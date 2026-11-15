@@ -83,8 +83,8 @@ This document specifies the Nightborn alpha line for Minecraft 1.21.1 on Fabric.
 | What replaces hunger? | Blood | FEED-1 |
 | How do powers grow? | A skill tree with three bloodlines, of which you invest in two | LINE-1 to LINE-3 |
 | Who is a hunter? | Any human who kills vampires | HUNT-1 |
-| How does a vampire die? | Only to direct sun or a stake. Anything else brings it down, greatly weakened, until it recovers | CORE-7, CORE-8 |
-| What happens on death? | Respawn at your coffin. A stake costs skill progress | COFFIN-4, SKILL-6 |
+| How does a vampire die? | Only to direct sun or a stake. Anything else brings it down, greatly weakened, until it recovers and escapes | CORE-7, CORE-8 |
+| What happens on death? | Respawn at your coffin. A stake costs skill progress. A server can make a vampire's death a full reset instead | COFFIN-4, SKILL-6, CORE-10 |
 | PvP? | Vampires and hunters are factions, and PvP follows the server's own setting | FACT-1 to FACT-4 |
 
 ## 3. Actors
@@ -117,7 +117,7 @@ This document specifies the Nightborn alpha line for Minecraft 1.21.1 on Fabric.
 | Sip | Feeding that stops before the victim dies |
 | Drain | Feeding until the victim dies |
 | Resist | A victim breaking free of a bite |
-| Weakened | The vampire debuff from garlic, crucifixes and holy water: slower, weaker blows and no powers. It is not the vanilla Weakness effect |
+| Weakened | The vampire debuff from garlic, crucifixes, holy water, being downed and escaping: slower, weaker blows and no powers. It is not the vanilla Weakness effect |
 | Skill point | Earned by a vampire through feeding, or by a hunter through killing vampires. Spent on a skill tree |
 | Core | The vampire skills every vampire can take |
 | Bloodline | One of three branches of the vampire tree: Noble, Beast or Occult |
@@ -126,6 +126,7 @@ This document specifies the Nightborn alpha line for Minecraft 1.21.1 on Fabric.
 | Garlic String | A block of hung garlic that weakens vampires near it |
 | Crucifix shape | A cross of crucifix-material blocks built in the world (see below) |
 | Downed | A vampire brought to its last health by anything but direct sun or a stake. It lies helpless and greatly weakened until it recovers |
+| Escaping | The minute after a downed vampire gets up, when only direct sun and a stake can hurt it and it stays weakened, so it can get away |
 | Staked | Killed by a stake: a wooden stake or stake bolt hitting a downed vampire, or striking the blow that would bring a vampire down |
 | Coffin | A block that is a vampire's bed and respawn point |
 | Thrall | A villager a Noble vampire has bound to follow and fight for them |
@@ -229,7 +230,7 @@ Sneak and use on a creature to bite it, and keep holding to drink. Let go to sto
 
 | ID | Requirement |
 |---|---|
-| SUN-1 | A vampire in direct sun catches fire, as a zombie does, and burns while it stays there. Sun fire kills, downed or not. Fire that keeps burning after the vampire reaches shade only downs it |
+| SUN-1 | A vampire in direct sun catches fire, as a zombie does, and burns while it stays there. Sun fire kills, downed or not. Fire that keeps burning after the vampire reaches shade only downs it, and cannot hurt it while it is escaping |
 | SUN-2 | No armour, helmet or effect, Fire Resistance included, stops the burn. Shade, rain, water and a closed coffin (COFFIN-7) do |
 | SUN-3 | A burning vampire gives off smoke and a sizzling sound, on top of the fire |
 | SUN-4 | Vampire mobs follow the same rules and seek shade at dawn |
@@ -276,8 +277,9 @@ Every vampire has the core, whatever bloodlines they choose.
 | CORE-5 | A vampire player never shows as a marker on a vanilla map |
 | CORE-6 | A vampire can sleep only in a coffin (COFFIN-1) |
 | CORE-7 | Only direct sun and a stake can kill a vampire. Damage from anything else, mobs, players, fire, falls, drowning or holy water included, stops at its last health. Falling into the void and an operator's `/kill` are the only exceptions |
-| CORE-8 | A vampire brought to its last health by anything else is downed: it collapses, cannot move, attack, feed or use items or powers, and is weakened at the cap (WEAK-9). It takes no damage from anything but sun and a stake while downed. After 30 seconds it gets up with 20% of its health, where it can stand unharmed, and stays downed until then. More damage does not reset the time. Everyone near can see and hear that it is downed |
+| CORE-8 | A vampire brought to its last health by anything else is downed: it collapses, cannot move, attack, feed or use items or powers, and is weakened at the cap (WEAK-9). It takes no damage from anything but sun and a stake while downed. After 30 seconds by default it gets up with 20% of its health, wherever it lies. More damage does not reset the time. Everyone near can see and hear that it is downed. It then escapes for 1 minute by default: it takes no damage but sun and a stake, stays weakened at the cap and can move freely. Vampire mobs flee while escaping |
 | CORE-9 | Phantoms never spawn for a vampire player and never target a vampire, and time a vampire spends awake never counts toward them |
+| CORE-10 | With the `hardcoreVampireDeath` server setting on, off by default, a vampire player who dies is reset like a hardcore death: they come back as a new human at world spawn with an empty inventory and ender chest, no experience, no skills, bloodlines or hunter tree, no coffin respawn point, and their thralls and familiars freed. Advancements are kept |
 
 **Not supported:** a vampire hiding its eyes while feeding.
 
@@ -311,7 +313,7 @@ The vampire tree has the core and three bloodlines. A vampire spends points in a
 | SKILL-3 | Bought skills are kept across death, reconnect and world reload |
 | SKILL-4 | Active skills sit in a small power bar and are used with keys the player can rebind |
 | SKILL-5 | Each active skill has a blood cost and a cooldown, shown on the bar |
-| SKILL-6 | A staked vampire player loses 10% of their earned points, taken from unspent points first and then from their most recent skills |
+| SKILL-6 | A staked vampire player loses 10% of their earned points, taken from unspent points first and then from their most recent skills. With CORE-10 on, the full reset applies instead |
 
 **Enforcement:** server. The client asks to buy a skill; the server checks points and order.
 
@@ -374,7 +376,7 @@ Every human is a hunter in waiting. Killing vampires earns hunter points.
 
 | ID | Requirement |
 |---|---|
-| HUNT-1 | Any human player earns hunter points by staking vampire mobs and vampire players, or by downing one that the sun finishes before it gets up. Downing alone earns nothing. No pledge is needed |
+| HUNT-1 | Any human player earns hunter points by staking vampire mobs and vampire players, or by downing one that the sun finishes before its escape ends. Downing alone earns nothing. No pledge is needed |
 | HUNT-2 | Contracts from the Guild Master earn hunter points as well as their reward |
 | HUNT-3 | The hunter tree is one shared tree for all humans |
 | HUNT-4 | Hunter skills cover tracking vampires, resisting bites and mesmerise, and faith powers that make crucifixes and holy water stronger |
@@ -428,7 +430,7 @@ Vampires are rare. They live in households hidden in four kinds of structure, ea
 | HOME-4 | Fog hangs around and inside every vampire structure, thicker near its heart |
 | HOME-5 | A household feels lived in: its vampires have their own personality, routine and hobbies, talk to and argue with each other, and react to each other's deaths |
 | HOME-6 | Household vampires sleep in coffins by day and wake at dusk |
-| HOME-7 | A castle's vampire lord is a boss with a health bar and its own powers. It is downed like any vampire, its bar shows it downed, and only a stake or the sun ends the fight |
+| HOME-7 | A castle's vampire lord is a boss with a health bar and its own powers. It is downed and escapes like any vampire, its bar shows when it is downed or escaping, and only a stake or the sun ends the fight |
 | HOME-8 | Structures hold loot chests with gear, Blood Bottles, decor and rare items found nowhere else |
 | HOME-9 | Vampire mobs spawn rarely at night in the open, alone or with vampire bats |
 | HOME-10 | Vampire bats spawn rarely in dark caves and at night, and bite (TURN-1) |
@@ -512,7 +514,7 @@ Vampires are rare. They live in households hidden in four kinds of structure, ea
 | CFG-2 | Settings are saved per world as JSON in the world save directory |
 | CFG-3 | A missing file gives defaults. A broken file gives defaults, is logged and is kept |
 | CFG-4 | Out-of-range values are clamped on load |
-| CFG-5 | Options cover turn chances, sickness length, sun damage, blood drain and values, garlic and crucifix ranges, skill point rates, the staking penalty, the downed time, the coffin sleep share, spawn and structure rates, and whether players can turn players |
+| CFG-5 | Options cover turn chances, sickness length, sun damage, blood drain and values, garlic and crucifix ranges, skill point rates, the staking penalty, the downed and escape times, the coffin sleep share, hardcore vampire deaths, spawn and structure rates, and whether players can turn players |
 | CFG-6 | A settings screen through Mod Menu shows the same server options and shares their validation with the commands |
 | CFG-7 | An option that only changes what one player sees, such as gore, is a client setting saved on that player's device |
 | CFG-8 | Operators can turn, cure, set points and reset the bloodlines of any player |
@@ -658,14 +660,14 @@ There is no singleplayer mode in this mod. A single-player world is an integrate
 
 | What | Chunk unload | World reload | Death | Disconnect | Power loss |
 |---|---|---|---|---|---|
-| Faction | not applicable | kept | kept | kept | kept to the last save |
+| Faction | not applicable | kept | kept, except CORE-10 | kept | kept to the last save |
 | Bite sickness and days left | not applicable | kept | kept | kept, paused while offline | kept to the last save |
-| Downed and its time left | kept, for a mob | kept | cleared | kept, so leaving does not escape it | kept to the last save |
+| Downed or escaping, and the time left | kept, for a mob | kept | cleared | kept, so leaving does not escape it | kept to the last save |
 | Blood | not applicable | kept | refilled, as hunger is on respawn | kept | kept to the last save |
-| Skills and bloodlines | not applicable | kept | kept, except SKILL-6 | kept | kept to the last save |
-| Hunter tree set aside on turning | not applicable | kept | kept | kept | kept to the last save |
-| Coffin respawn | kept | kept | kept | kept | kept to the last save |
-| Thralls and familiars | kept with their chunk | kept | kept, waiting (MIND-8) | kept | kept to the last save |
+| Skills and bloodlines | not applicable | kept | kept, except SKILL-6 and CORE-10 | kept | kept to the last save |
+| Hunter tree set aside on turning | not applicable | kept | kept, except CORE-10 | kept | kept to the last save |
+| Coffin respawn | kept | kept | kept, except CORE-10 | kept | kept to the last save |
+| Thralls and familiars | kept with their chunk | kept | kept, waiting (MIND-8), except CORE-10 | kept | kept to the last save |
 | Human familiar loyalty | kept | kept | kept | kept | kept to the last save |
 | Household members and state | kept | kept | not applicable | not applicable | kept to the last save |
 | Contracts in progress | not applicable | kept | kept | kept | kept to the last save |
@@ -713,7 +715,7 @@ There is no singleplayer mode in this mod. A single-player world is an integrate
 - A human can be bitten, get sick, and either cure it or turn, without outside help.
 - A vampire can feed, survive a full day in a coffin and buy skills in two bloodlines.
 - A human can find a vampire structure, down a vampire with hunter gear and stake it.
-- A vampire dies in the sun, and gets up again after being downed by anything else.
+- A vampire dies in the sun, and gets up and escapes after being downed by anything else.
 - No item, blood or skill point can be duplicated or lost by any mechanic the mod adds (SAFE-1, SAFE-2).
 - A dedicated server starts with no client classes loaded (CS-6).
 - Every string is translated in every shipped language.
