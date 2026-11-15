@@ -2,12 +2,9 @@ package com.grahambartley.nightborn.decor;
 
 import java.util.List;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockRenderType;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.BlockWithEntity;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.ShapeContext;
-import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemPlacementContext;
@@ -15,15 +12,11 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.BooleanProperty;
-import net.minecraft.state.property.DirectionProperty;
 import net.minecraft.state.property.Properties;
 import net.minecraft.util.ActionResult;
-import net.minecraft.util.BlockMirror;
-import net.minecraft.util.BlockRotation;
 import net.minecraft.util.Hand;
 import net.minecraft.util.ItemActionResult;
 import net.minecraft.util.hit.BlockHitResult;
@@ -38,10 +31,9 @@ import net.minecraft.world.WorldAccess;
 import net.minecraft.world.WorldView;
 import net.minecraft.world.event.GameEvent;
 
-public abstract class LightableFurnitureBlock extends BlockWithEntity implements AnimatedFurniture {
+public abstract class LightableFurnitureBlock extends FurnitureBlock {
 
   public static final BooleanProperty LIT = Properties.LIT;
-  public static final DirectionProperty FACING = Properties.HORIZONTAL_FACING;
   private static final float AMBIENT_CHANCE = 0.08f;
   private static final float SPARK_CHANCE = 0.2f;
   private static final float WISP_CHANCE = 0.08f;
@@ -76,8 +68,7 @@ public abstract class LightableFurnitureBlock extends BlockWithEntity implements
 
   @Override
   public BlockState getPlacementState(final ItemPlacementContext context) {
-    final BlockState state =
-        this.getDefaultState().with(FACING, context.getHorizontalPlayerFacing().getOpposite());
+    final BlockState state = this.facingPlacer(context);
     return state.canPlaceAt(context.getWorld(), context.getBlockPos()) ? state : null;
   }
 
@@ -103,32 +94,12 @@ public abstract class LightableFurnitureBlock extends BlockWithEntity implements
   }
 
   @Override
-  protected BlockState rotate(final BlockState state, final BlockRotation rotation) {
-    return state.with(FACING, rotation.rotate(state.get(FACING)));
-  }
-
-  @Override
-  protected BlockState mirror(final BlockState state, final BlockMirror mirror) {
-    return state.rotate(mirror.getRotation(state.get(FACING)));
-  }
-
-  @Override
   protected VoxelShape getOutlineShape(
       final BlockState state,
       final BlockView world,
       final BlockPos pos,
       final ShapeContext context) {
     return this.shapeFor(state);
-  }
-
-  @Override
-  protected BlockRenderType getRenderType(final BlockState state) {
-    return BlockRenderType.ENTITYBLOCK_ANIMATED;
-  }
-
-  @Override
-  public BlockEntity createBlockEntity(final BlockPos pos, final BlockState state) {
-    return new FurnitureBlockEntity(pos, state);
   }
 
   @Override
@@ -145,20 +116,12 @@ public abstract class LightableFurnitureBlock extends BlockWithEntity implements
       return ItemActionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
     }
     if (!world.isClient) {
-      if (toggle == FlameToggle.LIGHT_WITH_FLINT) {
-        stack.damage(1, player, LivingEntity.getSlotForHand(hand));
-      } else {
-        stack.decrementUnlessCreative(1, player);
+      switch (toggle.cost()) {
+        case WEAR -> stack.damage(1, player, LivingEntity.getSlotForHand(hand));
+        case USE_UP -> stack.decrementUnlessCreative(1, player);
+        case NONE -> {}
       }
-      this.setLit(
-          world,
-          pos,
-          state,
-          true,
-          player,
-          toggle == FlameToggle.LIGHT_WITH_FLINT
-              ? SoundEvents.ITEM_FLINTANDSTEEL_USE
-              : SoundEvents.ITEM_FIRECHARGE_USE);
+      this.apply(world, pos, state, player, toggle);
     }
     return ItemActionResult.success(world.isClient);
   }
@@ -170,12 +133,17 @@ public abstract class LightableFurnitureBlock extends BlockWithEntity implements
       final BlockPos pos,
       final PlayerEntity player,
       final BlockHitResult hit) {
-    if (FlameToggle.decide(state.get(LIT), player.getMainHandStack()) != FlameToggle.DOUSE) {
+    final FlameToggle toggle = FlameToggle.decide(state.get(LIT), player.getMainHandStack());
+    if (toggle != FlameToggle.DOUSE) {
       return ActionResult.PASS;
     }
     if (!world.isClient) {
-      this.setLit(world, pos, state, false, player, SoundEvents.BLOCK_CANDLE_EXTINGUISH);
-      this.puffSmoke((ServerWorld) world, pos, state);
+      this.apply(world, pos, state, player, toggle);
+      for (final Vec3d wick : this.wicks()) {
+        final Vec3d at = FacingShapes.atWick(pos, wick, state.get(FACING));
+        ((ServerWorld) world)
+            .spawnParticles(ParticleTypes.SMOKE, at.x, at.y, at.z, 2, 0.01, 0.02, 0.01, 0.01);
+      }
     }
     return ActionResult.success(world.isClient);
   }
@@ -187,7 +155,7 @@ public abstract class LightableFurnitureBlock extends BlockWithEntity implements
       return;
     }
     for (final Vec3d wick : this.wicks()) {
-      final Vec3d at = FacingShapes.turn(wick, state.get(FACING)).add(Vec3d.of(pos));
+      final Vec3d at = FacingShapes.atWick(pos, wick, state.get(FACING));
       if (random.nextFloat() < SPARK_CHANCE) {
         world.addParticle(ParticleTypes.SMALL_FLAME, at.x, at.y + FLAME_TIP, at.z, 0.0, 0.0, 0.0);
       }
@@ -208,22 +176,16 @@ public abstract class LightableFurnitureBlock extends BlockWithEntity implements
     }
   }
 
-  private void setLit(
+  private void apply(
       final World world,
       final BlockPos pos,
       final BlockState state,
-      final boolean lit,
       final PlayerEntity player,
-      final SoundEvent sound) {
-    world.setBlockState(pos, state.with(LIT, lit), Block.NOTIFY_ALL_AND_REDRAW);
-    world.playSound(null, pos, sound, SoundCategory.BLOCKS, 1.0f, 1.0f);
+      final FlameToggle toggle) {
+    world.setBlockState(pos, state.with(LIT, toggle.lights()), Block.NOTIFY_ALL_AND_REDRAW);
+    toggle
+        .sound()
+        .ifPresent(sound -> world.playSound(null, pos, sound, SoundCategory.BLOCKS, 1.0f, 1.0f));
     world.emitGameEvent(player, GameEvent.BLOCK_CHANGE, pos);
-  }
-
-  private void puffSmoke(final ServerWorld world, final BlockPos pos, final BlockState state) {
-    for (final Vec3d wick : this.wicks()) {
-      final Vec3d at = FacingShapes.turn(wick, state.get(FACING)).add(Vec3d.of(pos));
-      world.spawnParticles(ParticleTypes.SMOKE, at.x, at.y, at.z, 2, 0.01, 0.02, 0.01, 0.01);
-    }
   }
 }

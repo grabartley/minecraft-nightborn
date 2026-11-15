@@ -12,10 +12,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.stream.Stream;
 import net.minecraft.block.Block;
-import net.minecraft.block.FenceBlock;
-import net.minecraft.block.SlabBlock;
-import net.minecraft.block.StairsBlock;
-import net.minecraft.block.WallBlock;
 import net.minecraft.registry.Registries;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -44,28 +40,17 @@ class DecorBlocksTest {
 
   @ParameterizedTest(name = "{0} is a {1}")
   @CsvSource({
-    "gothic_stone_brick_stairs, StairsBlock",
-    "mossy_gothic_stone_brick_slab, SlabBlock",
-    "cracked_gothic_stone_brick_wall, WallBlock",
-    "ebony_fence, FenceBlock",
-    "candelabra, CandelabraBlock",
-    "chandelier, ChandelierBlock",
-    "ornate_chair, ChairBlock",
-    "ornate_table, TableBlock"
+    "gothic_stone_brick_stairs, net.minecraft.block.StairsBlock",
+    "mossy_gothic_stone_brick_slab, net.minecraft.block.SlabBlock",
+    "cracked_gothic_stone_brick_wall, net.minecraft.block.WallBlock",
+    "ebony_fence, net.minecraft.block.FenceBlock",
+    "candelabra, com.grahambartley.nightborn.decor.CandelabraBlock",
+    "chandelier, com.grahambartley.nightborn.decor.ChandelierBlock",
+    "ornate_chair, com.grahambartley.nightborn.decor.ChairBlock",
+    "ornate_table, com.grahambartley.nightborn.decor.TableBlock"
   })
-  void buildsEachMemberFromTheMatchingVanillaShape(final String id, final String kind) {
-    final Class<?> expected =
-        switch (kind) {
-          case "StairsBlock" -> StairsBlock.class;
-          case "SlabBlock" -> SlabBlock.class;
-          case "WallBlock" -> WallBlock.class;
-          case "FenceBlock" -> FenceBlock.class;
-          case "CandelabraBlock" -> CandelabraBlock.class;
-          case "ChandelierBlock" -> ChandelierBlock.class;
-          case "ChairBlock" -> ChairBlock.class;
-          default -> TableBlock.class;
-        };
-    assertTrue(expected.isInstance(DecorBlocks.get(id)));
+  void buildsEachMemberFromTheMatchingShape(final String id, final Class<?> kind) {
+    assertTrue(kind.isInstance(DecorBlocks.get(id)));
   }
 
   @Test

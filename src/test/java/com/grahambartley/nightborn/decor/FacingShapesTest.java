@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.stream.Stream;
 import net.minecraft.block.Block;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
@@ -48,5 +49,14 @@ class FacingShapesTest {
             .get(facing)
             .getBoundingBox();
     assertEquals(expected, box);
+  }
+
+  @ParameterizedTest(name = "facing {0}")
+  @MethodSource("turns")
+  void placesAWickInTheWorldAtTheTurnedPointOfItsBlock(final Direction facing, final Vec3d turned) {
+    final Vec3d at = FacingShapes.atWick(new BlockPos(10, 64, -3), BACK_LEFT, facing);
+    assertEquals(10 + turned.x, at.x, 1.0e-9);
+    assertEquals(64 + turned.y, at.y, 1.0e-9);
+    assertEquals(-3 + turned.z, at.z, 1.0e-9);
   }
 }

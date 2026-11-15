@@ -16,12 +16,13 @@ class DrapeColumnTest {
         Arguments.of(Set.of(), List.of(0)),
         Arguments.of(Set.of(1, 2, -1), List.of(0, 1, 2, -1)),
         Arguments.of(Set.of(2, -2), List.of(0)),
-        Arguments.of(Set.of(1, 2, 3, 4, 5, 6, 7, 8, 9, -1), List.of(0, 1, 2, 3, 4, 5, 6, 7)));
+        Arguments.of(
+            Set.of(1, 2, 3, 4, 5, 6, 7, 8, 9, -1), List.of(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, -1)));
   }
 
   @ParameterizedTest(name = "drapes at {0} join into {1}")
   @MethodSource("columns")
-  void gathersTheUnbrokenColumnUpThenDownUpToTheCap(
+  void gathersTheWholeUnbrokenColumnUpThenDown(
       final Set<Integer> drapesAt, final List<Integer> expected) {
     assertEquals(expected, DrapeColumn.offsets(drapesAt::contains));
   }

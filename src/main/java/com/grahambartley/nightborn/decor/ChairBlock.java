@@ -30,7 +30,7 @@ public class ChairBlock extends HorizontalFacingBlock {
       FacingShapes.fromNorth(
           VoxelShapes.union(
               Block.createCuboidShape(2, 0, 2, 14, 8, 14),
-              Block.createCuboidShape(2, 8, 12, 14, 16, 14)));
+              Block.createCuboidShape(2, 8, 12, 14, 23, 14)));
 
   public ChairBlock(final Settings settings) {
     super(settings);

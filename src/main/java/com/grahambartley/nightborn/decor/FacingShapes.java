@@ -2,6 +2,7 @@ package com.grahambartley.nightborn.decor;
 
 import java.util.EnumMap;
 import java.util.Map;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
@@ -33,6 +34,10 @@ public final class FacingShapes {
       case EAST -> new Vec3d(0.5 - z, northPoint.y, 0.5 + x);
       default -> northPoint;
     };
+  }
+
+  public static Vec3d atWick(final BlockPos pos, final Vec3d wick, final Direction facing) {
+    return turn(wick, facing).add(Vec3d.of(pos));
   }
 
   private static Box turn(final Box box, final Direction facing) {

@@ -192,6 +192,67 @@ public class DecorGameTest implements FabricGameTest {
         });
   }
 
+  @GameTest(templateName = ROOM, tickLimit = 20)
+  public void aLitCandelabraStaysLitWhenClickedWithAnItem(final TestContext context) {
+    context.setBlockState(FLOOR, Blocks.STONE);
+    context.setBlockState(
+        ON_FLOOR, DecorBlocks.CANDELABRA.getDefaultState().with(LightableFurnitureBlock.LIT, true));
+
+    context.useBlock(ON_FLOOR, holding(context, new ItemStack(Items.STICK)));
+
+    context.assertTrue(
+        context.getBlockState(ON_FLOOR).get(LightableFurnitureBlock.LIT), "still lit");
+    context.complete();
+  }
+
+  @GameTest(templateName = ROOM, tickLimit = 20)
+  public void openingTheMiddleOfAColumnDrawsItAll(final TestContext context) {
+    final BlockState drape =
+        DecorBlocks.EMERALD_VELVET_DRAPE.getDefaultState().with(DrapeBlock.FACING, Direction.NORTH);
+    context.setBlockState(FLOOR, drape);
+    context.setBlockState(ON_FLOOR, drape);
+    context.setBlockState(CEILING, drape);
+
+    context.useBlock(ON_FLOOR, holding(context, ItemStack.EMPTY));
+
+    for (final BlockPos at : new BlockPos[] {FLOOR, ON_FLOOR, CEILING}) {
+      context.assertTrue(context.getBlockState(at).get(DrapeBlock.OPEN), "open at " + at);
+    }
+    context.complete();
+  }
+
+  @GameTest(templateName = ROOM, tickLimit = 20)
+  public void aDrapeHungUnderAnOpenColumnJoinsItOpen(final TestContext context) {
+    final BlockState open =
+        DecorBlocks.BURGUNDY_VELVET_DRAPE
+            .getDefaultState()
+            .with(DrapeBlock.FACING, Direction.NORTH)
+            .with(DrapeBlock.OPEN, true);
+    context.setBlockState(FLOOR, Blocks.STONE);
+    context.setBlockState(CEILING, open);
+    final PlayerEntity player = holding(context, new ItemStack(DecorBlocks.BURGUNDY_VELVET_DRAPE));
+    player.setYaw(0.0f);
+
+    context.useStackOnBlock(player, player.getMainHandStack(), FLOOR, Direction.UP);
+
+    final BlockState placed = context.getBlockState(ON_FLOOR);
+    context.assertTrue(placed.isOf(DecorBlocks.BURGUNDY_VELVET_DRAPE), "drape placed");
+    context.assertTrue(placed.get(DrapeBlock.OPEN), "joins the column open");
+    context.complete();
+  }
+
+  @GameTest(templateName = ROOM, tickLimit = 20)
+  public void aSneakingPlayerDoesNotSitDown(final TestContext context) {
+    context.setBlockState(ON_FLOOR, DecorBlocks.ORNATE_CHAIR.getDefaultState());
+    final ServerPlayerEntity player = context.createMockCreativeServerPlayerInWorld();
+    player.setSneaking(true);
+
+    context.useBlock(ON_FLOOR, player);
+
+    context.assertFalse(player.hasVehicle(), "sneaking player stays standing");
+    context.complete();
+  }
+
   private static PlayerEntity holding(final TestContext context, final ItemStack stack) {
     final PlayerEntity player = context.createMockPlayer(GameMode.SURVIVAL);
     player.setStackInHand(Hand.MAIN_HAND, stack);

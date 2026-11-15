@@ -19,18 +19,20 @@ import org.junit.jupiter.params.provider.EnumSource;
 class ChairBlockTest {
 
   private static final Vec3d BACKREST = new Vec3d(0.5, 0.75, 0.8);
+  private static final Vec3d CREST = new Vec3d(0.5, 1.35, 0.8);
   private static final Vec3d ABOVE_SEAT = new Vec3d(0.5, 0.75, 0.3);
 
   @ParameterizedTest(name = "facing {0}")
   @EnumSource(
       value = Direction.class,
       names = {"NORTH", "EAST", "SOUTH", "WEST"})
-  void putsTheBackrestBehindTheSitter(final Direction facing) {
+  void putsTheTallBackrestBehindTheSitter(final Direction facing) {
     final BlockState state =
         DecorBlocks.ORNATE_CHAIR.getDefaultState().with(ChairBlock.FACING, facing);
     final VoxelShape shape =
         state.getOutlineShape(EmptyBlockView.INSTANCE, BlockPos.ORIGIN, ShapeContext.absent());
     assertTrue(contains(shape, FacingShapes.turn(BACKREST, facing)));
+    assertTrue(contains(shape, FacingShapes.turn(CREST, facing)));
     assertFalse(contains(shape, FacingShapes.turn(ABOVE_SEAT, facing)));
   }
 

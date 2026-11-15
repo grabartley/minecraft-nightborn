@@ -3,9 +3,12 @@ package com.grahambartley.nightborn.decor;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.grahambartley.nightborn.MinecraftBootstrapExtension;
+import java.util.Optional;
 import java.util.stream.Stream;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.sound.SoundEvent;
+import net.minecraft.sound.SoundEvents;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -39,5 +42,27 @@ class FlameToggleTest {
     assertEquals(
         toggle == FlameToggle.LIGHT_WITH_FLINT || toggle == FlameToggle.LIGHT_WITH_CHARGE,
         toggle.lights());
+  }
+
+  static Stream<Arguments> effects() {
+    return Stream.of(
+        Arguments.of(
+            FlameToggle.LIGHT_WITH_FLINT,
+            FlameToggle.Cost.WEAR,
+            SoundEvents.ITEM_FLINTANDSTEEL_USE),
+        Arguments.of(
+            FlameToggle.LIGHT_WITH_CHARGE,
+            FlameToggle.Cost.USE_UP,
+            SoundEvents.ITEM_FIRECHARGE_USE),
+        Arguments.of(FlameToggle.DOUSE, FlameToggle.Cost.NONE, SoundEvents.BLOCK_CANDLE_EXTINGUISH),
+        Arguments.of(FlameToggle.PASS, FlameToggle.Cost.NONE, null));
+  }
+
+  @ParameterizedTest(name = "{0} costs {1} and sounds {2}")
+  @MethodSource("effects")
+  void eachToggleHasItsCostAndSound(
+      final FlameToggle toggle, final FlameToggle.Cost cost, final SoundEvent sound) {
+    assertEquals(cost, toggle.cost());
+    assertEquals(Optional.ofNullable(sound), toggle.sound());
   }
 }
