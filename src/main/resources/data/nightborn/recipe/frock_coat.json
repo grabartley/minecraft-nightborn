@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "W": {
+      "tag": "minecraft:wool"
+    },
+    "G": {
+      "item": "minecraft:gold_nugget"
+    }
+  },
+  "pattern": [
+    "W W",
+    "WGW",
+    "WWW"
+  ],
+  "result": {
+    "count": 1,
+    "id": "nightborn:frock_coat"
+  }
+}

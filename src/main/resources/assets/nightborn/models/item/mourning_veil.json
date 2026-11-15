@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "nightborn:item/mourning_veil",
+    "layer1": "nightborn:item/mourning_veil_overlay"
+  }
+}

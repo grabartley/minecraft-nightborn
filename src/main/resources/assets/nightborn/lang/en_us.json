@@ -331,5 +331,21 @@
   "subtitles.nightborn.entity.vampire.hurt": "Vampire hurts",
   "subtitles.nightborn.entity.vampire.death": "Vampire dies",
   "subtitles.nightborn.entity.vampire.bite": "Vampire bites",
-  "subtitles.nightborn.entity.vampire_bat.bite": "Vampire bat bites"
+  "subtitles.nightborn.entity.vampire_bat.bite": "Vampire bat bites",
+  "item.nightborn.tricorne": "Tricorne",
+  "item.nightborn.top_hat": "Top Hat",
+  "item.nightborn.mourning_veil": "Mourning Veil",
+  "item.nightborn.frock_coat": "Frock Coat",
+  "item.nightborn.high_collared_cape": "High-Collared Cape",
+  "item.nightborn.corset": "Corset",
+  "item.nightborn.doublet": "Doublet",
+  "item.nightborn.breeches": "Breeches",
+  "item.nightborn.trousers": "Trousers",
+  "item.nightborn.long_skirt": "Long Skirt",
+  "item.nightborn.buckled_shoes": "Buckled Shoes",
+  "item.nightborn.riding_boots": "Riding Boots",
+  "enchantment.nightborn.nocturne": "Nocturne",
+  "enchantment.nightborn.batwing": "Batwing",
+  "enchantment.nightborn.gliding_step": "Gliding Step",
+  "enchantment.nightborn.hush": "Hush"
 }

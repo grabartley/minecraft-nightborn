@@ -499,10 +499,10 @@ Vampires are rare. They live in households hidden in four kinds of structure, ea
 | DECOR-6 | Candles, candelabras and chandeliers light the room. Flint and steel or a fire charge lights them and an empty hand puts them out, and every light, douse, opening and closing plays its own animation |
 | DECOR-7 | A gramophone, crafted from a jukebox, gold ingots and ebony planks and facing the player who placed it, plays any music disc as a jukebox does, with the same hopper, redstone and comparator behaviour, and animates while it plays |
 | DECOR-8 | Gothic music discs, one per track, play in a gramophone or a jukebox. They are found only in vampire structures: in their loot and in their gramophones (HOME-20) |
-| WEAR-1 | Capes and gothic clothing, each in a male and a female cut |
-| WEAR-2 | Clothing is worn in the armour slots and shows over armour |
-| WEAR-3 | Clothing takes enchantments the mod adds, which give small powers, from an enchanting table or anvil |
-| WEAR-4 | Clothing can be dyed where its colour is part of the look |
+| WEAR-1 | Capes and gothic clothing from several centuries, with at least two pieces for each armour slot, enough to dress at least 10 distinct looks. Each piece has a male and a female cut, and is drawn in the cut that fits its wearer: the female cut on a slim-armed player model, the male cut on a wide one |
+| WEAR-2 | Clothing is worn in the armour slots in place of armour, protects and wears out like leather and is mended with wool. It is drawn as an outer layer over the body, so a coat or cape hangs over any armour worn in the other slots, and capes and coat tails sway as the wearer walks |
+| WEAR-3 | Clothing takes the vanilla armour enchantments for its slot and four of the mod's own, from an enchanting table or anvil: Nocturne on hats sees in the dark at night, Batwing on coats and capes falls further before taking damage, Gliding Step on legwear steps up a full block, and Hush on shoes and boots sneaks faster |
+| WEAR-4 | Clothing whose colour is part of the look is dyed like leather, in a crafting grid with dyes, and a water cauldron washes the dye out. Only the cloth takes the dye: trims, buttons and buckles keep their own colours |
 | WEAR-5 | Every outfit a vampire mob wears is made of clothing a player can craft |
 
 **Enforcement:** server.

@@ -331,5 +331,21 @@
   "subtitles.nightborn.entity.vampire.hurt": "吸血鬼：受伤",
   "subtitles.nightborn.entity.vampire.death": "吸血鬼：死亡",
   "subtitles.nightborn.entity.vampire.bite": "吸血鬼：撕咬",
-  "subtitles.nightborn.entity.vampire_bat.bite": "吸血蝙蝠：撕咬"
+  "subtitles.nightborn.entity.vampire_bat.bite": "吸血蝙蝠：撕咬",
+  "item.nightborn.tricorne": "三角帽",
+  "item.nightborn.top_hat": "高礼帽",
+  "item.nightborn.mourning_veil": "丧礼面纱",
+  "item.nightborn.frock_coat": "礼服大衣",
+  "item.nightborn.high_collared_cape": "高领斗篷",
+  "item.nightborn.corset": "束身衣",
+  "item.nightborn.doublet": "紧身上衣",
+  "item.nightborn.breeches": "及膝马裤",
+  "item.nightborn.trousers": "长裤",
+  "item.nightborn.long_skirt": "长裙",
+  "item.nightborn.buckled_shoes": "搭扣鞋",
+  "item.nightborn.riding_boots": "马靴",
+  "enchantment.nightborn.nocturne": "夜曲",
+  "enchantment.nightborn.batwing": "蝠翼",
+  "enchantment.nightborn.gliding_step": "滑步",
+  "enchantment.nightborn.hush": "静谧"
 }

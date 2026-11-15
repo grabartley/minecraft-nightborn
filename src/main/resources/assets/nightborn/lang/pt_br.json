@@ -331,5 +331,21 @@
   "subtitles.nightborn.entity.vampire.hurt": "Vampiro ferido",
   "subtitles.nightborn.entity.vampire.death": "Vampiro morre",
   "subtitles.nightborn.entity.vampire.bite": "Vampiro morde",
-  "subtitles.nightborn.entity.vampire_bat.bite": "Morcego vampiro morde"
+  "subtitles.nightborn.entity.vampire_bat.bite": "Morcego vampiro morde",
+  "item.nightborn.tricorne": "Tricórnio",
+  "item.nightborn.top_hat": "Cartola",
+  "item.nightborn.mourning_veil": "Véu de luto",
+  "item.nightborn.frock_coat": "Sobrecasaca",
+  "item.nightborn.high_collared_cape": "Capa de gola alta",
+  "item.nightborn.corset": "Espartilho",
+  "item.nightborn.doublet": "Gibão",
+  "item.nightborn.breeches": "Calções",
+  "item.nightborn.trousers": "Calças",
+  "item.nightborn.long_skirt": "Saia longa",
+  "item.nightborn.buckled_shoes": "Sapatos de fivela",
+  "item.nightborn.riding_boots": "Botas de montaria",
+  "enchantment.nightborn.nocturne": "Noturno",
+  "enchantment.nightborn.batwing": "Asa de morcego",
+  "enchantment.nightborn.gliding_step": "Passo deslizante",
+  "enchantment.nightborn.hush": "Silêncio"
 }

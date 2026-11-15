@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.grahambartley.nightborn.blood.BloodQuality;
+import com.grahambartley.nightborn.clothing.ClothingPiece;
 import com.grahambartley.nightborn.config.NightbornConfig;
 import com.grahambartley.nightborn.config.Setting;
 import com.grahambartley.nightborn.faction.Faction;
@@ -48,7 +49,8 @@ class LangAssetsTest {
   }
 
   @Test
-  @DisplayName("every setting, section, faction and blood quality has its English text")
+  @DisplayName(
+      "every setting, section, faction, blood quality and clothing piece has its English text")
   void englishCoversTheCode() throws IOException {
     final JsonObject english = read("en_us");
     final List<String> needed = new ArrayList<>();
@@ -63,6 +65,9 @@ class LangAssetsTest {
     }
     for (final BloodQuality quality : BloodQuality.values()) {
       needed.add(quality.translationKey());
+    }
+    for (final ClothingPiece piece : ClothingPiece.values()) {
+      needed.add("item.nightborn." + piece.id());
     }
     needed.forEach(key -> assertTrue(english.has(key), key));
   }

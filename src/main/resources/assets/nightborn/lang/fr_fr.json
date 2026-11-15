@@ -331,5 +331,21 @@
   "subtitles.nightborn.entity.vampire.hurt": "Un vampire est blessé",
   "subtitles.nightborn.entity.vampire.death": "Un vampire meurt",
   "subtitles.nightborn.entity.vampire.bite": "Un vampire mord",
-  "subtitles.nightborn.entity.vampire_bat.bite": "Une chauve-souris vampire mord"
+  "subtitles.nightborn.entity.vampire_bat.bite": "Une chauve-souris vampire mord",
+  "item.nightborn.tricorne": "Tricorne",
+  "item.nightborn.top_hat": "Haut-de-forme",
+  "item.nightborn.mourning_veil": "Voile de deuil",
+  "item.nightborn.frock_coat": "Redingote",
+  "item.nightborn.high_collared_cape": "Cape à col haut",
+  "item.nightborn.corset": "Corset",
+  "item.nightborn.doublet": "Pourpoint",
+  "item.nightborn.breeches": "Culotte",
+  "item.nightborn.trousers": "Pantalon",
+  "item.nightborn.long_skirt": "Jupe longue",
+  "item.nightborn.buckled_shoes": "Souliers à boucle",
+  "item.nightborn.riding_boots": "Bottes de cavalier",
+  "enchantment.nightborn.nocturne": "Nocturne",
+  "enchantment.nightborn.batwing": "Aile de chauve-souris",
+  "enchantment.nightborn.gliding_step": "Pas glissé",
+  "enchantment.nightborn.hush": "Silence"
 }

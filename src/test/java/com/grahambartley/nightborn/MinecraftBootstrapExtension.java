@@ -1,5 +1,6 @@
 package com.grahambartley.nightborn;
 
+import com.grahambartley.nightborn.clothing.ClothingItems;
 import com.grahambartley.nightborn.coffin.Coffins;
 import com.grahambartley.nightborn.decor.DecorBlockEntities;
 import com.grahambartley.nightborn.decor.DecorBlocks;
@@ -31,5 +32,6 @@ public final class MinecraftBootstrapExtension implements BeforeAllCallback {
     HunterAttributes.register();
     GearBlocks.initialize();
     GearItems.register();
+    ClothingItems.register();
   }
 }

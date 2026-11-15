@@ -331,5 +331,21 @@
   "subtitles.nightborn.entity.vampire.hurt": "Vampir wird verletzt",
   "subtitles.nightborn.entity.vampire.death": "Vampir stirbt",
   "subtitles.nightborn.entity.vampire.bite": "Vampir beißt",
-  "subtitles.nightborn.entity.vampire_bat.bite": "Vampirfledermaus beißt"
+  "subtitles.nightborn.entity.vampire_bat.bite": "Vampirfledermaus beißt",
+  "item.nightborn.tricorne": "Dreispitz",
+  "item.nightborn.top_hat": "Zylinder",
+  "item.nightborn.mourning_veil": "Trauerschleier",
+  "item.nightborn.frock_coat": "Gehrock",
+  "item.nightborn.high_collared_cape": "Umhang mit hohem Kragen",
+  "item.nightborn.corset": "Korsett",
+  "item.nightborn.doublet": "Wams",
+  "item.nightborn.breeches": "Kniebundhose",
+  "item.nightborn.trousers": "Hose",
+  "item.nightborn.long_skirt": "Langer Rock",
+  "item.nightborn.buckled_shoes": "Schnallenschuhe",
+  "item.nightborn.riding_boots": "Reitstiefel",
+  "enchantment.nightborn.nocturne": "Nocturne",
+  "enchantment.nightborn.batwing": "Fledermausschwinge",
+  "enchantment.nightborn.gliding_step": "Gleitschritt",
+  "enchantment.nightborn.hush": "Stille"
 }
