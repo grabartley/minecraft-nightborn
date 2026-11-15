@@ -1,0 +1,28 @@
+{
+  "parent": "nightborn:no_reflection_on_you",
+  "display": {
+    "icon": {
+      "id": "nightborn:dark_oak_coffin"
+    },
+    "title": {
+      "translate": "advancements.nightborn.day_shift.title"
+    },
+    "description": {
+      "translate": "advancements.nightborn.day_shift.description"
+    },
+    "frame": "task"
+  },
+  "criteria": {
+    "day_skipped": {
+      "trigger": "nightborn:milestone",
+      "conditions": {
+        "milestone": "day_skipped"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "day_skipped"
+    ]
+  ]
+}

@@ -587,8 +587,8 @@ The mod has its own tab, lined with tufted burgundy leather and brass studs. It 
 | ADV-22 | Close Call and No Reflection On You branch from Love Bites. The other vampire advancements (ADV-4 to ADV-12) branch from No Reflection On You, in any order. Lord Of The Manner branches from House Call |
 | ADV-23 | Bad Taste and Good Help Is Hard To Find stay hidden until earned |
 | ADV-24 | Lord Of The Manner and Strings Attached are challenges. No Reflection On You, Old Blood and Close Call are goals. Goals give 50 experience and challenges give 100 |
-| ADV-25 | An advancement earned in steps shows its progress |
-| ADV-26 | Icons use the mod's own items where one fits |
+| ADV-25 | An advancement earned in steps shows its progress: Strings Attached counts the strings weakening you at once, and Old Blood counts bloodlines chosen |
+| ADV-26 | Icons use the mod's own items where one fits. A vampire lord counts for Lord Of The Manner by being in the `nightborn:vampire_lords` entity tag |
 | ADV-27 | Names may be tuned, but each stays short, clever and in plain English |
 
 **Enforcement:** server.

@@ -1,0 +1,46 @@
+{
+  "parent": "nightborn:no_reflection_on_you",
+  "display": {
+    "icon": {
+      "id": "nightborn:chandelier"
+    },
+    "title": {
+      "translate": "advancements.nightborn.old_blood.title"
+    },
+    "description": {
+      "translate": "advancements.nightborn.old_blood.description"
+    },
+    "frame": "goal"
+  },
+  "criteria": {
+    "first_bloodline": {
+      "trigger": "nightborn:milestone",
+      "conditions": {
+        "milestone": "bloodlines",
+        "count": {
+          "min": 1
+        }
+      }
+    },
+    "second_bloodline": {
+      "trigger": "nightborn:milestone",
+      "conditions": {
+        "milestone": "bloodlines",
+        "count": {
+          "min": 2
+        }
+      }
+    }
+  },
+  "requirements": [
+    [
+      "first_bloodline"
+    ],
+    [
+      "second_bloodline"
+    ]
+  ],
+  "rewards": {
+    "experience": 50
+  }
+}

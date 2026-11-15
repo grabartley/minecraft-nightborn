@@ -1,5 +1,7 @@
 package com.grahambartley.nightborn.structure;
 
+import com.grahambartley.nightborn.advancement.Milestone;
+import com.grahambartley.nightborn.advancement.MilestoneCriterion;
 import com.grahambartley.nightborn.network.StructureFogPayload;
 import it.unimi.dsi.fastutil.longs.LongSet;
 import java.util.ArrayList;
@@ -44,6 +46,9 @@ public final class StructureFogTracker {
       if (!zone.equals(SENT.getOrDefault(player.getUuid(), Optional.empty()))) {
         SENT.put(player.getUuid(), zone);
         ServerPlayNetworking.send(player, new StructureFogPayload(zone));
+        if (zone.isPresent()) {
+          MilestoneCriterion.reach(player, Milestone.STRUCTURE_ENTERED);
+        }
       }
     }
   }

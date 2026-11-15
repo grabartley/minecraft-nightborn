@@ -1,0 +1,28 @@
+{
+  "parent": "nightborn:root",
+  "display": {
+    "icon": {
+      "id": "nightborn:carved_gothic_stone"
+    },
+    "title": {
+      "translate": "advancements.nightborn.house_call.title"
+    },
+    "description": {
+      "translate": "advancements.nightborn.house_call.description"
+    },
+    "frame": "task"
+  },
+  "criteria": {
+    "entered": {
+      "trigger": "nightborn:milestone",
+      "conditions": {
+        "milestone": "structure_entered"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "entered"
+    ]
+  ]
+}

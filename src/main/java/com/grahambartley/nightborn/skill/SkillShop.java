@@ -1,5 +1,7 @@
 package com.grahambartley.nightborn.skill;
 
+import com.grahambartley.nightborn.advancement.Milestone;
+import com.grahambartley.nightborn.advancement.MilestoneCriterion;
 import com.grahambartley.nightborn.network.BuySkillPayload;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.registry.DynamicRegistryManager;
@@ -27,8 +29,9 @@ public final class SkillShop {
       player.sendMessage(Text.translatable(lookup.verdict().translationKey()), true);
       return lookup.verdict();
     }
-    SkillAttachment.set(
-        player, tree, SkillPurchase.apply(progress, id, lookup.skill(), lookup.branch()));
+    final TreeProgress bought = SkillPurchase.apply(progress, id, lookup.skill(), lookup.branch());
+    SkillAttachment.set(player, tree, bought);
+    MilestoneCriterion.reach(player, Milestone.BLOODLINES, bought.bloodlines().size());
     SkillAttributes.apply(player);
     player.sendMessage(
         Text.translatable("nightborn.skills.bought", Text.translatable(SkillNames.skill(id))),

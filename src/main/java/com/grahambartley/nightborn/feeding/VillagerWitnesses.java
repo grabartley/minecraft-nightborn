@@ -1,5 +1,7 @@
 package com.grahambartley.nightborn.feeding;
 
+import com.grahambartley.nightborn.advancement.Milestone;
+import com.grahambartley.nightborn.advancement.MilestoneCriterion;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.BooleanSupplier;
@@ -43,6 +45,9 @@ public final class VillagerWitnesses {
                     villager.squaredDistanceTo(vampire),
                     range,
                     () -> villager.canSee(vampire)));
+    if (!witnesses.isEmpty()) {
+      MilestoneCriterion.reach(vampire, Milestone.FED_WATCHED);
+    }
     for (final VillagerEntity witness : witnesses) {
       if (session.firstSighting(witness.getUuid())) {
         witness.onInteractionWith(EntityInteraction.VILLAGER_HURT, vampire);

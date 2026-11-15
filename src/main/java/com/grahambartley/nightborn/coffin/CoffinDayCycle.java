@@ -1,5 +1,7 @@
 package com.grahambartley.nightborn.coffin;
 
+import com.grahambartley.nightborn.advancement.Milestone;
+import com.grahambartley.nightborn.advancement.MilestoneCriterion;
 import com.grahambartley.nightborn.core.NightTime;
 import com.grahambartley.nightborn.server.ServerConfigService;
 import com.grahambartley.nightborn.vampire.Vampires;
@@ -57,6 +59,7 @@ public final class CoffinDayCycle {
     if (world.getGameRules().getBoolean(GameRules.DO_DAYLIGHT_CYCLE)) {
       world.setTimeOfDay(DaySkip.nextDusk(world.getTimeOfDay()));
       tell(vampires, Text.translatable(SKIPPING));
+      resting.forEach(player -> MilestoneCriterion.reach(player, Milestone.DAY_SKIPPED));
     }
     resting.forEach(player -> player.wakeUp(false, false));
   }

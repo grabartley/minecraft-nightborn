@@ -1,0 +1,28 @@
+{
+  "parent": "nightborn:no_reflection_on_you",
+  "display": {
+    "icon": {
+      "id": "nightborn:high_collared_cape"
+    },
+    "title": {
+      "translate": "advancements.nightborn.fly_by_night.title"
+    },
+    "description": {
+      "translate": "advancements.nightborn.fly_by_night.description"
+    },
+    "frame": "task"
+  },
+  "criteria": {
+    "bat_form": {
+      "trigger": "nightborn:milestone",
+      "conditions": {
+        "milestone": "bat_form"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "bat_form"
+    ]
+  ]
+}

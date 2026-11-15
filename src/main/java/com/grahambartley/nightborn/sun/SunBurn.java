@@ -1,5 +1,7 @@
 package com.grahambartley.nightborn.sun;
 
+import com.grahambartley.nightborn.advancement.Milestone;
+import com.grahambartley.nightborn.advancement.MilestoneCriterion;
 import com.grahambartley.nightborn.config.SunSettings;
 import com.grahambartley.nightborn.vampire.NightbornDamage;
 import net.minecraft.entity.LivingEntity;
@@ -41,6 +43,9 @@ public final class SunBurn {
         0.7F,
         1.6F);
     vampire.damage(NightbornDamage.sun(world), settings.sunDamage());
+    if (vampire.isAlive()) {
+      MilestoneCriterion.reach(vampire, Milestone.SUN_SURVIVED);
+    }
     return true;
   }
 }

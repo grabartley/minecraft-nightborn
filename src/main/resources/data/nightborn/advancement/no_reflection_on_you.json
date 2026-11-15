@@ -1,0 +1,31 @@
+{
+  "parent": "nightborn:love_bites",
+  "display": {
+    "icon": {
+      "id": "nightborn:blood_fountain"
+    },
+    "title": {
+      "translate": "advancements.nightborn.no_reflection_on_you.title"
+    },
+    "description": {
+      "translate": "advancements.nightborn.no_reflection_on_you.description"
+    },
+    "frame": "goal"
+  },
+  "criteria": {
+    "turned": {
+      "trigger": "nightborn:milestone",
+      "conditions": {
+        "milestone": "turned"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "turned"
+    ]
+  ],
+  "rewards": {
+    "experience": 50
+  }
+}

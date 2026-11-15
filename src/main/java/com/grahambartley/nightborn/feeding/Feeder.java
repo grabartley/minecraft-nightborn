@@ -1,5 +1,7 @@
 package com.grahambartley.nightborn.feeding;
 
+import com.grahambartley.nightborn.advancement.Milestone;
+import com.grahambartley.nightborn.advancement.MilestoneCriterion;
 import com.grahambartley.nightborn.blood.BloodAttachment;
 import com.grahambartley.nightborn.blood.BloodBottleItem;
 import com.grahambartley.nightborn.blood.BloodValue;
@@ -51,6 +53,8 @@ final class Feeder {
       victim.damage(bite, sip.drains() ? sip.take() + victim.getAbsorptionAmount() : sip.take());
       final float taken = Math.max(0.0F, before - Math.max(0.0F, victim.getHealth()));
       session.took(taken);
+      MilestoneCriterion.reach(victim, Milestone.BITTEN);
+      MilestoneCriterion.reach(vampire, Milestone.FED, victim);
       final float worth =
           BloodValue.worth(taken, session.quality().worthPercent(config), BloodValue.FRESH_PERCENT);
       SkillEarning.fromBlood(vampire, worth, config.skills());

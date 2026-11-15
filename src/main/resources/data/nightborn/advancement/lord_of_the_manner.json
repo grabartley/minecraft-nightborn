@@ -1,0 +1,39 @@
+{
+  "parent": "nightborn:house_call",
+  "display": {
+    "icon": {
+      "id": "nightborn:trophy_mount"
+    },
+    "title": {
+      "translate": "advancements.nightborn.lord_of_the_manner.title"
+    },
+    "description": {
+      "translate": "advancements.nightborn.lord_of_the_manner.description"
+    },
+    "frame": "challenge"
+  },
+  "criteria": {
+    "lord_defeated": {
+      "trigger": "minecraft:player_killed_entity",
+      "conditions": {
+        "entity": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "type": "#nightborn:vampire_lords"
+            }
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "lord_defeated"
+    ]
+  ],
+  "rewards": {
+    "experience": 100
+  }
+}

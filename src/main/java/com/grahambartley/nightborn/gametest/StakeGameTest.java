@@ -102,6 +102,8 @@ public class StakeGameTest implements FabricGameTest {
           context.assertFalse(Vampires.isVampire(vampire), "hardcore death made it human");
           context.assertEquals(
               SkillAttachment.get(hunter, SkillTree.HUNTER).earned(), 3, "the staker is paid");
+          context.assertTrue(
+              TestAdvancements.done(context, hunter, "stake_holder"), "staking earns Stake Holder");
           TestPlayers.finish(context, hunter, vampire);
         });
   }

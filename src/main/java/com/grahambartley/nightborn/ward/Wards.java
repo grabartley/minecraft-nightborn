@@ -1,5 +1,7 @@
 package com.grahambartley.nightborn.ward;
 
+import com.grahambartley.nightborn.advancement.Milestone;
+import com.grahambartley.nightborn.advancement.MilestoneCriterion;
 import com.grahambartley.nightborn.config.WardSettings;
 import com.grahambartley.nightborn.hunter.HunterAttributes;
 import com.grahambartley.nightborn.vampire.Vampires;
@@ -39,7 +41,13 @@ public final class Wards {
     if (holds(vampire, WardTags.GARLIC)) {
       touch(vampire, settings);
     }
-    Weakened.set(vampire, STRINGS, strings(world, vampire, settings), LINGER_TICKS);
+    final int strings = stringsAround(world, vampire, settings);
+    final int stringStrength =
+        WardStrength.strings(strings, settings.stringStrength(), settings.stringCap());
+    if (stringStrength > 0) {
+      MilestoneCriterion.reach(vampire, Milestone.GARLIC_STRINGS, strings);
+    }
+    Weakened.set(vampire, STRINGS, stringStrength, LINGER_TICKS);
     Weakened.set(vampire, CRUCIFIX, crucifixes(world, vampire, settings), LINGER_TICKS);
     Weakened.set(vampire, SHAPE, shapes(world, vampire, settings), LINGER_TICKS);
   }
@@ -59,7 +67,7 @@ public final class Wards {
     return entity.isHolding(stack -> stack.isIn(tag));
   }
 
-  private static int strings(
+  private static int stringsAround(
       final ServerWorld world, final LivingEntity vampire, final WardSettings settings) {
     if (settings.stringStrength() == 0 || settings.stringCap() == 0) {
       return 0;
@@ -72,8 +80,7 @@ public final class Wards {
                 vampire.getBlockPos(),
                 settings.stringRange(),
                 PointOfInterestStorage.OccupationStatus.ANY);
-    return WardStrength.strings(
-        (int) Math.min(Integer.MAX_VALUE, count), settings.stringStrength(), settings.stringCap());
+    return (int) Math.min(Integer.MAX_VALUE, count);
   }
 
   private static int crucifixes(

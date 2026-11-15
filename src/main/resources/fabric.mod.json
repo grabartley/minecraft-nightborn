@@ -28,6 +28,7 @@
     ],
     "fabric-gametest": [
       "com.grahambartley.nightborn.gametest.NightbornBootGameTest",
+      "com.grahambartley.nightborn.gametest.AdvancementGameTest",
       "com.grahambartley.nightborn.gametest.DecorGameTest",
       "com.grahambartley.nightborn.gametest.BloodHunterDecorGameTest",
       "com.grahambartley.nightborn.gametest.FactionGameTest",

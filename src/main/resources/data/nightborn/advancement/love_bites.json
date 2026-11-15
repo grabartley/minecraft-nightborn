@@ -1,0 +1,28 @@
+{
+  "parent": "nightborn:root",
+  "display": {
+    "icon": {
+      "id": "nightborn:blood_splatter"
+    },
+    "title": {
+      "translate": "advancements.nightborn.love_bites.title"
+    },
+    "description": {
+      "translate": "advancements.nightborn.love_bites.description"
+    },
+    "frame": "task"
+  },
+  "criteria": {
+    "bitten": {
+      "trigger": "nightborn:milestone",
+      "conditions": {
+        "milestone": "bitten"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "bitten"
+    ]
+  ]
+}

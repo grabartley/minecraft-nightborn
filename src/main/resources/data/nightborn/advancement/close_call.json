@@ -1,0 +1,31 @@
+{
+  "parent": "nightborn:love_bites",
+  "display": {
+    "icon": {
+      "id": "minecraft:golden_apple"
+    },
+    "title": {
+      "translate": "advancements.nightborn.close_call.title"
+    },
+    "description": {
+      "translate": "advancements.nightborn.close_call.description"
+    },
+    "frame": "goal"
+  },
+  "criteria": {
+    "cured": {
+      "trigger": "nightborn:milestone",
+      "conditions": {
+        "milestone": "sickness_cured"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "cured"
+    ]
+  ],
+  "rewards": {
+    "experience": 50
+  }
+}

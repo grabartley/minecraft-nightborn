@@ -1,0 +1,27 @@
+{
+  "display": {
+    "icon": {
+      "id": "nightborn:chalice"
+    },
+    "title": {
+      "translate": "advancements.nightborn.root.title"
+    },
+    "description": {
+      "translate": "advancements.nightborn.root.description"
+    },
+    "frame": "task",
+    "background": "nightborn:textures/gui/advancements/backgrounds/nightborn.png",
+    "show_toast": false,
+    "announce_to_chat": false
+  },
+  "criteria": {
+    "joined": {
+      "trigger": "minecraft:tick"
+    }
+  },
+  "requirements": [
+    [
+      "joined"
+    ]
+  ]
+}

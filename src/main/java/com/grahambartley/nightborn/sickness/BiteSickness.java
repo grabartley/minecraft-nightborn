@@ -1,6 +1,8 @@
 package com.grahambartley.nightborn.sickness;
 
 import com.grahambartley.nightborn.Nightborn;
+import com.grahambartley.nightborn.advancement.Milestone;
+import com.grahambartley.nightborn.advancement.MilestoneCriterion;
 import com.grahambartley.nightborn.config.TurningSettings;
 import com.grahambartley.nightborn.feeding.BiteRules;
 import com.grahambartley.nightborn.hunter.HunterAttributes;
@@ -80,6 +82,7 @@ public final class BiteSickness {
             1.0F,
             1.0F);
     player.sendMessage(Text.translatable("nightborn.sickness.cured"), true);
+    MilestoneCriterion.reach(player, Milestone.SICKNESS_CURED);
     return true;
   }
 

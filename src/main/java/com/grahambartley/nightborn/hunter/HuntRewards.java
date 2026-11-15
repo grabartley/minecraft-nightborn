@@ -1,5 +1,7 @@
 package com.grahambartley.nightborn.hunter;
 
+import com.grahambartley.nightborn.advancement.Milestone;
+import com.grahambartley.nightborn.advancement.MilestoneCriterion;
 import com.grahambartley.nightborn.downed.Downed;
 import com.grahambartley.nightborn.downed.DownedState;
 import com.grahambartley.nightborn.gear.Staking;
@@ -48,6 +50,11 @@ public final class HuntRewards {
     }
     final Optional<UUID> staker = Staking.staked(source) ? Downed.hunter(source) : Optional.empty();
     final String message = staker.isPresent() ? "nightborn.hunt.staked" : "nightborn.hunt.earned";
+    if (Vampires.isVampire(vampire)) {
+      staker
+          .map(id -> server.getPlayerManager().getPlayer(id))
+          .ifPresent(hunter -> MilestoneCriterion.reach(hunter, Milestone.VAMPIRE_STAKED));
+    }
     hunter(
             Vampires.isVampire(vampire),
             Downed.state(vampire),
