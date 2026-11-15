@@ -11,7 +11,9 @@ Every model and animation is a GeckoLib model and clip made in Blockbench throug
 - Two player rigs, wide-armed and slim-armed, are built in Blockbench on the vanilla 64x64 skin layout and textured with the player's own skin. They use the vampire rig's bone names and pivots, so the vampire animation file drives them unchanged.
 - `PlayerEntityRenderer` hands a vampire player to a GeckoLib `GeoReplacedEntityRenderer` while it levitates, lands or vomits, and draws it as vanilla does otherwise.
 - The rigs carry GeckoLib's armour anchor bones and two hand bones, so armour, trims, held items and the glowing eyes follow the clip.
-- Clip names come from `VampirePose`, which both the mob and the player read. Clip lengths and the heaves of the vomit clip are read from GeckoLib's loaded animation, because the Bedrock export does not carry particle keyframes. The mouth is found from the head bone where GeckoLib drew it.
+- Clip names come from `VampirePose`, which both the mob and the player read. Clip lengths and the heaves of the vomit clip are read from GeckoLib's loaded animation, because the Bedrock export does not carry particle keyframes. Vomit leaves from the rig's `mouth` bone, where GeckoLib drew it.
+- A second controller plays an upper-body clip over the base pose: the attack swing, or holding up an item in the right or left hand. Mobs use the same controller, so a vampire fighting in the air keeps its float.
+- How far the arms spread while moving is written in the clip as a Molang expression on `variable.levitate_spread`. Code only sets that value from the vampire's speed.
 
 ## Consequences
 

@@ -10,12 +10,12 @@ class VomitingTest {
 
   @ParameterizedTest(name = "creative {0}, used up {1}, no container {2}: {3}")
   @CsvSource({
-    "true, false, false, KEEP_STACK",
-    "true, true, true, KEEP_STACK",
+    "true, false, false, KEEP",
+    "true, true, true, KEEP",
     "false, true, false, HAND_BACK_CONTAINER",
     "false, true, true, HAND_BACK_CONTAINER",
     "false, false, false, POCKET_CONTAINER",
-    "false, false, true, KEEP_REST"
+    "false, false, true, KEEP"
   })
   @DisplayName(
       "what is left in hand matches eating it: creative keeps all, a last item leaves its container")

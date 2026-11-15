@@ -10,14 +10,13 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Vec3d;
 import org.joml.Vector3f;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
-import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.renderer.GeoReplacedEntityRenderer;
 
 public final class VampirePlayerRenderer
     extends GeoReplacedEntityRenderer<AbstractClientPlayerEntity, VampirePlayerAnimatable> {
 
   static final float SHADOW_RADIUS = 0.5F;
-  static final Vector3f MOUTH = new Vector3f(0.0F, 26.0F / 16.0F, -4.2F / 16.0F);
+  static final String MOUTH = "mouth";
 
   public VampirePlayerRenderer(final EntityRendererFactory.Context context, final boolean slim) {
     super(context, new VampirePlayerModel(slim), VampirePlayerAnimatable.INSTANCE);
@@ -48,13 +47,19 @@ public final class VampirePlayerRenderer
       final int colour) {
     if (!isReRender && getCurrentEntity() != null) {
       model
-          .getBone("head")
-          .map(GeoBone::getWorldSpaceMatrix)
+          .getBone(MOUTH)
           .ifPresent(
-              matrix ->
+              mouth ->
                   VomitFx.mouth(
                       getCurrentEntity(),
-                      new Vec3d(matrix.transformPosition(new Vector3f(MOUTH)))));
+                      new Vec3d(
+                          mouth
+                              .getWorldSpaceMatrix()
+                              .transformPosition(
+                                  new Vector3f(
+                                      mouth.getPivotX() / 16.0F,
+                                      mouth.getPivotY() / 16.0F,
+                                      mouth.getPivotZ() / 16.0F)))));
     }
     super.postRender(
         poseStack,

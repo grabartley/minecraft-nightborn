@@ -1,6 +1,8 @@
 package com.grahambartley.nightborn.render;
 
 import com.grahambartley.nightborn.client.anim.VampirePlayerClips;
+import com.grahambartley.nightborn.mob.VampirePose;
+import java.util.Optional;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.player.PlayerEntity;
 import software.bernie.geckolib.animatable.GeoReplacedEntity;
@@ -39,6 +41,17 @@ public final class VampirePlayerAnimatable implements GeoReplacedEntity {
                         .map(pose -> state.setAndContinue(pose.clip()))
                         .orElse(PlayState.STOP)
                     : PlayState.STOP));
+    controllers.add(
+        new AnimationController<>(
+            this,
+            "action",
+            BLEND_TICKS,
+            state ->
+                VampirePose.playOrStop(
+                    state,
+                    state.getData(DataTickets.ENTITY) instanceof PlayerEntity player
+                        ? VampirePlayerClips.action(player)
+                        : Optional.empty())));
   }
 
   @Override

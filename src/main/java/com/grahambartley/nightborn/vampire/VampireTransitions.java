@@ -62,7 +62,7 @@ public final class VampireTransitions {
     Downed.clear(player);
     Weakened.clear(player);
     StarvingAttachment.set(player, 0);
-    Levitation.land(player);
+    Levitation.setDown(player);
     VisibleStateAttachment.set(player, VisibleState.NONE);
     VampireCore.remove(player);
     SkillAttributes.apply(player);

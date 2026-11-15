@@ -9,6 +9,7 @@ import com.grahambartley.nightborn.mob.goal.LieDownedGoal;
 import com.grahambartley.nightborn.mob.goal.SeekShadeGoal;
 import com.grahambartley.nightborn.server.ServerConfigService;
 import com.grahambartley.nightborn.vampire.VisibleStateAttachment;
+import java.util.Optional;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityData;
 import net.minecraft.entity.EntityType;
@@ -146,7 +147,7 @@ public class VampireEntity extends HostileEntity implements GeoEntity {
       return;
     }
     if (levitating) {
-      Levitation.land(this);
+      Levitation.setDown(this);
     } else {
       Levitation.start(this);
     }
@@ -214,7 +215,6 @@ public class VampireEntity extends HostileEntity implements GeoEntity {
                   VampirePose.of(
                       new VampirePose.Cue(
                           VisibleStateAttachment.get(this).downed(),
-                          handSwinging,
                           levitating,
                           landingEdge.landing(),
                           isSprinting(),
@@ -226,6 +226,17 @@ public class VampireEntity extends HostileEntity implements GeoEntity {
                   pose == VampirePose.LAND && state.getController().hasAnimationFinished());
               return play;
             }));
+    controllers.add(
+        new AnimationController<>(
+            this,
+            "action",
+            ANIMATION_BLEND_TICKS,
+            state ->
+                VampirePose.playOrStop(
+                    state,
+                    VisibleStateAttachment.get(this).downed()
+                        ? Optional.empty()
+                        : VampirePose.action(handSwinging, false, true))));
   }
 
   @Override

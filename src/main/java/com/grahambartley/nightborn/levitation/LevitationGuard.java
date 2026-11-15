@@ -7,7 +7,7 @@ public record LevitationGuard(int strikes, double lowestFeet) {
   public static final LevitationGuard FRESH = new LevitationGuard(0, Double.NaN);
 
   static final double TOLERANCE = 0.75;
-  static final double DESCENT = 0.01;
+  static final double DESCENT = LevitationLift.SINK_SPEED / 2.0;
   static final int STRIKE_LIMIT = 40;
 
   public LevitationGuard next(final double feet, final OptionalDouble surface) {

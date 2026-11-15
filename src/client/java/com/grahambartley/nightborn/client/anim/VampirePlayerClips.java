@@ -12,6 +12,8 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.util.Arm;
+import net.minecraft.util.Hand;
 
 public final class VampirePlayerClips {
 
@@ -52,6 +54,18 @@ public final class VampirePlayerClips {
             Math.hypot(player.getX() - player.prevX, player.getZ() - player.prevZ),
             VampireClips.seconds(VampirePose.LAND),
             VampireClips.seconds(VampirePose.VOMIT));
+  }
+
+  public static Optional<VampirePose> action(final PlayerEntity player) {
+    return clip(player)
+        .filter(pose -> pose != VampirePose.VOMIT)
+        .flatMap(
+            pose ->
+                VampirePose.action(
+                    player.handSwinging,
+                    player.isUsingItem(),
+                    (player.getActiveHand() == Hand.MAIN_HAND)
+                        == (player.getMainArm() == Arm.RIGHT)));
   }
 
   public static double vomitingSeconds(final PlayerEntity player, final float partialTick) {

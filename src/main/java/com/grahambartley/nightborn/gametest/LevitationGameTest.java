@@ -1,6 +1,7 @@
 package com.grahambartley.nightborn.gametest;
 
 import com.grahambartley.nightborn.levitation.Levitation;
+import com.grahambartley.nightborn.levitation.LevitationRules;
 import com.grahambartley.nightborn.mob.NightbornMobs;
 import com.grahambartley.nightborn.mob.VampireEntity;
 import com.grahambartley.nightborn.vampire.VampireTransitions;
@@ -158,8 +159,14 @@ public class LevitationGameTest implements FabricGameTest {
     context.assertTrue(Levitation.isLevitating(vampire), "the vampire floats");
     context.assertFalse(Levitation.isLevitating(human), "the human does not");
     Levitation.request(vampire);
-    context.assertFalse(Levitation.isLevitating(vampire), "pressing again lands");
-    TestPlayers.finish(context, vampire, human);
+    context.assertTrue(Levitation.isLevitating(vampire), "a second press at once is ignored");
+    context.runAtTick(
+        LevitationRules.TOGGLE_COOLDOWN_TICKS + 1,
+        () -> {
+          Levitation.request(vampire);
+          context.assertFalse(Levitation.isLevitating(vampire), "pressing again lands");
+          TestPlayers.finish(context, vampire, human);
+        });
   }
 
   @GameTest(templateName = YARD, batchId = BATCH, skyAccess = true, tickLimit = 20)

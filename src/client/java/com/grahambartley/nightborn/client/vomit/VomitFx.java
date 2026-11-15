@@ -4,6 +4,7 @@ import com.grahambartley.nightborn.client.anim.Heaves;
 import com.grahambartley.nightborn.client.anim.VampireClips;
 import com.grahambartley.nightborn.client.anim.VampirePlayerClips;
 import com.grahambartley.nightborn.client.state.ClientStateService;
+import com.grahambartley.nightborn.mob.VampirePose;
 import com.grahambartley.nightborn.vomit.VomitEffects;
 import java.util.Map;
 import java.util.WeakHashMap;
@@ -23,7 +24,9 @@ public final class VomitFx {
   static final double FALLBACK_MOUTH_DROP = 0.3;
 
   private static final Map<PlayerEntity, Double> LAST_SECONDS = new WeakHashMap<>();
-  private static final Map<PlayerEntity, Vec3d> MOUTHS = new WeakHashMap<>();
+  private static final Map<PlayerEntity, Mouth> MOUTHS = new WeakHashMap<>();
+
+  private record Mouth(Vec3d at, int age) {}
 
   private VomitFx() {}
 
@@ -34,10 +37,11 @@ public final class VomitFx {
 
   public static void started(final PlayerEntity player) {
     LAST_SECONDS.put(player, Double.NaN);
+    MOUTHS.remove(player);
   }
 
   public static void mouth(final PlayerEntity player, final Vec3d mouth) {
-    MOUTHS.put(player, mouth);
+    MOUTHS.put(player, new Mouth(mouth, player.age));
   }
 
   private static void tick(final PlayerEntity player) {
@@ -49,7 +53,12 @@ public final class VomitFx {
     for (final double ignored : Heaves.crossed(VampireClips.heaves(HEAVE_DEGREES), before, now)) {
       heave(player);
     }
-    LAST_SECONDS.put(player, now);
+    if (Double.isNaN(now) || now >= VampireClips.seconds(VampirePose.VOMIT)) {
+      LAST_SECONDS.remove(player);
+      MOUTHS.remove(player);
+    } else {
+      LAST_SECONDS.put(player, now);
+    }
   }
 
   private static void heave(final PlayerEntity player) {
@@ -73,10 +82,11 @@ public final class VomitFx {
     }
     final float facing = (180.0F - player.bodyYaw) * MathHelper.RADIANS_PER_DEGREE;
     final Vec3d forward = new Vec3d(0.0, 0.0, -1.0).rotateY(facing);
+    final Mouth drawn = MOUTHS.get(player);
     final Vec3d mouth =
-        MOUTHS.getOrDefault(
-            player,
-            player.getEyePos().add(forward.multiply(0.3)).subtract(0.0, FALLBACK_MOUTH_DROP, 0.0));
+        drawn != null && player.age - drawn.age() <= 1
+            ? drawn.at()
+            : player.getEyePos().add(forward.multiply(0.3)).subtract(0.0, FALLBACK_MOUTH_DROP, 0.0);
     final Random random = player.getRandom();
     for (int i = 0; i < burst.drops(); i++) {
       final double speed = FORWARD_SPEED * (0.5 + random.nextDouble());

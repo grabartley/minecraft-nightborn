@@ -18,11 +18,10 @@ public final class Vomiting {
 
   private Vomiting() {}
 
-  public enum Leftover {
-    KEEP_STACK,
+  enum Leftover {
+    KEEP,
     HAND_BACK_CONTAINER,
-    POCKET_CONTAINER,
-    KEEP_REST
+    POCKET_CONTAINER
   }
 
   public static ItemStack swallow(
@@ -37,7 +36,7 @@ public final class Vomiting {
       stack.decrement(1);
     }
     return switch (leftover(creative, stack.isEmpty(), leftBehind.isEmpty())) {
-      case KEEP_STACK, KEEP_REST -> stack;
+      case KEEP -> stack;
       case HAND_BACK_CONTAINER -> leftBehind;
       case POCKET_CONTAINER -> {
         if (!vampire.getInventory().insertStack(leftBehind)) {
@@ -51,12 +50,12 @@ public final class Vomiting {
   static Leftover leftover(
       final boolean creative, final boolean usedUp, final boolean noContainer) {
     if (creative) {
-      return Leftover.KEEP_STACK;
+      return Leftover.KEEP;
     }
     if (usedUp) {
       return Leftover.HAND_BACK_CONTAINER;
     }
-    return noContainer ? Leftover.KEEP_REST : Leftover.POCKET_CONTAINER;
+    return noContainer ? Leftover.KEEP : Leftover.POCKET_CONTAINER;
   }
 
   static void throwUp(final ServerPlayerEntity vampire, final int damage) {

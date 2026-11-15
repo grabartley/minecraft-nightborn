@@ -1,5 +1,9 @@
 package com.grahambartley.nightborn.mob;
 
+import java.util.Optional;
+import software.bernie.geckolib.animatable.GeoAnimatable;
+import software.bernie.geckolib.animation.AnimationState;
+import software.bernie.geckolib.animation.PlayState;
 import software.bernie.geckolib.animation.RawAnimation;
 
 public enum VampirePose {
@@ -12,12 +16,15 @@ public enum VampirePose {
   LEVITATE_MOVE("levitate_move", Play.LOOP),
   LEVITATE_SPRINT("levitate_sprint", Play.LOOP),
   LAND("land", Play.ONCE),
-  VOMIT("vomit", Play.ONCE);
+  VOMIT("vomit", Play.ONCE),
+  USE_ITEM_RIGHT("use_item_right", Play.LOOP),
+  USE_ITEM_LEFT("use_item_left", Play.LOOP);
 
   static final float RUN_SWING = 0.6F;
   static final float WALK_SWING = 0.1F;
   public static final double LEVITATE_MOVE_SPEED = 0.03;
   public static final double LEVITATE_SPRINT_SPEED = 0.24;
+  public static final String SPREAD_VARIABLE = "variable.levitate_spread";
 
   private enum Play {
     LOOP,
@@ -27,7 +34,6 @@ public enum VampirePose {
 
   public record Cue(
       boolean downed,
-      boolean attacking,
       boolean levitating,
       boolean landing,
       boolean sprinting,
@@ -51,9 +57,6 @@ public enum VampirePose {
     if (cue.downed()) {
       return DOWNED;
     }
-    if (cue.attacking()) {
-      return ATTACK;
-    }
     if (cue.levitating()) {
       return levitating(cue.sprinting(), cue.horizontalSpeed());
     }
@@ -71,6 +74,27 @@ public enum VampirePose {
       return LEVITATE_SPRINT;
     }
     return horizontalSpeed > LEVITATE_MOVE_SPEED ? LEVITATE_MOVE : LEVITATE;
+  }
+
+  public static double spread(final boolean sprinting, final double horizontalSpeed) {
+    return sprinting ? 1.0 : Math.max(0.0, Math.min(1.0, horizontalSpeed / LEVITATE_SPRINT_SPEED));
+  }
+
+  public static Optional<VampirePose> action(
+      final boolean swinging, final boolean using, final boolean rightArm) {
+    if (using) {
+      return Optional.of(rightArm ? USE_ITEM_RIGHT : USE_ITEM_LEFT);
+    }
+    return swinging ? Optional.of(ATTACK) : Optional.empty();
+  }
+
+  public static <T extends GeoAnimatable> PlayState playOrStop(
+      final AnimationState<T> state, final Optional<VampirePose> pose) {
+    if (pose.isEmpty()) {
+      state.getController().forceAnimationReset();
+      return PlayState.STOP;
+    }
+    return state.setAndContinue(pose.get().clip());
   }
 
   public String animation() {

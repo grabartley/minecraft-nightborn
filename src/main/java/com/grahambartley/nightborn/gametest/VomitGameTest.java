@@ -101,6 +101,35 @@ public class VomitGameTest implements FabricGameTest {
   }
 
   @GameTest(templateName = ARENA, batchId = BATCH, tickLimit = 140)
+  public void aGoldenAppleGivesAVampireNoAbsorptionOrRegeneration(final TestContext context) {
+    final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(3, 1, 4));
+    swallow(context, vampire, new ItemStack(Items.GOLDEN_APPLE));
+    context.runAtTick(
+        FINISHED,
+        () -> {
+          context.assertFalse(vampire.hasStatusEffect(StatusEffects.ABSORPTION), "no absorption");
+          context.assertFalse(
+              vampire.hasStatusEffect(StatusEffects.REGENERATION), "no regeneration");
+          context.assertTrue(vampire.getMainHandStack().isEmpty(), "the apple is gone");
+          context.assertTrue(vampire.hasStatusEffect(StatusEffects.NAUSEA), "nauseous");
+          TestPlayers.finish(context, vampire);
+        });
+  }
+
+  @GameTest(templateName = ARENA, batchId = BATCH, tickLimit = 140)
+  public void aStewLeavesTheBowlInTheVampiresHand(final TestContext context) {
+    final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(3, 1, 4));
+    swallow(context, vampire, new ItemStack(Items.MUSHROOM_STEW));
+    context.runAtTick(
+        FINISHED,
+        () -> {
+          context.assertTrue(vampire.getMainHandStack().isOf(Items.BOWL), "the bowl back");
+          context.assertTrue(vampire.hasStatusEffect(StatusEffects.NAUSEA), "nauseous");
+          TestPlayers.finish(context, vampire);
+        });
+  }
+
+  @GameTest(templateName = ARENA, batchId = BATCH, tickLimit = 140)
   public void aBloodBottleStillFeedsAVampire(final TestContext context) {
     final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(3, 1, 4));
     BloodAttachment.set(vampire, 5);

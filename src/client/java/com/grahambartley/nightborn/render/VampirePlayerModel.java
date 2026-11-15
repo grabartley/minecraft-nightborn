@@ -2,11 +2,14 @@ package com.grahambartley.nightborn.render;
 
 import com.grahambartley.nightborn.Nightborn;
 import com.grahambartley.nightborn.mob.VampireLook;
+import com.grahambartley.nightborn.mob.VampirePose;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import software.bernie.geckolib.animation.AnimationState;
 import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.constant.DataTickets;
+import software.bernie.geckolib.loading.math.MathParser;
 import software.bernie.geckolib.model.GeoModel;
 import software.bernie.geckolib.model.data.EntityModelData;
 
@@ -52,13 +55,28 @@ public final class VampirePlayerModel extends GeoModel<VampirePlayerAnimatable> 
                 anchor.setHidden(true);
               }
             });
+    final GeoBone mouth = getAnimationProcessor().getBone(VampirePlayerRenderer.MOUTH);
+    if (mouth != null) {
+      mouth.setTrackingMatrices(true);
+    }
     final GeoBone head = getAnimationProcessor().getBone("head");
     if (head == null) {
       return;
     }
-    head.setTrackingMatrices(true);
     final EntityModelData data = animationState.getData(DataTickets.ENTITY_MODEL_DATA);
     head.setRotX(head.getRotX() + data.headPitch() * MathHelper.RADIANS_PER_DEGREE);
     head.setRotY(head.getRotY() + data.netHeadYaw() * MathHelper.RADIANS_PER_DEGREE);
+  }
+
+  @Override
+  public void applyMolangQueries(
+      final AnimationState<VampirePlayerAnimatable> animationState, final double animTime) {
+    final double spread =
+        animationState.getData(DataTickets.ENTITY) instanceof PlayerEntity player
+            ? VampirePose.spread(
+                player.isSprinting(),
+                Math.hypot(player.getX() - player.prevX, player.getZ() - player.prevZ))
+            : 0.0;
+    MathParser.setVariable(VampirePose.SPREAD_VARIABLE, () -> spread);
   }
 }

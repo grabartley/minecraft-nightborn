@@ -13,6 +13,7 @@ import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.codec.PacketCodecs;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
@@ -33,7 +34,10 @@ public final class Levitation {
   public static final AttachmentType<LevitationGuard> GUARD =
       AttachmentRegistry.create(Identifier.of(Nightborn.MOD_ID, "levitation_guard"));
 
-  static final int GUARD_FALL_TICKS = 100;
+  static final AttachmentType<Long> TOGGLED_AT =
+      AttachmentRegistry.create(Identifier.of(Nightborn.MOD_ID, "levitation_toggled_at"));
+
+  static final int SET_DOWN_FALL_TICKS = 100;
 
   static final String REFUSED = "nightborn.levitation.refused";
 
@@ -48,6 +52,11 @@ public final class Levitation {
     if (!Vampires.isVampire(player) || player.isSpectator() || !player.isAlive()) {
       return;
     }
+    final long now = player.getWorld().getTime();
+    if (!LevitationRules.toggleReady(player.getAttached(TOGGLED_AT), now)) {
+      return;
+    }
+    player.setAttached(TOGGLED_AT, now);
     if (isLevitating(player)) {
       land(player);
     } else if (!start(player)) {
@@ -61,7 +70,10 @@ public final class Levitation {
 
   public static boolean start(final LivingEntity vampire) {
     if (!LevitationRules.mayLevitate(
-        Vampires.isVampire(vampire), weakness(vampire), Downed.state(vampire) != null)) {
+        Vampires.isVampire(vampire),
+        weakness(vampire),
+        Downed.state(vampire) != null,
+        occupied(vampire))) {
       return false;
     }
     vampire.setAttached(TYPE, true);
@@ -77,12 +89,22 @@ public final class Levitation {
     }
   }
 
+  public static void setDown(final LivingEntity entity) {
+    final boolean wasLevitating = isLevitating(entity);
+    land(entity);
+    if (wasLevitating && !entity.isOnGround()) {
+      entity.addStatusEffect(
+          new StatusEffectInstance(
+              StatusEffects.SLOW_FALLING, SET_DOWN_FALL_TICKS, 0, false, false));
+    }
+  }
+
   public static void tick(final LivingEntity vampire, final int weakened, final boolean downed) {
     if (!isLevitating(vampire)) {
       return;
     }
-    if (!LevitationRules.mayLevitate(true, weakened, downed)) {
-      land(vampire);
+    if (!LevitationRules.mayLevitate(true, weakened, downed, occupied(vampire))) {
+      setDown(vampire);
       return;
     }
     vampire.fallDistance = 0.0F;
@@ -97,12 +119,17 @@ public final class Levitation {
             .getAttachedOrElse(GUARD, LevitationGuard.FRESH)
             .next(player.getY(), LevitationGround.surfaceBelow(player));
     if (guard.lands()) {
-      land(player);
-      player.addStatusEffect(
-          new StatusEffectInstance(StatusEffects.SLOW_FALLING, GUARD_FALL_TICKS, 0, false, false));
+      setDown(player);
     } else {
       player.setAttached(GUARD, guard);
     }
+  }
+
+  private static boolean occupied(final LivingEntity entity) {
+    return entity.hasVehicle()
+        || entity.isSleeping()
+        || entity.isFallFlying()
+        || entity instanceof PlayerEntity player && player.getAbilities().flying;
   }
 
   private static int weakness(final LivingEntity vampire) {
