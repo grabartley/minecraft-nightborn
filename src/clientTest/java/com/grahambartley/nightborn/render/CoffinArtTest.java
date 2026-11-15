@@ -60,15 +60,7 @@ class CoffinArtTest {
   @DisplayName("every bone that carries cubes names a material the renderer can bind")
   void everyBoneWithCubesHasAMaterial() throws IOException {
     final Set<String> bones =
-        StreamSupport.stream(
-                JsonParser.parseString(Files.readString(file(CoffinArt.GEO)))
-                    .getAsJsonObject()
-                    .getAsJsonArray("minecraft:geometry")
-                    .get(0)
-                    .getAsJsonObject()
-                    .getAsJsonArray("bones")
-                    .spliterator(),
-                false)
+        StreamSupport.stream(bones().spliterator(), false)
             .map(JsonElement::getAsJsonObject)
             .filter(bone -> bone.has("cubes"))
             .map(bone -> bone.get("name").getAsString())
@@ -84,13 +76,7 @@ class CoffinArtTest {
   void centresTheItemOnTheModel() throws IOException {
     double min = Double.MAX_VALUE;
     double max = -Double.MAX_VALUE;
-    for (final JsonElement bone :
-        JsonParser.parseString(Files.readString(file(CoffinArt.GEO)))
-            .getAsJsonObject()
-            .getAsJsonArray("minecraft:geometry")
-            .get(0)
-            .getAsJsonObject()
-            .getAsJsonArray("bones")) {
+    for (final JsonElement bone : bones()) {
       if (!bone.getAsJsonObject().has("cubes")) {
         continue;
       }
@@ -126,6 +112,15 @@ class CoffinArtTest {
         Files.exists(
             Path.of("src/main/resources/assets", CoffinArt.VELVET.getNamespace())
                 .resolve(CoffinArt.VELVET.getPath())));
+  }
+
+  private static JsonArray bones() throws IOException {
+    return JsonParser.parseString(Files.readString(file(CoffinArt.GEO)))
+        .getAsJsonObject()
+        .getAsJsonArray("minecraft:geometry")
+        .get(0)
+        .getAsJsonObject()
+        .getAsJsonArray("bones");
   }
 
   private static Path file(final Identifier id) {

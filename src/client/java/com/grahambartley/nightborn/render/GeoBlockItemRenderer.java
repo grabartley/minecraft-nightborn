@@ -27,6 +27,13 @@ public class GeoBlockItemRenderer<T extends BlockEntity & GeoAnimatable>
   public GeoBlockItemRenderer(
       final Block block,
       final Supplier<GeoBlockRenderer<T>> rendererFactory,
+      final BiFunction<BlockPos, BlockState, T> entityFactory) {
+    this(block, rendererFactory, entityFactory, 0.0F);
+  }
+
+  public GeoBlockItemRenderer(
+      final Block block,
+      final Supplier<GeoBlockRenderer<T>> rendererFactory,
       final BiFunction<BlockPos, BlockState, T> entityFactory,
       final float shiftZ) {
     this.block = block;

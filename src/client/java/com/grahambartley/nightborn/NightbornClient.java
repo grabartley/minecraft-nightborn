@@ -59,7 +59,7 @@ public class NightbornClient implements ClientModInitializer {
                 BuiltinItemRendererRegistry.INSTANCE.register(
                     block,
                     new GeoBlockItemRenderer<>(
-                        block, FurnitureBlockRenderer::new, FurnitureBlockEntity::new, 0.0F)));
+                        block, FurnitureBlockRenderer::new, FurnitureBlockEntity::new)));
     BlockRenderLayerMap.INSTANCE.putBlocks(
         RenderLayer.getTranslucent(),
         DecorBlocks.GOTHIC_STAINED_GLASS,
