@@ -3,6 +3,7 @@
 	"package": "com.grahambartley.nightborn.mixin",
 	"compatibilityLevel": "JAVA_21",
 	"mixins": [
+		"CrossbowItemMixin",
 		"EnchantmentHelperMixin",
 		"HungerManagerMixin",
 		"LivingEntityMixin",
@@ -11,7 +12,8 @@
 		"PlayerEntityMixin",
 		"ServerPlayerEntityMixin",
 		"ServerWorldMixin",
-		"SleepManagerMixin"
+		"SleepManagerMixin",
+		"TippedArrowRecipeMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1

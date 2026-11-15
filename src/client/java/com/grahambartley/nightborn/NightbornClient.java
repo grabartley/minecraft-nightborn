@@ -1,5 +1,6 @@
 package com.grahambartley.nightborn;
 
+import com.grahambartley.nightborn.ammo.AmmoEntities;
 import com.grahambartley.nightborn.client.VampireClientFeatures;
 import com.grahambartley.nightborn.client.fog.StructureFog;
 import com.grahambartley.nightborn.client.state.ClientStateService;
@@ -10,6 +11,8 @@ import com.grahambartley.nightborn.decor.DecorBlocks;
 import com.grahambartley.nightborn.decor.DecorEntities;
 import com.grahambartley.nightborn.gear.GearBlocks;
 import com.grahambartley.nightborn.mob.NightbornMobs;
+import com.grahambartley.nightborn.render.AmmoModels;
+import com.grahambartley.nightborn.render.BoltEntityRenderer;
 import com.grahambartley.nightborn.render.CoffinBlockEntityRenderer;
 import com.grahambartley.nightborn.render.CoffinModels;
 import com.grahambartley.nightborn.render.FurnitureBlockRenderer;
@@ -24,6 +27,7 @@ import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.block.entity.BlockEntityRendererFactories;
 import net.minecraft.client.render.entity.EmptyEntityRenderer;
+import net.minecraft.client.render.entity.FlyingItemEntityRenderer;
 
 public class NightbornClient implements ClientModInitializer {
 
@@ -53,6 +57,9 @@ public class NightbornClient implements ClientModInitializer {
     EntityRendererRegistry.register(DecorEntities.SEAT, EmptyEntityRenderer::new);
     EntityRendererRegistry.register(NightbornMobs.VAMPIRE, VampireRenderer::new);
     EntityRendererRegistry.register(NightbornMobs.VAMPIRE_BAT, VampireBatRenderer::new);
+    EntityRendererRegistry.register(AmmoEntities.BOLT, BoltEntityRenderer::new);
+    EntityRendererRegistry.register(AmmoEntities.GARLIC_BOMB, FlyingItemEntityRenderer::new);
+    AmmoModels.register();
     VampireClientFeatures.register();
     StructureFog.register();
   }

@@ -98,7 +98,9 @@ public final class Wards {
           Math.max(
               strongest,
               WardStrength.crucifix(
-                  settings.crucifixStrength(), faith(holder), settings.faithBonus()));
+                  settings.crucifixStrength(),
+                  HunterAttributes.faith(holder),
+                  settings.faithBonus()));
     }
     return strongest;
   }
@@ -114,12 +116,6 @@ public final class Wards {
             .anyMatch(centre -> seesShape(world, vampire, centre))
         ? settings.shapeStrength()
         : 0;
-  }
-
-  private static double faith(final LivingEntity holder) {
-    return holder.getAttributes().hasAttribute(HunterAttributes.FAITH)
-        ? holder.getAttributeValue(HunterAttributes.FAITH)
-        : 0.0;
   }
 
   private static boolean seesShape(
