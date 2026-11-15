@@ -19,6 +19,7 @@ import com.grahambartley.nightborn.sickness.BiteSickness;
 import com.grahambartley.nightborn.sickness.BiteSicknessAttachment;
 import com.grahambartley.nightborn.sickness.BiteSicknessEffect;
 import com.grahambartley.nightborn.skill.SkillFeatures;
+import com.grahambartley.nightborn.smoke.SmokeParticles;
 import com.grahambartley.nightborn.vomit.VomitEffects;
 import com.grahambartley.nightborn.weakened.Weakened;
 
@@ -34,6 +35,7 @@ public final class VampireFeatures {
     Levitation.register();
     VomitEffects.register();
     GoreParticles.register();
+    SmokeParticles.register();
     GoreEvents.register();
     VisibleStateAttachment.register();
     BiteSicknessAttachment.register();

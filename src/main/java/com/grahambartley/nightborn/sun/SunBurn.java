@@ -3,9 +3,9 @@ package com.grahambartley.nightborn.sun;
 import com.grahambartley.nightborn.advancement.Milestone;
 import com.grahambartley.nightborn.advancement.MilestoneCriterion;
 import com.grahambartley.nightborn.config.SunSettings;
+import com.grahambartley.nightborn.smoke.SmokeParticles;
 import com.grahambartley.nightborn.vampire.NightbornDamage;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundEvents;
 
@@ -26,7 +26,7 @@ public final class SunBurn {
     }
     vampire.setOnFireFor(FIRE_SECONDS);
     world.spawnParticles(
-        ParticleTypes.LARGE_SMOKE,
+        SmokeParticles.VAMPIRE_SMOKE,
         vampire.getX(),
         vampire.getBodyY(0.6),
         vampire.getZ(),

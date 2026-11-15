@@ -3,6 +3,7 @@ package com.grahambartley.nightborn.client;
 import com.grahambartley.nightborn.blood.BloodItems;
 import com.grahambartley.nightborn.client.anim.VampirePlayerClips;
 import com.grahambartley.nightborn.client.gore.BloodFx;
+import com.grahambartley.nightborn.client.smoke.SmokeFx;
 import com.grahambartley.nightborn.client.vomit.VomitFx;
 import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
@@ -33,6 +34,7 @@ public final class VampireClientFeatures {
     VampirePlayerClips.register();
     VomitFx.register();
     BloodFx.register();
+    SmokeFx.register();
     WorldRenderEvents.AFTER_ENTITIES.register(WeakenedSignRenderer::render);
   }
 }
