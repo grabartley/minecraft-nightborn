@@ -90,7 +90,7 @@ public final class Tracking {
                                 vampire.getX() - hunter.getX(),
                                 vampire.getZ() - hunter.getZ(),
                                 hunter.getYaw()))
-                        .formatted(Formatting.DARK_RED))
+                        .formatted(Formatting.GOLD))
             .orElseGet(
                 () -> Text.translatable("nightborn.tracking.none").formatted(Formatting.GRAY));
     hunter.sendMessage(message, true);
