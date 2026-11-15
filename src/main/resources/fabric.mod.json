@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 1,
+  "id": "nightborn",
+  "version": "${version}",
+  "name": "Nightborn",
+  "description": "Rise as a vampire or hunt them down. Feed, take bat form and grow your bloodline, or take up stake and silver against the households hidden in the dark.",
+  "authors": [
+    "Vitória Vedana",
+    "Graham Bartley"
+  ],
+  "contact": {
+    "homepage": "https://modrinth.com/mod/nightborn",
+    "sources": "https://github.com/grabartley/minecraft-nightborn",
+    "issues": "https://github.com/grabartley/minecraft-nightborn/issues"
+  },
+  "license": "MIT",
+  "icon": "assets/nightborn/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "com.grahambartley.nightborn.Nightborn"
+    ],
+    "client": [
+      "com.grahambartley.nightborn.NightbornClient"
+    ],
+    "fabric-gametest": [
+      "com.grahambartley.nightborn.gametest.NightbornBootGameTest"
+    ]
+  },
+  "mixins": [
+    "nightborn.mixins.json",
+    {
+      "config": "nightborn.client.mixins.json",
+      "environment": "client"
+    }
+  ],
+  "accessWidener": "nightborn.accesswidener",
+  "depends": {
+    "fabricloader": ">=0.16.5",
+    "minecraft": "~1.21.1",
+    "java": ">=21",
+    "fabric-api": ">=0.107.0+1.21.1"
+  }
+}
