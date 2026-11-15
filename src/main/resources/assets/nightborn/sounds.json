@@ -1,0 +1,38 @@
+{
+  "entity.vampire.hurt": {
+    "subtitle": "subtitles.nightborn.entity.vampire.hurt",
+    "sounds": [
+      {
+        "name": "minecraft:entity.player.hurt",
+        "type": "event"
+      }
+    ]
+  },
+  "entity.vampire.death": {
+    "subtitle": "subtitles.nightborn.entity.vampire.death",
+    "sounds": [
+      {
+        "name": "minecraft:entity.player.death",
+        "type": "event"
+      }
+    ]
+  },
+  "entity.vampire.bite": {
+    "subtitle": "subtitles.nightborn.entity.vampire.bite",
+    "sounds": [
+      {
+        "name": "minecraft:entity.generic.drink",
+        "type": "event"
+      }
+    ]
+  },
+  "entity.vampire_bat.bite": {
+    "subtitle": "subtitles.nightborn.entity.vampire_bat.bite",
+    "sounds": [
+      {
+        "name": "minecraft:entity.generic.drink",
+        "type": "event"
+      }
+    ]
+  }
+}

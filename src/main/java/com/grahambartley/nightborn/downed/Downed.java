@@ -24,7 +24,6 @@ import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
@@ -76,8 +75,7 @@ public final class Downed {
     if (player.getWorld().isClient) {
       return VisibleStateAttachment.get(player).downed();
     }
-    final DownedState state = state(player);
-    return state != null && state.isDowned();
+    return DownedRules.helpless(state(player));
   }
 
   public static void down(
@@ -91,7 +89,7 @@ public final class Downed {
             null,
             vampire.getBlockPos(),
             SoundEvents.ENTITY_PLAYER_BIG_FALL,
-            SoundCategory.PLAYERS,
+            vampire.getSoundCategory(),
             1.0F,
             0.7F);
   }
@@ -113,7 +111,7 @@ public final class Downed {
                 null,
                 vampire.getBlockPos(),
                 SoundEvents.ENTITY_ZOMBIE_VILLAGER_CURE,
-                SoundCategory.PLAYERS,
+                vampire.getSoundCategory(),
                 0.6F,
                 0.6F);
       }
@@ -128,7 +126,7 @@ public final class Downed {
               null,
               vampire.getBlockPos(),
               SoundEvents.ENTITY_WARDEN_HEARTBEAT,
-              SoundCategory.PLAYERS,
+              vampire.getSoundCategory(),
               1.0F,
               0.8F);
     }

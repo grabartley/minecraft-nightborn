@@ -25,6 +25,10 @@ public final class BiteRules {
 
   public record Target(boolean warmBlood, boolean vampire, boolean player, boolean alive) {}
 
+  public static boolean drinkable(final boolean warmBlood, final boolean vampire) {
+    return warmBlood && !vampire;
+  }
+
   public static boolean startsSickness(
       final boolean victimIsHumanPlayer,
       final boolean playersCanTurnPlayers,
@@ -46,7 +50,7 @@ public final class BiteRules {
     if (!biter.sneaking() || !biter.emptyHand()) {
       return Decision.NOT_SNEAKING_EMPTY_HANDED;
     }
-    if (!target.alive() || !target.warmBlood() || target.vampire()) {
+    if (!target.alive() || !drinkable(target.warmBlood(), target.vampire())) {
       return Decision.NO_WARM_BLOOD;
     }
     if (biter.downed()) {

@@ -4,8 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.stream.Stream;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.MethodSource;
 
 class TurningSettingsTest {
@@ -22,14 +22,14 @@ class TurningSettingsTest {
     assertEquals(setting.defaultValue(), setting.get(NightbornConfig.DEFAULTS));
   }
 
-  @Test
-  @DisplayName("the constructor clamps values into bounds")
-  void clamps() {
-    final TurningSettings low = new TurningSettings(-5, true, 0);
-    assertEquals(0, low.biteTurnChance());
-    assertEquals(1, low.sicknessDays());
-    final TurningSettings high = new TurningSettings(250, false, 99);
-    assertEquals(100, high.biteTurnChance());
-    assertEquals(30, high.sicknessDays());
+  @ParameterizedTest(name = "chance {0} kept as {1}, days {2} kept as {3}")
+  @CsvSource({"-5, 0, 0, 1", "0, 0, 1, 1", "40, 40, 7, 7", "100, 100, 30, 30", "250, 100, 99, 30"})
+  @DisplayName("the constructor clamps every chance and the sickness length into bounds")
+  void clamps(final int chance, final int keptChance, final int days, final int keptDays) {
+    final TurningSettings settings = new TurningSettings(chance, chance, chance, true, days);
+    assertEquals(keptChance, settings.biteTurnChance());
+    assertEquals(keptChance, settings.vampireMobTurnChance());
+    assertEquals(keptChance, settings.vampireBatTurnChance());
+    assertEquals(keptDays, settings.sicknessDays());
   }
 }

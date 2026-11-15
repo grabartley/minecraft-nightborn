@@ -19,12 +19,20 @@ public final class DirectSun {
   }
 
   public static boolean on(final LivingEntity entity) {
-    final World world = entity.getWorld();
+    return under(entity, entity.getWorld().isDay());
+  }
+
+  public static boolean under(final LivingEntity entity, final boolean sunUp) {
     return exposed(
-        world.isDay(),
-        world.isSkyVisible(BlockPos.ofFloored(entity.getX(), entity.getEyeY(), entity.getZ())),
+        sunUp,
+        openSkyAbove(entity),
         entity.isWet(),
         entity.inPowderSnow || entity.wasInPowderSnow,
         CoffinSleepers.shelteredBy(entity));
+  }
+
+  public static boolean openSkyAbove(final LivingEntity entity) {
+    final World world = entity.getWorld();
+    return world.isSkyVisible(BlockPos.ofFloored(entity.getX(), entity.getEyeY(), entity.getZ()));
   }
 }

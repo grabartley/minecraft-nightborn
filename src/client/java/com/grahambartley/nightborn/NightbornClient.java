@@ -8,10 +8,13 @@ import com.grahambartley.nightborn.decor.DecorBlockEntities;
 import com.grahambartley.nightborn.decor.DecorBlocks;
 import com.grahambartley.nightborn.decor.DecorEntities;
 import com.grahambartley.nightborn.gear.GearBlocks;
+import com.grahambartley.nightborn.mob.NightbornMobs;
 import com.grahambartley.nightborn.render.CoffinBlockEntityRenderer;
 import com.grahambartley.nightborn.render.CoffinModels;
 import com.grahambartley.nightborn.render.FurnitureBlockRenderer;
 import com.grahambartley.nightborn.render.FurnitureItemRenderer;
+import com.grahambartley.nightborn.render.VampireBatRenderer;
+import com.grahambartley.nightborn.render.VampireRenderer;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
 import net.fabricmc.fabric.api.client.rendering.v1.BuiltinItemRendererRegistry;
@@ -45,6 +48,8 @@ public class NightbornClient implements ClientModInitializer {
     BlockRenderLayerMap.INSTANCE.putBlocks(
         RenderLayer.getCutoutMipped(), GearBlocks.SILVER_ORE, GearBlocks.DEEPSLATE_SILVER_ORE);
     EntityRendererRegistry.register(DecorEntities.SEAT, EmptyEntityRenderer::new);
+    EntityRendererRegistry.register(NightbornMobs.VAMPIRE, VampireRenderer::new);
+    EntityRendererRegistry.register(NightbornMobs.VAMPIRE_BAT, VampireBatRenderer::new);
     VampireClientFeatures.register();
   }
 }

@@ -90,6 +90,18 @@ class BiteRulesTest {
         decision.claimsTheInteraction());
   }
 
+  @ParameterizedTest(name = "warm blood {0}, vampire {1}: drinkable {2}")
+  @CsvSource({
+    "true, false, true",
+    "true, true, false",
+    "false, false, false",
+    "false, true, false"
+  })
+  @DisplayName("only warm blood that is not a vampire's can be drunk")
+  void drinkable(final boolean warmBlood, final boolean vampire, final boolean drinkable) {
+    assertEquals(drinkable, BiteRules.drinkable(warmBlood, vampire));
+  }
+
   @ParameterizedTest(name = "human {0}, allowed {1}, first {2}, roll {3} of {4}%: {5}")
   @CsvSource({
     "true, true, true, 99, 100, true",

@@ -2,10 +2,13 @@ package com.grahambartley.nightborn.sickness;
 
 import com.grahambartley.nightborn.Nightborn;
 import com.grahambartley.nightborn.config.TurningSettings;
+import com.grahambartley.nightborn.feeding.BiteRules;
+import com.grahambartley.nightborn.hunter.HunterAttributes;
 import com.grahambartley.nightborn.server.ServerConfigService;
 import com.grahambartley.nightborn.vampire.VampireTransitions;
 import com.grahambartley.nightborn.vampire.Vampires;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.item.Item;
@@ -18,6 +21,7 @@ import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.random.Random;
 
 public final class BiteSickness {
 
@@ -40,6 +44,24 @@ public final class BiteSickness {
     BiteSicknessAttachment.set(human, SicknessStage.totalTicks(settings.sicknessDays()));
     human.sendMessage(Text.translatable("nightborn.sickness.bitten"), true);
     return true;
+  }
+
+  public static boolean startFromBite(
+      final LivingEntity victim,
+      final int chancePercent,
+      final boolean playersCanTurnPlayers,
+      final boolean firstRoll,
+      final Random random,
+      final TurningSettings settings) {
+    return victim instanceof ServerPlayerEntity human
+        && BiteRules.startsSickness(
+            !Vampires.isVampire(human),
+            playersCanTurnPlayers,
+            firstRoll,
+            random.nextInt(100),
+            BiteRules.resistedChance(
+                chancePercent, human.getAttributeValue(HunterAttributes.BITE_RESISTANCE)))
+        && start(human, settings);
   }
 
   public static boolean cure(final ServerPlayerEntity player) {
