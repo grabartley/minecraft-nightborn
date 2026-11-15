@@ -1,5 +1,7 @@
 package com.grahambartley.nightborn.mixin;
 
+import com.grahambartley.nightborn.coffin.CoffinLayout;
+import com.grahambartley.nightborn.coffin.CoffinSleeperHold;
 import com.grahambartley.nightborn.coffin.CoffinSleepers;
 import com.grahambartley.nightborn.levitation.Levitation;
 import com.grahambartley.nightborn.levitation.LevitationMotion;
@@ -10,25 +12,30 @@ import com.grahambartley.nightborn.vomit.Consumables;
 import com.grahambartley.nightborn.vomit.Vomiting;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
-import com.llamalad7.mixinextras.sugar.Local;
+import java.util.Optional;
+import net.minecraft.entity.EntityDimensions;
+import net.minecraft.entity.EntityPose;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.mob.PhantomEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Constant;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.ModifyConstant;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(LivingEntity.class)
 abstract class LivingEntityMixin {
+
+  @Shadow @Final private static TrackedData<Optional<BlockPos>> SLEEPING_POSITION;
 
   @Inject(method = "tick", at = @At("TAIL"))
   private void nightborn$tickVampire(final CallbackInfo ci) {
@@ -90,11 +97,40 @@ abstract class LivingEntityMixin {
     return original.call(stack, world, user);
   }
 
-  @ModifyConstant(method = "setPositionInBed", constant = @Constant(doubleValue = 0.6875))
-  private double nightborn$lieInsideTheCoffin(
-      final double height, @Local(argsOnly = true) final BlockPos pos) {
-    return CoffinSleepers.isCoffin(((LivingEntity) (Object) this).getWorld(), pos)
-        ? CoffinSleepers.LYING_HEIGHT
-        : height;
+  @Inject(method = "setPositionInBed", at = @At("HEAD"), cancellable = true)
+  private void nightborn$restInsideTheCoffin(final BlockPos pos, final CallbackInfo ci) {
+    final LivingEntity self = (LivingEntity) (Object) this;
+    CoffinSleepers.restingSpot(self.getWorld(), pos)
+        .ifPresent(
+            spot -> {
+              self.setPosition(spot);
+              ci.cancel();
+            });
+  }
+
+  @Inject(method = "sleep", at = @At("TAIL"))
+  private void nightborn$standInAStandingCoffin(final BlockPos pos, final CallbackInfo ci) {
+    CoffinSleeperHold.settle((LivingEntity) (Object) this);
+  }
+
+  @Inject(method = "tick", at = @At("TAIL"))
+  private void nightborn$holdTheSleeperInsideTheCoffin(final CallbackInfo ci) {
+    CoffinSleeperHold.hold((LivingEntity) (Object) this);
+  }
+
+  @Inject(method = "getDimensions", at = @At("RETURN"), cancellable = true)
+  private void nightborn$fitTheUprightSleeperInsideTheCoffin(
+      final EntityPose pose, final CallbackInfoReturnable<EntityDimensions> cir) {
+    if (pose == EntityPose.STANDING && CoffinSleepers.upright((LivingEntity) (Object) this)) {
+      cir.setReturnValue(CoffinLayout.uprightSleeper(cir.getReturnValue()));
+    }
+  }
+
+  @Inject(method = "onTrackedDataSet", at = @At("TAIL"))
+  private void nightborn$refitWhenTheSleeperComesOrGoes(
+      final TrackedData<?> data, final CallbackInfo ci) {
+    if (SLEEPING_POSITION.equals(data)) {
+      ((LivingEntity) (Object) this).calculateDimensions();
+    }
   }
 }

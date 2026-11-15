@@ -62,6 +62,15 @@ abstract class PlayerEntityMixin {
     }
   }
 
+  @Inject(method = "updatePose", at = @At("HEAD"), cancellable = true)
+  private void nightborn$sleepStandingInAStandingCoffin(final CallbackInfo ci) {
+    final PlayerEntity self = (PlayerEntity) (Object) this;
+    if (CoffinSleepers.upright(self)) {
+      self.setPose(EntityPose.STANDING);
+      ci.cancel();
+    }
+  }
+
   @Inject(method = "eatFood", at = @At("HEAD"))
   private void nightborn$cureWithFood(
       final World world,
