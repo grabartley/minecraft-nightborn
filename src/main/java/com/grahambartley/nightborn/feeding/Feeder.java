@@ -48,13 +48,16 @@ final class Feeder {
             victim.getHealth(), config.feeding().drinkPerSecond(), session.atLastHealth());
     session.atLastHealth(sip.atLastHealth());
     final DamageSource bite = NightbornDamage.bite(world, vampire);
+    float taken = 0.0F;
     if (sip.take() > 0.0F) {
       final float before = victim.getHealth();
       victim.damage(bite, sip.drains() ? sip.take() + victim.getAbsorptionAmount() : sip.take());
-      final float taken = Math.max(0.0F, before - Math.max(0.0F, victim.getHealth()));
+      taken = Math.max(0.0F, before - Math.max(0.0F, victim.getHealth()));
       session.took(taken);
-      MilestoneCriterion.reach(victim, Milestone.BITTEN);
-      MilestoneCriterion.reach(vampire, Milestone.FED, victim);
+      if (taken > 0.0F) {
+        MilestoneCriterion.reach(victim, Milestone.BITTEN);
+        MilestoneCriterion.reach(vampire, Milestone.FED, victim);
+      }
       final float worth =
           BloodValue.worth(taken, session.quality().worthPercent(config), BloodValue.FRESH_PERCENT);
       SkillEarning.fromBlood(vampire, worth, config.skills());
@@ -69,7 +72,8 @@ final class Feeder {
       mayStartSickness(victim, session, config, world.getRandom());
     }
     if (VillagerWitnesses.alert(
-        world, vampire, victim, session, config.feeding().witnessRange(), bite)) {
+            world, vampire, victim, session, config.feeding().witnessRange(), bite)
+        && taken > 0.0F) {
       MilestoneCriterion.reach(vampire, Milestone.FED_WATCHED);
     }
     if (!victim.isAlive()) {

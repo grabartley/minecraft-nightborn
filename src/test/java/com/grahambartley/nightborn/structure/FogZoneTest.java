@@ -53,6 +53,20 @@ class FogZoneTest {
     }
   }
 
+  @ParameterizedTest(name = "at {0},{1},{2} enclosed: {3}")
+  @CsvSource({
+    "5, 65, 5, true",
+    "-40, 60, 0, true",
+    "10, 70, 10, true",
+    "-50, 65, 5, false",
+    "5, 59.5, 5, false",
+    "10.5, 65, 5, false"
+  })
+  @DisplayName("a point is enclosed only within the structure's bounds, not its fog")
+  void encloses(final double x, final double y, final double z, final boolean enclosed) {
+    assertEquals(enclosed, ZONE.encloses(x, y, z));
+  }
+
   @ParameterizedTest(name = "at {0},{1},{2} inside: {3}")
   @CsvSource({"5, 65, 5, true", "-50, 65, 5, true", "-64, 65, 5, false", "5, 200, 5, false"})
   @DisplayName("a point is inside a zone only while it has some fog")

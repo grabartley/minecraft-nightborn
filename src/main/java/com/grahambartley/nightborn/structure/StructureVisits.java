@@ -17,6 +17,6 @@ public final class StructureVisits {
 
   static boolean inside(
       final Optional<FogZone> zone, final double x, final double y, final double z) {
-    return zone.isPresent() && zone.get().outside(x, y, z) == 0.0;
+    return zone.isPresent() && zone.get().encloses(x, y, z);
   }
 }
