@@ -37,7 +37,11 @@ public class CoffinBlockEntityRenderer implements BlockEntityRenderer<CoffinBloc
             .getBakedModelManager()
             .getModel(CoffinModels.lidOf(state.getBlock()));
     matrices.push();
-    CoffinLidPose.apply(matrices, state.get(CoffinBlock.FACING), coffin.openness(tickDelta));
+    CoffinLidPose.apply(
+        matrices,
+        state.get(CoffinBlock.FACING),
+        state.get(CoffinBlock.STANDING),
+        coffin.openness(tickDelta));
     this.models.render(
         matrices.peek(),
         vertexConsumers.getBuffer(RenderLayers.getEntityBlockLayer(state, false)),

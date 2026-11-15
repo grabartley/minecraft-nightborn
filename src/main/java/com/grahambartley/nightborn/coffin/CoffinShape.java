@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import net.minecraft.block.Block;
 import net.minecraft.block.enums.BedPart;
+import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.util.shape.VoxelShapes;
@@ -28,10 +29,17 @@ public final class CoffinShape {
 
   private static final Map<Direction, VoxelShape> HEAD = FacingShapes.fromNorth(cell(0));
   private static final Map<Direction, VoxelShape> FOOT = FacingShapes.fromNorth(cell(16));
+  private static final Map<Direction, VoxelShape> STANDING_HEAD =
+      FacingShapes.fromNorth(stoodUp(cell(0)));
+  private static final Map<Direction, VoxelShape> STANDING_FOOT =
+      FacingShapes.fromNorth(stoodUp(cell(16)));
 
   private CoffinShape() {}
 
-  public static VoxelShape of(final BedPart part, final Direction facing) {
+  public static VoxelShape of(final BedPart part, final Direction facing, final boolean standing) {
+    if (standing) {
+      return (part == BedPart.HEAD ? STANDING_HEAD : STANDING_FOOT).get(facing);
+    }
     return (part == BedPart.HEAD ? HEAD : FOOT).get(facing);
   }
 
@@ -45,6 +53,18 @@ public final class CoffinShape {
             VoxelShapes.union(
                 shape, Block.createCuboidShape(band.fromX(), 0, from, band.toX(), HEIGHT, to));
       }
+    }
+    return shape.simplify();
+  }
+
+  static VoxelShape stoodUp(final VoxelShape lying) {
+    VoxelShape shape = VoxelShapes.empty();
+    for (final Box box : lying.getBoundingBoxes()) {
+      shape =
+          VoxelShapes.union(
+              shape,
+              VoxelShapes.cuboid(
+                  box.minX, 1.0 - box.maxZ, box.minY, box.maxX, 1.0 - box.minZ, box.maxY));
     }
     return shape.simplify();
   }

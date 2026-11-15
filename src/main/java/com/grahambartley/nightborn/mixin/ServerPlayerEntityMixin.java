@@ -1,5 +1,6 @@
 package com.grahambartley.nightborn.mixin;
 
+import com.grahambartley.nightborn.coffin.CoffinBlock;
 import com.grahambartley.nightborn.coffin.CoffinSleepers;
 import com.grahambartley.nightborn.coffin.RestRules;
 import com.grahambartley.nightborn.faction.FactionPlayerList;
@@ -12,6 +13,7 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.Unit;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Direction;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -50,5 +52,14 @@ abstract class ServerPlayerEntityMixin {
         day,
         self.getWorld().getDimension().hasFixedTime(),
         self.getWorld().getTimeOfDay());
+  }
+
+  @Inject(method = "isBedObstructed", at = @At("HEAD"), cancellable = true)
+  private void nightborn$aStandingCoffinNeedsRoomInFront(
+      final BlockPos pos, final Direction direction, final CallbackInfoReturnable<Boolean> cir) {
+    final ServerPlayerEntity self = (ServerPlayerEntity) (Object) this;
+    if (CoffinBlock.isStanding(self.getWorld().getBlockState(pos))) {
+      cir.setReturnValue(CoffinSleepers.blockedInFront(self.getWorld(), pos));
+    }
   }
 }

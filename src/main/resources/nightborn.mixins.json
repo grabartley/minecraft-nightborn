@@ -3,6 +3,7 @@
 	"package": "com.grahambartley.nightborn.mixin",
 	"compatibilityLevel": "JAVA_21",
 	"mixins": [
+		"BedBlockMixin",
 		"CrossbowItemMixin",
 		"EnchantmentHelperMixin",
 		"HungerManagerMixin",

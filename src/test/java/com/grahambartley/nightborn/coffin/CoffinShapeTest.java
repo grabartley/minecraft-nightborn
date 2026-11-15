@@ -31,7 +31,7 @@ class CoffinShapeTest {
   @MethodSource("cells")
   @DisplayName("every cell stays inside its block and stands as tall as the closed lid")
   void staysInsideItsCell(final BedPart part, final Direction facing) {
-    final Box box = CoffinShape.of(part, facing).getBoundingBox();
+    final Box box = CoffinShape.of(part, facing, false).getBoundingBox();
     assertTrue(box.minX >= 0 && box.minZ >= 0 && box.maxX <= 1 && box.maxZ <= 1);
     assertEquals(0.0, box.minY, 1.0E-9);
     assertEquals(CoffinShape.HEIGHT * PIXEL, box.maxY, 1.0E-9);
@@ -50,7 +50,7 @@ class CoffinShapeTest {
   @DisplayName("the shoulders sit in the head and the body narrows towards the foot")
   void widensAtTheShoulders(
       final BedPart part, final Direction facing, final int from, final int to) {
-    final Box box = CoffinShape.of(part, facing).getBoundingBox();
+    final Box box = CoffinShape.of(part, facing, false).getBoundingBox();
     final boolean alongX = facing.getAxis() == Direction.Axis.Z;
     assertEquals(from * PIXEL, alongX ? box.minX : box.minZ, 1.0E-9);
     assertEquals(to * PIXEL, alongX ? box.maxX : box.maxZ, 1.0E-9);
@@ -68,11 +68,57 @@ class CoffinShapeTest {
   @MethodSource("ends")
   @DisplayName("the head and foot ends are narrower than the shoulders")
   void tapersAtTheEnds(final BedPart part, final double x, final double z, final boolean solid) {
-    final VoxelShape shape = CoffinShape.of(part, Direction.NORTH);
+    final VoxelShape shape = CoffinShape.of(part, Direction.NORTH, false);
     final boolean inside =
         shape.getBoundingBoxes().stream()
             .anyMatch(box -> x > box.minX && x < box.maxX && z > box.minZ && z < box.maxZ);
     assertEquals(solid, inside);
     assertFalse(shape.isEmpty());
+  }
+
+  @ParameterizedTest(name = "{0} facing {1}")
+  @MethodSource("cells")
+  @DisplayName(
+      "a standing cell fills its block's height and is as deep as the shut lid, back to the wall")
+  void standsAgainstTheWall(final BedPart part, final Direction facing) {
+    final Box box = CoffinShape.of(part, facing, true).getBoundingBox();
+    assertEquals(0.0, box.minY, 1.0E-9);
+    assertEquals(1.0, box.maxY, 1.0E-9);
+    final double back = facing.getAxis() == Direction.Axis.Z ? box.minZ : box.minX;
+    final double front = facing.getAxis() == Direction.Axis.Z ? box.maxZ : box.maxX;
+    final double depth = front - back;
+    assertEquals(CoffinShape.HEIGHT * PIXEL, depth, 1.0E-9);
+    final double wallSide =
+        facing.getDirection() == Direction.AxisDirection.NEGATIVE ? back : 1.0 - front;
+    assertEquals(0.0, wallSide, 1.0E-9);
+  }
+
+  static Stream<Arguments> uprightPoints() {
+    return Stream.of(
+        Arguments.of(BedPart.HEAD, 8.0 / 16.0, 15.5 / 16.0, true),
+        Arguments.of(BedPart.HEAD, 3.0 / 16.0, 15.5 / 16.0, false),
+        Arguments.of(BedPart.HEAD, 1.5 / 16.0, 6.0 / 16.0, true),
+        Arguments.of(BedPart.FOOT, 4.5 / 16.0, 0.5 / 16.0, false),
+        Arguments.of(BedPart.FOOT, 8.0 / 16.0, 0.5 / 16.0, true));
+  }
+
+  @ParameterizedTest(name = "{0} at x {1}, y {2}: solid {3}")
+  @MethodSource("uprightPoints")
+  @DisplayName("a standing coffin keeps its shoulders high and its narrow ends at top and bottom")
+  void keepsItsOutlineUpright(
+      final BedPart part, final double x, final double y, final boolean solid) {
+    final VoxelShape shape = CoffinShape.of(part, Direction.NORTH, true);
+    final double z = 0.25;
+    final boolean inside =
+        shape.getBoundingBoxes().stream()
+            .anyMatch(
+                box ->
+                    x > box.minX
+                        && x < box.maxX
+                        && y > box.minY
+                        && y < box.maxY
+                        && z > box.minZ
+                        && z < box.maxZ);
+    assertEquals(solid, inside);
   }
 }
