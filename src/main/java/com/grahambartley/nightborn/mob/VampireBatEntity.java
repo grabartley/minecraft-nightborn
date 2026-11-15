@@ -24,7 +24,7 @@ import software.bernie.geckolib.util.GeckoLibUtil;
 
 public class VampireBatEntity extends BatEntity implements GeoEntity {
 
-  private static final TrackedData<Boolean> HUNTING =
+  private static final TrackedData<Boolean> SWOOPING =
       DataTracker.registerData(VampireBatEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
 
   static final double HUNT_RANGE = 12.0;
@@ -51,14 +51,14 @@ public class VampireBatEntity extends BatEntity implements GeoEntity {
         .add(EntityAttributes.GENERIC_FOLLOW_RANGE, HUNT_RANGE);
   }
 
-  public boolean isHunting() {
-    return dataTracker.get(HUNTING);
+  public boolean isSwooping() {
+    return dataTracker.get(SWOOPING);
   }
 
   @Override
   protected void initDataTracker(final DataTracker.Builder builder) {
     super.initDataTracker(builder);
-    builder.add(HUNTING, false);
+    builder.add(SWOOPING, false);
   }
 
   @Override
@@ -72,7 +72,7 @@ public class VampireBatEntity extends BatEntity implements GeoEntity {
     if (prey == null && age % SEARCH_INTERVAL_TICKS == 0) {
       prey = findPrey();
     }
-    dataTracker.set(HUNTING, prey != null && biteCooldown == 0);
+    dataTracker.set(SWOOPING, prey != null && biteCooldown == 0);
     if (prey == null || biteCooldown > 0) {
       super.mobTick();
       return;
@@ -171,7 +171,7 @@ public class VampireBatEntity extends BatEntity implements GeoEntity {
             ANIMATION_BLEND_TICKS,
             state ->
                 state.setAndContinue(
-                    VampireBatPose.of(isRoosting(), biteShownTicks > 0, isHunting()).clip())));
+                    VampireBatPose.of(isRoosting(), biteShownTicks > 0, isSwooping()).clip())));
   }
 
   @Override

@@ -62,6 +62,7 @@ public class VampireBatGameTest implements FabricGameTest {
           if (context.getTick() <= TestPlayers.READY || bitten[0]) {
             return;
           }
+          swooped[0] |= bat.isSwooping();
           if (human.getHealth() < human.getMaxHealth()) {
             bitten[0] = true;
             context.assertTrue(swooped[0], "the bat swoops before it bites");
@@ -71,12 +72,10 @@ public class VampireBatGameTest implements FabricGameTest {
             context.waitAndRun(
                 2,
                 () -> {
-                  context.assertFalse(bat.isHunting(), "the bat stops swooping after a bite");
+                  context.assertFalse(bat.isSwooping(), "the bat stops swooping after a bite");
                   TestPlayers.finish(context, human);
                 });
-            return;
           }
-          swooped[0] |= bat.isHunting();
         });
   }
 
@@ -88,12 +87,13 @@ public class VampireBatGameTest implements FabricGameTest {
   public void aVampireBatInTheOpenLeavesHumansAloneByDay(final TestContext context) {
     final VampireBatEntity bat = hunter(context);
     final ServerPlayerEntity human = TestPlayers.human(context, new BlockPos(5, 2, 4));
+    context.runAtEveryTick(
+        () -> context.assertFalse(bat.isSwooping(), "a bat in the open by day does not swoop"));
     context.runAtTick(
         TestPlayers.READY + HUNT_WINDOW - 2,
         () -> {
           context.assertEquals(
               human.getHealth(), human.getMaxHealth(), "no bite in the open by day");
-          context.assertFalse(bat.isHunting(), "a bat in the open by day does not swoop");
           TestPlayers.finish(context, human);
         });
   }
