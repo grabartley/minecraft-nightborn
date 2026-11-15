@@ -19,6 +19,7 @@ public final class SkillFeatures {
     PowerCooldownAttachment.register();
     SkillShop.register();
     Powers.register();
+    Tracking.register();
     ServerPlayConnectionEvents.JOIN.register(
         (handler, sender, server) -> SkillAttributes.apply(handler.getPlayer()));
     ServerPlayerEvents.AFTER_RESPAWN.addPhaseOrdering(Event.DEFAULT_PHASE, AFTER_ATTACHMENTS_COPY);

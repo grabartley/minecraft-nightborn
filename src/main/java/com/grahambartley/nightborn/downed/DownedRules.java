@@ -2,6 +2,8 @@ package com.grahambartley.nightborn.downed;
 
 import com.grahambartley.nightborn.config.DownedSettings;
 import com.grahambartley.nightborn.downed.DownedState.Phase;
+import java.util.Optional;
+import java.util.UUID;
 import org.jetbrains.annotations.Nullable;
 
 public final class DownedRules {
@@ -25,17 +27,20 @@ public final class DownedRules {
     return !killsVampires;
   }
 
-  public static DownedState downed(final DownedSettings settings) {
-    return new DownedState(Phase.DOWNED, settings.downedSeconds() * 20);
+  public static Optional<UUID> hunter(final boolean human, final UUID attacker) {
+    return human ? Optional.of(attacker) : Optional.empty();
+  }
+
+  public static DownedState downed(final DownedSettings settings, final Optional<UUID> hunter) {
+    return new DownedState(Phase.DOWNED, settings.downedSeconds() * 20, hunter);
   }
 
   public static Step tick(final DownedState state, final DownedSettings settings) {
     if (state.ticksLeft() > 1) {
-      return new Step(new DownedState(state.phase(), state.ticksLeft() - 1), Change.NONE);
+      return new Step(state.next(state.phase(), state.ticksLeft() - 1), Change.NONE);
     }
     if (state.phase() == Phase.DOWNED) {
-      return new Step(
-          new DownedState(Phase.ESCAPING, settings.escapeSeconds() * 20), Change.STOOD_UP);
+      return new Step(state.next(Phase.ESCAPING, settings.escapeSeconds() * 20), Change.STOOD_UP);
     }
     return new Step(null, Change.ESCAPED);
   }

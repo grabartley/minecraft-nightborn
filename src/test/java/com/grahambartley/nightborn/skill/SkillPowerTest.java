@@ -32,6 +32,22 @@ class SkillPowerTest {
     assertEquals(StatusEffects.SPEED, power.effects().get(0).getEffectType());
     assertEquals(160, power.effects().get(0).getDuration());
     assertTrue(power.sound().isPresent());
+    assertTrue(power.track().isEmpty());
+  }
+
+  @Test
+  @DisplayName("a power can track the nearest vampire instead of giving effects")
+  void tracks() {
+    final SkillPower power =
+        SkillPower.CODEC
+            .parse(
+                JsonOps.INSTANCE,
+                JsonParser.parseString(
+                    "{\"blood\":0,\"cooldown_ticks\":1200,\"track\":{\"range\":64,\"duration_ticks\":200}}"))
+            .getOrThrow();
+    assertEquals(0, power.blood());
+    assertTrue(power.effects().isEmpty());
+    assertEquals(new TrackPower(64, 200), power.track().orElseThrow());
   }
 
   @ParameterizedTest(name = "{0}")

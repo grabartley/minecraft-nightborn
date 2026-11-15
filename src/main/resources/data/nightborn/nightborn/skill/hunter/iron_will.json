@@ -1,0 +1,11 @@
+{
+  "branch": "nightborn:hunter",
+  "cost": 2,
+  "requires": ["nightborn:hunter/tracking"],
+  "icon": "nightborn:skills/icon/iron_will",
+  "column": 2,
+  "row": 1,
+  "attributes": [
+    { "attribute": "nightborn:mesmerise_resistance", "amount": 0.35, "operation": "add_value" }
+  ]
+}

@@ -4,6 +4,7 @@ import com.grahambartley.nightborn.blood.BloodAttachment;
 import com.grahambartley.nightborn.blood.BloodBottleItem;
 import com.grahambartley.nightborn.blood.BloodValue;
 import com.grahambartley.nightborn.config.NightbornConfig;
+import com.grahambartley.nightborn.hunter.HunterAttributes;
 import com.grahambartley.nightborn.sickness.BiteSickness;
 import com.grahambartley.nightborn.skill.SkillEarning;
 import com.grahambartley.nightborn.vampire.NightbornDamage;
@@ -144,7 +145,9 @@ final class Feeder {
             config.turning().playersCanTurnPlayers(),
             firstRoll,
             random.nextInt(100),
-            config.turning().biteTurnChance())) {
+            BiteRules.resistedChance(
+                config.turning().biteTurnChance(),
+                human.getAttributeValue(HunterAttributes.BITE_RESISTANCE)))) {
       BiteSickness.start(human, config.turning());
     }
   }

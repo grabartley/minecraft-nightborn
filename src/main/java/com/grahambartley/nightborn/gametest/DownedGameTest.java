@@ -111,7 +111,7 @@ public class DownedGameTest implements FabricGameTest {
         5,
         () -> {
           vampire.setHealth(1.0F);
-          vampire.setAttached(Downed.TYPE, new DownedState(Phase.DOWNED, 3));
+          vampire.setAttached(Downed.TYPE, new DownedState(Phase.DOWNED, 10));
         });
     context.runAtTick(
         7,
@@ -124,7 +124,7 @@ public class DownedGameTest implements FabricGameTest {
               "a downed vampire cannot move");
         });
     context.runAtTick(
-        12,
+        22,
         () -> {
           final DownedState state = Downed.state(vampire);
           context.assertTrue(state != null && !state.isDowned(), "it got up and is escaping");

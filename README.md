@@ -2,7 +2,7 @@
 
 Rise as a vampire or hunt them down. Feed, take bat form and grow your bloodline, or take up stake and silver against the households hidden in the dark.
 
-> **Alpha:** Nightborn is in early development. You can be bitten, fall sick and turn, live on blood, earn skills by feeding and choose two of three bloodlines, and learn that only the sun or a stake will finish you. Its candlelit furniture and gothic building blocks are in. The bloodlines' own powers, hunters and vampire households are still to come.
+> **Alpha:** Nightborn is in early development. You can be bitten, fall sick and turn, live on blood, earn skills by feeding and choose two of three bloodlines, and learn that only the sun or a stake will finish you. A human who brings a vampire down for the sun to finish earns hunter skills, starting with tracking vampires and resisting their bites. Its candlelit furniture and gothic building blocks are in. The bloodlines' own powers, hunter gear and camps, and vampire households are still to come.
 > The [product requirements](docs/prd.md) say what the mod will be.
 
 ## Documentation

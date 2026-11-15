@@ -1,6 +1,7 @@
 package com.grahambartley.nightborn.mixin;
 
 import com.grahambartley.nightborn.core.VampireCore;
+import com.grahambartley.nightborn.hunter.HunterAttributes;
 import com.grahambartley.nightborn.server.ServerConfigService;
 import com.grahambartley.nightborn.sickness.BiteSickness;
 import com.grahambartley.nightborn.vampire.Vampires;
@@ -9,6 +10,7 @@ import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
 import net.minecraft.component.type.FoodComponent;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityPose;
+import net.minecraft.entity.attribute.DefaultAttributeContainer;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -23,6 +25,12 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(PlayerEntity.class)
 abstract class PlayerEntityMixin {
+
+  @Inject(method = "createPlayerAttributes", at = @At("RETURN"))
+  private static void nightborn$hunterAttributes(
+      final CallbackInfoReturnable<DefaultAttributeContainer.Builder> cir) {
+    HunterAttributes.addTo(cir.getReturnValue());
+  }
 
   @Inject(method = "canConsume", at = @At("HEAD"), cancellable = true)
   private void nightborn$vampiresMayAlwaysEat(

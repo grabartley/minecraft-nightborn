@@ -2,9 +2,12 @@ package com.grahambartley.nightborn.downed;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import java.util.Optional;
+import java.util.UUID;
 import net.minecraft.util.StringIdentifiable;
+import net.minecraft.util.Uuids;
 
-public record DownedState(Phase phase, int ticksLeft) {
+public record DownedState(Phase phase, int ticksLeft, Optional<UUID> downedBy) {
 
   public enum Phase implements StringIdentifiable {
     DOWNED("downed"),
@@ -32,8 +35,19 @@ public record DownedState(Phase phase, int ticksLeft) {
                       Phase.CODEC.fieldOf("phase").forGetter(DownedState::phase),
                       Codec.intRange(0, Integer.MAX_VALUE)
                           .fieldOf("ticksLeft")
-                          .forGetter(DownedState::ticksLeft))
+                          .forGetter(DownedState::ticksLeft),
+                      Uuids.INT_STREAM_CODEC
+                          .optionalFieldOf("downedBy")
+                          .forGetter(DownedState::downedBy))
                   .apply(instance, DownedState::new));
+
+  public DownedState(final Phase phase, final int ticksLeft) {
+    this(phase, ticksLeft, Optional.empty());
+  }
+
+  public DownedState next(final Phase nextPhase, final int nextTicksLeft) {
+    return new DownedState(nextPhase, nextTicksLeft, downedBy);
+  }
 
   public boolean isDowned() {
     return phase == Phase.DOWNED;

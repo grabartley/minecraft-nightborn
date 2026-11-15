@@ -56,6 +56,7 @@ public final class Powers {
     for (final StatusEffectInstance effect : power.effects()) {
       player.addStatusEffect(new StatusEffectInstance(effect), player);
     }
+    power.track().ifPresent(track -> Tracking.start(player, track));
     power
         .sound()
         .ifPresent(

@@ -1,0 +1,11 @@
+{
+  "branch": "nightborn:hunter",
+  "cost": 3,
+  "requires": ["nightborn:hunter/faith"],
+  "icon": "nightborn:skills/icon/devotion",
+  "column": 1,
+  "row": 2,
+  "attributes": [
+    { "attribute": "nightborn:faith", "amount": 1.0, "operation": "add_value" }
+  ]
+}

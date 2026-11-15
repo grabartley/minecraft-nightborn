@@ -5,6 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 
 import com.grahambartley.nightborn.config.DownedSettings;
 import com.grahambartley.nightborn.downed.DownedState.Phase;
+import java.util.Optional;
+import java.util.UUID;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -40,7 +42,7 @@ class DownedRulesTest {
   @Test
   @DisplayName("a vampire lies downed for the set time, gets up, escapes, then is free")
   void fullCycle() {
-    DownedState state = DownedRules.downed(SETTINGS);
+    DownedState state = DownedRules.downed(SETTINGS, Optional.empty());
     assertEquals(new DownedState(Phase.DOWNED, 600), state);
     DownedRules.Change change = DownedRules.Change.NONE;
     int ticks = 0;
@@ -71,5 +73,28 @@ class DownedRulesTest {
         health,
         DownedRules.recoveredHealth(max, new DownedSettings(30, 60, percent, false)),
         0.0001F);
+  }
+
+  @ParameterizedTest(name = "human attacker {0}: remembered {1}")
+  @CsvSource({"true, true", "false, false"})
+  @DisplayName("only a human player who downs a vampire is remembered as its hunter")
+  void hunter(final boolean human, final boolean remembered) {
+    final UUID attacker = UUID.fromString("00000000-0000-0000-0000-000000000047");
+    assertEquals(
+        remembered ? Optional.of(attacker) : Optional.empty(), DownedRules.hunter(human, attacker));
+  }
+
+  @Test
+  @DisplayName("the hunter who downed a vampire is remembered while it lies and escapes")
+  void remembersTheHunter() {
+    final Optional<UUID> hunter =
+        Optional.of(UUID.fromString("00000000-0000-0000-0000-000000000047"));
+    DownedState state = DownedRules.downed(SETTINGS, hunter);
+    assertEquals(new DownedState(Phase.DOWNED, 600, hunter), state);
+    while (state != null && state.isDowned()) {
+      state = DownedRules.tick(state, SETTINGS).state();
+    }
+    assertEquals(new DownedState(Phase.ESCAPING, 1200, hunter), state);
+    assertEquals(hunter, DownedRules.tick(state, SETTINGS).state().downedBy());
   }
 }

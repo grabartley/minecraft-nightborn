@@ -3,6 +3,7 @@ package com.grahambartley.nightborn;
 import com.grahambartley.nightborn.decor.DecorBlockEntities;
 import com.grahambartley.nightborn.decor.DecorBlocks;
 import com.grahambartley.nightborn.decor.DecorEntities;
+import com.grahambartley.nightborn.hunter.HunterAttributes;
 import java.util.concurrent.atomic.AtomicBoolean;
 import net.minecraft.Bootstrap;
 import net.minecraft.SharedConstants;
@@ -23,5 +24,6 @@ public final class MinecraftBootstrapExtension implements BeforeAllCallback {
     DecorBlocks.initialize();
     DecorBlockEntities.initialize();
     DecorEntities.initialize();
+    HunterAttributes.register();
   }
 }

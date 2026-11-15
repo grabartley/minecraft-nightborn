@@ -24,4 +24,13 @@ public final class SkillEarning {
           vampire, SkillTree.VAMPIRE, progress.addPoints(settings.drainBonusPoints()));
     }
   }
+
+  public static boolean fromHunt(final PlayerEntity hunter, final SkillSettings settings) {
+    if (Vampires.isVampire(hunter) || settings.huntPoints() <= 0) {
+      return false;
+    }
+    final TreeProgress progress = SkillAttachment.get(hunter, SkillTree.HUNTER);
+    SkillAttachment.set(hunter, SkillTree.HUNTER, progress.addPoints(settings.huntPoints()));
+    return true;
+  }
 }
