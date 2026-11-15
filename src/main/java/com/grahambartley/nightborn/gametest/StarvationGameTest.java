@@ -25,9 +25,11 @@ public class StarvationGameTest implements FabricGameTest {
 
   static final int MIDNIGHT = 18000;
 
-  private Difficulty difficulty = Difficulty.NORMAL;
-  private long timeBefore;
-  private boolean cycleBefore;
+  private static Difficulty difficulty = Difficulty.NORMAL;
+  private static long timeBefore;
+  private static boolean cycleBefore;
+  private static int hurtDelayBefore;
+  private static int hurtSecondsBefore;
 
   @BeforeBatch(batchId = BATCH)
   public void starveFast(final ServerWorld world) {
@@ -36,6 +38,8 @@ public class StarvationGameTest implements FabricGameTest {
     cycleBefore = world.getGameRules().getBoolean(GameRules.DO_DAYLIGHT_CYCLE);
     world.getGameRules().get(GameRules.DO_DAYLIGHT_CYCLE).set(false, world.getServer());
     world.setTimeOfDay(MIDNIGHT);
+    hurtDelayBefore = ServerConfigService.current().blood().starvingHurtDelaySeconds();
+    hurtSecondsBefore = ServerConfigService.current().blood().starvingHurtSeconds();
     world.getServer().setDifficulty(Difficulty.HARD, true);
     ServerConfigService.update(
         world.getServer(),
@@ -52,12 +56,8 @@ public class StarvationGameTest implements FabricGameTest {
     ServerConfigService.update(
         world.getServer(),
         ServerConfigService.current()
-            .with(
-                BloodSettings.STARVING_HURT_DELAY_SECONDS,
-                BloodSettings.STARVING_HURT_DELAY_SECONDS.defaultValue())
-            .with(
-                BloodSettings.STARVING_HURT_SECONDS,
-                BloodSettings.STARVING_HURT_SECONDS.defaultValue()));
+            .with(BloodSettings.STARVING_HURT_DELAY_SECONDS, hurtDelayBefore)
+            .with(BloodSettings.STARVING_HURT_SECONDS, hurtSecondsBefore));
   }
 
   @GameTest(templateName = ARENA, batchId = BATCH, tickLimit = 40)

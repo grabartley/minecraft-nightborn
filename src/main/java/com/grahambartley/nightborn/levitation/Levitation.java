@@ -11,6 +11,8 @@ import net.fabricmc.fabric.api.attachment.v1.AttachmentSyncPredicate;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentType;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.effect.StatusEffectInstance;
+import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.network.codec.PacketCodecs;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
@@ -28,8 +30,10 @@ public final class Levitation {
                   .persistent(Codec.BOOL)
                   .syncWith(PacketCodecs.BOOL.cast(), AttachmentSyncPredicate.all()));
 
-  static final AttachmentType<LevitationGuard> GUARD =
+  public static final AttachmentType<LevitationGuard> GUARD =
       AttachmentRegistry.create(Identifier.of(Nightborn.MOD_ID, "levitation_guard"));
+
+  static final int GUARD_FALL_TICKS = 100;
 
   static final String REFUSED = "nightborn.levitation.refused";
 
@@ -94,6 +98,8 @@ public final class Levitation {
             .next(player.getY(), LevitationGround.surfaceBelow(player));
     if (guard.lands()) {
       land(player);
+      player.addStatusEffect(
+          new StatusEffectInstance(StatusEffects.SLOW_FALLING, GUARD_FALL_TICKS, 0, false, false));
     } else {
       player.setAttached(GUARD, guard);
     }

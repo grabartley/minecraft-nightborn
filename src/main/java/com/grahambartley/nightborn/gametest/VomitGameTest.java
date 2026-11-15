@@ -4,6 +4,7 @@ import com.grahambartley.nightborn.blood.BloodAttachment;
 import com.grahambartley.nightborn.blood.BloodBottleItem;
 import com.grahambartley.nightborn.blood.BloodQuality;
 import com.grahambartley.nightborn.downed.Downed;
+import com.grahambartley.nightborn.vampire.NightbornDamage;
 import com.grahambartley.nightborn.vomit.Consumables;
 import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
 import net.minecraft.component.DataComponentTypes;
@@ -14,15 +15,38 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.potion.Potions;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.world.ServerWorld;
+import net.minecraft.test.AfterBatch;
+import net.minecraft.test.BeforeBatch;
 import net.minecraft.test.GameTest;
 import net.minecraft.test.TestContext;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.GameRules;
 
 public class VomitGameTest implements FabricGameTest {
 
   static final String ARENA = "nightborn:vampire_arena";
+  static final String BATCH = "vomiting";
+  static final int MIDNIGHT = 18000;
   static final int FINISHED = TestPlayers.READY + 45;
+
+  private static long timeBefore;
+  private static boolean cycleBefore;
+
+  @BeforeBatch(batchId = BATCH)
+  public void pinMidnight(final ServerWorld world) {
+    timeBefore = world.getTimeOfDay();
+    cycleBefore = world.getGameRules().getBoolean(GameRules.DO_DAYLIGHT_CYCLE);
+    world.getGameRules().get(GameRules.DO_DAYLIGHT_CYCLE).set(false, world.getServer());
+    world.setTimeOfDay(MIDNIGHT);
+  }
+
+  @AfterBatch(batchId = BATCH)
+  public void release(final ServerWorld world) {
+    world.getGameRules().get(GameRules.DO_DAYLIGHT_CYCLE).set(cycleBefore, world.getServer());
+    world.setTimeOfDay(timeBefore);
+  }
 
   private static void swallow(
       final TestContext context, final ServerPlayerEntity player, final ItemStack stack) {
@@ -34,7 +58,7 @@ public class VomitGameTest implements FabricGameTest {
         });
   }
 
-  @GameTest(templateName = ARENA, tickLimit = 140)
+  @GameTest(templateName = ARENA, batchId = BATCH, tickLimit = 140)
   public void aVampireEatingBreadGainsNothingIsHurtAndRetches(final TestContext context) {
     final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(3, 1, 4));
     BloodAttachment.set(vampire, 10);
@@ -44,13 +68,18 @@ public class VomitGameTest implements FabricGameTest {
         () -> {
           context.assertEquals(vampire.getMainHandStack().getCount(), 1, "one bread used up");
           context.assertEquals(BloodAttachment.get(vampire), 10, "no blood from bread");
-          context.assertTrue(vampire.getHealth() < vampire.getMaxHealth(), "hurt");
+          context.assertTrue(
+              vampire.getHealth() < vampire.getMaxHealth(), "hurt: " + Diagnostics.of(vampire));
+          context.assertTrue(
+              vampire.getRecentDamageSource() != null
+                  && vampire.getRecentDamageSource().isOf(NightbornDamage.VOMIT),
+              "hurt by vomiting: " + Diagnostics.of(vampire));
           context.assertTrue(vampire.hasStatusEffect(StatusEffects.NAUSEA), "nauseous");
           TestPlayers.finish(context, vampire);
         });
   }
 
-  @GameTest(templateName = ARENA, tickLimit = 140)
+  @GameTest(templateName = ARENA, batchId = BATCH, tickLimit = 140)
   public void aPotionGivesAVampireNothingAndLeavesTheBottle(final TestContext context) {
     final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(3, 1, 4));
     final ItemStack potion = new ItemStack(Items.POTION);
@@ -65,7 +94,7 @@ public class VomitGameTest implements FabricGameTest {
         });
   }
 
-  @GameTest(templateName = ARENA, tickLimit = 140)
+  @GameTest(templateName = ARENA, batchId = BATCH, tickLimit = 140)
   public void milkClearsNothingFromAVampire(final TestContext context) {
     final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(3, 1, 4));
     vampire.addStatusEffect(new StatusEffectInstance(StatusEffects.SLOWNESS, 2000));
@@ -79,7 +108,7 @@ public class VomitGameTest implements FabricGameTest {
         });
   }
 
-  @GameTest(templateName = ARENA, tickLimit = 140)
+  @GameTest(templateName = ARENA, batchId = BATCH, tickLimit = 140)
   public void aBloodBottleStillFeedsAVampire(final TestContext context) {
     final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(3, 1, 4));
     BloodAttachment.set(vampire, 5);
@@ -93,7 +122,7 @@ public class VomitGameTest implements FabricGameTest {
         });
   }
 
-  @GameTest(templateName = ARENA, tickLimit = 140)
+  @GameTest(templateName = ARENA, batchId = BATCH, tickLimit = 140)
   public void aHumanEatsAsNormal(final TestContext context) {
     final ServerPlayerEntity human = TestPlayers.human(context, new BlockPos(3, 1, 4));
     human.getHungerManager().setFoodLevel(10);
@@ -107,7 +136,7 @@ public class VomitGameTest implements FabricGameTest {
         });
   }
 
-  @GameTest(templateName = ARENA, tickLimit = 140)
+  @GameTest(templateName = ARENA, batchId = BATCH, tickLimit = 140)
   public void vomitingAtLowHealthDownsAVampireButNeverKills(final TestContext context) {
     final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(3, 1, 4));
     context.runAtTick(TestPlayers.READY - 1, () -> vampire.setHealth(2.0F));
@@ -116,7 +145,11 @@ public class VomitGameTest implements FabricGameTest {
         FINISHED,
         () -> {
           context.assertTrue(vampire.isAlive(), "alive");
-          context.assertTrue(Downed.state(vampire) != null, "downed");
+          context.assertTrue(Downed.state(vampire) != null, "downed: " + Diagnostics.of(vampire));
+          context.assertTrue(
+              vampire.getRecentDamageSource() != null
+                  && vampire.getRecentDamageSource().isOf(NightbornDamage.VOMIT),
+              "downed by vomiting: " + Diagnostics.of(vampire));
           TestPlayers.finish(context, vampire);
         });
   }

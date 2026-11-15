@@ -79,6 +79,16 @@ public final class PlayerMotion {
     return peaks.isEmpty() ? List.of(0.0) : peaks;
   }
 
+  public List<Double> heavesCrossed(
+      final ClipSet clips, final double degrees, final double before, final double now) {
+    if (Double.isNaN(now)) {
+      return List.of();
+    }
+    return heaves(clips, degrees).stream()
+        .filter(heave -> (Double.isNaN(before) || before < heave) && now >= heave)
+        .toList();
+  }
+
   private static RigPose playing(
       final ClipSet clips, final VampirePose pose, final double from, final double age) {
     if (finished(from, clips.length(pose), age)) {

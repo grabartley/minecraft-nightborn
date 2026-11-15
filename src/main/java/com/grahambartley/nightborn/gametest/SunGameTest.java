@@ -19,8 +19,11 @@ public class SunGameTest implements FabricGameTest {
   static final String YARD = "nightborn:vampire_yard";
   static final int NOON = 6000;
 
+  private static long timeBefore;
+
   @BeforeBatch(batchId = BATCH)
   public void pinNoon(final ServerWorld world) {
+    timeBefore = world.getTimeOfDay();
     world.getGameRules().get(GameRules.DO_DAYLIGHT_CYCLE).set(false, world.getServer());
     world.setTimeOfDay(NOON);
     world.setWeather(12000, 0, false, false);
@@ -29,6 +32,7 @@ public class SunGameTest implements FabricGameTest {
   @AfterBatch(batchId = BATCH)
   public void restoreDaylight(final ServerWorld world) {
     world.getGameRules().get(GameRules.DO_DAYLIGHT_CYCLE).set(true, world.getServer());
+    world.setTimeOfDay(timeBefore);
   }
 
   @GameTest(

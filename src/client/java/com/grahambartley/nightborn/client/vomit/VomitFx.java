@@ -47,13 +47,9 @@ public final class VomitFx {
       final ClipSet clips,
       final double secondsBefore,
       final double secondsNow) {
-    if (Double.isNaN(secondsNow)) {
-      return;
-    }
-    for (final double heave : motion.heaves(clips, HEAVE_DEGREES)) {
-      if ((Double.isNaN(secondsBefore) || secondsBefore < heave) && secondsNow >= heave) {
-        heave(player, motion, clips);
-      }
+    for (final double ignored :
+        motion.heavesCrossed(clips, HEAVE_DEGREES, secondsBefore, secondsNow)) {
+      heave(player, motion, clips);
     }
   }
 

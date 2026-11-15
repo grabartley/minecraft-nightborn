@@ -21,4 +21,22 @@ class LandingEdgeTest {
     }
     assertEquals(expected, String.join("", seen));
   }
+
+  @ParameterizedTest(name = "land pose {0}, finished {1}: still landing {2}")
+  @CsvSource({
+    "true, false, true",
+    "true, true, false",
+    "false, false, false",
+    "false, true, false"
+  })
+  @DisplayName(
+      "the landing holds while its clip plays and clears once it ends or another pose wins")
+  void latch(final boolean landPose, final boolean finished, final boolean stillLanding) {
+    final LandingEdge edge = new LandingEdge();
+    edge.landed(true);
+    edge.landed(false);
+    assertEquals(true, edge.landing());
+    edge.shown(landPose, finished);
+    assertEquals(stillLanding, edge.landing());
+  }
 }

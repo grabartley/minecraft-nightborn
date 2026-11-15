@@ -53,7 +53,6 @@ public class VampireEntity extends HostileEntity implements GeoEntity {
 
   private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
   private final LandingEdge landingEdge = new LandingEdge();
-  private boolean landing;
 
   public VampireEntity(final EntityType<? extends VampireEntity> type, final World world) {
     super(type, world);
@@ -210,26 +209,21 @@ public class VampireEntity extends HostileEntity implements GeoEntity {
             ANIMATION_BLEND_TICKS,
             state -> {
               final boolean levitating = Levitation.isLevitating(this);
-              if (landingEdge.landed(levitating)) {
-                landing = true;
-              }
+              landingEdge.landed(levitating);
               final VampirePose pose =
                   VampirePose.of(
                       new VampirePose.Cue(
                           VisibleStateAttachment.get(this).downed(),
                           handSwinging,
                           levitating,
-                          landing,
+                          landingEdge.landing(),
                           isSprinting(),
                           state.getLimbSwingAmount(),
                           Math.hypot(getX() - prevX, getZ() - prevZ)));
-              if (landing && pose != VampirePose.LAND) {
-                landing = false;
-              }
               final PlayState play = state.setAndContinue(pose.clip());
-              if (pose == VampirePose.LAND && state.getController().hasAnimationFinished()) {
-                landing = false;
-              }
+              landingEdge.shown(
+                  pose == VampirePose.LAND,
+                  pose == VampirePose.LAND && state.getController().hasAnimationFinished());
               return play;
             }));
   }

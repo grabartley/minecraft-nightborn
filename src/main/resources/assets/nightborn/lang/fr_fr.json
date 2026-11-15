@@ -327,5 +327,5 @@
   "nightborn.levitation.refused": "Tu es trop faible pour léviter",
   "key.nightborn.levitate": "Léviter",
   "subtitles.nightborn.entity.vampire.retch": "Un vampire a un haut-le-cœur",
-  "death.attack.nightborn.vomit": "%1$s n'a pas pu le garder"
+  "death.attack.nightborn.vomit": "%1$s a été rendu malade par une nourriture mortelle"
 }

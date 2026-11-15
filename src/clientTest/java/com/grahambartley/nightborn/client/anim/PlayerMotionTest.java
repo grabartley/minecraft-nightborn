@@ -114,6 +114,22 @@ class PlayerMotionTest {
     assertTrue(motion.idle(CLIPS, 120));
   }
 
+  @ParameterizedTest(name = "from {0} to {1}: {2} heaves")
+  @CsvSource({
+    "NaN, 0.0, 0",
+    "NaN, 0.4, 1",
+    "NaN, 1.0, 2",
+    "0.4, 0.5, 0",
+    "0.39, 0.4, 1",
+    "0.5, 0.8, 1",
+    "0.8, 2.0, 0",
+    "0.0, NaN, 0"
+  })
+  @DisplayName("each heave fires once, on the frame the clip passes it")
+  void crossed(final double before, final double now, final int count) {
+    assertEquals(count, new PlayerMotion().heavesCrossed(CLIPS, 30, before, now).size());
+  }
+
   @Test
   @DisplayName("a vomit clip with no heave deep enough still retches once, at the start")
   void heavesAtLeastOnce() {

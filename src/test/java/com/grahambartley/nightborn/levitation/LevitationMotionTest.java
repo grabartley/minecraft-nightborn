@@ -8,27 +8,16 @@ import org.junit.jupiter.params.provider.CsvSource;
 
 class LevitationMotionTest {
 
-  @ParameterizedTest(name = "levitating {0}, client {1}, moves here {2}, player {3}: {4}")
+  @ParameterizedTest(name = "levitating {0}, moves here {1}: {2}")
   @CsvSource({
-    "true, false, true, false, true",
-    "true, false, false, false, true",
-    "true, false, true, true, false",
-    "true, true, true, true, true",
-    "true, true, false, true, false",
-    "true, true, false, false, false",
-    "true, true, true, false, true",
-    "false, false, true, false, false",
-    "false, true, true, true, false"
+    "true, true, true",
+    "true, false, false",
+    "false, true, false",
+    "false, false, false"
   })
   @DisplayName(
-      "the server holds up every levitating mob, even one with no AI, and a player's own client"
-          + " holds up the player")
-  void drives(
-      final boolean levitating,
-      final boolean client,
-      final boolean movesHere,
-      final boolean player,
-      final boolean drives) {
-    assertEquals(drives, LevitationMotion.drives(levitating, client, movesHere, player));
+      "the hover runs only where vanilla moves the body: the server for mobs, the client for its player")
+  void drives(final boolean levitating, final boolean movesHere, final boolean drives) {
+    assertEquals(drives, LevitationMotion.drives(levitating, movesHere));
   }
 }

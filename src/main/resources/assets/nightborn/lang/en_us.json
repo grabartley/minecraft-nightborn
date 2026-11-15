@@ -327,5 +327,5 @@
   "nightborn.levitation.refused": "You are too weak to levitate",
   "key.nightborn.levitate": "Levitate",
   "subtitles.nightborn.entity.vampire.retch": "Vampire retches",
-  "death.attack.nightborn.vomit": "%1$s could not keep it down"
+  "death.attack.nightborn.vomit": "%1$s was sickened by mortal food"
 }
