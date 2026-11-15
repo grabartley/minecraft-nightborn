@@ -8,7 +8,7 @@ import org.junit.jupiter.params.provider.CsvSource;
 
 class SicknessStageTest {
 
-  @ParameterizedTest(name = "{0} ticks run of {1} days: day {2}, {3} left")
+  @ParameterizedTest(name = "{0} ticks run of {1} days: stage {2}, {3} days left")
   @CsvSource({
     "0, 3, 1, 3, true, false, false",
     "23999, 3, 1, 3, true, false, false",
@@ -17,22 +17,29 @@ class SicknessStageTest {
     "48000, 3, 3, 1, true, true, true",
     "71999, 3, 3, 1, true, true, true",
     "0, 1, 1, 1, true, false, false",
-    "23999, 1, 1, 1, true, false, false",
-    "48000, 1, 1, 0, true, false, false",
+    "7999, 1, 1, 1, true, false, false",
+    "8000, 1, 2, 1, true, true, false",
+    "16000, 1, 3, 1, true, true, true",
+    "23999, 1, 3, 1, true, true, true",
+    "48000, 1, 3, 0, true, true, true",
+    "0, 2, 1, 2, true, false, false",
+    "16000, 2, 2, 2, true, true, false",
+    "32000, 2, 3, 1, true, true, true",
     "0, 10, 1, 10, true, false, false",
-    "239999, 10, 10, 1, true, true, true"
+    "80000, 10, 2, 7, true, true, false",
+    "239999, 10, 3, 1, true, true, true"
   })
-  @DisplayName("the sickness worsens each day: hunger, then Weakness, then daylight slowness")
+  @DisplayName("the sickness worsens in three equal stages over its length, whatever the length")
   void stages(
       final int ticksRun,
       final int days,
-      final int day,
+      final int stage,
       final int daysLeft,
       final boolean hunger,
       final boolean weakness,
       final boolean slowness) {
     assertEquals(
-        new SicknessStage(day, daysLeft, hunger, weakness, slowness),
+        new SicknessStage(stage, daysLeft, hunger, weakness, slowness),
         SicknessStage.of(ticksRun, days));
   }
 

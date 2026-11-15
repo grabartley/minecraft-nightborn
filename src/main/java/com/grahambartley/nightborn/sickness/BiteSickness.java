@@ -136,11 +136,11 @@ public final class BiteSickness {
         shown != null,
         shown == null ? 0 : shown.getAmplifier(),
         shown == null ? 0 : shown.getDuration(),
-        stage.day() - 1,
+        stage.stage() - 1,
         ticksLeft)) {
       player.addStatusEffect(
           new StatusEffectInstance(
-              BiteSicknessEffect.ENTRY, ticksLeft, stage.day() - 1, false, false, true));
+              BiteSicknessEffect.ENTRY, ticksLeft, stage.stage() - 1, false, false, true));
     }
     if (stage.hunger()) {
       symptom(
