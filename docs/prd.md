@@ -117,7 +117,7 @@ This document specifies the Nightborn alpha line for Minecraft 1.21.1 on Fabric.
 | Sip | Feeding that stops before the victim dies |
 | Drain | Feeding until the victim dies |
 | Resist | A victim breaking free of a bite |
-| Weakened | The vampire debuff from garlic, crucifixes and holy water: slower, weaker blows and no powers. It is not the vanilla Weakness effect |
+| Weakened | The vampire debuff from garlic, crucifixes, holy water, being downed and escaping: slower, weaker blows and no powers. It is not the vanilla Weakness effect |
 | Skill point | Earned by a vampire through feeding, or by a hunter through killing vampires. Spent on a skill tree |
 | Core | The vampire skills every vampire can take |
 | Bloodline | One of three branches of the vampire tree: Noble, Beast or Occult |
@@ -126,6 +126,7 @@ This document specifies the Nightborn alpha line for Minecraft 1.21.1 on Fabric.
 | Garlic String | A block of hung garlic that weakens vampires near it |
 | Crucifix shape | A cross of crucifix-material blocks built in the world (see below) |
 | Downed | A vampire brought to its last health by anything but direct sun or a stake. It lies helpless and greatly weakened until it recovers |
+| Escaping | The minute after a downed vampire gets up, when only direct sun and a stake can hurt it and it stays weakened, so it can get away |
 | Staked | Killed by a stake: a wooden stake or stake bolt hitting a downed vampire, or striking the blow that would bring a vampire down |
 | Coffin | A block that is a vampire's bed and respawn point |
 | Thrall | A villager a Noble vampire has bound to follow and fight for them |
@@ -229,7 +230,7 @@ Sneak and use on a creature to bite it, and keep holding to drink. Let go to sto
 
 | ID | Requirement |
 |---|---|
-| SUN-1 | A vampire in direct sun catches fire, as a zombie does, and burns while it stays there. Sun fire kills, downed or not. Fire that keeps burning after the vampire reaches shade only downs it |
+| SUN-1 | A vampire in direct sun catches fire, as a zombie does, and burns while it stays there. Sun fire kills, downed or not. Fire that keeps burning after the vampire reaches shade only downs it, and cannot hurt it while it is escaping |
 | SUN-2 | No armour, helmet or effect, Fire Resistance included, stops the burn. Shade, rain, water and a closed coffin (COFFIN-7) do |
 | SUN-3 | A burning vampire gives off smoke and a sizzling sound, on top of the fire |
 | SUN-4 | Vampire mobs follow the same rules and seek shade at dawn |
@@ -276,7 +277,7 @@ Every vampire has the core, whatever bloodlines they choose.
 | CORE-5 | A vampire player never shows as a marker on a vanilla map |
 | CORE-6 | A vampire can sleep only in a coffin (COFFIN-1) |
 | CORE-7 | Only direct sun and a stake can kill a vampire. Damage from anything else, mobs, players, fire, falls, drowning or holy water included, stops at its last health. Falling into the void and an operator's `/kill` are the only exceptions |
-| CORE-8 | A vampire brought to its last health by anything else is downed: it collapses, cannot move, attack, feed or use items or powers, and is weakened at the cap (WEAK-9). It takes no damage from anything but sun and a stake while downed. After 30 seconds it gets up with 20% of its health, wherever it lies. More damage does not reset the time. Everyone near can see and hear that it is downed. For 1 minute after it gets up, it takes no damage but sun and a stake and stays weakened, so it can escape |
+| CORE-8 | A vampire brought to its last health by anything else is downed: it collapses, cannot move, attack, feed or use items or powers, and is weakened at the cap (WEAK-9). It takes no damage from anything but sun and a stake while downed. After 30 seconds by default it gets up with 20% of its health, wherever it lies. More damage does not reset the time. Everyone near can see and hear that it is downed. It then escapes for 1 minute by default: it takes no damage but sun and a stake, stays weakened at the cap and can move freely. Vampire mobs flee while escaping |
 | CORE-9 | Phantoms never spawn for a vampire player and never target a vampire, and time a vampire spends awake never counts toward them |
 
 **Not supported:** a vampire hiding its eyes while feeding.
@@ -374,7 +375,7 @@ Every human is a hunter in waiting. Killing vampires earns hunter points.
 
 | ID | Requirement |
 |---|---|
-| HUNT-1 | Any human player earns hunter points by staking vampire mobs and vampire players, or by downing one that the sun finishes before it gets up. Downing alone earns nothing. No pledge is needed |
+| HUNT-1 | Any human player earns hunter points by staking vampire mobs and vampire players, or by downing one that the sun finishes before its escape ends. Downing alone earns nothing. No pledge is needed |
 | HUNT-2 | Contracts from the Guild Master earn hunter points as well as their reward |
 | HUNT-3 | The hunter tree is one shared tree for all humans |
 | HUNT-4 | Hunter skills cover tracking vampires, resisting bites and mesmerise, and faith powers that make crucifixes and holy water stronger |
@@ -428,7 +429,7 @@ Vampires are rare. They live in households hidden in four kinds of structure, ea
 | HOME-4 | Fog hangs around and inside every vampire structure, thicker near its heart |
 | HOME-5 | A household feels lived in: its vampires have their own personality, routine and hobbies, talk to and argue with each other, and react to each other's deaths |
 | HOME-6 | Household vampires sleep in coffins by day and wake at dusk |
-| HOME-7 | A castle's vampire lord is a boss with a health bar and its own powers. It is downed like any vampire, its bar shows it downed, and only a stake or the sun ends the fight |
+| HOME-7 | A castle's vampire lord is a boss with a health bar and its own powers. It is downed and escapes like any vampire, its bar shows when it is downed or escaping, and only a stake or the sun ends the fight |
 | HOME-8 | Structures hold loot chests with gear, Blood Bottles, decor and rare items found nowhere else |
 | HOME-9 | Vampire mobs spawn rarely at night in the open, alone or with vampire bats |
 | HOME-10 | Vampire bats spawn rarely in dark caves and at night, and bite (TURN-1) |
