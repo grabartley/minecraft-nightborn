@@ -112,7 +112,9 @@ This document specifies the Nightborn alpha line for Minecraft 1.21.1 on Fabric.
 |---|---|
 | Vampire | A player or mob that has turned. Lives on blood, and dies only to direct sun or a stake |
 | Human | A player who is not a vampire |
-| Bite sickness | The state between a turning bite and turning. It lasts 3 in-game days by default |
+| Bite sickness | The state between a bite that starts it and turning. It lasts 3 in-game days by default |
+| Feeding bite | A vampire player's bite that drinks without ever starting bite sickness. Bites feed by default |
+| Turning bite | A vampire player's bite that drinks and may also start bite sickness (TURN-8) |
 | Blood | What a vampire lives on, shown as the blood bar in place of hunger |
 | Fresh blood | Blood drunk straight from a living creature |
 | Bottled blood | Blood stored in a Blood Bottle. It restores less than fresh blood |
@@ -173,12 +175,12 @@ A vampire mob, a vampire bat or a vampire player bites a human. A mob's or a bat
 |---|---|
 | TURN-1 | A bite from a vampire mob, a vampire bat or a vampire player's turning bite (TURN-8) starts bite sickness on a human, with a chance set per biter. By default a turning bite starts it every time, a vampire mob's bite one time in four and a vampire bat's one time in ten, less against a human with bite resistance (HUNT-4). A vampire player's feeding bite never starts it |
 | TURN-2 | A vampire player can bite a human player only where the server allows PvP |
-| TURN-3 | Bite sickness lasts 3 in-game days by default, and gets worse each day: hunger, then the vanilla Weakness effect, then slowness in daylight. The time already run counts against the current sickness length, so a changed length applies at once to a player already sick, and one already past it turns. A night skipped in a bed counts toward it |
+| TURN-3 | Bite sickness lasts 3 in-game days by default, and gets worse each day: hunger, then the vanilla Weakness effect, then slowness in daylight. The time already run counts against the current sickness length, so a changed length applies at once to a player already sick, and one already past it turns. Time skipped by sleeping counts toward it, whether beds skip the night or coffins skip the day (COFFIN-2) |
 | TURN-4 | A sick player is shown the sickness and the days left, as a status effect and a sign on screen |
 | TURN-5 | When the sickness runs out, the player turns. They keep their inventory, start with a full blood bar and get the vampire core |
 | TURN-6 | A player who turns stops earning hunter skills, and their hunter tree is set aside. It comes back if an operator makes them human again |
 | TURN-7 | Another bite during the sickness does not restart or lengthen it |
-| TURN-8 | A vampire player switches their bite between feeding and turning with a key they can rebind. Each switch is confirmed on screen, and a sign stays on screen while the turning bite is on. Vampire mobs and bats do not choose |
+| TURN-8 | A vampire player switches their bite between feeding and turning with a key they can rebind. Each switch is confirmed on screen, and a sign stays on screen while the turning bite is on. A turning bite feeds like any other bite (FEED-4 to FEED-12), and the bite's mode is fixed when it first draws blood. Where the server stops players turning players, a turning bite on a player feeds only. Vampire mobs and bats do not choose |
 
 **Not supported:** turning by any means other than a bite or an operator command; turning a villager into a vampire.
 
@@ -206,7 +208,7 @@ Sneak and use on a creature to bite it, and keep holding to drink. Let go to sto
 
 | Gesture | Effect |
 |---|---|
-| Sneak and hold use on a creature, empty hand | Bite and drink |
+| Sneak and hold use on a creature, empty hand | Bite and drink, as a feeding or turning bite (TURN-8) |
 | Let go | Stop. The victim lives |
 | Keep holding past the victim's last health | Drain. The victim dies |
 | Hold an empty Glass Bottle in the off hand while feeding | Fill Blood Bottles instead of drinking |
@@ -449,9 +451,9 @@ Vampires are rare. They live in households hidden in four kinds of structure, ea
 | HOME-7 | A castle's vampire lord is a boss with a health bar and its own powers. It is downed and escapes like any vampire, its bar shows when it is downed or escaping, and only a stake or the sun ends the fight |
 | HOME-8 | Structures hold loot chests with gear, Blood Bottles, decor, gothic music discs (DECOR-8), relics (RITE-1) and rare items found nowhere else |
 | HOME-9 | Vampire mobs live only in vampire structures, as members of a household. Each remembers its structure and its own coffin, which starts assigned to it (COFFIN-4), so it cannot be broken until that vampire dies to the sun or a stake. They never spawn at random anywhere else, and never despawn |
-| HOME-10 | Vampire bats spawn rarely, and only underground where a vanilla bat could spawn, or inside a vampire structure. They also fly with vampire mobs. Under cover, or at night in the open, they swoop at warm-blooded creatures and bite them (TURN-1). A vampire bat is bigger and darker than a vanilla bat, with soot fur, burgundy wings and red eyes that always glow. It hangs wrapped in its wings, flies, swoops on its prey and bites |
+| HOME-10 | Vampire bats spawn rarely, and only underground where a vanilla bat could spawn, or inside a vampire structure. Under cover, or at night in the open, they swoop at warm-blooded creatures and bite them (TURN-1). A vampire bat is bigger and darker than a vanilla bat, with soot fur, burgundy wings and red eyes that always glow. It hangs wrapped in its wings, flies, swoops on its prey and bites |
 | HOME-11 | Vampire mobs attack only when hungry or provoked. Being hurt, or a housemate being hurt nearby, provokes them. A fed vampire may watch, follow or warn off a stranger, but does not attack. They ignore vampire players unless provoked |
-| HOME-12 | Structure layouts, the coffins each structure holds, loot, relic chances, structure spawn rates, vampire stages and their odds per structure type, the skills vampire mobs pick, their looks, sizes, builds and outfits, and the biomes vampire bats spawn in are data, changed by a data pack |
+| HOME-12 | Structure layouts, the coffins each structure holds, loot, relic chances, structure spawn rates, vampire stages and their odds per structure type, the skills vampire mobs pick, their looks, sizes, builds and outfits, and the biomes and structures vampire bats spawn in are data, changed by a data pack |
 | HOME-13 | Vampire mobs have blood that drains over time. A hungry vampire may leave its structure at night to hunt humans, villagers and animals within a range of home. Not every vampire leaves every night, so a household is rarely empty. Each heads back in time to reach its coffin by dawn. One caught out at dawn seeks shade (SUN-4). Their bites can start bite sickness (TURN-1) |
 | HOME-14 | A provoked vampire gives up the chase past a range from its structure and goes home |
 | HOME-15 | Each vampire mob has a stage, fledgling, adult, elder or ancient, which sets its health, speed, damage, how many skills it has and how much blood it can spend on powers. Its skills come from the vampire tree and, unlike a player's, may come from all three bloodlines. The older a vampire and the more skills it has, the rarer it is, the harder it fights, and the more hunter points (HUNT-1) and the better loot it gives. Only the Eldest has every skill (RITE-3) |
@@ -658,6 +660,7 @@ There is no singleplayer mode in this mod. A single-player world is an integrate
 | Server owns | Client does |
 |---|---|
 | Faction, sickness, blood, skills and bloodlines | Shows the blood bar, power bar and skill screen |
+| The turning bite choice | Sends the switch and draws the sign |
 | Feeding, resisting and draining | Sends the bite request and plays the effects |
 | Sun, weakness and their sources | Draws smoke, fire and the weakness sign |
 | Bat form | Draws the bat and the poof |
