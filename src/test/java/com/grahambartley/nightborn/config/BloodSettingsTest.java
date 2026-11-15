@@ -23,6 +23,12 @@ class BloodSettingsTest {
   }
 
   @Test
+  @DisplayName("blood drains one point every 10 seconds at rest by default")
+  void restingDrainDefault() {
+    assertEquals(10, BloodSettings.RESTING_DRAIN_SECONDS.defaultValue());
+  }
+
+  @Test
   @DisplayName("the constructor clamps values into bounds")
   void clamps() {
     assertEquals(

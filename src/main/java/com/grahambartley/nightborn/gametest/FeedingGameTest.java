@@ -28,6 +28,7 @@ import net.minecraft.test.GameTest;
 import net.minecraft.test.TestContext;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 
 public class FeedingGameTest implements FabricGameTest {
 
@@ -83,6 +84,51 @@ public class FeedingGameTest implements FabricGameTest {
               cow.hasStatusEffect(StatusEffects.WEAKNESS), "a sipped cow is left weak");
           context.assertFalse(
               VisibleStateAttachment.get(vampire).feeding(), "letting go ends the feeding pose");
+          TestPlayers.finish(context, vampire);
+        });
+  }
+
+  @GameTest(templateName = ARENA, batchId = BATCH, tickLimit = 70)
+  public void aBittenCowIsHeldInPlaceAndFreeAgainAfterTheBite(final TestContext context) {
+    final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(2, 2, 4));
+    BloodAttachment.set(vampire, 10);
+    final CowEntity held = context.spawnEntity(EntityType.COW, new BlockPos(3, 2, 4));
+    final CowEntity free = context.spawnEntity(EntityType.COW, new BlockPos(1, 2, 1));
+    final BlockPos heldGoal = context.getAbsolutePos(new BlockPos(6, 2, 4));
+    final BlockPos freeGoal = context.getAbsolutePos(new BlockPos(5, 2, 1));
+    final Vec3d[] start = new Vec3d[2];
+    context.runAtTick(
+        5,
+        () -> {
+          start[0] = held.getPos();
+          start[1] = free.getPos();
+        });
+    context.runAtEveryTick(
+        () -> {
+          if (context.getTick() >= 5 && context.getTick() <= 45) {
+            hold(context, vampire, held);
+            held.getNavigation()
+                .startMovingTo(heldGoal.getX(), heldGoal.getY(), heldGoal.getZ(), 1.0);
+            free.getNavigation()
+                .startMovingTo(freeGoal.getX(), freeGoal.getY(), freeGoal.getZ(), 1.0);
+          }
+        });
+    context.runAtTick(
+        46,
+        () -> {
+          context.assertTrue(
+              held.getPos().distanceTo(start[0]) < 0.3,
+              "the held cow stayed put but moved " + held.getPos().distanceTo(start[0]));
+          context.assertTrue(
+              free.getPos().distanceTo(start[1]) > 1.0,
+              "the same walk takes a free cow away, it moved "
+                  + free.getPos().distanceTo(start[1]));
+        });
+    context.runAtTick(
+        60,
+        () -> {
+          context.assertFalse(
+              held.hasStatusEffect(StatusEffects.SLOWNESS), "the hold is gone after the bite");
           TestPlayers.finish(context, vampire);
         });
   }

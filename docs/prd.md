@@ -216,14 +216,14 @@ Sneak and use on a creature to bite it, and keep holding to drink. Let go to sto
 
 | ID | Requirement |
 |---|---|
-| FEED-1 | A vampire has a blood bar in place of hunger. It drains over time and faster when the vampire runs, fights or uses powers |
+| FEED-1 | A vampire has a blood bar in place of hunger. It drains over time, by default one point every 10 seconds at rest, and faster when the vampire runs, fights or uses powers |
 | FEED-2 | An empty blood bar starves the vampire (FEED-14), and a full one heals |
 | FEED-3 | Normal food, potions and milk give a vampire nothing. A vampire who eats or drinks one is hurt and vomits it back up, with a short spell of Nausea, seen and heard by everyone near. Anything eaten or drunk counts, including other mods' food and drink, as does anything in the `nightborn:vampire_rejects` tag, which takes in the shared `c:foods` and `c:potions` tags. Blood Bottles, holy water and items in the `nightborn:vampire_consumables` tag are exempt |
-| FEED-4 | Feeding drinks blood from the victim each second, and hurts it by the same amount |
+| FEED-4 | Feeding drinks blood from the victim each second, and hurts it by the same amount. The victim is held in place for as long as the bite lasts: it cannot walk, be pushed away or leave, and it is free again a moment after the bite ends. The vampire plays a drinking animation for as long as the bite lasts, seen by everyone near and by the vampire in first person |
 | FEED-5 | Letting go stops the bite and leaves the victim alive, with Weakness for a short time |
 | FEED-6 | Holding past the victim's last health drains it, and it dies |
 | FEED-7 | A victim resists with a chance that grows with its maximum health and falls as its health drops. A sleeping or mesmerised victim never resists |
-| FEED-8 | A resisting victim breaks free, pushes the vampire back and, if it can attack, fights back |
+| FEED-8 | A resisting victim breaks free of the hold, pushes the vampire back and, if it can attack, fights back |
 | FEED-9 | Blood restores more by quality: animal least, then villager and illager, then player |
 | FEED-10 | Fresh blood restores more than the same blood bottled |
 | FEED-11 | A Blood Bottle keeps the quality of the creature it came from, and shows it |

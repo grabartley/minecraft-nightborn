@@ -106,6 +106,7 @@ public final class FeedingSessions {
         finish(vampire, victim, session, config);
         continue;
       }
+      VictimHold.apply(victim);
       if (!session.drinkDue(now)) {
         continue;
       }
