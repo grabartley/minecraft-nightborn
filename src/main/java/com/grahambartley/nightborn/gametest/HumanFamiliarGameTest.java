@@ -291,6 +291,8 @@ public class HumanFamiliarGameTest implements FabricGameTest {
           for (int step = 0; step < 3 && errand.shouldContinue(); step++) {
             errand.tick();
           }
+          context.assertFalse(errand.shouldContinue(), "the errand ends after delivering");
+          errand.tick();
           final ChestBlockEntity to = context.getBlockEntity(deliver);
           context.assertEquals(from.count(Items.WHEAT), 0, "the fetch chest is emptied");
           context.assertEquals(to.count(Items.WHEAT), 10, "what was not traded is delivered");
@@ -435,6 +437,46 @@ public class HumanFamiliarGameTest implements FabricGameTest {
           FamiliarUpkeep.check(second);
           context.assertTrue(second.isRemoved(), "the freed familiar becomes a villager again");
           TestPlayers.finish(context, vampire);
+        });
+  }
+
+  @GameTest(templateName = ARENA, batchId = NOON_BATCH, tickLimit = TestPlayers.READY + 400)
+  public void aWorkingFamiliarRunsItsOwnErrandWithoutLosingAnything(final TestContext context) {
+    final ServerPlayerEntity vampire = TestPlayers.vampire(context, STAND);
+    final BlockPos fetch = new BlockPos(2, 2, 2);
+    final BlockPos deliver = new BlockPos(4, 2, 2);
+    context.setBlockState(fetch, Blocks.CHEST);
+    context.setBlockState(deliver, Blocks.CHEST);
+    final ChestBlockEntity from = context.getBlockEntity(fetch);
+    from.setStack(0, new ItemStack(Items.WHEAT, 30));
+    final HumanFamiliarEntity[] familiar = new HumanFamiliarEntity[1];
+    final long[] delivered = {-1L};
+    context.runAtTick(
+        TestPlayers.READY,
+        () -> {
+          familiar[0] = hired(context, vampire);
+          FamiliarOrders.mark(vampire, context.getAbsolutePos(fetch));
+          FamiliarOrders.mark(vampire, context.getAbsolutePos(deliver));
+        });
+    context.runAtEveryTick(
+        () -> {
+          if (familiar[0] == null) {
+            return;
+          }
+          final ChestBlockEntity to = context.getBlockEntity(deliver);
+          final int carried = familiar[0].getInventory().count(Items.WHEAT);
+          context.assertEquals(
+              from.count(Items.WHEAT) + carried + to.count(Items.WHEAT),
+              30,
+              "every ear of wheat is in a chest or carried");
+          if (to.count(Items.WHEAT) == 30 && delivered[0] < 0) {
+            delivered[0] = context.getTick();
+          }
+          if (delivered[0] >= 0 && context.getTick() >= delivered[0] + 40) {
+            context.assertTrue(
+                familiar[0].isAlive(), "the familiar keeps working after its errand");
+            TestPlayers.finish(context, vampire);
+          }
         });
   }
 

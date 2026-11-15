@@ -115,6 +115,9 @@ public class RunErrandGoal extends Goal {
 
   @Override
   public void tick() {
+    if (leg == null) {
+      return;
+    }
     ticks++;
     switch (leg) {
       case FETCH -> fetchLeg();

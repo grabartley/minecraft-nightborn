@@ -15,7 +15,7 @@ class HomeRulesTest {
     assertEquals(range, HomeRules.range(working, guardRange));
   }
 
-  @ParameterizedTest(name = "creeper {0}, {1} blocks squared from home, range {2}: {3}")
+  @ParameterizedTest(name = "creeper or vampire {0}, {1} blocks squared from home, range {2}: {3}")
   @CsvSource({
     "false, 0, 8, true",
     "false, 64, 8, true",
@@ -23,9 +23,10 @@ class HomeRulesTest {
     "true, 0, 8, false",
     "false, 1024, 32, true"
   })
-  @DisplayName("a familiar drives off monsters inside its guard range, except creepers")
+  @DisplayName(
+      "a familiar drives off monsters inside its guard range, sparing creepers and vampires")
   void drivesOff(
-      final boolean creeper, final double distanceSquared, final int range, final boolean drives) {
-    assertEquals(drives, HomeRules.drivesOff(creeper, distanceSquared, range));
+      final boolean spared, final double distanceSquared, final int range, final boolean drives) {
+    assertEquals(drives, HomeRules.drivesOff(spared, distanceSquared, range));
   }
 }

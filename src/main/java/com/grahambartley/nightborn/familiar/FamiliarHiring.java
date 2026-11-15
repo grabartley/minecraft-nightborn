@@ -75,6 +75,7 @@ public final class FamiliarHiring {
     final List<ItemStack> carried = villager.getInventory().clearToList();
     final HumanFamiliarEntity familiar = villager.convertTo(Familiars.HUMAN_FAMILIAR, true);
     if (familiar == null) {
+      carried.forEach(villager.getInventory()::addStack);
       return HireRules.Outcome.NOT_HIREABLE;
     }
     final FamiliarSettings settings = ServerConfigService.current().familiars();

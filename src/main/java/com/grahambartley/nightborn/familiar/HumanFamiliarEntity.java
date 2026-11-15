@@ -280,7 +280,7 @@ public class HumanFamiliarEntity extends PathAwareEntity
   public void readCustomDataFromNbt(final NbtCompound nbt) {
     super.readCustomDataFromNbt(nbt);
     owner = nbt.containsUuid(OWNER) ? nbt.getUuid(OWNER) : null;
-    loyalty = Loyalty.clamp(nbt.getInt(LOYALTY));
+    loyalty = nbt.contains(LOYALTY) ? Loyalty.clamp(nbt.getInt(LOYALTY)) : loyalty;
     paidThroughDay = nbt.getLong(PAID_THROUGH);
     lastDay = nbt.contains(LAST_DAY) ? nbt.getLong(LAST_DAY) : -1L;
     turned = nbt.getBoolean(TURNED);

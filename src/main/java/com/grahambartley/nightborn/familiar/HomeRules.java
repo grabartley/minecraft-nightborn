@@ -11,7 +11,7 @@ public final class HomeRules {
   }
 
   public static boolean drivesOff(
-      final boolean creeper, final double distanceToHomeSquared, final int guardRange) {
-    return !creeper && distanceToHomeSquared <= (double) guardRange * guardRange;
+      final boolean spared, final double distanceToHomeSquared, final int guardRange) {
+    return !spared && distanceToHomeSquared <= (double) guardRange * guardRange;
   }
 }
