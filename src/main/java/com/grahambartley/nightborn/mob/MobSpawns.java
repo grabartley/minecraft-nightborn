@@ -11,6 +11,7 @@ import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.SpawnRestriction;
 import net.minecraft.entity.mob.HostileEntity;
 import net.minecraft.entity.mob.MobEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.tag.TagKey;
 import net.minecraft.util.Identifier;
@@ -95,20 +96,26 @@ public final class MobSpawns {
             ServerConfigService.current().mobs().vampireBatSpawnChance())) {
       return false;
     }
-    if (reason == SpawnReason.NATURAL
-        && MobSpawnRules.crowded(
-            world
-                .getEntitiesByClass(
-                    VampireBatEntity.class,
-                    Box.of(
-                        Vec3d.ofCenter(pos),
-                        MobSpawnRules.NEARBY_RANGE * 2,
-                        MobSpawnRules.NEARBY_HEIGHT * 2,
-                        MobSpawnRules.NEARBY_RANGE * 2),
-                    bat -> true)
-                .size())) {
+    if (reason == SpawnReason.NATURAL && MobSpawnRules.crowded(batsAround(world, pos))) {
       return false;
     }
     return MobEntity.canMobSpawn(type, world, reason, pos, random);
+  }
+
+  private static int batsAround(final ServerWorldAccess world, final BlockPos pos) {
+    final PlayerEntity player =
+        world.getClosestPlayer(
+            pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, MobSpawnRules.NEARBY_RANGE, false);
+    final Vec3d centre = player == null ? Vec3d.ofCenter(pos) : player.getPos();
+    return world
+        .getEntitiesByClass(
+            VampireBatEntity.class,
+            Box.of(
+                centre,
+                MobSpawnRules.NEARBY_RANGE * 2,
+                MobSpawnRules.NEARBY_HEIGHT * 2,
+                MobSpawnRules.NEARBY_RANGE * 2),
+            bat -> true)
+        .size();
   }
 }
