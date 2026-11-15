@@ -21,10 +21,12 @@ class StakePenaltyTest {
   private static final Identifier CORE_A = Identifier.of("nightborn", "core_a");
   private static final Identifier CORE_B = Identifier.of("nightborn", "core_b");
   private static final Identifier NOBLE_A = Identifier.of("nightborn", "noble_a");
+  private static final Identifier NOBLE_B = Identifier.of("nightborn", "noble_b");
   private static final Identifier BEAST_A = Identifier.of("nightborn", "beast_a");
 
   private static final Function<Identifier, Optional<Identifier>> LINES =
-      skill -> Optional.ofNullable(Map.of(NOBLE_A, NOBLE, BEAST_A, BEAST).get(skill));
+      skill ->
+          Optional.ofNullable(Map.of(NOBLE_A, NOBLE, NOBLE_B, NOBLE, BEAST_A, BEAST).get(skill));
 
   @ParameterizedTest(name = "{0} earned at {1}%: loses {2}")
   @CsvSource({"100, 10, 10", "15, 10, 2", "5, 10, 1", "0, 10, 0", "40, 0, 0", "40, 100, 40"})
@@ -70,6 +72,14 @@ class StakePenaltyTest {
                 0.0F,
                 List.of(new BoughtSkill(Identifier.of("nightborn", "gone"), 4)),
                 List.of(BEAST))),
+        Arguments.of(
+            "a bloodline keeps a skill that was not removed",
+            new TreeProgress(
+                5,
+                0.0F,
+                List.of(new BoughtSkill(NOBLE_A, 3), new BoughtSkill(NOBLE_B, 2)),
+                List.of(NOBLE)),
+            new TreeProgress(4, 0.0F, List.of(new BoughtSkill(NOBLE_A, 3)), List.of(NOBLE))),
         Arguments.of("nothing earned loses nothing", TreeProgress.EMPTY, TreeProgress.EMPTY));
   }
 

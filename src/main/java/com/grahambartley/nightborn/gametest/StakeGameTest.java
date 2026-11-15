@@ -7,6 +7,7 @@ import com.grahambartley.nightborn.downed.DownedState.Phase;
 import com.grahambartley.nightborn.gear.GearItems;
 import com.grahambartley.nightborn.server.ServerConfigService;
 import com.grahambartley.nightborn.skill.SkillAttachment;
+import com.grahambartley.nightborn.skill.SkillShop;
 import com.grahambartley.nightborn.skill.SkillTree;
 import com.grahambartley.nightborn.skill.TreeProgress;
 import com.grahambartley.nightborn.vampire.Vampires;
@@ -22,6 +23,7 @@ import net.minecraft.test.BeforeBatch;
 import net.minecraft.test.GameTest;
 import net.minecraft.test.TestContext;
 import net.minecraft.util.Hand;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 
 public class StakeGameTest implements FabricGameTest {
@@ -100,6 +102,32 @@ public class StakeGameTest implements FabricGameTest {
           context.assertFalse(Vampires.isVampire(vampire), "hardcore death made it human");
           context.assertEquals(
               SkillAttachment.get(hunter, SkillTree.HUNTER).earned(), 3, "the staker is paid");
+          TestPlayers.finish(context, hunter, vampire);
+        });
+  }
+
+  @GameTest(templateName = ARENA, batchId = PVP, tickLimit = TestPlayers.READY + 20)
+  public void aStakedVampireLosesItsNewestSkillAndThatBloodline(final TestContext context) {
+    final ServerPlayerEntity hunter = armed(context, new BlockPos(2, 2, 4), GearItems.WOODEN_STAKE);
+    final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(4, 2, 4));
+    final Identifier core = Identifier.of("nightborn", "core/thick_blood");
+    final Identifier noble = Identifier.of("nightborn", "noble/noble_blood");
+    context.runAtTick(
+        TestPlayers.READY,
+        () -> {
+          SkillAttachment.set(vampire, SkillTree.VAMPIRE, TreeProgress.EMPTY.addPoints(2));
+          SkillShop.buy(vampire, core);
+          SkillShop.buy(vampire, noble);
+          final TreeProgress before = SkillAttachment.get(vampire, SkillTree.VAMPIRE);
+          context.assertTrue(
+              before.owns(noble) && before.bloodlines().size() == 1, "bought into a bloodline");
+          vampire.setHealth(1.0F);
+          vampire.damage(hunter.getDamageSources().playerAttack(hunter), 5.0F);
+          final TreeProgress after = SkillAttachment.get(vampire, SkillTree.VAMPIRE);
+          context.assertEquals(after.earned(), 1, "it lost one point");
+          context.assertTrue(after.owns(core), "the older core skill is kept");
+          context.assertFalse(after.owns(noble), "the newest skill is gone");
+          context.assertTrue(after.bloodlines().isEmpty(), "the bloodline is free again");
           TestPlayers.finish(context, hunter, vampire);
         });
   }

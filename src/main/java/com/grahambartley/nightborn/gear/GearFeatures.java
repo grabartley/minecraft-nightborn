@@ -1,5 +1,7 @@
 package com.grahambartley.nightborn.gear;
 
+import com.grahambartley.nightborn.skill.StakedVampires;
+
 public final class GearFeatures {
 
   private GearFeatures() {}

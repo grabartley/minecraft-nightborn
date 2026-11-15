@@ -6,6 +6,7 @@ import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.damage.DamageTypes;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 
 public final class Staking {
@@ -14,14 +15,10 @@ public final class Staking {
 
   public static boolean isStakeBlow(final DamageSource source) {
     final ItemStack weapon = source.getWeaponStack();
-    return isStakeBlow(
-        source.isDirect()
-            && (source.isOf(DamageTypes.PLAYER_ATTACK) || source.isOf(DamageTypes.MOB_ATTACK)),
-        weapon != null && weapon.isIn(VampireBane.STAKES));
-  }
-
-  public static boolean isStakeBlow(final boolean melee, final boolean stakeInHand) {
-    return melee && stakeInHand;
+    return source.isDirect()
+        && (source.isOf(DamageTypes.PLAYER_ATTACK) || source.isOf(DamageTypes.MOB_ATTACK))
+        && weapon != null
+        && weapon.isIn(VampireBane.STAKES);
   }
 
   public static boolean finishesVampire(final DamageSource source) {
@@ -36,7 +33,7 @@ public final class Staking {
     final Entity hunter = blow.getAttacker();
     vampire.damage(NightbornDamage.stake(vampire.getWorld(), hunter), Float.MAX_VALUE);
     final ItemStack weapon = blow.getWeaponStack();
-    if (weapon != null && hunter instanceof LivingEntity wielder) {
+    if (weapon != null && hunter instanceof PlayerEntity wielder) {
       weapon.damage(1, wielder, EquipmentSlot.MAINHAND);
     }
   }

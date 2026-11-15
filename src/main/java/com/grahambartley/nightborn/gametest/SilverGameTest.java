@@ -7,9 +7,8 @@ import java.util.List;
 import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.damage.DamageSource;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.mob.ZombieEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -21,6 +20,7 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.test.GameTest;
 import net.minecraft.test.TestContext;
+import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.gen.feature.PlacedFeature;
 
@@ -29,30 +29,28 @@ public class SilverGameTest implements FabricGameTest {
   static final String ARENA = "nightborn:vampire_arena";
 
   @GameTest(templateName = ARENA, tickLimit = TestPlayers.READY + 20)
-  public void stakesAndSilverHitVampiresHarderThanHumans(final TestContext context) {
+  public void aMobSwingingSilverOrAStakeHitsVampiresHarder(final TestContext context) {
+    final List<Item> weapons =
+        List.of(
+            GearItems.WOODEN_STAKE,
+            GearItems.SILVER_SWORD,
+            GearItems.SILVER_AXE,
+            GearItems.SILVER_STAKE,
+            Items.IRON_SWORD);
+    final List<Float> bonus = List.of(4.0F, 4.0F, 4.0F, 8.0F, 0.0F);
     final ServerPlayerEntity human = TestPlayers.human(context, new BlockPos(2, 2, 4));
-    final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(4, 2, 4));
+    final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(6, 2, 4));
+    final ZombieEntity attacker = context.spawnEntity(EntityType.ZOMBIE, new BlockPos(4, 2, 4));
+    attacker.setAiDisabled(true);
     context.runAtTick(
         TestPlayers.READY,
         () -> {
-          final ServerWorld world = context.getWorld();
-          final DamageSource source = world.getDamageSources().generic();
-          final List<Item> weapons =
-              List.of(
-                  GearItems.WOODEN_STAKE,
-                  GearItems.SILVER_SWORD,
-                  GearItems.SILVER_AXE,
-                  GearItems.SILVER_STAKE,
-                  Items.IRON_SWORD);
-          final List<Float> bonus = List.of(4.0F, 4.0F, 4.0F, 8.0F, 0.0F);
           for (int i = 0; i < weapons.size(); i++) {
-            final ItemStack stack = new ItemStack(weapons.get(i));
+            attacker.setStackInHand(Hand.MAIN_HAND, new ItemStack(weapons.get(i)));
+            final float vampireLoss = swing(attacker, vampire);
+            final float humanLoss = swing(attacker, human);
             context.assertEquals(
-                hit(world, stack, vampire, source),
-                5.0F + bonus.get(i),
-                weapons.get(i) + " on a vampire");
-            context.assertEquals(
-                hit(world, stack, human, source), 5.0F, weapons.get(i) + " on a human");
+                vampireLoss - humanLoss, bonus.get(i), weapons.get(i) + " bonus on a vampire");
           }
           TestPlayers.finish(context, human, vampire);
         });
@@ -117,11 +115,11 @@ public class SilverGameTest implements FabricGameTest {
         .orElse(ItemStack.EMPTY);
   }
 
-  private static float hit(
-      final ServerWorld world,
-      final ItemStack weapon,
-      final LivingEntity target,
-      final DamageSource source) {
-    return EnchantmentHelper.getDamage(world, weapon, target, source, 5.0F);
+  private static float swing(final ZombieEntity attacker, final ServerPlayerEntity target) {
+    target.setHealth(target.getMaxHealth());
+    target.timeUntilRegen = 0;
+    final float before = target.getHealth();
+    attacker.tryAttack(target);
+    return before - target.getHealth();
   }
 }

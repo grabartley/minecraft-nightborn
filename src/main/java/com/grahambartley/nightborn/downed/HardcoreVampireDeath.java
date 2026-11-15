@@ -22,7 +22,7 @@ public final class HardcoreVampireDeath {
 
   private HardcoreVampireDeath() {}
 
-  public static final Identifier RESET_PHASE = Identifier.of(Nightborn.MOD_ID, "hardcore_reset");
+  private static final Identifier RESET_PHASE = Identifier.of(Nightborn.MOD_ID, "hardcore_reset");
 
   public static void register() {
     ServerLivingEntityEvents.AFTER_DEATH.addPhaseOrdering(Event.DEFAULT_PHASE, RESET_PHASE);

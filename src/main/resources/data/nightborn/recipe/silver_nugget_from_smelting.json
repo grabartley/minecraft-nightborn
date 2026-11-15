@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:smelting",
+  "category": "misc",
+  "cookingtime": 200,
+  "experience": 0.1,
+  "ingredient": [
+    {
+      "item": "nightborn:silver_sword"
+    },
+    {
+      "item": "nightborn:silver_axe"
+    },
+    {
+      "item": "nightborn:silver_stake"
+    }
+  ],
+  "result": {
+    "id": "nightborn:silver_nugget"
+  }
+}

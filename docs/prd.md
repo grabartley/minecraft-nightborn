@@ -127,7 +127,7 @@ This document specifies the Nightborn alpha line for Minecraft 1.21.1 on Fabric.
 | Crucifix shape | A cross of crucifix-material blocks built in the world (see below) |
 | Downed | A vampire brought to its last health by anything but direct sun or a stake. It lies helpless and greatly weakened until it recovers |
 | Escaping | The minute after a downed vampire gets up, when only direct sun and a stake can hurt it and it stays weakened, so it can get away |
-| Staked | Killed by a stake: a wooden stake or stake bolt hitting a downed vampire, or striking the blow that would bring a vampire down |
+| Staked | Killed by a stake: a wooden or silver-tipped stake, or a stake bolt, hitting a downed vampire, or striking the blow that would bring a vampire down |
 | Coffin | A block that is a vampire's bed and respawn point |
 | Thrall | A villager a Noble vampire has bound to follow and fight for them |
 | Ghostly familiar | A spirit an Occult vampire summons to fight and do tasks |
