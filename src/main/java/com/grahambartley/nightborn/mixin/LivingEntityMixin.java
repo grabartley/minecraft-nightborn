@@ -1,12 +1,17 @@
 package com.grahambartley.nightborn.mixin;
 
+import com.grahambartley.nightborn.coffin.CoffinSleepers;
 import com.grahambartley.nightborn.vampire.VampireTicker;
 import com.grahambartley.nightborn.vampire.Vampires;
+import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.mob.PhantomEntity;
+import net.minecraft.util.math.BlockPos;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Constant;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyConstant;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
@@ -30,5 +35,13 @@ abstract class LivingEntityMixin {
     if ((Object) this instanceof PhantomEntity && Vampires.isVampire(target)) {
       cir.setReturnValue(false);
     }
+  }
+
+  @ModifyConstant(method = "setPositionInBed", constant = @Constant(doubleValue = 0.6875))
+  private double nightborn$lieInsideTheCoffin(
+      final double height, @Local(argsOnly = true) final BlockPos pos) {
+    return CoffinSleepers.isCoffin(((LivingEntity) (Object) this).getWorld(), pos)
+        ? CoffinSleepers.LYING_HEIGHT
+        : height;
   }
 }
