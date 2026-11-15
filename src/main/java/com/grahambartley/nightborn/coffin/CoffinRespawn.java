@@ -21,6 +21,7 @@ public final class CoffinRespawn {
     if (pos != null
         && world != null
         && !holds(
+            player.isSpawnForced(),
             CoffinSleepers.isCoffin(world, pos),
             CoffinOwnership.owner(world, pos),
             player.getUuid())) {
@@ -45,8 +46,9 @@ public final class CoffinRespawn {
     }
   }
 
-  static boolean holds(final boolean coffin, final Optional<UUID> owner, final UUID player) {
-    return !coffin || CoffinRest.of(owner, player) == CoffinRest.RETURN;
+  static boolean holds(
+      final boolean forced, final boolean coffin, final Optional<UUID> owner, final UUID player) {
+    return forced || !coffin || CoffinRest.of(owner, player) == CoffinRest.RETURN;
   }
 
   static boolean pointsAt(

@@ -23,18 +23,25 @@ class CoffinRespawnTest {
 
   static Stream<Arguments> respawns() {
     return Stream.of(
-        Arguments.of("a respawn point that is not a coffin", false, Optional.empty(), true),
-        Arguments.of("the player's own coffin", true, Optional.of(PLAYER), true),
-        Arguments.of("an unassigned coffin", true, Optional.empty(), false),
-        Arguments.of("another vampire's coffin", true, Optional.of(OTHER), false));
+        Arguments.of("a respawn point that is not a coffin", false, false, Optional.empty(), true),
+        Arguments.of("the player's own coffin", false, true, Optional.of(PLAYER), true),
+        Arguments.of("an unassigned coffin", false, true, Optional.empty(), false),
+        Arguments.of("another vampire's coffin", false, true, Optional.of(OTHER), false),
+        Arguments.of(
+            "an operator's spawnpoint on another's coffin", true, true, Optional.of(OTHER), true));
   }
 
-  @ParameterizedTest(name = "{0}: kept {3}")
+  @ParameterizedTest(name = "{0}: kept {4}")
   @MethodSource("respawns")
-  @DisplayName("a coffin is a respawn point only for its owner, and other respawn points stand")
+  @DisplayName(
+      "a coffin is a respawn point only for its owner, and other or operator-set respawn points stand")
   void keepsARespawnOnlyInYourOwnCoffin(
-      final String name, final boolean coffin, final Optional<UUID> owner, final boolean kept) {
-    assertEquals(kept, CoffinRespawn.holds(coffin, owner, PLAYER));
+      final String name,
+      final boolean forced,
+      final boolean coffin,
+      final Optional<UUID> owner,
+      final boolean kept) {
+    assertEquals(kept, CoffinRespawn.holds(forced, coffin, owner, PLAYER));
   }
 
   static Stream<Arguments> points() {

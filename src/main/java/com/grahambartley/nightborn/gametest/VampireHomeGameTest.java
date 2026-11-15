@@ -11,6 +11,7 @@ import com.grahambartley.nightborn.mob.VampireEntity;
 import com.grahambartley.nightborn.mob.goal.WatchStrangerGoal;
 import com.grahambartley.nightborn.mob.home.HomeCoffins;
 import com.grahambartley.nightborn.server.ServerConfigService;
+import com.grahambartley.nightborn.vampire.NightbornDamage;
 import com.grahambartley.nightborn.weakened.Weakened;
 import java.util.UUID;
 import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
@@ -44,6 +45,7 @@ public class VampireHomeGameTest implements FabricGameTest {
   static final int UNLOADED = 20000;
   static final int HUNGRY = 4;
   static final int CLAIM_WAIT = 110;
+  static final int DEATH_TICKS = 30;
   static final int FAR_AWAY = 200;
 
   private int outingChanceBefore;
@@ -447,6 +449,33 @@ public class VampireHomeGameTest implements FabricGameTest {
           vampire.remove(Entity.RemovalReason.KILLED);
           context.assertTrue(ownerOf(context, head) == null, "its death frees the coffin");
           context.complete();
+        });
+  }
+
+  @GameTest(templateName = ARENA, tickLimit = CLAIM_WAIT + DEATH_TICKS + 10)
+  public void aStrangerCannotBreakALivingVampiresCoffin(final TestContext context) {
+    final BlockPos head = CoffinStage.coffin(context, new BlockPos(4, 2, 1), Direction.SOUTH);
+    final VampireEntity vampire = household(context, new BlockPos(4, 2, 5), head);
+    final ServerPlayerEntity stranger = TestPlayers.human(context, new BlockPos(2, 2, 3));
+    context.runAtTick(
+        CLAIM_WAIT,
+        () -> {
+          context.assertEquals(ownerOf(context, head), vampire.getUuid(), "the vampire owns it");
+          context.assertFalse(
+              stranger.interactionManager.tryBreakBlock(context.getAbsolutePos(head)),
+              "a survival stranger cannot break it while the vampire lives");
+          context.expectBlock(CoffinStage.wood(), head);
+          vampire.damage(NightbornDamage.sun(context.getWorld()), Float.MAX_VALUE);
+          context.assertTrue(vampire.isDead(), "the sun kills the vampire");
+        });
+    context.runAtTick(
+        CLAIM_WAIT + DEATH_TICKS,
+        () -> {
+          context.assertTrue(ownerOf(context, head) == null, "its death to the sun frees it");
+          context.assertTrue(
+              stranger.interactionManager.tryBreakBlock(context.getAbsolutePos(head)),
+              "then anyone can break it");
+          TestPlayers.finish(context, stranger);
         });
   }
 
