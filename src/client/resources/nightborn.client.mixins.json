@@ -3,6 +3,8 @@
 	"package": "com.grahambartley.nightborn.mixin.client",
 	"compatibilityLevel": "JAVA_21",
 	"client": [
+		"CameraMixin",
+		"EntityRendererMixin",
 		"InGameHudMixin"
 	],
 	"injectors": {

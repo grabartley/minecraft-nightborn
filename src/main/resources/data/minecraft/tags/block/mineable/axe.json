@@ -1,11 +1,17 @@
 {
   "replace": false,
   "values": [
+    "nightborn:cherry_coffin",
+    "nightborn:crimson_coffin",
+    "nightborn:dark_oak_coffin",
     "nightborn:ebony_fence",
     "nightborn:ebony_planks",
     "nightborn:ebony_slab",
     "nightborn:ebony_stairs",
+    "nightborn:mangrove_coffin",
+    "nightborn:oak_coffin",
     "nightborn:ornate_chair",
-    "nightborn:ornate_table"
+    "nightborn:ornate_table",
+    "nightborn:spruce_coffin"
   ]
 }

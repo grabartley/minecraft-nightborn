@@ -1,11 +1,14 @@
 package com.grahambartley.nightborn.mixin;
 
+import com.grahambartley.nightborn.coffin.CoffinSleepers;
+import com.grahambartley.nightborn.coffin.RestRules;
 import com.grahambartley.nightborn.core.VampireCore;
 import com.grahambartley.nightborn.hunter.HunterAttributes;
 import com.grahambartley.nightborn.server.ServerConfigService;
 import com.grahambartley.nightborn.sickness.BiteSickness;
 import com.grahambartley.nightborn.vampire.Vampires;
 import com.grahambartley.nightborn.vampire.VisibleStateAttachment;
+import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
 import net.minecraft.component.type.FoodComponent;
 import net.minecraft.entity.Entity;
@@ -77,5 +80,17 @@ abstract class PlayerEntityMixin {
                   "Lnet/minecraft/entity/player/PlayerEntity;incrementStat(Lnet/minecraft/util/Identifier;)V"))
   private boolean nightborn$vampiresNeverTire(final PlayerEntity player, final Identifier stat) {
     return stat != Stats.TIME_SINCE_REST || !Vampires.isVampire(player);
+  }
+
+  @ModifyExpressionValue(
+      method = "tick",
+      at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;isDay()Z"))
+  private boolean nightborn$coffinSleepersRiseAtDusk(final boolean day) {
+    final PlayerEntity self = (PlayerEntity) (Object) this;
+    return RestRules.wrongTime(
+        CoffinSleepers.inCoffin(self),
+        day,
+        self.getWorld().getDimension().hasFixedTime(),
+        self.getWorld().getTimeOfDay());
   }
 }

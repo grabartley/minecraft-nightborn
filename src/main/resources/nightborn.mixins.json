@@ -8,7 +8,8 @@
 		"MapStateMixin",
 		"PhantomSpawnerMixin",
 		"PlayerEntityMixin",
-		"ServerPlayerEntityMixin"
+		"ServerPlayerEntityMixin",
+		"SleepManagerMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1

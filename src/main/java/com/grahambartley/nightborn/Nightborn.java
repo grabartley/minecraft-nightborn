@@ -1,5 +1,6 @@
 package com.grahambartley.nightborn;
 
+import com.grahambartley.nightborn.coffin.Coffins;
 import com.grahambartley.nightborn.decor.DecorBlockEntities;
 import com.grahambartley.nightborn.decor.DecorBlocks;
 import com.grahambartley.nightborn.decor.DecorEntities;
@@ -21,6 +22,7 @@ public class Nightborn implements ModInitializer {
     FactionAttachment.register();
     DecorBlocks.initialize();
     DecorBlockEntities.initialize();
+    Coffins.initialize();
     DecorEntities.initialize();
     DecorItemGroup.initialize();
     VampireFeatures.register();

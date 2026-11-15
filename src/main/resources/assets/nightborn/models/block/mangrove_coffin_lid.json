@@ -1,0 +1,8 @@
+{
+  "parent": "nightborn:block/template_coffin_lid",
+  "textures": {
+    "0": "minecraft:block/mangrove_planks",
+    "1": "minecraft:block/raw_gold_block",
+    "particle": "minecraft:block/mangrove_planks"
+  }
+}

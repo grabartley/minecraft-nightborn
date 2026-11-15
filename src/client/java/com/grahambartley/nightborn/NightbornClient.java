@@ -2,10 +2,13 @@ package com.grahambartley.nightborn;
 
 import com.grahambartley.nightborn.client.VampireClientFeatures;
 import com.grahambartley.nightborn.client.state.ClientStateService;
+import com.grahambartley.nightborn.coffin.Coffins;
 import com.grahambartley.nightborn.decor.AnimatedFurniture;
 import com.grahambartley.nightborn.decor.DecorBlockEntities;
 import com.grahambartley.nightborn.decor.DecorBlocks;
 import com.grahambartley.nightborn.decor.DecorEntities;
+import com.grahambartley.nightborn.render.CoffinBlockEntityRenderer;
+import com.grahambartley.nightborn.render.CoffinModels;
 import com.grahambartley.nightborn.render.FurnitureBlockRenderer;
 import com.grahambartley.nightborn.render.FurnitureItemRenderer;
 import net.fabricmc.api.ClientModInitializer;
@@ -24,6 +27,8 @@ public class NightbornClient implements ClientModInitializer {
     ClientStateService.load(FabricLoader.getInstance().getConfigDir());
     BlockEntityRendererFactories.register(
         DecorBlockEntities.FURNITURE, FurnitureBlockRenderer::new);
+    BlockEntityRendererFactories.register(Coffins.BLOCK_ENTITY, CoffinBlockEntityRenderer::new);
+    CoffinModels.register();
     DecorBlocks.all().stream()
         .filter(AnimatedFurniture.class::isInstance)
         .forEach(

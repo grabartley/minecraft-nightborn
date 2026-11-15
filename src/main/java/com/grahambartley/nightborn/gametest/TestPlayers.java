@@ -3,6 +3,7 @@ package com.grahambartley.nightborn.gametest;
 import com.grahambartley.nightborn.vampire.VampireTransitions;
 import com.mojang.authlib.GameProfile;
 import io.netty.channel.embedded.EmbeddedChannel;
+import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 import net.minecraft.network.ClientConnection;
@@ -57,6 +58,11 @@ final class TestPlayers {
     for (final ServerPlayerEntity player : players) {
       context.getWorld().getServer().getPlayerManager().remove(player);
     }
+  }
+
+  static void disconnectEveryone(final MinecraftServer server) {
+    List.copyOf(server.getPlayerManager().getPlayerList())
+        .forEach(server.getPlayerManager()::remove);
   }
 
   static void finish(final TestContext context, final ServerPlayerEntity... players) {

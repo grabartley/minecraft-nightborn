@@ -72,6 +72,7 @@ class NightbornConfigTest {
             "feeding",
             "blood",
             "sun",
+            "coffins",
             "downed",
             "core",
             "weakened",

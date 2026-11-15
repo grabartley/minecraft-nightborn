@@ -1,0 +1,90 @@
+{
+  "parent": "nightborn:block/template_coffin_item",
+  "display": {
+    "thirdperson_righthand": {
+      "rotation": [
+        30,
+        340,
+        0
+      ],
+      "translation": [
+        -0.63,
+        1.54,
+        -0.85
+      ],
+      "scale": [
+        0.23,
+        0.23,
+        0.23
+      ]
+    },
+    "firstperson_righthand": {
+      "rotation": [
+        30,
+        340,
+        0
+      ],
+      "translation": [
+        -1.03,
+        0.62,
+        1.88
+      ],
+      "scale": [
+        0.375,
+        0.375,
+        0.375
+      ]
+    },
+    "gui": {
+      "rotation": [
+        30,
+        340,
+        0
+      ],
+      "translation": [
+        0.54,
+        -0.39,
+        2.67
+      ],
+      "scale": [
+        0.5325,
+        0.5325,
+        0.5325
+      ]
+    },
+    "ground": {
+      "rotation": [
+        0,
+        180,
+        0
+      ],
+      "translation": [
+        0.0,
+        0.25,
+        0.0
+      ],
+      "scale": [
+        0.25,
+        0.25,
+        0.25
+      ]
+    },
+    "fixed": {
+      "rotation": [
+        270,
+        180,
+        0
+      ],
+      "translation": [
+        0.0,
+        0.0,
+        -0.5
+      ],
+      "scale": [
+        0.5,
+        0.5,
+        0.5
+      ]
+    }
+  }
+}

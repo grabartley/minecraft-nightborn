@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "decorations",
+  "group": "coffin",
+  "pattern": [
+    "PNP",
+    "PWP",
+    "PPP"
+  ],
+  "key": {
+    "P": {
+      "item": "minecraft:cherry_planks"
+    },
+    "N": {
+      "item": "minecraft:gold_nugget"
+    },
+    "W": {
+      "item": "minecraft:red_wool"
+    }
+  },
+  "result": {
+    "id": "nightborn:cherry_coffin",
+    "count": 1
+  }
+}

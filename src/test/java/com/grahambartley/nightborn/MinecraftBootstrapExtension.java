@@ -1,5 +1,6 @@
 package com.grahambartley.nightborn;
 
+import com.grahambartley.nightborn.coffin.Coffins;
 import com.grahambartley.nightborn.decor.DecorBlockEntities;
 import com.grahambartley.nightborn.decor.DecorBlocks;
 import com.grahambartley.nightborn.decor.DecorEntities;
@@ -23,6 +24,7 @@ public final class MinecraftBootstrapExtension implements BeforeAllCallback {
     Bootstrap.initialize();
     DecorBlocks.initialize();
     DecorBlockEntities.initialize();
+    Coffins.initialize();
     DecorEntities.initialize();
     HunterAttributes.register();
   }
