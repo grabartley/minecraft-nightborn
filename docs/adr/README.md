@@ -9,3 +9,4 @@ Shared engineering standards across all the mods in this family live in [`../sta
 | Record | Decision |
 |---|---|
 | [0001](0001-a-linter-forbids-comments-rather-than-a-formatter-stripping-them.md) | A linter forbids comments rather than a formatter stripping them |
+| [0002](0002-player-state-lives-in-fabric-attachments.md) | Player state lives in Fabric attachments |

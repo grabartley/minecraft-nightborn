@@ -1,5 +1,6 @@
 package com.grahambartley.nightborn;
 
+import com.grahambartley.nightborn.faction.FactionAttachment;
 import net.fabricmc.api.ModInitializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,6 +12,7 @@ public class Nightborn implements ModInitializer {
 
   @Override
   public void onInitialize() {
+    FactionAttachment.register();
     LOGGER.info("Nightborn initialised");
   }
 }

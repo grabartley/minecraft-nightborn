@@ -701,7 +701,7 @@ There is no singleplayer mode in this mod. A single-player world is an integrate
 
 | ID | Requirement |
 |---|---|
-| COMPAT-1 | Minecraft 1.21.1, Java 21, Fabric Loader 0.16.5 or later, Fabric API 0.107.0+1.21.1 or later |
+| COMPAT-1 | Minecraft 1.21.1, Java 21, Fabric Loader 0.16.5 or later, Fabric API 0.116.12+1.21.1 or later |
 | COMPAT-2 | Mod Menu, JEI and EMI are optional. Without them, the mod works fully |
 | COMPAT-3 | Nightborn needs no other mod in the family |
 | COMPAT-4 | Vanilla undead behave as they do without the mod, except CORE-9, and beds and night sleeping work as normal for humans |
