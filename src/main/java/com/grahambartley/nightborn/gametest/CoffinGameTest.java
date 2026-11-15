@@ -499,7 +499,7 @@ public class CoffinGameTest implements FabricGameTest {
         });
   }
 
-  private static void roof(final TestContext context) {
+  static void roof(final TestContext context) {
     for (int x = 0; x <= 8; x++) {
       for (int z = 0; z <= 8; z++) {
         context.setBlockState(new BlockPos(x, 4, z), Blocks.STONE);
@@ -507,8 +507,7 @@ public class CoffinGameTest implements FabricGameTest {
     }
   }
 
-  private static BlockPos coffin(
-      final TestContext context, final BlockPos foot, final Direction facing) {
+  static BlockPos coffin(final TestContext context, final BlockPos foot, final Direction facing) {
     return pair(context, Coffins.get(CoffinWood.DARK_OAK), foot, facing);
   }
 
@@ -527,7 +526,7 @@ public class CoffinGameTest implements FabricGameTest {
     return head;
   }
 
-  private static void pin(final ServerWorld world, final int time, final boolean cycle) {
+  static void pin(final ServerWorld world, final int time, final boolean cycle) {
     timeBefore = world.getTimeOfDay();
     cycleBefore = world.getGameRules().getBoolean(GameRules.DO_DAYLIGHT_CYCLE);
     world.getGameRules().get(GameRules.DO_DAYLIGHT_CYCLE).set(cycle, world.getServer());
@@ -535,7 +534,7 @@ public class CoffinGameTest implements FabricGameTest {
     world.setWeather(12000, 0, false, false);
   }
 
-  private static void release(final ServerWorld world) {
+  static void release(final ServerWorld world) {
     world.getGameRules().get(GameRules.DO_DAYLIGHT_CYCLE).set(cycleBefore, world.getServer());
     world.setTimeOfDay(timeBefore);
   }

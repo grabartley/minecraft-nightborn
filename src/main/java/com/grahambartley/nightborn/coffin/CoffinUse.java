@@ -6,9 +6,12 @@ public enum CoffinUse {
   REST;
 
   public static CoffinUse of(
-      final boolean occupied, final boolean sneaking, final boolean vampire) {
+      final boolean occupied,
+      final boolean sneaking,
+      final boolean emptyHanded,
+      final boolean vampire) {
     if (occupied) {
-      return REFUSE_OCCUPIED;
+      return sneaking && emptyHanded ? TOGGLE_LID : REFUSE_OCCUPIED;
     }
     return sneaking || !vampire ? TOGGLE_LID : REST;
   }

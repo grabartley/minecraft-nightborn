@@ -99,7 +99,10 @@ public class CoffinBlock extends BedBlock {
       return ActionResult.CONSUME;
     }
     switch (CoffinUse.of(
-        headState.get(OCCUPIED), player.isSneaking(), Vampires.isVampire(player))) {
+        headState.get(OCCUPIED),
+        player.isSneaking(),
+        player.getMainHandStack().isEmpty() && player.getOffHandStack().isEmpty(),
+        Vampires.isVampire(player))) {
       case REFUSE_OCCUPIED -> player.sendMessage(Text.translatable(RestRules.OCCUPIED), true);
       case TOGGLE_LID -> this.setLid(world, head, headState, !headState.get(OPEN), player);
       case REST ->
