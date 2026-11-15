@@ -9,7 +9,7 @@ public record SkillLayout(int left, int top, int width, int height, int branchWi
   static final int HEADER = 56;
   static final int POINTS_TOP = 20;
   static final int BANNER = 13;
-  static final int BANNER_PAD = 6;
+  static final int BANNER_PAD = 8;
   static final int BANNER_GAP = 3;
   static final int BANNER_TEXT_INSET = 3;
   static final int MIN_WIDTH = 200;
