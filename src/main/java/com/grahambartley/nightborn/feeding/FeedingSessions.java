@@ -106,17 +106,18 @@ public final class FeedingSessions {
         finish(vampire, victim, session, config);
         continue;
       }
-      if (!session.drinkDue(now)) {
-        continue;
-      }
-      final Feeder.Result result = Feeder.drink(world, vampire, victim, session, config);
-      if (result != Feeder.Result.CONTINUE) {
-        sessions.remove();
-        finish(vampire, victim, session, config);
-        if (result == Feeder.Result.RESISTED) {
-          SHAKEN_OFF_UNTIL.put(vampire.getUuid(), now + RESIST_COOLDOWN_TICKS);
+      if (session.drinkDue(now)) {
+        final Feeder.Result result = Feeder.drink(world, vampire, victim, session, config);
+        if (result != Feeder.Result.CONTINUE) {
+          sessions.remove();
+          finish(vampire, victim, session, config);
+          if (result == Feeder.Result.RESISTED) {
+            SHAKEN_OFF_UNTIL.put(vampire.getUuid(), now + RESIST_COOLDOWN_TICKS);
+          }
+          continue;
         }
       }
+      VictimHold.apply(victim, session.anchorAt(victim.getPos()));
     }
   }
 

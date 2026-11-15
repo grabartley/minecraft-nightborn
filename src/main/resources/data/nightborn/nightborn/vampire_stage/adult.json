@@ -1,0 +1,14 @@
+{
+  "rank": 1,
+  "weight": 35,
+  "skills": { "count": { "type": "minecraft:uniform", "min_inclusive": 1, "max_inclusive": 2 } },
+  "combat": {
+    "blood_floor": 6,
+    "think_ticks": 30,
+    "leap_chance": 30,
+    "dash_chance": 15,
+    "dodge_chance": 15,
+    "retreat_health": 25
+  },
+  "loot": "nightborn:entities/vampire/adult"
+}

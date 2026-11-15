@@ -36,4 +36,21 @@ class HouseholdTest {
   void validates(final String resident, final String residents, final boolean loads) {
     assertEquals(loads, loads(resident, residents));
   }
+
+  @ParameterizedTest(name = "{0}: {1}")
+  @CsvSource(
+      delimiter = '|',
+      value = {
+        "{} | true",
+        "{\"nightborn:ancient\": 3, \"nightborn:elder\": 7} | true",
+        "{\"nightborn:ancient\": 1001} | false",
+        "{\"nightborn:ancient\": -1} | false"
+      })
+  @DisplayName("a household may set its own odds for each vampire stage")
+  void stageOdds(final String stages, final boolean loads) {
+    final String json =
+        "{\"resident\": \"minecraft:zombie\", \"residents\": 2, \"stages\": " + stages + "}";
+    assertEquals(
+        loads, Household.CODEC.parse(JsonOps.INSTANCE, JsonParser.parseString(json)).isSuccess());
+  }
 }

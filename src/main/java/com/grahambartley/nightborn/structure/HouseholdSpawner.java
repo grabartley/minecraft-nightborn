@@ -38,7 +38,11 @@ public final class HouseholdSpawner {
         resident.refreshPositionAndAngles(
             spot.getX() + 0.5, spot.getY(), spot.getZ() + 0.5, random.nextFloat() * FULL_TURN, 0);
         if (resident instanceof MobEntity mob) {
-          mob.initialize(world, world.getLocalDifficulty(spot), SpawnReason.STRUCTURE, null);
+          mob.initialize(
+              world,
+              world.getLocalDifficulty(spot),
+              SpawnReason.STRUCTURE,
+              new HouseholdArrival(household.stages()));
           mob.setPersistent();
         }
         if (resident instanceof HouseholdMember member) {

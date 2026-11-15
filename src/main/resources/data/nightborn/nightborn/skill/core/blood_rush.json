@@ -12,6 +12,14 @@
       { "id": "minecraft:speed", "amplifier": 1, "duration": 160, "show_icon": true },
       { "id": "minecraft:strength", "amplifier": 0, "duration": 160, "show_icon": true }
     ],
-    "sound": "minecraft:entity.warden.heartbeat"
+    "sound": "minecraft:entity.warden.heartbeat",
+    "mob": {
+      "min_range": 4.0,
+      "max_range": 20.0,
+      "tell_ticks": 12,
+      "tell_sound": "minecraft:entity.warden.sonic_charge",
+      "tell_clip": "blood_rush_tell",
+      "clip": "blood_rush"
+    }
   }
 }

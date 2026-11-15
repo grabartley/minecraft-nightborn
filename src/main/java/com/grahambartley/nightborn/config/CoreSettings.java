@@ -15,7 +15,7 @@ public record CoreSettings(
       new IntSetting(SECTION, "nightJump", 20, 0, 100, c -> c.core().nightJump());
   public static final IntSetting LEVITATION_DRAIN_SECONDS =
       new IntSetting(
-          SECTION, "levitationDrainSeconds", 20, 1, 600, c -> c.core().levitationDrainSeconds());
+          SECTION, "levitationDrainSeconds", 120, 1, 600, c -> c.core().levitationDrainSeconds());
 
   public static final List<Setting<?>> SETTINGS =
       List.of(BARE_HAND_DAMAGE, NIGHT_SPEED, NIGHT_JUMP, LEVITATION_DRAIN_SECONDS);
