@@ -47,11 +47,19 @@ public final class Coatings {
   public static Optional<Coat> live(
       final ItemStack stack, final NightbornConfig config, final long now) {
     return of(stack)
-        .filter(coat -> coat.live(CoatingTerms.of(coat.coating(), config), now, stack.isIn(AMMO)));
+        .filter(coat -> coat.live(CoatingTerms.of(coat.coating(), config), now, isAmmo(stack)));
+  }
+
+  public static boolean isAmmo(final ItemStack stack) {
+    return stack.isIn(AMMO);
   }
 
   public static boolean isCoatedAmmo(final ItemStack stack) {
-    return stack.contains(COAT) && stack.isIn(AMMO);
+    return stack.contains(COAT) && isAmmo(stack);
+  }
+
+  public static boolean isCoatedWeapon(final ItemStack stack) {
+    return stack.contains(COAT) && stack.isIn(WEAPONS);
   }
 
   private static TagKey<Item> tag(final String path) {

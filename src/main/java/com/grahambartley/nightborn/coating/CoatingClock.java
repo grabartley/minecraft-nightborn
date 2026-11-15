@@ -27,7 +27,7 @@ public final class CoatingClock {
     for (int slot = 0; slot < inventory.size(); slot++) {
       final ItemStack stack = inventory.getStack(slot);
       final Coat coat = stack.get(Coatings.COAT);
-      if (coat == null || stack.isIn(Coatings.AMMO)) {
+      if (coat == null || Coatings.isAmmo(stack)) {
         continue;
       }
       coat.afterCheck(CoatingTerms.of(coat.coating(), ServerConfigService.current()), now)
@@ -39,7 +39,7 @@ public final class CoatingClock {
               },
               () -> {
                 stack.remove(Coatings.COAT);
-                CoatedStrikes.wearOff(player.getServerWorld(), player, coat.coating());
+                coat.coating().wearOff(player.getServerWorld(), player);
               });
     }
   }

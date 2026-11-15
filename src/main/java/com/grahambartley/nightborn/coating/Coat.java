@@ -67,10 +67,6 @@ public record Coat(Coating coating, int hitsUsed, long startedAt) {
     return ammo || !worn(terms, now);
   }
 
-  public float bonus(final CoatingTerms terms, final long now, final boolean ammo) {
-    return live(terms, now, ammo) ? terms.damage() : 0.0F;
-  }
-
   public Optional<Coat> afterStrike(final CoatingTerms terms, final long now) {
     return stillOn(startingAt(now).struck(), terms, now);
   }

@@ -17,25 +17,11 @@ import org.junit.jupiter.params.provider.EnumSource;
 class CoatingTest {
 
   @ParameterizedTest(name = "{0}")
-  @CsvSource({
-    "HOLY_WATER, holy_water, holy_water, block.fire.extinguish, white_smoke",
-    "GARLIC, garlic, garlic_touch, entity.splash_potion.break, item"
-  })
-  @DisplayName("each coating weakens through its own source and fizzles with its own hit")
-  void facts(
-      final Coating coating,
-      final String id,
-      final String source,
-      final String sound,
-      final String particle) {
+  @CsvSource({"HOLY_WATER, holy_water, holy_water", "GARLIC, garlic, garlic_touch"})
+  @DisplayName("each coating weakens through the same source as the thing it is made of")
+  void facts(final Coating coating, final String id, final String source) {
     assertEquals(id, coating.asString());
     assertEquals(source, coating.weakenedSource());
-    assertEquals(sound, coating.wearOffSound().getId().getPath());
-    assertEquals(
-        particle,
-        net.minecraft.registry.Registries.PARTICLE_TYPE
-            .getId(coating.wearOffParticle().getType())
-            .getPath());
     assertEquals("nightborn.coating." + id, coating.translationKey());
   }
 

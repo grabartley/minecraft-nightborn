@@ -30,21 +30,17 @@ public class CoatingGameTest implements FabricGameTest {
 
   @GameTest(templateName = ARENA, tickLimit = TestPlayers.READY + 20)
   public void aHolyWaterCoatedSwordHitsVampiresHarderUntilItWearsOff(final TestContext context) {
+    final CraftingRecipeInput grid =
+        CraftingRecipeInput.create(
+            2, 1, List.of(new ItemStack(Items.IRON_SWORD), HolyWater.bottle()));
     final ItemStack sword =
         context
             .getWorld()
             .getRecipeManager()
-            .getFirstMatch(
-                RecipeType.CRAFTING,
-                CraftingRecipeInput.create(
-                    2, 1, List.of(new ItemStack(Items.IRON_SWORD), HolyWater.bottle())),
-                context.getWorld())
+            .getFirstMatch(RecipeType.CRAFTING, grid, context.getWorld())
             .orElseThrow()
             .value()
-            .craft(
-                CraftingRecipeInput.create(
-                    2, 1, List.of(new ItemStack(Items.IRON_SWORD), HolyWater.bottle())),
-                context.getWorld().getRegistryManager());
+            .craft(grid, context.getWorld().getRegistryManager());
     context.assertTrue(
         sword.isOf(Items.IRON_SWORD) && Coatings.of(sword).isPresent(), "the recipe coats it");
     final ServerPlayerEntity human = TestPlayers.human(context, new BlockPos(2, 2, 4));

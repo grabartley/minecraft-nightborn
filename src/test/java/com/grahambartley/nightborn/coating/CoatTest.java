@@ -56,24 +56,17 @@ class CoatTest {
             .getOrThrow());
   }
 
-  @ParameterizedTest(name = "{0} used, started {1}, now {2}, ammo {3}: live {4}, bonus {5}")
+  @ParameterizedTest(name = "{0} used, started {1}, now {2}, ammo {3}: live {4}")
   @CsvSource({
-    "0, -1, 9000, false, true, 3.0",
-    "5, 100, 150, false, false, 0.0",
-    "0, 100, 300, false, false, 0.0",
-    "5, 100, 300, true, true, 3.0"
+    "0, -1, 9000, false, true",
+    "5, 100, 150, false, false",
+    "0, 100, 300, false, false",
+    "5, 100, 300, true, true"
   })
-  @DisplayName("a worn coat gives no bonus on a weapon, and ammo keeps its coat until fired")
-  void bonus(
-      final int used,
-      final long started,
-      final long now,
-      final boolean ammo,
-      final boolean live,
-      final float bonus) {
-    final Coat coat = new Coat(Coating.GARLIC, used, started);
-    assertEquals(live, coat.live(TERMS, now, ammo));
-    assertEquals(bonus, coat.bonus(TERMS, now, ammo));
+  @DisplayName("a worn coat is spent on a weapon, and ammo keeps its coat until fired")
+  void live(
+      final int used, final long started, final long now, final boolean ammo, final boolean live) {
+    assertEquals(live, new Coat(Coating.GARLIC, used, started).live(TERMS, now, ammo));
   }
 
   @ParameterizedTest(name = "{0} used, started {1}, strike at {2}: {3}")

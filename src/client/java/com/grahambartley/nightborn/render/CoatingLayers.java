@@ -5,7 +5,9 @@ import com.grahambartley.nightborn.coating.Coat;
 import com.grahambartley.nightborn.coating.Coating;
 import com.mojang.blaze3d.systems.RenderSystem;
 import java.util.EnumMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.RenderPhase;
@@ -48,6 +50,12 @@ public final class CoatingLayers extends RenderLayer {
         false,
         () -> {},
         () -> {});
+  }
+
+  public static List<RenderLayer> all() {
+    return Stream.of(ITEM, TRANSLUCENT, ENTITY)
+        .flatMap(layers -> layers.values().stream())
+        .toList();
   }
 
   public static VertexConsumer item(
