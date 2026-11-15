@@ -1,0 +1,29 @@
+{
+  "anvil_cost": 4,
+  "description": {
+    "translate": "enchantment.nightborn.nocturne"
+  },
+  "effects": {
+    "minecraft:tick": [
+      {
+        "effect": {
+          "type": "nightborn:night_sight"
+        }
+      }
+    ]
+  },
+  "max_cost": {
+    "base": 65,
+    "per_level_above_first": 0
+  },
+  "max_level": 1,
+  "min_cost": {
+    "base": 15,
+    "per_level_above_first": 0
+  },
+  "slots": [
+    "head"
+  ],
+  "supported_items": "#nightborn:enchantable/head_clothing",
+  "weight": 2
+}

@@ -4,6 +4,7 @@ import com.grahambartley.nightborn.ammo.AmmoEntities;
 import com.grahambartley.nightborn.client.VampireClientFeatures;
 import com.grahambartley.nightborn.client.fog.StructureFog;
 import com.grahambartley.nightborn.client.state.ClientStateService;
+import com.grahambartley.nightborn.clothing.ClothingRenderProviders;
 import com.grahambartley.nightborn.coffin.Coffins;
 import com.grahambartley.nightborn.decor.AnimatedFurniture;
 import com.grahambartley.nightborn.decor.DecorBlockEntities;
@@ -13,6 +14,8 @@ import com.grahambartley.nightborn.gear.GearBlocks;
 import com.grahambartley.nightborn.mob.NightbornMobs;
 import com.grahambartley.nightborn.render.AmmoModels;
 import com.grahambartley.nightborn.render.BoltEntityRenderer;
+import com.grahambartley.nightborn.render.ClothingColors;
+import com.grahambartley.nightborn.render.ClothingRenderProvider;
 import com.grahambartley.nightborn.render.CoffinBlockEntityRenderer;
 import com.grahambartley.nightborn.render.CoffinModels;
 import com.grahambartley.nightborn.render.FurnitureBlockRenderer;
@@ -60,6 +63,8 @@ public class NightbornClient implements ClientModInitializer {
     EntityRendererRegistry.register(AmmoEntities.BOLT, BoltEntityRenderer::new);
     EntityRendererRegistry.register(AmmoEntities.GARLIC_BOMB, FlyingItemEntityRenderer::new);
     AmmoModels.register();
+    ClothingRenderProviders.use(item -> new ClothingRenderProvider());
+    ClothingColors.register();
     VampireClientFeatures.register();
     StructureFog.register();
   }

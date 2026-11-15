@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "W": {
+      "tag": "minecraft:wool"
+    },
+    "M": {
+      "item": "minecraft:phantom_membrane"
+    }
+  },
+  "pattern": [
+    "WMW",
+    "WWW",
+    "W W"
+  ],
+  "result": {
+    "count": 1,
+    "id": "nightborn:high_collared_cape"
+  }
+}
