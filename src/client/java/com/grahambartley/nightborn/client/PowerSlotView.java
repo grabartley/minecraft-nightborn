@@ -19,6 +19,10 @@ public final class PowerSlotView {
     return Math.round(ICON * Math.max(0.0F, Math.min(1.0F, fraction)));
   }
 
+  public static int shadeTop(final float fraction) {
+    return ICON - shadedRows(fraction);
+  }
+
   public static String keyLabel(final String bound, final boolean unbound) {
     if (unbound) {
       return "";

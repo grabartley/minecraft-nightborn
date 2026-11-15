@@ -3,7 +3,12 @@ package com.grahambartley.nightborn.screen;
 public record SkillPointsRow(int iconX, int countX, int detailX, int width) {
 
   public static final int ICON = 16;
+  public static final int SIZED_FOR = 999;
   public static final int COUNT_SCALE = 2;
+  public static final int COUNT_TOP = 1;
+  public static final int DETAIL_TOP = 5;
+  static final int FONT_HEIGHT = 9;
+  public static final int HEIGHT = Math.max(ICON, COUNT_TOP + FONT_HEIGHT * COUNT_SCALE);
   static final int GAP = 4;
   static final int DETAIL_GAP = 10;
 
@@ -19,6 +24,6 @@ public record SkillPointsRow(int iconX, int countX, int detailX, int width) {
   public boolean overPoints(
       final int top, final double mouseX, final double mouseY, final int countTextWidth) {
     final int right = countX + countTextWidth * COUNT_SCALE;
-    return mouseX >= iconX && mouseX < right && mouseY >= top && mouseY < top + ICON;
+    return mouseX >= iconX && mouseX < right && mouseY >= top && mouseY < top + HEIGHT;
   }
 }

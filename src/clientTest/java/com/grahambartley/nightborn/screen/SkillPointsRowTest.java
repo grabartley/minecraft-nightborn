@@ -27,12 +27,22 @@ class SkillPointsRowTest {
     "118, 40, true",
     "124, 35, true",
     "99, 30, false",
-    "100, 46, false",
+    "100, 48, true",
+    "100, 49, false",
     "150, 35, false"
   })
   @DisplayName("hovering the graphic or the count names what the number means")
   void hover(final int mouseX, final int mouseY, final boolean over) {
     final SkillPointsRow row = new SkillPointsRow(100, 120, 140, 100);
     assertEquals(over, row.overPoints(30, mouseX, mouseY, 6));
+  }
+
+  @ParameterizedTest(name = "count scale {0}")
+  @CsvSource({"2"})
+  @DisplayName("the row is tall enough for the doubled count as well as the graphic")
+  void tallEnough(final int scale) {
+    assertEquals(scale, SkillPointsRow.COUNT_SCALE);
+    assertTrue(SkillPointsRow.HEIGHT >= SkillPointsRow.ICON);
+    assertTrue(SkillPointsRow.HEIGHT >= SkillPointsRow.COUNT_TOP + 9 * scale);
   }
 }

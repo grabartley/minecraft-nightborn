@@ -92,17 +92,17 @@ public final class PowerBarHud {
     context.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
     final float shade = PowerCooldowns.fraction(ticksLeft, power.cooldownTicks());
     if (shade > 0.0F) {
-      final int rows = PowerSlotView.shadedRows(shade);
+      final int top = PowerSlotView.shadeTop(shade);
       context.drawGuiTexture(
           COOLDOWN,
           PowerSlotView.ICON,
           PowerSlotView.ICON,
           0,
-          PowerSlotView.ICON - rows,
+          top,
           at.x() + inset,
-          at.y() + inset + PowerSlotView.ICON - rows,
+          at.y() + inset + top,
           PowerSlotView.ICON,
-          rows);
+          PowerSlotView.ICON - top);
       final String seconds = Long.toString(PowerSlotView.seconds(ticksLeft));
       context.drawCenteredTextWithShadow(
           client.textRenderer, seconds, at.x() + size / 2, at.y() + inset + 4, READY_COLOUR);

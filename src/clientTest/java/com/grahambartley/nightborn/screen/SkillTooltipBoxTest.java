@@ -3,6 +3,8 @@ package com.grahambartley.nightborn.screen;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.Collections;
+import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -26,7 +28,8 @@ class SkillTooltipBoxTest {
       final int width,
       final int height) {
     final SkillTooltipBox box =
-        SkillTooltipBox.around(mouseX, mouseY, contentWidth, lines, width, height);
+        SkillTooltipBox.around(
+            mouseX, mouseY, Collections.nCopies(lines, contentWidth), width, height);
     assertTrue(box.x() >= 0 && box.x() + box.width() <= width, "x " + box);
     assertTrue(box.y() >= 0 && box.y() + box.height() <= height, "y " + box);
   }
@@ -35,7 +38,7 @@ class SkillTooltipBoxTest {
   @CsvSource({"20, true", "150, true", "250, false"})
   @DisplayName("the tooltip sits right of the cursor, and flips left when it would run off")
   void flips(final int mouseX, final boolean right) {
-    final SkillTooltipBox box = SkillTooltipBox.around(mouseX, 100, 80, 3, 320, 240);
+    final SkillTooltipBox box = SkillTooltipBox.around(mouseX, 100, List.of(40, 80, 60), 320, 240);
     assertEquals(right, box.x() > mouseX, box.toString());
     assertTrue(box.x() > mouseX || box.x() + box.width() < mouseX, "never under the cursor");
   }
@@ -45,8 +48,18 @@ class SkillTooltipBoxTest {
   @DisplayName("the box is tall enough for every line, with a gap under the title")
   void height(final int lines, final int content) {
     assertEquals(content, SkillTooltipBox.contentHeight(lines));
-    final SkillTooltipBox box = SkillTooltipBox.around(50, 50, 40, lines, 320, 240);
+    final SkillTooltipBox box =
+        SkillTooltipBox.around(50, 50, Collections.nCopies(lines, 40), 320, 240);
     assertEquals(content + SkillTooltipBox.PAD * 2, box.height());
     assertTrue(box.lineY(lines - 1) + 9 <= box.y() + box.height() - SkillTooltipBox.PAD + 1);
+  }
+
+  @ParameterizedTest(name = "widths {0}, {1}, {2}")
+  @CsvSource({"40, 120, 60", "120, 40, 60", "60, 40, 120"})
+  @DisplayName("the box is as wide as the widest line, wherever it falls")
+  void widestLine(final int first, final int second, final int third) {
+    final SkillTooltipBox box =
+        SkillTooltipBox.around(10, 10, List.of(first, second, third), 320, 240);
+    assertEquals(120 + SkillTooltipBox.PAD * 2, box.width());
   }
 }

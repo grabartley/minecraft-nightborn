@@ -55,7 +55,15 @@ public final class SkillScreen extends Screen {
     shownTree = tree();
     theme = SkillTheme.of(shownTree);
     branches = SkillTreeView.branches(branchData, shownTree);
-    layout = SkillLayout.of(width, height, branches.size(), SkillTreeView.rows(nodes, branches));
+    final String most = Integer.toString(SkillPointsRow.SIZED_FOR);
+    final SkillPointsRow widest =
+        SkillPointsRow.centred(
+            0,
+            textRenderer.getWidth(most),
+            textRenderer.getWidth(Text.translatable("nightborn.skills.earned_spent", most, most)));
+    layout =
+        SkillLayout.of(
+            width, height, branches.size(), SkillTreeView.rows(nodes, branches), widest.width());
   }
 
   private SkillTree tree() {
@@ -106,7 +114,7 @@ public final class SkillScreen extends Screen {
         final SkillPurchase.Verdict verdict = verdict(id, progress);
         drawNode(context, x, y, skill, verdict);
         if (SkillLayout.contains(x, y, mouseX, mouseY)) {
-          tooltip = SkillTooltip.lines(id, skill, verdict, theme.accent());
+          tooltip = SkillTooltip.lines(id, skill, verdict, theme.title());
         }
       }
     }
@@ -131,12 +139,13 @@ public final class SkillScreen extends Screen {
     context.drawGuiTexture(
         theme.point(), row.iconX(), top, SkillPointsRow.ICON, SkillPointsRow.ICON);
     context.getMatrices().push();
-    context.getMatrices().translate(row.countX(), top + 1, 0.0F);
+    context.getMatrices().translate(row.countX(), top + SkillPointsRow.COUNT_TOP, 0.0F);
     context.getMatrices().scale(SkillPointsRow.COUNT_SCALE, SkillPointsRow.COUNT_SCALE, 1.0F);
     context.drawTextWithShadow(
         textRenderer, count, 0, 0, progress.free() > 0 ? theme.title() : theme.muted());
     context.getMatrices().pop();
-    context.drawTextWithShadow(textRenderer, detail, row.detailX(), top + 5, theme.muted());
+    context.drawTextWithShadow(
+        textRenderer, detail, row.detailX(), top + SkillPointsRow.DETAIL_TOP, theme.muted());
     if (row.overPoints(top, mouseX, mouseY, countWidth)) {
       return List.of(Text.translatable("nightborn.skills.free_points", progress.free()));
     }
@@ -162,7 +171,7 @@ public final class SkillScreen extends Screen {
         textRenderer,
         title,
         centre,
-        layout.bannerY() + 3,
+        layout.bannerTextY(),
         locked ? theme.muted() : chosen ? theme.title() : theme.text());
   }
 

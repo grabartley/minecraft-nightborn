@@ -21,16 +21,11 @@ public final class ThemedTooltip {
     if (lines.isEmpty()) {
       return;
     }
-    int widest = 0;
-    for (final Text line : lines) {
-      widest = Math.max(widest, textRenderer.getWidth(line));
-    }
     final SkillTooltipBox box =
         SkillTooltipBox.around(
             mouseX,
             mouseY,
-            widest,
-            lines.size(),
+            lines.stream().map(textRenderer::getWidth).toList(),
             context.getScaledWindowWidth(),
             context.getScaledWindowHeight());
     context.getMatrices().push();

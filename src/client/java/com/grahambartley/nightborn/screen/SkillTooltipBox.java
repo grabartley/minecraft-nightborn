@@ -1,5 +1,7 @@
 package com.grahambartley.nightborn.screen;
 
+import java.util.List;
+
 public record SkillTooltipBox(int x, int y, int width, int height) {
 
   static final int PAD = 6;
@@ -18,12 +20,12 @@ public record SkillTooltipBox(int x, int y, int width, int height) {
   public static SkillTooltipBox around(
       final int mouseX,
       final int mouseY,
-      final int contentWidth,
-      final int lines,
+      final List<Integer> lineWidths,
       final int screenWidth,
       final int screenHeight) {
+    final int contentWidth = lineWidths.stream().mapToInt(Integer::intValue).max().orElse(0);
     final int width = contentWidth + PAD * 2;
-    final int height = contentHeight(lines) + PAD * 2;
+    final int height = contentHeight(lineWidths.size()) + PAD * 2;
     int x = mouseX + CURSOR_GAP;
     if (x + width > screenWidth - EDGE) {
       x = mouseX - CURSOR_GAP - width;
