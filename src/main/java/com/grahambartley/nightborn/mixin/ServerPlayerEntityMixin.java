@@ -21,6 +21,7 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Unit;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
+import net.minecraft.world.TeleportTarget;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -101,6 +102,14 @@ abstract class ServerPlayerEntityMixin {
       final boolean forced,
       final boolean sendMessage) {
     return CoffinOwnership.rest(self, pos);
+  }
+
+  @Inject(method = "getRespawnTarget", at = @At("HEAD"))
+  private void nightborn$respawnOnlyInYourOwnCoffin(
+      final boolean alive,
+      final TeleportTarget.PostDimensionTransition postDimensionTransition,
+      final CallbackInfoReturnable<TeleportTarget> cir) {
+    CoffinOwnership.keepRespawnOnlyAtOwnCoffin((ServerPlayerEntity) (Object) this);
   }
 
   @Inject(method = "isBedObstructed", at = @At("HEAD"), cancellable = true)

@@ -2,6 +2,7 @@ package com.grahambartley.nightborn.mob.home;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.DisplayName;
@@ -26,7 +27,7 @@ class CoffinClaimTest {
   @MethodSource("kept")
   @DisplayName("a vampire keeps its coffin while it still stands and still records it")
   void keeps(final boolean head, final UUID owner, final boolean kept) {
-    assertEquals(kept, CoffinClaim.keeps(head, owner, ME));
+    assertEquals(kept, CoffinClaim.keeps(head, Optional.ofNullable(owner), ME));
   }
 
   static Stream<Arguments> claimable() {
@@ -41,6 +42,6 @@ class CoffinClaimTest {
   @MethodSource("claimable")
   @DisplayName("only a coffin no one owns can be claimed")
   void mayClaim(final boolean head, final UUID owner, final boolean claimable) {
-    assertEquals(claimable, CoffinClaim.mayClaim(head, owner));
+    assertEquals(claimable, CoffinClaim.mayClaim(head, Optional.ofNullable(owner), ME));
   }
 }

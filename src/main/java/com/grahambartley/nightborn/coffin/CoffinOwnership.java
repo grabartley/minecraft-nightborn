@@ -62,6 +62,17 @@ public final class CoffinOwnership {
         .ifPresent(owner -> forgetRespawn(world.getServer(), owner, coffin));
   }
 
+  public static void keepRespawnOnlyAtOwnCoffin(final ServerPlayerEntity player) {
+    final BlockPos pos = player.getSpawnPointPosition();
+    final ServerWorld world = player.server.getWorld(player.getSpawnPointDimension());
+    if (pos != null
+        && world != null
+        && head(world, pos).isPresent()
+        && CoffinRest.of(owner(world, pos), player.getUuid()) != CoffinRest.RETURN) {
+      player.setSpawnPoint(World.OVERWORLD, null, 0.0F, false, false);
+    }
+  }
+
   private static void forgetRespawn(
       final MinecraftServer server, final UUID owner, final GlobalPos coffin) {
     final ServerPlayerEntity player = server.getPlayerManager().getPlayer(owner);

@@ -1,5 +1,6 @@
 package com.grahambartley.nightborn.gametest;
 
+import com.grahambartley.nightborn.coffin.CoffinOwnersState;
 import com.grahambartley.nightborn.coffin.CoffinOwnership;
 import com.grahambartley.nightborn.coffin.CoffinRise;
 import com.grahambartley.nightborn.coffin.CoffinSleepers;
@@ -26,7 +27,9 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.GameMode;
+import net.minecraft.world.TeleportTarget;
 import net.minecraft.world.World;
+import net.minecraft.world.explosion.Explosion;
 
 public class CoffinOwnershipGameTest implements FabricGameTest {
 
@@ -188,7 +191,8 @@ public class CoffinOwnershipGameTest implements FabricGameTest {
   }
 
   @GameTest(templateName = CoffinStage.YARD, batchId = BATCH, tickLimit = TestPlayers.READY + 10)
-  public void explosionsAndWithersLeaveAnAssignedCoffinWhole(final TestContext context) {
+  public void explosionsLeaveAnAssignedCoffinOutOfTheBlastAndAWitherCannotBreakIt(
+      final TestContext context) {
     final BlockPos assigned = CoffinStage.coffin(context, new BlockPos(1, 2, 4), Direction.EAST);
     final BlockPos free = CoffinStage.coffin(context, new BlockPos(5, 2, 4), Direction.WEST);
     final BlockPos struck = CoffinStage.coffin(context, new BlockPos(3, 2, 7), Direction.EAST);
@@ -199,8 +203,16 @@ public class CoffinOwnershipGameTest implements FabricGameTest {
           claim(context, struck, UUID.randomUUID());
           final ServerWorld world = context.getWorld();
           final Vec3d center = context.getAbsolute(new Vec3d(3.5, 2.5, 4.5));
-          world.createExplosion(
-              null, center.x, center.y, center.z, BLAST_POWER, World.ExplosionSourceType.TNT);
+          final Explosion blast =
+              world.createExplosion(
+                  null, center.x, center.y, center.z, BLAST_POWER, World.ExplosionSourceType.TNT);
+          context.assertTrue(
+              blast.getAffectedBlocks().contains(context.getAbsolutePos(free)),
+              "the blast reaches the free coffin");
+          context.assertFalse(
+              blast.getAffectedBlocks().contains(context.getAbsolutePos(assigned))
+                  || blast.getAffectedBlocks().contains(context.getAbsolutePos(assigned.west())),
+              "the assigned coffin is left out of the blast every client replays");
           final CreeperEntity creeper =
               context.spawnEntity(EntityType.CREEPER, new BlockPos(3, 2, 2));
           world.createExplosion(
@@ -297,6 +309,29 @@ public class CoffinOwnershipGameTest implements FabricGameTest {
               respawned.getPos().isInRange(Vec3d.ofCenter(context.getAbsolutePos(heads[3])), 3.0),
               "the vampire respawns at its coffin: " + respawned.getPos());
           TestPlayers.finish(context, burned, staked, cured, respawned);
+        });
+  }
+
+  @GameTest(templateName = CoffinStage.YARD, batchId = BATCH, tickLimit = TestPlayers.READY + 10)
+  public void aRespawnPointInACoffinNoLongerYoursFallsBackToWorldSpawn(final TestContext context) {
+    final BlockPos head = CoffinStage.coffin(context, new BlockPos(4, 2, 6), Direction.EAST);
+    final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(4, 2, 4));
+    context.runAtTick(
+        TestPlayers.READY,
+        () -> {
+          context.useBlock(head, vampire);
+          CoffinRise.wakeAtOnce(vampire);
+          CoffinOwnersState.get(context.getWorld().getServer()).release(vampire.getUuid());
+          claim(context, head, UUID.randomUUID());
+          context.assertEquals(
+              vampire.getSpawnPointPosition(),
+              context.getAbsolutePos(head),
+              "the respawn point still names the coffin, as for an owner who was offline");
+          vampire.getRespawnTarget(true, TeleportTarget.NO_OP);
+          context.assertTrue(
+              vampire.getSpawnPointPosition() == null,
+              "a coffin owned by another is no respawn point");
+          TestPlayers.finish(context, vampire);
         });
   }
 

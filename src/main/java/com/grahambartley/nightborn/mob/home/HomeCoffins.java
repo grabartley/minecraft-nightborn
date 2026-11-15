@@ -28,8 +28,7 @@ public final class HomeCoffins {
       return Optional.empty();
     }
     return Optional.of(
-        CoffinClaim.keeps(
-            head(world, coffin), CoffinOwnership.ownerAt(world, coffin).orElse(null), vampire));
+        CoffinClaim.keeps(head(world, coffin), CoffinOwnership.ownerAt(world, coffin), vampire));
   }
 
   public static Optional<BlockPos> claim(
@@ -52,7 +51,8 @@ public final class HomeCoffins {
                     coffin ->
                         CoffinClaim.mayClaim(
                             head(world, coffin.getPos()),
-                            CoffinOwnership.ownerAt(world, coffin.getPos()).orElse(null)))
+                            CoffinOwnership.ownerAt(world, coffin.getPos()),
+                            vampire))
                 .min(
                     Comparator.comparingDouble(coffin -> coffin.getPos().getSquaredDistance(home)));
         if (nearest.isPresent()

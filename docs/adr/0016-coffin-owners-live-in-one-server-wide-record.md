@@ -12,14 +12,15 @@ One `PersistentState` on the overworld, `nightborn_coffin_owners`, maps each own
 
 - Claiming a coffin replaces the owner's previous entry, so a vampire never holds two, and a coffin that already has an owner is never taken.
 - Freeing by owner works with no chunk loaded. Freeing by position runs when the coffin's head is removed, from `onStateReplaced`, and only when the new state is not the same coffin.
-- When a player's coffin is freed while they are online and their respawn point is that coffin, the respawn point is cleared, so they respawn at world spawn.
+- When a player's coffin is freed while they are online and their respawn point is that coffin, the respawn point is cleared, so they respawn at world spawn. An owner who was offline when their coffin was freed is checked when they respawn: a respawn point in a coffin they do not own is cleared then.
 - The loader skips a damaged entry with a warning and keeps the rest.
 
-Protection reads the same record: player breaks through Fabric's block break event, explosions through `onExploded`, pistons by refusing a push that would destroy the coffin, and other entities through `World.breakBlock` and the dragon's block removal.
+Protection reads the same record: player breaks through Fabric's block break event, explosions by leaving the coffin out of the blast's block list, pistons by refusing a push that would destroy the coffin, and other entities through `World.breakBlock` and the dragon's block removal. The blast list is what every client replays, so a coffin kept out of it stays whole on every screen.
 
 ## Consequences
 
 - Freeing never depends on the coffin and its owner being loaded together.
 - The client does not know who owns a coffin. A stranger who mines one sees it break and come back, with a message, as with spawn protection.
 - A coffin removed without block callbacks, for example by a world editor, leaves its entry until its owner claims another coffin or is freed.
+- Pistons decide on each client too, and a client cannot see owners. A sticky piston pulling a slime chain into an owned coffin can show a broken coffin on that client until the chunk is sent again. The server keeps the coffin.
 - Accepted drawback: owners whose coffins were set on the block entity before this change lose that link. Household vampires claim a free coffin again on their next check, and players claim theirs by resting in it.

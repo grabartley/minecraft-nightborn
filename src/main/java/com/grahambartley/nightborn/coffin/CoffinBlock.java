@@ -2,7 +2,6 @@ package com.grahambartley.nightborn.coffin;
 
 import com.grahambartley.nightborn.vampire.Vampires;
 import com.mojang.serialization.MapCodec;
-import java.util.function.BiConsumer;
 import net.minecraft.block.BedBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -36,7 +35,6 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldAccess;
 import net.minecraft.world.WorldEvents;
 import net.minecraft.world.event.GameEvent;
-import net.minecraft.world.explosion.Explosion;
 
 public class CoffinBlock extends BedBlock {
 
@@ -132,18 +130,6 @@ public class CoffinBlock extends BedBlock {
       CoffinOwnership.releaseAt(server, pos);
     }
     super.onStateReplaced(state, world, pos, newState, moved);
-  }
-
-  @Override
-  protected void onExploded(
-      final BlockState state,
-      final World world,
-      final BlockPos pos,
-      final Explosion explosion,
-      final BiConsumer<ItemStack, BlockPos> stackMerger) {
-    if (!CoffinProtection.shields(world, pos, null)) {
-      super.onExploded(state, world, pos, explosion, stackMerger);
-    }
   }
 
   @Override
