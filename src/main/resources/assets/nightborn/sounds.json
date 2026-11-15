@@ -34,5 +34,14 @@
         "type": "event"
       }
     ]
+  },
+  "entity.vampire.retch": {
+    "subtitle": "subtitles.nightborn.entity.vampire.retch",
+    "sounds": [
+      {
+        "name": "minecraft:entity.player.hurt_drown",
+        "type": "event"
+      }
+    ]
   }
 }

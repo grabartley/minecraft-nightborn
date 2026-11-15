@@ -20,3 +20,4 @@ Shared engineering standards across all the mods in this family live in [`../sta
 | [0010](0010-coffins-are-vanilla-beds-drawn-with-vanilla-wood.md) | Coffins are vanilla beds drawn with vanilla wood |
 | [0011](0011-vampire-structures-share-one-structure-type.md) | Vampire structures share one structure type |
 | [0012](0012-wards-are-found-near-vampires-and-indexed-on-block-change.md) | Wards are found near vampires and indexed on block change |
+| [0013](0013-vampire-players-play-the-vampire-rigs-clips.md) | Vampire players play the vampire rig's clips |

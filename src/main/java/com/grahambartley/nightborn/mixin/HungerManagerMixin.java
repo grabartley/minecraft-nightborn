@@ -16,8 +16,7 @@ abstract class HungerManagerMixin {
   @Inject(method = "update", at = @At("HEAD"), cancellable = true)
   private void nightborn$liveOnBlood(final PlayerEntity player, final CallbackInfo ci) {
     if (Vampires.isVampire(player)) {
-      BloodTicker.tick(
-          player, (HungerManager) (Object) this, ServerConfigService.current().blood());
+      BloodTicker.tick(player, (HungerManager) (Object) this, ServerConfigService.current());
       ci.cancel();
     }
   }

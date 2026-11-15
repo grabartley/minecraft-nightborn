@@ -1,20 +1,24 @@
 package com.grahambartley.nightborn.blood;
 
-import com.grahambartley.nightborn.config.BloodSettings;
+import com.grahambartley.nightborn.config.NightbornConfig;
 import com.grahambartley.nightborn.downed.Downed;
 import com.grahambartley.nightborn.downed.DownedState;
+import com.grahambartley.nightborn.levitation.Levitation;
+import com.grahambartley.nightborn.weakened.Weakened;
 import net.minecraft.entity.player.HungerManager;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.world.Difficulty;
 import net.minecraft.world.GameRules;
 
 public final class BloodTicker {
 
   static final float PINNED_SATURATION = 5.0F;
+  static final int STARVING_SOURCE_TICKS = 2;
 
   private BloodTicker() {}
 
   public static void tick(
-      final PlayerEntity vampire, final HungerManager hunger, final BloodSettings settings) {
+      final PlayerEntity vampire, final HungerManager hunger, final NightbornConfig config) {
     final DownedState downed = Downed.state(vampire);
     final BloodMetabolism.Outcome outcome =
         BloodMetabolism.tick(
@@ -26,8 +30,10 @@ public final class BloodTicker {
                 vampire.getWorld().getDifficulty(),
                 vampire.getWorld().getGameRules().getBoolean(GameRules.NATURAL_REGENERATION)
                     && (downed == null || !downed.isDowned()),
+                Levitation.isLevitating(vampire),
                 vampire.age),
-            settings.restingDrainSeconds());
+            config.blood().restingDrainSeconds(),
+            config.core().levitationDrainSeconds());
     hunger.setExhaustion(outcome.exhaustion());
     hunger.setFoodLevel(BloodAttachment.FULL);
     hunger.setSaturationLevel(PINNED_SATURATION);
@@ -35,8 +41,22 @@ public final class BloodTicker {
     if (outcome.heals()) {
       vampire.heal(1.0F);
     }
-    if (outcome.starves()) {
-      vampire.damage(vampire.getDamageSources().starve(), 1.0F);
+    starve(vampire, outcome.blood(), config);
+  }
+
+  private static void starve(
+      final PlayerEntity vampire, final int blood, final NightbornConfig config) {
+    final Starvation.Outcome starving =
+        Starvation.tick(
+            StarvingAttachment.get(vampire),
+            blood,
+            vampire.getHealth(),
+            vampire.getWorld().getDifficulty() == Difficulty.PEACEFUL,
+            config.blood());
+    StarvingAttachment.set(vampire, starving.ticks());
+    Weakened.set(vampire, Starvation.SOURCE, starving.weakness(), STARVING_SOURCE_TICKS);
+    if (starving.hurt() > 0.0F) {
+      vampire.damage(vampire.getDamageSources().starve(), starving.hurt());
     }
   }
 }

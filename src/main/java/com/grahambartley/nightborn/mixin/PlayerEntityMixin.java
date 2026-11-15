@@ -2,6 +2,7 @@ package com.grahambartley.nightborn.mixin;
 
 import com.grahambartley.nightborn.coffin.CoffinSleepers;
 import com.grahambartley.nightborn.coffin.RestRules;
+import com.grahambartley.nightborn.config.NightbornConfig;
 import com.grahambartley.nightborn.core.VampireCore;
 import com.grahambartley.nightborn.hunter.HunterAttributes;
 import com.grahambartley.nightborn.server.ServerConfigService;
@@ -47,7 +48,8 @@ abstract class PlayerEntityMixin {
   private void nightborn$bareHandsMatchTheBlow(final Entity target, final CallbackInfo ci) {
     final PlayerEntity self = (PlayerEntity) (Object) this;
     if (!self.getWorld().isClient && Vampires.isVampire(self)) {
-      VampireCore.refreshBareHands(self, ServerConfigService.current().core());
+      final NightbornConfig config = ServerConfigService.current();
+      VampireCore.refreshBareHands(self, config.core(), config.blood());
     }
   }
 

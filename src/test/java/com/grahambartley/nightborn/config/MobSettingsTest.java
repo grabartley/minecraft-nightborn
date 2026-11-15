@@ -26,9 +26,18 @@ class MobSettingsTest {
   @CsvSource({"-20, 0", "0, 0", "55, 55", "100, 100", "180, 100"})
   @DisplayName("the constructor clamps every chance to a percentage")
   void clamps(final int given, final int kept) {
-    final MobSettings settings = new MobSettings(given, given, given);
+    final MobSettings settings = new MobSettings(given, given, given, 30, 15);
     assertEquals(kept, settings.vampireSpawnChance());
     assertEquals(kept, settings.vampireBatSpawnChance());
     assertEquals(kept, settings.batEscortChance());
+  }
+
+  @ParameterizedTest(name = "{0} seconds is kept as {1}")
+  @CsvSource({"-5, 0", "0, 0", "30, 30", "3600, 3600", "9000, 3600"})
+  @DisplayName("the constructor clamps the levitation timings, and 0 is allowed")
+  void clampsLevitation(final int given, final int kept) {
+    final MobSettings settings = new MobSettings(100, 100, 40, given, given);
+    assertEquals(kept, settings.vampireLevitateSeconds());
+    assertEquals(kept, settings.vampireLandSeconds());
   }
 }

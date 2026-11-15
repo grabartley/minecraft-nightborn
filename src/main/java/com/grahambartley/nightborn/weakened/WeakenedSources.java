@@ -63,6 +63,11 @@ public record WeakenedSources(Map<String, Source> sources) {
     return new WeakenedSources(updated);
   }
 
+  public int strength(final String id) {
+    final Source source = sources.get(id);
+    return source == null ? 0 : source.strength();
+  }
+
   public static int clampStrength(final long strength) {
     return (int) Math.max(0, Math.min(CAP, strength));
   }
