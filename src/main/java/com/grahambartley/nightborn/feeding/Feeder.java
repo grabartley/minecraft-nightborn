@@ -50,11 +50,10 @@ final class Feeder {
       victim.damage(bite, sip.drains() ? sip.take() + victim.getAbsorptionAmount() : sip.take());
       final float taken = Math.max(0.0F, before - Math.max(0.0F, victim.getHealth()));
       session.took(taken);
-      SkillEarning.fromBlood(
-          vampire,
-          BloodValue.worth(taken, session.quality().worthPercent(config), BloodValue.FRESH_PERCENT),
-          config.skills());
-      keep(vampire, session, taken, config);
+      final float worth =
+          BloodValue.worth(taken, session.quality().worthPercent(config), BloodValue.FRESH_PERCENT);
+      SkillEarning.fromBlood(vampire, worth, config.skills());
+      keep(vampire, session, taken, worth, config);
       world.playSound(
           null,
           vampire.getBlockPos(),
@@ -83,7 +82,13 @@ final class Feeder {
       final LivingEntity victim,
       final FeedingSession session,
       final NightbornConfig config) {
-    drinkFresh(vampire, session, session.heldForBottles(), config);
+    drinkFresh(
+        vampire,
+        session,
+        BloodValue.worth(
+            session.heldForBottles(),
+            session.quality().worthPercent(config),
+            BloodValue.FRESH_PERCENT));
     session.heldForBottles(0.0F);
     if (victim != null && victim.isAlive() && session.totalTaken() > 0.0F) {
       final int seconds = config.feeding().sipWeaknessSeconds();
@@ -97,10 +102,11 @@ final class Feeder {
       final ServerPlayerEntity vampire,
       final FeedingSession session,
       final float taken,
+      final float worth,
       final NightbornConfig config) {
     final ItemStack offHand = vampire.getOffHandStack();
     if (!offHand.isOf(Items.GLASS_BOTTLE)) {
-      drinkFresh(vampire, session, taken, config);
+      drinkFresh(vampire, session, worth);
       return;
     }
     final Bottling.Fill fill =
@@ -117,14 +123,8 @@ final class Feeder {
   }
 
   private static void drinkFresh(
-      final ServerPlayerEntity vampire,
-      final FeedingSession session,
-      final float taken,
-      final NightbornConfig config) {
-    final float pending =
-        session.pendingBlood()
-            + BloodValue.worth(
-                taken, session.quality().worthPercent(config), BloodValue.FRESH_PERCENT);
+      final ServerPlayerEntity vampire, final FeedingSession session, final float worth) {
+    final float pending = session.pendingBlood() + worth;
     final BloodValue.Split split = BloodValue.split(pending);
     session.pendingBlood(split.remainder());
     if (split.whole() > 0) {

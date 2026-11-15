@@ -1,5 +1,6 @@
 package com.grahambartley.nightborn.screen;
 
+import com.grahambartley.nightborn.client.PowerSlotView;
 import com.grahambartley.nightborn.skill.Skill;
 import com.grahambartley.nightborn.skill.SkillNames;
 import com.grahambartley.nightborn.skill.SkillPurchase;
@@ -12,8 +13,6 @@ import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 
 public final class SkillTooltip {
-
-  static final int TICKS_PER_SECOND = 20;
 
   private SkillTooltip() {}
 
@@ -55,7 +54,7 @@ public final class SkillTooltip {
                 Text.translatable(
                         "nightborn.skills.power",
                         shown.blood(),
-                        shown.cooldownTicks() / TICKS_PER_SECOND)
+                        PowerSlotView.seconds(shown.cooldownTicks()))
                     .formatted(Formatting.DARK_RED)));
     lines.add(status(verdict));
     return lines;

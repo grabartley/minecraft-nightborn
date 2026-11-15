@@ -9,18 +9,18 @@ import org.junit.jupiter.params.provider.CsvSource;
 
 class SkillLayoutTest {
 
-  @ParameterizedTest(name = "{0}x{1} with {2} branches")
+  @ParameterizedTest(name = "{0}x{1} with {2} branches and {3} rows")
   @CsvSource({
-    "320, 240, 4",
-    "427, 240, 4",
-    "640, 360, 4",
-    "1920, 1080, 4",
-    "320, 240, 1",
-    "854, 480, 2"
+    "320, 240, 4, 6",
+    "427, 240, 4, 2",
+    "640, 360, 4, 6",
+    "1920, 1080, 4, 1",
+    "320, 240, 1, 3",
+    "854, 480, 2, 6"
   })
   @DisplayName("every node of every branch fits inside the panel and the panel fits the screen")
-  void fits(final int width, final int height, final int branches) {
-    final SkillLayout layout = SkillLayout.of(width, height, branches);
+  void fits(final int width, final int height, final int branches, final int rows) {
+    final SkillLayout layout = SkillLayout.of(width, height, branches, rows);
     assertTrue(
         layout.left() >= 0 && layout.left() + layout.width() <= Math.max(width, layout.width()));
     assertTrue(layout.top() + layout.height() <= height, "panel height " + layout.height());
@@ -31,7 +31,7 @@ class SkillLayoutTest {
         assertTrue(x + SkillLayout.NODE <= layout.branchLeft(b, branches) + layout.branchWidth());
       }
     }
-    final int lastRow = layout.nodeY(Skill.MAX_ROW) + SkillLayout.NODE;
+    final int lastRow = layout.nodeY(rows - 1) + SkillLayout.NODE;
     assertTrue(lastRow <= layout.top() + layout.height(), "last row inside the panel");
   }
 
@@ -39,9 +39,21 @@ class SkillLayoutTest {
   @CsvSource({"0, 1", "1, 2"})
   @DisplayName("neighbouring nodes never overlap at the smallest screen")
   void noOverlap(final int left, final int right) {
-    final SkillLayout layout = SkillLayout.of(320, 240, 4);
+    final SkillLayout layout = SkillLayout.of(320, 240, 4, 6);
     assertTrue(layout.nodeX(0, 4, left) + SkillLayout.NODE <= layout.nodeX(0, 4, right));
     assertTrue(layout.nodeY(0) + SkillLayout.NODE < layout.nodeY(1));
+  }
+
+  @ParameterizedTest(name = "{0} rows")
+  @CsvSource({"1", "2", "6"})
+  @DisplayName("the panel grows with the rows in use, so a short tree is not mostly empty")
+  void heightFollowsRows(final int rows) {
+    final SkillLayout shorter = SkillLayout.of(854, 480, 4, rows);
+    final SkillLayout taller = SkillLayout.of(854, 480, 4, rows + 1);
+    assertTrue(taller.height() > shorter.height() || rows + 1 > Skill.MAX_ROW + 1);
+    assertTrue(
+        shorter.nodeY(rows - 1) + SkillLayout.NODE + SkillLayout.PAD
+            <= shorter.top() + shorter.height());
   }
 
   @ParameterizedTest(name = "mouse at {0},{1} -> {2}")

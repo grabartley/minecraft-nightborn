@@ -8,6 +8,7 @@ public final class PowerBarLayout {
   public static final int SLOT = 22;
   static final int HOTBAR_HALF_WIDTH = 91;
   static final int OFFHAND_WIDTH = 29;
+  static final int ATTACK_INDICATOR_WIDTH = 24;
   static final int GAP = 6;
   static final int EDGE = 2;
 
@@ -19,10 +20,15 @@ public final class PowerBarLayout {
       final int screenWidth,
       final int screenHeight,
       final int count,
-      final boolean offhandOnRight) {
+      final boolean offhandOnRight,
+      final boolean indicatorOnRight) {
     final List<Point> points = new ArrayList<>();
     final int start =
-        screenWidth / 2 + HOTBAR_HALF_WIDTH + GAP + (offhandOnRight ? OFFHAND_WIDTH : 0);
+        screenWidth / 2
+            + HOTBAR_HALF_WIDTH
+            + GAP
+            + (offhandOnRight ? OFFHAND_WIDTH : 0)
+            + (indicatorOnRight ? ATTACK_INDICATOR_WIDTH : 0);
     final int y = screenHeight - SLOT;
     if (start + count * SLOT <= screenWidth - EDGE) {
       for (int i = 0; i < count; i++) {

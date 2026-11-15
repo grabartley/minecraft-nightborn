@@ -67,6 +67,18 @@ final class SkillsCommand {
       final CommandContext<ServerCommandSource> context, final SkillTree tree)
       throws CommandSyntaxException {
     final int points = IntegerArgumentType.getInteger(context, POINTS);
+    for (final ServerPlayerEntity player :
+        EntityArgumentType.getPlayers(context, PlayerCommand.TARGETS)) {
+      final int spent = SkillAttachment.get(player, tree).spent();
+      if (points < spent) {
+        context
+            .getSource()
+            .sendError(
+                Text.translatable(
+                    "nightborn.command.player.points.below_spent", player.getName(), spent));
+        return 0;
+      }
+    }
     return PlayerCommand.forEach(
         context,
         "points",

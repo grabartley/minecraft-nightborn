@@ -75,6 +75,6 @@ class SkillTooltipTest {
   void powerArgs() {
     final Text line =
         SkillTooltip.lines(ID, 2, List.of(), RUSH, SkillPurchase.Verdict.OWNED).get(3);
-    assertEquals(List.of(3, 30), List.of(((TranslatableTextContent) line.getContent()).getArgs()));
+    assertEquals(List.of(3, 30L), List.of(((TranslatableTextContent) line.getContent()).getArgs()));
   }
 }

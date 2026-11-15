@@ -1,7 +1,10 @@
 package com.grahambartley.nightborn.skill;
 
 import com.grahambartley.nightborn.Nightborn;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.registry.DynamicRegistries;
 import net.minecraft.registry.DynamicRegistryManager;
 import net.minecraft.registry.Registry;
@@ -21,6 +24,16 @@ public final class Skills {
   public static void register() {
     DynamicRegistries.registerSynced(SKILL, Skill.CODEC);
     DynamicRegistries.registerSynced(BRANCH, SkillBranch.CODEC);
+    ServerLifecycleEvents.SERVER_STARTED.register(server -> check(server.getRegistryManager()));
+  }
+
+  static void check(final DynamicRegistryManager registries) {
+    final Map<Identifier, Skill> skills = new HashMap<>();
+    final Map<Identifier, SkillBranch> branches = new HashMap<>();
+    skills(registries).ifPresent(r -> r.getIds().forEach(id -> skills.put(id, r.get(id))));
+    branches(registries).ifPresent(r -> r.getIds().forEach(id -> branches.put(id, r.get(id))));
+    SkillDataCheck.problems(skills, branches)
+        .forEach(problem -> Nightborn.LOGGER.error("Bad skill data: {}", problem));
   }
 
   public static Optional<Registry<Skill>> skills(final DynamicRegistryManager registries) {
@@ -36,20 +49,23 @@ public final class Skills {
     return skills(registries).map(registry -> registry.get(id)).orElse(null);
   }
 
-  @Nullable
-  public static SkillBranch branchOf(
-      final DynamicRegistryManager registries, @Nullable final Skill skill) {
-    return skill == null
-        ? null
-        : branches(registries).map(registry -> registry.get(skill.branch())).orElse(null);
-  }
+  public record Lookup(
+      Identifier id,
+      @Nullable Skill skill,
+      @Nullable SkillBranch branch,
+      SkillPurchase.Verdict verdict) {}
 
-  public static SkillPurchase.Verdict check(
+  public static Lookup lookup(
       final DynamicRegistryManager registries,
       final TreeProgress progress,
       final SkillTree playerTree,
       final Identifier id) {
     final Skill skill = skill(registries, id);
-    return SkillPurchase.check(progress, playerTree, id, skill, branchOf(registries, skill));
+    final SkillBranch branch =
+        skill == null
+            ? null
+            : branches(registries).map(registry -> registry.get(skill.branch())).orElse(null);
+    return new Lookup(
+        id, skill, branch, SkillPurchase.check(progress, playerTree, id, skill, branch));
   }
 }

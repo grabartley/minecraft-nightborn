@@ -11,12 +11,17 @@ public record SkillLayout(int left, int top, int width, int height, int branchWi
   static final int MAX_BRANCH_WIDTH = 96;
   static final int MIN_BRANCH_WIDTH = NODE * (Skill.MAX_COLUMN + 1);
 
-  public static SkillLayout of(final int screenWidth, final int screenHeight, final int branches) {
+  public static SkillLayout of(
+      final int screenWidth, final int screenHeight, final int branches, final int rows) {
     final int count = Math.max(1, branches);
     final int branchWidth =
         Math.max(MIN_BRANCH_WIDTH, Math.min(MAX_BRANCH_WIDTH, (screenWidth - PAD * 4) / count));
     final int width = Math.max(branchWidth * count + PAD * 2, 200);
-    final int height = HEADER + ROW_STEP * (Skill.MAX_ROW + 1) + PAD;
+    final int height =
+        HEADER
+            + ROW_STEP * Math.max(1, Math.min(rows, Skill.MAX_ROW + 1))
+            - (ROW_STEP - NODE)
+            + PAD * 2;
     return new SkillLayout(
         Math.max(0, (screenWidth - width) / 2),
         Math.max(0, (screenHeight - height) / 2),

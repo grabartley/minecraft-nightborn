@@ -15,6 +15,7 @@ import java.util.List;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.network.ClientPlayerEntity;
+import net.minecraft.client.option.AttackIndicator;
 import net.minecraft.client.render.RenderTickCounter;
 import net.minecraft.registry.Registry;
 import net.minecraft.util.Arm;
@@ -23,12 +24,10 @@ import net.minecraft.util.Identifier;
 public final class PowerBarHud {
 
   static final Identifier SLOT = Identifier.of(Nightborn.MOD_ID, "hud/power_slot");
-  static final int ICON = 16;
   static final int COOLDOWN_SHADE = 0xB0000000;
   static final int COST_COLOUR = 0xE04040;
   static final int KEY_COLOUR = 0xC8B8A0;
   static final int READY_COLOUR = 0xFFFFFF;
-  static final int TICKS_PER_SECOND = 20;
 
   private PowerBarHud() {}
 
@@ -52,14 +51,17 @@ public final class PowerBarHud {
     if (bar.isEmpty()) {
       return;
     }
-    final boolean offhandOnRight =
-        player.getMainArm() == Arm.LEFT && !player.getOffHandStack().isEmpty();
+    final boolean rightHanded = player.getMainArm() == Arm.RIGHT;
+    final boolean offhandOnRight = !rightHanded && !player.getOffHandStack().isEmpty();
+    final boolean indicatorOnRight =
+        rightHanded && client.options.getAttackIndicator().getValue() == AttackIndicator.HOTBAR;
     final List<PowerBarLayout.Point> points =
         PowerBarLayout.slots(
             context.getScaledWindowWidth(),
             context.getScaledWindowHeight(),
             bar.size(),
-            offhandOnRight);
+            offhandOnRight,
+            indicatorOnRight);
     final PowerCooldowns cooldowns = PowerCooldownAttachment.get(player);
     final long now = client.world.getTime();
     final int blood = BloodAttachment.get(player);
@@ -82,19 +84,24 @@ public final class PowerBarHud {
       final int slot) {
     final int size = PowerBarLayout.SLOT;
     context.drawGuiTexture(SLOT, at.x(), at.y(), size, size);
-    final int inset = (size - ICON) / 2;
+    final int inset = (size - PowerSlotView.ICON) / 2;
     final boolean thirsty = blood < power.blood();
     if (thirsty) {
       context.setShaderColor(0.5F, 0.3F, 0.3F, 1.0F);
     }
-    context.drawGuiTexture(skill.icon(), at.x() + inset, at.y() + inset, ICON, ICON);
+    context.drawGuiTexture(
+        skill.icon(), at.x() + inset, at.y() + inset, PowerSlotView.ICON, PowerSlotView.ICON);
     context.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
     final float shade = PowerCooldowns.fraction(ticksLeft, power.cooldownTicks());
     if (shade > 0.0F) {
-      final int top = at.y() + inset + Math.round(ICON * (1.0F - shade));
+      final int top = at.y() + inset + PowerSlotView.ICON - PowerSlotView.shadedRows(shade);
       context.fill(
-          at.x() + inset, top, at.x() + inset + ICON, at.y() + inset + ICON, COOLDOWN_SHADE);
-      final String seconds = Long.toString((ticksLeft + TICKS_PER_SECOND - 1) / TICKS_PER_SECOND);
+          at.x() + inset,
+          top,
+          at.x() + inset + PowerSlotView.ICON,
+          at.y() + inset + PowerSlotView.ICON,
+          COOLDOWN_SHADE);
+      final String seconds = Long.toString(PowerSlotView.seconds(ticksLeft));
       context.drawCenteredTextWithShadow(
           client.textRenderer, seconds, at.x() + size / 2, at.y() + inset + 4, READY_COLOUR);
     }
@@ -107,9 +114,8 @@ public final class PowerBarHud {
           at.y() + size - 8,
           COST_COLOUR);
     }
-    final String key = SkillKeys.power(slot).getBoundKeyLocalizedText().getString();
-    if (key.length() <= 2) {
-      context.drawTextWithShadow(client.textRenderer, key, at.x() + 2, at.y() + 2, KEY_COLOUR);
-    }
+    final String key =
+        PowerSlotView.keyLabel(SkillKeys.power(slot).getBoundKeyLocalizedText().getString());
+    context.drawTextWithShadow(client.textRenderer, key, at.x() + 2, at.y() + 2, KEY_COLOUR);
   }
 }

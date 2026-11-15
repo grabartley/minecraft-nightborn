@@ -23,14 +23,13 @@ public final class SkillShop {
     final DynamicRegistryManager registries = player.getServerWorld().getRegistryManager();
     final SkillTree tree = SkillTree.of(FactionAttachment.get(player));
     final TreeProgress progress = SkillAttachment.get(player, tree);
-    final Skill skill = Skills.skill(registries, id);
-    final SkillBranch branch = Skills.branchOf(registries, skill);
-    final SkillPurchase.Verdict verdict = SkillPurchase.check(progress, tree, id, skill, branch);
-    if (verdict != SkillPurchase.Verdict.ALLOWED) {
-      player.sendMessage(Text.translatable(verdict.translationKey()), true);
-      return verdict;
+    final Skills.Lookup lookup = Skills.lookup(registries, progress, tree, id);
+    if (lookup.verdict() != SkillPurchase.Verdict.ALLOWED) {
+      player.sendMessage(Text.translatable(lookup.verdict().translationKey()), true);
+      return lookup.verdict();
     }
-    SkillAttachment.set(player, tree, SkillPurchase.apply(progress, id, skill, branch));
+    SkillAttachment.set(
+        player, tree, SkillPurchase.apply(progress, id, lookup.skill(), lookup.branch()));
     SkillAttributes.apply(player);
     player.sendMessage(
         Text.translatable("nightborn.skills.bought", Text.translatable(SkillNames.skill(id))),
@@ -44,6 +43,6 @@ public final class SkillShop {
             SoundCategory.PLAYERS,
             0.8F,
             0.7F);
-    return verdict;
+    return lookup.verdict();
   }
 }

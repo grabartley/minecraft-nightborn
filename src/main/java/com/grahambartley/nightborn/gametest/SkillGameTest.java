@@ -1,30 +1,38 @@
 package com.grahambartley.nightborn.gametest;
 
 import com.grahambartley.nightborn.blood.BloodAttachment;
+import com.grahambartley.nightborn.blood.BloodItems;
 import com.grahambartley.nightborn.config.FeedingSettings;
 import com.grahambartley.nightborn.config.SkillSettings;
+import com.grahambartley.nightborn.downed.Downed;
+import com.grahambartley.nightborn.downed.DownedState;
 import com.grahambartley.nightborn.feeding.FeedingSessions;
 import com.grahambartley.nightborn.server.ServerConfigService;
 import com.grahambartley.nightborn.skill.PowerCooldownAttachment;
 import com.grahambartley.nightborn.skill.PowerUse;
 import com.grahambartley.nightborn.skill.Powers;
 import com.grahambartley.nightborn.skill.SkillAttachment;
+import com.grahambartley.nightborn.skill.SkillAttributes;
 import com.grahambartley.nightborn.skill.SkillPurchase;
 import com.grahambartley.nightborn.skill.SkillShop;
 import com.grahambartley.nightborn.skill.SkillTree;
 import com.grahambartley.nightborn.skill.Skills;
 import com.grahambartley.nightborn.skill.TreeProgress;
+import com.grahambartley.nightborn.vampire.VampireTransitions;
 import com.grahambartley.nightborn.weakened.Weakened;
 import net.fabricmc.fabric.api.event.player.UseEntityCallback;
 import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.passive.CowEntity;
 import net.minecraft.entity.passive.VillagerEntity;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
@@ -45,6 +53,8 @@ public class SkillGameTest implements FabricGameTest {
   static final Identifier NOBLE = Identifier.of("nightborn", "noble/noble_blood");
   static final Identifier BEAST = Identifier.of("nightborn", "beast/beast_blood");
   static final Identifier OCCULT = Identifier.of("nightborn", "occult/occult_blood");
+  static final Identifier THICK_BLOOD_MODIFIER =
+      Identifier.of("nightborn", "skill/core/thick_blood/0");
 
   @BeforeBatch(batchId = BATCH)
   public void onePointPerBlood(final ServerWorld world) {
@@ -112,26 +122,117 @@ public class SkillGameTest implements FabricGameTest {
   @GameTest(templateName = ARENA, batchId = BATCH, tickLimit = 20)
   public void aBoughtSkillChangesThePlayerAndSurvivesDeath(final TestContext context) {
     final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(3, 2, 4));
-    final float before = vampire.getMaxHealth();
+    context.runAtTick(
+        3,
+        () -> {
+          final float before = vampire.getMaxHealth();
+          context.assertEquals(before, 40.0F, "a vampire starts with double health");
+          SkillAttachment.set(vampire, SkillTree.VAMPIRE, TreeProgress.EMPTY.withEarned(1));
+          SkillShop.buy(vampire, THICK_BLOOD);
+          context.assertEquals(vampire.getMaxHealth(), 44.0F, "Thick Blood adds a tenth");
+          final ServerPlayerEntity respawned =
+              context
+                  .getWorld()
+                  .getServer()
+                  .getPlayerManager()
+                  .respawnPlayer(vampire, false, Entity.RemovalReason.KILLED);
+          context.assertTrue(
+              SkillAttachment.get(respawned, SkillTree.VAMPIRE).owns(THICK_BLOOD),
+              "the skill is kept through death");
+          context.assertTrue(
+              respawned
+                      .getAttributeInstance(EntityAttributes.GENERIC_MAX_HEALTH)
+                      .getModifier(THICK_BLOOD_MODIFIER)
+                  != null,
+              "and still applies after respawn");
+          TestPlayers.finish(context, respawned);
+        });
+  }
+
+  @GameTest(templateName = ARENA, batchId = BATCH, tickLimit = 20)
+  public void aCuredVampireKeepsItsTreeButLosesItsBonuses(final TestContext context) {
+    final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(3, 2, 4));
     SkillAttachment.set(vampire, SkillTree.VAMPIRE, TreeProgress.EMPTY.withEarned(1));
     SkillShop.buy(vampire, THICK_BLOOD);
-    context.assertEquals(vampire.getMaxHealth(), before + 4.0F, "Thick Blood adds two hearts");
-    final ServerPlayerEntity respawned =
-        context
-            .getWorld()
-            .getServer()
-            .getPlayerManager()
-            .respawnPlayer(vampire, false, Entity.RemovalReason.KILLED);
+    VampireTransitions.makeHuman(vampire);
     context.assertTrue(
-        SkillAttachment.get(respawned, SkillTree.VAMPIRE).owns(THICK_BLOOD),
-        "the skill is kept through death");
-    context.assertTrue(
-        respawned
+        vampire
                 .getAttributeInstance(EntityAttributes.GENERIC_MAX_HEALTH)
-                .getModifier(Identifier.of("nightborn", "skill/core/thick_blood/0"))
+                .getModifier(THICK_BLOOD_MODIFIER)
+            == null,
+        "a human gets nothing from vampire skills");
+    context.assertTrue(
+        SkillAttachment.get(vampire, SkillTree.VAMPIRE).owns(THICK_BLOOD),
+        "the vampire tree is set aside, not lost");
+    TestPlayers.finish(context, vampire);
+  }
+
+  @GameTest(templateName = ARENA, batchId = BATCH, tickLimit = 20)
+  public void aModifierFromARemovedSkillIsCleared(final TestContext context) {
+    final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(3, 2, 4));
+    final Identifier stray = Identifier.of("nightborn", "skill/core/removed/0");
+    vampire
+        .getAttributeInstance(EntityAttributes.GENERIC_ARMOR)
+        .addPersistentModifier(
+            new EntityAttributeModifier(stray, 5.0, EntityAttributeModifier.Operation.ADD_VALUE));
+    SkillAttachment.set(
+        vampire,
+        SkillTree.VAMPIRE,
+        TreeProgress.EMPTY.withEarned(3).buy(Identifier.of("nightborn", "core/removed"), 1, null));
+    SkillAttachment.set(
+        vampire,
+        SkillTree.VAMPIRE,
+        SkillAttachment.get(vampire, SkillTree.VAMPIRE)
+            .buy(NOBLE, 1, Identifier.of("nightborn", "noble")));
+    SkillAttributes.apply(vampire);
+    context.assertTrue(
+        vampire.getAttributeInstance(EntityAttributes.GENERIC_ARMOR).getModifier(stray) == null,
+        "a skill missing from the data gives nothing");
+    context.assertTrue(
+        vampire
+                .getAttributeInstance(EntityAttributes.GENERIC_ARMOR)
+                .getModifier(Identifier.of("nightborn", "skill/noble/noble_blood/0"))
             != null,
-        "and still applies after respawn");
-    TestPlayers.finish(context, respawned);
+        "a skill still in the data keeps applying");
+    TestPlayers.finish(context, vampire);
+  }
+
+  @GameTest(templateName = ARENA, batchId = BATCH, tickLimit = 20)
+  public void aDownedVampireCannotUsePowers(final TestContext context) {
+    final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(3, 2, 4));
+    SkillAttachment.set(
+        vampire,
+        SkillTree.VAMPIRE,
+        TreeProgress.EMPTY.withEarned(3).buy(THICK_BLOOD, 1, null).buy(BLOOD_RUSH, 2, null));
+    vampire.setAttached(Downed.TYPE, new DownedState(DownedState.Phase.DOWNED, 200));
+    context.assertEquals(Powers.use(vampire, 0), PowerUse.Verdict.HELPLESS, "refused");
+    context.assertFalse(vampire.hasStatusEffect(StatusEffects.SPEED), "no effect given");
+    TestPlayers.finish(context, vampire);
+  }
+
+  @GameTest(templateName = ARENA, batchId = BATCH, tickLimit = 100)
+  public void fillingBloodBottlesEarnsPoints(final TestContext context) {
+    final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(2, 2, 4));
+    BloodAttachment.set(vampire, 5);
+    vampire.setStackInHand(Hand.OFF_HAND, new ItemStack(Items.GLASS_BOTTLE, 4));
+    final CowEntity cow = still(context.spawnEntity(EntityType.COW, new BlockPos(3, 2, 4)));
+    context.runAtEveryTick(
+        () -> {
+          if (context.getTick() <= 65) {
+            hold(context, vampire, cow);
+          }
+        });
+    context.runAtTick(
+        85,
+        () -> {
+          context.assertEquals(
+              vampire.getInventory().count(BloodItems.BLOOD_BOTTLE), 1, "a bottle was filled");
+          context.assertEquals(
+              SkillAttachment.get(vampire, SkillTree.VAMPIRE).earned(),
+              3,
+              "bottling the same blood earns the same points");
+          TestPlayers.finish(context, vampire);
+        });
   }
 
   @GameTest(templateName = EMPTY_STRUCTURE, batchId = BATCH, tickLimit = 20)
@@ -245,6 +346,13 @@ public class SkillGameTest implements FabricGameTest {
     context.assertEquals(
         SkillAttachment.get(vampire, SkillTree.VAMPIRE).earned(), 4, "points are set");
     SkillShop.buy(vampire, THICK_BLOOD);
+    server
+        .getCommandManager()
+        .executeWithPrefix(source, "nightborn player " + name + " skills vampire points 0");
+    context.assertEquals(
+        SkillAttachment.get(vampire, SkillTree.VAMPIRE).earned(),
+        4,
+        "points below what was spent are refused");
     SkillShop.buy(vampire, NOBLE);
     server
         .getCommandManager()

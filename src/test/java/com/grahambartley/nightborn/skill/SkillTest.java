@@ -68,22 +68,6 @@ class SkillTest {
 
   @ParameterizedTest(name = "{0}")
   @MethodSource("skillIds")
-  @DisplayName("every shipped skill sits in a known branch and needs only skills in its own tree")
-  void wellFormed(final Identifier id) throws IOException {
-    final Map<Identifier, Skill> skills = shippedSkills();
-    final Map<Identifier, SkillBranch> branches = shippedBranches();
-    final Skill skill = skills.get(id);
-    final SkillBranch branch = branches.get(skill.branch());
-    assertTrue(branch != null, "branch " + skill.branch());
-    for (final Identifier need : skill.requires()) {
-      assertTrue(skills.containsKey(need), "requirement " + need);
-      assertEquals(branch.tree(), branches.get(skills.get(need).branch()).tree());
-      assertFalse(need.equals(id), "a skill cannot need itself");
-    }
-  }
-
-  @ParameterizedTest(name = "{0}")
-  @MethodSource("skillIds")
   @DisplayName("every shipped skill has its icon sprite and English name and description")
   void hasArtAndText(final Identifier id) throws IOException {
     final Skill skill = shippedSkills().get(id);
@@ -97,20 +81,9 @@ class SkillTest {
   }
 
   @Test
-  @DisplayName("no two shipped skills in one branch share a place on the screen")
-  void noOverlaps() throws IOException {
-    final Map<String, List<Identifier>> places =
-        shippedSkills().entrySet().stream()
-            .collect(
-                Collectors.groupingBy(
-                    e ->
-                        e.getValue().branch()
-                            + "@"
-                            + e.getValue().column()
-                            + ","
-                            + e.getValue().row(),
-                    Collectors.mapping(Map.Entry::getKey, Collectors.toList())));
-    places.values().forEach(ids -> assertEquals(1, ids.size(), ids.toString()));
+  @DisplayName("the shipped data passes the load-time check")
+  void passesTheLoadCheck() throws IOException {
+    assertEquals(List.of(), SkillDataCheck.problems(shippedSkills(), shippedBranches()));
   }
 
   @Test

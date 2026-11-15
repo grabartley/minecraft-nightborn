@@ -5,6 +5,6 @@
   "column": 1,
   "row": 0,
   "attributes": [
-    { "attribute": "minecraft:generic.max_health", "amount": 4.0, "operation": "add_value" }
+    { "attribute": "minecraft:generic.max_health", "amount": 0.1, "operation": "add_multiplied_total" }
   ]
 }
