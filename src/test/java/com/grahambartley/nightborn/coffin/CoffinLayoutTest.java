@@ -21,6 +21,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.MethodSource;
 
@@ -122,6 +123,29 @@ class CoffinLayoutTest {
     assertEquals(resting.y, heels.y, EPSILON);
     assertTrue(towardsHead > -1.5 + END_WALL, "the heels stay off the foot end");
     assertTrue(towardsHead < -0.5, "the heels are in the foot cell");
+  }
+
+  @ParameterizedTest(name = "standing {0}, rising {1}: heels {2}, faces out {3}")
+  @CsvSource({
+    "false, false, false, false",
+    "false, true, true, true",
+    "true, false, false, true",
+    "true, true, false, true"
+  })
+  @DisplayName(
+      "only a rise from a flat coffin holds the sleeper on its heels, and a riser or upright"
+          + " sleeper faces out")
+  void holdSpot(
+      final boolean standing, final boolean rising, final boolean heels, final boolean facesOut) {
+    for (final Direction facing : Direction.Type.HORIZONTAL) {
+      assertEquals(
+          heels
+              ? CoffinLayout.heels(AT, facing, 1.62F)
+              : CoffinLayout.restingSpot(AT, facing, standing),
+          CoffinLayout.holdSpot(AT, facing, standing, rising, 1.62F),
+          facing.toString());
+    }
+    assertEquals(facesOut, CoffinLayout.facesOut(standing, rising));
   }
 
   @ParameterizedTest(name = "facing {0}")

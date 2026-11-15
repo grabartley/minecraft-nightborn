@@ -127,7 +127,7 @@ abstract class LivingEntityMixin {
   @Inject(method = "wakeUp", at = @At("HEAD"), cancellable = true)
   private void nightborn$riseBeforeAVampireMobWakes(final CallbackInfo ci) {
     final LivingEntity self = (LivingEntity) (Object) this;
-    if (!(self instanceof PlayerEntity) && CoffinRise.defersWake(self)) {
+    if (!(self instanceof PlayerEntity) && CoffinRise.deferWakeIntoRise(self)) {
       ci.cancel();
     }
   }

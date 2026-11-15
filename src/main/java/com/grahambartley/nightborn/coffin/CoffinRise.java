@@ -3,8 +3,11 @@ package com.grahambartley.nightborn.coffin;
 import com.grahambartley.nightborn.Nightborn;
 import com.grahambartley.nightborn.mob.VampirePose;
 import com.grahambartley.nightborn.vampire.Vampires;
+import java.util.Collections;
+import java.util.IdentityHashMap;
 import java.util.Optional;
 import java.util.OptionalLong;
+import java.util.Set;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentRegistry;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentSyncPredicate;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentType;
@@ -26,6 +29,9 @@ public final class CoffinRise {
           ID,
           builder -> builder.syncWith(PacketCodecs.VAR_LONG.cast(), AttachmentSyncPredicate.all()));
 
+  private static final Set<LivingEntity> FORCED =
+      Collections.newSetFromMap(new IdentityHashMap<>());
+
   private CoffinRise() {}
 
   public static void register() {}
@@ -42,13 +48,30 @@ public final class CoffinRise {
         VampirePose.coffin(rising(sleeper), CoffinSleepers.inStandingCoffin(sleeper)));
   }
 
-  public static boolean defersWake(final LivingEntity sleeper) {
+  public static void wakeAtOnce(final ServerPlayerEntity sleeper) {
+    if (!sleeper.isSleeping()) {
+      return;
+    }
+    FORCED.add(sleeper);
+    try {
+      sleeper.wakeUp(true, true);
+    } finally {
+      FORCED.remove(sleeper);
+    }
+    sleeper.removeAttached(TYPE);
+  }
+
+  public static boolean deferWakeIntoRise(final LivingEntity sleeper) {
     if (sleeper.getWorld().isClient) {
       return false;
     }
     final RiseRules.Wake wake =
         RiseRules.wake(
-            staysInside(sleeper), sleeper.isOnFire(), until(sleeper), sleeper.getWorld().getTime());
+            staysInside(sleeper),
+            FORCED.contains(sleeper),
+            sleeper.isOnFire(),
+            until(sleeper),
+            sleeper.getWorld().getTime());
     if (wake == RiseRules.Wake.BEGIN) {
       begin(sleeper);
     }
@@ -63,7 +86,7 @@ public final class CoffinRise {
       sleeper.removeAttached(TYPE);
       return;
     }
-    if (!defersWake(sleeper)) {
+    if (!deferWakeIntoRise(sleeper)) {
       finish(sleeper);
     }
   }

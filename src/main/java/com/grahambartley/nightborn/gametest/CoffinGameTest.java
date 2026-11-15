@@ -8,6 +8,7 @@ import com.grahambartley.nightborn.config.CoffinSettings;
 import com.grahambartley.nightborn.core.NightTime;
 import com.grahambartley.nightborn.server.ServerConfigService;
 import java.util.List;
+import java.util.Set;
 import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.EntityPose;
@@ -358,7 +359,7 @@ public class CoffinGameTest implements FabricGameTest {
       templateName = CoffinStage.YARD,
       batchId = DAY,
       tickLimit = TestPlayers.READY + RiseRules.RISE_TICKS + 10)
-  public void aWakingVampireRisesFromItsHeelsThroughDamageThenStandsClear(
+  public void aWakingVampireRisesFromItsHeelsThroughDamageAndWakeUpsThenStandsClear(
       final TestContext context) {
     final BlockPos head = CoffinStage.coffin(context, new BlockPos(4, 2, 6), Direction.SOUTH);
     final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(3, 2, 6));
@@ -382,8 +383,10 @@ public class CoffinGameTest implements FabricGameTest {
         TestPlayers.READY + 5,
         () -> {
           vampire.damage(context.getWorld().getDamageSources().generic(), 1.0F);
+          vampire.wakeUp(false, true);
           context.assertTrue(
-              CoffinRise.rising(vampire) && vampire.isSleeping(), "damage does not end the rise");
+              CoffinRise.rising(vampire) && vampire.isSleeping(),
+              "neither damage nor a second wake-up ends the rise");
           context.assertTrue(
               vampire.getPos().squaredDistanceTo(heels) < 1.0E-6,
               "the vampire pivots on its heels at " + heels + ", not " + vampire.getPos());
@@ -397,6 +400,30 @@ public class CoffinGameTest implements FabricGameTest {
           context.assertTrue(
               context.getWorld().isSpaceEmpty(vampire),
               "the vampire stands clear of the coffin, at " + vampire.getPos());
+          TestPlayers.finish(context, vampire);
+        });
+  }
+
+  @GameTest(templateName = CoffinStage.YARD, batchId = DAY, tickLimit = TestPlayers.READY + 10)
+  public void aTeleportWakesAResterAtOnceWithoutARise(final TestContext context) {
+    final BlockPos head = CoffinStage.coffin(context, new BlockPos(4, 2, 6), Direction.SOUTH);
+    final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(3, 2, 6));
+    final Vec3d target = context.getAbsolute(Vec3d.ofBottomCenter(new BlockPos(1, 2, 1)));
+    context.runAtTick(
+        TestPlayers.READY,
+        () -> {
+          context.useBlock(head, vampire);
+          vampire.teleport(context.getWorld(), target.x, target.y, target.z, Set.of(), 0.0F, 0.0F);
+          context.assertTrue(
+              !vampire.isSleeping() && !CoffinRise.rising(vampire),
+              "a teleport wakes the resting vampire without a rise");
+        });
+    context.runAtTick(
+        TestPlayers.READY + 3,
+        () -> {
+          context.assertTrue(
+              vampire.getPos().squaredDistanceTo(target) < 1.0E-6,
+              "the vampire stays where it was sent, at " + vampire.getPos());
           TestPlayers.finish(context, vampire);
         });
   }

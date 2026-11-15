@@ -20,8 +20,12 @@ public final class RiseRules {
   }
 
   public static Wake wake(
-      final boolean held, final boolean burning, final OptionalLong until, final long now) {
-    if (!held) {
+      final boolean held,
+      final boolean forced,
+      final boolean burning,
+      final OptionalLong until,
+      final long now) {
+    if (!held || forced) {
       return Wake.WAKE;
     }
     if (until.isEmpty()) {

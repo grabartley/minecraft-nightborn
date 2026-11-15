@@ -14,23 +14,26 @@ import org.junit.jupiter.params.provider.CsvSource;
 
 class RiseRulesTest {
 
-  @ParameterizedTest(name = "held {0}, burning {1}, until {2}, now {3}: {4}")
+  @ParameterizedTest(name = "held {0}, forced {1}, burning {2}, until {3}, now {4}: {5}")
   @CsvSource({
-    "true, false, , 100, BEGIN",
-    "true, true, , 100, WAKE",
-    "true, false, 130, 100, WAIT",
-    "true, true, 130, 100, WAIT",
-    "true, false, 130, 129, WAIT",
-    "true, false, 130, 130, WAKE",
-    "true, false, 130, 400, WAKE",
-    "false, false, , 100, WAKE",
-    "false, false, 130, 100, WAKE"
+    "true, false, false, , 100, BEGIN",
+    "true, false, true, , 100, WAKE",
+    "true, true, false, , 100, WAKE",
+    "true, false, false, 130, 100, WAIT",
+    "true, false, true, 130, 100, WAIT",
+    "true, true, false, 130, 100, WAKE",
+    "true, false, false, 130, 129, WAIT",
+    "true, false, false, 130, 130, WAKE",
+    "true, false, false, 130, 400, WAKE",
+    "false, false, false, , 100, WAKE",
+    "false, false, false, 130, 100, WAKE"
   })
   @DisplayName(
       "the first wake starts the rise unless the sleeper burns, later wakes and fire wait for it,"
-          + " and it ends on time or when the sleeper can no longer stay")
+          + " and it ends on time, on a forced wake or when the sleeper can no longer stay")
   void wake(
       final boolean held,
+      final boolean forced,
       final boolean burning,
       final Long until,
       final long now,
@@ -38,7 +41,11 @@ class RiseRulesTest {
     assertEquals(
         wake,
         RiseRules.wake(
-            held, burning, until == null ? OptionalLong.empty() : OptionalLong.of(until), now));
+            held,
+            forced,
+            burning,
+            until == null ? OptionalLong.empty() : OptionalLong.of(until),
+            now));
   }
 
   @ParameterizedTest(name = "standing {0}: {1} ticks, clip {2}")

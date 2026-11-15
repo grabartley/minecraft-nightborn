@@ -1,6 +1,7 @@
 package com.grahambartley.nightborn.gametest;
 
 import com.grahambartley.nightborn.coffin.CoffinBlock;
+import com.grahambartley.nightborn.coffin.CoffinRise;
 import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -60,7 +61,8 @@ public class CoffinLidGameTest implements FabricGameTest {
               vampire.getHealth() < settled[0],
               "the sun reaches the open coffin: " + Diagnostics.of(vampire));
           context.assertFalse(
-              vampire.isSleeping(), "the burn wakes the sleeper: " + Diagnostics.of(vampire));
+              vampire.isSleeping() || CoffinRise.rising(vampire),
+              "the burn wakes the sleeper at once, without a rise: " + Diagnostics.of(vampire));
           context.assertTrue(
               context.getBlockState(head).get(CoffinBlock.OPEN), "the lid stays open as they rise");
           TestPlayers.finish(context, vampire, hunter);

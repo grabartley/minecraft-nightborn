@@ -69,6 +69,21 @@ public final class CoffinLayout {
         .add(-facing.getOffsetX() * towardsFoot, 0.0, -facing.getOffsetZ() * towardsFoot);
   }
 
+  public static Vec3d holdSpot(
+      final BlockPos head,
+      final Direction facing,
+      final boolean standing,
+      final boolean rising,
+      final float standingEyeHeight) {
+    return rising && !standing
+        ? heels(head, facing, standingEyeHeight)
+        : restingSpot(head, facing, standing);
+  }
+
+  public static boolean facesOut(final boolean standing, final boolean rising) {
+    return standing || rising;
+  }
+
   public static List<BlockPos> frontCells(final BlockPos head, final Direction facing) {
     final Direction out = facing.getOpposite();
     return List.of(head.offset(out), head.down().offset(out));
