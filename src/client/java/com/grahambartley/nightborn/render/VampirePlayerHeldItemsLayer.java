@@ -1,5 +1,6 @@
 package com.grahambartley.nightborn.render;
 
+import com.grahambartley.nightborn.client.anim.VampirePlayerClips;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.model.json.ModelTransformationMode;
@@ -29,7 +30,9 @@ public final class VampirePlayerHeldItemsLayer
   protected ItemStack getStackForBone(
       final GeoBone bone, final VampirePlayerAnimatable animatable) {
     final var player = players.getCurrentEntity();
-    if (player == null || !(RIGHT.equals(bone.getName()) || LEFT.equals(bone.getName()))) {
+    if (player == null
+        || !(RIGHT.equals(bone.getName()) || LEFT.equals(bone.getName()))
+        || !VampirePlayerClips.showsHeldItems(player)) {
       return null;
     }
     final Arm arm = RIGHT.equals(bone.getName()) ? Arm.RIGHT : Arm.LEFT;
