@@ -1,6 +1,7 @@
 package com.grahambartley.nightborn;
 
 import com.grahambartley.nightborn.ammo.AmmoEntities;
+import com.grahambartley.nightborn.client.CoatingTooltip;
 import com.grahambartley.nightborn.client.VampireClientFeatures;
 import com.grahambartley.nightborn.client.fog.StructureFog;
 import com.grahambartley.nightborn.client.state.ClientStateService;
@@ -67,5 +68,6 @@ public class NightbornClient implements ClientModInitializer {
     ClothingColors.register();
     VampireClientFeatures.register();
     StructureFog.register();
+    CoatingTooltip.register();
   }
 }

@@ -1,6 +1,7 @@
 package com.grahambartley.nightborn.gear;
 
 import com.grahambartley.nightborn.Nightborn;
+import com.grahambartley.nightborn.coating.CoatedStrikes;
 import com.grahambartley.nightborn.config.GearSettings;
 import com.grahambartley.nightborn.server.ServerConfigService;
 import com.grahambartley.nightborn.vampire.Vampires;
@@ -24,11 +25,12 @@ public final class VampireBane {
   private VampireBane() {}
 
   public static float bonus(final ItemStack weapon, final Entity target) {
-    return bonus(weapon, target, STAKES, SILVER_WEAPONS);
+    return bonus(weapon, target, STAKES, SILVER_WEAPONS)
+        + CoatedStrikes.weaponBonus(weapon, target);
   }
 
   public static float ammoBonus(final ItemStack ammo, final Entity target) {
-    return bonus(ammo, target, STAKE_AMMO, SILVER_AMMO);
+    return bonus(ammo, target, STAKE_AMMO, SILVER_AMMO) + CoatedStrikes.ammoBonus(ammo, target);
   }
 
   public static double projectileBase(final double base, final float bonus, final double speed) {

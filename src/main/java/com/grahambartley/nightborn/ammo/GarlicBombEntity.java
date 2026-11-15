@@ -18,6 +18,7 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.hit.HitResult;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 public class GarlicBombEntity extends ThrownItemEntity {
@@ -69,11 +70,16 @@ public class GarlicBombEntity extends ThrownItemEntity {
             Optional.of(GarlicFumesEffect.COLOUR),
             List.of(new StatusEffectInstance(GarlicFumesEffect.ENTRY, 1))));
     world.spawnEntity(cloud);
+    splatter(world, getX(), getY(), getZ());
+  }
+
+  public static void splatter(
+      final ServerWorld world, final double x, final double y, final double z) {
     world.spawnParticles(
         new ItemStackParticleEffect(ParticleTypes.ITEM, new ItemStack(GearItems.GARLIC)),
-        getX(),
-        getY(),
-        getZ(),
+        x,
+        y,
+        z,
         BURST_PARTICLES,
         BURST_SPREAD,
         BURST_SPREAD,
@@ -81,7 +87,7 @@ public class GarlicBombEntity extends ThrownItemEntity {
         BURST_SPEED);
     world.playSound(
         null,
-        getBlockPos(),
+        BlockPos.ofFloored(x, y, z),
         SoundEvents.ENTITY_SPLASH_POTION_BREAK,
         SoundCategory.NEUTRAL,
         1.0F,

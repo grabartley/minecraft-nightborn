@@ -1,0 +1,13 @@
+{
+  "values": [
+    "#minecraft:swords",
+    "#minecraft:axes",
+    "#nightborn:stakes",
+    "minecraft:trident",
+    "minecraft:mace",
+    {
+      "id": "#c:tools/melee_weapon",
+      "required": false
+    }
+  ]
+}

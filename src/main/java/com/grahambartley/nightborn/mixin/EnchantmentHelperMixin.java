@@ -1,5 +1,6 @@
 package com.grahambartley.nightborn.mixin;
 
+import com.grahambartley.nightborn.coating.Coatings;
 import com.grahambartley.nightborn.gear.VampireBane;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
@@ -23,5 +24,17 @@ abstract class EnchantmentHelperMixin {
       final float baseDamage,
       final CallbackInfoReturnable<Float> cir) {
     cir.setReturnValue(cir.getReturnValueF() + VampireBane.bonus(stack, target));
+  }
+
+  @Inject(method = "getAmmoUse", at = @At("RETURN"), cancellable = true)
+  private static void nightborn$coatedAmmoIsAlwaysSpent(
+      final ServerWorld world,
+      final ItemStack weapon,
+      final ItemStack projectile,
+      final int baseAmmoUse,
+      final CallbackInfoReturnable<Integer> cir) {
+    if (Coatings.isCoatedAmmo(projectile)) {
+      cir.setReturnValue(Math.max(cir.getReturnValueI(), baseAmmoUse));
+    }
   }
 }

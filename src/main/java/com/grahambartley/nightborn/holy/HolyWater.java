@@ -152,19 +152,23 @@ public final class HolyWater {
               attacker == vampire ? null : attacker),
           dose.damage());
     }
+    sizzle(world, vampire);
+  }
+
+  public static void sizzle(final ServerWorld world, final Entity at) {
     world.spawnParticles(
         ParticleTypes.WHITE_SMOKE,
-        vampire.getX(),
-        vampire.getBodyY(0.6),
-        vampire.getZ(),
+        at.getX(),
+        at.getBodyY(0.6),
+        at.getZ(),
         SIZZLE_PARTICLES,
-        vampire.getWidth() / 2.0,
-        vampire.getHeight() / 4.0,
-        vampire.getWidth() / 2.0,
+        at.getWidth() / 2.0,
+        at.getHeight() / 4.0,
+        at.getWidth() / 2.0,
         0.02);
     world.playSound(
         null,
-        vampire.getBlockPos(),
+        at.getBlockPos(),
         SoundEvents.BLOCK_FIRE_EXTINGUISH,
         SoundCategory.NEUTRAL,
         0.6F,

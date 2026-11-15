@@ -10,6 +10,7 @@
 		"LivingEntityMixin",
 		"MapStateMixin",
 		"MobNavigationMixin",
+		"PersistentProjectileEntityMixin",
 		"PhantomSpawnerMixin",
 		"PlayerEntityMixin",
 		"ServerPlayNetworkHandlerMixin",

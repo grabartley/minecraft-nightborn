@@ -16,6 +16,7 @@ public record NightbornConfig(
     FactionSettings factions,
     SkillSettings skills,
     GearSettings gear,
+    CoatingSettings coatings,
     ClothingSettings clothing,
     MobSettings mobs,
     StructureSettings structures) {
@@ -34,6 +35,7 @@ public record NightbornConfig(
               FactionSettings.SETTINGS,
               SkillSettings.SETTINGS,
               GearSettings.SETTINGS,
+              CoatingSettings.SETTINGS,
               ClothingSettings.SETTINGS,
               MobSettings.SETTINGS,
               StructureSettings.SETTINGS)
@@ -56,6 +58,7 @@ public record NightbornConfig(
         FactionSettings.from(values),
         SkillSettings.from(values),
         GearSettings.from(values),
+        CoatingSettings.from(values),
         ClothingSettings.from(values),
         MobSettings.from(values),
         StructureSettings.from(values));

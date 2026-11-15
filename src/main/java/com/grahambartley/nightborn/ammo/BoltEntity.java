@@ -1,6 +1,5 @@
 package com.grahambartley.nightborn.ammo;
 
-import com.grahambartley.nightborn.gear.VampireBane;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.PotionContentsComponent;
 import net.minecraft.entity.EntityType;
@@ -58,12 +57,7 @@ public class BoltEntity extends PersistentProjectileEntity {
 
   @Override
   protected void onEntityHit(final EntityHitResult hit) {
-    final double base = getDamage();
-    setDamage(
-        VampireBane.projectileBase(
-            base, VampireBane.ammoBonus(getItemStack(), hit.getEntity()), getVelocity().length()));
     super.onEntityHit(hit);
-    setDamage(base);
     shatterIfVial();
   }
 
