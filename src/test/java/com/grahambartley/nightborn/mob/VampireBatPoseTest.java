@@ -15,15 +15,26 @@ import org.junit.jupiter.params.provider.EnumSource;
 
 class VampireBatPoseTest {
 
-  @ParameterizedTest(name = "roosting {0}, biting {1}: {2}")
-  @CsvSource({"true, true, HANG, hang", "false, true, BITE, bite", "false, false, FLY, fly"})
-  @DisplayName("a roosting bat hangs, and a flying bat bites or flies")
+  @ParameterizedTest(name = "roosting {0}, biting {1}, climb {2}: {3}")
+  @CsvSource({
+    "true, true, -0.5, HANG, hang",
+    "true, false, 0.0, HANG, hang",
+    "false, true, -0.5, BITE, bite",
+    "false, true, 0.0, BITE, bite",
+    "false, false, -0.5, SWOOP, swoop",
+    "false, false, -0.13, SWOOP, swoop",
+    "false, false, -0.12, FLY, fly",
+    "false, false, 0.0, FLY, fly",
+    "false, false, 0.4, FLY, fly"
+  })
+  @DisplayName("a roosting bat hangs, a biting bat bites, a diving bat swoops, and the rest fly")
   void pose(
       final boolean roosting,
       final boolean biting,
+      final double climbPerTick,
       final VampireBatPose pose,
       final String animation) {
-    assertEquals(pose, VampireBatPose.of(roosting, biting));
+    assertEquals(pose, VampireBatPose.of(roosting, biting, climbPerTick));
     assertEquals(animation, pose.animation());
   }
 

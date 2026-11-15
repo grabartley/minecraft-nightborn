@@ -153,7 +153,8 @@ public class VampireBatEntity extends BatEntity implements GeoEntity {
             "pose",
             ANIMATION_BLEND_TICKS,
             state ->
-                state.setAndContinue(VampireBatPose.of(isRoosting(), biteShownTicks > 0).clip())));
+                state.setAndContinue(
+                    VampireBatPose.of(isRoosting(), biteShownTicks > 0, getY() - prevY).clip())));
   }
 
   @Override

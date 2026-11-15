@@ -6,6 +6,7 @@ import net.minecraft.client.render.entity.EntityRendererFactory;
 import net.minecraft.util.Identifier;
 import software.bernie.geckolib.model.DefaultedEntityGeoModel;
 import software.bernie.geckolib.renderer.GeoEntityRenderer;
+import software.bernie.geckolib.renderer.layer.AutoGlowingGeoLayer;
 
 public class VampireBatRenderer extends GeoEntityRenderer<VampireBatEntity> {
 
@@ -16,5 +17,6 @@ public class VampireBatRenderer extends GeoEntityRenderer<VampireBatEntity> {
         context,
         new DefaultedEntityGeoModel<>(Identifier.of(Nightborn.MOD_ID, "vampire_bat"), true));
     this.shadowRadius = SHADOW_RADIUS;
+    addRenderLayer(new AutoGlowingGeoLayer<>(this));
   }
 }
