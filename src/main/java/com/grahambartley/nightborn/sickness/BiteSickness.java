@@ -9,6 +9,7 @@ import com.grahambartley.nightborn.hunter.HunterAttributes;
 import com.grahambartley.nightborn.server.ServerConfigService;
 import com.grahambartley.nightborn.vampire.VampireTransitions;
 import com.grahambartley.nightborn.vampire.Vampires;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffectInstance;
@@ -33,9 +34,12 @@ public final class BiteSickness {
   static final int EFFECT_REFRESH_TICKS = 20;
   static final int SYMPTOM_TICKS = 60;
 
+  private static final SicknessClock CLOCK = new SicknessClock();
+
   private BiteSickness() {}
 
   public static void register() {
+    ServerLifecycleEvents.SERVER_STARTED.register(server -> CLOCK.reset());
     ServerTickEvents.END_SERVER_TICK.register(BiteSickness::tick);
   }
 
@@ -43,7 +47,7 @@ public final class BiteSickness {
     if (Vampires.isVampire(human) || BiteSicknessAttachment.isSick(human)) {
       return false;
     }
-    BiteSicknessAttachment.set(human, SicknessStage.totalTicks(settings.sicknessDays()));
+    BiteSicknessAttachment.set(human, 0);
     human.sendMessage(Text.translatable("nightborn.sickness.bitten"), true);
     return true;
   }
@@ -96,23 +100,27 @@ public final class BiteSickness {
   }
 
   private static void tick(final MinecraftServer server) {
+    final int step = CLOCK.advance(server.getOverworld().getTimeOfDay());
     final TurningSettings settings = ServerConfigService.current().turning();
     for (final ServerPlayerEntity player : server.getPlayerManager().getPlayerList()) {
       if (BiteSicknessAttachment.isSick(player)) {
-        tick(player, settings);
+        tick(player, settings, step);
       }
     }
   }
 
-  static void tick(final ServerPlayerEntity player, final TurningSettings settings) {
-    final int left = BiteSicknessAttachment.ticksLeft(player) - 1;
+  public static void tick(
+      final ServerPlayerEntity player, final TurningSettings settings, final int step) {
+    final int runBefore = BiteSicknessAttachment.ticksRun(player);
+    final int run = SicknessClock.run(runBefore, step);
+    final int left = SicknessStage.ticksLeft(run, settings.sicknessDays());
     if (left <= 0) {
       VampireTransitions.turn(player);
       return;
     }
-    final SicknessStage before = SicknessStage.of(left + 1, settings.sicknessDays());
-    BiteSicknessAttachment.set(player, left);
-    final SicknessStage stage = SicknessStage.of(left, settings.sicknessDays());
+    final SicknessStage before = SicknessStage.of(runBefore, settings.sicknessDays());
+    BiteSicknessAttachment.set(player, run);
+    final SicknessStage stage = SicknessStage.of(run, settings.sicknessDays());
     if (SicknessRules.remindsOfDaysLeft(before.daysLeft(), stage.daysLeft(), player.age)) {
       player.sendMessage(Text.translatable("nightborn.sickness.days_left", stage.daysLeft()), true);
     }

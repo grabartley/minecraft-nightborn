@@ -11,7 +11,7 @@ public final class BiteSicknessAttachment {
 
   public static final Identifier ID = Identifier.of(Nightborn.MOD_ID, "bite_sickness");
 
-  public static final AttachmentType<Integer> TICKS_LEFT =
+  public static final AttachmentType<Integer> TICKS_RUN =
       AttachmentRegistry.create(
           ID, builder -> builder.persistent(Codec.intRange(0, Integer.MAX_VALUE)).copyOnDeath());
 
@@ -20,18 +20,18 @@ public final class BiteSicknessAttachment {
   public static void register() {}
 
   public static boolean isSick(final AttachmentTarget target) {
-    return target.hasAttached(TICKS_LEFT);
+    return target.hasAttached(TICKS_RUN);
   }
 
-  public static int ticksLeft(final AttachmentTarget target) {
-    return target.getAttachedOrElse(TICKS_LEFT, 0);
+  public static int ticksRun(final AttachmentTarget target) {
+    return target.getAttachedOrElse(TICKS_RUN, 0);
   }
 
-  public static void set(final AttachmentTarget target, final int ticksLeft) {
-    target.setAttached(TICKS_LEFT, ticksLeft);
+  public static void set(final AttachmentTarget target, final int ticksRun) {
+    target.setAttached(TICKS_RUN, ticksRun);
   }
 
   public static void clear(final AttachmentTarget target) {
-    target.removeAttached(TICKS_LEFT);
+    target.removeAttached(TICKS_RUN);
   }
 }
