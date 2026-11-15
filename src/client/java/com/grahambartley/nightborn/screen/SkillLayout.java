@@ -5,8 +5,11 @@ import com.grahambartley.nightborn.skill.Skill;
 public record SkillLayout(int left, int top, int width, int height, int branchWidth) {
 
   public static final int NODE = 22;
-  static final int ROW_STEP = 30;
-  static final int HEADER = 40;
+  static final int ROW_STEP = 28;
+  static final int HEADER = 56;
+  static final int POINTS_TOP = 20;
+  static final int BANNER = 13;
+  static final int BANNER_PAD = 6;
   static final int PAD = 8;
   static final int MAX_BRANCH_WIDTH = 96;
   static final int MIN_BRANCH_WIDTH = NODE * (Skill.MAX_COLUMN + 1);
@@ -43,6 +46,18 @@ public record SkillLayout(int left, int top, int width, int height, int branchWi
 
   public int nodeY(final int row) {
     return top + HEADER + row * ROW_STEP;
+  }
+
+  public int pointsY() {
+    return top + POINTS_TOP;
+  }
+
+  public int bannerY() {
+    return top + HEADER - BANNER - 3;
+  }
+
+  public int bannerWidth(final int textWidth) {
+    return Math.min(branchWidth - 2, textWidth + BANNER_PAD * 2);
   }
 
   public static boolean contains(

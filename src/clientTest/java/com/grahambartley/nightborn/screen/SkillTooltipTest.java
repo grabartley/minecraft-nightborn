@@ -22,6 +22,7 @@ class SkillTooltipTest {
 
   static final Identifier ID = Identifier.of("nightborn", "core/blood_rush");
   static final Identifier NEED = Identifier.of("nightborn", "core/thick_blood");
+  static final int TITLE = 0xBEE0EA;
   static final Optional<SkillTooltip.Power> RUSH = Optional.of(new SkillTooltip.Power(3, 600));
 
   static String key(final Text text) {
@@ -52,7 +53,7 @@ class SkillTooltipTest {
       final Optional<SkillTooltip.Power> power,
       final List<String> facts) {
     final List<Text> lines =
-        SkillTooltip.lines(ID, 2, requires, power, SkillPurchase.Verdict.ALLOWED);
+        SkillTooltip.lines(ID, 2, requires, power, SkillPurchase.Verdict.ALLOWED, TITLE);
     final List<String> expected =
         Stream.concat(Stream.of(SkillNames.skill(ID), SkillNames.description(ID)), facts.stream())
             .toList();
@@ -75,7 +76,7 @@ class SkillTooltipTest {
   @DisplayName("the power line shows its blood cost and cooldown in seconds")
   void powerArgs() {
     final Text line =
-        SkillTooltip.lines(ID, 2, List.of(), RUSH, SkillPurchase.Verdict.OWNED).get(3);
+        SkillTooltip.lines(ID, 2, List.of(), RUSH, SkillPurchase.Verdict.OWNED, TITLE).get(3);
     assertEquals(List.of(3, 30L), List.of(((TranslatableTextContent) line.getContent()).getArgs()));
   }
 
@@ -88,5 +89,16 @@ class SkillTooltipTest {
     assertEquals(key, content.getKey());
     assertEquals(args, content.getArgs().length);
     assertEquals(60L, content.getArgs()[args - 1]);
+  }
+
+  @ParameterizedTest(name = "title colour {0}")
+  @CsvSource({"0xE6C77A", "0xBEE0EA"})
+  @DisplayName("the skill name is drawn in the colour of the tree's theme")
+  void titleColour(final String colour) {
+    final int rgb = Integer.decode(colour);
+    final Text title =
+        SkillTooltip.lines(ID, 2, List.of(), Optional.empty(), SkillPurchase.Verdict.OWNED, rgb)
+            .get(0);
+    assertEquals(rgb, title.getStyle().getColor().getRgb());
   }
 }

@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Optional;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
+import net.minecraft.text.TextColor;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 
@@ -19,13 +20,17 @@ public final class SkillTooltip {
   public record Power(int blood, int cooldownTicks) {}
 
   public static List<Text> lines(
-      final Identifier id, final Skill skill, final SkillPurchase.Verdict verdict) {
+      final Identifier id,
+      final Skill skill,
+      final SkillPurchase.Verdict verdict,
+      final int titleColour) {
     return lines(
         id,
         skill.cost(),
         skill.requires(),
         skill.power().map(p -> new Power(p.blood(), p.cooldownTicks())),
-        verdict);
+        verdict,
+        titleColour);
   }
 
   static List<Text> lines(
@@ -33,9 +38,12 @@ public final class SkillTooltip {
       final int cost,
       final List<Identifier> requires,
       final Optional<Power> power,
-      final SkillPurchase.Verdict verdict) {
+      final SkillPurchase.Verdict verdict,
+      final int titleColour) {
     final List<Text> lines = new ArrayList<>();
-    lines.add(Text.translatable(SkillNames.skill(id)).formatted(Formatting.GOLD));
+    lines.add(
+        Text.translatable(SkillNames.skill(id))
+            .styled(style -> style.withColor(TextColor.fromRgb(titleColour))));
     lines.add(Text.translatable(SkillNames.description(id)).formatted(Formatting.GRAY));
     lines.add(Text.translatable("nightborn.skills.cost", cost).formatted(Formatting.WHITE));
     if (!requires.isEmpty()) {

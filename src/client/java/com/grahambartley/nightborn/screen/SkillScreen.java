@@ -1,6 +1,5 @@
 package com.grahambartley.nightborn.screen;
 
-import com.grahambartley.nightborn.Nightborn;
 import com.grahambartley.nightborn.client.PowerSlotView;
 import com.grahambartley.nightborn.client.SkillKeys;
 import com.grahambartley.nightborn.network.BuySkillPayload;
@@ -27,12 +26,6 @@ import net.minecraft.util.Identifier;
 
 public final class SkillScreen extends Screen {
 
-  static final Identifier PANEL = Identifier.of(Nightborn.MOD_ID, "skills/panel");
-  static final Identifier LINE = Identifier.of(Nightborn.MOD_ID, "skills/line");
-  static final Identifier LINE_OWNED = Identifier.of(Nightborn.MOD_ID, "skills/line_owned");
-  static final int TITLE_COLOUR = 0xE6C77A;
-  static final int TEXT_COLOUR = 0xD8C8B0;
-  static final int MUTED_COLOUR = 0x7A6A5A;
   static final int LINE_WIDTH = 2;
   static final float DIM = 0.45F;
 
@@ -41,6 +34,7 @@ public final class SkillScreen extends Screen {
   private final Map<Identifier, SkillBranch> branchData = new HashMap<>();
   private List<Identifier> branches = List.of();
   private SkillTree shownTree;
+  private SkillTheme theme;
   private SkillLayout layout;
 
   public SkillScreen() {
@@ -59,6 +53,7 @@ public final class SkillScreen extends Screen {
         (id, skill) ->
             nodes.put(id, new SkillTreeView.Node(skill.branch(), skill.column(), skill.row())));
     shownTree = tree();
+    theme = SkillTheme.of(shownTree);
     branches = SkillTreeView.branches(branchData, shownTree);
     layout = SkillLayout.of(width, height, branches.size(), SkillTreeView.rows(nodes, branches));
   }
@@ -78,7 +73,8 @@ public final class SkillScreen extends Screen {
       clearAndInit();
     }
     super.render(context, mouseX, mouseY, delta);
-    context.drawGuiTexture(PANEL, layout.left(), layout.top(), layout.width(), layout.height());
+    context.drawGuiTexture(
+        theme.panel(), layout.left(), layout.top(), layout.width(), layout.height());
     final TreeProgress progress = progress();
     final int centre = layout.left() + layout.width() / 2;
     context.drawCenteredTextWithShadow(
@@ -86,22 +82,15 @@ public final class SkillScreen extends Screen {
         Text.translatable(shownTree.translationKey()),
         centre,
         layout.top() + SkillLayout.PAD,
-        TITLE_COLOUR);
-    context.drawCenteredTextWithShadow(
-        textRenderer,
-        Text.translatable(
-            "nightborn.skills.points", progress.earned(), progress.spent(), progress.free()),
-        centre,
-        layout.top() + SkillLayout.PAD + 11,
-        TEXT_COLOUR);
+        theme.title());
+    List<Text> tooltip = drawPoints(context, progress, centre, mouseX, mouseY);
     if (branches.isEmpty()) {
       context.drawCenteredTextWithShadow(
           textRenderer,
           Text.translatable("nightborn.skills.empty"),
           centre,
           layout.top() + SkillLayout.HEADER,
-          MUTED_COLOUR);
-      return;
+          theme.muted());
     }
     for (int b = 0; b < branches.size(); b++) {
       drawBranchTitle(context, b, progress);
@@ -109,7 +98,6 @@ public final class SkillScreen extends Screen {
         drawLines(context, b, id, progress);
       }
     }
-    List<Text> tooltip = null;
     for (int b = 0; b < branches.size(); b++) {
       for (final Identifier id : SkillTreeView.skillsIn(branches.get(b), nodes)) {
         final Skill skill = skills.get(id);
@@ -118,13 +106,41 @@ public final class SkillScreen extends Screen {
         final SkillPurchase.Verdict verdict = verdict(id, progress);
         drawNode(context, x, y, skill, verdict);
         if (SkillLayout.contains(x, y, mouseX, mouseY)) {
-          tooltip = SkillTooltip.lines(id, skill, verdict);
+          tooltip = SkillTooltip.lines(id, skill, verdict, theme.accent());
         }
       }
     }
     if (tooltip != null) {
-      context.drawTooltip(textRenderer, tooltip, mouseX, mouseY);
+      ThemedTooltip.draw(context, textRenderer, theme, tooltip, mouseX, mouseY);
     }
+  }
+
+  private List<Text> drawPoints(
+      final DrawContext context,
+      final TreeProgress progress,
+      final int centre,
+      final int mouseX,
+      final int mouseY) {
+    final String count = Integer.toString(progress.free());
+    final Text detail =
+        Text.translatable("nightborn.skills.earned_spent", progress.earned(), progress.spent());
+    final int countWidth = textRenderer.getWidth(count);
+    final SkillPointsRow row =
+        SkillPointsRow.centred(centre, countWidth, textRenderer.getWidth(detail));
+    final int top = layout.pointsY();
+    context.drawGuiTexture(
+        theme.point(), row.iconX(), top, SkillPointsRow.ICON, SkillPointsRow.ICON);
+    context.getMatrices().push();
+    context.getMatrices().translate(row.countX(), top + 1, 0.0F);
+    context.getMatrices().scale(SkillPointsRow.COUNT_SCALE, SkillPointsRow.COUNT_SCALE, 1.0F);
+    context.drawTextWithShadow(
+        textRenderer, count, 0, 0, progress.free() > 0 ? theme.title() : theme.muted());
+    context.getMatrices().pop();
+    context.drawTextWithShadow(textRenderer, detail, row.detailX(), top + 5, theme.muted());
+    if (row.overPoints(top, mouseX, mouseY, countWidth)) {
+      return List.of(Text.translatable("nightborn.skills.free_points", progress.free()));
+    }
+    return null;
   }
 
   private void drawBranchTitle(
@@ -135,12 +151,19 @@ public final class SkillScreen extends Screen {
     final boolean chosen = progress.bloodlines().contains(id);
     final Text title =
         Text.translatable(SkillNames.branch(id)).styled(style -> style.withStrikethrough(locked));
+    final int bannerWidth = layout.bannerWidth(textRenderer.getWidth(title));
+    context.drawGuiTexture(
+        theme.header(),
+        centre - bannerWidth / 2,
+        layout.bannerY(),
+        bannerWidth,
+        SkillLayout.BANNER);
     context.drawCenteredTextWithShadow(
         textRenderer,
         title,
         centre,
-        layout.top() + SkillLayout.HEADER - 12,
-        locked ? MUTED_COLOUR : chosen ? TITLE_COLOUR : TEXT_COLOUR);
+        layout.bannerY() + 3,
+        locked ? theme.muted() : chosen ? theme.title() : theme.text());
   }
 
   private void drawLines(
@@ -152,7 +175,7 @@ public final class SkillScreen extends Screen {
     final int toX =
         layout.nodeX(branchIndex, branches.size(), skill.column()) + SkillLayout.NODE / 2;
     final int toY = layout.nodeY(skill.row());
-    final Identifier sprite = progress.owns(id) ? LINE_OWNED : LINE;
+    final Identifier sprite = theme.line(progress.owns(id));
     for (final Identifier parentId : skill.requires()) {
       final Skill parent = skills.get(parentId);
       if (parent == null || !parent.branch().equals(skill.branch())) {
@@ -174,7 +197,7 @@ public final class SkillScreen extends Screen {
       final int y,
       final Skill skill,
       final SkillPurchase.Verdict verdict) {
-    context.drawGuiTexture(SkillTreeView.frame(verdict), x, y, SkillLayout.NODE, SkillLayout.NODE);
+    context.drawGuiTexture(theme.frame(verdict), x, y, SkillLayout.NODE, SkillLayout.NODE);
     final int inset = (SkillLayout.NODE - PowerSlotView.ICON) / 2;
     if (SkillTreeView.dimmed(verdict)) {
       context.setShaderColor(DIM, DIM, DIM, 1.0F);
