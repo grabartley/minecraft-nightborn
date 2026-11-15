@@ -1,0 +1,55 @@
+package com.grahambartley.nightborn.feeding;
+
+public final class BiteRules {
+
+  private BiteRules() {}
+
+  public enum Decision {
+    BITE,
+    NOT_A_VAMPIRE,
+    NOT_SNEAKING_EMPTY_HANDED,
+    HELPLESS,
+    NO_WARM_BLOOD,
+    PVP_OFF;
+
+    public boolean bites() {
+      return this == BITE;
+    }
+
+    public boolean claimsTheInteraction() {
+      return this == BITE || this == PVP_OFF || this == HELPLESS;
+    }
+  }
+
+  public record Biter(boolean vampire, boolean sneaking, boolean emptyHand, boolean downed) {}
+
+  public record Target(boolean warmBlood, boolean vampire, boolean player, boolean alive) {}
+
+  public static boolean startsSickness(
+      final boolean victimIsHumanPlayer,
+      final boolean playersCanTurnPlayers,
+      final boolean firstRoll,
+      final int roll,
+      final int chancePercent) {
+    return victimIsHumanPlayer && playersCanTurnPlayers && firstRoll && roll < chancePercent;
+  }
+
+  public static Decision decide(final Biter biter, final Target target, final boolean pvp) {
+    if (!biter.vampire()) {
+      return Decision.NOT_A_VAMPIRE;
+    }
+    if (!biter.sneaking() || !biter.emptyHand()) {
+      return Decision.NOT_SNEAKING_EMPTY_HANDED;
+    }
+    if (!target.alive() || !target.warmBlood() || target.vampire()) {
+      return Decision.NO_WARM_BLOOD;
+    }
+    if (biter.downed()) {
+      return Decision.HELPLESS;
+    }
+    if (target.player() && !pvp) {
+      return Decision.PVP_OFF;
+    }
+    return Decision.BITE;
+  }
+}

@@ -1,5 +1,6 @@
 package com.grahambartley.nightborn;
 
+import com.grahambartley.nightborn.client.VampireClientFeatures;
 import com.grahambartley.nightborn.decor.AnimatedFurniture;
 import com.grahambartley.nightborn.decor.DecorBlockEntities;
 import com.grahambartley.nightborn.decor.DecorBlocks;
@@ -33,5 +34,6 @@ public class NightbornClient implements ClientModInitializer {
     BlockRenderLayerMap.INSTANCE.putBlocks(
         RenderLayer.getCutout(), DecorBlocks.ORNATE_CHAIR, DecorBlocks.ORNATE_TABLE);
     EntityRendererRegistry.register(DecorEntities.SEAT, EmptyEntityRenderer::new);
+    VampireClientFeatures.register();
   }
 }

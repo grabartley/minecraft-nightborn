@@ -160,7 +160,7 @@ A crucifix shape is a vertical column of at least 3 blocks with a single block o
 
 **Actor:** Human, sick player.
 
-A vampire mob, a vampire bat or a vampire player bites a human. The bite may start the sickness. A sick player sees a clear sign that something is wrong, which grows as the days pass. When the sickness runs out, the player dies, wakes up a vampire and respawns as one.
+A vampire mob, a vampire bat or a vampire player bites a human. The bite may start the sickness. A sick player sees a clear sign that something is wrong, which grows as the days pass. When the sickness runs out, the player collapses where they stand and wakes up a vampire.
 
 | ID | Requirement |
 |---|---|

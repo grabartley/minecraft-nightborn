@@ -23,10 +23,22 @@
     "client": [
       "com.grahambartley.nightborn.NightbornClient"
     ],
+    "modmenu": [
+      "com.grahambartley.nightborn.NightbornModMenu"
+    ],
     "fabric-gametest": [
       "com.grahambartley.nightborn.gametest.NightbornBootGameTest",
       "com.grahambartley.nightborn.gametest.DecorGameTest",
-      "com.grahambartley.nightborn.gametest.FactionGameTest"
+      "com.grahambartley.nightborn.gametest.FactionGameTest",
+      "com.grahambartley.nightborn.gametest.FeedingGameTest",
+      "com.grahambartley.nightborn.gametest.DownedGameTest",
+      "com.grahambartley.nightborn.gametest.HardcoreVampireDeathGameTest",
+      "com.grahambartley.nightborn.gametest.SunGameTest",
+      "com.grahambartley.nightborn.gametest.BiteSicknessGameTest",
+      "com.grahambartley.nightborn.gametest.VampireCoreGameTest",
+      "com.grahambartley.nightborn.gametest.WeakenedGameTest",
+      "com.grahambartley.nightborn.gametest.SettingsGameTest",
+      "com.grahambartley.nightborn.gametest.PlayerFeedingGameTest"
     ]
   },
   "mixins": [
