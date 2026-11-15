@@ -45,6 +45,10 @@ abstract class ServerPlayerEntityMixin {
   private boolean nightborn$coffinsAreForTheDay(
       final boolean day, @Local(argsOnly = true) final BlockPos pos) {
     final ServerPlayerEntity self = (ServerPlayerEntity) (Object) this;
-    return RestRules.wrongTime(CoffinSleepers.isCoffin(self.getWorld(), pos), day);
+    return RestRules.wrongTime(
+        CoffinSleepers.isCoffin(self.getWorld(), pos),
+        day,
+        self.getWorld().getDimension().hasFixedTime(),
+        self.getWorld().getTimeOfDay());
   }
 }

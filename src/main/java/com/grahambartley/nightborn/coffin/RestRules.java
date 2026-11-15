@@ -1,5 +1,6 @@
 package com.grahambartley.nightborn.coffin;
 
+import com.grahambartley.nightborn.core.NightTime;
 import java.util.Optional;
 import net.minecraft.entity.player.PlayerEntity.SleepFailureReason;
 
@@ -26,8 +27,9 @@ public final class RestRules {
     return Optional.empty();
   }
 
-  public static boolean wrongTime(final boolean coffin, final boolean day) {
-    return coffin != day;
+  public static boolean wrongTime(
+      final boolean coffin, final boolean day, final boolean fixedTime, final long timeOfDay) {
+    return coffin ? NightTime.isNight(fixedTime, timeOfDay) : day;
   }
 
   public static Optional<String> message(final SleepFailureReason reason) {

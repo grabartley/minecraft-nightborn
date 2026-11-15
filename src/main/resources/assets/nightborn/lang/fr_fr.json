@@ -100,7 +100,7 @@
   "nightborn.setting.sun.sunDamage": "Dégâts du soleil par seconde",
   "nightborn.setting.sun.sunDamage.tooltip": "Dégâts que le soleil direct inflige à un vampire chaque seconde. Seuls l'ombre, la pluie, l'eau et un cercueil fermé l'arrêtent",
   "nightborn.section.coffins": "Cercueils",
-  "nightborn.setting.coffins.sleepShare": "Part pour le repos diurne",
+  "nightborn.setting.coffins.sleepShare": "Part pour le repos diurne (%)",
   "nightborn.setting.coffins.sleepShare.tooltip": "Pourcentage des joueurs vampires d'une dimension qui doivent reposer dans un cercueil pour faire passer le jour jusqu'au crépuscule",
   "nightborn.setting.downed.downedSeconds": "Temps à terre (secondes)",
   "nightborn.setting.downed.downedSeconds.tooltip": "Combien de temps un vampire à terre reste sans défense",

@@ -20,6 +20,9 @@ import com.grahambartley.nightborn.vampire.VampireTransitions;
 import java.util.Optional;
 import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.world.ServerWorld;
+import net.minecraft.test.AfterBatch;
+import net.minecraft.test.BeforeBatch;
 import net.minecraft.test.GameTest;
 import net.minecraft.test.TestContext;
 import net.minecraft.util.Identifier;
@@ -28,6 +31,7 @@ import net.minecraft.util.math.BlockPos;
 public class HunterGameTest implements FabricGameTest {
 
   static final String ARENA = "nightborn:vampire_arena";
+  static final String PVP = "hunter-pvp";
   static final Identifier HUNTER = Identifier.of("nightborn", "hunter");
   static final Identifier TRACKING = Identifier.of("nightborn", "hunter/tracking");
   static final Identifier BITE_WARD = Identifier.of("nightborn", "hunter/bite_ward");
@@ -43,6 +47,19 @@ public class HunterGameTest implements FabricGameTest {
     Identifier.of("nightborn", "hunter/clear_mind")
   };
 
+  private static boolean pvpBefore;
+
+  @BeforeBatch(batchId = PVP)
+  public void pvpOn(final ServerWorld world) {
+    pvpBefore = world.getServer().isPvpEnabled();
+    world.getServer().setPvpEnabled(true);
+  }
+
+  @AfterBatch(batchId = PVP)
+  public void restorePvp(final ServerWorld world) {
+    world.getServer().setPvpEnabled(pvpBefore);
+  }
+
   @GameTest(templateName = EMPTY_STRUCTURE, tickLimit = 20)
   public void theHunterTreeLoadsAsData(final TestContext context) {
     final var registries = context.getWorld().getRegistryManager();
@@ -55,7 +72,7 @@ public class HunterGameTest implements FabricGameTest {
     context.complete();
   }
 
-  @GameTest(templateName = ARENA, tickLimit = TestPlayers.READY + 40)
+  @GameTest(templateName = ARENA, batchId = PVP, tickLimit = TestPlayers.READY + 40)
   public void aHumanWhoDownedAVampireEarnsPointsWhenTheSunFinishesIt(final TestContext context) {
     final ServerPlayerEntity hunter = TestPlayers.human(context, new BlockPos(2, 2, 4));
     final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(5, 2, 4));
@@ -87,7 +104,7 @@ public class HunterGameTest implements FabricGameTest {
         });
   }
 
-  @GameTest(templateName = ARENA, tickLimit = TestPlayers.READY + 40)
+  @GameTest(templateName = ARENA, batchId = PVP, tickLimit = TestPlayers.READY + 40)
   public void noHumanIsPaidForAVampireAnotherVampireDowned(final TestContext context) {
     final ServerPlayerEntity human = TestPlayers.human(context, new BlockPos(1, 2, 4));
     final ServerPlayerEntity biter = TestPlayers.vampire(context, new BlockPos(3, 2, 4));

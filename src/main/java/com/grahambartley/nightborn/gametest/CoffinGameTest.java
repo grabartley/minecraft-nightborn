@@ -14,6 +14,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.enums.BedPart;
 import net.minecraft.entity.ItemEntity;
+import net.minecraft.item.Items;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.server.world.SleepManager;
@@ -23,6 +24,7 @@ import net.minecraft.test.GameTest;
 import net.minecraft.test.TestContext;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.TeleportTarget;
 
@@ -33,10 +35,14 @@ public class CoffinGameTest implements FabricGameTest {
   static final String HALF_SHARE = "coffin-half-share";
   static final String NIGHT = "coffin-night";
   static final String BED_SHARE = "coffin-bed-share";
+  static final String STORM = "coffin-storm";
+  static final String DUSK = "coffin-dusk";
   static final String YARD = "nightborn:vampire_yard";
   static final int NOON = 6000;
   static final int MIDNIGHT = 18000;
   static final int SLEEP_READY = 105;
+  static final double BOUNCE = 0.05;
+  private static long timeBefore;
 
   @BeforeBatch(batchId = DAY)
   public void pinNoon(final ServerWorld world) {
@@ -94,6 +100,80 @@ public class CoffinGameTest implements FabricGameTest {
   @AfterBatch(batchId = BED_SHARE)
   public void releaseBedShare(final ServerWorld world) {
     release(world);
+  }
+
+  @BeforeBatch(batchId = STORM)
+  public void brewAStormAtNoon(final ServerWorld world) {
+    pin(world, NOON, false);
+    world.setWeather(0, 12000, true, true);
+    world.setRainGradient(1.0F);
+    world.setThunderGradient(1.0F);
+  }
+
+  @AfterBatch(batchId = STORM)
+  public void clearTheStorm(final ServerWorld world) {
+    world.setWeather(12000, 0, false, false);
+    world.setRainGradient(0.0F);
+    world.setThunderGradient(0.0F);
+    release(world);
+  }
+
+  @BeforeBatch(batchId = DUSK)
+  public void letTheDayRun(final ServerWorld world) {
+    pin(world, NOON, true);
+  }
+
+  @AfterBatch(batchId = DUSK)
+  public void releaseDusk(final ServerWorld world) {
+    release(world);
+  }
+
+  @GameTest(templateName = YARD, batchId = STORM, tickLimit = TestPlayers.READY + 50)
+  public void aThunderstormAtNoonIsStillTheDayForACoffin(final TestContext context) {
+    final BlockPos head = coffin(context, new BlockPos(4, 2, 6), Direction.NORTH);
+    roof(context);
+    final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(5, 2, 5));
+    context.runAtTick(
+        TestPlayers.READY,
+        () -> {
+          context.assertFalse(context.getWorld().isDay(), "a thunderstorm darkens the sky at noon");
+          vampire.extinguish();
+          context.useBlock(head, vampire);
+          context.assertTrue(vampire.isSleeping(), "a vampire lies down under a stormy noon");
+        });
+    context.runAtTick(
+        TestPlayers.READY + 40,
+        () -> {
+          context.assertTrue(
+              vampire.isSleeping(),
+              "the storm never wakes the sleeper: " + Diagnostics.of(vampire));
+          TestPlayers.finish(context, vampire);
+        });
+  }
+
+  @GameTest(templateName = YARD, batchId = DUSK, tickLimit = TestPlayers.READY + 60)
+  public void aRestingVampireRisesAtDusk(final TestContext context) {
+    final BlockPos head = coffin(context, new BlockPos(4, 2, 6), Direction.NORTH);
+    roof(context);
+    final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(5, 2, 5));
+    context.runAtTick(
+        TestPlayers.READY,
+        () -> {
+          context.getWorld().setTimeOfDay(NightTime.DUSK - 20);
+          vampire.extinguish();
+          context.useBlock(head, vampire);
+          context.assertTrue(vampire.isSleeping(), "a vampire lies down just before dusk");
+        });
+    context.runAtTick(
+        TestPlayers.READY + 40,
+        () -> {
+          final long time = Math.floorMod(context.getWorld().getTimeOfDay(), NightTime.DAY_LENGTH);
+          context.assertTrue(time >= NightTime.DUSK, "dusk has come, time " + time);
+          context.assertFalse(vampire.isSleeping(), "the vampire rises at dusk");
+          context.assertTrue(
+              context.getBlockState(head).get(CoffinBlock.OPEN), "the lid opens as they rise");
+          TestPlayers.finish(context, vampire);
+        });
   }
 
   @GameTest(
@@ -348,6 +428,35 @@ public class CoffinGameTest implements FabricGameTest {
         });
   }
 
+  @GameTest(templateName = YARD, batchId = DAY, tickLimit = 60)
+  public void anItemDroppedOnACoffinLandsWithoutTheBounceABedGives(final TestContext context) {
+    final BlockPos coffinHead = coffin(context, new BlockPos(2, 2, 6), Direction.NORTH);
+    final BlockPos bedHead = bed(context, new BlockPos(6, 2, 6), Direction.NORTH);
+    final ItemEntity onCoffin = context.spawnItem(Items.STICK, 2.5F, 3.5F, 5.5F);
+    final ItemEntity onBed = context.spawnItem(Items.STICK, 6.5F, 3.5F, 5.5F);
+    for (final ItemEntity item : List.of(onCoffin, onBed)) {
+      item.setVelocity(Vec3d.ZERO);
+      item.setPickupDelayInfinite();
+    }
+    final boolean[] bounced = new boolean[2];
+    context.runAtEveryTick(
+        () -> {
+          bounced[0] |= onCoffin.getVelocity().y > BOUNCE;
+          bounced[1] |= onBed.getVelocity().y > BOUNCE;
+        });
+    context.runAtTick(
+        50,
+        () -> {
+          context.assertTrue(bounced[1], "an item bounces off a bed");
+          context.assertFalse(bounced[0], "an item does not bounce off a coffin");
+          context.assertTrue(
+              onCoffin.getY() > context.getAbsolutePos(coffinHead).getY() + 0.5,
+              "the item rests on the coffin's lid, at y " + onCoffin.getY());
+          context.expectBlock(Blocks.RED_BED, bedHead);
+          context.complete();
+        });
+  }
+
   @GameTest(templateName = YARD, batchId = NIGHT, tickLimit = TestPlayers.READY + 10)
   public void aVampireCannotRestAtNight(final TestContext context) {
     final BlockPos head = coffin(context, new BlockPos(4, 2, 6), Direction.NORTH);
@@ -413,6 +522,7 @@ public class CoffinGameTest implements FabricGameTest {
   }
 
   private static void pin(final ServerWorld world, final int time, final boolean cycle) {
+    timeBefore = world.getTimeOfDay();
     world.getGameRules().get(GameRules.DO_DAYLIGHT_CYCLE).set(cycle, world.getServer());
     world.setTimeOfDay(time);
     world.setWeather(12000, 0, false, false);
@@ -420,5 +530,6 @@ public class CoffinGameTest implements FabricGameTest {
 
   private static void release(final ServerWorld world) {
     world.getGameRules().get(GameRules.DO_DAYLIGHT_CYCLE).set(true, world.getServer());
+    world.setTimeOfDay(timeBefore);
   }
 }

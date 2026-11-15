@@ -2,6 +2,7 @@ package com.grahambartley.nightborn.vampire;
 
 import com.grahambartley.nightborn.blood.BloodAttachment;
 import com.grahambartley.nightborn.blood.BloodItems;
+import com.grahambartley.nightborn.coffin.CoffinDayCycle;
 import com.grahambartley.nightborn.command.NightbornCommand;
 import com.grahambartley.nightborn.downed.Downed;
 import com.grahambartley.nightborn.downed.HardcoreVampireDeath;
@@ -35,5 +36,6 @@ public final class VampireFeatures {
     BiteSickness.register();
     HardcoreVampireDeath.register();
     FactionPlayerList.register();
+    CoffinDayCycle.register();
   }
 }

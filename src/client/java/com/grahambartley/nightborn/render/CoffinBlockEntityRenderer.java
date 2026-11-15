@@ -11,7 +11,6 @@ import net.minecraft.client.render.block.entity.BlockEntityRenderer;
 import net.minecraft.client.render.block.entity.BlockEntityRendererFactory;
 import net.minecraft.client.render.model.BakedModel;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.registry.Registries;
 
 public class CoffinBlockEntityRenderer implements BlockEntityRenderer<CoffinBlockEntity> {
 
@@ -36,7 +35,7 @@ public class CoffinBlockEntityRenderer implements BlockEntityRenderer<CoffinBloc
     final BakedModel lid =
         MinecraftClient.getInstance()
             .getBakedModelManager()
-            .getModel(CoffinModels.lid(Registries.BLOCK.getId(state.getBlock())));
+            .getModel(CoffinModels.lidOf(state.getBlock()));
     matrices.push();
     CoffinLidPose.apply(matrices, state.get(CoffinBlock.FACING), coffin.openness(tickDelta));
     this.models.render(

@@ -29,16 +29,6 @@ public final class CoffinSleepers {
         .orElse(false);
   }
 
-  public static boolean hiddenBy(final LivingEntity sleeper) {
-    return shelteredBy(sleeper)
-        && sleeper
-            .getSleepingPosition()
-            .map(pos -> sleeper.getWorld().getBlockEntity(pos))
-            .filter(CoffinBlockEntity.class::isInstance)
-            .map(entity -> ((CoffinBlockEntity) entity).isShut())
-            .orElse(false);
-  }
-
   public static boolean shelters(final BlockState state) {
     return state.getBlock() instanceof CoffinBlock && !state.get(CoffinBlock.OPEN);
   }

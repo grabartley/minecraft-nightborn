@@ -11,7 +11,8 @@ Coffins also come in several woods, and the wood should look like the planks a p
 `CoffinBlock` extends vanilla's `BedBlock`. Pairing the two cells, placement, breaking with one drop, occupancy, the respawn point and the wake-up spot all come from vanilla. Mixins change only what differs:
 
 - A vampire may rest only in a coffin and a human only in a bed.
-- A coffin is for the day: a vampire is refused at night and rises at dusk.
+- A coffin is for the day by the clock, from dawn to dusk, so a thunderstorm's dark sky does not count as night: a vampire is refused at night and rises at dusk.
+- A coffin softens a fall as a bed does, but nothing bounces off its lid.
 - A sleeper lies low enough for the lid to close over them, and a client does not draw a sleeper under a shut lid.
 - Vampires are left out of the bed share. A server tick counts the coffin share and passes the day to dusk.
 

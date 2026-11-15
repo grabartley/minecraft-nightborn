@@ -100,7 +100,7 @@
   "nightborn.setting.sun.sunDamage": "Dano do sol por segundo",
   "nightborn.setting.sun.sunDamage.tooltip": "Dano que o sol direto causa a um vampiro a cada segundo. Só sombra, chuva, água e um caixão fechado o impedem",
   "nightborn.section.coffins": "Caixões",
-  "nightborn.setting.coffins.sleepShare": "Parcela para o descanso diurno",
+  "nightborn.setting.coffins.sleepShare": "Parcela para o descanso diurno (%)",
   "nightborn.setting.coffins.sleepShare.tooltip": "Porcentagem dos jogadores vampiros de uma dimensão que precisam descansar em caixões para o dia passar até o anoitecer",
   "nightborn.setting.downed.downedSeconds": "Tempo caído (segundos)",
   "nightborn.setting.downed.downedSeconds.tooltip": "Por quanto tempo um vampiro caído fica indefeso",

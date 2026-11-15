@@ -1,6 +1,6 @@
 package com.grahambartley.nightborn.mixin.client;
 
-import com.grahambartley.nightborn.coffin.CoffinSleepers;
+import com.grahambartley.nightborn.render.CoffinSleeperView;
 import net.minecraft.client.render.Frustum;
 import net.minecraft.client.render.entity.EntityRenderer;
 import net.minecraft.entity.Entity;
@@ -21,7 +21,7 @@ abstract class EntityRendererMixin<T extends Entity> {
       final double y,
       final double z,
       final CallbackInfoReturnable<Boolean> cir) {
-    if (entity instanceof LivingEntity sleeper && CoffinSleepers.hiddenBy(sleeper)) {
+    if (entity instanceof LivingEntity sleeper && CoffinSleeperView.hidden(sleeper)) {
       cir.setReturnValue(false);
     }
   }

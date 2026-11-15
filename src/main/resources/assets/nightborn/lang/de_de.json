@@ -100,7 +100,7 @@
   "nightborn.setting.sun.sunDamage": "Sonnenschaden pro Sekunde",
   "nightborn.setting.sun.sunDamage.tooltip": "Schaden, den direkte Sonne einem Vampir pro Sekunde zufügt. Nur Schatten, Regen, Wasser und ein geschlossener Sarg halten ihn auf",
   "nightborn.section.coffins": "Särge",
-  "nightborn.setting.coffins.sleepShare": "Anteil für die Tagesruhe",
+  "nightborn.setting.coffins.sleepShare": "Anteil für die Tagesruhe (%)",
   "nightborn.setting.coffins.sleepShare.tooltip": "Anteil der Vampir-Spieler einer Dimension in Prozent, die in Särgen ruhen müssen, damit der Tag bis zur Dämmerung vergeht",
   "nightborn.setting.downed.downedSeconds": "Zeit am Boden (Sekunden)",
   "nightborn.setting.downed.downedSeconds.tooltip": "Wie lange ein niedergestreckter Vampir hilflos daliegt",

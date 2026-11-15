@@ -11,6 +11,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.MethodSource;
 
 class CoffinLidPoseTest {
@@ -43,9 +44,11 @@ class CoffinLidPoseTest {
   }
 
   @ParameterizedTest(name = "facing {0}")
-  @MethodSource("headEnds")
+  @EnumSource(
+      value = Direction.class,
+      names = {"NORTH", "EAST", "SOUTH", "WEST"})
   @DisplayName("an open lid swings up off the hinge side")
-  void swingsUpOffTheHinge(final Direction facing, final float x, final float z) {
+  void swingsUpOffTheHinge(final Direction facing) {
     final Vector4f farEdge = place(facing, 1.0F, 15.0F / 16.0F, 0.5F, 0.5F);
     final Vector4f hinge = place(facing, 1.0F, CoffinLidPose.HINGE_X, CoffinLidPose.HINGE_Y, 0.5F);
     assertTrue(farEdge.y() > 1.0F);

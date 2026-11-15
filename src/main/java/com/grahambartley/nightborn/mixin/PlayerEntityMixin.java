@@ -86,6 +86,11 @@ abstract class PlayerEntityMixin {
       method = "tick",
       at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;isDay()Z"))
   private boolean nightborn$coffinSleepersRiseAtDusk(final boolean day) {
-    return RestRules.wrongTime(CoffinSleepers.inCoffin((PlayerEntity) (Object) this), day);
+    final PlayerEntity self = (PlayerEntity) (Object) this;
+    return RestRules.wrongTime(
+        CoffinSleepers.inCoffin(self),
+        day,
+        self.getWorld().getDimension().hasFixedTime(),
+        self.getWorld().getTimeOfDay());
   }
 }

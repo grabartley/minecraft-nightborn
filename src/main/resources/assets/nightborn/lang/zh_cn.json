@@ -100,7 +100,7 @@
   "nightborn.setting.sun.sunDamage": "每秒阳光伤害",
   "nightborn.setting.sun.sunDamage.tooltip": "直射阳光每秒对吸血鬼造成的伤害。只有阴影、雨水、水和合上的棺材能阻挡",
   "nightborn.section.coffins": "棺材",
-  "nightborn.setting.coffins.sleepShare": "白天安息比例",
+  "nightborn.setting.coffins.sleepShare": "白天安息比例（%）",
   "nightborn.setting.coffins.sleepShare.tooltip": "一个维度中必须在棺材里安息才能让白天过渡到黄昏的吸血鬼玩家百分比",
   "nightborn.setting.downed.downedSeconds": "倒地时间（秒）",
   "nightborn.setting.downed.downedSeconds.tooltip": "倒地的吸血鬼无助躺倒的时长",

@@ -30,17 +30,29 @@ class RestRulesTest {
 
   static Stream<Arguments> times() {
     return Stream.of(
-        Arguments.of(true, true, false),
-        Arguments.of(true, false, true),
-        Arguments.of(false, true, true),
-        Arguments.of(false, false, false));
+        Arguments.of(true, true, false, 6000L, false),
+        Arguments.of(true, false, false, 6000L, false),
+        Arguments.of(true, false, false, 12999L, false),
+        Arguments.of(true, false, false, 13000L, true),
+        Arguments.of(true, false, false, 18000L, true),
+        Arguments.of(true, true, false, 23000L, false),
+        Arguments.of(true, false, true, 18000L, false),
+        Arguments.of(false, true, false, 6000L, true),
+        Arguments.of(false, false, false, 18000L, false),
+        Arguments.of(false, false, false, 6000L, false));
   }
 
-  @ParameterizedTest(name = "coffin {0}, day {1}")
+  @ParameterizedTest(name = "coffin {0}, day {1}, fixed time {2}, time {3}")
   @MethodSource("times")
-  @DisplayName("a coffin is for the day and a bed is for the night")
-  void knowsTheWrongTime(final boolean coffin, final boolean day, final boolean wrong) {
-    assertEquals(wrong, RestRules.wrongTime(coffin, day));
+  @DisplayName(
+      "a coffin is for the hours between dawn and dusk, whatever the sky, and a bed is for the night")
+  void knowsTheWrongTime(
+      final boolean coffin,
+      final boolean day,
+      final boolean fixedTime,
+      final long timeOfDay,
+      final boolean wrong) {
+    assertEquals(wrong, RestRules.wrongTime(coffin, day, fixedTime, timeOfDay));
   }
 
   static Stream<Arguments> reasons() {

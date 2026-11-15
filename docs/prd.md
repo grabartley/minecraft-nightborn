@@ -452,7 +452,7 @@ Vampires are rare. They live in households hidden in four kinds of structure, ea
 
 | ID | Requirement |
 |---|---|
-| COFFIN-1 | A coffin opens and closes, and a vampire can lie in it by day, as a human lies in a bed by night. Using it lies a vampire down; a human, or a vampire who sneaks with an empty hand, opens or shuts the lid instead. The lid shuts over a vampire who lies down, opens when they rise, and stays shut while someone is inside. Two cells long, it is crafted like a bed from planks with red wool for the lining and a gold nugget for the fittings |
+| COFFIN-1 | A coffin opens and closes, and a vampire can lie in it by day, from dawn to dusk whatever the weather, as a human lies in a bed by night. Using it lies a vampire down; a human, or a vampire who sneaks with an empty hand, opens or shuts the lid instead. The lid shuts over a vampire who lies down, opens when they rise, and stays shut while someone is inside. It softens a fall like a bed, but nothing bounces off its lid. Two cells long, it is crafted like a bed from planks with red wool for the lining and a gold nugget for the fittings |
 | COFFIN-2 | Enough vampires sleeping in coffins skips the day to dusk, as beds skip the night to dawn |
 | COFFIN-3 | The share of vampire players who must sleep is a server option, 100% by default. Only vampire players online in that dimension count. With none online, nothing skips the day |
 | COFFIN-4 | Lying in a coffin sets the vampire's respawn point there, as a bed does |

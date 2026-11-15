@@ -1,5 +1,6 @@
 package com.grahambartley.nightborn.coffin;
 
+import com.grahambartley.nightborn.core.NightTime;
 import com.grahambartley.nightborn.server.ServerConfigService;
 import com.grahambartley.nightborn.vampire.Vampires;
 import java.util.HashMap;
@@ -23,7 +24,7 @@ public final class CoffinDayCycle {
 
   private CoffinDayCycle() {}
 
-  static void register() {
+  public static void register() {
     ServerTickEvents.END_WORLD_TICK.register(CoffinDayCycle::tick);
     ServerLifecycleEvents.SERVER_STOPPED.register(server -> LAST_TALLY.clear());
   }
@@ -36,9 +37,11 @@ public final class CoffinDayCycle {
   }
 
   static boolean counts(final ServerPlayerEntity player) {
-    return !player.isSpectator()
-        && Vampires.isVampire(player)
-        && player.getServer().getPlayerManager().getPlayer(player.getUuid()) == player;
+    return !player.isSpectator() && Vampires.isVampire(player) && isConnected(player);
+  }
+
+  static boolean isConnected(final ServerPlayerEntity player) {
+    return player.getServer().getPlayerManager().getPlayer(player.getUuid()) == player;
   }
 
   private static void settle(
@@ -51,7 +54,8 @@ public final class CoffinDayCycle {
     }
     final int ready =
         (int) resting.stream().filter(ServerPlayerEntity::canResetTimeBySleeping).count();
-    if (!world.isDay() || !DaySkip.skips(ready, vampires.size(), share)) {
+    if (NightTime.isNight(world.getDimension().hasFixedTime(), world.getTimeOfDay())
+        || !DaySkip.skips(ready, vampires.size(), share)) {
       return;
     }
     if (world.getGameRules().getBoolean(GameRules.DO_DAYLIGHT_CYCLE)) {

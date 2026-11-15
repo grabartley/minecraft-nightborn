@@ -22,7 +22,7 @@ class CoffinBlockEntityTest {
     "false, true, 4, 0.4",
     "true, false, 2, 0.8"
   })
-  @DisplayName("the lid follows the block's open state and counts as shut only once it has closed")
+  @DisplayName("the lid follows the block's open state a tenth of the way each tick")
   void followsTheBlockState(
       final boolean found, final boolean then, final int ticks, final float openness) {
     final BlockState head =
@@ -33,6 +33,5 @@ class CoffinBlockEntityTest {
       coffin.clientTick(head.with(CoffinBlock.OPEN, then));
     }
     assertEquals(openness, coffin.openness(1.0F), 1.0E-5F);
-    assertEquals(openness == 0.0F, coffin.isShut());
   }
 }

@@ -35,6 +35,7 @@ public class CoffinBlock extends BedBlock {
   public static final MapCodec<BedBlock> CODEC = createCodec(CoffinBlock::new);
   public static final BooleanProperty OPEN = Properties.OPEN;
 
+  static final float LID_VOLUME = 0.6F;
   static final float LID_PITCH = 0.55F;
 
   public CoffinBlock(final Settings settings) {
@@ -90,7 +91,7 @@ public class CoffinBlock extends BedBlock {
       final PlayerEntity player,
       final BlockHitResult hit) {
     if (world.isClient) {
-      return ActionResult.CONSUME;
+      return ActionResult.SUCCESS;
     }
     final BlockPos head = state.get(PART) == BedPart.HEAD ? pos : pos.offset(state.get(FACING));
     final BlockState headState = world.getBlockState(head);
@@ -150,16 +151,6 @@ public class CoffinBlock extends BedBlock {
   }
 
   @Override
-  public void onLandedUpon(
-      final World world,
-      final BlockState state,
-      final BlockPos pos,
-      final Entity entity,
-      final float fallDistance) {
-    entity.handleFallDamage(fallDistance, 1.0F, entity.getDamageSources().fall());
-  }
-
-  @Override
   public void onEntityLand(final BlockView world, final Entity entity) {
     entity.setVelocity(entity.getVelocity().multiply(1.0, 0.0, 1.0));
   }
@@ -176,7 +167,7 @@ public class CoffinBlock extends BedBlock {
         head,
         open ? SoundEvents.BLOCK_CHEST_OPEN : SoundEvents.BLOCK_CHEST_CLOSE,
         SoundCategory.BLOCKS,
-        0.6F,
+        LID_VOLUME,
         LID_PITCH);
     world.emitGameEvent(player, open ? GameEvent.CONTAINER_OPEN : GameEvent.CONTAINER_CLOSE, head);
   }

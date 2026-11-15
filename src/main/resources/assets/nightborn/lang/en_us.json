@@ -100,7 +100,7 @@
   "nightborn.setting.sun.sunDamage": "Sun Damage Per Second",
   "nightborn.setting.sun.sunDamage.tooltip": "Damage direct sun deals a vampire each second. Only shade, rain, water and a closed coffin stop it",
   "nightborn.section.coffins": "Coffins",
-  "nightborn.setting.coffins.sleepShare": "Day Rest Share",
+  "nightborn.setting.coffins.sleepShare": "Day Rest Share (%)",
   "nightborn.setting.coffins.sleepShare.tooltip": "Percentage of the vampire players in a dimension who must rest in coffins to pass the day to dusk",
   "nightborn.setting.downed.downedSeconds": "Time Downed (seconds)",
   "nightborn.setting.downed.downedSeconds.tooltip": "How long a downed vampire lies helpless",

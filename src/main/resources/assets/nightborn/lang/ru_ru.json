@@ -100,7 +100,7 @@
   "nightborn.setting.sun.sunDamage": "Урон от солнца в секунду",
   "nightborn.setting.sun.sunDamage.tooltip": "Урон, который прямое солнце наносит вампиру каждую секунду. Его останавливают только тень, дождь, вода и закрытый гроб",
   "nightborn.section.coffins": "Гробы",
-  "nightborn.setting.coffins.sleepShare": "Доля для дневного отдыха",
+  "nightborn.setting.coffins.sleepShare": "Доля для дневного отдыха (%)",
   "nightborn.setting.coffins.sleepShare.tooltip": "Процент игроков-вампиров в измерении, которые должны отдыхать в гробах, чтобы день прошёл до сумерек",
   "nightborn.setting.downed.downedSeconds": "Время поверженным (секунды)",
   "nightborn.setting.downed.downedSeconds.tooltip": "Как долго поверженный вампир лежит беспомощным",
