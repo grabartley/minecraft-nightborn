@@ -5,19 +5,17 @@ import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 
 public enum CoffinWood {
-  OAK(Blocks.OAK_PLANKS, true),
-  SPRUCE(Blocks.SPRUCE_PLANKS, true),
-  DARK_OAK(Blocks.DARK_OAK_PLANKS, true),
-  MANGROVE(Blocks.MANGROVE_PLANKS, true),
-  CHERRY(Blocks.CHERRY_PLANKS, true),
-  CRIMSON(Blocks.CRIMSON_PLANKS, false);
+  OAK(Blocks.OAK_PLANKS),
+  SPRUCE(Blocks.SPRUCE_PLANKS),
+  DARK_OAK(Blocks.DARK_OAK_PLANKS),
+  MANGROVE(Blocks.MANGROVE_PLANKS),
+  CHERRY(Blocks.CHERRY_PLANKS),
+  CRIMSON(Blocks.CRIMSON_PLANKS);
 
   private final Block planks;
-  private final boolean flammable;
 
-  CoffinWood(final Block planks, final boolean flammable) {
+  CoffinWood(final Block planks) {
     this.planks = planks;
-    this.flammable = flammable;
   }
 
   public String id() {
@@ -26,9 +24,5 @@ public enum CoffinWood {
 
   public Block planks() {
     return this.planks;
-  }
-
-  public boolean flammable() {
-    return this.flammable;
   }
 }

@@ -97,21 +97,19 @@ public class CoffinBlock extends BedBlock {
     if (!headState.isOf(this)) {
       return ActionResult.CONSUME;
     }
-    if (headState.get(OCCUPIED)) {
-      player.sendMessage(Text.translatable(RestRules.OCCUPIED), true);
-      return ActionResult.SUCCESS;
+    switch (CoffinUse.of(
+        headState.get(OCCUPIED), player.isSneaking(), Vampires.isVampire(player))) {
+      case REFUSE_OCCUPIED -> player.sendMessage(Text.translatable(RestRules.OCCUPIED), true);
+      case TOGGLE_LID -> this.setLid(world, head, headState, !headState.get(OPEN), player);
+      case REST ->
+          player
+              .trySleep(head)
+              .ifLeft(
+                  reason ->
+                      RestRules.message(reason)
+                          .ifPresent(key -> player.sendMessage(Text.translatable(key), true)))
+              .ifRight(rested -> player.extinguish());
     }
-    if (player.isSneaking() || !Vampires.isVampire(player)) {
-      this.setLid(world, head, headState, !headState.get(OPEN), player);
-      return ActionResult.SUCCESS;
-    }
-    player
-        .trySleep(head)
-        .ifLeft(
-            reason ->
-                RestRules.message(reason)
-                    .ifPresent(key -> player.sendMessage(Text.translatable(key), true)))
-        .ifRight(rested -> player.extinguish());
     return ActionResult.SUCCESS;
   }
 

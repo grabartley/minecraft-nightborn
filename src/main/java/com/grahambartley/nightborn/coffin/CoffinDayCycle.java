@@ -19,30 +19,35 @@ public final class CoffinDayCycle {
   public static final String RESTING = "nightborn.coffin.resting";
   public static final String SKIPPING = "nightborn.coffin.skipping";
 
-  private static final Map<RegistryKey<World>, Integer> LAST_RESTING = new HashMap<>();
+  private static final Map<RegistryKey<World>, RestTally> LAST_TALLY = new HashMap<>();
 
   private CoffinDayCycle() {}
 
   static void register() {
     ServerTickEvents.END_WORLD_TICK.register(CoffinDayCycle::tick);
-    ServerLifecycleEvents.SERVER_STOPPED.register(server -> LAST_RESTING.clear());
+    ServerLifecycleEvents.SERVER_STOPPED.register(server -> LAST_TALLY.clear());
   }
 
   static void tick(final ServerWorld world) {
     settle(
         world,
-        world.getPlayers(player -> !player.isSpectator() && Vampires.isVampire(player)),
+        world.getPlayers(CoffinDayCycle::counts),
         ServerConfigService.current().coffins().sleepShare());
   }
 
-  public static void settle(
+  static boolean counts(final ServerPlayerEntity player) {
+    return !player.isSpectator()
+        && Vampires.isVampire(player)
+        && player.getServer().getPlayerManager().getPlayer(player.getUuid()) == player;
+  }
+
+  private static void settle(
       final ServerWorld world, final List<ServerPlayerEntity> vampires, final int share) {
     final List<ServerPlayerEntity> resting =
         vampires.stream().filter(CoffinSleepers::inCoffin).toList();
-    final int needed = DaySkip.required(vampires.size(), share);
-    final Integer last = LAST_RESTING.put(world.getRegistryKey(), resting.size());
-    if (!resting.isEmpty() && (last == null || last != resting.size())) {
-      tell(vampires, Text.translatable(RESTING, resting.size(), needed));
+    final RestTally tally = new RestTally(resting.size(), DaySkip.required(vampires.size(), share));
+    if (tally.announces(LAST_TALLY.put(world.getRegistryKey(), tally))) {
+      tell(vampires, Text.translatable(RESTING, tally.resting(), tally.needed()));
     }
     final int ready =
         (int) resting.stream().filter(ServerPlayerEntity::canResetTimeBySleeping).count();

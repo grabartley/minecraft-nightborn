@@ -1,9 +1,11 @@
 package com.grahambartley.nightborn.coffin;
 
 import com.grahambartley.nightborn.Nightborn;
+import com.grahambartley.nightborn.decor.DecorItemGroup;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
+import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.fabricmc.fabric.api.registry.FlammableBlockRegistry;
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
@@ -16,10 +18,6 @@ import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
 
 public final class Coffins {
-
-  private static final int WOOD_BURN = 5;
-  private static final int WOOD_SPREAD = 20;
-  private static final float STRENGTH = 2.0F;
 
   private static final Map<CoffinWood, Block> BLOCKS = registerBlocks();
 
@@ -37,10 +35,14 @@ public final class Coffins {
     final FlammableBlockRegistry flammable = FlammableBlockRegistry.getDefaultInstance();
     BLOCKS.forEach(
         (wood, block) -> {
-          if (wood.flammable()) {
-            flammable.add(block, WOOD_BURN, WOOD_SPREAD);
+          final FlammableBlockRegistry.Entry planks = flammable.get(wood.planks());
+          if (planks.getBurnChance() > 0) {
+            flammable.add(block, planks);
           }
         });
+    ItemGroupEvents.modifyEntriesEvent(
+            Registries.ITEM_GROUP.getKey(DecorItemGroup.DECOR).orElseThrow())
+        .register(entries -> BLOCKS.values().forEach(entries::add));
     CoffinDayCycle.register();
   }
 
@@ -62,7 +64,6 @@ public final class Coffins {
               id,
               new CoffinBlock(
                   AbstractBlock.Settings.copy(wood.planks())
-                      .strength(STRENGTH)
                       .nonOpaque()
                       .pistonBehavior(PistonBehavior.DESTROY)));
       Registry.register(Registries.ITEM, id, new BedItem(block, new Item.Settings().maxCount(1)));

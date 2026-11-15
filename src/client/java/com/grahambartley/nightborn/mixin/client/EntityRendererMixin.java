@@ -21,7 +21,7 @@ abstract class EntityRendererMixin<T extends Entity> {
       final double y,
       final double z,
       final CallbackInfoReturnable<Boolean> cir) {
-    if (entity instanceof LivingEntity sleeper && CoffinSleepers.shelteredBy(sleeper)) {
+    if (entity instanceof LivingEntity sleeper && CoffinSleepers.hiddenBy(sleeper)) {
       cir.setReturnValue(false);
     }
   }

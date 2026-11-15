@@ -17,21 +17,19 @@ class CoffinWoodTest {
 
   static Stream<Arguments> woods() {
     return Stream.of(
-        Arguments.of(CoffinWood.OAK, "oak_coffin", Blocks.OAK_PLANKS, true),
-        Arguments.of(CoffinWood.SPRUCE, "spruce_coffin", Blocks.SPRUCE_PLANKS, true),
-        Arguments.of(CoffinWood.DARK_OAK, "dark_oak_coffin", Blocks.DARK_OAK_PLANKS, true),
-        Arguments.of(CoffinWood.MANGROVE, "mangrove_coffin", Blocks.MANGROVE_PLANKS, true),
-        Arguments.of(CoffinWood.CHERRY, "cherry_coffin", Blocks.CHERRY_PLANKS, true),
-        Arguments.of(CoffinWood.CRIMSON, "crimson_coffin", Blocks.CRIMSON_PLANKS, false));
+        Arguments.of(CoffinWood.OAK, "oak_coffin", Blocks.OAK_PLANKS),
+        Arguments.of(CoffinWood.SPRUCE, "spruce_coffin", Blocks.SPRUCE_PLANKS),
+        Arguments.of(CoffinWood.DARK_OAK, "dark_oak_coffin", Blocks.DARK_OAK_PLANKS),
+        Arguments.of(CoffinWood.MANGROVE, "mangrove_coffin", Blocks.MANGROVE_PLANKS),
+        Arguments.of(CoffinWood.CHERRY, "cherry_coffin", Blocks.CHERRY_PLANKS),
+        Arguments.of(CoffinWood.CRIMSON, "crimson_coffin", Blocks.CRIMSON_PLANKS));
   }
 
   @ParameterizedTest(name = "{0}")
   @MethodSource("woods")
-  @DisplayName("each wood names its coffin, its planks and whether it burns")
-  void describesTheWood(
-      final CoffinWood wood, final String id, final Block planks, final boolean flammable) {
+  @DisplayName("each wood names its coffin and its planks")
+  void describesTheWood(final CoffinWood wood, final String id, final Block planks) {
     assertEquals(id, wood.id());
     assertEquals(planks, wood.planks());
-    assertEquals(flammable, wood.flammable());
   }
 }

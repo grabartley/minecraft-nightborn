@@ -1,7 +1,6 @@
 package com.grahambartley.nightborn.decor;
 
 import com.grahambartley.nightborn.Nightborn;
-import com.grahambartley.nightborn.coffin.Coffins;
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
@@ -21,11 +20,7 @@ public final class DecorItemGroup {
           FabricItemGroup.builder()
               .icon(() -> new ItemStack(DecorBlocks.CANDELABRA))
               .displayName(Text.translatable(TRANSLATION_KEY))
-              .entries(
-                  (context, entries) -> {
-                    DecorBlocks.all().forEach(entries::add);
-                    Coffins.all().forEach(entries::add);
-                  })
+              .entries((context, entries) -> DecorBlocks.all().forEach(entries::add))
               .build());
 
   private DecorItemGroup() {}

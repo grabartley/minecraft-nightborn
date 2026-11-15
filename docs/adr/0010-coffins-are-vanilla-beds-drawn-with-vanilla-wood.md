@@ -19,6 +19,6 @@ Each cell is a plain block model, exported from Blockbench, that names the wood'
 
 ## Consequences
 
-- Every coffin looks like its wood under any resource pack, and a new wood is a few model files and one line in `CoffinWood`.
+- Every coffin looks like its wood under any resource pack. A new wood is one line in `CoffinWood`, its three child models, item model and blockstate, a loot table, a recipe, the axe tag and a name in each language. Its fire behaviour is read from its planks.
 - Coffins do not use GeckoLib, so the lid's motion is a hinge angle in code rather than an animation clip. ADR 0003 still applies to the candelabra, chandelier and drapes.
 - Anything in vanilla or another mod that treats every `BedBlock` as a bed treats a coffin as one too. Villagers do not, because their home point lists vanilla's beds by name.

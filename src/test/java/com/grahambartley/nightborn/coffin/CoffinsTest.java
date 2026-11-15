@@ -39,10 +39,9 @@ class CoffinsTest {
 
   @ParameterizedTest(name = "{0}")
   @EnumSource(CoffinWood.class)
-  @DisplayName("coffins catch fire like their planks, and crimson does not burn")
+  @DisplayName("coffins catch fire exactly as their planks do, so crimson never burns")
   void burnsLikeItsPlanks(final CoffinWood wood) {
-    final int burn =
-        FlammableBlockRegistry.getDefaultInstance().get(Coffins.get(wood)).getBurnChance();
-    assertEquals(wood.flammable(), burn > 0);
+    final FlammableBlockRegistry fire = FlammableBlockRegistry.getDefaultInstance();
+    assertEquals(fire.get(wood.planks()), fire.get(Coffins.get(wood)));
   }
 }

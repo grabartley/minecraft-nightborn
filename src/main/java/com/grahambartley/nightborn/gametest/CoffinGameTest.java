@@ -1,10 +1,11 @@
 package com.grahambartley.nightborn.gametest;
 
 import com.grahambartley.nightborn.coffin.CoffinBlock;
-import com.grahambartley.nightborn.coffin.CoffinDayCycle;
 import com.grahambartley.nightborn.coffin.CoffinWood;
 import com.grahambartley.nightborn.coffin.Coffins;
+import com.grahambartley.nightborn.config.CoffinSettings;
 import com.grahambartley.nightborn.core.NightTime;
+import com.grahambartley.nightborn.server.ServerConfigService;
 import java.util.List;
 import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
 import net.minecraft.block.BedBlock;
@@ -29,6 +30,7 @@ public class CoffinGameTest implements FabricGameTest {
 
   static final String DAY = "coffin-day";
   static final String SKIP = "coffin-skip";
+  static final String HALF_SHARE = "coffin-half-share";
   static final String NIGHT = "coffin-night";
   static final String BED_SHARE = "coffin-bed-share";
   static final String YARD = "nightborn:vampire_yard";
@@ -49,11 +51,29 @@ public class CoffinGameTest implements FabricGameTest {
   @BeforeBatch(batchId = SKIP)
   public void startAtNoon(final ServerWorld world) {
     pin(world, NOON, true);
+    TestPlayers.disconnectEveryone(world.getServer());
   }
 
   @AfterBatch(batchId = SKIP)
   public void releaseSkip(final ServerWorld world) {
     release(world);
+  }
+
+  @BeforeBatch(batchId = HALF_SHARE)
+  public void halveTheShare(final ServerWorld world) {
+    pin(world, NOON, true);
+    TestPlayers.disconnectEveryone(world.getServer());
+    ServerConfigService.update(
+        world.getServer(), ServerConfigService.current().with(CoffinSettings.SLEEP_SHARE, 50));
+  }
+
+  @AfterBatch(batchId = HALF_SHARE)
+  public void restoreTheShare(final ServerWorld world) {
+    release(world);
+    ServerConfigService.update(
+        world.getServer(),
+        ServerConfigService.current()
+            .with(CoffinSettings.SLEEP_SHARE, CoffinSettings.SLEEP_SHARE.defaultValue()));
   }
 
   @BeforeBatch(batchId = NIGHT)
@@ -79,14 +99,13 @@ public class CoffinGameTest implements FabricGameTest {
   @GameTest(
       templateName = YARD,
       batchId = SKIP,
-      tickLimit = TestPlayers.READY + 2 * SLEEP_READY + 40)
+      tickLimit = TestPlayers.READY + 2 * SLEEP_READY + 20)
   public void theDayPassesOnlyWhenEveryVampireRests(final TestContext context) {
     final BlockPos first = coffin(context, new BlockPos(2, 2, 6), Direction.NORTH);
     final BlockPos second = coffin(context, new BlockPos(6, 2, 6), Direction.NORTH);
     roof(context);
     final ServerPlayerEntity a = TestPlayers.vampire(context, new BlockPos(3, 2, 5));
     final ServerPlayerEntity b = TestPlayers.vampire(context, new BlockPos(5, 2, 5));
-    final List<ServerPlayerEntity> both = List.of(a, b);
     context.runAtTick(
         TestPlayers.READY,
         () -> {
@@ -97,19 +116,14 @@ public class CoffinGameTest implements FabricGameTest {
     context.runAtTick(
         TestPlayers.READY + SLEEP_READY,
         () -> {
-          context.assertTrue(a.isSleeping(), "the first vampire rests: " + Diagnostics.of(a));
-          CoffinDayCycle.settle(context.getWorld(), both, 100);
           context.assertTrue(
-              context.getWorld().isDay() && a.isSleeping(),
-              "one of two vampires resting does not pass the day");
+              a.isSleeping() && context.getWorld().isDay(),
+              "one of two vampires resting does not pass the day: " + Diagnostics.of(a));
           context.useBlock(second, b);
         });
     context.runAtTick(
         TestPlayers.READY + 2 * SLEEP_READY + 10,
         () -> {
-          if (b.isSleeping()) {
-            CoffinDayCycle.settle(context.getWorld(), both, 100);
-          }
           final long time = Math.floorMod(context.getWorld().getTimeOfDay(), NightTime.DAY_LENGTH);
           context.assertTrue(
               time >= NightTime.DUSK && time < NightTime.DUSK + SLEEP_READY,
@@ -118,6 +132,33 @@ public class CoffinGameTest implements FabricGameTest {
           context.assertTrue(
               context.getBlockState(first).get(CoffinBlock.OPEN), "the lid opens as they rise");
           TestPlayers.finish(context, a, b);
+        });
+  }
+
+  @GameTest(
+      templateName = YARD,
+      batchId = HALF_SHARE,
+      tickLimit = TestPlayers.READY + SLEEP_READY + 20)
+  public void theSleepShareSettingLetsHalfTheVampiresPassTheDay(final TestContext context) {
+    final BlockPos head = coffin(context, new BlockPos(2, 2, 6), Direction.NORTH);
+    roof(context);
+    final ServerPlayerEntity resting = TestPlayers.vampire(context, new BlockPos(3, 2, 5));
+    final ServerPlayerEntity awake = TestPlayers.vampire(context, new BlockPos(6, 2, 3));
+    context.runAtTick(
+        TestPlayers.READY,
+        () -> {
+          resting.extinguish();
+          awake.extinguish();
+          context.useBlock(head, resting);
+        });
+    context.runAtTick(
+        TestPlayers.READY + SLEEP_READY + 10,
+        () -> {
+          final long time = Math.floorMod(context.getWorld().getTimeOfDay(), NightTime.DAY_LENGTH);
+          context.assertTrue(
+              time >= NightTime.DUSK && time < NightTime.DUSK + SLEEP_READY,
+              "one of two vampires resting passes the day at a 50% share, time " + time);
+          TestPlayers.finish(context, resting, awake);
         });
   }
 
@@ -228,6 +269,23 @@ public class CoffinGameTest implements FabricGameTest {
           vampire.wakeUp(false, true);
           context.assertTrue(context.getBlockState(head).get(CoffinBlock.OPEN), "head open");
           context.assertTrue(context.getBlockState(foot).get(CoffinBlock.OPEN), "foot open");
+          TestPlayers.finish(context, vampire);
+        });
+  }
+
+  @GameTest(templateName = YARD, batchId = DAY, tickLimit = TestPlayers.READY + 10)
+  public void aSneakingVampireWorksTheLidInsteadOfLyingDown(final TestContext context) {
+    final BlockPos head = coffin(context, new BlockPos(4, 2, 6), Direction.NORTH);
+    final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(5, 2, 5));
+    context.runAtTick(
+        TestPlayers.READY,
+        () -> {
+          vampire.setSneaking(true);
+          context.useBlock(head, vampire);
+          context.assertTrue(context.getBlockState(head).get(CoffinBlock.OPEN), "the lid opens");
+          context.assertFalse(vampire.isSleeping(), "a sneaking vampire does not lie down");
+          context.useBlock(head, vampire);
+          context.assertFalse(context.getBlockState(head).get(CoffinBlock.OPEN), "the lid shuts");
           TestPlayers.finish(context, vampire);
         });
   }

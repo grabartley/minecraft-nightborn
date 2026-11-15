@@ -19,4 +19,8 @@ public class CoffinBlockEntity extends BlockEntity {
   public float openness(final float tickDelta) {
     return this.lid.openness(tickDelta);
   }
+
+  public boolean isShut() {
+    return this.lid.openness(1.0F) <= 0.0F;
+  }
 }
