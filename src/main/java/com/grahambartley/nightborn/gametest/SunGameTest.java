@@ -39,6 +39,9 @@ public class SunGameTest implements FabricGameTest {
         () -> {
           context.assertTrue(vampire.getHealth() < 20.0F, "the sun hurts a vampire");
           context.assertTrue(vampire.isOnFire(), "a vampire in the sun catches fire");
+          context.assertTrue(
+              TestAdvancements.done(context, vampire, "sun_dried"),
+              "burning in the sun and living earns Sun Dried");
           TestPlayers.finish(context, vampire);
         });
   }

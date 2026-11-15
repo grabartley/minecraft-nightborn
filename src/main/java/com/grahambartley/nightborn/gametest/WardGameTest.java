@@ -184,6 +184,35 @@ public class WardGameTest implements FabricGameTest {
         });
   }
 
+  @GameTest(templateName = ARENA, tickLimit = SCANNED + 25)
+  public void threeStringsAtOnceEarnStringsAttached(final TestContext context) {
+    final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(4, 2, 4));
+    for (int i = 0; i < 2; i++) {
+      context.setBlockState(
+          new BlockPos(1 + 2 * i, 3, 1),
+          GearBlocks.GARLIC_STRING.getDefaultState().with(GarlicStringBlock.HANGING, true));
+    }
+    context.runAtTick(
+        SCANNED,
+        () -> {
+          context.assertFalse(
+              TestAdvancements.done(context, vampire, "strings_attached"), "two strings");
+          context.assertTrue(
+              TestAdvancements.progress(context, vampire, "strings_attached").isAnyObtained(),
+              "two strings show as progress");
+          context.setBlockState(
+              new BlockPos(5, 3, 1),
+              GearBlocks.GARLIC_STRING.getDefaultState().with(GarlicStringBlock.HANGING, true));
+        });
+    context.runAtTick(
+        SCANNED + 20,
+        () -> {
+          context.assertTrue(
+              TestAdvancements.done(context, vampire, "strings_attached"), "three strings");
+          TestPlayers.finish(context, vampire);
+        });
+  }
+
   @GameTest(templateName = ARENA, tickLimit = SCANNED + 5)
   public void aStringOnAWallStaysUpAndWeakens(final TestContext context) {
     final VampireEntity vampire = still(context, new BlockPos(4, 2, 4));

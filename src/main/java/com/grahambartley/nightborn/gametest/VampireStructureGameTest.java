@@ -293,6 +293,46 @@ public class VampireStructureGameTest implements FabricGameTest {
     context.complete();
   }
 
+  @GameTest(templateName = ARENA, tickLimit = 40)
+  public void onlySteppingInsideAStructureEarnsHouseCall(final TestContext context) {
+    final ServerWorld world = context.getWorld();
+    final Structure structure = decodeStructure(world, 64).getOrThrow();
+    final BlockBox heart = arena(context);
+    final BlockPos centre = heart.getCenter();
+    final WorldChunk chunk = world.getWorldChunk(centre);
+    final ChunkPos home = chunk.getPos();
+    final StructureStart start =
+        new StructureStart(structure, home, 0, new StructurePiecesList(List.of(new Marker(heart))));
+    final Map<Structure, StructureStart> startsBefore = new HashMap<>(chunk.getStructureStarts());
+    final Map<Structure, LongSet> referencesBefore = new HashMap<>(chunk.getStructureReferences());
+    chunk.setStructureStart(structure, start);
+    chunk.addStructureReference(structure, home.toLong());
+    final ServerPlayerEntity inside = TestPlayers.human(context, new BlockPos(4, 2, 4));
+    final ServerPlayerEntity nearby = TestPlayers.human(context, new BlockPos(4, 2, 4));
+    final BlockBox whole = start.getBoundingBox();
+    nearby.refreshPositionAndAngles(
+        whole.getMaxX() + 9.5, centre.getY(), centre.getZ() + 0.5, 0.0F, 0.0F);
+    context.runAtTick(
+        30,
+        () -> {
+          try {
+            context.assertTrue(
+                StructureFogTracker.zoneAround(nearby).isPresent(),
+                "the player beside the structure is in its fog");
+            context.assertTrue(
+                TestAdvancements.done(context, inside, "house_call"),
+                "stepping inside earns House Call");
+            context.assertFalse(
+                TestAdvancements.done(context, nearby, "house_call"),
+                "standing in the fog outside does not");
+          } finally {
+            chunk.setStructureStarts(startsBefore);
+            chunk.setStructureReferences(referencesBefore);
+          }
+          TestPlayers.finish(context, inside, nearby);
+        });
+  }
+
   private static final class Marker extends StructurePiece {
 
     Marker(final BlockBox box) {

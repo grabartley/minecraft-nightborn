@@ -1,6 +1,7 @@
 package com.grahambartley.nightborn.advancement;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -12,7 +13,6 @@ import java.util.Optional;
 import java.util.stream.Stream;
 import net.minecraft.predicate.NumberRange;
 import net.minecraft.predicate.entity.LootContextPredicate;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -30,9 +30,18 @@ class MilestoneCriterionTest {
         Optional.empty(), milestone, Optional.empty(), NumberRange.IntRange.ANY);
   }
 
-  @Test
-  void isRegisteredAsNightbornMilestone() {
-    assertEquals("nightborn:milestone", MilestoneCriterion.ID.toString());
+  @ParameterizedTest(name = "{0}")
+  @ValueSource(
+      strings = {
+        "{}",
+        "{\"milestone\":\"flew_away\"}",
+        "{\"milestone\":\"turned\",\"count\":\"lots\"}"
+      })
+  void rejectsConditionsItCannotRead(final String text) {
+    assertTrue(
+        MilestoneCriterion.Conditions.CODEC
+            .parse(JsonOps.INSTANCE, JsonParser.parseString(text))
+            .isError());
   }
 
   static Stream<Arguments> milestonePairs() {
@@ -88,7 +97,12 @@ class MilestoneCriterionTest {
     return List.of(
         "{\"milestone\":\"turned\"}",
         "{\"milestone\":\"garlic_strings\",\"count\":{\"min\":3}}",
-        "{\"milestone\":\"bloodlines\",\"count\":{\"min\":2}}");
+        "{\"milestone\":\"bloodlines\",\"count\":{\"min\":2}}",
+        "{\"milestone\":\"fed\",\"entity\":[{\"condition\":\"minecraft:entity_properties\","
+            + "\"entity\":\"this\",\"predicate\":{\"flags\":{\"is_on_fire\":true}}}]}",
+        "{\"milestone\":\"structure_entered\",\"player\":[{\"condition\":"
+            + "\"minecraft:entity_properties\",\"entity\":\"this\","
+            + "\"predicate\":{\"flags\":{\"is_sneaking\":true}}}]}");
   }
 
   @ParameterizedTest(name = "{0}")
@@ -98,14 +112,10 @@ class MilestoneCriterionTest {
     final MilestoneCriterion.Conditions parsed =
         MilestoneCriterion.Conditions.CODEC.parse(JsonOps.INSTANCE, json).getOrThrow();
     assertEquals(json.get("milestone").getAsString(), parsed.milestone().asString());
+    assertEquals(json.has("entity"), parsed.entity().isPresent());
+    assertEquals(json.has("player"), parsed.player().isPresent());
     assertEquals(
-        parsed,
-        MilestoneCriterion.Conditions.CODEC
-            .parse(
-                JsonOps.INSTANCE,
-                MilestoneCriterion.Conditions.CODEC
-                    .encodeStart(JsonOps.INSTANCE, parsed)
-                    .getOrThrow())
-            .getOrThrow());
+        json,
+        MilestoneCriterion.Conditions.CODEC.encodeStart(JsonOps.INSTANCE, parsed).getOrThrow());
   }
 }

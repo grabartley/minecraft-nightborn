@@ -1,7 +1,5 @@
 package com.grahambartley.nightborn.feeding;
 
-import com.grahambartley.nightborn.advancement.Milestone;
-import com.grahambartley.nightborn.advancement.MilestoneCriterion;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.BooleanSupplier;
@@ -23,7 +21,7 @@ public final class VillagerWitnesses {
 
   private VillagerWitnesses() {}
 
-  public static void alert(
+  public static boolean alert(
       final ServerWorld world,
       final LivingEntity vampire,
       final LivingEntity victim,
@@ -31,7 +29,7 @@ public final class VillagerWitnesses {
       final int range,
       final DamageSource bite) {
     if (range <= 0) {
-      return;
+      return false;
     }
     final List<VillagerEntity> witnesses =
         world.getEntitiesByClass(
@@ -45,9 +43,6 @@ public final class VillagerWitnesses {
                     villager.squaredDistanceTo(vampire),
                     range,
                     () -> villager.canSee(vampire)));
-    if (!witnesses.isEmpty()) {
-      MilestoneCriterion.reach(vampire, Milestone.FED_WATCHED);
-    }
     for (final VillagerEntity witness : witnesses) {
       if (session.firstSighting(witness.getUuid())) {
         witness.onInteractionWith(EntityInteraction.VILLAGER_HURT, vampire);
@@ -58,6 +53,7 @@ public final class VillagerWitnesses {
         }
       }
     }
+    return !witnesses.isEmpty();
   }
 
   static boolean sees(

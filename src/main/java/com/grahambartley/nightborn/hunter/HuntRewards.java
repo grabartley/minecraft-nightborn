@@ -50,18 +50,19 @@ public final class HuntRewards {
     }
     final Optional<UUID> staker = Staking.staked(source) ? Downed.hunter(source) : Optional.empty();
     final String message = staker.isPresent() ? "nightborn.hunt.staked" : "nightborn.hunt.earned";
-    if (Vampires.isVampire(vampire)) {
-      staker
-          .map(id -> server.getPlayerManager().getPlayer(id))
-          .ifPresent(hunter -> MilestoneCriterion.reach(hunter, Milestone.VAMPIRE_STAKED));
-    }
     hunter(
             Vampires.isVampire(vampire),
             Downed.state(vampire),
             source.isOf(NightbornDamage.SUN),
             staker)
         .map(id -> server.getPlayerManager().getPlayer(id))
-        .ifPresent(hunter -> reward(hunter, vampire, message));
+        .ifPresent(
+            hunter -> {
+              if (staker.isPresent()) {
+                MilestoneCriterion.reach(hunter, Milestone.VAMPIRE_STAKED);
+              }
+              reward(hunter, vampire, message);
+            });
   }
 
   private static void reward(

@@ -68,7 +68,10 @@ final class Feeder {
           0.6F);
       mayStartSickness(victim, session, config, world.getRandom());
     }
-    VillagerWitnesses.alert(world, vampire, victim, session, config.feeding().witnessRange(), bite);
+    if (VillagerWitnesses.alert(
+        world, vampire, victim, session, config.feeding().witnessRange(), bite)) {
+      MilestoneCriterion.reach(vampire, Milestone.FED_WATCHED);
+    }
     if (!victim.isAlive()) {
       if (sip.drains()) {
         SkillEarning.fromDrain(vampire, config.skills());
