@@ -40,12 +40,12 @@ public class VampireBatGameTest implements FabricGameTest {
 
   @BeforeBatch(batchId = NOON_BATCH)
   public void pinNoon(final ServerWorld world) {
-    VampireMobGameTest.pinTime(world, VampireMobGameTest.NOON);
+    WorldClock.pin(world, VampireMobGameTest.NOON);
   }
 
   @AfterBatch(batchId = NOON_BATCH)
   public void unpinNoon(final ServerWorld world) {
-    VampireMobGameTest.unpinTime(world);
+    WorldClock.release(world);
   }
 
   @GameTest(

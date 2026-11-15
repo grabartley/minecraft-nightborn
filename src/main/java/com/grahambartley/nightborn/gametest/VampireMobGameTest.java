@@ -38,7 +38,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.GameMode;
-import net.minecraft.world.GameRules;
 
 public class VampireMobGameTest implements FabricGameTest {
 
@@ -61,27 +60,27 @@ public class VampireMobGameTest implements FabricGameTest {
 
   @BeforeBatch(batchId = NOON_BATCH)
   public void pinNoon(final ServerWorld world) {
-    pinTime(world, NOON);
+    WorldClock.pin(world, NOON);
   }
 
   @AfterBatch(batchId = NOON_BATCH)
   public void unpinNoon(final ServerWorld world) {
-    unpinTime(world);
+    WorldClock.release(world);
   }
 
   @BeforeBatch(batchId = DAWN_BATCH)
   public void pinDawn(final ServerWorld world) {
-    pinTime(world, BEFORE_DAWN);
+    WorldClock.pin(world, BEFORE_DAWN);
   }
 
   @AfterBatch(batchId = DAWN_BATCH)
   public void unpinDawn(final ServerWorld world) {
-    unpinTime(world);
+    WorldClock.release(world);
   }
 
   @BeforeBatch(batchId = NIGHT_BATCH)
   public void pinNightAndShortDowns(final ServerWorld world) {
-    pinTime(world, MIDNIGHT);
+    WorldClock.pin(world, MIDNIGHT);
     downedSecondsBefore = ServerConfigService.current().downed().downedSeconds();
     ServerConfigService.update(
         world.getServer(), ServerConfigService.current().with(DownedSettings.DOWNED_SECONDS, 5));
@@ -89,7 +88,7 @@ public class VampireMobGameTest implements FabricGameTest {
 
   @AfterBatch(batchId = NIGHT_BATCH)
   public void restoreNightAndDowns(final ServerWorld world) {
-    unpinTime(world);
+    WorldClock.release(world);
     ServerConfigService.update(
         world.getServer(),
         ServerConfigService.current().with(DownedSettings.DOWNED_SECONDS, downedSecondsBefore));
@@ -385,15 +384,5 @@ public class VampireMobGameTest implements FabricGameTest {
 
   private static boolean feeding(final VampireEntity vampire) {
     return FeedingSessions.ticksSinceFed(vampire, vampire.getWorld().getTime()) >= 0;
-  }
-
-  static void pinTime(final ServerWorld world, final int time) {
-    world.getGameRules().get(GameRules.DO_DAYLIGHT_CYCLE).set(false, world.getServer());
-    world.setTimeOfDay(time);
-    world.setWeather(12000, 0, false, false);
-  }
-
-  static void unpinTime(final ServerWorld world) {
-    world.getGameRules().get(GameRules.DO_DAYLIGHT_CYCLE).set(true, world.getServer());
   }
 }
