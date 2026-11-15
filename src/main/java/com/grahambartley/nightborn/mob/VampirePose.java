@@ -1,6 +1,7 @@
 package com.grahambartley.nightborn.mob;
 
 import java.util.Optional;
+import net.minecraft.entity.EntityPose;
 import software.bernie.geckolib.animatable.GeoAnimatable;
 import software.bernie.geckolib.animation.AnimationState;
 import software.bernie.geckolib.animation.PlayState;
@@ -86,6 +87,11 @@ public enum VampirePose {
     return horizontalSpeed > WEAKENED_WALK_SPEED ? WEAKENED_WALK : WEAKENED;
   }
 
+  public static boolean staggersOnFoot(
+      final EntityPose pose, final boolean riding, final boolean flying, final boolean usingItem) {
+    return pose == EntityPose.STANDING && !riding && !flying && !usingItem;
+  }
+
   public static double spread(final boolean sprinting, final double horizontalSpeed) {
     return sprinting ? 1.0 : Math.max(0.0, Math.min(1.0, horizontalSpeed / LEVITATE_SPRINT_SPEED));
   }
@@ -115,7 +121,7 @@ public enum VampirePose {
   }
 
   public boolean holdsHead() {
-    return this == DOWNED || this == RISE;
+    return this == DOWNED || this == RISE || this == FEED || this == DRAIN;
   }
 
   public String animation() {

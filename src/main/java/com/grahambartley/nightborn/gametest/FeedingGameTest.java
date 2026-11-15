@@ -67,7 +67,8 @@ public class FeedingGameTest implements FabricGameTest {
           context.assertEquals(BloodAttachment.get(vampire), 13, "blood after three sips of cow");
           context.assertEquals(cow.getHealth(), 4.0F, "cow health after three sips");
           context.assertTrue(
-              VisibleStateAttachment.get(vampire).feeding(), "others see the vampire feeding");
+              VisibleStateAttachment.get(vampire).feeding(),
+              "the vampire's synced state marks it feeding");
         });
     context.runAtTick(
         85,

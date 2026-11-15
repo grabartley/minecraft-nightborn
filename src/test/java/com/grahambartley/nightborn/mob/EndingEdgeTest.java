@@ -13,7 +13,7 @@ class EndingEdgeTest {
   @ParameterizedTest(name = "{0} -> {1}")
   @CsvSource({"ffff, ----", "tttt, ----", "ttff, --E-", "tftf, -E-E", "fttf, ---E", "ftft, --E-"})
   @DisplayName("the edge fires once, on the tick the state ends")
-  void landed(final String active, final String expected) {
+  void fires(final String active, final String expected) {
     final EndingEdge edge = new EndingEdge();
     final List<String> seen = new ArrayList<>();
     for (final char tick : active.toCharArray()) {
