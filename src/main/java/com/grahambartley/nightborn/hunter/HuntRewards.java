@@ -5,6 +5,7 @@ import com.grahambartley.nightborn.advancement.MilestoneCriterion;
 import com.grahambartley.nightborn.downed.Downed;
 import com.grahambartley.nightborn.downed.DownedState;
 import com.grahambartley.nightborn.gear.Staking;
+import com.grahambartley.nightborn.mob.stage.Staged;
 import com.grahambartley.nightborn.server.ServerConfigService;
 import com.grahambartley.nightborn.skill.SkillEarning;
 import com.grahambartley.nightborn.vampire.NightbornDamage;
@@ -67,7 +68,10 @@ public final class HuntRewards {
 
   private static void reward(
       final ServerPlayerEntity hunter, final LivingEntity vampire, final String message) {
-    if (!SkillEarning.fromHunt(hunter, ServerConfigService.current().skills())) {
+    if (!SkillEarning.fromHunt(
+        hunter,
+        ServerConfigService.current().skills(),
+        vampire instanceof Staged staged ? staged.stageRank() : 0)) {
       return;
     }
     hunter.sendMessage(Text.translatable(message, vampire.getDisplayName()), true);

@@ -14,6 +14,7 @@ import com.grahambartley.nightborn.structure.StructureFogTracker;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.JsonOps;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
 import net.minecraft.entity.Entity;
@@ -79,7 +80,8 @@ public class VampireStructureGameTest implements FabricGameTest {
   private static Household household(final int residents) {
     return new Household(
         Registries.ENTITY_TYPE.getEntry(NightbornMobs.VAMPIRE),
-        ConstantIntProvider.create(residents));
+        ConstantIntProvider.create(residents),
+        Map.of());
   }
 
   static String structureJson(final int reach) {

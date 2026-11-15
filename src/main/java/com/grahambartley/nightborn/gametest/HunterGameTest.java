@@ -143,7 +143,7 @@ public class HunterGameTest implements FabricGameTest {
     context.assertEquals(
         SkillShop.buy(player, FAITH), SkillPurchase.Verdict.WRONG_TREE, "no hunter skills");
     context.assertFalse(
-        SkillEarning.fromHunt(player, ServerConfigService.current().skills()),
+        SkillEarning.fromHunt(player, ServerConfigService.current().skills(), 0),
         "a vampire earns no hunter points");
     final TreeProgress kept = SkillAttachment.get(player, SkillTree.HUNTER);
     context.assertTrue(kept.owns(TRACKING) && kept.owns(BITE_WARD), "the tree is kept aside");

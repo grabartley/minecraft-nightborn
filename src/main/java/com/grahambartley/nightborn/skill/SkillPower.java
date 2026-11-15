@@ -12,7 +12,8 @@ public record SkillPower(
     int cooldownTicks,
     List<StatusEffectInstance> effects,
     Optional<Identifier> sound,
-    Optional<TrackPower> track) {
+    Optional<TrackPower> track,
+    Optional<MobPowerUse> mob) {
 
   public static final Codec<SkillPower> CODEC =
       RecordCodecBuilder.create(
@@ -28,6 +29,7 @@ public record SkillPower(
                           .optionalFieldOf("effects", List.of())
                           .forGetter(SkillPower::effects),
                       Identifier.CODEC.optionalFieldOf("sound").forGetter(SkillPower::sound),
-                      TrackPower.CODEC.optionalFieldOf("track").forGetter(SkillPower::track))
+                      TrackPower.CODEC.optionalFieldOf("track").forGetter(SkillPower::track),
+                      MobPowerUse.CODEC.optionalFieldOf("mob").forGetter(SkillPower::mob))
                   .apply(instance, SkillPower::new));
 }

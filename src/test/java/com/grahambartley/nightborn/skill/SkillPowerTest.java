@@ -33,6 +33,20 @@ class SkillPowerTest {
     assertEquals(160, power.effects().get(0).getDuration());
     assertTrue(power.sound().isPresent());
     assertTrue(power.track().isEmpty());
+    assertTrue(power.mob().isEmpty());
+  }
+
+  @Test
+  @DisplayName("a power can say how a vampire mob uses it")
+  void mobUse() {
+    final SkillPower power =
+        SkillPower.CODEC
+            .parse(
+                JsonOps.INSTANCE,
+                JsonParser.parseString(
+                    "{\"blood\":3,\"cooldown_ticks\":600,\"mob\":{\"max_range\":20,\"tell_ticks\":12,\"tell_sound\":\"minecraft:entity.warden.sonic_charge\",\"tell_clip\":\"blood_rush_tell\"}}"))
+            .getOrThrow();
+    assertEquals(12, power.mob().orElseThrow().tellTicks());
   }
 
   @Test

@@ -83,6 +83,7 @@ class NightbornConfigTest {
             "coatings",
             "clothing",
             "mobs",
+            "combat",
             "structures"),
         NightbornConfig.sections());
   }

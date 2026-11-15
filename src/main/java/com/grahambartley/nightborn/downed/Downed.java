@@ -71,11 +71,11 @@ public final class Downed {
     return entity.getAttached(TYPE);
   }
 
-  public static boolean helpless(final PlayerEntity player) {
-    if (player.getWorld().isClient) {
-      return VisibleStateAttachment.get(player).downed();
+  public static boolean helpless(final LivingEntity entity) {
+    if (entity.getWorld().isClient) {
+      return VisibleStateAttachment.get(entity).downed();
     }
-    return DownedRules.helpless(state(player));
+    return DownedRules.helpless(state(entity));
   }
 
   public static void down(
