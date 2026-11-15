@@ -29,10 +29,10 @@ class ConfigFileTest {
   @DisplayName("a missing file gives defaults and writes them out")
   void missingWritesDefaults() {
     final Path path = ConfigPaths.serverConfig(world);
-    final NightbornConfig loaded = new ConfigFile(path, CLOCK).loadOrCreate();
+    final NightbornConfig loaded = new ConfigFile<>(path, ConfigJson.FORMAT, CLOCK).loadOrCreate();
     assertEquals(NightbornConfig.DEFAULTS, loaded);
     assertTrue(Files.exists(path));
-    assertEquals(NightbornConfig.DEFAULTS, new ConfigFile(path, CLOCK).load());
+    assertEquals(NightbornConfig.DEFAULTS, new ConfigFile<>(path, ConfigJson.FORMAT, CLOCK).load());
   }
 
   @Test
@@ -40,8 +40,8 @@ class ConfigFileTest {
   void saveThenLoad() {
     final Path path = ConfigPaths.serverConfig(world);
     final NightbornConfig config = NightbornConfig.DEFAULTS.with(SunSettings.SUN_DAMAGE, 11);
-    assertTrue(new ConfigFile(path, CLOCK).save(config));
-    assertEquals(config, new ConfigFile(path, CLOCK).loadOrCreate());
+    assertTrue(new ConfigFile<>(path, ConfigJson.FORMAT, CLOCK).save(config));
+    assertEquals(config, new ConfigFile<>(path, ConfigJson.FORMAT, CLOCK).loadOrCreate());
     assertFalse(Files.exists(path.resolveSibling("server-config.json.tmp")));
   }
 
@@ -52,7 +52,7 @@ class ConfigFileTest {
     final Path path = ConfigPaths.serverConfig(world);
     Files.createDirectories(path.getParent());
     Files.writeString(path, contents, StandardCharsets.UTF_8);
-    final ConfigFile file = new ConfigFile(path, CLOCK);
+    final ConfigFile<NightbornConfig> file = new ConfigFile<>(path, ConfigJson.FORMAT, CLOCK);
     assertEquals(NightbornConfig.DEFAULTS, file.load());
     final Path kept = path.resolveSibling("server-config.broken.2026-11-15T10-20-30Z.json");
     assertTrue(Files.exists(kept));
@@ -65,7 +65,7 @@ class ConfigFileTest {
     final Path path = ConfigPaths.serverConfig(world);
     Files.createDirectories(path.getParent());
     Files.writeString(path, "{ broken", StandardCharsets.UTF_8);
-    new ConfigFile(path, CLOCK).loadOrCreate();
+    new ConfigFile<>(path, ConfigJson.FORMAT, CLOCK).loadOrCreate();
     try (Stream<Path> files = Files.list(path.getParent())) {
       assertEquals(1, files.filter(p -> p.getFileName().toString().contains("broken")).count());
     }

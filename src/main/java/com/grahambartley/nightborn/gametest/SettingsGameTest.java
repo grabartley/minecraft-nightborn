@@ -1,6 +1,7 @@
 package com.grahambartley.nightborn.gametest;
 
 import com.grahambartley.nightborn.config.ConfigFile;
+import com.grahambartley.nightborn.config.ConfigJson;
 import com.grahambartley.nightborn.config.ConfigPaths;
 import com.grahambartley.nightborn.config.FactionSettings;
 import com.grahambartley.nightborn.server.ServerConfigService;
@@ -28,7 +29,10 @@ public class SettingsGameTest implements FabricGameTest {
             server, ServerConfigService.current().with(FactionSettings.SHOW_IN_PLAYER_LIST, true)),
         "the setting saved");
     context.assertTrue(
-        new ConfigFile(file, Clock.systemUTC()).load().factions().showInPlayerList(),
+        new ConfigFile<>(file, ConfigJson.FORMAT, Clock.systemUTC())
+            .load()
+            .factions()
+            .showInPlayerList(),
         "the world's settings file holds the change");
     final Text listed = vampire.getPlayerListName();
     context.assertTrue(
