@@ -53,7 +53,7 @@ public class LevitationGameTest implements FabricGameTest {
   }
 
   private static double floorTop(final TestContext context) {
-    return context.getAbsolutePos(new BlockPos(0, 1, 0)).getY();
+    return context.getAbsolutePos(new BlockPos(0, 2, 0)).getY();
   }
 
   private static double feet(final TestContext context, final LivingEntity entity) {
@@ -71,7 +71,7 @@ public class LevitationGameTest implements FabricGameTest {
 
   @GameTest(templateName = YARD, batchId = BATCH, skyAccess = true, tickLimit = 60)
   public void aLevitatingBodyFloatsOneBlockAboveTheGround(final TestContext context) {
-    final ArmorStandEntity stand = stand(context, new BlockPos(4, 1, 4));
+    final ArmorStandEntity stand = stand(context, new BlockPos(4, 2, 4));
     context.runAtTick(5, () -> levitate(stand));
     context.runAtTick(
         50,
@@ -85,7 +85,7 @@ public class LevitationGameTest implements FabricGameTest {
 
   @GameTest(templateName = YARD, batchId = BATCH, skyAccess = true, tickLimit = 100)
   public void overADropItSinksSlowlyAndNeverBuildsAFall(final TestContext context) {
-    final ArmorStandEntity stand = stand(context, new BlockPos(4, 5, 4));
+    final ArmorStandEntity stand = stand(context, new BlockPos(4, 6, 4));
     levitate(stand);
     context.runAtTick(
         10,
@@ -106,14 +106,14 @@ public class LevitationGameTest implements FabricGameTest {
 
   @GameTest(templateName = YARD, batchId = BATCH, skyAccess = true, tickLimit = 20)
   public void aLevitatingVampireCanStillFindAPath(final TestContext context) {
-    final VampireEntity vampire = still(context, new BlockPos(1, 2, 1));
+    final VampireEntity vampire = still(context, new BlockPos(1, 3, 1));
     levitate(vampire);
     context.runAtTick(
         5,
         () -> {
           context.assertFalse(vampire.isOnGround(), "held off the ground");
           context.assertTrue(
-              vampire.getNavigation().findPathTo(context.getAbsolutePos(new BlockPos(7, 1, 7)), 0)
+              vampire.getNavigation().findPathTo(context.getAbsolutePos(new BlockPos(7, 2, 7)), 0)
                   != null,
               "a path while levitating");
           context.complete();
@@ -122,13 +122,13 @@ public class LevitationGameTest implements FabricGameTest {
 
   @GameTest(templateName = YARD, batchId = BATCH, skyAccess = true, tickLimit = 20)
   public void aGroundedVampireOffTheGroundFindsNoPath(final TestContext context) {
-    final VampireEntity vampire = still(context, new BlockPos(1, 2, 1));
+    final VampireEntity vampire = still(context, new BlockPos(1, 3, 1));
     context.runAtTick(
         5,
         () -> {
           context.assertFalse(vampire.isOnGround(), "held off the ground");
           context.assertTrue(
-              vampire.getNavigation().findPathTo(context.getAbsolutePos(new BlockPos(7, 1, 7)), 0)
+              vampire.getNavigation().findPathTo(context.getAbsolutePos(new BlockPos(7, 2, 7)), 0)
                   == null,
               "vanilla finds no path in the air");
           context.complete();
@@ -137,7 +137,7 @@ public class LevitationGameTest implements FabricGameTest {
 
   @GameTest(templateName = YARD, batchId = BATCH, skyAccess = true, tickLimit = 40)
   public void aWeakenedVampireLandsAtOnce(final TestContext context) {
-    final VampireEntity vampire = still(context, new BlockPos(4, 1, 4));
+    final VampireEntity vampire = still(context, new BlockPos(4, 2, 4));
     Levitation.start(vampire);
     context.runAtTick(10, () -> Weakened.add(vampire, "garlic", 10, 200));
     context.runAtTick(
@@ -151,8 +151,8 @@ public class LevitationGameTest implements FabricGameTest {
 
   @GameTest(templateName = YARD, batchId = BATCH, skyAccess = true, tickLimit = 20)
   public void onlyVampirePlayersLevitate(final TestContext context) {
-    final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(3, 1, 4));
-    final ServerPlayerEntity human = TestPlayers.human(context, new BlockPos(5, 1, 4));
+    final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(3, 2, 4));
+    final ServerPlayerEntity human = TestPlayers.human(context, new BlockPos(5, 2, 4));
     Levitation.request(vampire);
     Levitation.request(human);
     context.assertTrue(Levitation.isLevitating(vampire), "the vampire floats");
@@ -164,7 +164,7 @@ public class LevitationGameTest implements FabricGameTest {
 
   @GameTest(templateName = YARD, batchId = BATCH, skyAccess = true, tickLimit = 20)
   public void becomingHumanLands(final TestContext context) {
-    final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(3, 1, 4));
+    final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(3, 2, 4));
     Levitation.request(vampire);
     VampireTransitions.makeHuman(vampire);
     context.assertFalse(Levitation.isLevitating(vampire), "a human never stays levitating");
@@ -189,7 +189,7 @@ public class LevitationGameTest implements FabricGameTest {
       skyAccess = true,
       tickLimit = TestPlayers.READY + 60)
   public void theServerLandsAPlayerHeldAboveTheHover(final TestContext context) {
-    final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(4, 1, 4));
+    final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(4, 2, 4));
     context.runAtTick(TestPlayers.READY, () -> Levitation.request(vampire));
     holdAt(context, vampire, HOVER + 2.0);
     context.runAtTick(
@@ -219,7 +219,7 @@ public class LevitationGameTest implements FabricGameTest {
       skyAccess = true,
       tickLimit = TestPlayers.READY + 70)
   public void aPlayerAtTheHoverKeepsLevitating(final TestContext context) {
-    final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(4, 1, 4));
+    final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(4, 2, 4));
     context.runAtTick(TestPlayers.READY, () -> Levitation.request(vampire));
     holdAt(context, vampire, HOVER);
     context.runAtTick(

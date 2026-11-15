@@ -9,7 +9,7 @@ import org.junit.jupiter.params.provider.CsvSource;
 
 class LevitationGuardTest {
 
-  @ParameterizedTest(name = "strikes {0}, last {1}, feet {2}, surface {3}: strikes {4}")
+  @ParameterizedTest(name = "strikes {0}, lowest {1}, feet {2}, surface {3}: strikes {4}")
   @CsvSource({
     "0, NaN, 65.0, 64, 0",
     "0, NaN, 65.7, 64, 0",
@@ -19,18 +19,19 @@ class LevitationGuardTest {
     "5, 66.0, 65.95, 64, 0",
     "5, 66.0, 66.0, , 6",
     "5, 66.0, 65.9, , 0",
-    "12, 70.0, 65.0, 64, 0"
+    "12, 70.0, 65.0, 64, 0",
+    "5, 65.9, 66.0, 64, 6"
   })
   @DisplayName("strikes build only while held too high and not coming down")
   void strikes(
       final int strikes,
-      final double last,
+      final double lowest,
       final double feet,
       final Double surface,
       final int after) {
     final OptionalDouble below =
         surface == null ? OptionalDouble.empty() : OptionalDouble.of(surface);
-    assertEquals(after, new LevitationGuard(strikes, last).next(feet, below).strikes());
+    assertEquals(after, new LevitationGuard(strikes, lowest).next(feet, below).strikes());
   }
 
   @ParameterizedTest(name = "{0} strikes: lands {1}")
@@ -47,6 +48,17 @@ class LevitationGuardTest {
     LevitationGuard guard = LevitationGuard.FRESH;
     for (int tick = 0; tick < ticks; tick++) {
       guard = guard.next(feet, OptionalDouble.of(64.0));
+    }
+    assertEquals(lands, guard.lands());
+  }
+
+  @ParameterizedTest(name = "bobbing between {0} and {1} for 40 ticks: lands {2}")
+  @CsvSource({"66.0, 65.92, true", "66.0, 66.08, true", "66.0, 65.0, false"})
+  @DisplayName("bobbing up and down while held too high still lands the vampire")
+  void bobbing(final double high, final double low, final boolean lands) {
+    LevitationGuard guard = LevitationGuard.FRESH;
+    for (int tick = 0; tick < 40; tick++) {
+      guard = guard.next(tick % 2 == 0 ? high : low, OptionalDouble.of(64.0));
     }
     assertEquals(lands, guard.lands());
   }

@@ -2,7 +2,7 @@ package com.grahambartley.nightborn.levitation;
 
 import java.util.OptionalDouble;
 
-public record LevitationGuard(int strikes, double lastFeet) {
+public record LevitationGuard(int strikes, double lowestFeet) {
 
   public static final LevitationGuard FRESH = new LevitationGuard(0, Double.NaN);
 
@@ -11,10 +11,14 @@ public record LevitationGuard(int strikes, double lastFeet) {
   static final int STRIKE_LIMIT = 40;
 
   public LevitationGuard next(final double feet, final OptionalDouble surface) {
-    final boolean descending = !Double.isNaN(lastFeet) && feet < lastFeet - DESCENT;
+    final boolean descending = !Double.isNaN(lowestFeet) && feet < lowestFeet - DESCENT;
     final boolean tooHigh =
         surface.isEmpty() || feet > surface.getAsDouble() + LevitationLift.HOVER_HEIGHT + TOLERANCE;
-    return new LevitationGuard(tooHigh && !descending ? strikes + 1 : 0, feet);
+    if (tooHigh && !descending) {
+      return new LevitationGuard(
+          strikes + 1, Double.isNaN(lowestFeet) ? feet : Math.min(lowestFeet, feet));
+    }
+    return new LevitationGuard(0, feet);
   }
 
   public boolean lands() {
