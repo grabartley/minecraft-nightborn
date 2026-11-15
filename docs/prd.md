@@ -34,7 +34,7 @@ Nightborn adds vampires and the people who hunt them. A bite from a vampire or a
 | Claim | Why it holds |
 |---|---|
 | Both sides are playable | Turning, feeding and bloodlines for vampires, gear and a skill tree for hunters (TURN, FEED, LINE, HUNT) |
-| Feeding is a real choice | Sip or drain, fresh or bottled, animal or person, and the victim can fight back (FEED-1 to FEED-13) |
+| Feeding is a real choice | Sip or drain, fresh or bottled, animal or person, and the victim can fight back (FEED-1 to FEED-14) |
 | Builds that fit your playstyle | Pick two of three bloodlines, each with its own powers (LINE-1 to LINE-7) |
 | Vampires are hard to kill | Only direct sun or a stake finishes one. Anything else only brings it down (CORE-7, CORE-8) |
 | Folklore that works | Garlic, crucifixes built from blocks, holy water, silver and stakes each have real rules (WEAK-1 to WEAK-10) |
@@ -120,7 +120,7 @@ This document specifies the Nightborn alpha line for Minecraft 1.21.1 on Fabric.
 | Sip | Feeding that stops before the victim dies |
 | Drain | Feeding until the victim dies |
 | Resist | A victim breaking free of a bite |
-| Weakened | The vampire debuff from garlic, crucifixes, holy water, being downed and escaping: slower, weaker blows and no powers. It is not the vanilla Weakness effect |
+| Weakened | The vampire debuff from garlic, crucifixes, holy water, starving, being downed and escaping: slower, weaker blows and no powers. It is not the vanilla Weakness effect |
 | Skill point | Earned by a vampire through feeding, or by a hunter through killing vampires. Spent on a skill tree |
 | Core | The vampire skills every vampire can take |
 | Bloodline | One of three branches of the vampire tree: Noble, Beast or Occult |
@@ -214,7 +214,7 @@ Sneak and use on a creature to bite it, and keep holding to drink. Let go to sto
 | ID | Requirement |
 |---|---|
 | FEED-1 | A vampire has a blood bar in place of hunger. It drains over time and faster when the vampire runs, fights or uses powers |
-| FEED-2 | An empty blood bar hurts the vampire as an empty hunger bar does, and a full one heals |
+| FEED-2 | An empty blood bar starves the vampire (FEED-14), and a full one heals |
 | FEED-3 | Normal food, potions and milk give a vampire nothing. A vampire who eats or drinks one is hurt and vomits it back up, with a short spell of Nausea, seen and heard by everyone near. Blood Bottles, holy water and items in the `nightborn:vampire_consumables` tag are exempt |
 | FEED-4 | Feeding drinks blood from the victim each second, and hurts it by the same amount |
 | FEED-5 | Letting go stops the bite and leaves the victim alive, with Weakness for a short time |
@@ -226,6 +226,7 @@ Sneak and use on a creature to bite it, and keep holding to drink. Let go to sto
 | FEED-11 | A Blood Bottle keeps the quality of the creature it came from, and shows it |
 | FEED-12 | Feeding earns vampire skill points from the blood drunk, weighed by its quality, with a bonus for draining. Filling Blood Bottles counts as feeding |
 | FEED-13 | A villager that sees a vampire feed panics and flees, rings the village bell, and the village treats the vampire as it treats a player who hurt a villager, through vanilla gossip. A villager that sees nothing acts as normal |
+| FEED-14 | A starving vampire grows more weakened over time, up to the cap (WEAK-9). Its powers and levitation stop, then its night speed and jump fade, and its bare-hand damage shrinks. After a while it loses health slowly, down to half a heart on any difficulty but Peaceful. Starving never downs or kills a vampire. Any blood stops it growing, and the weakness fades as the bar refills
 
 **Not supported:** feeding on the list's excluded creatures; feeding through blocks; a human drinking blood.
 
@@ -456,7 +457,7 @@ Vampires are rare. They live in households hidden in four kinds of structure, ea
 | HOME-17 | Every power a vampire mob uses has a clear tell in sight and sound just before it lands, never colour alone (ACC-1) |
 | HOME-18 | Vampire mobs are men and women in at least 10 looks, from 1.5 to 2 blocks tall in slim, average and broad builds. Their hitbox, eye height and reach follow their size. Outfits are chosen by era (LOOK-4). A vampire keeps its look and size for life, the same on every client, and an older stage reads as older |
 | HOME-19 | Vampire mobs bare their fangs and hiss, with animation and sound, when they notice a threat, are provoked, face garlic or a crucifix, or are about to strike. They have their own idle, hurt, death, talk and argue voices, male and female, pitched by size |
-| HOME-20 | Vampire structures hold gramophones loaded with gothic music discs (DECOR-8). Each starts its disc now and then while a player is near, and its disc can be taken. Gramophone music and structure music never play over each other for the same player |
+| HOME-20 | Vampire structures hold gramophones loaded with gothic music discs (DECOR-8). Each starts its disc now and then while a player is near, and its disc can be taken. A gramophone's music never plays over other music the mod or the game plays for the same player |
 
 **Not supported:** a household rebuilding after it is cleared; vampire mobs spawning outside their structures.
 
@@ -476,7 +477,7 @@ Vampires are rare. They live in households hidden in four kinds of structure, ea
 | COFFIN-6 | A human can open a coffin but not sleep in it |
 | COFFIN-7 | A closed coffin shades the vampire inside from the sun, smothers any flames they carry in, and hides them from view. An open one does none of these |
 | COFFIN-8 | Vampire players never count toward the bed share, and humans never count toward the coffin share, so neither side blocks the other's sleep |
-| COFFIN-9 | Any player can sneak and use an occupied coffin with an empty hand to open or shut its lid. An open lid shows the vampire inside and no longer shades them, so direct sun reaches them (SUN-1). The vampire, player or mob, sleeps on until hurt. A plain use is still refused (CS-2) |
+| COFFIN-9 | Any player can sneak and use an occupied coffin with an empty hand to open or shut its lid. An open lid shows the vampire inside and no longer shades them, so direct sun reaches them (SUN-1). The vampire, player or mob, sleeps on until hurt. Using it without sneaking does not open it (COFFIN-1), and a second vampire cannot lie down in it (CS-2) |
 | COFFIN-10 | A coffin placed while sneaking stands upright, two cells tall, its back to the block behind and its lid facing the player who placed it. A standing coffin follows every coffin rule, a vampire sleeps in it standing, and one who respawns at it stands on the floor in front of it |
 | COFFIN-11 | A vampire asleep in a coffin, player or mob, lies or stands with arms crossed over the chest |
 | COFFIN-12 | A vampire waking in a flat coffin rises rigid, pivoting up from the heels until upright, then steps off. One waking in a standing coffin steps forward out of it. It cannot move until it stands clear, damage does not cancel the rise, and it always ends on a safe free cell next to the coffin |
@@ -541,7 +542,7 @@ Vampires are rare. They live in households hidden in four kinds of structure, ea
 | CFG-2 | Settings are saved per world as JSON in the world save directory |
 | CFG-3 | A missing file gives defaults. A broken file gives defaults, is logged and is kept |
 | CFG-4 | Out-of-range values are clamped on load |
-| CFG-5 | Options cover turn chances, sickness length, sun damage, blood drain and values, garlic and crucifix ranges, skill point rates, the staking penalty, stake and silver damage, the downed and escape times, the damage from vomiting food or potions, the blood drain while levitating, the coffin sleep share, hardcore vampire deaths, spawn and structure rates, vampire mob hunger threshold and blood drain, feeding range and chase range, how often structure gramophones play, the rewards for older vampires and the Eldest, and whether players can turn players |
+| CFG-5 | Options cover turn chances, sickness length, sun damage, blood drain and values, garlic and crucifix ranges, skill point rates, the staking penalty, stake and silver damage, the downed and escape times, the damage from vomiting food or potions, the blood drain while levitating, how fast starving weakens and hurts, the coffin sleep share, hardcore vampire deaths, spawn and structure rates, vampire mob hunger threshold and blood drain, feeding range and chase range, how often structure gramophones play, the rewards for older vampires and the Eldest, and whether players can turn players |
 | CFG-6 | A settings screen through Mod Menu shows the same server options and shares their validation with the commands |
 | CFG-7 | An option that only changes what one player sees, such as gore, is a client setting saved on that player's device. Every player can change it on the settings screen, whatever their operator level |
 | CFG-8 | Operators can turn, cure, set points and reset the bloodlines of any player |
@@ -603,7 +604,7 @@ The Eldest is the oldest vampire there is, with every power of every bloodline. 
 | RITE-4 | The Eldest is downed and escapes like any vampire, and only a stake or the sun ends it (CORE-7, CORE-8). Its bar shows when it is downed or escaping |
 | RITE-5 | The ritual uses up the relics. The altar can be used again with a new set, so the fight can be repeated |
 | RITE-6 | Ending the Eldest gives a large number of hunter points to every human who took part in the fight, and loot found nowhere else |
-| RITE-7 | Only a human can start the ritual. Vampire players can join the fight as the PvP setting allows (FACT-2) |
+| RITE-7 | Only a human can start the ritual. The Eldest attacks humans, and ignores vampire players unless they attack it (HOME-11). Vampire players can fight on either side as the PvP setting allows (FACT-2) |
 | RITE-8 | The Eldest is not the castle's vampire lord (HOME-7). It appears only through the ritual |
 
 **Not supported:** summoning the Eldest any other way.
@@ -623,7 +624,8 @@ A modified client is assumed. Hiding a control is never the enforcement of a rul
 | Earn and spend hunter points | Yes | No | No | Through CFG-8 |
 | Earn and spend vampire points | No | Yes | Yes | Through CFG-8 |
 | Sleep in a coffin | No | Yes | Yes | Yes, as a vampire |
-| Break or open an empty coffin | Yes | Yes | Yes | Yes |
+| Break a coffin | Yes | Yes | Yes | Yes |
+| Open an empty coffin | Yes | Yes | Yes | Yes |
 | Open an occupied coffin | Yes, sneaking with an empty hand | Yes, sneaking with an empty hand | Yes, sneaking with an empty hand | Yes, sneaking with an empty hand |
 | Start the ritual | Yes | No | No | Yes, as a human |
 | Command a thrall or familiar | No | Only their own | Only their own | No |
