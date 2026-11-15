@@ -181,6 +181,8 @@
   "nightborn.setting.skills.drainBonusPoints.tooltip": "Дополнительные очки навыка вампира за осушение жертвы",
   "nightborn.setting.skills.huntPoints": "Очки охотника за убийство",
   "nightborn.setting.skills.huntPoints.tooltip": "Очки навыков охотника человеку, который пронзил вампира колом или поверг вампира, добитого потом солнцем",
+  "nightborn.setting.skills.stagePoints": "Доп. очки охотника за ступень",
+  "nightborn.setting.skills.stagePoints.tooltip": "Дополнительные очки навыков охотника за каждую ступень, на которую вампир старше новообращённого",
   "nightborn.skill_tree.vampire": "Древо вампира",
   "nightborn.skill_tree.hunter": "Древо охотника",
   "skill_branch.nightborn.core": "Основа",

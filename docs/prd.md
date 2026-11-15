@@ -393,7 +393,7 @@ The hunter tree starts with Tracking, an active power that points toward the nea
 
 | ID | Requirement |
 |---|---|
-| HUNT-1 | Any human player earns hunter points by staking vampire mobs and vampire players, or by downing one that the sun finishes before its escape ends. Downing alone earns nothing. No pledge is needed. The Eldest also pays hunters, as RITE-6 says |
+| HUNT-1 | Any human player earns hunter points by staking vampire mobs and vampire players, or by downing one that the sun finishes before its escape ends. Downing alone earns nothing. A vampire mob pays extra points for each stage it has above fledgling (HOME-15). No pledge is needed. The Eldest also pays hunters, as RITE-6 says |
 | HUNT-2 | Contracts from the Guild Master earn hunter points as well as their reward |
 | HUNT-3 | The hunter tree is one shared tree for all humans |
 | HUNT-4 | Hunter skills cover tracking vampires, resisting bites and mesmerise, and faith powers that make crucifixes and holy water stronger |

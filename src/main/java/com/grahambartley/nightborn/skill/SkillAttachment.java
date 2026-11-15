@@ -5,6 +5,7 @@ import net.fabricmc.fabric.api.attachment.v1.AttachmentRegistry;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentSyncPredicate;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentTarget;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentType;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.Identifier;
 
 public final class SkillAttachment {
@@ -31,6 +32,10 @@ public final class SkillAttachment {
 
   public static TreeProgress get(final AttachmentTarget target, final SkillTree tree) {
     return get(target).get(tree);
+  }
+
+  public static TreeProgress owned(final LivingEntity entity) {
+    return get(entity, SkillTree.of(entity));
   }
 
   public static void set(

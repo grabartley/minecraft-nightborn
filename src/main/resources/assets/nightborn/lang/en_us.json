@@ -181,6 +181,8 @@
   "nightborn.setting.skills.drainBonusPoints.tooltip": "Extra vampire skill points for draining a victim",
   "nightborn.setting.skills.huntPoints": "Hunter Points Per Kill",
   "nightborn.setting.skills.huntPoints.tooltip": "Hunter skill points for a human who stakes a vampire, or downs one that the sun then finishes",
+  "nightborn.setting.skills.stagePoints": "Extra Hunter Points Per Stage",
+  "nightborn.setting.skills.stagePoints.tooltip": "Extra hunter skill points for each stage a vampire mob is older than a fledgling",
   "nightborn.skill_tree.vampire": "Vampire Tree",
   "nightborn.skill_tree.hunter": "Hunter Tree",
   "skill_branch.nightborn.core": "Core",

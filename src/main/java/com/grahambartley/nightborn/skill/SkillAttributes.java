@@ -5,10 +5,10 @@ import com.grahambartley.nightborn.vampire.Modifiers;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.attribute.EntityAttribute;
 import net.minecraft.entity.attribute.EntityAttributeInstance;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.entry.RegistryEntry;
@@ -20,10 +20,10 @@ public final class SkillAttributes {
 
   private SkillAttributes() {}
 
-  public static void apply(final PlayerEntity player) {
+  public static void apply(final LivingEntity entity) {
     final Registry<Skill> skills =
-        Skills.skills(player.getWorld().getRegistryManager()).orElse(null);
-    final TreeProgress owned = SkillAttachment.get(player, SkillTree.of(player));
+        Skills.skills(entity.getWorld().getRegistryManager()).orElse(null);
+    final TreeProgress owned = SkillAttachment.owned(entity);
     final Map<Identifier, SkillAttribute> wanted = new HashMap<>();
     if (skills != null) {
       for (final Identifier id : owned.ownedInOrder()) {
@@ -33,16 +33,16 @@ public final class SkillAttributes {
         }
       }
     }
-    removeStray(player, wanted);
+    removeStray(entity, wanted);
     wanted.forEach(
         (modifier, attribute) ->
             Modifiers.set(
-                player,
+                entity,
                 attribute.attribute(),
                 modifier,
                 attribute.amount(),
                 attribute.operation()));
-    Modifiers.clampHealth(player);
+    Modifiers.clampHealth(entity);
   }
 
   static Map<Identifier, SkillAttribute> modifiers(
@@ -72,12 +72,12 @@ public final class SkillAttributes {
   }
 
   private static void removeStray(
-      final PlayerEntity player, final Map<Identifier, SkillAttribute> wanted) {
+      final LivingEntity entity, final Map<Identifier, SkillAttribute> wanted) {
     Registries.ATTRIBUTE
         .streamEntries()
         .forEach(
             attribute -> {
-              final EntityAttributeInstance instance = player.getAttributeInstance(attribute);
+              final EntityAttributeInstance instance = entity.getAttributeInstance(attribute);
               if (instance == null) {
                 return;
               }

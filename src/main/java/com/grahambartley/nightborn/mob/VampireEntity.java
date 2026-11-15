@@ -6,8 +6,11 @@ import com.grahambartley.nightborn.config.NightbornConfig;
 import com.grahambartley.nightborn.core.VampireCore;
 import com.grahambartley.nightborn.downed.Downed;
 import com.grahambartley.nightborn.levitation.Levitation;
+import com.grahambartley.nightborn.mob.combat.CombatMoves;
+import com.grahambartley.nightborn.mob.combat.PowerCasting;
 import com.grahambartley.nightborn.mob.goal.FleeWhileEscapingGoal;
 import com.grahambartley.nightborn.mob.goal.LieDownedGoal;
+import com.grahambartley.nightborn.mob.goal.RetreatGoal;
 import com.grahambartley.nightborn.mob.goal.SeekShadeGoal;
 import com.grahambartley.nightborn.mob.goal.SleepInCoffinGoal;
 import com.grahambartley.nightborn.mob.goal.WatchStrangerGoal;
@@ -21,10 +24,18 @@ import com.grahambartley.nightborn.mob.look.VampireLooks;
 import com.grahambartley.nightborn.mob.look.VampireRig;
 import com.grahambartley.nightborn.mob.look.VampireSize;
 import com.grahambartley.nightborn.mob.look.VampireVoice;
+import com.grahambartley.nightborn.mob.stage.StageCombat;
+import com.grahambartley.nightborn.mob.stage.Staged;
+import com.grahambartley.nightborn.mob.stage.VampireStage;
+import com.grahambartley.nightborn.mob.stage.VampireStages;
+import com.grahambartley.nightborn.mob.stage.VampireStaging;
 import com.grahambartley.nightborn.server.ServerConfigService;
+import com.grahambartley.nightborn.skill.PowerShow;
+import com.grahambartley.nightborn.structure.HouseholdArrival;
 import com.grahambartley.nightborn.structure.HouseholdMember;
 import com.grahambartley.nightborn.vampire.VisibleStateAttachment;
 import com.grahambartley.nightborn.weakened.Weakened;
+import java.util.Map;
 import java.util.Optional;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityData;
@@ -52,8 +63,10 @@ import net.minecraft.entity.data.TrackedDataHandlerRegistry;
 import net.minecraft.entity.mob.HostileEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.loot.LootTable;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
+import net.minecraft.registry.RegistryKey;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;
@@ -72,11 +85,14 @@ import software.bernie.geckolib.animation.PlayState;
 import software.bernie.geckolib.animation.RawAnimation;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
-public class VampireEntity extends HostileEntity implements GeoEntity, HouseholdMember {
+public class VampireEntity extends HostileEntity
+    implements GeoEntity, HouseholdMember, PowerShow, Staged {
 
   static final String LOOK_KEY = "Look";
   static final String HEIGHT_KEY = "Height";
   static final String WIDTH_KEY = "Width";
+  static final String STAGE_KEY = "Stage";
+  static final String ACTION_CONTROLLER = "action_clip";
   static final int ANIMATION_BLEND_TICKS = 4;
   static final String HISS_CONTROLLER = "hiss";
   static final String HISS_CLIP = "hiss";
@@ -88,11 +104,20 @@ public class VampireEntity extends HostileEntity implements GeoEntity, Household
       DataTracker.registerData(VampireEntity.class, TrackedDataHandlerRegistry.FLOAT);
   private static final TrackedData<Float> WIDTH =
       DataTracker.registerData(VampireEntity.class, TrackedDataHandlerRegistry.FLOAT);
+  private static final TrackedData<String> STAGE =
+      DataTracker.registerData(VampireEntity.class, TrackedDataHandlerRegistry.STRING);
+  private static final TrackedData<String> ACTION =
+      DataTracker.registerData(VampireEntity.class, TrackedDataHandlerRegistry.STRING);
+  private static final TrackedData<Integer> ACTION_SEQUENCE =
+      DataTracker.registerData(VampireEntity.class, TrackedDataHandlerRegistry.INTEGER);
 
   private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
   private final EndingEdge landingEdge = new EndingEdge();
   private final HomeLife homeLife = new HomeLife();
   private final MobBlood blood = new MobBlood();
+  private final PowerCasting casting = new PowerCasting();
+  private final CombatMoves moves = new CombatMoves();
+  private final ShownAction shownAction = new ShownAction();
   private VampirePose shownPose = VampirePose.IDLE;
   private long nextHiss;
   private boolean warded;
@@ -117,6 +142,9 @@ public class VampireEntity extends HostileEntity implements GeoEntity, Household
     builder.add(LOOK, "");
     builder.add(HEIGHT, VampireSize.BASE_HEIGHT);
     builder.add(WIDTH, 1.0F);
+    builder.add(STAGE, "");
+    builder.add(ACTION, "");
+    builder.add(ACTION_SEQUENCE, 0);
   }
 
   @Override
@@ -140,6 +168,7 @@ public class VampireEntity extends HostileEntity implements GeoEntity, Household
     goalSelector.add(2, new SeekShadeGoal(this, 1.3));
     goalSelector.add(3, new AvoidSunlightGoal(this));
     goalSelector.add(3, new SleepInCoffinGoal(this));
+    goalSelector.add(3, new RetreatGoal(this, 1.3, () -> stage().combat().retreatHealth()));
     goalSelector.add(4, new MeleeAttackGoal(this, 1.15, false));
     goalSelector.add(5, new GoToWalkTargetGoal(this, 1.0));
     goalSelector.add(6, new WatchStrangerGoal(this));
@@ -250,7 +279,50 @@ public class VampireEntity extends HostileEntity implements GeoEntity, Household
       hiss();
     }
     warded = nowWarded;
+    fight();
     levitateAboutHome();
+  }
+
+  private void fight() {
+    if (getTarget() == null || Downed.state(this) != null || isSleeping()) {
+      return;
+    }
+    final StageCombat combat = stage().combat();
+    casting.tick(this, combat);
+    if (!casting.telling() && Weakened.sources(this).level(false) == 0) {
+      moves.tick(this, combat);
+    }
+  }
+
+  @Override
+  public void showPower(final String clip) {
+    dataTracker.set(ACTION, clip);
+    dataTracker.set(ACTION_SEQUENCE, dataTracker.get(ACTION_SEQUENCE) + 1);
+  }
+
+  public Identifier stageId() {
+    final Identifier id = Identifier.tryParse(dataTracker.get(STAGE));
+    return id == null ? VampireStaging.NONE : id;
+  }
+
+  public void becomeStage(final Identifier id) {
+    dataTracker.set(
+        STAGE, VampireStaging.become(this, getWorld().getRegistryManager(), id, random).toString());
+  }
+
+  public VampireStage stage() {
+    return VampireStages.stage(getWorld().getRegistryManager(), stageId())
+        .orElse(VampireStage.PLAIN);
+  }
+
+  @Override
+  public int stageRank() {
+    return stage().rank();
+  }
+
+  @Override
+  public RegistryKey<LootTable> getLootTableId() {
+    return stage().loot().orElseGet(super::getLootTableId);
   }
 
   private void setOutToFeed() {
@@ -375,6 +447,14 @@ public class VampireEntity extends HostileEntity implements GeoEntity, Household
     VampireCore.tick(this, config.core(), config.blood());
     setHealth(getMaxHealth());
     blood.start(this, random.nextInt(Integer.MAX_VALUE), config);
+    dataTracker.set(
+        STAGE,
+        VampireStaging.begin(
+                this,
+                world.getRegistryManager(),
+                entityData instanceof HouseholdArrival arrival ? arrival.stages() : Map.of(),
+                random)
+            .toString());
     return super.initialize(world, difficulty, spawnReason, entityData);
   }
 
@@ -433,6 +513,7 @@ public class VampireEntity extends HostileEntity implements GeoEntity, Household
     nbt.putString(LOOK_KEY, dataTracker.get(LOOK));
     nbt.putFloat(HEIGHT_KEY, height());
     nbt.putFloat(WIDTH_KEY, width());
+    nbt.putString(STAGE_KEY, dataTracker.get(STAGE));
     homeLife.write(nbt);
     blood.write(nbt);
   }
@@ -442,6 +523,7 @@ public class VampireEntity extends HostileEntity implements GeoEntity, Household
     super.readCustomDataFromNbt(nbt);
     homeLife.read(nbt);
     blood.read(nbt);
+    dataTracker.set(STAGE, nbt.getString(STAGE_KEY));
     undressed = nbt.contains(LOOK_KEY) && !nbt.contains(LOOK_KEY, NbtElement.STRING_TYPE);
     if (nbt.contains(LOOK_KEY, NbtElement.STRING_TYPE)) {
       final Identifier look = Identifier.tryParse(nbt.getString(LOOK_KEY));
@@ -493,7 +575,11 @@ public class VampireEntity extends HostileEntity implements GeoEntity, Household
                           state.getLimbSwingAmount(),
                           Math.hypot(getX() - prevX, getZ() - prevZ)));
               shownPose = pose == VampirePose.IDLE ? IdleFidget.pose(getId(), age) : pose;
-              final PlayState play = state.setAndContinue(shownPose.clip());
+              final PlayState play =
+                  state.setAndContinue(
+                      shownPose == VampirePose.IDLE
+                          ? stage().look().idle().map(ClipCache::loop).orElse(shownPose.clip())
+                          : shownPose.clip());
               landingEdge.shown(
                   pose == VampirePose.LAND,
                   pose == VampirePose.LAND && state.getController().hasAnimationFinished());
@@ -510,6 +596,14 @@ public class VampireEntity extends HostileEntity implements GeoEntity, Household
                     shownPose.allowsActions()
                         ? VampirePose.action(handSwinging, false, true)
                         : Optional.empty())));
+    controllers.add(
+        new AnimationController<>(
+            this,
+            ACTION_CONTROLLER,
+            2,
+            state ->
+                shownAction.play(
+                    state, dataTracker.get(ACTION_SEQUENCE), dataTracker.get(ACTION))));
     controllers.add(
         new AnimationController<>(this, HISS_CONTROLLER, 2, state -> PlayState.STOP)
             .triggerableAnim(HISS_CLIP, HISS));

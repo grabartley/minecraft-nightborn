@@ -181,6 +181,8 @@
   "nightborn.setting.skills.drainBonusPoints.tooltip": "Zusätzliche Vampir-Fähigkeitspunkte, wenn ein Opfer ausgesaugt wird",
   "nightborn.setting.skills.huntPoints": "Jägerpunkte pro Tötung",
   "nightborn.setting.skills.huntPoints.tooltip": "Jäger-Fähigkeitspunkte für einen Menschen, der einen Vampir pfählt oder niederstreckt, den dann die Sonne erledigt",
+  "nightborn.setting.skills.stagePoints": "Zusätzliche Jägerpunkte pro Stufe",
+  "nightborn.setting.skills.stagePoints.tooltip": "Zusätzliche Jäger-Fähigkeitspunkte für jede Stufe, die ein Vampir älter als ein Jungvampir ist",
   "nightborn.skill_tree.vampire": "Vampirbaum",
   "nightborn.skill_tree.hunter": "Jägerbaum",
   "skill_branch.nightborn.core": "Kern",

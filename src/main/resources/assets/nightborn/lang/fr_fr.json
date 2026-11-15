@@ -181,6 +181,8 @@
   "nightborn.setting.skills.drainBonusPoints.tooltip": "Points de compétence vampirique en plus pour avoir vidé une victime",
   "nightborn.setting.skills.huntPoints": "Points de chasseur par mise à mort",
   "nightborn.setting.skills.huntPoints.tooltip": "Points de compétence de chasseur pour un humain qui plante un pieu dans un vampire, ou en met un à terre que le soleil achève ensuite",
+  "nightborn.setting.skills.stagePoints": "Points de chasseur en plus par stade",
+  "nightborn.setting.skills.stagePoints.tooltip": "Points de compétence de chasseur en plus pour chaque stade où un vampire est plus vieux qu'un novice",
   "nightborn.skill_tree.vampire": "Arbre vampirique",
   "nightborn.skill_tree.hunter": "Arbre du chasseur",
   "skill_branch.nightborn.core": "Fondement",

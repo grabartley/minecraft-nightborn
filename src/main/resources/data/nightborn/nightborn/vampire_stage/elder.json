@@ -1,0 +1,19 @@
+{
+  "rank": 2,
+  "weight": 18,
+  "body": { "health": 0.6, "speed": 0.1, "damage": 0.4 },
+  "skills": {
+    "count": { "type": "minecraft:uniform", "min_inclusive": 2, "max_inclusive": 4 },
+    "weights": { "nightborn:core/blood_rush": 4 }
+  },
+  "combat": {
+    "blood_floor": 3,
+    "think_ticks": 20,
+    "leap_chance": 45,
+    "dash_chance": 35,
+    "dodge_chance": 30,
+    "retreat_health": 35
+  },
+  "look": { "idle": "idle_elder", "marks": "nightborn:textures/entity/vampire/stage/elder" },
+  "loot": "nightborn:entities/vampire/elder"
+}

@@ -181,6 +181,8 @@
   "nightborn.setting.skills.drainBonusPoints.tooltip": "Pontos de habilidade vampírica extras por drenar uma vítima",
   "nightborn.setting.skills.huntPoints": "Pontos de caçador por morte",
   "nightborn.setting.skills.huntPoints.tooltip": "Pontos de habilidade de caçador para um humano que estaca um vampiro, ou derruba um que o sol depois acaba",
+  "nightborn.setting.skills.stagePoints": "Pontos de caçador extras por estágio",
+  "nightborn.setting.skills.stagePoints.tooltip": "Pontos de habilidade de caçador extras para cada estágio em que um vampiro é mais velho que um novato",
   "nightborn.skill_tree.vampire": "Árvore vampírica",
   "nightborn.skill_tree.hunter": "Árvore do caçador",
   "skill_branch.nightborn.core": "Núcleo",

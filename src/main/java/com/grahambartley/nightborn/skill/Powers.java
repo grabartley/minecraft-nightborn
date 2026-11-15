@@ -5,14 +5,16 @@ import com.grahambartley.nightborn.downed.Downed;
 import com.grahambartley.nightborn.network.UsePowerPayload;
 import com.grahambartley.nightborn.weakened.Weakened;
 import java.util.List;
+import java.util.Optional;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.registry.Registry;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
+import org.jetbrains.annotations.Nullable;
 
 public final class Powers {
 
@@ -29,45 +31,70 @@ public final class Powers {
     }
     final Registry<Skill> skills =
         Skills.skills(player.getServerWorld().getRegistryManager()).orElse(null);
-    final TreeProgress progress = SkillAttachment.get(player, SkillTree.of(player));
-    final List<Identifier> bar = PowerBar.slots(skills, progress);
-    final Identifier id = slot >= 0 && slot < bar.size() ? bar.get(slot) : null;
-    final SkillPower power = id == null ? null : skills.get(id).power().orElseThrow();
-    final long now = player.getServerWorld().getTime();
-    final PowerCooldowns cooldowns = PowerCooldownAttachment.get(player);
+    final List<Identifier> bar = PowerBar.slots(skills, SkillAttachment.owned(player));
     final PowerUse.Verdict verdict =
-        PowerUse.check(
-            power != null,
-            Downed.helpless(player),
-            Weakened.sources(player).level(Downed.state(player) != null) > 0,
-            id == null ? 0L : cooldowns.ticksLeft(id, now),
-            BloodAttachment.get(player),
-            power == null ? 0 : power.blood());
+        cast(player, slot >= 0 && slot < bar.size() ? bar.get(slot) : null);
+    if (verdict != PowerUse.Verdict.READY && verdict != PowerUse.Verdict.NO_POWER) {
+      player.sendMessage(Text.translatable(verdict.translationKey()), true);
+    }
+    return verdict;
+  }
+
+  public static Optional<SkillPower> power(
+      final LivingEntity caster, @Nullable final Identifier id) {
+    if (id == null || !SkillAttachment.owned(caster).owns(id)) {
+      return Optional.empty();
+    }
+    return Skills.skills(caster.getWorld().getRegistryManager())
+        .map(registry -> registry.get(id))
+        .flatMap(Skill::power);
+  }
+
+  public static PowerUse.Verdict check(final LivingEntity caster, @Nullable final Identifier id) {
+    final Optional<SkillPower> power = power(caster, id);
+    return PowerUse.check(
+        power.isPresent(),
+        Downed.helpless(caster),
+        Weakened.sources(caster).level(Downed.state(caster) != null) > 0,
+        id == null
+            ? 0L
+            : PowerCooldownAttachment.get(caster).ticksLeft(id, caster.getWorld().getTime()),
+        BloodAttachment.get(caster),
+        power.map(SkillPower::blood).orElse(0));
+  }
+
+  public static PowerUse.Verdict cast(final LivingEntity caster, @Nullable final Identifier id) {
+    final PowerUse.Verdict verdict = check(caster, id);
     if (verdict != PowerUse.Verdict.READY) {
-      if (verdict != PowerUse.Verdict.NO_POWER) {
-        player.sendMessage(Text.translatable(verdict.translationKey()), true);
-      }
       return verdict;
     }
+    final SkillPower power = power(caster, id).orElseThrow();
     if (power.blood() > 0) {
-      BloodAttachment.set(player, BloodAttachment.get(player) - power.blood());
+      BloodAttachment.set(caster, BloodAttachment.get(caster) - power.blood());
     }
-    PowerCooldownAttachment.set(player, cooldowns.start(id, now, power.cooldownTicks()));
+    final long now = caster.getWorld().getTime();
+    PowerCooldownAttachment.set(
+        caster, PowerCooldownAttachment.get(caster).start(id, now, power.cooldownTicks()));
     for (final StatusEffectInstance effect : power.effects()) {
-      player.addStatusEffect(new StatusEffectInstance(effect), player);
+      caster.addStatusEffect(new StatusEffectInstance(effect), caster);
     }
-    power.track().ifPresent(track -> Tracking.start(player, track));
+    if (caster instanceof ServerPlayerEntity player) {
+      power.track().ifPresent(track -> Tracking.start(player, track));
+    }
+    if (caster instanceof PowerShow show) {
+      power.mob().flatMap(MobPowerUse::clip).ifPresent(show::showPower);
+    }
     power
         .sound()
         .ifPresent(
             sound ->
-                player
-                    .getServerWorld()
+                caster
+                    .getWorld()
                     .playSound(
                         null,
-                        player.getBlockPos(),
+                        caster.getBlockPos(),
                         SoundEvent.of(sound),
-                        SoundCategory.PLAYERS,
+                        caster.getSoundCategory(),
                         1.0F,
                         1.0F));
     return verdict;
