@@ -2,21 +2,20 @@
 
 ## Context
 
-Levitation (CORE-11) and vomiting (FEED-3) need the same poses on a vampire player as on a vampire mob: a float with the feet together, a lean that grows with speed, a landing, and doubling over to retch. Vampire mobs are GeckoLib entities that play clips from `animations/entity/vampire.animation.json`. Players are drawn by vanilla's player model, which has no clip player. Hand-coding the player poses in Java would make a second copy of every pose that could drift from the mob's.
+Levitation (CORE-11) and vomiting (FEED-3) need the same poses on a vampire player as on a vampire mob: a float with the feet together, a lean that grows with speed, a landing, and doubling over to retch. Vampire mobs are GeckoLib entities that play clips from `animations/entity/vampire.animation.json`. Players are drawn by vanilla's player model, which has no clip player. Copying the clips onto the vanilla model in code would mean a second, hand-written version of every pose that could drift from the mob's, and it did not hold together in game.
 
 ## Decision
 
-The vampire rig's animation file is the only place a vampire pose is defined. The client reads the same file for players and plays it on the vanilla player model:
+Every model and animation is a GeckoLib model and clip made in Blockbench through the `bbmodel` MCP. Vampire players are drawn by GeckoLib while a vampire clip plays:
 
-- `ClipFile` reads the exported Bedrock animation, and `RigGeometry` reads the bone pivots, parents and the `mouth` locator from the male rig's geometry.
-- `RigSpace` turns a clip's values into vanilla model angles and pivots, following the conventions GeckoLib uses for the same file, so a clip looks the same on a player as on a mob. The root bone becomes a transform in `PlayerEntityRenderer.setupTransforms`, so armour, held items and the cape tilt with the body.
-- The body bone pivots at the hips, so the head and arms ride a forward bend, as on the mob rig.
-- Clip names come from `VampirePose`, which both the mob and the player read.
-- The vomit bursts land on the heaves of the vomit clip, found as the body's strongest forward bends, because the Bedrock export does not carry particle keyframes.
+- Two player rigs, wide-armed and slim-armed, are built in Blockbench on the vanilla 64x64 skin layout and textured with the player's own skin. They use the vampire rig's bone names and pivots, so the vampire animation file drives them unchanged.
+- `PlayerEntityRenderer` hands a vampire player to a GeckoLib `GeoReplacedEntityRenderer` while it levitates, lands or vomits, and draws it as vanilla does otherwise.
+- The rigs carry GeckoLib's armour anchor bones and two hand bones, so armour, trims, held items and the glowing eyes follow the clip.
+- Clip names come from `VampirePose`, which both the mob and the player read. Clip lengths and the heaves of the vomit clip are read from GeckoLib's loaded animation, because the Bedrock export does not carry particle keyframes. The mouth is found from the head bone where GeckoLib drew it.
 
 ## Consequences
 
 - A clip retimed or repainted in the Blockbench project changes players and mobs together, with no code change.
-- A clip may use only plain numbers. An expression is refused when the file loads.
 - The first-person arm is left to vanilla, so a held item stays where players expect it.
-- When the male and female rigs gain different proportions (#11), players keep following the male rig's pivots until a player rig of their own is needed.
+- Vanilla's own poses, such as sneaking, swimming or drawing a bow, stay vanilla. A vampire version of one is a new clip in Blockbench, not code.
+- Capes, elytra, shoulder parrots and stuck arrows are not drawn while a vampire clip plays.

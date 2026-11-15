@@ -16,28 +16,20 @@ import net.minecraft.test.GameTest;
 import net.minecraft.test.TestContext;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.Difficulty;
-import net.minecraft.world.GameRules;
 
 public class StarvationGameTest implements FabricGameTest {
 
   static final String ARENA = "nightborn:vampire_arena";
   static final String BATCH = "starving";
 
-  static final int MIDNIGHT = 18000;
-
   private static Difficulty difficulty = Difficulty.NORMAL;
-  private static long timeBefore;
-  private static boolean cycleBefore;
   private static int hurtDelayBefore;
   private static int hurtSecondsBefore;
 
   @BeforeBatch(batchId = BATCH)
   public void starveFast(final ServerWorld world) {
     difficulty = world.getDifficulty();
-    timeBefore = world.getTimeOfDay();
-    cycleBefore = world.getGameRules().getBoolean(GameRules.DO_DAYLIGHT_CYCLE);
-    world.getGameRules().get(GameRules.DO_DAYLIGHT_CYCLE).set(false, world.getServer());
-    world.setTimeOfDay(MIDNIGHT);
+    WorldClock.freeze(world, WorldClock.MIDNIGHT);
     hurtDelayBefore = ServerConfigService.current().blood().starvingHurtDelaySeconds();
     hurtSecondsBefore = ServerConfigService.current().blood().starvingHurtSeconds();
     world.getServer().setDifficulty(Difficulty.HARD, true);
@@ -51,8 +43,7 @@ public class StarvationGameTest implements FabricGameTest {
   @AfterBatch(batchId = BATCH)
   public void restore(final ServerWorld world) {
     world.getServer().setDifficulty(difficulty, true);
-    world.getGameRules().get(GameRules.DO_DAYLIGHT_CYCLE).set(cycleBefore, world.getServer());
-    world.setTimeOfDay(timeBefore);
+    WorldClock.release(world);
     ServerConfigService.update(
         world.getServer(),
         ServerConfigService.current()

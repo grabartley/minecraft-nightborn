@@ -22,30 +22,21 @@ import net.minecraft.test.GameTest;
 import net.minecraft.test.TestContext;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.GameRules;
 
 public class VomitGameTest implements FabricGameTest {
 
   static final String ARENA = "nightborn:vampire_arena";
   static final String BATCH = "vomiting";
-  static final int MIDNIGHT = 18000;
   static final int FINISHED = TestPlayers.READY + 45;
-
-  private static long timeBefore;
-  private static boolean cycleBefore;
 
   @BeforeBatch(batchId = BATCH)
   public void pinMidnight(final ServerWorld world) {
-    timeBefore = world.getTimeOfDay();
-    cycleBefore = world.getGameRules().getBoolean(GameRules.DO_DAYLIGHT_CYCLE);
-    world.getGameRules().get(GameRules.DO_DAYLIGHT_CYCLE).set(false, world.getServer());
-    world.setTimeOfDay(MIDNIGHT);
+    WorldClock.freeze(world, WorldClock.MIDNIGHT);
   }
 
   @AfterBatch(batchId = BATCH)
   public void release(final ServerWorld world) {
-    world.getGameRules().get(GameRules.DO_DAYLIGHT_CYCLE).set(cycleBefore, world.getServer());
-    world.setTimeOfDay(timeBefore);
+    WorldClock.release(world);
   }
 
   private static void swallow(

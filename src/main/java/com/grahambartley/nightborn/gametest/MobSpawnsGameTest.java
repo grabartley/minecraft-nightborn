@@ -20,22 +20,22 @@ public class MobSpawnsGameTest implements FabricGameTest {
 
   @BeforeBatch(batchId = NOON_BATCH)
   public void pinNoon(final ServerWorld world) {
-    VampireMobGameTest.pinTime(world, VampireMobGameTest.NOON);
+    WorldClock.freeze(world, WorldClock.NOON);
   }
 
   @AfterBatch(batchId = NOON_BATCH)
   public void unpinNoon(final ServerWorld world) {
-    VampireMobGameTest.unpinTime(world);
+    WorldClock.release(world);
   }
 
   @BeforeBatch(batchId = NIGHT_BATCH)
   public void pinNight(final ServerWorld world) {
-    VampireMobGameTest.pinTime(world, VampireMobGameTest.MIDNIGHT);
+    WorldClock.freeze(world, WorldClock.MIDNIGHT);
   }
 
   @AfterBatch(batchId = NIGHT_BATCH)
   public void unpinNight(final ServerWorld world) {
-    VampireMobGameTest.unpinTime(world);
+    WorldClock.release(world);
   }
 
   @GameTest(

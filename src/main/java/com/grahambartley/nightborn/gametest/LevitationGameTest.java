@@ -18,31 +18,22 @@ import net.minecraft.test.GameTest;
 import net.minecraft.test.TestContext;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.GameRules;
 
 public class LevitationGameTest implements FabricGameTest {
 
   static final String YARD = "nightborn:vampire_yard";
   static final String BATCH = "levitation";
-  static final int MIDNIGHT = 18000;
   static final double HOVER = 1.0;
   static final double SETTLED = 0.05;
 
-  private static long timeBefore;
-  private static boolean cycleBefore;
-
   @BeforeBatch(batchId = BATCH)
   public void pinMidnight(final ServerWorld world) {
-    timeBefore = world.getTimeOfDay();
-    cycleBefore = world.getGameRules().getBoolean(GameRules.DO_DAYLIGHT_CYCLE);
-    world.getGameRules().get(GameRules.DO_DAYLIGHT_CYCLE).set(false, world.getServer());
-    world.setTimeOfDay(MIDNIGHT);
+    WorldClock.freeze(world, WorldClock.MIDNIGHT);
   }
 
   @AfterBatch(batchId = BATCH)
   public void release(final ServerWorld world) {
-    world.getGameRules().get(GameRules.DO_DAYLIGHT_CYCLE).set(cycleBefore, world.getServer());
-    world.setTimeOfDay(timeBefore);
+    WorldClock.release(world);
   }
 
   private static VampireEntity still(final TestContext context, final BlockPos at) {
