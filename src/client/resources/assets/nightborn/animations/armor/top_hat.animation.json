@@ -3,11 +3,53 @@
 	"animations": {
 		"idle": {
 			"loop": true,
-			"animation_length": 1
+			"animation_length": 4,
+			"bones": {
+				"ribbon": {
+					"rotation": {
+						"0.0": [
+							"0",
+							"0",
+							"0"
+						],
+						"2.0": [
+							"2",
+							"0",
+							"0"
+						],
+						"4.0": [
+							"0",
+							"0",
+							"0"
+						]
+					}
+				}
+			}
 		},
 		"walk": {
 			"loop": true,
-			"animation_length": 1
+			"animation_length": 1,
+			"bones": {
+				"ribbon": {
+					"rotation": {
+						"0.0": [
+							"6",
+							"0",
+							"0"
+						],
+						"0.5": [
+							"12",
+							"0",
+							"0"
+						],
+						"1.0": [
+							"6",
+							"0",
+							"0"
+						]
+					}
+				}
+			}
 		}
 	}
 }

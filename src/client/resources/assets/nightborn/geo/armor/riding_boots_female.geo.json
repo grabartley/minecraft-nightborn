@@ -3,14 +3,14 @@
 	"minecraft:geometry": [
 		{
 			"description": {
-				"identifier": "geometry.clothing_feet",
+				"identifier": "geometry.riding_boots_female",
 				"texture_width": 64,
 				"texture_height": 64,
 				"visible_bounds_width": 2,
-				"visible_bounds_height": 1.5,
+				"visible_bounds_height": 2.5,
 				"visible_bounds_offset": [
 					0,
-					0.25,
+					0.75,
 					0
 				]
 			},
@@ -31,10 +31,10 @@
 							],
 							"size": [
 								4,
-								5,
+								8,
 								4
 							],
-							"inflate": 0.55,
+							"inflate": 0.4,
 							"uv": [
 								0,
 								0
@@ -42,18 +42,70 @@
 						},
 						{
 							"origin": [
-								-3,
-								1.5,
-								-2.65
+								-3.9,
+								7,
+								-2
 							],
 							"size": [
-								2,
-								2,
-								0.19999999999999973
+								4,
+								1,
+								4
 							],
+							"inflate": 0.55,
 							"uv": [
+								18,
+								12
+							]
+						},
+						{
+							"origin": [
+								-2.4,
+								0.5,
+								2.3
+							],
+							"size": [
+								1,
+								1,
+								1
+							],
+							"inflate": -0.15,
+							"uv": [
+								8,
+								18
+							]
+						},
+						{
+							"origin": [
+								-3.9,
 								0,
-								10
+								-3
+							],
+							"size": [
+								4,
+								1,
+								5
+							],
+							"inflate": 0.42,
+							"uv": [
+								32,
+								0
+							]
+						},
+						{
+							"origin": [
+								-3.4,
+								0,
+								1
+							],
+							"size": [
+								3,
+								1,
+								1
+							],
+							"inflate": 0.5,
+							"uv": [
+								50,
+								12
 							]
 						}
 					]
@@ -74,10 +126,10 @@
 							],
 							"size": [
 								4,
-								5,
+								8,
 								4
 							],
-							"inflate": 0.55,
+							"inflate": 0.4,
 							"uv": [
 								16,
 								0
@@ -85,18 +137,70 @@
 						},
 						{
 							"origin": [
-								1,
-								1.5,
-								-2.65
+								-0.10000000000000009,
+								7,
+								-2
 							],
 							"size": [
-								2,
-								2,
-								0.19999999999999973
+								4,
+								1,
+								4
 							],
+							"inflate": 0.55,
 							"uv": [
-								16,
-								10
+								34,
+								12
+							]
+						},
+						{
+							"origin": [
+								1.4,
+								0.5,
+								2.3
+							],
+							"size": [
+								1,
+								1,
+								1
+							],
+							"inflate": -0.15,
+							"uv": [
+								12,
+								18
+							]
+						},
+						{
+							"origin": [
+								-0.10000000000000009,
+								0,
+								-3
+							],
+							"size": [
+								4,
+								1,
+								5
+							],
+							"inflate": 0.42,
+							"uv": [
+								0,
+								12
+							]
+						},
+						{
+							"origin": [
+								0.3999999999999999,
+								0,
+								1
+							],
+							"size": [
+								3,
+								1,
+								1
+							],
+							"inflate": 0.5,
+							"uv": [
+								0,
+								18
 							]
 						}
 					]
