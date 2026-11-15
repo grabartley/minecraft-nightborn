@@ -87,11 +87,11 @@ public record CombatSettings(
 
   public CombatSettings {
     leapMinRange = LEAP_MIN_RANGE.clamp(leapMinRange);
-    leapMaxRange = LEAP_MAX_RANGE.clamp(leapMaxRange);
+    leapMaxRange = Math.max(leapMinRange, LEAP_MAX_RANGE.clamp(leapMaxRange));
     leapPush = LEAP_PUSH.clamp(leapPush);
     leapLift = LEAP_LIFT.clamp(leapLift);
     dashMinRange = DASH_MIN_RANGE.clamp(dashMinRange);
-    dashMaxRange = DASH_MAX_RANGE.clamp(dashMaxRange);
+    dashMaxRange = Math.max(dashMinRange, DASH_MAX_RANGE.clamp(dashMaxRange));
     dashPush = DASH_PUSH.clamp(dashPush);
     dashLift = DASH_LIFT.clamp(dashLift);
     dodgePush = DODGE_PUSH.clamp(dodgePush);

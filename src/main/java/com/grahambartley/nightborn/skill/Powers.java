@@ -51,7 +51,11 @@ public final class Powers {
   }
 
   public static PowerUse.Verdict check(final LivingEntity caster, @Nullable final Identifier id) {
-    final Optional<SkillPower> power = power(caster, id);
+    return check(caster, id, power(caster, id));
+  }
+
+  public static PowerUse.Verdict check(
+      final LivingEntity caster, @Nullable final Identifier id, final Optional<SkillPower> power) {
     return PowerUse.check(
         power.isPresent(),
         Downed.helpless(caster),
@@ -64,11 +68,12 @@ public final class Powers {
   }
 
   public static PowerUse.Verdict cast(final LivingEntity caster, @Nullable final Identifier id) {
-    final PowerUse.Verdict verdict = check(caster, id);
+    final Optional<SkillPower> owned = power(caster, id);
+    final PowerUse.Verdict verdict = check(caster, id, owned);
     if (verdict != PowerUse.Verdict.READY) {
       return verdict;
     }
-    final SkillPower power = power(caster, id).orElseThrow();
+    final SkillPower power = owned.orElseThrow();
     if (power.blood() > 0) {
       BloodAttachment.set(caster, BloodAttachment.get(caster) - power.blood());
     }

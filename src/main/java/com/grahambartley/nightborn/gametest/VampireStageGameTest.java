@@ -2,27 +2,95 @@ package com.grahambartley.nightborn.gametest;
 
 import com.grahambartley.nightborn.Nightborn;
 import com.grahambartley.nightborn.blood.BloodAttachment;
+import com.grahambartley.nightborn.config.CombatSettings;
 import com.grahambartley.nightborn.mob.NightbornMobs;
 import com.grahambartley.nightborn.mob.VampireEntity;
 import com.grahambartley.nightborn.mob.stage.VampireStages;
 import com.grahambartley.nightborn.mob.stage.VampireStaging;
+import com.grahambartley.nightborn.server.ServerConfigService;
 import com.grahambartley.nightborn.skill.PowerCooldownAttachment;
 import com.grahambartley.nightborn.skill.PowerUse;
 import com.grahambartley.nightborn.skill.Powers;
 import com.grahambartley.nightborn.skill.SkillAttachment;
 import com.grahambartley.nightborn.skill.SkillTree;
 import com.grahambartley.nightborn.skill.Skills;
+import com.grahambartley.nightborn.structure.HouseholdArrival;
 import com.grahambartley.nightborn.weakened.Weakened;
 import java.util.List;
+import java.util.Map;
 import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
+import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.registry.DynamicRegistryManager;
+import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.world.ServerWorld;
+import net.minecraft.test.AfterBatch;
+import net.minecraft.test.BeforeBatch;
 import net.minecraft.test.GameTest;
 import net.minecraft.test.TestContext;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 
 public class VampireStageGameTest implements FabricGameTest {
+
+  static final String RETREAT_BATCH = "vampire-stage-retreat";
+  static final int TELL_LANDS = 40;
+
+  private int retreatDistanceBefore;
+
+  @BeforeBatch(batchId = RETREAT_BATCH)
+  public void pinNightAndShortRetreats(final ServerWorld world) {
+    WorldClock.freeze(world, WorldClock.MIDNIGHT);
+    retreatDistanceBefore = ServerConfigService.current().combat().retreatDistance();
+    ServerConfigService.update(
+        world.getServer(), ServerConfigService.current().with(CombatSettings.RETREAT_DISTANCE, 4));
+  }
+
+  @AfterBatch(batchId = RETREAT_BATCH)
+  public void restoreRetreats(final ServerWorld world) {
+    WorldClock.release(world);
+    ServerConfigService.update(
+        world.getServer(),
+        ServerConfigService.current().with(CombatSettings.RETREAT_DISTANCE, retreatDistanceBefore));
+  }
+
+  @GameTest(templateName = ARENA, tickLimit = 20)
+  public void aHouseholdsStageOddsReachTheVampiresItSpawns(final TestContext context) {
+    final VampireEntity vampire = context.spawnEntity(NightbornMobs.VAMPIRE, new BlockPos(4, 2, 4));
+    vampire.setAiDisabled(true);
+    vampire.initialize(
+        context.getWorld(),
+        context.getWorld().getLocalDifficulty(vampire.getBlockPos()),
+        SpawnReason.STRUCTURE,
+        new HouseholdArrival(Map.of(ANCIENT, 1)));
+    context.assertEquals(vampire.stageId(), ANCIENT, "the household's only stage is picked");
+    context.complete();
+  }
+
+  @GameTest(
+      templateName = ARENA,
+      batchId = RETREAT_BATCH,
+      tickLimit = TestPlayers.READY + TELL_LANDS + 10)
+  public void aBadlyHurtVampireFallsBackWithoutCasting(final TestContext context) {
+    final ServerPlayerEntity hunter = TestPlayers.human(context, new BlockPos(7, 2, 7));
+    final VampireEntity vampire = fighter(context, new BlockPos(1, 2, 1));
+    context.runAtTick(
+        TestPlayers.READY,
+        () -> {
+          vampire.damage(hunter.getDamageSources().playerAttack(hunter), 1.0F);
+          vampire.setHealth(vampire.getMaxHealth() * 0.1F);
+          vampire.setTarget(hunter);
+        });
+    context.runAtTick(
+        TestPlayers.READY + TELL_LANDS,
+        () -> {
+          context.assertFalse(
+              vampire.hasStatusEffect(StatusEffects.SPEED), "a falling back vampire casts nothing");
+          context.assertEquals(
+              BloodAttachment.get(vampire), BloodAttachment.FULL, "and spends no blood");
+          TestPlayers.finish(context, hunter);
+        });
+  }
 
   static final String ARENA = "nightborn:vampire_arena";
   static final Identifier FLEDGLING = Identifier.of(Nightborn.MOD_ID, "fledgling");
@@ -102,9 +170,14 @@ public class VampireStageGameTest implements FabricGameTest {
     return vampire;
   }
 
-  private static VampireEntity withBloodRush(final TestContext context, final BlockPos pos) {
+  private static VampireEntity fighter(final TestContext context, final BlockPos pos) {
     final VampireEntity vampire = context.spawnEntity(NightbornMobs.VAMPIRE, pos);
-    vampire.setAiDisabled(true);
+    vampire.becomeStage(ANCIENT);
+    learnBloodRush(context, vampire);
+    return vampire;
+  }
+
+  private static void learnBloodRush(final TestContext context, final VampireEntity vampire) {
     final DynamicRegistryManager registries = context.getWorld().getRegistryManager();
     SkillAttachment.set(
         vampire,
@@ -114,6 +187,12 @@ public class VampireStageGameTest implements FabricGameTest {
             Skills.allSkills(registries),
             Skills.allBranches(registries)));
     BloodAttachment.set(vampire, BloodAttachment.FULL);
+  }
+
+  private static VampireEntity withBloodRush(final TestContext context, final BlockPos pos) {
+    final VampireEntity vampire = context.spawnEntity(NightbornMobs.VAMPIRE, pos);
+    vampire.setAiDisabled(true);
+    learnBloodRush(context, vampire);
     return vampire;
   }
 }
