@@ -24,7 +24,8 @@
       "com.grahambartley.nightborn.NightbornClient"
     ],
     "fabric-gametest": [
-      "com.grahambartley.nightborn.gametest.NightbornBootGameTest"
+      "com.grahambartley.nightborn.gametest.NightbornBootGameTest",
+      "com.grahambartley.nightborn.gametest.FactionGameTest"
     ]
   },
   "mixins": [
@@ -39,6 +40,6 @@
     "fabricloader": ">=0.16.5",
     "minecraft": "~1.21.1",
     "java": ">=21",
-    "fabric-api": ">=0.107.0+1.21.1"
+    "fabric-api": ">=0.116.12+1.21.1"
   }
 }
