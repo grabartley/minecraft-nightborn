@@ -11,14 +11,16 @@ public record LevitationGuard(int strikes, double lowestFeet) {
   static final int STRIKE_LIMIT = 40;
 
   public LevitationGuard next(final double feet, final OptionalDouble surface) {
-    final boolean descending = !Double.isNaN(lowestFeet) && feet < lowestFeet - DESCENT;
     final boolean tooHigh =
         surface.isEmpty() || feet > surface.getAsDouble() + LevitationLift.HOVER_HEIGHT + TOLERANCE;
-    if (tooHigh && !descending) {
-      return new LevitationGuard(
-          strikes + 1, Double.isNaN(lowestFeet) ? feet : Math.min(lowestFeet, feet));
+    if (!tooHigh) {
+      return new LevitationGuard(0, feet);
     }
-    return new LevitationGuard(0, feet);
+    if (Double.isNaN(lowestFeet)) {
+      return new LevitationGuard(strikes + 1, feet);
+    }
+    final boolean descending = feet < lowestFeet - DESCENT;
+    return new LevitationGuard(descending ? strikes : strikes + 1, Math.min(lowestFeet, feet));
   }
 
   public boolean lands() {

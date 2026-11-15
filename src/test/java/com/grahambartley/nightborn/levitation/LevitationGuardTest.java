@@ -16,13 +16,13 @@ class LevitationGuardTest {
     "0, NaN, 65.8, 64, 1",
     "5, 66.0, 66.0, 64, 6",
     "5, 66.0, 66.2, 64, 6",
-    "5, 66.0, 65.95, 64, 0",
+    "5, 66.0, 65.95, 64, 5",
     "5, 66.0, 66.0, , 6",
-    "5, 66.0, 65.9, , 0",
+    "5, 66.0, 65.9, , 5",
     "12, 70.0, 65.0, 64, 0",
     "5, 65.9, 66.0, 64, 6"
   })
-  @DisplayName("strikes build only while held too high and not coming down")
+  @DisplayName("strikes build while held too high, pause while coming down, and clear at the hover")
   void strikes(
       final int strikes,
       final double lowest,
@@ -52,12 +52,12 @@ class LevitationGuardTest {
     assertEquals(lands, guard.lands());
   }
 
-  @ParameterizedTest(name = "bobbing between {0} and {1} for 40 ticks: lands {2}")
+  @ParameterizedTest(name = "bobbing between {0} and {1} for 42 ticks: lands {2}")
   @CsvSource({"66.0, 65.92, true", "66.0, 66.08, true", "66.0, 65.0, false"})
   @DisplayName("bobbing up and down while held too high still lands the vampire")
   void bobbing(final double high, final double low, final boolean lands) {
     LevitationGuard guard = LevitationGuard.FRESH;
-    for (int tick = 0; tick < 40; tick++) {
+    for (int tick = 0; tick < 42; tick++) {
       guard = guard.next(tick % 2 == 0 ? high : low, OptionalDouble.of(64.0));
     }
     assertEquals(lands, guard.lands());
