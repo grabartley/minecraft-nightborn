@@ -1,0 +1,341 @@
+import java.nio.charset.StandardCharsets
+
+import net.darkhax.curseforgegradle.TaskPublishCurseForge
+
+plugins {
+	id 'fabric-loom' version "${loom_version}"
+	id 'maven-publish'
+	id 'com.diffplug.spotless' version '6.25.0'
+	id 'jacoco'
+	id 'checkstyle'
+	id 'com.modrinth.minotaur' version '2.9.0'
+	id 'net.darkhax.curseforgegradle' version '1.1.26'
+}
+
+version = gradle.startParameter.projectProperties.getOrDefault("version", project.mod_version)
+group = project.maven_group
+
+base {
+	archivesName = project.archives_base_name
+}
+
+repositories {
+	maven {
+		name = 'Terraformers'
+		url 'https://maven.terraformersmc.com/'
+	}
+	maven {
+		name = 'BlameJared'
+		url 'https://maven.blamejared.com/'
+	}
+}
+
+loom {
+	splitEnvironmentSourceSets()
+
+	accessWidenerPath = file("src/main/resources/nightborn.accesswidener")
+
+	mods {
+		"nightborn" {
+			sourceSet sourceSets.main
+			sourceSet sourceSets.client
+		}
+	}
+
+	runs {
+		client {
+			programArgs "--username", "DevPlayer"
+		}
+		gametest {
+			server()
+			name "Game Test"
+			vmArg "-ea"
+			vmArg "-XX:+ExitOnOutOfMemoryError"
+			runDir "build/gametest"
+			programArgs "--nogui"
+			property "fabric-api.gametest", "true"
+			property "fabric-api.gametest.report-file", "${project.buildDir}/gametest-results.xml"
+		}
+		gametestServer {
+			inherit gametest
+			name "Game Test Server"
+		}
+		serverSmoke {
+			server()
+			name "Server Smoke Boot"
+			runDir "build/server-smoke"
+			programArgs "--nogui"
+		}
+	}
+}
+
+sourceSets {
+	clientTest {
+		compileClasspath += sourceSets.client.compileClasspath + sourceSets.client.output + sourceSets.main.output + sourceSets.test.output
+		runtimeClasspath += sourceSets.client.runtimeClasspath + sourceSets.client.compileClasspath + sourceSets.client.output + sourceSets.main.output + sourceSets.test.output
+	}
+}
+
+dependencies {
+	minecraft "com.mojang:minecraft:${project.minecraft_version}"
+	mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
+	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+
+	modCompileOnly "com.terraformersmc:modmenu:${project.modmenu_version}"
+	modLocalRuntime "com.terraformersmc:modmenu:${project.modmenu_version}"
+
+	if (project.recipe_viewers.toBoolean()) {
+		modLocalRuntime "mezz.jei:jei-1.21.1-fabric:${project.jei_version}"
+		modLocalRuntime "dev.emi:emi-fabric:${project.emi_version}"
+	}
+
+	testImplementation "net.fabricmc:fabric-loader-junit:${project.loader_version}"
+	testImplementation 'org.junit.jupiter:junit-jupiter:5.10.1'
+	testImplementation "com.puppycrawl.tools:checkstyle:${project.checkstyle_version}"
+	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+	testImplementation 'org.mockito:mockito-core:5.10.0'
+	testImplementation 'org.mockito:mockito-junit-jupiter:5.10.0'
+
+	clientTestImplementation 'org.junit.jupiter:junit-jupiter:5.10.1'
+	clientTestRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+	clientTestImplementation 'org.mockito:mockito-core:5.10.0'
+	clientTestImplementation 'org.mockito:mockito-junit-jupiter:5.10.0'
+}
+
+processResources {
+	def templateVersion = project.version
+	def templateGroup = project.group
+
+	inputs.property "version", templateVersion
+	inputs.property "group", templateGroup
+
+	filesMatching("fabric.mod.json") {
+		expand "version": templateVersion, "group": templateGroup
+	}
+}
+
+tasks.withType(JavaCompile).configureEach {
+	it.options.release = 21
+}
+
+java {
+	withSourcesJar()
+
+	sourceCompatibility = JavaVersion.VERSION_21
+	targetCompatibility = JavaVersion.VERSION_21
+}
+
+test {
+	useJUnitPlatform()
+	inputs
+		.file(rootProject.file("config/checkstyle/checkstyle.xml"))
+		.withPropertyName("noCommentsGateConfig")
+		.withPathSensitivity(PathSensitivity.RELATIVE)
+	testLogging {
+		events "passed", "skipped", "failed"
+		exceptionFormat "full"
+	}
+	finalizedBy jacocoTestReport
+}
+
+tasks.register("clientTest", Test) {
+	group = "verification"
+	description = "Runs client-side unit tests."
+	useJUnitPlatform()
+	testClassesDirs = sourceSets.clientTest.output.classesDirs
+	classpath = sourceSets.clientTest.runtimeClasspath
+	testLogging {
+		events "passed", "skipped", "failed"
+		exceptionFormat "full"
+	}
+}
+
+jacoco {
+	toolVersion = "0.8.12"
+}
+
+checkstyle {
+	toolVersion = project.checkstyle_version
+	configFile = rootProject.file("config/checkstyle/checkstyle.xml")
+	maxWarnings = 0
+	maxErrors = 0
+}
+
+jacocoTestReport {
+	dependsOn test
+	reports {
+		xml.required = true
+		html.required = true
+		csv.required = false
+	}
+}
+
+tasks.register("verifyMainSourceSideSafety") {
+	group = "verification"
+	description = "Fails if src/main/java references client-only classes"
+	def mainJavaFiles = fileTree("src/main/java") {
+		include "**/*.java"
+	}
+	inputs.files(mainJavaFiles)
+
+	doLast {
+		def disallowedPatterns = [
+			"net.minecraft.client.",
+			"com.grahambartley.nightborn.client.",
+			"com.grahambartley.nightborn.compat.",
+			"com.grahambartley.nightborn.render.",
+			"com.grahambartley.nightborn.model.",
+			"com.grahambartley.nightborn.screen.",
+			"com.grahambartley.nightborn.mixin.client.",
+			"com.grahambartley.nightborn.NightbornClient",
+			"com.grahambartley.nightborn.NightbornDataGenerator",
+			"com.grahambartley.nightborn.NightbornModMenu",
+			"com.grahambartley.nightborn.ModKeyBindings",
+			"com.grahambartley.nightborn.network.ModNetworkingClient"
+		]
+		def violations = []
+
+		inputs.files.files.each { file ->
+			def text = file.getText(StandardCharsets.UTF_8.name())
+			disallowedPatterns.each { pattern ->
+				if (text.contains(pattern)) {
+					violations << "${file}: contains '${pattern}'"
+				}
+			}
+		}
+
+		if (!violations.isEmpty()) {
+			throw new GradleException("Main source set side-safety violations found:\n" + violations.join("\n"))
+		}
+	}
+}
+
+tasks.register("verifyNoBundledRecipeViewers") {
+	group = "verification"
+	description = "Fails if the remapped jar bundles Mod Menu, JEI, or EMI code, directly or as a nested jar"
+
+	def remappedJar = tasks.named("remapJar").flatMap { it.archiveFile }
+	inputs.file(remappedJar)
+
+	doLast {
+		def bundledPrefixes = ["mezz/jei/", "dev/emi/", "com/terraformersmc/modmenu/"]
+		def bundledModIds = ["jei", "emi", "modmenu"]
+		def violations = []
+
+		def scan
+		scan = { java.util.zip.ZipInputStream zip, String location ->
+			def entry
+			while ((entry = zip.nextEntry) != null) {
+				def path = location + entry.name
+				if (bundledPrefixes.any { entry.name.startsWith(it) }) {
+					violations << path
+				} else if (entry.name == "fabric.mod.json" && location) {
+					def modId = new groovy.json.JsonSlurper().parse(zip.readAllBytes()).id
+					if (modId in bundledModIds) {
+						violations << "${path} (mod id ${modId})"
+					}
+				} else if (entry.name.startsWith("META-INF/jars/") && entry.name.endsWith(".jar")) {
+					scan(new java.util.zip.ZipInputStream(new ByteArrayInputStream(zip.readAllBytes())), path + "!/")
+				}
+			}
+		}
+
+		remappedJar.get().asFile.withInputStream { stream ->
+			scan(new java.util.zip.ZipInputStream(stream), "")
+		}
+
+		if (!violations.isEmpty()) {
+			throw new GradleException(
+				"Recipe viewer code bundled into the mod jar:\n" + violations.join("\n"))
+		}
+	}
+}
+
+check {
+	dependsOn spotlessCheck
+	dependsOn verifyMainSourceSideSafety
+	dependsOn verifyNoBundledRecipeViewers
+	dependsOn clientTest
+}
+
+jar {
+	def archivesName = project.base.archivesName.get()
+	inputs.property "archivesName", archivesName
+
+	from("LICENSE") {
+		rename { "${it}_${archivesName}" }
+	}
+}
+
+publishing {
+	publications {
+		create("mavenJava", MavenPublication) {
+			artifactId = project.archives_base_name
+			from components.java
+		}
+	}
+
+	repositories {
+	}
+}
+
+spotless {
+	java {
+		target 'src/**/*.java'
+		targetExclude 'build/**'
+		googleJavaFormat('1.19.2')
+		removeUnusedImports()
+		trimTrailingWhitespace()
+		endWithNewline()
+	}
+	format 'misc', {
+		target '**/*.gradle', '**/*.md', '**/.gitignore'
+		targetExclude '.claude/**', '**/.claude/**', 'build/**', '.gradle/**'
+		trimTrailingWhitespace()
+		indentWithTabs()
+		endWithNewline()
+	}
+}
+
+modrinth {
+	projectId = 'nightborn'
+	versionNumber = project.version.toString()
+	versionName = "Nightborn v${project.version}"
+	versionType = System.getenv('MOD_RELEASE_TYPE') ?: 'alpha'
+	uploadFile = remapJar
+	gameVersions = ['1.21.1']
+	loaders = ['fabric']
+	changelog = rootProject.file('release-notes.md').exists()
+		? rootProject.file('release-notes.md').text
+		: 'No changelog provided.'
+	dependencies {
+		required.project 'fabric-api'
+	}
+}
+
+tasks.register('curseforge', TaskPublishCurseForge) {
+	group = 'publishing'
+	description = 'Uploads the remapped JAR to CurseForge.'
+	dependsOn remapJar
+	apiToken = System.getenv('CURSEFORGE_TOKEN')
+
+	doFirst {
+		def projectId = project.findProperty('curseforge_project_id')?.toString()
+		if (!projectId?.isLong()) {
+			throw new GradleException('Set curseforge_project_id in gradle.properties to the numeric CurseForge project ID.')
+		}
+		def mainFile = upload(projectId.toLong(), remapJar)
+		mainFile.displayName = "Nightborn v${project.version}"
+		mainFile.releaseType = System.getenv('MOD_RELEASE_TYPE') ?: 'alpha'
+		mainFile.changelogType = 'markdown'
+		mainFile.changelog = rootProject.file('release-notes.md').exists()
+			? rootProject.file('release-notes.md').text
+			: 'No changelog provided.'
+		mainFile.addGameVersion(project.minecraft_version)
+		mainFile.addModLoader('Fabric')
+		mainFile.addJavaVersion('Java 21')
+		mainFile.addEnvironment('Client', 'Server')
+		mainFile.addRequirement('fabric-api')
+	}
+}
