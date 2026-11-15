@@ -9,8 +9,10 @@ import net.minecraft.util.math.Vec3d;
 
 public final class CoffinLayout {
 
-  static final double LYING_HEIGHT = 3.0 / 16.0;
-  static final double STANDING_DEPTH = 5.5 / 16.0;
+  static final double BODY_LIFT = 5.875 / 16.0;
+  static final double HEAD_SHIFT = 5.32 / 16.0;
+  static final double STANDING_FLOOR = 0.5 / 16.0;
+  static final float INNER_LENGTH = 31.5F / 16.0F;
   static final float UPRIGHT_SLEEPER_WIDTH = 0.2F;
 
   private CoffinLayout() {}
@@ -34,8 +36,8 @@ public final class CoffinLayout {
   }
 
   public static EntityDimensions uprightSleeper(final EntityDimensions standing) {
-    return EntityDimensions.fixed(UPRIGHT_SLEEPER_WIDTH, standing.height())
-        .withEyeHeight(standing.eyeHeight());
+    return EntityDimensions.fixed(UPRIGHT_SLEEPER_WIDTH, Math.min(standing.height(), INNER_LENGTH))
+        .withEyeHeight(Math.min(standing.eyeHeight(), INNER_LENGTH));
   }
 
   public static float outwardYaw(final Direction facing) {
@@ -45,13 +47,17 @@ public final class CoffinLayout {
   public static Vec3d restingSpot(
       final BlockPos head, final Direction facing, final boolean standing) {
     if (!standing) {
-      return Vec3d.add(head, 0.5, LYING_HEIGHT, 0.5);
+      return Vec3d.add(
+          head,
+          0.5 + facing.getOffsetX() * HEAD_SHIFT,
+          BODY_LIFT,
+          0.5 + facing.getOffsetZ() * HEAD_SHIFT);
     }
-    final double towardsBack = 0.5 - STANDING_DEPTH;
+    final double towardsBack = 0.5 - BODY_LIFT;
     return Vec3d.add(
         head.down(),
         0.5 + facing.getOffsetX() * towardsBack,
-        0.0,
+        STANDING_FLOOR,
         0.5 + facing.getOffsetZ() * towardsBack);
   }
 

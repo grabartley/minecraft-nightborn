@@ -29,9 +29,14 @@ class CoffinLayoutTest {
 
   private static final BlockPos AT = new BlockPos(10, 64, -7);
   private static final double EPSILON = 1.0E-9;
-  private static final double HALF_WIDTH = 0.3;
-  private static final double SHUT_LID_INNER_FACE = 8.0 / 16.0;
+  private static final double SHUT_LID_INNER_FACE = 10.0 / 16.0;
   private static final double NEAR_PLANE = 0.05;
+  private static final double PLAYER_LENGTH = 32 * 0.9375 / 16.0;
+  private static final double SLEEP_SHIFT = 1.62 - 0.1;
+  private static final double END_WALL = 0.5 / 16.0;
+  private static final double HEAD_END = 1.0;
+  private static final double CUSHION_TOP = 2.0 / 16.0;
+  private static final double HEAD_HALF_DEPTH = 4 * 0.9375 / 16.0;
 
   static Stream<Arguments> cells() {
     return Direction.Type.HORIZONTAL.stream()
@@ -84,12 +89,17 @@ class CoffinLayoutTest {
   @EnumSource(
       value = Direction.class,
       names = {"NORTH", "EAST", "SOUTH", "WEST"})
-  @DisplayName("a flat sleeper lies low in the head cell's middle so the lid shuts over them")
-  void liesLowInAFlatCoffin(final Direction facing) {
+  @DisplayName("a flat sleeper lies between the end walls, off the floor and under the shut lid")
+  void liesInsideAFlatCoffin(final Direction facing) {
     final Vec3d spot = CoffinLayout.restingSpot(AT, facing, false);
-    assertEquals(AT.getX() + 0.5, spot.x, EPSILON);
-    assertEquals(AT.getY() + 3.0 / 16.0, spot.y, EPSILON);
-    assertEquals(AT.getZ() + 0.5, spot.z, EPSILON);
+    final Vec3d shift = spot.subtract(Vec3d.ofBottomCenter(AT));
+    final double towardsHead = shift.x * facing.getOffsetX() + shift.z * facing.getOffsetZ();
+    final double headTop = towardsHead + PLAYER_LENGTH - SLEEP_SHIFT;
+    final double feet = towardsHead - SLEEP_SHIFT;
+    assertTrue(headTop < HEAD_END - END_WALL, "the head stays off the head end");
+    assertTrue(feet > -1.5 + END_WALL, "the feet stay off the foot end");
+    assertTrue(shift.y - HEAD_HALF_DEPTH >= CUSHION_TOP, "the head rests on the cushion");
+    assertTrue(shift.y + HEAD_HALF_DEPTH < SHUT_LID_INNER_FACE, "the lid shuts over the face");
   }
 
   @ParameterizedTest(name = "facing {0}")
@@ -102,12 +112,16 @@ class CoffinLayoutTest {
     final Vec3d spot = CoffinLayout.restingSpot(AT, facing, true);
     final Vec3d footMiddle = Vec3d.ofBottomCenter(AT.down());
     final Vec3d shift = spot.subtract(footMiddle);
-    assertEquals(0.0, shift.y, EPSILON);
+    assertTrue(shift.y >= END_WALL, "the feet stay off the foot end");
+    assertTrue(
+        shift.y + PLAYER_LENGTH < 1.5 + HEAD_END - END_WALL, "the head stays under the head end");
     final double towardsWall = shift.x * facing.getOffsetX() + shift.z * facing.getOffsetZ();
     final double sideways = shift.x * facing.getOffsetZ() - shift.z * facing.getOffsetX();
     assertEquals(0.0, sideways, EPSILON);
     final double fromBackWall = 0.5 - towardsWall;
-    assertTrue(fromBackWall - HALF_WIDTH >= 0.0, "the body stays off the wall behind");
+    assertTrue(fromBackWall - HEAD_HALF_DEPTH >= CUSHION_TOP, "the head stays off the back");
+    assertTrue(
+        fromBackWall + HEAD_HALF_DEPTH < SHUT_LID_INNER_FACE, "the face stays behind the lid");
     assertTrue(
         SHUT_LID_INNER_FACE - fromBackWall > NEAR_PLANE,
         "the eye sits far enough behind the shut lid that the view cannot pass through it");
@@ -169,7 +183,7 @@ class CoffinLayoutTest {
     final EntityDimensions standing =
         EntityDimensions.changing(0.6F, height).withEyeHeight(height * 0.9F);
     final EntityDimensions fitted = CoffinLayout.uprightSleeper(standing);
-    assertEquals(standing.height(), fitted.height(), EPSILON);
+    assertEquals(Math.min(height, 31.5F / 16.0F), fitted.height(), EPSILON);
     assertEquals(standing.eyeHeight(), fitted.eyeHeight(), EPSILON);
     final BlockPos head = AT;
     final Box body = fitted.getBoxAt(CoffinLayout.restingSpot(head, facing, true)).contract(1.0E-3);

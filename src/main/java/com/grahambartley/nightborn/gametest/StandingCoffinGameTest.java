@@ -39,7 +39,6 @@ public class StandingCoffinGameTest implements FabricGameTest {
 
   static final String DAY = "standing-coffin-day";
   static final String SKIP = "standing-coffin-skip";
-  private static final double EPSILON = 1.0E-6;
 
   @BeforeBatch(batchId = DAY)
   public void pinNoon(final ServerWorld world) {
@@ -161,8 +160,8 @@ public class StandingCoffinGameTest implements FabricGameTest {
               "an upright sleeper keeps the standing pose, got " + vampire.getPose());
           final BlockPos absoluteFoot = context.getAbsolutePos(foot);
           context.assertTrue(
-              Math.abs(vampire.getY() - absoluteFoot.getY()) < EPSILON,
-              "their feet are on the foot cell's floor, y " + vampire.getY());
+              vampire.getY() > absoluteFoot.getY() && vampire.getY() < absoluteFoot.getY() + 0.1,
+              "their feet stand on the coffin's floor, y " + vampire.getY());
           context.assertTrue(
               vampire.getBlockPos().equals(absoluteFoot),
               "they stand inside the foot cell, at " + vampire.getBlockPos());

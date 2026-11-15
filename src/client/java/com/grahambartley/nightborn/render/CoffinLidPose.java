@@ -7,8 +7,8 @@ import net.minecraft.util.math.RotationAxis;
 public final class CoffinLidPose {
 
   static final float OPEN_DEGREES = 100.0F;
-  static final float HINGE_X = 1.0F / 16.0F;
-  static final float HINGE_Y = 8.0F / 16.0F;
+  static final float HINGE_X = -0.75F / 16.0F;
+  static final float HINGE_Y = 10.0F / 16.0F;
   static final float STOOD_UP_DEGREES = 90.0F;
   private static final float AUTHORED_FACING = Direction.NORTH.asRotation();
 
