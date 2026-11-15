@@ -406,7 +406,7 @@ The hunter tree starts with Tracking, an active power that points toward the nea
 | GEAR-6 | Holy water is brewed from a water bottle and a silver nugget, or a cleric villager blesses a water bottle for an emerald as a trade. It comes as a drink, a splash and a lingering potion, made from the drink with gunpowder and dragon's breath as vanilla potions are. Holy water cannot tip arrows: the holy water bolt is its ammo |
 | GEAR-7 | A Crucifix is crafted from gold or silver and held in either hand |
 | GEAR-8 | Garlic grows wild in plains and around villages, can be farmed, and is crafted into Garlic Strings |
-| GEAR-9 | Holy water or garlic can be applied to any weapon or ammo in a crafting grid. The coating gives extra damage against vampires for a short time, always less than silver does, and does nothing to anyone else |
+| GEAR-9 | Holy water or garlic can be applied to any weapon or ammo in a crafting grid. The coating gives extra damage against vampires and weakens them briefly, always less than silver does, and does nothing to anyone else. On a weapon it lasts a set number of hits on vampires or a set time, whichever runs out first; on ammo it lasts until fired. A coated item shows its own sheen, holy water or garlic, wherever it is drawn, and the sheen goes when the coating wears off |
 
 **Enforcement:** server.
 

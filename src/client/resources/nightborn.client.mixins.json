@@ -4,9 +4,11 @@
 	"compatibilityLevel": "JAVA_21",
 	"client": [
 		"BackgroundRendererMixin",
+		"BuiltinModelItemRendererMixin",
 		"CameraMixin",
 		"EntityRendererMixin",
 		"InGameHudMixin",
+		"ItemRendererMixin",
 		"ItemModelsMixin",
 		"PlayerEntityRendererMixin"
 	],
