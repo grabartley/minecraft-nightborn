@@ -51,17 +51,30 @@ public class VampireBatGameTest implements FabricGameTest {
   @GameTest(
       templateName = VampireMobGameTest.ARENA,
       batchId = COVER_BATCH,
-      tickLimit = TestPlayers.READY + HUNT_WINDOW)
+      tickLimit = TestPlayers.READY + HUNT_WINDOW + 2)
   public void aVampireBatUnderCoverSwoopsOnAHumanAndCanTurnThem(final TestContext context) {
     final VampireBatEntity bat = hunter(context);
     final ServerPlayerEntity human = TestPlayers.human(context, new BlockPos(5, 2, 4));
+    final boolean[] swooped = {false};
+    final boolean[] bitten = {false};
     context.runAtEveryTick(
         () -> {
-          if (context.getTick() > TestPlayers.READY && human.getHealth() < human.getMaxHealth()) {
+          if (context.getTick() <= TestPlayers.READY || bitten[0]) {
+            return;
+          }
+          swooped[0] |= bat.isSwooping();
+          if (human.getHealth() < human.getMaxHealth()) {
+            bitten[0] = true;
+            context.assertTrue(swooped[0], "the bat swoops before it bites");
             context.assertTrue(
                 BiteSicknessAttachment.isSick(human), "the bat's bite starts sickness");
             context.assertTrue(bat.isAlive(), "the bat bit and lived");
-            TestPlayers.finish(context, human);
+            context.waitAndRun(
+                2,
+                () -> {
+                  context.assertFalse(bat.isSwooping(), "the bat stops swooping after a bite");
+                  TestPlayers.finish(context, human);
+                });
           }
         });
   }
@@ -72,8 +85,10 @@ public class VampireBatGameTest implements FabricGameTest {
       skyAccess = true,
       tickLimit = TestPlayers.READY + HUNT_WINDOW)
   public void aVampireBatInTheOpenLeavesHumansAloneByDay(final TestContext context) {
-    hunter(context);
+    final VampireBatEntity bat = hunter(context);
     final ServerPlayerEntity human = TestPlayers.human(context, new BlockPos(5, 2, 4));
+    context.runAtEveryTick(
+        () -> context.assertFalse(bat.isSwooping(), "a bat in the open by day does not swoop"));
     context.runAtTick(
         TestPlayers.READY + HUNT_WINDOW - 2,
         () -> {

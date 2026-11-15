@@ -5,6 +5,7 @@ import software.bernie.geckolib.animation.RawAnimation;
 public enum VampireBatPose {
   HANG("hang", true),
   FLY("fly", true),
+  SWOOP("swoop", true),
   BITE("bite", false);
 
   private final String animation;
@@ -16,11 +17,15 @@ public enum VampireBatPose {
         loops ? RawAnimation.begin().thenLoop(animation) : RawAnimation.begin().thenPlay(animation);
   }
 
-  public static VampireBatPose of(final boolean roosting, final boolean biting) {
+  public static VampireBatPose of(
+      final boolean roosting, final boolean biting, final boolean hunting) {
     if (roosting) {
       return HANG;
     }
-    return biting ? BITE : FLY;
+    if (biting) {
+      return BITE;
+    }
+    return hunting ? SWOOP : FLY;
   }
 
   public String animation() {
