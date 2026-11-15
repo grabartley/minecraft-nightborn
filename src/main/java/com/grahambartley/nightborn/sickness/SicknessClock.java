@@ -22,8 +22,4 @@ public final class SicknessClock {
     }
     return (int) Math.min(Integer.MAX_VALUE, timeOfDay - lastTimeOfDay);
   }
-
-  public static int run(final int ticksRun, final int step) {
-    return (int) Math.min(Integer.MAX_VALUE, (long) ticksRun + Math.max(1, step));
-  }
 }

@@ -14,6 +14,10 @@ public record SicknessStage(
     return Math.max(0, totalTicks(days) - Math.max(0, ticksRun));
   }
 
+  public static int advance(final int ticksRun, final int step) {
+    return (int) Math.min(Integer.MAX_VALUE, (long) Math.max(0, ticksRun) + Math.max(0, step));
+  }
+
   public static SicknessStage of(final int ticksRun, final int days) {
     final int total = totalTicks(days);
     final int left = ticksLeft(ticksRun, days);

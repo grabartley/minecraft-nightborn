@@ -9,7 +9,7 @@ import net.minecraft.util.Identifier;
 
 public final class BiteSicknessAttachment {
 
-  public static final Identifier ID = Identifier.of(Nightborn.MOD_ID, "bite_sickness");
+  public static final Identifier ID = Identifier.of(Nightborn.MOD_ID, "bite_sickness_run");
 
   public static final AttachmentType<Integer> TICKS_RUN =
       AttachmentRegistry.create(

@@ -57,6 +57,19 @@ class SicknessStageTest {
     assertEquals(left, SicknessStage.ticksLeft(ticksRun, days));
   }
 
+  @ParameterizedTest(name = "{0} run + step {1} = {2}")
+  @CsvSource({
+    "0, 1, 1",
+    "100, 11000, 11100",
+    "100, 0, 100",
+    "-7, 1, 1",
+    "2147483000, 100000, 2147483647"
+  })
+  @DisplayName("the time run grows by the clock step and never overflows")
+  void advance(final int ticksRun, final int step, final int expected) {
+    assertEquals(expected, SicknessStage.advance(ticksRun, step));
+  }
+
   @ParameterizedTest(name = "{0} days")
   @CsvSource({"1, 24000", "3, 72000", "0, 24000"})
   void totals(final int days, final int ticks) {
