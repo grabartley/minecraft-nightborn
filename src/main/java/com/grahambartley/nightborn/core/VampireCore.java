@@ -1,8 +1,10 @@
 package com.grahambartley.nightborn.core;
 
 import com.grahambartley.nightborn.Nightborn;
+import com.grahambartley.nightborn.blood.Starvation;
 import com.grahambartley.nightborn.config.CoreSettings;
 import com.grahambartley.nightborn.vampire.Modifiers;
+import com.grahambartley.nightborn.weakened.Weakened;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.attribute.EntityAttributeModifier.Operation;
 import net.minecraft.entity.attribute.EntityAttributes;
@@ -27,7 +29,9 @@ public final class VampireCore {
     final boolean night =
         NightTime.isNight(
             vampire.getWorld().getDimension().hasFixedTime(), vampire.getWorld().getTimeOfDay());
-    apply(vampire, CoreBoosts.of(settings, vampire.getMainHandStack().isEmpty(), night));
+    apply(
+        vampire,
+        CoreBoosts.of(settings, vampire.getMainHandStack().isEmpty(), night, starving(vampire)));
     if (night && vampire instanceof PlayerEntity) {
       keepNightVision(vampire);
     }
@@ -38,7 +42,8 @@ public final class VampireCore {
         vampire,
         EntityAttributes.GENERIC_ATTACK_DAMAGE,
         BARE_HANDS,
-        CoreBoosts.of(settings, vampire.getMainHandStack().isEmpty(), false).bareHandDamage(),
+        CoreBoosts.of(settings, vampire.getMainHandStack().isEmpty(), false, starving(vampire))
+            .bareHandDamage(),
         Operation.ADD_VALUE);
   }
 
@@ -75,6 +80,10 @@ public final class VampireCore {
         NIGHT_JUMP,
         boosts.jumpMultiplier(),
         Operation.ADD_MULTIPLIED_BASE);
+  }
+
+  private static int starving(final LivingEntity vampire) {
+    return Weakened.sources(vampire).strength(Starvation.SOURCE);
   }
 
   private static void keepNightVision(final LivingEntity vampire) {

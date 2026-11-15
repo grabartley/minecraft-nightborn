@@ -1,12 +1,14 @@
 package com.grahambartley.nightborn.vampire;
 
 import com.grahambartley.nightborn.blood.BloodAttachment;
+import com.grahambartley.nightborn.blood.StarvingAttachment;
 import com.grahambartley.nightborn.core.VampireCore;
 import com.grahambartley.nightborn.downed.Downed;
 import com.grahambartley.nightborn.faction.Faction;
 import com.grahambartley.nightborn.faction.FactionAttachment;
 import com.grahambartley.nightborn.faction.FactionPlayerList;
 import com.grahambartley.nightborn.feeding.FeedingSessions;
+import com.grahambartley.nightborn.levitation.Levitation;
 import com.grahambartley.nightborn.sickness.BiteSicknessAttachment;
 import com.grahambartley.nightborn.sickness.BiteSicknessEffect;
 import com.grahambartley.nightborn.skill.SkillAttributes;
@@ -59,6 +61,8 @@ public final class VampireTransitions {
     BloodAttachment.set(player, BloodAttachment.FULL);
     Downed.clear(player);
     Weakened.clear(player);
+    StarvingAttachment.set(player, 0);
+    Levitation.land(player);
     VisibleStateAttachment.set(player, VisibleState.NONE);
     VampireCore.remove(player);
     SkillAttributes.apply(player);

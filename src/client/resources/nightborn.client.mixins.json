@@ -4,9 +4,11 @@
 	"compatibilityLevel": "JAVA_21",
 	"client": [
 		"BackgroundRendererMixin",
+		"BipedEntityModelMixin",
 		"CameraMixin",
 		"EntityRendererMixin",
-		"InGameHudMixin"
+		"InGameHudMixin",
+		"PlayerEntityRendererMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1

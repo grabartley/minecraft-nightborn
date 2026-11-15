@@ -28,7 +28,7 @@
 					"parent": "root",
 					"pivot": [
 						0,
-						24,
+						12,
 						0
 					],
 					"cubes": [
@@ -91,7 +91,14 @@
 								0
 							]
 						}
-					]
+					],
+					"locators": {
+						"mouth": [
+							0,
+							26,
+							-4.2
+						]
+					}
 				},
 				{
 					"name": "right_arm",

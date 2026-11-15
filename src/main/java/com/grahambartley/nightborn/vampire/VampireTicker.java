@@ -6,6 +6,7 @@ import com.grahambartley.nightborn.core.VampireCore;
 import com.grahambartley.nightborn.downed.Downed;
 import com.grahambartley.nightborn.downed.DownedState;
 import com.grahambartley.nightborn.feeding.FeedingSessions;
+import com.grahambartley.nightborn.levitation.Levitation;
 import com.grahambartley.nightborn.server.ServerConfigService;
 import com.grahambartley.nightborn.sun.SunBurn;
 import com.grahambartley.nightborn.weakened.Weakened;
@@ -28,6 +29,7 @@ public final class VampireTicker {
     VampireCore.tick(vampire, config.core());
     final DownedState downed = Downed.state(vampire);
     final int weakened = Weakened.tick(vampire, downed != null, config.weakened());
+    Levitation.tick(vampire, weakened, downed != null);
     final boolean eyes =
         EyeGlow.glowing(
             FeedingSessions.isFeeding(vampire),

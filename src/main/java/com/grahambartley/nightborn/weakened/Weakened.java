@@ -33,6 +33,11 @@ public final class Weakened {
     store(entity, sources(entity).with(sourceId, strength, ticks));
   }
 
+  public static void hold(
+      final LivingEntity entity, final String sourceId, final int strength, final int ticks) {
+    store(entity, sources(entity).holding(sourceId, strength, ticks));
+  }
+
   public static int tick(
       final LivingEntity vampire, final boolean atCap, final WeakenedSettings settings) {
     final WeakenedSources ticked = sources(vampire).tick();

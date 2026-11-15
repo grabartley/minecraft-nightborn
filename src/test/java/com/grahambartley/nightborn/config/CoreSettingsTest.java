@@ -25,7 +25,7 @@ class CoreSettingsTest {
   @Test
   @DisplayName("the constructor clamps values into bounds")
   void clamps() {
-    assertEquals(new CoreSettings(0, 0, 0), new CoreSettings(-1, -1, -1));
-    assertEquals(new CoreSettings(20, 100, 100), new CoreSettings(21, 101, 101));
+    assertEquals(new CoreSettings(0, 0, 0, 1), new CoreSettings(-1, -1, -1, 0));
+    assertEquals(new CoreSettings(20, 100, 100, 600), new CoreSettings(21, 101, 101, 601));
   }
 }

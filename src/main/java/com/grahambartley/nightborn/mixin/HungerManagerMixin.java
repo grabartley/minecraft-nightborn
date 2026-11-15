@@ -1,7 +1,6 @@
 package com.grahambartley.nightborn.mixin;
 
 import com.grahambartley.nightborn.blood.BloodTicker;
-import com.grahambartley.nightborn.server.ServerConfigService;
 import com.grahambartley.nightborn.vampire.Vampires;
 import net.minecraft.entity.player.HungerManager;
 import net.minecraft.entity.player.PlayerEntity;
@@ -16,8 +15,7 @@ abstract class HungerManagerMixin {
   @Inject(method = "update", at = @At("HEAD"), cancellable = true)
   private void nightborn$liveOnBlood(final PlayerEntity player, final CallbackInfo ci) {
     if (Vampires.isVampire(player)) {
-      BloodTicker.tick(
-          player, (HungerManager) (Object) this, ServerConfigService.current().blood());
+      BloodTicker.tick(player, (HungerManager) (Object) this);
       ci.cancel();
     }
   }

@@ -3,6 +3,7 @@ package com.grahambartley.nightborn.mob;
 import com.grahambartley.nightborn.config.NightbornConfig;
 import com.grahambartley.nightborn.core.VampireCore;
 import com.grahambartley.nightborn.downed.Downed;
+import com.grahambartley.nightborn.levitation.Levitation;
 import com.grahambartley.nightborn.mob.goal.FleeWhileEscapingGoal;
 import com.grahambartley.nightborn.mob.goal.LieDownedGoal;
 import com.grahambartley.nightborn.mob.goal.SeekShadeGoal;
@@ -39,6 +40,7 @@ import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.AnimatableManager;
 import software.bernie.geckolib.animation.AnimationController;
+import software.bernie.geckolib.animation.PlayState;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 public class VampireEntity extends HostileEntity implements GeoEntity {
@@ -50,6 +52,8 @@ public class VampireEntity extends HostileEntity implements GeoEntity {
       DataTracker.registerData(VampireEntity.class, TrackedDataHandlerRegistry.INTEGER);
 
   private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
+  private boolean wasLevitating;
+  private boolean landing;
 
   public VampireEntity(final EntityType<? extends VampireEntity> type, final World world) {
     super(type, world);
@@ -129,6 +133,19 @@ public class VampireEntity extends HostileEntity implements GeoEntity {
                 target == getAttacker() || !Prey.isPrey(target)))) {
       setTarget(null);
     }
+    levitateAboutHome();
+  }
+
+  private void levitateAboutHome() {
+    final boolean levitating = Levitation.isLevitating(this);
+    if (MobLevitation.wants(levitating, getTarget() != null, random.nextFloat()) == levitating) {
+      return;
+    }
+    if (levitating) {
+      Levitation.land(this);
+    } else {
+      Levitation.start(this);
+    }
   }
 
   @Override
@@ -186,13 +203,31 @@ public class VampireEntity extends HostileEntity implements GeoEntity {
             this,
             "pose",
             ANIMATION_BLEND_TICKS,
-            state ->
-                state.setAndContinue(
-                    VampirePose.of(
-                            VisibleStateAttachment.get(this).downed(),
-                            handSwinging,
-                            state.getLimbSwingAmount())
-                        .clip())));
+            state -> {
+              final boolean levitating = Levitation.isLevitating(this);
+              if (wasLevitating && !levitating) {
+                landing = true;
+              }
+              wasLevitating = levitating;
+              final VampirePose pose =
+                  VampirePose.of(
+                      new VampirePose.Cue(
+                          VisibleStateAttachment.get(this).downed(),
+                          handSwinging,
+                          levitating,
+                          landing,
+                          isAttacking(),
+                          state.getLimbSwingAmount(),
+                          Math.hypot(getX() - prevX, getZ() - prevZ)));
+              if (landing && pose != VampirePose.LAND) {
+                landing = false;
+              }
+              final PlayState play = state.setAndContinue(pose.clip());
+              if (pose == VampirePose.LAND && state.getController().hasAnimationFinished()) {
+                landing = false;
+              }
+              return play;
+            }));
   }
 
   @Override

@@ -3,38 +3,74 @@ package com.grahambartley.nightborn.mob;
 import software.bernie.geckolib.animation.RawAnimation;
 
 public enum VampirePose {
-  IDLE("idle", true),
-  WALK("walk", true),
-  RUN("run", true),
-  ATTACK("attack", false),
-  DOWNED("downed", false);
+  IDLE("idle", Play.LOOP),
+  WALK("walk", Play.LOOP),
+  RUN("run", Play.LOOP),
+  ATTACK("attack", Play.HOLD),
+  DOWNED("downed", Play.HOLD),
+  LEVITATE("levitate", Play.LOOP),
+  LEVITATE_MOVE("levitate_move", Play.LOOP),
+  LEVITATE_SPRINT("levitate_sprint", Play.LOOP),
+  LAND("land", Play.ONCE),
+  VOMIT("vomit", Play.ONCE);
 
   static final float RUN_SWING = 0.6F;
   static final float WALK_SWING = 0.1F;
+  public static final double LEVITATE_MOVE_SPEED = 0.03;
+  public static final double LEVITATE_SPRINT_SPEED = 0.24;
+
+  private enum Play {
+    LOOP,
+    HOLD,
+    ONCE
+  }
+
+  public record Cue(
+      boolean downed,
+      boolean attacking,
+      boolean levitating,
+      boolean landing,
+      boolean sprinting,
+      float limbSwing,
+      double horizontalSpeed) {}
 
   private final String animation;
   private final RawAnimation clip;
 
-  VampirePose(final String animation, final boolean loops) {
+  VampirePose(final String animation, final Play play) {
     this.animation = animation;
     this.clip =
-        loops
-            ? RawAnimation.begin().thenLoop(animation)
-            : RawAnimation.begin().thenPlayAndHold(animation);
+        switch (play) {
+          case LOOP -> RawAnimation.begin().thenLoop(animation);
+          case HOLD -> RawAnimation.begin().thenPlayAndHold(animation);
+          case ONCE -> RawAnimation.begin().thenPlay(animation);
+        };
   }
 
-  public static VampirePose of(
-      final boolean downed, final boolean attacking, final float limbSwing) {
-    if (downed) {
+  public static VampirePose of(final Cue cue) {
+    if (cue.downed()) {
       return DOWNED;
     }
-    if (attacking) {
+    if (cue.attacking()) {
       return ATTACK;
     }
-    if (limbSwing > RUN_SWING) {
+    if (cue.levitating()) {
+      return levitating(cue.sprinting(), cue.horizontalSpeed());
+    }
+    if (cue.landing()) {
+      return LAND;
+    }
+    if (cue.limbSwing() > RUN_SWING) {
       return RUN;
     }
-    return limbSwing > WALK_SWING ? WALK : IDLE;
+    return cue.limbSwing() > WALK_SWING ? WALK : IDLE;
+  }
+
+  static VampirePose levitating(final boolean sprinting, final double horizontalSpeed) {
+    if (sprinting || horizontalSpeed > LEVITATE_SPRINT_SPEED) {
+      return LEVITATE_SPRINT;
+    }
+    return horizontalSpeed > LEVITATE_MOVE_SPEED ? LEVITATE_MOVE : LEVITATE;
   }
 
   public String animation() {

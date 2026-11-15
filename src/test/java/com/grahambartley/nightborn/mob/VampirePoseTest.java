@@ -15,22 +15,34 @@ import org.junit.jupiter.params.provider.EnumSource;
 
 class VampirePoseTest {
 
-  @ParameterizedTest(name = "downed {0}, attacking {1}, swing {2}: {3}")
+  @ParameterizedTest(name = "downed {0}, attacking {1}, levitating {2}, landing {3}: {7}")
   @CsvSource({
-    "true, true, 0.9, DOWNED, downed",
-    "false, true, 0.9, ATTACK, attack",
-    "false, false, 0.9, RUN, run",
-    "false, false, 0.3, WALK, walk",
-    "false, false, 0.05, IDLE, idle"
+    "true, true, true, false, false, 0.9, 0.3, DOWNED, downed",
+    "false, true, true, false, false, 0.9, 0.3, ATTACK, attack",
+    "false, false, true, false, false, 0.0, 0.0, LEVITATE, levitate",
+    "false, false, true, false, false, 0.0, 0.1, LEVITATE_MOVE, levitate_move",
+    "false, false, true, false, false, 0.0, 0.3, LEVITATE_SPRINT, levitate_sprint",
+    "false, false, true, false, true, 0.0, 0.1, LEVITATE_SPRINT, levitate_sprint",
+    "false, false, false, true, false, 0.9, 0.3, LAND, land",
+    "false, false, false, false, false, 0.9, 0.3, RUN, run",
+    "false, false, false, false, false, 0.3, 0.1, WALK, walk",
+    "false, false, false, false, false, 0.05, 0.0, IDLE, idle"
   })
-  @DisplayName("being downed wins over attacking, which wins over moving")
+  @DisplayName("downed wins over attacking, which wins over levitating, landing and moving")
   void pose(
       final boolean downed,
       final boolean attacking,
+      final boolean levitating,
+      final boolean landing,
+      final boolean sprinting,
       final float swing,
+      final double speed,
       final VampirePose pose,
       final String animation) {
-    assertEquals(pose, VampirePose.of(downed, attacking, swing));
+    assertEquals(
+        pose,
+        VampirePose.of(
+            new VampirePose.Cue(downed, attacking, levitating, landing, sprinting, swing, speed)));
     assertEquals(animation, pose.animation());
   }
 

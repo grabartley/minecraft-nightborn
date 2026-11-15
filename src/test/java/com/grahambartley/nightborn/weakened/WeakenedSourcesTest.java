@@ -54,6 +54,25 @@ class WeakenedSourcesTest {
     assertTrue(WeakenedSources.NONE.with("x", strength, ticks).isEmpty());
   }
 
+  @ParameterizedTest(name = "held at {0} then {1}")
+  @CsvSource({"40, 20", "20, 40", "40, 0"})
+  @DisplayName("a held source takes exactly the strength it is given, so it can fade")
+  void holdingReplaces(final int first, final int second) {
+    final WeakenedSources sources =
+        WeakenedSources.NONE
+            .with("garlic", 10, 100)
+            .holding("starving", first, 2)
+            .holding("starving", second, 2);
+    assertEquals(second, sources.strength("starving"));
+    assertEquals(10 + second, sources.level(false));
+  }
+
+  @Test
+  @DisplayName("an absent source has no strength")
+  void absentStrength() {
+    assertEquals(0, WeakenedSources.NONE.strength("starving"));
+  }
+
   @Test
   @DisplayName("sources save and load")
   void codecRoundTrips() {

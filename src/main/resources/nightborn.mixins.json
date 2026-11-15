@@ -9,6 +9,7 @@
 		"MapStateMixin",
 		"PhantomSpawnerMixin",
 		"PlayerEntityMixin",
+		"ServerPlayNetworkHandlerMixin",
 		"ServerPlayerEntityMixin",
 		"SleepManagerMixin"
 	],
