@@ -47,17 +47,14 @@ public class HunterGameTest implements FabricGameTest {
     Identifier.of("nightborn", "hunter/clear_mind")
   };
 
-  private static boolean pvpBefore;
-
   @BeforeBatch(batchId = PVP)
   public void pvpOn(final ServerWorld world) {
-    pvpBefore = world.getServer().isPvpEnabled();
-    world.getServer().setPvpEnabled(true);
+    BatchPvp.set(world.getServer(), true);
   }
 
   @AfterBatch(batchId = PVP)
   public void restorePvp(final ServerWorld world) {
-    world.getServer().setPvpEnabled(pvpBefore);
+    BatchPvp.restore(world.getServer());
   }
 
   @GameTest(templateName = EMPTY_STRUCTURE, tickLimit = 20)

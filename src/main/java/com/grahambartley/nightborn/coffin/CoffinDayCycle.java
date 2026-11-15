@@ -29,19 +29,15 @@ public final class CoffinDayCycle {
     ServerLifecycleEvents.SERVER_STOPPED.register(server -> LAST_TALLY.clear());
   }
 
-  static void tick(final ServerWorld world) {
+  private static void tick(final ServerWorld world) {
     settle(
         world,
         world.getPlayers(CoffinDayCycle::counts),
         ServerConfigService.current().coffins().sleepShare());
   }
 
-  static boolean counts(final ServerPlayerEntity player) {
-    return !player.isSpectator() && Vampires.isVampire(player) && isConnected(player);
-  }
-
-  static boolean isConnected(final ServerPlayerEntity player) {
-    return player.getServer().getPlayerManager().getPlayer(player.getUuid()) == player;
+  private static boolean counts(final ServerPlayerEntity player) {
+    return !player.isSpectator() && Vampires.isVampire(player);
   }
 
   private static void settle(

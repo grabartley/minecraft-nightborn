@@ -21,17 +21,22 @@ public class PlayerFeedingGameTest implements FabricGameTest {
 
   @BeforeBatch(batchId = PVP_OFF)
   public void pvpOff(final ServerWorld world) {
-    world.getServer().setPvpEnabled(false);
+    BatchPvp.set(world.getServer(), false);
   }
 
   @AfterBatch(batchId = PVP_OFF)
-  public void pvpBackOn(final ServerWorld world) {
-    world.getServer().setPvpEnabled(true);
+  public void restoreAfterPvpOff(final ServerWorld world) {
+    BatchPvp.restore(world.getServer());
   }
 
   @BeforeBatch(batchId = PVP_ON)
   public void pvpOn(final ServerWorld world) {
-    world.getServer().setPvpEnabled(true);
+    BatchPvp.set(world.getServer(), true);
+  }
+
+  @AfterBatch(batchId = PVP_ON)
+  public void restoreAfterPvpOn(final ServerWorld world) {
+    BatchPvp.restore(world.getServer());
   }
 
   @GameTest(templateName = ARENA, batchId = PVP_OFF, tickLimit = TestPlayers.READY + 40)

@@ -21,6 +21,10 @@ public final class CoffinSleeperView {
         .orElse(false);
   }
 
+  public static float cameraLift(final boolean inCoffin, final float lift) {
+    return inCoffin ? 0.0F : lift;
+  }
+
   static boolean hides(final boolean shut, final float openness) {
     return shut && openness <= 0.0F;
   }

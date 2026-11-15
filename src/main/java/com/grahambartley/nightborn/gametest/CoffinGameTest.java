@@ -43,6 +43,8 @@ public class CoffinGameTest implements FabricGameTest {
   static final int SLEEP_READY = 105;
   static final double BOUNCE = 0.05;
   private static long timeBefore;
+  private static boolean cycleBefore;
+  private static int shareBefore;
 
   @BeforeBatch(batchId = DAY)
   public void pinNoon(final ServerWorld world) {
@@ -69,6 +71,7 @@ public class CoffinGameTest implements FabricGameTest {
   public void halveTheShare(final ServerWorld world) {
     pin(world, NOON, true);
     TestPlayers.disconnectEveryone(world.getServer());
+    shareBefore = ServerConfigService.current().coffins().sleepShare();
     ServerConfigService.update(
         world.getServer(), ServerConfigService.current().with(CoffinSettings.SLEEP_SHARE, 50));
   }
@@ -78,8 +81,7 @@ public class CoffinGameTest implements FabricGameTest {
     release(world);
     ServerConfigService.update(
         world.getServer(),
-        ServerConfigService.current()
-            .with(CoffinSettings.SLEEP_SHARE, CoffinSettings.SLEEP_SHARE.defaultValue()));
+        ServerConfigService.current().with(CoffinSettings.SLEEP_SHARE, shareBefore));
   }
 
   @BeforeBatch(batchId = NIGHT)
@@ -250,6 +252,7 @@ public class CoffinGameTest implements FabricGameTest {
   public void aShutCoffinShadesItsSleeperFromTheSun(final TestContext context) {
     final BlockPos head = coffin(context, new BlockPos(4, 2, 6), Direction.NORTH);
     final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(5, 2, 5));
+    final ServerPlayerEntity exposed = TestPlayers.vampire(context, new BlockPos(1, 2, 2));
     final float[] settled = new float[1];
     context.runAtTick(
         TestPlayers.READY,
@@ -265,9 +268,12 @@ public class CoffinGameTest implements FabricGameTest {
           context.assertFalse(
               context.getBlockState(head).get(CoffinBlock.OPEN), "the lid shut over the sleeper");
           context.assertTrue(
+              exposed.isOnFire(),
+              "the sun burns a vampire standing in the open: " + Diagnostics.of(exposed));
+          context.assertTrue(
               vampire.getHealth() >= settled[0] && !vampire.isOnFire(),
               "the sun does not reach a closed coffin: " + Diagnostics.of(vampire));
-          TestPlayers.finish(context, vampire);
+          TestPlayers.finish(context, vampire, exposed);
         });
   }
 
@@ -523,13 +529,14 @@ public class CoffinGameTest implements FabricGameTest {
 
   private static void pin(final ServerWorld world, final int time, final boolean cycle) {
     timeBefore = world.getTimeOfDay();
+    cycleBefore = world.getGameRules().getBoolean(GameRules.DO_DAYLIGHT_CYCLE);
     world.getGameRules().get(GameRules.DO_DAYLIGHT_CYCLE).set(cycle, world.getServer());
     world.setTimeOfDay(time);
     world.setWeather(12000, 0, false, false);
   }
 
   private static void release(final ServerWorld world) {
-    world.getGameRules().get(GameRules.DO_DAYLIGHT_CYCLE).set(true, world.getServer());
+    world.getGameRules().get(GameRules.DO_DAYLIGHT_CYCLE).set(cycleBefore, world.getServer());
     world.setTimeOfDay(timeBefore);
   }
 }
