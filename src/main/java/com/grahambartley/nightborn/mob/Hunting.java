@@ -19,8 +19,16 @@ public final class Hunting {
     return !peaceful && (!openSky || NightTime.isNight(fixedTime, timeOfDay));
   }
 
-  public static boolean dropsTarget(
-      final boolean huntingHours, final boolean endangered, final boolean provoked) {
-    return endangered || (!huntingHours && !provoked);
+  public record Pursuit(
+      boolean huntingHours,
+      boolean hungry,
+      boolean endangered,
+      boolean provoked,
+      boolean outOfRange) {}
+
+  public static boolean dropsTarget(final Pursuit pursuit) {
+    return pursuit.endangered()
+        || pursuit.outOfRange()
+        || (!pursuit.provoked() && (!pursuit.huntingHours() || !pursuit.hungry()));
   }
 }

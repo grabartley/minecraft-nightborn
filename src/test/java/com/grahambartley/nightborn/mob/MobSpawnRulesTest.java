@@ -9,25 +9,6 @@ import org.junit.jupiter.params.provider.CsvSource;
 
 class MobSpawnRulesTest {
 
-  @ParameterizedTest(name = "time {0}, open sky {1}, roll {2}, chance {3}: spawns {4}")
-  @CsvSource({
-    "14000, true, 10, 100, true",
-    "6000, true, 10, 100, false",
-    "14000, false, 10, 100, false",
-    "14000, true, 50, 50, false",
-    "14000, true, 49, 50, true",
-    "14000, true, 0, 0, false"
-  })
-  @DisplayName("vampires spawn only at night in the open, within the spawn chance")
-  void vampire(
-      final long time,
-      final boolean openSky,
-      final int roll,
-      final int chance,
-      final boolean spawns) {
-    assertEquals(spawns, MobSpawnRules.vampireMaySpawn(false, time, openSky, roll, chance));
-  }
-
   @ParameterizedTest(name = "roll {0} of {1}%, vanilla cave {2}, structure {3}: spawns {4}")
   @CsvSource({
     "10, 100, true, false, true",

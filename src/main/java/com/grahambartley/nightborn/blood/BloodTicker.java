@@ -5,6 +5,7 @@ import com.grahambartley.nightborn.downed.Downed;
 import com.grahambartley.nightborn.downed.DownedState;
 import com.grahambartley.nightborn.levitation.Levitation;
 import com.grahambartley.nightborn.weakened.Weakened;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.HungerManager;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.world.Difficulty;
@@ -19,12 +20,23 @@ public final class BloodTicker {
 
   public static void tick(
       final PlayerEntity vampire, final HungerManager hunger, final NightbornConfig config) {
+    hunger.setExhaustion(
+        metabolise(vampire, hunger.getExhaustion(), config.blood().restingDrainSeconds(), config));
+    hunger.setFoodLevel(BloodAttachment.FULL);
+    hunger.setSaturationLevel(PINNED_SATURATION);
+  }
+
+  public static float metabolise(
+      final LivingEntity vampire,
+      final float exhaustion,
+      final int drainSeconds,
+      final NightbornConfig config) {
     final DownedState downed = Downed.state(vampire);
     final BloodMetabolism.Outcome outcome =
         BloodMetabolism.tick(
             new BloodMetabolism.State(
                 BloodAttachment.get(vampire),
-                hunger.getExhaustion(),
+                exhaustion,
                 vampire.getHealth(),
                 vampire.getMaxHealth(),
                 vampire.getWorld().getDifficulty(),
@@ -32,20 +44,18 @@ public final class BloodTicker {
                     && (downed == null || !downed.isDowned()),
                 Levitation.isLevitating(vampire),
                 vampire.age),
-            config.blood().restingDrainSeconds(),
+            drainSeconds,
             config.core().levitationDrainSeconds());
-    hunger.setExhaustion(outcome.exhaustion());
-    hunger.setFoodLevel(BloodAttachment.FULL);
-    hunger.setSaturationLevel(PINNED_SATURATION);
     BloodAttachment.set(vampire, outcome.blood());
     if (outcome.heals()) {
       vampire.heal(1.0F);
     }
     starve(vampire, outcome.blood(), config);
+    return outcome.exhaustion();
   }
 
   private static void starve(
-      final PlayerEntity vampire, final int blood, final NightbornConfig config) {
+      final LivingEntity vampire, final int blood, final NightbornConfig config) {
     final Starvation.Outcome starving =
         Starvation.tick(
             StarvingAttachment.get(vampire),

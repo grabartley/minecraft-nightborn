@@ -25,4 +25,11 @@ class ShadeRulesTest {
   void sunIsNear(final boolean fixedTime, final long time, final boolean near) {
     assertEquals(near, ShadeRules.sunIsNear(fixedTime, time));
   }
+
+  @ParameterizedTest(name = "time {0}: {1} ticks until the sun is near")
+  @CsvSource({"13000, 9000", "18000, 4000", "21999, 1", "22000, 0", "23000, 23000", "37000, 9000"})
+  @DisplayName("counts down to the stretch of night when the sun is near, wrapping each day")
+  void ticksUntilSunIsNear(final long time, final long ticks) {
+    assertEquals(ticks, ShadeRules.ticksUntilSunIsNear(time));
+  }
 }

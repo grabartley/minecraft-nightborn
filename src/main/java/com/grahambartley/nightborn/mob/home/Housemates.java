@@ -1,0 +1,21 @@
+package com.grahambartley.nightborn.mob.home;
+
+import java.util.Optional;
+import net.minecraft.util.math.BlockPos;
+
+public final class Housemates {
+
+  private Housemates() {}
+
+  public static boolean share(final Optional<BlockPos> one, final Optional<BlockPos> other) {
+    return one.isPresent() && one.equals(other);
+  }
+
+  public static boolean alerted(
+      final boolean sameHome,
+      final boolean attackerIsHousemate,
+      final double distanceSquared,
+      final int alertRange) {
+    return sameHome && !attackerIsHousemate && distanceSquared <= (double) alertRange * alertRange;
+  }
+}

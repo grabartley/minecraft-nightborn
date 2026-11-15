@@ -41,6 +41,9 @@ public final class HouseholdSpawner {
           mob.initialize(world, world.getLocalDifficulty(spot), SpawnReason.STRUCTURE, null);
           mob.setPersistent();
         }
+        if (resident instanceof HouseholdMember member) {
+          member.settleAt(centre);
+        }
         world.spawnEntityAndPassengers(resident);
         settled.add(resident);
       }
