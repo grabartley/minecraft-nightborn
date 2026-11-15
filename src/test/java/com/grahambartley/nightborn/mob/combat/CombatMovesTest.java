@@ -3,6 +3,7 @@ package com.grahambartley.nightborn.mob.combat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.grahambartley.nightborn.MinecraftBootstrapExtension;
+import com.grahambartley.nightborn.config.NightbornConfig;
 import java.util.stream.Stream;
 import net.minecraft.util.math.Vec3d;
 import org.junit.jupiter.api.DisplayName;
@@ -30,7 +31,8 @@ class CombatMovesTest {
   @DisplayName("leaps and dashes go at the target on the flat, dodges go to one side")
   void impulse(
       final CombatMove move, final Vec3d toward, final boolean left, final Vec3d expected) {
-    final Vec3d impulse = CombatMoves.impulse(move, toward, left);
+    final Vec3d impulse =
+        CombatMoves.impulse(move.tuning(NightbornConfig.DEFAULTS.combat()), move, toward, left);
     assertEquals(expected.x, impulse.x, CLOSE);
     assertEquals(expected.y, impulse.y, CLOSE);
     assertEquals(expected.z, impulse.z, CLOSE);

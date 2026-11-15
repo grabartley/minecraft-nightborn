@@ -34,7 +34,7 @@ public record VampireStage(
               instance
                   .group(
                       Codec.intRange(0, HIGHEST_RANK).fieldOf("rank").forGetter(VampireStage::rank),
-                      Codec.intRange(0, StageSkills.HEAVIEST)
+                      Codec.intRange(0, StageOdds.HEAVIEST)
                           .fieldOf("weight")
                           .forGetter(VampireStage::weight),
                       StageBody.CODEC

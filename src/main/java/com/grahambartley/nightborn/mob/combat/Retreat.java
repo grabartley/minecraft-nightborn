@@ -1,10 +1,10 @@
 package com.grahambartley.nightborn.mob.combat;
 
+import com.grahambartley.nightborn.config.CombatSettings;
+
 public final class Retreat {
 
-  public static final int REGAIN_PERCENT = 30;
-  public static final int LONGEST_TICKS = 160;
-  public static final int REST_TICKS = 300;
+  private static final int TICKS_PER_SECOND = 20;
 
   private Retreat() {}
 
@@ -17,7 +17,20 @@ public final class Retreat {
     return !resting && retreatHealth > 0 && healthPercent < retreatHealth;
   }
 
-  public static boolean ends(final int healthPercent, final int retreatHealth, final int ticks) {
-    return ticks >= LONGEST_TICKS || healthPercent >= Math.min(100, retreatHealth + REGAIN_PERCENT);
+  public static boolean ends(
+      final int healthPercent,
+      final int retreatHealth,
+      final int ticks,
+      final CombatSettings settings) {
+    return ticks >= settings.retreatLongestSeconds() * TICKS_PER_SECOND
+        || healthPercent >= Math.min(100, retreatHealth + settings.retreatRegainPercent());
+  }
+
+  public static int restTicks(final CombatSettings settings) {
+    return settings.retreatRestSeconds() * TICKS_PER_SECOND;
+  }
+
+  public static double speed(final CombatSettings settings) {
+    return settings.retreatSpeed() / 100.0;
   }
 }

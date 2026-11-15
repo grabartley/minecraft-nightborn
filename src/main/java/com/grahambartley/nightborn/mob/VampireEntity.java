@@ -6,8 +6,7 @@ import com.grahambartley.nightborn.config.NightbornConfig;
 import com.grahambartley.nightborn.core.VampireCore;
 import com.grahambartley.nightborn.downed.Downed;
 import com.grahambartley.nightborn.levitation.Levitation;
-import com.grahambartley.nightborn.mob.combat.CombatMoves;
-import com.grahambartley.nightborn.mob.combat.PowerCasting;
+import com.grahambartley.nightborn.mob.combat.Fighting;
 import com.grahambartley.nightborn.mob.goal.FleeWhileEscapingGoal;
 import com.grahambartley.nightborn.mob.goal.LieDownedGoal;
 import com.grahambartley.nightborn.mob.goal.RetreatGoal;
@@ -24,13 +23,14 @@ import com.grahambartley.nightborn.mob.look.VampireLooks;
 import com.grahambartley.nightborn.mob.look.VampireRig;
 import com.grahambartley.nightborn.mob.look.VampireSize;
 import com.grahambartley.nightborn.mob.look.VampireVoice;
-import com.grahambartley.nightborn.mob.stage.StageCombat;
 import com.grahambartley.nightborn.mob.stage.Staged;
 import com.grahambartley.nightborn.mob.stage.VampireStage;
 import com.grahambartley.nightborn.mob.stage.VampireStages;
 import com.grahambartley.nightborn.mob.stage.VampireStaging;
 import com.grahambartley.nightborn.server.ServerConfigService;
 import com.grahambartley.nightborn.skill.PowerShow;
+import com.grahambartley.nightborn.skill.SkillHolder;
+import com.grahambartley.nightborn.skill.SkillTree;
 import com.grahambartley.nightborn.structure.HouseholdArrival;
 import com.grahambartley.nightborn.structure.HouseholdMember;
 import com.grahambartley.nightborn.vampire.VisibleStateAttachment;
@@ -86,7 +86,7 @@ import software.bernie.geckolib.animation.RawAnimation;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 public class VampireEntity extends HostileEntity
-    implements GeoEntity, HouseholdMember, PowerShow, Staged {
+    implements GeoEntity, HouseholdMember, PowerShow, SkillHolder, Staged {
 
   static final String LOOK_KEY = "Look";
   static final String HEIGHT_KEY = "Height";
@@ -115,8 +115,8 @@ public class VampireEntity extends HostileEntity
   private final EndingEdge landingEdge = new EndingEdge();
   private final HomeLife homeLife = new HomeLife();
   private final MobBlood blood = new MobBlood();
-  private final PowerCasting casting = new PowerCasting();
-  private final CombatMoves moves = new CombatMoves();
+  private final Fighting fighting = new Fighting();
+  private RetreatGoal retreat;
   private final ShownAction shownAction = new ShownAction();
   private VampirePose shownPose = VampirePose.IDLE;
   private long nextHiss;
@@ -168,7 +168,8 @@ public class VampireEntity extends HostileEntity
     goalSelector.add(2, new SeekShadeGoal(this, 1.3));
     goalSelector.add(3, new AvoidSunlightGoal(this));
     goalSelector.add(3, new SleepInCoffinGoal(this));
-    goalSelector.add(3, new RetreatGoal(this, 1.3, () -> stage().combat().retreatHealth()));
+    retreat = new RetreatGoal(this, () -> stage().combat().retreatHealth());
+    goalSelector.add(3, retreat);
     goalSelector.add(4, new MeleeAttackGoal(this, 1.15, false));
     goalSelector.add(5, new GoToWalkTargetGoal(this, 1.0));
     goalSelector.add(6, new WatchStrangerGoal(this));
@@ -284,14 +285,16 @@ public class VampireEntity extends HostileEntity
   }
 
   private void fight() {
-    if (getTarget() == null || Downed.state(this) != null || isSleeping()) {
-      return;
-    }
-    final StageCombat combat = stage().combat();
-    casting.tick(this, combat);
-    if (!casting.telling() && Weakened.sources(this).level(false) == 0) {
-      moves.tick(this, combat);
-    }
+    fighting.tick(
+        this,
+        Fighting.fights(
+            getTarget() != null,
+            Downed.state(this) != null,
+            isSleeping(),
+            retreat.active(),
+            Weakened.sources(this).level(false) > 0),
+        stage().combat(),
+        ServerConfigService.current().combat());
   }
 
   @Override
@@ -301,8 +304,7 @@ public class VampireEntity extends HostileEntity
   }
 
   public Identifier stageId() {
-    final Identifier id = Identifier.tryParse(dataTracker.get(STAGE));
-    return id == null ? VampireStaging.NONE : id;
+    return VampireStaging.parse(dataTracker.get(STAGE));
   }
 
   public void becomeStage(final Identifier id) {
@@ -313,6 +315,11 @@ public class VampireEntity extends HostileEntity
   public VampireStage stage() {
     return VampireStages.stage(getWorld().getRegistryManager(), stageId())
         .orElse(VampireStage.PLAIN);
+  }
+
+  @Override
+  public SkillTree skillTree() {
+    return SkillTree.VAMPIRE;
   }
 
   @Override
@@ -576,10 +583,7 @@ public class VampireEntity extends HostileEntity
                           Math.hypot(getX() - prevX, getZ() - prevZ)));
               shownPose = pose == VampirePose.IDLE ? IdleFidget.pose(getId(), age) : pose;
               final PlayState play =
-                  state.setAndContinue(
-                      shownPose == VampirePose.IDLE
-                          ? stage().look().idle().map(ClipCache::loop).orElse(shownPose.clip())
-                          : shownPose.clip());
+                  state.setAndContinue(StageClips.clip(shownPose, stage().look()));
               landingEdge.shown(
                   pose == VampirePose.LAND,
                   pose == VampirePose.LAND && state.getController().hasAnimationFinished());

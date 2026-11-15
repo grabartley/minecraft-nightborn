@@ -1,7 +1,9 @@
 package com.grahambartley.nightborn.mob.goal;
 
+import com.grahambartley.nightborn.config.CombatSettings;
 import com.grahambartley.nightborn.downed.Downed;
 import com.grahambartley.nightborn.mob.combat.Retreat;
+import com.grahambartley.nightborn.server.ServerConfigService;
 import java.util.EnumSet;
 import java.util.function.IntSupplier;
 import net.minecraft.entity.LivingEntity;
@@ -13,22 +15,22 @@ import org.jetbrains.annotations.Nullable;
 
 public class RetreatGoal extends Goal {
 
-  static final int RETREAT_DISTANCE = 14;
-  static final int RETREAT_HEIGHT = 6;
+  static final int SEARCH_HEIGHT = 6;
 
   private final PathAwareEntity mob;
-  private final double speed;
   private final IntSupplier retreatHealth;
   @Nullable private LivingEntity threat;
   private int ticks;
   private long restUntil;
 
-  public RetreatGoal(
-      final PathAwareEntity mob, final double speed, final IntSupplier retreatHealth) {
+  public RetreatGoal(final PathAwareEntity mob, final IntSupplier retreatHealth) {
     this.mob = mob;
-    this.speed = speed;
     this.retreatHealth = retreatHealth;
     setControls(EnumSet.of(Control.MOVE));
+  }
+
+  public boolean active() {
+    return threat != null;
   }
 
   @Override
@@ -40,20 +42,21 @@ public class RetreatGoal extends Goal {
             health(), retreatHealth.getAsInt(), mob.getWorld().getTime() < restUntil)) {
       return false;
     }
-    threat = target;
-    return move();
+    return awayFrom(target) != null;
   }
 
   @Override
   public boolean shouldContinue() {
     return threat != null
         && Downed.state(mob) == null
-        && !Retreat.ends(health(), retreatHealth.getAsInt(), ticks);
+        && !Retreat.ends(health(), retreatHealth.getAsInt(), ticks, settings());
   }
 
   @Override
   public void start() {
     ticks = 0;
+    threat = mob.getTarget();
+    move();
   }
 
   @Override
@@ -67,24 +70,30 @@ public class RetreatGoal extends Goal {
   @Override
   public void stop() {
     threat = null;
-    restUntil = mob.getWorld().getTime() + Retreat.REST_TICKS;
+    restUntil = mob.getWorld().getTime() + Retreat.restTicks(settings());
     mob.getNavigation().stop();
   }
 
-  private boolean move() {
-    if (threat == null) {
-      return false;
+  private void move() {
+    if (threat != null) {
+      final Vec3d away = awayFrom(threat);
+      if (away != null) {
+        mob.getNavigation().startMovingTo(away.x, away.y, away.z, Retreat.speed(settings()));
+      }
     }
-    final Vec3d away =
-        NoPenaltyTargeting.findFrom(mob, RETREAT_DISTANCE, RETREAT_HEIGHT, threat.getPos());
-    if (away == null) {
-      return false;
-    }
-    mob.getNavigation().startMovingTo(away.x, away.y, away.z, speed);
-    return true;
+  }
+
+  @Nullable
+  private Vec3d awayFrom(final LivingEntity from) {
+    return NoPenaltyTargeting.findFrom(
+        mob, settings().retreatDistance(), SEARCH_HEIGHT, from.getPos());
   }
 
   private int health() {
     return Retreat.healthPercent(mob.getHealth(), mob.getMaxHealth());
+  }
+
+  private static CombatSettings settings() {
+    return ServerConfigService.current().combat();
   }
 }

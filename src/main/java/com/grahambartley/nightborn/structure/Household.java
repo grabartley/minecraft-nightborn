@@ -1,5 +1,6 @@
 package com.grahambartley.nightborn.structure;
 
+import com.grahambartley.nightborn.mob.stage.StageOdds;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import java.util.Map;
@@ -13,7 +14,6 @@ public record Household(
     RegistryEntry<EntityType<?>> resident, IntProvider residents, Map<Identifier, Integer> stages) {
 
   public static final int LARGEST_HOUSEHOLD = 16;
-  public static final int HEAVIEST_STAGE = 1000;
 
   public static final Codec<Household> CODEC =
       RecordCodecBuilder.create(
@@ -27,7 +27,7 @@ public record Household(
                       IntProvider.createValidatingCodec(0, LARGEST_HOUSEHOLD)
                           .fieldOf("residents")
                           .forGetter(Household::residents),
-                      Codec.unboundedMap(Identifier.CODEC, Codec.intRange(0, HEAVIEST_STAGE))
+                      Codec.unboundedMap(Identifier.CODEC, Codec.intRange(0, StageOdds.HEAVIEST))
                           .optionalFieldOf("stages", Map.of())
                           .forGetter(Household::stages))
                   .apply(instance, Household::new));

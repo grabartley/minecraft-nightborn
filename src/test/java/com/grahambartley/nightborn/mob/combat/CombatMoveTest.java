@@ -3,6 +3,8 @@ package com.grahambartley.nightborn.mob.combat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import com.grahambartley.nightborn.config.CombatSettings;
+import com.grahambartley.nightborn.config.NightbornConfig;
 import com.grahambartley.nightborn.mob.ShippedClips;
 import com.grahambartley.nightborn.mob.stage.StageCombat;
 import java.util.Optional;
@@ -13,6 +15,7 @@ import org.junit.jupiter.params.provider.EnumSource;
 
 class CombatMoveTest {
 
+  private static final CombatSettings SETTINGS = NightbornConfig.DEFAULTS.combat();
   private static final StageCombat ELDER = new StageCombat(3, 20, 45, 35, 30, 35);
 
   @ParameterizedTest(name = "{0} blocks, ground {1}, swing {2}, aim {3}, roll {4}: {5}")
@@ -41,7 +44,7 @@ class CombatMoveTest {
     assertEquals(
         move.equals("NONE") ? Optional.empty() : Optional.of(CombatMove.valueOf(move)),
         CombatMove.decide(
-            distance, onGround, new CombatMove.Threat(swinging, aiming), roll, ELDER));
+            distance, onGround, new CombatMove.Threat(swinging, aiming), roll, ELDER, SETTINGS));
   }
 
   @ParameterizedTest(name = "{0}")
@@ -57,6 +60,24 @@ class CombatMoveTest {
   void plainNeverMoves(final double distance) {
     assertEquals(
         Optional.empty(),
-        CombatMove.decide(distance, true, new CombatMove.Threat(true, true), 0, StageCombat.PLAIN));
+        CombatMove.decide(
+            distance, true, new CombatMove.Threat(true, true), 0, StageCombat.PLAIN, SETTINGS));
   }
+
+  @ParameterizedTest(name = "leap range {0} to {1} at {2} blocks: {3}")
+  @CsvSource({"3, 7, 5, LEAP", "3, 7, 9, NONE", "8, 12, 9, LEAP", "8, 12, 5, NONE"})
+  @DisplayName("the server settings decide how far a leap reaches")
+  void leapRangeIsASetting(final int min, final int max, final double distance, final String move) {
+    final CombatSettings settings =
+        NightbornConfig.DEFAULTS
+            .with(CombatSettings.LEAP_MIN_RANGE, min)
+            .with(CombatSettings.LEAP_MAX_RANGE, max)
+            .combat();
+    assertEquals(
+        move.equals("NONE") ? Optional.empty() : Optional.of(CombatMove.LEAP),
+        CombatMove.decide(
+            distance, true, new CombatMove.Threat(false, false), 0, LEAP_ONLY, settings));
+  }
+
+  private static final StageCombat LEAP_ONLY = new StageCombat(0, 20, 100, 0, 0, 0);
 }

@@ -10,7 +10,6 @@ import net.minecraft.util.math.intprovider.IntProvider;
 public record StageSkills(IntProvider count, Map<Identifier, Integer> weights, int otherWeight) {
 
   public static final int MOST_SKILLS = 64;
-  public static final int HEAVIEST = 1000;
 
   public static final StageSkills NONE =
       new StageSkills(ConstantIntProvider.create(0), Map.of(), 1);
@@ -23,10 +22,10 @@ public record StageSkills(IntProvider count, Map<Identifier, Integer> weights, i
                       IntProvider.createValidatingCodec(0, MOST_SKILLS)
                           .fieldOf("count")
                           .forGetter(StageSkills::count),
-                      Codec.unboundedMap(Identifier.CODEC, Codec.intRange(0, HEAVIEST))
+                      Codec.unboundedMap(Identifier.CODEC, Codec.intRange(0, StageOdds.HEAVIEST))
                           .optionalFieldOf("weights", Map.of())
                           .forGetter(StageSkills::weights),
-                      Codec.intRange(0, HEAVIEST)
+                      Codec.intRange(0, StageOdds.HEAVIEST)
                           .optionalFieldOf("other_weight", 1)
                           .forGetter(StageSkills::otherWeight))
                   .apply(instance, StageSkills::new));

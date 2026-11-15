@@ -22,6 +22,11 @@ public final class VampireStaging {
 
   private VampireStaging() {}
 
+  public static Identifier parse(final String saved) {
+    final Identifier id = saved.isBlank() ? null : Identifier.tryParse(saved);
+    return id == null ? NONE : id;
+  }
+
   public static Identifier begin(
       final LivingEntity vampire,
       final DynamicRegistryManager registries,

@@ -2,6 +2,8 @@ package com.grahambartley.nightborn.mob.combat;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import com.grahambartley.nightborn.config.CombatSettings;
+import com.grahambartley.nightborn.config.NightbornConfig;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -37,6 +39,19 @@ class RetreatTest {
   })
   @DisplayName("it comes again once healed enough or after a while")
   void ends(final int health, final int threshold, final int ticks, final boolean ends) {
-    assertEquals(ends, Retreat.ends(health, threshold, ticks));
+    assertEquals(ends, Retreat.ends(health, threshold, ticks, NightbornConfig.DEFAULTS.combat()));
+  }
+
+  @ParameterizedTest(name = "rest {0} s, speed {1}%: {2} ticks at {3}x")
+  @CsvSource({"15, 130, 300, 1.3", "0, 50, 0, 0.5", "300, 300, 6000, 3.0"})
+  @DisplayName("rest and speed come from the server settings")
+  void fromSettings(final int rest, final int speed, final int ticks, final double factor) {
+    final CombatSettings settings =
+        NightbornConfig.DEFAULTS
+            .with(CombatSettings.RETREAT_REST_SECONDS, rest)
+            .with(CombatSettings.RETREAT_SPEED, speed)
+            .combat();
+    assertEquals(ticks, Retreat.restTicks(settings));
+    assertEquals(factor, Retreat.speed(settings), 1.0E-9);
   }
 }

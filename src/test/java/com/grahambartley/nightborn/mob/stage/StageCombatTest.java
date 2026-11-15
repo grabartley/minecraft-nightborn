@@ -12,10 +12,10 @@ import org.junit.jupiter.params.provider.CsvSource;
 class StageCombatTest {
 
   @Test
-  @DisplayName("a stage with no fighting habits holds back, thinks slowly and never moves")
+  @DisplayName("a stage with no fighting habits fights like a plain vampire")
   void defaults() {
     assertEquals(
-        new StageCombat(0, 20, 0, 0, 0, 0),
+        StageCombat.PLAIN,
         StageCombat.CODEC.parse(JsonOps.INSTANCE, JsonParser.parseString("{}")).getOrThrow());
   }
 

@@ -8,6 +8,8 @@ import net.minecraft.util.Identifier;
 
 public final class StageOdds {
 
+  public static final int HEAVIEST = 1000;
+
   private StageOdds() {}
 
   public static Optional<Identifier> pick(

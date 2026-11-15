@@ -11,7 +11,10 @@ public record StageCombat(
     int dodgeChance,
     int retreatHealth) {
 
-  public static final StageCombat PLAIN = new StageCombat(20, 40, 0, 0, 0, 0);
+  static final int PLAIN_FLOOR = 20;
+  static final int PLAIN_THINK = 40;
+
+  public static final StageCombat PLAIN = new StageCombat(PLAIN_FLOOR, PLAIN_THINK, 0, 0, 0, 0);
 
   public static final Codec<StageCombat> CODEC =
       RecordCodecBuilder.create(
@@ -19,10 +22,10 @@ public record StageCombat(
               instance
                   .group(
                       Codec.intRange(0, 20)
-                          .optionalFieldOf("blood_floor", 0)
+                          .optionalFieldOf("blood_floor", PLAIN_FLOOR)
                           .forGetter(StageCombat::bloodFloor),
                       Codec.intRange(1, 200)
-                          .optionalFieldOf("think_ticks", 20)
+                          .optionalFieldOf("think_ticks", PLAIN_THINK)
                           .forGetter(StageCombat::thinkTicks),
                       Codec.intRange(0, 100)
                           .optionalFieldOf("leap_chance", 0)

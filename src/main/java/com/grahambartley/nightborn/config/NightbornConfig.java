@@ -19,6 +19,7 @@ public record NightbornConfig(
     CoatingSettings coatings,
     ClothingSettings clothing,
     MobSettings mobs,
+    CombatSettings combat,
     StructureSettings structures) {
 
   public static final List<Setting<?>> SETTINGS =
@@ -38,6 +39,7 @@ public record NightbornConfig(
               CoatingSettings.SETTINGS,
               ClothingSettings.SETTINGS,
               MobSettings.SETTINGS,
+              CombatSettings.SETTINGS,
               StructureSettings.SETTINGS)
           .flatMap(List::stream)
           .toList();
@@ -61,6 +63,7 @@ public record NightbornConfig(
         CoatingSettings.from(values),
         ClothingSettings.from(values),
         MobSettings.from(values),
+        CombatSettings.from(values),
         StructureSettings.from(values));
   }
 

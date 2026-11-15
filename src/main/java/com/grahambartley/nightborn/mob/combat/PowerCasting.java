@@ -5,15 +5,11 @@ import com.grahambartley.nightborn.mob.stage.StageCombat;
 import com.grahambartley.nightborn.skill.MobPowerUse;
 import com.grahambartley.nightborn.skill.PowerShow;
 import com.grahambartley.nightborn.skill.Powers;
-import com.grahambartley.nightborn.skill.Skill;
 import com.grahambartley.nightborn.skill.SkillAttachment;
-import com.grahambartley.nightborn.skill.SkillPower;
-import com.grahambartley.nightborn.skill.Skills;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.mob.MobEntity;
-import net.minecraft.registry.Registry;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Nullable;
@@ -48,6 +44,10 @@ public final class PowerCasting {
         .ifPresent(option -> tell(caster, option, now));
   }
 
+  public void cancel() {
+    telling = null;
+  }
+
   public boolean telling() {
     return telling != null;
   }
@@ -62,19 +62,15 @@ public final class PowerCasting {
   }
 
   static List<PowerChoice.Option> options(final LivingEntity caster) {
-    final Registry<Skill> skills =
-        Skills.skills(caster.getWorld().getRegistryManager()).orElse(null);
     final List<PowerChoice.Option> options = new ArrayList<>();
-    if (skills == null) {
-      return options;
-    }
     for (final Identifier id : SkillAttachment.owned(caster).ownedInOrder()) {
-      final Skill skill = skills.get(id);
-      final SkillPower power = skill == null ? null : skill.power().orElse(null);
-      if (power != null && power.mob().isPresent()) {
-        options.add(
-            new PowerChoice.Option(id, Powers.check(caster, id), power.blood(), power.mob().get()));
-      }
+      Powers.power(caster, id)
+          .filter(power -> power.mob().isPresent())
+          .ifPresent(
+              power ->
+                  options.add(
+                      new PowerChoice.Option(
+                          id, Powers.check(caster, id), power.blood(), power.mob().get())));
     }
     return options;
   }

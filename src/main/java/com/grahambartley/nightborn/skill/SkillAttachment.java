@@ -35,7 +35,7 @@ public final class SkillAttachment {
   }
 
   public static TreeProgress owned(final LivingEntity entity) {
-    return get(entity, SkillTree.of(entity));
+    return SkillTree.of(entity).map(tree -> get(entity, tree)).orElse(TreeProgress.EMPTY);
   }
 
   public static void set(

@@ -15,6 +15,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.MethodSource;
 
 @ExtendWith(MinecraftBootstrapExtension.class)
@@ -38,5 +39,18 @@ class VampireStagingTest {
     assertEquals(spent, progress.spent());
     assertEquals(0, progress.free());
     assertEquals(bloodlines, progress.bloodlines());
+  }
+
+  @ParameterizedTest(name = "\"{0}\" reads as {1}")
+  @CsvSource({
+    "'', nightborn:none",
+    "'  ', nightborn:none",
+    "'Bad Id', nightborn:none",
+    "nightborn:elder, nightborn:elder",
+    "nightborn:ancient, nightborn:ancient"
+  })
+  @DisplayName("a saved stage reads back, and a blank or broken one reads as no stage")
+  void parse(final String saved, final String id) {
+    assertEquals(Identifier.of(id), VampireStaging.parse(saved));
   }
 }
