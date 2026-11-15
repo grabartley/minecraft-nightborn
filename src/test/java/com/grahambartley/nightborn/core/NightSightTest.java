@@ -1,0 +1,17 @@
+package com.grahambartley.nightborn.core;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+
+class NightSightTest {
+
+  @ParameterizedTest(name = "{0} ticks left: refresh {1}")
+  @CsvSource({"0, true", "1, true", "219, true", "220, false", "400, false"})
+  @DisplayName("night sight is topped up before it starts to flicker, and not every tick")
+  void refreshesBeforeTheFlicker(final int ticksLeft, final boolean refresh) {
+    assertEquals(refresh, NightSight.needsRefresh(ticksLeft));
+  }
+}

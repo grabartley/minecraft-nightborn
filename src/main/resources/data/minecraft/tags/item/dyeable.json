@@ -1,0 +1,15 @@
+{
+  "replace": false,
+  "values": [
+    "nightborn:tricorne",
+    "nightborn:top_hat",
+    "nightborn:mourning_veil",
+    "nightborn:frock_coat",
+    "nightborn:high_collared_cape",
+    "nightborn:corset",
+    "nightborn:doublet",
+    "nightborn:breeches",
+    "nightborn:trousers",
+    "nightborn:long_skirt"
+  ]
+}

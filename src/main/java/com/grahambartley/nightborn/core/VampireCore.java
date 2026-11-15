@@ -9,8 +9,6 @@ import com.grahambartley.nightborn.weakened.Weakened;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.attribute.EntityAttributeModifier.Operation;
 import net.minecraft.entity.attribute.EntityAttributes;
-import net.minecraft.entity.effect.StatusEffectInstance;
-import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Identifier;
 
@@ -21,22 +19,17 @@ public final class VampireCore {
   static final Identifier NIGHT_SPEED = Identifier.of(Nightborn.MOD_ID, "vampire_night_speed");
   static final Identifier NIGHT_JUMP = Identifier.of(Nightborn.MOD_ID, "vampire_night_jump");
 
-  static final int NIGHT_VISION_TICKS = 400;
-  static final int NIGHT_VISION_REFRESH_BELOW = 220;
-
   private VampireCore() {}
 
   public static void tick(
       final LivingEntity vampire, final CoreSettings settings, final BloodSettings blood) {
-    final boolean night =
-        NightTime.isNight(
-            vampire.getWorld().getDimension().hasFixedTime(), vampire.getWorld().getTimeOfDay());
+    final boolean night = NightSight.isNight(vampire.getWorld());
     apply(
         vampire,
         CoreBoosts.of(
             settings, blood, vampire.getMainHandStack().isEmpty(), night, starving(vampire)));
     if (night && vampire instanceof PlayerEntity) {
-      keepNightVision(vampire);
+      NightSight.keep(vampire);
     }
   }
 
@@ -89,14 +82,5 @@ public final class VampireCore {
 
   private static int starving(final LivingEntity vampire) {
     return Weakened.sources(vampire).strength(Starvation.SOURCE);
-  }
-
-  private static void keepNightVision(final LivingEntity vampire) {
-    final StatusEffectInstance current = vampire.getStatusEffect(StatusEffects.NIGHT_VISION);
-    if (current == null || current.getDuration() < NIGHT_VISION_REFRESH_BELOW) {
-      vampire.addStatusEffect(
-          new StatusEffectInstance(
-              StatusEffects.NIGHT_VISION, NIGHT_VISION_TICKS, 0, true, false, false));
-    }
   }
 }

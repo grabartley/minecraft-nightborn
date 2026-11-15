@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "nightborn:item/long_skirt",
+    "layer1": "nightborn:item/long_skirt_overlay"
+  }
+}

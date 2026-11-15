@@ -16,6 +16,7 @@ public record NightbornConfig(
     FactionSettings factions,
     SkillSettings skills,
     GearSettings gear,
+    ClothingSettings clothing,
     MobSettings mobs,
     StructureSettings structures) {
 
@@ -33,6 +34,7 @@ public record NightbornConfig(
               FactionSettings.SETTINGS,
               SkillSettings.SETTINGS,
               GearSettings.SETTINGS,
+              ClothingSettings.SETTINGS,
               MobSettings.SETTINGS,
               StructureSettings.SETTINGS)
           .flatMap(List::stream)
@@ -54,6 +56,7 @@ public record NightbornConfig(
         FactionSettings.from(values),
         SkillSettings.from(values),
         GearSettings.from(values),
+        ClothingSettings.from(values),
         MobSettings.from(values),
         StructureSettings.from(values));
   }
