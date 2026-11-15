@@ -18,6 +18,8 @@ import net.minecraft.state.property.BooleanProperty;
 import net.minecraft.state.property.DirectionProperty;
 import net.minecraft.state.property.Properties;
 import net.minecraft.util.ActionResult;
+import net.minecraft.util.BlockMirror;
+import net.minecraft.util.BlockRotation;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
@@ -99,6 +101,16 @@ public class DrapeBlock extends BlockWithEntity implements AnimatedFurniture {
       return state.with(TOP, !this.continues(state, neighborState));
     }
     return state;
+  }
+
+  @Override
+  protected BlockState rotate(final BlockState state, final BlockRotation rotation) {
+    return state.with(FACING, rotation.rotate(state.get(FACING)));
+  }
+
+  @Override
+  protected BlockState mirror(final BlockState state, final BlockMirror mirror) {
+    return state.rotate(mirror.getRotation(state.get(FACING)));
   }
 
   @Override

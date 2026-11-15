@@ -22,12 +22,14 @@ import net.minecraft.world.GameMode;
 public class DecorGameTest implements FabricGameTest {
 
   private static final String ROOM = "nightborn:decor_room";
-  private static final BlockPos ON_FLOOR = new BlockPos(2, 2, 2);
-  private static final BlockPos UNDER_CEILING = new BlockPos(2, 4, 2);
-  private static final BlockPos CEILING = new BlockPos(2, 5, 2);
+  private static final BlockPos FLOOR = new BlockPos(2, 1, 2);
+  private static final BlockPos ON_FLOOR = FLOOR.up();
+  private static final BlockPos CEILING = new BlockPos(2, 3, 2);
+  private static final BlockPos UNDER_CEILING = CEILING.down();
 
   @GameTest(templateName = ROOM, tickLimit = 20)
   public void flintAndSteelLightsACandelabraAndWearsTheFlint(final TestContext context) {
+    context.setBlockState(FLOOR, Blocks.STONE);
     context.setBlockState(ON_FLOOR, DecorBlocks.CANDELABRA.getDefaultState());
     final PlayerEntity player = holding(context, new ItemStack(Items.FLINT_AND_STEEL));
 
@@ -43,6 +45,7 @@ public class DecorGameTest implements FabricGameTest {
 
   @GameTest(templateName = ROOM, tickLimit = 20)
   public void anEmptyHandDousesALitCandelabra(final TestContext context) {
+    context.setBlockState(FLOOR, Blocks.STONE);
     context.setBlockState(
         ON_FLOOR, DecorBlocks.CANDELABRA.getDefaultState().with(LightableFurnitureBlock.LIT, true));
 
@@ -56,6 +59,7 @@ public class DecorGameTest implements FabricGameTest {
 
   @GameTest(templateName = ROOM, tickLimit = 20)
   public void aFireChargeLightsAHangingChandelierAndIsSpent(final TestContext context) {
+    context.setBlockState(CEILING, Blocks.STONE);
     context.setBlockState(UNDER_CEILING, DecorBlocks.CHANDELIER.getDefaultState());
     final PlayerEntity player = holding(context, new ItemStack(Items.FIRE_CHARGE, 2));
 
@@ -70,21 +74,30 @@ public class DecorGameTest implements FabricGameTest {
 
   @GameTest(templateName = ROOM, tickLimit = 20)
   public void aChandelierFallsWhenItsCeilingIsRemoved(final TestContext context) {
+    context.setBlockState(CEILING, Blocks.STONE);
     context.setBlockState(UNDER_CEILING, DecorBlocks.CHANDELIER.getDefaultState());
 
     context.setBlockState(CEILING, Blocks.AIR);
 
     context.expectBlock(Blocks.AIR, UNDER_CEILING);
+    context.expectItemAt(DecorBlocks.CHANDELIER.asItem(), UNDER_CEILING, 1.5);
     context.complete();
   }
 
   @GameTest(templateName = ROOM, tickLimit = 20)
   public void aCandelabraCannotStandOnAir(final TestContext context) {
+    context.setBlockState(FLOOR, Blocks.AIR);
     context.assertFalse(
         DecorBlocks.CANDELABRA
             .getDefaultState()
-            .canPlaceAt(context.getWorld(), context.getAbsolutePos(ON_FLOOR.up())),
+            .canPlaceAt(context.getWorld(), context.getAbsolutePos(ON_FLOOR)),
         "candelabra needs a floor under it");
+    context.setBlockState(FLOOR, Blocks.STONE);
+    context.assertTrue(
+        DecorBlocks.CANDELABRA
+            .getDefaultState()
+            .canPlaceAt(context.getWorld(), context.getAbsolutePos(ON_FLOOR)),
+        "candelabra stands on a floor");
     context.complete();
   }
 

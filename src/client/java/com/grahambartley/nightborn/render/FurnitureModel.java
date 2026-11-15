@@ -1,6 +1,5 @@
 package com.grahambartley.nightborn.render;
 
-import com.grahambartley.nightborn.Nightborn;
 import com.grahambartley.nightborn.decor.FurnitureBlockEntity;
 import java.util.Set;
 import net.minecraft.registry.Registries;
@@ -35,9 +34,5 @@ public class FurnitureModel extends GeoModel<FurnitureBlockEntity> {
     for (final GeoBone bone : this.getAnimationProcessor().getRegisteredBones()) {
       bone.setHidden(hidden.contains(bone.getName()));
     }
-  }
-
-  static Identifier id(final String path) {
-    return Identifier.of(Nightborn.MOD_ID, path);
   }
 }

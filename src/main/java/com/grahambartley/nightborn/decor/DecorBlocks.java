@@ -9,13 +9,9 @@ import net.fabricmc.fabric.api.registry.FlammableBlockRegistry;
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
-import net.minecraft.block.FenceBlock;
 import net.minecraft.block.MapColor;
 import net.minecraft.block.PaneBlock;
-import net.minecraft.block.SlabBlock;
-import net.minecraft.block.StairsBlock;
 import net.minecraft.block.TransparentBlock;
-import net.minecraft.block.WallBlock;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.registry.Registries;
@@ -119,24 +115,16 @@ public final class DecorBlocks {
         family.material() == BuildingFamily.Material.STONE
             ? AbstractBlock.Settings.copy(Blocks.POLISHED_BLACKSTONE_BRICKS)
             : AbstractBlock.Settings.copy(Blocks.DARK_OAK_PLANKS).mapColor(MapColor.BLACK);
-    final Block base = register(FamilyMember.BASE.idFor(family.baseId()), Block::new, settings);
-    for (final FamilyMember member : FamilyMember.values()) {
-      if (member == FamilyMember.BASE || !family.members().contains(member)) {
-        continue;
-      }
-      final String id = member.idFor(family.baseId());
-      switch (member) {
-        case STAIRS ->
-            register(
-                id,
-                s -> new StairsBlock(base.getDefaultState(), s),
-                AbstractBlock.Settings.copy(base));
-        case SLAB -> register(id, SlabBlock::new, AbstractBlock.Settings.copy(base));
-        case WALL -> register(id, WallBlock::new, AbstractBlock.Settings.copy(base).solid());
-        case FENCE -> register(id, FenceBlock::new, AbstractBlock.Settings.copy(base));
-        default -> throw new IllegalStateException(member.name());
-      }
-    }
+    final Block base = register(family.baseId(), s -> FamilyMember.BASE.create(null, s), settings);
+    family.members().stream()
+        .filter(member -> member != FamilyMember.BASE)
+        .sorted()
+        .forEach(
+            member ->
+                register(
+                    member.idFor(family.baseId()),
+                    s -> member.create(base, s),
+                    AbstractBlock.Settings.copy(base)));
   }
 
   private static Block register(

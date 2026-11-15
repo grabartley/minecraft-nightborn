@@ -5,6 +5,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import com.grahambartley.nightborn.MinecraftBootstrapExtension;
 import java.util.Set;
 import net.minecraft.block.BlockState;
+import net.minecraft.util.BlockMirror;
+import net.minecraft.util.BlockRotation;
+import net.minecraft.util.math.Direction;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -32,5 +35,29 @@ class DrapeBlockTest {
     final DrapeBlock drape = (DrapeBlock) DecorBlocks.get(id);
     assertEquals(DrapeBlock.OPEN, drape.toggleProperty());
     assertEquals("velvet_drape", drape.artModel());
+  }
+
+  @ParameterizedTest(name = "{0} turns north to {1}")
+  @CsvSource({
+    "NONE, NORTH",
+    "CLOCKWISE_90, EAST",
+    "CLOCKWISE_180, SOUTH",
+    "COUNTERCLOCKWISE_90, WEST"
+  })
+  void turnsWithTheStructureItIsPlacedIn(final BlockRotation rotation, final Direction expected) {
+    assertEquals(
+        expected,
+        DecorBlocks.BURGUNDY_VELVET_DRAPE
+            .getDefaultState()
+            .rotate(rotation)
+            .get(DrapeBlock.FACING));
+  }
+
+  @ParameterizedTest(name = "{0} mirrors north to {1}")
+  @CsvSource({"NONE, NORTH", "LEFT_RIGHT, SOUTH", "FRONT_BACK, NORTH"})
+  void mirrorsWithTheStructureItIsPlacedIn(final BlockMirror mirror, final Direction expected) {
+    assertEquals(
+        expected,
+        DecorBlocks.EMERALD_VELVET_DRAPE.getDefaultState().mirror(mirror).get(DrapeBlock.FACING));
   }
 }

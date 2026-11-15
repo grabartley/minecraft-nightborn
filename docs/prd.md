@@ -470,7 +470,7 @@ Vampires are rare. They live in households hidden in four kinds of structure, ea
 | DECOR-3 | Blood decor: blood fountains, blood pools, placeable splatter decals and chalices |
 | DECOR-4 | Hunter decor: weapon racks, wanted posters, trophy mounts and crucifixes |
 | DECOR-5 | Coffins in several woods |
-| DECOR-6 | Candelabras and chandeliers light the room. Flint and steel or a fire charge lights them and an empty hand puts them out, and every light, douse, opening and closing plays its own animation |
+| DECOR-6 | Candles, candelabras and chandeliers light the room. Flint and steel or a fire charge lights them and an empty hand puts them out, and every light, douse, opening and closing plays its own animation |
 | WEAR-1 | Capes and gothic clothing, each in a male and a female cut |
 | WEAR-2 | Clothing is worn in the armour slots and shows over armour |
 | WEAR-3 | Clothing takes enchantments the mod adds, which give small powers, from an enchanting table or anvil |

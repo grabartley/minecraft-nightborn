@@ -13,6 +13,10 @@ import software.bernie.geckolib.renderer.layer.AutoGlowingGeoLayer;
 public class FurnitureBlockRenderer extends GeoBlockRenderer<FurnitureBlockEntity> {
 
   public FurnitureBlockRenderer(final BlockEntityRendererFactory.Context context) {
+    this();
+  }
+
+  public FurnitureBlockRenderer() {
     super(new FurnitureModel());
     this.addRenderLayer(
         new AutoGlowingGeoLayer<>(this) {

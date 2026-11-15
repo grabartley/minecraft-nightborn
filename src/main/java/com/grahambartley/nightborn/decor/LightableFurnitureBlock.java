@@ -22,6 +22,8 @@ import net.minecraft.state.property.BooleanProperty;
 import net.minecraft.state.property.DirectionProperty;
 import net.minecraft.state.property.Properties;
 import net.minecraft.util.ActionResult;
+import net.minecraft.util.BlockMirror;
+import net.minecraft.util.BlockRotation;
 import net.minecraft.util.Hand;
 import net.minecraft.util.ItemActionResult;
 import net.minecraft.util.hit.BlockHitResult;
@@ -41,6 +43,9 @@ public abstract class LightableFurnitureBlock extends BlockWithEntity implements
   public static final BooleanProperty LIT = Properties.LIT;
   public static final DirectionProperty FACING = Properties.HORIZONTAL_FACING;
   private static final float AMBIENT_CHANCE = 0.08f;
+  private static final float SPARK_CHANCE = 0.2f;
+  private static final float WISP_CHANCE = 0.08f;
+  private static final double FLAME_TIP = 2.0 / 16;
 
   protected LightableFurnitureBlock(final Settings settings) {
     super(settings);
@@ -95,6 +100,16 @@ public abstract class LightableFurnitureBlock extends BlockWithEntity implements
     }
     return super.getStateForNeighborUpdate(
         state, direction, neighborState, world, pos, neighborPos);
+  }
+
+  @Override
+  protected BlockState rotate(final BlockState state, final BlockRotation rotation) {
+    return state.with(FACING, rotation.rotate(state.get(FACING)));
+  }
+
+  @Override
+  protected BlockState mirror(final BlockState state, final BlockMirror mirror) {
+    return state.rotate(mirror.getRotation(state.get(FACING)));
   }
 
   @Override
@@ -168,7 +183,19 @@ public abstract class LightableFurnitureBlock extends BlockWithEntity implements
   @Override
   public void randomDisplayTick(
       final BlockState state, final World world, final BlockPos pos, final Random random) {
-    if (state.get(LIT) && random.nextFloat() < AMBIENT_CHANCE) {
+    if (!state.get(LIT)) {
+      return;
+    }
+    for (final Vec3d wick : this.wicks()) {
+      final Vec3d at = FacingShapes.turn(wick, state.get(FACING)).add(Vec3d.of(pos));
+      if (random.nextFloat() < SPARK_CHANCE) {
+        world.addParticle(ParticleTypes.SMALL_FLAME, at.x, at.y + FLAME_TIP, at.z, 0.0, 0.0, 0.0);
+      }
+      if (random.nextFloat() < WISP_CHANCE) {
+        world.addParticle(ParticleTypes.SMOKE, at.x, at.y + FLAME_TIP, at.z, 0.0, 0.0, 0.0);
+      }
+    }
+    if (random.nextFloat() < AMBIENT_CHANCE) {
       world.playSound(
           pos.getX() + 0.5,
           pos.getY() + 0.5,

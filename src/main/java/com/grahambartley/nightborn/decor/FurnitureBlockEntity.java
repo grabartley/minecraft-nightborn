@@ -1,6 +1,5 @@
 package com.grahambartley.nightborn.decor;
 
-import java.util.List;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.util.math.BlockPos;
@@ -9,7 +8,6 @@ import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.AnimatableManager;
 import software.bernie.geckolib.animation.AnimationController;
 import software.bernie.geckolib.animation.PlayState;
-import software.bernie.geckolib.animation.RawAnimation;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 public class FurnitureBlockEntity extends BlockEntity implements GeoBlockEntity {
@@ -41,17 +39,10 @@ public class FurnitureBlockEntity extends BlockEntity implements GeoBlockEntity 
             state -> {
               this.clips
                   .observe(this.isActive())
-                  .ifPresent(names -> state.getController().setAnimation(sequence(names)));
+                  .ifPresent(
+                      names -> state.getController().setAnimation(ToggleClips.sequence(names)));
               return PlayState.CONTINUE;
             }));
-  }
-
-  private static RawAnimation sequence(final List<String> names) {
-    RawAnimation animation = RawAnimation.begin();
-    for (int index = 0; index < names.size() - 1; index++) {
-      animation = animation.thenPlay(names.get(index));
-    }
-    return animation.thenLoop(names.getLast());
   }
 
   @Override

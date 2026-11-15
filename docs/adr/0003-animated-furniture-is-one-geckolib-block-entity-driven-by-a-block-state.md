@@ -8,7 +8,7 @@ Every action in Nightborn plays an animation. Lighting a candelabra, putting out
 
 Candelabras, chandeliers and drapes share one block entity type, `FurnitureBlockEntity`, rendered by GeckoLib. The block decides everything on the server and stores it in one boolean block state property: `lit` for lights and `open` for drapes. The block entity holds no saved data of its own.
 
-On the client the block entity watches that property. The first time it sees the block it holds the matching pose, so loading a chunk never replays an animation. When the property changes it plays a transition clip and then holds the new pose. Every piece uses the same four clips: `activate`, `active`, `deactivate` and `inactive`. Which geometry and texture a piece uses is data on the block, so a new piece needs a model and its clips, not new rendering code.
+On the client the block entity watches that property. The first time it sees the block it holds the matching pose, so loading a chunk never replays an animation. When the property changes it plays a transition clip and then holds the new pose. Every piece uses the same four clips: `activate`, `active`, `deactivate` and `inactive`. Each block declares which geometry and texture it uses, so a new piece needs a model and its clips, not new rendering code.
 
 Furniture that never animates, such as the chair, the table and the building blocks, stays a vanilla block model.
 

@@ -9,6 +9,8 @@ import java.util.stream.Stream;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import software.bernie.geckolib.animation.Animation;
+import software.bernie.geckolib.animation.RawAnimation;
 
 class ToggleClipsTest {
 
@@ -38,5 +40,28 @@ class ToggleClipsTest {
     final List<Optional<List<String>>> played = new ArrayList<>();
     observed.forEach(active -> played.add(clips.observe(active)));
     assertEquals(expected, played);
+  }
+
+  static Stream<Arguments> sequenced() {
+    return Stream.of(
+        Arguments.of(List.of("active"), List.of("active:loop")),
+        Arguments.of(List.of("activate", "active"), List.of("activate:play", "active:loop")),
+        Arguments.of(
+            List.of("deactivate", "inactive"), List.of("deactivate:play", "inactive:loop")));
+  }
+
+  @ParameterizedTest(name = "{0} becomes {1}")
+  @MethodSource("sequenced")
+  void playsEachTransitionOnceThenLoopsTheHold(
+      final List<String> names, final List<String> expected) {
+    final RawAnimation animation = ToggleClips.sequence(names);
+    assertEquals(
+        expected,
+        animation.getAnimationStages().stream()
+            .map(
+                stage ->
+                    stage.animationName()
+                        + (stage.loopType() == Animation.LoopType.LOOP ? ":loop" : ":play"))
+            .toList());
   }
 }

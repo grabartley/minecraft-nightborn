@@ -28,7 +28,7 @@ public class FurnitureItemRenderer implements BuiltinItemRendererRegistry.Dynami
       final int light,
       final int overlay) {
     if (this.renderer == null) {
-      this.renderer = new FurnitureBlockRenderer(null);
+      this.renderer = new FurnitureBlockRenderer();
       this.shown = new FurnitureBlockEntity(BlockPos.ORIGIN, this.block.getDefaultState());
     }
     this.renderer.render(this.shown, 0.0f, matrices, vertexConsumers, light, overlay);
