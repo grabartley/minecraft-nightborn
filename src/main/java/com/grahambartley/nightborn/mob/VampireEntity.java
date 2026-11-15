@@ -1,5 +1,6 @@
 package com.grahambartley.nightborn.mob;
 
+import com.grahambartley.nightborn.coffin.CoffinRise;
 import com.grahambartley.nightborn.coffin.CoffinSleepers;
 import com.grahambartley.nightborn.config.NightbornConfig;
 import com.grahambartley.nightborn.core.VampireCore;
@@ -217,6 +218,8 @@ public class VampireEntity extends HostileEntity implements GeoEntity {
                   VampirePose.of(
                       new VampirePose.Cue(
                           CoffinSleepers.inCoffin(this),
+                          CoffinRise.rising(this),
+                          CoffinSleepers.inStandingCoffin(this),
                           VisibleStateAttachment.get(this).downed(),
                           levitating,
                           landingEdge.ending(),

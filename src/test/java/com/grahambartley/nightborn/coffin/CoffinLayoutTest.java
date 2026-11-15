@@ -107,6 +107,28 @@ class CoffinLayoutTest {
       value = Direction.class,
       names = {"NORTH", "EAST", "SOUTH", "WEST"})
   @DisplayName(
+      "a rise from a flat coffin pivots on the drawn sleeper's heels, inside the foot cell")
+  void risesFromTheSleepersHeels(final Direction facing) {
+    final Vec3d resting = CoffinLayout.restingSpot(AT, facing, false);
+    final Vec3d heels = CoffinLayout.heels(AT, facing, 1.62F);
+    final Vec3d shift = heels.subtract(Vec3d.ofBottomCenter(AT));
+    final double towardsHead = shift.x * facing.getOffsetX() + shift.z * facing.getOffsetZ();
+    final double sideways = shift.x * facing.getOffsetZ() - shift.z * facing.getOffsetX();
+    final double restingTowardsHead =
+        resting.subtract(Vec3d.ofBottomCenter(AT)).x * facing.getOffsetX()
+            + resting.subtract(Vec3d.ofBottomCenter(AT)).z * facing.getOffsetZ();
+    assertEquals(restingTowardsHead - SLEEP_SHIFT, towardsHead, 1.0E-6);
+    assertEquals(0.0, sideways, EPSILON);
+    assertEquals(resting.y, heels.y, EPSILON);
+    assertTrue(towardsHead > -1.5 + END_WALL, "the heels stay off the foot end");
+    assertTrue(towardsHead < -0.5, "the heels are in the foot cell");
+  }
+
+  @ParameterizedTest(name = "facing {0}")
+  @EnumSource(
+      value = Direction.class,
+      names = {"NORTH", "EAST", "SOUTH", "WEST"})
+  @DisplayName(
       "an upright sleeper stands on the foot cell's floor, inside the walls and clear of the lid")
   void standsInAStandingCoffin(final Direction facing) {
     final Vec3d spot = CoffinLayout.restingSpot(AT, facing, true);

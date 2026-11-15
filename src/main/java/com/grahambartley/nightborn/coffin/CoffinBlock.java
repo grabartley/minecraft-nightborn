@@ -203,6 +203,13 @@ public class CoffinBlock extends BedBlock {
         : Blocks.AIR.getDefaultState();
   }
 
+  public static void openLid(final World world, final BlockPos head) {
+    final BlockState state = world.getBlockState(head);
+    if (state.getBlock() instanceof CoffinBlock coffin && !state.get(OPEN)) {
+      coffin.setLid(world, head, state, true, null);
+    }
+  }
+
   public static boolean isStanding(final BlockState state) {
     return state.getBlock() instanceof CoffinBlock && state.get(STANDING);
   }

@@ -3,6 +3,8 @@ package com.grahambartley.nightborn.client.anim;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import com.grahambartley.nightborn.mob.VampirePose;
+import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -13,11 +15,11 @@ class PlayerClipStateTest {
   static final PlayerClipState.Lengths LENGTHS = new PlayerClipState.Lengths(0.7, 2.6, 1.4, 1.6);
 
   private static PlayerClipState.Situation still() {
-    return new PlayerClipState.Situation(false, false, 0.0, false, false, false, false);
+    return new PlayerClipState.Situation(false, false, 0.0, false, false, false, Optional.empty());
   }
 
   private static PlayerClipState.Situation levitating() {
-    return new PlayerClipState.Situation(true, false, 0.0, false, false, false, false);
+    return new PlayerClipState.Situation(true, false, 0.0, false, false, false, Optional.empty());
   }
 
   private static String clip(
@@ -51,7 +53,8 @@ class PlayerClipStateTest {
         clip(
             state,
             1,
-            new PlayerClipState.Situation(true, sprinting, speed, false, false, false, false)));
+            new PlayerClipState.Situation(
+                true, sprinting, speed, false, false, false, Optional.empty())));
   }
 
   @ParameterizedTest(name = "{0} ticks after retching, levitating {1}: {2}")
@@ -75,7 +78,8 @@ class PlayerClipStateTest {
         clip(
             state,
             10,
-            new PlayerClipState.Situation(false, false, 0.0, true, false, false, false)));
+            new PlayerClipState.Situation(
+                false, false, 0.0, true, false, false, Optional.empty())));
     state.tick(11, false, false);
     assertEquals(expected, clip(state, 11 + after, still()));
   }
@@ -99,7 +103,8 @@ class PlayerClipStateTest {
         clip(
             state,
             200 + after,
-            new PlayerClipState.Situation(false, false, 0.0, false, feeding, false, false)));
+            new PlayerClipState.Situation(
+                false, false, 0.0, false, feeding, false, Optional.empty())));
   }
 
   @ParameterizedTest(name = "lev {0}, downed {1}, feeding {2}, weakened {3}, speed {4}: {5}")
@@ -128,28 +133,30 @@ class PlayerClipStateTest {
             state,
             1,
             new PlayerClipState.Situation(
-                levitating, false, speed, downed, feeding, weakened, false)));
+                levitating, false, speed, downed, feeding, weakened, Optional.empty())));
   }
 
   @ParameterizedTest(
-      name = "downed {0}, feeding {1}, levitating {2}, weakened {3}, retching {4}, draining {5}")
+      name =
+          "{6}, downed {0}, feeding {1}, levitating {2}, weakened {3}, retching {4}, draining {5}")
   @CsvSource({
-    "false, false, false, false, false, false",
-    "true, false, false, false, false, false",
-    "false, true, true, false, false, false",
-    "false, false, false, true, false, false",
-    "false, false, false, false, true, false",
-    "false, true, false, false, false, true",
-    "true, true, true, true, true, true"
+    "false, false, false, false, false, false, COFFIN_SLEEP",
+    "true, false, false, false, false, false, COFFIN_SLEEP",
+    "false, true, true, false, false, false, COFFIN_RISE",
+    "false, false, false, true, false, false, COFFIN_STEP_OUT",
+    "false, false, false, false, true, false, COFFIN_SLEEP",
+    "false, true, false, false, false, true, COFFIN_RISE",
+    "true, true, true, true, true, true, COFFIN_STEP_OUT"
   })
-  @DisplayName("sleeping in a coffin wins over every other clip")
-  void sleepsInCoffin(
+  @DisplayName("resting or rising in a coffin wins over every other clip")
+  void inCoffin(
       final boolean downed,
       final boolean feeding,
       final boolean levitating,
       final boolean weakened,
       final boolean retching,
-      final boolean draining) {
+      final boolean draining,
+      final VampirePose coffin) {
     final PlayerClipState state = new PlayerClipState();
     if (retching) {
       state.vomit(0);
@@ -159,12 +166,12 @@ class PlayerClipStateTest {
     }
     state.tick(0, levitating, downed);
     assertEquals(
-        "COFFIN_SLEEP",
+        coffin.name(),
         clip(
             state,
             1,
             new PlayerClipState.Situation(
-                levitating, false, 0.0, downed, feeding, weakened, true)));
+                levitating, false, 0.0, downed, feeding, weakened, Optional.of(coffin))));
   }
 
   @Test

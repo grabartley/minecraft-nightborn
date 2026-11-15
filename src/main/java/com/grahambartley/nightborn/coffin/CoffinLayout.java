@@ -14,6 +14,7 @@ public final class CoffinLayout {
   static final double STANDING_FLOOR = 0.5 / 16.0;
   static final float INNER_LENGTH = 31.5F / 16.0F;
   static final float UPRIGHT_SLEEPER_WIDTH = 0.2F;
+  static final double LYING_FEET_SHIFT = 0.1;
 
   private CoffinLayout() {}
 
@@ -59,6 +60,13 @@ public final class CoffinLayout {
         0.5 + facing.getOffsetX() * towardsBack,
         STANDING_FLOOR,
         0.5 + facing.getOffsetZ() * towardsBack);
+  }
+
+  public static Vec3d heels(
+      final BlockPos head, final Direction facing, final float standingEyeHeight) {
+    final double towardsFoot = standingEyeHeight - LYING_FEET_SHIFT;
+    return restingSpot(head, facing, false)
+        .add(-facing.getOffsetX() * towardsFoot, 0.0, -facing.getOffsetZ() * towardsFoot);
   }
 
   public static List<BlockPos> frontCells(final BlockPos head, final Direction facing) {
