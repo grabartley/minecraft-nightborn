@@ -11,24 +11,20 @@ import net.minecraft.test.BeforeBatch;
 import net.minecraft.test.GameTest;
 import net.minecraft.test.TestContext;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.GameRules;
 
 public class SunGameTest implements FabricGameTest {
 
   static final String BATCH = "sun";
   static final String YARD = "nightborn:vampire_yard";
-  static final int NOON = 6000;
 
   @BeforeBatch(batchId = BATCH)
   public void pinNoon(final ServerWorld world) {
-    world.getGameRules().get(GameRules.DO_DAYLIGHT_CYCLE).set(false, world.getServer());
-    world.setTimeOfDay(NOON);
-    world.setWeather(12000, 0, false, false);
+    WorldClock.freeze(world, WorldClock.NOON);
   }
 
   @AfterBatch(batchId = BATCH)
   public void restoreDaylight(final ServerWorld world) {
-    world.getGameRules().get(GameRules.DO_DAYLIGHT_CYCLE).set(true, world.getServer());
+    WorldClock.release(world);
   }
 
   @GameTest(
