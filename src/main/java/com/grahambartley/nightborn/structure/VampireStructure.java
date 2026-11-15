@@ -31,8 +31,6 @@ import net.minecraft.world.gen.structure.StructureType;
 
 public final class VampireStructure extends Structure {
 
-  private static final int DEEPEST_POOL_CHAIN = 20;
-
   public static final MapCodec<VampireStructure> CODEC =
       RecordCodecBuilder.<VampireStructure>mapCodec(
               instance ->
@@ -45,16 +43,19 @@ public final class VampireStructure extends Structure {
                           Identifier.CODEC
                               .optionalFieldOf("start_jigsaw_name")
                               .forGetter(structure -> structure.startJigsawName),
-                          Codec.intRange(0, DEEPEST_POOL_CHAIN)
+                          Codec.intRange(1, JigsawStructure.MAX_GENERATION_DEPTH)
                               .fieldOf("size")
                               .forGetter(structure -> structure.size),
                           HeightProvider.CODEC
                               .fieldOf("start_height")
                               .forGetter(structure -> structure.startHeight),
+                          Codec.BOOL
+                              .optionalFieldOf("use_expansion_hack", false)
+                              .forGetter(structure -> structure.useExpansionHack),
                           Heightmap.Type.CODEC
                               .optionalFieldOf("project_start_to_heightmap")
                               .forGetter(structure -> structure.projectStartToHeightmap),
-                          Codec.intRange(1, StructureReach.LARGEST_REACH)
+                          Codec.intRange(1, JigsawStructure.MAX_SIZE)
                               .fieldOf("max_distance_from_center")
                               .forGetter(structure -> structure.maxDistanceFromCenter),
                           Codec.list(StructurePoolAliasBinding.CODEC)
@@ -78,6 +79,7 @@ public final class VampireStructure extends Structure {
   private final Optional<Identifier> startJigsawName;
   private final int size;
   private final HeightProvider startHeight;
+  private final boolean useExpansionHack;
   private final Optional<Heightmap.Type> projectStartToHeightmap;
   private final int maxDistanceFromCenter;
   private final List<StructurePoolAliasBinding> poolAliases;
@@ -91,6 +93,7 @@ public final class VampireStructure extends Structure {
       final Optional<Identifier> startJigsawName,
       final int size,
       final HeightProvider startHeight,
+      final boolean useExpansionHack,
       final Optional<Heightmap.Type> projectStartToHeightmap,
       final int maxDistanceFromCenter,
       final List<StructurePoolAliasBinding> poolAliases,
@@ -102,6 +105,7 @@ public final class VampireStructure extends Structure {
     this.startJigsawName = startJigsawName;
     this.size = size;
     this.startHeight = startHeight;
+    this.useExpansionHack = useExpansionHack;
     this.projectStartToHeightmap = projectStartToHeightmap;
     this.maxDistanceFromCenter = maxDistanceFromCenter;
     this.poolAliases = poolAliases;
@@ -116,7 +120,7 @@ public final class VampireStructure extends Structure {
         : DataResult.error(
             () ->
                 "A vampire structure's reach including terrain adaptation must not exceed "
-                    + StructureReach.LARGEST_REACH);
+                    + JigsawStructure.MAX_SIZE);
   }
 
   @Override
@@ -132,7 +136,7 @@ public final class VampireStructure extends Structure {
         startJigsawName,
         size,
         start,
-        false,
+        useExpansionHack,
         projectStartToHeightmap,
         maxDistanceFromCenter,
         StructurePoolAliasLookup.create(poolAliases, start, context.seed()),
@@ -149,10 +153,8 @@ public final class VampireStructure extends Structure {
       final BlockBox chunkBox,
       final ChunkPos chunk,
       final StructurePiecesList pieces) {
-    if (!pieces.isEmpty()) {
-      HouseholdSpawner.settle(
-          world, chunkBox, pieces.pieces().getFirst().getBoundingBox(), household, random);
-    }
+    StructureHeart.of(pieces.pieces())
+        .ifPresent(heart -> HouseholdSpawner.settle(world, chunkBox, heart, household, random));
   }
 
   @Override

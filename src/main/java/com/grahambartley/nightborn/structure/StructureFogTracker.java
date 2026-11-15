@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
@@ -31,6 +32,7 @@ public final class StructureFogTracker {
     ServerTickEvents.END_SERVER_TICK.register(StructureFogTracker::tick);
     ServerPlayConnectionEvents.DISCONNECT.register(
         (handler, server) -> SENT.remove(handler.getPlayer().getUuid()));
+    ServerLifecycleEvents.SERVER_STOPPED.register(server -> SENT.clear());
   }
 
   private static void tick(final MinecraftServer server) {
@@ -56,7 +58,7 @@ public final class StructureFogTracker {
             .ifPresent(chunk -> collect(world, chunk, zones));
       }
     }
-    return FogZones.nearest(zones, player.getX(), player.getEyeY(), player.getZ());
+    return FogZones.deepest(zones, player.getX(), player.getEyeY(), player.getZ());
   }
 
   private static void collect(
@@ -69,15 +71,14 @@ public final class StructureFogTracker {
         final ChunkPos home = new ChunkPos(reference);
         loaded(world, home.x, home.z)
             .map(startChunk -> startChunk.getStructureStart(entry.getKey()))
-            .filter(start -> start != null && start.hasChildren())
-            .map(StructureFogTracker::zoneOf)
-            .ifPresent(zones::add);
+            .ifPresent(start -> zoneOf(start).ifPresent(zones::add));
       }
     }
   }
 
-  private static FogZone zoneOf(final StructureStart start) {
-    return FogZone.around(start.getChildren().getFirst().getBoundingBox(), start.getBoundingBox());
+  private static Optional<FogZone> zoneOf(final StructureStart start) {
+    return StructureHeart.of(start.getChildren())
+        .map(heart -> FogZone.around(heart, start.getBoundingBox()));
   }
 
   private static Optional<Chunk> loaded(final ServerWorld world, final int x, final int z) {

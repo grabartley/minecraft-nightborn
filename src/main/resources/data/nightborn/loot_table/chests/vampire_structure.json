@@ -67,7 +67,7 @@
           "name": "nightborn:silver_sword",
           "weight": 2,
           "functions": [
-            { "function": "minecraft:enchant_randomly" }
+            { "function": "minecraft:enchant_randomly", "options": "#minecraft:on_random_loot" }
           ]
         },
         {

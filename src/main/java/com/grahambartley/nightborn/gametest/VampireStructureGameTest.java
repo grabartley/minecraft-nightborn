@@ -96,6 +96,10 @@ public class VampireStructureGameTest implements FabricGameTest {
   }
 
   static String structureJson(final int reach) {
+    return structureJson(reach, 2);
+  }
+
+  static String structureJson(final int reach, final int size) {
     return """
         {
           "type": "nightborn:vampire_structure",
@@ -104,7 +108,7 @@ public class VampireStructureGameTest implements FabricGameTest {
           "spawn_overrides": {},
           "terrain_adaptation": "beard_thin",
           "start_pool": "minecraft:village/plains/town_centers",
-          "size": 2,
+          "size": %d,
           "start_height": { "absolute": 0 },
           "project_start_to_heightmap": "WORLD_SURFACE_WG",
           "max_distance_from_center": %d,
@@ -114,24 +118,34 @@ public class VampireStructureGameTest implements FabricGameTest {
           }
         }
         """
-        .formatted(reach);
+        .formatted(size, reach);
   }
 
   private static DataResult<Structure> decodeStructure(final ServerWorld world, final int reach) {
-    final JsonElement json = JsonParser.parseString(structureJson(reach));
+    return decodeStructure(world, reach, 2);
+  }
+
+  private static DataResult<Structure> decodeStructure(
+      final ServerWorld world, final int reach, final int size) {
+    final JsonElement json = JsonParser.parseString(structureJson(reach, size));
     return Structure.STRUCTURE_CODEC.parse(
         RegistryOps.of(JsonOps.INSTANCE, world.getRegistryManager()), json);
   }
 
   private static StructurePlacement decodePlacement(final ServerWorld world) {
+    return decodePlacement(world, 40, 12).getOrThrow();
+  }
+
+  private static DataResult<StructurePlacement> decodePlacement(
+      final ServerWorld world, final int spacing, final int separation) {
     final JsonElement json =
         JsonParser.parseString(
             """
-            { "type": "nightborn:vampire_structure", "salt": 1975, "spacing": 40, "separation": 12 }
-            """);
-    return StructurePlacement.TYPE_CODEC
-        .parse(RegistryOps.of(JsonOps.INSTANCE, world.getRegistryManager()), json)
-        .getOrThrow();
+            { "type": "nightborn:vampire_structure", "salt": 1975, "spacing": %d, "separation": %d }
+            """
+                .formatted(spacing, separation));
+    return StructurePlacement.TYPE_CODEC.parse(
+        RegistryOps.of(JsonOps.INSTANCE, world.getRegistryManager()), json);
   }
 
   @GameTest(templateName = ARENA, tickLimit = 20)
@@ -181,7 +195,7 @@ public class VampireStructureGameTest implements FabricGameTest {
       context.assertTrue(
           loot.stream().anyMatch(stack -> stack.isOf(BloodItems.BLOOD_BOTTLE)),
           "seed " + seed + " gives at least one Blood Bottle");
-      context.assertTrue(loot.size() >= 3, "seed " + seed + " fills more than one slot");
+      context.assertTrue(loot.size() >= 3, "seed " + seed + " fills at least three slots");
     }
     context.complete();
   }
@@ -194,6 +208,28 @@ public class VampireStructureGameTest implements FabricGameTest {
     context.assertTrue(
         decodeStructure(world, 117).isError(),
         "a reach that would spill past the referenced chunks is refused");
+    context.complete();
+  }
+
+  @GameTest(templateName = ARENA, tickLimit = 20)
+  public void structureDataRefusesALayoutWithNoDepth(final TestContext context) {
+    final ServerWorld world = context.getWorld();
+    context.assertTrue(decodeStructure(world, 64, 1).isSuccess(), "a depth of one loads");
+    context.assertTrue(
+        decodeStructure(world, 64, 0).isError(),
+        "a depth of zero is refused, because the jigsaw generator then places no pieces at all");
+    context.complete();
+  }
+
+  @GameTest(templateName = ARENA, tickLimit = 20)
+  public void placementRefusesASeparationAsWideAsItsSpacing(final TestContext context) {
+    final ServerWorld world = context.getWorld();
+    context.assertTrue(
+        decodePlacement(world, 40, 39).isSuccess(), "separation below spacing loads");
+    context.assertTrue(
+        decodePlacement(world, 40, 40).isError(), "separation equal to spacing is refused");
+    context.assertTrue(
+        decodePlacement(world, 40, 60).isError(), "separation past spacing is refused");
     context.complete();
   }
 
@@ -234,17 +270,22 @@ public class VampireStructureGameTest implements FabricGameTest {
     chunk.setStructureStart(structure, start);
     chunk.addStructureReference(structure, home.toLong());
     try {
-      final ServerPlayerEntity player = context.createMockCreativeServerPlayerInWorld();
-      player.refreshPositionAndAngles(
-          centre.getX() + 0.5, centre.getY(), centre.getZ() + 0.5, 0, 0);
-      final Optional<FogZone> zone = StructureFogTracker.zoneAround(player);
+      final ServerPlayerEntity inside = context.createMockCreativeServerPlayerInWorld();
+      final ServerPlayerEntity outside = context.createMockCreativeServerPlayerInWorld();
       final FogZone expected = FogZone.around(heart, start.getBoundingBox());
-      context.assertTrue(
-          zone.equals(Optional.of(expected)), "fog centres on the heart, got " + zone);
-      player.refreshPositionAndAngles(
+      inside.refreshPositionAndAngles(
+          centre.getX() + 0.5, centre.getY(), centre.getZ() + 0.5, 0, 0);
+      outside.refreshPositionAndAngles(
           centre.getX() + 0.5, centre.getY() + expected.reach() + 4, centre.getZ() + 0.5, 0, 0);
+      final Optional<FogZone> insideZone = StructureFogTracker.zoneAround(inside);
       context.assertTrue(
-          StructureFogTracker.zoneAround(player).isEmpty(), "no fog beyond the structure's reach");
+          insideZone.equals(Optional.of(expected)), "fog centres on the heart, got " + insideZone);
+      context.assertTrue(
+          StructureFogTracker.zoneAround(outside).isEmpty(),
+          "a second player beyond the structure gets no fog while the first is inside");
+      context.assertTrue(
+          StructureFogTracker.zoneAround(inside).equals(Optional.of(expected)),
+          "the first player keeps their fog whatever the second player sees");
     } finally {
       chunk.setStructureStarts(startsBefore);
       chunk.setStructureReferences(referencesBefore);

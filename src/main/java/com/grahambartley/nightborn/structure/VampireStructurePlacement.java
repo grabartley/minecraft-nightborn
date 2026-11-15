@@ -2,6 +2,7 @@ package com.grahambartley.nightborn.structure;
 
 import com.grahambartley.nightborn.server.ServerConfigService;
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.DataResult;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import java.util.Optional;
@@ -18,22 +19,23 @@ public final class VampireStructurePlacement extends RandomSpreadStructurePlacem
   private static final int LARGEST_SPREAD = 4096;
 
   public static final MapCodec<VampireStructurePlacement> CODEC =
-      RecordCodecBuilder.mapCodec(
-          instance ->
-              buildCodec(instance)
-                  .and(
-                      Codec.intRange(1, LARGEST_SPREAD)
-                          .fieldOf("spacing")
-                          .forGetter(VampireStructurePlacement::baseSpacing))
-                  .and(
-                      Codec.intRange(0, LARGEST_SPREAD)
-                          .fieldOf("separation")
-                          .forGetter(VampireStructurePlacement::baseSeparation))
-                  .and(
-                      SpreadType.CODEC
-                          .optionalFieldOf("spread_type", SpreadType.LINEAR)
-                          .forGetter(VampireStructurePlacement::getSpreadType))
-                  .apply(instance, VampireStructurePlacement::new));
+      RecordCodecBuilder.<VampireStructurePlacement>mapCodec(
+              instance ->
+                  buildCodec(instance)
+                      .and(
+                          Codec.intRange(1, LARGEST_SPREAD)
+                              .fieldOf("spacing")
+                              .forGetter(VampireStructurePlacement::baseSpacing))
+                      .and(
+                          Codec.intRange(0, LARGEST_SPREAD)
+                              .fieldOf("separation")
+                              .forGetter(VampireStructurePlacement::baseSeparation))
+                      .and(
+                          SpreadType.CODEC
+                              .optionalFieldOf("spread_type", SpreadType.LINEAR)
+                              .forGetter(VampireStructurePlacement::getSpreadType))
+                      .apply(instance, VampireStructurePlacement::new))
+          .validate(VampireStructurePlacement::spacesWiderThanItSeparates);
 
   public VampireStructurePlacement(
       final Vec3i locateOffset,
@@ -53,6 +55,13 @@ public final class VampireStructurePlacement extends RandomSpreadStructurePlacem
         spacing,
         separation,
         spreadType);
+  }
+
+  private static DataResult<VampireStructurePlacement> spacesWiderThanItSeparates(
+      final VampireStructurePlacement placement) {
+    return placement.baseSpacing() > placement.baseSeparation()
+        ? DataResult.success(placement)
+        : DataResult.error(() -> "Spacing has to be larger than separation");
   }
 
   private int baseSpacing() {

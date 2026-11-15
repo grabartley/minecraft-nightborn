@@ -16,8 +16,8 @@ class StructureFogPayloadTest {
   static Stream<Optional<FogZone>> zones() {
     return Stream.of(
         Optional.empty(),
-        Optional.of(new FogZone(0.0, 64.0, 0.0, 40.0)),
-        Optional.of(new FogZone(-1200.5, -40.0, 3000.25, 150.0)));
+        Optional.of(new FogZone(0.0, 64.0, 0.0, -10, 60, -10, 10, 70, 10)),
+        Optional.of(new FogZone(-1200.5, -40.0, 3000.25, -1300, -60, 2900, -1100, 20, 3100)));
   }
 
   @ParameterizedTest(name = "{0}")

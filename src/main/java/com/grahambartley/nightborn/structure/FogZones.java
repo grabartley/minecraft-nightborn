@@ -8,7 +8,7 @@ public final class FogZones {
 
   private FogZones() {}
 
-  public static Optional<FogZone> nearest(
+  public static Optional<FogZone> deepest(
       final Collection<FogZone> zones, final double x, final double y, final double z) {
     return zones.stream()
         .filter(zone -> zone.contains(x, y, z))

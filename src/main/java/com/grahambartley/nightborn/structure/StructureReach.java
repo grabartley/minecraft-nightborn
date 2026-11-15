@@ -1,10 +1,10 @@
 package com.grahambartley.nightborn.structure;
 
 import net.minecraft.world.gen.StructureTerrainAdaptation;
+import net.minecraft.world.gen.structure.JigsawStructure;
 
 public final class StructureReach {
 
-  public static final int LARGEST_REACH = 128;
   private static final int ADAPTATION_PADDING = 12;
 
   private StructureReach() {}
@@ -15,6 +15,6 @@ public final class StructureReach {
 
   public static boolean fits(
       final int maxDistanceFromCenter, final StructureTerrainAdaptation adaptation) {
-    return maxDistanceFromCenter + padding(adaptation) <= LARGEST_REACH;
+    return maxDistanceFromCenter + padding(adaptation) <= JigsawStructure.MAX_SIZE;
   }
 }

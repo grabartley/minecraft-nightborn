@@ -8,17 +8,17 @@ More Doors places its vaults with a custom jigsaw structure type and a custom ra
 
 ## Decision
 
-**One structure type, `nightborn:vampire_structure`, serves every kind.** It takes the same fields as a vanilla jigsaw structure plus a `household`: the entity type that lives there and how many. Biomes, terrain adaptation, layouts (template pools), processors and loot all stay in data, so a new kind is data only. No code names a kind.
+**One structure type, `nightborn:vampire_structure`, serves every kind.** It takes the same fields as a vanilla jigsaw structure plus a `household`: the entity type that lives there and how many. Its `size` must be at least one, because vanilla's jigsaw generator places no pieces at all at a size of zero. Biomes, terrain adaptation, layouts (template pools), processors and loot all stay in data, so a new kind is data only. No code names a kind.
 
 **The first piece placed is the heart.** Residents settle on open floor inside it, and fog is thickest at its centre. A layout puts its throne room, blood pool or crypt chamber in its start pool.
 
 **Residents settle once, from the chunk that holds the heart's centre.** `postPlace` runs once per chunk, so only that chunk spawns the household, and only on floor inside both the heart and that chunk. Residents are persistent so they stay home. `HouseholdSpots` keeps them apart while there is room.
 
-**Rarity is read as chunks generate.** `nightborn:vampire_structure` is also a placement type with the fields of vanilla's random spread. Its spacing and separation are the data's numbers scaled by the `structureRarity` setting, from 25% to 400%. Changing it only affects chunks not yet generated.
+**Rarity is read as chunks generate.** `nightborn:vampire_structure` is also a placement type with the fields of vanilla's random spread. Its spacing and separation are the data's numbers scaled by the `structureRarity` setting, from 25% to 400%. As in vanilla, the data's spacing must be larger than its separation. Changing the setting only affects chunks not yet generated.
 
 **Reach is capped by the codec.** `max_distance_from_center` plus the padding terrain adaptation adds must stay within 128 blocks, the 8 chunks a structure start references. A layout that reaches further fails to load rather than loading extra chunks.
 
-**The server finds fog and the client draws it.** Once a second the server looks at the structure references already held by loaded chunks within two chunks of each player. It reads a start only from a loaded chunk, so it never loads one. When the nearest zone changes it sends the heart and reach. A player with no zone costs one map lookup per nearby chunk each second, and the client does nothing. The client eases towards the target and pulls vanilla's fog in towards 20 blocks at the heart. It never pushes back a nearer vanilla fog, such as blindness or water, so a threat 8 blocks away is at most 40% faded.
+**The server finds fog and the client draws it.** Fog covers the structure's box and a 24 block margin around it. It is full at the heart and fades with distance from it, and it fades to nothing across the margin, so it never starts abruptly. Once a second the server looks at the structure references already held by loaded chunks within two chunks of each player, which always covers the margin. It reads a start only from a loaded chunk, so it never loads one. When the zone a player is deepest in changes, it sends the heart and box. A player with no zone costs one map lookup per nearby chunk each second, and the client does nothing. The client eases towards the target and pulls vanilla's fog in towards 20 blocks at the heart. It never pushes back a nearer vanilla fog, such as blindness or water, so a threat 8 blocks away is at most 40% faded.
 
 ## Consequences
 
@@ -26,4 +26,5 @@ More Doors places its vaults with a custom jigsaw structure type and a custom ra
 - A heart whose start chunk is not loaded casts no fog until it loads. With a view distance of two or more this does not happen inside a structure.
 - Fog changes distance only, not colour, so it reads as mist by day and darkness by night.
 - Vanilla's structure locator caches misses per chunk until restart, so `/locate` can stay wrong for searched chunks after the rarity changes, as More Doors found.
+- Changing the rarity in a world that is already explored moves the grid. A new start in fresh land can reach into chunks that already generated and be cut off there, and two structures can sit closer than their separation where new land meets old.
 - The test server turns structure generation off, so natural placement is checked by hand. Gametests cover settling, the codec cap, the rarity scaling, the fog lookup and the loot table.
