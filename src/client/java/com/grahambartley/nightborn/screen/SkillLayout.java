@@ -16,6 +16,7 @@ public record SkillLayout(int left, int top, int width, int height, int branchWi
   static final int PAD = 8;
   static final int MAX_BRANCH_WIDTH = 96;
   static final int MAX_INSET = 6;
+  static final int NODE_GAP = 2;
   static final int MIN_BRANCH_WIDTH = NODE * (Skill.MAX_COLUMN + 1);
 
   public static SkillLayout of(
@@ -48,7 +49,11 @@ public record SkillLayout(int left, int top, int width, int height, int branchWi
   }
 
   public int nodeX(final int branchIndex, final int branches, final int column) {
-    final int inset = Math.max(0, Math.min(MAX_INSET, (branchWidth - MIN_BRANCH_WIDTH) / 2));
+    final int inset =
+        Math.max(
+            0,
+            Math.min(
+                MAX_INSET, (branchWidth - MIN_BRANCH_WIDTH - NODE_GAP * Skill.MAX_COLUMN) / 2));
     final int step = (branchWidth - NODE - inset * 2) / Skill.MAX_COLUMN;
     final int span = step * Skill.MAX_COLUMN + NODE;
     return branchLeft(branchIndex, branches) + (branchWidth - span) / 2 + column * step;

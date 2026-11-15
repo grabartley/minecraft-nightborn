@@ -41,7 +41,9 @@ class SkillLayoutTest {
   @DisplayName("neighbouring nodes never overlap at the smallest screen")
   void noOverlap(final int left, final int right) {
     final SkillLayout layout = SkillLayout.of(320, 240, 4, 6, 0);
-    assertTrue(layout.nodeX(0, 4, left) + SkillLayout.NODE <= layout.nodeX(0, 4, right));
+    assertTrue(
+        layout.nodeX(0, 4, left) + SkillLayout.NODE + SkillLayout.NODE_GAP
+            <= layout.nodeX(0, 4, right));
     assertTrue(layout.nodeY(0) + SkillLayout.NODE < layout.nodeY(1));
   }
 
@@ -95,12 +97,19 @@ class SkillLayoutTest {
             <= layout.left() + layout.width() - SkillLayout.PAD - SkillLayout.MAX_INSET);
   }
 
-  @ParameterizedTest(name = "{0} branches, header {1} px")
-  @CsvSource({"1, 150", "1, 250", "4, 250", "1, 0"})
+  @ParameterizedTest(name = "{0}x{1}, {2} branches, header {3} px")
+  @CsvSource({
+    "480, 270, 1, 150",
+    "480, 270, 1, 250",
+    "480, 270, 4, 250",
+    "480, 270, 1, 0",
+    "320, 240, 1, 230",
+    "320, 240, 4, 230"
+  })
   @DisplayName("the panel is always wide enough for the points row above the branches")
-  void fitsHeader(final int branches, final int header) {
-    final SkillLayout layout = SkillLayout.of(480, 270, branches, 3, header);
+  void fitsHeader(final int width, final int height, final int branches, final int header) {
+    final SkillLayout layout = SkillLayout.of(width, height, branches, 3, header);
     assertTrue(header <= layout.width() - SkillLayout.PAD * 2, "width " + layout.width());
-    assertTrue(layout.left() + layout.width() <= 480);
+    assertTrue(layout.left() + layout.width() <= width);
   }
 }

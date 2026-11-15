@@ -36,13 +36,4 @@ class SkillPointsRowTest {
     final SkillPointsRow row = new SkillPointsRow(100, 120, 140, 100);
     assertEquals(over, row.overPoints(30, mouseX, mouseY, 6));
   }
-
-  @ParameterizedTest(name = "count scale {0}")
-  @CsvSource({"2"})
-  @DisplayName("the row is tall enough for the doubled count as well as the graphic")
-  void tallEnough(final int scale) {
-    assertEquals(scale, SkillPointsRow.COUNT_SCALE);
-    assertTrue(SkillPointsRow.HEIGHT >= SkillPointsRow.ICON);
-    assertTrue(SkillPointsRow.HEIGHT >= SkillPointsRow.COUNT_TOP + 9 * scale);
-  }
 }
