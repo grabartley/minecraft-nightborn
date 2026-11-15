@@ -2,17 +2,18 @@ package com.grahambartley.nightborn.render;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import net.minecraft.client.model.Dilation;
 import net.minecraft.client.model.ModelPart;
 import net.minecraft.client.model.TexturedModelData;
 import net.minecraft.client.render.entity.model.BipedEntityModel;
 import net.minecraft.entity.EquipmentSlot;
-import net.minecraft.entity.LivingEntity;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.EnumSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 class RigArmorModelsTest {
 
@@ -26,15 +27,11 @@ class RigArmorModelsTest {
         .createModel();
   }
 
-  @ParameterizedTest(name = "{0}")
-  @EnumSource(
-      value = EquipmentSlot.class,
-      names = {"HEAD", "CHEST", "LEGS", "FEET"})
+  @ParameterizedTest(name = "{0} -> {1}")
+  @CsvSource({"HEAD, outer", "CHEST, outer", "LEGS, inner", "FEET, outer"})
   @DisplayName("leggings fit the inner armour model and every other slot the outer one")
-  void picksTheArmourLayerForTheSlot(final EquipmentSlot slot) {
-    final BipedEntityModel<LivingEntity> model = models.model(slot);
-    assertSame(
-        slot == EquipmentSlot.LEGS ? INNER.getChild("head") : OUTER.getChild("head"), model.head);
+  void picksTheArmourLayerForTheSlot(final EquipmentSlot slot, final String layer) {
+    assertSame(root(layer).getChild("head"), models.model(slot).head);
   }
 
   @ParameterizedTest(name = "{0}")
@@ -46,20 +43,31 @@ class RigArmorModelsTest {
     assertFalse(models.model(slot).child);
   }
 
-  @ParameterizedTest(name = "{0} {1} -> {2}")
+  @ParameterizedTest(name = "{0} {1} -> {2} {3}")
   @CsvSource({
-    "HEAD, head, head",
-    "CHEST, body, body",
-    "CHEST, right_arm, right_arm",
-    "CHEST, left_arm, left_arm",
-    "LEGS, right_leg, right_leg",
-    "LEGS, left_leg, left_leg",
-    "FEET, right_leg, right_leg",
-    "FEET, left_leg, left_leg"
+    "HEAD, head, outer, head",
+    "CHEST, body, outer, body",
+    "CHEST, right_arm, outer, right_arm",
+    "CHEST, left_arm, outer, left_arm",
+    "LEGS, right_leg, inner, right_leg",
+    "LEGS, left_leg, inner, left_leg",
+    "FEET, right_leg, outer, right_leg",
+    "FEET, left_leg, outer, left_leg"
   })
   @DisplayName("each anchor draws the matching part of the slot's armour model")
-  void picksThePartForTheAnchor(final EquipmentSlot slot, final String name, final String child) {
-    final ModelPart root = slot == EquipmentSlot.LEGS ? INNER : OUTER;
-    assertSame(root.getChild(child), models.part(slot, name));
+  void picksThePartForTheAnchor(
+      final EquipmentSlot slot, final String name, final String layer, final String child) {
+    assertSame(root(layer).getChild(child), models.part(slot, name));
+  }
+
+  @ParameterizedTest(name = "part named [{0}]")
+  @ValueSource(strings = {"", "hat", "leftleg"})
+  @DisplayName("an unknown part name is refused instead of drawing some other part")
+  void refusesUnknownParts(final String name) {
+    assertThrows(IllegalArgumentException.class, () -> models.part(EquipmentSlot.HEAD, name));
+  }
+
+  private static ModelPart root(final String layer) {
+    return "inner".equals(layer) ? INNER : OUTER;
   }
 }

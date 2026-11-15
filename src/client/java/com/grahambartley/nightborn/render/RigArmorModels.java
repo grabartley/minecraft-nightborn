@@ -37,7 +37,8 @@ final class RigArmorModels {
       case "right_arm" -> model.rightArm;
       case "left_arm" -> model.leftArm;
       case "right_leg" -> model.rightLeg;
-      default -> model.leftLeg;
+      case "left_leg" -> model.leftLeg;
+      default -> throw new IllegalArgumentException("No armour part named " + name);
     };
   }
 
