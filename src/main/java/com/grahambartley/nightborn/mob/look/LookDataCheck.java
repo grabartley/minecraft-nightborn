@@ -47,7 +47,7 @@ public final class LookDataCheck {
               for (final VampireOutfit.Piece piece : outfit.pieces()) {
                 final Optional<EquipmentSlot> slot = slotOf.apply(piece.item());
                 if (slot.isEmpty()) {
-                  problems.add(id + " uses " + piece.item() + ", which is not clothing");
+                  problems.add(id + " uses " + piece.item() + ", which is not wearable");
                 } else if (!worn.add(slot.get())) {
                   problems.add(id + " puts two pieces in the " + slot.get().getName() + " slot");
                 }

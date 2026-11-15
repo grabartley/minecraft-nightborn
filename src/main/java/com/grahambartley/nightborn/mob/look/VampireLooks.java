@@ -31,13 +31,15 @@ public final class VampireLooks {
     DynamicRegistries.registerSynced(LOOK, VampireLook.CODEC);
     DynamicRegistries.registerSynced(OUTFIT, VampireOutfit.CODEC);
     DynamicRegistries.registerSynced(BUILD, VampireBuild.CODEC);
-    ServerLifecycleEvents.SERVER_STARTED.register(
-        server -> {
-          final DynamicRegistryManager registries = server.getRegistryManager();
-          LookDataCheck.problems(
-                  looks(registries), outfits(registries), builds(registries), VampireLooks::slotOf)
-              .forEach(problem -> Nightborn.LOGGER.error("Bad vampire look data: {}", problem));
-        });
+    ServerLifecycleEvents.SERVER_STARTED.register(server -> check(server.getRegistryManager()));
+    ServerLifecycleEvents.END_DATA_PACK_RELOAD.register(
+        (server, resources, success) -> check(server.getRegistryManager()));
+  }
+
+  private static void check(final DynamicRegistryManager registries) {
+    LookDataCheck.problems(
+            looks(registries), outfits(registries), builds(registries), VampireLooks::slotOf)
+        .forEach(problem -> Nightborn.LOGGER.error("Bad vampire look data: {}", problem));
   }
 
   public static Map<Identifier, VampireLook> looks(final DynamicRegistryManager registries) {

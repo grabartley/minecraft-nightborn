@@ -24,6 +24,7 @@ import net.minecraft.entity.EntityData;
 import net.minecraft.entity.EntityDimensions;
 import net.minecraft.entity.EntityPose;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.ai.goal.ActiveTargetGoal;
@@ -42,8 +43,10 @@ import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
 import net.minecraft.entity.mob.HostileEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.random.Random;
@@ -81,6 +84,7 @@ public class VampireEntity extends HostileEntity implements GeoEntity {
   private VampirePose shownPose = VampirePose.IDLE;
   private long nextHiss;
   private boolean warded;
+  private boolean undressed;
 
   public VampireEntity(final EntityType<? extends VampireEntity> type, final World world) {
     super(type, world);
@@ -167,6 +171,15 @@ public class VampireEntity extends HostileEntity implements GeoEntity {
   @Override
   protected void mobTick() {
     super.mobTick();
+    if (undressed && getWorld() instanceof ServerWorld world) {
+      undressed = false;
+      for (final EquipmentSlot slot : EquipmentSlot.values()) {
+        if (slot.isArmorSlot()) {
+          equipStack(slot, ItemStack.EMPTY);
+        }
+      }
+      dress(world);
+    }
     final LivingEntity target = getTarget();
     if (target != null
         && (Downed.state(this) != null
@@ -256,9 +269,10 @@ public class VampireEntity extends HostileEntity implements GeoEntity {
 
   private void dress(final ServerWorldAccess world) {
     final var registries = world.getRegistryManager();
+    final var outfits = VampireLooks.outfits(registries);
     Appearance.pick(
             VampireLooks.looks(registries),
-            VampireLooks.outfits(registries),
+            outfits,
             VampireLooks.builds(registries),
             random::nextDouble)
         .ifPresent(
@@ -266,7 +280,7 @@ public class VampireEntity extends HostileEntity implements GeoEntity {
               setAppearance(appearance.look(), appearance.height(), appearance.width());
               appearance
                   .outfit()
-                  .map(id -> VampireLooks.outfits(registries).get(id))
+                  .map(outfits::get)
                   .map(outfit -> OutfitDressing.stacks(outfit, VampireLooks::item))
                   .ifPresent(stacks -> stacks.forEach(this::equipStack));
             });
@@ -310,6 +324,7 @@ public class VampireEntity extends HostileEntity implements GeoEntity {
   @Override
   public void readCustomDataFromNbt(final NbtCompound nbt) {
     super.readCustomDataFromNbt(nbt);
+    undressed = nbt.contains(LOOK_KEY) && !nbt.contains(LOOK_KEY, NbtElement.STRING_TYPE);
     if (nbt.contains(LOOK_KEY, NbtElement.STRING_TYPE)) {
       final Identifier look = Identifier.tryParse(nbt.getString(LOOK_KEY));
       setAppearance(

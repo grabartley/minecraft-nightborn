@@ -42,7 +42,7 @@ class LookDataCheckTest {
       value = {
         "MALE|v|coat|shoes|nightborn:bram has no male outfit for nightborn:g",
         "FEMALE|g|coat|shoes|nightborn:bram has no male outfit for nightborn:g",
-        "MALE|g|coat|stone|nightborn:dress uses nightborn:stone, which is not clothing",
+        "MALE|g|coat|stone|nightborn:dress uses nightborn:stone, which is not wearable",
         "MALE|g|coat|cape|nightborn:dress puts two pieces in the chest slot"
       })
   @DisplayName("a look with no outfit, or an outfit that is not wearable clothing, is reported")
