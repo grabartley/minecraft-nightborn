@@ -25,11 +25,15 @@ class TurningSettingsTest {
   @Test
   @DisplayName("the constructor clamps values into bounds")
   void clamps() {
-    final TurningSettings low = new TurningSettings(-5, true, 0);
+    final TurningSettings low = new TurningSettings(-5, -1, -9, true, 0);
     assertEquals(0, low.biteTurnChance());
+    assertEquals(0, low.vampireMobTurnChance());
+    assertEquals(0, low.vampireBatTurnChance());
     assertEquals(1, low.sicknessDays());
-    final TurningSettings high = new TurningSettings(250, false, 99);
+    final TurningSettings high = new TurningSettings(250, 101, 300, false, 99);
     assertEquals(100, high.biteTurnChance());
+    assertEquals(100, high.vampireMobTurnChance());
+    assertEquals(100, high.vampireBatTurnChance());
     assertEquals(30, high.sicknessDays());
   }
 }

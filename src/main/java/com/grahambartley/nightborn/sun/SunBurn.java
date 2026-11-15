@@ -5,7 +5,6 @@ import com.grahambartley.nightborn.vampire.NightbornDamage;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 
 public final class SunBurn {
@@ -38,7 +37,7 @@ public final class SunBurn {
         null,
         vampire.getBlockPos(),
         SoundEvents.ENTITY_GENERIC_EXTINGUISH_FIRE,
-        SoundCategory.PLAYERS,
+        vampire.getSoundCategory(),
         0.7F,
         1.6F);
     vampire.damage(NightbornDamage.sun(world), settings.sunDamage());

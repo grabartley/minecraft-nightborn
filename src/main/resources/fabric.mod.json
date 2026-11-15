@@ -43,7 +43,8 @@
       "com.grahambartley.nightborn.gametest.HunterGameTest",
       "com.grahambartley.nightborn.gametest.CoffinGameTest",
       "com.grahambartley.nightborn.gametest.StakeGameTest",
-      "com.grahambartley.nightborn.gametest.SilverGameTest"
+      "com.grahambartley.nightborn.gametest.SilverGameTest",
+      "com.grahambartley.nightborn.gametest.VampireMobGameTest"
     ]
   },
   "mixins": [

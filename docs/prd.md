@@ -164,7 +164,7 @@ A vampire mob, a vampire bat or a vampire player bites a human. The bite may sta
 
 | ID | Requirement |
 |---|---|
-| TURN-1 | A bite from a vampire mob, vampire bat or vampire player starts bite sickness on a human, with a chance set per biter. A vampire player's bite starts it every time by default, less against a human with bite resistance (HUNT-4) |
+| TURN-1 | A bite from a vampire mob, vampire bat or vampire player starts bite sickness on a human, with a chance set per biter. By default a vampire player's bite starts it every time, a vampire mob's one time in four and a vampire bat's one time in ten, less against a human with bite resistance (HUNT-4) |
 | TURN-2 | A vampire player can bite a human player only where the server allows PvP |
 | TURN-3 | Bite sickness lasts 3 in-game days, and gets worse each day: hunger, then the vanilla Weakness effect, then slowness in daylight |
 | TURN-4 | A sick player is shown the sickness and the days left, as a status effect and a sign on screen |
@@ -436,10 +436,10 @@ Vampires are rare. They live in households hidden in four kinds of structure, ea
 | HOME-6 | Household vampires sleep in coffins by day and wake at dusk |
 | HOME-7 | A castle's vampire lord is a boss with a health bar and its own powers. It is downed and escapes like any vampire, its bar shows when it is downed or escaping, and only a stake or the sun ends the fight |
 | HOME-8 | Structures hold loot chests with gear, Blood Bottles, decor and rare items found nowhere else |
-| HOME-9 | Vampire mobs spawn rarely at night in the open, alone or with vampire bats |
-| HOME-10 | Vampire bats spawn rarely in dark caves and at night, and bite (TURN-1) |
+| HOME-9 | Vampire mobs spawn rarely at night in the open, alone or with one or two vampire bats |
+| HOME-10 | Vampire bats spawn rarely in dark caves and at night. In the dark or at night they swoop at warm-blooded creatures and bite them (TURN-1) |
 | HOME-11 | Vampire mobs ignore vampire players unless attacked |
-| HOME-12 | Structure layouts, loot and spawn rates are data, changed by a data pack |
+| HOME-12 | Structure layouts, loot, structure spawn rates and the biomes vampire mobs and vampire bats spawn in are data, changed by a data pack |
 | HOME-13 | Vampire mobs hunt humans, villagers and animals at night to feed on them, and their bites can start bite sickness (TURN-1) |
 
 **Not supported:** a household rebuilding after it is cleared.
