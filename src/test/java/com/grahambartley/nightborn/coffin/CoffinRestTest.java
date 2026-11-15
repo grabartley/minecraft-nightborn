@@ -17,20 +17,16 @@ class CoffinRestTest {
 
   static Stream<Arguments> rests() {
     return Stream.of(
-        Arguments.of("an unassigned coffin", Optional.empty(), CoffinRest.CLAIM, true),
-        Arguments.of("the sleeper's own coffin", Optional.of(SLEEPER), CoffinRest.RETURN, true),
-        Arguments.of("another vampire's coffin", Optional.of(OTHER), CoffinRest.BORROW, false));
+        Arguments.of("an unassigned coffin", Optional.empty(), CoffinRest.CLAIM),
+        Arguments.of("the sleeper's own coffin", Optional.of(SLEEPER), CoffinRest.RETURN),
+        Arguments.of("another vampire's coffin", Optional.of(OTHER), CoffinRest.BORROW));
   }
 
-  @ParameterizedTest(name = "{0}: {2}, sets respawn {3}")
+  @ParameterizedTest(name = "{0}: {2}")
   @MethodSource("rests")
   @DisplayName("resting claims a free coffin, returns to your own, and only borrows another's")
   void decidesWhatRestingDoes(
-      final String name,
-      final Optional<UUID> owner,
-      final CoffinRest rest,
-      final boolean setsRespawn) {
+      final String name, final Optional<UUID> owner, final CoffinRest rest) {
     assertEquals(rest, CoffinRest.of(owner, SLEEPER));
-    assertEquals(setsRespawn, rest.setsRespawn());
   }
 }

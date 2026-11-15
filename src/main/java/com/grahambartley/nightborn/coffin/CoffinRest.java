@@ -14,8 +14,4 @@ public enum CoffinRest {
     }
     return owner.get().equals(sleeper) ? RETURN : BORROW;
   }
-
-  public boolean setsRespawn() {
-    return this != BORROW;
-  }
 }

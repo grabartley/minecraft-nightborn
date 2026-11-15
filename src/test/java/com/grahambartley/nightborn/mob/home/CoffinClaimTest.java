@@ -42,6 +42,6 @@ class CoffinClaimTest {
   @MethodSource("claimable")
   @DisplayName("only a coffin no one owns can be claimed")
   void mayClaim(final boolean head, final UUID owner, final boolean claimable) {
-    assertEquals(claimable, CoffinClaim.mayClaim(head, Optional.ofNullable(owner), ME));
+    assertEquals(claimable, CoffinClaim.mayClaim(head, Optional.ofNullable(owner)));
   }
 }

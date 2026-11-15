@@ -3,12 +3,12 @@ package com.grahambartley.nightborn.coffin;
 import com.grahambartley.nightborn.server.ConfigEditPermission;
 import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
 import net.minecraft.block.BedBlock;
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.block.enums.BedPart;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.network.packet.s2c.play.BlockUpdateS2CPacket;
-import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -47,16 +47,19 @@ public final class CoffinProtection {
       return true;
     }
     player.sendMessage(Text.translatable(OWNED), true);
-    if (player instanceof ServerPlayerEntity server) {
-      server.networkHandler.sendPacket(
-          new BlockUpdateS2CPacket(
-              world,
-              pos.offset(
-                  CoffinLayout.towardsOtherPart(
-                      state.get(BedBlock.PART),
-                      state.get(BedBlock.FACING),
-                      state.get(CoffinBlock.STANDING)))));
-    }
+    resync(world, pos);
     return false;
+  }
+
+  public static void resync(final World world, final BlockPos pos) {
+    final BlockState state = world.getBlockState(pos);
+    final BlockPos head = CoffinBlock.head(pos, state);
+    final BlockPos foot =
+        CoffinLayout.foot(
+            head, BedPart.HEAD, state.get(BedBlock.FACING), state.get(CoffinBlock.STANDING));
+    for (final BlockPos part : new BlockPos[] {head, foot}) {
+      final BlockState partState = world.getBlockState(part);
+      world.updateListeners(part, partState, partState, Block.NOTIFY_ALL);
+    }
   }
 }

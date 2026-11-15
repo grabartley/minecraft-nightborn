@@ -57,6 +57,31 @@ class CoffinBlockTest {
     }
   }
 
+  static Stream<Arguments> replacements() {
+    final BlockState head =
+        Coffins.get(CoffinWood.OAK).getDefaultState().with(BedBlock.PART, BedPart.HEAD);
+    return Stream.of(
+        Arguments.of("the head broken to air", head, Blocks.AIR.getDefaultState(), true),
+        Arguments.of(
+            "the head replaced by another block", head, Blocks.STONE.getDefaultState(), true),
+        Arguments.of("the head's lid opening", head, head.with(CoffinBlock.OPEN, true), false),
+        Arguments.of(
+            "the head filling with a sleeper", head, head.with(BedBlock.OCCUPIED, true), false),
+        Arguments.of(
+            "the foot broken to air",
+            head.with(BedBlock.PART, BedPart.FOOT),
+            Blocks.AIR.getDefaultState(),
+            false));
+  }
+
+  @ParameterizedTest(name = "{0}: frees {3}")
+  @MethodSource("replacements")
+  @DisplayName("a coffin frees its owner only when its head stops being a coffin")
+  void freesItsOwnerOnlyWhenTheHeadIsGone(
+      final String name, final BlockState state, final BlockState newState, final boolean frees) {
+    assertEquals(frees, CoffinBlock.freesOwnerOnReplace(state, newState));
+  }
+
   static Stream<Arguments> pairs() {
     return Stream.of(Direction.Type.HORIZONTAL.stream().toArray())
         .flatMap(

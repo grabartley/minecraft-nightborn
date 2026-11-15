@@ -15,13 +15,9 @@ public final class CoffinOwnerDeaths {
     ServerLivingEntityEvents.AFTER_DEATH.register(CoffinOwnerDeaths::afterDeath);
   }
 
-  static boolean frees(final boolean sun, final boolean staked) {
-    return sun || staked;
-  }
-
   private static void afterDeath(final LivingEntity entity, final DamageSource source) {
     if (entity instanceof ServerPlayerEntity player
-        && frees(source.isOf(NightbornDamage.SUN), Staking.staked(source))) {
+        && (source.isOf(NightbornDamage.SUN) || Staking.staked(source))) {
       CoffinOwnership.release(player.server, player.getUuid());
     }
   }

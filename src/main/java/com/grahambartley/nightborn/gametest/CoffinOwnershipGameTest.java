@@ -34,6 +34,7 @@ import net.minecraft.world.explosion.Explosion;
 public class CoffinOwnershipGameTest implements FabricGameTest {
 
   static final String BATCH = "coffin-ownership";
+  static final String NIGHT = "coffin-ownership-night";
   static final int WAKE_WINDOW = 60;
   static final float BLAST_POWER = 3.0F;
 
@@ -67,6 +68,36 @@ public class CoffinOwnershipGameTest implements FabricGameTest {
               vampire.getSpawnPointPosition(),
               context.getAbsolutePos(second),
               "the respawn point follows the claimed coffin");
+          TestPlayers.finish(context, vampire);
+        });
+  }
+
+  @BeforeBatch(batchId = NIGHT)
+  public void pinMidnight(final ServerWorld world) {
+    WorldClock.freeze(world, WorldClock.MIDNIGHT);
+  }
+
+  @AfterBatch(batchId = NIGHT)
+  public void releaseMidnight(final ServerWorld world) {
+    WorldClock.release(world);
+  }
+
+  @GameTest(templateName = CoffinStage.YARD, batchId = NIGHT, tickLimit = TestPlayers.READY + 10)
+  public void aRefusedRestClaimsNothingAndKeepsTheCoffinHeldBefore(final TestContext context) {
+    final BlockPos held = CoffinStage.coffin(context, new BlockPos(1, 2, 6), Direction.EAST);
+    final BlockPos tried = CoffinStage.coffin(context, new BlockPos(5, 2, 6), Direction.EAST);
+    final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(4, 2, 4));
+    claim(context, held, vampire.getUuid());
+    context.runAtTick(
+        TestPlayers.READY,
+        () -> {
+          context.useBlock(tried, vampire);
+          context.assertFalse(vampire.isSleeping(), "a vampire cannot rest at night");
+          context.assertEquals(owner(context, tried), Optional.empty(), "the coffin stays free");
+          context.assertEquals(
+              owner(context, held), Optional.of(vampire.getUuid()), "the old coffin is kept");
+          context.assertTrue(
+              vampire.getSpawnPointPosition() == null, "the refused coffin sets no respawn");
           TestPlayers.finish(context, vampire);
         });
   }
@@ -148,7 +179,7 @@ public class CoffinOwnershipGameTest implements FabricGameTest {
               "the owner breaks their own coffin");
           context.assertEquals(owner(context, head), Optional.empty(), "the coffin is freed");
           context.assertEquals(
-              CoffinOwnership.coffinOf(context.getWorld().getServer(), vampire.getUuid()),
+              CoffinOwnersState.get(context.getWorld().getServer()).coffinOf(vampire.getUuid()),
               Optional.empty(),
               "the vampire holds no coffin");
           context.assertTrue(vampire.getSpawnPointPosition() == null, "the respawn is cleared");
@@ -176,7 +207,7 @@ public class CoffinOwnershipGameTest implements FabricGameTest {
               "the owner breaks it while it is occupied");
           context.assertEquals(owner(context, head), Optional.empty(), "the coffin is freed");
           context.assertEquals(
-              CoffinOwnership.coffinOf(context.getWorld().getServer(), sleeper.getUuid()),
+              CoffinOwnersState.get(context.getWorld().getServer()).coffinOf(sleeper.getUuid()),
               Optional.empty(),
               "the sleeper never gains it");
         });

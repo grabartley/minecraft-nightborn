@@ -21,9 +21,15 @@ abstract class PistonHandlerMixin {
 
   @Inject(method = "calculatePush", at = @At("RETURN"), cancellable = true)
   private void nightborn$anAssignedCoffinHoldsFast(final CallbackInfoReturnable<Boolean> cir) {
-    if (cir.getReturnValueZ()
-        && this.brokenBlocks.stream()
-            .anyMatch(pos -> CoffinProtection.shields(this.world, pos, null))) {
+    if (!cir.getReturnValueZ()) {
+      return;
+    }
+    final List<BlockPos> shielded =
+        this.brokenBlocks.stream()
+            .filter(pos -> CoffinProtection.shields(this.world, pos, null))
+            .toList();
+    if (!shielded.isEmpty()) {
+      shielded.forEach(pos -> CoffinProtection.resync(this.world, pos));
       cir.setReturnValue(false);
     }
   }

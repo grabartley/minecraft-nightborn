@@ -51,8 +51,7 @@ public final class HomeCoffins {
                     coffin ->
                         CoffinClaim.mayClaim(
                             head(world, coffin.getPos()),
-                            CoffinOwnership.ownerAt(world, coffin.getPos()),
-                            vampire))
+                            CoffinOwnership.ownerAt(world, coffin.getPos())))
                 .min(
                     Comparator.comparingDouble(coffin -> coffin.getPos().getSquaredDistance(home)));
         if (nearest.isPresent()
@@ -65,10 +64,6 @@ public final class HomeCoffins {
     }
     return best.map(CoffinBlockEntity::getPos)
         .filter(coffin -> CoffinOwnership.claim(world, coffin, vampire));
-  }
-
-  public static void release(final ServerWorld world, final UUID vampire) {
-    CoffinOwnership.release(world.getServer(), vampire);
   }
 
   public static boolean free(final ServerWorld world, final BlockPos coffin) {

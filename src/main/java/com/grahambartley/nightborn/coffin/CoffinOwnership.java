@@ -2,7 +2,6 @@ package com.grahambartley.nightborn.coffin;
 
 import java.util.Optional;
 import java.util.UUID;
-import net.minecraft.block.BedBlock;
 import net.minecraft.block.BlockState;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -26,74 +25,53 @@ public final class CoffinOwnership {
     return CoffinOwnersState.get(world.getServer()).ownerOf(at(world, head));
   }
 
-  public static Optional<GlobalPos> coffinOf(final MinecraftServer server, final UUID owner) {
-    return CoffinOwnersState.get(server).coffinOf(owner);
-  }
-
   public static boolean claim(final ServerWorld world, final BlockPos head, final UUID owner) {
     return CoffinOwnersState.get(world.getServer()).assign(owner, at(world, head));
   }
 
-  public static boolean rest(final ServerPlayerEntity sleeper, final BlockPos pos) {
-    final ServerWorld world = sleeper.getServerWorld();
-    final Optional<BlockPos> head = head(world, pos);
-    if (head.isEmpty()) {
-      return true;
-    }
-    final CoffinRest rest = CoffinRest.of(ownerAt(world, head.get()), sleeper.getUuid());
-    switch (rest) {
-      case CLAIM -> claim(world, head.get(), sleeper.getUuid());
-      case BORROW -> sleeper.sendMessage(Text.translatable(RestRules.BORROWED), true);
-      case RETURN -> {}
-    }
-    return rest.setsRespawn();
+  public static boolean respawnsAt(final ServerPlayerEntity sleeper, final BlockPos pos) {
+    return head(sleeper.getServerWorld(), pos)
+        .map(head -> rest(sleeper, head) == CoffinRest.RETURN)
+        .orElse(true);
+  }
+
+  public static void rested(final ServerPlayerEntity sleeper, final BlockPos pos) {
+    head(sleeper.getServerWorld(), pos)
+        .ifPresent(
+            head -> {
+              switch (rest(sleeper, head)) {
+                case CLAIM -> {
+                  claim(sleeper.getServerWorld(), head, sleeper.getUuid());
+                  CoffinRespawn.set(sleeper, head);
+                }
+                case BORROW -> sleeper.sendMessage(Text.translatable(RestRules.BORROWED), true);
+                case RETURN -> {}
+              }
+            });
   }
 
   public static void release(final MinecraftServer server, final UUID owner) {
     CoffinOwnersState.get(server)
         .release(owner)
-        .ifPresent(coffin -> forgetRespawn(server, owner, coffin));
+        .ifPresent(coffin -> CoffinRespawn.forget(server, owner, coffin));
   }
 
   public static void releaseAt(final ServerWorld world, final BlockPos head) {
     final GlobalPos coffin = at(world, head);
     CoffinOwnersState.get(world.getServer())
         .releaseCoffin(coffin)
-        .ifPresent(owner -> forgetRespawn(world.getServer(), owner, coffin));
+        .ifPresent(owner -> CoffinRespawn.forget(world.getServer(), owner, coffin));
   }
 
-  public static void keepRespawnOnlyAtOwnCoffin(final ServerPlayerEntity player) {
-    final BlockPos pos = player.getSpawnPointPosition();
-    final ServerWorld world = player.server.getWorld(player.getSpawnPointDimension());
-    if (pos != null
-        && world != null
-        && head(world, pos).isPresent()
-        && CoffinRest.of(owner(world, pos), player.getUuid()) != CoffinRest.RETURN) {
-      player.setSpawnPoint(World.OVERWORLD, null, 0.0F, false, false);
-    }
-  }
-
-  private static void forgetRespawn(
-      final MinecraftServer server, final UUID owner, final GlobalPos coffin) {
-    final ServerPlayerEntity player = server.getPlayerManager().getPlayer(owner);
-    if (player != null
-        && coffin.pos().equals(player.getSpawnPointPosition())
-        && coffin.dimension().equals(player.getSpawnPointDimension())) {
-      player.setSpawnPoint(World.OVERWORLD, null, 0.0F, false, false);
-    }
+  private static CoffinRest rest(final ServerPlayerEntity sleeper, final BlockPos head) {
+    return CoffinRest.of(ownerAt(sleeper.getServerWorld(), head), sleeper.getUuid());
   }
 
   private static Optional<BlockPos> head(final ServerWorld world, final BlockPos pos) {
     final BlockState state = world.getBlockState(pos);
-    if (!(state.getBlock() instanceof CoffinBlock)) {
-      return Optional.empty();
-    }
-    return Optional.of(
-        CoffinLayout.head(
-            pos,
-            state.get(BedBlock.PART),
-            state.get(BedBlock.FACING),
-            state.get(CoffinBlock.STANDING)));
+    return state.getBlock() instanceof CoffinBlock
+        ? Optional.of(CoffinBlock.head(pos, state))
+        : Optional.empty();
   }
 
   private static GlobalPos at(final ServerWorld world, final BlockPos head) {

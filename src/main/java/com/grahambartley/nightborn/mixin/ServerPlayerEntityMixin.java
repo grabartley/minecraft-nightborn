@@ -2,6 +2,7 @@ package com.grahambartley.nightborn.mixin;
 
 import com.grahambartley.nightborn.coffin.CoffinBlock;
 import com.grahambartley.nightborn.coffin.CoffinOwnership;
+import com.grahambartley.nightborn.coffin.CoffinRespawn;
 import com.grahambartley.nightborn.coffin.CoffinRise;
 import com.grahambartley.nightborn.coffin.CoffinSleepers;
 import com.grahambartley.nightborn.coffin.RestRules;
@@ -101,7 +102,15 @@ abstract class ServerPlayerEntityMixin {
       final float angle,
       final boolean forced,
       final boolean sendMessage) {
-    return CoffinOwnership.rest(self, pos);
+    return CoffinOwnership.respawnsAt(self, pos);
+  }
+
+  @Inject(method = "trySleep", at = @At("RETURN"))
+  private void nightborn$aRestfulCoffinBecomesYours(
+      final BlockPos pos, final CallbackInfoReturnable<Either<SleepFailureReason, Unit>> cir) {
+    if (cir.getReturnValue().right().isPresent()) {
+      CoffinOwnership.rested((ServerPlayerEntity) (Object) this, pos);
+    }
   }
 
   @Inject(method = "getRespawnTarget", at = @At("HEAD"))
@@ -109,7 +118,7 @@ abstract class ServerPlayerEntityMixin {
       final boolean alive,
       final TeleportTarget.PostDimensionTransition postDimensionTransition,
       final CallbackInfoReturnable<TeleportTarget> cir) {
-    CoffinOwnership.keepRespawnOnlyAtOwnCoffin((ServerPlayerEntity) (Object) this);
+    CoffinRespawn.keepOnlyAtOwnCoffin((ServerPlayerEntity) (Object) this);
   }
 
   @Inject(method = "isBedObstructed", at = @At("HEAD"), cancellable = true)

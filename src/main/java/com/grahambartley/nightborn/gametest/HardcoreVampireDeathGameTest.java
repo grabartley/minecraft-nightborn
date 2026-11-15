@@ -1,5 +1,6 @@
 package com.grahambartley.nightborn.gametest;
 
+import com.grahambartley.nightborn.coffin.CoffinOwnersState;
 import com.grahambartley.nightborn.coffin.CoffinOwnership;
 import com.grahambartley.nightborn.config.DownedSettings;
 import com.grahambartley.nightborn.faction.Faction;
@@ -84,7 +85,7 @@ public class HardcoreVampireDeathGameTest implements FabricGameTest {
               respawned.getEnderChestInventory().isEmpty(), "ender chest is emptied");
           context.assertTrue(respawned.getSpawnPointPosition() == null, "no respawn point is kept");
           context.assertEquals(
-              CoffinOwnership.coffinOf(context.getWorld().getServer(), respawned.getUuid()),
+              CoffinOwnersState.get(context.getWorld().getServer()).coffinOf(respawned.getUuid()),
               Optional.empty(),
               "the coffin is unassigned");
           context.assertEquals(

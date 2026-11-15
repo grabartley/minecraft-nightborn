@@ -13,8 +13,7 @@ public final class CoffinClaim {
     return coffinHead && CoffinRest.of(owner, vampire) == CoffinRest.RETURN;
   }
 
-  public static boolean mayClaim(
-      final boolean coffinHead, final Optional<UUID> owner, final UUID vampire) {
-    return coffinHead && CoffinRest.of(owner, vampire) == CoffinRest.CLAIM;
+  public static boolean mayClaim(final boolean coffinHead, final Optional<UUID> owner) {
+    return coffinHead && owner.isEmpty();
   }
 }
