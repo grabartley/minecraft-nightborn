@@ -16,7 +16,7 @@ Minecraft has no vampires, and nothing that hunts them. Its undead are mindless 
 
 ### What The Mod Is
 
-Nightborn adds vampires and the people who hunt them. A bite from a vampire or a vampire bat starts a sickness, and if it is not cured in time you turn. As a vampire you live on blood, sleep through the day in a coffin and die in direct sun. You grow through a skill tree and pick two of three bloodlines: Noble, Beast and Occult. Each gives powers the others do not, such as bat form, mesmerising, thralls and ghostly familiars. Humans can fight back. Garlic, crucifixes, holy water, silver and the stake all hurt vampires, and every human earns hunter skills by killing them. Vampires are rare. They live in households hidden in castles, crypts, ruined manors and deep lairs, wrapped in fog, and hunters keep camps of their own.
+Nightborn adds vampires and the people who hunt them. A bite from a vampire or a vampire bat starts a sickness, and if it is not cured in time you turn. As a vampire you live on blood, sleep through the day in a coffin, and nothing but direct sun or a stake can finish you. Anything else only brings you down. You grow through a skill tree and pick two of three bloodlines: Noble, Beast and Occult. Each gives powers the others do not, such as bat form, mesmerising, thralls and ghostly familiars. Humans can fight back. Garlic, crucifixes, holy water, silver and the stake all hurt vampires, and every human earns hunter skills by killing them. Vampires are rare. They live in households hidden in castles, crypts, ruined manors and deep lairs, wrapped in fog, and hunters keep camps of their own.
 
 ### Experience It Aims For
 
@@ -25,7 +25,6 @@ Nightborn adds vampires and the people who hunt them. A bite from a vampire or a
 - **Two sides, one server.** Vampires and hunters are real factions, and players choose which to be.
 - **Choices stick.** A bloodline, once chosen, is yours. A turned player stays turned.
 - **Lived-in gothic.** Places feel old, rich and inhabited. Candlelight, decay and clutter, never clean or plastic.
-- **Played straight.** It is dark and bloody, never a joke.
 - **Premium look and sound.** Every model, animation and sound is hand-made and judged against the best Minecraft art.
 - **Vanilla at heart.** Recipes and rules echo what vanilla already teaches: a cleric blesses, a golden apple cures, a bed skips the night.
 
@@ -36,6 +35,7 @@ Nightborn adds vampires and the people who hunt them. A bite from a vampire or a
 | Both sides are playable | Turning, feeding and bloodlines for vampires, gear and a skill tree for hunters (TURN, FEED, LINE, HUNT) |
 | Feeding is a real choice | Sip or drain, fresh or bottled, animal or person, and the victim can fight back (FEED-1 to FEED-13) |
 | Builds that fit your playstyle | Pick two of three bloodlines, each with its own powers (LINE-1 to LINE-6) |
+| Vampires are hard to kill | Only direct sun or a stake finishes one. Anything else only brings it down (CORE-7, CORE-8) |
 | Folklore that works | Garlic, crucifixes built from blocks, holy water, silver and stakes each have real rules (WEAK-1 to WEAK-10) |
 | Vampires live somewhere | Households with personalities in four kinds of structure, rare and hidden in fog (HOME-1 to HOME-13) |
 | The day belongs to vampires too | Coffins skip the day the way beds skip the night (COFFIN-1 to COFFIN-8) |
@@ -43,12 +43,11 @@ Nightborn adds vampires and the people who hunt them. A bite from a vampire or a
 
 ### Non-Goals
 
-- **Not a comedy mod.** The tone is played straight.
 - **Not a werewolf or general monster mod.** Vampires and hunters only.
 - **No cure after turning.** A cure works only during the sickness.
 - **No vampire that feeds on anything but blood.**
 - **Not a claims or protection mod.** Garlic weakens vampires. It does not stop them breaking blocks.
-- **No change to vanilla undead.** Zombies, skeletons and phantoms behave as they always have.
+- **No change to vanilla undead.** Zombies, skeletons and phantoms behave as they always have, except that phantoms never come for vampires (CORE-9).
 
 ## 2. Release Scope
 
@@ -84,6 +83,7 @@ This document specifies the Nightborn alpha line for Minecraft 1.21.1 on Fabric.
 | What replaces hunger? | Blood | FEED-1 |
 | How do powers grow? | A skill tree with three bloodlines, of which you invest in two | LINE-1 to LINE-3 |
 | Who is a hunter? | Any human who kills vampires | HUNT-1 |
+| How does a vampire die? | Only to direct sun or a stake. Anything else brings it down, greatly weakened, until it recovers | CORE-7, CORE-8 |
 | What happens on death? | Respawn at your coffin. A stake costs skill progress | COFFIN-4, SKILL-6 |
 | PvP? | Vampires and hunters are factions, and PvP follows the server's own setting | FACT-1 to FACT-4 |
 
@@ -107,7 +107,7 @@ This document specifies the Nightborn alpha line for Minecraft 1.21.1 on Fabric.
 
 | Term | Definition |
 |---|---|
-| Vampire | A player or mob that has turned. Lives on blood and dies in direct sun |
+| Vampire | A player or mob that has turned. Lives on blood, and dies only to direct sun or a stake |
 | Human | A player who is not a vampire |
 | Bite sickness | The state between a turning bite and turning. It lasts 3 in-game days |
 | Blood | What a vampire lives on, shown as the blood bar in place of hunger |
@@ -125,7 +125,8 @@ This document specifies the Nightborn alpha line for Minecraft 1.21.1 on Fabric.
 | Direct sun | Daylight on a vampire with open sky above it, not in rain, water or shade |
 | Garlic String | A block of hung garlic that weakens vampires near it |
 | Crucifix shape | A cross of crucifix-material blocks built in the world (see below) |
-| Staked | Killed with a wooden stake or stake bolt as the final blow |
+| Downed | A vampire brought to its last health by anything but direct sun or a stake. It lies helpless and greatly weakened until it recovers |
+| Staked | Killed by a stake: a wooden stake or stake bolt hitting a downed vampire, or striking the blow that would bring a vampire down |
 | Coffin | A block that is a vampire's bed and respawn point |
 | Thrall | A villager a Noble vampire has bound to follow and fight for them |
 | Ghostly familiar | A spirit an Occult vampire summons to fight and do tasks |
@@ -228,7 +229,7 @@ Sneak and use on a creature to bite it, and keep holding to drink. Let go to sto
 
 | ID | Requirement |
 |---|---|
-| SUN-1 | A vampire in direct sun catches fire, as a zombie does, and keeps burning while it stays there |
+| SUN-1 | A vampire in direct sun catches fire, as a zombie does, and keeps burning while it stays there until it dies, downed or not |
 | SUN-2 | No armour, helmet or effect, Fire Resistance included, stops the burn. Shade, rain, water and a closed coffin (COFFIN-7) do |
 | SUN-3 | A burning vampire gives off smoke and a sizzling sound, on top of the fire |
 | SUN-4 | Vampire mobs follow the same rules and seek shade at dawn |
@@ -251,7 +252,7 @@ How weakened a vampire is scales with how strong the source is.
 | WEAK-4 | A crucifix shape in the world weakens vampires within 8 blocks who can see it |
 | WEAK-5 | Holy water hurts vampires and weakens them for a short time, whether splashed, lingering or fired as a bolt. It does nothing to anyone else |
 | WEAK-6 | Silver weapons deal extra damage to vampires |
-| WEAK-7 | A wooden stake deals extra damage to vampires. A stake as the final blow stakes the vampire |
+| WEAK-7 | A wooden stake deals extra damage to vampires, and stakes a vampire it downs or hits while downed |
 | WEAK-8 | A weakened vampire shows it to everyone with a sign that is not colour alone |
 | WEAK-9 | Being weakened by different sources adds up, to a cap |
 | WEAK-10 | Being weakened never damages a vampire on its own. Holy water does damage, as WEAK-5 says |
@@ -274,6 +275,9 @@ Every vampire has the core, whatever bloodlines they choose.
 | CORE-4 | A vampire's eyes glow red while feeding, for 5 seconds after, and while their health is below 30%. At all other times they look normal |
 | CORE-5 | A vampire player never shows as a marker on a vanilla map |
 | CORE-6 | A vampire can sleep only in a coffin (COFFIN-1) |
+| CORE-7 | Only direct sun and a stake can kill a vampire. Damage from anything else, mobs, players, fire, falls, drowning or holy water included, stops at its last health. Falling into the void and an operator's `/kill` are the only exceptions |
+| CORE-8 | A vampire brought to its last health by anything else is downed: it collapses, cannot move, attack, feed or use items or powers, and is greatly weakened. After 30 seconds it gets up with a little health. Everyone near can see and hear that it is downed |
+| CORE-9 | Phantoms never spawn for a vampire player, and time a vampire spends awake never counts toward them |
 
 **Not supported:** a vampire hiding its eyes while feeding.
 
@@ -552,7 +556,7 @@ The mod has its own tab. It branches early into three paths, Vampire, Hunter and
 | ADV-24 | Lord Of The Manner and Strings Attached are challenges. No Reflection On You, Old Blood and Close Call are goals. Goals give 50 experience and challenges give 100 |
 | ADV-25 | An advancement earned in steps shows its progress |
 | ADV-26 | Icons use the mod's own items where one fits |
-| ADV-27 | Names may be tuned, but each stays short, clever and in plain English. Wordplay is fine, a joke at the expense of the dark tone is not |
+| ADV-27 | Names may be tuned, but each stays short, clever and in plain English. |
 
 **Enforcement:** server.
 
@@ -656,6 +660,7 @@ There is no singleplayer mode in this mod. A single-player world is an integrate
 |---|---|---|---|---|---|
 | Faction | not applicable | kept | kept | kept | kept to the last save |
 | Bite sickness and days left | not applicable | kept | kept | kept, paused while offline | kept to the last save |
+| Downed and its time left | not applicable | kept | not applicable | kept, so leaving does not escape it | kept to the last save |
 | Blood | not applicable | kept | refilled, as hunger is on respawn | kept | kept to the last save |
 | Skills and bloodlines | not applicable | kept | kept, except SKILL-6 | kept | kept to the last save |
 | Hunter tree set aside on turning | not applicable | kept | kept | kept | kept to the last save |
@@ -697,7 +702,7 @@ There is no singleplayer mode in this mod. A single-player world is an integrate
 | COMPAT-1 | Minecraft 1.21.1, Java 21, Fabric Loader 0.16.5 or later, Fabric API 0.107.0+1.21.1 or later |
 | COMPAT-2 | Mod Menu, JEI and EMI are optional. Without them, the mod works fully |
 | COMPAT-3 | Nightborn needs no other mod in the family |
-| COMPAT-4 | Vanilla undead behave as they do without the mod, and beds and night sleeping work as normal for humans |
+| COMPAT-4 | Vanilla undead behave as they do without the mod, except CORE-9, and beds and night sleeping work as normal for humans |
 | COMPAT-5 | Feeding lists, crucifix materials, structures, loot and trades can be changed by data packs |
 | COMPAT-6 | Shipped languages: English, German, Spanish, French, Brazilian Portuguese, Russian and Simplified Chinese |
 | COMPAT-7 | Every declared dependency is used |
