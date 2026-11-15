@@ -5,46 +5,70 @@ import java.util.List;
 import java.util.Map;
 import net.minecraft.block.Block;
 import net.minecraft.block.enums.BedPart;
+import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.util.shape.VoxelShapes;
 
 public final class CoffinShape {
 
-  public static final int HEIGHT = 10;
+  public static final int HEIGHT = 12;
 
-  record Band(int fromZ, int toZ, int fromX, int toX) {}
+  record Band(double fromZ, double toZ, double halfWidth) {}
 
   static final List<Band> BANDS =
       List.of(
-          new Band(0, 2, 4, 12),
-          new Band(2, 5, 3, 13),
-          new Band(5, 8, 2, 14),
-          new Band(8, 12, 1, 15),
-          new Band(12, 17, 2, 14),
-          new Band(17, 22, 3, 13),
-          new Band(22, 27, 4, 12),
-          new Band(27, 32, 5, 11));
+          new Band(-8, -6, 4.5),
+          new Band(-6, -4, 5.5),
+          new Band(-4, -2, 6.5),
+          new Band(-2, 1, 7.5),
+          new Band(1, 4, 8.25),
+          new Band(4, 16, 8.75),
+          new Band(16, 19, 8),
+          new Band(19, 22, 7.25),
+          new Band(22, 25, 6.5),
+          new Band(25, 28, 5.75),
+          new Band(28, 30, 5),
+          new Band(30, 32, 4.25));
 
   private static final Map<Direction, VoxelShape> HEAD = FacingShapes.fromNorth(cell(0));
   private static final Map<Direction, VoxelShape> FOOT = FacingShapes.fromNorth(cell(16));
+  private static final Map<Direction, VoxelShape> STANDING_HEAD =
+      FacingShapes.fromNorth(stoodUp(cell(0)));
+  private static final Map<Direction, VoxelShape> STANDING_FOOT =
+      FacingShapes.fromNorth(stoodUp(cell(16)));
 
   private CoffinShape() {}
 
-  public static VoxelShape of(final BedPart part, final Direction facing) {
+  public static VoxelShape of(final BedPart part, final Direction facing, final boolean standing) {
+    if (standing) {
+      return (part == BedPart.HEAD ? STANDING_HEAD : STANDING_FOOT).get(facing);
+    }
     return (part == BedPart.HEAD ? HEAD : FOOT).get(facing);
   }
 
   static VoxelShape cell(final int startZ) {
     VoxelShape shape = VoxelShapes.empty();
     for (final Band band : BANDS) {
-      final int from = Math.max(band.fromZ(), startZ) - startZ;
-      final int to = Math.min(band.toZ(), startZ + 16) - startZ;
+      final double from = Math.max(band.fromZ(), startZ) - startZ;
+      final double to = Math.min(band.toZ(), startZ + 16) - startZ;
+      final double fromX = Math.max(0, 8 - band.halfWidth());
+      final double toX = Math.min(16, 8 + band.halfWidth());
       if (from < to) {
-        shape =
-            VoxelShapes.union(
-                shape, Block.createCuboidShape(band.fromX(), 0, from, band.toX(), HEIGHT, to));
+        shape = VoxelShapes.union(shape, Block.createCuboidShape(fromX, 0, from, toX, HEIGHT, to));
       }
+    }
+    return shape.simplify();
+  }
+
+  static VoxelShape stoodUp(final VoxelShape lying) {
+    VoxelShape shape = VoxelShapes.empty();
+    for (final Box box : lying.getBoundingBoxes()) {
+      shape =
+          VoxelShapes.union(
+              shape,
+              VoxelShapes.cuboid(
+                  box.minX, 1.0 - box.maxZ, box.minY, box.maxX, 1.0 - box.minZ, box.maxY));
     }
     return shape.simplify();
   }

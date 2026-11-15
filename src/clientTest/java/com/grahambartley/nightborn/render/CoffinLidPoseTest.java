@@ -3,9 +3,13 @@ package com.grahambartley.nightborn.render;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.Map;
 import java.util.stream.Stream;
+import net.minecraft.client.render.model.ModelRotation;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.math.Direction;
+import org.joml.Matrix4f;
+import org.joml.Vector3f;
 import org.joml.Vector4f;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -58,7 +62,46 @@ class CoffinLidPoseTest {
   private static Vector4f place(
       final Direction facing, final float openness, final float x, final float y, final float z) {
     final MatrixStack matrices = new MatrixStack();
-    CoffinLidPose.apply(matrices, facing, openness);
+    CoffinLidPose.apply(matrices, facing, false, openness);
     return matrices.peek().getPositionMatrix().transform(new Vector4f(x, y, z, 1.0F));
+  }
+
+  static Stream<Arguments> standingCorners() {
+    return Stream.of(Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST)
+        .flatMap(
+            facing ->
+                Stream.of(
+                        new Vector3f(1.0F / 16.0F, 9.0F / 16.0F, 0.0F),
+                        new Vector3f(15.0F / 16.0F, 8.0F / 16.0F, 12.0F / 16.0F),
+                        new Vector3f(6.0F / 16.0F, 10.0F / 16.0F, 2.0F))
+                    .map(corner -> Arguments.of(facing, corner)));
+  }
+
+  @ParameterizedTest(name = "facing {0}, lid corner {1}")
+  @MethodSource("standingCorners")
+  @DisplayName("a shut lid on a standing coffin lands where the game turns the coffin's own model")
+  void standsWithTheCoffin(final Direction facing, final Vector3f corner) {
+    final MatrixStack matrices = new MatrixStack();
+    CoffinLidPose.apply(matrices, facing, true, 0.0F);
+    final Vector4f drawn =
+        matrices
+            .peek()
+            .getPositionMatrix()
+            .transform(new Vector4f(corner.x(), corner.y(), corner.z(), 1.0F));
+    final Vector3f expected = turnedByTheBlockstate(corner, BLOCKSTATE_Y.get(facing));
+    assertEquals(expected.x(), drawn.x(), EPSILON);
+    assertEquals(expected.y(), drawn.y(), EPSILON);
+    assertEquals(expected.z(), drawn.z(), EPSILON);
+  }
+
+  private static final Map<Direction, Integer> BLOCKSTATE_Y =
+      Map.of(Direction.NORTH, 0, Direction.EAST, 90, Direction.SOUTH, 180, Direction.WEST, 270);
+
+  private static Vector3f turnedByTheBlockstate(final Vector3f corner, final int y) {
+    final Matrix4f rotation = ModelRotation.get(270, y).getRotation().getMatrix();
+    final Vector4f turned =
+        rotation.transform(
+            new Vector4f(corner.x() - 0.5F, corner.y() - 0.5F, corner.z() - 0.5F, 1.0F));
+    return new Vector3f(turned.x() + 0.5F, turned.y() + 0.5F, turned.z() + 0.5F);
   }
 }
