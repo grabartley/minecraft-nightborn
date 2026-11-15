@@ -13,7 +13,9 @@ import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.MovementType;
 import net.minecraft.entity.ai.brain.MemoryModuleType;
+import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.passive.CowEntity;
@@ -33,7 +35,9 @@ import net.minecraft.util.math.Vec3d;
 public class FeedingGameTest implements FabricGameTest {
 
   static final String BATCH = "feeding";
+  static final String RESISTING = "feeding-resisting";
   static final String ARENA = "nightborn:vampire_arena";
+  static final double WALK_STEP = 0.15;
 
   @BeforeBatch(batchId = BATCH)
   public void neverResist(final ServerWorld world) {
@@ -49,6 +53,45 @@ public class FeedingGameTest implements FabricGameTest {
         world.getServer(),
         ServerConfigService.current()
             .with(FeedingSettings.RESIST_CHANCE, FeedingSettings.RESIST_CHANCE.defaultValue()));
+  }
+
+  @BeforeBatch(batchId = RESISTING)
+  public void alwaysResist(final ServerWorld world) {
+    FeedingSessions.clearAll();
+    ServerConfigService.update(
+        world.getServer(), ServerConfigService.current().with(FeedingSettings.RESIST_CHANCE, 100));
+  }
+
+  @AfterBatch(batchId = RESISTING)
+  public void restoreResistAfterResisting(final ServerWorld world) {
+    restoreResist(world);
+  }
+
+  @GameTest(templateName = ARENA, batchId = RESISTING, tickLimit = 60)
+  public void aVictimThatBreaksFreeIsNotHeldAnyMore(final TestContext context) {
+    final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(2, 2, 4));
+    final CowEntity cow = still(context.spawnEntity(EntityType.COW, new BlockPos(3, 2, 4)));
+    cow.getAttributeInstance(EntityAttributes.GENERIC_MAX_HEALTH).setBaseValue(200.0);
+    cow.setHealth(200.0F);
+    context.runAtEveryTick(
+        () -> {
+          if (context.getTick() <= 30) {
+            hold(context, vampire, cow);
+          }
+        });
+    context.runAtTick(
+        15,
+        () ->
+            context.assertTrue(
+                cow.hasStatusEffect(StatusEffects.SLOWNESS), "the cow is held before it resists"));
+    context.runAtTick(
+        36,
+        () -> {
+          context.assertFalse(FeedingSessions.isFeeding(vampire), "the cow broke free");
+          context.assertFalse(
+              cow.hasStatusEffect(StatusEffects.SLOWNESS), "a cow that broke free is not held");
+          TestPlayers.finish(context, vampire);
+        });
   }
 
   @GameTest(templateName = ARENA, batchId = BATCH, tickLimit = 100)
@@ -92,10 +135,8 @@ public class FeedingGameTest implements FabricGameTest {
   public void aBittenCowIsHeldInPlaceAndFreeAgainAfterTheBite(final TestContext context) {
     final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(2, 2, 4));
     BloodAttachment.set(vampire, 10);
-    final CowEntity held = context.spawnEntity(EntityType.COW, new BlockPos(3, 2, 4));
-    final CowEntity free = context.spawnEntity(EntityType.COW, new BlockPos(1, 2, 1));
-    final BlockPos heldGoal = context.getAbsolutePos(new BlockPos(6, 2, 4));
-    final BlockPos freeGoal = context.getAbsolutePos(new BlockPos(5, 2, 1));
+    final CowEntity held = still(context.spawnEntity(EntityType.COW, new BlockPos(3, 2, 4)));
+    final CowEntity free = still(context.spawnEntity(EntityType.COW, new BlockPos(1, 2, 1)));
     final Vec3d[] start = new Vec3d[2];
     context.runAtTick(
         5,
@@ -107,20 +148,18 @@ public class FeedingGameTest implements FabricGameTest {
         () -> {
           if (context.getTick() >= 5 && context.getTick() <= 45) {
             hold(context, vampire, held);
-            held.getNavigation()
-                .startMovingTo(heldGoal.getX(), heldGoal.getY(), heldGoal.getZ(), 1.0);
-            free.getNavigation()
-                .startMovingTo(freeGoal.getX(), freeGoal.getY(), freeGoal.getZ(), 1.0);
+            walk(held);
+            walk(free);
           }
         });
     context.runAtTick(
         46,
         () -> {
           context.assertTrue(
-              held.getPos().distanceTo(start[0]) < 0.3,
-              "the held cow stayed put but moved " + held.getPos().distanceTo(start[0]));
+              held.getPos().distanceTo(start[0]) < 0.4,
+              "the held cow was walking but moved " + held.getPos().distanceTo(start[0]));
           context.assertTrue(
-              free.getPos().distanceTo(start[1]) > 1.0,
+              free.getPos().distanceTo(start[1]) > 3.0,
               "the same walk takes a free cow away, it moved "
                   + free.getPos().distanceTo(start[1]));
         });
@@ -129,6 +168,46 @@ public class FeedingGameTest implements FabricGameTest {
         () -> {
           context.assertFalse(
               held.hasStatusEffect(StatusEffects.SLOWNESS), "the hold is gone after the bite");
+          TestPlayers.finish(context, vampire);
+        });
+  }
+
+  @GameTest(templateName = ARENA, batchId = BATCH, tickLimit = 80)
+  public void aBittenBatStaysWithinReach(final TestContext context) {
+    heldFlyerStaysWithinReach(context, EntityType.BAT);
+  }
+
+  @GameTest(templateName = ARENA, batchId = BATCH, tickLimit = 80)
+  public void aBittenParrotStaysWithinReach(final TestContext context) {
+    heldFlyerStaysWithinReach(context, EntityType.PARROT);
+  }
+
+  @GameTest(templateName = ARENA, batchId = BATCH, tickLimit = 70)
+  public void theHoldEndsWhenTheVampireLeavesMidBite(final TestContext context) {
+    final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(2, 2, 4));
+    final CowEntity cow = still(context.spawnEntity(EntityType.COW, new BlockPos(3, 2, 4)));
+    context.runAtEveryTick(
+        () -> {
+          if (context.getTick() <= 30) {
+            hold(context, vampire, cow);
+          }
+        });
+    context.runAtTick(
+        29,
+        () ->
+            context.assertTrue(
+                cow.hasStatusEffect(StatusEffects.SLOWNESS), "the cow is held mid-bite"));
+    context.runAtTick(
+        30,
+        () -> {
+          FeedingSessions.end(vampire);
+          context.assertFalse(FeedingSessions.isFeeding(vampire), "the bite is over");
+        });
+    context.runAtTick(
+        45,
+        () -> {
+          context.assertFalse(
+              cow.hasStatusEffect(StatusEffects.SLOWNESS), "nothing holds the cow any more");
           TestPlayers.finish(context, vampire);
         });
   }
@@ -265,6 +344,49 @@ public class FeedingGameTest implements FabricGameTest {
           context.assertFalse(FeedingSessions.isFeeding(human), "a human never feeds");
           TestPlayers.finish(context, human);
         });
+  }
+
+  private void heldFlyerStaysWithinReach(
+      final TestContext context, final EntityType<? extends MobEntity> type) {
+    final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(2, 2, 4));
+    final MobEntity held = still(context.spawnEntity(type, new BlockPos(3, 2, 4)));
+    final MobEntity free = still(context.spawnEntity(type, new BlockPos(1, 2, 1)));
+    final Vec3d[] start = new Vec3d[2];
+    context.runAtTick(
+        5,
+        () -> {
+          start[0] = held.getPos();
+          start[1] = free.getPos();
+        });
+    context.runAtEveryTick(
+        () -> {
+          if (context.getTick() >= 5 && context.getTick() <= 45) {
+            hold(context, vampire, held);
+            fly(held);
+            fly(free);
+          }
+        });
+    context.runAtTick(
+        46,
+        () -> {
+          context.assertTrue(held.isAlive(), "the held flyer is still there");
+          context.assertTrue(
+              held.getPos().distanceTo(start[0]) < 0.4,
+              "the held flyer was drifting but moved " + held.getPos().distanceTo(start[0]));
+          context.assertTrue(
+              free.getPos().distanceTo(start[1]) > 3.0,
+              "the same drift takes a free flyer away, it moved "
+                  + free.getPos().distanceTo(start[1]));
+          TestPlayers.finish(context, vampire);
+        });
+  }
+
+  private static void walk(final MobEntity mob) {
+    mob.move(MovementType.SELF, new Vec3d(WALK_STEP, 0.0, 0.0));
+  }
+
+  private static void fly(final MobEntity mob) {
+    mob.move(MovementType.SELF, new Vec3d(WALK_STEP, WALK_STEP / 2, 0.0));
   }
 
   private static <E extends MobEntity> E still(final E mob) {

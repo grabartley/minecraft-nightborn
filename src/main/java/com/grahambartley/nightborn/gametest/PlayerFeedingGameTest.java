@@ -7,6 +7,7 @@ import com.grahambartley.nightborn.server.ServerConfigService;
 import com.grahambartley.nightborn.sickness.BiteSicknessAttachment;
 import net.fabricmc.fabric.api.event.player.UseEntityCallback;
 import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
+import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.test.AfterBatch;
@@ -15,6 +16,7 @@ import net.minecraft.test.GameTest;
 import net.minecraft.test.TestContext;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 
 public class PlayerFeedingGameTest implements FabricGameTest {
 
@@ -85,6 +87,42 @@ public class PlayerFeedingGameTest implements FabricGameTest {
           context.assertFalse(
               BiteSicknessAttachment.isSick(human), "a bite that began feeding never turns");
           TestPlayers.finish(context, vampire, human);
+        });
+  }
+
+  @GameTest(templateName = ARENA, batchId = HELD_BITE, tickLimit = TestPlayers.READY + 60)
+  public void aBittenPlayerIsHeldWhereTheyStandAndFreeAgainAfterTheBite(final TestContext context) {
+    final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(3, 2, 4));
+    final ServerPlayerEntity held = TestPlayers.human(context, new BlockPos(4, 2, 4));
+    final ServerPlayerEntity free = TestPlayers.human(context, new BlockPos(1, 2, 1));
+    final Vec3d heldStart = context.getAbsolute(Vec3d.ofBottomCenter(new BlockPos(4, 2, 4)));
+    final Vec3d freeStart = context.getAbsolute(Vec3d.ofBottomCenter(new BlockPos(1, 2, 1)));
+    context.runAtEveryTick(
+        () -> {
+          if (context.getTick() >= TestPlayers.READY
+              && context.getTick() <= TestPlayers.READY + 40) {
+            hold(context, vampire, held);
+            walk(held);
+            walk(free);
+          }
+        });
+    context.runAtTick(
+        TestPlayers.READY + 41,
+        () -> {
+          context.assertTrue(
+              held.getPos().distanceTo(heldStart) < 0.4,
+              "the held player was walking but moved " + held.getPos().distanceTo(heldStart));
+          context.assertTrue(
+              free.getPos().distanceTo(freeStart) > 3.0,
+              "the same walk takes a free player away, it moved "
+                  + free.getPos().distanceTo(freeStart));
+        });
+    context.runAtTick(
+        TestPlayers.READY + 55,
+        () -> {
+          context.assertFalse(
+              held.hasStatusEffect(StatusEffects.SLOWNESS), "the hold is gone after the bite");
+          TestPlayers.finish(context, vampire, held, free);
         });
   }
 
@@ -166,6 +204,11 @@ public class PlayerFeedingGameTest implements FabricGameTest {
           context.assertTrue(human.getHealth() < human.getMaxHealth(), "the human was bitten");
           TestPlayers.finish(context, vampire, human);
         });
+  }
+
+  private static void walk(final ServerPlayerEntity player) {
+    player.refreshPositionAndAngles(
+        player.getX() + 0.15, player.getY(), player.getZ(), player.getYaw(), player.getPitch());
   }
 
   private static void hold(

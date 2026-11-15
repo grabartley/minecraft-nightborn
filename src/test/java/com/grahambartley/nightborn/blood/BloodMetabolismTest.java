@@ -2,6 +2,7 @@ package com.grahambartley.nightborn.blood;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import net.minecraft.world.Difficulty;
 import org.junit.jupiter.api.DisplayName;
@@ -63,25 +64,32 @@ class BloodMetabolismTest {
 
   @ParameterizedTest(name = "blood {0}, health {1}, age {2}: heals {3}")
   @CsvSource({
-    "20, 30, 80, true",
-    "18, 30, 160, true",
-    "17, 30, 80, false",
-    "20, 40, 80, false",
-    "20, 30, 81, false"
+    "20, 30, 200, true",
+    "11, 30, 400, true",
+    "10, 30, 200, false",
+    "0, 30, 200, false",
+    "20, 40, 200, false",
+    "20, 30, 80, false",
+    "20, 30, 201, false"
   })
-  @DisplayName("a near-full blood bar heals every 80 ticks while hurt")
+  @DisplayName("a blood bar above half heals every 200 ticks while hurt")
   void heals(final int blood, final float health, final int age, final boolean heals) {
     final BloodMetabolism.Outcome outcome =
         BloodMetabolism.tick(state(blood, 0.0F, health, Difficulty.NORMAL, age), 600, 600);
     assertEquals(heals, outcome.heals());
   }
 
-  @Test
-  @DisplayName("healing costs exhaustion, as vanilla hunger does")
-  void healingCostsExhaustion() {
-    final BloodMetabolism.Outcome outcome =
-        BloodMetabolism.tick(state(20, 0.0F, 30.0F, Difficulty.PEACEFUL, 80), 600, 600);
-    assertEquals(6.0F, outcome.exhaustion(), 0.0001F);
+  @ParameterizedTest(name = "exhaustion {0}")
+  @CsvSource({"0.0", "1.5", "3.9"})
+  @DisplayName("healing costs no blood and adds no exhaustion")
+  void healingIsFree(final float exhaustion) {
+    final BloodMetabolism.Outcome healing =
+        BloodMetabolism.tick(state(20, exhaustion, 30.0F, Difficulty.NORMAL, 200), 600, 600);
+    final BloodMetabolism.Outcome idle =
+        BloodMetabolism.tick(state(20, exhaustion, 30.0F, Difficulty.NORMAL, 201), 600, 600);
+    assertTrue(healing.heals());
+    assertEquals(idle.blood(), healing.blood());
+    assertEquals(idle.exhaustion(), healing.exhaustion(), 0.0001F);
   }
 
   @Test
@@ -89,7 +97,7 @@ class BloodMetabolismTest {
   void noRegenNoHeal() {
     final BloodMetabolism.Outcome outcome =
         BloodMetabolism.tick(
-            new BloodMetabolism.State(20, 0.0F, 30.0F, 40.0F, Difficulty.NORMAL, false, false, 80),
+            new BloodMetabolism.State(20, 0.0F, 30.0F, 40.0F, Difficulty.NORMAL, false, false, 200),
             600,
             600);
     assertFalse(outcome.heals());
@@ -125,12 +133,13 @@ class BloodMetabolismTest {
     assertEquals(10, outcome.blood());
   }
 
-  @Test
+  @ParameterizedTest(name = "exhaustion {0} becomes {1}")
+  @CsvSource({"3.0, 3.0", "43.9, 39.9", "44.0, 40.0", "60.0, 40.0"})
   @DisplayName("exhaustion is capped at vanilla's 40")
-  void exhaustionCapped() {
+  void exhaustionCapped(final float given, final float kept) {
     assertEquals(
-        40.0F,
-        BloodMetabolism.tick(state(20, 39.9F, 30.0F, Difficulty.PEACEFUL, 80), 600, 600)
+        kept,
+        BloodMetabolism.tick(state(20, given, 30.0F, Difficulty.PEACEFUL, 1), 600, 600)
             .exhaustion(),
         0.0001F);
   }

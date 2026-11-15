@@ -6,6 +6,7 @@ import java.util.stream.Stream;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.MethodSource;
 
 class BloodSettingsTest {
@@ -22,10 +23,17 @@ class BloodSettingsTest {
     assertEquals(setting.defaultValue(), setting.get(NightbornConfig.DEFAULTS));
   }
 
-  @Test
-  @DisplayName("blood drains one point every 10 seconds at rest by default")
-  void restingDrainDefault() {
-    assertEquals(10, BloodSettings.RESTING_DRAIN_SECONDS.defaultValue());
+  @ParameterizedTest(name = "{0} defaults to {1}")
+  @CsvSource({"restingDrainSeconds, 300"})
+  @DisplayName("balance settings keep the default the PRD states")
+  void keepsPrdDefault(final String key, final int expected) {
+    assertEquals(
+        expected,
+        BloodSettings.SETTINGS.stream()
+            .filter(setting -> setting.key().equals(key))
+            .findFirst()
+            .orElseThrow()
+            .defaultValue());
   }
 
   @Test
