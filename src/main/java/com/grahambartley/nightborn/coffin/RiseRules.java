@@ -19,12 +19,13 @@ public final class RiseRules {
     return standing ? STEP_OUT_TICKS : RISE_TICKS;
   }
 
-  public static Wake wake(final boolean held, final OptionalLong until, final long now) {
+  public static Wake wake(
+      final boolean held, final boolean burning, final OptionalLong until, final long now) {
     if (!held) {
       return Wake.WAKE;
     }
     if (until.isEmpty()) {
-      return Wake.BEGIN;
+      return burning ? Wake.WAKE : Wake.BEGIN;
     }
     return now < until.getAsLong() ? Wake.WAIT : Wake.WAKE;
   }

@@ -1,7 +1,9 @@
 package com.grahambartley.nightborn.coffin;
 
 import com.grahambartley.nightborn.Nightborn;
+import com.grahambartley.nightborn.mob.VampirePose;
 import com.grahambartley.nightborn.vampire.Vampires;
+import java.util.Optional;
 import java.util.OptionalLong;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentRegistry;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentSyncPredicate;
@@ -32,12 +34,21 @@ public final class CoffinRise {
     return sleeper.hasAttached(TYPE);
   }
 
-  public static boolean holds(final LivingEntity sleeper) {
+  public static Optional<VampirePose> pose(final LivingEntity sleeper) {
+    if (!Vampires.isVampire(sleeper) || !CoffinSleepers.inCoffin(sleeper)) {
+      return Optional.empty();
+    }
+    return Optional.of(
+        VampirePose.coffin(rising(sleeper), CoffinSleepers.inStandingCoffin(sleeper)));
+  }
+
+  public static boolean defersWake(final LivingEntity sleeper) {
     if (sleeper.getWorld().isClient) {
       return false;
     }
     final RiseRules.Wake wake =
-        RiseRules.wake(staysInside(sleeper), until(sleeper), sleeper.getWorld().getTime());
+        RiseRules.wake(
+            staysInside(sleeper), sleeper.isOnFire(), until(sleeper), sleeper.getWorld().getTime());
     if (wake == RiseRules.Wake.BEGIN) {
       begin(sleeper);
     }
@@ -52,7 +63,7 @@ public final class CoffinRise {
       sleeper.removeAttached(TYPE);
       return;
     }
-    if (!holds(sleeper)) {
+    if (!defersWake(sleeper)) {
       finish(sleeper);
     }
   }

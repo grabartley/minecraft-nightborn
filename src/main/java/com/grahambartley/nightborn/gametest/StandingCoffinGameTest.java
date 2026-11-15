@@ -31,6 +31,7 @@ import net.minecraft.util.function.BooleanBiFunction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Direction;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.util.shape.VoxelShapes;
@@ -476,6 +477,65 @@ public class StandingCoffinGameTest implements FabricGameTest {
                     + vampires[i].getPos());
           }
           TestPlayers.finish(context, vampires);
+        });
+  }
+
+  @GameTest(templateName = CoffinStage.YARD, batchId = DAY, tickLimit = RiseRules.RISE_TICKS + 20)
+  public void aWokenVampireMobRisesOrStepsOutThenStandsClearFacingOut(final TestContext context) {
+    final BlockPos standingHead =
+        CoffinStage.standing(context, new BlockPos(2, 2, 4), Direction.NORTH);
+    final BlockPos flatHead = CoffinStage.coffin(context, new BlockPos(6, 2, 6), Direction.NORTH);
+    CoffinStage.roof(context);
+    final VampireEntity upright = context.spawnEntity(NightbornMobs.VAMPIRE, new BlockPos(2, 2, 6));
+    final VampireEntity lying = context.spawnEntity(NightbornMobs.VAMPIRE, new BlockPos(6, 2, 7));
+    upright.setAiDisabled(true);
+    lying.setAiDisabled(true);
+    final BlockPos absoluteFlat = context.getAbsolutePos(flatHead);
+    final Vec3d heels =
+        CoffinLayout.heels(absoluteFlat, Direction.NORTH, lying.getEyeHeight(EntityPose.STANDING));
+    final float outward = CoffinLayout.outwardYaw(Direction.NORTH);
+    context.runAtTick(
+        2,
+        () -> {
+          upright.sleep(context.getAbsolutePos(standingHead));
+          lying.sleep(absoluteFlat);
+          upright.wakeUp();
+          lying.wakeUp();
+          context.assertTrue(
+              CoffinRise.rising(upright) && upright.isSleeping(),
+              "a woken mob in a standing coffin starts to step out");
+          context.assertTrue(
+              CoffinRise.rising(lying)
+                  && lying.isSleeping()
+                  && lying.getPose() == EntityPose.STANDING,
+              "a woken mob in a flat coffin starts to rise, got " + lying.getPose());
+          context.assertTrue(
+              lying.getPos().squaredDistanceTo(heels) < 1.0E-6,
+              "the mob pivots on its heels at " + heels + ", not " + lying.getPos());
+        });
+    context.runAtTick(
+        RiseRules.STEP_OUT_TICKS + 4,
+        () ->
+            context.assertTrue(
+                !upright.isSleeping() && context.getWorld().isSpaceEmpty(upright),
+                "the mob steps out clear of the standing coffin, at " + upright.getPos()));
+    context.runAtTick(
+        RiseRules.RISE_TICKS + 4,
+        () -> {
+          context.assertTrue(
+              !lying.isSleeping() && !CoffinRise.rising(lying),
+              "the mob is awake once the rise ends");
+          context.assertTrue(
+              context.getWorld().isSpaceEmpty(lying),
+              "the mob stands clear of the flat coffin, at " + lying.getPos());
+          context.assertTrue(
+              Math.abs(MathHelper.wrapDegrees(lying.getYaw() - outward)) < 1.0F
+                  && Math.abs(MathHelper.wrapDegrees(upright.getYaw() - outward)) < 1.0F,
+              "both mobs still face the way they rose, yaws "
+                  + lying.getYaw()
+                  + " and "
+                  + upright.getYaw());
+          context.complete();
         });
   }
 

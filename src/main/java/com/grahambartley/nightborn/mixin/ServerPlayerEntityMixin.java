@@ -34,7 +34,7 @@ abstract class ServerPlayerEntityMixin {
   @Inject(method = "wakeUp", at = @At("HEAD"), cancellable = true)
   private void nightborn$riseFromTheCoffinBeforeWaking(
       final boolean skipSleepTimer, final boolean updateSleepingPlayers, final CallbackInfo ci) {
-    if (CoffinRise.holds((ServerPlayerEntity) (Object) this)) {
+    if (CoffinRise.defersWake((ServerPlayerEntity) (Object) this)) {
       ci.cancel();
     }
   }

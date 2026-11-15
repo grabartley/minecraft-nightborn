@@ -2,12 +2,10 @@ package com.grahambartley.nightborn.client.anim;
 
 import com.grahambartley.nightborn.client.vomit.VomitFx;
 import com.grahambartley.nightborn.coffin.CoffinRise;
-import com.grahambartley.nightborn.coffin.CoffinSleepers;
 import com.grahambartley.nightborn.levitation.Levitation;
 import com.grahambartley.nightborn.mob.VampirePose;
 import com.grahambartley.nightborn.network.PlayerCue;
 import com.grahambartley.nightborn.network.PlayerCuePayload;
-import com.grahambartley.nightborn.vampire.Vampires;
 import com.grahambartley.nightborn.vampire.VisibleState;
 import com.grahambartley.nightborn.vampire.VisibleStateAttachment;
 import java.util.Map;
@@ -63,7 +61,7 @@ public final class VampirePlayerClips {
                 visible.downed(),
                 visible.feeding(),
                 visible.isWeakened() && staggersOnFoot(player),
-                coffin(player)),
+                CoffinRise.pose(player)),
             new PlayerClipState.Lengths(
                 VampireClips.seconds(VampirePose.LAND),
                 VampireClips.seconds(VampirePose.VOMIT),
@@ -89,14 +87,6 @@ public final class VampirePlayerClips {
 
   public static double vomitingSeconds(final PlayerEntity player, final float partialTick) {
     return state(player).vomitingSeconds(player.age + partialTick);
-  }
-
-  private static Optional<VampirePose> coffin(final PlayerEntity player) {
-    if (!Vampires.isVampire(player) || !CoffinSleepers.inCoffin(player)) {
-      return Optional.empty();
-    }
-    return Optional.of(
-        VampirePose.coffin(CoffinRise.rising(player), CoffinSleepers.inStandingCoffin(player)));
   }
 
   private static boolean staggersOnFoot(final PlayerEntity player) {

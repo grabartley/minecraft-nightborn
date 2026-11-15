@@ -16,28 +16,25 @@ import org.junit.jupiter.params.provider.EnumSource;
 
 class VampirePoseTest {
 
-  @ParameterizedTest(name = "in coffin {0}, rising {1}, standing coffin {2}, downed {3}: {9}")
+  @ParameterizedTest(name = "coffin {0}, downed {1}, levitating {2}, landing {3}: {7}")
   @CsvSource({
-    "true, false, false, true, true, true, true, 0.9, 0.3, COFFIN_SLEEP, coffin_sleep",
-    "true, false, true, false, false, false, false, 0.0, 0.0, COFFIN_SLEEP, coffin_sleep",
-    "true, true, false, true, true, false, false, 0.9, 0.3, COFFIN_RISE, coffin_rise",
-    "true, true, true, true, true, false, false, 0.9, 0.3, COFFIN_STEP_OUT, coffin_step_out",
-    "false, true, true, true, true, false, false, 0.9, 0.3, DOWNED, downed",
-    "false, false, false, false, true, false, false, 0.0, 0.0, LEVITATE, levitate",
-    "false, false, false, false, true, false, false, 0.0, 0.1, LEVITATE_MOVE, levitate_move",
-    "false, false, false, false, true, false, false, 0.0, 0.3, LEVITATE_SPRINT, levitate_sprint",
-    "false, false, false, false, true, false, true, 0.0, 0.1, LEVITATE_SPRINT, levitate_sprint",
-    "false, false, false, false, false, true, false, 0.9, 0.3, LAND, land",
-    "false, false, false, false, false, false, false, 0.9, 0.3, RUN, run",
-    "false, false, false, false, false, false, false, 0.3, 0.1, WALK, walk",
-    "false, false, false, false, false, false, false, 0.05, 0.0, IDLE, idle"
+    "COFFIN_SLEEP, true, true, true, true, 0.9, 0.3, COFFIN_SLEEP, coffin_sleep",
+    "COFFIN_RISE, true, true, false, false, 0.9, 0.3, COFFIN_RISE, coffin_rise",
+    "COFFIN_STEP_OUT, true, true, false, false, 0.9, 0.3, COFFIN_STEP_OUT, coffin_step_out",
+    ", true, true, false, false, 0.9, 0.3, DOWNED, downed",
+    ", false, true, false, false, 0.0, 0.0, LEVITATE, levitate",
+    ", false, true, false, false, 0.0, 0.1, LEVITATE_MOVE, levitate_move",
+    ", false, true, false, false, 0.0, 0.3, LEVITATE_SPRINT, levitate_sprint",
+    ", false, true, false, true, 0.0, 0.1, LEVITATE_SPRINT, levitate_sprint",
+    ", false, false, true, false, 0.9, 0.3, LAND, land",
+    ", false, false, false, false, 0.9, 0.3, RUN, run",
+    ", false, false, false, false, 0.3, 0.1, WALK, walk",
+    ", false, false, false, false, 0.05, 0.0, IDLE, idle"
   })
   @DisplayName(
       "resting or rising in a coffin wins over downed, which wins over levitating, landing and moving")
   void pose(
-      final boolean inCoffin,
-      final boolean rising,
-      final boolean standingCoffin,
+      final VampirePose coffin,
       final boolean downed,
       final boolean levitating,
       final boolean landing,
@@ -50,9 +47,7 @@ class VampirePoseTest {
         pose,
         VampirePose.of(
             new VampirePose.Cue(
-                inCoffin,
-                rising,
-                standingCoffin,
+                Optional.ofNullable(coffin),
                 downed,
                 levitating,
                 landing,

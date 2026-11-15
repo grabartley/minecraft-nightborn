@@ -49,9 +49,7 @@ public enum VampirePose {
   }
 
   public record Cue(
-      boolean inCoffin,
-      boolean rising,
-      boolean standingCoffin,
+      Optional<VampirePose> coffin,
       boolean downed,
       boolean levitating,
       boolean landing,
@@ -79,8 +77,8 @@ public enum VampirePose {
   }
 
   public static VampirePose of(final Cue cue) {
-    if (cue.inCoffin()) {
-      return coffin(cue.rising(), cue.standingCoffin());
+    if (cue.coffin().isPresent()) {
+      return cue.coffin().get();
     }
     if (cue.downed()) {
       return DOWNED;
