@@ -34,12 +34,15 @@ public final class CoffinSleeperHold {
     if (settling && standing) {
       sleeper.setPose(EntityPose.STANDING);
     }
-    final Vec3d spot = CoffinLayout.restingSpot(head, facing, standing);
+    final boolean rising = CoffinRise.rising(sleeper);
+    final Vec3d spot =
+        CoffinLayout.holdSpot(
+            head, facing, standing, rising, sleeper.getEyeHeight(EntityPose.STANDING));
     if (!sleeper.getPos().equals(spot)) {
       sleeper.setPosition(spot);
     }
     sleeper.setVelocity(Vec3d.ZERO);
-    if (standing) {
+    if (CoffinLayout.facesOut(standing, rising)) {
       faceOut(sleeper, CoffinLayout.outwardYaw(facing));
     }
   }

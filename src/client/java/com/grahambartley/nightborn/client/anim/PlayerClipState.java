@@ -13,7 +13,7 @@ public final class PlayerClipState {
       boolean downed,
       boolean feeding,
       boolean weakened,
-      boolean inCoffin) {}
+      Optional<VampirePose> coffin) {}
 
   public record Lengths(double land, double vomit, double drain, double rise) {}
 
@@ -43,8 +43,8 @@ public final class PlayerClipState {
 
   public Optional<VampirePose> clip(
       final double age, final Situation situation, final Lengths lengths) {
-    if (situation.inCoffin()) {
-      return Optional.of(VampirePose.COFFIN_SLEEP);
+    if (situation.coffin().isPresent()) {
+      return situation.coffin();
     }
     if (vomit.playing(lengths.vomit(), age)) {
       return Optional.of(VampirePose.VOMIT);

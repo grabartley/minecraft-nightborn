@@ -1,6 +1,7 @@
 package com.grahambartley.nightborn.mixin;
 
 import com.grahambartley.nightborn.coffin.CoffinLayout;
+import com.grahambartley.nightborn.coffin.CoffinRise;
 import com.grahambartley.nightborn.coffin.CoffinSleeperHold;
 import com.grahambartley.nightborn.coffin.CoffinSleepers;
 import com.grahambartley.nightborn.levitation.Levitation;
@@ -116,6 +117,19 @@ abstract class LivingEntityMixin {
   @Inject(method = "tick", at = @At("TAIL"))
   private void nightborn$holdTheSleeperInsideTheCoffin(final CallbackInfo ci) {
     CoffinSleeperHold.hold((LivingEntity) (Object) this);
+  }
+
+  @Inject(method = "tick", at = @At("TAIL"))
+  private void nightborn$finishRisingFromTheCoffin(final CallbackInfo ci) {
+    CoffinRise.tick((LivingEntity) (Object) this);
+  }
+
+  @Inject(method = "wakeUp", at = @At("HEAD"), cancellable = true)
+  private void nightborn$riseBeforeAVampireMobWakes(final CallbackInfo ci) {
+    final LivingEntity self = (LivingEntity) (Object) this;
+    if (!(self instanceof PlayerEntity) && CoffinRise.deferWakeIntoRise(self)) {
+      ci.cancel();
+    }
   }
 
   @Inject(method = "getDimensions", at = @At("RETURN"), cancellable = true)

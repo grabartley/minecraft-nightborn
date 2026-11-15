@@ -2,9 +2,11 @@ package com.grahambartley.nightborn.gametest;
 
 import com.grahambartley.nightborn.coffin.CoffinBlock;
 import com.grahambartley.nightborn.coffin.CoffinLayout;
+import com.grahambartley.nightborn.coffin.CoffinRise;
 import com.grahambartley.nightborn.coffin.CoffinSleepers;
 import com.grahambartley.nightborn.coffin.CoffinWood;
 import com.grahambartley.nightborn.coffin.Coffins;
+import com.grahambartley.nightborn.coffin.RiseRules;
 import com.grahambartley.nightborn.core.NightTime;
 import com.grahambartley.nightborn.mob.NightbornMobs;
 import com.grahambartley.nightborn.mob.VampireEntity;
@@ -29,6 +31,7 @@ import net.minecraft.util.function.BooleanBiFunction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Direction;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.util.shape.VoxelShapes;
@@ -241,8 +244,11 @@ public class StandingCoffinGameTest implements FabricGameTest {
         });
   }
 
-  @GameTest(templateName = CoffinStage.YARD, batchId = DAY, tickLimit = TestPlayers.READY + 10)
-  public void aSleeperRisesAndRespawnsOnTheFloorInFront(final TestContext context) {
+  @GameTest(
+      templateName = CoffinStage.YARD,
+      batchId = DAY,
+      tickLimit = TestPlayers.READY + RiseRules.STEP_OUT_TICKS + 10)
+  public void aSleeperStepsOutAndRespawnsOnTheFloorInFront(final TestContext context) {
     final BlockPos foot = new BlockPos(4, 2, 4);
     final BlockPos head = CoffinStage.standing(context, foot, Direction.EAST);
     CoffinStage.roof(context);
@@ -263,12 +269,26 @@ public class StandingCoffinGameTest implements FabricGameTest {
               "they respawn on the floor in front, at " + respawn.pos());
           vampire.wakeUp(false, true);
           context.assertTrue(
-              vampire.getBlockPos().equals(inFront),
-              "they rise onto the floor in front, at " + vampire.getBlockPos());
-          context.assertTrue(
-              vampire.getPose() == EntityPose.STANDING && !vampire.isSleeping(),
-              "they are awake and standing");
+              CoffinRise.rising(vampire) && vampire.isSleeping(),
+              "waking starts the step out with the vampire still held in the coffin");
           context.assertTrue(context.getBlockState(head).get(CoffinBlock.OPEN), "the lid opens");
+        });
+    context.runAtTick(
+        TestPlayers.READY + RiseRules.STEP_OUT_TICKS - 2,
+        () ->
+            context.assertTrue(
+                vampire.isSleeping(), "the vampire is held in the coffin until the step out ends"));
+    context.runAtTick(
+        TestPlayers.READY + RiseRules.STEP_OUT_TICKS + 2,
+        () -> {
+          context.assertTrue(
+              vampire.getBlockPos().equals(inFront),
+              "they step out onto the floor in front, at " + vampire.getBlockPos());
+          context.assertTrue(
+              vampire.getPose() == EntityPose.STANDING
+                  && !vampire.isSleeping()
+                  && !CoffinRise.rising(vampire),
+              "they are awake and standing");
           TestPlayers.finish(context, vampire);
         });
   }
@@ -348,7 +368,7 @@ public class StandingCoffinGameTest implements FabricGameTest {
   @GameTest(
       templateName = CoffinStage.YARD,
       batchId = SKIP,
-      tickLimit = TestPlayers.READY + CoffinGameTest.SLEEP_READY + 20)
+      tickLimit = TestPlayers.READY + CoffinGameTest.SLEEP_READY + RiseRules.STEP_OUT_TICKS + 20)
   public void aVampireSleepingUprightPassesTheDay(final TestContext context) {
     final BlockPos head = CoffinStage.standing(context, new BlockPos(4, 2, 4), Direction.NORTH);
     CoffinStage.roof(context);
@@ -360,7 +380,7 @@ public class StandingCoffinGameTest implements FabricGameTest {
           context.useBlock(head, vampire);
         });
     context.runAtTick(
-        TestPlayers.READY + CoffinGameTest.SLEEP_READY + 10,
+        TestPlayers.READY + CoffinGameTest.SLEEP_READY + RiseRules.STEP_OUT_TICKS + 10,
         () -> {
           final long time = Math.floorMod(context.getWorld().getTimeOfDay(), NightTime.DAY_LENGTH);
           context.assertTrue(
@@ -420,7 +440,10 @@ public class StandingCoffinGameTest implements FabricGameTest {
         });
   }
 
-  @GameTest(templateName = CoffinStage.YARD, batchId = DAY, tickLimit = TestPlayers.READY + 10)
+  @GameTest(
+      templateName = CoffinStage.YARD,
+      batchId = DAY,
+      tickLimit = TestPlayers.READY + RiseRules.STEP_OUT_TICKS + 10)
   public void aWakingVampireIsClearOfTheCoffinOnEveryFacing(final TestContext context) {
     final Direction[] facings = {Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST};
     final BlockPos[] feet = {
@@ -440,14 +463,79 @@ public class StandingCoffinGameTest implements FabricGameTest {
             context.useBlock(heads[i], vampires[i]);
             context.assertTrue(vampires[i].isSleeping(), "rests facing " + facings[i]);
             vampires[i].wakeUp(false, true);
+          }
+        });
+    context.runAtTick(
+        TestPlayers.READY + RiseRules.STEP_OUT_TICKS + 2,
+        () -> {
+          for (int i = 0; i < 4; i++) {
             context.assertTrue(
-                context.getWorld().isSpaceEmpty(vampires[i]),
-                "a vampire rising from a coffin facing "
+                !vampires[i].isSleeping() && context.getWorld().isSpaceEmpty(vampires[i]),
+                "a vampire stepping out of a coffin facing "
                     + facings[i]
-                    + " is not inside it, at "
+                    + " is awake and not inside it, at "
                     + vampires[i].getPos());
           }
           TestPlayers.finish(context, vampires);
+        });
+  }
+
+  @GameTest(templateName = CoffinStage.YARD, batchId = DAY, tickLimit = RiseRules.RISE_TICKS + 20)
+  public void aWokenVampireMobRisesOrStepsOutThenStandsClearFacingOut(final TestContext context) {
+    final BlockPos standingHead =
+        CoffinStage.standing(context, new BlockPos(2, 2, 4), Direction.NORTH);
+    final BlockPos flatHead = CoffinStage.coffin(context, new BlockPos(6, 2, 6), Direction.NORTH);
+    CoffinStage.roof(context);
+    final VampireEntity upright = context.spawnEntity(NightbornMobs.VAMPIRE, new BlockPos(2, 2, 6));
+    final VampireEntity lying = context.spawnEntity(NightbornMobs.VAMPIRE, new BlockPos(6, 2, 7));
+    upright.setAiDisabled(true);
+    lying.setAiDisabled(true);
+    final BlockPos absoluteFlat = context.getAbsolutePos(flatHead);
+    final Vec3d heels =
+        CoffinLayout.heels(absoluteFlat, Direction.NORTH, lying.getEyeHeight(EntityPose.STANDING));
+    final float outward = CoffinLayout.outwardYaw(Direction.NORTH);
+    context.runAtTick(
+        2,
+        () -> {
+          upright.sleep(context.getAbsolutePos(standingHead));
+          lying.sleep(absoluteFlat);
+          upright.wakeUp();
+          lying.wakeUp();
+          context.assertTrue(
+              CoffinRise.rising(upright) && upright.isSleeping(),
+              "a woken mob in a standing coffin starts to step out");
+          context.assertTrue(
+              CoffinRise.rising(lying)
+                  && lying.isSleeping()
+                  && lying.getPose() == EntityPose.STANDING,
+              "a woken mob in a flat coffin starts to rise, got " + lying.getPose());
+          context.assertTrue(
+              lying.getPos().squaredDistanceTo(heels) < 1.0E-6,
+              "the mob pivots on its heels at " + heels + ", not " + lying.getPos());
+        });
+    context.runAtTick(
+        RiseRules.STEP_OUT_TICKS + 4,
+        () ->
+            context.assertTrue(
+                !upright.isSleeping() && context.getWorld().isSpaceEmpty(upright),
+                "the mob steps out clear of the standing coffin, at " + upright.getPos()));
+    context.runAtTick(
+        RiseRules.RISE_TICKS + 4,
+        () -> {
+          context.assertTrue(
+              !lying.isSleeping() && !CoffinRise.rising(lying),
+              "the mob is awake once the rise ends");
+          context.assertTrue(
+              context.getWorld().isSpaceEmpty(lying),
+              "the mob stands clear of the flat coffin, at " + lying.getPos());
+          context.assertTrue(
+              Math.abs(MathHelper.wrapDegrees(lying.getYaw() - outward)) < 1.0F
+                  && Math.abs(MathHelper.wrapDegrees(upright.getYaw() - outward)) < 1.0F,
+              "both mobs still face the way they rose, yaws "
+                  + lying.getYaw()
+                  + " and "
+                  + upright.getYaw());
+          context.complete();
         });
   }
 

@@ -24,6 +24,10 @@ public final class CoffinSleepers {
   }
 
   public static boolean upright(final LivingEntity sleeper) {
+    return inStandingCoffin(sleeper) || CoffinRise.rising(sleeper);
+  }
+
+  public static boolean inStandingCoffin(final LivingEntity sleeper) {
     return sleeper
         .getSleepingPosition()
         .map(pos -> CoffinBlock.isStanding(sleeper.getWorld().getBlockState(pos)))

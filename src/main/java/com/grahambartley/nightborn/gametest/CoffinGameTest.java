@@ -1,12 +1,17 @@
 package com.grahambartley.nightborn.gametest;
 
 import com.grahambartley.nightborn.coffin.CoffinBlock;
+import com.grahambartley.nightborn.coffin.CoffinLayout;
+import com.grahambartley.nightborn.coffin.CoffinRise;
+import com.grahambartley.nightborn.coffin.RiseRules;
 import com.grahambartley.nightborn.config.CoffinSettings;
 import com.grahambartley.nightborn.core.NightTime;
 import com.grahambartley.nightborn.server.ServerConfigService;
 import java.util.List;
+import java.util.Set;
 import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
 import net.minecraft.block.Blocks;
+import net.minecraft.entity.EntityPose;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.item.Items;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -141,7 +146,10 @@ public class CoffinGameTest implements FabricGameTest {
         });
   }
 
-  @GameTest(templateName = CoffinStage.YARD, batchId = DUSK, tickLimit = TestPlayers.READY + 60)
+  @GameTest(
+      templateName = CoffinStage.YARD,
+      batchId = DUSK,
+      tickLimit = TestPlayers.READY + RiseRules.RISE_TICKS + 60)
   public void aRestingVampireRisesAtDusk(final TestContext context) {
     final BlockPos head = CoffinStage.coffin(context, new BlockPos(4, 2, 6), Direction.NORTH);
     CoffinStage.roof(context);
@@ -155,7 +163,7 @@ public class CoffinGameTest implements FabricGameTest {
           context.assertTrue(vampire.isSleeping(), "a vampire lies down just before dusk");
         });
     context.runAtTick(
-        TestPlayers.READY + 40,
+        TestPlayers.READY + RiseRules.RISE_TICKS + 40,
         () -> {
           final long time = Math.floorMod(context.getWorld().getTimeOfDay(), NightTime.DAY_LENGTH);
           context.assertTrue(time >= NightTime.DUSK, "dusk has come, time " + time);
@@ -169,7 +177,7 @@ public class CoffinGameTest implements FabricGameTest {
   @GameTest(
       templateName = CoffinStage.YARD,
       batchId = SKIP,
-      tickLimit = TestPlayers.READY + 2 * SLEEP_READY + 20)
+      tickLimit = TestPlayers.READY + 2 * SLEEP_READY + RiseRules.RISE_TICKS + 20)
   public void theDayPassesOnlyWhenEveryVampireRests(final TestContext context) {
     final BlockPos first = CoffinStage.coffin(context, new BlockPos(2, 2, 6), Direction.NORTH);
     final BlockPos second = CoffinStage.coffin(context, new BlockPos(6, 2, 6), Direction.NORTH);
@@ -192,7 +200,7 @@ public class CoffinGameTest implements FabricGameTest {
           context.useBlock(second, b);
         });
     context.runAtTick(
-        TestPlayers.READY + 2 * SLEEP_READY + 10,
+        TestPlayers.READY + 2 * SLEEP_READY + RiseRules.RISE_TICKS + 10,
         () -> {
           final long time = Math.floorMod(context.getWorld().getTimeOfDay(), NightTime.DAY_LENGTH);
           context.assertTrue(
@@ -343,6 +351,79 @@ public class CoffinGameTest implements FabricGameTest {
           vampire.wakeUp(false, true);
           context.assertTrue(context.getBlockState(head).get(CoffinBlock.OPEN), "head open");
           context.assertTrue(context.getBlockState(foot).get(CoffinBlock.OPEN), "foot open");
+          TestPlayers.finish(context, vampire);
+        });
+  }
+
+  @GameTest(
+      templateName = CoffinStage.YARD,
+      batchId = DAY,
+      tickLimit = TestPlayers.READY + RiseRules.RISE_TICKS + 10)
+  public void aWakingVampireRisesFromItsHeelsThroughDamageAndWakeUpsThenStandsClear(
+      final TestContext context) {
+    final BlockPos head = CoffinStage.coffin(context, new BlockPos(4, 2, 6), Direction.SOUTH);
+    final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(3, 2, 6));
+    final Vec3d heels =
+        CoffinLayout.heels(
+            context.getAbsolutePos(head),
+            Direction.SOUTH,
+            vampire.getEyeHeight(EntityPose.STANDING));
+    context.runAtTick(
+        TestPlayers.READY,
+        () -> {
+          context.useBlock(head, vampire);
+          vampire.wakeUp(false, true);
+          context.assertTrue(
+              CoffinRise.rising(vampire) && vampire.isSleeping(),
+              "waking starts the rise with the vampire still held in the coffin");
+          context.assertTrue(
+              vampire.getPose() == EntityPose.STANDING, "the rise stands the body up");
+        });
+    context.runAtTick(
+        TestPlayers.READY + 5,
+        () -> {
+          vampire.damage(context.getWorld().getDamageSources().generic(), 1.0F);
+          vampire.wakeUp(false, true);
+          context.assertTrue(
+              CoffinRise.rising(vampire) && vampire.isSleeping(),
+              "neither damage nor a second wake-up ends the rise");
+          context.assertTrue(
+              vampire.getPos().squaredDistanceTo(heels) < 1.0E-6,
+              "the vampire pivots on its heels at " + heels + ", not " + vampire.getPos());
+        });
+    context.runAtTick(
+        TestPlayers.READY + RiseRules.RISE_TICKS + 2,
+        () -> {
+          context.assertTrue(
+              !vampire.isSleeping() && !CoffinRise.rising(vampire),
+              "the vampire is awake once the rise ends");
+          context.assertTrue(
+              context.getWorld().isSpaceEmpty(vampire),
+              "the vampire stands clear of the coffin, at " + vampire.getPos());
+          TestPlayers.finish(context, vampire);
+        });
+  }
+
+  @GameTest(templateName = CoffinStage.YARD, batchId = DAY, tickLimit = TestPlayers.READY + 10)
+  public void aTeleportWakesASleepingVampireAtOnceWithoutARise(final TestContext context) {
+    final BlockPos head = CoffinStage.coffin(context, new BlockPos(4, 2, 6), Direction.SOUTH);
+    final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(3, 2, 6));
+    final Vec3d target = context.getAbsolute(Vec3d.ofBottomCenter(new BlockPos(1, 2, 1)));
+    context.runAtTick(
+        TestPlayers.READY,
+        () -> {
+          context.useBlock(head, vampire);
+          vampire.teleport(context.getWorld(), target.x, target.y, target.z, Set.of(), 0.0F, 0.0F);
+          context.assertTrue(
+              !vampire.isSleeping() && !CoffinRise.rising(vampire),
+              "a teleport wakes the resting vampire without a rise");
+        });
+    context.runAtTick(
+        TestPlayers.READY + 3,
+        () -> {
+          context.assertTrue(
+              vampire.getPos().squaredDistanceTo(target) < 1.0E-6,
+              "the vampire stays where it was sent, at " + vampire.getPos());
           TestPlayers.finish(context, vampire);
         });
   }
