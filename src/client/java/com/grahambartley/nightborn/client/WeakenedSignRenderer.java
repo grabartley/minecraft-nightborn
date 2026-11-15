@@ -1,23 +1,25 @@
 package com.grahambartley.nightborn.client;
 
+import com.grahambartley.nightborn.Nightborn;
 import com.grahambartley.nightborn.vampire.VisibleStateAttachment;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.render.Camera;
 import net.minecraft.client.render.OverlayTexture;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
-import net.minecraft.client.texture.Sprite;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.client.world.ClientWorld;
-import net.minecraft.entity.effect.StatusEffects;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Vec3d;
 import org.joml.Matrix4f;
 
 public final class WeakenedSignRenderer {
 
+  static final Identifier SPRITE = Identifier.of(Nightborn.MOD_ID, "hud/weakened");
+  static final Identifier TEXTURE =
+      SPRITE.withPath(path -> "textures/gui/sprites/" + path + ".png");
   static final float SIZE = 0.4F;
   static final double ABOVE_HEAD = 0.55;
   static final int FULL_BRIGHT = 0xF000F0;
@@ -31,10 +33,7 @@ public final class WeakenedSignRenderer {
     if (world == null || consumers == null || matrices == null) {
       return;
     }
-    final MinecraftClient client = MinecraftClient.getInstance();
-    final Sprite sprite = client.getStatusEffectSpriteManager().getSprite(StatusEffects.WEAKNESS);
-    final VertexConsumer buffer =
-        consumers.getBuffer(RenderLayer.getEntityTranslucent(sprite.getAtlasId()));
+    final VertexConsumer buffer = consumers.getBuffer(RenderLayer.getEntityTranslucent(TEXTURE));
     final Camera camera = context.camera();
     final float tickDelta = context.tickCounter().getTickDelta(false);
     for (final AbstractClientPlayerEntity player : world.getPlayers()) {
@@ -52,19 +51,18 @@ public final class WeakenedSignRenderer {
       matrices.push();
       matrices.translate(at.x, at.y, at.z);
       matrices.multiply(camera.getRotation());
-      quad(matrices, buffer, sprite);
+      quad(matrices, buffer);
       matrices.pop();
     }
   }
 
-  private static void quad(
-      final MatrixStack matrices, final VertexConsumer buffer, final Sprite sprite) {
+  private static void quad(final MatrixStack matrices, final VertexConsumer buffer) {
     final Matrix4f matrix = matrices.peek().getPositionMatrix();
     final float half = SIZE / 2.0F;
-    corner(matrices, buffer, matrix, -half, -half, sprite.getMinU(), sprite.getMaxV());
-    corner(matrices, buffer, matrix, half, -half, sprite.getMaxU(), sprite.getMaxV());
-    corner(matrices, buffer, matrix, half, half, sprite.getMaxU(), sprite.getMinV());
-    corner(matrices, buffer, matrix, -half, half, sprite.getMinU(), sprite.getMinV());
+    corner(matrices, buffer, matrix, -half, -half, 0.0F, 1.0F);
+    corner(matrices, buffer, matrix, half, -half, 1.0F, 1.0F);
+    corner(matrices, buffer, matrix, half, half, 1.0F, 0.0F);
+    corner(matrices, buffer, matrix, -half, half, 0.0F, 0.0F);
   }
 
   private static void corner(

@@ -10,7 +10,6 @@ import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.render.RenderTickCounter;
 import net.minecraft.entity.effect.StatusEffectInstance;
-import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
@@ -36,13 +35,7 @@ public final class VampireHud {
     }
     final VisibleState visible = VisibleStateAttachment.get(player);
     if (visible.isWeakened()) {
-      context.drawSprite(
-          SIGN_X,
-          SIGN_Y,
-          0,
-          ICON,
-          ICON,
-          client.getStatusEffectSpriteManager().getSprite(StatusEffects.WEAKNESS));
+      context.drawGuiTexture(WeakenedSignRenderer.SPRITE, SIGN_X, SIGN_Y, ICON, ICON);
       context.drawTextWithShadow(
           client.textRenderer,
           Text.translatable("nightborn.weakened.sign", visible.weakened()),
