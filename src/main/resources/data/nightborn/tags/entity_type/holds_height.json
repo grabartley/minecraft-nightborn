@@ -1,7 +1,8 @@
 {
   "values": [
+    "#minecraft:aquatic",
     "minecraft:bat",
-    "minecraft:parrot",
-    "minecraft:dolphin"
+    "minecraft:bee",
+    "minecraft:parrot"
   ]
 }

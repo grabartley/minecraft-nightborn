@@ -21,6 +21,7 @@ final class VictimHold {
 
   static void apply(final LivingEntity victim, final Vec3d anchor) {
     final boolean holdsHeight = victim.hasNoGravity() || victim.getType().isIn(HOLDS_HEIGHT);
+    victim.stopRiding();
     victim.setVelocity(HoldRules.pinned(victim.getVelocity(), holdsHeight));
     if (victim instanceof MobEntity mob) {
       mob.getNavigation().stop();
@@ -33,6 +34,9 @@ final class VictimHold {
       } else {
         victim.refreshPositionAfterTeleport(back);
       }
+    }
+    if (victim instanceof ServerPlayerEntity) {
+      return;
     }
     final StatusEffectInstance current = victim.getStatusEffect(StatusEffects.SLOWNESS);
     if (current == null || HoldRules.needsRefresh(current.getDuration(), current.getAmplifier())) {

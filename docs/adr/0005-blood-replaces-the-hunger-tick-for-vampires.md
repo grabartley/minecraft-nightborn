@@ -2,7 +2,7 @@
 
 ## Context
 
-A vampire has a blood bar in place of hunger (FEED-1). It drains over time and faster with effort, hurts when empty and heals when full (FEED-2), and food restores none of it (FEED-3). Blood must never be created except by feeding, turning and respawning (SAFE-2).
+A vampire has a blood bar in place of hunger (FEED-1). It drains over time and faster with effort, hurts when empty and heals slowly while above half (FEED-2), and food restores none of it (FEED-3). Blood must never be created except by feeding, turning and respawning (SAFE-2).
 
 Storing blood in vanilla's hunger manager looks cheap, but many vanilla paths add to it: food, the Saturation effect, and peaceful difficulty refilling it. Each would need its own block, and a missed one creates blood.
 
@@ -14,7 +14,7 @@ For a vampire, a mixin cancels `HungerManager.update` and runs `BloodTicker` in 
 
 - Vanilla's exhaustion still collects from sprinting, jumping and fighting, and every 4 exhaustion costs one blood, as it costs one hunger.
 - A resting drain adds exhaustion at the rate the `restingDrainSeconds` setting gives. Nothing drains in peaceful, as with hunger.
-- At 18 blood or more a hurt vampire heals one health every 80 ticks, and empty blood starves on the same pulse and difficulty rules as hunger.
+- While blood is above half, a hurt vampire heals one health every 200 ticks. Healing adds no exhaustion, so it costs no blood. Empty blood starves on the same pulse and difficulty rules as hunger.
 
 The vampire's hunger bar is pinned full, so vanilla code that reads it, such as sprinting and eating, behaves the same for every vampire. Vampires may always eat, for no gain.
 

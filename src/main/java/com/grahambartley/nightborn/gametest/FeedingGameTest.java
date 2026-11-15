@@ -20,6 +20,7 @@ import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.passive.CowEntity;
 import net.minecraft.entity.passive.VillagerEntity;
+import net.minecraft.entity.vehicle.BoatEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -188,7 +189,7 @@ public class FeedingGameTest implements FabricGameTest {
     final CowEntity cow = still(context.spawnEntity(EntityType.COW, new BlockPos(3, 2, 4)));
     context.runAtEveryTick(
         () -> {
-          if (context.getTick() <= 30) {
+          if (context.getTick() < 30) {
             hold(context, vampire, cow);
           }
         });
@@ -204,10 +205,31 @@ public class FeedingGameTest implements FabricGameTest {
           context.assertFalse(FeedingSessions.isFeeding(vampire), "the bite is over");
         });
     context.runAtTick(
-        45,
+        35,
         () -> {
           context.assertFalse(
               cow.hasStatusEffect(StatusEffects.SLOWNESS), "nothing holds the cow any more");
+          TestPlayers.finish(context, vampire);
+        });
+  }
+
+  @GameTest(templateName = ARENA, batchId = BATCH, tickLimit = 60)
+  public void aBittenRiderIsLiftedOffItsVehicle(final TestContext context) {
+    final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(2, 2, 4));
+    final BoatEntity boat = context.spawnEntity(EntityType.BOAT, new BlockPos(3, 2, 4));
+    final CowEntity cow = still(context.spawnEntity(EntityType.COW, new BlockPos(3, 2, 4)));
+    cow.startRiding(boat, true);
+    context.runAtTick(2, () -> context.assertTrue(cow.hasVehicle(), "the cow rides the boat"));
+    context.runAtEveryTick(
+        () -> {
+          if (context.getTick() >= 3 && context.getTick() <= 20) {
+            hold(context, vampire, cow);
+          }
+        });
+    context.runAtTick(
+        25,
+        () -> {
+          context.assertFalse(cow.hasVehicle(), "a bitten cow is lifted off its boat");
           TestPlayers.finish(context, vampire);
         });
   }
