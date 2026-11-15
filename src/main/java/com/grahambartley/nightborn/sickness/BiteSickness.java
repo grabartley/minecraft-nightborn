@@ -39,6 +39,7 @@ public final class BiteSickness {
   public static boolean startFromBite(
       final LivingEntity victim,
       final int chancePercent,
+      final boolean turningBite,
       final boolean playersCanTurnPlayers,
       final boolean firstRoll,
       final Random random,
@@ -46,6 +47,7 @@ public final class BiteSickness {
     return victim instanceof ServerPlayerEntity human
         && BiteRules.startsSickness(
             !Vampires.isVampire(human),
+            turningBite,
             playersCanTurnPlayers,
             firstRoll,
             random.nextInt(100),

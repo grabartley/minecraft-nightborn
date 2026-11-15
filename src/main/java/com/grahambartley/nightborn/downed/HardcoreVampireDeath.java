@@ -3,6 +3,7 @@ package com.grahambartley.nightborn.downed;
 import com.grahambartley.nightborn.Nightborn;
 import com.grahambartley.nightborn.faction.Faction;
 import com.grahambartley.nightborn.faction.FactionAttachment;
+import com.grahambartley.nightborn.feeding.TurningBite;
 import com.grahambartley.nightborn.server.ServerConfigService;
 import com.grahambartley.nightborn.sickness.BiteSicknessAttachment;
 import com.grahambartley.nightborn.skill.PowerCooldownAttachment;
@@ -40,6 +41,7 @@ public final class HardcoreVampireDeath {
   static void reset(final ServerPlayerEntity player) {
     FactionAttachment.set(player, Faction.HUMAN);
     BiteSicknessAttachment.clear(player);
+    TurningBite.set(player, false);
     SkillAttachment.clear(player);
     PowerCooldownAttachment.set(player, PowerCooldowns.NONE);
     player.getEnderChestInventory().clear();
