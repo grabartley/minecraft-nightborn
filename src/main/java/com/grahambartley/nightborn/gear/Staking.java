@@ -14,6 +14,10 @@ public final class Staking {
   private Staking() {}
 
   public static boolean isStakeBlow(final DamageSource source) {
+    return isStakeStrike(source) || VampireBane.ammo(source).isIn(VampireBane.STAKE_AMMO);
+  }
+
+  static boolean isStakeStrike(final DamageSource source) {
     final ItemStack weapon = source.getWeaponStack();
     return source.isDirect()
         && (source.isOf(DamageTypes.PLAYER_ATTACK) || source.isOf(DamageTypes.MOB_ATTACK))
@@ -33,7 +37,7 @@ public final class Staking {
     final Entity hunter = blow.getAttacker();
     vampire.damage(NightbornDamage.stake(vampire.getWorld(), hunter), Float.MAX_VALUE);
     final ItemStack weapon = blow.getWeaponStack();
-    if (weapon != null && hunter instanceof PlayerEntity wielder) {
+    if (weapon != null && isStakeStrike(blow) && hunter instanceof PlayerEntity wielder) {
       weapon.damage(1, wielder, EquipmentSlot.MAINHAND);
     }
   }

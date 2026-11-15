@@ -1,6 +1,7 @@
 package com.grahambartley.nightborn.vomit;
 
 import com.grahambartley.nightborn.Nightborn;
+import com.grahambartley.nightborn.holy.HolyWater;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.FoodComponent;
 import net.minecraft.item.Item;
@@ -26,7 +27,7 @@ public final class Consumables {
         && rejects(
             swallowed(stack.getUseAction()),
             stack.isIn(VAMPIRE_REJECTS),
-            stack.isIn(VAMPIRE_CONSUMABLES));
+            stack.isIn(VAMPIRE_CONSUMABLES) || HolyWater.isHolyWater(stack));
   }
 
   static boolean rejects(

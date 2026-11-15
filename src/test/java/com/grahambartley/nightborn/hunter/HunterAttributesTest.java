@@ -10,6 +10,7 @@ import net.minecraft.entity.attribute.EntityAttribute;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.registry.entry.RegistryEntry;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -51,5 +52,11 @@ class HunterAttributesTest {
   @DisplayName("names follow the vanilla attribute key pattern")
   void keys(final String path, final String key) {
     assertEquals(key, HunterAttributes.translationKey(path));
+  }
+
+  @Test
+  @DisplayName("nothing behind a blow has no faith")
+  void noFaithWithoutAHolder() {
+    assertEquals(0.0, HunterAttributes.faith(null));
   }
 }

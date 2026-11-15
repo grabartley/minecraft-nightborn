@@ -4,6 +4,7 @@ import com.grahambartley.nightborn.blood.BloodAttachment;
 import com.grahambartley.nightborn.blood.BloodBottleItem;
 import com.grahambartley.nightborn.blood.BloodQuality;
 import com.grahambartley.nightborn.downed.Downed;
+import com.grahambartley.nightborn.holy.HolyWater;
 import com.grahambartley.nightborn.vampire.NightbornDamage;
 import com.grahambartley.nightborn.vomit.Consumables;
 import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
@@ -109,6 +110,26 @@ public class VomitGameTest implements FabricGameTest {
         () -> {
           context.assertTrue(BloodAttachment.get(vampire) > 5, "blood restored");
           context.assertFalse(vampire.hasStatusEffect(StatusEffects.NAUSEA), "kept down");
+          TestPlayers.finish(context, vampire);
+        });
+  }
+
+  @GameTest(templateName = ARENA, batchId = BATCH, tickLimit = 140)
+  public void holyWaterIsNotVomitedButBurns(final TestContext context) {
+    final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(3, 1, 4));
+    final ItemStack holy = new ItemStack(Items.POTION);
+    holy.set(DataComponentTypes.POTION_CONTENTS, new PotionContentsComponent(HolyWater.POTION));
+    swallow(context, vampire, holy);
+    context.runAtTick(
+        FINISHED,
+        () -> {
+          context.assertFalse(
+              vampire.hasStatusEffect(StatusEffects.NAUSEA),
+              "kept down: " + Diagnostics.of(vampire));
+          context.assertTrue(
+              vampire.getRecentDamageSource() == null
+                  || !vampire.getRecentDamageSource().isOf(NightbornDamage.VOMIT),
+              "not hurt by vomiting: " + Diagnostics.of(vampire));
           TestPlayers.finish(context, vampire);
         });
   }
