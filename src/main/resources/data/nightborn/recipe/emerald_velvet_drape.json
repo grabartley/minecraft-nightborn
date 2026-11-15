@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "decorations",
+  "pattern": [
+    "SSS",
+    "WWW",
+    "WWW"
+  ],
+  "key": {
+    "S": {
+      "item": "minecraft:stick"
+    },
+    "W": {
+      "item": "minecraft:green_wool"
+    }
+  },
+  "result": {
+    "id": "nightborn:emerald_velvet_drape",
+    "count": 3
+  }
+}

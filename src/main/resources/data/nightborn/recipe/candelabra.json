@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "decorations",
+  "pattern": [
+    "CCC",
+    "NIN",
+    " I "
+  ],
+  "key": {
+    "C": {
+      "item": "minecraft:candle"
+    },
+    "N": {
+      "item": "minecraft:gold_nugget"
+    },
+    "I": {
+      "item": "minecraft:gold_ingot"
+    }
+  },
+  "result": {
+    "id": "nightborn:candelabra",
+    "count": 1
+  }
+}

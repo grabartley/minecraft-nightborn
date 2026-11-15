@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/template_glass_pane_noside",
+  "textures": {
+    "pane": "nightborn:block/gothic_stained_glass",
+    "edge": "nightborn:block/gothic_stained_glass_pane_top"
+  }
+}

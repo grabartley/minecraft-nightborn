@@ -1,0 +1,13 @@
+{
+  "variants": {
+    "type=bottom": {
+      "model": "nightborn:block/gothic_stone_brick_slab"
+    },
+    "type=top": {
+      "model": "nightborn:block/gothic_stone_brick_slab_top"
+    },
+    "type=double": {
+      "model": "nightborn:block/gothic_stone_bricks"
+    }
+  }
+}

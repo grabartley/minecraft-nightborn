@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/cube_column",
+  "textures": {
+    "end": "nightborn:block/carved_gothic_stone_top",
+    "side": "nightborn:block/carved_gothic_stone"
+  }
+}

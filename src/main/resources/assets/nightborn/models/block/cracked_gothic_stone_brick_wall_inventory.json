@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/wall_inventory",
+  "textures": {
+    "wall": "nightborn:block/cracked_gothic_stone_bricks"
+  }
+}

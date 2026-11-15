@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "nightborn:block/ornate_chair"
+    },
+    "facing=east": {
+      "model": "nightborn:block/ornate_chair",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "nightborn:block/ornate_chair",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "nightborn:block/ornate_chair",
+      "y": 270
+    }
+  }
+}

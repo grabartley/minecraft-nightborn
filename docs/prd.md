@@ -465,12 +465,12 @@ Vampires are rare. They live in households hidden in four kinds of structure, ea
 
 | ID | Requirement |
 |---|---|
-| DECOR-1 | Gothic furniture: candelabras, chandeliers, velvet drapes, stained glass, ornate chairs and tables |
-| DECOR-2 | Gothic building blocks in stone and dark wood, with stairs, slabs and walls |
+| DECOR-1 | Gothic furniture: candelabras, chandeliers, velvet drapes, stained glass, ornate chairs and tables. Drapes open and close as a whole column, a chair seats one player at a time, and stained glass needs Silk Touch like vanilla glass |
+| DECOR-2 | Gothic building blocks in stone and dark wood: gothic stone bricks in plain, cracked and mossy forms with stairs, slabs and walls, carved gothic stone, and ebony planks with stairs, slabs and a fence |
 | DECOR-3 | Blood decor: blood fountains, blood pools, placeable splatter decals and chalices |
 | DECOR-4 | Hunter decor: weapon racks, wanted posters, trophy mounts and crucifixes |
 | DECOR-5 | Coffins in several woods |
-| DECOR-6 | Candles and candelabras light the room. A chandelier can be lit and put out |
+| DECOR-6 | Candles, candelabras and chandeliers light the room. Flint and steel or a fire charge lights them and an empty hand puts them out, and every light, douse, opening and closing plays its own animation |
 | WEAR-1 | Capes and gothic clothing, each in a male and a female cut |
 | WEAR-2 | Clothing is worn in the armour slots and shows over armour |
 | WEAR-3 | Clothing takes enchantments the mod adds, which give small powers, from an enchanting table or anvil |

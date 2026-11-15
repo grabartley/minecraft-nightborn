@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "decorations",
+  "pattern": [
+    "GGG",
+    "GGG"
+  ],
+  "key": {
+    "G": {
+      "item": "nightborn:gothic_stained_glass"
+    }
+  },
+  "result": {
+    "id": "nightborn:gothic_stained_glass_pane",
+    "count": 16
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/cube_all",
+  "textures": {
+    "all": "nightborn:block/mossy_gothic_stone_bricks"
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "decorations",
+  "pattern": [
+    " H ",
+    "CIC",
+    "CNC"
+  ],
+  "key": {
+    "H": {
+      "item": "minecraft:chain"
+    },
+    "C": {
+      "item": "minecraft:candle"
+    },
+    "I": {
+      "item": "minecraft:gold_ingot"
+    },
+    "N": {
+      "item": "minecraft:gold_nugget"
+    }
+  },
+  "result": {
+    "id": "nightborn:chandelier",
+    "count": 1
+  }
+}
