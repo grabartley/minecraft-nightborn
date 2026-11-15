@@ -61,7 +61,7 @@ abstract class LivingEntityMixin {
   private void nightborn$hoverWhileLevitating(final Vec3d movementInput, final CallbackInfo ci) {
     final LivingEntity self = (LivingEntity) (Object) this;
     if (LevitationMotion.drives(self)) {
-      LevitationMotion.hover(self);
+      LevitationMotion.hover(self, movementInput);
     }
   }
 

@@ -20,11 +20,12 @@ public final class LevitationMotion {
     return levitating && movesHere && !serverPlayer;
   }
 
-  public static void hover(final LivingEntity entity) {
+  public static void hover(final LivingEntity entity, final Vec3d movementInput) {
     final Vec3d velocity = entity.getVelocity();
     entity.setVelocity(
         velocity.x,
-        LevitationLift.verticalVelocity(entity.getY(), LevitationGround.surfaceBelow(entity)),
+        LevitationLift.verticalVelocity(
+            entity.getY(), LevitationGround.surfaceToFollow(entity, movementInput)),
         velocity.z);
     entity.fallDistance = 0.0F;
   }

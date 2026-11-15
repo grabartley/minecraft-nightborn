@@ -7,6 +7,7 @@
 		"BufferBuilderStorageMixin",
 		"BuiltinModelItemRendererMixin",
 		"CameraMixin",
+		"ClientPlayerEntityMixin",
 		"EntityRendererMixin",
 		"InGameHudMixin",
 		"ItemRendererMixin",

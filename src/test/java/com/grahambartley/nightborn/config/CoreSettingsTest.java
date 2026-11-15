@@ -6,6 +6,7 @@ import java.util.stream.Stream;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.MethodSource;
 
 class CoreSettingsTest {
@@ -27,5 +28,24 @@ class CoreSettingsTest {
   void clamps() {
     assertEquals(new CoreSettings(0, 0, 0, 1), new CoreSettings(-1, -1, -1, 0));
     assertEquals(new CoreSettings(20, 100, 100, 600), new CoreSettings(21, 101, 101, 601));
+  }
+
+  @ParameterizedTest(name = "{0}: {1}")
+  @CsvSource({
+    "bareHandDamage, 3",
+    "nightSpeed, 20",
+    "nightJump, 20",
+    "levitationDrainSeconds, 120"
+  })
+  @DisplayName(
+      "each core setting starts at its default, with levitation costing a blood every two minutes")
+  void defaults(final String key, final int value) {
+    assertEquals(
+        value,
+        CoreSettings.SETTINGS.stream()
+            .filter(setting -> setting.key().equals(key))
+            .findFirst()
+            .orElseThrow()
+            .defaultValue());
   }
 }
