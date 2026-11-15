@@ -444,7 +444,7 @@ Vampires are rare. They live in households hidden in four kinds of structure, ea
 | HOME-3 | Each type has several layouts, chosen at random |
 | HOME-4 | Fog hangs around and inside every vampire structure, thicker near its heart |
 | HOME-5 | A household feels lived in: its vampires have their own personality and hobbies, talk to and argue with each other, react to each other's deaths, follow a nightly routine and use the furniture of their home: chairs, candles, drapes, books and gramophones |
-| HOME-6 | Household vampires sleep in coffins by day and wake at dusk |
+| HOME-6 | Household vampires sleep in coffins by day and wake at dusk. Each structure uses the coffin styles (DECOR-5) that suit it: crypts hold stone and gothic stone coffins, underground lairs deepslate and blackstone ones, ruined manors wooden ones, and castles wooden coffins in their chambers and stone ones in their vaults |
 | HOME-7 | A castle's vampire lord is a boss with a health bar and its own powers. It is downed and escapes like any vampire, its bar shows when it is downed or escaping, and only a stake or the sun ends the fight |
 | HOME-8 | Structures hold loot chests with gear, Blood Bottles, decor, gothic music discs (DECOR-8), relics (RITE-1) and rare items found nowhere else |
 | HOME-9 | Vampire mobs live only in vampire structures, as members of a household. Each remembers its structure and its own coffin. They never spawn at random anywhere else, and never despawn |
