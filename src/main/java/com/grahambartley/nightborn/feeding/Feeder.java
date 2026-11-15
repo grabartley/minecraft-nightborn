@@ -4,6 +4,8 @@ import com.grahambartley.nightborn.blood.BloodAttachment;
 import com.grahambartley.nightborn.blood.BloodBottleItem;
 import com.grahambartley.nightborn.blood.BloodValue;
 import com.grahambartley.nightborn.config.NightbornConfig;
+import com.grahambartley.nightborn.network.PlayerCue;
+import com.grahambartley.nightborn.network.PlayerCues;
 import com.grahambartley.nightborn.sickness.BiteSickness;
 import com.grahambartley.nightborn.skill.SkillEarning;
 import com.grahambartley.nightborn.vampire.NightbornDamage;
@@ -66,6 +68,7 @@ final class Feeder {
     if (!victim.isAlive()) {
       if (sip.drains()) {
         SkillEarning.fromDrain(vampire, config.skills());
+        PlayerCues.send(vampire, PlayerCue.DRAIN);
       }
       return Result.DRAINED;
     }

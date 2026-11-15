@@ -6,11 +6,11 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.network.codec.PacketCodec;
 import net.minecraft.network.codec.PacketCodecs;
 
-public record VisibleState(boolean eyesGlowing, boolean downed, int weakened) {
+public record VisibleState(boolean eyesGlowing, boolean feeding, boolean downed, int weakened) {
 
   public static final int WEAKENED_CAP = 100;
 
-  public static final VisibleState NONE = new VisibleState(false, false, 0);
+  public static final VisibleState NONE = new VisibleState(false, false, false, 0);
 
   public static final Codec<VisibleState> CODEC =
       RecordCodecBuilder.create(
@@ -18,6 +18,7 @@ public record VisibleState(boolean eyesGlowing, boolean downed, int weakened) {
               instance
                   .group(
                       Codec.BOOL.fieldOf("eyesGlowing").forGetter(VisibleState::eyesGlowing),
+                      Codec.BOOL.optionalFieldOf("feeding", false).forGetter(VisibleState::feeding),
                       Codec.BOOL.fieldOf("downed").forGetter(VisibleState::downed),
                       Codec.intRange(0, WEAKENED_CAP)
                           .fieldOf("weakened")
@@ -28,6 +29,8 @@ public record VisibleState(boolean eyesGlowing, boolean downed, int weakened) {
       PacketCodec.tuple(
           PacketCodecs.BOOL,
           VisibleState::eyesGlowing,
+          PacketCodecs.BOOL,
+          VisibleState::feeding,
           PacketCodecs.BOOL,
           VisibleState::downed,
           PacketCodecs.VAR_INT,

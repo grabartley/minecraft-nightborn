@@ -32,13 +32,14 @@ public final class VampireTicker {
     Wards.tick(vampire, config.wards());
     final int weakened = Weakened.tick(vampire, downed != null, config.weakened());
     Levitation.tick(vampire, weakened, downed != null);
+    final boolean feeding = FeedingSessions.isFeeding(vampire);
     final boolean eyes =
         EyeGlow.glowing(
-            FeedingSessions.isFeeding(vampire),
+            feeding,
             FeedingSessions.ticksSinceFed(vampire, vampire.getWorld().getTime()),
             vampire.getHealth(),
             vampire.getMaxHealth());
     VisibleStateAttachment.set(
-        vampire, new VisibleState(eyes, downed != null && downed.isDowned(), weakened));
+        vampire, new VisibleState(eyes, feeding, downed != null && downed.isDowned(), weakened));
   }
 }

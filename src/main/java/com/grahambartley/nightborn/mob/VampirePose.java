@@ -18,12 +18,18 @@ public enum VampirePose {
   LAND("land", Play.ONCE),
   VOMIT("vomit", Play.ONCE),
   USE_ITEM_RIGHT("use_item_right", Play.LOOP),
-  USE_ITEM_LEFT("use_item_left", Play.LOOP);
+  USE_ITEM_LEFT("use_item_left", Play.LOOP),
+  FEED("feed", Play.LOOP),
+  DRAIN("drain", Play.ONCE),
+  RISE("rise", Play.ONCE),
+  WEAKENED("weakened", Play.LOOP),
+  WEAKENED_WALK("weakened_walk", Play.LOOP);
 
   static final float RUN_SWING = 0.6F;
   static final float WALK_SWING = 0.1F;
   public static final double LEVITATE_MOVE_SPEED = 0.03;
   public static final double LEVITATE_SPRINT_SPEED = 0.24;
+  public static final double WEAKENED_WALK_SPEED = 0.02;
   public static final String SPREAD_VARIABLE = "variable.levitate_spread";
 
   private enum Play {
@@ -76,6 +82,10 @@ public enum VampirePose {
     return horizontalSpeed > LEVITATE_MOVE_SPEED ? LEVITATE_MOVE : LEVITATE;
   }
 
+  public static VampirePose weakened(final double horizontalSpeed) {
+    return horizontalSpeed > WEAKENED_WALK_SPEED ? WEAKENED_WALK : WEAKENED;
+  }
+
   public static double spread(final boolean sprinting, final double horizontalSpeed) {
     return sprinting ? 1.0 : Math.max(0.0, Math.min(1.0, horizontalSpeed / LEVITATE_SPRINT_SPEED));
   }
@@ -95,6 +105,17 @@ public enum VampirePose {
       return PlayState.STOP;
     }
     return state.setAndContinue(pose.get().clip());
+  }
+
+  public boolean allowsActions() {
+    return switch (this) {
+      case VOMIT, DOWNED, RISE, FEED, DRAIN -> false;
+      default -> true;
+    };
+  }
+
+  public boolean holdsHead() {
+    return this == DOWNED || this == RISE;
   }
 
   public String animation() {
