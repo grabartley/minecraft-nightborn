@@ -1,59 +1,82 @@
 package com.grahambartley.nightborn.client.anim;
 
-import com.grahambartley.nightborn.mob.LandingEdge;
+import com.grahambartley.nightborn.mob.EndingEdge;
 import com.grahambartley.nightborn.mob.VampirePose;
 import java.util.Optional;
 
 public final class PlayerClipState {
 
-  public static final double TICKS_PER_SECOND = 20.0;
+  public record Situation(
+      boolean levitating,
+      boolean sprinting,
+      double horizontalSpeed,
+      boolean downed,
+      boolean feeding,
+      boolean weakened) {}
 
-  private final LandingEdge landing = new LandingEdge();
-  private double landedAt = Double.NaN;
-  private double vomitAt = Double.NaN;
+  public record Lengths(double land, double vomit, double drain, double rise) {}
 
-  public void tick(final double age, final boolean levitating) {
-    if (landing.landed(levitating)) {
-      landedAt = age;
-    }
-    if (levitating) {
-      landedAt = Double.NaN;
-    }
+  private final EndingEdge landing = new EndingEdge();
+  private final EndingEdge standing = new EndingEdge();
+  private final OneShot land = new OneShot();
+  private final OneShot rise = new OneShot();
+  private final OneShot vomit = new OneShot();
+  private final OneShot drain = new OneShot();
+
+  public void tick(final double age, final boolean levitating, final boolean downed) {
+    follow(landing, land, levitating, age);
+    follow(standing, rise, downed, age);
   }
 
   public void vomit(final double age) {
-    vomitAt = age;
+    vomit.start(age);
+  }
+
+  public void drain(final double age) {
+    drain.start(age);
   }
 
   public double vomitingSeconds(final double age) {
-    return seconds(vomitAt, age);
+    return vomit.seconds(age);
   }
 
   public Optional<VampirePose> clip(
-      final double age,
-      final boolean levitating,
-      final boolean sprinting,
-      final double horizontalSpeed,
-      final double landSeconds,
-      final double vomitSeconds) {
-    if (playing(vomitAt, vomitSeconds, age)) {
+      final double age, final Situation situation, final Lengths lengths) {
+    if (vomit.playing(lengths.vomit(), age)) {
       return Optional.of(VampirePose.VOMIT);
     }
-    if (levitating) {
-      return Optional.of(VampirePose.levitating(sprinting, horizontalSpeed));
+    if (situation.downed()) {
+      return Optional.of(VampirePose.DOWNED);
     }
-    if (playing(landedAt, landSeconds, age)) {
+    if (rise.playing(lengths.rise(), age)) {
+      return Optional.of(VampirePose.RISE);
+    }
+    if (drain.playing(lengths.drain(), age)) {
+      return Optional.of(VampirePose.DRAIN);
+    }
+    if (situation.feeding()) {
+      return Optional.of(VampirePose.FEED);
+    }
+    if (situation.levitating()) {
+      return Optional.of(
+          VampirePose.levitating(situation.sprinting(), situation.horizontalSpeed()));
+    }
+    if (land.playing(lengths.land(), age)) {
       return Optional.of(VampirePose.LAND);
+    }
+    if (situation.weakened()) {
+      return Optional.of(VampirePose.weakened(situation.horizontalSpeed()));
     }
     return Optional.empty();
   }
 
-  private static double seconds(final double from, final double age) {
-    return Double.isNaN(from) ? Double.NaN : (age - from) / TICKS_PER_SECOND;
-  }
-
-  private static boolean playing(final double from, final double length, final double age) {
-    final double seconds = seconds(from, age);
-    return !Double.isNaN(seconds) && seconds >= 0.0 && seconds < length;
+  private static void follow(
+      final EndingEdge edge, final OneShot shot, final boolean active, final double age) {
+    if (edge.ended(active)) {
+      shot.start(age);
+    }
+    if (active) {
+      shot.clear();
+    }
   }
 }

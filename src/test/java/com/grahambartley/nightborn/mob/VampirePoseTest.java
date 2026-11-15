@@ -59,6 +59,47 @@ class VampirePoseTest {
     assertEquals(spread, VampirePose.spread(sprinting, speed), 1.0e-9);
   }
 
+  @ParameterizedTest(name = "speed {0}: {1}")
+  @CsvSource({"0.0, WEAKENED", "0.02, WEAKENED", "0.021, WEAKENED_WALK", "0.3, WEAKENED_WALK"})
+  @DisplayName("a weakened vampire stoops in place and staggers once it moves")
+  void weakened(final double speed, final VampirePose pose) {
+    assertEquals(pose, VampirePose.weakened(speed));
+  }
+
+  @ParameterizedTest(name = "{0}: holds head {1}")
+  @CsvSource({
+    "DOWNED, true",
+    "RISE, true",
+    "FEED, true",
+    "DRAIN, true",
+    "WEAKENED, false",
+    "WEAKENED_WALK, false",
+    "LEVITATE, false",
+    "IDLE, false"
+  })
+  @DisplayName(
+      "the head follows the look except where the clip aims it: lying, getting up and biting")
+  void holdsHead(final VampirePose pose, final boolean holds) {
+    assertEquals(holds, pose.holdsHead());
+  }
+
+  @ParameterizedTest(name = "{0}: allows actions {1}")
+  @CsvSource({
+    "VOMIT, false",
+    "DOWNED, false",
+    "RISE, false",
+    "FEED, false",
+    "DRAIN, false",
+    "LEVITATE, true",
+    "LAND, true",
+    "WEAKENED, true",
+    "WEAKENED_WALK, true"
+  })
+  @DisplayName("a swing or item use plays over every pose except those that hold both arms")
+  void allowsActions(final VampirePose pose, final boolean allows) {
+    assertEquals(allows, pose.allowsActions());
+  }
+
   @ParameterizedTest(name = "swinging {0}, using {1}, right arm {2}: {3}")
   @CsvSource({
     "false, false, true, ",

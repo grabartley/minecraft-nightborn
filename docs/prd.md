@@ -262,7 +262,7 @@ How weakened a vampire is scales with how strong the source is. By default each 
 | WEAK-5 | Holy water hurts vampires and weakens them for a short time, whether splashed, lingering, fired as a bolt or carried as a coating on a weapon or ammo (GEAR-9). It does nothing to anyone else |
 | WEAK-6 | Silver weapons deal extra damage to vampires, and only to vampires |
 | WEAK-7 | A stake deals extra damage to vampires, and stakes a vampire it downs or hits while downed, whoever holds it. It also hurts a vampire that is escaping |
-| WEAK-8 | A weakened vampire shows it to everyone with a sign that is not colour alone |
+| WEAK-8 | A weakened vampire shows it to everyone with a sign that is not colour alone, and stoops and staggers on foot |
 | WEAK-9 | Being weakened by different sources adds up, to a cap |
 | WEAK-10 | Being weakened never damages a vampire on its own. Holy water does damage, as WEAK-5 says |
 

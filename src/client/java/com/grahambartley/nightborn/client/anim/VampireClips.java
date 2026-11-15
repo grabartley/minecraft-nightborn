@@ -19,7 +19,7 @@ public final class VampireClips {
   private VampireClips() {}
 
   public static double seconds(final VampirePose pose) {
-    return clip(pose).map(clip -> clip.length() / PlayerClipState.TICKS_PER_SECOND).orElse(0.0);
+    return clip(pose).map(clip -> clip.length() / OneShot.TICKS_PER_SECOND).orElse(0.0);
   }
 
   public static List<Double> heaves(final double deeperThan) {
@@ -32,7 +32,7 @@ public final class VampireClips {
               double tick = 0.0;
               for (final Keyframe<MathValue> key : body.rotationKeyFrames().xKeyframes()) {
                 tick += key.length();
-                times.add(tick / PlayerClipState.TICKS_PER_SECOND);
+                times.add(tick / OneShot.TICKS_PER_SECOND);
                 degrees.add(Math.toDegrees(key.endValue().get()));
               }
             });
