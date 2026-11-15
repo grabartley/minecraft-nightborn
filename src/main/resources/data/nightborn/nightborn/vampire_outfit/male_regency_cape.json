@@ -1,0 +1,18 @@
+{
+  "rig": "male",
+  "era": "nightborn:regency",
+  "pieces": [
+    {
+      "item": "nightborn:high_collared_cape",
+      "color": "#5A1A24"
+    },
+    {
+      "item": "nightborn:trousers",
+      "color": "#1C1A1D"
+    },
+    {
+      "item": "nightborn:riding_boots"
+    }
+  ],
+  "weight": 10
+}

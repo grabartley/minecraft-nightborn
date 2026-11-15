@@ -1,5 +1,6 @@
 package com.grahambartley.nightborn.gametest;
 
+import com.grahambartley.nightborn.Nightborn;
 import com.grahambartley.nightborn.config.DownedSettings;
 import com.grahambartley.nightborn.config.TurningSettings;
 import com.grahambartley.nightborn.downed.Downed;
@@ -34,6 +35,7 @@ import net.minecraft.test.AfterBatch;
 import net.minecraft.test.BeforeBatch;
 import net.minecraft.test.GameTest;
 import net.minecraft.test.TestContext;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
@@ -346,15 +348,18 @@ public class VampireMobGameTest implements FabricGameTest {
   }
 
   @GameTest(templateName = ARENA, tickLimit = 20)
-  public void aVampireMobKeepsItsLookAndDownedStateThroughSaveAndLoad(final TestContext context) {
+  public void aVampireMobKeepsItsLookSizeAndDownedStateThroughSaveAndLoad(
+      final TestContext context) {
     final VampireEntity vampire = still(context, new BlockPos(4, 2, 4));
-    vampire.setLook(4);
+    vampire.setAppearance(Identifier.of(Nightborn.MOD_ID, "female_morwen"), 1.62F, 0.88F);
     Downed.down(vampire, ServerConfigService.current().downed(), Optional.empty());
     final NbtCompound saved = vampire.writeNbt(new NbtCompound());
     final VampireEntity loaded = NightbornMobs.VAMPIRE.create(context.getWorld());
     context.assertTrue(loaded != null, "a vampire mob can be created");
     loaded.readNbt(saved);
-    context.assertEquals(loaded.look().index(), 4, "the look is kept");
+    context.assertEquals(loaded.lookId(), vampire.lookId(), "the look is kept");
+    context.assertEquals(loaded.height(), 1.62F, "the height is kept");
+    context.assertEquals(loaded.width(), 0.88F, "the build is kept");
     final DownedState state = Downed.state(loaded);
     context.assertTrue(state != null && state.isDowned(), "being downed is kept");
     loaded.discard();

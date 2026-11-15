@@ -1,7 +1,7 @@
 package com.grahambartley.nightborn.client.anim;
 
-import com.grahambartley.nightborn.mob.VampireLook;
 import com.grahambartley.nightborn.mob.VampirePose;
+import com.grahambartley.nightborn.mob.look.VampireRig;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -41,7 +41,7 @@ public final class VampireClips {
 
   private static Optional<Animation> clip(final VampirePose pose) {
     final BakedAnimations animations =
-        GeckoLibCache.getBakedAnimations().get(VampireLook.animation());
+        GeckoLibCache.getBakedAnimations().get(VampireRig.animation());
     return animations == null
         ? Optional.empty()
         : Optional.ofNullable(animations.getAnimation(pose.animation()));

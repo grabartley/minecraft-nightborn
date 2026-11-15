@@ -1,0 +1,8 @@
+{
+  "rig": "female",
+  "texture": "nightborn:textures/entity/vampire/female_isolde.png",
+  "eras": [
+    "nightborn:georgian"
+  ],
+  "weight": 10
+}

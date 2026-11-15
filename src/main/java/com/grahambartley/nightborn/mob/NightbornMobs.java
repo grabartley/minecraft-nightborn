@@ -1,6 +1,7 @@
 package com.grahambartley.nightborn.mob;
 
 import com.grahambartley.nightborn.Nightborn;
+import com.grahambartley.nightborn.mob.look.VampireLooks;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
 import net.minecraft.entity.Entity;
@@ -44,6 +45,7 @@ public final class NightbornMobs {
 
   public static void initialize() {
     MobSounds.initialize();
+    VampireLooks.register();
     FabricDefaultAttributeRegistry.register(VAMPIRE, VampireEntity.createVampireAttributes());
     FabricDefaultAttributeRegistry.register(
         VAMPIRE_BAT, VampireBatEntity.createVampireBatAttributes());

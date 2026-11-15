@@ -1,0 +1,9 @@
+{
+  "rig": "male",
+  "texture": "nightborn:textures/entity/vampire/male_ezekiel.png",
+  "eras": [
+    "nightborn:renaissance",
+    "nightborn:georgian"
+  ],
+  "weight": 10
+}

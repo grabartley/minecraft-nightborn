@@ -1,0 +1,8 @@
+{
+  "rig": "female",
+  "texture": "nightborn:textures/entity/vampire/female_ottilie.png",
+  "eras": [
+    "nightborn:renaissance"
+  ],
+  "weight": 10
+}

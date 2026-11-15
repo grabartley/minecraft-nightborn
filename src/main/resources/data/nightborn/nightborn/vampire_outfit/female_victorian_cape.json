@@ -1,0 +1,18 @@
+{
+  "rig": "female",
+  "era": "nightborn:victorian",
+  "pieces": [
+    {
+      "item": "nightborn:high_collared_cape",
+      "color": "#3E1F3A"
+    },
+    {
+      "item": "nightborn:long_skirt",
+      "color": "#1C1A1D"
+    },
+    {
+      "item": "nightborn:buckled_shoes"
+    }
+  ],
+  "weight": 10
+}

@@ -1,19 +1,83 @@
 {
-  "entity.vampire.hurt": {
-    "subtitle": "subtitles.nightborn.entity.vampire.hurt",
+  "entity.vampire.male.ambient": {
+    "subtitle": "subtitles.nightborn.entity.vampire.ambient",
     "sounds": [
       {
-        "name": "minecraft:entity.player.hurt",
-        "type": "event"
+        "name": "minecraft:entity.player.breath",
+        "type": "event",
+        "pitch": 0.75,
+        "volume": 0.5
       }
     ]
   },
-  "entity.vampire.death": {
+  "entity.vampire.male.hurt": {
+    "subtitle": "subtitles.nightborn.entity.vampire.hurt",
+    "sounds": [
+      {
+        "name": "minecraft:entity.evoker.hurt",
+        "type": "event",
+        "pitch": 0.9
+      }
+    ]
+  },
+  "entity.vampire.male.death": {
     "subtitle": "subtitles.nightborn.entity.vampire.death",
     "sounds": [
       {
-        "name": "minecraft:entity.player.death",
-        "type": "event"
+        "name": "minecraft:entity.evoker.death",
+        "type": "event",
+        "pitch": 0.85
+      }
+    ]
+  },
+  "entity.vampire.male.hiss": {
+    "subtitle": "subtitles.nightborn.entity.vampire.hiss",
+    "sounds": [
+      {
+        "name": "minecraft:entity.cat.hiss",
+        "type": "event",
+        "pitch": 0.7
+      }
+    ]
+  },
+  "entity.vampire.female.ambient": {
+    "subtitle": "subtitles.nightborn.entity.vampire.ambient",
+    "sounds": [
+      {
+        "name": "minecraft:entity.player.breath",
+        "type": "event",
+        "pitch": 0.95,
+        "volume": 0.5
+      }
+    ]
+  },
+  "entity.vampire.female.hurt": {
+    "subtitle": "subtitles.nightborn.entity.vampire.hurt",
+    "sounds": [
+      {
+        "name": "minecraft:entity.witch.hurt",
+        "type": "event",
+        "pitch": 1.0
+      }
+    ]
+  },
+  "entity.vampire.female.death": {
+    "subtitle": "subtitles.nightborn.entity.vampire.death",
+    "sounds": [
+      {
+        "name": "minecraft:entity.witch.death",
+        "type": "event",
+        "pitch": 1.0
+      }
+    ]
+  },
+  "entity.vampire.female.hiss": {
+    "subtitle": "subtitles.nightborn.entity.vampire.hiss",
+    "sounds": [
+      {
+        "name": "minecraft:entity.cat.hiss",
+        "type": "event",
+        "pitch": 0.85
       }
     ]
   },

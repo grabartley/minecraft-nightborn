@@ -1,0 +1,18 @@
+{
+  "rig": "female",
+  "era": "nightborn:renaissance",
+  "pieces": [
+    {
+      "item": "nightborn:corset",
+      "color": "#4A1C2A"
+    },
+    {
+      "item": "nightborn:long_skirt",
+      "color": "#6E5A24"
+    },
+    {
+      "item": "nightborn:buckled_shoes"
+    }
+  ],
+  "weight": 10
+}

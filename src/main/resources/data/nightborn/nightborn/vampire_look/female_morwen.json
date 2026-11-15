@@ -1,0 +1,8 @@
+{
+  "rig": "female",
+  "texture": "nightborn:textures/entity/vampire/female_morwen.png",
+  "eras": [
+    "nightborn:victorian"
+  ],
+  "weight": 10
+}

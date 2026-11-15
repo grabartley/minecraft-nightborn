@@ -1,0 +1,8 @@
+{
+  "rig": "male",
+  "texture": "nightborn:textures/entity/vampire/male_aldric.png",
+  "eras": [
+    "nightborn:georgian"
+  ],
+  "weight": 10
+}

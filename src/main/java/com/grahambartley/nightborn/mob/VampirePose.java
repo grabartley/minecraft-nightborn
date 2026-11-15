@@ -8,6 +8,8 @@ import software.bernie.geckolib.animation.RawAnimation;
 
 public enum VampirePose {
   IDLE("idle", Play.LOOP),
+  IDLE_LOOK("idle_look", Play.ONCE, Hold.HEAD),
+  IDLE_LISTEN("idle_listen", Play.ONCE, Hold.HEAD),
   WALK("walk", Play.LOOP),
   RUN("run", Play.LOOP),
   ATTACK("attack", Play.HOLD),
@@ -43,6 +45,7 @@ public enum VampirePose {
 
   private enum Hold {
     NOTHING,
+    HEAD,
     ARMS,
     ARMS_AND_HEAD,
     ARMS_HEAD_AND_HANDS
@@ -135,11 +138,11 @@ public enum VampirePose {
   }
 
   public boolean allowsActions() {
-    return hold == Hold.NOTHING;
+    return hold == Hold.NOTHING || hold == Hold.HEAD;
   }
 
   public boolean holdsHead() {
-    return hold == Hold.ARMS_AND_HEAD || hold == Hold.ARMS_HEAD_AND_HANDS;
+    return hold == Hold.HEAD || hold == Hold.ARMS_AND_HEAD || hold == Hold.ARMS_HEAD_AND_HANDS;
   }
 
   public boolean showsHeldItems() {
