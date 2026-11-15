@@ -41,6 +41,7 @@
       "com.grahambartley.nightborn.gametest.WeakenedGameTest",
       "com.grahambartley.nightborn.gametest.SettingsGameTest",
       "com.grahambartley.nightborn.gametest.PlayerFeedingGameTest",
+      "com.grahambartley.nightborn.gametest.TurningBiteGameTest",
       "com.grahambartley.nightborn.gametest.SkillGameTest",
       "com.grahambartley.nightborn.gametest.HunterGameTest",
       "com.grahambartley.nightborn.gametest.CoffinGameTest",

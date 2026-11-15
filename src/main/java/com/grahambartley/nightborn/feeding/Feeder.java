@@ -69,7 +69,7 @@ final class Feeder {
           SoundCategory.PLAYERS,
           0.8F,
           0.6F);
-      mayStartSickness(victim, session, config, world.getRandom());
+      mayStartSickness(vampire, victim, session, config, world.getRandom());
     }
     if (VillagerWitnesses.alert(
             world, vampire, victim, session, config.feeding().witnessRange(), bite)
@@ -146,15 +146,18 @@ final class Feeder {
   }
 
   private static void mayStartSickness(
+      final ServerPlayerEntity vampire,
       final LivingEntity victim,
       final FeedingSession session,
       final NightbornConfig config,
       final Random random) {
+    final boolean firstRoll = session.rollTurnOnce();
     BiteSickness.startFromBite(
         victim,
         config.turning().biteTurnChance(),
+        TurningBite.isOn(vampire),
         config.turning().playersCanTurnPlayers(),
-        session.rollTurnOnce(),
+        firstRoll,
         random,
         config.turning());
   }

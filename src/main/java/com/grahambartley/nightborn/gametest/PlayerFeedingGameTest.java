@@ -1,6 +1,7 @@
 package com.grahambartley.nightborn.gametest;
 
 import com.grahambartley.nightborn.feeding.FeedingSessions;
+import com.grahambartley.nightborn.feeding.TurningBite;
 import com.grahambartley.nightborn.sickness.BiteSicknessAttachment;
 import net.fabricmc.fabric.api.event.player.UseEntityCallback;
 import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
@@ -60,9 +61,29 @@ public class PlayerFeedingGameTest implements FabricGameTest {
   }
 
   @GameTest(templateName = ARENA, batchId = PVP_ON, tickLimit = TestPlayers.READY + 40)
-  public void withPvpOnAVampiresBiteStartsBiteSickness(final TestContext context) {
+  public void withPvpOnAFeedingBiteNeverStartsBiteSickness(final TestContext context) {
     final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(3, 2, 4));
     final ServerPlayerEntity human = TestPlayers.human(context, new BlockPos(4, 2, 4));
+    context.runAtEveryTick(
+        () -> {
+          if (context.getTick() >= TestPlayers.READY) {
+            hold(context, vampire, human);
+          }
+        });
+    context.runAtTick(
+        TestPlayers.READY + 30,
+        () -> {
+          context.assertTrue(human.getHealth() < human.getMaxHealth(), "the human was bitten");
+          context.assertFalse(BiteSicknessAttachment.isSick(human), "a feeding bite never turns");
+          TestPlayers.finish(context, vampire, human);
+        });
+  }
+
+  @GameTest(templateName = ARENA, batchId = PVP_ON, tickLimit = TestPlayers.READY + 40)
+  public void withPvpOnATurningBiteStartsBiteSickness(final TestContext context) {
+    final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(3, 2, 4));
+    final ServerPlayerEntity human = TestPlayers.human(context, new BlockPos(4, 2, 4));
+    TurningBite.set(vampire, true);
     context.runAtEveryTick(
         () -> {
           if (context.getTick() >= TestPlayers.READY && !BiteSicknessAttachment.isSick(human)) {

@@ -39,7 +39,7 @@ public final class MobBite {
         FeedingSessions.fed(biter, world.getTime());
       }
     }
-    BiteSickness.startFromBite(victim, turnChance, true, true, world.getRandom(), turning);
+    BiteSickness.startFromBite(victim, turnChance, true, true, true, world.getRandom(), turning);
     return true;
   }
 }

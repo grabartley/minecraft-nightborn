@@ -1,5 +1,7 @@
 package com.grahambartley.nightborn.client;
 
+import com.grahambartley.nightborn.Nightborn;
+import com.grahambartley.nightborn.feeding.TurningBite;
 import com.grahambartley.nightborn.sickness.BiteSicknessEffect;
 import com.grahambartley.nightborn.vampire.VisibleState;
 import com.grahambartley.nightborn.vampire.VisibleStateAttachment;
@@ -16,9 +18,7 @@ import net.minecraft.util.Identifier;
 public final class VampireHud {
 
   static final Identifier VIGNETTE = Identifier.ofVanilla("textures/misc/vignette.png");
-  static final int SIGN_X = 4;
-  static final int SIGN_Y = 4;
-  static final int ICON = 18;
+  static final Identifier TURNING_BITE = Identifier.of(Nightborn.MOD_ID, "hud/turning_bite");
   static final int TEXT_COLOUR = 0xD8C8B0;
 
   private VampireHud() {}
@@ -34,15 +34,35 @@ public final class VampireHud {
       drawSicknessVignette(context, SicknessVignette.alpha(sickness.getAmplifier()));
     }
     final VisibleState visible = VisibleStateAttachment.get(player);
+    int signs = 0;
     if (visible.isWeakened()) {
-      context.drawGuiTexture(WeakenedSignRenderer.SPRITE, SIGN_X, SIGN_Y, ICON, ICON);
-      context.drawTextWithShadow(
-          client.textRenderer,
+      drawSign(
+          context,
+          client,
+          WeakenedSignRenderer.SPRITE,
           Text.translatable("nightborn.weakened.sign", visible.weakened()),
-          SIGN_X + ICON + 4,
-          SIGN_Y + 5,
-          TEXT_COLOUR);
+          signs++);
     }
+    if (TurningBite.isOn(player)) {
+      drawSign(
+          context, client, TURNING_BITE, Text.translatable("nightborn.turning_bite.sign"), signs);
+    }
+  }
+
+  private static void drawSign(
+      final DrawContext context,
+      final MinecraftClient client,
+      final Identifier sprite,
+      final Text text,
+      final int index) {
+    final int y = HudSigns.y(index);
+    context.drawGuiTexture(sprite, HudSigns.X, y, HudSigns.ICON, HudSigns.ICON);
+    context.drawTextWithShadow(
+        client.textRenderer,
+        text,
+        HudSigns.X + HudSigns.TEXT_OFFSET_X,
+        y + HudSigns.TEXT_OFFSET_Y,
+        TEXT_COLOUR);
   }
 
   private static void drawSicknessVignette(final DrawContext context, final float alpha) {

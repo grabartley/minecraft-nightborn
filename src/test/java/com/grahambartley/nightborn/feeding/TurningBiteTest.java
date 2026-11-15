@@ -1,0 +1,49 @@
+package com.grahambartley.nightborn.feeding;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import com.grahambartley.nightborn.testing.FakeAttachmentTarget;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.ValueSource;
+
+class TurningBiteTest {
+
+  @Test
+  @DisplayName("a vampire's bite feeds until they choose otherwise, and stores nothing")
+  void feedsByDefault() {
+    final FakeAttachmentTarget player = new FakeAttachmentTarget();
+    assertFalse(TurningBite.isOn(player));
+    assertFalse(player.hasAttached(TurningBite.TYPE));
+  }
+
+  @ParameterizedTest(name = "set {0}")
+  @ValueSource(booleans = {true, false})
+  @DisplayName("the choice is stored only while the turning bite is on")
+  void storesOnlyWhenOn(final boolean on) {
+    final FakeAttachmentTarget player = new FakeAttachmentTarget();
+    TurningBite.set(player, true);
+    TurningBite.set(player, on);
+    assertEquals(on, TurningBite.isOn(player));
+    assertEquals(on, player.hasAttached(TurningBite.TYPE));
+  }
+
+  @ParameterizedTest(name = "on {0}: {1}")
+  @CsvSource({"true, nightborn.turning_bite.on", "false, nightborn.turning_bite.off"})
+  @DisplayName("each switch is confirmed with its own line")
+  void messages(final boolean on, final String key) {
+    assertEquals(key, TurningBite.messageKey(on));
+  }
+
+  @Test
+  @DisplayName("the choice is saved, kept through death and synced to its owner")
+  void followsTheGrid() {
+    assertTrue(TurningBite.TYPE.isPersistent());
+    assertTrue(TurningBite.TYPE.copyOnDeath());
+    assertTrue(TurningBite.TYPE.isSynced());
+  }
+}

@@ -31,6 +31,7 @@ public final class VampireClientFeatures {
     HudRenderCallback.EVENT.register(PowerBarHud::render);
     SkillKeys.register();
     LevitationKey.register();
+    TurningBiteKey.register();
     VampirePlayerClips.register();
     VomitFx.register();
     BloodFx.register();
