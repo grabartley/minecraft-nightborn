@@ -1,6 +1,7 @@
 package com.grahambartley.nightborn.familiar.goal;
 
 import com.grahambartley.nightborn.familiar.FamiliarDays;
+import com.grahambartley.nightborn.familiar.HomeRules;
 import com.grahambartley.nightborn.familiar.HumanFamiliarEntity;
 import com.grahambartley.nightborn.server.ServerConfigService;
 import java.util.EnumSet;
@@ -9,7 +10,6 @@ import net.minecraft.util.math.BlockPos;
 
 public class StayHomeGoal extends Goal {
 
-  static final int NIGHT_RANGE = 3;
   static final double SPEED = 0.7;
 
   private final HumanFamiliarEntity familiar;
@@ -46,8 +46,8 @@ public class StayHomeGoal extends Goal {
   }
 
   private int range() {
-    return FamiliarDays.isWorkingHours(familiar.getWorld())
-        ? ServerConfigService.current().familiars().guardRange()
-        : NIGHT_RANGE;
+    return HomeRules.range(
+        FamiliarDays.isWorkingHours(familiar.getWorld()),
+        ServerConfigService.current().familiars().guardRange());
   }
 }

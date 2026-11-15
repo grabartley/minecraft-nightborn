@@ -5,6 +5,7 @@ import com.grahambartley.nightborn.advancement.MilestoneCriterion;
 import com.grahambartley.nightborn.config.FamiliarSettings;
 import com.grahambartley.nightborn.server.ServerConfigService;
 import com.grahambartley.nightborn.vampire.Vampires;
+import java.util.List;
 import java.util.Locale;
 import net.fabricmc.fabric.api.event.player.UseEntityCallback;
 import net.minecraft.entity.Entity;
@@ -58,7 +59,7 @@ public final class FamiliarHiring {
     final HireRules.Outcome outcome =
         HireRules.decide(
             Vampires.isVampire(player),
-            villager.isAlive() && !villager.isBaby(),
+            villager.isAlive() && !villager.isBaby() && !villager.hasCustomer(),
             registry.bondOf(player.getUuid()).isPresent());
     if (outcome != HireRules.Outcome.HIRE) {
       player.sendMessage(Text.translatable(key(outcome)), true);
@@ -70,6 +71,7 @@ public final class FamiliarHiring {
     villager.releaseTicketFor(MemoryModuleType.JOB_SITE);
     villager.releaseTicketFor(MemoryModuleType.POTENTIAL_JOB_SITE);
     villager.releaseTicketFor(MemoryModuleType.MEETING_POINT);
+    final List<ItemStack> carried = villager.getInventory().clearToList();
     final HumanFamiliarEntity familiar = villager.convertTo(Familiars.HUMAN_FAMILIAR, true);
     if (familiar == null) {
       return HireRules.Outcome.NOT_HIREABLE;
@@ -77,6 +79,12 @@ public final class FamiliarHiring {
     final FamiliarSettings settings = ServerConfigService.current().familiars();
     familiar.hire(
         player.getUuid(), data, FamiliarDays.today(world), settings.startLoyalty(), hiredAt);
+    for (final ItemStack stack : carried) {
+      final ItemStack left = familiar.getInventory().addStack(stack);
+      if (!left.isEmpty()) {
+        familiar.dropStack(left);
+      }
+    }
     registry.bind(player.getUuid(), familiar.getUuid());
     contract.decrementUnlessCreative(1, player);
     MilestoneCriterion.reach(player, Milestone.FAMILIAR_HIRED);

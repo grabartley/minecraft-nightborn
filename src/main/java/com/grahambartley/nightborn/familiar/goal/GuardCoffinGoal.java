@@ -1,5 +1,6 @@
 package com.grahambartley.nightborn.familiar.goal;
 
+import com.grahambartley.nightborn.familiar.HomeRules;
 import com.grahambartley.nightborn.familiar.HumanFamiliarEntity;
 import com.grahambartley.nightborn.server.ServerConfigService;
 import net.minecraft.entity.ai.goal.ActiveTargetGoal;
@@ -16,15 +17,14 @@ public class GuardCoffinGoal extends ActiveTargetGoal<HostileEntity> {
         true,
         false,
         intruder ->
-            !(intruder instanceof CreeperEntity)
-                && familiar
-                    .home()
-                    .filter(
-                        home ->
-                            intruder
-                                .getBlockPos()
-                                .isWithinDistance(
-                                    home, ServerConfigService.current().familiars().guardRange()))
-                    .isPresent());
+            familiar
+                .home()
+                .filter(
+                    home ->
+                        HomeRules.drivesOff(
+                            intruder instanceof CreeperEntity,
+                            intruder.getBlockPos().getSquaredDistance(home),
+                            ServerConfigService.current().familiars().guardRange()))
+                .isPresent());
   }
 }

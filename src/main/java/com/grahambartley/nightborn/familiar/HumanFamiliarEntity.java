@@ -29,6 +29,8 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtHelper;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.sound.SoundEvent;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
@@ -118,7 +120,7 @@ public class HumanFamiliarEntity extends PathAwareEntity
     if (getWorld() instanceof ServerWorld && isAlive()) {
       return FamiliarCare.interact(this, player, hand);
     }
-    return player.getUuid().equals(owner) ? ActionResult.SUCCESS : ActionResult.PASS;
+    return ActionResult.PASS;
   }
 
   @Override
@@ -152,6 +154,21 @@ public class HumanFamiliarEntity extends PathAwareEntity
     for (final ItemStack stack : carried.clearToList()) {
       dropStack(stack);
     }
+  }
+
+  @Override
+  protected SoundEvent getAmbientSound() {
+    return SoundEvents.ENTITY_VILLAGER_AMBIENT;
+  }
+
+  @Override
+  protected SoundEvent getHurtSound(final DamageSource source) {
+    return SoundEvents.ENTITY_VILLAGER_HURT;
+  }
+
+  @Override
+  protected SoundEvent getDeathSound() {
+    return SoundEvents.ENTITY_VILLAGER_DEATH;
   }
 
   @Override
@@ -231,8 +248,8 @@ public class HumanFamiliarEntity extends PathAwareEntity
     home = pos.toImmutable();
   }
 
-  boolean slightedRecently(final int coolingTicks) {
-    return (long) age - lastSlightedAge < coolingTicks;
+  long ticksSinceSlighted() {
+    return (long) age - lastSlightedAge;
   }
 
   void markSlighted() {

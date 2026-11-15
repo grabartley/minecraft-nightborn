@@ -32,7 +32,6 @@ import net.minecraft.test.GameTest;
 import net.minecraft.test.TestContext;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.GlobalPos;
 import net.minecraft.village.TradeOffer;
 import net.minecraft.village.TradeOfferList;
 import net.minecraft.village.TradedItem;
@@ -275,19 +274,14 @@ public class HumanFamiliarGameTest implements FabricGameTest {
         () -> {
           final HumanFamiliarEntity familiar = hired(context, vampire);
           familiar.setAiDisabled(true);
-          final GlobalPos fetchAt =
-              GlobalPos.create(context.getWorld().getRegistryKey(), context.getAbsolutePos(fetch));
-          final GlobalPos deliverAt =
-              GlobalPos.create(
-                  context.getWorld().getRegistryKey(), context.getAbsolutePos(deliver));
           context.assertTrue(
-              FamiliarOrders.mark(vampire, fetchAt).equals(Optional.of(ChestMark.FETCH)),
-              "the first mark is a fetch chest");
-          FamiliarOrders.mark(vampire, deliverAt);
+              FamiliarOrders.mark(vampire, context.getAbsolutePos(fetch))
+                  .equals(Optional.of(ChestMark.FETCH)),
+              "the first marked chest is the fetch chest");
           context.assertTrue(
-              FamiliarOrders.mark(vampire, deliverAt).equals(Optional.of(ChestMark.DELIVER)),
-              "marking a chest twice makes it the deliver chest");
-          FamiliarOrders.mark(vampire, fetchAt);
+              FamiliarOrders.mark(vampire, context.getAbsolutePos(deliver))
+                  .equals(Optional.of(ChestMark.DELIVER)),
+              "the second marked chest is the deliver chest");
           final RunErrandGoal errand = new RunErrandGoal(familiar);
           context.assertTrue(errand.canStart(), "a familiar with both chests marked runs errands");
           errand.start();
@@ -300,6 +294,46 @@ public class HumanFamiliarGameTest implements FabricGameTest {
           context.assertEquals(to.count(Items.EMERALD), 1, "what was bought is delivered");
           context.assertEquals(offers.get(0).getUses(), 1, "the villager made the trade");
           context.assertTrue(familiar.getInventory().isEmpty(), "nothing is left carried");
+          context.assertTrue(
+              context
+                  .getWorld()
+                  .getEntitiesByClass(
+                      ItemEntity.class, context.getTestBox().expand(2), item -> true)
+                  .isEmpty(),
+              "nothing is dropped on the way");
+          TestPlayers.finish(context, vampire);
+        });
+  }
+
+  @GameTest(templateName = ARENA, tickLimit = TestPlayers.READY + 20)
+  public void onlyAnOpenChestOrBarrelCanBeMarked(final TestContext context) {
+    final ServerPlayerEntity vampire = TestPlayers.vampire(context, STAND);
+    final BlockPos locked = new BlockPos(1, 2, 1);
+    final BlockPos furnace = new BlockPos(2, 2, 1);
+    final BlockPos barrel = new BlockPos(4, 2, 1);
+    context.setBlockState(locked, Blocks.CHEST);
+    context.setBlockState(furnace, Blocks.FURNACE);
+    context.setBlockState(barrel, Blocks.BARREL);
+    final NbtCompound lock = new NbtCompound();
+    lock.putString("Lock", "crypt key");
+    context.getBlockEntity(locked).read(lock, context.getWorld().getRegistryManager());
+    context.runAtTick(
+        TestPlayers.READY,
+        () -> {
+          context.assertTrue(
+              FamiliarOrders.mark(vampire, context.getAbsolutePos(barrel)).isEmpty(),
+              "a vampire without a familiar marks nothing");
+          hired(context, vampire);
+          context.assertTrue(
+              FamiliarOrders.mark(vampire, context.getAbsolutePos(locked)).isEmpty(),
+              "a chest the owner cannot open is refused");
+          context.assertTrue(
+              FamiliarOrders.mark(vampire, context.getAbsolutePos(furnace)).isEmpty(),
+              "a furnace is not an errand chest");
+          context.assertTrue(
+              FamiliarOrders.mark(vampire, context.getAbsolutePos(barrel))
+                  .equals(Optional.of(ChestMark.FETCH)),
+              "a barrel can be marked");
           TestPlayers.finish(context, vampire);
         });
   }

@@ -6,7 +6,16 @@ public final class FamiliarDay {
 
   private FamiliarDay() {}
 
+  public static final int MOST_DAYS_AT_ONCE = 7;
+
   public record Outcome(int loyalty, boolean betrays) {}
+
+  public static long catchUpFrom(final long lastDay, final long today) {
+    if (lastDay < 0L) {
+      return today;
+    }
+    return Math.max(lastDay, today - MOST_DAYS_AT_ONCE);
+  }
 
   public static Outcome pass(
       final int loyalty, final boolean paid, final FamiliarSettings settings, final int roll) {

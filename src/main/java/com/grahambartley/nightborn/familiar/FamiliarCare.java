@@ -19,8 +19,6 @@ import net.minecraft.util.Hand;
 
 public final class FamiliarCare {
 
-  static final int SLIGHT_COOLING_TICKS = 100;
-
   private FamiliarCare() {}
 
   static ActionResult interact(
@@ -84,15 +82,15 @@ public final class FamiliarCare {
 
   static void slighted(final HumanFamiliarEntity familiar, final DamageSource source) {
     final Entity attacker = source.getAttacker();
-    if (!(attacker instanceof PlayerEntity player)
-        || !familiar.isOwnedBy(player)
-        || familiar.slightedRecently(SLIGHT_COOLING_TICKS)) {
-      return;
-    }
-    final FamiliarSettings settings = ServerConfigService.current().familiars();
     final int loss =
-        source.isOf(NightbornDamage.BITE) ? settings.bittenLoyalty() : settings.hurtLoyalty();
-    familiar.changeLoyalty(-loss);
-    familiar.markSlighted();
+        Slights.loyaltyLost(
+            attacker instanceof PlayerEntity player && familiar.isOwnedBy(player),
+            source.isOf(NightbornDamage.BITE),
+            familiar.ticksSinceSlighted(),
+            ServerConfigService.current().familiars());
+    if (loss > 0) {
+      familiar.changeLoyalty(-loss);
+      familiar.markSlighted();
+    }
   }
 }

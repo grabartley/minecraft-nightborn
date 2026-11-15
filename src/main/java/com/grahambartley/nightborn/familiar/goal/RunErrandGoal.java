@@ -1,6 +1,7 @@
 package com.grahambartley.nightborn.familiar.goal;
 
 import com.grahambartley.nightborn.familiar.ChestMarks;
+import com.grahambartley.nightborn.familiar.ErrandRules;
 import com.grahambartley.nightborn.familiar.ErrandTransfer;
 import com.grahambartley.nightborn.familiar.FamiliarBond;
 import com.grahambartley.nightborn.familiar.FamiliarDays;
@@ -70,10 +71,12 @@ public class RunErrandGoal extends Goal {
     final int range = ServerConfigService.current().familiars().errandRange();
     final GlobalPos from = marks.get().fetch().orElseThrow();
     final GlobalPos to = marks.get().deliver().orElseThrow();
-    if (from.dimension() != world.getRegistryKey()
-        || to.dimension() != world.getRegistryKey()
-        || !familiar.getBlockPos().isWithinDistance(from.pos(), range)
-        || !familiar.getBlockPos().isWithinDistance(to.pos(), range)) {
+    if (!ErrandRules.inReach(
+        from.dimension() == world.getRegistryKey(),
+        to.dimension() == world.getRegistryKey(),
+        familiar.getBlockPos().getSquaredDistance(from.pos()),
+        familiar.getBlockPos().getSquaredDistance(to.pos()),
+        range)) {
       return false;
     }
     fetch = from.pos();
@@ -131,7 +134,7 @@ public class RunErrandGoal extends Goal {
   }
 
   private void tradeLeg() {
-    if (trader == null || !trader.isAlive()) {
+    if (trader == null || !trader.isAlive() || trader.hasCustomer()) {
       trader = findTrader();
       if (trader == null) {
         leg = Leg.DELIVER;
@@ -152,7 +155,7 @@ public class RunErrandGoal extends Goal {
         break;
       }
       final ItemStack left = TradePick.pay(offer.get(), familiar.getInventory());
-      trader.trade(offer.get());
+      offer.get().use();
       if (!left.isEmpty()) {
         familiar.dropStack(left);
       }

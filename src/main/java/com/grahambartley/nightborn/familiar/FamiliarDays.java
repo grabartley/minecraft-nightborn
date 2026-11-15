@@ -12,8 +12,6 @@ import net.minecraft.world.World;
 
 public final class FamiliarDays {
 
-  static final int MOST_DAYS_AT_ONCE = 7;
-
   private FamiliarDays() {}
 
   public static long today(final World world) {
@@ -43,9 +41,7 @@ public final class FamiliarDays {
       final FamiliarRegistry registry,
       final long today,
       final FamiliarSettings settings) {
-    if (familiar.lastDay() < 0L || today - familiar.lastDay() > MOST_DAYS_AT_ONCE) {
-      familiar.lastDay(Math.max(familiar.lastDay(), today - MOST_DAYS_AT_ONCE));
-    }
+    familiar.lastDay(FamiliarDay.catchUpFrom(familiar.lastDay(), today));
     while (familiar.lastDay() < today) {
       final long ended = familiar.lastDay();
       final FamiliarDay.Outcome outcome =

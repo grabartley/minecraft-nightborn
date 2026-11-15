@@ -41,4 +41,11 @@ class FamiliarDayTest {
     final FamiliarSettings never = new FamiliarSettings(60, 1, 7, 5, 15, 25, 10, 25, 0, 8, 32);
     assertEquals(false, FamiliarDay.pass(0, false, never, roll).betrays());
   }
+
+  @ParameterizedTest(name = "last day {0}, today {1}: counts from {2}")
+  @CsvSource({"-1, 10, 10", "10, 10, 10", "8, 10, 8", "3, 10, 3", "2, 10, 3", "-1, 0, 0"})
+  @DisplayName("a familiar counts at most a week of missed days, and a new one starts today")
+  void catchUpFrom(final long lastDay, final long today, final long from) {
+    assertEquals(from, FamiliarDay.catchUpFrom(lastDay, today));
+  }
 }

@@ -10,6 +10,7 @@ import net.minecraft.command.argument.EntityArgumentType;
 import net.minecraft.entity.Entity;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 
 final class FamiliarCommand {
@@ -30,7 +31,17 @@ final class FamiliarCommand {
     final ServerCommandSource source = context.getSource();
     int released = 0;
     for (final Entity entity : EntityArgumentType.getEntities(context, TARGETS)) {
-      if (entity instanceof HumanFamiliarEntity familiar
+      if (entity instanceof ServerPlayerEntity owner
+          && FamiliarRelease.freeOwner(source.getServer(), owner.getUuid())) {
+        released++;
+        Nightborn.LOGGER.info(
+            "{} used /nightborn familiar {} release",
+            source.getName(),
+            owner.getName().getString());
+        source.sendFeedback(
+            () -> Text.translatable("nightborn.command.familiar.release.owner", owner.getName()),
+            true);
+      } else if (entity instanceof HumanFamiliarEntity familiar
           && FamiliarRelease.release(familiar) != null) {
         released++;
         Nightborn.LOGGER.info(

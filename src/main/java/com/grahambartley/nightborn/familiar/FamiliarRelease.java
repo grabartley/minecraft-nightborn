@@ -32,7 +32,7 @@ public final class FamiliarRelease {
     return villager;
   }
 
-  public static void freeOwner(final MinecraftServer server, final UUID owner) {
-    FamiliarRegistry.of(server).freeOwner(owner);
+  public static boolean freeOwner(final MinecraftServer server, final UUID owner) {
+    return FamiliarRegistry.of(server).freeOwner(owner);
   }
 }

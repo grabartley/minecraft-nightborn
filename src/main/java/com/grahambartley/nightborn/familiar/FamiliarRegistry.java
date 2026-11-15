@@ -55,10 +55,12 @@ public final class FamiliarRegistry extends PersistentState {
     }
   }
 
-  public void freeOwner(final UUID owner) {
-    if (bonds.remove(owner) != null) {
-      markDirty();
+  public boolean freeOwner(final UUID owner) {
+    if (bonds.remove(owner) == null) {
+      return false;
     }
+    markDirty();
+    return true;
   }
 
   @Override

@@ -22,17 +22,17 @@ class ChestMarksTest {
   static Stream<Arguments> marks() {
     return Stream.of(
         Arguments.of(ChestMarks.NONE, A, marks(A, null), ChestMark.FETCH),
-        Arguments.of(marks(A, null), A, marks(null, A), ChestMark.DELIVER),
-        Arguments.of(marks(null, A), A, ChestMarks.NONE, ChestMark.CLEARED),
+        Arguments.of(marks(A, null), B, marks(A, B), ChestMark.DELIVER),
+        Arguments.of(marks(A, null), A, ChestMarks.NONE, ChestMark.CLEARED),
         Arguments.of(marks(A, B), B, marks(A, null), ChestMark.CLEARED),
-        Arguments.of(marks(A, B), A, marks(null, A), ChestMark.DELIVER),
-        Arguments.of(marks(A, B), C, marks(C, B), ChestMark.FETCH),
+        Arguments.of(marks(A, B), A, marks(null, B), ChestMark.CLEARED),
+        Arguments.of(marks(A, B), C, marks(A, C), ChestMark.DELIVER),
         Arguments.of(marks(null, B), A, marks(A, B), ChestMark.FETCH));
   }
 
   @ParameterizedTest(name = "{0} marking {1} gives {2}")
   @MethodSource("marks")
-  @DisplayName("marking a chest cycles it from fetch to deliver to cleared")
+  @DisplayName("the first chest marked fetches, the next delivers, and a marked chest clears")
   void mark(
       final ChestMarks before,
       final GlobalPos chest,

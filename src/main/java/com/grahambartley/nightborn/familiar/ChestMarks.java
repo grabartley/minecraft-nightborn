@@ -22,12 +22,15 @@ public record ChestMarks(Optional<GlobalPos> fetch, Optional<GlobalPos> deliver)
 
   public Marked mark(final GlobalPos chest) {
     if (fetch.filter(chest::equals).isPresent()) {
-      return new Marked(new ChestMarks(Optional.empty(), Optional.of(chest)), ChestMark.DELIVER);
+      return new Marked(new ChestMarks(Optional.empty(), deliver), ChestMark.CLEARED);
     }
     if (deliver.filter(chest::equals).isPresent()) {
       return new Marked(new ChestMarks(fetch, Optional.empty()), ChestMark.CLEARED);
     }
-    return new Marked(new ChestMarks(Optional.of(chest), deliver), ChestMark.FETCH);
+    if (fetch.isEmpty()) {
+      return new Marked(new ChestMarks(Optional.of(chest), deliver), ChestMark.FETCH);
+    }
+    return new Marked(new ChestMarks(fetch, Optional.of(chest)), ChestMark.DELIVER);
   }
 
   public boolean complete() {
