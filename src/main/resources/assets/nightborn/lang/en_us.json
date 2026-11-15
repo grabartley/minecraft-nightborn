@@ -156,7 +156,6 @@
   "nightborn.skills.title": "Skills",
   "nightborn.skills.points": "Earned: %s   Spent: %s   Free: %s",
   "nightborn.skills.empty": "No skills to learn yet",
-  "nightborn.skills.branch_locked": "%s (locked)",
   "nightborn.skills.cost": "Point cost: %s",
   "nightborn.skills.needs": "Needs: %s",
   "nightborn.skills.power": "Power: %s blood, %s s cooldown",

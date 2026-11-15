@@ -156,7 +156,6 @@
   "nightborn.skills.title": "Навыки",
   "nightborn.skills.points": "Получено: %s   Потрачено: %s   Свободно: %s",
   "nightborn.skills.empty": "Пока нечему учиться",
-  "nightborn.skills.branch_locked": "%s (закрыта)",
   "nightborn.skills.cost": "Стоимость в очках: %s",
   "nightborn.skills.needs": "Нужно: %s",
   "nightborn.skills.power": "Сила: %s крови, перезарядка %s с",

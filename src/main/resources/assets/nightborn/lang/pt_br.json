@@ -156,7 +156,6 @@
   "nightborn.skills.title": "Habilidades",
   "nightborn.skills.points": "Ganhos: %s   Gastos: %s   Livres: %s",
   "nightborn.skills.empty": "Ainda não há habilidades para aprender",
-  "nightborn.skills.branch_locked": "%s (bloqueada)",
   "nightborn.skills.cost": "Custo em pontos: %s",
   "nightborn.skills.needs": "Requer: %s",
   "nightborn.skills.power": "Poder: %s de sangue, %s s de recarga",

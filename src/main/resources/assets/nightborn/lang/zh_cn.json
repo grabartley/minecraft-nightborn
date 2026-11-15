@@ -156,7 +156,6 @@
   "nightborn.skills.title": "技能",
   "nightborn.skills.points": "已获得：%s   已花费：%s   可用：%s",
   "nightborn.skills.empty": "暂时没有可学的技能",
-  "nightborn.skills.branch_locked": "%s（已锁定）",
   "nightborn.skills.cost": "点数花费：%s",
   "nightborn.skills.needs": "需要：%s",
   "nightborn.skills.power": "能力：%s 血液，冷却 %s 秒",

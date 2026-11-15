@@ -27,6 +27,7 @@ public final class PowerBarHud {
   static final int COST_COLOUR = 0xE04040;
   static final int KEY_COLOUR = 0xC8B8A0;
   static final int READY_COLOUR = 0xFFFFFF;
+  static final float KEY_SCALE = 0.5F;
 
   private PowerBarHud() {}
 
@@ -99,19 +100,23 @@ public final class PowerBarHud {
       context.drawCenteredTextWithShadow(
           client.textRenderer, seconds, at.x() + size / 2, at.y() + inset + 4, READY_COLOUR);
     }
-    if (power.blood() > 0) {
+    if (power.blood() > 0 && shade <= 0.0F) {
       final String cost = Integer.toString(power.blood());
       context.drawTextWithShadow(
           client.textRenderer,
           cost,
-          at.x() + size - 1 - client.textRenderer.getWidth(cost),
-          at.y() + size - 8,
+          at.x() + inset + PowerSlotView.ICON + 1 - client.textRenderer.getWidth(cost),
+          at.y() + inset + PowerSlotView.ICON / 2 + 1,
           COST_COLOUR);
     }
     final String key =
         PowerSlotView.keyLabel(
             SkillKeys.power(slot).getBoundKeyLocalizedText().getString(),
             SkillKeys.power(slot).isUnbound());
-    context.drawTextWithShadow(client.textRenderer, key, at.x() + 2, at.y() + 2, KEY_COLOUR);
+    context.getMatrices().push();
+    context.getMatrices().translate(at.x() + inset - 1, at.y() + inset - 1, 0.0F);
+    context.getMatrices().scale(KEY_SCALE, KEY_SCALE, 1.0F);
+    context.drawTextWithShadow(client.textRenderer, key, 0, 0, KEY_COLOUR);
+    context.getMatrices().pop();
   }
 }

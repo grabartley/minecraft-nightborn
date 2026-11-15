@@ -133,10 +133,8 @@ public final class SkillScreen extends Screen {
     final int centre = layout.branchLeft(index, branches.size()) + layout.branchWidth() / 2;
     final boolean locked = SkillPurchase.locked(progress, id, branchData.get(id));
     final boolean chosen = progress.bloodlines().contains(id);
-    Text title = Text.translatable(SkillNames.branch(id));
-    if (locked) {
-      title = Text.translatable("nightborn.skills.branch_locked", title);
-    }
+    final Text title =
+        Text.translatable(SkillNames.branch(id)).styled(style -> style.withStrikethrough(locked));
     context.drawCenteredTextWithShadow(
         textRenderer,
         title,
