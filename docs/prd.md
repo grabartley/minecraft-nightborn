@@ -37,8 +37,8 @@ Nightborn adds vampires and the people who hunt them. A bite from a vampire or a
 | Feeding is a real choice | Sip or drain, fresh or bottled, animal or person, and the victim can fight back (FEED-1 to FEED-13) |
 | Builds that fit your playstyle | Pick two of three bloodlines, each with its own powers (LINE-1 to LINE-6) |
 | Folklore that works | Garlic, crucifixes built from blocks, holy water, silver and stakes each have real rules (WEAK-1 to WEAK-10) |
-| Vampires live somewhere | Households with personalities in four kinds of structure, rare and hidden in fog (HOME-1 to HOME-12) |
-| The day belongs to vampires too | Coffins skip the day the way beds skip the night (COFFIN-1 to COFFIN-7) |
+| Vampires live somewhere | Households with personalities in four kinds of structure, rare and hidden in fog (HOME-1 to HOME-13) |
+| The day belongs to vampires too | Coffins skip the day the way beds skip the night (COFFIN-1 to COFFIN-8) |
 | Help in the daylight | A human familiar runs errands and guards your coffin, and might betray you (FAM-1 to FAM-8) |
 
 ### Non-Goals
@@ -71,7 +71,7 @@ This document specifies the Nightborn alpha line for Minecraft 1.21.1 on Fabric.
 | Vampires needing an invitation to enter a home | Needs a notion of home ownership, which the mod does not have |
 | Changing bloodlines once chosen | Choices are meant to stick. A reset can come later if play shows the need |
 | Hunter orders with separate trees | One shared tree keeps hunters simple |
-| Markers for vampires on map mods | Vanilla maps come first (FACT-6) |
+| Hiding vampire markers on map mods | Vanilla maps come first (CORE-5) |
 
 ### Product Decisions
 
@@ -79,7 +79,7 @@ This document specifies the Nightborn alpha line for Minecraft 1.21.1 on Fabric.
 |---|---|---|
 | Which side is the mod about? | Both. Vampires and hunters are both playable | TURN, HUNT |
 | How do you turn? | A bite from a vampire, a vampire bat or a vampire player | TURN-1 |
-| Can you be cured? | Only during the sickness | CURE-1 to CURE-4 |
+| Can you be cured? | Only during the sickness | CURE-1 to CURE-3 |
 | How bad is the sun? | Lethal. Direct sun sets a vampire on fire | SUN-1 |
 | What replaces hunger? | Blood | FEED-1 |
 | How do powers grow? | A skill tree with three bloodlines, of which you invest in two | LINE-1 to LINE-3 |
@@ -117,6 +117,7 @@ This document specifies the Nightborn alpha line for Minecraft 1.21.1 on Fabric.
 | Sip | Feeding that stops before the victim dies |
 | Drain | Feeding until the victim dies |
 | Resist | A victim breaking free of a bite |
+| Weakened | The vampire debuff from garlic, crucifixes and holy water: slower, weaker blows and no powers. It is not the vanilla Weakness effect |
 | Skill point | Earned by a vampire through feeding, or by a hunter through killing vampires. Spent on a skill tree |
 | Core | The vampire skills every vampire can take |
 | Bloodline | One of three branches of the vampire tree: Noble, Beast or Occult |
@@ -161,9 +162,9 @@ A vampire mob, a vampire bat or a vampire player bites a human. The bite may sta
 
 | ID | Requirement |
 |---|---|
-| TURN-1 | A bite from a vampire mob, vampire bat or vampire player starts bite sickness on a human, with a chance set per biter. A vampire player's bite always starts it |
+| TURN-1 | A bite from a vampire mob, vampire bat or vampire player starts bite sickness on a human, with a chance set per biter. A vampire player's bite starts it every time by default, less against a human with bite resistance (HUNT-4) |
 | TURN-2 | A vampire player can bite a human player only where the server allows PvP |
-| TURN-3 | Bite sickness lasts 3 in-game days, and gets worse each day: hunger, then weakness, then slowness in daylight |
+| TURN-3 | Bite sickness lasts 3 in-game days, and gets worse each day: hunger, then the vanilla Weakness effect, then slowness in daylight |
 | TURN-4 | A sick player is shown the sickness and the days left, as a status effect and a sign on screen |
 | TURN-5 | When the sickness runs out, the player turns. They keep their inventory, start with a full blood bar and get the vampire core |
 | TURN-6 | A player who turns stops earning hunter skills, and their hunter tree is set aside. It comes back if an operator makes them human again |
@@ -181,8 +182,7 @@ A vampire mob, a vampire bat or a vampire player bites a human. The bite may sta
 |---|---|
 | CURE-1 | Eating a golden apple while under Weakness cures bite sickness, as it cures a zombie villager |
 | CURE-2 | Drinking holy water while sick cures it |
-| CURE-3 | A cure works only during the sickness. Nothing a player can do cures a vampire |
-| CURE-4 | Hunter skills can lower the chance that a bite starts the sickness (HUNT-4) |
+| CURE-3 | A cure works only during the sickness. Nothing a player can do cures a vampire. Only an operator can make a vampire human again (CFG-8) |
 
 **Not supported:** a cure after turning.
 
@@ -229,10 +229,9 @@ Sneak and use on a creature to bite it, and keep holding to drink. Let go to sto
 | ID | Requirement |
 |---|---|
 | SUN-1 | A vampire in direct sun catches fire, as a zombie does, and keeps burning while it stays there |
-| SUN-2 | No armour, helmet or effect stops the burn. Shade, rain, water and the coffin do |
+| SUN-2 | No armour, helmet or effect, Fire Resistance included, stops the burn. Shade, rain, water and a closed coffin (COFFIN-7) do |
 | SUN-3 | A burning vampire gives off smoke and a sizzling sound, on top of the fire |
-| SUN-4 | Fire Resistance does not stop sun damage |
-| SUN-5 | Vampire mobs follow the same rules and seek shade at dawn |
+| SUN-4 | Vampire mobs follow the same rules and seek shade at dawn |
 
 **Not supported:** a way to walk in direct sun.
 
@@ -242,7 +241,7 @@ Sneak and use on a creature to bite it, and keep holding to drink. Let go to sto
 
 **Actor:** Vampire, hunter.
 
-Weakened means slower, weaker blows and no powers, scaled by how strong the source is.
+How weakened a vampire is scales with how strong the source is.
 
 | ID | Requirement |
 |---|---|
@@ -254,8 +253,8 @@ Weakened means slower, weaker blows and no powers, scaled by how strong the sour
 | WEAK-6 | Silver weapons deal extra damage to vampires |
 | WEAK-7 | A wooden stake deals extra damage to vampires. A stake as the final blow stakes the vampire |
 | WEAK-8 | A weakened vampire shows it to everyone with a sign that is not colour alone |
-| WEAK-9 | Weakness from different sources adds up, to a cap |
-| WEAK-10 | Weakness never damages a vampire on its own, except holy water |
+| WEAK-9 | Being weakened by different sources adds up, to a cap |
+| WEAK-10 | Being weakened never damages a vampire on its own. Holy water does damage, as WEAK-5 says |
 
 **Not supported:** garlic or crucifixes stopping a vampire break blocks or open doors.
 
@@ -303,7 +302,7 @@ The vampire tree has the core and three bloodlines. A vampire spends points in a
 
 | ID | Requirement |
 |---|---|
-| SKILL-1 | Vampire points come from feeding (FEED-12). Hunter points come from killing vampires and finishing contracts (HUNT-2) |
+| SKILL-1 | Vampire points and hunter points are separate, and each is spent only in its own tree. Their sources are FEED-12, HUNT-1 and HUNT-2 |
 | SKILL-2 | A skill costs points and may need another skill first |
 | SKILL-3 | Bought skills are kept across death, reconnect and world reload |
 | SKILL-4 | Active skills sit in a small power bar and are used with keys the player can rebind |
@@ -399,7 +398,7 @@ Every human is a hunter in waiting. Killing vampires earns hunter points.
 | GUILD-1 | Hunter camps generate rarely in the overworld, each with a few hunter mobs and a Guild Master |
 | GUILD-2 | Hunter mobs attack vampire players and vampire mobs on sight, and leave humans alone |
 | GUILD-3 | The Guild Master sells hunter gear and gives contracts, such as killing vampires or clearing a vampire structure |
-| GUILD-4 | Contracts pay in emeralds, silver and gear, and earn hunter points (HUNT-2) |
+| GUILD-4 | Contracts pay in emeralds, silver and gear, on top of the hunter points HUNT-2 gives |
 | GUILD-5 | A vampire player cannot trade or take contracts at a camp |
 
 **Enforcement:** server.
@@ -431,6 +430,7 @@ Vampires are rare. They live in households hidden in four kinds of structure, ea
 | HOME-10 | Vampire bats spawn rarely in dark caves and at night, and bite (TURN-1) |
 | HOME-11 | Vampire mobs ignore vampire players unless attacked |
 | HOME-12 | Structure layouts, loot and spawn rates are data, changed by a data pack |
+| HOME-13 | Vampire mobs hunt humans, villagers and animals at night to feed on them, and their bites can start bite sickness (TURN-1) |
 
 **Not supported:** a household rebuilding after it is cleared.
 
@@ -444,11 +444,12 @@ Vampires are rare. They live in households hidden in four kinds of structure, ea
 |---|---|
 | COFFIN-1 | A coffin opens and closes, and a vampire can lie in it by day, as a human lies in a bed by night |
 | COFFIN-2 | Enough vampires sleeping in coffins skips the day to dusk, as beds skip the night to dawn |
-| COFFIN-3 | The share of vampire players who must sleep is a server option, 100% by default. Only vampire players online in that dimension count |
+| COFFIN-3 | The share of vampire players who must sleep is a server option, 100% by default. Only vampire players online in that dimension count. With none online, nothing skips the day |
 | COFFIN-4 | Lying in a coffin sets the vampire's respawn point there, as a bed does |
 | COFFIN-5 | A vampire whose coffin is gone respawns at world spawn, as with a missing bed |
 | COFFIN-6 | A human can open a coffin but not sleep in it |
 | COFFIN-7 | A closed coffin shades the vampire inside from the sun |
+| COFFIN-8 | Vampire players never count toward the bed share, and humans never count toward the coffin share, so neither side blocks the other's sleep |
 
 **Enforcement:** server.
 
@@ -460,7 +461,7 @@ Vampires are rare. They live in households hidden in four kinds of structure, ea
 |---|---|
 | DECOR-1 | Gothic furniture: candelabras, chandeliers, velvet drapes, stained glass, ornate chairs and tables |
 | DECOR-2 | Gothic building blocks in stone and dark wood, with stairs, slabs and walls |
-| DECOR-3 | Blood decor: blood fountains, blood pools, splatter decals and chalices |
+| DECOR-3 | Blood decor: blood fountains, blood pools, placeable splatter decals and chalices |
 | DECOR-4 | Hunter decor: weapon racks, wanted posters, trophy mounts and crucifixes |
 | DECOR-5 | Coffins in several woods |
 | DECOR-6 | Candles and candelabras light the room. A chandelier can be lit and put out |
@@ -477,7 +478,7 @@ Vampires are rare. They live in households hidden in four kinds of structure, ea
 
 | ID | Requirement |
 |---|---|
-| GORE-1 | Bites, stakes and silver hits spray blood. Blood leaves splatter on nearby blocks that fades with time |
+| GORE-1 | Bites, stakes and silver hits spray blood. Blood leaves splatter on nearby blocks, drawn by the client, that fades with time |
 | GORE-2 | A drained victim and a staked vampire have their own death effects |
 | GORE-3 | A client option sets gore to Full, Reduced or Off. Full is the default |
 | GORE-4 | Gore is drawn by the client only. The setting never changes what happens in the world |
@@ -492,10 +493,8 @@ Vampires are rare. They live in households hidden in four kinds of structure, ea
 |---|---|
 | FACT-1 | Every player is a vampire or a human. Humans earn hunter skills; vampires earn bloodline skills |
 | FACT-2 | Combat between players follows the server's PvP setting. With PvP on, vampires and humans can fight and bite |
-| FACT-3 | Hunter mobs and hunter gear target vampire players (GUILD-2) |
-| FACT-4 | A player's faction is shown in the player list only if the server turns it on. It is off by default |
-| FACT-5 | Vampires, humans and sick players are told apart only by what other players can see: eyes, weakness and effects |
-| FACT-6 | Vanilla maps never show a vampire player's marker (CORE-5) |
+| FACT-3 | A player's faction is shown in the player list only if the server turns it on. It is off by default |
+| FACT-4 | Otherwise, vampires, humans and sick players are told apart only by what other players can see: eyes, being weakened and effects |
 
 **Enforcement:** server.
 
@@ -505,11 +504,11 @@ Vampires are rare. They live in households hidden in four kinds of structure, ea
 
 | ID | Requirement |
 |---|---|
-| CFG-1 | Every option can be set with `/nightborn`, by an operator of level 2 or above |
+| CFG-1 | Every server option can be set with `/nightborn`, by an operator of level 2 or above |
 | CFG-2 | Settings are saved per world as JSON in the world save directory |
 | CFG-3 | A missing file gives defaults. A broken file gives defaults, is logged and is kept |
 | CFG-4 | Out-of-range values are clamped on load |
-| CFG-5 | Options cover turn chances, sickness length, sun damage, blood drain and values, weakness ranges, skill point rates, the staking penalty, the coffin sleep share, spawn and structure rates, and whether players can turn players |
+| CFG-5 | Options cover turn chances, sickness length, sun damage, blood drain and values, garlic and crucifix ranges, skill point rates, the staking penalty, the coffin sleep share, spawn and structure rates, and whether players can turn players |
 | CFG-6 | A settings screen through Mod Menu shows the same server options and shares their validation with the commands |
 | CFG-7 | An option that only changes what one player sees, such as gore, is a client setting saved on that player's device |
 | CFG-8 | Operators can turn, cure, set points and reset the bloodlines of any player |
@@ -520,7 +519,7 @@ Vampires are rare. They live in households hidden in four kinds of structure, ea
 
 **Actor:** Any player.
 
-The mod has its own tab. It branches early into three paths, Vampire, Hunter and World, and each can be followed in any order. Names are short and clever.
+The mod has its own tab. It branches early into three paths, Vampire, Hunter and World, and each can be followed in any order.
 
 | ID | Advancement | Earned by |
 |---|---|---|
@@ -553,7 +552,7 @@ The mod has its own tab. It branches early into three paths, Vampire, Hunter and
 | ADV-24 | Lord Of The Manner and Strings Attached are challenges. No Reflection On You, Old Blood and Close Call are goals. Goals give 50 experience and challenges give 100 |
 | ADV-25 | An advancement earned in steps shows its progress |
 | ADV-26 | Icons use the mod's own items where one fits |
-| ADV-27 | Names may be tuned, but each stays short, clever and in plain English |
+| ADV-27 | Names may be tuned, but each stays short, clever and in plain English. Wordplay is fine, a joke at the expense of the dark tone is not |
 
 **Enforcement:** server.
 
@@ -571,7 +570,7 @@ A modified client is assumed. Hiding a control is never the enforcement of a rul
 | Earn and spend vampire points | No | Yes | Yes | Through CFG-8 |
 | Sleep in a coffin | No | Yes | Yes | Yes, as a vampire |
 | Break or open a coffin | Yes | Yes | Yes | Yes |
-| Command a thrall or familiar | No | Only their own | Yes | No |
+| Command a thrall or familiar | No | Only their own | Only their own | No |
 | Hurt a thrall or familiar | Yes | Yes | Yes | Yes |
 | Trade or take contracts at a hunter camp | Yes | No | No | Yes, as a human |
 | Turn, cure or reset a player | No | No | No | Yes |
@@ -617,7 +616,7 @@ There is no singleplayer mode in this mod. A single-player world is an integrate
 
 | State | Scope |
 |---|---|
-| Faction, sickness, blood, skills, bloodlines and cooldowns | That player, synced only to them, except what others can see (CORE-4, WEAK-8) |
+| Faction, sickness, blood, skills, bloodlines and cooldowns | That player, synced only to them, except what others can see (CORE-4, WEAK-8, FACT-3) |
 | Coffin respawn point | That player |
 | Gore setting | That player's device |
 
@@ -635,16 +634,16 @@ There is no singleplayer mode in this mod. A single-player world is an integrate
 | ID | Requirement |
 |---|---|
 | SAFE-1 | No game mechanic duplicates or deletes any item the mod handles. Bottling blood, contracts and trades conserve items |
-| SAFE-2 | Blood and skill points are never created except by FEED-12, HUNT-1, HUNT-2 and CFG-8 |
+| SAFE-2 | Blood is never created except by feeding (FEED-4), turning (TURN-5) and respawning, as the persistence grid says |
 | SAFE-3 | A bad config file never stops a server starting (CFG-3, CFG-4) |
 | SAFE-4 | Every payload is size-limited and checked, including skill purchases and familiar orders |
-| SAFE-5 | Turning never loses a player's inventory |
+| SAFE-5 | Skill points are never created except by FEED-12, HUNT-1, HUNT-2 and CFG-8 |
 
 ### Performance
 
 | ID | Requirement |
 |---|---|
-| PERF-1 | A human with no sickness costs nothing per tick beyond vanilla |
+| PERF-1 | A human with no sickness, holding no crucifix and not tracking costs nothing per tick beyond vanilla |
 | PERF-2 | Garlic and crucifix checks look only near vampires, never across the world |
 | PERF-3 | Crucifix shapes are found when blocks change, not every tick |
 | PERF-4 | Fog and ambience cost nothing outside the range of a vampire structure |
@@ -675,7 +674,7 @@ There is no singleplayer mode in this mod. A single-player world is an integrate
 | LOOK-2 | Places feel old, rich and lived in: decaying opulence, layered with portraits, velvet, dusty books, taxidermy and tarnished gold |
 | LOOK-3 | Colours are muted jewel tones: burgundy, emerald, black and gold |
 | LOOK-4 | Each vampire dresses in the era they were turned in, so a household mixes centuries |
-| LOOK-5 | Every model and animation is hand-made to a premium bar and judged against the best Minecraft art. Every mob is animated at rest, moving, attacking and feeding |
+| LOOK-5 | Every model and animation is hand-made to a premium bar and judged against the best Minecraft art. Every mob is animated at rest, moving and attacking, and every vampire while feeding |
 | LOOK-6 | Music is baroque and gothic: harpsichord, choir and brooding strings |
 | LOOK-7 | Vampire structures sound like old houses: creaks, settling, drips, guttering candles, wind in the halls and distant bells |
 | LOOK-8 | Blocks and items look like vanilla ones wherever they are held or shown: GUI, first and third person, item frames and the ground |
@@ -705,7 +704,7 @@ There is no singleplayer mode in this mod. A single-player world is an integrate
 
 ## 9. Release Criteria
 
-- Every use case's requirements hold on a dedicated server with two clients and in a singleplayer world, through the same code.
+- Every use case's requirements hold on a dedicated server with two clients and on an integrated server with one client, through the same code.
 - A human can be bitten, get sick, and either cure it or turn, without outside help.
 - A vampire can feed, survive a full day in a coffin and buy skills in two bloodlines.
 - A human can find a vampire structure and kill a vampire with hunter gear.
