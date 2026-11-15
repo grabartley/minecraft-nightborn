@@ -27,6 +27,7 @@ public class BiteSicknessGameTest implements FabricGameTest {
 
   static final String ARENA = "nightborn:vampire_arena";
   static final String CLOCK_BATCH = "sickness-clock";
+  static final String EFFECT_BATCH = "sickness-effect";
   static final int NIGHT_SKIPPED = 7000;
   static final int SAME_STAGE_RUN = 20000;
 
@@ -121,6 +122,16 @@ public class BiteSicknessGameTest implements FabricGameTest {
     WorldClock.release(world);
   }
 
+  @BeforeBatch(batchId = EFFECT_BATCH)
+  public void holdTheClock(final ServerWorld world) {
+    WorldClock.freeze(world, WorldClock.MIDNIGHT);
+  }
+
+  @AfterBatch(batchId = EFFECT_BATCH)
+  public void letTheClockGo(final ServerWorld world) {
+    WorldClock.release(world);
+  }
+
   @GameTest(templateName = ARENA, batchId = CLOCK_BATCH, tickLimit = 40)
   public void aSkippedNightMovesTheSicknessOn(final TestContext context) {
     final ServerPlayerEntity human = TestPlayers.human(context, new BlockPos(4, 2, 4));
@@ -142,7 +153,7 @@ public class BiteSicknessGameTest implements FabricGameTest {
         });
   }
 
-  @GameTest(templateName = ARENA, batchId = CLOCK_BATCH, tickLimit = 80)
+  @GameTest(templateName = ARENA, batchId = EFFECT_BATCH, tickLimit = 80)
   public void theEffectShrinksWhenLessTimeIsLeft(final TestContext context) {
     final ServerPlayerEntity human = TestPlayers.human(context, new BlockPos(4, 2, 4));
     final TurningSettings turning = ServerConfigService.current().turning();

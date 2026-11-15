@@ -4,6 +4,8 @@ public final class SicknessRules {
 
   static final int REMINDER_TICKS = 6000;
   static final int DISPLAY_DRIFT_TICKS = 40;
+  public static final int SYMPTOM_TICKS = 60;
+  public static final int REFRESH_TICKS = 20;
 
   private SicknessRules() {}
 
@@ -21,10 +23,14 @@ public final class SicknessRules {
       final boolean shown,
       final int shownAmplifier,
       final int shownDuration,
-      final int dayIndex,
+      final int stageIndex,
       final int ticksLeft) {
     return !shown
-        || shownAmplifier != dayIndex
+        || shownAmplifier != stageIndex
         || Math.abs(shownDuration - ticksLeft) > DISPLAY_DRIFT_TICKS;
+  }
+
+  public static boolean refreshesSymptom(final boolean present, final int duration) {
+    return !present || duration < SYMPTOM_TICKS - REFRESH_TICKS;
   }
 }

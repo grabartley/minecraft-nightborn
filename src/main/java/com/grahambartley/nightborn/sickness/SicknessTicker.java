@@ -13,9 +13,6 @@ import net.minecraft.text.Text;
 
 public final class SicknessTicker {
 
-  static final int EFFECT_REFRESH_TICKS = 20;
-  static final int SYMPTOM_TICKS = 60;
-
   private static final SicknessClock CLOCK = new SicknessClock();
 
   private SicknessTicker() {}
@@ -38,7 +35,7 @@ public final class SicknessTicker {
   public static void tick(
       final ServerPlayerEntity player, final TurningSettings settings, final int step) {
     final int runBefore = BiteSicknessAttachment.ticksRun(player);
-    final int run = SicknessStage.advance(runBefore, step);
+    final int run = SicknessClock.run(runBefore, step);
     final int left = SicknessStage.ticksLeft(run, settings.sicknessDays());
     if (left <= 0) {
       VampireTransitions.turn(player);
@@ -50,7 +47,7 @@ public final class SicknessTicker {
     if (SicknessRules.remindsOfDaysLeft(before.daysLeft(), stage.daysLeft(), player.age)) {
       player.sendMessage(Text.translatable("nightborn.sickness.days_left", stage.daysLeft()), true);
     }
-    if (player.age % EFFECT_REFRESH_TICKS == 0) {
+    if (player.age % SicknessRules.REFRESH_TICKS == 0) {
       showSymptoms(player, stage, left);
     }
   }
@@ -72,23 +69,27 @@ public final class SicknessTicker {
     if (stage.hunger()) {
       symptom(
           player,
-          new StatusEffectInstance(StatusEffects.HUNGER, SYMPTOM_TICKS, 0, true, false, true));
+          new StatusEffectInstance(
+              StatusEffects.HUNGER, SicknessRules.SYMPTOM_TICKS, 0, true, false, true));
     }
     if (stage.weakness()) {
       symptom(
           player,
-          new StatusEffectInstance(StatusEffects.WEAKNESS, SYMPTOM_TICKS, 0, true, false, true));
+          new StatusEffectInstance(
+              StatusEffects.WEAKNESS, SicknessRules.SYMPTOM_TICKS, 0, true, false, true));
     }
     if (stage.daylightSlowness() && player.getWorld().isDay()) {
       symptom(
           player,
-          new StatusEffectInstance(StatusEffects.SLOWNESS, SYMPTOM_TICKS, 0, true, false, true));
+          new StatusEffectInstance(
+              StatusEffects.SLOWNESS, SicknessRules.SYMPTOM_TICKS, 0, true, false, true));
     }
   }
 
   private static void symptom(final ServerPlayerEntity player, final StatusEffectInstance effect) {
     final StatusEffectInstance current = player.getStatusEffect(effect.getEffectType());
-    if (current == null || current.getDuration() < SYMPTOM_TICKS - EFFECT_REFRESH_TICKS) {
+    if (SicknessRules.refreshesSymptom(
+        current != null, current == null ? 0 : current.getDuration())) {
       player.addStatusEffect(effect);
     }
   }

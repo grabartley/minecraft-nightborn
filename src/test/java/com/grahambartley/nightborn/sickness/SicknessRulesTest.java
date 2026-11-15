@@ -33,7 +33,7 @@ class SicknessRulesTest {
     assertEquals(reminds, SicknessRules.remindsOfDaysLeft(before, now, age));
   }
 
-  @ParameterizedTest(name = "shown {0} at {1} for {2}, now day {3} with {4}: refresh {5}")
+  @ParameterizedTest(name = "shown {0} at {1} for {2}, now stage {3} with {4}: refresh {5}")
   @CsvSource({
     "false, 0, 0, 0, 72000, true",
     "true, 0, 72000, 0, 71990, false",
@@ -45,9 +45,22 @@ class SicknessRulesTest {
       final boolean shown,
       final int amplifier,
       final int duration,
-      final int day,
+      final int stage,
       final int left,
       final boolean refresh) {
-    assertEquals(refresh, SicknessRules.refreshesDisplay(shown, amplifier, duration, day, left));
+    assertEquals(refresh, SicknessRules.refreshesDisplay(shown, amplifier, duration, stage, left));
+  }
+
+  @ParameterizedTest(name = "present {0} with {1} ticks: refresh {2}")
+  @CsvSource({
+    "false, 0, true",
+    "true, 60, false",
+    "true, 40, false",
+    "true, 39, true",
+    "true, 0, true"
+  })
+  @DisplayName("a symptom is topped up before it runs out, never every tick")
+  void refreshesSymptom(final boolean present, final int duration, final boolean refresh) {
+    assertEquals(refresh, SicknessRules.refreshesSymptom(present, duration));
   }
 }

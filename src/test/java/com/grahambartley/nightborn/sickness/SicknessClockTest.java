@@ -32,4 +32,17 @@ class SicknessClockTest {
     clock.reset();
     assertEquals(1, clock.advance(90000));
   }
+
+  @ParameterizedTest(name = "{0} run + step {1} = {2}")
+  @CsvSource({
+    "0, 1, 1",
+    "100, 11000, 11100",
+    "100, 0, 100",
+    "-7, 1, 1",
+    "2147483000, 100000, 2147483647"
+  })
+  @DisplayName("the time run grows by the clock step and never overflows")
+  void run(final int ticksRun, final int step, final int expected) {
+    assertEquals(expected, SicknessClock.run(ticksRun, step));
+  }
 }
