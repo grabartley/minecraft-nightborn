@@ -1,5 +1,7 @@
 package com.grahambartley.nightborn.gametest;
 
+import com.grahambartley.nightborn.ammo.AmmoItems;
+import com.grahambartley.nightborn.ammo.BoltItem;
 import com.grahambartley.nightborn.gear.GearItems;
 import com.grahambartley.nightborn.gore.Gore;
 import com.grahambartley.nightborn.gore.GoreEvents;
@@ -11,7 +13,9 @@ import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.passive.PigEntity;
+import net.minecraft.entity.projectile.PersistentProjectileEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.test.GameTest;
 import net.minecraft.test.TestContext;
@@ -73,6 +77,33 @@ public class GoreGameTest implements FabricGameTest {
     final PigEntity pig = still(context, EntityType.PIG, 3);
     final var bite = NightbornDamage.bite(context.getWorld(), vampire);
     context.assertEquals(Optional.of(Gore.DRAINED), GoreEvents.onDeath(pig, bite), "drained");
+    context.complete();
+  }
+
+  @GameTest(templateName = ARENA)
+  public void aMeleeStakeBlowSpraysAsAStake(final TestContext context) {
+    final VampireEntity vampire = still(context, NightbornMobs.VAMPIRE, 1);
+    final ServerPlayerEntity hunter = hunterWith(context, new ItemStack(GearItems.WOODEN_STAKE));
+    final var blow = context.getWorld().getDamageSources().playerAttack(hunter);
+    context.assertEquals(Optional.of(Gore.STAKE), GoreEvents.onHit(vampire, blow), "stake");
+    context.complete();
+  }
+
+  @GameTest(templateName = ARENA)
+  public void aSilverBoltDrawsBloodFromAVampire(final TestContext context) {
+    final VampireEntity vampire = still(context, NightbornMobs.VAMPIRE, 1);
+    final ServerPlayerEntity hunter = context.createMockCreativeServerPlayerInWorld();
+    final PersistentProjectileEntity bolt =
+        (PersistentProjectileEntity)
+            ((BoltItem) AmmoItems.SILVER_BOLT)
+                .createProjectile(
+                    context.getWorld(),
+                    hunter,
+                    new ItemStack(AmmoItems.SILVER_BOLT),
+                    new ItemStack(Items.CROSSBOW),
+                    false);
+    final var shot = context.getWorld().getDamageSources().arrow(bolt, hunter);
+    context.assertEquals(Optional.of(Gore.SILVER), GoreEvents.onHit(vampire, shot), "bolt");
     context.complete();
   }
 }
