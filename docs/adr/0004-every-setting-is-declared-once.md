@@ -1,0 +1,20 @@
+# ADR 0004: Every setting is declared once
+
+## Context
+
+The PRD asks for every server option to be set from `/nightborn` (CFG-1), saved per world as JSON (CFG-2), shown on a Mod Menu screen that shares the commands' validation (CFG-6), and synced to clients. Written by hand, each option would appear in at least five places: the record, the JSON reader and writer, the network codec, the command tree and the screen. Nightborn needs dozens of options, and every later feature adds more (CFG-5), so those copies would drift.
+
+## Decision
+
+Each option is one `IntSetting` or `BoolSetting` field beside the section record that holds it, with its section, key, default and bounds. `NightbornConfig.SETTINGS` lists them all in order.
+
+- The JSON file, the network codec, the `/nightborn config` tree, `/nightborn status` and the settings screen all walk that list. None of them names an option.
+- Bounds live on the setting, so the command argument, the screen slider and the clamp on load use the same numbers.
+- Section records are still immutable records, and clamp in their constructors, so a value built any other way is clamped too.
+- Settings are whole numbers or toggles. Percentages and seconds are whole numbers, which keeps the codec and the commands simple.
+
+## Consequences
+
+- Adding an option is one field, one entry in its section's list, and its two lang keys. `LangAssetsTest` fails if the lang keys are missing.
+- The network codec sends the values in list order with a count first, so a client and server with different option lists refuse each other's packet instead of misreading it.
+- A setting that needs a type other than a whole number or a toggle needs a new `Setting` kind, handled in each place that switches over the sealed interface. The compiler lists those places.

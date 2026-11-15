@@ -132,7 +132,7 @@ public final class FeedingSessions {
     return vampire.squaredDistanceTo(victim) <= reach * reach;
   }
 
-  private static void clearAll() {
+  public static void clearAll() {
     SESSIONS.clear();
     LAST_FED.clear();
     SHAKEN_OFF_UNTIL.clear();
