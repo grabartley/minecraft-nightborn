@@ -556,7 +556,7 @@ Vampires are rare. They live in households hidden in four kinds of structure, ea
 
 **Actor:** Any player.
 
-The mod has its own tab. It branches early into three paths, Vampire, Hunter and World, and each can be followed in any order.
+The mod has its own tab, lined with tufted burgundy leather and brass studs. It branches early into three paths, Vampire, Hunter and World, and each can be followed in any order.
 
 | ID | Advancement | Earned by |
 |---|---|---|
