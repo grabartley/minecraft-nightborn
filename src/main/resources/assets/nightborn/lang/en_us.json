@@ -50,7 +50,7 @@
   "nightborn.weakened.sign": "Weakened %s%%",
   "nightborn.screen.settings.title": "Nightborn Settings",
   "nightborn.screen.settings.read_only": "Only an operator can change the world settings",
-  "nightborn.screen.settings.no_world": "Join a world to see its world settings",
+  "nightborn.screen.settings.no_world": "Join a world to see the world settings",
   "nightborn.section.turning": "Turning",
   "nightborn.section.feeding": "Feeding",
   "nightborn.section.blood": "Blood",

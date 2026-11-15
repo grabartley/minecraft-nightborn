@@ -50,7 +50,7 @@
   "nightborn.weakened.sign": "虚弱 %s%%",
   "nightborn.screen.settings.title": "Nightborn 设置",
   "nightborn.screen.settings.read_only": "只有管理员可以更改世界设置",
-  "nightborn.screen.settings.no_world": "进入一个世界以查看其世界设置",
+  "nightborn.screen.settings.no_world": "进入一个世界以查看世界设置",
   "nightborn.section.turning": "转化",
   "nightborn.section.feeding": "吸血",
   "nightborn.section.blood": "血液",

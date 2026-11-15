@@ -9,22 +9,7 @@ import java.util.List;
 public final class ConfigJson {
 
   public static final ConfigFormat<NightbornConfig> FORMAT =
-      new ConfigFormat<>() {
-        @Override
-        public NightbornConfig defaults() {
-          return NightbornConfig.DEFAULTS;
-        }
-
-        @Override
-        public ConfigFormat.Read<NightbornConfig> read(final JsonObject root) {
-          return ConfigJson.read(root);
-        }
-
-        @Override
-        public JsonObject write(final NightbornConfig config) {
-          return ConfigJson.write(config);
-        }
-      };
+      ConfigFormat.of(NightbornConfig.DEFAULTS, ConfigJson::read, ConfigJson::write);
 
   private ConfigJson() {}
 

@@ -14,22 +14,7 @@ public final class ClientStateJson {
   private static final String GORE = "gore";
 
   public static final ConfigFormat<ClientState> FORMAT =
-      new ConfigFormat<>() {
-        @Override
-        public ClientState defaults() {
-          return ClientState.DEFAULTS;
-        }
-
-        @Override
-        public ConfigFormat.Read<ClientState> read(final JsonObject root) {
-          return ClientStateJson.read(root);
-        }
-
-        @Override
-        public JsonObject write(final ClientState state) {
-          return ClientStateJson.write(state);
-        }
-      };
+      ConfigFormat.of(ClientState.DEFAULTS, ClientStateJson::read, ClientStateJson::write);
 
   private static final String KNOWN =
       Arrays.stream(GoreLevel.values()).map(GoreLevel::id).collect(Collectors.joining(", "));
