@@ -6,7 +6,6 @@ import com.grahambartley.nightborn.feeding.FeedingSessions;
 import com.grahambartley.nightborn.gear.Staking;
 import com.grahambartley.nightborn.server.ServerConfigService;
 import com.grahambartley.nightborn.vampire.Modifiers;
-import com.grahambartley.nightborn.vampire.NightbornDamage;
 import com.grahambartley.nightborn.vampire.Vampires;
 import com.grahambartley.nightborn.vampire.VisibleStateAttachment;
 import java.util.Optional;
@@ -149,19 +148,17 @@ public final class Downed {
       return true;
     }
     final DownedState state = state(entity);
-    final boolean stakeBlow = Staking.isStakeBlow(source);
-    if (DownedRules.stakesOnHit(state, stakeBlow)) {
-      Staking.stake(entity, source.getAttacker());
+    if (DownedRules.stakesOnHit(state, Staking.isStakeBlow(source))) {
+      Staking.stake(entity, source);
       return false;
     }
-    return DownedRules.allowsDamage(state, NightbornDamage.killsVampires(source) || stakeBlow);
+    return DownedRules.allowsDamage(state, Staking.finishesVampire(source));
   }
 
   private static boolean allowDeath(
       final LivingEntity entity, final DamageSource source, final float amount) {
     if (!Vampires.isVampire(entity)
-        || !DownedRules.downsInsteadOfDying(
-            NightbornDamage.killsVampires(source) || Staking.isStakeBlow(source))) {
+        || !DownedRules.downsInsteadOfDying(Staking.finishesVampire(source))) {
       return true;
     }
     down(entity, ServerConfigService.current().downed(), hunter(source));

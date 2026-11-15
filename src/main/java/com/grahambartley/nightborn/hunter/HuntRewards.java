@@ -6,6 +6,7 @@ import com.grahambartley.nightborn.gear.Staking;
 import com.grahambartley.nightborn.server.ServerConfigService;
 import com.grahambartley.nightborn.skill.SkillEarning;
 import com.grahambartley.nightborn.vampire.NightbornDamage;
+import com.grahambartley.nightborn.vampire.Vampires;
 import java.util.Optional;
 import java.util.UUID;
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
@@ -27,7 +28,13 @@ public final class HuntRewards {
   }
 
   public static Optional<UUID> hunter(
-      @Nullable final DownedState state, final boolean sunKill, final Optional<UUID> staker) {
+      final boolean vampire,
+      @Nullable final DownedState state,
+      final boolean sunKill,
+      final Optional<UUID> staker) {
+    if (!vampire) {
+      return Optional.empty();
+    }
     if (staker.isPresent()) {
       return staker;
     }
@@ -41,7 +48,11 @@ public final class HuntRewards {
     }
     final Optional<UUID> staker = Staking.staked(source) ? Downed.hunter(source) : Optional.empty();
     final String message = staker.isPresent() ? "nightborn.hunt.staked" : "nightborn.hunt.earned";
-    hunter(Downed.state(vampire), source.isOf(NightbornDamage.SUN), staker)
+    hunter(
+            Vampires.isVampire(vampire),
+            Downed.state(vampire),
+            source.isOf(NightbornDamage.SUN),
+            staker)
         .map(id -> server.getPlayerManager().getPlayer(id))
         .ifPresent(hunter -> reward(hunter, vampire, message));
   }

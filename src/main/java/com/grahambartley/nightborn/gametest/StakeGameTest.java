@@ -1,12 +1,15 @@
 package com.grahambartley.nightborn.gametest;
 
+import com.grahambartley.nightborn.config.DownedSettings;
 import com.grahambartley.nightborn.downed.Downed;
 import com.grahambartley.nightborn.downed.DownedState;
 import com.grahambartley.nightborn.downed.DownedState.Phase;
 import com.grahambartley.nightborn.gear.GearItems;
+import com.grahambartley.nightborn.server.ServerConfigService;
 import com.grahambartley.nightborn.skill.SkillAttachment;
 import com.grahambartley.nightborn.skill.SkillTree;
 import com.grahambartley.nightborn.skill.TreeProgress;
+import com.grahambartley.nightborn.vampire.Vampires;
 import java.util.List;
 import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
 import net.minecraft.item.Item;
@@ -25,6 +28,7 @@ public class StakeGameTest implements FabricGameTest {
 
   static final String ARENA = "nightborn:vampire_arena";
   static final String PVP = "stake-pvp";
+  static final String HARDCORE = "stake-hardcore";
 
   @BeforeBatch(batchId = PVP)
   public void pvpOn(final ServerWorld world) {
@@ -34,6 +38,70 @@ public class StakeGameTest implements FabricGameTest {
   @AfterBatch(batchId = PVP)
   public void restorePvp(final ServerWorld world) {
     BatchPvp.restore(world.getServer());
+  }
+
+  @BeforeBatch(batchId = HARDCORE)
+  public void pvpAndHardcoreOn(final ServerWorld world) {
+    BatchPvp.set(world.getServer(), true);
+    ServerConfigService.update(
+        world.getServer(),
+        ServerConfigService.current().with(DownedSettings.HARDCORE_VAMPIRE_DEATH, true));
+  }
+
+  @AfterBatch(batchId = HARDCORE)
+  public void restorePvpAndHardcore(final ServerWorld world) {
+    BatchPvp.restore(world.getServer());
+    ServerConfigService.update(
+        world.getServer(),
+        ServerConfigService.current().with(DownedSettings.HARDCORE_VAMPIRE_DEATH, false));
+  }
+
+  @GameTest(templateName = ARENA, batchId = PVP, tickLimit = TestPlayers.READY + 20)
+  public void stakingSomethingThatIsNotAVampireEarnsNothing(final TestContext context) {
+    final ServerPlayerEntity hunter = armed(context, new BlockPos(2, 2, 4), GearItems.WOODEN_STAKE);
+    final ServerPlayerEntity human = TestPlayers.human(context, new BlockPos(4, 2, 4));
+    context.runAtTick(
+        TestPlayers.READY,
+        () -> {
+          human.setHealth(1.0F);
+          human.damage(hunter.getDamageSources().playerAttack(hunter), 5.0F);
+          context.assertTrue(human.isDead(), "the stake kills the human");
+          context.assertEquals(
+              SkillAttachment.get(hunter, SkillTree.HUNTER).earned(), 0, "no hunter points");
+          TestPlayers.finish(context, hunter, human);
+        });
+  }
+
+  @GameTest(templateName = ARENA, batchId = PVP, tickLimit = TestPlayers.READY + 20)
+  public void stakingADownedVampireWearsTheStake(final TestContext context) {
+    final ServerPlayerEntity hunter = armed(context, new BlockPos(2, 2, 4), GearItems.WOODEN_STAKE);
+    final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(4, 2, 4));
+    context.runAtTick(
+        TestPlayers.READY,
+        () -> {
+          vampire.damage(vampire.getDamageSources().generic(), 1000.0F);
+          vampire.damage(hunter.getDamageSources().playerAttack(hunter), 1.0F);
+          context.assertTrue(vampire.isDead(), "the vampire is staked");
+          context.assertEquals(hunter.getMainHandStack().getDamage(), 1, "the stake wears");
+          TestPlayers.finish(context, hunter, vampire);
+        });
+  }
+
+  @GameTest(templateName = ARENA, batchId = HARDCORE, tickLimit = TestPlayers.READY + 20)
+  public void aStakerIsPaidWhenAHardcoreVampireIsStaked(final TestContext context) {
+    final ServerPlayerEntity hunter = armed(context, new BlockPos(2, 2, 4), GearItems.WOODEN_STAKE);
+    final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(4, 2, 4));
+    context.runAtTick(
+        TestPlayers.READY,
+        () -> {
+          vampire.setHealth(1.0F);
+          vampire.damage(hunter.getDamageSources().playerAttack(hunter), 5.0F);
+          context.assertTrue(vampire.isDead(), "the vampire is staked");
+          context.assertFalse(Vampires.isVampire(vampire), "hardcore death made it human");
+          context.assertEquals(
+              SkillAttachment.get(hunter, SkillTree.HUNTER).earned(), 3, "the staker is paid");
+          TestPlayers.finish(context, hunter, vampire);
+        });
   }
 
   @GameTest(templateName = ARENA, batchId = PVP, tickLimit = TestPlayers.READY + 20)

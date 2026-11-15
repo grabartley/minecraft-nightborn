@@ -8,7 +8,6 @@ import com.grahambartley.nightborn.MinecraftBootstrapExtension;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.stream.Stream;
-import net.minecraft.block.Block;
 import net.minecraft.item.AxeItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.SwordItem;
@@ -43,22 +42,5 @@ class GearItemsTest {
     assertInstanceOf(type, item);
     assertTrue(Files.exists(ASSETS.resolve("models/item/" + name + ".json")));
     assertTrue(Files.exists(ASSETS.resolve("textures/item/" + name + ".png")));
-  }
-
-  static Stream<Arguments> ores() {
-    return Stream.of(
-        Arguments.of("silver_ore", GearItems.SILVER_ORE),
-        Arguments.of("deepslate_silver_ore", GearItems.DEEPSLATE_SILVER_ORE));
-  }
-
-  @ParameterizedTest(name = "{0}")
-  @MethodSource("ores")
-  @DisplayName("each ore is registered with its item, blockstate and model, and needs a tool")
-  void ore(final String name, final Block ore) {
-    assertEquals("nightborn:" + name, Registries.BLOCK.getId(ore).toString());
-    assertEquals(ore, ((net.minecraft.item.BlockItem) ore.asItem()).getBlock());
-    assertTrue(ore.getDefaultState().isToolRequired());
-    assertTrue(Files.exists(ASSETS.resolve("blockstates/" + name + ".json")));
-    assertTrue(Files.exists(ASSETS.resolve("models/block/" + name + ".json")));
   }
 }

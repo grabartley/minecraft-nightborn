@@ -1,5 +1,6 @@
 package com.grahambartley.nightborn.downed;
 
+import com.grahambartley.nightborn.Nightborn;
 import com.grahambartley.nightborn.faction.Faction;
 import com.grahambartley.nightborn.faction.FactionAttachment;
 import com.grahambartley.nightborn.server.ServerConfigService;
@@ -9,9 +10,11 @@ import com.grahambartley.nightborn.skill.PowerCooldowns;
 import com.grahambartley.nightborn.skill.SkillAttachment;
 import com.grahambartley.nightborn.vampire.Vampires;
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
+import net.fabricmc.fabric.api.event.Event;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.util.Identifier;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
 
@@ -19,8 +22,11 @@ public final class HardcoreVampireDeath {
 
   private HardcoreVampireDeath() {}
 
+  public static final Identifier RESET_PHASE = Identifier.of(Nightborn.MOD_ID, "hardcore_reset");
+
   public static void register() {
-    ServerLivingEntityEvents.AFTER_DEATH.register(HardcoreVampireDeath::afterDeath);
+    ServerLivingEntityEvents.AFTER_DEATH.addPhaseOrdering(Event.DEFAULT_PHASE, RESET_PHASE);
+    ServerLivingEntityEvents.AFTER_DEATH.register(RESET_PHASE, HardcoreVampireDeath::afterDeath);
   }
 
   private static void afterDeath(final LivingEntity entity, final DamageSource source) {

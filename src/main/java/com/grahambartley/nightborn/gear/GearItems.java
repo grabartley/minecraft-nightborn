@@ -3,12 +3,7 @@ package com.grahambartley.nightborn.gear;
 import com.grahambartley.nightborn.Nightborn;
 import java.util.function.Function;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
-import net.minecraft.block.AbstractBlock;
-import net.minecraft.block.Block;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.ExperienceDroppingBlock;
 import net.minecraft.item.AxeItem;
-import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroups;
 import net.minecraft.item.Items;
@@ -17,7 +12,6 @@ import net.minecraft.item.ToolMaterials;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.math.intprovider.ConstantIntProvider;
 
 public final class GearItems {
 
@@ -46,10 +40,6 @@ public final class GearItems {
                   settings.attributeModifiers(
                       AxeItem.createAttributeModifiers(SilverMaterial.SILVER, 6.0F, -3.1F))));
 
-  public static final Block SILVER_ORE = ore("silver_ore", Blocks.IRON_ORE);
-  public static final Block DEEPSLATE_SILVER_ORE =
-      ore("deepslate_silver_ore", Blocks.DEEPSLATE_IRON_ORE);
-
   private GearItems() {}
 
   public static void register() {
@@ -72,25 +62,13 @@ public final class GearItems {
     ItemGroupEvents.modifyEntriesEvent(ItemGroups.NATURAL)
         .register(
             entries -> {
-              entries.addAfter(Items.GOLD_ORE, SILVER_ORE);
-              entries.addAfter(Items.DEEPSLATE_GOLD_ORE, DEEPSLATE_SILVER_ORE);
+              entries.addAfter(Items.GOLD_ORE, GearBlocks.SILVER_ORE);
+              entries.addAfter(Items.DEEPSLATE_GOLD_ORE, GearBlocks.DEEPSLATE_SILVER_ORE);
             });
   }
 
   private static Item item(final String name, final Function<Item.Settings, Item> factory) {
     return Registry.register(
         Registries.ITEM, Identifier.of(Nightborn.MOD_ID, name), factory.apply(new Item.Settings()));
-  }
-
-  private static Block ore(final String name, final Block like) {
-    final Identifier id = Identifier.of(Nightborn.MOD_ID, name);
-    final Block block =
-        Registry.register(
-            Registries.BLOCK,
-            id,
-            new ExperienceDroppingBlock(
-                ConstantIntProvider.create(0), AbstractBlock.Settings.copy(like)));
-    Registry.register(Registries.ITEM, id, new BlockItem(block, new Item.Settings()));
-    return block;
   }
 }

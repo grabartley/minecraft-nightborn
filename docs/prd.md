@@ -315,7 +315,7 @@ The core starts with Thick Blood (more health), Grave Strength (harder blows) an
 | SKILL-3 | Bought skills are kept across death, reconnect and world reload |
 | SKILL-4 | Active skills sit in a small power bar of up to five slots, in the order they were bought, and are used with keys the player can rebind |
 | SKILL-5 | Each active skill has a blood cost and a cooldown, shown on the bar. A downed or weakened vampire cannot use powers |
-| SKILL-6 | A staked vampire player loses 10% of their earned points, rounded up, taken from unspent points first and then from their most recent skills. With CORE-10 on, the full reset applies instead |
+| SKILL-6 | A staked vampire player loses 10% of their earned points, rounded up, taken from unspent points first and then from their most recent skills. A bloodline left with none of its skills is freed for a new choice. With CORE-10 on, the full reset applies instead |
 
 **Enforcement:** server. The client asks to buy a skill; the server checks points and order.
 

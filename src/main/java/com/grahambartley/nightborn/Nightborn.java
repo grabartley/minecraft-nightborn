@@ -6,6 +6,7 @@ import com.grahambartley.nightborn.decor.DecorBlocks;
 import com.grahambartley.nightborn.decor.DecorEntities;
 import com.grahambartley.nightborn.decor.DecorItemGroup;
 import com.grahambartley.nightborn.faction.FactionAttachment;
+import com.grahambartley.nightborn.gear.GearFeatures;
 import com.grahambartley.nightborn.hunter.HunterFeatures;
 import com.grahambartley.nightborn.vampire.VampireFeatures;
 import net.fabricmc.api.ModInitializer;
@@ -26,6 +27,7 @@ public class Nightborn implements ModInitializer {
     DecorEntities.initialize();
     DecorItemGroup.initialize();
     VampireFeatures.register();
+    GearFeatures.register();
     HunterFeatures.register();
     LOGGER.info("Nightborn initialised");
   }

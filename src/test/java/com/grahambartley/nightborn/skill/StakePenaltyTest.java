@@ -58,6 +58,18 @@ class StakePenaltyTest {
             "a bloodline with no skill left is dropped",
             twoLines,
             new TreeProgress(8, 0.0F, List.of(new BoughtSkill(NOBLE_A, 4)), List.of(NOBLE))),
+        Arguments.of(
+            "a bloodline whose skills are unknown is kept when none were removed",
+            new TreeProgress(
+                20,
+                0.0F,
+                List.of(new BoughtSkill(Identifier.of("nightborn", "gone"), 4)),
+                List.of(BEAST)),
+            new TreeProgress(
+                18,
+                0.0F,
+                List.of(new BoughtSkill(Identifier.of("nightborn", "gone"), 4)),
+                List.of(BEAST))),
         Arguments.of("nothing earned loses nothing", TreeProgress.EMPTY, TreeProgress.EMPTY));
   }
 

@@ -1,5 +1,6 @@
 package com.grahambartley.nightborn.gametest;
 
+import com.grahambartley.nightborn.gear.GearBlocks;
 import com.grahambartley.nightborn.gear.GearItems;
 import com.grahambartley.nightborn.gear.SilverOreGeneration;
 import java.util.List;
@@ -61,7 +62,7 @@ public class SilverGameTest implements FabricGameTest {
   public void silverOreNeedsIronAndDropsRawSilver(final TestContext context) {
     final ServerWorld world = context.getWorld();
     final BlockPos pos = context.getAbsolutePos(BlockPos.ORIGIN);
-    for (final Block ore : List.of(GearItems.SILVER_ORE, GearItems.DEEPSLATE_SILVER_ORE)) {
+    for (final Block ore : List.of(GearBlocks.SILVER_ORE, GearBlocks.DEEPSLATE_SILVER_ORE)) {
       final BlockState state = ore.getDefaultState();
       context.assertTrue(new ItemStack(Items.IRON_PICKAXE).isSuitableFor(state), ore + " iron");
       context.assertFalse(new ItemStack(Items.STONE_PICKAXE).isSuitableFor(state), ore + " stone");
@@ -76,7 +77,7 @@ public class SilverGameTest implements FabricGameTest {
   @GameTest(templateName = EMPTY_STRUCTURE, tickLimit = 20)
   public void silverSmeltsIntoIngots(final TestContext context) {
     final ServerWorld world = context.getWorld();
-    for (final Item input : List.of(GearItems.RAW_SILVER, GearItems.SILVER_ORE.asItem())) {
+    for (final Item input : List.of(GearItems.RAW_SILVER, GearBlocks.SILVER_ORE.asItem())) {
       final SingleStackRecipeInput stack = new SingleStackRecipeInput(new ItemStack(input));
       context.assertTrue(
           smelted(world, RecipeType.SMELTING, stack).isOf(GearItems.SILVER_INGOT),
