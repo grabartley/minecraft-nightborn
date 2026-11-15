@@ -3,6 +3,7 @@ package com.grahambartley.nightborn.client;
 import com.grahambartley.nightborn.Nightborn;
 import com.grahambartley.nightborn.feeding.TurningBite;
 import com.grahambartley.nightborn.sickness.BiteSicknessEffect;
+import com.grahambartley.nightborn.vampire.Vampires;
 import com.grahambartley.nightborn.vampire.VisibleState;
 import com.grahambartley.nightborn.vampire.VisibleStateAttachment;
 import com.mojang.blaze3d.platform.GlStateManager;
@@ -43,7 +44,7 @@ public final class VampireHud {
           Text.translatable("nightborn.weakened.sign", visible.weakened()),
           signs++);
     }
-    if (TurningBite.isOn(player)) {
+    if (Vampires.isVampire(player) && TurningBite.isOn(player)) {
       drawSign(
           context, client, TURNING_BITE, Text.translatable("nightborn.turning_bite.sign"), signs);
     }

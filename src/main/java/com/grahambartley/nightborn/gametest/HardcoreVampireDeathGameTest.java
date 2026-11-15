@@ -3,6 +3,7 @@ package com.grahambartley.nightborn.gametest;
 import com.grahambartley.nightborn.config.DownedSettings;
 import com.grahambartley.nightborn.faction.Faction;
 import com.grahambartley.nightborn.faction.FactionAttachment;
+import com.grahambartley.nightborn.feeding.TurningBite;
 import com.grahambartley.nightborn.server.ServerConfigService;
 import com.grahambartley.nightborn.skill.SkillAttachment;
 import com.grahambartley.nightborn.skill.SkillProgress;
@@ -58,6 +59,7 @@ public class HardcoreVampireDeathGameTest implements FabricGameTest {
                 1,
                 Identifier.of("nightborn", "noble")));
     SkillAttachment.set(dead, SkillTree.HUNTER, TreeProgress.EMPTY.withEarned(2));
+    TurningBite.set(dead, true);
     dead.setSpawnPoint(
         World.OVERWORLD, context.getAbsolutePos(new BlockPos(4, 2, 4)), 0.0F, true, false);
     context.runAtTick(
@@ -72,6 +74,7 @@ public class HardcoreVampireDeathGameTest implements FabricGameTest {
                   .getPlayerManager()
                   .respawnPlayer(dead, false, Entity.RemovalReason.KILLED);
           context.assertEquals(FactionAttachment.get(respawned), Faction.HUMAN, "comes back human");
+          context.assertFalse(TurningBite.isOn(respawned), "the turning bite is cleared");
           context.assertTrue(
               respawned.getEnderChestInventory().isEmpty(), "ender chest is emptied");
           context.assertTrue(respawned.getSpawnPointPosition() == null, "no respawn point is kept");

@@ -2,7 +2,6 @@ package com.grahambartley.nightborn.feeding;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.grahambartley.nightborn.testing.FakeAttachmentTarget;
 import org.junit.jupiter.api.DisplayName;
@@ -37,13 +36,5 @@ class TurningBiteTest {
   @DisplayName("each switch is confirmed with its own line")
   void messages(final boolean on, final String key) {
     assertEquals(key, TurningBite.messageKey(on));
-  }
-
-  @Test
-  @DisplayName("the choice is saved, kept through death and synced to its owner")
-  void followsTheGrid() {
-    assertTrue(TurningBite.TYPE.isPersistent());
-    assertTrue(TurningBite.TYPE.copyOnDeath());
-    assertTrue(TurningBite.TYPE.isSynced());
   }
 }

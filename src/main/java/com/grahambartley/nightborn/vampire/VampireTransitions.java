@@ -10,6 +10,7 @@ import com.grahambartley.nightborn.faction.Faction;
 import com.grahambartley.nightborn.faction.FactionAttachment;
 import com.grahambartley.nightborn.faction.FactionPlayerList;
 import com.grahambartley.nightborn.feeding.FeedingSessions;
+import com.grahambartley.nightborn.feeding.TurningBite;
 import com.grahambartley.nightborn.levitation.Levitation;
 import com.grahambartley.nightborn.sickness.BiteSicknessAttachment;
 import com.grahambartley.nightborn.sickness.BiteSicknessEffect;
@@ -66,6 +67,7 @@ public final class VampireTransitions {
     Weakened.clear(player);
     StarvingAttachment.set(player, 0);
     Levitation.setDown(player);
+    TurningBite.set(player, false);
     VisibleStateAttachment.set(player, VisibleState.NONE);
     VampireCore.remove(player);
     SkillAttributes.apply(player);

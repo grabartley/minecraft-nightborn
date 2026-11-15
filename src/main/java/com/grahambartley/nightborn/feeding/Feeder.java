@@ -151,13 +151,12 @@ final class Feeder {
       final FeedingSession session,
       final NightbornConfig config,
       final Random random) {
-    final boolean firstRoll = session.rollTurnOnce();
     BiteSickness.startFromBite(
         victim,
         config.turning().biteTurnChance(),
         TurningBite.isOn(vampire),
         config.turning().playersCanTurnPlayers(),
-        firstRoll,
+        session.rollTurnOnce(),
         random,
         config.turning());
   }

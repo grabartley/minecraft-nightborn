@@ -1,6 +1,6 @@
 package com.grahambartley.nightborn.client;
 
-public final class HudSigns {
+final class HudSigns {
 
   static final int X = 4;
   static final int TOP = 4;
@@ -12,6 +12,6 @@ public final class HudSigns {
   private HudSigns() {}
 
   static int y(final int index) {
-    return TOP + Math.max(0, index) * (ICON + GAP);
+    return TOP + index * (ICON + GAP);
   }
 }
