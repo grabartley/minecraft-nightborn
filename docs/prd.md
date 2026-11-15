@@ -112,9 +112,9 @@ This document specifies the Nightborn alpha line for Minecraft 1.21.1 on Fabric.
 |---|---|
 | Vampire | A player or mob that has turned. Lives on blood, and dies only to direct sun or a stake |
 | Human | A player who is not a vampire |
-| Bite sickness | The state between a bite that starts it and turning. It lasts 3 in-game days by default |
-| Feeding bite | A vampire player's bite that drinks without ever starting bite sickness. Bites feed by default |
-| Turning bite | A vampire player's bite that drinks and may also start bite sickness (TURN-8) |
+| Bite sickness | The state between a bite that starts it and turning (TURN-3) |
+| Feeding bite | A vampire player's bite that only drinks (TURN-8) |
+| Turning bite | A vampire player's bite that drinks and may start bite sickness (TURN-8) |
 | Blood | What a vampire lives on, shown as the blood bar in place of hunger |
 | Fresh blood | Blood drunk straight from a living creature |
 | Bottled blood | Blood stored in a Blood Bottle. It restores less than fresh blood |
@@ -169,18 +169,18 @@ A crucifix shape is a vertical column of at least 3 blocks with a single block o
 
 **Actor:** Human, sick player.
 
-A vampire mob, a vampire bat or a vampire player bites a human. A mob's or a bat's bite may start the sickness. A vampire player's bite starts it only when they choose to turn, so they can feed on a human without turning them. A sick player sees a clear sign that something is wrong, which grows as the days pass. When the sickness runs out, the player collapses where they stand and wakes up a vampire.
+A vampire mob, a vampire bat or a vampire player bites a human. A mob's or a bat's bite may start the sickness. A vampire player chooses whether their bite can turn. A sick player sees a clear sign that something is wrong, which grows as the days pass. When the sickness runs out, the player collapses where they stand and wakes up a vampire.
 
 | ID | Requirement |
 |---|---|
 | TURN-1 | A bite from a vampire mob, a vampire bat or a vampire player's turning bite (TURN-8) starts bite sickness on a human, with a chance set per biter. By default a turning bite starts it every time, a vampire mob's bite one time in four and a vampire bat's one time in ten, less against a human with bite resistance (HUNT-4). A vampire player's feeding bite never starts it |
 | TURN-2 | A vampire player can bite a human player only where the server allows PvP |
-| TURN-3 | Bite sickness lasts 3 in-game days by default, and gets worse each day: hunger, then the vanilla Weakness effect, then slowness in daylight. The time already run counts against the current sickness length, so a changed length applies at once to a player already sick, and one already past it turns. Time skipped by sleeping counts toward it, whether beds skip the night or coffins skip the day (COFFIN-2) |
+| TURN-3 | Bite sickness lasts 3 in-game days by default, and gets worse in three equal stages over its length: hunger, then the vanilla Weakness effect, then slowness in daylight. The time already run counts against the current sickness length, so a changed length applies at once to a player already sick, and a player whose sickness has already run longer than the new length turns at once. Time skipped by sleeping counts toward it, whether beds skip the night or coffins skip the day (COFFIN-2) |
 | TURN-4 | A sick player is shown the sickness and the days left, as a status effect and a sign on screen |
 | TURN-5 | When the sickness runs out, the player turns. They keep their inventory, start with a full blood bar and get the vampire core |
 | TURN-6 | A player who turns stops earning hunter skills, and their hunter tree is set aside. It comes back if an operator makes them human again |
 | TURN-7 | Another bite during the sickness does not restart or lengthen it |
-| TURN-8 | A vampire player switches their bite between feeding and turning with a key they can rebind. Each switch is confirmed on screen, and a sign stays on screen while the turning bite is on. A turning bite feeds like any other bite (FEED-4 to FEED-12), and the bite's mode is fixed when it first draws blood. Where the server stops players turning players, a turning bite on a player feeds only. Vampire mobs and bats do not choose |
+| TURN-8 | A vampire player's bite feeds by default. They switch it between feeding and turning with a key they can rebind. Each switch is confirmed on screen, and a sign with its own icon stays on screen while the turning bite is on (ACC-1). A turning bite feeds like any other bite (FEED-4 to FEED-12), and the bite's mode is fixed when it first draws blood. Where the server stops players turning players (CFG-5), a turning bite on a player feeds only. Vampire mobs and bats do not choose |
 
 **Not supported:** turning by any means other than a bite or an operator command; turning a villager into a vampire.
 
@@ -759,7 +759,7 @@ There is no singleplayer mode in this mod. A single-player world is an integrate
 
 | ID | Requirement |
 |---|---|
-| ACC-1 | No state relies on colour alone: weakness, sickness and blood quality each have a shape or icon as well |
+| ACC-1 | No state relies on colour alone: weakness, sickness, blood quality and the turning bite each have a shape or icon as well |
 | ACC-2 | No meaning relies on particles alone. Sun damage, bat form, weakness, vomiting and a burning coffin all have sound and an on-screen sign |
 | ACC-3 | Gore can be reduced or turned off (GORE-3) |
 | ACC-4 | Fog never hides a threat completely within 8 blocks |
