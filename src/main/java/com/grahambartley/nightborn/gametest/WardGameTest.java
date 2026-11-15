@@ -299,6 +299,36 @@ public class WardGameTest implements FabricGameTest {
   }
 
   @GameTest(templateName = ARENA, tickLimit = SCANNED + 5)
+  public void aHeldCrucifixWeakensAndSlowsAVampirePlayer(final TestContext context) {
+    final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(2, 2, 4));
+    final double free = vampire.getAttributeValue(EntityAttributes.GENERIC_MOVEMENT_SPEED);
+    final ServerPlayerEntity hunter = TestPlayers.human(context, new BlockPos(6, 2, 4));
+    hunter.setStackInHand(Hand.OFF_HAND, new ItemStack(GearItems.SILVER_CRUCIFIX));
+    context.runAtTick(
+        SCANNED,
+        () -> {
+          context.assertEquals(strength(vampire, Wards.CRUCIFIX), 60, "a crucifix in sight");
+          context.assertTrue(
+              vampire.getAttributeValue(EntityAttributes.GENERIC_MOVEMENT_SPEED) < free * 0.8,
+              "the vampire player is slowed");
+          TestPlayers.finish(context, vampire, hunter);
+        });
+  }
+
+  @GameTest(templateName = ARENA, tickLimit = SCANNED + 5)
+  public void aCrucifixInAVampiresHandWardsNoOne(final TestContext context) {
+    final VampireEntity vampire = still(context, new BlockPos(2, 2, 4));
+    final ServerPlayerEntity holder = TestPlayers.vampire(context, new BlockPos(6, 2, 4));
+    holder.setStackInHand(Hand.MAIN_HAND, new ItemStack(GearItems.GOLD_CRUCIFIX));
+    context.runAtTick(
+        SCANNED,
+        () -> {
+          context.assertEquals(strength(vampire, Wards.CRUCIFIX), 0, "a vampire cannot wield it");
+          TestPlayers.finish(context, holder);
+        });
+  }
+
+  @GameTest(templateName = ARENA, tickLimit = SCANNED + 5)
   public void aWallHidesTheCrucifix(final TestContext context) {
     final VampireEntity vampire = still(context, new BlockPos(2, 2, 4));
     final ServerPlayerEntity hunter = TestPlayers.human(context, new BlockPos(6, 2, 4));

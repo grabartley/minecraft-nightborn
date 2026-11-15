@@ -251,7 +251,7 @@ Sneak and use on a creature to bite it, and keep holding to drink. Let go to sto
 
 **Actor:** Vampire, hunter.
 
-How weakened a vampire is scales with how strong the source is. By default each Garlic String in range weakens by 15%, up to 45% for three or more; touching or holding garlic weakens by 80%; a held crucifix weakens by 60%, and by 25% more of that for each point of the holder's faith; and a crucifix shape weakens by 40%.
+How weakened a vampire is scales with how strong the source is. By default each Garlic String in range weakens by 15%, up to 45% for three or more; touching or holding garlic weakens by 80%; a held crucifix weakens by 60%, and by 25% more of that for each point of the holder's faith; and a crucifix shape weakens by 40%. A crucifix held by a vampire wards no one.
 
 | ID | Requirement |
 |---|---|

@@ -8,7 +8,6 @@ import java.util.List;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
 import net.minecraft.registry.tag.TagKey;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.hit.BlockHitResult;
@@ -63,9 +62,7 @@ public final class Wards {
   }
 
   private static boolean holds(final LivingEntity entity, final TagKey<Item> tag) {
-    final ItemStack main = entity.getMainHandStack();
-    final ItemStack off = entity.getOffHandStack();
-    return main.isIn(tag) || off.isIn(tag);
+    return entity.isHolding(stack -> stack.isIn(tag));
   }
 
   private static int strings(
@@ -93,6 +90,7 @@ public final class Wards {
                 holder != vampire
                     && holder.isAlive()
                     && !holder.isSpectator()
+                    && !Vampires.isVampire(holder)
                     && holder.squaredDistanceTo(vampire) <= range * range
                     && holdsCrucifix(holder)
                     && vampire.canSee(holder));
@@ -124,7 +122,8 @@ public final class Wards {
                 RaycastContext.FluidHandling.NONE,
                 vampire));
     return hit.getType() == HitResult.Type.MISS
-        || CrucifixShape.partOf(centre, hit.getBlockPos())
-            && world.getBlockState(hit.getBlockPos()).isIn(WardTags.CRUCIFIX_MATERIALS);
+        || CrucifixShape.blocks(
+                centre, pos -> world.getBlockState(pos).isIn(WardTags.CRUCIFIX_MATERIALS))
+            .contains(hit.getBlockPos());
   }
 }

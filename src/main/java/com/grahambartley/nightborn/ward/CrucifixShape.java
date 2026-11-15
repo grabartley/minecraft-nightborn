@@ -1,7 +1,9 @@
 package com.grahambartley.nightborn.ward;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Predicate;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
@@ -36,8 +38,15 @@ public final class CrucifixShape {
     return centres;
   }
 
-  public static boolean partOf(final BlockPos centre, final BlockPos block) {
-    return block.getManhattanDistance(centre) <= 1;
+  public static Set<BlockPos> blocks(final BlockPos centre, final Predicate<BlockPos> material) {
+    final Set<BlockPos> blocks = new HashSet<>(List.of(centre, centre.up(), centre.down()));
+    for (final Direction axis : ARM_AXES) {
+      if (armsAlong(centre, axis, material)) {
+        blocks.add(centre.offset(axis));
+        blocks.add(centre.offset(axis.getOpposite()));
+      }
+    }
+    return blocks;
   }
 
   private static boolean armsAlong(

@@ -6,7 +6,7 @@ Garlic Strings, garlic crops, held crucifixes and crucifix shapes all weaken vam
 
 ## Decision
 
-**Each vampire looks around itself, every 10 ticks.** The vampire tick runs the ward scan on a beat set by the entity id, so vampires spread their scans across ticks. A human costs nothing. Each source is added to the vampire's weakened sources under its own id and lasts 15 ticks, so it holds while the vampire stays in range and fades just after it leaves.
+**Each vampire looks around itself, every 10 ticks.** The vampire tick runs the ward scan on a beat set by the entity id, so vampires spread their scans across ticks. A human costs nothing. Each scanned source replaces its own entry in the vampire's weakened sources and lasts 15 ticks, so it holds while the vampire stays in range, drops when strings come down or a stronger holder leaves, and fades just after the vampire leaves. Touching garlic lasts 3 seconds, so a brush keeps weakening for a moment after.
 
 **Garlic Strings are points of interest.** The string is registered as a vanilla point of interest type, so the world already tracks every string per chunk section and saves it. Counting strings near a vampire is one vanilla query.
 
@@ -14,7 +14,7 @@ Garlic Strings, garlic crops, held crucifixes and crucifix shapes all weaken vam
 
 **Crucifix shapes live in a per-world index updated on block change.** A mixin on `ServerWorld.onBlockChanged`, at the head because the method returns early for most blocks, re-checks every centre a changed block could belong to when the block goes into or out of the tag. Found centres are saved per world, grouped by chunk. A vampire's scan reads the index for nearby chunks and checks each shape again, which drops any shape the tag no longer allows. The check reads only loaded chunks.
 
-**Seeing is a ray.** A held crucifix counts when the vampire can see its holder, the same test mobs use for targets. A shape counts when a ray from the vampire's eyes reaches the shape's centre or lands on one of its blocks.
+**Seeing is a ray.** A held crucifix counts when the vampire can see its holder, the same test mobs use for targets. A shape counts when a ray from the vampire's eyes reaches the shape's centre or lands on one of its own blocks: the column or a matched arm. A crucifix held by a vampire wards no one.
 
 **Faith makes a held crucifix stronger.** The holder's `nightborn:faith` attribute adds a share of the base strength for each point.
 

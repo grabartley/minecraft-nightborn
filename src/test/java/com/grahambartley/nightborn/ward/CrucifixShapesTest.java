@@ -30,7 +30,8 @@ class CrucifixShapesTest {
   @DisplayName("found shapes survive a save and load")
   void roundTrips(final List<BlockPos> centres) {
     final NbtCompound nbt = new NbtCompound();
-    nbt.putLongArray("centres", centres.stream().mapToLong(BlockPos::asLong).toArray());
+    nbt.putLongArray(
+        CrucifixShapes.CENTRES, centres.stream().mapToLong(BlockPos::asLong).toArray());
     final CrucifixShapes loaded = CrucifixShapes.fromNbt(nbt, null);
     centres.forEach(centre -> assertTrue(loaded.contains(centre), centre.toString()));
     assertFalse(loaded.isDirty());

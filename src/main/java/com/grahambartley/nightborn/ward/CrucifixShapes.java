@@ -19,7 +19,7 @@ import net.minecraft.world.chunk.WorldChunk;
 public final class CrucifixShapes extends PersistentState {
 
   private static final String DATA_NAME = Nightborn.MOD_ID + "_crucifix_shapes";
-  private static final String CENTRES = "centres";
+  static final String CENTRES = "centres";
 
   private final Long2ObjectOpenHashMap<LongSet> byChunk = new Long2ObjectOpenHashMap<>();
 

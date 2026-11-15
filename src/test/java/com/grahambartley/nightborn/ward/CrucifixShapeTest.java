@@ -103,20 +103,23 @@ class CrucifixShapeTest {
   }
 
   static Stream<Arguments> parts() {
+    final Set<BlockPos> plankBehind = cross(Direction.EAST, 1);
+    plankBehind.add(CENTRE.north());
     return Stream.of(
-        Arguments.of(CENTRE, true),
-        Arguments.of(CENTRE.up(), true),
-        Arguments.of(CENTRE.down(), true),
-        Arguments.of(CENTRE.east(), true),
-        Arguments.of(CENTRE.north(), true),
-        Arguments.of(CENTRE.east().up(), false),
-        Arguments.of(CENTRE.up(2), false));
+        Arguments.of("the centre", cross(Direction.EAST, 1), CENTRE, true),
+        Arguments.of("the top", cross(Direction.EAST, 1), CENTRE.up(), true),
+        Arguments.of("the foot", cross(Direction.EAST, 1), CENTRE.down(), true),
+        Arguments.of("an arm", cross(Direction.EAST, 1), CENTRE.west(), true),
+        Arguments.of("an arm facing south", cross(Direction.SOUTH, 1), CENTRE.north(), true),
+        Arguments.of("a plank behind the centre", plankBehind, CENTRE.north(), false),
+        Arguments.of("above an arm", cross(Direction.EAST, 1), CENTRE.east().up(), false));
   }
 
-  @ParameterizedTest(name = "{0}: {1}")
+  @ParameterizedTest(name = "{0}")
   @MethodSource("parts")
-  @DisplayName("a sight line that lands on the cross counts as seeing it")
-  void partOf(final BlockPos block, final boolean expected) {
-    assertEquals(expected, CrucifixShape.partOf(CENTRE, block));
+  @DisplayName("only the column and the arms that matched are the shape's own blocks")
+  void blocks(
+      final String name, final Set<BlockPos> built, final BlockPos block, final boolean expected) {
+    assertEquals(expected, CrucifixShape.blocks(CENTRE, built::contains).contains(block));
   }
 }
