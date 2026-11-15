@@ -7,6 +7,7 @@ import com.grahambartley.nightborn.decor.AnimatedFurniture;
 import com.grahambartley.nightborn.decor.DecorBlockEntities;
 import com.grahambartley.nightborn.decor.DecorBlocks;
 import com.grahambartley.nightborn.decor.DecorEntities;
+import com.grahambartley.nightborn.gear.GearBlocks;
 import com.grahambartley.nightborn.render.CoffinBlockEntityRenderer;
 import com.grahambartley.nightborn.render.CoffinModels;
 import com.grahambartley.nightborn.render.FurnitureBlockRenderer;
@@ -41,6 +42,8 @@ public class NightbornClient implements ClientModInitializer {
         DecorBlocks.GOTHIC_STAINED_GLASS_PANE);
     BlockRenderLayerMap.INSTANCE.putBlocks(
         RenderLayer.getCutout(), DecorBlocks.ORNATE_CHAIR, DecorBlocks.ORNATE_TABLE);
+    BlockRenderLayerMap.INSTANCE.putBlocks(
+        RenderLayer.getCutoutMipped(), GearBlocks.SILVER_ORE, GearBlocks.DEEPSLATE_SILVER_ORE);
     EntityRendererRegistry.register(DecorEntities.SEAT, EmptyEntityRenderer::new);
     VampireClientFeatures.register();
   }

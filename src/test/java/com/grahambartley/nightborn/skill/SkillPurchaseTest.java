@@ -178,4 +178,20 @@ class SkillPurchaseTest {
     assertEquals(List.of(OCCULT), afterOccult.bloodlines());
     assertEquals(1, afterOccult.free());
   }
+
+  static Stream<Arguments> bloodlines() {
+    return Stream.of(
+        Arguments.of("a bloodline skill", skill(NOBLE, 1), BLOODLINE, NOBLE),
+        Arguments.of("a core skill", skill(CORE, 1), CORE_BRANCH, null),
+        Arguments.of("an unknown skill", null, BLOODLINE, null),
+        Arguments.of("an unknown branch", skill(NOBLE, 1), null, null));
+  }
+
+  @ParameterizedTest(name = "{0}")
+  @MethodSource("bloodlines")
+  @DisplayName("only a skill in a bloodline branch belongs to a bloodline")
+  void bloodline(
+      final String name, final Skill skill, final SkillBranch branch, final Identifier line) {
+    assertEquals(line, SkillPurchase.bloodline(skill, branch));
+  }
 }

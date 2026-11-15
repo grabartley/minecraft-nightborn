@@ -63,6 +63,12 @@ public final class SkillPurchase {
       final Identifier id,
       final Skill skill,
       final SkillBranch branch) {
-    return progress.buy(id, skill.cost(), branch.bloodline() ? skill.branch() : null);
+    return progress.buy(id, skill.cost(), bloodline(skill, branch));
+  }
+
+  @Nullable
+  public static Identifier bloodline(
+      @Nullable final Skill skill, @Nullable final SkillBranch branch) {
+    return skill != null && branch != null && branch.bloodline() ? skill.branch() : null;
   }
 }

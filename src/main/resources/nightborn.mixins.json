@@ -3,6 +3,7 @@
 	"package": "com.grahambartley.nightborn.mixin",
 	"compatibilityLevel": "JAVA_21",
 	"mixins": [
+		"EnchantmentHelperMixin",
 		"HungerManagerMixin",
 		"LivingEntityMixin",
 		"MapStateMixin",

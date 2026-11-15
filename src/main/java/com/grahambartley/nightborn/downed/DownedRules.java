@@ -27,6 +27,10 @@ public final class DownedRules {
     return !killsVampires;
   }
 
+  public static boolean stakesOnHit(@Nullable final DownedState state, final boolean stakeBlow) {
+    return stakeBlow && state != null && state.isDowned();
+  }
+
   public static Optional<UUID> hunter(final boolean human, final UUID attacker) {
     return human ? Optional.of(attacker) : Optional.empty();
   }

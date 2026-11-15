@@ -58,6 +58,13 @@ public final class Skills {
     return branches(registries).map(registry -> registry.get(id)).orElse(null);
   }
 
+  public static Optional<Identifier> bloodlineOf(
+      final DynamicRegistryManager registries, final Identifier id) {
+    final Skill skill = skill(registries, id);
+    final SkillBranch branch = skill == null ? null : branch(registries, skill.branch());
+    return Optional.ofNullable(SkillPurchase.bloodline(skill, branch));
+  }
+
   private static <T> Map<Identifier, T> copy(final Optional<Registry<T>> registry) {
     final Map<Identifier, T> entries = new HashMap<>();
     registry.ifPresent(r -> r.getIds().forEach(id -> entries.put(id, r.get(id))));

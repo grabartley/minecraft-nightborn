@@ -4,6 +4,8 @@ import com.grahambartley.nightborn.coffin.Coffins;
 import com.grahambartley.nightborn.decor.DecorBlockEntities;
 import com.grahambartley.nightborn.decor.DecorBlocks;
 import com.grahambartley.nightborn.decor.DecorEntities;
+import com.grahambartley.nightborn.gear.GearBlocks;
+import com.grahambartley.nightborn.gear.GearItems;
 import com.grahambartley.nightborn.hunter.HunterAttributes;
 import java.util.concurrent.atomic.AtomicBoolean;
 import net.minecraft.Bootstrap;
@@ -27,5 +29,7 @@ public final class MinecraftBootstrapExtension implements BeforeAllCallback {
     Coffins.initialize();
     DecorEntities.initialize();
     HunterAttributes.register();
+    GearBlocks.initialize();
+    GearItems.register();
   }
 }

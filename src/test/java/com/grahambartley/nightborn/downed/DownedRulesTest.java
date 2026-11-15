@@ -39,6 +39,20 @@ class DownedRulesTest {
     assertEquals(downs, DownedRules.downsInsteadOfDying(killer));
   }
 
+  @ParameterizedTest(name = "state {0}, stake blow {1}: staked {2}")
+  @CsvSource({
+    "STANDING, true, false",
+    "DOWNED, true, true",
+    "DOWNED, false, false",
+    "ESCAPING, true, false"
+  })
+  @DisplayName("a stake blow stakes a downed vampire outright")
+  void stakesOnHit(final String state, final boolean stakeBlow, final boolean staked) {
+    final DownedState current =
+        state.equals("STANDING") ? null : new DownedState(Phase.valueOf(state), 10);
+    assertEquals(staked, DownedRules.stakesOnHit(current, stakeBlow));
+  }
+
   @Test
   @DisplayName("a vampire lies downed for the set time, gets up, escapes, then is free")
   void fullCycle() {
