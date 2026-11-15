@@ -71,4 +71,17 @@ class LevitationLookAheadTest {
       final OptionalDouble first, final OptionalDouble second, final OptionalDouble higher) {
     assertEquals(higher, LevitationLookAhead.higher(first, second));
   }
+
+  @ParameterizedTest(name = "ground {0}, feet {1}: looks from {2}")
+  @CsvSource({"64, 65, 65.05", "64, 66.4, 65.05", ", 70, 70.05", "64.5, 65.5, 65.55"})
+  @DisplayName(
+      "it only climbs one block above the ground it follows, whatever its step height, so a"
+          + " fence or a wall still stops it")
+  void climbLimit(final Double ground, final double feet, final double limit) {
+    assertEquals(
+        limit,
+        LevitationLookAhead.climbLimit(
+            ground == null ? OptionalDouble.empty() : OptionalDouble.of(ground), feet),
+        0.0001);
+  }
 }

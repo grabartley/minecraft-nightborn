@@ -10,6 +10,9 @@ public final class LevitationLookAhead {
   static final double MAX_REACH = 3.5;
   static final int SAMPLES = 4;
   static final double STILL = 1.0E-4;
+  static final double MAX_CLIMB = 1.0;
+  static final double CLIMB_MARGIN = 0.05;
+  static final double SEARCH_DEPTH = MAX_CLIMB + LevitationLift.HOVER_HEIGHT + CLIMB_MARGIN;
 
   private LevitationLookAhead() {}
 
@@ -36,6 +39,12 @@ public final class LevitationLookAhead {
       distances[sample] = reach * (sample + 1) / SAMPLES;
     }
     return distances;
+  }
+
+  public static double climbLimit(final OptionalDouble groundBelow, final double feetY) {
+    final double ground =
+        groundBelow.isPresent() ? groundBelow.getAsDouble() : feetY - LevitationLift.HOVER_HEIGHT;
+    return ground + MAX_CLIMB + CLIMB_MARGIN;
   }
 
   public static OptionalDouble higher(final OptionalDouble first, final OptionalDouble second) {

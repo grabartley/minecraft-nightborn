@@ -30,8 +30,8 @@ public final class LevitationGround {
       return below;
     }
     final Box box = entity.getBoundingBox();
-    final double startY = box.minY + entity.getStepHeight();
-    final double depth = entity.getStepHeight() + LevitationLift.HOVER_HEIGHT;
+    final double startY = LevitationLookAhead.climbLimit(below, box.minY);
+    final double depth = LevitationLookAhead.SEARCH_DEPTH;
     OptionalDouble highest = below;
     for (final double distance :
         LevitationLookAhead.distances(entity.getVelocity().horizontalLength())) {

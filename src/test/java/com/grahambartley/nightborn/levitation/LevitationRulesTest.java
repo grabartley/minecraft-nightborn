@@ -42,8 +42,7 @@ class LevitationRulesTest {
 
   @ParameterizedTest(name = "on ground {0}, levitating {1}: {2}")
   @CsvSource({"true, false, true", "false, true, true", "true, true, true", "false, false, false"})
-  @DisplayName(
-      "a levitating vampire steps up and starts a sprint as it would standing on the ground")
+  @DisplayName("a levitating vampire starts a sprint as it would standing on the ground")
   void movesAsGrounded(final boolean onGround, final boolean levitating, final boolean grounded) {
     assertEquals(grounded, LevitationRules.movesAsGrounded(onGround, levitating));
   }
