@@ -467,7 +467,8 @@
   "nightborn.familiar.hire.not_a_vampire": "Solo un vampiro puede contratar a un familiar",
   "nightborn.familiar.hire.not_hireable": "Solo se puede contratar a un aldeano adulto",
   "nightborn.familiar.hire.already_keeps_one": "Ya tienes un familiar",
-  "nightborn.familiar.wage.paid": "Tu familiar tiene pagados %s días",
+  "nightborn.familiar.hire.busy": "Ese aldeano está ocupado comerciando",
+  "nightborn.familiar.wage.paid": "Días de sueldo pagados: %s",
   "nightborn.familiar.wage.ahead": "Tu familiar ya está pagado con toda la antelación que acepta",
   "nightborn.familiar.mood.devoted": "Tu familiar parece entregado a ti",
   "nightborn.familiar.mood.content": "Tu familiar parece satisfecho",
@@ -500,7 +501,7 @@
   "nightborn.setting.familiars.betrayChance": "Probabilidad de traición",
   "nightborn.setting.familiars.betrayChance.tooltip": "Probabilidad diaria, en porcentaje, de que un familiar desleal se vuelva contra su amo. 0 significa nunca",
   "nightborn.setting.familiars.guardRange": "Alcance de guardia",
-  "nightborn.setting.familiars.guardRange.tooltip": "A qué distancia del ataúd de su amo, en bloques, un familiar ahuyenta a los monstruos",
+  "nightborn.setting.familiars.guardRange.tooltip": "A qué distancia del ataúd de su amo, en bloques, un familiar se mueve de día y ahuyenta a los monstruos",
   "nightborn.setting.familiars.errandRange": "Alcance de recados",
   "nightborn.setting.familiars.errandRange.tooltip": "A qué distancia, en bloques, puede estar un cofre marcado para que un familiar haga recados hasta él"
 }

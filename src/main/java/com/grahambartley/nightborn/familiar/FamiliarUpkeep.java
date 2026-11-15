@@ -2,25 +2,15 @@ package com.grahambartley.nightborn.familiar;
 
 import com.grahambartley.nightborn.coffin.CoffinBlock;
 import com.grahambartley.nightborn.config.FamiliarSettings;
-import com.grahambartley.nightborn.core.NightTime;
 import com.grahambartley.nightborn.server.ServerConfigService;
 import java.util.UUID;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
 
-public final class FamiliarDays {
+public final class FamiliarUpkeep {
 
-  private FamiliarDays() {}
-
-  public static long today(final World world) {
-    return Math.floorDiv(world.getTimeOfDay(), NightTime.DAY_LENGTH);
-  }
-
-  public static boolean isWorkingHours(final World world) {
-    return !NightTime.isNight(world.getDimension().hasFixedTime(), world.getTimeOfDay());
-  }
+  private FamiliarUpkeep() {}
 
   public static void check(final HumanFamiliarEntity familiar) {
     if (!(familiar.getWorld() instanceof ServerWorld world) || familiar.owner().isEmpty()) {
@@ -33,7 +23,8 @@ public final class FamiliarDays {
       return;
     }
     followCoffin(familiar, world, owner);
-    passDays(familiar, registry, today(world), ServerConfigService.current().familiars());
+    passDays(
+        familiar, registry, FamiliarClock.today(world), ServerConfigService.current().familiars());
   }
 
   public static void passDays(

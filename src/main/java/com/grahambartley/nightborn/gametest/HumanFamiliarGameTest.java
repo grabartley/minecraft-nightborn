@@ -2,15 +2,16 @@ package com.grahambartley.nightborn.gametest;
 
 import com.grahambartley.nightborn.config.FamiliarSettings;
 import com.grahambartley.nightborn.familiar.ChestMark;
-import com.grahambartley.nightborn.familiar.FamiliarDays;
 import com.grahambartley.nightborn.familiar.FamiliarHiring;
 import com.grahambartley.nightborn.familiar.FamiliarOrders;
 import com.grahambartley.nightborn.familiar.FamiliarRegistry;
 import com.grahambartley.nightborn.familiar.FamiliarRelease;
+import com.grahambartley.nightborn.familiar.FamiliarUpkeep;
 import com.grahambartley.nightborn.familiar.Familiars;
 import com.grahambartley.nightborn.familiar.HireRules;
 import com.grahambartley.nightborn.familiar.HumanFamiliarEntity;
 import com.grahambartley.nightborn.familiar.goal.BetrayOwnerGoal;
+import com.grahambartley.nightborn.familiar.goal.RetaliateGoal;
 import com.grahambartley.nightborn.familiar.goal.RunErrandGoal;
 import com.grahambartley.nightborn.server.ServerConfigService;
 import com.grahambartley.nightborn.vampire.NightbornDamage;
@@ -24,6 +25,8 @@ import net.minecraft.entity.passive.VillagerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.test.AfterBatch;
@@ -188,7 +191,7 @@ public class HumanFamiliarGameTest implements FabricGameTest {
           final FamiliarRegistry registry = FamiliarRegistry.of(context.getWorld().getServer());
           familiar.loyalty(20);
           final long today = familiar.lastDay();
-          FamiliarDays.passDays(familiar, registry, today + 2, ALWAYS_BETRAYS);
+          FamiliarUpkeep.passDays(familiar, registry, today + 2, ALWAYS_BETRAYS);
           context.assertTrue(familiar.turned(), "a disloyal unpaid familiar turns");
           context.assertTrue(
               registry.bondOf(vampire.getUuid()).isEmpty(), "a turned familiar frees the slot");
@@ -209,7 +212,7 @@ public class HumanFamiliarGameTest implements FabricGameTest {
         () -> {
           final HumanFamiliarEntity familiar = hired(context, vampire);
           FamiliarRelease.freeOwner(context.getWorld().getServer(), vampire.getUuid());
-          FamiliarDays.check(familiar);
+          FamiliarUpkeep.check(familiar);
           context.assertTrue(familiar.isRemoved(), "a freed familiar stops being a familiar");
           final VillagerEntity villager =
               context
@@ -334,6 +337,103 @@ public class HumanFamiliarGameTest implements FabricGameTest {
               FamiliarOrders.mark(vampire, context.getAbsolutePos(barrel))
                   .equals(Optional.of(ChestMark.FETCH)),
               "a barrel can be marked");
+          TestPlayers.finish(context, vampire);
+        });
+  }
+
+  @GameTest(templateName = ARENA, tickLimit = TestPlayers.READY + 20)
+  public void aFamiliarNeverStrikesBackAtItsOwner(final TestContext context) {
+    final ServerPlayerEntity vampire = TestPlayers.vampire(context, STAND);
+    final ServerPlayerEntity stranger = TestPlayers.human(context, STAND.east());
+    final HumanFamiliarEntity[] familiar = new HumanFamiliarEntity[1];
+    context.runAtTick(TestPlayers.READY, () -> familiar[0] = hired(context, vampire));
+    context.runAtTick(
+        TestPlayers.READY + 5,
+        () -> {
+          familiar[0].damage(context.getWorld().getDamageSources().playerAttack(vampire), 1.0F);
+          context.assertTrue(
+              familiar[0].getAttacker() == vampire, "the owner's blow lands on the familiar");
+          context.assertFalse(
+              new RetaliateGoal(familiar[0]).canStart(), "a blow from its owner goes unanswered");
+        });
+    context.runAtTick(
+        TestPlayers.READY + 10,
+        () -> {
+          familiar[0].timeUntilRegen = 0;
+          familiar[0].damage(context.getWorld().getDamageSources().playerAttack(stranger), 1.0F);
+          context.assertTrue(
+              new RetaliateGoal(familiar[0]).canStart(), "a blow from a stranger is answered");
+          TestPlayers.finish(context, vampire, stranger);
+        });
+  }
+
+  @GameTest(templateName = ARENA, batchId = NOON_BATCH, tickLimit = TestPlayers.READY + 40)
+  public void aChestLockedAfterMarkingIsLeftAlone(final TestContext context) {
+    final ServerPlayerEntity vampire = TestPlayers.vampire(context, STAND);
+    final BlockPos fetch = new BlockPos(2, 2, 2);
+    final BlockPos deliver = new BlockPos(4, 2, 2);
+    context.setBlockState(fetch, Blocks.CHEST);
+    context.setBlockState(deliver, Blocks.CHEST);
+    final ChestBlockEntity from = context.getBlockEntity(fetch);
+    from.setStack(0, new ItemStack(Items.WHEAT, 30));
+    context.runAtTick(
+        TestPlayers.READY,
+        () -> {
+          final HumanFamiliarEntity familiar = hired(context, vampire);
+          familiar.setAiDisabled(true);
+          FamiliarOrders.mark(vampire, context.getAbsolutePos(fetch));
+          FamiliarOrders.mark(vampire, context.getAbsolutePos(deliver));
+          final NbtCompound lock = new NbtCompound();
+          lock.putString("Lock", "crypt key");
+          from.read(lock, context.getWorld().getRegistryManager());
+          from.setStack(0, new ItemStack(Items.WHEAT, 30));
+          final RunErrandGoal errand = new RunErrandGoal(familiar);
+          context.assertTrue(errand.canStart(), "the errand starts from its marks");
+          errand.start();
+          for (int step = 0; step < 3 && errand.shouldContinue(); step++) {
+            errand.tick();
+          }
+          context.assertEquals(from.count(Items.WHEAT), 30, "nothing is taken from a locked chest");
+          context.assertTrue(familiar.getInventory().isEmpty(), "the familiar carries nothing");
+          context.assertTrue(
+              FamiliarRegistry.of(context.getWorld().getServer())
+                  .bondOf(vampire.getUuid())
+                  .orElseThrow()
+                  .marks()
+                  .fetch()
+                  .isEmpty(),
+              "the locked chest is forgotten");
+          TestPlayers.finish(context, vampire);
+        });
+  }
+
+  @GameTest(templateName = ARENA, tickLimit = TestPlayers.READY + 20)
+  public void theReleaseCommandFreesAPlayersSlotOrAFamiliar(final TestContext context) {
+    final ServerPlayerEntity vampire = TestPlayers.vampire(context, STAND);
+    context.runAtTick(
+        TestPlayers.READY,
+        () -> {
+          final MinecraftServer server = context.getWorld().getServer();
+          final HumanFamiliarEntity familiar = hired(context, vampire);
+          final ServerCommandSource operator = server.getCommandSource().withSilent();
+          server
+              .getCommandManager()
+              .executeWithPrefix(
+                  operator, "nightborn familiar " + familiar.getUuidAsString() + " release");
+          context.assertTrue(familiar.isRemoved(), "a familiar named in the command is released");
+          context.assertTrue(
+              FamiliarRegistry.of(server).bondOf(vampire.getUuid()).isEmpty(),
+              "releasing the familiar frees its owner's slot");
+          final HumanFamiliarEntity second = hired(context, vampire);
+          server
+              .getCommandManager()
+              .executeWithPrefix(
+                  operator, "nightborn familiar " + vampire.getName().getString() + " release");
+          context.assertTrue(
+              FamiliarRegistry.of(server).bondOf(vampire.getUuid()).isEmpty(),
+              "a player named in the command loses their familiar slot");
+          FamiliarUpkeep.check(second);
+          context.assertTrue(second.isRemoved(), "the freed familiar becomes a villager again");
           TestPlayers.finish(context, vampire);
         });
   }

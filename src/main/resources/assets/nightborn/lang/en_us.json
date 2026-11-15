@@ -467,7 +467,8 @@
   "nightborn.familiar.hire.not_a_vampire": "Only a vampire can hire a familiar",
   "nightborn.familiar.hire.not_hireable": "Only a grown villager can be hired",
   "nightborn.familiar.hire.already_keeps_one": "You already keep a familiar",
-  "nightborn.familiar.wage.paid": "Your familiar is paid for %s days",
+  "nightborn.familiar.hire.busy": "That villager is busy trading",
+  "nightborn.familiar.wage.paid": "Days of wages paid: %s",
   "nightborn.familiar.wage.ahead": "Your familiar is already paid as far ahead as it will take",
   "nightborn.familiar.mood.devoted": "Your familiar seems devoted to you",
   "nightborn.familiar.mood.content": "Your familiar seems content",
@@ -500,7 +501,7 @@
   "nightborn.setting.familiars.betrayChance": "Betrayal Chance",
   "nightborn.setting.familiars.betrayChance.tooltip": "Chance each day, in percent, that a disloyal familiar turns on its owner. 0 means never",
   "nightborn.setting.familiars.guardRange": "Guard Range",
-  "nightborn.setting.familiars.guardRange.tooltip": "How far from its owner's coffin, in blocks, a familiar drives off monsters",
+  "nightborn.setting.familiars.guardRange.tooltip": "How far from its owner's coffin, in blocks, a familiar roams by day and drives off monsters",
   "nightborn.setting.familiars.errandRange": "Errand Range",
   "nightborn.setting.familiars.errandRange.tooltip": "How far away, in blocks, a marked chest can be for a familiar to run errands to it"
 }

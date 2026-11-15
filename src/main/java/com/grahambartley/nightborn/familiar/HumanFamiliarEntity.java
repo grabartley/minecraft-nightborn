@@ -2,6 +2,7 @@ package com.grahambartley.nightborn.familiar;
 
 import com.grahambartley.nightborn.familiar.goal.BetrayOwnerGoal;
 import com.grahambartley.nightborn.familiar.goal.GuardCoffinGoal;
+import com.grahambartley.nightborn.familiar.goal.RetaliateGoal;
 import com.grahambartley.nightborn.familiar.goal.RunErrandGoal;
 import com.grahambartley.nightborn.familiar.goal.StayHomeGoal;
 import java.util.Optional;
@@ -11,7 +12,6 @@ import net.minecraft.entity.InventoryOwner;
 import net.minecraft.entity.ai.goal.LookAroundGoal;
 import net.minecraft.entity.ai.goal.LookAtEntityGoal;
 import net.minecraft.entity.ai.goal.MeleeAttackGoal;
-import net.minecraft.entity.ai.goal.RevengeGoal;
 import net.minecraft.entity.ai.goal.SwimGoal;
 import net.minecraft.entity.ai.goal.WanderAroundFarGoal;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;
@@ -94,7 +94,7 @@ public class HumanFamiliarEntity extends PathAwareEntity
     goalSelector.add(6, new WanderAroundFarGoal(this, 0.6));
     goalSelector.add(7, new LookAtEntityGoal(this, PlayerEntity.class, 6.0F));
     goalSelector.add(8, new LookAroundGoal(this));
-    targetSelector.add(1, new RevengeGoal(this));
+    targetSelector.add(1, new RetaliateGoal(this));
     targetSelector.add(2, new BetrayOwnerGoal(this));
     targetSelector.add(3, new GuardCoffinGoal(this));
   }
@@ -136,7 +136,7 @@ public class HumanFamiliarEntity extends PathAwareEntity
   protected void mobTick() {
     super.mobTick();
     if (age % 20 == 0) {
-      FamiliarDays.check(this);
+      FamiliarUpkeep.check(this);
     }
   }
 

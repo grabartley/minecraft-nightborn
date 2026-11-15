@@ -68,6 +68,21 @@ class ChestMarksTest {
             .getOrThrow());
   }
 
+  static Stream<Arguments> forgets() {
+    return Stream.of(
+        Arguments.of(marks(A, B), A, marks(null, B)),
+        Arguments.of(marks(A, B), B, marks(A, null)),
+        Arguments.of(marks(A, B), C, marks(A, B)),
+        Arguments.of(ChestMarks.NONE, A, ChestMarks.NONE));
+  }
+
+  @ParameterizedTest(name = "{0} without {1} is {2}")
+  @MethodSource("forgets")
+  @DisplayName("a chest that stops being an errand chest is forgotten")
+  void without(final ChestMarks before, final GlobalPos chest, final ChestMarks after) {
+    assertEquals(after, before.without(chest));
+  }
+
   private static ChestMarks marks(final GlobalPos fetch, final GlobalPos deliver) {
     return new ChestMarks(Optional.ofNullable(fetch), Optional.ofNullable(deliver));
   }

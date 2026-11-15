@@ -8,6 +8,10 @@ public final class Slights {
 
   private Slights() {}
 
+  public static boolean retaliates(final boolean byOwner) {
+    return !byOwner;
+  }
+
   public static int loyaltyLost(
       final boolean byOwner,
       final boolean bite,

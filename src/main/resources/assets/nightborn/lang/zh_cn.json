@@ -467,7 +467,8 @@
   "nightborn.familiar.hire.not_a_vampire": "只有吸血鬼才能雇佣眷属",
   "nightborn.familiar.hire.not_hireable": "只能雇佣成年村民",
   "nightborn.familiar.hire.already_keeps_one": "你已经有一名眷属",
-  "nightborn.familiar.wage.paid": "你的眷属已预付 %s 天工钱",
+  "nightborn.familiar.hire.busy": "这名村民正在交易",
+  "nightborn.familiar.wage.paid": "已付工钱天数：%s",
   "nightborn.familiar.wage.ahead": "你的眷属已预付到它愿意接受的最长天数",
   "nightborn.familiar.mood.devoted": "你的眷属似乎对你忠心耿耿",
   "nightborn.familiar.mood.content": "你的眷属似乎很满足",
@@ -500,7 +501,7 @@
   "nightborn.setting.familiars.betrayChance": "背叛几率",
   "nightborn.setting.familiars.betrayChance.tooltip": "不忠的眷属每天背叛主人的几率（百分比）。0 表示从不",
   "nightborn.setting.familiars.guardRange": "守卫范围",
-  "nightborn.setting.familiars.guardRange.tooltip": "眷属在离主人棺材多少格内驱赶怪物",
+  "nightborn.setting.familiars.guardRange.tooltip": "眷属白天在离主人棺材多少格内活动并驱赶怪物",
   "nightborn.setting.familiars.errandRange": "差事范围",
   "nightborn.setting.familiars.errandRange.tooltip": "被标记的箱子离眷属最远多少格时，眷属仍会为其跑差事"
 }

@@ -23,28 +23,32 @@ public final class FamiliarCare {
 
   static ActionResult interact(
       final HumanFamiliarEntity familiar, final PlayerEntity player, final Hand hand) {
-    if (!familiar.isOwnedBy(player)) {
-      return ActionResult.PASS;
-    }
     final ItemStack stack = player.getStackInHand(hand);
-    if (stack.isOf(Items.EMERALD)) {
-      pay(familiar, player, stack);
-      return ActionResult.CONSUME;
-    }
-    if (stack.isEmpty() && hand == Hand.MAIN_HAND) {
-      player.sendMessage(
-          Text.translatable(
-              FamiliarMood.of(familiar.loyalty(), familiar.turned()).translationKey()),
-          true);
-      return ActionResult.CONSUME;
-    }
-    return ActionResult.PASS;
+    return switch (CareRules.choose(
+        familiar.isOwnedBy(player),
+        hand == Hand.MAIN_HAND,
+        stack.isOf(Items.EMERALD),
+        stack.isEmpty(),
+        player.getOffHandStack().isOf(Items.EMERALD))) {
+      case PAY -> {
+        pay(familiar, player, stack);
+        yield ActionResult.CONSUME;
+      }
+      case MOOD -> {
+        player.sendMessage(
+            Text.translatable(
+                FamiliarMood.of(familiar.loyalty(), familiar.turned()).translationKey()),
+            true);
+        yield ActionResult.CONSUME;
+      }
+      case NONE -> ActionResult.PASS;
+    };
   }
 
   static void pay(
       final HumanFamiliarEntity familiar, final PlayerEntity player, final ItemStack emeralds) {
     final FamiliarSettings settings = ServerConfigService.current().familiars();
-    final long today = FamiliarDays.today(familiar.getWorld());
+    final long today = FamiliarClock.today(familiar.getWorld());
     final OptionalLong paidThrough =
         Wages.pay(
             familiar.paidThroughDay(),

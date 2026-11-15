@@ -2,20 +2,38 @@ package com.grahambartley.nightborn.client.familiar;
 
 import com.grahambartley.nightborn.familiar.FamiliarLivery;
 import com.grahambartley.nightborn.familiar.HumanFamiliarEntity;
+import java.util.HashMap;
+import java.util.Map;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.feature.FeatureRenderer;
 import net.minecraft.client.render.entity.feature.FeatureRendererContext;
 import net.minecraft.client.render.entity.model.VillagerResemblingModel;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.util.Identifier;
+import net.minecraft.village.VillagerType;
 
 public class FamiliarLiveryFeatureRenderer
     extends FeatureRenderer<HumanFamiliarEntity, VillagerResemblingModel<HumanFamiliarEntity>> {
+
+  private final Map<VillagerType, Identifier> textures = new HashMap<>();
 
   public FamiliarLiveryFeatureRenderer(
       final FeatureRendererContext<
               HumanFamiliarEntity, VillagerResemblingModel<HumanFamiliarEntity>>
           context) {
     super(context);
+  }
+
+  private Identifier livery(final VillagerType type) {
+    return textures.computeIfAbsent(
+        type,
+        key -> {
+          final Identifier texture = FamiliarLivery.texture(key);
+          return MinecraftClient.getInstance().getResourceManager().getResource(texture).isPresent()
+              ? texture
+              : FamiliarLivery.texture(VillagerType.PLAINS);
+        });
   }
 
   @Override
@@ -35,7 +53,7 @@ public class FamiliarLiveryFeatureRenderer
     }
     renderModel(
         getContextModel(),
-        FamiliarLivery.texture(familiar.getVillagerData().getType()),
+        livery(familiar.getVillagerData().getType()),
         matrices,
         vertexConsumers,
         light,

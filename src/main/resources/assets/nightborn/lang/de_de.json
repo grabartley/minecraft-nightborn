@@ -467,7 +467,8 @@
   "nightborn.familiar.hire.not_a_vampire": "Nur ein Vampir kann einen Vertrauten einstellen",
   "nightborn.familiar.hire.not_hireable": "Nur ein erwachsener Dorfbewohner kann eingestellt werden",
   "nightborn.familiar.hire.already_keeps_one": "Du hast bereits einen Vertrauten",
-  "nightborn.familiar.wage.paid": "Dein Vertrauter ist für %s Tage bezahlt",
+  "nightborn.familiar.hire.busy": "Dieser Dorfbewohner handelt gerade",
+  "nightborn.familiar.wage.paid": "Bezahlte Lohntage: %s",
   "nightborn.familiar.wage.ahead": "Dein Vertrauter ist bereits so weit im Voraus bezahlt, wie er annimmt",
   "nightborn.familiar.mood.devoted": "Dein Vertrauter wirkt dir ergeben",
   "nightborn.familiar.mood.content": "Dein Vertrauter wirkt zufrieden",
@@ -500,7 +501,7 @@
   "nightborn.setting.familiars.betrayChance": "Verratschance",
   "nightborn.setting.familiars.betrayChance.tooltip": "Chance pro Tag in Prozent, dass sich ein untreuer Vertrauter gegen seinen Herrn wendet. 0 heißt nie",
   "nightborn.setting.familiars.guardRange": "Wachreichweite",
-  "nightborn.setting.familiars.guardRange.tooltip": "Wie weit vom Sarg seines Herrn, in Blöcken, ein Vertrauter Monster vertreibt",
+  "nightborn.setting.familiars.guardRange.tooltip": "Wie weit vom Sarg seines Herrn, in Blöcken, ein Vertrauter tagsüber umhergeht und Monster vertreibt",
   "nightborn.setting.familiars.errandRange": "Botengangreichweite",
   "nightborn.setting.familiars.errandRange.tooltip": "Wie weit, in Blöcken, eine markierte Truhe entfernt sein darf, damit ein Vertrauter Botengänge dorthin macht"
 }

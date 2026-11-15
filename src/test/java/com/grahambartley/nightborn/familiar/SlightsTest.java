@@ -26,4 +26,11 @@ class SlightsTest {
   void loyaltyLost(final boolean byOwner, final boolean bite, final long since, final int lost) {
     assertEquals(lost, Slights.loyaltyLost(byOwner, bite, since, SETTINGS));
   }
+
+  @ParameterizedTest(name = "struck by its owner {0}: strikes back {1}")
+  @CsvSource({"true, false", "false, true"})
+  @DisplayName("a familiar never strikes back at its owner")
+  void retaliates(final boolean byOwner, final boolean strikes) {
+    assertEquals(strikes, Slights.retaliates(byOwner));
+  }
 }

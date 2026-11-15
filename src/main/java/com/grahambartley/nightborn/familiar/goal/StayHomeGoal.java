@@ -1,6 +1,6 @@
 package com.grahambartley.nightborn.familiar.goal;
 
-import com.grahambartley.nightborn.familiar.FamiliarDays;
+import com.grahambartley.nightborn.familiar.FamiliarClock;
 import com.grahambartley.nightborn.familiar.HomeRules;
 import com.grahambartley.nightborn.familiar.HumanFamiliarEntity;
 import com.grahambartley.nightborn.server.ServerConfigService;
@@ -47,7 +47,7 @@ public class StayHomeGoal extends Goal {
 
   private int range() {
     return HomeRules.range(
-        FamiliarDays.isWorkingHours(familiar.getWorld()),
+        FamiliarClock.isWorkingHours(familiar.getWorld()),
         ServerConfigService.current().familiars().guardRange());
   }
 }

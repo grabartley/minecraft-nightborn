@@ -467,7 +467,8 @@
   "nightborn.familiar.hire.not_a_vampire": "Seul un vampire peut engager un familier",
   "nightborn.familiar.hire.not_hireable": "Seul un villageois adulte peut être engagé",
   "nightborn.familiar.hire.already_keeps_one": "Vous avez déjà un familier",
-  "nightborn.familiar.wage.paid": "Votre familier est payé pour %s jours",
+  "nightborn.familiar.hire.busy": "Ce villageois est occupé à commercer",
+  "nightborn.familiar.wage.paid": "Jours de gages payés : %s",
   "nightborn.familiar.wage.ahead": "Votre familier est déjà payé aussi loin d'avance qu'il l'accepte",
   "nightborn.familiar.mood.devoted": "Votre familier semble vous être dévoué",
   "nightborn.familiar.mood.content": "Votre familier semble satisfait",
@@ -500,7 +501,7 @@
   "nightborn.setting.familiars.betrayChance": "Chance de trahison",
   "nightborn.setting.familiars.betrayChance.tooltip": "Chance par jour, en pourcentage, qu'un familier déloyal se retourne contre son maître. 0 signifie jamais",
   "nightborn.setting.familiars.guardRange": "Portée de garde",
-  "nightborn.setting.familiars.guardRange.tooltip": "Jusqu'à quelle distance du cercueil de son maître, en blocs, un familier chasse les monstres",
+  "nightborn.setting.familiars.guardRange.tooltip": "Jusqu'à quelle distance du cercueil de son maître, en blocs, un familier circule le jour et chasse les monstres",
   "nightborn.setting.familiars.errandRange": "Portée des courses",
   "nightborn.setting.familiars.errandRange.tooltip": "À quelle distance, en blocs, un coffre marqué peut se trouver pour qu'un familier y fasse ses courses"
 }

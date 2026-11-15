@@ -4,7 +4,8 @@ import com.grahambartley.nightborn.familiar.ChestMarks;
 import com.grahambartley.nightborn.familiar.ErrandRules;
 import com.grahambartley.nightborn.familiar.ErrandTransfer;
 import com.grahambartley.nightborn.familiar.FamiliarBond;
-import com.grahambartley.nightborn.familiar.FamiliarDays;
+import com.grahambartley.nightborn.familiar.FamiliarClock;
+import com.grahambartley.nightborn.familiar.FamiliarOrders;
 import com.grahambartley.nightborn.familiar.FamiliarRegistry;
 import com.grahambartley.nightborn.familiar.HumanFamiliarEntity;
 import com.grahambartley.nightborn.familiar.TradePick;
@@ -55,7 +56,7 @@ public class RunErrandGoal extends Goal {
     if (!(familiar.getWorld() instanceof ServerWorld world)
         || world.getTime() < restUntil
         || familiar.getTarget() != null
-        || !FamiliarDays.isWorkingHours(world)) {
+        || !FamiliarClock.isWorkingHours(world)) {
       return false;
     }
     final Optional<ChestMarks> marks =
@@ -96,7 +97,7 @@ public class RunErrandGoal extends Goal {
     return leg != null
         && ticks < GIVE_UP_TICKS
         && familiar.getTarget() == null
-        && FamiliarDays.isWorkingHours(familiar.getWorld());
+        && FamiliarClock.isWorkingHours(familiar.getWorld());
   }
 
   @Override
@@ -124,6 +125,9 @@ public class RunErrandGoal extends Goal {
 
   private void fetchLeg() {
     if (!reached(fetch)) {
+      return;
+    }
+    if (!stillErrandChest(fetch)) {
       return;
     }
     final Inventory chest = HopperBlockEntity.getInventoryAt(familiar.getWorld(), fetch);
@@ -167,11 +171,30 @@ public class RunErrandGoal extends Goal {
     if (!reached(deliver)) {
       return;
     }
+    if (!stillErrandChest(deliver)) {
+      return;
+    }
     final Inventory chest = HopperBlockEntity.getInventoryAt(familiar.getWorld(), deliver);
     if (chest != null) {
       ErrandTransfer.deliverAll(familiar.getInventory(), chest);
     }
     leg = null;
+  }
+
+  private boolean stillErrandChest(final BlockPos chest) {
+    if (FamiliarOrders.isErrandChest(familiar.getWorld(), chest)) {
+      return true;
+    }
+    if (familiar.getWorld() instanceof ServerWorld world) {
+      familiar
+          .owner()
+          .ifPresent(
+              owner ->
+                  FamiliarOrders.forget(
+                      world.getServer(), owner, GlobalPos.create(world.getRegistryKey(), chest)));
+    }
+    leg = null;
+    return false;
   }
 
   private boolean reached(final BlockPos chest) {

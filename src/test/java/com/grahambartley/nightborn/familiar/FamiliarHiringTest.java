@@ -13,6 +13,7 @@ class FamiliarHiringTest {
     "HIRE, nightborn.familiar.hire.hire",
     "NOT_A_VAMPIRE, nightborn.familiar.hire.not_a_vampire",
     "NOT_HIREABLE, nightborn.familiar.hire.not_hireable",
+    "BUSY, nightborn.familiar.hire.busy",
     "ALREADY_KEEPS_ONE, nightborn.familiar.hire.already_keeps_one"
   })
   @DisplayName("each hiring outcome tells the player what happened")

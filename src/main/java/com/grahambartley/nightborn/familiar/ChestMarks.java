@@ -33,6 +33,11 @@ public record ChestMarks(Optional<GlobalPos> fetch, Optional<GlobalPos> deliver)
     return new Marked(new ChestMarks(fetch, Optional.of(chest)), ChestMark.DELIVER);
   }
 
+  public ChestMarks without(final GlobalPos chest) {
+    return new ChestMarks(
+        fetch.filter(pos -> !pos.equals(chest)), deliver.filter(pos -> !pos.equals(chest)));
+  }
+
   public boolean complete() {
     return fetch.isPresent() && deliver.isPresent();
   }

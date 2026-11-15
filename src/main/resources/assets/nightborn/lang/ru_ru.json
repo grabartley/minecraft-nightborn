@@ -467,7 +467,8 @@
   "nightborn.familiar.hire.not_a_vampire": "Нанять фамильяра может только вампир",
   "nightborn.familiar.hire.not_hireable": "Нанять можно только взрослого жителя",
   "nightborn.familiar.hire.already_keeps_one": "У вас уже есть фамильяр",
-  "nightborn.familiar.wage.paid": "Ваш фамильяр оплачен на %s дн.",
+  "nightborn.familiar.hire.busy": "Этот житель сейчас торгует",
+  "nightborn.familiar.wage.paid": "Оплачено дней жалованья: %s",
   "nightborn.familiar.wage.ahead": "Ваш фамильяр уже оплачен настолько вперёд, насколько он согласен",
   "nightborn.familiar.mood.devoted": "Ваш фамильяр кажется преданным вам",
   "nightborn.familiar.mood.content": "Ваш фамильяр кажется довольным",
@@ -500,7 +501,7 @@
   "nightborn.setting.familiars.betrayChance": "Шанс предательства",
   "nightborn.setting.familiars.betrayChance.tooltip": "Шанс в день, в процентах, что неверный фамильяр обратится против хозяина. 0 значит никогда",
   "nightborn.setting.familiars.guardRange": "Радиус охраны",
-  "nightborn.setting.familiars.guardRange.tooltip": "На каком расстоянии от гроба хозяина, в блоках, фамильяр отгоняет монстров",
+  "nightborn.setting.familiars.guardRange.tooltip": "На каком расстоянии от гроба хозяина, в блоках, фамильяр ходит днём и отгоняет монстров",
   "nightborn.setting.familiars.errandRange": "Радиус поручений",
   "nightborn.setting.familiars.errandRange.tooltip": "Как далеко, в блоках, может быть отмеченный сундук, чтобы фамильяр выполнял к нему поручения"
 }

@@ -59,7 +59,8 @@ public final class FamiliarHiring {
     final HireRules.Outcome outcome =
         HireRules.decide(
             Vampires.isVampire(player),
-            villager.isAlive() && !villager.isBaby() && !villager.hasCustomer(),
+            villager.isAlive() && !villager.isBaby(),
+            villager.hasCustomer(),
             registry.bondOf(player.getUuid()).isPresent());
     if (outcome != HireRules.Outcome.HIRE) {
       player.sendMessage(Text.translatable(key(outcome)), true);
@@ -78,7 +79,7 @@ public final class FamiliarHiring {
     }
     final FamiliarSettings settings = ServerConfigService.current().familiars();
     familiar.hire(
-        player.getUuid(), data, FamiliarDays.today(world), settings.startLoyalty(), hiredAt);
+        player.getUuid(), data, FamiliarClock.today(world), settings.startLoyalty(), hiredAt);
     for (final ItemStack stack : carried) {
       final ItemStack left = familiar.getInventory().addStack(stack);
       if (!left.isEmpty()) {
