@@ -11,37 +11,25 @@ public enum VampirePose {
   WALK("walk", Play.LOOP),
   RUN("run", Play.LOOP),
   ATTACK("attack", Play.HOLD),
-  DOWNED("downed", Play.HOLD, Hold.ARMS_AND_HEAD),
+  DOWNED("downed", Play.HOLD),
   LEVITATE("levitate", Play.LOOP),
   LEVITATE_MOVE("levitate_move", Play.LOOP),
   LEVITATE_SPRINT("levitate_sprint", Play.LOOP),
   LAND("land", Play.ONCE),
-  VOMIT("vomit", Play.ONCE, Hold.ARMS),
+  VOMIT("vomit", Play.ONCE),
   USE_ITEM_RIGHT("use_item_right", Play.LOOP),
-  USE_ITEM_LEFT("use_item_left", Play.LOOP),
-  FEED("feed", Play.LOOP, Hold.ARMS_AND_HEAD),
-  DRAIN("drain", Play.ONCE, Hold.ARMS_AND_HEAD),
-  RISE("rise", Play.ONCE, Hold.ARMS_AND_HEAD),
-  WEAKENED("weakened", Play.LOOP),
-  WEAKENED_WALK("weakened_walk", Play.LOOP);
+  USE_ITEM_LEFT("use_item_left", Play.LOOP);
 
   static final float RUN_SWING = 0.6F;
   static final float WALK_SWING = 0.1F;
   public static final double LEVITATE_MOVE_SPEED = 0.03;
   public static final double LEVITATE_SPRINT_SPEED = 0.24;
-  public static final double WEAKENED_WALK_SPEED = 0.02;
   public static final String SPREAD_VARIABLE = "variable.levitate_spread";
 
   private enum Play {
     LOOP,
     HOLD,
     ONCE
-  }
-
-  private enum Hold {
-    NOTHING,
-    ARMS,
-    ARMS_AND_HEAD
   }
 
   public record Cue(
@@ -54,15 +42,9 @@ public enum VampirePose {
 
   private final String animation;
   private final RawAnimation clip;
-  private final Hold hold;
 
   VampirePose(final String animation, final Play play) {
-    this(animation, play, Hold.NOTHING);
-  }
-
-  VampirePose(final String animation, final Play play, final Hold hold) {
     this.animation = animation;
-    this.hold = hold;
     this.clip =
         switch (play) {
           case LOOP -> RawAnimation.begin().thenLoop(animation);
@@ -94,10 +76,6 @@ public enum VampirePose {
     return horizontalSpeed > LEVITATE_MOVE_SPEED ? LEVITATE_MOVE : LEVITATE;
   }
 
-  public static VampirePose weakened(final double horizontalSpeed) {
-    return horizontalSpeed > WEAKENED_WALK_SPEED ? WEAKENED_WALK : WEAKENED;
-  }
-
   public static double spread(final boolean sprinting, final double horizontalSpeed) {
     return sprinting ? 1.0 : Math.max(0.0, Math.min(1.0, horizontalSpeed / LEVITATE_SPRINT_SPEED));
   }
@@ -117,14 +95,6 @@ public enum VampirePose {
       return PlayState.STOP;
     }
     return state.setAndContinue(pose.get().clip());
-  }
-
-  public boolean allowsActions() {
-    return hold == Hold.NOTHING;
-  }
-
-  public boolean holdsHead() {
-    return hold == Hold.ARMS_AND_HEAD;
   }
 
   public String animation() {

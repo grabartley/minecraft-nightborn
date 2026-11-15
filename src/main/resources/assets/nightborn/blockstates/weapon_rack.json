@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "nightborn:block/weapon_rack"
+    },
+    "facing=east": {
+      "model": "nightborn:block/weapon_rack",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "nightborn:block/weapon_rack",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "nightborn:block/weapon_rack",
+      "y": 270
+    }
+  }
+}

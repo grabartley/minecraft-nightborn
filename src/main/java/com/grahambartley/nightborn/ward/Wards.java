@@ -110,12 +110,38 @@ public final class Wards {
     if (settings.shapeStrength() == 0) {
       return 0;
     }
-    return CrucifixShapes.get(world)
-            .near(world, vampire.getBlockPos(), settings.shapeRange())
-            .stream()
-            .anyMatch(centre -> seesShape(world, vampire, centre))
+    final boolean seesShape =
+        CrucifixShapes.get(world).near(world, vampire.getBlockPos(), settings.shapeRange()).stream()
+            .anyMatch(centre -> seesShape(world, vampire, centre));
+    return seesShape || seesHungCrucifix(world, vampire, settings.shapeRange())
         ? settings.shapeStrength()
         : 0;
+  }
+
+  private static boolean seesHungCrucifix(
+      final ServerWorld world, final LivingEntity vampire, final int range) {
+    return world
+        .getPointOfInterestStorage()
+        .getPositions(
+            type -> type.matchesKey(WardPoints.HUNG_CRUCIFIX),
+            pos -> true,
+            vampire.getBlockPos(),
+            range,
+            PointOfInterestStorage.OccupationStatus.ANY)
+        .anyMatch(pos -> seesBlock(world, vampire, pos));
+  }
+
+  private static boolean seesBlock(
+      final ServerWorld world, final LivingEntity vampire, final BlockPos target) {
+    final BlockHitResult hit =
+        world.raycast(
+            new RaycastContext(
+                vampire.getEyePos(),
+                Vec3d.ofCenter(target),
+                RaycastContext.ShapeType.COLLIDER,
+                RaycastContext.FluidHandling.NONE,
+                vampire));
+    return hit.getType() == HitResult.Type.MISS || hit.getBlockPos().equals(target);
   }
 
   private static boolean seesShape(

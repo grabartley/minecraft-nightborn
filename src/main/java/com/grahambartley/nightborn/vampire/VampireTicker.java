@@ -19,7 +19,6 @@ public final class VampireTicker {
 
   public static void tick(final LivingEntity vampire) {
     if (!vampire.isAlive()) {
-      VisibleStateAttachment.set(vampire, VisibleState.NONE);
       return;
     }
     final NightbornConfig config = ServerConfigService.current();
@@ -33,14 +32,13 @@ public final class VampireTicker {
     Wards.tick(vampire, config.wards());
     final int weakened = Weakened.tick(vampire, downed != null, config.weakened());
     Levitation.tick(vampire, weakened, downed != null);
-    final boolean feeding = FeedingSessions.isFeeding(vampire);
     final boolean eyes =
         EyeGlow.glowing(
-            feeding,
+            FeedingSessions.isFeeding(vampire),
             FeedingSessions.ticksSinceFed(vampire, vampire.getWorld().getTime()),
             vampire.getHealth(),
             vampire.getMaxHealth());
     VisibleStateAttachment.set(
-        vampire, new VisibleState(eyes, feeding, downed != null && downed.isDowned(), weakened));
+        vampire, new VisibleState(eyes, downed != null && downed.isDowned(), weakened));
   }
 }

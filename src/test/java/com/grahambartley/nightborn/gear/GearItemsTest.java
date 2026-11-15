@@ -35,8 +35,8 @@ class GearItemsTest {
         Arguments.of("silver_nugget", GearItems.SILVER_NUGGET, Item.class),
         Arguments.of("raw_silver", GearItems.RAW_SILVER, Item.class),
         Arguments.of("garlic", GearItems.GARLIC, AliasedBlockItem.class),
-        Arguments.of("gold_crucifix", GearItems.GOLD_CRUCIFIX, Item.class),
-        Arguments.of("silver_crucifix", GearItems.SILVER_CRUCIFIX, Item.class));
+        Arguments.of("gold_crucifix", GearItems.GOLD_CRUCIFIX, CrucifixItem.class),
+        Arguments.of("silver_crucifix", GearItems.SILVER_CRUCIFIX, CrucifixItem.class));
   }
 
   static Stream<Arguments> crucifixes() {

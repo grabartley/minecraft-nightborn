@@ -1,7 +1,6 @@
 package com.grahambartley.nightborn.render;
 
 import com.grahambartley.nightborn.Nightborn;
-import com.grahambartley.nightborn.client.anim.VampirePlayerClips;
 import com.grahambartley.nightborn.mob.VampireLook;
 import com.grahambartley.nightborn.mob.VampirePose;
 import net.minecraft.entity.player.PlayerEntity;
@@ -61,9 +60,7 @@ public final class VampirePlayerModel extends GeoModel<VampirePlayerAnimatable> 
       mouth.setTrackingMatrices(true);
     }
     final GeoBone head = getAnimationProcessor().getBone("head");
-    if (head == null
-        || !(animationState.getData(DataTickets.ENTITY) instanceof PlayerEntity player)
-        || VampirePlayerClips.clip(player).map(VampirePose::holdsHead).orElse(false)) {
+    if (head == null) {
       return;
     }
     final EntityModelData data = animationState.getData(DataTickets.ENTITY_MODEL_DATA);

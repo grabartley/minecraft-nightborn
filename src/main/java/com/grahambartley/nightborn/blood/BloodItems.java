@@ -5,6 +5,7 @@ import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.minecraft.component.ComponentType;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroups;
+import net.minecraft.item.Items;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
@@ -25,7 +26,10 @@ public final class BloodItems {
           Registries.ITEM,
           Identifier.of(Nightborn.MOD_ID, "blood_bottle"),
           new BloodBottleItem(
-              new Item.Settings().maxCount(16).component(BLOOD_QUALITY, BloodQuality.ANIMAL)));
+              new Item.Settings()
+                  .maxCount(16)
+                  .recipeRemainder(Items.GLASS_BOTTLE)
+                  .component(BLOOD_QUALITY, BloodQuality.ANIMAL)));
 
   private BloodItems() {}
 

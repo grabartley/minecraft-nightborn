@@ -1,6 +1,7 @@
 package com.grahambartley.nightborn.screen;
 
 import com.grahambartley.nightborn.client.SyncedServerConfig;
+import com.grahambartley.nightborn.client.gore.SplatterLook;
 import com.grahambartley.nightborn.client.state.ClientState;
 import com.grahambartley.nightborn.client.state.ClientStateService;
 import com.grahambartley.nightborn.client.state.GoreLevel;
@@ -131,7 +132,12 @@ public final class NightbornSettingsScreen extends Screen {
   }
 
   private void saveAndClose() {
-    ClientStateService.update(device);
+    final GoreLevel goreBefore = ClientStateService.current().gore();
+    if (ClientStateService.update(device)
+        && SplatterLook.redrawNeeded(goreBefore, device.gore())
+        && client != null) {
+      client.worldRenderer.reload();
+    }
     if (access() == EditAccess.EDITABLE) {
       ClientPlayNetworking.send(new EditConfigPayload(opened, NightbornConfig.from(values)));
     }

@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "decorations",
+  "pattern": [
+    "N N",
+    "PPP"
+  ],
+  "key": {
+    "N": {
+      "item": "minecraft:iron_nugget"
+    },
+    "P": {
+      "item": "nightborn:ebony_planks"
+    }
+  },
+  "result": {
+    "id": "nightborn:weapon_rack",
+    "count": 1
+  }
+}

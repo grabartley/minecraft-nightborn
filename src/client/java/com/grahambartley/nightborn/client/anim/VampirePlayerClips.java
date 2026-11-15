@@ -3,10 +3,8 @@ package com.grahambartley.nightborn.client.anim;
 import com.grahambartley.nightborn.client.vomit.VomitFx;
 import com.grahambartley.nightborn.levitation.Levitation;
 import com.grahambartley.nightborn.mob.VampirePose;
-import com.grahambartley.nightborn.network.PlayerCue;
-import com.grahambartley.nightborn.network.PlayerCuePayload;
-import com.grahambartley.nightborn.vampire.VisibleState;
-import com.grahambartley.nightborn.vampire.VisibleStateAttachment;
+import com.grahambartley.nightborn.network.VomitPayload;
+import com.grahambartley.nightborn.vampire.Vampires;
 import java.util.Map;
 import java.util.Optional;
 import java.util.WeakHashMap;
@@ -29,47 +27,38 @@ public final class VampirePlayerClips {
             world
                 .getPlayers()
                 .forEach(
-                    player ->
-                        state(player)
-                            .tick(
-                                player.age,
-                                Levitation.isLevitating(player),
-                                VisibleStateAttachment.get(player).downed())));
+                    player -> state(player).tick(player.age, Levitation.isLevitating(player))));
     ClientPlayNetworking.registerGlobalReceiver(
-        PlayerCuePayload.ID,
+        VomitPayload.ID,
         (payload, context) -> {
           final Entity entity =
               context.client().world == null
                   ? null
                   : context.client().world.getEntityById(payload.entityId());
           if (entity instanceof PlayerEntity player) {
-            cued(player, payload.cue());
+            state(player).vomit(player.age);
+            VomitFx.started(player);
           }
         });
   }
 
   public static Optional<VampirePose> clip(final PlayerEntity player) {
-    final VisibleState visible = VisibleStateAttachment.get(player);
+    if (!Vampires.isVampire(player)) {
+      return Optional.empty();
+    }
     return state(player)
         .clip(
             player.age,
-            new PlayerClipState.Situation(
-                Levitation.isLevitating(player),
-                player.isSprinting(),
-                Math.hypot(player.getX() - player.prevX, player.getZ() - player.prevZ),
-                visible.downed(),
-                visible.feeding(),
-                visible.isWeakened() && staggersOnFoot(player)),
-            new PlayerClipState.Lengths(
-                VampireClips.seconds(VampirePose.LAND),
-                VampireClips.seconds(VampirePose.VOMIT),
-                VampireClips.seconds(VampirePose.DRAIN),
-                VampireClips.seconds(VampirePose.RISE)));
+            Levitation.isLevitating(player),
+            player.isSprinting(),
+            Math.hypot(player.getX() - player.prevX, player.getZ() - player.prevZ),
+            VampireClips.seconds(VampirePose.LAND),
+            VampireClips.seconds(VampirePose.VOMIT));
   }
 
   public static Optional<VampirePose> action(final PlayerEntity player) {
     return clip(player)
-        .filter(VampirePose::allowsActions)
+        .filter(pose -> pose != VampirePose.VOMIT)
         .flatMap(
             pose ->
                 VampirePose.action(
@@ -81,21 +70,6 @@ public final class VampirePlayerClips {
 
   public static double vomitingSeconds(final PlayerEntity player, final float partialTick) {
     return state(player).vomitingSeconds(player.age + partialTick);
-  }
-
-  private static boolean staggersOnFoot(final PlayerEntity player) {
-    return WeakenedStoop.onFoot(
-        player.getPose(), player.isOnGround(), player.hasVehicle(), player.isUsingItem());
-  }
-
-  private static void cued(final PlayerEntity player, final PlayerCue cue) {
-    switch (cue) {
-      case VOMIT -> {
-        state(player).vomit(player.age);
-        VomitFx.started(player);
-      }
-      case DRAIN -> state(player).drain(player.age);
-    }
   }
 
   private static PlayerClipState state(final PlayerEntity player) {

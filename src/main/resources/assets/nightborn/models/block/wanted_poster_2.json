@@ -1,0 +1,7 @@
+{
+  "parent": "nightborn:block/wanted_poster",
+  "textures": {
+    "0": "nightborn:block/wanted_poster_2",
+    "particle": "nightborn:block/wanted_poster_2"
+  }
+}

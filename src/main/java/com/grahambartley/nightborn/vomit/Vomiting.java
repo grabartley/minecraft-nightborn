@@ -1,9 +1,10 @@
 package com.grahambartley.nightborn.vomit;
 
 import com.grahambartley.nightborn.config.BloodSettings;
-import com.grahambartley.nightborn.network.PlayerCue;
-import com.grahambartley.nightborn.network.PlayerCues;
+import com.grahambartley.nightborn.network.VomitPayload;
 import com.grahambartley.nightborn.vampire.NightbornDamage;
+import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerEntity;
@@ -60,7 +61,9 @@ public final class Vomiting {
   static void throwUp(final ServerPlayerEntity vampire, final int damage) {
     vampire.addStatusEffect(
         new StatusEffectInstance(StatusEffects.NAUSEA, NAUSEA_TICKS, 0, false, false, true));
-    PlayerCues.send(vampire, PlayerCue.VOMIT);
+    final VomitPayload payload = new VomitPayload(vampire.getId());
+    ServerPlayNetworking.send(vampire, payload);
+    PlayerLookup.tracking(vampire).forEach(watcher -> ServerPlayNetworking.send(watcher, payload));
     if (damage > 0) {
       vampire.damage(NightbornDamage.vomit(vampire.getWorld()), damage);
     }

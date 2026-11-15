@@ -14,7 +14,7 @@ class VisibleStateAttachmentTest {
   @DisplayName("nothing to see stores nothing, so a human costs nothing")
   void noneStoresNothing() {
     final FakeAttachmentTarget player = new FakeAttachmentTarget();
-    VisibleStateAttachment.set(player, new VisibleState(true, true, false, 0));
+    VisibleStateAttachment.set(player, new VisibleState(true, false, 0));
     VisibleStateAttachment.set(player, VisibleState.NONE);
     assertFalse(player.hasAttached(VisibleStateAttachment.TYPE));
     assertEquals(VisibleState.NONE, VisibleStateAttachment.get(player));
@@ -24,9 +24,9 @@ class VisibleStateAttachmentTest {
   @DisplayName("an unchanged state is not written again, so it is not re-sent every tick")
   void unchangedNotWritten() {
     final FakeAttachmentTarget player = new FakeAttachmentTarget();
-    VisibleStateAttachment.set(player, new VisibleState(false, false, true, 100));
+    VisibleStateAttachment.set(player, new VisibleState(false, true, 100));
     final int writes = player.writes();
-    VisibleStateAttachment.set(player, new VisibleState(false, false, true, 100));
+    VisibleStateAttachment.set(player, new VisibleState(false, true, 100));
     assertEquals(writes, player.writes());
   }
 

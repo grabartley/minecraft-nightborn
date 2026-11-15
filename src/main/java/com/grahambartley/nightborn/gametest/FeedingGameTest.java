@@ -7,7 +7,6 @@ import com.grahambartley.nightborn.blood.BloodQuality;
 import com.grahambartley.nightborn.config.FeedingSettings;
 import com.grahambartley.nightborn.feeding.FeedingSessions;
 import com.grahambartley.nightborn.server.ServerConfigService;
-import com.grahambartley.nightborn.vampire.VisibleStateAttachment;
 import net.fabricmc.fabric.api.event.player.UseEntityCallback;
 import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
 import net.minecraft.block.Blocks;
@@ -66,9 +65,6 @@ public class FeedingGameTest implements FabricGameTest {
         () -> {
           context.assertEquals(BloodAttachment.get(vampire), 13, "blood after three sips of cow");
           context.assertEquals(cow.getHealth(), 4.0F, "cow health after three sips");
-          context.assertTrue(
-              VisibleStateAttachment.get(vampire).feeding(),
-              "the vampire's synced state marks it feeding");
         });
     context.runAtTick(
         85,
@@ -76,8 +72,6 @@ public class FeedingGameTest implements FabricGameTest {
           context.assertTrue(cow.isAlive(), "letting go leaves the cow alive");
           context.assertTrue(
               cow.hasStatusEffect(StatusEffects.WEAKNESS), "a sipped cow is left weak");
-          context.assertFalse(
-              VisibleStateAttachment.get(vampire).feeding(), "letting go ends the feeding pose");
           TestPlayers.finish(context, vampire);
         });
   }

@@ -251,18 +251,18 @@ Sneak and use on a creature to bite it, and keep holding to drink. Let go to sto
 
 **Actor:** Vampire, hunter.
 
-How weakened a vampire is scales with how strong the source is. By default each Garlic String in range weakens by 15%, up to 45% for three or more; touching or holding garlic weakens by 80%; a held crucifix weakens by 60%, and by 25% more of that for each point of the holder's faith; and a crucifix shape weakens by 40%. A crucifix held by a vampire wards no one. A vampire mob's only attack is its bite, so it cannot hurt a crucifix holder at all.
+How weakened a vampire is scales with how strong the source is. By default each Garlic String in range weakens by 15%, up to 45% for three or more; touching or holding garlic weakens by 80%; a held crucifix weakens by 60%, and by 25% more of that for each point of the holder's faith; and a crucifix shape or a hung crucifix weakens by 40%. A crucifix held by a vampire wards no one. A vampire mob's only attack is its bite, so it cannot hurt a crucifix holder at all.
 
 | ID | Requirement |
 |---|---|
 | WEAK-1 | Each Garlic String weakens vampires within 8 blocks. More strings in range weaken more, up to a cap |
 | WEAK-2 | Touching garlic, by walking through garlic crops or brushing a Garlic String, or holding garlic, weakens a vampire greatly, far more than a string in range |
 | WEAK-3 | Holding a Crucifix in either hand weakens and slows vampires within 6 blocks who can see it, players and mobs alike, and stops them biting the holder |
-| WEAK-4 | A crucifix shape in the world weakens vampires within 8 blocks who can see it |
+| WEAK-4 | A crucifix shape in the world, or a crucifix hung on a wall (DECOR-4), weakens vampires within 8 blocks who can see it |
 | WEAK-5 | Holy water hurts vampires and weakens them for a short time, whether splashed, lingering, fired as a bolt or carried as a coating on a weapon or ammo (GEAR-9). It does nothing to anyone else |
 | WEAK-6 | Silver weapons deal extra damage to vampires, and only to vampires |
 | WEAK-7 | A stake deals extra damage to vampires, and stakes a vampire it downs or hits while downed, whoever holds it. It also hurts a vampire that is escaping |
-| WEAK-8 | A weakened vampire shows it to everyone with a sign that is not colour alone, and stoops and staggers on foot |
+| WEAK-8 | A weakened vampire shows it to everyone with a sign that is not colour alone |
 | WEAK-9 | Being weakened by different sources adds up, to a cap |
 | WEAK-10 | Being weakened never damages a vampire on its own. Holy water does damage, as WEAK-5 says |
 
@@ -495,8 +495,8 @@ Vampires are rare. They live in households hidden in four kinds of structure, ea
 |---|---|
 | DECOR-1 | Gothic furniture: candelabras, chandeliers, velvet drapes, stained glass, ornate chairs and tables. Drapes open and close as a whole column, a chair seats one player at a time, and stained glass needs Silk Touch like vanilla glass |
 | DECOR-2 | Gothic building blocks in stone and dark wood: gothic stone bricks in plain, cracked and mossy forms with stairs, slabs and walls, carved gothic stone, and ebony planks with stairs, slabs and a fence |
-| DECOR-3 | Blood decor: blood fountains, blood pools, placeable splatter decals and chalices |
-| DECOR-4 | Hunter decor: weapon racks, wanted posters, trophy mounts and crucifixes |
+| DECOR-3 | Blood decor: blood fountains, blood pools, placeable splatter decals and chalices. A blood fountain flows until it gets a redstone signal and starts again when the signal ends, and every start and stop plays its own animation. A blood pool lies flat on a floor. Blood splatter hangs on any face of a block in one of four shapes, set by where it is placed. Pouring a Blood Bottle into an empty gold chalice fills it, and a glass bottle takes the same blood back out, keeping its quality (FEED-11). A vampire can drink straight from a full chalice with an empty hand, as from a bottle. Placed splatter follows the gore option (GORE-3): fresh on Full, dried and dark on Reduced, and not drawn on Off |
+| DECOR-4 | Hunter decor: weapon racks, wanted posters, trophy mounts and crucifixes, each hung on the side of a block and dropped when that block goes. A weapon rack holds two weapons from the `nightborn:weapon_rack_holds` tag, which starts with swords, axes, bows, crossbows, tridents, maces and stakes. Using a weapon on a free hook hangs it there, using an empty hand on a hook takes back what hangs on it, and breaking the rack drops all it holds. A wanted poster shows one of three faces, set by where it hangs. A trophy mount shows a fanged vampire skull. A gold or silver Crucifix used on the side of a block hangs there and breaks back into the same Crucifix, and a hung crucifix wards like a crucifix shape (WEAK-4) |
 | DECOR-5 | Coffins in two styles. Wooden coffins are narrow at the head and foot and widest at the shoulders, made from oak, spruce, dark oak, mangrove, cherry or crimson planks and drawn with that wood's planks. Their hinged lid creaks open and shut, and they sound and break like their wood, fastest with an axe, and catch fire as it does (COFFIN-14), so a crimson coffin never catches fire. Stone coffins are plain rectangular boxes made from stone bricks, deepslate bricks, polished blackstone bricks or gothic stone bricks (DECOR-2) and drawn with that stone. Their heavy lid slides open and shut with a grind of stone, and they sound and break like those bricks, dropping only when mined with a pickaxe. Both styles lie flat or stand (COFFIN-10) and follow every coffin rule in 5.14 |
 | DECOR-6 | Candles, candelabras and chandeliers light the room. Flint and steel or a fire charge lights them and an empty hand puts them out, and every light, douse, opening and closing plays its own animation |
 | DECOR-7 | A gramophone, crafted from a jukebox, gold ingots and ebony planks and facing the player who placed it, plays any music disc as a jukebox does, with the same hopper, redstone and comparator behaviour, and animates while it plays |
@@ -517,7 +517,7 @@ Vampires are rare. They live in households hidden in four kinds of structure, ea
 |---|---|
 | GORE-1 | Bites, stakes and silver hits spray blood. Blood leaves splatter on nearby blocks, drawn by the client, that fades with time |
 | GORE-2 | A drained victim and a staked vampire have their own death effects |
-| GORE-3 | A client option sets gore, including vomit particles (FEED-3), to Full, Reduced or Off. Full is the default. Vomit particles also follow the vanilla Particles setting, and none show on Minimal |
+| GORE-3 | A client option sets gore, including vomit particles (FEED-3) and placed blood splatter (DECOR-3), to Full, Reduced or Off. Full is the default. Vomit particles also follow the vanilla Particles setting, and none show on Minimal |
 | GORE-4 | Gore is drawn by the client only. The setting never changes what happens in the world |
 
 **Enforcement:** server decides what happens. The client decides how much blood to draw.

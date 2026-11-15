@@ -44,6 +44,12 @@ public class BloodBottleItem extends Item {
             config.blood().bottledBlood()));
   }
 
+  public static void drink(final PlayerEntity player, final BloodQuality quality) {
+    BloodAttachment.set(
+        player,
+        BloodAttachment.get(player) + bloodRestored(quality, ServerConfigService.current()));
+  }
+
   @Override
   public TypedActionResult<ItemStack> use(
       final World world, final PlayerEntity user, final Hand hand) {
@@ -56,10 +62,7 @@ public class BloodBottleItem extends Item {
   @Override
   public ItemStack finishUsing(final ItemStack stack, final World world, final LivingEntity user) {
     if (!world.isClient && user instanceof PlayerEntity player && Vampires.isVampire(player)) {
-      BloodAttachment.set(
-          player,
-          BloodAttachment.get(player)
-              + bloodRestored(qualityOf(stack), ServerConfigService.current()));
+      drink(player, qualityOf(stack));
       player.playSound(SoundEvents.ENTITY_GENERIC_DRINK, 1.0F, 1.0F);
       return ItemUsage.exchangeStack(stack, player, new ItemStack(Items.GLASS_BOTTLE), false);
     }

@@ -1,0 +1,7 @@
+{
+  "parent": "nightborn:block/gold_wall_crucifix",
+  "textures": {
+    "0": "nightborn:block/silver_crucifix",
+    "particle": "nightborn:block/silver_crucifix"
+  }
+}

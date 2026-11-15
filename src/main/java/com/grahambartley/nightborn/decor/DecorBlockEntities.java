@@ -20,6 +20,13 @@ public final class DecorBlockEntities {
                       .toArray(Block[]::new))
               .build());
 
+  public static final BlockEntityType<WeaponRackBlockEntity> WEAPON_RACK =
+      Registry.register(
+          Registries.BLOCK_ENTITY_TYPE,
+          Identifier.of(Nightborn.MOD_ID, "weapon_rack"),
+          BlockEntityType.Builder.create(WeaponRackBlockEntity::new, DecorBlocks.WEAPON_RACK)
+              .build());
+
   private DecorBlockEntities() {}
 
   public static void initialize() {}

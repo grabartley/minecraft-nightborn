@@ -1,13 +1,17 @@
 {
   "replace": false,
   "values": [
+    "nightborn:blood_fountain",
     "nightborn:candelabra",
     "nightborn:carved_gothic_stone",
+    "nightborn:chalice",
     "nightborn:chandelier",
     "nightborn:cracked_gothic_stone_brick_slab",
     "nightborn:cracked_gothic_stone_brick_stairs",
     "nightborn:cracked_gothic_stone_brick_wall",
     "nightborn:cracked_gothic_stone_bricks",
+    "nightborn:deepslate_silver_ore",
+    "nightborn:gold_wall_crucifix",
     "nightborn:gothic_stone_brick_slab",
     "nightborn:gothic_stone_brick_stairs",
     "nightborn:gothic_stone_brick_wall",
@@ -17,6 +21,6 @@
     "nightborn:mossy_gothic_stone_brick_wall",
     "nightborn:mossy_gothic_stone_bricks",
     "nightborn:silver_ore",
-    "nightborn:deepslate_silver_ore"
+    "nightborn:silver_wall_crucifix"
   ]
 }

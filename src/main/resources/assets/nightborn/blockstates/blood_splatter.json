@@ -1,0 +1,216 @@
+{
+  "variants": {
+    "face=floor,facing=north,splat=0": {
+      "model": "nightborn:block/blood_splatter"
+    },
+    "face=floor,facing=north,splat=1": {
+      "model": "nightborn:block/blood_splatter_1"
+    },
+    "face=floor,facing=north,splat=2": {
+      "model": "nightborn:block/blood_splatter_2"
+    },
+    "face=floor,facing=north,splat=3": {
+      "model": "nightborn:block/blood_splatter_3"
+    },
+    "face=floor,facing=east,splat=0": {
+      "model": "nightborn:block/blood_splatter",
+      "y": 90
+    },
+    "face=floor,facing=east,splat=1": {
+      "model": "nightborn:block/blood_splatter_1",
+      "y": 90
+    },
+    "face=floor,facing=east,splat=2": {
+      "model": "nightborn:block/blood_splatter_2",
+      "y": 90
+    },
+    "face=floor,facing=east,splat=3": {
+      "model": "nightborn:block/blood_splatter_3",
+      "y": 90
+    },
+    "face=floor,facing=south,splat=0": {
+      "model": "nightborn:block/blood_splatter",
+      "y": 180
+    },
+    "face=floor,facing=south,splat=1": {
+      "model": "nightborn:block/blood_splatter_1",
+      "y": 180
+    },
+    "face=floor,facing=south,splat=2": {
+      "model": "nightborn:block/blood_splatter_2",
+      "y": 180
+    },
+    "face=floor,facing=south,splat=3": {
+      "model": "nightborn:block/blood_splatter_3",
+      "y": 180
+    },
+    "face=floor,facing=west,splat=0": {
+      "model": "nightborn:block/blood_splatter",
+      "y": 270
+    },
+    "face=floor,facing=west,splat=1": {
+      "model": "nightborn:block/blood_splatter_1",
+      "y": 270
+    },
+    "face=floor,facing=west,splat=2": {
+      "model": "nightborn:block/blood_splatter_2",
+      "y": 270
+    },
+    "face=floor,facing=west,splat=3": {
+      "model": "nightborn:block/blood_splatter_3",
+      "y": 270
+    },
+    "face=wall,facing=north,splat=0": {
+      "model": "nightborn:block/blood_splatter",
+      "x": 90
+    },
+    "face=wall,facing=north,splat=1": {
+      "model": "nightborn:block/blood_splatter_1",
+      "x": 90
+    },
+    "face=wall,facing=north,splat=2": {
+      "model": "nightborn:block/blood_splatter_2",
+      "x": 90
+    },
+    "face=wall,facing=north,splat=3": {
+      "model": "nightborn:block/blood_splatter_3",
+      "x": 90
+    },
+    "face=wall,facing=east,splat=0": {
+      "model": "nightborn:block/blood_splatter",
+      "x": 90,
+      "y": 90
+    },
+    "face=wall,facing=east,splat=1": {
+      "model": "nightborn:block/blood_splatter_1",
+      "x": 90,
+      "y": 90
+    },
+    "face=wall,facing=east,splat=2": {
+      "model": "nightborn:block/blood_splatter_2",
+      "x": 90,
+      "y": 90
+    },
+    "face=wall,facing=east,splat=3": {
+      "model": "nightborn:block/blood_splatter_3",
+      "x": 90,
+      "y": 90
+    },
+    "face=wall,facing=south,splat=0": {
+      "model": "nightborn:block/blood_splatter",
+      "x": 90,
+      "y": 180
+    },
+    "face=wall,facing=south,splat=1": {
+      "model": "nightborn:block/blood_splatter_1",
+      "x": 90,
+      "y": 180
+    },
+    "face=wall,facing=south,splat=2": {
+      "model": "nightborn:block/blood_splatter_2",
+      "x": 90,
+      "y": 180
+    },
+    "face=wall,facing=south,splat=3": {
+      "model": "nightborn:block/blood_splatter_3",
+      "x": 90,
+      "y": 180
+    },
+    "face=wall,facing=west,splat=0": {
+      "model": "nightborn:block/blood_splatter",
+      "x": 90,
+      "y": 270
+    },
+    "face=wall,facing=west,splat=1": {
+      "model": "nightborn:block/blood_splatter_1",
+      "x": 90,
+      "y": 270
+    },
+    "face=wall,facing=west,splat=2": {
+      "model": "nightborn:block/blood_splatter_2",
+      "x": 90,
+      "y": 270
+    },
+    "face=wall,facing=west,splat=3": {
+      "model": "nightborn:block/blood_splatter_3",
+      "x": 90,
+      "y": 270
+    },
+    "face=ceiling,facing=north,splat=0": {
+      "model": "nightborn:block/blood_splatter",
+      "x": 180,
+      "y": 180
+    },
+    "face=ceiling,facing=north,splat=1": {
+      "model": "nightborn:block/blood_splatter_1",
+      "x": 180,
+      "y": 180
+    },
+    "face=ceiling,facing=north,splat=2": {
+      "model": "nightborn:block/blood_splatter_2",
+      "x": 180,
+      "y": 180
+    },
+    "face=ceiling,facing=north,splat=3": {
+      "model": "nightborn:block/blood_splatter_3",
+      "x": 180,
+      "y": 180
+    },
+    "face=ceiling,facing=east,splat=0": {
+      "model": "nightborn:block/blood_splatter",
+      "x": 180,
+      "y": 270
+    },
+    "face=ceiling,facing=east,splat=1": {
+      "model": "nightborn:block/blood_splatter_1",
+      "x": 180,
+      "y": 270
+    },
+    "face=ceiling,facing=east,splat=2": {
+      "model": "nightborn:block/blood_splatter_2",
+      "x": 180,
+      "y": 270
+    },
+    "face=ceiling,facing=east,splat=3": {
+      "model": "nightborn:block/blood_splatter_3",
+      "x": 180,
+      "y": 270
+    },
+    "face=ceiling,facing=south,splat=0": {
+      "model": "nightborn:block/blood_splatter",
+      "x": 180
+    },
+    "face=ceiling,facing=south,splat=1": {
+      "model": "nightborn:block/blood_splatter_1",
+      "x": 180
+    },
+    "face=ceiling,facing=south,splat=2": {
+      "model": "nightborn:block/blood_splatter_2",
+      "x": 180
+    },
+    "face=ceiling,facing=south,splat=3": {
+      "model": "nightborn:block/blood_splatter_3",
+      "x": 180
+    },
+    "face=ceiling,facing=west,splat=0": {
+      "model": "nightborn:block/blood_splatter",
+      "x": 180,
+      "y": 90
+    },
+    "face=ceiling,facing=west,splat=1": {
+      "model": "nightborn:block/blood_splatter_1",
+      "x": 180,
+      "y": 90
+    },
+    "face=ceiling,facing=west,splat=2": {
+      "model": "nightborn:block/blood_splatter_2",
+      "x": 180,
+      "y": 90
+    },
+    "face=ceiling,facing=west,splat=3": {
+      "model": "nightborn:block/blood_splatter_3",
+      "x": 180,
+      "y": 90
+    }
+  }
+}
