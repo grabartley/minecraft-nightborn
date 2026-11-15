@@ -1,9 +1,6 @@
 {
   "parent": "nightborn:item/template_coffin",
   "textures": {
-    "0": "minecraft:block/mangrove_planks",
-    "1": "nightborn:block/burgundy_velvet",
-    "2": "minecraft:block/raw_gold_block",
     "particle": "minecraft:block/mangrove_planks"
   }
 }

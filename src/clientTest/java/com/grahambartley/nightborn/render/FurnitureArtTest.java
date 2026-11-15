@@ -8,7 +8,6 @@ import com.grahambartley.nightborn.decor.ToggleClips;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Set;
 import net.minecraft.util.Identifier;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -49,8 +48,7 @@ class FurnitureArtTest {
     assertTrue(Files.exists(texture));
     assertEquals(glows, Files.exists(texture.resolveSibling(block + "_glowmask.png")));
     assertEquals(
-        Set.of(
-            ToggleClips.ACTIVATE, ToggleClips.ACTIVE, ToggleClips.DEACTIVATE, ToggleClips.INACTIVE),
+        ToggleClips.FURNITURE.all(),
         JsonParser.parseString(
                 Files.readString(file(FurnitureArt.animation(art), "src/client/resources")))
             .getAsJsonObject()

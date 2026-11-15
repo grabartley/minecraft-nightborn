@@ -5,6 +5,7 @@ import com.grahambartley.nightborn.decor.DecorItemGroup;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.fabricmc.fabric.api.registry.FlammableBlockRegistry;
 import net.minecraft.block.AbstractBlock;
@@ -20,6 +21,9 @@ import net.minecraft.util.Identifier;
 public final class Coffins {
 
   private static final Map<CoffinWood, Block> BLOCKS = registerBlocks();
+  private static final Map<Block, CoffinWood> WOODS =
+      BLOCKS.entrySet().stream()
+          .collect(Collectors.toUnmodifiableMap(Map.Entry::getValue, Map.Entry::getKey));
 
   public static final BlockEntityType<CoffinBlockEntity> BLOCK_ENTITY =
       Registry.register(
@@ -47,6 +51,10 @@ public final class Coffins {
 
   public static Block get(final CoffinWood wood) {
     return BLOCKS.get(wood);
+  }
+
+  public static CoffinWood wood(final Block coffin) {
+    return WOODS.get(coffin);
   }
 
   public static List<Block> all() {

@@ -2,7 +2,12 @@ package com.grahambartley.nightborn.coffin;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.grahambartley.nightborn.MinecraftBootstrapExtension;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import net.minecraft.block.BedBlock;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.enums.BedPart;
@@ -11,9 +16,12 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 @ExtendWith(MinecraftBootstrapExtension.class)
 class CoffinBlockEntityTest {
+
+  private static final double TICKS_PER_SECOND = 20.0;
 
   @ParameterizedTest(name = "found open {0}, then open {1} for {2} ticks: {3}")
   @CsvSource({
@@ -33,5 +41,25 @@ class CoffinBlockEntityTest {
       coffin.clientTick(head.with(CoffinBlock.OPEN, then));
     }
     assertEquals(openness, coffin.openness(1.0F), 1.0E-5F);
+  }
+
+  @ParameterizedTest(name = "{0}")
+  @ValueSource(strings = {"open", "close"})
+  @DisplayName(
+      "each lid swing clip lasts as long as the lid takes to swing, so a sleeper vanishes as it shuts")
+  void swingClipsMatchTheLidTimer(final String clip) throws IOException {
+    final JsonObject animations =
+        JsonParser.parseString(
+                Files.readString(
+                    Path.of(
+                        "src/client/resources/assets/nightborn/animations/block/coffin.animation.json")))
+            .getAsJsonObject()
+            .getAsJsonObject("animations");
+    assertEquals(CoffinBlockEntity.LID_CLIPS.all(), animations.keySet());
+    final double ticks = 1.0 / LidMotion.STEP;
+    assertEquals(
+        ticks / TICKS_PER_SECOND,
+        animations.getAsJsonObject(clip).get("animation_length").getAsDouble(),
+        1.0E-6);
   }
 }

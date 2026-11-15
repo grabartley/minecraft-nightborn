@@ -1,9 +1,0 @@
-{
-  "parent": "nightborn:block/template_coffin_foot",
-  "textures": {
-    "0": "minecraft:block/cherry_planks",
-    "1": "nightborn:block/burgundy_velvet",
-    "2": "minecraft:block/raw_gold_block",
-    "particle": "minecraft:block/cherry_planks"
-  }
-}

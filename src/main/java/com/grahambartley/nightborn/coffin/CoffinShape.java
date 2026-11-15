@@ -18,18 +18,14 @@ public final class CoffinShape {
 
   static final List<Band> BANDS =
       List.of(
-          new Band(-8, -6, 4.5),
-          new Band(-6, -4, 5.5),
-          new Band(-4, -2, 6.5),
-          new Band(-2, 1, 7.5),
-          new Band(1, 4, 8.25),
-          new Band(4, 16, 8.75),
-          new Band(16, 19, 8),
-          new Band(19, 22, 7.25),
-          new Band(22, 25, 6.5),
-          new Band(25, 28, 5.75),
-          new Band(28, 30, 5),
-          new Band(30, 32, 4.25));
+          new Band(0, 2, 9.5),
+          new Band(2, 20, 10),
+          new Band(20, 22, 9.75),
+          new Band(22, 24, 9.25),
+          new Band(24, 26, 8.5),
+          new Band(26, 28, 8),
+          new Band(28, 30, 7.5),
+          new Band(30, 32, 7));
 
   private static final Map<Direction, VoxelShape> HEAD = FacingShapes.fromNorth(cell(0));
   private static final Map<Direction, VoxelShape> FOOT = FacingShapes.fromNorth(cell(16));

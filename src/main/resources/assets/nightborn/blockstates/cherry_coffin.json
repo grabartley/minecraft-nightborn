@@ -1,72 +1,7 @@
 {
   "variants": {
-    "facing=north,part=foot,standing=false": {
-      "model": "nightborn:block/cherry_coffin_foot"
-    },
-    "facing=east,part=foot,standing=false": {
-      "model": "nightborn:block/cherry_coffin_foot",
-      "y": 90
-    },
-    "facing=south,part=foot,standing=false": {
-      "model": "nightborn:block/cherry_coffin_foot",
-      "y": 180
-    },
-    "facing=west,part=foot,standing=false": {
-      "model": "nightborn:block/cherry_coffin_foot",
-      "y": 270
-    },
-    "facing=north,part=foot,standing=true": {
-      "model": "nightborn:block/cherry_coffin_foot",
-      "x": 270
-    },
-    "facing=east,part=foot,standing=true": {
-      "model": "nightborn:block/cherry_coffin_foot",
-      "x": 270,
-      "y": 90
-    },
-    "facing=south,part=foot,standing=true": {
-      "model": "nightborn:block/cherry_coffin_foot",
-      "x": 270,
-      "y": 180
-    },
-    "facing=west,part=foot,standing=true": {
-      "model": "nightborn:block/cherry_coffin_foot",
-      "x": 270,
-      "y": 270
-    },
-    "facing=north,part=head,standing=false": {
-      "model": "nightborn:block/cherry_coffin_head"
-    },
-    "facing=east,part=head,standing=false": {
-      "model": "nightborn:block/cherry_coffin_head",
-      "y": 90
-    },
-    "facing=south,part=head,standing=false": {
-      "model": "nightborn:block/cherry_coffin_head",
-      "y": 180
-    },
-    "facing=west,part=head,standing=false": {
-      "model": "nightborn:block/cherry_coffin_head",
-      "y": 270
-    },
-    "facing=north,part=head,standing=true": {
-      "model": "nightborn:block/cherry_coffin_head",
-      "x": 270
-    },
-    "facing=east,part=head,standing=true": {
-      "model": "nightborn:block/cherry_coffin_head",
-      "x": 270,
-      "y": 90
-    },
-    "facing=south,part=head,standing=true": {
-      "model": "nightborn:block/cherry_coffin_head",
-      "x": 270,
-      "y": 180
-    },
-    "facing=west,part=head,standing=true": {
-      "model": "nightborn:block/cherry_coffin_head",
-      "x": 270,
-      "y": 270
+    "": {
+      "model": "nightborn:block/cherry_coffin"
     }
   }
 }

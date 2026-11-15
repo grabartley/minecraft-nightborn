@@ -36,7 +36,7 @@ class ToggleClipsTest {
   @MethodSource("sequences")
   void holdsOnFirstSightAndTransitionsOnlyOnChange(
       final List<Boolean> observed, final List<Optional<List<String>>> expected) {
-    final ToggleClips clips = new ToggleClips();
+    final ToggleClips clips = new ToggleClips(ToggleClips.FURNITURE);
     final List<Optional<List<String>>> played = new ArrayList<>();
     observed.forEach(active -> played.add(clips.observe(active)));
     assertEquals(expected, played);
@@ -63,5 +63,30 @@ class ToggleClipsTest {
                     stage.animationName()
                         + (stage.loopType() == Animation.LoopType.LOOP ? ":loop" : ":play"))
             .toList());
+  }
+
+  static Stream<Arguments> named() {
+    final ToggleClips.Names lid = new ToggleClips.Names("open", "opened", "close", "closed");
+    return Stream.of(
+        Arguments.of(lid, List.of(true), List.of(Optional.of(List.of("opened")))),
+        Arguments.of(
+            lid,
+            List.of(false, true, false),
+            List.of(
+                Optional.of(List.of("closed")),
+                Optional.of(List.of("open", "opened")),
+                Optional.of(List.of("close", "closed")))));
+  }
+
+  @ParameterizedTest(name = "{1} plays {2}")
+  @MethodSource("named")
+  void playsTheClipNamesItWasGiven(
+      final ToggleClips.Names names,
+      final List<Boolean> observed,
+      final List<Optional<List<String>>> expected) {
+    final ToggleClips clips = new ToggleClips(names);
+    final List<Optional<List<String>>> played = new ArrayList<>();
+    observed.forEach(active -> played.add(clips.observe(active)));
+    assertEquals(expected, played);
   }
 }
