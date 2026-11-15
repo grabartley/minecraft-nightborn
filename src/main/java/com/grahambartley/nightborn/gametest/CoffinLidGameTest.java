@@ -18,22 +18,22 @@ import net.minecraft.util.math.Vec3d;
 
 public class CoffinLidGameTest implements FabricGameTest {
 
-  static final String NOON = "coffin-lid-noon";
+  static final String BATCH = "coffin-lid-noon";
   static final int SUN_REACHES = 40;
 
-  @BeforeBatch(batchId = NOON)
+  @BeforeBatch(batchId = BATCH)
   public void pinNoon(final ServerWorld world) {
-    WorldClock.pin(world, CoffinGameTest.NOON, false);
+    WorldClock.freeze(world, WorldClock.NOON);
   }
 
-  @AfterBatch(batchId = NOON)
+  @AfterBatch(batchId = BATCH)
   public void releaseNoon(final ServerWorld world) {
     WorldClock.release(world);
   }
 
   @GameTest(
       templateName = CoffinStage.YARD,
-      batchId = NOON,
+      batchId = BATCH,
       skyAccess = true,
       tickLimit = TestPlayers.READY + SUN_REACHES + 10)
   public void aHunterWhoOpensACoffinInTheSunBurnsAndWakesTheSleeper(final TestContext context) {
@@ -69,7 +69,7 @@ public class CoffinLidGameTest implements FabricGameTest {
 
   @GameTest(
       templateName = CoffinStage.YARD,
-      batchId = NOON,
+      batchId = BATCH,
       tickLimit = TestPlayers.READY + SUN_REACHES + 10)
   public void anOpenLidInShadeLetsTheSleeperSleepOnAndShutsAgain(final TestContext context) {
     final BlockPos head = CoffinStage.coffin(context, new BlockPos(4, 2, 6), Direction.EAST);
@@ -104,7 +104,39 @@ public class CoffinLidGameTest implements FabricGameTest {
         });
   }
 
-  @GameTest(templateName = CoffinStage.YARD, batchId = NOON, tickLimit = TestPlayers.READY + 10)
+  @GameTest(
+      templateName = CoffinStage.YARD,
+      batchId = BATCH,
+      skyAccess = true,
+      tickLimit = TestPlayers.READY + SUN_REACHES + 10)
+  public void shuttingTheLidAgainShadesTheSleeperFromTheSun(final TestContext context) {
+    final BlockPos head = CoffinStage.coffin(context, new BlockPos(4, 2, 6), Direction.NORTH);
+    final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(5, 2, 5));
+    final ServerPlayerEntity hunter = TestPlayers.human(context, new BlockPos(3, 2, 5));
+    final float[] settled = new float[1];
+    context.runAtTick(
+        TestPlayers.READY,
+        () -> {
+          context.useBlock(head, vampire);
+          vampire.extinguish();
+          settled[0] = vampire.getHealth();
+          hunter.setSneaking(true);
+          use(context, hunter, head);
+          use(context, hunter, head);
+          context.assertFalse(
+              context.getBlockState(head).get(CoffinBlock.OPEN), "the lid is shut again");
+        });
+    context.runAtTick(
+        TestPlayers.READY + SUN_REACHES,
+        () -> {
+          context.assertTrue(
+              vampire.isSleeping() && vampire.getHealth() >= settled[0] && !vampire.isOnFire(),
+              "the shut lid shades the sleeper again: " + Diagnostics.of(vampire));
+          TestPlayers.finish(context, vampire, hunter);
+        });
+  }
+
+  @GameTest(templateName = CoffinStage.YARD, batchId = BATCH, tickLimit = TestPlayers.READY + 10)
   public void anOccupiedCoffinStaysShutToAPlainUseOrAFullHand(final TestContext context) {
     final BlockPos head = CoffinStage.coffin(context, new BlockPos(4, 2, 6), Direction.NORTH);
     final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(5, 2, 5));
@@ -123,6 +155,12 @@ public class CoffinLidGameTest implements FabricGameTest {
           context.assertFalse(
               context.getBlockState(head).get(CoffinBlock.OPEN),
               "a sneak-use with something in hand leaves the lid shut");
+          hunter.setStackInHand(Hand.MAIN_HAND, ItemStack.EMPTY);
+          hunter.setStackInHand(Hand.OFF_HAND, new ItemStack(Items.TORCH));
+          use(context, hunter, head);
+          context.assertFalse(
+              context.getBlockState(head).get(CoffinBlock.OPEN),
+              "a sneak-use with something in the off hand leaves the lid shut");
           context.assertTrue(vampire.isSleeping(), "the sleeper is undisturbed");
           TestPlayers.finish(context, vampire, hunter);
         });

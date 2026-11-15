@@ -16,11 +16,10 @@ public class SunGameTest implements FabricGameTest {
 
   static final String BATCH = "sun";
   static final String YARD = "nightborn:vampire_yard";
-  static final int NOON = 6000;
 
   @BeforeBatch(batchId = BATCH)
   public void pinNoon(final ServerWorld world) {
-    WorldClock.pin(world, NOON);
+    WorldClock.freeze(world, WorldClock.NOON);
   }
 
   @AfterBatch(batchId = BATCH)

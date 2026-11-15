@@ -46,11 +46,9 @@ public class VampireMobGameTest implements FabricGameTest {
   static final String NOON_BATCH = "vampire-mob-noon";
   static final String DAWN_BATCH = "vampire-mob-dawn";
   static final String BITE_BATCH = "vampire-mob-bite";
-  static final int NOON = 6000;
   static final int BEFORE_DAWN = 22500;
   static final int TRIES = 40;
   static final String NIGHT_BATCH = "vampire-mob-night";
-  static final int MIDNIGHT = 18000;
   static final int ESCAPED_AT = 110;
   static final int PROVOKED_FOR = 110;
   static final int LIGHT_SETTLED = 20;
@@ -60,7 +58,7 @@ public class VampireMobGameTest implements FabricGameTest {
 
   @BeforeBatch(batchId = NOON_BATCH)
   public void pinNoon(final ServerWorld world) {
-    WorldClock.pin(world, NOON);
+    WorldClock.freeze(world, WorldClock.NOON);
   }
 
   @AfterBatch(batchId = NOON_BATCH)
@@ -70,7 +68,7 @@ public class VampireMobGameTest implements FabricGameTest {
 
   @BeforeBatch(batchId = DAWN_BATCH)
   public void pinDawn(final ServerWorld world) {
-    WorldClock.pin(world, BEFORE_DAWN);
+    WorldClock.freeze(world, BEFORE_DAWN);
   }
 
   @AfterBatch(batchId = DAWN_BATCH)
@@ -80,7 +78,7 @@ public class VampireMobGameTest implements FabricGameTest {
 
   @BeforeBatch(batchId = NIGHT_BATCH)
   public void pinNightAndShortDowns(final ServerWorld world) {
-    WorldClock.pin(world, MIDNIGHT);
+    WorldClock.freeze(world, WorldClock.MIDNIGHT);
     downedSecondsBefore = ServerConfigService.current().downed().downedSeconds();
     ServerConfigService.update(
         world.getServer(), ServerConfigService.current().with(DownedSettings.DOWNED_SECONDS, 5));

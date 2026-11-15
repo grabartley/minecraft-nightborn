@@ -30,16 +30,13 @@ public class CoffinGameTest implements FabricGameTest {
   static final String BED_SHARE = "coffin-bed-share";
   static final String STORM = "coffin-storm";
   static final String DUSK = "coffin-dusk";
-  static final String YARD = CoffinStage.YARD;
-  static final int NOON = 6000;
-  static final int MIDNIGHT = 18000;
   static final int SLEEP_READY = 105;
   static final double BOUNCE = 0.05;
   private static int shareBefore;
 
   @BeforeBatch(batchId = DAY)
   public void pinNoon(final ServerWorld world) {
-    WorldClock.pin(world, NOON, false);
+    WorldClock.freeze(world, WorldClock.NOON);
   }
 
   @AfterBatch(batchId = DAY)
@@ -49,7 +46,7 @@ public class CoffinGameTest implements FabricGameTest {
 
   @BeforeBatch(batchId = SKIP)
   public void startAtNoon(final ServerWorld world) {
-    WorldClock.pin(world, NOON, true);
+    WorldClock.runFrom(world, WorldClock.NOON);
     TestPlayers.disconnectEveryone(world.getServer());
   }
 
@@ -60,7 +57,7 @@ public class CoffinGameTest implements FabricGameTest {
 
   @BeforeBatch(batchId = HALF_SHARE)
   public void halveTheShare(final ServerWorld world) {
-    WorldClock.pin(world, NOON, true);
+    WorldClock.runFrom(world, WorldClock.NOON);
     TestPlayers.disconnectEveryone(world.getServer());
     shareBefore = ServerConfigService.current().coffins().sleepShare();
     ServerConfigService.update(
@@ -77,7 +74,7 @@ public class CoffinGameTest implements FabricGameTest {
 
   @BeforeBatch(batchId = NIGHT)
   public void pinMidnight(final ServerWorld world) {
-    WorldClock.pin(world, MIDNIGHT, false);
+    WorldClock.freeze(world, WorldClock.MIDNIGHT);
   }
 
   @AfterBatch(batchId = NIGHT)
@@ -87,7 +84,7 @@ public class CoffinGameTest implements FabricGameTest {
 
   @BeforeBatch(batchId = BED_SHARE)
   public void startAtMidnight(final ServerWorld world) {
-    WorldClock.pin(world, MIDNIGHT, false);
+    WorldClock.freeze(world, WorldClock.MIDNIGHT);
   }
 
   @AfterBatch(batchId = BED_SHARE)
@@ -97,7 +94,7 @@ public class CoffinGameTest implements FabricGameTest {
 
   @BeforeBatch(batchId = STORM)
   public void brewAStormAtNoon(final ServerWorld world) {
-    WorldClock.pin(world, NOON, false);
+    WorldClock.freeze(world, WorldClock.NOON);
     world.setWeather(0, 12000, true, true);
     world.setRainGradient(1.0F);
     world.setThunderGradient(1.0F);
@@ -113,7 +110,7 @@ public class CoffinGameTest implements FabricGameTest {
 
   @BeforeBatch(batchId = DUSK)
   public void letTheDayRun(final ServerWorld world) {
-    WorldClock.pin(world, NOON, true);
+    WorldClock.runFrom(world, WorldClock.NOON);
   }
 
   @AfterBatch(batchId = DUSK)
@@ -121,7 +118,7 @@ public class CoffinGameTest implements FabricGameTest {
     WorldClock.release(world);
   }
 
-  @GameTest(templateName = YARD, batchId = STORM, tickLimit = TestPlayers.READY + 50)
+  @GameTest(templateName = CoffinStage.YARD, batchId = STORM, tickLimit = TestPlayers.READY + 50)
   public void aThunderstormAtNoonIsStillTheDayForACoffin(final TestContext context) {
     final BlockPos head = CoffinStage.coffin(context, new BlockPos(4, 2, 6), Direction.NORTH);
     CoffinStage.roof(context);
@@ -144,7 +141,7 @@ public class CoffinGameTest implements FabricGameTest {
         });
   }
 
-  @GameTest(templateName = YARD, batchId = DUSK, tickLimit = TestPlayers.READY + 60)
+  @GameTest(templateName = CoffinStage.YARD, batchId = DUSK, tickLimit = TestPlayers.READY + 60)
   public void aRestingVampireRisesAtDusk(final TestContext context) {
     final BlockPos head = CoffinStage.coffin(context, new BlockPos(4, 2, 6), Direction.NORTH);
     CoffinStage.roof(context);
@@ -170,7 +167,7 @@ public class CoffinGameTest implements FabricGameTest {
   }
 
   @GameTest(
-      templateName = YARD,
+      templateName = CoffinStage.YARD,
       batchId = SKIP,
       tickLimit = TestPlayers.READY + 2 * SLEEP_READY + 20)
   public void theDayPassesOnlyWhenEveryVampireRests(final TestContext context) {
@@ -209,7 +206,7 @@ public class CoffinGameTest implements FabricGameTest {
   }
 
   @GameTest(
-      templateName = YARD,
+      templateName = CoffinStage.YARD,
       batchId = HALF_SHARE,
       tickLimit = TestPlayers.READY + SLEEP_READY + 20)
   public void theSleepShareSettingLetsHalfTheVampiresPassTheDay(final TestContext context) {
@@ -236,7 +233,7 @@ public class CoffinGameTest implements FabricGameTest {
   }
 
   @GameTest(
-      templateName = YARD,
+      templateName = CoffinStage.YARD,
       batchId = DAY,
       skyAccess = true,
       tickLimit = TestPlayers.READY + 80)
@@ -268,7 +265,7 @@ public class CoffinGameTest implements FabricGameTest {
         });
   }
 
-  @GameTest(templateName = YARD, batchId = DAY, tickLimit = TestPlayers.READY + 50)
+  @GameTest(templateName = CoffinStage.YARD, batchId = DAY, tickLimit = TestPlayers.READY + 50)
   public void aBurningVampireLiesDownAndTheFlamesGoOut(final TestContext context) {
     final BlockPos head = CoffinStage.coffin(context, new BlockPos(4, 2, 6), Direction.NORTH);
     CoffinStage.roof(context);
@@ -290,7 +287,7 @@ public class CoffinGameTest implements FabricGameTest {
         });
   }
 
-  @GameTest(templateName = YARD, batchId = DAY, tickLimit = TestPlayers.READY + 10)
+  @GameTest(templateName = CoffinStage.YARD, batchId = DAY, tickLimit = TestPlayers.READY + 10)
   public void restingSetsTheRespawnPointAndTheCoffinsLossClearsIt(final TestContext context) {
     final BlockPos head = CoffinStage.coffin(context, new BlockPos(4, 2, 6), Direction.EAST);
     final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(4, 2, 4));
@@ -313,7 +310,7 @@ public class CoffinGameTest implements FabricGameTest {
         });
   }
 
-  @GameTest(templateName = YARD, batchId = DAY, tickLimit = TestPlayers.READY + 10)
+  @GameTest(templateName = CoffinStage.YARD, batchId = DAY, tickLimit = TestPlayers.READY + 10)
   public void aSecondVampireIsRefused(final TestContext context) {
     final BlockPos head = CoffinStage.coffin(context, new BlockPos(4, 2, 6), Direction.NORTH);
     final ServerPlayerEntity first = TestPlayers.vampire(context, new BlockPos(3, 2, 5));
@@ -331,7 +328,7 @@ public class CoffinGameTest implements FabricGameTest {
         });
   }
 
-  @GameTest(templateName = YARD, batchId = DAY, tickLimit = TestPlayers.READY + 10)
+  @GameTest(templateName = CoffinStage.YARD, batchId = DAY, tickLimit = TestPlayers.READY + 10)
   public void theLidShutsOverTheSleeperAndOpensWhenTheyRise(final TestContext context) {
     final BlockPos head = CoffinStage.coffin(context, new BlockPos(4, 2, 6), Direction.SOUTH);
     final BlockPos foot = head.offset(Direction.NORTH);
@@ -350,7 +347,7 @@ public class CoffinGameTest implements FabricGameTest {
         });
   }
 
-  @GameTest(templateName = YARD, batchId = DAY, tickLimit = TestPlayers.READY + 10)
+  @GameTest(templateName = CoffinStage.YARD, batchId = DAY, tickLimit = TestPlayers.READY + 10)
   public void aSneakingVampireWorksTheLidInsteadOfLyingDown(final TestContext context) {
     final BlockPos head = CoffinStage.coffin(context, new BlockPos(4, 2, 6), Direction.NORTH);
     final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(5, 2, 5));
@@ -367,7 +364,7 @@ public class CoffinGameTest implements FabricGameTest {
         });
   }
 
-  @GameTest(templateName = YARD, batchId = DAY, tickLimit = TestPlayers.READY + 10)
+  @GameTest(templateName = CoffinStage.YARD, batchId = DAY, tickLimit = TestPlayers.READY + 10)
   public void aHumanOpensACoffinButCannotRestInIt(final TestContext context) {
     final BlockPos head = CoffinStage.coffin(context, new BlockPos(4, 2, 6), Direction.NORTH);
     final ServerPlayerEntity human = TestPlayers.human(context, new BlockPos(5, 2, 5));
@@ -386,7 +383,7 @@ public class CoffinGameTest implements FabricGameTest {
         });
   }
 
-  @GameTest(templateName = YARD, batchId = DAY, tickLimit = TestPlayers.READY + 10)
+  @GameTest(templateName = CoffinStage.YARD, batchId = DAY, tickLimit = TestPlayers.READY + 10)
   public void aVampireCannotSleepInABed(final TestContext context) {
     final BlockPos head = CoffinStage.bed(context, new BlockPos(4, 2, 6), Direction.NORTH);
     final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(5, 2, 5));
@@ -403,7 +400,7 @@ public class CoffinGameTest implements FabricGameTest {
         });
   }
 
-  @GameTest(templateName = YARD, batchId = DAY, tickLimit = TestPlayers.READY + 10)
+  @GameTest(templateName = CoffinStage.YARD, batchId = DAY, tickLimit = TestPlayers.READY + 10)
   public void breakingEitherHalfDropsOneCoffin(final TestContext context) {
     final BlockPos head = CoffinStage.coffin(context, new BlockPos(4, 2, 6), Direction.WEST);
     final BlockPos foot = head.offset(Direction.EAST);
@@ -425,7 +422,7 @@ public class CoffinGameTest implements FabricGameTest {
         });
   }
 
-  @GameTest(templateName = YARD, batchId = DAY, tickLimit = 60)
+  @GameTest(templateName = CoffinStage.YARD, batchId = DAY, tickLimit = 60)
   public void anItemDroppedOnACoffinLandsWithoutTheBounceABedGives(final TestContext context) {
     final BlockPos coffinHead = CoffinStage.coffin(context, new BlockPos(2, 2, 6), Direction.NORTH);
     final BlockPos bedHead = CoffinStage.bed(context, new BlockPos(6, 2, 6), Direction.NORTH);
@@ -454,7 +451,7 @@ public class CoffinGameTest implements FabricGameTest {
         });
   }
 
-  @GameTest(templateName = YARD, batchId = NIGHT, tickLimit = TestPlayers.READY + 10)
+  @GameTest(templateName = CoffinStage.YARD, batchId = NIGHT, tickLimit = TestPlayers.READY + 10)
   public void aVampireCannotRestAtNight(final TestContext context) {
     final BlockPos head = CoffinStage.coffin(context, new BlockPos(4, 2, 6), Direction.NORTH);
     final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(5, 2, 5));
@@ -468,7 +465,7 @@ public class CoffinGameTest implements FabricGameTest {
   }
 
   @GameTest(
-      templateName = YARD,
+      templateName = CoffinStage.YARD,
       batchId = BED_SHARE,
       tickLimit = TestPlayers.READY + SLEEP_READY + 10)
   public void anAwakeVampireNeverHoldsBackTheNight(final TestContext context) {

@@ -5,16 +5,23 @@ import net.minecraft.world.GameRules;
 
 final class WorldClock {
 
+  static final int NOON = 6000;
+  static final int MIDNIGHT = 18000;
+
   private static long timeBefore;
   private static boolean cycleBefore;
 
   private WorldClock() {}
 
-  static void pin(final ServerWorld world, final int time) {
-    pin(world, time, false);
+  static void freeze(final ServerWorld world, final int time) {
+    set(world, time, false);
   }
 
-  static void pin(final ServerWorld world, final int time, final boolean cycle) {
+  static void runFrom(final ServerWorld world, final int time) {
+    set(world, time, true);
+  }
+
+  private static void set(final ServerWorld world, final int time, final boolean cycle) {
     timeBefore = world.getTimeOfDay();
     cycleBefore = world.getGameRules().getBoolean(GameRules.DO_DAYLIGHT_CYCLE);
     world.getGameRules().get(GameRules.DO_DAYLIGHT_CYCLE).set(cycle, world.getServer());
