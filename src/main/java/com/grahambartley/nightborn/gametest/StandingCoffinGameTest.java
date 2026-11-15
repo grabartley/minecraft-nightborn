@@ -380,6 +380,8 @@ public class StandingCoffinGameTest implements FabricGameTest {
     CoffinStage.roof(context);
     final VampireEntity upright = context.spawnEntity(NightbornMobs.VAMPIRE, new BlockPos(2, 2, 6));
     final VampireEntity lying = context.spawnEntity(NightbornMobs.VAMPIRE, new BlockPos(6, 2, 7));
+    upright.setAiDisabled(true);
+    lying.setAiDisabled(true);
     final BlockPos absoluteStanding = context.getAbsolutePos(standingHead);
     final BlockPos absoluteFlat = context.getAbsolutePos(flatHead);
     context.runAtTick(
