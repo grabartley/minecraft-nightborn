@@ -1,28 +1,22 @@
 package com.grahambartley.nightborn.client;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.stream.Stream;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 class WeakenedSignRendererTest {
 
-  static Stream<Arguments> icons() {
-    return Stream.of(
-        Arguments.of(
-            "hud sprite", "textures/gui/sprites/" + WeakenedSignRenderer.SPRITE.getPath() + ".png"),
-        Arguments.of("world sign texture", WeakenedSignRenderer.TEXTURE.getPath()));
-  }
-
   @ParameterizedTest(name = "{0}")
-  @MethodSource("icons")
-  @DisplayName("the icon the HUD and the sign above the head draw ships with the mod")
-  void iconShips(final String where, final String path) {
-    assertTrue(Files.exists(Path.of("src/main/resources/assets/nightborn", path)), where);
+  @ValueSource(strings = "textures/gui/sprites/hud/weakened.png")
+  @DisplayName("the sign above the head draws the shipped weakened icon")
+  void drawsShippedIcon(final String path) {
+    assertEquals("nightborn", WeakenedSignRenderer.TEXTURE.getNamespace());
+    assertEquals(path, WeakenedSignRenderer.TEXTURE.getPath());
+    assertTrue(Files.exists(Path.of("src/main/resources/assets/nightborn", path)), path);
   }
 }

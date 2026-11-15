@@ -6,8 +6,6 @@ import java.util.Optional;
 
 public final class PlayerClipState {
 
-  public static final double TICKS_PER_SECOND = 20.0;
-
   public record Situation(
       boolean levitating,
       boolean sprinting,

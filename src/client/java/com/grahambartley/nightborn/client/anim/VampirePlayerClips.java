@@ -85,7 +85,7 @@ public final class VampirePlayerClips {
 
   private static boolean staggersOnFoot(final PlayerEntity player) {
     return WeakenedStoop.onFoot(
-        player.getPose(), player.hasVehicle(), player.getAbilities().flying, player.isUsingItem());
+        player.getPose(), player.isOnGround(), player.hasVehicle(), player.isUsingItem());
   }
 
   private static void cued(final PlayerEntity player, final PlayerCue cue) {

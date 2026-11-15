@@ -25,7 +25,7 @@ class OneShotTest {
     final OneShot shot = new OneShot();
     shot.start(100);
     assertEquals(playing, shot.playing(length, 100 + ticksIn));
-    assertEquals(ticksIn / PlayerClipState.TICKS_PER_SECOND, shot.seconds(100 + ticksIn), 1e-9);
+    assertEquals(ticksIn / OneShot.TICKS_PER_SECOND, shot.seconds(100 + ticksIn), 1e-9);
   }
 
   @Test

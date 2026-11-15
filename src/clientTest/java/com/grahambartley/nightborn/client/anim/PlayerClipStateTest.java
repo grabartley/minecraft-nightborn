@@ -58,8 +58,7 @@ class PlayerClipStateTest {
     final PlayerClipState state = new PlayerClipState();
     state.vomit(100);
     assertEquals(expected, clip(state, 100 + after, levitating ? levitating() : still()));
-    assertEquals(
-        after / PlayerClipState.TICKS_PER_SECOND, state.vomitingSeconds(100 + after), 1e-9);
+    assertEquals(after / OneShot.TICKS_PER_SECOND, state.vomitingSeconds(100 + after), 1e-9);
   }
 
   @ParameterizedTest(name = "{0} ticks after getting up: {1}")

@@ -19,6 +19,7 @@ public final class VampireTicker {
 
   public static void tick(final LivingEntity vampire) {
     if (!vampire.isAlive()) {
+      VisibleStateAttachment.set(vampire, VisibleState.NONE);
       return;
     }
     final NightbornConfig config = ServerConfigService.current();
