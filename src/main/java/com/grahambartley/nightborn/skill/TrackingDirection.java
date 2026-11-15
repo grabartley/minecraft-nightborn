@@ -1,4 +1,4 @@
-package com.grahambartley.nightborn.hunter;
+package com.grahambartley.nightborn.skill;
 
 import java.util.List;
 import net.minecraft.util.math.MathHelper;

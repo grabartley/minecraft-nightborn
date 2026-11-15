@@ -7,6 +7,5 @@ public final class HunterFeatures {
   public static void register() {
     HunterAttributes.register();
     HuntRewards.register();
-    Tracking.register();
   }
 }

@@ -1,38 +1,37 @@
-package com.grahambartley.nightborn.hunter;
+package com.grahambartley.nightborn.skill;
 
-import com.grahambartley.nightborn.Nightborn;
-import com.grahambartley.nightborn.skill.TrackPower;
 import com.grahambartley.nightborn.vampire.Vampires;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
-import net.fabricmc.fabric.api.attachment.v1.AttachmentRegistry;
-import net.fabricmc.fabric.api.attachment.v1.AttachmentType;
+import java.util.UUID;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
-import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Box;
 import org.jetbrains.annotations.Nullable;
 
 public final class Tracking {
 
-  public static final AttachmentType<TrackingState> TYPE =
-      AttachmentRegistry.create(Identifier.of(Nightborn.MOD_ID, "tracking"));
-
   static final int UPDATE_TICKS = 5;
+
+  private static final Map<UUID, TrackingState> ACTIVE = new HashMap<>();
 
   private Tracking() {}
 
   public static void register() {
     ServerTickEvents.END_SERVER_TICK.register(Tracking::tick);
+    ServerLifecycleEvents.SERVER_STOPPED.register(server -> ACTIVE.clear());
   }
 
   public static void start(final ServerPlayerEntity hunter, final TrackPower power) {
-    hunter.setAttached(
-        TYPE,
+    ACTIVE.put(
+        hunter.getUuid(),
         new TrackingState(
             hunter.getServerWorld().getTime() + power.durationTicks(), power.range()));
     show(hunter, power.range());
@@ -40,7 +39,7 @@ public final class Tracking {
 
   @Nullable
   public static TrackingState state(final ServerPlayerEntity hunter) {
-    return hunter.getAttached(TYPE);
+    return ACTIVE.get(hunter.getUuid());
   }
 
   public static Optional<LivingEntity> nearest(final ServerPlayerEntity hunter, final int range) {
@@ -59,17 +58,25 @@ public final class Tracking {
   }
 
   private static void tick(final MinecraftServer server) {
-    for (final ServerPlayerEntity player : server.getPlayerManager().getPlayerList()) {
-      final TrackingState state = state(player);
-      if (state == null) {
-        continue;
-      }
-      if (state.over(player.getServerWorld().getTime()) || !player.isAlive()) {
-        player.removeAttached(TYPE);
-      } else if (player.age % UPDATE_TICKS == 0) {
-        show(player, state.range());
-      }
+    if (ACTIVE.isEmpty()) {
+      return;
     }
+    ACTIVE
+        .entrySet()
+        .removeIf(
+            entry -> {
+              final ServerPlayerEntity player = server.getPlayerManager().getPlayer(entry.getKey());
+              if (player == null
+                  || !player.isAlive()
+                  || Vampires.isVampire(player)
+                  || entry.getValue().over(player.getServerWorld().getTime())) {
+                return true;
+              }
+              if (player.age % UPDATE_TICKS == 0) {
+                show(player, entry.getValue().range());
+              }
+              return false;
+            });
   }
 
   private static void show(final ServerPlayerEntity hunter, final int range) {

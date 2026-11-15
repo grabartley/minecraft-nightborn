@@ -42,7 +42,7 @@ class DownedRulesTest {
   @Test
   @DisplayName("a vampire lies downed for the set time, gets up, escapes, then is free")
   void fullCycle() {
-    DownedState state = DownedRules.downed(SETTINGS);
+    DownedState state = DownedRules.downed(SETTINGS, Optional.empty());
     assertEquals(new DownedState(Phase.DOWNED, 600), state);
     DownedRules.Change change = DownedRules.Change.NONE;
     int ticks = 0;

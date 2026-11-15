@@ -1,4 +1,4 @@
-package com.grahambartley.nightborn.hunter;
+package com.grahambartley.nightborn.skill;
 
 public record TrackingState(long until, int range) {
 

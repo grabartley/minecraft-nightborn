@@ -27,10 +27,6 @@ public final class DownedRules {
     return !killsVampires;
   }
 
-  public static DownedState downed(final DownedSettings settings) {
-    return downed(settings, Optional.empty());
-  }
-
   public static DownedState downed(final DownedSettings settings, final Optional<UUID> hunter) {
     return new DownedState(Phase.DOWNED, settings.downedSeconds() * 20, hunter);
   }

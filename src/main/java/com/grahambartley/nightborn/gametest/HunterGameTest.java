@@ -3,7 +3,6 @@ package com.grahambartley.nightborn.gametest;
 import com.grahambartley.nightborn.downed.Downed;
 import com.grahambartley.nightborn.downed.DownedState;
 import com.grahambartley.nightborn.hunter.HunterAttributes;
-import com.grahambartley.nightborn.hunter.Tracking;
 import com.grahambartley.nightborn.server.ServerConfigService;
 import com.grahambartley.nightborn.skill.PowerUse;
 import com.grahambartley.nightborn.skill.Powers;
@@ -14,6 +13,7 @@ import com.grahambartley.nightborn.skill.SkillPurchase;
 import com.grahambartley.nightborn.skill.SkillShop;
 import com.grahambartley.nightborn.skill.SkillTree;
 import com.grahambartley.nightborn.skill.Skills;
+import com.grahambartley.nightborn.skill.Tracking;
 import com.grahambartley.nightborn.skill.TreeProgress;
 import com.grahambartley.nightborn.vampire.NightbornDamage;
 import com.grahambartley.nightborn.vampire.VampireTransitions;
@@ -160,6 +160,22 @@ public class HunterGameTest implements FabricGameTest {
         Tracking.nearest(hunter, 64).orElse(null), far, "the next nearest takes its place");
     context.assertTrue(Tracking.nearest(hunter, 1).isEmpty(), "nothing beyond range");
     TestPlayers.finish(context, hunter, far);
+  }
+
+  @GameTest(templateName = ARENA, tickLimit = 20)
+  public void aHunterWhoTurnsStopsTracking(final TestContext context) {
+    final ServerPlayerEntity hunter = TestPlayers.human(context, new BlockPos(3, 2, 3));
+    SkillAttachment.set(hunter, SkillTree.HUNTER, TreeProgress.EMPTY.withEarned(1));
+    SkillShop.buy(hunter, TRACKING);
+    Powers.use(hunter, 0);
+    context.assertTrue(Tracking.state(hunter) != null, "tracking starts");
+    VampireTransitions.turn(hunter);
+    context.runAtTick(
+        2,
+        () -> {
+          context.assertTrue(Tracking.state(hunter) == null, "a turned hunter stops tracking");
+          TestPlayers.finish(context, hunter);
+        });
   }
 
   @GameTest(templateName = ARENA, tickLimit = 260)

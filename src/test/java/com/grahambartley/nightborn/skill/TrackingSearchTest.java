@@ -1,4 +1,4 @@
-package com.grahambartley.nightborn.hunter;
+package com.grahambartley.nightborn.skill;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 

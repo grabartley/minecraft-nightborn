@@ -1,4 +1,4 @@
-package com.grahambartley.nightborn.hunter;
+package com.grahambartley.nightborn.skill;
 
 import java.util.Comparator;
 import java.util.List;
