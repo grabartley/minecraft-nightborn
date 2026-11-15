@@ -6,6 +6,7 @@ import com.grahambartley.nightborn.levitation.Levitation;
 import com.grahambartley.nightborn.mob.VampirePose;
 import com.grahambartley.nightborn.network.PlayerCue;
 import com.grahambartley.nightborn.network.PlayerCuePayload;
+import com.grahambartley.nightborn.vampire.Vampires;
 import com.grahambartley.nightborn.vampire.VisibleState;
 import com.grahambartley.nightborn.vampire.VisibleStateAttachment;
 import java.util.Map;
@@ -61,7 +62,7 @@ public final class VampirePlayerClips {
                 visible.downed(),
                 visible.feeding(),
                 visible.isWeakened() && staggersOnFoot(player),
-                CoffinSleepers.inCoffin(player)),
+                Vampires.isVampire(player) && CoffinSleepers.inCoffin(player)),
             new PlayerClipState.Lengths(
                 VampireClips.seconds(VampirePose.LAND),
                 VampireClips.seconds(VampirePose.VOMIT),

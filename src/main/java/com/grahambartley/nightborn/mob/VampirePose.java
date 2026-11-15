@@ -24,7 +24,7 @@ public enum VampirePose {
   RISE("rise", Play.ONCE, Hold.ARMS_AND_HEAD),
   WEAKENED("weakened", Play.LOOP),
   WEAKENED_WALK("weakened_walk", Play.LOOP),
-  COFFIN_SLEEP("coffin_sleep", Play.LOOP, Hold.WHOLE_BODY);
+  COFFIN_SLEEP("coffin_sleep", Play.HOLD, Hold.ARMS_HEAD_AND_HANDS);
 
   static final float RUN_SWING = 0.6F;
   static final float WALK_SWING = 0.1F;
@@ -43,7 +43,7 @@ public enum VampirePose {
     NOTHING,
     ARMS,
     ARMS_AND_HEAD,
-    WHOLE_BODY
+    ARMS_HEAD_AND_HANDS
   }
 
   public record Cue(
@@ -130,11 +130,11 @@ public enum VampirePose {
   }
 
   public boolean holdsHead() {
-    return hold == Hold.ARMS_AND_HEAD || hold == Hold.WHOLE_BODY;
+    return hold == Hold.ARMS_AND_HEAD || hold == Hold.ARMS_HEAD_AND_HANDS;
   }
 
   public boolean showsHeldItems() {
-    return hold != Hold.WHOLE_BODY;
+    return hold != Hold.ARMS_HEAD_AND_HANDS;
   }
 
   public String animation() {

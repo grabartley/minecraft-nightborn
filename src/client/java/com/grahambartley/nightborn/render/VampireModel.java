@@ -3,7 +3,6 @@ package com.grahambartley.nightborn.render;
 import com.grahambartley.nightborn.mob.VampireEntity;
 import com.grahambartley.nightborn.mob.VampireLook;
 import com.grahambartley.nightborn.mob.VampirePose;
-import com.grahambartley.nightborn.vampire.VisibleStateAttachment;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import software.bernie.geckolib.animation.AnimationState;
@@ -36,7 +35,7 @@ public class VampireModel extends GeoModel<VampireEntity> {
       final long instanceId,
       final AnimationState<VampireEntity> animationState) {
     final GeoBone head = getAnimationProcessor().getBone("head");
-    if (head == null || VisibleStateAttachment.get(vampire).downed()) {
+    if (head == null || vampire.shownPose().holdsHead()) {
       return;
     }
     final EntityModelData data = animationState.getData(DataTickets.ENTITY_MODEL_DATA);

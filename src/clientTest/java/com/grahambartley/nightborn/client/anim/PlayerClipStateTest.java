@@ -131,23 +131,31 @@ class PlayerClipStateTest {
                 levitating, false, speed, downed, feeding, weakened, false)));
   }
 
-  @ParameterizedTest(name = "downed {0}, feeding {1}, levitating {2}, retching {3}: COFFIN_SLEEP")
+  @ParameterizedTest(
+      name = "downed {0}, feeding {1}, levitating {2}, weakened {3}, retching {4}, draining {5}")
   @CsvSource({
-    "false, false, false, false",
-    "true, false, false, false",
-    "false, true, true, false",
-    "false, false, false, true",
-    "true, true, true, true"
+    "false, false, false, false, false, false",
+    "true, false, false, false, false, false",
+    "false, true, true, false, false, false",
+    "false, false, false, true, false, false",
+    "false, false, false, false, true, false",
+    "false, true, false, false, false, true",
+    "true, true, true, true, true, true"
   })
   @DisplayName("sleeping in a coffin wins over every other clip")
   void sleepsInCoffin(
       final boolean downed,
       final boolean feeding,
       final boolean levitating,
-      final boolean retching) {
+      final boolean weakened,
+      final boolean retching,
+      final boolean draining) {
     final PlayerClipState state = new PlayerClipState();
     if (retching) {
       state.vomit(0);
+    }
+    if (draining) {
+      state.drain(0);
     }
     state.tick(0, levitating, downed);
     assertEquals(
@@ -155,7 +163,8 @@ class PlayerClipStateTest {
         clip(
             state,
             1,
-            new PlayerClipState.Situation(levitating, false, 0.0, downed, feeding, true, true)));
+            new PlayerClipState.Situation(
+                levitating, false, 0.0, downed, feeding, weakened, true)));
   }
 
   @Test

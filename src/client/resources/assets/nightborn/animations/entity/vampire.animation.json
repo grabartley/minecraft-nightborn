@@ -3225,8 +3225,8 @@
 			}
 		},
 		"coffin_sleep": {
-			"loop": true,
-			"animation_length": 4,
+			"loop": "hold_on_last_frame",
+			"animation_length": 0.5,
 			"bones": {
 				"right_arm": {
 					"rotation": {
