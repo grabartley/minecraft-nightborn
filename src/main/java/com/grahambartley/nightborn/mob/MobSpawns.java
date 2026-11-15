@@ -2,6 +2,8 @@ package com.grahambartley.nightborn.mob;
 
 import com.grahambartley.nightborn.Nightborn;
 import com.grahambartley.nightborn.server.ServerConfigService;
+import com.grahambartley.nightborn.structure.VampireStructure;
+import com.grahambartley.nightborn.structure.VampireStructureStarts;
 import net.fabricmc.fabric.api.biome.v1.BiomeModifications;
 import net.fabricmc.fabric.api.biome.v1.BiomeSelectors;
 import net.minecraft.entity.EntityType;
@@ -88,10 +90,12 @@ public final class MobSpawns {
       final Random random) {
     if (reason == SpawnReason.NATURAL
         && !MobSpawnRules.batMaySpawn(
-            world.getDimension().hasFixedTime(),
-            world.getLevelProperties().getTimeOfDay(),
-            world.isSkyVisible(pos),
+            pos.getY() < world.getSeaLevel(),
             world.getLightLevel(pos),
+            random.nextInt(MobSpawnRules.CAVE_DARKNESS),
+            () ->
+                VampireStructureStarts.contain(
+                    world.toServerWorld(), pos, VampireStructure::spawnsVampireBats),
             random.nextInt(100),
             ServerConfigService.current().mobs().vampireBatSpawnChance())) {
       return false;

@@ -27,23 +27,48 @@ class MobSpawnRulesTest {
     assertEquals(spawns, MobSpawnRules.vampireMaySpawn(false, time, openSky, roll, chance));
   }
 
-  @ParameterizedTest(name = "time {0}, open sky {1}, light {2}, roll {3}: spawns {4}")
+  @ParameterizedTest(
+      name = "below sea {0}, light {1}, darkness roll {2}, structure {3}, roll {4}: spawns {5}")
   @CsvSource({
-    "6000, false, 0, 10, true",
-    "6000, false, 4, 10, true",
-    "6000, false, 5, 10, false",
-    "6000, true, 0, 10, false",
-    "14000, true, 0, 10, true",
-    "14000, true, 0, 100, false"
+    "true, 0, 0, false, 10, true",
+    "true, 3, 3, false, 10, true",
+    "true, 3, 2, false, 10, false",
+    "true, 15, 3, false, 10, false",
+    "false, 0, 3, false, 10, false",
+    "false, 15, 0, true, 10, true",
+    "true, 15, 0, true, 10, true",
+    "true, 0, 3, false, 100, false",
+    "false, 0, 0, true, 100, false"
   })
-  @DisplayName("vampire bats spawn in dark caves and at night, within the spawn chance")
+  @DisplayName(
+      "vampire bats spawn only in dark places below sea level or inside a vampire structure")
   void bat(
-      final long time,
-      final boolean openSky,
+      final boolean belowSea,
       final int light,
+      final int darknessRoll,
+      final boolean inStructure,
       final int roll,
       final boolean spawns) {
-    assertEquals(spawns, MobSpawnRules.batMaySpawn(false, time, openSky, light, roll, 100));
+    assertEquals(
+        spawns,
+        MobSpawnRules.batMaySpawn(belowSea, light, darknessRoll, () -> inStructure, roll, 100));
+  }
+
+  @ParameterizedTest(name = "chance roll {0}")
+  @CsvSource({"100", "57"})
+  @DisplayName("a failed chance roll never looks for a structure")
+  void skipsTheStructureLookup(final int roll) {
+    assertEquals(
+        false,
+        MobSpawnRules.batMaySpawn(
+            false,
+            0,
+            0,
+            () -> {
+              throw new AssertionError("looked for a structure");
+            },
+            roll,
+            50));
   }
 
   @ParameterizedTest(name = "roll {0}, chance {1}, extra {2}: {3} bats")

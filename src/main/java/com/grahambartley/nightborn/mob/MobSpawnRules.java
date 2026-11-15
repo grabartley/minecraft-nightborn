@@ -1,10 +1,11 @@
 package com.grahambartley.nightborn.mob;
 
 import com.grahambartley.nightborn.core.NightTime;
+import java.util.function.BooleanSupplier;
 
 public final class MobSpawnRules {
 
-  static final int DARK_CAVE_LIGHT = 4;
+  public static final int CAVE_DARKNESS = 4;
   static final int MAX_ESCORT = 2;
   public static final int MAX_NEARBY_BATS = 2;
   public static final double NEARBY_RANGE = 128.0;
@@ -22,15 +23,16 @@ public final class MobSpawnRules {
   }
 
   public static boolean batMaySpawn(
-      final boolean fixedTime,
-      final long timeOfDay,
-      final boolean openSky,
+      final boolean belowSeaLevel,
       final int light,
+      final int darknessRoll,
+      final BooleanSupplier inVampireStructure,
       final int roll,
       final int chance) {
-    final boolean darkCave = !openSky && light <= DARK_CAVE_LIGHT;
-    final boolean openNight = openSky && NightTime.isNight(fixedTime, timeOfDay);
-    return (darkCave || openNight) && roll < chance;
+    if (roll >= chance) {
+      return false;
+    }
+    return (belowSeaLevel && light <= darknessRoll) || inVampireStructure.getAsBoolean();
   }
 
   public static boolean crowded(final int nearbyBats) {

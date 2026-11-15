@@ -13,10 +13,7 @@ import com.grahambartley.nightborn.structure.HouseholdSpawner;
 import com.grahambartley.nightborn.structure.StructureFogTracker;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.JsonOps;
-import it.unimi.dsi.fastutil.longs.LongSet;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
 import net.minecraft.entity.Entity;
@@ -26,17 +23,12 @@ import net.minecraft.loot.LootTable;
 import net.minecraft.loot.context.LootContextParameterSet;
 import net.minecraft.loot.context.LootContextParameters;
 import net.minecraft.loot.context.LootContextTypes;
-import net.minecraft.nbt.NbtCompound;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.RegistryOps;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.structure.StructureContext;
-import net.minecraft.structure.StructurePiece;
-import net.minecraft.structure.StructurePieceType;
-import net.minecraft.structure.StructurePiecesList;
 import net.minecraft.structure.StructureStart;
 import net.minecraft.test.AfterBatch;
 import net.minecraft.test.BeforeBatch;
@@ -45,14 +37,9 @@ import net.minecraft.test.TestContext;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockBox;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.intprovider.ConstantIntProvider;
 import net.minecraft.util.math.random.Random;
-import net.minecraft.world.StructureWorldAccess;
-import net.minecraft.world.chunk.WorldChunk;
-import net.minecraft.world.gen.StructureAccessor;
-import net.minecraft.world.gen.chunk.ChunkGenerator;
 import net.minecraft.world.gen.chunk.placement.RandomSpreadStructurePlacement;
 import net.minecraft.world.gen.chunk.placement.StructurePlacement;
 import net.minecraft.world.gen.structure.Structure;
@@ -83,7 +70,7 @@ public class VampireStructureGameTest implements FabricGameTest {
                 StructureSettings.STRUCTURE_RARITY.defaultValue()));
   }
 
-  private static BlockBox arena(final TestContext context) {
+  static BlockBox arena(final TestContext context) {
     return BlockBox.create(
         context.getAbsolutePos(new BlockPos(0, 1, 0)),
         context.getAbsolutePos(new BlockPos(8, 4, 8)));
@@ -121,7 +108,7 @@ public class VampireStructureGameTest implements FabricGameTest {
         .formatted(size, reach);
   }
 
-  private static DataResult<Structure> decodeStructure(final ServerWorld world, final int reach) {
+  static DataResult<Structure> decodeStructure(final ServerWorld world, final int reach) {
     return decodeStructure(world, reach, 2);
   }
 
@@ -261,14 +248,8 @@ public class VampireStructureGameTest implements FabricGameTest {
     final Structure structure = decodeStructure(world, 64).getOrThrow();
     final BlockBox heart = arena(context);
     final BlockPos centre = heart.getCenter();
-    final WorldChunk chunk = world.getWorldChunk(centre);
-    final ChunkPos home = chunk.getPos();
-    final StructureStart start =
-        new StructureStart(structure, home, 0, new StructurePiecesList(List.of(new Marker(heart))));
-    final Map<Structure, StructureStart> startsBefore = new HashMap<>(chunk.getStructureStarts());
-    final Map<Structure, LongSet> referencesBefore = new HashMap<>(chunk.getStructureReferences());
-    chunk.setStructureStart(structure, start);
-    chunk.addStructureReference(structure, home.toLong());
+    final PlacedStructure placed = PlacedStructure.place(world, structure, heart);
+    final StructureStart start = placed.start();
     try {
       final ServerPlayerEntity inside = context.createMockCreativeServerPlayerInWorld();
       final ServerPlayerEntity outside = context.createMockCreativeServerPlayerInWorld();
@@ -287,8 +268,7 @@ public class VampireStructureGameTest implements FabricGameTest {
           StructureFogTracker.zoneAround(inside).equals(Optional.of(expected)),
           "the first player keeps their fog whatever the second player sees");
     } finally {
-      chunk.setStructureStarts(startsBefore);
-      chunk.setStructureReferences(referencesBefore);
+      placed.remove();
     }
     context.complete();
   }
@@ -299,14 +279,8 @@ public class VampireStructureGameTest implements FabricGameTest {
     final Structure structure = decodeStructure(world, 64).getOrThrow();
     final BlockBox heart = arena(context);
     final BlockPos centre = heart.getCenter();
-    final WorldChunk chunk = world.getWorldChunk(centre);
-    final ChunkPos home = chunk.getPos();
-    final StructureStart start =
-        new StructureStart(structure, home, 0, new StructurePiecesList(List.of(new Marker(heart))));
-    final Map<Structure, StructureStart> startsBefore = new HashMap<>(chunk.getStructureStarts());
-    final Map<Structure, LongSet> referencesBefore = new HashMap<>(chunk.getStructureReferences());
-    chunk.setStructureStart(structure, start);
-    chunk.addStructureReference(structure, home.toLong());
+    final PlacedStructure placed = PlacedStructure.place(world, structure, heart);
+    final StructureStart start = placed.start();
     final ServerPlayerEntity inside = TestPlayers.human(context, new BlockPos(4, 2, 4));
     final ServerPlayerEntity nearby = TestPlayers.human(context, new BlockPos(4, 2, 4));
     final BlockBox whole = start.getBoundingBox();
@@ -326,30 +300,9 @@ public class VampireStructureGameTest implements FabricGameTest {
                 TestAdvancements.done(context, nearby, "house_call"),
                 "standing in the fog outside does not");
           } finally {
-            chunk.setStructureStarts(startsBefore);
-            chunk.setStructureReferences(referencesBefore);
+            placed.remove();
           }
           TestPlayers.finish(context, inside, nearby);
         });
-  }
-
-  private static final class Marker extends StructurePiece {
-
-    Marker(final BlockBox box) {
-      super(StructurePieceType.JIGSAW, 0, box);
-    }
-
-    @Override
-    protected void writeNbt(final StructureContext context, final NbtCompound nbt) {}
-
-    @Override
-    public void generate(
-        final StructureWorldAccess world,
-        final StructureAccessor structures,
-        final ChunkGenerator generator,
-        final Random random,
-        final BlockBox chunkBox,
-        final ChunkPos chunk,
-        final BlockPos pivot) {}
   }
 }
