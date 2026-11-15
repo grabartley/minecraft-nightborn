@@ -30,19 +30,12 @@ class StructureHeartTest {
   }
 
   @ParameterizedTest(name = "{0} pieces")
-  @ValueSource(ints = {1, 2, 5})
-  @DisplayName("the heart is the first piece placed")
+  @ValueSource(ints = {0, 1, 2, 5})
+  @DisplayName("the heart is the first piece placed, and a structure with no pieces has none")
   void isTheFirstPiece(final int count) {
     final List<StructurePiece> pieces =
         IntStream.range(0, count).mapToObj(i -> (StructurePiece) new Piece(box(i))).toList();
-    assertEquals(Optional.of(box(0)), StructureHeart.of(pieces));
-  }
-
-  @ParameterizedTest(name = "{0}")
-  @ValueSource(ints = {0})
-  @DisplayName("a structure with no pieces has no heart")
-  void noPiecesNoHeart(final int count) {
-    assertEquals(Optional.empty(), StructureHeart.of(List.of()));
+    assertEquals(count == 0 ? Optional.empty() : Optional.of(box(0)), StructureHeart.of(pieces));
   }
 
   private static final class Piece extends StructurePiece {

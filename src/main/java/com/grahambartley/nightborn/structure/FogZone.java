@@ -1,14 +1,14 @@
 package com.grahambartley.nightborn.structure;
 
 import io.netty.buffer.ByteBuf;
-import java.util.List;
 import net.minecraft.network.codec.PacketCodec;
 import net.minecraft.network.codec.PacketCodecs;
 import net.minecraft.util.math.BlockBox;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 
 public record FogZone(
-    double x, double y, double z, int minX, int minY, int minZ, int maxX, int maxY, int maxZ) {
+    double x, double y, double z, int minX, int minY, int minZ, int endX, int endY, int endZ) {
 
   public static final int MARGIN = 24;
 
@@ -20,9 +20,16 @@ public record FogZone(
           FogZone::y,
           PacketCodecs.DOUBLE,
           FogZone::z,
-          PacketCodecs.VAR_INT.collect(PacketCodecs.toList(6)),
-          FogZone::bounds,
-          FogZone::of);
+          BlockPos.PACKET_CODEC,
+          FogZone::min,
+          BlockPos.PACKET_CODEC,
+          FogZone::end,
+          FogZone::new);
+
+  private FogZone(
+      final double x, final double y, final double z, final BlockPos min, final BlockPos end) {
+    this(x, y, z, min.getX(), min.getY(), min.getZ(), end.getX(), end.getY(), end.getZ());
+  }
 
   public static FogZone around(final BlockBox heart, final BlockBox whole) {
     return new FogZone(
@@ -37,35 +44,25 @@ public record FogZone(
         whole.getMaxZ() + 1);
   }
 
-  private static FogZone of(
-      final double x, final double y, final double z, final List<Integer> bounds) {
-    return new FogZone(
-        x,
-        y,
-        z,
-        bounds.get(0),
-        bounds.get(1),
-        bounds.get(2),
-        bounds.get(3),
-        bounds.get(4),
-        bounds.get(5));
+  private BlockPos min() {
+    return new BlockPos(minX, minY, minZ);
   }
 
-  private List<Integer> bounds() {
-    return List.of(minX, minY, minZ, maxX, maxY, maxZ);
+  private BlockPos end() {
+    return new BlockPos(endX, endY, endZ);
   }
 
   public double reach() {
-    final double dx = Math.max(x - minX, maxX - x);
-    final double dy = Math.max(y - minY, maxY - y);
-    final double dz = Math.max(z - minZ, maxZ - z);
+    final double dx = Math.max(x - minX, endX - x);
+    final double dy = Math.max(y - minY, endY - y);
+    final double dz = Math.max(z - minZ, endZ - z);
     return Math.sqrt(dx * dx + dy * dy + dz * dz) + MARGIN;
   }
 
   public double outside(final double px, final double py, final double pz) {
-    final double dx = Math.max(0.0, Math.max(minX - px, px - maxX));
-    final double dy = Math.max(0.0, Math.max(minY - py, py - maxY));
-    final double dz = Math.max(0.0, Math.max(minZ - pz, pz - maxZ));
+    final double dx = Math.max(0.0, Math.max(minX - px, px - endX));
+    final double dy = Math.max(0.0, Math.max(minY - py, py - endY));
+    final double dz = Math.max(0.0, Math.max(minZ - pz, pz - endZ));
     return Math.sqrt(dx * dx + dy * dy + dz * dz);
   }
 
