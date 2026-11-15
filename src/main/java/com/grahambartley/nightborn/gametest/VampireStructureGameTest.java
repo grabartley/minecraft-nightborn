@@ -70,7 +70,7 @@ public class VampireStructureGameTest implements FabricGameTest {
                 StructureSettings.STRUCTURE_RARITY.defaultValue()));
   }
 
-  static BlockBox arena(final TestContext context) {
+  private static BlockBox arena(final TestContext context) {
     return BlockBox.create(
         context.getAbsolutePos(new BlockPos(0, 1, 0)),
         context.getAbsolutePos(new BlockPos(8, 4, 8)));

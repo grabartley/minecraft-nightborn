@@ -53,7 +53,7 @@ public final class StructureFogTracker {
     final List<FogZone> zones = new ArrayList<>();
     for (int dx = -CHUNK_RADIUS; dx <= CHUNK_RADIUS; dx++) {
       for (int dz = -CHUNK_RADIUS; dz <= CHUNK_RADIUS; dz++) {
-        VampireStructureStarts.loaded(world, centre.x + dx, centre.z + dz)
+        Optional.ofNullable(world.getChunkManager().getWorldChunk(centre.x + dx, centre.z + dz))
             .ifPresent(chunk -> collect(world, chunk, zones));
       }
     }

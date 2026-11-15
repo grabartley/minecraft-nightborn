@@ -2,6 +2,7 @@ package com.grahambartley.nightborn.gametest;
 
 import com.grahambartley.nightborn.mob.MobSpawns;
 import com.grahambartley.nightborn.mob.NightbornMobs;
+import com.grahambartley.nightborn.structure.VampireStructureStarts;
 import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.SpawnReason;
@@ -83,6 +84,9 @@ public class VampireBatSpawnGameTest implements FabricGameTest {
     final PlacedStructure placed = place(context, VampireStructureGameTest.structureJson(64));
     try {
       context.assertTrue(
+          VampireStructureStarts.anyContains(context.getWorld(), spot, structure -> true),
+          "the spot is inside the placed structure");
+      context.assertTrue(
           spawns(context, spot), "a vampire bat spawns inside a structure by default");
     } finally {
       placed.remove();
@@ -96,6 +100,9 @@ public class VampireBatSpawnGameTest implements FabricGameTest {
     final BlockPos spot = surfaceGround(context);
     final PlacedStructure placed = place(context, false);
     try {
+      context.assertTrue(
+          VampireStructureStarts.anyContains(context.getWorld(), spot, structure -> true),
+          "the spot is inside the placed structure");
       context.assertFalse(spawns(context, spot), "this structure's data spawns no bats");
     } finally {
       placed.remove();
@@ -112,6 +119,9 @@ public class VampireBatSpawnGameTest implements FabricGameTest {
     context.spawnEntity(NightbornMobs.VAMPIRE_BAT, surface.add(2, 1, 2)).setAiDisabled(true);
     final PlacedStructure placed = place(context, true);
     try {
+      context.assertTrue(
+          VampireStructureStarts.anyContains(context.getWorld(), spot, structure -> true),
+          "the spot is inside the placed structure");
       context.assertFalse(spawns(context, spot), "no third vampire bat joins two nearby");
       context.assertTrue(
           MobSpawns.batCanSpawn(

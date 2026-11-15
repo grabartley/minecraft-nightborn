@@ -23,20 +23,26 @@ import net.minecraft.world.gen.structure.Structure;
 
 final class PlacedStructure {
 
-  private final WorldChunk chunk;
+  private final WorldChunk home;
   private final Map<Structure, StructureStart> startsBefore;
-  private final Map<Structure, LongSet> referencesBefore;
+  private final Map<WorldChunk, Map<Structure, LongSet>> referencesBefore = new HashMap<>();
   private final StructureStart start;
 
   private PlacedStructure(final ServerWorld world, final Structure structure, final BlockBox box) {
-    chunk = world.getWorldChunk(box.getCenter());
-    final ChunkPos home = chunk.getPos();
+    home = world.getWorldChunk(box.getCenter());
+    final ChunkPos homePos = home.getPos();
     start =
-        new StructureStart(structure, home, 0, new StructurePiecesList(List.of(new Marker(box))));
-    startsBefore = new HashMap<>(chunk.getStructureStarts());
-    referencesBefore = new HashMap<>(chunk.getStructureReferences());
-    chunk.setStructureStart(structure, start);
-    chunk.addStructureReference(structure, home.toLong());
+        new StructureStart(
+            structure, homePos, 0, new StructurePiecesList(List.of(new Marker(box))));
+    startsBefore = new HashMap<>(home.getStructureStarts());
+    home.setStructureStart(structure, start);
+    for (int x = box.getMinX() >> 4; x <= box.getMaxX() >> 4; x++) {
+      for (int z = box.getMinZ() >> 4; z <= box.getMaxZ() >> 4; z++) {
+        final WorldChunk chunk = world.getChunk(x, z);
+        referencesBefore.put(chunk, new HashMap<>(chunk.getStructureReferences()));
+        chunk.addStructureReference(structure, homePos.toLong());
+      }
+    }
   }
 
   static PlacedStructure place(
@@ -49,8 +55,8 @@ final class PlacedStructure {
   }
 
   void remove() {
-    chunk.setStructureStarts(startsBefore);
-    chunk.setStructureReferences(referencesBefore);
+    home.setStructureStarts(startsBefore);
+    referencesBefore.forEach((chunk, references) -> chunk.setStructureReferences(references));
   }
 
   private static final class Marker extends StructurePiece {

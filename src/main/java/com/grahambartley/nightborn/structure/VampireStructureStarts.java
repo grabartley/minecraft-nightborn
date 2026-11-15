@@ -53,7 +53,7 @@ public final class VampireStructureStarts {
     return pieces.stream().anyMatch(box -> box.contains(pos));
   }
 
-  static Optional<Chunk> loaded(final ServerWorld world, final int x, final int z) {
+  private static Optional<Chunk> loaded(final ServerWorld world, final int x, final int z) {
     return Optional.ofNullable(world.getChunkManager().getWorldChunk(x, z));
   }
 }
