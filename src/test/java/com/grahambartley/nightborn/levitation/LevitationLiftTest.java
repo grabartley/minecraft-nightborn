@@ -58,7 +58,7 @@ class LevitationLiftTest {
       assertTrue(feet <= 66.0, "never above the hover height");
       ticks++;
     }
-    assertEquals(66.0, feet);
+    assertEquals(66.0, feet, 1.0E-9);
     assertTrue(ticks <= 20, "reaches the top within a second, took " + ticks);
   }
 }

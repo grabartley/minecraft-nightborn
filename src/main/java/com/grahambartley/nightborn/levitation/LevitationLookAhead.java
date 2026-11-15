@@ -1,5 +1,6 @@
 package com.grahambartley.nightborn.levitation;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.OptionalDouble;
 
@@ -12,11 +13,13 @@ public final class LevitationLookAhead {
   static final double STILL = 1.0E-4;
   static final double MAX_CLIMB = 1.0;
   static final double CLIMB_MARGIN = 0.05;
-  static final double SEARCH_DEPTH = MAX_CLIMB + LevitationLift.HOVER_HEIGHT + CLIMB_MARGIN;
+  static final double AHEAD_DEPTH = MAX_CLIMB + LevitationLift.HOVER_HEIGHT + CLIMB_MARGIN;
 
   private LevitationLookAhead() {}
 
   public record Heading(double x, double z) {}
+
+  public record Sample(boolean blocked, OptionalDouble surface) {}
 
   public static Optional<Heading> heading(
       final double strafe, final double forward, final float yawDegrees) {
@@ -45,6 +48,18 @@ public final class LevitationLookAhead {
     final double ground =
         groundBelow.isPresent() ? groundBelow.getAsDouble() : feetY - LevitationLift.HOVER_HEIGHT;
     return ground + MAX_CLIMB + CLIMB_MARGIN;
+  }
+
+  public static OptionalDouble groundToFollow(
+      final OptionalDouble below, final List<Sample> nearestFirst) {
+    OptionalDouble highest = below;
+    for (final Sample sample : nearestFirst) {
+      if (sample.blocked()) {
+        return highest;
+      }
+      highest = higher(highest, sample.surface());
+    }
+    return highest;
   }
 
   public static OptionalDouble higher(final OptionalDouble first, final OptionalDouble second) {

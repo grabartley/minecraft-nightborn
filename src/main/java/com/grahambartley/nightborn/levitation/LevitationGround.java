@@ -1,5 +1,7 @@
 package com.grahambartley.nightborn.levitation;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.OptionalDouble;
 import net.minecraft.entity.Entity;
@@ -19,7 +21,7 @@ public final class LevitationGround {
 
   public static OptionalDouble surfaceBelow(final Entity entity) {
     final Box box = entity.getBoundingBox();
-    return highestUnder(entity, box, box.minY + RAY_START_ABOVE_FEET, SEARCH_DEPTH, false);
+    return sample(entity, box, box.minY + RAY_START_ABOVE_FEET, SEARCH_DEPTH).surface();
   }
 
   public static OptionalDouble surfaceToFollow(final Entity entity, final Vec3d movementInput) {
@@ -31,35 +33,28 @@ public final class LevitationGround {
     }
     final Box box = entity.getBoundingBox();
     final double startY = LevitationLookAhead.climbLimit(below, box.minY);
-    final double depth = LevitationLookAhead.SEARCH_DEPTH;
-    OptionalDouble highest = below;
+    final List<LevitationLookAhead.Sample> samples = new ArrayList<>();
     for (final double distance :
         LevitationLookAhead.distances(entity.getVelocity().horizontalLength())) {
-      highest =
-          LevitationLookAhead.higher(
-              highest,
-              highestUnder(
-                  entity,
-                  box.offset(heading.get().x() * distance, 0.0, heading.get().z() * distance),
-                  startY,
-                  depth,
-                  true));
+      samples.add(
+          sample(
+              entity,
+              box.offset(heading.get().x() * distance, 0.0, heading.get().z() * distance),
+              startY,
+              LevitationLookAhead.AHEAD_DEPTH));
     }
-    return highest;
+    return LevitationLookAhead.groundToFollow(below, samples);
   }
 
-  private static OptionalDouble highestUnder(
-      final Entity entity,
-      final Box footprint,
-      final double startY,
-      final double depth,
-      final boolean skipBlocked) {
+  private static LevitationLookAhead.Sample sample(
+      final Entity entity, final Box footprint, final double startY, final double depth) {
     final double[] xs = {
       footprint.minX + FOOTPRINT_INSET, footprint.getCenter().x, footprint.maxX - FOOTPRINT_INSET
     };
     final double[] zs = {
       footprint.minZ + FOOTPRINT_INSET, footprint.getCenter().z, footprint.maxZ - FOOTPRINT_INSET
     };
+    boolean blocked = false;
     OptionalDouble highest = OptionalDouble.empty();
     for (final double x : xs) {
       for (final double z : zs) {
@@ -73,13 +68,16 @@ public final class LevitationGround {
                         RaycastContext.ShapeType.COLLIDER,
                         RaycastContext.FluidHandling.ANY,
                         entity));
-        if (hit.getType() == HitResult.Type.MISS
-            || skipBlocked && hit instanceof BlockHitResult block && block.isInsideBlock()) {
+        if (hit.getType() == HitResult.Type.MISS) {
+          continue;
+        }
+        if (hit instanceof BlockHitResult block && block.isInsideBlock()) {
+          blocked = true;
           continue;
         }
         highest = LevitationLookAhead.higher(highest, OptionalDouble.of(hit.getPos().y));
       }
     }
-    return highest;
+    return new LevitationLookAhead.Sample(blocked, highest);
   }
 }

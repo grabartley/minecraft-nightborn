@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.List;
 import java.util.OptionalDouble;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.DisplayName;
@@ -83,5 +84,35 @@ class LevitationLookAheadTest {
         LevitationLookAhead.climbLimit(
             ground == null ? OptionalDouble.empty() : OptionalDouble.of(ground), feet),
         0.0001);
+  }
+
+  static Stream<Arguments> scans() {
+    final LevitationLookAhead.Sample flat =
+        new LevitationLookAhead.Sample(false, OptionalDouble.of(64));
+    final LevitationLookAhead.Sample step =
+        new LevitationLookAhead.Sample(false, OptionalDouble.of(65));
+    final LevitationLookAhead.Sample fence =
+        new LevitationLookAhead.Sample(true, OptionalDouble.empty());
+    final LevitationLookAhead.Sample gap =
+        new LevitationLookAhead.Sample(false, OptionalDouble.empty());
+    return Stream.of(
+        Arguments.of("open ground", List.of(flat, flat, flat, flat), 64.0),
+        Arguments.of("a step ahead", List.of(flat, flat, step, step), 65.0),
+        Arguments.of("a fence with a step behind it", List.of(flat, fence, step, step), 64.0),
+        Arguments.of("a wall straight ahead", List.of(fence, step, step, step), 64.0),
+        Arguments.of("a step before a wall", List.of(step, fence, flat, flat), 65.0),
+        Arguments.of("a gap then a step", List.of(gap, step, step, step), 65.0));
+  }
+
+  @ParameterizedTest(name = "{0}: {2}")
+  @MethodSource("scans")
+  @DisplayName(
+      "it follows the highest ground it can reach, and never ground beyond a fence or wall in"
+          + " the way")
+  void groundToFollow(
+      final String scene, final List<LevitationLookAhead.Sample> samples, final double ground) {
+    assertEquals(
+        OptionalDouble.of(ground),
+        LevitationLookAhead.groundToFollow(OptionalDouble.of(64), samples));
   }
 }
