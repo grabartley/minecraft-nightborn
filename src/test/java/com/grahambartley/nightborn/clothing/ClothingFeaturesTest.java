@@ -22,8 +22,10 @@ class ClothingFeaturesTest {
   }
 
   @Test
-  @DisplayName("registering clothing brings in the night sight power")
-  void registersNightSight() {
+  @DisplayName("registering clothing brings in the night sight and clothing power effects")
+  void registersPowers() {
     assertTrue(Registries.ENCHANTMENT_ENTITY_EFFECT_TYPE.containsId(NightSightEffect.ID));
+    assertTrue(
+        Registries.ENCHANTMENT_LOCATION_BASED_EFFECT_TYPE.containsId(ClothingPowerEffect.ID));
   }
 }

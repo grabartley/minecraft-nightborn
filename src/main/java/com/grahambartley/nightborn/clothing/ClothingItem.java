@@ -19,8 +19,10 @@ import software.bernie.geckolib.util.GeckoLibUtil;
 
 public class ClothingItem extends ArmorItem implements GeoItem {
 
-  private static final RawAnimation IDLE = RawAnimation.begin().thenLoop(ClothingMotion.IDLE);
-  private static final RawAnimation WALK = RawAnimation.begin().thenLoop(ClothingMotion.WALK);
+  private static final RawAnimation IDLE =
+      RawAnimation.begin().thenLoop(ClothingMotion.IDLE.clip());
+  private static final RawAnimation WALK =
+      RawAnimation.begin().thenLoop(ClothingMotion.WALK.clip());
 
   private final ClothingPiece piece;
   private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
@@ -47,8 +49,7 @@ public class ClothingItem extends ArmorItem implements GeoItem {
     final Entity wearer = state.getData(DataTickets.ENTITY);
     final float limbSpeed =
         wearer instanceof LivingEntity living ? living.limbAnimator.getSpeed() : 0;
-    return state.setAndContinue(
-        ClothingMotion.WALK.equals(ClothingMotion.clip(limbSpeed)) ? WALK : IDLE);
+    return state.setAndContinue(ClothingMotion.of(limbSpeed) == ClothingMotion.WALK ? WALK : IDLE);
   }
 
   @Override

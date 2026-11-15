@@ -89,7 +89,7 @@ public final class VampirePlayerArmorLayer extends GeoRenderLayer<VampirePlayerA
       geo.prepForRender(player, stack, piece.slot(), model, bufferSource, partialTick, 0, 0, 0, 0);
       geo.applyBoneVisibilityByPart(piece.slot(), part, model);
       geo.render(poseStack, null, packedLight, packedOverlay, Color.WHITE.argbInt());
-    } else if (draw == ArmorDraw.VANILLA) {
+    } else {
       render(
           poseStack,
           bufferSource,

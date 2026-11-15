@@ -3,6 +3,7 @@ package com.grahambartley.nightborn.clothing;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
+import com.google.gson.JsonParser;
 import com.grahambartley.nightborn.MinecraftBootstrapExtension;
 import com.mojang.serialization.JsonOps;
 import net.minecraft.enchantment.effect.EnchantmentEntityEffect;
@@ -21,7 +22,7 @@ class NightSightEffectTest {
   void readsFromEnchantmentData(final String json) {
     final EnchantmentEntityEffect effect =
         EnchantmentEntityEffect.CODEC
-            .parse(JsonOps.INSTANCE, com.google.gson.JsonParser.parseString(json))
+            .parse(JsonOps.INSTANCE, JsonParser.parseString(json))
             .getOrThrow();
     assertSame(NightSightEffect.INSTANCE, effect);
     assertEquals(

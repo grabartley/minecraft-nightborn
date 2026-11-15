@@ -7,5 +7,6 @@ public final class ClothingFeatures {
   public static void register() {
     ClothingItems.register();
     NightSightEffect.register();
+    ClothingPowerEffect.register();
   }
 }

@@ -19,7 +19,9 @@ public final class ClothingItems {
 
   private static final Map<ClothingPiece, ClothingItem> ITEMS =
       Arrays.stream(ClothingPiece.values())
-          .collect(Collectors.toUnmodifiableMap(Function.identity(), ClothingItems::register));
+          .collect(Collectors.toUnmodifiableMap(Function.identity(), ClothingItems::registerItem));
+  private static final List<ClothingItem> ALL =
+      Arrays.stream(ClothingPiece.values()).map(ITEMS::get).toList();
 
   private ClothingItems() {}
 
@@ -28,7 +30,7 @@ public final class ClothingItems {
   }
 
   public static List<ClothingItem> all() {
-    return Arrays.stream(ClothingPiece.values()).map(ClothingItems::of).toList();
+    return ALL;
   }
 
   public static void register() {
@@ -43,7 +45,7 @@ public final class ClothingItems {
                     .put(item, CauldronBehavior.CLEAN_DYEABLE_ITEM));
   }
 
-  private static ClothingItem register(final ClothingPiece piece) {
+  private static ClothingItem registerItem(final ClothingPiece piece) {
     return Registry.register(
         Registries.ITEM,
         Identifier.of(Nightborn.MOD_ID, piece.id()),

@@ -1,14 +1,18 @@
 package com.grahambartley.nightborn.clothing;
 
-public final class ClothingMotion {
+import java.util.Locale;
 
-  public static final String IDLE = "idle";
-  public static final String WALK = "walk";
+public enum ClothingMotion {
+  IDLE,
+  WALK;
+
   static final float WALKING_LIMB_SPEED = 0.1F;
 
-  private ClothingMotion() {}
-
-  public static String clip(final float limbSpeed) {
+  public static ClothingMotion of(final float limbSpeed) {
     return limbSpeed > WALKING_LIMB_SPEED ? WALK : IDLE;
+  }
+
+  public String clip() {
+    return name().toLowerCase(Locale.ROOT);
   }
 }

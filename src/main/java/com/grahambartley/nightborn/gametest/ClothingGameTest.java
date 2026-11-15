@@ -5,6 +5,8 @@ import com.grahambartley.nightborn.clothing.ClothingFabric;
 import com.grahambartley.nightborn.clothing.ClothingItem;
 import com.grahambartley.nightborn.clothing.ClothingItems;
 import com.grahambartley.nightborn.clothing.ClothingPiece;
+import com.grahambartley.nightborn.config.ClothingSettings;
+import com.grahambartley.nightborn.server.ServerConfigService;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -47,6 +49,7 @@ public class ClothingGameTest implements FabricGameTest {
   static final String BATCH = "clothing";
   static final String NIGHT_BATCH = "clothing-night";
   static final String NOON_BATCH = "clothing-noon";
+  static final String SETTINGS_BATCH = "clothing-settings";
   static final BlockPos SPOT = new BlockPos(4, 2, 4);
   static final int WORN = 5;
   static final int NIGHT_VISION_CHECK = 10;
@@ -104,6 +107,50 @@ public class ClothingGameTest implements FabricGameTest {
   @AfterBatch(batchId = NOON_BATCH)
   public void unpinNoon(final ServerWorld world) {
     WorldClock.release(world);
+  }
+
+  @BeforeBatch(batchId = SETTINGS_BATCH)
+  public void retuneClothing(final ServerWorld world) {
+    WorldClock.freeze(world, WorldClock.MIDNIGHT);
+    ServerConfigService.update(
+        world.getServer(),
+        ServerConfigService.current()
+            .with(ClothingSettings.NOCTURNE, false)
+            .with(ClothingSettings.BATWING_BLOCKS, 2));
+  }
+
+  @AfterBatch(batchId = SETTINGS_BATCH)
+  public void restoreClothing(final ServerWorld world) {
+    WorldClock.release(world);
+    ServerConfigService.update(
+        world.getServer(),
+        ServerConfigService.current()
+            .with(ClothingSettings.NOCTURNE, ClothingSettings.NOCTURNE.defaultValue())
+            .with(ClothingSettings.BATWING_BLOCKS, ClothingSettings.BATWING_BLOCKS.defaultValue()));
+  }
+
+  @GameTest(templateName = ARENA, batchId = SETTINGS_BATCH, tickLimit = WORN + 10)
+  public void batwingFollowsTheServerSetting(final TestContext context) {
+    wearingRaisesTheAttribute(
+        context,
+        new Raise(
+            "batwing",
+            ClothingPiece.FROCK_COAT,
+            3,
+            EntityAttributes.GENERIC_SAFE_FALL_DISTANCE,
+            6.0));
+  }
+
+  @GameTest(templateName = ARENA, batchId = SETTINGS_BATCH, tickLimit = NIGHT_VISION_CHECK + 10)
+  public void nocturneRestsWhenTheServerTurnsItOff(final TestContext context) {
+    final ServerPlayerEntity human = wearNocturne(context);
+    context.runAtTick(
+        NIGHT_VISION_CHECK,
+        () -> {
+          context.assertFalse(
+              human.hasStatusEffect(StatusEffects.NIGHT_VISION), "nocturne is turned off");
+          TestPlayers.finish(context, human);
+        });
   }
 
   @CustomTestProvider

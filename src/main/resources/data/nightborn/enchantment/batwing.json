@@ -4,16 +4,12 @@
     "translate": "enchantment.nightborn.batwing"
   },
   "effects": {
-    "minecraft:attributes": [
+    "minecraft:location_changed": [
       {
-        "amount": {
-          "type": "minecraft:linear",
-          "base": 1.0,
-          "per_level_above_first": 1.0
-        },
-        "attribute": "minecraft:generic.safe_fall_distance",
-        "id": "nightborn:enchantment.batwing",
-        "operation": "add_value"
+        "effect": {
+          "type": "nightborn:clothing_power",
+          "power": "batwing"
+        }
       }
     ]
   },

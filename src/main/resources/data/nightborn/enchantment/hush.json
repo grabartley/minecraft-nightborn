@@ -4,16 +4,12 @@
     "translate": "enchantment.nightborn.hush"
   },
   "effects": {
-    "minecraft:attributes": [
+    "minecraft:location_changed": [
       {
-        "amount": {
-          "type": "minecraft:linear",
-          "base": 0.1,
-          "per_level_above_first": 0.1
-        },
-        "attribute": "minecraft:player.sneaking_speed",
-        "id": "nightborn:enchantment.hush",
-        "operation": "add_value"
+        "effect": {
+          "type": "nightborn:clothing_power",
+          "power": "hush"
+        }
       }
     ]
   },

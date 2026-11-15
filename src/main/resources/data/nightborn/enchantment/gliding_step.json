@@ -4,16 +4,12 @@
     "translate": "enchantment.nightborn.gliding_step"
   },
   "effects": {
-    "minecraft:attributes": [
+    "minecraft:location_changed": [
       {
-        "amount": {
-          "type": "minecraft:linear",
-          "base": 0.4,
-          "per_level_above_first": 0.0
-        },
-        "attribute": "minecraft:generic.step_height",
-        "id": "nightborn:enchantment.gliding_step",
-        "operation": "add_value"
+        "effect": {
+          "type": "nightborn:clothing_power",
+          "power": "gliding_step"
+        }
       }
     ]
   },

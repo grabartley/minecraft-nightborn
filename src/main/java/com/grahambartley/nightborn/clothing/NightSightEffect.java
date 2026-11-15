@@ -2,6 +2,7 @@ package com.grahambartley.nightborn.clothing;
 
 import com.grahambartley.nightborn.Nightborn;
 import com.grahambartley.nightborn.core.NightSight;
+import com.grahambartley.nightborn.server.ServerConfigService;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.enchantment.EnchantmentEffectContext;
 import net.minecraft.enchantment.effect.EnchantmentEntityEffect;
@@ -32,7 +33,9 @@ public final class NightSightEffect implements EnchantmentEntityEffect {
       final EnchantmentEffectContext context,
       final Entity user,
       final Vec3d pos) {
-    if (user instanceof LivingEntity seer && NightSight.isNight(world)) {
+    if (user instanceof LivingEntity seer
+        && ServerConfigService.current().clothing().nocturne()
+        && NightSight.isNight(world)) {
       NightSight.keep(seer);
     }
   }

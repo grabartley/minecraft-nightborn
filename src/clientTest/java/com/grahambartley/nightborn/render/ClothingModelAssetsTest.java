@@ -64,7 +64,7 @@ class ClothingModelAssetsTest {
   @DisplayName("every piece ships the clips its wearer's motion plays")
   void shipsTheMotionClips(final ClothingPiece piece) throws IOException {
     assertEquals(
-        Set.of(ClothingMotion.IDLE, ClothingMotion.WALK),
+        Set.of(ClothingMotion.IDLE.clip(), ClothingMotion.WALK.clip()),
         read(ClothingArt.animation(piece)).getAsJsonObject("animations").keySet());
   }
 

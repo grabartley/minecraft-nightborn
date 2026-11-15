@@ -27,6 +27,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 class LangAssetsTest {
 
   private static final Path LANG = Path.of("src/main/resources/assets/nightborn/lang");
+  private static final Path ENCHANTMENTS = Path.of("src/main/resources/data/nightborn/enchantment");
   private static final Pattern PLACEHOLDER = Pattern.compile("%(?:\\d+\\$)?s|%%");
 
   static Stream<String> languages() {
@@ -50,7 +51,7 @@ class LangAssetsTest {
 
   @Test
   @DisplayName(
-      "every setting, section, faction, blood quality and clothing piece has its English text")
+      "every setting, section, faction, blood quality, clothing piece and enchantment has its English text")
   void englishCoversTheCode() throws IOException {
     final JsonObject english = read("en_us");
     final List<String> needed = new ArrayList<>();
@@ -68,6 +69,12 @@ class LangAssetsTest {
     }
     for (final ClothingPiece piece : ClothingPiece.values()) {
       needed.add("item.nightborn." + piece.id());
+    }
+    try (Stream<Path> enchantments = Files.list(ENCHANTMENTS)) {
+      enchantments.forEach(
+          file ->
+              needed.add(
+                  "enchantment.nightborn." + file.getFileName().toString().replace(".json", "")));
     }
     needed.forEach(key -> assertTrue(english.has(key), key));
   }
