@@ -44,7 +44,7 @@ public final class CoffinOwnership {
                   claim(sleeper.getServerWorld(), head, sleeper.getUuid());
                   CoffinRespawn.set(sleeper, head);
                 }
-                case BORROW -> sleeper.sendMessage(Text.translatable(RestRules.BORROWED), true);
+                case BORROW -> sleeper.sendMessage(Text.translatable(RestRules.BORROWED), false);
                 case RETURN -> {}
               }
             });
