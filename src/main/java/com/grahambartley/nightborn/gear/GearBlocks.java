@@ -1,6 +1,7 @@
 package com.grahambartley.nightborn.gear;
 
 import com.grahambartley.nightborn.Nightborn;
+import net.fabricmc.fabric.api.registry.FlammableBlockRegistry;
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
@@ -37,9 +38,14 @@ public final class GearBlocks {
                   .sounds(BlockSoundGroup.CROP)
                   .pistonBehavior(PistonBehavior.DESTROY)));
 
+  static final int STRING_BURN = 30;
+  static final int STRING_SPREAD = 60;
+
   private GearBlocks() {}
 
-  public static void initialize() {}
+  public static void initialize() {
+    FlammableBlockRegistry.getDefaultInstance().add(GARLIC_STRING, STRING_BURN, STRING_SPREAD);
+  }
 
   private static Block ore(final String name, final Block like) {
     return withItem(

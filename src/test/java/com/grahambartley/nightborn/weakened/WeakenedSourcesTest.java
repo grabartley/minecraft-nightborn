@@ -30,6 +30,28 @@ class WeakenedSourcesTest {
     assertEquals(300, sources.sources().get("garlic").ticksLeft());
   }
 
+  @ParameterizedTest(name = "{0} then {1}: {2}")
+  @CsvSource({"45, 15, 15", "15, 45, 45", "60, 0, 0", "0, 30, 30", "40, 150, 100"})
+  @DisplayName("a replacing write sets the strength, lower or higher, and zero removes it")
+  void replacing(final int first, final int second, final int level) {
+    final WeakenedSources sources =
+        WeakenedSources.NONE.replacing("strings", first, 15).replacing("strings", second, 15);
+    assertEquals(level, sources.level(false));
+    assertEquals(level == 0, sources.isEmpty());
+  }
+
+  @Test
+  @DisplayName("a replacing write leaves other sources alone")
+  void replacingKeepsOthers() {
+    final WeakenedSources sources =
+        WeakenedSources.NONE
+            .with("touch", 80, 60)
+            .replacing("strings", 15, 15)
+            .replacing("strings", 0, 15);
+    assertEquals(80, sources.level(false));
+    assertEquals(60, sources.sources().get("touch").ticksLeft());
+  }
+
   @Test
   @DisplayName("being downed or escaping is weakened at the cap whatever else applies")
   void downedIsAtCap() {

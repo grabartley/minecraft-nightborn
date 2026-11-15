@@ -15,8 +15,8 @@ abstract class ServerWorldMixin {
   @Inject(method = "onBlockChanged", at = @At("HEAD"))
   private void nightborn$findCrucifixShapes(
       final BlockPos pos, final BlockState before, final BlockState after, final CallbackInfo ci) {
-    if (CrucifixShapes.flipsMaterial(before, after)) {
-      final ServerWorld self = (ServerWorld) (Object) this;
+    final ServerWorld self = (ServerWorld) (Object) this;
+    if (self.getServer().isOnThread() && CrucifixShapes.flipsMaterial(before, after)) {
       CrucifixShapes.get(self).refreshAround(self, pos);
     }
   }

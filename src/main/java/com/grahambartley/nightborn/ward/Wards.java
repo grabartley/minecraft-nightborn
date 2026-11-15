@@ -40,12 +40,16 @@ public final class Wards {
     if (holds(vampire, WardTags.GARLIC)) {
       touch(vampire, settings);
     }
-    Weakened.add(vampire, STRINGS, strings(world, vampire, settings), LINGER_TICKS);
-    Weakened.add(vampire, CRUCIFIX, crucifixes(world, vampire, settings), LINGER_TICKS);
-    if (CrucifixShapes.get(world).near(world, vampire.getBlockPos(), settings.shapeRange()).stream()
-        .anyMatch(centre -> seesShape(world, vampire, centre))) {
-      Weakened.add(vampire, SHAPE, settings.shapeStrength(), LINGER_TICKS);
-    }
+    Weakened.set(vampire, STRINGS, strings(world, vampire, settings), LINGER_TICKS);
+    Weakened.set(vampire, CRUCIFIX, crucifixes(world, vampire, settings), LINGER_TICKS);
+    Weakened.set(
+        vampire,
+        SHAPE,
+        CrucifixShapes.get(world).near(world, vampire.getBlockPos(), settings.shapeRange()).stream()
+                .anyMatch(centre -> seesShape(world, vampire, centre))
+            ? settings.shapeStrength()
+            : 0,
+        LINGER_TICKS);
   }
 
   public static void touch(final Entity entity, final WardSettings settings) {
@@ -88,6 +92,7 @@ public final class Wards {
             holder ->
                 holder != vampire
                     && holder.isAlive()
+                    && !holder.isSpectator()
                     && holder.squaredDistanceTo(vampire) <= range * range
                     && holdsCrucifix(holder)
                     && vampire.canSee(holder));
@@ -118,6 +123,8 @@ public final class Wards {
                 RaycastContext.ShapeType.COLLIDER,
                 RaycastContext.FluidHandling.NONE,
                 vampire));
-    return hit.getType() == HitResult.Type.MISS || CrucifixShape.partOf(centre, hit.getBlockPos());
+    return hit.getType() == HitResult.Type.MISS
+        || CrucifixShape.partOf(centre, hit.getBlockPos())
+            && world.getBlockState(hit.getBlockPos()).isIn(WardTags.CRUCIFIX_MATERIALS);
   }
 }

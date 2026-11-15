@@ -2,6 +2,7 @@ package com.grahambartley.nightborn.gametest;
 
 import com.grahambartley.nightborn.config.FeedingSettings;
 import com.grahambartley.nightborn.config.NightbornConfig;
+import com.grahambartley.nightborn.config.WardSettings;
 import com.grahambartley.nightborn.feeding.FeedingSessions;
 import com.grahambartley.nightborn.gear.GarlicStringBlock;
 import com.grahambartley.nightborn.gear.GearBlocks;
@@ -47,6 +48,8 @@ public class WardGameTest implements FabricGameTest {
   static final String ARENA = "nightborn:vampire_arena";
   static final String BITES = "ward-bites";
   static final int SCANNED = 25;
+  static final String SHORT_RANGE = "ward-short-range";
+  static final int SHORT = 3;
 
   private NightbornConfig beforeBites = NightbornConfig.DEFAULTS;
 
@@ -62,6 +65,92 @@ public class WardGameTest implements FabricGameTest {
   public void restore(final ServerWorld world) {
     BatchPvp.restore(world.getServer());
     ServerConfigService.update(world.getServer(), beforeBites);
+  }
+
+  private NightbornConfig beforeShortRange = NightbornConfig.DEFAULTS;
+
+  @BeforeBatch(batchId = SHORT_RANGE)
+  public void shortRanges(final ServerWorld world) {
+    beforeShortRange = ServerConfigService.current();
+    ServerConfigService.update(
+        world.getServer(),
+        beforeShortRange
+            .with(WardSettings.STRING_RANGE, SHORT)
+            .with(WardSettings.CRUCIFIX_RANGE, SHORT)
+            .with(WardSettings.SHAPE_RANGE, SHORT));
+  }
+
+  @AfterBatch(batchId = SHORT_RANGE)
+  public void restoreRanges(final ServerWorld world) {
+    ServerConfigService.update(world.getServer(), beforeShortRange);
+  }
+
+  @GameTest(templateName = ARENA, batchId = SHORT_RANGE, tickLimit = SCANNED + 5)
+  public void aStringOutOfRangeDoesNothing(final TestContext context) {
+    context.setBlockState(
+        new BlockPos(4, 3, 1),
+        GearBlocks.GARLIC_STRING.getDefaultState().with(GarlicStringBlock.HANGING, true));
+    final VampireEntity near = still(context, new BlockPos(4, 2, 3));
+    final VampireEntity far = still(context, new BlockPos(4, 2, 7));
+    context.runAtTick(
+        SCANNED,
+        () -> {
+          context.assertEquals(strength(near, Wards.STRINGS), 15, "in range");
+          context.assertEquals(strength(far, Wards.STRINGS), 0, "out of range");
+          context.complete();
+        });
+  }
+
+  @GameTest(templateName = ARENA, batchId = SHORT_RANGE, tickLimit = SCANNED + 5)
+  public void aCrucifixOutOfRangeDoesNothing(final TestContext context) {
+    final ServerPlayerEntity hunter = TestPlayers.human(context, new BlockPos(1, 2, 4));
+    hunter.setStackInHand(Hand.MAIN_HAND, new ItemStack(GearItems.GOLD_CRUCIFIX));
+    final VampireEntity near = still(context, new BlockPos(3, 2, 4));
+    final VampireEntity far = still(context, new BlockPos(6, 2, 4));
+    context.runAtTick(
+        SCANNED,
+        () -> {
+          context.assertEquals(strength(near, Wards.CRUCIFIX), 60, "in range");
+          context.assertEquals(strength(far, Wards.CRUCIFIX), 0, "out of range");
+          TestPlayers.finish(context, hunter);
+        });
+  }
+
+  @GameTest(templateName = ARENA, batchId = SHORT_RANGE, tickLimit = SCANNED + 5)
+  public void aCrucifixShapeOutOfRangeDoesNothing(final TestContext context) {
+    build(context, new BlockPos(1, 2, 4), Blocks.OAK_PLANKS, Direction.SOUTH);
+    final VampireEntity near = still(context, new BlockPos(3, 2, 2));
+    final VampireEntity far = still(context, new BlockPos(7, 2, 4));
+    context.runAtTick(
+        SCANNED,
+        () -> {
+          context.assertEquals(strength(near, Wards.SHAPE), 40, "in range");
+          context.assertEquals(strength(far, Wards.SHAPE), 0, "out of range");
+          context.complete();
+        });
+  }
+
+  @GameTest(templateName = ARENA, tickLimit = SCANNED + 25)
+  public void breakingStringsLowersTheWeakening(final TestContext context) {
+    final VampireEntity vampire = still(context, new BlockPos(4, 2, 4));
+    for (int i = 0; i < 3; i++) {
+      context.setBlockState(
+          new BlockPos(1 + 2 * i, 3, 1),
+          GearBlocks.GARLIC_STRING.getDefaultState().with(GarlicStringBlock.HANGING, true));
+    }
+    context.runAtTick(
+        SCANNED,
+        () -> {
+          context.assertEquals(strength(vampire, Wards.STRINGS), 45, "three strings");
+          context.setBlockState(new BlockPos(3, 3, 1), Blocks.AIR);
+          context.setBlockState(new BlockPos(5, 3, 1), Blocks.AIR);
+        });
+    context.runAtTick(
+        SCANNED + 20,
+        () -> {
+          context.assertEquals(strength(vampire, Wards.STRINGS), 15, "one string left");
+          context.complete();
+        });
   }
 
   @CustomTestProvider

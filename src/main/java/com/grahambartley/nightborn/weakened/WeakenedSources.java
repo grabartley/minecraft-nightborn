@@ -50,6 +50,19 @@ public record WeakenedSources(Map<String, Source> sources) {
     return new WeakenedSources(updated);
   }
 
+  public WeakenedSources replacing(final String id, final int strength, final int ticks) {
+    final int clampedStrength = Math.max(0, Math.min(CAP, strength));
+    final Map<String, Source> updated = new LinkedHashMap<>(sources);
+    if (clampedStrength == 0 || ticks <= 0) {
+      if (updated.remove(id) == null) {
+        return this;
+      }
+    } else {
+      updated.put(id, new Source(clampedStrength, ticks));
+    }
+    return new WeakenedSources(updated);
+  }
+
   public WeakenedSources tick() {
     if (sources.isEmpty()) {
       return this;

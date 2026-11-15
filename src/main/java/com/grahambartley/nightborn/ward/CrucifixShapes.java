@@ -14,6 +14,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.ChunkSectionPos;
 import net.minecraft.world.PersistentState;
+import net.minecraft.world.chunk.WorldChunk;
 
 public final class CrucifixShapes extends PersistentState {
 
@@ -100,7 +101,13 @@ public final class CrucifixShapes extends PersistentState {
   }
 
   private static boolean isMaterial(final ServerWorld world, final BlockPos pos) {
-    return world.getBlockState(pos).isIn(WardTags.CRUCIFIX_MATERIALS);
+    final WorldChunk chunk =
+        world
+            .getChunkManager()
+            .getWorldChunk(
+                ChunkSectionPos.getSectionCoord(pos.getX()),
+                ChunkSectionPos.getSectionCoord(pos.getZ()));
+    return chunk != null && chunk.getBlockState(pos).isIn(WardTags.CRUCIFIX_MATERIALS);
   }
 
   private static boolean loadedAround(final ServerWorld world, final BlockPos centre) {
@@ -113,8 +120,9 @@ public final class CrucifixShapes extends PersistentState {
 
   private static boolean loaded(final ServerWorld world, final int x, final int z) {
     return world
-        .getChunkManager()
-        .isChunkLoaded(ChunkSectionPos.getSectionCoord(x), ChunkSectionPos.getSectionCoord(z));
+            .getChunkManager()
+            .getWorldChunk(ChunkSectionPos.getSectionCoord(x), ChunkSectionPos.getSectionCoord(z))
+        != null;
   }
 
   @Override

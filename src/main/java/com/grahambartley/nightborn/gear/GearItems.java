@@ -4,7 +4,6 @@ import com.grahambartley.nightborn.Nightborn;
 import java.util.function.Function;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.fabricmc.fabric.api.registry.CompostingChanceRegistry;
-import net.fabricmc.fabric.api.registry.FlammableBlockRegistry;
 import net.minecraft.item.AliasedBlockItem;
 import net.minecraft.item.AxeItem;
 import net.minecraft.item.Item;
@@ -19,8 +18,6 @@ import net.minecraft.util.Identifier;
 public final class GearItems {
 
   static final float COMPOST_CHANCE = 0.65F;
-  static final int STRING_BURN = 30;
-  static final int STRING_SPREAD = 60;
 
   public static final Item SILVER_INGOT = item("silver_ingot", Item::new);
   public static final Item SILVER_NUGGET = item("silver_nugget", Item::new);
@@ -85,8 +82,6 @@ public final class GearItems {
         .register(entries -> entries.add(GearBlocks.GARLIC_STRING));
     CompostingChanceRegistry.INSTANCE.add(GARLIC, COMPOST_CHANCE);
     CompostingChanceRegistry.INSTANCE.add(GearBlocks.GARLIC_STRING, COMPOST_CHANCE);
-    FlammableBlockRegistry.getDefaultInstance()
-        .add(GearBlocks.GARLIC_STRING, STRING_BURN, STRING_SPREAD);
   }
 
   private static Item item(final String name, final Function<Item.Settings, Item> factory) {
