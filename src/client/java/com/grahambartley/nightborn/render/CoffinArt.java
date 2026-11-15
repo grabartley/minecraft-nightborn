@@ -12,7 +12,7 @@ public final class CoffinArt {
   static final Identifier VELVET =
       Identifier.of(Nightborn.MOD_ID, "textures/block/burgundy_velvet.png");
   static final Identifier FITTINGS = Identifier.ofVanilla("textures/block/raw_gold_block.png");
-  static final float MODEL_CENTRE_Z = 4.0F / 16.0F;
+  public static final float MODEL_CENTRE_Z = 4.0F / 16.0F;
 
   private static final String WOOD = "_wood";
   private static final String LINING = "_velvet";

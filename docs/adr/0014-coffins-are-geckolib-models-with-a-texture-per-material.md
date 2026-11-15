@@ -25,7 +25,7 @@ A standing coffin is the same model turned upright about the head cell, as the b
 
 ## Consequences
 
-- A new wood still needs no art: one line in `CoffinWood`, its item model and blockstate, which only name the planks for particles, a loot table, a recipe, the axe tag and a name in each language.
+- A new wood still needs no art: one line in `CoffinWood`, its block model, item model and blockstate, which only name the planks for particles, a loot table, a recipe, the axe tag and a name in each language.
 - The lid's motion and timing live in the clip. The lid's 10-tick swing in `LidMotion` still decides when a sleeper is hidden, and a unit test holds the clip lengths to it.
 - The coffin is up to 22 pixels wide with its handles, so two coffins placed side by side overlap a little. Its hit box stays inside its two cells.
 - Like a vanilla bed or chest, a coffin shows no cracks while it is being broken.

@@ -3,6 +3,7 @@ package com.grahambartley.nightborn.render;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import java.io.IOException;
@@ -20,6 +21,7 @@ import org.junit.jupiter.params.provider.CsvSource;
 
 class CoffinArtTest {
 
+  private static final double HALF_PIXEL = 0.5 / 16.0;
   private static final Identifier OAK = Identifier.ofVanilla("textures/block/oak_planks.png");
 
   @ParameterizedTest(name = "{0}")
@@ -75,6 +77,46 @@ class CoffinArtTest {
         Set.of("body_wood", "body_velvet", "body_gold", "lid_wood", "lid_velvet", "lid_gold"),
         bones);
     bones.forEach(bone -> assertTrue(CoffinArt.texture(bone, OAK).isPresent(), bone));
+  }
+
+  @Test
+  @DisplayName("the item is centred on the model's length as exported")
+  void centresTheItemOnTheModel() throws IOException {
+    double min = Double.MAX_VALUE;
+    double max = -Double.MAX_VALUE;
+    for (final JsonElement bone :
+        JsonParser.parseString(Files.readString(file(CoffinArt.GEO)))
+            .getAsJsonObject()
+            .getAsJsonArray("minecraft:geometry")
+            .get(0)
+            .getAsJsonObject()
+            .getAsJsonArray("bones")) {
+      if (!bone.getAsJsonObject().has("cubes")) {
+        continue;
+      }
+      for (final JsonElement cube : bone.getAsJsonObject().getAsJsonArray("cubes")) {
+        final JsonArray origin = cube.getAsJsonObject().getAsJsonArray("origin");
+        final JsonArray size = cube.getAsJsonObject().getAsJsonArray("size");
+        final JsonArray pivot = cube.getAsJsonObject().getAsJsonArray("pivot");
+        final double turn =
+            cube.getAsJsonObject().has("rotation")
+                ? Math.toRadians(
+                    cube.getAsJsonObject().getAsJsonArray("rotation").get(1).getAsDouble())
+                : 0.0;
+        final double px = pivot == null ? 0.0 : pivot.get(0).getAsDouble();
+        final double pz = pivot == null ? 0.0 : pivot.get(2).getAsDouble();
+        for (int corner = 0; corner < 4; corner++) {
+          final double x =
+              origin.get(0).getAsDouble() + (corner & 1) * size.get(0).getAsDouble() - px;
+          final double z =
+              origin.get(2).getAsDouble() + (corner >> 1) * size.get(2).getAsDouble() - pz;
+          final double turnedZ = pz - x * Math.sin(turn) + z * Math.cos(turn);
+          min = Math.min(min, turnedZ);
+          max = Math.max(max, turnedZ);
+        }
+      }
+    }
+    assertEquals((min + max) / 2.0 / 16.0, CoffinArt.MODEL_CENTRE_Z, HALF_PIXEL);
   }
 
   @Test
