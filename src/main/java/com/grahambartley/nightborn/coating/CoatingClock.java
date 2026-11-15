@@ -30,12 +30,17 @@ public final class CoatingClock {
       if (coat == null || stack.isIn(Coatings.AMMO)) {
         continue;
       }
-      if (!coat.started()) {
-        stack.set(Coatings.COAT, coat.startingAt(now));
-      } else if (coat.worn(CoatingTerms.of(coat.coating(), ServerConfigService.current()), now)) {
-        stack.remove(Coatings.COAT);
-        CoatedStrikes.wearOff(player.getServerWorld(), player, coat.coating());
-      }
+      coat.afterCheck(CoatingTerms.of(coat.coating(), ServerConfigService.current()), now)
+          .ifPresentOrElse(
+              left -> {
+                if (!left.equals(coat)) {
+                  stack.set(Coatings.COAT, left);
+                }
+              },
+              () -> {
+                stack.remove(Coatings.COAT);
+                CoatedStrikes.wearOff(player.getServerWorld(), player, coat.coating());
+              });
     }
   }
 }

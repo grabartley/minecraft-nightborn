@@ -3,6 +3,7 @@ package com.grahambartley.nightborn.coating;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import io.netty.buffer.ByteBuf;
+import java.util.Optional;
 import net.minecraft.network.codec.PacketCodec;
 import net.minecraft.network.codec.PacketCodecs;
 
@@ -60,5 +61,25 @@ public record Coat(Coating coating, int hitsUsed, long startedAt) {
 
   public boolean worn(final CoatingTerms terms, final long now) {
     return hitsLeft(terms) == 0 || ticksLeft(terms, now) == 0L;
+  }
+
+  public boolean live(final CoatingTerms terms, final long now, final boolean ammo) {
+    return ammo || !worn(terms, now);
+  }
+
+  public float bonus(final CoatingTerms terms, final long now, final boolean ammo) {
+    return live(terms, now, ammo) ? terms.damage() : 0.0F;
+  }
+
+  public Optional<Coat> afterStrike(final CoatingTerms terms, final long now) {
+    return stillOn(startingAt(now).struck(), terms, now);
+  }
+
+  public Optional<Coat> afterCheck(final CoatingTerms terms, final long now) {
+    return stillOn(startingAt(now), terms, now);
+  }
+
+  private static Optional<Coat> stillOn(final Coat coat, final CoatingTerms terms, final long now) {
+    return coat.worn(terms, now) ? Optional.empty() : Optional.of(coat);
   }
 }

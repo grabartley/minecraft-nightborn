@@ -1,7 +1,8 @@
 package com.grahambartley.nightborn.render;
 
+import com.grahambartley.nightborn.client.LiveCoating;
+import com.grahambartley.nightborn.coating.Coat;
 import com.grahambartley.nightborn.coating.Coating;
-import com.grahambartley.nightborn.coating.Coatings;
 import com.mojang.blaze3d.systems.RenderSystem;
 import java.util.EnumMap;
 import java.util.Map;
@@ -74,7 +75,7 @@ public final class CoatingLayers extends RenderLayer {
   }
 
   private static Coating coating(final ItemStack stack) {
-    return Coatings.of(stack).map(coat -> coat.coating()).orElse(null);
+    return LiveCoating.of(stack).map(Coat::coating).orElse(null);
   }
 
   private static RenderLayer layer(
@@ -100,7 +101,7 @@ public final class CoatingLayers extends RenderLayer {
       builder.target(ITEM_ENTITY_TARGET);
     }
     return of(
-        "nightborn_" + sheen.name().toLowerCase() + "_coating_" + kind,
+        "nightborn_" + sheen.coating().asString() + "_coating_" + kind,
         VertexFormats.POSITION_TEXTURE,
         VertexFormat.DrawMode.QUADS,
         1536,

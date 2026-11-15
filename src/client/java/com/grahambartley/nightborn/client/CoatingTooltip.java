@@ -5,7 +5,7 @@ import com.grahambartley.nightborn.coating.CoatingTerms;
 import com.grahambartley.nightborn.coating.Coatings;
 import java.util.List;
 import net.fabricmc.fabric.api.client.item.v1.ItemTooltipCallback;
-import net.minecraft.client.MinecraftClient;
+import net.minecraft.SharedConstants;
 import net.minecraft.text.Text;
 import net.minecraft.text.TextColor;
 import net.minecraft.util.Formatting;
@@ -14,26 +14,22 @@ import net.minecraft.util.StringHelper;
 public final class CoatingTooltip {
 
   static final int COLOUR = 0xB8C4CC;
-  static final float TICKS_PER_SECOND = 20.0F;
 
   private CoatingTooltip() {}
 
   public static void register() {
     ItemTooltipCallback.EVENT.register(
         (stack, context, type, lines) ->
-            Coatings.of(stack)
+            LiveCoating.of(stack)
                 .ifPresent(
-                    coat -> {
-                      final MinecraftClient client = MinecraftClient.getInstance();
-                      final long now = client.world == null ? 0L : client.world.getTime();
-                      lines.addAll(
-                          Math.min(1, lines.size()),
-                          lines(
-                              coat,
-                              CoatingTerms.of(coat.coating(), SyncedServerConfig.get()),
-                              now,
-                              stack.isIn(Coatings.AMMO)));
-                    }));
+                    coat ->
+                        lines.addAll(
+                            Math.min(1, lines.size()),
+                            lines(
+                                coat,
+                                CoatingTerms.of(coat.coating(), SyncedServerConfig.get()),
+                                LiveCoating.now(),
+                                stack.isIn(Coatings.AMMO)))));
   }
 
   static List<Text> lines(
@@ -47,7 +43,8 @@ public final class CoatingTooltip {
     }
     final int hits = coat.hitsLeft(terms);
     final String time =
-        StringHelper.formatTicks((int) coat.ticksLeft(terms, now), TICKS_PER_SECOND);
+        StringHelper.formatTicks(
+            (int) coat.ticksLeft(terms, now), SharedConstants.TICKS_PER_SECOND);
     final Text left =
         hits == 1
             ? Text.translatable("nightborn.coating.left.one", time)

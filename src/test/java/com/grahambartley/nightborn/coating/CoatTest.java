@@ -55,4 +55,49 @@ class CoatTest {
             .parse(JsonOps.INSTANCE, Coat.CODEC.encodeStart(JsonOps.INSTANCE, coat).getOrThrow())
             .getOrThrow());
   }
+
+  @ParameterizedTest(name = "{0} used, started {1}, now {2}, ammo {3}: live {4}, bonus {5}")
+  @CsvSource({
+    "0, -1, 9000, false, true, 3.0",
+    "5, 100, 150, false, false, 0.0",
+    "0, 100, 300, false, false, 0.0",
+    "5, 100, 300, true, true, 3.0"
+  })
+  @DisplayName("a worn coat gives no bonus on a weapon, and ammo keeps its coat until fired")
+  void bonus(
+      final int used,
+      final long started,
+      final long now,
+      final boolean ammo,
+      final boolean live,
+      final float bonus) {
+    final Coat coat = new Coat(Coating.GARLIC, used, started);
+    assertEquals(live, coat.live(TERMS, now, ammo));
+    assertEquals(bonus, coat.bonus(TERMS, now, ammo));
+  }
+
+  @ParameterizedTest(name = "{0} used, started {1}, strike at {2}: {3}")
+  @CsvSource({"0, -1, 50, '1, 50'", "3, 10, 50, '4, 10'", "4, 10, 50, ''", "0, 10, 210, ''"})
+  @DisplayName("a strike starts the clock, counts a hit, and wears the coat off on its last hit")
+  void afterStrike(final int used, final long started, final long now, final String left) {
+    assertEquals(
+        expected(left), new Coat(Coating.HOLY_WATER, used, started).afterStrike(TERMS, now));
+  }
+
+  @ParameterizedTest(name = "{0} used, started {1}, checked at {2}: {3}")
+  @CsvSource({"0, -1, 50, '0, 50'", "2, 10, 50, '2, 10'", "0, 10, 210, ''", "5, 10, 50, ''"})
+  @DisplayName("an inventory check starts the clock once and drops a worn coat")
+  void afterCheck(final int used, final long started, final long now, final String left) {
+    assertEquals(
+        expected(left), new Coat(Coating.HOLY_WATER, used, started).afterCheck(TERMS, now));
+  }
+
+  private static java.util.Optional<Coat> expected(final String left) {
+    if (left.isEmpty()) {
+      return java.util.Optional.empty();
+    }
+    final String[] parts = left.split(", ");
+    return java.util.Optional.of(
+        new Coat(Coating.HOLY_WATER, Integer.parseInt(parts[0]), Long.parseLong(parts[1])));
+  }
 }

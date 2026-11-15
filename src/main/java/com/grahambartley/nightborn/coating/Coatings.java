@@ -1,6 +1,7 @@
 package com.grahambartley.nightborn.coating;
 
 import com.grahambartley.nightborn.Nightborn;
+import com.grahambartley.nightborn.config.NightbornConfig;
 import java.util.Optional;
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
@@ -41,6 +42,16 @@ public final class Coatings {
 
   public static Optional<Coat> of(final ItemStack stack) {
     return Optional.ofNullable(stack.get(COAT));
+  }
+
+  public static Optional<Coat> live(
+      final ItemStack stack, final NightbornConfig config, final long now) {
+    return of(stack)
+        .filter(coat -> coat.live(CoatingTerms.of(coat.coating(), config), now, stack.isIn(AMMO)));
+  }
+
+  public static boolean isCoatedAmmo(final ItemStack stack) {
+    return stack.contains(COAT) && stack.isIn(AMMO);
   }
 
   private static TagKey<Item> tag(final String path) {

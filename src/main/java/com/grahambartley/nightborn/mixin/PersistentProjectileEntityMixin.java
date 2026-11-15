@@ -1,7 +1,9 @@
 package com.grahambartley.nightborn.mixin;
 
+import com.grahambartley.nightborn.coating.Coatings;
 import com.grahambartley.nightborn.gear.VampireBane;
 import net.minecraft.entity.projectile.PersistentProjectileEntity;
+import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.EntityHitResult;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -31,5 +33,19 @@ abstract class PersistentProjectileEntityMixin {
   @Inject(method = "onEntityHit", at = @At("RETURN"))
   private void nightborn$restoreDamage(final EntityHitResult hit, final CallbackInfo ci) {
     damage = nightborn$baseDamage;
+    nightborn$spendCoating();
+  }
+
+  @Inject(method = "onBlockHit", at = @At("HEAD"))
+  private void nightborn$coatingSpentOnBlock(final BlockHitResult hit, final CallbackInfo ci) {
+    nightborn$spendCoating();
+  }
+
+  @Unique
+  private void nightborn$spendCoating() {
+    final PersistentProjectileEntity self = (PersistentProjectileEntity) (Object) this;
+    if (!self.getWorld().isClient && Coatings.isCoatedAmmo(self.getItemStack())) {
+      self.getItemStack().remove(Coatings.COAT);
+    }
   }
 }

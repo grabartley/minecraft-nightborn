@@ -5,12 +5,14 @@ import com.grahambartley.nightborn.coating.Coating;
 import com.grahambartley.nightborn.coating.CoatingTerms;
 import com.grahambartley.nightborn.coating.Coatings;
 import com.grahambartley.nightborn.holy.HolyWater;
+import com.grahambartley.nightborn.mob.VampireEntity;
 import com.grahambartley.nightborn.server.ServerConfigService;
 import com.grahambartley.nightborn.weakened.Weakened;
 import java.util.List;
 import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.mob.ZombieEntity;
+import net.minecraft.entity.projectile.ArrowEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.recipe.RecipeType;
@@ -20,6 +22,7 @@ import net.minecraft.test.GameTest;
 import net.minecraft.test.TestContext;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 
 public class CoatingGameTest implements FabricGameTest {
 
@@ -69,6 +72,29 @@ public class CoatingGameTest implements FabricGameTest {
           context.assertTrue(Coatings.of(held).isEmpty(), "the last hit wears the coating off");
           context.assertEquals(swing(attacker, vampire), swing(attacker, human), "no bonus left");
           TestPlayers.finish(context, human, vampire);
+        });
+  }
+
+  @GameTest(templateName = ARENA, tickLimit = 40)
+  public void aGarlicCoatedArrowWeakensAVampireAndLosesItsCoatOnHit(final TestContext context) {
+    final VampireEntity vampire = AmmoTargets.vampire(context, new BlockPos(4, 2, 5));
+    final ItemStack coated = new ItemStack(Items.ARROW);
+    coated.set(Coatings.COAT, Coat.fresh(Coating.GARLIC));
+    final Vec3d from = context.getAbsolute(new Vec3d(4.5, 3.2, 1.5));
+    final ArrowEntity arrow =
+        new ArrowEntity(context.getWorld(), from.x, from.y, from.z, coated, null);
+    arrow.setVelocity(0.0, 0.0, 3.0);
+    context.getWorld().spawnEntity(arrow);
+    context.waitAndRun(
+        20,
+        () -> {
+          context.assertTrue(vampire.getHealth() < AmmoTargets.TOUGH, "the arrow hit");
+          context.assertTrue(
+              Weakened.sources(vampire).sources().containsKey(Coating.GARLIC.weakenedSource()),
+              "the garlic weakened the vampire");
+          context.assertFalse(
+              arrow.getItemStack().contains(Coatings.COAT), "the fired arrow is plain again");
+          context.complete();
         });
   }
 

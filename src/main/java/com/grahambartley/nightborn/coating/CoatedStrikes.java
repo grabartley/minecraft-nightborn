@@ -1,6 +1,5 @@
 package com.grahambartley.nightborn.coating;
 
-import com.grahambartley.nightborn.gear.GearItems;
 import com.grahambartley.nightborn.gear.VampireBane;
 import com.grahambartley.nightborn.server.ServerConfigService;
 import com.grahambartley.nightborn.vampire.Vampires;
@@ -9,13 +8,8 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.item.ItemStack;
-import net.minecraft.particle.ItemStackParticleEffect;
-import net.minecraft.particle.ParticleEffect;
-import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvent;
-import net.minecraft.sound.SoundEvents;
 
 public final class CoatedStrikes {
 
@@ -28,7 +22,7 @@ public final class CoatedStrikes {
   }
 
   public static float ammoBonus(final ItemStack ammo, final Entity target) {
-    return bonus(ammo, target, true);
+    return ammo.isIn(Coatings.AMMO) ? bonus(ammo, target, true) : 0.0F;
   }
 
   static void afterDamage(
@@ -42,8 +36,9 @@ public final class CoatedStrikes {
     }
     final ItemStack ammo = VampireBane.ammo(source);
     final ItemStack weapon = source.getWeaponStack();
-    if (ammo.contains(Coatings.COAT)) {
-      weaken(target, ammo.get(Coatings.COAT));
+    if (Coatings.isCoatedAmmo(ammo)) {
+      final Coat coat = ammo.get(Coatings.COAT);
+      weaken(target, coat.coating(), terms(coat));
     } else if (weapon != null && weapon.contains(Coatings.COAT)) {
       spend(target, weapon);
     }
@@ -51,7 +46,7 @@ public final class CoatedStrikes {
 
   static void wearOff(final ServerWorld world, final Entity at, final Coating coating) {
     world.spawnParticles(
-        particle(coating),
+        coating.wearOffParticle(),
         at.getX(),
         at.getBodyY(0.5),
         at.getZ(),
@@ -60,32 +55,31 @@ public final class CoatedStrikes {
         at.getHeight() / 4.0,
         at.getWidth() / 2.0,
         0.02);
-    world.playSound(null, at.getBlockPos(), sound(coating), SoundCategory.PLAYERS, 0.5F, 1.6F);
+    world.playSound(
+        null, at.getBlockPos(), coating.wearOffSound(), SoundCategory.PLAYERS, 0.5F, 1.6F);
   }
 
   private static void spend(final LivingEntity target, final ItemStack weapon) {
     final long now = target.getWorld().getTime();
-    final Coat coat = weapon.get(Coatings.COAT).startingAt(now);
-    final CoatingTerms terms = CoatingTerms.of(coat.coating(), ServerConfigService.current());
-    if (coat.worn(terms, now)) {
-      return;
+    final Coat coat = weapon.get(Coatings.COAT);
+    final CoatingTerms terms = terms(coat);
+    if (coat.live(terms, now, false)) {
+      weaken(target, coat.coating(), terms);
     }
-    weaken(target, coat);
-    final Coat spent = coat.struck();
-    if (spent.worn(terms, now)) {
-      weapon.remove(Coatings.COAT);
-      if (target.getWorld() instanceof ServerWorld world) {
-        wearOff(world, target, coat.coating());
-      }
-    } else {
-      weapon.set(Coatings.COAT, spent);
-    }
+    coat.afterStrike(terms, now)
+        .ifPresentOrElse(
+            left -> weapon.set(Coatings.COAT, left),
+            () -> {
+              weapon.remove(Coatings.COAT);
+              if (target.getWorld() instanceof ServerWorld world) {
+                wearOff(world, target, coat.coating());
+              }
+            });
   }
 
-  private static void weaken(final LivingEntity vampire, final Coat coat) {
-    final CoatingTerms terms = CoatingTerms.of(coat.coating(), ServerConfigService.current());
-    Weakened.add(
-        vampire, coat.coating().weakenedSource(), terms.weakenStrength(), terms.weakenTicks());
+  private static void weaken(
+      final LivingEntity vampire, final Coating coating, final CoatingTerms terms) {
+    Weakened.add(vampire, coating.weakenedSource(), terms.weakenStrength(), terms.weakenTicks());
   }
 
   private static float bonus(final ItemStack stack, final Entity target, final boolean ammo) {
@@ -93,22 +87,10 @@ public final class CoatedStrikes {
     if (coat == null || !(target instanceof LivingEntity living) || !Vampires.isVampire(living)) {
       return 0.0F;
     }
-    final CoatingTerms terms = CoatingTerms.of(coat.coating(), ServerConfigService.current());
-    return ammo || !coat.worn(terms, target.getWorld().getTime()) ? terms.damage() : 0.0F;
+    return coat.bonus(terms(coat), target.getWorld().getTime(), ammo);
   }
 
-  private static ParticleEffect particle(final Coating coating) {
-    return switch (coating) {
-      case HOLY_WATER -> ParticleTypes.WHITE_SMOKE;
-      case GARLIC ->
-          new ItemStackParticleEffect(ParticleTypes.ITEM, new ItemStack(GearItems.GARLIC));
-    };
-  }
-
-  private static SoundEvent sound(final Coating coating) {
-    return switch (coating) {
-      case HOLY_WATER -> SoundEvents.BLOCK_FIRE_EXTINGUISH;
-      case GARLIC -> SoundEvents.ENTITY_SPLASH_POTION_BREAK;
-    };
+  private static CoatingTerms terms(final Coat coat) {
+    return CoatingTerms.of(coat.coating(), ServerConfigService.current());
   }
 }

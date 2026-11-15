@@ -10,7 +10,8 @@
 		"InGameHudMixin",
 		"ItemRendererMixin",
 		"ItemModelsMixin",
-		"PlayerEntityRendererMixin"
+		"PlayerEntityRendererMixin",
+		"TridentEntityRendererMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1

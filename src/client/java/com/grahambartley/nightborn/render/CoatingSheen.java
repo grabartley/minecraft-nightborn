@@ -24,7 +24,16 @@ public enum CoatingSheen {
   }
 
   public static CoatingSheen of(final Coating coating) {
-    return values()[coating.ordinal()];
+    for (final CoatingSheen sheen : values()) {
+      if (sheen.coating == coating) {
+        return sheen;
+      }
+    }
+    throw new IllegalArgumentException("no sheen for " + coating);
+  }
+
+  public Coating coating() {
+    return coating;
   }
 
   public Identifier texture() {
