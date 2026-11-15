@@ -34,6 +34,11 @@ public final class BiteRules {
     return victimIsHumanPlayer && playersCanTurnPlayers && firstRoll && roll < chancePercent;
   }
 
+  public static int resistedChance(final int chancePercent, final double biteResistance) {
+    final double kept = 1.0 - Math.max(0.0, Math.min(1.0, biteResistance));
+    return (int) Math.round(chancePercent * kept);
+  }
+
   public static Decision decide(final Biter biter, final Target target, final boolean pvp) {
     if (!biter.vampire()) {
       return Decision.NOT_A_VAMPIRE;

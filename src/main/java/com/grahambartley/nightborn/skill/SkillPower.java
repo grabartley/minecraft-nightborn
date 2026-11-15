@@ -8,7 +8,11 @@ import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.util.Identifier;
 
 public record SkillPower(
-    int blood, int cooldownTicks, List<StatusEffectInstance> effects, Optional<Identifier> sound) {
+    int blood,
+    int cooldownTicks,
+    List<StatusEffectInstance> effects,
+    Optional<Identifier> sound,
+    Optional<TrackPower> track) {
 
   public static final Codec<SkillPower> CODEC =
       RecordCodecBuilder.create(
@@ -23,6 +27,7 @@ public record SkillPower(
                           .listOf()
                           .optionalFieldOf("effects", List.of())
                           .forGetter(SkillPower::effects),
-                      Identifier.CODEC.optionalFieldOf("sound").forGetter(SkillPower::sound))
+                      Identifier.CODEC.optionalFieldOf("sound").forGetter(SkillPower::sound),
+                      TrackPower.CODEC.optionalFieldOf("track").forGetter(SkillPower::track))
                   .apply(instance, SkillPower::new));
 }

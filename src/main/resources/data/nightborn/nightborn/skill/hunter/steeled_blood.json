@@ -1,0 +1,11 @@
+{
+  "branch": "nightborn:hunter",
+  "cost": 3,
+  "requires": ["nightborn:hunter/bite_ward"],
+  "icon": "nightborn:skills/icon/steeled_blood",
+  "column": 0,
+  "row": 2,
+  "attributes": [
+    { "attribute": "nightborn:bite_resistance", "amount": 0.35, "operation": "add_value" }
+  ]
+}

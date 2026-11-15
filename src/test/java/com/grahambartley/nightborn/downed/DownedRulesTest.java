@@ -5,6 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 
 import com.grahambartley.nightborn.config.DownedSettings;
 import com.grahambartley.nightborn.downed.DownedState.Phase;
+import java.util.Optional;
+import java.util.UUID;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -71,5 +73,19 @@ class DownedRulesTest {
         health,
         DownedRules.recoveredHealth(max, new DownedSettings(30, 60, percent, false)),
         0.0001F);
+  }
+
+  @Test
+  @DisplayName("the hunter who downed a vampire is remembered while it lies and escapes")
+  void remembersTheHunter() {
+    final Optional<UUID> hunter =
+        Optional.of(UUID.fromString("00000000-0000-0000-0000-000000000047"));
+    DownedState state = DownedRules.downed(SETTINGS, hunter);
+    assertEquals(new DownedState(Phase.DOWNED, 600, hunter), state);
+    while (state != null && state.isDowned()) {
+      state = DownedRules.tick(state, SETTINGS).state();
+    }
+    assertEquals(new DownedState(Phase.ESCAPING, 1200, hunter), state);
+    assertEquals(hunter, DownedRules.tick(state, SETTINGS).state().downedBy());
   }
 }

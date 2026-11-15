@@ -14,6 +14,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.MethodSource;
 
@@ -76,5 +77,16 @@ class SkillTooltipTest {
     final Text line =
         SkillTooltip.lines(ID, 2, List.of(), RUSH, SkillPurchase.Verdict.OWNED).get(3);
     assertEquals(List.of(3, 30L), List.of(((TranslatableTextContent) line.getContent()).getArgs()));
+  }
+
+  @ParameterizedTest(name = "{0} blood")
+  @CsvSource({"3, nightborn.skills.power, 2", "0, nightborn.skills.power.free, 1"})
+  @DisplayName("a power that costs no blood shows only its cooldown")
+  void powerKey(final int blood, final String key, final int args) {
+    final Text line = SkillTooltip.powerLine(new SkillTooltip.Power(blood, 1200));
+    final TranslatableTextContent content = (TranslatableTextContent) line.getContent();
+    assertEquals(key, content.getKey());
+    assertEquals(args, content.getArgs().length);
+    assertEquals(60L, content.getArgs()[args - 1]);
   }
 }

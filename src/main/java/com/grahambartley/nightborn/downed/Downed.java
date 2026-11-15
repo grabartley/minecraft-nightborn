@@ -8,6 +8,8 @@ import com.grahambartley.nightborn.vampire.Modifiers;
 import com.grahambartley.nightborn.vampire.NightbornDamage;
 import com.grahambartley.nightborn.vampire.Vampires;
 import com.grahambartley.nightborn.vampire.VisibleStateAttachment;
+import java.util.Optional;
+import java.util.UUID;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentRegistry;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentType;
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
@@ -78,9 +80,10 @@ public final class Downed {
     return state != null && state.isDowned();
   }
 
-  public static void down(final LivingEntity vampire, final DownedSettings settings) {
+  public static void down(
+      final LivingEntity vampire, final DownedSettings settings, final Optional<UUID> hunter) {
     vampire.setHealth(LAST_HEALTH);
-    vampire.setAttached(TYPE, DownedRules.downed(settings));
+    vampire.setAttached(TYPE, DownedRules.downed(settings, hunter));
     FeedingSessions.end(vampire);
     vampire
         .getWorld()
@@ -153,8 +156,14 @@ public final class Downed {
         || !DownedRules.downsInsteadOfDying(NightbornDamage.killsVampires(source))) {
       return true;
     }
-    down(entity, ServerConfigService.current().downed());
+    down(entity, ServerConfigService.current().downed(), hunter(source));
     return false;
+  }
+
+  static Optional<UUID> hunter(final DamageSource source) {
+    return source.getAttacker() instanceof PlayerEntity player && !Vampires.isVampire(player)
+        ? Optional.of(player.getUuid())
+        : Optional.empty();
   }
 
   private static void pin(final LivingEntity entity, final boolean pinned) {

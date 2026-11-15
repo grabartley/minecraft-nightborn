@@ -48,16 +48,18 @@ public final class SkillTooltip {
       }
       lines.add(Text.translatable("nightborn.skills.needs", needs).formatted(Formatting.WHITE));
     }
-    power.ifPresent(
-        shown ->
-            lines.add(
-                Text.translatable(
-                        "nightborn.skills.power",
-                        shown.blood(),
-                        PowerSlotView.seconds(shown.cooldownTicks()))
-                    .formatted(Formatting.DARK_RED)));
+    power.ifPresent(shown -> lines.add(powerLine(shown)));
     lines.add(status(verdict));
     return lines;
+  }
+
+  static Text powerLine(final Power power) {
+    final long seconds = PowerSlotView.seconds(power.cooldownTicks());
+    final MutableText line =
+        power.blood() > 0
+            ? Text.translatable("nightborn.skills.power", power.blood(), seconds)
+            : Text.translatable("nightborn.skills.power.free", seconds);
+    return line.formatted(Formatting.DARK_RED);
   }
 
   static Text status(final SkillPurchase.Verdict verdict) {

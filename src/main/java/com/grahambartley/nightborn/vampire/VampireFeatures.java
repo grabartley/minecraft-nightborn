@@ -7,6 +7,7 @@ import com.grahambartley.nightborn.downed.Downed;
 import com.grahambartley.nightborn.downed.HardcoreVampireDeath;
 import com.grahambartley.nightborn.faction.FactionPlayerList;
 import com.grahambartley.nightborn.feeding.FeedingSessions;
+import com.grahambartley.nightborn.hunter.HunterFeatures;
 import com.grahambartley.nightborn.network.NightbornPayloads;
 import com.grahambartley.nightborn.server.ServerConfigService;
 import com.grahambartley.nightborn.sickness.BiteSickness;
@@ -26,6 +27,7 @@ public final class VampireFeatures {
     VisibleStateAttachment.register();
     BiteSicknessAttachment.register();
     SkillFeatures.register();
+    HunterFeatures.register();
     Weakened.register();
     BiteSicknessEffect.register();
     BloodItems.register();

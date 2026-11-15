@@ -2,6 +2,7 @@ package com.grahambartley.nightborn.skill;
 
 import com.grahambartley.nightborn.blood.BloodAttachment;
 import com.grahambartley.nightborn.downed.Downed;
+import com.grahambartley.nightborn.hunter.Tracking;
 import com.grahambartley.nightborn.network.UsePowerPayload;
 import com.grahambartley.nightborn.weakened.Weakened;
 import java.util.List;
@@ -56,6 +57,7 @@ public final class Powers {
     for (final StatusEffectInstance effect : power.effects()) {
       player.addStatusEffect(new StatusEffectInstance(effect), player);
     }
+    power.track().ifPresent(track -> Tracking.start(player, track));
     power
         .sound()
         .ifPresent(

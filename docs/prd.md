@@ -376,6 +376,8 @@ The core starts with Thick Blood (more health), Grave Strength (harder blows) an
 
 Every human is a hunter in waiting. Killing vampires earns hunter points.
 
+The hunter tree starts with Tracking, an active power that points toward the nearest vampire for a short time and costs no blood. Below it, three paths: Bite Ward and Steeled Blood lower the chance a bite starts the sickness, Iron Will and Clear Mind resist mesmerise, and Faith and Devotion make crucifixes and holy water stronger. Each of these gifts is a player attribute (`nightborn:bite_resistance`, `nightborn:mesmerise_resistance` and `nightborn:faith`) that the skills raise, so the features that use them read one number and never the skills themselves.
+
 | ID | Requirement |
 |---|---|
 | HUNT-1 | Any human player earns hunter points by staking vampire mobs and vampire players, or by downing one that the sun finishes before its escape ends. Downing alone earns nothing. No pledge is needed |

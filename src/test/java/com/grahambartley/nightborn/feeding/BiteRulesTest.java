@@ -109,4 +109,20 @@ class BiteRulesTest {
       final boolean starts) {
     assertEquals(starts, BiteRules.startsSickness(human, allowed, first, roll, chance));
   }
+
+  @ParameterizedTest(name = "{0}% with {1} resistance: {2}%")
+  @CsvSource({
+    "100, 0.0, 100",
+    "100, 0.35, 65",
+    "100, 0.7, 30",
+    "100, 1.0, 0",
+    "100, 1.5, 0",
+    "100, -0.5, 100",
+    "50, 0.35, 33",
+    "0, 0.35, 0"
+  })
+  @DisplayName("bite resistance lowers the chance a bite starts the sickness")
+  void resistedChance(final int chance, final double resistance, final int left) {
+    assertEquals(left, BiteRules.resistedChance(chance, resistance));
+  }
 }
