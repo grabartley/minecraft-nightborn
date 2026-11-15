@@ -252,8 +252,8 @@ How weakened a vampire is scales with how strong the source is.
 | WEAK-3 | Holding a Crucifix weakens vampires within 6 blocks who can see it, and stops them biting the holder |
 | WEAK-4 | A crucifix shape in the world weakens vampires within 8 blocks who can see it |
 | WEAK-5 | Holy water hurts vampires and weakens them for a short time, whether splashed, lingering or fired as a bolt. It does nothing to anyone else |
-| WEAK-6 | Silver weapons deal extra damage to vampires |
-| WEAK-7 | A wooden stake deals extra damage to vampires, and stakes a vampire it downs or hits while downed |
+| WEAK-6 | Silver weapons deal extra damage to vampires, and only to vampires |
+| WEAK-7 | A stake deals extra damage to vampires, and stakes a vampire it downs or hits while downed, whoever holds it. It also hurts a vampire that is escaping |
 | WEAK-8 | A weakened vampire shows it to everyone with a sign that is not colour alone |
 | WEAK-9 | Being weakened by different sources adds up, to a cap |
 | WEAK-10 | Being weakened never damages a vampire on its own. Holy water does damage, as WEAK-5 says |
@@ -315,7 +315,7 @@ The core starts with Thick Blood (more health), Grave Strength (harder blows) an
 | SKILL-3 | Bought skills are kept across death, reconnect and world reload |
 | SKILL-4 | Active skills sit in a small power bar of up to five slots, in the order they were bought, and are used with keys the player can rebind |
 | SKILL-5 | Each active skill has a blood cost and a cooldown, shown on the bar. A downed or weakened vampire cannot use powers |
-| SKILL-6 | A staked vampire player loses 10% of their earned points, taken from unspent points first and then from their most recent skills. With CORE-10 on, the full reset applies instead |
+| SKILL-6 | A staked vampire player loses 10% of their earned points, rounded up, taken from unspent points first and then from their most recent skills. With CORE-10 on, the full reset applies instead |
 
 **Enforcement:** server. The client asks to buy a skill; the server checks points and order.
 
@@ -388,9 +388,9 @@ The hunter tree starts with Tracking, an active power that points toward the nea
 
 | ID | Requirement |
 |---|---|
-| GEAR-1 | A wooden stake is crafted from sticks and used as a melee weapon |
-| GEAR-2 | Silver ore generates underground, with a deepslate form, and smelts to silver ingots |
-| GEAR-3 | Silver gives a sword, an axe and a stake tip |
+| GEAR-1 | A wooden stake is crafted from two sticks and used as a melee weapon. It hits lighter and faster than a sword and never sweeps |
+| GEAR-2 | Silver ore generates underground, with a deepslate form, rarer than iron and needing an iron pickaxe. It drops raw silver, which smelts to silver ingots |
+| GEAR-3 | Silver gives a sword, an axe and a stake tip. Silver wears faster than iron and hits as hard. A silver-tipped stake counts as both a stake and silver |
 | GEAR-4 | A crossbow can fire stake bolts, silver bolts, holy water bolts and garlic bombs |
 | GEAR-5 | A garlic bomb bursts into a cloud that weakens vampires inside it for a short time |
 | GEAR-6 | Holy water is brewed from a water bottle, or blessed by a cleric villager as a trade. It comes as a drink, a splash and a lingering potion |
@@ -518,7 +518,7 @@ Vampires are rare. They live in households hidden in four kinds of structure, ea
 | CFG-2 | Settings are saved per world as JSON in the world save directory |
 | CFG-3 | A missing file gives defaults. A broken file gives defaults, is logged and is kept |
 | CFG-4 | Out-of-range values are clamped on load |
-| CFG-5 | Options cover turn chances, sickness length, sun damage, blood drain and values, garlic and crucifix ranges, skill point rates, the staking penalty, the downed and escape times, the coffin sleep share, hardcore vampire deaths, spawn and structure rates, and whether players can turn players |
+| CFG-5 | Options cover turn chances, sickness length, sun damage, blood drain and values, garlic and crucifix ranges, skill point rates, the staking penalty, stake and silver damage, the downed and escape times, the coffin sleep share, hardcore vampire deaths, spawn and structure rates, and whether players can turn players |
 | CFG-6 | A settings screen through Mod Menu shows the same server options and shares their validation with the commands |
 | CFG-7 | An option that only changes what one player sees, such as gore, is a client setting saved on that player's device. Every player can change it on the settings screen, whatever their operator level |
 | CFG-8 | Operators can turn, cure, set points and reset the bloodlines of any player |

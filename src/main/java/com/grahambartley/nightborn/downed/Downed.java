@@ -3,6 +3,7 @@ package com.grahambartley.nightborn.downed;
 import com.grahambartley.nightborn.Nightborn;
 import com.grahambartley.nightborn.config.DownedSettings;
 import com.grahambartley.nightborn.feeding.FeedingSessions;
+import com.grahambartley.nightborn.gear.Staking;
 import com.grahambartley.nightborn.server.ServerConfigService;
 import com.grahambartley.nightborn.vampire.Modifiers;
 import com.grahambartley.nightborn.vampire.NightbornDamage;
@@ -147,20 +148,27 @@ public final class Downed {
     if (!Vampires.isVampire(entity)) {
       return true;
     }
-    return DownedRules.allowsDamage(state(entity), NightbornDamage.killsVampires(source));
+    final DownedState state = state(entity);
+    final boolean stakeBlow = Staking.isStakeBlow(source);
+    if (DownedRules.stakesOnHit(state, stakeBlow)) {
+      Staking.stake(entity, source.getAttacker());
+      return false;
+    }
+    return DownedRules.allowsDamage(state, NightbornDamage.killsVampires(source) || stakeBlow);
   }
 
   private static boolean allowDeath(
       final LivingEntity entity, final DamageSource source, final float amount) {
     if (!Vampires.isVampire(entity)
-        || !DownedRules.downsInsteadOfDying(NightbornDamage.killsVampires(source))) {
+        || !DownedRules.downsInsteadOfDying(
+            NightbornDamage.killsVampires(source) || Staking.isStakeBlow(source))) {
       return true;
     }
     down(entity, ServerConfigService.current().downed(), hunter(source));
     return false;
   }
 
-  static Optional<UUID> hunter(final DamageSource source) {
+  public static Optional<UUID> hunter(final DamageSource source) {
     return source.getAttacker() instanceof PlayerEntity player
         ? DownedRules.hunter(!Vampires.isVampire(player), player.getUuid())
         : Optional.empty();

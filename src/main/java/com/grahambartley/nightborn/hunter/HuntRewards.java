@@ -2,6 +2,7 @@ package com.grahambartley.nightborn.hunter;
 
 import com.grahambartley.nightborn.downed.Downed;
 import com.grahambartley.nightborn.downed.DownedState;
+import com.grahambartley.nightborn.gear.Staking;
 import com.grahambartley.nightborn.server.ServerConfigService;
 import com.grahambartley.nightborn.skill.SkillEarning;
 import com.grahambartley.nightborn.vampire.NightbornDamage;
@@ -25,7 +26,11 @@ public final class HuntRewards {
     ServerLivingEntityEvents.AFTER_DEATH.register(HuntRewards::afterDeath);
   }
 
-  public static Optional<UUID> hunter(@Nullable final DownedState state, final boolean sunKill) {
+  public static Optional<UUID> hunter(
+      @Nullable final DownedState state, final boolean sunKill, final Optional<UUID> staker) {
+    if (staker.isPresent()) {
+      return staker;
+    }
     return state != null && sunKill ? state.downedBy() : Optional.empty();
   }
 
@@ -34,16 +39,19 @@ public final class HuntRewards {
     if (server == null) {
       return;
     }
-    hunter(Downed.state(vampire), source.isOf(NightbornDamage.SUN))
+    final Optional<UUID> staker = Staking.staked(source) ? Downed.hunter(source) : Optional.empty();
+    final String message = staker.isPresent() ? "nightborn.hunt.staked" : "nightborn.hunt.earned";
+    hunter(Downed.state(vampire), source.isOf(NightbornDamage.SUN), staker)
         .map(id -> server.getPlayerManager().getPlayer(id))
-        .ifPresent(hunter -> reward(hunter, vampire));
+        .ifPresent(hunter -> reward(hunter, vampire, message));
   }
 
-  private static void reward(final ServerPlayerEntity hunter, final LivingEntity vampire) {
+  private static void reward(
+      final ServerPlayerEntity hunter, final LivingEntity vampire, final String message) {
     if (!SkillEarning.fromHunt(hunter, ServerConfigService.current().skills())) {
       return;
     }
-    hunter.sendMessage(Text.translatable("nightborn.hunt.earned", vampire.getDisplayName()), true);
+    hunter.sendMessage(Text.translatable(message, vampire.getDisplayName()), true);
     hunter
         .getServerWorld()
         .playSound(
