@@ -5,9 +5,8 @@ import net.minecraft.world.Difficulty;
 public final class BloodMetabolism {
 
   static final float EXHAUSTION_PER_BLOOD = 4.0F;
-  static final float HEAL_EXHAUSTION = 6.0F;
-  static final int PULSE_TICKS = 80;
-  static final int HEAL_THRESHOLD = 18;
+  static final int PULSE_TICKS = 200;
+  static final int HEAL_ABOVE = BloodAttachment.FULL / 2;
   static final float MAX_EXHAUSTION = 40.0F;
 
   private BloodMetabolism() {}
@@ -44,11 +43,8 @@ public final class BloodMetabolism {
     final boolean heals =
         state.age() % PULSE_TICKS == 0
             && state.naturalRegeneration()
-            && blood >= HEAL_THRESHOLD
+            && blood > HEAL_ABOVE
             && state.health() < state.maxHealth();
-    if (heals) {
-      exhaustion += HEAL_EXHAUSTION;
-    }
     return new Outcome(blood, Math.min(exhaustion, MAX_EXHAUSTION), heals);
   }
 

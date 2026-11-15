@@ -4,6 +4,7 @@ import com.grahambartley.nightborn.blood.BloodQuality;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
+import net.minecraft.util.math.Vec3d;
 
 public final class FeedingSession {
 
@@ -13,6 +14,7 @@ public final class FeedingSession {
   private final UUID victim;
   private final BloodQuality quality;
   private final Set<UUID> alertedWitnesses = new HashSet<>();
+  private Vec3d anchor;
   private long lastHeldTick;
   private long nextDrinkTick;
   private boolean atLastHealth;
@@ -35,6 +37,13 @@ public final class FeedingSession {
 
   public BloodQuality quality() {
     return quality;
+  }
+
+  Vec3d anchorAt(final Vec3d position) {
+    if (anchor == null) {
+      anchor = position;
+    }
+    return anchor;
   }
 
   void held(final long now) {
