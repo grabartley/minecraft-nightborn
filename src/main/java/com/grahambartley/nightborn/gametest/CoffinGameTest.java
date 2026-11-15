@@ -405,7 +405,7 @@ public class CoffinGameTest implements FabricGameTest {
   }
 
   @GameTest(templateName = CoffinStage.YARD, batchId = DAY, tickLimit = TestPlayers.READY + 10)
-  public void aTeleportWakesAResterAtOnceWithoutARise(final TestContext context) {
+  public void aTeleportWakesASleepingVampireAtOnceWithoutARise(final TestContext context) {
     final BlockPos head = CoffinStage.coffin(context, new BlockPos(4, 2, 6), Direction.SOUTH);
     final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(3, 2, 6));
     final Vec3d target = context.getAbsolute(Vec3d.ofBottomCenter(new BlockPos(1, 2, 1)));

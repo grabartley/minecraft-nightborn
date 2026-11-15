@@ -64,7 +64,7 @@ public class CoffinLidGameTest implements FabricGameTest {
               vampire.isSleeping() || CoffinRise.rising(vampire),
               "the burn wakes the sleeper at once, without a rise: " + Diagnostics.of(vampire));
           context.assertTrue(
-              context.getBlockState(head).get(CoffinBlock.OPEN), "the lid stays open as they rise");
+              context.getBlockState(head).get(CoffinBlock.OPEN), "the lid stays open");
           TestPlayers.finish(context, vampire, hunter);
         });
   }
