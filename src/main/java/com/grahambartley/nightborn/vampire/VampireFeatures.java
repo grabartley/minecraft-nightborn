@@ -9,6 +9,7 @@ import com.grahambartley.nightborn.downed.Downed;
 import com.grahambartley.nightborn.downed.HardcoreVampireDeath;
 import com.grahambartley.nightborn.faction.FactionPlayerList;
 import com.grahambartley.nightborn.feeding.FeedingSessions;
+import com.grahambartley.nightborn.gore.GoreEvents;
 import com.grahambartley.nightborn.levitation.Levitation;
 import com.grahambartley.nightborn.network.NightbornPayloads;
 import com.grahambartley.nightborn.server.ServerConfigService;
@@ -30,6 +31,7 @@ public final class VampireFeatures {
     StarvingAttachment.register();
     Levitation.register();
     VomitEffects.register();
+    GoreEvents.register();
     VisibleStateAttachment.register();
     BiteSicknessAttachment.register();
     SkillFeatures.register();
