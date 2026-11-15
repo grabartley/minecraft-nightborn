@@ -17,16 +17,16 @@ class BiteSicknessAttachmentTest {
   void healthyStoresNothing() {
     final FakeAttachmentTarget player = new FakeAttachmentTarget();
     assertFalse(BiteSicknessAttachment.isSick(player));
-    assertEquals(0, BiteSicknessAttachment.ticksLeft(player));
+    assertEquals(0, BiteSicknessAttachment.ticksRun(player));
   }
 
   @ParameterizedTest(name = "{0} ticks")
-  @ValueSource(ints = {1, 24000, 72000})
+  @ValueSource(ints = {0, 1, 24000, 72000})
   void storesAndClears(final int ticks) {
     final FakeAttachmentTarget player = new FakeAttachmentTarget();
     BiteSicknessAttachment.set(player, ticks);
     assertTrue(BiteSicknessAttachment.isSick(player));
-    assertEquals(ticks, BiteSicknessAttachment.ticksLeft(player));
+    assertEquals(ticks, BiteSicknessAttachment.ticksRun(player));
     BiteSicknessAttachment.clear(player);
     assertFalse(BiteSicknessAttachment.isSick(player));
   }
@@ -34,8 +34,8 @@ class BiteSicknessAttachmentTest {
   @Test
   @DisplayName("the sickness is saved and kept through death, and never synced to anyone")
   void followsTheGrid() {
-    assertTrue(BiteSicknessAttachment.TICKS_LEFT.isPersistent());
-    assertTrue(BiteSicknessAttachment.TICKS_LEFT.copyOnDeath());
-    assertFalse(BiteSicknessAttachment.TICKS_LEFT.isSynced());
+    assertTrue(BiteSicknessAttachment.TICKS_RUN.isPersistent());
+    assertTrue(BiteSicknessAttachment.TICKS_RUN.copyOnDeath());
+    assertFalse(BiteSicknessAttachment.TICKS_RUN.isSynced());
   }
 }

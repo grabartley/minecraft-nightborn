@@ -77,7 +77,7 @@ final class PlayerCommand {
           BiteSicknessAttachment.isSick(player)
               ? Text.translatable(
                   "nightborn.command.player.info.sick",
-                  SicknessStage.of(BiteSicknessAttachment.ticksLeft(player), turning.sicknessDays())
+                  SicknessStage.of(BiteSicknessAttachment.ticksRun(player), turning.sicknessDays())
                       .daysLeft())
               : Text.translatable("nightborn.command.player.info.well");
       final Text downedText =
