@@ -58,7 +58,9 @@ public class SunGameTest implements FabricGameTest {
     context.runAtTick(
         TestPlayers.READY + 45,
         () -> {
-          context.assertTrue(vampire.getHealth() < 20.0F, "fire resistance does not stop the sun");
+          context.assertTrue(
+              vampire.getHealth() < 20.0F,
+              "fire resistance does not stop the sun: " + Diagnostics.of(vampire));
           TestPlayers.finish(context, vampire);
         });
   }
@@ -78,7 +80,9 @@ public class SunGameTest implements FabricGameTest {
     context.runAtTick(
         TestPlayers.READY + 45,
         () -> {
-          context.assertFalse(vampire.getHealth() < 20.0F, "shade keeps a vampire whole");
+          context.assertFalse(
+              vampire.getHealth() < 20.0F,
+              "shade keeps a vampire whole: " + Diagnostics.of(vampire));
           context.assertFalse(vampire.isOnFire(), "shade keeps a vampire from burning");
           TestPlayers.finish(context, vampire);
         });

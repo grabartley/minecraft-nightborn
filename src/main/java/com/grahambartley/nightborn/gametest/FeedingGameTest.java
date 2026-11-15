@@ -119,7 +119,14 @@ public class FeedingGameTest implements FabricGameTest {
     context.runAtTick(
         125,
         () -> {
-          context.assertFalse(victim.isAlive(), "the villager was drained");
+          context.assertFalse(
+              victim.isAlive(),
+              "the villager was drained: health "
+                  + victim.getHealth()
+                  + ", feeding "
+                  + FeedingSessions.isFeeding(vampire)
+                  + ", "
+                  + Diagnostics.of(vampire));
           final int glass = vampire.getInventory().count(Items.GLASS_BOTTLE);
           final int blood = vampire.getInventory().count(BloodItems.BLOOD_BOTTLE);
           context.assertEquals(glass + blood, 3, "bottles before and after");
@@ -164,7 +171,12 @@ public class FeedingGameTest implements FabricGameTest {
                   .getBrain()
                   .getOptionalRegisteredMemory(MemoryModuleType.HURT_BY_ENTITY)
                   .isPresent(),
-              "the villager that saw the bite panics");
+              "the villager that saw the bite panics: cow "
+                  + cow.getHealth()
+                  + ", sees "
+                  + witness.canSee(vampire)
+                  + ", "
+                  + Diagnostics.of(vampire));
           context.assertTrue(witness.getReputation(vampire) < 0, "the witness gossips");
           context.assertFalse(
               hidden

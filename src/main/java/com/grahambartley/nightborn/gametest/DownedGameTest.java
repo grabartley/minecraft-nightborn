@@ -53,13 +53,17 @@ public class DownedGameTest implements FabricGameTest {
         });
   }
 
-  @GameTest(templateName = ARENA, tickLimit = TestPlayers.READY + 20)
+  @GameTest(templateName = ARENA, tickLimit = TestPlayers.READY + 40)
   public void theSunKillsADownedVampire(final TestContext context) {
     final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(4, 1, 4));
     context.runAtTick(
         TestPlayers.READY,
         () -> {
           vampire.damage(vampire.getDamageSources().generic(), 1000.0F);
+        });
+    context.runAtTick(
+        TestPlayers.READY + 25,
+        () -> {
           vampire.damage(NightbornDamage.sun(context.getWorld()), 2.0F);
           context.assertTrue(vampire.isDead(), "sun finishes a downed vampire");
           TestPlayers.finish(context, vampire);
