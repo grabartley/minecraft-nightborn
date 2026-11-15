@@ -25,7 +25,7 @@ import net.minecraft.text.Text;
 
 final class PlayerCommand {
 
-  private static final String TARGETS = "targets";
+  static final String TARGETS = "targets";
 
   private PlayerCommand() {}
 
@@ -35,7 +35,8 @@ final class PlayerCommand {
             CommandManager.argument(TARGETS, EntityArgumentType.players())
                 .then(CommandManager.literal("turn").executes(PlayerCommand::turn))
                 .then(CommandManager.literal("cure").executes(PlayerCommand::cure))
-                .then(CommandManager.literal("info").executes(PlayerCommand::info)));
+                .then(CommandManager.literal("info").executes(PlayerCommand::info))
+                .then(SkillsCommand.node()));
   }
 
   private static int turn(final CommandContext<ServerCommandSource> context)
@@ -100,9 +101,18 @@ final class PlayerCommand {
     return 1;
   }
 
-  private static int forEach(
+  static int forEach(
       final CommandContext<ServerCommandSource> context,
       final String action,
+      final Predicate<ServerPlayerEntity> change)
+      throws CommandSyntaxException {
+    return forEach(context, action, "", change);
+  }
+
+  static int forEach(
+      final CommandContext<ServerCommandSource> context,
+      final String action,
+      final String detail,
       final Predicate<ServerPlayerEntity> change)
       throws CommandSyntaxException {
     final ServerCommandSource source = context.getSource();
@@ -112,10 +122,11 @@ final class PlayerCommand {
       if (change.test(player)) {
         changed++;
         Nightborn.LOGGER.info(
-            "{} used /nightborn player {} {}",
+            "{} used /nightborn player {} {} {}",
             source.getName(),
             player.getName().getString(),
-            action);
+            action,
+            detail);
         source.sendFeedback(
             () ->
                 Text.translatable("nightborn.command.player." + action + ".done", player.getName()),

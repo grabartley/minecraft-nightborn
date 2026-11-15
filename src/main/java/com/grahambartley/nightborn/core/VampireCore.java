@@ -47,9 +47,7 @@ public final class VampireCore {
     Modifiers.remove(entity, EntityAttributes.GENERIC_ATTACK_DAMAGE, BARE_HANDS);
     Modifiers.remove(entity, EntityAttributes.GENERIC_MOVEMENT_SPEED, NIGHT_SPEED);
     Modifiers.remove(entity, EntityAttributes.GENERIC_JUMP_STRENGTH, NIGHT_JUMP);
-    if (entity.getHealth() > entity.getMaxHealth()) {
-      entity.setHealth(entity.getMaxHealth());
-    }
+    Modifiers.clampHealth(entity);
   }
 
   private static void apply(final LivingEntity vampire, final CoreBoosts boosts) {

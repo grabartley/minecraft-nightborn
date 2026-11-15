@@ -4,6 +4,9 @@ import com.grahambartley.nightborn.faction.Faction;
 import com.grahambartley.nightborn.faction.FactionAttachment;
 import com.grahambartley.nightborn.server.ServerConfigService;
 import com.grahambartley.nightborn.sickness.BiteSicknessAttachment;
+import com.grahambartley.nightborn.skill.PowerCooldownAttachment;
+import com.grahambartley.nightborn.skill.PowerCooldowns;
+import com.grahambartley.nightborn.skill.SkillAttachment;
 import com.grahambartley.nightborn.vampire.Vampires;
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.minecraft.entity.LivingEntity;
@@ -31,6 +34,8 @@ public final class HardcoreVampireDeath {
   static void reset(final ServerPlayerEntity player) {
     FactionAttachment.set(player, Faction.HUMAN);
     BiteSicknessAttachment.clear(player);
+    SkillAttachment.clear(player);
+    PowerCooldownAttachment.set(player, PowerCooldowns.NONE);
     player.getEnderChestInventory().clear();
     if (player.getServerWorld().getGameRules().getBoolean(GameRules.KEEP_INVENTORY)) {
       player.getInventory().clear();

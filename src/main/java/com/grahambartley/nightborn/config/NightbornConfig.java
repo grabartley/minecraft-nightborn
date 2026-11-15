@@ -11,7 +11,8 @@ public record NightbornConfig(
     DownedSettings downed,
     CoreSettings core,
     WeakenedSettings weakened,
-    FactionSettings factions) {
+    FactionSettings factions,
+    SkillSettings skills) {
 
   public static final List<Setting<?>> SETTINGS =
       Stream.of(
@@ -22,7 +23,8 @@ public record NightbornConfig(
               DownedSettings.SETTINGS,
               CoreSettings.SETTINGS,
               WeakenedSettings.SETTINGS,
-              FactionSettings.SETTINGS)
+              FactionSettings.SETTINGS,
+              SkillSettings.SETTINGS)
           .flatMap(List::stream)
           .toList();
 
@@ -37,7 +39,8 @@ public record NightbornConfig(
         DownedSettings.from(values),
         CoreSettings.from(values),
         WeakenedSettings.from(values),
-        FactionSettings.from(values));
+        FactionSettings.from(values),
+        SkillSettings.from(values));
   }
 
   public SettingValues values() {
