@@ -30,9 +30,9 @@ public final class VampireSmokeParticle extends SpriteBillboardParticle {
     this.velocityZ = velocityZ;
     this.gravityStrength = BUOYANCY;
     this.velocityMultiplier = DRAG;
-    this.maxAge = SmokeLife.maxAge(random);
-    this.fullScale = SmokeLife.fullSize(random);
-    final float shade = SmokeLife.shade(random);
+    this.maxAge = SmokeRolls.maxAge(random.nextFloat());
+    this.fullScale = SmokeRolls.fullSize(random.nextFloat());
+    final float shade = SmokeRolls.shade(random.nextFloat());
     setColor(shade, shade, shade);
     this.alpha = SmokeLife.alpha(0, maxAge);
     setSpriteForAge(sprites);
