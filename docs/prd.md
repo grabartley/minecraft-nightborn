@@ -215,7 +215,7 @@ Sneak and use on a creature to bite it, and keep holding to drink. Let go to sto
 |---|---|
 | FEED-1 | A vampire has a blood bar in place of hunger. It drains over time and faster when the vampire runs, fights or uses powers |
 | FEED-2 | An empty blood bar starves the vampire (FEED-14), and a full one heals |
-| FEED-3 | Normal food, potions and milk give a vampire nothing. A vampire who eats or drinks one is hurt and vomits it back up, with a short spell of Nausea, seen and heard by everyone near. Blood Bottles, holy water and items in the `nightborn:vampire_consumables` tag are exempt |
+| FEED-3 | Normal food, potions and milk give a vampire nothing. A vampire who eats or drinks one is hurt and vomits it back up, with a short spell of Nausea, seen and heard by everyone near. Anything eaten or drunk counts, including other mods' food and drink, as does anything in the `nightborn:vampire_rejects` tag, which takes in the shared `c:foods` and `c:potions` tags. Blood Bottles, holy water and items in the `nightborn:vampire_consumables` tag are exempt |
 | FEED-4 | Feeding drinks blood from the victim each second, and hurts it by the same amount |
 | FEED-5 | Letting go stops the bite and leaves the victim alive, with Weakness for a short time |
 | FEED-6 | Holding past the victim's last health drains it, and it dies |
@@ -288,7 +288,7 @@ Every vampire has the core, whatever bloodlines they choose.
 | CORE-8 | A vampire brought to its last health by anything else is downed: it collapses, cannot move, attack, feed or use items or powers, and is weakened at the cap (WEAK-9). It takes no damage from anything but sun and a stake while downed. After 30 seconds by default it gets up with 20% of its health, wherever it lies. More damage does not reset the time. Everyone near can see and hear that it is downed. It then escapes for 1 minute by default: it takes no damage but sun and a stake, stays weakened at the cap and can move freely. Vampire mobs flee while escaping |
 | CORE-9 | Phantoms never spawn for a vampire player and never target a vampire, and time a vampire spends awake never counts toward them |
 | CORE-10 | With the `hardcoreVampireDeath` server setting on, off by default, a vampire player who dies is reset like a hardcore death: they come back as a new human at world spawn with an empty inventory and ender chest, no experience, no skills, bloodlines or hunter tree, no coffin respawn point, and their thralls and familiars freed. Advancements are kept |
-| CORE-11 | Every vampire, player or mob, can levitate. Players toggle it with a key they can rebind. A levitating vampire floats one block above the ground with its feet together, follows the ground up steps and slopes and over water, and sinks slowly over a drop without fall damage. It leans forward to move and further to sprint, never fully horizontal, with arms spreading as it speeds up, and lands with its own animation. It drains blood while active. A weakened or downed vampire, or one in bat form, cannot levitate and lands at once |
+| CORE-11 | Every vampire, player or mob, can levitate. Players toggle it with a key they can rebind. A levitating vampire floats one block above the ground with its feet together, follows the ground up steps and slopes and over water, and sinks slowly over a drop without fall damage. It leans forward to move and further to sprint, never fully horizontal, with arms spreading as it speeds up, and lands with its own animation. It drains blood while active. A weakened or downed vampire, or one in bat form, cannot levitate and lands at once. The server lands a player who stays well above that height for more than a moment. Vampire mobs rise in a fight and now and then as they move about, as often as the server's options allow, and still find their way while levitating |
 
 **Not supported:** a vampire hiding its eyes while feeding; levitating higher than one block.
 
@@ -514,7 +514,7 @@ Vampires are rare. They live in households hidden in four kinds of structure, ea
 |---|---|
 | GORE-1 | Bites, stakes and silver hits spray blood. Blood leaves splatter on nearby blocks, drawn by the client, that fades with time |
 | GORE-2 | A drained victim and a staked vampire have their own death effects |
-| GORE-3 | A client option sets gore, including vomit particles (FEED-3), to Full, Reduced or Off. Full is the default |
+| GORE-3 | A client option sets gore, including vomit particles (FEED-3), to Full, Reduced or Off. Full is the default. Vomit particles also follow the vanilla Particles setting, and none show on Minimal |
 | GORE-4 | Gore is drawn by the client only. The setting never changes what happens in the world |
 
 **Enforcement:** server decides what happens. The client decides how much blood to draw.
@@ -542,7 +542,7 @@ Vampires are rare. They live in households hidden in four kinds of structure, ea
 | CFG-2 | Settings are saved per world as JSON in the world save directory |
 | CFG-3 | A missing file gives defaults. A broken file gives defaults, is logged and is kept |
 | CFG-4 | Out-of-range values are clamped on load |
-| CFG-5 | Options cover turn chances, sickness length, sun damage, blood drain and values, garlic and crucifix ranges, skill point rates, the staking penalty, stake and silver damage, the downed and escape times, the damage from vomiting food or potions, the blood drain while levitating, how fast starving weakens and hurts, the coffin sleep share, hardcore vampire deaths, spawn and structure rates, vampire mob hunger threshold and blood drain, feeding range and chase range, how often structure gramophones play, the rewards for older vampires and the Eldest, and whether players can turn players |
+| CFG-5 | Options cover turn chances, sickness length, sun damage, blood drain and values, garlic and crucifix ranges, skill point rates, the staking penalty, stake and silver damage, the downed and escape times, the damage from vomiting food or potions, the blood drain while levitating, how fast starving weakens and hurts and how much it takes from night gifts and bare hands, the coffin sleep share, hardcore vampire deaths, spawn and structure rates, vampire mob hunger threshold and blood drain, how often vampire mobs rise to levitate and land, feeding range and chase range, how often structure gramophones play, the rewards for older vampires and the Eldest, and whether players can turn players |
 | CFG-6 | A settings screen through Mod Menu shows the same server options and shares their validation with the commands |
 | CFG-7 | An option that only changes what one player sees, such as gore, is a client setting saved on that player's device. Every player can change it on the settings screen, whatever their operator level |
 | CFG-8 | Operators can turn, cure, set points and reset the bloodlines of any player |

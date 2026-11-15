@@ -1,7 +1,7 @@
 package com.grahambartley.nightborn.vomit;
 
+import com.grahambartley.nightborn.config.BloodSettings;
 import com.grahambartley.nightborn.network.VomitPayload;
-import com.grahambartley.nightborn.server.ServerConfigService;
 import com.grahambartley.nightborn.vampire.NightbornDamage;
 import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
@@ -18,32 +18,53 @@ public final class Vomiting {
 
   private Vomiting() {}
 
-  public static ItemStack swallow(final PlayerEntity vampire, final ItemStack stack) {
+  public enum Leftover {
+    KEEP_STACK,
+    HAND_BACK_CONTAINER,
+    POCKET_CONTAINER,
+    KEEP_REST
+  }
+
+  public static ItemStack swallow(
+      final PlayerEntity vampire, final ItemStack stack, final BloodSettings settings) {
     final ItemStack leftBehind = Consumables.leftBehind(stack);
     vampire.incrementStat(Stats.USED.getOrCreateStat(stack.getItem()));
     if (vampire instanceof ServerPlayerEntity server) {
-      throwUp(server);
+      throwUp(server, settings.vomitDamage());
     }
-    if (vampire.isInCreativeMode()) {
-      return stack;
+    final boolean creative = vampire.isInCreativeMode();
+    if (!creative) {
+      stack.decrement(1);
     }
-    stack.decrement(1);
-    if (stack.isEmpty()) {
-      return leftBehind;
-    }
-    if (!leftBehind.isEmpty() && !vampire.getInventory().insertStack(leftBehind)) {
-      vampire.dropItem(leftBehind, false);
-    }
-    return stack;
+    return switch (leftover(creative, stack.isEmpty(), leftBehind.isEmpty())) {
+      case KEEP_STACK, KEEP_REST -> stack;
+      case HAND_BACK_CONTAINER -> leftBehind;
+      case POCKET_CONTAINER -> {
+        if (!vampire.getInventory().insertStack(leftBehind)) {
+          vampire.dropItem(leftBehind, false);
+        }
+        yield stack;
+      }
+    };
   }
 
-  static void throwUp(final ServerPlayerEntity vampire) {
+  static Leftover leftover(
+      final boolean creative, final boolean usedUp, final boolean noContainer) {
+    if (creative) {
+      return Leftover.KEEP_STACK;
+    }
+    if (usedUp) {
+      return Leftover.HAND_BACK_CONTAINER;
+    }
+    return noContainer ? Leftover.KEEP_REST : Leftover.POCKET_CONTAINER;
+  }
+
+  static void throwUp(final ServerPlayerEntity vampire, final int damage) {
     vampire.addStatusEffect(
         new StatusEffectInstance(StatusEffects.NAUSEA, NAUSEA_TICKS, 0, false, false, true));
     final VomitPayload payload = new VomitPayload(vampire.getId());
     ServerPlayNetworking.send(vampire, payload);
     PlayerLookup.tracking(vampire).forEach(watcher -> ServerPlayNetworking.send(watcher, payload));
-    final int damage = ServerConfigService.current().blood().vomitDamage();
     if (damage > 0) {
       vampire.damage(NightbornDamage.vomit(vampire.getWorld()), damage);
     }

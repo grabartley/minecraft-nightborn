@@ -26,10 +26,10 @@ class BloodSettingsTest {
   @DisplayName("the constructor clamps values into bounds")
   void clamps() {
     assertEquals(
-        new BloodSettings(5, 0, 0, 0, 0, 5, 1, 0, 1, 0),
-        new BloodSettings(0, -1, -1, -1, -1, 0, 0, -1, 0, -1));
+        new BloodSettings(5, 0, 0, 0, 0, 5, 1, 0, 1, 1, 0, 0),
+        new BloodSettings(0, -1, -1, -1, -1, 0, 0, -1, 0, 0, -1, -1));
     assertEquals(
-        new BloodSettings(600, 500, 500, 500, 99, 1200, 100, 3600, 600, 40),
-        new BloodSettings(9000, 900, 900, 900, 100, 9000, 101, 9000, 9000, 41));
+        new BloodSettings(600, 500, 500, 500, 99, 1200, 100, 3600, 600, 100, 100, 40),
+        new BloodSettings(9000, 900, 900, 900, 100, 9000, 101, 9000, 9000, 101, 101, 41));
   }
 }

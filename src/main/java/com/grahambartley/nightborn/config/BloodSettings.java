@@ -12,6 +12,8 @@ public record BloodSettings(
     int starvingStep,
     int starvingHurtDelaySeconds,
     int starvingHurtSeconds,
+    int starvingNightGiftsGoneAt,
+    int starvingBareHandLoss,
     int vomitDamage) {
 
   static final String SECTION = "blood";
@@ -43,6 +45,17 @@ public record BloodSettings(
   public static final IntSetting STARVING_HURT_SECONDS =
       new IntSetting(
           SECTION, "starvingHurtSeconds", 10, 1, 600, c -> c.blood().starvingHurtSeconds());
+  public static final IntSetting STARVING_NIGHT_GIFTS_GONE_AT =
+      new IntSetting(
+          SECTION,
+          "starvingNightGiftsGoneAt",
+          50,
+          1,
+          100,
+          c -> c.blood().starvingNightGiftsGoneAt());
+  public static final IntSetting STARVING_BARE_HAND_LOSS =
+      new IntSetting(
+          SECTION, "starvingBareHandLoss", 50, 0, 100, c -> c.blood().starvingBareHandLoss());
   public static final IntSetting VOMIT_DAMAGE =
       new IntSetting(SECTION, "vomitDamage", 4, 0, 40, c -> c.blood().vomitDamage());
 
@@ -57,6 +70,8 @@ public record BloodSettings(
           STARVING_STEP,
           STARVING_HURT_DELAY_SECONDS,
           STARVING_HURT_SECONDS,
+          STARVING_NIGHT_GIFTS_GONE_AT,
+          STARVING_BARE_HAND_LOSS,
           VOMIT_DAMAGE);
 
   public BloodSettings {
@@ -69,6 +84,8 @@ public record BloodSettings(
     starvingStep = STARVING_STEP.clamp(starvingStep);
     starvingHurtDelaySeconds = STARVING_HURT_DELAY_SECONDS.clamp(starvingHurtDelaySeconds);
     starvingHurtSeconds = STARVING_HURT_SECONDS.clamp(starvingHurtSeconds);
+    starvingNightGiftsGoneAt = STARVING_NIGHT_GIFTS_GONE_AT.clamp(starvingNightGiftsGoneAt);
+    starvingBareHandLoss = STARVING_BARE_HAND_LOSS.clamp(starvingBareHandLoss);
     vomitDamage = VOMIT_DAMAGE.clamp(vomitDamage);
   }
 
@@ -83,6 +100,8 @@ public record BloodSettings(
         values.get(STARVING_STEP),
         values.get(STARVING_HURT_DELAY_SECONDS),
         values.get(STARVING_HURT_SECONDS),
+        values.get(STARVING_NIGHT_GIFTS_GONE_AT),
+        values.get(STARVING_BARE_HAND_LOSS),
         values.get(VOMIT_DAMAGE));
   }
 }

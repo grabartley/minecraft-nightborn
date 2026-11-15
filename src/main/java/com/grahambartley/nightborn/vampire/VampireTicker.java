@@ -26,7 +26,7 @@ public final class VampireTicker {
     if (!vampire.isAlive()) {
       return;
     }
-    VampireCore.tick(vampire, config.core());
+    VampireCore.tick(vampire, config.core(), config.blood());
     final DownedState downed = Downed.state(vampire);
     final int weakened = Weakened.tick(vampire, downed != null, config.weakened());
     Levitation.tick(vampire, weakened, downed != null);

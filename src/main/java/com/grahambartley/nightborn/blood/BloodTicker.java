@@ -4,7 +4,6 @@ import com.grahambartley.nightborn.config.NightbornConfig;
 import com.grahambartley.nightborn.downed.Downed;
 import com.grahambartley.nightborn.downed.DownedState;
 import com.grahambartley.nightborn.levitation.Levitation;
-import com.grahambartley.nightborn.server.ServerConfigService;
 import com.grahambartley.nightborn.weakened.Weakened;
 import net.minecraft.entity.player.HungerManager;
 import net.minecraft.entity.player.PlayerEntity;
@@ -18,8 +17,8 @@ public final class BloodTicker {
 
   private BloodTicker() {}
 
-  public static void tick(final PlayerEntity vampire, final HungerManager hunger) {
-    final NightbornConfig config = ServerConfigService.current();
+  public static void tick(
+      final PlayerEntity vampire, final HungerManager hunger, final NightbornConfig config) {
     final DownedState downed = Downed.state(vampire);
     final BloodMetabolism.Outcome outcome =
         BloodMetabolism.tick(

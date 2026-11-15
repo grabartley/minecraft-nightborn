@@ -28,6 +28,9 @@ public final class Levitation {
                   .persistent(Codec.BOOL)
                   .syncWith(PacketCodecs.BOOL.cast(), AttachmentSyncPredicate.all()));
 
+  static final AttachmentType<LevitationGuard> GUARD =
+      AttachmentRegistry.create(Identifier.of(Nightborn.MOD_ID, "levitation_guard"));
+
   static final String REFUSED = "nightborn.levitation.refused";
 
   private Levitation() {}
@@ -65,16 +68,34 @@ public final class Levitation {
     if (entity.hasAttached(TYPE)) {
       entity.removeAttached(TYPE);
     }
+    if (entity.hasAttached(GUARD)) {
+      entity.removeAttached(GUARD);
+    }
   }
 
   public static void tick(final LivingEntity vampire, final int weakened, final boolean downed) {
     if (!isLevitating(vampire)) {
       return;
     }
-    if (LevitationRules.mayLevitate(true, weakened, downed)) {
-      vampire.fallDistance = 0.0F;
-    } else {
+    if (!LevitationRules.mayLevitate(true, weakened, downed)) {
       land(vampire);
+      return;
+    }
+    vampire.fallDistance = 0.0F;
+    if (vampire instanceof ServerPlayerEntity player) {
+      guard(player);
+    }
+  }
+
+  private static void guard(final ServerPlayerEntity player) {
+    final LevitationGuard guard =
+        player
+            .getAttachedOrElse(GUARD, LevitationGuard.FRESH)
+            .next(player.getY(), LevitationGround.surfaceBelow(player));
+    if (guard.lands()) {
+      land(player);
+    } else {
+      player.setAttached(GUARD, guard);
     }
   }
 

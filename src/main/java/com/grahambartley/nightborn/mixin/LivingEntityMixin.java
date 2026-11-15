@@ -3,6 +3,7 @@ package com.grahambartley.nightborn.mixin;
 import com.grahambartley.nightborn.coffin.CoffinSleepers;
 import com.grahambartley.nightborn.levitation.Levitation;
 import com.grahambartley.nightborn.levitation.LevitationMotion;
+import com.grahambartley.nightborn.server.ServerConfigService;
 import com.grahambartley.nightborn.vampire.VampireTicker;
 import com.grahambartley.nightborn.vampire.Vampires;
 import com.grahambartley.nightborn.vomit.Consumables;
@@ -84,7 +85,7 @@ abstract class LivingEntityMixin {
       final Operation<ItemStack> original) {
     if (user instanceof PlayerEntity player
         && Consumables.rejectedBy(stack, Vampires.isVampire(player))) {
-      return Vomiting.swallow(player, stack);
+      return Vomiting.swallow(player, stack, ServerConfigService.current().blood());
     }
     return original.call(stack, world, user);
   }

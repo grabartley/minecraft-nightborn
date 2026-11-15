@@ -4,6 +4,7 @@ import com.grahambartley.nightborn.blood.BloodAttachment;
 import com.grahambartley.nightborn.blood.BloodBottleItem;
 import com.grahambartley.nightborn.blood.BloodQuality;
 import com.grahambartley.nightborn.downed.Downed;
+import com.grahambartley.nightborn.vomit.Consumables;
 import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.PotionContentsComponent;
@@ -118,5 +119,20 @@ public class VomitGameTest implements FabricGameTest {
           context.assertTrue(Downed.state(vampire) != null, "downed");
           TestPlayers.finish(context, vampire);
         });
+  }
+
+  @GameTest(templateName = FabricGameTest.EMPTY_STRUCTURE)
+  public void theRejectTagTakesInSharedFoodAndPotionTags(final TestContext context) {
+    context.assertTrue(
+        new ItemStack(Items.BREAD).isIn(Consumables.VAMPIRE_REJECTS), "bread through c:foods");
+    context.assertTrue(
+        new ItemStack(Items.SPLASH_POTION).isIn(Consumables.VAMPIRE_REJECTS),
+        "splash potion through c:potions");
+    context.assertTrue(
+        new ItemStack(Items.MILK_BUCKET).isIn(Consumables.VAMPIRE_REJECTS), "milk named");
+    context.assertTrue(
+        BloodBottleItem.of(BloodQuality.PLAYER).isIn(Consumables.VAMPIRE_CONSUMABLES),
+        "blood bottle exempt");
+    context.complete();
   }
 }

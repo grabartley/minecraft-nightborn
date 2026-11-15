@@ -1,6 +1,7 @@
 package com.grahambartley.nightborn.client.vomit;
 
 import com.grahambartley.nightborn.client.anim.ClipSet;
+import com.grahambartley.nightborn.client.anim.PlayerAnimator;
 import com.grahambartley.nightborn.client.anim.PlayerMotion;
 import com.grahambartley.nightborn.client.anim.RigSpace;
 import com.grahambartley.nightborn.client.state.ClientStateService;
@@ -35,7 +36,7 @@ public final class VomitFx {
                   ? null
                   : context.client().world.getEntityById(payload.entityId());
           if (entity instanceof PlayerEntity player) {
-            com.grahambartley.nightborn.client.anim.PlayerAnimator.startVomiting(player);
+            PlayerAnimator.startVomiting(player);
           }
         });
   }
@@ -69,7 +70,10 @@ public final class VomitFx {
             1.0F,
             0.9F + player.getRandom().nextFloat() * 0.2F,
             false);
-    final VomitBurst burst = VomitBurst.of(ClientStateService.current().gore());
+    final VomitBurst burst =
+        VomitBurst.of(
+            ClientStateService.current().gore(),
+            MinecraftClient.getInstance().options.getParticles().getValue());
     if (burst.drops() == 0) {
       return;
     }

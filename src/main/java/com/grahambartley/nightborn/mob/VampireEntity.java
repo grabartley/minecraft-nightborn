@@ -52,7 +52,7 @@ public class VampireEntity extends HostileEntity implements GeoEntity {
       DataTracker.registerData(VampireEntity.class, TrackedDataHandlerRegistry.INTEGER);
 
   private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
-  private boolean wasLevitating;
+  private final LandingEdge landingEdge = new LandingEdge();
   private boolean landing;
 
   public VampireEntity(final EntityType<? extends VampireEntity> type, final World world) {
@@ -138,7 +138,12 @@ public class VampireEntity extends HostileEntity implements GeoEntity {
 
   private void levitateAboutHome() {
     final boolean levitating = Levitation.isLevitating(this);
-    if (MobLevitation.wants(levitating, getTarget() != null, random.nextFloat()) == levitating) {
+    if (MobLevitation.wants(
+            levitating,
+            getTarget() != null,
+            random.nextFloat(),
+            ServerConfigService.current().mobs())
+        == levitating) {
       return;
     }
     if (levitating) {
@@ -156,7 +161,7 @@ public class VampireEntity extends HostileEntity implements GeoEntity {
       @Nullable final EntityData entityData) {
     final NightbornConfig config = ServerConfigService.current();
     setLook(random.nextInt(VampireLook.COUNT));
-    VampireCore.tick(this, config.core());
+    VampireCore.tick(this, config.core(), config.blood());
     setHealth(getMaxHealth());
     if (spawnReason == SpawnReason.NATURAL) {
       BatEscort.gather(world, this, config.mobs().batEscortChance());
@@ -205,10 +210,9 @@ public class VampireEntity extends HostileEntity implements GeoEntity {
             ANIMATION_BLEND_TICKS,
             state -> {
               final boolean levitating = Levitation.isLevitating(this);
-              if (wasLevitating && !levitating) {
+              if (landingEdge.landed(levitating)) {
                 landing = true;
               }
-              wasLevitating = levitating;
               final VampirePose pose =
                   VampirePose.of(
                       new VampirePose.Cue(
@@ -216,7 +220,7 @@ public class VampireEntity extends HostileEntity implements GeoEntity {
                           handSwinging,
                           levitating,
                           landing,
-                          isAttacking(),
+                          isSprinting(),
                           state.getLimbSwingAmount(),
                           Math.hypot(getX() - prevX, getZ() - prevZ)));
               if (landing && pose != VampirePose.LAND) {

@@ -16,17 +16,26 @@ import net.minecraft.test.GameTest;
 import net.minecraft.test.TestContext;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.Difficulty;
+import net.minecraft.world.GameRules;
 
 public class StarvationGameTest implements FabricGameTest {
 
   static final String ARENA = "nightborn:vampire_arena";
   static final String BATCH = "starving";
 
+  static final int MIDNIGHT = 18000;
+
   private Difficulty difficulty = Difficulty.NORMAL;
+  private long timeBefore;
+  private boolean cycleBefore;
 
   @BeforeBatch(batchId = BATCH)
   public void starveFast(final ServerWorld world) {
     difficulty = world.getDifficulty();
+    timeBefore = world.getTimeOfDay();
+    cycleBefore = world.getGameRules().getBoolean(GameRules.DO_DAYLIGHT_CYCLE);
+    world.getGameRules().get(GameRules.DO_DAYLIGHT_CYCLE).set(false, world.getServer());
+    world.setTimeOfDay(MIDNIGHT);
     world.getServer().setDifficulty(Difficulty.HARD, true);
     ServerConfigService.update(
         world.getServer(),
@@ -38,6 +47,8 @@ public class StarvationGameTest implements FabricGameTest {
   @AfterBatch(batchId = BATCH)
   public void restore(final ServerWorld world) {
     world.getServer().setDifficulty(difficulty, true);
+    world.getGameRules().get(GameRules.DO_DAYLIGHT_CYCLE).set(cycleBefore, world.getServer());
+    world.setTimeOfDay(timeBefore);
     ServerConfigService.update(
         world.getServer(),
         ServerConfigService.current()
@@ -94,9 +105,11 @@ public class StarvationGameTest implements FabricGameTest {
     context.runAtTick(
         TestPlayers.READY + 120,
         () -> {
-          context.assertTrue(vampire.isAlive(), "alive");
-          context.assertEquals(vampire.getHealth(), 1.0F, "half a heart left");
-          context.assertTrue(Downed.state(vampire) == null, "not downed");
+          context.assertTrue(vampire.isAlive(), "alive: " + Diagnostics.of(vampire));
+          context.assertEquals(
+              vampire.getHealth(), 1.0F, "half a heart left: " + Diagnostics.of(vampire));
+          context.assertTrue(
+              Downed.state(vampire) == null, "not downed: " + Diagnostics.of(vampire));
           TestPlayers.finish(context, vampire);
         });
   }

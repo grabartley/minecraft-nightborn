@@ -1,5 +1,6 @@
 package com.grahambartley.nightborn.client.anim;
 
+import com.grahambartley.nightborn.mob.LandingEdge;
 import com.grahambartley.nightborn.mob.VampirePose;
 import java.util.List;
 
@@ -10,6 +11,7 @@ public final class PlayerMotion {
   static final double RISE_SHARE = 0.25;
   static final double NOT_PLAYING = Double.NaN;
 
+  private final LandingEdge landing = new LandingEdge();
   private boolean levitating;
   private double previousLift;
   private double lift;
@@ -24,7 +26,7 @@ public final class PlayerMotion {
       final boolean nowLevitating,
       final double horizontalSpeed,
       final boolean sprinting) {
-    if (levitating && !nowLevitating) {
+    if (landing.landed(nowLevitating)) {
       landingFrom = age;
       lift = 0.0;
     }
@@ -59,7 +61,7 @@ public final class PlayerMotion {
     RigPose pose = RigPose.REST;
     final double weight = previousLift + (lift - previousLift) * partial;
     if (weight > 0.0) {
-      final LevitationBlend mix = previousBlend.lerp(blend, partial);
+      final LevitationBlend mix = previousBlend.approach(blend, partial);
       pose =
           clips
               .sample(VampirePose.LEVITATE, seconds)
@@ -72,10 +74,9 @@ public final class PlayerMotion {
   }
 
   public List<Double> heaves(final ClipSet clips, final double degrees) {
-    return clips
-        .clip(VampirePose.VOMIT)
-        .map(clip -> clip.peaksOf("body", degrees))
-        .orElse(List.of());
+    final List<Double> peaks =
+        clips.clip(VampirePose.VOMIT).map(clip -> clip.peaksOf("body", degrees)).orElse(List.of());
+    return peaks.isEmpty() ? List.of(0.0) : peaks;
   }
 
   private static RigPose playing(

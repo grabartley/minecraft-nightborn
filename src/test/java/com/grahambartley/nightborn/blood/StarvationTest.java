@@ -11,7 +11,7 @@ import org.junit.jupiter.params.provider.CsvSource;
 class StarvationTest {
 
   private static final BloodSettings SETTINGS =
-      new BloodSettings(30, 50, 100, 150, 60, 60, 10, 300, 10, 4);
+      new BloodSettings(30, 50, 100, 150, 60, 60, 10, 300, 10, 50, 50, 4);
 
   @ParameterizedTest(name = "blood {1}: {0} -> {2}")
   @CsvSource({"0, 0, 1", "40, 0, 41", "40, 5, 40", "40, 19, 40", "40, 20, 0"})
@@ -53,8 +53,28 @@ class StarvationTest {
   @CsvSource({"0, 1, 1", "25, 0.5, 0.875", "50, 0, 0.75", "100, 0, 0.5"})
   @DisplayName("night speed and jump fade then stop, and bare-hand damage shrinks")
   void giftsFade(final int weakness, final double night, final double hands) {
-    assertEquals(night, Starvation.nightGiftShare(weakness), 0.0001);
-    assertEquals(hands, Starvation.bareHandShare(weakness), 0.0001);
+    assertEquals(night, Starvation.nightGiftShare(weakness, SETTINGS), 0.0001);
+    assertEquals(hands, Starvation.bareHandShare(weakness, SETTINGS), 0.0001);
+  }
+
+  @ParameterizedTest(name = "gone at {0}, hand loss {1}, weakness {2}: gifts {3}, hands {4}")
+  @CsvSource({
+    "100, 0, 50, 0.5, 1",
+    "100, 100, 100, 0, 0",
+    "20, 20, 10, 0.5, 0.98",
+    "1, 50, 1, 0, 0.995"
+  })
+  @DisplayName("the server sets when night gifts are gone and how much bare hands lose")
+  void configured(
+      final int goneAt,
+      final int handLoss,
+      final int weakness,
+      final double night,
+      final double hands) {
+    final BloodSettings settings =
+        new BloodSettings(30, 50, 100, 150, 60, 60, 10, 300, 10, goneAt, handLoss, 4);
+    assertEquals(night, Starvation.nightGiftShare(weakness, settings), 0.0001);
+    assertEquals(hands, Starvation.bareHandShare(weakness, settings), 0.0001);
   }
 
   @Test

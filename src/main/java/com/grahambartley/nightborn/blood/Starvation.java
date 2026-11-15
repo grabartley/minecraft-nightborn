@@ -39,12 +39,16 @@ public final class Starvation {
     return (int) Math.min(WeakenedSources.CAP, steps * settings.starvingStep());
   }
 
-  public static double nightGiftShare(final int weakness) {
-    return Math.max(0.0, 1.0 - weakness / (WeakenedSources.CAP / 2.0));
+  public static double nightGiftShare(final int weakness, final BloodSettings settings) {
+    return Math.max(0.0, 1.0 - (double) weakness / settings.starvingNightGiftsGoneAt());
   }
 
-  public static double bareHandShare(final int weakness) {
-    return 1.0 - 0.5 * Math.min(WeakenedSources.CAP, Math.max(0, weakness)) / WeakenedSources.CAP;
+  public static double bareHandShare(final int weakness, final BloodSettings settings) {
+    return 1.0
+        - settings.starvingBareHandLoss()
+            / 100.0
+            * Math.min(WeakenedSources.CAP, Math.max(0, weakness))
+            / WeakenedSources.CAP;
   }
 
   static boolean hurtsOn(final int ticks, final BloodSettings settings) {

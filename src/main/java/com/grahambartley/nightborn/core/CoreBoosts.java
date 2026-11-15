@@ -1,6 +1,7 @@
 package com.grahambartley.nightborn.core;
 
 import com.grahambartley.nightborn.blood.Starvation;
+import com.grahambartley.nightborn.config.BloodSettings;
 import com.grahambartley.nightborn.config.CoreSettings;
 
 public record CoreBoosts(
@@ -13,13 +14,14 @@ public record CoreBoosts(
 
   public static CoreBoosts of(
       final CoreSettings settings,
+      final BloodSettings blood,
       final boolean emptyMainHand,
       final boolean night,
       final int starving) {
-    final double nightShare = night ? Starvation.nightGiftShare(starving) : 0.0;
+    final double nightShare = night ? Starvation.nightGiftShare(starving, blood) : 0.0;
     return new CoreBoosts(
         DOUBLE_HEALTH,
-        emptyMainHand ? settings.bareHandDamage() * Starvation.bareHandShare(starving) : 0.0,
+        emptyMainHand ? settings.bareHandDamage() * Starvation.bareHandShare(starving, blood) : 0.0,
         nightShare * settings.nightSpeed() / 100.0,
         nightShare * settings.nightJump() / 100.0);
   }

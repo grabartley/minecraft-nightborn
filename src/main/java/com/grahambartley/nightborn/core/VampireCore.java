@@ -2,6 +2,7 @@ package com.grahambartley.nightborn.core;
 
 import com.grahambartley.nightborn.Nightborn;
 import com.grahambartley.nightborn.blood.Starvation;
+import com.grahambartley.nightborn.config.BloodSettings;
 import com.grahambartley.nightborn.config.CoreSettings;
 import com.grahambartley.nightborn.vampire.Modifiers;
 import com.grahambartley.nightborn.weakened.Weakened;
@@ -25,24 +26,28 @@ public final class VampireCore {
 
   private VampireCore() {}
 
-  public static void tick(final LivingEntity vampire, final CoreSettings settings) {
+  public static void tick(
+      final LivingEntity vampire, final CoreSettings settings, final BloodSettings blood) {
     final boolean night =
         NightTime.isNight(
             vampire.getWorld().getDimension().hasFixedTime(), vampire.getWorld().getTimeOfDay());
     apply(
         vampire,
-        CoreBoosts.of(settings, vampire.getMainHandStack().isEmpty(), night, starving(vampire)));
+        CoreBoosts.of(
+            settings, blood, vampire.getMainHandStack().isEmpty(), night, starving(vampire)));
     if (night && vampire instanceof PlayerEntity) {
       keepNightVision(vampire);
     }
   }
 
-  public static void refreshBareHands(final LivingEntity vampire, final CoreSettings settings) {
+  public static void refreshBareHands(
+      final LivingEntity vampire, final CoreSettings settings, final BloodSettings blood) {
     Modifiers.set(
         vampire,
         EntityAttributes.GENERIC_ATTACK_DAMAGE,
         BARE_HANDS,
-        CoreBoosts.of(settings, vampire.getMainHandStack().isEmpty(), false, starving(vampire))
+        CoreBoosts.of(
+                settings, blood, vampire.getMainHandStack().isEmpty(), false, starving(vampire))
             .bareHandDamage(),
         Operation.ADD_VALUE);
   }

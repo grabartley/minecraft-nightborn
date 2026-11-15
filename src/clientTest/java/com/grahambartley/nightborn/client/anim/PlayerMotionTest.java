@@ -115,6 +115,12 @@ class PlayerMotionTest {
   }
 
   @Test
+  @DisplayName("a vomit clip with no heave deep enough still retches once, at the start")
+  void heavesAtLeastOnce() {
+    assertEquals(List.of(0.0), new PlayerMotion().heaves(CLIPS, 90));
+  }
+
+  @Test
   @DisplayName("nothing was ever vomited, so no time has passed")
   void notVomiting() {
     assertTrue(Double.isNaN(new PlayerMotion().vomitingSeconds(5)));

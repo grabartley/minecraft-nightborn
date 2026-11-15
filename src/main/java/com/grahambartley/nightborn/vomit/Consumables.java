@@ -16,14 +16,25 @@ public final class Consumables {
   public static final TagKey<Item> VAMPIRE_CONSUMABLES =
       TagKey.of(RegistryKeys.ITEM, Identifier.of(Nightborn.MOD_ID, "vampire_consumables"));
 
+  public static final TagKey<Item> VAMPIRE_REJECTS =
+      TagKey.of(RegistryKeys.ITEM, Identifier.of(Nightborn.MOD_ID, "vampire_rejects"));
+
   private Consumables() {}
 
   public static boolean rejectedBy(final ItemStack stack, final boolean vampire) {
-    return vampire && swallowed(stack) && !stack.isIn(VAMPIRE_CONSUMABLES);
+    return vampire
+        && rejects(
+            swallowed(stack.getUseAction()),
+            stack.isIn(VAMPIRE_REJECTS),
+            stack.isIn(VAMPIRE_CONSUMABLES));
   }
 
-  static boolean swallowed(final ItemStack stack) {
-    final UseAction action = stack.getUseAction();
+  static boolean rejects(
+      final boolean swallowed, final boolean rejectTagged, final boolean consumableTagged) {
+    return (swallowed || rejectTagged) && !consumableTagged;
+  }
+
+  static boolean swallowed(final UseAction action) {
     return action == UseAction.EAT || action == UseAction.DRINK;
   }
 

@@ -24,10 +24,6 @@ public record LevitationBlend(double move, double sprint) {
         move + (target.move - move) * share, sprint + (target.sprint - sprint) * share);
   }
 
-  public LevitationBlend lerp(final LevitationBlend next, final double partial) {
-    return approach(next, partial);
-  }
-
   static double smoothstep(final double from, final double to, final double value) {
     final double t = Math.max(0.0, Math.min(1.0, (value - from) / (to - from)));
     return t * t * (3.0 - 2.0 * t);
