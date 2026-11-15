@@ -1,6 +1,7 @@
 package com.grahambartley.nightborn.downed;
 
 import com.grahambartley.nightborn.Nightborn;
+import com.grahambartley.nightborn.coffin.CoffinOwnership;
 import com.grahambartley.nightborn.faction.Faction;
 import com.grahambartley.nightborn.faction.FactionAttachment;
 import com.grahambartley.nightborn.feeding.TurningBite;
@@ -52,6 +53,7 @@ public final class HardcoreVampireDeath {
       player.experienceProgress = 0.0F;
       player.totalExperience = 0;
     }
+    CoffinOwnership.release(player.server, player.getUuid());
     player.setSpawnPoint(World.OVERWORLD, null, 0.0F, false, false);
   }
 }

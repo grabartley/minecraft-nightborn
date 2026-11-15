@@ -1,23 +1,27 @@
 package com.grahambartley.nightborn.mixin;
 
 import com.grahambartley.nightborn.coffin.CoffinBlock;
+import com.grahambartley.nightborn.coffin.CoffinOwnership;
 import com.grahambartley.nightborn.coffin.CoffinRise;
 import com.grahambartley.nightborn.coffin.CoffinSleepers;
 import com.grahambartley.nightborn.coffin.RestRules;
 import com.grahambartley.nightborn.faction.FactionPlayerList;
 import com.grahambartley.nightborn.vampire.Vampires;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
+import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.mojang.datafixers.util.Either;
 import java.util.Set;
 import net.minecraft.entity.player.PlayerEntity.SleepFailureReason;
 import net.minecraft.network.packet.s2c.play.PositionFlag;
+import net.minecraft.registry.RegistryKey;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
 import net.minecraft.util.Unit;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
+import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -80,6 +84,23 @@ abstract class ServerPlayerEntityMixin {
         day,
         self.getWorld().getDimension().hasFixedTime(),
         self.getWorld().getTimeOfDay());
+  }
+
+  @WrapWithCondition(
+      method = "trySleep",
+      at =
+          @At(
+              value = "INVOKE",
+              target =
+                  "Lnet/minecraft/server/network/ServerPlayerEntity;setSpawnPoint(Lnet/minecraft/registry/RegistryKey;Lnet/minecraft/util/math/BlockPos;FZZ)V"))
+  private boolean nightborn$onlyYourOwnCoffinBecomesYourRespawn(
+      final ServerPlayerEntity self,
+      final RegistryKey<World> dimension,
+      final BlockPos pos,
+      final float angle,
+      final boolean forced,
+      final boolean sendMessage) {
+    return CoffinOwnership.rest(self, pos);
   }
 
   @Inject(method = "isBedObstructed", at = @At("HEAD"), cancellable = true)

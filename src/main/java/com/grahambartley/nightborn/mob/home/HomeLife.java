@@ -117,10 +117,8 @@ public final class HomeLife {
   }
 
   public void release(final ServerWorld world, final Entity vampire) {
-    if (coffin != null) {
-      HomeCoffins.release(world, coffin, vampire.getUuid());
-      coffin = null;
-    }
+    HomeCoffins.release(world, vampire.getUuid());
+    coffin = null;
   }
 
   public void write(final NbtCompound nbt) {

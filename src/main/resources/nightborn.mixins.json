@@ -6,18 +6,21 @@
 		"BedBlockMixin",
 		"CrossbowItemMixin",
 		"EnchantmentHelperMixin",
+		"EnderDragonEntityMixin",
 		"HungerManagerMixin",
 		"LivingEntityMixin",
 		"MapStateMixin",
 		"MobNavigationMixin",
 		"PersistentProjectileEntityMixin",
 		"PhantomSpawnerMixin",
+		"PistonHandlerMixin",
 		"PlayerEntityMixin",
 		"ServerPlayNetworkHandlerMixin",
 		"ServerPlayerEntityMixin",
 		"ServerWorldMixin",
 		"SleepManagerMixin",
-		"TippedArrowRecipeMixin"
+		"TippedArrowRecipeMixin",
+		"WorldMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1

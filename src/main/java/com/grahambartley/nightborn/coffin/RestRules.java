@@ -14,6 +14,7 @@ public final class RestRules {
   public static final String OBSTRUCTED = "nightborn.coffin.obstructed";
   public static final String NOT_SAFE = "block.minecraft.bed.not_safe";
   public static final String OCCUPIED = "nightborn.coffin.occupied";
+  public static final String BORROWED = "nightborn.coffin.borrowed";
 
   private RestRules() {}
 

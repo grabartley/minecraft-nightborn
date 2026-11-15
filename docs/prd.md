@@ -687,7 +687,7 @@ There is no singleplayer mode in this mod. A single-player world is an integrate
 | State | Scope |
 |---|---|
 | Faction, sickness, blood, skills, bloodlines, cooldowns and the turning bite choice | That player, synced only to them, except what others can see (CORE-4, CORE-8, WEAK-8, FACT-3) |
-| Assigned coffin and respawn point | That player, and the coffin records its owner, player or mob |
+| Assigned coffin and respawn point | That player, with one server-wide record of every owner's coffin, player or mob, so a coffin is freed even when its chunk is not loaded |
 | Gore setting | That player's device |
 
 ### Side Separation

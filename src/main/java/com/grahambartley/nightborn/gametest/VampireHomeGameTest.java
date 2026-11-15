@@ -2,7 +2,7 @@ package com.grahambartley.nightborn.gametest;
 
 import com.grahambartley.nightborn.blood.BloodAttachment;
 import com.grahambartley.nightborn.blood.Starvation;
-import com.grahambartley.nightborn.coffin.CoffinBlockEntity;
+import com.grahambartley.nightborn.coffin.CoffinOwnership;
 import com.grahambartley.nightborn.config.CoreSettings;
 import com.grahambartley.nightborn.config.MobSettings;
 import com.grahambartley.nightborn.levitation.Levitation;
@@ -135,7 +135,7 @@ public class VampireHomeGameTest implements FabricGameTest {
     final BlockPos taken = CoffinStage.coffin(context, new BlockPos(1, 2, 1), Direction.SOUTH);
     final BlockPos free = CoffinStage.coffin(context, new BlockPos(6, 2, 1), Direction.SOUTH);
     final UUID someoneElse = UUID.randomUUID();
-    coffinAt(context, taken).setOwner(someoneElse);
+    CoffinOwnership.claim(context.getWorld(), context.getAbsolutePos(taken), someoneElse);
     final VampireEntity vampire = household(context, new BlockPos(4, 2, 4), taken);
     context.runAtTick(
         CLAIM_WAIT,
@@ -145,24 +145,11 @@ public class VampireHomeGameTest implements FabricGameTest {
               context.getAbsolutePos(free),
               "the vampire takes the free coffin, not the one already assigned");
           context.assertEquals(
-              coffinAt(context, free).owner(), vampire.getUuid(), "the coffin records its vampire");
+              ownerOf(context, free), vampire.getUuid(), "the coffin records its vampire");
           context.assertEquals(
-              coffinAt(context, taken).owner(), someoneElse, "the other coffin keeps its owner");
+              ownerOf(context, taken), someoneElse, "the other coffin keeps its owner");
           context.complete();
         });
-  }
-
-  @GameTest(templateName = ARENA, tickLimit = 20)
-  public void aCoffinKeepsItsOwnerThroughSaveAndLoad(final TestContext context) {
-    final BlockPos head = CoffinStage.coffin(context, new BlockPos(4, 2, 3), Direction.SOUTH);
-    final CoffinBlockEntity coffin = coffinAt(context, head);
-    final UUID owner = UUID.randomUUID();
-    coffin.setOwner(owner);
-    final NbtCompound saved = coffin.createNbt(context.getWorld().getRegistryManager());
-    coffin.setOwner(null);
-    coffin.read(saved, context.getWorld().getRegistryManager());
-    context.assertEquals(coffin.owner(), owner, "the owner is kept");
-    context.complete();
   }
 
   @GameTest(templateName = ARENA, tickLimit = 20)
@@ -456,9 +443,9 @@ public class VampireHomeGameTest implements FabricGameTest {
         CLAIM_WAIT,
         () -> {
           context.assertEquals(
-              coffinAt(context, head).owner(), vampire.getUuid(), "the vampire owns its coffin");
+              ownerOf(context, head), vampire.getUuid(), "the vampire owns its coffin");
           vampire.remove(Entity.RemovalReason.KILLED);
-          context.assertTrue(coffinAt(context, head).owner() == null, "its death frees the coffin");
+          context.assertTrue(ownerOf(context, head) == null, "its death frees the coffin");
           context.complete();
         });
   }
@@ -479,7 +466,7 @@ public class VampireHomeGameTest implements FabricGameTest {
               firstCoffin != null && secondCoffin != null, "both housemates have a coffin");
           context.assertFalse(firstCoffin.equals(secondCoffin), "each has its own");
           context.assertTrue(
-              coffinAt(context, left).owner() != null && coffinAt(context, right).owner() != null,
+              ownerOf(context, left) != null && ownerOf(context, right) != null,
               "both coffins are taken");
           context.complete();
         });
@@ -492,7 +479,7 @@ public class VampireHomeGameTest implements FabricGameTest {
     return vampire;
   }
 
-  private static CoffinBlockEntity coffinAt(final TestContext context, final BlockPos head) {
-    return context.getBlockEntity(head);
+  private static UUID ownerOf(final TestContext context, final BlockPos head) {
+    return CoffinOwnership.ownerAt(context.getWorld(), context.getAbsolutePos(head)).orElse(null);
   }
 }

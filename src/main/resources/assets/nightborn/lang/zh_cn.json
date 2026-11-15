@@ -262,6 +262,8 @@
   "nightborn.coffin.too_far": "棺材太远了",
   "nightborn.coffin.obstructed": "这口棺材被阻挡了",
   "nightborn.coffin.occupied": "这口棺材已被占用",
+  "nightborn.coffin.owned": "这口棺材属于他人",
+  "nightborn.coffin.borrowed": "你在他人的棺材中安息，重生点保持不变",
   "nightborn.coffin.resting": "%s/%s名吸血鬼正在安息",
   "nightborn.coffin.skipping": "在安息中度过白天",
   "item.nightborn.wooden_stake": "木桩",

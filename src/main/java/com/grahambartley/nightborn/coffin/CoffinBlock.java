@@ -2,6 +2,7 @@ package com.grahambartley.nightborn.coffin;
 
 import com.grahambartley.nightborn.vampire.Vampires;
 import com.mojang.serialization.MapCodec;
+import java.util.function.BiConsumer;
 import net.minecraft.block.BedBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -16,6 +17,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.item.ItemStack;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.state.StateManager;
@@ -34,6 +36,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldAccess;
 import net.minecraft.world.WorldEvents;
 import net.minecraft.world.event.GameEvent;
+import net.minecraft.world.explosion.Explosion;
 
 public class CoffinBlock extends BedBlock {
 
@@ -114,6 +117,33 @@ public class CoffinBlock extends BedBlock {
     this.spawnBreakParticles(world, player, pos, state);
     world.emitGameEvent(GameEvent.BLOCK_DESTROY, pos, GameEvent.Emitter.of(player, state));
     return state;
+  }
+
+  @Override
+  protected void onStateReplaced(
+      final BlockState state,
+      final World world,
+      final BlockPos pos,
+      final BlockState newState,
+      final boolean moved) {
+    if (world instanceof ServerWorld server
+        && state.get(PART) == BedPart.HEAD
+        && !newState.isOf(this)) {
+      CoffinOwnership.releaseAt(server, pos);
+    }
+    super.onStateReplaced(state, world, pos, newState, moved);
+  }
+
+  @Override
+  protected void onExploded(
+      final BlockState state,
+      final World world,
+      final BlockPos pos,
+      final Explosion explosion,
+      final BiConsumer<ItemStack, BlockPos> stackMerger) {
+    if (!CoffinProtection.shields(world, pos, null)) {
+      super.onExploded(state, world, pos, explosion, stackMerger);
+    }
   }
 
   @Override

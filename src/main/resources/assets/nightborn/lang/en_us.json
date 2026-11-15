@@ -262,6 +262,8 @@
   "nightborn.coffin.too_far": "The coffin is too far away",
   "nightborn.coffin.obstructed": "This coffin is obstructed",
   "nightborn.coffin.occupied": "This coffin is occupied",
+  "nightborn.coffin.owned": "This coffin belongs to another",
+  "nightborn.coffin.borrowed": "You rest in another's coffin, and your respawn point stays where it was",
   "nightborn.coffin.resting": "%s/%s vampires resting",
   "nightborn.coffin.skipping": "Resting through the day",
   "item.nightborn.wooden_stake": "Wooden Stake",
