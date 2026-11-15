@@ -66,19 +66,11 @@ class SkillTreeViewTest {
 
   @ParameterizedTest(name = "{0}")
   @EnumSource(SkillPurchase.Verdict.class)
-  @DisplayName(
-      "owned and buyable skills get their own frames and are drawn bright; the rest are locked and dim")
-  void frames(final SkillPurchase.Verdict verdict) {
+  @DisplayName("owned and buyable skills are drawn bright; the rest are locked and dim")
+  void dimmed(final SkillPurchase.Verdict verdict) {
     final boolean open =
         verdict == SkillPurchase.Verdict.OWNED || verdict == SkillPurchase.Verdict.ALLOWED;
     assertEquals(!open, SkillTreeView.dimmed(verdict));
-    assertEquals(
-        switch (verdict) {
-          case OWNED -> SkillTreeView.FRAME_OWNED;
-          case ALLOWED -> SkillTreeView.FRAME_AVAILABLE;
-          default -> SkillTreeView.FRAME_LOCKED;
-        },
-        SkillTreeView.frame(verdict));
   }
 
   @ParameterizedTest(name = "from {0},{1} to {2},{3}")

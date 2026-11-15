@@ -1,6 +1,5 @@
 package com.grahambartley.nightborn.screen;
 
-import com.grahambartley.nightborn.Nightborn;
 import com.grahambartley.nightborn.skill.SkillBranch;
 import com.grahambartley.nightborn.skill.SkillPurchase;
 import com.grahambartley.nightborn.skill.SkillTree;
@@ -10,11 +9,6 @@ import java.util.Map;
 import net.minecraft.util.Identifier;
 
 public final class SkillTreeView {
-
-  static final Identifier FRAME_OWNED = Identifier.of(Nightborn.MOD_ID, "skills/frame_owned");
-  static final Identifier FRAME_AVAILABLE =
-      Identifier.of(Nightborn.MOD_ID, "skills/frame_available");
-  static final Identifier FRAME_LOCKED = Identifier.of(Nightborn.MOD_ID, "skills/frame_locked");
 
   public record Segment(int x, int y, int width, int height) {}
 
@@ -50,14 +44,6 @@ public final class SkillTreeView {
             .max()
             .orElse(0)
         + 1;
-  }
-
-  public static Identifier frame(final SkillPurchase.Verdict verdict) {
-    return switch (verdict) {
-      case OWNED -> FRAME_OWNED;
-      case ALLOWED -> FRAME_AVAILABLE;
-      default -> FRAME_LOCKED;
-    };
   }
 
   public static boolean dimmed(final SkillPurchase.Verdict verdict) {

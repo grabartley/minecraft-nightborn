@@ -23,6 +23,14 @@ class PowerSlotViewTest {
     assertEquals(rows, PowerSlotView.shadedRows(fraction));
   }
 
+  @ParameterizedTest(name = "{0} -> shade from row {1}")
+  @CsvSource({"0.0, 16", "0.25, 12", "0.5, 8", "1.0, 0", "2.0, 0"})
+  @DisplayName("the cooldown shade grows up from the bottom of the icon")
+  void shadeTop(final float fraction, final int top) {
+    assertEquals(top, PowerSlotView.shadeTop(fraction));
+    assertEquals(PowerSlotView.ICON, top + PowerSlotView.shadedRows(fraction));
+  }
+
   @ParameterizedTest(name = "\"{0}\" -> \"{1}\"")
   @CsvSource({
     "R, R",
