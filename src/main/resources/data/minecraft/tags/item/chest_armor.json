@@ -1,9 +1,6 @@
 {
   "replace": false,
   "values": [
-    "nightborn:frock_coat",
-    "nightborn:high_collared_cape",
-    "nightborn:corset",
-    "nightborn:doublet"
+    "#nightborn:enchantable/chest_clothing"
   ]
 }

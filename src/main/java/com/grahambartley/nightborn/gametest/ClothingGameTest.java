@@ -1,6 +1,7 @@
 package com.grahambartley.nightborn.gametest;
 
 import com.grahambartley.nightborn.Nightborn;
+import com.grahambartley.nightborn.clothing.ClothingFabric;
 import com.grahambartley.nightborn.clothing.ClothingItem;
 import com.grahambartley.nightborn.clothing.ClothingItems;
 import com.grahambartley.nightborn.clothing.ClothingPiece;
@@ -15,6 +16,7 @@ import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.attribute.EntityAttribute;
 import net.minecraft.entity.attribute.EntityAttributes;
+import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -110,7 +112,7 @@ public class ClothingGameTest implements FabricGameTest {
     for (final ClothingPiece piece : ClothingPiece.values()) {
       tests.add(test("craftedfromitsrecipe", piece, ClothingGameTest::craftedFromItsRecipe));
       tests.add(test("dyedonlyifdyeable", piece, ClothingGameTest::dyedOnlyIfDyeable));
-      tests.add(test("mendedwithwool", piece, ClothingGameTest::mendedWithWool));
+      tests.add(test("mendedwithitsfabric", piece, ClothingGameTest::mendedWithItsFabric));
       tests.add(test("takesarmourenchantments", piece, ClothingGameTest::takesArmourEnchantments));
       tests.add(test("takesitsslotpowersonly", piece, ClothingGameTest::takesItsSlotPowersOnly));
       tests.add(test("worninitsslot", piece, ClothingGameTest::wornInItsSlot));
@@ -156,8 +158,11 @@ public class ClothingGameTest implements FabricGameTest {
     context.runAtTick(
         NIGHT_VISION_CHECK,
         () -> {
+          final StatusEffectInstance sight = human.getStatusEffect(StatusEffects.NIGHT_VISION);
+          context.assertTrue(sight != null, "a nocturne hat sees by night");
           context.assertTrue(
-              human.hasStatusEffect(StatusEffects.NIGHT_VISION), "a nocturne hat sees by night");
+              sight.isAmbient() && !sight.shouldShowParticles() && !sight.shouldShowIcon(),
+              "night sight shows no swirls and no icon, as a vampire's does");
           TestPlayers.finish(context, human);
         });
   }
@@ -225,11 +230,18 @@ public class ClothingGameTest implements FabricGameTest {
     context.complete();
   }
 
-  private static void mendedWithWool(final TestContext context, final ClothingPiece piece) {
+  private static void mendedWithItsFabric(final TestContext context, final ClothingPiece piece) {
     final ClothingItem item = ClothingItems.of(piece);
     final ItemStack worn = new ItemStack(item);
-    context.assertTrue(item.canRepair(worn, new ItemStack(Items.BLACK_WOOL)), "wool mends it");
-    context.assertFalse(item.canRepair(worn, new ItemStack(Items.LEATHER)), "leather does not");
+    final boolean cloth = piece.fabric() == ClothingFabric.CLOTH;
+    context.assertEquals(
+        cloth,
+        item.canRepair(worn, new ItemStack(Items.BLACK_WOOL)),
+        piece.id() + " mends with wool");
+    context.assertEquals(
+        !cloth,
+        item.canRepair(worn, new ItemStack(Items.LEATHER)),
+        piece.id() + " mends with leather");
     context.complete();
   }
 

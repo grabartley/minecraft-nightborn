@@ -18,6 +18,13 @@ public final class ClothingMaterial {
 
   private ClothingMaterial() {}
 
+  public static RegistryEntry<ArmorMaterial> of(final ClothingFabric fabric) {
+    return switch (fabric) {
+      case CLOTH -> CLOTH;
+      case LEATHER -> ArmorMaterials.LEATHER;
+    };
+  }
+
   private static RegistryEntry<ArmorMaterial> register() {
     final ArmorMaterial leather = ArmorMaterials.LEATHER.value();
     return Registry.registerReference(

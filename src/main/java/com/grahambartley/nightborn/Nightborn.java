@@ -1,6 +1,6 @@
 package com.grahambartley.nightborn;
 
-import com.grahambartley.nightborn.clothing.ClothingItems;
+import com.grahambartley.nightborn.clothing.ClothingFeatures;
 import com.grahambartley.nightborn.coffin.Coffins;
 import com.grahambartley.nightborn.decor.DecorBlockEntities;
 import com.grahambartley.nightborn.decor.DecorBlocks;
@@ -33,7 +33,7 @@ public class Nightborn implements ModInitializer {
     NightbornMobs.initialize();
     GearFeatures.register();
     HunterFeatures.register();
-    ClothingItems.register();
+    ClothingFeatures.register();
     NightbornStructures.initialize();
     LOGGER.info("Nightborn initialised");
   }

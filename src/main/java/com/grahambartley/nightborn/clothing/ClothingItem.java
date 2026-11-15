@@ -1,9 +1,11 @@
 package com.grahambartley.nightborn.clothing;
 
 import java.util.function.Consumer;
+import net.minecraft.component.type.DyedColorComponent;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ArmorItem;
+import net.minecraft.item.ItemStack;
 import software.bernie.geckolib.animatable.GeoItem;
 import software.bernie.geckolib.animatable.client.GeoRenderProvider;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
@@ -24,12 +26,16 @@ public class ClothingItem extends ArmorItem implements GeoItem {
   private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
 
   public ClothingItem(final ClothingPiece piece, final Settings settings) {
-    super(ClothingMaterial.CLOTH, piece.type(), settings);
+    super(ClothingMaterial.of(piece.fabric()), piece.type(), settings);
     this.piece = piece;
   }
 
   public ClothingPiece piece() {
     return this.piece;
+  }
+
+  public int color(final ItemStack stack) {
+    return DyedColorComponent.getColor(stack, this.piece.undyedColor());
   }
 
   @Override

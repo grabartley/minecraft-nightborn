@@ -6,7 +6,6 @@ import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.model.BipedEntityModel;
 import net.minecraft.client.util.SkinTextures;
-import net.minecraft.component.type.DyedColorComponent;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.item.ItemStack;
@@ -66,9 +65,7 @@ public class ClothingRenderer extends DyeableGeoArmorRenderer<ClothingItem> {
 
   @Override
   protected Color getColorForBone(final GeoBone bone) {
-    final ClothingItem item = (ClothingItem) this.currentStack.getItem();
-    return Color.ofOpaque(
-        DyedColorComponent.getColor(this.currentStack, item.piece().undyedColor()));
+    return Color.ofOpaque(((ClothingItem) this.currentStack.getItem()).color(this.currentStack));
   }
 
   private static boolean slimBody(final Entity entity) {

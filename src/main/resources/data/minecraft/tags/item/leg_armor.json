@@ -1,8 +1,6 @@
 {
   "replace": false,
   "values": [
-    "nightborn:breeches",
-    "nightborn:trousers",
-    "nightborn:long_skirt"
+    "#nightborn:enchantable/legs_clothing"
   ]
 }
