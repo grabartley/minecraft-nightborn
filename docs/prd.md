@@ -240,7 +240,7 @@ Sneak and use on a creature to bite it, and keep holding to drink. Let go to sto
 |---|---|
 | SUN-1 | A vampire in direct sun catches fire, as a zombie does, and burns while it stays there. Sun fire kills, downed or not. Fire that keeps burning after the vampire reaches shade only downs it, and cannot hurt it while it is escaping |
 | SUN-2 | No armour, helmet or effect, Fire Resistance included, stops the burn. Shade, rain, water and a closed coffin that is not burning (COFFIN-7, COFFIN-14) do |
-| SUN-3 | A burning vampire gives off dark, ashy smoke and a sizzling sound, on top of the fire. The same smoke rises from a staked vampire (GORE-2) and makes the poof of bat form (BAT-2) |
+| SUN-3 | A burning vampire gives off dark, ashy smoke and a sizzling sound, on top of the fire |
 | SUN-4 | Vampire mobs follow the same rules and seek shade at dawn |
 
 **Not supported:** a way to walk in direct sun.
@@ -336,7 +336,7 @@ The core starts with Thick Blood (more health), Grave Strength (harder blows) an
 | ID | Requirement |
 |---|---|
 | BAT-1 | A Beast vampire can turn into a bat and fly |
-| BAT-2 | Turning into a bat, and back, gives a poof of smoke and a sound, seen and heard by everyone near |
+| BAT-2 | Turning into a bat, and back, gives a poof of the dark, ashy vampire smoke (SUN-3) and a sound, seen and heard by everyone near |
 | BAT-3 | A bat cannot use items, open containers or feed. It drains blood while flying |
 | BAT-4 | Direct sun forces a vampire out of bat form |
 | BAT-5 | Turning back needs room to stand. Without it, the bat stays a bat |
@@ -516,7 +516,7 @@ Vampires are rare. They live in households hidden in four kinds of structure, ea
 | ID | Requirement |
 |---|---|
 | GORE-1 | Bites, stakes and silver hits spray blood. Blood leaves splatter on nearby blocks, drawn by the client, that fades with time |
-| GORE-2 | A drained victim and a staked vampire have their own death effects |
+| GORE-2 | A drained victim and a staked vampire have their own death effects. A staked vampire also gives off the dark, ashy smoke of a burning one (SUN-3) |
 | GORE-3 | A client option sets gore, including vomit particles (FEED-3), blood spray and its splatter (GORE-1), and placed blood splatter (DECOR-3), to Full, Reduced or Off. Full is the default. Reduced draws fewer drops, and blood spray and splatter dried and dark. Vomit particles and blood spray also follow the vanilla Particles setting: fewer on Decreased, and none on Minimal |
 | GORE-4 | Gore is drawn by the client only. The setting never changes what happens in the world |
 
