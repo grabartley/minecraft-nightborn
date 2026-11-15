@@ -79,4 +79,16 @@ class NightbornConfigTest {
       case BoolSetting flag -> NightbornConfig.DEFAULTS.with(flag, !flag.defaultValue());
     };
   }
+
+  @Test
+  @DisplayName("a screen save keeps changes made elsewhere while the screen was open")
+  void screenSaveKeepsOtherChanges() {
+    final NightbornConfig opened = NightbornConfig.DEFAULTS;
+    final NightbornConfig current = opened.with(SunSettings.SUN_DAMAGE, 9);
+    final NightbornConfig edited = opened.with(FeedingSettings.BOTTLE_SIZE, 6);
+    final NightbornConfig merged = current.withChanges(opened, edited);
+    assertEquals(9, merged.sun().sunDamage());
+    assertEquals(6, merged.feeding().bottleSize());
+    assertEquals(List.of(FeedingSettings.BOTTLE_SIZE), merged.changedFrom(current));
+  }
 }

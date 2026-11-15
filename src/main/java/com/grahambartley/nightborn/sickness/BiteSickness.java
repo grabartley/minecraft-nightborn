@@ -26,7 +26,6 @@ public final class BiteSickness {
 
   static final int EFFECT_REFRESH_TICKS = 20;
   static final int SYMPTOM_TICKS = 60;
-  static final int DISPLAY_DRIFT_TICKS = 40;
 
   private BiteSickness() {}
 
@@ -63,7 +62,10 @@ public final class BiteSickness {
   }
 
   public static void onEaten(final ServerPlayerEntity player, final ItemStack food) {
-    if (food.isIn(CURES) && player.hasStatusEffect(StatusEffects.WEAKNESS)) {
+    if (SicknessRules.cures(
+        food.isIn(CURES),
+        player.hasStatusEffect(StatusEffects.WEAKNESS),
+        BiteSicknessAttachment.isSick(player))) {
       cure(player);
     }
   }
@@ -86,7 +88,7 @@ public final class BiteSickness {
     final SicknessStage before = SicknessStage.of(left + 1, settings.sicknessDays());
     BiteSicknessAttachment.set(player, left);
     final SicknessStage stage = SicknessStage.of(left, settings.sicknessDays());
-    if (stage.daysLeft() != before.daysLeft() || player.age % 6000 == 0) {
+    if (SicknessRules.remindsOfDaysLeft(before.daysLeft(), stage.daysLeft(), player.age)) {
       player.sendMessage(Text.translatable("nightborn.sickness.days_left", stage.daysLeft()), true);
     }
     if (player.age % EFFECT_REFRESH_TICKS == 0) {
@@ -97,9 +99,12 @@ public final class BiteSickness {
   private static void showSymptoms(
       final ServerPlayerEntity player, final SicknessStage stage, final int ticksLeft) {
     final StatusEffectInstance shown = player.getStatusEffect(BiteSicknessEffect.ENTRY);
-    if (shown == null
-        || shown.getAmplifier() != stage.day() - 1
-        || Math.abs(shown.getDuration() - ticksLeft) > DISPLAY_DRIFT_TICKS) {
+    if (SicknessRules.refreshesDisplay(
+        shown != null,
+        shown == null ? 0 : shown.getAmplifier(),
+        shown == null ? 0 : shown.getDuration(),
+        stage.day() - 1,
+        ticksLeft)) {
       player.addStatusEffect(
           new StatusEffectInstance(
               BiteSicknessEffect.ENTRY, ticksLeft, stage.day() - 1, false, false, true));

@@ -21,6 +21,7 @@ class SettingTest {
     assertEquals(setting.section() + "." + setting.key(), setting.id());
     assertEquals("nightborn.setting." + setting.id(), setting.translationKey());
     assertEquals(setting.translationKey() + ".tooltip", setting.tooltipKey());
+    assertEquals("nightborn.section." + setting.section(), setting.sectionKey());
     assertTrue(setting.key().matches("[a-z][A-Za-z]+"), setting.key());
   }
 }

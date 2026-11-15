@@ -1,12 +1,12 @@
 package com.grahambartley.nightborn;
 
+import com.grahambartley.nightborn.client.VampireClientFeatures;
 import com.grahambartley.nightborn.decor.AnimatedFurniture;
 import com.grahambartley.nightborn.decor.DecorBlockEntities;
 import com.grahambartley.nightborn.decor.DecorBlocks;
 import com.grahambartley.nightborn.decor.DecorEntities;
 import com.grahambartley.nightborn.render.FurnitureBlockRenderer;
 import com.grahambartley.nightborn.render.FurnitureItemRenderer;
-import com.grahambartley.nightborn.client.VampireClientFeatures;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
 import net.fabricmc.fabric.api.client.rendering.v1.BuiltinItemRendererRegistry;

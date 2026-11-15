@@ -3,6 +3,7 @@ package com.grahambartley.nightborn.client;
 import com.grahambartley.nightborn.sickness.BiteSicknessEffect;
 import com.grahambartley.nightborn.vampire.VisibleState;
 import com.grahambartley.nightborn.vampire.VisibleStateAttachment;
+import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
@@ -53,7 +54,9 @@ public final class VampireHud {
 
   private static void drawSicknessVignette(final DrawContext context, final float alpha) {
     RenderSystem.enableBlend();
-    context.setShaderColor(0.45F, 0.02F, 0.06F, alpha);
+    RenderSystem.blendFunc(
+        GlStateManager.SrcFactor.ZERO, GlStateManager.DstFactor.ONE_MINUS_SRC_COLOR);
+    context.setShaderColor(alpha * 0.15F, alpha, alpha * 0.9F, 1.0F);
     context.drawTexture(
         VIGNETTE,
         0,
@@ -66,6 +69,7 @@ public final class VampireHud {
         context.getScaledWindowWidth(),
         context.getScaledWindowHeight());
     context.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+    RenderSystem.defaultBlendFunc();
     RenderSystem.disableBlend();
   }
 }

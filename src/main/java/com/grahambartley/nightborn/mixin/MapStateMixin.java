@@ -3,6 +3,7 @@ package com.grahambartley.nightborn.mixin;
 import com.grahambartley.nightborn.vampire.Vampires;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.item.map.MapDecorationType;
 import net.minecraft.item.map.MapState;
 import net.minecraft.registry.entry.RegistryEntry;
@@ -35,14 +36,9 @@ abstract class MapStateMixin {
       final double z,
       final double rotation,
       final Text text,
-      final Operation<Void> original) {
-    final boolean vampire =
-        world != null
-            && world.getPlayers().stream()
-                .anyMatch(
-                    player ->
-                        player.getName().getString().equals(key) && Vampires.isVampire(player));
-    if (vampire) {
+      final Operation<Void> original,
+      @Local final MapState.PlayerUpdateTracker tracker) {
+    if (Vampires.isVampire(tracker.player)) {
       removeDecoration(key);
     } else {
       original.call(state, type, world, key, x, z, rotation, text);

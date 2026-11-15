@@ -36,23 +36,31 @@ public class HardcoreVampireDeathGameTest implements FabricGameTest {
         ServerConfigService.current().with(DownedSettings.HARDCORE_VAMPIRE_DEATH, false));
   }
 
-  @GameTest(templateName = "nightborn:vampire_arena", batchId = BATCH, tickLimit = 20)
+  @GameTest(
+      templateName = "nightborn:vampire_arena",
+      batchId = BATCH,
+      tickLimit = TestPlayers.READY + 20)
   public void aVampireWhoDiesComesBackAsANewHuman(final TestContext context) {
     final ServerPlayerEntity dead = TestPlayers.vampire(context, new BlockPos(4, 1, 4));
     dead.getEnderChestInventory().setStack(0, new ItemStack(Items.DIAMOND, 4));
     dead.setSpawnPoint(
         World.OVERWORLD, context.getAbsolutePos(new BlockPos(4, 1, 4)), 0.0F, true, false);
-    dead.damage(NightbornDamage.sun(context.getWorld()), 1000.0F);
-    context.assertTrue(dead.isDead(), "the sun killed the vampire");
-    final ServerPlayerEntity respawned =
-        context
-            .getWorld()
-            .getServer()
-            .getPlayerManager()
-            .respawnPlayer(dead, false, Entity.RemovalReason.KILLED);
-    context.assertEquals(FactionAttachment.get(respawned), Faction.HUMAN, "comes back human");
-    context.assertTrue(respawned.getEnderChestInventory().isEmpty(), "ender chest is emptied");
-    context.assertTrue(respawned.getSpawnPointPosition() == null, "no respawn point is kept");
-    TestPlayers.finish(context, respawned);
+    context.runAtTick(
+        TestPlayers.READY,
+        () -> {
+          dead.damage(NightbornDamage.sun(context.getWorld()), 1000.0F);
+          context.assertTrue(dead.isDead(), "the sun killed the vampire");
+          final ServerPlayerEntity respawned =
+              context
+                  .getWorld()
+                  .getServer()
+                  .getPlayerManager()
+                  .respawnPlayer(dead, false, Entity.RemovalReason.KILLED);
+          context.assertEquals(FactionAttachment.get(respawned), Faction.HUMAN, "comes back human");
+          context.assertTrue(
+              respawned.getEnderChestInventory().isEmpty(), "ender chest is emptied");
+          context.assertTrue(respawned.getSpawnPointPosition() == null, "no respawn point is kept");
+          TestPlayers.finish(context, respawned);
+        });
   }
 }

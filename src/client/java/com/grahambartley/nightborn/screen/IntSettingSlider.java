@@ -18,15 +18,19 @@ final class IntSettingSlider extends SliderWidget {
       final IntSetting setting,
       final int initial,
       final IntConsumer sink) {
-    super(
-        0,
-        0,
-        width,
-        height,
-        Text.empty(),
-        new SliderScale(setting.min(), setting.max()).fractionOf(initial));
+    this(width, height, setting, new SliderScale(setting.min(), setting.max()), initial, sink);
+  }
+
+  private IntSettingSlider(
+      final int width,
+      final int height,
+      final IntSetting setting,
+      final SliderScale scale,
+      final int initial,
+      final IntConsumer sink) {
+    super(0, 0, width, height, Text.empty(), scale.fractionOf(initial));
     this.setting = setting;
-    this.scale = new SliderScale(setting.min(), setting.max());
+    this.scale = scale;
     this.current = scale.clamp(initial);
     this.sink = sink;
     updateMessage();

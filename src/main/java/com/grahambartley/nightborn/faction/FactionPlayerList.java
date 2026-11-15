@@ -4,6 +4,7 @@ import com.grahambartley.nightborn.server.ServerConfigService;
 import java.util.EnumSet;
 import java.util.List;
 import net.minecraft.network.packet.s2c.play.PlayerListS2CPacket;
+import net.minecraft.scoreboard.Team;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
@@ -24,7 +25,7 @@ public final class FactionPlayerList {
       return null;
     }
     return Text.empty()
-        .append(player.getName())
+        .append(Team.decorateName(player.getScoreboardTeam(), player.getName()))
         .append(" ")
         .append(
             Text.translatable(

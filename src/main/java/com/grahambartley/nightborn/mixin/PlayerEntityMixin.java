@@ -1,10 +1,13 @@
 package com.grahambartley.nightborn.mixin;
 
+import com.grahambartley.nightborn.core.VampireCore;
+import com.grahambartley.nightborn.server.ServerConfigService;
 import com.grahambartley.nightborn.sickness.BiteSickness;
 import com.grahambartley.nightborn.vampire.Vampires;
 import com.grahambartley.nightborn.vampire.VisibleStateAttachment;
 import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
 import net.minecraft.component.type.FoodComponent;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityPose;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -26,6 +29,14 @@ abstract class PlayerEntityMixin {
       final boolean ignoreHunger, final CallbackInfoReturnable<Boolean> cir) {
     if (Vampires.isVampire((PlayerEntity) (Object) this)) {
       cir.setReturnValue(true);
+    }
+  }
+
+  @Inject(method = "attack", at = @At("HEAD"))
+  private void nightborn$bareHandsMatchTheBlow(final Entity target, final CallbackInfo ci) {
+    final PlayerEntity self = (PlayerEntity) (Object) this;
+    if (!self.getWorld().isClient && Vampires.isVampire(self)) {
+      VampireCore.refreshBareHands(self, ServerConfigService.current().core());
     }
   }
 

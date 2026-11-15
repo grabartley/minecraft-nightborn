@@ -24,11 +24,22 @@ public final class VampireCore {
   private VampireCore() {}
 
   public static void tick(final LivingEntity vampire, final CoreSettings settings) {
-    final boolean night = !vampire.getWorld().isDay();
+    final boolean night =
+        NightTime.isNight(
+            vampire.getWorld().getDimension().hasFixedTime(), vampire.getWorld().getTimeOfDay());
     apply(vampire, CoreBoosts.of(settings, vampire.getMainHandStack().isEmpty(), night));
     if (night && vampire instanceof PlayerEntity) {
       keepNightVision(vampire);
     }
+  }
+
+  public static void refreshBareHands(final LivingEntity vampire, final CoreSettings settings) {
+    Modifiers.set(
+        vampire,
+        EntityAttributes.GENERIC_ATTACK_DAMAGE,
+        BARE_HANDS,
+        CoreBoosts.of(settings, vampire.getMainHandStack().isEmpty(), false).bareHandDamage(),
+        Operation.ADD_VALUE);
   }
 
   public static void remove(final LivingEntity entity) {

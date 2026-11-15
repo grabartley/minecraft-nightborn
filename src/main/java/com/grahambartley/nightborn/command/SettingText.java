@@ -42,7 +42,7 @@ public final class SettingText {
     for (final Setting<?> setting : NightbornConfig.SETTINGS) {
       if (!setting.section().equals(section)) {
         section = setting.section();
-        lines.add(Text.translatable("nightborn.section." + section));
+        lines.add(Text.translatable(setting.sectionKey()));
       }
       lines.add(value(setting, config));
     }

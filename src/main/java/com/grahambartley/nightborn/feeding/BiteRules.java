@@ -25,6 +25,15 @@ public final class BiteRules {
 
   public record Target(boolean warmBlood, boolean vampire, boolean player, boolean alive) {}
 
+  public static boolean startsSickness(
+      final boolean victimIsHumanPlayer,
+      final boolean playersCanTurnPlayers,
+      final boolean firstRoll,
+      final int roll,
+      final int chancePercent) {
+    return victimIsHumanPlayer && playersCanTurnPlayers && firstRoll && roll < chancePercent;
+  }
+
   public static Decision decide(final Biter biter, final Target target, final boolean pvp) {
     if (!biter.vampire()) {
       return Decision.NOT_A_VAMPIRE;

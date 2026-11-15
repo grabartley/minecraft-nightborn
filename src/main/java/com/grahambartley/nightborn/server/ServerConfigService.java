@@ -1,8 +1,10 @@
 package com.grahambartley.nightborn.server;
 
+import com.grahambartley.nightborn.Nightborn;
 import com.grahambartley.nightborn.config.ConfigFile;
 import com.grahambartley.nightborn.config.ConfigPaths;
 import com.grahambartley.nightborn.config.NightbornConfig;
+import com.grahambartley.nightborn.config.Setting;
 import com.grahambartley.nightborn.network.EditConfigPayload;
 import com.grahambartley.nightborn.network.SyncConfigPayload;
 import java.time.Clock;
@@ -35,7 +37,15 @@ public final class ServerConfigService {
         (payload, context) -> {
           final ServerPlayerEntity player = context.player();
           if (ConfigEditPermission.canEdit(player, player.getServer())) {
-            update(player.getServer(), payload.config());
+            final NightbornConfig merged = current.withChanges(payload.opened(), payload.edited());
+            final List<String> changed =
+                merged.changedFrom(current).stream().map(Setting::id).toList();
+            if (!changed.isEmpty() && update(player.getServer(), merged)) {
+              Nightborn.LOGGER.info(
+                  "{} changed Nightborn settings from the settings screen: {}",
+                  player.getName().getString(),
+                  changed);
+            }
           } else {
             sendTo(player);
           }

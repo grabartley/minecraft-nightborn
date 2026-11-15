@@ -16,6 +16,10 @@ public sealed interface Setting<T> permits IntSetting, BoolSetting {
     return section() + "." + key();
   }
 
+  default String sectionKey() {
+    return "nightborn.section." + section();
+  }
+
   default String translationKey() {
     return "nightborn.setting." + section() + "." + key();
   }

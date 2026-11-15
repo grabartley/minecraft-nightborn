@@ -48,6 +48,29 @@ public record NightbornConfig(
     return from(values().with(setting, value));
   }
 
+  public NightbornConfig withChanges(final NightbornConfig opened, final NightbornConfig edited) {
+    SettingValues merged = values();
+    final SettingValues before = opened.values();
+    final SettingValues after = edited.values();
+    for (final Setting<?> setting : SETTINGS) {
+      merged = carry(merged, setting, before, after);
+    }
+    return from(merged);
+  }
+
+  public List<Setting<?>> changedFrom(final NightbornConfig other) {
+    return SETTINGS.stream().filter(s -> !s.get(this).equals(s.get(other))).toList();
+  }
+
+  private static <T> SettingValues carry(
+      final SettingValues merged,
+      final Setting<T> setting,
+      final SettingValues before,
+      final SettingValues after) {
+    final T edited = after.get(setting);
+    return edited.equals(before.get(setting)) ? merged : merged.with(setting, edited);
+  }
+
   public static List<String> sections() {
     return SETTINGS.stream().map(Setting::section).distinct().toList();
   }

@@ -11,6 +11,8 @@ Each option is one `IntSetting` or `BoolSetting` field beside the section record
 - The JSON file, the network codec, the `/nightborn config` tree, `/nightborn status` and the settings screen all walk that list. None of them names an option.
 - Bounds live on the setting, so the command argument, the screen slider and the clamp on load use the same numbers.
 - Section records are still immutable records, and clamp in their constructors, so a value built any other way is clamped too.
+- Settings load when the server starts, from the world save. The standards allow loading them earlier, from the level storage session, for options needed before the server is built. No Nightborn option is needed that early yet, so the later, simpler hook is used until one is.
+- The settings screen sends the settings it opened with and the settings it ends with. The server applies only the ones the operator changed, so a change made by command while the screen was open is kept, and it logs who changed what.
 - Settings are whole numbers or toggles. Percentages and seconds are whole numbers, which keeps the codec and the commands simple.
 
 ## Consequences

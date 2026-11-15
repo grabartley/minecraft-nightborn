@@ -34,14 +34,15 @@ public final class NightbornSettingsScreen extends Screen {
   static final int BANNER_COLOUR = 0xC9A24A;
 
   private final Screen parent;
+  private final NightbornConfig opened;
   private SettingValues values;
 
   public NightbornSettingsScreen(@Nullable final Screen parent) {
     super(Text.translatable("nightborn.screen.settings.title"));
     this.parent = parent;
-    this.values =
-        (access() == EditAccess.NO_WORLD ? NightbornConfig.DEFAULTS : SyncedServerConfig.get())
-            .values();
+    this.opened =
+        access() == EditAccess.NO_WORLD ? NightbornConfig.DEFAULTS : SyncedServerConfig.get();
+    this.values = opened.values();
   }
 
   @Override
@@ -58,7 +59,7 @@ public final class NightbornSettingsScreen extends Screen {
             new SectionHeader(
                 WIDGET_WIDTH,
                 HEADER_HEIGHT,
-                Text.translatable("nightborn.section." + section),
+                Text.translatable(setting.sectionKey()),
                 textRenderer));
       }
       final ClickableWidget widget = widgetFor(setting);
@@ -104,7 +105,7 @@ public final class NightbornSettingsScreen extends Screen {
 
   private void saveAndClose() {
     if (access() == EditAccess.EDITABLE) {
-      ClientPlayNetworking.send(new EditConfigPayload(NightbornConfig.from(values)));
+      ClientPlayNetworking.send(new EditConfigPayload(opened, NightbornConfig.from(values)));
     }
     close();
   }

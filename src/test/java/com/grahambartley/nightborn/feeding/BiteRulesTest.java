@@ -9,6 +9,7 @@ import java.util.stream.Stream;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.MethodSource;
 
@@ -87,5 +88,25 @@ class BiteRulesTest {
     assertEquals(
         decision == Decision.BITE || decision == Decision.PVP_OFF || decision == Decision.HELPLESS,
         decision.claimsTheInteraction());
+  }
+
+  @ParameterizedTest(name = "human {0}, allowed {1}, first {2}, roll {3} of {4}%: {5}")
+  @CsvSource({
+    "true, true, true, 99, 100, true",
+    "true, true, true, 50, 50, false",
+    "true, true, true, 49, 50, true",
+    "false, true, true, 0, 100, false",
+    "true, false, true, 0, 100, false",
+    "true, true, false, 0, 100, false"
+  })
+  @DisplayName("a bite starts sickness only in a human, when allowed, once, and by chance")
+  void startsSickness(
+      final boolean human,
+      final boolean allowed,
+      final boolean first,
+      final int roll,
+      final int chance,
+      final boolean starts) {
+    assertEquals(starts, BiteRules.startsSickness(human, allowed, first, roll, chance));
   }
 }

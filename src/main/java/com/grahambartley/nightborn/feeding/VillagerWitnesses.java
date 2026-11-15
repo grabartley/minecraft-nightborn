@@ -2,6 +2,7 @@ package com.grahambartley.nightborn.feeding;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.function.BooleanSupplier;
 import net.minecraft.block.BellBlock;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.EntityInteraction;
@@ -34,7 +35,14 @@ public final class VillagerWitnesses {
         world.getEntitiesByClass(
             VillagerEntity.class,
             Box.of(vampire.getPos(), range * 2.0, range * 2.0, range * 2.0),
-            villager -> sees(villager, vampire, victim, range));
+            villager ->
+                sees(
+                    villager == victim,
+                    villager.isAlive(),
+                    villager.isSleeping(),
+                    villager.squaredDistanceTo(vampire),
+                    range,
+                    () -> villager.canSee(vampire)));
     for (final VillagerEntity witness : witnesses) {
       if (session.firstSighting(witness.getUuid())) {
         witness.onInteractionWith(EntityInteraction.VILLAGER_HURT, vampire);
@@ -47,16 +55,18 @@ public final class VillagerWitnesses {
     }
   }
 
-  private static boolean sees(
-      final VillagerEntity villager,
-      final LivingEntity vampire,
-      final LivingEntity victim,
-      final int range) {
-    return villager != victim
-        && villager.isAlive()
-        && !villager.isSleeping()
-        && villager.squaredDistanceTo(vampire) <= (double) range * range
-        && villager.canSee(vampire);
+  static boolean sees(
+      final boolean victim,
+      final boolean alive,
+      final boolean sleeping,
+      final double distanceSquared,
+      final int range,
+      final BooleanSupplier lineOfSight) {
+    return !victim
+        && alive
+        && !sleeping
+        && distanceSquared <= (double) range * range
+        && lineOfSight.getAsBoolean();
   }
 
   private static boolean ringBell(final ServerWorld world, final VillagerEntity witness) {
