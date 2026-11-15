@@ -88,28 +88,23 @@ public class PlayerFeedingGameTest implements FabricGameTest {
         });
   }
 
-  @GameTest(templateName = ARENA, batchId = HELD_BITE, tickLimit = TestPlayers.READY + 80)
-  public void switchingToFeedingMidBiteKeepsTheSickness(final TestContext context) {
+  @GameTest(templateName = ARENA, batchId = HELD_BITE, tickLimit = TestPlayers.READY + 400)
+  public void drainingAHumanWithAFeedingBiteNeverTurnsThem(final TestContext context) {
     final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(3, 2, 4));
     final ServerPlayerEntity human = TestPlayers.human(context, new BlockPos(4, 2, 4));
-    TurningBite.set(vampire, true);
     context.runAtEveryTick(
         () -> {
-          if (context.getTick() >= TestPlayers.READY) {
-            hold(context, vampire, human);
+          if (context.getTick() < TestPlayers.READY) {
+            return;
           }
-        });
-    context.runAtTick(
-        FIRST_DRINK,
-        () -> {
-          context.assertTrue(BiteSicknessAttachment.isSick(human), "the turning bite took");
-          TurningBite.set(vampire, false);
-        });
-    context.runAtTick(
-        TestPlayers.READY + 70,
-        () -> {
-          context.assertTrue(
-              BiteSicknessAttachment.isSick(human), "switching back does not undo the bite");
+          if (human.isAlive()) {
+            context.assertFalse(
+                BiteSicknessAttachment.isSick(human), "a feeding bite never starts the sickness");
+            hold(context, vampire, human);
+            return;
+          }
+          context.assertFalse(
+              BiteSicknessAttachment.isSick(human), "the drained human died without the sickness");
           TestPlayers.finish(context, vampire, human);
         });
   }

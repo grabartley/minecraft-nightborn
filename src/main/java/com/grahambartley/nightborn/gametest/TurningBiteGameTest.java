@@ -1,6 +1,7 @@
 package com.grahambartley.nightborn.gametest;
 
 import com.grahambartley.nightborn.feeding.TurningBite;
+import com.grahambartley.nightborn.feeding.TurningBiteToggle;
 import com.grahambartley.nightborn.vampire.VampireTransitions;
 import com.mojang.authlib.GameProfile;
 import java.util.UUID;
@@ -21,9 +22,9 @@ public class TurningBiteGameTest implements FabricGameTest {
   public void aVampireSwitchesTheirBiteBothWays(final TestContext context) {
     final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(4, 2, 4));
     context.assertFalse(TurningBite.isOn(vampire), "a new vampire's bite feeds");
-    context.assertTrue(TurningBite.toggle(vampire), "the switch is accepted");
+    context.assertTrue(TurningBiteToggle.toggle(vampire), "the switch is accepted");
     context.assertTrue(TurningBite.isOn(vampire), "the bite now turns");
-    TurningBite.toggle(vampire);
+    TurningBiteToggle.toggle(vampire);
     context.assertFalse(TurningBite.isOn(vampire), "and feeds again");
     TestPlayers.finish(context, vampire);
   }
@@ -31,7 +32,7 @@ public class TurningBiteGameTest implements FabricGameTest {
   @GameTest(templateName = ARENA, tickLimit = 20)
   public void aHumanCannotSwitchABite(final TestContext context) {
     final ServerPlayerEntity human = TestPlayers.human(context, new BlockPos(4, 2, 4));
-    context.assertFalse(TurningBite.toggle(human), "a human has no bite to switch");
+    context.assertFalse(TurningBiteToggle.toggle(human), "a human has no bite to switch");
     context.assertFalse(TurningBite.isOn(human), "nothing is stored");
     TestPlayers.finish(context, human);
   }
