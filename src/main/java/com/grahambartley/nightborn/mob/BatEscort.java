@@ -17,6 +17,7 @@ public final class BatEscort {
     final int size =
         MobSpawnRules.escortSize(
             random.nextInt(100), chance, random.nextInt(MobSpawnRules.MAX_ESCORT));
+    int gathered = 0;
     for (int i = 0; i < size; i++) {
       final VampireBatEntity bat = NightbornMobs.VAMPIRE_BAT.create(world.toServerWorld());
       if (bat == null) {
@@ -28,11 +29,16 @@ public final class BatEscort {
           leader.getZ() + random.nextDouble() - 0.5,
           random.nextFloat() * 360.0F,
           0.0F);
+      if (!world.isSpaceEmpty(bat)) {
+        bat.discard();
+        continue;
+      }
       bat.initialize(
           world, world.getLocalDifficulty(bat.getBlockPos()), SpawnReason.REINFORCEMENT, null);
       bat.setRoosting(false);
       world.spawnEntityAndPassengers(bat);
+      gathered++;
     }
-    return size;
+    return gathered;
   }
 }

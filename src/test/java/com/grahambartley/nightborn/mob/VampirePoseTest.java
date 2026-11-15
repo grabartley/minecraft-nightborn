@@ -1,10 +1,17 @@
 package com.grahambartley.nightborn.mob;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.EnumSource;
 
 class VampirePoseTest {
 
@@ -25,5 +32,19 @@ class VampirePoseTest {
       final String animation) {
     assertEquals(pose, VampirePose.of(downed, attacking, swing));
     assertEquals(animation, pose.animation());
+  }
+
+  @ParameterizedTest(name = "{0}")
+  @EnumSource(VampirePose.class)
+  @DisplayName("every pose the vampire plays is in its animation file")
+  void animationShips(final VampirePose pose) throws IOException {
+    final JsonObject animations =
+        JsonParser.parseString(
+                Files.readString(
+                    Path.of(
+                        "src/client/resources/assets/nightborn/animations/entity/vampire.animation.json")))
+            .getAsJsonObject()
+            .getAsJsonObject("animations");
+    assertTrue(animations.has(pose.animation()), pose.animation());
   }
 }

@@ -26,7 +26,7 @@ public class VampireBatEntity extends BatEntity implements GeoEntity {
   static final int BITE_COOLDOWN_TICKS = 50;
   static final int SEARCH_INTERVAL_TICKS = 20;
   static final int ANIMATION_BLEND_TICKS = 3;
-  static final byte BITE_STATUS = 61;
+  static final byte BITE_STATUS = 109;
   static final int BITE_SHOWN_TICKS = 10;
 
   private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
@@ -50,7 +50,10 @@ public class VampireBatEntity extends BatEntity implements GeoEntity {
     if (biteCooldown > 0) {
       biteCooldown--;
     }
-    if (age % SEARCH_INTERVAL_TICKS == 0 || !stillHunting(prey)) {
+    if (prey != null && !stillHunting(prey)) {
+      prey = null;
+    }
+    if (prey == null && age % SEARCH_INTERVAL_TICKS == 0) {
       prey = findPrey();
     }
     if (prey == null || biteCooldown > 0) {
@@ -112,11 +115,11 @@ public class VampireBatEntity extends BatEntity implements GeoEntity {
 
   private boolean huntingNow() {
     final World world = getWorld();
-    return world.getDifficulty() != Difficulty.PEACEFUL
-        && Prey.batHunts(
-            world.getDimension().hasFixedTime(),
-            world.getTimeOfDay(),
-            world.isSkyVisible(BlockPos.ofFloored(getX(), getEyeY(), getZ())));
+    return Prey.batHunts(
+        world.getDifficulty() == Difficulty.PEACEFUL,
+        world.getDimension().hasFixedTime(),
+        world.getTimeOfDay(),
+        world.isSkyVisible(BlockPos.ofFloored(getX(), getEyeY(), getZ())));
   }
 
   @Nullable

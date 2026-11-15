@@ -3,6 +3,7 @@ package com.grahambartley.nightborn.mob;
 import com.grahambartley.nightborn.Nightborn;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.SpawnGroup;
 import net.minecraft.item.Item;
@@ -55,7 +56,7 @@ public final class NightbornMobs {
     MobSpawns.register();
   }
 
-  private static <T extends net.minecraft.entity.Entity> EntityType<T> register(
+  private static <T extends Entity> EntityType<T> register(
       final String path, final EntityType.Builder<T> builder) {
     return Registry.register(
         Registries.ENTITY_TYPE, Identifier.of(Nightborn.MOD_ID, path), builder.build(path));

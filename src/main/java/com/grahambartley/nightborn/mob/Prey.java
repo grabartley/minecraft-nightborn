@@ -23,16 +23,20 @@ public final class Prey {
         target instanceof PlayerEntity player && (player.isCreative() || player.isSpectator()));
   }
 
-  public static boolean vampireHunts(final boolean fixedTime, final long timeOfDay) {
-    return NightTime.isNight(fixedTime, timeOfDay);
+  public static boolean mayBite(
+      final boolean downedOrEscaping, final boolean prey, final boolean provoked) {
+    return !downedOrEscaping && (prey || provoked);
   }
 
   public static boolean vampireHunts(final World world) {
-    return vampireHunts(world.getDimension().hasFixedTime(), world.getTimeOfDay());
+    return NightTime.isNight(world.getDimension().hasFixedTime(), world.getTimeOfDay());
   }
 
   public static boolean batHunts(
-      final boolean fixedTime, final long timeOfDay, final boolean openSky) {
-    return !openSky || NightTime.isNight(fixedTime, timeOfDay);
+      final boolean peaceful,
+      final boolean fixedTime,
+      final long timeOfDay,
+      final boolean openSky) {
+    return !peaceful && (!openSky || NightTime.isNight(fixedTime, timeOfDay));
   }
 }

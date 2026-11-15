@@ -26,17 +26,25 @@ class ShadeRulesTest {
     assertEquals(near, ShadeRules.sunIsNear(fixedTime, time));
   }
 
-  @ParameterizedTest(name = "time {0}, open sky {1}, wet {2}: seeks shade {3}")
+  @ParameterizedTest(
+      name = "time {0}, open sky {1}, wet {2}, powder snow {3}, closed coffin {4}: seeks {5}")
   @CsvSource({
-    "22500, true, false, true",
-    "22500, false, false, false",
-    "22500, true, true, false",
-    "6000, true, false, true",
-    "18000, true, false, false"
+    "22500, true, false, false, false, true",
+    "22500, false, false, false, false, false",
+    "22500, true, true, false, false, false",
+    "22500, true, false, true, false, false",
+    "22500, true, false, false, true, false",
+    "6000, true, false, false, false, true",
+    "18000, true, false, false, false, false"
   })
-  @DisplayName(
-      "a vampire under open sky seeks shade as dawn nears, unless rain or water shelter it")
-  void seeksShade(final long time, final boolean openSky, final boolean wet, final boolean seeks) {
-    assertEquals(seeks, ShadeRules.seeksShade(false, time, openSky, wet));
+  @DisplayName("a vampire seeks shade as dawn nears, unless the sun's own shelters cover it")
+  void seeksShade(
+      final long time,
+      final boolean openSky,
+      final boolean wet,
+      final boolean snow,
+      final boolean coffin,
+      final boolean seeks) {
+    assertEquals(seeks, ShadeRules.seeksShade(false, time, openSky, wet, snow, coffin));
   }
 }

@@ -1,6 +1,7 @@
 package com.grahambartley.nightborn.mob;
 
 import com.grahambartley.nightborn.config.NightbornConfig;
+import com.grahambartley.nightborn.core.VampireCore;
 import com.grahambartley.nightborn.downed.Downed;
 import com.grahambartley.nightborn.mob.goal.FleeWhileEscapingGoal;
 import com.grahambartley.nightborn.mob.goal.LieDownedGoal;
@@ -85,9 +86,9 @@ public class VampireEntity extends HostileEntity implements GeoEntity {
         2, new ActiveTargetGoal<>(this, LivingEntity.class, 10, true, false, this::hunts));
   }
 
-  private boolean hunts(final LivingEntity target) {
-    return Prey.vampireHunts(getWorld())
-        && !DownedMobRules.helpless(Downed.state(this))
+  public boolean hunts(final LivingEntity target) {
+    return Downed.state(this) == null
+        && Prey.vampireHunts(getWorld())
         && !SeekShadeGoal.exposed(this)
         && Prey.isPrey(target);
   }
@@ -95,8 +96,10 @@ public class VampireEntity extends HostileEntity implements GeoEntity {
   @Override
   public boolean tryAttack(final Entity target) {
     if (!(target instanceof LivingEntity victim)
-        || Downed.state(this) != null
-        || !Prey.isPrey(victim) && victim != getAttacker()) {
+        || !Prey.mayBite(
+            Downed.state(this) != null,
+            Prey.isPrey(victim),
+            victim == getTarget() || victim == getAttacker())) {
       return false;
     }
     final NightbornConfig config = ServerConfigService.current();
@@ -114,14 +117,25 @@ public class VampireEntity extends HostileEntity implements GeoEntity {
   }
 
   @Override
+  protected void mobTick() {
+    super.mobTick();
+    if (Downed.state(this) != null && getTarget() != null) {
+      setTarget(null);
+    }
+  }
+
+  @Override
   public EntityData initialize(
       final ServerWorldAccess world,
       final LocalDifficulty difficulty,
       final SpawnReason spawnReason,
       @Nullable final EntityData entityData) {
+    final NightbornConfig config = ServerConfigService.current();
     setLook(random.nextInt(VampireLook.COUNT));
+    VampireCore.tick(this, config.core());
+    setHealth(getMaxHealth());
     if (spawnReason == SpawnReason.NATURAL) {
-      BatEscort.gather(world, this, ServerConfigService.current().mobs().batEscortChance());
+      BatEscort.gather(world, this, config.mobs().batEscortChance());
     }
     return super.initialize(world, difficulty, spawnReason, entityData);
   }

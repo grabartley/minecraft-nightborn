@@ -1,10 +1,17 @@
 package com.grahambartley.nightborn.mob;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
+import net.minecraft.util.Identifier;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.MethodSource;
 
 class VampireLookTest {
 
@@ -39,5 +46,27 @@ class VampireLookTest {
   void clamp(final int given, final int kept) {
     assertEquals(kept, VampireLook.clamp(given));
     assertEquals(kept, VampireLook.of(kept).index());
+  }
+
+  static Stream<Integer> looks() {
+    return IntStream.range(0, VampireLook.COUNT).boxed();
+  }
+
+  @ParameterizedTest(name = "look {0}")
+  @MethodSource("looks")
+  @DisplayName("every look's rig, costume and eye layer ship with the mod")
+  void artShips(final int index) {
+    final VampireLook look = VampireLook.of(index);
+    assertTrue(Files.exists(asset(CLIENT, look.geo())), look.geo().toString());
+    assertTrue(Files.exists(asset(MAIN, look.texture())), look.texture().toString());
+    assertTrue(Files.exists(asset(MAIN, look.eyes())), look.eyes().toString());
+    assertTrue(Files.exists(asset(CLIENT, VampireLook.animation())));
+  }
+
+  private static final Path CLIENT = Path.of("src/client/resources/assets");
+  private static final Path MAIN = Path.of("src/main/resources/assets");
+
+  private static Path asset(final Path root, final Identifier id) {
+    return root.resolve(id.getNamespace()).resolve(id.getPath());
   }
 }

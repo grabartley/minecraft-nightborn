@@ -7,12 +7,14 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.UUID;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.event.player.UseEntityCallback;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
@@ -34,6 +36,16 @@ public final class FeedingSessions {
     ServerTickEvents.END_SERVER_TICK.register(FeedingSessions::tick);
     ServerLifecycleEvents.SERVER_STOPPED.register(server -> clearAll());
     ServerPlayConnectionEvents.DISCONNECT.register((handler, server) -> end(handler.getPlayer()));
+    ServerEntityEvents.ENTITY_UNLOAD.register(
+        (entity, world) -> {
+          if (!(entity instanceof PlayerEntity)) {
+            LAST_FED.remove(entity.getUuid());
+          }
+        });
+  }
+
+  public static void fed(final Entity vampire, final long now) {
+    LAST_FED.put(vampire.getUuid(), now);
   }
 
   public static boolean isFeeding(final Entity vampire) {
@@ -118,7 +130,7 @@ public final class FeedingSessions {
       @Nullable final LivingEntity victim,
       final FeedingSession session,
       final NightbornConfig config) {
-    LAST_FED.put(vampire.getUuid(), vampire.getServerWorld().getTime());
+    fed(vampire, vampire.getServerWorld().getTime());
     Feeder.finish(vampire, victim, session, config);
   }
 

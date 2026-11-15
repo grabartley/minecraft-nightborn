@@ -75,8 +75,7 @@ public final class Downed {
     if (player.getWorld().isClient) {
       return VisibleStateAttachment.get(player).downed();
     }
-    final DownedState state = state(player);
-    return state != null && state.isDowned();
+    return DownedRules.helpless(state(player));
   }
 
   public static void down(

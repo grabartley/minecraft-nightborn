@@ -1,7 +1,8 @@
 package com.grahambartley.nightborn.mob.goal;
 
+import com.grahambartley.nightborn.coffin.CoffinSleepers;
 import com.grahambartley.nightborn.downed.Downed;
-import com.grahambartley.nightborn.mob.DownedMobRules;
+import com.grahambartley.nightborn.downed.DownedRules;
 import com.grahambartley.nightborn.mob.ShadeRules;
 import net.minecraft.entity.ai.goal.EscapeSunlightGoal;
 import net.minecraft.entity.mob.PathAwareEntity;
@@ -27,12 +28,14 @@ public class SeekShadeGoal extends EscapeSunlightGoal {
         world.getDimension().hasFixedTime(),
         world.getTimeOfDay(),
         world.isSkyVisible(BlockPos.ofFloored(mob.getX(), mob.getEyeY(), mob.getZ())),
-        mob.isWet());
+        mob.isWet(),
+        mob.inPowderSnow || mob.wasInPowderSnow,
+        CoffinSleepers.shelteredBy(mob));
   }
 
   @Override
   public boolean canStart() {
-    return !DownedMobRules.helpless(Downed.state(mob)) && exposed(mob) && targetShadedPos();
+    return !DownedRules.helpless(Downed.state(mob)) && exposed(mob) && targetShadedPos();
   }
 
   @Override
@@ -48,13 +51,13 @@ public class SeekShadeGoal extends EscapeSunlightGoal {
     final Random random = mob.getRandom();
     final BlockPos origin = mob.getBlockPos();
     for (int i = 0; i < SEARCH_TRIES; i++) {
-      final BlockPos pos =
-          origin.add(
-              random.nextInt(SEARCH_RADIUS * 2 + 1) - SEARCH_RADIUS,
-              random.nextInt(SEARCH_HEIGHT * 2 + 1) - SEARCH_HEIGHT,
-              random.nextInt(SEARCH_RADIUS * 2 + 1) - SEARCH_RADIUS);
-      if (standsInShade(world, pos)) {
-        return Vec3d.ofBottomCenter(pos);
+      final int dx = random.nextInt(SEARCH_RADIUS * 2 + 1) - SEARCH_RADIUS;
+      final int dz = random.nextInt(SEARCH_RADIUS * 2 + 1) - SEARCH_RADIUS;
+      for (int dy = SEARCH_HEIGHT; dy >= -SEARCH_HEIGHT; dy--) {
+        final BlockPos pos = origin.add(dx, dy, dz);
+        if (standsInShade(world, pos)) {
+          return Vec3d.ofBottomCenter(pos);
+        }
       }
     }
     return null;

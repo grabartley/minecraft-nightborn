@@ -4,11 +4,9 @@ import com.grahambartley.nightborn.blood.BloodAttachment;
 import com.grahambartley.nightborn.blood.BloodBottleItem;
 import com.grahambartley.nightborn.blood.BloodValue;
 import com.grahambartley.nightborn.config.NightbornConfig;
-import com.grahambartley.nightborn.hunter.HunterAttributes;
 import com.grahambartley.nightborn.sickness.BiteSickness;
 import com.grahambartley.nightborn.skill.SkillEarning;
 import com.grahambartley.nightborn.vampire.NightbornDamage;
-import com.grahambartley.nightborn.vampire.Vampires;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.damage.DamageSource;
@@ -138,18 +136,13 @@ final class Feeder {
       final FeedingSession session,
       final NightbornConfig config,
       final Random random) {
-    final boolean firstRoll = session.rollTurnOnce();
-    if (victim instanceof ServerPlayerEntity human
-        && BiteRules.startsSickness(
-            !Vampires.isVampire(human),
-            config.turning().playersCanTurnPlayers(),
-            firstRoll,
-            random.nextInt(100),
-            BiteRules.resistedChance(
-                config.turning().biteTurnChance(),
-                human.getAttributeValue(HunterAttributes.BITE_RESISTANCE)))) {
-      BiteSickness.start(human, config.turning());
-    }
+    BiteSickness.startFromBite(
+        victim,
+        config.turning().biteTurnChance(),
+        config.turning().playersCanTurnPlayers(),
+        session.rollTurnOnce(),
+        random,
+        config.turning());
   }
 
   private static boolean resists(

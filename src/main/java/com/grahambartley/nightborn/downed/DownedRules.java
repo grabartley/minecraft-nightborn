@@ -27,6 +27,14 @@ public final class DownedRules {
     return !killsVampires;
   }
 
+  public static boolean helpless(@Nullable final DownedState state) {
+    return state != null && state.isDowned();
+  }
+
+  public static boolean flees(@Nullable final DownedState state) {
+    return state != null && !state.isDowned();
+  }
+
   public static boolean stakesOnHit(@Nullable final DownedState state, final boolean stakeBlow) {
     return stakeBlow && state != null && state.isDowned();
   }

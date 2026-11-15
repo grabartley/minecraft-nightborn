@@ -1,7 +1,7 @@
 package com.grahambartley.nightborn.mob.goal;
 
 import com.grahambartley.nightborn.downed.Downed;
-import com.grahambartley.nightborn.mob.DownedMobRules;
+import com.grahambartley.nightborn.downed.DownedRules;
 import java.util.EnumSet;
 import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.entity.mob.MobEntity;
@@ -17,7 +17,7 @@ public class LieDownedGoal extends Goal {
 
   @Override
   public boolean canStart() {
-    return DownedMobRules.helpless(Downed.state(mob));
+    return DownedRules.helpless(Downed.state(mob));
   }
 
   @Override

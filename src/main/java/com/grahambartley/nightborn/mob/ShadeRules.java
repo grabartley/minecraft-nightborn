@@ -1,6 +1,7 @@
 package com.grahambartley.nightborn.mob;
 
 import com.grahambartley.nightborn.core.NightTime;
+import com.grahambartley.nightborn.sun.DirectSun;
 
 public final class ShadeRules {
 
@@ -15,7 +16,13 @@ public final class ShadeRules {
   }
 
   public static boolean seeksShade(
-      final boolean fixedTime, final long timeOfDay, final boolean openSky, final boolean wet) {
-    return openSky && !wet && sunIsNear(fixedTime, timeOfDay);
+      final boolean fixedTime,
+      final long timeOfDay,
+      final boolean openSky,
+      final boolean wet,
+      final boolean inPowderSnow,
+      final boolean inClosedCoffin) {
+    return DirectSun.exposed(
+        sunIsNear(fixedTime, timeOfDay), openSky, wet, inPowderSnow, inClosedCoffin);
   }
 }

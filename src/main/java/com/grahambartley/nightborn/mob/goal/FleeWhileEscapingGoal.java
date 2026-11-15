@@ -1,8 +1,9 @@
 package com.grahambartley.nightborn.mob.goal;
 
 import com.grahambartley.nightborn.downed.Downed;
-import com.grahambartley.nightborn.mob.DownedMobRules;
-import com.grahambartley.nightborn.vampire.Vampires;
+import com.grahambartley.nightborn.downed.DownedRules;
+import com.grahambartley.nightborn.downed.DownedState;
+import com.grahambartley.nightborn.mob.Prey;
 import java.util.EnumSet;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.NoPenaltyTargeting;
@@ -30,7 +31,7 @@ public class FleeWhileEscapingGoal extends Goal {
 
   @Override
   public boolean canStart() {
-    if (!DownedMobRules.flees(Downed.state(mob))) {
+    if (!DownedRules.flees(Downed.state(mob))) {
       return false;
     }
     final LivingEntity threat = threat();
@@ -43,7 +44,7 @@ public class FleeWhileEscapingGoal extends Goal {
 
   @Override
   public boolean shouldContinue() {
-    return DownedMobRules.flees(Downed.state(mob)) && !mob.getNavigation().isIdle();
+    return DownedRules.flees(Downed.state(mob)) && !mob.getNavigation().isIdle();
   }
 
   @Override
@@ -61,10 +62,16 @@ public class FleeWhileEscapingGoal extends Goal {
 
   @Nullable
   private LivingEntity threat() {
+    final DownedState state = Downed.state(mob);
+    final LivingEntity hunter =
+        state == null
+            ? null
+            : state.downedBy().map(id -> mob.getWorld().getPlayerByUuid(id)).orElse(null);
+    if (near(hunter)) {
+      return hunter;
+    }
     final LivingEntity attacker = mob.getAttacker();
-    if (attacker != null
-        && attacker.isAlive()
-        && mob.squaredDistanceTo(attacker) < THREAT_RANGE * THREAT_RANGE) {
+    if (near(attacker)) {
       return attacker;
     }
     return mob.getWorld()
@@ -73,10 +80,12 @@ public class FleeWhileEscapingGoal extends Goal {
             mob.getY(),
             mob.getZ(),
             THREAT_RANGE,
-            entity ->
-                entity instanceof PlayerEntity player
-                    && !player.isSpectator()
-                    && !player.isCreative()
-                    && !Vampires.isVampire(player));
+            entity -> entity instanceof PlayerEntity player && Prey.isPrey(player));
+  }
+
+  private boolean near(@Nullable final LivingEntity threat) {
+    return threat != null
+        && threat.isAlive()
+        && mob.squaredDistanceTo(threat) < THREAT_RANGE * THREAT_RANGE;
   }
 }

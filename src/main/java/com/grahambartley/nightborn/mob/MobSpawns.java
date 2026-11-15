@@ -2,9 +2,7 @@ package com.grahambartley.nightborn.mob;
 
 import com.grahambartley.nightborn.Nightborn;
 import com.grahambartley.nightborn.server.ServerConfigService;
-import java.util.function.Predicate;
 import net.fabricmc.fabric.api.biome.v1.BiomeModifications;
-import net.fabricmc.fabric.api.biome.v1.BiomeSelectionContext;
 import net.fabricmc.fabric.api.biome.v1.BiomeSelectors;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.SpawnGroup;
@@ -36,16 +34,14 @@ public final class MobSpawns {
 
   static void register() {
     BiomeModifications.addSpawn(
-        BiomeSelectors.tag(SPAWNS_VAMPIRES)
-            .and(alreadySpawns(SpawnGroup.MONSTER, EntityType.ZOMBIE)),
+        BiomeSelectors.tag(SPAWNS_VAMPIRES),
         SpawnGroup.MONSTER,
         NightbornMobs.VAMPIRE,
         VAMPIRE_WEIGHT,
         1,
         1);
     BiomeModifications.addSpawn(
-        BiomeSelectors.tag(SPAWNS_VAMPIRE_BATS)
-            .and(alreadySpawns(SpawnGroup.AMBIENT, EntityType.BAT)),
+        BiomeSelectors.tag(SPAWNS_VAMPIRE_BATS),
         SpawnGroup.AMBIENT,
         NightbornMobs.VAMPIRE_BAT,
         VAMPIRE_BAT_WEIGHT,
@@ -61,13 +57,6 @@ public final class MobSpawns {
         SpawnLocationTypes.ON_GROUND,
         Heightmap.Type.MOTION_BLOCKING_NO_LEAVES,
         MobSpawns::batCanSpawn);
-  }
-
-  private static Predicate<BiomeSelectionContext> alreadySpawns(
-      final SpawnGroup group, final EntityType<?> type) {
-    return context ->
-        context.getBiome().getSpawnSettings().getSpawnEntries(group).getEntries().stream()
-            .anyMatch(entry -> entry.type == type);
   }
 
   static boolean vampireCanSpawn(
