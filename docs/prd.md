@@ -16,11 +16,12 @@ Minecraft has no vampires, and nothing that hunts them. Its undead are mindless 
 
 ### What The Mod Is
 
-Nightborn adds vampires and the people who hunt them. A bite from a vampire or a vampire bat starts a sickness, and if it is not cured in time you turn. As a vampire you live on blood, sleep through the day in a coffin, and nothing but direct sun or a stake can finish you. Anything else only brings you down. You grow through a skill tree and pick two of three bloodlines: Noble, Beast and Occult. Each gives powers the others do not, such as bat form, mesmerising, thralls and ghostly familiars. Humans can fight back. Garlic, crucifixes, holy water, silver and the stake all hurt vampires, and every human earns hunter skills by killing them. Vampires are rare. They live in households hidden in castles, crypts, ruined manors and deep lairs, wrapped in fog, and hunters keep camps of their own.
+Nightborn adds vampires and the people who hunt them. A bite from a vampire or a vampire bat starts a sickness, and if it is not cured in time you turn. As a vampire you live on blood, sleep through the day in a coffin, and nothing but direct sun or a stake can finish you. Anything else only brings you down. You grow through a skill tree and pick two of three bloodlines: Noble, Beast and Occult. Each gives powers the others do not, such as bat form, mesmerising, thralls and ghostly familiars. Humans can fight back. Garlic, crucifixes, holy water, silver and the stake all hurt vampires, and every human earns hunter skills by killing them. Vampires are rare. They live in households hidden in castles, crypts, ruined manors and deep lairs, wrapped in fog, and hunters keep camps of their own. Each vampire is someone: a look, a voice, a stage of age and powers of its own. A hunter who gathers a relic from every kind of vampire structure can summon the Eldest, a vampire with every power, again and again.
 
 ### Experience It Aims For
 
 - **The night is dangerous again.** Vampires are rare, so meeting one matters.
+- **Every vampire is someone.** Wild vampires have a home, a routine, a look and powers of their own. An old one is a fast, frightening fight that pays well.
 - **Being a vampire changes how you play.** Sun, blood, garlic and the coffin shape every day.
 - **Two sides, one server.** Vampires and hunters are real factions, and players choose which to be.
 - **Choices stick.** A bloodline, once chosen, is yours. A turned player stays turned.
@@ -33,12 +34,14 @@ Nightborn adds vampires and the people who hunt them. A bite from a vampire or a
 | Claim | Why it holds |
 |---|---|
 | Both sides are playable | Turning, feeding and bloodlines for vampires, gear and a skill tree for hunters (TURN, FEED, LINE, HUNT) |
-| Feeding is a real choice | Sip or drain, fresh or bottled, animal or person, and the victim can fight back (FEED-1 to FEED-13) |
-| Builds that fit your playstyle | Pick two of three bloodlines, each with its own powers (LINE-1 to LINE-6) |
+| Feeding is a real choice | Sip or drain, fresh or bottled, animal or person, and the victim can fight back (FEED-1 to FEED-14) |
+| Builds that fit your playstyle | Pick two of three bloodlines, each with its own powers (LINE-1 to LINE-7) |
 | Vampires are hard to kill | Only direct sun or a stake finishes one. Anything else only brings it down (CORE-7, CORE-8) |
 | Folklore that works | Garlic, crucifixes built from blocks, holy water, silver and stakes each have real rules (WEAK-1 to WEAK-10) |
-| Vampires live somewhere | Households with personalities in four kinds of structure, rare and hidden in fog (HOME-1 to HOME-13) |
-| The day belongs to vampires too | Coffins skip the day the way beds skip the night (COFFIN-1 to COFFIN-8) |
+| Vampires live somewhere | Households with personalities in four kinds of structure, rare and hidden in fog. Vampires live there, go out to feed and come home by dawn (HOME-1 to HOME-20) |
+| Vampires fight like players | Wild vampires grow in stages and use every power a player can, more often and more cleverly the older they are (HOME-15 to HOME-17) |
+| The day belongs to vampires too | Coffins skip the day the way beds skip the night (COFFIN-1 to COFFIN-12) |
+| An endgame for hunters | A repeatable ritual summons the Eldest, a boss with every vampire power (RITE-1 to RITE-8) |
 | Help in the daylight | A human familiar runs errands and guards your coffin, and might betray you (FAM-1 to FAM-8) |
 
 ### Non-Goals
@@ -65,7 +68,7 @@ This document specifies the Nightborn alpha line for Minecraft 1.21.1 on Fabric.
 
 | Out | Why |
 |---|---|
-| Vampire raids on villages | Structures and night spawns carry the world first |
+| Vampire raids on villages | Structures and their households carry the world first |
 | Mirrors that show no reflection | Not chosen for the first set |
 | Vampires needing an invitation to enter a home | Needs a notion of home ownership, which the mod does not have |
 | Changing bloodlines once chosen | Choices are meant to stick. A reset can come later if play shows the need |
@@ -117,7 +120,7 @@ This document specifies the Nightborn alpha line for Minecraft 1.21.1 on Fabric.
 | Sip | Feeding that stops before the victim dies |
 | Drain | Feeding until the victim dies |
 | Resist | A victim breaking free of a bite |
-| Weakened | The vampire debuff from garlic, crucifixes, holy water, being downed and escaping: slower, weaker blows and no powers. It is not the vanilla Weakness effect |
+| Weakened | The vampire debuff from garlic, crucifixes, holy water, starving, being downed and escaping: slower, weaker blows and no powers. It is not the vanilla Weakness effect |
 | Skill point | Earned by a vampire through feeding, or by a hunter through killing vampires. Spent on a skill tree |
 | Core | The vampire skills every vampire can take |
 | Bloodline | One of three branches of the vampire tree: Noble, Beast or Occult |
@@ -128,12 +131,16 @@ This document specifies the Nightborn alpha line for Minecraft 1.21.1 on Fabric.
 | Downed | A vampire brought to its last health by anything but direct sun or a stake. It lies helpless and greatly weakened until it recovers |
 | Escaping | The minute after a downed vampire gets up, when only direct sun and a stake can hurt it and it stays weakened, so it can get away |
 | Staked | Killed by a stake: a wooden or silver-tipped stake, or a stake bolt, hitting a downed vampire, or striking the blow that would bring a vampire down |
-| Coffin | A block that is a vampire's bed and respawn point |
+| Coffin | A block, lying flat or standing upright, that is a vampire's bed and respawn point |
 | Thrall | A villager a Noble vampire has bound to follow and fight for them |
 | Ghostly familiar | A spirit an Occult vampire summons to fight and do tasks |
 | Human familiar | A villager hired as a vampire's daytime servant |
 | Loyalty | How a human familiar feels about its owner, from 0 to 100 |
 | Household | The vampires who live in one vampire structure |
+| Stage | How old and strong a vampire mob is: fledgling, adult, elder or ancient |
+| Hungry | A vampire mob whose blood has fallen below its hunger threshold |
+| Relic | A rare item found in one kind of vampire structure, used in the ritual |
+| The Eldest | A boss vampire with every vampire skill, summoned only by the ritual |
 | Vampire structure | A castle, crypt, ruined manor or underground lair, home to a household |
 | Hunter camp | A generated camp of hunter mobs, home to a Guild Master |
 | Faction | Vampire or human. Every player is in exactly one |
@@ -207,8 +214,8 @@ Sneak and use on a creature to bite it, and keep holding to drink. Let go to sto
 | ID | Requirement |
 |---|---|
 | FEED-1 | A vampire has a blood bar in place of hunger. It drains over time and faster when the vampire runs, fights or uses powers |
-| FEED-2 | An empty blood bar hurts the vampire as an empty hunger bar does, and a full one heals |
-| FEED-3 | Normal food restores no blood. A vampire can still eat it, for no gain |
+| FEED-2 | An empty blood bar starves the vampire (FEED-14), and a full one heals |
+| FEED-3 | Normal food, potions and milk give a vampire nothing. A vampire who eats or drinks one is hurt and vomits it back up, with a short spell of Nausea, seen and heard by everyone near. Blood Bottles, holy water and items in the `nightborn:vampire_consumables` tag are exempt |
 | FEED-4 | Feeding drinks blood from the victim each second, and hurts it by the same amount |
 | FEED-5 | Letting go stops the bite and leaves the victim alive, with Weakness for a short time |
 | FEED-6 | Holding past the victim's last health drains it, and it dies |
@@ -219,6 +226,7 @@ Sneak and use on a creature to bite it, and keep holding to drink. Let go to sto
 | FEED-11 | A Blood Bottle keeps the quality of the creature it came from, and shows it |
 | FEED-12 | Feeding earns vampire skill points from the blood drunk, weighed by its quality, with a bonus for draining. Filling Blood Bottles counts as feeding |
 | FEED-13 | A villager that sees a vampire feed panics and flees, rings the village bell, and the village treats the vampire as it treats a player who hurt a villager, through vanilla gossip. A villager that sees nothing acts as normal |
+| FEED-14 | A starving vampire grows more weakened over time, up to the cap (WEAK-9). Its powers and levitation stop, then its night speed and jump fade, and its bare-hand damage shrinks. After a while it loses health slowly, down to half a heart on any difficulty but Peaceful. Starving never downs or kills a vampire. Any blood stops it growing, and the weakness fades as the bar refills
 
 **Not supported:** feeding on the list's excluded creatures; feeding through blocks; a human drinking blood.
 
@@ -249,7 +257,7 @@ How weakened a vampire is scales with how strong the source is.
 |---|---|
 | WEAK-1 | Each Garlic String weakens vampires within 8 blocks. More strings in range weaken more, up to a cap |
 | WEAK-2 | Touching garlic, by walking through garlic crops or brushing a Garlic String, or holding garlic, weakens a vampire greatly, far more than a string in range |
-| WEAK-3 | Holding a Crucifix weakens vampires within 6 blocks who can see it, and stops them biting the holder |
+| WEAK-3 | Holding a Crucifix in either hand weakens and slows vampires within 6 blocks who can see it, players and mobs alike, and stops them biting the holder |
 | WEAK-4 | A crucifix shape in the world weakens vampires within 8 blocks who can see it |
 | WEAK-5 | Holy water hurts vampires and weakens them for a short time, whether splashed, lingering or fired as a bolt. It does nothing to anyone else |
 | WEAK-6 | Silver weapons deal extra damage to vampires, and only to vampires |
@@ -280,8 +288,9 @@ Every vampire has the core, whatever bloodlines they choose.
 | CORE-8 | A vampire brought to its last health by anything else is downed: it collapses, cannot move, attack, feed or use items or powers, and is weakened at the cap (WEAK-9). It takes no damage from anything but sun and a stake while downed. After 30 seconds by default it gets up with 20% of its health, wherever it lies. More damage does not reset the time. Everyone near can see and hear that it is downed. It then escapes for 1 minute by default: it takes no damage but sun and a stake, stays weakened at the cap and can move freely. Vampire mobs flee while escaping |
 | CORE-9 | Phantoms never spawn for a vampire player and never target a vampire, and time a vampire spends awake never counts toward them |
 | CORE-10 | With the `hardcoreVampireDeath` server setting on, off by default, a vampire player who dies is reset like a hardcore death: they come back as a new human at world spawn with an empty inventory and ender chest, no experience, no skills, bloodlines or hunter tree, no coffin respawn point, and their thralls and familiars freed. Advancements are kept |
+| CORE-11 | Every vampire, player or mob, can levitate. Players toggle it with a key they can rebind. A levitating vampire floats one block above the ground with its feet together, follows the ground up steps and slopes and over water, and sinks slowly over a drop without fall damage. It leans forward to move and further to sprint, never fully horizontal, with arms spreading as it speeds up, and lands with its own animation. It drains blood while active. A weakened or downed vampire, or one in bat form, cannot levitate and lands at once |
 
-**Not supported:** a vampire hiding its eyes while feeding.
+**Not supported:** a vampire hiding its eyes while feeding; levitating higher than one block.
 
 **Enforcement:** server decides state. The client draws eyes and effects.
 
@@ -289,7 +298,7 @@ Every vampire has the core, whatever bloodlines they choose.
 
 **Actor:** Vampire.
 
-The vampire tree has the core and three bloodlines. A vampire spends points in at most two bloodlines, so each vampire is a different kind of vampire.
+The vampire tree has the core and three bloodlines. A vampire player spends points in at most two bloodlines, so each vampire is a different kind of vampire. Vampire mobs are not bound by this (HOME-15).
 
 | Bloodline | What it gives |
 |---|---|
@@ -306,7 +315,8 @@ The core starts with Thick Blood (more health), Grave Strength (harder blows) an
 | LINE-3 | A chosen bloodline cannot be swapped, except by an operator (CFG-8) |
 | LINE-4 | Every bloodline has skills a vampire without it cannot get |
 | LINE-5 | Each skill shows what it does, what it costs and what it needs first, before it is bought |
-| LINE-6 | The skill screen opens with a key, and shows points earned, spent and free |
+| LINE-6 | The skill screen opens with a key, and shows free points with a skill point graphic, readable at a glance, and points earned and spent |
+| LINE-7 | The vampire and hunter skill screens are styled, each with its own look: background, frames, lines, headers, tooltips and point graphic. Neither is a plain menu |
 
 | ID | Requirement |
 |---|---|
@@ -380,7 +390,7 @@ The hunter tree starts with Tracking, an active power that points toward the nea
 
 | ID | Requirement |
 |---|---|
-| HUNT-1 | Any human player earns hunter points by staking vampire mobs and vampire players, or by downing one that the sun finishes before its escape ends. Downing alone earns nothing. No pledge is needed |
+| HUNT-1 | Any human player earns hunter points by staking vampire mobs and vampire players, or by downing one that the sun finishes before its escape ends. Downing alone earns nothing. No pledge is needed. The Eldest also pays hunters, as RITE-6 says |
 | HUNT-2 | Contracts from the Guild Master earn hunter points as well as their reward |
 | HUNT-3 | The hunter tree is one shared tree for all humans |
 | HUNT-4 | Hunter skills cover tracking vampires, resisting bites and mesmerise, and faith powers that make crucifixes and holy water stronger |
@@ -432,17 +442,24 @@ Vampires are rare. They live in households hidden in four kinds of structure, ea
 | HOME-2 | Each structure holds several vampires |
 | HOME-3 | Each type has several layouts, chosen at random |
 | HOME-4 | Fog hangs around and inside every vampire structure, thicker near its heart |
-| HOME-5 | A household feels lived in: its vampires have their own personality, routine and hobbies, talk to and argue with each other, and react to each other's deaths |
+| HOME-5 | A household feels lived in: its vampires have their own personality and hobbies, talk to and argue with each other, react to each other's deaths, follow a nightly routine and use the furniture of their home: chairs, candles, drapes, books and gramophones |
 | HOME-6 | Household vampires sleep in coffins by day and wake at dusk |
 | HOME-7 | A castle's vampire lord is a boss with a health bar and its own powers. It is downed and escapes like any vampire, its bar shows when it is downed or escaping, and only a stake or the sun ends the fight |
-| HOME-8 | Structures hold loot chests with gear, Blood Bottles, decor and rare items found nowhere else |
-| HOME-9 | Vampire mobs spawn rarely at night in the open, alone or with one or two vampire bats |
+| HOME-8 | Structures hold loot chests with gear, Blood Bottles, decor, gothic music discs (DECOR-8), relics (RITE-1) and rare items found nowhere else |
+| HOME-9 | Vampire mobs live only in vampire structures, as members of a household. Each remembers its structure and its own coffin. They never spawn at random anywhere else, and never despawn |
 | HOME-10 | Vampire bats spawn rarely in dark caves and at night. Under cover, or at night in the open, they swoop at warm-blooded creatures and bite them (TURN-1) |
-| HOME-11 | Vampire mobs ignore vampire players unless attacked |
-| HOME-12 | Structure layouts, loot, structure spawn rates and the biomes vampire mobs and vampire bats spawn in are data, changed by a data pack |
-| HOME-13 | Vampire mobs hunt humans, villagers and animals at night to feed on them, and their bites can start bite sickness (TURN-1) |
+| HOME-11 | Vampire mobs attack only when hungry or provoked. Being hurt, or a housemate being hurt nearby, provokes them. A fed vampire may watch, follow or warn off a stranger, but does not attack. They ignore vampire players unless provoked |
+| HOME-12 | Structure layouts, loot, relic chances, structure spawn rates, vampire stages and their odds per structure type, the skills vampire mobs pick, their looks, sizes, builds and outfits, and the biomes vampire bats spawn in are data, changed by a data pack |
+| HOME-13 | Vampire mobs have blood that drains over time. A hungry vampire may leave its structure at night to hunt humans, villagers and animals within a range of home. Not every vampire leaves every night, so a household is rarely empty. Each heads back in time to reach its coffin by dawn. One caught out at dawn seeks shade (SUN-4). Their bites can start bite sickness (TURN-1) |
+| HOME-14 | A provoked vampire gives up the chase past a range from its structure and goes home |
+| HOME-15 | Each vampire mob has a stage, fledgling, adult, elder or ancient, which sets its health, speed, damage, how many skills it has and how much blood it can spend on powers. Its skills come from the vampire tree and, unlike a player's, may come from all three bloodlines. The older a vampire and the more skills it has, the rarer it is, the harder it fights, and the more hunter points (HUNT-1) and the better loot it gives. Only the Eldest has every skill (RITE-3) |
+| HOME-16 | A vampire mob uses every power a player with the same skills could use, with the same blood costs, cooldowns and weaknesses, through the same code. It fights like a skilled player: closing fast, leaping, dodging, mesmerising and taking bat form, and pulling back to recover. Older stages use more powers, and use them more cleverly |
+| HOME-17 | Every power a vampire mob uses has a clear tell in sight and sound just before it lands, never colour alone (ACC-1) |
+| HOME-18 | Vampire mobs are men and women in at least 10 looks, from 1.5 to 2 blocks tall in slim, average and broad builds. Their hitbox, eye height and reach follow their size. Outfits are chosen by era (LOOK-4). A vampire keeps its look and size for life, the same on every client, and an older stage reads as older |
+| HOME-19 | Vampire mobs bare their fangs and hiss, with animation and sound, when they notice a threat, are provoked, face garlic or a crucifix, or are about to strike. They have their own idle, hurt, death, talk and argue voices, male and female, pitched by size |
+| HOME-20 | Vampire structures hold gramophones loaded with gothic music discs (DECOR-8). Each starts its disc now and then while a player is near, and its disc can be taken. A gramophone's music never plays over other music the mod or the game plays for the same player |
 
-**Not supported:** a household rebuilding after it is cleared.
+**Not supported:** a household rebuilding after it is cleared; vampire mobs spawning outside their structures.
 
 **Enforcement:** server.
 
@@ -452,14 +469,18 @@ Vampires are rare. They live in households hidden in four kinds of structure, ea
 
 | ID | Requirement |
 |---|---|
-| COFFIN-1 | A coffin opens and closes, and a vampire can lie in it by day, from dawn to dusk whatever the weather, as a human lies in a bed by night. Using it lies a vampire down; a human, or a vampire who sneaks with an empty hand, opens or shuts the lid instead. The lid shuts over a vampire who lies down, opens when they rise, and stays shut while someone is inside. It softens a fall like a bed, but nothing bounces off its lid. Two cells long, it is crafted like a bed from planks with red wool for the lining and a gold nugget for the fittings |
+| COFFIN-1 | A coffin opens and closes, and a vampire can lie in it by day, from dawn to dusk whatever the weather, as a human lies in a bed by night. Using it lies a vampire down; a human, or a vampire who sneaks with an empty hand, opens or shuts the lid instead. The lid shuts over a vampire who lies down, opens when they rise, and stays shut while someone is inside unless a player opens it (COFFIN-9). It softens a fall like a bed, but nothing bounces off its lid. Two cells long, or two cells tall when standing (COFFIN-10), it is crafted like a bed from planks with red wool for the lining and a gold nugget for the fittings |
 | COFFIN-2 | Enough vampires sleeping in coffins skips the day to dusk, as beds skip the night to dawn |
 | COFFIN-3 | The share of vampire players who must sleep is a server option, 100% by default. Only vampire players online in that dimension count. With none online, nothing skips the day |
 | COFFIN-4 | Lying in a coffin sets the vampire's respawn point there, as a bed does |
 | COFFIN-5 | A vampire whose coffin is gone respawns at world spawn, as with a missing bed |
 | COFFIN-6 | A human can open a coffin but not sleep in it |
-| COFFIN-7 | A closed coffin shades the vampire inside from the sun, smothers any flames they carry in, and hides them from view |
+| COFFIN-7 | A closed coffin shades the vampire inside from the sun, smothers any flames they carry in, and hides them from view. An open one does none of these |
 | COFFIN-8 | Vampire players never count toward the bed share, and humans never count toward the coffin share, so neither side blocks the other's sleep |
+| COFFIN-9 | Any player can sneak and use an occupied coffin with an empty hand to open or shut its lid. An open lid shows the vampire inside and no longer shades them, so direct sun reaches them (SUN-1). The vampire, player or mob, sleeps on until hurt. Using it without sneaking does not open it (COFFIN-1), and a second vampire cannot lie down in it (CS-2) |
+| COFFIN-10 | A coffin placed while sneaking stands upright, two cells tall, its back to the block behind and its lid facing the player who placed it. A standing coffin follows every coffin rule, a vampire sleeps in it standing, and one who respawns at it stands on the floor in front of it |
+| COFFIN-11 | A vampire asleep in a coffin, player or mob, lies or stands with arms crossed over the chest |
+| COFFIN-12 | A vampire waking in a flat coffin rises rigid, pivoting up from the heels until upright, then steps off. One waking in a standing coffin steps forward out of it. It cannot move until it stands clear, damage does not cancel the rise, and it always ends on a safe free cell next to the coffin |
 
 **Enforcement:** server.
 
@@ -473,12 +494,15 @@ Vampires are rare. They live in households hidden in four kinds of structure, ea
 | DECOR-2 | Gothic building blocks in stone and dark wood: gothic stone bricks in plain, cracked and mossy forms with stairs, slabs and walls, carved gothic stone, and ebony planks with stairs, slabs and a fence |
 | DECOR-3 | Blood decor: blood fountains, blood pools, placeable splatter decals and chalices |
 | DECOR-4 | Hunter decor: weapon racks, wanted posters, trophy mounts and crucifixes |
-| DECOR-5 | Coffins in several woods: oak, spruce, dark oak, mangrove, cherry and crimson, each drawn with that wood's own planks |
+| DECOR-5 | Coffins in several woods: oak, spruce, dark oak, mangrove, cherry and crimson, each drawn with that wood's own planks, and each able to lie flat or stand (COFFIN-10) |
 | DECOR-6 | Candles, candelabras and chandeliers light the room. Flint and steel or a fire charge lights them and an empty hand puts them out, and every light, douse, opening and closing plays its own animation |
+| DECOR-7 | A gramophone, crafted from a jukebox, gold ingots and ebony planks and facing the player who placed it, plays any music disc as a jukebox does, with the same hopper, redstone and comparator behaviour, and animates while it plays |
+| DECOR-8 | Gothic music discs, one per track, play in a gramophone or a jukebox. They are found only in vampire structures: in their loot and in their gramophones (HOME-20) |
 | WEAR-1 | Capes and gothic clothing, each in a male and a female cut |
 | WEAR-2 | Clothing is worn in the armour slots and shows over armour |
 | WEAR-3 | Clothing takes enchantments the mod adds, which give small powers, from an enchanting table or anvil |
 | WEAR-4 | Clothing can be dyed where its colour is part of the look |
+| WEAR-5 | Every outfit a vampire mob wears is made of clothing a player can craft |
 
 **Enforcement:** server.
 
@@ -490,7 +514,7 @@ Vampires are rare. They live in households hidden in four kinds of structure, ea
 |---|---|
 | GORE-1 | Bites, stakes and silver hits spray blood. Blood leaves splatter on nearby blocks, drawn by the client, that fades with time |
 | GORE-2 | A drained victim and a staked vampire have their own death effects |
-| GORE-3 | A client option sets gore to Full, Reduced or Off. Full is the default |
+| GORE-3 | A client option sets gore, including vomit particles (FEED-3), to Full, Reduced or Off. Full is the default |
 | GORE-4 | Gore is drawn by the client only. The setting never changes what happens in the world |
 
 **Enforcement:** server decides what happens. The client decides how much blood to draw.
@@ -518,7 +542,7 @@ Vampires are rare. They live in households hidden in four kinds of structure, ea
 | CFG-2 | Settings are saved per world as JSON in the world save directory |
 | CFG-3 | A missing file gives defaults. A broken file gives defaults, is logged and is kept |
 | CFG-4 | Out-of-range values are clamped on load |
-| CFG-5 | Options cover turn chances, sickness length, sun damage, blood drain and values, garlic and crucifix ranges, skill point rates, the staking penalty, stake and silver damage, the downed and escape times, the coffin sleep share, hardcore vampire deaths, spawn and structure rates, and whether players can turn players |
+| CFG-5 | Options cover turn chances, sickness length, sun damage, blood drain and values, garlic and crucifix ranges, skill point rates, the staking penalty, stake and silver damage, the downed and escape times, the damage from vomiting food or potions, the blood drain while levitating, how fast starving weakens and hurts, the coffin sleep share, hardcore vampire deaths, spawn and structure rates, vampire mob hunger threshold and blood drain, feeding range and chase range, how often structure gramophones play, the rewards for older vampires and the Eldest, and whether players can turn players |
 | CFG-6 | A settings screen through Mod Menu shows the same server options and shares their validation with the commands |
 | CFG-7 | An option that only changes what one player sees, such as gore, is a client setting saved on that player's device. Every player can change it on the settings screen, whatever their operator level |
 | CFG-8 | Operators can turn, cure, set points and reset the bloodlines of any player |
@@ -566,6 +590,27 @@ The mod has its own tab. It branches early into three paths, Vampire, Hunter and
 
 **Enforcement:** server.
 
+### 5.20 Summon The Eldest
+
+**Actor:** Human, hunter.
+
+The Eldest is the oldest vampire there is, with every power of every bloodline. It appears only when the ritual calls it. A hunter who has raided every kind of vampire structure brings one relic from each to a ritual altar at night, and the Eldest comes.
+
+| ID | Requirement |
+|---|---|
+| RITE-1 | Each vampire structure type has a relic of its own: a castle, a crypt, a ruined manor and an underground lair. It has a chance to be found in that structure's loot or dropped by its older vampires |
+| RITE-2 | A ritual altar is crafted. Placing one relic of every type on it and using it at night starts the ritual, with a build-up everyone near can see and hear |
+| RITE-3 | The ritual summons the Eldest beside the altar: a vampire with every skill in the vampire tree, all three bloodlines at once, using every power as HOME-16 says. It has a boss bar, and is a boss for MIND-4. Its health grows with the number of players near |
+| RITE-4 | The Eldest is downed and escapes like any vampire, and only a stake or the sun ends it (CORE-7, CORE-8). Its bar shows when it is downed or escaping |
+| RITE-5 | The ritual uses up the relics. The altar can be used again with a new set, so the fight can be repeated |
+| RITE-6 | Ending the Eldest gives a large number of hunter points to every human who took part in the fight, and loot found nowhere else |
+| RITE-7 | Only a human can start the ritual. The Eldest attacks humans, and ignores vampire players unless they attack it (HOME-11). Vampire players can fight on either side as the PvP setting allows (FACT-2) |
+| RITE-8 | The Eldest is not the castle's vampire lord (HOME-7). It appears only through the ritual |
+
+**Not supported:** summoning the Eldest any other way.
+
+**Enforcement:** server.
+
 ## 6. Permissions
 
 A modified client is assumed. Hiding a control is never the enforcement of a rule. Coffins, decor and structure blocks have no owner, as a placed bed has none. Thralls and familiars have one owner.
@@ -579,7 +624,10 @@ A modified client is assumed. Hiding a control is never the enforcement of a rul
 | Earn and spend hunter points | Yes | No | No | Through CFG-8 |
 | Earn and spend vampire points | No | Yes | Yes | Through CFG-8 |
 | Sleep in a coffin | No | Yes | Yes | Yes, as a vampire |
-| Break or open a coffin | Yes | Yes | Yes | Yes |
+| Break a coffin | Yes | Yes | Yes | Yes |
+| Open an empty coffin | Yes | Yes | Yes | Yes |
+| Open an occupied coffin | Yes, sneaking with an empty hand | Yes, sneaking with an empty hand | Yes, sneaking with an empty hand | Yes, sneaking with an empty hand |
+| Start the ritual | Yes | No | No | Yes, as a human |
 | Command a thrall or familiar | No | Only their own | Only their own | No |
 | Hurt a thrall or familiar | Yes | Yes | Yes | Yes |
 | Trade or take contracts at a hunter camp | Yes | No | No | Yes, as a human |
@@ -611,6 +659,7 @@ There is no singleplayer mode in this mod. A single-player world is an integrate
 | Household behaviour and structures | Draws fog and plays ambience |
 | Who is on which map | Draws the map it is sent |
 | Gore events | Decides how much gore to draw (GORE-3) |
+| Coffin lids and who sleeps inside, levitation, vomiting, vampire mob powers, the ritual and the Eldest | Draws the lids, sleepers, poses, tells, vomit and the ritual build-up, with vomit scaled by GORE-3 |
 
 ### Concurrency
 
@@ -647,7 +696,7 @@ There is no singleplayer mode in this mod. A single-player world is an integrate
 | SAFE-2 | Blood is never created except by feeding (FEED-4), turning (TURN-5) and respawning, as the persistence grid says |
 | SAFE-3 | A bad config file never stops a server starting (CFG-3, CFG-4) |
 | SAFE-4 | Every payload is size-limited and checked, including skill purchases and familiar orders |
-| SAFE-5 | Skill points are never created except by FEED-12, HUNT-1, HUNT-2 and CFG-8 |
+| SAFE-5 | Skill points are never created except by FEED-12, HUNT-1, HUNT-2, RITE-6 and CFG-8 |
 
 ### Performance
 
@@ -673,7 +722,10 @@ There is no singleplayer mode in this mod. A single-player world is an integrate
 | Coffin respawn | kept | kept | kept, except CORE-10 | kept | kept to the last save |
 | Thralls and familiars | kept with their chunk | kept | kept, waiting (MIND-8), except CORE-10 | kept | kept to the last save |
 | Human familiar loyalty | kept | kept | kept | kept | kept to the last save |
-| Household members and state | kept | kept | not applicable | not applicable | kept to the last save |
+| Household members and state, including members out feeding | kept | kept | not applicable | not applicable | kept to the last save |
+| A vampire mob's stage, skills, look, size, blood and hunger | kept | kept | not applicable | not applicable | kept to the last save |
+| Relics placed on a ritual altar | kept | kept | not applicable | not applicable | kept to the last save |
+| A summoned Eldest and its fight | kept with its chunk | kept | not applicable | not applicable | kept to the last save |
 | Contracts in progress | not applicable | kept | kept | kept | kept to the last save |
 | Settings | not applicable | kept | not applicable | not applicable | written atomically |
 
@@ -696,7 +748,7 @@ There is no singleplayer mode in this mod. A single-player world is an integrate
 | ID | Requirement |
 |---|---|
 | ACC-1 | No state relies on colour alone: weakness, sickness and blood quality each have a shape or icon as well |
-| ACC-2 | No meaning relies on particles alone. Sun damage, bat form and weakness all have sound and an on-screen sign |
+| ACC-2 | No meaning relies on particles alone. Sun damage, bat form, weakness and vomiting all have sound and an on-screen sign |
 | ACC-3 | Gore can be reduced or turned off (GORE-3) |
 | ACC-4 | Fog never hides a threat completely within 8 blocks |
 | ACC-5 | Every string is translated into every shipped language |
@@ -709,7 +761,7 @@ There is no singleplayer mode in this mod. A single-player world is an integrate
 | COMPAT-2 | Mod Menu, JEI and EMI are optional. Without them, the mod works fully |
 | COMPAT-3 | Nightborn needs no other mod in the family |
 | COMPAT-4 | Vanilla undead behave as they do without the mod, except CORE-9, and beds and night sleeping work as normal for humans |
-| COMPAT-5 | Feeding lists, crucifix materials, structures, loot and trades can be changed by data packs |
+| COMPAT-5 | Feeding lists, crucifix materials, the foods and drinks a vampire can keep down, structures, loot, relic chances, trades, and vampire mob stages, skills, looks, sizes, builds and outfits can be changed by data packs |
 | COMPAT-6 | Shipped languages: English, German, Spanish, French, Brazilian Portuguese, Russian and Simplified Chinese |
 | COMPAT-7 | Every declared dependency is used |
 
