@@ -8,6 +8,7 @@ import java.util.Optional;
 import java.util.function.Predicate;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.structure.StructureStart;
+import net.minecraft.util.math.BlockBox;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.chunk.Chunk;
@@ -34,17 +35,22 @@ public final class VampireStructureStarts {
     return starts;
   }
 
-  public static boolean contain(
+  public static boolean anyContains(
       final ServerWorld world, final BlockPos pos, final Predicate<VampireStructure> which) {
     return loaded(world, pos.getX() >> 4, pos.getZ() >> 4)
         .map(chunk -> referencedBy(world, chunk))
         .orElse(List.of())
         .stream()
+        .filter(start -> which.test((VampireStructure) start.getStructure()))
         .anyMatch(
             start ->
-                which.test((VampireStructure) start.getStructure())
-                    && start.getChildren().stream()
-                        .anyMatch(piece -> piece.getBoundingBox().contains(pos)));
+                anyHolds(
+                    start.getChildren().stream().map(piece -> piece.getBoundingBox()).toList(),
+                    pos));
+  }
+
+  static boolean anyHolds(final List<BlockBox> pieces, final BlockPos pos) {
+    return pieces.stream().anyMatch(box -> box.contains(pos));
   }
 
   static Optional<Chunk> loaded(final ServerWorld world, final int x, final int z) {

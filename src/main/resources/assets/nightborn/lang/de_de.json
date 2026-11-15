@@ -379,7 +379,7 @@
   "nightborn.setting.mobs.vampireSpawnChance": "Vampir-Spawnchance (%)",
   "nightborn.setting.mobs.vampireSpawnChance.tooltip": "Anteil der nächtlichen Spawns im Freien, die einen Vampir bringen können. 0 verhindert ihr Erscheinen",
   "nightborn.setting.mobs.vampireBatSpawnChance": "Vampirfledermaus-Spawnchance (%)",
-  "nightborn.setting.mobs.vampireBatSpawnChance.tooltip": "Anteil der Spawns in dunklen Höhlen und bei Nacht, die eine Vampirfledermaus bringen können. 0 verhindert ihr Erscheinen",
+  "nightborn.setting.mobs.vampireBatSpawnChance.tooltip": "Anteil der Spawns in dunklen Höhlen unter dem Meeresspiegel und in Vampirbauten, die eine Vampirfledermaus bringen können. 0 verhindert ihr Erscheinen",
   "nightborn.setting.mobs.batEscortChance": "Fledermaus-Begleitchance (%)",
   "nightborn.setting.mobs.batEscortChance.tooltip": "Chance, dass ein nachts erscheinender Vampir eine oder zwei Vampirfledermäuse mitbringt",
   "nightborn.setting.mobs.vampireLevitateSeconds": "Sekunden, bis ein Vampir aufsteigt",

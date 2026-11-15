@@ -1,6 +1,7 @@
 package com.grahambartley.nightborn.mob;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -27,48 +28,40 @@ class MobSpawnRulesTest {
     assertEquals(spawns, MobSpawnRules.vampireMaySpawn(false, time, openSky, roll, chance));
   }
 
-  @ParameterizedTest(
-      name = "below sea {0}, light {1}, darkness roll {2}, structure {3}, roll {4}: spawns {5}")
+  @ParameterizedTest(name = "roll {0} of {1}%, vanilla cave {2}, structure {3}: spawns {4}")
   @CsvSource({
-    "true, 0, 0, false, 10, true",
-    "true, 3, 3, false, 10, true",
-    "true, 3, 2, false, 10, false",
-    "true, 15, 3, false, 10, false",
-    "false, 0, 3, false, 10, false",
-    "false, 15, 0, true, 10, true",
-    "true, 15, 0, true, 10, true",
-    "true, 0, 3, false, 100, false",
-    "false, 0, 0, true, 100, false"
+    "10, 100, true, false, true",
+    "10, 100, false, true, true",
+    "10, 100, true, true, true",
+    "10, 100, false, false, false",
+    "99, 100, true, false, true",
+    "50, 50, true, true, false",
+    "0, 0, true, true, false"
   })
-  @DisplayName(
-      "vampire bats spawn only in dark places below sea level or inside a vampire structure")
+  @DisplayName("vampire bats spawn only where a vanilla bat could or inside a vampire structure")
   void bat(
-      final boolean belowSea,
-      final int light,
-      final int darknessRoll,
-      final boolean inStructure,
       final int roll,
+      final int chance,
+      final boolean cave,
+      final boolean structure,
       final boolean spawns) {
-    assertEquals(
-        spawns,
-        MobSpawnRules.batMaySpawn(belowSea, light, darknessRoll, () -> inStructure, roll, 100));
+    assertEquals(spawns, MobSpawnRules.batMaySpawn(roll, chance, () -> cave, () -> structure));
   }
 
   @ParameterizedTest(name = "chance roll {0}")
   @CsvSource({"100", "57"})
-  @DisplayName("a failed chance roll never looks for a structure")
-  void skipsTheStructureLookup(final int roll) {
-    assertEquals(
-        false,
+  @DisplayName("a failed chance roll never checks the cave or looks for a structure")
+  void skipsTheLookups(final int roll) {
+    assertFalse(
         MobSpawnRules.batMaySpawn(
-            false,
-            0,
-            0,
+            roll,
+            50,
+            () -> {
+              throw new AssertionError("checked the cave");
+            },
             () -> {
               throw new AssertionError("looked for a structure");
-            },
-            roll,
-            50));
+            }));
   }
 
   @ParameterizedTest(name = "roll {0}, chance {1}, extra {2}: {3} bats")

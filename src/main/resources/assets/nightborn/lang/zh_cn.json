@@ -379,7 +379,7 @@
   "nightborn.setting.mobs.vampireSpawnChance": "吸血鬼生成几率（%）",
   "nightborn.setting.mobs.vampireSpawnChance.tooltip": "夜间露天生成中可能带来吸血鬼的比例。设为 0 则不会生成",
   "nightborn.setting.mobs.vampireBatSpawnChance": "吸血蝙蝠生成几率（%）",
-  "nightborn.setting.mobs.vampireBatSpawnChance.tooltip": "黑暗洞穴中及夜间生成中可能带来吸血蝙蝠的比例。设为 0 则不会生成",
+  "nightborn.setting.mobs.vampireBatSpawnChance.tooltip": "低于海平面的黑暗洞穴中及吸血鬼建筑内生成中可能带来吸血蝙蝠的比例。设为 0 则不会生成",
   "nightborn.setting.mobs.batEscortChance": "蝙蝠随从几率（%）",
   "nightborn.setting.mobs.batEscortChance.tooltip": "夜间生成的吸血鬼带来一到两只吸血蝙蝠的几率",
   "nightborn.setting.mobs.vampireLevitateSeconds": "吸血鬼升空前的秒数",

@@ -379,7 +379,7 @@
   "nightborn.setting.mobs.vampireSpawnChance": "Chance de surgimento de vampiros (%)",
   "nightborn.setting.mobs.vampireSpawnChance.tooltip": "Parte dos surgimentos noturnos ao ar livre que podem trazer um vampiro. 0 impede que surjam",
   "nightborn.setting.mobs.vampireBatSpawnChance": "Chance de surgimento de morcegos vampiros (%)",
-  "nightborn.setting.mobs.vampireBatSpawnChance.tooltip": "Parte dos surgimentos em cavernas escuras e à noite que podem trazer um morcego vampiro. 0 impede que surjam",
+  "nightborn.setting.mobs.vampireBatSpawnChance.tooltip": "Parte dos surgimentos em cavernas escuras abaixo do nível do mar e dentro de estruturas de vampiros que podem trazer um morcego vampiro. 0 impede que surjam",
   "nightborn.setting.mobs.batEscortChance": "Chance de escolta de morcegos (%)",
   "nightborn.setting.mobs.batEscortChance.tooltip": "Chance de um vampiro que surge à noite trazer um ou dois morcegos vampiros",
   "nightborn.setting.mobs.vampireLevitateSeconds": "Segundos até um vampiro se erguer",

@@ -379,7 +379,7 @@
   "nightborn.setting.mobs.vampireSpawnChance": "Chance d'apparition des vampires (%)",
   "nightborn.setting.mobs.vampireSpawnChance.tooltip": "Part des apparitions nocturnes en plein air qui peuvent amener un vampire. 0 les empêche d'apparaître",
   "nightborn.setting.mobs.vampireBatSpawnChance": "Chance d'apparition des chauves-souris vampires (%)",
-  "nightborn.setting.mobs.vampireBatSpawnChance.tooltip": "Part des apparitions dans les grottes sombres et la nuit qui peuvent amener une chauve-souris vampire. 0 les empêche d'apparaître",
+  "nightborn.setting.mobs.vampireBatSpawnChance.tooltip": "Part des apparitions dans les grottes sombres sous le niveau de la mer et dans les structures de vampires qui peuvent amener une chauve-souris vampire. 0 les empêche d'apparaître",
   "nightborn.setting.mobs.batEscortChance": "Chance d'escorte de chauves-souris (%)",
   "nightborn.setting.mobs.batEscortChance.tooltip": "Chance qu'un vampire apparaissant la nuit amène une ou deux chauves-souris vampires",
   "nightborn.setting.mobs.vampireLevitateSeconds": "Secondes avant qu'un vampire s'élève",

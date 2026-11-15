@@ -42,7 +42,7 @@ public class MobSpawnsGameTest implements FabricGameTest {
     context.assertFalse(
         MobSpawns.batCanSpawn(
             NightbornMobs.VAMPIRE_BAT, world, SpawnReason.NATURAL, spot, world.getRandom()),
-        "no vampire bat spawns on the surface at noon");
+        "no vampire bat spawns in daylight");
     context.assertTrue(
         MobSpawns.batCanSpawn(
             NightbornMobs.VAMPIRE_BAT, world, SpawnReason.SPAWN_EGG, spot, world.getRandom()),

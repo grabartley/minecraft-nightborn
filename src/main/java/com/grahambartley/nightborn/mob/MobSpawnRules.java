@@ -5,7 +5,6 @@ import java.util.function.BooleanSupplier;
 
 public final class MobSpawnRules {
 
-  public static final int CAVE_DARKNESS = 4;
   static final int MAX_ESCORT = 2;
   public static final int MAX_NEARBY_BATS = 2;
   public static final double NEARBY_RANGE = 128.0;
@@ -23,16 +22,11 @@ public final class MobSpawnRules {
   }
 
   public static boolean batMaySpawn(
-      final boolean belowSeaLevel,
-      final int light,
-      final int darknessRoll,
-      final BooleanSupplier inVampireStructure,
       final int roll,
-      final int chance) {
-    if (roll >= chance) {
-      return false;
-    }
-    return (belowSeaLevel && light <= darknessRoll) || inVampireStructure.getAsBoolean();
+      final int chance,
+      final BooleanSupplier vanillaBatCave,
+      final BooleanSupplier inVampireStructure) {
+    return roll < chance && (vanillaBatCave.getAsBoolean() || inVampireStructure.getAsBoolean());
   }
 
   public static boolean crowded(final int nearbyBats) {

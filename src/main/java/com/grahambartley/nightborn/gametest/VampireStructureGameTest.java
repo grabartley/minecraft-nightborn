@@ -108,15 +108,19 @@ public class VampireStructureGameTest implements FabricGameTest {
         .formatted(size, reach);
   }
 
-  static DataResult<Structure> decodeStructure(final ServerWorld world, final int reach) {
+  private static DataResult<Structure> decodeStructure(final ServerWorld world, final int reach) {
     return decodeStructure(world, reach, 2);
   }
 
   private static DataResult<Structure> decodeStructure(
       final ServerWorld world, final int reach, final int size) {
-    final JsonElement json = JsonParser.parseString(structureJson(reach, size));
+    return decode(world, structureJson(reach, size));
+  }
+
+  static DataResult<Structure> decode(final ServerWorld world, final String json) {
+    final JsonElement parsed = JsonParser.parseString(json);
     return Structure.STRUCTURE_CODEC.parse(
-        RegistryOps.of(JsonOps.INSTANCE, world.getRegistryManager()), json);
+        RegistryOps.of(JsonOps.INSTANCE, world.getRegistryManager()), parsed);
   }
 
   private static StructurePlacement decodePlacement(final ServerWorld world) {
