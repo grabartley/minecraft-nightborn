@@ -43,6 +43,14 @@ public enum SplatterLook {
     return alpha << 24 | red << 16 | green << 8 | blue;
   }
 
+  public float[] rgb(final float shade) {
+    return new float[] {
+      ((this.tint >> 16) & 0xFF) / 255.0F * shade,
+      ((this.tint >> 8) & 0xFF) / 255.0F * shade,
+      (this.tint & 0xFF) / 255.0F * shade
+    };
+  }
+
   private static int channel(final int value, final int tint) {
     return (value & 0xFF) * (tint & 0xFF) / 0xFF;
   }

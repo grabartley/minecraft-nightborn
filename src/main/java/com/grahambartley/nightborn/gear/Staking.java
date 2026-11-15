@@ -5,7 +5,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
-import net.minecraft.entity.damage.DamageTypes;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 
@@ -18,11 +17,7 @@ public final class Staking {
   }
 
   static boolean isStakeStrike(final DamageSource source) {
-    final ItemStack weapon = source.getWeaponStack();
-    return source.isDirect()
-        && (source.isOf(DamageTypes.PLAYER_ATTACK) || source.isOf(DamageTypes.MOB_ATTACK))
-        && weapon != null
-        && weapon.isIn(VampireBane.STAKES);
+    return VampireBane.meleeWith(source, VampireBane.STAKES);
   }
 
   public static boolean finishesVampire(final DamageSource source) {

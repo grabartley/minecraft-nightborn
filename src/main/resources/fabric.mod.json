@@ -54,6 +54,7 @@
       "com.grahambartley.nightborn.gametest.LevitationGameTest",
       "com.grahambartley.nightborn.gametest.StarvationGameTest",
       "com.grahambartley.nightborn.gametest.VomitGameTest",
+      "com.grahambartley.nightborn.gametest.GoreGameTest",
       "com.grahambartley.nightborn.gametest.WardGameTest",
       "com.grahambartley.nightborn.gametest.HolyWaterGameTest",
       "com.grahambartley.nightborn.gametest.HunterAmmoGameTest",
