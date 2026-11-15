@@ -12,6 +12,7 @@ import com.grahambartley.nightborn.server.ServerConfigService;
 import com.grahambartley.nightborn.sickness.BiteSickness;
 import com.grahambartley.nightborn.sickness.BiteSicknessAttachment;
 import com.grahambartley.nightborn.sickness.BiteSicknessEffect;
+import com.grahambartley.nightborn.skill.SkillFeatures;
 import com.grahambartley.nightborn.weakened.Weakened;
 
 public final class VampireFeatures {
@@ -24,6 +25,7 @@ public final class VampireFeatures {
     BloodAttachment.register();
     VisibleStateAttachment.register();
     BiteSicknessAttachment.register();
+    SkillFeatures.register();
     Weakened.register();
     BiteSicknessEffect.register();
     BloodItems.register();

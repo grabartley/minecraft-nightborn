@@ -217,7 +217,7 @@ Sneak and use on a creature to bite it, and keep holding to drink. Let go to sto
 | FEED-9 | Blood restores more by quality: animal least, then villager and illager, then player |
 | FEED-10 | Fresh blood restores more than the same blood bottled |
 | FEED-11 | A Blood Bottle keeps the quality of the creature it came from, and shows it |
-| FEED-12 | Feeding earns vampire skill points, more for better blood and for draining |
+| FEED-12 | Feeding earns vampire skill points from the blood drunk, weighed by its quality, with a bonus for draining. Filling Blood Bottles counts as feeding |
 | FEED-13 | A villager that sees a vampire feed panics and flees, rings the village bell, and the village treats the vampire as it treats a player who hurt a villager, through vanilla gossip. A villager that sees nothing acts as normal |
 
 **Not supported:** feeding on the list's excluded creatures; feeding through blocks; a human drinking blood.
@@ -297,6 +297,8 @@ The vampire tree has the core and three bloodlines. A vampire spends points in a
 | **Beast** | Bat form, stronger bare hands, speed and a long leap |
 | **Occult** | Ghostly familiars, fog and shadow tricks |
 
+The core starts with Thick Blood (more health), Grave Strength (harder blows) and Blood Rush, an active power that burns blood for a short burst of speed and strength. The first skill of each bloodline chooses it and gives a small lasting gift: tougher skin for Noble, safer falls for Beast and longer reach for Occult.
+
 | ID | Requirement |
 |---|---|
 | LINE-1 | The vampire tree has the core and the three bloodlines |
@@ -311,8 +313,8 @@ The vampire tree has the core and three bloodlines. A vampire spends points in a
 | SKILL-1 | Vampire points and hunter points are separate, and each is spent only in its own tree. Their sources are FEED-12, HUNT-1 and HUNT-2 |
 | SKILL-2 | A skill costs points and may need another skill first |
 | SKILL-3 | Bought skills are kept across death, reconnect and world reload |
-| SKILL-4 | Active skills sit in a small power bar and are used with keys the player can rebind |
-| SKILL-5 | Each active skill has a blood cost and a cooldown, shown on the bar |
+| SKILL-4 | Active skills sit in a small power bar of up to five slots, in the order they were bought, and are used with keys the player can rebind |
+| SKILL-5 | Each active skill has a blood cost and a cooldown, shown on the bar. A downed or weakened vampire cannot use powers |
 | SKILL-6 | A staked vampire player loses 10% of their earned points, taken from unspent points first and then from their most recent skills. With CORE-10 on, the full reset applies instead |
 
 **Enforcement:** server. The client asks to buy a skill; the server checks points and order.

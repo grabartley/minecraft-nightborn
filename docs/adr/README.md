@@ -16,3 +16,4 @@ Shared engineering standards across all the mods in this family live in [`../sta
 | [0006](0006-feeding-rides-vanillas-held-use-packets.md) | Feeding rides vanilla's held-use packets |
 | [0007](0007-turning-happens-where-the-player-stands.md) | Turning happens where the player stands |
 | [0008](0008-vampire-rules-apply-to-any-vampire-entity.md) | Vampire rules apply to any vampire entity |
+| [0009](0009-skills-are-data-in-synced-registries.md) | Skills are data in synced registries |

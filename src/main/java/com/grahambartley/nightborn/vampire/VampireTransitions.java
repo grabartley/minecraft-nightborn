@@ -9,6 +9,7 @@ import com.grahambartley.nightborn.faction.FactionPlayerList;
 import com.grahambartley.nightborn.feeding.FeedingSessions;
 import com.grahambartley.nightborn.sickness.BiteSicknessAttachment;
 import com.grahambartley.nightborn.sickness.BiteSicknessEffect;
+import com.grahambartley.nightborn.skill.SkillAttributes;
 import com.grahambartley.nightborn.weakened.Weakened;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
@@ -45,6 +46,7 @@ public final class VampireTransitions {
             SoundCategory.PLAYERS,
             1.0F,
             0.5F);
+    SkillAttributes.apply(player);
     player.sendMessage(Text.translatable("nightborn.turning.turned"), false);
     FactionPlayerList.refresh(player);
   }
@@ -59,6 +61,7 @@ public final class VampireTransitions {
     Weakened.clear(player);
     VisibleStateAttachment.set(player, VisibleState.NONE);
     VampireCore.remove(player);
+    SkillAttributes.apply(player);
     player.resetStat(Stats.CUSTOM.getOrCreateStat(Stats.TIME_SINCE_REST));
     FactionPlayerList.refresh(player);
   }

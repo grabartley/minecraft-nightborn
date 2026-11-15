@@ -1,0 +1,67 @@
+package com.grahambartley.nightborn.client;
+
+import com.grahambartley.nightborn.network.UsePowerPayload;
+import com.grahambartley.nightborn.screen.SkillScreen;
+import com.grahambartley.nightborn.skill.PowerBar;
+import java.util.ArrayList;
+import java.util.List;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
+import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.option.KeyBinding;
+import net.minecraft.client.util.InputUtil;
+import org.lwjgl.glfw.GLFW;
+
+public final class SkillKeys {
+
+  static final String CATEGORY = "key.category.nightborn";
+  static final int[] POWER_DEFAULTS = {
+    GLFW.GLFW_KEY_R, GLFW.GLFW_KEY_G, GLFW.GLFW_KEY_V, GLFW.GLFW_KEY_B, GLFW.GLFW_KEY_N
+  };
+
+  private static KeyBinding openSkills;
+  private static final List<KeyBinding> POWERS = new ArrayList<>();
+
+  private SkillKeys() {}
+
+  public static void register() {
+    openSkills =
+        KeyBindingHelper.registerKeyBinding(
+            new KeyBinding(
+                "key.nightborn.skills", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_K, CATEGORY));
+    for (int i = 0; i < PowerBar.SLOTS; i++) {
+      POWERS.add(
+          KeyBindingHelper.registerKeyBinding(
+              new KeyBinding(
+                  "key.nightborn.power_" + (i + 1),
+                  InputUtil.Type.KEYSYM,
+                  POWER_DEFAULTS[i],
+                  CATEGORY)));
+    }
+    ClientTickEvents.END_CLIENT_TICK.register(SkillKeys::tick);
+  }
+
+  public static KeyBinding openSkills() {
+    return openSkills;
+  }
+
+  public static KeyBinding power(final int slot) {
+    return POWERS.get(slot);
+  }
+
+  private static void tick(final MinecraftClient client) {
+    while (openSkills.wasPressed()) {
+      if (client.currentScreen == null && client.player != null) {
+        client.setScreen(new SkillScreen());
+      }
+    }
+    for (int i = 0; i < POWERS.size(); i++) {
+      while (POWERS.get(i).wasPressed()) {
+        if (client.currentScreen == null && ClientPlayNetworking.canSend(UsePowerPayload.ID)) {
+          ClientPlayNetworking.send(new UsePowerPayload(i));
+        }
+      }
+    }
+  }
+}

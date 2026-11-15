@@ -24,6 +24,8 @@ public final class VampireClientFeatures {
           }
         });
     HudRenderCallback.EVENT.register(VampireHud::render);
+    HudRenderCallback.EVENT.register(PowerBarHud::render);
+    SkillKeys.register();
     WorldRenderEvents.AFTER_ENTITIES.register(WeakenedSignRenderer::render);
   }
 }

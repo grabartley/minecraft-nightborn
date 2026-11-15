@@ -5,6 +5,7 @@ import com.grahambartley.nightborn.blood.BloodBottleItem;
 import com.grahambartley.nightborn.blood.BloodValue;
 import com.grahambartley.nightborn.config.NightbornConfig;
 import com.grahambartley.nightborn.sickness.BiteSickness;
+import com.grahambartley.nightborn.skill.SkillEarning;
 import com.grahambartley.nightborn.vampire.NightbornDamage;
 import com.grahambartley.nightborn.vampire.Vampires;
 import net.minecraft.entity.LivingEntity;
@@ -49,6 +50,10 @@ final class Feeder {
       victim.damage(bite, sip.drains() ? sip.take() + victim.getAbsorptionAmount() : sip.take());
       final float taken = Math.max(0.0F, before - Math.max(0.0F, victim.getHealth()));
       session.took(taken);
+      SkillEarning.fromBlood(
+          vampire,
+          BloodValue.worth(taken, session.quality().worthPercent(config), BloodValue.FRESH_PERCENT),
+          config.skills());
       keep(vampire, session, taken, config);
       world.playSound(
           null,
@@ -61,6 +66,9 @@ final class Feeder {
     }
     VillagerWitnesses.alert(world, vampire, victim, session, config.feeding().witnessRange(), bite);
     if (!victim.isAlive()) {
+      if (sip.drains()) {
+        SkillEarning.fromDrain(vampire, config.skills());
+      }
       return Result.DRAINED;
     }
     if (resists(victim, config, world.getRandom())) {

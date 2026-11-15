@@ -1,0 +1,10 @@
+{
+  "branch": "nightborn:beast",
+  "cost": 1,
+  "icon": "nightborn:skills/icon/beast_blood",
+  "column": 1,
+  "row": 0,
+  "attributes": [
+    { "attribute": "minecraft:generic.safe_fall_distance", "amount": 3.0, "operation": "add_value" }
+  ]
+}

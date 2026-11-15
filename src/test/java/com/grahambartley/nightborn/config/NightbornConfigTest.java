@@ -67,7 +67,16 @@ class NightbornConfigTest {
   @DisplayName("sections are listed once each, in declaration order")
   void sectionsInOrder() {
     assertEquals(
-        List.of("turning", "feeding", "blood", "sun", "downed", "core", "weakened", "factions"),
+        List.of(
+            "turning",
+            "feeding",
+            "blood",
+            "sun",
+            "downed",
+            "core",
+            "weakened",
+            "factions",
+            "skills"),
         NightbornConfig.sections());
   }
 
