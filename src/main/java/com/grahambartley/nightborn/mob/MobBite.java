@@ -5,6 +5,7 @@ import com.grahambartley.nightborn.feeding.FeedingSessions;
 import com.grahambartley.nightborn.sickness.BiteSickness;
 import com.grahambartley.nightborn.vampire.NightbornDamage;
 import com.grahambartley.nightborn.vampire.Vampires;
+import com.grahambartley.nightborn.ward.Wards;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.server.world.ServerWorld;
@@ -21,7 +22,7 @@ public final class MobBite {
       final int turnChance,
       final SoundEvent sound,
       final TurningSettings turning) {
-    if (!(biter.getWorld() instanceof ServerWorld world)) {
+    if (!(biter.getWorld() instanceof ServerWorld world) || Wards.holdsCrucifix(victim)) {
       return false;
     }
     final float before = victim.getHealth();
