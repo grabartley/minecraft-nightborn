@@ -10,11 +10,14 @@ import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemConvertible;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.BlockView;
+import net.minecraft.world.Heightmap;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldView;
 
 public class GarlicCropBlock extends CropBlock {
 
   public static final MapCodec<GarlicCropBlock> CODEC = createCodec(GarlicCropBlock::new);
+  static final int MIN_LIGHT = 8;
 
   public GarlicCropBlock(final Settings settings) {
     super(settings);
@@ -37,6 +40,18 @@ public class GarlicCropBlock extends CropBlock {
         || floor.isOf(Blocks.DIRT)
         || floor.isOf(Blocks.COARSE_DIRT)
         || floor.isOf(Blocks.GRASS_BLOCK);
+  }
+
+  @Override
+  protected boolean canPlaceAt(final BlockState state, final WorldView world, final BlockPos pos) {
+    return lightEnough(
+            world.getBaseLightLevel(pos, 0),
+            world.getTopY(Heightmap.Type.MOTION_BLOCKING, pos.getX(), pos.getZ()) <= pos.getY())
+        && canPlantOnTop(world.getBlockState(pos.down()), world, pos.down());
+  }
+
+  static boolean lightEnough(final int baseLight, final boolean openSky) {
+    return baseLight >= MIN_LIGHT || openSky;
   }
 
   @Override

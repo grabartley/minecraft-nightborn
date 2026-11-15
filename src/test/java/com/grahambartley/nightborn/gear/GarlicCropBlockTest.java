@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.MethodSource;
 
 @ExtendWith(MinecraftBootstrapExtension.class)
@@ -51,5 +52,18 @@ class GarlicCropBlockTest {
     assertEquals(
         plantable,
         GARLIC.canPlantOnTop(floor.getDefaultState(), EmptyBlockView.INSTANCE, BlockPos.ORIGIN));
+  }
+
+  @ParameterizedTest(name = "light {0}, sky {1}: {2}")
+  @CsvSource({
+    "0, true, true",
+    "15, false, true",
+    "8, false, true",
+    "7, false, false",
+    "0, false, false"
+  })
+  @DisplayName("garlic grows in light or under open sky, so wild garlic can generate before light")
+  void light(final int light, final boolean sky, final boolean grows) {
+    assertEquals(grows, GarlicCropBlock.lightEnough(light, sky));
   }
 }
