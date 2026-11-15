@@ -2,6 +2,7 @@ package com.grahambartley.nightborn.render;
 
 import com.grahambartley.nightborn.clothing.ClothingCut;
 import com.grahambartley.nightborn.clothing.ClothingItem;
+import net.minecraft.client.model.ModelPart;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.model.BipedEntityModel;
@@ -16,6 +17,7 @@ import software.bernie.geckolib.util.Color;
 public class ClothingRenderer extends DyeableGeoArmorRenderer<ClothingItem> {
 
   private final ClothingModel clothing;
+  private boolean drawnByPart;
 
   public ClothingRenderer() {
     this(new ClothingModel());
@@ -39,6 +41,7 @@ public class ClothingRenderer extends DyeableGeoArmorRenderer<ClothingItem> {
       final float netHeadYaw,
       final float headPitch) {
     this.clothing.fit(ClothingCut.fitting(slimBody(entity)));
+    this.drawnByPart = false;
     super.prepForRender(
         entity,
         stack,
@@ -50,6 +53,20 @@ public class ClothingRenderer extends DyeableGeoArmorRenderer<ClothingItem> {
         limbSwingAmount,
         netHeadYaw,
         headPitch);
+  }
+
+  @Override
+  public void applyBoneVisibilityByPart(
+      final EquipmentSlot slot, final ModelPart part, final BipedEntityModel<?> model) {
+    super.applyBoneVisibilityByPart(slot, part, model);
+    this.drawnByPart = true;
+  }
+
+  @Override
+  protected void applyBoneVisibilityBySlot(final EquipmentSlot slot) {
+    if (!this.drawnByPart) {
+      super.applyBoneVisibilityBySlot(slot);
+    }
   }
 
   @Override

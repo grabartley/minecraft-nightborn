@@ -21,9 +21,12 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.trim.ArmorTrim;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.registry.tag.ItemTags;
+import software.bernie.geckolib.animatable.client.GeoRenderProvider;
 import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.cache.object.GeoCube;
+import software.bernie.geckolib.renderer.GeoArmorRenderer;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
+import software.bernie.geckolib.util.Color;
 
 public final class VampirePlayerArmorLayer extends GeoRenderLayer<VampirePlayerAnimatable> {
 
@@ -68,7 +71,8 @@ public final class VampirePlayerArmorLayer extends GeoRenderLayer<VampirePlayerA
       return;
     }
     final ItemStack stack = player.getEquippedStack(piece.slot());
-    if (!(stack.getItem() instanceof ArmorItem armor)) {
+    final ArmorDraw draw = ArmorDraw.of(stack.getItem());
+    if (draw == ArmorDraw.NONE) {
       return;
     }
     final BipedEntityModel<LivingEntity> model = model(piece.slot());
@@ -79,15 +83,23 @@ public final class VampirePlayerArmorLayer extends GeoRenderLayer<VampirePlayerA
     poseStack.push();
     poseStack.scale(-1.0F, -1.0F, 1.0F);
     fit(poseStack, bone, part);
-    render(
-        poseStack,
-        bufferSource,
-        stack,
-        armor.getMaterial(),
-        piece.slot(),
-        part,
-        packedLight,
-        packedOverlay);
+    if (draw == ArmorDraw.GECKO
+        && GeoRenderProvider.of(stack).getGeoArmorRenderer(player, stack, piece.slot(), model)
+            instanceof GeoArmorRenderer<?> geo) {
+      geo.prepForRender(player, stack, piece.slot(), model, bufferSource, partialTick, 0, 0, 0, 0);
+      geo.applyBoneVisibilityByPart(piece.slot(), part, model);
+      geo.render(poseStack, null, packedLight, packedOverlay, Color.WHITE.argbInt());
+    } else if (draw == ArmorDraw.VANILLA) {
+      render(
+          poseStack,
+          bufferSource,
+          stack,
+          ((ArmorItem) stack.getItem()).getMaterial(),
+          piece.slot(),
+          part,
+          packedLight,
+          packedOverlay);
+    }
     poseStack.pop();
   }
 

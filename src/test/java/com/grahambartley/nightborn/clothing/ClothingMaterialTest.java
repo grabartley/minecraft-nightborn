@@ -6,12 +6,14 @@ import com.grahambartley.nightborn.MinecraftBootstrapExtension;
 import net.minecraft.item.ArmorItem;
 import net.minecraft.item.ArmorMaterial;
 import net.minecraft.item.ArmorMaterials;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.registry.Registries;
-import net.minecraft.registry.entry.RegistryEntry;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.EnumSource;
 
 @ExtendWith(MinecraftBootstrapExtension.class)
@@ -39,12 +41,16 @@ class ClothingMaterialTest {
     assertEquals("nightborn:cloth", Registries.ARMOR_MATERIAL.getId(cloth).toString());
   }
 
-  @ParameterizedTest(name = "{0}")
-  @EnumSource(ClothingFabric.class)
-  @DisplayName("cloth is mended with wool and leather with leather")
-  void mendsWithItsFabric(final ClothingFabric fabric) {
-    final RegistryEntry<ArmorMaterial> material = ClothingMaterial.of(fabric);
+  @ParameterizedTest(name = "{0}: leather mends it {1}")
+  @CsvSource({"CLOTH, false", "LEATHER, true"})
+  @DisplayName("leather mends only the leather pieces")
+  void leatherMendsLeather(final ClothingFabric fabric, final boolean mends) {
     assertEquals(
-        fabric == ClothingFabric.CLOTH ? ClothingMaterial.CLOTH : ArmorMaterials.LEATHER, material);
+        mends,
+        ClothingMaterial.of(fabric)
+            .value()
+            .repairIngredient()
+            .get()
+            .test(new ItemStack(Items.LEATHER)));
   }
 }
