@@ -5,11 +5,11 @@ import com.grahambartley.nightborn.mob.ShadeRules;
 
 public final class NightRoutine {
 
-  public static final int HOME_RADIUS = 16;
   public static final long NO_NIGHT = Long.MIN_VALUE;
   static final double BLOCKS_PER_TICK_PER_SPEED = 0.25;
   static final double PATH_MARGIN = 2.0;
   static final long SETTLE_TICKS = 600L;
+  static final int COFFIN_REACH_HOMES = 2;
 
   private NightRoutine() {}
 
@@ -37,8 +37,13 @@ public final class NightRoutine {
         <= distanceHome / blocksPerTick * PATH_MARGIN + SETTLE_TICKS;
   }
 
-  public static boolean goesOut(final boolean hungry, final int roll, final int chance) {
-    return hungry && roll < chance;
+  public static boolean decidesTonight(
+      final boolean bedtime, final long decidedNight, final long night, final boolean hungry) {
+    return !bedtime && hungry && decidedNight != night;
+  }
+
+  public static boolean goesOut(final int roll, final int chance) {
+    return roll < chance;
   }
 
   public static boolean out(
@@ -46,7 +51,36 @@ public final class NightRoutine {
     return outingNight != NO_NIGHT && outingNight == night && hungry && !headsHome;
   }
 
-  public static int roamRadius(final boolean out, final int feedingRange) {
-    return out ? Math.max(HOME_RADIUS, feedingRange) : HOME_RADIUS;
+  public static int roamRadius(final boolean out, final int feedingRange, final int homeRadius) {
+    return out ? Math.max(homeRadius, feedingRange) : homeRadius;
+  }
+
+  public static boolean outOfRange(
+      final boolean provoked,
+      final boolean out,
+      final double vampireDistanceSquared,
+      final double targetDistanceSquared,
+      final int chaseRange,
+      final int feedingRange) {
+    if (provoked) {
+      final double reach = out ? Math.max(chaseRange, feedingRange) : chaseRange;
+      return vampireDistanceSquared > reach * reach;
+    }
+    return targetDistanceSquared > (double) feedingRange * feedingRange;
+  }
+
+  public static boolean readyForBed(
+      final boolean bedtime, final boolean hasTarget, final boolean downed) {
+    return bedtime && !hasTarget && !downed;
+  }
+
+  public static boolean walksToCoffin(
+      final boolean known,
+      final double distanceSquared,
+      final int homeRadius,
+      final boolean loaded,
+      final boolean free) {
+    final double reach = (double) homeRadius * COFFIN_REACH_HOMES;
+    return known && distanceSquared <= reach * reach && loaded && free;
   }
 }

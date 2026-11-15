@@ -19,15 +19,18 @@ public final class HomeLife {
   static final String OUTING_KEY = "OutingNight";
   static final String DECIDED_KEY = "DecidedNight";
   static final int COFFIN_CHECK_TICKS = 100;
+  static final long CLAIM_RETRY_TICKS = 1200L;
 
   @Nullable private BlockPos home;
   @Nullable private BlockPos coffin;
   private long outingNight = NightRoutine.NO_NIGHT;
   private long decidedNight = NightRoutine.NO_NIGHT;
+  private long nextClaim;
 
   public void settle(final BlockPos home) {
     this.home = home.toImmutable();
     this.coffin = null;
+    this.nextClaim = 0L;
   }
 
   public Optional<BlockPos> home() {
@@ -68,16 +71,19 @@ public final class HomeLife {
   }
 
   public boolean outOfRange(
-      final Entity vampire,
+      final PathAwareEntity vampire,
       final Entity target,
       final boolean provoked,
+      final boolean hungry,
       final NightbornConfig config) {
-    if (home == null) {
-      return false;
-    }
-    return provoked
-        ? distanceSquared(vampire.getPos()) > square(config.mobs().vampireChaseRange())
-        : distanceSquared(target.getPos()) > square(config.mobs().vampireFeedingRange());
+    return home != null
+        && NightRoutine.outOfRange(
+            provoked,
+            out(vampire, hungry),
+            distanceSquared(vampire.getPos()),
+            distanceSquared(target.getPos()),
+            config.mobs().vampireChaseRange(),
+            config.mobs().vampireFeedingRange());
   }
 
   public void tick(
@@ -90,18 +96,22 @@ public final class HomeLife {
     }
     final long time = world.getTimeOfDay();
     final long night = NightRoutine.night(time);
-    if (!bedtime(vampire) && decidedNight != night) {
+    if (NightRoutine.decidesTonight(bedtime(vampire), decidedNight, night, hungry)) {
       decidedNight = night;
       if (NightRoutine.goesOut(
-          hungry, vampire.getRandom().nextInt(100), config.mobs().vampireOutingChance())) {
+          vampire.getRandom().nextInt(100), config.mobs().vampireOutingChance())) {
         outingNight = night;
         onOuting.run();
       }
     }
     vampire.setPositionTarget(
-        home, NightRoutine.roamRadius(out(vampire, hungry), config.mobs().vampireFeedingRange()));
+        home,
+        NightRoutine.roamRadius(
+            out(vampire, hungry),
+            config.mobs().vampireFeedingRange(),
+            config.mobs().vampireHomeRadius()));
     if (vampire.age % COFFIN_CHECK_TICKS == 0) {
-      checkCoffin(world, vampire);
+      checkCoffin(world, vampire, config.mobs().vampireHomeRadius());
     }
   }
 
@@ -142,21 +152,19 @@ public final class HomeLife {
             : NightRoutine.NO_NIGHT;
   }
 
-  private void checkCoffin(final ServerWorld world, final Entity vampire) {
+  private void checkCoffin(final ServerWorld world, final Entity vampire, final int radius) {
     if (coffin != null && !HomeCoffins.keeps(world, coffin, vampire.getUuid()).orElse(true)) {
       coffin = null;
     }
-    if (coffin == null && HomeCoffins.loaded(world, home)) {
-      coffin =
-          HomeCoffins.claim(world, home, NightRoutine.HOME_RADIUS, vampire.getUuid()).orElse(null);
+    if (coffin == null && world.getTime() >= nextClaim && HomeCoffins.loaded(world, home)) {
+      coffin = HomeCoffins.claim(world, home, radius, vampire.getUuid()).orElse(null);
+      if (coffin == null) {
+        nextClaim = world.getTime() + CLAIM_RETRY_TICKS;
+      }
     }
   }
 
   private double distanceSquared(final Vec3d pos) {
     return home == null ? 0.0 : pos.squaredDistanceTo(Vec3d.ofBottomCenter(home));
-  }
-
-  private static double square(final int value) {
-    return (double) value * value;
   }
 }

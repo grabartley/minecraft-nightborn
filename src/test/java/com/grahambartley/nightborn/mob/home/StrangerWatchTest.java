@@ -34,4 +34,22 @@ class StrangerWatchTest {
   void keepsWatching(final double distance, final boolean nearHome, final boolean keeps) {
     assertEquals(keeps, StrangerWatch.keepsWatching(distance, nearHome));
   }
+
+  @ParameterizedTest(name = "target {0}, sleeping {1}, hungry {2}, downed {3}: calm {4}")
+  @CsvSource({
+    "false, false, false, false, true",
+    "true, false, false, false, false",
+    "false, true, false, false, false",
+    "false, false, true, false, false",
+    "false, false, false, true, false"
+  })
+  @DisplayName("only an awake, fed vampire that is not fighting or downed watches strangers")
+  void calm(
+      final boolean target,
+      final boolean sleeping,
+      final boolean hungry,
+      final boolean downed,
+      final boolean calm) {
+    assertEquals(calm, StrangerWatch.calm(target, sleeping, hungry, downed));
+  }
 }

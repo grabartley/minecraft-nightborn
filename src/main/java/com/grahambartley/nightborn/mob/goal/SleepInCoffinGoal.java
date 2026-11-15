@@ -4,6 +4,7 @@ import com.grahambartley.nightborn.downed.Downed;
 import com.grahambartley.nightborn.mob.VampireEntity;
 import com.grahambartley.nightborn.mob.home.HomeCoffins;
 import com.grahambartley.nightborn.mob.home.NightRoutine;
+import com.grahambartley.nightborn.server.ServerConfigService;
 import java.util.EnumSet;
 import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.server.world.ServerWorld;
@@ -27,15 +28,19 @@ public class SleepInCoffinGoal extends Goal {
 
   @Override
   public boolean canStart() {
-    if (vampire.isSleeping() || !readyForBed()) {
+    if (vampire.isSleeping()
+        || !readyForBed()
+        || !(vampire.getWorld() instanceof ServerWorld world)) {
       return false;
     }
     final BlockPos known = vampire.homeLife().coffin().orElse(null);
-    if (known == null
-        || !known.isWithinDistance(vampire.getPos(), NightRoutine.HOME_RADIUS * 2.0)
-        || !(vampire.getWorld() instanceof ServerWorld world)
-        || !HomeCoffins.loaded(world, known)
-        || !HomeCoffins.free(world, known)) {
+    final boolean loaded = known != null && HomeCoffins.loaded(world, known);
+    if (!NightRoutine.walksToCoffin(
+        known != null,
+        known == null ? 0.0 : known.getSquaredDistance(vampire.getPos()),
+        ServerConfigService.current().mobs().vampireHomeRadius(),
+        loaded,
+        loaded && HomeCoffins.free(world, known))) {
       return false;
     }
     coffin = known;
@@ -63,10 +68,7 @@ public class SleepInCoffinGoal extends Goal {
 
   @Override
   public void tick() {
-    if (coffin == null) {
-      return;
-    }
-    if (vampire.isSleeping()) {
+    if (coffin == null || vampire.isSleeping()) {
       return;
     }
     if (coffin.isWithinDistance(vampire.getPos(), LIE_DOWN_REACH)) {
@@ -89,8 +91,9 @@ public class SleepInCoffinGoal extends Goal {
   }
 
   private boolean readyForBed() {
-    return vampire.homeLife().bedtime(vampire)
-        && vampire.getTarget() == null
-        && Downed.state(vampire) == null;
+    return NightRoutine.readyForBed(
+        vampire.homeLife().bedtime(vampire),
+        vampire.getTarget() != null,
+        Downed.state(vampire) != null);
   }
 }

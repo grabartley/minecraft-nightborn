@@ -12,7 +12,9 @@ public record MobSettings(
     int vampireBloodDrainSeconds,
     int vampireOutingChance,
     int vampireFeedingRange,
-    int vampireChaseRange) {
+    int vampireChaseRange,
+    int vampireHomeRadius,
+    int vampireAlertRange) {
 
   static final String SECTION = "mobs";
 
@@ -52,6 +54,11 @@ public record MobSettings(
   public static final IntSetting VAMPIRE_CHASE_RANGE =
       new IntSetting(SECTION, "vampireChaseRange", 40, 16, 256, c -> c.mobs().vampireChaseRange());
 
+  public static final IntSetting VAMPIRE_HOME_RADIUS =
+      new IntSetting(SECTION, "vampireHomeRadius", 16, 8, 64, c -> c.mobs().vampireHomeRadius());
+  public static final IntSetting VAMPIRE_ALERT_RANGE =
+      new IntSetting(SECTION, "vampireAlertRange", 24, 4, 64, c -> c.mobs().vampireAlertRange());
+
   public static final List<Setting<?>> SETTINGS =
       List.of(
           VAMPIRE_BAT_SPAWN_CHANCE,
@@ -63,7 +70,9 @@ public record MobSettings(
           VAMPIRE_BLOOD_DRAIN_SECONDS,
           VAMPIRE_OUTING_CHANCE,
           VAMPIRE_FEEDING_RANGE,
-          VAMPIRE_CHASE_RANGE);
+          VAMPIRE_CHASE_RANGE,
+          VAMPIRE_HOME_RADIUS,
+          VAMPIRE_ALERT_RANGE);
 
   public MobSettings {
     vampireBatSpawnChance = VAMPIRE_BAT_SPAWN_CHANCE.clamp(vampireBatSpawnChance);
@@ -76,6 +85,8 @@ public record MobSettings(
     vampireOutingChance = VAMPIRE_OUTING_CHANCE.clamp(vampireOutingChance);
     vampireFeedingRange = VAMPIRE_FEEDING_RANGE.clamp(vampireFeedingRange);
     vampireChaseRange = VAMPIRE_CHASE_RANGE.clamp(vampireChaseRange);
+    vampireHomeRadius = VAMPIRE_HOME_RADIUS.clamp(vampireHomeRadius);
+    vampireAlertRange = VAMPIRE_ALERT_RANGE.clamp(vampireAlertRange);
   }
 
   static MobSettings from(final SettingValues values) {
@@ -89,6 +100,8 @@ public record MobSettings(
         values.get(VAMPIRE_BLOOD_DRAIN_SECONDS),
         values.get(VAMPIRE_OUTING_CHANCE),
         values.get(VAMPIRE_FEEDING_RANGE),
-        values.get(VAMPIRE_CHASE_RANGE));
+        values.get(VAMPIRE_CHASE_RANGE),
+        values.get(VAMPIRE_HOME_RADIUS),
+        values.get(VAMPIRE_ALERT_RANGE));
   }
 }

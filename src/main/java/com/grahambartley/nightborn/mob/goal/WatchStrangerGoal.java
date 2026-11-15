@@ -2,8 +2,8 @@ package com.grahambartley.nightborn.mob.goal;
 
 import com.grahambartley.nightborn.downed.Downed;
 import com.grahambartley.nightborn.mob.VampireEntity;
-import com.grahambartley.nightborn.mob.home.NightRoutine;
 import com.grahambartley.nightborn.mob.home.StrangerWatch;
+import com.grahambartley.nightborn.server.ServerConfigService;
 import com.grahambartley.nightborn.vampire.Vampires;
 import java.util.EnumSet;
 import net.minecraft.entity.ai.goal.Goal;
@@ -56,7 +56,9 @@ public class WatchStrangerGoal extends Goal {
         && calm()
         && StrangerWatch.keepsWatching(
             vampire.distanceTo(stranger),
-            vampire.homeLife().withinRoam(vampire, NightRoutine.HOME_RADIUS));
+            vampire
+                .homeLife()
+                .withinRoam(vampire, ServerConfigService.current().mobs().vampireHomeRadius()));
   }
 
   @Override
@@ -94,9 +96,10 @@ public class WatchStrangerGoal extends Goal {
   }
 
   private boolean calm() {
-    return vampire.getTarget() == null
-        && !vampire.isSleeping()
-        && !vampire.hungry()
-        && Downed.state(vampire) == null;
+    return StrangerWatch.calm(
+        vampire.getTarget() != null,
+        vampire.isSleeping(),
+        vampire.hungry(),
+        Downed.state(vampire) != null);
   }
 }

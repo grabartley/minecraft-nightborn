@@ -49,18 +49,29 @@ class NightRoutineTest {
     assertEquals(heads, NightRoutine.headsHome(fixed, time, distance, speed));
   }
 
-  @ParameterizedTest(name = "hungry {0}, roll {1} of {2}%: goes out {3}")
+  @ParameterizedTest(name = "bedtime {0}, decided {1}, night {2}, hungry {3}: decides {4}")
   @CsvSource({
-    "true, 10, 50, true",
-    "true, 49, 50, true",
-    "true, 50, 50, false",
-    "false, 0, 100, false",
-    "true, 0, 0, false",
-    "true, 99, 100, true"
+    "false, 3, 4, true, true",
+    "false, 4, 4, true, false",
+    "true, 3, 4, true, false",
+    "false, 3, 4, false, false",
+    "false, -9223372036854775808, 0, true, true"
   })
-  @DisplayName("only a hungry vampire goes out, and not every night")
-  void goesOut(final boolean hungry, final int roll, final int chance, final boolean out) {
-    assertEquals(out, NightRoutine.goesOut(hungry, roll, chance));
+  @DisplayName("a vampire weighs going out once a night, when it first wakes hungry")
+  void decidesTonight(
+      final boolean bedtime,
+      final long decided,
+      final long night,
+      final boolean hungry,
+      final boolean decides) {
+    assertEquals(decides, NightRoutine.decidesTonight(bedtime, decided, night, hungry));
+  }
+
+  @ParameterizedTest(name = "roll {0} of {1}%: goes out {2}")
+  @CsvSource({"10, 50, true", "49, 50, true", "50, 50, false", "0, 0, false", "99, 100, true"})
+  @DisplayName("not every hungry vampire goes out every night")
+  void goesOut(final int roll, final int chance, final boolean out) {
+    assertEquals(out, NightRoutine.goesOut(roll, chance));
   }
 
   @ParameterizedTest(name = "outing night {0}, night {1}, hungry {2}, heading home {3}: out {4}")
@@ -81,10 +92,74 @@ class NightRoutineTest {
     assertEquals(out, NightRoutine.out(outing, night, hungry, headsHome));
   }
 
-  @ParameterizedTest(name = "out {0}, feeding range {1}: roams {2}")
-  @CsvSource({"true, 64, 64", "false, 64, 16", "true, 8, 16", "false, 256, 16"})
+  @ParameterizedTest(name = "out {0}, feeding range {1}, home {2}: roams {3}")
+  @CsvSource({
+    "true, 64, 16, 64",
+    "false, 64, 16, 16",
+    "true, 8, 16, 16",
+    "false, 256, 32, 32",
+    "true, 20, 32, 32"
+  })
   @DisplayName("a vampire roams its home, or its feeding range when out")
-  void roamRadius(final boolean out, final int range, final int radius) {
-    assertEquals(radius, NightRoutine.roamRadius(out, range));
+  void roamRadius(final boolean out, final int range, final int home, final int radius) {
+    assertEquals(radius, NightRoutine.roamRadius(out, range, home));
+  }
+
+  @ParameterizedTest(
+      name = "provoked {0}, out {1}, vampire {2} and target {3} blocks from home: out of range {4}")
+  @CsvSource({
+    "true, false, 40, 0, false",
+    "true, false, 41, 0, true",
+    "true, true, 60, 0, false",
+    "true, true, 65, 0, true",
+    "false, false, 200, 64, false",
+    "false, true, 0, 65, true",
+    "false, false, 0, 10, false"
+  })
+  @DisplayName(
+      "prey must stay within the feeding range of home, and a chase ends past the chase range,"
+          + " or the feeding range while out")
+  void outOfRange(
+      final boolean provoked,
+      final boolean out,
+      final double vampire,
+      final double target,
+      final boolean outOfRange) {
+    assertEquals(
+        outOfRange,
+        NightRoutine.outOfRange(provoked, out, vampire * vampire, target * target, 40, 64));
+  }
+
+  @ParameterizedTest(name = "bedtime {0}, target {1}, downed {2}: ready {3}")
+  @CsvSource({
+    "true, false, false, true",
+    "false, false, false, false",
+    "true, true, false, false",
+    "true, false, true, false"
+  })
+  @DisplayName("a vampire goes to bed at bedtime unless it is fighting or downed")
+  void readyForBed(
+      final boolean bedtime, final boolean target, final boolean downed, final boolean ready) {
+    assertEquals(ready, NightRoutine.readyForBed(bedtime, target, downed));
+  }
+
+  @ParameterizedTest(name = "known {0}, {1} blocks away, home {2}, loaded {3}, free {4}: walks {5}")
+  @CsvSource({
+    "true, 10, 16, true, true, true",
+    "true, 32, 16, true, true, true",
+    "true, 33, 16, true, true, false",
+    "false, 1, 16, true, true, false",
+    "true, 1, 16, false, true, false",
+    "true, 1, 16, true, false, false"
+  })
+  @DisplayName("a vampire walks to its own coffin when it is near, loaded and free")
+  void walksToCoffin(
+      final boolean known,
+      final double distance,
+      final int home,
+      final boolean loaded,
+      final boolean free,
+      final boolean walks) {
+    assertEquals(walks, NightRoutine.walksToCoffin(known, distance * distance, home, loaded, free));
   }
 }

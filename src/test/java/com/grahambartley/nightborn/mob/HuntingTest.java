@@ -66,8 +66,6 @@ class HuntingTest {
       final boolean endangered,
       final boolean outOfRange,
       final boolean hunts) {
-    assertEquals(
-        hunts,
-        Hunting.huntsPrey(new Hunting.Pursuit(hours, hungry, endangered, false, outOfRange)));
+    assertEquals(hunts, Hunting.huntsPrey(hours, hungry, endangered, outOfRange));
   }
 }

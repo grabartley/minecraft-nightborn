@@ -8,7 +8,8 @@ import com.grahambartley.nightborn.config.MobSettings;
 import com.grahambartley.nightborn.levitation.Levitation;
 import com.grahambartley.nightborn.mob.NightbornMobs;
 import com.grahambartley.nightborn.mob.VampireEntity;
-import com.grahambartley.nightborn.mob.home.NightRoutine;
+import com.grahambartley.nightborn.mob.goal.WatchStrangerGoal;
+import com.grahambartley.nightborn.mob.home.HomeCoffins;
 import com.grahambartley.nightborn.server.ServerConfigService;
 import com.grahambartley.nightborn.weakened.Weakened;
 import java.util.UUID;
@@ -24,6 +25,8 @@ import net.minecraft.test.GameTest;
 import net.minecraft.test.TestContext;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
+import net.minecraft.world.Difficulty;
+import net.minecraft.world.GameMode;
 
 public class VampireHomeGameTest implements FabricGameTest {
 
@@ -31,6 +34,13 @@ public class VampireHomeGameTest implements FabricGameTest {
   static final String DAY_BATCH = "vampire-home-day";
   static final String NIGHT_BATCH = "vampire-home-night";
   static final String DRAIN_BATCH = "vampire-home-drain";
+  static final String DAWN_BATCH = "vampire-home-dawn";
+  static final String PEACEFUL_BATCH = "vampire-home-peaceful";
+  static final String STRANGER_BATCH = "vampire-home-stranger";
+  static final String KIN_BATCH = "vampire-home-kin";
+  static final int NEAR_DAWN = 21900;
+  static final int TRIES = 400;
+  static final int UNLOADED = 20000;
   static final int HUNGRY = 4;
   static final int CLAIM_WAIT = 110;
   static final int FAR_AWAY = 200;
@@ -38,6 +48,8 @@ public class VampireHomeGameTest implements FabricGameTest {
   private int outingChanceBefore;
   private int mobDrainBefore;
   private int levitationDrainBefore;
+  private int dawnOutingChanceBefore;
+  private Difficulty difficultyBefore;
 
   @BeforeBatch(batchId = DAY_BATCH)
   public void pinNoon(final ServerWorld world) {
@@ -84,6 +96,37 @@ public class VampireHomeGameTest implements FabricGameTest {
         ServerConfigService.current()
             .with(MobSettings.VAMPIRE_BLOOD_DRAIN_SECONDS, mobDrainBefore)
             .with(CoreSettings.LEVITATION_DRAIN_SECONDS, levitationDrainBefore));
+  }
+
+  @BeforeBatch(batchId = DAWN_BATCH)
+  public void pinNearDawnAndAlwaysGoOut(final ServerWorld world) {
+    WorldClock.freeze(world, NEAR_DAWN);
+    dawnOutingChanceBefore = ServerConfigService.current().mobs().vampireOutingChance();
+    ServerConfigService.update(
+        world.getServer(),
+        ServerConfigService.current().with(MobSettings.VAMPIRE_OUTING_CHANCE, 100));
+  }
+
+  @AfterBatch(batchId = DAWN_BATCH)
+  public void restoreDawnAndOutings(final ServerWorld world) {
+    WorldClock.release(world);
+    ServerConfigService.update(
+        world.getServer(),
+        ServerConfigService.current()
+            .with(MobSettings.VAMPIRE_OUTING_CHANCE, dawnOutingChanceBefore));
+  }
+
+  @BeforeBatch(batchId = PEACEFUL_BATCH)
+  public void peacefulMidnight(final ServerWorld world) {
+    WorldClock.freeze(world, WorldClock.MIDNIGHT);
+    difficultyBefore = world.getDifficulty();
+    world.getServer().setDifficulty(Difficulty.PEACEFUL, true);
+  }
+
+  @AfterBatch(batchId = PEACEFUL_BATCH)
+  public void restoreDifficulty(final ServerWorld world) {
+    WorldClock.release(world);
+    world.getServer().setDifficulty(difficultyBefore, true);
   }
 
   @GameTest(templateName = ARENA, tickLimit = CLAIM_WAIT + 10)
@@ -180,7 +223,7 @@ public class VampireHomeGameTest implements FabricGameTest {
               "a hungry vampire roams out to its feeding range");
           context.assertEquals(
               fed.getPositionTargetRange(),
-              (float) NightRoutine.HOME_RADIUS,
+              (float) ServerConfigService.current().mobs().vampireHomeRadius(),
               "a fed vampire stays about its home");
           context.complete();
         });
@@ -280,6 +323,125 @@ public class VampireHomeGameTest implements FabricGameTest {
           context.assertTrue(
               Weakened.sources(vampire).strength(Starvation.SOURCE) > 0,
               "an empty bar weakens the vampire mob as it does a player");
+          context.complete();
+        });
+  }
+
+  @GameTest(templateName = ARENA, batchId = DAWN_BATCH, tickLimit = 10)
+  public void aHungryVampireStaysHomeWhenDawnIsTooNearToGoOut(final TestContext context) {
+    final VampireEntity vampire = household(context, new BlockPos(4, 2, 4), null);
+    BloodAttachment.set(vampire, HUNGRY);
+    context.runAtTick(
+        5,
+        () -> {
+          context.assertTrue(vampire.homeLife().headsHome(vampire), "dawn is near: head home");
+          context.assertEquals(
+              vampire.getPositionTargetRange(),
+              (float) ServerConfigService.current().mobs().vampireHomeRadius(),
+              "a vampire near dawn keeps to its home, hungry or not");
+          context.complete();
+        });
+  }
+
+  @GameTest(templateName = ARENA, batchId = NIGHT_BATCH, tickLimit = 20)
+  public void aHungryVampireBiteFillsItsBlood(final TestContext context) {
+    final VampireEntity vampire = VampireMobGameTest.still(context, new BlockPos(4, 2, 4));
+    final VillagerEntity villager = context.spawnEntity(EntityType.VILLAGER, new BlockPos(5, 2, 4));
+    villager.setAiDisabled(true);
+    BloodAttachment.set(vampire, HUNGRY);
+    vampire.setTarget(villager);
+    context.assertTrue(vampire.tryAttack(villager), "a hungry vampire bites its prey");
+    context.assertTrue(
+        BloodAttachment.get(vampire) > HUNGRY,
+        "the bite fills its blood: " + BloodAttachment.get(vampire));
+    context.complete();
+  }
+
+  @GameTest(templateName = ARENA, batchId = PEACEFUL_BATCH, tickLimit = TestPlayers.READY + 10)
+  public void onPeacefulAHungryVampireSparesPlayersAndStays(final TestContext context) {
+    final VampireEntity vampire = VampireMobGameTest.still(context, new BlockPos(2, 2, 2));
+    final VillagerEntity villager = context.spawnEntity(EntityType.VILLAGER, new BlockPos(4, 2, 4));
+    villager.setAiDisabled(true);
+    final ServerPlayerEntity human = TestPlayers.human(context, new BlockPos(6, 2, 6));
+    BloodAttachment.set(vampire, HUNGRY);
+    context.runAtTick(
+        TestPlayers.READY,
+        () -> {
+          context.assertFalse(vampire.hunts(human), "on Peaceful a vampire never hunts a player");
+          context.assertTrue(vampire.hunts(villager), "it still hunts a villager");
+          vampire.checkDespawn();
+          context.assertFalse(vampire.isRemoved(), "Peaceful does not clear a household");
+          TestPlayers.finish(context, human);
+        });
+  }
+
+  @GameTest(templateName = ARENA, batchId = STRANGER_BATCH, tickLimit = TestPlayers.READY + 10)
+  public void aFedVampireFollowsAHumanStrangerWithoutAttacking(final TestContext context) {
+    final VampireEntity vampire = VampireMobGameTest.still(context, new BlockPos(1, 2, 1));
+    vampire.settleAt(context.getAbsolutePos(new BlockPos(1, 2, 1)));
+    BloodAttachment.set(vampire, BloodAttachment.FULL);
+    final ServerPlayerEntity stranger = TestPlayers.human(context, new BlockPos(7, 2, 7));
+    context.runAtTick(
+        TestPlayers.READY,
+        () -> {
+          final WatchStrangerGoal goal = new WatchStrangerGoal(vampire);
+          boolean noticed = false;
+          for (int i = 0; i < TRIES && !noticed; i++) {
+            noticed = goal.canStart();
+          }
+          context.assertTrue(noticed, "a fed vampire notices a human stranger");
+          vampire.setOnGround(true);
+          goal.start();
+          goal.tick();
+          context.assertTrue(
+              vampire.getNavigation().getCurrentPath() != null,
+              "it follows a stranger standing off at a distance");
+          context.assertFalse(vampire.hunts(stranger), "a fed vampire does not hunt the stranger");
+          context.assertTrue(vampire.getTarget() == null, "nor does it target them");
+          TestPlayers.finish(context, stranger);
+        });
+  }
+
+  @GameTest(templateName = ARENA, batchId = KIN_BATCH, tickLimit = TestPlayers.READY + 10)
+  public void aVampireDoesNotWatchVampireOrCreativePlayers(final TestContext context) {
+    final VampireEntity vampire = VampireMobGameTest.still(context, new BlockPos(1, 2, 1));
+    vampire.settleAt(context.getAbsolutePos(new BlockPos(1, 2, 1)));
+    BloodAttachment.set(vampire, BloodAttachment.FULL);
+    final ServerPlayerEntity kin = TestPlayers.vampire(context, new BlockPos(5, 2, 5));
+    final ServerPlayerEntity builder = TestPlayers.human(context, new BlockPos(7, 2, 7));
+    builder.changeGameMode(GameMode.CREATIVE);
+    context.runAtTick(
+        TestPlayers.READY,
+        () -> {
+          final WatchStrangerGoal goal = new WatchStrangerGoal(vampire);
+          boolean noticed = false;
+          for (int i = 0; i < TRIES && !noticed; i++) {
+            noticed = goal.canStart();
+          }
+          context.assertFalse(noticed, "neither a vampire nor a creative player is a stranger");
+          TestPlayers.finish(context, kin, builder);
+        });
+  }
+
+  @GameTest(templateName = ARENA, tickLimit = CLAIM_WAIT + 10)
+  public void aVampireKeepsItsCoffinWhileTheCoffinIsUnloaded(final TestContext context) {
+    final VampireEntity vampire = context.spawnEntity(NightbornMobs.VAMPIRE, new BlockPos(4, 2, 4));
+    final BlockPos away = context.getAbsolutePos(new BlockPos(4, 2, 4)).add(UNLOADED, 0, 0);
+    final NbtCompound nbt = new NbtCompound();
+    vampire.writeNbt(nbt);
+    nbt.putLong("Home", away.asLong());
+    nbt.putLong("Coffin", away.north(2).asLong());
+    vampire.readNbt(nbt);
+    context.runAtTick(
+        CLAIM_WAIT,
+        () -> {
+          context.assertEquals(
+              vampire.homeLife().coffin().orElse(null),
+              away.north(2),
+              "a coffin in an unloaded chunk is kept, not dropped or reloaded");
+          context.assertFalse(
+              HomeCoffins.loaded(context.getWorld(), away),
+              "checking the coffin never loads its chunk");
           context.complete();
         });
   }

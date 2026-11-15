@@ -5,6 +5,7 @@ public final class StrangerWatch {
   public static final double NOTICE_RANGE = 12.0;
   static final double FOLLOW_BEYOND = 6.0;
   static final double WARN_WITHIN = 3.0;
+  static final double LET_GO_FACTOR = 1.5;
 
   public enum Move {
     FOLLOW,
@@ -27,6 +28,11 @@ public final class StrangerWatch {
   }
 
   public static boolean keepsWatching(final double distance, final boolean nearHome) {
-    return distance <= NOTICE_RANGE * 1.5 && nearHome;
+    return distance <= NOTICE_RANGE * LET_GO_FACTOR && nearHome;
+  }
+
+  public static boolean calm(
+      final boolean hasTarget, final boolean sleeping, final boolean hungry, final boolean downed) {
+    return !hasTarget && !sleeping && !hungry && !downed;
   }
 }

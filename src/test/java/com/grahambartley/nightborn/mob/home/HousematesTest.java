@@ -44,6 +44,7 @@ class HousematesTest {
       final boolean attackerIsHousemate,
       final double distance,
       final boolean alerted) {
-    assertEquals(alerted, Housemates.alerted(sameHome, attackerIsHousemate, distance * distance));
+    assertEquals(
+        alerted, Housemates.alerted(sameHome, attackerIsHousemate, distance * distance, 24));
   }
 }

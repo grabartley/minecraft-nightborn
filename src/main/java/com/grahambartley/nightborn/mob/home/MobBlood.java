@@ -1,28 +1,29 @@
 package com.grahambartley.nightborn.mob.home;
 
 import com.grahambartley.nightborn.blood.BloodAttachment;
-import com.grahambartley.nightborn.blood.BloodMetabolism;
 import com.grahambartley.nightborn.blood.BloodQuality;
 import com.grahambartley.nightborn.blood.BloodTicker;
 import com.grahambartley.nightborn.blood.BloodValue;
 import com.grahambartley.nightborn.config.NightbornConfig;
-import com.grahambartley.nightborn.downed.Downed;
-import com.grahambartley.nightborn.downed.DownedState;
-import com.grahambartley.nightborn.levitation.Levitation;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.world.GameRules;
+import net.minecraft.nbt.NbtCompound;
 
 public final class MobBlood {
+
+  static final String EXHAUSTION_KEY = "BloodExhaustion";
+  static final String PENDING_KEY = "BloodPending";
 
   private float exhaustion;
   private float pending;
 
-  public int blood(final LivingEntity vampire) {
-    return BloodAttachment.get(vampire);
+  public static BloodValue.Split gain(
+      final float pending, final float taken, final int qualityPercent) {
+    return BloodValue.split(
+        pending + BloodValue.worth(taken, qualityPercent, BloodValue.FRESH_PERCENT));
   }
 
   public boolean hungry(final LivingEntity vampire, final NightbornConfig config) {
-    return MobHunger.hungry(blood(vampire), config.mobs().vampireHungerThreshold());
+    return MobHunger.hungry(BloodAttachment.get(vampire), config.mobs().vampireHungerThreshold());
   }
 
   public void start(final LivingEntity vampire, final int roll, final NightbornConfig config) {
@@ -31,27 +32,9 @@ public final class MobBlood {
   }
 
   public void tick(final LivingEntity vampire, final NightbornConfig config) {
-    final DownedState downed = Downed.state(vampire);
-    final BloodMetabolism.Outcome outcome =
-        BloodMetabolism.tick(
-            new BloodMetabolism.State(
-                blood(vampire),
-                exhaustion,
-                vampire.getHealth(),
-                vampire.getMaxHealth(),
-                vampire.getWorld().getDifficulty(),
-                vampire.getWorld().getGameRules().getBoolean(GameRules.NATURAL_REGENERATION)
-                    && (downed == null || !downed.isDowned()),
-                Levitation.isLevitating(vampire),
-                vampire.age),
-            config.mobs().vampireBloodDrainSeconds(),
-            config.core().levitationDrainSeconds());
-    exhaustion = outcome.exhaustion();
-    BloodAttachment.set(vampire, outcome.blood());
-    if (outcome.heals()) {
-      vampire.heal(1.0F);
-    }
-    BloodTicker.starve(vampire, outcome.blood(), config);
+    exhaustion =
+        BloodTicker.metabolise(
+            vampire, exhaustion, config.mobs().vampireBloodDrainSeconds(), config);
   }
 
   public void drink(
@@ -59,11 +42,22 @@ public final class MobBlood {
       final LivingEntity victim,
       final float taken,
       final NightbornConfig config) {
-    final int quality =
-        BloodQuality.of(victim.getType()).map(q -> q.worthPercent(config)).orElse(0);
     final BloodValue.Split split =
-        BloodValue.split(pending + BloodValue.worth(taken, quality, BloodValue.FRESH_PERCENT));
+        gain(
+            pending,
+            taken,
+            BloodQuality.of(victim.getType()).map(q -> q.worthPercent(config)).orElse(0));
     pending = split.remainder();
-    BloodAttachment.set(vampire, blood(vampire) + split.whole());
+    BloodAttachment.set(vampire, BloodAttachment.get(vampire) + split.whole());
+  }
+
+  public void write(final NbtCompound nbt) {
+    nbt.putFloat(EXHAUSTION_KEY, exhaustion);
+    nbt.putFloat(PENDING_KEY, pending);
+  }
+
+  public void read(final NbtCompound nbt) {
+    exhaustion = nbt.getFloat(EXHAUSTION_KEY);
+    pending = nbt.getFloat(PENDING_KEY);
   }
 }

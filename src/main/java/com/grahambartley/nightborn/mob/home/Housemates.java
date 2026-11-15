@@ -5,8 +5,6 @@ import net.minecraft.util.math.BlockPos;
 
 public final class Housemates {
 
-  public static final double ALERT_RANGE = 24.0;
-
   private Housemates() {}
 
   public static boolean share(final Optional<BlockPos> one, final Optional<BlockPos> other) {
@@ -14,7 +12,10 @@ public final class Housemates {
   }
 
   public static boolean alerted(
-      final boolean sameHome, final boolean attackerIsHousemate, final double distanceSquared) {
-    return sameHome && !attackerIsHousemate && distanceSquared <= ALERT_RANGE * ALERT_RANGE;
+      final boolean sameHome,
+      final boolean attackerIsHousemate,
+      final double distanceSquared,
+      final int alertRange) {
+    return sameHome && !attackerIsHousemate && distanceSquared <= (double) alertRange * alertRange;
   }
 }

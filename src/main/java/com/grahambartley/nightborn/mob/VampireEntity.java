@@ -156,17 +156,28 @@ public class VampireEntity extends HostileEntity implements GeoEntity, Household
         && Prey.isPrey(target)
         && !Prey.spared(
             getWorld().getDifficulty() == Difficulty.PEACEFUL, target instanceof PlayerEntity)
-        && Hunting.huntsPrey(pursuit(target, false));
+        && huntsPrey(target);
+  }
+
+  private boolean huntsPrey(final LivingEntity target) {
+    final NightbornConfig config = ServerConfigService.current();
+    final boolean hungry = blood.hungry(this, config);
+    return Hunting.huntsPrey(
+        Hunting.vampireHunts(getWorld()),
+        hungry,
+        ShadeRules.endangered(this),
+        homeLife.outOfRange(this, target, false, hungry, config));
   }
 
   private Hunting.Pursuit pursuit(final LivingEntity target, final boolean provoked) {
     final NightbornConfig config = ServerConfigService.current();
+    final boolean hungry = blood.hungry(this, config);
     return new Hunting.Pursuit(
         Hunting.vampireHunts(getWorld()),
-        blood.hungry(this, config),
+        hungry,
         ShadeRules.endangered(this),
         provoked,
-        homeLife.outOfRange(this, target, provoked, config));
+        homeLife.outOfRange(this, target, provoked, hungry, config));
   }
 
   public boolean hungry() {
@@ -285,12 +296,13 @@ public class VampireEntity extends HostileEntity implements GeoEntity, Household
         getWorld()
             .getEntitiesByClass(
                 VampireEntity.class,
-                getBoundingBox().expand(Housemates.ALERT_RANGE),
+                getBoundingBox().expand(ServerConfigService.current().mobs().vampireAlertRange()),
                 mate -> mate != this && mate != attacker && !mate.isSleeping())) {
       if (Housemates.alerted(
           Housemates.share(homeLife.home(), mate.homeLife.home()),
           attackerIsHousemate,
-          mate.squaredDistanceTo(this))) {
+          mate.squaredDistanceTo(this),
+          ServerConfigService.current().mobs().vampireAlertRange())) {
         mate.setAttacker(attacker);
       }
     }
@@ -427,12 +439,14 @@ public class VampireEntity extends HostileEntity implements GeoEntity, Household
     nbt.putFloat(HEIGHT_KEY, height());
     nbt.putFloat(WIDTH_KEY, width());
     homeLife.write(nbt);
+    blood.write(nbt);
   }
 
   @Override
   public void readCustomDataFromNbt(final NbtCompound nbt) {
     super.readCustomDataFromNbt(nbt);
     homeLife.read(nbt);
+    blood.read(nbt);
     undressed = nbt.contains(LOOK_KEY) && !nbt.contains(LOOK_KEY, NbtElement.STRING_TYPE);
     if (nbt.contains(LOOK_KEY, NbtElement.STRING_TYPE)) {
       final Identifier look = Identifier.tryParse(nbt.getString(LOOK_KEY));
