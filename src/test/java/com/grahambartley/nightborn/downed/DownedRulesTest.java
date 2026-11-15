@@ -75,6 +75,15 @@ class DownedRulesTest {
         0.0001F);
   }
 
+  @ParameterizedTest(name = "human attacker {0}: remembered {1}")
+  @CsvSource({"true, true", "false, false"})
+  @DisplayName("only a human player who downs a vampire is remembered as its hunter")
+  void hunter(final boolean human, final boolean remembered) {
+    final UUID attacker = UUID.fromString("00000000-0000-0000-0000-000000000047");
+    assertEquals(
+        remembered ? Optional.of(attacker) : Optional.empty(), DownedRules.hunter(human, attacker));
+  }
+
   @Test
   @DisplayName("the hunter who downed a vampire is remembered while it lies and escapes")
   void remembersTheHunter() {

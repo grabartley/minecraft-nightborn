@@ -184,8 +184,15 @@ public class HunterGameTest implements FabricGameTest {
     SkillAttachment.set(hunter, SkillTree.HUNTER, TreeProgress.EMPTY.withEarned(1));
     SkillShop.buy(hunter, TRACKING);
     Powers.use(hunter, 0);
+    final int duration =
+        Skills.skill(context.getWorld().getRegistryManager(), TRACKING)
+            .power()
+            .orElseThrow()
+            .track()
+            .orElseThrow()
+            .durationTicks();
     context.runAtTick(
-        200 + 5,
+        duration + 5,
         () -> {
           context.assertTrue(Tracking.state(hunter) == null, "tracking stops after its time");
           TestPlayers.finish(context, hunter);

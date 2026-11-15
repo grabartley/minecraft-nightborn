@@ -161,8 +161,8 @@ public final class Downed {
   }
 
   static Optional<UUID> hunter(final DamageSource source) {
-    return source.getAttacker() instanceof PlayerEntity player && !Vampires.isVampire(player)
-        ? Optional.of(player.getUuid())
+    return source.getAttacker() instanceof PlayerEntity player
+        ? DownedRules.hunter(!Vampires.isVampire(player), player.getUuid())
         : Optional.empty();
   }
 
