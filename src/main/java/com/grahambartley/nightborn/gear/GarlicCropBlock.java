@@ -4,10 +4,10 @@ import com.grahambartley.nightborn.server.ServerConfigService;
 import com.grahambartley.nightborn.ward.Wards;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
 import net.minecraft.block.CropBlock;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemConvertible;
-import net.minecraft.registry.tag.BlockTags;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
@@ -33,7 +33,10 @@ public class GarlicCropBlock extends CropBlock {
   @Override
   protected boolean canPlantOnTop(
       final BlockState floor, final BlockView world, final BlockPos pos) {
-    return super.canPlantOnTop(floor, world, pos) || floor.isIn(BlockTags.DIRT);
+    return super.canPlantOnTop(floor, world, pos)
+        || floor.isOf(Blocks.DIRT)
+        || floor.isOf(Blocks.COARSE_DIRT)
+        || floor.isOf(Blocks.GRASS_BLOCK);
   }
 
   @Override

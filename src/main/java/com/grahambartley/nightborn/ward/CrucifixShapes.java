@@ -5,6 +5,7 @@ import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
 import it.unimi.dsi.fastutil.longs.LongSet;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import net.minecraft.block.BlockState;
 import net.minecraft.nbt.NbtCompound;
@@ -13,6 +14,7 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.ChunkSectionPos;
+import net.minecraft.util.math.Direction;
 import net.minecraft.world.PersistentState;
 import net.minecraft.world.chunk.WorldChunk;
 
@@ -36,6 +38,10 @@ public final class CrucifixShapes extends PersistentState {
   }
 
   public void refreshAround(final ServerWorld world, final BlockPos changed) {
+    if (Arrays.stream(Direction.values())
+        .noneMatch(side -> isMaterial(world, changed.offset(side)))) {
+      return;
+    }
     for (final BlockPos centre : CrucifixShape.centresTouching(changed)) {
       if (loadedAround(world, centre)) {
         set(centre, CrucifixShape.centredAt(centre, pos -> isMaterial(world, pos)));
@@ -100,7 +106,7 @@ public final class CrucifixShapes extends PersistentState {
         .add(centre.asLong());
   }
 
-  private static boolean isMaterial(final ServerWorld world, final BlockPos pos) {
+  public static boolean isMaterial(final ServerWorld world, final BlockPos pos) {
     final WorldChunk chunk =
         world
             .getChunkManager()

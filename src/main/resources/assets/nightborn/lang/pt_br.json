@@ -270,6 +270,8 @@
   "nightborn.setting.wards.stringCap.tooltip": "O máximo que as réstias de alho ao alcance podem enfraquecer um vampiro juntas",
   "nightborn.setting.wards.touchStrength": "Fraqueza ao tocar alho (%)",
   "nightborn.setting.wards.touchStrength.tooltip": "Quanto tocar ou segurar alho enfraquece um vampiro",
+  "nightborn.setting.wards.touchSeconds": "Duração após tocar alho (segundos)",
+  "nightborn.setting.wards.touchSeconds.tooltip": "Por quanto tempo um vampiro fica enfraquecido depois de tocar ou segurar alho",
   "nightborn.setting.wards.crucifixRange": "Alcance do crucifixo na mão (blocos)",
   "nightborn.setting.wards.crucifixRange.tooltip": "Até onde um crucifixo na mão alcança para enfraquecer vampiros que o veem",
   "nightborn.setting.wards.crucifixStrength": "Fraqueza por um crucifixo na mão (%)",

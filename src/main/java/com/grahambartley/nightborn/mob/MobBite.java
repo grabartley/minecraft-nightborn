@@ -22,7 +22,7 @@ public final class MobBite {
       final int turnChance,
       final SoundEvent sound,
       final TurningSettings turning) {
-    if (!(biter.getWorld() instanceof ServerWorld world) || Wards.holdsCrucifix(victim)) {
+    if (!(biter.getWorld() instanceof ServerWorld world) || Wards.wards(victim)) {
       return false;
     }
     final float before = victim.getHealth();

@@ -270,6 +270,8 @@
   "nightborn.setting.wards.stringCap.tooltip": "Le maximum dont les tresses d'ail à portée peuvent affaiblir un vampire ensemble",
   "nightborn.setting.wards.touchStrength": "Affaiblissement au contact de l'ail (%)",
   "nightborn.setting.wards.touchStrength.tooltip": "De combien toucher ou tenir de l'ail affaiblit un vampire",
+  "nightborn.setting.wards.touchSeconds": "Durée après contact avec l'ail (secondes)",
+  "nightborn.setting.wards.touchSeconds.tooltip": "Combien de temps un vampire reste affaibli après avoir touché ou tenu de l'ail",
   "nightborn.setting.wards.crucifixRange": "Portée du crucifix tenu (blocs)",
   "nightborn.setting.wards.crucifixRange.tooltip": "Jusqu'où un crucifix tenu affaiblit les vampires qui le voient",
   "nightborn.setting.wards.crucifixStrength": "Affaiblissement par un crucifix tenu (%)",

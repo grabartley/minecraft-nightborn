@@ -49,10 +49,10 @@ class WardSettingsTest {
   @DisplayName("the constructor clamps values into bounds")
   void clamps() {
     assertEquals(
-        new WardSettings(1, 0, 0, 0, 1, 0, 1, 0, 0),
-        new WardSettings(-1, -1, -1, -1, -1, -1, -1, -1, -1));
+        new WardSettings(1, 0, 0, 0, 1, 1, 0, 1, 0, 0),
+        new WardSettings(-1, -1, -1, -1, -1, -1, -1, -1, -1, -1));
     assertEquals(
-        new WardSettings(32, 100, 100, 100, 32, 100, 32, 100, 100),
-        new WardSettings(99, 999, 999, 999, 99, 999, 99, 999, 999));
+        new WardSettings(32, 100, 100, 100, 30, 32, 100, 32, 100, 100),
+        new WardSettings(99, 999, 999, 999, 99, 99, 999, 99, 999, 999));
   }
 }

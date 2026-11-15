@@ -43,7 +43,7 @@ final class FeedingInteraction {
                 Vampires.isVampire(victim),
                 victim instanceof PlayerEntity,
                 victim.isAlive(),
-                Wards.holdsCrucifix(victim)),
+                Wards.wards(victim)),
             pvp);
     if (!decision.claimsTheInteraction()) {
       return ActionResult.PASS;

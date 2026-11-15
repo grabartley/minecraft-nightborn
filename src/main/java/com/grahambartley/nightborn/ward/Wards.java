@@ -26,8 +26,8 @@ public final class Wards {
   public static final String SHAPE = "crucifix_shape";
 
   static final int SCAN_TICKS = 10;
+  static final int TICKS_PER_SECOND = 20;
   static final int LINGER_TICKS = SCAN_TICKS + 5;
-  static final int TOUCH_TICKS = 60;
 
   private Wards() {}
 
@@ -41,24 +41,18 @@ public final class Wards {
     }
     Weakened.set(vampire, STRINGS, strings(world, vampire, settings), LINGER_TICKS);
     Weakened.set(vampire, CRUCIFIX, crucifixes(world, vampire, settings), LINGER_TICKS);
-    Weakened.set(
-        vampire,
-        SHAPE,
-        CrucifixShapes.get(world).near(world, vampire.getBlockPos(), settings.shapeRange()).stream()
-                .anyMatch(centre -> seesShape(world, vampire, centre))
-            ? settings.shapeStrength()
-            : 0,
-        LINGER_TICKS);
+    Weakened.set(vampire, SHAPE, shapes(world, vampire, settings), LINGER_TICKS);
   }
 
   public static void touch(final Entity entity, final WardSettings settings) {
     if (entity instanceof LivingEntity living && Vampires.isVampire(living)) {
-      Weakened.add(living, TOUCH, settings.touchStrength(), TOUCH_TICKS);
+      Weakened.add(
+          living, TOUCH, settings.touchStrength(), settings.touchSeconds() * TICKS_PER_SECOND);
     }
   }
 
-  public static boolean holdsCrucifix(final LivingEntity entity) {
-    return holds(entity, WardTags.CRUCIFIXES);
+  public static boolean wards(final LivingEntity entity) {
+    return holds(entity, WardTags.CRUCIFIXES) && !Vampires.isVampire(entity);
   }
 
   private static boolean holds(final LivingEntity entity, final TagKey<Item> tag) {
@@ -67,6 +61,9 @@ public final class Wards {
 
   private static int strings(
       final ServerWorld world, final LivingEntity vampire, final WardSettings settings) {
+    if (settings.stringStrength() == 0 || settings.stringCap() == 0) {
+      return 0;
+    }
     final long count =
         world
             .getPointOfInterestStorage()
@@ -81,18 +78,19 @@ public final class Wards {
 
   private static int crucifixes(
       final ServerWorld world, final LivingEntity vampire, final WardSettings settings) {
+    if (settings.crucifixStrength() == 0) {
+      return 0;
+    }
     final double range = settings.crucifixRange();
     final List<LivingEntity> holders =
         world.getEntitiesByClass(
             LivingEntity.class,
             new Box(vampire.getBlockPos()).expand(range),
             holder ->
-                holder != vampire
-                    && holder.isAlive()
+                holder.isAlive()
                     && !holder.isSpectator()
-                    && !Vampires.isVampire(holder)
                     && holder.squaredDistanceTo(vampire) <= range * range
-                    && holdsCrucifix(holder)
+                    && wards(holder)
                     && vampire.canSee(holder));
     int strongest = 0;
     for (final LivingEntity holder : holders) {
@@ -103,6 +101,19 @@ public final class Wards {
                   settings.crucifixStrength(), faith(holder), settings.faithBonus()));
     }
     return strongest;
+  }
+
+  private static int shapes(
+      final ServerWorld world, final LivingEntity vampire, final WardSettings settings) {
+    if (settings.shapeStrength() == 0) {
+      return 0;
+    }
+    return CrucifixShapes.get(world)
+            .near(world, vampire.getBlockPos(), settings.shapeRange())
+            .stream()
+            .anyMatch(centre -> seesShape(world, vampire, centre))
+        ? settings.shapeStrength()
+        : 0;
   }
 
   private static double faith(final LivingEntity holder) {

@@ -270,6 +270,8 @@
   "nightborn.setting.wards.stringCap.tooltip": "范围内的蒜串合计最多让吸血鬼虚弱多少",
   "nightborn.setting.wards.touchStrength": "触碰大蒜造成的虚弱（%）",
   "nightborn.setting.wards.touchStrength.tooltip": "触碰或手持大蒜让吸血鬼虚弱多少",
+  "nightborn.setting.wards.touchSeconds": "触碰大蒜后的持续时间（秒）",
+  "nightborn.setting.wards.touchSeconds.tooltip": "吸血鬼触碰或手持大蒜后保持虚弱多久",
   "nightborn.setting.wards.crucifixRange": "手持十字架范围（格）",
   "nightborn.setting.wards.crucifixRange.tooltip": "手持十字架能在多远处削弱看得见它的吸血鬼",
   "nightborn.setting.wards.crucifixStrength": "手持十字架造成的虚弱（%）",

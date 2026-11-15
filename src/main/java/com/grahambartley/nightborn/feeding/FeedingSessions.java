@@ -100,7 +100,7 @@ public final class FeedingSessions {
       if (victim == null
           || !victim.isAlive()
           || session.released(now)
-          || Wards.holdsCrucifix(victim)
+          || Wards.wards(victim)
           || !inReach(vampire, victim)) {
         sessions.remove();
         finish(vampire, victim, session, config);

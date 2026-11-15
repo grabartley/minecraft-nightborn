@@ -16,6 +16,6 @@ public final class WardStrength {
   }
 
   private static int clamp(final long value, final int cap) {
-    return (int) Math.min(Math.min(cap, WeakenedSources.CAP), value);
+    return WeakenedSources.clampStrength(Math.min(cap, value));
   }
 }

@@ -35,13 +35,18 @@ class GarlicCropBlockTest {
   static Stream<Arguments> floors() {
     return Stream.of(
         Arguments.of(Blocks.FARMLAND, true),
+        Arguments.of(Blocks.DIRT, true),
+        Arguments.of(Blocks.COARSE_DIRT, true),
+        Arguments.of(Blocks.GRASS_BLOCK, true),
+        Arguments.of(Blocks.MUD, false),
+        Arguments.of(Blocks.MOSS_BLOCK, false),
         Arguments.of(Blocks.STONE, false),
         Arguments.of(Blocks.SAND, false));
   }
 
   @ParameterizedTest(name = "{0}: {1}")
   @MethodSource("floors")
-  @DisplayName("garlic is farmed on farmland and never planted on stone or sand")
+  @DisplayName("garlic is farmed on farmland, grows on dirt and grass, and nowhere else")
   void floor(final Block floor, final boolean plantable) {
     assertEquals(
         plantable,

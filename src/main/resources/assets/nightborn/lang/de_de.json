@@ -270,6 +270,8 @@
   "nightborn.setting.wards.stringCap.tooltip": "Wie stark Knoblauchzöpfe in Reichweite einen Vampir zusammen höchstens schwächen",
   "nightborn.setting.wards.touchStrength": "Schwächung durch Berühren von Knoblauch (%)",
   "nightborn.setting.wards.touchStrength.tooltip": "Wie stark das Berühren oder Halten von Knoblauch einen Vampir schwächt",
+  "nightborn.setting.wards.touchSeconds": "Dauer nach Berühren von Knoblauch (Sekunden)",
+  "nightborn.setting.wards.touchSeconds.tooltip": "Wie lange ein Vampir geschwächt bleibt, nachdem er Knoblauch berührt oder gehalten hat",
   "nightborn.setting.wards.crucifixRange": "Reichweite eines gehaltenen Kruzifixes (Blöcke)",
   "nightborn.setting.wards.crucifixRange.tooltip": "Wie weit ein gehaltenes Kruzifix reicht, um Vampire zu schwächen, die es sehen",
   "nightborn.setting.wards.crucifixStrength": "Schwächung durch ein gehaltenes Kruzifix (%)",

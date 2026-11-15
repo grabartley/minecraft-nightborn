@@ -270,6 +270,8 @@
   "nightborn.setting.wards.stringCap.tooltip": "Насколько сильнее всего связки чеснока в радиусе могут вместе ослабить вампира",
   "nightborn.setting.wards.touchStrength": "Ослабление от касания чеснока (%)",
   "nightborn.setting.wards.touchStrength.tooltip": "Насколько касание чеснока или чеснок в руке ослабляет вампира",
+  "nightborn.setting.wards.touchSeconds": "Длительность после касания чеснока (секунды)",
+  "nightborn.setting.wards.touchSeconds.tooltip": "Как долго вампир остаётся ослабленным после касания чеснока или чеснока в руке",
   "nightborn.setting.wards.crucifixRange": "Радиус распятия в руке (блоки)",
   "nightborn.setting.wards.crucifixRange.tooltip": "Как далеко распятие в руке ослабляет вампиров, которые его видят",
   "nightborn.setting.wards.crucifixStrength": "Ослабление от распятия в руке (%)",

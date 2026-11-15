@@ -7,6 +7,7 @@ public record WardSettings(
     int stringStrength,
     int stringCap,
     int touchStrength,
+    int touchSeconds,
     int crucifixRange,
     int crucifixStrength,
     int shapeRange,
@@ -23,6 +24,8 @@ public record WardSettings(
       new IntSetting(SECTION, "stringCap", 45, 0, 100, c -> c.wards().stringCap());
   public static final IntSetting TOUCH_STRENGTH =
       new IntSetting(SECTION, "touchStrength", 80, 0, 100, c -> c.wards().touchStrength());
+  public static final IntSetting TOUCH_SECONDS =
+      new IntSetting(SECTION, "touchSeconds", 3, 1, 30, c -> c.wards().touchSeconds());
   public static final IntSetting CRUCIFIX_RANGE =
       new IntSetting(SECTION, "crucifixRange", 6, 1, 32, c -> c.wards().crucifixRange());
   public static final IntSetting CRUCIFIX_STRENGTH =
@@ -40,6 +43,7 @@ public record WardSettings(
           STRING_STRENGTH,
           STRING_CAP,
           TOUCH_STRENGTH,
+          TOUCH_SECONDS,
           CRUCIFIX_RANGE,
           CRUCIFIX_STRENGTH,
           SHAPE_RANGE,
@@ -51,6 +55,7 @@ public record WardSettings(
     stringStrength = STRING_STRENGTH.clamp(stringStrength);
     stringCap = STRING_CAP.clamp(stringCap);
     touchStrength = TOUCH_STRENGTH.clamp(touchStrength);
+    touchSeconds = TOUCH_SECONDS.clamp(touchSeconds);
     crucifixRange = CRUCIFIX_RANGE.clamp(crucifixRange);
     crucifixStrength = CRUCIFIX_STRENGTH.clamp(crucifixStrength);
     shapeRange = SHAPE_RANGE.clamp(shapeRange);
@@ -64,6 +69,7 @@ public record WardSettings(
         values.get(STRING_STRENGTH),
         values.get(STRING_CAP),
         values.get(TOUCH_STRENGTH),
+        values.get(TOUCH_SECONDS),
         values.get(CRUCIFIX_RANGE),
         values.get(CRUCIFIX_STRENGTH),
         values.get(SHAPE_RANGE),

@@ -270,6 +270,8 @@
   "nightborn.setting.wards.stringCap.tooltip": "The most that Garlic Strings in range can weaken a vampire together",
   "nightborn.setting.wards.touchStrength": "Weakening from Touching Garlic (%)",
   "nightborn.setting.wards.touchStrength.tooltip": "How much touching or holding garlic weakens a vampire",
+  "nightborn.setting.wards.touchSeconds": "Touching Garlic Lasts (seconds)",
+  "nightborn.setting.wards.touchSeconds.tooltip": "How long a vampire stays weakened after touching or holding garlic",
   "nightborn.setting.wards.crucifixRange": "Held Crucifix Range (blocks)",
   "nightborn.setting.wards.crucifixRange.tooltip": "How far a held crucifix reaches to weaken vampires who can see it",
   "nightborn.setting.wards.crucifixStrength": "Weakening from a Held Crucifix (%)",

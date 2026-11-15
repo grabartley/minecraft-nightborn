@@ -270,6 +270,8 @@
   "nightborn.setting.wards.stringCap.tooltip": "Lo máximo que las ristras de ajos al alcance pueden debilitar juntas a un vampiro",
   "nightborn.setting.wards.touchStrength": "Debilidad por tocar ajo (%)",
   "nightborn.setting.wards.touchStrength.tooltip": "Cuánto debilita a un vampiro tocar o sostener ajo",
+  "nightborn.setting.wards.touchSeconds": "Duración tras tocar ajo (segundos)",
+  "nightborn.setting.wards.touchSeconds.tooltip": "Cuánto tiempo sigue debilitado un vampiro después de tocar o sostener ajo",
   "nightborn.setting.wards.crucifixRange": "Alcance del crucifijo en mano (bloques)",
   "nightborn.setting.wards.crucifixRange.tooltip": "Hasta dónde llega un crucifijo en mano para debilitar a los vampiros que lo ven",
   "nightborn.setting.wards.crucifixStrength": "Debilidad por un crucifijo en mano (%)",
