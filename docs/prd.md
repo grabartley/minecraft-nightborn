@@ -417,7 +417,7 @@ The hunter tree starts with Tracking, an active power that points toward the nea
 
 **Actor:** Any player.
 
-Vampires are rare. They live in households hidden in four kinds of structure, each placed to fit the land around it.
+Vampires are rare. They live in households hidden in four kinds of structure, each placed to fit the land around it. Each structure has a heart, the room its household gathers in, and its fog is thickest there.
 
 | Structure | Where | Household |
 |---|---|---|
