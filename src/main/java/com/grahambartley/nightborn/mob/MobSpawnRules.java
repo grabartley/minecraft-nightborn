@@ -7,7 +7,8 @@ public final class MobSpawnRules {
   static final int DARK_CAVE_LIGHT = 4;
   static final int MAX_ESCORT = 2;
   public static final int MAX_NEARBY_BATS = 2;
-  public static final double NEARBY_RANGE = 48.0;
+  public static final double NEARBY_RANGE = 128.0;
+  public static final double NEARBY_HEIGHT = 64.0;
 
   private MobSpawnRules() {}
 

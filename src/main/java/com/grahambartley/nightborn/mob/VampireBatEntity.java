@@ -116,7 +116,7 @@ public class VampireBatEntity extends BatEntity implements GeoEntity {
 
   private boolean huntingNow() {
     final World world = getWorld();
-    return Prey.batHunts(
+    return Hunting.batHunts(
         world.getDifficulty() == Difficulty.PEACEFUL,
         world.getDimension().hasFixedTime(),
         world.getTimeOfDay(),

@@ -294,6 +294,20 @@ public class VampireMobGameTest implements FabricGameTest {
         });
   }
 
+  @GameTest(templateName = YARD, batchId = DAWN_BATCH, skyAccess = true, tickLimit = 20)
+  public void aVampireMobDropsItsPreyAsDawnNears(final TestContext context) {
+    final VampireEntity vampire = context.spawnEntity(NightbornMobs.VAMPIRE, new BlockPos(4, 2, 4));
+    final CowEntity cow = context.spawnEntity(EntityType.COW, new BlockPos(6, 2, 6));
+    cow.setAiDisabled(true);
+    vampire.setTarget(cow);
+    context.runAtTick(
+        5,
+        () -> {
+          context.assertTrue(vampire.getTarget() == null, "the vampire mob gives up its prey");
+          context.complete();
+        });
+  }
+
   @GameTest(templateName = ARENA, tickLimit = TestPlayers.READY + PROVOKED_FOR + 10)
   public void aVampireMobIgnoresVampirePlayersUnlessAttacked(final TestContext context) {
     final VampireEntity provoked = still(context, new BlockPos(4, 2, 4));
@@ -349,7 +363,7 @@ public class VampireMobGameTest implements FabricGameTest {
   }
 
   @GameTest(templateName = YARD, skyAccess = true, tickLimit = 20)
-  public void aNightVampireCanBringBats(final TestContext context) {
+  public void aVampireCanBringBats(final TestContext context) {
     final VampireEntity vampire = still(context, new BlockPos(4, 2, 4));
     final int bats = BatEscort.gather(context.getWorld(), vampire, 100);
     context.assertTrue(bats >= 1 && bats <= 2, "a vampire brings one or two bats: " + bats);

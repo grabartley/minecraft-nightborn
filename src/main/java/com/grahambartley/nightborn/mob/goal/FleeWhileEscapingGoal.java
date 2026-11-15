@@ -4,6 +4,7 @@ import com.grahambartley.nightborn.downed.Downed;
 import com.grahambartley.nightborn.downed.DownedRules;
 import com.grahambartley.nightborn.downed.DownedState;
 import com.grahambartley.nightborn.mob.Prey;
+import com.grahambartley.nightborn.mob.ShadeRules;
 import java.util.EnumSet;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.NoPenaltyTargeting;
@@ -31,7 +32,7 @@ public class FleeWhileEscapingGoal extends Goal {
 
   @Override
   public boolean canStart() {
-    if (!DownedRules.flees(Downed.state(mob))) {
+    if (!DownedRules.flees(Downed.state(mob)) || ShadeRules.endangered(mob)) {
       return false;
     }
     final LivingEntity threat = threat();

@@ -88,7 +88,7 @@ public class VampireEntity extends HostileEntity implements GeoEntity {
 
   public boolean hunts(final LivingEntity target) {
     return Downed.state(this) == null
-        && Prey.vampireHunts(getWorld())
+        && Hunting.vampireHunts(getWorld())
         && !ShadeRules.endangered(this)
         && Prey.isPrey(target);
   }
@@ -120,7 +120,13 @@ public class VampireEntity extends HostileEntity implements GeoEntity {
   @Override
   protected void mobTick() {
     super.mobTick();
-    if (Downed.state(this) != null && getTarget() != null) {
+    final LivingEntity target = getTarget();
+    if (target != null
+        && (Downed.state(this) != null
+            || Hunting.dropsTarget(
+                Hunting.vampireHunts(getWorld()),
+                ShadeRules.endangered(this),
+                target == getAttacker() || !Prey.isPrey(target)))) {
       setTarget(null);
     }
   }

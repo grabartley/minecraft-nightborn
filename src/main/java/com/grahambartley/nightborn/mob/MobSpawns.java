@@ -61,7 +61,7 @@ public final class MobSpawns {
         MobSpawns::batCanSpawn);
   }
 
-  static boolean vampireCanSpawn(
+  public static boolean vampireCanSpawn(
       final EntityType<? extends HostileEntity> type,
       final ServerWorldAccess world,
       final SpawnReason reason,
@@ -79,7 +79,7 @@ public final class MobSpawns {
         && HostileEntity.canSpawnInDark(type, world, reason, pos, random);
   }
 
-  static boolean batCanSpawn(
+  public static boolean batCanSpawn(
       final EntityType<? extends MobEntity> type,
       final ServerWorldAccess world,
       final SpawnReason reason,
@@ -103,7 +103,7 @@ public final class MobSpawns {
                     Box.of(
                         Vec3d.ofCenter(pos),
                         MobSpawnRules.NEARBY_RANGE * 2,
-                        MobSpawnRules.NEARBY_RANGE * 2,
+                        MobSpawnRules.NEARBY_HEIGHT * 2,
                         MobSpawnRules.NEARBY_RANGE * 2),
                     bat -> true)
                 .size())) {
