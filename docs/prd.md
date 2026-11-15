@@ -83,7 +83,7 @@ This document specifies the Nightborn alpha line for Minecraft 1.21.1 on Fabric.
 | What replaces hunger? | Blood | FEED-1 |
 | How do powers grow? | A skill tree with three bloodlines, of which you invest in two | LINE-1 to LINE-3 |
 | Who is a hunter? | Any human who kills vampires | HUNT-1 |
-| How does a vampire die? | Only to direct sun or a stake. Anything else brings it down, greatly weakened, until it recovers | CORE-7, CORE-8 |
+| How does a vampire die? | Only to direct sun or a stake. Anything else brings it down, greatly weakened, until it recovers and escapes | CORE-7, CORE-8 |
 | What happens on death? | Respawn at your coffin. A stake costs skill progress | COFFIN-4, SKILL-6 |
 | PvP? | Vampires and hunters are factions, and PvP follows the server's own setting | FACT-1 to FACT-4 |
 
@@ -276,7 +276,7 @@ Every vampire has the core, whatever bloodlines they choose.
 | CORE-5 | A vampire player never shows as a marker on a vanilla map |
 | CORE-6 | A vampire can sleep only in a coffin (COFFIN-1) |
 | CORE-7 | Only direct sun and a stake can kill a vampire. Damage from anything else, mobs, players, fire, falls, drowning or holy water included, stops at its last health. Falling into the void and an operator's `/kill` are the only exceptions |
-| CORE-8 | A vampire brought to its last health by anything else is downed: it collapses, cannot move, attack, feed or use items or powers, and is weakened at the cap (WEAK-9). It takes no damage from anything but sun and a stake while downed. After 30 seconds it gets up with 20% of its health, where it can stand unharmed, and stays downed until then. More damage does not reset the time. Everyone near can see and hear that it is downed |
+| CORE-8 | A vampire brought to its last health by anything else is downed: it collapses, cannot move, attack, feed or use items or powers, and is weakened at the cap (WEAK-9). It takes no damage from anything but sun and a stake while downed. After 30 seconds it gets up with 20% of its health, wherever it lies. More damage does not reset the time. Everyone near can see and hear that it is downed. For 1 minute after it gets up, it takes no damage but sun and a stake and stays weakened, so it can escape |
 | CORE-9 | Phantoms never spawn for a vampire player and never target a vampire, and time a vampire spends awake never counts toward them |
 
 **Not supported:** a vampire hiding its eyes while feeding.
@@ -512,7 +512,7 @@ Vampires are rare. They live in households hidden in four kinds of structure, ea
 | CFG-2 | Settings are saved per world as JSON in the world save directory |
 | CFG-3 | A missing file gives defaults. A broken file gives defaults, is logged and is kept |
 | CFG-4 | Out-of-range values are clamped on load |
-| CFG-5 | Options cover turn chances, sickness length, sun damage, blood drain and values, garlic and crucifix ranges, skill point rates, the staking penalty, the downed time, the coffin sleep share, spawn and structure rates, and whether players can turn players |
+| CFG-5 | Options cover turn chances, sickness length, sun damage, blood drain and values, garlic and crucifix ranges, skill point rates, the staking penalty, the downed and escape times, the coffin sleep share, spawn and structure rates, and whether players can turn players |
 | CFG-6 | A settings screen through Mod Menu shows the same server options and shares their validation with the commands |
 | CFG-7 | An option that only changes what one player sees, such as gore, is a client setting saved on that player's device |
 | CFG-8 | Operators can turn, cure, set points and reset the bloodlines of any player |
@@ -660,7 +660,7 @@ There is no singleplayer mode in this mod. A single-player world is an integrate
 |---|---|---|---|---|---|
 | Faction | not applicable | kept | kept | kept | kept to the last save |
 | Bite sickness and days left | not applicable | kept | kept | kept, paused while offline | kept to the last save |
-| Downed and its time left | kept, for a mob | kept | cleared | kept, so leaving does not escape it | kept to the last save |
+| Downed or escaping, and the time left | kept, for a mob | kept | cleared | kept, so leaving does not escape it | kept to the last save |
 | Blood | not applicable | kept | refilled, as hunger is on respawn | kept | kept to the last save |
 | Skills and bloodlines | not applicable | kept | kept, except SKILL-6 | kept | kept to the last save |
 | Hunter tree set aside on turning | not applicable | kept | kept | kept | kept to the last save |
@@ -713,7 +713,7 @@ There is no singleplayer mode in this mod. A single-player world is an integrate
 - A human can be bitten, get sick, and either cure it or turn, without outside help.
 - A vampire can feed, survive a full day in a coffin and buy skills in two bloodlines.
 - A human can find a vampire structure, down a vampire with hunter gear and stake it.
-- A vampire dies in the sun, and gets up again after being downed by anything else.
+- A vampire dies in the sun, and gets up and escapes after being downed by anything else.
 - No item, blood or skill point can be duplicated or lost by any mechanic the mod adds (SAFE-1, SAFE-2).
 - A dedicated server starts with no client classes loaded (CS-6).
 - Every string is translated in every shipped language.
