@@ -1,6 +1,7 @@
 package com.grahambartley.nightborn;
 
 import com.grahambartley.nightborn.client.VampireClientFeatures;
+import com.grahambartley.nightborn.client.fog.StructureFog;
 import com.grahambartley.nightborn.client.state.ClientStateService;
 import com.grahambartley.nightborn.coffin.Coffins;
 import com.grahambartley.nightborn.decor.AnimatedFurniture;
@@ -51,5 +52,6 @@ public class NightbornClient implements ClientModInitializer {
     EntityRendererRegistry.register(NightbornMobs.VAMPIRE, VampireRenderer::new);
     EntityRendererRegistry.register(NightbornMobs.VAMPIRE_BAT, VampireBatRenderer::new);
     VampireClientFeatures.register();
+    StructureFog.register();
   }
 }

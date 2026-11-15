@@ -79,7 +79,8 @@ class NightbornConfigTest {
             "factions",
             "skills",
             "gear",
-            "mobs"),
+            "mobs",
+            "structures"),
         NightbornConfig.sections());
   }
 

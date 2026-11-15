@@ -9,6 +9,7 @@ import com.grahambartley.nightborn.faction.FactionAttachment;
 import com.grahambartley.nightborn.gear.GearFeatures;
 import com.grahambartley.nightborn.hunter.HunterFeatures;
 import com.grahambartley.nightborn.mob.NightbornMobs;
+import com.grahambartley.nightborn.structure.NightbornStructures;
 import com.grahambartley.nightborn.vampire.VampireFeatures;
 import net.fabricmc.api.ModInitializer;
 import org.slf4j.Logger;
@@ -31,6 +32,7 @@ public class Nightborn implements ModInitializer {
     NightbornMobs.initialize();
     GearFeatures.register();
     HunterFeatures.register();
+    NightbornStructures.initialize();
     LOGGER.info("Nightborn initialised");
   }
 }
