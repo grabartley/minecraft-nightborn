@@ -9,13 +9,14 @@ public enum CoatedHit {
       final boolean vampire,
       final boolean blocked,
       final boolean coatedAmmo,
-      final boolean coatedWeapon) {
+      final boolean coatedWeapon,
+      final boolean weaponStrike) {
     if (!vampire || blocked) {
       return NONE;
     }
     if (coatedAmmo) {
       return AMMO;
     }
-    return coatedWeapon ? WEAPON : NONE;
+    return coatedWeapon && weaponStrike ? WEAPON : NONE;
   }
 }

@@ -6,6 +6,7 @@ import java.util.Optional;
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.minecraft.component.ComponentType;
+import net.minecraft.entity.damage.DamageType;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.recipe.RecipeSerializer;
@@ -32,6 +33,8 @@ public final class Coatings {
 
   public static final TagKey<Item> WEAPONS = tag("coatable_weapons");
   public static final TagKey<Item> AMMO = tag("coatable_ammo");
+  public static final TagKey<DamageType> WEAPON_STRIKES =
+      TagKey.of(RegistryKeys.DAMAGE_TYPE, Identifier.of(Nightborn.MOD_ID, "coated_weapon_strikes"));
 
   private Coatings() {}
 

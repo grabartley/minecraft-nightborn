@@ -35,7 +35,8 @@ public final class CoatedStrikes {
         Vampires.isVampire(target),
         blocked,
         Coatings.isCoatedAmmo(ammo),
-        Coatings.isCoatedWeapon(weapon))) {
+        Coatings.isCoatedWeapon(weapon),
+        source.isIn(Coatings.WEAPON_STRIKES))) {
       case AMMO -> {
         final Coat coat = ammo.get(Coatings.COAT);
         weaken(target, coat.coating(), terms(coat));
