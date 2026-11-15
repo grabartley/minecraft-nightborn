@@ -16,17 +16,17 @@ class WantedPosterBlockTest {
   private static final Path TEXTURES =
       Path.of("src/main/resources/assets/nightborn/textures/block");
 
-  @ParameterizedTest(name = "face {0}")
+  @ParameterizedTest(name = "portrait {0}")
   @ValueSource(ints = {0, 1, 2})
-  void everyFaceHasItsOwnPortrait(final int face) {
-    assertTrue(WantedPosterBlock.FACE.getValues().contains(face));
-    assertTrue(Files.exists(TEXTURES.resolve("wanted_poster_" + face + ".png")));
+  void everyPortraitHasItsOwnTexture(final int portrait) {
+    assertTrue(WantedPosterBlock.PORTRAIT.getValues().contains(portrait));
+    assertTrue(Files.exists(TEXTURES.resolve("wanted_poster_" + portrait + ".png")));
   }
 
-  @ParameterizedTest(name = "{0} faces")
+  @ParameterizedTest(name = "{0} portraits")
   @ValueSource(ints = {3})
-  void offersThreeFaces(final int faces) {
-    assertEquals(faces, WantedPosterBlock.FACES);
-    assertEquals(faces, WantedPosterBlock.FACE.getValues().size());
+  void offersThreeFaces(final int portraits) {
+    assertEquals(portraits, WantedPosterBlock.PORTRAITS);
+    assertEquals(portraits, WantedPosterBlock.PORTRAIT.getValues().size());
   }
 }

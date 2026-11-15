@@ -16,6 +16,6 @@ Blood pools, fountains and full chalices are furnishings, not gore, and look the
 
 ## Consequences
 
-- Hidden splatter still has its outline and can be broken, so a player with gore off can still find and remove it.
+- Hidden splatter still has its outline and can be broken, so a player with gore off can still find and remove it. Breaking it still throws the block's small red break particles, like any block's.
 - A rebuild redraws every loaded chunk, which costs a moment, the same as changing vanilla's graphics settings.
 - A future block that is gore can reuse the wrapper by adding its block to the plugin.

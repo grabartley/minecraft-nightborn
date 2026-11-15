@@ -217,6 +217,28 @@ public class WardGameTest implements FabricGameTest {
         });
   }
 
+  @GameTest(templateName = ARENA, tickLimit = SCANNED + 5)
+  public void aWallHidesAHungCrucifix(final TestContext context) {
+    final VampireEntity vampire = still(context, new BlockPos(4, 2, 5));
+    context.setBlockState(new BlockPos(1, 2, 2), Blocks.STONE);
+    context.setBlockState(
+        new BlockPos(1, 2, 3),
+        GearBlocks.GOLD_WALL_CRUCIFIX
+            .getDefaultState()
+            .with(WallDecorBlock.FACING, Direction.SOUTH));
+    for (int x = 0; x <= 6; x++) {
+      for (int y = 1; y <= 4; y++) {
+        context.setBlockState(new BlockPos(x, y, 4), Blocks.STONE);
+      }
+    }
+    context.runAtTick(
+        SCANNED,
+        () -> {
+          context.assertEquals(strength(vampire, Wards.SHAPE), 0, "the wall blocks the sight");
+          context.complete();
+        });
+  }
+
   @GameTest(templateName = ARENA, tickLimit = 20)
   public void aStringFallsWhenItsWallIsBroken(final TestContext context) {
     context.setBlockState(new BlockPos(1, 2, 2), Blocks.STONE);

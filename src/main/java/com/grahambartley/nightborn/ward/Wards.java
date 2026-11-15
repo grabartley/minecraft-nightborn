@@ -131,32 +131,29 @@ public final class Wards {
         .anyMatch(pos -> seesBlock(world, vampire, pos));
   }
 
-  private static boolean seesBlock(
-      final ServerWorld world, final LivingEntity vampire, final BlockPos target) {
-    final BlockHitResult hit =
-        world.raycast(
-            new RaycastContext(
-                vampire.getEyePos(),
-                Vec3d.ofCenter(target),
-                RaycastContext.ShapeType.COLLIDER,
-                RaycastContext.FluidHandling.NONE,
-                vampire));
-    return hit.getType() == HitResult.Type.MISS || hit.getBlockPos().equals(target);
-  }
-
   private static boolean seesShape(
       final ServerWorld world, final LivingEntity vampire, final BlockPos centre) {
-    final BlockHitResult hit =
-        world.raycast(
-            new RaycastContext(
-                vampire.getEyePos(),
-                Vec3d.ofCenter(centre),
-                RaycastContext.ShapeType.COLLIDER,
-                RaycastContext.FluidHandling.NONE,
-                vampire));
+    final BlockHitResult hit = sightLine(world, vampire, centre);
     return hit.getType() == HitResult.Type.MISS
         || CrucifixShape.blocks(
                 centre, pos -> world.getBlockState(pos).isIn(WardTags.CRUCIFIX_MATERIALS))
             .contains(hit.getBlockPos());
+  }
+
+  private static boolean seesBlock(
+      final ServerWorld world, final LivingEntity vampire, final BlockPos target) {
+    final BlockHitResult hit = sightLine(world, vampire, target);
+    return hit.getType() == HitResult.Type.MISS || hit.getBlockPos().equals(target);
+  }
+
+  private static BlockHitResult sightLine(
+      final ServerWorld world, final LivingEntity vampire, final BlockPos target) {
+    return world.raycast(
+        new RaycastContext(
+            vampire.getEyePos(),
+            Vec3d.ofCenter(target),
+            RaycastContext.ShapeType.COLLIDER,
+            RaycastContext.FluidHandling.NONE,
+            vampire));
   }
 }

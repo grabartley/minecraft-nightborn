@@ -15,7 +15,6 @@ import net.minecraft.util.ItemActionResult;
 import net.minecraft.util.ItemScatterer;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.world.World;
 import net.minecraft.world.event.GameEvent;
@@ -39,8 +38,8 @@ public class WeaponRackBlock extends WallDecorBlock implements BlockEntityProvid
     return new WeaponRackBlockEntity(pos, state);
   }
 
-  private static int hook(final BlockState state, final BlockPos pos, final BlockHitResult hit) {
-    return RackHooks.hookAt(state.get(FACING), hit.getPos().subtract(Vec3d.of(pos)));
+  private static int hook(final BlockPos pos, final BlockHitResult hit) {
+    return RackHooks.hookAt(hit.getPos().y - pos.getY());
   }
 
   @Override
@@ -52,12 +51,15 @@ public class WeaponRackBlock extends WallDecorBlock implements BlockEntityProvid
       final PlayerEntity player,
       final Hand hand,
       final BlockHitResult hit) {
-    if (!stack.isIn(DecorTags.WEAPON_RACK_HOLDS)
-        || !(world.getBlockEntity(pos) instanceof WeaponRackBlockEntity rack)) {
+    if (!(world.getBlockEntity(pos) instanceof WeaponRackBlockEntity rack)) {
       return ItemActionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
     }
-    final int hook = hook(state, pos, hit);
-    if (!rack.get(hook).isEmpty()) {
+    final int hook = hook(pos, hit);
+    final boolean hangs =
+        RackUse.decide(stack.isIn(DecorTags.WEAPON_RACK_HOLDS), false, rack.get(hook).isEmpty())
+            .filter(use -> use == RackUse.HANG)
+            .isPresent();
+    if (!hangs) {
       return ItemActionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
     }
     if (!world.isClient) {
@@ -76,12 +78,15 @@ public class WeaponRackBlock extends WallDecorBlock implements BlockEntityProvid
       final BlockPos pos,
       final PlayerEntity player,
       final BlockHitResult hit) {
-    if (!player.getMainHandStack().isEmpty()
-        || !(world.getBlockEntity(pos) instanceof WeaponRackBlockEntity rack)) {
+    if (!(world.getBlockEntity(pos) instanceof WeaponRackBlockEntity rack)) {
       return ActionResult.PASS;
     }
-    final int hook = hook(state, pos, hit);
-    if (rack.get(hook).isEmpty()) {
+    final int hook = hook(pos, hit);
+    final boolean takes =
+        RackUse.decide(false, player.getMainHandStack().isEmpty(), rack.get(hook).isEmpty())
+            .filter(use -> use == RackUse.TAKE)
+            .isPresent();
+    if (!takes) {
       return ActionResult.PASS;
     }
     if (!world.isClient) {

@@ -17,8 +17,8 @@ import net.minecraft.util.math.Vec3d;
 
 public class WeaponRackRenderer implements BlockEntityRenderer<WeaponRackBlockEntity> {
 
-  static final float SCALE = 0.75f;
-  static final float HANG_DEGREES = 135.0f;
+  private static final float SCALE = 0.55f;
+  private static final float HANG_DEGREES = 45.0f;
 
   private final ItemRenderer items;
 

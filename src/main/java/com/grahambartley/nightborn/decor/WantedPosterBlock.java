@@ -11,15 +11,15 @@ import org.jetbrains.annotations.Nullable;
 
 public class WantedPosterBlock extends WallDecorBlock {
 
-  public static final int FACES = 3;
-  public static final IntProperty FACE = IntProperty.of("face", 0, FACES - 1);
+  public static final int PORTRAITS = 3;
+  public static final IntProperty PORTRAIT = IntProperty.of("portrait", 0, PORTRAITS - 1);
   public static final MapCodec<WantedPosterBlock> CODEC = createCodec(WantedPosterBlock::new);
 
   private static final VoxelShape NORTH = Block.createCuboidShape(3, 1, 15, 13, 15, 16);
 
   public WantedPosterBlock(final Settings settings) {
     super(settings, NORTH);
-    this.setDefaultState(this.getDefaultState().with(FACE, 0));
+    this.setDefaultState(this.getDefaultState().with(PORTRAIT, 0));
   }
 
   @Override
@@ -30,7 +30,7 @@ public class WantedPosterBlock extends WallDecorBlock {
   @Override
   protected void appendProperties(final StateManager.Builder<Block, BlockState> builder) {
     super.appendProperties(builder);
-    builder.add(FACE);
+    builder.add(PORTRAIT);
   }
 
   @Override
@@ -39,6 +39,6 @@ public class WantedPosterBlock extends WallDecorBlock {
     final BlockState state = super.getPlacementState(context);
     return state == null
         ? null
-        : state.with(FACE, DecorVariants.pick(context.getBlockPos(), FACES));
+        : state.with(PORTRAIT, DecorVariants.pick(context.getBlockPos(), PORTRAITS));
   }
 }

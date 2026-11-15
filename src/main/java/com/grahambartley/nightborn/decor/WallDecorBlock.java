@@ -9,8 +9,6 @@ import net.minecraft.block.HorizontalFacingBlock;
 import net.minecraft.block.ShapeContext;
 import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.state.StateManager;
-import net.minecraft.util.BlockMirror;
-import net.minecraft.util.BlockRotation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.shape.VoxelShape;
@@ -86,15 +84,5 @@ public class WallDecorBlock extends HorizontalFacingBlock {
     return direction == support(state) && !state.canPlaceAt(world, pos)
         ? Blocks.AIR.getDefaultState()
         : super.getStateForNeighborUpdate(state, direction, neighborState, world, pos, neighborPos);
-  }
-
-  @Override
-  protected BlockState rotate(final BlockState state, final BlockRotation rotation) {
-    return state.with(FACING, rotation.rotate(state.get(FACING)));
-  }
-
-  @Override
-  protected BlockState mirror(final BlockState state, final BlockMirror mirror) {
-    return state.rotate(mirror.getRotation(state.get(FACING)));
   }
 }

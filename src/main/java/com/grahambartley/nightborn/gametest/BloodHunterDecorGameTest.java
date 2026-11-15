@@ -69,6 +69,27 @@ public class BloodHunterDecorGameTest implements FabricGameTest {
   }
 
   @GameTest(templateName = ROOM, tickLimit = 20)
+  public void aWeaponRackDropsEverythingWhenItsWallGoes(final TestContext context) {
+    context.setBlockState(WALL, Blocks.STONE);
+    context.setBlockState(
+        HUNG,
+        DecorBlocks.WEAPON_RACK.getDefaultState().with(WallDecorBlock.FACING, Direction.NORTH));
+    final PlayerEntity player = holding(context, new ItemStack(Items.TRIDENT));
+    context.useBlock(HUNG, player, atHook(context, 0));
+    player.setStackInHand(Hand.MAIN_HAND, new ItemStack(Items.MACE));
+    context.useBlock(HUNG, player, atHook(context, 1));
+
+    context.getWorld().breakBlock(context.getAbsolutePos(WALL), false);
+
+    context.expectBlock(Blocks.AIR, HUNG);
+    context.assertEquals(1, dropped(context, Items.TRIDENT), "the trident drops");
+    context.assertEquals(1, dropped(context, Items.MACE), "the mace drops");
+    context.assertEquals(
+        1, dropped(context, DecorBlocks.WEAPON_RACK.asItem()), "the rack itself drops");
+    context.complete();
+  }
+
+  @GameTest(templateName = ROOM, tickLimit = 20)
   public void aWeaponRackRefusesWhatIsNotAWeapon(final TestContext context) {
     context.setBlockState(WALL, Blocks.STONE);
     context.setBlockState(
