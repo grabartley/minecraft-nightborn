@@ -1,0 +1,9 @@
+{
+  "rig": "female",
+  "texture": "nightborn:textures/entity/vampire/female_vespera.png",
+  "eras": [
+    "nightborn:victorian",
+    "nightborn:renaissance"
+  ],
+  "weight": 10
+}

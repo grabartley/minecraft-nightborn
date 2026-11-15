@@ -7,7 +7,8 @@ public record MobSettings(
     int vampireBatSpawnChance,
     int batEscortChance,
     int vampireLevitateSeconds,
-    int vampireLandSeconds) {
+    int vampireLandSeconds,
+    int vampireHissSeconds) {
 
   static final String SECTION = "mobs";
 
@@ -27,13 +28,17 @@ public record MobSettings(
       new IntSetting(
           SECTION, "vampireLandSeconds", 15, 0, 3600, c -> c.mobs().vampireLandSeconds());
 
+  public static final IntSetting VAMPIRE_HISS_SECONDS =
+      new IntSetting(SECTION, "vampireHissSeconds", 8, 0, 600, c -> c.mobs().vampireHissSeconds());
+
   public static final List<Setting<?>> SETTINGS =
       List.of(
           VAMPIRE_SPAWN_CHANCE,
           VAMPIRE_BAT_SPAWN_CHANCE,
           BAT_ESCORT_CHANCE,
           VAMPIRE_LEVITATE_SECONDS,
-          VAMPIRE_LAND_SECONDS);
+          VAMPIRE_LAND_SECONDS,
+          VAMPIRE_HISS_SECONDS);
 
   public MobSettings {
     vampireSpawnChance = VAMPIRE_SPAWN_CHANCE.clamp(vampireSpawnChance);
@@ -41,6 +46,7 @@ public record MobSettings(
     batEscortChance = BAT_ESCORT_CHANCE.clamp(batEscortChance);
     vampireLevitateSeconds = VAMPIRE_LEVITATE_SECONDS.clamp(vampireLevitateSeconds);
     vampireLandSeconds = VAMPIRE_LAND_SECONDS.clamp(vampireLandSeconds);
+    vampireHissSeconds = VAMPIRE_HISS_SECONDS.clamp(vampireHissSeconds);
   }
 
   static MobSettings from(final SettingValues values) {
@@ -49,6 +55,7 @@ public record MobSettings(
         values.get(VAMPIRE_BAT_SPAWN_CHANCE),
         values.get(BAT_ESCORT_CHANCE),
         values.get(VAMPIRE_LEVITATE_SECONDS),
-        values.get(VAMPIRE_LAND_SECONDS));
+        values.get(VAMPIRE_LAND_SECONDS),
+        values.get(VAMPIRE_HISS_SECONDS));
   }
 }

@@ -1,8 +1,10 @@
 package com.grahambartley.nightborn.render;
 
+import com.grahambartley.nightborn.Nightborn;
 import com.grahambartley.nightborn.mob.VampireEntity;
-import com.grahambartley.nightborn.mob.VampireLook;
 import com.grahambartley.nightborn.mob.VampirePose;
+import com.grahambartley.nightborn.mob.look.VampireLook;
+import com.grahambartley.nightborn.mob.look.VampireRig;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import software.bernie.geckolib.animation.AnimationState;
@@ -14,19 +16,22 @@ import software.bernie.geckolib.model.data.EntityModelData;
 
 public class VampireModel extends GeoModel<VampireEntity> {
 
+  static final Identifier FALLBACK_TEXTURE =
+      Identifier.of(Nightborn.MOD_ID, "textures/entity/vampire/male_corvin.png");
+
   @Override
   public Identifier getModelResource(final VampireEntity vampire) {
-    return vampire.look().geo();
+    return vampire.rig().geo();
   }
 
   @Override
   public Identifier getTextureResource(final VampireEntity vampire) {
-    return vampire.look().texture();
+    return vampire.look().map(VampireLook::texture).orElse(FALLBACK_TEXTURE);
   }
 
   @Override
   public Identifier getAnimationResource(final VampireEntity vampire) {
-    return VampireLook.animation();
+    return VampireRig.animation();
   }
 
   @Override
@@ -34,13 +39,14 @@ public class VampireModel extends GeoModel<VampireEntity> {
       final VampireEntity vampire,
       final long instanceId,
       final AnimationState<VampireEntity> animationState) {
+    RigArmorLayer.hideAnchors(getAnimationProcessor());
     final GeoBone head = getAnimationProcessor().getBone("head");
     if (head == null || vampire.shownPose().holdsHead()) {
       return;
     }
     final EntityModelData data = animationState.getData(DataTickets.ENTITY_MODEL_DATA);
-    head.setRotX(data.headPitch() * MathHelper.RADIANS_PER_DEGREE);
-    head.setRotY(data.netHeadYaw() * MathHelper.RADIANS_PER_DEGREE);
+    head.setRotX(head.getRotX() + data.headPitch() * MathHelper.RADIANS_PER_DEGREE);
+    head.setRotY(head.getRotY() + data.netHeadYaw() * MathHelper.RADIANS_PER_DEGREE);
   }
 
   @Override

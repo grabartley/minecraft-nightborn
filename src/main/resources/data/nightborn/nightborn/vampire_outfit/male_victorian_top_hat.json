@@ -1,0 +1,22 @@
+{
+  "rig": "male",
+  "era": "nightborn:victorian",
+  "pieces": [
+    {
+      "item": "nightborn:top_hat",
+      "color": "#1C1A1D"
+    },
+    {
+      "item": "nightborn:frock_coat",
+      "color": "#1C1A1D"
+    },
+    {
+      "item": "nightborn:trousers",
+      "color": "#3A3638"
+    },
+    {
+      "item": "nightborn:riding_boots"
+    }
+  ],
+  "weight": 10
+}

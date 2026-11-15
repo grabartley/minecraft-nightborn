@@ -1,0 +1,22 @@
+{
+  "rig": "male",
+  "era": "nightborn:georgian",
+  "pieces": [
+    {
+      "item": "nightborn:tricorne",
+      "color": "#1C1A1D"
+    },
+    {
+      "item": "nightborn:frock_coat",
+      "color": "#5A1A24"
+    },
+    {
+      "item": "nightborn:breeches",
+      "color": "#1C1A1D"
+    },
+    {
+      "item": "nightborn:buckled_shoes"
+    }
+  ],
+  "weight": 10
+}

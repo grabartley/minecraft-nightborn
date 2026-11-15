@@ -1,6 +1,7 @@
 package com.grahambartley.nightborn.render;
 
 import java.util.Map;
+import java.util.function.Supplier;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.model.ModelPart;
 import net.minecraft.client.render.RenderLayer;
@@ -21,14 +22,17 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.trim.ArmorTrim;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.registry.tag.ItemTags;
+import software.bernie.geckolib.animatable.GeoAnimatable;
 import software.bernie.geckolib.animatable.client.GeoRenderProvider;
+import software.bernie.geckolib.animation.AnimationProcessor;
 import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.cache.object.GeoCube;
 import software.bernie.geckolib.renderer.GeoArmorRenderer;
+import software.bernie.geckolib.renderer.GeoRenderer;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
 import software.bernie.geckolib.util.Color;
 
-public final class VampirePlayerArmorLayer extends GeoRenderLayer<VampirePlayerAnimatable> {
+public final class RigArmorLayer<T extends GeoAnimatable> extends GeoRenderLayer<T> {
 
   static final int UNDYED = -6265536;
 
@@ -45,19 +49,31 @@ public final class VampirePlayerArmorLayer extends GeoRenderLayer<VampirePlayerA
           "armor_right_boot", new Piece(EquipmentSlot.FEET, "right_leg"),
           "armor_left_boot", new Piece(EquipmentSlot.FEET, "left_leg"));
 
-  private final VampirePlayerRenderer players;
+  private final Supplier<LivingEntity> wearer;
   private BipedEntityModel<LivingEntity> inner;
   private BipedEntityModel<LivingEntity> outer;
 
-  public VampirePlayerArmorLayer(final VampirePlayerRenderer renderer) {
+  public RigArmorLayer(final GeoRenderer<T> renderer, final Supplier<LivingEntity> wearer) {
     super(renderer);
-    this.players = renderer;
+    this.wearer = wearer;
+  }
+
+  public static void hideAnchors(final AnimationProcessor<?> bones) {
+    PIECES
+        .keySet()
+        .forEach(
+            name -> {
+              final GeoBone anchor = bones.getBone(name);
+              if (anchor != null) {
+                anchor.setHidden(true);
+              }
+            });
   }
 
   @Override
   public void renderForBone(
       final MatrixStack poseStack,
-      final VampirePlayerAnimatable animatable,
+      final T animatable,
       final GeoBone bone,
       final RenderLayer renderType,
       final VertexConsumerProvider bufferSource,
@@ -66,11 +82,11 @@ public final class VampirePlayerArmorLayer extends GeoRenderLayer<VampirePlayerA
       final int packedLight,
       final int packedOverlay) {
     final Piece piece = PIECES.get(bone.getName());
-    final var player = players.getCurrentEntity();
-    if (piece == null || player == null) {
+    final LivingEntity wearing = wearer.get();
+    if (piece == null || wearing == null) {
       return;
     }
-    final ItemStack stack = player.getEquippedStack(piece.slot());
+    final ItemStack stack = wearing.getEquippedStack(piece.slot());
     final ArmorDraw draw = ArmorDraw.of(stack.getItem());
     if (draw == ArmorDraw.NONE) {
       return;
@@ -84,9 +100,9 @@ public final class VampirePlayerArmorLayer extends GeoRenderLayer<VampirePlayerA
     poseStack.scale(-1.0F, -1.0F, 1.0F);
     fit(poseStack, bone, part);
     if (draw == ArmorDraw.GECKO
-        && GeoRenderProvider.of(stack).getGeoArmorRenderer(player, stack, piece.slot(), model)
+        && GeoRenderProvider.of(stack).getGeoArmorRenderer(wearing, stack, piece.slot(), model)
             instanceof GeoArmorRenderer<?> geo) {
-      geo.prepForRender(player, stack, piece.slot(), model, bufferSource, partialTick, 0, 0, 0, 0);
+      geo.prepForRender(wearing, stack, piece.slot(), model, bufferSource, partialTick, 0, 0, 0, 0);
       geo.applyBoneVisibilityByPart(piece.slot(), part, model);
       geo.render(poseStack, null, packedLight, packedOverlay, Color.WHITE.argbInt());
     } else {

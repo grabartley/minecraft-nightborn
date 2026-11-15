@@ -1,0 +1,18 @@
+{
+  "rig": "male",
+  "era": "nightborn:renaissance",
+  "pieces": [
+    {
+      "item": "nightborn:doublet",
+      "color": "#1F4A3A"
+    },
+    {
+      "item": "nightborn:breeches",
+      "color": "#3A3638"
+    },
+    {
+      "item": "nightborn:buckled_shoes"
+    }
+  ],
+  "weight": 10
+}

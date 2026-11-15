@@ -104,10 +104,13 @@ class VampirePoseTest {
     "WEAKENED, false",
     "WEAKENED_WALK, false",
     "LEVITATE, false",
-    "IDLE, false"
+    "IDLE, false",
+    "IDLE_LOOK, true",
+    "IDLE_LISTEN, true"
   })
   @DisplayName(
-      "the head follows the look except where the clip aims it: lying, getting up and biting")
+      "the head follows the look except where the clip aims it: lying, getting up, biting and"
+          + " glancing about")
   void holdsHead(final VampirePose pose, final boolean holds) {
     assertEquals(holds, pose.holdsHead());
   }
@@ -125,7 +128,9 @@ class VampirePoseTest {
     "LEVITATE, true",
     "LAND, true",
     "WEAKENED, true",
-    "WEAKENED_WALK, true"
+    "WEAKENED_WALK, true",
+    "IDLE_LOOK, true",
+    "IDLE_LISTEN, true"
   })
   @DisplayName("a swing or item use plays over every pose except those that hold both arms")
   void allowsActions(final VampirePose pose, final boolean allows) {

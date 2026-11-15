@@ -23,7 +23,7 @@ public final class VampirePlayerRenderer
     this.shadowRadius = SHADOW_RADIUS;
     addRenderLayer(new VampirePlayerEyesLayer(this));
     addRenderLayer(new VampirePlayerHeldItemsLayer(this));
-    addRenderLayer(new VampirePlayerArmorLayer(this));
+    addRenderLayer(new RigArmorLayer<>(this, this::getCurrentEntity));
   }
 
   @Override

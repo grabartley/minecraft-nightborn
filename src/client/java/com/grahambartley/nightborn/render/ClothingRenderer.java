@@ -2,6 +2,7 @@ package com.grahambartley.nightborn.render;
 
 import com.grahambartley.nightborn.clothing.ClothingCut;
 import com.grahambartley.nightborn.clothing.ClothingItem;
+import com.grahambartley.nightborn.mob.VampireEntity;
 import net.minecraft.client.model.ModelPart;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.render.VertexConsumerProvider;
@@ -40,7 +41,7 @@ public class ClothingRenderer extends DyeableGeoArmorRenderer<ClothingItem> {
       final float limbSwingAmount,
       final float netHeadYaw,
       final float headPitch) {
-    this.clothing.fit(ClothingCut.fitting(slimBody(entity)));
+    this.clothing.fit(cut(entity));
     this.drawnByPart = false;
     super.prepForRender(
         entity,
@@ -85,8 +86,12 @@ public class ClothingRenderer extends DyeableGeoArmorRenderer<ClothingItem> {
     return Color.ofOpaque(((ClothingItem) this.currentStack.getItem()).color(this.currentStack));
   }
 
-  private static boolean slimBody(final Entity entity) {
-    return entity instanceof AbstractClientPlayerEntity player
-        && player.getSkinTextures().model() == SkinTextures.Model.SLIM;
+  private static ClothingCut cut(final Entity entity) {
+    if (entity instanceof VampireEntity vampire) {
+      return vampire.rig().cut();
+    }
+    return ClothingCut.fitting(
+        entity instanceof AbstractClientPlayerEntity player
+            && player.getSkinTextures().model() == SkinTextures.Model.SLIM);
   }
 }

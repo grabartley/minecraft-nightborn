@@ -8,11 +8,21 @@ import com.grahambartley.nightborn.levitation.Levitation;
 import com.grahambartley.nightborn.mob.goal.FleeWhileEscapingGoal;
 import com.grahambartley.nightborn.mob.goal.LieDownedGoal;
 import com.grahambartley.nightborn.mob.goal.SeekShadeGoal;
+import com.grahambartley.nightborn.mob.look.Appearance;
+import com.grahambartley.nightborn.mob.look.OutfitDressing;
+import com.grahambartley.nightborn.mob.look.VampireLook;
+import com.grahambartley.nightborn.mob.look.VampireLooks;
+import com.grahambartley.nightborn.mob.look.VampireRig;
+import com.grahambartley.nightborn.mob.look.VampireSize;
+import com.grahambartley.nightborn.mob.look.VampireVoice;
 import com.grahambartley.nightborn.server.ServerConfigService;
 import com.grahambartley.nightborn.vampire.VisibleStateAttachment;
+import com.grahambartley.nightborn.weakened.Weakened;
 import java.util.Optional;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityData;
+import net.minecraft.entity.EntityDimensions;
+import net.minecraft.entity.EntityPose;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.SpawnReason;
@@ -33,7 +43,10 @@ import net.minecraft.entity.data.TrackedDataHandlerRegistry;
 import net.minecraft.entity.mob.HostileEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtElement;
 import net.minecraft.sound.SoundEvent;
+import net.minecraft.util.Identifier;
+import net.minecraft.util.math.random.Random;
 import net.minecraft.world.LocalDifficulty;
 import net.minecraft.world.ServerWorldAccess;
 import net.minecraft.world.World;
@@ -43,19 +56,31 @@ import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.AnimatableManager;
 import software.bernie.geckolib.animation.AnimationController;
 import software.bernie.geckolib.animation.PlayState;
+import software.bernie.geckolib.animation.RawAnimation;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 public class VampireEntity extends HostileEntity implements GeoEntity {
 
   static final String LOOK_KEY = "Look";
+  static final String HEIGHT_KEY = "Height";
+  static final String WIDTH_KEY = "Width";
   static final int ANIMATION_BLEND_TICKS = 4;
+  static final String HISS_CONTROLLER = "hiss";
+  static final String HISS_CLIP = "hiss";
+  static final RawAnimation HISS = RawAnimation.begin().thenPlay(HISS_CLIP);
 
-  private static final TrackedData<Integer> LOOK =
-      DataTracker.registerData(VampireEntity.class, TrackedDataHandlerRegistry.INTEGER);
+  private static final TrackedData<String> LOOK =
+      DataTracker.registerData(VampireEntity.class, TrackedDataHandlerRegistry.STRING);
+  private static final TrackedData<Float> HEIGHT =
+      DataTracker.registerData(VampireEntity.class, TrackedDataHandlerRegistry.FLOAT);
+  private static final TrackedData<Float> WIDTH =
+      DataTracker.registerData(VampireEntity.class, TrackedDataHandlerRegistry.FLOAT);
 
   private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
   private final EndingEdge landingEdge = new EndingEdge();
   private VampirePose shownPose = VampirePose.IDLE;
+  private long nextHiss;
+  private boolean warded;
 
   public VampireEntity(final EntityType<? extends VampireEntity> type, final World world) {
     super(type, world);
@@ -73,7 +98,22 @@ public class VampireEntity extends HostileEntity implements GeoEntity {
   @Override
   protected void initDataTracker(final DataTracker.Builder builder) {
     super.initDataTracker(builder);
-    builder.add(LOOK, 0);
+    builder.add(LOOK, "");
+    builder.add(HEIGHT, VampireSize.BASE_HEIGHT);
+    builder.add(WIDTH, 1.0F);
+  }
+
+  @Override
+  public void onTrackedDataSet(final TrackedData<?> data) {
+    super.onTrackedDataSet(data);
+    if (HEIGHT.equals(data) || WIDTH.equals(data)) {
+      calculateDimensions();
+    }
+  }
+
+  @Override
+  public EntityDimensions getBaseDimensions(final EntityPose pose) {
+    return VampireSize.dimensions(super.getBaseDimensions(pose), height(), width());
   }
 
   @Override
@@ -108,6 +148,7 @@ public class VampireEntity extends HostileEntity implements GeoEntity {
             victim == getTarget() || victim == getAttacker())) {
       return false;
     }
+    hiss();
     final NightbornConfig config = ServerConfigService.current();
     final boolean bitten =
         MobBite.bite(
@@ -135,7 +176,46 @@ public class VampireEntity extends HostileEntity implements GeoEntity {
                 target == getAttacker() || !Prey.isPrey(target)))) {
       setTarget(null);
     }
+    final boolean nowWarded = Hissing.warded(Weakened.sources(this));
+    if (nowWarded && !warded) {
+      hiss();
+    }
+    warded = nowWarded;
     levitateAboutHome();
+  }
+
+  @Override
+  public void setTarget(@Nullable final LivingEntity target) {
+    final boolean noticed = target != null && getTarget() == null;
+    super.setTarget(target);
+    if (noticed) {
+      hiss();
+    }
+  }
+
+  @Override
+  public boolean damage(final DamageSource source, final float amount) {
+    final boolean hurt = super.damage(source, amount);
+    if (hurt && source.getAttacker() instanceof LivingEntity) {
+      hiss();
+    }
+    return hurt;
+  }
+
+  void hiss() {
+    if (getWorld().isClient()
+        || !isAlive()
+        || Downed.state(this) != null
+        || CoffinRise.pose(this).isPresent()) {
+      return;
+    }
+    final long now = getWorld().getTime();
+    if (!Hissing.ready(now, nextHiss)) {
+      return;
+    }
+    nextHiss = Hissing.nextAllowed(now, ServerConfigService.current().mobs().vampireHissSeconds());
+    triggerAnim(HISS_CONTROLLER, HISS_CLIP);
+    playSound(MobSounds.vampire(rig(), VampireVoice.HISS), getSoundVolume(), getSoundPitch());
   }
 
   private void levitateAboutHome() {
@@ -162,7 +242,7 @@ public class VampireEntity extends HostileEntity implements GeoEntity {
       final SpawnReason spawnReason,
       @Nullable final EntityData entityData) {
     final NightbornConfig config = ServerConfigService.current();
-    setLook(random.nextInt(VampireLook.COUNT));
+    dress(world);
     VampireCore.tick(this, config.core(), config.blood());
     setHealth(getMaxHealth());
     if (spawnReason == SpawnReason.NATURAL) {
@@ -171,36 +251,92 @@ public class VampireEntity extends HostileEntity implements GeoEntity {
     return super.initialize(world, difficulty, spawnReason, entityData);
   }
 
-  public VampireLook look() {
-    return VampireLook.of(dataTracker.get(LOOK));
+  @Override
+  protected void initEquipment(final Random random, final LocalDifficulty difficulty) {}
+
+  private void dress(final ServerWorldAccess world) {
+    final var registries = world.getRegistryManager();
+    Appearance.pick(
+            VampireLooks.looks(registries),
+            VampireLooks.outfits(registries),
+            VampireLooks.builds(registries),
+            random::nextDouble)
+        .ifPresent(
+            appearance -> {
+              setAppearance(appearance.look(), appearance.height(), appearance.width());
+              appearance
+                  .outfit()
+                  .map(id -> VampireLooks.outfits(registries).get(id))
+                  .map(outfit -> OutfitDressing.stacks(outfit, VampireLooks::item))
+                  .ifPresent(stacks -> stacks.forEach(this::equipStack));
+            });
   }
 
-  public void setLook(final int index) {
-    dataTracker.set(LOOK, VampireLook.of(index).index());
+  public void setAppearance(final Identifier look, final float height, final float width) {
+    dataTracker.set(LOOK, look.toString());
+    dataTracker.set(HEIGHT, VampireSize.clampHeight(height));
+    dataTracker.set(WIDTH, VampireSize.clampWidth(width));
+  }
+
+  public Identifier lookId() {
+    final Identifier id = Identifier.tryParse(dataTracker.get(LOOK));
+    return id == null ? VampireLooks.NONE : id;
+  }
+
+  public Optional<VampireLook> look() {
+    return VampireLooks.look(getWorld().getRegistryManager(), lookId());
+  }
+
+  public VampireRig rig() {
+    return look().map(VampireLook::rig).orElse(VampireRig.MALE);
+  }
+
+  public float height() {
+    return dataTracker.get(HEIGHT);
+  }
+
+  public float width() {
+    return dataTracker.get(WIDTH);
   }
 
   @Override
   public void writeCustomDataToNbt(final NbtCompound nbt) {
     super.writeCustomDataToNbt(nbt);
-    nbt.putInt(LOOK_KEY, dataTracker.get(LOOK));
+    nbt.putString(LOOK_KEY, dataTracker.get(LOOK));
+    nbt.putFloat(HEIGHT_KEY, height());
+    nbt.putFloat(WIDTH_KEY, width());
   }
 
   @Override
   public void readCustomDataFromNbt(final NbtCompound nbt) {
     super.readCustomDataFromNbt(nbt);
-    if (nbt.contains(LOOK_KEY)) {
-      setLook(nbt.getInt(LOOK_KEY));
+    if (nbt.contains(LOOK_KEY, NbtElement.STRING_TYPE)) {
+      final Identifier look = Identifier.tryParse(nbt.getString(LOOK_KEY));
+      setAppearance(
+          look == null ? VampireLooks.NONE : look,
+          nbt.contains(HEIGHT_KEY) ? nbt.getFloat(HEIGHT_KEY) : VampireSize.BASE_HEIGHT,
+          nbt.contains(WIDTH_KEY) ? nbt.getFloat(WIDTH_KEY) : 1.0F);
     }
   }
 
   @Override
+  protected SoundEvent getAmbientSound() {
+    return MobSounds.vampire(rig(), VampireVoice.AMBIENT);
+  }
+
+  @Override
   protected SoundEvent getHurtSound(final DamageSource source) {
-    return MobSounds.VAMPIRE_HURT;
+    return MobSounds.vampire(rig(), VampireVoice.HURT);
   }
 
   @Override
   protected SoundEvent getDeathSound() {
-    return MobSounds.VAMPIRE_DEATH;
+    return MobSounds.vampire(rig(), VampireVoice.DEATH);
+  }
+
+  @Override
+  public float getSoundPitch() {
+    return super.getSoundPitch() * VampireVoice.pitch(height());
   }
 
   @Override
@@ -223,8 +359,8 @@ public class VampireEntity extends HostileEntity implements GeoEntity {
                           isSprinting(),
                           state.getLimbSwingAmount(),
                           Math.hypot(getX() - prevX, getZ() - prevZ)));
-              shownPose = pose;
-              final PlayState play = state.setAndContinue(pose.clip());
+              shownPose = pose == VampirePose.IDLE ? IdleFidget.pose(getId(), age) : pose;
+              final PlayState play = state.setAndContinue(shownPose.clip());
               landingEdge.shown(
                   pose == VampirePose.LAND,
                   pose == VampirePose.LAND && state.getController().hasAnimationFinished());
@@ -241,6 +377,9 @@ public class VampireEntity extends HostileEntity implements GeoEntity {
                     shownPose.allowsActions()
                         ? VampirePose.action(handSwinging, false, true)
                         : Optional.empty())));
+    controllers.add(
+        new AnimationController<>(this, HISS_CONTROLLER, 2, state -> PlayState.STOP)
+            .triggerableAnim(HISS_CLIP, HISS));
   }
 
   public VampirePose shownPose() {

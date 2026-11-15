@@ -1,0 +1,9 @@
+{
+  "rig": "male",
+  "texture": "nightborn:textures/entity/vampire/male_lucien.png",
+  "eras": [
+    "nightborn:regency",
+    "nightborn:georgian"
+  ],
+  "weight": 10
+}

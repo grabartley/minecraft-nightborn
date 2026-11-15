@@ -1,0 +1,9 @@
+{
+  "rig": "male",
+  "texture": "nightborn:textures/entity/vampire/male_corvin.png",
+  "eras": [
+    "nightborn:victorian",
+    "nightborn:regency"
+  ],
+  "weight": 10
+}

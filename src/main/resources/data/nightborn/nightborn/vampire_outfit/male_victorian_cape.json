@@ -1,0 +1,22 @@
+{
+  "rig": "male",
+  "era": "nightborn:victorian",
+  "pieces": [
+    {
+      "item": "nightborn:top_hat",
+      "color": "#1C1A1D"
+    },
+    {
+      "item": "nightborn:high_collared_cape",
+      "color": "#4A1C2A"
+    },
+    {
+      "item": "nightborn:trousers",
+      "color": "#1C1A1D"
+    },
+    {
+      "item": "nightborn:buckled_shoes"
+    }
+  ],
+  "weight": 10
+}

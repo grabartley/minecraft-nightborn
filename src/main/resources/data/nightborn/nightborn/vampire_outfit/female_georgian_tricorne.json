@@ -1,0 +1,22 @@
+{
+  "rig": "female",
+  "era": "nightborn:georgian",
+  "pieces": [
+    {
+      "item": "nightborn:tricorne",
+      "color": "#1C1A1D"
+    },
+    {
+      "item": "nightborn:corset",
+      "color": "#1F4A3A"
+    },
+    {
+      "item": "nightborn:long_skirt",
+      "color": "#5A1A24"
+    },
+    {
+      "item": "nightborn:buckled_shoes"
+    }
+  ],
+  "weight": 10
+}

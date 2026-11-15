@@ -32,7 +32,7 @@ public class VampireEyesLayer extends GeoRenderLayer<VampireEntity> {
     if (vampire.isInvisible() || !VisibleStateAttachment.get(vampire).eyesGlowing()) {
       return;
     }
-    final RenderLayer eyes = RenderLayer.getEyes(vampire.look().eyes());
+    final RenderLayer eyes = RenderLayer.getEyes(vampire.rig().eyes());
     getRenderer()
         .reRender(
             bakedModel,

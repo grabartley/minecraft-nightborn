@@ -2,8 +2,8 @@ package com.grahambartley.nightborn.render;
 
 import com.grahambartley.nightborn.Nightborn;
 import com.grahambartley.nightborn.client.anim.VampirePlayerClips;
-import com.grahambartley.nightborn.mob.VampireLook;
 import com.grahambartley.nightborn.mob.VampirePose;
+import com.grahambartley.nightborn.mob.look.VampireRig;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
@@ -39,7 +39,7 @@ public final class VampirePlayerModel extends GeoModel<VampirePlayerAnimatable> 
 
   @Override
   public Identifier getAnimationResource(final VampirePlayerAnimatable animatable) {
-    return VampireLook.animation();
+    return VampireRig.animation();
   }
 
   @Override
@@ -47,15 +47,7 @@ public final class VampirePlayerModel extends GeoModel<VampirePlayerAnimatable> 
       final VampirePlayerAnimatable animatable,
       final long instanceId,
       final AnimationState<VampirePlayerAnimatable> animationState) {
-    VampirePlayerArmorLayer.PIECES
-        .keySet()
-        .forEach(
-            name -> {
-              final GeoBone anchor = getAnimationProcessor().getBone(name);
-              if (anchor != null) {
-                anchor.setHidden(true);
-              }
-            });
+    RigArmorLayer.hideAnchors(getAnimationProcessor());
     final GeoBone mouth = getAnimationProcessor().getBone(VampirePlayerRenderer.MOUTH);
     if (mouth != null) {
       mouth.setTrackingMatrices(true);
