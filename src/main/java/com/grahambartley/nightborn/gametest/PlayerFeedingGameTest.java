@@ -36,8 +36,8 @@ public class PlayerFeedingGameTest implements FabricGameTest {
 
   @GameTest(templateName = ARENA, batchId = PVP_OFF, tickLimit = TestPlayers.READY + 40)
   public void withPvpOffAVampireCannotBiteAPlayer(final TestContext context) {
-    final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(3, 1, 4));
-    final ServerPlayerEntity human = TestPlayers.human(context, new BlockPos(4, 1, 4));
+    final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(3, 2, 4));
+    final ServerPlayerEntity human = TestPlayers.human(context, new BlockPos(4, 2, 4));
     context.runAtEveryTick(
         () -> {
           if (context.getTick() >= TestPlayers.READY) {
@@ -56,8 +56,8 @@ public class PlayerFeedingGameTest implements FabricGameTest {
 
   @GameTest(templateName = ARENA, batchId = PVP_ON, tickLimit = TestPlayers.READY + 40)
   public void withPvpOnAVampiresBiteStartsBiteSickness(final TestContext context) {
-    final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(3, 1, 4));
-    final ServerPlayerEntity human = TestPlayers.human(context, new BlockPos(4, 1, 4));
+    final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(3, 2, 4));
+    final ServerPlayerEntity human = TestPlayers.human(context, new BlockPos(4, 2, 4));
     context.runAtEveryTick(
         () -> {
           if (context.getTick() >= TestPlayers.READY && !BiteSicknessAttachment.isSick(human)) {

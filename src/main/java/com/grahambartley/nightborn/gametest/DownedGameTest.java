@@ -36,7 +36,7 @@ public class DownedGameTest implements FabricGameTest {
             DamageSources::lava);
     final List<ServerPlayerEntity> vampires = new ArrayList<>();
     for (int i = 0; i < sources.size(); i++) {
-      vampires.add(TestPlayers.vampire(context, new BlockPos(2 + i, 1, 4)));
+      vampires.add(TestPlayers.vampire(context, new BlockPos(2 + i, 2, 4)));
     }
     context.runAtTick(
         TestPlayers.READY,
@@ -55,7 +55,7 @@ public class DownedGameTest implements FabricGameTest {
 
   @GameTest(templateName = ARENA, tickLimit = TestPlayers.READY + 40)
   public void theSunKillsADownedVampire(final TestContext context) {
-    final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(4, 1, 4));
+    final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(4, 2, 4));
     context.runAtTick(
         TestPlayers.READY,
         () -> {
@@ -72,7 +72,7 @@ public class DownedGameTest implements FabricGameTest {
 
   @GameTest(templateName = ARENA, tickLimit = TestPlayers.READY + 20)
   public void theVoidStillKillsAVampire(final TestContext context) {
-    final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(4, 1, 4));
+    final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(4, 2, 4));
     context.runAtTick(
         TestPlayers.READY,
         () -> {
@@ -84,8 +84,8 @@ public class DownedGameTest implements FabricGameTest {
 
   @GameTest(templateName = ARENA, tickLimit = TestPlayers.READY + 20)
   public void aDownedOrEscapingVampireTakesNoOtherDamage(final TestContext context) {
-    final ServerPlayerEntity downed = TestPlayers.vampire(context, new BlockPos(3, 1, 4));
-    final ServerPlayerEntity escaping = TestPlayers.vampire(context, new BlockPos(5, 1, 4));
+    final ServerPlayerEntity downed = TestPlayers.vampire(context, new BlockPos(3, 2, 4));
+    final ServerPlayerEntity escaping = TestPlayers.vampire(context, new BlockPos(5, 2, 4));
     context.runAtTick(
         TestPlayers.READY,
         () -> {
@@ -106,7 +106,7 @@ public class DownedGameTest implements FabricGameTest {
 
   @GameTest(templateName = ARENA, tickLimit = 40)
   public void aDownedVampireGetsUpWithAShareOfItsHealthAndEscapes(final TestContext context) {
-    final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(4, 1, 4));
+    final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(4, 2, 4));
     context.runAtTick(
         5,
         () -> {
@@ -138,7 +138,7 @@ public class DownedGameTest implements FabricGameTest {
 
   @GameTest(templateName = ARENA, tickLimit = 20)
   public void downedIsKeptThroughSaveAndLoad(final TestContext context) {
-    final ServerPlayerEntity saved = TestPlayers.vampire(context, new BlockPos(4, 1, 4));
+    final ServerPlayerEntity saved = TestPlayers.vampire(context, new BlockPos(4, 2, 4));
     saved.setAttached(Downed.TYPE, new DownedState(Phase.DOWNED, 321));
     final NbtCompound nbt = saved.writeNbt(new NbtCompound());
     final ServerPlayerEntity loaded =
@@ -155,7 +155,7 @@ public class DownedGameTest implements FabricGameTest {
 
   @GameTest(templateName = ARENA, tickLimit = 20)
   public void deathClearsTheDownedState(final TestContext context) {
-    final ServerPlayerEntity dead = TestPlayers.vampire(context, new BlockPos(4, 1, 4));
+    final ServerPlayerEntity dead = TestPlayers.vampire(context, new BlockPos(4, 2, 4));
     dead.setAttached(Downed.TYPE, new DownedState(Phase.ESCAPING, 100));
     final ServerPlayerEntity respawned =
         context

@@ -16,7 +16,7 @@ import net.minecraft.world.GameRules;
 public class SunGameTest implements FabricGameTest {
 
   static final String BATCH = "sun";
-  static final String ARENA = "nightborn:vampire_arena";
+  static final String YARD = "nightborn:vampire_yard";
   static final int NOON = 6000;
 
   @BeforeBatch(batchId = BATCH)
@@ -32,12 +32,12 @@ public class SunGameTest implements FabricGameTest {
   }
 
   @GameTest(
-      templateName = ARENA,
+      templateName = YARD,
       batchId = BATCH,
       skyAccess = true,
       tickLimit = TestPlayers.READY + 60)
   public void directSunBurnsAVampire(final TestContext context) {
-    final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(4, 1, 4));
+    final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(4, 2, 4));
     context.runAtTick(
         TestPlayers.READY + 45,
         () -> {
@@ -48,12 +48,12 @@ public class SunGameTest implements FabricGameTest {
   }
 
   @GameTest(
-      templateName = ARENA,
+      templateName = YARD,
       batchId = BATCH,
       skyAccess = true,
       tickLimit = TestPlayers.READY + 60)
   public void fireResistanceDoesNotStopTheSun(final TestContext context) {
-    final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(4, 1, 4));
+    final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(4, 2, 4));
     vampire.addStatusEffect(new StatusEffectInstance(StatusEffects.FIRE_RESISTANCE, 1200));
     context.runAtTick(
         TestPlayers.READY + 45,
@@ -66,17 +66,17 @@ public class SunGameTest implements FabricGameTest {
   }
 
   @GameTest(
-      templateName = ARENA,
+      templateName = YARD,
       batchId = BATCH,
       skyAccess = true,
       tickLimit = TestPlayers.READY + 60)
   public void shadeProtectsAVampire(final TestContext context) {
     for (int x = 2; x <= 6; x++) {
       for (int z = 2; z <= 6; z++) {
-        context.setBlockState(new BlockPos(x, 3, z), Blocks.STONE);
+        context.setBlockState(new BlockPos(x, 4, z), Blocks.STONE);
       }
     }
-    final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(4, 1, 4));
+    final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(4, 2, 4));
     context.runAtTick(
         TestPlayers.READY + 45,
         () -> {
@@ -89,12 +89,12 @@ public class SunGameTest implements FabricGameTest {
   }
 
   @GameTest(
-      templateName = ARENA,
+      templateName = YARD,
       batchId = BATCH,
       skyAccess = true,
       tickLimit = TestPlayers.READY + 60)
   public void humansDoNotBurn(final TestContext context) {
-    final ServerPlayerEntity human = TestPlayers.human(context, new BlockPos(4, 1, 4));
+    final ServerPlayerEntity human = TestPlayers.human(context, new BlockPos(4, 2, 4));
     context.runAtTick(
         TestPlayers.READY + 45,
         () -> {

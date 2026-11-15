@@ -3,6 +3,7 @@ package com.grahambartley.nightborn.gametest;
 import com.grahambartley.nightborn.blood.BloodAttachment;
 import com.grahambartley.nightborn.sun.DirectSun;
 import net.minecraft.entity.damage.DamageSource;
+import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.server.network.ServerPlayerEntity;
 
 final class Diagnostics {
@@ -21,6 +22,14 @@ final class Diagnostics {
         + (last == null ? "nothing" : last.getName())
         + ", in sun "
         + DirectSun.on(player)
+        + ", day "
+        + player.getWorld().isDay()
+        + ", time "
+        + player.getWorld().getTimeOfDay()
+        + ", sky "
+        + player.getWorld().isSkyVisible(player.getBlockPos().up())
+        + ", fire resistant "
+        + player.hasStatusEffect(StatusEffects.FIRE_RESISTANCE)
         + ", pos "
         + player.getBlockPos().toShortString()
         + ", sneaking "

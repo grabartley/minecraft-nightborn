@@ -16,7 +16,7 @@ public class WeakenedGameTest implements FabricGameTest {
 
   @GameTest(templateName = ARENA, tickLimit = 20)
   public void sourcesAddUpToTheCapAndEveryoneSeesIt(final TestContext context) {
-    final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(4, 1, 4));
+    final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(4, 2, 4));
     Weakened.add(vampire, "garlic", 30, 200);
     Weakened.add(vampire, "cross", 20, 200);
     context.runAtTick(
@@ -35,7 +35,7 @@ public class WeakenedGameTest implements FabricGameTest {
 
   @GameTest(templateName = ARENA, tickLimit = 20)
   public void aDownedVampireIsWeakenedAtTheCap(final TestContext context) {
-    final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(4, 1, 4));
+    final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(4, 2, 4));
     vampire.setAttached(Downed.TYPE, new DownedState(DownedState.Phase.ESCAPING, 200));
     context.runAtTick(
         2,
@@ -47,7 +47,7 @@ public class WeakenedGameTest implements FabricGameTest {
 
   @GameTest(templateName = ARENA, tickLimit = 20)
   public void beingWeakenedNeverHurts(final TestContext context) {
-    final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(4, 1, 4));
+    final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(4, 2, 4));
     Weakened.add(vampire, "garlic", 100, 200);
     context.runAtTick(
         10,

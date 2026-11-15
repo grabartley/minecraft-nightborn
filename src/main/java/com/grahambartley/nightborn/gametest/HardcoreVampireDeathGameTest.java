@@ -41,10 +41,10 @@ public class HardcoreVampireDeathGameTest implements FabricGameTest {
       batchId = BATCH,
       tickLimit = TestPlayers.READY + 20)
   public void aVampireWhoDiesComesBackAsANewHuman(final TestContext context) {
-    final ServerPlayerEntity dead = TestPlayers.vampire(context, new BlockPos(4, 1, 4));
+    final ServerPlayerEntity dead = TestPlayers.vampire(context, new BlockPos(4, 2, 4));
     dead.getEnderChestInventory().setStack(0, new ItemStack(Items.DIAMOND, 4));
     dead.setSpawnPoint(
-        World.OVERWORLD, context.getAbsolutePos(new BlockPos(4, 1, 4)), 0.0F, true, false);
+        World.OVERWORLD, context.getAbsolutePos(new BlockPos(4, 2, 4)), 0.0F, true, false);
     context.runAtTick(
         TestPlayers.READY,
         () -> {

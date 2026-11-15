@@ -22,8 +22,8 @@ public class VampireCoreGameTest implements FabricGameTest {
 
   @GameTest(templateName = ARENA, tickLimit = 20)
   public void aVampireHasDoubleAHumansHealthUntilMadeHuman(final TestContext context) {
-    final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(3, 1, 4));
-    final ServerPlayerEntity human = TestPlayers.human(context, new BlockPos(5, 1, 4));
+    final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(3, 2, 4));
+    final ServerPlayerEntity human = TestPlayers.human(context, new BlockPos(5, 2, 4));
     context.runAtTick(
         3,
         () -> {
@@ -36,9 +36,9 @@ public class VampireCoreGameTest implements FabricGameTest {
 
   @GameTest(templateName = ARENA, tickLimit = 20)
   public void phantomsNeverTargetAVampire(final TestContext context) {
-    final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(3, 1, 4));
-    final ServerPlayerEntity human = TestPlayers.human(context, new BlockPos(5, 1, 4));
-    final PhantomEntity phantom = context.spawnEntity(EntityType.PHANTOM, new BlockPos(4, 2, 4));
+    final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(3, 2, 4));
+    final ServerPlayerEntity human = TestPlayers.human(context, new BlockPos(5, 2, 4));
+    final PhantomEntity phantom = context.spawnEntity(EntityType.PHANTOM, new BlockPos(4, 3, 4));
     phantom.setAiDisabled(true);
     context.assertFalse(phantom.canTarget(vampire), "a phantom ignores a vampire");
     context.assertTrue(phantom.canTarget(human), "a phantom still hunts a human");
@@ -47,8 +47,8 @@ public class VampireCoreGameTest implements FabricGameTest {
 
   @GameTest(templateName = ARENA, tickLimit = 40)
   public void timeAwakeNeverCountsForAVampire(final TestContext context) {
-    final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(3, 1, 4));
-    final ServerPlayerEntity human = TestPlayers.human(context, new BlockPos(5, 1, 4));
+    final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(3, 2, 4));
+    final ServerPlayerEntity human = TestPlayers.human(context, new BlockPos(5, 2, 4));
     context.runAtTick(
         25,
         () -> {
@@ -61,8 +61,8 @@ public class VampireCoreGameTest implements FabricGameTest {
 
   @GameTest(templateName = ARENA, tickLimit = 20)
   public void aVanillaMapShowsHumansAndHidesVampires(final TestContext context) {
-    final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(3, 1, 4));
-    final ServerPlayerEntity human = TestPlayers.human(context, new BlockPos(5, 1, 4));
+    final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(3, 2, 4));
+    final ServerPlayerEntity human = TestPlayers.human(context, new BlockPos(5, 2, 4));
     final ItemStack map =
         FilledMapItem.createMap(
             context.getWorld(), (int) human.getX(), (int) human.getZ(), (byte) 0, true, false);
@@ -81,7 +81,7 @@ public class VampireCoreGameTest implements FabricGameTest {
 
   @GameTest(templateName = ARENA, tickLimit = 20)
   public void foodRestoresNoBloodButCanStillBeEaten(final TestContext context) {
-    final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(4, 1, 4));
+    final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(4, 2, 4));
     BloodAttachment.set(vampire, 10);
     context.assertTrue(vampire.canConsume(false), "a vampire can still eat");
     final ItemStack bread = new ItemStack(Items.BREAD);
@@ -92,7 +92,7 @@ public class VampireCoreGameTest implements FabricGameTest {
 
   @GameTest(templateName = ARENA, tickLimit = 20)
   public void aVampiresHungerBarStaysOutOfThePicture(final TestContext context) {
-    final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(4, 1, 4));
+    final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(4, 2, 4));
     vampire.getHungerManager().setFoodLevel(3);
     context.runAtTick(
         3,

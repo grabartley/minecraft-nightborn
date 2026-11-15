@@ -23,7 +23,7 @@ public class BiteSicknessGameTest implements FabricGameTest {
 
   @GameTest(templateName = ARENA, tickLimit = 40)
   public void aBiteStartsTheSicknessAndShowsIt(final TestContext context) {
-    final ServerPlayerEntity human = TestPlayers.human(context, new BlockPos(4, 1, 4));
+    final ServerPlayerEntity human = TestPlayers.human(context, new BlockPos(4, 2, 4));
     context.assertTrue(
         BiteSickness.start(human, ServerConfigService.current().turning()), "the bite takes");
     context.assertEquals(
@@ -41,7 +41,7 @@ public class BiteSicknessGameTest implements FabricGameTest {
 
   @GameTest(templateName = ARENA, tickLimit = 20)
   public void anotherBiteDoesNotRestartTheSickness(final TestContext context) {
-    final ServerPlayerEntity human = TestPlayers.human(context, new BlockPos(4, 1, 4));
+    final ServerPlayerEntity human = TestPlayers.human(context, new BlockPos(4, 2, 4));
     BiteSickness.start(human, ServerConfigService.current().turning());
     BiteSicknessAttachment.set(human, 1000);
     context.assertFalse(
@@ -52,7 +52,7 @@ public class BiteSicknessGameTest implements FabricGameTest {
 
   @GameTest(templateName = ARENA, tickLimit = 20)
   public void aGoldenAppleUnderWeaknessCures(final TestContext context) {
-    final ServerPlayerEntity human = TestPlayers.human(context, new BlockPos(4, 1, 4));
+    final ServerPlayerEntity human = TestPlayers.human(context, new BlockPos(4, 2, 4));
     BiteSickness.start(human, ServerConfigService.current().turning());
     human.addStatusEffect(new StatusEffectInstance(StatusEffects.WEAKNESS, 600));
     eatGoldenApple(context, human);
@@ -62,7 +62,7 @@ public class BiteSicknessGameTest implements FabricGameTest {
 
   @GameTest(templateName = ARENA, tickLimit = 20)
   public void aGoldenAppleWithoutWeaknessDoesNotCure(final TestContext context) {
-    final ServerPlayerEntity human = TestPlayers.human(context, new BlockPos(4, 1, 4));
+    final ServerPlayerEntity human = TestPlayers.human(context, new BlockPos(4, 2, 4));
     BiteSickness.start(human, ServerConfigService.current().turning());
     eatGoldenApple(context, human);
     context.assertTrue(BiteSicknessAttachment.isSick(human), "still sick without Weakness");
@@ -71,7 +71,7 @@ public class BiteSicknessGameTest implements FabricGameTest {
 
   @GameTest(templateName = ARENA, tickLimit = 40)
   public void theSicknessRunningOutTurnsAndKeepsTheInventory(final TestContext context) {
-    final ServerPlayerEntity human = TestPlayers.human(context, new BlockPos(4, 1, 4));
+    final ServerPlayerEntity human = TestPlayers.human(context, new BlockPos(4, 2, 4));
     human.getInventory().insertStack(new ItemStack(Items.DIAMOND, 5));
     BiteSickness.start(human, ServerConfigService.current().turning());
     BiteSicknessAttachment.set(human, 3);
@@ -89,7 +89,7 @@ public class BiteSicknessGameTest implements FabricGameTest {
 
   @GameTest(templateName = ARENA, tickLimit = 20)
   public void nothingCuresAVampire(final TestContext context) {
-    final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(4, 1, 4));
+    final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(4, 2, 4));
     vampire.addStatusEffect(new StatusEffectInstance(StatusEffects.WEAKNESS, 600));
     eatGoldenApple(context, vampire);
     context.assertTrue(Vampires.isVampire(vampire), "a golden apple does not cure a vampire");

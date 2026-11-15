@@ -51,9 +51,9 @@ public class FeedingGameTest implements FabricGameTest {
 
   @GameTest(templateName = ARENA, batchId = BATCH, tickLimit = 100)
   public void biteOnACowFillsTheBloodBar(final TestContext context) {
-    final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(2, 1, 4));
+    final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(2, 2, 4));
     BloodAttachment.set(vampire, 10);
-    final CowEntity cow = still(context.spawnEntity(EntityType.COW, new BlockPos(3, 1, 4)));
+    final CowEntity cow = still(context.spawnEntity(EntityType.COW, new BlockPos(3, 2, 4)));
     context.runAtEveryTick(
         () -> {
           if (context.getTick() <= 65) {
@@ -78,12 +78,12 @@ public class FeedingGameTest implements FabricGameTest {
 
   @GameTest(templateName = ARENA, batchId = BATCH, tickLimit = 80)
   public void twoVampiresNeverTakeMoreThanTheVictimHas(final TestContext context) {
-    final ServerPlayerEntity first = TestPlayers.vampire(context, new BlockPos(2, 1, 4));
-    final ServerPlayerEntity second = TestPlayers.vampire(context, new BlockPos(4, 1, 4));
+    final ServerPlayerEntity first = TestPlayers.vampire(context, new BlockPos(2, 2, 4));
+    final ServerPlayerEntity second = TestPlayers.vampire(context, new BlockPos(4, 2, 4));
     BloodAttachment.set(first, 10);
     BloodAttachment.set(second, 10);
     final VillagerEntity victim =
-        still(context.spawnEntity(EntityType.VILLAGER, new BlockPos(3, 1, 4)));
+        still(context.spawnEntity(EntityType.VILLAGER, new BlockPos(3, 2, 4)));
     victim.setHealth(3.0F);
     context.runAtEveryTick(
         () -> {
@@ -104,11 +104,11 @@ public class FeedingGameTest implements FabricGameTest {
 
   @GameTest(templateName = ARENA, batchId = BATCH, tickLimit = 140)
   public void bottlingConservesBottlesAndNeverCreatesBlood(final TestContext context) {
-    final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(2, 1, 4));
+    final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(2, 2, 4));
     BloodAttachment.set(vampire, 10);
     vampire.setStackInHand(Hand.OFF_HAND, new ItemStack(Items.GLASS_BOTTLE, 3));
     final VillagerEntity victim =
-        still(context.spawnEntity(EntityType.VILLAGER, new BlockPos(3, 1, 4)));
+        still(context.spawnEntity(EntityType.VILLAGER, new BlockPos(3, 2, 4)));
     victim.setHealth(9.0F);
     context.runAtEveryTick(
         () -> {
@@ -146,17 +146,17 @@ public class FeedingGameTest implements FabricGameTest {
 
   @GameTest(templateName = ARENA, batchId = BATCH, tickLimit = 60)
   public void onlyAVillagerThatSeesTheBiteRaisesTheAlarm(final TestContext context) {
-    for (int y = 1; y <= 3; y++) {
+    for (int y = 2; y <= 3; y++) {
       for (int z = 0; z <= 8; z++) {
-        context.setBlockState(new BlockPos(1, y, z), Blocks.STONE);
+        context.setBlockState(new BlockPos(1, y, z), Blocks.BEDROCK);
       }
     }
-    final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(4, 1, 4));
-    final CowEntity cow = still(context.spawnEntity(EntityType.COW, new BlockPos(5, 1, 4)));
+    final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(4, 2, 4));
+    final CowEntity cow = still(context.spawnEntity(EntityType.COW, new BlockPos(5, 2, 4)));
     final VillagerEntity witness =
-        still(context.spawnEntity(EntityType.VILLAGER, new BlockPos(7, 1, 4)));
+        still(context.spawnEntity(EntityType.VILLAGER, new BlockPos(7, 2, 4)));
     final VillagerEntity hidden =
-        still(context.spawnEntity(EntityType.VILLAGER, new BlockPos(0, 1, 4)));
+        still(context.spawnEntity(EntityType.VILLAGER, new BlockPos(0, 2, 4)));
     context.runAtEveryTick(
         () -> {
           if (context.getTick() <= 30) {
@@ -192,8 +192,8 @@ public class FeedingGameTest implements FabricGameTest {
 
   @GameTest(templateName = ARENA, batchId = BATCH, tickLimit = 40)
   public void aHumanCannotBite(final TestContext context) {
-    final ServerPlayerEntity human = TestPlayers.human(context, new BlockPos(2, 1, 4));
-    final CowEntity cow = still(context.spawnEntity(EntityType.COW, new BlockPos(3, 1, 4)));
+    final ServerPlayerEntity human = TestPlayers.human(context, new BlockPos(2, 2, 4));
+    final CowEntity cow = still(context.spawnEntity(EntityType.COW, new BlockPos(3, 2, 4)));
     context.runAtEveryTick(() -> hold(context, human, cow));
     context.runAtTick(
         30,

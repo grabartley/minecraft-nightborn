@@ -22,7 +22,7 @@ public class SettingsGameTest implements FabricGameTest {
   public void aChangedSettingIsSavedInTheWorldAndShowsFactions(final TestContext context) {
     final var server = context.getWorld().getServer();
     final Path file = ConfigPaths.serverConfig(server.getSavePath(WorldSavePath.ROOT).normalize());
-    final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(4, 1, 4));
+    final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(4, 2, 4));
     context.assertTrue(
         ServerConfigService.update(
             server, ServerConfigService.current().with(FactionSettings.SHOW_IN_PLAYER_LIST, true)),
