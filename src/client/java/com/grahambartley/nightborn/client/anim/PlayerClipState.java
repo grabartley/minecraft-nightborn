@@ -20,50 +20,40 @@ public final class PlayerClipState {
 
   private final EndingEdge landing = new EndingEdge();
   private final EndingEdge standing = new EndingEdge();
-  private double landedAt = Double.NaN;
-  private double roseAt = Double.NaN;
-  private double vomitAt = Double.NaN;
-  private double drainAt = Double.NaN;
+  private final OneShot land = new OneShot();
+  private final OneShot rise = new OneShot();
+  private final OneShot vomit = new OneShot();
+  private final OneShot drain = new OneShot();
 
   public void tick(final double age, final boolean levitating, final boolean downed) {
-    if (landing.ended(levitating)) {
-      landedAt = age;
-    }
-    if (levitating) {
-      landedAt = Double.NaN;
-    }
-    if (standing.ended(downed)) {
-      roseAt = age;
-    }
-    if (downed) {
-      roseAt = Double.NaN;
-    }
+    follow(landing, land, levitating, age);
+    follow(standing, rise, downed, age);
   }
 
   public void vomit(final double age) {
-    vomitAt = age;
+    vomit.start(age);
   }
 
   public void drain(final double age) {
-    drainAt = age;
+    drain.start(age);
   }
 
   public double vomitingSeconds(final double age) {
-    return seconds(vomitAt, age);
+    return vomit.seconds(age);
   }
 
   public Optional<VampirePose> clip(
       final double age, final Situation situation, final Lengths lengths) {
-    if (playing(vomitAt, lengths.vomit(), age)) {
+    if (vomit.playing(lengths.vomit(), age)) {
       return Optional.of(VampirePose.VOMIT);
     }
     if (situation.downed()) {
       return Optional.of(VampirePose.DOWNED);
     }
-    if (playing(roseAt, lengths.rise(), age)) {
+    if (rise.playing(lengths.rise(), age)) {
       return Optional.of(VampirePose.RISE);
     }
-    if (playing(drainAt, lengths.drain(), age)) {
+    if (drain.playing(lengths.drain(), age)) {
       return Optional.of(VampirePose.DRAIN);
     }
     if (situation.feeding()) {
@@ -73,7 +63,7 @@ public final class PlayerClipState {
       return Optional.of(
           VampirePose.levitating(situation.sprinting(), situation.horizontalSpeed()));
     }
-    if (playing(landedAt, lengths.land(), age)) {
+    if (land.playing(lengths.land(), age)) {
       return Optional.of(VampirePose.LAND);
     }
     if (situation.weakened()) {
@@ -82,12 +72,13 @@ public final class PlayerClipState {
     return Optional.empty();
   }
 
-  private static double seconds(final double from, final double age) {
-    return Double.isNaN(from) ? Double.NaN : (age - from) / TICKS_PER_SECOND;
-  }
-
-  private static boolean playing(final double from, final double length, final double age) {
-    final double seconds = seconds(from, age);
-    return !Double.isNaN(seconds) && seconds >= 0.0 && seconds < length;
+  private static void follow(
+      final EndingEdge edge, final OneShot shot, final boolean active, final double age) {
+    if (edge.ended(active)) {
+      shot.start(age);
+    }
+    if (active) {
+      shot.clear();
+    }
   }
 }

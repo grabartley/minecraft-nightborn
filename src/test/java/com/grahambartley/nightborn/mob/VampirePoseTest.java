@@ -9,7 +9,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Optional;
-import net.minecraft.entity.EntityPose;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -82,29 +81,6 @@ class VampirePoseTest {
       "the head follows the look except where the clip aims it: lying, getting up and biting")
   void holdsHead(final VampirePose pose, final boolean holds) {
     assertEquals(holds, pose.holdsHead());
-  }
-
-  @ParameterizedTest(name = "{0}, riding {1}, flying {2}, using {3}: staggers {4}")
-  @CsvSource({
-    "STANDING, false, false, false, true",
-    "CROUCHING, false, false, false, false",
-    "SWIMMING, false, false, false, false",
-    "SLEEPING, false, false, false, false",
-    "FALL_FLYING, false, false, false, false",
-    "SPIN_ATTACK, false, false, false, false",
-    "DYING, false, false, false, false",
-    "STANDING, true, false, false, false",
-    "STANDING, false, true, false, false",
-    "STANDING, false, false, true, false"
-  })
-  @DisplayName("the weakened stoop plays only standing on foot with nothing in use")
-  void staggersOnFoot(
-      final EntityPose pose,
-      final boolean riding,
-      final boolean flying,
-      final boolean using,
-      final boolean staggers) {
-    assertEquals(staggers, VampirePose.staggersOnFoot(pose, riding, flying, using));
   }
 
   @ParameterizedTest(name = "{0}: allows actions {1}")

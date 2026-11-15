@@ -1,7 +1,6 @@
 package com.grahambartley.nightborn.mob;
 
 import java.util.Optional;
-import net.minecraft.entity.EntityPose;
 import software.bernie.geckolib.animatable.GeoAnimatable;
 import software.bernie.geckolib.animation.AnimationState;
 import software.bernie.geckolib.animation.PlayState;
@@ -12,17 +11,17 @@ public enum VampirePose {
   WALK("walk", Play.LOOP),
   RUN("run", Play.LOOP),
   ATTACK("attack", Play.HOLD),
-  DOWNED("downed", Play.HOLD),
+  DOWNED("downed", Play.HOLD, Hold.ARMS_AND_HEAD),
   LEVITATE("levitate", Play.LOOP),
   LEVITATE_MOVE("levitate_move", Play.LOOP),
   LEVITATE_SPRINT("levitate_sprint", Play.LOOP),
   LAND("land", Play.ONCE),
-  VOMIT("vomit", Play.ONCE),
+  VOMIT("vomit", Play.ONCE, Hold.ARMS),
   USE_ITEM_RIGHT("use_item_right", Play.LOOP),
   USE_ITEM_LEFT("use_item_left", Play.LOOP),
-  FEED("feed", Play.LOOP),
-  DRAIN("drain", Play.ONCE),
-  RISE("rise", Play.ONCE),
+  FEED("feed", Play.LOOP, Hold.ARMS_AND_HEAD),
+  DRAIN("drain", Play.ONCE, Hold.ARMS_AND_HEAD),
+  RISE("rise", Play.ONCE, Hold.ARMS_AND_HEAD),
   WEAKENED("weakened", Play.LOOP),
   WEAKENED_WALK("weakened_walk", Play.LOOP);
 
@@ -39,6 +38,12 @@ public enum VampirePose {
     ONCE
   }
 
+  private enum Hold {
+    NOTHING,
+    ARMS,
+    ARMS_AND_HEAD
+  }
+
   public record Cue(
       boolean downed,
       boolean levitating,
@@ -49,9 +54,15 @@ public enum VampirePose {
 
   private final String animation;
   private final RawAnimation clip;
+  private final Hold hold;
 
   VampirePose(final String animation, final Play play) {
+    this(animation, play, Hold.NOTHING);
+  }
+
+  VampirePose(final String animation, final Play play, final Hold hold) {
     this.animation = animation;
+    this.hold = hold;
     this.clip =
         switch (play) {
           case LOOP -> RawAnimation.begin().thenLoop(animation);
@@ -87,11 +98,6 @@ public enum VampirePose {
     return horizontalSpeed > WEAKENED_WALK_SPEED ? WEAKENED_WALK : WEAKENED;
   }
 
-  public static boolean staggersOnFoot(
-      final EntityPose pose, final boolean riding, final boolean flying, final boolean usingItem) {
-    return pose == EntityPose.STANDING && !riding && !flying && !usingItem;
-  }
-
   public static double spread(final boolean sprinting, final double horizontalSpeed) {
     return sprinting ? 1.0 : Math.max(0.0, Math.min(1.0, horizontalSpeed / LEVITATE_SPRINT_SPEED));
   }
@@ -114,14 +120,11 @@ public enum VampirePose {
   }
 
   public boolean allowsActions() {
-    return switch (this) {
-      case VOMIT, DOWNED, RISE, FEED, DRAIN -> false;
-      default -> true;
-    };
+    return hold == Hold.NOTHING;
   }
 
   public boolean holdsHead() {
-    return this == DOWNED || this == RISE || this == FEED || this == DRAIN;
+    return hold == Hold.ARMS_AND_HEAD;
   }
 
   public String animation() {
