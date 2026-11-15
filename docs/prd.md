@@ -40,7 +40,7 @@ Nightborn adds vampires and the people who hunt them. A bite from a vampire or a
 | Folklore that works | Garlic, crucifixes built from blocks, holy water, silver and stakes each have real rules (WEAK-1 to WEAK-10) |
 | Vampires live somewhere | Households with personalities in four kinds of structure, rare and hidden in fog. Vampires live there, go out to feed and come home by dawn (HOME-1 to HOME-20) |
 | Vampires fight like players | Wild vampires grow in stages and use every power a player can, more often and more cleverly the older they are (HOME-15 to HOME-17) |
-| The day belongs to vampires too | Coffins skip the day the way beds skip the night (COFFIN-1 to COFFIN-12) |
+| The day belongs to vampires too | Coffins skip the day the way beds skip the night (COFFIN-1 to COFFIN-13) |
 | An endgame for hunters | A repeatable ritual summons the Eldest, a boss with every vampire power (RITE-1 to RITE-8) |
 | Help in the daylight | A human familiar runs errands and guards your coffin, and might betray you (FAM-1 to FAM-8) |
 
@@ -131,7 +131,7 @@ This document specifies the Nightborn alpha line for Minecraft 1.21.1 on Fabric.
 | Downed | A vampire brought to its last health by anything but direct sun or a stake. It lies helpless and greatly weakened until it recovers |
 | Escaping | The minute after a downed vampire gets up, when only direct sun and a stake can hurt it and it stays weakened, so it can get away |
 | Staked | Killed by a stake: a wooden or silver-tipped stake, or a stake bolt, hitting a downed vampire, or striking the blow that would bring a vampire down |
-| Coffin | A block, lying flat or standing upright, that is a vampire's bed and respawn point |
+| Coffin | A block, lying flat or standing upright, that is a vampire's bed. A vampire's assigned coffin is their respawn point, and only they can break it |
 | Thrall | A villager a Noble vampire has bound to follow and fight for them |
 | Ghostly familiar | A spirit an Occult vampire summons to fight and do tasks |
 | Human familiar | A villager hired as a vampire's daytime servant |
@@ -444,7 +444,7 @@ Vampires are rare. They live in households hidden in four kinds of structure, ea
 | HOME-3 | Each type has several layouts, chosen at random |
 | HOME-4 | Fog hangs around and inside every vampire structure, thicker near its heart |
 | HOME-5 | A household feels lived in: its vampires have their own personality and hobbies, talk to and argue with each other, react to each other's deaths, follow a nightly routine and use the furniture of their home: chairs, candles, drapes, books and gramophones |
-| HOME-6 | Household vampires sleep in coffins by day and wake at dusk. Each structure holds the coffins (DECOR-5) that suit it, by default: plain stone and gothic stone coffins in crypts, deepslate and blackstone in underground lairs, wood in ruined manors, and wood in a castle's chambers with stone in its vaults. A data pack can change these (HOME-12) |
+| HOME-6 | Household vampires sleep in coffins by day and wake at dusk. Each structure holds the coffins (DECOR-5) that suit it, by default: stone brick and gothic stone brick coffins in crypts, deepslate brick and polished blackstone brick in underground lairs, dark oak and spruce in ruined manors, and dark oak in a castle with gothic stone brick around its heart. A data pack can change these (HOME-12) |
 | HOME-7 | A castle's vampire lord is a boss with a health bar and its own powers. It is downed and escapes like any vampire, its bar shows when it is downed or escaping, and only a stake or the sun ends the fight |
 | HOME-8 | Structures hold loot chests with gear, Blood Bottles, decor, gothic music discs (DECOR-8), relics (RITE-1) and rare items found nowhere else |
 | HOME-9 | Vampire mobs live only in vampire structures, as members of a household. Each remembers its structure and its own coffin. They never spawn at random anywhere else, and never despawn |
@@ -470,10 +470,10 @@ Vampires are rare. They live in households hidden in four kinds of structure, ea
 
 | ID | Requirement |
 |---|---|
-| COFFIN-1 | A coffin opens and closes, and a vampire can lie in it by day, from dawn to dusk whatever the weather, as a human lies in a bed by night. Using it lies a vampire down; a human, or a vampire who sneaks with an empty hand, opens or shuts the lid instead. The lid shuts over a vampire who lies down, opens when they rise, and stays shut while someone is inside unless a player opens it (COFFIN-9). It softens a fall like a bed, but nothing bounces off its lid. Two cells long, or two cells tall when standing (COFFIN-10), it is crafted like a bed from that coffin's planks or bricks (DECOR-5), with red wool for the lining and a gold nugget for the fittings |
+| COFFIN-1 | A coffin opens and closes, and a vampire can lie in it by day, from dawn to dusk whatever the weather, as a human lies in a bed by night. Using it lies a vampire down; a human, or a vampire who sneaks with an empty hand, opens or shuts the lid instead. The lid shuts over a vampire who lies down, opens when they rise, and stays shut while someone is inside unless a player opens it (COFFIN-9). It softens a fall like a bed, but nothing bounces off its lid. Two cells long, or two cells tall when standing (COFFIN-10), it is crafted like a bed from the planks or bricks it is made of (DECOR-5), with red wool for the lining and a gold nugget for the fittings |
 | COFFIN-2 | Enough vampires sleeping in coffins skips the day to dusk, as beds skip the night to dawn |
 | COFFIN-3 | The share of vampire players who must sleep is a server option, 100% by default. Only vampire players online in that dimension count. With none online, nothing skips the day |
-| COFFIN-4 | Lying in a coffin sets the vampire's respawn point there, as a bed does |
+| COFFIN-4 | A vampire, player or mob, has at most one assigned coffin, and it is their respawn point, as a bed is. Sleeping in an unassigned coffin assigns it to that vampire and frees the one they had before. A vampire can sleep in any coffin no one is lying in, including another vampire's assigned coffin, but that assigns nothing and leaves their respawn point where it was |
 | COFFIN-5 | A vampire whose coffin is gone respawns at world spawn, as with a missing bed |
 | COFFIN-6 | A human can open a coffin but not sleep in it |
 | COFFIN-7 | A closed coffin shades the vampire inside from the sun, smothers any flames they carry in, and hides them from view. An open one does none of these |
@@ -482,6 +482,7 @@ Vampires are rare. They live in households hidden in four kinds of structure, ea
 | COFFIN-10 | A coffin placed while sneaking stands upright, two cells tall, its back to the block behind and its lid facing the player who placed it. A standing coffin follows every coffin rule, a vampire sleeps in it standing, and one who respawns at it stands on the floor in front of it |
 | COFFIN-11 | A vampire asleep in a coffin, player or mob, lies or stands with arms crossed over the chest |
 | COFFIN-12 | A vampire waking in a flat coffin rises rigid, pivoting up from the heels until upright, then steps off. One waking in a standing coffin steps forward out of it. It cannot move until it stands clear, damage does not cancel the rise, and it always ends on a safe free cell next to the coffin |
+| COFFIN-13 | Only the owner can break an assigned coffin. Other players, mobs, explosions, fire and pistons leave it whole, though creative players and operators can still break it. A coffin is unassigned when its owner dies for good, to the sun or a stake, is made human again (CFG-8), is reset by a hardcore death (CORE-10), or breaks it themselves |
 
 **Enforcement:** server.
 
@@ -495,7 +496,7 @@ Vampires are rare. They live in households hidden in four kinds of structure, ea
 | DECOR-2 | Gothic building blocks in stone and dark wood: gothic stone bricks in plain, cracked and mossy forms with stairs, slabs and walls, carved gothic stone, and ebony planks with stairs, slabs and a fence |
 | DECOR-3 | Blood decor: blood fountains, blood pools, placeable splatter decals and chalices |
 | DECOR-4 | Hunter decor: weapon racks, wanted posters, trophy mounts and crucifixes |
-| DECOR-5 | Coffins in two styles. Wooden coffins are narrow at the head and foot and widest at the shoulders, made from oak, spruce, dark oak, mangrove, cherry or crimson planks and drawn with that wood's planks. Their hinged lid creaks open and shut, and they sound, burn and break like wood, fastest with an axe. Stone coffins are plain rectangular boxes made from stone bricks, deepslate bricks, polished blackstone bricks or gothic stone bricks (DECOR-2) and drawn with that stone. Their heavy lid slides open and shut with a grind of stone, and they sound, resist blasts and break like those bricks, never burn, and drop only when mined with a pickaxe. Both styles lie flat or stand (COFFIN-10) and follow every coffin rule (COFFIN-1 to COFFIN-12) |
+| DECOR-5 | Coffins in two styles. Wooden coffins are narrow at the head and foot and widest at the shoulders, made from oak, spruce, dark oak, mangrove, cherry or crimson planks and drawn with that wood's planks. Their hinged lid creaks open and shut, and they sound, burn and break like their wood, fastest with an axe, so a crimson coffin never burns. Stone coffins are plain rectangular boxes made from stone bricks, deepslate bricks, polished blackstone bricks or gothic stone bricks (DECOR-2) and drawn with that stone. Their heavy lid slides open and shut with a grind of stone, and they sound, resist blasts and break like those bricks, dropping only when mined with a pickaxe. Both styles lie flat or stand (COFFIN-10) and follow every coffin rule in 5.14 |
 | DECOR-6 | Candles, candelabras and chandeliers light the room. Flint and steel or a fire charge lights them and an empty hand puts them out, and every light, douse, opening and closing plays its own animation |
 | DECOR-7 | A gramophone, crafted from a jukebox, gold ingots and ebony planks and facing the player who placed it, plays any music disc as a jukebox does, with the same hopper, redstone and comparator behaviour, and animates while it plays |
 | DECOR-8 | Gothic music discs, one per track, play in a gramophone or a jukebox. They are found only in vampire structures: in their loot and in their gramophones (HOME-20) |
@@ -614,7 +615,7 @@ The Eldest is the oldest vampire there is, with every power of every bloodline. 
 
 ## 6. Permissions
 
-A modified client is assumed. Hiding a control is never the enforcement of a rule. Coffins, decor and structure blocks have no owner, as a placed bed has none. Thralls and familiars have one owner.
+A modified client is assumed. Hiding a control is never the enforcement of a rule. Decor and structure blocks have no owner, as a placed bed has none. A coffin has an owner only while it is assigned (COFFIN-13). Thralls and familiars have one owner.
 
 ### Capability Matrix
 
@@ -625,7 +626,8 @@ A modified client is assumed. Hiding a control is never the enforcement of a rul
 | Earn and spend hunter points | Yes | No | No | Through CFG-8 |
 | Earn and spend vampire points | No | Yes | Yes | Through CFG-8 |
 | Sleep in a coffin | No | Yes | Yes | Yes, as a vampire |
-| Break a coffin | Yes | Yes | Yes | Yes |
+| Break an unassigned coffin | Yes | Yes | Yes | Yes |
+| Break an assigned coffin | No | Only their own | Only their own | Yes |
 | Open an empty coffin | Yes | Yes | Yes | Yes |
 | Open an occupied coffin | Yes, sneaking with an empty hand | Yes, sneaking with an empty hand | Yes, sneaking with an empty hand | Yes, sneaking with an empty hand |
 | Start the ritual | Yes | No | No | Yes, as a human |
@@ -677,7 +679,7 @@ There is no singleplayer mode in this mod. A single-player world is an integrate
 | State | Scope |
 |---|---|
 | Faction, sickness, blood, skills, bloodlines and cooldowns | That player, synced only to them, except what others can see (CORE-4, CORE-8, WEAK-8, FACT-3) |
-| Coffin respawn point | That player |
+| Assigned coffin and respawn point | That player |
 | Gore setting | That player's device |
 
 ### Side Separation
@@ -720,7 +722,7 @@ There is no singleplayer mode in this mod. A single-player world is an integrate
 | Blood | not applicable | kept | refilled, as hunger is on respawn | kept | kept to the last save |
 | Skills and bloodlines | not applicable | kept | kept, except SKILL-6 and CORE-10 | kept | kept to the last save |
 | Hunter tree set aside on turning | not applicable | kept | kept, except CORE-10 | kept | kept to the last save |
-| Coffin respawn | kept | kept | kept, except CORE-10 | kept | kept to the last save |
+| Assigned coffin and respawn | kept | kept | cleared by sun or a stake (COFFIN-13), otherwise kept, except CORE-10 | kept | kept to the last save |
 | Thralls and familiars | kept with their chunk | kept | kept, waiting (MIND-8), except CORE-10 | kept | kept to the last save |
 | Human familiar loyalty | kept | kept | kept | kept | kept to the last save |
 | Household members and state, including members out feeding | kept | kept | not applicable | not applicable | kept to the last save |
