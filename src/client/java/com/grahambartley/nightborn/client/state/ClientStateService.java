@@ -24,10 +24,10 @@ public final class ClientStateService {
   }
 
   public static boolean update(final ClientState state) {
-    if (state.equals(current)) {
+    if (state.equals(current) || file == null || !file.save(state)) {
       return false;
     }
     current = state;
-    return file != null && file.save(state);
+    return true;
   }
 }

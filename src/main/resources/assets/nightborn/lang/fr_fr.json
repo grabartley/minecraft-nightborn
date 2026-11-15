@@ -64,7 +64,7 @@
   "nightborn.client.gore.full": "Complet",
   "nightborn.client.gore.reduced": "Réduit",
   "nightborn.client.gore.off": "Désactivé",
-  "nightborn.client.gore.tooltip": "La quantité de sang que vous voyez. Ne change que votre propre écran, jamais le monde.",
+  "nightborn.client.gore.tooltip": "La quantité de sang et de carnage que vous voyez. Ne change que votre propre écran, jamais le monde.",
   "nightborn.setting.turning.biteTurnChance": "Chance de transformation par morsure (%)",
   "nightborn.setting.turning.biteTurnChance.tooltip": "Chance que la morsure d'un joueur vampire déclenche le mal de la morsure",
   "nightborn.setting.turning.playersCanTurnPlayers": "Les joueurs peuvent transformer des joueurs",

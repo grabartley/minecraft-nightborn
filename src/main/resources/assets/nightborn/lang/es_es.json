@@ -64,7 +64,7 @@
   "nightborn.client.gore.full": "Completa",
   "nightborn.client.gore.reduced": "Reducida",
   "nightborn.client.gore.off": "Desactivada",
-  "nightborn.client.gore.tooltip": "Cuánta sangre ves. Solo cambia tu propia pantalla, nunca el mundo.",
+  "nightborn.client.gore.tooltip": "Cuánta sangre y vísceras ves. Solo cambia tu propia pantalla, nunca el mundo.",
   "nightborn.setting.turning.biteTurnChance": "Probabilidad de transformar al morder (%)",
   "nightborn.setting.turning.biteTurnChance.tooltip": "Probabilidad de que el mordisco de un jugador vampiro provoque la enfermedad del mordisco",
   "nightborn.setting.turning.playersCanTurnPlayers": "Los jugadores pueden transformar jugadores",

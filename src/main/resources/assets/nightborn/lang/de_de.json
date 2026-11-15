@@ -64,7 +64,7 @@
   "nightborn.client.gore.full": "Voll",
   "nightborn.client.gore.reduced": "Reduziert",
   "nightborn.client.gore.off": "Aus",
-  "nightborn.client.gore.tooltip": "Wie viel Blut du siehst. Ändert nur deinen eigenen Bildschirm, nie die Welt.",
+  "nightborn.client.gore.tooltip": "Wie viel Blut und Gemetzel du siehst. Ändert nur deinen eigenen Bildschirm, nie die Welt.",
   "nightborn.setting.turning.biteTurnChance": "Verwandlungschance durch Biss (%)",
   "nightborn.setting.turning.biteTurnChance.tooltip": "Chance, dass der Biss eines Vampirspielers die Bisskrankheit auslöst",
   "nightborn.setting.turning.playersCanTurnPlayers": "Spieler können Spieler verwandeln",

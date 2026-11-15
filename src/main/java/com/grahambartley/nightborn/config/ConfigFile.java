@@ -43,8 +43,7 @@ public final class ConfigFile<T> {
     try {
       text = Files.readString(path, StandardCharsets.UTF_8);
     } catch (final IOException ex) {
-      LOGGER.warn(
-          "Could not read Nightborn settings at {}, using defaults: {}", path, ex.getMessage());
+      LOGGER.warn("Could not read Nightborn file at {}, using defaults: {}", path, ex.getMessage());
       return format.defaults();
     }
     try {
@@ -53,13 +52,12 @@ public final class ConfigFile<T> {
         throw new JsonParseException("the file is not a JSON object");
       }
       final ConfigFormat.Read<T> read = format.read(root.getAsJsonObject());
-      read.problems()
-          .forEach(problem -> LOGGER.warn("Nightborn settings at {}: {}", path, problem));
+      read.problems().forEach(problem -> LOGGER.warn("Nightborn file at {}: {}", path, problem));
       return read.value();
     } catch (final JsonParseException ex) {
       final Path kept = keepBrokenFile();
       LOGGER.error(
-          "Nightborn settings at {} are broken, kept as {} and using defaults: {}",
+          "Nightborn file at {} is broken, kept as {} and using defaults: {}",
           path,
           kept,
           ex.getMessage());
@@ -75,7 +73,7 @@ public final class ConfigFile<T> {
       Files.move(temp, path, StandardCopyOption.ATOMIC_MOVE, StandardCopyOption.REPLACE_EXISTING);
       return true;
     } catch (final IOException ex) {
-      LOGGER.error("Could not save Nightborn settings at {}: {}", path, ex.getMessage());
+      LOGGER.error("Could not save Nightborn file at {}: {}", path, ex.getMessage());
       return false;
     }
   }
@@ -93,7 +91,7 @@ public final class ConfigFile<T> {
       Files.move(path, broken, StandardCopyOption.REPLACE_EXISTING);
       return broken;
     } catch (final IOException ex) {
-      LOGGER.error("Could not keep the broken Nightborn settings file: {}", ex.getMessage());
+      LOGGER.error("Could not keep the broken Nightborn file: {}", ex.getMessage());
       return path;
     }
   }

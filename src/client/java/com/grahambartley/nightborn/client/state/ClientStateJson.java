@@ -4,15 +4,35 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.grahambartley.nightborn.config.ConfigFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public final class ClientStateJson {
 
-  static final String GORE = "gore";
+  private static final String GORE = "gore";
 
   public static final ConfigFormat<ClientState> FORMAT =
-      new ConfigFormat<>(ClientState.DEFAULTS, ClientStateJson::read, ClientStateJson::write);
+      new ConfigFormat<>() {
+        @Override
+        public ClientState defaults() {
+          return ClientState.DEFAULTS;
+        }
+
+        @Override
+        public ConfigFormat.Read<ClientState> read(final JsonObject root) {
+          return ClientStateJson.read(root);
+        }
+
+        @Override
+        public JsonObject write(final ClientState state) {
+          return ClientStateJson.write(state);
+        }
+      };
+
+  private static final String KNOWN =
+      Arrays.stream(GoreLevel.values()).map(GoreLevel::id).collect(Collectors.joining(", "));
 
   private ClientStateJson() {}
 
@@ -38,7 +58,7 @@ public final class ClientStateJson {
             ? GoreLevel.byId(element.getAsString())
             : Optional.empty();
     if (level.isEmpty()) {
-      problems.add(GORE + " is not full, reduced or off, using " + fallback.id());
+      problems.add(GORE + " is not one of " + KNOWN + ", using " + fallback.id());
     }
     return level.orElse(fallback);
   }

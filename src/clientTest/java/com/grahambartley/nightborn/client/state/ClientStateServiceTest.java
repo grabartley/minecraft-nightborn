@@ -43,9 +43,12 @@ class ClientStateServiceTest {
 
   @Test
   @DisplayName("saving an unchanged state writes nothing")
-  void unchangedIsNotSaved() {
+  void unchangedIsNotSaved() throws IOException {
     ClientStateService.load(config);
+    final Path file = ConfigPaths.clientState(config);
+    Files.writeString(file, "{\"gore\": \"full\"}", StandardCharsets.UTF_8);
     assertFalse(ClientStateService.update(ClientState.DEFAULTS));
+    assertEquals("{\"gore\": \"full\"}", Files.readString(file, StandardCharsets.UTF_8));
   }
 
   @ParameterizedTest(name = "{0}")

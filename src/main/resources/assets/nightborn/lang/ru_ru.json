@@ -64,7 +64,7 @@
   "nightborn.client.gore.full": "Полная",
   "nightborn.client.gore.reduced": "Уменьшенная",
   "nightborn.client.gore.off": "Выкл.",
-  "nightborn.client.gore.tooltip": "Сколько крови вы видите. Меняет только ваш экран, но не мир.",
+  "nightborn.client.gore.tooltip": "Сколько крови и жестокости вы видите. Меняет только ваш экран, но не мир.",
   "nightborn.setting.turning.biteTurnChance": "Шанс превращения от укуса (%)",
   "nightborn.setting.turning.biteTurnChance.tooltip": "Шанс, что укус игрока-вампира вызовет укусную лихорадку",
   "nightborn.setting.turning.playersCanTurnPlayers": "Игроки могут обращать игроков",

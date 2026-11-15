@@ -64,7 +64,7 @@
   "nightborn.client.gore.full": "Completo",
   "nightborn.client.gore.reduced": "Reduzido",
   "nightborn.client.gore.off": "Desligado",
-  "nightborn.client.gore.tooltip": "Quanto sangue você vê. Muda só a sua própria tela, nunca o mundo.",
+  "nightborn.client.gore.tooltip": "Quanto sangue e violência você vê. Muda só a sua própria tela, nunca o mundo.",
   "nightborn.setting.turning.biteTurnChance": "Chance de transformar ao morder (%)",
   "nightborn.setting.turning.biteTurnChance.tooltip": "Chance de a mordida de um jogador vampiro causar a doença da mordida",
   "nightborn.setting.turning.playersCanTurnPlayers": "Jogadores podem transformar jogadores",
