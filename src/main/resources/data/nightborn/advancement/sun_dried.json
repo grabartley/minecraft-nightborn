@@ -1,0 +1,28 @@
+{
+  "parent": "nightborn:no_reflection_on_you",
+  "display": {
+    "icon": {
+      "id": "minecraft:sunflower"
+    },
+    "title": {
+      "translate": "advancements.nightborn.sun_dried.title"
+    },
+    "description": {
+      "translate": "advancements.nightborn.sun_dried.description"
+    },
+    "frame": "task"
+  },
+  "criteria": {
+    "sun_survived": {
+      "trigger": "nightborn:milestone",
+      "conditions": {
+        "milestone": "sun_survived"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "sun_survived"
+    ]
+  ]
+}

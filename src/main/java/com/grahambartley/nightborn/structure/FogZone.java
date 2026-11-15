@@ -76,6 +76,10 @@ public record FogZone(
     return (float) (towardsHeart * withinEdge);
   }
 
+  public boolean encloses(final double px, final double py, final double pz) {
+    return outside(px, py, pz) == 0.0;
+  }
+
   public boolean contains(final double px, final double py, final double pz) {
     return closeness(px, py, pz) > 0.0F;
   }

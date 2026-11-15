@@ -1,0 +1,28 @@
+{
+  "parent": "nightborn:root",
+  "display": {
+    "icon": {
+      "id": "nightborn:wooden_stake"
+    },
+    "title": {
+      "translate": "advancements.nightborn.stake_holder.title"
+    },
+    "description": {
+      "translate": "advancements.nightborn.stake_holder.description"
+    },
+    "frame": "task"
+  },
+  "criteria": {
+    "vampire_staked": {
+      "trigger": "nightborn:milestone",
+      "conditions": {
+        "milestone": "vampire_staked"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "vampire_staked"
+    ]
+  ]
+}

@@ -1,0 +1,29 @@
+{
+  "parent": "nightborn:no_reflection_on_you",
+  "display": {
+    "icon": {
+      "id": "nightborn:wanted_poster"
+    },
+    "title": {
+      "translate": "advancements.nightborn.bad_taste.title"
+    },
+    "description": {
+      "translate": "advancements.nightborn.bad_taste.description"
+    },
+    "frame": "task",
+    "hidden": true
+  },
+  "criteria": {
+    "fed_watched": {
+      "trigger": "nightborn:milestone",
+      "conditions": {
+        "milestone": "fed_watched"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "fed_watched"
+    ]
+  ]
+}

@@ -1,0 +1,29 @@
+{
+  "parent": "nightborn:no_reflection_on_you",
+  "display": {
+    "icon": {
+      "id": "nightborn:candelabra"
+    },
+    "title": {
+      "translate": "advancements.nightborn.good_help_is_hard_to_find.title"
+    },
+    "description": {
+      "translate": "advancements.nightborn.good_help_is_hard_to_find.description"
+    },
+    "frame": "task",
+    "hidden": true
+  },
+  "criteria": {
+    "familiar_hired": {
+      "trigger": "nightborn:milestone",
+      "conditions": {
+        "milestone": "familiar_hired"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "familiar_hired"
+    ]
+  ]
+}

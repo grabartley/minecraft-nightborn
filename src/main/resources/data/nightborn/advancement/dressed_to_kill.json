@@ -1,0 +1,49 @@
+{
+  "parent": "nightborn:root",
+  "display": {
+    "icon": {
+      "id": "nightborn:top_hat"
+    },
+    "title": {
+      "translate": "advancements.nightborn.dressed_to_kill.title"
+    },
+    "description": {
+      "translate": "advancements.nightborn.dressed_to_kill.description"
+    },
+    "frame": "task"
+  },
+  "criteria": {
+    "dressed": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "player": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "equipment": {
+                "head": {
+                  "items": "#nightborn:enchantable/head_clothing"
+                },
+                "chest": {
+                  "items": "#nightborn:enchantable/chest_clothing"
+                },
+                "legs": {
+                  "items": "#nightborn:enchantable/legs_clothing"
+                },
+                "feet": {
+                  "items": "#nightborn:enchantable/feet_clothing"
+                }
+              }
+            }
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "dressed"
+    ]
+  ]
+}

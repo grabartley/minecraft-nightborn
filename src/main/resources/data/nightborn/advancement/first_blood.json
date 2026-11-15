@@ -1,0 +1,28 @@
+{
+  "parent": "nightborn:no_reflection_on_you",
+  "display": {
+    "icon": {
+      "id": "nightborn:blood_bottle"
+    },
+    "title": {
+      "translate": "advancements.nightborn.first_blood.title"
+    },
+    "description": {
+      "translate": "advancements.nightborn.first_blood.description"
+    },
+    "frame": "task"
+  },
+  "criteria": {
+    "fed": {
+      "trigger": "nightborn:milestone",
+      "conditions": {
+        "milestone": "fed"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "fed"
+    ]
+  ]
+}

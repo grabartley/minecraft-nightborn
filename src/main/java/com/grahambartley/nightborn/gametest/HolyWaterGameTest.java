@@ -145,11 +145,27 @@ public class HolyWaterGameTest implements FabricGameTest {
         .isPresent();
   }
 
-  private static void splash(final TestContext context, final BlockPos target) {
+  @GameTest(templateName = ARENA, tickLimit = 40)
+  public void holyWaterThrownAtAVampireEarnsHolyMoly(final TestContext context) {
+    final ServerPlayerEntity hunter = TestPlayers.human(context, new BlockPos(1, 2, 1));
+    final VampireEntity vampire = AmmoTargets.vampire(context, new BlockPos(4, 2, 4));
+    splash(context, new BlockPos(4, 2, 4)).setOwner(hunter);
+    context.runAtTick(
+        30,
+        () -> {
+          context.assertTrue(vampire.getHealth() < AmmoTargets.TOUGH, "holy water scalds");
+          context.assertTrue(
+              TestAdvancements.done(context, hunter, "holy_moly"), "the thrower earns Holy Moly");
+          TestPlayers.finish(context, hunter);
+        });
+  }
+
+  private static PotionEntity splash(final TestContext context, final BlockPos target) {
     final PotionEntity potion =
         context.spawnEntity(
             EntityType.POTION, Vec3d.ofBottomCenter(target).add(0.0, SPLASH_HEIGHT, 0.0));
     potion.setItem(PotionContentsComponent.createStack(Items.SPLASH_POTION, HolyWater.POTION));
     potion.setVelocity(0.0, -0.5, 0.0);
+    return potion;
   }
 }

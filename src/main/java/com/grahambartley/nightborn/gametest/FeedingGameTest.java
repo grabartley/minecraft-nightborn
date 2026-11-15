@@ -67,6 +67,11 @@ public class FeedingGameTest implements FabricGameTest {
           context.assertEquals(BloodAttachment.get(vampire), 13, "blood after three sips of cow");
           context.assertEquals(cow.getHealth(), 4.0F, "cow health after three sips");
           context.assertTrue(
+              TestAdvancements.done(context, vampire, "first_blood"), "drinking earns First Blood");
+          context.assertFalse(
+              TestAdvancements.done(context, vampire, "fresh_off_the_neck"),
+              "a cow is not a villager");
+          context.assertTrue(
               VisibleStateAttachment.get(vampire).feeding(),
               "the vampire's synced state marks it feeding");
         });
@@ -146,6 +151,9 @@ public class FeedingGameTest implements FabricGameTest {
           }
           context.assertEquals(
               BloodAttachment.get(vampire), 11, "the one blood left over is drunk fresh");
+          context.assertTrue(
+              TestAdvancements.done(context, vampire, "fresh_off_the_neck"),
+              "drinking from a villager earns Fresh Off The Neck");
           TestPlayers.finish(context, vampire);
         });
   }
@@ -184,6 +192,9 @@ public class FeedingGameTest implements FabricGameTest {
                   + ", "
                   + Diagnostics.of(vampire));
           context.assertTrue(witness.getReputation(vampire) < 0, "the witness gossips");
+          context.assertTrue(
+              TestAdvancements.done(context, vampire, "bad_taste"),
+              "feeding in sight of a villager earns Bad Taste");
           context.assertFalse(
               hidden
                   .getBrain()

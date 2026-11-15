@@ -209,6 +209,10 @@ public class CoffinGameTest implements FabricGameTest {
           context.assertFalse(a.isSleeping() || b.isSleeping(), "both rise at dusk");
           context.assertTrue(
               context.getBlockState(first).get(CoffinBlock.OPEN), "the lid opens as they rise");
+          context.assertTrue(
+              TestAdvancements.done(context, a, "day_shift")
+                  && TestAdvancements.done(context, b, "day_shift"),
+              "resting through the day earns Day Shift");
           TestPlayers.finish(context, a, b);
         });
   }

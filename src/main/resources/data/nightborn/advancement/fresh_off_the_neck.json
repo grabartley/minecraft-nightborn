@@ -1,0 +1,40 @@
+{
+  "parent": "nightborn:no_reflection_on_you",
+  "display": {
+    "icon": {
+      "id": "nightborn:blood_bottle",
+      "components": {
+        "nightborn:blood_quality": "villager"
+      }
+    },
+    "title": {
+      "translate": "advancements.nightborn.fresh_off_the_neck.title"
+    },
+    "description": {
+      "translate": "advancements.nightborn.fresh_off_the_neck.description"
+    },
+    "frame": "task"
+  },
+  "criteria": {
+    "fed_on_villager": {
+      "trigger": "nightborn:milestone",
+      "conditions": {
+        "milestone": "fed",
+        "entity": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "type": "minecraft:villager"
+            }
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "fed_on_villager"
+    ]
+  ]
+}

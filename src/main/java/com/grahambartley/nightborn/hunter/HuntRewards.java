@@ -1,5 +1,7 @@
 package com.grahambartley.nightborn.hunter;
 
+import com.grahambartley.nightborn.advancement.Milestone;
+import com.grahambartley.nightborn.advancement.MilestoneCriterion;
 import com.grahambartley.nightborn.downed.Downed;
 import com.grahambartley.nightborn.downed.DownedState;
 import com.grahambartley.nightborn.gear.Staking;
@@ -54,7 +56,13 @@ public final class HuntRewards {
             source.isOf(NightbornDamage.SUN),
             staker)
         .map(id -> server.getPlayerManager().getPlayer(id))
-        .ifPresent(hunter -> reward(hunter, vampire, message));
+        .ifPresent(
+            hunter -> {
+              if (staker.isPresent()) {
+                MilestoneCriterion.reach(hunter, Milestone.VAMPIRE_STAKED);
+              }
+              reward(hunter, vampire, message);
+            });
   }
 
   private static void reward(

@@ -1,5 +1,7 @@
 package com.grahambartley.nightborn.vampire;
 
+import com.grahambartley.nightborn.advancement.Milestone;
+import com.grahambartley.nightborn.advancement.MilestoneCriterion;
 import com.grahambartley.nightborn.blood.BloodAttachment;
 import com.grahambartley.nightborn.blood.StarvingAttachment;
 import com.grahambartley.nightborn.core.VampireCore;
@@ -34,6 +36,7 @@ public final class VampireTransitions {
       return;
     }
     FactionAttachment.set(player, Faction.VAMPIRE);
+    MilestoneCriterion.reach(player, Milestone.TURNED);
     BloodAttachment.set(player, BloodAttachment.FULL);
     player.getHungerManager().setFoodLevel(BloodAttachment.FULL);
     player.resetStat(Stats.CUSTOM.getOrCreateStat(Stats.TIME_SINCE_REST));

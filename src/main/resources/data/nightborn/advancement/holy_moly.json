@@ -1,0 +1,33 @@
+{
+  "parent": "nightborn:root",
+  "display": {
+    "icon": {
+      "id": "minecraft:splash_potion",
+      "components": {
+        "minecraft:potion_contents": {
+          "potion": "nightborn:holy_water"
+        }
+      }
+    },
+    "title": {
+      "translate": "advancements.nightborn.holy_moly.title"
+    },
+    "description": {
+      "translate": "advancements.nightborn.holy_moly.description"
+    },
+    "frame": "task"
+  },
+  "criteria": {
+    "holy_water_hit": {
+      "trigger": "nightborn:milestone",
+      "conditions": {
+        "milestone": "holy_water_hit"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "holy_water_hit"
+    ]
+  ]
+}

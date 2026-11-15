@@ -254,6 +254,8 @@ public class VampireMobGameTest implements FabricGameTest {
           context.assertTrue(player.getHealth() < before, "the bite hurts the vampire player");
           context.assertEquals(vampire.getHealth(), 10.0F, "a vampire's blood heals nothing");
           context.assertFalse(feeding(vampire), "biting a vampire is not feeding");
+          context.assertTrue(
+              TestAdvancements.done(context, player, "love_bites"), "a bite earns Love Bites");
           TestPlayers.finish(context, player);
         });
   }

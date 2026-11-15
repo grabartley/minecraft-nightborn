@@ -1,0 +1,42 @@
+{
+  "parent": "nightborn:root",
+  "display": {
+    "icon": {
+      "id": "nightborn:silver_sword"
+    },
+    "title": {
+      "translate": "advancements.nightborn.silver_lining.title"
+    },
+    "description": {
+      "translate": "advancements.nightborn.silver_lining.description"
+    },
+    "frame": "task"
+  },
+  "criteria": {
+    "silver_sword": {
+      "trigger": "minecraft:recipe_crafted",
+      "conditions": {
+        "recipe_id": "nightborn:silver_sword"
+      }
+    },
+    "silver_axe": {
+      "trigger": "minecraft:recipe_crafted",
+      "conditions": {
+        "recipe_id": "nightborn:silver_axe"
+      }
+    },
+    "silver_stake": {
+      "trigger": "minecraft:recipe_crafted",
+      "conditions": {
+        "recipe_id": "nightborn:silver_stake"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "silver_sword",
+      "silver_axe",
+      "silver_stake"
+    ]
+  ]
+}

@@ -1,5 +1,6 @@
 package com.grahambartley.nightborn;
 
+import com.grahambartley.nightborn.advancement.MilestoneCriterion;
 import com.grahambartley.nightborn.clothing.ClothingFeatures;
 import com.grahambartley.nightborn.coffin.Coffins;
 import com.grahambartley.nightborn.decor.DecorBlockEntities;
@@ -23,6 +24,7 @@ public class Nightborn implements ModInitializer {
 
   @Override
   public void onInitialize() {
+    MilestoneCriterion.register();
     FactionAttachment.register();
     DecorBlocks.initialize();
     DecorBlockEntities.initialize();

@@ -41,6 +41,7 @@ public final class StructureFogTracker {
     }
     for (final ServerPlayerEntity player : server.getPlayerManager().getPlayerList()) {
       final Optional<FogZone> zone = zoneAround(player);
+      StructureVisits.visit(player, zone);
       if (!zone.equals(SENT.getOrDefault(player.getUuid(), Optional.empty()))) {
         SENT.put(player.getUuid(), zone);
         ServerPlayNetworking.send(player, new StructureFogPayload(zone));
