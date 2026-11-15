@@ -49,7 +49,7 @@ Nightborn adds vampires and the people who hunt them. A bite from a vampire or a
 - **Not a werewolf or general monster mod.** Vampires and hunters only.
 - **No cure after turning.** A cure works only during the sickness.
 - **No vampire that feeds on anything but blood.**
-- **Not a claims or protection mod.** Garlic weakens vampires. It does not stop them breaking blocks.
+- **Not a claims or protection mod.** Garlic weakens vampires. It does not stop them breaking blocks. The one protected block is an assigned coffin (COFFIN-13).
 - **No change to vanilla undead.** Zombies, skeletons and phantoms behave as they always have, except that phantoms never come for vampires (CORE-9).
 
 ## 2. Release Scope
@@ -87,7 +87,7 @@ This document specifies the Nightborn alpha line for Minecraft 1.21.1 on Fabric.
 | How do powers grow? | A skill tree with three bloodlines, of which you invest in two | LINE-1 to LINE-3 |
 | Who is a hunter? | Any human who kills vampires | HUNT-1 |
 | How does a vampire die? | Only to direct sun or a stake. Anything else brings it down, greatly weakened, until it recovers and escapes | CORE-7, CORE-8 |
-| What happens on death? | Respawn at your coffin. A stake costs skill progress. A server can make a vampire's death a full reset instead | COFFIN-4, SKILL-6, CORE-10 |
+| What happens on death? | Respawn at your assigned coffin, which death by the sun or a stake unassigns, sending you to world spawn. A stake costs skill progress. A server can make a vampire's death a full reset instead | COFFIN-4, COFFIN-5, COFFIN-13, SKILL-6, CORE-10 |
 | PvP? | Vampires and hunters are factions, and PvP follows the server's own setting | FACT-1 to FACT-4 |
 
 ## 3. Actors
@@ -131,7 +131,7 @@ This document specifies the Nightborn alpha line for Minecraft 1.21.1 on Fabric.
 | Downed | A vampire brought to its last health by anything but direct sun or a stake. It lies helpless and greatly weakened until it recovers |
 | Escaping | The minute after a downed vampire gets up, when only direct sun and a stake can hurt it and it stays weakened, so it can get away |
 | Staked | Killed by a stake: a wooden or silver-tipped stake, or a stake bolt, hitting a downed vampire, or striking the blow that would bring a vampire down |
-| Coffin | A block, lying flat or standing upright, that is a vampire's bed. A vampire's assigned coffin is their respawn point, and only they can break it |
+| Coffin | A block, lying flat or standing upright, that is a vampire's bed. A vampire's assigned coffin, assigned by sleeping in it (COFFIN-4), is their respawn point, and only its owner, a creative player or an operator can break it |
 | Thrall | A villager a Noble vampire has bound to follow and fight for them |
 | Ghostly familiar | A spirit an Occult vampire summons to fight and do tasks |
 | Human familiar | A villager hired as a vampire's daytime servant |
@@ -239,7 +239,7 @@ Sneak and use on a creature to bite it, and keep holding to drink. Let go to sto
 | ID | Requirement |
 |---|---|
 | SUN-1 | A vampire in direct sun catches fire, as a zombie does, and burns while it stays there. Sun fire kills, downed or not. Fire that keeps burning after the vampire reaches shade only downs it, and cannot hurt it while it is escaping |
-| SUN-2 | No armour, helmet or effect, Fire Resistance included, stops the burn. Shade, rain, water and a closed coffin (COFFIN-7) do |
+| SUN-2 | No armour, helmet or effect, Fire Resistance included, stops the burn. Shade, rain, water and a closed coffin that is not burning (COFFIN-7, COFFIN-14) do |
 | SUN-3 | A burning vampire gives off smoke and a sizzling sound, on top of the fire |
 | SUN-4 | Vampire mobs follow the same rules and seek shade at dawn |
 
@@ -287,7 +287,7 @@ Every vampire has the core, whatever bloodlines they choose.
 | CORE-7 | Only direct sun and a stake can kill a vampire. Damage from anything else, mobs, players, fire, falls, drowning or holy water included, stops at its last health. Falling into the void and an operator's `/kill` are the only exceptions |
 | CORE-8 | A vampire brought to its last health by anything else is downed: it collapses, cannot move, attack, feed or use items or powers, and is weakened at the cap (WEAK-9). It takes no damage from anything but sun and a stake while downed. After 30 seconds by default it gets up with 20% of its health, wherever it lies. More damage does not reset the time. Everyone near can see and hear that it is downed. It then escapes for 1 minute by default: it takes no damage but sun and a stake, stays weakened at the cap and can move freely. Vampire mobs flee while escaping |
 | CORE-9 | Phantoms never spawn for a vampire player and never target a vampire, and time a vampire spends awake never counts toward them |
-| CORE-10 | With the `hardcoreVampireDeath` server setting on, off by default, a vampire player who dies is reset like a hardcore death: they come back as a new human at world spawn with an empty inventory and ender chest, no experience, no skills, bloodlines or hunter tree, no coffin respawn point, and their thralls and familiars freed. Advancements are kept |
+| CORE-10 | With the `hardcoreVampireDeath` server setting on, off by default, a vampire player who dies is reset like a hardcore death: they come back as a new human at world spawn with an empty inventory and ender chest, no experience, no skills, bloodlines or hunter tree, their coffin unassigned (COFFIN-13), and their thralls and familiars freed. Advancements are kept |
 | CORE-11 | Every vampire, player or mob, can levitate. Players toggle it with a key they can rebind. A levitating vampire floats one block above the ground with its feet together, follows the ground up steps and slopes and over water, and sinks slowly over a drop without fall damage. It leans forward to move and further to sprint, never fully horizontal, with arms spreading as it speeds up, and lands with its own animation. It drains blood while active. It can still attack and use items while it floats, and others see the swing or the raised hand over the float. A weakened or downed vampire, or one in bat form, riding, sleeping, gliding or flying in creative, cannot levitate and lands at once. The server lands a player who stays well above that height for more than a moment, and ignores a toggle pressed again within half a second. Every landing the vampire did not choose sets it down gently, never with fall damage. Vampire mobs rise in a fight and now and then as they move about, as often as the server's options allow, and still find their way while levitating |
 
 **Not supported:** a vampire hiding its eyes while feeding; levitating higher than one block.
@@ -372,7 +372,7 @@ The core starts with Thick Blood (more health), Grave Strength (harder blows) an
 | FAM-1 | An Occult vampire can summon ghostly familiars that fight for them, carry items and scout ahead |
 | FAM-2 | Ghostly familiars last a set time, cost blood to summon and pass through blocks only while scouting |
 | FAM-3 | Any vampire can hire one villager as a human familiar with a Familiar's Contract |
-| FAM-4 | A human familiar works in daylight: it carries items between chests the owner marks, trades with villagers for the owner and guards the owner's coffin |
+| FAM-4 | A human familiar works in daylight: it carries items between chests the owner marks, trades with villagers for the owner and guards the owner's assigned coffin |
 | FAM-5 | A human familiar has loyalty. Good treatment raises it. Being fed on, hurt or left without pay lowers it |
 | FAM-6 | A human familiar with low loyalty may secretly turn to the hunters, then attack its owner while they sleep. Its loyalty is never shown as a number |
 | FAM-7 | A familiar obeys only its owner |
@@ -447,7 +447,7 @@ Vampires are rare. They live in households hidden in four kinds of structure, ea
 | HOME-6 | Household vampires sleep in coffins by day and wake at dusk. Each structure holds the coffins (DECOR-5) that suit it, by default: stone brick and gothic stone brick coffins in crypts, deepslate brick and polished blackstone brick in underground lairs, dark oak and spruce in ruined manors, and dark oak in a castle with gothic stone brick around its heart. A data pack can change these (HOME-12) |
 | HOME-7 | A castle's vampire lord is a boss with a health bar and its own powers. It is downed and escapes like any vampire, its bar shows when it is downed or escaping, and only a stake or the sun ends the fight |
 | HOME-8 | Structures hold loot chests with gear, Blood Bottles, decor, gothic music discs (DECOR-8), relics (RITE-1) and rare items found nowhere else |
-| HOME-9 | Vampire mobs live only in vampire structures, as members of a household. Each remembers its structure and its own coffin. They never spawn at random anywhere else, and never despawn |
+| HOME-9 | Vampire mobs live only in vampire structures, as members of a household. Each remembers its structure and its own coffin, which starts assigned to it (COFFIN-4), so it cannot be broken until that vampire dies to the sun or a stake. They never spawn at random anywhere else, and never despawn |
 | HOME-10 | Vampire bats spawn rarely in dark caves and at night. Under cover, or at night in the open, they swoop at warm-blooded creatures and bite them (TURN-1) |
 | HOME-11 | Vampire mobs attack only when hungry or provoked. Being hurt, or a housemate being hurt nearby, provokes them. A fed vampire may watch, follow or warn off a stranger, but does not attack. They ignore vampire players unless provoked |
 | HOME-12 | Structure layouts, the coffins each structure holds, loot, relic chances, structure spawn rates, vampire stages and their odds per structure type, the skills vampire mobs pick, their looks, sizes, builds and outfits, and the biomes vampire bats spawn in are data, changed by a data pack |
@@ -473,8 +473,8 @@ Vampires are rare. They live in households hidden in four kinds of structure, ea
 | COFFIN-1 | A coffin opens and closes, and a vampire can lie in it by day, from dawn to dusk whatever the weather, as a human lies in a bed by night. Using it lies a vampire down; a human, or a vampire who sneaks with an empty hand, opens or shuts the lid instead. The lid shuts over a vampire who lies down, opens when they rise, and stays shut while someone is inside unless a player opens it (COFFIN-9). It softens a fall like a bed, but nothing bounces off its lid. Two cells long, or two cells tall when standing (COFFIN-10), it is crafted like a bed from the planks or bricks it is made of (DECOR-5), with red wool for the lining and a gold nugget for the fittings |
 | COFFIN-2 | Enough vampires sleeping in coffins skips the day to dusk, as beds skip the night to dawn |
 | COFFIN-3 | The share of vampire players who must sleep is a server option, 100% by default. Only vampire players online in that dimension count. With none online, nothing skips the day |
-| COFFIN-4 | A vampire, player or mob, has at most one assigned coffin, and it is their respawn point, as a bed is. Sleeping in an unassigned coffin assigns it to that vampire and frees the one they had before. A vampire can sleep in any coffin no one is lying in, including another vampire's assigned coffin, but that assigns nothing and leaves their respawn point where it was |
-| COFFIN-5 | A vampire whose coffin is gone respawns at world spawn, as with a missing bed |
+| COFFIN-4 | A vampire, player or mob, has at most one assigned coffin. It is a player's respawn point, as a bed is, and a vampire mob's home coffin (HOME-9). Sleeping in an unassigned coffin assigns it to that vampire and frees the one they had before. A vampire can sleep in any coffin no one is lying in, including another vampire's assigned coffin, but that assigns nothing and leaves their respawn point where it was |
+| COFFIN-5 | A vampire player with no assigned coffin, or whose assigned coffin is missing, respawns at world spawn, as with a missing bed. Since dying to the sun or a stake unassigns the coffin (COFFIN-13), the coffin respawn applies only after the void or an operator's `/kill` (CORE-7) |
 | COFFIN-6 | A human can open a coffin but not sleep in it |
 | COFFIN-7 | A closed coffin shades the vampire inside from the sun, smothers any flames they carry in, and hides them from view, unless the coffin itself is burning (COFFIN-14). An open one does none of these |
 | COFFIN-8 | Vampire players never count toward the bed share, and humans never count toward the coffin share, so neither side blocks the other's sleep |
@@ -482,8 +482,8 @@ Vampires are rare. They live in households hidden in four kinds of structure, ea
 | COFFIN-10 | A coffin placed while sneaking stands upright, two cells tall, its back to the block behind and its lid facing the player who placed it. A standing coffin follows every coffin rule, a vampire sleeps in it standing, and one who respawns at it stands on the floor in front of it |
 | COFFIN-11 | A vampire asleep in a coffin, player or mob, lies or stands with arms crossed over the chest |
 | COFFIN-12 | A vampire waking in a flat coffin rises rigid, pivoting up from the heels until upright, then steps off. One waking in a standing coffin steps forward out of it. It cannot move until it stands clear, damage does not cancel the rise, and it always ends on a safe free cell next to the coffin |
-| COFFIN-13 | Only the owner can break an assigned coffin. Other players, mobs, explosions and pistons leave it whole, though creative players and operators can still break it. A coffin is unassigned when its owner dies for good, to the sun or a stake, is made human again (CFG-8), is reset by a hardcore death (CORE-10), or breaks it themselves |
-| COFFIN-14 | A coffin made of a flammable material catches fire as that material does. While it burns it is drawn ablaze, and it wakes anyone inside and sets them on fire, open or shut. Fire never destroys a coffin, of any style, assigned or not |
+| COFFIN-13 | Only the owner can break an assigned coffin. Other players, mobs, explosions and pistons leave it whole, though creative players and operators can still break it. A coffin is unassigned when its owner dies to the sun or a stake, is made human again (CFG-8), is reset by a hardcore death (CORE-10), or breaks it themselves |
+| COFFIN-14 | A coffin made of a flammable material catches fire as that material does. While it burns it is drawn ablaze with the crackle of fire, and it wakes anyone inside and sets them on fire, open or shut. No vampire can lie down in a burning coffin. The fire burns out on its own after a while, and rain, water or a player putting it out ends it sooner. Fire never destroys a coffin, of any style, assigned or not |
 
 **Enforcement:** server.
 
@@ -497,7 +497,7 @@ Vampires are rare. They live in households hidden in four kinds of structure, ea
 | DECOR-2 | Gothic building blocks in stone and dark wood: gothic stone bricks in plain, cracked and mossy forms with stairs, slabs and walls, carved gothic stone, and ebony planks with stairs, slabs and a fence |
 | DECOR-3 | Blood decor: blood fountains, blood pools, placeable splatter decals and chalices |
 | DECOR-4 | Hunter decor: weapon racks, wanted posters, trophy mounts and crucifixes |
-| DECOR-5 | Coffins in two styles. Wooden coffins are narrow at the head and foot and widest at the shoulders, made from oak, spruce, dark oak, mangrove, cherry or crimson planks and drawn with that wood's planks. Their hinged lid creaks open and shut, and they sound and break like their wood, fastest with an axe, and catch fire as it does (COFFIN-14), so a crimson coffin never does. Stone coffins are plain rectangular boxes made from stone bricks, deepslate bricks, polished blackstone bricks or gothic stone bricks (DECOR-2) and drawn with that stone. Their heavy lid slides open and shut with a grind of stone, and they sound, resist blasts and break like those bricks, dropping only when mined with a pickaxe. Both styles lie flat or stand (COFFIN-10) and follow every coffin rule in 5.14 |
+| DECOR-5 | Coffins in two styles. Wooden coffins are narrow at the head and foot and widest at the shoulders, made from oak, spruce, dark oak, mangrove, cherry or crimson planks and drawn with that wood's planks. Their hinged lid creaks open and shut, and they sound and break like their wood, fastest with an axe, and catch fire as it does (COFFIN-14), so a crimson coffin never catches fire. Stone coffins are plain rectangular boxes made from stone bricks, deepslate bricks, polished blackstone bricks or gothic stone bricks (DECOR-2) and drawn with that stone. Their heavy lid slides open and shut with a grind of stone, and they sound and break like those bricks, dropping only when mined with a pickaxe. Both styles lie flat or stand (COFFIN-10) and follow every coffin rule in 5.14 |
 | DECOR-6 | Candles, candelabras and chandeliers light the room. Flint and steel or a fire charge lights them and an empty hand puts them out, and every light, douse, opening and closing plays its own animation |
 | DECOR-7 | A gramophone, crafted from a jukebox, gold ingots and ebony planks and facing the player who placed it, plays any music disc as a jukebox does, with the same hopper, redstone and comparator behaviour, and animates while it plays |
 | DECOR-8 | Gothic music discs, one per track, play in a gramophone or a jukebox. They are found only in vampire structures: in their loot and in their gramophones (HOME-20) |
@@ -629,6 +629,7 @@ A modified client is assumed. Hiding a control is never the enforcement of a rul
 | Sleep in a coffin | No | Yes | Yes | Yes, as a vampire |
 | Break an unassigned coffin | Yes | Yes | Yes | Yes |
 | Break an assigned coffin | No | Only their own | Only their own | Yes |
+| Set a flammable coffin alight | Yes | Yes | Yes | Yes |
 | Open an empty coffin | Yes | Yes | Yes | Yes |
 | Open an occupied coffin | Yes, sneaking with an empty hand | Yes, sneaking with an empty hand | Yes, sneaking with an empty hand | Yes, sneaking with an empty hand |
 | Start the ritual | Yes | No | No | Yes, as a human |
@@ -663,7 +664,7 @@ There is no singleplayer mode in this mod. A single-player world is an integrate
 | Household behaviour and structures | Draws fog and plays ambience |
 | Who is on which map | Draws the map it is sent |
 | Gore events | Decides how much gore to draw (GORE-3) |
-| Coffin lids and who sleeps inside, levitation, vomiting, vampire mob powers, the ritual and the Eldest | Draws the lids, sleepers, poses, tells, vomit and the ritual build-up, with vomit scaled by GORE-3 |
+| Coffin lids, ownership, burning and who sleeps inside, levitation, vomiting, vampire mob powers, the ritual and the Eldest | Draws the lids, burning coffins, sleepers, poses, tells, vomit and the ritual build-up, with vomit scaled by GORE-3 |
 
 ### Concurrency
 
@@ -671,6 +672,8 @@ There is no singleplayer mode in this mod. A single-player world is an integrate
 |---|---|
 | CS-1 | Two vampires feeding on one victim share its blood. Neither can take more than it has |
 | CS-2 | Two players using one coffin: the first lies down, the second is refused |
+| CS-8 | An owner breaking their assigned coffin while another vampire sleeps in it wakes the sleeper and frees the coffin once |
+| CS-9 | A coffin catching fire as a vampire lies down in it ends with the vampire awake and burning, never asleep in a burning coffin |
 | CS-3 | A victim drained and killed in the same tick by a vampire and another attacker dies once and drops loot once |
 | CS-4 | Two players filling Blood Bottles from one victim never create blood it did not have |
 | CS-5 | A player cured and turned in the same tick ends in one defined state: the cure wins if it landed before the sickness ran out |
@@ -680,7 +683,7 @@ There is no singleplayer mode in this mod. A single-player world is an integrate
 | State | Scope |
 |---|---|
 | Faction, sickness, blood, skills, bloodlines and cooldowns | That player, synced only to them, except what others can see (CORE-4, CORE-8, WEAK-8, FACT-3) |
-| Assigned coffin and respawn point | That player |
+| Assigned coffin and respawn point | That player, and the coffin records its owner, player or mob |
 | Gore setting | That player's device |
 
 ### Side Separation
@@ -752,7 +755,7 @@ There is no singleplayer mode in this mod. A single-player world is an integrate
 | ID | Requirement |
 |---|---|
 | ACC-1 | No state relies on colour alone: weakness, sickness and blood quality each have a shape or icon as well |
-| ACC-2 | No meaning relies on particles alone. Sun damage, bat form, weakness and vomiting all have sound and an on-screen sign |
+| ACC-2 | No meaning relies on particles alone. Sun damage, bat form, weakness, vomiting and a burning coffin all have sound and an on-screen sign |
 | ACC-3 | Gore can be reduced or turned off (GORE-3) |
 | ACC-4 | Fog never hides a threat completely within 8 blocks |
 | ACC-5 | Every string is translated into every shipped language |
