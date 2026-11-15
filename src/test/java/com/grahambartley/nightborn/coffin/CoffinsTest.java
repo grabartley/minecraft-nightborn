@@ -44,4 +44,11 @@ class CoffinsTest {
     final FlammableBlockRegistry fire = FlammableBlockRegistry.getDefaultInstance();
     assertEquals(fire.get(wood.planks()), fire.get(Coffins.get(wood)));
   }
+
+  @ParameterizedTest(name = "{0}")
+  @EnumSource(CoffinWood.class)
+  @DisplayName("each coffin block knows the wood it was made from")
+  void findsTheWoodOfEachCoffin(final CoffinWood wood) {
+    assertEquals(wood, Coffins.wood(Coffins.get(wood)));
+  }
 }

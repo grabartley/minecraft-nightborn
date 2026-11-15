@@ -6,21 +6,23 @@ import com.grahambartley.nightborn.client.VampireClientFeatures;
 import com.grahambartley.nightborn.client.fog.StructureFog;
 import com.grahambartley.nightborn.client.state.ClientStateService;
 import com.grahambartley.nightborn.clothing.ClothingRenderProviders;
+import com.grahambartley.nightborn.coffin.CoffinBlockEntity;
 import com.grahambartley.nightborn.coffin.Coffins;
 import com.grahambartley.nightborn.decor.AnimatedFurniture;
 import com.grahambartley.nightborn.decor.DecorBlockEntities;
 import com.grahambartley.nightborn.decor.DecorBlocks;
 import com.grahambartley.nightborn.decor.DecorEntities;
+import com.grahambartley.nightborn.decor.FurnitureBlockEntity;
 import com.grahambartley.nightborn.gear.GearBlocks;
 import com.grahambartley.nightborn.mob.NightbornMobs;
 import com.grahambartley.nightborn.render.AmmoModels;
 import com.grahambartley.nightborn.render.BoltEntityRenderer;
 import com.grahambartley.nightborn.render.ClothingColors;
 import com.grahambartley.nightborn.render.ClothingRenderProvider;
-import com.grahambartley.nightborn.render.CoffinBlockEntityRenderer;
-import com.grahambartley.nightborn.render.CoffinModels;
+import com.grahambartley.nightborn.render.CoffinArt;
+import com.grahambartley.nightborn.render.CoffinRenderer;
 import com.grahambartley.nightborn.render.FurnitureBlockRenderer;
-import com.grahambartley.nightborn.render.FurnitureItemRenderer;
+import com.grahambartley.nightborn.render.GeoBlockItemRenderer;
 import com.grahambartley.nightborn.render.VampireBatRenderer;
 import com.grahambartley.nightborn.render.VampireRenderer;
 import net.fabricmc.api.ClientModInitializer;
@@ -40,14 +42,25 @@ public class NightbornClient implements ClientModInitializer {
     ClientStateService.load(FabricLoader.getInstance().getConfigDir());
     BlockEntityRendererFactories.register(
         DecorBlockEntities.FURNITURE, FurnitureBlockRenderer::new);
-    BlockEntityRendererFactories.register(Coffins.BLOCK_ENTITY, CoffinBlockEntityRenderer::new);
-    CoffinModels.register();
+    BlockEntityRendererFactories.register(Coffins.BLOCK_ENTITY, CoffinRenderer::new);
+    Coffins.all()
+        .forEach(
+            block ->
+                BuiltinItemRendererRegistry.INSTANCE.register(
+                    block,
+                    new GeoBlockItemRenderer<>(
+                        block,
+                        CoffinRenderer::new,
+                        CoffinBlockEntity::new,
+                        -CoffinArt.MODEL_CENTRE_Z)));
     DecorBlocks.all().stream()
         .filter(AnimatedFurniture.class::isInstance)
         .forEach(
             block ->
                 BuiltinItemRendererRegistry.INSTANCE.register(
-                    block, new FurnitureItemRenderer(block)));
+                    block,
+                    new GeoBlockItemRenderer<>(
+                        block, FurnitureBlockRenderer::new, FurnitureBlockEntity::new)));
     BlockRenderLayerMap.INSTANCE.putBlocks(
         RenderLayer.getTranslucent(),
         DecorBlocks.GOTHIC_STAINED_GLASS,

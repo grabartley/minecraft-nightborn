@@ -15,7 +15,7 @@ public class FurnitureBlockEntity extends BlockEntity implements GeoBlockEntity 
   private static final String CONTROLLER = "toggle";
 
   private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
-  private final ToggleClips clips = new ToggleClips();
+  private final ToggleClips clips = new ToggleClips(ToggleClips.FURNITURE);
 
   public FurnitureBlockEntity(final BlockPos pos, final BlockState state) {
     super(DecorBlockEntities.FURNITURE, pos, state);

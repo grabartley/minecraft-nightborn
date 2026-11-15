@@ -1,5 +1,5 @@
 {
-  "parent": "nightborn:block/template_coffin_item",
+  "parent": "minecraft:builtin/entity",
   "display": {
     "thirdperson_righthand": {
       "rotation": [

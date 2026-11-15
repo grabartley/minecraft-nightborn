@@ -58,15 +58,17 @@ class CoffinShapeTest {
 
   static Stream<Arguments> ends() {
     return Stream.of(
-        Arguments.of(BedPart.HEAD, 6.0 / 16.0, 0.5 / 16.0, true),
-        Arguments.of(BedPart.HEAD, 0.25 / 16.0, 0.5 / 16.0, false),
+        Arguments.of(BedPart.HEAD, 0.25 / 16.0, 0.5 / 16.0, true),
+        Arguments.of(BedPart.FOOT, 0.25 / 16.0, 8.0 / 16.0, true),
         Arguments.of(BedPart.FOOT, 8.0 / 16.0, 15.5 / 16.0, true),
-        Arguments.of(BedPart.FOOT, 2.5 / 16.0, 15.5 / 16.0, false));
+        Arguments.of(BedPart.FOOT, 1.5 / 16.0, 15.5 / 16.0, true),
+        Arguments.of(BedPart.FOOT, 0.5 / 16.0, 15.5 / 16.0, false),
+        Arguments.of(BedPart.FOOT, 0.25 / 16.0, 13.5 / 16.0, false));
   }
 
   @ParameterizedTest(name = "{0} at x {1}, z {2}: solid {3}")
   @MethodSource("ends")
-  @DisplayName("the head and foot ends are narrower than the shoulders")
+  @DisplayName("the head cell is full width and the foot narrows towards its end")
   void tapersAtTheEnds(final BedPart part, final double x, final double z, final boolean solid) {
     final VoxelShape shape = CoffinShape.of(part, Direction.NORTH, false);
     final boolean inside =
@@ -96,15 +98,15 @@ class CoffinShapeTest {
   static Stream<Arguments> uprightPoints() {
     return Stream.of(
         Arguments.of(BedPart.HEAD, 8.0 / 16.0, 15.5 / 16.0, true),
-        Arguments.of(BedPart.HEAD, 0.25 / 16.0, 15.5 / 16.0, false),
-        Arguments.of(BedPart.HEAD, 1.5 / 16.0, 6.0 / 16.0, true),
-        Arguments.of(BedPart.FOOT, 2.5 / 16.0, 0.5 / 16.0, false),
+        Arguments.of(BedPart.HEAD, 0.25 / 16.0, 15.5 / 16.0, true),
+        Arguments.of(BedPart.HEAD, 0.25 / 16.0, 6.0 / 16.0, true),
+        Arguments.of(BedPart.FOOT, 0.5 / 16.0, 0.5 / 16.0, false),
         Arguments.of(BedPart.FOOT, 8.0 / 16.0, 0.5 / 16.0, true));
   }
 
   @ParameterizedTest(name = "{0} at x {1}, y {2}: solid {3}")
   @MethodSource("uprightPoints")
-  @DisplayName("a standing coffin keeps its shoulders high and its narrow ends at top and bottom")
+  @DisplayName("a standing coffin keeps its full-width shoulders high and narrows at its foot")
   void keepsItsOutlineUpright(
       final BedPart part, final double x, final double y, final boolean solid) {
     final VoxelShape shape = CoffinShape.of(part, Direction.NORTH, true);

@@ -17,19 +17,7 @@ public final class CoffinShape {
   record Band(double fromZ, double toZ, double halfWidth) {}
 
   static final List<Band> BANDS =
-      List.of(
-          new Band(-8, -6, 4.5),
-          new Band(-6, -4, 5.5),
-          new Band(-4, -2, 6.5),
-          new Band(-2, 1, 7.5),
-          new Band(1, 4, 8.25),
-          new Band(4, 16, 8.75),
-          new Band(16, 19, 8),
-          new Band(19, 22, 7.25),
-          new Band(22, 25, 6.5),
-          new Band(25, 28, 5.75),
-          new Band(28, 30, 5),
-          new Band(30, 32, 4.25));
+      List.of(new Band(0, 28, 8), new Band(28, 30, 7.5), new Band(30, 32, 7));
 
   private static final Map<Direction, VoxelShape> HEAD = FacingShapes.fromNorth(cell(0));
   private static final Map<Direction, VoxelShape> FOOT = FacingShapes.fromNorth(cell(16));

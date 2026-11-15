@@ -8,6 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import com.grahambartley.nightborn.MinecraftBootstrapExtension;
 import java.util.stream.Stream;
 import net.minecraft.block.BedBlock;
+import net.minecraft.block.BlockRenderType;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.enums.BedPart;
@@ -30,6 +31,17 @@ class CoffinBlockTest {
     final BlockState state = Coffins.get(wood).getDefaultState();
     assertFalse(state.get(CoffinBlock.OPEN));
     assertFalse(state.get(BedBlock.OCCUPIED));
+  }
+
+  @ParameterizedTest(name = "{0}")
+  @EnumSource(CoffinWood.class)
+  @DisplayName("both cells leave drawing to the block entity, as a bed does")
+  void drawsThroughTheBlockEntity(final CoffinWood wood) {
+    for (final BedPart part : BedPart.values()) {
+      assertEquals(
+          BlockRenderType.ENTITYBLOCK_ANIMATED,
+          Coffins.get(wood).getDefaultState().with(BedBlock.PART, part).getRenderType());
+    }
   }
 
   @ParameterizedTest(name = "{0}")

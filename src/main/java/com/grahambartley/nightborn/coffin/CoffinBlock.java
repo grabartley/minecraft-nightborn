@@ -4,7 +4,6 @@ import com.grahambartley.nightborn.vampire.Vampires;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.block.BedBlock;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockRenderType;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.ShapeContext;
@@ -59,11 +58,6 @@ public class CoffinBlock extends BedBlock {
   protected void appendProperties(final StateManager.Builder<Block, BlockState> builder) {
     super.appendProperties(builder);
     builder.add(OPEN, STANDING);
-  }
-
-  @Override
-  protected BlockRenderType getRenderType(final BlockState state) {
-    return BlockRenderType.MODEL;
   }
 
   @Override

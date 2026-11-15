@@ -21,3 +21,4 @@ Shared engineering standards across all the mods in this family live in [`../sta
 | [0011](0011-vampire-structures-share-one-structure-type.md) | Vampire structures share one structure type |
 | [0012](0012-wards-are-found-near-vampires-and-indexed-on-block-change.md) | Wards are found near vampires and indexed on block change |
 | [0013](0013-vampire-players-play-the-vampire-rigs-clips.md) | Vampire players play the vampire rig's clips |
+| [0014](0014-coffins-are-geckolib-models-with-a-texture-per-material.md) | Coffins are GeckoLib models with a texture per material |
