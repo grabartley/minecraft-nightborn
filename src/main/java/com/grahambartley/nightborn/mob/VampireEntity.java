@@ -3,11 +3,13 @@ package com.grahambartley.nightborn.mob;
 import com.grahambartley.nightborn.config.NightbornConfig;
 import com.grahambartley.nightborn.core.VampireCore;
 import com.grahambartley.nightborn.downed.Downed;
+import com.grahambartley.nightborn.levitation.Levitation;
 import com.grahambartley.nightborn.mob.goal.FleeWhileEscapingGoal;
 import com.grahambartley.nightborn.mob.goal.LieDownedGoal;
 import com.grahambartley.nightborn.mob.goal.SeekShadeGoal;
 import com.grahambartley.nightborn.server.ServerConfigService;
 import com.grahambartley.nightborn.vampire.VisibleStateAttachment;
+import java.util.Optional;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityData;
 import net.minecraft.entity.EntityType;
@@ -39,6 +41,7 @@ import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.AnimatableManager;
 import software.bernie.geckolib.animation.AnimationController;
+import software.bernie.geckolib.animation.PlayState;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 public class VampireEntity extends HostileEntity implements GeoEntity {
@@ -50,6 +53,7 @@ public class VampireEntity extends HostileEntity implements GeoEntity {
       DataTracker.registerData(VampireEntity.class, TrackedDataHandlerRegistry.INTEGER);
 
   private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
+  private final LandingEdge landingEdge = new LandingEdge();
 
   public VampireEntity(final EntityType<? extends VampireEntity> type, final World world) {
     super(type, world);
@@ -129,6 +133,24 @@ public class VampireEntity extends HostileEntity implements GeoEntity {
                 target == getAttacker() || !Prey.isPrey(target)))) {
       setTarget(null);
     }
+    levitateAboutHome();
+  }
+
+  private void levitateAboutHome() {
+    final boolean levitating = Levitation.isLevitating(this);
+    if (MobLevitation.wants(
+            levitating,
+            getTarget() != null,
+            random.nextFloat(),
+            ServerConfigService.current().mobs())
+        == levitating) {
+      return;
+    }
+    if (levitating) {
+      Levitation.setDown(this);
+    } else {
+      Levitation.start(this);
+    }
   }
 
   @Override
@@ -139,7 +161,7 @@ public class VampireEntity extends HostileEntity implements GeoEntity {
       @Nullable final EntityData entityData) {
     final NightbornConfig config = ServerConfigService.current();
     setLook(random.nextInt(VampireLook.COUNT));
-    VampireCore.tick(this, config.core());
+    VampireCore.tick(this, config.core(), config.blood());
     setHealth(getMaxHealth());
     if (spawnReason == SpawnReason.NATURAL) {
       BatEscort.gather(world, this, config.mobs().batEscortChance());
@@ -186,13 +208,35 @@ public class VampireEntity extends HostileEntity implements GeoEntity {
             this,
             "pose",
             ANIMATION_BLEND_TICKS,
+            state -> {
+              final boolean levitating = Levitation.isLevitating(this);
+              landingEdge.landed(levitating);
+              final VampirePose pose =
+                  VampirePose.of(
+                      new VampirePose.Cue(
+                          VisibleStateAttachment.get(this).downed(),
+                          levitating,
+                          landingEdge.landing(),
+                          isSprinting(),
+                          state.getLimbSwingAmount(),
+                          Math.hypot(getX() - prevX, getZ() - prevZ)));
+              final PlayState play = state.setAndContinue(pose.clip());
+              landingEdge.shown(
+                  pose == VampirePose.LAND,
+                  pose == VampirePose.LAND && state.getController().hasAnimationFinished());
+              return play;
+            }));
+    controllers.add(
+        new AnimationController<>(
+            this,
+            "action",
+            ANIMATION_BLEND_TICKS,
             state ->
-                state.setAndContinue(
-                    VampirePose.of(
-                            VisibleStateAttachment.get(this).downed(),
-                            handSwinging,
-                            state.getLimbSwingAmount())
-                        .clip())));
+                VampirePose.playOrStop(
+                    state,
+                    VisibleStateAttachment.get(this).downed()
+                        ? Optional.empty()
+                        : VampirePose.action(handSwinging, false, true))));
   }
 
   @Override

@@ -1,0 +1,10 @@
+{
+  "values": [
+    { "id": "#c:foods", "required": false },
+    { "id": "#c:potions", "required": false },
+    "minecraft:milk_bucket",
+    "minecraft:potion",
+    "minecraft:honey_bottle",
+    "minecraft:ominous_bottle"
+  ]
+}

@@ -8,8 +8,7 @@ public final class BloodMetabolism {
   static final float HEAL_EXHAUSTION = 6.0F;
   static final int PULSE_TICKS = 80;
   static final int HEAL_THRESHOLD = 18;
-  static final float EASY_STARVE_FLOOR = 10.0F;
-  static final float NORMAL_STARVE_FLOOR = 1.0F;
+  static final float MAX_EXHAUSTION = 40.0F;
 
   private BloodMetabolism() {}
 
@@ -20,15 +19,21 @@ public final class BloodMetabolism {
       float maxHealth,
       Difficulty difficulty,
       boolean naturalRegeneration,
+      boolean levitating,
       int age) {}
 
-  public record Outcome(int blood, float exhaustion, boolean heals, boolean starves) {}
+  public record Outcome(int blood, float exhaustion, boolean heals) {}
 
-  public static Outcome tick(final State state, final int restingDrainSeconds) {
+  public static Outcome tick(
+      final State state, final int restingDrainSeconds, final int levitationDrainSeconds) {
     final boolean peaceful = state.difficulty() == Difficulty.PEACEFUL;
-    float exhaustion =
-        state.exhaustion()
-            + (peaceful ? 0.0F : EXHAUSTION_PER_BLOOD / (restingDrainSeconds * 20.0F));
+    float exhaustion = state.exhaustion();
+    if (!peaceful) {
+      exhaustion += drainPerTick(restingDrainSeconds);
+      if (state.levitating()) {
+        exhaustion += drainPerTick(levitationDrainSeconds);
+      }
+    }
     int blood = state.blood();
     if (exhaustion >= EXHAUSTION_PER_BLOOD) {
       exhaustion -= EXHAUSTION_PER_BLOOD;
@@ -36,22 +41,18 @@ public final class BloodMetabolism {
         blood = Math.max(0, blood - 1);
       }
     }
-    final boolean pulse = state.age() % PULSE_TICKS == 0;
     final boolean heals =
-        pulse
+        state.age() % PULSE_TICKS == 0
             && state.naturalRegeneration()
             && blood >= HEAL_THRESHOLD
             && state.health() < state.maxHealth();
     if (heals) {
       exhaustion += HEAL_EXHAUSTION;
     }
-    final boolean starves = pulse && blood <= 0 && canStarve(state.health(), state.difficulty());
-    return new Outcome(blood, Math.min(exhaustion, 40.0F), heals, starves);
+    return new Outcome(blood, Math.min(exhaustion, MAX_EXHAUSTION), heals);
   }
 
-  static boolean canStarve(final float health, final Difficulty difficulty) {
-    return health > EASY_STARVE_FLOOR
-        || difficulty == Difficulty.HARD
-        || (difficulty == Difficulty.NORMAL && health > NORMAL_STARVE_FLOOR);
+  private static float drainPerTick(final int secondsPerBlood) {
+    return EXHAUSTION_PER_BLOOD / (secondsPerBlood * 20.0F);
   }
 }

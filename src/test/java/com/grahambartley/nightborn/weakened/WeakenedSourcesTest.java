@@ -77,6 +77,12 @@ class WeakenedSourcesTest {
   }
 
   @Test
+  @DisplayName("an absent source has no strength")
+  void absentStrength() {
+    assertEquals(0, WeakenedSources.NONE.strength("starving"));
+  }
+
+  @Test
   @DisplayName("sources save and load")
   void codecRoundTrips() {
     final WeakenedSources sources = WeakenedSources.NONE.with("garlic", 25, 40);
