@@ -180,7 +180,7 @@ A vampire mob, a vampire bat or a vampire player bites a human. A mob's or a bat
 | TURN-5 | When the sickness runs out, the player turns. They keep their inventory, start with a full blood bar and get the vampire core |
 | TURN-6 | A player who turns stops earning hunter skills, and their hunter tree is set aside. It comes back if an operator makes them human again |
 | TURN-7 | Another bite during the sickness does not restart or lengthen it |
-| TURN-8 | A vampire player's bite feeds by default. They switch it between feeding and turning with a key they can rebind. Each switch is confirmed on screen, and a sign with its own icon stays on screen while the turning bite is on (ACC-1). A turning bite feeds like any other bite (FEED-4 to FEED-12), and the bite's mode is fixed when it first draws blood. Where the server stops players turning players (CFG-5), a turning bite on a player feeds only. Vampire mobs and bats do not choose |
+| TURN-8 | A vampire player's bite feeds by default. They switch it between feeding and turning with a key they can rebind. Each switch is confirmed on screen, and a sign with its own icon stays on screen while the turning bite is on (ACC-1). A turning bite feeds like any other bite (FEED-4 to FEED-12), and the bite's mode is fixed when it first draws blood. Where the server stops players turning players (CFG-5), a turning bite on a player feeds only. A vampire made human loses the choice, so a player who turns again starts with a feeding bite. Vampire mobs and bats do not choose |
 
 **Not supported:** turning by any means other than a bite or an operator command; turning a villager into a vampire.
 
@@ -726,7 +726,7 @@ There is no singleplayer mode in this mod. A single-player world is an integrate
 |---|---|---|---|---|---|
 | Faction | not applicable | kept | kept, except CORE-10 | kept | kept to the last save |
 | Bite sickness and days left | not applicable | kept | kept | kept, paused while offline | kept to the last save |
-| Turning bite choice | not applicable | kept | kept | kept | kept to the last save |
+| Turning bite choice | not applicable | kept | kept, except CORE-10 | kept | kept to the last save |
 | Downed or escaping, and the time left | kept, for a mob | kept | cleared | kept, so leaving does not escape it | kept to the last save |
 | Blood | not applicable | kept | refilled, as hunger is on respawn | kept | kept to the last save |
 | Skills and bloodlines | not applicable | kept | kept, except SKILL-6 and CORE-10 | kept | kept to the last save |
