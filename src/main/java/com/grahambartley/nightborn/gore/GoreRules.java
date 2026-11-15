@@ -22,11 +22,11 @@ public final class GoreRules {
   }
 
   public static Optional<Gore> onDeath(
-      final boolean bleeds, final boolean vampire, final boolean staked, final Blow blow) {
+      final boolean bleeds, final boolean vampire, final Blow blow) {
     if (!bleeds) {
       return Optional.empty();
     }
-    if (vampire && staked) {
+    if (vampire && blow.stake()) {
       return Optional.of(Gore.STAKED);
     }
     if (blow.bite() && !vampire) {

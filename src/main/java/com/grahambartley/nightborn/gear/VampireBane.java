@@ -8,6 +8,7 @@ import com.grahambartley.nightborn.vampire.Vampires;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
+import net.minecraft.entity.damage.DamageTypes;
 import net.minecraft.entity.projectile.PersistentProjectileEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -46,6 +47,18 @@ public final class VampireBane {
       return 0.0F;
     }
     return (stake ? settings.stakeDamage() : 0) + (silver ? settings.silverDamage() : 0);
+  }
+
+  public static boolean isSilverBlow(final DamageSource source) {
+    return meleeWith(source, SILVER_WEAPONS) || ammo(source).isIn(SILVER_AMMO);
+  }
+
+  static boolean meleeWith(final DamageSource source, final TagKey<Item> weapons) {
+    final ItemStack weapon = source.getWeaponStack();
+    return source.isDirect()
+        && (source.isOf(DamageTypes.PLAYER_ATTACK) || source.isOf(DamageTypes.MOB_ATTACK))
+        && weapon != null
+        && weapon.isIn(weapons);
   }
 
   public static ItemStack ammo(final DamageSource source) {

@@ -44,4 +44,23 @@ class SplatterLookTest {
     assertEquals(redraw, SplatterLook.redrawNeeded(before, after));
     assertTrue(SplatterLook.FRESH.drawn());
   }
+
+  @ParameterizedTest(name = "{0} at shade {1}: ({2}, {3}, {4})")
+  @CsvSource({
+    "FRESH, 1.0, 1.0, 1.0, 1.0",
+    "FRESH, 0.5, 0.5, 0.5, 0.5",
+    "DRIED, 1.0, 0.43137, 0.32157, 0.28235",
+    "DRIED, 0.5, 0.21569, 0.16078, 0.14118"
+  })
+  void rgb(
+      final SplatterLook look,
+      final float shade,
+      final float red,
+      final float green,
+      final float blue) {
+    final float[] rgb = look.rgb(shade);
+    assertEquals(red, rgb[0], 1.0e-4F);
+    assertEquals(green, rgb[1], 1.0e-4F);
+    assertEquals(blue, rgb[2], 1.0e-4F);
+  }
 }

@@ -517,7 +517,7 @@ Vampires are rare. They live in households hidden in four kinds of structure, ea
 |---|---|
 | GORE-1 | Bites, stakes and silver hits spray blood. Blood leaves splatter on nearby blocks, drawn by the client, that fades with time |
 | GORE-2 | A drained victim and a staked vampire have their own death effects |
-| GORE-3 | A client option sets gore, including vomit particles (FEED-3) and placed blood splatter (DECOR-3), to Full, Reduced or Off. Full is the default. Vomit particles also follow the vanilla Particles setting, and none show on Minimal |
+| GORE-3 | A client option sets gore, including vomit particles (FEED-3), blood spray and its splatter (GORE-1), and placed blood splatter (DECOR-3), to Full, Reduced or Off. Full is the default. Reduced draws fewer drops, and blood spray and splatter dried and dark. Vomit particles and blood spray also follow the vanilla Particles setting: fewer on Decreased, and none on Minimal |
 | GORE-4 | Gore is drawn by the client only. The setting never changes what happens in the world |
 
 **Enforcement:** server decides what happens. The client decides how much blood to draw.
