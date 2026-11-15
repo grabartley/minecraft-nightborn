@@ -1,0 +1,7 @@
+{
+  "parent": "nightborn:block/blood_splatter",
+  "textures": {
+    "0": "nightborn:block/blood_splatter_1",
+    "particle": "nightborn:block/blood_splatter_1"
+  }
+}

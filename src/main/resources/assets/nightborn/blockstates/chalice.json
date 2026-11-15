@@ -1,0 +1,16 @@
+{
+  "variants": {
+    "blood=empty": {
+      "model": "nightborn:block/chalice"
+    },
+    "blood=animal": {
+      "model": "nightborn:block/chalice_full"
+    },
+    "blood=villager": {
+      "model": "nightborn:block/chalice_full"
+    },
+    "blood=player": {
+      "model": "nightborn:block/chalice_full"
+    }
+  }
+}

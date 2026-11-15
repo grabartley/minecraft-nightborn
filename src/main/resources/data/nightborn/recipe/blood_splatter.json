@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "decorations",
+  "ingredients": [
+    {
+      "item": "nightborn:blood_bottle"
+    }
+  ],
+  "result": {
+    "id": "nightborn:blood_splatter",
+    "count": 4
+  }
+}

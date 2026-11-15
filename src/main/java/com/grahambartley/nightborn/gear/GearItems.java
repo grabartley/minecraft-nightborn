@@ -47,9 +47,13 @@ public final class GearItems {
   public static final Item GARLIC =
       item("garlic", settings -> new AliasedBlockItem(GearBlocks.GARLIC, settings));
   public static final Item GOLD_CRUCIFIX =
-      item("gold_crucifix", settings -> new Item(settings.maxCount(1)));
+      item(
+          "gold_crucifix",
+          settings -> new CrucifixItem(GearBlocks.GOLD_WALL_CRUCIFIX, settings.maxCount(1)));
   public static final Item SILVER_CRUCIFIX =
-      item("silver_crucifix", settings -> new Item(settings.maxCount(1)));
+      item(
+          "silver_crucifix",
+          settings -> new CrucifixItem(GearBlocks.SILVER_WALL_CRUCIFIX, settings.maxCount(1)));
 
   private GearItems() {}
 

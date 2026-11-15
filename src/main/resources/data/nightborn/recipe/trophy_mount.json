@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "decorations",
+  "pattern": [
+    "K",
+    "P"
+  ],
+  "key": {
+    "K": {
+      "item": "minecraft:skeleton_skull"
+    },
+    "P": {
+      "item": "nightborn:ebony_planks"
+    }
+  },
+  "result": {
+    "id": "nightborn:trophy_mount",
+    "count": 1
+  }
+}

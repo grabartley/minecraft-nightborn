@@ -12,12 +12,15 @@ import net.minecraft.block.Blocks;
 import net.minecraft.block.MapColor;
 import net.minecraft.block.PaneBlock;
 import net.minecraft.block.TransparentBlock;
+import net.minecraft.block.piston.PistonBehavior;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.shape.VoxelShape;
+import net.minecraft.util.shape.VoxelShapes;
 
 public final class DecorBlocks {
 
@@ -26,6 +29,10 @@ public final class DecorBlocks {
   private static final int WOOD_SPREAD = 20;
   private static final int CLOTH_BURN = 30;
   private static final int CLOTH_SPREAD = 60;
+  private static final VoxelShape TROPHY_SHAPE =
+      VoxelShapes.union(
+          Block.createCuboidShape(4, 1, 15, 12, 15, 16),
+          Block.createCuboidShape(5, 3, 9, 11, 12, 15));
 
   public static final Block CANDELABRA =
       register(
@@ -78,6 +85,46 @@ public final class DecorBlocks {
           TableBlock::new,
           AbstractBlock.Settings.copy(Blocks.DARK_OAK_PLANKS).mapColor(MapColor.BLACK).nonOpaque());
 
+  public static final Block BLOOD_FOUNTAIN =
+      register(
+          "blood_fountain",
+          BloodFountainBlock::new,
+          AbstractBlock.Settings.copy(Blocks.POLISHED_BLACKSTONE_BRICKS).nonOpaque());
+  public static final Block BLOOD_POOL =
+      register("blood_pool", BloodPoolBlock::new, blood().strength(0.2f));
+  public static final Block BLOOD_SPLATTER =
+      register("blood_splatter", BloodSplatterBlock::new, blood().breakInstantly());
+  public static final Block CHALICE =
+      register(
+          "chalice",
+          ChaliceBlock::new,
+          AbstractBlock.Settings.create()
+              .mapColor(MapColor.GOLD)
+              .strength(1.0f)
+              .sounds(BlockSoundGroup.METAL)
+              .nonOpaque()
+              .pistonBehavior(PistonBehavior.DESTROY));
+  public static final Block WEAPON_RACK =
+      register(
+          "weapon_rack",
+          WeaponRackBlock::new,
+          AbstractBlock.Settings.copy(Blocks.DARK_OAK_PLANKS).mapColor(MapColor.BLACK).nonOpaque());
+  public static final Block WANTED_POSTER =
+      register(
+          "wanted_poster",
+          WantedPosterBlock::new,
+          AbstractBlock.Settings.create()
+              .mapColor(MapColor.PALE_YELLOW)
+              .noCollision()
+              .breakInstantly()
+              .sounds(BlockSoundGroup.WOOL)
+              .pistonBehavior(PistonBehavior.DESTROY));
+  public static final Block TROPHY_MOUNT =
+      register(
+          "trophy_mount",
+          settings -> new WallDecorBlock(settings, TROPHY_SHAPE),
+          AbstractBlock.Settings.copy(Blocks.DARK_OAK_PLANKS).mapColor(MapColor.BLACK).nonOpaque());
+
   static {
     BuildingFamily.ALL.forEach(DecorBlocks::registerFamily);
   }
@@ -90,6 +137,9 @@ public final class DecorBlocks {
     flammable.add(ORNATE_TABLE, WOOD_BURN, WOOD_SPREAD);
     flammable.add(BURGUNDY_VELVET_DRAPE, CLOTH_BURN, CLOTH_SPREAD);
     flammable.add(EMERALD_VELVET_DRAPE, CLOTH_BURN, CLOTH_SPREAD);
+    flammable.add(WEAPON_RACK, WOOD_BURN, WOOD_SPREAD);
+    flammable.add(TROPHY_MOUNT, WOOD_BURN, WOOD_SPREAD);
+    flammable.add(WANTED_POSTER, CLOTH_BURN, CLOTH_SPREAD);
     BuildingFamily.ALL.stream()
         .filter(family -> family.material() == BuildingFamily.Material.WOOD)
         .flatMap(family -> family.ids().stream())
@@ -106,6 +156,15 @@ public final class DecorBlocks {
 
   public static List<Block> all() {
     return List.copyOf(BLOCKS.values());
+  }
+
+  private static AbstractBlock.Settings blood() {
+    return AbstractBlock.Settings.create()
+        .mapColor(MapColor.DARK_RED)
+        .noCollision()
+        .nonOpaque()
+        .sounds(BlockSoundGroup.HONEY)
+        .pistonBehavior(PistonBehavior.DESTROY);
   }
 
   private static void registerFamily(final BuildingFamily family) {

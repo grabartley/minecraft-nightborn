@@ -1,0 +1,49 @@
+{
+  "variants": {
+    "portrait=0,facing=north": {
+      "model": "nightborn:block/wanted_poster"
+    },
+    "portrait=1,facing=north": {
+      "model": "nightborn:block/wanted_poster_1"
+    },
+    "portrait=2,facing=north": {
+      "model": "nightborn:block/wanted_poster_2"
+    },
+    "portrait=0,facing=east": {
+      "model": "nightborn:block/wanted_poster",
+      "y": 90
+    },
+    "portrait=1,facing=east": {
+      "model": "nightborn:block/wanted_poster_1",
+      "y": 90
+    },
+    "portrait=2,facing=east": {
+      "model": "nightborn:block/wanted_poster_2",
+      "y": 90
+    },
+    "portrait=0,facing=south": {
+      "model": "nightborn:block/wanted_poster",
+      "y": 180
+    },
+    "portrait=1,facing=south": {
+      "model": "nightborn:block/wanted_poster_1",
+      "y": 180
+    },
+    "portrait=2,facing=south": {
+      "model": "nightborn:block/wanted_poster_2",
+      "y": 180
+    },
+    "portrait=0,facing=west": {
+      "model": "nightborn:block/wanted_poster",
+      "y": 270
+    },
+    "portrait=1,facing=west": {
+      "model": "nightborn:block/wanted_poster_1",
+      "y": 270
+    },
+    "portrait=2,facing=west": {
+      "model": "nightborn:block/wanted_poster_2",
+      "y": 270
+    }
+  }
+}

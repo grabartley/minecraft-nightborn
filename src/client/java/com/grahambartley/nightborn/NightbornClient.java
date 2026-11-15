@@ -4,6 +4,7 @@ import com.grahambartley.nightborn.ammo.AmmoEntities;
 import com.grahambartley.nightborn.client.CoatingTooltip;
 import com.grahambartley.nightborn.client.VampireClientFeatures;
 import com.grahambartley.nightborn.client.fog.StructureFog;
+import com.grahambartley.nightborn.client.gore.SplatterModels;
 import com.grahambartley.nightborn.client.state.ClientStateService;
 import com.grahambartley.nightborn.clothing.ClothingRenderProviders;
 import com.grahambartley.nightborn.coffin.CoffinBlockEntity;
@@ -25,6 +26,7 @@ import com.grahambartley.nightborn.render.FurnitureBlockRenderer;
 import com.grahambartley.nightborn.render.GeoBlockItemRenderer;
 import com.grahambartley.nightborn.render.VampireBatRenderer;
 import com.grahambartley.nightborn.render.VampireRenderer;
+import com.grahambartley.nightborn.render.WeaponRackRenderer;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
 import net.fabricmc.fabric.api.client.rendering.v1.BuiltinItemRendererRegistry;
@@ -43,6 +45,8 @@ public class NightbornClient implements ClientModInitializer {
     BlockEntityRendererFactories.register(
         DecorBlockEntities.FURNITURE, FurnitureBlockRenderer::new);
     BlockEntityRendererFactories.register(Coffins.BLOCK_ENTITY, CoffinRenderer::new);
+    BlockEntityRendererFactories.register(DecorBlockEntities.WEAPON_RACK, WeaponRackRenderer::new);
+    SplatterModels.register();
     Coffins.all()
         .forEach(
             block ->
@@ -66,7 +70,12 @@ public class NightbornClient implements ClientModInitializer {
         DecorBlocks.GOTHIC_STAINED_GLASS,
         DecorBlocks.GOTHIC_STAINED_GLASS_PANE);
     BlockRenderLayerMap.INSTANCE.putBlocks(
-        RenderLayer.getCutout(), DecorBlocks.ORNATE_CHAIR, DecorBlocks.ORNATE_TABLE);
+        RenderLayer.getCutout(),
+        DecorBlocks.ORNATE_CHAIR,
+        DecorBlocks.ORNATE_TABLE,
+        DecorBlocks.BLOOD_POOL,
+        DecorBlocks.BLOOD_SPLATTER,
+        DecorBlocks.CHALICE);
     BlockRenderLayerMap.INSTANCE.putBlocks(
         RenderLayer.getCutoutMipped(), GearBlocks.SILVER_ORE, GearBlocks.DEEPSLATE_SILVER_ORE);
     BlockRenderLayerMap.INSTANCE.putBlocks(

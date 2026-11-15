@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "decorations",
+  "pattern": [
+    " B ",
+    "S S",
+    "SSS"
+  ],
+  "key": {
+    "B": {
+      "item": "nightborn:blood_bottle"
+    },
+    "S": {
+      "item": "nightborn:gothic_stone_bricks"
+    }
+  },
+  "result": {
+    "id": "nightborn:blood_fountain",
+    "count": 1
+  }
+}

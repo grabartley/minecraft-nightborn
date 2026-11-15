@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "decorations",
+  "pattern": [
+    "SS",
+    "SS"
+  ],
+  "key": {
+    "S": {
+      "item": "nightborn:blood_splatter"
+    }
+  },
+  "result": {
+    "id": "nightborn:blood_pool",
+    "count": 1
+  }
+}

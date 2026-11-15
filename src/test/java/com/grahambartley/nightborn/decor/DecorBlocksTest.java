@@ -47,7 +47,14 @@ class DecorBlocksTest {
     "candelabra, com.grahambartley.nightborn.decor.CandelabraBlock",
     "chandelier, com.grahambartley.nightborn.decor.ChandelierBlock",
     "ornate_chair, com.grahambartley.nightborn.decor.ChairBlock",
-    "ornate_table, com.grahambartley.nightborn.decor.TableBlock"
+    "ornate_table, com.grahambartley.nightborn.decor.TableBlock",
+    "blood_fountain, com.grahambartley.nightborn.decor.BloodFountainBlock",
+    "blood_pool, com.grahambartley.nightborn.decor.BloodPoolBlock",
+    "blood_splatter, com.grahambartley.nightborn.decor.BloodSplatterBlock",
+    "chalice, com.grahambartley.nightborn.decor.ChaliceBlock",
+    "weapon_rack, com.grahambartley.nightborn.decor.WeaponRackBlock",
+    "wanted_poster, com.grahambartley.nightborn.decor.WantedPosterBlock",
+    "trophy_mount, com.grahambartley.nightborn.decor.WallDecorBlock"
   })
   void buildsEachMemberFromTheMatchingShape(final String id, final Class<?> kind) {
     assertTrue(kind.isInstance(DecorBlocks.get(id)));

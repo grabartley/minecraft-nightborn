@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "nightborn:block/silver_wall_crucifix"
+    },
+    "facing=east": {
+      "model": "nightborn:block/silver_wall_crucifix",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "nightborn:block/silver_wall_crucifix",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "nightborn:block/silver_wall_crucifix",
+      "y": 270
+    }
+  }
+}

@@ -3,6 +3,7 @@ package com.grahambartley.nightborn.gametest;
 import com.grahambartley.nightborn.config.FeedingSettings;
 import com.grahambartley.nightborn.config.NightbornConfig;
 import com.grahambartley.nightborn.config.WardSettings;
+import com.grahambartley.nightborn.decor.WallDecorBlock;
 import com.grahambartley.nightborn.feeding.FeedingSessions;
 import com.grahambartley.nightborn.gear.GarlicStringBlock;
 import com.grahambartley.nightborn.gear.GearBlocks;
@@ -195,6 +196,45 @@ public class WardGameTest implements FabricGameTest {
         () -> {
           context.expectBlock(GearBlocks.GARLIC_STRING, new BlockPos(1, 2, 3));
           context.assertEquals(strength(vampire, Wards.STRINGS), 15, "one string in range");
+          context.complete();
+        });
+  }
+
+  @GameTest(templateName = ARENA, tickLimit = SCANNED + 5)
+  public void aHungCrucifixWeakensLikeACrucifixShape(final TestContext context) {
+    final VampireEntity vampire = still(context, new BlockPos(4, 2, 4));
+    context.setBlockState(new BlockPos(1, 2, 2), Blocks.STONE);
+    context.setBlockState(
+        new BlockPos(1, 2, 3),
+        GearBlocks.GOLD_WALL_CRUCIFIX
+            .getDefaultState()
+            .with(WallDecorBlock.FACING, Direction.SOUTH));
+    context.runAtTick(
+        SCANNED,
+        () -> {
+          context.assertEquals(strength(vampire, Wards.SHAPE), 40, "a hung crucifix in sight");
+          context.complete();
+        });
+  }
+
+  @GameTest(templateName = ARENA, tickLimit = SCANNED + 5)
+  public void aWallHidesAHungCrucifix(final TestContext context) {
+    final VampireEntity vampire = still(context, new BlockPos(4, 2, 5));
+    context.setBlockState(new BlockPos(1, 2, 2), Blocks.STONE);
+    context.setBlockState(
+        new BlockPos(1, 2, 3),
+        GearBlocks.GOLD_WALL_CRUCIFIX
+            .getDefaultState()
+            .with(WallDecorBlock.FACING, Direction.SOUTH));
+    for (int x = 0; x <= 6; x++) {
+      for (int y = 1; y <= 4; y++) {
+        context.setBlockState(new BlockPos(x, y, 4), Blocks.STONE);
+      }
+    }
+    context.runAtTick(
+        SCANNED,
+        () -> {
+          context.assertEquals(strength(vampire, Wards.SHAPE), 0, "the wall blocks the sight");
           context.complete();
         });
   }

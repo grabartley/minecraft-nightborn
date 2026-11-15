@@ -1,0 +1,631 @@
+{
+	"format_version": "1.12.0",
+	"minecraft:geometry": [
+		{
+			"description": {
+				"identifier": "geometry.blood_fountain",
+				"texture_width": 128,
+				"texture_height": 64,
+				"visible_bounds_width": 2,
+				"visible_bounds_height": 2.5,
+				"visible_bounds_offset": [
+					0,
+					0.75,
+					0
+				]
+			},
+			"bones": [
+				{
+					"name": "fountain",
+					"pivot": [
+						0,
+						0,
+						0
+					]
+				},
+				{
+					"name": "basin",
+					"parent": "fountain",
+					"pivot": [
+						0,
+						0,
+						0
+					],
+					"cubes": [
+						{
+							"origin": [
+								-7,
+								0,
+								-7
+							],
+							"size": [
+								14,
+								1,
+								14
+							],
+							"uv": [
+								0,
+								0
+							]
+						},
+						{
+							"origin": [
+								-7,
+								1,
+								-7
+							],
+							"size": [
+								14,
+								4,
+								2
+							],
+							"uv": [
+								38,
+								28
+							]
+						},
+						{
+							"origin": [
+								-7,
+								1,
+								5
+							],
+							"size": [
+								14,
+								4,
+								2
+							],
+							"uv": [
+								70,
+								28
+							]
+						},
+						{
+							"origin": [
+								5,
+								1,
+								-5
+							],
+							"size": [
+								2,
+								4,
+								10
+							],
+							"uv": [
+								56,
+								0
+							]
+						},
+						{
+							"origin": [
+								-7,
+								1,
+								-5
+							],
+							"size": [
+								2,
+								4,
+								10
+							],
+							"uv": [
+								80,
+								0
+							]
+						}
+					]
+				},
+				{
+					"name": "basin_blood",
+					"parent": "fountain",
+					"pivot": [
+						0,
+						4,
+						0
+					],
+					"cubes": [
+						{
+							"origin": [
+								-5,
+								1,
+								-5
+							],
+							"size": [
+								10,
+								3,
+								10
+							],
+							"uv": [
+								0,
+								15
+							]
+						}
+					]
+				},
+				{
+					"name": "column",
+					"parent": "fountain",
+					"pivot": [
+						0,
+						1,
+						0
+					],
+					"cubes": [
+						{
+							"origin": [
+								-1.5,
+								1,
+								-1.5
+							],
+							"size": [
+								3,
+								9,
+								3
+							],
+							"uv": [
+								40,
+								15
+							]
+						},
+						{
+							"origin": [
+								-2,
+								4,
+								-2
+							],
+							"size": [
+								4,
+								1,
+								4
+							],
+							"uv": [
+								102,
+								28
+							]
+						}
+					]
+				},
+				{
+					"name": "bowl",
+					"parent": "fountain",
+					"pivot": [
+						0,
+						10,
+						0
+					],
+					"cubes": [
+						{
+							"origin": [
+								-4,
+								10,
+								-4
+							],
+							"size": [
+								8,
+								1,
+								8
+							],
+							"uv": [
+								76,
+								15
+							]
+						},
+						{
+							"origin": [
+								-4,
+								11,
+								-4
+							],
+							"size": [
+								8,
+								2,
+								1
+							],
+							"uv": [
+								0,
+								36
+							]
+						},
+						{
+							"origin": [
+								-4,
+								11,
+								3
+							],
+							"size": [
+								8,
+								2,
+								1
+							],
+							"uv": [
+								18,
+								36
+							]
+						},
+						{
+							"origin": [
+								3,
+								11,
+								-3
+							],
+							"size": [
+								1,
+								2,
+								6
+							],
+							"uv": [
+								108,
+								15
+							]
+						},
+						{
+							"origin": [
+								-4,
+								11,
+								-3
+							],
+							"size": [
+								1,
+								2,
+								6
+							],
+							"uv": [
+								0,
+								28
+							]
+						},
+						{
+							"origin": [
+								-1,
+								11,
+								-1
+							],
+							"size": [
+								2,
+								3,
+								2
+							],
+							"uv": [
+								118,
+								28
+							]
+						}
+					]
+				},
+				{
+					"name": "bowl_blood",
+					"parent": "fountain",
+					"pivot": [
+						0,
+						12,
+						0
+					],
+					"cubes": [
+						{
+							"origin": [
+								-3,
+								11,
+								-3
+							],
+							"size": [
+								6,
+								1,
+								6
+							],
+							"uv": [
+								14,
+								28
+							]
+						}
+					]
+				},
+				{
+					"name": "well",
+					"parent": "fountain",
+					"pivot": [
+						0,
+						14,
+						0
+					],
+					"cubes": [
+						{
+							"origin": [
+								-1,
+								14,
+								-1
+							],
+							"size": [
+								2,
+								1,
+								2
+							],
+							"uv": [
+								36,
+								36
+							]
+						}
+					]
+				},
+				{
+					"name": "stream_north",
+					"parent": "fountain",
+					"pivot": [
+						0,
+						14,
+						-4.5
+					],
+					"cubes": [
+						{
+							"origin": [
+								-1,
+								4,
+								-5
+							],
+							"size": [
+								2,
+								9,
+								1
+							],
+							"uv": [
+								64,
+								15
+							]
+						},
+						{
+							"origin": [
+								-1,
+								13,
+								-5
+							],
+							"size": [
+								2,
+								1,
+								2
+							],
+							"uv": [
+								44,
+								36
+							]
+						}
+					]
+				},
+				{
+					"name": "stream_south",
+					"parent": "fountain",
+					"pivot": [
+						0,
+						14,
+						4.5
+					],
+					"cubes": [
+						{
+							"origin": [
+								-1,
+								4,
+								4
+							],
+							"size": [
+								2,
+								9,
+								1
+							],
+							"uv": [
+								70,
+								15
+							]
+						},
+						{
+							"origin": [
+								-1,
+								13,
+								3
+							],
+							"size": [
+								2,
+								1,
+								2
+							],
+							"uv": [
+								52,
+								36
+							]
+						}
+					]
+				},
+				{
+					"name": "stream_west",
+					"parent": "fountain",
+					"pivot": [
+						4.5,
+						14,
+						0
+					],
+					"cubes": [
+						{
+							"origin": [
+								4,
+								4,
+								-1
+							],
+							"size": [
+								1,
+								9,
+								2
+							],
+							"uv": [
+								52,
+								15
+							]
+						},
+						{
+							"origin": [
+								3,
+								13,
+								-1
+							],
+							"size": [
+								2,
+								1,
+								2
+							],
+							"uv": [
+								60,
+								36
+							]
+						}
+					]
+				},
+				{
+					"name": "stream_east",
+					"parent": "fountain",
+					"pivot": [
+						-4.5,
+						14,
+						0
+					],
+					"cubes": [
+						{
+							"origin": [
+								-5,
+								4,
+								-1
+							],
+							"size": [
+								1,
+								9,
+								2
+							],
+							"uv": [
+								58,
+								15
+							]
+						},
+						{
+							"origin": [
+								-5,
+								13,
+								-1
+							],
+							"size": [
+								2,
+								1,
+								2
+							],
+							"uv": [
+								68,
+								36
+							]
+						}
+					]
+				},
+				{
+					"name": "drop_north",
+					"parent": "fountain",
+					"pivot": [
+						0,
+						12,
+						-5.5
+					],
+					"cubes": [
+						{
+							"origin": [
+								-0.5,
+								11.5,
+								-6
+							],
+							"size": [
+								1,
+								1,
+								1
+							],
+							"uv": [
+								76,
+								36
+							]
+						}
+					]
+				},
+				{
+					"name": "drop_south",
+					"parent": "fountain",
+					"pivot": [
+						0,
+						12,
+						5.5
+					],
+					"cubes": [
+						{
+							"origin": [
+								-0.5,
+								11.5,
+								5
+							],
+							"size": [
+								1,
+								1,
+								1
+							],
+							"uv": [
+								80,
+								36
+							]
+						}
+					]
+				},
+				{
+					"name": "drop_west",
+					"parent": "fountain",
+					"pivot": [
+						5.5,
+						12,
+						0
+					],
+					"cubes": [
+						{
+							"origin": [
+								5,
+								11.5,
+								-0.5
+							],
+							"size": [
+								1,
+								1,
+								1
+							],
+							"uv": [
+								84,
+								36
+							]
+						}
+					]
+				},
+				{
+					"name": "drop_east",
+					"parent": "fountain",
+					"pivot": [
+						-5.5,
+						12,
+						0
+					],
+					"cubes": [
+						{
+							"origin": [
+								-6,
+								11.5,
+								-0.5
+							],
+							"size": [
+								1,
+								1,
+								1
+							],
+							"uv": [
+								88,
+								36
+							]
+						}
+					]
+				}
+			]
+		}
+	]
+}

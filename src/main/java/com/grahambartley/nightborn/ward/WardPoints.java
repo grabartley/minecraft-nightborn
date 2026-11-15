@@ -15,9 +15,16 @@ public final class WardPoints {
   public static final RegistryKey<PointOfInterestType> GARLIC_STRING =
       RegistryKey.of(RegistryKeys.POINT_OF_INTEREST_TYPE, GARLIC_STRING_ID);
 
+  public static final Identifier HUNG_CRUCIFIX_ID =
+      Identifier.of(Nightborn.MOD_ID, "hung_crucifix");
+  public static final RegistryKey<PointOfInterestType> HUNG_CRUCIFIX =
+      RegistryKey.of(RegistryKeys.POINT_OF_INTEREST_TYPE, HUNG_CRUCIFIX_ID);
+
   private WardPoints() {}
 
   public static void register() {
     PointOfInterestHelper.register(GARLIC_STRING_ID, 0, 1, GearBlocks.GARLIC_STRING);
+    PointOfInterestHelper.register(
+        HUNG_CRUCIFIX_ID, 0, 1, GearBlocks.GOLD_WALL_CRUCIFIX, GearBlocks.SILVER_WALL_CRUCIFIX);
   }
 }
