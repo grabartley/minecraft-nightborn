@@ -26,7 +26,8 @@ public final class NightbornCommand {
             .executes(NightbornCommand::help)
             .then(CommandManager.literal("status").executes(NightbornCommand::status))
             .then(ConfigCommand.node())
-            .then(PlayerCommand.node()));
+            .then(PlayerCommand.node())
+            .then(FamiliarCommand.node()));
   }
 
   static List<Text> helpLines() {
@@ -38,7 +39,8 @@ public final class NightbornCommand {
         Text.translatable("nightborn.command.help.turn"),
         Text.translatable("nightborn.command.help.cure"),
         Text.translatable("nightborn.command.help.info"),
-        Text.translatable("nightborn.command.help.skills"));
+        Text.translatable("nightborn.command.help.skills"),
+        Text.translatable("nightborn.command.help.familiar"));
   }
 
   private static int help(final CommandContext<ServerCommandSource> context) {

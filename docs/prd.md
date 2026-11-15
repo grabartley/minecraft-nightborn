@@ -371,12 +371,12 @@ The core starts with Thick Blood (more health), Grave Strength (harder blows) an
 |---|---|
 | FAM-1 | An Occult vampire can summon ghostly familiars that fight for them, carry items and scout ahead |
 | FAM-2 | Ghostly familiars last a set time, cost blood to summon and pass through blocks only while scouting |
-| FAM-3 | Any vampire can hire one villager as a human familiar with a Familiar's Contract |
-| FAM-4 | A human familiar works in daylight: it carries items between chests the owner marks, trades with villagers for the owner and guards the owner's assigned coffin |
-| FAM-5 | A human familiar has loyalty. Good treatment raises it. Being fed on, hurt or left without pay lowers it |
-| FAM-6 | A human familiar with low loyalty may secretly turn to the hunters, then attack its owner while they sleep. Its loyalty is never shown as a number |
+| FAM-3 | Any vampire can hire one grown villager as a human familiar by using a Familiar's Contract on it. The contract is crafted from paper, a feather and a Blood Bottle, and is used up. The familiar keeps the villager's biome look in a servant's livery but leaves its trade behind |
+| FAM-4 | A human familiar works in daylight: it carries items between chests the owner marks, trades with villagers for the owner and guards the owner's assigned coffin. The owner sneaks and uses a chest or barrel with an empty hand to mark it as the fetch chest, again to make it the deliver chest, and again to clear it. On each errand the familiar takes a stack from the fetch chest, buys what it can afford from the nearest villager, and puts everything into the deliver chest. It drives off monsters near the coffin, other than creepers, and at night it stays by the coffin |
+| FAM-5 | A human familiar has loyalty. Good treatment raises it. Being fed on, hurt or left without pay lowers it. The owner pays wages by using emeralds on it, a set number of days per emerald, up to a set number of days ahead. Each paid day raises loyalty and each unpaid day lowers it |
+| FAM-6 | A human familiar with low loyalty may secretly turn to the hunters, then attack its owner while they sleep. Its loyalty is never shown as a number: using it with an empty hand tells the owner whether it seems devoted, content, uneasy or resentful, and a turned familiar always seems content. A turned familiar stops running errands |
 | FAM-7 | A familiar obeys only its owner |
-| FAM-8 | A human familiar killed or turned against its owner frees the contract slot |
+| FAM-8 | A human familiar killed or turned against its owner frees the contract slot. A familiar drops whatever it carries when it dies or is released, and a released familiar becomes a villager again |
 
 **Enforcement:** server.
 
@@ -545,10 +545,10 @@ Vampires are rare. They live in households hidden in four kinds of structure, ea
 | CFG-2 | Settings are saved per world as JSON in the world save directory |
 | CFG-3 | A missing file gives defaults. A broken file gives defaults, is logged and is kept |
 | CFG-4 | Out-of-range values are clamped on load |
-| CFG-5 | Options cover turn chances, sickness length, sun damage, blood drain and values, garlic and crucifix ranges, skill point rates, the staking penalty, stake and silver damage, the damage, hits, time and weakening of each weapon coating, the downed and escape times, the damage from vomiting food or potions, the blood drain while levitating, how fast starving weakens and hurts and how much it takes from night gifts and bare hands, the coffin sleep share, hardcore vampire deaths, spawn and structure rates, vampire mob hunger threshold and blood drain, how often vampire mobs rise to levitate and land, feeding range and chase range, how often structure gramophones play, the rewards for older vampires and the Eldest, and whether players can turn players, whether Nocturne works and how strong Batwing, Gliding Step and Hush are |
+| CFG-5 | Options cover turn chances, sickness length, sun damage, blood drain and values, garlic and crucifix ranges, skill point rates, the staking penalty, stake and silver damage, the damage, hits, time and weakening of each weapon coating, the downed and escape times, the damage from vomiting food or potions, the blood drain while levitating, how fast starving weakens and hurts and how much it takes from night gifts and bare hands, the coffin sleep share, hardcore vampire deaths, spawn and structure rates, vampire mob hunger threshold and blood drain, how often vampire mobs rise to levitate and land, a human familiar's starting loyalty, wages, loyalty gains and losses, betrayal threshold and chance, and guard and errand ranges, feeding range and chase range, how often structure gramophones play, the rewards for older vampires and the Eldest, and whether players can turn players, whether Nocturne works and how strong Batwing, Gliding Step and Hush are |
 | CFG-6 | A settings screen through Mod Menu shows the same server options and shares their validation with the commands |
 | CFG-7 | An option that only changes what one player sees, such as gore, is a client setting saved on that player's device. Every player can change it on the settings screen, whatever their operator level |
-| CFG-8 | Operators can turn, cure, set points and reset the bloodlines of any player |
+| CFG-8 | Operators can turn, cure, set points and reset the bloodlines of any player, and release any human familiar |
 
 **Enforcement:** server.
 
