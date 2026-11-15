@@ -7,6 +7,9 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;
 import net.minecraft.entity.attribute.EntityAttributes;
+import net.minecraft.entity.data.DataTracker;
+import net.minecraft.entity.data.TrackedData;
+import net.minecraft.entity.data.TrackedDataHandlerRegistry;
 import net.minecraft.entity.passive.BatEntity;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
@@ -20,6 +23,9 @@ import software.bernie.geckolib.animation.AnimationController;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 public class VampireBatEntity extends BatEntity implements GeoEntity {
+
+  private static final TrackedData<Boolean> HUNTING =
+      DataTracker.registerData(VampireBatEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
 
   static final double HUNT_RANGE = 12.0;
   static final double BITE_REACH = 1.4;
@@ -46,6 +52,12 @@ public class VampireBatEntity extends BatEntity implements GeoEntity {
   }
 
   @Override
+  protected void initDataTracker(final DataTracker.Builder builder) {
+    super.initDataTracker(builder);
+    builder.add(HUNTING, false);
+  }
+
+  @Override
   protected void mobTick() {
     if (biteCooldown > 0) {
       biteCooldown--;
@@ -56,6 +68,7 @@ public class VampireBatEntity extends BatEntity implements GeoEntity {
     if (prey == null && age % SEARCH_INTERVAL_TICKS == 0) {
       prey = findPrey();
     }
+    dataTracker.set(HUNTING, prey != null);
     if (prey == null || biteCooldown > 0) {
       super.mobTick();
       return;
@@ -154,7 +167,8 @@ public class VampireBatEntity extends BatEntity implements GeoEntity {
             ANIMATION_BLEND_TICKS,
             state ->
                 state.setAndContinue(
-                    VampireBatPose.of(isRoosting(), biteShownTicks > 0, getY() - prevY).clip())));
+                    VampireBatPose.of(isRoosting(), biteShownTicks > 0, dataTracker.get(HUNTING))
+                        .clip())));
   }
 
   @Override

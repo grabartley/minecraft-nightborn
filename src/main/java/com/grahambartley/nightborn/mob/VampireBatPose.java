@@ -8,8 +8,6 @@ public enum VampireBatPose {
   SWOOP("swoop", true),
   BITE("bite", false);
 
-  static final double SWOOP_DESCENT_PER_TICK = 0.12;
-
   private final String animation;
   private final RawAnimation clip;
 
@@ -20,14 +18,14 @@ public enum VampireBatPose {
   }
 
   public static VampireBatPose of(
-      final boolean roosting, final boolean biting, final double climbPerTick) {
+      final boolean roosting, final boolean biting, final boolean hunting) {
     if (roosting) {
       return HANG;
     }
     if (biting) {
       return BITE;
     }
-    return climbPerTick < -SWOOP_DESCENT_PER_TICK ? SWOOP : FLY;
+    return hunting ? SWOOP : FLY;
   }
 
   public String animation() {
