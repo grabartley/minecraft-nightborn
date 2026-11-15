@@ -84,7 +84,7 @@ This document specifies the Nightborn alpha line for Minecraft 1.21.1 on Fabric.
 | How do powers grow? | A skill tree with three bloodlines, of which you invest in two | LINE-1 to LINE-3 |
 | Who is a hunter? | Any human who kills vampires | HUNT-1 |
 | How does a vampire die? | Only to direct sun or a stake. Anything else brings it down, greatly weakened, until it recovers and escapes | CORE-7, CORE-8 |
-| What happens on death? | Respawn at your coffin. A stake costs skill progress | COFFIN-4, SKILL-6 |
+| What happens on death? | Respawn at your coffin. A stake costs skill progress. A server can make a vampire's death a full reset instead | COFFIN-4, SKILL-6, CORE-10 |
 | PvP? | Vampires and hunters are factions, and PvP follows the server's own setting | FACT-1 to FACT-4 |
 
 ## 3. Actors
@@ -279,6 +279,7 @@ Every vampire has the core, whatever bloodlines they choose.
 | CORE-7 | Only direct sun and a stake can kill a vampire. Damage from anything else, mobs, players, fire, falls, drowning or holy water included, stops at its last health. Falling into the void and an operator's `/kill` are the only exceptions |
 | CORE-8 | A vampire brought to its last health by anything else is downed: it collapses, cannot move, attack, feed or use items or powers, and is weakened at the cap (WEAK-9). It takes no damage from anything but sun and a stake while downed. After 30 seconds by default it gets up with 20% of its health, wherever it lies. More damage does not reset the time. Everyone near can see and hear that it is downed. It then escapes for 1 minute by default: it takes no damage but sun and a stake, stays weakened at the cap and can move freely. Vampire mobs flee while escaping |
 | CORE-9 | Phantoms never spawn for a vampire player and never target a vampire, and time a vampire spends awake never counts toward them |
+| CORE-10 | With the `hardcoreVampireDeath` server setting on, off by default, a vampire player who dies is reset like a hardcore death: they come back as a new human at world spawn with an empty inventory and ender chest, no experience, no skills, bloodlines or hunter tree, no coffin respawn point, and their thralls and familiars freed. Advancements are kept |
 
 **Not supported:** a vampire hiding its eyes while feeding.
 
@@ -312,7 +313,7 @@ The vampire tree has the core and three bloodlines. A vampire spends points in a
 | SKILL-3 | Bought skills are kept across death, reconnect and world reload |
 | SKILL-4 | Active skills sit in a small power bar and are used with keys the player can rebind |
 | SKILL-5 | Each active skill has a blood cost and a cooldown, shown on the bar |
-| SKILL-6 | A staked vampire player loses 10% of their earned points, taken from unspent points first and then from their most recent skills |
+| SKILL-6 | A staked vampire player loses 10% of their earned points, taken from unspent points first and then from their most recent skills. With CORE-10 on, the full reset applies instead |
 
 **Enforcement:** server. The client asks to buy a skill; the server checks points and order.
 
@@ -513,7 +514,7 @@ Vampires are rare. They live in households hidden in four kinds of structure, ea
 | CFG-2 | Settings are saved per world as JSON in the world save directory |
 | CFG-3 | A missing file gives defaults. A broken file gives defaults, is logged and is kept |
 | CFG-4 | Out-of-range values are clamped on load |
-| CFG-5 | Options cover turn chances, sickness length, sun damage, blood drain and values, garlic and crucifix ranges, skill point rates, the staking penalty, the downed and escape times, the coffin sleep share, spawn and structure rates, and whether players can turn players |
+| CFG-5 | Options cover turn chances, sickness length, sun damage, blood drain and values, garlic and crucifix ranges, skill point rates, the staking penalty, the downed and escape times, the coffin sleep share, hardcore vampire deaths, spawn and structure rates, and whether players can turn players |
 | CFG-6 | A settings screen through Mod Menu shows the same server options and shares their validation with the commands |
 | CFG-7 | An option that only changes what one player sees, such as gore, is a client setting saved on that player's device |
 | CFG-8 | Operators can turn, cure, set points and reset the bloodlines of any player |
@@ -659,14 +660,14 @@ There is no singleplayer mode in this mod. A single-player world is an integrate
 
 | What | Chunk unload | World reload | Death | Disconnect | Power loss |
 |---|---|---|---|---|---|
-| Faction | not applicable | kept | kept | kept | kept to the last save |
+| Faction | not applicable | kept | kept, except CORE-10 | kept | kept to the last save |
 | Bite sickness and days left | not applicable | kept | kept | kept, paused while offline | kept to the last save |
 | Downed or escaping, and the time left | kept, for a mob | kept | cleared | kept, so leaving does not escape it | kept to the last save |
 | Blood | not applicable | kept | refilled, as hunger is on respawn | kept | kept to the last save |
-| Skills and bloodlines | not applicable | kept | kept, except SKILL-6 | kept | kept to the last save |
-| Hunter tree set aside on turning | not applicable | kept | kept | kept | kept to the last save |
-| Coffin respawn | kept | kept | kept | kept | kept to the last save |
-| Thralls and familiars | kept with their chunk | kept | kept, waiting (MIND-8) | kept | kept to the last save |
+| Skills and bloodlines | not applicable | kept | kept, except SKILL-6 and CORE-10 | kept | kept to the last save |
+| Hunter tree set aside on turning | not applicable | kept | kept, except CORE-10 | kept | kept to the last save |
+| Coffin respawn | kept | kept | kept, except CORE-10 | kept | kept to the last save |
+| Thralls and familiars | kept with their chunk | kept | kept, waiting (MIND-8), except CORE-10 | kept | kept to the last save |
 | Human familiar loyalty | kept | kept | kept | kept | kept to the last save |
 | Household members and state | kept | kept | not applicable | not applicable | kept to the last save |
 | Contracts in progress | not applicable | kept | kept | kept | kept to the last save |
