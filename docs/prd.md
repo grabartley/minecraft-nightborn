@@ -159,7 +159,7 @@ The list is a tag, so a pack can change it.
 
 ### Crucifix Shape
 
-A crucifix shape is a vertical column of at least 3 blocks with a single block on each side, one below the top, all from the `nightborn:crucifix_materials` tag. The tag starts with every plank, log, gold block and silver block. The shape can face any horizontal direction.
+A crucifix shape is a vertical column of at least 3 blocks with a single block on each side, one below the top, all from the `nightborn:crucifix_materials` tag. The tag starts with every plank, log and gold block, and any block in `c:storage_blocks/silver`. The shape can face any horizontal direction. The arms and the top are single blocks: another tag block beyond an arm, above or below an arm, or above the top means it is not a crucifix.
 
 ## 5. Use Cases
 
@@ -251,7 +251,7 @@ Sneak and use on a creature to bite it, and keep holding to drink. Let go to sto
 
 **Actor:** Vampire, hunter.
 
-How weakened a vampire is scales with how strong the source is.
+How weakened a vampire is scales with how strong the source is. By default each Garlic String in range weakens by 15%, up to 45% for three or more; touching or holding garlic weakens by 80%; a held crucifix weakens by 60%, and by 25% more of that for each point of the holder's faith; and a crucifix shape weakens by 40%. A crucifix held by a vampire wards no one. A vampire mob's only attack is its bite, so it cannot hurt a crucifix holder at all.
 
 | ID | Requirement |
 |---|---|

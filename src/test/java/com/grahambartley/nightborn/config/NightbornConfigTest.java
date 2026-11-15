@@ -76,6 +76,7 @@ class NightbornConfigTest {
             "downed",
             "core",
             "weakened",
+            "wards",
             "factions",
             "skills",
             "gear",

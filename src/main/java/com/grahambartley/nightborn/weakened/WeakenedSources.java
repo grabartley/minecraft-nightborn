@@ -34,7 +34,7 @@ public record WeakenedSources(Map<String, Source> sources) {
   }
 
   public WeakenedSources with(final String id, final int strength, final int ticks) {
-    final int clampedStrength = Math.max(0, Math.min(CAP, strength));
+    final int clampedStrength = clampStrength(strength);
     if (clampedStrength == 0 || ticks <= 0) {
       return this;
     }
@@ -50,11 +50,13 @@ public record WeakenedSources(Map<String, Source> sources) {
     return new WeakenedSources(updated);
   }
 
-  public WeakenedSources holding(final String id, final int strength, final int ticks) {
+  public WeakenedSources replacing(final String id, final int strength, final int ticks) {
+    final int clampedStrength = clampStrength(strength);
     final Map<String, Source> updated = new LinkedHashMap<>(sources);
-    final int clampedStrength = Math.max(0, Math.min(CAP, strength));
     if (clampedStrength == 0 || ticks <= 0) {
-      updated.remove(id);
+      if (updated.remove(id) == null) {
+        return this;
+      }
     } else {
       updated.put(id, new Source(clampedStrength, ticks));
     }
@@ -64,6 +66,10 @@ public record WeakenedSources(Map<String, Source> sources) {
   public int strength(final String id) {
     final Source source = sources.get(id);
     return source == null ? 0 : source.strength();
+  }
+
+  public static int clampStrength(final long strength) {
+    return (int) Math.max(0, Math.min(CAP, strength));
   }
 
   public WeakenedSources tick() {

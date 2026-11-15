@@ -3,6 +3,8 @@ package com.grahambartley.nightborn.gear;
 import com.grahambartley.nightborn.Nightborn;
 import java.util.function.Function;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
+import net.fabricmc.fabric.api.registry.CompostingChanceRegistry;
+import net.minecraft.item.AliasedBlockItem;
 import net.minecraft.item.AxeItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroups;
@@ -14,6 +16,8 @@ import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
 
 public final class GearItems {
+
+  static final float COMPOST_CHANCE = 0.65F;
 
   public static final Item SILVER_INGOT = item("silver_ingot", Item::new);
   public static final Item SILVER_NUGGET = item("silver_nugget", Item::new);
@@ -40,6 +44,13 @@ public final class GearItems {
                   settings.attributeModifiers(
                       AxeItem.createAttributeModifiers(SilverMaterial.SILVER, 6.0F, -3.1F))));
 
+  public static final Item GARLIC =
+      item("garlic", settings -> new AliasedBlockItem(GearBlocks.GARLIC, settings));
+  public static final Item GOLD_CRUCIFIX =
+      item("gold_crucifix", settings -> new Item(settings.maxCount(1)));
+  public static final Item SILVER_CRUCIFIX =
+      item("silver_crucifix", settings -> new Item(settings.maxCount(1)));
+
   private GearItems() {}
 
   public static void register() {
@@ -49,6 +60,7 @@ public final class GearItems {
               entries.addAfter(Items.IRON_SWORD, SILVER_SWORD);
               entries.addAfter(Items.IRON_AXE, SILVER_AXE);
               entries.addAfter(Items.NETHERITE_AXE, WOODEN_STAKE, SILVER_STAKE);
+              entries.addAfter(SILVER_STAKE, GOLD_CRUCIFIX, SILVER_CRUCIFIX);
             });
     ItemGroupEvents.modifyEntriesEvent(ItemGroups.TOOLS)
         .register(entries -> entries.addAfter(Items.IRON_HOE, SILVER_AXE));
@@ -64,7 +76,12 @@ public final class GearItems {
             entries -> {
               entries.addAfter(Items.GOLD_ORE, GearBlocks.SILVER_ORE);
               entries.addAfter(Items.DEEPSLATE_GOLD_ORE, GearBlocks.DEEPSLATE_SILVER_ORE);
+              entries.addAfter(Items.BEETROOT_SEEDS, GARLIC);
             });
+    ItemGroupEvents.modifyEntriesEvent(ItemGroups.FUNCTIONAL)
+        .register(entries -> entries.add(GearBlocks.GARLIC_STRING));
+    CompostingChanceRegistry.INSTANCE.add(GARLIC, COMPOST_CHANCE);
+    CompostingChanceRegistry.INSTANCE.add(GearBlocks.GARLIC_STRING, COMPOST_CHANCE);
   }
 
   private static Item item(final String name, final Function<Item.Settings, Item> factory) {

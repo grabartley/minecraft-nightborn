@@ -37,4 +37,20 @@ class GearBlocksTest {
     assertTrue(Files.exists(ASSETS.resolve("blockstates/" + name + ".json")));
     assertTrue(Files.exists(ASSETS.resolve("models/block/" + name + ".json")));
   }
+
+  static Stream<Arguments> garlicBlocks() {
+    return Stream.of(
+        Arguments.of("garlic", GearBlocks.GARLIC, "garlic_stage3"),
+        Arguments.of("garlic_string", GearBlocks.GARLIC_STRING, "garlic_string_wall"));
+  }
+
+  @ParameterizedTest(name = "{0}")
+  @MethodSource("garlicBlocks")
+  @DisplayName("each garlic block is registered with its blockstate and the art made for it")
+  void garlic(final String name, final Block block, final String model) {
+    assertEquals("nightborn:" + name, Registries.BLOCK.getId(block).toString());
+    assertTrue(Files.exists(ASSETS.resolve("blockstates/" + name + ".json")));
+    assertTrue(Files.exists(ASSETS.resolve("models/block/" + model + ".json")));
+    assertTrue(Files.exists(ASSETS.resolve("models/item/" + name + ".json")));
+  }
 }

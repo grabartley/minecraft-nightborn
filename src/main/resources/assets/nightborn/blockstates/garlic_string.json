@@ -1,0 +1,34 @@
+{
+  "variants": {
+    "facing=north,hanging=false": {
+      "model": "nightborn:block/garlic_string_wall"
+    },
+    "facing=north,hanging=true": {
+      "model": "nightborn:block/garlic_string_ceiling"
+    },
+    "facing=east,hanging=false": {
+      "model": "nightborn:block/garlic_string_wall",
+      "y": 90
+    },
+    "facing=east,hanging=true": {
+      "model": "nightborn:block/garlic_string_ceiling",
+      "y": 90
+    },
+    "facing=south,hanging=false": {
+      "model": "nightborn:block/garlic_string_wall",
+      "y": 180
+    },
+    "facing=south,hanging=true": {
+      "model": "nightborn:block/garlic_string_ceiling",
+      "y": 180
+    },
+    "facing=west,hanging=false": {
+      "model": "nightborn:block/garlic_string_wall",
+      "y": 270
+    },
+    "facing=west,hanging=true": {
+      "model": "nightborn:block/garlic_string_ceiling",
+      "y": 270
+    }
+  }
+}

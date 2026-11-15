@@ -1,0 +1,12 @@
+{
+  "replace": false,
+  "values": [
+    "#minecraft:planks",
+    "#minecraft:logs",
+    "minecraft:gold_block",
+    {
+      "id": "#c:storage_blocks/silver",
+      "required": false
+    }
+  ]
+}

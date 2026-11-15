@@ -48,6 +48,8 @@ public class NightbornClient implements ClientModInitializer {
         RenderLayer.getCutout(), DecorBlocks.ORNATE_CHAIR, DecorBlocks.ORNATE_TABLE);
     BlockRenderLayerMap.INSTANCE.putBlocks(
         RenderLayer.getCutoutMipped(), GearBlocks.SILVER_ORE, GearBlocks.DEEPSLATE_SILVER_ORE);
+    BlockRenderLayerMap.INSTANCE.putBlocks(
+        RenderLayer.getCutout(), GearBlocks.GARLIC, GearBlocks.GARLIC_STRING);
     EntityRendererRegistry.register(DecorEntities.SEAT, EmptyEntityRenderer::new);
     EntityRendererRegistry.register(NightbornMobs.VAMPIRE, VampireRenderer::new);
     EntityRendererRegistry.register(NightbornMobs.VAMPIRE_BAT, VampireBatRenderer::new);

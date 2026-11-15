@@ -1,4 +1,4 @@
-# ADR 0012: Vampire players play the vampire rig's clips
+# ADR 0013: Vampire players play the vampire rig's clips
 
 ## Context
 

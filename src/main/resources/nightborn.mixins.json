@@ -12,6 +12,7 @@
 		"PlayerEntityMixin",
 		"ServerPlayNetworkHandlerMixin",
 		"ServerPlayerEntityMixin",
+		"ServerWorldMixin",
 		"SleepManagerMixin"
 	],
 	"injectors": {

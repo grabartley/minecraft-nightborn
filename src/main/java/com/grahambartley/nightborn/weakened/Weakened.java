@@ -33,9 +33,9 @@ public final class Weakened {
     store(entity, sources(entity).with(sourceId, strength, ticks));
   }
 
-  public static void hold(
+  public static void set(
       final LivingEntity entity, final String sourceId, final int strength, final int ticks) {
-    store(entity, sources(entity).holding(sourceId, strength, ticks));
+    store(entity, sources(entity).replacing(sourceId, strength, ticks));
   }
 
   public static int tick(

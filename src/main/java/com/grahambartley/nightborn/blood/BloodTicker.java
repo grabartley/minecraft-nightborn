@@ -54,7 +54,7 @@ public final class BloodTicker {
             vampire.getWorld().getDifficulty() == Difficulty.PEACEFUL,
             config.blood());
     StarvingAttachment.set(vampire, starving.ticks());
-    Weakened.hold(vampire, Starvation.SOURCE, starving.weakness(), STARVING_SOURCE_TICKS);
+    Weakened.set(vampire, Starvation.SOURCE, starving.weakness(), STARVING_SOURCE_TICKS);
     if (starving.hurt() > 0.0F) {
       vampire.damage(vampire.getDamageSources().starve(), starving.hurt());
     }
