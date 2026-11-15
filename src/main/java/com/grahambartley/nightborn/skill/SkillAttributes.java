@@ -1,5 +1,6 @@
 package com.grahambartley.nightborn.skill;
 
+import com.grahambartley.nightborn.Nightborn;
 import com.grahambartley.nightborn.faction.FactionAttachment;
 import com.grahambartley.nightborn.vampire.Modifiers;
 import java.util.HashMap;
@@ -43,9 +44,7 @@ public final class SkillAttributes {
                 modifier,
                 attribute.amount(),
                 attribute.operation()));
-    if (player.getHealth() > player.getMaxHealth()) {
-      player.setHealth(player.getMaxHealth());
-    }
+    Modifiers.clampHealth(player);
   }
 
   static Map<Identifier, SkillAttribute> modifiers(
@@ -58,14 +57,16 @@ public final class SkillAttributes {
   }
 
   static Identifier modifierId(final Identifier skill, final int index) {
-    return Identifier.of(skill.getNamespace(), PREFIX + skill.getPath() + "/" + index);
+    return Identifier.of(
+        Nightborn.MOD_ID, PREFIX + skill.getNamespace() + "/" + skill.getPath() + "/" + index);
   }
 
   static boolean stray(
       final Identifier modifier,
       final RegistryEntry<EntityAttribute> on,
       final Map<Identifier, SkillAttribute> wanted) {
-    if (!modifier.getPath().startsWith(PREFIX)) {
+    if (!modifier.getNamespace().equals(Nightborn.MOD_ID)
+        || !modifier.getPath().startsWith(PREFIX)) {
       return false;
     }
     final SkillAttribute keep = wanted.get(modifier);

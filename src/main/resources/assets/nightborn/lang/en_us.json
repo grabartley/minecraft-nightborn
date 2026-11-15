@@ -181,6 +181,7 @@
   "key.nightborn.power_5": "Power 5",
   "nightborn.command.help.skills": "/nightborn player <targets> skills <vampire|hunter> [points <n>|reset]: show a player's skills, set their points or refund their skills",
   "nightborn.command.player.skills": "%s, %s: earned %s, spent %s, free %s, %s skills, bloodlines: %s",
+  "nightborn.command.player.skills.none": "none",
   "nightborn.command.player.points.done": "Set %s's skill points",
   "nightborn.command.player.points.unchanged": "%s already has that many skill points",
   "nightborn.command.player.points.below_spent": "%s has already spent %s points. Reset their skills first",

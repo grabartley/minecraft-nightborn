@@ -8,6 +8,7 @@ import com.grahambartley.nightborn.network.BuySkillPayload;
 import com.grahambartley.nightborn.skill.Skill;
 import com.grahambartley.nightborn.skill.SkillAttachment;
 import com.grahambartley.nightborn.skill.SkillBranch;
+import com.grahambartley.nightborn.skill.SkillLookup;
 import com.grahambartley.nightborn.skill.SkillNames;
 import com.grahambartley.nightborn.skill.SkillPurchase;
 import com.grahambartley.nightborn.skill.SkillTree;
@@ -53,9 +54,8 @@ public final class SkillScreen extends Screen {
     skills.clear();
     nodes.clear();
     branchData.clear();
-    Skills.skills(registries).ifPresent(r -> r.getIds().forEach(id -> skills.put(id, r.get(id))));
-    Skills.branches(registries)
-        .ifPresent(r -> r.getIds().forEach(id -> branchData.put(id, r.get(id))));
+    skills.putAll(Skills.allSkills(registries));
+    branchData.putAll(Skills.allBranches(registries));
     skills.forEach(
         (id, skill) ->
             nodes.put(id, new SkillTreeView.Node(skill.branch(), skill.column(), skill.row())));
@@ -76,7 +76,7 @@ public final class SkillScreen extends Screen {
   public void render(
       final DrawContext context, final int mouseX, final int mouseY, final float delta) {
     if (tree() != shownTree) {
-      init();
+      clearAndInit();
     }
     super.render(context, mouseX, mouseY, delta);
     context.drawGuiTexture(PANEL, layout.left(), layout.top(), layout.width(), layout.height());
@@ -188,7 +188,7 @@ public final class SkillScreen extends Screen {
   }
 
   private SkillPurchase.Verdict verdict(final Identifier id, final TreeProgress progress) {
-    return Skills.lookup(client.world.getRegistryManager(), progress, shownTree, id).verdict();
+    return SkillLookup.of(client.world.getRegistryManager(), progress, shownTree, id).verdict();
   }
 
   @Override

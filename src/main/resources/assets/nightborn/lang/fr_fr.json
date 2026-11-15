@@ -181,6 +181,7 @@
   "key.nightborn.power_5": "Pouvoir 5",
   "nightborn.command.help.skills": "/nightborn player <targets> skills <vampire|hunter> [points <n>|reset] : afficher les compétences d'un joueur, fixer ses points ou rembourser ses compétences",
   "nightborn.command.player.skills": "%s, %s : gagnés %s, dépensés %s, libres %s, %s compétences, lignées : %s",
+  "nightborn.command.player.skills.none": "aucune",
   "nightborn.command.player.points.done": "Points de compétence de %s fixés",
   "nightborn.command.player.points.unchanged": "%s a déjà ce nombre de points de compétence",
   "nightborn.command.player.points.below_spent": "%s a déjà dépensé %s points. Réinitialise d'abord ses compétences",

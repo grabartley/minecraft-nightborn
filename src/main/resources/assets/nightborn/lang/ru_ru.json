@@ -181,6 +181,7 @@
   "key.nightborn.power_5": "Сила 5",
   "nightborn.command.help.skills": "/nightborn player <targets> skills <vampire|hunter> [points <n>|reset]: показать навыки игрока, задать его очки или вернуть его навыки",
   "nightborn.command.player.skills": "%s, %s: получено %s, потрачено %s, свободно %s, навыков %s, линии крови: %s",
+  "nightborn.command.player.skills.none": "нет",
   "nightborn.command.player.points.done": "Очки навыка игрока %s заданы",
   "nightborn.command.player.points.unchanged": "У %s уже столько очков навыка",
   "nightborn.command.player.points.below_spent": "%s уже потратил %s очк. Сначала сбросьте навыки",

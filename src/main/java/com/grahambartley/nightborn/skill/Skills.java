@@ -24,16 +24,12 @@ public final class Skills {
   public static void register() {
     DynamicRegistries.registerSynced(SKILL, Skill.CODEC);
     DynamicRegistries.registerSynced(BRANCH, SkillBranch.CODEC);
-    ServerLifecycleEvents.SERVER_STARTED.register(server -> check(server.getRegistryManager()));
-  }
-
-  static void check(final DynamicRegistryManager registries) {
-    final Map<Identifier, Skill> skills = new HashMap<>();
-    final Map<Identifier, SkillBranch> branches = new HashMap<>();
-    skills(registries).ifPresent(r -> r.getIds().forEach(id -> skills.put(id, r.get(id))));
-    branches(registries).ifPresent(r -> r.getIds().forEach(id -> branches.put(id, r.get(id))));
-    SkillDataCheck.problems(skills, branches)
-        .forEach(problem -> Nightborn.LOGGER.error("Bad skill data: {}", problem));
+    ServerLifecycleEvents.SERVER_STARTED.register(
+        server ->
+            SkillDataCheck.problems(
+                    allSkills(server.getRegistryManager()),
+                    allBranches(server.getRegistryManager()))
+                .forEach(problem -> Nightborn.LOGGER.error("Bad skill data: {}", problem)));
   }
 
   public static Optional<Registry<Skill>> skills(final DynamicRegistryManager registries) {
@@ -44,28 +40,27 @@ public final class Skills {
     return registries.getOptional(BRANCH);
   }
 
+  public static Map<Identifier, Skill> allSkills(final DynamicRegistryManager registries) {
+    return copy(skills(registries));
+  }
+
+  public static Map<Identifier, SkillBranch> allBranches(final DynamicRegistryManager registries) {
+    return copy(branches(registries));
+  }
+
   @Nullable
   public static Skill skill(final DynamicRegistryManager registries, final Identifier id) {
     return skills(registries).map(registry -> registry.get(id)).orElse(null);
   }
 
-  public record Lookup(
-      Identifier id,
-      @Nullable Skill skill,
-      @Nullable SkillBranch branch,
-      SkillPurchase.Verdict verdict) {}
+  @Nullable
+  public static SkillBranch branch(final DynamicRegistryManager registries, final Identifier id) {
+    return branches(registries).map(registry -> registry.get(id)).orElse(null);
+  }
 
-  public static Lookup lookup(
-      final DynamicRegistryManager registries,
-      final TreeProgress progress,
-      final SkillTree playerTree,
-      final Identifier id) {
-    final Skill skill = skill(registries, id);
-    final SkillBranch branch =
-        skill == null
-            ? null
-            : branches(registries).map(registry -> registry.get(skill.branch())).orElse(null);
-    return new Lookup(
-        id, skill, branch, SkillPurchase.check(progress, playerTree, id, skill, branch));
+  private static <T> Map<Identifier, T> copy(final Optional<Registry<T>> registry) {
+    final Map<Identifier, T> entries = new HashMap<>();
+    registry.ifPresent(r -> r.getIds().forEach(id -> entries.put(id, r.get(id))));
+    return entries;
   }
 }

@@ -32,6 +32,12 @@ public final class Modifiers {
     instance.overwritePersistentModifier(new EntityAttributeModifier(id, value, operation));
   }
 
+  public static void clampHealth(final LivingEntity entity) {
+    if (entity.getHealth() > entity.getMaxHealth()) {
+      entity.setHealth(entity.getMaxHealth());
+    }
+  }
+
   public static void remove(
       final LivingEntity entity,
       final RegistryEntry<EntityAttribute> attribute,

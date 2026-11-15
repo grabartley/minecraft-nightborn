@@ -3,6 +3,7 @@ package com.grahambartley.nightborn.client;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
@@ -35,6 +36,12 @@ class PowerSlotViewTest {
   })
   @DisplayName("every key shows a short label that fits in the slot corner")
   void keyLabel(final String bound, final String label) {
-    assertEquals(label, PowerSlotView.keyLabel(bound));
+    assertEquals(label, PowerSlotView.keyLabel(bound, false));
+  }
+
+  @Test
+  @DisplayName("an unbound key shows no label rather than a stray abbreviation")
+  void unbound() {
+    assertEquals("", PowerSlotView.keyLabel("Not bound", true));
   }
 }

@@ -5,6 +5,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.util.Identifier;
+import org.jetbrains.annotations.Nullable;
 
 public record TreeProgress(
     int earned, float blood, List<BoughtSkill> bought, List<Identifier> bloodlines) {
@@ -78,7 +79,8 @@ public record TreeProgress(
     return new TreeProgress(earned + points, total - points * bloodPerPoint, bought, bloodlines);
   }
 
-  public TreeProgress buy(final Identifier skill, final int cost, final Identifier bloodline) {
+  public TreeProgress buy(
+      final Identifier skill, final int cost, @Nullable final Identifier bloodline) {
     final List<BoughtSkill> nextBought = new ArrayList<>(bought);
     nextBought.add(new BoughtSkill(skill, cost));
     final List<Identifier> nextLines = new ArrayList<>(bloodlines);

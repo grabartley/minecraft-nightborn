@@ -181,6 +181,7 @@
   "key.nightborn.power_5": "能力 5",
   "nightborn.command.help.skills": "/nightborn player <targets> skills <vampire|hunter> [points <n>|reset]：显示玩家的技能、设定其点数或返还其技能",
   "nightborn.command.player.skills": "%s，%s：已获得 %s，已花费 %s，可用 %s，%s 个技能，血脉：%s",
+  "nightborn.command.player.skills.none": "无",
   "nightborn.command.player.points.done": "已设定 %s 的技能点",
   "nightborn.command.player.points.unchanged": "%s 已经拥有这么多技能点",
   "nightborn.command.player.points.below_spent": "%s 已花费 %s 点。请先重置其技能",

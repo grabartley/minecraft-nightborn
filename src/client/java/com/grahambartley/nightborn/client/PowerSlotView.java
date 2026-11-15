@@ -19,7 +19,10 @@ public final class PowerSlotView {
     return Math.round(ICON * Math.max(0.0F, Math.min(1.0F, fraction)));
   }
 
-  public static String keyLabel(final String bound) {
+  public static String keyLabel(final String bound, final boolean unbound) {
+    if (unbound) {
+      return "";
+    }
     final String trimmed = bound.trim();
     if (trimmed.length() <= MAX_KEY_LABEL) {
       return trimmed.toUpperCase(Locale.ROOT);

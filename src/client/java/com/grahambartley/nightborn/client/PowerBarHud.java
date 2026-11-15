@@ -41,13 +41,9 @@ public final class PowerBarHud {
       return;
     }
     final Registry<Skill> skills = Skills.skills(client.world.getRegistryManager()).orElse(null);
-    if (skills == null) {
-      return;
-    }
     final List<Identifier> bar =
         PowerBar.slots(
-            SkillAttachment.get(player, SkillTree.of(FactionAttachment.get(player))),
-            id -> skills.get(id) != null && skills.get(id).active());
+            skills, SkillAttachment.get(player, SkillTree.of(FactionAttachment.get(player))));
     if (bar.isEmpty()) {
       return;
     }
@@ -115,7 +111,9 @@ public final class PowerBarHud {
           COST_COLOUR);
     }
     final String key =
-        PowerSlotView.keyLabel(SkillKeys.power(slot).getBoundKeyLocalizedText().getString());
+        PowerSlotView.keyLabel(
+            SkillKeys.power(slot).getBoundKeyLocalizedText().getString(),
+            SkillKeys.power(slot).isUnbound());
     context.drawTextWithShadow(client.textRenderer, key, at.x() + 2, at.y() + 2, KEY_COLOUR);
   }
 }

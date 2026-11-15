@@ -43,6 +43,7 @@ import net.minecraft.test.TestContext;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.GameMode;
 
 public class SkillGameTest implements FabricGameTest {
 
@@ -54,7 +55,7 @@ public class SkillGameTest implements FabricGameTest {
   static final Identifier BEAST = Identifier.of("nightborn", "beast/beast_blood");
   static final Identifier OCCULT = Identifier.of("nightborn", "occult/occult_blood");
   static final Identifier THICK_BLOOD_MODIFIER =
-      Identifier.of("nightborn", "skill/core/thick_blood/0");
+      Identifier.of("nightborn", "skill/nightborn/core/thick_blood/0");
 
   @BeforeBatch(batchId = BATCH)
   public void onePointPerBlood(final ServerWorld world) {
@@ -170,7 +171,7 @@ public class SkillGameTest implements FabricGameTest {
   @GameTest(templateName = ARENA, batchId = BATCH, tickLimit = 20)
   public void aModifierFromARemovedSkillIsCleared(final TestContext context) {
     final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(3, 2, 4));
-    final Identifier stray = Identifier.of("nightborn", "skill/core/removed/0");
+    final Identifier stray = Identifier.of("nightborn", "skill/nightborn/core/removed/0");
     vampire
         .getAttributeInstance(EntityAttributes.GENERIC_ARMOR)
         .addPersistentModifier(
@@ -191,21 +192,24 @@ public class SkillGameTest implements FabricGameTest {
     context.assertTrue(
         vampire
                 .getAttributeInstance(EntityAttributes.GENERIC_ARMOR)
-                .getModifier(Identifier.of("nightborn", "skill/noble/noble_blood/0"))
+                .getModifier(Identifier.of("nightborn", "skill/nightborn/noble/noble_blood/0"))
             != null,
         "a skill still in the data keeps applying");
     TestPlayers.finish(context, vampire);
   }
 
   @GameTest(templateName = ARENA, batchId = BATCH, tickLimit = 20)
-  public void aDownedVampireCannotUsePowers(final TestContext context) {
+  public void aDownedVampireOrASpectatorCannotUsePowers(final TestContext context) {
     final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(3, 2, 4));
     SkillAttachment.set(
         vampire,
         SkillTree.VAMPIRE,
         TreeProgress.EMPTY.withEarned(3).buy(THICK_BLOOD, 1, null).buy(BLOOD_RUSH, 2, null));
+    vampire.changeGameMode(GameMode.SPECTATOR);
+    context.assertEquals(Powers.use(vampire, 0), PowerUse.Verdict.HELPLESS, "a spectator");
+    vampire.changeGameMode(GameMode.SURVIVAL);
     vampire.setAttached(Downed.TYPE, new DownedState(DownedState.Phase.DOWNED, 200));
-    context.assertEquals(Powers.use(vampire, 0), PowerUse.Verdict.HELPLESS, "refused");
+    context.assertEquals(Powers.use(vampire, 0), PowerUse.Verdict.HELPLESS, "a downed vampire");
     context.assertFalse(vampire.hasStatusEffect(StatusEffects.SPEED), "no effect given");
     TestPlayers.finish(context, vampire);
   }
@@ -364,7 +368,7 @@ public class SkillGameTest implements FabricGameTest {
     context.assertTrue(
         vampire
                 .getAttributeInstance(EntityAttributes.GENERIC_MAX_HEALTH)
-                .getModifier(Identifier.of("nightborn", "skill/core/thick_blood/0"))
+                .getModifier(Identifier.of("nightborn", "skill/nightborn/core/thick_blood/0"))
             == null,
         "a refunded skill stops applying");
     TestPlayers.finish(context, vampire);

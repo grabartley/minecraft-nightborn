@@ -23,7 +23,7 @@ public final class SkillShop {
     final DynamicRegistryManager registries = player.getServerWorld().getRegistryManager();
     final SkillTree tree = SkillTree.of(FactionAttachment.get(player));
     final TreeProgress progress = SkillAttachment.get(player, tree);
-    final Skills.Lookup lookup = Skills.lookup(registries, progress, tree, id);
+    final SkillLookup lookup = SkillLookup.of(registries, progress, tree, id);
     if (lookup.verdict() != SkillPurchase.Verdict.ALLOWED) {
       player.sendMessage(Text.translatable(lookup.verdict().translationKey()), true);
       return lookup.verdict();

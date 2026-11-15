@@ -63,6 +63,19 @@ class SkillDataCheckTest {
                 skill("tracking", 0, 0)),
             List.of("nightborn:core/a needs nightborn:tracking/a from another tree")),
         Arguments.of(
+            "a requirement on the same row",
+            Map.of(id("core/a"), skill("core", 0, 1), id("core/b"), skill("core", 1, 1, "core/a")),
+            List.of("nightborn:core/b needs nightborn:core/a, which is not on a row above it")),
+        Arguments.of(
+            "a loop of requirements",
+            Map.of(
+                id("core/a"), skill("core", 0, 0, "core/b"),
+                id("core/b"), skill("core", 1, 1, "core/a")),
+            List.of(
+                "nightborn:core/a needs nightborn:core/b, which is not on a row above it",
+                "nightborn:core/a needs itself through a loop of requirements",
+                "nightborn:core/b needs itself through a loop of requirements")),
+        Arguments.of(
             "two skills in one place",
             Map.of(id("core/a"), skill("core", 1, 2), id("core/b"), skill("core", 1, 2)),
             List.of(

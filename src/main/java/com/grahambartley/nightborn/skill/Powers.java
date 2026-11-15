@@ -4,7 +4,7 @@ import com.grahambartley.nightborn.blood.BloodAttachment;
 import com.grahambartley.nightborn.downed.Downed;
 import com.grahambartley.nightborn.faction.FactionAttachment;
 import com.grahambartley.nightborn.network.UsePowerPayload;
-import com.grahambartley.nightborn.vampire.VisibleStateAttachment;
+import com.grahambartley.nightborn.weakened.Weakened;
 import java.util.List;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.entity.effect.StatusEffectInstance;
@@ -29,10 +29,7 @@ public final class Powers {
         Skills.skills(player.getServerWorld().getRegistryManager()).orElse(null);
     final TreeProgress progress =
         SkillAttachment.get(player, SkillTree.of(FactionAttachment.get(player)));
-    final List<Identifier> bar =
-        skills == null
-            ? List.of()
-            : PowerBar.slots(progress, id -> skills.get(id) != null && skills.get(id).active());
+    final List<Identifier> bar = PowerBar.slots(skills, progress);
     final Identifier id = slot >= 0 && slot < bar.size() ? bar.get(slot) : null;
     final SkillPower power = id == null ? null : skills.get(id).power().orElseThrow();
     final long now = player.getServerWorld().getTime();
@@ -40,8 +37,8 @@ public final class Powers {
     final PowerUse.Verdict verdict =
         PowerUse.check(
             power != null,
-            Downed.helpless(player),
-            VisibleStateAttachment.get(player).isWeakened(),
+            Downed.helpless(player) || player.isSpectator() || !player.isAlive(),
+            Weakened.sources(player).level(Downed.state(player) != null) > 0,
             id == null ? 0L : cooldowns.ticksLeft(id, now),
             BloodAttachment.get(player),
             power == null ? 0 : power.blood());
