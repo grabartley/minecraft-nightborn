@@ -66,7 +66,7 @@ public enum VampirePose {
     return cue.limbSwing() > WALK_SWING ? WALK : IDLE;
   }
 
-  static VampirePose levitating(final boolean sprinting, final double horizontalSpeed) {
+  public static VampirePose levitating(final boolean sprinting, final double horizontalSpeed) {
     if (sprinting || horizontalSpeed > LEVITATE_SPRINT_SPEED) {
       return LEVITATE_SPRINT;
     }

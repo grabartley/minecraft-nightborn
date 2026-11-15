@@ -1,6 +1,7 @@
 package com.grahambartley.nightborn.levitation;
 
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.math.Vec3d;
 
 public final class LevitationMotion {
@@ -8,11 +9,15 @@ public final class LevitationMotion {
   private LevitationMotion() {}
 
   public static boolean drives(final LivingEntity entity) {
-    return drives(Levitation.isLevitating(entity), entity.isLogicalSideForUpdatingMovement());
+    return drives(
+        Levitation.isLevitating(entity),
+        entity.isLogicalSideForUpdatingMovement(),
+        entity instanceof ServerPlayerEntity);
   }
 
-  static boolean drives(final boolean levitating, final boolean movesHere) {
-    return levitating && movesHere;
+  static boolean drives(
+      final boolean levitating, final boolean movesHere, final boolean serverPlayer) {
+    return levitating && movesHere && !serverPlayer;
   }
 
   public static void hover(final LivingEntity entity) {

@@ -1,7 +1,7 @@
 package com.grahambartley.nightborn.client;
 
 import com.grahambartley.nightborn.blood.BloodItems;
-import com.grahambartley.nightborn.client.anim.PlayerAnimator;
+import com.grahambartley.nightborn.client.anim.VampirePlayerClips;
 import com.grahambartley.nightborn.client.vomit.VomitFx;
 import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
@@ -29,7 +29,7 @@ public final class VampireClientFeatures {
     HudRenderCallback.EVENT.register(PowerBarHud::render);
     SkillKeys.register();
     LevitationKey.register();
-    PlayerAnimator.register();
+    VampirePlayerClips.register();
     VomitFx.register();
     WorldRenderEvents.AFTER_ENTITIES.register(WeakenedSignRenderer::render);
   }

@@ -1,12 +1,14 @@
 package com.grahambartley.nightborn.mixin.client;
 
-import com.grahambartley.nightborn.client.anim.ClipLibrary;
-import com.grahambartley.nightborn.client.anim.PlayerAnimator;
-import com.grahambartley.nightborn.client.anim.PlayerPoser;
+import com.grahambartley.nightborn.client.anim.VampirePlayerClips;
+import com.grahambartley.nightborn.render.VampirePlayerRenderer;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
+import net.minecraft.client.render.VertexConsumerProvider;
+import net.minecraft.client.render.entity.EntityRendererFactory;
 import net.minecraft.client.render.entity.PlayerEntityRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -14,26 +16,30 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(PlayerEntityRenderer.class)
 abstract class PlayerEntityRendererMixin {
 
-  @Inject(method = "setupTransforms", at = @At("TAIL"))
-  private void nightborn$tiltTheWholeBody(
+  @Unique private VampirePlayerRenderer nightborn$vampire;
+
+  @Inject(method = "<init>", at = @At("RETURN"))
+  private void nightborn$buildVampireRenderer(
+      final EntityRendererFactory.Context context, final boolean slim, final CallbackInfo ci) {
+    nightborn$vampire = new VampirePlayerRenderer(context, slim);
+  }
+
+  @Inject(
+      method =
+          "render(Lnet/minecraft/client/network/AbstractClientPlayerEntity;FFLnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;I)V",
+      at = @At("HEAD"),
+      cancellable = true)
+  private void nightborn$playVampireClips(
       final AbstractClientPlayerEntity player,
-      final MatrixStack matrices,
-      final float animationProgress,
-      final float bodyYaw,
+      final float yaw,
       final float tickDelta,
-      final float scale,
+      final MatrixStack matrices,
+      final VertexConsumerProvider vertexConsumers,
+      final int light,
       final CallbackInfo ci) {
-    PlayerPoser.tilt(
-        matrices, PlayerAnimator.pose(player, animationProgress), ClipLibrary.current().rig());
-  }
-
-  @Inject(method = "renderArm", at = @At("HEAD"))
-  private void nightborn$firstPersonArmStaysVanilla(final CallbackInfo ci) {
-    PlayerAnimator.drawingFirstPersonArm(true);
-  }
-
-  @Inject(method = "renderArm", at = @At("RETURN"))
-  private void nightborn$firstPersonArmDone(final CallbackInfo ci) {
-    PlayerAnimator.drawingFirstPersonArm(false);
+    if (VampirePlayerClips.clip(player).isPresent()) {
+      nightborn$vampire.render(player, yaw, tickDelta, matrices, vertexConsumers, light);
+      ci.cancel();
+    }
   }
 }

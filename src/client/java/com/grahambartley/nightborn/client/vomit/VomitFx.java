@@ -1,15 +1,14 @@
 package com.grahambartley.nightborn.client.vomit;
 
-import com.grahambartley.nightborn.client.anim.ClipSet;
-import com.grahambartley.nightborn.client.anim.PlayerAnimator;
-import com.grahambartley.nightborn.client.anim.PlayerMotion;
-import com.grahambartley.nightborn.client.anim.RigSpace;
+import com.grahambartley.nightborn.client.anim.Heaves;
+import com.grahambartley.nightborn.client.anim.VampireClips;
+import com.grahambartley.nightborn.client.anim.VampirePlayerClips;
 import com.grahambartley.nightborn.client.state.ClientStateService;
-import com.grahambartley.nightborn.network.VomitPayload;
 import com.grahambartley.nightborn.vomit.VomitEffects;
-import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+import java.util.Map;
+import java.util.WeakHashMap;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.util.math.MathHelper;
@@ -19,42 +18,41 @@ import net.minecraft.util.math.random.Random;
 public final class VomitFx {
 
   static final double HEAVE_DEGREES = 30.0;
-  static final String MOUTH = "mouth";
-  static final float PLAYER_MODEL_SCALE = 0.9375F;
   static final double FORWARD_SPEED = 0.11;
   static final double SPREAD = 0.045;
+  static final double FALLBACK_MOUTH_DROP = 0.3;
+
+  private static final Map<PlayerEntity, Double> LAST_SECONDS = new WeakHashMap<>();
+  private static final Map<PlayerEntity, Vec3d> MOUTHS = new WeakHashMap<>();
 
   private VomitFx() {}
 
   public static void register() {
     VomitParticleFactories.register();
-    ClientPlayNetworking.registerGlobalReceiver(
-        VomitPayload.ID,
-        (payload, context) -> {
-          final Entity entity =
-              context.client().world == null
-                  ? null
-                  : context.client().world.getEntityById(payload.entityId());
-          if (entity instanceof PlayerEntity player) {
-            PlayerAnimator.startVomiting(player);
-          }
-        });
+    ClientTickEvents.END_WORLD_TICK.register(world -> world.getPlayers().forEach(VomitFx::tick));
   }
 
-  public static void tick(
-      final PlayerEntity player,
-      final PlayerMotion motion,
-      final ClipSet clips,
-      final double secondsBefore,
-      final double secondsNow) {
-    for (final double ignored :
-        motion.heavesCrossed(clips, HEAVE_DEGREES, secondsBefore, secondsNow)) {
-      heave(player, motion, clips);
+  public static void started(final PlayerEntity player) {
+    LAST_SECONDS.put(player, Double.NaN);
+  }
+
+  public static void mouth(final PlayerEntity player, final Vec3d mouth) {
+    MOUTHS.put(player, mouth);
+  }
+
+  private static void tick(final PlayerEntity player) {
+    if (!LAST_SECONDS.containsKey(player)) {
+      return;
     }
+    final double now = VampirePlayerClips.vomitingSeconds(player, 0.0F);
+    final double before = LAST_SECONDS.get(player);
+    for (final double ignored : Heaves.crossed(VampireClips.heaves(HEAVE_DEGREES), before, now)) {
+      heave(player);
+    }
+    LAST_SECONDS.put(player, now);
   }
 
-  private static void heave(
-      final PlayerEntity player, final PlayerMotion motion, final ClipSet clips) {
+  private static void heave(final PlayerEntity player) {
     player
         .getWorld()
         .playSound(
@@ -73,12 +71,12 @@ public final class VomitFx {
     if (burst.drops() == 0) {
       return;
     }
-    final Vec3d frame =
-        RigSpace.locate(clips.rig(), motion.pose(clips, player.age), MOUTH, PLAYER_MODEL_SCALE)
-            .orElse(new Vec3d(0.0, player.getStandingEyeHeight() - 0.3, -0.3));
     final float facing = (180.0F - player.bodyYaw) * MathHelper.RADIANS_PER_DEGREE;
-    final Vec3d mouth = player.getPos().add(frame.rotateY(facing));
     final Vec3d forward = new Vec3d(0.0, 0.0, -1.0).rotateY(facing);
+    final Vec3d mouth =
+        MOUTHS.getOrDefault(
+            player,
+            player.getEyePos().add(forward.multiply(0.3)).subtract(0.0, FALLBACK_MOUTH_DROP, 0.0));
     final Random random = player.getRandom();
     for (int i = 0; i < burst.drops(); i++) {
       final double speed = FORWARD_SPEED * (0.5 + random.nextDouble());

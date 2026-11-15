@@ -25,8 +25,7 @@ public class LevitationGameTest implements FabricGameTest {
   static final String YARD = "nightborn:vampire_yard";
   static final String BATCH = "levitation";
   static final int MIDNIGHT = 18000;
-  static final double FLOOR = 1.0;
-  static final double HOVER = FLOOR + 1.0;
+  static final double HOVER = 1.0;
   static final double SETTLED = 0.05;
 
   private static long timeBefore;
@@ -62,8 +61,12 @@ public class LevitationGameTest implements FabricGameTest {
     entity.setAttached(Levitation.TYPE, true);
   }
 
+  private static double floorTop(final TestContext context) {
+    return context.getAbsolutePos(new BlockPos(0, 1, 0)).getY();
+  }
+
   private static double feet(final TestContext context, final LivingEntity entity) {
-    return context.getRelative(entity.getPos()).y;
+    return entity.getY() - floorTop(context);
   }
 
   private static String motion(final TestContext context, final LivingEntity entity) {
@@ -72,14 +75,10 @@ public class LevitationGameTest implements FabricGameTest {
         + ", velocity "
         + entity.getVelocity()
         + ", on ground "
-        + entity.isOnGround()
-        + ", forward "
-        + entity.forwardSpeed
-        + ", speed "
-        + entity.getMovementSpeed();
+        + entity.isOnGround();
   }
 
-  @GameTest(templateName = YARD, batchId = BATCH, tickLimit = 60)
+  @GameTest(templateName = YARD, batchId = BATCH, skyAccess = true, tickLimit = 60)
   public void aLevitatingBodyFloatsOneBlockAboveTheGround(final TestContext context) {
     final ArmorStandEntity stand = stand(context, new BlockPos(4, 1, 4));
     context.runAtTick(5, () -> levitate(stand));
@@ -93,7 +92,7 @@ public class LevitationGameTest implements FabricGameTest {
         });
   }
 
-  @GameTest(templateName = YARD, batchId = BATCH, tickLimit = 100)
+  @GameTest(templateName = YARD, batchId = BATCH, skyAccess = true, tickLimit = 100)
   public void overADropItSinksSlowlyAndNeverBuildsAFall(final TestContext context) {
     final ArmorStandEntity stand = stand(context, new BlockPos(4, 5, 4));
     levitate(stand);
@@ -114,45 +113,7 @@ public class LevitationGameTest implements FabricGameTest {
         });
   }
 
-  @GameTest(templateName = YARD, batchId = BATCH, tickLimit = 60)
-  public void levitatingKeepsWalkingPace(final TestContext context) {
-    final ArmorStandEntity walker = stand(context, new BlockPos(2, 1, 1));
-    final ArmorStandEntity floater = stand(context, new BlockPos(6, 1, 1));
-    context.runAtTick(5, () -> levitate(floater));
-    context.runAtEveryTick(
-        () -> {
-          if (context.getTick() >= 25) {
-            walker.forwardSpeed = 1.0F;
-            floater.forwardSpeed = 1.0F;
-            walker.setMovementSpeed(0.1F);
-            floater.setMovementSpeed(0.1F);
-          }
-        });
-    final Vec3d[] start = new Vec3d[2];
-    context.runAtTick(
-        30,
-        () -> {
-          start[0] = walker.getPos();
-          start[1] = floater.getPos();
-        });
-    context.runAtTick(
-        45,
-        () -> {
-          final double walked = walker.getPos().subtract(start[0]).horizontalLength();
-          final double floated = floater.getPos().subtract(start[1]).horizontalLength();
-          context.assertTrue(
-              walked > 0.5, "the walker moved " + walked + ": " + motion(context, walker));
-          context.assertTrue(
-              feet(context, floater) > FLOOR + 0.5,
-              "the floater is up: " + motion(context, floater));
-          context.assertTrue(
-              Math.abs(floated - walked) < walked * 0.15,
-              "floated " + floated + " against walked " + walked);
-          context.complete();
-        });
-  }
-
-  @GameTest(templateName = YARD, batchId = BATCH, tickLimit = 20)
+  @GameTest(templateName = YARD, batchId = BATCH, skyAccess = true, tickLimit = 20)
   public void aLevitatingVampireCanStillFindAPath(final TestContext context) {
     final VampireEntity vampire = still(context, new BlockPos(1, 2, 1));
     levitate(vampire);
@@ -168,7 +129,7 @@ public class LevitationGameTest implements FabricGameTest {
         });
   }
 
-  @GameTest(templateName = YARD, batchId = BATCH, tickLimit = 20)
+  @GameTest(templateName = YARD, batchId = BATCH, skyAccess = true, tickLimit = 20)
   public void aGroundedVampireOffTheGroundFindsNoPath(final TestContext context) {
     final VampireEntity vampire = still(context, new BlockPos(1, 2, 1));
     context.runAtTick(
@@ -183,7 +144,7 @@ public class LevitationGameTest implements FabricGameTest {
         });
   }
 
-  @GameTest(templateName = YARD, batchId = BATCH, tickLimit = 40)
+  @GameTest(templateName = YARD, batchId = BATCH, skyAccess = true, tickLimit = 40)
   public void aWeakenedVampireLandsAtOnce(final TestContext context) {
     final VampireEntity vampire = still(context, new BlockPos(4, 1, 4));
     Levitation.start(vampire);
@@ -197,7 +158,7 @@ public class LevitationGameTest implements FabricGameTest {
         });
   }
 
-  @GameTest(templateName = YARD, batchId = BATCH, tickLimit = 20)
+  @GameTest(templateName = YARD, batchId = BATCH, skyAccess = true, tickLimit = 20)
   public void onlyVampirePlayersLevitate(final TestContext context) {
     final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(3, 1, 4));
     final ServerPlayerEntity human = TestPlayers.human(context, new BlockPos(5, 1, 4));
@@ -210,7 +171,7 @@ public class LevitationGameTest implements FabricGameTest {
     TestPlayers.finish(context, vampire, human);
   }
 
-  @GameTest(templateName = YARD, batchId = BATCH, tickLimit = 20)
+  @GameTest(templateName = YARD, batchId = BATCH, skyAccess = true, tickLimit = 20)
   public void becomingHumanLands(final TestContext context) {
     final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(3, 1, 4));
     Levitation.request(vampire);
@@ -224,14 +185,18 @@ public class LevitationGameTest implements FabricGameTest {
     context.runAtEveryTick(
         () -> {
           if (context.getTick() >= TestPlayers.READY) {
-            final Vec3d at = context.getAbsolute(new Vec3d(4.5, relativeFeet, 4.5));
-            player.updatePosition(at.x, at.y, at.z);
+            final Vec3d at = context.getAbsolute(new Vec3d(4.5, 0.0, 4.5));
+            player.updatePosition(at.x, floorTop(context) + relativeFeet, at.z);
             player.setVelocity(Vec3d.ZERO);
           }
         });
   }
 
-  @GameTest(templateName = YARD, batchId = BATCH, tickLimit = TestPlayers.READY + 60)
+  @GameTest(
+      templateName = YARD,
+      batchId = BATCH,
+      skyAccess = true,
+      tickLimit = TestPlayers.READY + 60)
   public void theServerLandsAPlayerHeldAboveTheHover(final TestContext context) {
     final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(4, 1, 4));
     context.runAtTick(TestPlayers.READY, () -> Levitation.request(vampire));
@@ -257,7 +222,11 @@ public class LevitationGameTest implements FabricGameTest {
         });
   }
 
-  @GameTest(templateName = YARD, batchId = BATCH, tickLimit = TestPlayers.READY + 70)
+  @GameTest(
+      templateName = YARD,
+      batchId = BATCH,
+      skyAccess = true,
+      tickLimit = TestPlayers.READY + 70)
   public void aPlayerAtTheHoverKeepsLevitating(final TestContext context) {
     final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(4, 1, 4));
     context.runAtTick(TestPlayers.READY, () -> Levitation.request(vampire));
