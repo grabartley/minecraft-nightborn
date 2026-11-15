@@ -50,22 +50,4 @@ class HuntingTest {
         drops,
         Hunting.dropsTarget(new Hunting.Pursuit(hours, hungry, endangered, provoked, outOfRange)));
   }
-
-  @ParameterizedTest(name = "hours {0}, hungry {1}, endangered {2}, out of range {3}: hunts {4}")
-  @CsvSource({
-    "true, true, false, false, true",
-    "true, false, false, false, false",
-    "false, true, false, false, false",
-    "true, true, true, false, false",
-    "true, true, false, true, false"
-  })
-  @DisplayName("only a hungry vampire hunts, at night, out of the sun and near enough to home")
-  void huntsPrey(
-      final boolean hours,
-      final boolean hungry,
-      final boolean endangered,
-      final boolean outOfRange,
-      final boolean hunts) {
-    assertEquals(hunts, Hunting.huntsPrey(hours, hungry, endangered, outOfRange));
-  }
 }

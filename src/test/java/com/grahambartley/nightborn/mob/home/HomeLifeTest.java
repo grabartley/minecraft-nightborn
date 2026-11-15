@@ -9,6 +9,7 @@ import net.minecraft.util.math.BlockPos;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.MethodSource;
 
 class HomeLifeTest {
@@ -50,5 +51,22 @@ class HomeLifeTest {
     loaded.read(nbt);
     assertEquals(Optional.empty(), loaded.home());
     assertEquals(Optional.empty(), loaded.coffin());
+  }
+
+  @ParameterizedTest(name = "coffin {0}, out on night {1}, decided night {2}")
+  @CsvSource({"12, 4, 4", "-900, -1, 7", "0, -9223372036854775808, -9223372036854775808"})
+  @DisplayName("a vampire's coffin and its night's plans survive a save and load")
+  void keepsCoffinAndNight(final long coffin, final long outing, final long decided) {
+    final NbtCompound nbt = new NbtCompound();
+    nbt.putLong(HomeLife.HOME_KEY, new BlockPos(3, 70, 3).asLong());
+    nbt.putLong(HomeLife.COFFIN_KEY, new BlockPos((int) coffin, 70, 5).asLong());
+    nbt.putLong(HomeLife.OUTING_KEY, outing);
+    nbt.putLong(HomeLife.DECIDED_KEY, decided);
+    final HomeLife life = new HomeLife();
+    life.read(nbt);
+    assertEquals(Optional.of(new BlockPos((int) coffin, 70, 5)), life.coffin());
+    final NbtCompound saved = new NbtCompound();
+    life.write(saved);
+    assertEquals(nbt, saved);
   }
 }

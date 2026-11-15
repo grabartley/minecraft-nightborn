@@ -112,13 +112,14 @@ class NightRoutineTest {
     "true, false, 41, 0, true",
     "true, true, 60, 0, false",
     "true, true, 65, 0, true",
-    "false, false, 200, 64, false",
+    "false, true, 200, 64, false",
     "false, true, 0, 65, true",
-    "false, false, 0, 10, false"
+    "false, false, 0, 16, false",
+    "false, false, 0, 17, true"
   })
   @DisplayName(
-      "prey must stay within the feeding range of home, and a chase ends past the chase range,"
-          + " or the feeding range while out")
+      "prey must be within the feeding range when out or the home radius when in, and a chase"
+          + " ends past the chase range, or the feeding range while out")
   void outOfRange(
       final boolean provoked,
       final boolean out,
@@ -127,7 +128,7 @@ class NightRoutineTest {
       final boolean outOfRange) {
     assertEquals(
         outOfRange,
-        NightRoutine.outOfRange(provoked, out, vampire * vampire, target * target, 40, 64));
+        NightRoutine.outOfRange(provoked, out, vampire * vampire, target * target, 40, 64, 16));
   }
 
   @ParameterizedTest(name = "bedtime {0}, target {1}, downed {2}: ready {3}")

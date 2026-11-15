@@ -1,5 +1,6 @@
 package com.grahambartley.nightborn.mob;
 
+import com.grahambartley.nightborn.blood.BloodValue;
 import com.grahambartley.nightborn.coffin.CoffinRise;
 import com.grahambartley.nightborn.config.NightbornConfig;
 import com.grahambartley.nightborn.core.VampireCore;
@@ -156,17 +157,7 @@ public class VampireEntity extends HostileEntity implements GeoEntity, Household
         && Prey.isPrey(target)
         && !Prey.spared(
             getWorld().getDifficulty() == Difficulty.PEACEFUL, target instanceof PlayerEntity)
-        && huntsPrey(target);
-  }
-
-  private boolean huntsPrey(final LivingEntity target) {
-    final NightbornConfig config = ServerConfigService.current();
-    final boolean hungry = blood.hungry(this, config);
-    return Hunting.huntsPrey(
-        Hunting.vampireHunts(getWorld()),
-        hungry,
-        ShadeRules.endangered(this),
-        homeLife.outOfRange(this, target, false, hungry, config));
+        && !Hunting.dropsTarget(pursuit(target, false));
   }
 
   private Hunting.Pursuit pursuit(final LivingEntity target, final boolean provoked) {
@@ -216,8 +207,7 @@ public class VampireEntity extends HostileEntity implements GeoEntity, Household
     if (bitten) {
       onAttacking(victim);
       if (Prey.hasDrinkableBlood(victim)) {
-        blood.drink(
-            this, victim, Math.max(0.0F, before - Math.max(0.0F, victim.getHealth())), config);
+        blood.drink(this, victim, BloodValue.taken(before, victim.getHealth()), config);
       }
     }
     return bitten;
@@ -289,6 +279,7 @@ public class VampireEntity extends HostileEntity implements GeoEntity, Household
   }
 
   private void alertHousemates(final LivingEntity attacker) {
+    final int range = ServerConfigService.current().mobs().vampireAlertRange();
     final boolean attackerIsHousemate =
         attacker instanceof VampireEntity other
             && Housemates.share(homeLife.home(), other.homeLife.home());
@@ -296,24 +287,24 @@ public class VampireEntity extends HostileEntity implements GeoEntity, Household
         getWorld()
             .getEntitiesByClass(
                 VampireEntity.class,
-                getBoundingBox().expand(ServerConfigService.current().mobs().vampireAlertRange()),
+                getBoundingBox().expand(range),
                 mate -> mate != this && mate != attacker && !mate.isSleeping())) {
       if (Housemates.alerted(
           Housemates.share(homeLife.home(), mate.homeLife.home()),
           attackerIsHousemate,
           mate.squaredDistanceTo(this),
-          ServerConfigService.current().mobs().vampireAlertRange())) {
+          range)) {
         mate.setAttacker(attacker);
       }
     }
   }
 
   @Override
-  public void onDeath(final DamageSource source) {
-    super.onDeath(source);
-    if (getWorld() instanceof ServerWorld world) {
+  public void remove(final RemovalReason reason) {
+    if (reason.shouldDestroy() && getWorld() instanceof ServerWorld world) {
       homeLife.release(world, this);
     }
+    super.remove(reason);
   }
 
   @Override
@@ -323,20 +314,24 @@ public class VampireEntity extends HostileEntity implements GeoEntity, Household
 
   @Override
   public boolean cannotDespawn() {
-    return true;
+    return homeLife.home().isPresent() || super.cannotDespawn();
   }
 
   @Override
   public boolean canImmediatelyDespawn(final double distanceSquared) {
-    return false;
+    return homeLife.home().isEmpty() && super.canImmediatelyDespawn(distanceSquared);
   }
 
   @Override
   protected boolean isDisallowedInPeaceful() {
-    return false;
+    return homeLife.home().isEmpty();
   }
 
-  public void hiss() {
+  public void warnOff() {
+    hiss();
+  }
+
+  void hiss() {
     if (getWorld().isClient()
         || !isAlive()
         || Downed.state(this) != null

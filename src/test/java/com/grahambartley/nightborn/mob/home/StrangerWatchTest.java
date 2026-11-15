@@ -8,17 +8,16 @@ import org.junit.jupiter.params.provider.CsvSource;
 
 class StrangerWatchTest {
 
-  @ParameterizedTest(name = "player {0}, vampire {1}, creative or spectator {2}: stranger {3}")
+  @ParameterizedTest(name = "vampire {0}, creative or spectator {1}: stranger {2}")
   @CsvSource({
-    "true, false, false, true",
-    "true, true, false, false",
-    "true, false, true, false",
-    "false, false, false, false"
+    "false, false, true",
+    "true, false, false",
+    "false, true, false",
+    "true, true, false"
   })
-  @DisplayName("a stranger is a human player the vampire could see as a threat")
-  void stranger(
-      final boolean player, final boolean vampire, final boolean exempt, final boolean stranger) {
-    assertEquals(stranger, StrangerWatch.stranger(player, vampire, exempt));
+  @DisplayName("a stranger is a human player in survival or adventure")
+  void stranger(final boolean vampire, final boolean exempt, final boolean stranger) {
+    assertEquals(stranger, StrangerWatch.stranger(vampire, exempt));
   }
 
   @ParameterizedTest(name = "{0} blocks away: {1}")

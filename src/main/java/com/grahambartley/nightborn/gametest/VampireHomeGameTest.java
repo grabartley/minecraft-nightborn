@@ -14,6 +14,7 @@ import com.grahambartley.nightborn.server.ServerConfigService;
 import com.grahambartley.nightborn.weakened.Weakened;
 import java.util.UUID;
 import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.passive.VillagerEntity;
 import net.minecraft.nbt.NbtCompound;
@@ -360,6 +361,7 @@ public class VampireHomeGameTest implements FabricGameTest {
   @GameTest(templateName = ARENA, batchId = PEACEFUL_BATCH, tickLimit = TestPlayers.READY + 10)
   public void onPeacefulAHungryVampireSparesPlayersAndStays(final TestContext context) {
     final VampireEntity vampire = VampireMobGameTest.still(context, new BlockPos(2, 2, 2));
+    vampire.settleAt(context.getAbsolutePos(new BlockPos(4, 2, 4)));
     final VillagerEntity villager = context.spawnEntity(EntityType.VILLAGER, new BlockPos(4, 2, 4));
     villager.setAiDisabled(true);
     final ServerPlayerEntity human = TestPlayers.human(context, new BlockPos(6, 2, 6));
@@ -442,6 +444,43 @@ public class VampireHomeGameTest implements FabricGameTest {
           context.assertFalse(
               HomeCoffins.loaded(context.getWorld(), away),
               "checking the coffin never loads its chunk");
+          context.complete();
+        });
+  }
+
+  @GameTest(templateName = ARENA, tickLimit = CLAIM_WAIT + 10)
+  public void aVampireThatDiesFreesItsCoffin(final TestContext context) {
+    final BlockPos head = CoffinStage.coffin(context, new BlockPos(4, 2, 1), Direction.SOUTH);
+    final VampireEntity vampire = household(context, new BlockPos(4, 2, 5), head);
+    context.runAtTick(
+        CLAIM_WAIT,
+        () -> {
+          context.assertEquals(
+              coffinAt(context, head).owner(), vampire.getUuid(), "the vampire owns its coffin");
+          vampire.remove(Entity.RemovalReason.KILLED);
+          context.assertTrue(coffinAt(context, head).owner() == null, "its death frees the coffin");
+          context.complete();
+        });
+  }
+
+  @GameTest(templateName = ARENA, tickLimit = CLAIM_WAIT + 10)
+  public void housematesNeverShareACoffin(final TestContext context) {
+    final BlockPos left = CoffinStage.coffin(context, new BlockPos(2, 2, 1), Direction.SOUTH);
+    final BlockPos right = CoffinStage.coffin(context, new BlockPos(6, 2, 1), Direction.SOUTH);
+    final BlockPos home = new BlockPos(4, 2, 4);
+    final VampireEntity first = household(context, new BlockPos(3, 2, 5), home);
+    final VampireEntity second = household(context, new BlockPos(5, 2, 5), home);
+    context.runAtTick(
+        CLAIM_WAIT,
+        () -> {
+          final BlockPos firstCoffin = first.homeLife().coffin().orElse(null);
+          final BlockPos secondCoffin = second.homeLife().coffin().orElse(null);
+          context.assertTrue(
+              firstCoffin != null && secondCoffin != null, "both housemates have a coffin");
+          context.assertFalse(firstCoffin.equals(secondCoffin), "each has its own");
+          context.assertTrue(
+              coffinAt(context, left).owner() != null && coffinAt(context, right).owner() != null,
+              "both coffins are taken");
           context.complete();
         });
   }

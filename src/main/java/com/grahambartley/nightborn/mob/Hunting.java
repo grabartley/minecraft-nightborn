@@ -26,14 +26,6 @@ public final class Hunting {
       boolean provoked,
       boolean outOfRange) {}
 
-  public static boolean huntsPrey(
-      final boolean huntingHours,
-      final boolean hungry,
-      final boolean endangered,
-      final boolean outOfRange) {
-    return huntingHours && hungry && !endangered && !outOfRange;
-  }
-
   public static boolean dropsTarget(final Pursuit pursuit) {
     return pursuit.endangered()
         || pursuit.outOfRange()

@@ -15,9 +15,8 @@ public final class StrangerWatch {
 
   private StrangerWatch() {}
 
-  public static boolean stranger(
-      final boolean player, final boolean vampire, final boolean creativeOrSpectator) {
-    return player && !vampire && !creativeOrSpectator;
+  public static boolean stranger(final boolean vampire, final boolean creativeOrSpectator) {
+    return !vampire && !creativeOrSpectator;
   }
 
   public static Move move(final double distance) {

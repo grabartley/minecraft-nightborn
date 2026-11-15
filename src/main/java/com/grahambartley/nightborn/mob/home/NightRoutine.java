@@ -61,12 +61,14 @@ public final class NightRoutine {
       final double vampireDistanceSquared,
       final double targetDistanceSquared,
       final int chaseRange,
-      final int feedingRange) {
+      final int feedingRange,
+      final int homeRadius) {
     if (provoked) {
       final double reach = out ? Math.max(chaseRange, feedingRange) : chaseRange;
       return vampireDistanceSquared > reach * reach;
     }
-    return targetDistanceSquared > (double) feedingRange * feedingRange;
+    final double reach = roamRadius(out, feedingRange, homeRadius);
+    return targetDistanceSquared > reach * reach;
   }
 
   public static boolean readyForBed(

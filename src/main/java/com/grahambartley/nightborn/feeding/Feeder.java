@@ -52,7 +52,7 @@ final class Feeder {
     if (sip.take() > 0.0F) {
       final float before = victim.getHealth();
       victim.damage(bite, sip.drains() ? sip.take() + victim.getAbsorptionAmount() : sip.take());
-      taken = Math.max(0.0F, before - Math.max(0.0F, victim.getHealth()));
+      taken = BloodValue.taken(before, victim.getHealth());
       session.took(taken);
       if (taken > 0.0F) {
         MilestoneCriterion.reach(victim, Milestone.BITTEN);

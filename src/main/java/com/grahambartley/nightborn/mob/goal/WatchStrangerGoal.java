@@ -42,7 +42,6 @@ public class WatchStrangerGoal extends Goal {
                 StrangerWatch.NOTICE_RANGE,
                 player ->
                     StrangerWatch.stranger(
-                        true,
                         Vampires.isVampire((PlayerEntity) player),
                         player.isSpectator() || ((PlayerEntity) player).isCreative()));
     return stranger != null;
@@ -84,7 +83,7 @@ public class WatchStrangerGoal extends Goal {
       case WATCH -> vampire.getNavigation().stop();
       case WARN -> {
         vampire.getNavigation().stop();
-        vampire.hiss();
+        vampire.warnOff();
       }
     }
   }

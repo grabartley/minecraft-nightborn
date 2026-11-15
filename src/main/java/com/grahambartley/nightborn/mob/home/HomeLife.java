@@ -83,7 +83,8 @@ public final class HomeLife {
             distanceSquared(vampire.getPos()),
             distanceSquared(target.getPos()),
             config.mobs().vampireChaseRange(),
-            config.mobs().vampireFeedingRange());
+            config.mobs().vampireFeedingRange(),
+            config.mobs().vampireHomeRadius());
   }
 
   public void tick(
