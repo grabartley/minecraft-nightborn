@@ -1,6 +1,5 @@
 package com.grahambartley.nightborn.mob;
 
-import com.grahambartley.nightborn.core.NightTime;
 import java.util.function.BooleanSupplier;
 
 public final class MobSpawnRules {
@@ -11,15 +10,6 @@ public final class MobSpawnRules {
   public static final double NEARBY_HEIGHT = 64.0;
 
   private MobSpawnRules() {}
-
-  public static boolean vampireMaySpawn(
-      final boolean fixedTime,
-      final long timeOfDay,
-      final boolean openSky,
-      final int roll,
-      final int chance) {
-    return openSky && NightTime.isNight(fixedTime, timeOfDay) && roll < chance;
-  }
 
   public static boolean batMaySpawn(
       final int roll,

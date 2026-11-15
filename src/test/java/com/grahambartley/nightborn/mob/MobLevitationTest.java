@@ -32,7 +32,8 @@ class MobLevitationTest {
       final boolean fighting,
       final float roll,
       final boolean wants) {
-    final MobSettings settings = new MobSettings(100, 100, 40, riseSeconds, landSeconds, 8);
+    final MobSettings settings =
+        new MobSettings(100, 40, riseSeconds, landSeconds, 8, 14, 60, 50, 64, 40);
     assertEquals(wants, MobLevitation.wants(levitating, fighting, roll, settings));
   }
 

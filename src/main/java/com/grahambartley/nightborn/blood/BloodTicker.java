@@ -5,6 +5,7 @@ import com.grahambartley.nightborn.downed.Downed;
 import com.grahambartley.nightborn.downed.DownedState;
 import com.grahambartley.nightborn.levitation.Levitation;
 import com.grahambartley.nightborn.weakened.Weakened;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.HungerManager;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.world.Difficulty;
@@ -44,8 +45,8 @@ public final class BloodTicker {
     starve(vampire, outcome.blood(), config);
   }
 
-  private static void starve(
-      final PlayerEntity vampire, final int blood, final NightbornConfig config) {
+  public static void starve(
+      final LivingEntity vampire, final int blood, final NightbornConfig config) {
     final Starvation.Outcome starving =
         Starvation.tick(
             StarvingAttachment.get(vampire),

@@ -1,6 +1,7 @@
 package com.grahambartley.nightborn.gametest;
 
 import com.grahambartley.nightborn.Nightborn;
+import com.grahambartley.nightborn.blood.BloodAttachment;
 import com.grahambartley.nightborn.config.DownedSettings;
 import com.grahambartley.nightborn.config.TurningSettings;
 import com.grahambartley.nightborn.downed.Downed;
@@ -191,6 +192,7 @@ public class VampireMobGameTest implements FabricGameTest {
   public void anEscapingVampireMobFleesWhoeverDownedIt(final TestContext context) {
     final VampireEntity vampire = context.spawnEntity(NightbornMobs.VAMPIRE, new BlockPos(4, 2, 4));
     final VampireEntity control = still(context, new BlockPos(6, 2, 6));
+    BloodAttachment.set(control, VampireHomeGameTest.HUNGRY);
     final ServerPlayerEntity hunter = TestPlayers.human(context, new BlockPos(2, 2, 4));
     context.runAtTick(
         TestPlayers.READY,

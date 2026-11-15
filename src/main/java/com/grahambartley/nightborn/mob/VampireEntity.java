@@ -8,6 +8,11 @@ import com.grahambartley.nightborn.levitation.Levitation;
 import com.grahambartley.nightborn.mob.goal.FleeWhileEscapingGoal;
 import com.grahambartley.nightborn.mob.goal.LieDownedGoal;
 import com.grahambartley.nightborn.mob.goal.SeekShadeGoal;
+import com.grahambartley.nightborn.mob.goal.SleepInCoffinGoal;
+import com.grahambartley.nightborn.mob.goal.WatchStrangerGoal;
+import com.grahambartley.nightborn.mob.home.HomeLife;
+import com.grahambartley.nightborn.mob.home.Housemates;
+import com.grahambartley.nightborn.mob.home.MobBlood;
 import com.grahambartley.nightborn.mob.look.Appearance;
 import com.grahambartley.nightborn.mob.look.OutfitDressing;
 import com.grahambartley.nightborn.mob.look.VampireLook;
@@ -16,6 +21,7 @@ import com.grahambartley.nightborn.mob.look.VampireRig;
 import com.grahambartley.nightborn.mob.look.VampireSize;
 import com.grahambartley.nightborn.mob.look.VampireVoice;
 import com.grahambartley.nightborn.server.ServerConfigService;
+import com.grahambartley.nightborn.structure.HouseholdMember;
 import com.grahambartley.nightborn.vampire.VisibleStateAttachment;
 import com.grahambartley.nightborn.weakened.Weakened;
 import java.util.Optional;
@@ -29,6 +35,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.ai.goal.ActiveTargetGoal;
 import net.minecraft.entity.ai.goal.AvoidSunlightGoal;
+import net.minecraft.entity.ai.goal.GoToWalkTargetGoal;
 import net.minecraft.entity.ai.goal.LookAroundGoal;
 import net.minecraft.entity.ai.goal.LookAtEntityGoal;
 import net.minecraft.entity.ai.goal.MeleeAttackGoal;
@@ -49,7 +56,9 @@ import net.minecraft.nbt.NbtElement;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.random.Random;
+import net.minecraft.world.Difficulty;
 import net.minecraft.world.LocalDifficulty;
 import net.minecraft.world.ServerWorldAccess;
 import net.minecraft.world.World;
@@ -62,7 +71,7 @@ import software.bernie.geckolib.animation.PlayState;
 import software.bernie.geckolib.animation.RawAnimation;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
-public class VampireEntity extends HostileEntity implements GeoEntity {
+public class VampireEntity extends HostileEntity implements GeoEntity, HouseholdMember {
 
   static final String LOOK_KEY = "Look";
   static final String HEIGHT_KEY = "Height";
@@ -81,6 +90,8 @@ public class VampireEntity extends HostileEntity implements GeoEntity {
 
   private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
   private final EndingEdge landingEdge = new EndingEdge();
+  private final HomeLife homeLife = new HomeLife();
+  private final MobBlood blood = new MobBlood();
   private VampirePose shownPose = VampirePose.IDLE;
   private long nextHiss;
   private boolean warded;
@@ -127,7 +138,10 @@ public class VampireEntity extends HostileEntity implements GeoEntity {
     goalSelector.add(1, new FleeWhileEscapingGoal(this, 1.4));
     goalSelector.add(2, new SeekShadeGoal(this, 1.3));
     goalSelector.add(3, new AvoidSunlightGoal(this));
+    goalSelector.add(3, new SleepInCoffinGoal(this));
     goalSelector.add(4, new MeleeAttackGoal(this, 1.15, false));
+    goalSelector.add(5, new GoToWalkTargetGoal(this, 1.0));
+    goalSelector.add(6, new WatchStrangerGoal(this));
     goalSelector.add(6, new WanderAroundFarGoal(this, 0.8));
     goalSelector.add(7, new LookAtEntityGoal(this, PlayerEntity.class, 8.0F));
     goalSelector.add(7, new LookAroundGoal(this));
@@ -138,9 +152,34 @@ public class VampireEntity extends HostileEntity implements GeoEntity {
 
   public boolean hunts(final LivingEntity target) {
     return Downed.state(this) == null
-        && Hunting.vampireHunts(getWorld())
-        && !ShadeRules.endangered(this)
-        && Prey.isPrey(target);
+        && !isSleeping()
+        && Prey.isPrey(target)
+        && !Prey.spared(
+            getWorld().getDifficulty() == Difficulty.PEACEFUL, target instanceof PlayerEntity)
+        && Hunting.huntsPrey(pursuit(target, false));
+  }
+
+  private Hunting.Pursuit pursuit(final LivingEntity target, final boolean provoked) {
+    final NightbornConfig config = ServerConfigService.current();
+    return new Hunting.Pursuit(
+        Hunting.vampireHunts(getWorld()),
+        blood.hungry(this, config),
+        ShadeRules.endangered(this),
+        provoked,
+        homeLife.outOfRange(this, target, provoked, config));
+  }
+
+  public boolean hungry() {
+    return blood.hungry(this, ServerConfigService.current());
+  }
+
+  public HomeLife homeLife() {
+    return homeLife;
+  }
+
+  @Override
+  public void settleAt(final BlockPos home) {
+    homeLife.settle(home);
   }
 
   @Override
@@ -154,6 +193,7 @@ public class VampireEntity extends HostileEntity implements GeoEntity {
     }
     hiss();
     final NightbornConfig config = ServerConfigService.current();
+    final float before = victim.getHealth();
     final boolean bitten =
         MobBite.bite(
             this,
@@ -164,8 +204,23 @@ public class VampireEntity extends HostileEntity implements GeoEntity {
             config.turning());
     if (bitten) {
       onAttacking(victim);
+      if (Prey.hasDrinkableBlood(victim)) {
+        blood.drink(
+            this, victim, Math.max(0.0F, before - Math.max(0.0F, victim.getHealth())), config);
+      }
     }
     return bitten;
+  }
+
+  @Override
+  public void tick() {
+    super.tick();
+    if (!getWorld().isClient() && isAlive()) {
+      blood.tick(this, ServerConfigService.current());
+      if (isSleeping() && !homeLife.bedtime(this) && !CoffinRise.rising(this)) {
+        wakeUp();
+      }
+    }
   }
 
   @Override
@@ -180,13 +235,13 @@ public class VampireEntity extends HostileEntity implements GeoEntity {
       }
       dress(world);
     }
+    final NightbornConfig config = ServerConfigService.current();
+    homeLife.tick(this, blood.hungry(this, config), config, this::setOutToFeed);
     final LivingEntity target = getTarget();
     if (target != null
         && (Downed.state(this) != null
             || Hunting.dropsTarget(
-                Hunting.vampireHunts(getWorld()),
-                ShadeRules.endangered(this),
-                target == getAttacker() || !Prey.isPrey(target)))) {
+                pursuit(target, target == getAttacker() || !Prey.isPrey(target))))) {
       setTarget(null);
     }
     final boolean nowWarded = Hissing.warded(Weakened.sources(this));
@@ -195,6 +250,12 @@ public class VampireEntity extends HostileEntity implements GeoEntity {
     }
     warded = nowWarded;
     levitateAboutHome();
+  }
+
+  private void setOutToFeed() {
+    if (getWorld() instanceof ServerWorld world) {
+      BatEscort.gather(world, this, ServerConfigService.current().mobs().batEscortChance());
+    }
   }
 
   @Override
@@ -209,13 +270,61 @@ public class VampireEntity extends HostileEntity implements GeoEntity {
   @Override
   public boolean damage(final DamageSource source, final float amount) {
     final boolean hurt = super.damage(source, amount);
-    if (hurt && source.getAttacker() instanceof LivingEntity) {
+    if (hurt && source.getAttacker() instanceof LivingEntity attacker) {
       hiss();
+      alertHousemates(attacker);
     }
     return hurt;
   }
 
-  void hiss() {
+  private void alertHousemates(final LivingEntity attacker) {
+    final boolean attackerIsHousemate =
+        attacker instanceof VampireEntity other
+            && Housemates.share(homeLife.home(), other.homeLife.home());
+    for (final VampireEntity mate :
+        getWorld()
+            .getEntitiesByClass(
+                VampireEntity.class,
+                getBoundingBox().expand(Housemates.ALERT_RANGE),
+                mate -> mate != this && mate != attacker && !mate.isSleeping())) {
+      if (Housemates.alerted(
+          Housemates.share(homeLife.home(), mate.homeLife.home()),
+          attackerIsHousemate,
+          mate.squaredDistanceTo(this))) {
+        mate.setAttacker(attacker);
+      }
+    }
+  }
+
+  @Override
+  public void onDeath(final DamageSource source) {
+    super.onDeath(source);
+    if (getWorld() instanceof ServerWorld world) {
+      homeLife.release(world, this);
+    }
+  }
+
+  @Override
+  protected boolean isImmobile() {
+    return super.isImmobile() || isSleeping();
+  }
+
+  @Override
+  public boolean cannotDespawn() {
+    return true;
+  }
+
+  @Override
+  public boolean canImmediatelyDespawn(final double distanceSquared) {
+    return false;
+  }
+
+  @Override
+  protected boolean isDisallowedInPeaceful() {
+    return false;
+  }
+
+  public void hiss() {
     if (getWorld().isClient()
         || !isAlive()
         || Downed.state(this) != null
@@ -258,9 +367,7 @@ public class VampireEntity extends HostileEntity implements GeoEntity {
     dress(world);
     VampireCore.tick(this, config.core(), config.blood());
     setHealth(getMaxHealth());
-    if (spawnReason == SpawnReason.NATURAL) {
-      BatEscort.gather(world, this, config.mobs().batEscortChance());
-    }
+    blood.start(this, random.nextInt(Integer.MAX_VALUE), config);
     return super.initialize(world, difficulty, spawnReason, entityData);
   }
 
@@ -319,11 +426,13 @@ public class VampireEntity extends HostileEntity implements GeoEntity {
     nbt.putString(LOOK_KEY, dataTracker.get(LOOK));
     nbt.putFloat(HEIGHT_KEY, height());
     nbt.putFloat(WIDTH_KEY, width());
+    homeLife.write(nbt);
   }
 
   @Override
   public void readCustomDataFromNbt(final NbtCompound nbt) {
     super.readCustomDataFromNbt(nbt);
+    homeLife.read(nbt);
     undressed = nbt.contains(LOOK_KEY) && !nbt.contains(LOOK_KEY, NbtElement.STRING_TYPE);
     if (nbt.contains(LOOK_KEY, NbtElement.STRING_TYPE)) {
       final Identifier look = Identifier.tryParse(nbt.getString(LOOK_KEY));

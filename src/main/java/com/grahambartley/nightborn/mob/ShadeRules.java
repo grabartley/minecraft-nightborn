@@ -17,6 +17,10 @@ public final class ShadeRules {
             || !NightTime.isNight(false, timeOfDay + DAWN_WARNING));
   }
 
+  public static long ticksUntilSunIsNear(final long timeOfDay) {
+    return Math.floorMod(NightTime.DAWN - DAWN_WARNING - timeOfDay, NightTime.DAY_LENGTH);
+  }
+
   public static boolean endangered(final LivingEntity vampire) {
     final World world = vampire.getWorld();
     return DirectSun.under(
