@@ -3,7 +3,7 @@
 	"minecraft:geometry": [
 		{
 			"description": {
-				"identifier": "geometry.clothing_legs",
+				"identifier": "geometry.breeches_female",
 				"texture_width": 64,
 				"texture_height": 64,
 				"visible_bounds_width": 2,
@@ -21,29 +21,38 @@
 						-1.9,
 						12,
 						0
+					]
+				},
+				{
+					"name": "dyed_right_leg",
+					"parent": "armorRightLeg",
+					"pivot": [
+						-1.9,
+						12,
+						0
 					],
 					"cubes": [
 						{
 							"origin": [
 								-3.9,
-								11,
+								6,
 								-2
 							],
 							"size": [
 								4,
-								1,
+								6,
 								4
 							],
-							"inflate": 0.4,
+							"inflate": 0.5,
 							"uv": [
-								0,
-								32
+								32,
+								0
 							]
 						}
 					]
 				},
 				{
-					"name": "dyed_right_leg",
+					"name": "right_stocking",
 					"parent": "armorRightLeg",
 					"pivot": [
 						-1.9,
@@ -59,13 +68,86 @@
 							],
 							"size": [
 								4,
-								12,
+								7,
 								4
 							],
-							"inflate": 0.3,
+							"inflate": 0.25,
 							"uv": [
 								0,
 								0
+							]
+						}
+					]
+				},
+				{
+					"name": "right_garter",
+					"parent": "armorRightLeg",
+					"pivot": [
+						-1.9,
+						12,
+						0
+					],
+					"cubes": [
+						{
+							"origin": [
+								-3.9,
+								6,
+								-2
+							],
+							"size": [
+								4,
+								1,
+								4
+							],
+							"inflate": 0.62,
+							"uv": [
+								12,
+								11
+							]
+						},
+						{
+							"origin": [
+								-4.9,
+								6,
+								-1.5
+							],
+							"size": [
+								1.0000000000000004,
+								2,
+								3
+							],
+							"inflate": -0.2,
+							"uv": [
+								44,
+								11
+							]
+						}
+					]
+				},
+				{
+					"name": "right_ribbon",
+					"parent": "right_garter",
+					"pivot": [
+						-4.3,
+						7,
+						0
+					],
+					"cubes": [
+						{
+							"origin": [
+								-4.9,
+								3,
+								-0.5
+							],
+							"size": [
+								1.0000000000000004,
+								4,
+								2
+							],
+							"inflate": -0.3,
+							"uv": [
+								0,
+								11
 							]
 						}
 					]
@@ -76,29 +158,38 @@
 						1.9,
 						12,
 						0
+					]
+				},
+				{
+					"name": "dyed_left_leg",
+					"parent": "armorLeftLeg",
+					"pivot": [
+						1.9,
+						12,
+						0
 					],
 					"cubes": [
 						{
 							"origin": [
 								-0.10000000000000009,
-								11,
+								6,
 								-2
 							],
 							"size": [
 								4,
-								1,
+								6,
 								4
 							],
-							"inflate": 0.4,
+							"inflate": 0.5,
 							"uv": [
-								16,
-								32
+								48,
+								0
 							]
 						}
 					]
 				},
 				{
-					"name": "dyed_left_leg",
+					"name": "left_stocking",
 					"parent": "armorLeftLeg",
 					"pivot": [
 						1.9,
@@ -114,13 +205,86 @@
 							],
 							"size": [
 								4,
-								12,
+								7,
 								4
 							],
-							"inflate": 0.3,
+							"inflate": 0.25,
 							"uv": [
 								16,
 								0
+							]
+						}
+					]
+				},
+				{
+					"name": "left_garter",
+					"parent": "armorLeftLeg",
+					"pivot": [
+						1.9,
+						12,
+						0
+					],
+					"cubes": [
+						{
+							"origin": [
+								-0.10000000000000009,
+								6,
+								-2
+							],
+							"size": [
+								4,
+								1,
+								4
+							],
+							"inflate": 0.62,
+							"uv": [
+								28,
+								11
+							]
+						},
+						{
+							"origin": [
+								3.9,
+								6,
+								-1.5
+							],
+							"size": [
+								1.0000000000000004,
+								2,
+								3
+							],
+							"inflate": -0.2,
+							"uv": [
+								52,
+								11
+							]
+						}
+					]
+				},
+				{
+					"name": "left_ribbon",
+					"parent": "left_garter",
+					"pivot": [
+						4.3,
+						7,
+						0
+					],
+					"cubes": [
+						{
+							"origin": [
+								3.9,
+								3,
+								-0.5
+							],
+							"size": [
+								1.0000000000000004,
+								4,
+								2
+							],
+							"inflate": -0.3,
+							"uv": [
+								6,
+								11
 							]
 						}
 					]

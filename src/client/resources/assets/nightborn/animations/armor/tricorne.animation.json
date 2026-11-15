@@ -3,11 +3,53 @@
 	"animations": {
 		"idle": {
 			"loop": true,
-			"animation_length": 1
+			"animation_length": 4,
+			"bones": {
+				"cockade": {
+					"rotation": {
+						"0.0": [
+							"0",
+							"0",
+							"0"
+						],
+						"2.0": [
+							"0",
+							"0",
+							"1.5"
+						],
+						"4.0": [
+							"0",
+							"0",
+							"0"
+						]
+					}
+				}
+			}
 		},
 		"walk": {
 			"loop": true,
-			"animation_length": 1
+			"animation_length": 1,
+			"bones": {
+				"cockade": {
+					"rotation": {
+						"0.0": [
+							"0",
+							"0",
+							"-2"
+						],
+						"0.5": [
+							"0",
+							"0",
+							"3"
+						],
+						"1.0": [
+							"0",
+							"0",
+							"-2"
+						]
+					}
+				}
+			}
 		}
 	}
 }
