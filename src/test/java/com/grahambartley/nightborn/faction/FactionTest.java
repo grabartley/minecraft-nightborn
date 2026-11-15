@@ -9,7 +9,6 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.EnumSource;
@@ -56,9 +55,16 @@ class FactionTest {
     assertEquals(0, buffer.readableBytes());
   }
 
-  @Test
-  @DisplayName("every player starts human")
-  void everyPlayerStartsHuman() {
-    assertEquals(Faction.HUMAN, Faction.DEFAULT);
+  static Stream<Arguments> wireValues() {
+    return Stream.of(Arguments.of(Faction.HUMAN, 0), Arguments.of(Faction.VAMPIRE, 1));
+  }
+
+  @ParameterizedTest(name = "{0} is sent as {1}")
+  @MethodSource("wireValues")
+  @DisplayName("each faction is sent as a fixed number")
+  void isSentAsAFixedNumber(final Faction faction, final int wire) {
+    final ByteBuf buffer = Unpooled.buffer();
+    Faction.PACKET_CODEC.encode(buffer, faction);
+    assertEquals(wire, buffer.readByte());
   }
 }

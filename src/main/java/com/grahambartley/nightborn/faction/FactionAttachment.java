@@ -11,8 +11,6 @@ public final class FactionAttachment {
 
   public static final Identifier ID = Identifier.of(Nightborn.MOD_ID, "faction");
 
-  public static final AttachmentSyncPredicate SYNC_PREDICATE = AttachmentSyncPredicate.targetOnly();
-
   public static final AttachmentType<Faction> TYPE =
       AttachmentRegistry.create(
           ID,
@@ -20,7 +18,7 @@ public final class FactionAttachment {
               builder
                   .persistent(Faction.CODEC)
                   .copyOnDeath()
-                  .syncWith(Faction.PACKET_CODEC.cast(), SYNC_PREDICATE));
+                  .syncWith(Faction.PACKET_CODEC.cast(), AttachmentSyncPredicate.targetOnly()));
 
   private FactionAttachment() {}
 

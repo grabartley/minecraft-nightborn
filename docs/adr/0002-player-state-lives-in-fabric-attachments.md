@@ -14,7 +14,7 @@ Each piece of per-player state is its own Fabric data attachment on the player, 
 - State other players can see gets its own small attachment synced to every player tracking that player, added by the feature that makes it visible. Private and public state never share an attachment, so a public sync cannot leak a private value.
 - A player at the default, a human, stores no data at all, and nothing in this state runs per tick.
 
-This needs attachment sync, so the mod requires Fabric API 0.116.12 for 1.21.1, the same version Total Storage uses.
+Attachment sync is not in the Fabric API 0.107 line, so the mod builds against and requires Fabric API 0.116.12 for 1.21.1.
 
 ## Consequences
 
