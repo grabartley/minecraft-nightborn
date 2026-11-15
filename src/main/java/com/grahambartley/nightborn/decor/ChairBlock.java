@@ -68,10 +68,15 @@ public class ChairBlock extends HorizontalFacingBlock {
       final BlockPos pos,
       final PlayerEntity player,
       final BlockHitResult hit) {
-    if (player.isSneaking() || player.hasVehicle()) {
+    final Seating.Choice choice =
+        Seating.choose(
+            player.isSneaking(),
+            player.hasVehicle(),
+            !world.getEntitiesByClass(SeatEntity.class, new Box(pos), seat -> true).isEmpty());
+    if (choice == Seating.Choice.PASS) {
       return ActionResult.PASS;
     }
-    if (!world.getEntitiesByClass(SeatEntity.class, new Box(pos), seat -> true).isEmpty()) {
+    if (choice == Seating.Choice.TAKEN) {
       return ActionResult.CONSUME;
     }
     if (!world.isClient) {

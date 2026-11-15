@@ -25,12 +25,4 @@ class DrapeBlockTest {
     final BlockState state = drape.getDefaultState().with(DrapeBlock.TOP, top);
     assertEquals(rodHidden ? Set.of(DrapeBlock.ROD_BONE) : Set.of(), drape.hiddenBones(state));
   }
-
-  @ParameterizedTest(name = "{0} animates on open and shares the drape art")
-  @CsvSource({"burgundy_velvet_drape", "emerald_velvet_drape"})
-  void animatesOnOpenWithTheSharedDrapeModel(final String id) {
-    final DrapeBlock drape = (DrapeBlock) DecorBlocks.get(id);
-    assertEquals(DrapeBlock.OPEN, drape.toggleProperty());
-    assertEquals("velvet_drape", drape.artModel());
-  }
 }

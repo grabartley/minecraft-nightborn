@@ -36,8 +36,7 @@ public final class DecorBlocks {
               .strength(1.5f)
               .sounds(BlockSoundGroup.LANTERN)
               .nonOpaque()
-              .luminance(
-                  state -> state.get(LightableFurnitureBlock.LIT) ? CandelabraBlock.LIGHT : 0));
+              .luminance(LightableFurnitureBlock.luminance(CandelabraBlock.LIGHT)));
   public static final Block CHANDELIER =
       register(
           "chandelier",
@@ -47,8 +46,7 @@ public final class DecorBlocks {
               .strength(1.5f)
               .sounds(BlockSoundGroup.CHAIN)
               .nonOpaque()
-              .luminance(
-                  state -> state.get(LightableFurnitureBlock.LIT) ? ChandelierBlock.LIGHT : 0));
+              .luminance(LightableFurnitureBlock.luminance(ChandelierBlock.LIGHT)));
   public static final Block BURGUNDY_VELVET_DRAPE =
       register(
           "burgundy_velvet_drape",

@@ -1,6 +1,8 @@
 package com.grahambartley.nightborn.gametest;
 
+import com.grahambartley.nightborn.decor.CandelabraBlock;
 import com.grahambartley.nightborn.decor.ChairBlock;
+import com.grahambartley.nightborn.decor.ChandelierBlock;
 import com.grahambartley.nightborn.decor.DecorBlocks;
 import com.grahambartley.nightborn.decor.DrapeBlock;
 import com.grahambartley.nightborn.decor.LightableFurnitureBlock;
@@ -37,7 +39,7 @@ public class DecorGameTest implements FabricGameTest {
 
     final BlockState state = context.getBlockState(ON_FLOOR);
     context.assertTrue(state.get(LightableFurnitureBlock.LIT), "candelabra should be lit");
-    context.assertEquals(12, state.getLuminance(), "lit candelabra light");
+    context.assertEquals(CandelabraBlock.LIGHT, state.getLuminance(), "lit candelabra light");
     context.assertEquals(
         1, player.getMainHandStack().getDamage(), "flint and steel should take one use");
     context.complete();
@@ -67,7 +69,7 @@ public class DecorGameTest implements FabricGameTest {
 
     final BlockState state = context.getBlockState(UNDER_CEILING);
     context.assertTrue(state.get(LightableFurnitureBlock.LIT), "chandelier should be lit");
-    context.assertEquals(15, state.getLuminance(), "lit chandelier light");
+    context.assertEquals(ChandelierBlock.LIGHT, state.getLuminance(), "lit chandelier light");
     context.assertEquals(1, player.getMainHandStack().getCount(), "one fire charge spent");
     context.complete();
   }
@@ -250,6 +252,25 @@ public class DecorGameTest implements FabricGameTest {
     context.useBlock(ON_FLOOR, player);
 
     context.assertFalse(player.hasVehicle(), "sneaking player stays standing");
+    context.complete();
+  }
+
+  @GameTest(templateName = ROOM, tickLimit = 20)
+  public void aDrapeHungBetweenTwoColumnsMakesThemOne(final TestContext context) {
+    final BlockState drape =
+        DecorBlocks.BURGUNDY_VELVET_DRAPE
+            .getDefaultState()
+            .with(DrapeBlock.FACING, Direction.NORTH);
+    context.setBlockState(CEILING, drape.with(DrapeBlock.OPEN, true));
+    final PlayerEntity player = holding(context, new ItemStack(DecorBlocks.BURGUNDY_VELVET_DRAPE));
+    player.setYaw(0.0f);
+    context.setBlockState(FLOOR, drape);
+
+    context.useStackOnBlock(player, player.getMainHandStack(), FLOOR, Direction.UP);
+
+    for (final BlockPos at : new BlockPos[] {FLOOR, ON_FLOOR, CEILING}) {
+      context.assertTrue(context.getBlockState(at).get(DrapeBlock.OPEN), "open at " + at);
+    }
     context.complete();
   }
 

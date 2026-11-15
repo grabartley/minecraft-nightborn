@@ -7,8 +7,10 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.BlockWithEntity;
 import net.minecraft.block.ShapeContext;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemPlacementContext;
+import net.minecraft.item.ItemStack;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.state.StateManager;
@@ -42,12 +44,7 @@ public class DrapeBlock extends FurnitureBlock {
 
   public DrapeBlock(final Settings settings) {
     super(settings);
-    this.setDefaultState(
-        this.getStateManager()
-            .getDefaultState()
-            .with(FACING, Direction.NORTH)
-            .with(OPEN, false)
-            .with(TOP, true));
+    this.setDefaultState(this.getDefaultState().with(OPEN, false).with(TOP, true));
   }
 
   @Override
@@ -72,7 +69,8 @@ public class DrapeBlock extends FurnitureBlock {
 
   @Override
   protected void appendProperties(final StateManager.Builder<Block, BlockState> builder) {
-    builder.add(FACING, OPEN, TOP);
+    super.appendProperties(builder);
+    builder.add(OPEN, TOP);
   }
 
   @Override
@@ -85,6 +83,18 @@ public class DrapeBlock extends FurnitureBlock {
         (this.continues(state, above) && above.get(OPEN))
             || (this.continues(state, below) && below.get(OPEN));
     return state.with(TOP, !this.continues(state, above)).with(OPEN, open);
+  }
+
+  @Override
+  public void onPlaced(
+      final World world,
+      final BlockPos pos,
+      final BlockState state,
+      final LivingEntity placer,
+      final ItemStack stack) {
+    if (!world.isClient) {
+      this.setColumn(world, pos, state, state.get(OPEN));
+    }
   }
 
   @Override
@@ -119,12 +129,7 @@ public class DrapeBlock extends FurnitureBlock {
       final BlockHitResult hit) {
     if (!world.isClient) {
       final boolean open = !state.get(OPEN);
-      for (final int offset :
-          DrapeColumn.offsets(dy -> this.continues(state, world.getBlockState(pos.up(dy))))) {
-        final BlockPos at = pos.up(offset);
-        world.setBlockState(
-            at, world.getBlockState(at).with(OPEN, open), Block.NOTIFY_ALL_AND_REDRAW);
-      }
+      this.setColumn(world, pos, state, open);
       world.playSound(
           null,
           pos,
@@ -135,6 +140,18 @@ public class DrapeBlock extends FurnitureBlock {
       world.emitGameEvent(player, GameEvent.BLOCK_CHANGE, pos);
     }
     return ActionResult.success(world.isClient);
+  }
+
+  private void setColumn(
+      final World world, final BlockPos pos, final BlockState state, final boolean open) {
+    for (final int offset :
+        DrapeColumn.offsets(dy -> this.continues(state, world.getBlockState(pos.up(dy))))) {
+      final BlockPos at = pos.up(offset);
+      final BlockState current = world.getBlockState(at);
+      if (current.get(OPEN) != open) {
+        world.setBlockState(at, current.with(OPEN, open), Block.NOTIFY_ALL_AND_REDRAW);
+      }
+    }
   }
 
   private boolean continues(final BlockState self, final BlockState other) {

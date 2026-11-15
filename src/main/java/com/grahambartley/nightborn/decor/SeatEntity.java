@@ -19,9 +19,9 @@ public class SeatEntity extends Entity {
   public void tick() {
     super.tick();
     if (!this.getWorld().isClient
-        && (!this.hasPassengers()
-            || !(this.getWorld().getBlockState(this.getBlockPos()).getBlock()
-                instanceof ChairBlock))) {
+        && !Seating.keepsSeat(
+            this.hasPassengers(),
+            this.getWorld().getBlockState(this.getBlockPos()).getBlock() instanceof ChairBlock)) {
       this.discard();
     }
   }

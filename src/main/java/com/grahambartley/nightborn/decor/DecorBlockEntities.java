@@ -1,6 +1,7 @@
 package com.grahambartley.nightborn.decor;
 
 import com.grahambartley.nightborn.Nightborn;
+import net.minecraft.block.Block;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
@@ -14,10 +15,9 @@ public final class DecorBlockEntities {
           Identifier.of(Nightborn.MOD_ID, "furniture"),
           BlockEntityType.Builder.create(
                   FurnitureBlockEntity::new,
-                  DecorBlocks.CANDELABRA,
-                  DecorBlocks.CHANDELIER,
-                  DecorBlocks.BURGUNDY_VELVET_DRAPE,
-                  DecorBlocks.EMERALD_VELVET_DRAPE)
+                  DecorBlocks.all().stream()
+                      .filter(AnimatedFurniture.class::isInstance)
+                      .toArray(Block[]::new))
               .build());
 
   private DecorBlockEntities() {}

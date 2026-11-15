@@ -1,6 +1,7 @@
 package com.grahambartley.nightborn.decor;
 
 import java.util.List;
+import java.util.function.ToIntFunction;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -41,8 +42,11 @@ public abstract class LightableFurnitureBlock extends FurnitureBlock {
 
   protected LightableFurnitureBlock(final Settings settings) {
     super(settings);
-    this.setDefaultState(
-        this.getStateManager().getDefaultState().with(LIT, false).with(FACING, Direction.NORTH));
+    this.setDefaultState(this.getDefaultState().with(LIT, false));
+  }
+
+  public static ToIntFunction<BlockState> luminance(final int level) {
+    return state -> state.get(LIT) ? level : 0;
   }
 
   protected abstract VoxelShape shapeFor(BlockState state);
@@ -63,7 +67,8 @@ public abstract class LightableFurnitureBlock extends FurnitureBlock {
 
   @Override
   protected void appendProperties(final StateManager.Builder<Block, BlockState> builder) {
-    builder.add(LIT, FACING);
+    super.appendProperties(builder);
+    builder.add(LIT);
   }
 
   @Override
@@ -116,10 +121,10 @@ public abstract class LightableFurnitureBlock extends FurnitureBlock {
       return ItemActionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
     }
     if (!world.isClient) {
-      switch (toggle.cost()) {
-        case WEAR -> stack.damage(1, player, LivingEntity.getSlotForHand(hand));
-        case USE_UP -> stack.decrementUnlessCreative(1, player);
-        case NONE -> {}
+      if (toggle.cost() == FlameToggle.Cost.WEAR) {
+        stack.damage(1, player, LivingEntity.getSlotForHand(hand));
+      } else {
+        stack.decrementUnlessCreative(1, player);
       }
       this.apply(world, pos, state, player, toggle);
     }
