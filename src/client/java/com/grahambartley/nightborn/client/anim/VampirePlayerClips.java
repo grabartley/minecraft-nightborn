@@ -5,7 +5,6 @@ import com.grahambartley.nightborn.levitation.Levitation;
 import com.grahambartley.nightborn.mob.VampirePose;
 import com.grahambartley.nightborn.network.PlayerCue;
 import com.grahambartley.nightborn.network.PlayerCuePayload;
-import com.grahambartley.nightborn.vampire.Vampires;
 import com.grahambartley.nightborn.vampire.VisibleState;
 import com.grahambartley.nightborn.vampire.VisibleStateAttachment;
 import java.util.Map;
@@ -50,9 +49,6 @@ public final class VampirePlayerClips {
   }
 
   public static Optional<VampirePose> clip(final PlayerEntity player) {
-    if (!Vampires.isVampire(player)) {
-      return Optional.empty();
-    }
     final VisibleState visible = VisibleStateAttachment.get(player);
     return state(player)
         .clip(
