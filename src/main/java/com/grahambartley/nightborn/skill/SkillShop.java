@@ -1,6 +1,5 @@
 package com.grahambartley.nightborn.skill;
 
-import com.grahambartley.nightborn.faction.FactionAttachment;
 import com.grahambartley.nightborn.network.BuySkillPayload;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.registry.DynamicRegistryManager;
@@ -21,7 +20,7 @@ public final class SkillShop {
 
   public static SkillPurchase.Verdict buy(final ServerPlayerEntity player, final Identifier id) {
     final DynamicRegistryManager registries = player.getServerWorld().getRegistryManager();
-    final SkillTree tree = SkillTree.of(FactionAttachment.get(player));
+    final SkillTree tree = SkillTree.of(player);
     final TreeProgress progress = SkillAttachment.get(player, tree);
     final SkillLookup lookup = SkillLookup.of(registries, progress, tree, id);
     if (lookup.verdict() != SkillPurchase.Verdict.ALLOWED) {

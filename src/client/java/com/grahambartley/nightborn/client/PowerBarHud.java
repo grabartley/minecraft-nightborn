@@ -2,7 +2,6 @@ package com.grahambartley.nightborn.client;
 
 import com.grahambartley.nightborn.Nightborn;
 import com.grahambartley.nightborn.blood.BloodAttachment;
-import com.grahambartley.nightborn.faction.FactionAttachment;
 import com.grahambartley.nightborn.skill.PowerBar;
 import com.grahambartley.nightborn.skill.PowerCooldownAttachment;
 import com.grahambartley.nightborn.skill.PowerCooldowns;
@@ -42,8 +41,7 @@ public final class PowerBarHud {
     }
     final Registry<Skill> skills = Skills.skills(client.world.getRegistryManager()).orElse(null);
     final List<Identifier> bar =
-        PowerBar.slots(
-            skills, SkillAttachment.get(player, SkillTree.of(FactionAttachment.get(player))));
+        PowerBar.slots(skills, SkillAttachment.get(player, SkillTree.of(player)));
     if (bar.isEmpty()) {
       return;
     }

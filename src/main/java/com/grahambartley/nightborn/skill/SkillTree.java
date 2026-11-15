@@ -1,7 +1,9 @@
 package com.grahambartley.nightborn.skill;
 
 import com.grahambartley.nightborn.faction.Faction;
+import com.grahambartley.nightborn.faction.FactionAttachment;
 import com.mojang.serialization.Codec;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.StringIdentifiable;
 
 public enum SkillTree implements StringIdentifiable {
@@ -18,6 +20,10 @@ public enum SkillTree implements StringIdentifiable {
 
   public static SkillTree of(final Faction faction) {
     return faction == Faction.VAMPIRE ? VAMPIRE : HUNTER;
+  }
+
+  public static SkillTree of(final PlayerEntity player) {
+    return of(FactionAttachment.get(player));
   }
 
   public String translationKey() {

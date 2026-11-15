@@ -18,4 +18,4 @@ The rules live in pure helpers, `SkillPurchase` and `PowerUse`, that both sides 
 - A data pack can retune or add skills, but registry changes need a world restart, not `/reload`.
 - Changing a skill's cost does not change what players already paid, so a refund always returns exactly what was spent.
 - A skill removed from the data stays in a player's record until an operator resets that tree, and gives nothing while it is missing: its attribute modifiers are cleared the next time the player's skills are applied.
-- Skill data is checked when the server starts. A skill in an unknown branch, a requirement that does not exist or sits in another tree, and two skills in one place on the screen are each logged as an error.
+- Skill data is checked when the server starts. A skill in an unknown branch, a skill that needs itself directly or through a loop, a requirement that does not exist, sits in another tree or is not on a row above the skill in its branch, and two skills in one place on the screen are each logged as an error.

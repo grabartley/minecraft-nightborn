@@ -13,7 +13,6 @@ import net.minecraft.command.argument.EntityArgumentType;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 
 final class SkillsCommand {
@@ -56,24 +55,10 @@ final class SkillsCommand {
                       progress.spent(),
                       progress.free(),
                       progress.ownedInOrder().size(),
-                      bloodlines(progress)),
+                      SkillNames.bloodlines(progress.bloodlines())),
               false);
     }
     return 1;
-  }
-
-  static Text bloodlines(final TreeProgress progress) {
-    if (progress.bloodlines().isEmpty()) {
-      return Text.translatable("nightborn.command.player.skills.none");
-    }
-    final MutableText names = Text.empty();
-    for (int i = 0; i < progress.bloodlines().size(); i++) {
-      if (i > 0) {
-        names.append(", ");
-      }
-      names.append(Text.translatable(SkillNames.branch(progress.bloodlines().get(i))));
-    }
-    return names;
   }
 
   private static int setPoints(
@@ -82,19 +67,22 @@ final class SkillsCommand {
     final int points = IntegerArgumentType.getInteger(context, POINTS);
     for (final ServerPlayerEntity player :
         EntityArgumentType.getPlayers(context, PlayerCommand.TARGETS)) {
-      final int spent = SkillAttachment.get(player, tree).spent();
-      if (points < spent) {
+      final TreeProgress progress = SkillAttachment.get(player, tree);
+      if (!progress.canSetEarned(points)) {
         context
             .getSource()
             .sendError(
                 Text.translatable(
-                    "nightborn.command.player.points.below_spent", player.getName(), spent));
+                    "nightborn.command.player.points.below_spent",
+                    player.getName(),
+                    progress.spent()));
         return 0;
       }
     }
     return PlayerCommand.forEach(
         context,
         "points",
+        tree.asString() + " " + points,
         player -> {
           final TreeProgress progress = SkillAttachment.get(player, tree);
           if (progress.earned() == points) {
@@ -110,6 +98,7 @@ final class SkillsCommand {
     return PlayerCommand.forEach(
         context,
         "reset_skills",
+        tree.asString(),
         player -> {
           final TreeProgress progress = SkillAttachment.get(player, tree);
           if (progress.bought().isEmpty()) {

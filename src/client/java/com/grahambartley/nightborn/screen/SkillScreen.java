@@ -3,7 +3,6 @@ package com.grahambartley.nightborn.screen;
 import com.grahambartley.nightborn.Nightborn;
 import com.grahambartley.nightborn.client.PowerSlotView;
 import com.grahambartley.nightborn.client.SkillKeys;
-import com.grahambartley.nightborn.faction.FactionAttachment;
 import com.grahambartley.nightborn.network.BuySkillPayload;
 import com.grahambartley.nightborn.skill.Skill;
 import com.grahambartley.nightborn.skill.SkillAttachment;
@@ -65,7 +64,7 @@ public final class SkillScreen extends Screen {
   }
 
   private SkillTree tree() {
-    return SkillTree.of(FactionAttachment.get(client.player));
+    return SkillTree.of(client.player);
   }
 
   private TreeProgress progress() {

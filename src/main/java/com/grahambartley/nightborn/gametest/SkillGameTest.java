@@ -206,7 +206,7 @@ public class SkillGameTest implements FabricGameTest {
         SkillTree.VAMPIRE,
         TreeProgress.EMPTY.withEarned(3).buy(THICK_BLOOD, 1, null).buy(BLOOD_RUSH, 2, null));
     vampire.changeGameMode(GameMode.SPECTATOR);
-    context.assertEquals(Powers.use(vampire, 0), PowerUse.Verdict.HELPLESS, "a spectator");
+    context.assertEquals(Powers.use(vampire, 0), PowerUse.Verdict.NO_POWER, "a spectator");
     vampire.changeGameMode(GameMode.SURVIVAL);
     vampire.setAttached(Downed.TYPE, new DownedState(DownedState.Phase.DOWNED, 200));
     context.assertEquals(Powers.use(vampire, 0), PowerUse.Verdict.HELPLESS, "a downed vampire");

@@ -1,7 +1,6 @@
 package com.grahambartley.nightborn.skill;
 
 import com.grahambartley.nightborn.Nightborn;
-import com.grahambartley.nightborn.faction.FactionAttachment;
 import com.grahambartley.nightborn.vampire.Modifiers;
 import java.util.HashMap;
 import java.util.List;
@@ -24,8 +23,7 @@ public final class SkillAttributes {
   public static void apply(final PlayerEntity player) {
     final Registry<Skill> skills =
         Skills.skills(player.getWorld().getRegistryManager()).orElse(null);
-    final TreeProgress owned =
-        SkillAttachment.get(player, SkillTree.of(FactionAttachment.get(player)));
+    final TreeProgress owned = SkillAttachment.get(player, SkillTree.of(player));
     final Map<Identifier, SkillAttribute> wanted = new HashMap<>();
     if (skills != null) {
       for (final Identifier id : owned.ownedInOrder()) {

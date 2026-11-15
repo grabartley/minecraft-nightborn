@@ -2,7 +2,6 @@ package com.grahambartley.nightborn.skill;
 
 import com.grahambartley.nightborn.blood.BloodAttachment;
 import com.grahambartley.nightborn.downed.Downed;
-import com.grahambartley.nightborn.faction.FactionAttachment;
 import com.grahambartley.nightborn.network.UsePowerPayload;
 import com.grahambartley.nightborn.weakened.Weakened;
 import java.util.List;
@@ -25,10 +24,12 @@ public final class Powers {
   }
 
   public static PowerUse.Verdict use(final ServerPlayerEntity player, final int slot) {
+    if (player.isSpectator() || !player.isAlive()) {
+      return PowerUse.Verdict.NO_POWER;
+    }
     final Registry<Skill> skills =
         Skills.skills(player.getServerWorld().getRegistryManager()).orElse(null);
-    final TreeProgress progress =
-        SkillAttachment.get(player, SkillTree.of(FactionAttachment.get(player)));
+    final TreeProgress progress = SkillAttachment.get(player, SkillTree.of(player));
     final List<Identifier> bar = PowerBar.slots(skills, progress);
     final Identifier id = slot >= 0 && slot < bar.size() ? bar.get(slot) : null;
     final SkillPower power = id == null ? null : skills.get(id).power().orElseThrow();
@@ -37,7 +38,7 @@ public final class Powers {
     final PowerUse.Verdict verdict =
         PowerUse.check(
             power != null,
-            Downed.helpless(player) || player.isSpectator() || !player.isAlive(),
+            Downed.helpless(player),
             Weakened.sources(player).level(Downed.state(player) != null) > 0,
             id == null ? 0L : cooldowns.ticksLeft(id, now),
             BloodAttachment.get(player),

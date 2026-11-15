@@ -62,6 +62,10 @@ public record TreeProgress(
     return equals(EMPTY);
   }
 
+  public boolean canSetEarned(final int points) {
+    return points >= spent();
+  }
+
   public TreeProgress withEarned(final int points) {
     return new TreeProgress(points, blood, bought, bloodlines);
   }

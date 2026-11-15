@@ -1,5 +1,8 @@
 package com.grahambartley.nightborn.skill;
 
+import java.util.List;
+import net.minecraft.text.MutableText;
+import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
 public final class SkillNames {
@@ -16,5 +19,19 @@ public final class SkillNames {
 
   public static String branch(final Identifier id) {
     return "skill_branch." + id.getNamespace() + "." + id.getPath();
+  }
+
+  public static Text bloodlines(final List<Identifier> bloodlines) {
+    if (bloodlines.isEmpty()) {
+      return Text.translatable("nightborn.command.player.skills.none");
+    }
+    final MutableText names = Text.empty();
+    for (int i = 0; i < bloodlines.size(); i++) {
+      if (i > 0) {
+        names.append(", ");
+      }
+      names.append(Text.translatable(branch(bloodlines.get(i))));
+    }
+    return names;
   }
 }

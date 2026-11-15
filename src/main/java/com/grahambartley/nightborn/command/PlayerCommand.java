@@ -106,6 +106,15 @@ final class PlayerCommand {
       final String action,
       final Predicate<ServerPlayerEntity> change)
       throws CommandSyntaxException {
+    return forEach(context, action, "", change);
+  }
+
+  static int forEach(
+      final CommandContext<ServerCommandSource> context,
+      final String action,
+      final String detail,
+      final Predicate<ServerPlayerEntity> change)
+      throws CommandSyntaxException {
     final ServerCommandSource source = context.getSource();
     final Collection<ServerPlayerEntity> players = EntityArgumentType.getPlayers(context, TARGETS);
     int changed = 0;
@@ -113,10 +122,11 @@ final class PlayerCommand {
       if (change.test(player)) {
         changed++;
         Nightborn.LOGGER.info(
-            "{} used /nightborn player {} {}",
+            "{} used /nightborn player {} {} {}",
             source.getName(),
             player.getName().getString(),
-            action);
+            action,
+            detail);
         source.sendFeedback(
             () ->
                 Text.translatable("nightborn.command.player." + action + ".done", player.getName()),

@@ -92,4 +92,14 @@ class TreeProgressTest {
             .getOrThrow();
     assertEquals(progress, loaded);
   }
+
+  @ParameterizedTest(name = "spent {0}, set to {1} -> {2}")
+  @CsvSource({"3, 0, false", "3, 2, false", "3, 3, true", "3, 9, true", "0, 0, true"})
+  @DisplayName("an operator cannot set points below what was already spent")
+  void canSetEarned(final int spent, final int points, final boolean allowed) {
+    final TreeProgress progress =
+        new TreeProgress(
+            10, 0.0F, spent == 0 ? List.of() : List.of(new BoughtSkill(THICK, spent)), List.of());
+    assertEquals(allowed, progress.canSetEarned(points));
+  }
 }

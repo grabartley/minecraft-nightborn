@@ -16,7 +16,12 @@ public final class PowerBar {
       @Nullable final Registry<Skill> skills, final TreeProgress progress) {
     return skills == null
         ? List.of()
-        : slots(progress, id -> skills.get(id) != null && skills.get(id).active());
+        : slots(
+            progress,
+            id -> {
+              final Skill skill = skills.get(id);
+              return skill != null && skill.active();
+            });
   }
 
   public static List<Identifier> slots(
