@@ -1,0 +1,43 @@
+{
+	"format_version": "1.21.6",
+	"credit": "Made with Blockbench",
+	"textures": {
+		"particle": "nightborn:block/garlic_string",
+		"string": "nightborn:block/garlic_string"
+	},
+	"elements": [
+		{
+			"name": "string",
+			"from": [
+				0,
+				0,
+				15.2
+			],
+			"to": [
+				16,
+				16,
+				15.2
+			],
+			"faces": {
+				"north": {
+					"uv": [
+						0,
+						0,
+						16,
+						16
+					],
+					"texture": "#string"
+				},
+				"south": {
+					"uv": [
+						0,
+						0,
+						16,
+						16
+					],
+					"texture": "#string"
+				}
+			}
+		}
+	]
+}
