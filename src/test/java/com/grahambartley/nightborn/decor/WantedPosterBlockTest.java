@@ -25,7 +25,7 @@ class WantedPosterBlockTest {
 
   @ParameterizedTest(name = "{0} portraits")
   @ValueSource(ints = {3})
-  void offersThreeFaces(final int portraits) {
+  void offersThreePortraits(final int portraits) {
     assertEquals(portraits, WantedPosterBlock.PORTRAITS);
     assertEquals(portraits, WantedPosterBlock.PORTRAIT.getValues().size());
   }

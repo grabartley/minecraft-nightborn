@@ -26,7 +26,7 @@ class RackHooksTest {
   }
 
   @ParameterizedTest(name = "height {0} is hook {1}")
-  @CsvSource({"0.95, 0", "0.6, 0", "0.47, 0", "0.46, 1", "0.3, 1", "0.02, 1"})
+  @CsvSource({"0.95, 0", "0.6, 0", "0.5, 0", "0.49, 1", "0.3, 1", "0.02, 1"})
   void theUpperHalfIsTheUpperRow(final double height, final int hook) {
     assertEquals(hook, RackHooks.hookAt(height));
   }

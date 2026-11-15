@@ -1,6 +1,7 @@
 package com.grahambartley.nightborn.decor;
 
 import com.mojang.serialization.MapCodec;
+import java.util.Optional;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockEntityProvider;
 import net.minecraft.block.BlockState;
@@ -22,7 +23,7 @@ import net.minecraft.world.event.GameEvent;
 public class WeaponRackBlock extends WallDecorBlock implements BlockEntityProvider {
 
   public static final MapCodec<WeaponRackBlock> CODEC = createCodec(WeaponRackBlock::new);
-  private static final VoxelShape NORTH = Block.createCuboidShape(1, 1, 12, 15, 16, 16);
+  private static final VoxelShape NORTH = Block.createCuboidShape(0.5, 1, 12, 15.5, 16, 16);
 
   public WeaponRackBlock(final Settings settings) {
     super(settings, NORTH);
@@ -36,6 +37,17 @@ public class WeaponRackBlock extends WallDecorBlock implements BlockEntityProvid
   @Override
   public BlockEntity createBlockEntity(final BlockPos pos, final BlockState state) {
     return new WeaponRackBlockEntity(pos, state);
+  }
+
+  private static Optional<RackUse> decide(
+      final WeaponRackBlockEntity rack,
+      final int hook,
+      final ItemStack held,
+      final PlayerEntity player) {
+    return RackUse.decide(
+        held.isIn(DecorTags.WEAPON_RACK_HOLDS),
+        player.getMainHandStack().isEmpty(),
+        rack.get(hook).isEmpty());
   }
 
   private static int hook(final BlockPos pos, final BlockHitResult hit) {
@@ -55,11 +67,7 @@ public class WeaponRackBlock extends WallDecorBlock implements BlockEntityProvid
       return ItemActionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
     }
     final int hook = hook(pos, hit);
-    final boolean hangs =
-        RackUse.decide(stack.isIn(DecorTags.WEAPON_RACK_HOLDS), false, rack.get(hook).isEmpty())
-            .filter(use -> use == RackUse.HANG)
-            .isPresent();
-    if (!hangs) {
+    if (!decide(rack, hook, stack, player).equals(Optional.of(RackUse.HANG))) {
       return ItemActionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
     }
     if (!world.isClient) {
@@ -82,11 +90,7 @@ public class WeaponRackBlock extends WallDecorBlock implements BlockEntityProvid
       return ActionResult.PASS;
     }
     final int hook = hook(pos, hit);
-    final boolean takes =
-        RackUse.decide(false, player.getMainHandStack().isEmpty(), rack.get(hook).isEmpty())
-            .filter(use -> use == RackUse.TAKE)
-            .isPresent();
-    if (!takes) {
+    if (!decide(rack, hook, player.getMainHandStack(), player).equals(Optional.of(RackUse.TAKE))) {
       return ActionResult.PASS;
     }
     if (!world.isClient) {
