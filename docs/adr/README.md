@@ -9,3 +9,4 @@ Shared engineering standards across all the mods in this family live in [`../sta
 | Record | Decision |
 |---|---|
 | [0001](0001-a-linter-forbids-comments-rather-than-a-formatter-stripping-them.md) | A linter forbids comments rather than a formatter stripping them |
+| [0003](0003-animated-furniture-is-one-geckolib-block-entity-driven-by-a-block-state.md) | Animated furniture is one GeckoLib block entity driven by a block state |

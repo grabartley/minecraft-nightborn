@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "pattern": [
+    "S",
+    "S"
+  ],
+  "key": {
+    "S": {
+      "item": "nightborn:gothic_stone_brick_slab"
+    }
+  },
+  "result": {
+    "id": "nightborn:carved_gothic_stone",
+    "count": 1
+  }
+}

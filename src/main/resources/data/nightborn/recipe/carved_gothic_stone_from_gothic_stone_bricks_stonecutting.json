@@ -1,0 +1,10 @@
+{
+  "type": "minecraft:stonecutting",
+  "ingredient": {
+    "item": "nightborn:gothic_stone_bricks"
+  },
+  "result": {
+    "id": "nightborn:carved_gothic_stone",
+    "count": 1
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "replace": false,
+  "values": [
+    "nightborn:ebony_fence",
+    "nightborn:ebony_planks",
+    "nightborn:ebony_slab",
+    "nightborn:ebony_stairs",
+    "nightborn:ornate_chair",
+    "nightborn:ornate_table"
+  ]
+}

@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/template_wall_side_tall",
+  "textures": {
+    "wall": "nightborn:block/mossy_gothic_stone_bricks"
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "pattern": [
+    "B  ",
+    "BB ",
+    "BBB"
+  ],
+  "key": {
+    "B": {
+      "item": "nightborn:cracked_gothic_stone_bricks"
+    }
+  },
+  "result": {
+    "id": "nightborn:cracked_gothic_stone_brick_stairs",
+    "count": 4
+  }
+}

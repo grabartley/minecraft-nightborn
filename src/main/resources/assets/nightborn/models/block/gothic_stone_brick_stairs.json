@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/stairs",
+  "textures": {
+    "bottom": "nightborn:block/gothic_stone_bricks",
+    "top": "nightborn:block/gothic_stone_bricks",
+    "side": "nightborn:block/gothic_stone_bricks"
+  }
+}

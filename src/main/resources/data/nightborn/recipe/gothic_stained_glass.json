@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "pattern": [
+    "RYR",
+    "ENE",
+    "RYR"
+  ],
+  "key": {
+    "R": {
+      "item": "minecraft:red_stained_glass"
+    },
+    "Y": {
+      "item": "minecraft:yellow_stained_glass"
+    },
+    "E": {
+      "item": "minecraft:green_stained_glass"
+    },
+    "N": {
+      "item": "minecraft:iron_nugget"
+    }
+  },
+  "result": {
+    "id": "nightborn:gothic_stained_glass",
+    "count": 8
+  }
+}

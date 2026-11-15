@@ -1,0 +1,6 @@
+{
+  "parent": "nightborn:block/ornate_table_frame",
+  "textures": {
+    "particle": "nightborn:block/ebony_planks"
+  }
+}

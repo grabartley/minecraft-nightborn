@@ -1,0 +1,20 @@
+{
+  "replace": false,
+  "values": [
+    "nightborn:candelabra",
+    "nightborn:carved_gothic_stone",
+    "nightborn:chandelier",
+    "nightborn:cracked_gothic_stone_brick_slab",
+    "nightborn:cracked_gothic_stone_brick_stairs",
+    "nightborn:cracked_gothic_stone_brick_wall",
+    "nightborn:cracked_gothic_stone_bricks",
+    "nightborn:gothic_stone_brick_slab",
+    "nightborn:gothic_stone_brick_stairs",
+    "nightborn:gothic_stone_brick_wall",
+    "nightborn:gothic_stone_bricks",
+    "nightborn:mossy_gothic_stone_brick_slab",
+    "nightborn:mossy_gothic_stone_brick_stairs",
+    "nightborn:mossy_gothic_stone_brick_wall",
+    "nightborn:mossy_gothic_stone_bricks"
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "decorations",
+  "pattern": [
+    "SSS",
+    "WWW",
+    "WWW"
+  ],
+  "key": {
+    "S": {
+      "item": "minecraft:stick"
+    },
+    "W": {
+      "item": "minecraft:red_wool"
+    }
+  },
+  "result": {
+    "id": "nightborn:burgundy_velvet_drape",
+    "count": 3
+  }
+}

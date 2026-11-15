@@ -1,5 +1,9 @@
 package com.grahambartley.nightborn;
 
+import com.grahambartley.nightborn.decor.DecorBlockEntities;
+import com.grahambartley.nightborn.decor.DecorBlocks;
+import com.grahambartley.nightborn.decor.DecorEntities;
+import com.grahambartley.nightborn.decor.DecorItemGroup;
 import net.fabricmc.api.ModInitializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,6 +15,10 @@ public class Nightborn implements ModInitializer {
 
   @Override
   public void onInitialize() {
+    DecorBlocks.initialize();
+    DecorBlockEntities.initialize();
+    DecorEntities.initialize();
+    DecorItemGroup.initialize();
     LOGGER.info("Nightborn initialised");
   }
 }

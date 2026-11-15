@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "decorations",
+  "pattern": [
+    "SRS",
+    " P ",
+    " P "
+  ],
+  "key": {
+    "S": {
+      "item": "nightborn:ebony_slab"
+    },
+    "R": {
+      "item": "minecraft:red_carpet"
+    },
+    "P": {
+      "item": "nightborn:ebony_planks"
+    }
+  },
+  "result": {
+    "id": "nightborn:ornate_table",
+    "count": 1
+  }
+}

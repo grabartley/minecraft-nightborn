@@ -2,7 +2,7 @@
 
 Rise as a vampire or hunt them down. Feed, take bat form and grow your bloodline, or take up stake and silver against the households hidden in the dark.
 
-> **Alpha:** Nightborn is in early development and has no gameplay yet.
+> **Alpha:** Nightborn is in early development. Its candlelit furniture and gothic building blocks are in, and the vampires and hunters are still to come.
 > The [product requirements](docs/prd.md) say what the mod will be.
 
 ## Documentation

@@ -25,6 +25,10 @@ repositories {
 		url 'https://maven.terraformersmc.com/'
 	}
 	maven {
+		name = 'GeckoLib'
+		url 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/'
+	}
+	maven {
 		name = 'BlameJared'
 		url 'https://maven.blamejared.com/'
 	}
@@ -81,6 +85,7 @@ dependencies {
 	mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
 	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+	modImplementation "software.bernie.geckolib:geckolib-fabric-1.21.1:${project.geckolib_version}"
 
 	modCompileOnly "com.terraformersmc:modmenu:${project.modmenu_version}"
 	modLocalRuntime "com.terraformersmc:modmenu:${project.modmenu_version}"
@@ -311,6 +316,7 @@ modrinth {
 		: 'No changelog provided.'
 	dependencies {
 		required.project 'fabric-api'
+		required.project 'geckolib'
 	}
 }
 
@@ -337,5 +343,6 @@ tasks.register('curseforge', TaskPublishCurseForge) {
 		mainFile.addJavaVersion('Java 21')
 		mainFile.addEnvironment('Client', 'Server')
 		mainFile.addRequirement('fabric-api')
+		mainFile.addRequirement('geckolib')
 	}
 }

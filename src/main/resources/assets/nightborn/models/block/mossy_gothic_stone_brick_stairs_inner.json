@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/inner_stairs",
+  "textures": {
+    "bottom": "nightborn:block/mossy_gothic_stone_bricks",
+    "top": "nightborn:block/mossy_gothic_stone_bricks",
+    "side": "nightborn:block/mossy_gothic_stone_bricks"
+  }
+}
