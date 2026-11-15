@@ -2,12 +2,12 @@ package com.grahambartley.nightborn.client.gore;
 
 import com.grahambartley.nightborn.client.state.ClientStateService;
 import com.grahambartley.nightborn.network.GorePayload;
+import com.grahambartley.nightborn.smoke.SmokeParticles;
 import java.util.Optional;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.Entity;
-import net.minecraft.particle.ParticleTypes;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
@@ -75,7 +75,7 @@ public final class BloodFx {
     }
     for (int i = 0; i < burst.smoke(); i++) {
       world.addParticle(
-          ParticleTypes.LARGE_SMOKE,
+          SmokeParticles.VAMPIRE_SMOKE,
           origin.x + random.nextGaussian() * 0.2,
           origin.y + random.nextGaussian() * 0.3,
           origin.z + random.nextGaussian() * 0.2,

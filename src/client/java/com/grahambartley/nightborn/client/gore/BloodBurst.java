@@ -31,7 +31,7 @@ public record BloodBurst(
         full.spread,
         full.allAround,
         full.pools,
-        full.smoke,
+        full.smoke * share / 4,
         look);
   }
 

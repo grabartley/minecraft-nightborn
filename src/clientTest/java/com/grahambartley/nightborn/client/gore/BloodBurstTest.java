@@ -67,4 +67,19 @@ class BloodBurstTest {
     assertEquals(kind == Gore.STAKED, burst.allAround());
     assertEquals(kind == Gore.STAKED, burst.smoke() > 0);
   }
+
+  @ParameterizedTest(name = "gore {0}, particles {1}: {2} puffs")
+  @CsvSource({
+    "FULL, ALL, 12",
+    "FULL, DECREASED, 6",
+    "REDUCED, ALL, 6",
+    "REDUCED, DECREASED, 3",
+    "OFF, ALL, 0",
+    "FULL, MINIMAL, 0"
+  })
+  @DisplayName("a staked vampire's smoke is cut down with its blood")
+  void stakedSmokeFollowsSettings(
+      final GoreLevel gore, final ParticlesMode particles, final int smoke) {
+    assertEquals(smoke, BloodBurst.of(gore, particles, Gore.STAKED).smoke());
+  }
 }
