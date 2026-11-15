@@ -16,20 +16,24 @@ import org.junit.jupiter.params.provider.EnumSource;
 
 class VampirePoseTest {
 
-  @ParameterizedTest(name = "downed {0}, levitating {1}, landing {2}: {6}")
+  @ParameterizedTest(name = "in coffin {0}, downed {1}, levitating {2}, landing {3}: {7}")
   @CsvSource({
-    "true, true, false, false, 0.9, 0.3, DOWNED, downed",
-    "false, true, false, false, 0.0, 0.0, LEVITATE, levitate",
-    "false, true, false, false, 0.0, 0.1, LEVITATE_MOVE, levitate_move",
-    "false, true, false, false, 0.0, 0.3, LEVITATE_SPRINT, levitate_sprint",
-    "false, true, false, true, 0.0, 0.1, LEVITATE_SPRINT, levitate_sprint",
-    "false, false, true, false, 0.9, 0.3, LAND, land",
-    "false, false, false, false, 0.9, 0.3, RUN, run",
-    "false, false, false, false, 0.3, 0.1, WALK, walk",
-    "false, false, false, false, 0.05, 0.0, IDLE, idle"
+    "true, true, true, true, true, 0.9, 0.3, COFFIN_SLEEP, coffin_sleep",
+    "true, false, false, false, false, 0.0, 0.0, COFFIN_SLEEP, coffin_sleep",
+    "false, true, true, false, false, 0.9, 0.3, DOWNED, downed",
+    "false, false, true, false, false, 0.0, 0.0, LEVITATE, levitate",
+    "false, false, true, false, false, 0.0, 0.1, LEVITATE_MOVE, levitate_move",
+    "false, false, true, false, false, 0.0, 0.3, LEVITATE_SPRINT, levitate_sprint",
+    "false, false, true, false, true, 0.0, 0.1, LEVITATE_SPRINT, levitate_sprint",
+    "false, false, false, true, false, 0.9, 0.3, LAND, land",
+    "false, false, false, false, false, 0.9, 0.3, RUN, run",
+    "false, false, false, false, false, 0.3, 0.1, WALK, walk",
+    "false, false, false, false, false, 0.05, 0.0, IDLE, idle"
   })
-  @DisplayName("downed wins over levitating, which wins over landing and moving")
+  @DisplayName(
+      "sleeping in a coffin wins over downed, which wins over levitating, landing and moving")
   void pose(
+      final boolean inCoffin,
       final boolean downed,
       final boolean levitating,
       final boolean landing,
@@ -40,7 +44,8 @@ class VampirePoseTest {
       final String animation) {
     assertEquals(
         pose,
-        VampirePose.of(new VampirePose.Cue(downed, levitating, landing, sprinting, swing, speed)));
+        VampirePose.of(
+            new VampirePose.Cue(inCoffin, downed, levitating, landing, sprinting, swing, speed)));
     assertEquals(animation, pose.animation());
   }
 
@@ -72,6 +77,7 @@ class VampirePoseTest {
     "RISE, true",
     "FEED, true",
     "DRAIN, true",
+    "COFFIN_SLEEP, true",
     "WEAKENED, false",
     "WEAKENED_WALK, false",
     "LEVITATE, false",
@@ -90,6 +96,7 @@ class VampirePoseTest {
     "RISE, false",
     "FEED, false",
     "DRAIN, false",
+    "COFFIN_SLEEP, false",
     "LEVITATE, true",
     "LAND, true",
     "WEAKENED, true",
@@ -98,6 +105,20 @@ class VampirePoseTest {
   @DisplayName("a swing or item use plays over every pose except those that hold both arms")
   void allowsActions(final VampirePose pose, final boolean allows) {
     assertEquals(allows, pose.allowsActions());
+  }
+
+  @ParameterizedTest(name = "{0}: shows held items {1}")
+  @CsvSource({
+    "COFFIN_SLEEP, false",
+    "DOWNED, true",
+    "FEED, true",
+    "VOMIT, true",
+    "LEVITATE, true",
+    "IDLE, true"
+  })
+  @DisplayName("only sleeping in a coffin puts away what the vampire holds")
+  void showsHeldItems(final VampirePose pose, final boolean shows) {
+    assertEquals(shows, pose.showsHeldItems());
   }
 
   @ParameterizedTest(name = "swinging {0}, using {1}, right arm {2}: {3}")

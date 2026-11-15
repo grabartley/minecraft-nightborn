@@ -1,6 +1,7 @@
 package com.grahambartley.nightborn.client.anim;
 
 import com.grahambartley.nightborn.client.vomit.VomitFx;
+import com.grahambartley.nightborn.coffin.CoffinSleepers;
 import com.grahambartley.nightborn.levitation.Levitation;
 import com.grahambartley.nightborn.mob.VampirePose;
 import com.grahambartley.nightborn.network.PlayerCue;
@@ -59,7 +60,8 @@ public final class VampirePlayerClips {
                 Math.hypot(player.getX() - player.prevX, player.getZ() - player.prevZ),
                 visible.downed(),
                 visible.feeding(),
-                visible.isWeakened() && staggersOnFoot(player)),
+                visible.isWeakened() && staggersOnFoot(player),
+                CoffinSleepers.inCoffin(player)),
             new PlayerClipState.Lengths(
                 VampireClips.seconds(VampirePose.LAND),
                 VampireClips.seconds(VampirePose.VOMIT),
@@ -77,6 +79,10 @@ public final class VampirePlayerClips {
                     player.isUsingItem(),
                     (player.getActiveHand() == Hand.MAIN_HAND)
                         == (player.getMainArm() == Arm.RIGHT)));
+  }
+
+  public static boolean showsHeldItems(final PlayerEntity player) {
+    return clip(player).map(VampirePose::showsHeldItems).orElse(true);
   }
 
   public static double vomitingSeconds(final PlayerEntity player, final float partialTick) {
