@@ -272,5 +272,6 @@
   "item.nightborn.vampire_bat_spawn_egg": "Vampirfledermaus-Spawn-Ei",
   "subtitles.nightborn.entity.vampire.hurt": "Vampir wird verletzt",
   "subtitles.nightborn.entity.vampire.death": "Vampir stirbt",
-  "subtitles.nightborn.entity.vampire.bite": "Vampir beißt"
+  "subtitles.nightborn.entity.vampire.bite": "Vampir beißt",
+  "subtitles.nightborn.entity.vampire_bat.bite": "Vampirfledermaus beißt"
 }

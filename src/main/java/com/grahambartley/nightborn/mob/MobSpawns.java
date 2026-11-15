@@ -15,6 +15,8 @@ import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.tag.TagKey;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Box;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.random.Random;
 import net.minecraft.world.Heightmap;
 import net.minecraft.world.ServerWorldAccess;
@@ -91,6 +93,20 @@ public final class MobSpawns {
             world.getLightLevel(pos),
             random.nextInt(100),
             ServerConfigService.current().mobs().vampireBatSpawnChance())) {
+      return false;
+    }
+    if (reason == SpawnReason.NATURAL
+        && MobSpawnRules.crowded(
+            world
+                .getEntitiesByClass(
+                    VampireBatEntity.class,
+                    Box.of(
+                        Vec3d.ofCenter(pos),
+                        MobSpawnRules.NEARBY_RANGE * 2,
+                        MobSpawnRules.NEARBY_RANGE * 2,
+                        MobSpawnRules.NEARBY_RANGE * 2),
+                    bat -> true)
+                .size())) {
       return false;
     }
     return MobEntity.canMobSpawn(type, world, reason, pos, random);

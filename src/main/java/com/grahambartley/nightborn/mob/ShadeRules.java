@@ -2,6 +2,8 @@ package com.grahambartley.nightborn.mob;
 
 import com.grahambartley.nightborn.core.NightTime;
 import com.grahambartley.nightborn.sun.DirectSun;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.world.World;
 
 public final class ShadeRules {
 
@@ -15,14 +17,9 @@ public final class ShadeRules {
             || !NightTime.isNight(false, timeOfDay + DAWN_WARNING));
   }
 
-  public static boolean seeksShade(
-      final boolean fixedTime,
-      final long timeOfDay,
-      final boolean openSky,
-      final boolean wet,
-      final boolean inPowderSnow,
-      final boolean inClosedCoffin) {
-    return DirectSun.exposed(
-        sunIsNear(fixedTime, timeOfDay), openSky, wet, inPowderSnow, inClosedCoffin);
+  public static boolean endangered(final LivingEntity vampire) {
+    final World world = vampire.getWorld();
+    return DirectSun.under(
+        vampire, sunIsNear(world.getDimension().hasFixedTime(), world.getTimeOfDay()));
   }
 }

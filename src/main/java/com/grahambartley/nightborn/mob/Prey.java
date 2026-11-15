@@ -2,6 +2,7 @@ package com.grahambartley.nightborn.mob;
 
 import com.grahambartley.nightborn.blood.BloodQuality;
 import com.grahambartley.nightborn.core.NightTime;
+import com.grahambartley.nightborn.feeding.BiteRules;
 import com.grahambartley.nightborn.vampire.Vampires;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -13,7 +14,12 @@ public final class Prey {
 
   public static boolean isPrey(
       final boolean warmBlood, final boolean vampire, final boolean untouchablePlayer) {
-    return warmBlood && !vampire && !untouchablePlayer;
+    return BiteRules.drinkable(warmBlood, vampire) && !untouchablePlayer;
+  }
+
+  public static boolean hasDrinkableBlood(final LivingEntity target) {
+    return BiteRules.drinkable(
+        BloodQuality.of(target.getType()).isPresent(), Vampires.isVampire(target));
   }
 
   public static boolean isPrey(final LivingEntity target) {

@@ -2,12 +2,12 @@ package com.grahambartley.nightborn.mob;
 
 import com.grahambartley.nightborn.config.NightbornConfig;
 import com.grahambartley.nightborn.server.ServerConfigService;
+import com.grahambartley.nightborn.sun.DirectSun;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.passive.BatEntity;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.Difficulty;
@@ -81,6 +81,7 @@ public class VampireBatEntity extends BatEntity implements GeoEntity {
         victim,
         (float) getAttributeValue(EntityAttributes.GENERIC_ATTACK_DAMAGE),
         config.turning().vampireBatTurnChance(),
+        MobSounds.VAMPIRE_BAT_BITE,
         config.turning())) {
       getWorld().sendEntityStatus(this, BITE_STATUS);
     }
@@ -119,7 +120,7 @@ public class VampireBatEntity extends BatEntity implements GeoEntity {
         world.getDifficulty() == Difficulty.PEACEFUL,
         world.getDimension().hasFixedTime(),
         world.getTimeOfDay(),
-        world.isSkyVisible(BlockPos.ofFloored(getX(), getEyeY(), getZ())));
+        DirectSun.openSkyAbove(this));
   }
 
   @Nullable

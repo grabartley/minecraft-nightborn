@@ -6,6 +6,8 @@ public final class MobSpawnRules {
 
   static final int DARK_CAVE_LIGHT = 4;
   static final int MAX_ESCORT = 2;
+  public static final int MAX_NEARBY_BATS = 2;
+  public static final double NEARBY_RANGE = 48.0;
 
   private MobSpawnRules() {}
 
@@ -28,6 +30,10 @@ public final class MobSpawnRules {
     final boolean darkCave = !openSky && light <= DARK_CAVE_LIGHT;
     final boolean openNight = openSky && NightTime.isNight(fixedTime, timeOfDay);
     return (darkCave || openNight) && roll < chance;
+  }
+
+  public static boolean crowded(final int nearbyBats) {
+    return nearbyBats >= MAX_NEARBY_BATS;
   }
 
   public static int escortSize(final int roll, final int chance, final int extraBats) {

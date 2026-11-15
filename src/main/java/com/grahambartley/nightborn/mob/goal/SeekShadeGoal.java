@@ -1,6 +1,5 @@
 package com.grahambartley.nightborn.mob.goal;
 
-import com.grahambartley.nightborn.coffin.CoffinSleepers;
 import com.grahambartley.nightborn.downed.Downed;
 import com.grahambartley.nightborn.downed.DownedRules;
 import com.grahambartley.nightborn.mob.ShadeRules;
@@ -22,20 +21,11 @@ public class SeekShadeGoal extends EscapeSunlightGoal {
     super(mob, speed);
   }
 
-  public static boolean exposed(final PathAwareEntity mob) {
-    final World world = mob.getWorld();
-    return ShadeRules.seeksShade(
-        world.getDimension().hasFixedTime(),
-        world.getTimeOfDay(),
-        world.isSkyVisible(BlockPos.ofFloored(mob.getX(), mob.getEyeY(), mob.getZ())),
-        mob.isWet(),
-        mob.inPowderSnow || mob.wasInPowderSnow,
-        CoffinSleepers.shelteredBy(mob));
-  }
-
   @Override
   public boolean canStart() {
-    return !DownedRules.helpless(Downed.state(mob)) && exposed(mob) && targetShadedPos();
+    return !DownedRules.helpless(Downed.state(mob))
+        && ShadeRules.endangered(mob)
+        && targetShadedPos();
   }
 
   @Override

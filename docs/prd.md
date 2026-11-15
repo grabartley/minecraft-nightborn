@@ -437,7 +437,7 @@ Vampires are rare. They live in households hidden in four kinds of structure, ea
 | HOME-7 | A castle's vampire lord is a boss with a health bar and its own powers. It is downed and escapes like any vampire, its bar shows when it is downed or escaping, and only a stake or the sun ends the fight |
 | HOME-8 | Structures hold loot chests with gear, Blood Bottles, decor and rare items found nowhere else |
 | HOME-9 | Vampire mobs spawn rarely at night in the open, alone or with one or two vampire bats |
-| HOME-10 | Vampire bats spawn rarely in dark caves and at night. In the dark or at night they swoop at warm-blooded creatures and bite them (TURN-1) |
+| HOME-10 | Vampire bats spawn rarely in dark caves and at night. Under cover, or at night in the open, they swoop at warm-blooded creatures and bite them (TURN-1) |
 | HOME-11 | Vampire mobs ignore vampire players unless attacked |
 | HOME-12 | Structure layouts, loot, structure spawn rates and the biomes vampire mobs and vampire bats spawn in are data, changed by a data pack |
 | HOME-13 | Vampire mobs hunt humans, villagers and animals at night to feed on them, and their bites can start bite sickness (TURN-1) |

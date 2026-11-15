@@ -272,5 +272,6 @@
   "item.nightborn.vampire_bat_spawn_egg": "Œuf d'apparition de chauve-souris vampire",
   "subtitles.nightborn.entity.vampire.hurt": "Un vampire est blessé",
   "subtitles.nightborn.entity.vampire.death": "Un vampire meurt",
-  "subtitles.nightborn.entity.vampire.bite": "Un vampire mord"
+  "subtitles.nightborn.entity.vampire.bite": "Un vampire mord",
+  "subtitles.nightborn.entity.vampire_bat.bite": "Une chauve-souris vampire mord"
 }

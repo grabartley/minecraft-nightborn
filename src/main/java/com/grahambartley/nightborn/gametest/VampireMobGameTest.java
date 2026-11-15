@@ -9,6 +9,7 @@ import com.grahambartley.nightborn.feeding.FeedingSessions;
 import com.grahambartley.nightborn.mob.BatEscort;
 import com.grahambartley.nightborn.mob.NightbornMobs;
 import com.grahambartley.nightborn.mob.Prey;
+import com.grahambartley.nightborn.mob.ShadeRules;
 import com.grahambartley.nightborn.mob.VampireEntity;
 import com.grahambartley.nightborn.mob.goal.FleeWhileEscapingGoal;
 import com.grahambartley.nightborn.mob.goal.LieDownedGoal;
@@ -242,6 +243,24 @@ public class VampireMobGameTest implements FabricGameTest {
     context.complete();
   }
 
+  @GameTest(templateName = ARENA, tickLimit = TestPlayers.READY + 10)
+  public void aVampireMobDrinksNothingFromAVampirePlayer(final TestContext context) {
+    final VampireEntity vampire = still(context, new BlockPos(4, 2, 4));
+    final ServerPlayerEntity player = TestPlayers.vampire(context, new BlockPos(5, 2, 4));
+    context.runAtTick(
+        TestPlayers.READY,
+        () -> {
+          vampire.setHealth(10.0F);
+          vampire.setTarget(player);
+          final float before = player.getHealth();
+          context.assertTrue(vampire.tryAttack(player), "a provoked vampire mob bites back");
+          context.assertTrue(player.getHealth() < before, "the bite hurts the vampire player");
+          context.assertEquals(vampire.getHealth(), 10.0F, "a vampire's blood heals nothing");
+          context.assertFalse(feeding(vampire), "biting a vampire is not feeding");
+          TestPlayers.finish(context, player);
+        });
+  }
+
   @GameTest(templateName = ARENA, batchId = NOON_BATCH, tickLimit = 20)
   public void aVampireMobDoesNotHuntByDay(final TestContext context) {
     final VampireEntity vampire = still(context, new BlockPos(4, 2, 4));
@@ -261,7 +280,7 @@ public class VampireMobGameTest implements FabricGameTest {
     context.runAtTick(
         LIGHT_SETTLED,
         () -> {
-          context.assertTrue(SeekShadeGoal.exposed(vampire), "open sky before dawn is a danger");
+          context.assertTrue(ShadeRules.endangered(vampire), "open sky before dawn is a danger");
           final SeekShadeGoal goal = new SeekShadeGoal(vampire, 1.3);
           Vec3d shade = null;
           for (int i = 0; i < TRIES && shade == null; i++) {

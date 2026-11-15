@@ -2,7 +2,6 @@ package com.grahambartley.nightborn.mob;
 
 import com.grahambartley.nightborn.Nightborn;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.math.MathHelper;
 
 public record VampireLook(Rig rig, int costume) {
 
@@ -27,10 +26,6 @@ public record VampireLook(Rig rig, int costume) {
   public static VampireLook of(final int index) {
     final int safe = Math.floorMod(index, COUNT);
     return new VampireLook(Rig.values()[safe / COSTUMES_PER_RIG], safe % COSTUMES_PER_RIG);
-  }
-
-  public static int clamp(final int index) {
-    return MathHelper.clamp(index, 0, COUNT - 1);
   }
 
   public int index() {

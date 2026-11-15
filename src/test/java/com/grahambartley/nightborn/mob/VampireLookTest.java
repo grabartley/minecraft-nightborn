@@ -40,12 +40,11 @@ class VampireLookTest {
     assertEquals("nightborn:textures/entity/vampire/" + geo + "_eyes.png", look.eyes().toString());
   }
 
-  @ParameterizedTest(name = "{0} is kept as {1}")
-  @CsvSource({"-4, 0", "0, 0", "4, 4", "5, 5", "99, 5"})
-  @DisplayName("a saved look outside the range is clamped to a real one")
-  void clamp(final int given, final int kept) {
-    assertEquals(kept, VampireLook.clamp(given));
-    assertEquals(kept, VampireLook.of(kept).index());
+  @ParameterizedTest(name = "{0} wraps to {1}")
+  @CsvSource({"-4, 2", "-1, 5", "0, 0", "5, 5", "6, 0", "99, 3"})
+  @DisplayName("a saved look outside the range wraps to a real one")
+  void wraps(final int given, final int kept) {
+    assertEquals(kept, VampireLook.of(given).index());
   }
 
   static Stream<Integer> looks() {

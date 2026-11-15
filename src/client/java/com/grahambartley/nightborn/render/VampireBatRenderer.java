@@ -14,7 +14,7 @@ public class VampireBatRenderer extends GeoEntityRenderer<VampireBatEntity> {
   public VampireBatRenderer(final EntityRendererFactory.Context context) {
     super(
         context,
-        new DefaultedEntityGeoModel<>(Identifier.of(Nightborn.MOD_ID, "vampire_bat"), false));
+        new DefaultedEntityGeoModel<>(Identifier.of(Nightborn.MOD_ID, "vampire_bat"), true));
     this.shadowRadius = SHADOW_RADIUS;
   }
 }

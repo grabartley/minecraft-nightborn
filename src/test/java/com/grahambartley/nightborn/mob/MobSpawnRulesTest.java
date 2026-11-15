@@ -52,4 +52,11 @@ class MobSpawnRulesTest {
   void escort(final int roll, final int chance, final int extra, final int bats) {
     assertEquals(bats, MobSpawnRules.escortSize(roll, chance, extra));
   }
+
+  @ParameterizedTest(name = "{0} bats near: crowded {1}")
+  @CsvSource({"0, false", "1, false", "2, true", "9, true"})
+  @DisplayName("no more vampire bats spawn where a few already fly")
+  void crowded(final int nearby, final boolean crowded) {
+    assertEquals(crowded, MobSpawnRules.crowded(nearby));
+  }
 }

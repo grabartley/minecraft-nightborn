@@ -272,5 +272,6 @@
   "item.nightborn.vampire_bat_spawn_egg": "Яйцо призыва летучей мыши-вампира",
   "subtitles.nightborn.entity.vampire.hurt": "Вампир ранен",
   "subtitles.nightborn.entity.vampire.death": "Вампир умирает",
-  "subtitles.nightborn.entity.vampire.bite": "Вампир кусает"
+  "subtitles.nightborn.entity.vampire.bite": "Вампир кусает",
+  "subtitles.nightborn.entity.vampire_bat.bite": "Летучая мышь-вампир кусает"
 }

@@ -272,5 +272,6 @@
   "item.nightborn.vampire_bat_spawn_egg": "吸血蝙蝠刷怪蛋",
   "subtitles.nightborn.entity.vampire.hurt": "吸血鬼：受伤",
   "subtitles.nightborn.entity.vampire.death": "吸血鬼：死亡",
-  "subtitles.nightborn.entity.vampire.bite": "吸血鬼：撕咬"
+  "subtitles.nightborn.entity.vampire.bite": "吸血鬼：撕咬",
+  "subtitles.nightborn.entity.vampire_bat.bite": "吸血蝙蝠：撕咬"
 }

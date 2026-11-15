@@ -89,7 +89,7 @@ public class VampireEntity extends HostileEntity implements GeoEntity {
   public boolean hunts(final LivingEntity target) {
     return Downed.state(this) == null
         && Prey.vampireHunts(getWorld())
-        && !SeekShadeGoal.exposed(this)
+        && !ShadeRules.endangered(this)
         && Prey.isPrey(target);
   }
 
@@ -109,6 +109,7 @@ public class VampireEntity extends HostileEntity implements GeoEntity {
             victim,
             (float) getAttributeValue(EntityAttributes.GENERIC_ATTACK_DAMAGE),
             config.turning().vampireMobTurnChance(),
+            MobSounds.VAMPIRE_BITE,
             config.turning());
     if (bitten) {
       onAttacking(victim);
@@ -145,7 +146,7 @@ public class VampireEntity extends HostileEntity implements GeoEntity {
   }
 
   public void setLook(final int index) {
-    dataTracker.set(LOOK, VampireLook.clamp(index));
+    dataTracker.set(LOOK, VampireLook.of(index).index());
   }
 
   @Override

@@ -25,5 +25,14 @@
         "type": "event"
       }
     ]
+  },
+  "entity.vampire_bat.bite": {
+    "subtitle": "subtitles.nightborn.entity.vampire_bat.bite",
+    "sounds": [
+      {
+        "name": "minecraft:entity.generic.drink",
+        "type": "event"
+      }
+    ]
   }
 }

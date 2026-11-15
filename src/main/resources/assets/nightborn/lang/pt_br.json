@@ -272,5 +272,6 @@
   "item.nightborn.vampire_bat_spawn_egg": "Ovo gerador de morcego vampiro",
   "subtitles.nightborn.entity.vampire.hurt": "Vampiro ferido",
   "subtitles.nightborn.entity.vampire.death": "Vampiro morre",
-  "subtitles.nightborn.entity.vampire.bite": "Vampiro morde"
+  "subtitles.nightborn.entity.vampire.bite": "Vampiro morde",
+  "subtitles.nightborn.entity.vampire_bat.bite": "Morcego vampiro morde"
 }

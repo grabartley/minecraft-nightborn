@@ -272,5 +272,6 @@
   "item.nightborn.vampire_bat_spawn_egg": "Vampire Bat Spawn Egg",
   "subtitles.nightborn.entity.vampire.hurt": "Vampire hurts",
   "subtitles.nightborn.entity.vampire.death": "Vampire dies",
-  "subtitles.nightborn.entity.vampire.bite": "Vampire bites"
+  "subtitles.nightborn.entity.vampire.bite": "Vampire bites",
+  "subtitles.nightborn.entity.vampire_bat.bite": "Vampire bat bites"
 }
