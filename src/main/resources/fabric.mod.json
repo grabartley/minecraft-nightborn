@@ -49,7 +49,9 @@
       "com.grahambartley.nightborn.gametest.VampireBatGameTest",
       "com.grahambartley.nightborn.gametest.MobSpawnsGameTest",
       "com.grahambartley.nightborn.gametest.VampireStructureGameTest",
-      "com.grahambartley.nightborn.gametest.WardGameTest"
+      "com.grahambartley.nightborn.gametest.WardGameTest",
+      "com.grahambartley.nightborn.gametest.HolyWaterGameTest",
+      "com.grahambartley.nightborn.gametest.HunterAmmoGameTest"
     ]
   },
   "mixins": [

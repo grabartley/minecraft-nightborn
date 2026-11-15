@@ -1,0 +1,29 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "B": {
+      "item": "nightborn:stake_bolt"
+    },
+    "H": {
+      "fabric:type": "fabric:components",
+      "base": {
+        "item": "minecraft:potion"
+      },
+      "components": {
+        "minecraft:potion_contents": {
+          "potion": "nightborn:holy_water"
+        }
+      }
+    }
+  },
+  "pattern": [
+    "BBB",
+    "BHB",
+    "BBB"
+  ],
+  "result": {
+    "count": 8,
+    "id": "nightborn:holy_water_bolt"
+  }
+}

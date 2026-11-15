@@ -2,6 +2,8 @@ package com.grahambartley.nightborn.hunter;
 
 import com.grahambartley.nightborn.Nightborn;
 import java.util.List;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.attribute.ClampedEntityAttribute;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;
 import net.minecraft.entity.attribute.EntityAttribute;
@@ -32,6 +34,12 @@ public final class HunterAttributes {
       final DefaultAttributeContainer.Builder builder) {
     ALL.forEach(builder::add);
     return builder;
+  }
+
+  public static double faith(final Entity entity) {
+    return entity instanceof LivingEntity living && living.getAttributes().hasAttribute(FAITH)
+        ? living.getAttributeValue(FAITH)
+        : 0.0;
   }
 
   public static String translationKey(final String path) {

@@ -6,7 +6,8 @@
 		"BackgroundRendererMixin",
 		"CameraMixin",
 		"EntityRendererMixin",
-		"InGameHudMixin"
+		"InGameHudMixin",
+		"ItemModelsMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1

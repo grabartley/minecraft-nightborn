@@ -403,9 +403,10 @@ The hunter tree starts with Tracking, an active power that points toward the nea
 | GEAR-3 | Silver gives a sword, an axe and a stake tip. Silver wears faster than iron and hits as hard. A silver-tipped stake counts as both a stake and silver |
 | GEAR-4 | A crossbow can fire stake bolts, silver bolts, holy water bolts and garlic bombs |
 | GEAR-5 | A garlic bomb bursts into a cloud that weakens vampires inside it for a short time |
-| GEAR-6 | Holy water is brewed from a water bottle, or blessed by a cleric villager as a trade. It comes as a drink, a splash and a lingering potion |
+| GEAR-6 | Holy water is brewed from a water bottle and a silver nugget, or a cleric villager blesses a water bottle for an emerald as a trade. It comes as a drink, a splash and a lingering potion, made from the drink with gunpowder and dragon's breath as vanilla potions are. Holy water cannot tip arrows: the holy water bolt is its ammo |
 | GEAR-7 | A Crucifix is crafted from gold or silver and held in either hand |
 | GEAR-8 | Garlic grows wild in plains and around villages, can be farmed, and is crafted into Garlic Strings |
+| GEAR-9 | Holy water or garlic can be applied to any weapon or ammo in a crafting grid. The coating gives extra damage against vampires for a short time, always less than silver does, and does nothing to anyone else |
 
 **Enforcement:** server.
 
