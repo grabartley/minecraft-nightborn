@@ -2,6 +2,8 @@ package com.grahambartley.nightborn.mob;
 
 import com.grahambartley.nightborn.Nightborn;
 import com.grahambartley.nightborn.server.ServerConfigService;
+import com.grahambartley.nightborn.structure.VampireStructure;
+import com.grahambartley.nightborn.structure.VampireStructureStarts;
 import net.fabricmc.fabric.api.biome.v1.BiomeModifications;
 import net.fabricmc.fabric.api.biome.v1.BiomeSelectors;
 import net.minecraft.entity.EntityType;
@@ -11,6 +13,7 @@ import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.SpawnRestriction;
 import net.minecraft.entity.mob.HostileEntity;
 import net.minecraft.entity.mob.MobEntity;
+import net.minecraft.entity.passive.BatEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.tag.TagKey;
@@ -86,20 +89,23 @@ public final class MobSpawns {
       final SpawnReason reason,
       final BlockPos pos,
       final Random random) {
-    if (reason == SpawnReason.NATURAL
-        && !MobSpawnRules.batMaySpawn(
-            world.getDimension().hasFixedTime(),
-            world.getLevelProperties().getTimeOfDay(),
-            world.isSkyVisible(pos),
-            world.getLightLevel(pos),
+    if (reason != SpawnReason.NATURAL) {
+      return MobEntity.canMobSpawn(type, world, reason, pos, random);
+    }
+    return MobSpawnRules.batMaySpawn(
             random.nextInt(100),
-            ServerConfigService.current().mobs().vampireBatSpawnChance())) {
-      return false;
-    }
-    if (reason == SpawnReason.NATURAL && MobSpawnRules.crowded(batsAround(world, pos))) {
-      return false;
-    }
-    return MobEntity.canMobSpawn(type, world, reason, pos, random);
+            ServerConfigService.current().mobs().vampireBatSpawnChance(),
+            () -> BatEntity.canSpawn(asBat(type), world, reason, pos, random),
+            () ->
+                VampireStructureStarts.anyContains(
+                        world.toServerWorld(), pos, VampireStructure::spawnsVampireBats)
+                    && MobEntity.canMobSpawn(type, world, reason, pos, random))
+        && !MobSpawnRules.crowded(batsAround(world, pos));
+  }
+
+  @SuppressWarnings("unchecked")
+  private static EntityType<BatEntity> asBat(final EntityType<? extends MobEntity> type) {
+    return (EntityType<BatEntity>) (EntityType<?>) type;
   }
 
   private static int batsAround(final ServerWorldAccess world, final BlockPos pos) {

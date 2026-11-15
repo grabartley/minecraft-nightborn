@@ -379,7 +379,7 @@
   "nightborn.setting.mobs.vampireSpawnChance": "Vampire Spawn Chance (%)",
   "nightborn.setting.mobs.vampireSpawnChance.tooltip": "Share of night spawns in the open that may bring a vampire. 0 stops them spawning",
   "nightborn.setting.mobs.vampireBatSpawnChance": "Vampire Bat Spawn Chance (%)",
-  "nightborn.setting.mobs.vampireBatSpawnChance.tooltip": "Share of spawns in dark caves and at night that may bring a vampire bat. 0 stops them spawning",
+  "nightborn.setting.mobs.vampireBatSpawnChance.tooltip": "Share of spawns in dark caves below sea level and inside vampire structures that may bring a vampire bat. 0 stops them spawning",
   "nightborn.setting.mobs.batEscortChance": "Bat Escort Chance (%)",
   "nightborn.setting.mobs.batEscortChance.tooltip": "Chance that a vampire spawning at night brings one or two vampire bats with it",
   "nightborn.setting.mobs.vampireLevitateSeconds": "Seconds Before A Vampire Rises",

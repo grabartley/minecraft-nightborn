@@ -379,7 +379,7 @@
   "nightborn.setting.mobs.vampireSpawnChance": "Probabilidad de aparición de vampiros (%)",
   "nightborn.setting.mobs.vampireSpawnChance.tooltip": "Parte de las apariciones nocturnas al aire libre que pueden traer un vampiro. 0 impide que aparezcan",
   "nightborn.setting.mobs.vampireBatSpawnChance": "Probabilidad de aparición de murciélagos vampiro (%)",
-  "nightborn.setting.mobs.vampireBatSpawnChance.tooltip": "Parte de las apariciones en cuevas oscuras y de noche que pueden traer un murciélago vampiro. 0 impide que aparezcan",
+  "nightborn.setting.mobs.vampireBatSpawnChance.tooltip": "Parte de las apariciones en cuevas oscuras bajo el nivel del mar y dentro de estructuras vampíricas que pueden traer un murciélago vampiro. 0 impide que aparezcan",
   "nightborn.setting.mobs.batEscortChance": "Probabilidad de escolta de murciélagos (%)",
   "nightborn.setting.mobs.batEscortChance.tooltip": "Probabilidad de que un vampiro que aparece de noche traiga uno o dos murciélagos vampiro",
   "nightborn.setting.mobs.vampireLevitateSeconds": "Segundos antes de que un vampiro se eleve",

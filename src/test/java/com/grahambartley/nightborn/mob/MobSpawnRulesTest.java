@@ -1,6 +1,7 @@
 package com.grahambartley.nightborn.mob;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -27,23 +28,40 @@ class MobSpawnRulesTest {
     assertEquals(spawns, MobSpawnRules.vampireMaySpawn(false, time, openSky, roll, chance));
   }
 
-  @ParameterizedTest(name = "time {0}, open sky {1}, light {2}, roll {3}: spawns {4}")
+  @ParameterizedTest(name = "roll {0} of {1}%, vanilla cave {2}, structure {3}: spawns {4}")
   @CsvSource({
-    "6000, false, 0, 10, true",
-    "6000, false, 4, 10, true",
-    "6000, false, 5, 10, false",
-    "6000, true, 0, 10, false",
-    "14000, true, 0, 10, true",
-    "14000, true, 0, 100, false"
+    "10, 100, true, false, true",
+    "10, 100, false, true, true",
+    "10, 100, true, true, true",
+    "10, 100, false, false, false",
+    "99, 100, true, false, true",
+    "50, 50, true, true, false",
+    "0, 0, true, true, false"
   })
-  @DisplayName("vampire bats spawn in dark caves and at night, within the spawn chance")
+  @DisplayName("vampire bats spawn only where a vanilla bat could or inside a vampire structure")
   void bat(
-      final long time,
-      final boolean openSky,
-      final int light,
       final int roll,
+      final int chance,
+      final boolean cave,
+      final boolean structure,
       final boolean spawns) {
-    assertEquals(spawns, MobSpawnRules.batMaySpawn(false, time, openSky, light, roll, 100));
+    assertEquals(spawns, MobSpawnRules.batMaySpawn(roll, chance, () -> cave, () -> structure));
+  }
+
+  @ParameterizedTest(name = "chance roll {0}")
+  @CsvSource({"100", "57"})
+  @DisplayName("a failed chance roll never checks the cave or looks for a structure")
+  void skipsTheLookups(final int roll) {
+    assertFalse(
+        MobSpawnRules.batMaySpawn(
+            roll,
+            50,
+            () -> {
+              throw new AssertionError("checked the cave");
+            },
+            () -> {
+              throw new AssertionError("looked for a structure");
+            }));
   }
 
   @ParameterizedTest(name = "roll {0}, chance {1}, extra {2}: {3} bats")

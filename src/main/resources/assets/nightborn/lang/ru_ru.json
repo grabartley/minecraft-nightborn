@@ -379,7 +379,7 @@
   "nightborn.setting.mobs.vampireSpawnChance": "Шанс появления вампиров (%)",
   "nightborn.setting.mobs.vampireSpawnChance.tooltip": "Доля ночных появлений под открытым небом, которые могут привести вампира. 0 запрещает их появление",
   "nightborn.setting.mobs.vampireBatSpawnChance": "Шанс появления летучих мышей-вампиров (%)",
-  "nightborn.setting.mobs.vampireBatSpawnChance.tooltip": "Доля появлений в тёмных пещерах и ночью, которые могут привести летучую мышь-вампира. 0 запрещает их появление",
+  "nightborn.setting.mobs.vampireBatSpawnChance.tooltip": "Доля появлений в тёмных пещерах ниже уровня моря и внутри вампирских построек, которые могут привести летучую мышь-вампира. 0 запрещает их появление",
   "nightborn.setting.mobs.batEscortChance": "Шанс свиты из летучих мышей (%)",
   "nightborn.setting.mobs.batEscortChance.tooltip": "Шанс, что вампир, появившийся ночью, приведёт одну или две летучие мыши-вампира",
   "nightborn.setting.mobs.vampireLevitateSeconds": "Секунд до того, как вампир взлетит",
