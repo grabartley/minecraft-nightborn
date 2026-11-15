@@ -229,7 +229,7 @@ Sneak and use on a creature to bite it, and keep holding to drink. Let go to sto
 
 | ID | Requirement |
 |---|---|
-| SUN-1 | A vampire in direct sun catches fire, as a zombie does, and keeps burning while it stays there until it dies, downed or not |
+| SUN-1 | A vampire in direct sun catches fire, as a zombie does, and burns while it stays there. Sun fire kills, downed or not. Fire that keeps burning after the vampire reaches shade only downs it |
 | SUN-2 | No armour, helmet or effect, Fire Resistance included, stops the burn. Shade, rain, water and a closed coffin (COFFIN-7) do |
 | SUN-3 | A burning vampire gives off smoke and a sizzling sound, on top of the fire |
 | SUN-4 | Vampire mobs follow the same rules and seek shade at dawn |
@@ -276,8 +276,8 @@ Every vampire has the core, whatever bloodlines they choose.
 | CORE-5 | A vampire player never shows as a marker on a vanilla map |
 | CORE-6 | A vampire can sleep only in a coffin (COFFIN-1) |
 | CORE-7 | Only direct sun and a stake can kill a vampire. Damage from anything else, mobs, players, fire, falls, drowning or holy water included, stops at its last health. Falling into the void and an operator's `/kill` are the only exceptions |
-| CORE-8 | A vampire brought to its last health by anything else is downed: it collapses, cannot move, attack, feed or use items or powers, and is greatly weakened. After 30 seconds it gets up with a little health. Everyone near can see and hear that it is downed |
-| CORE-9 | Phantoms never spawn for a vampire player, and time a vampire spends awake never counts toward them |
+| CORE-8 | A vampire brought to its last health by anything else is downed: it collapses, cannot move, attack, feed or use items or powers, and is weakened at the cap (WEAK-9). It takes no damage from anything but sun and a stake while downed. After 30 seconds it gets up with 20% of its health, where it can stand unharmed, and stays downed until then. More damage does not reset the time. Everyone near can see and hear that it is downed |
+| CORE-9 | Phantoms never spawn for a vampire player and never target a vampire, and time a vampire spends awake never counts toward them |
 
 **Not supported:** a vampire hiding its eyes while feeding.
 
@@ -326,7 +326,7 @@ The vampire tree has the core and three bloodlines. A vampire spends points in a
 | BAT-3 | A bat cannot use items, open containers or feed. It drains blood while flying |
 | BAT-4 | Direct sun forces a vampire out of bat form |
 | BAT-5 | Turning back needs room to stand. Without it, the bat stays a bat |
-| BAT-6 | Heavy damage, holy water or garlic in range forces a vampire out of bat form |
+| BAT-6 | Heavy damage, being downed, holy water or garlic in range forces a vampire out of bat form |
 
 **Enforcement:** server.
 
@@ -374,7 +374,7 @@ Every human is a hunter in waiting. Killing vampires earns hunter points.
 
 | ID | Requirement |
 |---|---|
-| HUNT-1 | Any human player earns hunter points by killing vampire mobs and vampire players. No pledge is needed |
+| HUNT-1 | Any human player earns hunter points by staking vampire mobs and vampire players, or by downing one that the sun finishes before it gets up. Downing alone earns nothing. No pledge is needed |
 | HUNT-2 | Contracts from the Guild Master earn hunter points as well as their reward |
 | HUNT-3 | The hunter tree is one shared tree for all humans |
 | HUNT-4 | Hunter skills cover tracking vampires, resisting bites and mesmerise, and faith powers that make crucifixes and holy water stronger |
@@ -401,7 +401,7 @@ Every human is a hunter in waiting. Killing vampires earns hunter points.
 |---|---|
 | GUILD-1 | Hunter camps generate rarely in the overworld, each with a few hunter mobs and a Guild Master |
 | GUILD-2 | Hunter mobs attack vampire players and vampire mobs on sight, and leave humans alone |
-| GUILD-3 | The Guild Master sells hunter gear and gives contracts, such as killing vampires or clearing a vampire structure |
+| GUILD-3 | The Guild Master sells hunter gear and gives contracts, such as staking vampires or clearing a vampire structure |
 | GUILD-4 | Contracts pay in emeralds, silver and gear, on top of the hunter points HUNT-2 gives |
 | GUILD-5 | A vampire player cannot trade or take contracts at a camp |
 
@@ -428,7 +428,7 @@ Vampires are rare. They live in households hidden in four kinds of structure, ea
 | HOME-4 | Fog hangs around and inside every vampire structure, thicker near its heart |
 | HOME-5 | A household feels lived in: its vampires have their own personality, routine and hobbies, talk to and argue with each other, and react to each other's deaths |
 | HOME-6 | Household vampires sleep in coffins by day and wake at dusk |
-| HOME-7 | A castle's vampire lord is a boss with a health bar and its own powers |
+| HOME-7 | A castle's vampire lord is a boss with a health bar and its own powers. It is downed like any vampire, its bar shows it downed, and only a stake or the sun ends the fight |
 | HOME-8 | Structures hold loot chests with gear, Blood Bottles, decor and rare items found nowhere else |
 | HOME-9 | Vampire mobs spawn rarely at night in the open, alone or with vampire bats |
 | HOME-10 | Vampire bats spawn rarely in dark caves and at night, and bite (TURN-1) |
@@ -512,7 +512,7 @@ Vampires are rare. They live in households hidden in four kinds of structure, ea
 | CFG-2 | Settings are saved per world as JSON in the world save directory |
 | CFG-3 | A missing file gives defaults. A broken file gives defaults, is logged and is kept |
 | CFG-4 | Out-of-range values are clamped on load |
-| CFG-5 | Options cover turn chances, sickness length, sun damage, blood drain and values, garlic and crucifix ranges, skill point rates, the staking penalty, the coffin sleep share, spawn and structure rates, and whether players can turn players |
+| CFG-5 | Options cover turn chances, sickness length, sun damage, blood drain and values, garlic and crucifix ranges, skill point rates, the staking penalty, the downed time, the coffin sleep share, spawn and structure rates, and whether players can turn players |
 | CFG-6 | A settings screen through Mod Menu shows the same server options and shares their validation with the commands |
 | CFG-7 | An option that only changes what one player sees, such as gore, is a client setting saved on that player's device |
 | CFG-8 | Operators can turn, cure, set points and reset the bloodlines of any player |
@@ -556,7 +556,7 @@ The mod has its own tab. It branches early into three paths, Vampire, Hunter and
 | ADV-24 | Lord Of The Manner and Strings Attached are challenges. No Reflection On You, Old Blood and Close Call are goals. Goals give 50 experience and challenges give 100 |
 | ADV-25 | An advancement earned in steps shows its progress |
 | ADV-26 | Icons use the mod's own items where one fits |
-| ADV-27 | Names may be tuned, but each stays short, clever and in plain English. |
+| ADV-27 | Names may be tuned, but each stays short, clever and in plain English |
 
 **Enforcement:** server.
 
@@ -620,7 +620,7 @@ There is no singleplayer mode in this mod. A single-player world is an integrate
 
 | State | Scope |
 |---|---|
-| Faction, sickness, blood, skills, bloodlines and cooldowns | That player, synced only to them, except what others can see (CORE-4, WEAK-8, FACT-3) |
+| Faction, sickness, blood, skills, bloodlines and cooldowns | That player, synced only to them, except what others can see (CORE-4, CORE-8, WEAK-8, FACT-3) |
 | Coffin respawn point | That player |
 | Gore setting | That player's device |
 
@@ -660,7 +660,7 @@ There is no singleplayer mode in this mod. A single-player world is an integrate
 |---|---|---|---|---|---|
 | Faction | not applicable | kept | kept | kept | kept to the last save |
 | Bite sickness and days left | not applicable | kept | kept | kept, paused while offline | kept to the last save |
-| Downed and its time left | not applicable | kept | not applicable | kept, so leaving does not escape it | kept to the last save |
+| Downed and its time left | kept, for a mob | kept | cleared | kept, so leaving does not escape it | kept to the last save |
 | Blood | not applicable | kept | refilled, as hunger is on respawn | kept | kept to the last save |
 | Skills and bloodlines | not applicable | kept | kept, except SKILL-6 | kept | kept to the last save |
 | Hunter tree set aside on turning | not applicable | kept | kept | kept | kept to the last save |
@@ -712,7 +712,8 @@ There is no singleplayer mode in this mod. A single-player world is an integrate
 - Every use case's requirements hold on a dedicated server with two clients and on an integrated server with one client, through the same code.
 - A human can be bitten, get sick, and either cure it or turn, without outside help.
 - A vampire can feed, survive a full day in a coffin and buy skills in two bloodlines.
-- A human can find a vampire structure and kill a vampire with hunter gear.
+- A human can find a vampire structure, down a vampire with hunter gear and stake it.
+- A vampire dies in the sun, and gets up again after being downed by anything else.
 - No item, blood or skill point can be duplicated or lost by any mechanic the mod adds (SAFE-1, SAFE-2).
 - A dedicated server starts with no client classes loaded (CS-6).
 - Every string is translated in every shipped language.
