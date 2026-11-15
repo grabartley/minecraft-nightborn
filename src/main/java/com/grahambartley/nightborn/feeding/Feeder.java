@@ -102,7 +102,7 @@ final class Feeder {
     for (int i = 0; i < fill.bottles(); i++) {
       offHand.decrement(1);
       final ItemStack bottle = BloodBottleItem.of(session.quality());
-      if (!vampire.getInventory().insertStack(bottle)) {
+      if (!BottleStowing.stow(vampire.getInventory(), bottle)) {
         vampire.dropItem(bottle, false);
       }
     }

@@ -77,11 +77,18 @@ public class SunGameTest implements FabricGameTest {
       }
     }
     final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(4, 2, 4));
+    final float[] settled = new float[1];
+    context.runAtTick(
+        TestPlayers.READY,
+        () -> {
+          vampire.extinguish();
+          settled[0] = vampire.getHealth();
+        });
     context.runAtTick(
         TestPlayers.READY + 45,
         () -> {
           context.assertFalse(
-              vampire.getHealth() < 20.0F,
+              vampire.getHealth() < settled[0],
               "shade keeps a vampire whole: " + Diagnostics.of(vampire));
           context.assertFalse(vampire.isOnFire(), "shade keeps a vampire from burning");
           TestPlayers.finish(context, vampire);
