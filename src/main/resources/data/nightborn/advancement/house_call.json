@@ -2,7 +2,7 @@
   "parent": "nightborn:root",
   "display": {
     "icon": {
-      "id": "nightborn:carved_gothic_stone"
+      "id": "nightborn:gothic_stained_glass"
     },
     "title": {
       "translate": "advancements.nightborn.house_call.title"
