@@ -3,6 +3,7 @@ package com.grahambartley.nightborn.feeding;
 import com.grahambartley.nightborn.blood.BloodQuality;
 import com.grahambartley.nightborn.downed.Downed;
 import com.grahambartley.nightborn.vampire.Vampires;
+import com.grahambartley.nightborn.ward.Wards;
 import java.util.Optional;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
@@ -41,7 +42,8 @@ final class FeedingInteraction {
                 quality.isPresent(),
                 Vampires.isVampire(victim),
                 victim instanceof PlayerEntity,
-                victim.isAlive()),
+                victim.isAlive(),
+                Wards.wards(victim)),
             pvp);
     if (!decision.claimsTheInteraction()) {
       return ActionResult.PASS;
@@ -51,6 +53,8 @@ final class FeedingInteraction {
         FeedingSessions.hold(vampire, victim, quality.orElseThrow());
       } else if (decision == BiteRules.Decision.PVP_OFF) {
         vampire.sendMessage(Text.translatable("nightborn.feeding.pvp_off"), true);
+      } else if (decision == BiteRules.Decision.WARDED) {
+        vampire.sendMessage(Text.translatable("nightborn.feeding.warded"), true);
       }
     }
     return ActionResult.SUCCESS;

@@ -10,6 +10,7 @@ public final class BiteRules {
     NOT_SNEAKING_EMPTY_HANDED,
     HELPLESS,
     NO_WARM_BLOOD,
+    WARDED,
     PVP_OFF;
 
     public boolean bites() {
@@ -17,13 +18,14 @@ public final class BiteRules {
     }
 
     public boolean claimsTheInteraction() {
-      return this == BITE || this == PVP_OFF || this == HELPLESS;
+      return this == BITE || this == PVP_OFF || this == HELPLESS || this == WARDED;
     }
   }
 
   public record Biter(boolean vampire, boolean sneaking, boolean emptyHand, boolean downed) {}
 
-  public record Target(boolean warmBlood, boolean vampire, boolean player, boolean alive) {}
+  public record Target(
+      boolean warmBlood, boolean vampire, boolean player, boolean alive, boolean warded) {}
 
   public static boolean drinkable(final boolean warmBlood, final boolean vampire) {
     return warmBlood && !vampire;
@@ -55,6 +57,9 @@ public final class BiteRules {
     }
     if (biter.downed()) {
       return Decision.HELPLESS;
+    }
+    if (target.warded()) {
+      return Decision.WARDED;
     }
     if (target.player() && !pvp) {
       return Decision.PVP_OFF;

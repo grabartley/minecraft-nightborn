@@ -16,8 +16,8 @@ import org.junit.jupiter.params.provider.MethodSource;
 class BiteRulesTest {
 
   private static final Biter READY = new Biter(true, true, true, false);
-  private static final Target COW = new Target(true, false, false, true);
-  private static final Target HUMAN = new Target(true, false, true, true);
+  private static final Target COW = new Target(true, false, false, true, false);
+  private static final Target HUMAN = new Target(true, false, true, true, false);
 
   static Stream<Arguments> cases() {
     return Stream.of(
@@ -49,23 +49,41 @@ class BiteRulesTest {
         Arguments.of(
             "no blood in a zombie",
             READY,
-            new Target(false, false, false, true),
+            new Target(false, false, false, true, false),
             true,
             Decision.NO_WARM_BLOOD),
         Arguments.of(
             "a vampire's blood is already dead",
             READY,
-            new Target(true, true, true, true),
+            new Target(true, true, true, true, false),
             true,
             Decision.NO_WARM_BLOOD),
         Arguments.of(
             "a dead victim gives nothing",
             READY,
-            new Target(true, false, false, false),
+            new Target(true, false, false, false, false),
             true,
             Decision.NO_WARM_BLOOD),
         Arguments.of("a human player with PvP on", READY, HUMAN, true, Decision.BITE),
-        Arguments.of("a human player with PvP off", READY, HUMAN, false, Decision.PVP_OFF));
+        Arguments.of("a human player with PvP off", READY, HUMAN, false, Decision.PVP_OFF),
+        Arguments.of(
+            "a human holding a crucifix",
+            READY,
+            new Target(true, false, true, true, true),
+            true,
+            Decision.WARDED),
+        Arguments.of(
+            "a crucifix wards even with PvP off",
+            READY,
+            new Target(true, false, true, true, true),
+            false,
+            Decision.WARDED),
+        Arguments.of(
+            "a downed vampire is helpless before the crucifix matters",
+            new Biter(true, true, true, true),
+            new Target(true, false, true, true, true),
+            true,
+            Decision.HELPLESS));
   }
 
   @ParameterizedTest(name = "{0}")
@@ -86,7 +104,10 @@ class BiteRulesTest {
   void claims(final Decision decision) {
     assertEquals(decision == Decision.BITE, decision.bites());
     assertEquals(
-        decision == Decision.BITE || decision == Decision.PVP_OFF || decision == Decision.HELPLESS,
+        decision == Decision.BITE
+            || decision == Decision.PVP_OFF
+            || decision == Decision.HELPLESS
+            || decision == Decision.WARDED,
         decision.claimsTheInteraction());
   }
 

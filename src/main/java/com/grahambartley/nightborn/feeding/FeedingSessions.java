@@ -3,6 +3,7 @@ package com.grahambartley.nightborn.feeding;
 import com.grahambartley.nightborn.blood.BloodQuality;
 import com.grahambartley.nightborn.config.NightbornConfig;
 import com.grahambartley.nightborn.server.ServerConfigService;
+import com.grahambartley.nightborn.ward.Wards;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -99,6 +100,7 @@ public final class FeedingSessions {
       if (victim == null
           || !victim.isAlive()
           || session.released(now)
+          || Wards.wards(victim)
           || !inReach(vampire, victim)) {
         sessions.remove();
         finish(vampire, victim, session, config);

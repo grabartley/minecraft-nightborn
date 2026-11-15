@@ -8,6 +8,7 @@ import com.grahambartley.nightborn.downed.DownedState;
 import com.grahambartley.nightborn.feeding.FeedingSessions;
 import com.grahambartley.nightborn.server.ServerConfigService;
 import com.grahambartley.nightborn.sun.SunBurn;
+import com.grahambartley.nightborn.ward.Wards;
 import com.grahambartley.nightborn.weakened.Weakened;
 import net.minecraft.entity.LivingEntity;
 
@@ -27,6 +28,7 @@ public final class VampireTicker {
     }
     VampireCore.tick(vampire, config.core());
     final DownedState downed = Downed.state(vampire);
+    Wards.tick(vampire, config.wards());
     final int weakened = Weakened.tick(vampire, downed != null, config.weakened());
     final boolean eyes =
         EyeGlow.glowing(
