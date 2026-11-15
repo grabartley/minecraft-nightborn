@@ -40,7 +40,7 @@ Nightborn adds vampires and the people who hunt them. A bite from a vampire or a
 | Folklore that works | Garlic, crucifixes built from blocks, holy water, silver and stakes each have real rules (WEAK-1 to WEAK-10) |
 | Vampires live somewhere | Households with personalities in four kinds of structure, rare and hidden in fog. Vampires live there, go out to feed and come home by dawn (HOME-1 to HOME-20) |
 | Vampires fight like players | Wild vampires grow in stages and use every power a player can, more often and more cleverly the older they are (HOME-15 to HOME-17) |
-| The day belongs to vampires too | Coffins skip the day the way beds skip the night (COFFIN-1 to COFFIN-13) |
+| The day belongs to vampires too | Coffins skip the day the way beds skip the night (COFFIN-1 to COFFIN-14) |
 | An endgame for hunters | A repeatable ritual summons the Eldest, a boss with every vampire power (RITE-1 to RITE-8) |
 | Help in the daylight | A human familiar runs errands and guards your coffin, and might betray you (FAM-1 to FAM-8) |
 
@@ -476,13 +476,14 @@ Vampires are rare. They live in households hidden in four kinds of structure, ea
 | COFFIN-4 | A vampire, player or mob, has at most one assigned coffin, and it is their respawn point, as a bed is. Sleeping in an unassigned coffin assigns it to that vampire and frees the one they had before. A vampire can sleep in any coffin no one is lying in, including another vampire's assigned coffin, but that assigns nothing and leaves their respawn point where it was |
 | COFFIN-5 | A vampire whose coffin is gone respawns at world spawn, as with a missing bed |
 | COFFIN-6 | A human can open a coffin but not sleep in it |
-| COFFIN-7 | A closed coffin shades the vampire inside from the sun, smothers any flames they carry in, and hides them from view. An open one does none of these |
+| COFFIN-7 | A closed coffin shades the vampire inside from the sun, smothers any flames they carry in, and hides them from view, unless the coffin itself is burning (COFFIN-14). An open one does none of these |
 | COFFIN-8 | Vampire players never count toward the bed share, and humans never count toward the coffin share, so neither side blocks the other's sleep |
 | COFFIN-9 | Any player can sneak and use an occupied coffin with an empty hand to open or shut its lid. An open lid shows the vampire inside and no longer shades them, so direct sun reaches them (SUN-1). The vampire, player or mob, sleeps on until hurt. Using it without sneaking does not open it (COFFIN-1), and a second vampire cannot lie down in it (CS-2) |
 | COFFIN-10 | A coffin placed while sneaking stands upright, two cells tall, its back to the block behind and its lid facing the player who placed it. A standing coffin follows every coffin rule, a vampire sleeps in it standing, and one who respawns at it stands on the floor in front of it |
 | COFFIN-11 | A vampire asleep in a coffin, player or mob, lies or stands with arms crossed over the chest |
 | COFFIN-12 | A vampire waking in a flat coffin rises rigid, pivoting up from the heels until upright, then steps off. One waking in a standing coffin steps forward out of it. It cannot move until it stands clear, damage does not cancel the rise, and it always ends on a safe free cell next to the coffin |
-| COFFIN-13 | Only the owner can break an assigned coffin. Other players, mobs, explosions, fire and pistons leave it whole, though creative players and operators can still break it. A coffin is unassigned when its owner dies for good, to the sun or a stake, is made human again (CFG-8), is reset by a hardcore death (CORE-10), or breaks it themselves |
+| COFFIN-13 | Only the owner can break an assigned coffin. Other players, mobs, explosions and pistons leave it whole, though creative players and operators can still break it. A coffin is unassigned when its owner dies for good, to the sun or a stake, is made human again (CFG-8), is reset by a hardcore death (CORE-10), or breaks it themselves |
+| COFFIN-14 | A coffin made of a flammable material catches fire as that material does. While it burns it is drawn ablaze, and it wakes anyone inside and sets them on fire, open or shut. Fire never destroys a coffin, of any style, assigned or not |
 
 **Enforcement:** server.
 
@@ -496,7 +497,7 @@ Vampires are rare. They live in households hidden in four kinds of structure, ea
 | DECOR-2 | Gothic building blocks in stone and dark wood: gothic stone bricks in plain, cracked and mossy forms with stairs, slabs and walls, carved gothic stone, and ebony planks with stairs, slabs and a fence |
 | DECOR-3 | Blood decor: blood fountains, blood pools, placeable splatter decals and chalices |
 | DECOR-4 | Hunter decor: weapon racks, wanted posters, trophy mounts and crucifixes |
-| DECOR-5 | Coffins in two styles. Wooden coffins are narrow at the head and foot and widest at the shoulders, made from oak, spruce, dark oak, mangrove, cherry or crimson planks and drawn with that wood's planks. Their hinged lid creaks open and shut, and they sound, burn and break like their wood, fastest with an axe, so a crimson coffin never burns. Stone coffins are plain rectangular boxes made from stone bricks, deepslate bricks, polished blackstone bricks or gothic stone bricks (DECOR-2) and drawn with that stone. Their heavy lid slides open and shut with a grind of stone, and they sound, resist blasts and break like those bricks, dropping only when mined with a pickaxe. Both styles lie flat or stand (COFFIN-10) and follow every coffin rule in 5.14 |
+| DECOR-5 | Coffins in two styles. Wooden coffins are narrow at the head and foot and widest at the shoulders, made from oak, spruce, dark oak, mangrove, cherry or crimson planks and drawn with that wood's planks. Their hinged lid creaks open and shut, and they sound and break like their wood, fastest with an axe, and catch fire as it does (COFFIN-14), so a crimson coffin never does. Stone coffins are plain rectangular boxes made from stone bricks, deepslate bricks, polished blackstone bricks or gothic stone bricks (DECOR-2) and drawn with that stone. Their heavy lid slides open and shut with a grind of stone, and they sound, resist blasts and break like those bricks, dropping only when mined with a pickaxe. Both styles lie flat or stand (COFFIN-10) and follow every coffin rule in 5.14 |
 | DECOR-6 | Candles, candelabras and chandeliers light the room. Flint and steel or a fire charge lights them and an empty hand puts them out, and every light, douse, opening and closing plays its own animation |
 | DECOR-7 | A gramophone, crafted from a jukebox, gold ingots and ebony planks and facing the player who placed it, plays any music disc as a jukebox does, with the same hopper, redstone and comparator behaviour, and animates while it plays |
 | DECOR-8 | Gothic music discs, one per track, play in a gramophone or a jukebox. They are found only in vampire structures: in their loot and in their gramophones (HOME-20) |
