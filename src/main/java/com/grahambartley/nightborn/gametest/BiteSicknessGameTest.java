@@ -28,7 +28,7 @@ public class BiteSicknessGameTest implements FabricGameTest {
   static final String ARENA = "nightborn:vampire_arena";
   static final String CLOCK_BATCH = "sickness-clock";
   static final int NIGHT_SKIPPED = 7000;
-  static final int SHORT_LEFT = 12000;
+  static final int SAME_STAGE_RUN = 20000;
 
   @GameTest(templateName = ARENA, tickLimit = 40)
   public void aBiteStartsTheSicknessAndShowsIt(final TestContext context) {
@@ -152,13 +152,14 @@ public class BiteSicknessGameTest implements FabricGameTest {
         () -> {
           context.assertTrue(
               human.hasStatusEffect(BiteSicknessEffect.ENTRY), "the sickness shows first");
-          BiteSicknessAttachment.set(
-              human, SicknessStage.totalTicks(turning.sicknessDays()) - SHORT_LEFT);
+          BiteSicknessAttachment.set(human, SAME_STAGE_RUN);
         });
     context.runAtTick(
         60,
         () -> {
           final StatusEffectInstance shown = human.getStatusEffect(BiteSicknessEffect.ENTRY);
+          context.assertTrue(
+              shown != null && shown.getAmplifier() == 0, "still the first stage of the sickness");
           final int left =
               SicknessStage.ticksLeft(
                   BiteSicknessAttachment.ticksRun(human), turning.sicknessDays());
