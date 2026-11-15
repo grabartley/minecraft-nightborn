@@ -11,6 +11,10 @@ public final class LevitationRules {
     return vampire && weakened <= 0 && !downed && !occupied;
   }
 
+  public static boolean movesAsGrounded(final boolean onGround, final boolean levitating) {
+    return onGround || levitating;
+  }
+
   public static boolean toggleReady(final Long lastToggle, final long now) {
     return lastToggle == null || now < lastToggle || now - lastToggle >= TOGGLE_COOLDOWN_TICKS;
   }

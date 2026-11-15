@@ -5,6 +5,7 @@
 	"mixins": [
 		"BedBlockMixin",
 		"CrossbowItemMixin",
+		"EntityMixin",
 		"EnchantmentHelperMixin",
 		"HungerManagerMixin",
 		"LivingEntityMixin",
