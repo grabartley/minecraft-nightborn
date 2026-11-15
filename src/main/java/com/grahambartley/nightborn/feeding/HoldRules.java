@@ -24,6 +24,14 @@ final class HoldRules {
         > DRIFT_TOLERANCE * DRIFT_TOLERANCE;
   }
 
+  static boolean holdsHeight(final boolean noGravity, final boolean tagged, final boolean flying) {
+    return noGravity || tagged || flying;
+  }
+
+  static boolean slows(final boolean player) {
+    return !player;
+  }
+
   static boolean needsRefresh(final int remainingTicks, final int amplifier) {
     return amplifier < SLOWNESS_AMPLIFIER || remainingTicks < REFRESH_BELOW_TICKS;
   }

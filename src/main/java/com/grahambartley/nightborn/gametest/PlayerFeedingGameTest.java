@@ -7,7 +7,6 @@ import com.grahambartley.nightborn.server.ServerConfigService;
 import com.grahambartley.nightborn.sickness.BiteSicknessAttachment;
 import net.fabricmc.fabric.api.event.player.UseEntityCallback;
 import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
-import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.test.AfterBatch;
@@ -90,7 +89,7 @@ public class PlayerFeedingGameTest implements FabricGameTest {
         });
   }
 
-  @GameTest(templateName = ARENA, batchId = HELD_BITE, tickLimit = TestPlayers.READY + 60)
+  @GameTest(templateName = ARENA, batchId = HELD_BITE, tickLimit = TestPlayers.READY + 70)
   public void aBittenPlayerIsHeldWhereTheyStandAndFreeAgainAfterTheBite(final TestContext context) {
     final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(3, 2, 4));
     final ServerPlayerEntity held = TestPlayers.human(context, new BlockPos(4, 2, 4));
@@ -100,8 +99,10 @@ public class PlayerFeedingGameTest implements FabricGameTest {
     context.runAtEveryTick(
         () -> {
           if (context.getTick() >= TestPlayers.READY
-              && context.getTick() <= TestPlayers.READY + 40) {
-            hold(context, vampire, held);
+              && context.getTick() <= TestPlayers.READY + 60) {
+            if (context.getTick() <= TestPlayers.READY + 40) {
+              hold(context, vampire, held);
+            }
             walk(held);
             walk(free);
           }
@@ -118,10 +119,12 @@ public class PlayerFeedingGameTest implements FabricGameTest {
                   + free.getPos().distanceTo(freeStart));
         });
     context.runAtTick(
-        TestPlayers.READY + 55,
+        TestPlayers.READY + 61,
         () -> {
-          context.assertFalse(
-              held.hasStatusEffect(StatusEffects.SLOWNESS), "the hold is gone after the bite");
+          context.assertTrue(
+              held.getPos().distanceTo(heldStart) > 0.8,
+              "a player is free once the bite ends but moved "
+                  + held.getPos().distanceTo(heldStart));
           TestPlayers.finish(context, vampire, held, free);
         });
   }

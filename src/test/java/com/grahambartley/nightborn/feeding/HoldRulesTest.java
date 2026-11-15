@@ -63,6 +63,27 @@ class HoldRulesTest {
     assertEquals(drifted, HoldRules.drifted(anchor, anchor.add(new Vec3d(x, y, z)), holdsHeight));
   }
 
+  @ParameterizedTest(name = "no gravity {0}, tagged {1}, flying {2}: holds height {3}")
+  @CsvSource({
+    "false, false, false, false",
+    "true, false, false, true",
+    "false, true, false, true",
+    "false, false, true, true",
+    "true, true, true, true"
+  })
+  @DisplayName("height is held for anything that floats, flies or is listed")
+  void holdsHeight(
+      final boolean noGravity, final boolean tagged, final boolean flying, final boolean holds) {
+    assertEquals(holds, HoldRules.holdsHeight(noGravity, tagged, flying));
+  }
+
+  @ParameterizedTest(name = "player {0}: slowed {1}")
+  @CsvSource({"true, false", "false, true"})
+  @DisplayName("a player is held by being put back, never slowed, so their view does not zoom")
+  void slows(final boolean player, final boolean slowed) {
+    assertEquals(slowed, HoldRules.slows(player));
+  }
+
   @ParameterizedTest(name = "{1} ticks left at amplifier {0}: {2}")
   @CsvSource({
     "6, 4, false",

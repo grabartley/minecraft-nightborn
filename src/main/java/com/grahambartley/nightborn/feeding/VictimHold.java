@@ -6,6 +6,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.mob.MobEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.tag.TagKey;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -20,7 +21,9 @@ final class VictimHold {
   private VictimHold() {}
 
   static void apply(final LivingEntity victim, final Vec3d anchor) {
-    final boolean holdsHeight = victim.hasNoGravity() || victim.getType().isIn(HOLDS_HEIGHT);
+    final boolean holdsHeight =
+        HoldRules.holdsHeight(
+            victim.hasNoGravity(), victim.getType().isIn(HOLDS_HEIGHT), flying(victim));
     victim.stopRiding();
     victim.setVelocity(HoldRules.pinned(victim.getVelocity(), holdsHeight));
     if (victim instanceof MobEntity mob) {
@@ -35,7 +38,7 @@ final class VictimHold {
         victim.refreshPositionAfterTeleport(back);
       }
     }
-    if (victim instanceof ServerPlayerEntity) {
+    if (!HoldRules.slows(victim instanceof ServerPlayerEntity)) {
       return;
     }
     final StatusEffectInstance current = victim.getStatusEffect(StatusEffects.SLOWNESS);
@@ -49,5 +52,10 @@ final class VictimHold {
               false,
               false));
     }
+  }
+
+  private static boolean flying(final LivingEntity victim) {
+    return victim instanceof PlayerEntity player
+        && (player.getAbilities().flying || player.isFallFlying());
   }
 }

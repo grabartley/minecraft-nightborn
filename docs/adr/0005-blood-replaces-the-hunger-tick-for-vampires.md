@@ -14,7 +14,7 @@ For a vampire, a mixin cancels `HungerManager.update` and runs `BloodTicker` in 
 
 - Vanilla's exhaustion still collects from sprinting, jumping and fighting, and every 4 exhaustion costs one blood, as it costs one hunger.
 - A resting drain adds exhaustion at the rate the `restingDrainSeconds` setting gives. Nothing drains in peaceful, as with hunger.
-- While blood is above half, a hurt vampire heals one health every 200 ticks. Healing adds no exhaustion, so it costs no blood. Empty blood starves on the same pulse and difficulty rules as hunger.
+- While blood is above half, a hurt vampire heals one health every 200 ticks. Healing adds no exhaustion, so it costs no blood. Empty blood starves the vampire through `Starvation`, which weakens and then hurts it on the timers its settings give (FEED-14), and never in peaceful.
 
 The vampire's hunger bar is pinned full, so vanilla code that reads it, such as sprinting and eating, behaves the same for every vampire. Vampires may always eat, for no gain.
 

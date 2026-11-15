@@ -74,23 +74,31 @@ public class FeedingGameTest implements FabricGameTest {
     final CowEntity cow = still(context.spawnEntity(EntityType.COW, new BlockPos(3, 2, 4)));
     cow.getAttributeInstance(EntityAttributes.GENERIC_MAX_HEALTH).setBaseValue(200.0);
     cow.setHealth(200.0F);
+    final Vec3d[] start = new Vec3d[1];
+    context.runAtTick(5, () -> start[0] = cow.getPos());
     context.runAtEveryTick(
         () -> {
-          if (context.getTick() <= 30) {
-            hold(context, vampire, cow);
+          if (context.getTick() >= 5 && context.getTick() <= 40) {
+            if (context.getTick() <= 30) {
+              hold(context, vampire, cow);
+            }
+            walk(cow);
           }
         });
     context.runAtTick(
-        15,
+        18,
         () ->
             context.assertTrue(
-                cow.hasStatusEffect(StatusEffects.SLOWNESS), "the cow is held before it resists"));
+                cow.getPos().distanceTo(start[0]) < 0.4,
+                "the cow is held before it resists but moved "
+                    + cow.getPos().distanceTo(start[0])));
     context.runAtTick(
-        36,
+        41,
         () -> {
           context.assertFalse(FeedingSessions.isFeeding(vampire), "the cow broke free");
-          context.assertFalse(
-              cow.hasStatusEffect(StatusEffects.SLOWNESS), "a cow that broke free is not held");
+          context.assertTrue(
+              cow.getPos().distanceTo(start[0]) > 1.0,
+              "a cow that broke free walks off but moved " + cow.getPos().distanceTo(start[0]));
           TestPlayers.finish(context, vampire);
         });
   }
@@ -187,17 +195,23 @@ public class FeedingGameTest implements FabricGameTest {
   public void theHoldEndsWhenTheVampireLeavesMidBite(final TestContext context) {
     final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(2, 2, 4));
     final CowEntity cow = still(context.spawnEntity(EntityType.COW, new BlockPos(3, 2, 4)));
+    final Vec3d[] start = new Vec3d[1];
+    context.runAtTick(5, () -> start[0] = cow.getPos());
     context.runAtEveryTick(
         () -> {
-          if (context.getTick() < 30) {
-            hold(context, vampire, cow);
+          if (context.getTick() >= 5 && context.getTick() <= 45) {
+            if (context.getTick() < 30) {
+              hold(context, vampire, cow);
+            }
+            walk(cow);
           }
         });
     context.runAtTick(
         29,
         () ->
             context.assertTrue(
-                cow.hasStatusEffect(StatusEffects.SLOWNESS), "the cow is held mid-bite"));
+                cow.getPos().distanceTo(start[0]) < 0.4,
+                "the cow is held mid-bite but moved " + cow.getPos().distanceTo(start[0])));
     context.runAtTick(
         30,
         () -> {
@@ -205,10 +219,12 @@ public class FeedingGameTest implements FabricGameTest {
           context.assertFalse(FeedingSessions.isFeeding(vampire), "the bite is over");
         });
     context.runAtTick(
-        35,
+        46,
         () -> {
-          context.assertFalse(
-              cow.hasStatusEffect(StatusEffects.SLOWNESS), "nothing holds the cow any more");
+          context.assertTrue(
+              cow.getPos().distanceTo(start[0]) > 1.0,
+              "nothing holds the cow once the vampire leaves, it moved "
+                  + cow.getPos().distanceTo(start[0]));
           TestPlayers.finish(context, vampire);
         });
   }
