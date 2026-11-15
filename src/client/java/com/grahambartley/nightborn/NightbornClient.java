@@ -1,6 +1,7 @@
 package com.grahambartley.nightborn;
 
 import com.grahambartley.nightborn.client.VampireClientFeatures;
+import com.grahambartley.nightborn.client.state.ClientStateService;
 import com.grahambartley.nightborn.decor.AnimatedFurniture;
 import com.grahambartley.nightborn.decor.DecorBlockEntities;
 import com.grahambartley.nightborn.decor.DecorBlocks;
@@ -11,6 +12,7 @@ import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
 import net.fabricmc.fabric.api.client.rendering.v1.BuiltinItemRendererRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.block.entity.BlockEntityRendererFactories;
 import net.minecraft.client.render.entity.EmptyEntityRenderer;
@@ -19,6 +21,7 @@ public class NightbornClient implements ClientModInitializer {
 
   @Override
   public void onInitializeClient() {
+    ClientStateService.load(FabricLoader.getInstance().getConfigDir());
     BlockEntityRendererFactories.register(
         DecorBlockEntities.FURNITURE, FurnitureBlockRenderer::new);
     DecorBlocks.all().stream()

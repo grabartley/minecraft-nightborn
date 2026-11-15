@@ -2,6 +2,7 @@ package com.grahambartley.nightborn.server;
 
 import com.grahambartley.nightborn.Nightborn;
 import com.grahambartley.nightborn.config.ConfigFile;
+import com.grahambartley.nightborn.config.ConfigJson;
 import com.grahambartley.nightborn.config.ConfigPaths;
 import com.grahambartley.nightborn.config.NightbornConfig;
 import com.grahambartley.nightborn.config.Setting;
@@ -81,9 +82,10 @@ public final class ServerConfigService {
     ServerPlayNetworking.send(player, new SyncConfigPayload(current));
   }
 
-  private static ConfigFile fileFor(final MinecraftServer server) {
-    return new ConfigFile(
+  private static ConfigFile<NightbornConfig> fileFor(final MinecraftServer server) {
+    return new ConfigFile<>(
         ConfigPaths.serverConfig(server.getSavePath(WorldSavePath.ROOT).normalize()),
+        ConfigJson.FORMAT,
         Clock.systemUTC());
   }
 }

@@ -14,4 +14,11 @@ class ConfigPathsTest {
     assertEquals(
         Path.of(root, "nightborn", "server-config.json"), ConfigPaths.serverConfig(Path.of(root)));
   }
+
+  @ParameterizedTest(name = "{0}")
+  @ValueSource(strings = {"config", ".minecraft/config", "/home/player/instance/config"})
+  void deviceSettingsLiveInTheGameConfigFolder(final String root) {
+    assertEquals(
+        Path.of(root, "nightborn", "client-state.json"), ConfigPaths.clientState(Path.of(root)));
+  }
 }

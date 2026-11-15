@@ -8,11 +8,12 @@ import java.util.List;
 
 public final class ConfigJson {
 
+  public static final ConfigFormat<NightbornConfig> FORMAT =
+      ConfigFormat.of(NightbornConfig.DEFAULTS, ConfigJson::read, ConfigJson::write);
+
   private ConfigJson() {}
 
-  public record Read(NightbornConfig config, List<String> problems) {}
-
-  public static Read read(final JsonObject root) {
+  public static ConfigFormat.Read<NightbornConfig> read(final JsonObject root) {
     final List<String> problems = new ArrayList<>();
     SettingValues values = SettingValues.EMPTY;
     for (final Setting<?> setting : NightbornConfig.SETTINGS) {
@@ -21,7 +22,7 @@ public final class ConfigJson {
         values = readInto(values, setting, element, problems);
       }
     }
-    return new Read(NightbornConfig.from(values), List.copyOf(problems));
+    return new ConfigFormat.Read<>(NightbornConfig.from(values), problems);
   }
 
   public static JsonObject write(final NightbornConfig config) {

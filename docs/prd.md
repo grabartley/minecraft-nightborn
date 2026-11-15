@@ -518,7 +518,7 @@ Vampires are rare. They live in households hidden in four kinds of structure, ea
 | CFG-4 | Out-of-range values are clamped on load |
 | CFG-5 | Options cover turn chances, sickness length, sun damage, blood drain and values, garlic and crucifix ranges, skill point rates, the staking penalty, the downed and escape times, the coffin sleep share, hardcore vampire deaths, spawn and structure rates, and whether players can turn players |
 | CFG-6 | A settings screen through Mod Menu shows the same server options and shares their validation with the commands |
-| CFG-7 | An option that only changes what one player sees, such as gore, is a client setting saved on that player's device |
+| CFG-7 | An option that only changes what one player sees, such as gore, is a client setting saved on that player's device. Every player can change it on the settings screen, whatever their operator level |
 | CFG-8 | Operators can turn, cure, set points and reset the bloodlines of any player |
 
 **Enforcement:** server.

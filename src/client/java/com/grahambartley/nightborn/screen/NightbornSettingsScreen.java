@@ -1,6 +1,9 @@
 package com.grahambartley.nightborn.screen;
 
 import com.grahambartley.nightborn.client.SyncedServerConfig;
+import com.grahambartley.nightborn.client.state.ClientState;
+import com.grahambartley.nightborn.client.state.ClientStateService;
+import com.grahambartley.nightborn.client.state.GoreLevel;
 import com.grahambartley.nightborn.config.BoolSetting;
 import com.grahambartley.nightborn.config.IntSetting;
 import com.grahambartley.nightborn.config.NightbornConfig;
@@ -36,6 +39,7 @@ public final class NightbornSettingsScreen extends Screen {
   private final Screen parent;
   private final NightbornConfig opened;
   private SettingValues values;
+  private ClientState device;
 
   public NightbornSettingsScreen(@Nullable final Screen parent) {
     super(Text.translatable("nightborn.screen.settings.title"));
@@ -43,6 +47,7 @@ public final class NightbornSettingsScreen extends Screen {
     this.opened =
         access() == EditAccess.NO_WORLD ? NightbornConfig.DEFAULTS : SyncedServerConfig.get();
     this.values = opened.values();
+    this.device = ClientStateService.current();
   }
 
   @Override
@@ -51,6 +56,7 @@ public final class NightbornSettingsScreen extends Screen {
     final SettingsList list =
         new SettingsList(
             client, width, height - LIST_TOP - FOOTER, LIST_TOP, ROW_HEIGHT, CONTENT_WIDTH);
+    addDeviceSection(list);
     String section = "";
     for (final Setting<?> setting : NightbornConfig.SETTINGS) {
       if (!setting.section().equals(section)) {
@@ -74,12 +80,33 @@ public final class NightbornSettingsScreen extends Screen {
         ButtonWidget.builder(Text.translatable("gui.done"), button -> saveAndClose())
             .dimensions(left, y, BUTTON_WIDTH, WIDGET_HEIGHT)
             .build();
-    done.active = editable;
     addDrawableChild(done);
     addDrawableChild(
         ButtonWidget.builder(Text.translatable("gui.cancel"), button -> close())
             .dimensions(left + BUTTON_WIDTH + BUTTON_GAP, y, BUTTON_WIDTH, WIDGET_HEIGHT)
             .build());
+  }
+
+  private void addDeviceSection(final SettingsList list) {
+    list.addRow(
+        new SectionHeader(
+            WIDGET_WIDTH,
+            HEADER_HEIGHT,
+            Text.translatable("nightborn.section.device"),
+            textRenderer));
+    final CyclingButtonWidget<GoreLevel> gore =
+        CyclingButtonWidget.<GoreLevel>builder(level -> Text.translatable(level.translationKey()))
+            .values(GoreLevel.values())
+            .initially(device.gore())
+            .build(
+                0,
+                0,
+                WIDGET_WIDTH,
+                WIDGET_HEIGHT,
+                Text.translatable("nightborn.client.gore"),
+                (button, level) -> device = device.withGore(level));
+    gore.setTooltip(Tooltip.of(Text.translatable("nightborn.client.gore.tooltip")));
+    list.addRow(gore);
   }
 
   private ClickableWidget widgetFor(final Setting<?> setting) {
@@ -104,6 +131,7 @@ public final class NightbornSettingsScreen extends Screen {
   }
 
   private void saveAndClose() {
+    ClientStateService.update(device);
     if (access() == EditAccess.EDITABLE) {
       ClientPlayNetworking.send(new EditConfigPayload(opened, NightbornConfig.from(values)));
     }

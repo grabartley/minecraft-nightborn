@@ -15,8 +15,8 @@ class ConfigJsonTest {
   @Test
   @DisplayName("an empty object reads as defaults with no problems")
   void emptyIsDefaults() {
-    final ConfigJson.Read read = ConfigJson.read(new JsonObject());
-    assertEquals(NightbornConfig.DEFAULTS, read.config());
+    final ConfigFormat.Read<NightbornConfig> read = ConfigJson.read(new JsonObject());
+    assertEquals(NightbornConfig.DEFAULTS, read.value());
     assertTrue(read.problems().isEmpty());
   }
 
@@ -28,7 +28,7 @@ class ConfigJsonTest {
             .with(FeedingSettings.BOTTLE_SIZE, 9)
             .with(TurningSettings.PLAYERS_CAN_TURN_PLAYERS, false)
             .with(BloodSettings.PLAYER_BLOOD, 400);
-    assertEquals(config, ConfigJson.read(ConfigJson.write(config)).config());
+    assertEquals(config, ConfigJson.read(ConfigJson.write(config)).value());
   }
 
   @Test
@@ -43,8 +43,9 @@ class ConfigJsonTest {
   @CsvSource({"999, 600", "-3, 5", "2, 5", "600, 600"})
   @DisplayName("out of range numbers are clamped and reported")
   void clampsOutOfRange(final long written, final int loaded) {
-    final ConfigJson.Read read = read("{\"downed\":{\"escapeSeconds\":" + written + "}}");
-    assertEquals(loaded, read.config().downed().escapeSeconds());
+    final ConfigFormat.Read<NightbornConfig> read =
+        read("{\"downed\":{\"escapeSeconds\":" + written + "}}");
+    assertEquals(loaded, read.value().downed().escapeSeconds());
     assertEquals(written >= 5 && written <= 600, read.problems().isEmpty());
   }
 
@@ -54,8 +55,9 @@ class ConfigJsonTest {
       value = {"\"thirty\"", "true", "1.5", "{}", "[1]"})
   @DisplayName("a wrong type for a number falls back to its default and is reported")
   void wrongNumberType(final String value) {
-    final ConfigJson.Read read = read("{\"downed\":{\"downedSeconds\":" + value + "}}");
-    assertEquals(30, read.config().downed().downedSeconds());
+    final ConfigFormat.Read<NightbornConfig> read =
+        read("{\"downed\":{\"downedSeconds\":" + value + "}}");
+    assertEquals(30, read.value().downed().downedSeconds());
     assertEquals(1, read.problems().size());
   }
 
@@ -65,18 +67,19 @@ class ConfigJsonTest {
       value = {"\"yes\"", "1", "null"})
   @DisplayName("a wrong type for a toggle falls back to its default and is reported")
   void wrongToggleType(final String value) {
-    final ConfigJson.Read read = read("{\"downed\":{\"hardcoreVampireDeath\":" + value + "}}");
-    assertEquals(false, read.config().downed().hardcoreVampireDeath());
+    final ConfigFormat.Read<NightbornConfig> read =
+        read("{\"downed\":{\"hardcoreVampireDeath\":" + value + "}}");
+    assertEquals(false, read.value().downed().hardcoreVampireDeath());
     assertEquals(1, read.problems().size());
   }
 
   @Test
   @DisplayName("a section that is not an object is ignored")
   void badSectionIgnored() {
-    assertEquals(NightbornConfig.DEFAULTS, read("{\"sun\":5}").config());
+    assertEquals(NightbornConfig.DEFAULTS, read("{\"sun\":5}").value());
   }
 
-  private static ConfigJson.Read read(final String json) {
+  private static ConfigFormat.Read<NightbornConfig> read(final String json) {
     return ConfigJson.read(JsonParser.parseString(json).getAsJsonObject());
   }
 }

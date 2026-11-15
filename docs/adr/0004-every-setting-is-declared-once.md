@@ -14,6 +14,7 @@ Each option is one `IntSetting` or `BoolSetting` field beside the section record
 - Settings load when the server starts, from the world save. The standards allow loading them earlier, from the level storage session, for options needed before the server is built. No Nightborn option is needed that early yet, so the later, simpler hook is used until one is.
 - The settings screen sends the settings it opened with and the settings it ends with. The server applies only the ones the operator changed, so a change made by command while the screen was open is kept, and it logs who changed what.
 - Settings are whole numbers or toggles. Percentages and seconds are whole numbers, which keeps the codec and the commands simple.
+- An option that only changes what one player sees (CFG-7), such as gore, is not a setting. It lives in a separate client store, `ClientState`, saved in the game's config folder as `nightborn/client-state.json` and never sent to the server. It shares only the file handling, `ConfigFile`, with the server settings, and the settings screen shows it in its own section that every player can change, in a world or not.
 
 ## Consequences
 
