@@ -1,0 +1,46 @@
+package com.grahambartley.nightborn.downed;
+
+import com.grahambartley.nightborn.config.DownedSettings;
+import com.grahambartley.nightborn.downed.DownedState.Phase;
+import org.jetbrains.annotations.Nullable;
+
+public final class DownedRules {
+
+  private DownedRules() {}
+
+  public enum Change {
+    NONE,
+    STOOD_UP,
+    ESCAPED
+  }
+
+  public record Step(@Nullable DownedState state, Change change) {}
+
+  public static boolean allowsDamage(
+      @Nullable final DownedState state, final boolean killsVampires) {
+    return state == null || killsVampires;
+  }
+
+  public static boolean downsInsteadOfDying(final boolean killsVampires) {
+    return !killsVampires;
+  }
+
+  public static DownedState downed(final DownedSettings settings) {
+    return new DownedState(Phase.DOWNED, settings.downedSeconds() * 20);
+  }
+
+  public static Step tick(final DownedState state, final DownedSettings settings) {
+    if (state.ticksLeft() > 1) {
+      return new Step(new DownedState(state.phase(), state.ticksLeft() - 1), Change.NONE);
+    }
+    if (state.phase() == Phase.DOWNED) {
+      return new Step(
+          new DownedState(Phase.ESCAPING, settings.escapeSeconds() * 20), Change.STOOD_UP);
+    }
+    return new Step(null, Change.ESCAPED);
+  }
+
+  public static float recoveredHealth(final float maxHealth, final DownedSettings settings) {
+    return Math.max(1.0F, maxHealth * settings.recoverHealth() / 100.0F);
+  }
+}

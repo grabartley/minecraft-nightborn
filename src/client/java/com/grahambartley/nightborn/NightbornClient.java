@@ -6,6 +6,7 @@ import com.grahambartley.nightborn.decor.DecorBlocks;
 import com.grahambartley.nightborn.decor.DecorEntities;
 import com.grahambartley.nightborn.render.FurnitureBlockRenderer;
 import com.grahambartley.nightborn.render.FurnitureItemRenderer;
+import com.grahambartley.nightborn.client.VampireClientFeatures;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
 import net.fabricmc.fabric.api.client.rendering.v1.BuiltinItemRendererRegistry;
@@ -33,5 +34,6 @@ public class NightbornClient implements ClientModInitializer {
     BlockRenderLayerMap.INSTANCE.putBlocks(
         RenderLayer.getCutout(), DecorBlocks.ORNATE_CHAIR, DecorBlocks.ORNATE_TABLE);
     EntityRendererRegistry.register(DecorEntities.SEAT, EmptyEntityRenderer::new);
+    VampireClientFeatures.register();
   }
 }

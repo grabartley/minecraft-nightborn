@@ -23,6 +23,9 @@
     "client": [
       "com.grahambartley.nightborn.NightbornClient"
     ],
+    "modmenu": [
+      "com.grahambartley.nightborn.NightbornModMenu"
+    ],
     "fabric-gametest": [
       "com.grahambartley.nightborn.gametest.NightbornBootGameTest",
       "com.grahambartley.nightborn.gametest.DecorGameTest",

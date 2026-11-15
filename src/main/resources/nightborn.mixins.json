@@ -2,7 +2,14 @@
 	"required": true,
 	"package": "com.grahambartley.nightborn.mixin",
 	"compatibilityLevel": "JAVA_21",
-	"mixins": [],
+	"mixins": [
+		"HungerManagerMixin",
+		"LivingEntityMixin",
+		"MapStateMixin",
+		"PhantomSpawnerMixin",
+		"PlayerEntityMixin",
+		"ServerPlayerEntityMixin"
+	],
 	"injectors": {
 		"defaultRequire": 1
 	},
