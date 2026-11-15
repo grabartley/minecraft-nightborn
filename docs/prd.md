@@ -458,7 +458,7 @@ Vampires are rare. They live in households hidden in four kinds of structure, ea
 | COFFIN-4 | Lying in a coffin sets the vampire's respawn point there, as a bed does |
 | COFFIN-5 | A vampire whose coffin is gone respawns at world spawn, as with a missing bed |
 | COFFIN-6 | A human can open a coffin but not sleep in it |
-| COFFIN-7 | A closed coffin shades the vampire inside from the sun, and hides them from view |
+| COFFIN-7 | A closed coffin shades the vampire inside from the sun, smothers any flames they carry in, and hides them from view |
 | COFFIN-8 | Vampire players never count toward the bed share, and humans never count toward the coffin share, so neither side blocks the other's sleep |
 
 **Enforcement:** server.

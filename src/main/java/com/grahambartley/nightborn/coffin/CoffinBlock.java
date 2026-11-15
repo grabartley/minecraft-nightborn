@@ -110,7 +110,8 @@ public class CoffinBlock extends BedBlock {
         .ifLeft(
             reason ->
                 RestRules.message(reason)
-                    .ifPresent(key -> player.sendMessage(Text.translatable(key), true)));
+                    .ifPresent(key -> player.sendMessage(Text.translatable(key), true)))
+        .ifRight(rested -> player.extinguish());
     return ActionResult.SUCCESS;
   }
 

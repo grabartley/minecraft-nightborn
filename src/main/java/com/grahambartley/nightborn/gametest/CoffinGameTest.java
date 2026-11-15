@@ -150,6 +150,28 @@ public class CoffinGameTest implements FabricGameTest {
         });
   }
 
+  @GameTest(templateName = YARD, batchId = DAY, tickLimit = TestPlayers.READY + 50)
+  public void aBurningVampireLiesDownAndTheFlamesGoOut(final TestContext context) {
+    final BlockPos head = coffin(context, new BlockPos(4, 2, 6), Direction.NORTH);
+    roof(context);
+    final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(5, 2, 5));
+    context.runAtTick(
+        TestPlayers.READY,
+        () -> {
+          vampire.setOnFireFor(8.0F);
+          context.useBlock(head, vampire);
+          context.assertFalse(vampire.isOnFire(), "a shut coffin smothers the flames");
+        });
+    context.runAtTick(
+        TestPlayers.READY + 40,
+        () -> {
+          context.assertTrue(
+              vampire.isSleeping(),
+              "the flames never wake the sleeper: " + Diagnostics.of(vampire));
+          TestPlayers.finish(context, vampire);
+        });
+  }
+
   @GameTest(templateName = YARD, batchId = DAY, tickLimit = TestPlayers.READY + 10)
   public void restingSetsTheRespawnPointAndTheCoffinsLossClearsIt(final TestContext context) {
     final BlockPos head = coffin(context, new BlockPos(4, 2, 6), Direction.EAST);
