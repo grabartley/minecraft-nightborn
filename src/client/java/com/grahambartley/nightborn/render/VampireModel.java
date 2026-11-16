@@ -4,7 +4,6 @@ import com.grahambartley.nightborn.Nightborn;
 import com.grahambartley.nightborn.mob.VampireEntity;
 import com.grahambartley.nightborn.mob.VampirePose;
 import com.grahambartley.nightborn.mob.look.VampireLook;
-import com.grahambartley.nightborn.mob.look.VampireRig;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.util.Identifier;
 import software.bernie.geckolib.animation.AnimationState;
@@ -30,7 +29,7 @@ public class VampireModel extends GeoModel<VampireEntity> {
 
   @Override
   public Identifier getAnimationResource(final VampireEntity vampire) {
-    return VampireRig.animation();
+    return vampire.rig().clips();
   }
 
   @Override

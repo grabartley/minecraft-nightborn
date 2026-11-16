@@ -71,7 +71,11 @@ class LookDataCheckTest {
         List.of(
             "nightborn:eraless has no era", "nightborn:odd has a lowest height above its highest"),
         LookDataCheck.problems(
-            Map.of(id("eraless"), new VampireLook(VampireRig.MALE, id("t"), List.of(), 1)),
+            Map.of(
+                id("eraless"),
+                new VampireLook(VampireRig.MALE, id("t"), List.of(), 1),
+                id("lord"),
+                new VampireLook(VampireRig.LORD, id("t"), List.of(), 1)),
             Map.of(),
             Map.of(id("odd"), new VampireBuild(1.0F, 1.9F, 1.6F, 1)),
             SLOTS));

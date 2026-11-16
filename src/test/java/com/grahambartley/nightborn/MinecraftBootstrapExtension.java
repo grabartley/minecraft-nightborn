@@ -13,6 +13,7 @@ import com.grahambartley.nightborn.holy.HolyWater;
 import com.grahambartley.nightborn.hunter.HunterAttributes;
 import com.grahambartley.nightborn.mind.MindAttributes;
 import com.grahambartley.nightborn.mind.MindEffect;
+import com.grahambartley.nightborn.mob.NightbornMobs;
 import com.grahambartley.nightborn.occult.OccultAttributes;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -46,5 +47,6 @@ public final class MinecraftBootstrapExtension implements BeforeAllCallback {
     AmmoItems.register();
     Objects.requireNonNull(HolyWater.POTION);
     Objects.requireNonNull(ContractItems.HUNTER_CONTRACT);
+    Objects.requireNonNull(NightbornMobs.VAMPIRE_BAT);
   }
 }

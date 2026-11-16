@@ -16,6 +16,7 @@ final class VampireDressing {
     final Map<Identifier, VampireOutfit> outfits = VampireLooks.outfits(registries);
     Appearance.pick(
             VampireLooks.looks(registries),
+            vampire.rigs(),
             outfits,
             VampireLooks.builds(registries),
             vampire.getRandom()::nextDouble)

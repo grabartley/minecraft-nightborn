@@ -53,4 +53,21 @@ class HouseholdTest {
     assertEquals(
         loads, Household.CODEC.parse(JsonOps.INSTANCE, JsonParser.parseString(json)).isSuccess());
   }
+
+  @ParameterizedTest(name = "{0}: {1}")
+  @CsvSource(
+      delimiter = '|',
+      value = {
+        "{\"resident\": \"nightborn:vampire_lord\"} | true",
+        "{\"resident\": \"nightborn:vampire_lord\", \"stages\": {\"nightborn:lord\": 1}} | true",
+        "{\"stages\": {\"nightborn:lord\": 1}} | false",
+        "{\"resident\": \"nightborn:no_such_thing\"} | false"
+      })
+  @DisplayName("a household may have one head, a real entity type with its own stage odds")
+  void head(final String head, final boolean loads) {
+    final String json =
+        "{\"resident\": \"minecraft:zombie\", \"residents\": 2, \"head\": " + head + "}";
+    assertEquals(
+        loads, Household.CODEC.parse(JsonOps.INSTANCE, JsonParser.parseString(json)).isSuccess());
+  }
 }

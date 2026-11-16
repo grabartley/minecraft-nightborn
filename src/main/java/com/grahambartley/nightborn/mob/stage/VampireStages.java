@@ -31,7 +31,8 @@ public final class VampireStages {
     StageDataCheck.problems(
             stages(registries),
             SkillPicks.ofTree(
-                Skills.allSkills(registries), Skills.allBranches(registries), SkillTree.VAMPIRE))
+                Skills.allSkills(registries), Skills.allBranches(registries), SkillTree.VAMPIRE),
+            Skills.allBranches(registries))
         .forEach(problem -> Nightborn.LOGGER.error("Bad vampire stage data: {}", problem));
   }
 

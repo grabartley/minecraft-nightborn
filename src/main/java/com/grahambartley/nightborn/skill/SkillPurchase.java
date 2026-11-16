@@ -30,7 +30,7 @@ public final class SkillPurchase {
       final Identifier id,
       @Nullable final Skill skill,
       @Nullable final SkillBranch branch) {
-    if (skill == null || branch == null) {
+    if (skill == null || branch == null || !branch.learnable()) {
       return Verdict.UNKNOWN;
     }
     if (branch.tree() != playerTree) {

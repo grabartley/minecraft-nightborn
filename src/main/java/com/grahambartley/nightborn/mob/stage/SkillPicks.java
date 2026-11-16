@@ -31,6 +31,21 @@ public final class SkillPicks {
     return inTree;
   }
 
+  public static Map<Identifier, Skill> forStage(
+      final Map<Identifier, Skill> tree,
+      final Map<Identifier, SkillBranch> branches,
+      final StageSkills stage) {
+    final Map<Identifier, Skill> open = new HashMap<>();
+    tree.forEach(
+        (id, skill) -> {
+          final SkillBranch branch = branches.get(skill.branch());
+          if (branch != null && (branch.learnable() || stage.weights().containsKey(id))) {
+            open.put(id, skill);
+          }
+        });
+    return open;
+  }
+
   public static int most(final int wanted, final int treeSize) {
     return Math.max(0, Math.min(wanted, treeSize - 1));
   }

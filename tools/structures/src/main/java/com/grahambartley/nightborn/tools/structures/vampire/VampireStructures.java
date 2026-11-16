@@ -1,6 +1,7 @@
 package com.grahambartley.nightborn.tools.structures.vampire;
 
 import com.grahambartley.nightborn.tools.structures.template.Template;
+import com.grahambartley.nightborn.tools.structures.vampire.castle.Castle;
 import com.grahambartley.nightborn.tools.structures.vampire.crypt.Church;
 import com.grahambartley.nightborn.tools.structures.vampire.crypt.Churchyard;
 import com.grahambartley.nightborn.tools.structures.vampire.crypt.Ossuary;
@@ -20,6 +21,8 @@ public final class VampireStructures {
         Church.build(Church.TOWER),
         Church.build(Church.BELLCOTE),
         BloodPoolDen.build(),
-        Grotto.build());
+        Grotto.build(),
+        Castle.build(Castle.BASTIONS),
+        Castle.build(Castle.RUINED));
   }
 }

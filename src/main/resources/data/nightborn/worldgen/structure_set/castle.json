@@ -1,0 +1,13 @@
+{
+  "structures": [
+    { "structure": "nightborn:castle", "weight": 1 }
+  ],
+  "placement": {
+    "type": "nightborn:rare_spread",
+    "rarity": "vampire_structures",
+    "salt": 418820553,
+    "spacing": 48,
+    "separation": 24,
+    "exclusion_zone": { "other_set": "minecraft:villages", "chunk_count": 4 }
+  }
+}

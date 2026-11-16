@@ -2,6 +2,7 @@ package com.grahambartley.nightborn.mob.stage;
 
 import static com.grahambartley.nightborn.mob.stage.StageFixtures.FAITH;
 import static com.grahambartley.nightborn.mob.stage.StageFixtures.NOBLE_BLOOD;
+import static com.grahambartley.nightborn.mob.stage.StageFixtures.RALLY;
 import static com.grahambartley.nightborn.mob.stage.StageFixtures.RUSH;
 import static com.grahambartley.nightborn.mob.stage.StageFixtures.STRENGTH;
 import static com.grahambartley.nightborn.mob.stage.StageFixtures.THICK;
@@ -32,10 +33,25 @@ class SkillPicksTest {
   @Test
   @DisplayName("only skills in the vampire tree are on offer, from every bloodline")
   void ofTree() {
-    assertEquals(Set.of(THICK, RUSH, STRENGTH, NOBLE_BLOOD), VAMPIRE.keySet());
+    assertEquals(Set.of(THICK, RUSH, STRENGTH, NOBLE_BLOOD, RALLY), VAMPIRE.keySet());
     assertEquals(
         Set.of(FAITH),
         SkillPicks.ofTree(StageFixtures.SKILLS, StageFixtures.BRANCHES, SkillTree.HUNTER).keySet());
+  }
+
+  @ParameterizedTest(name = "stage names the mob-only skill: {0}")
+  @ValueSource(booleans = {true, false})
+  @DisplayName("a skill only vampire mobs can hold is on offer only to a stage that names it")
+  void forStage(final boolean named) {
+    final Map<Identifier, Integer> weights = named ? Map.of(RALLY, 5) : Map.of(THICK, 5);
+    final Set<Identifier> expected =
+        named
+            ? Set.of(THICK, RUSH, STRENGTH, NOBLE_BLOOD, RALLY)
+            : Set.of(THICK, RUSH, STRENGTH, NOBLE_BLOOD);
+    assertEquals(
+        expected,
+        SkillPicks.forStage(VAMPIRE, StageFixtures.BRANCHES, StageFixtures.weights(weights, 1))
+            .keySet());
   }
 
   @ParameterizedTest(name = "wants {0} of {1}: {2}")

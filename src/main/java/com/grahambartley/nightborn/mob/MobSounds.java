@@ -7,6 +7,8 @@ import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 import net.minecraft.sound.SoundEvent;
 
 public final class MobSounds {
@@ -28,9 +30,9 @@ public final class MobSounds {
       List.of(VampireVoice.AMBIENT, VampireVoice.HURT, VampireVoice.DEATH);
 
   private static final Map<VampireRig, Map<VampireVoice, SoundEvent>> VOICES =
-      voices(VAMPIRE, Arrays.asList(VampireVoice.values()));
+      voices(VAMPIRE, Arrays.asList(VampireVoice.values()), Set.of(VampireRig.values()));
   private static final Map<VampireRig, Map<VampireVoice, SoundEvent>> HUNTERS =
-      voices(HUNTER, HUNTER_VOICES);
+      voices(HUNTER, HUNTER_VOICES, VampireRig.COMMON);
 
   private MobSounds() {}
 
@@ -41,9 +43,10 @@ public final class MobSounds {
   }
 
   public static SoundEvent hunter(final VampireRig rig, final VampireVoice voice) {
-    final SoundEvent sound = HUNTERS.get(rig).get(voice);
+    final SoundEvent sound = HUNTERS.getOrDefault(rig, Map.of()).get(voice);
     if (sound == null) {
-      throw new IllegalArgumentException("hunters have no " + voice.id() + " voice");
+      throw new IllegalArgumentException(
+          "hunters have no " + rig.asString() + " " + voice.id() + " voice");
     }
     return sound;
   }
@@ -53,9 +56,9 @@ public final class MobSounds {
   }
 
   private static Map<VampireRig, Map<VampireVoice, SoundEvent>> voices(
-      final String speaker, final List<VampireVoice> spoken) {
+      final String speaker, final List<VampireVoice> spoken, final Set<VampireRig> rigs) {
     final Map<VampireRig, Map<VampireVoice, SoundEvent>> voices = new EnumMap<>(VampireRig.class);
-    for (final VampireRig rig : VampireRig.values()) {
+    for (final VampireRig rig : new TreeSet<>(rigs)) {
       final Map<VampireVoice, SoundEvent> sounds = new EnumMap<>(VampireVoice.class);
       spoken.forEach(
           voice -> sounds.put(voice, NightbornSounds.register(voicePath(speaker, rig, voice))));

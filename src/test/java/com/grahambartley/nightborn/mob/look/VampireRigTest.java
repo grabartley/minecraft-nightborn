@@ -17,7 +17,7 @@ import org.junit.jupiter.params.provider.EnumSource;
 class VampireRigTest {
 
   @ParameterizedTest(name = "{0} reads as {1} and wears the {2} cut")
-  @CsvSource({"male, MALE, MALE", "female, FEMALE, FEMALE"})
+  @CsvSource({"male, MALE, MALE", "female, FEMALE, FEMALE", "lord, LORD, MALE"})
   @DisplayName("a rig reads from data and fits clothing of its own cut")
   void readsAndFits(final String id, final VampireRig rig, final ClothingCut cut) {
     assertEquals(rig, VampireRig.CODEC.parse(JsonOps.INSTANCE, new JsonPrimitive(id)).getOrThrow());
@@ -27,11 +27,20 @@ class VampireRigTest {
 
   @ParameterizedTest(name = "{0}")
   @EnumSource(VampireRig.class)
-  @DisplayName("every rig's model, eye glow and the shared clips ship with the mod")
+  @DisplayName("every rig's model, eye glow and clips ship with the mod")
   void artShips(final VampireRig rig) {
     assertTrue(Files.exists(asset("src/client/resources/assets", rig.geo())), rig.geo().toString());
     assertTrue(Files.exists(asset("src/main/resources/assets", rig.eyes())), rig.eyes().toString());
-    assertTrue(Files.exists(asset("src/client/resources/assets", VampireRig.animation())));
+    assertTrue(
+        Files.exists(asset("src/client/resources/assets", rig.clips())), rig.clips().toString());
+  }
+
+  @ParameterizedTest(name = "{0} shares the household clips: {1}")
+  @CsvSource({"MALE, true", "FEMALE, true", "LORD, false"})
+  @DisplayName("household rigs share one clip file and only they are common")
+  void sharesClips(final VampireRig rig, final boolean common) {
+    assertEquals(common, rig.clips().equals(VampireRig.playerClips()));
+    assertEquals(common, VampireRig.COMMON.contains(rig));
   }
 
   @ParameterizedTest(name = "{0} rolled {1} is {2}")

@@ -42,14 +42,18 @@ class VampireStagesTest {
             SkillPicks.ofTree(
                 read("nightborn/skill", Skill.CODEC),
                 read("nightborn/skill_branch", SkillBranch.CODEC),
-                SkillTree.VAMPIRE)));
+                SkillTree.VAMPIRE),
+            read("nightborn/skill_branch", SkillBranch.CODEC)));
   }
 
   @Test
   @DisplayName("each older stage is rarer, tougher, keeps less blood back and is worth more")
   void olderIsHarder() {
     final List<VampireStage> byRank =
-        stages().values().stream().sorted((a, b) -> Integer.compare(a.rank(), b.rank())).toList();
+        stages().values().stream()
+            .filter(stage -> stage.weight() > 0)
+            .sorted((a, b) -> Integer.compare(a.rank(), b.rank()))
+            .toList();
     assertEquals(4, byRank.size());
     for (int i = 1; i < byRank.size(); i++) {
       final VampireStage younger = byRank.get(i - 1);
@@ -61,6 +65,23 @@ class VampireStagesTest {
       assertTrue(older.combat().bloodFloor() < younger.combat().bloodFloor());
       assertTrue(older.combat().thinkTicks() < younger.combat().thinkTicks());
     }
+  }
+
+  static Stream<VampireStage> wild() {
+    return stages().values().stream().filter(stage -> stage.weight() > 0);
+  }
+
+  @ParameterizedTest(name = "{0}")
+  @MethodSource("wild")
+  @DisplayName("the lord's stage is never rolled, outranks every other and is the toughest")
+  void lordTopsEveryStage(final VampireStage stage) {
+    final VampireStage lord = stages().get(Identifier.of("nightborn", "lord"));
+    assertEquals(0, lord.weight());
+    assertTrue(lord.rank() > stage.rank());
+    assertTrue(lord.body().health() > stage.body().health());
+    assertTrue(lord.body().damage() > stage.body().damage());
+    assertTrue(lord.skills().count().getMin() > stage.skills().count().getMax());
+    assertTrue(lord.combat().thinkTicks() < stage.combat().thinkTicks());
   }
 
   static Stream<VampireStage> shipped() {

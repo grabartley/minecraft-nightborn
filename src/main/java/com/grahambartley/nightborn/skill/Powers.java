@@ -3,6 +3,8 @@ package com.grahambartley.nightborn.skill;
 import com.grahambartley.nightborn.batform.BatForm;
 import com.grahambartley.nightborn.blood.BloodAttachment;
 import com.grahambartley.nightborn.downed.Downed;
+import com.grahambartley.nightborn.lord.Rally;
+import com.grahambartley.nightborn.lord.Summons;
 import com.grahambartley.nightborn.mind.Gazes;
 import com.grahambartley.nightborn.network.UsePowerPayload;
 import com.grahambartley.nightborn.occult.FogClouds;
@@ -56,6 +58,11 @@ public final class Powers {
     return Skills.skills(caster.getWorld().getRegistryManager())
         .map(registry -> registry.get(id))
         .flatMap(Skill::power);
+  }
+
+  @Nullable
+  public static LivingEntity foe(final LivingEntity caster) {
+    return caster instanceof MobEntity mob ? mob.getTarget() : caster.getAttacking();
   }
 
   static Vec3d heading(final LivingEntity caster) {
@@ -130,6 +137,8 @@ public final class Powers {
     }
     power.familiar().ifPresent(familiar -> GhostlyFamiliars.summon(caster, familiar));
     power.fog().ifPresent(fog -> FogClouds.spawn(caster, fog));
+    power.rally().ifPresent(rally -> Rally.call(caster, rally));
+    power.summon().ifPresent(summon -> Summons.call(caster, summon));
     if (caster instanceof ServerPlayerEntity player) {
       power.track().ifPresent(track -> Tracking.start(player, track));
     }

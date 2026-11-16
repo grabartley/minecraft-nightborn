@@ -6,10 +6,12 @@ import com.grahambartley.nightborn.Nightborn;
 import com.grahambartley.nightborn.blood.BloodItems;
 import com.grahambartley.nightborn.config.StructureSettings;
 import com.grahambartley.nightborn.mob.NightbornMobs;
+import com.grahambartley.nightborn.mob.VampireLordEntity;
 import com.grahambartley.nightborn.server.ServerConfigService;
 import com.grahambartley.nightborn.structure.FogZone;
 import com.grahambartley.nightborn.structure.Footing;
 import com.grahambartley.nightborn.structure.Household;
+import com.grahambartley.nightborn.structure.HouseholdHead;
 import com.grahambartley.nightborn.structure.HouseholdSpawner;
 import com.grahambartley.nightborn.structure.RareSpreadPlacement;
 import com.grahambartley.nightborn.structure.StructureZone;
@@ -21,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
+import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.item.ItemStack;
@@ -85,11 +88,21 @@ public class VampireStructureGameTest implements FabricGameTest {
         context.getAbsolutePos(new BlockPos(8, 4, 8)));
   }
 
+  private static BlockBox unroofed(final TestContext context) {
+    for (int x = 0; x <= 8; x++) {
+      for (int z = 0; z <= 8; z++) {
+        context.setBlockState(x, 4, z, Blocks.AIR);
+      }
+    }
+    return arena(context);
+  }
+
   private static Household household(final int residents) {
     return new Household(
         Registries.ENTITY_TYPE.getEntry(NightbornMobs.VAMPIRE),
         ConstantIntProvider.create(residents),
-        Map.of());
+        Map.of(),
+        Optional.empty());
   }
 
   static String structureJson(final int reach) {
@@ -275,6 +288,82 @@ public class VampireStructureGameTest implements FabricGameTest {
           "a resident stands on the floor inside its heart, at " + resident.getBlockPos());
       context.assertTrue(resident.isAlive(), "a resident is in the world");
     }
+    context.complete();
+  }
+
+  @GameTest(templateName = ARENA, tickLimit = 20)
+  public void aHouseholdSeatsItsHeadAtTheMiddleOfItsHeart(final TestContext context) {
+    final BlockBox box = arena(context);
+    final Household household =
+        new Household(
+            Registries.ENTITY_TYPE.getEntry(NightbornMobs.VAMPIRE),
+            ConstantIntProvider.create(2),
+            Map.of(),
+            Optional.of(
+                new HouseholdHead(
+                    Registries.ENTITY_TYPE.getEntry(NightbornMobs.VAMPIRE_LORD), Map.of())));
+    final List<Entity> settled =
+        HouseholdSpawner.settle(context.getWorld(), box, box, household, Random.create(5L));
+    settled.forEach(resident -> ((MobEntity) resident).setAiDisabled(true));
+    context.assertTrue(
+        settled.size() == 3, "the head and two residents settle, not " + settled.size());
+    final Entity head = settled.get(0);
+    context.assertTrue(
+        head instanceof VampireLordEntity lord && lord.stageId().equals(VampireLordEntity.STAGE),
+        "the head settles first and takes the lord stage");
+    context.assertTrue(
+        head.getBlockX() == box.getCenter().getX() && head.getBlockZ() == box.getCenter().getZ(),
+        "the head stands at the middle of the heart, at " + head.getBlockPos());
+    context.assertTrue(
+        settled.stream().skip(1).allMatch(resident -> resident.getType() == NightbornMobs.VAMPIRE),
+        "the rest are the household's residents");
+    context.complete();
+  }
+
+  @GameTest(templateName = ARENA, tickLimit = 20)
+  public void theShippedCastleIsLedByAVampireLord(final TestContext context) {
+    final Structure castle =
+        context
+            .getWorld()
+            .getRegistryManager()
+            .get(RegistryKeys.STRUCTURE)
+            .get(Identifier.of(Nightborn.MOD_ID, "castle"));
+    context.assertTrue(
+        castle instanceof VampireStructure vampire
+            && vampire
+                .household()
+                .head()
+                .filter(head -> head.resident().value() == NightbornMobs.VAMPIRE_LORD)
+                .isPresent(),
+        "the castle's household is led by a vampire lord, got " + castle);
+    final StructureSet castles =
+        context
+            .getWorld()
+            .getRegistryManager()
+            .get(RegistryKeys.STRUCTURE_SET)
+            .get(Identifier.of(Nightborn.MOD_ID, "castle"));
+    context.assertTrue(
+        castles != null && castles.placement() instanceof RareSpreadPlacement,
+        "castles are placed with the rare spread that the rarity setting scales");
+    final LootTable loot =
+        context
+            .getWorld()
+            .getServer()
+            .getReloadableRegistries()
+            .getLootTable(
+                RegistryKey.of(
+                    RegistryKeys.LOOT_TABLE, Identifier.of(Nightborn.MOD_ID, "chests/castle")));
+    context.assertTrue(loot != LootTable.EMPTY, "the castle chest loot table loads");
+    context.complete();
+  }
+
+  @GameTest(templateName = ARENA, tickLimit = 20)
+  public void aHouseholdNeverSettlesUnderOpenSky(final TestContext context) {
+    final BlockBox box = unroofed(context);
+    final List<Entity> settled =
+        HouseholdSpawner.settle(context.getWorld(), box, box, household(3), Random.create(5L));
+    context.assertTrue(
+        settled.isEmpty(), "no resident settles where the sun can reach, not " + settled.size());
     context.complete();
   }
 

@@ -30,7 +30,7 @@ public final class LookDataCheck {
     new TreeMap<>(looks)
         .forEach(
             (id, look) -> {
-              if (look.eras().isEmpty()) {
+              if (look.eras().isEmpty() && VampireRig.COMMON.contains(look.rig())) {
                 problems.add(id + " has no era");
               }
               for (final Identifier era : look.eras()) {

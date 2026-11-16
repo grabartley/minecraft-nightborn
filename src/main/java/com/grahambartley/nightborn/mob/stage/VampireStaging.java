@@ -49,7 +49,8 @@ public final class VampireStaging {
     final Map<Identifier, SkillBranch> branches = Skills.allBranches(registries);
     final List<Identifier> picks =
         SkillPicks.pick(
-            SkillPicks.ofTree(skills, branches, SkillTree.VAMPIRE),
+            SkillPicks.forStage(
+                SkillPicks.ofTree(skills, branches, SkillTree.VAMPIRE), branches, stage.skills()),
             stage.skills(),
             stage.skills().count().get(random),
             random::nextDouble);

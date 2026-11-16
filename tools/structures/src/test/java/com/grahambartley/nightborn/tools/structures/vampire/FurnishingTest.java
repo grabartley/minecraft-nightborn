@@ -41,11 +41,19 @@ class FurnishingTest {
     assertTrue(t.get(3, 2, 3).contains("part=head") && t.get(3, 2, 3).contains("facing=east"));
   }
 
-  @Test
-  void chestsHoldVampireLoot() {
+  @ParameterizedTest(name = "a chest asking for {0} holds {1}")
+  @CsvSource({
+    ", nightborn:chests/vampire_structure",
+    "nightborn:chests/castle, nightborn:chests/castle"
+  })
+  void chestsHoldTheirStructuresLoot(final String asked, final String held) {
     final Template t = new Template("vampire/test", 7, 4, 7);
-    Furnishing.chest(t, 1, 1, 1, "east");
-    assertEquals(Furnishing.LOOT, t.blockData().get(new Pos(1, 1, 1)).get("LootTable"));
+    if (asked == null) {
+      Furnishing.chest(t, 1, 1, 1, "east");
+    } else {
+      Furnishing.chest(t, 1, 1, 1, "east", asked);
+    }
+    assertEquals(held, t.blockData().get(new Pos(1, 1, 1)).get("LootTable"));
   }
 
   @ParameterizedTest(name = "a drape {0} tall marks only its top block as the top")

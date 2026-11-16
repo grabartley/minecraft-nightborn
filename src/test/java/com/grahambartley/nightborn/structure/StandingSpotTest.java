@@ -2,6 +2,7 @@ package com.grahambartley.nightborn.structure;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.util.List;
 import java.util.stream.Stream;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
@@ -33,5 +34,23 @@ class StandingSpotTest {
     assertEquals(
         fits,
         StandingSpot.fits(floor.getDefaultState(), feet.getDefaultState(), head.getDefaultState()));
+  }
+
+  static Stream<Arguments> roofs() {
+    return Stream.of(
+        Arguments.of(List.of(), false),
+        Arguments.of(List.of(Blocks.AIR, Blocks.AIR), false),
+        Arguments.of(List.of(Blocks.AIR, Blocks.GLASS), false),
+        Arguments.of(List.of(Blocks.OAK_LEAVES), false),
+        Arguments.of(List.of(Blocks.AIR, Blocks.DARK_OAK_PLANKS), true),
+        Arguments.of(List.of(Blocks.STONE_BRICKS, Blocks.AIR), true));
+  }
+
+  @ParameterizedTest(name = "{0} above: {1}")
+  @MethodSource("roofs")
+  @DisplayName("a spot is sheltered only when a solid block above keeps the sun off it")
+  void sheltered(final List<Block> above, final boolean sheltered) {
+    assertEquals(
+        sheltered, StandingSpot.sheltered(above.stream().map(Block::getDefaultState).toList()));
   }
 }

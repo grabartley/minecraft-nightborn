@@ -18,13 +18,25 @@ import net.minecraft.util.Identifier;
 
 public final class NightbornMobs {
 
+  static final float VAMPIRE_WIDTH = 0.6F;
+  static final float VAMPIRE_HEIGHT = 1.95F;
+  static final float VAMPIRE_EYES = 1.74F;
+
   public static final EntityType<VampireEntity> VAMPIRE =
       register(
           "vampire",
           EntityType.Builder.create(VampireEntity::new, SpawnGroup.MONSTER)
-              .dimensions(0.6F, 1.95F)
-              .eyeHeight(1.74F)
+              .dimensions(VAMPIRE_WIDTH, VAMPIRE_HEIGHT)
+              .eyeHeight(VAMPIRE_EYES)
               .maxTrackingRange(8));
+
+  public static final EntityType<VampireLordEntity> VAMPIRE_LORD =
+      register(
+          "vampire_lord",
+          EntityType.Builder.create(VampireLordEntity::new, SpawnGroup.MONSTER)
+              .dimensions(VAMPIRE_WIDTH, VAMPIRE_HEIGHT)
+              .eyeHeight(VAMPIRE_EYES)
+              .maxTrackingRange(10));
 
   public static final EntityType<VampireBatEntity> VAMPIRE_BAT =
       register(
@@ -37,6 +49,11 @@ public final class NightbornMobs {
   public static final Item VAMPIRE_SPAWN_EGG =
       registerEgg(
           "vampire_spawn_egg", new SpawnEggItem(VAMPIRE, 0x2A0A10, 0xD8CEC2, new Item.Settings()));
+
+  public static final Item VAMPIRE_LORD_SPAWN_EGG =
+      registerEgg(
+          "vampire_lord_spawn_egg",
+          new SpawnEggItem(VAMPIRE_LORD, 0x3A0610, 0xB8902E, new Item.Settings()));
 
   public static final Item VAMPIRE_BAT_SPAWN_EGG =
       registerEgg(
@@ -51,12 +68,14 @@ public final class NightbornMobs {
     VampireStages.register();
     Temperaments.register();
     FabricDefaultAttributeRegistry.register(VAMPIRE, VampireEntity.createVampireAttributes());
+    FabricDefaultAttributeRegistry.register(VAMPIRE_LORD, VampireEntity.createVampireAttributes());
     FabricDefaultAttributeRegistry.register(
         VAMPIRE_BAT, VampireBatEntity.createVampireBatAttributes());
     ItemGroupEvents.modifyEntriesEvent(ItemGroups.SPAWN_EGGS)
         .register(
             entries -> {
               entries.add(VAMPIRE_SPAWN_EGG);
+              entries.add(VAMPIRE_LORD_SPAWN_EGG);
               entries.add(VAMPIRE_BAT_SPAWN_EGG);
             });
     MobSpawns.register();
