@@ -2,18 +2,28 @@ package com.grahambartley.nightborn.batform;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import com.google.gson.JsonParser;
+import com.grahambartley.nightborn.MinecraftBootstrapExtension;
 import com.grahambartley.nightborn.ammo.GarlicFumesEffect;
 import com.grahambartley.nightborn.blood.Starvation;
 import com.grahambartley.nightborn.holy.HolyWater;
+import com.grahambartley.nightborn.skill.SkillPower;
 import com.grahambartley.nightborn.ward.Wards;
 import com.grahambartley.nightborn.weakened.WeakenedSources;
+import com.mojang.serialization.JsonOps;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.List;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.MethodSource;
 
+@ExtendWith(MinecraftBootstrapExtension.class)
 class BatFormRulesTest {
 
   @ParameterizedTest(
@@ -40,6 +50,24 @@ class BatFormRulesTest {
     assertEquals(expected, BatFormRules.forcedOut(sun, downed, warded, blood, ownsForm));
   }
 
+  static final Path BAT_FORM =
+      Path.of("src/main/resources/data/nightborn/nightborn/skill/beast/bat_form.json");
+
+  static List<String> shippedForcedBy() {
+    try {
+      return SkillPower.CODEC
+          .parse(
+              JsonOps.INSTANCE,
+              JsonParser.parseString(Files.readString(BAT_FORM)).getAsJsonObject().get("power"))
+          .getOrThrow()
+          .batForm()
+          .orElseThrow()
+          .forcedBy();
+    } catch (final IOException e) {
+      throw new IllegalStateException(e);
+    }
+  }
+
   static Stream<Arguments> sources() {
     return Stream.of(
         Arguments.of(Wards.STRINGS, 1, true),
@@ -55,9 +83,12 @@ class BatFormRulesTest {
   @ParameterizedTest(name = "{0} at {1} -> {2}")
   @MethodSource("sources")
   @DisplayName(
-      "only garlic, from strings, a touch or a bomb, and holy water ward a bat out of its form")
+      "the shipped bat form is forced out by garlic, from strings, a touch or a bomb, and holy"
+          + " water only")
   void warded(final String source, final int strength, final boolean expected) {
-    assertEquals(expected, BatFormRules.warded(WeakenedSources.NONE.with(source, strength, 20)));
+    assertEquals(
+        expected,
+        BatFormRules.warded(WeakenedSources.NONE.with(source, strength, 20), shippedForcedBy()));
   }
 
   @ParameterizedTest(name = "{0} damage against {1} -> {2}")

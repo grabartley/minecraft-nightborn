@@ -9,11 +9,13 @@ import com.grahambartley.nightborn.feeding.FeedingSessions;
 import com.grahambartley.nightborn.levitation.Levitation;
 import com.grahambartley.nightborn.mob.NightbornMobs;
 import com.grahambartley.nightborn.server.ServerConfigService;
+import com.grahambartley.nightborn.skill.BatFormPower;
 import com.grahambartley.nightborn.skill.Powers;
 import com.grahambartley.nightborn.smoke.SmokeParticles;
 import com.grahambartley.nightborn.sun.DirectSun;
 import com.grahambartley.nightborn.weakened.Weakened;
 import com.mojang.serialization.Codec;
+import java.util.Optional;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentRegistry;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentSyncPredicate;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentType;
@@ -26,6 +28,8 @@ import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.codec.PacketCodecs;
+import net.minecraft.registry.Registries;
+import net.minecraft.registry.Registry;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundEvent;
@@ -43,10 +47,8 @@ public final class BatForm {
                   .persistent(Codec.BOOL)
                   .syncWith(PacketCodecs.BOOL.cast(), AttachmentSyncPredicate.all()));
 
-  public static final Identifier ENTER_SOUND =
-      Identifier.of(Nightborn.MOD_ID, "power.bat_form.enter");
-  public static final Identifier LEAVE_SOUND =
-      Identifier.of(Nightborn.MOD_ID, "power.bat_form.leave");
+  public static final SoundEvent ENTER_SOUND = sound("power.bat_form.enter");
+  public static final SoundEvent LEAVE_SOUND = sound("power.bat_form.leave");
 
   static final int SMOKE_COUNT = 30;
   static final double SMOKE_SPEED = 0.02;
@@ -57,6 +59,11 @@ public final class BatForm {
   public static void register() {
     BatFormLimits.register();
     ServerLivingEntityEvents.AFTER_DAMAGE.register(BatForm::afterDamage);
+  }
+
+  private static SoundEvent sound(final String path) {
+    final Identifier id = Identifier.of(Nightborn.MOD_ID, path);
+    return Registry.register(Registries.SOUND_EVENT, id, SoundEvent.of(id));
   }
 
   public static boolean isBat(final Entity entity) {
@@ -113,12 +120,14 @@ public final class BatForm {
     if (!isBat(vampire)) {
       return;
     }
+    final Optional<BatFormPower> form = Powers.ownedBatForm(vampire);
     if (BatFormRules.forcedOut(
             DirectSun.on(vampire),
             downed,
-            BatFormRules.warded(Weakened.sources(vampire)),
+            form.map(power -> BatFormRules.warded(Weakened.sources(vampire), power.forcedBy()))
+                .orElse(false),
             BloodAttachment.get(vampire),
-            Powers.ownedBatForm(vampire).isPresent())
+            form.isPresent())
         && leave(vampire)) {
       return;
     }
@@ -148,7 +157,7 @@ public final class BatForm {
     }
   }
 
-  private static void poof(final LivingEntity vampire, final Identifier sound) {
+  private static void poof(final LivingEntity vampire, final SoundEvent sound) {
     if (!(vampire.getWorld() instanceof ServerWorld world)) {
       return;
     }
@@ -168,7 +177,7 @@ public final class BatForm {
         vampire.getX(),
         vampire.getY(),
         vampire.getZ(),
-        SoundEvent.of(sound),
+        sound,
         vampire.getSoundCategory(),
         1.0F,
         1.0F);

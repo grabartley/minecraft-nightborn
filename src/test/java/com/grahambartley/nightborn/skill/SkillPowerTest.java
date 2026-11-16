@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import com.google.gson.JsonParser;
 import com.grahambartley.nightborn.MinecraftBootstrapExtension;
 import com.mojang.serialization.JsonOps;
+import java.util.List;
 import net.minecraft.entity.effect.StatusEffects;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -83,7 +84,7 @@ class SkillPowerTest {
                 JsonParser.parseString(
                     "{\"blood\":1,\"cooldown_ticks\":100,\"leap\":{\"forward\":1.4,\"up\":0.5}}"))
             .getOrThrow();
-    assertEquals(new BatFormPower(3.0F), bat.batForm().orElseThrow());
+    assertEquals(new BatFormPower(3.0F, List.of()), bat.batForm().orElseThrow());
     assertTrue(bat.leap().isEmpty());
     assertEquals(new LeapPower(1.4F, 0.5F), leap.leap().orElseThrow());
     assertTrue(leap.batForm().isEmpty());

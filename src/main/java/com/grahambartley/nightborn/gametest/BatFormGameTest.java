@@ -213,6 +213,24 @@ public class BatFormGameTest implements FabricGameTest {
     TestPlayers.finish(context, vampire);
   }
 
+  @GameTest(templateName = ARENA, batchId = NIGHT, tickLimit = 20)
+  public void aVampireMobLeapsAtItsTarget(final TestContext context) {
+    final VampireEntity vampire = context.spawnEntity(NightbornMobs.VAMPIRE, new BlockPos(1, 2, 1));
+    vampire.setAiDisabled(true);
+    vampire.setYaw(180.0F);
+    final CowEntity cow = context.spawnEntity(EntityType.COW, new BlockPos(7, 2, 7));
+    cow.setAiDisabled(true);
+    learn(context, vampire, SWIFT_PROWL, LONG_LEAP);
+    vampire.setTarget(cow);
+    context.assertEquals(Powers.cast(vampire, LONG_LEAP), PowerUse.Verdict.READY, "leaps");
+    final Vec3d toward = cow.getPos().subtract(vampire.getPos());
+    final Vec3d velocity = vampire.getVelocity();
+    context.assertTrue(
+        velocity.x * toward.x + velocity.z * toward.z > 0.0,
+        "it leaps at its target whichever way it faced: " + velocity);
+    context.complete();
+  }
+
   @GameTest(templateName = ARENA, batchId = NIGHT, tickLimit = 40)
   public void aVampireMobWithNothingToChaseLandsFromBatForm(final TestContext context) {
     final VampireEntity vampire = context.spawnEntity(NightbornMobs.VAMPIRE, STAND);

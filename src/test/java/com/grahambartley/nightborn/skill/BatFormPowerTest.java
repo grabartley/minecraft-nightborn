@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import com.google.gson.JsonParser;
 import com.mojang.serialization.JsonOps;
+import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -15,10 +16,24 @@ import org.junit.jupiter.params.provider.ValueSource;
 class BatFormPowerTest {
 
   @Test
+  @DisplayName("bat form reads what forces it back")
+  void parsesForcedBy() {
+    assertEquals(
+        List.of("garlic_touch", "holy_water"),
+        BatFormPower.CODEC
+            .parse(
+                JsonOps.INSTANCE,
+                JsonParser.parseString(
+                    "{\"land_range\":3.0,\"forced_by\":[\"garlic_touch\",\"holy_water\"]}"))
+            .getOrThrow()
+            .forcedBy());
+  }
+
+  @Test
   @DisplayName("bat form reads how close a vampire mob flies before turning back")
   void parses() {
     assertEquals(
-        new BatFormPower(3.0F),
+        new BatFormPower(3.0F, List.of()),
         BatFormPower.CODEC
             .parse(JsonOps.INSTANCE, JsonParser.parseString("{\"land_range\":3.0}"))
             .getOrThrow());
@@ -46,13 +61,15 @@ class BatFormPowerTest {
     assertEquals(
         expected,
         BatFormPower.chases(
-            owns ? Optional.of(new BatFormPower(3.0F)) : Optional.empty(), alive, distance));
+            owns ? Optional.of(new BatFormPower(3.0F, List.of())) : Optional.empty(),
+            alive,
+            distance));
   }
 
   @ParameterizedTest(name = "{0} blocks away with range {1} -> {2}")
   @CsvSource({"2.0, 3.0, true", "3.0, 3.0, true", "3.1, 3.0, false", "20.0, 3.0, false"})
   @DisplayName("a mob turns back once it is within its landing range")
   void landsAt(final double distance, final float range, final boolean expected) {
-    assertEquals(expected, new BatFormPower(range).landsAt(distance));
+    assertEquals(expected, new BatFormPower(range, List.of()).landsAt(distance));
   }
 }

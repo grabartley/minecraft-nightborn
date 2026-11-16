@@ -8,7 +8,10 @@
   "power": {
     "blood": 2,
     "cooldown_ticks": 100,
-    "bat_form": { "land_range": 3.0 },
+    "bat_form": {
+      "land_range": 3.0,
+      "forced_by": ["garlic_strings", "garlic_touch", "garlic_bomb", "holy_water"]
+    },
     "mob": {
       "min_range": 12.0,
       "max_range": 32.0,

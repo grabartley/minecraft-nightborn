@@ -11,11 +11,13 @@ import java.util.Optional;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffectInstance;
+import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.registry.Registry;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.Vec3d;
 import org.jetbrains.annotations.Nullable;
 
 public final class Powers {
@@ -50,6 +52,12 @@ public final class Powers {
     return Skills.skills(caster.getWorld().getRegistryManager())
         .map(registry -> registry.get(id))
         .flatMap(Skill::power);
+  }
+
+  static Vec3d heading(final LivingEntity caster) {
+    return caster instanceof MobEntity mob && mob.getTarget() != null
+        ? mob.getTarget().getPos().subtract(caster.getPos())
+        : caster.getRotationVector();
   }
 
   public static Optional<BatFormPower> ownedBatForm(final LivingEntity caster) {
@@ -98,7 +106,7 @@ public final class Powers {
       caster.addStatusEffect(new StatusEffectInstance(effect), caster);
     }
     power.batForm().ifPresent(form -> BatForm.enter(caster));
-    power.leap().ifPresent(leap -> leap.launch(caster));
+    power.leap().ifPresent(leap -> leap.launch(caster, heading(caster)));
     if (caster instanceof ServerPlayerEntity player) {
       power.track().ifPresent(track -> Tracking.start(player, track));
     }
