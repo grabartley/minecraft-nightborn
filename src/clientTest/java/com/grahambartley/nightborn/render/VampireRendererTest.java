@@ -21,7 +21,7 @@ class VampireRendererTest {
 
   private static final Path TEXTURES =
       Path.of("src/main/resources/assets/nightborn/textures/entity/vampire");
-  private static final Path CLIPS = GeoAssets.ENTITY_CLIPS.resolve("vampire.animation.json");
+  private static final Path CLIPS = GeoAssets.clips("vampire");
 
   static Stream<Arguments> sheets() throws IOException {
     try (Stream<Path> files = Files.walk(TEXTURES)) {

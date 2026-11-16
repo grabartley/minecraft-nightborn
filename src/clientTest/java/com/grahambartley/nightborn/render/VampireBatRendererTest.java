@@ -17,7 +17,7 @@ class VampireBatRendererTest {
   private static final Path TEXTURES =
       Path.of("src/main/resources/assets/nightborn/textures/entity");
   private static final Path GEO = GeoAssets.ENTITY_GEO.resolve("vampire_bat.geo.json");
-  private static final Path CLIPS = GeoAssets.ENTITY_CLIPS.resolve("vampire_bat.animation.json");
+  private static final Path CLIPS = GeoAssets.clips("vampire_bat");
 
   @ParameterizedTest(name = "{0}")
   @ValueSource(strings = {"vampire_bat.png", "vampire_bat_glowmask.png"})

@@ -42,7 +42,8 @@ class EntityRigAssetsTest {
 
   static Stream<Bone> sidedBones() throws IOException {
     final List<Bone> found = new ArrayList<>();
-    for (final Path dir : List.of(GeoAssets.ENTITY_GEO, GeoAssets.ARMOR_GEO)) {
+    for (final Path dir :
+        List.of(GeoAssets.ENTITY_GEO, GeoAssets.ARMOR_GEO, GeoAssets.GEO.resolve("block"))) {
       for (final Path file : GeoAssets.geoFiles(dir)) {
         for (final JsonElement element : GeoAssets.bones(file)) {
           final JsonObject bone = element.getAsJsonObject();

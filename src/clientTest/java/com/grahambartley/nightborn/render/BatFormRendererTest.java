@@ -12,7 +12,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 class BatFormRendererTest {
 
-  private static final Path CLIPS = GeoAssets.ENTITY_CLIPS.resolve("vampire_bat.animation.json");
+  private static final Path CLIPS = GeoAssets.clips("vampire_bat");
 
   @ParameterizedTest(name = "{0}")
   @ValueSource(

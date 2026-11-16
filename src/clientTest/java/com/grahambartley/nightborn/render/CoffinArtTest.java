@@ -7,7 +7,6 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -107,10 +106,7 @@ class CoffinArtTest {
   @Test
   @DisplayName("the velvet lining ships with the mod")
   void shipsTheVelvet() {
-    assertTrue(
-        Files.exists(
-            Path.of("src/main/resources/assets", CoffinArt.VELVET.getNamespace())
-                .resolve(CoffinArt.VELVET.getPath())));
+    assertTrue(Files.exists(GeoAssets.mainFile(CoffinArt.VELVET)));
   }
 
   private static JsonArray bones() throws IOException {

@@ -16,6 +16,7 @@ import net.minecraft.util.Identifier;
 final class GeoAssets {
 
   static final Path ASSETS = Path.of("src/client/resources/assets");
+  static final Path MAIN_ASSETS = Path.of("src/main/resources/assets");
   static final Path GEO = ASSETS.resolve("nightborn/geo");
   static final Path ENTITY_GEO = GEO.resolve("entity");
   static final Path ARMOR_GEO = GEO.resolve("armor");
@@ -25,6 +26,20 @@ final class GeoAssets {
 
   static Path file(final Identifier id) {
     return ASSETS.resolve(id.getNamespace()).resolve(id.getPath());
+  }
+
+  static Path mainFile(final Identifier id) {
+    return MAIN_ASSETS.resolve(id.getNamespace()).resolve(id.getPath());
+  }
+
+  static Path clips(final String rig) {
+    return ENTITY_CLIPS.resolve(rig + ".animation.json");
+  }
+
+  static List<Path> clipFiles() throws IOException {
+    try (Stream<Path> files = Files.list(ENTITY_CLIPS)) {
+      return files.filter(file -> file.toString().endsWith(".animation.json")).sorted().toList();
+    }
   }
 
   static JsonObject read(final Path file) throws IOException {

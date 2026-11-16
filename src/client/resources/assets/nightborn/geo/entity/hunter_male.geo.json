@@ -137,16 +137,11 @@
 					]
 				},
 				{
-					"name": "right_item",
+					"name": "item_right",
 					"parent": "right_arm",
 					"pivot": [
 						-6,
 						12,
-						-1
-					],
-					"rotation": [
-						90,
-						0,
 						0
 					]
 				},

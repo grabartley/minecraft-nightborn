@@ -12,7 +12,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.junit.jupiter.params.provider.ValueSource;
 
 class GeoAssetsTest {
 
@@ -31,12 +30,15 @@ class GeoAssetsTest {
     assertEquals(GeoAssets.bones(file).size(), GeoAssets.boneNames(file).size());
   }
 
+  static Stream<Path> clipFiles() throws IOException {
+    return GeoAssets.clipFiles().stream();
+  }
+
   @ParameterizedTest(name = "{0}")
-  @ValueSource(strings = {"vampire", "hunter", "ghostly_familiar", "vampire_bat"})
+  @MethodSource("clipFiles")
   @DisplayName("every entity clip file reads as named animations")
-  void readsEveryClipFile(final String rig) throws IOException {
-    assertFalse(
-        GeoAssets.animations(GeoAssets.ENTITY_CLIPS.resolve(rig + ".animation.json")).isEmpty());
+  void readsEveryClipFile(final Path file) throws IOException {
+    assertFalse(GeoAssets.animations(file).isEmpty());
   }
 
   @ParameterizedTest(name = "{0}")
@@ -47,5 +49,14 @@ class GeoAssetsTest {
   @DisplayName("an identifier resolves under the client assets folder")
   void resolvesIdentifiers(final String id, final String path) {
     assertEquals(Path.of(path), GeoAssets.file(Identifier.of(id)));
+  }
+
+  @ParameterizedTest(name = "{0}")
+  @CsvSource({
+    "nightborn:textures/entity/vampire_bat.png, src/main/resources/assets/nightborn/textures/entity/vampire_bat.png"
+  })
+  @DisplayName("an identifier resolves under the main assets folder")
+  void resolvesMainIdentifiers(final String id, final String path) {
+    assertEquals(Path.of(path), GeoAssets.mainFile(Identifier.of(id)));
   }
 }
