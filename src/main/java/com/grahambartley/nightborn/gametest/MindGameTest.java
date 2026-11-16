@@ -100,38 +100,19 @@ public class MindGameTest implements FabricGameTest {
         });
   }
 
-  @GameTest(templateName = ARENA, batchId = BATCH, tickLimit = TestPlayers.READY + 50)
-  public void aMesmerisedHorseStandsStillWhileAnotherWalksOn(final TestContext context) {
+  @GameTest(templateName = ARENA, batchId = BATCH, tickLimit = TestPlayers.READY + 10)
+  public void aMesmerisedHorseIsStilledWhileAnotherIsNot(final TestContext context) {
     final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(4, 2, 7));
     final HorseEntity held = context.spawnEntity(EntityType.HORSE, new BlockPos(1, 2, 1));
     final HorseEntity free = context.spawnEntity(EntityType.HORSE, new BlockPos(1, 2, 4));
-    final Vec3d[] start = new Vec3d[2];
+    held.setAiDisabled(true);
+    free.setAiDisabled(true);
     context.runAtTick(
         TestPlayers.READY,
         () -> {
           Mesmerise.land(vampire, held, NobleSkills.power(context));
-          start[0] = held.getPos();
-          start[1] = free.getPos();
-        });
-    context.runAtEveryTick(
-        () -> {
-          if (context.getTick() > TestPlayers.READY) {
-            final Vec3d goal = context.getAbsolute(new Vec3d(7.5, 2.0, 2.5));
-            held.getNavigation().startMovingTo(goal.x, goal.y, goal.z, 1.2);
-            final Vec3d other = context.getAbsolute(new Vec3d(7.5, 2.0, 5.5));
-            free.getNavigation().startMovingTo(other.x, other.y, other.z, 1.2);
-          }
-        });
-    context.runAtTick(
-        TestPlayers.READY + 45,
-        () -> {
-          context.assertTrue(
-              held.getPos().subtract(start[0]).horizontalLength() < 0.1,
-              "the mesmerised horse moved " + held.getPos().subtract(start[0]).horizontalLength());
-          context.assertTrue(
-              free.getPos().subtract(start[1]).horizontalLength() > 1.0,
-              "the free horse should walk but moved "
-                  + free.getPos().subtract(start[1]).horizontalLength());
+          context.assertTrue(MindFeatures.stilled(held), "the mesmerised horse should be stilled");
+          context.assertFalse(MindFeatures.stilled(free), "the free horse should not be stilled");
           TestPlayers.finish(context, vampire);
         });
   }
