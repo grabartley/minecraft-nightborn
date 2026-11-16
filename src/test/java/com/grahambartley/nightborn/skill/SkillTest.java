@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.util.Identifier;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -108,9 +109,12 @@ class SkillTest {
         "{\"branch\":\"nightborn:core\",\"cost\":1,\"icon\":\"nightborn:x\",\"column\":3}",
         "{\"branch\":\"nightborn:core\",\"cost\":1,\"icon\":\"nightborn:x\",\"row\":6}",
         "{\"branch\":\"nightborn:core\",\"cost\":-1,\"icon\":\"nightborn:x\"}",
-        "{\"cost\":1,\"icon\":\"nightborn:x\"}"
+        "{\"cost\":1,\"icon\":\"nightborn:x\"}",
+        "{\"branch\":\"nightborn:core\",\"cost\":1,\"icon\":\"nightborn:x\",\"bare_hand_damage\":-1}"
       })
-  @DisplayName("a skill off the screen grid, with a negative cost or no branch is rejected")
+  @DisplayName(
+      "a skill off the screen grid, with a negative cost or bare hand bonus, or no branch is"
+          + " rejected")
   void rejects(final String json) {
     assertFalse(Skill.CODEC.parse(JsonOps.INSTANCE, JsonParser.parseString(json)).isSuccess());
   }
@@ -123,5 +127,29 @@ class SkillTest {
             .collect(Collectors.toMap(Map.Entry::getKey, e -> e.getValue().active()));
     assertTrue(active.get(Identifier.of("nightborn", "core/blood_rush")));
     assertFalse(active.get(Identifier.of("nightborn", "core/thick_blood")));
+  }
+
+  @ParameterizedTest(name = "{0}")
+  @CsvSource({
+    "beast/bat_form, bat form",
+    "beast/beast_claws, bare hands",
+    "beast/swift_prowl, speed",
+    "beast/long_leap, leap"
+  })
+  @DisplayName("the Beast bloodline gives bat form, stronger bare hands, speed and a long leap")
+  void beastGifts(final String path, final String gift) throws IOException {
+    final Skill skill = shippedSkills().get(Identifier.of("nightborn", path));
+    assertEquals(Identifier.of("nightborn", "beast"), skill.branch());
+    final boolean gives =
+        switch (gift) {
+          case "bat form" -> skill.power().flatMap(SkillPower::batForm).isPresent();
+          case "bare hands" -> skill.bareHandDamage() > 0.0;
+          case "speed" ->
+              skill.attributes().stream()
+                  .anyMatch(a -> a.attribute().equals(EntityAttributes.GENERIC_MOVEMENT_SPEED));
+          case "leap" -> skill.power().flatMap(SkillPower::leap).isPresent();
+          default -> false;
+        };
+    assertTrue(gives, gift);
   }
 }

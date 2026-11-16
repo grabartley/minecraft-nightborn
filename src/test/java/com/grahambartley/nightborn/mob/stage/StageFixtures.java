@@ -45,6 +45,7 @@ final class StageFixtures {
         0,
         0,
         List.of(),
+        0.0,
         Optional.empty());
   }
 

@@ -27,7 +27,7 @@ class SkillPurchaseTest {
   static final SkillBranch HUNTER = new SkillBranch(SkillTree.HUNTER, false, 0);
 
   static Skill skill(final Identifier branch, final int cost, final Identifier... requires) {
-    return new Skill(branch, cost, List.of(requires), ROOT, 0, 0, List.of(), Optional.empty());
+    return new Skill(branch, cost, List.of(requires), ROOT, 0, 0, List.of(), 0.0, Optional.empty());
   }
 
   static TreeProgress twoBloodlines(final int earned) {

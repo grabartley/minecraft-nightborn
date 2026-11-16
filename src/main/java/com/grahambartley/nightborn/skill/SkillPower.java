@@ -16,6 +16,8 @@ public record SkillPower(
     List<StatusEffectInstance> effects,
     Optional<Identifier> sound,
     Optional<TrackPower> track,
+    Optional<BatFormPower> batForm,
+    Optional<LeapPower> leap,
     Optional<MesmerisePower> mesmerise,
     Optional<FamiliarPower> familiar,
     Optional<FogPower> fog,
@@ -37,6 +39,8 @@ public record SkillPower(
                           .forGetter(SkillPower::effects),
                       Identifier.CODEC.optionalFieldOf("sound").forGetter(SkillPower::sound),
                       TrackPower.CODEC.optionalFieldOf("track").forGetter(SkillPower::track),
+                      BatFormPower.CODEC.optionalFieldOf("bat_form").forGetter(SkillPower::batForm),
+                      LeapPower.CODEC.optionalFieldOf("leap").forGetter(SkillPower::leap),
                       MesmerisePower.CODEC
                           .optionalFieldOf("mesmerise")
                           .forGetter(SkillPower::mesmerise),

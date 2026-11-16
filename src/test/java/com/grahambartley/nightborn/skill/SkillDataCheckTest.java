@@ -28,6 +28,7 @@ class SkillDataCheckTest {
         column,
         row,
         List.of(),
+        0.0,
         Optional.empty());
   }
 
