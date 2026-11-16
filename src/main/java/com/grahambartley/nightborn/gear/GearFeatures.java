@@ -24,5 +24,6 @@ public final class GearFeatures {
     AmmoEntities.initialize();
     AmmoItems.register();
     Coatings.register();
+    BaneHitSounds.register();
   }
 }

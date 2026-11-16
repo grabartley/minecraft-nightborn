@@ -1,5 +1,6 @@
 package com.grahambartley.nightborn.coffin;
 
+import com.grahambartley.nightborn.sound.NightbornSounds;
 import com.grahambartley.nightborn.vampire.Vampires;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.block.BedBlock;
@@ -18,7 +19,6 @@ import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvents;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.BooleanProperty;
 import net.minecraft.state.property.Properties;
@@ -43,7 +43,7 @@ public class CoffinBlock extends BedBlock {
   public static final BooleanProperty STANDING = BooleanProperty.of("standing");
 
   static final float LID_VOLUME = 0.6F;
-  static final float LID_PITCH = 0.55F;
+  static final float LID_PITCH = 1.0F;
 
   public CoffinBlock(final Settings settings) {
     super(DyeColor.BLACK, settings);
@@ -256,12 +256,7 @@ public class CoffinBlock extends BedBlock {
       final PlayerEntity player) {
     world.setBlockState(head, state.with(OPEN, open), Block.NOTIFY_ALL);
     world.playSound(
-        null,
-        head,
-        open ? SoundEvents.BLOCK_CHEST_OPEN : SoundEvents.BLOCK_CHEST_CLOSE,
-        SoundCategory.BLOCKS,
-        LID_VOLUME,
-        LID_PITCH);
+        null, head, NightbornSounds.lid(open), SoundCategory.BLOCKS, LID_VOLUME, LID_PITCH);
     world.emitGameEvent(player, open ? GameEvent.CONTAINER_OPEN : GameEvent.CONTAINER_CLOSE, head);
   }
 }

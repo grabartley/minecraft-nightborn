@@ -2,151 +2,384 @@
   "entity.vampire.male.ambient": {
     "subtitle": "subtitles.nightborn.entity.vampire.ambient",
     "sounds": [
-      {
-        "name": "minecraft:entity.player.breath",
-        "type": "event",
-        "pitch": 0.75,
-        "volume": 0.5
-      }
+      "nightborn:entity/vampire/male/ambient1",
+      "nightborn:entity/vampire/male/ambient2",
+      "nightborn:entity/vampire/male/ambient3"
     ]
   },
   "entity.vampire.male.hurt": {
     "subtitle": "subtitles.nightborn.entity.vampire.hurt",
     "sounds": [
-      {
-        "name": "minecraft:entity.evoker.hurt",
-        "type": "event",
-        "pitch": 0.9
-      }
+      "nightborn:entity/vampire/male/hurt1",
+      "nightborn:entity/vampire/male/hurt2",
+      "nightborn:entity/vampire/male/hurt3"
     ]
   },
   "entity.vampire.male.death": {
     "subtitle": "subtitles.nightborn.entity.vampire.death",
     "sounds": [
-      {
-        "name": "minecraft:entity.evoker.death",
-        "type": "event",
-        "pitch": 0.85
-      }
+      "nightborn:entity/vampire/male/death1",
+      "nightborn:entity/vampire/male/death2"
     ]
   },
   "entity.vampire.male.hiss": {
     "subtitle": "subtitles.nightborn.entity.vampire.hiss",
     "sounds": [
-      {
-        "name": "minecraft:entity.cat.hiss",
-        "type": "event",
-        "pitch": 0.7
-      }
+      "nightborn:entity/vampire/male/hiss1",
+      "nightborn:entity/vampire/male/hiss2"
+    ]
+  },
+  "entity.vampire.male.talk": {
+    "subtitle": "subtitles.nightborn.entity.vampire.talk",
+    "sounds": [
+      "nightborn:entity/vampire/male/talk1",
+      "nightborn:entity/vampire/male/talk2",
+      "nightborn:entity/vampire/male/talk3"
+    ]
+  },
+  "entity.vampire.male.argue": {
+    "subtitle": "subtitles.nightborn.entity.vampire.argue",
+    "sounds": [
+      "nightborn:entity/vampire/male/argue1",
+      "nightborn:entity/vampire/male/argue2",
+      "nightborn:entity/vampire/male/argue3"
+    ]
+  },
+  "entity.vampire.male.retch": {
+    "subtitle": "subtitles.nightborn.entity.vampire.retch",
+    "sounds": [
+      "nightborn:entity/vampire/male/retch1",
+      "nightborn:entity/vampire/male/retch2"
+    ]
+  },
+  "entity.hunter.male.ambient": {
+    "subtitle": "subtitles.nightborn.entity.hunter.ambient",
+    "sounds": [
+      "nightborn:entity/hunter/male/ambient1",
+      "nightborn:entity/hunter/male/ambient2"
+    ]
+  },
+  "entity.hunter.male.hurt": {
+    "subtitle": "subtitles.nightborn.entity.hunter.hurt",
+    "sounds": [
+      "nightborn:entity/hunter/male/hurt1",
+      "nightborn:entity/hunter/male/hurt2",
+      "nightborn:entity/hunter/male/hurt3"
+    ]
+  },
+  "entity.hunter.male.death": {
+    "subtitle": "subtitles.nightborn.entity.hunter.death",
+    "sounds": [
+      "nightborn:entity/hunter/male/death"
     ]
   },
   "entity.vampire.female.ambient": {
     "subtitle": "subtitles.nightborn.entity.vampire.ambient",
     "sounds": [
-      {
-        "name": "minecraft:entity.player.breath",
-        "type": "event",
-        "pitch": 0.95,
-        "volume": 0.5
-      }
+      "nightborn:entity/vampire/female/ambient1",
+      "nightborn:entity/vampire/female/ambient2",
+      "nightborn:entity/vampire/female/ambient3"
     ]
   },
   "entity.vampire.female.hurt": {
     "subtitle": "subtitles.nightborn.entity.vampire.hurt",
     "sounds": [
-      {
-        "name": "minecraft:entity.witch.hurt",
-        "type": "event",
-        "pitch": 1.0
-      }
+      "nightborn:entity/vampire/female/hurt1",
+      "nightborn:entity/vampire/female/hurt2",
+      "nightborn:entity/vampire/female/hurt3"
     ]
   },
   "entity.vampire.female.death": {
     "subtitle": "subtitles.nightborn.entity.vampire.death",
     "sounds": [
-      {
-        "name": "minecraft:entity.witch.death",
-        "type": "event",
-        "pitch": 1.0
-      }
+      "nightborn:entity/vampire/female/death1",
+      "nightborn:entity/vampire/female/death2"
     ]
   },
   "entity.vampire.female.hiss": {
     "subtitle": "subtitles.nightborn.entity.vampire.hiss",
     "sounds": [
-      {
-        "name": "minecraft:entity.cat.hiss",
-        "type": "event",
-        "pitch": 0.85
-      }
+      "nightborn:entity/vampire/female/hiss1",
+      "nightborn:entity/vampire/female/hiss2"
+    ]
+  },
+  "entity.vampire.female.talk": {
+    "subtitle": "subtitles.nightborn.entity.vampire.talk",
+    "sounds": [
+      "nightborn:entity/vampire/female/talk1",
+      "nightborn:entity/vampire/female/talk2",
+      "nightborn:entity/vampire/female/talk3"
+    ]
+  },
+  "entity.vampire.female.argue": {
+    "subtitle": "subtitles.nightborn.entity.vampire.argue",
+    "sounds": [
+      "nightborn:entity/vampire/female/argue1",
+      "nightborn:entity/vampire/female/argue2",
+      "nightborn:entity/vampire/female/argue3"
+    ]
+  },
+  "entity.vampire.female.retch": {
+    "subtitle": "subtitles.nightborn.entity.vampire.retch",
+    "sounds": [
+      "nightborn:entity/vampire/female/retch1",
+      "nightborn:entity/vampire/female/retch2"
+    ]
+  },
+  "entity.hunter.female.ambient": {
+    "subtitle": "subtitles.nightborn.entity.hunter.ambient",
+    "sounds": [
+      "nightborn:entity/hunter/female/ambient1",
+      "nightborn:entity/hunter/female/ambient2",
+      "nightborn:entity/hunter/female/ambient3"
+    ]
+  },
+  "entity.hunter.female.hurt": {
+    "subtitle": "subtitles.nightborn.entity.hunter.hurt",
+    "sounds": [
+      "nightborn:entity/hunter/female/hurt1",
+      "nightborn:entity/hunter/female/hurt2"
+    ]
+  },
+  "entity.hunter.female.death": {
+    "subtitle": "subtitles.nightborn.entity.hunter.death",
+    "sounds": [
+      "nightborn:entity/hunter/female/death"
     ]
   },
   "entity.vampire.bite": {
     "subtitle": "subtitles.nightborn.entity.vampire.bite",
     "sounds": [
-      {
-        "name": "minecraft:entity.generic.drink",
-        "type": "event"
-      }
+      "nightborn:entity/vampire/bite1",
+      "nightborn:entity/vampire/bite2",
+      "nightborn:entity/vampire/bite3"
+    ]
+  },
+  "entity.vampire.drink": {
+    "subtitle": "subtitles.nightborn.entity.vampire.drink",
+    "sounds": [
+      "nightborn:entity/vampire/drink1",
+      "nightborn:entity/vampire/drink2"
+    ]
+  },
+  "entity.vampire.drain": {
+    "subtitle": "subtitles.nightborn.entity.vampire.drain",
+    "sounds": [
+      "nightborn:entity/vampire/drain1",
+      "nightborn:entity/vampire/drain2"
+    ]
+  },
+  "entity.vampire.sizzle": {
+    "subtitle": "subtitles.nightborn.entity.vampire.sizzle",
+    "sounds": [
+      "nightborn:entity/vampire/sizzle1",
+      "nightborn:entity/vampire/sizzle2",
+      "nightborn:entity/vampire/sizzle3"
+    ]
+  },
+  "entity.vampire_bat.ambient": {
+    "subtitle": "subtitles.nightborn.entity.vampire_bat.ambient",
+    "sounds": [
+      "nightborn:entity/vampire_bat/ambient1",
+      "nightborn:entity/vampire_bat/ambient2",
+      "nightborn:entity/vampire_bat/ambient3"
+    ]
+  },
+  "entity.vampire_bat.hurt": {
+    "subtitle": "subtitles.nightborn.entity.vampire_bat.hurt",
+    "sounds": [
+      "nightborn:entity/vampire_bat/hurt1",
+      "nightborn:entity/vampire_bat/hurt2"
+    ]
+  },
+  "entity.vampire_bat.death": {
+    "subtitle": "subtitles.nightborn.entity.vampire_bat.death",
+    "sounds": [
+      "nightborn:entity/vampire_bat/death"
     ]
   },
   "entity.vampire_bat.bite": {
     "subtitle": "subtitles.nightborn.entity.vampire_bat.bite",
     "sounds": [
-      {
-        "name": "minecraft:entity.generic.drink",
-        "type": "event"
-      }
-    ]
-  },
-  "entity.vampire.retch": {
-    "subtitle": "subtitles.nightborn.entity.vampire.retch",
-    "sounds": [
-      {
-        "name": "minecraft:entity.player.hurt_drown",
-        "type": "event"
-      }
+      "nightborn:entity/vampire_bat/bite1",
+      "nightborn:entity/vampire_bat/bite2"
     ]
   },
   "entity.ghostly_familiar.ambient": {
     "subtitle": "subtitles.nightborn.entity.ghostly_familiar.ambient",
     "sounds": [
-      {
-        "name": "minecraft:particle.soul_escape",
-        "type": "event",
-        "pitch": 0.8,
-        "volume": 0.6
-      }
+      "nightborn:entity/ghostly_familiar/ambient1",
+      "nightborn:entity/ghostly_familiar/ambient2",
+      "nightborn:entity/ghostly_familiar/ambient3"
     ]
   },
   "entity.ghostly_familiar.hurt": {
     "subtitle": "subtitles.nightborn.entity.ghostly_familiar.hurt",
     "sounds": [
-      {
-        "name": "minecraft:entity.vex.hurt",
-        "type": "event",
-        "pitch": 0.6
-      }
+      "nightborn:entity/ghostly_familiar/hurt"
     ]
   },
   "entity.ghostly_familiar.death": {
     "subtitle": "subtitles.nightborn.entity.ghostly_familiar.death",
     "sounds": [
-      {
-        "name": "minecraft:entity.vex.death",
-        "type": "event",
-        "pitch": 0.6
-      }
+      "nightborn:entity/ghostly_familiar/death"
     ]
   },
   "entity.ghostly_familiar.fade": {
     "subtitle": "subtitles.nightborn.entity.ghostly_familiar.fade",
     "sounds": [
+      "nightborn:entity/ghostly_familiar/fade"
+    ]
+  },
+  "power.bat_form.enter": {
+    "subtitle": "subtitles.nightborn.power.bat_form.enter",
+    "sounds": [
+      "nightborn:power/bat_form_enter"
+    ]
+  },
+  "power.bat_form.leave": {
+    "subtitle": "subtitles.nightborn.power.bat_form.leave",
+    "sounds": [
+      "nightborn:power/bat_form_leave"
+    ]
+  },
+  "item.stake.hit": {
+    "subtitle": "subtitles.nightborn.item.stake.hit",
+    "sounds": [
+      "nightborn:item/stake_hit1",
+      "nightborn:item/stake_hit2"
+    ]
+  },
+  "item.silver.hit": {
+    "subtitle": "subtitles.nightborn.item.silver.hit",
+    "sounds": [
+      "nightborn:item/silver_hit1",
+      "nightborn:item/silver_hit2"
+    ]
+  },
+  "item.holy_water.hiss": {
+    "subtitle": "subtitles.nightborn.item.holy_water.hiss",
+    "sounds": [
+      "nightborn:item/holy_water_hiss1",
+      "nightborn:item/holy_water_hiss2"
+    ]
+  },
+  "block.coffin.open": {
+    "subtitle": "subtitles.nightborn.block.coffin.open",
+    "sounds": [
+      "nightborn:block/coffin/open1",
+      "nightborn:block/coffin/open2"
+    ]
+  },
+  "block.coffin.close": {
+    "subtitle": "subtitles.nightborn.block.coffin.close",
+    "sounds": [
+      "nightborn:block/coffin/close1",
+      "nightborn:block/coffin/close2"
+    ]
+  },
+  "music.gothic": {
+    "sounds": [
       {
-        "name": "minecraft:particle.soul_escape",
-        "type": "event",
-        "pitch": 0.6
+        "name": "nightborn:music/adagio_in_f_minor",
+        "stream": true
+      },
+      {
+        "name": "nightborn:music/la_malinconia",
+        "stream": true
+      },
+      {
+        "name": "nightborn:music/prelude_in_a_minor",
+        "stream": true
+      },
+      {
+        "name": "nightborn:music/variation_25",
+        "stream": true
+      },
+      {
+        "name": "nightborn:music/vespers",
+        "stream": true
       }
+    ]
+  },
+  "ambient.castle.loop": {
+    "sounds": [
+      {
+        "name": "nightborn:ambient/loop/hall",
+        "stream": true
+      }
+    ]
+  },
+  "ambient.castle.additions": {
+    "sounds": [
+      "nightborn:ambient/oneshot/creak1",
+      "nightborn:ambient/oneshot/creak2",
+      "nightborn:ambient/oneshot/creak3",
+      "nightborn:ambient/oneshot/candle1",
+      "nightborn:ambient/oneshot/candle2",
+      "nightborn:ambient/oneshot/candle3",
+      "nightborn:ambient/oneshot/bell",
+      "nightborn:ambient/oneshot/gust"
+    ]
+  },
+  "ambient.crypt.loop": {
+    "sounds": [
+      {
+        "name": "nightborn:ambient/loop/vault",
+        "stream": true
+      }
+    ]
+  },
+  "ambient.crypt.additions": {
+    "sounds": [
+      "nightborn:ambient/oneshot/drip1",
+      "nightborn:ambient/oneshot/drip2",
+      "nightborn:ambient/oneshot/drip3",
+      "nightborn:ambient/oneshot/stone1",
+      "nightborn:ambient/oneshot/stone2",
+      "nightborn:ambient/oneshot/chains1",
+      "nightborn:ambient/oneshot/chains2",
+      "nightborn:ambient/oneshot/bell"
+    ]
+  },
+  "ambient.manor.loop": {
+    "sounds": [
+      {
+        "name": "nightborn:ambient/loop/wind",
+        "stream": true
+      }
+    ]
+  },
+  "ambient.manor.additions": {
+    "sounds": [
+      "nightborn:ambient/oneshot/creak1",
+      "nightborn:ambient/oneshot/creak2",
+      "nightborn:ambient/oneshot/creak3",
+      "nightborn:ambient/oneshot/settle1",
+      "nightborn:ambient/oneshot/settle2",
+      "nightborn:ambient/oneshot/leaves",
+      "nightborn:ambient/oneshot/candle1",
+      "nightborn:ambient/oneshot/candle2",
+      "nightborn:ambient/oneshot/candle3"
+    ]
+  },
+  "ambient.lair.loop": {
+    "sounds": [
+      {
+        "name": "nightborn:ambient/loop/cave",
+        "stream": true
+      }
+    ]
+  },
+  "ambient.lair.additions": {
+    "sounds": [
+      "nightborn:ambient/oneshot/drip1",
+      "nightborn:ambient/oneshot/drip2",
+      "nightborn:ambient/oneshot/drip3",
+      "nightborn:ambient/oneshot/rats1",
+      "nightborn:ambient/oneshot/rats2",
+      "nightborn:ambient/oneshot/stone1",
+      "nightborn:ambient/oneshot/stone2"
     ]
   }
 }

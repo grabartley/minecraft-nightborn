@@ -750,7 +750,7 @@ There is no singleplayer mode in this mod. A single-player world is an integrate
 | LOOK-3 | Colours are muted jewel tones: burgundy, emerald, black and gold |
 | LOOK-4 | Each vampire dresses in the era they were turned in, so a household mixes centuries |
 | LOOK-5 | Every model and animation is hand-made to a premium bar and judged against the best Minecraft art. Every mob is animated at rest, moving and attacking, and every vampire while feeding |
-| LOOK-6 | Music is baroque and gothic: harpsichord, choir and brooding strings |
+| LOOK-6 | Music is baroque and gothic: harpsichord, organ, choir and brooding strings |
 | LOOK-7 | Vampire structures sound like old houses: creaks, settling, drips, guttering candles, wind in the halls and distant bells |
 | LOOK-8 | Blocks and items look like vanilla ones wherever they are held or shown: GUI, first and third person, item frames and the ground |
 | LOOK-9 | Sounds use vanilla first and real recordings next. Creature voices are never synthesised |

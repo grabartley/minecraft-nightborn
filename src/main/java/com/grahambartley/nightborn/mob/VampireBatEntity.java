@@ -7,10 +7,12 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;
 import net.minecraft.entity.attribute.EntityAttributes;
+import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
 import net.minecraft.entity.passive.BatEntity;
+import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.Difficulty;
@@ -104,6 +106,22 @@ public class VampireBatEntity extends BatEntity implements GeoEntity {
     }
     biteCooldown = BITE_COOLDOWN_TICKS;
     setVelocity(getVelocity().multiply(-0.6, 0.5, -0.6).add(0.0, 0.3, 0.0));
+  }
+
+  @Override
+  @Nullable
+  public SoundEvent getAmbientSound() {
+    return super.getAmbientSound() == null ? null : MobSounds.VAMPIRE_BAT_AMBIENT;
+  }
+
+  @Override
+  protected SoundEvent getHurtSound(final DamageSource source) {
+    return MobSounds.VAMPIRE_BAT_HURT;
+  }
+
+  @Override
+  protected SoundEvent getDeathSound() {
+    return MobSounds.VAMPIRE_BAT_DEATH;
   }
 
   @Override

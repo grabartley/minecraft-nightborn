@@ -10,13 +10,18 @@ import net.minecraft.util.Identifier;
 
 public final class VomitEffects {
 
-  public static final SoundEvent RETCH = sound("entity.vampire.retch");
+  public static final SoundEvent RETCH_MALE = sound("entity.vampire.male.retch");
+  public static final SoundEvent RETCH_FEMALE = sound("entity.vampire.female.retch");
   public static final SimpleParticleType DROP = ModParticles.simple("vomit");
   public static final SimpleParticleType SPLASH = ModParticles.simple("vomit_splash");
 
   private VomitEffects() {}
 
   public static void register() {}
+
+  public static SoundEvent retch(final boolean slim) {
+    return slim ? RETCH_FEMALE : RETCH_MALE;
+  }
 
   private static SoundEvent sound(final String path) {
     final Identifier id = Identifier.of(Nightborn.MOD_ID, path);
