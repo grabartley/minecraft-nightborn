@@ -58,6 +58,6 @@ public final class HardcoreVampireDeath {
     CoffinOwnership.release(player.server, player.getUuid());
     CoffinRespawn.clear(player);
     Thralls.freeOwner(player.server, player.getUuid());
-        FamiliarRelease.freeOwner(player.server, player.getUuid());
+    FamiliarRelease.freeOwner(player.server, player.getUuid());
   }
 }
