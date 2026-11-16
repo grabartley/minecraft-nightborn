@@ -11,7 +11,20 @@ public final class FamiliarRules {
   static final double ARRIVED_DISTANCE = 1.0;
   static final int FADE_TICKS = 20;
 
+  public enum ScoutEnd {
+    SETTLE,
+    JOIN_OWNER,
+    RISE
+  }
+
   private FamiliarRules() {}
+
+  public static ScoutEnd scoutEnd(final boolean insideWall, final boolean ownerHere) {
+    if (!insideWall) {
+      return ScoutEnd.SETTLE;
+    }
+    return ownerHere ? ScoutEnd.JOIN_OWNER : ScoutEnd.RISE;
+  }
 
   public static boolean follows(final boolean ownerHere, final double distance) {
     return ownerHere && distance > START_DISTANCE;

@@ -2,7 +2,7 @@ package com.grahambartley.nightborn.occult.goal;
 
 import com.grahambartley.nightborn.occult.FamiliarRules;
 import com.grahambartley.nightborn.occult.GhostlyFamiliarEntity;
-import com.grahambartley.nightborn.occult.Servants;
+import com.grahambartley.nightborn.servant.Servants;
 import com.grahambartley.nightborn.thrall.TargetRules;
 import java.util.EnumSet;
 import net.minecraft.entity.LivingEntity;

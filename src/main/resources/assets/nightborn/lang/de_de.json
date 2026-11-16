@@ -555,7 +555,7 @@
   "entity.nightborn.ghostly_familiar": "Geisterhafter Vertrauter",
   "attribute.name.nightborn.familiar_limit": "Vertrauten-Grenze",
   "skill.nightborn.occult.summon_familiar": "Vertrauten rufen",
-  "skill.nightborn.occult.summon_familiar.description": "Rufe für eine Minute einen geisterhaften Vertrauten. Er kämpft für dich, trägt, was du ihm gibst, und kundschaftet durch Wände voraus. Sprich ihn an, um seine Aufgabe zu ändern",
+  "skill.nightborn.occult.summon_familiar.description": "Rufe für eine Minute einen geisterhaften Vertrauten. Er kämpft für dich, trägt, was du ihm gibst, und kundschaftet durch Wände voraus. Benutze ihn mit leerer Hand, um seine Aufgabe zu ändern",
   "skill.nightborn.occult.spirit_pact": "Geisterpakt",
   "skill.nightborn.occult.spirit_pact.description": "Halte zwei geisterhafte Vertraute zugleich",
   "skill.nightborn.occult.grave_fog": "Grabesnebel",

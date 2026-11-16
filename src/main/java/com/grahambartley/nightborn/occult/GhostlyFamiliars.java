@@ -1,6 +1,7 @@
 package com.grahambartley.nightborn.occult;
 
 import com.grahambartley.nightborn.Nightborn;
+import com.grahambartley.nightborn.servant.Servants;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -53,7 +54,7 @@ public final class GhostlyFamiliars {
     }
     final List<GhostlyFamiliarEntity> owned =
         owned(world, caster.getUuid()).stream()
-            .sorted(Comparator.comparingInt(GhostlyFamiliarEntity::ticksLeft))
+            .sorted(Comparator.comparingLong(GhostlyFamiliarEntity::summonedAt))
             .toList();
     final int dismiss =
         FamiliarRules.toDismiss(owned.size(), OccultAttributes.familiarLimit(caster));

@@ -1,5 +1,6 @@
 package com.grahambartley.nightborn.thrall;
 
+import com.grahambartley.nightborn.servant.Servant;
 import com.grahambartley.nightborn.thrall.goal.ThrallFollowGoal;
 import com.grahambartley.nightborn.thrall.goal.ThrallPostGoal;
 import com.grahambartley.nightborn.thrall.goal.ThrallTargetGoal;
@@ -36,7 +37,7 @@ import net.minecraft.village.VillagerType;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
-public class ThrallEntity extends PathAwareEntity implements VillagerDataContainer {
+public class ThrallEntity extends PathAwareEntity implements VillagerDataContainer, Servant {
 
   static final int CHECK_BOND_TICKS = 20;
 
@@ -156,6 +157,7 @@ public class ThrallEntity extends PathAwareEntity implements VillagerDataContain
     dataTracker.set(VILLAGER_DATA, data);
   }
 
+  @Override
   public Optional<UUID> owner() {
     return dataTracker.get(OWNER_UUID);
   }

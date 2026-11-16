@@ -1,5 +1,6 @@
 package com.grahambartley.nightborn.occult;
 
+import com.grahambartley.nightborn.servant.Servants;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;

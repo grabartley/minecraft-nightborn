@@ -555,7 +555,7 @@
   "entity.nightborn.ghostly_familiar": "Familier spectral",
   "attribute.name.nightborn.familiar_limit": "Limite de familiers",
   "skill.nightborn.occult.summon_familiar": "Invoquer un familier",
-  "skill.nightborn.occult.summon_familiar.description": "Appelle un familier spectral pendant une minute. Il se bat pour toi, porte ce que tu lui donnes et part en éclaireur à travers les murs. Parle-lui pour changer sa tâche",
+  "skill.nightborn.occult.summon_familiar.description": "Appelle un familier spectral pendant une minute. Il se bat pour toi, porte ce que tu lui donnes et part en éclaireur à travers les murs. Utilise-le à main nue pour changer sa tâche",
   "skill.nightborn.occult.spirit_pact": "Pacte spirituel",
   "skill.nightborn.occult.spirit_pact.description": "Garde deux familiers spectraux à la fois",
   "skill.nightborn.occult.grave_fog": "Brume funèbre",

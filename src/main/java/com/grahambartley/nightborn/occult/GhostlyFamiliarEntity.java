@@ -4,6 +4,8 @@ import com.grahambartley.nightborn.occult.goal.FamiliarAttackGoal;
 import com.grahambartley.nightborn.occult.goal.FamiliarFollowGoal;
 import com.grahambartley.nightborn.occult.goal.FamiliarScoutGoal;
 import com.grahambartley.nightborn.occult.goal.FamiliarTargetGoal;
+import com.grahambartley.nightborn.servant.Servant;
+import com.grahambartley.nightborn.servant.Servants;
 import java.util.Optional;
 import java.util.UUID;
 import net.minecraft.block.BlockState;
@@ -45,11 +47,12 @@ import software.bernie.geckolib.animation.AnimatableManager;
 import software.bernie.geckolib.animation.AnimationController;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
-public class GhostlyFamiliarEntity extends PathAwareEntity implements GeoEntity {
+public class GhostlyFamiliarEntity extends PathAwareEntity implements GeoEntity, Servant {
 
   static final FamiliarPower DEFAULT_POWER =
       new FamiliarPower(1200, 10.0F, 3.0F, 24.0F, 200, 8.0F, 200, 9);
   static final int ANIMATION_BLEND_TICKS = 4;
+  static final double BURIED_MARGIN = 1.0E-3;
 
   private static final TrackedData<Optional<UUID>> OWNER_UUID =
       DataTracker.registerData(
@@ -64,6 +67,7 @@ public class GhostlyFamiliarEntity extends PathAwareEntity implements GeoEntity 
   private static final String TICKS_LEFT = "TicksLeft";
   private static final String POWER = "Power";
   private static final String CARRIED = "Carried";
+  private static final String SUMMONED_AT = "SummonedAt";
 
   private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
   private FamiliarPower power = DEFAULT_POWER;
@@ -71,6 +75,7 @@ public class GhostlyFamiliarEntity extends PathAwareEntity implements GeoEntity 
   private int ticksLeft = DEFAULT_POWER.lifetimeTicks();
   @Nullable private Vec3d scoutTarget;
   private int scoutTicks;
+  private long summonedAt;
 
   public GhostlyFamiliarEntity(
       final EntityType<? extends PathAwareEntity> type, final World world) {
@@ -121,6 +126,7 @@ public class GhostlyFamiliarEntity extends PathAwareEntity implements GeoEntity 
     power = summoned;
     carried = new SimpleInventory(summoned.carrySlots());
     ticksLeft = summoned.lifetimeTicks();
+    summonedAt = getWorld().getTime();
     applyPower();
     setHealth(getMaxHealth());
   }
@@ -185,6 +191,7 @@ public class GhostlyFamiliarEntity extends PathAwareEntity implements GeoEntity 
     }
   }
 
+  @Override
   public Optional<UUID> owner() {
     return dataTracker.get(OWNER_UUID);
   }
@@ -209,6 +216,14 @@ public class GhostlyFamiliarEntity extends PathAwareEntity implements GeoEntity 
 
   public FamiliarPower power() {
     return power;
+  }
+
+  public boolean buried() {
+    return !getWorld().isBlockSpaceEmpty(this, getBoundingBox().contract(BURIED_MARGIN));
+  }
+
+  public long summonedAt() {
+    return summonedAt;
   }
 
   public int ticksLeft() {
@@ -321,6 +336,7 @@ public class GhostlyFamiliarEntity extends PathAwareEntity implements GeoEntity 
     owner().ifPresent(id -> nbt.putUuid(OWNER, id));
     nbt.putString(MODE_KEY, mode().name());
     nbt.putInt(TICKS_LEFT, ticksLeft);
+    nbt.putLong(SUMMONED_AT, summonedAt);
     FamiliarPower.CODEC
         .encodeStart(NbtOps.INSTANCE, power)
         .result()
@@ -333,8 +349,8 @@ public class GhostlyFamiliarEntity extends PathAwareEntity implements GeoEntity 
     super.readCustomDataFromNbt(nbt);
     dataTracker.set(
         OWNER_UUID, nbt.containsUuid(OWNER) ? Optional.of(nbt.getUuid(OWNER)) : Optional.empty());
-    final FamiliarMode saved = FamiliarMode.byName(nbt.getString(MODE_KEY));
-    dataTracker.set(MODE, (saved == FamiliarMode.SCOUT ? FamiliarMode.FIGHT : saved).ordinal());
+    dataTracker.set(MODE, FamiliarMode.byName(nbt.getString(MODE_KEY)).ordinal());
+    summonedAt = nbt.getLong(SUMMONED_AT);
     power =
         FamiliarPower.CODEC.parse(NbtOps.INSTANCE, nbt.get(POWER)).result().orElse(DEFAULT_POWER);
     ticksLeft = nbt.contains(TICKS_LEFT) ? nbt.getInt(TICKS_LEFT) : power.lifetimeTicks();

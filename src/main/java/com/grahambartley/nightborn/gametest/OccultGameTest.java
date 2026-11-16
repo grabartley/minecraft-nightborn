@@ -8,11 +8,13 @@ import com.grahambartley.nightborn.occult.FamiliarPower;
 import com.grahambartley.nightborn.occult.FogClouds;
 import com.grahambartley.nightborn.occult.GhostlyFamiliarEntity;
 import com.grahambartley.nightborn.occult.GhostlyFamiliars;
+import com.grahambartley.nightborn.occult.goal.FamiliarScoutGoal;
 import com.grahambartley.nightborn.skill.PowerCooldownAttachment;
 import com.grahambartley.nightborn.skill.PowerCooldowns;
 import com.grahambartley.nightborn.skill.PowerUse;
 import com.grahambartley.nightborn.skill.Powers;
 import java.util.List;
+import java.util.UUID;
 import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.EntityType;
@@ -36,6 +38,7 @@ public class OccultGameTest implements FabricGameTest {
   static final String ARENA = "nightborn:vampire_arena";
   static final String BATCH = "occult";
   static final int SHORT_LIFE = 40;
+  static final int SCOUT_TICKS = 20;
 
   @BeforeBatch(batchId = BATCH)
   public void clearFog(final ServerWorld world) {
@@ -245,6 +248,91 @@ public class OccultGameTest implements FabricGameTest {
               1,
               "a familiar answered the mob");
           context.complete();
+        });
+  }
+
+  private static void encase(final TestContext context, final BlockPos at) {
+    for (final BlockPos pos : BlockPos.iterate(at.add(-1, 0, -1), at.add(1, 1, 1))) {
+      context.setBlockState(pos, Blocks.STONE);
+    }
+  }
+
+  private static void runOutScout(final GhostlyFamiliarEntity familiar) {
+    final FamiliarScoutGoal goal = new FamiliarScoutGoal(familiar);
+    goal.start();
+    for (int i = 0; i < SCOUT_TICKS * 2 && familiar.mode() == FamiliarMode.SCOUT; i++) {
+      goal.tick();
+    }
+  }
+
+  private static FamiliarPower shortScout() {
+    return new FamiliarPower(1200, 10.0F, 3.0F, 24.0F, SCOUT_TICKS, 8.0F, 200, 9);
+  }
+
+  @GameTest(templateName = ARENA, batchId = BATCH, tickLimit = TestPlayers.READY + 10)
+  public void aScoutThatEndsInsideAWallRejoinsItsOwner(final TestContext context) {
+    final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(1, 2, 4));
+    encase(context, new BlockPos(6, 2, 4));
+    final GhostlyFamiliarEntity familiar =
+        context.spawnEntity(GhostlyFamiliars.GHOSTLY_FAMILIAR, new BlockPos(6, 2, 4));
+    familiar.summon(vampire.getUuid(), shortScout());
+    familiar.setAiDisabled(true);
+    context.runAtTick(
+        TestPlayers.READY,
+        () -> {
+          familiar.order(FamiliarMode.SCOUT, vampire);
+          context.assertTrue(familiar.buried(), "the scout starts out inside the stone");
+          runOutScout(familiar);
+          context.assertEquals(familiar.mode(), FamiliarMode.FIGHT, "the scout is over");
+          context.assertFalse(familiar.buried(), "it is out of the stone");
+          context.assertTrue(familiar.distanceTo(vampire) < 2.0, "it rejoined its owner");
+          TestPlayers.finish(context, vampire);
+        });
+  }
+
+  @GameTest(templateName = ARENA, batchId = BATCH, tickLimit = 20)
+  public void aScoutWithNoOwnerRisesOutOfTheStone(final TestContext context) {
+    encase(context, new BlockPos(4, 2, 4));
+    final GhostlyFamiliarEntity familiar =
+        context.spawnEntity(GhostlyFamiliars.GHOSTLY_FAMILIAR, new BlockPos(4, 2, 4));
+    familiar.summon(UUID.randomUUID(), shortScout());
+    familiar.setAiDisabled(true);
+    context.runAtTick(
+        5,
+        () -> {
+          familiar.order(FamiliarMode.SCOUT, null);
+          context.assertTrue(familiar.buried(), "the scout starts out inside the stone");
+          runOutScout(familiar);
+          context.assertEquals(familiar.mode(), FamiliarMode.FIGHT, "the scout is over");
+          context.assertFalse(familiar.buried(), "it rose clear of the stone");
+          context.complete();
+        });
+  }
+
+  @GameTest(templateName = ARENA, batchId = BATCH, tickLimit = TestPlayers.READY + 10)
+  public void shadowStepLandsOnAGlassFloor(final TestContext context) {
+    final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(1, 2, 4));
+    for (int x = 3; x <= 7; x++) {
+      context.setBlockState(new BlockPos(x, 1, 4), Blocks.GLASS);
+    }
+    context.setBlockState(new BlockPos(8, 2, 4), Blocks.STONE);
+    context.setBlockState(new BlockPos(8, 3, 4), Blocks.STONE);
+    OccultSkills.learn(vampire, OccultSkills.GRAVE_FOG, OccultSkills.SHADOW_STEP);
+    final Vec3d start = context.getAbsolute(Vec3d.ofBottomCenter(new BlockPos(1, 2, 4)));
+    context.runAtTick(
+        TestPlayers.READY,
+        () -> {
+          vampire.setYaw(-90.0F);
+          vampire.setPitch(0.0F);
+          context.assertEquals(
+              Powers.cast(vampire, OccultSkills.SHADOW_STEP),
+              PowerUse.Verdict.READY,
+              "the step was taken");
+          context.assertTrue(vampire.getX() - start.x >= 4.0, "the caster stepped onto the glass");
+          context.assertTrue(
+              Math.abs(vampire.getY() - start.y) < 0.01,
+              "the caster stands on the glass, not under it");
+          TestPlayers.finish(context, vampire);
         });
   }
 }

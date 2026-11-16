@@ -555,7 +555,7 @@
   "entity.nightborn.ghostly_familiar": "Ghostly Familiar",
   "attribute.name.nightborn.familiar_limit": "Familiar Limit",
   "skill.nightborn.occult.summon_familiar": "Summon Familiar",
-  "skill.nightborn.occult.summon_familiar.description": "Call up a ghostly familiar for a minute. It fights for you, carries what you hand it and scouts ahead through walls. Speak to it to change its task",
+  "skill.nightborn.occult.summon_familiar.description": "Call up a ghostly familiar for a minute. It fights for you, carries what you hand it and scouts ahead through walls. Use it with an empty hand to change its task",
   "skill.nightborn.occult.spirit_pact": "Spirit Pact",
   "skill.nightborn.occult.spirit_pact.description": "Keep two ghostly familiars at once",
   "skill.nightborn.occult.grave_fog": "Grave Fog",

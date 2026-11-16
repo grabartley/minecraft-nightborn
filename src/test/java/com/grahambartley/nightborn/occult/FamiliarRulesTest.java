@@ -107,4 +107,18 @@ class FamiliarRulesTest {
   void toDismiss(final int owned, final int limit, final int expected) {
     assertEquals(expected, FamiliarRules.toDismiss(owned, limit));
   }
+
+  @ParameterizedTest(name = "inside a wall {0}, owner here {1} -> {2}")
+  @CsvSource({
+    "false, true, SETTLE",
+    "false, false, SETTLE",
+    "true, true, JOIN_OWNER",
+    "true, false, RISE"
+  })
+  @DisplayName(
+      "a scout that ends inside a wall joins its owner, or rises out when no owner is near")
+  void scoutEnd(
+      final boolean insideWall, final boolean ownerHere, final FamiliarRules.ScoutEnd expected) {
+    assertEquals(expected, FamiliarRules.scoutEnd(insideWall, ownerHere));
+  }
 }

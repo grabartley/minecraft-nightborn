@@ -3,7 +3,7 @@ package com.grahambartley.nightborn.occult.goal;
 import com.grahambartley.nightborn.occult.FamiliarMode;
 import com.grahambartley.nightborn.occult.FamiliarRules;
 import com.grahambartley.nightborn.occult.GhostlyFamiliarEntity;
-import com.grahambartley.nightborn.occult.Servants;
+import com.grahambartley.nightborn.servant.Servants;
 import java.util.EnumSet;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.goal.Goal;
@@ -15,6 +15,7 @@ public class FamiliarScoutGoal extends Goal {
 
   static final int MARK_EVERY_TICKS = 10;
   static final double SPEED = 1.5;
+  static final double RISE_STEP = 0.5;
 
   private final GhostlyFamiliarEntity familiar;
   private boolean returning;
@@ -54,7 +55,7 @@ public class FamiliarScoutGoal extends Goal {
     if (returning
         && FamiliarRules.scoutHome(
             owner != null, owner == null ? 0.0 : familiar.distanceTo(owner), ticks, limit)) {
-      familiar.order(FamiliarMode.FIGHT, owner);
+      settle(owner);
       return;
     }
     final Vec3d heading =
@@ -65,6 +66,23 @@ public class FamiliarScoutGoal extends Goal {
     }
     if (ticks % MARK_EVERY_TICKS == 0) {
       mark(owner);
+    }
+  }
+
+  private void settle(final LivingEntity owner) {
+    switch (FamiliarRules.scoutEnd(familiar.buried(), owner != null)) {
+      case SETTLE -> familiar.order(FamiliarMode.FIGHT, owner);
+      case JOIN_OWNER -> {
+        familiar.refreshPositionAndAngles(
+            owner.getX(),
+            owner.getBodyY(0.6),
+            owner.getZ(),
+            familiar.getYaw(),
+            familiar.getPitch());
+        familiar.order(FamiliarMode.FIGHT, owner);
+      }
+      case RISE ->
+          familiar.setPosition(familiar.getX(), familiar.getY() + RISE_STEP, familiar.getZ());
     }
   }
 

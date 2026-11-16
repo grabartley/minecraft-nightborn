@@ -9,7 +9,10 @@ import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Box;
+import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.world.RaycastContext;
 
 public final class ShadowStep {
@@ -59,17 +62,18 @@ public final class ShadowStep {
     final double feetY = eye.y - caster.getStandingEyeHeight();
     final BlockPos start = BlockPos.ofFloored(eye.x, feetY, eye.z);
     for (int down = 0; down <= FLOOR_SEARCH; down++) {
-      final BlockPos feet = start.down(down);
-      final Vec3d at = new Vec3d(eye.x, feet.getY(), eye.z);
-      if (caster.getWorld().getBlockState(feet.down()).isSolidBlock(caster.getWorld(), feet.down())
-          && caster
-              .getWorld()
-              .isSpaceEmpty(caster, caster.getDimensions(caster.getPose()).getBoxAt(at))
-          && !caster
-              .getWorld()
-              .containsFluid(caster.getDimensions(caster.getPose()).getBoxAt(at))) {
+      final BlockPos floor = start.down(down + 1);
+      final VoxelShape shape =
+          caster.getWorld().getBlockState(floor).getCollisionShape(caster.getWorld(), floor);
+      if (shape.isEmpty()) {
+        continue;
+      }
+      final Vec3d at = new Vec3d(eye.x, floor.getY() + shape.getMax(Direction.Axis.Y), eye.z);
+      final Box body = caster.getDimensions(caster.getPose()).getBoxAt(at);
+      if (caster.getWorld().isSpaceEmpty(caster, body) && !caster.getWorld().containsFluid(body)) {
         return Optional.of(at);
       }
+      return Optional.empty();
     }
     return Optional.empty();
   }

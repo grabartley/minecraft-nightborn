@@ -16,6 +16,9 @@ public record PowerAim(@Nullable LivingEntity gazeTarget, @Nullable Vec3d stepTo
       return NONE;
     }
     final SkillPower skill = power.get();
+    if (skill.mesmerise().isEmpty() && skill.shadowStep().isEmpty()) {
+      return NONE;
+    }
     return new PowerAim(
         skill
             .mesmerise()

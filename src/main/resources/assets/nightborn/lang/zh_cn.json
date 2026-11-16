@@ -555,7 +555,7 @@
   "entity.nightborn.ghostly_familiar": "幽灵使魔",
   "attribute.name.nightborn.familiar_limit": "使魔上限",
   "skill.nightborn.occult.summon_familiar": "召唤使魔",
-  "skill.nightborn.occult.summon_familiar.description": "召唤一只幽灵使魔，持续一分钟。它为你战斗，替你携带交给它的物品，并穿墙前去侦察。与它交谈可更换任务",
+  "skill.nightborn.occult.summon_familiar.description": "召唤一只幽灵使魔，持续一分钟。它为你战斗，替你携带交给它的物品，并穿墙前去侦察。空手对它使用可更换任务",
   "skill.nightborn.occult.spirit_pact": "灵魂契约",
   "skill.nightborn.occult.spirit_pact.description": "可同时拥有两只幽灵使魔",
   "skill.nightborn.occult.grave_fog": "墓雾",

@@ -555,7 +555,7 @@
   "entity.nightborn.ghostly_familiar": "Familiar fantasmagórico",
   "attribute.name.nightborn.familiar_limit": "Limite de familiares",
   "skill.nightborn.occult.summon_familiar": "Invocar familiar",
-  "skill.nightborn.occult.summon_familiar.description": "Chame um familiar fantasmagórico por um minuto. Ele luta por você, carrega o que você entregar e explora à frente através das paredes. Fale com ele para mudar a tarefa",
+  "skill.nightborn.occult.summon_familiar.description": "Chame um familiar fantasmagórico por um minuto. Ele luta por você, carrega o que você entregar e explora à frente através das paredes. Use-o com a mão vazia para mudar a tarefa",
   "skill.nightborn.occult.spirit_pact": "Pacto espiritual",
   "skill.nightborn.occult.spirit_pact.description": "Tenha dois familiares fantasmagóricos ao mesmo tempo",
   "skill.nightborn.occult.grave_fog": "Névoa sepulcral",

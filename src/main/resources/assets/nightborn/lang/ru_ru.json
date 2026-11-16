@@ -555,7 +555,7 @@
   "entity.nightborn.ghostly_familiar": "Призрачный фамильяр",
   "attribute.name.nightborn.familiar_limit": "Предел фамильяров",
   "skill.nightborn.occult.summon_familiar": "Призыв фамильяра",
-  "skill.nightborn.occult.summon_familiar.description": "Призовите призрачного фамильяра на минуту. Он сражается за вас, носит то, что вы ему дадите, и разведывает путь сквозь стены. Заговорите с ним, чтобы сменить его задачу",
+  "skill.nightborn.occult.summon_familiar.description": "Призовите призрачного фамильяра на минуту. Он сражается за вас, носит то, что вы ему дадите, и разведывает путь сквозь стены. Используйте его пустой рукой, чтобы сменить его задачу",
   "skill.nightborn.occult.spirit_pact": "Духовный договор",
   "skill.nightborn.occult.spirit_pact.description": "Держите двух призрачных фамильяров сразу",
   "skill.nightborn.occult.grave_fog": "Могильный туман",
