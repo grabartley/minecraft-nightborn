@@ -37,11 +37,17 @@ public final class FurnitureUse {
   public static boolean needs(final ServerWorld world, final BlockPos pos, final Chore chore) {
     final BlockState state = world.getBlockState(pos);
     return switch (chore) {
-      case LIGHT -> is(world, pos, FurnitureKind.LIGHT) && !lit(state);
+      case LIGHT -> is(world, pos, FurnitureKind.LIGHT) && lightable(state);
       case DOUSE -> is(world, pos, FurnitureKind.LIGHT) && lit(state);
       case OPEN_DRAPES -> is(world, pos, FurnitureKind.DRAPE) && !open(state);
       case CLOSE_DRAPES -> is(world, pos, FurnitureKind.DRAPE) && open(state);
     };
+  }
+
+  public static boolean lightable(final BlockState state) {
+    return state.getBlock() instanceof LightableFurnitureBlock
+        ? !lit(state)
+        : CandleBlock.canBeLit(state) || CandleCakeBlock.canBeLit(state);
   }
 
   public static boolean lit(final BlockState state) {
@@ -83,7 +89,7 @@ public final class FurnitureUse {
       AbstractCandleBlock.extinguish(null, state, world, pos);
       return;
     }
-    if (CandleBlock.canBeLit(state) || CandleCakeBlock.canBeLit(state)) {
+    if (lightable(state)) {
       world.setBlockState(pos, state.with(Properties.LIT, true), Block.NOTIFY_ALL_AND_REDRAW);
       world.playSound(
           null,

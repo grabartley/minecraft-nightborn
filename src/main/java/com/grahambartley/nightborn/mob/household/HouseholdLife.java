@@ -1,5 +1,7 @@
 package com.grahambartley.nightborn.mob.household;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 import java.util.function.DoubleSupplier;
 import net.minecraft.nbt.NbtCompound;
@@ -7,6 +9,7 @@ import net.minecraft.nbt.NbtElement;
 import net.minecraft.registry.DynamicRegistryManager;
 import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.Nullable;
 
 public final class HouseholdLife {
@@ -19,6 +22,7 @@ public final class HouseholdLife {
   private long talkingUntil;
   @Nullable private Engagement engagement;
   private final HandLoan handLoan = new HandLoan();
+  private final Map<BlockPos, Long> skipped = new HashMap<>();
 
   public record Engagement(int partnerId, long until) {}
 
@@ -71,6 +75,15 @@ public final class HouseholdLife {
 
   public boolean talking(final long now) {
     return now < talkingUntil;
+  }
+
+  public void skip(final BlockPos spot, final long until) {
+    skipped.put(spot.toImmutable(), until);
+  }
+
+  public boolean skips(final BlockPos spot, final long now) {
+    skipped.values().removeIf(until -> now >= until);
+    return skipped.containsKey(spot);
   }
 
   public HandLoan handLoan() {

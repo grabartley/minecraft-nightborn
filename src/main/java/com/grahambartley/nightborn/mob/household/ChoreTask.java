@@ -13,6 +13,7 @@ public final class ChoreTask implements HouseholdTask {
   static final double TEND_REACH = 3.0;
   static final int GIVE_UP_TICKS = 400;
   static final int TEND_TICKS = 20;
+  static final long SKIP_TICKS = 3000L;
 
   private final VampireEntity vampire;
   private final ServerWorld world;
@@ -46,6 +47,7 @@ public final class ChoreTask implements HouseholdTask {
       return false;
     }
     if (!approach.running()) {
+      vampire.householdLife().skip(spot, world.getTime() + SKIP_TICKS);
       return false;
     }
     if (walk.toward(target, TEND_REACH)) {

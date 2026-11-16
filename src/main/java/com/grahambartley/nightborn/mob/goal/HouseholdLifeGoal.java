@@ -20,6 +20,11 @@ public class HouseholdLifeGoal extends Goal {
   }
 
   @Override
+  public boolean shouldRunEveryTick() {
+    return true;
+  }
+
+  @Override
   public boolean canStart() {
     return HouseholdPlanner.calm(vampire);
   }
@@ -42,6 +47,7 @@ public class HouseholdLifeGoal extends Goal {
     final long now = world.getTime();
     final Optional<VampireEntity> speaker = engagedBy(world, now);
     if (speaker.isPresent()) {
+      endTask();
       vampire.getNavigation().stop();
       vampire.getLookControl().lookAt(speaker.get());
       return;

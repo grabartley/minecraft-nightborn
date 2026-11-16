@@ -95,7 +95,9 @@ public final class HouseholdPlanner {
         .flatMap(
             kind ->
                 switch (kind) {
-                  case LIGHT -> Chore.forLight(phase, FurnitureUse.lit(state));
+                  case LIGHT ->
+                      Chore.forLight(phase, FurnitureUse.lit(state))
+                          .filter(chore -> chore != Chore.LIGHT || FurnitureUse.lightable(state));
                   case DRAPE -> Chore.forDrape(phase, FurnitureUse.open(state));
                   case SEAT, BOOKS -> Optional.empty();
                 });
@@ -114,7 +116,9 @@ public final class HouseholdPlanner {
           FurniturePick.nearest(
               furniture.getOrDefault(kind, List.of()),
               vampire.getPos(),
-              pos -> choreFor(world, phase, pos).isPresent());
+              pos ->
+                  !vampire.householdLife().skips(pos, world.getTime())
+                      && choreFor(world, phase, pos).isPresent());
       if (spot.isPresent()) {
         return Optional.of(
             new ChoreTask(

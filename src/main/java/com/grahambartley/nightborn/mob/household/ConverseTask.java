@@ -35,7 +35,15 @@ public final class ConverseTask implements HouseholdTask {
 
   @Override
   public boolean tick() {
-    if (!partner.isAlive() || partner.getTarget() != null || partner.isSleeping()) {
+    final long now = vampire.getWorld().getTime();
+    if (!partner.isAlive()
+        || partner.getTarget() != null
+        || partner.isSleeping()
+        || partner
+            .householdLife()
+            .engagement(now)
+            .filter(engagement -> engagement.partnerId() == vampire.getId())
+            .isEmpty()) {
       return false;
     }
     vampire.getLookControl().lookAt(partner);

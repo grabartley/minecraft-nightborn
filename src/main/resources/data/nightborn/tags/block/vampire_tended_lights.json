@@ -1,6 +1,7 @@
 {
   "values": [
     "#minecraft:candles",
+    "#minecraft:candle_cakes",
     "nightborn:candelabra",
     "nightborn:chandelier"
   ]

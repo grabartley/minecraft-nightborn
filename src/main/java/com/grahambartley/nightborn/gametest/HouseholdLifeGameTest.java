@@ -13,12 +13,14 @@ import com.grahambartley.nightborn.mob.household.ChoreTask;
 import com.grahambartley.nightborn.mob.household.Conversation;
 import com.grahambartley.nightborn.mob.household.ConverseTask;
 import com.grahambartley.nightborn.mob.household.FurnitureKind;
+import com.grahambartley.nightborn.mob.household.FurnitureUse;
 import com.grahambartley.nightborn.mob.household.HomeFurniture;
 import com.grahambartley.nightborn.mob.household.HouseholdBonds;
 import com.grahambartley.nightborn.mob.household.ReadTask;
 import com.grahambartley.nightborn.mob.household.SitTask;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.CandleBlock;
@@ -189,6 +191,14 @@ public class HouseholdLifeGameTest implements FabricGameTest {
     context.assertTrue(
         found.getOrDefault(FurnitureKind.LIGHT, List.of()).contains(context.getAbsolutePos(candle)),
         "the candle is a light to tend");
+    context.assertTrue(
+        FurnitureUse.lightable(context.getBlockState(candle)),
+        "an unlit vanilla candle can be lit");
+    context.setBlockState(candle, Blocks.CANDLE_CAKE);
+    context.assertTrue(
+        FurnitureKind.of(context.getBlockState(candle)).equals(Optional.of(FurnitureKind.LIGHT))
+            && FurnitureUse.lightable(context.getBlockState(candle)),
+        "an unlit candle cake is a light a vampire can tend");
     context.assertTrue(
         found.getOrDefault(FurnitureKind.DRAPE, List.of()).contains(context.getAbsolutePos(drape)),
         "the drape can be drawn");

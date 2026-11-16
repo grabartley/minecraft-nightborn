@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.util.Optional;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.registry.DynamicRegistryManager;
+import net.minecraft.util.math.BlockPos;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -60,6 +61,17 @@ class HouseholdLifeTest {
     final NbtCompound nbt = new NbtCompound();
     life.write(nbt, NONE);
     assertEquals(false, nbt.contains(HouseholdLife.TEMPERAMENT_KEY));
+  }
+
+  @ParameterizedTest(name = "skipped until {0}, asked at {1}: {2}")
+  @CsvSource({"500, 100, true", "500, 499, true", "500, 500, false", "500, 900, false"})
+  @DisplayName("a chore a vampire gave up on is left alone for a while")
+  void skipsChores(final long until, final long now, final boolean skips) {
+    final HouseholdLife life = new HouseholdLife();
+    final BlockPos spot = new BlockPos(1, 2, 3);
+    life.skip(spot, until);
+    assertEquals(skips, life.skips(spot, now));
+    assertEquals(false, life.skips(spot.up(), now));
   }
 
   private static HouseholdLife reloaded(final HouseholdLife life) {
