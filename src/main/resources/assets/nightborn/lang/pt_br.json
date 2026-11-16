@@ -264,6 +264,8 @@
   "nightborn.coffin.too_far": "O caixão está longe demais",
   "nightborn.coffin.obstructed": "Este caixão está obstruído",
   "nightborn.coffin.occupied": "Este caixão está ocupado",
+  "nightborn.coffin.owned": "Este caixão pertence a outro",
+  "nightborn.coffin.borrowed": "Você descansa no caixão de outro, e seu ponto de renascimento continua onde estava",
   "nightborn.coffin.resting": "%s/%s vampiros descansando",
   "nightborn.coffin.skipping": "Descansando durante o dia",
   "item.nightborn.wooden_stake": "Estaca de madeira",

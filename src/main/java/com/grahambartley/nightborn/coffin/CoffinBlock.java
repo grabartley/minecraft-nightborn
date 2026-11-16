@@ -16,6 +16,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.item.ItemStack;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.state.StateManager;
@@ -117,6 +118,19 @@ public class CoffinBlock extends BedBlock {
   }
 
   @Override
+  protected void onStateReplaced(
+      final BlockState state,
+      final World world,
+      final BlockPos pos,
+      final BlockState newState,
+      final boolean moved) {
+    if (world instanceof ServerWorld server && freesOwnerOnReplace(state, newState)) {
+      CoffinOwnership.releaseAt(server, pos);
+    }
+    super.onStateReplaced(state, world, pos, newState, moved);
+  }
+
+  @Override
   protected long getRenderingSeed(final BlockState state, final BlockPos pos) {
     final BlockPos foot =
         CoffinLayout.foot(pos, state.get(PART), state.get(FACING), state.get(STANDING));
@@ -214,6 +228,10 @@ public class CoffinBlock extends BedBlock {
     return state.getBlock() instanceof CoffinBlock && state.get(STANDING);
   }
 
+  static boolean freesOwnerOnReplace(final BlockState state, final BlockState newState) {
+    return state.get(PART) == BedPart.HEAD && !newState.isOf(state.getBlock());
+  }
+
   static boolean pairs(final BlockState state, final BlockState neighborState) {
     return neighborState.isOf(state.getBlock())
         && neighborState.get(PART) != state.get(PART)
@@ -221,7 +239,7 @@ public class CoffinBlock extends BedBlock {
         && neighborState.get(STANDING) == state.get(STANDING);
   }
 
-  private static BlockPos head(final BlockPos pos, final BlockState state) {
+  public static BlockPos head(final BlockPos pos, final BlockState state) {
     return CoffinLayout.head(pos, state.get(PART), state.get(FACING), state.get(STANDING));
   }
 

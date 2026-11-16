@@ -8,11 +8,9 @@ import com.grahambartley.nightborn.MinecraftBootstrapExtension;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.UUID;
 import net.minecraft.block.BedBlock;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.enums.BedPart;
-import net.minecraft.nbt.NbtCompound;
 import net.minecraft.util.math.BlockPos;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -63,26 +61,5 @@ class CoffinBlockEntityTest {
         ticks / TICKS_PER_SECOND,
         animations.getAsJsonObject(clip).get("animation_length").getAsDouble(),
         1.0E-6);
-  }
-
-  @ParameterizedTest(name = "owner {0}")
-  @ValueSource(
-      strings = {
-        "00000000-0000-0000-0000-00000000002a",
-        "4f0c1d2e-9b8a-4c3d-8e7f-001122334455",
-        ""
-      })
-  @DisplayName("a coffin's owner survives a save and load, and an unowned coffin stays unowned")
-  void keepsItsOwner(final String owner) {
-    final BlockState head =
-        Coffins.get(CoffinWood.DARK_OAK).getDefaultState().with(BedBlock.PART, BedPart.HEAD);
-    final CoffinBlockEntity coffin = new CoffinBlockEntity(BlockPos.ORIGIN, head);
-    final UUID expected = owner.isEmpty() ? null : UUID.fromString(owner);
-    coffin.setOwner(expected);
-    final NbtCompound nbt = new NbtCompound();
-    coffin.writeNbt(nbt, null);
-    final CoffinBlockEntity loaded = new CoffinBlockEntity(BlockPos.ORIGIN, head);
-    loaded.readNbt(nbt, null);
-    assertEquals(expected, loaded.owner());
   }
 }

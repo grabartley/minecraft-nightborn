@@ -1,5 +1,6 @@
 package com.grahambartley.nightborn.mob.home;
 
+import com.grahambartley.nightborn.coffin.CoffinOwnership;
 import com.grahambartley.nightborn.config.NightbornConfig;
 import java.util.Optional;
 import net.minecraft.entity.Entity;
@@ -117,10 +118,8 @@ public final class HomeLife {
   }
 
   public void release(final ServerWorld world, final Entity vampire) {
-    if (coffin != null) {
-      HomeCoffins.release(world, coffin, vampire.getUuid());
-      coffin = null;
-    }
+    CoffinOwnership.release(world.getServer(), vampire.getUuid());
+    coffin = null;
   }
 
   public void write(final NbtCompound nbt) {

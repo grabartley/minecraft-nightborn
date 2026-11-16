@@ -264,6 +264,8 @@
   "nightborn.coffin.too_far": "Le cercueil est trop loin",
   "nightborn.coffin.obstructed": "Ce cercueil est obstrué",
   "nightborn.coffin.occupied": "Ce cercueil est occupé",
+  "nightborn.coffin.owned": "Ce cercueil appartient à un autre",
+  "nightborn.coffin.borrowed": "Vous reposez dans le cercueil d'un autre, et votre point d'apparition reste inchangé",
   "nightborn.coffin.resting": "%s/%s vampires au repos",
   "nightborn.coffin.skipping": "Repos jusqu'à la fin du jour",
   "item.nightborn.wooden_stake": "Pieu en bois",

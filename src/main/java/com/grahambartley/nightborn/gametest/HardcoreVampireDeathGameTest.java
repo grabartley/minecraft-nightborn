@@ -1,5 +1,7 @@
 package com.grahambartley.nightborn.gametest;
 
+import com.grahambartley.nightborn.coffin.CoffinOwnersState;
+import com.grahambartley.nightborn.coffin.CoffinOwnership;
 import com.grahambartley.nightborn.config.DownedSettings;
 import com.grahambartley.nightborn.faction.Faction;
 import com.grahambartley.nightborn.faction.FactionAttachment;
@@ -10,6 +12,7 @@ import com.grahambartley.nightborn.skill.SkillProgress;
 import com.grahambartley.nightborn.skill.SkillTree;
 import com.grahambartley.nightborn.skill.TreeProgress;
 import com.grahambartley.nightborn.vampire.NightbornDamage;
+import java.util.Optional;
 import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
@@ -22,6 +25,7 @@ import net.minecraft.test.GameTest;
 import net.minecraft.test.TestContext;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
 
 public class HardcoreVampireDeathGameTest implements FabricGameTest {
@@ -60,6 +64,8 @@ public class HardcoreVampireDeathGameTest implements FabricGameTest {
                 Identifier.of("nightborn", "noble")));
     SkillAttachment.set(dead, SkillTree.HUNTER, TreeProgress.EMPTY.withEarned(2));
     TurningBite.set(dead, true);
+    final BlockPos coffin = CoffinStage.coffin(context, new BlockPos(2, 2, 2), Direction.EAST);
+    CoffinOwnership.claim(context.getWorld(), context.getAbsolutePos(coffin), dead.getUuid());
     dead.setSpawnPoint(
         World.OVERWORLD, context.getAbsolutePos(new BlockPos(4, 2, 4)), 0.0F, true, false);
     context.runAtTick(
@@ -78,6 +84,10 @@ public class HardcoreVampireDeathGameTest implements FabricGameTest {
           context.assertTrue(
               respawned.getEnderChestInventory().isEmpty(), "ender chest is emptied");
           context.assertTrue(respawned.getSpawnPointPosition() == null, "no respawn point is kept");
+          context.assertEquals(
+              CoffinOwnersState.get(context.getWorld().getServer()).coffinOf(respawned.getUuid()),
+              Optional.empty(),
+              "the coffin is unassigned");
           context.assertEquals(
               SkillAttachment.get(respawned),
               SkillProgress.EMPTY,

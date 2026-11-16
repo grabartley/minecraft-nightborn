@@ -2,18 +2,17 @@ package com.grahambartley.nightborn.mob.home;
 
 import com.grahambartley.nightborn.coffin.CoffinBlock;
 import com.grahambartley.nightborn.coffin.CoffinBlockEntity;
+import com.grahambartley.nightborn.coffin.CoffinOwnership;
 import java.util.Comparator;
 import java.util.Optional;
 import java.util.UUID;
 import net.minecraft.block.BedBlock;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.enums.BedPart;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.chunk.WorldChunk;
-import org.jetbrains.annotations.Nullable;
 
 public final class HomeCoffins {
 
@@ -28,7 +27,8 @@ public final class HomeCoffins {
     if (!loaded(world, coffin)) {
       return Optional.empty();
     }
-    return Optional.of(CoffinClaim.keeps(head(world, coffin), owner(world, coffin), vampire));
+    return Optional.of(
+        CoffinClaim.keeps(head(world, coffin), CoffinOwnership.ownerAt(world, coffin), vampire));
   }
 
   public static Optional<BlockPos> claim(
@@ -48,7 +48,10 @@ public final class HomeCoffins {
                 .map(CoffinBlockEntity.class::cast)
                 .filter(coffin -> coffin.getPos().isWithinDistance(home, radius))
                 .filter(
-                    coffin -> CoffinClaim.mayClaim(head(world, coffin.getPos()), coffin.owner()))
+                    coffin ->
+                        CoffinClaim.mayClaim(
+                            head(world, coffin.getPos()),
+                            CoffinOwnership.ownerAt(world, coffin.getPos())))
                 .min(
                     Comparator.comparingDouble(coffin -> coffin.getPos().getSquaredDistance(home)));
         if (nearest.isPresent()
@@ -59,16 +62,8 @@ public final class HomeCoffins {
         }
       }
     }
-    best.ifPresent(coffin -> coffin.setOwner(vampire));
-    return best.map(CoffinBlockEntity::getPos);
-  }
-
-  public static void release(final ServerWorld world, final BlockPos coffin, final UUID vampire) {
-    if (loaded(world, coffin)
-        && world.getBlockEntity(coffin) instanceof CoffinBlockEntity entity
-        && vampire.equals(entity.owner())) {
-      entity.setOwner(null);
-    }
+    return best.map(CoffinBlockEntity::getPos)
+        .filter(coffin -> CoffinOwnership.claim(world, coffin, vampire));
   }
 
   public static boolean free(final ServerWorld world, final BlockPos coffin) {
@@ -79,11 +74,5 @@ public final class HomeCoffins {
   private static boolean head(final ServerWorld world, final BlockPos pos) {
     final BlockState state = world.getBlockState(pos);
     return state.getBlock() instanceof CoffinBlock && state.get(BedBlock.PART) == BedPart.HEAD;
-  }
-
-  @Nullable
-  private static UUID owner(final ServerWorld world, final BlockPos pos) {
-    final BlockEntity entity = world.getBlockEntity(pos);
-    return entity instanceof CoffinBlockEntity coffin ? coffin.owner() : null;
   }
 }

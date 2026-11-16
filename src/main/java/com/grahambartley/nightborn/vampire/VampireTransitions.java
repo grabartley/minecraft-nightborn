@@ -4,6 +4,7 @@ import com.grahambartley.nightborn.advancement.Milestone;
 import com.grahambartley.nightborn.advancement.MilestoneCriterion;
 import com.grahambartley.nightborn.blood.BloodAttachment;
 import com.grahambartley.nightborn.blood.StarvingAttachment;
+import com.grahambartley.nightborn.coffin.CoffinOwnership;
 import com.grahambartley.nightborn.core.VampireCore;
 import com.grahambartley.nightborn.downed.Downed;
 import com.grahambartley.nightborn.faction.Faction;
@@ -70,6 +71,7 @@ public final class VampireTransitions {
     TurningBite.set(player, false);
     VisibleStateAttachment.set(player, VisibleState.NONE);
     VampireCore.remove(player);
+    CoffinOwnership.release(player.server, player.getUuid());
     SkillAttributes.apply(player);
     player.resetStat(Stats.CUSTOM.getOrCreateStat(Stats.TIME_SINCE_REST));
     FactionPlayerList.refresh(player);

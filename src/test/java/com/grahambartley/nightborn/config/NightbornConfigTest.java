@@ -92,7 +92,10 @@ class NightbornConfigTest {
     return switch (setting) {
       case IntSetting number ->
           NightbornConfig.DEFAULTS.with(
-              number, number.defaultValue() == number.max() ? number.min() : number.max());
+              number,
+              number.defaultValue() == number.max()
+                  ? number.defaultValue() - 1
+                  : number.defaultValue() + 1);
       case BoolSetting flag -> NightbornConfig.DEFAULTS.with(flag, !flag.defaultValue());
     };
   }

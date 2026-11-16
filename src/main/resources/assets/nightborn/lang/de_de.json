@@ -264,6 +264,8 @@
   "nightborn.coffin.too_far": "Der Sarg ist zu weit entfernt",
   "nightborn.coffin.obstructed": "Dieser Sarg ist blockiert",
   "nightborn.coffin.occupied": "Dieser Sarg ist belegt",
+  "nightborn.coffin.owned": "Dieser Sarg gehört einem anderen",
+  "nightborn.coffin.borrowed": "Du ruhst im Sarg eines anderen, und dein Einstiegspunkt bleibt, wo er war",
   "nightborn.coffin.resting": "%s/%s Vampire ruhen",
   "nightborn.coffin.skipping": "Der Tag wird durchruht",
   "item.nightborn.wooden_stake": "Holzpflock",

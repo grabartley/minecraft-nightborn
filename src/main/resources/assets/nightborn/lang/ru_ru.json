@@ -264,6 +264,8 @@
   "nightborn.coffin.too_far": "Гроб слишком далеко",
   "nightborn.coffin.obstructed": "Гроб чем-то загорожен",
   "nightborn.coffin.occupied": "Этот гроб занят",
+  "nightborn.coffin.owned": "Этот гроб принадлежит другому",
+  "nightborn.coffin.borrowed": "Вы отдыхаете в чужом гробу, и ваша точка возрождения остаётся прежней",
   "nightborn.coffin.resting": "Вампиров отдыхает: %s/%s",
   "nightborn.coffin.skipping": "День проходит в отдыхе",
   "item.nightborn.wooden_stake": "Деревянный кол",
