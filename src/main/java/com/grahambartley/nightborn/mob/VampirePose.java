@@ -30,8 +30,6 @@ public enum VampirePose {
   COFFIN_RISE("coffin_rise", Play.HOLD, Hold.ARMS_HEAD_AND_HANDS),
   COFFIN_STEP_OUT("coffin_step_out", Play.HOLD, Hold.ARMS_HEAD_AND_HANDS);
 
-  static final float RUN_SWING = 0.6F;
-  static final float WALK_SWING = 0.1F;
   public static final double LEVITATE_MOVE_SPEED = 0.03;
   public static final double LEVITATE_SPRINT_SPEED = 0.24;
   public static final double WEAKENED_WALK_SPEED = 0.02;
@@ -92,10 +90,11 @@ public enum VampirePose {
     if (cue.landing()) {
       return LAND;
     }
-    if (cue.limbSwing() > RUN_SWING) {
-      return RUN;
-    }
-    return cue.limbSwing() > WALK_SWING ? WALK : IDLE;
+    return switch (Gait.of(cue.limbSwing())) {
+      case RUN -> RUN;
+      case WALK -> WALK;
+      case STILL -> IDLE;
+    };
   }
 
   public static VampirePose coffin(final boolean rising, final boolean standingCoffin) {
