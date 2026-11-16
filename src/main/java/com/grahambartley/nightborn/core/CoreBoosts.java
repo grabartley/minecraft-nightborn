@@ -17,11 +17,15 @@ public record CoreBoosts(
       final BloodSettings blood,
       final boolean emptyMainHand,
       final boolean night,
-      final int starving) {
+      final int starving,
+      final double skillBareHandDamage) {
     final double nightShare = night ? Starvation.nightGiftShare(starving, blood) : 0.0;
     return new CoreBoosts(
         DOUBLE_HEALTH,
-        emptyMainHand ? settings.bareHandDamage() * Starvation.bareHandShare(starving, blood) : 0.0,
+        emptyMainHand
+            ? (settings.bareHandDamage() + skillBareHandDamage)
+                * Starvation.bareHandShare(starving, blood)
+            : 0.0,
         nightShare * settings.nightSpeed() / 100.0,
         nightShare * settings.nightJump() / 100.0);
   }

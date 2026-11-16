@@ -338,12 +338,12 @@ The core starts with Thick Blood (more health), Grave Strength (harder blows) an
 
 | ID | Requirement |
 |---|---|
-| BAT-1 | A Beast vampire can turn into a bat and fly |
+| BAT-1 | A Beast vampire can turn into a bat and fly, and uses the same power again to turn back. A vampire mob takes bat form to close on a distant target and turns back beside it |
 | BAT-2 | Turning into a bat, and back, gives a poof of the dark, ashy vampire smoke (SUN-3) and a sound, seen and heard by everyone near |
-| BAT-3 | A bat cannot use items, open containers or feed. It drains blood while flying |
-| BAT-4 | Direct sun forces a vampire out of bat form |
+| BAT-3 | A bat cannot attack, break blocks, use items or other powers, open containers or feed, and turning into one ends a feed. It drains blood while flying, faster than levitating, and an empty blood bar forces it back |
+| BAT-4 | Direct sun forces a vampire out of bat form, and no vampire can take bat form in it |
 | BAT-5 | Turning back needs room to stand. Without it, the bat stays a bat |
-| BAT-6 | Heavy damage, being downed, holy water or garlic in range forces a vampire out of bat form |
+| BAT-6 | A single heavy blow, as heavy as the server sets, being downed, holy water or garlic in range forces a vampire out of bat form |
 
 **Enforcement:** server.
 

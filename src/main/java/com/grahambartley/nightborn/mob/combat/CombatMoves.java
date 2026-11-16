@@ -3,6 +3,7 @@ package com.grahambartley.nightborn.mob.combat;
 import com.grahambartley.nightborn.config.CombatSettings;
 import com.grahambartley.nightborn.mob.stage.StageCombat;
 import com.grahambartley.nightborn.skill.PowerShow;
+import com.grahambartley.nightborn.vampire.Impulse;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.item.ItemStack;
@@ -57,16 +58,12 @@ public final class CombatMoves {
       final CombatMove move,
       final Vec3d toward,
       final boolean left) {
-    final Vec3d flat = new Vec3d(toward.x, 0.0, toward.z);
-    if (flat.lengthSquared() < 1.0E-6) {
-      return new Vec3d(0.0, tuning.liftBlocks(), 0.0);
-    }
-    final Vec3d ahead = flat.normalize();
+    final Vec3d ahead = Impulse.ahead(toward);
     final Vec3d heading =
         move == CombatMove.DODGE
             ? (left ? new Vec3d(-ahead.z, 0.0, ahead.x) : new Vec3d(ahead.z, 0.0, -ahead.x))
             : ahead;
-    return heading.multiply(tuning.pushBlocks()).add(0.0, tuning.liftBlocks(), 0.0);
+    return Impulse.push(heading, tuning.pushBlocks(), tuning.liftBlocks());
   }
 
   static boolean ranged(final ItemStack stack) {

@@ -1,5 +1,7 @@
 package com.grahambartley.nightborn.mixin;
 
+import com.grahambartley.nightborn.batform.BatForm;
+import com.grahambartley.nightborn.batform.BatShape;
 import com.grahambartley.nightborn.coffin.CoffinSleepers;
 import com.grahambartley.nightborn.coffin.RestRules;
 import com.grahambartley.nightborn.config.NightbornConfig;
@@ -15,6 +17,7 @@ import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
 import net.minecraft.component.type.FoodComponent;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityDimensions;
 import net.minecraft.entity.EntityPose;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;
 import net.minecraft.entity.player.PlayerEntity;
@@ -24,6 +27,7 @@ import net.minecraft.stat.Stats;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -31,6 +35,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(PlayerEntity.class)
 abstract class PlayerEntityMixin {
+
+  @Unique private final BatShape nightborn$batShape = new BatShape();
 
   @Inject(method = "createPlayerAttributes", at = @At("RETURN"))
   private static void nightborn$hunterAttributes(
@@ -107,5 +113,21 @@ abstract class PlayerEntityMixin {
         day,
         self.getWorld().getDimension().hasFixedTime(),
         self.getWorld().getTimeOfDay());
+  }
+
+  @Inject(method = "getBaseDimensions", at = @At("HEAD"), cancellable = true)
+  private void nightborn$batSized(
+      final EntityPose pose, final CallbackInfoReturnable<EntityDimensions> cir) {
+    if (BatForm.isBat((PlayerEntity) (Object) this)) {
+      cir.setReturnValue(BatForm.dimensions());
+    }
+  }
+
+  @Inject(method = "tick", at = @At("HEAD"))
+  private void nightborn$reshapeOnBatForm(final CallbackInfo ci) {
+    final PlayerEntity self = (PlayerEntity) (Object) this;
+    if (nightborn$batShape.changed(BatForm.isBat(self))) {
+      self.calculateDimensions();
+    }
   }
 }

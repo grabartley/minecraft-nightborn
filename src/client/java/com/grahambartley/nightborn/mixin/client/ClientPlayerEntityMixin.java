@@ -1,5 +1,7 @@
 package com.grahambartley.nightborn.mixin.client;
 
+import com.grahambartley.nightborn.batform.BatForm;
+import com.grahambartley.nightborn.batform.BatFormRules;
 import com.grahambartley.nightborn.levitation.Levitation;
 import com.grahambartley.nightborn.levitation.LevitationRules;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
@@ -20,5 +22,16 @@ abstract class ClientPlayerEntityMixin {
   private boolean nightborn$sprintStartsWhileLevitating(final boolean onGround) {
     return LevitationRules.movesAsGrounded(
         onGround, Levitation.isLevitating((ClientPlayerEntity) (Object) this));
+  }
+
+  @ModifyExpressionValue(
+      method = "tickMovement",
+      at =
+          @At(
+              value = "INVOKE",
+              target =
+                  "Lnet/minecraft/client/network/ClientPlayerInteractionManager;isFlyingLocked()Z"))
+  private boolean nightborn$aBatAlwaysFlies(final boolean locked) {
+    return BatFormRules.flightLocked(locked, BatForm.isBat((ClientPlayerEntity) (Object) this));
   }
 }

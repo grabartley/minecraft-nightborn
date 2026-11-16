@@ -1,0 +1,11 @@
+{
+  "branch": "nightborn:beast",
+  "cost": 1,
+  "requires": ["nightborn:beast/beast_blood"],
+  "icon": "nightborn:skills/icon/swift_prowl",
+  "column": 2,
+  "row": 1,
+  "attributes": [
+    { "attribute": "minecraft:generic.movement_speed", "amount": 0.1, "operation": "add_multiplied_total" }
+  ]
+}

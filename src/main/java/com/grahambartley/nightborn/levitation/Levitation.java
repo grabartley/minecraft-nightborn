@@ -1,6 +1,7 @@
 package com.grahambartley.nightborn.levitation;
 
 import com.grahambartley.nightborn.Nightborn;
+import com.grahambartley.nightborn.batform.BatForm;
 import com.grahambartley.nightborn.downed.Downed;
 import com.grahambartley.nightborn.network.ToggleLevitationPayload;
 import com.grahambartley.nightborn.vampire.Vampires;
@@ -126,7 +127,8 @@ public final class Levitation {
   }
 
   private static boolean occupied(final LivingEntity entity) {
-    return entity.hasVehicle()
+    return BatForm.isBat(entity)
+        || entity.hasVehicle()
         || entity.isSleeping()
         || entity.isFallFlying()
         || entity instanceof PlayerEntity player && player.getAbilities().flying;

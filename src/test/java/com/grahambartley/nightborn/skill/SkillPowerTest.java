@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import com.google.gson.JsonParser;
 import com.grahambartley.nightborn.MinecraftBootstrapExtension;
 import com.mojang.serialization.JsonOps;
+import java.util.List;
 import net.minecraft.entity.effect.StatusEffects;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -33,6 +34,8 @@ class SkillPowerTest {
     assertEquals(160, power.effects().get(0).getDuration());
     assertTrue(power.sound().isPresent());
     assertTrue(power.track().isEmpty());
+    assertTrue(power.batForm().isEmpty());
+    assertTrue(power.leap().isEmpty());
     assertTrue(power.mesmerise().isEmpty());
     assertTrue(power.familiar().isEmpty());
     assertTrue(power.fog().isEmpty());
@@ -66,6 +69,29 @@ class SkillPowerTest {
     assertEquals(0, power.blood());
     assertTrue(power.effects().isEmpty());
     assertEquals(new TrackPower(64, 200), power.track().orElseThrow());
+  }
+
+  @Test
+  @DisplayName("a power can turn the caster into a bat or throw it into a leap")
+  void shapes() {
+    final SkillPower bat =
+        SkillPower.CODEC
+            .parse(
+                JsonOps.INSTANCE,
+                JsonParser.parseString(
+                    "{\"blood\":2,\"cooldown_ticks\":100,\"bat_form\":{\"land_range\":3}}"))
+            .getOrThrow();
+    final SkillPower leap =
+        SkillPower.CODEC
+            .parse(
+                JsonOps.INSTANCE,
+                JsonParser.parseString(
+                    "{\"blood\":1,\"cooldown_ticks\":100,\"leap\":{\"forward\":1.4,\"up\":0.5}}"))
+            .getOrThrow();
+    assertEquals(new BatFormPower(3.0F, List.of()), bat.batForm().orElseThrow());
+    assertTrue(bat.leap().isEmpty());
+    assertEquals(new LeapPower(1.4F, 0.5F), leap.leap().orElseThrow());
+    assertTrue(leap.batForm().isEmpty());
   }
 
   @ParameterizedTest(name = "{0}")
