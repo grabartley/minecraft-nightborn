@@ -3,7 +3,6 @@ package com.grahambartley.nightborn.mob;
 import com.grahambartley.nightborn.batform.BatForm;
 import com.grahambartley.nightborn.batform.BatShape;
 import com.grahambartley.nightborn.batform.BatShifter;
-import com.grahambartley.nightborn.blood.BloodValue;
 import com.grahambartley.nightborn.coffin.CoffinRise;
 import com.grahambartley.nightborn.config.NightbornConfig;
 import com.grahambartley.nightborn.core.VampireCore;
@@ -12,7 +11,6 @@ import com.grahambartley.nightborn.downed.Downed;
 import com.grahambartley.nightborn.levitation.Levitation;
 import com.grahambartley.nightborn.mind.MindAttributes;
 import com.grahambartley.nightborn.mob.combat.Fighting;
-import com.grahambartley.nightborn.mob.combat.Grudge;
 import com.grahambartley.nightborn.mob.goal.BatFlightGoal;
 import com.grahambartley.nightborn.mob.goal.FleeWhileEscapingGoal;
 import com.grahambartley.nightborn.mob.goal.HouseholdLifeGoal;
@@ -86,7 +84,6 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.random.Random;
-import net.minecraft.world.Difficulty;
 import net.minecraft.world.LocalDifficulty;
 import net.minecraft.world.ServerWorldAccess;
 import net.minecraft.world.World;
@@ -136,10 +133,9 @@ public class VampireEntity extends HostileEntity
   private final HouseholdLife householdLife = new HouseholdLife();
   private final MobBlood blood = new MobBlood();
   private final Fighting fighting = new Fighting();
-  private final Grudge grudge = new Grudge();
+  private final VampireHunt hunt = new VampireHunt(blood, homeLife);
+  private final VampireHiss hissing = new VampireHiss();
   private RetreatGoal retreat;
-  private long nextHiss;
-  private boolean warded;
   private boolean undressed;
 
   public VampireEntity(final EntityType<? extends VampireEntity> type, final World world) {
@@ -216,23 +212,7 @@ public class VampireEntity extends HostileEntity
   }
 
   public boolean hunts(final LivingEntity target) {
-    return Downed.state(this) == null
-        && !isSleeping()
-        && Prey.isPrey(target)
-        && !Prey.spared(
-            getWorld().getDifficulty() == Difficulty.PEACEFUL, target instanceof PlayerEntity)
-        && !Hunting.dropsTarget(pursuit(target, false));
-  }
-
-  private Hunting.Pursuit pursuit(final LivingEntity target, final boolean provoked) {
-    final NightbornConfig config = ServerConfigService.current();
-    final boolean hungry = blood.hungry(this, config);
-    return new Hunting.Pursuit(
-        Hunting.vampireHunts(getWorld()),
-        hungry,
-        ShadeRules.endangered(this),
-        provoked,
-        homeLife.outOfRange(this, target, provoked, hungry, config));
+    return hunt.hunts(this, target);
   }
 
   public boolean hungry() {
@@ -285,33 +265,7 @@ public class VampireEntity extends HostileEntity
 
   @Override
   public boolean tryAttack(final Entity target) {
-    if (BatForm.isBat(this)
-        || !(target instanceof LivingEntity victim)
-        || !Prey.mayBite(
-            Downed.state(this) != null,
-            Vampires.isVampire(victim),
-            Prey.isPrey(victim),
-            victim == getTarget() || victim == getAttacker())) {
-      return false;
-    }
-    hiss();
-    final NightbornConfig config = ServerConfigService.current();
-    final float before = victim.getHealth();
-    final boolean bitten =
-        MobBite.bite(
-            this,
-            victim,
-            (float) getAttributeValue(EntityAttributes.GENERIC_ATTACK_DAMAGE),
-            config.turning().vampireMobTurnChance(),
-            MobSounds.VAMPIRE_BITE,
-            config.turning());
-    if (bitten) {
-      onAttacking(victim);
-      if (Prey.hasDrinkableBlood(victim)) {
-        blood.drink(this, victim, BloodValue.taken(before, victim.getHealth()), config);
-      }
-    }
-    return bitten;
+    return hunt.bite(this, target);
   }
 
   @Override
@@ -341,11 +295,7 @@ public class VampireEntity extends HostileEntity
       VampireDressing.dress(this, world.getRegistryManager());
     }
     tickHome();
-    final boolean nowWarded = Hissing.warded(Weakened.sources(this));
-    if (nowWarded && !warded) {
-      hiss();
-    }
-    warded = nowWarded;
+    hissing.tickWard(this);
     if (!BatForm.isBat(this)) {
       fight();
       levitateAboutHome();
@@ -353,18 +303,7 @@ public class VampireEntity extends HostileEntity
   }
 
   public void tickHome() {
-    final NightbornConfig config = ServerConfigService.current();
-    final boolean downed = Downed.state(this) != null;
-    grudge.update(this, downed);
-    final LivingEntity target = getTarget();
-    if (target != null
-        && (downed
-            || Hunting.dropsTarget(
-                pursuit(target, Grudge.provoked(grudge.against(target), Prey.isPrey(target)))))) {
-      grudge.forgive(target);
-      setTarget(null);
-    }
-    homeLife.tick(this, blood.hungry(this, config), grudge.held(), config, this::setOutToFeed);
+    hunt.tick(this);
   }
 
   private void fight() {
@@ -427,7 +366,7 @@ public class VampireEntity extends HostileEntity
     return stage().loot().orElseGet(super::getLootTableId);
   }
 
-  private void setOutToFeed() {
+  void setOutToFeed() {
     if (getWorld() instanceof ServerWorld world) {
       BatEscort.gather(world, this, ServerConfigService.current().mobs().batEscortChance());
     }
@@ -450,8 +389,8 @@ public class VampireEntity extends HostileEntity
   @Override
   public void setAttacker(@Nullable final LivingEntity attacker) {
     super.setAttacker(attacker);
-    if (attacker != null && !Vampires.isVampire(attacker)) {
-      grudge.provoke(attacker);
+    if (attacker != null) {
+      hunt.provokedBy(attacker);
     }
   }
 
@@ -533,19 +472,7 @@ public class VampireEntity extends HostileEntity
   }
 
   void hiss() {
-    if (getWorld().isClient()
-        || !isAlive()
-        || Downed.state(this) != null
-        || CoffinRise.pose(this).isPresent()) {
-      return;
-    }
-    final long now = getWorld().getTime();
-    if (!Hissing.ready(now, nextHiss)) {
-      return;
-    }
-    nextHiss = Hissing.nextAllowed(now, ServerConfigService.current().mobs().vampireHissSeconds());
-    triggerAnim(VampireAnimator.HISS_CONTROLLER, VampireAnimator.HISS_CLIP);
-    playSound(MobSounds.vampire(rig(), VampireVoice.HISS), getSoundVolume(), getSoundPitch());
+    hissing.hiss(this);
   }
 
   private void levitateAboutHome() {
