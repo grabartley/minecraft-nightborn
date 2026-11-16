@@ -12,6 +12,7 @@ import com.grahambartley.nightborn.downed.Downed;
 import com.grahambartley.nightborn.levitation.Levitation;
 import com.grahambartley.nightborn.mind.MindAttributes;
 import com.grahambartley.nightborn.mob.combat.Fighting;
+import com.grahambartley.nightborn.mob.combat.Grudge;
 import com.grahambartley.nightborn.mob.goal.BatFlightGoal;
 import com.grahambartley.nightborn.mob.goal.FleeWhileEscapingGoal;
 import com.grahambartley.nightborn.mob.goal.HouseholdLifeGoal;
@@ -124,6 +125,7 @@ public class VampireEntity extends HostileEntity
   private final HouseholdLife householdLife = new HouseholdLife();
   private final MobBlood blood = new MobBlood();
   private final Fighting fighting = new Fighting();
+  private final Grudge grudge = new Grudge();
   private RetreatGoal retreat;
   private long nextHiss;
   private boolean warded;
@@ -326,14 +328,8 @@ public class VampireEntity extends HostileEntity
       dress(world);
     }
     final NightbornConfig config = ServerConfigService.current();
-    homeLife.tick(this, blood.hungry(this, config), config, this::setOutToFeed);
-    final LivingEntity target = getTarget();
-    if (target != null
-        && (Downed.state(this) != null
-            || Hunting.dropsTarget(
-                pursuit(target, target == getAttacker() || !Prey.isPrey(target))))) {
-      setTarget(null);
-    }
+    holdTarget();
+    homeLife.tick(this, blood.hungry(this, config), grudge.held(), config, this::setOutToFeed);
     final boolean nowWarded = Hissing.warded(Weakened.sources(this));
     if (nowWarded && !warded) {
       hiss();
@@ -343,6 +339,23 @@ public class VampireEntity extends HostileEntity
       fight();
       levitateAboutHome();
     }
+  }
+
+  public void holdTarget() {
+    final boolean downed = Downed.state(this) != null;
+    grudge.tick(this, downed);
+    final LivingEntity target = getTarget();
+    if (target != null
+        && (downed
+            || Hunting.dropsTarget(
+                pursuit(target, grudge.against(target) || !Prey.isPrey(target))))) {
+      grudge.forgive(target);
+      setTarget(null);
+    }
+  }
+
+  public Grudge grudge() {
+    return grudge;
   }
 
   private void fight() {
@@ -417,6 +430,14 @@ public class VampireEntity extends HostileEntity
     super.setTarget(target);
     if (noticed) {
       hiss();
+    }
+  }
+
+  @Override
+  public void setAttacker(@Nullable final LivingEntity attacker) {
+    super.setAttacker(attacker);
+    if (attacker != null) {
+      grudge.provoke(attacker);
     }
   }
 

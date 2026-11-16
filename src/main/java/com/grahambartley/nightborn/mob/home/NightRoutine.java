@@ -6,6 +6,7 @@ import com.grahambartley.nightborn.mob.ShadeRules;
 public final class NightRoutine {
 
   public static final long NO_NIGHT = Long.MIN_VALUE;
+  public static final int UNLEASHED = -1;
   static final double BLOCKS_PER_TICK_PER_SPEED = 0.25;
   static final double PATH_MARGIN = 2.0;
   static final long SETTLE_TICKS = 600L;
@@ -53,6 +54,11 @@ public final class NightRoutine {
 
   public static int roamRadius(final boolean out, final int feedingRange, final int homeRadius) {
     return out ? Math.max(homeRadius, feedingRange) : homeRadius;
+  }
+
+  public static int leash(
+      final boolean provoked, final boolean out, final int feedingRange, final int homeRadius) {
+    return provoked ? UNLEASHED : roamRadius(out, feedingRange, homeRadius);
   }
 
   public static boolean outOfRange(
