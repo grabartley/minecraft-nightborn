@@ -6,7 +6,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import com.grahambartley.nightborn.tools.structures.template.BlockState;
 import com.grahambartley.nightborn.tools.structures.template.Template;
 import com.grahambartley.nightborn.tools.structures.vampire.Coffins;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -21,7 +20,7 @@ class GrottoTest {
   private static final Template GROTTO = Grotto.build();
 
   static IntStream benches() {
-    return Arrays.stream(Grotto.BENCHES);
+    return Grotto.BENCHES.stream().mapToInt(Integer::intValue);
   }
 
   @Test
@@ -92,6 +91,11 @@ class GrottoTest {
 
   @Test
   void everyHangingDripstoneIsWhole() {
-    Dripstone.assertHangingWhole(GROTTO);
+    LairChecks.assertHangingWhole(GROTTO);
+  }
+
+  @Test
+  void twoBlocksOfRockWallInTheWholeGrotto() {
+    LairChecks.assertSealed(GROTTO);
   }
 }

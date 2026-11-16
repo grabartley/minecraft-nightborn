@@ -31,40 +31,15 @@ class LairCaveTest {
     assertTrue(rock(t.get(7, 7, 7)));
   }
 
-  @ParameterizedTest(
-      name = "the cave keeps two blocks of rock at its box edge in a {0} by {1} room")
+  @ParameterizedTest(name = "a bare {0} by {1} cave keeps two blocks of rock round it")
   @CsvSource({"15, 15", "25, 25", "31, 15"})
-  void theBoxEdgeIsAlwaysRock(final int sizeX, final int sizeZ) {
-    final Template t = cave(sizeX, 12, sizeZ);
-    for (int x = 0; x < sizeX; x++) {
-      for (int z = 0; z < sizeZ; z++) {
-        final boolean shell =
-            x < LairCave.SHELL
-                || z < LairCave.SHELL
-                || x >= sizeX - LairCave.SHELL
-                || z >= sizeZ - LairCave.SHELL;
-        if (shell) {
-          assertEquals(0, LairCave.roof(t, x, z), x + "," + z);
-        }
-      }
-    }
-  }
-
-  @ParameterizedTest(name = "the roof of a {0} by {1} cave keeps two blocks of rock above it")
-  @CsvSource({"25, 25", "31, 15"})
-  void theRoofNeverReachesTheTopOfTheBox(final int sizeX, final int sizeZ) {
-    final Template t = cave(sizeX, 12, sizeZ);
-    for (int x = 0; x < sizeX; x++) {
-      for (int z = 0; z < sizeZ; z++) {
-        assertTrue(rock(t.get(x, 11, z)), x + "," + z);
-        assertTrue(rock(t.get(x, 10, z)), x + "," + z);
-      }
-    }
+  void theShellIsTwoBlocksThick(final int sizeX, final int sizeZ) {
+    LairChecks.assertSealed(cave(sizeX, 12, sizeZ));
   }
 
   @ParameterizedTest(name = "every hanging dripstone in a {0} by {1} cave hangs from rock")
   @CsvSource({"25, 25", "31, 15"})
   void hangingDripstoneHangsFromRock(final int sizeX, final int sizeZ) {
-    assertTrue(Dripstone.assertHangingWhole(cave(sizeX, 12, sizeZ)) > 0);
+    assertTrue(LairChecks.assertHangingWhole(cave(sizeX, 12, sizeZ)) > 0);
   }
 }

@@ -6,9 +6,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import com.grahambartley.nightborn.tools.structures.template.BlockState;
 import com.grahambartley.nightborn.tools.structures.template.Template;
 
-final class Dripstone {
+final class LairChecks {
 
-  private Dripstone() {}
+  private LairChecks() {}
 
   static int assertHangingWhole(final Template t) {
     int hanging = 0;
@@ -31,5 +31,26 @@ final class Dripstone {
       }
     }
     return hanging;
+  }
+
+  static void assertSealed(final Template t) {
+    for (int x = 0; x < t.sizeX(); x++) {
+      for (int y = 0; y < t.sizeY(); y++) {
+        for (int z = 0; z < t.sizeZ(); z++) {
+          final boolean shell =
+              x < LairCave.SHELL
+                  || z < LairCave.SHELL
+                  || x >= t.sizeX() - LairCave.SHELL
+                  || z >= t.sizeZ() - LairCave.SHELL
+                  || y >= t.sizeY() - LairCave.SHELL;
+          if (shell) {
+            final String state = t.get(x, y, z);
+            assertTrue(
+                state != null && (state.contains("deepslate") || state.contains("tuff")),
+                x + "," + y + "," + z + " is " + state);
+          }
+        }
+      }
+    }
   }
 }

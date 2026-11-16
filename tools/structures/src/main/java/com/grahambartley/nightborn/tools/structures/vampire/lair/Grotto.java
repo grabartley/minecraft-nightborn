@@ -6,6 +6,7 @@ import static com.grahambartley.nightborn.tools.structures.vampire.lair.LairShri
 import com.grahambartley.nightborn.tools.structures.template.BlockState;
 import com.grahambartley.nightborn.tools.structures.template.Template;
 import com.grahambartley.nightborn.tools.structures.vampire.Furnishing;
+import java.util.List;
 
 public final class Grotto {
 
@@ -15,7 +16,7 @@ public final class Grotto {
   public static final int SIZE_Z = 15;
   public static final int LEDGE = 22;
   public static final int LEDGE_TOP = 2;
-  public static final int[] BENCHES = {4, 7, 10};
+  public static final List<Integer> BENCHES = List.of(4, 7, 10);
   public static final int SPRING_X = 14;
   public static final int SPRING_Z = 7;
   static final double SPRING_REACH_X = 5.5;
@@ -26,12 +27,12 @@ public final class Grotto {
   public static Template build() {
     final Template t = new Template(PATH, SIZE_X, SIZE_Y, SIZE_Z);
     LairCave.carve(t);
-    LairFeatures.path(t, 11, 10, LEDGE - 1, 11);
+    LairFeatures.path(t, 11, 10, LEDGE - 1, 10);
     LairFeatures.path(t, LEDGE - 1, 6, LEDGE - 1, 11);
     spring(t);
     ledge(t);
-    LairShrine.cut(t, 6, 1, "south", DEEPSLATE_COFFIN);
-    LairShrine.cut(t, 15, 13, "north", BLACKSTONE_COFFIN);
+    LairShrine.cut(t, 6, 2, "south", DEEPSLATE_COFFIN);
+    LairShrine.cut(t, 15, 12, "north", BLACKSTONE_COFFIN);
     hearth(t);
     LairFeatures.readingCorner(t, 2, 4, 7, "east");
     LairFeatures.bones(t, 2, 3, 4);
@@ -61,9 +62,9 @@ public final class Grotto {
       t.set(LEDGE, 1, z, LairShrine.DRESSED.base());
     }
     final int y = LEDGE_TOP + 1;
-    for (int i = 0; i < BENCHES.length; i++) {
+    for (int i = 0; i < BENCHES.size(); i++) {
       Furnishing.coffin(
-          t, i % 2 == 0 ? BLACKSTONE_COFFIN : DEEPSLATE_COFFIN, 24, y, BENCHES[i], "east");
+          t, i % 2 == 0 ? BLACKSTONE_COFFIN : DEEPSLATE_COFFIN, 24, y, BENCHES.get(i), "east");
     }
     t.set(27, y, 7, "polished_blackstone");
     Furnishing.chalice(t, 27, y + 1, 7, "villager");

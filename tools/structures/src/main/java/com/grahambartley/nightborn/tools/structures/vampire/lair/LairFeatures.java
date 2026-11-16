@@ -10,13 +10,12 @@ import com.grahambartley.nightborn.tools.structures.vampire.Stone;
 public final class LairFeatures {
 
   public static final String POOL = "nightborn:blood_pool";
+  public static final String BOOK = "minecraft:writable_book";
   static final String KERB =
       BlockState.of("polished_blackstone_brick_slab", "type", "bottom", "waterlogged", false);
   static final String RIM = "polished_blackstone_bricks";
 
   private LairFeatures() {}
-
-  public static final String BOOK = "minecraft:writable_book";
 
   public static void readingCorner(
       final Template t, final int shelfX, final int lecternX, final int z, final String toward) {

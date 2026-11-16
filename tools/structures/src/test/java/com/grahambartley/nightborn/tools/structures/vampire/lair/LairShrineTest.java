@@ -38,6 +38,6 @@ class LairShrineTest {
   @ParameterizedTest(name = "a shrine facing {0} leaves no dripstone buried in its rock")
   @ValueSource(strings = {"north", "south", "east", "west"})
   void shrinesLeaveNoBuriedDripstone(final String front) {
-    Dripstone.assertHangingWhole(shrineFacing(front));
+    LairChecks.assertHangingWhole(shrineFacing(front));
   }
 }

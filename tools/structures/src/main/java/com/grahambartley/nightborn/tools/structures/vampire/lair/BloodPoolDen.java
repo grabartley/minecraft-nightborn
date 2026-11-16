@@ -28,11 +28,11 @@ public final class BloodPoolDen {
         1,
         CENTRE,
         BlockState.of("nightborn:blood_fountain", "facing", "south", "flowing", true));
-    LairShrine.cut(t, 6, 1, "south", DEEPSLATE_COFFIN);
-    LairShrine.cut(t, 18, 1, "south", BLACKSTONE_COFFIN);
-    LairShrine.cut(t, 23, CENTRE, "west", DEEPSLATE_COFFIN);
-    LairShrine.cut(t, 1, 6, "east", BLACKSTONE_COFFIN);
-    LairShrine.cut(t, 23, 17, "west", BLACKSTONE_COFFIN);
+    LairShrine.cut(t, 6, 2, "south", DEEPSLATE_COFFIN);
+    LairShrine.cut(t, 18, 2, "south", BLACKSTONE_COFFIN);
+    LairShrine.cut(t, 22, CENTRE, "west", DEEPSLATE_COFFIN);
+    LairShrine.cut(t, 2, 6, "east", BLACKSTONE_COFFIN);
+    LairShrine.cut(t, 22, 17, "west", BLACKSTONE_COFFIN);
     gathering(t);
     altar(t);
     remains(t);
@@ -68,7 +68,7 @@ public final class BloodPoolDen {
     LairFeatures.stalagmite(t, 4, 12, 1);
     LairFeatures.stalagmite(t, 15, 21, 3);
     Furnishing.chest(t, 10, 1, 21, "north");
-    t.set(6, 3, 1, "cobweb");
-    t.set(23, 3, CENTRE, "cobweb");
+    t.set(6, 3, 2, "cobweb");
+    t.set(22, 3, CENTRE, "cobweb");
   }
 }

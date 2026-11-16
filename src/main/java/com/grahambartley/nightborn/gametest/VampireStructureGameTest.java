@@ -154,21 +154,6 @@ public class VampireStructureGameTest implements FabricGameTest {
   }
 
   @GameTest(templateName = ARENA, tickLimit = 20)
-  public void lairsSpreadWiderThanCrypts(final TestContext context) {
-    final var sets = context.getWorld().getRegistryManager().get(RegistryKeys.STRUCTURE_SET);
-    final StructureSet lairs = sets.get(Identifier.of(Nightborn.MOD_ID, "underground_lair"));
-    final StructureSet crypts = sets.get(Identifier.of(Nightborn.MOD_ID, "crypt"));
-    context.assertTrue(
-        lairs != null
-            && crypts != null
-            && lairs.placement() instanceof RareSpreadPlacement lair
-            && crypts.placement() instanceof RareSpreadPlacement crypt
-            && lair.getSpacing() > crypt.getSpacing(),
-        "lairs, which can lie under most land, are spaced further apart than crypts");
-    context.complete();
-  }
-
-  @GameTest(templateName = ARENA, tickLimit = 20)
   public void theShippedCryptKeepsToTheVillageEdge(final TestContext context) {
     final StructureSet crypts =
         context

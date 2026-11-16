@@ -62,7 +62,12 @@ class BloodPoolDenTest {
 
   @Test
   void everyHangingDripstoneIsWhole() {
-    Dripstone.assertHangingWhole(DEN);
+    LairChecks.assertHangingWhole(DEN);
+  }
+
+  @Test
+  void twoBlocksOfRockWallInTheWholeDen() {
+    LairChecks.assertSealed(DEN);
   }
 
   @Test
