@@ -39,7 +39,6 @@ import net.minecraft.test.TestContext;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
-import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.GameMode;
 
@@ -287,21 +286,30 @@ public class VampireMobGameTest implements FabricGameTest {
 
   @GameTest(templateName = YARD, batchId = DAWN_BATCH, skyAccess = true, tickLimit = 40)
   public void aVampireMobPassesShadeItCannotReach(final TestContext context) {
-    roof(context, 0, 1);
-    final BlockPos cell = new BlockPos(4, 2, 5);
-    for (final Direction side : Direction.Type.HORIZONTAL) {
-      context.setBlockState(cell.offset(side), Blocks.STONE);
-      context.setBlockState(cell.offset(side).up(), Blocks.STONE);
+    for (int y = 2; y <= 4; y++) {
+      for (int x = 3; x <= 7; x++) {
+        for (int z = 0; z <= 4; z++) {
+          final boolean inside = y < 4 && x > 3 && x < 7 && z > 0 && z < 4;
+          context.setBlockState(new BlockPos(x, y, z), inside ? Blocks.AIR : Blocks.STONE);
+        }
+      }
     }
-    context.setBlockState(cell.up(2), Blocks.STONE);
-    final VampireEntity vampire = still(context, new BlockPos(4, 2, 7));
+    roof(context, 7, 8);
+    final VampireEntity vampire = still(context, new BlockPos(1, 2, 1));
     context.runAtTick(
         LIGHT_SETTLED,
         () -> {
           context.assertFalse(
-              context.getWorld().isSkyVisible(context.getAbsolutePos(cell.up())),
-              "the walled cell is shaded");
-          assertHeadsFor(context, vampire, new BlockPos(4, 2, 1));
+              context.getWorld().isSkyVisible(context.getAbsolutePos(new BlockPos(5, 3, 2))),
+              "the sealed room is shaded");
+          final BlockPos target = startSeekingShade(context, vampire);
+          final BlockPos spot = context.getRelativePos(target);
+          final boolean inRoom =
+              spot.getX() > 3 && spot.getX() < 7 && spot.getZ() > 0 && spot.getZ() < 4;
+          context.assertFalse(inRoom, "it passes the sealed room it cannot walk into: " + spot);
+          context.assertFalse(
+              context.getWorld().isSkyVisible(target.up()), "it heads for cover: " + spot);
+          context.complete();
         });
   }
 
@@ -315,15 +323,21 @@ public class VampireMobGameTest implements FabricGameTest {
 
   private static void assertHeadsFor(
       final TestContext context, final VampireEntity vampire, final BlockPos shade) {
+    context.assertEquals(
+        startSeekingShade(context, vampire),
+        context.getAbsolutePos(shade),
+        "it heads for the nearest shade it can reach");
+    context.complete();
+  }
+
+  private static BlockPos startSeekingShade(
+      final TestContext context, final VampireEntity vampire) {
     final SeekShadeGoal goal = new SeekShadeGoal(vampire, 1.3);
     vampire.setOnGround(true);
     context.assertTrue(goal.canStart(), "the vampire mob finds shade it can reach");
     goal.start();
-    final BlockPos target = vampire.getNavigation().getTargetPos();
-    context.assertEquals(
-        target, context.getAbsolutePos(shade), "it heads for the nearest shade it can reach");
     context.assertTrue(goal.shouldContinue(), "it keeps going while the sky is open");
-    context.complete();
+    return vampire.getNavigation().getTargetPos();
   }
 
   @GameTest(templateName = YARD, batchId = DAWN_BATCH, skyAccess = true, tickLimit = 20)

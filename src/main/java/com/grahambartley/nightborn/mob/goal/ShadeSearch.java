@@ -4,13 +4,14 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import net.minecraft.util.math.Vec3i;
 
 public final class ShadeSearch {
 
-  private static final Comparator<Vec3i> NEAREST_FIRST =
+  static final Comparator<Vec3i> NEAREST_FIRST =
       Comparator.<Vec3i>comparingInt(
               offset -> offset.getX() * offset.getX() + offset.getZ() * offset.getZ())
           .thenComparingInt(offset -> Math.abs(offset.getY()))
@@ -36,21 +37,28 @@ public final class ShadeSearch {
   public static <R> Optional<R> nearestReachable(
       final List<Vec3i> nearestFirst,
       final Predicate<Vec3i> shaded,
-      final Function<Vec3i, Optional<R>> route,
-      final int routeTries) {
-    int tries = 0;
-    for (final Vec3i offset : nearestFirst) {
-      if (tries >= routeTries) {
+      final Set<Vec3i> ruledOut,
+      final Function<List<Vec3i>, Optional<R>> route,
+      final int batchSize,
+      final int batches) {
+    for (int batch = 0; batch < batches; batch++) {
+      final List<Vec3i> spots = new ArrayList<>(batchSize);
+      for (final Vec3i offset : nearestFirst) {
+        if (spots.size() == batchSize) {
+          break;
+        }
+        if (!ruledOut.contains(offset) && shaded.test(offset)) {
+          spots.add(offset);
+        }
+      }
+      if (spots.isEmpty()) {
         return Optional.empty();
       }
-      if (!shaded.test(offset)) {
-        continue;
-      }
-      tries++;
-      final Optional<R> found = route.apply(offset);
+      final Optional<R> found = route.apply(List.copyOf(spots));
       if (found.isPresent()) {
         return found;
       }
+      ruledOut.addAll(spots);
     }
     return Optional.empty();
   }
