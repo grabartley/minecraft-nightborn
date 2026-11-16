@@ -299,10 +299,7 @@ public class VampireHomeGameTest implements FabricGameTest {
         TestPlayers.READY,
         () -> {
           vampire.damage(vampire.getDamageSources().playerAttack(hunter), 1.0F);
-          vampire
-              .homeLife()
-              .tick(
-                  vampire, false, vampire.grudge().held(), ServerConfigService.current(), () -> {});
+          vampire.tickHome();
           context.assertTrue(
               vampire.isInWalkTargetRange(hunter.getBlockPos()),
               "a struck vampire may chase an attacker outside its home radius");
@@ -312,13 +309,38 @@ public class VampireHomeGameTest implements FabricGameTest {
         TestPlayers.READY + ATTACKER_FORGOTTEN,
         () -> {
           context.assertTrue(vampire.getAttacker() == null, "vanilla has forgotten the attacker");
-          vampire.holdTarget();
+          vampire.tickHome();
           context.assertTrue(
               vampire.getTarget() == hunter, "a fed vampire keeps fighting whoever hit it");
           final float before = hunter.getHealth();
           context.assertTrue(vampire.tryAttack(hunter), "it strikes back");
           context.assertTrue(hunter.getHealth() < before, "and hurts its attacker");
+          vampire.setTarget(null);
+          vampire.tickHome();
+          context.assertFalse(
+              vampire.isInWalkTargetRange(hunter.getBlockPos()),
+              "once it stops fighting it is back on its home leash");
           TestPlayers.finish(context, hunter);
+        });
+  }
+
+  @GameTest(templateName = ARENA, batchId = NIGHT_BATCH, tickLimit = TestPlayers.READY + 10)
+  public void aVampireNeverFightsBackAgainstAnotherVampire(final TestContext context) {
+    final VampireEntity vampire = VampireMobGameTest.still(context, new BlockPos(2, 2, 2));
+    final VampireEntity kin = VampireMobGameTest.still(context, new BlockPos(6, 2, 6));
+    vampire.settleAt(context.getAbsolutePos(new BlockPos(2, 2, 2)).add(PAST_HOME, 0, 0));
+    final ServerPlayerEntity player = TestPlayers.vampire(context, new BlockPos(3, 2, 2));
+    context.runAtTick(
+        TestPlayers.READY,
+        () -> {
+          vampire.damage(vampire.getDamageSources().playerAttack(player), 1.0F);
+          vampire.tickHome();
+          context.assertFalse(vampire.canTarget(player), "a vampire player is never its target");
+          context.assertFalse(vampire.canTarget(kin), "nor is a vampire mob");
+          context.assertFalse(
+              vampire.isInWalkTargetRange(player.getBlockPos()),
+              "being hit by a vampire does not take it off its home leash");
+          TestPlayers.finish(context, player);
         });
   }
 

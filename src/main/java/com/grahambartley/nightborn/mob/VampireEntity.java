@@ -27,7 +27,6 @@ import com.grahambartley.nightborn.mob.household.HouseholdBonds;
 import com.grahambartley.nightborn.mob.household.HouseholdLife;
 import com.grahambartley.nightborn.mob.household.HouseholdPlanner;
 import com.grahambartley.nightborn.mob.household.SeatedHeight;
-import com.grahambartley.nightborn.mob.look.Appearance;
 import com.grahambartley.nightborn.mob.look.OutfitDressing;
 import com.grahambartley.nightborn.mob.look.VampireLook;
 import com.grahambartley.nightborn.mob.look.VampireLooks;
@@ -45,6 +44,7 @@ import com.grahambartley.nightborn.skill.SkillHolder;
 import com.grahambartley.nightborn.skill.SkillTree;
 import com.grahambartley.nightborn.structure.HouseholdArrival;
 import com.grahambartley.nightborn.structure.HouseholdMember;
+import com.grahambartley.nightborn.vampire.Vampires;
 import com.grahambartley.nightborn.weakened.Weakened;
 import java.util.Map;
 import java.util.Optional;
@@ -325,11 +325,9 @@ public class VampireEntity extends HostileEntity
           equipStack(slot, ItemStack.EMPTY);
         }
       }
-      dress(world);
+      OutfitDressing.dress(this, world.getRegistryManager());
     }
-    final NightbornConfig config = ServerConfigService.current();
-    holdTarget();
-    homeLife.tick(this, blood.hungry(this, config), grudge.held(), config, this::setOutToFeed);
+    tickHome();
     final boolean nowWarded = Hissing.warded(Weakened.sources(this));
     if (nowWarded && !warded) {
       hiss();
@@ -341,21 +339,13 @@ public class VampireEntity extends HostileEntity
     }
   }
 
-  public void holdTarget() {
-    final boolean downed = Downed.state(this) != null;
-    grudge.tick(this, downed);
-    final LivingEntity target = getTarget();
-    if (target != null
-        && (downed
-            || Hunting.dropsTarget(
-                pursuit(target, grudge.against(target) || !Prey.isPrey(target))))) {
-      grudge.forgive(target);
-      setTarget(null);
-    }
-  }
-
-  public Grudge grudge() {
-    return grudge;
+  public void tickHome() {
+    final NightbornConfig config = ServerConfigService.current();
+    grudge.hold(
+        this,
+        Downed.state(this) != null,
+        (target, provoked) -> Hunting.dropsTarget(pursuit(target, provoked)));
+    homeLife.tick(this, blood.hungry(this, config), grudge.held(), config, this::setOutToFeed);
   }
 
   private void fight() {
@@ -434,10 +424,15 @@ public class VampireEntity extends HostileEntity
   }
 
   @Override
+  public boolean canTarget(final LivingEntity target) {
+    return Grudge.fightsBack(Vampires.isVampire(target)) && super.canTarget(target);
+  }
+
+  @Override
   public void setAttacker(@Nullable final LivingEntity attacker) {
     super.setAttacker(attacker);
     if (attacker != null) {
-      grudge.provoke(attacker);
+      grudge.provoke(attacker, Vampires.isVampire(attacker));
     }
   }
 
@@ -559,7 +554,7 @@ public class VampireEntity extends HostileEntity
       final SpawnReason spawnReason,
       @Nullable final EntityData entityData) {
     final NightbornConfig config = ServerConfigService.current();
-    dress(world);
+    OutfitDressing.dress(this, world.getRegistryManager());
     VampireCore.tick(this, config.core(), config.blood());
     setHealth(getMaxHealth());
     blood.start(this, random.nextInt(Integer.MAX_VALUE), config);
@@ -576,25 +571,6 @@ public class VampireEntity extends HostileEntity
 
   @Override
   protected void initEquipment(final Random random, final LocalDifficulty difficulty) {}
-
-  private void dress(final ServerWorldAccess world) {
-    final var registries = world.getRegistryManager();
-    final var outfits = VampireLooks.outfits(registries);
-    Appearance.pick(
-            VampireLooks.looks(registries),
-            outfits,
-            VampireLooks.builds(registries),
-            random::nextDouble)
-        .ifPresent(
-            appearance -> {
-              setAppearance(appearance.look(), appearance.height(), appearance.width());
-              appearance
-                  .outfit()
-                  .map(outfits::get)
-                  .map(outfit -> OutfitDressing.stacks(outfit, VampireLooks::item))
-                  .ifPresent(stacks -> stacks.forEach(this::equipStack));
-            });
-  }
 
   public void setAppearance(final Identifier look, final float height, final float width) {
     dataTracker.set(LOOK, look.toString());
