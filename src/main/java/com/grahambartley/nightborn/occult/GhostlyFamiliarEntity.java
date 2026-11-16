@@ -9,6 +9,7 @@ import com.grahambartley.nightborn.servant.Servants;
 import java.util.Optional;
 import java.util.UUID;
 import net.minecraft.block.BlockState;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MovementType;
@@ -295,6 +296,12 @@ public class GhostlyFamiliarEntity extends PathAwareEntity implements GeoEntity,
   public boolean isPushable() {
     return false;
   }
+
+  @Override
+  protected void tickCramming() {}
+
+  @Override
+  protected void pushAway(final Entity entity) {}
 
   @Override
   public boolean cannotDespawn() {

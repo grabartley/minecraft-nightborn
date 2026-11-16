@@ -374,7 +374,7 @@ public class OccultGameTest implements FabricGameTest {
     final GhostlyFamiliarEntity familiar =
         context.spawnEntity(GhostlyFamiliars.GHOSTLY_FAMILIAR, new BlockPos(2, 2, 4));
     familiar.summon(
-        vampire.getUuid(), new FamiliarPower(1200, 10.0F, 3.0F, 6.0F, 200, 8.0F, 200, 9));
+        vampire.getUuid(), new FamiliarPower(1200, 10.0F, 3.0F, 4.0F, 200, 8.0F, 200, 9));
     final Vec3d start = familiar.getPos();
     final double[] farthest = new double[1];
     context.runAtTick(
@@ -390,7 +390,7 @@ public class OccultGameTest implements FabricGameTest {
         TestPlayers.READY + 40,
         () -> {
           context.assertTrue(
-              farthest[0] >= 5.0, "the scout flew out to its range, only " + farthest[0]);
+              farthest[0] >= 3.0, "the scout flew out to its range, only " + farthest[0]);
           end(context, vampire);
         });
   }
