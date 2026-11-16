@@ -278,15 +278,39 @@ public class BatFormGameTest implements FabricGameTest {
   }
 
   @GameTest(templateName = YARD, batchId = NIGHT, skyAccess = true, tickLimit = 20)
-  public void aBatTurningBackInTheAirFloatsDown(final TestContext context) {
+  public void aBatPlayerTurningBackInTheAirDrops(final TestContext context) {
     final ServerPlayerEntity vampire = beast(context, BAT_FORM);
     Powers.cast(vampire, BAT_FORM);
     final Vec3d aloft = context.getAbsolute(new Vec3d(4.5, 6.0, 4.5));
     vampire.refreshPositionAndAngles(aloft.x, aloft.y, aloft.z, 0.0F, 0.0F);
     context.assertEquals(Powers.cast(vampire, BAT_FORM), PowerUse.Verdict.READY, "turns back");
-    context.assertTrue(
-        vampire.hasStatusEffect(StatusEffects.SLOW_FALLING), "it floats down from the air");
+    context.assertFalse(
+        vampire.hasStatusEffect(StatusEffects.SLOW_FALLING), "nothing slows its fall");
+    context.assertFalse(vampire.getAbilities().flying, "it no longer flies");
     TestPlayers.finish(context, vampire);
+  }
+
+  @GameTest(templateName = YARD, batchId = NIGHT, skyAccess = true, tickLimit = 40)
+  public void aBatMobTurningBackInTheAirFallsAndTakesFallDamage(final TestContext context) {
+    final VampireEntity vampire = context.spawnEntity(NightbornMobs.VAMPIRE, STAND);
+    vampire.setAiDisabled(true);
+    learn(context, vampire, BAT_FORM);
+    context.assertEquals(Powers.cast(vampire, BAT_FORM), PowerUse.Verdict.READY, "turns");
+    final Vec3d aloft = context.getAbsolute(new Vec3d(4.5, 10.0, 4.5));
+    vampire.refreshPositionAndAngles(aloft.x, aloft.y, aloft.z, 0.0F, 0.0F);
+    final float health = vampire.getHealth();
+    context.assertEquals(Powers.cast(vampire, BAT_FORM), PowerUse.Verdict.READY, "turns back");
+    context.assertFalse(
+        vampire.hasStatusEffect(StatusEffects.SLOW_FALLING), "nothing slows its fall");
+    context.runAtEveryTick(
+        () -> {
+          if (vampire.isOnGround() && vampire.getY() < aloft.y - 4.0) {
+            context.assertTrue(
+                vampire.getHealth() < health,
+                "the eight block drop hurts: " + vampire.getHealth() + " of " + health);
+            context.complete();
+          }
+        });
   }
 
   @GameTest(

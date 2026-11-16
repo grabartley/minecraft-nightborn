@@ -24,8 +24,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityDimensions;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
-import net.minecraft.entity.effect.StatusEffectInstance;
-import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.codec.PacketCodecs;
 import net.minecraft.registry.Registries;
@@ -52,7 +50,6 @@ public final class BatForm {
 
   static final int SMOKE_COUNT = 30;
   static final double SMOKE_SPEED = 0.02;
-  static final int LANDING_FALL_TICKS = 100;
 
   private BatForm() {}
 
@@ -105,12 +102,6 @@ public final class BatForm {
       BatFlight.ground(player);
     } else {
       vampire.setNoGravity(false);
-    }
-    if (!vampire.isOnGround()) {
-      vampire.fallDistance = 0.0F;
-      vampire.addStatusEffect(
-          new StatusEffectInstance(
-              StatusEffects.SLOW_FALLING, LANDING_FALL_TICKS, 0, false, false));
     }
     poof(vampire, LEAVE_SOUND);
     return true;
