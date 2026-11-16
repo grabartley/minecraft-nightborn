@@ -29,33 +29,34 @@ public final class VampireHunt {
 
   public static boolean hunts(
       final boolean downed,
-      final boolean sleeping,
-      final boolean prey,
-      final boolean spared,
+      final BooleanSupplier sleeping,
+      final BooleanSupplier prey,
+      final BooleanSupplier spared,
       final BooleanSupplier dropsPursuit) {
-    return !downed && !sleeping && prey && !spared && !dropsPursuit.getAsBoolean();
+    return !downed
+        && !sleeping.getAsBoolean()
+        && prey.getAsBoolean()
+        && !spared.getAsBoolean()
+        && !dropsPursuit.getAsBoolean();
   }
 
   public static boolean letsGo(final boolean downed, final BooleanSupplier dropsPursuit) {
     return downed || dropsPursuit.getAsBoolean();
   }
 
-  public static boolean bearsGrudge(final boolean attackerIsVampire) {
-    return !attackerIsVampire;
-  }
-
   public boolean hunts(final VampireEntity vampire, final LivingEntity target) {
     return hunts(
         Downed.state(vampire) != null,
-        vampire.isSleeping(),
-        Prey.isPrey(target),
-        Prey.spared(
-            vampire.getWorld().getDifficulty() == Difficulty.PEACEFUL,
-            target instanceof PlayerEntity),
+        vampire::isSleeping,
+        () -> Prey.isPrey(target),
+        () ->
+            Prey.spared(
+                vampire.getWorld().getDifficulty() == Difficulty.PEACEFUL,
+                target instanceof PlayerEntity),
         () -> Hunting.dropsTarget(pursuit(vampire, target, false)));
   }
 
-  public void tick(final VampireEntity vampire) {
+  public void tick(final VampireEntity vampire, final Runnable setOutToFeed) {
     final NightbornConfig config = ServerConfigService.current();
     final boolean downed = Downed.state(vampire) != null;
     grudge.update(vampire, downed);
@@ -72,12 +73,11 @@ public final class VampireHunt {
       grudge.forgive(target);
       vampire.setTarget(null);
     }
-    homeLife.tick(
-        vampire, blood.hungry(vampire, config), grudge.held(), config, vampire::setOutToFeed);
+    homeLife.tick(vampire, blood.hungry(vampire, config), grudge.held(), config, setOutToFeed);
   }
 
   public void provokedBy(final LivingEntity attacker) {
-    if (bearsGrudge(Vampires.isVampire(attacker))) {
+    if (!Vampires.isVampire(attacker)) {
       grudge.provoke(attacker);
     }
   }

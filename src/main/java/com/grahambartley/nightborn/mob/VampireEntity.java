@@ -303,7 +303,7 @@ public class VampireEntity extends HostileEntity
   }
 
   public void tickHome() {
-    hunt.tick(this);
+    hunt.tick(this, this::setOutToFeed);
   }
 
   private void fight() {
@@ -366,7 +366,7 @@ public class VampireEntity extends HostileEntity
     return stage().loot().orElseGet(super::getLootTableId);
   }
 
-  void setOutToFeed() {
+  private void setOutToFeed() {
     if (getWorld() instanceof ServerWorld world) {
       BatEscort.gather(world, this, ServerConfigService.current().mobs().batEscortChance());
     }

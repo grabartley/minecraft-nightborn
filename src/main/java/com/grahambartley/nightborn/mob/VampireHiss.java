@@ -5,6 +5,7 @@ import com.grahambartley.nightborn.downed.Downed;
 import com.grahambartley.nightborn.mob.look.VampireVoice;
 import com.grahambartley.nightborn.server.ServerConfigService;
 import com.grahambartley.nightborn.weakened.Weakened;
+import java.util.function.BooleanSupplier;
 
 public final class VampireHiss {
 
@@ -13,12 +14,10 @@ public final class VampireHiss {
 
   public static boolean mayHiss(
       final boolean client,
-      final boolean alive,
-      final boolean downed,
-      final boolean rising,
-      final long now,
-      final long nextAllowed) {
-    return !client && alive && !downed && !rising && Hissing.ready(now, nextAllowed);
+      final BooleanSupplier alive,
+      final BooleanSupplier downed,
+      final BooleanSupplier rising) {
+    return !client && alive.getAsBoolean() && !downed.getAsBoolean() && !rising.getAsBoolean();
   }
 
   public static boolean newlyWarded(final boolean nowWarded, final boolean wasWarded) {
@@ -26,14 +25,15 @@ public final class VampireHiss {
   }
 
   public void hiss(final VampireEntity vampire) {
-    final long now = vampire.getWorld().getTime();
     if (!mayHiss(
         vampire.getWorld().isClient(),
-        vampire.isAlive(),
-        Downed.state(vampire) != null,
-        CoffinRise.pose(vampire).isPresent(),
-        now,
-        nextHiss)) {
+        vampire::isAlive,
+        () -> Downed.state(vampire) != null,
+        () -> CoffinRise.pose(vampire).isPresent())) {
+      return;
+    }
+    final long now = vampire.getWorld().getTime();
+    if (!Hissing.ready(now, nextHiss)) {
       return;
     }
     nextHiss = Hissing.nextAllowed(now, ServerConfigService.current().mobs().vampireHissSeconds());
