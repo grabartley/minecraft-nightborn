@@ -7,20 +7,25 @@ import com.grahambartley.nightborn.blood.BloodValue;
 import com.grahambartley.nightborn.coffin.CoffinRise;
 import com.grahambartley.nightborn.config.NightbornConfig;
 import com.grahambartley.nightborn.core.VampireCore;
+import com.grahambartley.nightborn.decor.SeatEntity;
 import com.grahambartley.nightborn.downed.Downed;
 import com.grahambartley.nightborn.levitation.Levitation;
 import com.grahambartley.nightborn.mind.MindAttributes;
 import com.grahambartley.nightborn.mob.combat.Fighting;
 import com.grahambartley.nightborn.mob.goal.BatFlightGoal;
 import com.grahambartley.nightborn.mob.goal.FleeWhileEscapingGoal;
+import com.grahambartley.nightborn.mob.goal.HouseholdLifeGoal;
 import com.grahambartley.nightborn.mob.goal.LieDownedGoal;
 import com.grahambartley.nightborn.mob.goal.RetreatGoal;
 import com.grahambartley.nightborn.mob.goal.SeekShadeGoal;
 import com.grahambartley.nightborn.mob.goal.SleepInCoffinGoal;
 import com.grahambartley.nightborn.mob.goal.WatchStrangerGoal;
 import com.grahambartley.nightborn.mob.home.HomeLife;
-import com.grahambartley.nightborn.mob.home.Housemates;
 import com.grahambartley.nightborn.mob.home.MobBlood;
+import com.grahambartley.nightborn.mob.household.HouseholdBonds;
+import com.grahambartley.nightborn.mob.household.HouseholdLife;
+import com.grahambartley.nightborn.mob.household.HouseholdPlanner;
+import com.grahambartley.nightborn.mob.household.SeatedHeight;
 import com.grahambartley.nightborn.mob.look.Appearance;
 import com.grahambartley.nightborn.mob.look.OutfitDressing;
 import com.grahambartley.nightborn.mob.look.VampireLook;
@@ -39,7 +44,6 @@ import com.grahambartley.nightborn.skill.SkillHolder;
 import com.grahambartley.nightborn.skill.SkillTree;
 import com.grahambartley.nightborn.structure.HouseholdArrival;
 import com.grahambartley.nightborn.structure.HouseholdMember;
-import com.grahambartley.nightborn.vampire.VisibleStateAttachment;
 import com.grahambartley.nightborn.weakened.Weakened;
 import java.util.Map;
 import java.util.Optional;
@@ -77,6 +81,7 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.random.Random;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.LocalDifficulty;
@@ -86,9 +91,6 @@ import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.AnimatableManager;
-import software.bernie.geckolib.animation.AnimationController;
-import software.bernie.geckolib.animation.PlayState;
-import software.bernie.geckolib.animation.RawAnimation;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 public class VampireEntity extends HostileEntity
@@ -98,11 +100,7 @@ public class VampireEntity extends HostileEntity
   static final String HEIGHT_KEY = "Height";
   static final String WIDTH_KEY = "Width";
   static final String STAGE_KEY = "Stage";
-  static final String ACTION_CONTROLLER = "action_clip";
-  static final int ANIMATION_BLEND_TICKS = 4;
-  static final String HISS_CONTROLLER = "hiss";
-  static final String HISS_CLIP = "hiss";
-  static final RawAnimation HISS = RawAnimation.begin().thenPlay(HISS_CLIP);
+  static final String MOURN_CLIP = "mourn";
 
   private static final TrackedData<String> LOOK =
       DataTracker.registerData(VampireEntity.class, TrackedDataHandlerRegistry.STRING);
@@ -116,16 +114,17 @@ public class VampireEntity extends HostileEntity
       DataTracker.registerData(VampireEntity.class, TrackedDataHandlerRegistry.STRING);
   private static final TrackedData<Integer> ACTION_SEQUENCE =
       DataTracker.registerData(VampireEntity.class, TrackedDataHandlerRegistry.INTEGER);
+  private static final TrackedData<Boolean> READING =
+      DataTracker.registerData(VampireEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
 
   private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
-  private final EndingEdge landingEdge = new EndingEdge();
+  private final VampireAnimator animator = new VampireAnimator();
   private final BatShape batShape = new BatShape();
   private final HomeLife homeLife = new HomeLife();
+  private final HouseholdLife householdLife = new HouseholdLife();
   private final MobBlood blood = new MobBlood();
   private final Fighting fighting = new Fighting();
   private RetreatGoal retreat;
-  private final ShownAction shownAction = new ShownAction();
-  private VampirePose shownPose = VampirePose.IDLE;
   private long nextHiss;
   private boolean warded;
   private boolean undressed;
@@ -154,6 +153,7 @@ public class VampireEntity extends HostileEntity
     builder.add(STAGE, "");
     builder.add(ACTION, "");
     builder.add(ACTION_SEQUENCE, 0);
+    builder.add(READING, false);
   }
 
   @Override
@@ -192,9 +192,10 @@ public class VampireEntity extends HostileEntity
     goalSelector.add(4, new MeleeAttackGoal(this, 1.15, false));
     goalSelector.add(5, new GoToWalkTargetGoal(this, 1.0));
     goalSelector.add(6, new WatchStrangerGoal(this));
-    goalSelector.add(6, new WanderAroundFarGoal(this, 0.8));
-    goalSelector.add(7, new LookAtEntityGoal(this, PlayerEntity.class, 8.0F));
-    goalSelector.add(7, new LookAroundGoal(this));
+    goalSelector.add(7, new HouseholdLifeGoal(this));
+    goalSelector.add(8, new WanderAroundFarGoal(this, 0.8));
+    goalSelector.add(9, new LookAtEntityGoal(this, PlayerEntity.class, 8.0F));
+    goalSelector.add(9, new LookAroundGoal(this));
     targetSelector.add(1, new RevengeGoal(this));
     targetSelector.add(
         2, new ActiveTargetGoal<>(this, LivingEntity.class, 10, true, false, this::hunts));
@@ -226,6 +227,41 @@ public class VampireEntity extends HostileEntity
 
   public HomeLife homeLife() {
     return homeLife;
+  }
+
+  public HouseholdLife householdLife() {
+    return householdLife;
+  }
+
+  public boolean reading() {
+    return dataTracker.get(READING);
+  }
+
+  public void setReading(final boolean reading) {
+    dataTracker.set(READING, reading);
+  }
+
+  public void lendHand(final ItemStack prop) {
+    householdLife
+        .handLoan()
+        .lend(getEquippedStack(EquipmentSlot.MAINHAND), getDropChance(EquipmentSlot.MAINHAND));
+    setEquipmentDropChance(EquipmentSlot.MAINHAND, 0.0F);
+    equipStack(EquipmentSlot.MAINHAND, prop);
+  }
+
+  public void returnHand() {
+    householdLife
+        .handLoan()
+        .take()
+        .ifPresent(
+            kept -> {
+              equipStack(EquipmentSlot.MAINHAND, kept.stack());
+              setEquipmentDropChance(EquipmentSlot.MAINHAND, kept.dropChance());
+            });
+  }
+
+  public void speak(final VampireVoice voice) {
+    playSound(MobSounds.vampire(rig(), voice), getSoundVolume(), getSoundPitch());
   }
 
   @Override
@@ -324,8 +360,20 @@ public class VampireEntity extends HostileEntity
 
   @Override
   public void showPower(final String clip) {
+    showAction(clip);
+  }
+
+  public void showAction(final String clip) {
     dataTracker.set(ACTION, clip);
     dataTracker.set(ACTION_SEQUENCE, dataTracker.get(ACTION_SEQUENCE) + 1);
+  }
+
+  public String action() {
+    return dataTracker.get(ACTION);
+  }
+
+  int actionSequence() {
+    return dataTracker.get(ACTION_SEQUENCE);
   }
 
   public Identifier stageId() {
@@ -377,30 +425,44 @@ public class VampireEntity extends HostileEntity
     final boolean hurt = super.damage(source, amount);
     if (hurt && source.getAttacker() instanceof LivingEntity attacker) {
       hiss();
-      alertHousemates(attacker);
+      HouseholdBonds.alert(
+          this, attacker, ServerConfigService.current().mobs().vampireAlertRange());
     }
     return hurt;
   }
 
-  private void alertHousemates(final LivingEntity attacker) {
-    final int range = ServerConfigService.current().mobs().vampireAlertRange();
-    final boolean attackerIsHousemate =
-        attacker instanceof VampireEntity other
-            && Housemates.share(homeLife.home(), other.homeLife.home());
-    for (final VampireEntity mate :
-        getWorld()
-            .getEntitiesByClass(
-                VampireEntity.class,
-                getBoundingBox().expand(range),
-                mate -> mate != this && mate != attacker && !mate.isSleeping())) {
-      if (Housemates.alerted(
-          Housemates.share(homeLife.home(), mate.homeLife.home()),
-          attackerIsHousemate,
-          mate.squaredDistanceTo(this),
-          range)) {
-        mate.setAttacker(attacker);
-      }
+  @Override
+  public void onDeath(final DamageSource source) {
+    returnHand();
+    super.onDeath(source);
+    if (getWorld() instanceof ServerWorld world) {
+      HouseholdBonds.mourn(world, this, ServerConfigService.current().mobs().vampireAlertRange());
     }
+  }
+
+  public void mourn(final ServerWorld world) {
+    householdLife.grieve(
+        world.getTime(),
+        householdLife.temperament(world.getRegistryManager(), random::nextDouble).mourning());
+    if (getTarget() == null && !isSleeping()) {
+      showAction(MOURN_CLIP);
+    }
+  }
+
+  @Override
+  public boolean saveNbt(final NbtCompound nbt) {
+    if (!(getVehicle() instanceof SeatEntity seat) || !saveSelfNbt(nbt)) {
+      return super.saveNbt(nbt);
+    }
+    nbt.put("Pos", toNbtList(getX(), seat.getY(), getZ()));
+    return true;
+  }
+
+  @Override
+  public Vec3d getVehicleAttachmentPos(final Entity vehicle) {
+    return vehicle instanceof SeatEntity
+        ? new Vec3d(0.0, SeatedHeight.lift(height(), getScale()), 0.0)
+        : super.getVehicleAttachmentPos(vehicle);
   }
 
   @Override
@@ -447,7 +509,7 @@ public class VampireEntity extends HostileEntity
       return;
     }
     nextHiss = Hissing.nextAllowed(now, ServerConfigService.current().mobs().vampireHissSeconds());
-    triggerAnim(HISS_CONTROLLER, HISS_CLIP);
+    triggerAnim(VampireAnimator.HISS_CONTROLLER, VampireAnimator.HISS_CLIP);
     playSound(MobSounds.vampire(rig(), VampireVoice.HISS), getSoundVolume(), getSoundPitch());
   }
 
@@ -456,6 +518,7 @@ public class VampireEntity extends HostileEntity
     if (MobLevitation.wants(
             levitating,
             getTarget() != null,
+            HouseholdPlanner.settled(this),
             random.nextFloat(),
             ServerConfigService.current().mobs())
         == levitating) {
@@ -547,6 +610,7 @@ public class VampireEntity extends HostileEntity
     nbt.putFloat(WIDTH_KEY, width());
     nbt.putString(STAGE_KEY, dataTracker.get(STAGE));
     homeLife.write(nbt);
+    householdLife.write(nbt, getRegistryManager());
     blood.write(nbt);
   }
 
@@ -554,6 +618,8 @@ public class VampireEntity extends HostileEntity
   public void readCustomDataFromNbt(final NbtCompound nbt) {
     super.readCustomDataFromNbt(nbt);
     homeLife.read(nbt);
+    householdLife.read(nbt, getRegistryManager());
+    returnHand();
     blood.read(nbt);
     dataTracker.set(STAGE, nbt.getString(STAGE_KEY));
     undressed = nbt.contains(LOOK_KEY) && !nbt.contains(LOOK_KEY, NbtElement.STRING_TYPE);
@@ -588,58 +654,15 @@ public class VampireEntity extends HostileEntity
 
   @Override
   public void registerControllers(final AnimatableManager.ControllerRegistrar controllers) {
-    controllers.add(
-        new AnimationController<>(
-            this,
-            "pose",
-            ANIMATION_BLEND_TICKS,
-            state -> {
-              final boolean levitating = Levitation.isLevitating(this);
-              landingEdge.ended(levitating);
-              final VampirePose pose =
-                  VampirePose.of(
-                      new VampirePose.Cue(
-                          CoffinRise.pose(this),
-                          VisibleStateAttachment.get(this).downed(),
-                          levitating,
-                          landingEdge.ending(),
-                          isSprinting(),
-                          state.getLimbSwingAmount(),
-                          Math.hypot(getX() - prevX, getZ() - prevZ)));
-              shownPose = pose == VampirePose.IDLE ? IdleFidget.pose(getId(), age) : pose;
-              final PlayState play =
-                  state.setAndContinue(StageClips.clip(shownPose, stage().look()));
-              landingEdge.shown(
-                  pose == VampirePose.LAND,
-                  pose == VampirePose.LAND && state.getController().hasAnimationFinished());
-              return play;
-            }));
-    controllers.add(
-        new AnimationController<>(
-            this,
-            "action",
-            ANIMATION_BLEND_TICKS,
-            state ->
-                VampirePose.playOrStop(
-                    state,
-                    shownPose.allowsActions()
-                        ? VampirePose.action(handSwinging, false, true)
-                        : Optional.empty())));
-    controllers.add(
-        new AnimationController<>(
-            this,
-            ACTION_CONTROLLER,
-            2,
-            state ->
-                shownAction.play(
-                    state, dataTracker.get(ACTION_SEQUENCE), dataTracker.get(ACTION))));
-    controllers.add(
-        new AnimationController<>(this, HISS_CONTROLLER, 2, state -> PlayState.STOP)
-            .triggerableAnim(HISS_CLIP, HISS));
+    animator.register(this, controllers);
   }
 
   public VampirePose shownPose() {
-    return shownPose;
+    return animator.shownPose();
+  }
+
+  public boolean holdsHead() {
+    return animator.holdsHead();
   }
 
   @Override

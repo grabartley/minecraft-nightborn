@@ -39,7 +39,7 @@ public class VampireModel extends GeoModel<VampireEntity> {
       final AnimationState<VampireEntity> animationState) {
     RigArmorLayer.hideAnchors(getAnimationProcessor());
     final GeoBone head = getAnimationProcessor().getBone("head");
-    if (head == null || vampire.shownPose().holdsHead()) {
+    if (head == null || vampire.holdsHead()) {
       return;
     }
     HeadLook.apply(head, animationState.getData(DataTickets.ENTITY_MODEL_DATA));

@@ -9,32 +9,38 @@ import org.junit.jupiter.params.provider.CsvSource;
 
 class MobLevitationTest {
 
-  @ParameterizedTest(name = "rise {0}s, land {1}s, levitating {2}, fighting {3}, roll {4}: {5}")
+  @ParameterizedTest(
+      name = "rise {0}s, land {1}s, levitating {2}, fighting {3}, settled {4}, roll {5}: {6}")
   @CsvSource({
-    "30, 15, false, true, 0.9, true",
-    "30, 15, true, true, 0.9, true",
-    "30, 15, false, false, 0.001, true",
-    "30, 15, false, false, 0.5, false",
-    "30, 15, true, false, 0.001, false",
-    "30, 15, true, false, 0.5, true",
-    "0, 15, false, true, 0.0, false",
-    "0, 15, false, false, 0.0, false",
-    "0, 15, true, true, 0.001, false",
-    "30, 0, true, false, 0.0, true",
-    "0, 0, true, true, 0.0, true"
+    "30, 15, false, true, false, 0.9, true",
+    "30, 15, true, true, false, 0.9, true",
+    "30, 15, false, false, false, 0.001, true",
+    "30, 15, false, false, true, 0.001, false",
+    "30, 15, true, false, true, 0.5, false",
+    "30, 15, true, true, true, 0.5, true",
+    "30, 15, false, false, false, 0.5, false",
+    "30, 15, true, false, false, 0.001, false",
+    "30, 15, true, false, false, 0.5, true",
+    "0, 15, false, true, false, 0.0, false",
+    "0, 15, false, false, false, 0.0, false",
+    "0, 15, true, true, false, 0.001, false",
+    "30, 0, true, false, false, 0.0, true",
+    "0, 0, true, true, false, 0.0, true"
   })
   @DisplayName(
-      "a vampire levitates in a fight and now and then about its home, as the server allows")
+      "a vampire levitates in a fight and now and then about its home, as the server allows, but"
+          + " stays on its feet while it reads, sits or talks")
   void wants(
       final int riseSeconds,
       final int landSeconds,
       final boolean levitating,
       final boolean fighting,
+      final boolean settled,
       final float roll,
       final boolean wants) {
     final MobSettings settings =
         new MobSettings(100, 40, riseSeconds, landSeconds, 8, 14, 60, 50, 64, 40, 16, 24);
-    assertEquals(wants, MobLevitation.wants(levitating, fighting, roll, settings));
+    assertEquals(wants, MobLevitation.wants(levitating, fighting, settled, roll, settings));
   }
 
   @ParameterizedTest(name = "{0} seconds: {1} per tick")

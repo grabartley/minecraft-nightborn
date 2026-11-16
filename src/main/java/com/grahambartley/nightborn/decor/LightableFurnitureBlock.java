@@ -6,6 +6,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.ShapeContext;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemPlacementContext;
@@ -144,11 +145,6 @@ public abstract class LightableFurnitureBlock extends FurnitureBlock {
     }
     if (!world.isClient) {
       this.apply(world, pos, state, player, toggle);
-      for (final Vec3d wick : this.wicks()) {
-        final Vec3d at = FacingShapes.atWick(pos, wick, state.get(FACING));
-        ((ServerWorld) world)
-            .spawnParticles(ParticleTypes.SMOKE, at.x, at.y, at.z, 2, 0.01, 0.02, 0.01, 0.01);
-      }
     }
     return ActionResult.success(world.isClient);
   }
@@ -181,16 +177,22 @@ public abstract class LightableFurnitureBlock extends FurnitureBlock {
     }
   }
 
-  private void apply(
+  public void apply(
       final World world,
       final BlockPos pos,
       final BlockState state,
-      final PlayerEntity player,
+      final Entity actor,
       final FlameToggle toggle) {
     world.setBlockState(pos, state.with(LIT, toggle.lights()), Block.NOTIFY_ALL_AND_REDRAW);
     toggle
         .sound()
         .ifPresent(sound -> world.playSound(null, pos, sound, SoundCategory.BLOCKS, 1.0f, 1.0f));
-    world.emitGameEvent(player, GameEvent.BLOCK_CHANGE, pos);
+    if (toggle == FlameToggle.DOUSE && world instanceof ServerWorld server) {
+      for (final Vec3d wick : this.wicks()) {
+        final Vec3d at = FacingShapes.atWick(pos, wick, state.get(FACING));
+        server.spawnParticles(ParticleTypes.SMOKE, at.x, at.y, at.z, 2, 0.01, 0.02, 0.01, 0.01);
+      }
+    }
+    world.emitGameEvent(actor, GameEvent.BLOCK_CHANGE, pos);
   }
 }

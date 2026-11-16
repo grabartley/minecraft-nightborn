@@ -16,7 +16,14 @@ class VampireVoiceTest {
   }
 
   @ParameterizedTest(name = "{0} is {1}")
-  @CsvSource({"AMBIENT, ambient", "HURT, hurt", "DEATH, death", "HISS, hiss"})
+  @CsvSource({
+    "AMBIENT, ambient",
+    "HURT, hurt",
+    "DEATH, death",
+    "HISS, hiss",
+    "TALK, talk",
+    "ARGUE, argue"
+  })
   @DisplayName("each voice has a lower case id for its sound")
   void id(final VampireVoice voice, final String id) {
     assertEquals(id, voice.id());

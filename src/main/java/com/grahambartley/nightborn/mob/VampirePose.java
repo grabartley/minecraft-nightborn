@@ -28,7 +28,9 @@ public enum VampirePose {
   WEAKENED_WALK("weakened_walk", Play.LOOP),
   COFFIN_SLEEP("coffin_sleep", Play.HOLD, Hold.ARMS_HEAD_AND_HANDS),
   COFFIN_RISE("coffin_rise", Play.HOLD, Hold.ARMS_HEAD_AND_HANDS),
-  COFFIN_STEP_OUT("coffin_step_out", Play.HOLD, Hold.ARMS_HEAD_AND_HANDS);
+  COFFIN_STEP_OUT("coffin_step_out", Play.HOLD, Hold.ARMS_HEAD_AND_HANDS),
+  SIT("sit", Play.LOOP),
+  READ("read", Play.LOOP, Hold.ARMS_AND_HEAD);
 
   public static final double LEVITATE_MOVE_SPEED = 0.03;
   public static final double LEVITATE_SPRINT_SPEED = 0.24;
@@ -56,7 +58,9 @@ public enum VampirePose {
       boolean landing,
       boolean sprinting,
       float limbSwing,
-      double horizontalSpeed) {}
+      double horizontalSpeed,
+      boolean seated,
+      boolean reading) {}
 
   private final String animation;
   private final RawAnimation clip;
@@ -90,10 +94,13 @@ public enum VampirePose {
     if (cue.landing()) {
       return LAND;
     }
+    if (cue.seated()) {
+      return SIT;
+    }
     return switch (Gait.of(cue.limbSwing())) {
       case RUN -> RUN;
       case WALK -> WALK;
-      case STILL -> IDLE;
+      case STILL -> cue.reading() ? READ : IDLE;
     };
   }
 

@@ -7,6 +7,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.BlockWithEntity;
 import net.minecraft.block.ShapeContext;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemPlacementContext;
@@ -128,18 +129,26 @@ public class DrapeBlock extends FurnitureBlock {
       final PlayerEntity player,
       final BlockHitResult hit) {
     if (!world.isClient) {
-      final boolean open = !state.get(OPEN);
-      this.setColumn(world, pos, state, open);
-      world.playSound(
-          null,
-          pos,
-          open ? SoundEvents.BLOCK_WOOL_BREAK : SoundEvents.BLOCK_WOOL_PLACE,
-          SoundCategory.BLOCKS,
-          0.8f,
-          open ? 0.8f : 0.7f);
-      world.emitGameEvent(player, GameEvent.BLOCK_CHANGE, pos);
+      this.draw(world, pos, state, player, !state.get(OPEN));
     }
     return ActionResult.success(world.isClient);
+  }
+
+  public void draw(
+      final World world,
+      final BlockPos pos,
+      final BlockState state,
+      final Entity actor,
+      final boolean open) {
+    this.setColumn(world, pos, state, open);
+    world.playSound(
+        null,
+        pos,
+        open ? SoundEvents.BLOCK_WOOL_BREAK : SoundEvents.BLOCK_WOOL_PLACE,
+        SoundCategory.BLOCKS,
+        0.8f,
+        open ? 0.8f : 0.7f);
+    world.emitGameEvent(actor, GameEvent.BLOCK_CHANGE, pos);
   }
 
   private void setColumn(

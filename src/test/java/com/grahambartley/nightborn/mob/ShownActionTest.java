@@ -3,6 +3,7 @@ package com.grahambartley.nightborn.mob;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.List;
+import java.util.Set;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -26,5 +27,19 @@ class ShownActionTest {
             .map(s -> action.fresh(Integer.parseInt(s.trim())))
             .toList();
     assertEquals(List.of(expected.split(",")).stream().map(Boolean::parseBoolean).toList(), fresh);
+  }
+
+  @ParameterizedTest(name = "{0} then end {1}: showing mourn {2}")
+  @CsvSource({"mourn, false, true", "mourn, true, false", "talk, false, false", "'', false, false"})
+  @DisplayName(
+      "the model knows when a head-holding clip is playing, so the look leaves the head alone")
+  void showing(final String clip, final boolean ended, final boolean showing) {
+    final ShownAction action = new ShownAction();
+    action.begin(1, "");
+    action.begin(2, clip);
+    if (ended) {
+      action.end();
+    }
+    assertEquals(showing, action.showing(Set.of("mourn")));
   }
 }

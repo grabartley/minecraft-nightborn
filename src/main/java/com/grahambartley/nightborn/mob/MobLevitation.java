@@ -11,10 +11,14 @@ public final class MobLevitation {
   public static boolean wants(
       final boolean levitating,
       final boolean fighting,
+      final boolean settled,
       final float roll,
       final MobSettings settings) {
     if (fighting && settings.vampireLevitateSeconds() > 0) {
       return true;
+    }
+    if (settled) {
+      return false;
     }
     return levitating
         ? roll >= chancePerTick(settings.vampireLandSeconds())

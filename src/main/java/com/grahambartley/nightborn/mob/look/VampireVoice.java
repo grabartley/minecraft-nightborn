@@ -6,7 +6,9 @@ public enum VampireVoice {
   AMBIENT,
   HURT,
   DEATH,
-  HISS;
+  HISS,
+  TALK,
+  ARGUE;
 
   static final float AVERAGE_HEIGHT = 1.75F;
   static final float PITCH_PER_BLOCK = 0.6F;

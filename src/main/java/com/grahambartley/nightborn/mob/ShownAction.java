@@ -1,5 +1,6 @@
 package com.grahambartley.nightborn.mob;
 
+import java.util.Set;
 import software.bernie.geckolib.animatable.GeoAnimatable;
 import software.bernie.geckolib.animation.AnimationState;
 import software.bernie.geckolib.animation.PlayState;
@@ -10,6 +11,7 @@ public final class ShownAction {
 
   private int seen = UNSEEN;
   private boolean playing;
+  private String clip = "";
 
   public boolean fresh(final int sequence) {
     if (seen == sequence) {
@@ -20,15 +22,31 @@ public final class ShownAction {
     return !first;
   }
 
+  public boolean begin(final int sequence, final String clip) {
+    if (fresh(sequence) && !clip.isEmpty()) {
+      this.clip = clip;
+      playing = true;
+      return true;
+    }
+    return false;
+  }
+
+  public void end() {
+    playing = false;
+  }
+
+  public boolean showing(final Set<String> clips) {
+    return playing && clips.contains(clip);
+  }
+
   public <T extends GeoAnimatable> PlayState play(
       final AnimationState<T> state, final int sequence, final String clip) {
-    if (fresh(sequence) && !clip.isEmpty()) {
+    if (begin(sequence, clip)) {
       state.getController().forceAnimationReset();
-      playing = true;
       return state.setAndContinue(ClipCache.once(clip));
     }
     if (!playing || state.getController().hasAnimationFinished()) {
-      playing = false;
+      end();
       return PlayState.STOP;
     }
     return state.setAndContinue(ClipCache.once(clip));

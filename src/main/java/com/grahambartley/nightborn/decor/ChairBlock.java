@@ -6,6 +6,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.HorizontalFacingBlock;
 import net.minecraft.block.ShapeContext;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.sound.SoundCategory;
@@ -69,10 +70,7 @@ public class ChairBlock extends HorizontalFacingBlock {
       final PlayerEntity player,
       final BlockHitResult hit) {
     final Seating.Choice choice =
-        Seating.choose(
-            player.isSneaking(),
-            player.hasVehicle(),
-            !world.getEntitiesByClass(SeatEntity.class, new Box(pos), seat -> true).isEmpty());
+        Seating.choose(player.isSneaking(), player.hasVehicle(), taken(world, pos));
     if (choice == Seating.Choice.PASS) {
       return ActionResult.PASS;
     }
@@ -80,17 +78,26 @@ public class ChairBlock extends HorizontalFacingBlock {
       return ActionResult.CONSUME;
     }
     if (!world.isClient) {
-      final SeatEntity seat = new SeatEntity(DecorEntities.SEAT, world);
-      seat.refreshPositionAndAngles(
-          pos.getX() + 0.5,
-          pos.getY() + SEAT_HEIGHT,
-          pos.getZ() + 0.5,
-          state.get(FACING).asRotation(),
-          0.0f);
-      world.spawnEntity(seat);
-      player.startRiding(seat);
-      world.playSound(null, pos, SoundEvents.BLOCK_WOOD_PLACE, SoundCategory.BLOCKS, 0.6f, 0.75f);
+      seat(world, pos, state, player);
     }
     return ActionResult.success(world.isClient);
+  }
+
+  public static boolean taken(final World world, final BlockPos pos) {
+    return !world.getEntitiesByClass(SeatEntity.class, new Box(pos), seat -> true).isEmpty();
+  }
+
+  public static void seat(
+      final World world, final BlockPos pos, final BlockState state, final Entity sitter) {
+    final SeatEntity seat = new SeatEntity(DecorEntities.SEAT, world);
+    seat.refreshPositionAndAngles(
+        pos.getX() + 0.5,
+        pos.getY() + SEAT_HEIGHT,
+        pos.getZ() + 0.5,
+        state.get(FACING).asRotation(),
+        0.0f);
+    world.spawnEntity(seat);
+    sitter.startRiding(seat);
+    world.playSound(null, pos, SoundEvents.BLOCK_WOOD_PLACE, SoundCategory.BLOCKS, 0.6f, 0.75f);
   }
 }

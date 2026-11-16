@@ -16,23 +16,31 @@ import org.junit.jupiter.params.provider.EnumSource;
 
 class VampirePoseTest {
 
-  @ParameterizedTest(name = "coffin {0}, downed {1}, levitating {2}, landing {3}: {7}")
+  @ParameterizedTest(
+      name = "coffin {0}, downed {1}, levitating {2}, landing {3}, seated {7}, reading {8}: {9}")
   @CsvSource({
-    "COFFIN_SLEEP, true, true, true, true, 0.9, 0.3, COFFIN_SLEEP, coffin_sleep",
-    "COFFIN_RISE, true, true, false, false, 0.9, 0.3, COFFIN_RISE, coffin_rise",
-    "COFFIN_STEP_OUT, true, true, false, false, 0.9, 0.3, COFFIN_STEP_OUT, coffin_step_out",
-    ", true, true, false, false, 0.9, 0.3, DOWNED, downed",
-    ", false, true, false, false, 0.0, 0.0, LEVITATE, levitate",
-    ", false, true, false, false, 0.0, 0.1, LEVITATE_MOVE, levitate_move",
-    ", false, true, false, false, 0.0, 0.3, LEVITATE_SPRINT, levitate_sprint",
-    ", false, true, false, true, 0.0, 0.1, LEVITATE_SPRINT, levitate_sprint",
-    ", false, false, true, false, 0.9, 0.3, LAND, land",
-    ", false, false, false, false, 0.9, 0.3, RUN, run",
-    ", false, false, false, false, 0.3, 0.1, WALK, walk",
-    ", false, false, false, false, 0.05, 0.0, IDLE, idle"
+    "COFFIN_SLEEP, true, true, true, true, 0.9, 0.3, false, false, COFFIN_SLEEP, coffin_sleep",
+    "COFFIN_RISE, true, true, false, false, 0.9, 0.3, false, false, COFFIN_RISE, coffin_rise",
+    "COFFIN_STEP_OUT, true, true, false, false, 0.9, 0.3, false, false, COFFIN_STEP_OUT, coffin_step_out",
+    ", true, true, false, false, 0.9, 0.3, false, false, DOWNED, downed",
+    ", false, true, false, false, 0.0, 0.0, false, false, LEVITATE, levitate",
+    ", false, true, false, false, 0.0, 0.1, false, false, LEVITATE_MOVE, levitate_move",
+    ", false, true, false, false, 0.0, 0.3, false, false, LEVITATE_SPRINT, levitate_sprint",
+    ", false, true, false, true, 0.0, 0.1, false, false, LEVITATE_SPRINT, levitate_sprint",
+    ", false, false, true, false, 0.9, 0.3, false, false, LAND, land",
+    ", false, false, false, false, 0.9, 0.3, false, false, RUN, run",
+    ", false, false, false, false, 0.3, 0.1, false, false, WALK, walk",
+    ", false, false, false, false, 0.05, 0.0, false, false, IDLE, idle",
+    ", false, false, false, false, 0.05, 0.0, true, false, SIT, sit",
+    ", false, false, false, false, 0.05, 0.0, true, true, SIT, sit",
+    ", false, true, false, false, 0.0, 0.0, true, false, LEVITATE, levitate",
+    ", true, false, false, false, 0.0, 0.0, true, false, DOWNED, downed",
+    ", false, false, false, false, 0.05, 0.0, false, true, READ, read",
+    ", false, false, false, false, 0.3, 0.1, false, true, WALK, walk"
   })
   @DisplayName(
-      "resting or rising in a coffin wins over downed, which wins over levitating, landing and moving")
+      "resting or rising in a coffin wins over downed, then levitating, landing, sitting and moving,"
+          + " and a vampire reads only while it stands still")
   void pose(
       final VampirePose coffin,
       final boolean downed,
@@ -41,6 +49,8 @@ class VampirePoseTest {
       final boolean sprinting,
       final float swing,
       final double speed,
+      final boolean seated,
+      final boolean reading,
       final VampirePose pose,
       final String animation) {
     assertEquals(
@@ -53,7 +63,9 @@ class VampirePoseTest {
                 landing,
                 sprinting,
                 swing,
-                speed)));
+                speed,
+                seated,
+                reading)));
     assertEquals(animation, pose.animation());
   }
 
@@ -106,7 +118,9 @@ class VampirePoseTest {
     "LEVITATE, false",
     "IDLE, false",
     "IDLE_LOOK, true",
-    "IDLE_LISTEN, true"
+    "IDLE_LISTEN, true",
+    "SIT, false",
+    "READ, true"
   })
   @DisplayName(
       "the head follows the look except where the clip aims it: lying, getting up, biting and"
@@ -130,7 +144,9 @@ class VampirePoseTest {
     "WEAKENED, true",
     "WEAKENED_WALK, true",
     "IDLE_LOOK, true",
-    "IDLE_LISTEN, true"
+    "IDLE_LISTEN, true",
+    "SIT, true",
+    "READ, false"
   })
   @DisplayName("a swing or item use plays over every pose except those that hold both arms")
   void allowsActions(final VampirePose pose, final boolean allows) {
