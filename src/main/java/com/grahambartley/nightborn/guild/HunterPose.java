@@ -38,10 +38,9 @@ public enum HunterPose {
     if (trading) {
       return TRADE;
     }
-    final Gait gait = Gait.of(limbSwing);
-    if (gait == Gait.STILL) {
+    if (Gait.of(limbSwing) == Gait.STILL) {
       return IDLE;
     }
-    return sprinting || gait == Gait.RUN ? RUN : WALK;
+    return sprinting ? RUN : WALK;
   }
 }

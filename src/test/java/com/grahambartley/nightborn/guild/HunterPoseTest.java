@@ -18,7 +18,8 @@ class HunterPoseTest {
     "false, false, false, 0.3, WALK",
     "false, false, false, 0.55, WALK",
     "false, false, true, 0.3, RUN",
-    "false, false, false, 0.8, RUN"
+    "false, false, false, 0.8, WALK",
+    "false, false, true, 0.8, RUN"
   })
   void picksTheClipForWhatTheHunterIsDoing(
       final boolean swinging,
