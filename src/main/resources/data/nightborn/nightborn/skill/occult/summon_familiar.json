@@ -1,0 +1,33 @@
+{
+  "branch": "nightborn:occult",
+  "cost": 2,
+  "requires": ["nightborn:occult/occult_blood"],
+  "icon": "nightborn:skills/icon/summon_familiar",
+  "column": 0,
+  "row": 1,
+  "attributes": [
+    { "attribute": "nightborn:familiar_limit", "amount": 1.0, "operation": "add_value" }
+  ],
+  "power": {
+    "blood": 4,
+    "cooldown_ticks": 1200,
+    "familiar": {
+      "lifetime_ticks": 1200,
+      "health": 10.0,
+      "damage": 3.0,
+      "scout_range": 24.0,
+      "scout_ticks": 200,
+      "mark_radius": 8.0,
+      "mark_ticks": 200,
+      "carry_slots": 9
+    },
+    "sound": "minecraft:particle.soul_escape",
+    "mob": {
+      "min_range": 0.0,
+      "max_range": 16.0,
+      "tell_ticks": 14,
+      "tell_sound": "minecraft:entity.evoker.prepare_summon",
+      "tell_clip": "mesmerise"
+    }
+  }
+}

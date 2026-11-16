@@ -1,0 +1,11 @@
+{
+  "branch": "nightborn:occult",
+  "cost": 2,
+  "requires": ["nightborn:occult/summon_familiar"],
+  "icon": "nightborn:skills/icon/spirit_pact",
+  "column": 0,
+  "row": 2,
+  "attributes": [
+    { "attribute": "nightborn:familiar_limit", "amount": 1.0, "operation": "add_value" }
+  ]
+}

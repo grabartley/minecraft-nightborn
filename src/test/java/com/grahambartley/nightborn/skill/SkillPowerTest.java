@@ -34,6 +34,9 @@ class SkillPowerTest {
     assertTrue(power.sound().isPresent());
     assertTrue(power.track().isEmpty());
     assertTrue(power.mesmerise().isEmpty());
+    assertTrue(power.familiar().isEmpty());
+    assertTrue(power.fog().isEmpty());
+    assertTrue(power.shadowStep().isEmpty());
     assertTrue(power.mob().isEmpty());
   }
 
@@ -91,5 +94,23 @@ class SkillPowerTest {
             .getOrThrow();
     assertEquals(20, power.mesmerise().orElseThrow().stareTicks());
     assertTrue(power.effects().isEmpty());
+  }
+
+  @Test
+  @DisplayName("a power can summon a familiar, breathe a fog or step through the shadows")
+  void occult() {
+    final SkillPower power =
+        SkillPower.CODEC
+            .parse(
+                JsonOps.INSTANCE,
+                JsonParser.parseString(
+                    "{\"blood\":4,\"cooldown_ticks\":600,"
+                        + "\"familiar\":{\"lifetime_ticks\":1200,\"health\":10,\"damage\":3,\"scout_range\":24,\"scout_ticks\":200,\"mark_radius\":8,\"mark_ticks\":200,\"carry_slots\":9},"
+                        + "\"fog\":{\"radius\":4,\"duration_ticks\":160,\"effects\":[{\"id\":\"minecraft:blindness\",\"duration\":60}]},"
+                        + "\"shadow_step\":{\"range\":16,\"behind\":1.5}}"))
+            .getOrThrow();
+    assertEquals(1200, power.familiar().orElseThrow().lifetimeTicks());
+    assertEquals(4.0F, power.fog().orElseThrow().radius());
+    assertEquals(16.0F, power.shadowStep().orElseThrow().range());
   }
 }

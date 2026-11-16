@@ -53,6 +53,7 @@
       "com.grahambartley.nightborn.gametest.VampireMobGameTest",
       "com.grahambartley.nightborn.gametest.MindGameTest",
       "com.grahambartley.nightborn.gametest.ThrallGameTest",
+      "com.grahambartley.nightborn.gametest.OccultGameTest",
       "com.grahambartley.nightborn.gametest.VampireLookGameTest",
       "com.grahambartley.nightborn.gametest.VampireBatGameTest",
       "com.grahambartley.nightborn.gametest.MobSpawnsGameTest",

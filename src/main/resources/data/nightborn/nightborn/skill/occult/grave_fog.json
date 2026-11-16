@@ -1,0 +1,28 @@
+{
+  "branch": "nightborn:occult",
+  "cost": 2,
+  "requires": ["nightborn:occult/occult_blood"],
+  "icon": "nightborn:skills/icon/grave_fog",
+  "column": 2,
+  "row": 1,
+  "power": {
+    "blood": 3,
+    "cooldown_ticks": 600,
+    "fog": {
+      "radius": 4.0,
+      "duration_ticks": 160,
+      "effects": [
+        { "id": "minecraft:blindness", "amplifier": 0, "duration": 60, "show_icon": true },
+        { "id": "minecraft:slowness", "amplifier": 0, "duration": 60, "show_icon": true }
+      ]
+    },
+    "sound": "minecraft:entity.illusioner.prepare_blindness",
+    "mob": {
+      "min_range": 0.0,
+      "max_range": 4.0,
+      "tell_ticks": 10,
+      "tell_sound": "minecraft:entity.evoker.prepare_attack",
+      "tell_clip": "hiss"
+    }
+  }
+}

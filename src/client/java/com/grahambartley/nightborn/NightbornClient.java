@@ -5,6 +5,7 @@ import com.grahambartley.nightborn.client.CoatingTooltip;
 import com.grahambartley.nightborn.client.VampireClientFeatures;
 import com.grahambartley.nightborn.client.fog.StructureFog;
 import com.grahambartley.nightborn.client.gore.SplatterModels;
+import com.grahambartley.nightborn.client.occult.GhostlyFamiliarRenderer;
 import com.grahambartley.nightborn.client.state.ClientStateService;
 import com.grahambartley.nightborn.client.thrall.ThrallRenderer;
 import com.grahambartley.nightborn.clothing.ClothingRenderProviders;
@@ -17,6 +18,7 @@ import com.grahambartley.nightborn.decor.DecorEntities;
 import com.grahambartley.nightborn.decor.FurnitureBlockEntity;
 import com.grahambartley.nightborn.gear.GearBlocks;
 import com.grahambartley.nightborn.mob.NightbornMobs;
+import com.grahambartley.nightborn.occult.GhostlyFamiliars;
 import com.grahambartley.nightborn.render.AmmoModels;
 import com.grahambartley.nightborn.render.BoltEntityRenderer;
 import com.grahambartley.nightborn.render.ClothingColors;
@@ -86,6 +88,8 @@ public class NightbornClient implements ClientModInitializer {
     EntityRendererRegistry.register(NightbornMobs.VAMPIRE, VampireRenderer::new);
     EntityRendererRegistry.register(NightbornMobs.VAMPIRE_BAT, VampireBatRenderer::new);
     EntityRendererRegistry.register(Thralls.THRALL, ThrallRenderer::new);
+    EntityRendererRegistry.register(
+        GhostlyFamiliars.GHOSTLY_FAMILIAR, GhostlyFamiliarRenderer::new);
     EntityRendererRegistry.register(AmmoEntities.BOLT, BoltEntityRenderer::new);
     EntityRendererRegistry.register(AmmoEntities.GARLIC_BOMB, FlyingItemEntityRenderer::new);
     AmmoModels.register();

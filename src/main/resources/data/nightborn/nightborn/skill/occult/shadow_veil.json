@@ -1,0 +1,23 @@
+{
+  "branch": "nightborn:occult",
+  "cost": 3,
+  "requires": ["nightborn:occult/shadow_step"],
+  "icon": "nightborn:skills/icon/shadow_veil",
+  "column": 2,
+  "row": 3,
+  "power": {
+    "blood": 4,
+    "cooldown_ticks": 900,
+    "effects": [
+      { "id": "minecraft:invisibility", "amplifier": 0, "duration": 200, "show_icon": true }
+    ],
+    "sound": "minecraft:entity.illusioner.cast_spell",
+    "mob": {
+      "min_range": 8.0,
+      "max_range": 24.0,
+      "tell_ticks": 10,
+      "tell_sound": "minecraft:entity.evoker.prepare_attack",
+      "tell_clip": "hiss"
+    }
+  }
+}

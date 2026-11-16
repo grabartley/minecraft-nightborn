@@ -3,8 +3,10 @@ package com.grahambartley.nightborn.skill;
 import com.grahambartley.nightborn.blood.BloodAttachment;
 import com.grahambartley.nightborn.downed.Downed;
 import com.grahambartley.nightborn.mind.Gazes;
-import com.grahambartley.nightborn.mind.Mesmerise;
 import com.grahambartley.nightborn.network.UsePowerPayload;
+import com.grahambartley.nightborn.occult.FogClouds;
+import com.grahambartley.nightborn.occult.GhostlyFamiliars;
+import com.grahambartley.nightborn.occult.ShadowStep;
 import com.grahambartley.nightborn.weakened.Weakened;
 import java.util.List;
 import java.util.Optional;
@@ -58,22 +60,14 @@ public final class Powers {
 
   public static PowerUse.Verdict check(
       final LivingEntity caster, @Nullable final Identifier id, final Optional<SkillPower> power) {
-    return check(caster, id, power, gazeTarget(caster, power) == null);
-  }
-
-  @Nullable
-  static LivingEntity gazeTarget(final LivingEntity caster, final Optional<SkillPower> power) {
-    return power
-        .flatMap(SkillPower::mesmerise)
-        .map(mesmerise -> Mesmerise.target(caster, mesmerise.range()))
-        .orElse(null);
+    return check(caster, id, power, PowerAim.of(caster, power));
   }
 
   private static PowerUse.Verdict check(
       final LivingEntity caster,
       @Nullable final Identifier id,
       final Optional<SkillPower> power,
-      final boolean targetMissing) {
+      final PowerAim aim) {
     return PowerUse.check(
         power.isPresent(),
         Downed.helpless(caster),
@@ -83,13 +77,14 @@ public final class Powers {
             : PowerCooldownAttachment.get(caster).ticksLeft(id, caster.getWorld().getTime()),
         BloodAttachment.get(caster),
         power.map(SkillPower::blood).orElse(0),
-        power.flatMap(SkillPower::mesmerise).isPresent() && targetMissing);
+        power.flatMap(SkillPower::mesmerise).isPresent() && aim.gazeTarget() == null,
+        power.flatMap(SkillPower::shadowStep).isPresent() && aim.stepTo() == null);
   }
 
   public static PowerUse.Verdict cast(final LivingEntity caster, @Nullable final Identifier id) {
     final Optional<SkillPower> owned = power(caster, id);
-    final LivingEntity gazeTarget = gazeTarget(caster, owned);
-    final PowerUse.Verdict verdict = check(caster, id, owned, gazeTarget == null);
+    final PowerAim aim = PowerAim.of(caster, owned);
+    final PowerUse.Verdict verdict = check(caster, id, owned, aim);
     if (verdict != PowerUse.Verdict.READY) {
       return verdict;
     }
@@ -103,9 +98,14 @@ public final class Powers {
     for (final StatusEffectInstance effect : power.effects()) {
       caster.addStatusEffect(new StatusEffectInstance(effect), caster);
     }
-    if (gazeTarget != null) {
-      power.mesmerise().ifPresent(mesmerise -> Gazes.start(caster, gazeTarget, mesmerise));
+    if (aim.gazeTarget() != null) {
+      power.mesmerise().ifPresent(mesmerise -> Gazes.start(caster, aim.gazeTarget(), mesmerise));
     }
+    if (aim.stepTo() != null) {
+      ShadowStep.step(caster, aim.stepTo());
+    }
+    power.familiar().ifPresent(familiar -> GhostlyFamiliars.summon(caster, familiar));
+    power.fog().ifPresent(fog -> FogClouds.spawn(caster, fog));
     if (caster instanceof ServerPlayerEntity player) {
       power.track().ifPresent(track -> Tracking.start(player, track));
     }
