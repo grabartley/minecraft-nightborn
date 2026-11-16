@@ -11,6 +11,8 @@ import org.junit.jupiter.params.provider.CsvSource;
 
 class HouseholdLifeTest {
 
+  private static final DynamicRegistryManager NONE = DynamicRegistryManager.EMPTY;
+
   @ParameterizedTest(name = "grieves {1}s from {0}, asked at {2}: {3}")
   @CsvSource({
     "100, 10, 100, true",
@@ -22,11 +24,7 @@ class HouseholdLifeTest {
   void grieves(final long now, final int seconds, final long asked, final boolean grieving) {
     final HouseholdLife life = new HouseholdLife();
     life.grieve(now, seconds);
-    final NbtCompound nbt = new NbtCompound();
-    life.write(nbt);
-    final HouseholdLife loaded = new HouseholdLife();
-    loaded.read(nbt);
-    assertEquals(grieving, loaded.grieving(asked));
+    assertEquals(grieving, reloaded(life).grieving(asked));
   }
 
   @ParameterizedTest(name = "engaged by {0} until {1}, asked at {2}: {3}")
@@ -40,33 +38,35 @@ class HouseholdLifeTest {
         life.engagement(now));
   }
 
-  @ParameterizedTest(name = "borrowed {0}")
-  @CsvSource({"true", "false"})
-  @DisplayName(
-      "a book or flint and steel lent for a pastime is remembered through a reload, to be put back")
-  void remembersBorrowedHand(final boolean borrowed) {
+  @ParameterizedTest(name = "talking until {0}, stopped {1}, asked at {2}: {3}")
+  @CsvSource({"200, false, 150, true", "200, false, 200, false", "200, true, 150, false"})
+  @DisplayName("a vampire that starts a conversation is busy until it ends")
+  void talking(final long until, final boolean stopped, final long now, final boolean talking) {
     final HouseholdLife life = new HouseholdLife();
-    life.borrowHand(borrowed);
-    final NbtCompound nbt = new NbtCompound();
-    life.write(nbt);
-    final HouseholdLife loaded = new HouseholdLife();
-    loaded.read(nbt);
-    assertEquals(borrowed, loaded.handBorrowed());
+    life.startTalking(until);
+    if (stopped) {
+      life.stopTalking();
+    }
+    assertEquals(talking, life.talking(now));
   }
 
   @ParameterizedTest(name = "roll {0}")
   @CsvSource({"0.0", "0.5", "0.99"})
-  @DisplayName("a vampire keeps the temperament it was given, through a reload")
-  void keepsTemperament(final double roll) {
+  @DisplayName("with no temperament data a vampire is even tempered, but saves no temperament")
+  void fallbackIsNotSaved(final double roll) {
     final HouseholdLife life = new HouseholdLife();
-    assertEquals(
-        Temperaments.FALLBACK, life.temperamentId(DynamicRegistryManager.EMPTY, () -> roll));
+    assertEquals(Temperaments.FALLBACK, life.temperamentId(NONE, () -> roll));
+    assertEquals(Temperament.EVEN, life.temperament(NONE, () -> roll));
     final NbtCompound nbt = new NbtCompound();
-    life.write(nbt);
+    life.write(nbt, NONE);
+    assertEquals(false, nbt.contains(HouseholdLife.TEMPERAMENT_KEY));
+  }
+
+  private static HouseholdLife reloaded(final HouseholdLife life) {
+    final NbtCompound nbt = new NbtCompound();
+    life.write(nbt, NONE);
     final HouseholdLife loaded = new HouseholdLife();
-    loaded.read(nbt);
-    assertEquals(
-        Temperaments.FALLBACK, loaded.temperamentId(DynamicRegistryManager.EMPTY, () -> 1.0));
-    assertEquals(Temperament.EVEN, loaded.temperament(DynamicRegistryManager.EMPTY, () -> roll));
+    loaded.read(nbt, NONE);
+    return loaded;
   }
 }

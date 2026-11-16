@@ -1,7 +1,6 @@
 package com.grahambartley.nightborn.mob.household;
 
 import com.grahambartley.nightborn.mob.VampireEntity;
-import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.util.Hand;
@@ -18,7 +17,6 @@ public final class ReadTask implements HouseholdTask {
   private final Walk walk;
   private final Countdown reading;
   private final Countdown approach = new Countdown(GIVE_UP_TICKS);
-  private ItemStack held = ItemStack.EMPTY;
   private boolean open;
 
   public ReadTask(final VampireEntity vampire, final BlockPos books, final int ticks) {
@@ -40,9 +38,7 @@ public final class ReadTask implements HouseholdTask {
     if (walk.toward(shelf, READ_REACH)) {
       vampire.getLookControl().lookAt(shelf);
       vampire.swingHand(Hand.MAIN_HAND);
-      held = vampire.getEquippedStack(EquipmentSlot.MAINHAND);
-      vampire.householdLife().borrowHand(true);
-      vampire.equipStack(EquipmentSlot.MAINHAND, new ItemStack(Items.BOOK));
+      vampire.lendHand(new ItemStack(Items.BOOK));
       vampire.setReading(true);
       open = true;
     }
@@ -53,8 +49,7 @@ public final class ReadTask implements HouseholdTask {
   public void stop() {
     if (open) {
       vampire.setReading(false);
-      vampire.equipStack(EquipmentSlot.MAINHAND, held);
-      vampire.householdLife().borrowHand(false);
+      vampire.returnHand();
       open = false;
     }
   }

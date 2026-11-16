@@ -7,8 +7,11 @@ import com.grahambartley.nightborn.decor.LightableFurnitureBlock;
 import com.grahambartley.nightborn.decor.SeatEntity;
 import com.grahambartley.nightborn.mob.NightbornMobs;
 import com.grahambartley.nightborn.mob.VampireEntity;
+import com.grahambartley.nightborn.mob.goal.HouseholdLifeGoal;
 import com.grahambartley.nightborn.mob.household.Chore;
 import com.grahambartley.nightborn.mob.household.ChoreTask;
+import com.grahambartley.nightborn.mob.household.Conversation;
+import com.grahambartley.nightborn.mob.household.ConverseTask;
 import com.grahambartley.nightborn.mob.household.FurnitureKind;
 import com.grahambartley.nightborn.mob.household.HomeFurniture;
 import com.grahambartley.nightborn.mob.household.HouseholdBonds;
@@ -20,8 +23,12 @@ import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.CandleBlock;
 import net.minecraft.entity.EquipmentSlot;
+import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.server.world.ServerWorld;
+import net.minecraft.test.AfterBatch;
+import net.minecraft.test.BeforeBatch;
 import net.minecraft.test.GameTest;
 import net.minecraft.test.TestContext;
 import net.minecraft.util.math.BlockPos;
@@ -34,6 +41,8 @@ public class HouseholdLifeGameTest implements FabricGameTest {
   static final int TENDED_BY = 30;
   static final int RANGE = 24;
   static final int ELSEWHERE = 200;
+  static final String DUSK_BATCH = "household-dusk";
+  static final int DUSK = 13100;
 
   @GameTest(templateName = ARENA, tickLimit = 20)
   public void aVampireSitsInAFreeChairBesideItAndRisesWhenDone(final TestContext context) {
@@ -121,18 +130,19 @@ public class HouseholdLifeGameTest implements FabricGameTest {
   }
 
   @GameTest(templateName = ARENA, tickLimit = 20)
-  public void aVampireSavedMidReadPutsTheBookBackWhenItLoads(final TestContext context) {
+  public void aVampireSavedMidReadGetsBackWhatItHeldWhenItLoads(final TestContext context) {
     final BlockPos shelf = new BlockPos(3, 2, 3);
     context.setBlockState(shelf, Blocks.BOOKSHELF);
     final VampireEntity vampire = VampireMobGameTest.still(context, new BlockPos(3, 2, 4));
+    vampire.equipStack(EquipmentSlot.MAINHAND, new ItemStack(Items.ROSE_BUSH));
     new ReadTask(vampire, context.getAbsolutePos(shelf), SIT_TICKS).tick();
     final NbtCompound nbt = new NbtCompound();
     vampire.writeNbt(nbt);
     final VampireEntity loaded = NightbornMobs.VAMPIRE.create(context.getWorld());
     loaded.readNbt(nbt);
     context.assertTrue(
-        loaded.getEquippedStack(EquipmentSlot.MAINHAND).isEmpty(),
-        "a reloaded vampire does not keep the book it was reading");
+        loaded.getEquippedStack(EquipmentSlot.MAINHAND).isOf(Items.ROSE_BUSH),
+        "a reloaded vampire puts the book back and holds what it held before");
     loaded.discard();
     context.complete();
   }
@@ -178,5 +188,60 @@ public class HouseholdLifeGameTest implements FabricGameTest {
     context.assertTrue(housemate.householdLife().grieving(now), "the housemate mourns");
     context.assertFalse(stranger.householdLife().grieving(now), "a stranger does not");
     context.complete();
+  }
+
+  @BeforeBatch(batchId = DUSK_BATCH)
+  public void pinDusk(final ServerWorld world) {
+    WorldClock.freeze(world, DUSK);
+  }
+
+  @AfterBatch(batchId = DUSK_BATCH)
+  public void unpinDusk(final ServerWorld world) {
+    WorldClock.release(world);
+  }
+
+  @GameTest(templateName = ARENA, batchId = DUSK_BATCH, tickLimit = TENDED_BY + 20)
+  public void atDuskAHouseholdVampireLightsTheCandlesOfItsHome(final TestContext context) {
+    final BlockPos candle = new BlockPos(3, 2, 3);
+    context.setBlockState(candle, Blocks.CANDLE.getDefaultState().with(CandleBlock.LIT, false));
+    final VampireEntity vampire = VampireMobGameTest.still(context, new BlockPos(3, 2, 4));
+    vampire.settleAt(context.getAbsolutePos(new BlockPos(3, 2, 4)));
+    final HouseholdLifeGoal goal = new HouseholdLifeGoal(vampire);
+    context.assertTrue(goal.canStart(), "a calm vampire at home takes up its household life");
+    goal.start();
+    context.runAtEveryTick(
+        () -> {
+          goal.tick();
+          if (context.getBlockState(candle).get(CandleBlock.LIT)) {
+            goal.stop();
+            context.complete();
+          }
+        });
+  }
+
+  @GameTest(templateName = ARENA, tickLimit = ConverseTask.LINE_TICKS * 3)
+  public void housematesTakeTurnsAndQuarrelInAConversation(final TestContext context) {
+    final VampireEntity opener = VampireMobGameTest.still(context, new BlockPos(3, 2, 3));
+    final VampireEntity other = VampireMobGameTest.still(context, new BlockPos(4, 2, 3));
+    other.householdLife().engage(opener.getId(), Long.MAX_VALUE);
+    final ConverseTask talk =
+        new ConverseTask(
+            opener,
+            other,
+            List.of(
+                new Conversation.Line(true, Conversation.Tone.TALK),
+                new Conversation.Line(false, Conversation.Tone.ARGUE)));
+    context.runAtEveryTick(
+        () -> {
+          if (!talk.tick()) {
+            talk.stop();
+            context.assertEquals(opener.action(), "talk", "the opener speaks first");
+            context.assertEquals(other.action(), "argue", "the reply turns into an argument");
+            context.assertTrue(
+                other.householdLife().engagement(context.getWorld().getTime()).isEmpty(),
+                "the housemate is free once the conversation ends");
+            context.complete();
+          }
+        });
   }
 }

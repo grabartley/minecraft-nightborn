@@ -13,6 +13,7 @@ import com.grahambartley.nightborn.mob.household.FurniturePick;
 import com.grahambartley.nightborn.mob.household.FurnitureUse;
 import com.grahambartley.nightborn.mob.household.Hobby;
 import com.grahambartley.nightborn.mob.household.HobbyChoice;
+import com.grahambartley.nightborn.mob.household.HomeFurniture;
 import com.grahambartley.nightborn.mob.household.HouseholdCalm;
 import com.grahambartley.nightborn.mob.household.HouseholdTask;
 import com.grahambartley.nightborn.mob.household.NightPhase;
@@ -35,7 +36,6 @@ import org.jetbrains.annotations.Nullable;
 
 public class HouseholdLifeGoal extends Goal {
 
-  static final int LISTEN_TICKS = 20;
   static final int GRIEF_PAUSE_TICKS = 40;
   static final double GATHER_REACH = 5.0;
 
@@ -114,9 +114,7 @@ public class HouseholdLifeGoal extends Goal {
             .temperament(world.getRegistryManager(), vampire.getRandom()::nextDouble);
     final int ticks = temperament.pastimeSeconds().get(vampire.getRandom()) * 20;
     final Map<FurnitureKind, List<BlockPos>> furniture =
-        vampire
-            .householdLife()
-            .furniture(world, home, ServerConfigService.current().mobs().vampireHomeRadius());
+        HomeFurniture.around(world, home, ServerConfigService.current().mobs().vampireHomeRadius());
     final Optional<HouseholdTask> chore = chore(world, phase, furniture);
     if (chore.isPresent()) {
       return chore.get();
@@ -204,7 +202,9 @@ public class HouseholdLifeGoal extends Goal {
             vampire.getRandom().nextInt(100),
             temperament.temper(),
             theirs.temper());
-    partner.householdLife().engage(vampire.getId(), now + ConverseTask.length(lines.size()));
+    final long until = now + ConverseTask.length(lines.size());
+    partner.householdLife().engage(vampire.getId(), until);
+    vampire.householdLife().startTalking(until);
     return new ConverseTask(vampire, partner, lines);
   }
 
@@ -221,7 +221,8 @@ public class HouseholdLifeGoal extends Goal {
                         mate.isAlive(),
                         mate.isSleeping(),
                         mate.getTarget() != null,
-                        mate.householdLife().engagement(now).isPresent(),
+                        mate.householdLife().engagement(now).isPresent()
+                            || mate.householdLife().talking(now),
                         mate.householdLife().grieving(now)))
         .stream()
         .findAny();

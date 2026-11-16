@@ -1,39 +1,34 @@
 package com.grahambartley.nightborn.mob.household;
 
-import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.function.DoubleSupplier;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.registry.DynamicRegistryManager;
-import net.minecraft.server.world.ServerWorld;
+import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.Nullable;
 
 public final class HouseholdLife {
 
   static final String TEMPERAMENT_KEY = "Temperament";
   static final String GRIEF_KEY = "GriefUntil";
-  static final String BORROWED_KEY = "BorrowedHand";
-  static final long RESCAN_TICKS = 1200L;
 
   @Nullable private Identifier temperament;
   private long griefUntil;
-  private boolean borrowedHand;
+  private long talkingUntil;
   @Nullable private Engagement engagement;
-  private Map<FurnitureKind, List<BlockPos>> furniture = Map.of();
-  private long scannedAt = Long.MIN_VALUE;
+  private final HandLoan handLoan = new HandLoan();
 
   public record Engagement(int partnerId, long until) {}
 
   public Identifier temperamentId(
       final DynamicRegistryManager registries, final DoubleSupplier roll) {
     if (temperament == null) {
-      temperament =
-          Temperaments.pick(Temperaments.all(registries), roll.getAsDouble())
-              .orElse(Temperaments.FALLBACK);
+      final Optional<Identifier> picked =
+          Temperaments.pick(Temperaments.all(registries), roll.getAsDouble());
+      picked.ifPresent(id -> temperament = id);
+      return picked.orElse(Temperaments.FALLBACK);
     }
     return temperament;
   }
@@ -66,37 +61,36 @@ public final class HouseholdLife {
     return Optional.ofNullable(engagement);
   }
 
-  public Map<FurnitureKind, List<BlockPos>> furniture(
-      final ServerWorld world, final BlockPos home, final int radius) {
-    if (Rescan.due(scannedAt, world.getTime(), RESCAN_TICKS)) {
-      furniture = HomeFurniture.scan(world, home, radius);
-      scannedAt = world.getTime();
-    }
-    return furniture;
+  public void startTalking(final long until) {
+    talkingUntil = until;
   }
 
-  public void borrowHand(final boolean borrowed) {
-    borrowedHand = borrowed;
+  public void stopTalking() {
+    talkingUntil = 0L;
   }
 
-  public boolean handBorrowed() {
-    return borrowedHand;
+  public boolean talking(final long now) {
+    return now < talkingUntil;
   }
 
-  public void write(final NbtCompound nbt) {
-    nbt.putBoolean(BORROWED_KEY, borrowedHand);
+  public HandLoan handLoan() {
+    return handLoan;
+  }
+
+  public void write(final NbtCompound nbt, final RegistryWrapper.WrapperLookup registries) {
     if (temperament != null) {
       nbt.putString(TEMPERAMENT_KEY, temperament.toString());
     }
     nbt.putLong(GRIEF_KEY, griefUntil);
+    handLoan.write(nbt, registries);
   }
 
-  public void read(final NbtCompound nbt) {
+  public void read(final NbtCompound nbt, final RegistryWrapper.WrapperLookup registries) {
     temperament =
         nbt.contains(TEMPERAMENT_KEY, NbtElement.STRING_TYPE)
             ? Identifier.tryParse(nbt.getString(TEMPERAMENT_KEY))
             : null;
     griefUntil = nbt.getLong(GRIEF_KEY);
-    borrowedHand = nbt.getBoolean(BORROWED_KEY);
+    handLoan.read(nbt, registries);
   }
 }

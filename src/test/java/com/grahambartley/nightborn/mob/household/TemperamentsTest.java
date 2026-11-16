@@ -7,7 +7,6 @@ import java.util.Optional;
 import net.minecraft.registry.DynamicRegistryManager;
 import net.minecraft.util.Identifier;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
@@ -26,10 +25,11 @@ class TemperamentsTest {
         Optional.of(Identifier.of("nightborn", id)), Temperaments.pick(TEMPERAMENTS, roll));
   }
 
-  @Test
+  @ParameterizedTest(name = "roll {0}")
+  @CsvSource({"0.0", "0.5", "0.999"})
   @DisplayName("with no temperament data a vampire is even tempered")
-  void fallsBackToEven() {
-    assertEquals(Optional.empty(), Temperaments.pick(Map.of(), 0.5));
+  void fallsBackToEven(final double roll) {
+    assertEquals(Optional.empty(), Temperaments.pick(Map.of(), roll));
     assertEquals(
         Temperament.EVEN, Temperaments.of(DynamicRegistryManager.EMPTY, Temperaments.FALLBACK));
   }

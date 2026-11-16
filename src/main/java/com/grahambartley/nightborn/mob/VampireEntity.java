@@ -131,7 +131,6 @@ public class VampireEntity extends HostileEntity
   public VampireEntity(final EntityType<? extends VampireEntity> type, final World world) {
     super(type, world);
     this.experiencePoints = 10;
-    setEquipmentDropChance(EquipmentSlot.MAINHAND, 0.0F);
   }
 
   public static DefaultAttributeContainer.Builder createVampireAttributes() {
@@ -239,6 +238,25 @@ public class VampireEntity extends HostileEntity
 
   public void setReading(final boolean reading) {
     dataTracker.set(READING, reading);
+  }
+
+  public void lendHand(final ItemStack prop) {
+    householdLife
+        .handLoan()
+        .lend(getEquippedStack(EquipmentSlot.MAINHAND), getDropChance(EquipmentSlot.MAINHAND));
+    setEquipmentDropChance(EquipmentSlot.MAINHAND, 0.0F);
+    equipStack(EquipmentSlot.MAINHAND, prop);
+  }
+
+  public void returnHand() {
+    householdLife
+        .handLoan()
+        .take()
+        .ifPresent(
+            kept -> {
+              equipStack(EquipmentSlot.MAINHAND, kept.stack());
+              setEquipmentDropChance(EquipmentSlot.MAINHAND, kept.dropChance());
+            });
   }
 
   public void speak(final VampireVoice voice) {
@@ -349,7 +367,7 @@ public class VampireEntity extends HostileEntity
     dataTracker.set(ACTION_SEQUENCE, dataTracker.get(ACTION_SEQUENCE) + 1);
   }
 
-  String action() {
+  public String action() {
     return dataTracker.get(ACTION);
   }
 
@@ -580,7 +598,7 @@ public class VampireEntity extends HostileEntity
     nbt.putFloat(WIDTH_KEY, width());
     nbt.putString(STAGE_KEY, dataTracker.get(STAGE));
     homeLife.write(nbt);
-    householdLife.write(nbt);
+    householdLife.write(nbt, getRegistryManager());
     blood.write(nbt);
   }
 
@@ -588,11 +606,8 @@ public class VampireEntity extends HostileEntity
   public void readCustomDataFromNbt(final NbtCompound nbt) {
     super.readCustomDataFromNbt(nbt);
     homeLife.read(nbt);
-    householdLife.read(nbt);
-    if (householdLife.handBorrowed()) {
-      equipStack(EquipmentSlot.MAINHAND, ItemStack.EMPTY);
-      householdLife.borrowHand(false);
-    }
+    householdLife.read(nbt, getRegistryManager());
+    returnHand();
     blood.read(nbt);
     dataTracker.set(STAGE, nbt.getString(STAGE_KEY));
     undressed = nbt.contains(LOOK_KEY) && !nbt.contains(LOOK_KEY, NbtElement.STRING_TYPE);

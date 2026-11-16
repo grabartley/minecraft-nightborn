@@ -18,8 +18,8 @@ public final class HouseholdCalm {
       final boolean alive,
       final boolean sleeping,
       final boolean hunting,
-      final boolean engaged,
+      final boolean busy,
       final boolean grieving) {
-    return alive && !sleeping && !hunting && !engaged && !grieving;
+    return alive && !sleeping && !hunting && !busy && !grieving;
   }
 }

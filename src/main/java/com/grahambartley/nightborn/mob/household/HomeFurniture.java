@@ -2,8 +2,10 @@ package com.grahambartley.nightborn.mob.household;
 
 import java.util.ArrayList;
 import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.WeakHashMap;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkSectionPos;
@@ -12,8 +14,30 @@ public final class HomeFurniture {
 
   static final int REACH_UP = 8;
   static final int REACH_DOWN = 4;
+  static final long RESCAN_TICKS = 1200L;
+
+  private record Home(BlockPos heart, int radius) {}
+
+  private record Scan(Map<FurnitureKind, List<BlockPos>> found, long at) {}
+
+  private static final Map<ServerWorld, Map<Home, Scan>> SCANS = new WeakHashMap<>();
 
   private HomeFurniture() {}
+
+  public static Map<FurnitureKind, List<BlockPos>> around(
+      final ServerWorld world, final BlockPos home, final int radius) {
+    final long now = world.getTime();
+    final Map<Home, Scan> scans = SCANS.computeIfAbsent(world, w -> new HashMap<>());
+    final Home key = new Home(home.toImmutable(), radius);
+    final Scan known = scans.get(key);
+    if (known != null && !Rescan.due(known.at(), now, RESCAN_TICKS)) {
+      return known.found();
+    }
+    scans.values().removeIf(scan -> Rescan.due(scan.at(), now, RESCAN_TICKS * 2));
+    final Scan fresh = new Scan(scan(world, home, radius), now);
+    scans.put(key, fresh);
+    return fresh.found();
+  }
 
   public static Map<FurnitureKind, List<BlockPos>> scan(
       final ServerWorld world, final BlockPos home, final int radius) {

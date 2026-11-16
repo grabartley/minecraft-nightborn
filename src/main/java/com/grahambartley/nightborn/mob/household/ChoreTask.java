@@ -1,7 +1,6 @@
 package com.grahambartley.nightborn.mob.household;
 
 import com.grahambartley.nightborn.mob.VampireEntity;
-import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.server.world.ServerWorld;
@@ -22,7 +21,6 @@ public final class ChoreTask implements HouseholdTask {
   private final Walk walk;
   private final Countdown approach = new Countdown(GIVE_UP_TICKS);
   private Countdown tending;
-  private ItemStack held = ItemStack.EMPTY;
 
   public ChoreTask(
       final VampireEntity vampire,
@@ -52,9 +50,7 @@ public final class ChoreTask implements HouseholdTask {
     }
     if (walk.toward(target, TEND_REACH)) {
       if (chore.lights()) {
-        held = vampire.getEquippedStack(EquipmentSlot.MAINHAND);
-        vampire.householdLife().borrowHand(true);
-        vampire.equipStack(EquipmentSlot.MAINHAND, new ItemStack(Items.FLINT_AND_STEEL));
+        vampire.lendHand(new ItemStack(Items.FLINT_AND_STEEL));
       }
       vampire.swingHand(Hand.MAIN_HAND);
       tending = new Countdown(TEND_TICKS);
@@ -65,8 +61,7 @@ public final class ChoreTask implements HouseholdTask {
   @Override
   public void stop() {
     if (chore.lights() && tending != null) {
-      vampire.equipStack(EquipmentSlot.MAINHAND, held);
-      vampire.householdLife().borrowHand(false);
+      vampire.returnHand();
     }
   }
 }

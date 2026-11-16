@@ -7,7 +7,7 @@ import java.util.List;
 public final class ConverseTask implements HouseholdTask {
 
   static final double TALK_REACH = 2.5;
-  static final int LINE_TICKS = 50;
+  public static final int LINE_TICKS = 50;
   static final int GIVE_UP_TICKS = 300;
 
   private final VampireEntity vampire;
@@ -65,5 +65,6 @@ public final class ConverseTask implements HouseholdTask {
   @Override
   public void stop() {
     partner.householdLife().release();
+    vampire.householdLife().stopTalking();
   }
 }
