@@ -27,8 +27,8 @@ class CoffinBlockTest {
   @ParameterizedTest(name = "{0}")
   @EnumSource(CoffinMaterial.class)
   @DisplayName("a coffin is placed shut and empty")
-  void startsShut(final CoffinMaterial wood) {
-    final BlockState state = Coffins.get(wood).getDefaultState();
+  void startsShut(final CoffinMaterial material) {
+    final BlockState state = Coffins.get(material).getDefaultState();
     assertFalse(state.get(CoffinBlock.OPEN));
     assertFalse(state.get(BedBlock.OCCUPIED));
   }
@@ -36,11 +36,11 @@ class CoffinBlockTest {
   @ParameterizedTest(name = "{0}")
   @EnumSource(CoffinMaterial.class)
   @DisplayName("both cells leave drawing to the block entity, as a bed does")
-  void drawsThroughTheBlockEntity(final CoffinMaterial wood) {
+  void drawsThroughTheBlockEntity(final CoffinMaterial material) {
     for (final BedPart part : BedPart.values()) {
       assertEquals(
           BlockRenderType.ENTITYBLOCK_ANIMATED,
-          Coffins.get(wood).getDefaultState().with(BedBlock.PART, part).getRenderType());
+          Coffins.get(material).getDefaultState().with(BedBlock.PART, part).getRenderType());
     }
   }
 

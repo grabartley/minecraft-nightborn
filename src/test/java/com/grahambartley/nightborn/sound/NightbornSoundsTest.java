@@ -7,7 +7,6 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.grahambartley.nightborn.MinecraftBootstrapExtension;
-import com.grahambartley.nightborn.coffin.CoffinStyle;
 import com.grahambartley.nightborn.mob.MobSounds;
 import com.grahambartley.nightborn.occult.OccultSounds;
 import com.grahambartley.nightborn.vomit.VomitEffects;
@@ -98,16 +97,18 @@ class NightbornSoundsTest {
     assertEquals(path, NightbornSounds.sip(drains).getId().getPath());
   }
 
-  @ParameterizedTest(name = "{0} open={1}")
+  @ParameterizedTest(name = "{0}")
   @CsvSource({
-    "WOOD, true, block.coffin.open",
-    "WOOD, false, block.coffin.close",
-    "STONE, true, block.stone_coffin.open",
-    "STONE, false, block.stone_coffin.close"
+    "block.stone_coffin.open, minecraft:block/grindstone/grindstone1 minecraft:block/grindstone/grindstone2 minecraft:block/grindstone/grindstone3",
+    "block.stone_coffin.close, minecraft:block/grindstone/grindstone1 minecraft:block/grindstone/grindstone2 minecraft:block/grindstone/grindstone3"
   })
-  @DisplayName("each coffin style has its own lid open and close sounds")
-  void lid(final CoffinStyle style, final boolean open, final String path) {
-    assertEquals(path, NightbornSounds.lid(style, open).getId().getPath());
+  @DisplayName("a sound borrowed from vanilla names vanilla's own files")
+  void borrowsVanillaFiles(final String event, final String files) throws IOException {
+    assertEquals(
+        List.of(files.split(" ")),
+        sounds().getAsJsonObject(event).getAsJsonArray("sounds").asList().stream()
+            .map(NightbornSoundsTest::name)
+            .toList());
   }
 
   @ParameterizedTest(name = "seed {0}")

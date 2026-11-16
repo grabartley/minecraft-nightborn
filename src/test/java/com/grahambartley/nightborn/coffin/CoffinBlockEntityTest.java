@@ -43,16 +43,16 @@ class CoffinBlockEntityTest {
   }
 
   @ParameterizedTest(name = "{0}")
-  @CsvSource({"coffin, open", "coffin, close", "stone_coffin, open", "stone_coffin, close"})
+  @CsvSource({"WOOD, open", "WOOD, close", "STONE, open", "STONE, close"})
   @DisplayName(
       "each lid clip lasts as long as the lid takes to move, so a sleeper vanishes as it shuts")
-  void lidClipsMatchTheLidTimer(final String model, final String clip) throws IOException {
+  void lidClipsMatchTheLidTimer(final CoffinStyle style, final String clip) throws IOException {
     final JsonObject animations =
         JsonParser.parseString(
                 Files.readString(
                     Path.of(
                         "src/client/resources/assets/nightborn/animations/block/"
-                            + model
+                            + style.model()
                             + ".animation.json")))
             .getAsJsonObject()
             .getAsJsonObject("animations");

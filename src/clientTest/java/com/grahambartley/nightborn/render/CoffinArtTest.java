@@ -27,7 +27,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 class CoffinArtTest {
 
   private static final double HALF_PIXEL = 0.5 / 16.0;
-  private static final Identifier OAK = Identifier.ofVanilla("textures/block/oak_planks.png");
+  private static final Identifier SOURCE = Identifier.of("nightborn", "textures/block/source.png");
 
   @ParameterizedTest(name = "{0}")
   @CsvSource({
@@ -44,10 +44,10 @@ class CoffinArtTest {
 
   @ParameterizedTest(name = "{0} -> {1}")
   @CsvSource({
-    "body_wood, minecraft:textures/block/oak_planks.png",
-    "lid_wood, minecraft:textures/block/oak_planks.png",
-    "body_stone, minecraft:textures/block/oak_planks.png",
-    "lid_stone, minecraft:textures/block/oak_planks.png",
+    "body_wood, nightborn:textures/block/source.png",
+    "lid_wood, nightborn:textures/block/source.png",
+    "body_stone, nightborn:textures/block/source.png",
+    "lid_stone, nightborn:textures/block/source.png",
     "body_velvet, nightborn:textures/block/burgundy_velvet.png",
     "lid_velvet, nightborn:textures/block/burgundy_velvet.png",
     "body_gold, minecraft:textures/block/raw_gold_block.png",
@@ -55,14 +55,14 @@ class CoffinArtTest {
   })
   @DisplayName("each material bone binds its own texture")
   void bindsEachMaterialBone(final String bone, final String texture) {
-    assertEquals(Optional.of(Identifier.of(texture)), CoffinArt.texture(bone, OAK));
+    assertEquals(Optional.of(Identifier.of(texture)), CoffinArt.texture(bone, SOURCE));
   }
 
   @ParameterizedTest(name = "{0}")
   @CsvSource({"coffin", "body", "lid"})
   @DisplayName("a bone that only groups others keeps the buffer it was given")
   void leavesGroupingBonesAlone(final String bone) {
-    assertEquals(Optional.empty(), CoffinArt.texture(bone, OAK));
+    assertEquals(Optional.empty(), CoffinArt.texture(bone, SOURCE));
   }
 
   static Stream<Arguments> styles() {
@@ -85,7 +85,7 @@ class CoffinArtTest {
             .map(bone -> bone.get("name").getAsString())
             .collect(Collectors.toSet());
     assertEquals(expected, bones);
-    bones.forEach(bone -> assertTrue(CoffinArt.texture(bone, OAK).isPresent(), bone));
+    bones.forEach(bone -> assertTrue(CoffinArt.texture(bone, SOURCE).isPresent(), bone));
   }
 
   @ParameterizedTest(name = "{0}")

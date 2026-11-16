@@ -7,13 +7,6 @@ import net.minecraft.util.Identifier;
 
 public final class CoffinArt {
 
-  public static final Identifier GEO = Identifier.of(Nightborn.MOD_ID, "geo/block/coffin.geo.json");
-  public static final Identifier ANIMATION =
-      Identifier.of(Nightborn.MOD_ID, "animations/block/coffin.animation.json");
-  public static final Identifier STONE_GEO =
-      Identifier.of(Nightborn.MOD_ID, "geo/block/stone_coffin.geo.json");
-  public static final Identifier STONE_ANIMATION =
-      Identifier.of(Nightborn.MOD_ID, "animations/block/stone_coffin.animation.json");
   static final Identifier VELVET =
       Identifier.of(Nightborn.MOD_ID, "textures/block/burgundy_velvet.png");
   static final Identifier FITTINGS = Identifier.ofVanilla("textures/block/raw_gold_block.png");
@@ -27,11 +20,11 @@ public final class CoffinArt {
   private CoffinArt() {}
 
   public static Identifier geo(final CoffinStyle style) {
-    return style == CoffinStyle.STONE ? STONE_GEO : GEO;
+    return Identifier.of(Nightborn.MOD_ID, "geo/block/" + style.model() + ".geo.json");
   }
 
   public static Identifier animation(final CoffinStyle style) {
-    return style == CoffinStyle.STONE ? STONE_ANIMATION : ANIMATION;
+    return Identifier.of(Nightborn.MOD_ID, "animations/block/" + style.model() + ".animation.json");
   }
 
   public static Identifier texture(final Identifier sourceBlock) {

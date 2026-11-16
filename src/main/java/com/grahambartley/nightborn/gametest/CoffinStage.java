@@ -18,7 +18,7 @@ final class CoffinStage {
 
   private CoffinStage() {}
 
-  static Block wood() {
+  static Block darkOak() {
     return Coffins.get(CoffinMaterial.DARK_OAK);
   }
 

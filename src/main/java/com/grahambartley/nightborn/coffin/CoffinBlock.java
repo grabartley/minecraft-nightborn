@@ -257,7 +257,7 @@ public class CoffinBlock extends BedBlock {
     world.playSound(
         null,
         head,
-        NightbornSounds.lid(Coffins.material(this).style(), open),
+        Coffins.material(this).style().lid(open),
         SoundCategory.BLOCKS,
         LID_VOLUME,
         NightbornSounds.variedPitch(world.getRandom()));
