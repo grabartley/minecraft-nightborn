@@ -42,6 +42,8 @@ public class ThrallEntity extends PathAwareEntity implements VillagerDataContain
 
   private static final TrackedData<VillagerData> VILLAGER_DATA =
       DataTracker.registerData(ThrallEntity.class, TrackedDataHandlerRegistry.VILLAGER_DATA);
+  private static final TrackedData<Optional<UUID>> OWNER_UUID =
+      DataTracker.registerData(ThrallEntity.class, TrackedDataHandlerRegistry.OPTIONAL_UUID);
 
   private static final String OWNER = "Owner";
   private static final String MODE = "Mode";
@@ -49,7 +51,6 @@ public class ThrallEntity extends PathAwareEntity implements VillagerDataContain
   private static final String VILLAGER = "VillagerData";
   private static final String MEMORY = "VillagerMemory";
 
-  @Nullable private UUID owner;
   private ThrallMode mode = ThrallMode.FOLLOW;
   @Nullable private BlockPos post;
   private VillagerMemory memory = VillagerMemory.NONE;
@@ -71,6 +72,7 @@ public class ThrallEntity extends PathAwareEntity implements VillagerDataContain
   protected void initDataTracker(final DataTracker.Builder builder) {
     super.initDataTracker(builder);
     builder.add(VILLAGER_DATA, new VillagerData(VillagerType.PLAINS, VillagerProfession.NONE, 1));
+    builder.add(OWNER_UUID, Optional.empty());
   }
 
   @Override
@@ -85,7 +87,7 @@ public class ThrallEntity extends PathAwareEntity implements VillagerDataContain
   }
 
   public void bind(final UUID boundTo, final VillagerData data, final VillagerMemory kept) {
-    owner = boundTo;
+    dataTracker.set(OWNER_UUID, Optional.of(boundTo));
     setVillagerData(data);
     memory = kept;
     mode = ThrallMode.FOLLOW;
@@ -109,8 +111,8 @@ public class ThrallEntity extends PathAwareEntity implements VillagerDataContain
   @Override
   public void onDeath(final DamageSource source) {
     super.onDeath(source);
-    if (owner != null && getWorld() instanceof ServerWorld world) {
-      ThrallRegistry.of(world.getServer()).free(owner, getUuid());
+    if (getWorld() instanceof ServerWorld world) {
+      owner().ifPresent(id -> ThrallRegistry.of(world.getServer()).free(id, getUuid()));
     }
   }
 
@@ -155,21 +157,21 @@ public class ThrallEntity extends PathAwareEntity implements VillagerDataContain
   }
 
   public Optional<UUID> owner() {
-    return Optional.ofNullable(owner);
+    return dataTracker.get(OWNER_UUID);
   }
 
   public boolean isOwnedBy(final LivingEntity entity) {
-    return entity.getUuid().equals(owner);
+    return owner().filter(entity.getUuid()::equals).isPresent();
   }
 
   @Nullable
   public LivingEntity ownerHere() {
-    return owner != null
-            && getWorld() instanceof ServerWorld world
-            && world.getEntity(owner) instanceof LivingEntity living
-            && living.isAlive()
-        ? living
-        : null;
+    return owner()
+        .filter(id -> getWorld() instanceof ServerWorld)
+        .map(id -> ((ServerWorld) getWorld()).getEntity(id))
+        .filter(entity -> entity instanceof LivingEntity living && living.isAlive())
+        .map(LivingEntity.class::cast)
+        .orElse(null);
   }
 
   public VillagerMemory memory() {
@@ -191,15 +193,15 @@ public class ThrallEntity extends PathAwareEntity implements VillagerDataContain
   }
 
   public boolean servesSameOwner(final LivingEntity other) {
-    return owner != null && other instanceof ThrallEntity thrall && owner.equals(thrall.owner);
+    return other instanceof ThrallEntity thrall
+        && owner().isPresent()
+        && owner().equals(thrall.owner());
   }
 
   @Override
   public void writeCustomDataToNbt(final NbtCompound nbt) {
     super.writeCustomDataToNbt(nbt);
-    if (owner != null) {
-      nbt.putUuid(OWNER, owner);
-    }
+    owner().ifPresent(id -> nbt.putUuid(OWNER, id));
     nbt.putString(MODE, mode.name());
     if (post != null) {
       nbt.put(POST, NbtHelper.fromBlockPos(post));
@@ -214,7 +216,8 @@ public class ThrallEntity extends PathAwareEntity implements VillagerDataContain
   @Override
   public void readCustomDataFromNbt(final NbtCompound nbt) {
     super.readCustomDataFromNbt(nbt);
-    owner = nbt.containsUuid(OWNER) ? nbt.getUuid(OWNER) : null;
+    dataTracker.set(
+        OWNER_UUID, nbt.containsUuid(OWNER) ? Optional.of(nbt.getUuid(OWNER)) : Optional.empty());
     mode = ThrallMode.byName(nbt.getString(MODE));
     post = NbtHelper.toBlockPos(nbt, POST).orElse(null);
     if (nbt.contains(VILLAGER)) {

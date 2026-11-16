@@ -2,7 +2,6 @@ package com.grahambartley.nightborn.command;
 
 import com.grahambartley.nightborn.Nightborn;
 import com.grahambartley.nightborn.thrall.ThrallEntity;
-import com.grahambartley.nightborn.thrall.ThrallRegistry;
 import com.grahambartley.nightborn.thrall.Thralls;
 import com.mojang.authlib.GameProfile;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
@@ -41,7 +40,7 @@ final class ThrallCommand {
     final ServerCommandSource source = context.getSource();
     int freed = 0;
     for (final GameProfile owner : GameProfileArgumentType.getProfileArgument(context, OWNERS)) {
-      final int count = ThrallRegistry.of(source.getServer()).freeOwner(owner.getId());
+      final int count = Thralls.freeOwner(source.getServer(), owner.getId());
       freed += count;
       Nightborn.LOGGER.info(
           "{} used /nightborn thrall free on {}, freeing {}",

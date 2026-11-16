@@ -17,6 +17,7 @@ import net.minecraft.block.Blocks;
 import net.minecraft.command.argument.EntityAnchorArgumentType;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.effect.StatusEffects;
+import net.minecraft.entity.mob.CreeperEntity;
 import net.minecraft.entity.mob.ZombieEntity;
 import net.minecraft.entity.passive.HorseEntity;
 import net.minecraft.entity.passive.VillagerEntity;
@@ -139,7 +140,7 @@ public class MindGameTest implements FabricGameTest {
   public void aMesmerisedMobStandsStillAndCannotHurtAnyone(final TestContext context) {
     final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(1, 2, 1));
     final ZombieEntity zombie = context.spawnEntity(EntityType.ZOMBIE, new BlockPos(4, 2, 4));
-    final VillagerEntity villager = stillVillager(context, new BlockPos(5, 2, 4));
+    final VillagerEntity villager = stillVillager(context, new BlockPos(7, 2, 7));
     final Vec3d[] start = new Vec3d[1];
     context.runAtTick(
         TestPlayers.READY,
@@ -231,6 +232,25 @@ public class MindGameTest implements FabricGameTest {
               offer.getSpecialPrice(),
               -CharmDiscount.cut(offer.getOriginalFirstBuyItem().getCount(), 1),
               "the charmed price matches a hero's");
+          TestPlayers.finish(context, vampire);
+        });
+  }
+
+  @GameTest(templateName = ARENA, batchId = BATCH, tickLimit = TestPlayers.READY + 50)
+  public void aMesmerisedCreeperLetsItsFuseGoOut(final TestContext context) {
+    final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(1, 2, 1));
+    final CreeperEntity creeper = context.spawnEntity(EntityType.CREEPER, new BlockPos(5, 2, 5));
+    context.runAtTick(
+        TestPlayers.READY,
+        () -> {
+          creeper.setFuseSpeed(1);
+          Mesmerise.land(vampire, creeper, NobleSkills.power(context));
+        });
+    context.runAtTick(
+        TestPlayers.READY + 45,
+        () -> {
+          context.assertTrue(creeper.isAlive(), "the creeper never went off");
+          context.assertEquals(creeper.getFuseSpeed(), -1, "its fuse went out");
           TestPlayers.finish(context, vampire);
         });
   }

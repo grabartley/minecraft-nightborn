@@ -7,6 +7,7 @@ import java.util.Locale;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.ai.brain.MemoryModuleType;
 import net.minecraft.entity.ai.goal.PrioritizedGoal;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
@@ -135,6 +136,7 @@ public final class Mesmerise {
         .forEach(PrioritizedGoal::stop);
     mob.getNavigation().stop();
     mob.setTarget(null);
+    mob.getBrain().forget(MemoryModuleType.ATTACK_TARGET);
     mob.setAttacking(false);
     mob.getLookControl().lookAt(caster, 30.0F, 30.0F);
     mob.setVelocity(0.0, mob.getVelocity().y, 0.0);

@@ -5,6 +5,7 @@ import com.grahambartley.nightborn.config.MindSettings;
 import com.grahambartley.nightborn.mind.MindAttributes;
 import com.grahambartley.nightborn.mind.MindTies;
 import com.grahambartley.nightborn.server.ServerConfigService;
+import java.util.UUID;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
@@ -15,6 +16,7 @@ import net.minecraft.nbt.NbtOps;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
@@ -116,8 +118,8 @@ public final class Thralls {
     return true;
   }
 
-  public static int freeOwner(final ServerPlayerEntity owner) {
-    return ThrallRegistry.of(owner.getServer()).freeOwner(owner.getUuid());
+  public static int freeOwner(final MinecraftServer server, final UUID owner) {
+    return ThrallRegistry.of(server).freeOwner(owner);
   }
 
   static void release(final ThrallEntity thrall) {

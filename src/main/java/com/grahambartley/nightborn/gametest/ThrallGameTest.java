@@ -20,6 +20,7 @@ import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.mob.ZombieEntity;
 import net.minecraft.entity.passive.VillagerEntity;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.test.AfterBatch;
@@ -30,6 +31,7 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.village.VillageGossipType;
 import net.minecraft.village.VillagerProfession;
 
 public class ThrallGameTest implements FabricGameTest {
@@ -217,7 +219,7 @@ public class ThrallGameTest implements FabricGameTest {
     context.runAtTick(
         TestPlayers.READY,
         () -> {
-          context.assertTrue(Thralls.free(thrall), "an operator released it");
+          run(context, "nightborn thrall release " + thrall.getUuidAsString());
           context.assertTrue(thrall.isRemoved(), "the thrall is gone");
           context.expectEntityAround(EntityType.VILLAGER, at, 1.5);
           context.assertEquals(
@@ -238,6 +240,9 @@ public class ThrallGameTest implements FabricGameTest {
         TestPlayers.READY,
         () -> {
           villager.setExperience(30);
+          villager.getGossip().startGossip(vampire.getUuid(), VillageGossipType.MINOR_POSITIVE, 20);
+          final int reputation =
+              villager.getGossip().getReputationFor(vampire.getUuid(), type -> true);
           final int offers = villager.getOffers().size();
           final String firstSold = villager.getOffers().get(0).getSellItem().toString();
           Mesmerise.land(vampire, villager, NobleSkills.power(context));
@@ -253,6 +258,10 @@ public class ThrallGameTest implements FabricGameTest {
                       VillagerEntity.class, new Box(centre, centre).expand(2.0), v -> v.isAlive())
                   .get(0);
           context.assertEquals(back.getExperience(), 30, "the villager keeps its experience");
+          context.assertEquals(
+              back.getGossip().getReputationFor(vampire.getUuid(), type -> true),
+              reputation,
+              "the villager keeps its gossip");
           context.assertEquals(back.getOffers().size(), offers, "the villager keeps its trades");
           context.assertEquals(
               back.getOffers().get(0).getSellItem().toString(), firstSold, "the same first trade");
@@ -268,13 +277,96 @@ public class ThrallGameTest implements FabricGameTest {
     thrall.setAiDisabled(true);
     context.runAtTick(
         TestPlayers.READY,
-        () ->
-            context.assertEquals(Thralls.freeOwner(owner), 1, "the owner had one thrall to free"));
+        () -> {
+          run(context, "nightborn thrall free @a[name=" + owner.getName().getString() + "]");
+          context.assertEquals(
+              ThrallRegistry.of(context.getWorld().getServer()).count(owner.getUuid()),
+              0,
+              "the command freed the owner's thrall");
+        });
     context.runAtTick(
         TestPlayers.READY + 25,
         () -> {
           context.assertTrue(thrall.isRemoved(), "the thrall let go of its bond");
           context.expectEntityAround(EntityType.VILLAGER, at, 1.5);
+          TestPlayers.finish(context, owner);
+        });
+  }
+
+  private static void run(final TestContext context, final String command) {
+    final MinecraftServer server = context.getWorld().getServer();
+    server
+        .getCommandManager()
+        .executeWithPrefix(server.getCommandSource().withLevel(4).withSilent(), command);
+  }
+
+  @GameTest(templateName = ARENA, batchId = BATCH, tickLimit = TestPlayers.READY + 5)
+  public void aThrallFightsBackButNeverAtItsOwnersSide(final TestContext context) {
+    final ServerPlayerEntity owner = TestPlayers.vampire(context, new BlockPos(1, 2, 1));
+    final ThrallEntity thrall = bound(context, owner, new BlockPos(4, 2, 4));
+    final ThrallEntity fellow = bound(context, owner, new BlockPos(5, 2, 4));
+    final ZombieEntity zombie = context.spawnEntity(EntityType.ZOMBIE, new BlockPos(6, 2, 6));
+    zombie.setAiDisabled(true);
+    context.runAtTick(
+        TestPlayers.READY,
+        () -> {
+          thrall.setAttacker(owner);
+          context.assertFalse(
+              new ThrallTargetGoal(thrall).canStart(), "a blow from its owner is forgiven");
+          thrall.setAttacker(fellow);
+          context.assertFalse(
+              new ThrallTargetGoal(thrall).canStart(), "a blow from a fellow thrall is forgiven");
+          thrall.setAttacker(zombie);
+          final ThrallTargetGoal goal = new ThrallTargetGoal(thrall);
+          context.assertTrue(goal.canStart(), "a zombie's blow is answered");
+          goal.start();
+          context.assertTrue(thrall.getTarget() == zombie, "it fights back");
+          TestPlayers.finish(context, owner);
+        });
+  }
+
+  @GameTest(templateName = ARENA, batchId = BATCH, tickLimit = TestPlayers.READY + 5)
+  public void aGuardGoesAfterMonstersNearItsPostAndAFollowerDoesNot(final TestContext context) {
+    final ServerPlayerEntity owner = TestPlayers.vampire(context, new BlockPos(1, 2, 1));
+    final ThrallEntity guard = bound(context, owner, new BlockPos(3, 2, 4));
+    final ThrallEntity follower = bound(context, owner, new BlockPos(4, 2, 4));
+    final ZombieEntity zombie = context.spawnEntity(EntityType.ZOMBIE, new BlockPos(6, 2, 6));
+    zombie.setAiDisabled(true);
+    guard.order(ThrallMode.GUARD);
+    context.runAtTick(
+        TestPlayers.READY,
+        () -> {
+          context.assertFalse(
+              new ThrallTargetGoal(follower).canStart(), "a follower leaves the zombie be");
+          final ThrallTargetGoal goal = new ThrallTargetGoal(guard);
+          context.assertTrue(goal.canStart(), "the guard sees the zombie by its post");
+          goal.start();
+          context.assertTrue(guard.getTarget() == zombie, "the guard goes for it");
+          TestPlayers.finish(context, owner);
+        });
+  }
+
+  @GameTest(templateName = ARENA, batchId = BATCH, tickLimit = FIRST_DRINK + 5)
+  public void aThrallNeverJoinsItsOwnersFeed(final TestContext context) {
+    final ServerPlayerEntity owner = TestPlayers.vampire(context, new BlockPos(3, 2, 4));
+    final VillagerEntity villager = villager(context, new BlockPos(4, 2, 4));
+    final ThrallEntity thrall = bound(context, owner, new BlockPos(1, 2, 1));
+    context.runAtEveryTick(
+        () -> {
+          if (context.getTick() >= TestPlayers.READY && context.getTick() < FIRST_DRINK) {
+            owner.setSneaking(true);
+            UseEntityCallback.EVENT
+                .invoker()
+                .interact(owner, context.getWorld(), Hand.MAIN_HAND, villager, null);
+          }
+        });
+    context.runAtTick(
+        FIRST_DRINK,
+        () -> {
+          context.assertTrue(villager.getHealth() < villager.getMaxHealth(), "the owner fed");
+          context.assertFalse(
+              new ThrallTargetGoal(thrall).canStart(), "the thrall leaves the meal alone");
+          FeedingSessions.end(owner);
           TestPlayers.finish(context, owner);
         });
   }
