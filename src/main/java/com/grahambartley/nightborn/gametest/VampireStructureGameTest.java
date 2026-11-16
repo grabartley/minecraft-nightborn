@@ -166,7 +166,7 @@ public class VampireStructureGameTest implements FabricGameTest {
                       "salt": 1,
                       "spacing": 1,
                       "separation": 0,
-                      "near": { "other_set": "minecraft:villages", "chunk_count": 0 }
+                      "near": { "other_set": "minecraft:villages", "chunk_count": 1 }
                     }
                     """))
             .getOrThrow();
@@ -184,8 +184,8 @@ public class VampireStructureGameTest implements FabricGameTest {
         placement.shouldGenerate(calculator, village.x, village.z),
         "a start is allowed on the chunk a village can start on");
     context.assertFalse(
-        placement.shouldGenerate(calculator, village.x + 1, village.z),
-        "a start is refused one chunk from where a village can start");
+        placement.shouldGenerate(calculator, village.x + 2, village.z),
+        "a start is refused two chunks from where a village can start");
     context.complete();
   }
 
