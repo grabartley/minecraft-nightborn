@@ -43,7 +43,7 @@ public class SeekShadeGoal extends Goal {
 
   @Override
   public boolean canStart() {
-    if (!inDanger() || mob.age < nextSearchAge) {
+    if (!inDanger() || !standing() || mob.age < nextSearchAge) {
       return false;
     }
     route = routeToShade().orElse(null);
@@ -69,6 +69,10 @@ public class SeekShadeGoal extends Goal {
   public void stop() {
     route = null;
     mob.getNavigation().stop();
+  }
+
+  private boolean standing() {
+    return mob.isOnGround() || mob.isInFluid() || mob.hasVehicle();
   }
 
   private boolean inDanger() {

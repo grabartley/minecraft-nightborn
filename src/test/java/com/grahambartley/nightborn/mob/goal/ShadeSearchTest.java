@@ -114,7 +114,41 @@ class ShadeSearchTest {
           batchSize,
           1);
     }
-    assertEquals(List.of(first, second == null ? "" : second), tried);
+    assertEquals(List.of(first, second), tried);
+  }
+
+  @ParameterizedTest(name = "shade {0} all out of reach: starts over {1}")
+  @CsvSource({"'0,1', true", "'0,1,2,3,4,5,6,7,8,9', false"})
+  @DisplayName("starts over once every shade in reach has been ruled out")
+  void startsOverOnceEveryShadeIsRuledOut(final String shaded, final boolean startsOver) {
+    final Set<Integer> shade = ints(shaded);
+    final Set<Vec3i> ruledOut = new HashSet<>();
+    ShadeSearch.nearestReachable(
+        LINE,
+        offset -> shade.contains(offset.getX()),
+        ruledOut,
+        spots -> Optional.<Integer>empty(),
+        2,
+        2);
+    assertEquals(startsOver, ruledOut.isEmpty());
+  }
+
+  @ParameterizedTest(name = "batch {0} x {1}: each spot checked once")
+  @CsvSource({"1, 4", "2, 4", "3, 3"})
+  @DisplayName("checks each spot for shade at most once per search")
+  void checksEachSpotOnce(final int batchSize, final int batches) {
+    final List<Vec3i> checked = new ArrayList<>();
+    ShadeSearch.nearestReachable(
+        LINE,
+        offset -> {
+          checked.add(offset);
+          return offset.getX() % 2 == 0;
+        },
+        new HashSet<>(),
+        spots -> Optional.<Integer>empty(),
+        batchSize,
+        batches);
+    assertEquals(Set.copyOf(checked).size(), checked.size(), "checked twice: " + checked);
   }
 
   private static int flat(final Vec3i offset) {

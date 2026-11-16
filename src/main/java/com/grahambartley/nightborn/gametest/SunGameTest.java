@@ -5,8 +5,10 @@ import com.grahambartley.nightborn.mob.VampireEntity;
 import com.grahambartley.nightborn.sun.DirectSun;
 import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
 import net.minecraft.block.Blocks;
+import net.minecraft.entity.EntityType;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
+import net.minecraft.entity.mob.ZombieEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.test.AfterBatch;
@@ -18,6 +20,9 @@ import net.minecraft.util.math.BlockPos;
 public class SunGameTest implements FabricGameTest {
 
   static final String BATCH = "sun";
+  static final String DUSK_BATCH = "sun-dusk";
+  static final int DUSK = 12800;
+  static final int SIDE_BY_SIDE_TICKS = 400;
   static final String YARD = "nightborn:vampire_yard";
   static final int BURN_OUT_TICKS = 900;
   static final int IGNITED = 20;
@@ -30,6 +35,57 @@ public class SunGameTest implements FabricGameTest {
   @AfterBatch(batchId = BATCH)
   public void restoreDaylight(final ServerWorld world) {
     WorldClock.release(world);
+  }
+
+  @BeforeBatch(batchId = DUSK_BATCH)
+  public void pinDusk(final ServerWorld world) {
+    WorldClock.freeze(world, DUSK);
+  }
+
+  @AfterBatch(batchId = DUSK_BATCH)
+  public void restoreAfterDusk(final ServerWorld world) {
+    WorldClock.release(world);
+  }
+
+  @GameTest(
+      templateName = YARD,
+      batchId = BATCH,
+      skyAccess = true,
+      tickLimit = SIDE_BY_SIDE_TICKS + 1)
+  public void aVampireMobBurnsAtNoonLikeAZombie(final TestContext context) {
+    sideBySide(context, true);
+  }
+
+  @GameTest(
+      templateName = YARD,
+      batchId = DUSK_BATCH,
+      skyAccess = true,
+      tickLimit = SIDE_BY_SIDE_TICKS + 1)
+  public void aVampireMobStopsBurningAtDuskLikeAZombie(final TestContext context) {
+    sideBySide(context, false);
+  }
+
+  private static void sideBySide(final TestContext context, final boolean burns) {
+    final VampireEntity vampire = context.spawnEntity(NightbornMobs.VAMPIRE, new BlockPos(3, 2, 4));
+    final ZombieEntity zombie = context.spawnEntity(EntityType.ZOMBIE, new BlockPos(5, 2, 4));
+    vampire.setAiDisabled(true);
+    zombie.setAiDisabled(true);
+    vampire.setInvulnerable(true);
+    zombie.setInvulnerable(true);
+    final boolean[] caught = new boolean[2];
+    context.runAtEveryTick(
+        () -> {
+          caught[0] |= vampire.isOnFire();
+          caught[1] |= zombie.isOnFire();
+        });
+    context.runAtTick(
+        SIDE_BY_SIDE_TICKS,
+        () -> {
+          context.assertEquals(caught[1], burns, "the zombie burns: " + burns);
+          context.assertEquals(
+              caught[0], caught[1], "the vampire burns exactly when the zombie does");
+          context.complete();
+        });
   }
 
   @GameTest(

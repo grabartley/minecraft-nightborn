@@ -2,6 +2,7 @@ package com.grahambartley.nightborn.mob.goal;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -9,7 +10,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import net.minecraft.util.math.Vec3i;
 
-public final class ShadeSearch {
+final class ShadeSearch {
 
   static final Comparator<Vec3i> NEAREST_FIRST =
       Comparator.<Vec3i>comparingInt(
@@ -21,7 +22,7 @@ public final class ShadeSearch {
 
   private ShadeSearch() {}
 
-  public static List<Vec3i> nearestFirst(final int radius, final int height) {
+  static List<Vec3i> nearestFirst(final int radius, final int height) {
     final List<Vec3i> offsets = new ArrayList<>();
     for (int x = -radius; x <= radius; x++) {
       for (int z = -radius; z <= radius; z++) {
@@ -34,24 +35,24 @@ public final class ShadeSearch {
     return List.copyOf(offsets);
   }
 
-  public static <R> Optional<R> nearestReachable(
+  static <R> Optional<R> nearestReachable(
       final List<Vec3i> nearestFirst,
       final Predicate<Vec3i> shaded,
       final Set<Vec3i> ruledOut,
       final Function<List<Vec3i>, Optional<R>> route,
       final int batchSize,
       final int batches) {
+    final Iterator<Vec3i> offsets = nearestFirst.iterator();
     for (int batch = 0; batch < batches; batch++) {
       final List<Vec3i> spots = new ArrayList<>(batchSize);
-      for (final Vec3i offset : nearestFirst) {
-        if (spots.size() == batchSize) {
-          break;
-        }
+      while (spots.size() < batchSize && offsets.hasNext()) {
+        final Vec3i offset = offsets.next();
         if (!ruledOut.contains(offset) && shaded.test(offset)) {
           spots.add(offset);
         }
       }
       if (spots.isEmpty()) {
+        ruledOut.clear();
         return Optional.empty();
       }
       final Optional<R> found = route.apply(List.copyOf(spots));
