@@ -88,10 +88,10 @@ public class VampireStructureGameTest implements FabricGameTest {
         context.getAbsolutePos(new BlockPos(8, 4, 8)));
   }
 
-  private static BlockBox roofed(final TestContext context) {
+  private static BlockBox unroofed(final TestContext context) {
     for (int x = 0; x <= 8; x++) {
       for (int z = 0; z <= 8; z++) {
-        context.setBlockState(x, 4, z, Blocks.STONE);
+        context.setBlockState(x, 4, z, Blocks.AIR);
       }
     }
     return arena(context);
@@ -273,7 +273,7 @@ public class VampireStructureGameTest implements FabricGameTest {
 
   @GameTest(templateName = ARENA, tickLimit = 20)
   public void aHouseholdSettlesItsResidentsOnTheFloor(final TestContext context) {
-    final BlockBox box = roofed(context);
+    final BlockBox box = arena(context);
     final List<Entity> settled =
         HouseholdSpawner.settle(context.getWorld(), box, box, household(3), Random.create(5L));
     context.assertTrue(settled.size() == 3, "three residents settle, not " + settled.size());
@@ -293,7 +293,7 @@ public class VampireStructureGameTest implements FabricGameTest {
 
   @GameTest(templateName = ARENA, tickLimit = 20)
   public void aHouseholdSeatsItsHeadAtTheMiddleOfItsHeart(final TestContext context) {
-    final BlockBox box = roofed(context);
+    final BlockBox box = arena(context);
     final Household household =
         new Household(
             Registries.ENTITY_TYPE.getEntry(NightbornMobs.VAMPIRE),
@@ -359,7 +359,7 @@ public class VampireStructureGameTest implements FabricGameTest {
 
   @GameTest(templateName = ARENA, tickLimit = 20)
   public void aHouseholdNeverSettlesUnderOpenSky(final TestContext context) {
-    final BlockBox box = arena(context);
+    final BlockBox box = unroofed(context);
     final List<Entity> settled =
         HouseholdSpawner.settle(context.getWorld(), box, box, household(3), Random.create(5L));
     context.assertTrue(
