@@ -31,13 +31,14 @@ class SkillTreeViewTest {
           id("core"), new SkillBranch(SkillTree.VAMPIRE, false, 0),
           id("noble"), new SkillBranch(SkillTree.VAMPIRE, true, 1),
           id("beast"), new SkillBranch(SkillTree.VAMPIRE, true, 1),
-          id("tracking"), new SkillBranch(SkillTree.HUNTER, false, 0));
+          id("tracking"), new SkillBranch(SkillTree.HUNTER, false, 0),
+          id("lord"), new SkillBranch(SkillTree.VAMPIRE, false, 15, false));
 
   @ParameterizedTest(name = "{0}")
   @CsvSource(
       delimiter = '|',
       value = {"VAMPIRE|core,beast,noble,occult", "HUNTER|tracking"})
-  @DisplayName("a tree shows its own branches by order, then by id")
+  @DisplayName("a tree shows its own learnable branches by order, then by id")
   void branches(final SkillTree tree, final String expected) {
     assertEquals(
         List.of(expected.split(",")).stream().map(SkillTreeViewTest::id).toList(),

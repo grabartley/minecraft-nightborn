@@ -1,6 +1,7 @@
 package com.grahambartley.nightborn.mob.stage;
 
 import com.grahambartley.nightborn.skill.Skill;
+import com.grahambartley.nightborn.skill.SkillBranch;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -12,7 +13,9 @@ public final class StageDataCheck {
   private StageDataCheck() {}
 
   public static List<String> problems(
-      final Map<Identifier, VampireStage> stages, final Map<Identifier, Skill> vampireSkills) {
+      final Map<Identifier, VampireStage> stages,
+      final Map<Identifier, Skill> vampireSkills,
+      final Map<Identifier, SkillBranch> branches) {
     final List<String> problems = new ArrayList<>();
     if (stages.isEmpty()) {
       problems.add("there are no vampire stages");
@@ -30,8 +33,8 @@ public final class StageDataCheck {
                           problems.add(id + " weighs " + skill + ", which is not a vampire skill");
                         }
                       });
-              if (stage.skills().count().getMax() >= vampireSkills.size()
-                  && !vampireSkills.isEmpty()) {
+              final int open = SkillPicks.forStage(vampireSkills, branches, stage.skills()).size();
+              if (stage.skills().count().getMax() >= open && open > 0) {
                 problems.add(id + " may want every vampire skill, which only the Eldest has");
               }
             });

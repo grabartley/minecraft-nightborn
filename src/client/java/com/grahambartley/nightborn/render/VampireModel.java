@@ -30,7 +30,7 @@ public class VampireModel extends GeoModel<VampireEntity> {
 
   @Override
   public Identifier getAnimationResource(final VampireEntity vampire) {
-    return VampireRig.animation();
+    return vampire.rig().clips();
   }
 
   @Override

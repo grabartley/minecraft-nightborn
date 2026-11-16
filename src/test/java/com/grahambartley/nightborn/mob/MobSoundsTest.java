@@ -18,7 +18,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.EnumSource;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.MethodSource;
 
 @ExtendWith(MinecraftBootstrapExtension.class)
@@ -32,7 +32,7 @@ class MobSoundsTest {
   }
 
   static Stream<Arguments> hunterVoices() {
-    return Arrays.stream(VampireRig.values())
+    return VampireRig.COMMON.stream()
         .flatMap(rig -> MobSounds.HUNTER_VOICES.stream().map(v -> Arguments.of(rig, v)));
   }
 
@@ -47,11 +47,11 @@ class MobSoundsTest {
     assertTrue(sounds.has(path), path);
   }
 
-  @ParameterizedTest(name = "{0}")
-  @EnumSource(value = VampireVoice.class, names = "HISS")
+  @ParameterizedTest(name = "{0} {1}")
+  @CsvSource({"MALE, HISS", "LORD, AMBIENT", "LORD, HURT"})
   @DisplayName("asking for a voice hunters do not have fails loudly")
-  void hunterHasNoSuchVoice(final VampireVoice voice) {
-    assertThrows(IllegalArgumentException.class, () -> MobSounds.hunter(VampireRig.MALE, voice));
+  void hunterHasNoSuchVoice(final VampireRig rig, final VampireVoice voice) {
+    assertThrows(IllegalArgumentException.class, () -> MobSounds.hunter(rig, voice));
   }
 
   @ParameterizedTest(name = "{0} {1}")

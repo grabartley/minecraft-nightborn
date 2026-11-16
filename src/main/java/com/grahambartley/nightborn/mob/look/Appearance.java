@@ -2,6 +2,7 @@ package com.grahambartley.nightborn.mob.look;
 
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.function.DoubleSupplier;
 import net.minecraft.util.Identifier;
@@ -10,10 +11,13 @@ public record Appearance(Identifier look, Optional<Identifier> outfit, float hei
 
   public static Optional<Appearance> pick(
       final Map<Identifier, VampireLook> looks,
+      final Set<VampireRig> rigs,
       final Map<Identifier, VampireOutfit> outfits,
       final Map<Identifier, VampireBuild> builds,
       final DoubleSupplier rolls) {
-    final var lookEntries = new TreeMap<>(looks).entrySet().stream().toList();
+    final var lookEntries =
+        new TreeMap<>(looks)
+            .entrySet().stream().filter(e -> rigs.contains(e.getValue().rig())).toList();
     return Weighted.pick(lookEntries, e -> e.getValue().weight(), rolls.getAsDouble())
         .map(
             look -> {

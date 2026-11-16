@@ -4,6 +4,7 @@ import com.grahambartley.nightborn.mob.stage.StageOdds;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import java.util.Map;
+import java.util.Optional;
 import net.minecraft.entity.EntityType;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.entry.RegistryEntry;
@@ -11,7 +12,10 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.math.intprovider.IntProvider;
 
 public record Household(
-    RegistryEntry<EntityType<?>> resident, IntProvider residents, Map<Identifier, Integer> stages) {
+    RegistryEntry<EntityType<?>> resident,
+    IntProvider residents,
+    Map<Identifier, Integer> stages,
+    Optional<HouseholdHead> head) {
 
   public static final int LARGEST_HOUSEHOLD = 16;
 
@@ -29,7 +33,8 @@ public record Household(
                           .forGetter(Household::residents),
                       Codec.unboundedMap(Identifier.CODEC, Codec.intRange(0, StageOdds.HEAVIEST))
                           .optionalFieldOf("stages", Map.of())
-                          .forGetter(Household::stages))
+                          .forGetter(Household::stages),
+                      HouseholdHead.CODEC.optionalFieldOf("head").forGetter(Household::head))
                   .apply(instance, Household::new));
 
   public Household {

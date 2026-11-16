@@ -14,17 +14,20 @@ final class StageFixtures {
   static final Identifier CORE = Identifier.of("nightborn", "core");
   static final Identifier NOBLE = Identifier.of("nightborn", "noble");
   static final Identifier HUNTER = Identifier.of("nightborn", "hunter");
+  static final Identifier LORD = Identifier.of("nightborn", "lord");
   static final Identifier THICK = Identifier.of("nightborn", "core/thick_blood");
   static final Identifier RUSH = Identifier.of("nightborn", "core/blood_rush");
   static final Identifier STRENGTH = Identifier.of("nightborn", "core/grave_strength");
   static final Identifier NOBLE_BLOOD = Identifier.of("nightborn", "noble/noble_blood");
   static final Identifier FAITH = Identifier.of("nightborn", "hunter/faith");
+  static final Identifier RALLY = Identifier.of("nightborn", "lord/rally");
 
   static final Map<Identifier, SkillBranch> BRANCHES =
       Map.of(
           CORE, new SkillBranch(SkillTree.VAMPIRE, false, 0),
           NOBLE, new SkillBranch(SkillTree.VAMPIRE, true, 1),
-          HUNTER, new SkillBranch(SkillTree.HUNTER, false, 0));
+          HUNTER, new SkillBranch(SkillTree.HUNTER, false, 0),
+          LORD, new SkillBranch(SkillTree.VAMPIRE, false, 15, false));
 
   static final Map<Identifier, Skill> SKILLS =
       Map.of(
@@ -32,7 +35,8 @@ final class StageFixtures {
           RUSH, skill(CORE, 2, THICK),
           STRENGTH, skill(CORE, 2, THICK),
           NOBLE_BLOOD, skill(NOBLE, 1),
-          FAITH, skill(HUNTER, 1));
+          FAITH, skill(HUNTER, 1),
+          RALLY, skill(LORD, 1));
 
   private StageFixtures() {}
 

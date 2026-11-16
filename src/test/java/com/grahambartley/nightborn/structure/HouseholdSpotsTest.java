@@ -53,4 +53,32 @@ class HouseholdSpotsTest {
         HouseholdSpots.choose(row(12), 4, Random.create(seed)),
         HouseholdSpots.choose(row(12), 4, Random.create(seed)));
   }
+
+  @ParameterizedTest(name = "{0} -> {1}")
+  @CsvSource(
+      delimiter = '|',
+      value = {
+        "0,70,0;3,64,0;0,64,4|0,70,0",
+        "1,64,1;0,80,0;0,72,0|0,72,0",
+        "5,64,5;-5,60,-5|-5,60,-5",
+        "2,64,0|2,64,0"
+      })
+  @DisplayName("the head takes the spot nearest the middle across the floor, lowest floor first")
+  void middle(final String spots, final String expected) {
+    final List<BlockPos> floor =
+        java.util.Arrays.stream(spots.split(";")).map(HouseholdSpotsTest::pos).toList();
+    assertEquals(pos(expected), HouseholdSpots.middle(floor, new BlockPos(0, 70, 0)).orElseThrow());
+  }
+
+  @org.junit.jupiter.api.Test
+  @DisplayName("an empty heart has no seat for a head")
+  void noMiddle() {
+    assertTrue(HouseholdSpots.middle(List.of(), BlockPos.ORIGIN).isEmpty());
+  }
+
+  private static BlockPos pos(final String xyz) {
+    final String[] parts = xyz.split(",");
+    return new BlockPos(
+        Integer.parseInt(parts[0]), Integer.parseInt(parts[1]), Integer.parseInt(parts[2]));
+  }
 }

@@ -1,5 +1,7 @@
 package com.grahambartley.nightborn.skill;
 
+import com.grahambartley.nightborn.lord.RallyPower;
+import com.grahambartley.nightborn.lord.SummonPower;
 import com.grahambartley.nightborn.occult.FamiliarPower;
 import com.grahambartley.nightborn.occult.FogPower;
 import com.grahambartley.nightborn.occult.ShadowStepPower;
@@ -22,6 +24,8 @@ public record SkillPower(
     Optional<FamiliarPower> familiar,
     Optional<FogPower> fog,
     Optional<ShadowStepPower> shadowStep,
+    Optional<RallyPower> rally,
+    Optional<SummonPower> summon,
     Optional<MobPowerUse> mob) {
 
   public static final Codec<SkillPower> CODEC =
@@ -51,6 +55,8 @@ public record SkillPower(
                       ShadowStepPower.CODEC
                           .optionalFieldOf("shadow_step")
                           .forGetter(SkillPower::shadowStep),
+                      RallyPower.CODEC.optionalFieldOf("rally").forGetter(SkillPower::rally),
+                      SummonPower.CODEC.optionalFieldOf("summon").forGetter(SkillPower::summon),
                       MobPowerUse.CODEC.optionalFieldOf("mob").forGetter(SkillPower::mob))
                   .apply(instance, SkillPower::new));
 }

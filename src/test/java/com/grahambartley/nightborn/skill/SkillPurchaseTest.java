@@ -64,6 +64,14 @@ class SkillPurchaseTest {
             null,
             SkillPurchase.Verdict.UNKNOWN),
         Arguments.of(
+            "skill only vampire mobs can hold",
+            TreeProgress.EMPTY.withEarned(9),
+            SkillTree.VAMPIRE,
+            ROOT,
+            skill(CORE, 1),
+            new SkillBranch(SkillTree.VAMPIRE, false, 15, false),
+            SkillPurchase.Verdict.UNKNOWN),
+        Arguments.of(
             "human buying a vampire skill",
             TreeProgress.EMPTY.withEarned(9),
             SkillTree.HUNTER,

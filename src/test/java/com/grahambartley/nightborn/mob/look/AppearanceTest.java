@@ -47,7 +47,12 @@ class AppearanceTest {
       final float width,
       final float height) {
     final Appearance appearance =
-        Appearance.pick(LOOKS, OUTFITS, BUILDS, rolls(lookRoll, outfitRoll, buildRoll, heightRoll))
+        Appearance.pick(
+                LOOKS,
+                VampireRig.COMMON,
+                OUTFITS,
+                BUILDS,
+                rolls(lookRoll, outfitRoll, buildRoll, heightRoll))
             .orElseThrow();
     assertEquals(id(look), appearance.look());
     assertEquals(Optional.of(id(outfit)), appearance.outfit());
@@ -59,16 +64,30 @@ class AppearanceTest {
   @DisplayName("with no builds a vampire keeps the base size, and with no looks there is nothing")
   void fallbacks() {
     final Appearance plain =
-        Appearance.pick(LOOKS, Map.of(), Map.of(), rolls(0.1, 0.1, 0.1, 0.1)).orElseThrow();
+        Appearance.pick(LOOKS, VampireRig.COMMON, Map.of(), Map.of(), rolls(0.1, 0.1, 0.1, 0.1))
+            .orElseThrow();
     assertEquals(Optional.empty(), plain.outfit());
     assertEquals(VampireSize.BASE_HEIGHT, plain.height());
     assertEquals(1.0F, plain.width());
-    assertTrue(Appearance.pick(Map.of(), OUTFITS, BUILDS, rolls(0.1)).isEmpty());
+    assertTrue(Appearance.pick(Map.of(), VampireRig.COMMON, OUTFITS, BUILDS, rolls(0.1)).isEmpty());
   }
 
   private static java.util.function.DoubleSupplier rolls(final double... values) {
     final PrimitiveIterator.OfDouble it = DoubleStream.of(values).iterator();
     return () -> it.hasNext() ? it.nextDouble() : 0.0;
+  }
+
+  @ParameterizedTest(name = "{0} rigs -> {1}")
+  @CsvSource({"LORD, lord", "MALE, bram", "FEMALE, anna"})
+  @DisplayName("a vampire only wears a look made for one of its rigs")
+  void keepsToRigs(final VampireRig rig, final String look) {
+    final Map<Identifier, VampireLook> looks = new java.util.HashMap<>(LOOKS);
+    looks.put(id("lord"), new VampireLook(VampireRig.LORD, id("lord.png"), List.of(), 1));
+    assertEquals(
+        id(look),
+        Appearance.pick(looks, java.util.Set.of(rig), OUTFITS, BUILDS, rolls(0.5, 0.5, 0.5, 0.5))
+            .orElseThrow()
+            .look());
   }
 
   private static Identifier id(final String path) {

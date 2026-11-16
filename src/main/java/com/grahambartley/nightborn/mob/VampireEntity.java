@@ -49,6 +49,7 @@ import com.grahambartley.nightborn.vampire.Vampires;
 import com.grahambartley.nightborn.weakened.Weakened;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityData;
 import net.minecraft.entity.EntityDimensions;
@@ -600,6 +601,10 @@ public class VampireEntity extends HostileEntity
 
   public Optional<VampireLook> look() {
     return VampireLooks.look(getWorld().getRegistryManager(), lookId());
+  }
+
+  public Set<VampireRig> rigs() {
+    return VampireRig.COMMON;
   }
 
   public VampireRig rig() {

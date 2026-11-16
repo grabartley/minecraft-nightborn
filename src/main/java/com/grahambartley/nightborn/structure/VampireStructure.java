@@ -147,6 +147,10 @@ public final class VampireStructure extends Structure {
     return footing;
   }
 
+  public Household household() {
+    return household;
+  }
+
   private static DataResult<VampireStructure> staysInReach(final VampireStructure structure) {
     return StructureReach.fits(structure.maxDistanceFromCenter, structure.getTerrainAdaptation())
         ? DataResult.success(structure)

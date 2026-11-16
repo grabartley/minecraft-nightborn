@@ -37,12 +37,22 @@ public final class Furnishing {
 
   public static void chest(
       final Template t, final int x, final int y, final int z, final String facing) {
+    chest(t, x, y, z, facing, LOOT);
+  }
+
+  public static void chest(
+      final Template t,
+      final int x,
+      final int y,
+      final int z,
+      final String facing,
+      final String lootTable) {
     t.set(
         x,
         y,
         z,
         BlockState.of("chest", "facing", facing, "type", "single", "waterlogged", false),
-        Nbt.compound("id", "minecraft:chest", "LootTable", LOOT));
+        Nbt.compound("id", "minecraft:chest", "LootTable", lootTable));
   }
 
   public static void candles(

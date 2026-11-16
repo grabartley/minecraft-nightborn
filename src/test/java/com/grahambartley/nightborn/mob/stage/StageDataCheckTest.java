@@ -60,6 +60,7 @@ class StageDataCheckTest {
         problems,
         StageDataCheck.problems(
             stages,
-            SkillPicks.ofTree(StageFixtures.SKILLS, StageFixtures.BRANCHES, SkillTree.VAMPIRE)));
+            SkillPicks.ofTree(StageFixtures.SKILLS, StageFixtures.BRANCHES, SkillTree.VAMPIRE),
+            StageFixtures.BRANCHES));
   }
 }

@@ -19,7 +19,7 @@ public final class SkillTreeView {
   public static List<Identifier> branches(
       final Map<Identifier, SkillBranch> branches, final SkillTree tree) {
     return branches.entrySet().stream()
-        .filter(entry -> entry.getValue().tree() == tree)
+        .filter(entry -> entry.getValue().tree() == tree && entry.getValue().learnable())
         .sorted(
             Comparator.comparingInt(
                     (Map.Entry<Identifier, SkillBranch> entry) -> entry.getValue().order())

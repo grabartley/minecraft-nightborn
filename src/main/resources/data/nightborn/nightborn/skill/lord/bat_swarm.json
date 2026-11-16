@@ -1,0 +1,24 @@
+{
+  "branch": "nightborn:lord",
+  "cost": 1,
+  "icon": "nightborn:skills/icon/bat_form",
+  "column": 1,
+  "row": 0,
+  "power": {
+    "blood": 4,
+    "cooldown_ticks": 600,
+    "summon": {
+      "entity": "nightborn:vampire_bat",
+      "count": { "type": "minecraft:uniform", "min_inclusive": 3, "max_inclusive": 5 },
+      "spread": 2.0
+    },
+    "sound": "minecraft:entity.bat.takeoff",
+    "mob": {
+      "min_range": 4.0,
+      "max_range": 20.0,
+      "tell_ticks": 14,
+      "tell_sound": "minecraft:entity.evoker.prepare_summon",
+      "tell_clip": "mesmerise"
+    }
+  }
+}
