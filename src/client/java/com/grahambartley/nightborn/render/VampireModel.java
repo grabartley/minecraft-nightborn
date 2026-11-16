@@ -5,6 +5,7 @@ import com.grahambartley.nightborn.mob.VampireEntity;
 import com.grahambartley.nightborn.mob.VampirePose;
 import com.grahambartley.nightborn.mob.look.VampireLook;
 import com.grahambartley.nightborn.mob.look.VampireRig;
+import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.util.Identifier;
 import software.bernie.geckolib.animation.AnimationState;
 import software.bernie.geckolib.cache.object.GeoBone;
@@ -38,6 +39,11 @@ public class VampireModel extends GeoModel<VampireEntity> {
       final long instanceId,
       final AnimationState<VampireEntity> animationState) {
     RigArmorLayer.hideAnchors(getAnimationProcessor());
+    final GeoBone bust = getAnimationProcessor().getBone(BustShape.BONE);
+    if (bust != null) {
+      bust.setHidden(
+          ArmorDraw.of(vampire.getEquippedStack(EquipmentSlot.CHEST).getItem()).flattensBust());
+    }
     final GeoBone head = getAnimationProcessor().getBone("head");
     if (head == null || vampire.holdsHead()) {
       return;

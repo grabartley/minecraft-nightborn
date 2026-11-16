@@ -1,6 +1,8 @@
 package com.grahambartley.nightborn.guild;
 
-public interface HunterLooking {
+import com.grahambartley.nightborn.mob.look.Figure;
+
+public interface HunterLooking extends Figure {
 
   HunterLook look();
 }

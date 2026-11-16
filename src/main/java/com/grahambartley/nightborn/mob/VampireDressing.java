@@ -22,6 +22,7 @@ final class VampireDressing {
         .ifPresent(
             appearance -> {
               vampire.setAppearance(appearance.look(), appearance.height(), appearance.width());
+              vampire.shapeBust(vampire.getRandom().nextDouble());
               appearance
                   .outfit()
                   .map(outfits::get)

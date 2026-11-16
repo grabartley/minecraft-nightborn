@@ -3,11 +3,15 @@ package com.grahambartley.nightborn.render;
 import com.grahambartley.nightborn.clothing.ClothingCut;
 import com.grahambartley.nightborn.clothing.ClothingItem;
 import com.grahambartley.nightborn.mob.VampireEntity;
+import com.grahambartley.nightborn.mob.look.Figure;
 import net.minecraft.client.model.ModelPart;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
+import net.minecraft.client.render.RenderLayer;
+import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.model.BipedEntityModel;
 import net.minecraft.client.util.SkinTextures;
+import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.item.ItemStack;
@@ -68,6 +72,47 @@ public class ClothingRenderer extends DyeableGeoArmorRenderer<ClothingItem> {
     if (!this.drawnByPart) {
       super.applyBoneVisibilityBySlot(slot);
     }
+  }
+
+  @Override
+  protected void applyBaseTransformations(final BipedEntityModel<?> baseModel) {
+    super.applyBaseTransformations(baseModel);
+    BootPlacement.RIGHT.place(this.rightLeg, this.rightBoot, baseModel.rightLeg);
+    BootPlacement.LEFT.place(this.leftLeg, this.leftBoot, baseModel.leftLeg);
+  }
+
+  @Override
+  public void renderRecursively(
+      final MatrixStack poseStack,
+      final ClothingItem animatable,
+      final GeoBone bone,
+      final RenderLayer renderType,
+      final VertexConsumerProvider bufferSource,
+      final VertexConsumer buffer,
+      final boolean isReRender,
+      final float partialTick,
+      final int packedLight,
+      final int packedOverlay,
+      final int colour) {
+    if (BustShape.isBust(bone)) {
+      bone.setHidden(!BustShape.worn(this.currentEntity));
+    }
+    poseStack.push();
+    BustShape.size(
+        poseStack, bone, this.currentEntity instanceof Figure figure ? figure.bust() : Figure.FLAT);
+    super.renderRecursively(
+        poseStack,
+        animatable,
+        bone,
+        renderType,
+        bufferSource,
+        buffer,
+        isReRender,
+        partialTick,
+        packedLight,
+        packedOverlay,
+        colour);
+    poseStack.pop();
   }
 
   @Override

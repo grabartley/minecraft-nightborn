@@ -3,10 +3,13 @@ package com.grahambartley.nightborn.render;
 import com.grahambartley.nightborn.batform.BatForm;
 import com.grahambartley.nightborn.mob.VampireEntity;
 import com.grahambartley.nightborn.mob.look.VampireSize;
+import net.minecraft.client.render.RenderLayer;
+import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.EntityRendererFactory;
 import net.minecraft.client.util.math.MatrixStack;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
+import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.renderer.GeoEntityRenderer;
 
 public class VampireRenderer extends GeoEntityRenderer<VampireEntity> {
@@ -37,6 +40,36 @@ public class VampireRenderer extends GeoEntityRenderer<VampireEntity> {
       return;
     }
     super.render(vampire, yaw, tickDelta, matrices, vertexConsumers, light);
+  }
+
+  @Override
+  public void renderRecursively(
+      final MatrixStack poseStack,
+      final VampireEntity animatable,
+      final GeoBone bone,
+      final RenderLayer renderType,
+      final VertexConsumerProvider bufferSource,
+      final VertexConsumer buffer,
+      final boolean isReRender,
+      final float partialTick,
+      final int packedLight,
+      final int packedOverlay,
+      final int colour) {
+    poseStack.push();
+    BustShape.size(poseStack, bone, animatable.bust());
+    super.renderRecursively(
+        poseStack,
+        animatable,
+        bone,
+        renderType,
+        bufferSource,
+        buffer,
+        isReRender,
+        partialTick,
+        packedLight,
+        packedOverlay,
+        colour);
+    poseStack.pop();
   }
 
   @Override

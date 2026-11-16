@@ -2,6 +2,8 @@ package com.grahambartley.nightborn.guild;
 
 import com.grahambartley.nightborn.gear.GearItems;
 import com.grahambartley.nightborn.mob.MobSounds;
+import com.grahambartley.nightborn.mob.look.BustNbt;
+import com.grahambartley.nightborn.mob.look.Figure;
 import com.grahambartley.nightborn.mob.look.VampireRig;
 import com.grahambartley.nightborn.mob.look.VampireVoice;
 import com.grahambartley.nightborn.vampire.Vampires;
@@ -42,6 +44,8 @@ public class HunterEntity extends PathAwareEntity implements GeoEntity, HunterLo
 
   private static final TrackedData<Boolean> FEMALE =
       DataTracker.registerData(HunterEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
+  private static final TrackedData<Float> BUST =
+      DataTracker.registerData(HunterEntity.class, TrackedDataHandlerRegistry.FLOAT);
 
   private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
 
@@ -63,6 +67,7 @@ public class HunterEntity extends PathAwareEntity implements GeoEntity, HunterLo
   protected void initDataTracker(final DataTracker.Builder builder) {
     super.initDataTracker(builder);
     builder.add(FEMALE, false);
+    builder.add(BUST, Figure.FLAT);
   }
 
   @Override
@@ -93,6 +98,11 @@ public class HunterEntity extends PathAwareEntity implements GeoEntity, HunterLo
   }
 
   @Override
+  public float bust() {
+    return dataTracker.get(BUST);
+  }
+
+  @Override
   public void tick() {
     super.tick();
     if (!getWorld().isClient() && !hasPositionTarget()) {
@@ -103,6 +113,7 @@ public class HunterEntity extends PathAwareEntity implements GeoEntity, HunterLo
   private void settle() {
     CampHome.keep(this, CAMP_REACH);
     dataTracker.set(FEMALE, getRandom().nextBoolean());
+    dataTracker.set(BUST, rig().bust(getRandom().nextDouble()));
     equipStack(EquipmentSlot.MAINHAND, new ItemStack(GearItems.WOODEN_STAKE));
   }
 
@@ -139,6 +150,7 @@ public class HunterEntity extends PathAwareEntity implements GeoEntity, HunterLo
   public void writeCustomDataToNbt(final NbtCompound nbt) {
     super.writeCustomDataToNbt(nbt);
     nbt.putBoolean(FEMALE_KEY, dataTracker.get(FEMALE));
+    BustNbt.write(nbt, bust());
     CampHome.write(this, nbt);
   }
 
@@ -146,6 +158,7 @@ public class HunterEntity extends PathAwareEntity implements GeoEntity, HunterLo
   public void readCustomDataFromNbt(final NbtCompound nbt) {
     super.readCustomDataFromNbt(nbt);
     dataTracker.set(FEMALE, nbt.getBoolean(FEMALE_KEY));
+    dataTracker.set(BUST, BustNbt.read(nbt, rig()));
     CampHome.read(this, nbt, CAMP_REACH);
   }
 

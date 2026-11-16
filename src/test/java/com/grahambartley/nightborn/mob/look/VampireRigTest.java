@@ -34,6 +34,35 @@ class VampireRigTest {
     assertTrue(Files.exists(asset("src/client/resources/assets", VampireRig.animation())));
   }
 
+  @ParameterizedTest(name = "{0} rolled {1} is {2}")
+  @CsvSource({
+    "FEMALE, 0.0, 0.7",
+    "FEMALE, 0.5, 1.0",
+    "FEMALE, 1.0, 1.3",
+    "FEMALE, -1.0, 0.7",
+    "FEMALE, 2.0, 1.3",
+    "MALE, 0.0, 1.0",
+    "MALE, 1.0, 1.0"
+  })
+  @DisplayName("each body rolls its bust between its rig's smallest and largest")
+  void rollsBustWithinRange(final VampireRig rig, final double roll, final float bust) {
+    assertEquals(bust, rig.bust(roll), 1.0E-6F);
+  }
+
+  @ParameterizedTest(name = "{0} middle is {1}")
+  @CsvSource({"FEMALE, 1.0", "MALE, 1.0"})
+  @DisplayName("each rig's middle bust sits halfway between its smallest and largest")
+  void middleBustIsHalfway(final VampireRig rig, final float middle) {
+    assertEquals(middle, rig.middleBust(), 1.0E-6F);
+  }
+
+  @ParameterizedTest(name = "{0} {1} fits to {2}")
+  @CsvSource({"FEMALE, 0.1, 0.7", "FEMALE, 1.1, 1.1", "FEMALE, 9.0, 1.3", "MALE, 1.2, 1.0"})
+  @DisplayName("a bust outside the rig's range is brought back into it")
+  void fitsBustToRange(final VampireRig rig, final float bust, final float fitted) {
+    assertEquals(fitted, rig.fitBust(bust), 1.0E-6F);
+  }
+
   private static Path asset(final String root, final Identifier id) {
     return Path.of(root).resolve(id.getNamespace()).resolve(id.getPath());
   }
