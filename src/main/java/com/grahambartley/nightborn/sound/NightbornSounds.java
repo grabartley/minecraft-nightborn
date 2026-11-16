@@ -1,7 +1,6 @@
 package com.grahambartley.nightborn.sound;
 
 import com.grahambartley.nightborn.Nightborn;
-import java.util.List;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.sound.SoundEvent;
@@ -25,11 +24,6 @@ public final class NightbornSounds {
 
   public static float variedPitch(final Random random) {
     return 0.9F + random.nextFloat() * 0.2F;
-  }
-
-  public static List<SoundEvent> all() {
-    return List.of(
-        DRINK, DRAIN, SIZZLE, STAKE_HIT, SILVER_HIT, HOLY_WATER_HISS, COFFIN_OPEN, COFFIN_CLOSE);
   }
 
   public static SoundEvent sip(final boolean drains) {

@@ -48,10 +48,6 @@ public final class MobSounds {
     return sound;
   }
 
-  static String voicePath(final VampireRig rig, final VampireVoice voice) {
-    return voicePath(VAMPIRE, rig, voice);
-  }
-
   static String voicePath(final String speaker, final VampireRig rig, final VampireVoice voice) {
     return "entity." + speaker + "." + rig.asString() + "." + voice.id();
   }

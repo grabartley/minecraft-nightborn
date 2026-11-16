@@ -58,7 +58,7 @@ class MobSoundsTest {
   @MethodSource("voices")
   @DisplayName("each rig has its own voice, defined in sounds.json with a translated subtitle")
   void voiceIsDefined(final VampireRig rig, final VampireVoice voice) throws IOException {
-    final String path = MobSounds.voicePath(rig, voice);
+    final String path = MobSounds.voicePath(MobSounds.VAMPIRE, rig, voice);
     assertEquals("nightborn:" + path, MobSounds.vampire(rig, voice).getId().toString());
     final JsonObject sounds =
         JsonParser.parseString(Files.readString(ASSETS.resolve("sounds.json"))).getAsJsonObject();

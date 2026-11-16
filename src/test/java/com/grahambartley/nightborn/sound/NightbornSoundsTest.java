@@ -7,12 +7,17 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.grahambartley.nightborn.MinecraftBootstrapExtension;
+import com.grahambartley.nightborn.mob.MobSounds;
+import com.grahambartley.nightborn.occult.OccultSounds;
+import com.grahambartley.nightborn.vomit.VomitEffects;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Stream;
-import net.minecraft.sound.SoundEvent;
+import net.minecraft.registry.Registries;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.random.Random;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -29,8 +34,15 @@ class NightbornSoundsTest {
   private static final List<String> LANGS =
       List.of("en_us", "de_de", "es_es", "fr_fr", "pt_br", "ru_ru", "zh_cn");
 
-  static Stream<SoundEvent> registered() {
-    return NightbornSounds.all().stream();
+  static Stream<Identifier> registered() {
+    Stream.of(
+            NightbornSounds.DRINK,
+            MobSounds.VAMPIRE_BITE,
+            OccultSounds.FAMILIAR_AMBIENT,
+            VomitEffects.RETCH_MALE)
+        .forEach(Objects::requireNonNull);
+    return Registries.SOUND_EVENT.getIds().stream()
+        .filter(id -> "nightborn".equals(id.getNamespace()));
   }
 
   static Stream<Arguments> events() throws IOException {
@@ -49,9 +61,8 @@ class NightbornSoundsTest {
   @ParameterizedTest(name = "{0}")
   @MethodSource("registered")
   @DisplayName("every registered sound is defined in sounds.json")
-  void registeredSoundIsDefined(final SoundEvent sound) throws IOException {
-    assertEquals("nightborn", sound.getId().getNamespace());
-    assertTrue(sounds().has(sound.getId().getPath()), sound.getId().toString());
+  void registeredSoundIsDefined(final Identifier id) throws IOException {
+    assertTrue(sounds().has(id.getPath()), id.toString());
   }
 
   @ParameterizedTest(name = "{0}")
