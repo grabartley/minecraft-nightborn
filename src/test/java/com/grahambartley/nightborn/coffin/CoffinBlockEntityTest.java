@@ -16,7 +16,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
-import org.junit.jupiter.params.provider.ValueSource;
 
 @ExtendWith(MinecraftBootstrapExtension.class)
 class CoffinBlockEntityTest {
@@ -34,7 +33,7 @@ class CoffinBlockEntityTest {
   void followsTheBlockState(
       final boolean found, final boolean then, final int ticks, final float openness) {
     final BlockState head =
-        Coffins.get(CoffinWood.DARK_OAK).getDefaultState().with(BedBlock.PART, BedPart.HEAD);
+        Coffins.get(CoffinMaterial.DARK_OAK).getDefaultState().with(BedBlock.PART, BedPart.HEAD);
     final CoffinBlockEntity coffin = new CoffinBlockEntity(BlockPos.ORIGIN, head);
     coffin.clientTick(head.with(CoffinBlock.OPEN, found));
     for (int i = 0; i < ticks; i++) {
@@ -44,15 +43,17 @@ class CoffinBlockEntityTest {
   }
 
   @ParameterizedTest(name = "{0}")
-  @ValueSource(strings = {"open", "close"})
+  @CsvSource({"WOOD, open", "WOOD, close", "STONE, open", "STONE, close"})
   @DisplayName(
-      "each lid swing clip lasts as long as the lid takes to swing, so a sleeper vanishes as it shuts")
-  void swingClipsMatchTheLidTimer(final String clip) throws IOException {
+      "each lid clip lasts as long as the lid takes to move, so a sleeper vanishes as it shuts")
+  void lidClipsMatchTheLidTimer(final CoffinStyle style, final String clip) throws IOException {
     final JsonObject animations =
         JsonParser.parseString(
                 Files.readString(
                     Path.of(
-                        "src/client/resources/assets/nightborn/animations/block/coffin.animation.json")))
+                        "src/client/resources/assets/nightborn/animations/block/"
+                            + style.model()
+                            + ".animation.json")))
             .getAsJsonObject()
             .getAsJsonObject("animations");
     assertEquals(CoffinBlockEntity.LID_CLIPS.all(), animations.keySet());

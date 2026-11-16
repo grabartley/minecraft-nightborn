@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import com.grahambartley.nightborn.MinecraftBootstrapExtension;
 import net.fabricmc.fabric.api.registry.FlammableBlockRegistry;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
 import net.minecraft.item.BedItem;
 import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
@@ -19,11 +20,11 @@ import org.junit.jupiter.params.provider.EnumSource;
 class CoffinsTest {
 
   @ParameterizedTest(name = "{0}")
-  @EnumSource(CoffinWood.class)
-  @DisplayName("each wood registers a coffin block placed by a single-stack bed item")
-  void registersEachWood(final CoffinWood wood) {
-    final Block block = Coffins.get(wood);
-    assertEquals(Identifier.of("nightborn", wood.id()), Registries.BLOCK.getId(block));
+  @EnumSource(CoffinMaterial.class)
+  @DisplayName("each material registers a coffin block placed by a single-stack bed item")
+  void registersEachMaterial(final CoffinMaterial material) {
+    final Block block = Coffins.get(material);
+    assertEquals(Identifier.of("nightborn", material.id()), Registries.BLOCK.getId(block));
     assertInstanceOf(CoffinBlock.class, block);
     assertInstanceOf(BedItem.class, block.asItem());
     assertEquals(1, block.asItem().getMaxCount());
@@ -31,24 +32,36 @@ class CoffinsTest {
   }
 
   @ParameterizedTest(name = "{0}")
-  @EnumSource(CoffinWood.class)
+  @EnumSource(CoffinMaterial.class)
   @DisplayName("every coffin can hold the lid's block entity")
-  void sharesOneBlockEntityType(final CoffinWood wood) {
-    assertTrue(Coffins.BLOCK_ENTITY.supports(Coffins.get(wood).getDefaultState()));
+  void sharesOneBlockEntityType(final CoffinMaterial material) {
+    assertTrue(Coffins.BLOCK_ENTITY.supports(Coffins.get(material).getDefaultState()));
   }
 
   @ParameterizedTest(name = "{0}")
-  @EnumSource(CoffinWood.class)
-  @DisplayName("coffins catch fire exactly as their planks do, so crimson never burns")
-  void burnsLikeItsPlanks(final CoffinWood wood) {
+  @EnumSource(CoffinMaterial.class)
+  @DisplayName(
+      "coffins catch fire exactly as their source block does, so crimson and stone never burn")
+  void burnsLikeItsSource(final CoffinMaterial material) {
     final FlammableBlockRegistry fire = FlammableBlockRegistry.getDefaultInstance();
-    assertEquals(fire.get(wood.planks()), fire.get(Coffins.get(wood)));
+    assertEquals(fire.get(material.source()), fire.get(Coffins.get(material)));
   }
 
   @ParameterizedTest(name = "{0}")
-  @EnumSource(CoffinWood.class)
-  @DisplayName("each coffin block knows the wood it was made from")
-  void findsTheWoodOfEachCoffin(final CoffinWood wood) {
-    assertEquals(wood, Coffins.wood(Coffins.get(wood)));
+  @EnumSource(CoffinMaterial.class)
+  @DisplayName("each coffin block knows the material it was made from")
+  void findsTheMaterialOfEachCoffin(final CoffinMaterial material) {
+    assertEquals(material, Coffins.material(Coffins.get(material)));
+  }
+
+  @ParameterizedTest(name = "{0}")
+  @EnumSource(CoffinMaterial.class)
+  @DisplayName("a coffin is as hard to break as its source block and needs the same tool")
+  void breaksLikeItsSource(final CoffinMaterial material) {
+    final BlockState coffin = Coffins.get(material).getDefaultState();
+    final BlockState source = material.source().getDefaultState();
+    assertEquals(source.getHardness(null, null), coffin.getHardness(null, null));
+    assertEquals(source.isToolRequired(), coffin.isToolRequired());
+    assertEquals(source.getSoundGroup(), coffin.getSoundGroup());
   }
 }

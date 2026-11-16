@@ -464,7 +464,7 @@ public class VampireHomeGameTest implements FabricGameTest {
           context.assertFalse(
               stranger.interactionManager.tryBreakBlock(context.getAbsolutePos(head)),
               "a survival stranger cannot break it while the vampire lives");
-          context.expectBlock(CoffinStage.wood(), head);
+          context.expectBlock(CoffinStage.darkOak(), head);
           vampire.damage(NightbornDamage.sun(context.getWorld()), Float.MAX_VALUE);
           context.assertTrue(vampire.isDead(), "the sun kills the vampire");
         });

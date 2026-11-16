@@ -55,7 +55,9 @@ class NightbornSoundsTest {
             e ->
                 e.getValue().getAsJsonObject().getAsJsonArray("sounds").asList().stream()
                     .filter(NightbornSoundsTest::isFile)
-                    .map(s -> Arguments.of(e.getKey(), name(s))));
+                    .map(NightbornSoundsTest::name)
+                    .filter(name -> !name.startsWith("minecraft:"))
+                    .map(name -> Arguments.of(e.getKey(), name)));
   }
 
   @ParameterizedTest(name = "{0}")
@@ -95,11 +97,18 @@ class NightbornSoundsTest {
     assertEquals(path, NightbornSounds.sip(drains).getId().getPath());
   }
 
-  @ParameterizedTest(name = "open={0}")
-  @CsvSource({"true, block.coffin.open", "false, block.coffin.close"})
-  @DisplayName("the coffin lid has its own open and close sounds")
-  void lid(final boolean open, final String path) {
-    assertEquals(path, NightbornSounds.lid(open).getId().getPath());
+  @ParameterizedTest(name = "{0}")
+  @CsvSource({
+    "block.stone_coffin.open, minecraft:block/grindstone/grindstone1 minecraft:block/grindstone/grindstone2 minecraft:block/grindstone/grindstone3",
+    "block.stone_coffin.close, minecraft:block/grindstone/grindstone1 minecraft:block/grindstone/grindstone2 minecraft:block/grindstone/grindstone3"
+  })
+  @DisplayName("a sound borrowed from vanilla names vanilla's own files")
+  void borrowsVanillaFiles(final String event, final String files) throws IOException {
+    assertEquals(
+        List.of(files.split(" ")),
+        sounds().getAsJsonObject(event).getAsJsonArray("sounds").asList().stream()
+            .map(NightbornSoundsTest::name)
+            .toList());
   }
 
   @ParameterizedTest(name = "seed {0}")

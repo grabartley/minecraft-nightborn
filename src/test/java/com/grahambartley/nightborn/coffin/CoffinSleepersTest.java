@@ -25,7 +25,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 class CoffinSleepersTest {
 
   static Stream<Arguments> states() {
-    final BlockState coffin = Coffins.get(CoffinWood.OAK).getDefaultState();
+    final BlockState coffin = Coffins.get(CoffinMaterial.OAK).getDefaultState();
     return Stream.of(
         Arguments.of(coffin.with(CoffinBlock.OPEN, false), true, true),
         Arguments.of(coffin.with(CoffinBlock.OPEN, true), true, false),
@@ -53,7 +53,7 @@ class CoffinSleepersTest {
   @DisplayName("a coffin gives its sleeper the resting spot its layout sets, anything else none")
   void restsWhereTheLayoutSays(final Direction facing, final boolean standing) {
     final BlockState coffin =
-        Coffins.get(CoffinWood.OAK)
+        Coffins.get(CoffinMaterial.OAK)
             .getDefaultState()
             .with(BedBlock.FACING, facing)
             .with(CoffinBlock.STANDING, standing);
@@ -81,7 +81,7 @@ class CoffinSleepersTest {
   void needsRoomInFront(
       final Direction facing, final boolean standing, final int wall, final boolean blocked) {
     final BlockState coffin =
-        Coffins.get(CoffinWood.OAK)
+        Coffins.get(CoffinMaterial.OAK)
             .getDefaultState()
             .with(BedBlock.FACING, facing)
             .with(CoffinBlock.STANDING, standing);

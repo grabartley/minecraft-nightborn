@@ -20,8 +20,8 @@ import net.minecraft.util.Identifier;
 
 public final class Coffins {
 
-  private static final Map<CoffinWood, Block> BLOCKS = registerBlocks();
-  private static final Map<Block, CoffinWood> WOODS =
+  private static final Map<CoffinMaterial, Block> BLOCKS = registerBlocks();
+  private static final Map<Block, CoffinMaterial> MATERIALS =
       BLOCKS.entrySet().stream()
           .collect(Collectors.toUnmodifiableMap(Map.Entry::getValue, Map.Entry::getKey));
 
@@ -38,10 +38,10 @@ public final class Coffins {
   public static void initialize() {
     final FlammableBlockRegistry flammable = FlammableBlockRegistry.getDefaultInstance();
     BLOCKS.forEach(
-        (wood, block) -> {
-          final FlammableBlockRegistry.Entry planks = flammable.get(wood.planks());
-          if (planks.getBurnChance() > 0) {
-            flammable.add(block, planks);
+        (material, block) -> {
+          final FlammableBlockRegistry.Entry fire = flammable.get(material.source());
+          if (fire.getBurnChance() > 0) {
+            flammable.add(block, fire);
           }
         });
     ItemGroupEvents.modifyEntriesEvent(
@@ -51,32 +51,32 @@ public final class Coffins {
     CoffinOwnerDeaths.register();
   }
 
-  public static Block get(final CoffinWood wood) {
-    return BLOCKS.get(wood);
+  public static Block get(final CoffinMaterial material) {
+    return BLOCKS.get(material);
   }
 
-  public static CoffinWood wood(final Block coffin) {
-    return WOODS.get(coffin);
+  public static CoffinMaterial material(final Block coffin) {
+    return MATERIALS.get(coffin);
   }
 
   public static List<Block> all() {
     return List.copyOf(BLOCKS.values());
   }
 
-  private static Map<CoffinWood, Block> registerBlocks() {
-    final Map<CoffinWood, Block> blocks = new EnumMap<>(CoffinWood.class);
-    for (final CoffinWood wood : CoffinWood.values()) {
-      final Identifier id = Identifier.of(Nightborn.MOD_ID, wood.id());
+  private static Map<CoffinMaterial, Block> registerBlocks() {
+    final Map<CoffinMaterial, Block> blocks = new EnumMap<>(CoffinMaterial.class);
+    for (final CoffinMaterial material : CoffinMaterial.values()) {
+      final Identifier id = Identifier.of(Nightborn.MOD_ID, material.id());
       final Block block =
           Registry.register(
               Registries.BLOCK,
               id,
               new CoffinBlock(
-                  AbstractBlock.Settings.copy(wood.planks())
+                  AbstractBlock.Settings.copy(material.source())
                       .nonOpaque()
                       .pistonBehavior(PistonBehavior.DESTROY)));
       Registry.register(Registries.ITEM, id, new BedItem(block, new Item.Settings().maxCount(1)));
-      blocks.put(wood, block);
+      blocks.put(material, block);
     }
     return blocks;
   }

@@ -278,6 +278,22 @@
       "nightborn:block/coffin/close2"
     ]
   },
+  "block.stone_coffin.open": {
+    "subtitle": "subtitles.nightborn.block.stone_coffin.open",
+    "sounds": [
+      { "name": "minecraft:block/grindstone/grindstone1", "pitch": 0.6 },
+      { "name": "minecraft:block/grindstone/grindstone2", "pitch": 0.6 },
+      { "name": "minecraft:block/grindstone/grindstone3", "pitch": 0.6 }
+    ]
+  },
+  "block.stone_coffin.close": {
+    "subtitle": "subtitles.nightborn.block.stone_coffin.close",
+    "sounds": [
+      { "name": "minecraft:block/grindstone/grindstone1", "pitch": 0.5 },
+      { "name": "minecraft:block/grindstone/grindstone2", "pitch": 0.5 },
+      { "name": "minecraft:block/grindstone/grindstone3", "pitch": 0.5 }
+    ]
+  },
   "music.gothic": {
     "sounds": [
       {

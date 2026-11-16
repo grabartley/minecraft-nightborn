@@ -12,25 +12,26 @@ import software.bernie.geckolib.model.GeoModel;
 
 public class CoffinModel extends GeoModel<CoffinBlockEntity> {
 
-  private final Map<Block, Identifier> woods =
+  private final Map<Block, Identifier> textures =
       Coffins.all().stream()
           .collect(
               Collectors.toUnmodifiableMap(
                   Function.identity(),
-                  block -> CoffinArt.planks(Registries.BLOCK.getId(Coffins.wood(block).planks()))));
+                  block ->
+                      CoffinArt.texture(Registries.BLOCK.getId(Coffins.material(block).source()))));
 
   @Override
   public Identifier getModelResource(final CoffinBlockEntity coffin) {
-    return CoffinArt.GEO;
+    return CoffinArt.geo(Coffins.material(coffin.getCachedState().getBlock()).style());
   }
 
   @Override
   public Identifier getTextureResource(final CoffinBlockEntity coffin) {
-    return this.woods.get(coffin.getCachedState().getBlock());
+    return this.textures.get(coffin.getCachedState().getBlock());
   }
 
   @Override
   public Identifier getAnimationResource(final CoffinBlockEntity coffin) {
-    return CoffinArt.ANIMATION;
+    return CoffinArt.animation(Coffins.material(coffin.getCachedState().getBlock()).style());
   }
 }
