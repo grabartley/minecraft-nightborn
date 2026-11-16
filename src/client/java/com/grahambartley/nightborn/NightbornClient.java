@@ -9,6 +9,8 @@ import com.grahambartley.nightborn.client.gore.SplatterModels;
 import com.grahambartley.nightborn.client.guild.HunterRenderer;
 import com.grahambartley.nightborn.client.occult.GhostlyFamiliarRenderer;
 import com.grahambartley.nightborn.client.state.ClientStateService;
+import com.grahambartley.nightborn.client.structure.NearbyStructure;
+import com.grahambartley.nightborn.client.structure.StructureAmbiencePlayer;
 import com.grahambartley.nightborn.client.thrall.ThrallRenderer;
 import com.grahambartley.nightborn.clothing.ClothingRenderProviders;
 import com.grahambartley.nightborn.coffin.CoffinBlockEntity;
@@ -103,7 +105,9 @@ public class NightbornClient implements ClientModInitializer {
     ClothingRenderProviders.use(item -> new ClothingRenderProvider());
     ClothingColors.register();
     VampireClientFeatures.register();
+    NearbyStructure.register();
     StructureFog.register();
+    StructureAmbiencePlayer.register();
     CoatingTooltip.register();
   }
 }

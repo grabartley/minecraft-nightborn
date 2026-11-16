@@ -13,6 +13,7 @@
 		"InGameHudMixin",
 		"ItemRendererMixin",
 		"ItemModelsMixin",
+		"MinecraftClientMixin",
 		"PlayerEntityRendererMixin"
 	],
 	"injectors": {

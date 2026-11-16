@@ -17,6 +17,7 @@ public final class NightbornSounds {
   public static final SoundEvent HOLY_WATER_HISS = register("item.holy_water.hiss");
   public static final SoundEvent COFFIN_OPEN = register("block.coffin.open");
   public static final SoundEvent COFFIN_CLOSE = register("block.coffin.close");
+  public static final SoundEvent MUSIC_GOTHIC = register("music.gothic");
 
   private NightbornSounds() {}
 
