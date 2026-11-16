@@ -53,11 +53,11 @@ class FootingTest {
   @ParameterizedTest(name = "a box {0} wide sampled every {1} has {2} points a side")
   @CsvSource({"38, 8, 6", "16, 8, 3", "1, 8, 1", "17, 16, 2"})
   void samplesReachEveryEdgeOfTheBox(final int width, final int spacing, final int perSide) {
-    final List<int[]> samples =
+    final List<net.minecraft.util.math.ColumnPos> samples =
         new Footing(true, 4, spacing).samples(new BlockBox(0, 0, 0, width - 1, 10, width - 1));
     assertEquals(perSide * perSide, samples.size());
-    assertTrue(samples.stream().anyMatch(p -> p[0] == width - 1 && p[1] == width - 1));
-    assertTrue(samples.stream().anyMatch(p -> p[0] == 0 && p[1] == 0));
+    assertTrue(samples.stream().anyMatch(p -> p.x() == width - 1 && p.z() == width - 1));
+    assertTrue(samples.stream().anyMatch(p -> p.x() == 0 && p.z() == 0));
   }
 
   @Test

@@ -22,9 +22,7 @@ public final class CryptStair {
   static final String RIB = "tuff_brick_stairs";
   static final String SHAFT = "tuff_brick_wall";
   static final String CAPITAL = "chiseled_tuff";
-  static final com.grahambartley.nightborn.tools.structures.vampire.Stone FLAGS =
-      new com.grahambartley.nightborn.tools.structures.vampire.Stone(
-          "polished_tuff", "tuff_bricks", "tuff", 35);
+  static final Stone FLAGS = new Stone("polished_tuff", "tuff_bricks", "tuff", 35);
 
   static final Stone MASONRY =
       new Stone(
@@ -45,7 +43,7 @@ public final class CryptStair {
         t.set(x, y, STAIR_Z, BlockState.AIR);
       }
       if (step > 0 && step < TOP) {
-        t.set(x, step, STAIR_Z, step(x, step));
+        t.set(x, step, STAIR_Z, step());
       }
     }
     t.jigsaw(
@@ -53,16 +51,16 @@ public final class CryptStair {
         TOP,
         STAIR_Z,
         "up_north",
-        "minecraft:empty",
+        Template.EMPTY,
         Church.VESTRY,
         POOL,
-        step(SIZE_X - 1, TOP),
+        step(),
         "aligned");
     t.anchor(ANCHOR_X, TOP, ANCHOR_Z, GROUND, MASONRY.base());
     return t;
   }
 
-  static String step(final int x, final int y) {
+  static String step() {
     return BlockState.of(
         STEP, "facing", "east", "half", "bottom", "shape", "straight", "waterlogged", false);
   }

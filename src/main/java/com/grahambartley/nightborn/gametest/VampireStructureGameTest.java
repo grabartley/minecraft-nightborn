@@ -8,8 +8,10 @@ import com.grahambartley.nightborn.config.StructureSettings;
 import com.grahambartley.nightborn.mob.NightbornMobs;
 import com.grahambartley.nightborn.server.ServerConfigService;
 import com.grahambartley.nightborn.structure.FogZone;
+import com.grahambartley.nightborn.structure.Footing;
 import com.grahambartley.nightborn.structure.Household;
 import com.grahambartley.nightborn.structure.HouseholdSpawner;
+import com.grahambartley.nightborn.structure.RareSpreadPlacement;
 import com.grahambartley.nightborn.structure.StructureZone;
 import com.grahambartley.nightborn.structure.StructureZoneTracker;
 import com.grahambartley.nightborn.structure.VampireStructure;
@@ -32,6 +34,7 @@ import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.RegistryOps;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.structure.StructureSet;
 import net.minecraft.structure.StructureStart;
 import net.minecraft.test.AfterBatch;
 import net.minecraft.test.BeforeBatch;
@@ -130,6 +133,39 @@ public class VampireStructureGameTest implements FabricGameTest {
     final JsonElement parsed = JsonParser.parseString(json);
     return Structure.STRUCTURE_CODEC.parse(
         RegistryOps.of(JsonOps.INSTANCE, world.getRegistryManager()), parsed);
+  }
+
+  @GameTest(templateName = ARENA, tickLimit = 20)
+  public void theCryptAsksForDryLevelGround(final TestContext context) {
+    final Structure crypt =
+        context
+            .getWorld()
+            .getRegistryManager()
+            .get(RegistryKeys.STRUCTURE)
+            .get(Identifier.of(Nightborn.MOD_ID, "crypt"));
+    context.assertTrue(
+        crypt instanceof VampireStructure vampire
+            && vampire.footing().equals(Optional.of(new Footing(true, 4, 8))),
+        "the crypt keeps to dry ground that rises 4 blocks or less, got " + crypt);
+    context.complete();
+  }
+
+  @GameTest(templateName = ARENA, tickLimit = 20)
+  public void theCryptStandsOnlyNearAVillage(final TestContext context) {
+    final StructureSet crypts =
+        context
+            .getWorld()
+            .getRegistryManager()
+            .get(RegistryKeys.STRUCTURE_SET)
+            .get(Identifier.of(Nightborn.MOD_ID, "crypt"));
+    context.assertTrue(
+        crypts != null
+            && crypts.placement() instanceof RareSpreadPlacement rare
+            && rare.near().isPresent()
+            && rare.near().get().chunkCount() == 12
+            && rare.near().get().otherSet().matchesId(Identifier.ofVanilla("villages")),
+        "a crypt only starts within 12 chunks of a village start");
+    context.complete();
   }
 
   private static StructurePlacement decodePlacement(final ServerWorld world) {

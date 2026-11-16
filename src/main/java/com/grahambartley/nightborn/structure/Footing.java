@@ -5,6 +5,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.util.math.BlockBox;
+import net.minecraft.util.math.ColumnPos;
 import net.minecraft.world.Heightmap;
 import net.minecraft.world.gen.structure.Structure;
 
@@ -50,11 +51,11 @@ public record Footing(boolean dry, int maxRise, int spacing) {
     return highest - lowest <= maxRise;
   }
 
-  public List<int[]> samples(final BlockBox box) {
-    final List<int[]> points = new ArrayList<>();
+  public List<ColumnPos> samples(final BlockBox box) {
+    final List<ColumnPos> points = new ArrayList<>();
     for (final int x : steps(box.getMinX(), box.getMaxX())) {
       for (final int z : steps(box.getMinZ(), box.getMaxZ())) {
-        points.add(new int[] {x, z});
+        points.add(new ColumnPos(x, z));
       }
     }
     return points;
@@ -62,7 +63,7 @@ public record Footing(boolean dry, int maxRise, int spacing) {
 
   public boolean fits(final Structure.Context context, final BlockBox box) {
     final List<Column> columns = new ArrayList<>();
-    for (final int[] point : samples(box)) {
+    for (final ColumnPos point : samples(box)) {
       columns.add(
           new Column(
               height(context, point, Heightmap.Type.WORLD_SURFACE_WG),
@@ -81,9 +82,9 @@ public record Footing(boolean dry, int maxRise, int spacing) {
   }
 
   private static int height(
-      final Structure.Context context, final int[] point, final Heightmap.Type type) {
+      final Structure.Context context, final ColumnPos point, final Heightmap.Type type) {
     return context
         .chunkGenerator()
-        .getHeight(point[0], point[1], type, context.world(), context.noiseConfig());
+        .getHeight(point.x(), point.z(), type, context.world(), context.noiseConfig());
   }
 }

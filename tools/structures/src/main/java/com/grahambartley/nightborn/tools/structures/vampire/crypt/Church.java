@@ -22,6 +22,7 @@ public final class Church {
   public static final int YARD_Z = SIZE_Z - 1;
   public static final int STAIR_X = 27;
   public static final int STAIR_Z = 4;
+  public static final int CLEARANCE = 4;
 
   static final Stone WALL =
       new Stone("stone_bricks", "mossy_stone_bricks", "cracked_stone_bricks", 14);
@@ -79,7 +80,6 @@ public final class Church {
       Openings.lancet(t, Axis.X, x, 5, 2, 3, GLASS);
     }
     Openings.arch(t, Axis.X, 13, 13, 13, 1, 2, TRIM);
-    Openings.arch(t, Axis.Z, 8, 10, 22, 1, 4, TRIM);
   }
 
   private static void chancel(final Template t) {
@@ -114,7 +114,7 @@ public final class Church {
     }
     t.set(26, 1, 6, door("north", "lower"));
     t.set(26, 2, 6, door("north", "upper"));
-    t.set(26, 0, STAIR_Z, "air");
+    t.fill(STAIR_X - 2, 0, STAIR_Z, STAIR_X - 1, 0, STAIR_Z, "air");
     t.set(25, 1, 3, "brewing_stand");
     t.set(25, 1, 5, BlockState.of("barrel", "facing", "up", "open", false));
     t.set(27, 3, 3, BlockState.of("lantern", "hanging", false, "waterlogged", false));
@@ -180,6 +180,8 @@ public final class Church {
     Openings.arch(t, Axis.Z, 8, 10, 8, 1, 3, TRIM);
     Openings.lancet(t, Axis.Z, 9, 8, 5, 4, GLASS);
     t.fill(5, 0, 9, 7, 0, 9, "dirt_path");
+    t.fill(6, 0, 10, 6, 0, 20, "dirt_path");
+    t.fill(7, 0, 20, 12, 0, 20, "dirt_path");
   }
 
   private static void buttress(final Template t, final int x, final int z, final String slope) {
@@ -252,7 +254,7 @@ public final class Church {
         if (t.get(x, 0, z) == null) {
           t.set(x, 0, z, BlockState.of("grass_block", "snowy", false));
         }
-        for (int y = 1; y <= 3; y++) {
+        for (int y = 1; y <= CLEARANCE; y++) {
           if (t.get(x, y, z) == null) {
             t.set(x, y, z, BlockState.AIR);
           }

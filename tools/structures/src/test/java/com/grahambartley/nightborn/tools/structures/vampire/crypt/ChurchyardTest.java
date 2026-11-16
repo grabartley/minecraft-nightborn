@@ -48,6 +48,22 @@ class ChurchyardTest {
   }
 
   @Test
+  void everyStepHasHeadroomUpThroughTheVestryFloor() {
+    for (int step = 1; step <= CryptStair.TOP; step++) {
+      final int x = CryptStair.OFFSET_X + CryptStair.FOOT_X + step;
+      for (int y = step + 1; y <= step + 3; y++) {
+        final String above =
+            y < Churchyard.DEPTH
+                ? BANK.get(x, y, Church.STAIR_Z)
+                : CHURCH.get(x, y - Churchyard.DEPTH, Church.STAIR_Z);
+        assertTrue(
+            above.equals("minecraft:air") || above.startsWith("minecraft:jigsaw"),
+            "step " + step + " has " + above + " at height " + y);
+      }
+    }
+  }
+
+  @Test
   void theBankCoversTheChurchyardExactly() {
     assertEquals(CHURCH.sizeX(), BANK.sizeX());
     assertEquals(Church.YARD_Z, BANK.sizeZ());
