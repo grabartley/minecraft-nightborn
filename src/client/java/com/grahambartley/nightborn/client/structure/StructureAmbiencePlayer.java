@@ -15,7 +15,6 @@ import net.minecraft.util.Identifier;
 public final class StructureAmbiencePlayer {
 
   private static AmbienceLoop loop;
-  private static Identifier loopSound;
 
   private StructureAmbiencePlayer() {}
 
@@ -38,7 +37,8 @@ public final class StructureAmbiencePlayer {
 
   private static void playLoop(
       final MinecraftClient client, final Optional<Identifier> wanted, final float closeness) {
-    final Optional<Identifier> playing = loop == null ? Optional.empty() : Optional.of(loopSound);
+    final Optional<Identifier> playing =
+        loop == null ? Optional.empty() : Optional.of(loop.getId());
     final boolean done = loop != null && loop.isDone();
     switch (AmbienceMix.loopAction(playing, done, wanted, closeness)) {
       case KEEP -> loop.aimAt(closeness);
@@ -57,7 +57,6 @@ public final class StructureAmbiencePlayer {
 
   private static void start(
       final MinecraftClient client, final Identifier sound, final float closeness) {
-    loopSound = sound;
     loop = new AmbienceLoop(SoundEvent.of(sound), closeness);
     client.getSoundManager().play(loop);
   }
