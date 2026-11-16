@@ -66,6 +66,18 @@ class FurnishingTest {
     }
   }
 
+  @ParameterizedTest(name = "a lectern facing {0} holds a book")
+  @CsvSource({"north", "west"})
+  void lecternsHoldABook(final String facing) {
+    final Template t = new Template("vampire/test", 5, 4, 5);
+    Furnishing.lectern(t, 2, 1, 2, facing);
+    assertTrue(t.get(2, 1, 2).contains("facing=" + facing));
+    assertTrue(t.get(2, 1, 2).contains("has_book=true"));
+    assertEquals(
+        Furnishing.BOOK,
+        ((java.util.Map<?, ?>) t.blockData().get(new Pos(2, 1, 2)).get("Book")).get("id"));
+  }
+
   @Test
   void tendedLightsStartUnlit() {
     final Template t = new Template("vampire/test", 7, 4, 7);

@@ -1,6 +1,5 @@
 package com.grahambartley.nightborn.tools.structures.vampire.lair;
 
-import com.grahambartley.nightborn.tools.structures.nbt.Nbt;
 import com.grahambartley.nightborn.tools.structures.template.BlockState;
 import com.grahambartley.nightborn.tools.structures.template.Facing;
 import com.grahambartley.nightborn.tools.structures.template.Template;
@@ -10,7 +9,6 @@ import com.grahambartley.nightborn.tools.structures.vampire.Stone;
 public final class LairFeatures {
 
   public static final String POOL = "nightborn:blood_pool";
-  public static final String BOOK = "minecraft:writable_book";
   static final String KERB =
       BlockState.of("polished_blackstone_brick_slab", "type", "bottom", "waterlogged", false);
   static final String RIM = "polished_blackstone_bricks";
@@ -23,13 +21,7 @@ public final class LairFeatures {
       t.set(shelfX, 1, z + dz, "bookshelf");
       t.set(shelfX, 2, z + dz, "bookshelf");
     }
-    t.set(
-        lecternX,
-        1,
-        z,
-        BlockState.of("lectern", "facing", toward, "has_book", true, "powered", false),
-        Nbt.compound(
-            "id", "minecraft:lectern", "Book", Nbt.compound("id", BOOK, "count", 1), "Page", 0));
+    Furnishing.lectern(t, lecternX, 1, z, toward);
     final int step = Integer.signum(lecternX - shelfX);
     Furnishing.chair(t, lecternX + step, 1, z, Facing.OPPOSITE.get(toward));
     Furnishing.candles(t, shelfX + step, 1, z + 1, 2, false);

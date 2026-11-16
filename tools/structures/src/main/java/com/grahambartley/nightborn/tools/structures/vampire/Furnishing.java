@@ -9,6 +9,7 @@ import com.grahambartley.nightborn.tools.structures.template.Template;
 public final class Furnishing {
 
   public static final String LOOT = "nightborn:chests/vampire_structure";
+  public static final String BOOK = "minecraft:writable_book";
 
   private Furnishing() {}
 
@@ -53,6 +54,17 @@ public final class Furnishing {
         z,
         BlockState.of("chest", "facing", facing, "type", "single", "waterlogged", false),
         Nbt.compound("id", "minecraft:chest", "LootTable", lootTable));
+  }
+
+  public static void lectern(
+      final Template t, final int x, final int y, final int z, final String facing) {
+    t.set(
+        x,
+        y,
+        z,
+        BlockState.of("lectern", "facing", facing, "has_book", true, "powered", false),
+        Nbt.compound(
+            "id", "minecraft:lectern", "Book", Nbt.compound("id", BOOK, "count", 1), "Page", 0));
   }
 
   public static void candles(

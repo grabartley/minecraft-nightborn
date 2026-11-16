@@ -19,7 +19,9 @@ class VampireStructuresTest {
             "vampire/lair/den",
             "vampire/lair/grotto",
             "vampire/castle/bastions",
-            "vampire/castle/ruined"),
+            "vampire/castle/ruined",
+            "vampire/manor/turret",
+            "vampire/manor/tower"),
         VampireStructures.build().stream().map(Template::path).toList());
   }
 }
