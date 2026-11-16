@@ -1,0 +1,27 @@
+{
+  "type": "nightborn:vampire_structure",
+  "biomes": "#nightborn:has_structure/underground_lair",
+  "step": "top_layer_modification",
+  "spawn_overrides": {
+    "monster": { "bounding_box": "piece", "spawns": [] }
+  },
+  "terrain_adaptation": "none",
+  "start_pool": "nightborn:vampire/lair/start",
+  "size": 1,
+  "start_height": {
+    "type": "minecraft:uniform",
+    "min_inclusive": { "absolute": -40 },
+    "max_inclusive": { "absolute": -16 }
+  },
+  "max_distance_from_center": 32,
+  "household": {
+    "resident": "nightborn:vampire",
+    "residents": { "type": "minecraft:uniform", "min_inclusive": 2, "max_inclusive": 5 },
+    "stages": { "nightborn:fledgling": 15, "nightborn:adult": 35, "nightborn:elder": 35, "nightborn:ancient": 15 }
+  },
+  "ambience": {
+    "ambient_sound": "nightborn:ambient.lair.loop",
+    "additions_sound": { "sound": "nightborn:ambient.lair.additions", "tick_chance": 0.01 },
+    "music": { "sound": "nightborn:music.gothic", "min_delay": 600, "max_delay": 2400 }
+  }
+}
