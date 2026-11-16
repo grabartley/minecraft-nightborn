@@ -5,6 +5,7 @@ import com.grahambartley.nightborn.coffin.CoffinOwnership;
 import com.grahambartley.nightborn.coffin.CoffinRespawn;
 import com.grahambartley.nightborn.faction.Faction;
 import com.grahambartley.nightborn.faction.FactionAttachment;
+import com.grahambartley.nightborn.familiar.FamiliarRelease;
 import com.grahambartley.nightborn.feeding.TurningBite;
 import com.grahambartley.nightborn.server.ServerConfigService;
 import com.grahambartley.nightborn.sickness.BiteSicknessAttachment;
@@ -57,5 +58,6 @@ public final class HardcoreVampireDeath {
     CoffinOwnership.release(player.server, player.getUuid());
     CoffinRespawn.clear(player);
     Thralls.freeOwner(player.server, player.getUuid());
+    FamiliarRelease.freeOwner(player.server, player.getUuid());
   }
 }

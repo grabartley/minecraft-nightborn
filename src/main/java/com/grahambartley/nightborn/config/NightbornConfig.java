@@ -20,6 +20,7 @@ public record NightbornConfig(
     CoatingSettings coatings,
     ClothingSettings clothing,
     MobSettings mobs,
+    FamiliarSettings familiars,
     CombatSettings combat,
     StructureSettings structures) {
 
@@ -41,6 +42,7 @@ public record NightbornConfig(
               CoatingSettings.SETTINGS,
               ClothingSettings.SETTINGS,
               MobSettings.SETTINGS,
+              FamiliarSettings.SETTINGS,
               CombatSettings.SETTINGS,
               StructureSettings.SETTINGS)
           .flatMap(List::stream)
@@ -66,6 +68,7 @@ public record NightbornConfig(
         CoatingSettings.from(values),
         ClothingSettings.from(values),
         MobSettings.from(values),
+        FamiliarSettings.from(values),
         CombatSettings.from(values),
         StructureSettings.from(values));
   }

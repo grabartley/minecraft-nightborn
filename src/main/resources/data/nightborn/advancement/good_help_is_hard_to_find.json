@@ -2,7 +2,7 @@
   "parent": "nightborn:no_reflection_on_you",
   "display": {
     "icon": {
-      "id": "nightborn:candelabra"
+      "id": "nightborn:familiars_contract"
     },
     "title": {
       "translate": "advancements.nightborn.good_help_is_hard_to_find.title"

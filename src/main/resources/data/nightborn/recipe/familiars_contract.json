@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "minecraft:paper"
+    },
+    {
+      "item": "minecraft:feather"
+    },
+    {
+      "item": "nightborn:blood_bottle"
+    }
+  ],
+  "result": {
+    "id": "nightborn:familiars_contract",
+    "count": 1
+  }
+}
