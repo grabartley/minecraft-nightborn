@@ -1,5 +1,6 @@
 package com.grahambartley.nightborn.guild;
 
+import com.grahambartley.nightborn.mob.Gait;
 import software.bernie.geckolib.animation.RawAnimation;
 
 public enum HunterPose {
@@ -8,8 +9,6 @@ public enum HunterPose {
   RUN("run", true),
   STAKE_STRIKE("stake_strike", false),
   TRADE("trade", true);
-
-  static final double MOVING_SPEED_SQUARED = 0.003;
 
   private final String animation;
   private final RawAnimation clip;
@@ -32,14 +31,14 @@ public enum HunterPose {
       final boolean swinging,
       final boolean trading,
       final boolean sprinting,
-      final double speedSquared) {
+      final float limbSwing) {
     if (swinging) {
       return STAKE_STRIKE;
     }
     if (trading) {
       return TRADE;
     }
-    if (speedSquared < MOVING_SPEED_SQUARED) {
+    if (Gait.of(limbSwing) == Gait.STILL) {
       return IDLE;
     }
     return sprinting ? RUN : WALK;

@@ -6,13 +6,11 @@ import com.grahambartley.nightborn.mob.VampirePose;
 import com.grahambartley.nightborn.mob.look.VampireLook;
 import com.grahambartley.nightborn.mob.look.VampireRig;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.math.MathHelper;
 import software.bernie.geckolib.animation.AnimationState;
 import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.constant.DataTickets;
 import software.bernie.geckolib.loading.math.MathParser;
 import software.bernie.geckolib.model.GeoModel;
-import software.bernie.geckolib.model.data.EntityModelData;
 
 public class VampireModel extends GeoModel<VampireEntity> {
 
@@ -44,9 +42,7 @@ public class VampireModel extends GeoModel<VampireEntity> {
     if (head == null || vampire.holdsHead()) {
       return;
     }
-    final EntityModelData data = animationState.getData(DataTickets.ENTITY_MODEL_DATA);
-    head.setRotX(head.getRotX() + data.headPitch() * MathHelper.RADIANS_PER_DEGREE);
-    head.setRotY(head.getRotY() + data.netHeadYaw() * MathHelper.RADIANS_PER_DEGREE);
+    HeadLook.apply(head, animationState.getData(DataTickets.ENTITY_MODEL_DATA));
   }
 
   @Override

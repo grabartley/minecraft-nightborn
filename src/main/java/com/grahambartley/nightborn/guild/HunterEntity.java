@@ -162,7 +162,7 @@ public class HunterEntity extends PathAwareEntity implements GeoEntity, HunterLo
                             handSwinging,
                             false,
                             isSprinting() || isAttacking(),
-                            getVelocity().horizontalLengthSquared())
+                            state.getLimbSwingAmount())
                         .clip())));
   }
 

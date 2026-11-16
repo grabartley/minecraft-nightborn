@@ -242,7 +242,7 @@ public class GuildMasterEntity extends MerchantEntity implements GeoEntity, Hunt
                             handSwinging,
                             dataTracker.get(TRADING),
                             false,
-                            getVelocity().horizontalLengthSquared())
+                            state.getLimbSwingAmount())
                         .clip())));
   }
 
