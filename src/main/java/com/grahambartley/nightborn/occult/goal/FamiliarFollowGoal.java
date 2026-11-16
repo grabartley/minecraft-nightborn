@@ -5,6 +5,8 @@ import com.grahambartley.nightborn.occult.GhostlyFamiliarEntity;
 import java.util.EnumSet;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.goal.Goal;
+import net.minecraft.util.math.Direction;
+import net.minecraft.util.math.Vec3d;
 import org.jetbrains.annotations.Nullable;
 
 public class FamiliarFollowGoal extends Goal {
@@ -63,9 +65,13 @@ public class FamiliarFollowGoal extends Goal {
       return;
     }
     repath = getTickCount(REPATH_TICKS);
-    if (FamiliarRules.teleports(familiar.mode(), familiar.distanceTo(owner))) {
+    final Vec3d beside = owner.getPos().withAxis(Direction.Axis.Y, owner.getBodyY(0.6));
+    if (FamiliarRules.teleports(familiar.mode(), familiar.distanceTo(owner))
+        && familiar
+            .getWorld()
+            .isSpaceEmpty(familiar, familiar.getType().getDimensions().getBoxAt(beside))) {
       familiar.refreshPositionAndAngles(
-          owner.getX(), owner.getBodyY(0.6), owner.getZ(), familiar.getYaw(), familiar.getPitch());
+          beside.x, beside.y, beside.z, familiar.getYaw(), familiar.getPitch());
       familiar.getNavigation().stop();
       return;
     }

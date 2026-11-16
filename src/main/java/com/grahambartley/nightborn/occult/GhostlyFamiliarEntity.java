@@ -11,6 +11,7 @@ import java.util.UUID;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.MovementType;
 import net.minecraft.entity.ai.control.FlightMoveControl;
 import net.minecraft.entity.ai.goal.LookAroundGoal;
 import net.minecraft.entity.ai.goal.LookAtEntityGoal;
@@ -53,6 +54,10 @@ public class GhostlyFamiliarEntity extends PathAwareEntity implements GeoEntity,
       new FamiliarPower(1200, 10.0F, 3.0F, 24.0F, 200, 8.0F, 200, 9);
   static final int ANIMATION_BLEND_TICKS = 4;
   static final double BURIED_MARGIN = 1.0E-3;
+  static final double FLYING_SPEED = 0.16;
+  static final float AIR_DRAG = 0.91F;
+  static final float WATER_DRAG = 0.8F;
+  static final float WATER_PUSH = 0.02F;
 
   private static final TrackedData<Optional<UUID>> OWNER_UUID =
       DataTracker.registerData(
@@ -88,7 +93,7 @@ public class GhostlyFamiliarEntity extends PathAwareEntity implements GeoEntity,
   public static DefaultAttributeContainer.Builder createFamiliarAttributes() {
     return MobEntity.createMobAttributes()
         .add(EntityAttributes.GENERIC_MAX_HEALTH, DEFAULT_POWER.health())
-        .add(EntityAttributes.GENERIC_FLYING_SPEED, 0.6)
+        .add(EntityAttributes.GENERIC_FLYING_SPEED, FLYING_SPEED)
         .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.3)
         .add(EntityAttributes.GENERIC_FOLLOW_RANGE, 32.0)
         .add(EntityAttributes.GENERIC_ATTACK_DAMAGE, DEFAULT_POWER.damage());
@@ -197,17 +202,12 @@ public class GhostlyFamiliarEntity extends PathAwareEntity implements GeoEntity,
   }
 
   public boolean isOwnedBy(final LivingEntity entity) {
-    return Servants.serves(owner(), entity.getUuid());
+    return Servants.serves(this, entity);
   }
 
   @Nullable
   public LivingEntity ownerHere() {
-    return owner()
-        .filter(id -> getWorld() instanceof ServerWorld)
-        .map(id -> ((ServerWorld) getWorld()).getEntity(id))
-        .filter(entity -> entity instanceof LivingEntity living && living.isAlive())
-        .map(LivingEntity.class::cast)
-        .orElse(null);
+    return Servants.masterHere(this);
   }
 
   public FamiliarMode mode() {
@@ -259,6 +259,17 @@ public class GhostlyFamiliarEntity extends PathAwareEntity implements GeoEntity,
 
   public int scoutTick() {
     return ++scoutTicks;
+  }
+
+  @Override
+  public void travel(final Vec3d movementInput) {
+    if (isLogicalSideForUpdatingMovement()) {
+      final boolean wet = isTouchingWater() || isInLava();
+      updateVelocity(wet ? WATER_PUSH : getMovementSpeed(), movementInput);
+      move(MovementType.SELF, getVelocity());
+      setVelocity(getVelocity().multiply(wet ? WATER_DRAG : AIR_DRAG));
+    }
+    updateLimbs(false);
   }
 
   @Override

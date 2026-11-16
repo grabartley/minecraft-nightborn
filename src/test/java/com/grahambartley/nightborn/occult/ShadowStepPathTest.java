@@ -53,4 +53,27 @@ class ShadowStepPathTest {
     assertEquals(
         expected, ShadowStepPath.candidates(Vec3d.ZERO, new Vec3d(0.0, 0.0, length)).size());
   }
+
+  @ParameterizedTest(name = "target ({0},{1}) behind {2} range {3} -> eye at ({4},{5},{6})")
+  @CsvSource({
+    "6, 0, 1.5, 16, 7.5, 65.6, 0",
+    "20, 0, 1.5, 16, 16, 65.6, 0",
+    "0, 4, 2.0, 16, 0, 65.6, 6"
+  })
+  @DisplayName("a stepping mob aims just past its target, cut short at its range")
+  void aimBehind(
+      final double tx,
+      final double tz,
+      final double behind,
+      final double range,
+      final double ex,
+      final double ey,
+      final double ez) {
+    final Vec3d aim =
+        ShadowStepPath.aimBehind(
+            new Vec3d(0.0, 64.0, 0.0), 1.6, new Vec3d(tx, 64.0, tz), behind, range);
+    assertEquals(ex, aim.x, 1.0E-9);
+    assertEquals(ey, aim.y, 1.0E-9);
+    assertEquals(ez, aim.z, 1.0E-9);
+  }
 }

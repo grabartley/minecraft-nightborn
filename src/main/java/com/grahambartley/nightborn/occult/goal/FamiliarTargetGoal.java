@@ -2,14 +2,11 @@ package com.grahambartley.nightborn.occult.goal;
 
 import com.grahambartley.nightborn.occult.FamiliarRules;
 import com.grahambartley.nightborn.occult.GhostlyFamiliarEntity;
-import com.grahambartley.nightborn.servant.Servants;
-import com.grahambartley.nightborn.thrall.TargetRules;
+import com.grahambartley.nightborn.servant.ServantTargets;
 import java.util.EnumSet;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.TargetPredicate;
 import net.minecraft.entity.ai.goal.TrackTargetGoal;
-import net.minecraft.entity.mob.MobEntity;
-import net.minecraft.entity.player.PlayerEntity;
 import org.jetbrains.annotations.Nullable;
 
 public class FamiliarTargetGoal extends TrackTargetGoal {
@@ -31,7 +28,7 @@ public class FamiliarTargetGoal extends TrackTargetGoal {
     if (--rethink > 0 || !FamiliarRules.fights(familiar.mode())) {
       return false;
     }
-    rethink = RETHINK_TICKS;
+    rethink = getTickCount(RETHINK_TICKS);
     chosen = pick();
     return chosen != null;
   }
@@ -51,30 +48,12 @@ public class FamiliarTargetGoal extends TrackTargetGoal {
 
   @Nullable
   private LivingEntity pick() {
-    final LivingEntity owner = familiar.ownerHere();
-    if (owner != null) {
-      if (allowed(owner.getAttacker())) {
-        return owner.getAttacker();
-      }
-      if (owner instanceof MobEntity mob && allowed(mob.getTarget())) {
-        return mob.getTarget();
-      }
-      if (TargetRules.ownerStillFighting(owner.age, owner.getLastAttackTime())
-          && allowed(owner.getAttacking())) {
-        return owner.getAttacking();
-      }
-    }
-    return allowed(familiar.getAttacker()) ? familiar.getAttacker() : null;
+    return ServantTargets.mastersFoe(familiar, this::allowed);
   }
 
   private boolean allowed(@Nullable final LivingEntity candidate) {
     return candidate != null
-        && TargetRules.mayAttack(
-            candidate.isAlive(),
-            familiar.isOwnedBy(candidate),
-            Servants.sameMaster(familiar, candidate),
-            candidate instanceof PlayerEntity player
-                && (player.isCreative() || player.isSpectator()))
+        && ServantTargets.mayAttack(familiar, candidate)
         && canTrack(candidate, TargetPredicate.DEFAULT);
   }
 }

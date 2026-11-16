@@ -16,6 +16,7 @@ import com.grahambartley.nightborn.skill.Powers;
 import java.util.List;
 import java.util.UUID;
 import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
+import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.ItemEntity;
@@ -309,11 +310,11 @@ public class OccultGameTest implements FabricGameTest {
         });
   }
 
-  @GameTest(templateName = ARENA, batchId = BATCH, tickLimit = TestPlayers.READY + 10)
-  public void shadowStepLandsOnAGlassFloor(final TestContext context) {
+  private static void stepOnto(
+      final TestContext context, final BlockState floor, final int level, final double rise) {
     final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(1, 2, 4));
     for (int x = 3; x <= 7; x++) {
-      context.setBlockState(new BlockPos(x, 1, 4), Blocks.GLASS);
+      context.setBlockState(new BlockPos(x, level, 4), floor);
     }
     context.setBlockState(new BlockPos(8, 2, 4), Blocks.STONE);
     context.setBlockState(new BlockPos(8, 3, 4), Blocks.STONE);
@@ -328,10 +329,49 @@ public class OccultGameTest implements FabricGameTest {
               Powers.cast(vampire, OccultSkills.SHADOW_STEP),
               PowerUse.Verdict.READY,
               "the step was taken");
-          context.assertTrue(vampire.getX() - start.x >= 4.0, "the caster stepped onto the glass");
           context.assertTrue(
-              Math.abs(vampire.getY() - start.y) < 0.01,
-              "the caster stands on the glass, not under it");
+              vampire.getX() - start.x >= 4.0, "the caster stepped across the floor");
+          context.assertTrue(
+              Math.abs(vampire.getY() - (start.y + rise)) < 0.01,
+              "the caster stands on top of the floor, at " + (vampire.getY() - start.y));
+          TestPlayers.finish(context, vampire);
+        });
+  }
+
+  @GameTest(templateName = ARENA, batchId = BATCH, tickLimit = TestPlayers.READY + 10)
+  public void shadowStepLandsOnAGlassFloor(final TestContext context) {
+    stepOnto(context, Blocks.GLASS.getDefaultState(), 1, 0.0);
+  }
+
+  @GameTest(templateName = ARENA, batchId = BATCH, tickLimit = TestPlayers.READY + 10)
+  public void shadowStepLandsOnACarpet(final TestContext context) {
+    stepOnto(context, Blocks.RED_CARPET.getDefaultState(), 2, 1.0 / 16.0);
+  }
+
+  @GameTest(templateName = ARENA, batchId = BATCH, tickLimit = TestPlayers.READY + 10)
+  public void shadowStepLandsOnASlab(final TestContext context) {
+    stepOnto(context, Blocks.STONE_BRICK_SLAB.getDefaultState(), 1, -0.5);
+  }
+
+  @GameTest(templateName = ARENA, batchId = BATCH, tickLimit = TestPlayers.READY + 40)
+  public void aScoutFliesOutAhead(final TestContext context) {
+    final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(1, 2, 4));
+    final GhostlyFamiliarEntity familiar =
+        context.spawnEntity(GhostlyFamiliars.GHOSTLY_FAMILIAR, new BlockPos(2, 2, 4));
+    familiar.summon(vampire.getUuid(), power(1200));
+    final Vec3d start = familiar.getPos();
+    context.runAtTick(
+        TestPlayers.READY,
+        () -> {
+          vampire.setYaw(-90.0F);
+          vampire.setPitch(0.0F);
+          familiar.order(FamiliarMode.SCOUT, vampire);
+        });
+    context.runAtTick(
+        TestPlayers.READY + 30,
+        () -> {
+          final double out = familiar.getPos().distanceTo(start);
+          context.assertTrue(out >= 12.0, "the scout flew well ahead, not " + out);
           TestPlayers.finish(context, vampire);
         });
   }

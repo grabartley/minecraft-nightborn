@@ -3,6 +3,9 @@ package com.grahambartley.nightborn.servant;
 import java.util.Optional;
 import java.util.UUID;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.server.world.ServerWorld;
+import org.jetbrains.annotations.Nullable;
 
 public final class Servants {
 
@@ -10,6 +13,18 @@ public final class Servants {
 
   public static Optional<UUID> masterOf(final Entity entity) {
     return entity instanceof Servant servant ? servant.owner() : Optional.empty();
+  }
+
+  @Nullable
+  public static LivingEntity masterHere(final Entity servant) {
+    if (!(servant.getWorld() instanceof ServerWorld world)) {
+      return null;
+    }
+    return masterOf(servant)
+        .map(world::getEntity)
+        .filter(entity -> entity instanceof LivingEntity living && living.isAlive())
+        .map(LivingEntity.class::cast)
+        .orElse(null);
   }
 
   public static boolean serves(final Entity servant, final Entity master) {

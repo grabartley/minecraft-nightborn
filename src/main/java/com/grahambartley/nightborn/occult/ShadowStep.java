@@ -47,13 +47,12 @@ public final class ShadowStep {
 
   private static Vec3d wanted(final LivingEntity caster, final ShadowStepPower power) {
     if (caster instanceof MobEntity mob && mob.getTarget() != null) {
-      final Vec3d behind =
-          ShadowStepPath.behind(caster.getPos(), mob.getTarget().getPos(), power.behind());
-      final Vec3d eyeHeight = new Vec3d(0.0, caster.getStandingEyeHeight(), 0.0);
-      final Vec3d way = behind.add(eyeHeight).subtract(caster.getEyePos());
-      return way.length() > power.range()
-          ? caster.getEyePos().add(way.normalize().multiply(power.range()))
-          : behind.add(eyeHeight);
+      return ShadowStepPath.aimBehind(
+          caster.getPos(),
+          caster.getStandingEyeHeight(),
+          mob.getTarget().getPos(),
+          power.behind(),
+          power.range());
     }
     return caster.getEyePos().add(caster.getRotationVector().multiply(power.range()));
   }
@@ -62,7 +61,7 @@ public final class ShadowStep {
     final double feetY = eye.y - caster.getStandingEyeHeight();
     final BlockPos start = BlockPos.ofFloored(eye.x, feetY, eye.z);
     for (int down = 0; down <= FLOOR_SEARCH; down++) {
-      final BlockPos floor = start.down(down + 1);
+      final BlockPos floor = start.down(down);
       final VoxelShape shape =
           caster.getWorld().getBlockState(floor).getCollisionShape(caster.getWorld(), floor);
       if (shape.isEmpty()) {

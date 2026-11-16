@@ -1,4 +1,4 @@
-package com.grahambartley.nightborn.thrall;
+package com.grahambartley.nightborn.servant;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
