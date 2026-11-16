@@ -1,0 +1,6 @@
+{
+  "parent": "nightborn:item/template_coffin",
+  "textures": {
+    "particle": "nightborn:block/gothic_stone_bricks"
+  }
+}

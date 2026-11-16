@@ -2,9 +2,9 @@ package com.grahambartley.nightborn.gametest;
 
 import com.grahambartley.nightborn.coffin.CoffinBlock;
 import com.grahambartley.nightborn.coffin.CoffinLayout;
+import com.grahambartley.nightborn.coffin.CoffinMaterial;
 import com.grahambartley.nightborn.coffin.CoffinRise;
 import com.grahambartley.nightborn.coffin.CoffinSleepers;
-import com.grahambartley.nightborn.coffin.CoffinWood;
 import com.grahambartley.nightborn.coffin.Coffins;
 import com.grahambartley.nightborn.coffin.RiseRules;
 import com.grahambartley.nightborn.core.NightTime;
@@ -78,17 +78,17 @@ public class StandingCoffinGameTest implements FabricGameTest {
           for (int i = 0; i < facings.length; i++) {
             placer.setYaw(facings[i].asRotation());
             context.useStackOnBlock(
-                placer, new ItemStack(Coffins.get(CoffinWood.OAK)), spots[i], Direction.UP);
+                placer, new ItemStack(Coffins.get(CoffinMaterial.OAK)), spots[i], Direction.UP);
             final BlockPos foot = spots[i].up();
             final BlockState footState = context.getBlockState(foot);
             final BlockState headState = context.getBlockState(foot.up());
             context.assertTrue(
-                footState.isOf(Coffins.get(CoffinWood.OAK))
+                footState.isOf(Coffins.get(CoffinMaterial.OAK))
                     && footState.get(BedBlock.PART) == BedPart.FOOT
                     && footState.get(CoffinBlock.STANDING),
                 "the foot stands on the floor facing " + facings[i] + ", got " + footState);
             context.assertTrue(
-                headState.isOf(Coffins.get(CoffinWood.OAK))
+                headState.isOf(Coffins.get(CoffinMaterial.OAK))
                     && headState.get(BedBlock.PART) == BedPart.HEAD
                     && headState.get(CoffinBlock.STANDING),
                 "the head stands on the foot facing " + facings[i] + ", got " + headState);
@@ -114,14 +114,14 @@ public class StandingCoffinGameTest implements FabricGameTest {
           placer.setSneaking(false);
           placer.setYaw(Direction.NORTH.asRotation());
           context.useStackOnBlock(
-              placer, new ItemStack(Coffins.get(CoffinWood.OAK)), floor, Direction.UP);
+              placer, new ItemStack(Coffins.get(CoffinMaterial.OAK)), floor, Direction.UP);
           final BlockState foot = context.getBlockState(floor.up());
           final BlockState head = context.getBlockState(floor.up().north());
           context.assertTrue(
-              foot.isOf(Coffins.get(CoffinWood.OAK)) && !foot.get(CoffinBlock.STANDING),
+              foot.isOf(Coffins.get(CoffinMaterial.OAK)) && !foot.get(CoffinBlock.STANDING),
               "the foot lies flat, got " + foot);
           context.assertTrue(
-              head.isOf(Coffins.get(CoffinWood.OAK)) && head.get(BedBlock.PART) == BedPart.HEAD,
+              head.isOf(Coffins.get(CoffinMaterial.OAK)) && head.get(BedBlock.PART) == BedPart.HEAD,
               "the head lies flat beyond it, got " + head);
           context.assertTrue(context.getBlockState(floor.up(2)).isAir(), "nothing stands up");
           TestPlayers.finish(context, placer);
@@ -139,7 +139,7 @@ public class StandingCoffinGameTest implements FabricGameTest {
           placer.setSneaking(true);
           placer.setYaw(Direction.NORTH.asRotation());
           context.useStackOnBlock(
-              placer, new ItemStack(Coffins.get(CoffinWood.OAK)), floor, Direction.UP);
+              placer, new ItemStack(Coffins.get(CoffinMaterial.OAK)), floor, Direction.UP);
           context.assertTrue(
               context.getBlockState(floor.up()).isAir(),
               "a coffin with no room to stand is not placed");

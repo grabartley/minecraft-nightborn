@@ -273,28 +273,71 @@ public class VampireMobGameTest implements FabricGameTest {
   }
 
   @GameTest(templateName = YARD, batchId = DAWN_BATCH, skyAccess = true, tickLimit = 40)
-  public void aVampireMobSeeksShadeAsDawnNears(final TestContext context) {
-    for (int x = 0; x <= 8; x++) {
-      for (int z = 0; z <= 3; z++) {
-        context.setBlockState(new BlockPos(x, 4, z), Blocks.STONE);
-      }
-    }
+  public void aVampireMobHeadsForTheNearestShadeAsDawnNears(final TestContext context) {
+    roof(context, 0, 3);
     final VampireEntity vampire = still(context, new BlockPos(4, 2, 7));
     context.runAtTick(
         LIGHT_SETTLED,
         () -> {
           context.assertTrue(ShadeRules.endangered(vampire), "open sky before dawn is a danger");
-          final SeekShadeGoal goal = new SeekShadeGoal(vampire, 1.3);
-          Vec3d shade = null;
-          for (int i = 0; i < TRIES && shade == null; i++) {
-            shade = goal.locateShadedPos();
-          }
-          context.assertTrue(shade != null, "the vampire mob finds shade");
-          final BlockPos head = BlockPos.ofFloored(shade).up();
+          assertHeadsFor(context, vampire, new BlockPos(4, 2, 3));
+        });
+  }
+
+  @GameTest(templateName = YARD, batchId = DAWN_BATCH, skyAccess = true, tickLimit = 40)
+  public void aVampireMobPassesShadeItCannotReach(final TestContext context) {
+    for (int y = 2; y <= 4; y++) {
+      for (int x = 3; x <= 7; x++) {
+        for (int z = 0; z <= 4; z++) {
+          final boolean inside = y < 4 && x > 3 && x < 7 && z > 0 && z < 4;
+          context.setBlockState(new BlockPos(x, y, z), inside ? Blocks.AIR : Blocks.STONE);
+        }
+      }
+    }
+    roof(context, 7, 8);
+    final VampireEntity vampire = still(context, new BlockPos(1, 2, 1));
+    context.runAtTick(
+        LIGHT_SETTLED,
+        () -> {
           context.assertFalse(
-              context.getWorld().isSkyVisible(head), "the spot it picks is under cover: " + head);
+              context.getWorld().isSkyVisible(context.getAbsolutePos(new BlockPos(5, 3, 2))),
+              "the sealed room is shaded");
+          final BlockPos target = startSeekingShade(context, vampire);
+          final BlockPos spot = context.getRelativePos(target);
+          final boolean inRoom =
+              spot.getX() > 3 && spot.getX() < 7 && spot.getZ() > 0 && spot.getZ() < 4;
+          context.assertFalse(inRoom, "it passes the sealed room it cannot walk into: " + spot);
+          context.assertFalse(
+              context.getWorld().isSkyVisible(target.up()), "it heads for cover: " + spot);
           context.complete();
         });
+  }
+
+  private static void roof(final TestContext context, final int fromZ, final int toZ) {
+    for (int x = 0; x <= 8; x++) {
+      for (int z = fromZ; z <= toZ; z++) {
+        context.setBlockState(new BlockPos(x, 4, z), Blocks.STONE);
+      }
+    }
+  }
+
+  private static void assertHeadsFor(
+      final TestContext context, final VampireEntity vampire, final BlockPos shade) {
+    context.assertEquals(
+        startSeekingShade(context, vampire),
+        context.getAbsolutePos(shade),
+        "it heads for the nearest shade it can reach");
+    context.complete();
+  }
+
+  private static BlockPos startSeekingShade(
+      final TestContext context, final VampireEntity vampire) {
+    final SeekShadeGoal goal = new SeekShadeGoal(vampire, 1.3);
+    vampire.setOnGround(true);
+    context.assertTrue(goal.canStart(), "the vampire mob finds shade it can reach");
+    goal.start();
+    context.assertTrue(goal.shouldContinue(), "it keeps going while the sky is open");
+    return vampire.getNavigation().getTargetPos();
   }
 
   @GameTest(templateName = YARD, batchId = DAWN_BATCH, skyAccess = true, tickLimit = 20)

@@ -139,7 +139,7 @@ public class CoffinOwnershipGameTest implements FabricGameTest {
           context.assertFalse(
               stranger.interactionManager.tryBreakBlock(context.getAbsolutePos(strangers)),
               "a survival stranger cannot break it");
-          context.expectBlock(CoffinStage.wood(), strangers);
+          context.expectBlock(CoffinStage.darkOak(), strangers);
           context.assertEquals(
               owner(context, strangers), Optional.of(owners[0]), "the coffin stays assigned");
           builder.changeGameMode(GameMode.CREATIVE);
@@ -249,14 +249,14 @@ public class CoffinOwnershipGameTest implements FabricGameTest {
           world.createExplosion(
               creeper, center.x, center.y, center.z, BLAST_POWER, World.ExplosionSourceType.MOB);
           creeper.discard();
-          context.expectBlock(CoffinStage.wood(), assigned);
-          context.expectBlock(CoffinStage.wood(), assigned.west());
+          context.expectBlock(CoffinStage.darkOak(), assigned);
+          context.expectBlock(CoffinStage.darkOak(), assigned.west());
           context.expectBlock(Blocks.AIR, free);
           final WitherEntity wither = EntityType.WITHER.create(world);
           context.assertFalse(
               world.breakBlock(context.getAbsolutePos(struck), true, wither),
               "a wither cannot break an assigned coffin");
-          context.expectBlock(CoffinStage.wood(), struck);
+          context.expectBlock(CoffinStage.darkOak(), struck);
           context.complete();
         });
   }
@@ -279,8 +279,8 @@ public class CoffinOwnershipGameTest implements FabricGameTest {
     context.runAtTick(
         TestPlayers.READY + 10,
         () -> {
-          context.expectBlock(CoffinStage.wood(), assigned);
-          context.expectBlock(CoffinStage.wood(), assigned.west());
+          context.expectBlock(CoffinStage.darkOak(), assigned);
+          context.expectBlock(CoffinStage.darkOak(), assigned.west());
           context.expectBlock(Blocks.PISTON_HEAD, free);
           context.expectBlock(Blocks.AIR, free.west());
           context.checkBlockState(

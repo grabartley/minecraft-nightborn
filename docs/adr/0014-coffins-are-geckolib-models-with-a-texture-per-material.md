@@ -13,9 +13,11 @@ ADR 0010 drew each coffin cell as a plain block model and swung the lid with a h
 
 The coffin is one GeckoLib model covering both cells, made in Blockbench through the `bbmodel` MCP, with `open` and `close` clips for the lid and `opened` and `closed` holds. The head cell's block entity plays them from the `open` block state the way furniture does (ADR 0003). The foot cell draws nothing.
 
-The model's bones are grouped by material, named `_wood`, `_velvet` and `_gold`. Every face carries its own UV in 16 by 16 texture space, so the renderer binds a texture per bone:
+Each coffin style has its own model and clips: one for wood and one for stone, whose lid slides aside instead of swinging. `CoffinMaterial` names each coffin's style and the block it is made from.
 
-- wood bones draw the wood's own vanilla planks, so each wood looks like its planks under any resource pack
+The model's bones are grouped by material, named `_wood`, `_stone`, `_velvet` and `_gold`. Every face carries its own UV in 16 by 16 texture space, so the renderer binds a texture per bone:
+
+- wood and stone bones draw the source block's own texture, planks or bricks, so each coffin looks like its block under any resource pack
 - velvet bones draw the mod's burgundy velvet
 - gold bones draw vanilla's raw gold block
 
@@ -25,7 +27,7 @@ A standing coffin is the same model turned upright about the head cell, as the b
 
 ## Consequences
 
-- A new wood still needs no art: one line in `CoffinWood`, its block model, item model and blockstate, which only name the planks for particles, a loot table, a recipe, the axe tag and a name in each language.
+- A new wood or stone still needs no art: one line in `CoffinMaterial`, its block model, item model and blockstate, which only name the source block for particles, a loot table, a recipe, the axe or pickaxe tag and a name in each language.
 - The lid's motion and timing live in the clip. The lid's 10-tick swing in `LidMotion` still decides when a sleeper is hidden, and a unit test holds the clip lengths to it.
 - The coffin is up to 22 pixels wide with its handles, so two coffins placed side by side overlap a little. Its hit box stays inside its two cells.
 - Like a vanilla bed or chest, a coffin shows no cracks while it is being broken.
