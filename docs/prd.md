@@ -142,7 +142,7 @@ This document specifies the Nightborn alpha line for Minecraft 1.21.1 on Fabric.
 | Stage | How old and strong a vampire mob is: fledgling, adult, elder or ancient |
 | Hungry | A vampire mob whose blood has fallen below its hunger threshold |
 | Relic | A rare item found in a castle, crypt, ruined manor or underground lair, used in the ritual |
-| The Eldest | A boss vampire with every vampire skill, a man or a woman, summoned by the ritual or met once at the top of a mountain castle |
+| The Eldest | A boss vampire with every vampire skill (RITE-3, HOME-23) |
 | Vampire structure | A castle, mountain castle, crypt, ruined manor or underground lair, home to a household |
 | Hunter camp | A generated camp of hunter mobs, home to a Guild Master |
 | Faction | Vampire or human. Every player is in exactly one |
@@ -436,7 +436,7 @@ Vampires are rare. They live in households hidden in five kinds of structure, ea
 | Structure | Where | Household |
 |---|---|---|
 | Castle | Dark forests, old growth taiga, taiga, birch forests, swamps and mangrove swamps, never on mountains | A vampire lord and their court, coffins, blood fountains and rich loot |
-| Mountain castle | The summits of windswept hills, windswept gravelly hills, windswept forests, jagged peaks, stony peaks, frozen peaks and snowy slopes, by far the rarest | Twenty elder and ancient vampires and the Eldest in the highest room, and the best loot |
+| Mountain castle | The highest ground of windswept hills, windswept gravelly hills, windswept forests, jagged peaks, stony peaks, frozen peaks and snowy slopes, by far the rarest | Twenty elder and ancient vampires and the Eldest in the highest room, and the best loot |
 | Crypt | Under a church in or near a village, or in a graveyard | A few vampires below a working church |
 | Ruined manor | Dark forests | A vampire family in an overgrown house |
 | Underground lair | Deep caves, where no sun reaches | A den around a blood pool |
@@ -444,7 +444,7 @@ Vampires are rare. They live in households hidden in five kinds of structure, ea
 | ID | Requirement |
 |---|---|
 | HOME-1 | Each structure type generates rarely, in biomes that suit it, and blends into the land around it |
-| HOME-2 | Each structure holds several vampires, and by default a mountain castle twenty-one (HOME-22) |
+| HOME-2 | Each structure holds several vampires. A mountain castle holds twenty-one by default (HOME-22) |
 | HOME-3 | Each type has several layouts, chosen at random |
 | HOME-4 | Fog hangs around and inside every vampire structure, thicker near its heart |
 | HOME-5 | A household feels lived in: its vampires have their own personality and hobbies, talk to and argue with each other, react to each other's deaths, follow a nightly routine and use the furniture of their home: chairs, candles, drapes, books and gramophones. At dusk a household gathers at its heart, lights its candles and opens its drapes. Through the night each vampire sits, reads, talks with a housemate or wanders the house as its temperament leans, and a hot temper on either side turns talk into an argument. Before dawn they put out the candles and draw the drapes. A vampire whose housemate dies within reach mourns it for a while, even one asleep in its coffin |
@@ -463,11 +463,11 @@ Vampires are rare. They live in households hidden in five kinds of structure, ea
 | HOME-18 | Vampire mobs are men and women in at least 10 looks, from 1.5 to 2 blocks tall in slim, average and broad builds. Their hitbox, eye height and reach follow their size. Outfits are chosen by era (LOOK-4). A vampire keeps its look and size for life, the same on every client, and an older stage reads as older |
 | HOME-19 | Vampire mobs bare their fangs and hiss, with animation and sound, when they notice a threat, are provoked, face garlic or a crucifix, or are about to strike. They have their own idle, hurt, death, talk and argue voices, male and female, pitched by size |
 | HOME-20 | Vampire structures hold gramophones loaded with gothic music discs (DECOR-8). Each starts its disc now and then while a player is near, and its disc can be taken. A gramophone's music never plays over other music the mod or the game plays for the same player |
-| HOME-21 | A mountain castle is a vast stone castle that grows out of the summit of a large mountain. Sheer pale walls rise straight from the rock, with round and square towers under steep red-brown conical and hipped roofs, battlements, small deep windows and timbered upper floors. Courtyards, stairs and walkways climb from its gate to one tall keep, and in cold biomes snow lies on its roofs and ledges. It generates only on the highest ground of the biomes the table above lists, far less often than any other vampire structure |
+| HOME-21 | A mountain castle is a vast stone castle that grows out of the summit of a large mountain. Sheer pale walls rise straight from the rock, with round and square towers under steep red-brown conical and hipped roofs, battlements, small deep windows and timbered upper floors. Courtyards, stairs and walkways climb from its gate to one tall keep, and in cold biomes snow lies on its roofs and ledges. It generates only on the highest ground of the biomes the table above lists |
 | HOME-22 | A mountain castle's household is, by default, twenty elder and ancient vampires, about three elders to every ancient, and the Eldest (HOME-12) |
-| HOME-23 | The highest room of a mountain castle's keep belongs to the Eldest, a man or a woman at even odds, with the skills, boss bar and health of RITE-3 and the fight of RITE-4. It sleeps by day in its own coffin in that room and never leaves the castle to feed. If it escapes, it goes back to that room by the next night. Ending it needs no ritual and no relic, and gives what RITE-6 says. Once a stake or the sun ends it, that castle never has an Eldest again |
+| HOME-23 | The highest room of a mountain castle's keep belongs to the Eldest of RITE-3, who fights as RITE-4 says and treats players as RITE-7 says. It sleeps by day in its own coffin in that room, keeps to that room at night, takes no part in the household's routine (HOME-5) and never leaves the castle to feed. If it escapes, it goes back to that room by the next night. Ending it needs no ritual and no relic, and gives what RITE-6 says. Once a stake or the sun ends it, that castle never has an Eldest again |
 
-**Not supported:** a household rebuilding after it is cleared; vampire mobs spawning outside their structures; a mountain castle's Eldest coming back once it is ended.
+**Not supported:** a household rebuilding after it is cleared; vampire mobs spawning outside their structures.
 
 **Enforcement:** server.
 
@@ -604,12 +604,12 @@ The mod has its own tab, lined with tufted burgundy leather and brass studs. It 
 
 **Actor:** Human, hunter.
 
-The Eldest is the oldest vampire there is, with every power of every bloodline. It appears when the ritual calls it, and once at the top of every mountain castle (HOME-23). A hunter who has raided a castle, a crypt, a ruined manor and an underground lair brings one relic from each to a ritual altar at night, and the Eldest comes.
+The Eldest is among the oldest vampires there are, with every power of every bloodline. It appears when the ritual calls it, and once at the top of every mountain castle (HOME-23). A hunter who has raided a castle, a crypt, a ruined manor and an underground lair brings one relic from each to a ritual altar at night, and the Eldest comes.
 
 | ID | Requirement |
 |---|---|
 | RITE-1 | Each vampire structure type but the mountain castle has a relic of its own: a castle, a crypt, a ruined manor and an underground lair. It has a chance to be found in that structure's loot or dropped by its older vampires |
-| RITE-2 | A ritual altar is crafted. Placing one relic of every type on it and using it at night starts the ritual, with a build-up everyone near can see and hear |
+| RITE-2 | A ritual altar is crafted. Placing one of each relic (RITE-1) on it and using it at night starts the ritual, with a build-up everyone near can see and hear |
 | RITE-3 | The ritual summons the Eldest beside the altar: a vampire, a man or a woman at even odds, with every skill in the vampire tree, all three bloodlines at once, using every power as HOME-16 says. It has a boss bar, and is a boss for MIND-4. Its health grows with the number of players near |
 | RITE-4 | The Eldest is downed and escapes like any vampire, and only a stake or the sun ends it (CORE-7, CORE-8). Its bar shows when it is downed or escaping |
 | RITE-5 | The ritual uses up the relics. The altar can be used again with a new set, so the fight can be repeated |
