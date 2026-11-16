@@ -21,7 +21,7 @@ public final class ManorFront {
   public static final int PORCH_ROOF = F0 + 5;
   public static final int STEP_Z = PORCH_S + 1;
   public static final int STEPS_END = STEP_Z + F0 - 1;
-  public static final String STONE_FILL = "nightborn:gothic_stone_bricks";
+  public static final String STONE_FILL = "stone_bricks";
   public static final int BAY_W = 15;
   public static final int BAY_E = 19;
   public static final int BAY_S = WING_S + 2;

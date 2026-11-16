@@ -35,12 +35,12 @@ class ManorShellTest {
 
   @ParameterizedTest(name = "y {0} of the outer wall is {1}")
   @CsvSource({
-    "0, gothic_stone_bricks",
-    "3, gothic_stone_bricks",
+    "0, stone_bricks",
+    "3, stone_bricks",
     "6, minecraft:bricks",
-    "9, gothic_stone_bricks",
+    "9, stone_bricks",
     "12, minecraft:bricks",
-    "14, gothic_stone_bricks"
+    "14, stone_bricks"
   })
   void wallsCarryStoneBands(final int y, final String block) {
     assertTrue(shell.get(30, y, Manor.MAIN_N).contains(block), shell.get(30, y, Manor.MAIN_N));

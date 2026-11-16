@@ -19,8 +19,7 @@ public final class Ivy {
 
   public static boolean climbs(final String state) {
     return state != null
-        && (state.startsWith("minecraft:bricks")
-            || state.startsWith("nightborn:") && state.contains("gothic_stone_bricks"));
+        && (state.startsWith("minecraft:bricks") || state.contains("stone_bricks"));
   }
 
   public static int height(final int x, final int z) {

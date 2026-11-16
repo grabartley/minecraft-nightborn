@@ -15,6 +15,7 @@ class IvyTest {
     "minecraft:bricks, true",
     "nightborn:gothic_stone_bricks, true",
     "nightborn:mossy_gothic_stone_bricks, true",
+    "minecraft:mossy_stone_bricks, true",
     "minecraft:glass_pane, false",
     "minecraft:dark_oak_planks, false",
     "minecraft:deepslate_tiles, false"

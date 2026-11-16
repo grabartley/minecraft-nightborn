@@ -56,7 +56,7 @@ class TurretTest {
   @CsvSource({
     "true, 38, 20, air, 4",
     "true, 38, 20, bricks, 7",
-    "true, 38, 20, gothic_stone_bricks, 9",
+    "true, 38, 20, stone_bricks, 9",
     "true, 38, 20, air, 11",
     "true, 38, 20, bricks, 16",
     "true, 37, 21, bricks, 4",

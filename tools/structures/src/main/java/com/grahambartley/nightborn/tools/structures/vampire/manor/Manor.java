@@ -34,14 +34,10 @@ public final class Manor {
 
   public static final Stone BRICK = new Stone("bricks", "bricks", "bricks", 0);
   public static final Stone DRESSING =
-      new Stone(
-          "nightborn:gothic_stone_bricks",
-          "nightborn:mossy_gothic_stone_bricks",
-          "nightborn:cracked_gothic_stone_bricks",
-          24);
-  public static final String TRIM = "nightborn:gothic_stone_brick_stairs";
-  public static final String TRIM_SLAB = "nightborn:gothic_stone_brick_slab";
-  public static final String TRIM_WALL = "nightborn:gothic_stone_brick_wall";
+      new Stone("stone_bricks", "mossy_stone_bricks", "cracked_stone_bricks", 24);
+  public static final String TRIM = "stone_brick_stairs";
+  public static final String TRIM_SLAB = "stone_brick_slab";
+  public static final String TRIM_WALL = "stone_brick_wall";
   public static final Roof.Cover SLATE =
       new Roof.Cover("deepslate_tile_stairs", "deepslate_tiles", "deepslate_tile_slab");
   public static final String STAINED = "nightborn:gothic_stained_glass_pane";
