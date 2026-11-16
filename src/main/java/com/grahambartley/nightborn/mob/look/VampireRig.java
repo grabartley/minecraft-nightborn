@@ -30,6 +30,10 @@ public enum VampireRig implements StringIdentifiable {
     return MathHelper.lerp((float) MathHelper.clamp(roll, 0.0, 1.0), smallestBust, largestBust);
   }
 
+  public float middleBust() {
+    return bust(0.5);
+  }
+
   public float fitBust(final float bust) {
     return MathHelper.clamp(bust, smallestBust, largestBust);
   }

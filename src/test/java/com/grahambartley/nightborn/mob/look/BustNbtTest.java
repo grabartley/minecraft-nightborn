@@ -31,8 +31,8 @@ class BustNbtTest {
 
   @ParameterizedTest(name = "{0}")
   @EnumSource(VampireRig.class)
-  @DisplayName("a body saved before busts existed loads flat")
-  void oldSavesLoadFlat(final VampireRig rig) {
-    assertEquals(Figure.FLAT, BustNbt.read(new NbtCompound(), rig), TOLERANCE);
+  @DisplayName("a body saved before busts existed loads at the middle of its rig's range")
+  void oldSavesLoadAtTheMiddle(final VampireRig rig) {
+    assertEquals(rig.middleBust(), BustNbt.read(new NbtCompound(), rig), TOLERANCE);
   }
 }

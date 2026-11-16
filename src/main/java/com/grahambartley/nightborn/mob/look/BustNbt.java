@@ -13,6 +13,6 @@ public final class BustNbt {
   }
 
   public static float read(final NbtCompound nbt, final VampireRig rig) {
-    return rig.fitBust(nbt.contains(KEY) ? nbt.getFloat(KEY) : Figure.FLAT);
+    return rig.fitBust(nbt.contains(KEY) ? nbt.getFloat(KEY) : rig.middleBust());
   }
 }
