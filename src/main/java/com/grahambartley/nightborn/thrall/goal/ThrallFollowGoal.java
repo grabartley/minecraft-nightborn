@@ -62,7 +62,11 @@ public class ThrallFollowGoal extends Goal {
       return;
     }
     repath = getTickCount(REPATH_TICKS);
-    if (FollowRules.teleports(thrall.distanceTo(owner))) {
+    if (FollowRules.teleports(
+            thrall.distanceTo(owner), owner.isOnGround(), owner.isInLava() || owner.isOnFire())
+        && thrall
+            .getWorld()
+            .isSpaceEmpty(thrall, thrall.getType().getDimensions().getBoxAt(owner.getPos()))) {
       thrall.refreshPositionAndAngles(
           owner.getX(), owner.getY(), owner.getZ(), thrall.getYaw(), thrall.getPitch());
       thrall.getNavigation().stop();

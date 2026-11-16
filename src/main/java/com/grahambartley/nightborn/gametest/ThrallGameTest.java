@@ -207,6 +207,11 @@ public class ThrallGameTest implements FabricGameTest {
           context.assertTrue(goal.canStart(), "the thrall found someone to fight");
           goal.start();
           context.assertTrue(thrall.getTarget() == zombie, "it went for the zombie");
+          thrall.setTarget(null);
+          owner.age += 200;
+          context.assertFalse(
+              new ThrallTargetGoal(thrall).canStart(),
+              "long after the owner's blow the thrall leaves the zombie be");
           TestPlayers.finish(context, owner);
         });
   }

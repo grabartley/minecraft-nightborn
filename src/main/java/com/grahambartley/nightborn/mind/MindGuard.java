@@ -7,7 +7,8 @@ public final class MindGuard {
   public static boolean blocks(
       final boolean attackerMesmerised,
       final boolean attackerIsPlayer,
-      final boolean mesmerisedByVictim) {
-    return attackerMesmerised && (!attackerIsPlayer || mesmerisedByVictim);
+      final boolean mesmerisedByVictim,
+      final boolean explosion) {
+    return attackerMesmerised && !explosion && (!attackerIsPlayer || mesmerisedByVictim);
   }
 }

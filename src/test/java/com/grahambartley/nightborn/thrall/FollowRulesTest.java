@@ -28,11 +28,19 @@ class FollowRulesTest {
     assertEquals(keeps, FollowRules.keepsFollowing(mode, here, distance));
   }
 
-  @ParameterizedTest(name = "{0} blocks -> {1}")
-  @CsvSource({"10.0, false", "24.0, false", "24.5, true", "100.0, true"})
-  @DisplayName("a thrall left far behind catches up at once")
-  void teleports(final double distance, final boolean expected) {
-    assertEquals(expected, FollowRules.teleports(distance));
+  @ParameterizedTest(name = "{0} blocks, owner on ground {1}, in danger {2} -> {3}")
+  @CsvSource({
+    "10.0, true, false, false",
+    "24.0, true, false, false",
+    "24.5, true, false, true",
+    "100.0, true, false, true",
+    "100.0, false, false, false",
+    "100.0, true, true, false"
+  })
+  @DisplayName("a thrall left far behind catches up at once, but only to safe ground")
+  void teleports(
+      final double distance, final boolean onGround, final boolean danger, final boolean expected) {
+    assertEquals(expected, FollowRules.teleports(distance, onGround, danger));
   }
 
   @ParameterizedTest(name = "{0}, {1} from post -> {2}")

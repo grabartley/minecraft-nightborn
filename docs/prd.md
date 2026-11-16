@@ -353,7 +353,7 @@ The core starts with Thick Blood (more health), Grave Strength (harder blows) an
 
 | ID | Requirement |
 |---|---|
-| MIND-1 | Mesmerise is a power: the vampire stares at a mob, villager or player in sight and in range for a moment, and if the stare holds, the target is mesmerised. A mesmerised mob stands still and cannot attack |
+| MIND-1 | Mesmerise is a power: the vampire stares at a mob, villager or player in sight and in range for a moment, and if the stare holds, the target is mesmerised. The blood and cooldown are spent when the stare begins, even if it breaks. A mesmerised mob stands still and cannot attack |
 | MIND-2 | A mesmerised villager can be charmed by talking to it: for a while it trades with that vampire as with a hero of the village. Silver Tongue gives the charm, as the `nightborn:charm` attribute |
 | MIND-3 | A mesmerised player is slowed and cannot hurt the vampire who mesmerised them for a short time. They are never frozen |
 | MIND-4 | Bosses cannot be mesmerised. Hunter skills resist it (HUNT-4) |

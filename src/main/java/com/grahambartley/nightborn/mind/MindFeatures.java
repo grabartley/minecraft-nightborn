@@ -7,6 +7,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.registry.tag.DamageTypeTags;
 
 public final class MindFeatures {
 
@@ -39,6 +40,7 @@ public final class MindFeatures {
         || !MindGuard.blocks(
             MindTies.mesmerised(attacker),
             attacker instanceof PlayerEntity,
-            MindTies.mesmerisedBy(attacker, victim));
+            MindTies.mesmerisedBy(attacker, victim),
+            source.isIn(DamageTypeTags.IS_EXPLOSION));
   }
 }

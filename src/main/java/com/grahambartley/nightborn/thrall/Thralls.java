@@ -83,6 +83,7 @@ public final class Thralls {
     villager.releaseTicketFor(MemoryModuleType.POTENTIAL_JOB_SITE);
     villager.releaseTicketFor(MemoryModuleType.MEETING_POINT);
     thrall.bind(vampire.getUuid(), data, memory);
+    thrall.setHealth(villager.getHealth());
     registry.bind(vampire.getUuid(), thrall.getUuid());
     final ServerWorld world = vampire.getServerWorld();
     world.spawnParticles(
@@ -128,6 +129,7 @@ public final class Thralls {
     if (villager != null) {
       villager.setVillagerData(data);
       thrall.memory().restore(villager);
+      villager.setHealth(thrall.getHealth());
     }
   }
 }

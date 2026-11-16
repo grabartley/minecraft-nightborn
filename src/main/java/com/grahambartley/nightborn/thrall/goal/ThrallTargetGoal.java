@@ -51,7 +51,8 @@ public class ThrallTargetGoal extends TrackTargetGoal {
       if (allowed(owner.getAttacker())) {
         return owner.getAttacker();
       }
-      if (allowed(owner.getAttacking())) {
+      if (TargetRules.ownerStillFighting(owner.age, owner.getLastAttackTime())
+          && allowed(owner.getAttacking())) {
         return owner.getAttacking();
       }
     }

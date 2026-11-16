@@ -19,8 +19,9 @@ public final class FollowRules {
     return mode == ThrallMode.FOLLOW && ownerHere && distance > STOP_DISTANCE;
   }
 
-  public static boolean teleports(final double distance) {
-    return distance > TELEPORT_DISTANCE;
+  public static boolean teleports(
+      final double distance, final boolean ownerOnGround, final boolean ownerInDanger) {
+    return distance > TELEPORT_DISTANCE && ownerOnGround && !ownerInDanger;
   }
 
   public static boolean returnsToPost(final ThrallMode mode, final double distanceFromPost) {
