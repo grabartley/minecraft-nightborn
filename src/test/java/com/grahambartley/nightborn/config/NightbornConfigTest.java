@@ -79,6 +79,7 @@ class NightbornConfigTest {
             "wards",
             "factions",
             "skills",
+            "minds",
             "gear",
             "coatings",
             "clothing",

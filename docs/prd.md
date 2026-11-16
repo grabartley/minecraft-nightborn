@@ -353,13 +353,13 @@ The core starts with Thick Blood (more health), Grave Strength (harder blows) an
 
 | ID | Requirement |
 |---|---|
-| MIND-1 | Staring at a mob or villager for a moment mesmerises it: it stands still and cannot attack |
-| MIND-2 | A mesmerised villager can be charmed: it trades as if the vampire were a hero of the village for a while |
-| MIND-3 | A mesmerised player is slowed and cannot attack the vampire for a short time. They are never frozen |
+| MIND-1 | Mesmerise is a power: the vampire stares at a mob, villager or player in sight and in range for a moment, and if the stare holds, the target is mesmerised. A mesmerised mob stands still and cannot attack |
+| MIND-2 | A mesmerised villager can be charmed by talking to it: for a while it trades with that vampire as with a hero of the village. Silver Tongue gives the charm, as the `nightborn:charm` attribute |
+| MIND-3 | A mesmerised player is slowed and cannot hurt the vampire who mesmerised them for a short time. They are never frozen |
 | MIND-4 | Bosses cannot be mesmerised. Hunter skills resist it (HUNT-4) |
 | MIND-5 | Sipping from a mesmerised villager can make it a thrall. A thrall follows its owner and fights for them |
-| MIND-6 | A thrall can be told to follow, stay or guard a place |
-| MIND-7 | A vampire has a limit on thralls, raised by Noble skills |
+| MIND-6 | A thrall can be told to follow, stay or guard a place. Its owner gives the order by using it with an empty hand, and a guard fights monsters near its post |
+| MIND-7 | A vampire has a limit on thralls, raised by Noble skills: Blood Bond allows one and Dark Court two more, as the `nightborn:thrall_limit` attribute |
 | MIND-8 | A thrall whose owner dies stays where it is until they return |
 
 **Not supported:** mesmerising through walls.
@@ -548,7 +548,7 @@ Vampires are rare. They live in households hidden in four kinds of structure, ea
 | CFG-2 | Settings are saved per world as JSON in the world save directory |
 | CFG-3 | A missing file gives defaults. A broken file gives defaults, is logged and is kept |
 | CFG-4 | Out-of-range values are clamped on load |
-| CFG-5 | Options cover turn chances, sickness length, sun damage, blood drain and values, garlic and crucifix ranges, skill point rates, the staking penalty, stake and silver damage, the damage, hits, time and weakening of each weapon coating, the downed and escape times, the damage from vomiting food or potions, the blood drain while levitating, how fast starving weakens and hurts and how much it takes from night gifts and bare hands, the coffin sleep share, hardcore vampire deaths, spawn and structure rates, vampire mob hunger threshold and blood drain, how often hungry vampire mobs go out to feed, how far they roam about home and how far a hurt one calls its housemates, how often vampire mobs rise to levitate and land, how far and how hard vampire mobs leap, dash and dodge and when they dodge, how long and how far they fall back and when they come again, feeding range and chase range, how often structure gramophones play, the rewards for older vampires and the Eldest, and whether players can turn players, whether Nocturne works and how strong Batwing, Gliding Step and Hush are |
+| CFG-5 | Options cover turn chances, sickness length, sun damage, blood drain and values, garlic and crucifix ranges, skill point rates, the staking penalty, stake and silver damage, the damage, hits, time and weakening of each weapon coating, the downed and escape times, the damage from vomiting food or potions, the blood drain while levitating, how fast starving weakens and hurts and how much it takes from night gifts and bare hands, the coffin sleep share, the chance a sip binds a thrall and how long a charm lasts, hardcore vampire deaths, spawn and structure rates, vampire mob hunger threshold and blood drain, how often hungry vampire mobs go out to feed, how far they roam about home and how far a hurt one calls its housemates, how often vampire mobs rise to levitate and land, how far and how hard vampire mobs leap, dash and dodge and when they dodge, how long and how far they fall back and when they come again, feeding range and chase range, how often structure gramophones play, the rewards for older vampires and the Eldest, and whether players can turn players, whether Nocturne works and how strong Batwing, Gliding Step and Hush are |
 | CFG-6 | A settings screen through Mod Menu shows the same server options and shares their validation with the commands |
 | CFG-7 | An option that only changes what one player sees, such as gore, is a client setting saved on that player's device. Every player can change it on the settings screen, whatever their operator level |
 | CFG-8 | Operators can turn, cure, set points and reset the bloodlines of any player |
@@ -648,7 +648,7 @@ A modified client is assumed. Hiding a control is never the enforcement of a rul
 |---|---|
 | PERM-1 | Every action in the matrix is checked on the server |
 | PERM-2 | A skill purchase is checked on the server for points, order and bloodline limit |
-| PERM-3 | A thrall or familiar whose owner leaves the server keeps its owner. An operator can release it |
+| PERM-3 | A thrall or familiar whose owner leaves the server keeps its owner. An operator can release it, with `/nightborn thrall release` for thralls |
 | PERM-4 | Operator actions on another player are logged |
 
 ## 7. Client And Server

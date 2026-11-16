@@ -33,6 +33,7 @@ class SkillPowerTest {
     assertEquals(160, power.effects().get(0).getDuration());
     assertTrue(power.sound().isPresent());
     assertTrue(power.track().isEmpty());
+    assertTrue(power.mesmerise().isEmpty());
     assertTrue(power.mob().isEmpty());
   }
 
@@ -76,5 +77,19 @@ class SkillPowerTest {
       "a power costing more than a full blood bar, or with a negative cooldown, is rejected")
   void rejects(final String json) {
     assertFalse(SkillPower.CODEC.parse(JsonOps.INSTANCE, JsonParser.parseString(json)).isSuccess());
+  }
+
+  @Test
+  @DisplayName("a power can mesmerise whatever the caster stares at")
+  void mesmerises() {
+    final SkillPower power =
+        SkillPower.CODEC
+            .parse(
+                JsonOps.INSTANCE,
+                JsonParser.parseString(
+                    "{\"blood\":2,\"cooldown_ticks\":300,\"mesmerise\":{\"range\":12,\"stare_ticks\":20,\"duration_ticks\":200,\"player_duration_ticks\":60,\"player_slowness\":2}}"))
+            .getOrThrow();
+    assertEquals(20, power.mesmerise().orElseThrow().stareTicks());
+    assertTrue(power.effects().isEmpty());
   }
 }

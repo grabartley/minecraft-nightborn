@@ -11,6 +11,7 @@ import com.grahambartley.nightborn.sickness.BiteSicknessAttachment;
 import com.grahambartley.nightborn.skill.PowerCooldownAttachment;
 import com.grahambartley.nightborn.skill.PowerCooldowns;
 import com.grahambartley.nightborn.skill.SkillAttachment;
+import com.grahambartley.nightborn.thrall.Thralls;
 import com.grahambartley.nightborn.vampire.Vampires;
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.fabricmc.fabric.api.event.Event;
@@ -55,5 +56,6 @@ public final class HardcoreVampireDeath {
     }
     CoffinOwnership.release(player.server, player.getUuid());
     CoffinRespawn.clear(player);
+    Thralls.freeOwner(player);
   }
 }

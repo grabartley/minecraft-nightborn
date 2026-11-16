@@ -4,6 +4,7 @@
 	"compatibilityLevel": "JAVA_21",
 	"mixins": [
 		"BedBlockMixin",
+		"CreeperEntityMixin",
 		"CrossbowItemMixin",
 		"EnchantmentHelperMixin",
 		"EnderDragonEntityMixin",
@@ -21,6 +22,7 @@
 		"ServerWorldMixin",
 		"SleepManagerMixin",
 		"TippedArrowRecipeMixin",
+		"VillagerEntityMixin",
 		"WorldMixin"
 	],
 	"injectors": {

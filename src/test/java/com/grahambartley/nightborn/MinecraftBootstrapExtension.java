@@ -8,6 +8,8 @@ import com.grahambartley.nightborn.decor.DecorEntities;
 import com.grahambartley.nightborn.gear.GearBlocks;
 import com.grahambartley.nightborn.gear.GearItems;
 import com.grahambartley.nightborn.hunter.HunterAttributes;
+import com.grahambartley.nightborn.mind.MindAttributes;
+import com.grahambartley.nightborn.mind.MindEffect;
 import java.util.concurrent.atomic.AtomicBoolean;
 import net.minecraft.Bootstrap;
 import net.minecraft.SharedConstants;
@@ -30,6 +32,8 @@ public final class MinecraftBootstrapExtension implements BeforeAllCallback {
     Coffins.initialize();
     DecorEntities.initialize();
     HunterAttributes.register();
+    MindAttributes.register();
+    MindEffect.register();
     GearBlocks.initialize();
     GearItems.register();
     ClothingFeatures.register();

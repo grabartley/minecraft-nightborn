@@ -2,6 +2,8 @@ package com.grahambartley.nightborn.skill;
 
 import com.grahambartley.nightborn.blood.BloodAttachment;
 import com.grahambartley.nightborn.downed.Downed;
+import com.grahambartley.nightborn.mind.Gazes;
+import com.grahambartley.nightborn.mind.Mesmerise;
 import com.grahambartley.nightborn.network.UsePowerPayload;
 import com.grahambartley.nightborn.weakened.Weakened;
 import java.util.List;
@@ -64,7 +66,11 @@ public final class Powers {
             ? 0L
             : PowerCooldownAttachment.get(caster).ticksLeft(id, caster.getWorld().getTime()),
         BloodAttachment.get(caster),
-        power.map(SkillPower::blood).orElse(0));
+        power.map(SkillPower::blood).orElse(0),
+        power
+            .flatMap(SkillPower::mesmerise)
+            .filter(mesmerise -> Mesmerise.target(caster, mesmerise.range()) == null)
+            .isPresent());
   }
 
   public static PowerUse.Verdict cast(final LivingEntity caster, @Nullable final Identifier id) {
@@ -83,6 +89,11 @@ public final class Powers {
     for (final StatusEffectInstance effect : power.effects()) {
       caster.addStatusEffect(new StatusEffectInstance(effect), caster);
     }
+    power
+        .mesmerise()
+        .ifPresent(
+            mesmerise ->
+                Gazes.start(caster, Mesmerise.target(caster, mesmerise.range()), mesmerise));
     if (caster instanceof ServerPlayerEntity player) {
       power.track().ifPresent(track -> Tracking.start(player, track));
     }
