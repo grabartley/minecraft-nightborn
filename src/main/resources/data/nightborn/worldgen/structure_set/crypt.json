@@ -6,7 +6,7 @@
     "type": "nightborn:rare_spread",
     "rarity": "vampire_structures",
     "salt": 731904217,
-    "spacing": 40,
+    "spacing": 32,
     "separation": 18,
     "exclusion_zone": { "other_set": "minecraft:villages", "chunk_count": 6 },
     "near": { "other_set": "minecraft:villages", "chunk_count": 8 }
