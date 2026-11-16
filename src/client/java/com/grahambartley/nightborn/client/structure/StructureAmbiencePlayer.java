@@ -38,19 +38,28 @@ public final class StructureAmbiencePlayer {
 
   private static void playLoop(
       final MinecraftClient client, final Optional<Identifier> wanted, final float closeness) {
-    if (loop != null && (loop.isDone() || !wanted.equals(Optional.of(loopSound)))) {
-      loop.fadeOut();
-      loop = null;
+    final Optional<Identifier> playing = loop == null ? Optional.empty() : Optional.of(loopSound);
+    final boolean done = loop != null && loop.isDone();
+    switch (AmbienceMix.loopAction(playing, done, wanted, closeness)) {
+      case KEEP -> loop.aimAt(closeness);
+      case START -> start(client, wanted.get(), closeness);
+      case REPLACE -> {
+        loop.fadeOut();
+        start(client, wanted.get(), closeness);
+      }
+      case STOP -> {
+        loop.fadeOut();
+        loop = null;
+      }
+      case NOTHING -> loop = null;
     }
-    if (loop != null) {
-      loop.aimAt(closeness);
-      return;
-    }
-    if (wanted.isPresent() && closeness > 0.0F) {
-      loopSound = wanted.get();
-      loop = new AmbienceLoop(SoundEvent.of(loopSound), closeness);
-      client.getSoundManager().play(loop);
-    }
+  }
+
+  private static void start(
+      final MinecraftClient client, final Identifier sound, final float closeness) {
+    loopSound = sound;
+    loop = new AmbienceLoop(SoundEvent.of(sound), closeness);
+    client.getSoundManager().play(loop);
   }
 
   private static void maybeAdd(

@@ -108,8 +108,8 @@ public class VampireStructureGameTest implements FabricGameTest {
             "residents": { "type": "minecraft:uniform", "min_inclusive": 2, "max_inclusive": 4 }
           },
           "ambience": {
-            "loop": "nightborn:ambient.castle.loop",
-            "additions": { "sound": "nightborn:ambient.castle.additions", "tick_chance": 0.01 },
+            "ambient_sound": "nightborn:ambient.castle.loop",
+            "additions_sound": { "sound": "nightborn:ambient.castle.additions", "tick_chance": 0.01 },
             "music": { "sound": "nightborn:music.gothic", "min_delay": 600, "max_delay": 2400 }
           }
         }

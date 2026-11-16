@@ -35,7 +35,7 @@ public final class AmbienceLoop extends MovingSoundInstance {
   @Override
   public void tick() {
     volume = AmbienceMix.approach(volume, target);
-    if (volume <= 0.0F && target <= 0.0F) {
+    if (AmbienceMix.finished(volume, target)) {
       setDone();
     }
   }

@@ -21,9 +21,11 @@ public record StructureAmbience(
           instance ->
               instance
                   .group(
-                      Identifier.CODEC.optionalFieldOf("loop").forGetter(StructureAmbience::loop),
+                      Identifier.CODEC
+                          .optionalFieldOf("ambient_sound")
+                          .forGetter(StructureAmbience::loop),
                       AmbientAdditions.CODEC
-                          .optionalFieldOf("additions")
+                          .optionalFieldOf("additions_sound")
                           .forGetter(StructureAmbience::additions),
                       StructureMusic.CODEC
                           .optionalFieldOf("music")

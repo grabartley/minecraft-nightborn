@@ -45,8 +45,8 @@ class StructureAmbienceTest {
       delimiter = '|',
       value = {
         "{} | false | false | false",
-        "{\"loop\": \"nightborn:ambient.lair.loop\"} | true | false | false",
-        "{\"additions\": {\"sound\": \"nightborn:ambient.lair.additions\", \"tick_chance\": 0.0111}} | false | true | false",
+        "{\"ambient_sound\": \"nightborn:ambient.lair.loop\"} | true | false | false",
+        "{\"additions_sound\": {\"sound\": \"nightborn:ambient.lair.additions\", \"tick_chance\": 0.0111}} | false | true | false",
         "{\"music\": {\"sound\": \"nightborn:music.gothic\", \"min_delay\": 600, \"max_delay\": 2400}} | false | false | true"
       })
   @DisplayName("every part of a structure's ambience is optional")
