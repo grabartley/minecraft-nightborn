@@ -31,11 +31,11 @@ class PartsTest {
     }
   }
 
-  @ParameterizedTest(name = "a door's {0} half starts shut")
+  @ParameterizedTest(name = "a door's {0} half stands open for the household")
   @ValueSource(strings = {"lower", "upper"})
-  void doorsStartShut(final String half) {
+  void doorsStandOpen(final String half) {
     final String door = Parts.door(Manor.DOOR, "north", half, "left");
-    assertTrue(door.contains("half=" + half) && door.contains("open=false"), door);
+    assertTrue(door.contains("half=" + half) && door.contains("open=true"), door);
   }
 
   @ParameterizedTest(name = "a flight rising {0} from {1},{2} steps down one block a tread")

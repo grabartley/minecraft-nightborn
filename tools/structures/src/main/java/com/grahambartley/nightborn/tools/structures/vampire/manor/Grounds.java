@@ -96,8 +96,13 @@ public final class Grounds {
         for (int y = 2; y <= top; y++) {
           t.set(x, y, RAILING_Z, Manor.BRICK.at(x, y, RAILING_Z));
         }
-        t.set(x, top + 1, RAILING_Z, Parts.slab(Manor.TRIM_SLAB, "bottom"));
-        if (top == 4) {
+        final boolean gate = top == 4;
+        t.set(
+            x,
+            top + 1,
+            RAILING_Z,
+            gate ? "chiseled_stone_bricks" : Parts.slab(Manor.TRIM_SLAB, "bottom"));
+        if (gate) {
           t.set(x, top + 2, RAILING_Z, Parts.lantern(false));
         }
       } else {

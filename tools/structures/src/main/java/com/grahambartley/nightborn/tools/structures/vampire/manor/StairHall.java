@@ -109,7 +109,7 @@ public final class StairHall {
           t.set(x, y, z, Parts.fence());
         }
       }
-      t.set(x, F0 + 1, FLIGHT_FOOT, "stripped_dark_oak_log");
+      t.set(x, F0 + 1, FLIGHT_FOOT, Parts.log("dark_oak_log", "y"));
       t.set(x, F0 + 2, FLIGHT_FOOT, Parts.lantern(false));
     }
   }

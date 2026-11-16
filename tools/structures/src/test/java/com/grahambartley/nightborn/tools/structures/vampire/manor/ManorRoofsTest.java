@@ -23,7 +23,7 @@ class ManorRoofsTest {
   }
 
   @ParameterizedTest(name = "a finial tops the ridge at {0},{1},{2}")
-  @CsvSource({"17, 22, 27", "17, 22, 8", "27, 20, 22", "40, 24, 15"})
+  @CsvSource({"17, 21, 27", "17, 21, 8", "27, 19, 22", "40, 23, 15"})
   void finialsTopEachGable(final int x, final int y, final int z) {
     assertTrue(
         roofed.get(x, y, z).startsWith("minecraft:" + ManorRoofs.FINIAL), roofed.get(x, y, z));

@@ -54,7 +54,7 @@ public final class Parts {
   public static String door(
       final String block, final String facing, final String half, final String hinge) {
     return BlockState.of(
-        block, "facing", facing, "half", half, "hinge", hinge, "open", false, "powered", false);
+        block, "facing", facing, "half", half, "hinge", hinge, "open", true, "powered", false);
   }
 
   public static String log(final String block, final String axis) {

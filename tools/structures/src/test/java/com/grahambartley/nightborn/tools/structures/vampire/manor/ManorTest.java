@@ -85,6 +85,82 @@ class ManorTest {
                     Arguments.of(layout, "the kitchen yard", 36, 1, 4)));
   }
 
+  static boolean open(final String state) {
+    return state == null || state.equals("minecraft:air");
+  }
+
+  static boolean meant(final Manor.Layout layout, final int x, final int y, final int z) {
+    if (new Turret(layout.roundTurret()).inside(x, z, Turret.RADIUS)) {
+      return true;
+    }
+    if (z == Manor.WING_S && ManorFront.inBay(x, z)) {
+      return true;
+    }
+    return Chimney.ALL.stream()
+        .flatMap(chimney -> chimney.fires().stream())
+        .anyMatch(
+            fire -> fire.x() == x && fire.z() == z && y > fire.floor() && y <= fire.floor() + 2);
+  }
+
+  @ParameterizedTest(
+      name = "{0}: the house walls have no holes but their doors, bay, fires and turret")
+  @MethodSource("layouts")
+  void wallsHaveNoStrayHoles(final Manor.Layout layout) {
+    final Template t = Manor.build(layout);
+    for (final ManorShell.Box box : List.of(ManorShell.WING, ManorShell.MAIN)) {
+      for (int x = box.x0(); x <= box.x1(); x++) {
+        for (int z = box.z0(); z <= box.z1(); z++) {
+          if (!box.onWall(x, z)) {
+            continue;
+          }
+          for (int y = Manor.F0; y <= Manor.TOP; y++) {
+            assertTrue(
+                !open(t.get(x, y, z)) || meant(layout, x, y, z),
+                "hole at " + x + "," + y + "," + z);
+          }
+        }
+      }
+    }
+  }
+
+  @ParameterizedTest(name = "{0}: every door has solid wall over it")
+  @MethodSource("layouts")
+  void doorsHaveAHeadAboveThem(final Manor.Layout layout) {
+    final Template t = Manor.build(layout);
+    for (final Pos door : find(t, "dark_oak_door")) {
+      if (t.get(door.x(), door.y(), door.z()).contains("half=upper")) {
+        assertTrue(!open(t.get(door.x(), door.y() + 1, door.z())), "over door " + door);
+      }
+    }
+  }
+
+  @ParameterizedTest(name = "{0}: every finial stands on a full block")
+  @MethodSource("layouts")
+  void finialsSitOnFullBlocks(final Manor.Layout layout) {
+    final Template t = Manor.build(layout);
+    final List<Pos> rods = find(t, ManorRoofs.FINIAL);
+    assertEquals(5, rods.size());
+    for (final Pos rod : rods) {
+      final String below = t.get(rod.x(), rod.y() - 1, rod.z());
+      assertTrue(
+          below.endsWith("tiles") || below.endsWith("bricks"),
+          "under the finial " + rod + ": " + below);
+    }
+  }
+
+  @ParameterizedTest(name = "{0}: every lantern hangs from or stands on something solid")
+  @MethodSource("layouts")
+  void lanternsAreHeld(final Manor.Layout layout) {
+    final Template t = Manor.build(layout);
+    for (final Pos lantern : find(t, ":lantern")) {
+      final boolean hanging = t.get(lantern.x(), lantern.y(), lantern.z()).contains("hanging=true");
+      final String held = t.get(lantern.x(), lantern.y() + (hanging ? 1 : -1), lantern.z());
+      assertTrue(
+          !open(held) && !held.contains("type=bottom") && !held.contains("lantern"),
+          "lantern " + lantern + " held by " + held);
+    }
+  }
+
   @ParameterizedTest(name = "{0}: without its ladder the study is out of reach")
   @MethodSource("layouts")
   void theStudyIsOnlyReachedByItsLadder(final Manor.Layout layout) {

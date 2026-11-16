@@ -49,10 +49,7 @@ public final class ManorRoofs {
 
   private static void finial(final Template t, final int x, final int ridge, final int z) {
     t.set(
-        x,
-        ridge + 1,
-        z,
-        BlockState.of(FINIAL, "facing", "up", "powered", false, "waterlogged", false));
+        x, ridge, z, BlockState.of(FINIAL, "facing", "up", "powered", false, "waterlogged", false));
   }
 
   private static void attic(final Template t) {
