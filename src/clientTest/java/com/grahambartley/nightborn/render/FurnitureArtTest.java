@@ -3,7 +3,6 @@ package com.grahambartley.nightborn.render;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import com.google.gson.JsonParser;
 import com.grahambartley.nightborn.decor.ToggleClips;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -43,20 +42,12 @@ class FurnitureArtTest {
   })
   void everyArtPathResolvesToAShippedFileWithTheFourClips(
       final String block, final String art, final boolean glows) throws IOException {
-    assertTrue(Files.exists(file(FurnitureArt.geo(art), "src/client/resources")));
-    final Path texture = file(FurnitureArt.texture(FurnitureArt.id(block)), "src/main/resources");
+    assertTrue(Files.exists(GeoAssets.file(FurnitureArt.geo(art))));
+    final Path texture = GeoAssets.mainFile(FurnitureArt.texture(FurnitureArt.id(block)));
     assertTrue(Files.exists(texture));
     assertEquals(glows, Files.exists(texture.resolveSibling(block + "_glowmask.png")));
     assertEquals(
         ToggleClips.FURNITURE.all(),
-        JsonParser.parseString(
-                Files.readString(file(FurnitureArt.animation(art), "src/client/resources")))
-            .getAsJsonObject()
-            .getAsJsonObject("animations")
-            .keySet());
-  }
-
-  private static Path file(final Identifier id, final String root) {
-    return Path.of(root, "assets", id.getNamespace(), id.getPath());
+        GeoAssets.animations(GeoAssets.file(FurnitureArt.animation(art))).keySet());
   }
 }

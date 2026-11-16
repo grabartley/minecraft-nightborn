@@ -53,6 +53,6 @@ class HunterLookTest {
     final String geo =
         Files.readString(CLIENT.resolve(look.geo().getNamespace()).resolve(look.geo().getPath()));
     assertTrue(geo.contains("\"name\": \"head\"") || geo.contains("\"name\":\"head\""));
-    assertTrue(geo.contains("right_item"));
+    assertTrue(geo.contains("item_right"));
   }
 }

@@ -5,11 +5,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
-import com.google.gson.JsonParser;
 import com.grahambartley.nightborn.coffin.CoffinStyle;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -126,30 +124,18 @@ class CoffinArtTest {
   @Test
   @DisplayName("the velvet lining ships with the mod")
   void shipsTheVelvet() {
-    assertTrue(
-        Files.exists(
-            Path.of("src/main/resources/assets", CoffinArt.VELVET.getNamespace())
-                .resolve(CoffinArt.VELVET.getPath())));
+    assertTrue(Files.exists(GeoAssets.mainFile(CoffinArt.VELVET)));
   }
 
   @ParameterizedTest(name = "{0}")
   @EnumSource(CoffinStyle.class)
   @DisplayName("each style's model and clips ship with the mod")
   void shipsEachStyle(final CoffinStyle style) {
-    assertTrue(Files.isRegularFile(file(CoffinArt.geo(style))));
-    assertTrue(Files.isRegularFile(file(CoffinArt.animation(style))));
+    assertTrue(Files.isRegularFile(GeoAssets.file(CoffinArt.geo(style))));
+    assertTrue(Files.isRegularFile(GeoAssets.file(CoffinArt.animation(style))));
   }
 
   private static JsonArray bones(final CoffinStyle style) throws IOException {
-    return JsonParser.parseString(Files.readString(file(CoffinArt.geo(style))))
-        .getAsJsonObject()
-        .getAsJsonArray("minecraft:geometry")
-        .get(0)
-        .getAsJsonObject()
-        .getAsJsonArray("bones");
-  }
-
-  private static Path file(final Identifier id) {
-    return Path.of("src/client/resources/assets", id.getNamespace()).resolve(id.getPath());
+    return GeoAssets.bones(GeoAssets.file(CoffinArt.geo(style)));
   }
 }
