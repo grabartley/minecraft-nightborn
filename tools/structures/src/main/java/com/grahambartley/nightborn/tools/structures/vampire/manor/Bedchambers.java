@@ -25,42 +25,44 @@ public final class Bedchambers {
     study(t);
   }
 
-  public static void fourPoster(
+  public static void halfTester(
       final Template t, final String coffin, final int x, final int z, final String head) {
     Furnishing.coffin(t, coffin, x, SEAT, z, head);
     final Pos step = Facing.STEP.get(head);
     final Pos side = Facing.STEP.get(Facing.CLOCKWISE.get(head));
-    final int x0 = Math.min(x - step.x(), x + 2 * step.x()) - Math.abs(side.x());
-    final int x1 = Math.max(x - step.x(), x + 2 * step.x()) + Math.abs(side.x());
-    final int z0 = Math.min(z - step.z(), z + 2 * step.z()) - Math.abs(side.z());
-    final int z1 = Math.max(z - step.z(), z + 2 * step.z()) + Math.abs(side.z());
-    for (int px = x0; px <= x1; px++) {
-      for (int pz = z0; pz <= z1; pz++) {
-        t.set(px, TESTER, pz, Parts.slab("dark_oak_slab", "top"));
-      }
-    }
-    for (final int px : new int[] {x0, x1}) {
-      for (final int pz : new int[] {z0, z1}) {
-        for (int y = SEAT; y < TESTER; y++) {
-          t.set(px, y, pz, StairHall.fence(false, false));
-        }
-      }
-    }
     final int hx = x + 2 * step.x();
     final int hz = z + 2 * step.z();
+    for (int along = 1; along <= 2; along++) {
+      for (int across = -1; across <= 1; across++) {
+        t.set(
+            x + along * step.x() + across * side.x(),
+            TESTER,
+            z + along * step.z() + across * side.z(),
+            Parts.slab("dark_oak_slab", "top"));
+      }
+    }
+    for (final int across : new int[] {-1, 1}) {
+      for (int y = SEAT; y < TESTER; y++) {
+        t.set(
+            hx + across * side.x(),
+            y,
+            hz + across * side.z(),
+            Parts.fence(false, false, false, false));
+      }
+    }
     Furnishing.drape(t, Manor.BURGUNDY, hx, SEAT, hz, TESTER - SEAT, Facing.OPPOSITE.get(head));
   }
 
   private static void master(final Template t) {
-    fourPoster(t, Manor.DARK_OAK_COFFIN, 19, 21, "east");
-    fourPoster(t, Manor.DARK_OAK_COFFIN, 19, 24, "east");
+    halfTester(t, Manor.DARK_OAK_COFFIN, 19, 21, "east");
+    halfTester(t, Manor.DARK_OAK_COFFIN, 19, 24, "east");
     Furnishing.chair(t, 15, SEAT, 20, "west");
     Furnishing.chair(t, 15, SEAT, 22, "west");
     Furnishing.candelabra(t, 16, SEAT, 21);
     Furnishing.table(t, 14, SEAT, 25);
     Furnishing.candles(t, 14, SEAT + 1, 25, 2, false);
     Furnishing.chair(t, 15, SEAT, 25, "west");
-    Furnishing.chest(t, 14, SEAT, 26, "east");
+    Furnishing.chest(t, 21, SEAT, 26, "west");
     for (final int z : new int[] {19, 25}) {
       Furnishing.drape(t, Manor.BURGUNDY, 13, SEAT, z, 4, "east");
     }
@@ -71,7 +73,7 @@ public final class Bedchambers {
   }
 
   private static void westChamber(final Template t) {
-    fourPoster(t, Manor.SPRUCE_COFFIN, 15, 13, "west");
+    halfTester(t, Manor.SPRUCE_COFFIN, 15, 13, "west");
     Furnishing.table(t, 19, SEAT, 13);
     Furnishing.candelabra(t, 19, SEAT + 1, 13);
     Furnishing.chair(t, 18, SEAT, 13, "east");
@@ -91,11 +93,11 @@ public final class Bedchambers {
 
   private static void eastChamber(final Template t, final Turret turret) {
     Furnishing.coffin(t, Manor.SPRUCE_COFFIN, 34, SEAT, 20, "north");
-    Furnishing.coffin(t, Manor.SPRUCE_COFFIN, 37, SEAT, 20, "north");
+    Furnishing.coffin(t, Manor.SPRUCE_COFFIN, 36, SEAT, 19, "north");
     Furnishing.candles(t, 35, SEAT, 19, 3, false);
     Furnishing.chair(t, 38, SEAT, 17, "east");
     Furnishing.candelabra(t, 35, SEAT, 17);
-    for (final int x : new int[] {34, 35}) {
+    for (final int x : new int[] {33, 36}) {
       Furnishing.drape(t, Manor.BURGUNDY, x, SEAT, 21, 4, "north");
     }
     Furnishing.chair(t, 41, SEAT, 23, "south");

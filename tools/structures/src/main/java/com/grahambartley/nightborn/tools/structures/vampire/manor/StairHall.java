@@ -21,8 +21,7 @@ public final class StairHall {
   public static final int LANDING_BACK = MAIN_N + 4;
   public static final int LANDING_FRONT = LANDING_BACK + 3;
   public static final int GALLERY_FRONT = MAIN_S - 2;
-  public static final int FLIGHT_FOOT = LANDING_FRONT + 2;
-  public static final String FENCE = "dark_oak_fence";
+  public static final int FLIGHT_FOOT = LANDING_FRONT + 3;
   public static final String STEP = "dark_oak_stairs";
 
   private StairHall() {}
@@ -68,23 +67,18 @@ public final class StairHall {
 
   private static void flights(final Template t) {
     for (int x = MID_X - 1; x <= MID_X + 1; x++) {
-      t.set(x, LANDING - 1, FLIGHT_FOOT - 1, Parts.stair(STEP, "north"));
-      t.set(x, LANDING - 2, FLIGHT_FOOT, Parts.stair(STEP, "north"));
-      t.set(x, LANDING - 2, FLIGHT_FOOT - 1, Manor.PLANKS);
+      Parts.flight(
+          t, STEP, Manor.PLANKS, x, LANDING_FRONT + 1, "north", LANDING, LANDING - F0, F0 + 1);
     }
     for (final int x0 : new int[] {WEST, MID_X + 2}) {
       for (int x = x0; x < x0 + 3; x++) {
-        t.set(x, LANDING + 1, LANDING_BACK + 1, Parts.stair(STEP, "south"));
-        t.set(x, LANDING, LANDING_BACK + 1, Manor.PLANKS);
-        t.set(x, LANDING + 2, LANDING_BACK + 2, Parts.stair(STEP, "south"));
-        t.set(x, LANDING + 1, LANDING_BACK + 2, Manor.PLANKS);
-        t.set(x, LANDING, LANDING_BACK + 2, Manor.PLANKS);
+        Parts.flight(t, STEP, Manor.PLANKS, x, LANDING_FRONT, "south", F1, F1 - LANDING, LANDING);
       }
     }
   }
 
   private static void galleries(final Template t) {
-    for (int z = LANDING_FRONT; z < MAIN_S; z++) {
+    for (int z = LANDING_FRONT + 1; z < MAIN_S; z++) {
       for (int x = WEST; x <= EAST; x++) {
         final boolean side = x < MID_X - 1 || x > MID_X + 1;
         if (side || z >= GALLERY_FRONT) {
@@ -95,64 +89,23 @@ public final class StairHall {
   }
 
   private static void balustrade(final Template t) {
-    for (int z = LANDING_FRONT; z < GALLERY_FRONT; z++) {
-      t.set(MID_X - 2, F1 + 1, z, fence(true, false));
-      t.set(MID_X + 2, F1 + 1, z, fence(true, false));
+    for (int z = LANDING_FRONT + 1; z < GALLERY_FRONT; z++) {
+      t.set(MID_X - 2, F1 + 1, z, Parts.fence(true, true, false, false));
+      t.set(MID_X + 2, F1 + 1, z, Parts.fence(true, true, false, false));
     }
     for (int x = MID_X - 1; x <= MID_X + 1; x++) {
-      t.set(x, F1 + 1, GALLERY_FRONT, fence(false, true));
+      t.set(x, F1 + 1, GALLERY_FRONT, Parts.fence(false, false, true, true));
     }
-    t.set(
-        MID_X - 2,
-        F1 + 1,
-        GALLERY_FRONT,
-        BlockState.of(
-            FENCE,
-            "north",
-            true,
-            "east",
-            true,
-            "south",
-            false,
-            "west",
-            false,
-            "waterlogged",
-            false));
-    t.set(
-        MID_X + 2,
-        F1 + 1,
-        GALLERY_FRONT,
-        BlockState.of(
-            FENCE,
-            "north",
-            true,
-            "west",
-            true,
-            "south",
-            false,
-            "east",
-            false,
-            "waterlogged",
-            false));
+    t.set(MID_X - 2, F1 + 1, GALLERY_FRONT, Parts.fence(true, false, true, false));
+    t.set(MID_X + 2, F1 + 1, GALLERY_FRONT, Parts.fence(true, false, false, true));
     for (final int x : new int[] {MID_X - 2, MID_X + 2}) {
+      for (int z = LANDING_BACK + 1; z <= LANDING_FRONT; z++) {
+        final int tread = LANDING + 1 + z - (LANDING_BACK + 1);
+        t.set(x, tread + 1, z, Parts.fence(true, true, false, false));
+      }
       t.set(x, F0 + 1, FLIGHT_FOOT, "stripped_dark_oak_log");
       t.set(x, F0 + 2, FLIGHT_FOOT, Parts.lantern(false));
     }
-  }
-
-  static String fence(final boolean northSouth, final boolean eastWest) {
-    return BlockState.of(
-        FENCE,
-        "north",
-        northSouth,
-        "south",
-        northSouth,
-        "east",
-        eastWest,
-        "west",
-        eastWest,
-        "waterlogged",
-        false);
   }
 
   private static void furnish(final Template t) {

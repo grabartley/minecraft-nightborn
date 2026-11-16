@@ -30,8 +30,8 @@ public final class Grounds {
     Topiary.figure(t, MID_X, SWEEP_Z);
     Topiary.cone(t, MID_X - 4, RAILING_Z - 2);
     Topiary.cone(t, MID_X + 4, RAILING_Z - 2);
-    lamp(t, MID_X - 4, ManorFront.STEP_Z + 2);
-    lamp(t, MID_X + 4, ManorFront.STEP_Z + 2);
+    lamp(t, MID_X - 4, ManorFront.STEPS_END + 1);
+    lamp(t, MID_X + 4, ManorFront.STEPS_END + 1);
     deadTree(t, 7, 33);
     deadTree(t, 41, 36);
     kitchenYard(t);
@@ -51,7 +51,7 @@ public final class Grounds {
 
   private static void drive(final Template t) {
     for (int x = 0; x < SIZE_X; x++) {
-      for (int z = ManorFront.STEP_Z + 2; z <= RAILING_Z; z++) {
+      for (int z = ManorFront.STEPS_END + 1; z <= RAILING_Z; z++) {
         final boolean lane = Math.abs(x - MID_X) <= 1 && !inCircle(x, z);
         if (lane || onSweep(x, z)) {
           ground(t, x, z, Stone.roll(x, 0, z) < 25 ? "coarse_dirt" : "gravel");
@@ -76,10 +76,6 @@ public final class Grounds {
       if (Math.abs(x - MID_X) > SWEEP_OUTER) {
         path(t, x, SWEEP_Z);
       }
-    }
-    for (int z = BACK_PATH_Z + 1; z < MAIN_N; z++) {
-      path(t, MID_X, z);
-      path(t, 36, z);
     }
     for (int x = WEST_PATH_X; x < Glasshouse.WEST - 2; x++) {
       path(t, x, Glasshouse.DOOR_Z);
@@ -159,11 +155,8 @@ public final class Grounds {
 
   private static void kitchenYard(final Template t) {
     for (final int x : new int[] {MID_X, 36}) {
-      t.set(x, 2, MAIN_N - 1, Parts.stair(Manor.TRIM, "south"));
-      t.set(x, 1, MAIN_N - 2, Parts.stair(Manor.TRIM, "south"));
-      t.set(x, 1, MAIN_N - 1, Manor.DRESSING.at(x, 1, MAIN_N - 1));
-      t.set(x, 0, MAIN_N - 1, Manor.DRESSING.at(x, 0, MAIN_N - 1));
-      t.set(x, 0, MAIN_N - 2, Manor.DRESSING.at(x, 0, MAIN_N - 2));
+      Parts.flight(
+          t, Manor.TRIM, ManorFront.STONE_FILL, x, MAIN_N - 1, "south", Manor.F0, Manor.F0, 0);
     }
     for (int x = 38; x <= 40; x++) {
       for (int y = 1; y <= 2; y++) {

@@ -56,8 +56,10 @@ class GlasshouseTest {
   void aDoorLeadsToTheGarden(final boolean fallen) {
     final Template t = built(fallen);
     assertTrue(t.get(Glasshouse.WEST, Manor.F0 + 1, Glasshouse.DOOR_Z).contains("dark_oak_door"));
-    assertTrue(t.get(Glasshouse.WEST - 1, 2, Glasshouse.DOOR_Z).contains("facing=east"));
-    assertTrue(t.get(Glasshouse.WEST - 2, 1, Glasshouse.DOOR_Z).contains("facing=east"));
+    for (int i = 1; i <= Manor.F0; i++) {
+      assertTrue(
+          t.get(Glasshouse.WEST - i, Manor.F0 + 1 - i, Glasshouse.DOOR_Z).contains("facing=east"));
+    }
     assertEquals(BlockState.AIR, t.get(Glasshouse.EAST, Manor.F0 + 1, Glasshouse.DOOR_Z));
   }
 

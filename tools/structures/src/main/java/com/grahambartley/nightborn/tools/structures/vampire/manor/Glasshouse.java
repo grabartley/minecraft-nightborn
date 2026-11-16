@@ -63,11 +63,7 @@ public final class Glasshouse {
 
   private static void entrance(final Template t) {
     Window.door(t, WEST, F0 + 1, DOOR_Z, "west");
-    t.set(WEST - 1, 2, DOOR_Z, Parts.stair(Manor.TRIM, "east"));
-    t.set(WEST - 2, 1, DOOR_Z, Parts.stair(Manor.TRIM, "east"));
-    t.set(WEST - 1, 1, DOOR_Z, Manor.DRESSING.at(WEST - 1, 1, DOOR_Z));
-    t.set(WEST - 1, 0, DOOR_Z, Manor.DRESSING.at(WEST - 1, 0, DOOR_Z));
-    t.set(WEST - 2, 0, DOOR_Z, Manor.DRESSING.at(WEST - 2, 0, DOOR_Z));
+    Parts.flight(t, Manor.TRIM, ManorFront.STONE_FILL, WEST - 1, DOOR_Z, "east", F0, F0, 0);
     for (int y = F0 + 1; y <= F0 + 2; y++) {
       t.set(EAST, y, DOOR_Z, BlockState.AIR);
       t.set(WEST + 1, y, DOOR_Z, BlockState.AIR);

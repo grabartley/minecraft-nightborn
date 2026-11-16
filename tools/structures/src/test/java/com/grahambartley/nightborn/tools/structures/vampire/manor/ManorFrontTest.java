@@ -41,11 +41,19 @@ class ManorFrontTest {
   }
 
   @ParameterizedTest(name = "step {0} rises to y {1}")
-  @CsvSource({"28, 1", "27, 2"})
+  @CsvSource({"29, 1", "28, 2", "27, 3"})
   void stepsClimbToThePorch(final int z, final int y) {
     assertTrue(front.get(Manor.MID_X, y, z).contains("facing=north"), front.get(Manor.MID_X, y, z));
     final String above = front.get(Manor.MID_X, y + 1, z);
     assertTrue(above == null || BlockState.AIR.equals(above), above);
+  }
+
+  @ParameterizedTest(name = "the bedroom wall above the bay at x {0} is {1}")
+  @CsvSource({"16, glass_pane", "17, bricks", "18, glass_pane"})
+  void theBayRoofLeavesTheWallAboveWhole(final int x, final String block) {
+    assertTrue(
+        front.get(x, Manor.F1 + 1, Manor.WING_S).contains(block),
+        front.get(x, Manor.F1 + 1, Manor.WING_S));
   }
 
   @ParameterizedTest(name = "the porch arch is open at y {0}")
@@ -57,7 +65,7 @@ class ManorFrontTest {
   @ParameterizedTest(name = "a gargoyle guards x {0}")
   @ValueSource(ints = {25, 29})
   void gargoylesGuardTheSteps(final int x) {
-    assertTrue(front.get(x, 3, ManorFront.STEP_Z + 1).startsWith(Manor.GARGOYLE + "[facing=south"));
+    assertTrue(front.get(x, 3, ManorFront.STEPS_END).startsWith(Manor.GARGOYLE + "[facing=south"));
   }
 
   @ParameterizedTest(name = "the great window rises to y {1} at x {0}")

@@ -52,6 +52,21 @@ class TurretTest {
     assertEquals(BlockState.AIR, t.get(Turret.CX, turret.roofTop() - 1, Turret.CZ));
   }
 
+  @ParameterizedTest(name = "round {0}: the wall inside the house at {1},{2} is {3} at y {4}")
+  @CsvSource({
+    "true, 38, 20, air, 4",
+    "true, 38, 20, bricks, 7",
+    "true, 38, 20, gothic_stone_bricks, 9",
+    "true, 38, 20, air, 11",
+    "true, 38, 20, bricks, 16",
+    "false, 37, 20, air, 5",
+    "false, 37, 20, bricks, 12"
+  })
+  void theWallInsideTheHouseRisesFromTheFoundationWithArches(
+      final boolean round, final int x, final int z, final String block, final int y) {
+    assertTrue(built(round).get(x, y, z).contains(block), built(round).get(x, y, z));
+  }
+
   @ParameterizedTest(name = "a cone stair at {0},{1} faces {2}")
   @CsvSource({"44, 22, west", "36, 22, east", "40, 26, north", "40, 18, south", "43, 24, west"})
   void coneStairsFaceTheTop(final int x, final int z, final String facing) {

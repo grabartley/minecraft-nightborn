@@ -35,6 +35,10 @@ final class ManorWalk {
     return OPEN.stream().anyMatch(block::endsWith);
   }
 
+  static boolean stair(final String state) {
+    return state != null && state.replaceAll("\\[.*", "").endsWith("_stairs");
+  }
+
   static boolean ladder(final String state) {
     return state != null && state.startsWith("minecraft:ladder");
   }
@@ -60,7 +64,9 @@ final class ManorWalk {
       for (final int[] step : new int[][] {{1, 0}, {-1, 0}, {0, 1}, {0, -1}}) {
         for (int dy = 1; dy >= -MAX_DROP; dy--) {
           final Pos to = at.offset(step[0], dy, step[1]);
-          if (dy == 1 && !open(t.get(at.x(), at.y() + 2, at.z()))) {
+          if (dy == 1
+              && (!open(t.get(at.x(), at.y() + 2, at.z()))
+                  || !stair(t.get(to.x(), to.y() - 1, to.z())))) {
             continue;
           }
           if (stands(t, to.x(), to.y(), to.z())) {

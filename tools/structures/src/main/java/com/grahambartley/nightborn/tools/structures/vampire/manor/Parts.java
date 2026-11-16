@@ -1,6 +1,9 @@
 package com.grahambartley.nightborn.tools.structures.vampire.manor;
 
 import com.grahambartley.nightborn.tools.structures.template.BlockState;
+import com.grahambartley.nightborn.tools.structures.template.Facing;
+import com.grahambartley.nightborn.tools.structures.template.Pos;
+import com.grahambartley.nightborn.tools.structures.template.Template;
 
 public final class Parts {
 
@@ -8,6 +11,43 @@ public final class Parts {
 
   public static String stair(final String block, final String facing) {
     return stair(block, facing, "bottom");
+  }
+
+  public static void flight(
+      final Template t,
+      final String block,
+      final String fill,
+      final int x,
+      final int z,
+      final String up,
+      final int top,
+      final int count,
+      final int base) {
+    final Pos step = Facing.STEP.get(up);
+    for (int i = 0; i < count; i++) {
+      final int sx = x - i * step.x();
+      final int sz = z - i * step.z();
+      t.set(sx, top - i, sz, stair(block, up));
+      for (int y = base; y < top - i; y++) {
+        t.set(sx, y, sz, fill);
+      }
+    }
+  }
+
+  public static String fence(
+      final boolean north, final boolean south, final boolean east, final boolean west) {
+    return BlockState.of(
+        "dark_oak_fence",
+        "north",
+        north,
+        "south",
+        south,
+        "east",
+        east,
+        "west",
+        west,
+        "waterlogged",
+        false);
   }
 
   public static String hood(final String block, final String facing) {

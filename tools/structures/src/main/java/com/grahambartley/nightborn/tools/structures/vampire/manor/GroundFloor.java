@@ -106,7 +106,7 @@ public final class GroundFloor {
     Furnishing.table(t, 41, SEAT, 23);
     Furnishing.chair(t, 40, SEAT, 23, "east");
     Furnishing.chair(t, 41, SEAT, 22, "south");
-    for (final int x : new int[] {34, 35}) {
+    for (final int x : new int[] {33, 36}) {
       Furnishing.drape(t, Manor.EMERALD, x, DRAPE_FROM, 21, 4, "north");
     }
     Furnishing.portrait(t, 33, F0 + 3, 17, "east");

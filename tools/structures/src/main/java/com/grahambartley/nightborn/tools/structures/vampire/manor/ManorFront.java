@@ -20,6 +20,8 @@ public final class ManorFront {
   public static final int PORCH_S = MAIN_S + 4;
   public static final int PORCH_ROOF = F0 + 5;
   public static final int STEP_Z = PORCH_S + 1;
+  public static final int STEPS_END = STEP_Z + F0 - 1;
+  public static final String STONE_FILL = "nightborn:gothic_stone_bricks";
   public static final int BAY_W = 15;
   public static final int BAY_E = 19;
   public static final int BAY_S = WING_S + 2;
@@ -70,20 +72,21 @@ public final class ManorFront {
 
   private static void steps(final Template t) {
     for (int x = MID_X - 1; x <= MID_X + 1; x++) {
-      t.set(x, 2, STEP_Z, Parts.stair(Manor.TRIM, "north"));
-      t.set(x, 1, STEP_Z + 1, Parts.stair(Manor.TRIM, "north"));
-      t.set(x, 1, STEP_Z, DRESSING.at(x, 1, STEP_Z));
-      t.set(x, 0, STEP_Z, DRESSING.at(x, 0, STEP_Z));
-      t.set(x, 0, STEP_Z + 1, DRESSING.at(x, 0, STEP_Z + 1));
+      Parts.flight(t, Manor.TRIM, STONE_FILL, x, STEP_Z, "north", F0, F0, 0);
     }
     for (final int x : new int[] {MID_X - 2, MID_X + 2}) {
-      for (int z = STEP_Z; z <= STEP_Z + 1; z++) {
-        for (int y = 0; y <= 2; y++) {
+      for (int z = STEP_Z; z <= STEPS_END; z++) {
+        for (int y = 0; y < F0; y++) {
           t.set(x, y, z, DRESSING.at(x, y, z));
         }
+        t.set(
+            x,
+            F0,
+            z,
+            z == STEPS_END
+                ? BlockState.of(Manor.GARGOYLE, "facing", "south")
+                : Parts.slab(Manor.TRIM_SLAB, "bottom"));
       }
-      t.set(x, 3, STEP_Z, Parts.slab(Manor.TRIM_SLAB, "bottom"));
-      t.set(x, 3, STEP_Z + 1, BlockState.of(Manor.GARGOYLE, "facing", "south"));
     }
   }
 
@@ -111,7 +114,9 @@ public final class ManorFront {
             t.set(x, y, z, BlockState.AIR);
           }
         }
-        t.set(x, F1 + 1, z, rim ? Manor.TRIM_WALL : Parts.slab(Manor.TRIM_SLAB, "bottom"));
+        if (z > WING_S) {
+          t.set(x, F1 + 1, z, rim ? Manor.TRIM_WALL : Parts.slab(Manor.TRIM_SLAB, "bottom"));
+        }
       }
     }
   }

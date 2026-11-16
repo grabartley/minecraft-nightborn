@@ -23,12 +23,13 @@ class StairHallTest {
 
   @ParameterizedTest(name = "a step at {0},{1},{2} rises {3}")
   @CsvSource({
-    "27, 4, 17, north",
-    "27, 5, 16, north",
+    "27, 4, 18, north",
+    "27, 5, 17, north",
+    "27, 6, 16, north",
     "24, 7, 13, south",
     "24, 8, 14, south",
-    "30, 7, 13, south",
-    "30, 8, 14, south"
+    "24, 9, 15, south",
+    "30, 9, 15, south"
   })
   void flightsRiseOneBlockAStep(final int x, final int y, final int z, final String facing) {
     assertTrue(hall.get(x, y, z).contains("dark_oak_stairs"), hall.get(x, y, z));
@@ -36,17 +37,17 @@ class StairHallTest {
   }
 
   @ParameterizedTest(name = "under the flights there is headroom at {0},{1}")
-  @CsvSource({"24, 13", "24, 14", "27, 12", "27, 14"})
+  @CsvSource({"24, 13", "24, 14", "24, 15", "27, 12", "27, 14"})
   void passagesRunUnderTheStairs(final int x, final int z) {
     assertEquals(BlockState.AIR, hall.get(x, Manor.F0 + 1, z));
     assertEquals(BlockState.AIR, hall.get(x, Manor.F0 + 2, z));
   }
 
   @ParameterizedTest(name = "the gallery edge is railed at z {0}")
-  @ValueSource(ints = {15, 17, 19})
+  @ValueSource(ints = {16, 17, 19})
   void galleriesAreRailed(final int z) {
-    assertTrue(hall.get(Manor.MID_X - 2, Manor.F1 + 1, z).startsWith("minecraft:dark_oak_fence"));
-    assertTrue(hall.get(Manor.MID_X + 2, Manor.F1 + 1, z).startsWith("minecraft:dark_oak_fence"));
+    assertTrue(hall.get(Manor.MID_X - 2, Manor.F1 + 1, z).contains("dark_oak_fence"));
+    assertTrue(hall.get(Manor.MID_X + 2, Manor.F1 + 1, z).contains("dark_oak_fence"));
   }
 
   @ParameterizedTest(name = "the hall is open to the ceiling at {0},{1}")
@@ -56,15 +57,16 @@ class StairHallTest {
   }
 
   @ParameterizedTest(name = "a gallery floor at {0},{1}")
-  @CsvSource({"23, 15", "31, 21", "27, 21"})
+  @CsvSource({"23, 16", "31, 21", "27, 21"})
   void galleriesCarryTheFloor(final int x, final int z) {
     assertEquals("minecraft:" + Manor.PLANKS, hall.get(x, Manor.F1, z));
   }
 
-  @ParameterizedTest(name = "a fence joined {0} {1}")
-  @CsvSource({"true, false", "false, true"})
-  void fencesJoinAlongTheirRun(final boolean northSouth, final boolean eastWest) {
-    final String fence = StairHall.fence(northSouth, eastWest);
-    assertTrue(fence.contains("north=" + northSouth) && fence.contains("east=" + eastWest));
+  @ParameterizedTest(name = "the {0} flight is railed at z {1}, y {2}")
+  @CsvSource({"west, 13, 8", "west, 14, 9", "west, 15, 10", "east, 13, 8", "east, 15, 10"})
+  void returnFlightsAreRailed(final String side, final int z, final int y) {
+    final int x = "west".equals(side) ? Manor.MID_X - 2 : Manor.MID_X + 2;
+    assertTrue(hall.get(x, y, z).contains("dark_oak_fence"), hall.get(x, y, z));
+    assertTrue(hall.get(x, y - 1, z).contains("dark_oak_stairs"));
   }
 }
