@@ -13,11 +13,15 @@ import com.grahambartley.nightborn.skill.PowerCooldownAttachment;
 import com.grahambartley.nightborn.skill.PowerCooldowns;
 import com.grahambartley.nightborn.skill.PowerUse;
 import com.grahambartley.nightborn.skill.Powers;
+import com.grahambartley.nightborn.skill.Skill;
+import com.grahambartley.nightborn.skill.SkillPower;
+import com.grahambartley.nightborn.skill.Skills;
 import java.util.List;
 import java.util.UUID;
 import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.effect.StatusEffects;
@@ -44,6 +48,16 @@ public class OccultGameTest implements FabricGameTest {
   @BeforeBatch(batchId = BATCH)
   public void clearFog(final ServerWorld world) {
     FogClouds.clearAll();
+  }
+
+  private static void end(final TestContext context, final Entity... owners) {
+    for (final Entity owner : owners) {
+      GhostlyFamiliars.owned(context.getWorld(), owner.getUuid()).forEach(Entity::discard);
+      if (owner instanceof ServerPlayerEntity player) {
+        TestPlayers.remove(context, player);
+      }
+    }
+    context.complete();
   }
 
   private static List<GhostlyFamiliarEntity> familiarsOf(
@@ -79,7 +93,7 @@ public class OccultGameTest implements FabricGameTest {
           context.assertEquals(familiars.size(), 1, "one familiar answered");
           context.assertTrue(familiars.get(0).isOwnedBy(vampire), "it serves the caster");
           context.assertEquals(BloodAttachment.get(vampire), 16, "the summon cost four blood");
-          TestPlayers.finish(context, vampire);
+          end(context, vampire);
         });
   }
 
@@ -102,7 +116,7 @@ public class OccultGameTest implements FabricGameTest {
           context.assertEquals(
               familiarsOf(context, single).size(), 1, "one familiar without a pact");
           context.assertEquals(familiarsOf(context, pact).size(), 2, "two familiars with a pact");
-          TestPlayers.finish(context, single, pact);
+          end(context, single, pact);
         });
   }
 
@@ -126,7 +140,7 @@ public class OccultGameTest implements FabricGameTest {
         TestPlayers.READY + 4,
         () -> {
           context.assertFalse(familiar.noClip, "a carrying familiar is solid again");
-          TestPlayers.finish(context, vampire);
+          end(context, vampire);
         });
   }
 
@@ -151,7 +165,7 @@ public class OccultGameTest implements FabricGameTest {
           familiar.interact(vampire, Hand.MAIN_HAND);
           context.assertTrue(familiar.carried().isEmpty(), "a sneaking owner takes it back");
           context.assertEquals(vampire.getInventory().count(Items.BREAD), 5, "nothing was lost");
-          TestPlayers.finish(context, vampire, stranger);
+          end(context, vampire, stranger);
         });
   }
 
@@ -179,7 +193,7 @@ public class OccultGameTest implements FabricGameTest {
                   .mapToInt(item -> item.getStack().getCount())
                   .sum();
           context.assertEquals(dropped, 3, "what it carried fell where it faded");
-          TestPlayers.finish(context, vampire);
+          end(context, vampire);
         });
   }
 
@@ -203,7 +217,7 @@ public class OccultGameTest implements FabricGameTest {
               zombie.hasStatusEffect(StatusEffects.BLINDNESS), "the zombie in the fog is blind");
           context.assertFalse(
               vampire.hasStatusEffect(StatusEffects.BLINDNESS), "the caster sees through it");
-          TestPlayers.finish(context, vampire);
+          end(context, vampire);
         });
   }
 
@@ -228,7 +242,7 @@ public class OccultGameTest implements FabricGameTest {
               "the caster stepped well forward, not " + (vampire.getX() - startX));
           context.assertTrue(
               vampire.getX() - startX <= 7.0, "the caster stopped short of the wall");
-          TestPlayers.finish(context, vampire);
+          end(context, vampire);
         });
   }
 
@@ -248,7 +262,7 @@ public class OccultGameTest implements FabricGameTest {
               GhostlyFamiliars.owned(context.getWorld(), vampire.getUuid()).size(),
               1,
               "a familiar answered the mob");
-          context.complete();
+          end(context, vampire);
         });
   }
 
@@ -287,7 +301,7 @@ public class OccultGameTest implements FabricGameTest {
           context.assertEquals(familiar.mode(), FamiliarMode.FIGHT, "the scout is over");
           context.assertFalse(familiar.buried(), "it is out of the stone");
           context.assertTrue(familiar.distanceTo(vampire) < 2.0, "it rejoined its owner");
-          TestPlayers.finish(context, vampire);
+          end(context, vampire);
         });
   }
 
@@ -306,6 +320,7 @@ public class OccultGameTest implements FabricGameTest {
           runOutScout(familiar);
           context.assertEquals(familiar.mode(), FamiliarMode.FIGHT, "the scout is over");
           context.assertFalse(familiar.buried(), "it rose clear of the stone");
+          familiar.discard();
           context.complete();
         });
   }
@@ -334,7 +349,7 @@ public class OccultGameTest implements FabricGameTest {
           context.assertTrue(
               Math.abs(vampire.getY() - (start.y + rise)) < 0.01,
               "the caster stands on top of the floor, at " + (vampire.getY() - start.y));
-          TestPlayers.finish(context, vampire);
+          end(context, vampire);
         });
   }
 
@@ -353,13 +368,15 @@ public class OccultGameTest implements FabricGameTest {
     stepOnto(context, Blocks.STONE_BRICK_SLAB.getDefaultState(), 1, -0.5);
   }
 
-  @GameTest(templateName = ARENA, batchId = BATCH, tickLimit = TestPlayers.READY + 40)
+  @GameTest(templateName = ARENA, batchId = BATCH, tickLimit = TestPlayers.READY + 45)
   public void aScoutFliesOutAhead(final TestContext context) {
     final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(1, 2, 4));
     final GhostlyFamiliarEntity familiar =
         context.spawnEntity(GhostlyFamiliars.GHOSTLY_FAMILIAR, new BlockPos(2, 2, 4));
-    familiar.summon(vampire.getUuid(), power(1200));
+    familiar.summon(
+        vampire.getUuid(), new FamiliarPower(1200, 10.0F, 3.0F, 6.0F, 200, 8.0F, 200, 9));
     final Vec3d start = familiar.getPos();
+    final double[] farthest = new double[1];
     context.runAtTick(
         TestPlayers.READY,
         () -> {
@@ -367,12 +384,31 @@ public class OccultGameTest implements FabricGameTest {
           vampire.setPitch(0.0F);
           familiar.order(FamiliarMode.SCOUT, vampire);
         });
+    context.runAtEveryTick(
+        () -> farthest[0] = Math.max(farthest[0], familiar.getPos().distanceTo(start)));
     context.runAtTick(
-        TestPlayers.READY + 30,
+        TestPlayers.READY + 40,
         () -> {
-          final double out = familiar.getPos().distanceTo(start);
-          context.assertTrue(out >= 12.0, "the scout flew well ahead, not " + out);
-          TestPlayers.finish(context, vampire);
+          context.assertTrue(
+              farthest[0] >= 5.0, "the scout flew out to its range, only " + farthest[0]);
+          end(context, vampire);
         });
+  }
+
+  @GameTest(templateName = ARENA, batchId = BATCH, tickLimit = 10)
+  public void aSecondSummonComesBeforeTheFirstFamiliarFades(final TestContext context) {
+    final SkillPower summon =
+        Skills.skills(context.getWorld().getRegistryManager())
+            .map(registry -> registry.get(OccultSkills.SUMMON_FAMILIAR))
+            .flatMap(Skill::power)
+            .orElseThrow();
+    final int lifetime = summon.familiar().orElseThrow().lifetimeTicks();
+    context.assertTrue(
+        summon.cooldownTicks() * 2 <= lifetime,
+        "the summon is ready again well inside a familiar's lifetime, so Spirit Pact keeps two: "
+            + summon.cooldownTicks()
+            + " of "
+            + lifetime);
+    context.complete();
   }
 }

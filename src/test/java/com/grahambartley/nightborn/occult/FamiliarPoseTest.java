@@ -11,7 +11,7 @@ import org.junit.jupiter.params.provider.CsvSource;
 
 class FamiliarPoseTest {
 
-  @ParameterizedTest(name = "fading {0}, age {1}, swinging {2}, {3} -> {4}")
+  @ParameterizedTest(name = "fading {0}, {1} ticks since summoned, swinging {2}, {3} -> {4}")
   @CsvSource({
     "true, 5, true, SCOUT, FADE",
     "false, 5, true, SCOUT, APPEAR",
@@ -23,11 +23,11 @@ class FamiliarPoseTest {
   @DisplayName("a familiar shows fading first, then appearing, striking and its task")
   void of(
       final boolean fading,
-      final int age,
+      final long sinceSummoned,
       final boolean swinging,
       final FamiliarMode mode,
       final FamiliarPose expected) {
-    assertEquals(expected, FamiliarPose.of(fading, age, swinging, mode));
+    assertEquals(expected, FamiliarPose.of(fading, sinceSummoned, swinging, mode));
   }
 
   @Test

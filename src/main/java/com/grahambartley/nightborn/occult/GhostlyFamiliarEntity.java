@@ -64,6 +64,8 @@ public class GhostlyFamiliarEntity extends PathAwareEntity implements GeoEntity,
           GhostlyFamiliarEntity.class, TrackedDataHandlerRegistry.OPTIONAL_UUID);
   private static final TrackedData<Integer> MODE =
       DataTracker.registerData(GhostlyFamiliarEntity.class, TrackedDataHandlerRegistry.INTEGER);
+  private static final TrackedData<Long> SUMMONED =
+      DataTracker.registerData(GhostlyFamiliarEntity.class, TrackedDataHandlerRegistry.LONG);
   private static final TrackedData<Boolean> FADING =
       DataTracker.registerData(GhostlyFamiliarEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
 
@@ -80,7 +82,6 @@ public class GhostlyFamiliarEntity extends PathAwareEntity implements GeoEntity,
   private int ticksLeft = DEFAULT_POWER.lifetimeTicks();
   @Nullable private Vec3d scoutTarget;
   private int scoutTicks;
-  private long summonedAt;
 
   public GhostlyFamiliarEntity(
       final EntityType<? extends PathAwareEntity> type, final World world) {
@@ -105,6 +106,7 @@ public class GhostlyFamiliarEntity extends PathAwareEntity implements GeoEntity,
     builder.add(OWNER_UUID, Optional.empty());
     builder.add(MODE, FamiliarMode.FIGHT.ordinal());
     builder.add(FADING, false);
+    builder.add(SUMMONED, 0L);
   }
 
   @Override
@@ -131,7 +133,7 @@ public class GhostlyFamiliarEntity extends PathAwareEntity implements GeoEntity,
     power = summoned;
     carried = new SimpleInventory(summoned.carrySlots());
     ticksLeft = summoned.lifetimeTicks();
-    summonedAt = getWorld().getTime();
+    dataTracker.set(SUMMONED, getWorld().getTime());
     applyPower();
     setHealth(getMaxHealth());
   }
@@ -150,7 +152,6 @@ public class GhostlyFamiliarEntity extends PathAwareEntity implements GeoEntity,
   public void tick() {
     noClip = mode().passesThroughBlocks();
     super.tick();
-    noClip = mode().passesThroughBlocks();
     if (getWorld().isClient || !isAlive()) {
       return;
     }
@@ -223,7 +224,7 @@ public class GhostlyFamiliarEntity extends PathAwareEntity implements GeoEntity,
   }
 
   public long summonedAt() {
-    return summonedAt;
+    return dataTracker.get(SUMMONED);
   }
 
   public int ticksLeft() {
@@ -333,7 +334,10 @@ public class GhostlyFamiliarEntity extends PathAwareEntity implements GeoEntity,
             "pose",
             ANIMATION_BLEND_TICKS,
             state ->
-                state.setAndContinue(FamiliarPose.of(fading(), age, handSwinging, mode()).clip())));
+                state.setAndContinue(
+                    FamiliarPose.of(
+                            fading(), getWorld().getTime() - summonedAt(), handSwinging, mode())
+                        .clip())));
   }
 
   @Override
@@ -347,7 +351,7 @@ public class GhostlyFamiliarEntity extends PathAwareEntity implements GeoEntity,
     owner().ifPresent(id -> nbt.putUuid(OWNER, id));
     nbt.putString(MODE_KEY, mode().name());
     nbt.putInt(TICKS_LEFT, ticksLeft);
-    nbt.putLong(SUMMONED_AT, summonedAt);
+    nbt.putLong(SUMMONED_AT, summonedAt());
     FamiliarPower.CODEC
         .encodeStart(NbtOps.INSTANCE, power)
         .result()
@@ -361,7 +365,7 @@ public class GhostlyFamiliarEntity extends PathAwareEntity implements GeoEntity,
     dataTracker.set(
         OWNER_UUID, nbt.containsUuid(OWNER) ? Optional.of(nbt.getUuid(OWNER)) : Optional.empty());
     dataTracker.set(MODE, FamiliarMode.byName(nbt.getString(MODE_KEY)).ordinal());
-    summonedAt = nbt.getLong(SUMMONED_AT);
+    dataTracker.set(SUMMONED, nbt.getLong(SUMMONED_AT));
     power =
         FamiliarPower.CODEC.parse(NbtOps.INSTANCE, nbt.get(POWER)).result().orElse(DEFAULT_POWER);
     ticksLeft = nbt.contains(TICKS_LEFT) ? nbt.getInt(TICKS_LEFT) : power.lifetimeTicks();

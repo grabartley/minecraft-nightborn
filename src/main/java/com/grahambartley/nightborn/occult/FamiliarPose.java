@@ -32,11 +32,14 @@ public enum FamiliarPose {
   }
 
   public static FamiliarPose of(
-      final boolean fading, final int age, final boolean swinging, final FamiliarMode mode) {
+      final boolean fading,
+      final long sinceSummoned,
+      final boolean swinging,
+      final FamiliarMode mode) {
     if (fading) {
       return FADE;
     }
-    if (age < APPEAR_TICKS) {
+    if (sinceSummoned < APPEAR_TICKS) {
       return APPEAR;
     }
     if (swinging) {

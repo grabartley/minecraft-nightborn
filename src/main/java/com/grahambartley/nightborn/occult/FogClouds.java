@@ -71,23 +71,13 @@ public final class FogClouds {
     world.spawnParticles(
         ParticleTypes.WHITE_SMOKE,
         cloud.centre().x,
-        cloud.centre().y + 0.8,
+        cloud.centre().y + 0.5,
         cloud.centre().z,
-        (int) Math.ceil(radius * 3),
+        (int) Math.ceil(radius * 5),
         radius * 0.6,
-        0.6,
+        0.4,
         radius * 0.6,
-        0.005);
-    world.spawnParticles(
-        ParticleTypes.LARGE_SMOKE,
-        cloud.centre().x,
-        cloud.centre().y + 0.4,
-        cloud.centre().z,
-        (int) Math.ceil(radius),
-        radius * 0.5,
-        0.3,
-        radius * 0.5,
-        0.002);
+        0.003);
   }
 
   private static void shroud(final ServerWorld world, final Cloud cloud) {
