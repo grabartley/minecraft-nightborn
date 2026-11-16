@@ -91,6 +91,13 @@ class BatFormRulesTest {
         BatFormRules.warded(WeakenedSources.NONE.with(source, strength, 20), shippedForcedBy()));
   }
 
+  @ParameterizedTest(name = "locked {0}, bat {1} -> {2}")
+  @CsvSource({"false, false, false", "true, false, true", "false, true, true", "true, true, true"})
+  @DisplayName("a bat keeps flying on the ground, as a spectator does")
+  void flightLocked(final boolean locked, final boolean bat, final boolean expected) {
+    assertEquals(expected, BatFormRules.flightLocked(locked, bat));
+  }
+
   @ParameterizedTest(name = "{0} damage against {1} -> {2}")
   @CsvSource({"5.9, 6, false", "6.0, 6, true", "12.0, 6, true", "1.0, 1, true", "0.5, 1, false"})
   @DisplayName("a blow at or above the heavy damage setting forces a bat back")

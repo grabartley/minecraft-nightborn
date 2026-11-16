@@ -20,6 +20,10 @@ public final class BatFormRules {
     return forcing.stream().anyMatch(source -> sources.strength(source) > 0);
   }
 
+  public static boolean flightLocked(final boolean locked, final boolean bat) {
+    return locked || bat;
+  }
+
   public static boolean heavyHit(final float damage, final int heavyDamage) {
     return damage >= heavyDamage;
   }
