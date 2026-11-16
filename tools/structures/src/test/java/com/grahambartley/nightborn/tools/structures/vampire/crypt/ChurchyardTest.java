@@ -64,6 +64,19 @@ class ChurchyardTest {
   }
 
   @Test
+  void theTopStepMeetsTheVestryFloorWithoutAJump() {
+    final String top =
+        (String)
+            CHURCH.blockData().get(new Pos(Church.STAIR_X, 0, Church.STAIR_Z)).get("final_state");
+    assertTrue(top.startsWith(CryptStair.STEP + "[facing=east,half=bottom"), top);
+    assertTrue(
+        BANK.get(Church.STAIR_X - 1, CryptStair.TOP, Church.STAIR_Z).startsWith(CryptStair.STEP));
+    assertEquals("minecraft:stone_bricks", CHURCH.get(Church.STAIR_X, 0, Church.STAIR_Z - 1));
+    assertEquals("minecraft:stone_bricks", CHURCH.get(Church.STAIR_X, 0, Church.STAIR_Z + 1));
+    assertEquals("minecraft:air", CHURCH.get(Church.STAIR_X, 1, Church.STAIR_Z));
+  }
+
+  @Test
   void theBankCoversTheChurchyardExactly() {
     assertEquals(CHURCH.sizeX(), BANK.sizeX());
     assertEquals(Church.YARD_Z, BANK.sizeZ());

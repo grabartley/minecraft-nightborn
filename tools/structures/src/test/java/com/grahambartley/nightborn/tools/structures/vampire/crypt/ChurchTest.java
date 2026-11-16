@@ -23,13 +23,14 @@ class ChurchTest {
 
   @ParameterizedTest(name = "{0} hangs from the crypt by the vestry stair")
   @MethodSource("churches")
-  void theVestryFloorOpensOntoTheCryptStair(final String path, final Template church) {
+  void theTopStepOfTheCryptStairIsLevelWithTheVestryFloor(
+      final String path, final Template church) {
     final Pos stair = new Pos(Church.STAIR_X, 0, Church.STAIR_Z);
     assertEquals(
         "minecraft:jigsaw[orientation=down_north]", church.get(stair.x(), stair.y(), stair.z()));
     final Map<String, Object> data = church.blockData().get(stair);
     assertEquals(Church.VESTRY, data.get("name"));
-    assertEquals(BlockState.AIR, data.get("final_state"));
+    assertTrue(((String) data.get("final_state")).startsWith(CryptStair.STEP + "[facing=east"));
     assertEquals(BlockState.AIR, church.get(Church.STAIR_X - 1, 0, Church.STAIR_Z));
     assertEquals(BlockState.AIR, church.get(Church.STAIR_X, 1, Church.STAIR_Z));
   }

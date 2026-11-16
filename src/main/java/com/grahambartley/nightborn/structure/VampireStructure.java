@@ -19,6 +19,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockBox;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
+import net.minecraft.util.math.ColumnPos;
 import net.minecraft.util.math.random.Random;
 import net.minecraft.world.Heightmap;
 import net.minecraft.world.StructureWorldAccess;
@@ -179,7 +180,12 @@ public final class VampireStructure extends Structure {
       return position;
     }
     final StructurePiecesCollector pieces = position.get().generate();
-    return footing.get().fits(context, pieces.getBoundingBox())
+    return footing
+            .get()
+            .fits(
+                context,
+                pieces.getBoundingBox(),
+                new ColumnPos(position.get().position().getX(), position.get().position().getZ()))
         ? Optional.of(new StructurePosition(position.get().position(), Either.right(pieces)))
         : Optional.empty();
   }

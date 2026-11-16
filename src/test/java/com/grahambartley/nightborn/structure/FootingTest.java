@@ -8,6 +8,7 @@ import com.mojang.serialization.JsonOps;
 import java.util.List;
 import java.util.stream.Stream;
 import net.minecraft.util.math.BlockBox;
+import net.minecraft.util.math.ColumnPos;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -53,9 +54,11 @@ class FootingTest {
   @ParameterizedTest(name = "a box {0} wide sampled every {1} has {2} points a side")
   @CsvSource({"38, 8, 6", "16, 8, 3", "1, 8, 1", "17, 16, 2"})
   void samplesReachEveryEdgeOfTheBox(final int width, final int spacing, final int perSide) {
-    final List<net.minecraft.util.math.ColumnPos> samples =
-        new Footing(true, 4, spacing).samples(new BlockBox(0, 0, 0, width - 1, 10, width - 1));
-    assertEquals(perSide * perSide, samples.size());
+    final List<ColumnPos> samples =
+        new Footing(true, 4, spacing)
+            .samples(new BlockBox(0, 0, 0, width - 1, 10, width - 1), new ColumnPos(-3, -4));
+    assertEquals(perSide * perSide + 1, samples.size());
+    assertEquals(new ColumnPos(-3, -4), samples.getFirst());
     assertTrue(samples.stream().anyMatch(p -> p.x() == width - 1 && p.z() == width - 1));
     assertTrue(samples.stream().anyMatch(p -> p.x() == 0 && p.z() == 0));
   }

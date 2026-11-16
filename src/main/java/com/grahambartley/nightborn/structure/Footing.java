@@ -51,8 +51,9 @@ public record Footing(boolean dry, int maxRise, int spacing) {
     return highest - lowest <= maxRise;
   }
 
-  public List<ColumnPos> samples(final BlockBox box) {
+  public List<ColumnPos> samples(final BlockBox box, final ColumnPos start) {
     final List<ColumnPos> points = new ArrayList<>();
+    points.add(start);
     for (final int x : steps(box.getMinX(), box.getMaxX())) {
       for (final int z : steps(box.getMinZ(), box.getMaxZ())) {
         points.add(new ColumnPos(x, z));
@@ -61,9 +62,9 @@ public record Footing(boolean dry, int maxRise, int spacing) {
     return points;
   }
 
-  public boolean fits(final Structure.Context context, final BlockBox box) {
+  public boolean fits(final Structure.Context context, final BlockBox box, final ColumnPos start) {
     final List<Column> columns = new ArrayList<>();
-    for (final ColumnPos point : samples(box)) {
+    for (final ColumnPos point : samples(box, start)) {
       columns.add(
           new Column(
               height(context, point, Heightmap.Type.WORLD_SURFACE_WG),

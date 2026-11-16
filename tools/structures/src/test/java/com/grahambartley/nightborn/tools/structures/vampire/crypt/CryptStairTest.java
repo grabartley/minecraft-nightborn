@@ -17,7 +17,7 @@ class CryptStairTest {
   private static final Template SHELL = CryptStair.shell("vampire/crypt/test");
 
   static IntStream steps() {
-    return IntStream.range(1, CryptStair.TOP);
+    return IntStream.rangeClosed(1, CryptStair.TOP);
   }
 
   @ParameterizedTest(name = "step {0} climbs one block east with headroom")
@@ -25,20 +25,20 @@ class CryptStairTest {
   void eachStepClimbsOneBlockWithRoomToWalk(final int step) {
     final int x = CryptStair.FOOT_X + step;
     assertTrue(SHELL.get(x, step, CryptStair.STAIR_Z).startsWith(CryptStair.STEP + "[facing=east"));
-    assertEquals(BlockState.AIR, SHELL.get(x, step + 1, CryptStair.STAIR_Z));
-    assertEquals(
-        BlockState.AIR, SHELL.get(x, Math.min(step + 2, CryptStair.TOP), CryptStair.STAIR_Z));
+    for (int y = step + 1; y <= Math.min(step + 3, CryptStair.TOP); y++) {
+      assertEquals(BlockState.AIR, SHELL.get(x, y, CryptStair.STAIR_Z), "headroom at " + y);
+    }
   }
 
   @Test
-  void theTopStepIsTheJigsawThatHangsTheChurchAbove() {
+  void theJigsawUnderTheTopStepHangsTheChurchAbove() {
     final Pos top = new Pos(CryptStair.SIZE_X - 1, CryptStair.TOP, CryptStair.STAIR_Z);
     assertEquals("minecraft:jigsaw[orientation=up_north]", SHELL.get(top.x(), top.y(), top.z()));
     final Map<String, Object> data = SHELL.blockData().get(top);
     assertEquals(Church.VESTRY, data.get("target"));
     assertEquals(CryptStair.POOL, data.get("pool"));
     assertEquals("aligned", data.get("joint"));
-    assertTrue(((String) data.get("final_state")).startsWith(CryptStair.STEP));
+    assertEquals(CryptStair.MASONRY.base(), data.get("final_state"));
   }
 
   @Test

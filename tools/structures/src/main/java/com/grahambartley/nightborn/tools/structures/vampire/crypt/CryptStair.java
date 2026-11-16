@@ -15,7 +15,7 @@ public final class CryptStair {
   public static final int OFFSET_X = Church.STAIR_X - (SIZE_X - 1);
   public static final int OFFSET_Z = Church.STAIR_Z - 2;
   public static final int STAIR_Z = Church.STAIR_Z - OFFSET_Z;
-  public static final int FOOT_X = 8;
+  public static final int FOOT_X = 7;
   public static final int ANCHOR_X = 7;
   public static final int ANCHOR_Z = 8;
   static final String STEP = "nightborn:gothic_stone_brick_stairs";
@@ -42,7 +42,7 @@ public final class CryptStair {
       for (int y = Math.max(1, step); y <= Math.min(TOP, step + 3); y++) {
         t.set(x, y, STAIR_Z, BlockState.AIR);
       }
-      if (step > 0 && step < TOP) {
+      if (step > 0 && step <= TOP) {
         t.set(x, step, STAIR_Z, step());
       }
     }
@@ -54,7 +54,7 @@ public final class CryptStair {
         Template.EMPTY,
         Church.VESTRY,
         POOL,
-        step(),
+        MASONRY.base(),
         "aligned");
     t.anchor(ANCHOR_X, TOP, ANCHOR_Z, GROUND, MASONRY.base());
     return t;

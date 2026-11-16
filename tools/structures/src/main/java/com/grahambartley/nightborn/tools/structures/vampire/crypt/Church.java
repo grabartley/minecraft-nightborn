@@ -58,7 +58,7 @@ public final class Church {
         VESTRY,
         Template.EMPTY,
         Template.EMPTY,
-        "air",
+        CryptStair.step(),
         "aligned");
     return t;
   }
@@ -114,7 +114,7 @@ public final class Church {
     }
     t.set(26, 1, 6, door("north", "lower"));
     t.set(26, 2, 6, door("north", "upper"));
-    t.fill(STAIR_X - 2, 0, STAIR_Z, STAIR_X - 1, 0, STAIR_Z, "air");
+    t.fill(STAIR_X - 3, 0, STAIR_Z, STAIR_X - 1, 0, STAIR_Z, "air");
     t.set(25, 1, 3, "brewing_stand");
     t.set(25, 1, 5, BlockState.of("barrel", "facing", "up", "open", false));
     t.set(27, 3, 3, BlockState.of("lantern", "hanging", false, "waterlogged", false));
