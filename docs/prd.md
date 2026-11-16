@@ -16,7 +16,7 @@ Minecraft has no vampires, and nothing that hunts them. Its undead are mindless 
 
 ### What The Mod Is
 
-Nightborn adds vampires and the people who hunt them. A bite from a vampire mob or a vampire bat may start a sickness, and a vampire player chooses whether their bite does. If it is not cured in time you turn. As a vampire you live on blood, sleep through the day in a coffin, and nothing but direct sun or a stake can finish you. Anything else only brings you down. You grow through a skill tree and pick two of three bloodlines: Noble, Beast and Occult. Each gives powers the others do not, such as bat form, mesmerising, thralls and ghostly familiars. Humans can fight back. Garlic, crucifixes, holy water, silver and the stake all hurt vampires, and every human earns hunter skills by killing them. Vampires are rare. They live in households hidden in castles, crypts, ruined manors and deep lairs, wrapped in fog, and hunters keep camps of their own. Each vampire is someone: a look, a voice, a stage of age and powers of its own. A hunter who gathers a relic from every kind of vampire structure can summon the Eldest, a vampire with every power, again and again.
+Nightborn adds vampires and the people who hunt them. A bite from a vampire mob or a vampire bat may start a sickness, and a vampire player chooses whether their bite does. If it is not cured in time you turn. As a vampire you live on blood, sleep through the day in a coffin, and nothing but direct sun or a stake can finish you. Anything else only brings you down. You grow through a skill tree and pick two of three bloodlines: Noble, Beast and Occult. Each gives powers the others do not, such as bat form, mesmerising, thralls and ghostly familiars. Humans can fight back. Garlic, crucifixes, holy water, silver and the stake all hurt vampires, and every human earns hunter skills by killing them. Vampires are rare. They live in households hidden in fog, in castles, crypts, ruined manors, deep lairs and, rarest of all, castles on the tops of mountains, and hunters keep camps of their own. Each vampire is someone: a look, a voice, a stage of age and powers of its own. A hunter who gathers a relic from a castle, a crypt, a ruined manor and an underground lair can summon the Eldest, a vampire with every power, again and again. Each mountain castle holds an Eldest of its own, met only once.
 
 ### Experience It Aims For
 
@@ -38,10 +38,10 @@ Nightborn adds vampires and the people who hunt them. A bite from a vampire mob 
 | Builds that fit your playstyle | Pick two of three bloodlines, each with its own powers (LINE-1 to LINE-7) |
 | Vampires are hard to kill | Only direct sun or a stake finishes one. Anything else only brings it down (CORE-7, CORE-8) |
 | Folklore that works | Garlic, crucifixes built from blocks, holy water, silver and stakes each have real rules (WEAK-1 to WEAK-10) |
-| Vampires live somewhere | Households with personalities in four kinds of structure, rare and hidden in fog. Vampires live there, go out to feed and come home by dawn (HOME-1 to HOME-20) |
+| Vampires live somewhere | Households with personalities in five kinds of structure, rare and hidden in fog. Vampires live there, go out to feed and come home by dawn (HOME-1 to HOME-23) |
 | Vampires fight like players | Wild vampires grow in stages and use every power a player can, more often and more cleverly the older they are (HOME-15 to HOME-17) |
 | The day belongs to vampires too | Coffins skip the day the way beds skip the night (COFFIN-1 to COFFIN-14) |
-| An endgame for hunters | A repeatable ritual summons the Eldest, a boss with every vampire power (RITE-1 to RITE-8) |
+| An endgame for hunters | A repeatable ritual summons the Eldest, a boss with every vampire power, and one waits once at the top of every mountain castle (RITE-1 to RITE-8, HOME-23) |
 | Help in the daylight | A human familiar runs errands and guards your coffin, and might betray you (FAM-1 to FAM-8) |
 
 ### Non-Goals
@@ -141,9 +141,9 @@ This document specifies the Nightborn alpha line for Minecraft 1.21.1 on Fabric.
 | Household | The vampires who live in one vampire structure |
 | Stage | How old and strong a vampire mob is: fledgling, adult, elder or ancient |
 | Hungry | A vampire mob whose blood has fallen below its hunger threshold |
-| Relic | A rare item found in one kind of vampire structure, used in the ritual |
-| The Eldest | A boss vampire with every vampire skill, summoned only by the ritual |
-| Vampire structure | A castle, crypt, ruined manor or underground lair, home to a household |
+| Relic | A rare item found in a castle, crypt, ruined manor or underground lair, used in the ritual |
+| The Eldest | A boss vampire with every vampire skill (RITE-3, HOME-23) |
+| Vampire structure | A castle, mountain castle, crypt, ruined manor or underground lair, home to a household |
 | Hunter camp | A generated camp of hunter mobs, home to a Guild Master |
 | Faction | Vampire or human. Every player is in exactly one |
 
@@ -291,7 +291,7 @@ Every vampire has the core, whatever bloodlines they choose.
 | CORE-8 | A vampire brought to its last health by anything else is downed: it collapses, cannot move, attack, feed or use items or powers, and is weakened at the cap (WEAK-9). It takes no damage from anything but sun and a stake while downed. After 30 seconds by default it gets up with 20% of its health, wherever it lies. More damage does not reset the time. Everyone near can see and hear that it is downed. It then escapes for 1 minute by default: it takes no damage but sun and a stake, stays weakened at the cap and can move freely. Vampire mobs flee while escaping |
 | CORE-9 | Phantoms never spawn for a vampire player and never target a vampire, and time a vampire spends awake never counts toward them |
 | CORE-10 | With the `hardcoreVampireDeath` server setting on, off by default, a vampire player who dies is reset like a hardcore death: they come back as a new human at world spawn with an empty inventory and ender chest, no experience, no skills, bloodlines or hunter tree, their coffin unassigned (COFFIN-13), and their thralls and familiars freed. Advancements are kept |
-| CORE-11 | Every vampire, player or mob, can levitate. Players toggle it with a key they can rebind. A levitating vampire floats one block above the ground with its feet together, follows the ground up steps and slopes and over water, gliding up a rise of one block without catching while a fence or a higher wall still stops it, and sinks slowly over a drop without fall damage. It starts a sprint as it would on foot, and leans forward to move and further to sprint, never fully horizontal, with arms spreading as it speeds up, and lands with its own animation. It drains blood while active. It can still attack and use items while it floats, and others see the swing or the raised hand over the float. A weakened or downed vampire, or one in bat form, riding, sleeping, gliding or flying in creative, cannot levitate and lands at once. The server lands a player who stays well above that height for more than a moment, and ignores a toggle pressed again within half a second. Every landing the vampire did not choose sets it down gently, never with fall damage. Vampire mobs rise in a fight and now and then as they move about, as often as the server's options allow, and still find their way while levitating |
+| CORE-11 | Every vampire, player or mob, can levitate. Players toggle it with a key they can rebind. A levitating vampire floats one block above the ground with its feet together, follows the ground up steps and slopes and over water, gliding up a rise of one block without catching while a fence or a higher wall still stops it, and sinks slowly over a drop without fall damage. A player holding sneak sinks over a drop about as fast as sneak lowers a creative flyer, keeping the float pose, and holding it over the ground lands them. It starts a sprint as it would on foot, and leans forward to move and further to sprint, never fully horizontal, with arms spreading as it speeds up, and lands with its own animation. It drains blood while active. It can still attack and use items while it floats, and others see the swing or the raised hand over the float. A weakened or downed vampire, or one in bat form, riding, sleeping, gliding or flying in creative, cannot levitate and lands at once. The server lands a player who stays well above that height for more than a moment, and ignores a toggle pressed again within half a second. Every landing the vampire did not choose sets it down gently, never with fall damage. Vampire mobs rise in a fight and now and then as they move about, as often as the server's options allow, and still find their way while levitating |
 
 **Not supported:** a vampire hiding its eyes while feeding; levitating higher than one block.
 
@@ -338,14 +338,16 @@ The core starts with Thick Blood (more health), Grave Strength (harder blows) an
 
 | ID | Requirement |
 |---|---|
-| BAT-1 | A Beast vampire can turn into a bat and fly, and uses the same power again to turn back. A vampire mob takes bat form to close on a distant target and turns back beside it |
+| BAT-1 | A Beast vampire can turn into a bat and fly, and uses the same power again to turn back. A vampire mob takes bat form to close on a distant target and turns back beside it. A vampire, player or mob, that turns back in the air, by choice or forced, falls with normal gravity and takes fall damage counted from where it turned back (CORE-7, CORE-8) |
 | BAT-2 | Turning into a bat, and back, gives a poof of the dark, ashy vampire smoke (SUN-3) and a sound, seen and heard by everyone near |
-| BAT-3 | A bat cannot attack, break blocks, use items or other powers, open containers or feed, and turning into one ends a feed. It drains blood while flying, faster than levitating, and an empty blood bar forces it back |
+| BAT-3 | A bat cannot attack, break blocks, use items or other powers, open containers or feed, and turning into one ends a feed. It drains blood while flying, faster than levitating and faster still at a sprint, and an empty blood bar forces it back. A landed or hanging bat drains blood only as a resting vampire does |
 | BAT-4 | Direct sun forces a vampire out of bat form, and no vampire can take bat form in it |
 | BAT-5 | Turning back needs room to stand. Without it, the bat stays a bat |
 | BAT-6 | A single heavy blow, as heavy as the server sets, being downed, holy water or garlic in range forces a vampire out of bat form |
+| BAT-7 | A bat player flies with weight, not as in creative. They steer with the camera and fly where they look while holding forward, climbing as they look up and diving as they look down. Speed eases in and out, turning slows the bat at speed, and letting go of forward lets it coast to a slow hover. Sprint flies faster. A bat never takes fall damage. Third person shows the bat in every pose |
+| BAT-8 | A bat player that flies into the ground lands on it, crawls slowly on its wings and takes off with jump. Using the underside of a block from beneath it hangs the bat upside down from that block, and the player's first-person view turns upside down with it. Jump or forward lets go. A hanging bat turning back drops as in BAT-1 |
 
-**Enforcement:** server.
+**Enforcement:** server decides the form, landing, hanging and blood drain, and checks bat flight as it checks any player's movement. The client moves and draws the bat.
 
 ### 5.9 Bend Minds
 
@@ -431,29 +433,30 @@ The hunter tree starts with Tracking, an active power that points toward the nea
 
 **Actor:** Any player.
 
-Vampires are rare. They live in households hidden in four kinds of structure, each placed to fit the land around it. Each structure has a heart, the room its household gathers in, and its fog is thickest there.
+Vampires are rare. They live in households hidden in five kinds of structure, each placed to fit the land around it. Each structure has a heart, the room its household gathers in, and its fog is thickest there.
 
 | Structure | Where | Household |
 |---|---|---|
-| Castle | Mountains and dark forests, rarest | A vampire lord and their court, coffins, blood fountains and the best loot |
-| Crypt | Under a church in or near a village, or in a graveyard | A few vampires below a working church |
+| Castle | Dark forests, old growth taiga, taiga, birch forests, swamps and mangrove swamps, never on mountains | A vampire lord and their court, coffins, blood fountains and rich loot |
+| Mountain castle | The highest ground of windswept hills, windswept gravelly hills, windswept forests, jagged peaks, stony peaks, frozen peaks and snowy slopes, by far the rarest | Twenty elder and ancient vampires and the Eldest in the highest room, and the best loot |
+| Crypt | Under a parish church in its walled, raised churchyard, standing just outside a village on dry, level plains | A few vampires below a working church, reached only by the vestry stair |
 | Ruined manor | Dark forests | A vampire family in an overgrown house |
 | Underground lair | Deep caves, where no sun reaches | A den around a blood pool |
 
 | ID | Requirement |
 |---|---|
 | HOME-1 | Each structure type generates rarely, in biomes that suit it, and blends into the land around it |
-| HOME-2 | Each structure holds several vampires |
+| HOME-2 | Each structure holds several vampires. A mountain castle holds twenty-one by default (HOME-22) |
 | HOME-3 | Each type has several layouts, chosen at random |
 | HOME-4 | Fog hangs around and inside every vampire structure, thicker near its heart |
 | HOME-5 | A household feels lived in: its vampires have their own personality and hobbies, talk to and argue with each other, react to each other's deaths, follow a nightly routine and use the furniture of their home: chairs, candles, drapes, books and gramophones. At dusk a household gathers at its heart, lights its candles and opens its drapes. Through the night each vampire sits, reads, talks with a housemate or wanders the house as its temperament leans, and a hot temper on either side turns talk into an argument. Before dawn they put out the candles and draw the drapes. A vampire whose housemate dies within reach mourns it for a while, even one asleep in its coffin |
-| HOME-6 | Household vampires sleep in coffins by day and wake at dusk. Each structure holds the coffins (DECOR-5) that suit it, by default: stone brick and gothic stone brick coffins in crypts, deepslate brick and polished blackstone brick in underground lairs, dark oak and spruce in ruined manors, and dark oak in a castle with gothic stone brick around its heart. A data pack can change these (HOME-12) |
+| HOME-6 | Household vampires sleep in coffins by day and wake at dusk. Each structure holds the coffins (DECOR-5) that suit it, by default: stone brick and gothic stone brick coffins in crypts, deepslate brick and polished blackstone brick in underground lairs, dark oak and spruce in ruined manors, dark oak in a castle with gothic stone brick around its heart, and gothic stone brick and dark oak in a mountain castle. A data pack can change these (HOME-12) |
 | HOME-7 | A castle's vampire lord is a boss with a health bar and its own powers. It is downed and escapes like any vampire, its bar shows when it is downed or escaping, and only a stake or the sun ends the fight |
-| HOME-8 | Structures hold loot chests with gear, Blood Bottles, decor, gothic music discs (DECOR-8), relics (RITE-1) and rare items found nowhere else |
+| HOME-8 | Structures hold loot chests with gear, Blood Bottles, decor, gothic music discs (DECOR-8), relics (RITE-1) and rare items found nowhere else. A mountain castle holds no relic |
 | HOME-9 | Vampire mobs live only in vampire structures, as members of a household. Each remembers its structure and its own coffin, which starts assigned to it (COFFIN-4), so it cannot be broken until that vampire dies to the sun or a stake. They never spawn at random anywhere else, and never despawn |
 | HOME-10 | Vampire bats spawn rarely, and only underground where a vanilla bat could spawn, or inside a vampire structure. Under cover, or at night in the open, they swoop at warm-blooded creatures and bite them (TURN-1). A vampire bat is bigger and darker than a vanilla bat, with soot fur, burgundy wings and red eyes that always glow. It hangs wrapped in its wings, flies, swoops on its prey and bites |
-| HOME-11 | Vampire mobs attack only when hungry or provoked. Being hurt, or a housemate being hurt nearby, provokes them. A fed vampire may watch, follow or warn off a stranger, but does not attack. They ignore vampire players unless provoked, and on Peaceful they never hunt players |
-| HOME-12 | Structure layouts, the coffins each structure holds, loot, relic chances, structure spawn rates, vampire stages and their odds per structure type, the skills vampire mobs pick, their temperaments and hobbies, the blocks they read at and the lights they tend, their looks, sizes, builds and outfits, and the biomes and structures vampire bats spawn in are data, changed by a data pack |
+| HOME-11 | Vampire mobs attack only when hungry or provoked. Being hurt, or a housemate being hurt nearby, provokes them, and a provoked vampire fights its attacker by day or night, fed or hungry, until it must escape the sun, falls back at low health, is downed, or the attacker leaves. A fed vampire may watch, follow or warn off a stranger, but does not attack. They never fight another vampire, whether a mob or a player, even one that hits them, and on Peaceful they never hunt players |
+| HOME-12 | Structure layouts, the coffins each structure holds, loot, relic chances, structure spawn rates, the biomes each structure generates in, household sizes, vampire stages and their odds per structure type, the skills vampire mobs pick, their temperaments and hobbies, the blocks they read at and the lights they tend, their looks, sizes, builds and outfits, and the biomes and structures vampire bats spawn in are data, changed by a data pack |
 | HOME-13 | Vampire mobs have blood that drains over time. A hungry vampire may leave its structure at night to hunt humans, villagers and animals within a range of home. Not every vampire leaves every night, so a household is rarely empty, and one setting out sometimes brings one or two vampire bats. Each heads back once it has fed, or in time to reach its coffin by dawn. One caught out at dawn seeks shade (SUN-4). Their bites can start bite sickness (TURN-1) |
 | HOME-14 | A provoked vampire gives up the chase past a range from its structure and goes home |
 | HOME-15 | Each vampire mob has a stage, fledgling, adult, elder or ancient, which sets its health, speed, damage, how many skills it has and how much blood it can spend on powers. Its skills come from the vampire tree and, unlike a player's, may come from all three bloodlines. The older a vampire and the more skills it has, the rarer it is, the harder it fights, and the more hunter points (HUNT-1) and the better loot it gives. Only the Eldest has every skill (RITE-3) |
@@ -462,6 +465,9 @@ Vampires are rare. They live in households hidden in four kinds of structure, ea
 | HOME-18 | Vampire mobs are men and women in at least 10 looks, from 1.5 to 2 blocks tall in slim, average and broad builds. Women, vampire and hunter alike, have a bust whose size is rolled once when they spawn, between a smallest and a largest. Their hitbox, eye height and reach follow their size. Outfits are chosen by era (LOOK-4). A vampire keeps its look and size for life, the same on every client, and an older stage reads as older |
 | HOME-19 | Vampire mobs bare their fangs and hiss, with animation and sound, when they notice a threat, are provoked, face garlic or a crucifix, or are about to strike. They have their own idle, hurt, death, talk and argue voices, male and female, pitched by size |
 | HOME-20 | Vampire structures hold gramophones loaded with gothic music discs (DECOR-8). Each starts its disc now and then while a player is near, and its disc can be taken. A gramophone's music never plays over other music the mod or the game plays for the same player |
+| HOME-21 | A mountain castle is a vast stone castle that grows out of the summit of a large mountain. Sheer pale walls rise straight from the rock, with round and square towers under steep red-brown conical and hipped roofs, battlements, small deep windows and timbered upper floors. Courtyards, stairs and walkways climb from its gate to one tall keep, and in cold biomes snow lies on its roofs and ledges. It generates only on the highest ground of the biomes the table above lists |
+| HOME-22 | A mountain castle's household is, by default, twenty elder and ancient vampires, about three elders to every ancient, and the Eldest (HOME-12) |
+| HOME-23 | The highest room of a mountain castle's keep belongs to the Eldest of RITE-3, who fights as RITE-4 says and treats players as RITE-7 says. It sleeps by day in its own coffin in that room, keeps to that room at night, takes no part in the household's routine (HOME-5) and never leaves the castle to feed. If it escapes, it goes back to that room by the next night. Ending it needs no ritual and no relic, and gives what RITE-6 says. Once a stake or the sun ends it, that castle never has an Eldest again |
 
 **Not supported:** a household rebuilding after it is cleared; vampire mobs spawning outside their structures.
 
@@ -548,7 +554,7 @@ Vampires are rare. They live in households hidden in four kinds of structure, ea
 | CFG-2 | Settings are saved per world as JSON in the world save directory |
 | CFG-3 | A missing file gives defaults. A broken file gives defaults, is logged and is kept |
 | CFG-4 | Out-of-range values are clamped on load |
-| CFG-5 | Options cover turn chances, sickness length, sun damage, blood drain and values, garlic and crucifix ranges, skill point rates, the staking penalty, stake and silver damage, the damage, hits, time and weakening of each weapon coating, the downed and escape times, the damage from vomiting food or potions, the blood drain while levitating, how fast starving weakens and hurts and how much it takes from night gifts and bare hands, the coffin sleep share, the chance a sip binds a thrall and how long a charm lasts, hardcore vampire deaths, spawn rates, vampire structure and hunter camp rates, hunter points per contract, vampire mob hunger threshold and blood drain, how often hungry vampire mobs go out to feed, how far they roam about home and how far a hurt one calls its housemates, how often vampire mobs rise to levitate and land, how far and how hard vampire mobs leap, dash and dodge and when they dodge, how long and how far they fall back and when they come again, a human familiar's starting loyalty, wages, loyalty gains and losses, betrayal threshold and chance, and guard and errand ranges, feeding range and chase range, how often structure gramophones play, the rewards for older vampires and the Eldest, and whether players can turn players, whether Nocturne works and how strong Batwing, Gliding Step and Hush are |
+| CFG-5 | Options cover turn chances, sickness length, sun damage, blood drain and values, garlic and crucifix ranges, skill point rates, the staking penalty, stake and silver damage, the damage, hits, time and weakening of each weapon coating, the downed and escape times, the damage from vomiting food or potions, the blood drain while levitating and in bat form, flying and at a sprint, how fast starving weakens and hurts and how much it takes from night gifts and bare hands, the coffin sleep share, the chance a sip binds a thrall and how long a charm lasts, hardcore vampire deaths, spawn rates, vampire structure and hunter camp rates, hunter points per contract, vampire mob hunger threshold and blood drain, how often hungry vampire mobs go out to feed, how far they roam about home and how far a hurt one calls its housemates, how often vampire mobs rise to levitate and land, how far and how hard vampire mobs leap, dash and dodge and when they dodge, how long and how far they fall back and when they come again, a human familiar's starting loyalty, wages, loyalty gains and losses, betrayal threshold and chance, and guard and errand ranges, feeding range and chase range, how often structure gramophones play, the rewards for older vampires and the Eldest, and whether players can turn players, whether Nocturne works and how strong Batwing, Gliding Step and Hush are |
 | CFG-6 | A settings screen through Mod Menu shows the same server options and shares their validation with the commands |
 | CFG-7 | An option that only changes what one player sees, such as gore, is a client setting saved on that player's device. Every player can change it on the settings screen, whatever their operator level |
 | CFG-8 | Operators can turn, cure, set points and reset the bloodlines of any player, and release any human familiar |
@@ -600,20 +606,20 @@ The mod has its own tab, lined with tufted burgundy leather and brass studs. It 
 
 **Actor:** Human, hunter.
 
-The Eldest is the oldest vampire there is, with every power of every bloodline. It appears only when the ritual calls it. A hunter who has raided every kind of vampire structure brings one relic from each to a ritual altar at night, and the Eldest comes.
+The Eldest is among the oldest vampires there are, with every power of every bloodline. It appears when the ritual calls it, and once at the top of every mountain castle (HOME-23). A hunter who has raided a castle, a crypt, a ruined manor and an underground lair brings one relic from each to a ritual altar at night, and the Eldest comes.
 
 | ID | Requirement |
 |---|---|
-| RITE-1 | Each vampire structure type has a relic of its own: a castle, a crypt, a ruined manor and an underground lair. It has a chance to be found in that structure's loot or dropped by its older vampires |
-| RITE-2 | A ritual altar is crafted. Placing one relic of every type on it and using it at night starts the ritual, with a build-up everyone near can see and hear |
-| RITE-3 | The ritual summons the Eldest beside the altar: a vampire with every skill in the vampire tree, all three bloodlines at once, using every power as HOME-16 says. It has a boss bar, and is a boss for MIND-4. Its health grows with the number of players near |
+| RITE-1 | Each vampire structure type but the mountain castle has a relic of its own: a castle, a crypt, a ruined manor and an underground lair. It has a chance to be found in that structure's loot or dropped by its older vampires |
+| RITE-2 | A ritual altar is crafted. Placing one of each relic (RITE-1) on it and using it at night starts the ritual, with a build-up everyone near can see and hear |
+| RITE-3 | The ritual summons the Eldest beside the altar: a vampire, a man or a woman at even odds, with every skill in the vampire tree, all three bloodlines at once, using every power as HOME-16 says. It has a boss bar, and is a boss for MIND-4. Its health grows with the number of players near |
 | RITE-4 | The Eldest is downed and escapes like any vampire, and only a stake or the sun ends it (CORE-7, CORE-8). Its bar shows when it is downed or escaping |
 | RITE-5 | The ritual uses up the relics. The altar can be used again with a new set, so the fight can be repeated |
-| RITE-6 | Ending the Eldest gives a large number of hunter points to every human who took part in the fight, and loot found nowhere else |
+| RITE-6 | Ending the Eldest gives a large number of hunter points to every human who took part in the fight, and loot found nowhere else. A summoned Eldest and a mountain castle's Eldest give the same points and roll one shared loot table |
 | RITE-7 | Only a human can start the ritual. The Eldest attacks humans, and ignores vampire players unless they attack it (HOME-11). Vampire players can fight on either side as the PvP setting allows (FACT-2) |
-| RITE-8 | The Eldest is not the castle's vampire lord (HOME-7). It appears only through the ritual |
+| RITE-8 | The Eldest is not the castle's vampire lord (HOME-7). It appears only through the ritual and in mountain castles (HOME-23) |
 
-**Not supported:** summoning the Eldest any other way.
+**Not supported:** the Eldest appearing any other way.
 
 **Enforcement:** server.
 
@@ -663,7 +669,7 @@ There is no singleplayer mode in this mod. A single-player world is an integrate
 | The turning bite choice | Sends the switch and draws the sign |
 | Feeding, resisting and draining | Sends the bite request and plays the effects |
 | Sun, weakness and their sources | Draws smoke, fire and the weakness sign |
-| Bat form | Draws the bat and the poof |
+| Bat form, landing and hanging | Moves the bat, draws it and the poof, and turns the view upside down while hanging |
 | Thralls, familiars and loyalty | Draws them |
 | Household behaviour and structures | Draws fog and plays ambience |
 | Who is on which map | Draws the map it is sent |
@@ -737,7 +743,8 @@ There is no singleplayer mode in this mod. A single-player world is an integrate
 | Household members and state, including members out feeding | kept | kept | not applicable | not applicable | kept to the last save |
 | A vampire mob's stage, skills, look, size, blood and hunger | kept | kept | not applicable | not applicable | kept to the last save |
 | Relics placed on a ritual altar | kept | kept | not applicable | not applicable | kept to the last save |
-| A summoned Eldest and its fight | kept with its chunk | kept | not applicable | not applicable | kept to the last save |
+| An Eldest, summoned or in a mountain castle, and its fight | kept with its chunk | kept | not applicable | not applicable | kept to the last save |
+| Whether a mountain castle's Eldest has been ended | kept | kept | not applicable | not applicable | kept to the last save |
 | Contracts in progress | not applicable | kept | kept | kept | kept to the last save |
 | Settings | not applicable | kept | not applicable | not applicable | written atomically |
 

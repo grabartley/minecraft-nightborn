@@ -10,6 +10,8 @@ import java.util.Map;
 
 public final class Template {
 
+  public static final String EMPTY = "minecraft:empty";
+
   private final String path;
   private final int sizeX;
   private final int sizeY;
@@ -115,28 +117,51 @@ public final class Template {
   }
 
   public void anchor(final int x, final int y, final int z, final String name, final String below) {
+    jigsaw(x, y, z, "up_north", name, EMPTY, EMPTY, below, "rollable");
+  }
+
+  public void jigsaw(
+      final int x,
+      final int y,
+      final int z,
+      final String orientation,
+      final String name,
+      final String target,
+      final String pool,
+      final String finalState,
+      final String joint) {
     set(
         x,
         y,
         z,
-        BlockState.of("jigsaw", "orientation", "up_north"),
+        BlockState.of("jigsaw", "orientation", orientation),
         Nbt.compound(
             "id",
             "minecraft:jigsaw",
             "name",
             name,
             "target",
-            "minecraft:empty",
+            target,
             "pool",
-            "minecraft:empty",
+            pool,
             "joint",
-            "rollable",
+            joint,
             "final_state",
-            BlockState.full(below),
+            BlockState.full(finalState),
             "placement_priority",
             0,
             "selection_priority",
             0));
+  }
+
+  public void embed(final Template inner, final int dx, final int dy, final int dz) {
+    inner
+        .cells()
+        .forEach(
+            (pos, state) -> {
+              final Pos to = pos.offset(dx, dy, dz);
+              set(to.x(), to.y(), to.z(), state, inner.blockData().get(pos));
+            });
   }
 
   public void entity(final int x, final int y, final int z, final Map<String, Object> data) {

@@ -13,9 +13,9 @@ public final class Housemates {
 
   public static boolean alerted(
       final boolean sameHome,
-      final boolean attackerIsHousemate,
+      final boolean attackerIsVampire,
       final double distanceSquared,
       final int alertRange) {
-    return sameHome && !attackerIsHousemate && distanceSquared <= (double) alertRange * alertRange;
+    return sameHome && !attackerIsVampire && distanceSquared <= (double) alertRange * alertRange;
   }
 }

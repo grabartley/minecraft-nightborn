@@ -8,8 +8,10 @@ import com.grahambartley.nightborn.config.StructureSettings;
 import com.grahambartley.nightborn.mob.NightbornMobs;
 import com.grahambartley.nightborn.server.ServerConfigService;
 import com.grahambartley.nightborn.structure.FogZone;
+import com.grahambartley.nightborn.structure.Footing;
 import com.grahambartley.nightborn.structure.Household;
 import com.grahambartley.nightborn.structure.HouseholdSpawner;
+import com.grahambartley.nightborn.structure.RareSpreadPlacement;
 import com.grahambartley.nightborn.structure.StructureZone;
 import com.grahambartley.nightborn.structure.StructureZoneTracker;
 import com.grahambartley.nightborn.structure.VampireStructure;
@@ -32,6 +34,7 @@ import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.RegistryOps;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.structure.StructureSet;
 import net.minecraft.structure.StructureStart;
 import net.minecraft.test.AfterBatch;
 import net.minecraft.test.BeforeBatch;
@@ -40,11 +43,14 @@ import net.minecraft.test.TestContext;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockBox;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.ChunkPos;
+import net.minecraft.util.math.ColumnPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.intprovider.ConstantIntProvider;
 import net.minecraft.util.math.random.Random;
 import net.minecraft.world.gen.chunk.placement.RandomSpreadStructurePlacement;
 import net.minecraft.world.gen.chunk.placement.StructurePlacement;
+import net.minecraft.world.gen.chunk.placement.StructurePlacementCalculator;
 import net.minecraft.world.gen.structure.Structure;
 
 public class VampireStructureGameTest implements FabricGameTest {
@@ -130,6 +136,110 @@ public class VampireStructureGameTest implements FabricGameTest {
     final JsonElement parsed = JsonParser.parseString(json);
     return Structure.STRUCTURE_CODEC.parse(
         RegistryOps.of(JsonOps.INSTANCE, world.getRegistryManager()), parsed);
+  }
+
+  @GameTest(templateName = ARENA, tickLimit = 20)
+  public void theCryptAsksForDryLevelGround(final TestContext context) {
+    final Structure crypt =
+        context
+            .getWorld()
+            .getRegistryManager()
+            .get(RegistryKeys.STRUCTURE)
+            .get(Identifier.of(Nightborn.MOD_ID, "crypt"));
+    context.assertTrue(
+        crypt instanceof VampireStructure vampire
+            && vampire.footing().equals(Optional.of(new Footing(true, 4, 8))),
+        "the crypt keeps to dry ground that rises 4 blocks or less, got " + crypt);
+    context.complete();
+  }
+
+  @GameTest(templateName = ARENA, tickLimit = 20)
+  public void theShippedCryptKeepsToTheVillageEdge(final TestContext context) {
+    final StructureSet crypts =
+        context
+            .getWorld()
+            .getRegistryManager()
+            .get(RegistryKeys.STRUCTURE_SET)
+            .get(Identifier.of(Nightborn.MOD_ID, "crypt"));
+    context.assertTrue(
+        crypts != null
+            && crypts.placement() instanceof RareSpreadPlacement rare
+            && rare.near()
+                .filter(zone -> zone.chunkCount() == 8)
+                .filter(zone -> zone.otherSet().matchesId(Identifier.ofVanilla("villages")))
+                .isPresent(),
+        "the shipped crypt only starts within 8 chunks of a village start");
+    context.complete();
+  }
+
+  @GameTest(templateName = ARENA, tickLimit = 20)
+  public void aNearRuleStartsOnlyWhereTheOtherSetCanStart(final TestContext context) {
+    final ServerWorld world = context.getWorld();
+    final StructurePlacement placement =
+        StructurePlacement.TYPE_CODEC
+            .parse(
+                RegistryOps.of(JsonOps.INSTANCE, world.getRegistryManager()),
+                JsonParser.parseString(
+                    """
+                    {
+                      "type": "nightborn:rare_spread",
+                      "rarity": "vampire_structures",
+                      "salt": 1,
+                      "spacing": 1,
+                      "separation": 0,
+                      "near": { "other_set": "minecraft:villages", "chunk_count": 1 }
+                    }
+                    """))
+            .getOrThrow();
+    final StructurePlacementCalculator calculator =
+        world.getChunkManager().getStructurePlacementCalculator();
+    final RandomSpreadStructurePlacement villages =
+        (RandomSpreadStructurePlacement)
+            world
+                .getRegistryManager()
+                .get(RegistryKeys.STRUCTURE_SET)
+                .get(Identifier.ofVanilla("villages"))
+                .placement();
+    final ChunkPos village = villages.getStartChunk(calculator.getStructureSeed(), 0, 0);
+    context.assertTrue(
+        placement.shouldGenerate(calculator, village.x, village.z),
+        "a start is allowed on the chunk a village can start on");
+    context.assertFalse(
+        placement.shouldGenerate(calculator, village.x + 2, village.z),
+        "a start is refused two chunks from where a village can start");
+    context.complete();
+  }
+
+  @GameTest(templateName = ARENA, tickLimit = 20)
+  public void theCryptFootingAcceptsDryLevelGround(final TestContext context) {
+    final ServerWorld world = context.getWorld();
+    final Structure crypt =
+        world
+            .getRegistryManager()
+            .get(RegistryKeys.STRUCTURE)
+            .get(Identifier.of(Nightborn.MOD_ID, "crypt"));
+    final BlockPos origin = context.getAbsolutePos(BlockPos.ORIGIN);
+    final Structure.Context generation =
+        new Structure.Context(
+            world.getRegistryManager(),
+            world.getChunkManager().getChunkGenerator(),
+            world.getChunkManager().getChunkGenerator().getBiomeSource(),
+            world.getChunkManager().getNoiseConfig(),
+            world.getStructureTemplateManager(),
+            world.getSeed(),
+            new ChunkPos(origin),
+            world,
+            biome -> true);
+    final BlockBox churchyard = BlockBox.create(origin, origin.add(37, 20, 22));
+    context.assertTrue(
+        crypt instanceof VampireStructure vampire
+            && vampire.footing().isPresent()
+            && vampire
+                .footing()
+                .get()
+                .fits(generation, churchyard, new ColumnPos(origin.getX(), origin.getZ())),
+        "the crypt footing accepts the flat dry test ground");
+    context.complete();
   }
 
   private static StructurePlacement decodePlacement(final ServerWorld world) {
