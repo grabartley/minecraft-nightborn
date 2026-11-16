@@ -67,7 +67,7 @@ public final class Bedchambers {
     for (final int x : new int[] {16, 18}) {
       Furnishing.drape(t, Manor.BURGUNDY, x, SEAT, 26, 4, "north");
     }
-    t.set(14, SEAT + 1, 18, StairHall.portrait("south"));
+    Furnishing.portrait(t, 14, SEAT + 1, 18, "south");
   }
 
   private static void westChamber(final Template t) {
@@ -99,7 +99,7 @@ public final class Bedchambers {
       Furnishing.drape(t, Manor.BURGUNDY, x, SEAT, 21, 4, "north");
     }
     Furnishing.chair(t, 41, SEAT, 23, "south");
-    t.set(33, SEAT + 1, 20, StairHall.portrait("east"));
+    Furnishing.portrait(t, 33, SEAT + 1, 20, "east");
     t.set(
         turret.ladderX() + 1,
         SEAT,
@@ -120,7 +120,7 @@ public final class Bedchambers {
       }
     }
     Furnishing.chest(t, 38, SEAT, 14, "west");
-    t.set(36, SEAT + 2, 9, StairHall.portrait("south"));
+    Furnishing.portrait(t, 36, SEAT + 2, 9, "south");
     for (final int x : new int[] {34, 38}) {
       Furnishing.drape(t, Manor.EMERALD, x, SEAT, 9, 4, "south");
     }

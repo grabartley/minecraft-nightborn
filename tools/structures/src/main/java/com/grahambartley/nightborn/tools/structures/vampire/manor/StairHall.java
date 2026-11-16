@@ -170,18 +170,14 @@ public final class StairHall {
     Furnishing.chair(t, EAST, F0 + 1, LANDING_FRONT + 2, "west");
     Furnishing.chair(t, WEST, F0 + 1, LANDING_FRONT + 2, "east");
     for (final int z : new int[] {LANDING_FRONT + 1, MAIN_S - 2}) {
-      t.set(WEST, F0 + 3, z, portrait("east"));
-      t.set(EAST, F0 + 3, z, portrait("west"));
-      t.set(WEST, F1 + 2, z, portrait("east"));
-      t.set(EAST, F1 + 2, z, portrait("west"));
+      Furnishing.portrait(t, WEST, F0 + 3, z, "east");
+      Furnishing.portrait(t, EAST, F0 + 3, z, "west");
+      Furnishing.portrait(t, WEST, F1 + 2, z, "east");
+      Furnishing.portrait(t, EAST, F1 + 2, z, "west");
     }
     Furnishing.candelabra(t, WEST, LANDING + 1, MAIN_N + 1);
     Furnishing.candelabra(t, EAST, LANDING + 1, MAIN_N + 1);
     Furnishing.drape(t, Manor.BURGUNDY, MID_X - 2, LANDING + 2, MAIN_N + 1, 4, "south");
     Furnishing.drape(t, Manor.BURGUNDY, MID_X + 2, LANDING + 2, MAIN_N + 1, 4, "south");
-  }
-
-  static String portrait(final String facing) {
-    return BlockState.of(Manor.PORTRAIT, "facing", facing);
   }
 }

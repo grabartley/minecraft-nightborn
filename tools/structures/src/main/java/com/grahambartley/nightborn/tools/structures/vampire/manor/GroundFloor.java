@@ -38,7 +38,7 @@ public final class GroundFloor {
     Furnishing.table(t, 17, SEAT, 28);
     Furnishing.chalice(t, 17, SEAT + 1, 28, "full");
     Furnishing.chair(t, 18, SEAT, 28, "west");
-    t.set(13, CEILING, 22, StairHall.portrait("east"));
+    Furnishing.portrait(t, 13, CEILING, 22, "east");
     Furnishing.chandelier(t, 17, CEILING, 23);
     for (final int z : new int[] {19, 25}) {
       Furnishing.drape(t, Manor.BURGUNDY, 13, DRAPE_FROM, z, 4, "east");
@@ -46,7 +46,7 @@ public final class GroundFloor {
     t.set(21, SEAT, 18, "potted_fern");
     t.set(21, SEAT, 26, "potted_fern");
     Furnishing.chest(t, 20, SEAT, 26, "north");
-    t.set(21, F0 + 3, 22, StairHall.portrait("west"));
+    Furnishing.portrait(t, 21, F0 + 3, 22, "west");
   }
 
   private static void library(final Template t) {
@@ -109,7 +109,7 @@ public final class GroundFloor {
     for (final int x : new int[] {34, 35}) {
       Furnishing.drape(t, Manor.EMERALD, x, DRAPE_FROM, 21, 4, "north");
     }
-    t.set(33, F0 + 3, 17, StairHall.portrait("east"));
+    Furnishing.portrait(t, 33, F0 + 3, 17, "east");
   }
 
   private static void kitchen(final Template t) {

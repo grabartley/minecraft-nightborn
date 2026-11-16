@@ -27,6 +27,7 @@ class WallDecorBlockTest {
             DecorBlocks.WEAPON_RACK,
             DecorBlocks.WANTED_POSTER,
             DecorBlocks.TROPHY_MOUNT,
+            DecorBlocks.PORTRAIT,
             GearBlocks.GOLD_WALL_CRUCIFIX,
             GearBlocks.SILVER_WALL_CRUCIFIX)
         .flatMap(

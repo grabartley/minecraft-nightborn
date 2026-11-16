@@ -1,0 +1,16 @@
+{
+  "variants": {
+    "facing=north,portrait=0": { "model": "nightborn:block/portrait" },
+    "facing=north,portrait=1": { "model": "nightborn:block/portrait_1" },
+    "facing=north,portrait=2": { "model": "nightborn:block/portrait_2" },
+    "facing=east,portrait=0": { "model": "nightborn:block/portrait", "y": 90 },
+    "facing=east,portrait=1": { "model": "nightborn:block/portrait_1", "y": 90 },
+    "facing=east,portrait=2": { "model": "nightborn:block/portrait_2", "y": 90 },
+    "facing=south,portrait=0": { "model": "nightborn:block/portrait", "y": 180 },
+    "facing=south,portrait=1": { "model": "nightborn:block/portrait_1", "y": 180 },
+    "facing=south,portrait=2": { "model": "nightborn:block/portrait_2", "y": 180 },
+    "facing=west,portrait=0": { "model": "nightborn:block/portrait", "y": 270 },
+    "facing=west,portrait=1": { "model": "nightborn:block/portrait_1", "y": 270 },
+    "facing=west,portrait=2": { "model": "nightborn:block/portrait_2", "y": 270 }
+  }
+}

@@ -9,22 +9,22 @@ import net.minecraft.state.property.IntProperty;
 import net.minecraft.util.shape.VoxelShape;
 import org.jetbrains.annotations.Nullable;
 
-public class WantedPosterBlock extends WallDecorBlock {
+public class PictureBlock extends WallDecorBlock {
 
   public static final int PORTRAITS = 3;
   public static final IntProperty PORTRAIT = IntProperty.of("portrait", 0, PORTRAITS - 1);
-  public static final MapCodec<WantedPosterBlock> CODEC = createCodec(WantedPosterBlock::new);
 
-  private static final VoxelShape NORTH = Block.createCuboidShape(3, 1, 15, 13, 15, 16);
+  private final MapCodec<PictureBlock> codec;
 
-  public WantedPosterBlock(final Settings settings) {
-    super(settings, NORTH);
+  public PictureBlock(final Settings settings, final VoxelShape northShape) {
+    super(settings, northShape);
+    this.codec = createCodec(copy -> new PictureBlock(copy, northShape));
     this.setDefaultState(this.getDefaultState().with(PORTRAIT, 0));
   }
 
   @Override
-  protected MapCodec<WantedPosterBlock> getCodec() {
-    return CODEC;
+  protected MapCodec<PictureBlock> getCodec() {
+    return this.codec;
   }
 
   @Override

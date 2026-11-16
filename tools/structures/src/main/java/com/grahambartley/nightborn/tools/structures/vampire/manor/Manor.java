@@ -53,7 +53,6 @@ public final class Manor {
   public static final String BURGUNDY = "nightborn:burgundy_velvet_drape";
   public static final String EMERALD = "nightborn:emerald_velvet_drape";
   public static final String GARGOYLE = "nightborn:gargoyle";
-  public static final String PORTRAIT = "nightborn:portrait";
 
   private Manor() {}
 
