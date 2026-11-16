@@ -72,6 +72,11 @@ public final class Furnishing {
     t.set(x, y, z, BlockState.of("nightborn:chalice", "blood", blood));
   }
 
+  public static String splatter(final String facing, final int splat) {
+    return BlockState.of(
+        "nightborn:blood_splatter", "face", "floor", "facing", facing, "splat", splat);
+  }
+
   public static void drape(
       final Template t,
       final String drape,

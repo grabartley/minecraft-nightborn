@@ -11,6 +11,16 @@ import org.junit.jupiter.params.provider.CsvSource;
 
 class FurnishingTest {
 
+  @ParameterizedTest(name = "splatter {1} lies on the floor facing {0}")
+  @CsvSource({"north, 0", "east, 3"})
+  void splatterLiesOnTheFloor(final String facing, final int splat) {
+    final String state = Furnishing.splatter(facing, splat);
+    assertTrue(state.startsWith("nightborn:blood_splatter"));
+    assertTrue(state.contains("face=floor"));
+    assertTrue(state.contains("facing=" + facing));
+    assertTrue(state.contains("splat=" + splat));
+  }
+
   @ParameterizedTest(name = "a coffin facing {0} puts its head at {1},{2}")
   @CsvSource({"north, 3, 2", "south, 3, 4", "east, 4, 3", "west, 2, 3"})
   void aLyingCoffinPutsItsHeadTheWayItFaces(final String facing, final int x, final int z) {

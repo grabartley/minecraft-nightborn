@@ -43,6 +43,23 @@ class BloodPoolDenTest {
   }
 
   @Test
+  void theAltarPathRunsToThePoolKerb() {
+    assertTrue(
+        List.of("minecraft:polished_deepslate", "minecraft:cracked_deepslate_tiles")
+            .contains(DEN.get(10, 0, 15)));
+    assertTrue(DEN.get(10, 1, 14).startsWith("minecraft:polished_blackstone_brick_slab"));
+    assertTrue(
+        List.of("minecraft:polished_deepslate", "minecraft:cracked_deepslate_tiles")
+            .contains(DEN.get(5, 0, 17)));
+  }
+
+  @Test
+  void aReadingCornerSitsAwayFromThePool() {
+    assertTrue(DEN.get(18, 1, 5).startsWith("minecraft:lectern"));
+    assertTrue(DEN.get(17, 1, 5).startsWith("nightborn:ornate_chair"));
+  }
+
+  @Test
   void everyCoffinStandsOnTheFloor() {
     for (final Coffins.Coffin coffin : Coffins.in(DEN)) {
       final String below = DEN.get(coffin.foot().x(), coffin.foot().y() - 1, coffin.foot().z());

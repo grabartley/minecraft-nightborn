@@ -18,8 +18,9 @@ public final class BloodPoolDen {
 
   public static Template build() {
     final Template t = new Template(PATH, SIZE, SIZE_Y, SIZE);
-    LairFeatures.cave(t);
+    LairCave.carve(t);
     LairFeatures.path(t, 5, 16, 9, 17);
+    LairFeatures.path(t, 9, 15, 10, 16);
     LairFeatures.pool(t, CENTRE, CENTRE, 2.5);
     t.set(CENTRE, 0, CENTRE, LairFeatures.RIM);
     t.set(
@@ -35,6 +36,7 @@ public final class BloodPoolDen {
     gathering(t);
     altar(t);
     remains(t);
+    LairFeatures.readingCorner(t, 20, 18, 5, "west");
     return t;
   }
 
@@ -44,9 +46,9 @@ public final class BloodPoolDen {
     Furnishing.chair(t, CENTRE - 5, 1, CENTRE, "east");
     Furnishing.candelabra(t, CENTRE - 4, 1, CENTRE - 4);
     Furnishing.candelabra(t, CENTRE + 4, 1, CENTRE + 4);
-    t.set(CENTRE + 4, 1, CENTRE - 1, LairFeatures.splatter("west", 1));
-    t.set(CENTRE - 1, 1, CENTRE - 4, LairFeatures.splatter("north", 3));
-    t.set(CENTRE - 4, 1, CENTRE + 2, LairFeatures.splatter("east", 0));
+    t.set(CENTRE + 4, 1, CENTRE - 1, Furnishing.splatter("west", 1));
+    t.set(CENTRE - 1, 1, CENTRE - 4, Furnishing.splatter("north", 3));
+    t.set(CENTRE - 4, 1, CENTRE + 2, Furnishing.splatter("east", 0));
   }
 
   private static void altar(final Template t) {

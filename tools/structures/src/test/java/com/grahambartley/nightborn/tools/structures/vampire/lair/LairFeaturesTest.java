@@ -17,46 +17,8 @@ class LairFeaturesTest {
 
   private static Template room() {
     final Template t = new Template("vampire/test", 15, 8, 15);
-    LairFeatures.cave(t);
+    LairCave.carve(t);
     return t;
-  }
-
-  @Test
-  void theCaveIsRockWithAnOpenMiddle() {
-    final Template t = room();
-    assertTrue(LairFeatures.roof(t, 7, 7) > LairFeatures.WALL_HEIGHT);
-    assertEquals(BlockState.AIR, t.get(7, 1, 7));
-    assertTrue(t.get(0, 2, 0).contains("deepslate") || t.get(0, 2, 0).contains("tuff"));
-    assertTrue(t.get(7, 7, 7).contains("deepslate") || t.get(7, 7, 7).contains("tuff"));
-  }
-
-  @ParameterizedTest(name = "the cave is walled in at its box edge in a {0} by {1} room")
-  @CsvSource({"15, 15", "25, 25", "29, 15"})
-  void theBoxEdgeIsAlwaysRock(final int sizeX, final int sizeZ) {
-    final Template t = new Template("vampire/test", sizeX, 12, sizeZ);
-    for (int x = 0; x < sizeX; x++) {
-      assertEquals(0, LairFeatures.roof(t, x, 0));
-      assertEquals(0, LairFeatures.roof(t, x, sizeZ - 1));
-    }
-    for (int z = 0; z < sizeZ; z++) {
-      assertEquals(0, LairFeatures.roof(t, 0, z));
-      assertEquals(0, LairFeatures.roof(t, sizeX - 1, z));
-    }
-  }
-
-  @Test
-  void hangingDripstoneHangsFromRock() {
-    final Template t = new Template("vampire/test", 25, 12, 25);
-    LairFeatures.cave(t);
-    int hanging = 0;
-    for (final var cell : t.cells().entrySet()) {
-      if (cell.getValue().contains("vertical_direction=down")) {
-        hanging++;
-        final String above = t.get(cell.getKey().x(), cell.getKey().y() + 1, cell.getKey().z());
-        assertTrue(!above.endsWith("air"), cell.getKey().toString());
-      }
-    }
-    assertTrue(hanging > 0);
   }
 
   @ParameterizedTest(name = "a shrine facing {0} stands its coffin in an open arch")
@@ -111,6 +73,21 @@ class LairFeaturesTest {
     assertTrue(t.get(4, 2, 4).startsWith("minecraft:skeleton_skull"));
   }
 
+  @ParameterizedTest(name = "a reading corner facing {0} seats its reader at the lectern")
+  @CsvSource({"west, 12, 10, 9", "east, 2, 4, 5"})
+  void readingCornersFaceTheirReader(
+      final String toward, final int shelfX, final int lecternX, final int chairX) {
+    final Template t = room();
+    LairFeatures.readingCorner(t, shelfX, lecternX, 7, toward);
+    for (int z = 6; z <= 8; z++) {
+      assertEquals("minecraft:bookshelf", t.get(shelfX, 1, z));
+      assertEquals("minecraft:bookshelf", t.get(shelfX, 2, z));
+    }
+    assertTrue(t.get(lecternX, 1, 7).contains("facing=" + toward));
+    assertTrue(
+        t.get(chairX, 1, 7).contains("facing=" + Facing.OPPOSITE.get(toward)), t.get(chairX, 1, 7));
+  }
+
   @ParameterizedTest(name = "the path tile at {0},{1} is worn deepslate")
   @CsvSource({"2, 2", "3, 5", "4, 9"})
   void pathsAreWornDeepslate(final int x, final int z) {
@@ -121,14 +98,5 @@ class LairFeaturesTest {
         tile.equals("minecraft:polished_deepslate")
             || tile.equals("minecraft:cracked_deepslate_tiles"),
         tile);
-  }
-
-  @ParameterizedTest(name = "splatter {1} faces {0} on the floor")
-  @CsvSource({"north, 0", "east, 3"})
-  void splatterLiesOnTheFloor(final String facing, final int splat) {
-    final String state = LairFeatures.splatter(facing, splat);
-    assertTrue(state.contains("face=floor"));
-    assertTrue(state.contains("facing=" + facing));
-    assertTrue(state.contains("splat=" + splat));
   }
 }

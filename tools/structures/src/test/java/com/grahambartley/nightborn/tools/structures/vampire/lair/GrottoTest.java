@@ -51,6 +51,12 @@ class GrottoTest {
   }
 
   @Test
+  void aReadingCornerSitsBesideTheHearth() {
+    assertTrue(GROTTO.get(4, 1, 7).startsWith("minecraft:lectern"));
+    assertTrue(GROTTO.get(5, 1, 7).startsWith("nightborn:ornate_chair"));
+  }
+
+  @Test
   void theSpringIsKerbedWithGapsToStepIn() {
     assertEquals(LairFeatures.POOL, GROTTO.get(14, 0, 7));
     assertTrue(GROTTO.get(10, 1, 5).startsWith("minecraft:polished_blackstone_brick_slab"));

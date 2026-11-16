@@ -14,7 +14,6 @@ public final class LairFeatures {
   public static final String DEEPSLATE_COFFIN = "nightborn:deepslate_brick_coffin";
   public static final String BLACKSTONE_COFFIN = "nightborn:polished_blackstone_brick_coffin";
   public static final String POOL = "nightborn:blood_pool";
-  static final Stone ROCK = new Stone("deepslate", "cobbled_deepslate", "tuff", 45);
   static final Stone DRESSED =
       new Stone("deepslate_bricks", "deepslate_tiles", "cracked_deepslate_bricks", 30);
   static final String ARCH = "deepslate_brick_stairs";
@@ -22,42 +21,8 @@ public final class LairFeatures {
       BlockState.of("polished_blackstone_brick_slab", "type", "bottom", "waterlogged", false);
   static final String RIM = "polished_blackstone_bricks";
   static final int SHRINE_HEIGHT = 5;
-  static final int WALL_HEIGHT = 3;
-  static final int STALACTITE_ROOF = 6;
-  static final int STALACTITE_PERCENT = 6;
 
   private LairFeatures() {}
-
-  public static void cave(final Template t) {
-    ROCK.fill(t, 0, 0, 0, t.sizeX() - 1, 0, t.sizeZ() - 1);
-    for (int x = 0; x < t.sizeX(); x++) {
-      for (int z = 0; z < t.sizeZ(); z++) {
-        final int roof = roof(t, x, z);
-        for (int y = 1; y < t.sizeY(); y++) {
-          t.set(x, y, z, y <= roof ? BlockState.AIR : ROCK.at(x, y, z));
-        }
-        if (roof >= STALACTITE_ROOF && Stone.roll(x, roof, z) < STALACTITE_PERCENT) {
-          t.set(x, roof, z, hanging("tip"));
-          if (Stone.roll(z, roof, x) < STALACTITE_PERCENT * 4) {
-            t.set(x, roof, z, hanging("frustum"));
-            t.set(x, roof - 1, z, hanging("tip"));
-          }
-        }
-      }
-    }
-  }
-
-  public static int roof(final Template t, final int x, final int z) {
-    final double rx = (t.sizeX() - 1) / 2.0;
-    final double rz = (t.sizeZ() - 1) / 2.0;
-    final double wobble = (Stone.roll(x, 0, z) % 10) / 100.0;
-    final double reach = Math.pow(Math.abs(x - rx) / rx, 4) + Math.pow(Math.abs(z - rz) / rz, 4);
-    if (reach + wobble > 1) {
-      return 0;
-    }
-    final int rise = t.sizeY() - 2 - WALL_HEIGHT;
-    return WALL_HEIGHT + (int) Math.round(rise * Math.sqrt(1 - reach)) - Stone.roll(z, 1, x) % 2;
-  }
 
   public static void shrine(
       final Template t, final int x, final int z, final String front, final String coffin) {
@@ -78,7 +43,7 @@ public final class LairFeatures {
               cz,
               d == 0 && Math.abs(a - along) <= 2 && y <= 4
                   ? DRESSED.at(cx, y, cz)
-                  : ROCK.at(cx, y, cz));
+                  : LairCave.ROCK.at(cx, y, cz));
         }
       }
     }
@@ -87,6 +52,22 @@ public final class LairFeatures {
     }
     Furnishing.standingCoffin(
         t, coffin, wall.x(along, depth0), 1, wall.z(along, depth0), Facing.OPPOSITE.get(front));
+  }
+
+  public static void readingCorner(
+      final Template t, final int shelfX, final int lecternX, final int z, final String toward) {
+    for (int dz = -1; dz <= 1; dz++) {
+      t.set(shelfX, 1, z + dz, "bookshelf");
+      t.set(shelfX, 2, z + dz, "bookshelf");
+    }
+    t.set(
+        lecternX,
+        1,
+        z,
+        BlockState.of("lectern", "facing", toward, "has_book", false, "powered", false));
+    final int step = Integer.signum(lecternX - shelfX);
+    Furnishing.chair(t, lecternX + step, 1, z, Facing.OPPOSITE.get(toward));
+    Furnishing.candles(t, shelfX + step, 1, z + 1, 2, false);
   }
 
   public static void pool(final Template t, final int cx, final int cz, final double radius) {
@@ -118,11 +99,6 @@ public final class LairFeatures {
     t.set(x, 2, z, BlockState.of("skeleton_skull", "rotation", (skullRotation + 3) % 16));
   }
 
-  public static String splatter(final String facing, final int splat) {
-    return BlockState.of(
-        "nightborn:blood_splatter", "face", "floor", "facing", facing, "splat", splat);
-  }
-
   public static void path(
       final Template t, final int x0, final int z0, final int x1, final int z1) {
     for (int x = Math.min(x0, x1); x <= Math.max(x0, x1); x++) {
@@ -130,17 +106,6 @@ public final class LairFeatures {
         t.set(x, 0, z, Stone.roll(x, 0, z) < 25 ? "cracked_deepslate_tiles" : "polished_deepslate");
       }
     }
-  }
-
-  private static String hanging(final String thickness) {
-    return BlockState.of(
-        "pointed_dripstone",
-        "thickness",
-        thickness,
-        "vertical_direction",
-        "down",
-        "waterlogged",
-        false);
   }
 
   private static String dripstone(final String thickness) {

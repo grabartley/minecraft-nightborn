@@ -21,7 +21,7 @@ public final class Grotto {
 
   public static Template build() {
     final Template t = new Template(PATH, SIZE_X, SIZE_Y, SIZE_Z);
-    LairFeatures.cave(t);
+    LairCave.carve(t);
     LairFeatures.path(t, 11, 10, LEDGE - 1, 11);
     LairFeatures.path(t, LEDGE - 1, 6, LEDGE - 1, 11);
     spring(t);
@@ -29,6 +29,7 @@ public final class Grotto {
     LairFeatures.shrine(t, 6, 1, "south", DEEPSLATE_COFFIN);
     LairFeatures.shrine(t, 15, 13, "north", BLACKSTONE_COFFIN);
     hearth(t);
+    LairFeatures.readingCorner(t, 2, 4, 7, "east");
     LairFeatures.bones(t, 2, 3, 4);
     LairFeatures.stalagmite(t, 3, 12, 2);
     LairFeatures.stalagmite(t, 12, 2, 1);
@@ -52,7 +53,7 @@ public final class Grotto {
   }
 
   private static void ledge(final Template t) {
-    LairFeatures.ROCK.fill(t, LEDGE, 0, 2, SIZE_X - 1, LEDGE_TOP, 12);
+    LairCave.ROCK.fill(t, LEDGE, 0, 2, SIZE_X - 1, LEDGE_TOP, 12);
     LairFeatures.DRESSED.fill(t, LEDGE, 0, 2, LEDGE, LEDGE_TOP, 12);
     for (int z = 6; z <= 8; z++) {
       t.set(LEDGE - 1, 1, z, step());
@@ -76,8 +77,8 @@ public final class Grotto {
     Furnishing.chair(t, 10, 1, 11, "east");
     Furnishing.chair(t, 12, 1, 11, "west");
     Furnishing.candles(t, 11, 2, 11, 3, false);
-    t.set(9, 1, 12, LairFeatures.splatter("south", 2));
-    t.set(13, 1, 3, LairFeatures.splatter("east", 1));
+    t.set(9, 1, 12, Furnishing.splatter("south", 2));
+    t.set(13, 1, 3, Furnishing.splatter("east", 1));
   }
 
   private static String step() {
