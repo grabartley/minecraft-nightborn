@@ -1,6 +1,7 @@
 package com.grahambartley.nightborn.mob.combat;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.mockito.Mockito.mock;
 
 import net.minecraft.entity.LivingEntity;
@@ -59,7 +60,7 @@ class GrudgeTest {
     }
     assertEquals(held, grudge.held());
     assertEquals(held, grudge.against(attacker));
-    assertEquals(false, grudge.against(bystander));
-    assertEquals(false, grudge.against(null));
+    assertFalse(grudge.against(bystander));
+    assertFalse(grudge.against(null));
   }
 }

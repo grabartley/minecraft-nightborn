@@ -49,6 +49,7 @@ public class VampireHomeGameTest implements FabricGameTest {
   static final int FAR_AWAY = 200;
   static final int PAST_HOME = 24;
   static final int ATTACKER_FORGOTTEN = 120;
+  static final int HURT_COOLDOWN = 20;
 
   private int outingChanceBefore;
   private int mobDrainBefore;
@@ -324,7 +325,10 @@ public class VampireHomeGameTest implements FabricGameTest {
         });
   }
 
-  @GameTest(templateName = ARENA, batchId = NIGHT_BATCH, tickLimit = TestPlayers.READY + 10)
+  @GameTest(
+      templateName = ARENA,
+      batchId = NIGHT_BATCH,
+      tickLimit = TestPlayers.READY + HURT_COOLDOWN + 10)
   public void aVampireNeverFightsBackAgainstAnotherVampire(final TestContext context) {
     final VampireEntity vampire = VampireMobGameTest.still(context, new BlockPos(2, 2, 2));
     final VampireEntity kin = VampireMobGameTest.still(context, new BlockPos(6, 2, 6));
@@ -339,7 +343,18 @@ public class VampireHomeGameTest implements FabricGameTest {
           context.assertFalse(vampire.canTarget(kin), "nor is a vampire mob");
           context.assertFalse(
               vampire.isInWalkTargetRange(player.getBlockPos()),
-              "being hit by a vampire does not take it off its home leash");
+              "being hit by a vampire player does not take it off its home leash");
+        });
+    context.runAtTick(
+        TestPlayers.READY + HURT_COOLDOWN,
+        () -> {
+          context.assertTrue(
+              vampire.damage(vampire.getDamageSources().mobAttack(kin), 1.0F),
+              "a vampire mob hits it");
+          vampire.tickHome();
+          context.assertFalse(
+              vampire.isInWalkTargetRange(kin.getBlockPos()),
+              "nor does being hit by a vampire mob");
           TestPlayers.finish(context, player);
         });
   }
