@@ -61,4 +61,13 @@ class LevitationLiftTest {
     assertEquals(66.0, feet, 1.0E-9);
     assertTrue(ticks <= 20, "reaches the top within a second, took " + ticks);
   }
+
+  @ParameterizedTest(name = "feet {0}, levitating {1}: path feet {2}")
+  @CsvSource({"65, true, 64", "65.2, true, 64.2", "64, false, 64", "65, false, 65"})
+  @DisplayName(
+      "a levitating vampire follows a path from the ground under it, so it reaches each step it"
+          + " floats over")
+  void pathFeetY(final double feetY, final boolean levitating, final double pathFeet) {
+    assertEquals(pathFeet, LevitationLift.pathFeetY(feetY, levitating), 1.0e-9);
+  }
 }
