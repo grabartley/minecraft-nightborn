@@ -22,6 +22,6 @@ class SkillEarningTest {
   @DisplayName("an older vampire is worth more hunter points")
   void huntPoints(final int perKill, final int perStage, final int rank, final int points) {
     assertEquals(
-        points, SkillEarning.huntPoints(new SkillSettings(20, 1, perKill, perStage, 10), rank));
+        points, SkillEarning.huntPoints(new SkillSettings(20, 1, perKill, perStage, 10, 5), rank));
   }
 }

@@ -24,8 +24,11 @@ class StructureSettingsTest {
 
   @ParameterizedTest(name = "{0} is kept as {1}")
   @CsvSource({"-5, 25", "10, 25", "25, 25", "100, 100", "400, 400", "900, 400"})
-  @DisplayName("the constructor clamps rarity to between a quarter and four times the spacing")
+  @DisplayName(
+      "the constructor clamps both rarities to between a quarter and four times the spacing")
   void clamps(final int given, final int kept) {
-    assertEquals(kept, new StructureSettings(given).structureRarity());
+    final StructureSettings settings = new StructureSettings(given, given);
+    assertEquals(kept, settings.structureRarity());
+    assertEquals(kept, settings.campRarity());
   }
 }

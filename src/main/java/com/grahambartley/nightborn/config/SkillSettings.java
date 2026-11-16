@@ -3,7 +3,12 @@ package com.grahambartley.nightborn.config;
 import java.util.List;
 
 public record SkillSettings(
-    int bloodPerPoint, int drainBonusPoints, int huntPoints, int stagePoints, int stakePenalty) {
+    int bloodPerPoint,
+    int drainBonusPoints,
+    int huntPoints,
+    int stagePoints,
+    int stakePenalty,
+    int contractPoints) {
 
   static final String SECTION = "skills";
 
@@ -17,9 +22,17 @@ public record SkillSettings(
       new IntSetting(SECTION, "stagePoints", 2, 0, 50, c -> c.skills().stagePoints());
   public static final IntSetting STAKE_PENALTY =
       new IntSetting(SECTION, "stakePenalty", 10, 0, 100, c -> c.skills().stakePenalty());
+  public static final IntSetting CONTRACT_POINTS =
+      new IntSetting(SECTION, "contractPoints", 5, 0, 50, c -> c.skills().contractPoints());
 
   public static final List<Setting<?>> SETTINGS =
-      List.of(BLOOD_PER_POINT, DRAIN_BONUS_POINTS, HUNT_POINTS, STAGE_POINTS, STAKE_PENALTY);
+      List.of(
+          BLOOD_PER_POINT,
+          DRAIN_BONUS_POINTS,
+          HUNT_POINTS,
+          STAGE_POINTS,
+          STAKE_PENALTY,
+          CONTRACT_POINTS);
 
   public SkillSettings {
     bloodPerPoint = BLOOD_PER_POINT.clamp(bloodPerPoint);
@@ -27,6 +40,7 @@ public record SkillSettings(
     huntPoints = HUNT_POINTS.clamp(huntPoints);
     stagePoints = STAGE_POINTS.clamp(stagePoints);
     stakePenalty = STAKE_PENALTY.clamp(stakePenalty);
+    contractPoints = CONTRACT_POINTS.clamp(contractPoints);
   }
 
   static SkillSettings from(final SettingValues values) {
@@ -35,6 +49,7 @@ public record SkillSettings(
         values.get(DRAIN_BONUS_POINTS),
         values.get(HUNT_POINTS),
         values.get(STAGE_POINTS),
-        values.get(STAKE_PENALTY));
+        values.get(STAKE_PENALTY),
+        values.get(CONTRACT_POINTS));
   }
 }

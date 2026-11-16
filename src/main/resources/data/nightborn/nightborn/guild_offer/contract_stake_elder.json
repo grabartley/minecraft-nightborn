@@ -1,0 +1,17 @@
+{
+  "order": 90,
+  "wants": {
+    "id": "minecraft:paper",
+    "count": 1
+  },
+  "gives": {
+    "id": "nightborn:hunter_contract",
+    "count": 1,
+    "components": {
+      "nightborn:hunter_contract": {
+        "contract": "nightborn:stake_elder"
+      }
+    }
+  },
+  "max_uses": 1
+}

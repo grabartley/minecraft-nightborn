@@ -1,0 +1,16 @@
+{
+  "order": 60,
+  "wants": {
+    "id": "minecraft:emerald",
+    "count": 10
+  },
+  "also_wants": {
+    "id": "nightborn:silver_ingot",
+    "count": 2
+  },
+  "gives": {
+    "id": "nightborn:silver_stake",
+    "count": 1
+  },
+  "max_uses": 3
+}

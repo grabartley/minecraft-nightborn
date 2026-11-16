@@ -1,0 +1,7 @@
+{
+  "description": { "translate": "nightborn.contract.clear_household" },
+  "goal": "clear_household",
+  "count": 1,
+  "minimum_stage": 0,
+  "reward": "nightborn:contract/clear_household"
+}

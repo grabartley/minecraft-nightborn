@@ -1,0 +1,21 @@
+{
+  "order": 30,
+  "wants": {
+    "id": "minecraft:emerald",
+    "count": 4
+  },
+  "also_wants": {
+    "id": "minecraft:glass_bottle",
+    "count": 1
+  },
+  "gives": {
+    "id": "minecraft:splash_potion",
+    "count": 1,
+    "components": {
+      "minecraft:potion_contents": {
+        "potion": "nightborn:holy_water"
+      }
+    }
+  },
+  "max_uses": 8
+}

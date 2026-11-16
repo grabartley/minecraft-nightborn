@@ -31,7 +31,14 @@ public final class SkillEarning {
 
   public static boolean fromHunt(
       final PlayerEntity hunter, final SkillSettings settings, final int stageRank) {
-    final int points = huntPoints(settings, stageRank);
+    return grantHunterPoints(hunter, huntPoints(settings, stageRank));
+  }
+
+  public static boolean fromContract(final PlayerEntity hunter, final SkillSettings settings) {
+    return grantHunterPoints(hunter, settings.contractPoints());
+  }
+
+  private static boolean grantHunterPoints(final PlayerEntity hunter, final int points) {
     if (Vampires.isVampire(hunter) || points <= 0) {
       return false;
     }

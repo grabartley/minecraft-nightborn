@@ -24,3 +24,4 @@ Shared engineering standards across all the mods in this family live in [`../sta
 | [0014](0014-coffins-are-geckolib-models-with-a-texture-per-material.md) | Coffins are GeckoLib models with a texture per material |
 | [0015](0015-placed-blood-follows-the-gore-option-on-each-client.md) | Placed blood follows the gore option on each client |
 | [0016](0016-coffin-owners-live-in-one-server-wide-record.md) | Coffin owners live in one server-wide record |
+| [0017](0017-hunter-camps-are-generated-templates-and-contracts-are-items.md) | Hunter camps are generated templates and contracts are items |
