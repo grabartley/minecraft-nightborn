@@ -9,14 +9,19 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
-class FogZonesTest {
+class StructureZonesTest {
 
-  private static final FogZone WEST =
-      FogZone.around(
-          new BlockBox(-55, 60, -5, -45, 70, 5), new BlockBox(-60, 60, -10, -40, 70, 10));
-  private static final FogZone EAST =
-      FogZone.around(new BlockBox(45, 60, -5, 55, 70, 5), new BlockBox(10, 60, -10, 90, 70, 10));
-  private static final List<FogZone> ZONES = List.of(WEST, EAST);
+  private static final StructureZone WEST =
+      new StructureZone(
+          FogZone.around(
+              new BlockBox(-55, 60, -5, -45, 70, 5), new BlockBox(-60, 60, -10, -40, 70, 10)),
+          StructureAmbience.SILENT);
+  private static final StructureZone EAST =
+      new StructureZone(
+          FogZone.around(
+              new BlockBox(45, 60, -5, 55, 70, 5), new BlockBox(10, 60, -10, 90, 70, 10)),
+          StructureAmbience.SILENT);
+  private static final List<StructureZone> ZONES = List.of(WEST, EAST);
 
   @ParameterizedTest(name = "at x {0} the zone is {1}")
   @CsvSource({"-50, WEST", "-35, WEST", "-5, EAST", "50, EAST", "-90, NONE", "120, NONE"})
@@ -28,13 +33,13 @@ class FogZonesTest {
           case "EAST" -> Optional.of(EAST);
           default -> Optional.empty();
         },
-        FogZones.deepest(ZONES, x, 65.0, 0.0));
+        StructureZones.deepest(ZONES, x, 65.0, 0.0));
   }
 
   @ParameterizedTest(name = "at x {0}")
   @CsvSource({"0", "100", "-100"})
-  @DisplayName("no zones give no fog")
+  @DisplayName("no zones give no zone")
   void emptyIsEmpty(final double x) {
-    assertEquals(Optional.empty(), FogZones.deepest(List.of(), x, 65.0, 0.0));
+    assertEquals(Optional.empty(), StructureZones.deepest(List.of(), x, 65.0, 0.0));
   }
 }
