@@ -117,7 +117,7 @@ public final class Church {
     t.fill(STAIR_X - 3, 0, STAIR_Z, STAIR_X - 1, 0, STAIR_Z, "air");
     t.set(25, 1, 3, "brewing_stand");
     t.set(25, 1, 5, BlockState.of("barrel", "facing", "up", "open", false));
-    t.set(27, 3, 3, BlockState.of("lantern", "hanging", false, "waterlogged", false));
+    t.set(27, 3, 3, BlockState.of("lantern", "hanging", true, "waterlogged", false));
   }
 
   private static void porch(final Template t) {

@@ -19,7 +19,7 @@ public final class Ossuary {
   public static Template build() {
     final Template t = CryptStair.shell(PATH);
     gallery(t);
-    t.fill(5, 1, 2, 8, 3, 3, "air");
+    t.fill(5, 1, 2, 7, 3, 3, "air");
     Openings.arch(t, Axis.X, 6, 8, 4, 1, 3, CryptStair.STEP);
     Openings.arch(t, Axis.X, 6, 8, 5, 1, 3, CryptStair.STEP);
     northChapel(t);

@@ -8,25 +8,32 @@ import com.grahambartley.nightborn.tools.structures.template.Pos;
 import com.grahambartley.nightborn.tools.structures.template.Template;
 import java.util.Map;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 class CryptStairTest {
 
   private static final Template SHELL = CryptStair.shell("vampire/crypt/test");
 
-  static IntStream steps() {
-    return IntStream.rangeClosed(1, CryptStair.TOP);
+  static Stream<Arguments> steps() {
+    return Stream.of(SHELL, Undercroft.build(), Ossuary.build())
+        .flatMap(
+            crypt ->
+                IntStream.rangeClosed(1, CryptStair.TOP)
+                    .mapToObj(step -> Arguments.of(crypt.path(), crypt, step)));
   }
 
-  @ParameterizedTest(name = "step {0} climbs one block east with headroom")
+  @ParameterizedTest(name = "in {0} step {2} climbs one block east with headroom")
   @MethodSource("steps")
-  void eachStepClimbsOneBlockWithRoomToWalk(final int step) {
+  void eachStepClimbsOneBlockWithRoomToWalk(
+      final String path, final Template crypt, final int step) {
     final int x = CryptStair.FOOT_X + step;
-    assertTrue(SHELL.get(x, step, CryptStair.STAIR_Z).startsWith(CryptStair.STEP + "[facing=east"));
+    assertTrue(crypt.get(x, step, CryptStair.STAIR_Z).startsWith(CryptStair.STEP + "[facing=east"));
     for (int y = step + 1; y <= Math.min(step + 3, CryptStair.TOP); y++) {
-      assertEquals(BlockState.AIR, SHELL.get(x, y, CryptStair.STAIR_Z), "headroom at " + y);
+      assertEquals(BlockState.AIR, crypt.get(x, y, CryptStair.STAIR_Z), "headroom at " + y);
     }
   }
 

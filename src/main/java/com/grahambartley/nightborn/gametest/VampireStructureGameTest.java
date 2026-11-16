@@ -11,6 +11,7 @@ import com.grahambartley.nightborn.structure.FogZone;
 import com.grahambartley.nightborn.structure.Footing;
 import com.grahambartley.nightborn.structure.Household;
 import com.grahambartley.nightborn.structure.HouseholdSpawner;
+import com.grahambartley.nightborn.structure.RareSpreadPlacement;
 import com.grahambartley.nightborn.structure.StructureZone;
 import com.grahambartley.nightborn.structure.StructureZoneTracker;
 import com.grahambartley.nightborn.structure.VampireStructure;
@@ -33,6 +34,7 @@ import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.RegistryOps;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.structure.StructureSet;
 import net.minecraft.structure.StructureStart;
 import net.minecraft.test.AfterBatch;
 import net.minecraft.test.BeforeBatch;
@@ -148,6 +150,25 @@ public class VampireStructureGameTest implements FabricGameTest {
         crypt instanceof VampireStructure vampire
             && vampire.footing().equals(Optional.of(new Footing(true, 4, 8))),
         "the crypt keeps to dry ground that rises 4 blocks or less, got " + crypt);
+    context.complete();
+  }
+
+  @GameTest(templateName = ARENA, tickLimit = 20)
+  public void theShippedCryptKeepsToTheVillageEdge(final TestContext context) {
+    final StructureSet crypts =
+        context
+            .getWorld()
+            .getRegistryManager()
+            .get(RegistryKeys.STRUCTURE_SET)
+            .get(Identifier.of(Nightborn.MOD_ID, "crypt"));
+    context.assertTrue(
+        crypts != null
+            && crypts.placement() instanceof RareSpreadPlacement rare
+            && rare.near()
+                .filter(zone -> zone.chunkCount() == 8)
+                .filter(zone -> zone.otherSet().matchesId(Identifier.ofVanilla("villages")))
+                .isPresent(),
+        "the shipped crypt only starts within 8 chunks of a village start");
     context.complete();
   }
 
