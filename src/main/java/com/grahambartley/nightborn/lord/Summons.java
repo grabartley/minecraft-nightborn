@@ -1,5 +1,6 @@
 package com.grahambartley.nightborn.lord;
 
+import com.grahambartley.nightborn.skill.Powers;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.entity.Entity;
@@ -20,7 +21,7 @@ public final class Summons {
       return List.of();
     }
     final Random random = caster.getRandom();
-    final LivingEntity foe = Rally.foe(caster);
+    final LivingEntity foe = Powers.foe(caster);
     final List<Entity> called = new ArrayList<>();
     final int count = power.count().get(random);
     for (int i = 0; i < count; i++) {

@@ -107,7 +107,7 @@ public class VampireLordGameTest implements FabricGameTest {
     second.settleAt(home);
     stranger.settleAt(home.add(200, 0, 0));
     lord.setTarget(foe);
-    final var answered = Rally.call(lord, new RallyPower(16.0F));
+    final var answered = Rally.call(lord, new RallyPower(16));
     context.assertTrue(answered.size() == 2, "both housemates answer, not " + answered.size());
     context.assertTrue(
         first.getTarget() == foe && second.getTarget() == foe, "they turn on the foe");

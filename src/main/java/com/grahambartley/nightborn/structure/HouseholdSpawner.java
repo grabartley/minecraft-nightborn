@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.IntStream;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
@@ -42,7 +43,6 @@ public final class HouseholdSpawner {
         .flatMap(head -> HouseholdSpots.middle(spots, centre).map(spot -> Map.entry(head, spot)))
         .ifPresent(
             seat -> {
-              spots.remove(seat.getValue());
               held.add(seat.getValue());
               spawn(
                       world,
@@ -89,13 +89,12 @@ public final class HouseholdSpawner {
     return Optional.of(resident);
   }
 
-  private static List<BlockState> above(
+  private static Iterable<BlockState> above(
       final StructureWorldAccess world, final BlockPos floor, final int top) {
-    final List<BlockState> above = new ArrayList<>();
-    for (int y = floor.getY() + 3; y <= top; y++) {
-      above.add(world.getBlockState(new BlockPos(floor.getX(), y, floor.getZ())));
-    }
-    return above;
+    return () ->
+        IntStream.rangeClosed(floor.getY() + 3, top)
+            .mapToObj(y -> world.getBlockState(new BlockPos(floor.getX(), y, floor.getZ())))
+            .iterator();
   }
 
   private static List<BlockPos> spots(

@@ -22,14 +22,15 @@ class HouseholdSpotsTest {
   @CsvSource({"10, 3, 3", "10, 0, 0", "2, 5, 2", "0, 4, 0", "6, 6, 6"})
   @DisplayName("never chooses more spots than were asked for or exist")
   void counts(final int spots, final int wanted, final int chosen) {
-    assertEquals(chosen, HouseholdSpots.choose(row(spots), wanted, Random.create(1L)).size());
+    assertEquals(
+        chosen, HouseholdSpots.choose(row(spots), wanted, Random.create(1L), List.of()).size());
   }
 
   @ParameterizedTest(name = "seed {0}")
   @CsvSource({"1", "2", "3", "42", "1000"})
   @DisplayName("never puts two residents in the same spot")
   void distinct(final long seed) {
-    final List<BlockPos> chosen = HouseholdSpots.choose(row(4), 4, Random.create(seed));
+    final List<BlockPos> chosen = HouseholdSpots.choose(row(4), 4, Random.create(seed), List.of());
     assertEquals(chosen.size(), new HashSet<>(chosen).size());
   }
 
@@ -37,7 +38,7 @@ class HouseholdSpotsTest {
   @CsvSource({"1", "2", "3", "42", "1000"})
   @DisplayName("keeps residents apart while there is room to")
   void spreadsOut(final long seed) {
-    final List<BlockPos> chosen = HouseholdSpots.choose(row(12), 3, Random.create(seed));
+    final List<BlockPos> chosen = HouseholdSpots.choose(row(12), 3, Random.create(seed), List.of());
     for (final BlockPos a : chosen) {
       for (final BlockPos b : chosen) {
         assertTrue(a == b || a.getManhattanDistance(b) >= 2, a + " crowds " + b);
@@ -50,8 +51,8 @@ class HouseholdSpotsTest {
   @DisplayName("the same seed gives the same household")
   void repeatable(final long seed) {
     assertEquals(
-        HouseholdSpots.choose(row(12), 4, Random.create(seed)),
-        HouseholdSpots.choose(row(12), 4, Random.create(seed)));
+        HouseholdSpots.choose(row(12), 4, Random.create(seed), List.of()),
+        HouseholdSpots.choose(row(12), 4, Random.create(seed), List.of()));
   }
 
   @ParameterizedTest(name = "{0} -> {1}")

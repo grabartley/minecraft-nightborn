@@ -1,8 +1,10 @@
 package com.grahambartley.nightborn.mob.household;
 
+import com.grahambartley.nightborn.downed.Downed;
 import com.grahambartley.nightborn.mob.VampireEntity;
 import com.grahambartley.nightborn.mob.home.Housemates;
 import com.grahambartley.nightborn.vampire.Vampires;
+import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.server.world.ServerWorld;
@@ -24,6 +26,26 @@ public final class HouseholdBonds {
         mate.setAttacker(attacker);
       }
     }
+  }
+
+  public static List<VampireEntity> rally(
+      final VampireEntity head, final LivingEntity foe, final int range) {
+    final boolean foeIsVampire = Vampires.isVampire(foe);
+    final List<VampireEntity> rallied = new ArrayList<>();
+    for (final VampireEntity mate : near(head, range, foe)) {
+      if (Housemates.rallied(
+          Housemates.share(head.homeLife().home(), mate.homeLife().home()),
+          foeIsVampire,
+          mate.isSleeping(),
+          Downed.helpless(mate),
+          mate.squaredDistanceTo(head),
+          range)) {
+        mate.setAttacker(foe);
+        mate.setTarget(foe);
+        rallied.add(mate);
+      }
+    }
+    return rallied;
   }
 
   public static void mourn(final ServerWorld world, final VampireEntity dead, final int range) {

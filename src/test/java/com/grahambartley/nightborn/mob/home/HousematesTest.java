@@ -46,4 +46,29 @@ class HousematesTest {
       final boolean alerted) {
     assertEquals(alerted, Housemates.alerted(sameHome, attackerIsVampire, distance * distance, 24));
   }
+
+  @ParameterizedTest(
+      name = "same home {0}, foe a vampire {1}, asleep {2}, helpless {3}, {4} blocks: {5}")
+  @CsvSource({
+    "true, false, false, false, 10, true",
+    "true, false, false, false, 32, true",
+    "true, false, false, false, 33, false",
+    "false, false, false, false, 4, false",
+    "true, true, false, false, 4, false",
+    "true, false, true, false, 4, false",
+    "true, false, false, true, 4, false"
+  })
+  @DisplayName(
+      "a head's call rallies only awake housemates who can still fight, never on a vampire")
+  void rallied(
+      final boolean sameHome,
+      final boolean foeIsVampire,
+      final boolean asleep,
+      final boolean helpless,
+      final int blocks,
+      final boolean rallied) {
+    assertEquals(
+        rallied,
+        Housemates.rallied(sameHome, foeIsVampire, asleep, helpless, (double) blocks * blocks, 32));
+  }
 }

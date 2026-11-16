@@ -11,6 +11,16 @@ public final class Housemates {
     return one.isPresent() && one.equals(other);
   }
 
+  public static boolean rallied(
+      final boolean sameHome,
+      final boolean foeIsVampire,
+      final boolean asleep,
+      final boolean helpless,
+      final double distanceSquared,
+      final int range) {
+    return !asleep && !helpless && alerted(sameHome, foeIsVampire, distanceSquared, range);
+  }
+
   public static boolean alerted(
       final boolean sameHome,
       final boolean attackerIsVampire,

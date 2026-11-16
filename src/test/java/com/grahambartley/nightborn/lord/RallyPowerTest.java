@@ -16,7 +16,7 @@ class RallyPowerTest {
       value = {
         "{\"range\":32} | true",
         "{\"range\":1} | true",
-        "{\"range\":0.5} | false",
+        "{\"range\":0} | false",
         "{\"range\":49} | false",
         "{} | false"
       })
@@ -24,27 +24,5 @@ class RallyPowerTest {
   void parses(final String json, final boolean loads) {
     assertEquals(
         loads, RallyPower.CODEC.parse(JsonOps.INSTANCE, JsonParser.parseString(json)).isSuccess());
-  }
-
-  @ParameterizedTest(name = "caster {0}, vampire {1}, same home {2}, helpless {3}, {4} away: {5}")
-  @CsvSource({
-    "false, true, true, false, 10.0, true",
-    "false, true, true, false, 32.0, true",
-    "false, true, true, false, 32.5, false",
-    "true, true, true, false, 0.0, false",
-    "false, false, true, false, 4.0, false",
-    "false, true, false, false, 4.0, false",
-    "false, true, true, true, 4.0, false"
-  })
-  @DisplayName("only other vampires of the same household in reach that can still fight answer")
-  void answers(
-      final boolean caster,
-      final boolean vampire,
-      final boolean sameHome,
-      final boolean helpless,
-      final double distance,
-      final boolean answers) {
-    assertEquals(
-        answers, new RallyPower(32.0F).answers(caster, vampire, sameHome, helpless, distance));
   }
 }

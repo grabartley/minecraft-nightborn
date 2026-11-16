@@ -29,6 +29,7 @@ import com.grahambartley.nightborn.mob.household.HouseholdPlanner;
 import com.grahambartley.nightborn.mob.household.SeatedHeight;
 import com.grahambartley.nightborn.mob.look.BustNbt;
 import com.grahambartley.nightborn.mob.look.Figure;
+import com.grahambartley.nightborn.mob.look.RigWearer;
 import com.grahambartley.nightborn.mob.look.VampireLook;
 import com.grahambartley.nightborn.mob.look.VampireLooks;
 import com.grahambartley.nightborn.mob.look.VampireRig;
@@ -49,7 +50,6 @@ import com.grahambartley.nightborn.vampire.Vampires;
 import com.grahambartley.nightborn.weakened.Weakened;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityData;
 import net.minecraft.entity.EntityDimensions;
@@ -97,7 +97,14 @@ import software.bernie.geckolib.animation.AnimatableManager;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 public class VampireEntity extends HostileEntity
-    implements BatShifter, Figure, GeoEntity, HouseholdMember, PowerShow, SkillHolder, Staged {
+    implements BatShifter,
+        Figure,
+        GeoEntity,
+        HouseholdMember,
+        PowerShow,
+        RigWearer,
+        SkillHolder,
+        Staged {
 
   static final String LOOK_KEY = "Look";
   static final String HEIGHT_KEY = "Height";
@@ -601,10 +608,6 @@ public class VampireEntity extends HostileEntity
 
   public Optional<VampireLook> look() {
     return VampireLooks.look(getWorld().getRegistryManager(), lookId());
-  }
-
-  public Set<VampireRig> rigs() {
-    return VampireRig.COMMON;
   }
 
   public VampireRig rig() {

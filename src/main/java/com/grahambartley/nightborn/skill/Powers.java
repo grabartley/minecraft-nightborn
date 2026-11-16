@@ -60,6 +60,11 @@ public final class Powers {
         .flatMap(Skill::power);
   }
 
+  @Nullable
+  public static LivingEntity foe(final LivingEntity caster) {
+    return caster instanceof MobEntity mob ? mob.getTarget() : caster.getAttacking();
+  }
+
   static Vec3d heading(final LivingEntity caster) {
     return caster instanceof MobEntity mob && mob.getTarget() != null
         ? mob.getTarget().getPos().subtract(caster.getPos())

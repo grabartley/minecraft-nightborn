@@ -15,11 +15,6 @@ public final class HouseholdSpots {
   private HouseholdSpots() {}
 
   public static List<BlockPos> choose(
-      final List<BlockPos> spots, final int count, final Random random) {
-    return choose(spots, count, random, List.of());
-  }
-
-  public static List<BlockPos> choose(
       final List<BlockPos> spots, final int count, final Random random, final List<BlockPos> held) {
     final List<BlockPos> shuffled = Util.copyShuffled(spots.stream(), random);
     final List<BlockPos> chosen = new ArrayList<>();
