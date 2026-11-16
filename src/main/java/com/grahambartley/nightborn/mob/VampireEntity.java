@@ -432,6 +432,7 @@ public class VampireEntity extends HostileEntity
 
   @Override
   public void onDeath(final DamageSource source) {
+    returnHand();
     super.onDeath(source);
     if (getWorld() instanceof ServerWorld world) {
       HouseholdBonds.mourn(world, this, ServerConfigService.current().mobs().vampireAlertRange());
@@ -442,9 +443,18 @@ public class VampireEntity extends HostileEntity
     householdLife.grieve(
         world.getTime(),
         householdLife.temperament(world.getRegistryManager(), random::nextDouble).mourning());
-    if (getTarget() == null) {
+    if (getTarget() == null && !isSleeping()) {
       showAction(MOURN_CLIP);
     }
+  }
+
+  @Override
+  public boolean saveNbt(final NbtCompound nbt) {
+    if (!(getVehicle() instanceof SeatEntity seat) || !saveSelfNbt(nbt)) {
+      return super.saveNbt(nbt);
+    }
+    nbt.put("Pos", toNbtList(getX(), seat.getY(), getZ()));
+    return true;
   }
 
   @Override

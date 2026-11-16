@@ -60,6 +60,26 @@ public class HouseholdLifeGameTest implements FabricGameTest {
     context.complete();
   }
 
+  @GameTest(templateName = ARENA, tickLimit = 20)
+  public void aSeatedVampireIsSavedStandingOnItsSeat(final TestContext context) {
+    final BlockPos chair = new BlockPos(3, 2, 3);
+    context.setBlockState(
+        chair, DecorBlocks.ORNATE_CHAIR.getDefaultState().with(ChairBlock.FACING, Direction.SOUTH));
+    final VampireEntity vampire = VampireMobGameTest.still(context, new BlockPos(3, 2, 4));
+    new SitTask(vampire, context.getWorld(), context.getAbsolutePos(chair), SIT_TICKS).tick();
+    final double seatY = vampire.getVehicle().getY();
+    final NbtCompound nbt = new NbtCompound();
+    context.assertTrue(
+        vampire.saveNbt(nbt), "a seated vampire is saved even though its seat is not");
+    final VampireEntity loaded = NightbornMobs.VAMPIRE.create(context.getWorld());
+    loaded.readNbt(nbt);
+    context.assertFalse(loaded.hasVehicle(), "the vampire loads on its feet");
+    context.assertTrue(
+        Math.abs(loaded.getY() - seatY) < 1.0E-6, "the vampire stands on the seat it sat in");
+    loaded.discard();
+    context.complete();
+  }
+
   @GameTest(templateName = ARENA, tickLimit = TENDED_BY + 10)
   public void aVampireLightsACandelabraWithFlintAndSteelThenPutsItAway(final TestContext context) {
     final BlockPos candelabra = new BlockPos(3, 2, 3);
@@ -116,7 +136,8 @@ public class HouseholdLifeGameTest implements FabricGameTest {
     final BlockPos shelf = new BlockPos(3, 2, 3);
     context.setBlockState(shelf, Blocks.BOOKSHELF);
     final VampireEntity vampire = VampireMobGameTest.still(context, new BlockPos(3, 2, 4));
-    final ReadTask read = new ReadTask(vampire, context.getAbsolutePos(shelf), SIT_TICKS);
+    final ReadTask read =
+        new ReadTask(vampire, context.getWorld(), context.getAbsolutePos(shelf), SIT_TICKS);
     read.tick();
     context.assertTrue(vampire.reading(), "the vampire opens a book");
     context.assertTrue(
@@ -135,7 +156,7 @@ public class HouseholdLifeGameTest implements FabricGameTest {
     context.setBlockState(shelf, Blocks.BOOKSHELF);
     final VampireEntity vampire = VampireMobGameTest.still(context, new BlockPos(3, 2, 4));
     vampire.equipStack(EquipmentSlot.MAINHAND, new ItemStack(Items.ROSE_BUSH));
-    new ReadTask(vampire, context.getAbsolutePos(shelf), SIT_TICKS).tick();
+    new ReadTask(vampire, context.getWorld(), context.getAbsolutePos(shelf), SIT_TICKS).tick();
     final NbtCompound nbt = new NbtCompound();
     vampire.writeNbt(nbt);
     final VampireEntity loaded = NightbornMobs.VAMPIRE.create(context.getWorld());

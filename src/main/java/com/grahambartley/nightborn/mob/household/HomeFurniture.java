@@ -1,6 +1,7 @@
 package com.grahambartley.nightborn.mob.household;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
@@ -51,12 +52,15 @@ public final class HomeFurniture {
         }
         for (int y = home.getY() - REACH_DOWN; y <= home.getY() + REACH_UP; y++) {
           at.set(x, y, z);
-          final BlockPos pos = at.toImmutable();
           FurnitureKind.of(world.getBlockState(at))
-              .ifPresent(kind -> found.computeIfAbsent(kind, k -> new ArrayList<>()).add(pos));
+              .ifPresent(
+                  kind ->
+                      found.computeIfAbsent(kind, k -> new ArrayList<>()).add(at.toImmutable()));
         }
       }
     }
-    return found;
+    final Map<FurnitureKind, List<BlockPos>> frozen = new EnumMap<>(FurnitureKind.class);
+    found.forEach((kind, spots) -> frozen.put(kind, List.copyOf(spots)));
+    return Collections.unmodifiableMap(frozen);
   }
 }

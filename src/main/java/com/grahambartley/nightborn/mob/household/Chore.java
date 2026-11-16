@@ -9,14 +9,14 @@ public enum Chore {
   CLOSE_DRAPES;
 
   public static Optional<Chore> forLight(final NightPhase phase, final boolean lit) {
-    if (!phase.choresDue() || lit == phase.lightsWanted()) {
+    if (!phase.choresDue() || lit == phase.awake()) {
       return Optional.empty();
     }
     return Optional.of(lit ? DOUSE : LIGHT);
   }
 
   public static Optional<Chore> forDrape(final NightPhase phase, final boolean open) {
-    if (!phase.choresDue() || open == phase.lightsWanted()) {
+    if (!phase.choresDue() || open == phase.awake()) {
       return Optional.empty();
     }
     return Optional.of(open ? CLOSE_DRAPES : OPEN_DRAPES);

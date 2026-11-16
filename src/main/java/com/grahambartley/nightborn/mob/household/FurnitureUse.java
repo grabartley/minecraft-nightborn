@@ -8,6 +8,7 @@ import net.minecraft.block.AbstractCandleBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.CandleBlock;
+import net.minecraft.block.CandleCakeBlock;
 import net.minecraft.entity.Entity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
@@ -27,6 +28,20 @@ public final class FurnitureUse {
 
   public static void sit(final ServerWorld world, final BlockPos pos, final Entity sitter) {
     ChairBlock.seat(world, pos, world.getBlockState(pos), sitter);
+  }
+
+  public static boolean is(final ServerWorld world, final BlockPos pos, final FurnitureKind kind) {
+    return FurnitureKind.of(world.getBlockState(pos)).filter(kind::equals).isPresent();
+  }
+
+  public static boolean needs(final ServerWorld world, final BlockPos pos, final Chore chore) {
+    final BlockState state = world.getBlockState(pos);
+    return switch (chore) {
+      case LIGHT -> is(world, pos, FurnitureKind.LIGHT) && !lit(state);
+      case DOUSE -> is(world, pos, FurnitureKind.LIGHT) && lit(state);
+      case OPEN_DRAPES -> is(world, pos, FurnitureKind.DRAPE) && !open(state);
+      case CLOSE_DRAPES -> is(world, pos, FurnitureKind.DRAPE) && open(state);
+    };
   }
 
   public static boolean lit(final BlockState state) {
@@ -68,10 +83,15 @@ public final class FurnitureUse {
       AbstractCandleBlock.extinguish(null, state, world, pos);
       return;
     }
-    if (!(state.getBlock() instanceof CandleBlock) || CandleBlock.canBeLit(state)) {
+    if (CandleBlock.canBeLit(state) || CandleCakeBlock.canBeLit(state)) {
       world.setBlockState(pos, state.with(Properties.LIT, true), Block.NOTIFY_ALL_AND_REDRAW);
       world.playSound(
-          null, pos, SoundEvents.ITEM_FLINTANDSTEEL_USE, SoundCategory.BLOCKS, 1.0f, 1.0f);
+          null,
+          pos,
+          SoundEvents.ITEM_FLINTANDSTEEL_USE,
+          SoundCategory.BLOCKS,
+          1.0f,
+          world.getRandom().nextFloat() * 0.4f + 0.8f);
       world.emitGameEvent(actor, GameEvent.BLOCK_CHANGE, pos);
     }
   }

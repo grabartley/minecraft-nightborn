@@ -9,7 +9,7 @@ public enum NightPhase {
   WIND_DOWN;
 
   static final long GATHER_TICKS = 1500L;
-  static final long WIND_DOWN_START = NightTime.DAWN - 2000L;
+  static final long WIND_DOWN_START = NightTime.DAWN - 3000L;
 
   public static NightPhase of(final boolean fixedTime, final long timeOfDay) {
     if (fixedTime) {
@@ -25,7 +25,7 @@ public enum NightPhase {
     return time >= WIND_DOWN_START ? WIND_DOWN : PASTIME;
   }
 
-  public boolean lightsWanted() {
+  public boolean awake() {
     return this == GATHER || this == PASTIME;
   }
 

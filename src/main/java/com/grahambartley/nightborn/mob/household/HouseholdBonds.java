@@ -16,11 +16,12 @@ public final class HouseholdBonds {
         attacker instanceof VampireEntity other
             && Housemates.share(hurt.homeLife().home(), other.homeLife().home());
     for (final VampireEntity mate : near(hurt, range, attacker)) {
-      if (Housemates.alerted(
-          Housemates.share(hurt.homeLife().home(), mate.homeLife().home()),
-          attackerIsHousemate,
-          mate.squaredDistanceTo(hurt),
-          range)) {
+      if (!mate.isSleeping()
+          && Housemates.alerted(
+              Housemates.share(hurt.homeLife().home(), mate.homeLife().home()),
+              attackerIsHousemate,
+              mate.squaredDistanceTo(hurt),
+              range)) {
         mate.setAttacker(attacker);
       }
     }
@@ -45,6 +46,6 @@ public final class HouseholdBonds {
         .getEntitiesByClass(
             VampireEntity.class,
             center.getBoundingBox().expand(range),
-            mate -> mate != center && mate != besides && mate.isAlive() && !mate.isSleeping());
+            mate -> mate != center && mate != besides && mate.isAlive());
   }
 }

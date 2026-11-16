@@ -32,23 +32,15 @@ class HouseholdCalmTest {
     assertEquals(calm, HouseholdCalm.calm(sleeping, hunting, downed, bat, out, bedtime));
   }
 
-  @ParameterizedTest(name = "alive {0}, sleeping {1}, hunting {2}, busy {3}, grieving {4}: {5}")
+  @ParameterizedTest(name = "calm {0}, busy {1}, grieving {2}: {3}")
   @CsvSource({
-    "true, false, false, false, false, true",
-    "false, false, false, false, false, false",
-    "true, true, false, false, false, false",
-    "true, false, true, false, false, false",
-    "true, false, false, true, false, false",
-    "true, false, false, false, true, false"
+    "true, false, false, true",
+    "false, false, false, false",
+    "true, true, false, false",
+    "true, false, true, false"
   })
-  @DisplayName("only an idle housemate can be drawn into a conversation")
-  void free(
-      final boolean alive,
-      final boolean sleeping,
-      final boolean hunting,
-      final boolean busy,
-      final boolean grieving,
-      final boolean free) {
-    assertEquals(free, HouseholdCalm.free(alive, sleeping, hunting, busy, grieving));
+  @DisplayName("only a calm, idle housemate can be drawn into a conversation")
+  void free(final boolean calm, final boolean busy, final boolean grieving, final boolean free) {
+    assertEquals(free, HouseholdCalm.free(calm, busy, grieving));
   }
 }

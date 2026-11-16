@@ -49,6 +49,9 @@ public final class ChoreTask implements HouseholdTask {
       return false;
     }
     if (walk.toward(target, TEND_REACH)) {
+      if (!FurnitureUse.needs(world, spot, chore)) {
+        return false;
+      }
       if (chore.lights()) {
         vampire.lendHand(new ItemStack(Items.FLINT_AND_STEEL));
       }
