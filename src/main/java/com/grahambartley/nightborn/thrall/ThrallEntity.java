@@ -47,10 +47,12 @@ public class ThrallEntity extends PathAwareEntity implements VillagerDataContain
   private static final String MODE = "Mode";
   private static final String POST = "Post";
   private static final String VILLAGER = "VillagerData";
+  private static final String MEMORY = "VillagerMemory";
 
   @Nullable private UUID owner;
   private ThrallMode mode = ThrallMode.FOLLOW;
   @Nullable private BlockPos post;
+  private VillagerMemory memory = VillagerMemory.NONE;
 
   public ThrallEntity(final EntityType<? extends PathAwareEntity> type, final World world) {
     super(type, world);
@@ -82,9 +84,10 @@ public class ThrallEntity extends PathAwareEntity implements VillagerDataContain
     targetSelector.add(1, new ThrallTargetGoal(this));
   }
 
-  public void bind(final UUID boundTo, final VillagerData data) {
+  public void bind(final UUID boundTo, final VillagerData data, final VillagerMemory kept) {
     owner = boundTo;
     setVillagerData(data);
+    memory = kept;
     mode = ThrallMode.FOLLOW;
     post = getBlockPos();
     setPersistent();
@@ -92,16 +95,13 @@ public class ThrallEntity extends PathAwareEntity implements VillagerDataContain
 
   @Override
   protected ActionResult interactMob(final PlayerEntity player, final Hand hand) {
-    if (getWorld() instanceof ServerWorld && isAlive()) {
-      return ThrallOrders.interact(this, player, hand);
-    }
-    return isOwnedBy(player) ? ActionResult.SUCCESS : ActionResult.PASS;
+    return isAlive() ? ThrallOrders.interact(this, player, hand) : ActionResult.PASS;
   }
 
   @Override
-  protected void mobTick() {
-    super.mobTick();
-    if (age % CHECK_BOND_TICKS == 0 && getWorld() instanceof ServerWorld world) {
+  public void tick() {
+    super.tick();
+    if (age % CHECK_BOND_TICKS == 0 && isAlive() && getWorld() instanceof ServerWorld world) {
       Thralls.checkBond(world, this);
     }
   }
@@ -172,6 +172,10 @@ public class ThrallEntity extends PathAwareEntity implements VillagerDataContain
         : null;
   }
 
+  public VillagerMemory memory() {
+    return memory;
+  }
+
   public ThrallMode mode() {
     return mode;
   }
@@ -204,6 +208,7 @@ public class ThrallEntity extends PathAwareEntity implements VillagerDataContain
         .encodeStart(NbtOps.INSTANCE, getVillagerData())
         .result()
         .ifPresent(encoded -> nbt.put(VILLAGER, encoded));
+    nbt.put(MEMORY, memory.write(new NbtCompound(), getRegistryManager().getOps(NbtOps.INSTANCE)));
   }
 
   @Override
@@ -218,5 +223,7 @@ public class ThrallEntity extends PathAwareEntity implements VillagerDataContain
           .result()
           .ifPresent(this::setVillagerData);
     }
+    memory =
+        VillagerMemory.read(nbt.getCompound(MEMORY), getRegistryManager().getOps(NbtOps.INSTANCE));
   }
 }

@@ -12,6 +12,7 @@
 		"HungerManagerMixin",
 		"LivingEntityMixin",
 		"MapStateMixin",
+		"MobEntityMixin",
 		"MobNavigationMixin",
 		"PersistentProjectileEntityMixin",
 		"PhantomSpawnerMixin",

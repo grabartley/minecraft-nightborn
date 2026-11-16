@@ -549,6 +549,7 @@
   "nightborn.thrall.mode.stay": "%s se queda aquí",
   "nightborn.thrall.mode.guard": "%s vigila este lugar",
   "nightborn.command.help.thrall": "/nightborn thrall release <thralls>: liberar siervos de sus amos",
+  "nightborn.command.help.thrall_free": "/nightborn thrall free <players>: liberar todos los siervos de un jugador, aunque no estén cargados",
   "nightborn.command.thrall.release.done": "Se liberaron %s siervos",
   "nightborn.command.thrall.release.none": "No se liberó ningún siervo"
 }

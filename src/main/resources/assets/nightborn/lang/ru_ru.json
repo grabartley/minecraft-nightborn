@@ -549,6 +549,7 @@
   "nightborn.thrall.mode.stay": "%s остаётся здесь",
   "nightborn.thrall.mode.guard": "%s охраняет это место",
   "nightborn.command.help.thrall": "/nightborn thrall release <thralls>: освободить рабов от хозяев",
+  "nightborn.command.help.thrall_free": "/nightborn thrall free <players>: освободить всех рабов игрока, даже незагруженных",
   "nightborn.command.thrall.release.done": "Освобождено рабов: %s",
   "nightborn.command.thrall.release.none": "Никто не освобождён"
 }

@@ -549,6 +549,7 @@
   "nightborn.thrall.mode.stay": "%s 留在这里",
   "nightborn.thrall.mode.guard": "%s 守卫此处",
   "nightborn.command.help.thrall": "/nightborn thrall release <thralls>：将仆从从主人手中释放",
+  "nightborn.command.help.thrall_free": "/nightborn thrall free <players>：释放某玩家的所有仆从，包括未加载的",
   "nightborn.command.thrall.release.done": "已释放 %s 名仆从",
   "nightborn.command.thrall.release.none": "没有释放任何仆从"
 }

@@ -40,7 +40,8 @@ public final class NightbornCommand {
         Text.translatable("nightborn.command.help.cure"),
         Text.translatable("nightborn.command.help.info"),
         Text.translatable("nightborn.command.help.skills"),
-        Text.translatable("nightborn.command.help.thrall"));
+        Text.translatable("nightborn.command.help.thrall"),
+        Text.translatable("nightborn.command.help.thrall_free"));
   }
 
   private static int help(final CommandContext<ServerCommandSource> context) {

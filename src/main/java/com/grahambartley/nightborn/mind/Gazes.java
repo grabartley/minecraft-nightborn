@@ -37,10 +37,6 @@ public final class Gazes {
             power));
   }
 
-  public static boolean gazing(final LivingEntity caster) {
-    return GAZES.containsKey(caster.getUuid());
-  }
-
   private static void tick(final MinecraftServer server) {
     if (GAZES.isEmpty()) {
       return;

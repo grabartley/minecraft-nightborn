@@ -549,6 +549,7 @@
   "nightborn.thrall.mode.stay": "%s stays here",
   "nightborn.thrall.mode.guard": "%s guards this place",
   "nightborn.command.help.thrall": "/nightborn thrall release <thralls>: free thralls from their owners",
+  "nightborn.command.help.thrall_free": "/nightborn thrall free <players>: free every thrall a player owns, even ones that are not loaded",
   "nightborn.command.thrall.release.done": "Freed %s thralls",
   "nightborn.command.thrall.release.none": "No thralls were freed"
 }

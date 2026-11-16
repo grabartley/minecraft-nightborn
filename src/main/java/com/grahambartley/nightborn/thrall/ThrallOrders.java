@@ -28,6 +28,9 @@ public final class ThrallOrders {
         player.isSneaking())) {
       return ActionResult.PASS;
     }
+    if (thrall.getWorld().isClient) {
+      return ActionResult.SUCCESS;
+    }
     final ThrallMode next = thrall.mode().next();
     thrall.order(next);
     thrall

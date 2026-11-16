@@ -18,6 +18,7 @@ import net.minecraft.command.argument.EntityAnchorArgumentType;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.mob.ZombieEntity;
+import net.minecraft.entity.passive.HorseEntity;
 import net.minecraft.entity.passive.VillagerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
@@ -73,22 +74,63 @@ public class MindGameTest implements FabricGameTest {
         });
   }
 
-  @GameTest(templateName = ARENA, batchId = BATCH, tickLimit = TestPlayers.READY + 5)
+  @GameTest(templateName = ARENA, batchId = BATCH, tickLimit = LANDED + 5)
   public void aWallBlocksTheGaze(final TestContext context) {
     final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(1, 2, 4));
     final VillagerEntity villager = stillVillager(context, new BlockPos(6, 2, 4));
     NobleSkills.learn(vampire, NobleSkills.MESMERISE);
     context.setBlockState(new BlockPos(3, 2, 4), Blocks.STONE);
     context.setBlockState(new BlockPos(3, 3, 4), Blocks.STONE);
+    context.runAtEveryTick(
+        () -> vampire.lookAt(EntityAnchorArgumentType.EntityAnchor.EYES, villager.getEyePos()));
+    context.runAtTick(
+        TestPlayers.READY,
+        () ->
+            context.assertEquals(
+                Powers.cast(vampire, NobleSkills.MESMERISE),
+                PowerUse.Verdict.UNSEEN,
+                "nothing can be mesmerised through a wall"));
+    context.runAtTick(
+        LANDED,
+        () -> {
+          context.assertFalse(
+              MindTies.mesmerised(villager), "the villager behind the wall is free");
+          TestPlayers.finish(context, vampire);
+        });
+  }
+
+  @GameTest(templateName = ARENA, batchId = BATCH, tickLimit = TestPlayers.READY + 50)
+  public void aMesmerisedHorseStandsStillWhileAnotherWalksOn(final TestContext context) {
+    final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(4, 2, 7));
+    final HorseEntity held = context.spawnEntity(EntityType.HORSE, new BlockPos(1, 2, 1));
+    final HorseEntity free = context.spawnEntity(EntityType.HORSE, new BlockPos(1, 2, 4));
+    final Vec3d[] start = new Vec3d[2];
     context.runAtTick(
         TestPlayers.READY,
         () -> {
-          vampire.lookAt(EntityAnchorArgumentType.EntityAnchor.EYES, villager.getEyePos());
-          context.assertEquals(
-              Powers.cast(vampire, NobleSkills.MESMERISE),
-              PowerUse.Verdict.UNSEEN,
-              "nothing can be mesmerised through a wall");
-          context.assertFalse(Gazes.gazing(vampire), "no gaze began");
+          Mesmerise.land(vampire, held, NobleSkills.power(context));
+          start[0] = held.getPos();
+          start[1] = free.getPos();
+        });
+    context.runAtEveryTick(
+        () -> {
+          if (context.getTick() > TestPlayers.READY) {
+            final Vec3d goal = context.getAbsolute(new Vec3d(7.5, 2.0, 2.5));
+            held.getNavigation().startMovingTo(goal.x, goal.y, goal.z, 1.2);
+            final Vec3d other = context.getAbsolute(new Vec3d(7.5, 2.0, 5.5));
+            free.getNavigation().startMovingTo(other.x, other.y, other.z, 1.2);
+          }
+        });
+    context.runAtTick(
+        TestPlayers.READY + 45,
+        () -> {
+          context.assertTrue(
+              held.getPos().subtract(start[0]).horizontalLength() < 0.1,
+              "the mesmerised horse moved " + held.getPos().subtract(start[0]).horizontalLength());
+          context.assertTrue(
+              free.getPos().subtract(start[1]).horizontalLength() > 1.0,
+              "the free horse should walk but moved "
+                  + free.getPos().subtract(start[1]).horizontalLength());
           TestPlayers.finish(context, vampire);
         });
   }

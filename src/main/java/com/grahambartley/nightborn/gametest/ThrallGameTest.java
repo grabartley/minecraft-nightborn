@@ -11,6 +11,7 @@ import com.grahambartley.nightborn.thrall.ThrallEntity;
 import com.grahambartley.nightborn.thrall.ThrallMode;
 import com.grahambartley.nightborn.thrall.ThrallRegistry;
 import com.grahambartley.nightborn.thrall.Thralls;
+import com.grahambartley.nightborn.thrall.VillagerMemory;
 import com.grahambartley.nightborn.thrall.goal.ThrallTargetGoal;
 import java.util.List;
 import java.util.UUID;
@@ -68,7 +69,7 @@ public class ThrallGameTest implements FabricGameTest {
   private static ThrallEntity bound(
       final TestContext context, final ServerPlayerEntity owner, final BlockPos at) {
     final ThrallEntity thrall = context.spawnEntity(Thralls.THRALL, at);
-    thrall.bind(owner.getUuid(), thrall.getVillagerData());
+    thrall.bind(owner.getUuid(), thrall.getVillagerData(), VillagerMemory.NONE);
     ThrallRegistry.of(context.getWorld().getServer()).bind(owner.getUuid(), thrall.getUuid());
     return thrall;
   }
@@ -175,7 +176,7 @@ public class ThrallGameTest implements FabricGameTest {
   public void aThrallWaitsWhereItIsWhileItsOwnerIsAway(final TestContext context) {
     final UUID away = UUID.randomUUID();
     final ThrallEntity thrall = context.spawnEntity(Thralls.THRALL, new BlockPos(4, 2, 4));
-    thrall.bind(away, thrall.getVillagerData());
+    thrall.bind(away, thrall.getVillagerData(), VillagerMemory.NONE);
     ThrallRegistry.of(context.getWorld().getServer()).bind(away, thrall.getUuid());
     final Vec3d start = context.getAbsolute(Vec3d.ofBottomCenter(new BlockPos(4, 2, 4)));
     context.runAtTick(
@@ -223,6 +224,57 @@ public class ThrallGameTest implements FabricGameTest {
               ThrallRegistry.of(context.getWorld().getServer()).count(owner.getUuid()),
               0,
               "the owner keeps no thralls");
+          TestPlayers.finish(context, owner);
+        });
+  }
+
+  @GameTest(templateName = ARENA, batchId = BATCH, tickLimit = TestPlayers.READY + 5)
+  public void aThrallSetFreeKeepsItsTradesAndExperience(final TestContext context) {
+    final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(3, 2, 4));
+    final BlockPos at = new BlockPos(4, 2, 4);
+    final VillagerEntity villager = villager(context, at);
+    NobleSkills.learn(vampire, NobleSkills.MESMERISE, NobleSkills.BLOOD_BOND);
+    context.runAtTick(
+        TestPlayers.READY,
+        () -> {
+          villager.setExperience(30);
+          final int offers = villager.getOffers().size();
+          final String firstSold = villager.getOffers().get(0).getSellItem().toString();
+          Mesmerise.land(vampire, villager, NobleSkills.power(context));
+          context.assertEquals(
+              Thralls.mayBind(vampire, villager, 1.0F), BindRules.Outcome.BOUND, "bound");
+          final ThrallEntity thrall = thrallsNear(context, at).get(0);
+          context.assertTrue(Thralls.free(thrall), "released");
+          final Vec3d centre = context.getAbsolute(Vec3d.ofBottomCenter(at));
+          final VillagerEntity back =
+              context
+                  .getWorld()
+                  .getEntitiesByClass(
+                      VillagerEntity.class, new Box(centre, centre).expand(2.0), v -> v.isAlive())
+                  .get(0);
+          context.assertEquals(back.getExperience(), 30, "the villager keeps its experience");
+          context.assertEquals(back.getOffers().size(), offers, "the villager keeps its trades");
+          context.assertEquals(
+              back.getOffers().get(0).getSellItem().toString(), firstSold, "the same first trade");
+          TestPlayers.finish(context, vampire);
+        });
+  }
+
+  @GameTest(templateName = ARENA, batchId = BATCH, tickLimit = TestPlayers.READY + 30)
+  public void freeingAnOwnerLetsTheirThrallsGo(final TestContext context) {
+    final ServerPlayerEntity owner = TestPlayers.vampire(context, new BlockPos(3, 2, 4));
+    final BlockPos at = new BlockPos(5, 2, 5);
+    final ThrallEntity thrall = bound(context, owner, at);
+    thrall.setAiDisabled(true);
+    context.runAtTick(
+        TestPlayers.READY,
+        () ->
+            context.assertEquals(Thralls.freeOwner(owner), 1, "the owner had one thrall to free"));
+    context.runAtTick(
+        TestPlayers.READY + 25,
+        () -> {
+          context.assertTrue(thrall.isRemoved(), "the thrall let go of its bond");
+          context.expectEntityAround(EntityType.VILLAGER, at, 1.5);
           TestPlayers.finish(context, owner);
         });
   }

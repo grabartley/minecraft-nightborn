@@ -26,6 +26,13 @@ public final class MindFeatures {
     return entity instanceof MobEntity && MindTies.mesmerised(entity);
   }
 
+  public static void holdStill(final MobEntity mob) {
+    mob.setForwardSpeed(0.0F);
+    mob.setSidewaysSpeed(0.0F);
+    mob.setUpwardSpeed(0.0F);
+    mob.setJumping(false);
+  }
+
   static boolean allowDamage(
       final LivingEntity victim, final DamageSource source, final float amount) {
     return !(source.getAttacker() instanceof LivingEntity attacker)

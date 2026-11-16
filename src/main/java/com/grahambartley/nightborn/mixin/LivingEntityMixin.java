@@ -6,7 +6,6 @@ import com.grahambartley.nightborn.coffin.CoffinSleeperHold;
 import com.grahambartley.nightborn.coffin.CoffinSleepers;
 import com.grahambartley.nightborn.levitation.Levitation;
 import com.grahambartley.nightborn.levitation.LevitationMotion;
-import com.grahambartley.nightborn.mind.MindFeatures;
 import com.grahambartley.nightborn.server.ServerConfigService;
 import com.grahambartley.nightborn.vampire.VampireTicker;
 import com.grahambartley.nightborn.vampire.Vampires;
@@ -55,13 +54,6 @@ abstract class LivingEntityMixin {
       final LivingEntity target, final CallbackInfoReturnable<Boolean> cir) {
     if ((Object) this instanceof PhantomEntity && Vampires.isVampire(target)) {
       cir.setReturnValue(false);
-    }
-  }
-
-  @Inject(method = "isImmobile", at = @At("HEAD"), cancellable = true)
-  private void nightborn$standStillWhileMesmerised(final CallbackInfoReturnable<Boolean> cir) {
-    if (MindFeatures.stilled((LivingEntity) (Object) this)) {
-      cir.setReturnValue(true);
     }
   }
 

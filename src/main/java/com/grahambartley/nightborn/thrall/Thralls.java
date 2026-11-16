@@ -11,6 +11,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.SpawnGroup;
 import net.minecraft.entity.ai.brain.MemoryModuleType;
 import net.minecraft.entity.passive.VillagerEntity;
+import net.minecraft.nbt.NbtOps;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
@@ -69,15 +70,17 @@ public final class Thralls {
       final VillagerEntity villager,
       final ThrallRegistry registry) {
     final VillagerData data = villager.getVillagerData();
-    villager.releaseTicketFor(MemoryModuleType.HOME);
-    villager.releaseTicketFor(MemoryModuleType.JOB_SITE);
-    villager.releaseTicketFor(MemoryModuleType.POTENTIAL_JOB_SITE);
-    villager.releaseTicketFor(MemoryModuleType.MEETING_POINT);
+    final VillagerMemory memory =
+        VillagerMemory.of(villager, villager.getRegistryManager().getOps(NbtOps.INSTANCE));
     final ThrallEntity thrall = villager.convertTo(THRALL, true);
     if (thrall == null) {
       return;
     }
-    thrall.bind(vampire.getUuid(), data);
+    villager.releaseTicketFor(MemoryModuleType.HOME);
+    villager.releaseTicketFor(MemoryModuleType.JOB_SITE);
+    villager.releaseTicketFor(MemoryModuleType.POTENTIAL_JOB_SITE);
+    villager.releaseTicketFor(MemoryModuleType.MEETING_POINT);
+    thrall.bind(vampire.getUuid(), data, memory);
     registry.bind(vampire.getUuid(), thrall.getUuid());
     final ServerWorld world = vampire.getServerWorld();
     world.spawnParticles(
@@ -122,6 +125,7 @@ public final class Thralls {
     final VillagerEntity villager = thrall.convertTo(EntityType.VILLAGER, true);
     if (villager != null) {
       villager.setVillagerData(data);
+      thrall.memory().restore(villager);
     }
   }
 }

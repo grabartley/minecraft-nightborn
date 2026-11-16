@@ -2,11 +2,14 @@ package com.grahambartley.nightborn.command;
 
 import com.grahambartley.nightborn.Nightborn;
 import com.grahambartley.nightborn.thrall.ThrallEntity;
+import com.grahambartley.nightborn.thrall.ThrallRegistry;
 import com.grahambartley.nightborn.thrall.Thralls;
+import com.mojang.authlib.GameProfile;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.command.argument.EntityArgumentType;
+import net.minecraft.command.argument.GameProfileArgumentType;
 import net.minecraft.entity.Entity;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
@@ -15,6 +18,7 @@ import net.minecraft.text.Text;
 final class ThrallCommand {
 
   static final String THRALLS = "thralls";
+  static final String OWNERS = "owners";
 
   private ThrallCommand() {}
 
@@ -24,7 +28,35 @@ final class ThrallCommand {
             CommandManager.literal("release")
                 .then(
                     CommandManager.argument(THRALLS, EntityArgumentType.entities())
-                        .executes(ThrallCommand::release)));
+                        .executes(ThrallCommand::release)))
+        .then(
+            CommandManager.literal("free")
+                .then(
+                    CommandManager.argument(OWNERS, GameProfileArgumentType.gameProfile())
+                        .executes(ThrallCommand::free)));
+  }
+
+  private static int free(final CommandContext<ServerCommandSource> context)
+      throws CommandSyntaxException {
+    final ServerCommandSource source = context.getSource();
+    int freed = 0;
+    for (final GameProfile owner : GameProfileArgumentType.getProfileArgument(context, OWNERS)) {
+      final int count = ThrallRegistry.of(source.getServer()).freeOwner(owner.getId());
+      freed += count;
+      Nightborn.LOGGER.info(
+          "{} used /nightborn thrall free on {}, freeing {}",
+          source.getName(),
+          owner.getName(),
+          count);
+    }
+    final int total = freed;
+    if (total == 0) {
+      source.sendError(Text.translatable("nightborn.command.thrall.release.none"));
+    } else {
+      source.sendFeedback(
+          () -> Text.translatable("nightborn.command.thrall.release.done", total), true);
+    }
+    return total;
   }
 
   private static int release(final CommandContext<ServerCommandSource> context)

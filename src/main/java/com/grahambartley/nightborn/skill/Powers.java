@@ -58,6 +58,22 @@ public final class Powers {
 
   public static PowerUse.Verdict check(
       final LivingEntity caster, @Nullable final Identifier id, final Optional<SkillPower> power) {
+    return check(caster, id, power, gazeTarget(caster, power) == null);
+  }
+
+  @Nullable
+  static LivingEntity gazeTarget(final LivingEntity caster, final Optional<SkillPower> power) {
+    return power
+        .flatMap(SkillPower::mesmerise)
+        .map(mesmerise -> Mesmerise.target(caster, mesmerise.range()))
+        .orElse(null);
+  }
+
+  private static PowerUse.Verdict check(
+      final LivingEntity caster,
+      @Nullable final Identifier id,
+      final Optional<SkillPower> power,
+      final boolean targetMissing) {
     return PowerUse.check(
         power.isPresent(),
         Downed.helpless(caster),
@@ -67,15 +83,13 @@ public final class Powers {
             : PowerCooldownAttachment.get(caster).ticksLeft(id, caster.getWorld().getTime()),
         BloodAttachment.get(caster),
         power.map(SkillPower::blood).orElse(0),
-        power
-            .flatMap(SkillPower::mesmerise)
-            .filter(mesmerise -> Mesmerise.target(caster, mesmerise.range()) == null)
-            .isPresent());
+        power.flatMap(SkillPower::mesmerise).isPresent() && targetMissing);
   }
 
   public static PowerUse.Verdict cast(final LivingEntity caster, @Nullable final Identifier id) {
     final Optional<SkillPower> owned = power(caster, id);
-    final PowerUse.Verdict verdict = check(caster, id, owned);
+    final LivingEntity gazeTarget = gazeTarget(caster, owned);
+    final PowerUse.Verdict verdict = check(caster, id, owned, gazeTarget == null);
     if (verdict != PowerUse.Verdict.READY) {
       return verdict;
     }
@@ -89,11 +103,9 @@ public final class Powers {
     for (final StatusEffectInstance effect : power.effects()) {
       caster.addStatusEffect(new StatusEffectInstance(effect), caster);
     }
-    power
-        .mesmerise()
-        .ifPresent(
-            mesmerise ->
-                Gazes.start(caster, Mesmerise.target(caster, mesmerise.range()), mesmerise));
+    if (gazeTarget != null) {
+      power.mesmerise().ifPresent(mesmerise -> Gazes.start(caster, gazeTarget, mesmerise));
+    }
     if (caster instanceof ServerPlayerEntity player) {
       power.track().ifPresent(track -> Tracking.start(player, track));
     }

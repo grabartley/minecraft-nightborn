@@ -549,6 +549,7 @@
   "nightborn.thrall.mode.stay": "%s bleibt hier",
   "nightborn.thrall.mode.guard": "%s bewacht diesen Ort",
   "nightborn.command.help.thrall": "/nightborn thrall release <thralls>: Leibeigene von ihren Herren befreien",
+  "nightborn.command.help.thrall_free": "/nightborn thrall free <players>: alle Leibeigenen eines Spielers befreien, auch nicht geladene",
   "nightborn.command.thrall.release.done": "%s Leibeigene befreit",
   "nightborn.command.thrall.release.none": "Keine Leibeigenen befreit"
 }
