@@ -27,6 +27,7 @@ import com.grahambartley.nightborn.mob.household.HouseholdLife;
 import com.grahambartley.nightborn.mob.household.HouseholdPlanner;
 import com.grahambartley.nightborn.mob.household.SeatedHeight;
 import com.grahambartley.nightborn.mob.look.Appearance;
+import com.grahambartley.nightborn.mob.look.Figure;
 import com.grahambartley.nightborn.mob.look.OutfitDressing;
 import com.grahambartley.nightborn.mob.look.VampireLook;
 import com.grahambartley.nightborn.mob.look.VampireLooks;
@@ -94,7 +95,7 @@ import software.bernie.geckolib.animation.AnimatableManager;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 public class VampireEntity extends HostileEntity
-    implements BatShifter, GeoEntity, HouseholdMember, PowerShow, SkillHolder, Staged {
+    implements BatShifter, Figure, GeoEntity, HouseholdMember, PowerShow, SkillHolder, Staged {
 
   static final String LOOK_KEY = "Look";
   static final String HEIGHT_KEY = "Height";
@@ -116,6 +117,8 @@ public class VampireEntity extends HostileEntity
       DataTracker.registerData(VampireEntity.class, TrackedDataHandlerRegistry.INTEGER);
   private static final TrackedData<Boolean> READING =
       DataTracker.registerData(VampireEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
+  private static final TrackedData<Float> BUST =
+      DataTracker.registerData(VampireEntity.class, TrackedDataHandlerRegistry.FLOAT);
 
   private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
   private final VampireAnimator animator = new VampireAnimator();
@@ -154,6 +157,7 @@ public class VampireEntity extends HostileEntity
     builder.add(ACTION, "");
     builder.add(ACTION_SEQUENCE, 0);
     builder.add(READING, false);
+    builder.add(BUST, Figure.FLAT);
   }
 
   @Override
@@ -567,6 +571,7 @@ public class VampireEntity extends HostileEntity
         .ifPresent(
             appearance -> {
               setAppearance(appearance.look(), appearance.height(), appearance.width());
+              dataTracker.set(BUST, rig().bust(random.nextDouble()));
               appearance
                   .outfit()
                   .map(outfits::get)
@@ -603,11 +608,17 @@ public class VampireEntity extends HostileEntity
   }
 
   @Override
+  public float bust() {
+    return dataTracker.get(BUST);
+  }
+
+  @Override
   public void writeCustomDataToNbt(final NbtCompound nbt) {
     super.writeCustomDataToNbt(nbt);
     nbt.putString(LOOK_KEY, dataTracker.get(LOOK));
     nbt.putFloat(HEIGHT_KEY, height());
     nbt.putFloat(WIDTH_KEY, width());
+    Figure.write(nbt, bust());
     nbt.putString(STAGE_KEY, dataTracker.get(STAGE));
     homeLife.write(nbt);
     householdLife.write(nbt, getRegistryManager());
@@ -629,6 +640,7 @@ public class VampireEntity extends HostileEntity
           look == null ? VampireLooks.NONE : look,
           nbt.contains(HEIGHT_KEY) ? nbt.getFloat(HEIGHT_KEY) : VampireSize.BASE_HEIGHT,
           nbt.contains(WIDTH_KEY) ? nbt.getFloat(WIDTH_KEY) : 1.0F);
+      dataTracker.set(BUST, Figure.read(nbt, rig()));
     }
   }
 
