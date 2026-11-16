@@ -245,6 +245,7 @@
   "nightborn.skills.verdict.needs_skill": "Aprende primero las habilidades que requiere",
   "nightborn.skills.verdict.too_few_points": "No tienes suficientes puntos de habilidad",
   "nightborn.powers.verdict.helpless": "No puedes usar poderes mientras estás derribado",
+  "nightborn.powers.verdict.as_a_bat": "No puedes usar eso como murciélago",
   "nightborn.powers.verdict.weakened": "Estás demasiado debilitado para usar poderes",
   "nightborn.powers.verdict.cooling": "Ese poder aún no está listo",
   "nightborn.powers.verdict.thirsty": "No tienes suficiente sangre",

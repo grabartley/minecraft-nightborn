@@ -3,7 +3,6 @@ package com.grahambartley.nightborn.render;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.google.gson.JsonParser;
-import com.grahambartley.nightborn.mob.VampireBatPose;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -33,7 +32,7 @@ class BatFormRendererTest {
   @CsvSource({"0.0", "1.0"})
   @DisplayName("every clip bat form plays ships in the vampire bat's animations")
   void playsShippedClips(final float swing) throws IOException {
-    final String clip = VampireBatPose.of(false, false, BatFormPose.swoops(swing)).animation();
+    final String clip = BatFormAnimatable.pose(swing).animation();
     assertTrue(
         JsonParser.parseString(Files.readString(CLIPS))
             .getAsJsonObject()

@@ -13,8 +13,12 @@ public final class BatFormRules {
   private BatFormRules() {}
 
   public static boolean forcedOut(
-      final boolean directSun, final boolean downed, final boolean warded, final int blood) {
-    return directSun || downed || warded || blood <= 0;
+      final boolean directSun,
+      final boolean downed,
+      final boolean warded,
+      final int blood,
+      final boolean ownsForm) {
+    return directSun || downed || warded || blood <= 0 || !ownsForm;
   }
 
   public static boolean warded(final WeakenedSources sources) {

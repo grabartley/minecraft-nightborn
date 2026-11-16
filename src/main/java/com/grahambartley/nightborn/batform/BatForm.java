@@ -5,9 +5,11 @@ import com.grahambartley.nightborn.advancement.Milestone;
 import com.grahambartley.nightborn.advancement.MilestoneCriterion;
 import com.grahambartley.nightborn.blood.BloodAttachment;
 import com.grahambartley.nightborn.config.CoreSettings;
+import com.grahambartley.nightborn.feeding.FeedingSessions;
 import com.grahambartley.nightborn.levitation.Levitation;
 import com.grahambartley.nightborn.mob.NightbornMobs;
 import com.grahambartley.nightborn.server.ServerConfigService;
+import com.grahambartley.nightborn.skill.Powers;
 import com.grahambartley.nightborn.smoke.SmokeParticles;
 import com.grahambartley.nightborn.sun.DirectSun;
 import com.grahambartley.nightborn.weakened.Weakened;
@@ -70,6 +72,7 @@ public final class BatForm {
       return;
     }
     vampire.stopRiding();
+    FeedingSessions.end(vampire);
     Levitation.land(vampire);
     vampire.setAttached(TYPE, true);
     vampire.calculateDimensions();
@@ -114,7 +117,8 @@ public final class BatForm {
             DirectSun.on(vampire),
             downed,
             BatFormRules.warded(Weakened.sources(vampire)),
-            BloodAttachment.get(vampire))
+            BloodAttachment.get(vampire),
+            Powers.ownedBatForm(vampire).isPresent())
         && leave(vampire)) {
       return;
     }

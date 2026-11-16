@@ -31,10 +31,11 @@ public final class BatFormAnimatable implements GeoReplacedEntity {
             this,
             "flight",
             BLEND_TICKS,
-            state ->
-                state.setAndContinue(
-                    VampireBatPose.of(false, false, BatFormPose.swoops(state.getLimbSwingAmount()))
-                        .clip())));
+            state -> state.setAndContinue(pose(state.getLimbSwingAmount()).clip())));
+  }
+
+  static VampireBatPose pose(final float limbSwingAmount) {
+    return VampireBatPose.of(false, false, BatFormPose.swoops(limbSwingAmount));
   }
 
   @Override

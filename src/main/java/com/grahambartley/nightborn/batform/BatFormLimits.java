@@ -2,6 +2,8 @@ package com.grahambartley.nightborn.batform;
 
 import com.grahambartley.nightborn.Nightborn;
 import net.fabricmc.fabric.api.event.Event;
+import net.fabricmc.fabric.api.event.player.AttackBlockCallback;
+import net.fabricmc.fabric.api.event.player.AttackEntityCallback;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.fabricmc.fabric.api.event.player.UseEntityCallback;
 import net.fabricmc.fabric.api.event.player.UseItemCallback;
@@ -19,6 +21,8 @@ public final class BatFormLimits {
     UseItemCallback.EVENT.addPhaseOrdering(BEFORE_OTHERS, Event.DEFAULT_PHASE);
     UseBlockCallback.EVENT.addPhaseOrdering(BEFORE_OTHERS, Event.DEFAULT_PHASE);
     UseEntityCallback.EVENT.addPhaseOrdering(BEFORE_OTHERS, Event.DEFAULT_PHASE);
+    AttackEntityCallback.EVENT.addPhaseOrdering(BEFORE_OTHERS, Event.DEFAULT_PHASE);
+    AttackBlockCallback.EVENT.addPhaseOrdering(BEFORE_OTHERS, Event.DEFAULT_PHASE);
     UseItemCallback.EVENT.register(
         BEFORE_OTHERS,
         (player, world, hand) ->
@@ -27,6 +31,10 @@ public final class BatFormLimits {
         BEFORE_OTHERS, (player, world, hand, hit) -> verdict(BatForm.isBat(player)));
     UseEntityCallback.EVENT.register(
         BEFORE_OTHERS, (player, world, hand, entity, hit) -> verdict(BatForm.isBat(player)));
+    AttackEntityCallback.EVENT.register(
+        BEFORE_OTHERS, (player, world, hand, entity, hit) -> verdict(BatForm.isBat(player)));
+    AttackBlockCallback.EVENT.register(
+        BEFORE_OTHERS, (player, world, hand, pos, direction) -> verdict(BatForm.isBat(player)));
   }
 
   static ActionResult verdict(final boolean bat) {

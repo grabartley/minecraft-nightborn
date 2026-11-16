@@ -245,6 +245,7 @@
   "nightborn.skills.verdict.needs_skill": "Learn the skills it needs first",
   "nightborn.skills.verdict.too_few_points": "Not enough skill points",
   "nightborn.powers.verdict.helpless": "You cannot use powers while downed",
+  "nightborn.powers.verdict.as_a_bat": "You cannot use that as a bat",
   "nightborn.powers.verdict.weakened": "You are too weakened to use powers",
   "nightborn.powers.verdict.cooling": "That power is not ready yet",
   "nightborn.powers.verdict.thirsty": "Not enough blood",

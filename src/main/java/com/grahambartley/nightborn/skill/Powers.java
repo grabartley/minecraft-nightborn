@@ -51,6 +51,13 @@ public final class Powers {
         .flatMap(Skill::power);
   }
 
+  public static Optional<BatFormPower> ownedBatForm(final LivingEntity caster) {
+    return SkillAttachment.owned(caster).ownedInOrder().stream()
+        .map(id -> power(caster, id).flatMap(SkillPower::batForm))
+        .flatMap(Optional::stream)
+        .findFirst();
+  }
+
   public static PowerUse.Verdict check(final LivingEntity caster, @Nullable final Identifier id) {
     return check(caster, id, power(caster, id));
   }
@@ -60,6 +67,7 @@ public final class Powers {
     return PowerUse.check(
         power.isPresent(),
         Downed.helpless(caster),
+        BatForm.isBat(caster),
         Weakened.sources(caster).level(Downed.state(caster) != null) > 0,
         id == null
             ? 0L

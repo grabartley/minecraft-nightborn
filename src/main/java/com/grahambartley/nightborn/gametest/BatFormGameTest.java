@@ -2,18 +2,23 @@ package com.grahambartley.nightborn.gametest;
 
 import com.grahambartley.nightborn.batform.BatForm;
 import com.grahambartley.nightborn.blood.BloodAttachment;
+import com.grahambartley.nightborn.downed.Downed;
 import com.grahambartley.nightborn.holy.HolyWater;
 import com.grahambartley.nightborn.mob.NightbornMobs;
 import com.grahambartley.nightborn.mob.VampireEntity;
 import com.grahambartley.nightborn.mob.stage.VampireStaging;
+import com.grahambartley.nightborn.server.ServerConfigService;
 import com.grahambartley.nightborn.skill.PowerUse;
 import com.grahambartley.nightborn.skill.Powers;
 import com.grahambartley.nightborn.skill.SkillAttachment;
+import com.grahambartley.nightborn.skill.SkillPower;
 import com.grahambartley.nightborn.skill.SkillTree;
 import com.grahambartley.nightborn.skill.Skills;
+import com.grahambartley.nightborn.ward.Wards;
 import com.grahambartley.nightborn.weakened.Weakened;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import net.fabricmc.fabric.api.event.player.UseEntityCallback;
 import net.fabricmc.fabric.api.event.player.UseItemCallback;
 import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
@@ -132,6 +137,54 @@ public class BatFormGameTest implements FabricGameTest {
         });
   }
 
+  @GameTest(templateName = ARENA, batchId = NIGHT, tickLimit = 20)
+  public void garlicForcesABatBack(final TestContext context) {
+    final ServerPlayerEntity vampire = beast(context, BAT_FORM);
+    Powers.cast(vampire, BAT_FORM);
+    Weakened.add(vampire, Wards.STRINGS, 1, 100);
+    context.runAtTick(
+        5,
+        () -> {
+          context.assertFalse(BatForm.isBat(vampire), "garlic forces the bat back");
+          TestPlayers.finish(context, vampire);
+        });
+  }
+
+  @GameTest(templateName = ARENA, batchId = NIGHT, tickLimit = 20)
+  public void anEmptyBloodBarForcesABatBack(final TestContext context) {
+    final ServerPlayerEntity vampire = beast(context, BAT_FORM);
+    Powers.cast(vampire, BAT_FORM);
+    BloodAttachment.set(vampire, 0);
+    context.runAtTick(
+        5,
+        () -> {
+          context.assertFalse(BatForm.isBat(vampire), "an empty blood bar forces the bat back");
+          TestPlayers.finish(context, vampire);
+        });
+  }
+
+  @GameTest(templateName = ARENA, batchId = NIGHT, tickLimit = 20)
+  public void beingDownedForcesABatBack(final TestContext context) {
+    final ServerPlayerEntity vampire = beast(context, BAT_FORM);
+    Powers.cast(vampire, BAT_FORM);
+    Downed.down(vampire, ServerConfigService.current().downed(), Optional.empty());
+    context.runAtTick(
+        5,
+        () -> {
+          context.assertFalse(BatForm.isBat(vampire), "being downed forces the bat back");
+          TestPlayers.finish(context, vampire);
+        });
+  }
+
+  @GameTest(templateName = ARENA, batchId = NIGHT, tickLimit = 20)
+  public void aBatCannotUseItsOtherPowers(final TestContext context) {
+    final ServerPlayerEntity vampire = beast(context, BAT_FORM, SWIFT_PROWL, LONG_LEAP);
+    Powers.cast(vampire, BAT_FORM);
+    context.assertEquals(
+        Powers.cast(vampire, LONG_LEAP), PowerUse.Verdict.AS_A_BAT, "a bat cannot leap");
+    TestPlayers.finish(context, vampire);
+  }
+
   @GameTest(templateName = ARENA, batchId = NIGHT, tickLimit = TestPlayers.READY + 10)
   public void aHeavyBlowForcesABatBack(final TestContext context) {
     final ServerPlayerEntity vampire = beast(context, BAT_FORM);
@@ -171,6 +224,36 @@ public class BatFormGameTest implements FabricGameTest {
           context.assertFalse(BatForm.isBat(vampire), "with no target it turns back");
           context.assertFalse(vampire.hasNoGravity(), "and falls under gravity again");
           context.complete();
+        });
+  }
+
+  @GameTest(templateName = ARENA, batchId = NIGHT, tickLimit = 80)
+  public void aVampireMobFliesToItsTargetAndLandsBesideIt(final TestContext context) {
+    final VampireEntity vampire = context.spawnEntity(NightbornMobs.VAMPIRE, new BlockPos(1, 2, 1));
+    final CowEntity cow = context.spawnEntity(EntityType.COW, new BlockPos(7, 2, 7));
+    cow.setAiDisabled(true);
+    learn(context, vampire, BAT_FORM);
+    final float landRange =
+        Skills.skill(context.getWorld().getRegistryManager(), BAT_FORM)
+            .power()
+            .flatMap(SkillPower::batForm)
+            .orElseThrow()
+            .landRange();
+    context.assertTrue(vampire.distanceTo(cow) > landRange, "the target starts out of reach");
+    vampire.setAttacker(cow);
+    vampire.setTarget(cow);
+    context.assertEquals(Powers.cast(vampire, BAT_FORM), PowerUse.Verdict.READY, "turns");
+    final boolean[] flew = {false};
+    context.runAtEveryTick(
+        () -> {
+          if (BatForm.isBat(vampire)) {
+            flew[0] = true;
+          } else if (flew[0]) {
+            context.assertTrue(
+                vampire.distanceTo(cow) <= landRange + 1.0F,
+                "it lands beside its target, " + vampire.distanceTo(cow) + " away");
+            context.complete();
+          }
         });
   }
 

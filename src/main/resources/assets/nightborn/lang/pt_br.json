@@ -245,6 +245,7 @@
   "nightborn.skills.verdict.needs_skill": "Aprenda primeiro as habilidades exigidas",
   "nightborn.skills.verdict.too_few_points": "Pontos de habilidade insuficientes",
   "nightborn.powers.verdict.helpless": "Você não pode usar poderes enquanto está caído",
+  "nightborn.powers.verdict.as_a_bat": "Você não pode usar isso como morcego",
   "nightborn.powers.verdict.weakened": "Você está enfraquecido demais para usar poderes",
   "nightborn.powers.verdict.cooling": "Esse poder ainda não está pronto",
   "nightborn.powers.verdict.thirsty": "Sangue insuficiente",

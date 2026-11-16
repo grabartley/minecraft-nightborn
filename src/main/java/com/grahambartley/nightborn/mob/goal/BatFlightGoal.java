@@ -2,12 +2,8 @@ package com.grahambartley.nightborn.mob.goal;
 
 import com.grahambartley.nightborn.batform.BatForm;
 import com.grahambartley.nightborn.mob.BatSteering;
-import com.grahambartley.nightborn.skill.BatFormPower;
 import com.grahambartley.nightborn.skill.Powers;
-import com.grahambartley.nightborn.skill.SkillAttachment;
-import com.grahambartley.nightborn.skill.SkillPower;
 import java.util.EnumSet;
-import java.util.Optional;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.entity.mob.MobEntity;
@@ -51,7 +47,9 @@ public class BatFlightGoal extends Goal {
     final boolean chasing =
         target != null
             && target.isAlive()
-            && form().map(form -> !form.landsAt(mob.distanceTo(target))).orElse(false);
+            && Powers.ownedBatForm(mob)
+                .map(form -> !form.landsAt(mob.distanceTo(target)))
+                .orElse(false);
     if (!chasing) {
       if (!BatForm.leave(mob)) {
         mob.setVelocity(mob.getVelocity().multiply(HOVER_DRAG).add(SINK));
@@ -65,12 +63,5 @@ public class BatFlightGoal extends Goal {
     mob.setYaw(yaw);
     mob.setBodyYaw(yaw);
     mob.setHeadYaw(yaw);
-  }
-
-  private Optional<BatFormPower> form() {
-    return SkillAttachment.owned(mob).ownedInOrder().stream()
-        .map(id -> Powers.power(mob, id).flatMap(SkillPower::batForm))
-        .flatMap(Optional::stream)
-        .findFirst();
   }
 }
