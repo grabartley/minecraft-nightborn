@@ -16,6 +16,8 @@ More Doors places its vaults with a custom jigsaw structure type and a custom ra
 
 **Rarity is read as chunks generate.** The `nightborn:rare_spread` placement type has the fields of vanilla's random spread plus a `rarity` that names the setting it reads: Vampire structure sets name `vampire_structures`, which reads `structureRarity`, and hunter camps name `hunter_camps`, which reads `campRarity`. Its spacing and separation are the data's numbers scaled by that setting, from 25% to 400%. As in vanilla, the data's spacing must be larger than its separation. Changing the setting only affects chunks not yet generated.
 
+**A structure can ask for good ground.** An optional `footing` samples the terrain across the whole footprint every `spacing` blocks, 8 by default, before the structure is placed. It refuses the spot if any sample is under water, when `dry` is set, which it is by default, or if the ground rises more than `max_rise` blocks across it. A refused spot gets no structure, the same as a biome that does not match.
+
 **Reach is capped by the codec.** `max_distance_from_center` plus the padding terrain adaptation adds must stay within 128 blocks, the 8 chunks a structure start references. A layout that reaches further fails to load rather than loading extra chunks.
 
 **The server finds fog and the client draws it.** Fog covers the structure start's box, which already includes vanilla's 12 block terrain adaptation padding, and a 24 block margin around that. It is full at the heart and fades with distance from it, and it fades to nothing across the margin, so it never starts abruptly. Once a second the server looks at the structure references already held by loaded chunks within two chunks of each player, which always covers the margin. It reads a start only from a loaded chunk, so it never loads one. When the zone a player is deepest in changes, it sends the heart and box. A player with no zone costs one map lookup per nearby chunk each second, and the client does nothing. The client eases towards the target and pulls vanilla's fog in towards 20 blocks at the heart. It never pushes back a nearer vanilla fog, such as blindness or water, so a threat 8 blocks away is at most 40% faded.
@@ -25,6 +27,7 @@ More Doors places its vaults with a custom jigsaw structure type and a custom ra
 ## Consequences
 
 - Castles, crypts, manors and lairs (issues 70 and 71) are data files on this type. Household routines (issue 69) build on the residents settled here.
+- A crypt is a church on the surface hung from the crypt below by a vertical jigsaw. The crypt is the start piece, so it is the heart. Any buried rigid piece makes vanilla shape the ground around it, which cut into the churchyard, so crypts use no terrain adaptation. Instead the crypt piece is a level bank of earth under the whole churchyard, faced with a rubble retaining wall, and its footing keeps it to dry ground that rises 4 blocks or less.
 - A heart whose start chunk is not loaded casts no fog until it loads. With a view distance of two or more this does not happen inside a structure.
 - Fog changes distance only, not colour, so it reads as mist by day and darkness by night.
 - Vanilla's structure locator caches misses per chunk until restart, so `/locate` can stay wrong for searched chunks after the rarity changes, as More Doors found.

@@ -1,0 +1,21 @@
+package com.grahambartley.nightborn.tools.structures.vampire;
+
+import com.grahambartley.nightborn.tools.structures.template.Template;
+import com.grahambartley.nightborn.tools.structures.vampire.crypt.Church;
+import com.grahambartley.nightborn.tools.structures.vampire.crypt.Churchyard;
+import com.grahambartley.nightborn.tools.structures.vampire.crypt.Ossuary;
+import com.grahambartley.nightborn.tools.structures.vampire.crypt.Undercroft;
+import java.util.List;
+
+public final class VampireStructures {
+
+  private VampireStructures() {}
+
+  public static List<Template> build() {
+    return List.of(
+        Churchyard.bank(Undercroft.build()),
+        Churchyard.bank(Ossuary.build()),
+        Church.build(Church.TOWER),
+        Church.build(Church.BELLCOTE));
+  }
+}

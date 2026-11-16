@@ -1,5 +1,6 @@
 package com.grahambartley.nightborn.structure;
 
+import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.MapCodec;
@@ -8,6 +9,7 @@ import java.util.List;
 import java.util.Optional;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.structure.StructureLiquidSettings;
+import net.minecraft.structure.StructurePiecesCollector;
 import net.minecraft.structure.StructurePiecesList;
 import net.minecraft.structure.pool.StructurePool;
 import net.minecraft.structure.pool.StructurePoolBasedGenerator;
@@ -77,7 +79,10 @@ public final class VampireStructure extends Structure {
                               .forGetter(VampireStructure::spawnsVampireBats),
                           StructureAmbience.CODEC
                               .optionalFieldOf("ambience", StructureAmbience.SILENT)
-                              .forGetter(VampireStructure::ambience))
+                              .forGetter(VampireStructure::ambience),
+                          Footing.CODEC
+                              .optionalFieldOf("footing")
+                              .forGetter(structure -> structure.footing))
                       .apply(instance, VampireStructure::new))
           .validate(VampireStructure::staysInReach);
 
@@ -94,6 +99,7 @@ public final class VampireStructure extends Structure {
   private final Household household;
   private final boolean spawnsVampireBats;
   private final StructureAmbience ambience;
+  private final Optional<Footing> footing;
 
   public VampireStructure(
       final Config config,
@@ -109,7 +115,8 @@ public final class VampireStructure extends Structure {
       final StructureLiquidSettings liquidSettings,
       final Household household,
       final boolean spawnsVampireBats,
-      final StructureAmbience ambience) {
+      final StructureAmbience ambience,
+      final Optional<Footing> footing) {
     super(config);
     this.startPool = startPool;
     this.startJigsawName = startJigsawName;
@@ -124,6 +131,7 @@ public final class VampireStructure extends Structure {
     this.household = household;
     this.spawnsVampireBats = spawnsVampireBats;
     this.ambience = ambience;
+    this.footing = footing;
   }
 
   public boolean spawnsVampireBats() {
@@ -150,18 +158,26 @@ public final class VampireStructure extends Structure {
         startHeight.get(
             context.random(), new HeightContext(context.chunkGenerator(), context.world()));
     final BlockPos start = new BlockPos(chunk.getStartX(), y, chunk.getStartZ());
-    return StructurePoolBasedGenerator.generate(
-        context,
-        startPool,
-        startJigsawName,
-        size,
-        start,
-        useExpansionHack,
-        projectStartToHeightmap,
-        maxDistanceFromCenter,
-        StructurePoolAliasLookup.create(poolAliases, start, context.seed()),
-        dimensionPadding,
-        liquidSettings);
+    final Optional<StructurePosition> position =
+        StructurePoolBasedGenerator.generate(
+            context,
+            startPool,
+            startJigsawName,
+            size,
+            start,
+            useExpansionHack,
+            projectStartToHeightmap,
+            maxDistanceFromCenter,
+            StructurePoolAliasLookup.create(poolAliases, start, context.seed()),
+            dimensionPadding,
+            liquidSettings);
+    if (footing.isEmpty() || position.isEmpty()) {
+      return position;
+    }
+    final StructurePiecesCollector pieces = position.get().generate();
+    return footing.get().fits(context, pieces.getBoundingBox())
+        ? Optional.of(new StructurePosition(position.get().position(), Either.right(pieces)))
+        : Optional.empty();
   }
 
   @Override
