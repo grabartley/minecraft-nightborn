@@ -25,6 +25,7 @@ import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.passive.CowEntity;
 import net.minecraft.registry.DynamicRegistryManager;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -37,6 +38,7 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 
 public class BatFormGameTest implements FabricGameTest {
 
@@ -141,7 +143,7 @@ public class BatFormGameTest implements FabricGameTest {
   public void garlicForcesABatBack(final TestContext context) {
     final ServerPlayerEntity vampire = beast(context, BAT_FORM);
     Powers.cast(vampire, BAT_FORM);
-    Weakened.add(vampire, Wards.STRINGS, 1, 100);
+    Weakened.add(vampire, Wards.TOUCH, 1, 100);
     context.runAtTick(
         5,
         () -> {
@@ -255,6 +257,33 @@ public class BatFormGameTest implements FabricGameTest {
             context.complete();
           }
         });
+  }
+
+  @GameTest(templateName = YARD, batchId = NIGHT, skyAccess = true, tickLimit = 20)
+  public void aBatTurningBackInTheAirFloatsDown(final TestContext context) {
+    final ServerPlayerEntity vampire = beast(context, BAT_FORM);
+    Powers.cast(vampire, BAT_FORM);
+    final Vec3d aloft = context.getAbsolute(new Vec3d(4.5, 6.0, 4.5));
+    vampire.refreshPositionAndAngles(aloft.x, aloft.y, aloft.z, 0.0F, 0.0F);
+    context.assertEquals(Powers.cast(vampire, BAT_FORM), PowerUse.Verdict.READY, "turns back");
+    context.assertTrue(
+        vampire.hasStatusEffect(StatusEffects.SLOW_FALLING), "it floats down from the air");
+    TestPlayers.finish(context, vampire);
+  }
+
+  @GameTest(
+      templateName = YARD,
+      batchId = DAY,
+      skyAccess = true,
+      tickLimit = TestPlayers.READY + 10)
+  public void nobodyTakesBatFormInDirectSun(final TestContext context) {
+    final ServerPlayerEntity vampire = beast(context, BAT_FORM);
+    context.assertEquals(
+        Powers.cast(vampire, BAT_FORM), PowerUse.Verdict.SUNLIT, "the sun refuses bat form");
+    context.assertFalse(BatForm.isBat(vampire), "it stays on its feet");
+    context.assertEquals(
+        BloodAttachment.get(vampire), BloodAttachment.FULL, "the refusal costs no blood");
+    TestPlayers.finish(context, vampire);
   }
 
   @GameTest(

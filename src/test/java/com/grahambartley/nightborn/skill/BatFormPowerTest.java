@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import com.google.gson.JsonParser;
 import com.mojang.serialization.JsonOps;
+import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -29,6 +30,23 @@ class BatFormPowerTest {
   void rejects(final String json) {
     assertFalse(
         BatFormPower.CODEC.parse(JsonOps.INSTANCE, JsonParser.parseString(json)).isSuccess());
+  }
+
+  @ParameterizedTest(name = "form {0}, target alive {1}, {2} away -> chases {3}")
+  @CsvSource({
+    "true, true, 20.0, true",
+    "true, true, 3.0, false",
+    "true, false, 20.0, false",
+    "false, true, 20.0, false"
+  })
+  @DisplayName(
+      "a mob bat chases a live target until it is in landing range, and only if it owns the form")
+  void chases(
+      final boolean owns, final boolean alive, final double distance, final boolean expected) {
+    assertEquals(
+        expected,
+        BatFormPower.chases(
+            owns ? Optional.of(new BatFormPower(3.0F)) : Optional.empty(), alive, distance));
   }
 
   @ParameterizedTest(name = "{0} blocks away with range {1} -> {2}")

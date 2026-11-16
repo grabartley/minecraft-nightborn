@@ -247,6 +247,7 @@
   "nightborn.powers.verdict.helpless": "Нельзя использовать силы, пока ты повержен",
   "nightborn.powers.verdict.as_a_bat": "Нельзя использовать это в облике летучей мыши",
   "nightborn.powers.verdict.weakened": "Ты слишком ослаблен для сил",
+  "nightborn.powers.verdict.sunlit": "Нельзя принять облик летучей мыши под прямым солнцем",
   "nightborn.powers.verdict.cooling": "Эта сила ещё не готова",
   "nightborn.powers.verdict.thirsty": "Не хватает крови",
   "nightborn.powers.verdict.cramped": "Нет места, чтобы вернуть облик",

@@ -247,6 +247,7 @@
   "nightborn.powers.verdict.helpless": "倒地时无法使用能力",
   "nightborn.powers.verdict.as_a_bat": "蝙蝠形态下无法使用",
   "nightborn.powers.verdict.weakened": "你太虚弱，无法使用能力",
+  "nightborn.powers.verdict.sunlit": "阳光直射下无法化身蝙蝠",
   "nightborn.powers.verdict.cooling": "该能力尚未就绪",
   "nightborn.powers.verdict.thirsty": "血液不足",
   "nightborn.powers.verdict.cramped": "没有足够空间变回原形",

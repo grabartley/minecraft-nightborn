@@ -1,5 +1,6 @@
 package com.grahambartley.nightborn.batform;
 
+import com.grahambartley.nightborn.ammo.GarlicFumesEffect;
 import com.grahambartley.nightborn.holy.HolyWater;
 import com.grahambartley.nightborn.ward.Wards;
 import com.grahambartley.nightborn.weakened.WeakenedSources;
@@ -8,7 +9,8 @@ import java.util.List;
 public final class BatFormRules {
 
   static final List<String> FORCING_SOURCES =
-      List.of(Wards.STRINGS, Wards.TOUCH, HolyWater.WEAKENED_SOURCE);
+      List.of(
+          Wards.STRINGS, Wards.TOUCH, GarlicFumesEffect.WEAKENED_SOURCE, HolyWater.WEAKENED_SOURCE);
 
   private BatFormRules() {}
 

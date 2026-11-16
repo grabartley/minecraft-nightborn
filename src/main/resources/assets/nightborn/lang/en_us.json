@@ -247,6 +247,7 @@
   "nightborn.powers.verdict.helpless": "You cannot use powers while downed",
   "nightborn.powers.verdict.as_a_bat": "You cannot use that as a bat",
   "nightborn.powers.verdict.weakened": "You are too weakened to use powers",
+  "nightborn.powers.verdict.sunlit": "You cannot take bat form in direct sun",
   "nightborn.powers.verdict.cooling": "That power is not ready yet",
   "nightborn.powers.verdict.thirsty": "Not enough blood",
   "nightborn.powers.verdict.cramped": "No room to turn back",

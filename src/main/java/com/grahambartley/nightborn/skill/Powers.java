@@ -4,6 +4,7 @@ import com.grahambartley.nightborn.batform.BatForm;
 import com.grahambartley.nightborn.blood.BloodAttachment;
 import com.grahambartley.nightborn.downed.Downed;
 import com.grahambartley.nightborn.network.UsePowerPayload;
+import com.grahambartley.nightborn.sun.DirectSun;
 import com.grahambartley.nightborn.weakened.Weakened;
 import java.util.List;
 import java.util.Optional;
@@ -69,6 +70,7 @@ public final class Powers {
         Downed.helpless(caster),
         BatForm.isBat(caster),
         Weakened.sources(caster).level(Downed.state(caster) != null) > 0,
+        power.flatMap(SkillPower::batForm).isPresent() && DirectSun.on(caster),
         id == null
             ? 0L
             : PowerCooldownAttachment.get(caster).ticksLeft(id, caster.getWorld().getTime()),

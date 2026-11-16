@@ -2,6 +2,7 @@ package com.grahambartley.nightborn.batform;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import com.grahambartley.nightborn.ammo.GarlicFumesEffect;
 import com.grahambartley.nightborn.blood.Starvation;
 import com.grahambartley.nightborn.holy.HolyWater;
 import com.grahambartley.nightborn.ward.Wards;
@@ -43,6 +44,7 @@ class BatFormRulesTest {
     return Stream.of(
         Arguments.of(Wards.STRINGS, 1, true),
         Arguments.of(Wards.TOUCH, 2, true),
+        Arguments.of(GarlicFumesEffect.WEAKENED_SOURCE, 1, true),
         Arguments.of(HolyWater.WEAKENED_SOURCE, 1, true),
         Arguments.of(Wards.CRUCIFIX, 3, false),
         Arguments.of(Wards.SHAPE, 3, false),
@@ -52,7 +54,8 @@ class BatFormRulesTest {
 
   @ParameterizedTest(name = "{0} at {1} -> {2}")
   @MethodSource("sources")
-  @DisplayName("only garlic and holy water count as warding a bat out of its form")
+  @DisplayName(
+      "only garlic, from strings, a touch or a bomb, and holy water ward a bat out of its form")
   void warded(final String source, final int strength, final boolean expected) {
     assertEquals(expected, BatFormRules.warded(WeakenedSources.NONE.with(source, strength, 20)));
   }

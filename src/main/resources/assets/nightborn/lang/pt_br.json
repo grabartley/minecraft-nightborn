@@ -247,6 +247,7 @@
   "nightborn.powers.verdict.helpless": "Você não pode usar poderes enquanto está caído",
   "nightborn.powers.verdict.as_a_bat": "Você não pode usar isso como morcego",
   "nightborn.powers.verdict.weakened": "Você está enfraquecido demais para usar poderes",
+  "nightborn.powers.verdict.sunlit": "Você não pode assumir a forma de morcego sob o sol direto",
   "nightborn.powers.verdict.cooling": "Esse poder ainda não está pronto",
   "nightborn.powers.verdict.thirsty": "Sangue insuficiente",
   "nightborn.powers.verdict.cramped": "Sem espaço para voltar à forma",

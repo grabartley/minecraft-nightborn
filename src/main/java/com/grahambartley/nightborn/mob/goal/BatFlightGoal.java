@@ -2,6 +2,7 @@ package com.grahambartley.nightborn.mob.goal;
 
 import com.grahambartley.nightborn.batform.BatForm;
 import com.grahambartley.nightborn.mob.BatSteering;
+import com.grahambartley.nightborn.skill.BatFormPower;
 import com.grahambartley.nightborn.skill.Powers;
 import java.util.EnumSet;
 import net.minecraft.entity.LivingEntity;
@@ -46,10 +47,8 @@ public class BatFlightGoal extends Goal {
     final LivingEntity target = mob.getTarget();
     final boolean chasing =
         target != null
-            && target.isAlive()
-            && Powers.ownedBatForm(mob)
-                .map(form -> !form.landsAt(mob.distanceTo(target)))
-                .orElse(false);
+            && BatFormPower.chases(
+                Powers.ownedBatForm(mob), target.isAlive(), mob.distanceTo(target));
     if (!chasing) {
       if (!BatForm.leave(mob)) {
         mob.setVelocity(mob.getVelocity().multiply(HOVER_DRAG).add(SINK));

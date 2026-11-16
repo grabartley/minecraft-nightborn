@@ -247,6 +247,7 @@
   "nightborn.powers.verdict.helpless": "Tu ne peux pas utiliser de pouvoirs à terre",
   "nightborn.powers.verdict.as_a_bat": "Tu ne peux pas utiliser cela en chauve-souris",
   "nightborn.powers.verdict.weakened": "Tu es trop affaibli pour utiliser des pouvoirs",
+  "nightborn.powers.verdict.sunlit": "Tu ne peux pas prendre forme de chauve-souris en plein soleil",
   "nightborn.powers.verdict.cooling": "Ce pouvoir n'est pas encore prêt",
   "nightborn.powers.verdict.thirsty": "Pas assez de sang",
   "nightborn.powers.verdict.cramped": "Pas assez de place pour reprendre forme",
