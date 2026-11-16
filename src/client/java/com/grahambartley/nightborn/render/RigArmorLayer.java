@@ -9,7 +9,6 @@ import net.minecraft.client.render.TexturedRenderLayers;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.model.BipedEntityModel;
-import net.minecraft.client.render.entity.model.EntityModelLayers;
 import net.minecraft.client.texture.Sprite;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.component.DataComponentTypes;
@@ -50,8 +49,7 @@ public final class RigArmorLayer<T extends GeoAnimatable> extends GeoRenderLayer
           "armor_left_boot", new Piece(EquipmentSlot.FEET, "left_leg"));
 
   private final Supplier<LivingEntity> wearer;
-  private BipedEntityModel<LivingEntity> inner;
-  private BipedEntityModel<LivingEntity> outer;
+  private RigArmorModels models;
 
   public RigArmorLayer(final GeoRenderer<T> renderer, final Supplier<LivingEntity> wearer) {
     super(renderer);
@@ -91,8 +89,11 @@ public final class RigArmorLayer<T extends GeoAnimatable> extends GeoRenderLayer
     if (draw == ArmorDraw.NONE) {
       return;
     }
-    final BipedEntityModel<LivingEntity> model = model(piece.slot());
-    final ModelPart part = part(model, piece.part());
+    if (models == null) {
+      models = RigArmorModels.load();
+    }
+    final BipedEntityModel<LivingEntity> model = models.model(piece.slot());
+    final ModelPart part = models.part(piece.slot(), piece.part());
     if (part.isEmpty()) {
       return;
     }
@@ -176,25 +177,5 @@ public final class RigArmorLayer<T extends GeoAnimatable> extends GeoRenderLayer
     part.yaw = -bone.getRotY();
     part.roll = bone.getRotZ();
     poseStack.scale(scaleX, scaleY, scaleZ);
-  }
-
-  private BipedEntityModel<LivingEntity> model(final EquipmentSlot slot) {
-    if (inner == null) {
-      final var models = MinecraftClient.getInstance().getEntityModelLoader();
-      inner = new BipedEntityModel<>(models.getModelPart(EntityModelLayers.PLAYER_INNER_ARMOR));
-      outer = new BipedEntityModel<>(models.getModelPart(EntityModelLayers.PLAYER_OUTER_ARMOR));
-    }
-    return slot == EquipmentSlot.LEGS ? inner : outer;
-  }
-
-  private static ModelPart part(final BipedEntityModel<LivingEntity> model, final String name) {
-    return switch (name) {
-      case "head" -> model.head;
-      case "body" -> model.body;
-      case "right_arm" -> model.rightArm;
-      case "left_arm" -> model.leftArm;
-      case "right_leg" -> model.rightLeg;
-      default -> model.leftLeg;
-    };
   }
 }

@@ -3,8 +3,12 @@ package com.grahambartley.nightborn.skill;
 import com.grahambartley.nightborn.batform.BatForm;
 import com.grahambartley.nightborn.blood.BloodAttachment;
 import com.grahambartley.nightborn.downed.Downed;
+import com.grahambartley.nightborn.mind.Gazes;
 import com.grahambartley.nightborn.network.UsePowerPayload;
 import com.grahambartley.nightborn.sun.DirectSun;
+import com.grahambartley.nightborn.occult.FogClouds;
+import com.grahambartley.nightborn.occult.GhostlyFamiliars;
+import com.grahambartley.nightborn.occult.ShadowStep;
 import com.grahambartley.nightborn.weakened.Weakened;
 import java.util.List;
 import java.util.Optional;
@@ -73,6 +77,14 @@ public final class Powers {
 
   public static PowerUse.Verdict check(
       final LivingEntity caster, @Nullable final Identifier id, final Optional<SkillPower> power) {
+    return check(caster, id, power, PowerAim.of(caster, power));
+  }
+
+  private static PowerUse.Verdict check(
+      final LivingEntity caster,
+      @Nullable final Identifier id,
+      final Optional<SkillPower> power,
+      final PowerAim aim) {
     return PowerUse.check(
         power.isPresent(),
         Downed.helpless(caster),
@@ -83,7 +95,9 @@ public final class Powers {
             ? 0L
             : PowerCooldownAttachment.get(caster).ticksLeft(id, caster.getWorld().getTime()),
         BloodAttachment.get(caster),
-        power.map(SkillPower::blood).orElse(0));
+        power.map(SkillPower::blood).orElse(0),
+        power.flatMap(SkillPower::mesmerise).isPresent() && aim.gazeTarget() == null,
+        power.flatMap(SkillPower::shadowStep).isPresent() && aim.stepTo() == null);
   }
 
   public static PowerUse.Verdict cast(final LivingEntity caster, @Nullable final Identifier id) {
@@ -91,7 +105,8 @@ public final class Powers {
     if (BatForm.isBat(caster) && owned.flatMap(SkillPower::batForm).isPresent()) {
       return BatForm.leave(caster) ? PowerUse.Verdict.READY : PowerUse.Verdict.CRAMPED;
     }
-    final PowerUse.Verdict verdict = check(caster, id, owned);
+    final PowerAim aim = PowerAim.of(caster, owned);
+    final PowerUse.Verdict verdict = check(caster, id, owned, aim);
     if (verdict != PowerUse.Verdict.READY) {
       return verdict;
     }
@@ -107,6 +122,14 @@ public final class Powers {
     }
     power.batForm().ifPresent(form -> BatForm.enter(caster));
     power.leap().ifPresent(leap -> leap.launch(caster, heading(caster)));
+    if (aim.gazeTarget() != null) {
+      power.mesmerise().ifPresent(mesmerise -> Gazes.start(caster, aim.gazeTarget(), mesmerise));
+    }
+    if (aim.stepTo() != null) {
+      ShadowStep.step(caster, aim.stepTo());
+    }
+    power.familiar().ifPresent(familiar -> GhostlyFamiliars.summon(caster, familiar));
+    power.fog().ifPresent(fog -> FogClouds.spawn(caster, fog));
     if (caster instanceof ServerPlayerEntity player) {
       power.track().ifPresent(track -> Tracking.start(player, track));
     }

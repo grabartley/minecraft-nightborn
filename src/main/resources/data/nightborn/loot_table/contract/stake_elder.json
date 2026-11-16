@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:gift",
+  "random_sequence": "nightborn:contract/stake_elder",
+  "pools": [
+    { "rolls": 1, "entries": [ { "type": "minecraft:item", "name": "minecraft:emerald", "functions": [ { "function": "minecraft:set_count", "count": { "type": "minecraft:uniform", "min": 12, "max": 18 } } ] } ] },
+    { "rolls": 1, "entries": [ { "type": "minecraft:item", "name": "nightborn:silver_ingot", "functions": [ { "function": "minecraft:set_count", "count": { "type": "minecraft:uniform", "min": 3, "max": 5 } } ] } ] },
+    { "rolls": 1, "entries": [
+      { "type": "minecraft:item", "name": "nightborn:silver_sword", "weight": 2 },
+      { "type": "minecraft:item", "name": "nightborn:silver_stake", "weight": 3 }
+    ] }
+  ]
+}

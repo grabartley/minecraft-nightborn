@@ -9,8 +9,12 @@ import com.grahambartley.nightborn.decor.DecorEntities;
 import com.grahambartley.nightborn.decor.DecorItemGroup;
 import com.grahambartley.nightborn.faction.FactionAttachment;
 import com.grahambartley.nightborn.gear.GearFeatures;
+import com.grahambartley.nightborn.guild.GuildFeatures;
 import com.grahambartley.nightborn.hunter.HunterFeatures;
+import com.grahambartley.nightborn.mind.MindFeatures;
 import com.grahambartley.nightborn.mob.NightbornMobs;
+import com.grahambartley.nightborn.occult.OccultFeatures;
+import com.grahambartley.nightborn.sound.NightbornSounds;
 import com.grahambartley.nightborn.structure.NightbornStructures;
 import com.grahambartley.nightborn.vampire.VampireFeatures;
 import net.fabricmc.api.ModInitializer;
@@ -25,6 +29,7 @@ public class Nightborn implements ModInitializer {
   @Override
   public void onInitialize() {
     MilestoneCriterion.register();
+    NightbornSounds.initialize();
     FactionAttachment.register();
     DecorBlocks.initialize();
     DecorBlockEntities.initialize();
@@ -35,6 +40,9 @@ public class Nightborn implements ModInitializer {
     NightbornMobs.initialize();
     GearFeatures.register();
     HunterFeatures.register();
+    GuildFeatures.register();
+    MindFeatures.register();
+    OccultFeatures.register();
     ClothingFeatures.register();
     NightbornStructures.initialize();
     LOGGER.info("Nightborn initialised");

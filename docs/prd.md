@@ -307,7 +307,7 @@ The vampire tree has the core and three bloodlines. A vampire player spends poin
 |---|---|
 | **Noble** | Mesmerise, thralls and charm |
 | **Beast** | Bat form, stronger bare hands, speed and a long leap |
-| **Occult** | Ghostly familiars, fog and shadow tricks |
+| **Occult** | Ghostly familiars, Grave Fog, Shadow Step and Shadow Veil |
 
 The core starts with Thick Blood (more health), Grave Strength (harder blows) and Blood Rush, an active power that burns blood for a short burst of speed and strength. The first skill of each bloodline chooses it and gives a small lasting gift: tougher skin for Noble, safer falls for Beast and longer reach for Occult.
 
@@ -353,13 +353,13 @@ The core starts with Thick Blood (more health), Grave Strength (harder blows) an
 
 | ID | Requirement |
 |---|---|
-| MIND-1 | Staring at a mob or villager for a moment mesmerises it: it stands still and cannot attack |
-| MIND-2 | A mesmerised villager can be charmed: it trades as if the vampire were a hero of the village for a while |
-| MIND-3 | A mesmerised player is slowed and cannot attack the vampire for a short time. They are never frozen |
+| MIND-1 | Mesmerise is a power: the vampire stares at a mob, villager or player in sight and in range for a moment, and if the stare holds, the target is mesmerised. The blood and cooldown are spent when the stare begins, even if it breaks. A mesmerised mob stands still and cannot attack |
+| MIND-2 | A mesmerised villager can be charmed by talking to it: for a while it trades with that vampire as with a hero of the village. Silver Tongue gives the charm, as the `nightborn:charm` attribute |
+| MIND-3 | A mesmerised player is slowed and cannot hurt the vampire who mesmerised them for a short time. They are never frozen |
 | MIND-4 | Bosses cannot be mesmerised. Hunter skills resist it (HUNT-4) |
 | MIND-5 | Sipping from a mesmerised villager can make it a thrall. A thrall follows its owner and fights for them |
-| MIND-6 | A thrall can be told to follow, stay or guard a place |
-| MIND-7 | A vampire has a limit on thralls, raised by Noble skills |
+| MIND-6 | A thrall can be told to follow, stay or guard a place. Its owner gives the order by using it with an empty hand, and a guard fights monsters near its post |
+| MIND-7 | A vampire has a limit on thralls, raised by Noble skills: Blood Bond allows one and Dark Court two more, as the `nightborn:thrall_limit` attribute |
 | MIND-8 | A thrall whose owner dies stays where it is until they return |
 
 **Not supported:** mesmerising through walls.
@@ -372,8 +372,8 @@ The core starts with Thick Blood (more health), Grave Strength (harder blows) an
 
 | ID | Requirement |
 |---|---|
-| FAM-1 | An Occult vampire can summon ghostly familiars that fight for them, carry items and scout ahead |
-| FAM-2 | Ghostly familiars last a set time, cost blood to summon and pass through blocks only while scouting |
+| FAM-1 | An Occult vampire can summon ghostly familiars that fight for them, carry items and scout ahead. Summon Familiar allows one at a time and Spirit Pact one more, as the `nightborn:familiar_limit` attribute; summoning past the limit sends the oldest away. The owner changes its task by using it with an empty hand, hands it items while it carries and takes them back by sneaking. A scout flies the way its owner looks and makes the creatures and people it passes glow for a while |
+| FAM-2 | Ghostly familiars last a set time, cost blood to summon and pass through blocks only while scouting. One that fades or dies drops what it carried |
 | FAM-3 | Any vampire can hire one villager as a human familiar with a Familiar's Contract |
 | FAM-4 | A human familiar works in daylight: it carries items between chests the owner marks, trades with villagers for the owner and guards the owner's assigned coffin |
 | FAM-5 | A human familiar has loyalty. Good treatment raises it. Being fed on, hurt or left without pay lowers it |
@@ -419,10 +419,10 @@ The hunter tree starts with Tracking, an active power that points toward the nea
 
 | ID | Requirement |
 |---|---|
-| GUILD-1 | Hunter camps generate rarely in the overworld, each with a few hunter mobs and a Guild Master |
-| GUILD-2 | Hunter mobs attack vampire players and vampire mobs on sight, and leave humans alone |
-| GUILD-3 | The Guild Master sells hunter gear and gives contracts, such as staking vampires or clearing a vampire structure |
-| GUILD-4 | Contracts pay in emeralds, silver and gear, on top of the hunter points HUNT-2 gives |
+| GUILD-1 | Hunter camps generate rarely in the open country of the overworld (plains, meadows and savannas), each with a few hunter mobs and a Guild Master |
+| GUILD-2 | Hunter mobs attack vampire players and vampire mobs on sight with stakes, so a vampire they bring down is finished. They leave humans alone and do not fight back when a human hits them. Hunters and the Guild Master stay near their camp |
+| GUILD-3 | The Guild Master sells hunter gear and writes contracts on paper, such as staking vampires, staking an elder, or clearing a vampire structure by staking the last of its household. His offers and contracts are data, he trades through the vanilla trading screen, and his stock renews each day |
+| GUILD-4 | Contracts pay in emeralds, silver and gear, on top of the hunter points HUNT-2 gives. A contract is an item that keeps its own count. One stake marks one open contract. A vampire player counts as a fledgling against a contract that asks for an older vampire, and a vampire who lives alone is the last of its household. A fulfilled contract, in either hand, is handed to a Guild Master, who takes it and pays once |
 | GUILD-5 | A vampire player cannot trade or take contracts at a camp |
 
 **Enforcement:** server.
@@ -548,7 +548,7 @@ Vampires are rare. They live in households hidden in four kinds of structure, ea
 | CFG-2 | Settings are saved per world as JSON in the world save directory |
 | CFG-3 | A missing file gives defaults. A broken file gives defaults, is logged and is kept |
 | CFG-4 | Out-of-range values are clamped on load |
-| CFG-5 | Options cover turn chances, sickness length, sun damage, blood drain and values, garlic and crucifix ranges, skill point rates, the staking penalty, stake and silver damage, the damage, hits, time and weakening of each weapon coating, the downed and escape times, the damage from vomiting food or potions, the blood drain while levitating, how fast starving weakens and hurts and how much it takes from night gifts and bare hands, the coffin sleep share, hardcore vampire deaths, spawn and structure rates, vampire mob hunger threshold and blood drain, how often hungry vampire mobs go out to feed, how far they roam about home and how far a hurt one calls its housemates, how often vampire mobs rise to levitate and land, how far and how hard vampire mobs leap, dash and dodge and when they dodge, how long and how far they fall back and when they come again, feeding range and chase range, how often structure gramophones play, the rewards for older vampires and the Eldest, and whether players can turn players, whether Nocturne works and how strong Batwing, Gliding Step and Hush are |
+| CFG-5 | Options cover turn chances, sickness length, sun damage, blood drain and values, garlic and crucifix ranges, skill point rates, the staking penalty, stake and silver damage, the damage, hits, time and weakening of each weapon coating, the downed and escape times, the damage from vomiting food or potions, the blood drain while levitating, how fast starving weakens and hurts and how much it takes from night gifts and bare hands, the coffin sleep share, the chance a sip binds a thrall and how long a charm lasts, hardcore vampire deaths, spawn rates, vampire structure and hunter camp rates, hunter points per contract, vampire mob hunger threshold and blood drain, how often hungry vampire mobs go out to feed, how far they roam about home and how far a hurt one calls its housemates, how often vampire mobs rise to levitate and land, how far and how hard vampire mobs leap, dash and dodge and when they dodge, how long and how far they fall back and when they come again, feeding range and chase range, how often structure gramophones play, the rewards for older vampires and the Eldest, and whether players can turn players, whether Nocturne works and how strong Batwing, Gliding Step and Hush are |
 | CFG-6 | A settings screen through Mod Menu shows the same server options and shares their validation with the commands |
 | CFG-7 | An option that only changes what one player sees, such as gore, is a client setting saved on that player's device. Every player can change it on the settings screen, whatever their operator level |
 | CFG-8 | Operators can turn, cure, set points and reset the bloodlines of any player |
@@ -648,7 +648,7 @@ A modified client is assumed. Hiding a control is never the enforcement of a rul
 |---|---|
 | PERM-1 | Every action in the matrix is checked on the server |
 | PERM-2 | A skill purchase is checked on the server for points, order and bloodline limit |
-| PERM-3 | A thrall or familiar whose owner leaves the server keeps its owner. An operator can release it |
+| PERM-3 | A thrall or familiar whose owner leaves the server keeps its owner. An operator can release it, with `/nightborn thrall release` for thralls |
 | PERM-4 | Operator actions on another player are logged |
 
 ## 7. Client And Server
@@ -750,7 +750,7 @@ There is no singleplayer mode in this mod. A single-player world is an integrate
 | LOOK-3 | Colours are muted jewel tones: burgundy, emerald, black and gold |
 | LOOK-4 | Each vampire dresses in the era they were turned in, so a household mixes centuries |
 | LOOK-5 | Every model and animation is hand-made to a premium bar and judged against the best Minecraft art. Every mob is animated at rest, moving and attacking, and every vampire while feeding |
-| LOOK-6 | Music is baroque and gothic: harpsichord, choir and brooding strings |
+| LOOK-6 | Music is baroque and gothic: harpsichord, organ, choir and brooding strings |
 | LOOK-7 | Vampire structures sound like old houses: creaks, settling, drips, guttering candles, wind in the halls and distant bells |
 | LOOK-8 | Blocks and items look like vanilla ones wherever they are held or shown: GUI, first and third person, item frames and the ground |
 | LOOK-9 | Sounds use vanilla first and real recordings next. Creature voices are never synthesised |

@@ -1,0 +1,12 @@
+{
+  "structures": [
+    { "structure": "nightborn:hunter_camp", "weight": 1 }
+  ],
+  "placement": {
+    "type": "nightborn:rare_spread",
+    "rarity": "hunter_camps",
+    "salt": 590183427,
+    "spacing": 48,
+    "separation": 20
+  }
+}
