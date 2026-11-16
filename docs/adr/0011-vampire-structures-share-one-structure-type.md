@@ -14,7 +14,7 @@ More Doors places its vaults with a custom jigsaw structure type and a custom ra
 
 **Residents settle once, from the chunk that holds the heart's centre.** `postPlace` runs once per chunk, so only that chunk spawns the household, and only on floor inside both the heart and that chunk. Residents are persistent so they stay home. `HouseholdSpots` keeps them apart while there is room.
 
-**Rarity is read as chunks generate.** `nightborn:vampire_structure` is also a placement type with the fields of vanilla's random spread. Its spacing and separation are the data's numbers scaled by the `structureRarity` setting, from 25% to 400%. As in vanilla, the data's spacing must be larger than its separation. Changing the setting only affects chunks not yet generated.
+**Rarity is read as chunks generate.** The `nightborn:rare_spread` placement type has the fields of vanilla's random spread plus a `rarity` that names the setting it reads: `vampire_structures` reads `structureRarity` and `hunter_camps` reads `campRarity`. Its spacing and separation are the data's numbers scaled by that setting, from 25% to 400%. As in vanilla, the data's spacing must be larger than its separation. Changing the setting only affects chunks not yet generated.
 
 **Reach is capped by the codec.** `max_distance_from_center` plus the padding terrain adaptation adds must stay within 128 blocks, the 8 chunks a structure start references. A layout that reaches further fails to load rather than loading extra chunks.
 

@@ -25,8 +25,8 @@ class SkillSettingsTest {
   @Test
   @DisplayName("the constructor clamps values into bounds")
   void clamps() {
-    assertEquals(new SkillSettings(1, 0, 0, 0, 0), new SkillSettings(0, -1, -1, -1, -1));
+    assertEquals(new SkillSettings(1, 0, 0, 0, 0, 0), new SkillSettings(0, -1, -1, -1, -1, -1));
     assertEquals(
-        new SkillSettings(1000, 20, 50, 50, 100), new SkillSettings(1001, 21, 51, 51, 101));
+        new SkillSettings(1000, 20, 50, 50, 100, 50), new SkillSettings(1001, 21, 51, 51, 101, 51));
   }
 }

@@ -1,0 +1,12 @@
+{
+  "order": 50,
+  "wants": {
+    "id": "minecraft:emerald",
+    "count": 6
+  },
+  "gives": {
+    "id": "nightborn:gold_crucifix",
+    "count": 1
+  },
+  "max_uses": 3
+}

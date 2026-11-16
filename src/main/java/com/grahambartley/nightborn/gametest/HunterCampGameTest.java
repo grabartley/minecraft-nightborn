@@ -1,0 +1,249 @@
+package com.grahambartley.nightborn.gametest;
+
+import com.grahambartley.nightborn.gear.GearItems;
+import com.grahambartley.nightborn.guild.ContractItems;
+import com.grahambartley.nightborn.guild.ContractProgress;
+import com.grahambartley.nightborn.guild.GuildMasterEntity;
+import com.grahambartley.nightborn.guild.GuildMobs;
+import com.grahambartley.nightborn.guild.HunterEntity;
+import com.grahambartley.nightborn.mob.NightbornMobs;
+import com.grahambartley.nightborn.mob.VampireEntity;
+import com.grahambartley.nightborn.server.ServerConfigService;
+import com.grahambartley.nightborn.skill.SkillAttachment;
+import com.grahambartley.nightborn.skill.SkillTree;
+import com.grahambartley.nightborn.structure.RareSpreadPlacement;
+import com.grahambartley.nightborn.structure.StructureRarity;
+import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
+import net.minecraft.registry.RegistryKeys;
+import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.test.GameTest;
+import net.minecraft.test.TestContext;
+import net.minecraft.util.Hand;
+import net.minecraft.util.Identifier;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.village.TradeOffer;
+
+public class HunterCampGameTest implements FabricGameTest {
+
+  static final String ARENA = "nightborn:vampire_arena";
+  static final int START = 2;
+  static final Identifier STAKE_THREE = Identifier.of("nightborn", "stake_three");
+  static final Identifier CLEAR_HOUSEHOLD = Identifier.of("nightborn", "clear_household");
+
+  static ItemStack contract(final Identifier id, final int done) {
+    final ItemStack stack = new ItemStack(ContractItems.HUNTER_CONTRACT);
+    stack.set(ContractItems.PROGRESS, new ContractProgress(id, done));
+    return stack;
+  }
+
+  static int done(final ServerPlayerEntity player, final int slot) {
+    final ContractProgress progress =
+        player.getInventory().getStack(slot).get(ContractItems.PROGRESS);
+    return progress == null ? -1 : progress.done();
+  }
+
+  static int count(final ServerPlayerEntity player, final net.minecraft.item.Item item) {
+    return player.getInventory().count(item);
+  }
+
+  private GuildMasterEntity guildMaster(final TestContext context) {
+    final GuildMasterEntity master =
+        context.spawnEntity(GuildMobs.GUILD_MASTER, new BlockPos(4, 2, 4));
+    master.setAiDisabled(true);
+    return master;
+  }
+
+  @GameTest(templateName = EMPTY_STRUCTURE, tickLimit = 20)
+  public void hunterCampsGenerateRarelyFromTheCampRarity(final TestContext context) {
+    final var registries = context.getWorld().getRegistryManager();
+    context.assertTrue(
+        registries
+            .get(RegistryKeys.STRUCTURE)
+            .containsId(Identifier.of("nightborn", "hunter_camp")),
+        "the hunter camp structure loads");
+    final var set =
+        registries.get(RegistryKeys.STRUCTURE_SET).get(Identifier.of("nightborn", "hunter_camp"));
+    context.assertTrue(
+        set != null
+            && set.placement() instanceof RareSpreadPlacement placement
+            && placement.rarity() == StructureRarity.HUNTER_CAMPS,
+        "camps are spread by the camp rarity setting");
+    context.assertTrue(
+        context
+            .getWorld()
+            .getStructureTemplateManager()
+            .getTemplate(Identifier.of("nightborn", "hunter_camp/camp"))
+            .isPresent(),
+        "the camp template loads");
+    context.complete();
+  }
+
+  @GameTest(templateName = ARENA, tickLimit = TestPlayers.READY + 20)
+  public void theGuildMasterTurnsAVampireAway(final TestContext context) {
+    final GuildMasterEntity master = guildMaster(context);
+    final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(2, 2, 4));
+    vampire.setStackInHand(Hand.MAIN_HAND, contract(STAKE_THREE, 3));
+    context.runAtTick(
+        START,
+        () -> {
+          master.interactMob(vampire, Hand.MAIN_HAND);
+          context.assertFalse(master.hasCustomer(), "a vampire cannot trade");
+          context.assertEquals(done(vampire, vampire.getInventory().selectedSlot), 3, "no claim");
+          context.assertEquals(count(vampire, Items.EMERALD), 0, "nothing is paid");
+          TestPlayers.finish(context, vampire);
+        });
+  }
+
+  @GameTest(templateName = ARENA, tickLimit = TestPlayers.READY + 20)
+  public void theGuildMasterSellsGearAndContractsToAHuman(final TestContext context) {
+    final GuildMasterEntity master = guildMaster(context);
+    final ServerPlayerEntity human = TestPlayers.human(context, new BlockPos(2, 2, 4));
+    context.runAtTick(
+        START,
+        () -> {
+          master.interactMob(human, Hand.MAIN_HAND);
+          context.assertTrue(master.getCustomer() == human, "the human is trading");
+          context.assertTrue(
+              master.getOffers().stream()
+                  .map(TradeOffer::getSellItem)
+                  .anyMatch(stack -> stack.isOf(GearItems.WOODEN_STAKE)),
+              "stakes are for sale");
+          context.assertTrue(
+              master.getOffers().stream()
+                  .map(TradeOffer::getSellItem)
+                  .anyMatch(stack -> stack.contains(ContractItems.PROGRESS)),
+              "contracts are on offer");
+          TestPlayers.finish(context, human);
+        });
+  }
+
+  @GameTest(templateName = ARENA, tickLimit = TestPlayers.READY + 20)
+  public void aFulfilledContractPaysOnceAndIsHandedIn(final TestContext context) {
+    final GuildMasterEntity master = guildMaster(context);
+    final ServerPlayerEntity human = TestPlayers.human(context, new BlockPos(2, 2, 4));
+    human.setStackInHand(Hand.MAIN_HAND, contract(STAKE_THREE, 3));
+    context.runAtTick(
+        START,
+        () -> {
+          final int before = SkillAttachment.get(human, SkillTree.HUNTER).earned();
+          master.interactMob(human, Hand.MAIN_HAND);
+          context.assertEquals(
+              count(human, ContractItems.HUNTER_CONTRACT), 0, "the contract is handed in");
+          context.assertTrue(count(human, Items.EMERALD) > 0, "the contract pays emeralds");
+          context.assertTrue(count(human, GearItems.SILVER_INGOT) > 0, "and silver");
+          context.assertEquals(
+              SkillAttachment.get(human, SkillTree.HUNTER).earned() - before,
+              ServerConfigService.current().skills().contractPoints(),
+              "and hunter points");
+          final int emeralds = count(human, Items.EMERALD);
+          master.interactMob(human, Hand.MAIN_HAND);
+          context.assertEquals(count(human, Items.EMERALD), emeralds, "it pays only once");
+          context.assertTrue(master.getCustomer() == human, "a second visit opens the trades");
+          TestPlayers.finish(context, human);
+        });
+  }
+
+  @GameTest(templateName = ARENA, tickLimit = TestPlayers.READY + 20)
+  public void aContractNotYetFulfilledIsNotPaid(final TestContext context) {
+    final GuildMasterEntity master = guildMaster(context);
+    final ServerPlayerEntity human = TestPlayers.human(context, new BlockPos(2, 2, 4));
+    human.setStackInHand(Hand.MAIN_HAND, contract(STAKE_THREE, 2));
+    context.runAtTick(
+        START,
+        () -> {
+          master.interactMob(human, Hand.MAIN_HAND);
+          context.assertEquals(
+              count(human, ContractItems.HUNTER_CONTRACT), 1, "the contract is kept");
+          context.assertEquals(count(human, Items.EMERALD), 0, "nothing is paid");
+          TestPlayers.finish(context, human);
+        });
+  }
+
+  @GameTest(templateName = ARENA, tickLimit = TestPlayers.READY + 20)
+  public void stakingAVampireMarksOnlyTheFirstOpenContract(final TestContext context) {
+    final ServerPlayerEntity human = TestPlayers.human(context, new BlockPos(2, 2, 4));
+    human.getInventory().setStack(0, new ItemStack(GearItems.WOODEN_STAKE));
+    human.getInventory().setStack(1, contract(STAKE_THREE, 0));
+    human.getInventory().setStack(2, contract(STAKE_THREE, 0));
+    human.getInventory().selectedSlot = 0;
+    final VampireEntity vampire = context.spawnEntity(NightbornMobs.VAMPIRE, new BlockPos(4, 2, 4));
+    vampire.setAiDisabled(true);
+    context.runAtTick(
+        START,
+        () -> {
+          vampire.damage(vampire.getDamageSources().generic(), 1000.0F);
+          vampire.damage(human.getDamageSources().playerAttack(human), 1.0F);
+          context.assertFalse(vampire.isAlive(), "the vampire is staked");
+          context.assertEquals(done(human, 1), 1, "the first contract moves on");
+          context.assertEquals(done(human, 2), 0, "the second does not");
+          TestPlayers.finish(context, human);
+        });
+  }
+
+  @GameTest(templateName = ARENA, tickLimit = TestPlayers.READY + 20)
+  public void clearingAHouseholdCountsOnlyTheLastOfThem(final TestContext context) {
+    final ServerPlayerEntity human = TestPlayers.human(context, new BlockPos(2, 2, 4));
+    human.getInventory().setStack(0, new ItemStack(GearItems.WOODEN_STAKE));
+    human.getInventory().setStack(1, contract(CLEAR_HOUSEHOLD, 0));
+    human.getInventory().selectedSlot = 0;
+    final BlockPos home = context.getAbsolutePos(new BlockPos(4, 2, 4));
+    final VampireEntity first = context.spawnEntity(NightbornMobs.VAMPIRE, new BlockPos(4, 2, 4));
+    final VampireEntity last = context.spawnEntity(NightbornMobs.VAMPIRE, new BlockPos(6, 2, 4));
+    for (final VampireEntity vampire : new VampireEntity[] {first, last}) {
+      vampire.setAiDisabled(true);
+      vampire.settleAt(home);
+    }
+    context.runAtTick(
+        START,
+        () -> {
+          stake(first, human);
+          context.assertEquals(done(human, 1), 0, "a housemate still lives");
+          stake(last, human);
+          context.assertEquals(done(human, 1), 1, "the household is cleared");
+          TestPlayers.finish(context, human);
+        });
+  }
+
+  private static void stake(final VampireEntity vampire, final ServerPlayerEntity hunter) {
+    vampire.damage(vampire.getDamageSources().generic(), 1000.0F);
+    vampire.damage(hunter.getDamageSources().playerAttack(hunter), 1.0F);
+  }
+
+  @GameTest(templateName = ARENA, tickLimit = TestPlayers.READY + 20)
+  public void huntersHuntVampiresAndLeaveHumansAlone(final TestContext context) {
+    final HunterEntity hunter = context.spawnEntity(GuildMobs.HUNTER, new BlockPos(2, 2, 2));
+    final VampireEntity mob = context.spawnEntity(NightbornMobs.VAMPIRE, new BlockPos(6, 2, 6));
+    mob.setAiDisabled(true);
+    final ServerPlayerEntity human = TestPlayers.human(context, new BlockPos(2, 2, 6));
+    final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(6, 2, 2));
+    context.runAtTick(
+        START,
+        () -> {
+          context.assertTrue(hunter.canTarget(mob), "a vampire mob is hunted");
+          context.assertTrue(hunter.canTarget(vampire), "a vampire player is hunted");
+          context.assertFalse(hunter.canTarget(human), "a human is left alone");
+          TestPlayers.finish(context, human, vampire);
+        });
+  }
+
+  @GameTest(templateName = ARENA, tickLimit = 20)
+  public void aHuntersStakeFinishesADownedVampire(final TestContext context) {
+    final HunterEntity hunter = context.spawnEntity(GuildMobs.HUNTER, new BlockPos(3, 2, 4));
+    hunter.setAiDisabled(true);
+    hunter.equipStack(
+        net.minecraft.entity.EquipmentSlot.MAINHAND, new ItemStack(GearItems.WOODEN_STAKE));
+    final VampireEntity vampire = context.spawnEntity(NightbornMobs.VAMPIRE, new BlockPos(4, 2, 4));
+    vampire.setAiDisabled(true);
+    context.runAtTick(
+        START,
+        () -> {
+          vampire.damage(vampire.getDamageSources().generic(), 1000.0F);
+          context.assertTrue(vampire.isAlive(), "the vampire is only downed");
+          hunter.tryAttack(vampire);
+          context.assertFalse(vampire.isAlive(), "the hunter's stake finishes it");
+          context.complete();
+        });
+  }
+}

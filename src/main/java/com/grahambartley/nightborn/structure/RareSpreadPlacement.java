@@ -6,6 +6,7 @@ import com.mojang.serialization.DataResult;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import java.util.Optional;
+import net.minecraft.util.dynamic.Codecs;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.Vec3i;
 import net.minecraft.util.math.random.CheckedRandom;
@@ -14,30 +15,50 @@ import net.minecraft.world.gen.chunk.placement.RandomSpreadStructurePlacement;
 import net.minecraft.world.gen.chunk.placement.SpreadType;
 import net.minecraft.world.gen.chunk.placement.StructurePlacementType;
 
-public final class VampireStructurePlacement extends RandomSpreadStructurePlacement {
+public final class RareSpreadPlacement extends RandomSpreadStructurePlacement {
 
   private static final int LARGEST_SPREAD = 4096;
+  private static final int LOCATE_OFFSET_REACH = 16;
 
-  public static final MapCodec<VampireStructurePlacement> CODEC =
-      RecordCodecBuilder.<VampireStructurePlacement>mapCodec(
+  private final StructureRarity rarity;
+
+  public static final MapCodec<RareSpreadPlacement> CODEC =
+      RecordCodecBuilder.<RareSpreadPlacement>mapCodec(
               instance ->
-                  buildCodec(instance)
-                      .and(
+                  instance
+                      .group(
+                          Vec3i.createOffsetCodec(LOCATE_OFFSET_REACH)
+                              .optionalFieldOf("locate_offset", Vec3i.ZERO)
+                              .forGetter(RareSpreadPlacement::getLocateOffset),
+                          FrequencyReductionMethod.CODEC
+                              .optionalFieldOf(
+                                  "frequency_reduction_method", FrequencyReductionMethod.DEFAULT)
+                              .forGetter(RareSpreadPlacement::getFrequencyReductionMethod),
+                          Codec.floatRange(0.0F, 1.0F)
+                              .optionalFieldOf("frequency", 1.0F)
+                              .forGetter(RareSpreadPlacement::getFrequency),
+                          Codecs.NONNEGATIVE_INT
+                              .fieldOf("salt")
+                              .forGetter(RareSpreadPlacement::getSalt),
+                          ExclusionZone.CODEC
+                              .optionalFieldOf("exclusion_zone")
+                              .forGetter(RareSpreadPlacement::getExclusionZone),
                           Codec.intRange(1, LARGEST_SPREAD)
                               .fieldOf("spacing")
-                              .forGetter(VampireStructurePlacement::baseSpacing))
-                      .and(
+                              .forGetter(RareSpreadPlacement::baseSpacing),
                           Codec.intRange(0, LARGEST_SPREAD)
                               .fieldOf("separation")
-                              .forGetter(VampireStructurePlacement::baseSeparation))
-                      .and(
+                              .forGetter(RareSpreadPlacement::baseSeparation),
                           SpreadType.CODEC
                               .optionalFieldOf("spread_type", SpreadType.LINEAR)
-                              .forGetter(VampireStructurePlacement::getSpreadType))
-                      .apply(instance, VampireStructurePlacement::new))
-          .validate(VampireStructurePlacement::spacesWiderThanItSeparates);
+                              .forGetter(RareSpreadPlacement::getSpreadType),
+                          StructureRarity.CODEC
+                              .fieldOf("rarity")
+                              .forGetter(RareSpreadPlacement::rarity))
+                      .apply(instance, RareSpreadPlacement::new))
+          .validate(RareSpreadPlacement::spacesWiderThanItSeparates);
 
-  public VampireStructurePlacement(
+  public RareSpreadPlacement(
       final Vec3i locateOffset,
       final FrequencyReductionMethod frequencyReductionMethod,
       final float frequency,
@@ -45,7 +66,8 @@ public final class VampireStructurePlacement extends RandomSpreadStructurePlacem
       final Optional<ExclusionZone> exclusionZone,
       final int spacing,
       final int separation,
-      final SpreadType spreadType) {
+      final SpreadType spreadType,
+      final StructureRarity rarity) {
     super(
         locateOffset,
         frequencyReductionMethod,
@@ -55,10 +77,15 @@ public final class VampireStructurePlacement extends RandomSpreadStructurePlacem
         spacing,
         separation,
         spreadType);
+    this.rarity = rarity;
   }
 
-  private static DataResult<VampireStructurePlacement> spacesWiderThanItSeparates(
-      final VampireStructurePlacement placement) {
+  public StructureRarity rarity() {
+    return rarity;
+  }
+
+  private static DataResult<RareSpreadPlacement> spacesWiderThanItSeparates(
+      final RareSpreadPlacement placement) {
     return placement.baseSpacing() > placement.baseSeparation()
         ? DataResult.success(placement)
         : DataResult.error(() -> "Spacing has to be larger than separation");
@@ -72,18 +99,18 @@ public final class VampireStructurePlacement extends RandomSpreadStructurePlacem
     return super.getSeparation();
   }
 
-  private static int rarity() {
-    return ServerConfigService.current().structures().structureRarity();
+  private int rarityPercent() {
+    return rarity.percent(ServerConfigService.current().structures());
   }
 
   @Override
   public int getSpacing() {
-    return StructureSpread.spacing(baseSpacing(), rarity());
+    return StructureSpread.spacing(baseSpacing(), rarityPercent());
   }
 
   @Override
   public int getSeparation() {
-    return StructureSpread.separation(getSpacing(), baseSeparation(), rarity());
+    return StructureSpread.separation(getSpacing(), baseSeparation(), rarityPercent());
   }
 
   @Override
@@ -101,6 +128,6 @@ public final class VampireStructurePlacement extends RandomSpreadStructurePlacem
 
   @Override
   public StructurePlacementType<?> getType() {
-    return NightbornStructures.VAMPIRE_STRUCTURE_PLACEMENT;
+    return NightbornStructures.RARE_SPREAD;
   }
 }

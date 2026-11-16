@@ -9,6 +9,7 @@ import com.grahambartley.nightborn.decor.DecorEntities;
 import com.grahambartley.nightborn.decor.DecorItemGroup;
 import com.grahambartley.nightborn.faction.FactionAttachment;
 import com.grahambartley.nightborn.gear.GearFeatures;
+import com.grahambartley.nightborn.guild.GuildFeatures;
 import com.grahambartley.nightborn.hunter.HunterFeatures;
 import com.grahambartley.nightborn.mind.MindFeatures;
 import com.grahambartley.nightborn.mob.NightbornMobs;
@@ -37,6 +38,7 @@ public class Nightborn implements ModInitializer {
     NightbornMobs.initialize();
     GearFeatures.register();
     HunterFeatures.register();
+    GuildFeatures.register();
     MindFeatures.register();
     OccultFeatures.register();
     ClothingFeatures.register();

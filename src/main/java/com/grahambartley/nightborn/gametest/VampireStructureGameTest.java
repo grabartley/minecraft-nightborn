@@ -134,7 +134,7 @@ public class VampireStructureGameTest implements FabricGameTest {
     final JsonElement json =
         JsonParser.parseString(
             """
-            { "type": "nightborn:vampire_structure", "salt": 1975, "spacing": %d, "separation": %d }
+            { "type": "nightborn:rare_spread", "rarity": "vampire_structures", "salt": 1975, "spacing": %d, "separation": %d }
             """
                 .formatted(spacing, separation));
     return StructurePlacement.TYPE_CODEC.parse(
