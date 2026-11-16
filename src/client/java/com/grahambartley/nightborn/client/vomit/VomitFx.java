@@ -10,6 +10,8 @@ import java.util.Map;
 import java.util.WeakHashMap;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.network.AbstractClientPlayerEntity;
+import net.minecraft.client.util.SkinTextures;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.util.math.MathHelper;
@@ -61,6 +63,11 @@ public final class VomitFx {
     }
   }
 
+  private static boolean slim(final PlayerEntity player) {
+    return player instanceof AbstractClientPlayerEntity client
+        && client.getSkinTextures().model() == SkinTextures.Model.SLIM;
+  }
+
   private static void heave(final PlayerEntity player) {
     player
         .getWorld()
@@ -68,7 +75,7 @@ public final class VomitFx {
             player.getX(),
             player.getY(),
             player.getZ(),
-            VomitEffects.RETCH,
+            VomitEffects.retch(slim(player)),
             SoundCategory.PLAYERS,
             1.0F,
             0.9F + player.getRandom().nextFloat() * 0.2F,

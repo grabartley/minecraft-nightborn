@@ -11,6 +11,7 @@ import com.grahambartley.nightborn.network.PlayerCue;
 import com.grahambartley.nightborn.network.PlayerCues;
 import com.grahambartley.nightborn.sickness.BiteSickness;
 import com.grahambartley.nightborn.skill.SkillEarning;
+import com.grahambartley.nightborn.sound.NightbornSounds;
 import com.grahambartley.nightborn.thrall.Thralls;
 import com.grahambartley.nightborn.vampire.NightbornDamage;
 import net.minecraft.entity.LivingEntity;
@@ -24,7 +25,6 @@ import net.minecraft.item.Items;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.math.random.Random;
 
 final class Feeder {
@@ -67,10 +67,10 @@ final class Feeder {
       world.playSound(
           null,
           vampire.getBlockPos(),
-          SoundEvents.ENTITY_GENERIC_DRINK,
+          NightbornSounds.sip(sip.drains()),
           SoundCategory.PLAYERS,
           0.8F,
-          0.6F);
+          NightbornSounds.variedPitch(world.getRandom()));
       mayStartSickness(vampire, victim, session, config, world.getRandom());
     }
     if (VillagerWitnesses.alert(

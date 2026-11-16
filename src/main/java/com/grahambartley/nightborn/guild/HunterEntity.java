@@ -1,6 +1,9 @@
 package com.grahambartley.nightborn.guild;
 
 import com.grahambartley.nightborn.gear.GearItems;
+import com.grahambartley.nightborn.mob.MobSounds;
+import com.grahambartley.nightborn.mob.look.VampireRig;
+import com.grahambartley.nightborn.mob.look.VampireVoice;
 import com.grahambartley.nightborn.vampire.Vampires;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.EquipmentSlot;
@@ -14,6 +17,7 @@ import net.minecraft.entity.ai.goal.SwimGoal;
 import net.minecraft.entity.ai.goal.WanderAroundFarGoal;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;
 import net.minecraft.entity.attribute.EntityAttributes;
+import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
@@ -22,6 +26,7 @@ import net.minecraft.entity.mob.PathAwareEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.sound.SoundEvent;
 import net.minecraft.world.World;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
@@ -99,6 +104,25 @@ public class HunterEntity extends PathAwareEntity implements GeoEntity, HunterLo
     CampHome.keep(this, CAMP_REACH);
     dataTracker.set(FEMALE, getRandom().nextBoolean());
     equipStack(EquipmentSlot.MAINHAND, new ItemStack(GearItems.WOODEN_STAKE));
+  }
+
+  @Override
+  protected SoundEvent getAmbientSound() {
+    return MobSounds.hunter(rig(), VampireVoice.AMBIENT);
+  }
+
+  @Override
+  protected SoundEvent getHurtSound(final DamageSource source) {
+    return MobSounds.hunter(rig(), VampireVoice.HURT);
+  }
+
+  @Override
+  protected SoundEvent getDeathSound() {
+    return MobSounds.hunter(rig(), VampireVoice.DEATH);
+  }
+
+  private VampireRig rig() {
+    return dataTracker.get(FEMALE) ? VampireRig.FEMALE : VampireRig.MALE;
   }
 
   @Override

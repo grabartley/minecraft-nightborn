@@ -14,6 +14,7 @@ import com.grahambartley.nightborn.hunter.HunterFeatures;
 import com.grahambartley.nightborn.mind.MindFeatures;
 import com.grahambartley.nightborn.mob.NightbornMobs;
 import com.grahambartley.nightborn.occult.OccultFeatures;
+import com.grahambartley.nightborn.sound.NightbornSounds;
 import com.grahambartley.nightborn.structure.NightbornStructures;
 import com.grahambartley.nightborn.vampire.VampireFeatures;
 import net.fabricmc.api.ModInitializer;
@@ -28,6 +29,7 @@ public class Nightborn implements ModInitializer {
   @Override
   public void onInitialize() {
     MilestoneCriterion.register();
+    NightbornSounds.initialize();
     FactionAttachment.register();
     DecorBlocks.initialize();
     DecorBlockEntities.initialize();

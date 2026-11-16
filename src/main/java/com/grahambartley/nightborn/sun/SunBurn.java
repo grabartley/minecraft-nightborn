@@ -4,10 +4,10 @@ import com.grahambartley.nightborn.advancement.Milestone;
 import com.grahambartley.nightborn.advancement.MilestoneCriterion;
 import com.grahambartley.nightborn.config.SunSettings;
 import com.grahambartley.nightborn.smoke.SmokeParticles;
+import com.grahambartley.nightborn.sound.NightbornSounds;
 import com.grahambartley.nightborn.vampire.NightbornDamage;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.sound.SoundEvents;
 
 public final class SunBurn {
 
@@ -38,10 +38,10 @@ public final class SunBurn {
     world.playSound(
         null,
         vampire.getBlockPos(),
-        SoundEvents.ENTITY_GENERIC_EXTINGUISH_FIRE,
+        NightbornSounds.SIZZLE,
         vampire.getSoundCategory(),
         0.7F,
-        1.6F);
+        NightbornSounds.variedPitch(vampire.getRandom()));
     if (vampire.damage(NightbornDamage.sun(world), settings.sunDamage()) && vampire.isAlive()) {
       MilestoneCriterion.reach(vampire, Milestone.SUN_SURVIVED);
     }
