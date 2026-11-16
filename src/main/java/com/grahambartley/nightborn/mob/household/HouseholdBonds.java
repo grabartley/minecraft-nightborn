@@ -2,6 +2,7 @@ package com.grahambartley.nightborn.mob.household;
 
 import com.grahambartley.nightborn.mob.VampireEntity;
 import com.grahambartley.nightborn.mob.home.Housemates;
+import com.grahambartley.nightborn.vampire.Vampires;
 import java.util.List;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.server.world.ServerWorld;
@@ -12,14 +13,12 @@ public final class HouseholdBonds {
   private HouseholdBonds() {}
 
   public static void alert(final VampireEntity hurt, final LivingEntity attacker, final int range) {
-    final boolean attackerIsHousemate =
-        attacker instanceof VampireEntity other
-            && Housemates.share(hurt.homeLife().home(), other.homeLife().home());
+    final boolean attackerIsVampire = Vampires.isVampire(attacker);
     for (final VampireEntity mate : near(hurt, range, attacker)) {
       if (!mate.isSleeping()
           && Housemates.alerted(
               Housemates.share(hurt.homeLife().home(), mate.homeLife().home()),
-              attackerIsHousemate,
+              attackerIsVampire,
               mate.squaredDistanceTo(hurt),
               range)) {
         mate.setAttacker(attacker);

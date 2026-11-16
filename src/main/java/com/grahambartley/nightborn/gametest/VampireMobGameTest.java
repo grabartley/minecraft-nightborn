@@ -53,7 +53,6 @@ public class VampireMobGameTest implements FabricGameTest {
   static final int TRIES = 40;
   static final String NIGHT_BATCH = "vampire-mob-night";
   static final int ESCAPED_AT = 110;
-  static final int PROVOKED_FOR = 110;
   static final int LIGHT_SETTLED = 20;
 
   private int mobTurnChanceBefore;
@@ -244,26 +243,6 @@ public class VampireMobGameTest implements FabricGameTest {
     context.complete();
   }
 
-  @GameTest(templateName = ARENA, tickLimit = TestPlayers.READY + 10)
-  public void aVampireMobDrinksNothingFromAVampirePlayer(final TestContext context) {
-    final VampireEntity vampire = still(context, new BlockPos(4, 2, 4));
-    final ServerPlayerEntity player = TestPlayers.vampire(context, new BlockPos(5, 2, 4));
-    context.runAtTick(
-        TestPlayers.READY,
-        () -> {
-          vampire.setHealth(10.0F);
-          vampire.setTarget(player);
-          final float before = player.getHealth();
-          context.assertTrue(vampire.tryAttack(player), "a provoked vampire mob bites back");
-          context.assertTrue(player.getHealth() < before, "the bite hurts the vampire player");
-          context.assertEquals(vampire.getHealth(), 10.0F, "a vampire's blood heals nothing");
-          context.assertFalse(feeding(vampire), "biting a vampire is not feeding");
-          context.assertTrue(
-              TestAdvancements.done(context, player, "love_bites"), "a bite earns Love Bites");
-          TestPlayers.finish(context, player);
-        });
-  }
-
   @GameTest(templateName = ARENA, batchId = NOON_BATCH, tickLimit = 20)
   public void aVampireMobDoesNotHuntByDay(final TestContext context) {
     final VampireEntity vampire = still(context, new BlockPos(4, 2, 4));
@@ -354,25 +333,19 @@ public class VampireMobGameTest implements FabricGameTest {
         });
   }
 
-  @GameTest(templateName = ARENA, tickLimit = TestPlayers.READY + PROVOKED_FOR + 10)
-  public void aVampireMobIgnoresVampirePlayersUnlessAttacked(final TestContext context) {
-    final VampireEntity provoked = still(context, new BlockPos(4, 2, 4));
-    final VampireEntity calm = still(context, new BlockPos(6, 2, 6));
+  @GameTest(templateName = ARENA, tickLimit = TestPlayers.READY + 10)
+  public void aVampireMobNeverBitesAVampirePlayerEvenWhenHit(final TestContext context) {
+    final VampireEntity vampire = still(context, new BlockPos(4, 2, 4));
     final ServerPlayerEntity player = TestPlayers.vampire(context, new BlockPos(5, 2, 4));
     context.runAtTick(
         TestPlayers.READY,
         () -> {
           context.assertFalse(Prey.isPrey(player), "a vampire player is not prey");
-          provoked.setAttacker(player);
-          provoked.setTarget(player);
-        });
-    context.runAtTick(
-        TestPlayers.READY + PROVOKED_FOR,
-        () -> {
-          context.assertTrue(provoked.getAttacker() == null, "the last hit is long forgotten");
-          context.assertFalse(calm.tryAttack(player), "an unprovoked vampire mob leaves it be");
-          context.assertTrue(
-              provoked.tryAttack(player), "a vampire mob keeps biting back at its attacker");
+          vampire.damage(vampire.getDamageSources().playerAttack(player), 1.0F);
+          vampire.setTarget(player);
+          final float before = player.getHealth();
+          context.assertFalse(vampire.tryAttack(player), "a vampire mob does not bite back");
+          context.assertEquals(player.getHealth(), before, "the vampire player is unhurt");
           TestPlayers.finish(context, player);
         });
   }
@@ -388,6 +361,8 @@ public class VampireMobGameTest implements FabricGameTest {
           context.assertTrue(vampire.tryAttack(human), "a vampire mob bites a human");
           context.assertTrue(human.getHealth() < before, "the bite draws blood");
           context.assertTrue(BiteSicknessAttachment.isSick(human), "the bite starts sickness");
+          context.assertTrue(
+              TestAdvancements.done(context, human, "love_bites"), "a bite earns Love Bites");
           TestPlayers.finish(context, human);
         });
   }

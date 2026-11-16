@@ -10,13 +10,6 @@ import org.junit.jupiter.params.provider.CsvSource;
 
 class GrudgeTest {
 
-  @ParameterizedTest(name = "attacker is a vampire {0}: fights back {1}")
-  @CsvSource({"false, true", "true, false"})
-  @DisplayName("a vampire fights back against anyone but another vampire")
-  void fightsBack(final boolean vampire, final boolean fightsBack) {
-    assertEquals(fightsBack, Grudge.fightsBack(vampire));
-  }
-
   @ParameterizedTest(
       name = "present {0}, engaged {1}, downed {2}, {3} blocks, follow {4}: holds {5}")
   @CsvSource({
@@ -29,8 +22,8 @@ class GrudgeTest {
   })
   @DisplayName(
       "a grudge lasts while the vampire fights its attacker or was just hit by it, and ends"
-          + " when the attacker dies, turns creative or spectator, gets out of reach, or the"
-          + " vampire is downed")
+          + " when the attacker dies, leaves the world, turns creative or spectator, gets out of"
+          + " reach, or the vampire is downed")
   void holds(
       final boolean present,
       final boolean engaged,
@@ -48,16 +41,24 @@ class GrudgeTest {
     assertEquals(provoked, Grudge.provoked(againstTarget, prey));
   }
 
-  @ParameterizedTest(name = "hit by a vampire {0}: held {1}, against attacker {2}")
-  @CsvSource({"false, true, true", "true, false, false"})
-  @DisplayName("being hit sets a grudge against that attacker unless the attacker is a vampire")
-  void provoke(final boolean vampire, final boolean held, final boolean againstAttacker) {
+  @ParameterizedTest(name = "provoked {0}, forgive the attacker {1}: held {2}")
+  @CsvSource({"false, false, false", "true, false, true", "true, true, false"})
+  @DisplayName(
+      "a grudge is held against the attacker until that attacker, and nobody else, is forgiven")
+  void provokeAndForgive(final boolean provoke, final boolean forgiveAttacker, final boolean held) {
     final LivingEntity attacker = mock(LivingEntity.class);
     final LivingEntity bystander = mock(LivingEntity.class);
     final Grudge grudge = new Grudge();
-    grudge.provoke(attacker, vampire);
+    if (provoke) {
+      grudge.provoke(attacker);
+    }
+    grudge.forgive(bystander);
+    grudge.forgive(null);
+    if (forgiveAttacker) {
+      grudge.forgive(attacker);
+    }
     assertEquals(held, grudge.held());
-    assertEquals(againstAttacker, grudge.against(attacker));
+    assertEquals(held, grudge.against(attacker));
     assertEquals(false, grudge.against(bystander));
     assertEquals(false, grudge.against(null));
   }

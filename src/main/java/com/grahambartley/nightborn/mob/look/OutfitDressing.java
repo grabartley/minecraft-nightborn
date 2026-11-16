@@ -1,7 +1,6 @@
 package com.grahambartley.nightborn.mob.look;
 
 import com.grahambartley.nightborn.clothing.ClothingItem;
-import com.grahambartley.nightborn.mob.VampireEntity;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.Optional;
@@ -12,7 +11,6 @@ import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.item.ArmorItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.registry.DynamicRegistryManager;
 import net.minecraft.registry.tag.ItemTags;
 import net.minecraft.util.Identifier;
 
@@ -22,24 +20,6 @@ public final class OutfitDressing {
 
   public static Optional<EquipmentSlot> slot(final Item item) {
     return item instanceof ArmorItem armor ? Optional.of(armor.getSlotType()) : Optional.empty();
-  }
-
-  public static void dress(final VampireEntity vampire, final DynamicRegistryManager registries) {
-    final Map<Identifier, VampireOutfit> outfits = VampireLooks.outfits(registries);
-    Appearance.pick(
-            VampireLooks.looks(registries),
-            outfits,
-            VampireLooks.builds(registries),
-            vampire.getRandom()::nextDouble)
-        .ifPresent(
-            appearance -> {
-              vampire.setAppearance(appearance.look(), appearance.height(), appearance.width());
-              appearance
-                  .outfit()
-                  .map(outfits::get)
-                  .map(outfit -> stacks(outfit, VampireLooks::item))
-                  .ifPresent(stacks -> stacks.forEach(vampire::equipStack));
-            });
   }
 
   public static Map<EquipmentSlot, ItemStack> stacks(

@@ -24,18 +24,26 @@ class PreyTest {
     assertEquals(prey, Prey.isPrey(warmBlood, vampire, untouchable));
   }
 
-  @ParameterizedTest(name = "downed or escaping {0}, prey {1}, provoked {2}: bites {3}")
+  @ParameterizedTest(
+      name = "downed or escaping {0}, vampire victim {1}, prey {2}, provoked {3}: bites {4}")
   @CsvSource({
-    "false, true, false, true",
-    "false, false, true, true",
-    "false, false, false, false",
-    "true, true, true, false",
-    "true, true, false, false"
+    "false, false, true, false, true",
+    "false, false, false, true, true",
+    "false, false, false, false, false",
+    "true, false, true, true, false",
+    "true, false, true, false, false",
+    "false, true, false, true, false",
+    "false, true, true, true, false"
   })
-  @DisplayName("a standing vampire mob bites prey, or anything that provoked it")
+  @DisplayName(
+      "a standing vampire mob bites prey, or anything that provoked it, but never another vampire")
   void mayBite(
-      final boolean downed, final boolean prey, final boolean provoked, final boolean bites) {
-    assertEquals(bites, Prey.mayBite(downed, prey, provoked));
+      final boolean downed,
+      final boolean vampire,
+      final boolean prey,
+      final boolean provoked,
+      final boolean bites) {
+    assertEquals(bites, Prey.mayBite(downed, vampire, prey, provoked));
   }
 
   @ParameterizedTest(name = "peaceful {0}, player {1}: spared {2}")

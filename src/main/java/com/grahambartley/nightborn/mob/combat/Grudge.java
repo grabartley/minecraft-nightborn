@@ -1,7 +1,5 @@
 package com.grahambartley.nightborn.mob.combat;
 
-import com.grahambartley.nightborn.mob.Prey;
-import java.util.function.BiPredicate;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.mob.MobEntity;
@@ -11,10 +9,6 @@ import org.jetbrains.annotations.Nullable;
 public final class Grudge {
 
   @Nullable private LivingEntity attacker;
-
-  public static boolean fightsBack(final boolean attackerIsVampire) {
-    return !attackerIsVampire;
-  }
 
   public static boolean holds(
       final boolean attackerPresent,
@@ -29,10 +23,8 @@ public final class Grudge {
     return againstTarget || !prey;
   }
 
-  public void provoke(final LivingEntity by, final boolean vampire) {
-    if (fightsBack(vampire)) {
-      attacker = by;
-    }
+  public void provoke(final LivingEntity by) {
+    attacker = by;
   }
 
   public boolean held() {
@@ -43,26 +35,23 @@ public final class Grudge {
     return attacker != null && attacker == target;
   }
 
-  public void hold(
-      final MobEntity holder,
-      final boolean downed,
-      final BiPredicate<LivingEntity, Boolean> dropsTarget) {
-    final LivingEntity target = holder.getTarget();
+  public void forgive(@Nullable final LivingEntity target) {
+    if (against(target)) {
+      attacker = null;
+    }
+  }
+
+  public void update(final MobEntity holder, final boolean downed) {
     if (attacker != null
         && !holds(
-            attacker.isAlive() && EntityPredicates.EXCEPT_CREATIVE_OR_SPECTATOR.test(attacker),
-            against(target) || holder.getAttacker() == attacker,
+            attacker.isAlive()
+                && attacker.getWorld() == holder.getWorld()
+                && EntityPredicates.EXCEPT_CREATIVE_OR_SPECTATOR.test(attacker),
+            against(holder.getTarget()) || holder.getAttacker() == attacker,
             downed,
             holder.distanceTo(attacker),
             holder.getAttributeValue(EntityAttributes.GENERIC_FOLLOW_RANGE))) {
       attacker = null;
-    }
-    if (target != null
-        && (downed || dropsTarget.test(target, provoked(against(target), Prey.isPrey(target))))) {
-      if (against(target)) {
-        attacker = null;
-      }
-      holder.setTarget(null);
     }
   }
 }

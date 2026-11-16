@@ -29,7 +29,10 @@ public final class Prey {
   }
 
   public static boolean mayBite(
-      final boolean downedOrEscaping, final boolean prey, final boolean provoked) {
-    return !downedOrEscaping && (prey || provoked);
+      final boolean downedOrEscaping,
+      final boolean vampireVictim,
+      final boolean prey,
+      final boolean provoked) {
+    return !downedOrEscaping && !vampireVictim && (prey || provoked);
   }
 }
