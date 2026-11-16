@@ -55,6 +55,11 @@ class ConnectionsTest {
     "minecraft:stone, true",
     "minecraft:oak_slab[type=bottom], false",
     "minecraft:air, false",
+    "nightborn:burgundy_velvet_drape[facing=west], false",
+    "nightborn:spruce_coffin[part=head], false",
+    "nightborn:portrait[facing=east], false",
+    "nightborn:gargoyle[facing=south], false",
+    "nightborn:gothic_stone_bricks, true",
     "nightborn:weapon_rack[facing=north], false",
     "minecraft:snow, false",
     "minecraft:snow_block, true"

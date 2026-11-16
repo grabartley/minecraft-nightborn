@@ -29,6 +29,12 @@ public final class DecorBlocks {
   private static final int WOOD_SPREAD = 20;
   private static final int CLOTH_BURN = 30;
   private static final int CLOTH_SPREAD = 60;
+  private static final VoxelShape POSTER_SHAPE = Block.createCuboidShape(3, 1, 15, 13, 15, 16);
+  private static final VoxelShape PORTRAIT_SHAPE = Block.createCuboidShape(2, 1, 14, 14, 16, 16);
+  private static final VoxelShape GARGOYLE_SHAPE =
+      VoxelShapes.union(
+          Block.createCuboidShape(2, 0, 2, 14, 2, 14),
+          Block.createCuboidShape(3, 2, 1, 13, 16, 15));
   private static final VoxelShape TROPHY_SHAPE =
       VoxelShapes.union(
           Block.createCuboidShape(4, 1, 15, 12, 15, 16),
@@ -112,7 +118,7 @@ public final class DecorBlocks {
   public static final Block WANTED_POSTER =
       register(
           "wanted_poster",
-          WantedPosterBlock::new,
+          settings -> new PictureBlock(settings, POSTER_SHAPE),
           AbstractBlock.Settings.create()
               .mapColor(MapColor.PALE_YELLOW)
               .noCollision()
@@ -124,6 +130,16 @@ public final class DecorBlocks {
           "trophy_mount",
           settings -> new WallDecorBlock(settings, TROPHY_SHAPE),
           AbstractBlock.Settings.copy(Blocks.DARK_OAK_PLANKS).mapColor(MapColor.BLACK).nonOpaque());
+  public static final Block PORTRAIT =
+      register(
+          "portrait",
+          settings -> new PictureBlock(settings, PORTRAIT_SHAPE),
+          AbstractBlock.Settings.copy(Blocks.DARK_OAK_PLANKS).mapColor(MapColor.GOLD).nonOpaque());
+  public static final Block GARGOYLE =
+      register(
+          "gargoyle",
+          settings -> new StatueBlock(settings, GARGOYLE_SHAPE),
+          AbstractBlock.Settings.copy(Blocks.STONE).mapColor(MapColor.STONE_GRAY).nonOpaque());
 
   static {
     BuildingFamily.ALL.forEach(DecorBlocks::registerFamily);
@@ -139,6 +155,7 @@ public final class DecorBlocks {
     flammable.add(EMERALD_VELVET_DRAPE, CLOTH_BURN, CLOTH_SPREAD);
     flammable.add(WEAPON_RACK, WOOD_BURN, WOOD_SPREAD);
     flammable.add(TROPHY_MOUNT, WOOD_BURN, WOOD_SPREAD);
+    flammable.add(PORTRAIT, WOOD_BURN, WOOD_SPREAD);
     flammable.add(WANTED_POSTER, CLOTH_BURN, CLOTH_SPREAD);
     BuildingFamily.ALL.stream()
         .filter(family -> family.material() == BuildingFamily.Material.WOOD)

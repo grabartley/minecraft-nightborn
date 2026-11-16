@@ -66,6 +66,39 @@ class FurnishingTest {
     }
   }
 
+  @ParameterizedTest(name = "a lectern facing {0} holds a book")
+  @CsvSource({"north", "west"})
+  void lecternsHoldABook(final String facing) {
+    final Template t = new Template("vampire/test", 5, 4, 5);
+    Furnishing.lectern(t, 2, 1, 2, facing);
+    assertTrue(t.get(2, 1, 2).contains("facing=" + facing));
+    assertTrue(t.get(2, 1, 2).contains("has_book=true"));
+    assertEquals(
+        Furnishing.BOOK,
+        ((java.util.Map<?, ?>) t.blockData().get(new Pos(2, 1, 2)).get("Book")).get("id"));
+  }
+
+  @ParameterizedTest(name = "a portrait at {0},{1},{2} hangs facing {3}")
+  @CsvSource({"1, 1, 1, east", "2, 3, 1, west", "4, 2, 3, south"})
+  void portraitsHangOneOfThreeSitters(final int x, final int y, final int z, final String facing) {
+    final Template t = new Template("vampire/test", 6, 5, 6);
+    Furnishing.portrait(t, x, y, z, facing);
+    assertTrue(t.get(x, y, z).startsWith(Furnishing.PORTRAIT + "["));
+    assertTrue(t.get(x, y, z).contains("facing=" + facing));
+    assertTrue(t.get(x, y, z).matches(".*portrait=[0-2].*"), t.get(x, y, z));
+  }
+
+  @Test
+  void portraitsVaryAcrossAWall() {
+    final Template t = new Template("vampire/test", 1, 1, 30);
+    final java.util.Set<String> sitters = new java.util.HashSet<>();
+    for (int z = 0; z < 30; z++) {
+      Furnishing.portrait(t, 0, 0, z, "east");
+      sitters.add(t.get(0, 0, z).replaceAll(".*portrait=(\\d).*", "$1"));
+    }
+    assertEquals(Furnishing.PORTRAITS, sitters.size());
+  }
+
   @Test
   void tendedLightsStartUnlit() {
     final Template t = new Template("vampire/test", 7, 4, 7);

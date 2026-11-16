@@ -1,0 +1,13 @@
+{
+  "structures": [
+    { "structure": "nightborn:ruined_manor", "weight": 1 }
+  ],
+  "placement": {
+    "type": "nightborn:rare_spread",
+    "rarity": "vampire_structures",
+    "salt": 739104627,
+    "spacing": 48,
+    "separation": 24,
+    "exclusion_zone": { "other_set": "nightborn:castle", "chunk_count": 6 }
+  }
+}

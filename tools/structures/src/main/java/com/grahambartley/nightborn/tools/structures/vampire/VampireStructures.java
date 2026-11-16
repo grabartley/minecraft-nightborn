@@ -8,6 +8,7 @@ import com.grahambartley.nightborn.tools.structures.vampire.crypt.Ossuary;
 import com.grahambartley.nightborn.tools.structures.vampire.crypt.Undercroft;
 import com.grahambartley.nightborn.tools.structures.vampire.lair.BloodPoolDen;
 import com.grahambartley.nightborn.tools.structures.vampire.lair.Grotto;
+import com.grahambartley.nightborn.tools.structures.vampire.manor.Manor;
 import java.util.List;
 
 public final class VampireStructures {
@@ -23,6 +24,8 @@ public final class VampireStructures {
         BloodPoolDen.build(),
         Grotto.build(),
         Castle.build(Castle.BASTIONS),
-        Castle.build(Castle.RUINED));
+        Castle.build(Castle.RUINED),
+        Manor.build(Manor.TURRET),
+        Manor.build(Manor.TOWER));
   }
 }

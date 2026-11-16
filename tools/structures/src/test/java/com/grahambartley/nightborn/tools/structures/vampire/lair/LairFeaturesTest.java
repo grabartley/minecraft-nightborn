@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import com.grahambartley.nightborn.tools.structures.template.Facing;
 import com.grahambartley.nightborn.tools.structures.template.Pos;
 import com.grahambartley.nightborn.tools.structures.template.Template;
+import com.grahambartley.nightborn.tools.structures.vampire.Furnishing;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -77,7 +78,7 @@ class LairFeaturesTest {
     assertTrue(t.get(lecternX, 1, 7).contains("facing=" + toward));
     assertTrue(t.get(lecternX, 1, 7).contains("has_book=true"));
     assertEquals(
-        LairFeatures.BOOK,
+        Furnishing.BOOK,
         ((java.util.Map<?, ?>) t.blockData().get(new Pos(lecternX, 1, 7)).get("Book")).get("id"));
     assertTrue(
         t.get(chairX, 1, 7).contains("facing=" + Facing.OPPOSITE.get(toward)), t.get(chairX, 1, 7));
