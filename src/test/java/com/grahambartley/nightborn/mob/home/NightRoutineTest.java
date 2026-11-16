@@ -105,6 +105,19 @@ class NightRoutineTest {
     assertEquals(radius, NightRoutine.roamRadius(out, range, home));
   }
 
+  @ParameterizedTest(name = "provoked {0}, out {1}, feeding range {2}, home {3}: leash {4}")
+  @CsvSource({
+    "true, false, 64, 16, -1",
+    "true, true, 64, 16, -1",
+    "false, true, 64, 16, 64",
+    "false, false, 64, 16, 16"
+  })
+  @DisplayName("a provoked vampire is off its home leash so it can chase and strike its attacker")
+  void leash(
+      final boolean provoked, final boolean out, final int range, final int home, final int leash) {
+    assertEquals(leash, NightRoutine.leash(provoked, out, range, home));
+  }
+
   @ParameterizedTest(
       name = "provoked {0}, out {1}, vampire {2} and target {3} blocks from home: out of range {4}")
   @CsvSource({

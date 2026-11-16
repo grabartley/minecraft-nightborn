@@ -12,6 +12,7 @@ import com.grahambartley.nightborn.downed.Downed;
 import com.grahambartley.nightborn.levitation.Levitation;
 import com.grahambartley.nightborn.mind.MindAttributes;
 import com.grahambartley.nightborn.mob.combat.Fighting;
+import com.grahambartley.nightborn.mob.combat.Grudge;
 import com.grahambartley.nightborn.mob.goal.BatFlightGoal;
 import com.grahambartley.nightborn.mob.goal.FleeWhileEscapingGoal;
 import com.grahambartley.nightborn.mob.goal.HouseholdLifeGoal;
@@ -26,8 +27,6 @@ import com.grahambartley.nightborn.mob.household.HouseholdBonds;
 import com.grahambartley.nightborn.mob.household.HouseholdLife;
 import com.grahambartley.nightborn.mob.household.HouseholdPlanner;
 import com.grahambartley.nightborn.mob.household.SeatedHeight;
-import com.grahambartley.nightborn.mob.look.Appearance;
-import com.grahambartley.nightborn.mob.look.OutfitDressing;
 import com.grahambartley.nightborn.mob.look.VampireLook;
 import com.grahambartley.nightborn.mob.look.VampireLooks;
 import com.grahambartley.nightborn.mob.look.VampireRig;
@@ -44,6 +43,7 @@ import com.grahambartley.nightborn.skill.SkillHolder;
 import com.grahambartley.nightborn.skill.SkillTree;
 import com.grahambartley.nightborn.structure.HouseholdArrival;
 import com.grahambartley.nightborn.structure.HouseholdMember;
+import com.grahambartley.nightborn.vampire.Vampires;
 import com.grahambartley.nightborn.weakened.Weakened;
 import java.util.Map;
 import java.util.Optional;
@@ -124,6 +124,7 @@ public class VampireEntity extends HostileEntity
   private final HouseholdLife householdLife = new HouseholdLife();
   private final MobBlood blood = new MobBlood();
   private final Fighting fighting = new Fighting();
+  private final Grudge grudge = new Grudge();
   private RetreatGoal retreat;
   private long nextHiss;
   private boolean warded;
@@ -275,6 +276,7 @@ public class VampireEntity extends HostileEntity
         || !(target instanceof LivingEntity victim)
         || !Prey.mayBite(
             Downed.state(this) != null,
+            Vampires.isVampire(victim),
             Prey.isPrey(victim),
             victim == getTarget() || victim == getAttacker())) {
       return false;
@@ -323,17 +325,9 @@ public class VampireEntity extends HostileEntity
           equipStack(slot, ItemStack.EMPTY);
         }
       }
-      dress(world);
+      VampireDressing.dress(this, world.getRegistryManager());
     }
-    final NightbornConfig config = ServerConfigService.current();
-    homeLife.tick(this, blood.hungry(this, config), config, this::setOutToFeed);
-    final LivingEntity target = getTarget();
-    if (target != null
-        && (Downed.state(this) != null
-            || Hunting.dropsTarget(
-                pursuit(target, target == getAttacker() || !Prey.isPrey(target))))) {
-      setTarget(null);
-    }
+    tickHome();
     final boolean nowWarded = Hissing.warded(Weakened.sources(this));
     if (nowWarded && !warded) {
       hiss();
@@ -343,6 +337,21 @@ public class VampireEntity extends HostileEntity
       fight();
       levitateAboutHome();
     }
+  }
+
+  public void tickHome() {
+    final NightbornConfig config = ServerConfigService.current();
+    final boolean downed = Downed.state(this) != null;
+    grudge.update(this, downed);
+    final LivingEntity target = getTarget();
+    if (target != null
+        && (downed
+            || Hunting.dropsTarget(
+                pursuit(target, Grudge.provoked(grudge.against(target), Prey.isPrey(target)))))) {
+      grudge.forgive(target);
+      setTarget(null);
+    }
+    homeLife.tick(this, blood.hungry(this, config), grudge.held(), config, this::setOutToFeed);
   }
 
   private void fight() {
@@ -417,6 +426,19 @@ public class VampireEntity extends HostileEntity
     super.setTarget(target);
     if (noticed) {
       hiss();
+    }
+  }
+
+  @Override
+  public boolean canTarget(final LivingEntity target) {
+    return !Vampires.isVampire(target) && super.canTarget(target);
+  }
+
+  @Override
+  public void setAttacker(@Nullable final LivingEntity attacker) {
+    super.setAttacker(attacker);
+    if (attacker != null && !Vampires.isVampire(attacker)) {
+      grudge.provoke(attacker);
     }
   }
 
@@ -538,7 +560,7 @@ public class VampireEntity extends HostileEntity
       final SpawnReason spawnReason,
       @Nullable final EntityData entityData) {
     final NightbornConfig config = ServerConfigService.current();
-    dress(world);
+    VampireDressing.dress(this, world.getRegistryManager());
     VampireCore.tick(this, config.core(), config.blood());
     setHealth(getMaxHealth());
     blood.start(this, random.nextInt(Integer.MAX_VALUE), config);
@@ -555,25 +577,6 @@ public class VampireEntity extends HostileEntity
 
   @Override
   protected void initEquipment(final Random random, final LocalDifficulty difficulty) {}
-
-  private void dress(final ServerWorldAccess world) {
-    final var registries = world.getRegistryManager();
-    final var outfits = VampireLooks.outfits(registries);
-    Appearance.pick(
-            VampireLooks.looks(registries),
-            outfits,
-            VampireLooks.builds(registries),
-            random::nextDouble)
-        .ifPresent(
-            appearance -> {
-              setAppearance(appearance.look(), appearance.height(), appearance.width());
-              appearance
-                  .outfit()
-                  .map(outfits::get)
-                  .map(outfit -> OutfitDressing.stacks(outfit, VampireLooks::item))
-                  .ifPresent(stacks -> stacks.forEach(this::equipStack));
-            });
-  }
 
   public void setAppearance(final Identifier look, final float height, final float width) {
     dataTracker.set(LOOK, look.toString());

@@ -47,6 +47,9 @@ public class VampireHomeGameTest implements FabricGameTest {
   static final int CLAIM_WAIT = 110;
   static final int DEATH_TICKS = 30;
   static final int FAR_AWAY = 200;
+  static final int PAST_HOME = 24;
+  static final int ATTACKER_FORGOTTEN = 120;
+  static final int HURT_COOLDOWN = 20;
 
   private int outingChanceBefore;
   private int mobDrainBefore;
@@ -281,6 +284,78 @@ public class VampireHomeGameTest implements FabricGameTest {
           context.assertTrue(
               vampire.getTarget() == null, "past its chase range the vampire gives up");
           TestPlayers.finish(context, hunter);
+        });
+  }
+
+  @GameTest(
+      templateName = ARENA,
+      batchId = NIGHT_BATCH,
+      tickLimit = TestPlayers.READY + ATTACKER_FORGOTTEN + 10)
+  public void aFedVampireStruckOutsideItsHomeFightsBack(final TestContext context) {
+    final VampireEntity vampire = VampireMobGameTest.still(context, new BlockPos(2, 2, 2));
+    BloodAttachment.set(vampire, BloodAttachment.FULL);
+    vampire.settleAt(context.getAbsolutePos(new BlockPos(2, 2, 2)).add(PAST_HOME, 0, 0));
+    final ServerPlayerEntity hunter = TestPlayers.human(context, new BlockPos(3, 2, 2));
+    context.runAtTick(
+        TestPlayers.READY,
+        () -> {
+          vampire.damage(vampire.getDamageSources().playerAttack(hunter), 1.0F);
+          vampire.tickHome();
+          context.assertTrue(
+              vampire.isInWalkTargetRange(hunter.getBlockPos()),
+              "a struck vampire may chase an attacker outside its home radius");
+          vampire.setTarget(hunter);
+        });
+    context.runAtTick(
+        TestPlayers.READY + ATTACKER_FORGOTTEN,
+        () -> {
+          context.assertTrue(vampire.getAttacker() == null, "vanilla has forgotten the attacker");
+          vampire.tickHome();
+          context.assertTrue(
+              vampire.getTarget() == hunter, "a fed vampire keeps fighting whoever hit it");
+          final float before = hunter.getHealth();
+          context.assertTrue(vampire.tryAttack(hunter), "it strikes back");
+          context.assertTrue(hunter.getHealth() < before, "and hurts its attacker");
+          vampire.setTarget(null);
+          vampire.tickHome();
+          context.assertFalse(
+              vampire.isInWalkTargetRange(hunter.getBlockPos()),
+              "once it stops fighting it is back on its home leash");
+          TestPlayers.finish(context, hunter);
+        });
+  }
+
+  @GameTest(
+      templateName = ARENA,
+      batchId = NIGHT_BATCH,
+      tickLimit = TestPlayers.READY + HURT_COOLDOWN + 10)
+  public void aVampireNeverFightsBackAgainstAnotherVampire(final TestContext context) {
+    final VampireEntity vampire = VampireMobGameTest.still(context, new BlockPos(2, 2, 2));
+    final VampireEntity kin = VampireMobGameTest.still(context, new BlockPos(6, 2, 6));
+    vampire.settleAt(context.getAbsolutePos(new BlockPos(2, 2, 2)).add(PAST_HOME, 0, 0));
+    final ServerPlayerEntity player = TestPlayers.vampire(context, new BlockPos(3, 2, 2));
+    context.runAtTick(
+        TestPlayers.READY,
+        () -> {
+          vampire.damage(vampire.getDamageSources().playerAttack(player), 1.0F);
+          vampire.tickHome();
+          context.assertFalse(vampire.canTarget(player), "a vampire player is never its target");
+          context.assertFalse(vampire.canTarget(kin), "nor is a vampire mob");
+          context.assertFalse(
+              vampire.isInWalkTargetRange(player.getBlockPos()),
+              "being hit by a vampire player does not take it off its home leash");
+        });
+    context.runAtTick(
+        TestPlayers.READY + HURT_COOLDOWN,
+        () -> {
+          context.assertTrue(
+              vampire.damage(vampire.getDamageSources().mobAttack(kin), 1.0F),
+              "a vampire mob hits it");
+          vampire.tickHome();
+          context.assertFalse(
+              vampire.isInWalkTargetRange(kin.getBlockPos()),
+              "nor does being hit by a vampire mob");
+          TestPlayers.finish(context, player);
         });
   }
 

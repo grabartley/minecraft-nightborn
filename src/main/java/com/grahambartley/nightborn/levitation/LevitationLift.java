@@ -15,6 +15,10 @@ public final class LevitationLift {
 
   private LevitationLift() {}
 
+  public static double pathFeetY(final double feetY, final boolean levitating) {
+    return levitating ? feetY - HOVER_HEIGHT : feetY;
+  }
+
   public static double verticalVelocity(final double feetY, final OptionalDouble surface) {
     if (surface.isEmpty()) {
       return -SINK_SPEED;

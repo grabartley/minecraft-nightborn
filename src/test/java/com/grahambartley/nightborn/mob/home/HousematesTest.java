@@ -30,7 +30,7 @@ class HousematesTest {
     assertEquals(housemates, Housemates.share(one, other));
   }
 
-  @ParameterizedTest(name = "same home {0}, attacker a housemate {1}, {2} blocks: alerted {3}")
+  @ParameterizedTest(name = "same home {0}, attacker a vampire {1}, {2} blocks: alerted {3}")
   @CsvSource({
     "true, false, 0, true",
     "true, false, 24, true",
@@ -38,13 +38,12 @@ class HousematesTest {
     "false, false, 2, false",
     "true, true, 2, false"
   })
-  @DisplayName("a hurt vampire's nearby housemates turn on its attacker, unless it is family")
+  @DisplayName("a hurt vampire's nearby housemates turn on its attacker, unless it is a vampire")
   void alerted(
       final boolean sameHome,
-      final boolean attackerIsHousemate,
+      final boolean attackerIsVampire,
       final double distance,
       final boolean alerted) {
-    assertEquals(
-        alerted, Housemates.alerted(sameHome, attackerIsHousemate, distance * distance, 24));
+    assertEquals(alerted, Housemates.alerted(sameHome, attackerIsVampire, distance * distance, 24));
   }
 }

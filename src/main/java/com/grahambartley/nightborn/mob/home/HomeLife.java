@@ -91,6 +91,7 @@ public final class HomeLife {
   public void tick(
       final PathAwareEntity vampire,
       final boolean hungry,
+      final boolean provoked,
       final NightbornConfig config,
       final Runnable onOuting) {
     if (home == null || !(vampire.getWorld() instanceof ServerWorld world)) {
@@ -108,7 +109,8 @@ public final class HomeLife {
     }
     vampire.setPositionTarget(
         home,
-        NightRoutine.roamRadius(
+        NightRoutine.leash(
+            provoked,
             out(vampire, hungry),
             config.mobs().vampireFeedingRange(),
             config.mobs().vampireHomeRadius()));
