@@ -5,6 +5,7 @@ import com.grahambartley.nightborn.decor.SeatEntity;
 import com.grahambartley.nightborn.levitation.Levitation;
 import com.grahambartley.nightborn.vampire.VisibleStateAttachment;
 import java.util.Optional;
+import java.util.Set;
 import software.bernie.geckolib.animation.AnimatableManager;
 import software.bernie.geckolib.animation.AnimationController;
 import software.bernie.geckolib.animation.PlayState;
@@ -17,6 +18,7 @@ public final class VampireAnimator {
   static final String HISS_CONTROLLER = "hiss";
   static final String HISS_CLIP = "hiss";
   static final RawAnimation HISS = RawAnimation.begin().thenPlay(HISS_CLIP);
+  static final Set<String> HEAD_CLIPS = Set.of(VampireEntity.MOURN_CLIP);
 
   private final EndingEdge landingEdge = new EndingEdge();
   private final ShownAction shownAction = new ShownAction();
@@ -24,6 +26,10 @@ public final class VampireAnimator {
 
   public VampirePose shownPose() {
     return shownPose;
+  }
+
+  public boolean holdsHead() {
+    return shownPose.holdsHead() || shownAction.showing(HEAD_CLIPS);
   }
 
   void register(

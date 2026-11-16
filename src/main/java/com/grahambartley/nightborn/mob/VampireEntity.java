@@ -24,6 +24,7 @@ import com.grahambartley.nightborn.mob.home.HomeLife;
 import com.grahambartley.nightborn.mob.home.MobBlood;
 import com.grahambartley.nightborn.mob.household.HouseholdBonds;
 import com.grahambartley.nightborn.mob.household.HouseholdLife;
+import com.grahambartley.nightborn.mob.household.HouseholdPlanner;
 import com.grahambartley.nightborn.mob.household.SeatedHeight;
 import com.grahambartley.nightborn.mob.look.Appearance;
 import com.grahambartley.nightborn.mob.look.OutfitDressing;
@@ -517,6 +518,7 @@ public class VampireEntity extends HostileEntity
     if (MobLevitation.wants(
             levitating,
             getTarget() != null,
+            HouseholdPlanner.settled(this),
             random.nextFloat(),
             ServerConfigService.current().mobs())
         == levitating) {
@@ -657,6 +659,10 @@ public class VampireEntity extends HostileEntity
 
   public VampirePose shownPose() {
     return animator.shownPose();
+  }
+
+  public boolean holdsHead() {
+    return animator.holdsHead();
   }
 
   @Override

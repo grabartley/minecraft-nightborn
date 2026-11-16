@@ -59,6 +59,9 @@ public class HouseholdLifeGameTest implements FabricGameTest {
         vampire.getVehicle() instanceof SeatEntity, "the vampire sits in the chair beside it");
     sit.stop();
     context.assertFalse(vampire.hasVehicle(), "the vampire stands up when its pastime ends");
+    context.assertTrue(
+        vampire.getBlockPos().equals(context.getAbsolutePos(chair.south())),
+        "the vampire steps off the front of the chair, not onto its seat");
     context.complete();
   }
 
@@ -69,6 +72,11 @@ public class HouseholdLifeGameTest implements FabricGameTest {
         chair, DecorBlocks.ORNATE_CHAIR.getDefaultState().with(ChairBlock.FACING, Direction.SOUTH));
     final VampireEntity vampire = VampireMobGameTest.still(context, new BlockPos(3, 2, 4));
     new SitTask(vampire, context.getWorld(), context.getAbsolutePos(chair), SIT_TICKS).tick();
+    vampire.setBodyYaw(90.0f);
+    vampire.getVehicle().updatePassengerPosition(vampire);
+    context.assertTrue(
+        Math.abs(vampire.getBodyYaw() - vampire.getVehicle().getYaw()) < 1.0E-4f,
+        "a seated vampire faces the way its chair faces");
     final double seatY = vampire.getVehicle().getY();
     final NbtCompound nbt = new NbtCompound();
     context.assertTrue(

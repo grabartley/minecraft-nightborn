@@ -3,6 +3,7 @@ package com.grahambartley.nightborn.mob.goal;
 import com.grahambartley.nightborn.mob.VampireEntity;
 import com.grahambartley.nightborn.mob.household.HouseholdPlanner;
 import com.grahambartley.nightborn.mob.household.HouseholdTask;
+import com.grahambartley.nightborn.mob.household.StandTask;
 import java.util.EnumSet;
 import java.util.Optional;
 import net.minecraft.entity.ai.goal.Goal;
@@ -51,6 +52,9 @@ public class HouseholdLifeGoal extends Goal {
       vampire.getNavigation().stop();
       vampire.getLookControl().lookAt(speaker.get());
       return;
+    }
+    if (vampire.householdLife().grieving(now) && task != null && !(task instanceof StandTask)) {
+      endTask();
     }
     if (task == null || !task.tick()) {
       endTask();

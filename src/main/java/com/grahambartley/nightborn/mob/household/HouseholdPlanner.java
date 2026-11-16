@@ -1,6 +1,7 @@
 package com.grahambartley.nightborn.mob.household;
 
 import com.grahambartley.nightborn.batform.BatForm;
+import com.grahambartley.nightborn.decor.SeatEntity;
 import com.grahambartley.nightborn.downed.Downed;
 import com.grahambartley.nightborn.mob.VampireEntity;
 import com.grahambartley.nightborn.mob.home.Housemates;
@@ -31,6 +32,14 @@ public final class HouseholdPlanner {
             BatForm.isBat(vampire),
             vampire.homeLife().out(vampire, vampire.hungry()),
             vampire.homeLife().bedtime(vampire));
+  }
+
+  public static boolean settled(final VampireEntity vampire) {
+    final long now = vampire.getWorld().getTime();
+    return vampire.reading()
+        || vampire.getVehicle() instanceof SeatEntity
+        || vampire.householdLife().talking(now)
+        || vampire.householdLife().engagement(now).isPresent();
   }
 
   public static boolean free(final VampireEntity mate, final long now) {
