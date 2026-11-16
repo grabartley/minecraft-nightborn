@@ -1,5 +1,6 @@
 package com.grahambartley.nightborn.vampire;
 
+import com.grahambartley.nightborn.batform.BatForm;
 import com.grahambartley.nightborn.blood.BloodAttachment;
 import com.grahambartley.nightborn.blood.BloodItems;
 import com.grahambartley.nightborn.blood.StarvingAttachment;
@@ -34,6 +35,7 @@ public final class VampireFeatures {
     BloodAttachment.register();
     StarvingAttachment.register();
     Levitation.register();
+    BatForm.register();
     TurningBiteToggle.register();
     VomitEffects.register();
     GoreParticles.register();

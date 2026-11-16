@@ -8,9 +8,12 @@ public final class PowerUse {
     READY,
     NO_POWER,
     HELPLESS,
+    AS_A_BAT,
     WEAKENED,
+    SUNLIT,
     COOLING,
     THIRSTY,
+    CRAMPED,
     UNSEEN,
     NOWHERE;
 
@@ -24,7 +27,9 @@ public final class PowerUse {
   public static Verdict check(
       final boolean hasPower,
       final boolean helpless,
+      final boolean bat,
       final boolean weakened,
+      final boolean sunlit,
       final long cooldownTicksLeft,
       final int blood,
       final int bloodCost,
@@ -36,8 +41,14 @@ public final class PowerUse {
     if (helpless) {
       return Verdict.HELPLESS;
     }
+    if (bat) {
+      return Verdict.AS_A_BAT;
+    }
     if (weakened) {
       return Verdict.WEAKENED;
+    }
+    if (sunlit) {
+      return Verdict.SUNLIT;
     }
     if (cooldownTicksLeft > 0) {
       return Verdict.COOLING;

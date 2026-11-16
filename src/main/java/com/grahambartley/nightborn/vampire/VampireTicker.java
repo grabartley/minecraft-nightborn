@@ -1,5 +1,6 @@
 package com.grahambartley.nightborn.vampire;
 
+import com.grahambartley.nightborn.batform.BatForm;
 import com.grahambartley.nightborn.config.NightbornConfig;
 import com.grahambartley.nightborn.core.EyeGlow;
 import com.grahambartley.nightborn.core.VampireCore;
@@ -33,6 +34,7 @@ public final class VampireTicker {
     Wards.tick(vampire, config.wards());
     final int weakened = Weakened.tick(vampire, downed != null, config.weakened());
     Levitation.tick(vampire, weakened, downed != null);
+    BatForm.tick(vampire, downed != null && downed.isDowned());
     final boolean feeding = FeedingSessions.isFeeding(vampire);
     final boolean eyes =
         EyeGlow.glowing(

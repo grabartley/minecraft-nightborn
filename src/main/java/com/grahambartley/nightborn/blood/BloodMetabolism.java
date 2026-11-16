@@ -1,5 +1,6 @@
 package com.grahambartley.nightborn.blood;
 
+import com.grahambartley.nightborn.config.CoreSettings;
 import net.minecraft.world.Difficulty;
 
 public final class BloodMetabolism {
@@ -18,19 +19,20 @@ public final class BloodMetabolism {
       float maxHealth,
       Difficulty difficulty,
       boolean naturalRegeneration,
-      boolean levitating,
+      int flightDrainSeconds,
       int age) {}
 
   public record Outcome(int blood, float exhaustion, boolean heals) {}
 
-  public static Outcome tick(
-      final State state, final int restingDrainSeconds, final int levitationDrainSeconds) {
+  public static final int GROUNDED = 0;
+
+  public static Outcome tick(final State state, final int restingDrainSeconds) {
     final boolean peaceful = state.difficulty() == Difficulty.PEACEFUL;
     float exhaustion = state.exhaustion();
     if (!peaceful) {
       exhaustion += drainPerTick(restingDrainSeconds);
-      if (state.levitating()) {
-        exhaustion += drainPerTick(levitationDrainSeconds);
+      if (state.flightDrainSeconds() > GROUNDED) {
+        exhaustion += drainPerTick(state.flightDrainSeconds());
       }
     }
     int blood = state.blood();
@@ -46,6 +48,14 @@ public final class BloodMetabolism {
             && blood > HEAL_ABOVE
             && state.health() < state.maxHealth();
     return new Outcome(blood, Math.min(exhaustion, MAX_EXHAUSTION), heals);
+  }
+
+  public static int flightDrainSeconds(
+      final boolean bat, final boolean levitating, final CoreSettings settings) {
+    if (bat) {
+      return settings.batDrainSeconds();
+    }
+    return levitating ? settings.levitationDrainSeconds() : GROUNDED;
   }
 
   private static float drainPerTick(final int secondsPerBlood) {

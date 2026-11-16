@@ -1,7 +1,9 @@
 package com.grahambartley.nightborn.render;
 
+import com.grahambartley.nightborn.batform.BatForm;
 import com.grahambartley.nightborn.mob.VampireEntity;
 import com.grahambartley.nightborn.mob.look.VampireSize;
+import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.EntityRendererFactory;
 import net.minecraft.client.util.math.MatrixStack;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
@@ -11,12 +13,30 @@ public class VampireRenderer extends GeoEntityRenderer<VampireEntity> {
 
   static final float SHADOW_RADIUS = 0.5F;
 
+  private final BatFormRenderer batForm;
+
   public VampireRenderer(final EntityRendererFactory.Context context) {
     super(context, new VampireModel());
+    this.batForm = new BatFormRenderer(context);
     this.shadowRadius = SHADOW_RADIUS;
     addRenderLayer(new VampireStageMarksLayer(this));
     addRenderLayer(new VampireEyesLayer(this));
     addRenderLayer(new RigArmorLayer<>(this, this::getAnimatable));
+  }
+
+  @Override
+  public void render(
+      final VampireEntity vampire,
+      final float yaw,
+      final float tickDelta,
+      final MatrixStack matrices,
+      final VertexConsumerProvider vertexConsumers,
+      final int light) {
+    if (BatForm.isBat(vampire)) {
+      batForm.render(vampire, yaw, tickDelta, matrices, vertexConsumers, light);
+      return;
+    }
+    super.render(vampire, yaw, tickDelta, matrices, vertexConsumers, light);
   }
 
   @Override

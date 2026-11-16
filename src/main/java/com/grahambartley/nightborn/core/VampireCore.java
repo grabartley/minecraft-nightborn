@@ -4,6 +4,7 @@ import com.grahambartley.nightborn.Nightborn;
 import com.grahambartley.nightborn.blood.Starvation;
 import com.grahambartley.nightborn.config.BloodSettings;
 import com.grahambartley.nightborn.config.CoreSettings;
+import com.grahambartley.nightborn.skill.SkillBareHands;
 import com.grahambartley.nightborn.vampire.Modifiers;
 import com.grahambartley.nightborn.weakened.Weakened;
 import net.minecraft.entity.LivingEntity;
@@ -27,7 +28,12 @@ public final class VampireCore {
     apply(
         vampire,
         CoreBoosts.of(
-            settings, blood, vampire.getMainHandStack().isEmpty(), night, starving(vampire)));
+            settings,
+            blood,
+            vampire.getMainHandStack().isEmpty(),
+            night,
+            starving(vampire),
+            SkillBareHands.damage(vampire)));
     if (night && vampire instanceof PlayerEntity) {
       NightSight.keep(vampire);
     }
@@ -40,7 +46,12 @@ public final class VampireCore {
         EntityAttributes.GENERIC_ATTACK_DAMAGE,
         BARE_HANDS,
         CoreBoosts.of(
-                settings, blood, vampire.getMainHandStack().isEmpty(), false, starving(vampire))
+                settings,
+                blood,
+                vampire.getMainHandStack().isEmpty(),
+                false,
+                starving(vampire),
+                SkillBareHands.damage(vampire))
             .bareHandDamage(),
         Operation.ADD_VALUE);
   }

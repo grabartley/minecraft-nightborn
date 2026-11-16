@@ -1,5 +1,8 @@
 package com.grahambartley.nightborn.mob;
 
+import com.grahambartley.nightborn.batform.BatForm;
+import com.grahambartley.nightborn.batform.BatShape;
+import com.grahambartley.nightborn.batform.BatShifter;
 import com.grahambartley.nightborn.blood.BloodValue;
 import com.grahambartley.nightborn.coffin.CoffinRise;
 import com.grahambartley.nightborn.config.NightbornConfig;
@@ -8,6 +11,7 @@ import com.grahambartley.nightborn.downed.Downed;
 import com.grahambartley.nightborn.levitation.Levitation;
 import com.grahambartley.nightborn.mind.MindAttributes;
 import com.grahambartley.nightborn.mob.combat.Fighting;
+import com.grahambartley.nightborn.mob.goal.BatFlightGoal;
 import com.grahambartley.nightborn.mob.goal.FleeWhileEscapingGoal;
 import com.grahambartley.nightborn.mob.goal.LieDownedGoal;
 import com.grahambartley.nightborn.mob.goal.RetreatGoal;
@@ -88,7 +92,7 @@ import software.bernie.geckolib.animation.RawAnimation;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 public class VampireEntity extends HostileEntity
-    implements GeoEntity, HouseholdMember, PowerShow, SkillHolder, Staged {
+    implements BatShifter, GeoEntity, HouseholdMember, PowerShow, SkillHolder, Staged {
 
   static final String LOOK_KEY = "Look";
   static final String HEIGHT_KEY = "Height";
@@ -115,6 +119,7 @@ public class VampireEntity extends HostileEntity
 
   private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
   private final EndingEdge landingEdge = new EndingEdge();
+  private final BatShape batShape = new BatShape();
   private final HomeLife homeLife = new HomeLife();
   private final MobBlood blood = new MobBlood();
   private final Fighting fighting = new Fighting();
@@ -161,12 +166,22 @@ public class VampireEntity extends HostileEntity
 
   @Override
   public EntityDimensions getBaseDimensions(final EntityPose pose) {
+    if (BatForm.isBat(this)) {
+      return BatForm.dimensions();
+    }
     return VampireSize.dimensions(super.getBaseDimensions(pose), height(), width());
+  }
+
+  @Override
+  public EntityDimensions standingDimensions() {
+    return VampireSize.dimensions(super.getBaseDimensions(EntityPose.STANDING), height(), width())
+        .scaled(getScale());
   }
 
   @Override
   protected void initGoals() {
     goalSelector.add(0, new LieDownedGoal(this));
+    goalSelector.add(0, new BatFlightGoal(this));
     goalSelector.add(1, new SwimGoal(this));
     goalSelector.add(1, new FleeWhileEscapingGoal(this, 1.4));
     goalSelector.add(2, new SeekShadeGoal(this, 1.3));
@@ -220,7 +235,8 @@ public class VampireEntity extends HostileEntity
 
   @Override
   public boolean tryAttack(final Entity target) {
-    if (!(target instanceof LivingEntity victim)
+    if (BatForm.isBat(this)
+        || !(target instanceof LivingEntity victim)
         || !Prey.mayBite(
             Downed.state(this) != null,
             Prey.isPrey(victim),
@@ -250,6 +266,9 @@ public class VampireEntity extends HostileEntity
   @Override
   public void tick() {
     super.tick();
+    if (batShape.changed(BatForm.isBat(this))) {
+      calculateDimensions();
+    }
     if (!getWorld().isClient() && isAlive()) {
       blood.tick(this, ServerConfigService.current());
       if (isSleeping() && !homeLife.bedtime(this) && !CoffinRise.rising(this)) {
@@ -284,8 +303,10 @@ public class VampireEntity extends HostileEntity
       hiss();
     }
     warded = nowWarded;
-    fight();
-    levitateAboutHome();
+    if (!BatForm.isBat(this)) {
+      fight();
+      levitateAboutHome();
+    }
   }
 
   private void fight() {
