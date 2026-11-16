@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.grahambartley.nightborn.MinecraftBootstrapExtension;
 import com.grahambartley.nightborn.mind.MindAttributes;
+import com.grahambartley.nightborn.occult.OccultAttributes;
 import java.util.stream.Stream;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;
 import net.minecraft.entity.attribute.EntityAttribute;
@@ -25,7 +26,8 @@ class VampireEntityTest {
         Arguments.of(EntityAttributes.GENERIC_ATTACK_DAMAGE, 4.0),
         Arguments.of(EntityAttributes.GENERIC_FOLLOW_RANGE, 32.0),
         Arguments.of(MindAttributes.CHARM, 0.0),
-        Arguments.of(MindAttributes.THRALL_LIMIT, 0.0));
+        Arguments.of(MindAttributes.THRALL_LIMIT, 0.0),
+        Arguments.of(OccultAttributes.FAMILIAR_LIMIT, 0.0));
   }
 
   @ParameterizedTest(name = "{0} = {1}")

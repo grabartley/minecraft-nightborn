@@ -307,7 +307,7 @@ The vampire tree has the core and three bloodlines. A vampire player spends poin
 |---|---|
 | **Noble** | Mesmerise, thralls and charm |
 | **Beast** | Bat form, stronger bare hands, speed and a long leap |
-| **Occult** | Ghostly familiars, fog and shadow tricks |
+| **Occult** | Ghostly familiars, Grave Fog, Shadow Step and Shadow Veil |
 
 The core starts with Thick Blood (more health), Grave Strength (harder blows) and Blood Rush, an active power that burns blood for a short burst of speed and strength. The first skill of each bloodline chooses it and gives a small lasting gift: tougher skin for Noble, safer falls for Beast and longer reach for Occult.
 
@@ -372,8 +372,8 @@ The core starts with Thick Blood (more health), Grave Strength (harder blows) an
 
 | ID | Requirement |
 |---|---|
-| FAM-1 | An Occult vampire can summon ghostly familiars that fight for them, carry items and scout ahead |
-| FAM-2 | Ghostly familiars last a set time, cost blood to summon and pass through blocks only while scouting |
+| FAM-1 | An Occult vampire can summon ghostly familiars that fight for them, carry items and scout ahead. Summon Familiar allows one at a time and Spirit Pact one more, as the `nightborn:familiar_limit` attribute; summoning past the limit sends the oldest away. The owner changes its task by using it with an empty hand, hands it items while it carries and takes them back by sneaking. A scout flies the way its owner looks and makes the creatures and people it passes glow for a while |
+| FAM-2 | Ghostly familiars last a set time, cost blood to summon and pass through blocks only while scouting. One that fades or dies drops what it carried |
 | FAM-3 | Any vampire can hire one villager as a human familiar with a Familiar's Contract |
 | FAM-4 | A human familiar works in daylight: it carries items between chests the owner marks, trades with villagers for the owner and guards the owner's assigned coffin |
 | FAM-5 | A human familiar has loyalty. Good treatment raises it. Being fed on, hurt or left without pay lowers it |

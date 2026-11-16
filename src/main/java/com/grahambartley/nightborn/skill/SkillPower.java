@@ -1,5 +1,8 @@
 package com.grahambartley.nightborn.skill;
 
+import com.grahambartley.nightborn.occult.FamiliarPower;
+import com.grahambartley.nightborn.occult.FogPower;
+import com.grahambartley.nightborn.occult.ShadowStepPower;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import java.util.List;
@@ -14,6 +17,9 @@ public record SkillPower(
     Optional<Identifier> sound,
     Optional<TrackPower> track,
     Optional<MesmerisePower> mesmerise,
+    Optional<FamiliarPower> familiar,
+    Optional<FogPower> fog,
+    Optional<ShadowStepPower> shadowStep,
     Optional<MobPowerUse> mob) {
 
   public static final Codec<SkillPower> CODEC =
@@ -34,6 +40,13 @@ public record SkillPower(
                       MesmerisePower.CODEC
                           .optionalFieldOf("mesmerise")
                           .forGetter(SkillPower::mesmerise),
+                      FamiliarPower.CODEC
+                          .optionalFieldOf("familiar")
+                          .forGetter(SkillPower::familiar),
+                      FogPower.CODEC.optionalFieldOf("fog").forGetter(SkillPower::fog),
+                      ShadowStepPower.CODEC
+                          .optionalFieldOf("shadow_step")
+                          .forGetter(SkillPower::shadowStep),
                       MobPowerUse.CODEC.optionalFieldOf("mob").forGetter(SkillPower::mob))
                   .apply(instance, SkillPower::new));
 }

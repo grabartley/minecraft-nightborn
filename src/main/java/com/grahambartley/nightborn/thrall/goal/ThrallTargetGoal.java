@@ -1,7 +1,7 @@
 package com.grahambartley.nightborn.thrall.goal;
 
+import com.grahambartley.nightborn.servant.ServantTargets;
 import com.grahambartley.nightborn.thrall.FollowRules;
-import com.grahambartley.nightborn.thrall.TargetRules;
 import com.grahambartley.nightborn.thrall.ThrallEntity;
 import java.util.Comparator;
 import java.util.EnumSet;
@@ -9,7 +9,6 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.TargetPredicate;
 import net.minecraft.entity.ai.goal.TrackTargetGoal;
 import net.minecraft.entity.mob.Monster;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
 import org.jetbrains.annotations.Nullable;
@@ -46,18 +45,9 @@ public class ThrallTargetGoal extends TrackTargetGoal {
 
   @Nullable
   private LivingEntity pick() {
-    final LivingEntity owner = thrall.ownerHere();
-    if (owner != null) {
-      if (allowed(owner.getAttacker())) {
-        return owner.getAttacker();
-      }
-      if (TargetRules.ownerStillFighting(owner.age, owner.getLastAttackTime())
-          && allowed(owner.getAttacking())) {
-        return owner.getAttacking();
-      }
-    }
-    if (allowed(thrall.getAttacker())) {
-      return thrall.getAttacker();
+    final LivingEntity foe = ServantTargets.mastersFoe(thrall, this::allowed);
+    if (foe != null) {
+      return foe;
     }
     final Vec3d post = Vec3d.ofBottomCenter(thrall.post());
     return thrall
@@ -76,12 +66,7 @@ public class ThrallTargetGoal extends TrackTargetGoal {
 
   private boolean allowed(@Nullable final LivingEntity candidate) {
     return candidate != null
-        && TargetRules.mayAttack(
-            candidate.isAlive(),
-            thrall.isOwnedBy(candidate),
-            thrall.servesSameOwner(candidate),
-            candidate instanceof PlayerEntity player
-                && (player.isCreative() || player.isSpectator()))
+        && ServantTargets.mayAttack(thrall, candidate)
         && canTrack(candidate, TargetPredicate.DEFAULT);
   }
 }

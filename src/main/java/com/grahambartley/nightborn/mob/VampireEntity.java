@@ -28,6 +28,7 @@ import com.grahambartley.nightborn.mob.stage.Staged;
 import com.grahambartley.nightborn.mob.stage.VampireStage;
 import com.grahambartley.nightborn.mob.stage.VampireStages;
 import com.grahambartley.nightborn.mob.stage.VampireStaging;
+import com.grahambartley.nightborn.occult.OccultAttributes;
 import com.grahambartley.nightborn.server.ServerConfigService;
 import com.grahambartley.nightborn.skill.PowerShow;
 import com.grahambartley.nightborn.skill.SkillHolder;
@@ -130,12 +131,13 @@ public class VampireEntity extends HostileEntity
   }
 
   public static DefaultAttributeContainer.Builder createVampireAttributes() {
-    return MindAttributes.addTo(
-        HostileEntity.createHostileAttributes()
-            .add(EntityAttributes.GENERIC_MAX_HEALTH, 30.0)
-            .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.3)
-            .add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 4.0)
-            .add(EntityAttributes.GENERIC_FOLLOW_RANGE, 32.0));
+    return OccultAttributes.addTo(
+        MindAttributes.addTo(
+            HostileEntity.createHostileAttributes()
+                .add(EntityAttributes.GENERIC_MAX_HEALTH, 30.0)
+                .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.3)
+                .add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 4.0)
+                .add(EntityAttributes.GENERIC_FOLLOW_RANGE, 32.0)));
   }
 
   @Override

@@ -107,5 +107,46 @@
         "type": "event"
       }
     ]
+  },
+  "entity.ghostly_familiar.ambient": {
+    "subtitle": "subtitles.nightborn.entity.ghostly_familiar.ambient",
+    "sounds": [
+      {
+        "name": "minecraft:particle.soul_escape",
+        "type": "event",
+        "pitch": 0.8,
+        "volume": 0.6
+      }
+    ]
+  },
+  "entity.ghostly_familiar.hurt": {
+    "subtitle": "subtitles.nightborn.entity.ghostly_familiar.hurt",
+    "sounds": [
+      {
+        "name": "minecraft:entity.vex.hurt",
+        "type": "event",
+        "pitch": 0.6
+      }
+    ]
+  },
+  "entity.ghostly_familiar.death": {
+    "subtitle": "subtitles.nightborn.entity.ghostly_familiar.death",
+    "sounds": [
+      {
+        "name": "minecraft:entity.vex.death",
+        "type": "event",
+        "pitch": 0.6
+      }
+    ]
+  },
+  "entity.ghostly_familiar.fade": {
+    "subtitle": "subtitles.nightborn.entity.ghostly_familiar.fade",
+    "sounds": [
+      {
+        "name": "minecraft:particle.soul_escape",
+        "type": "event",
+        "pitch": 0.6
+      }
+    ]
   }
 }

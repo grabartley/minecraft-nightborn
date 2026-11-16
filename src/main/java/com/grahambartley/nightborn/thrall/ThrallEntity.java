@@ -1,5 +1,7 @@
 package com.grahambartley.nightborn.thrall;
 
+import com.grahambartley.nightborn.servant.Servant;
+import com.grahambartley.nightborn.servant.Servants;
 import com.grahambartley.nightborn.thrall.goal.ThrallFollowGoal;
 import com.grahambartley.nightborn.thrall.goal.ThrallPostGoal;
 import com.grahambartley.nightborn.thrall.goal.ThrallTargetGoal;
@@ -36,7 +38,7 @@ import net.minecraft.village.VillagerType;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
-public class ThrallEntity extends PathAwareEntity implements VillagerDataContainer {
+public class ThrallEntity extends PathAwareEntity implements VillagerDataContainer, Servant {
 
   static final int CHECK_BOND_TICKS = 20;
 
@@ -156,22 +158,18 @@ public class ThrallEntity extends PathAwareEntity implements VillagerDataContain
     dataTracker.set(VILLAGER_DATA, data);
   }
 
+  @Override
   public Optional<UUID> owner() {
     return dataTracker.get(OWNER_UUID);
   }
 
   public boolean isOwnedBy(final LivingEntity entity) {
-    return owner().filter(entity.getUuid()::equals).isPresent();
+    return Servants.serves(this, entity);
   }
 
   @Nullable
   public LivingEntity ownerHere() {
-    return owner()
-        .filter(id -> getWorld() instanceof ServerWorld)
-        .map(id -> ((ServerWorld) getWorld()).getEntity(id))
-        .filter(entity -> entity instanceof LivingEntity living && living.isAlive())
-        .map(LivingEntity.class::cast)
-        .orElse(null);
+    return Servants.masterHere(this);
   }
 
   public VillagerMemory memory() {
@@ -190,12 +188,6 @@ public class ThrallEntity extends PathAwareEntity implements VillagerDataContain
     mode = next;
     post = getBlockPos().toImmutable();
     getNavigation().stop();
-  }
-
-  public boolean servesSameOwner(final LivingEntity other) {
-    return other instanceof ThrallEntity thrall
-        && owner().isPresent()
-        && owner().equals(thrall.owner());
   }
 
   @Override
