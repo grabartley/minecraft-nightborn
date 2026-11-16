@@ -6,11 +6,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 class OwnedFilesTest {
 
@@ -24,24 +26,37 @@ class OwnedFilesTest {
     }
   }
 
-  @Test
-  void listsEveryFileUnderTheOwnedFoldersSorted() {
-    assertEquals(
-        List.of("structure/b.nbt", "structure/x/a.nbt"),
-        OwnedFiles.list(root, List.of("structure", "missing")));
+  private static List<String> split(final String list) {
+    return list.isEmpty() ? List.of() : Arrays.asList(list.split(" "));
   }
 
-  @Test
-  void staleFilesAreOwnedFilesNobodyWrote() {
-    assertEquals(
-        List.of("structure/b.nbt"),
-        OwnedFiles.stale(root, List.of("structure"), Set.of("structure/x/a.nbt")));
+  @ParameterizedTest(name = "owning [{0}] lists [{1}]")
+  @CsvSource({
+    "structure missing, structure/b.nbt structure/x/a.nbt",
+    "loot, loot/c.json",
+    "missing, ''",
+    "structure/x, structure/x/a.nbt"
+  })
+  void listsEveryFileUnderTheOwnedFoldersSorted(final String folders, final String files) {
+    assertEquals(split(files), OwnedFiles.list(root, split(folders)));
   }
 
-  @Test
-  void deleteRemovesOnlyTheNamedFiles() {
-    OwnedFiles.delete(root, List.of("structure/b.nbt"));
-    assertTrue(Files.notExists(root.resolve("structure/b.nbt")));
+  @ParameterizedTest(name = "wrote [{0}], stale [{1}]")
+  @CsvSource({
+    "structure/x/a.nbt, structure/b.nbt",
+    "structure/b.nbt structure/x/a.nbt, ''",
+    "'', structure/b.nbt structure/x/a.nbt"
+  })
+  void staleFilesAreOwnedFilesNobodyWrote(final String written, final String stale) {
+    assertEquals(
+        split(stale), OwnedFiles.stale(root, List.of("structure"), Set.copyOf(split(written))));
+  }
+
+  @ParameterizedTest(name = "deleting {0}")
+  @CsvSource({"structure/b.nbt", "structure/x/a.nbt"})
+  void deleteRemovesOnlyTheNamedFiles(final String file) {
+    OwnedFiles.delete(root, List.of(file));
+    assertTrue(Files.notExists(root.resolve(file)));
     assertTrue(Files.exists(root.resolve("loot/c.json")));
   }
 }

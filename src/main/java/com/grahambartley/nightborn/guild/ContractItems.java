@@ -37,13 +37,20 @@ public final class ContractItems {
         .register(entries -> entries.add(HUNTER_CONTRACT));
   }
 
-  public static Optional<HunterContract> finished(
+  public static Optional<ContractCredit.Held> held(
       final ItemStack stack, final RegistryWrapper.WrapperLookup registries) {
     final ContractProgress progress = stack.get(PROGRESS);
     if (progress == null) {
       return Optional.empty();
     }
     return GuildData.contract(registries, progress.contract())
-        .filter(contract -> contract.finishedAt(progress.done()));
+        .map(contract -> new ContractCredit.Held(contract, progress.done()));
+  }
+
+  public static Optional<HunterContract> finished(
+      final ItemStack stack, final RegistryWrapper.WrapperLookup registries) {
+    return held(stack, registries)
+        .filter(held -> held.contract().finishedAt(held.done()))
+        .map(ContractCredit.Held::contract);
   }
 }

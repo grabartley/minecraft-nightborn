@@ -14,8 +14,9 @@ class GuildRestockTest {
   }
 
   @ParameterizedTest(name = "last {0}, today {1}: due {2}")
-  @CsvSource({"0, 0, false", "0, 1, true", "3, 7, true", "5, 5, false"})
-  void restocksOnceANewDayBegins(final long last, final long today, final boolean due) {
+  @CsvSource({"0, 0, false", "0, 1, true", "3, 7, true", "5, 5, false", "9, 2, true"})
+  void restocksWheneverTheDayChangesEvenIfTheClockWentBack(
+      final long last, final long today, final boolean due) {
     assertEquals(due, GuildRestock.due(last, today));
   }
 }

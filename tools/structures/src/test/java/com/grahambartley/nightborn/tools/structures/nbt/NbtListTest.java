@@ -5,28 +5,33 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 class NbtListTest {
 
-  @Test
-  void intsAreAnIntList() {
-    final NbtList list = NbtList.ints(1, 2, 3);
-    assertEquals(Nbt.INT, list.kind());
-    assertEquals(List.of(1, 2, 3), list.items());
+  static Stream<Arguments> lists() {
+    return Stream.of(
+        Arguments.of("ints", NbtList.ints(1, 2, 3), Nbt.INT, List.of(1, 2, 3)),
+        Arguments.of("doubles", NbtList.doubles(0.5, 2), Nbt.DOUBLE, List.of(0.5, 2.0)),
+        Arguments.of("strings", NbtList.strings(List.of("a")), Nbt.STRING, List.of("a")),
+        Arguments.of(
+            "compounds",
+            NbtList.compounds(List.of(Nbt.compound())),
+            Nbt.COMPOUND,
+            List.of(Nbt.compound())),
+        Arguments.of("empty ints", NbtList.ints(), Nbt.INT, List.of()));
   }
 
-  @Test
-  void doublesAreADoubleList() {
-    final NbtList list = NbtList.doubles(0.5, 2);
-    assertEquals(Nbt.DOUBLE, list.kind());
-    assertEquals(List.of(0.5, 2.0), list.items());
-  }
-
-  @Test
-  void stringsAndCompoundsKeepTheirKind() {
-    assertEquals(Nbt.STRING, NbtList.strings(List.of("a")).kind());
-    assertEquals(Nbt.COMPOUND, NbtList.compounds(List.of(Nbt.compound())).kind());
+  @ParameterizedTest(name = "{0}")
+  @MethodSource("lists")
+  void eachFactoryKeepsItsKindAndItems(
+      final String name, final NbtList list, final int kind, final List<Object> items) {
+    assertEquals(kind, list.kind());
+    assertEquals(items, list.items());
   }
 
   @Test

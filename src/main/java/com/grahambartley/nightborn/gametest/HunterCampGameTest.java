@@ -5,6 +5,7 @@ import com.grahambartley.nightborn.guild.ContractItems;
 import com.grahambartley.nightborn.guild.ContractProgress;
 import com.grahambartley.nightborn.guild.GuildMasterEntity;
 import com.grahambartley.nightborn.guild.GuildMobs;
+import com.grahambartley.nightborn.guild.GuildRestock;
 import com.grahambartley.nightborn.guild.HunterEntity;
 import com.grahambartley.nightborn.mob.NightbornMobs;
 import com.grahambartley.nightborn.mob.VampireEntity;
@@ -13,9 +14,12 @@ import com.grahambartley.nightborn.skill.SkillAttachment;
 import com.grahambartley.nightborn.skill.SkillTree;
 import com.grahambartley.nightborn.structure.RareSpreadPlacement;
 import com.grahambartley.nightborn.structure.StructureRarity;
+import com.grahambartley.nightborn.vampire.VampireTransitions;
 import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.test.GameTest;
@@ -29,6 +33,7 @@ public class HunterCampGameTest implements FabricGameTest {
 
   static final String ARENA = "nightborn:vampire_arena";
   static final int START = 2;
+  static final String RESTOCK = "guild-restock";
   static final Identifier STAKE_THREE = Identifier.of("nightborn", "stake_three");
   static final Identifier CLEAR_HOUSEHOLD = Identifier.of("nightborn", "clear_household");
 
@@ -44,7 +49,7 @@ public class HunterCampGameTest implements FabricGameTest {
     return progress == null ? -1 : progress.done();
   }
 
-  static int count(final ServerPlayerEntity player, final net.minecraft.item.Item item) {
+  static int count(final ServerPlayerEntity player, final Item item) {
     return player.getInventory().count(item);
   }
 
@@ -243,6 +248,92 @@ public class HunterCampGameTest implements FabricGameTest {
           context.assertTrue(vampire.isAlive(), "the vampire is only downed");
           hunter.tryAttack(vampire);
           context.assertFalse(vampire.isAlive(), "the hunter's stake finishes it");
+          context.complete();
+        });
+  }
+
+  @GameTest(templateName = ARENA, tickLimit = TestPlayers.READY + 20)
+  public void aContractInTheOffhandIsClaimedToo(final TestContext context) {
+    final GuildMasterEntity master = guildMaster(context);
+    final ServerPlayerEntity human = TestPlayers.human(context, new BlockPos(2, 2, 4));
+    human.setStackInHand(Hand.OFF_HAND, contract(STAKE_THREE, 3));
+    context.runAtTick(
+        START,
+        () -> {
+          master.interactMob(human, Hand.MAIN_HAND);
+          context.assertTrue(human.getOffHandStack().isEmpty(), "the offhand contract is taken");
+          context.assertTrue(count(human, Items.EMERALD) > 0, "and paid");
+          context.assertFalse(master.hasCustomer(), "claiming does not open the trades");
+          TestPlayers.finish(context, human);
+        });
+  }
+
+  @GameTest(templateName = ARENA, tickLimit = TestPlayers.READY + 20)
+  public void aPlayerWhoTurnsWhileTradingIsShutOut(final TestContext context) {
+    final GuildMasterEntity master = guildMaster(context);
+    final ServerPlayerEntity human = TestPlayers.human(context, new BlockPos(2, 2, 4));
+    context.runAtTick(
+        START,
+        () -> {
+          master.interactMob(human, Hand.MAIN_HAND);
+          context.assertTrue(master.getCustomer() == human, "the human is trading");
+          VampireTransitions.turn(human);
+        });
+    context.runAtTick(
+        START + 2,
+        () -> {
+          context.assertFalse(master.hasCustomer(), "the new vampire is turned away");
+          context.assertTrue(
+              human.currentScreenHandler == human.playerScreenHandler, "the trade screen closes");
+          TestPlayers.finish(context, human);
+        });
+  }
+
+  @GameTest(templateName = ARENA, batchId = RESTOCK, tickLimit = TestPlayers.READY + 20)
+  public void theGuildMastersStockRenewsEachDay(final TestContext context) {
+    final GuildMasterEntity master = guildMaster(context);
+    final ServerPlayerEntity human = TestPlayers.human(context, new BlockPos(2, 2, 4));
+    context.runAtTick(
+        START,
+        () -> {
+          context.getWorld().setTimeOfDay(1000L);
+          master.interactMob(human, Hand.MAIN_HAND);
+          final TradeOffer first = master.getOffers().getFirst();
+          while (!first.isDisabled()) {
+            first.use();
+          }
+          master.setCustomer(null);
+          master.interactMob(human, Hand.MAIN_HAND);
+          context.assertTrue(
+              master.getOffers().getFirst().isDisabled(), "stock stays sold out the same day");
+          master.setCustomer(null);
+          context.getWorld().setTimeOfDay(1000L + GuildRestock.DAY_TICKS);
+          master.interactMob(human, Hand.MAIN_HAND);
+          context.assertFalse(
+              master.getOffers().getFirst().isDisabled(), "a new day brings new stock");
+          TestPlayers.finish(context, human);
+        });
+  }
+
+  @GameTest(templateName = ARENA, tickLimit = 20)
+  public void huntersKeepTheirCampAcrossASave(final TestContext context) {
+    final HunterEntity hunter = context.spawnEntity(GuildMobs.HUNTER, new BlockPos(4, 2, 4));
+    hunter.setAiDisabled(true);
+    context.runAtTick(
+        START,
+        () -> {
+          context.assertTrue(hunter.hasPositionTarget(), "a hunter settles where it first stands");
+          context.assertEquals(
+              hunter.getPositionTarget(),
+              context.getAbsolutePos(new BlockPos(4, 2, 4)),
+              "at its spawn");
+          final NbtCompound saved = new NbtCompound();
+          hunter.writeNbt(saved);
+          final HunterEntity loaded = GuildMobs.HUNTER.create(context.getWorld());
+          loaded.readNbt(saved);
+          context.assertEquals(
+              loaded.getPositionTarget(), hunter.getPositionTarget(), "the camp is kept");
+          context.assertEquals(loaded.look(), hunter.look(), "and so is its look");
           context.complete();
         });
   }

@@ -420,9 +420,9 @@ The hunter tree starts with Tracking, an active power that points toward the nea
 | ID | Requirement |
 |---|---|
 | GUILD-1 | Hunter camps generate rarely in the overworld, each with a few hunter mobs and a Guild Master |
-| GUILD-2 | Hunter mobs attack vampire players and vampire mobs on sight with stakes, so a vampire they bring down is finished, and leave humans alone |
+| GUILD-2 | Hunter mobs attack vampire players and vampire mobs on sight with stakes, so a vampire they bring down is finished. They leave humans alone and do not fight back when a human hits them. Hunters and the Guild Master stay near their camp |
 | GUILD-3 | The Guild Master sells hunter gear and writes contracts on paper, such as staking vampires, staking an elder, or clearing a vampire structure by staking the last of its household. His offers and contracts are data, he trades through the vanilla trading screen, and his stock renews each day |
-| GUILD-4 | Contracts pay in emeralds, silver and gear, on top of the hunter points HUNT-2 gives. A contract is an item that keeps its own count. One stake marks one open contract, and a fulfilled contract is handed to a Guild Master, who takes it and pays once |
+| GUILD-4 | Contracts pay in emeralds, silver and gear, on top of the hunter points HUNT-2 gives. A contract is an item that keeps its own count. One stake marks one open contract. A vampire player counts as a fledgling against a contract that asks for an older vampire, and a vampire who lives alone is the last of its household. A fulfilled contract, in either hand, is handed to a Guild Master, who takes it and pays once |
 | GUILD-5 | A vampire player cannot trade or take contracts at a camp |
 
 **Enforcement:** server.

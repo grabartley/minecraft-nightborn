@@ -2,7 +2,10 @@ package com.grahambartley.nightborn.guild;
 
 import com.grahambartley.nightborn.server.ServerConfigService;
 import com.grahambartley.nightborn.vampire.Vampires;
+import java.util.Optional;
+import java.util.stream.Stream;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.ai.goal.GoToWalkTargetGoal;
 import net.minecraft.entity.ai.goal.LookAroundGoal;
 import net.minecraft.entity.ai.goal.LookAtCustomerGoal;
 import net.minecraft.entity.ai.goal.LookAtEntityGoal;
@@ -42,6 +45,7 @@ public class GuildMasterEntity extends MerchantEntity implements GeoEntity, Hunt
   static final String LAST_RESTOCK = "LastRestock";
   static final int HEAD_SHAKE_TICKS = 40;
   static final int ANIMATION_BLEND_TICKS = 4;
+  static final int TENT_REACH = 3;
 
   private static final TrackedData<Boolean> TRADING =
       DataTracker.registerData(GuildMasterEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
@@ -70,6 +74,7 @@ public class GuildMasterEntity extends MerchantEntity implements GeoEntity, Hunt
     goalSelector.add(0, new SwimGoal(this));
     goalSelector.add(1, new StopFollowingCustomerGoal(this));
     goalSelector.add(1, new LookAtCustomerGoal(this));
+    goalSelector.add(7, new GoToWalkTargetGoal(this, 0.4));
     goalSelector.add(8, new WanderAroundFarGoal(this, 0.35));
     goalSelector.add(9, new LookAtEntityGoal(this, PlayerEntity.class, 6.0F));
     goalSelector.add(10, new LookAroundGoal(this));
@@ -81,24 +86,29 @@ public class GuildMasterEntity extends MerchantEntity implements GeoEntity, Hunt
       return super.interactMob(player, hand);
     }
     if (player instanceof ServerPlayerEntity visitor) {
-      visit(visitor, player.getStackInHand(hand));
+      visit(visitor);
     }
     return ActionResult.success(getWorld().isClient);
   }
 
-  private void visit(final ServerPlayerEntity visitor, final ItemStack held) {
-    final GuildVisit visit =
-        GuildVisit.of(
-            Vampires.isVampire(visitor),
-            ContractItems.finished(held, getRegistryManager()).isPresent());
-    switch (visit) {
+  private void visit(final ServerPlayerEntity visitor) {
+    final Optional<ItemStack> claim =
+        Stream.of(visitor.getMainHandStack(), visitor.getOffHandStack())
+            .filter(stack -> ContractItems.finished(stack, getRegistryManager()).isPresent())
+            .findFirst();
+    switch (GuildVisit.of(Vampires.isVampire(visitor), claim.isPresent())) {
       case REFUSE -> refuse(visitor);
       case CLAIM ->
-          ContractItems.finished(held, getRegistryManager())
-              .ifPresent(
-                  contract ->
-                      ContractPayout.pay(
-                          visitor, held, contract, ServerConfigService.current().skills()));
+          claim.ifPresent(
+              stack ->
+                  ContractItems.finished(stack, getRegistryManager())
+                      .ifPresent(
+                          contract ->
+                              ContractPayout.pay(
+                                  visitor,
+                                  stack,
+                                  contract,
+                                  ServerConfigService.current().skills())));
       case TRADE -> openTrades(visitor);
     }
   }
@@ -129,8 +139,12 @@ public class GuildMasterEntity extends MerchantEntity implements GeoEntity, Hunt
   }
 
   @Override
-  protected void mobTick() {
-    super.mobTick();
+  public void tick() {
+    super.tick();
+    if (getWorld().isClient()) {
+      return;
+    }
+    CampHome.keep(this, TENT_REACH);
     final PlayerEntity customer = getCustomer();
     if (customer != null && Vampires.isVampire(customer)) {
       resetCustomer();
@@ -206,12 +220,14 @@ public class GuildMasterEntity extends MerchantEntity implements GeoEntity, Hunt
   public void writeCustomDataToNbt(final NbtCompound nbt) {
     super.writeCustomDataToNbt(nbt);
     nbt.putLong(LAST_RESTOCK, lastRestock);
+    CampHome.write(this, nbt);
   }
 
   @Override
   public void readCustomDataFromNbt(final NbtCompound nbt) {
     super.readCustomDataFromNbt(nbt);
     lastRestock = nbt.getLong(LAST_RESTOCK);
+    CampHome.read(this, nbt, TENT_REACH);
   }
 
   @Override

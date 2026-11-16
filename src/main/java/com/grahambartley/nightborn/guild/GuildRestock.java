@@ -11,6 +11,6 @@ public final class GuildRestock {
   }
 
   public static boolean due(final long lastRestockDay, final long today) {
-    return today > lastRestockDay;
+    return today != lastRestockDay;
   }
 }

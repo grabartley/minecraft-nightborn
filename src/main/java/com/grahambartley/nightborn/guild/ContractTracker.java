@@ -50,28 +50,15 @@ public final class ContractTracker {
     final PlayerInventory inventory = hunter.getInventory();
     final List<Optional<ContractCredit.Held>> held = new ArrayList<>();
     for (int slot = 0; slot < inventory.size(); slot++) {
-      held.add(held(hunter, inventory.getStack(slot)));
+      held.add(ContractItems.held(inventory.getStack(slot), hunter.getRegistryManager()));
     }
     ContractCredit.slotToAdvance(held, stake)
         .ifPresent(
             slot -> {
               final ItemStack stack = inventory.getStack(slot);
-              final ContractProgress progress = stack.get(ContractItems.PROGRESS);
-              if (progress != null) {
-                stack.set(ContractItems.PROGRESS, progress.advanced());
-                hunter.sendMessage(Text.translatable("nightborn.contract.advanced"), true);
-              }
+              stack.apply(ContractItems.PROGRESS, null, ContractProgress::advanced);
+              hunter.sendMessage(Text.translatable("nightborn.contract.advanced"), true);
             });
-  }
-
-  private static Optional<ContractCredit.Held> held(
-      final ServerPlayerEntity hunter, final ItemStack stack) {
-    final ContractProgress progress = stack.get(ContractItems.PROGRESS);
-    if (progress == null) {
-      return Optional.empty();
-    }
-    return GuildData.contract(hunter.getRegistryManager(), progress.contract())
-        .map(contract -> new ContractCredit.Held(contract, progress.done()));
   }
 
   static boolean householdCleared(final LivingEntity victim) {

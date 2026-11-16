@@ -16,5 +16,6 @@ Hunter camps generate rarely in the overworld with a few hunters and a Guild Mas
 
 - A data pack adds an offer or a contract with one JSON file, and a new kind of camp with a template and structure data.
 - A housemate out feeding in an unloaded chunk is not seen, so a household can count as cleared while one member is away.
-- Hunters spawn only in camps or from spawn eggs, and never despawn.
+- Hunters spawn only in camps or from spawn eggs, and never despawn. Each one keeps to the spot it first stood on, so camp residents stay at their camp across saves.
+- A vampire player has no stage, so it counts as a fledgling against a contract that asks for an older vampire.
 - Hunter and Guild Master rigs are placeholders until their art lands, at the paths the art issue lists.

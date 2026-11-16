@@ -8,6 +8,7 @@ import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.ai.goal.ActiveTargetGoal;
+import net.minecraft.entity.ai.goal.GoToWalkTargetGoal;
 import net.minecraft.entity.ai.goal.LookAroundGoal;
 import net.minecraft.entity.ai.goal.LookAtEntityGoal;
 import net.minecraft.entity.ai.goal.MeleeAttackGoal;
@@ -38,6 +39,7 @@ public class HunterEntity extends PathAwareEntity implements GeoEntity, HunterLo
 
   static final String FEMALE_KEY = "Female";
   static final int ANIMATION_BLEND_TICKS = 4;
+  static final int CAMP_REACH = 12;
 
   private static final TrackedData<Boolean> FEMALE =
       DataTracker.registerData(HunterEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
@@ -68,6 +70,7 @@ public class HunterEntity extends PathAwareEntity implements GeoEntity, HunterLo
   protected void initGoals() {
     goalSelector.add(0, new SwimGoal(this));
     goalSelector.add(2, new MeleeAttackGoal(this, 1.15, true));
+    goalSelector.add(4, new GoToWalkTargetGoal(this, 0.8));
     goalSelector.add(5, new WanderAroundFarGoal(this, 0.6));
     goalSelector.add(6, new LookAtEntityGoal(this, PlayerEntity.class, 8.0F));
     goalSelector.add(7, new LookAroundGoal(this));
@@ -107,6 +110,12 @@ public class HunterEntity extends PathAwareEntity implements GeoEntity, HunterLo
   }
 
   @Override
+  public void tick() {
+    super.tick();
+    CampHome.keep(this, CAMP_REACH);
+  }
+
+  @Override
   public boolean cannotDespawn() {
     return true;
   }
@@ -115,12 +124,14 @@ public class HunterEntity extends PathAwareEntity implements GeoEntity, HunterLo
   public void writeCustomDataToNbt(final NbtCompound nbt) {
     super.writeCustomDataToNbt(nbt);
     nbt.putBoolean(FEMALE_KEY, dataTracker.get(FEMALE));
+    CampHome.write(this, nbt);
   }
 
   @Override
   public void readCustomDataFromNbt(final NbtCompound nbt) {
     super.readCustomDataFromNbt(nbt);
     dataTracker.set(FEMALE, nbt.getBoolean(FEMALE_KEY));
+    CampHome.read(this, nbt, CAMP_REACH);
   }
 
   @Override

@@ -12,9 +12,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.FileTime;
 import java.util.List;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 class GeneratedSyncTest {
 
@@ -24,46 +24,35 @@ class GeneratedSyncTest {
   @TempDir Path generated;
   @TempDir Path target;
 
-  private OutputTree ours;
-
-  @BeforeEach
-  void generate() {
-    ours = new OutputTree(generated);
-    ours.nbt("structure/a.nbt", Nbt.compound("a", 1));
+  @ParameterizedTest(name = "target {0}, stray {1}: rewrote {2}, deleted {3}")
+  @CsvSource({
+    "same, false, 0, 0",
+    "changed, false, 1, 0",
+    "missing, false, 1, 0",
+    "same, true, 0, 1",
+    "changed, true, 1, 1"
+  })
+  void makesTheTargetMatchWhatWasGenerated(
+      final String state, final boolean stray, final int rewritten, final int deleted)
+      throws IOException {
+    final OutputTree ours = new OutputTree(generated);
     ours.nbt("structure/t.nbt", Nbt.compound("x", 1));
-  }
-
-  @Test
-  void copiesMissingAndChangedFiles() {
-    new OutputTree(target).nbt("structure/a.nbt", Nbt.compound("a", 2));
-    final GeneratedSync.Result result =
-        GeneratedSync.apply(generated, ours.written(), target, OWNED);
-    assertEquals(new GeneratedSync.Result(2, 0), result);
-    assertArrayEquals(
-        NbtWriter.bytes(Nbt.compound("a", 1)), NbtFiles.payload(target.resolve("structure/a.nbt")));
-    assertArrayEquals(
-        NbtWriter.bytes(Nbt.compound("x", 1)), NbtFiles.payload(target.resolve("structure/t.nbt")));
-  }
-
-  @Test
-  void leavesFilesThatAlreadyMatchAlone() throws IOException {
-    GeneratedSync.apply(generated, ours.written(), target, OWNED);
-    Files.setLastModifiedTime(target.resolve("structure/t.nbt"), OLD);
-    final GeneratedSync.Result result =
-        GeneratedSync.apply(generated, ours.written(), target, OWNED);
-    assertEquals(new GeneratedSync.Result(0, 0), result);
-    assertEquals(OLD, Files.getLastModifiedTime(target.resolve("structure/t.nbt")));
-  }
-
-  @Test
-  void deletesOwnedFilesNothingWroteAndKeepsTheRest() throws IOException {
-    Files.createDirectories(target.resolve("structure"));
+    final Path shipped = target.resolve("structure/t.nbt");
+    if (!state.equals("missing")) {
+      new OutputTree(target)
+          .nbt("structure/t.nbt", Nbt.compound("x", state.equals("same") ? 1 : 2));
+      Files.setLastModifiedTime(shipped, OLD);
+    }
+    if (stray) {
+      Files.writeString(target.resolve("structure/stray.nbt"), "");
+    }
     Files.createDirectories(target.resolve("loot"));
-    Files.writeString(target.resolve("structure/stray.nbt"), "");
     Files.writeString(target.resolve("loot/keep.json"), "{}");
-    final GeneratedSync.Result result =
-        GeneratedSync.apply(generated, ours.written(), target, OWNED);
-    assertEquals(1, result.deleted());
+    assertEquals(
+        new GeneratedSync.Result(rewritten, deleted),
+        GeneratedSync.apply(generated, ours.written(), target, OWNED));
+    assertArrayEquals(NbtWriter.bytes(Nbt.compound("x", 1)), NbtFiles.payload(shipped));
+    assertEquals(rewritten == 0, Files.getLastModifiedTime(shipped).equals(OLD));
     assertTrue(Files.notExists(target.resolve("structure/stray.nbt")));
     assertTrue(Files.exists(target.resolve("loot/keep.json")));
   }
