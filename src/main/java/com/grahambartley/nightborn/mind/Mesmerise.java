@@ -17,6 +17,7 @@ import net.minecraft.entity.projectile.ProjectileUtil;
 import net.minecraft.particle.DustParticleEffect;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.tag.TagKey;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
@@ -72,8 +73,22 @@ public final class Mesmerise {
   }
 
   public static void staring(final ServerWorld world, final LivingEntity target) {
-    world.spawnParticles(
-        GAZE_DUST, target.getX(), target.getEyeY(), target.getZ(), 2, 0.2, 0.2, 0.2, 0.0);
+    for (final ServerPlayerEntity viewer : world.getPlayers()) {
+      if (viewer != target) {
+        world.spawnParticles(
+            viewer,
+            GAZE_DUST,
+            false,
+            target.getX(),
+            target.getEyeY(),
+            target.getZ(),
+            2,
+            0.2,
+            0.2,
+            0.2,
+            0.0);
+      }
+    }
   }
 
   public static MesmeriseRules.Outcome land(
