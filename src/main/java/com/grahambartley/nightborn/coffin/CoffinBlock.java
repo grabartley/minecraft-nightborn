@@ -43,7 +43,6 @@ public class CoffinBlock extends BedBlock {
   public static final BooleanProperty STANDING = BooleanProperty.of("standing");
 
   static final float LID_VOLUME = 0.6F;
-  static final float LID_PITCH = 1.0F;
 
   public CoffinBlock(final Settings settings) {
     super(DyeColor.BLACK, settings);
@@ -256,7 +255,12 @@ public class CoffinBlock extends BedBlock {
       final PlayerEntity player) {
     world.setBlockState(head, state.with(OPEN, open), Block.NOTIFY_ALL);
     world.playSound(
-        null, head, NightbornSounds.lid(open), SoundCategory.BLOCKS, LID_VOLUME, LID_PITCH);
+        null,
+        head,
+        NightbornSounds.lid(open),
+        SoundCategory.BLOCKS,
+        LID_VOLUME,
+        NightbornSounds.variedPitch(world.getRandom()));
     world.emitGameEvent(player, open ? GameEvent.CONTAINER_OPEN : GameEvent.CONTAINER_CLOSE, head);
   }
 }

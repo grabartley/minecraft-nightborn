@@ -13,12 +13,14 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.stream.Stream;
 import net.minecraft.sound.SoundEvent;
+import net.minecraft.util.math.random.Random;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 @ExtendWith(MinecraftBootstrapExtension.class)
 class NightbornSoundsTest {
@@ -87,6 +89,17 @@ class NightbornSoundsTest {
   @DisplayName("the coffin lid has its own open and close sounds")
   void lid(final boolean open, final String path) {
     assertEquals(path, NightbornSounds.lid(open).getId().getPath());
+  }
+
+  @ParameterizedTest(name = "seed {0}")
+  @ValueSource(longs = {0L, 1L, 42L, 9001L, -7L})
+  @DisplayName("a varied pitch stays within a tenth of normal")
+  void variedPitch(final long seed) {
+    final Random random = Random.create(seed);
+    for (int i = 0; i < 200; i++) {
+      final float pitch = NightbornSounds.variedPitch(random);
+      assertTrue(pitch >= 0.9F && pitch <= 1.1F, String.valueOf(pitch));
+    }
   }
 
   private static boolean isFile(final JsonElement sound) {

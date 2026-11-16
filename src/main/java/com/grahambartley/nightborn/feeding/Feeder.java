@@ -70,7 +70,7 @@ final class Feeder {
           NightbornSounds.sip(sip.drains()),
           SoundCategory.PLAYERS,
           0.8F,
-          1.0F);
+          NightbornSounds.variedPitch(world.getRandom()));
       mayStartSickness(vampire, victim, session, config, world.getRandom());
     }
     if (VillagerWitnesses.alert(

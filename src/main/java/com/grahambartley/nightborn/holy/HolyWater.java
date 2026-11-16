@@ -177,7 +177,7 @@ public final class HolyWater {
         NightbornSounds.HOLY_WATER_HISS,
         SoundCategory.NEUTRAL,
         0.6F,
-        0.9F + world.random.nextFloat() * 0.2F);
+        NightbornSounds.variedPitch(world.random));
   }
 
   private static boolean isHolyArrow(final ItemStack stack) {

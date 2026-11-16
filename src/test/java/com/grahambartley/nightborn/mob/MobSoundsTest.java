@@ -1,6 +1,7 @@
 package com.grahambartley.nightborn.mob;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.google.gson.JsonObject;
@@ -17,6 +18,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.MethodSource;
 
 @ExtendWith(MinecraftBootstrapExtension.class)
@@ -43,6 +45,13 @@ class MobSoundsTest {
     final JsonObject sounds =
         JsonParser.parseString(Files.readString(ASSETS.resolve("sounds.json"))).getAsJsonObject();
     assertTrue(sounds.has(path), path);
+  }
+
+  @ParameterizedTest(name = "{0}")
+  @EnumSource(value = VampireVoice.class, names = "HISS")
+  @DisplayName("asking for a voice hunters do not have fails loudly")
+  void hunterHasNoSuchVoice(final VampireVoice voice) {
+    assertThrows(IllegalArgumentException.class, () -> MobSounds.hunter(VampireRig.MALE, voice));
   }
 
   @ParameterizedTest(name = "{0} {1}")

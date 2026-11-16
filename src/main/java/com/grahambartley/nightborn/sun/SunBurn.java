@@ -41,7 +41,7 @@ public final class SunBurn {
         NightbornSounds.SIZZLE,
         vampire.getSoundCategory(),
         0.7F,
-        1.0F);
+        NightbornSounds.variedPitch(vampire.getRandom()));
     if (vampire.damage(NightbornDamage.sun(world), settings.sunDamage()) && vampire.isAlive()) {
       MilestoneCriterion.reach(vampire, Milestone.SUN_SURVIVED);
     }

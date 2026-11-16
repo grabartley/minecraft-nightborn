@@ -6,6 +6,7 @@ import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.random.Random;
 
 public final class NightbornSounds {
 
@@ -22,6 +23,10 @@ public final class NightbornSounds {
 
   public static void initialize() {}
 
+  public static float variedPitch(final Random random) {
+    return 0.9F + random.nextFloat() * 0.2F;
+  }
+
   public static List<SoundEvent> all() {
     return List.of(
         DRINK, DRAIN, SIZZLE, STAKE_HIT, SILVER_HIT, HOLY_WATER_HISS, COFFIN_OPEN, COFFIN_CLOSE);
@@ -35,7 +40,7 @@ public final class NightbornSounds {
     return open ? COFFIN_OPEN : COFFIN_CLOSE;
   }
 
-  private static SoundEvent register(final String path) {
+  public static SoundEvent register(final String path) {
     final Identifier id = Identifier.of(Nightborn.MOD_ID, path);
     return Registry.register(Registries.SOUND_EVENT, id, SoundEvent.of(id));
   }

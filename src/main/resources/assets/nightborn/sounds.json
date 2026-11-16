@@ -311,6 +311,7 @@
     ]
   },
   "ambient.castle.additions": {
+    "subtitle": "subtitles.nightborn.ambient.additions",
     "sounds": [
       "nightborn:ambient/oneshot/creak1",
       "nightborn:ambient/oneshot/creak2",
@@ -331,6 +332,7 @@
     ]
   },
   "ambient.crypt.additions": {
+    "subtitle": "subtitles.nightborn.ambient.additions",
     "sounds": [
       "nightborn:ambient/oneshot/drip1",
       "nightborn:ambient/oneshot/drip2",
@@ -351,6 +353,7 @@
     ]
   },
   "ambient.manor.additions": {
+    "subtitle": "subtitles.nightborn.ambient.additions",
     "sounds": [
       "nightborn:ambient/oneshot/creak1",
       "nightborn:ambient/oneshot/creak2",
@@ -372,6 +375,7 @@
     ]
   },
   "ambient.lair.additions": {
+    "subtitle": "subtitles.nightborn.ambient.additions",
     "sounds": [
       "nightborn:ambient/oneshot/drip1",
       "nightborn:ambient/oneshot/drip2",
