@@ -1,7 +1,7 @@
 package com.grahambartley.nightborn.tools.structures.vampire.lair;
 
-import static com.grahambartley.nightborn.tools.structures.vampire.lair.LairFeatures.BLACKSTONE_COFFIN;
-import static com.grahambartley.nightborn.tools.structures.vampire.lair.LairFeatures.DEEPSLATE_COFFIN;
+import static com.grahambartley.nightborn.tools.structures.vampire.lair.LairShrine.BLACKSTONE_COFFIN;
+import static com.grahambartley.nightborn.tools.structures.vampire.lair.LairShrine.DEEPSLATE_COFFIN;
 
 import com.grahambartley.nightborn.tools.structures.template.BlockState;
 import com.grahambartley.nightborn.tools.structures.template.Template;
@@ -10,12 +10,16 @@ import com.grahambartley.nightborn.tools.structures.vampire.Furnishing;
 public final class Grotto {
 
   public static final String PATH = "vampire/lair/grotto";
-  public static final int SIZE_X = 29;
+  public static final int SIZE_X = 31;
   public static final int SIZE_Y = 12;
   public static final int SIZE_Z = 15;
   public static final int LEDGE = 22;
   public static final int LEDGE_TOP = 2;
   public static final int[] BENCHES = {4, 7, 10};
+  public static final int SPRING_X = 14;
+  public static final int SPRING_Z = 7;
+  static final double SPRING_REACH_X = 5.5;
+  static final double SPRING_REACH_Z = 2;
 
   private Grotto() {}
 
@@ -26,8 +30,8 @@ public final class Grotto {
     LairFeatures.path(t, LEDGE - 1, 6, LEDGE - 1, 11);
     spring(t);
     ledge(t);
-    LairFeatures.shrine(t, 6, 1, "south", DEEPSLATE_COFFIN);
-    LairFeatures.shrine(t, 15, 13, "north", BLACKSTONE_COFFIN);
+    LairShrine.cut(t, 6, 1, "south", DEEPSLATE_COFFIN);
+    LairShrine.cut(t, 15, 13, "north", BLACKSTONE_COFFIN);
     hearth(t);
     LairFeatures.readingCorner(t, 2, 4, 7, "east");
     LairFeatures.bones(t, 2, 3, 4);
@@ -38,27 +42,23 @@ public final class Grotto {
   }
 
   private static void spring(final Template t) {
-    for (int x = 8; x <= 20; x++) {
-      for (int z = 5; z <= 9; z++) {
-        final boolean edge = z == 5 || z == 9 || x == 8 || x == 20;
-        t.set(x, 0, z, edge ? LairFeatures.RIM : LairFeatures.POOL);
-        if (edge) {
-          t.set(x, 1, z, LairFeatures.KERB);
-        }
-      }
-    }
-    t.set(20, 1, 7, BlockState.of("nightborn:blood_fountain", "facing", "west", "flowing", true));
-    t.set(14, 1, 9, BlockState.AIR);
-    t.set(14, 1, 5, BlockState.AIR);
+    LairFeatures.pool(t, SPRING_X, SPRING_Z, SPRING_REACH_X, SPRING_REACH_Z);
+    t.set(
+        SPRING_X + 6,
+        1,
+        SPRING_Z,
+        BlockState.of("nightborn:blood_fountain", "facing", "west", "flowing", true));
+    t.set(SPRING_X, 1, SPRING_Z - 3, BlockState.AIR);
+    t.set(SPRING_X, 1, SPRING_Z + 3, BlockState.AIR);
   }
 
   private static void ledge(final Template t) {
     LairCave.ROCK.fill(t, LEDGE, 0, 2, SIZE_X - 1, LEDGE_TOP, 12);
-    LairFeatures.DRESSED.fill(t, LEDGE, 0, 2, LEDGE, LEDGE_TOP, 12);
+    LairShrine.DRESSED.fill(t, LEDGE, 0, 2, LEDGE, LEDGE_TOP, 12);
     for (int z = 6; z <= 8; z++) {
       t.set(LEDGE - 1, 1, z, step());
       t.set(LEDGE, 2, z, step());
-      t.set(LEDGE, 1, z, LairFeatures.DRESSED.base());
+      t.set(LEDGE, 1, z, LairShrine.DRESSED.base());
     }
     final int y = LEDGE_TOP + 1;
     for (int i = 0; i < BENCHES.length; i++) {

@@ -9,8 +9,10 @@ import com.grahambartley.nightborn.tools.structures.vampire.Coffins;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
@@ -25,8 +27,7 @@ class GrottoTest {
   @Test
   void holdsFiveLairCoffinsWhoseLidsCanSlideClear() {
     assertEquals(5, Coffins.in(GROTTO).size());
-    Coffins.assertSound(
-        GROTTO, List.of(LairFeatures.DEEPSLATE_COFFIN, LairFeatures.BLACKSTONE_COFFIN));
+    Coffins.assertSound(GROTTO, List.of(LairShrine.DEEPSLATE_COFFIN, LairShrine.BLACKSTONE_COFFIN));
   }
 
   @ParameterizedTest(name = "the bench coffin at z {0} lies on the ledge")
@@ -57,10 +58,40 @@ class GrottoTest {
   }
 
   @Test
-  void theSpringIsKerbedWithGapsToStepIn() {
-    assertEquals(LairFeatures.POOL, GROTTO.get(14, 0, 7));
-    assertTrue(GROTTO.get(10, 1, 5).startsWith("minecraft:polished_blackstone_brick_slab"));
-    assertEquals(BlockState.AIR, GROTTO.get(14, 1, 5));
-    assertTrue(GROTTO.get(20, 1, 7).startsWith("nightborn:blood_fountain"));
+  void theSpringIsAnOvalKerbedWithGapsToStepIn() {
+    final int x = Grotto.SPRING_X;
+    final int z = Grotto.SPRING_Z;
+    assertEquals(LairFeatures.POOL, GROTTO.get(x, 0, z));
+    assertEquals(LairFeatures.POOL, GROTTO.get(x + 5, 0, z));
+    assertTrue(GROTTO.get(x - 4, 1, z - 2).startsWith("minecraft:polished_blackstone_brick_slab"));
+    assertTrue(!GROTTO.get(x - 5, 0, z - 2).equals(LairFeatures.POOL));
+    assertEquals(BlockState.AIR, GROTTO.get(x, 1, z - 3));
+    assertEquals(BlockState.AIR, GROTTO.get(x, 1, z + 3));
+    assertTrue(GROTTO.get(x + 6, 1, z).startsWith("nightborn:blood_fountain"));
+  }
+
+  static Stream<Arguments> furnishings() {
+    final int y = Grotto.LEDGE_TOP + 1;
+    return Stream.of(
+        Arguments.of(11, 1, 11, "nightborn:ornate_table"),
+        Arguments.of(10, 1, 11, "nightborn:ornate_chair"),
+        Arguments.of(12, 1, 11, "nightborn:ornate_chair"),
+        Arguments.of(27, y + 1, 7, "nightborn:chalice"),
+        Arguments.of(27, y, 5, "nightborn:candelabra"),
+        Arguments.of(27, y, 9, "nightborn:candelabra"),
+        Arguments.of(27, y, 3, "minecraft:chest"));
+  }
+
+  @ParameterizedTest(name = "{3} stands at {0},{1},{2} with nothing buried over it")
+  @MethodSource("furnishings")
+  void theHearthAndLedgeAreFurnished(final int x, final int y, final int z, final String block) {
+    assertTrue(GROTTO.get(x, y, z).startsWith(block), GROTTO.get(x, y, z));
+    final String above = GROTTO.get(x, y + 1, z);
+    assertTrue(!above.contains("deepslate") && !above.contains("tuff"), above);
+  }
+
+  @Test
+  void everyHangingDripstoneIsWhole() {
+    Dripstone.assertHangingWhole(GROTTO);
   }
 }

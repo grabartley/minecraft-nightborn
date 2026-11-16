@@ -17,8 +17,7 @@ class BloodPoolDenTest {
   @Test
   void holdsFiveLairCoffinsWhoseLidsCanSlideClear() {
     assertEquals(5, Coffins.in(DEN).size());
-    Coffins.assertSound(
-        DEN, List.of(LairFeatures.DEEPSLATE_COFFIN, LairFeatures.BLACKSTONE_COFFIN));
+    Coffins.assertSound(DEN, List.of(LairShrine.DEEPSLATE_COFFIN, LairShrine.BLACKSTONE_COFFIN));
   }
 
   @Test
@@ -46,8 +45,8 @@ class BloodPoolDenTest {
   void theAltarPathRunsToThePoolKerb() {
     assertTrue(
         List.of("minecraft:polished_deepslate", "minecraft:cracked_deepslate_tiles")
-            .contains(DEN.get(10, 0, 15)));
-    assertTrue(DEN.get(10, 1, 14).startsWith("minecraft:polished_blackstone_brick_slab"));
+            .contains(DEN.get(9, 0, 16)));
+    assertTrue(DEN.get(10, 1, 15).startsWith("minecraft:polished_blackstone_brick_slab"));
     assertTrue(
         List.of("minecraft:polished_deepslate", "minecraft:cracked_deepslate_tiles")
             .contains(DEN.get(5, 0, 17)));
@@ -57,6 +56,19 @@ class BloodPoolDenTest {
   void aReadingCornerSitsAwayFromThePool() {
     assertTrue(DEN.get(18, 1, 5).startsWith("minecraft:lectern"));
     assertTrue(DEN.get(17, 1, 5).startsWith("nightborn:ornate_chair"));
+    final int c = BloodPoolDen.CENTRE;
+    assertTrue(Math.hypot(18 - c, 5 - c) > 8);
+  }
+
+  @Test
+  void everyHangingDripstoneIsWhole() {
+    Dripstone.assertHangingWhole(DEN);
+  }
+
+  @Test
+  void theSecondChestSitsWithTheBones() {
+    assertTrue(DEN.get(10, 1, 21).startsWith("minecraft:chest"));
+    assertTrue(DEN.get(9, 1, 21).startsWith("minecraft:skeleton_skull"));
   }
 
   @Test

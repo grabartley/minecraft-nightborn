@@ -7,6 +7,7 @@ import com.grahambartley.nightborn.tools.structures.vampire.Stone;
 public final class LairCave {
 
   static final Stone ROCK = new Stone("deepslate", "cobbled_deepslate", "tuff", 45);
+  static final int SHELL = 2;
   static final int WALL_HEIGHT = 3;
   static final int STALACTITE_ROOF = 6;
   static final int STALACTITE_PERCENT = 6;
@@ -33,14 +34,18 @@ public final class LairCave {
   }
 
   public static int roof(final Template t, final int x, final int z) {
+    if (x < SHELL || z < SHELL || x >= t.sizeX() - SHELL || z >= t.sizeZ() - SHELL) {
+      return 0;
+    }
     final double rx = (t.sizeX() - 1) / 2.0;
     final double rz = (t.sizeZ() - 1) / 2.0;
     final double wobble = (Stone.roll(x, 0, z) % 10) / 100.0;
-    final double reach = Math.pow(Math.abs(x - rx) / rx, 4) + Math.pow(Math.abs(z - rz) / rz, 4);
+    final double reach =
+        Math.pow(Math.abs(x - rx) / (rx - 1), 4) + Math.pow(Math.abs(z - rz) / (rz - 1), 4);
     if (reach + wobble > 1) {
       return 0;
     }
-    final int rise = t.sizeY() - 2 - WALL_HEIGHT;
+    final int rise = t.sizeY() - 1 - SHELL - WALL_HEIGHT;
     return WALL_HEIGHT + (int) Math.round(rise * Math.sqrt(1 - reach)) - Stone.roll(z, 1, x) % 2;
   }
 

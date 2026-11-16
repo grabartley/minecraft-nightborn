@@ -1,7 +1,7 @@
 package com.grahambartley.nightborn.tools.structures.vampire.lair;
 
-import static com.grahambartley.nightborn.tools.structures.vampire.lair.LairFeatures.BLACKSTONE_COFFIN;
-import static com.grahambartley.nightborn.tools.structures.vampire.lair.LairFeatures.DEEPSLATE_COFFIN;
+import static com.grahambartley.nightborn.tools.structures.vampire.lair.LairShrine.BLACKSTONE_COFFIN;
+import static com.grahambartley.nightborn.tools.structures.vampire.lair.LairShrine.DEEPSLATE_COFFIN;
 
 import com.grahambartley.nightborn.tools.structures.template.BlockState;
 import com.grahambartley.nightborn.tools.structures.template.Template;
@@ -21,18 +21,18 @@ public final class BloodPoolDen {
     LairCave.carve(t);
     LairFeatures.path(t, 5, 16, 9, 17);
     LairFeatures.path(t, 9, 15, 10, 16);
-    LairFeatures.pool(t, CENTRE, CENTRE, 2.5);
+    LairFeatures.pool(t, CENTRE, CENTRE, 2.5, 2.5);
     t.set(CENTRE, 0, CENTRE, LairFeatures.RIM);
     t.set(
         CENTRE,
         1,
         CENTRE,
         BlockState.of("nightborn:blood_fountain", "facing", "south", "flowing", true));
-    LairFeatures.shrine(t, 6, 1, "south", DEEPSLATE_COFFIN);
-    LairFeatures.shrine(t, 18, 1, "south", BLACKSTONE_COFFIN);
-    LairFeatures.shrine(t, 23, CENTRE, "west", DEEPSLATE_COFFIN);
-    LairFeatures.shrine(t, 1, 6, "east", BLACKSTONE_COFFIN);
-    LairFeatures.shrine(t, 23, 20, "west", BLACKSTONE_COFFIN);
+    LairShrine.cut(t, 6, 1, "south", DEEPSLATE_COFFIN);
+    LairShrine.cut(t, 18, 1, "south", BLACKSTONE_COFFIN);
+    LairShrine.cut(t, 23, CENTRE, "west", DEEPSLATE_COFFIN);
+    LairShrine.cut(t, 1, 6, "east", BLACKSTONE_COFFIN);
+    LairShrine.cut(t, 23, 17, "west", BLACKSTONE_COFFIN);
     gathering(t);
     altar(t);
     remains(t);
@@ -67,7 +67,7 @@ public final class BloodPoolDen {
     LairFeatures.stalagmite(t, 19, 16, 2);
     LairFeatures.stalagmite(t, 4, 12, 1);
     LairFeatures.stalagmite(t, 15, 21, 3);
-    Furnishing.chest(t, 9, 1, 2, "south");
+    Furnishing.chest(t, 10, 1, 21, "north");
     t.set(6, 3, 1, "cobweb");
     t.set(23, 3, CENTRE, "cobweb");
   }

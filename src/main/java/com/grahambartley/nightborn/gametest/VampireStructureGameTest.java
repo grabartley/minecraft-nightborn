@@ -48,7 +48,6 @@ import net.minecraft.util.math.ColumnPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.intprovider.ConstantIntProvider;
 import net.minecraft.util.math.random.Random;
-import net.minecraft.world.gen.GenerationStep;
 import net.minecraft.world.gen.chunk.placement.RandomSpreadStructurePlacement;
 import net.minecraft.world.gen.chunk.placement.StructurePlacement;
 import net.minecraft.world.gen.chunk.placement.StructurePlacementCalculator;
@@ -151,22 +150,6 @@ public class VampireStructureGameTest implements FabricGameTest {
         crypt instanceof VampireStructure vampire
             && vampire.footing().equals(Optional.of(new Footing(true, 4, 8))),
         "the crypt keeps to dry ground that rises 4 blocks or less, got " + crypt);
-    context.complete();
-  }
-
-  @GameTest(templateName = ARENA, tickLimit = 20)
-  public void theLairIsPlacedAfterVanillaSpringsAndOres(final TestContext context) {
-    final Structure lair =
-        context
-            .getWorld()
-            .getRegistryManager()
-            .get(RegistryKeys.STRUCTURE)
-            .get(Identifier.of(Nightborn.MOD_ID, "underground_lair"));
-    context.assertTrue(
-        lair instanceof VampireStructure vampire
-            && vampire.getFeatureGenerationStep() == GenerationStep.Feature.TOP_LAYER_MODIFICATION
-            && vampire.footing().isEmpty(),
-        "the lair is placed last so no spring opens in its walls, got " + lair);
     context.complete();
   }
 

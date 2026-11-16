@@ -3,11 +3,9 @@ package com.grahambartley.nightborn.tools.structures.vampire.lair;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import com.grahambartley.nightborn.tools.structures.template.BlockState;
 import com.grahambartley.nightborn.tools.structures.template.Facing;
+import com.grahambartley.nightborn.tools.structures.template.Pos;
 import com.grahambartley.nightborn.tools.structures.template.Template;
-import com.grahambartley.nightborn.tools.structures.vampire.Coffins;
-import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -21,22 +19,6 @@ class LairFeaturesTest {
     return t;
   }
 
-  @ParameterizedTest(name = "a shrine facing {0} stands its coffin in an open arch")
-  @ValueSource(strings = {"north", "south", "east", "west"})
-  void shrinesHoldAStandingCoffinWithRoomToOpen(final String front) {
-    final Template t = room();
-    final var step = Facing.STEP.get(front);
-    final int x = 7 - step.x() * 6;
-    final int z = 7 - step.z() * 6;
-    LairFeatures.shrine(t, x, z, front, LairFeatures.DEEPSLATE_COFFIN);
-    final List<Coffins.Coffin> coffins = Coffins.in(t);
-    assertEquals(1, coffins.size());
-    assertTrue(coffins.get(0).standing());
-    assertEquals(Facing.OPPOSITE.get(front), coffins.get(0).facing());
-    Coffins.assertSound(t, List.of(LairFeatures.DEEPSLATE_COFFIN));
-    assertEquals(BlockState.AIR, t.get(x + step.x(), 1, z + step.z()));
-  }
-
   @ParameterizedTest(name = "{2} blocks from the centre is {3}")
   @CsvSource({
     "7, 7, 0, nightborn:blood_pool",
@@ -45,11 +27,20 @@ class LairFeaturesTest {
   })
   void thePoolIsRingedByAKerb(final int x, final int z, final int r, final String floor) {
     final Template t = room();
-    LairFeatures.pool(t, 7, 7, 2.5);
+    LairFeatures.pool(t, 7, 7, 2.5, 2.5);
     assertEquals(floor, t.get(x, 0, z));
     if (floor.contains("blackstone")) {
       assertTrue(t.get(x, 1, z).startsWith("minecraft:polished_blackstone_brick_slab"));
     }
+  }
+
+  @ParameterizedTest(name = "an oval pool {0} wide keeps its kerb one block thick at {1},{2}")
+  @CsvSource({"5.5, 13, 7", "5.5, 1, 7", "5.5, 7, 10", "5.5, 7, 4"})
+  void ovalPoolsAreRingedByAThinKerb(final double reach, final int x, final int z) {
+    final Template t = new Template("vampire/test", 15, 8, 15);
+    LairFeatures.pool(t, 7, 7, reach, 2);
+    assertEquals("minecraft:polished_blackstone_bricks", t.get(x, 0, z));
+    assertEquals(null, t.get(x + Integer.signum(x - 7), 0, z + Integer.signum(z - 7)));
   }
 
   @ParameterizedTest(name = "a stalagmite {0} tall ends in a tip")
@@ -84,6 +75,10 @@ class LairFeaturesTest {
       assertEquals("minecraft:bookshelf", t.get(shelfX, 2, z));
     }
     assertTrue(t.get(lecternX, 1, 7).contains("facing=" + toward));
+    assertTrue(t.get(lecternX, 1, 7).contains("has_book=true"));
+    assertEquals(
+        LairFeatures.BOOK,
+        ((java.util.Map<?, ?>) t.blockData().get(new Pos(lecternX, 1, 7)).get("Book")).get("id"));
     assertTrue(
         t.get(chairX, 1, 7).contains("facing=" + Facing.OPPOSITE.get(toward)), t.get(chairX, 1, 7));
   }
