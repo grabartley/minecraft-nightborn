@@ -2,7 +2,6 @@ package com.grahambartley.nightborn.render;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import com.google.gson.JsonParser;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -13,8 +12,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 class BatFormRendererTest {
 
-  private static final Path CLIPS =
-      Path.of("src/client/resources/assets/nightborn/animations/entity/vampire_bat.animation.json");
+  private static final Path CLIPS = GeoAssets.ENTITY_CLIPS.resolve("vampire_bat.animation.json");
 
   @ParameterizedTest(name = "{0}")
   @ValueSource(
@@ -33,11 +31,6 @@ class BatFormRendererTest {
   @DisplayName("every clip bat form plays ships in the vampire bat's animations")
   void playsShippedClips(final float swing) throws IOException {
     final String clip = BatFormAnimatable.pose(swing).animation();
-    assertTrue(
-        JsonParser.parseString(Files.readString(CLIPS))
-            .getAsJsonObject()
-            .getAsJsonObject("animations")
-            .has(clip),
-        clip);
+    assertTrue(GeoAssets.animations(CLIPS).has(clip), clip);
   }
 }

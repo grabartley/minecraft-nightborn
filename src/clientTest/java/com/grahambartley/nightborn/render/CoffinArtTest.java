@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
-import com.google.gson.JsonParser;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -115,15 +114,6 @@ class CoffinArtTest {
   }
 
   private static JsonArray bones() throws IOException {
-    return JsonParser.parseString(Files.readString(file(CoffinArt.GEO)))
-        .getAsJsonObject()
-        .getAsJsonArray("minecraft:geometry")
-        .get(0)
-        .getAsJsonObject()
-        .getAsJsonArray("bones");
-  }
-
-  private static Path file(final Identifier id) {
-    return Path.of("src/client/resources/assets", id.getNamespace()).resolve(id.getPath());
+    return GeoAssets.bones(GeoAssets.file(CoffinArt.GEO));
   }
 }

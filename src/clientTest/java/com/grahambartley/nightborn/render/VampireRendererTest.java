@@ -4,12 +4,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Stream;
 import javax.imageio.ImageIO;
@@ -23,9 +21,7 @@ class VampireRendererTest {
 
   private static final Path TEXTURES =
       Path.of("src/main/resources/assets/nightborn/textures/entity/vampire");
-  private static final Path GEO = Path.of("src/client/resources/assets/nightborn/geo/entity");
-  private static final Path CLIPS =
-      Path.of("src/client/resources/assets/nightborn/animations/entity/vampire.animation.json");
+  private static final Path CLIPS = GeoAssets.ENTITY_CLIPS.resolve("vampire.animation.json");
 
   static Stream<Arguments> sheets() throws IOException {
     try (Stream<Path> files = Files.walk(TEXTURES)) {
@@ -42,7 +38,7 @@ class VampireRendererTest {
   @MethodSource("sheets")
   @DisplayName("every look, eye and stage marks sheet ships at the size its rig maps")
   void sheetMatchesRig(final String sheet, final String rig) throws IOException {
-    final JsonObject description = geometry(rig).getAsJsonObject("description");
+    final JsonObject description = GeoAssets.geometry(rigFile(rig)).getAsJsonObject("description");
     final BufferedImage image = ImageIO.read(TEXTURES.resolve(sheet).toFile());
     assertEquals(description.get("texture_width").getAsInt(), image.getWidth());
     assertEquals(description.get("texture_height").getAsInt(), image.getHeight());
@@ -52,14 +48,8 @@ class VampireRendererTest {
   @ValueSource(strings = {"male", "female"})
   @DisplayName("every bone a clip moves is in each rig, the jaw included")
   void everyAnimatedBoneIsInTheRig(final String rig) throws IOException {
-    final Set<String> bones = new HashSet<>();
-    geometry(rig)
-        .getAsJsonArray("bones")
-        .forEach(bone -> bones.add(bone.getAsJsonObject().get("name").getAsString()));
-    final JsonObject clips =
-        JsonParser.parseString(Files.readString(CLIPS))
-            .getAsJsonObject()
-            .getAsJsonObject("animations");
+    final Set<String> bones = GeoAssets.boneNames(rigFile(rig));
+    final JsonObject clips = GeoAssets.animations(CLIPS);
     for (final String clip : clips.keySet()) {
       final JsonObject animated = clips.getAsJsonObject(clip).getAsJsonObject("bones");
       if (animated != null) {
@@ -78,11 +68,7 @@ class VampireRendererTest {
     assertTrue(Files.exists(TEXTURES.resolve(sheet)));
   }
 
-  private static JsonObject geometry(final String rig) throws IOException {
-    return JsonParser.parseString(Files.readString(GEO.resolve("vampire_" + rig + ".geo.json")))
-        .getAsJsonObject()
-        .getAsJsonArray("minecraft:geometry")
-        .get(0)
-        .getAsJsonObject();
+  private static Path rigFile(final String rig) {
+    return GeoAssets.ENTITY_GEO.resolve("vampire_" + rig + ".geo.json");
   }
 }
