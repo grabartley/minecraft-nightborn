@@ -1,5 +1,6 @@
 package com.grahambartley.nightborn.coffin;
 
+import com.grahambartley.nightborn.sound.NightbornSounds;
 import com.grahambartley.nightborn.vampire.Vampires;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.block.BedBlock;
@@ -16,8 +17,8 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.item.ItemStack;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvents;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.BooleanProperty;
 import net.minecraft.state.property.Properties;
@@ -42,7 +43,6 @@ public class CoffinBlock extends BedBlock {
   public static final BooleanProperty STANDING = BooleanProperty.of("standing");
 
   static final float LID_VOLUME = 0.6F;
-  static final float LID_PITCH = 0.55F;
 
   public CoffinBlock(final Settings settings) {
     super(DyeColor.BLACK, settings);
@@ -114,6 +114,19 @@ public class CoffinBlock extends BedBlock {
     this.spawnBreakParticles(world, player, pos, state);
     world.emitGameEvent(GameEvent.BLOCK_DESTROY, pos, GameEvent.Emitter.of(player, state));
     return state;
+  }
+
+  @Override
+  protected void onStateReplaced(
+      final BlockState state,
+      final World world,
+      final BlockPos pos,
+      final BlockState newState,
+      final boolean moved) {
+    if (world instanceof ServerWorld server && freesOwnerOnReplace(state, newState)) {
+      CoffinOwnership.releaseAt(server, pos);
+    }
+    super.onStateReplaced(state, world, pos, newState, moved);
   }
 
   @Override
@@ -214,6 +227,10 @@ public class CoffinBlock extends BedBlock {
     return state.getBlock() instanceof CoffinBlock && state.get(STANDING);
   }
 
+  static boolean freesOwnerOnReplace(final BlockState state, final BlockState newState) {
+    return state.get(PART) == BedPart.HEAD && !newState.isOf(state.getBlock());
+  }
+
   static boolean pairs(final BlockState state, final BlockState neighborState) {
     return neighborState.isOf(state.getBlock())
         && neighborState.get(PART) != state.get(PART)
@@ -221,7 +238,7 @@ public class CoffinBlock extends BedBlock {
         && neighborState.get(STANDING) == state.get(STANDING);
   }
 
-  private static BlockPos head(final BlockPos pos, final BlockState state) {
+  public static BlockPos head(final BlockPos pos, final BlockState state) {
     return CoffinLayout.head(pos, state.get(PART), state.get(FACING), state.get(STANDING));
   }
 
@@ -240,10 +257,10 @@ public class CoffinBlock extends BedBlock {
     world.playSound(
         null,
         head,
-        open ? SoundEvents.BLOCK_CHEST_OPEN : SoundEvents.BLOCK_CHEST_CLOSE,
+        NightbornSounds.lid(open),
         SoundCategory.BLOCKS,
         LID_VOLUME,
-        LID_PITCH);
+        NightbornSounds.variedPitch(world.getRandom()));
     world.emitGameEvent(player, open ? GameEvent.CONTAINER_OPEN : GameEvent.CONTAINER_CLOSE, head);
   }
 }

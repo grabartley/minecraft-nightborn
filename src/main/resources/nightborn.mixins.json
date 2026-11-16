@@ -4,20 +4,27 @@
 	"compatibilityLevel": "JAVA_21",
 	"mixins": [
 		"BedBlockMixin",
+		"CreeperEntityMixin",
 		"CrossbowItemMixin",
 		"EnchantmentHelperMixin",
+		"EnderDragonEntityMixin",
+		"ExplosionMixin",
 		"HungerManagerMixin",
 		"LivingEntityMixin",
 		"MapStateMixin",
+		"MobEntityMixin",
 		"MobNavigationMixin",
 		"PersistentProjectileEntityMixin",
 		"PhantomSpawnerMixin",
+		"PistonHandlerMixin",
 		"PlayerEntityMixin",
 		"ServerPlayNetworkHandlerMixin",
 		"ServerPlayerEntityMixin",
 		"ServerWorldMixin",
 		"SleepManagerMixin",
-		"TippedArrowRecipeMixin"
+		"TippedArrowRecipeMixin",
+		"VillagerEntityMixin",
+		"WorldMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1

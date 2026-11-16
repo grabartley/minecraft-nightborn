@@ -1,5 +1,7 @@
 {
   "values": [
-    "minecraft:player"
+    "minecraft:player",
+    "nightborn:hunter",
+    "nightborn:guild_master"
   ]
 }

@@ -33,11 +33,16 @@ public final class BiteRules {
 
   public static boolean startsSickness(
       final boolean victimIsHumanPlayer,
+      final boolean turningBite,
       final boolean playersCanTurnPlayers,
       final boolean firstRoll,
       final int roll,
       final int chancePercent) {
-    return victimIsHumanPlayer && playersCanTurnPlayers && firstRoll && roll < chancePercent;
+    return victimIsHumanPlayer
+        && turningBite
+        && playersCanTurnPlayers
+        && firstRoll
+        && roll < chancePercent;
   }
 
   public static int resistedChance(final int chancePercent, final double biteResistance) {

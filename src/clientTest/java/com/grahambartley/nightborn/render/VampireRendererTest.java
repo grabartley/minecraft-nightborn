@@ -28,10 +28,11 @@ class VampireRendererTest {
       Path.of("src/client/resources/assets/nightborn/animations/entity/vampire.animation.json");
 
   static Stream<Arguments> sheets() throws IOException {
-    try (Stream<Path> files = Files.list(TEXTURES)) {
+    try (Stream<Path> files = Files.walk(TEXTURES)) {
       return files
-          .map(file -> file.getFileName().toString())
-          .map(name -> Arguments.of(name, name.startsWith("female") ? "female" : "male"))
+          .filter(Files::isRegularFile)
+          .map(file -> TEXTURES.relativize(file).toString())
+          .map(name -> Arguments.of(name, name.contains("female") ? "female" : "male"))
           .toList()
           .stream();
     }
@@ -39,7 +40,7 @@ class VampireRendererTest {
 
   @ParameterizedTest(name = "{0} on the {1} rig")
   @MethodSource("sheets")
-  @DisplayName("every look and eye sheet ships at the size its rig maps")
+  @DisplayName("every look, eye and stage marks sheet ships at the size its rig maps")
   void sheetMatchesRig(final String sheet, final String rig) throws IOException {
     final JsonObject description = geometry(rig).getAsJsonObject("description");
     final BufferedImage image = ImageIO.read(TEXTURES.resolve(sheet).toFile());

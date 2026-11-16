@@ -37,4 +37,16 @@ class PreyTest {
       final boolean downed, final boolean prey, final boolean provoked, final boolean bites) {
     assertEquals(bites, Prey.mayBite(downed, prey, provoked));
   }
+
+  @ParameterizedTest(name = "peaceful {0}, player {1}: spared {2}")
+  @CsvSource({
+    "true, true, true",
+    "true, false, false",
+    "false, true, false",
+    "false, false, false"
+  })
+  @DisplayName("on peaceful a vampire mob never hunts players, but still hunts animals")
+  void spared(final boolean peaceful, final boolean player, final boolean spared) {
+    assertEquals(spared, Prey.spared(peaceful, player));
+  }
 }

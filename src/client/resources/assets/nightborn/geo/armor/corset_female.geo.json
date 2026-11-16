@@ -3,7 +3,7 @@
 	"minecraft:geometry": [
 		{
 			"description": {
-				"identifier": "geometry.clothing_chest_female",
+				"identifier": "geometry.corset_female",
 				"texture_width": 64,
 				"texture_height": 64,
 				"visible_bounds_width": 2,
@@ -40,47 +40,36 @@
 							],
 							"size": [
 								8,
-								12,
+								11,
 								4
 							],
-							"inflate": 0.6,
+							"inflate": 0.4,
 							"uv": [
 								0,
 								0
 							]
-						}
-					]
-				},
-				{
-					"name": "dyed_tails",
-					"parent": "armorBody",
-					"pivot": [
-						0,
-						12,
-						0
-					],
-					"cubes": [
+						},
 						{
 							"origin": [
-								-4,
-								8,
-								-2
+								-1,
+								10,
+								-3
 							],
 							"size": [
-								8,
-								4,
-								4
+								2,
+								2,
+								1
 							],
-							"inflate": 0.7,
+							"inflate": -0.1,
 							"uv": [
-								0,
-								16
+								58,
+								15
 							]
 						}
 					]
 				},
 				{
-					"name": "collar",
+					"name": "chemise",
 					"parent": "armorBody",
 					"pivot": [
 						0,
@@ -91,18 +80,63 @@
 						{
 							"origin": [
 								-4,
-								24,
-								0.5
+								23,
+								-2
 							],
 							"size": [
 								8,
-								2.5,
-								1.5
+								1,
+								4
 							],
-							"inflate": 0.7,
+							"inflate": 0.3,
 							"uv": [
 								0,
-								28
+								15
+							]
+						},
+						{
+							"origin": [
+								-1,
+								13,
+								2
+							],
+							"size": [
+								2,
+								9,
+								1
+							],
+							"inflate": -0.28,
+							"uv": [
+								24,
+								0
+							]
+						}
+					]
+				},
+				{
+					"name": "laces",
+					"parent": "armorBody",
+					"pivot": [
+						0,
+						13,
+						2.6
+					],
+					"cubes": [
+						{
+							"origin": [
+								-1,
+								10,
+								2.4
+							],
+							"size": [
+								2,
+								4,
+								1
+							],
+							"inflate": -0.3,
+							"uv": [
+								52,
+								15
 							]
 						}
 					]
@@ -113,29 +147,10 @@
 						-5,
 						22,
 						0
-					],
-					"cubes": [
-						{
-							"origin": [
-								-7,
-								12,
-								-2
-							],
-							"size": [
-								3,
-								1,
-								4
-							],
-							"inflate": 0.5,
-							"uv": [
-								32,
-								34
-							]
-						}
 					]
 				},
 				{
-					"name": "dyed_right_sleeve",
+					"name": "right_puff",
 					"parent": "armorRightArm",
 					"pivot": [
 						-5,
@@ -146,18 +161,35 @@
 						{
 							"origin": [
 								-7,
-								12,
+								19,
 								-2
 							],
 							"size": [
 								3,
-								12,
+								5,
 								4
 							],
-							"inflate": 0.35,
+							"inflate": 0.7,
 							"uv": [
-								32,
+								30,
 								0
+							]
+						},
+						{
+							"origin": [
+								-7,
+								19,
+								-2
+							],
+							"size": [
+								3,
+								1,
+								4
+							],
+							"inflate": 0.78,
+							"uv": [
+								24,
+								15
 							]
 						}
 					]
@@ -168,29 +200,10 @@
 						5,
 						22,
 						0
-					],
-					"cubes": [
-						{
-							"origin": [
-								4,
-								12,
-								-2
-							],
-							"size": [
-								3,
-								1,
-								4
-							],
-							"inflate": 0.5,
-							"uv": [
-								48,
-								34
-							]
-						}
 					]
 				},
 				{
-					"name": "dyed_left_sleeve",
+					"name": "left_puff",
 					"parent": "armorLeftArm",
 					"pivot": [
 						5,
@@ -201,18 +214,35 @@
 						{
 							"origin": [
 								4,
-								12,
+								19,
 								-2
 							],
 							"size": [
 								3,
-								12,
+								5,
 								4
 							],
-							"inflate": 0.35,
+							"inflate": 0.7,
 							"uv": [
-								32,
-								16
+								44,
+								0
+							]
+						},
+						{
+							"origin": [
+								4,
+								19,
+								-2
+							],
+							"size": [
+								3,
+								1,
+								4
+							],
+							"inflate": 0.78,
+							"uv": [
+								38,
+								15
 							]
 						}
 					]

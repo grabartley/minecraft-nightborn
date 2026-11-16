@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:gift",
+  "random_sequence": "nightborn:contract/clear_household",
+  "pools": [
+    { "rolls": 1, "entries": [ { "type": "minecraft:item", "name": "minecraft:emerald", "functions": [ { "function": "minecraft:set_count", "count": { "type": "minecraft:uniform", "min": 16, "max": 24 } } ] } ] },
+    { "rolls": 1, "entries": [ { "type": "minecraft:item", "name": "nightborn:silver_ingot", "functions": [ { "function": "minecraft:set_count", "count": { "type": "minecraft:uniform", "min": 4, "max": 8 } } ] } ] },
+    { "rolls": 1, "entries": [
+      { "type": "minecraft:item", "name": "nightborn:silver_axe", "weight": 2 },
+      { "type": "minecraft:item", "name": "nightborn:silver_crucifix", "weight": 2 },
+      { "type": "minecraft:item", "name": "nightborn:silver_stake", "weight": 3 }
+    ] }
+  ]
+}

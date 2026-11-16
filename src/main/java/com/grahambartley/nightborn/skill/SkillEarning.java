@@ -25,12 +25,25 @@ public final class SkillEarning {
     }
   }
 
-  public static boolean fromHunt(final PlayerEntity hunter, final SkillSettings settings) {
-    if (Vampires.isVampire(hunter) || settings.huntPoints() <= 0) {
+  public static int huntPoints(final SkillSettings settings, final int stageRank) {
+    return settings.huntPoints() + Math.max(0, stageRank) * settings.stagePoints();
+  }
+
+  public static boolean fromHunt(
+      final PlayerEntity hunter, final SkillSettings settings, final int stageRank) {
+    return grantHunterPoints(hunter, huntPoints(settings, stageRank));
+  }
+
+  public static boolean fromContract(final PlayerEntity hunter, final SkillSettings settings) {
+    return grantHunterPoints(hunter, settings.contractPoints());
+  }
+
+  private static boolean grantHunterPoints(final PlayerEntity hunter, final int points) {
+    if (Vampires.isVampire(hunter) || points <= 0) {
       return false;
     }
     final TreeProgress progress = SkillAttachment.get(hunter, SkillTree.HUNTER);
-    SkillAttachment.set(hunter, SkillTree.HUNTER, progress.addPoints(settings.huntPoints()));
+    SkillAttachment.set(hunter, SkillTree.HUNTER, progress.addPoints(points));
     return true;
   }
 }

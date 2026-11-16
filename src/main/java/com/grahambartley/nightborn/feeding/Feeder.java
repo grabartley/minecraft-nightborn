@@ -6,10 +6,13 @@ import com.grahambartley.nightborn.blood.BloodAttachment;
 import com.grahambartley.nightborn.blood.BloodBottleItem;
 import com.grahambartley.nightborn.blood.BloodValue;
 import com.grahambartley.nightborn.config.NightbornConfig;
+import com.grahambartley.nightborn.mind.MindTies;
 import com.grahambartley.nightborn.network.PlayerCue;
 import com.grahambartley.nightborn.network.PlayerCues;
 import com.grahambartley.nightborn.sickness.BiteSickness;
 import com.grahambartley.nightborn.skill.SkillEarning;
+import com.grahambartley.nightborn.sound.NightbornSounds;
+import com.grahambartley.nightborn.thrall.Thralls;
 import com.grahambartley.nightborn.vampire.NightbornDamage;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.attribute.EntityAttributes;
@@ -22,7 +25,6 @@ import net.minecraft.item.Items;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.math.random.Random;
 
 final class Feeder {
@@ -52,7 +54,7 @@ final class Feeder {
     if (sip.take() > 0.0F) {
       final float before = victim.getHealth();
       victim.damage(bite, sip.drains() ? sip.take() + victim.getAbsorptionAmount() : sip.take());
-      taken = Math.max(0.0F, before - Math.max(0.0F, victim.getHealth()));
+      taken = BloodValue.taken(before, victim.getHealth());
       session.took(taken);
       if (taken > 0.0F) {
         MilestoneCriterion.reach(victim, Milestone.BITTEN);
@@ -65,11 +67,11 @@ final class Feeder {
       world.playSound(
           null,
           vampire.getBlockPos(),
-          SoundEvents.ENTITY_GENERIC_DRINK,
+          NightbornSounds.sip(sip.drains()),
           SoundCategory.PLAYERS,
           0.8F,
-          0.6F);
-      mayStartSickness(victim, session, config, world.getRandom());
+          NightbornSounds.variedPitch(world.getRandom()));
+      mayStartSickness(vampire, victim, session, config, world.getRandom());
     }
     if (VillagerWitnesses.alert(
             world, vampire, victim, session, config.feeding().witnessRange(), bite)
@@ -108,6 +110,7 @@ final class Feeder {
       if (seconds > 0) {
         victim.addStatusEffect(new StatusEffectInstance(StatusEffects.WEAKNESS, seconds * 20));
       }
+      Thralls.mayBind(vampire, victim, session.totalTaken());
     }
   }
 
@@ -146,6 +149,7 @@ final class Feeder {
   }
 
   private static void mayStartSickness(
+      final ServerPlayerEntity vampire,
       final LivingEntity victim,
       final FeedingSession session,
       final NightbornConfig config,
@@ -153,6 +157,7 @@ final class Feeder {
     BiteSickness.startFromBite(
         victim,
         config.turning().biteTurnChance(),
+        TurningBite.isOn(vampire),
         config.turning().playersCanTurnPlayers(),
         session.rollTurnOnce(),
         random,
@@ -166,7 +171,7 @@ final class Feeder {
             victim.getHealth(),
             victim.getMaxHealth(),
             config.feeding().resistChance(),
-            victim.isSleeping());
+            victim.isSleeping() || MindTies.mesmerised(victim));
   }
 
   private static void breakFree(final ServerPlayerEntity vampire, final LivingEntity victim) {

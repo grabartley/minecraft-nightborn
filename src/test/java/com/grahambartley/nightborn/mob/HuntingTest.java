@@ -23,18 +23,31 @@ class HuntingTest {
     assertEquals(hunts, Hunting.batHunts(peaceful, false, time, openSky));
   }
 
-  @ParameterizedTest(name = "hunting hours {0}, endangered {1}, provoked {2}: drops {3}")
+  @ParameterizedTest(
+      name = "hours {0}, hungry {1}, endangered {2}, provoked {3}, out of range {4}: drops {5}")
   @CsvSource({
-    "true, false, false, false",
-    "true, false, true, false",
-    "false, false, false, true",
-    "false, false, true, false",
-    "true, true, false, true",
-    "false, true, true, true"
+    "true, true, false, false, false, false",
+    "true, false, false, false, false, true",
+    "false, true, false, false, false, true",
+    "true, true, false, false, true, true",
+    "true, false, false, true, false, false",
+    "false, false, false, true, false, false",
+    "false, false, false, true, true, true",
+    "true, true, true, false, false, true",
+    "false, true, true, true, false, true"
   })
-  @DisplayName("a vampire drops its prey by day or at dawn, and its foe only to reach shade")
+  @DisplayName(
+      "a vampire keeps prey only while hungry at night in range, and a foe until it strays too"
+          + " far from home or needs shade")
   void dropsTarget(
-      final boolean hours, final boolean endangered, final boolean provoked, final boolean drops) {
-    assertEquals(drops, Hunting.dropsTarget(hours, endangered, provoked));
+      final boolean hours,
+      final boolean hungry,
+      final boolean endangered,
+      final boolean provoked,
+      final boolean outOfRange,
+      final boolean drops) {
+    assertEquals(
+        drops,
+        Hunting.dropsTarget(new Hunting.Pursuit(hours, hungry, endangered, provoked, outOfRange)));
   }
 }

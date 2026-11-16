@@ -3,14 +3,14 @@
 	"minecraft:geometry": [
 		{
 			"description": {
-				"identifier": "geometry.clothing_head",
+				"identifier": "geometry.top_hat_male",
 				"texture_width": 64,
 				"texture_height": 64,
 				"visible_bounds_width": 2,
-				"visible_bounds_height": 3.5,
+				"visible_bounds_height": 4.5,
 				"visible_bounds_offset": [
 					0,
-					1.25,
+					1.75,
 					0
 				]
 			},
@@ -34,15 +34,66 @@
 					"cubes": [
 						{
 							"origin": [
-								-5.5,
-								31.5,
-								-5.5
+								-6,
+								31,
+								-6
 							],
 							"size": [
-								11,
+								12,
 								1,
-								11
+								12
 							],
+							"uv": [
+								0,
+								14
+							]
+						},
+						{
+							"origin": [
+								-6,
+								31.4,
+								-5
+							],
+							"size": [
+								1,
+								1,
+								10
+							],
+							"inflate": 0.05,
+							"uv": [
+								32,
+								27
+							]
+						},
+						{
+							"origin": [
+								5,
+								31.4,
+								-5
+							],
+							"size": [
+								1,
+								1,
+								10
+							],
+							"inflate": 0.05,
+							"uv": [
+								0,
+								38
+							]
+						},
+						{
+							"origin": [
+								-4,
+								32,
+								-4
+							],
+							"size": [
+								8,
+								6,
+								8
+							],
+							"inflate": 0.3,
 							"uv": [
 								0,
 								0
@@ -50,18 +101,19 @@
 						},
 						{
 							"origin": [
-								-4.25,
-								32.5,
-								-4.25
+								-4,
+								38,
+								-4
 							],
 							"size": [
-								8.5,
-								4,
-								8.5
+								8,
+								3,
+								8
 							],
+							"inflate": 0.6,
 							"uv": [
 								0,
-								14
+								27
 							]
 						}
 					]
@@ -77,21 +129,64 @@
 					"cubes": [
 						{
 							"origin": [
-								-4.25,
-								32.5,
-								-4.25
+								-4,
+								32,
+								-4
 							],
 							"size": [
-								8.5,
-								1,
-								8.5
+								8,
+								2,
+								8
 							],
-							"inflate": 0.1,
+							"inflate": 0.45,
+							"uv": [
+								22,
+								38
+							]
+						},
+						{
+							"origin": [
+								-1,
+								32,
+								-5
+							],
+							"size": [
+								2,
+								2,
+								1
+							],
+							"inflate": -0.2,
 							"uv": [
 								0,
-								28
+								49
+							]
+						},
+						{
+							"origin": [
+								4.2,
+								32.2,
+								-1
+							],
+							"size": [
+								1,
+								2,
+								2
+							],
+							"inflate": -0.1,
+							"uv": [
+								54,
+								38
 							]
 						}
+					]
+				},
+				{
+					"name": "ribbon",
+					"parent": "armorHead",
+					"pivot": [
+						0,
+						33,
+						4.6
 					]
 				}
 			]

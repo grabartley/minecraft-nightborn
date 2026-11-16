@@ -316,8 +316,8 @@ public class CoffinGameTest implements FabricGameTest {
           vampire.wakeUp(false, true);
           context.getWorld().breakBlock(context.getAbsolutePos(head), false);
           context.assertTrue(
-              vampire.getRespawnTarget(false, TeleportTarget.NO_OP).missingRespawnBlock(),
-              "a vampire whose coffin is gone respawns at world spawn");
+              vampire.getSpawnPointPosition() == null,
+              "losing the coffin clears the respawn point, so the vampire respawns at world spawn");
           TestPlayers.finish(context, vampire);
         });
   }

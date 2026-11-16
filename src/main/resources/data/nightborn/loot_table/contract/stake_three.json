@@ -1,0 +1,8 @@
+{
+  "type": "minecraft:gift",
+  "random_sequence": "nightborn:contract/stake_three",
+  "pools": [
+    { "rolls": 1, "entries": [ { "type": "minecraft:item", "name": "minecraft:emerald", "functions": [ { "function": "minecraft:set_count", "count": { "type": "minecraft:uniform", "min": 6, "max": 10 } } ] } ] },
+    { "rolls": 1, "entries": [ { "type": "minecraft:item", "name": "nightborn:silver_ingot", "functions": [ { "function": "minecraft:set_count", "count": { "type": "minecraft:uniform", "min": 1, "max": 3 } } ] } ] }
+  ]
+}

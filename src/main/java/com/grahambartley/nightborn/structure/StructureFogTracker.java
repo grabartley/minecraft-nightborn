@@ -1,7 +1,6 @@
 package com.grahambartley.nightborn.structure;
 
 import com.grahambartley.nightborn.network.StructureFogPayload;
-import it.unimi.dsi.fastutil.longs.LongSet;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -18,7 +17,6 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.structure.StructureStart;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.chunk.Chunk;
-import net.minecraft.world.gen.structure.Structure;
 
 public final class StructureFogTracker {
 
@@ -55,7 +53,7 @@ public final class StructureFogTracker {
     final List<FogZone> zones = new ArrayList<>();
     for (int dx = -CHUNK_RADIUS; dx <= CHUNK_RADIUS; dx++) {
       for (int dz = -CHUNK_RADIUS; dz <= CHUNK_RADIUS; dz++) {
-        loaded(world, centre.x + dx, centre.z + dz)
+        Optional.ofNullable(world.getChunkManager().getWorldChunk(centre.x + dx, centre.z + dz))
             .ifPresent(chunk -> collect(world, chunk, zones));
       }
     }
@@ -64,25 +62,13 @@ public final class StructureFogTracker {
 
   private static void collect(
       final ServerWorld world, final Chunk chunk, final List<FogZone> zones) {
-    for (final Map.Entry<Structure, LongSet> entry : chunk.getStructureReferences().entrySet()) {
-      if (entry.getKey().getType() != NightbornStructures.VAMPIRE_STRUCTURE) {
-        continue;
-      }
-      for (final long reference : entry.getValue()) {
-        final ChunkPos home = new ChunkPos(reference);
-        loaded(world, home.x, home.z)
-            .map(startChunk -> startChunk.getStructureStart(entry.getKey()))
-            .ifPresent(start -> zoneOf(start).ifPresent(zones::add));
-      }
+    for (final StructureStart start : VampireStructureStarts.referencedBy(world, chunk)) {
+      zoneOf(start).ifPresent(zones::add);
     }
   }
 
   private static Optional<FogZone> zoneOf(final StructureStart start) {
     return StructureHeart.of(start.getChildren())
         .map(heart -> FogZone.around(heart, start.getBoundingBox()));
-  }
-
-  private static Optional<Chunk> loaded(final ServerWorld world, final int x, final int z) {
-    return Optional.ofNullable(world.getChunkManager().getWorldChunk(x, z));
   }
 }

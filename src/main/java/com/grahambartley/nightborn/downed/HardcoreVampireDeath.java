@@ -1,14 +1,18 @@
 package com.grahambartley.nightborn.downed;
 
 import com.grahambartley.nightborn.Nightborn;
+import com.grahambartley.nightborn.coffin.CoffinOwnership;
+import com.grahambartley.nightborn.coffin.CoffinRespawn;
 import com.grahambartley.nightborn.faction.Faction;
 import com.grahambartley.nightborn.faction.FactionAttachment;
 import com.grahambartley.nightborn.familiar.FamiliarRelease;
+import com.grahambartley.nightborn.feeding.TurningBite;
 import com.grahambartley.nightborn.server.ServerConfigService;
 import com.grahambartley.nightborn.sickness.BiteSicknessAttachment;
 import com.grahambartley.nightborn.skill.PowerCooldownAttachment;
 import com.grahambartley.nightborn.skill.PowerCooldowns;
 import com.grahambartley.nightborn.skill.SkillAttachment;
+import com.grahambartley.nightborn.thrall.Thralls;
 import com.grahambartley.nightborn.vampire.Vampires;
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.fabricmc.fabric.api.event.Event;
@@ -17,7 +21,6 @@ import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.GameRules;
-import net.minecraft.world.World;
 
 public final class HardcoreVampireDeath {
 
@@ -41,6 +44,7 @@ public final class HardcoreVampireDeath {
   static void reset(final ServerPlayerEntity player) {
     FactionAttachment.set(player, Faction.HUMAN);
     BiteSicknessAttachment.clear(player);
+    TurningBite.set(player, false);
     SkillAttachment.clear(player);
     PowerCooldownAttachment.set(player, PowerCooldowns.NONE);
     player.getEnderChestInventory().clear();
@@ -51,7 +55,9 @@ public final class HardcoreVampireDeath {
       player.experienceProgress = 0.0F;
       player.totalExperience = 0;
     }
-    player.setSpawnPoint(World.OVERWORLD, null, 0.0F, false, false);
-    FamiliarRelease.freeOwner(player.getServer(), player.getUuid());
+    CoffinOwnership.release(player.server, player.getUuid());
+    CoffinRespawn.clear(player);
+    Thralls.freeOwner(player.server, player.getUuid());
+        FamiliarRelease.freeOwner(player.server, player.getUuid());
   }
 }

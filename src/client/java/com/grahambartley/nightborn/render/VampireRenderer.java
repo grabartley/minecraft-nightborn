@@ -14,6 +14,7 @@ public class VampireRenderer extends GeoEntityRenderer<VampireEntity> {
   public VampireRenderer(final EntityRendererFactory.Context context) {
     super(context, new VampireModel());
     this.shadowRadius = SHADOW_RADIUS;
+    addRenderLayer(new VampireStageMarksLayer(this));
     addRenderLayer(new VampireEyesLayer(this));
     addRenderLayer(new RigArmorLayer<>(this, this::getAnimatable));
   }

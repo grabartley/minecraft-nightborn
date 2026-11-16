@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.grahambartley.nightborn.blood.BloodQuality;
 import java.util.UUID;
+import net.minecraft.util.math.Vec3d;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -22,6 +23,15 @@ class FeedingSessionTest {
   @DisplayName("letting go is noticed once the repeated use stops arriving")
   void release(final long now, final boolean released) {
     assertEquals(released, session().released(now));
+  }
+
+  @ParameterizedTest(name = "first {0}, then {1}")
+  @CsvSource({"1.0, 2.0", "0.0, 0.0", "-4.5, 9.0"})
+  @DisplayName("the anchor is the first position given and never moves")
+  void anchorStaysWhereTheBiteBegan(final double first, final double then) {
+    final FeedingSession session = session();
+    assertEquals(new Vec3d(first, 64.0, first), session.anchorAt(new Vec3d(first, 64.0, first)));
+    assertEquals(new Vec3d(first, 64.0, first), session.anchorAt(new Vec3d(then, 70.0, then)));
   }
 
   @Test

@@ -20,7 +20,7 @@ public record BloodSettings(
 
   public static final IntSetting RESTING_DRAIN_SECONDS =
       new IntSetting(
-          SECTION, "restingDrainSeconds", 30, 5, 600, c -> c.blood().restingDrainSeconds());
+          SECTION, "restingDrainSeconds", 300, 5, 600, c -> c.blood().restingDrainSeconds());
   public static final IntSetting ANIMAL_BLOOD =
       new IntSetting(SECTION, "animalBlood", 50, 0, 500, c -> c.blood().animalBlood());
   public static final IntSetting VILLAGER_BLOOD =

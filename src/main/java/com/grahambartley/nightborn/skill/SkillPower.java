@@ -1,5 +1,8 @@
 package com.grahambartley.nightborn.skill;
 
+import com.grahambartley.nightborn.occult.FamiliarPower;
+import com.grahambartley.nightborn.occult.FogPower;
+import com.grahambartley.nightborn.occult.ShadowStepPower;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import java.util.List;
@@ -12,7 +15,12 @@ public record SkillPower(
     int cooldownTicks,
     List<StatusEffectInstance> effects,
     Optional<Identifier> sound,
-    Optional<TrackPower> track) {
+    Optional<TrackPower> track,
+    Optional<MesmerisePower> mesmerise,
+    Optional<FamiliarPower> familiar,
+    Optional<FogPower> fog,
+    Optional<ShadowStepPower> shadowStep,
+    Optional<MobPowerUse> mob) {
 
   public static final Codec<SkillPower> CODEC =
       RecordCodecBuilder.create(
@@ -28,6 +36,17 @@ public record SkillPower(
                           .optionalFieldOf("effects", List.of())
                           .forGetter(SkillPower::effects),
                       Identifier.CODEC.optionalFieldOf("sound").forGetter(SkillPower::sound),
-                      TrackPower.CODEC.optionalFieldOf("track").forGetter(SkillPower::track))
+                      TrackPower.CODEC.optionalFieldOf("track").forGetter(SkillPower::track),
+                      MesmerisePower.CODEC
+                          .optionalFieldOf("mesmerise")
+                          .forGetter(SkillPower::mesmerise),
+                      FamiliarPower.CODEC
+                          .optionalFieldOf("familiar")
+                          .forGetter(SkillPower::familiar),
+                      FogPower.CODEC.optionalFieldOf("fog").forGetter(SkillPower::fog),
+                      ShadowStepPower.CODEC
+                          .optionalFieldOf("shadow_step")
+                          .forGetter(SkillPower::shadowStep),
+                      MobPowerUse.CODEC.optionalFieldOf("mob").forGetter(SkillPower::mob))
                   .apply(instance, SkillPower::new));
 }

@@ -1,14 +1,20 @@
 package com.grahambartley.nightborn.gametest;
 
+import com.grahambartley.nightborn.coffin.CoffinOwnersState;
+import com.grahambartley.nightborn.coffin.CoffinOwnership;
 import com.grahambartley.nightborn.config.DownedSettings;
 import com.grahambartley.nightborn.faction.Faction;
 import com.grahambartley.nightborn.faction.FactionAttachment;
+import com.grahambartley.nightborn.feeding.TurningBite;
 import com.grahambartley.nightborn.server.ServerConfigService;
 import com.grahambartley.nightborn.skill.SkillAttachment;
 import com.grahambartley.nightborn.skill.SkillProgress;
 import com.grahambartley.nightborn.skill.SkillTree;
 import com.grahambartley.nightborn.skill.TreeProgress;
+import com.grahambartley.nightborn.thrall.ThrallRegistry;
 import com.grahambartley.nightborn.vampire.NightbornDamage;
+import java.util.Optional;
+import java.util.UUID;
 import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
@@ -21,6 +27,7 @@ import net.minecraft.test.GameTest;
 import net.minecraft.test.TestContext;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
 
 public class HardcoreVampireDeathGameTest implements FabricGameTest {
@@ -58,6 +65,10 @@ public class HardcoreVampireDeathGameTest implements FabricGameTest {
                 1,
                 Identifier.of("nightborn", "noble")));
     SkillAttachment.set(dead, SkillTree.HUNTER, TreeProgress.EMPTY.withEarned(2));
+    TurningBite.set(dead, true);
+    ThrallRegistry.of(context.getWorld().getServer()).bind(dead.getUuid(), UUID.randomUUID());
+    final BlockPos coffin = CoffinStage.coffin(context, new BlockPos(2, 2, 2), Direction.EAST);
+    CoffinOwnership.claim(context.getWorld(), context.getAbsolutePos(coffin), dead.getUuid());
     dead.setSpawnPoint(
         World.OVERWORLD, context.getAbsolutePos(new BlockPos(4, 2, 4)), 0.0F, true, false);
     context.runAtTick(
@@ -72,9 +83,18 @@ public class HardcoreVampireDeathGameTest implements FabricGameTest {
                   .getPlayerManager()
                   .respawnPlayer(dead, false, Entity.RemovalReason.KILLED);
           context.assertEquals(FactionAttachment.get(respawned), Faction.HUMAN, "comes back human");
+          context.assertFalse(TurningBite.isOn(respawned), "the turning bite is cleared");
+          context.assertEquals(
+              ThrallRegistry.of(context.getWorld().getServer()).count(respawned.getUuid()),
+              0,
+              "their thralls are freed");
           context.assertTrue(
               respawned.getEnderChestInventory().isEmpty(), "ender chest is emptied");
           context.assertTrue(respawned.getSpawnPointPosition() == null, "no respawn point is kept");
+          context.assertEquals(
+              CoffinOwnersState.get(context.getWorld().getServer()).coffinOf(respawned.getUuid()),
+              Optional.empty(),
+              "the coffin is unassigned");
           context.assertEquals(
               SkillAttachment.get(respawned),
               SkillProgress.EMPTY,

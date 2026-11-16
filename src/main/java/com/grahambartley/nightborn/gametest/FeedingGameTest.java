@@ -13,11 +13,14 @@ import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.MovementType;
 import net.minecraft.entity.ai.brain.MemoryModuleType;
+import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.passive.CowEntity;
 import net.minecraft.entity.passive.VillagerEntity;
+import net.minecraft.entity.vehicle.BoatEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -28,11 +31,14 @@ import net.minecraft.test.GameTest;
 import net.minecraft.test.TestContext;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 
 public class FeedingGameTest implements FabricGameTest {
 
   static final String BATCH = "feeding";
+  static final String RESISTING = "feeding-resisting";
   static final String ARENA = "nightborn:vampire_arena";
+  static final double WALK_STEP = 0.15;
 
   @BeforeBatch(batchId = BATCH)
   public void neverResist(final ServerWorld world) {
@@ -48,6 +54,53 @@ public class FeedingGameTest implements FabricGameTest {
         world.getServer(),
         ServerConfigService.current()
             .with(FeedingSettings.RESIST_CHANCE, FeedingSettings.RESIST_CHANCE.defaultValue()));
+  }
+
+  @BeforeBatch(batchId = RESISTING)
+  public void alwaysResist(final ServerWorld world) {
+    FeedingSessions.clearAll();
+    ServerConfigService.update(
+        world.getServer(), ServerConfigService.current().with(FeedingSettings.RESIST_CHANCE, 100));
+  }
+
+  @AfterBatch(batchId = RESISTING)
+  public void restoreResistAfterResisting(final ServerWorld world) {
+    restoreResist(world);
+  }
+
+  @GameTest(templateName = ARENA, batchId = RESISTING, tickLimit = 60)
+  public void aVictimThatBreaksFreeIsNotHeldAnyMore(final TestContext context) {
+    final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(2, 2, 4));
+    final CowEntity cow = still(context.spawnEntity(EntityType.COW, new BlockPos(3, 2, 4)));
+    cow.getAttributeInstance(EntityAttributes.GENERIC_MAX_HEALTH).setBaseValue(200.0);
+    cow.setHealth(200.0F);
+    final Vec3d[] start = new Vec3d[1];
+    context.runAtTick(5, () -> start[0] = cow.getPos());
+    context.runAtEveryTick(
+        () -> {
+          if (context.getTick() >= 5 && context.getTick() <= 40) {
+            if (context.getTick() <= 30) {
+              hold(context, vampire, cow);
+            }
+            walk(cow);
+          }
+        });
+    context.runAtTick(
+        18,
+        () ->
+            context.assertTrue(
+                cow.getPos().distanceTo(start[0]) < 0.4,
+                "the cow is held before it resists but moved "
+                    + cow.getPos().distanceTo(start[0])));
+    context.runAtTick(
+        41,
+        () -> {
+          context.assertFalse(FeedingSessions.isFeeding(vampire), "the cow broke free");
+          context.assertTrue(
+              cow.getPos().distanceTo(start[0]) > 1.0,
+              "a cow that broke free walks off but moved " + cow.getPos().distanceTo(start[0]));
+          TestPlayers.finish(context, vampire);
+        });
   }
 
   @GameTest(templateName = ARENA, batchId = BATCH, tickLimit = 100)
@@ -83,6 +136,116 @@ public class FeedingGameTest implements FabricGameTest {
               cow.hasStatusEffect(StatusEffects.WEAKNESS), "a sipped cow is left weak");
           context.assertFalse(
               VisibleStateAttachment.get(vampire).feeding(), "letting go ends the feeding pose");
+          TestPlayers.finish(context, vampire);
+        });
+  }
+
+  @GameTest(templateName = ARENA, batchId = BATCH, tickLimit = 70)
+  public void aBittenCowIsHeldInPlaceAndFreeAgainAfterTheBite(final TestContext context) {
+    final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(2, 2, 4));
+    BloodAttachment.set(vampire, 10);
+    final CowEntity held = still(context.spawnEntity(EntityType.COW, new BlockPos(3, 2, 4)));
+    final CowEntity free = still(context.spawnEntity(EntityType.COW, new BlockPos(1, 2, 1)));
+    final Vec3d[] start = new Vec3d[2];
+    context.runAtTick(
+        5,
+        () -> {
+          start[0] = held.getPos();
+          start[1] = free.getPos();
+        });
+    context.runAtEveryTick(
+        () -> {
+          if (context.getTick() >= 5 && context.getTick() <= 45) {
+            hold(context, vampire, held);
+            walk(held);
+            walk(free);
+          }
+        });
+    context.runAtTick(
+        46,
+        () -> {
+          context.assertTrue(
+              held.getPos().distanceTo(start[0]) < 0.4,
+              "the held cow was walking but moved " + held.getPos().distanceTo(start[0]));
+          context.assertTrue(
+              free.getPos().distanceTo(start[1]) > 3.0,
+              "the same walk takes a free cow away, it moved "
+                  + free.getPos().distanceTo(start[1]));
+        });
+    context.runAtTick(
+        60,
+        () -> {
+          context.assertFalse(
+              held.hasStatusEffect(StatusEffects.SLOWNESS), "the hold is gone after the bite");
+          TestPlayers.finish(context, vampire);
+        });
+  }
+
+  @GameTest(templateName = ARENA, batchId = BATCH, tickLimit = 80)
+  public void aBittenBatStaysWithinReach(final TestContext context) {
+    heldFlyerStaysWithinReach(context, EntityType.BAT);
+  }
+
+  @GameTest(templateName = ARENA, batchId = BATCH, tickLimit = 80)
+  public void aBittenParrotStaysWithinReach(final TestContext context) {
+    heldFlyerStaysWithinReach(context, EntityType.PARROT);
+  }
+
+  @GameTest(templateName = ARENA, batchId = BATCH, tickLimit = 70)
+  public void theHoldEndsWhenTheVampireLeavesMidBite(final TestContext context) {
+    final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(2, 2, 4));
+    final CowEntity cow = still(context.spawnEntity(EntityType.COW, new BlockPos(3, 2, 4)));
+    final Vec3d[] start = new Vec3d[1];
+    context.runAtTick(5, () -> start[0] = cow.getPos());
+    context.runAtEveryTick(
+        () -> {
+          if (context.getTick() >= 5 && context.getTick() <= 45) {
+            if (context.getTick() < 30) {
+              hold(context, vampire, cow);
+            }
+            walk(cow);
+          }
+        });
+    context.runAtTick(
+        29,
+        () ->
+            context.assertTrue(
+                cow.getPos().distanceTo(start[0]) < 0.4,
+                "the cow is held mid-bite but moved " + cow.getPos().distanceTo(start[0])));
+    context.runAtTick(
+        30,
+        () -> {
+          FeedingSessions.end(vampire);
+          context.assertFalse(FeedingSessions.isFeeding(vampire), "the bite is over");
+        });
+    context.runAtTick(
+        46,
+        () -> {
+          context.assertTrue(
+              cow.getPos().distanceTo(start[0]) > 1.0,
+              "nothing holds the cow once the vampire leaves, it moved "
+                  + cow.getPos().distanceTo(start[0]));
+          TestPlayers.finish(context, vampire);
+        });
+  }
+
+  @GameTest(templateName = ARENA, batchId = BATCH, tickLimit = 60)
+  public void aBittenRiderIsLiftedOffItsVehicle(final TestContext context) {
+    final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(2, 2, 4));
+    final BoatEntity boat = context.spawnEntity(EntityType.BOAT, new BlockPos(3, 2, 4));
+    final CowEntity cow = still(context.spawnEntity(EntityType.COW, new BlockPos(3, 2, 4)));
+    cow.startRiding(boat, true);
+    context.runAtTick(2, () -> context.assertTrue(cow.hasVehicle(), "the cow rides the boat"));
+    context.runAtEveryTick(
+        () -> {
+          if (context.getTick() >= 3 && context.getTick() <= 20) {
+            hold(context, vampire, cow);
+          }
+        });
+    context.runAtTick(
+        25,
+        () -> {
+          context.assertFalse(cow.hasVehicle(), "a bitten cow is lifted off its boat");
           TestPlayers.finish(context, vampire);
         });
   }
@@ -219,6 +382,49 @@ public class FeedingGameTest implements FabricGameTest {
           context.assertFalse(FeedingSessions.isFeeding(human), "a human never feeds");
           TestPlayers.finish(context, human);
         });
+  }
+
+  private void heldFlyerStaysWithinReach(
+      final TestContext context, final EntityType<? extends MobEntity> type) {
+    final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(2, 2, 4));
+    final MobEntity held = still(context.spawnEntity(type, new BlockPos(3, 2, 4)));
+    final MobEntity free = still(context.spawnEntity(type, new BlockPos(1, 2, 1)));
+    final Vec3d[] start = new Vec3d[2];
+    context.runAtTick(
+        5,
+        () -> {
+          start[0] = held.getPos();
+          start[1] = free.getPos();
+        });
+    context.runAtEveryTick(
+        () -> {
+          if (context.getTick() >= 5 && context.getTick() <= 45) {
+            hold(context, vampire, held);
+            fly(held);
+            fly(free);
+          }
+        });
+    context.runAtTick(
+        46,
+        () -> {
+          context.assertTrue(held.isAlive(), "the held flyer is still there");
+          context.assertTrue(
+              held.getPos().distanceTo(start[0]) < 0.4,
+              "the held flyer was drifting but moved " + held.getPos().distanceTo(start[0]));
+          context.assertTrue(
+              free.getPos().distanceTo(start[1]) > 3.0,
+              "the same drift takes a free flyer away, it moved "
+                  + free.getPos().distanceTo(start[1]));
+          TestPlayers.finish(context, vampire);
+        });
+  }
+
+  private static void walk(final MobEntity mob) {
+    mob.move(MovementType.SELF, new Vec3d(WALK_STEP, 0.0, 0.0));
+  }
+
+  private static void fly(final MobEntity mob) {
+    mob.move(MovementType.SELF, new Vec3d(WALK_STEP, WALK_STEP / 2, 0.0));
   }
 
   private static <E extends MobEntity> E still(final E mob) {

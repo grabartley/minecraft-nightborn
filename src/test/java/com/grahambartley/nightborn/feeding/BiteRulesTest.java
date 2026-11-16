@@ -123,24 +123,28 @@ class BiteRulesTest {
     assertEquals(drinkable, BiteRules.drinkable(warmBlood, vampire));
   }
 
-  @ParameterizedTest(name = "human {0}, allowed {1}, first {2}, roll {3} of {4}%: {5}")
+  @ParameterizedTest(name = "human {0}, turning {1}, allowed {2}, first {3}, roll {4} of {5}%: {6}")
   @CsvSource({
-    "true, true, true, 99, 100, true",
-    "true, true, true, 50, 50, false",
-    "true, true, true, 49, 50, true",
-    "false, true, true, 0, 100, false",
-    "true, false, true, 0, 100, false",
-    "true, true, false, 0, 100, false"
+    "true, true, true, true, 99, 100, true",
+    "true, true, true, true, 50, 50, false",
+    "true, true, true, true, 49, 50, true",
+    "false, true, true, true, 0, 100, false",
+    "true, false, true, true, 0, 100, false",
+    "true, false, true, true, 99, 100, false",
+    "true, true, false, true, 0, 100, false",
+    "true, true, true, false, 0, 100, false"
   })
-  @DisplayName("a bite starts sickness only in a human, when allowed, once, and by chance")
+  @DisplayName(
+      "a bite starts sickness only in a human, as a turning bite, when allowed, once, and by chance")
   void startsSickness(
       final boolean human,
+      final boolean turning,
       final boolean allowed,
       final boolean first,
       final int roll,
       final int chance,
       final boolean starts) {
-    assertEquals(starts, BiteRules.startsSickness(human, allowed, first, roll, chance));
+    assertEquals(starts, BiteRules.startsSickness(human, turning, allowed, first, roll, chance));
   }
 
   @ParameterizedTest(name = "{0}% with {1} resistance: {2}%")

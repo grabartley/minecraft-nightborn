@@ -3,7 +3,7 @@
 	"minecraft:geometry": [
 		{
 			"description": {
-				"identifier": "geometry.clothing_chest_female",
+				"identifier": "geometry.frock_coat_female",
 				"texture_width": 64,
 				"texture_height": 64,
 				"visible_bounds_width": 2,
@@ -24,7 +24,7 @@
 					]
 				},
 				{
-					"name": "dyed_bodice",
+					"name": "dyed_coat",
 					"parent": "armorBody",
 					"pivot": [
 						0,
@@ -43,10 +43,118 @@
 								12,
 								4
 							],
-							"inflate": 0.6,
+							"inflate": 0.45,
 							"uv": [
 								0,
 								0
+							]
+						},
+						{
+							"origin": [
+								-4,
+								17,
+								-3
+							],
+							"size": [
+								3,
+								6,
+								1
+							],
+							"inflate": -0.1,
+							"pivot": [
+								-2.5,
+								23,
+								-2.5
+							],
+							"rotation": [
+								0,
+								0,
+								-8
+							],
+							"uv": [
+								56,
+								16
+							]
+						},
+						{
+							"origin": [
+								-4.5,
+								6,
+								-3
+							],
+							"size": [
+								3,
+								6,
+								1
+							],
+							"inflate": 0.3,
+							"pivot": [
+								-4.5,
+								12,
+								-2.5
+							],
+							"rotation": [
+								-4,
+								0,
+								10
+							],
+							"uv": [
+								0,
+								29
+							]
+						},
+						{
+							"origin": [
+								1,
+								17,
+								-3
+							],
+							"size": [
+								3,
+								6,
+								1
+							],
+							"inflate": -0.1,
+							"pivot": [
+								2.5,
+								23,
+								-2.5
+							],
+							"rotation": [
+								0,
+								0,
+								8
+							],
+							"uv": [
+								8,
+								29
+							]
+						},
+						{
+							"origin": [
+								1.5,
+								6,
+								-3
+							],
+							"size": [
+								3,
+								6,
+								1
+							],
+							"inflate": 0.3,
+							"pivot": [
+								4.5,
+								12,
+								-2.5
+							],
+							"rotation": [
+								-4,
+								0,
+								-10
+							],
+							"uv": [
+								16,
+								29
 							]
 						}
 					]
@@ -57,30 +165,64 @@
 					"pivot": [
 						0,
 						12,
-						0
+						2
 					],
 					"cubes": [
 						{
 							"origin": [
-								-4,
-								8,
+								-5,
+								3,
 								-2
 							],
 							"size": [
-								8,
-								4,
+								1,
+								9,
 								4
 							],
-							"inflate": 0.7,
+							"inflate": 0.35,
+							"uv": [
+								52,
+								0
+							]
+						},
+						{
+							"origin": [
+								4,
+								3,
+								-2
+							],
+							"size": [
+								1,
+								9,
+								4
+							],
+							"inflate": 0.35,
 							"uv": [
 								0,
+								16
+							]
+						},
+						{
+							"origin": [
+								-4,
+								3,
+								2
+							],
+							"size": [
+								8,
+								9,
+								1
+							],
+							"inflate": 0.4,
+							"uv": [
+								10,
 								16
 							]
 						}
 					]
 				},
 				{
-					"name": "collar",
+					"name": "buttons",
 					"parent": "armorBody",
 					"pivot": [
 						0,
@@ -90,19 +232,81 @@
 					"cubes": [
 						{
 							"origin": [
+								-0.5,
+								16.5,
+								-3
+							],
+							"size": [
+								1,
+								1,
+								1
+							],
+							"inflate": -0.22,
+							"uv": [
+								28,
+								36
+							]
+						},
+						{
+							"origin": [
+								-0.5,
+								14.5,
+								-3
+							],
+							"size": [
+								1,
+								1,
+								1
+							],
+							"inflate": -0.22,
+							"uv": [
+								32,
+								36
+							]
+						},
+						{
+							"origin": [
 								-4,
-								24,
-								0.5
+								12,
+								-2
 							],
 							"size": [
 								8,
-								2.5,
-								1.5
+								1,
+								4
 							],
-							"inflate": 0.7,
+							"inflate": 0.6,
 							"uv": [
-								0,
-								28
+								32,
+								29
+							]
+						}
+					]
+				},
+				{
+					"name": "cravat",
+					"parent": "armorBody",
+					"pivot": [
+						0,
+						24,
+						0
+					],
+					"cubes": [
+						{
+							"origin": [
+								-1.5,
+								18,
+								-3
+							],
+							"size": [
+								3,
+								6,
+								1
+							],
+							"inflate": -0.1,
+							"uv": [
+								24,
+								29
 							]
 						}
 					]
@@ -113,25 +317,6 @@
 						-5,
 						22,
 						0
-					],
-					"cubes": [
-						{
-							"origin": [
-								-7,
-								12,
-								-2
-							],
-							"size": [
-								3,
-								1,
-								4
-							],
-							"inflate": 0.5,
-							"uv": [
-								32,
-								34
-							]
-						}
 					]
 				},
 				{
@@ -154,10 +339,55 @@
 								12,
 								4
 							],
-							"inflate": 0.35,
+							"inflate": 0.45,
 							"uv": [
-								32,
+								24,
 								0
+							]
+						},
+						{
+							"origin": [
+								-7,
+								13,
+								-2
+							],
+							"size": [
+								3,
+								3,
+								4
+							],
+							"inflate": 0.75,
+							"uv": [
+								28,
+								16
+							]
+						}
+					]
+				},
+				{
+					"name": "right_cuff",
+					"parent": "armorRightArm",
+					"pivot": [
+						-5,
+						22,
+						0
+					],
+					"cubes": [
+						{
+							"origin": [
+								-7,
+								12,
+								-2
+							],
+							"size": [
+								3,
+								1,
+								4
+							],
+							"inflate": 0.57,
+							"uv": [
+								0,
+								36
 							]
 						}
 					]
@@ -168,25 +398,6 @@
 						5,
 						22,
 						0
-					],
-					"cubes": [
-						{
-							"origin": [
-								4,
-								12,
-								-2
-							],
-							"size": [
-								3,
-								1,
-								4
-							],
-							"inflate": 0.5,
-							"uv": [
-								48,
-								34
-							]
-						}
 					]
 				},
 				{
@@ -209,10 +420,55 @@
 								12,
 								4
 							],
-							"inflate": 0.35,
+							"inflate": 0.45,
 							"uv": [
-								32,
+								38,
+								0
+							]
+						},
+						{
+							"origin": [
+								4,
+								13,
+								-2
+							],
+							"size": [
+								3,
+								3,
+								4
+							],
+							"inflate": 0.75,
+							"uv": [
+								42,
 								16
+							]
+						}
+					]
+				},
+				{
+					"name": "left_cuff",
+					"parent": "armorLeftArm",
+					"pivot": [
+						5,
+						22,
+						0
+					],
+					"cubes": [
+						{
+							"origin": [
+								4,
+								12,
+								-2
+							],
+							"size": [
+								3,
+								1,
+								4
+							],
+							"inflate": 0.57,
+							"uv": [
+								14,
+								36
 							]
 						}
 					]

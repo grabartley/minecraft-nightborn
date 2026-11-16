@@ -34,6 +34,7 @@ replay_pid*
 .gradle/
 run/
 /build/
+/tools/*/build/
 AGENTS.md
 CLAUDE.md
 TODO.md

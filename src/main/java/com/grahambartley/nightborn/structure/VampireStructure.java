@@ -71,7 +71,10 @@ public final class VampireStructure extends Structure {
                               .forGetter(structure -> structure.liquidSettings),
                           Household.CODEC
                               .fieldOf("household")
-                              .forGetter(structure -> structure.household))
+                              .forGetter(structure -> structure.household),
+                          Codec.BOOL
+                              .optionalFieldOf("spawns_vampire_bats", true)
+                              .forGetter(VampireStructure::spawnsVampireBats))
                       .apply(instance, VampireStructure::new))
           .validate(VampireStructure::staysInReach);
 
@@ -86,6 +89,7 @@ public final class VampireStructure extends Structure {
   private final DimensionPadding dimensionPadding;
   private final StructureLiquidSettings liquidSettings;
   private final Household household;
+  private final boolean spawnsVampireBats;
 
   public VampireStructure(
       final Config config,
@@ -99,7 +103,8 @@ public final class VampireStructure extends Structure {
       final List<StructurePoolAliasBinding> poolAliases,
       final DimensionPadding dimensionPadding,
       final StructureLiquidSettings liquidSettings,
-      final Household household) {
+      final Household household,
+      final boolean spawnsVampireBats) {
     super(config);
     this.startPool = startPool;
     this.startJigsawName = startJigsawName;
@@ -112,6 +117,11 @@ public final class VampireStructure extends Structure {
     this.dimensionPadding = dimensionPadding;
     this.liquidSettings = liquidSettings;
     this.household = household;
+    this.spawnsVampireBats = spawnsVampireBats;
+  }
+
+  public boolean spawnsVampireBats() {
+    return spawnsVampireBats;
   }
 
   private static DataResult<VampireStructure> staysInReach(final VampireStructure structure) {

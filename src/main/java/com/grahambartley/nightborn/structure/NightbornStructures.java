@@ -9,14 +9,16 @@ import net.minecraft.world.gen.structure.StructureType;
 
 public final class NightbornStructures {
 
-  private static final Identifier ID = Identifier.of(Nightborn.MOD_ID, "vampire_structure");
-
   public static final StructureType<VampireStructure> VAMPIRE_STRUCTURE =
-      Registry.register(Registries.STRUCTURE_TYPE, ID, () -> VampireStructure.CODEC);
-  public static final StructurePlacementType<VampireStructurePlacement>
-      VAMPIRE_STRUCTURE_PLACEMENT =
-          Registry.register(
-              Registries.STRUCTURE_PLACEMENT, ID, () -> VampireStructurePlacement.CODEC);
+      Registry.register(
+          Registries.STRUCTURE_TYPE,
+          Identifier.of(Nightborn.MOD_ID, "vampire_structure"),
+          () -> VampireStructure.CODEC);
+  public static final StructurePlacementType<RareSpreadPlacement> RARE_SPREAD =
+      Registry.register(
+          Registries.STRUCTURE_PLACEMENT,
+          Identifier.of(Nightborn.MOD_ID, "rare_spread"),
+          () -> RareSpreadPlacement.CODEC);
 
   private NightbornStructures() {}
 

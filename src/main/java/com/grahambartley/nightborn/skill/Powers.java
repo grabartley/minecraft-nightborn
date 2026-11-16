@@ -2,17 +2,23 @@ package com.grahambartley.nightborn.skill;
 
 import com.grahambartley.nightborn.blood.BloodAttachment;
 import com.grahambartley.nightborn.downed.Downed;
+import com.grahambartley.nightborn.mind.Gazes;
 import com.grahambartley.nightborn.network.UsePowerPayload;
+import com.grahambartley.nightborn.occult.FogClouds;
+import com.grahambartley.nightborn.occult.GhostlyFamiliars;
+import com.grahambartley.nightborn.occult.ShadowStep;
 import com.grahambartley.nightborn.weakened.Weakened;
 import java.util.List;
+import java.util.Optional;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.registry.Registry;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
+import org.jetbrains.annotations.Nullable;
 
 public final class Powers {
 
@@ -29,45 +35,94 @@ public final class Powers {
     }
     final Registry<Skill> skills =
         Skills.skills(player.getServerWorld().getRegistryManager()).orElse(null);
-    final TreeProgress progress = SkillAttachment.get(player, SkillTree.of(player));
-    final List<Identifier> bar = PowerBar.slots(skills, progress);
-    final Identifier id = slot >= 0 && slot < bar.size() ? bar.get(slot) : null;
-    final SkillPower power = id == null ? null : skills.get(id).power().orElseThrow();
-    final long now = player.getServerWorld().getTime();
-    final PowerCooldowns cooldowns = PowerCooldownAttachment.get(player);
+    final List<Identifier> bar = PowerBar.slots(skills, SkillAttachment.owned(player));
     final PowerUse.Verdict verdict =
-        PowerUse.check(
-            power != null,
-            Downed.helpless(player),
-            Weakened.sources(player).level(Downed.state(player) != null) > 0,
-            id == null ? 0L : cooldowns.ticksLeft(id, now),
-            BloodAttachment.get(player),
-            power == null ? 0 : power.blood());
+        cast(player, slot >= 0 && slot < bar.size() ? bar.get(slot) : null);
+    if (verdict != PowerUse.Verdict.READY && verdict != PowerUse.Verdict.NO_POWER) {
+      player.sendMessage(Text.translatable(verdict.translationKey()), true);
+    }
+    return verdict;
+  }
+
+  public static Optional<SkillPower> power(
+      final LivingEntity caster, @Nullable final Identifier id) {
+    if (id == null || !SkillAttachment.owned(caster).owns(id)) {
+      return Optional.empty();
+    }
+    return Skills.skills(caster.getWorld().getRegistryManager())
+        .map(registry -> registry.get(id))
+        .flatMap(Skill::power);
+  }
+
+  public static PowerUse.Verdict check(final LivingEntity caster, @Nullable final Identifier id) {
+    return check(caster, id, power(caster, id));
+  }
+
+  public static PowerUse.Verdict check(
+      final LivingEntity caster, @Nullable final Identifier id, final Optional<SkillPower> power) {
+    return check(caster, id, power, PowerAim.of(caster, power));
+  }
+
+  private static PowerUse.Verdict check(
+      final LivingEntity caster,
+      @Nullable final Identifier id,
+      final Optional<SkillPower> power,
+      final PowerAim aim) {
+    return PowerUse.check(
+        power.isPresent(),
+        Downed.helpless(caster),
+        Weakened.sources(caster).level(Downed.state(caster) != null) > 0,
+        id == null
+            ? 0L
+            : PowerCooldownAttachment.get(caster).ticksLeft(id, caster.getWorld().getTime()),
+        BloodAttachment.get(caster),
+        power.map(SkillPower::blood).orElse(0),
+        power.flatMap(SkillPower::mesmerise).isPresent() && aim.gazeTarget() == null,
+        power.flatMap(SkillPower::shadowStep).isPresent() && aim.stepTo() == null);
+  }
+
+  public static PowerUse.Verdict cast(final LivingEntity caster, @Nullable final Identifier id) {
+    final Optional<SkillPower> owned = power(caster, id);
+    final PowerAim aim = PowerAim.of(caster, owned);
+    final PowerUse.Verdict verdict = check(caster, id, owned, aim);
     if (verdict != PowerUse.Verdict.READY) {
-      if (verdict != PowerUse.Verdict.NO_POWER) {
-        player.sendMessage(Text.translatable(verdict.translationKey()), true);
-      }
       return verdict;
     }
+    final SkillPower power = owned.orElseThrow();
     if (power.blood() > 0) {
-      BloodAttachment.set(player, BloodAttachment.get(player) - power.blood());
+      BloodAttachment.set(caster, BloodAttachment.get(caster) - power.blood());
     }
-    PowerCooldownAttachment.set(player, cooldowns.start(id, now, power.cooldownTicks()));
+    final long now = caster.getWorld().getTime();
+    PowerCooldownAttachment.set(
+        caster, PowerCooldownAttachment.get(caster).start(id, now, power.cooldownTicks()));
     for (final StatusEffectInstance effect : power.effects()) {
-      player.addStatusEffect(new StatusEffectInstance(effect), player);
+      caster.addStatusEffect(new StatusEffectInstance(effect), caster);
     }
-    power.track().ifPresent(track -> Tracking.start(player, track));
+    if (aim.gazeTarget() != null) {
+      power.mesmerise().ifPresent(mesmerise -> Gazes.start(caster, aim.gazeTarget(), mesmerise));
+    }
+    if (aim.stepTo() != null) {
+      ShadowStep.step(caster, aim.stepTo());
+    }
+    power.familiar().ifPresent(familiar -> GhostlyFamiliars.summon(caster, familiar));
+    power.fog().ifPresent(fog -> FogClouds.spawn(caster, fog));
+    if (caster instanceof ServerPlayerEntity player) {
+      power.track().ifPresent(track -> Tracking.start(player, track));
+    }
+    if (caster instanceof PowerShow show) {
+      power.mob().flatMap(MobPowerUse::clip).ifPresent(show::showPower);
+    }
     power
         .sound()
         .ifPresent(
             sound ->
-                player
-                    .getServerWorld()
+                caster
+                    .getWorld()
                     .playSound(
                         null,
-                        player.getBlockPos(),
+                        caster.getBlockPos(),
                         SoundEvent.of(sound),
-                        SoundCategory.PLAYERS,
+                        caster.getSoundCategory(),
                         1.0F,
                         1.0F));
     return verdict;

@@ -1,0 +1,69 @@
+plugins {
+	id 'java'
+	id 'checkstyle'
+}
+
+repositories {
+	mavenCentral()
+}
+
+java {
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(21)
+	}
+}
+
+dependencies {
+	testImplementation 'org.junit.jupiter:junit-jupiter:5.10.1'
+	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+checkstyle {
+	toolVersion = rootProject.checkstyle_version
+	configFile = rootProject.file('config/checkstyle/checkstyle.xml')
+	maxWarnings = 0
+	maxErrors = 0
+}
+
+test {
+	useJUnitPlatform()
+	testLogging {
+		events 'failed'
+		exceptionFormat 'full'
+	}
+}
+
+def dataRoot = rootProject.layout.projectDirectory.dir('src/main/resources/data/nightborn')
+
+tasks.register('generateStructures', JavaExec) {
+	group = 'nightborn tools'
+	description = 'Writes every generated structure template under src/main/resources/data/nightborn/structure.'
+	classpath = sourceSets.main.runtimeClasspath
+	mainClass = 'com.grahambartley.nightborn.tools.structures.StructureGenerator'
+	def scratch = layout.buildDirectory.dir('structures-generate')
+	args 'write', dataRoot.asFile.absolutePath, scratch.get().asFile.absolutePath
+}
+
+def checkStructures = tasks.register('checkStructures', JavaExec) {
+	group = 'nightborn tools'
+	description = 'Fails if any generated structure template differs from what is in the repo.'
+	classpath = sourceSets.main.runtimeClasspath
+	mainClass = 'com.grahambartley.nightborn.tools.structures.StructureGenerator'
+	def scratch = layout.buildDirectory.dir('structures-check')
+	def marker = layout.buildDirectory.file('structures-check.ok')
+	args 'check', dataRoot.asFile.absolutePath, scratch.get().asFile.absolutePath
+	inputs.files(sourceSets.main.runtimeClasspath).withPropertyName('generator').withNormalizer(ClasspathNormalizer)
+	inputs.files(fileTree(dataRoot) {
+		include 'structure/**'
+	}).withPropertyName('shippedFiles').withPathSensitivity(PathSensitivity.RELATIVE)
+	outputs.dir(scratch).withPropertyName('scratch')
+	outputs.file(marker).withPropertyName('marker')
+	def markerFile = marker.get().asFile
+	doLast {
+		markerFile.text = 'Generated files match what ships.\n'
+	}
+}
+
+tasks.named('check') {
+	dependsOn checkStructures
+}

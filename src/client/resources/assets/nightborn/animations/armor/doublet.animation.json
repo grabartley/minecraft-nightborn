@@ -5,32 +5,23 @@
 			"loop": true,
 			"animation_length": 4,
 			"bones": {
-				"dyed_tails": {
+				"dyed_peplum": {
 					"rotation": {
-						"0.0": {
-							"post": [
-								"0",
-								"0",
-								"0"
-							],
-							"lerp_mode": "catmullrom"
-						},
-						"2.0": {
-							"post": [
-								"-2",
-								"0",
-								"0"
-							],
-							"lerp_mode": "catmullrom"
-						},
-						"4.0": {
-							"post": [
-								"0",
-								"0",
-								"0"
-							],
-							"lerp_mode": "catmullrom"
-						}
+						"0.0": [
+							"0",
+							"0",
+							"0"
+						],
+						"2.0": [
+							"1.5",
+							"0",
+							"0"
+						],
+						"4.0": [
+							"0",
+							"0",
+							"0"
+						]
 					}
 				}
 			}
@@ -39,32 +30,23 @@
 			"loop": true,
 			"animation_length": 1,
 			"bones": {
-				"dyed_tails": {
+				"dyed_peplum": {
 					"rotation": {
-						"0.0": {
-							"post": [
-								"-8",
-								"0",
-								"0"
-							],
-							"lerp_mode": "catmullrom"
-						},
-						"0.5": {
-							"post": [
-								"-14",
-								"0",
-								"0"
-							],
-							"lerp_mode": "catmullrom"
-						},
-						"1.0": {
-							"post": [
-								"-8",
-								"0",
-								"0"
-							],
-							"lerp_mode": "catmullrom"
-						}
+						"0.0": [
+							"3",
+							"0",
+							"0"
+						],
+						"0.5": [
+							"7",
+							"0",
+							"0"
+						],
+						"1.0": [
+							"3",
+							"0",
+							"0"
+						]
 					}
 				}
 			}

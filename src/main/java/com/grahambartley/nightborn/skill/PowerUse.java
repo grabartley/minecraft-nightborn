@@ -10,7 +10,9 @@ public final class PowerUse {
     HELPLESS,
     WEAKENED,
     COOLING,
-    THIRSTY;
+    THIRSTY,
+    UNSEEN,
+    NOWHERE;
 
     public String translationKey() {
       return "nightborn.powers.verdict." + name().toLowerCase(Locale.ROOT);
@@ -25,7 +27,9 @@ public final class PowerUse {
       final boolean weakened,
       final long cooldownTicksLeft,
       final int blood,
-      final int bloodCost) {
+      final int bloodCost,
+      final boolean unseen,
+      final boolean nowhere) {
     if (!hasPower) {
       return Verdict.NO_POWER;
     }
@@ -40,6 +44,12 @@ public final class PowerUse {
     }
     if (blood < bloodCost) {
       return Verdict.THIRSTY;
+    }
+    if (unseen) {
+      return Verdict.UNSEEN;
+    }
+    if (nowhere) {
+      return Verdict.NOWHERE;
     }
     return Verdict.READY;
   }

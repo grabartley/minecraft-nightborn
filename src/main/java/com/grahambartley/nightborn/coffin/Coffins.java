@@ -47,6 +47,8 @@ public final class Coffins {
     ItemGroupEvents.modifyEntriesEvent(
             Registries.ITEM_GROUP.getKey(DecorItemGroup.DECOR).orElseThrow())
         .register(entries -> BLOCKS.values().forEach(entries::add));
+    CoffinProtection.register();
+    CoffinOwnerDeaths.register();
   }
 
   public static Block get(final CoffinWood wood) {

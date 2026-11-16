@@ -13,6 +13,10 @@ public final class BloodValue {
     return taken * qualityPercent / 100.0F * keptPercent / 100.0F;
   }
 
+  public static float taken(final float healthBefore, final float healthAfter) {
+    return Math.max(0.0F, healthBefore - Math.max(0.0F, healthAfter));
+  }
+
   public record Split(int whole, float remainder) {}
 
   public static Split split(final float pending) {

@@ -15,11 +15,13 @@ public record NightbornConfig(
     WardSettings wards,
     FactionSettings factions,
     SkillSettings skills,
+    MindSettings minds,
     GearSettings gear,
     CoatingSettings coatings,
     ClothingSettings clothing,
     MobSettings mobs,
     FamiliarSettings familiars,
+    CombatSettings combat,
     StructureSettings structures) {
 
   public static final List<Setting<?>> SETTINGS =
@@ -35,11 +37,13 @@ public record NightbornConfig(
               WardSettings.SETTINGS,
               FactionSettings.SETTINGS,
               SkillSettings.SETTINGS,
+              MindSettings.SETTINGS,
               GearSettings.SETTINGS,
               CoatingSettings.SETTINGS,
               ClothingSettings.SETTINGS,
               MobSettings.SETTINGS,
               FamiliarSettings.SETTINGS,
+              CombatSettings.SETTINGS,
               StructureSettings.SETTINGS)
           .flatMap(List::stream)
           .toList();
@@ -59,11 +63,13 @@ public record NightbornConfig(
         WardSettings.from(values),
         FactionSettings.from(values),
         SkillSettings.from(values),
+        MindSettings.from(values),
         GearSettings.from(values),
         CoatingSettings.from(values),
         ClothingSettings.from(values),
         MobSettings.from(values),
         FamiliarSettings.from(values),
+        CombatSettings.from(values),
         StructureSettings.from(values));
   }
 

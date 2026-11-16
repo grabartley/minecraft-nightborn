@@ -2,6 +2,7 @@ package com.grahambartley.nightborn.mob;
 
 import com.grahambartley.nightborn.advancement.Milestone;
 import com.grahambartley.nightborn.advancement.MilestoneCriterion;
+import com.grahambartley.nightborn.blood.BloodValue;
 import com.grahambartley.nightborn.config.TurningSettings;
 import com.grahambartley.nightborn.feeding.FeedingSessions;
 import com.grahambartley.nightborn.sickness.BiteSickness;
@@ -34,12 +35,12 @@ public final class MobBite {
     world.playSound(null, biter.getBlockPos(), sound, biter.getSoundCategory(), 0.8F, 0.6F);
     MilestoneCriterion.reach(victim, Milestone.BITTEN);
     if (Prey.hasDrinkableBlood(victim)) {
-      biter.heal(Math.max(0.0F, before - Math.max(0.0F, victim.getHealth())));
+      biter.heal(BloodValue.taken(before, victim.getHealth()));
       if (Vampires.isVampire(biter)) {
         FeedingSessions.fed(biter, world.getTime());
       }
     }
-    BiteSickness.startFromBite(victim, turnChance, true, true, world.getRandom(), turning);
+    BiteSickness.startFromBite(victim, turnChance, true, true, true, world.getRandom(), turning);
     return true;
   }
 }

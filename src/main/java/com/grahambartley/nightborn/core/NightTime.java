@@ -3,7 +3,7 @@ package com.grahambartley.nightborn.core;
 public final class NightTime {
 
   public static final long DUSK = 13000L;
-  static final long DAWN = 23000L;
+  public static final long DAWN = 23000L;
   public static final long DAY_LENGTH = 24000L;
 
   private NightTime() {}

@@ -7,6 +7,7 @@
     "minecraft:evoker",
     "minecraft:illusioner",
     "minecraft:witch",
-    "nightborn:human_familiar"
+    "nightborn:human_familiar",
+    "nightborn:thrall"
   ]
 }

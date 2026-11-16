@@ -2,6 +2,7 @@ package com.grahambartley.nightborn.blood;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
@@ -29,5 +30,12 @@ class BloodValueTest {
     final BloodValue.Split split = BloodValue.split(pending);
     assertEquals(whole, split.whole());
     assertEquals(remainder, split.remainder(), 0.0001F);
+  }
+
+  @ParameterizedTest(name = "{0} health before, {1} after: took {2}")
+  @CsvSource({"20, 16, 4", "4, -3, 4", "10, 10, 0", "5, 8, 0", "0.5, 0, 0.5"})
+  @DisplayName("a bite takes the health lost, never below zero health")
+  void taken(final float before, final float after, final float taken) {
+    assertEquals(taken, BloodValue.taken(before, after), 1.0E-6F);
   }
 }

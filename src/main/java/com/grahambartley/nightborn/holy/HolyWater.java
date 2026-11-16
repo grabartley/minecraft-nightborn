@@ -9,6 +9,7 @@ import com.grahambartley.nightborn.hunter.FaithBoost;
 import com.grahambartley.nightborn.hunter.HunterAttributes;
 import com.grahambartley.nightborn.server.ServerConfigService;
 import com.grahambartley.nightborn.sickness.BiteSickness;
+import com.grahambartley.nightborn.sound.NightbornSounds;
 import com.grahambartley.nightborn.vampire.Vampires;
 import com.grahambartley.nightborn.weakened.Weakened;
 import java.util.Optional;
@@ -37,7 +38,6 @@ import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Identifier;
 import net.minecraft.village.TradeOffer;
 import net.minecraft.village.TradedItem;
@@ -174,10 +174,10 @@ public final class HolyWater {
     world.playSound(
         null,
         at.getBlockPos(),
-        SoundEvents.BLOCK_FIRE_EXTINGUISH,
+        NightbornSounds.HOLY_WATER_HISS,
         SoundCategory.NEUTRAL,
         0.6F,
-        1.4F + world.random.nextFloat() * 0.3F);
+        NightbornSounds.variedPitch(world.random));
   }
 
   private static boolean isHolyArrow(final ItemStack stack) {

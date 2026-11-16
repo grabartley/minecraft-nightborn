@@ -287,7 +287,7 @@ publishing {
 
 spotless {
 	java {
-		target 'src/**/*.java'
+		target 'src/**/*.java', 'tools/**/src/**/*.java'
 		targetExclude 'build/**'
 		googleJavaFormat('1.19.2')
 		removeUnusedImports()

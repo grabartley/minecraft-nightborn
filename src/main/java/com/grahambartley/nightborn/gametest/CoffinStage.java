@@ -18,6 +18,10 @@ final class CoffinStage {
 
   private CoffinStage() {}
 
+  static Block wood() {
+    return Coffins.get(CoffinWood.DARK_OAK);
+  }
+
   static BlockPos coffin(final TestContext context, final BlockPos foot, final Direction facing) {
     return pair(context, Coffins.get(CoffinWood.DARK_OAK), foot, facing);
   }

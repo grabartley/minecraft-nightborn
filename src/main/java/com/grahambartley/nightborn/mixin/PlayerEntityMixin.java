@@ -5,6 +5,8 @@ import com.grahambartley.nightborn.coffin.RestRules;
 import com.grahambartley.nightborn.config.NightbornConfig;
 import com.grahambartley.nightborn.core.VampireCore;
 import com.grahambartley.nightborn.hunter.HunterAttributes;
+import com.grahambartley.nightborn.mind.MindAttributes;
+import com.grahambartley.nightborn.occult.OccultAttributes;
 import com.grahambartley.nightborn.server.ServerConfigService;
 import com.grahambartley.nightborn.sickness.BiteSickness;
 import com.grahambartley.nightborn.vampire.Vampires;
@@ -34,6 +36,8 @@ abstract class PlayerEntityMixin {
   private static void nightborn$hunterAttributes(
       final CallbackInfoReturnable<DefaultAttributeContainer.Builder> cir) {
     HunterAttributes.addTo(cir.getReturnValue());
+    MindAttributes.addTo(cir.getReturnValue());
+    OccultAttributes.addTo(cir.getReturnValue());
   }
 
   @Inject(method = "canConsume", at = @At("HEAD"), cancellable = true)

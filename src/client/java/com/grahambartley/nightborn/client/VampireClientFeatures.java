@@ -5,11 +5,14 @@ import com.grahambartley.nightborn.client.anim.VampirePlayerClips;
 import com.grahambartley.nightborn.client.gore.BloodFx;
 import com.grahambartley.nightborn.client.smoke.SmokeFx;
 import com.grahambartley.nightborn.client.vomit.VomitFx;
+import com.grahambartley.nightborn.network.ToggleLevitationPayload;
+import com.grahambartley.nightborn.network.ToggleTurningBitePayload;
 import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.fabricmc.fabric.api.client.rendering.v1.LivingEntityFeatureRendererRegistrationCallback;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
 import net.minecraft.client.render.entity.PlayerEntityRenderer;
+import org.lwjgl.glfw.GLFW;
 
 public final class VampireClientFeatures {
 
@@ -30,7 +33,10 @@ public final class VampireClientFeatures {
     HudRenderCallback.EVENT.register(VampireHud::render);
     HudRenderCallback.EVENT.register(PowerBarHud::render);
     SkillKeys.register();
-    LevitationKey.register();
+    PayloadKey.register(
+        "key.nightborn.levitate", GLFW.GLFW_KEY_H, ToggleLevitationPayload.INSTANCE);
+    PayloadKey.register(
+        "key.nightborn.turning_bite", GLFW.GLFW_KEY_J, ToggleTurningBitePayload.INSTANCE);
     VampirePlayerClips.register();
     VomitFx.register();
     BloodFx.register();

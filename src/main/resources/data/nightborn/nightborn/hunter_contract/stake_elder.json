@@ -1,0 +1,7 @@
+{
+  "description": { "translate": "nightborn.contract.stake_elder" },
+  "goal": "stake_vampires",
+  "count": 1,
+  "minimum_stage": 2,
+  "reward": "nightborn:contract/stake_elder"
+}

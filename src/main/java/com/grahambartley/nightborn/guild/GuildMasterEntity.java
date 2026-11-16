@@ -1,0 +1,253 @@
+package com.grahambartley.nightborn.guild;
+
+import com.grahambartley.nightborn.server.ServerConfigService;
+import com.grahambartley.nightborn.vampire.Vampires;
+import java.util.Optional;
+import java.util.stream.Stream;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.ai.goal.GoToWalkTargetGoal;
+import net.minecraft.entity.ai.goal.LookAroundGoal;
+import net.minecraft.entity.ai.goal.LookAtCustomerGoal;
+import net.minecraft.entity.ai.goal.LookAtEntityGoal;
+import net.minecraft.entity.ai.goal.StopFollowingCustomerGoal;
+import net.minecraft.entity.ai.goal.SwimGoal;
+import net.minecraft.entity.ai.goal.WanderAroundFarGoal;
+import net.minecraft.entity.attribute.DefaultAttributeContainer;
+import net.minecraft.entity.attribute.EntityAttributes;
+import net.minecraft.entity.damage.DamageSource;
+import net.minecraft.entity.data.DataTracker;
+import net.minecraft.entity.data.TrackedData;
+import net.minecraft.entity.data.TrackedDataHandlerRegistry;
+import net.minecraft.entity.mob.MobEntity;
+import net.minecraft.entity.passive.MerchantEntity;
+import net.minecraft.entity.passive.PassiveEntity;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.world.ServerWorld;
+import net.minecraft.sound.SoundEvent;
+import net.minecraft.sound.SoundEvents;
+import net.minecraft.text.Text;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.Hand;
+import net.minecraft.village.TradeOffer;
+import net.minecraft.world.World;
+import org.jetbrains.annotations.Nullable;
+import software.bernie.geckolib.animatable.GeoEntity;
+import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.animation.AnimatableManager;
+import software.bernie.geckolib.animation.AnimationController;
+import software.bernie.geckolib.util.GeckoLibUtil;
+
+public class GuildMasterEntity extends MerchantEntity implements GeoEntity, HunterLooking {
+
+  static final String LAST_RESTOCK = "LastRestock";
+  static final int HEAD_SHAKE_TICKS = 40;
+  static final int ANIMATION_BLEND_TICKS = 4;
+  static final int TENT_REACH = 3;
+
+  private static final TrackedData<Boolean> TRADING =
+      DataTracker.registerData(GuildMasterEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
+
+  private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
+  private long lastRestock;
+
+  public GuildMasterEntity(final EntityType<? extends MerchantEntity> type, final World world) {
+    super(type, world);
+  }
+
+  public static DefaultAttributeContainer.Builder createGuildMasterAttributes() {
+    return MobEntity.createMobAttributes()
+        .add(EntityAttributes.GENERIC_MAX_HEALTH, 30.0)
+        .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.5);
+  }
+
+  @Override
+  protected void initDataTracker(final DataTracker.Builder builder) {
+    super.initDataTracker(builder);
+    builder.add(TRADING, false);
+  }
+
+  @Override
+  protected void initGoals() {
+    goalSelector.add(0, new SwimGoal(this));
+    goalSelector.add(1, new StopFollowingCustomerGoal(this));
+    goalSelector.add(1, new LookAtCustomerGoal(this));
+    goalSelector.add(7, new GoToWalkTargetGoal(this, 0.4));
+    goalSelector.add(8, new WanderAroundFarGoal(this, 0.35));
+    goalSelector.add(9, new LookAtEntityGoal(this, PlayerEntity.class, 6.0F));
+    goalSelector.add(10, new LookAroundGoal(this));
+  }
+
+  @Override
+  public ActionResult interactMob(final PlayerEntity player, final Hand hand) {
+    if (!isAlive() || hasCustomer()) {
+      return super.interactMob(player, hand);
+    }
+    if (player instanceof ServerPlayerEntity visitor) {
+      visit(visitor);
+    }
+    return ActionResult.success(getWorld().isClient);
+  }
+
+  private void visit(final ServerPlayerEntity visitor) {
+    final Optional<ItemStack> claim =
+        Stream.of(visitor.getMainHandStack(), visitor.getOffHandStack())
+            .filter(stack -> ContractItems.finished(stack, getRegistryManager()).isPresent())
+            .findFirst();
+    switch (GuildVisit.of(Vampires.isVampire(visitor), claim.isPresent())) {
+      case REFUSE -> refuse(visitor);
+      case CLAIM ->
+          claim.ifPresent(
+              stack ->
+                  ContractItems.finished(stack, getRegistryManager())
+                      .ifPresent(
+                          contract ->
+                              ContractPayout.pay(
+                                  visitor,
+                                  stack,
+                                  contract,
+                                  ServerConfigService.current().skills())));
+      case TRADE -> openTrades(visitor);
+    }
+  }
+
+  private void refuse(final ServerPlayerEntity visitor) {
+    setHeadRollingTimeLeft(HEAD_SHAKE_TICKS);
+    playSound(SoundEvents.ENTITY_VILLAGER_NO, getSoundVolume(), getSoundPitch());
+    visitor.sendMessage(Text.translatable("nightborn.guild.refuse"), true);
+  }
+
+  private void openTrades(final ServerPlayerEntity visitor) {
+    restockIfNewDay();
+    if (getOffers().isEmpty()) {
+      return;
+    }
+    setCustomer(visitor);
+    sendOffers(visitor, getDisplayName(), 1);
+  }
+
+  private void restockIfNewDay() {
+    final long day = GuildRestock.day(getWorld().getTimeOfDay());
+    if (offers == null || offers.isEmpty() || GuildRestock.due(lastRestock, day)) {
+      offers = null;
+      getOffers();
+      lastRestock = day;
+    }
+  }
+
+  @Override
+  public void tick() {
+    super.tick();
+    if (getWorld().isClient()) {
+      return;
+    }
+    CampHome.keep(this, TENT_REACH);
+    final PlayerEntity customer = getCustomer();
+    if (customer != null && Vampires.isVampire(customer)) {
+      resetCustomer();
+      if (customer instanceof ServerPlayerEntity player) {
+        player.closeHandledScreen();
+      }
+    }
+    dataTracker.set(TRADING, hasCustomer());
+  }
+
+  @Override
+  protected void fillRecipes() {
+    if (getWorld() instanceof ServerWorld world) {
+      GuildData.offers(world.getRegistryManager()).stream()
+          .map(GuildOffer::toTradeOffer)
+          .forEach(offers::add);
+    }
+  }
+
+  @Override
+  protected void afterUsing(final TradeOffer offer) {
+    playSound(SoundEvents.ENTITY_VILLAGER_YES, getSoundVolume(), getSoundPitch());
+  }
+
+  @Override
+  public HunterLook look() {
+    return HunterLook.GUILD_MASTER;
+  }
+
+  @Override
+  public boolean isLeveledMerchant() {
+    return false;
+  }
+
+  @Override
+  public SoundEvent getYesSound() {
+    return SoundEvents.ENTITY_VILLAGER_YES;
+  }
+
+  @Override
+  protected SoundEvent getTradingSound(final boolean sold) {
+    return sold ? SoundEvents.ENTITY_VILLAGER_YES : SoundEvents.ENTITY_VILLAGER_NO;
+  }
+
+  @Override
+  @Nullable
+  protected SoundEvent getAmbientSound() {
+    return hasCustomer() ? SoundEvents.ENTITY_VILLAGER_TRADE : SoundEvents.ENTITY_VILLAGER_AMBIENT;
+  }
+
+  @Override
+  protected SoundEvent getHurtSound(final DamageSource source) {
+    return SoundEvents.ENTITY_VILLAGER_HURT;
+  }
+
+  @Override
+  protected SoundEvent getDeathSound() {
+    return SoundEvents.ENTITY_VILLAGER_DEATH;
+  }
+
+  @Override
+  @Nullable
+  public PassiveEntity createChild(final ServerWorld world, final PassiveEntity entity) {
+    return null;
+  }
+
+  @Override
+  public boolean cannotDespawn() {
+    return true;
+  }
+
+  @Override
+  public void writeCustomDataToNbt(final NbtCompound nbt) {
+    super.writeCustomDataToNbt(nbt);
+    nbt.putLong(LAST_RESTOCK, lastRestock);
+    CampHome.write(this, nbt);
+  }
+
+  @Override
+  public void readCustomDataFromNbt(final NbtCompound nbt) {
+    super.readCustomDataFromNbt(nbt);
+    lastRestock = nbt.getLong(LAST_RESTOCK);
+    CampHome.read(this, nbt, TENT_REACH);
+  }
+
+  @Override
+  public void registerControllers(final AnimatableManager.ControllerRegistrar controllers) {
+    controllers.add(
+        new AnimationController<>(
+            this,
+            "pose",
+            ANIMATION_BLEND_TICKS,
+            state ->
+                state.setAndContinue(
+                    HunterPose.of(
+                            handSwinging,
+                            dataTracker.get(TRADING),
+                            false,
+                            getVelocity().horizontalLengthSquared())
+                        .clip())));
+  }
+
+  @Override
+  public AnimatableInstanceCache getAnimatableInstanceCache() {
+    return cache;
+  }
+}
