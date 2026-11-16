@@ -10,7 +10,9 @@ import com.grahambartley.nightborn.server.ServerConfigService;
 import com.grahambartley.nightborn.structure.FogZone;
 import com.grahambartley.nightborn.structure.Household;
 import com.grahambartley.nightborn.structure.HouseholdSpawner;
-import com.grahambartley.nightborn.structure.StructureFogTracker;
+import com.grahambartley.nightborn.structure.StructureZone;
+import com.grahambartley.nightborn.structure.StructureZoneTracker;
+import com.grahambartley.nightborn.structure.VampireStructure;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.JsonOps;
 import java.util.List;
@@ -104,6 +106,11 @@ public class VampireStructureGameTest implements FabricGameTest {
           "household": {
             "resident": "nightborn:vampire",
             "residents": { "type": "minecraft:uniform", "min_inclusive": 2, "max_inclusive": 4 }
+          },
+          "ambience": {
+            "loop": "nightborn:ambient.castle.loop",
+            "additions": { "sound": "nightborn:ambient.castle.additions", "tick_chance": 0.01 },
+            "music": { "sound": "nightborn:music.gothic", "min_delay": 600, "max_delay": 2400 }
           }
         }
         """
@@ -264,14 +271,23 @@ public class VampireStructureGameTest implements FabricGameTest {
           centre.getX() + 0.5, centre.getY(), centre.getZ() + 0.5, 0, 0);
       outside.refreshPositionAndAngles(
           centre.getX() + 0.5, centre.getY() + expected.reach() + 4, centre.getZ() + 0.5, 0, 0);
-      final Optional<FogZone> insideZone = StructureFogTracker.zoneAround(inside);
+      final Optional<StructureZone> insideZone = StructureZoneTracker.zoneAround(inside);
       context.assertTrue(
-          insideZone.equals(Optional.of(expected)), "fog centres on the heart, got " + insideZone);
+          insideZone.map(StructureZone::area).equals(Optional.of(expected)),
+          "fog centres on the heart, got " + insideZone);
       context.assertTrue(
-          StructureFogTracker.zoneAround(outside).isEmpty(),
+          insideZone
+                  .map(StructureZone::ambience)
+                  .equals(Optional.of(((VampireStructure) structure).ambience()))
+              && insideZone.get().ambience().loop().isPresent(),
+          "the zone carries the structure's ambience, got " + insideZone);
+      context.assertTrue(
+          StructureZoneTracker.zoneAround(outside).isEmpty(),
           "a second player beyond the structure gets no fog while the first is inside");
       context.assertTrue(
-          StructureFogTracker.zoneAround(inside).equals(Optional.of(expected)),
+          StructureZoneTracker.zoneAround(inside)
+              .map(StructureZone::area)
+              .equals(Optional.of(expected)),
           "the first player keeps their fog whatever the second player sees");
     } finally {
       placed.remove();
@@ -297,7 +313,7 @@ public class VampireStructureGameTest implements FabricGameTest {
         () -> {
           try {
             context.assertTrue(
-                StructureFogTracker.zoneAround(nearby).isPresent(),
+                StructureZoneTracker.zoneAround(nearby).isPresent(),
                 "the player beside the structure is in its fog");
             context.assertTrue(
                 TestAdvancements.done(context, inside, "house_call"),

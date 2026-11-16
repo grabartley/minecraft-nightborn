@@ -23,6 +23,6 @@ public final class NightbornStructures {
   private NightbornStructures() {}
 
   public static void initialize() {
-    StructureFogTracker.register();
+    StructureZoneTracker.register();
   }
 }

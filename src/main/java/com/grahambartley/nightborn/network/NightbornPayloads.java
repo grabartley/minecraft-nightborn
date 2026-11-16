@@ -8,7 +8,7 @@ public final class NightbornPayloads {
 
   public static void register() {
     PayloadTypeRegistry.playS2C().register(SyncConfigPayload.ID, SyncConfigPayload.CODEC);
-    PayloadTypeRegistry.playS2C().register(StructureFogPayload.ID, StructureFogPayload.CODEC);
+    PayloadTypeRegistry.playS2C().register(StructureZonePayload.ID, StructureZonePayload.CODEC);
     PayloadTypeRegistry.playS2C().register(PlayerCuePayload.ID, PlayerCuePayload.CODEC);
     PayloadTypeRegistry.playS2C().register(GorePayload.ID, GorePayload.CODEC);
     PayloadTypeRegistry.playC2S().register(EditConfigPayload.ID, EditConfigPayload.CODEC);

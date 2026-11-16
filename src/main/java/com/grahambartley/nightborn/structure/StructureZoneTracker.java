@@ -1,6 +1,6 @@
 package com.grahambartley.nightborn.structure;
 
-import com.grahambartley.nightborn.network.StructureFogPayload;
+import com.grahambartley.nightborn.network.StructureZonePayload;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -18,16 +18,16 @@ import net.minecraft.structure.StructureStart;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.chunk.Chunk;
 
-public final class StructureFogTracker {
+public final class StructureZoneTracker {
 
   private static final int CHECK_INTERVAL = 20;
   private static final int CHUNK_RADIUS = 2;
-  private static final Map<UUID, Optional<FogZone>> SENT = new HashMap<>();
+  private static final Map<UUID, Optional<StructureZone>> SENT = new HashMap<>();
 
-  private StructureFogTracker() {}
+  private StructureZoneTracker() {}
 
   public static void register() {
-    ServerTickEvents.END_SERVER_TICK.register(StructureFogTracker::tick);
+    ServerTickEvents.END_SERVER_TICK.register(StructureZoneTracker::tick);
     ServerPlayConnectionEvents.DISCONNECT.register(
         (handler, server) -> SENT.remove(handler.getPlayer().getUuid()));
     ServerLifecycleEvents.SERVER_STOPPED.register(server -> SENT.clear());
@@ -38,37 +38,38 @@ public final class StructureFogTracker {
       return;
     }
     for (final ServerPlayerEntity player : server.getPlayerManager().getPlayerList()) {
-      final Optional<FogZone> zone = zoneAround(player);
-      StructureVisits.visit(player, zone);
+      final Optional<StructureZone> zone = zoneAround(player);
+      StructureVisits.visit(player, zone.map(StructureZone::area));
       if (!zone.equals(SENT.getOrDefault(player.getUuid(), Optional.empty()))) {
         SENT.put(player.getUuid(), zone);
-        ServerPlayNetworking.send(player, new StructureFogPayload(zone));
+        ServerPlayNetworking.send(player, new StructureZonePayload(zone));
       }
     }
   }
 
-  public static Optional<FogZone> zoneAround(final ServerPlayerEntity player) {
+  public static Optional<StructureZone> zoneAround(final ServerPlayerEntity player) {
     final ServerWorld world = player.getServerWorld();
     final ChunkPos centre = player.getChunkPos();
-    final List<FogZone> zones = new ArrayList<>();
+    final List<StructureZone> zones = new ArrayList<>();
     for (int dx = -CHUNK_RADIUS; dx <= CHUNK_RADIUS; dx++) {
       for (int dz = -CHUNK_RADIUS; dz <= CHUNK_RADIUS; dz++) {
         Optional.ofNullable(world.getChunkManager().getWorldChunk(centre.x + dx, centre.z + dz))
             .ifPresent(chunk -> collect(world, chunk, zones));
       }
     }
-    return FogZones.deepest(zones, player.getX(), player.getEyeY(), player.getZ());
+    return StructureZones.deepest(zones, player.getX(), player.getEyeY(), player.getZ());
   }
 
   private static void collect(
-      final ServerWorld world, final Chunk chunk, final List<FogZone> zones) {
+      final ServerWorld world, final Chunk chunk, final List<StructureZone> zones) {
     for (final StructureStart start : VampireStructureStarts.referencedBy(world, chunk)) {
       zoneOf(start).ifPresent(zones::add);
     }
   }
 
-  private static Optional<FogZone> zoneOf(final StructureStart start) {
+  private static Optional<StructureZone> zoneOf(final StructureStart start) {
+    final StructureAmbience ambience = ((VampireStructure) start.getStructure()).ambience();
     return StructureHeart.of(start.getChildren())
-        .map(heart -> FogZone.around(heart, start.getBoundingBox()));
+        .map(heart -> new StructureZone(FogZone.around(heart, start.getBoundingBox()), ambience));
   }
 }
