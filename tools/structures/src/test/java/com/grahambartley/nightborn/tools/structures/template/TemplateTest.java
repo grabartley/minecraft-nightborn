@@ -67,6 +67,30 @@ class TemplateTest {
     assertThrows(UnsupportedOperationException.class, () -> t.blockData().clear());
   }
 
+  @Test
+  void embedCopiesCellsAndTheirDataAtAnOffset() {
+    final Template inner = new Template("hunter_camp/test/inner", 2, 2, 2);
+    inner.set(1, 1, 1, "barrel", Nbt.compound("id", "minecraft:barrel"));
+    t.embed(inner, 2, 3, 1);
+    assertEquals("minecraft:barrel", t.get(3, 4, 2));
+    assertEquals(Nbt.compound("id", "minecraft:barrel"), t.blockData().get(new Pos(3, 4, 2)));
+    assertNull(t.get(1, 1, 1));
+  }
+
+  @ParameterizedTest(name = "a {0} jigsaw towards {1} keeps its orientation, pool and joint")
+  @CsvSource({"up_north, nightborn:pool_a, aligned", "west_up, nightborn:pool_b, rollable"})
+  void jigsawsCarryTheirConnection(
+      final String orientation, final String pool, final String joint) {
+    t.jigsaw(1, 1, 1, orientation, "nightborn:here", "nightborn:there", pool, "stone", joint);
+    assertEquals("minecraft:jigsaw[orientation=" + orientation + "]", t.get(1, 1, 1));
+    final Map<String, Object> data = t.blockData().get(new Pos(1, 1, 1));
+    assertEquals("nightborn:here", data.get("name"));
+    assertEquals("nightborn:there", data.get("target"));
+    assertEquals(pool, data.get("pool"));
+    assertEquals(joint, data.get("joint"));
+    assertEquals("minecraft:stone", data.get("final_state"));
+  }
+
   @ParameterizedTest(name = "anchor {0} leaves {1}")
   @CsvSource({"nightborn:camp_heart, dirt_path", "nightborn:other, minecraft:stone"})
   void anAnchorIsAnUpwardJigsawThatLeavesItsFinalState(final String name, final String below) {

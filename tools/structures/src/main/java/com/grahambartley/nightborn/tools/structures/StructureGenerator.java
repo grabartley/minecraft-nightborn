@@ -5,6 +5,7 @@ import com.grahambartley.nightborn.tools.structures.files.GeneratedSync;
 import com.grahambartley.nightborn.tools.structures.files.OutputTree;
 import com.grahambartley.nightborn.tools.structures.files.ShippedDiff;
 import com.grahambartley.nightborn.tools.structures.template.TemplateSaver;
+import com.grahambartley.nightborn.tools.structures.vampire.VampireStructures;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.Files;
@@ -72,6 +73,7 @@ public final class StructureGenerator {
     clean(scratch);
     final OutputTree out = new OutputTree(scratch);
     TemplateSaver.save(HunterCamp.build(), out);
+    VampireStructures.build().forEach(template -> TemplateSaver.save(template, out));
     return out;
   }
 

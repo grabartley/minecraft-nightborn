@@ -13,6 +13,7 @@ import net.minecraft.util.math.random.CheckedRandom;
 import net.minecraft.util.math.random.ChunkRandom;
 import net.minecraft.world.gen.chunk.placement.RandomSpreadStructurePlacement;
 import net.minecraft.world.gen.chunk.placement.SpreadType;
+import net.minecraft.world.gen.chunk.placement.StructurePlacementCalculator;
 import net.minecraft.world.gen.chunk.placement.StructurePlacementType;
 
 public final class RareSpreadPlacement extends RandomSpreadStructurePlacement {
@@ -21,6 +22,7 @@ public final class RareSpreadPlacement extends RandomSpreadStructurePlacement {
   private static final int LOCATE_OFFSET_REACH = 16;
 
   private final StructureRarity rarity;
+  private final Optional<ExclusionZone> near;
 
   public static final MapCodec<RareSpreadPlacement> CODEC =
       RecordCodecBuilder.<RareSpreadPlacement>mapCodec(
@@ -54,7 +56,10 @@ public final class RareSpreadPlacement extends RandomSpreadStructurePlacement {
                               .forGetter(RareSpreadPlacement::getSpreadType),
                           StructureRarity.CODEC
                               .fieldOf("rarity")
-                              .forGetter(RareSpreadPlacement::rarity))
+                              .forGetter(RareSpreadPlacement::rarity),
+                          ExclusionZone.CODEC
+                              .optionalFieldOf("near")
+                              .forGetter(RareSpreadPlacement::near))
                       .apply(instance, RareSpreadPlacement::new))
           .validate(RareSpreadPlacement::spacesWiderThanItSeparates);
 
@@ -67,7 +72,8 @@ public final class RareSpreadPlacement extends RandomSpreadStructurePlacement {
       final int spacing,
       final int separation,
       final SpreadType spreadType,
-      final StructureRarity rarity) {
+      final StructureRarity rarity,
+      final Optional<ExclusionZone> near) {
     super(
         locateOffset,
         frequencyReductionMethod,
@@ -78,6 +84,20 @@ public final class RareSpreadPlacement extends RandomSpreadStructurePlacement {
         separation,
         spreadType);
     this.rarity = rarity;
+    this.near = near;
+  }
+
+  public Optional<ExclusionZone> near() {
+    return near;
+  }
+
+  @Override
+  protected boolean isStartChunk(
+      final StructurePlacementCalculator calculator, final int chunkX, final int chunkZ) {
+    return super.isStartChunk(calculator, chunkX, chunkZ)
+        && near.map(
+                zone -> calculator.canGenerate(zone.otherSet(), chunkX, chunkZ, zone.chunkCount()))
+            .orElse(true);
   }
 
   public StructureRarity rarity() {

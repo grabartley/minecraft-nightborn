@@ -437,7 +437,7 @@ Vampires are rare. They live in households hidden in five kinds of structure, ea
 |---|---|---|
 | Castle | Dark forests, old growth taiga, taiga, birch forests, swamps and mangrove swamps, never on mountains | A vampire lord and their court, coffins, blood fountains and rich loot |
 | Mountain castle | The highest ground of windswept hills, windswept gravelly hills, windswept forests, jagged peaks, stony peaks, frozen peaks and snowy slopes, by far the rarest | Twenty elder and ancient vampires and the Eldest in the highest room, and the best loot |
-| Crypt | Under a church in or near a village, or in a graveyard | A few vampires below a working church |
+| Crypt | Under a parish church in its walled, raised churchyard, standing just outside a village on dry, level plains | A few vampires below a working church, reached only by the vestry stair |
 | Ruined manor | Dark forests | A vampire family in an overgrown house |
 | Underground lair | Deep caves, where no sun reaches | A den around a blood pool |
 
