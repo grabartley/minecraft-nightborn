@@ -80,6 +80,8 @@ class ManorTest {
                     Arguments.of(
                         layout, "the turret study", Turret.CX, Turret.STUDY + 1, Turret.CZ - 1),
                     Arguments.of(layout, "the glasshouse", 6, Manor.F0 + 1, 13),
+                    Arguments.of(layout, "the glasshouse aisle", 7, Manor.F0 + 1, 11),
+                    Arguments.of(layout, "the glasshouse by the library", 11, Manor.F0 + 1, 13),
                     Arguments.of(layout, "the kitchen yard", 36, 1, 4)));
   }
 

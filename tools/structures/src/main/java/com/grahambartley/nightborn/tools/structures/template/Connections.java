@@ -17,7 +17,7 @@ public final class Connections {
           "(slab|stairs|fence|wall|pane|iron_bars|door|trapdoor|lantern|torch|chain|sign|banner"
               + "|carpet|ladder|bell|button|lever|pressure|rail|campfire|anvil|cauldron|grindstone"
               + "|lectern|flower|sapling|snow$|grass$|fern|vine|_bed$|_rod$|candle|cobweb|hopper"
-              + "|skull|head|scaffolding|path|weapon_rack|wanted_poster|trophy_mount|crucifix|garlic|jigsaw|^minecraft:air"
+              + "|skull|head|scaffolding|path|weapon_rack|wanted_poster|trophy_mount|crucifix|portrait|gargoyle|coffin|drape|ornate_|candelabra|chandelier|chalice|blood_|garlic|jigsaw|^minecraft:air"
               + "|water|lava|sculk_vein|sculk_sensor|sculk_shrieker|composter|brewing|end_rod|cake"
               + "|bamboo|dripstone|amethyst_cluster|comparator|repeater|redstone_wire|tripwire"
               + "|moss_carpet|turtle_egg|sea_pickle|decorated_pot|flower_pot)");

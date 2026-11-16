@@ -36,7 +36,9 @@ final class ManorWalk {
   }
 
   static boolean stair(final String state) {
-    return state != null && state.replaceAll("\\[.*", "").endsWith("_stairs");
+    return state != null
+        && state.replaceAll("\\[.*", "").endsWith("_stairs")
+        && state.contains("half=bottom");
   }
 
   static boolean backOn(final String stair, final int[] step) {

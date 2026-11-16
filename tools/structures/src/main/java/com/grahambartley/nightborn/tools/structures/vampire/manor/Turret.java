@@ -36,9 +36,7 @@ public record Turret(boolean round) {
   }
 
   public static boolean doorway(final int x, final int z) {
-    final int dx = x - (CX - 2);
-    final int dz = z - (CZ - 2);
-    return !outsideHouse(x, z) && dx * dx + dz * dz <= 1;
+    return x == CX - 2 && (z == CZ - 2 || z == CZ - 3);
   }
 
   public static boolean outsideHouse(final int x, final int z) {

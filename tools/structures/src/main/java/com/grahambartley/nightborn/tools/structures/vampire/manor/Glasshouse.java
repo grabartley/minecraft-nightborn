@@ -15,7 +15,7 @@ public final class Glasshouse {
   public static final int SOUTH = 17;
   public static final int DOOR_Z = 13;
   public static final int EAVE = F0 + 5;
-  public static final int TREE_X = 8;
+  public static final int TREE_X = WEST + 4;
   public static final int TREE_Z = 13;
   static final Stone TILES =
       new Stone("stone_bricks", "mossy_stone_bricks", "cracked_stone_bricks", 60);
@@ -129,8 +129,8 @@ public final class Glasshouse {
     t.set(WEST + 3, F0 + 2, SOUTH - 1, "potted_wither_rose");
     t.set(WEST + 4, F0 + 2, SOUTH - 1, "potted_dead_bush");
     t.set(WEST + 5, F0 + 2, SOUTH - 1, "flower_pot");
+    t.set(EAST - 1, F0 + 1, NORTH + 1, Parts.stair(Manor.TRIM, "west"));
     t.set(EAST - 1, F0 + 1, NORTH + 2, Parts.stair(Manor.TRIM, "west"));
-    t.set(EAST - 1, F0 + 1, NORTH + 3, Parts.stair(Manor.TRIM, "west"));
     t.set(WEST + 1, roofY(WEST + 1) - 1, SOUTH - 1, "cobweb");
     t.set(EAST - 1, roofY(EAST - 1) - 1, NORTH + 1, Parts.vine("up"));
     t.set(WEST + 2, roofY(WEST + 2) - 1, TREE_Z + 2, Parts.vine("up"));
