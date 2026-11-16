@@ -7,7 +7,7 @@
   "power": {
     "blood": 3,
     "cooldown_ticks": 400,
-    "rally": { "range": 32.0 },
+    "rally": { "range": 32 },
     "sound": "minecraft:event.raid.horn",
     "mob": {
       "min_range": 0.0,
