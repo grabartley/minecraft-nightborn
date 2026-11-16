@@ -25,6 +25,7 @@ import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.passive.CowEntity;
 import net.minecraft.registry.DynamicRegistryManager;
@@ -51,6 +52,7 @@ public class BatFormGameTest implements FabricGameTest {
   static final Identifier LONG_LEAP = Identifier.of("nightborn", "beast/long_leap");
   static final Identifier SWIFT_PROWL = Identifier.of("nightborn", "beast/swift_prowl");
   static final BlockPos STAND = new BlockPos(4, 2, 4);
+  static final int HURTING_DROP = 8;
 
   @BeforeBatch(batchId = NIGHT)
   public void pinMidnight(final ServerWorld world) {
@@ -278,15 +280,52 @@ public class BatFormGameTest implements FabricGameTest {
   }
 
   @GameTest(templateName = YARD, batchId = NIGHT, skyAccess = true, tickLimit = 20)
-  public void aBatTurningBackInTheAirFloatsDown(final TestContext context) {
+  public void aBatPlayerTurningBackInTheAirDrops(final TestContext context) {
     final ServerPlayerEntity vampire = beast(context, BAT_FORM);
     Powers.cast(vampire, BAT_FORM);
     final Vec3d aloft = context.getAbsolute(new Vec3d(4.5, 6.0, 4.5));
     vampire.refreshPositionAndAngles(aloft.x, aloft.y, aloft.z, 0.0F, 0.0F);
     context.assertEquals(Powers.cast(vampire, BAT_FORM), PowerUse.Verdict.READY, "turns back");
-    context.assertTrue(
-        vampire.hasStatusEffect(StatusEffects.SLOW_FALLING), "it floats down from the air");
+    context.assertFalse(
+        vampire.hasStatusEffect(StatusEffects.SLOW_FALLING), "nothing slows its fall");
+    context.assertFalse(vampire.getAbilities().flying, "it no longer flies");
     TestPlayers.finish(context, vampire);
+  }
+
+  @GameTest(templateName = YARD, batchId = NIGHT, skyAccess = true, tickLimit = 20)
+  public void aBatMobTurningBackInTheAirFallsAndTakesFallDamage(final TestContext context) {
+    final VampireEntity vampire = aloftBat(context);
+    context.assertEquals(Powers.cast(vampire, BAT_FORM), PowerUse.Verdict.READY, "turns back");
+    assertFallsFreely(context, vampire);
+    final float health = vampire.getHealth();
+    fall(vampire, HURTING_DROP);
+    context.assertTrue(
+        vampire.getHealth() < health, "the drop hurts: " + vampire.getHealth() + " of " + health);
+    context.complete();
+  }
+
+  @GameTest(templateName = YARD, batchId = NIGHT, skyAccess = true, tickLimit = 20)
+  public void aHeavyBlowInTheAirDropsABatMob(final TestContext context) {
+    final VampireEntity vampire = aloftBat(context);
+    vampire.damage(vampire.getDamageSources().generic(), 8.0F);
+    context.assertFalse(BatForm.isBat(vampire), "a heavy blow forces it back");
+    assertFallsFreely(context, vampire);
+    context.complete();
+  }
+
+  @GameTest(templateName = YARD, batchId = NIGHT, skyAccess = true, tickLimit = 20)
+  public void aFallThatWouldKillDownsAVampireMobInstead(final TestContext context) {
+    final VampireEntity vampire = aloftBat(context);
+    context.assertEquals(Powers.cast(vampire, BAT_FORM), PowerUse.Verdict.READY, "turns back");
+    fall(
+        vampire,
+        vampire.getMaxHealth()
+            + (float) vampire.getAttributeValue(EntityAttributes.GENERIC_SAFE_FALL_DISTANCE)
+            + 4.0F);
+    context.assertTrue(vampire.isAlive(), "a fall that would kill a human leaves it alive");
+    context.assertTrue(
+        Downed.state(vampire) != null && Downed.state(vampire).isDowned(), "and downs it");
+    context.complete();
   }
 
   @GameTest(
@@ -318,6 +357,27 @@ public class BatFormGameTest implements FabricGameTest {
           context.assertFalse(BatForm.isBat(vampire), "the sun forces the bat back");
           TestPlayers.finish(context, vampire);
         });
+  }
+
+  private static VampireEntity aloftBat(final TestContext context) {
+    final VampireEntity vampire = context.spawnEntity(NightbornMobs.VAMPIRE, STAND);
+    vampire.setAiDisabled(true);
+    learn(context, vampire, BAT_FORM);
+    context.assertEquals(Powers.cast(vampire, BAT_FORM), PowerUse.Verdict.READY, "turns");
+    final Vec3d aloft = context.getAbsolute(Vec3d.ofBottomCenter(STAND.up(HURTING_DROP)));
+    vampire.refreshPositionAndAngles(aloft.x, aloft.y, aloft.z, 0.0F, 0.0F);
+    vampire.setOnGround(false);
+    return vampire;
+  }
+
+  private static void assertFallsFreely(final TestContext context, final VampireEntity vampire) {
+    context.assertFalse(vampire.hasNoGravity(), "gravity takes it");
+    context.assertFalse(
+        vampire.hasStatusEffect(StatusEffects.SLOW_FALLING), "nothing slows its fall");
+  }
+
+  private static void fall(final VampireEntity vampire, final float blocks) {
+    vampire.handleFallDamage(blocks, 1.0F, vampire.getDamageSources().fall());
   }
 
   private static ServerPlayerEntity beast(final TestContext context, final Identifier... skills) {
