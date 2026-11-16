@@ -1,0 +1,7 @@
+{
+  "weight": 3,
+  "hobbies": { "read": 5, "sit": 3, "converse": 1, "stroll": 1 },
+  "temper": 15,
+  "pastime_seconds": { "type": "minecraft:uniform", "min_inclusive": 40, "max_inclusive": 120 },
+  "mourning_seconds": 120
+}

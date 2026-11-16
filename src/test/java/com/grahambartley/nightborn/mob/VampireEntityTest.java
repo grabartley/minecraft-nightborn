@@ -1,6 +1,7 @@
 package com.grahambartley.nightborn.mob;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.grahambartley.nightborn.MinecraftBootstrapExtension;
 import com.grahambartley.nightborn.mind.MindAttributes;
@@ -15,6 +16,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 @ExtendWith(MinecraftBootstrapExtension.class)
 class VampireEntityTest {
@@ -36,5 +38,12 @@ class VampireEntityTest {
   void startsWith(final RegistryEntry<EntityAttribute> attribute, final double value) {
     final DefaultAttributeContainer vampires = VampireEntity.createVampireAttributes().build();
     assertEquals(value, vampires.getBaseValue(attribute), 1.0E-9);
+  }
+
+  @ParameterizedTest(name = "{0}")
+  @ValueSource(strings = {VampireEntity.MOURN_CLIP})
+  @DisplayName("a vampire mourns a housemate with a clip its rig ships")
+  void mournClipShips(final String clip) {
+    assertTrue(ShippedClips.vampire().contains(clip));
   }
 }
