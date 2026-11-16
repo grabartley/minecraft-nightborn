@@ -291,7 +291,7 @@ Every vampire has the core, whatever bloodlines they choose.
 | CORE-8 | A vampire brought to its last health by anything else is downed: it collapses, cannot move, attack, feed or use items or powers, and is weakened at the cap (WEAK-9). It takes no damage from anything but sun and a stake while downed. After 30 seconds by default it gets up with 20% of its health, wherever it lies. More damage does not reset the time. Everyone near can see and hear that it is downed. It then escapes for 1 minute by default: it takes no damage but sun and a stake, stays weakened at the cap and can move freely. Vampire mobs flee while escaping |
 | CORE-9 | Phantoms never spawn for a vampire player and never target a vampire, and time a vampire spends awake never counts toward them |
 | CORE-10 | With the `hardcoreVampireDeath` server setting on, off by default, a vampire player who dies is reset like a hardcore death: they come back as a new human at world spawn with an empty inventory and ender chest, no experience, no skills, bloodlines or hunter tree, their coffin unassigned (COFFIN-13), and their thralls and familiars freed. Advancements are kept |
-| CORE-11 | Every vampire, player or mob, can levitate. Players toggle it with a key they can rebind. A levitating vampire floats one block above the ground with its feet together, follows the ground up steps and slopes and over water, gliding up a rise of one block without catching while a fence or a higher wall still stops it, and sinks slowly over a drop without fall damage. It starts a sprint as it would on foot, and leans forward to move and further to sprint, never fully horizontal, with arms spreading as it speeds up, and lands with its own animation. It drains blood while active. It can still attack and use items while it floats, and others see the swing or the raised hand over the float. A weakened or downed vampire, or one in bat form, riding, sleeping, gliding or flying in creative, cannot levitate and lands at once. The server lands a player who stays well above that height for more than a moment, and ignores a toggle pressed again within half a second. Every landing the vampire did not choose sets it down gently, never with fall damage. Vampire mobs rise in a fight and now and then as they move about, as often as the server's options allow, and still find their way while levitating |
+| CORE-11 | Every vampire, player or mob, can levitate. Players toggle it with a key they can rebind. A levitating vampire floats one block above the ground with its feet together, follows the ground up steps and slopes and over water, gliding up a rise of one block without catching while a fence or a higher wall still stops it, and sinks slowly over a drop without fall damage. A player holding sneak sinks much faster, keeping the float pose, and lands once just above the ground. It starts a sprint as it would on foot, and leans forward to move and further to sprint, never fully horizontal, with arms spreading as it speeds up, and lands with its own animation. It drains blood while active. It can still attack and use items while it floats, and others see the swing or the raised hand over the float. A weakened or downed vampire, or one in bat form, riding, sleeping, gliding or flying in creative, cannot levitate and lands at once. The server lands a player who stays well above that height for more than a moment, and ignores a toggle pressed again within half a second. Every landing the vampire did not choose sets it down gently, never with fall damage. Vampire mobs rise in a fight and now and then as they move about, as often as the server's options allow, and still find their way while levitating |
 
 **Not supported:** a vampire hiding its eyes while feeding; levitating higher than one block.
 
@@ -338,14 +338,16 @@ The core starts with Thick Blood (more health), Grave Strength (harder blows) an
 
 | ID | Requirement |
 |---|---|
-| BAT-1 | A Beast vampire can turn into a bat and fly, and uses the same power again to turn back. A vampire mob takes bat form to close on a distant target and turns back beside it |
+| BAT-1 | A Beast vampire can turn into a bat and fly, and uses the same power again to turn back. A vampire mob takes bat form to close on a distant target and turns back beside it. A vampire, player or mob, that turns back in the air, by choice or forced, falls with normal gravity and takes fall damage from where it turned back, which downs it rather than killing it (CORE-7, CORE-8) |
 | BAT-2 | Turning into a bat, and back, gives a poof of the dark, ashy vampire smoke (SUN-3) and a sound, seen and heard by everyone near |
-| BAT-3 | A bat cannot attack, break blocks, use items or other powers, open containers or feed, and turning into one ends a feed. It drains blood while flying, faster than levitating, and an empty blood bar forces it back |
+| BAT-3 | A bat cannot attack, break blocks, use items or other powers, open containers or feed, and turning into one ends a feed. It drains blood while flying, faster than levitating and faster still at a sprint, and an empty blood bar forces it back. A landed or hanging bat drains blood only as a resting vampire does |
 | BAT-4 | Direct sun forces a vampire out of bat form, and no vampire can take bat form in it |
 | BAT-5 | Turning back needs room to stand. Without it, the bat stays a bat |
 | BAT-6 | A single heavy blow, as heavy as the server sets, being downed, holy water or garlic in range forces a vampire out of bat form |
+| BAT-7 | A bat player flies with weight, not as in creative. They steer with the camera and fly where they look while holding forward, climbing as they look up and diving as they look down. Speed eases in and out, turning slows the bat at speed, and letting go of forward lets it coast to a slow hover. Sprint flies faster. A bat never takes fall damage. Third person shows the bat in every pose |
+| BAT-8 | A bat that flies into the ground lands on it, crawls slowly on its wings and takes off with jump. Using the underside of a block from beneath it hangs the bat upside down from that block, and the player's first-person view turns upside down with it. Jump or forward lets go. A hanging bat turning back drops as in BAT-1 |
 
-**Enforcement:** server.
+**Enforcement:** server. The bat player's client moves the bat, as vanilla moves any player, and turns the view while hanging. The server decides the form, landing, hanging and blood drain.
 
 ### 5.9 Bend Minds
 
@@ -667,7 +669,7 @@ There is no singleplayer mode in this mod. A single-player world is an integrate
 | The turning bite choice | Sends the switch and draws the sign |
 | Feeding, resisting and draining | Sends the bite request and plays the effects |
 | Sun, weakness and their sources | Draws smoke, fire and the weakness sign |
-| Bat form | Draws the bat and the poof |
+| Bat form, landing and hanging | Moves the bat, draws it flying, landed and hanging, draws the poof, and turns the view upside down while hanging |
 | Thralls, familiars and loyalty | Draws them |
 | Household behaviour and structures | Draws fog and plays ambience |
 | Who is on which map | Draws the map it is sent |
