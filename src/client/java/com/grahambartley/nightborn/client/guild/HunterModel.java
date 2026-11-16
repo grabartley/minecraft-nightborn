@@ -2,15 +2,14 @@ package com.grahambartley.nightborn.client.guild;
 
 import com.grahambartley.nightborn.guild.HunterLook;
 import com.grahambartley.nightborn.guild.HunterLooking;
+import com.grahambartley.nightborn.render.HeadLook;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.math.MathHelper;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.animation.AnimationState;
 import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.constant.DataTickets;
 import software.bernie.geckolib.model.GeoModel;
-import software.bernie.geckolib.model.data.EntityModelData;
 
 public class HunterModel<T extends LivingEntity & GeoEntity & HunterLooking> extends GeoModel<T> {
 
@@ -38,8 +37,6 @@ public class HunterModel<T extends LivingEntity & GeoEntity & HunterLooking> ext
     if (head == null) {
       return;
     }
-    final EntityModelData data = animationState.getData(DataTickets.ENTITY_MODEL_DATA);
-    head.setRotX(head.getRotX() + data.headPitch() * MathHelper.RADIANS_PER_DEGREE);
-    head.setRotY(head.getRotY() + data.netHeadYaw() * MathHelper.RADIANS_PER_DEGREE);
+    HeadLook.apply(head, animationState.getData(DataTickets.ENTITY_MODEL_DATA));
   }
 }
