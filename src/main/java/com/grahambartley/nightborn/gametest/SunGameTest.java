@@ -1,5 +1,8 @@
 package com.grahambartley.nightborn.gametest;
 
+import com.grahambartley.nightborn.mob.NightbornMobs;
+import com.grahambartley.nightborn.mob.VampireEntity;
+import com.grahambartley.nightborn.sun.DirectSun;
 import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.effect.StatusEffectInstance;
@@ -16,6 +19,8 @@ public class SunGameTest implements FabricGameTest {
 
   static final String BATCH = "sun";
   static final String YARD = "nightborn:vampire_yard";
+  static final int BURN_OUT_TICKS = 900;
+  static final int IGNITED = 20;
 
   @BeforeBatch(batchId = BATCH)
   public void pinNoon(final ServerWorld world) {
@@ -43,6 +48,25 @@ public class SunGameTest implements FabricGameTest {
               TestAdvancements.done(context, vampire, "sun_dried"),
               "burning in the sun and living earns Sun Dried");
           TestPlayers.finish(context, vampire);
+        });
+  }
+
+  @GameTest(templateName = YARD, batchId = BATCH, skyAccess = true, tickLimit = BURN_OUT_TICKS)
+  public void aVampireMobInTheOpenBurnsUntilItDies(final TestContext context) {
+    final VampireEntity vampire = context.spawnEntity(NightbornMobs.VAMPIRE, new BlockPos(4, 2, 4));
+    vampire.setAiDisabled(true);
+    context.runAtEveryTick(
+        () -> {
+          if (context.getTick() < IGNITED) {
+            return;
+          }
+          if (!vampire.isAlive()) {
+            context.complete();
+            return;
+          }
+          context.assertTrue(
+              vampire.isOnFire() && DirectSun.on(vampire),
+              "a vampire mob in the open never stops burning, tick " + context.getTick());
         });
   }
 
