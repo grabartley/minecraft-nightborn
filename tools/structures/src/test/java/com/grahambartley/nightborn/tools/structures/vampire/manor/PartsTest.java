@@ -50,19 +50,6 @@ class PartsTest {
     assertTrue("minecraft:stone".equals(t.get(x, 2, z)));
   }
 
-  @ParameterizedTest(name = "a fence joined n {0} s {1} e {2} w {3}")
-  @CsvSource({"true, true, false, false", "true, false, true, false", "false, false, true, true"})
-  void fencesJoinTheirNamedSides(
-      final boolean north, final boolean south, final boolean east, final boolean west) {
-    final String fence = Parts.fence(north, south, east, west);
-    assertTrue(
-        fence.contains("north=" + north)
-            && fence.contains("south=" + south)
-            && fence.contains("east=" + east)
-            && fence.contains("west=" + west),
-        fence);
-  }
-
   @ParameterizedTest(name = "a hanging {0} lantern")
   @ValueSource(booleans = {true, false})
   void lanternsHangOrStand(final boolean hanging) {

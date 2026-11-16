@@ -39,6 +39,12 @@ final class ManorWalk {
     return state != null && state.replaceAll("\\[.*", "").endsWith("_stairs");
   }
 
+  static boolean backOn(final String stair, final int[] step) {
+    final String toward =
+        step[0] == 1 ? "west" : step[0] == -1 ? "east" : step[1] == 1 ? "north" : "south";
+    return stair.contains("facing=" + toward);
+  }
+
   static boolean ladder(final String state) {
     return state != null && state.startsWith("minecraft:ladder");
   }
@@ -66,7 +72,8 @@ final class ManorWalk {
           final Pos to = at.offset(step[0], dy, step[1]);
           if (dy == 1
               && (!open(t.get(at.x(), at.y() + 2, at.z()))
-                  || !stair(t.get(to.x(), to.y() - 1, to.z())))) {
+                  || !stair(t.get(to.x(), to.y() - 1, to.z()))
+                  || backOn(t.get(to.x(), to.y() - 1, to.z()), step))) {
             continue;
           }
           if (stands(t, to.x(), to.y(), to.z())) {

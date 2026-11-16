@@ -15,7 +15,7 @@ public final class Grounds {
   public static final int SWEEP_Z = 35;
   public static final double SWEEP_INNER = 3.5;
   public static final double SWEEP_OUTER = 5.3;
-  public static final int BACK_PATH_Z = MAIN_N - 3;
+  public static final int BACK_PATH_Z = MAIN_N - Manor.F0 - 1;
   public static final int WEST_PATH_X = 1;
   public static final int EAST_PATH_X = SIZE_X - 3;
   public static final int HEDGE_HEIGHT = 2;
@@ -76,9 +76,6 @@ public final class Grounds {
       if (Math.abs(x - MID_X) > SWEEP_OUTER) {
         path(t, x, SWEEP_Z);
       }
-    }
-    for (int x = WEST_PATH_X; x < Glasshouse.WEST - 2; x++) {
-      path(t, x, Glasshouse.DOOR_Z);
     }
   }
 
@@ -160,14 +157,14 @@ public final class Grounds {
     }
     for (int x = 38; x <= 40; x++) {
       for (int y = 1; y <= 2; y++) {
-        t.set(x, y, 2, Parts.log("oak_log", "x"));
+        t.set(x, y, 1, Parts.log("oak_log", "x"));
       }
     }
-    t.set(37, 1, 3, Parts.log("stripped_oak_log", "y"));
-    t.set(33, 1, 3, BlockState.of("barrel", "facing", "up", "open", false));
-    t.set(33, 1, 4, BlockState.of("barrel", "facing", "up", "open", false));
-    t.set(34, 1, 3, BlockState.of("water_cauldron", "level", 2));
-    t.set(32, 1, 3, "composter");
+    t.set(37, 1, 2, Parts.log("stripped_oak_log", "y"));
+    t.set(33, 1, 1, BlockState.of("barrel", "facing", "up", "open", false));
+    t.set(33, 1, 2, BlockState.of("barrel", "facing", "up", "open", false));
+    t.set(34, 1, 2, BlockState.of("water_cauldron", "level", 2));
+    t.set(32, 1, 2, "composter");
   }
 
   private static void lawn(final Template t) {

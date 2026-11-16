@@ -90,18 +90,24 @@ public final class StairHall {
 
   private static void balustrade(final Template t) {
     for (int z = LANDING_FRONT + 1; z < GALLERY_FRONT; z++) {
-      t.set(MID_X - 2, F1 + 1, z, Parts.fence(true, true, false, false));
-      t.set(MID_X + 2, F1 + 1, z, Parts.fence(true, true, false, false));
+      t.set(MID_X - 2, F1 + 1, z, Parts.fence());
+      t.set(MID_X + 2, F1 + 1, z, Parts.fence());
     }
     for (int x = MID_X - 1; x <= MID_X + 1; x++) {
-      t.set(x, F1 + 1, GALLERY_FRONT, Parts.fence(false, false, true, true));
+      t.set(x, F1 + 1, GALLERY_FRONT, Parts.fence());
     }
-    t.set(MID_X - 2, F1 + 1, GALLERY_FRONT, Parts.fence(true, false, true, false));
-    t.set(MID_X + 2, F1 + 1, GALLERY_FRONT, Parts.fence(true, false, false, true));
+    t.set(MID_X - 2, F1 + 1, GALLERY_FRONT, Parts.fence());
+    t.set(MID_X + 2, F1 + 1, GALLERY_FRONT, Parts.fence());
     for (final int x : new int[] {MID_X - 2, MID_X + 2}) {
       for (int z = LANDING_BACK + 1; z <= LANDING_FRONT; z++) {
         final int tread = LANDING + 1 + z - (LANDING_BACK + 1);
-        t.set(x, tread + 1, z, Parts.fence(true, true, false, false));
+        t.set(x, tread + 1, z, Parts.fence());
+      }
+      for (int z = LANDING_FRONT + 1; z < FLIGHT_FOOT; z++) {
+        final int tread = LANDING - (z - LANDING_FRONT - 1);
+        for (int y = F0 + 1; y <= tread + 1; y++) {
+          t.set(x, y, z, Parts.fence());
+        }
       }
       t.set(x, F0 + 1, FLIGHT_FOOT, "stripped_dark_oak_log");
       t.set(x, F0 + 2, FLIGHT_FOOT, Parts.lantern(false));

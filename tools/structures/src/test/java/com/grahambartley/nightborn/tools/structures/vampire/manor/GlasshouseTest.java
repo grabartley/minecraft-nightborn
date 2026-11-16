@@ -30,13 +30,13 @@ class GlasshouseTest {
   }
 
   @ParameterizedTest(name = "the roof at x {0} sits at y {1}")
-  @CsvSource({"4, 8", "6, 10", "7, 11", "8, 11", "11, 8"})
+  @CsvSource({"5, 8", "7, 10", "8, 11", "9, 10", "11, 8"})
   void theRoofIsAGable(final int x, final int y) {
     assertEquals(y, Glasshouse.roofY(x));
   }
 
   @ParameterizedTest(name = "fallen {0}: keeps between {1} and {2} roof panes")
-  @CsvSource({"false, 55, 72", "true, 15, 35"})
+  @CsvSource({"false, 48, 63", "true, 12, 32"})
   void fallenGlasshousesLoseMostOfTheirRoof(final boolean fallen, final int least, final int most) {
     final int left = panesLeft(built(fallen));
     assertTrue(least <= left && left <= most, "panes " + left);

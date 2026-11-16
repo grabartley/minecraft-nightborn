@@ -35,6 +35,12 @@ public record Turret(boolean round) {
     return y == F0 + 1 || y == F0 + 2 || y == F1 + 1 || y == F1 + 2;
   }
 
+  public static boolean doorway(final int x, final int z) {
+    final int dx = x - (CX - 2);
+    final int dz = z - (CZ - 2);
+    return !outsideHouse(x, z) && dx * dx + dz * dz <= 1;
+  }
+
   public static boolean outsideHouse(final int x, final int z) {
     return x >= MAIN_E || z >= MAIN_S;
   }
@@ -61,7 +67,7 @@ public record Turret(boolean round) {
 
   private void column(final Template t, final int x, final int z) {
     for (int y = 0; y <= WALL_TOP; y++) {
-      final boolean shell = ring(x, z) && (outsideHouse(x, z) || !arch(y));
+      final boolean shell = ring(x, z) && !(doorway(x, z) && arch(y));
       final boolean floor = y == F0 || y == F1 || y == STUDY || y == WALL_TOP;
       if (y < F0 || (shell && floor)) {
         t.set(x, y, z, Manor.DRESSING.at(x, y, z));

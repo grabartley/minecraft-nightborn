@@ -43,11 +43,7 @@ public final class Bedchambers {
     }
     for (final int across : new int[] {-1, 1}) {
       for (int y = SEAT; y < TESTER; y++) {
-        t.set(
-            hx + across * side.x(),
-            y,
-            hz + across * side.z(),
-            Parts.fence(false, false, false, false));
+        t.set(hx + across * side.x(), y, hz + across * side.z(), Parts.fence());
       }
     }
     Furnishing.drape(t, Manor.BURGUNDY, hx, SEAT, hz, TESTER - SEAT, Facing.OPPOSITE.get(head));

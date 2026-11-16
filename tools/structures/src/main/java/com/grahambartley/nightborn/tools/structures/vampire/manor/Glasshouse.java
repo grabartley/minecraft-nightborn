@@ -9,7 +9,7 @@ import com.grahambartley.nightborn.tools.structures.vampire.Stone;
 
 public final class Glasshouse {
 
-  public static final int WEST = 4;
+  public static final int WEST = 5;
   public static final int EAST = WING_W - 1;
   public static final int NORTH = 9;
   public static final int SOUTH = 17;

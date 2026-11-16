@@ -59,7 +59,12 @@ class TurretTest {
     "true, 38, 20, gothic_stone_bricks, 9",
     "true, 38, 20, air, 11",
     "true, 38, 20, bricks, 16",
+    "true, 37, 21, bricks, 4",
+    "true, 39, 19, bricks, 10",
     "false, 37, 20, air, 5",
+    "false, 38, 19, air, 10",
+    "false, 37, 19, bricks, 4",
+    "false, 39, 19, bricks, 4",
     "false, 37, 20, bricks, 12"
   })
   void theWallInsideTheHouseRisesFromTheFoundationWithArches(

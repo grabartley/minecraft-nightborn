@@ -34,20 +34,8 @@ public final class Parts {
     }
   }
 
-  public static String fence(
-      final boolean north, final boolean south, final boolean east, final boolean west) {
-    return BlockState.of(
-        "dark_oak_fence",
-        "north",
-        north,
-        "south",
-        south,
-        "east",
-        east,
-        "west",
-        west,
-        "waterlogged",
-        false);
+  public static String fence() {
+    return BlockState.of("dark_oak_fence", "waterlogged", false);
   }
 
   public static String hood(final String block, final String facing) {
