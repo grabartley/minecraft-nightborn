@@ -25,18 +25,18 @@ import org.junit.jupiter.params.provider.MethodSource;
 class CoffinBlockTest {
 
   @ParameterizedTest(name = "{0}")
-  @EnumSource(CoffinWood.class)
+  @EnumSource(CoffinMaterial.class)
   @DisplayName("a coffin is placed shut and empty")
-  void startsShut(final CoffinWood wood) {
+  void startsShut(final CoffinMaterial wood) {
     final BlockState state = Coffins.get(wood).getDefaultState();
     assertFalse(state.get(CoffinBlock.OPEN));
     assertFalse(state.get(BedBlock.OCCUPIED));
   }
 
   @ParameterizedTest(name = "{0}")
-  @EnumSource(CoffinWood.class)
+  @EnumSource(CoffinMaterial.class)
   @DisplayName("both cells leave drawing to the block entity, as a bed does")
-  void drawsThroughTheBlockEntity(final CoffinWood wood) {
+  void drawsThroughTheBlockEntity(final CoffinMaterial wood) {
     for (final BedPart part : BedPart.values()) {
       assertEquals(
           BlockRenderType.ENTITYBLOCK_ANIMATED,
@@ -48,7 +48,7 @@ class CoffinBlockTest {
   @EnumSource(BedPart.class)
   @DisplayName("only the head cell carries the block entity that draws the lid")
   void drawsTheLidFromTheHead(final BedPart part) {
-    final CoffinBlock coffin = (CoffinBlock) Coffins.get(CoffinWood.OAK);
+    final CoffinBlock coffin = (CoffinBlock) Coffins.get(CoffinMaterial.OAK);
     final BlockState state = coffin.getDefaultState().with(BedBlock.PART, part);
     if (part == BedPart.HEAD) {
       assertInstanceOf(CoffinBlockEntity.class, coffin.createBlockEntity(BlockPos.ORIGIN, state));
@@ -59,7 +59,7 @@ class CoffinBlockTest {
 
   static Stream<Arguments> replacements() {
     final BlockState head =
-        Coffins.get(CoffinWood.OAK).getDefaultState().with(BedBlock.PART, BedPart.HEAD);
+        Coffins.get(CoffinMaterial.OAK).getDefaultState().with(BedBlock.PART, BedPart.HEAD);
     return Stream.of(
         Arguments.of("the head broken to air", head, Blocks.AIR.getDefaultState(), true),
         Arguments.of(
@@ -92,7 +92,7 @@ class CoffinBlockTest {
   @MethodSource("pairs")
   @DisplayName("the foot follows the head's lid so both halves agree")
   void footFollowsTheHead(final Direction facing, final boolean open) {
-    final CoffinBlock coffin = (CoffinBlock) Coffins.get(CoffinWood.SPRUCE);
+    final CoffinBlock coffin = (CoffinBlock) Coffins.get(CoffinMaterial.SPRUCE);
     final BlockState foot =
         coffin.getDefaultState().with(BedBlock.FACING, facing).with(BedBlock.PART, BedPart.FOOT);
     final BlockState head = foot.with(BedBlock.PART, BedPart.HEAD).with(CoffinBlock.OPEN, open);
@@ -108,7 +108,7 @@ class CoffinBlockTest {
       names = {"NORTH", "EAST", "SOUTH", "WEST"})
   @DisplayName("a foot whose head is gone goes with it")
   void footBreaksWithoutItsHead(final Direction facing) {
-    final CoffinBlock coffin = (CoffinBlock) Coffins.get(CoffinWood.CHERRY);
+    final CoffinBlock coffin = (CoffinBlock) Coffins.get(CoffinMaterial.CHERRY);
     final BlockState foot =
         coffin.getDefaultState().with(BedBlock.FACING, facing).with(BedBlock.PART, BedPart.FOOT);
     final BlockState updated =
@@ -140,7 +140,7 @@ class CoffinBlockTest {
   @DisplayName("a standing foot answers only to the cell above it, never to the wall behind")
   void standingFootPairsUpward(
       final Direction facing, final Direction side, final String neighbour, final boolean kept) {
-    final CoffinBlock coffin = (CoffinBlock) Coffins.get(CoffinWood.MANGROVE);
+    final CoffinBlock coffin = (CoffinBlock) Coffins.get(CoffinMaterial.MANGROVE);
     final BlockState foot =
         coffin
             .getDefaultState()
@@ -169,7 +169,7 @@ class CoffinBlockTest {
       names = {"NORTH", "EAST", "SOUTH", "WEST"})
   @DisplayName("a standing head without its foot below goes with it")
   void standingHeadBreaksWithoutItsFoot(final Direction facing) {
-    final CoffinBlock coffin = (CoffinBlock) Coffins.get(CoffinWood.CRIMSON);
+    final CoffinBlock coffin = (CoffinBlock) Coffins.get(CoffinMaterial.CRIMSON);
     final BlockState head =
         coffin
             .getDefaultState()
@@ -188,7 +188,7 @@ class CoffinBlockTest {
   }
 
   static Stream<Arguments> standingStates() {
-    final BlockState oak = Coffins.get(CoffinWood.OAK).getDefaultState();
+    final BlockState oak = Coffins.get(CoffinMaterial.OAK).getDefaultState();
     return Stream.of(
         Arguments.of(oak, false),
         Arguments.of(oak.with(CoffinBlock.STANDING, true), true),

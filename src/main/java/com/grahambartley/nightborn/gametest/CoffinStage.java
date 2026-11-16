@@ -1,7 +1,7 @@
 package com.grahambartley.nightborn.gametest;
 
 import com.grahambartley.nightborn.coffin.CoffinBlock;
-import com.grahambartley.nightborn.coffin.CoffinWood;
+import com.grahambartley.nightborn.coffin.CoffinMaterial;
 import com.grahambartley.nightborn.coffin.Coffins;
 import net.minecraft.block.BedBlock;
 import net.minecraft.block.Block;
@@ -19,16 +19,16 @@ final class CoffinStage {
   private CoffinStage() {}
 
   static Block wood() {
-    return Coffins.get(CoffinWood.DARK_OAK);
+    return Coffins.get(CoffinMaterial.DARK_OAK);
   }
 
   static BlockPos coffin(final TestContext context, final BlockPos foot, final Direction facing) {
-    return pair(context, Coffins.get(CoffinWood.DARK_OAK), foot, facing);
+    return pair(context, Coffins.get(CoffinMaterial.DARK_OAK), foot, facing);
   }
 
   static BlockPos standing(final TestContext context, final BlockPos foot, final Direction facing) {
     final BlockState footState =
-        Coffins.get(CoffinWood.DARK_OAK)
+        Coffins.get(CoffinMaterial.DARK_OAK)
             .getDefaultState()
             .with(BedBlock.FACING, facing)
             .with(BedBlock.PART, BedPart.FOOT)

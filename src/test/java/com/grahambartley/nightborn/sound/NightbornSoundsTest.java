@@ -7,6 +7,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.grahambartley.nightborn.MinecraftBootstrapExtension;
+import com.grahambartley.nightborn.coffin.CoffinStyle;
 import com.grahambartley.nightborn.mob.MobSounds;
 import com.grahambartley.nightborn.occult.OccultSounds;
 import com.grahambartley.nightborn.vomit.VomitEffects;
@@ -55,7 +56,9 @@ class NightbornSoundsTest {
             e ->
                 e.getValue().getAsJsonObject().getAsJsonArray("sounds").asList().stream()
                     .filter(NightbornSoundsTest::isFile)
-                    .map(s -> Arguments.of(e.getKey(), name(s))));
+                    .map(NightbornSoundsTest::name)
+                    .filter(name -> !name.startsWith("minecraft:"))
+                    .map(name -> Arguments.of(e.getKey(), name)));
   }
 
   @ParameterizedTest(name = "{0}")
@@ -95,11 +98,16 @@ class NightbornSoundsTest {
     assertEquals(path, NightbornSounds.sip(drains).getId().getPath());
   }
 
-  @ParameterizedTest(name = "open={0}")
-  @CsvSource({"true, block.coffin.open", "false, block.coffin.close"})
-  @DisplayName("the coffin lid has its own open and close sounds")
-  void lid(final boolean open, final String path) {
-    assertEquals(path, NightbornSounds.lid(open).getId().getPath());
+  @ParameterizedTest(name = "{0} open={1}")
+  @CsvSource({
+    "WOOD, true, block.coffin.open",
+    "WOOD, false, block.coffin.close",
+    "STONE, true, block.stone_coffin.open",
+    "STONE, false, block.stone_coffin.close"
+  })
+  @DisplayName("each coffin style has its own lid open and close sounds")
+  void lid(final CoffinStyle style, final boolean open, final String path) {
+    assertEquals(path, NightbornSounds.lid(style, open).getId().getPath());
   }
 
   @ParameterizedTest(name = "seed {0}")

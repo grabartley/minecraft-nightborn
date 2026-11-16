@@ -1,6 +1,7 @@
 package com.grahambartley.nightborn.sound;
 
 import com.grahambartley.nightborn.Nightborn;
+import com.grahambartley.nightborn.coffin.CoffinStyle;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.sound.SoundEvent;
@@ -17,6 +18,8 @@ public final class NightbornSounds {
   public static final SoundEvent HOLY_WATER_HISS = register("item.holy_water.hiss");
   public static final SoundEvent COFFIN_OPEN = register("block.coffin.open");
   public static final SoundEvent COFFIN_CLOSE = register("block.coffin.close");
+  public static final SoundEvent STONE_COFFIN_OPEN = register("block.stone_coffin.open");
+  public static final SoundEvent STONE_COFFIN_CLOSE = register("block.stone_coffin.close");
   public static final SoundEvent MUSIC_GOTHIC = register("music.gothic");
 
   private NightbornSounds() {}
@@ -31,8 +34,11 @@ public final class NightbornSounds {
     return drains ? DRAIN : DRINK;
   }
 
-  public static SoundEvent lid(final boolean open) {
-    return open ? COFFIN_OPEN : COFFIN_CLOSE;
+  public static SoundEvent lid(final CoffinStyle style, final boolean open) {
+    return switch (style) {
+      case WOOD -> open ? COFFIN_OPEN : COFFIN_CLOSE;
+      case STONE -> open ? STONE_COFFIN_OPEN : STONE_COFFIN_CLOSE;
+    };
   }
 
   public static SoundEvent register(final String path) {

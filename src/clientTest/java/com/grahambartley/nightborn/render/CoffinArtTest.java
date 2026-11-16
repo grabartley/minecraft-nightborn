@@ -6,18 +6,23 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
+import com.grahambartley.nightborn.coffin.CoffinStyle;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 import net.minecraft.util.Identifier;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.EnumSource;
+import org.junit.jupiter.params.provider.MethodSource;
 
 class CoffinArtTest {
 
@@ -28,17 +33,21 @@ class CoffinArtTest {
   @CsvSource({
     "minecraft:oak_planks, minecraft:textures/block/oak_planks.png",
     "minecraft:dark_oak_planks, minecraft:textures/block/dark_oak_planks.png",
-    "minecraft:crimson_planks, minecraft:textures/block/crimson_planks.png"
+    "minecraft:crimson_planks, minecraft:textures/block/crimson_planks.png",
+    "minecraft:deepslate_bricks, minecraft:textures/block/deepslate_bricks.png",
+    "nightborn:gothic_stone_bricks, nightborn:textures/block/gothic_stone_bricks.png"
   })
-  @DisplayName("a coffin's wood is drawn with vanilla's own planks texture for that wood")
-  void drawsWoodWithVanillaPlanks(final String planks, final String texture) {
-    assertEquals(Identifier.of(texture), CoffinArt.planks(Identifier.of(planks)));
+  @DisplayName("a coffin is drawn with its source block's own texture")
+  void drawsTheSourceBlockTexture(final String source, final String texture) {
+    assertEquals(Identifier.of(texture), CoffinArt.texture(Identifier.of(source)));
   }
 
   @ParameterizedTest(name = "{0} -> {1}")
   @CsvSource({
     "body_wood, minecraft:textures/block/oak_planks.png",
     "lid_wood, minecraft:textures/block/oak_planks.png",
+    "body_stone, minecraft:textures/block/oak_planks.png",
+    "lid_stone, minecraft:textures/block/oak_planks.png",
     "body_velvet, nightborn:textures/block/burgundy_velvet.png",
     "lid_velvet, nightborn:textures/block/burgundy_velvet.png",
     "body_gold, minecraft:textures/block/raw_gold_block.png",
@@ -56,27 +65,36 @@ class CoffinArtTest {
     assertEquals(Optional.empty(), CoffinArt.texture(bone, OAK));
   }
 
-  @Test
+  static Stream<Arguments> styles() {
+    return Stream.of(
+        Arguments.of(
+            CoffinStyle.WOOD,
+            Set.of("body_wood", "body_velvet", "body_gold", "lid_wood", "lid_velvet", "lid_gold")),
+        Arguments.of(CoffinStyle.STONE, Set.of("body_stone", "body_velvet", "lid_stone")));
+  }
+
+  @ParameterizedTest(name = "{0}")
+  @MethodSource("styles")
   @DisplayName("every bone that carries cubes names a material the renderer can bind")
-  void everyBoneWithCubesHasAMaterial() throws IOException {
+  void everyBoneWithCubesHasAMaterial(final CoffinStyle style, final Set<String> expected)
+      throws IOException {
     final Set<String> bones =
-        StreamSupport.stream(bones().spliterator(), false)
+        StreamSupport.stream(bones(style).spliterator(), false)
             .map(JsonElement::getAsJsonObject)
             .filter(bone -> bone.has("cubes"))
             .map(bone -> bone.get("name").getAsString())
             .collect(Collectors.toSet());
-    assertEquals(
-        Set.of("body_wood", "body_velvet", "body_gold", "lid_wood", "lid_velvet", "lid_gold"),
-        bones);
+    assertEquals(expected, bones);
     bones.forEach(bone -> assertTrue(CoffinArt.texture(bone, OAK).isPresent(), bone));
   }
 
-  @Test
-  @DisplayName("the item is centred on the model's length as exported")
-  void centresTheItemOnTheModel() throws IOException {
+  @ParameterizedTest(name = "{0}")
+  @EnumSource(CoffinStyle.class)
+  @DisplayName("the item is centred on each model's length as exported")
+  void centresTheItemOnTheModel(final CoffinStyle style) throws IOException {
     double min = Double.MAX_VALUE;
     double max = -Double.MAX_VALUE;
-    for (final JsonElement bone : bones()) {
+    for (final JsonElement bone : bones(style)) {
       if (!bone.getAsJsonObject().has("cubes")) {
         continue;
       }
@@ -114,8 +132,16 @@ class CoffinArtTest {
                 .resolve(CoffinArt.VELVET.getPath())));
   }
 
-  private static JsonArray bones() throws IOException {
-    return JsonParser.parseString(Files.readString(file(CoffinArt.GEO)))
+  @ParameterizedTest(name = "{0}")
+  @EnumSource(CoffinStyle.class)
+  @DisplayName("each style's model and clips ship with the mod")
+  void shipsEachStyle(final CoffinStyle style) {
+    assertTrue(Files.isRegularFile(file(CoffinArt.geo(style))));
+    assertTrue(Files.isRegularFile(file(CoffinArt.animation(style))));
+  }
+
+  private static JsonArray bones(final CoffinStyle style) throws IOException {
+    return JsonParser.parseString(Files.readString(file(CoffinArt.geo(style))))
         .getAsJsonObject()
         .getAsJsonArray("minecraft:geometry")
         .get(0)

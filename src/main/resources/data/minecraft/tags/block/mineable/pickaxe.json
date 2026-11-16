@@ -10,8 +10,10 @@
     "nightborn:cracked_gothic_stone_brick_stairs",
     "nightborn:cracked_gothic_stone_brick_wall",
     "nightborn:cracked_gothic_stone_bricks",
+    "nightborn:deepslate_brick_coffin",
     "nightborn:deepslate_silver_ore",
     "nightborn:gold_wall_crucifix",
+    "nightborn:gothic_stone_brick_coffin",
     "nightborn:gothic_stone_brick_slab",
     "nightborn:gothic_stone_brick_stairs",
     "nightborn:gothic_stone_brick_wall",
@@ -20,7 +22,9 @@
     "nightborn:mossy_gothic_stone_brick_stairs",
     "nightborn:mossy_gothic_stone_brick_wall",
     "nightborn:mossy_gothic_stone_bricks",
+    "nightborn:polished_blackstone_brick_coffin",
     "nightborn:silver_ore",
-    "nightborn:silver_wall_crucifix"
+    "nightborn:silver_wall_crucifix",
+    "nightborn:stone_brick_coffin"
   ]
 }
