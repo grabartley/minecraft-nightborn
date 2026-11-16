@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.SpawnReason;
@@ -35,12 +36,14 @@ public final class HouseholdSpawner {
     }
     final List<BlockPos> spots = spots(world, chunkBox, heart);
     final List<Entity> settled = new ArrayList<>();
+    final List<BlockPos> held = new ArrayList<>();
     household
         .head()
         .flatMap(head -> HouseholdSpots.middle(spots, centre).map(spot -> Map.entry(head, spot)))
         .ifPresent(
             seat -> {
               spots.remove(seat.getValue());
+              held.add(seat.getValue());
               spawn(
                       world,
                       seat.getKey().resident().value(),
@@ -51,7 +54,7 @@ public final class HouseholdSpawner {
                   .ifPresent(settled::add);
             });
     final int count = household.residents().get(random);
-    for (final BlockPos spot : HouseholdSpots.choose(spots, count, random)) {
+    for (final BlockPos spot : HouseholdSpots.choose(spots, count, random, held)) {
       spawn(world, household.resident().value(), spot, household.stages(), centre, random)
           .ifPresent(settled::add);
     }
@@ -86,6 +89,15 @@ public final class HouseholdSpawner {
     return Optional.of(resident);
   }
 
+  private static List<BlockState> above(
+      final StructureWorldAccess world, final BlockPos floor, final int top) {
+    final List<BlockState> above = new ArrayList<>();
+    for (int y = floor.getY() + 3; y <= top; y++) {
+      above.add(world.getBlockState(new BlockPos(floor.getX(), y, floor.getZ())));
+    }
+    return above;
+  }
+
   private static List<BlockPos> spots(
       final StructureWorldAccess world, final BlockBox chunkBox, final BlockBox heart) {
     final List<BlockPos> spots = new ArrayList<>();
@@ -99,9 +111,10 @@ public final class HouseholdSpawner {
         for (int y = heart.getMinY(); y < heart.getMaxY() - 1; y++) {
           floor.set(x, y, z);
           if (StandingSpot.fits(
-              world.getBlockState(floor),
-              world.getBlockState(floor.up()),
-              world.getBlockState(floor.up(2)))) {
+                  world.getBlockState(floor),
+                  world.getBlockState(floor.up()),
+                  world.getBlockState(floor.up(2)))
+              && StandingSpot.sheltered(above(world, floor, heart.getMaxY()))) {
             spots.add(floor.up().toImmutable());
           }
         }

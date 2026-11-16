@@ -13,6 +13,15 @@ public final class StandingSpot {
         && isOpen(head);
   }
 
+  public static boolean sheltered(final Iterable<BlockState> above) {
+    for (final BlockState state : above) {
+      if (state.isOpaque()) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   private static boolean isOpen(final BlockState state) {
     return !state.blocksMovement() && state.getFluidState().isEmpty();
   }

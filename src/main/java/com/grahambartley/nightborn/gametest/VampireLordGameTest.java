@@ -96,13 +96,23 @@ public class VampireLordGameTest implements FabricGameTest {
     final ServerPlayerEntity foe = context.createMockCreativeServerPlayerInWorld();
     final VampireEntity first = context.spawnEntity(NightbornMobs.VAMPIRE, new BlockPos(1, 2, 1));
     final VampireEntity second = context.spawnEntity(NightbornMobs.VAMPIRE, new BlockPos(7, 2, 7));
+    final VampireEntity stranger =
+        context.spawnEntity(NightbornMobs.VAMPIRE, new BlockPos(1, 2, 7));
     first.setAiDisabled(true);
     second.setAiDisabled(true);
+    stranger.setAiDisabled(true);
+    final BlockPos home = context.getAbsolutePos(CENTRE);
+    lord.settleAt(home);
+    first.settleAt(home);
+    second.settleAt(home);
+    stranger.settleAt(home.add(200, 0, 0));
     lord.setTarget(foe);
     final var answered = Rally.call(lord, new RallyPower(16.0F));
     context.assertTrue(answered.size() == 2, "both housemates answer, not " + answered.size());
     context.assertTrue(
         first.getTarget() == foe && second.getTarget() == foe, "they turn on the foe");
+    context.assertTrue(
+        stranger.getTarget() == null, "a vampire from another household ignores the call");
     context.complete();
   }
 

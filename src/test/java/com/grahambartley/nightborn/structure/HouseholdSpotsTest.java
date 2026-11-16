@@ -76,6 +76,18 @@ class HouseholdSpotsTest {
     assertTrue(HouseholdSpots.middle(List.of(), BlockPos.ORIGIN).isEmpty());
   }
 
+  @ParameterizedTest(name = "seed {0}")
+  @CsvSource({"1", "2", "3", "42", "1000"})
+  @DisplayName("residents never take or crowd a spot the head already holds")
+  void keepsClearOfTheHead(final long seed) {
+    final BlockPos head = new BlockPos(5, 64, 0);
+    final List<BlockPos> chosen =
+        HouseholdSpots.choose(row(12), 3, Random.create(seed), List.of(head));
+    assertEquals(3, chosen.size());
+    assertTrue(
+        chosen.stream().allMatch(spot -> spot.getManhattanDistance(head) >= 2), chosen.toString());
+  }
+
   private static BlockPos pos(final String xyz) {
     final String[] parts = xyz.split(",");
     return new BlockPos(

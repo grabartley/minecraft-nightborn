@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
+import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.item.ItemStack;
@@ -85,6 +86,15 @@ public class VampireStructureGameTest implements FabricGameTest {
     return BlockBox.create(
         context.getAbsolutePos(new BlockPos(0, 1, 0)),
         context.getAbsolutePos(new BlockPos(8, 4, 8)));
+  }
+
+  private static BlockBox roofed(final TestContext context) {
+    for (int x = 0; x <= 8; x++) {
+      for (int z = 0; z <= 8; z++) {
+        context.setBlockState(x, 4, z, Blocks.STONE);
+      }
+    }
+    return arena(context);
   }
 
   private static Household household(final int residents) {
@@ -263,7 +273,7 @@ public class VampireStructureGameTest implements FabricGameTest {
 
   @GameTest(templateName = ARENA, tickLimit = 20)
   public void aHouseholdSettlesItsResidentsOnTheFloor(final TestContext context) {
-    final BlockBox box = arena(context);
+    final BlockBox box = roofed(context);
     final List<Entity> settled =
         HouseholdSpawner.settle(context.getWorld(), box, box, household(3), Random.create(5L));
     context.assertTrue(settled.size() == 3, "three residents settle, not " + settled.size());
@@ -283,7 +293,7 @@ public class VampireStructureGameTest implements FabricGameTest {
 
   @GameTest(templateName = ARENA, tickLimit = 20)
   public void aHouseholdSeatsItsHeadAtTheMiddleOfItsHeart(final TestContext context) {
-    final BlockBox box = arena(context);
+    final BlockBox box = roofed(context);
     final Household household =
         new Household(
             Registries.ENTITY_TYPE.getEntry(NightbornMobs.VAMPIRE),
@@ -344,6 +354,16 @@ public class VampireStructureGameTest implements FabricGameTest {
                 RegistryKey.of(
                     RegistryKeys.LOOT_TABLE, Identifier.of(Nightborn.MOD_ID, "chests/castle")));
     context.assertTrue(loot != LootTable.EMPTY, "the castle chest loot table loads");
+    context.complete();
+  }
+
+  @GameTest(templateName = ARENA, tickLimit = 20)
+  public void aHouseholdNeverSettlesUnderOpenSky(final TestContext context) {
+    final BlockBox box = arena(context);
+    final List<Entity> settled =
+        HouseholdSpawner.settle(context.getWorld(), box, box, household(3), Random.create(5L));
+    context.assertTrue(
+        settled.isEmpty(), "no resident settles where the sun can reach, not " + settled.size());
     context.complete();
   }
 

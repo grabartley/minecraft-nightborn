@@ -40,7 +40,24 @@ class SkillPowerTest {
     assertTrue(power.familiar().isEmpty());
     assertTrue(power.fog().isEmpty());
     assertTrue(power.shadowStep().isEmpty());
+    assertTrue(power.rally().isEmpty());
+    assertTrue(power.summon().isEmpty());
     assertTrue(power.mob().isEmpty());
+  }
+
+  @ParameterizedTest(name = "{0}")
+  @org.junit.jupiter.params.provider.CsvSource(
+      delimiter = '|',
+      value = {
+        "{\"blood\":3,\"cooldown_ticks\":400,\"rally\":{\"range\":32}} | true | false",
+        "{\"blood\":4,\"cooldown_ticks\":600,\"summon\":{\"entity\":\"nightborn:vampire_bat\",\"count\":4}} | false | true"
+      })
+  @DisplayName("a power can rally a household or summon creatures to the caster")
+  void ralliesOrSummons(final String json, final boolean rally, final boolean summon) {
+    final SkillPower power =
+        SkillPower.CODEC.parse(JsonOps.INSTANCE, JsonParser.parseString(json)).getOrThrow();
+    assertEquals(rally, power.rally().isPresent());
+    assertEquals(summon, power.summon().isPresent());
   }
 
   @Test

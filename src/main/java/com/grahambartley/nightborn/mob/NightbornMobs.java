@@ -18,20 +18,24 @@ import net.minecraft.util.Identifier;
 
 public final class NightbornMobs {
 
+  static final float VAMPIRE_WIDTH = 0.6F;
+  static final float VAMPIRE_HEIGHT = 1.95F;
+  static final float VAMPIRE_EYES = 1.74F;
+
   public static final EntityType<VampireEntity> VAMPIRE =
       register(
           "vampire",
           EntityType.Builder.create(VampireEntity::new, SpawnGroup.MONSTER)
-              .dimensions(0.6F, 1.95F)
-              .eyeHeight(1.74F)
+              .dimensions(VAMPIRE_WIDTH, VAMPIRE_HEIGHT)
+              .eyeHeight(VAMPIRE_EYES)
               .maxTrackingRange(8));
 
   public static final EntityType<VampireLordEntity> VAMPIRE_LORD =
       register(
           "vampire_lord",
           EntityType.Builder.create(VampireLordEntity::new, SpawnGroup.MONSTER)
-              .dimensions(0.6F, 1.95F)
-              .eyeHeight(1.74F)
+              .dimensions(VAMPIRE_WIDTH, VAMPIRE_HEIGHT)
+              .eyeHeight(VAMPIRE_EYES)
               .maxTrackingRange(10));
 
   public static final EntityType<VampireBatEntity> VAMPIRE_BAT =

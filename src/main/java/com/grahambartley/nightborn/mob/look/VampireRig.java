@@ -63,7 +63,7 @@ public enum VampireRig implements StringIdentifiable {
     return Identifier.of(Nightborn.MOD_ID, "textures/entity/vampire/" + id + "_eyes.png");
   }
 
-  public static Identifier animation() {
+  public static Identifier playerClips() {
     return MALE.clips();
   }
 

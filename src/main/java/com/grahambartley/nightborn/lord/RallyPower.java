@@ -16,8 +16,9 @@ public record RallyPower(float range) {
   public boolean answers(
       final boolean caster,
       final boolean vampireMob,
+      final boolean sameHome,
       final boolean helpless,
       final double distance) {
-    return !caster && vampireMob && !helpless && distance <= range;
+    return !caster && vampireMob && sameHome && !helpless && distance <= range;
   }
 }

@@ -16,15 +16,23 @@ public final class HouseholdSpots {
 
   public static List<BlockPos> choose(
       final List<BlockPos> spots, final int count, final Random random) {
+    return choose(spots, count, random, List.of());
+  }
+
+  public static List<BlockPos> choose(
+      final List<BlockPos> spots, final int count, final Random random, final List<BlockPos> held) {
     final List<BlockPos> shuffled = Util.copyShuffled(spots.stream(), random);
     final List<BlockPos> chosen = new ArrayList<>();
     for (final BlockPos spot : shuffled) {
-      if (chosen.size() < count && chosen.stream().noneMatch(taken -> crowds(taken, spot))) {
+      if (chosen.size() < count
+          && !held.contains(spot)
+          && chosen.stream().noneMatch(taken -> crowds(taken, spot))
+          && held.stream().noneMatch(taken -> crowds(taken, spot))) {
         chosen.add(spot);
       }
     }
     for (final BlockPos spot : shuffled) {
-      if (chosen.size() < count && !chosen.contains(spot)) {
+      if (chosen.size() < count && !chosen.contains(spot) && !held.contains(spot)) {
         chosen.add(spot);
       }
     }
