@@ -42,6 +42,7 @@ public class HunterCampGameTest implements FabricGameTest {
   static final int START = 2;
   static final String RESTOCK = "guild-restock";
   static final String PLACED_CAMP = "placed-camp";
+  static final int CLEAR_OF_OTHER_TESTS = 64;
   static final Identifier STAKE_THREE = Identifier.of("nightborn", "stake_three");
   static final Identifier CLEAR_HOUSEHOLD = Identifier.of("nightborn", "clear_household");
 
@@ -349,7 +350,7 @@ public class HunterCampGameTest implements FabricGameTest {
   @GameTest(templateName = ARENA, batchId = PLACED_CAMP, tickLimit = 20)
   public void aPlacedCampHoldsArmedHuntersAndAGuildMaster(final TestContext context) {
     final ServerWorld world = context.getWorld();
-    final BlockPos origin = context.getAbsolutePos(new BlockPos(0, 1, 0));
+    final BlockPos origin = context.getAbsolutePos(new BlockPos(0, 1, 0)).up(CLEAR_OF_OTHER_TESTS);
     final StructureTemplate camp =
         world
             .getStructureTemplateManager()

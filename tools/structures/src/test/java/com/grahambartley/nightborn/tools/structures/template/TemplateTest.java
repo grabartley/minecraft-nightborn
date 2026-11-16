@@ -66,4 +66,15 @@ class TemplateTest {
     assertThrows(UnsupportedOperationException.class, () -> t.cells().put(new Pos(0, 0, 0), "x"));
     assertThrows(UnsupportedOperationException.class, () -> t.blockData().clear());
   }
+
+  @ParameterizedTest(name = "anchor {0} leaves {1}")
+  @CsvSource({"nightborn:camp_heart, dirt_path", "nightborn:other, minecraft:stone"})
+  void anAnchorIsAnUpwardJigsawThatLeavesItsFinalState(final String name, final String below) {
+    t.anchor(2, 0, 3, name, below);
+    assertEquals("minecraft:jigsaw[orientation=up_north]", t.get(2, 0, 3));
+    final Map<String, Object> data = t.blockData().get(new Pos(2, 0, 3));
+    assertEquals(name, data.get("name"));
+    assertEquals(BlockState.full(below), data.get("final_state"));
+    assertEquals("minecraft:empty", data.get("pool"));
+  }
 }

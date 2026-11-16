@@ -15,9 +15,13 @@ public final class HunterCamp {
   public static final int FIRE_X = 8;
   public static final int FIRE_Z = 10;
   static final int TRODDEN = 2;
+  static final int CLEARED = 2;
   public static final String LOOT = "nightborn:chests/hunter_camp";
   public static final String HUNTER = "nightborn:hunter";
   public static final String GUILD_MASTER = "nightborn:guild_master";
+  public static final String HEART = "nightborn:camp_heart";
+  public static final int HEART_X = 8;
+  public static final int HEART_Z = 8;
   public static final List<int[]> HUNTER_SPOTS =
       List.of(new int[] {6, 1, 11}, new int[] {10, 1, 9}, new int[] {8, 1, 12});
   public static final int[] GUILD_MASTER_SPOT = {8, 1, 2};
@@ -29,7 +33,7 @@ public final class HunterCamp {
 
   public static Template build() {
     final Template camp = new Template(PATH, SIZE, HEIGHT, SIZE);
-    camp.fill(0, 1, 0, SIZE - 1, HEIGHT - 1, SIZE - 1, "air");
+    camp.fill(0, 1, 0, SIZE - 1, CLEARED, SIZE - 1, "air");
     ground(camp);
     GUILD_TENT.build(camp);
     BUNK_TENT.build(camp);
@@ -40,6 +44,7 @@ public final class HunterCamp {
     lanternPost(camp, 12, 14);
     lanternPost(camp, 4, 6);
     residents(camp);
+    camp.anchor(HEART_X, 0, HEART_Z, HEART, "dirt_path");
     return camp;
   }
 

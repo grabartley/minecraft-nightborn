@@ -59,6 +59,17 @@ class HunterCampTest {
   }
 
   @Test
+  void theCampIsAnchoredAtItsHeartOnATroddenPath() {
+    assertEquals(
+        "minecraft:jigsaw[orientation=up_north]",
+        CAMP.get(HunterCamp.HEART_X, 0, HunterCamp.HEART_Z));
+    final Map<String, Object> heart =
+        CAMP.blockData().get(new Pos(HunterCamp.HEART_X, 0, HunterCamp.HEART_Z));
+    assertEquals(HunterCamp.HEART, heart.get("name"));
+    assertEquals("minecraft:dirt_path", heart.get("final_state"));
+  }
+
+  @Test
   void aLitCampfireBurnsAtTheHeartOfTheCamp() {
     assertEquals(
         "minecraft:campfire[facing=north,lit=true]",

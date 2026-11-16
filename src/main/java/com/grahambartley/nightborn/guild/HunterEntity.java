@@ -102,6 +102,11 @@ public class HunterEntity extends PathAwareEntity implements GeoEntity, HunterLo
   }
 
   @Override
+  public boolean canBeLeashed() {
+    return false;
+  }
+
+  @Override
   public boolean cannotDespawn() {
     return true;
   }

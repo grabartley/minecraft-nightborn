@@ -114,6 +114,31 @@ public final class Template {
     }
   }
 
+  public void anchor(final int x, final int y, final int z, final String name, final String below) {
+    set(
+        x,
+        y,
+        z,
+        BlockState.of("jigsaw", "orientation", "up_north"),
+        Nbt.compound(
+            "id",
+            "minecraft:jigsaw",
+            "name",
+            name,
+            "target",
+            "minecraft:empty",
+            "pool",
+            "minecraft:empty",
+            "joint",
+            "rollable",
+            "final_state",
+            BlockState.full(below),
+            "placement_priority",
+            0,
+            "selection_priority",
+            0));
+  }
+
   public void entity(final int x, final int y, final int z, final Map<String, Object> data) {
     entities.add(
         Nbt.compound(
