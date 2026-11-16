@@ -2,11 +2,9 @@ package com.grahambartley.nightborn.guild;
 
 import com.grahambartley.nightborn.gear.GearItems;
 import com.grahambartley.nightborn.vampire.Vampires;
-import net.minecraft.entity.EntityData;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.ai.goal.ActiveTargetGoal;
 import net.minecraft.entity.ai.goal.GoToWalkTargetGoal;
 import net.minecraft.entity.ai.goal.LookAroundGoal;
@@ -24,11 +22,7 @@ import net.minecraft.entity.mob.PathAwareEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.util.math.random.Random;
-import net.minecraft.world.LocalDifficulty;
-import net.minecraft.world.ServerWorldAccess;
 import net.minecraft.world.World;
-import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.AnimatableManager;
@@ -89,22 +83,6 @@ public class HunterEntity extends PathAwareEntity implements GeoEntity, HunterLo
   }
 
   @Override
-  public EntityData initialize(
-      final ServerWorldAccess world,
-      final LocalDifficulty difficulty,
-      final SpawnReason reason,
-      @Nullable final EntityData data) {
-    dataTracker.set(FEMALE, world.getRandom().nextBoolean());
-    initEquipment(world.getRandom(), difficulty);
-    return super.initialize(world, difficulty, reason, data);
-  }
-
-  @Override
-  protected void initEquipment(final Random random, final LocalDifficulty difficulty) {
-    equipStack(EquipmentSlot.MAINHAND, new ItemStack(GearItems.WOODEN_STAKE));
-  }
-
-  @Override
   public HunterLook look() {
     return HunterLook.hunter(dataTracker.get(FEMALE));
   }
@@ -112,7 +90,15 @@ public class HunterEntity extends PathAwareEntity implements GeoEntity, HunterLo
   @Override
   public void tick() {
     super.tick();
+    if (!getWorld().isClient() && !hasPositionTarget()) {
+      settle();
+    }
+  }
+
+  private void settle() {
     CampHome.keep(this, CAMP_REACH);
+    dataTracker.set(FEMALE, getRandom().nextBoolean());
+    equipStack(EquipmentSlot.MAINHAND, new ItemStack(GearItems.WOODEN_STAKE));
   }
 
   @Override

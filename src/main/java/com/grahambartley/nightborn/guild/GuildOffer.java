@@ -2,8 +2,12 @@ package com.grahambartley.nightborn.guild;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.Identifier;
 import net.minecraft.village.TradeOffer;
 import net.minecraft.village.TradedItem;
 
@@ -27,6 +31,16 @@ public record GuildOffer(
                           .optionalFieldOf("max_uses", 1)
                           .forGetter(GuildOffer::maxUses))
                   .apply(instance, GuildOffer::new));
+
+  public static List<GuildOffer> inOrder(final Map<Identifier, GuildOffer> offers) {
+    return offers.entrySet().stream()
+        .sorted(
+            Comparator.comparingInt(
+                    (Map.Entry<Identifier, GuildOffer> entry) -> entry.getValue().order())
+                .thenComparing(entry -> entry.getKey().toString()))
+        .map(Map.Entry::getValue)
+        .toList();
+  }
 
   public TradeOffer toTradeOffer() {
     return new TradeOffer(wants, alsoWants, gives.copy(), maxUses, 0, 0.0F);

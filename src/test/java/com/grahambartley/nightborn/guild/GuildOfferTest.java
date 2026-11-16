@@ -6,12 +6,17 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import com.grahambartley.nightborn.MinecraftBootstrapExtension;
 import java.io.IOException;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Stream;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
+import net.minecraft.util.Identifier;
 import net.minecraft.village.TradeOffer;
+import net.minecraft.village.TradedItem;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.MethodSource;
 
 @ExtendWith(MinecraftBootstrapExtension.class)
@@ -43,5 +48,30 @@ class GuildOfferTest {
             .peek(offer -> assertEquals(1, offer.maxUses()))
             .count();
     assertEquals(GuildDataFiles.load("hunter_contract", HunterContract.CODEC).size(), contracts);
+  }
+
+  @ParameterizedTest(name = "{0}")
+  @CsvSource({
+    "'b:10, a:20, c:5', 'c, b, a'",
+    "'b:0, a:0, c:0', 'a, b, c'",
+    "'z:1, a:2, m:1', 'm, z, a'",
+    "'only:7', 'only'"
+  })
+  void offersRunByOrderThenById(final String offers, final String expected) {
+    final Map<Identifier, GuildOffer> byId = new java.util.HashMap<>();
+    for (final String entry : offers.split(", ")) {
+      final String[] parts = entry.split(":");
+      byId.put(
+          Identifier.of("nightborn", parts[0]),
+          new GuildOffer(
+              Integer.parseInt(parts[1]),
+              new TradedItem(Items.EMERALD),
+              Optional.empty(),
+              new ItemStack(Items.PAPER, parts[0].length()),
+              1));
+    }
+    assertEquals(
+        java.util.Arrays.stream(expected.split(", ")).map(String::length).toList(),
+        GuildOffer.inOrder(byId).stream().map(offer -> offer.gives().getCount()).toList());
   }
 }

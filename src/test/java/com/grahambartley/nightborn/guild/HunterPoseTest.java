@@ -7,7 +7,7 @@ import org.junit.jupiter.params.provider.CsvSource;
 
 class HunterPoseTest {
 
-  @ParameterizedTest(name = "swing {0}, trade {1}, sprint {2}, speed {3}: {4}")
+  @ParameterizedTest(name = "swing {0}, trade {1}, sprint {2}, speed squared {3}: {4}")
   @CsvSource({
     "true, true, true, 0.5, STAKE_STRIKE",
     "false, true, false, 0.5, TRADE",
@@ -20,9 +20,9 @@ class HunterPoseTest {
       final boolean swinging,
       final boolean trading,
       final boolean sprinting,
-      final double speed,
+      final double speedSquared,
       final HunterPose pose) {
-    assertEquals(pose, HunterPose.of(swinging, trading, sprinting, speed));
+    assertEquals(pose, HunterPose.of(swinging, trading, sprinting, speedSquared));
   }
 
   @ParameterizedTest(name = "{0} plays {1}")

@@ -122,7 +122,6 @@ public class GuildMasterEntity extends MerchantEntity implements GeoEntity, Hunt
   private void openTrades(final ServerPlayerEntity visitor) {
     restockIfNewDay();
     if (getOffers().isEmpty()) {
-      refuse(visitor);
       return;
     }
     setCustomer(visitor);

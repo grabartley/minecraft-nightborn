@@ -15,18 +15,25 @@ import com.grahambartley.nightborn.skill.SkillTree;
 import com.grahambartley.nightborn.structure.RareSpreadPlacement;
 import com.grahambartley.nightborn.structure.StructureRarity;
 import com.grahambartley.nightborn.vampire.VampireTransitions;
+import java.util.List;
 import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
+import net.minecraft.block.Blocks;
+import net.minecraft.entity.Entity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.world.ServerWorld;
+import net.minecraft.structure.StructurePlacementData;
+import net.minecraft.structure.StructureTemplate;
 import net.minecraft.test.GameTest;
 import net.minecraft.test.TestContext;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Box;
 import net.minecraft.village.TradeOffer;
 
 public class HunterCampGameTest implements FabricGameTest {
@@ -34,6 +41,7 @@ public class HunterCampGameTest implements FabricGameTest {
   static final String ARENA = "nightborn:vampire_arena";
   static final int START = 2;
   static final String RESTOCK = "guild-restock";
+  static final String PLACED_CAMP = "placed-camp";
   static final Identifier STAKE_THREE = Identifier.of("nightborn", "stake_three");
   static final Identifier CLEAR_HOUSEHOLD = Identifier.of("nightborn", "clear_household");
 
@@ -334,6 +342,43 @@ public class HunterCampGameTest implements FabricGameTest {
           context.assertEquals(
               loaded.getPositionTarget(), hunter.getPositionTarget(), "the camp is kept");
           context.assertEquals(loaded.look(), hunter.look(), "and so is its look");
+          context.complete();
+        });
+  }
+
+  @GameTest(templateName = ARENA, batchId = PLACED_CAMP, tickLimit = 20)
+  public void aPlacedCampHoldsArmedHuntersAndAGuildMaster(final TestContext context) {
+    final ServerWorld world = context.getWorld();
+    final BlockPos origin = context.getAbsolutePos(new BlockPos(0, 1, 0));
+    final StructureTemplate camp =
+        world
+            .getStructureTemplateManager()
+            .getTemplate(Identifier.of("nightborn", "hunter_camp/camp"))
+            .orElseThrow();
+    camp.place(world, origin, origin, new StructurePlacementData(), world.getRandom(), 2);
+    final Box area = new Box(origin).stretch(camp.getSize().getX(), 8, camp.getSize().getZ());
+    context.runAtTick(
+        START,
+        () -> {
+          final List<HunterEntity> hunters =
+              world.getEntitiesByClass(HunterEntity.class, area, hunter -> true);
+          final List<GuildMasterEntity> masters =
+              world.getEntitiesByClass(GuildMasterEntity.class, area, master -> true);
+          context.assertEquals(hunters.size(), 3, "three hunters live in a camp");
+          hunters.forEach(HunterEntity::tick);
+          context.assertEquals(masters.size(), 1, "with one Guild Master");
+          hunters.forEach(
+              hunter ->
+                  context.assertTrue(
+                      hunter.getMainHandStack().isOf(GearItems.WOODEN_STAKE),
+                      "every hunter carries a stake"));
+          context.assertTrue(
+              world.getBlockState(origin.add(8, 1, 10)).isOf(Blocks.CAMPFIRE),
+              "a campfire burns at the heart of the camp");
+          hunters.forEach(Entity::discard);
+          masters.forEach(Entity::discard);
+          BlockPos.iterate(origin, origin.add(camp.getSize()).add(-1, -1, -1))
+              .forEach(pos -> world.setBlockState(pos, Blocks.AIR.getDefaultState(), 2));
           context.complete();
         });
   }

@@ -1,8 +1,9 @@
 package com.grahambartley.nightborn.guild;
 
 import com.grahambartley.nightborn.Nightborn;
-import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import net.fabricmc.fabric.api.event.registry.DynamicRegistries;
 import net.minecraft.registry.DynamicRegistryManager;
@@ -26,16 +27,11 @@ public final class GuildData {
   }
 
   public static List<GuildOffer> offers(final DynamicRegistryManager registries) {
-    return registries
+    final Map<Identifier, GuildOffer> offers = new HashMap<>();
+    registries
         .getOptional(OFFER)
-        .map(
-            registry ->
-                registry.getIds().stream()
-                    .sorted(Comparator.comparing(Identifier::toString))
-                    .map(registry::get)
-                    .sorted(Comparator.comparingInt(GuildOffer::order))
-                    .toList())
-        .orElse(List.of());
+        .ifPresent(registry -> registry.getIds().forEach(id -> offers.put(id, registry.get(id))));
+    return GuildOffer.inOrder(offers);
   }
 
   public static Optional<HunterContract> contract(

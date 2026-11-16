@@ -11,7 +11,7 @@ public final class CampHome {
   private CampHome() {}
 
   public static void keep(final PathAwareEntity resident, final int reach) {
-    if (!resident.getWorld().isClient() && !resident.hasPositionTarget()) {
+    if (!resident.hasPositionTarget()) {
       resident.setPositionTarget(resident.getBlockPos(), reach);
     }
   }

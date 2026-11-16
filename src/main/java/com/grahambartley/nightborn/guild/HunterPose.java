@@ -9,7 +9,7 @@ public enum HunterPose {
   STAKE_STRIKE("stake_strike", false),
   TRADE("trade", true);
 
-  static final double MOVING = 0.003;
+  static final double MOVING_SPEED_SQUARED = 0.003;
 
   private final String animation;
   private final RawAnimation clip;
@@ -29,14 +29,17 @@ public enum HunterPose {
   }
 
   public static HunterPose of(
-      final boolean swinging, final boolean trading, final boolean sprinting, final double speed) {
+      final boolean swinging,
+      final boolean trading,
+      final boolean sprinting,
+      final double speedSquared) {
     if (swinging) {
       return STAKE_STRIKE;
     }
     if (trading) {
       return TRADE;
     }
-    if (speed < MOVING) {
+    if (speedSquared < MOVING_SPEED_SQUARED) {
       return IDLE;
     }
     return sprinting ? RUN : WALK;
