@@ -1,5 +1,6 @@
 package com.grahambartley.nightborn.blood;
 
+import com.grahambartley.nightborn.batform.BatForm;
 import com.grahambartley.nightborn.config.NightbornConfig;
 import com.grahambartley.nightborn.downed.Downed;
 import com.grahambartley.nightborn.downed.DownedState;
@@ -42,10 +43,10 @@ public final class BloodTicker {
                 vampire.getWorld().getDifficulty(),
                 vampire.getWorld().getGameRules().getBoolean(GameRules.NATURAL_REGENERATION)
                     && (downed == null || !downed.isDowned()),
-                Levitation.isLevitating(vampire),
+                BloodMetabolism.flightDrainSeconds(
+                    BatForm.isBat(vampire), Levitation.isLevitating(vampire), config.core()),
                 vampire.age),
-            drainSeconds,
-            config.core().levitationDrainSeconds());
+            drainSeconds);
     BloodAttachment.set(vampire, outcome.blood());
     if (outcome.heals()) {
       vampire.heal(1.0F);

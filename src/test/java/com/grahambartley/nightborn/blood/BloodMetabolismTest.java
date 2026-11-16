@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import com.grahambartley.nightborn.config.NightbornConfig;
 import net.minecraft.world.Difficulty;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -19,7 +20,7 @@ class BloodMetabolismTest {
       final Difficulty difficulty,
       final int age) {
     return new BloodMetabolism.State(
-        blood, exhaustion, health, 40.0F, difficulty, true, false, age);
+        blood, exhaustion, health, 40.0F, difficulty, true, BloodMetabolism.GROUNDED, age);
   }
 
   @ParameterizedTest(name = "drain every {0} s")
@@ -37,9 +38,15 @@ class BloodMetabolismTest {
       final BloodMetabolism.Outcome outcome =
           BloodMetabolism.tick(
               new BloodMetabolism.State(
-                  blood, exhaustion, 40.0F, 40.0F, Difficulty.NORMAL, true, false, tick),
-              seconds,
-              600);
+                  blood,
+                  exhaustion,
+                  40.0F,
+                  40.0F,
+                  Difficulty.NORMAL,
+                  true,
+                  BloodMetabolism.GROUNDED,
+                  tick),
+              seconds);
       blood = outcome.blood();
       exhaustion = outcome.exhaustion();
     }
@@ -50,7 +57,7 @@ class BloodMetabolismTest {
   @DisplayName("exhaustion from running and fighting costs blood as it costs hunger")
   void exhaustionCostsBlood() {
     final BloodMetabolism.Outcome outcome =
-        BloodMetabolism.tick(state(10, 4.0F, 40.0F, Difficulty.NORMAL, 1), 600, 600);
+        BloodMetabolism.tick(state(10, 4.0F, 40.0F, Difficulty.NORMAL, 1), 600);
     assertEquals(9, outcome.blood());
   }
 
@@ -58,7 +65,7 @@ class BloodMetabolismTest {
   @DisplayName("blood never drains in peaceful")
   void peacefulKeepsBlood() {
     final BloodMetabolism.Outcome outcome =
-        BloodMetabolism.tick(state(10, 4.5F, 40.0F, Difficulty.PEACEFUL, 1), 5, 600);
+        BloodMetabolism.tick(state(10, 4.5F, 40.0F, Difficulty.PEACEFUL, 1), 5);
     assertEquals(10, outcome.blood());
   }
 
@@ -75,7 +82,7 @@ class BloodMetabolismTest {
   @DisplayName("a blood bar above half heals every 200 ticks while hurt")
   void heals(final int blood, final float health, final int age, final boolean heals) {
     final BloodMetabolism.Outcome outcome =
-        BloodMetabolism.tick(state(blood, 0.0F, health, Difficulty.NORMAL, age), 600, 600);
+        BloodMetabolism.tick(state(blood, 0.0F, health, Difficulty.NORMAL, age), 600);
     assertEquals(heals, outcome.heals());
   }
 
@@ -84,9 +91,9 @@ class BloodMetabolismTest {
   @DisplayName("healing costs no blood and adds no exhaustion")
   void healingIsFree(final float exhaustion) {
     final BloodMetabolism.Outcome healing =
-        BloodMetabolism.tick(state(20, exhaustion, 30.0F, Difficulty.NORMAL, 200), 600, 600);
+        BloodMetabolism.tick(state(20, exhaustion, 30.0F, Difficulty.NORMAL, 200), 600);
     final BloodMetabolism.Outcome idle =
-        BloodMetabolism.tick(state(20, exhaustion, 30.0F, Difficulty.NORMAL, 201), 600, 600);
+        BloodMetabolism.tick(state(20, exhaustion, 30.0F, Difficulty.NORMAL, 201), 600);
     assertTrue(healing.heals());
     assertEquals(idle.blood(), healing.blood());
     assertEquals(idle.exhaustion(), healing.exhaustion(), 0.0001F);
@@ -97,25 +104,24 @@ class BloodMetabolismTest {
   void noRegenNoHeal() {
     final BloodMetabolism.Outcome outcome =
         BloodMetabolism.tick(
-            new BloodMetabolism.State(20, 0.0F, 30.0F, 40.0F, Difficulty.NORMAL, false, false, 200),
-            600,
+            new BloodMetabolism.State(
+                20, 0.0F, 30.0F, 40.0F, Difficulty.NORMAL, false, BloodMetabolism.GROUNDED, 200),
             600);
     assertFalse(outcome.heals());
   }
 
-  @ParameterizedTest(name = "levitation drain every {0} s")
+  @ParameterizedTest(name = "flight drain every {0} s")
   @CsvSource({"10", "20", "60"})
-  @DisplayName("levitating drains blood on top of the resting drain")
-  void levitatingDrains(final int seconds) {
+  @DisplayName("levitating or flying as a bat drains blood on top of the resting drain")
+  void flightDrains(final int seconds) {
     int blood = 20;
     float exhaustion = 0.0F;
     for (int tick = 1; tick <= seconds * 20 + 1; tick++) {
       final BloodMetabolism.Outcome outcome =
           BloodMetabolism.tick(
               new BloodMetabolism.State(
-                  blood, exhaustion, 40.0F, 40.0F, Difficulty.NORMAL, true, true, tick),
-              600,
-              seconds);
+                  blood, exhaustion, 40.0F, 40.0F, Difficulty.NORMAL, true, seconds, tick),
+              600);
       blood = outcome.blood();
       exhaustion = outcome.exhaustion();
     }
@@ -123,13 +129,11 @@ class BloodMetabolismTest {
   }
 
   @Test
-  @DisplayName("levitating costs nothing in peaceful")
-  void peacefulLevitationIsFree() {
+  @DisplayName("flight costs nothing in peaceful")
+  void peacefulFlightIsFree() {
     final BloodMetabolism.Outcome outcome =
         BloodMetabolism.tick(
-            new BloodMetabolism.State(10, 3.99F, 40.0F, 40.0F, Difficulty.PEACEFUL, true, true, 1),
-            5,
-            1);
+            new BloodMetabolism.State(10, 3.99F, 40.0F, 40.0F, Difficulty.PEACEFUL, true, 1, 1), 5);
     assertEquals(10, outcome.blood());
   }
 
@@ -139,8 +143,16 @@ class BloodMetabolismTest {
   void exhaustionCapped(final float given, final float kept) {
     assertEquals(
         kept,
-        BloodMetabolism.tick(state(20, given, 30.0F, Difficulty.PEACEFUL, 1), 600, 600)
-            .exhaustion(),
+        BloodMetabolism.tick(state(20, given, 30.0F, Difficulty.PEACEFUL, 1), 600).exhaustion(),
         0.0001F);
+  }
+
+  @ParameterizedTest(name = "bat {0}, levitating {1} -> {2} s")
+  @CsvSource({"true, false, 30", "true, true, 30", "false, true, 120", "false, false, 0"})
+  @DisplayName("a bat drains at the bat rate, a levitating vampire at the levitation rate")
+  void flightDrainSeconds(final boolean bat, final boolean levitating, final int expected) {
+    assertEquals(
+        expected,
+        BloodMetabolism.flightDrainSeconds(bat, levitating, NightbornConfig.DEFAULTS.core()));
   }
 }

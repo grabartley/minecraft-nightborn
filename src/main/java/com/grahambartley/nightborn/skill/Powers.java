@@ -1,5 +1,6 @@
 package com.grahambartley.nightborn.skill;
 
+import com.grahambartley.nightborn.batform.BatForm;
 import com.grahambartley.nightborn.blood.BloodAttachment;
 import com.grahambartley.nightborn.downed.Downed;
 import com.grahambartley.nightborn.network.UsePowerPayload;
@@ -69,6 +70,9 @@ public final class Powers {
 
   public static PowerUse.Verdict cast(final LivingEntity caster, @Nullable final Identifier id) {
     final Optional<SkillPower> owned = power(caster, id);
+    if (BatForm.isBat(caster) && owned.flatMap(SkillPower::batForm).isPresent()) {
+      return BatForm.leave(caster) ? PowerUse.Verdict.READY : PowerUse.Verdict.CRAMPED;
+    }
     final PowerUse.Verdict verdict = check(caster, id, owned);
     if (verdict != PowerUse.Verdict.READY) {
       return verdict;
@@ -83,6 +87,8 @@ public final class Powers {
     for (final StatusEffectInstance effect : power.effects()) {
       caster.addStatusEffect(new StatusEffectInstance(effect), caster);
     }
+    power.batForm().ifPresent(form -> BatForm.enter(caster));
+    power.leap().ifPresent(leap -> leap.launch(caster));
     if (caster instanceof ServerPlayerEntity player) {
       power.track().ifPresent(track -> Tracking.start(player, track));
     }

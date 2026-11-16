@@ -1,0 +1,40 @@
+package com.grahambartley.nightborn.skill;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+
+import com.google.gson.JsonParser;
+import com.mojang.serialization.JsonOps;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.ValueSource;
+
+class BatFormPowerTest {
+
+  @Test
+  @DisplayName("bat form reads how close a vampire mob flies before turning back")
+  void parses() {
+    assertEquals(
+        new BatFormPower(3.0F),
+        BatFormPower.CODEC
+            .parse(JsonOps.INSTANCE, JsonParser.parseString("{\"land_range\":3.0}"))
+            .getOrThrow());
+  }
+
+  @ParameterizedTest(name = "{0}")
+  @ValueSource(strings = {"{}", "{\"land_range\":0.5}", "{\"land_range\":65}"})
+  @DisplayName("a missing or out of range landing distance is rejected")
+  void rejects(final String json) {
+    assertFalse(
+        BatFormPower.CODEC.parse(JsonOps.INSTANCE, JsonParser.parseString(json)).isSuccess());
+  }
+
+  @ParameterizedTest(name = "{0} blocks away with range {1} -> {2}")
+  @CsvSource({"2.0, 3.0, true", "3.0, 3.0, true", "3.1, 3.0, false", "20.0, 3.0, false"})
+  @DisplayName("a mob turns back once it is within its landing range")
+  void landsAt(final double distance, final float range, final boolean expected) {
+    assertEquals(expected, new BatFormPower(range).landsAt(distance));
+  }
+}

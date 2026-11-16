@@ -10,7 +10,8 @@ public final class PowerUse {
     HELPLESS,
     WEAKENED,
     COOLING,
-    THIRSTY;
+    THIRSTY,
+    CRAMPED;
 
     public String translationKey() {
       return "nightborn.powers.verdict." + name().toLowerCase(Locale.ROOT);

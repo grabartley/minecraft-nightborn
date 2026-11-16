@@ -14,6 +14,7 @@ public record Skill(
     int column,
     int row,
     List<SkillAttribute> attributes,
+    double bareHandDamage,
     Optional<SkillPower> power) {
 
   public static final int MAX_COLUMN = 2;
@@ -39,6 +40,9 @@ public record Skill(
                           .listOf()
                           .optionalFieldOf("attributes", List.of())
                           .forGetter(Skill::attributes),
+                      Codec.doubleRange(0.0, 20.0)
+                          .optionalFieldOf("bare_hand_damage", 0.0)
+                          .forGetter(Skill::bareHandDamage),
                       SkillPower.CODEC.optionalFieldOf("power").forGetter(Skill::power))
                   .apply(instance, Skill::new));
 

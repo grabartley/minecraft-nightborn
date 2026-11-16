@@ -107,5 +107,25 @@
         "type": "event"
       }
     ]
+  },
+  "power.bat_form.enter": {
+    "subtitle": "subtitles.nightborn.power.bat_form.enter",
+    "sounds": [
+      {
+        "name": "minecraft:entity.bat.takeoff",
+        "type": "event",
+        "pitch": 0.8
+      }
+    ]
+  },
+  "power.bat_form.leave": {
+    "subtitle": "subtitles.nightborn.power.bat_form.leave",
+    "sounds": [
+      {
+        "name": "minecraft:entity.illusioner.mirror_move",
+        "type": "event",
+        "pitch": 0.7
+      }
+    ]
   }
 }

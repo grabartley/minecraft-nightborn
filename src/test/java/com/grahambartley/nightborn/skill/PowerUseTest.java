@@ -1,12 +1,23 @@
 package com.grahambartley.nightborn.skill;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.EnumSource;
 
 class PowerUseTest {
+
+  private static final Path ENGLISH =
+      Path.of("src/main/resources/assets/nightborn/lang/en_us.json");
 
   @ParameterizedTest(
       name = "power {0}, downed {1}, weakened {2}, cooling {3}, blood {4}/{5} -> {6}")
@@ -31,5 +42,17 @@ class PowerUseTest {
       final int cost,
       final PowerUse.Verdict expected) {
     assertEquals(expected, PowerUse.check(hasPower, helpless, weakened, cooling, blood, cost));
+  }
+
+  @ParameterizedTest(name = "{0}")
+  @EnumSource(
+      value = PowerUse.Verdict.class,
+      mode = EnumSource.Mode.EXCLUDE,
+      names = {"READY", "NO_POWER"})
+  @DisplayName("every refusal the action bar shows has an English line")
+  void everyVerdictIsWorded(final PowerUse.Verdict verdict) throws IOException {
+    final JsonObject english =
+        JsonParser.parseString(Files.readString(ENGLISH, StandardCharsets.UTF_8)).getAsJsonObject();
+    assertTrue(english.has(verdict.translationKey()), verdict.translationKey());
   }
 }

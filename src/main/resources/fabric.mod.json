@@ -58,6 +58,7 @@
       "com.grahambartley.nightborn.gametest.VampireStructureGameTest",
       "com.grahambartley.nightborn.gametest.VampireStageGameTest",
       "com.grahambartley.nightborn.gametest.LevitationGameTest",
+      "com.grahambartley.nightborn.gametest.BatFormGameTest",
       "com.grahambartley.nightborn.gametest.VampireHomeGameTest",
       "com.grahambartley.nightborn.gametest.StarvationGameTest",
       "com.grahambartley.nightborn.gametest.VomitGameTest",
