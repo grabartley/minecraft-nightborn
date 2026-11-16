@@ -9,13 +9,15 @@ import org.junit.jupiter.api.Test;
 class VampireStructuresTest {
 
   @Test
-  void buildsEveryCryptPieceOnce() {
+  void buildsEveryVampirePieceOnce() {
     assertEquals(
         List.of(
             "vampire/crypt/undercroft",
             "vampire/crypt/ossuary",
             "vampire/crypt/church_tower",
-            "vampire/crypt/church_bellcote"),
+            "vampire/crypt/church_bellcote",
+            "vampire/lair/den",
+            "vampire/lair/grotto"),
         VampireStructures.build().stream().map(Template::path).toList());
   }
 }

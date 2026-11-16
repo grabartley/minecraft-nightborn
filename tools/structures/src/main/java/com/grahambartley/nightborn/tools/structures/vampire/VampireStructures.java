@@ -5,6 +5,8 @@ import com.grahambartley.nightborn.tools.structures.vampire.crypt.Church;
 import com.grahambartley.nightborn.tools.structures.vampire.crypt.Churchyard;
 import com.grahambartley.nightborn.tools.structures.vampire.crypt.Ossuary;
 import com.grahambartley.nightborn.tools.structures.vampire.crypt.Undercroft;
+import com.grahambartley.nightborn.tools.structures.vampire.lair.BloodPoolDen;
+import com.grahambartley.nightborn.tools.structures.vampire.lair.Grotto;
 import java.util.List;
 
 public final class VampireStructures {
@@ -16,6 +18,8 @@ public final class VampireStructures {
         Churchyard.bank(Undercroft.build()),
         Churchyard.bank(Ossuary.build()),
         Church.build(Church.TOWER),
-        Church.build(Church.BELLCOTE));
+        Church.build(Church.BELLCOTE),
+        BloodPoolDen.build(),
+        Grotto.build());
   }
 }
