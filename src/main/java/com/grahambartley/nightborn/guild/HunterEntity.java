@@ -2,6 +2,7 @@ package com.grahambartley.nightborn.guild;
 
 import com.grahambartley.nightborn.gear.GearItems;
 import com.grahambartley.nightborn.mob.MobSounds;
+import com.grahambartley.nightborn.mob.look.BustNbt;
 import com.grahambartley.nightborn.mob.look.Figure;
 import com.grahambartley.nightborn.mob.look.VampireRig;
 import com.grahambartley.nightborn.mob.look.VampireVoice;
@@ -66,7 +67,7 @@ public class HunterEntity extends PathAwareEntity implements GeoEntity, HunterLo
   protected void initDataTracker(final DataTracker.Builder builder) {
     super.initDataTracker(builder);
     builder.add(FEMALE, false);
-    builder.add(BUST, FLAT);
+    builder.add(BUST, Figure.FLAT);
   }
 
   @Override
@@ -149,7 +150,7 @@ public class HunterEntity extends PathAwareEntity implements GeoEntity, HunterLo
   public void writeCustomDataToNbt(final NbtCompound nbt) {
     super.writeCustomDataToNbt(nbt);
     nbt.putBoolean(FEMALE_KEY, dataTracker.get(FEMALE));
-    Figure.write(nbt, bust());
+    BustNbt.write(nbt, bust());
     CampHome.write(this, nbt);
   }
 
@@ -157,7 +158,7 @@ public class HunterEntity extends PathAwareEntity implements GeoEntity, HunterLo
   public void readCustomDataFromNbt(final NbtCompound nbt) {
     super.readCustomDataFromNbt(nbt);
     dataTracker.set(FEMALE, nbt.getBoolean(FEMALE_KEY));
-    dataTracker.set(BUST, Figure.read(nbt, rig()));
+    dataTracker.set(BUST, BustNbt.read(nbt, rig()));
     CampHome.read(this, nbt, CAMP_REACH);
   }
 

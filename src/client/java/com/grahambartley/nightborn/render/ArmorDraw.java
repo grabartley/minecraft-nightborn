@@ -19,4 +19,8 @@ enum ArmorDraw {
     }
     return geckoModel ? GECKO : VANILLA;
   }
+
+  boolean flattensBust() {
+    return this == VANILLA;
+  }
 }

@@ -27,6 +27,7 @@ import com.grahambartley.nightborn.mob.household.HouseholdBonds;
 import com.grahambartley.nightborn.mob.household.HouseholdLife;
 import com.grahambartley.nightborn.mob.household.HouseholdPlanner;
 import com.grahambartley.nightborn.mob.household.SeatedHeight;
+import com.grahambartley.nightborn.mob.look.BustNbt;
 import com.grahambartley.nightborn.mob.look.Figure;
 import com.grahambartley.nightborn.mob.look.VampireLook;
 import com.grahambartley.nightborn.mob.look.VampireLooks;
@@ -624,7 +625,7 @@ public class VampireEntity extends HostileEntity
     nbt.putString(LOOK_KEY, dataTracker.get(LOOK));
     nbt.putFloat(HEIGHT_KEY, height());
     nbt.putFloat(WIDTH_KEY, width());
-    Figure.write(nbt, bust());
+    BustNbt.write(nbt, bust());
     nbt.putString(STAGE_KEY, dataTracker.get(STAGE));
     homeLife.write(nbt);
     householdLife.write(nbt, getRegistryManager());
@@ -646,7 +647,7 @@ public class VampireEntity extends HostileEntity
           look == null ? VampireLooks.NONE : look,
           nbt.contains(HEIGHT_KEY) ? nbt.getFloat(HEIGHT_KEY) : VampireSize.BASE_HEIGHT,
           nbt.contains(WIDTH_KEY) ? nbt.getFloat(WIDTH_KEY) : 1.0F);
-      dataTracker.set(BUST, Figure.read(nbt, rig()));
+      dataTracker.set(BUST, BustNbt.read(nbt, rig()));
     }
   }
 

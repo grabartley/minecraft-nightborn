@@ -19,4 +19,11 @@ class ArmorDrawTest {
   void picksHowToDraw(final boolean armour, final boolean geckoModel, final ArmorDraw draw) {
     assertEquals(draw, ArmorDraw.of(armour, geckoModel));
   }
+
+  @ParameterizedTest(name = "{0}: {1}")
+  @CsvSource({"VANILLA, true", "GECKO, false", "NONE, false"})
+  @DisplayName("only vanilla armour flattens the bust under it, having no room for one")
+  void flattensBustUnderVanillaArmour(final ArmorDraw draw, final boolean flattened) {
+    assertEquals(flattened, draw.flattensBust());
+  }
 }

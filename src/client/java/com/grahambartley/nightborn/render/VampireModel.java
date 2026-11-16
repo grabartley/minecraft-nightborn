@@ -42,8 +42,7 @@ public class VampireModel extends GeoModel<VampireEntity> {
     final GeoBone bust = getAnimationProcessor().getBone(BustShape.BONE);
     if (bust != null) {
       bust.setHidden(
-          BustShape.underPlate(
-              ArmorDraw.of(vampire.getEquippedStack(EquipmentSlot.CHEST).getItem())));
+          ArmorDraw.of(vampire.getEquippedStack(EquipmentSlot.CHEST).getItem()).flattensBust());
     }
     final GeoBone head = getAnimationProcessor().getBone("head");
     if (head == null || vampire.holdsHead()) {

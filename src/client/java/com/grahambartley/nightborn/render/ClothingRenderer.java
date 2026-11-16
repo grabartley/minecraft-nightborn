@@ -94,6 +94,9 @@ public class ClothingRenderer extends DyeableGeoArmorRenderer<ClothingItem> {
       final int packedLight,
       final int packedOverlay,
       final int colour) {
+    if (BustShape.isBust(bone)) {
+      bone.setHidden(!BustShape.worn(this.currentEntity));
+    }
     poseStack.push();
     BustShape.size(
         poseStack, bone, this.currentEntity instanceof Figure figure ? figure.bust() : Figure.FLAT);

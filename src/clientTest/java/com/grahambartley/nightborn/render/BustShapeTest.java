@@ -2,6 +2,7 @@ package com.grahambartley.nightborn.render;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import com.grahambartley.nightborn.mob.look.Figure;
 import net.minecraft.client.util.math.MatrixStack;
 import org.joml.Vector3f;
 import org.junit.jupiter.api.DisplayName;
@@ -41,10 +42,31 @@ class BustShapeTest {
   }
 
   @ParameterizedTest(name = "{0}: {1}")
-  @CsvSource({"VANILLA, true", "GECKO, false", "NONE, false"})
-  @DisplayName("only a vanilla chestplate flattens the body under it")
-  void flattensUnderAPlate(final ArmorDraw chest, final boolean flattened) {
-    assertEquals(flattened, BustShape.underPlate(chest));
+  @CsvSource({
+    "bust, true",
+    "dyed_bust, true",
+    "points_bust, true",
+    "cravat_bust, true",
+    "busk_point, false",
+    "body, false",
+    "armor_body, false"
+  })
+  @DisplayName("a bone is part of the bust when its name ends in bust")
+  void knowsTheBustBones(final String name, final boolean bust) {
+    assertEquals(bust, BustShape.isBust(bone(name, 0, 0, 0)));
+  }
+
+  @ParameterizedTest(name = "{0}: {1}")
+  @CsvSource({"figure, true", "player, false", "nobody, false"})
+  @DisplayName("clothing shapes a bust only on a wearer whose body has one")
+  void shapesClothingOnlyOnAFigure(final String wearer, final boolean worn) {
+    final Object who =
+        switch (wearer) {
+          case "figure" -> new Figure() {};
+          case "player" -> new Object();
+          default -> null;
+        };
+    assertEquals(worn, BustShape.worn(who));
   }
 
   private static GeoBone bone(final String name, final float x, final float y, final float z) {

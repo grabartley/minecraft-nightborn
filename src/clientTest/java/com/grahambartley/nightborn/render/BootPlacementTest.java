@@ -1,5 +1,6 @@
 package com.grahambartley.nightborn.render;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.List;
@@ -56,13 +57,15 @@ class BootPlacementTest {
     assertEquals(0, boot.getPosY());
     assertEquals(0, boot.getPosZ());
     assertEquals(0, boot.getRotX());
+    assertEquals(0, boot.getRotY());
+    assertEquals(0, boot.getRotZ());
   }
 
   @ParameterizedTest(name = "{0}")
   @EnumSource(BootPlacement.class)
   @DisplayName("a model with no boots is a no-op")
   void ignoresModelsWithoutBoots(final BootPlacement side) {
-    side.place(null, null, leg(3, -14, 0, 0, 0, 0));
+    assertDoesNotThrow(() -> side.place(null, null, leg(3, -14, 0, 0, 0, 0)));
   }
 
   private static GeoBone bone(final String name) {
