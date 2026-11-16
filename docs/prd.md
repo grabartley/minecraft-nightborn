@@ -127,7 +127,7 @@ This document specifies the Nightborn alpha line for Minecraft 1.21.1 on Fabric.
 | Core | The vampire skills every vampire can take |
 | Bloodline | One of three branches of the vampire tree: Noble, Beast or Occult |
 | Hunter tree | The one skill tree every human can earn |
-| Direct sun | Daylight on a vampire with open sky above it, not in rain, water or shade |
+| Direct sun | Daylight bright enough to burn the undead on a vampire with open sky above it, not in rain, water or shade |
 | Garlic String | A block of hung garlic that weakens vampires near it |
 | Crucifix shape | A cross of crucifix-material blocks built in the world (see below) |
 | Downed | A vampire brought to its last health by anything but direct sun or a stake. It lies helpless and greatly weakened until it recovers |
@@ -244,7 +244,7 @@ Sneak and use on a creature to bite it, and keep holding to drink. Let go to sto
 | SUN-1 | A vampire in direct sun catches fire, as a zombie does, and burns while it stays there. Sun fire kills, downed or not. Fire that keeps burning after the vampire reaches shade only downs it, and cannot hurt it while it is escaping |
 | SUN-2 | No armour, helmet or effect, Fire Resistance included, stops the burn. Shade, rain, water and a closed coffin that is not burning (COFFIN-7, COFFIN-14) do |
 | SUN-3 | A burning vampire gives off dark, ashy smoke and a sizzling sound, on top of the fire |
-| SUN-4 | Vampire mobs follow the same rules and seek shade at dawn |
+| SUN-4 | Vampire mobs follow the same rules. As dawn nears, and whenever the sun reaches them, they head for the nearest shade they can walk to and keep going until they are under cover |
 
 **Not supported:** a way to walk in direct sun.
 
