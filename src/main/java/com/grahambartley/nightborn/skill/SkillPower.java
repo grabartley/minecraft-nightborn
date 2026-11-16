@@ -13,6 +13,7 @@ public record SkillPower(
     List<StatusEffectInstance> effects,
     Optional<Identifier> sound,
     Optional<TrackPower> track,
+    Optional<MesmerisePower> mesmerise,
     Optional<MobPowerUse> mob) {
 
   public static final Codec<SkillPower> CODEC =
@@ -30,6 +31,9 @@ public record SkillPower(
                           .forGetter(SkillPower::effects),
                       Identifier.CODEC.optionalFieldOf("sound").forGetter(SkillPower::sound),
                       TrackPower.CODEC.optionalFieldOf("track").forGetter(SkillPower::track),
+                      MesmerisePower.CODEC
+                          .optionalFieldOf("mesmerise")
+                          .forGetter(SkillPower::mesmerise),
                       MobPowerUse.CODEC.optionalFieldOf("mob").forGetter(SkillPower::mob))
                   .apply(instance, SkillPower::new));
 }

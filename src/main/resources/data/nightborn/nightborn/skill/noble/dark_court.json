@@ -1,0 +1,11 @@
+{
+  "branch": "nightborn:noble",
+  "cost": 3,
+  "requires": ["nightborn:noble/blood_bond"],
+  "icon": "nightborn:skills/icon/dark_court",
+  "column": 0,
+  "row": 3,
+  "attributes": [
+    { "attribute": "nightborn:thrall_limit", "amount": 2.0, "operation": "add_value" }
+  ]
+}

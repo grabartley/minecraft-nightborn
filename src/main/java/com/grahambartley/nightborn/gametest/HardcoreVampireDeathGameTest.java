@@ -11,8 +11,10 @@ import com.grahambartley.nightborn.skill.SkillAttachment;
 import com.grahambartley.nightborn.skill.SkillProgress;
 import com.grahambartley.nightborn.skill.SkillTree;
 import com.grahambartley.nightborn.skill.TreeProgress;
+import com.grahambartley.nightborn.thrall.ThrallRegistry;
 import com.grahambartley.nightborn.vampire.NightbornDamage;
 import java.util.Optional;
+import java.util.UUID;
 import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
@@ -64,6 +66,7 @@ public class HardcoreVampireDeathGameTest implements FabricGameTest {
                 Identifier.of("nightborn", "noble")));
     SkillAttachment.set(dead, SkillTree.HUNTER, TreeProgress.EMPTY.withEarned(2));
     TurningBite.set(dead, true);
+    ThrallRegistry.of(context.getWorld().getServer()).bind(dead.getUuid(), UUID.randomUUID());
     final BlockPos coffin = CoffinStage.coffin(context, new BlockPos(2, 2, 2), Direction.EAST);
     CoffinOwnership.claim(context.getWorld(), context.getAbsolutePos(coffin), dead.getUuid());
     dead.setSpawnPoint(
@@ -81,6 +84,10 @@ public class HardcoreVampireDeathGameTest implements FabricGameTest {
                   .respawnPlayer(dead, false, Entity.RemovalReason.KILLED);
           context.assertEquals(FactionAttachment.get(respawned), Faction.HUMAN, "comes back human");
           context.assertFalse(TurningBite.isOn(respawned), "the turning bite is cleared");
+          context.assertEquals(
+              ThrallRegistry.of(context.getWorld().getServer()).count(respawned.getUuid()),
+              0,
+              "their thralls are freed");
           context.assertTrue(
               respawned.getEnderChestInventory().isEmpty(), "ender chest is emptied");
           context.assertTrue(respawned.getSpawnPointPosition() == null, "no respawn point is kept");
