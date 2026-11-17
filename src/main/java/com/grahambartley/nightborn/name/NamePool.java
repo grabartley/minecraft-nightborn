@@ -1,8 +1,10 @@
 package com.grahambartley.nightborn.name;
 
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.DataResult;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import java.util.List;
+import java.util.Optional;
 
 public record NamePool(List<String> names) {
 
@@ -16,6 +18,17 @@ public record NamePool(List<String> names) {
       RecordCodecBuilder.create(
           instance ->
               instance
-                  .group(Codec.STRING.listOf().fieldOf("names").forGetter(NamePool::names))
+                  .group(
+                      Codec.STRING
+                          .validate(NamePool::valid)
+                          .listOf()
+                          .fieldOf("names")
+                          .forGetter(NamePool::names))
                   .apply(instance, NamePool::new));
+
+  static DataResult<String> valid(final String name) {
+    return NameRules.check(name).name().equals(Optional.of(name))
+        ? DataResult.success(name)
+        : DataResult.error(() -> "Not a usable name: " + name);
+  }
 }

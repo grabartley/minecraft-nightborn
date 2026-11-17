@@ -3,36 +3,21 @@ package com.grahambartley.nightborn.name;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Optional;
-import java.util.stream.Stream;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 class NameBearerTest {
 
-  static Stream<NameStyle> styles() {
-    return Stream.of(NameStyle.VAMPIRE, NameStyle.HUNTER, NameStyle.FAMILIAR);
-  }
-
-  @ParameterizedTest(name = "{0}")
-  @MethodSource("styles")
-  @DisplayName("a bearer with nothing of its own has its style's colour, no epithet and no namer")
-  void defaults(final NameStyle style) {
-    final NameBearer bearer =
-        new NameBearer() {
-          @Override
-          public NameStyle nameStyle() {
-            return style;
-          }
-
-          @Override
-          public boolean bearsWomansName() {
-            return false;
-          }
-        };
+  @ParameterizedTest(name = "female={0}")
+  @ValueSource(booleans = {false, true})
+  @DisplayName("a bearer with nothing of its own has no epithet, colour or namer")
+  void defaults(final boolean female) {
+    final NameBearer bearer = () -> female;
     bearer.bearEpithet("the Pale");
-    assertEquals(style.colour(), bearer.nameColour());
+    assertEquals(female, bearer.bearsWomansName());
     assertEquals("", bearer.epithet());
+    assertEquals(Optional.empty(), bearer.nameColour());
     assertEquals(Optional.empty(), bearer.namedBy());
   }
 }

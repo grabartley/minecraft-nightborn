@@ -8,7 +8,6 @@ import com.grahambartley.nightborn.mob.NightbornMobs;
 import com.grahambartley.nightborn.mob.VampireEntity;
 import com.grahambartley.nightborn.name.Epithets;
 import com.grahambartley.nightborn.name.NamePools;
-import com.grahambartley.nightborn.name.NameStyle;
 import com.grahambartley.nightborn.name.ServantNaming;
 import com.grahambartley.nightborn.occult.FamiliarPower;
 import com.grahambartley.nightborn.occult.GhostlyFamiliarEntity;
@@ -50,8 +49,12 @@ public class NameGameTest implements FabricGameTest {
   }
 
   static boolean inFamiliarPools(final TestContext context, final String name) {
-    return inPool(context, NameStyle.FAMILIAR.men(), name)
-        || inPool(context, NameStyle.FAMILIAR.women(), name);
+    return inPool(context, pool("familiar_men"), name)
+        || inPool(context, pool("familiar_women"), name);
+  }
+
+  static Identifier pool(final String path) {
+    return Identifier.of("nightborn", path);
   }
 
   private static <T extends MobEntity> T still(final T mob) {
@@ -78,11 +81,11 @@ public class NameGameTest implements FabricGameTest {
           context.assertTrue(
               inPool(
                   context,
-                  vampire.bearsWomansName() ? NameStyle.VAMPIRE.women() : NameStyle.VAMPIRE.men(),
+                  pool(vampire.bearsWomansName() ? "vampire_women" : "vampire_men"),
                   given(vampire)),
               "the given name comes from the vampire pool for its sex");
           context.assertTrue(
-              inPool(context, NameStyle.VAMPIRE.epithets().orElseThrow(), vampire.epithet()),
+              inPool(context, pool("vampire_epithets"), vampire.epithet()),
               "the epithet comes from the 500");
           context.complete();
         });
@@ -132,7 +135,7 @@ public class NameGameTest implements FabricGameTest {
         NAMED,
         () -> {
           context.assertEquals(
-              vampire.getDisplayName().getSiblings().getFirst().getStyle().getColor(),
+              vampire.getDisplayName().getStyle().getColor(),
               TextColor.fromFormatting(Formatting.GOLD),
               "an elder's name is gold");
           context.complete();
@@ -150,15 +153,15 @@ public class NameGameTest implements FabricGameTest {
           for (final MobEntity mob : List.<MobEntity>of(hunter, master)) {
             final String name = mob.getName().getString();
             context.assertTrue(
-                inPool(context, NameStyle.HUNTER.men(), name)
-                    || inPool(context, NameStyle.HUNTER.women(), name),
+                inPool(context, pool("hunter_men"), name)
+                    || inPool(context, pool("hunter_women"), name),
                 "a hunter's name is a plain given name from the hunter pools: " + name);
           }
           context.assertTrue(
-              inPool(context, NameStyle.HUNTER.men(), master.getName().getString()),
+              inPool(context, pool("hunter_men"), master.getName().getString()),
               "the Guild Master draws from the men's pool");
           context.assertEquals(
-              hunter.getDisplayName().getSiblings().getFirst().getStyle().getColor(),
+              hunter.getDisplayName().getStyle().getColor(),
               TextColor.fromFormatting(Formatting.BLUE),
               "a hunter's name is blue");
           context.complete();
@@ -199,7 +202,7 @@ public class NameGameTest implements FabricGameTest {
           context.assertEquals(vampire.getName().getString(), "Old Wren", "the whole name");
           context.assertEquals(vampire.epithet(), "", "the epithet goes with the old name");
           context.assertEquals(
-              vampire.getDisplayName().getSiblings().getFirst().getStyle().getColor(),
+              vampire.getDisplayName().getStyle().getColor(),
               TextColor.fromFormatting(Formatting.GOLD),
               "an elder keeps its gold name");
           context.assertEquals(tag.getCount(), 1, "a good tag is used up");

@@ -17,10 +17,4 @@ public final class NameDraw {
     final List<String> from = free.isEmpty() ? pool : free;
     return from.isEmpty() ? Optional.empty() : Optional.of(from.get(below.applyAsInt(from.size())));
   }
-
-  public static List<String> both(final List<String> men, final List<String> women) {
-    final List<String> all = new ArrayList<>(men);
-    all.addAll(women);
-    return all;
-  }
 }

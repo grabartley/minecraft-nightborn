@@ -117,6 +117,16 @@ class SkillThemeTest {
     assertNotEquals(vampire.title(), hunter.title());
   }
 
+  @ParameterizedTest(name = "{0}")
+  @EnumSource(SkillTree.class)
+  @DisplayName("a problem line stands apart from the title, text and muted colours")
+  void problemColourStandsOut(final SkillTree tree) {
+    final SkillTheme theme = SkillTheme.of(tree);
+    assertEquals(
+        4,
+        Stream.of(theme.title(), theme.text(), theme.muted(), theme.problem()).distinct().count());
+  }
+
   static Stream<Arguments> verdicts() {
     return Stream.of(
         Arguments.of(SkillPurchase.Verdict.OWNED, "frame_owned"),

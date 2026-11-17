@@ -6,8 +6,6 @@ import net.minecraft.text.TextColor;
 
 public interface NameBearer {
 
-  NameStyle nameStyle();
-
   boolean bearsWomansName();
 
   default String epithet() {
@@ -17,7 +15,7 @@ public interface NameBearer {
   default void bearEpithet(final String epithet) {}
 
   default Optional<TextColor> nameColour() {
-    return nameStyle().colour();
+    return Optional.empty();
   }
 
   default Optional<UUID> namedBy() {

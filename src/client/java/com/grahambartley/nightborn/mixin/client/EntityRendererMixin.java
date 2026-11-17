@@ -1,9 +1,7 @@
 package com.grahambartley.nightborn.mixin.client;
 
-import com.grahambartley.nightborn.client.name.NameSight;
 import com.grahambartley.nightborn.render.CoffinSleeperView;
 import com.grahambartley.nightborn.vanish.VanishAttachment;
-import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import net.minecraft.client.render.Frustum;
 import net.minecraft.client.render.entity.EntityRenderer;
 import net.minecraft.entity.Entity;
@@ -28,10 +26,5 @@ abstract class EntityRendererMixin<T extends Entity> {
         || (entity instanceof LivingEntity sleeper && CoffinSleeperView.hidden(sleeper))) {
       cir.setReturnValue(false);
     }
-  }
-
-  @ModifyReturnValue(method = "hasLabel", at = @At("RETURN"))
-  private boolean nightborn$nameInSight(final boolean shown, final T entity) {
-    return NameSight.shows(entity, shown);
   }
 }

@@ -1,7 +1,10 @@
 package com.grahambartley.nightborn.name;
 
+import java.util.Locale;
 import java.util.Optional;
+import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
+import org.jetbrains.annotations.Nullable;
 
 public final class NameRules {
 
@@ -13,7 +16,7 @@ public final class NameRules {
     TOO_LONG;
 
     public String translationKey() {
-      return "nightborn.naming.problem." + name().toLowerCase(java.util.Locale.ROOT);
+      return "nightborn.naming.problem." + name().toLowerCase(Locale.ROOT);
     }
   }
 
@@ -25,6 +28,10 @@ public final class NameRules {
   }
 
   private NameRules() {}
+
+  public static Verdict checkTag(@Nullable final Text tagged) {
+    return check(tagged == null ? "" : tagged.getString());
+  }
 
   public static Verdict check(final String typed) {
     final String plain = Formatting.strip(typed);

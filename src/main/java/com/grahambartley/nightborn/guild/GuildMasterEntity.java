@@ -3,7 +3,6 @@ package com.grahambartley.nightborn.guild;
 import com.grahambartley.nightborn.mob.MobSounds;
 import com.grahambartley.nightborn.name.MobNaming;
 import com.grahambartley.nightborn.name.NameBearer;
-import com.grahambartley.nightborn.name.NameStyle;
 import com.grahambartley.nightborn.server.ServerConfigService;
 import com.grahambartley.nightborn.vampire.Vampires;
 import java.util.Optional;
@@ -184,11 +183,6 @@ public class GuildMasterEntity extends MerchantEntity
 
   private void wear(final String look) {
     dataTracker.set(LOOK, GuildData.wornLook(look, getRegistryManager(), rig(), getRandom()));
-  }
-
-  @Override
-  public NameStyle nameStyle() {
-    return NameStyle.HUNTER;
   }
 
   @Override

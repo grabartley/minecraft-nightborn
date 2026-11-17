@@ -6,7 +6,6 @@ import com.grahambartley.nightborn.mob.look.Figure;
 import com.grahambartley.nightborn.mob.look.VampireRig;
 import com.grahambartley.nightborn.name.MobNaming;
 import com.grahambartley.nightborn.name.NameBearer;
-import com.grahambartley.nightborn.name.NameStyle;
 import com.grahambartley.nightborn.vampire.Vampires;
 import java.util.Optional;
 import net.minecraft.entity.Entity;
@@ -181,11 +180,6 @@ public class HunterEntity extends PathAwareEntity
 
   public HunterAction action() {
     return HunterAction.byIndex(dataTracker.get(ACTION));
-  }
-
-  @Override
-  public NameStyle nameStyle() {
-    return NameStyle.HUNTER;
   }
 
   @Override

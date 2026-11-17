@@ -1,62 +1,93 @@
 package com.grahambartley.nightborn.name;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.util.Map;
+import com.google.gson.JsonParser;
+import com.mojang.serialization.JsonOps;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.List;
 import java.util.Optional;
-import java.util.stream.Stream;
 import net.minecraft.text.TextColor;
 import net.minecraft.util.Formatting;
+import net.minecraft.util.Identifier;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.CsvSource;
 
 class NameStyleTest {
 
-  private static final Map<String, NameStyle> STYLES =
-      Map.of(
-          "vampire", NameStyle.VAMPIRE,
-          "eldest", NameStyle.ELDEST,
-          "hunter", NameStyle.HUNTER,
-          "familiar", NameStyle.FAMILIAR);
+  private static final Path DATA = Path.of("src/main/resources/data/nightborn/nightborn");
+  private static final Identifier MEN = Identifier.of("nightborn", "men");
+  private static final Identifier WOMEN = Identifier.of("nightborn", "women");
 
-  static Stream<Arguments> pairs() {
-    return Stream.of(
-        Arguments.of("vampire", "eldest", true),
-        Arguments.of("vampire", "vampire", true),
-        Arguments.of("vampire", "hunter", false),
-        Arguments.of("hunter", "familiar", false),
-        Arguments.of("familiar", "familiar", true));
+  static NameStyle read(final String style) throws IOException {
+    return NameStyle.CODEC
+        .parse(
+            JsonOps.INSTANCE,
+            JsonParser.parseString(Files.readString(DATA.resolve("name_style/" + style + ".json"))))
+        .getOrThrow();
+  }
+
+  @ParameterizedTest(name = "gendered={0} female={1}")
+  @CsvSource({
+    "true, false, nightborn:men",
+    "true, true, nightborn:women",
+    "false, false, nightborn:men;nightborn:women",
+    "false, true, nightborn:men;nightborn:women"
+  })
+  @DisplayName("a gendered style draws from one sex's pool, an ungendered one from both")
+  void poolsFor(final boolean gendered, final boolean female, final String pools) {
+    assertEquals(
+        List.of(pools.split(";")).stream().map(Identifier::of).toList(),
+        new NameStyle(MEN, WOMEN, Optional.empty(), Optional.empty(), gendered).poolsFor(female));
   }
 
   @ParameterizedTest(name = "{0} and {1}: {2}")
-  @MethodSource("pairs")
+  @CsvSource({
+    "vampire, eldest, true",
+    "vampire, vampire_lord, true",
+    "vampire, hunter, false",
+    "hunter, guild_master, true",
+    "hunter, thrall, false",
+    "thrall, human_familiar, true",
+    "ghostly_familiar, thrall, true"
+  })
   @DisplayName("mobs that share given-name pools avoid each other's names")
-  void kin(final String one, final String other, final boolean kin) {
-    assertEquals(kin, STYLES.get(one).kin(STYLES.get(other)));
-  }
-
-  static Stream<Arguments> colours() {
-    return Stream.of(
-        Arguments.of("vampire", Optional.empty()),
-        Arguments.of("hunter", Optional.of(TextColor.fromFormatting(Formatting.BLUE))),
-        Arguments.of("familiar", Optional.empty()));
+  void kin(final String one, final String other, final boolean kin) throws IOException {
+    assertEquals(kin, read(one).kin(read(other)));
   }
 
   @ParameterizedTest(name = "{0}")
-  @MethodSource("colours")
-  @DisplayName("hunters are blue, familiars plain and vampires take their stage's colour instead")
-  void colour(final String style, final Optional<TextColor> colour) {
-    assertEquals(colour, STYLES.get(style).colour());
-  }
-
-  @ParameterizedTest(name = "{0}")
-  @MethodSource("pairs")
-  @DisplayName("only vampire styles carry epithets")
-  void epithets(final String style, final String ignored, final boolean ignoredKin) {
+  @CsvSource({
+    "vampire, nightborn:vampire_epithets, '', true",
+    "vampire_lord, nightborn:vampire_epithets, '', true",
+    "eldest, nightborn:eldest_epithets, '', true",
+    "hunter, '', blue, true",
+    "guild_master, '', blue, true",
+    "human_familiar, '', '', false",
+    "thrall, '', '', false",
+    "ghostly_familiar, '', '', false"
+  })
+  @DisplayName("each named mob's style is data, and every pool it names ships")
+  void shipped(
+      final String style, final String epithets, final String color, final boolean gendered)
+      throws IOException {
+    final NameStyle read = read(style);
     assertEquals(
-        style.equals("vampire") || style.equals("eldest"),
-        STYLES.get(style).epithets().isPresent());
+        Optional.of(epithets).filter(e -> !e.isEmpty()).map(Identifier::of), read.epithets());
+    assertEquals(
+        Optional.of(color)
+            .filter(c -> !c.isEmpty())
+            .map(c -> TextColor.fromFormatting(Formatting.byName(c))),
+        read.color());
+    assertEquals(gendered, read.gendered());
+    for (final Identifier pool :
+        List.of(read.men(), read.women(), read.epithets().orElse(read.men()))) {
+      assertTrue(
+          Files.exists(DATA.resolve("name_pool/" + pool.getPath() + ".json")), pool.toString());
+    }
   }
 }

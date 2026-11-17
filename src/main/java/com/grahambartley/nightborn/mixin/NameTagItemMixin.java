@@ -9,7 +9,6 @@ import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.NameTagItem;
-import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import org.spongepowered.asm.mixin.Mixin;
@@ -30,8 +29,7 @@ abstract class NameTagItemMixin {
     if (!(entity instanceof MobEntity mob) || !(entity instanceof NameBearer bearer)) {
       return;
     }
-    final Text tagged = stack.get(DataComponentTypes.CUSTOM_NAME);
-    final NameRules.Verdict verdict = NameRules.check(tagged == null ? "" : tagged.getString());
+    final NameRules.Verdict verdict = NameRules.checkTag(stack.get(DataComponentTypes.CUSTOM_NAME));
     if (!verdict.ok()) {
       cir.setReturnValue(ActionResult.PASS);
       return;

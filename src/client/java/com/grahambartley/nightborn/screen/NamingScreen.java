@@ -13,8 +13,6 @@ import org.lwjgl.glfw.GLFW;
 
 public final class NamingScreen extends Screen {
 
-  private static final int PROBLEM_COLOUR = 0xC0504A;
-
   private final int entityId;
   private final String suggestion;
   private SkillTheme theme;
@@ -105,11 +103,11 @@ public final class NamingScreen extends Screen {
                     Text.translatable(problem.translationKey(), NameRules.MAX_LENGTH),
                     layout.centre(),
                     layout.problemTop(),
-                    PROBLEM_COLOUR),
+                    theme.problem()),
             () ->
                 context.drawCenteredTextWithShadow(
                     textRenderer,
-                    Text.translatable("nightborn.naming.hint"),
+                    Text.translatable("nightborn.naming.hint", NameRules.MAX_LENGTH),
                     layout.centre(),
                     layout.problemTop(),
                     theme.muted()));

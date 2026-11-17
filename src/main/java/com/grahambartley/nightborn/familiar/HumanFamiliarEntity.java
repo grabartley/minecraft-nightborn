@@ -7,7 +7,6 @@ import com.grahambartley.nightborn.familiar.goal.RunErrandGoal;
 import com.grahambartley.nightborn.familiar.goal.StayHomeGoal;
 import com.grahambartley.nightborn.name.MobNaming;
 import com.grahambartley.nightborn.name.NameBearer;
-import com.grahambartley.nightborn.name.NameStyle;
 import com.grahambartley.nightborn.servant.ServantDeaths;
 import java.util.Optional;
 import java.util.UUID;
@@ -165,11 +164,6 @@ public class HumanFamiliarEntity extends PathAwareEntity
     for (final ItemStack stack : carried.clearToList()) {
       dropStack(stack);
     }
-  }
-
-  @Override
-  public NameStyle nameStyle() {
-    return NameStyle.FAMILIAR;
   }
 
   @Override

@@ -39,7 +39,6 @@ import com.grahambartley.nightborn.mob.stage.VampireStages;
 import com.grahambartley.nightborn.mob.stage.VampireStaging;
 import com.grahambartley.nightborn.name.MobNaming;
 import com.grahambartley.nightborn.name.NameBearer;
-import com.grahambartley.nightborn.name.NameStyle;
 import com.grahambartley.nightborn.occult.OccultAttributes;
 import com.grahambartley.nightborn.server.ServerConfigService;
 import com.grahambartley.nightborn.skill.PowerShow;
@@ -365,11 +364,6 @@ public class VampireEntity extends HostileEntity
   public VampireStage stage() {
     return VampireStages.stage(getWorld().getRegistryManager(), stageId())
         .orElse(VampireStage.PLAIN);
-  }
-
-  @Override
-  public NameStyle nameStyle() {
-    return NameStyle.VAMPIRE;
   }
 
   @Override

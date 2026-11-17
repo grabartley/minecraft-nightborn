@@ -9,6 +9,7 @@
 		"CameraMixin",
 		"ClientPlayerEntityMixin",
 		"EntityRendererMixin",
+		"GeoEntityRendererMixin",
 		"HeldItemRendererMixin",
 		"InGameHudMixin",
 		"ItemModelsMixin",

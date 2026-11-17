@@ -2,7 +2,6 @@ package com.grahambartley.nightborn.thrall;
 
 import com.grahambartley.nightborn.name.MobNaming;
 import com.grahambartley.nightborn.name.NameBearer;
-import com.grahambartley.nightborn.name.NameStyle;
 import com.grahambartley.nightborn.servant.Servant;
 import com.grahambartley.nightborn.servant.ServantDeaths;
 import com.grahambartley.nightborn.servant.Servants;
@@ -123,11 +122,6 @@ public class ThrallEntity extends PathAwareEntity
       owner().ifPresent(id -> ThrallRegistry.of(world.getServer()).free(id, getUuid()));
       ServantDeaths.tell(this, owner());
     }
-  }
-
-  @Override
-  public NameStyle nameStyle() {
-    return NameStyle.FAMILIAR;
   }
 
   @Override

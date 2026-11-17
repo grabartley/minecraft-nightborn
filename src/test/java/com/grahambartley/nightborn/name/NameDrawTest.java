@@ -40,16 +40,4 @@ class NameDrawTest {
   void emptyPool() {
     assertEquals(Optional.empty(), NameDraw.pick(List.of(), Set.of(), bound -> 0));
   }
-
-  @ParameterizedTest(name = "roll {0} gives {1}")
-  @CsvSource({"0, Bartholomew", "1, Edda", "2, Wren"})
-  @DisplayName("a familiar pick draws from both pools as one")
-  void both(final int roll, final String expected) {
-    assertEquals(
-        Optional.of(expected),
-        NameDraw.pick(
-            NameDraw.both(List.of("Bartholomew"), List.of("Edda", "Wren")),
-            Set.of(),
-            bound -> roll));
-  }
 }

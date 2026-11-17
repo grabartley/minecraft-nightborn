@@ -18,7 +18,7 @@ public final class ServantNaming {
   }
 
   public static void offer(final ServerPlayerEntity owner, final MobEntity servant) {
-    MobNaming.suggestion(owner.getServerWorld())
+    MobNaming.suggestion(servant)
         .ifPresent(
             name -> {
               MobNaming.give(servant, name);

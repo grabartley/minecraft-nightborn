@@ -3,6 +3,8 @@ package com.grahambartley.nightborn.name;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.mojang.serialization.JsonOps;
 import java.io.IOException;
@@ -97,5 +99,16 @@ class NamePoolTest {
     final NamePool pool = new NamePool(names);
     names.add("Wren");
     assertEquals(List.of("Hester"), pool.names());
+  }
+
+  @ParameterizedTest(name = "\"{0}\"")
+  @CsvSource({"''", "'   '", "' Hester'", "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "§cRed"})
+  @DisplayName("a data pack name the naming rules would change or refuse is rejected")
+  void rejectsBadNames(final String name) {
+    final JsonObject json = new JsonObject();
+    final JsonArray names = new JsonArray();
+    names.add(name);
+    json.add("names", names);
+    assertTrue(NamePool.CODEC.parse(JsonOps.INSTANCE, json).isError());
   }
 }

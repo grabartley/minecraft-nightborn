@@ -59,4 +59,30 @@ class NameDisplayTest {
         null,
         NameDisplay.shown(Text.literal(name), "", false, Optional.empty()).getStyle().getColor());
   }
+
+  @ParameterizedTest(name = "own={0} style={1}")
+  @CsvSource({"GOLD, BLUE, GOLD", ", BLUE, BLUE", "GOLD, , GOLD"})
+  @DisplayName("a bearer's own colour wins over its style's colour")
+  void bearerColourFirst(final Formatting own, final Formatting style, final Formatting shown) {
+    final NameBearer bearer =
+        new NameBearer() {
+          @Override
+          public boolean bearsWomansName() {
+            return false;
+          }
+
+          @Override
+          public Optional<TextColor> nameColour() {
+            return Optional.ofNullable(own).map(TextColor::fromFormatting);
+          }
+        };
+    assertEquals(
+        TextColor.fromFormatting(shown),
+        NameDisplay.shown(
+                Text.literal("Hester"),
+                bearer,
+                Optional.ofNullable(style).map(TextColor::fromFormatting))
+            .getStyle()
+            .getColor());
+  }
 }

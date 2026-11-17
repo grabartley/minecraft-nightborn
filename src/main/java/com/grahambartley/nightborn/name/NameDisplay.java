@@ -25,7 +25,12 @@ public final class NameDisplay {
     return colour.map(c -> shown.styled(style -> style.withColor(c))).orElse(shown);
   }
 
-  public static Text shown(final Text name, final NameBearer bearer) {
-    return shown(name, bearer.epithet(), bearer.bearsWomansName(), bearer.nameColour());
+  public static Text shown(
+      final Text name, final NameBearer bearer, final Optional<TextColor> styleColour) {
+    return shown(
+        name,
+        bearer.epithet(),
+        bearer.bearsWomansName(),
+        bearer.nameColour().or(() -> styleColour));
   }
 }

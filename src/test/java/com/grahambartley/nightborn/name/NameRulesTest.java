@@ -4,9 +4,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Optional;
 import java.util.stream.Stream;
+import net.minecraft.text.Text;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.MethodSource;
 
@@ -49,5 +52,20 @@ class NameRulesTest {
     assertEquals(
         "nightborn.naming.problem." + problem.name().toLowerCase(java.util.Locale.ROOT),
         problem.translationKey());
+  }
+
+  @ParameterizedTest(name = "\"{0}\"")
+  @CsvSource({"Old Wren, Old Wren", "'  Hester ', Hester", "'   ', ''"})
+  @DisplayName("a name tag's name passes the same rules as a typed name")
+  void checkTag(final String tag, final String name) {
+    assertEquals(
+        name.isEmpty() ? Optional.empty() : Optional.of(name),
+        NameRules.checkTag(Text.literal(tag)).name());
+  }
+
+  @Test
+  @DisplayName("a tag with no name at all is refused as empty")
+  void blankTag() {
+    assertEquals(Optional.of(NameRules.Problem.EMPTY), NameRules.checkTag(null).problem());
   }
 }

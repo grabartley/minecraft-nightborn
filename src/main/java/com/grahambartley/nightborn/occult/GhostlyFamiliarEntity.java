@@ -2,7 +2,6 @@ package com.grahambartley.nightborn.occult;
 
 import com.grahambartley.nightborn.name.MobNaming;
 import com.grahambartley.nightborn.name.NameBearer;
-import com.grahambartley.nightborn.name.NameStyle;
 import com.grahambartley.nightborn.occult.goal.FamiliarAttackGoal;
 import com.grahambartley.nightborn.occult.goal.FamiliarFollowGoal;
 import com.grahambartley.nightborn.occult.goal.FamiliarScoutGoal;
@@ -152,11 +151,6 @@ public class GhostlyFamiliarEntity extends PathAwareEntity
   @Override
   protected ActionResult interactMob(final PlayerEntity player, final Hand hand) {
     return isAlive() && !fading() ? FamiliarOrders.interact(this, player, hand) : ActionResult.PASS;
-  }
-
-  @Override
-  public NameStyle nameStyle() {
-    return NameStyle.FAMILIAR;
   }
 
   @Override

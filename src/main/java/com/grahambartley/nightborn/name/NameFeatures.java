@@ -6,6 +6,7 @@ public final class NameFeatures {
 
   public static void register() {
     NamePools.register();
+    NameStyles.register();
     ServantNaming.register();
   }
 }

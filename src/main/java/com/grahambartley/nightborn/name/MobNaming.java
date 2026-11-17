@@ -1,6 +1,6 @@
 package com.grahambartley.nightborn.name;
 
-import java.util.HashSet;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -8,6 +8,7 @@ import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.registry.DynamicRegistryManager;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
+import net.minecraft.util.Identifier;
 
 public final class MobNaming {
 
@@ -21,32 +22,36 @@ public final class MobNaming {
         || !(mob.getWorld() instanceof ServerWorld world)) {
       return;
     }
-    final Set<String> givens = new HashSet<>();
-    final Set<String> epithets = new HashSet<>();
-    for (final MobEntity other :
-        world.getEntitiesByClass(
-            MobEntity.class,
-            mob.getBoundingBox().expand(KIN_RANGE),
-            other ->
-                other != mob
-                    && other.hasCustomName()
-                    && other instanceof NameBearer kin
-                    && kin.nameStyle().kin(bearer.nameStyle()))) {
-      final NameBearer kin = (NameBearer) other;
-      final String full = other.getName().getString();
-      givens.add(Epithets.given(full, kin.epithet()).orElse(full));
-      if (!kin.epithet().isEmpty()) {
-        epithets.add(kin.epithet());
-      }
-    }
+    NameStyles.of(mob).ifPresent(style -> name(mob, bearer, world, style));
+  }
+
+  public static Optional<String> suggestion(final MobEntity mob) {
+    return NameStyles.of(mob)
+        .flatMap(
+            style ->
+                NameDraw.pick(
+                    names(mob.getRegistryManager(), style.poolsFor(false)),
+                    Set.of(),
+                    mob.getRandom()::nextInt));
+  }
+
+  public static void give(final MobEntity mob, final String name) {
+    mob.setCustomName(Text.literal(name));
+    mob.setCustomNameVisible(true);
+  }
+
+  private static void name(
+      final MobEntity mob,
+      final NameBearer bearer,
+      final ServerWorld world,
+      final NameStyle style) {
     final DynamicRegistryManager registries = world.getRegistryManager();
-    final NameStyle style = bearer.nameStyle();
-    final List<String> pool =
-        style.equals(NameStyle.FAMILIAR)
-            ? familiarPool(registries)
-            : NamePools.pool(registries, bearer.bearsWomansName() ? style.women() : style.men())
-                .names();
-    NameDraw.pick(pool, givens, mob.getRandom()::nextInt)
+    final List<String> pool = names(registries, style.poolsFor(bearer.bearsWomansName()));
+    if (pool.isEmpty()) {
+      return;
+    }
+    final KinNames.Taken taken = KinNames.taken(kin(mob, world, style));
+    NameDraw.pick(pool, taken.givens(), mob.getRandom()::nextInt)
         .ifPresent(
             given -> {
               final String epithet =
@@ -56,7 +61,7 @@ public final class MobNaming {
                           id ->
                               NameDraw.pick(
                                   NamePools.pool(registries, id).names(),
-                                  epithets,
+                                  taken.epithets(),
                                   mob.getRandom()::nextInt))
                       .orElse("");
               bearer.bearEpithet(epithet);
@@ -64,18 +69,27 @@ public final class MobNaming {
             });
   }
 
-  public static Optional<String> suggestion(final ServerWorld world) {
-    return NameDraw.pick(familiarPool(world.getRegistryManager()), Set.of(), world.random::nextInt);
+  private static List<KinNames.Held> kin(
+      final MobEntity mob, final ServerWorld world, final NameStyle style) {
+    return world
+        .getEntitiesByClass(
+            MobEntity.class,
+            mob.getBoundingBox().expand(KIN_RANGE),
+            other ->
+                other != mob
+                    && other.hasCustomName()
+                    && other instanceof NameBearer
+                    && NameStyles.of(other).filter(style::kin).isPresent())
+        .stream()
+        .map(
+            other -> new KinNames.Held(other.getName().getString(), ((NameBearer) other).epithet()))
+        .toList();
   }
 
-  public static void give(final MobEntity mob, final String name) {
-    mob.setCustomName(Text.literal(name));
-    mob.setCustomNameVisible(true);
-  }
-
-  private static List<String> familiarPool(final DynamicRegistryManager registries) {
-    return NameDraw.both(
-        NamePools.pool(registries, NameStyle.FAMILIAR.men()).names(),
-        NamePools.pool(registries, NameStyle.FAMILIAR.women()).names());
+  private static List<String> names(
+      final DynamicRegistryManager registries, final List<Identifier> pools) {
+    final List<String> names = new ArrayList<>();
+    pools.forEach(id -> names.addAll(NamePools.pool(registries, id).names()));
+    return names;
   }
 }
