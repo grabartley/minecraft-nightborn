@@ -1,8 +1,8 @@
 package com.grahambartley.nightborn.boss;
 
+import com.grahambartley.nightborn.gore.GoreParticles;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.mob.MobEntity;
-import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
@@ -47,7 +47,7 @@ public final class ZoneStrikes {
 
   public static void spray(final ServerWorld world, final ZoneShape shape, final double y) {
     world.spawnParticles(
-        ParticleTypes.CRIMSON_SPORE,
+        GoreParticles.DROP,
         shape.midX(),
         y + 0.3,
         shape.midZ(),

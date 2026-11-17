@@ -563,7 +563,8 @@
   "boss.eldest.organ": {
     "subtitle": "subtitles.nightborn.boss.eldest.organ",
     "sounds": [
-      "nightborn:boss/organ_sting"
+      "nightborn:boss/organ_sting",
+      "nightborn:boss/organ_sting2"
     ]
   },
   "music.boss.eldest": {
@@ -703,15 +704,15 @@
     "sounds": [
       {
         "name": "nightborn:entity/vampire/male/ambient1",
-        "pitch": 0.85
+        "pitch": 0.7
       },
       {
         "name": "nightborn:entity/vampire/male/ambient2",
-        "pitch": 0.85
+        "pitch": 0.7
       },
       {
         "name": "nightborn:entity/vampire/male/ambient3",
-        "pitch": 0.85
+        "pitch": 0.7
       }
     ]
   },
@@ -720,15 +721,15 @@
     "sounds": [
       {
         "name": "nightborn:entity/vampire/male/argue1",
-        "pitch": 0.85
+        "pitch": 0.7
       },
       {
         "name": "nightborn:entity/vampire/male/argue2",
-        "pitch": 0.85
+        "pitch": 0.7
       },
       {
         "name": "nightborn:entity/vampire/male/argue3",
-        "pitch": 0.85
+        "pitch": 0.7
       }
     ]
   },
@@ -737,11 +738,11 @@
     "sounds": [
       {
         "name": "nightborn:entity/vampire/male/death1",
-        "pitch": 0.85
+        "pitch": 0.7
       },
       {
         "name": "nightborn:entity/vampire/male/death2",
-        "pitch": 0.85
+        "pitch": 0.7
       }
     ]
   },
@@ -750,11 +751,11 @@
     "sounds": [
       {
         "name": "nightborn:entity/vampire/male/hiss1",
-        "pitch": 0.85
+        "pitch": 0.7
       },
       {
         "name": "nightborn:entity/vampire/male/hiss2",
-        "pitch": 0.85
+        "pitch": 0.7
       }
     ]
   },
@@ -763,15 +764,15 @@
     "sounds": [
       {
         "name": "nightborn:entity/vampire/male/hurt1",
-        "pitch": 0.85
+        "pitch": 0.7
       },
       {
         "name": "nightborn:entity/vampire/male/hurt2",
-        "pitch": 0.85
+        "pitch": 0.7
       },
       {
         "name": "nightborn:entity/vampire/male/hurt3",
-        "pitch": 0.85
+        "pitch": 0.7
       }
     ]
   },
@@ -780,15 +781,15 @@
     "sounds": [
       {
         "name": "nightborn:entity/vampire/male/talk1",
-        "pitch": 0.85
+        "pitch": 0.7
       },
       {
         "name": "nightborn:entity/vampire/male/talk2",
-        "pitch": 0.85
+        "pitch": 0.7
       },
       {
         "name": "nightborn:entity/vampire/male/talk3",
-        "pitch": 0.85
+        "pitch": 0.7
       }
     ]
   },
