@@ -3,6 +3,9 @@
   "textures": {
     "0": "minecraft:block/bone_block_side",
     "1": "minecraft:block/polished_blackstone",
-    "particle": "minecraft:block/bone_block_side"
+    "particle": "minecraft:block/bone_block_side",
+    "2": "minecraft:block/gold_block",
+    "3": "minecraft:block/redstone_block",
+    "4": "minecraft:block/blackstone"
   }
 }

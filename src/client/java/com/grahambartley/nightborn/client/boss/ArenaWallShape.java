@@ -18,6 +18,7 @@ public final class ArenaWallShape {
   static final int[] PALETTE = {0x8E0A14, 0x4A0A5E, 0x2A0008, 0x9C1050};
   static final double TURNS = 2.0;
   static final double CREEP = 0.004;
+  static final double SURFACE_TICKS = 240.0;
 
   private ArenaWallShape() {}
 
@@ -37,6 +38,11 @@ public final class ArenaWallShape {
     final double first = Math.exp(-Math.pow((beat - 0.10) / 0.06, 2.0));
     final double second = Math.exp(-Math.pow((beat - 0.32) / 0.06, 2.0));
     return (float) (REST + (1.0 - REST) * Math.min(1.0, first + 0.7 * second));
+  }
+
+  public static float surfacing(final double time) {
+    final double wave = 0.5 - 0.5 * Math.cos(2.0 * Math.PI * time / SURFACE_TICKS);
+    return (float) (wave * wave);
   }
 
   public static int tint(final double angle, final double time) {

@@ -1,5 +1,6 @@
 package com.grahambartley.nightborn.client.boss;
 
+import com.grahambartley.nightborn.Nightborn;
 import com.grahambartley.nightborn.boss.Arena;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext;
 import net.minecraft.client.render.OverlayTexture;
@@ -12,15 +13,26 @@ import net.minecraft.util.math.Vec3d;
 
 public final class ArenaWallRenderer {
 
-  static final Identifier TEXTURE = Identifier.ofVanilla("textures/misc/forcefield.png");
+  static final Identifier FOG =
+      Identifier.of(Nightborn.MOD_ID, "textures/entity/boss/arena_fog.png");
+  static final Identifier SHAPES =
+      Identifier.of(Nightborn.MOD_ID, "textures/entity/boss/arena_shapes.png");
   static final int FULL_BRIGHT = 0xF000F0;
 
   private record Veil(
-      float inset, float tile, float climb, float swirl, float alpha, double tintLead) {}
+      Identifier texture,
+      boolean surfaces,
+      float inset,
+      float tile,
+      float climb,
+      float swirl,
+      float alpha,
+      double tintLead) {}
 
   static final Veil[] VEILS = {
-    new Veil(0.0F, 2.0F, 0.006F, 0.002F, 1.0F, 0.0),
-    new Veil(0.12F, 3.5F, -0.011F, -0.005F, 0.7F, Math.PI)
+    new Veil(FOG, false, 0.0F, 6.0F, 0.006F, 0.002F, 1.0F, 0.0),
+    new Veil(FOG, false, 0.12F, 9.0F, -0.011F, -0.005F, 0.7F, Math.PI),
+    new Veil(SHAPES, true, 0.2F, 8.0F, 0.003F, 0.0015F, 1.0F, Math.PI / 2.0)
   };
 
   private ArenaWallRenderer() {}
@@ -38,11 +50,19 @@ public final class ArenaWallRenderer {
     final float time = context.world().getTime() + context.tickCounter().getTickDelta(false);
     final float strength = ArenaWallShape.strength(BossArenaView.fighting());
     final float alpha = ArenaWallShape.alpha(fromWall) * ArenaWallShape.pulse(time * strength);
-    final VertexConsumer buffer = consumers.getBuffer(RenderLayer.getEntityTranslucent(TEXTURE));
     matrices.push();
     matrices.translate(arena.midX() - camera.x, -camera.y, arena.midZ() - camera.z);
     for (final Veil veil : VEILS) {
-      veil(matrices, buffer, arena, veil, time, strength, alpha);
+      final VertexConsumer buffer =
+          consumers.getBuffer(RenderLayer.getEntityTranslucent(veil.texture()));
+      veil(
+          matrices,
+          buffer,
+          arena,
+          veil,
+          time,
+          strength,
+          veil.surfaces() ? alpha * ArenaWallShape.surfacing(time * strength) : alpha);
     }
     matrices.pop();
   }
