@@ -14,7 +14,9 @@ public final class StructureReach {
   }
 
   public static boolean fits(
-      final int maxDistanceFromCenter, final StructureTerrainAdaptation adaptation) {
-    return maxDistanceFromCenter + padding(adaptation) <= JigsawStructure.MAX_SIZE;
+      final int maxDistanceFromCenter,
+      final StructureTerrainAdaptation adaptation,
+      final int summitReach) {
+    return maxDistanceFromCenter + padding(adaptation) + summitReach <= JigsawStructure.MAX_SIZE;
   }
 }

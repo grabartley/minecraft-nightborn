@@ -39,7 +39,7 @@ class HandLoanTest {
     final HandLoan.Kept kept = loaded.take().orElseThrow();
     assertTrue(ItemStack.areEqual(held, kept.stack()));
     assertEquals(chance, kept.dropChance());
-    assertEquals(false, loaded.lent());
+    assertTrue(loaded.take().isEmpty());
   }
 
   @ParameterizedTest(name = "lent {0}")

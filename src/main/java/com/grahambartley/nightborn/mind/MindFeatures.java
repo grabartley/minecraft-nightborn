@@ -27,11 +27,15 @@ public final class MindFeatures {
     return entity instanceof MobEntity && MindTies.mesmerised(entity);
   }
 
-  public static void holdStill(final MobEntity mob) {
+  public static boolean hold(final MobEntity mob) {
+    if (!stilled(mob)) {
+      return false;
+    }
     mob.setForwardSpeed(0.0F);
     mob.setSidewaysSpeed(0.0F);
     mob.setUpwardSpeed(0.0F);
     mob.setJumping(false);
+    return true;
   }
 
   static boolean allowDamage(

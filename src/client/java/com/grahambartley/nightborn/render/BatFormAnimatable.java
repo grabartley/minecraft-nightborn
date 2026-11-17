@@ -1,12 +1,14 @@
 package com.grahambartley.nightborn.render;
 
+import com.grahambartley.nightborn.batform.BatHang;
 import com.grahambartley.nightborn.mob.NightbornMobs;
-import com.grahambartley.nightborn.mob.VampireBatPose;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import software.bernie.geckolib.animatable.GeoReplacedEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.AnimatableManager;
 import software.bernie.geckolib.animation.AnimationController;
+import software.bernie.geckolib.constant.DataTickets;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 public final class BatFormAnimatable implements GeoReplacedEntity {
@@ -31,11 +33,17 @@ public final class BatFormAnimatable implements GeoReplacedEntity {
             this,
             "flight",
             BLEND_TICKS,
-            state -> state.setAndContinue(pose(state.getLimbSwingAmount()).clip())));
+            state ->
+                state.setAndContinue(
+                    BatFormClip.next(
+                            pose(state.getData(DataTickets.ENTITY), state.getLimbSwingAmount()),
+                            BatFormClip.playing(state.getController().getCurrentRawAnimation()))
+                        .clip())));
   }
 
-  static VampireBatPose pose(final float limbSwingAmount) {
-    return VampireBatPose.of(false, false, BatFormPose.swoops(limbSwingAmount));
+  private static BatFormPose pose(final Entity entity, final float limbSwingAmount) {
+    return BatFormPose.of(
+        BatHang.isHanging(entity), entity.isOnGround(), limbSwingAmount, entity.isSprinting());
   }
 
   @Override

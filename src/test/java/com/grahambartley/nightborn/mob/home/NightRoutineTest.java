@@ -176,4 +176,11 @@ class NightRoutineTest {
       final boolean walks) {
     assertEquals(walks, NightRoutine.walksToCoffin(known, distance * distance, home, loaded, free));
   }
+
+  @ParameterizedTest(name = "keeps to a room {0}, room {1}, home {2}: radius {3}")
+  @CsvSource({"false, 6, 16, 16", "true, 6, 16, 6", "true, 40, 16, 16", "false, 0, 8, 8"})
+  @DisplayName("a vampire that keeps to a room roams and looks for its coffin only within it")
+  void homeRadius(final boolean keeps, final int room, final int home, final int radius) {
+    assertEquals(radius, NightRoutine.homeRadius(keeps, room, home));
+  }
 }

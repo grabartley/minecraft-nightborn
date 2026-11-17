@@ -11,6 +11,7 @@ import com.grahambartley.nightborn.occult.FogClouds;
 import com.grahambartley.nightborn.occult.GhostlyFamiliars;
 import com.grahambartley.nightborn.occult.ShadowStep;
 import com.grahambartley.nightborn.sun.DirectSun;
+import com.grahambartley.nightborn.vanish.Vanish;
 import com.grahambartley.nightborn.weakened.Weakened;
 import java.util.List;
 import java.util.Optional;
@@ -32,10 +33,16 @@ public final class Powers {
 
   public static void register() {
     ServerPlayNetworking.registerGlobalReceiver(
-        UsePowerPayload.ID, (payload, context) -> use(context.player(), payload.slot()));
+        UsePowerPayload.ID,
+        (payload, context) -> use(context.player(), payload.slot(), payload.heading()));
   }
 
   public static PowerUse.Verdict use(final ServerPlayerEntity player, final int slot) {
+    return use(player, slot, PowerHeading.NONE);
+  }
+
+  public static PowerUse.Verdict use(
+      final ServerPlayerEntity player, final int slot, final PowerHeading heading) {
     if (player.isSpectator() || !player.isAlive()) {
       return PowerUse.Verdict.NO_POWER;
     }
@@ -43,7 +50,7 @@ public final class Powers {
         Skills.skills(player.getServerWorld().getRegistryManager()).orElse(null);
     final List<Identifier> bar = PowerBar.slots(skills, SkillAttachment.owned(player));
     final PowerUse.Verdict verdict =
-        cast(player, slot >= 0 && slot < bar.size() ? bar.get(slot) : null);
+        cast(player, slot >= 0 && slot < bar.size() ? bar.get(slot) : null, heading);
     if (verdict != PowerUse.Verdict.READY && verdict != PowerUse.Verdict.NO_POWER) {
       player.sendMessage(Text.translatable(verdict.translationKey()), true);
     }
@@ -84,7 +91,7 @@ public final class Powers {
 
   public static PowerUse.Verdict check(
       final LivingEntity caster, @Nullable final Identifier id, final Optional<SkillPower> power) {
-    return check(caster, id, power, PowerAim.of(caster, power));
+    return check(caster, id, power, PowerAim.of(caster, power, PowerHeading.NONE));
   }
 
   private static PowerUse.Verdict check(
@@ -104,15 +111,22 @@ public final class Powers {
         BloodAttachment.get(caster),
         power.map(SkillPower::blood).orElse(0),
         power.flatMap(SkillPower::mesmerise).isPresent() && aim.gazeTarget() == null,
-        power.flatMap(SkillPower::shadowStep).isPresent() && aim.stepTo() == null);
+        (power.flatMap(SkillPower::shadowStep).isPresent()
+                || power.flatMap(SkillPower::vanish).isPresent())
+            && aim.stepTo() == null);
   }
 
   public static PowerUse.Verdict cast(final LivingEntity caster, @Nullable final Identifier id) {
+    return cast(caster, id, PowerHeading.NONE);
+  }
+
+  public static PowerUse.Verdict cast(
+      final LivingEntity caster, @Nullable final Identifier id, final PowerHeading heading) {
     final Optional<SkillPower> owned = power(caster, id);
     if (BatForm.isBat(caster) && owned.flatMap(SkillPower::batForm).isPresent()) {
       return BatForm.leave(caster) ? PowerUse.Verdict.READY : PowerUse.Verdict.CRAMPED;
     }
-    final PowerAim aim = PowerAim.of(caster, owned);
+    final PowerAim aim = PowerAim.of(caster, owned, heading);
     final PowerUse.Verdict verdict = check(caster, id, owned, aim);
     if (verdict != PowerUse.Verdict.READY) {
       return verdict;
@@ -133,7 +147,11 @@ public final class Powers {
       power.mesmerise().ifPresent(mesmerise -> Gazes.start(caster, aim.gazeTarget(), mesmerise));
     }
     if (aim.stepTo() != null) {
-      ShadowStep.step(caster, aim.stepTo());
+      power
+          .vanish()
+          .ifPresentOrElse(
+              vanish -> Vanish.go(caster, aim.stepTo(), vanish),
+              () -> ShadowStep.step(caster, aim.stepTo()));
     }
     power.familiar().ifPresent(familiar -> GhostlyFamiliars.summon(caster, familiar));
     power.fog().ifPresent(fog -> FogClouds.spawn(caster, fog));

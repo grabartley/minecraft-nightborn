@@ -8,10 +8,25 @@ import org.junit.jupiter.params.provider.CsvSource;
 
 class BatFormPoseTest {
 
-  @ParameterizedTest(name = "swing {0} -> swoops {1}")
-  @CsvSource({"0.0, false", "0.3, false", "0.59, false", "0.6, true", "1.0, true"})
-  @DisplayName("a bat that moves fast swoops, and one that drifts beats its wings")
-  void swoops(final float swing, final boolean expected) {
-    assertEquals(expected, BatFormPose.swoops(swing));
+  @ParameterizedTest(name = "hanging {0}, on ground {1}, swing {2}, sprinting {3} -> {4}")
+  @CsvSource({
+    "true, false, 0.0, false, HANG",
+    "true, true, 1.0, true, HANG",
+    "false, true, 0.0, false, REST",
+    "false, true, 0.05, false, REST",
+    "false, true, 0.06, false, CRAWL",
+    "false, true, 1.0, true, CRAWL",
+    "false, false, 0.0, false, FLY",
+    "false, false, 1.0, false, FLY",
+    "false, false, 1.0, true, SWOOP"
+  })
+  @DisplayName("a bat hangs, rests or crawls on the ground, flies, and swoops at a sprint")
+  void of(
+      final boolean hanging,
+      final boolean onGround,
+      final float swing,
+      final boolean sprinting,
+      final BatFormPose expected) {
+    assertEquals(expected, BatFormPose.of(hanging, onGround, swing, sprinting));
   }
 }

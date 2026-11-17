@@ -5,6 +5,7 @@ import com.grahambartley.nightborn.mob.NightbornMobs;
 import com.grahambartley.nightborn.structure.VampireStructureStarts;
 import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
 import net.minecraft.block.Blocks;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.SpawnReason;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.test.AfterBatch;
@@ -25,8 +26,9 @@ public class VampireBatSpawnGameTest implements FabricGameTest {
   static final int ATTEMPTS = 20;
 
   @BeforeBatch(batchId = BATCH)
-  public void pinNight(final ServerWorld world) {
+  public void pinNightAndClearStrayBats(final ServerWorld world) {
     WorldClock.freeze(world, WorldClock.MIDNIGHT);
+    world.getEntitiesByType(NightbornMobs.VAMPIRE_BAT, bat -> true).forEach(Entity::discard);
   }
 
   @AfterBatch(batchId = BATCH)

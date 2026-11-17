@@ -21,7 +21,22 @@ public final class PowerChoice {
 
   public static Optional<Option> choose(
       final List<Option> options, final double distance, final int blood, final int bloodFloor) {
+    return first(options, false, distance, blood, bloodFloor);
+  }
+
+  public static Optional<Option> dodge(
+      final List<Option> options, final double distance, final int blood, final int bloodFloor) {
+    return first(options, true, distance, blood, bloodFloor);
+  }
+
+  private static Optional<Option> first(
+      final List<Option> options,
+      final boolean dodge,
+      final double distance,
+      final int blood,
+      final int bloodFloor) {
     return options.stream()
+        .filter(option -> option.use().dodge() == dodge)
         .filter(option -> worthCasting(option, distance, blood, bloodFloor))
         .findFirst();
   }

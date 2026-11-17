@@ -34,7 +34,8 @@ public final class HouseholdSpots {
     return List.copyOf(chosen);
   }
 
-  public static Optional<BlockPos> middle(final List<BlockPos> spots, final BlockPos centre) {
+  public static Optional<BlockPos> middle(
+      final List<BlockPos> spots, final BlockPos centre, final HeadSeat seat) {
     return spots.stream()
         .min(
             Comparator.comparingDouble(
@@ -43,7 +44,7 @@ public final class HouseholdSpots {
                       final double dz = spot.getZ() - centre.getZ();
                       return dx * dx + dz * dz;
                     })
-                .thenComparingInt(BlockPos::getY)
+                .thenComparing(seat.order())
                 .thenComparing(BlockPos::asLong));
   }
 

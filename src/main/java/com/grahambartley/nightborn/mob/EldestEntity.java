@@ -5,7 +5,9 @@ import com.grahambartley.nightborn.config.RitualSettings;
 import com.grahambartley.nightborn.eldest.EldestFoes;
 import com.grahambartley.nightborn.eldest.EldestHealth;
 import com.grahambartley.nightborn.eldest.FightRoll;
+import com.grahambartley.nightborn.mob.goal.HouseholdLifeGoal;
 import com.grahambartley.nightborn.mob.look.VampireRig;
+import com.grahambartley.nightborn.server.ServerConfigService;
 import com.grahambartley.nightborn.structure.HouseholdArrival;
 import com.grahambartley.nightborn.vampire.Vampires;
 import java.util.Map;
@@ -20,6 +22,7 @@ import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.LocalDifficulty;
 import net.minecraft.world.ServerWorldAccess;
@@ -29,6 +32,7 @@ import org.jetbrains.annotations.Nullable;
 public class EldestEntity extends BossVampireEntity {
 
   public static final Identifier STAGE = Identifier.of(Nightborn.MOD_ID, "eldest");
+  public static final int ROOM_RADIUS = 6;
 
   private final FightRoll fightRoll = new FightRoll();
 
@@ -40,6 +44,41 @@ public class EldestEntity extends BossVampireEntity {
   @Override
   public Set<VampireRig> rigs() {
     return VampireRig.ELDEST;
+  }
+
+  @Override
+  public void settleAt(final BlockPos home) {
+    super.settleAt(home);
+    homeLife().keepTo(getBlockPos(), ROOM_RADIUS);
+    leaveRoutine();
+  }
+
+  private void leaveRoutine() {
+    if (homeLife().room().isPresent()) {
+      goalSelector.clear(goal -> goal instanceof HouseholdLifeGoal);
+    }
+  }
+
+  @Override
+  public void setTarget(@Nullable final LivingEntity target) {
+    final boolean rescales =
+        EldestHealth.rescales(
+            homeLife().room().isPresent(),
+            getTarget() != null,
+            target != null,
+            getHealth() >= getMaxHealth());
+    super.setTarget(target);
+    if (rescales && !getWorld().isClient()) {
+      final RitualSettings settings = ServerConfigService.current().ritual();
+      scaleFor(
+          getWorld()
+              .getEntitiesByClass(
+                  PlayerEntity.class,
+                  getBoundingBox().expand(settings.fightRange()),
+                  player -> player.isAlive() && !player.isSpectator())
+              .size(),
+          settings);
+    }
   }
 
   @Override
@@ -113,5 +152,6 @@ public class EldestEntity extends BossVampireEntity {
   public void readCustomDataFromNbt(final NbtCompound nbt) {
     super.readCustomDataFromNbt(nbt);
     fightRoll.read(nbt);
+    leaveRoutine();
   }
 }

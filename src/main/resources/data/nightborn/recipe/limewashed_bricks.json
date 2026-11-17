@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "pattern": [
+    "BBB",
+    "BLB",
+    "BBB"
+  ],
+  "key": {
+    "B": {
+      "item": "minecraft:stone_bricks"
+    },
+    "L": {
+      "item": "minecraft:bone_meal"
+    }
+  },
+  "result": {
+    "id": "nightborn:limewashed_bricks",
+    "count": 8
+  }
+}

@@ -6,6 +6,7 @@ import com.grahambartley.nightborn.mob.VampireBatEntity;
 import com.grahambartley.nightborn.server.ServerConfigService;
 import com.grahambartley.nightborn.sickness.BiteSicknessAttachment;
 import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
+import net.minecraft.entity.MovementType;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.test.AfterBatch;
@@ -59,13 +60,15 @@ public class VampireBatGameTest implements FabricGameTest {
     final boolean[] bitten = {false};
     context.runAtEveryTick(
         () -> {
+          final boolean swoopedEarlier = swooped[0];
+          huntStep(bat);
+          swooped[0] |= bat.isSwooping();
           if (context.getTick() <= TestPlayers.READY || bitten[0]) {
             return;
           }
-          swooped[0] |= bat.isSwooping();
           if (human.getHealth() < human.getMaxHealth()) {
             bitten[0] = true;
-            context.assertTrue(swooped[0], "the bat swoops before it bites");
+            context.assertTrue(swoopedEarlier, "the bat swoops before it bites");
             context.assertTrue(
                 BiteSicknessAttachment.isSick(human), "the bat's bite starts sickness");
             context.assertTrue(bat.isAlive(), "the bat bit and lived");
@@ -88,7 +91,10 @@ public class VampireBatGameTest implements FabricGameTest {
     final VampireBatEntity bat = hunter(context);
     final ServerPlayerEntity human = TestPlayers.human(context, new BlockPos(5, 2, 4));
     context.runAtEveryTick(
-        () -> context.assertFalse(bat.isSwooping(), "a bat in the open by day does not swoop"));
+        () -> {
+          huntStep(bat);
+          context.assertFalse(bat.isSwooping(), "a bat in the open by day does not swoop");
+        });
     context.runAtTick(
         TestPlayers.READY + HUNT_WINDOW - 2,
         () -> {
@@ -98,9 +104,17 @@ public class VampireBatGameTest implements FabricGameTest {
         });
   }
 
+  private static void huntStep(final VampireBatEntity bat) {
+    bat.hunt();
+    if (bat.isSwooping()) {
+      bat.move(MovementType.SELF, bat.getVelocity());
+    }
+  }
+
   private static VampireBatEntity hunter(final TestContext context) {
     final VampireBatEntity bat =
         context.spawnEntity(NightbornMobs.VAMPIRE_BAT, new BlockPos(4, 3, 4));
+    bat.setAiDisabled(true);
     bat.setRoosting(false);
     return bat;
   }

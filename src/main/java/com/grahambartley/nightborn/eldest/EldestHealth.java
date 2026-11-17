@@ -17,6 +17,14 @@ public final class EldestHealth {
     return Math.max(0, players - 1) * Math.max(0, percentPerPlayer) / 100.0;
   }
 
+  public static boolean rescales(
+      final boolean keepsToRoom,
+      final boolean hadTarget,
+      final boolean hasTarget,
+      final boolean unhurt) {
+    return keepsToRoom && !hadTarget && hasTarget && unhurt;
+  }
+
   public static void scale(
       final LivingEntity eldest, final int players, final int percentPerPlayer) {
     Modifiers.set(

@@ -1,5 +1,6 @@
 package com.grahambartley.nightborn.levitation;
 
+import com.grahambartley.nightborn.movement.MoveHeading;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -26,8 +27,8 @@ public final class LevitationGround {
 
   public static OptionalDouble surfaceToFollow(final Entity entity, final Vec3d movementInput) {
     final OptionalDouble below = surfaceBelow(entity);
-    final Optional<LevitationLookAhead.Heading> heading =
-        LevitationLookAhead.heading(movementInput.x, movementInput.z, entity.getYaw());
+    final Optional<MoveHeading> heading =
+        MoveHeading.of(movementInput.x, movementInput.z, entity.getYaw());
     if (heading.isEmpty()) {
       return below;
     }

@@ -33,6 +33,21 @@ public final class Roof {
       final Cover cover,
       final Stone gable,
       final boolean overhang) {
+    return gable(t, ridge, from, to, lowWall, highWall, eave, cover, gable, overhang, false);
+  }
+
+  public static int gable(
+      final Template t,
+      final Axis ridge,
+      final int from,
+      final int to,
+      final int lowWall,
+      final int highWall,
+      final int eave,
+      final Cover cover,
+      final Stone gable,
+      final boolean overhang,
+      final boolean ledged) {
     final Axis across = ridge.across();
     int k = overhang ? 0 : 1;
     while (true) {
@@ -50,6 +65,9 @@ public final class Roof {
               y + 1,
               ridge.z(a, low),
               BlockState.of(cover.slab(), "type", "bottom"));
+        } else if (ledged && k % 2 == 1) {
+          t.set(ridge.x(a, low), y, ridge.z(a, low), cover.full());
+          t.set(ridge.x(a, high), y, ridge.z(a, high), cover.full());
         } else {
           stair(t, ridge, a, low, y, across.high(), cover);
           stair(t, ridge, a, high, y, across.low(), cover);

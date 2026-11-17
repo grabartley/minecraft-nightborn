@@ -47,4 +47,15 @@ class RoofTest {
     assertEquals("minecraft:stone_bricks", t.get(end, 6, 5));
     assertEquals(null, t.get(4, 6, 5));
   }
+
+  @ParameterizedTest(name = "ledged {0}: the second course is {1}")
+  @CsvSource({"true, minecraft:deepslate_tiles", "false, minecraft:deepslate_tile_stairs"})
+  void ledgedRoofsStepEveryOtherCourseSoSnowCanLie(final boolean ledged, final String second) {
+    final Template t = new Template("vampire/test", 12, 14, 12);
+    Roof.gable(t, Axis.X, 3, 6, 1, 9, 4, SLATE, WALL, true, ledged);
+    assertTrue(t.get(4, 4, 0).startsWith("minecraft:deepslate_tile_stairs"));
+    assertTrue(t.get(4, 5, 1).startsWith(second), t.get(4, 5, 1));
+    assertTrue(t.get(4, 5, 9).startsWith(second), t.get(4, 5, 9));
+    assertTrue(t.get(4, 6, 2).startsWith("minecraft:deepslate_tile_stairs"));
+  }
 }

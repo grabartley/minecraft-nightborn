@@ -18,10 +18,6 @@ public record Window(int x, int z, String outward, int sill, int height, String 
     return new Window(x, z, outward, UPPER_SILL, TALL, Manor.PANE);
   }
 
-  public Window stained() {
-    return new Window(x, z, outward, sill, height, Manor.STAINED);
-  }
-
   public int head() {
     return sill + height;
   }

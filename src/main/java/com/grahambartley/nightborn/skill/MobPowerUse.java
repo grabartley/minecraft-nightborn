@@ -11,7 +11,8 @@ public record MobPowerUse(
     int tellTicks,
     Identifier tellSound,
     String tellClip,
-    Optional<String> clip) {
+    Optional<String> clip,
+    boolean dodge) {
 
   public static final float MAX_RANGE = 64.0F;
 
@@ -31,7 +32,8 @@ public record MobPowerUse(
                           .forGetter(MobPowerUse::tellTicks),
                       Identifier.CODEC.fieldOf("tell_sound").forGetter(MobPowerUse::tellSound),
                       Codec.STRING.fieldOf("tell_clip").forGetter(MobPowerUse::tellClip),
-                      Codec.STRING.optionalFieldOf("clip").forGetter(MobPowerUse::clip))
+                      Codec.STRING.optionalFieldOf("clip").forGetter(MobPowerUse::clip),
+                      Codec.BOOL.optionalFieldOf("dodge", false).forGetter(MobPowerUse::dodge))
                   .apply(instance, MobPowerUse::new));
 
   public boolean inRange(final double distance) {

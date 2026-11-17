@@ -1,0 +1,23 @@
+{
+  "branch": "nightborn:core",
+  "cost": 2,
+  "requires": ["nightborn:core/thick_blood"],
+  "icon": "nightborn:skills/icon/vanish",
+  "column": 1,
+  "row": 1,
+  "power": {
+    "blood": 1,
+    "cooldown_ticks": 100,
+    "vanish": {
+      "distance": 4.0,
+      "gone_ticks": 5
+    },
+    "mob": {
+      "max_range": 32.0,
+      "tell_ticks": 1,
+      "tell_sound": "nightborn:power.bat_form.enter",
+      "tell_clip": "dodge",
+      "dodge": true
+    }
+  }
+}

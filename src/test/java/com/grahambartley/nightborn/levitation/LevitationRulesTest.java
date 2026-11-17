@@ -46,4 +46,57 @@ class LevitationRulesTest {
   void movesAsGrounded(final boolean onGround, final boolean levitating, final boolean grounded) {
     assertEquals(grounded, LevitationRules.movesAsGrounded(onGround, levitating));
   }
+
+  @ParameterizedTest(name = "levitating {0}, player {1}, sneaking {2}: {3}")
+  @CsvSource({
+    "true, true, true, true",
+    "true, true, false, false",
+    "true, false, true, false",
+    "false, true, true, false",
+    "false, false, false, false"
+  })
+  @DisplayName("only a levitating player holding sneak sinks fast, never a mob")
+  void sinksFast(
+      final boolean levitating,
+      final boolean player,
+      final boolean sneaking,
+      final boolean sinksFast) {
+    assertEquals(sinksFast, LevitationRules.sinksFast(levitating, player, sneaking));
+  }
+
+  @ParameterizedTest(name = "sinks fast {0}, on ground {1}: {2}")
+  @CsvSource({
+    "true, true, true",
+    "true, false, false",
+    "false, true, false",
+    "false, false, false"
+  })
+  @DisplayName("a fast sink that reaches the ground lands the vampire")
+  void landsOnSneak(final boolean sinksFast, final boolean onGround, final boolean lands) {
+    assertEquals(lands, LevitationRules.landsOnSneak(sinksFast, onGround));
+  }
+
+  @ParameterizedTest(name = "levitating {0}, room to stand {1}: {2}")
+  @CsvSource({
+    "true, true, true",
+    "true, false, false",
+    "false, true, false",
+    "false, false, false"
+  })
+  @DisplayName("a levitating vampire holds the float pose wherever it has room to stand")
+  void holdsFloatPose(final boolean levitating, final boolean roomToStand, final boolean holds) {
+    assertEquals(holds, LevitationRules.holdsFloatPose(levitating, roomToStand));
+  }
+
+  @ParameterizedTest(name = "crouching {0}, holds float pose {1}: {2}")
+  @CsvSource({
+    "true, false, true",
+    "true, true, false",
+    "false, true, false",
+    "false, false, false"
+  })
+  @DisplayName("sneak never crouches a vampire that holds the float pose")
+  void crouches(final boolean crouching, final boolean holdsFloatPose, final boolean crouches) {
+    assertEquals(crouches, LevitationRules.crouches(crouching, holdsFloatPose));
+  }
 }

@@ -10,7 +10,7 @@ import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.util.Identifier;
 
 public record HouseholdHead(
-    RegistryEntry<EntityType<?>> resident, Map<Identifier, Integer> stages) {
+    RegistryEntry<EntityType<?>> resident, Map<Identifier, Integer> stages, HeadSeat seat) {
 
   public static final Codec<HouseholdHead> CODEC =
       RecordCodecBuilder.create(
@@ -23,7 +23,10 @@ public record HouseholdHead(
                           .forGetter(HouseholdHead::resident),
                       Codec.unboundedMap(Identifier.CODEC, Codec.intRange(0, StageOdds.HEAVIEST))
                           .optionalFieldOf("stages", Map.of())
-                          .forGetter(HouseholdHead::stages))
+                          .forGetter(HouseholdHead::stages),
+                      HeadSeat.CODEC
+                          .optionalFieldOf("seat", HeadSeat.LOWEST)
+                          .forGetter(HouseholdHead::seat))
                   .apply(instance, HouseholdHead::new));
 
   public HouseholdHead {
