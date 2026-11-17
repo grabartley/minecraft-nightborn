@@ -25,7 +25,9 @@ public final class LevitationMotion {
     entity.setVelocity(
         velocity.x,
         LevitationLift.verticalVelocity(
-            entity.getY(), LevitationGround.surfaceToFollow(entity, movementInput)),
+            entity.getY(),
+            LevitationGround.surfaceToFollow(entity, movementInput),
+            Levitation.sinksFast(entity)),
         velocity.z);
     entity.fallDistance = 0.0F;
   }

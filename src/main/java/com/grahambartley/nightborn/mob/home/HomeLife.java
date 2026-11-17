@@ -196,6 +196,7 @@ public final class HomeLife {
   }
 
   private double distanceSquared(final Vec3d pos) {
-    return home == null ? 0.0 : pos.squaredDistanceTo(Vec3d.ofBottomCenter(anchor()));
+    final BlockPos anchor = anchor();
+    return anchor == null ? 0.0 : pos.squaredDistanceTo(Vec3d.ofBottomCenter(anchor));
   }
 }

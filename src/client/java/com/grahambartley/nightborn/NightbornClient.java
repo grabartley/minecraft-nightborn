@@ -8,6 +8,7 @@ import com.grahambartley.nightborn.client.fog.StructureFog;
 import com.grahambartley.nightborn.client.gore.SplatterModels;
 import com.grahambartley.nightborn.client.guild.HunterRenderer;
 import com.grahambartley.nightborn.client.occult.GhostlyFamiliarRenderer;
+import com.grahambartley.nightborn.client.ritual.RitualGloom;
 import com.grahambartley.nightborn.client.state.ClientStateService;
 import com.grahambartley.nightborn.client.structure.NearbyStructure;
 import com.grahambartley.nightborn.client.structure.StructureAmbiencePlayer;
@@ -33,9 +34,12 @@ import com.grahambartley.nightborn.render.CoffinArt;
 import com.grahambartley.nightborn.render.CoffinRenderer;
 import com.grahambartley.nightborn.render.FurnitureBlockRenderer;
 import com.grahambartley.nightborn.render.GeoBlockItemRenderer;
+import com.grahambartley.nightborn.render.RitualAltarRenderer;
 import com.grahambartley.nightborn.render.VampireBatRenderer;
 import com.grahambartley.nightborn.render.VampireRenderer;
 import com.grahambartley.nightborn.render.WeaponRackRenderer;
+import com.grahambartley.nightborn.ritual.RitualAltarBlockEntity;
+import com.grahambartley.nightborn.ritual.RitualBlocks;
 import com.grahambartley.nightborn.thrall.Thralls;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
@@ -56,6 +60,11 @@ public class NightbornClient implements ClientModInitializer {
         DecorBlockEntities.FURNITURE, FurnitureBlockRenderer::new);
     BlockEntityRendererFactories.register(Coffins.BLOCK_ENTITY, CoffinRenderer::new);
     BlockEntityRendererFactories.register(DecorBlockEntities.WEAPON_RACK, WeaponRackRenderer::new);
+    BlockEntityRendererFactories.register(RitualBlocks.ALTAR_ENTITY, RitualAltarRenderer::new);
+    BuiltinItemRendererRegistry.INSTANCE.register(
+        RitualBlocks.ALTAR,
+        new GeoBlockItemRenderer<>(
+            RitualBlocks.ALTAR, RitualAltarRenderer::new, RitualAltarBlockEntity::new));
     SplatterModels.register();
     Coffins.all()
         .forEach(
@@ -109,6 +118,7 @@ public class NightbornClient implements ClientModInitializer {
     VampireClientFeatures.register();
     NearbyStructure.register();
     StructureFog.register();
+    RitualGloom.register();
     StructureAmbiencePlayer.register();
     CoatingTooltip.register();
   }

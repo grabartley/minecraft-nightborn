@@ -7,6 +7,7 @@ import com.grahambartley.nightborn.coffin.RestRules;
 import com.grahambartley.nightborn.config.NightbornConfig;
 import com.grahambartley.nightborn.core.VampireCore;
 import com.grahambartley.nightborn.hunter.HunterAttributes;
+import com.grahambartley.nightborn.levitation.Levitation;
 import com.grahambartley.nightborn.mind.MindAttributes;
 import com.grahambartley.nightborn.occult.OccultAttributes;
 import com.grahambartley.nightborn.server.ServerConfigService;
@@ -20,6 +21,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityDimensions;
 import net.minecraft.entity.EntityPose;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;
+import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -81,6 +83,15 @@ abstract class PlayerEntityMixin {
     }
   }
 
+  @Inject(method = "updatePose", at = @At("HEAD"), cancellable = true)
+  private void nightborn$keepTheFloatPoseWhileLevitating(final CallbackInfo ci) {
+    final PlayerEntity self = (PlayerEntity) (Object) this;
+    if (Levitation.holdsFloatPose(self)) {
+      self.setPose(EntityPose.STANDING);
+      ci.cancel();
+    }
+  }
+
   @Inject(method = "eatFood", at = @At("HEAD"))
   private void nightborn$cureWithFood(
       final World world,
@@ -120,6 +131,17 @@ abstract class PlayerEntityMixin {
       final EntityPose pose, final CallbackInfoReturnable<EntityDimensions> cir) {
     if (BatForm.isBat((PlayerEntity) (Object) this)) {
       cir.setReturnValue(BatForm.dimensions());
+    }
+  }
+
+  @Inject(method = "handleFallDamage", at = @At("HEAD"), cancellable = true)
+  private void nightborn$aBatNeverTakesFallDamage(
+      final float fallDistance,
+      final float damageMultiplier,
+      final DamageSource damageSource,
+      final CallbackInfoReturnable<Boolean> cir) {
+    if (BatForm.isBat((PlayerEntity) (Object) this)) {
+      cir.setReturnValue(false);
     }
   }
 

@@ -7,7 +7,8 @@
     "blood_floor": 10,
     "think_ticks": 40,
     "leap_chance": 15,
-    "dodge_chance": 5
+    "dodge_chance": 5,
+    "power_dodge_chance": 10
   },
   "look": { "idle": "idle_fledgling" },
   "loot": "nightborn:entities/vampire/fledgling"

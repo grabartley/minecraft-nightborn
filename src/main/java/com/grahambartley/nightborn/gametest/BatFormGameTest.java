@@ -1,6 +1,8 @@
 package com.grahambartley.nightborn.gametest;
 
+import com.grahambartley.nightborn.batform.BatEffort;
 import com.grahambartley.nightborn.batform.BatForm;
+import com.grahambartley.nightborn.batform.BatHang;
 import com.grahambartley.nightborn.blood.BloodAttachment;
 import com.grahambartley.nightborn.downed.Downed;
 import com.grahambartley.nightborn.holy.HolyWater;
@@ -19,6 +21,7 @@ import com.grahambartley.nightborn.weakened.Weakened;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.fabricmc.fabric.api.event.player.UseEntityCallback;
 import net.fabricmc.fabric.api.event.player.UseItemCallback;
 import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
@@ -38,7 +41,9 @@ import net.minecraft.test.TestContext;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
 
 public class BatFormGameTest implements FabricGameTest {
@@ -52,6 +57,7 @@ public class BatFormGameTest implements FabricGameTest {
   static final Identifier LONG_LEAP = Identifier.of("nightborn", "beast/long_leap");
   static final Identifier SWIFT_PROWL = Identifier.of("nightborn", "beast/swift_prowl");
   static final BlockPos STAND = new BlockPos(4, 2, 4);
+  static final BlockPos ROOST = STAND.up();
   static final int HURTING_DROP = 8;
 
   @BeforeBatch(batchId = NIGHT)
@@ -79,7 +85,8 @@ public class BatFormGameTest implements FabricGameTest {
     final ServerPlayerEntity vampire = beast(context, BAT_FORM);
     context.assertEquals(Powers.cast(vampire, BAT_FORM), PowerUse.Verdict.READY, "turns");
     context.assertTrue(BatForm.isBat(vampire), "the vampire is a bat");
-    context.assertTrue(vampire.getAbilities().flying, "the bat flies");
+    context.assertFalse(vampire.getAbilities().flying, "the bat does not fly as in creative");
+    context.assertEquals(BatForm.effort(vampire), BatEffort.FLYING, "a bat in the air is flying");
     context.assertTrue(
         TestAdvancements.done(context, vampire, "fly_by_night"),
         "taking bat form earns Fly By Night");
@@ -125,6 +132,72 @@ public class BatFormGameTest implements FabricGameTest {
     context.assertEquals(
         Powers.cast(vampire, BAT_FORM), PowerUse.Verdict.CRAMPED, "no room to turn back");
     context.assertTrue(BatForm.isBat(vampire), "the vampire is still a bat");
+    TestPlayers.finish(context, vampire);
+  }
+
+  @GameTest(templateName = ARENA, batchId = NIGHT, tickLimit = 20)
+  public void aBatHangsFromTheUndersideOfABlock(final TestContext context) {
+    final ServerPlayerEntity vampire = hangingBat(context);
+    final Vec3d spot = context.getAbsolute(new Vec3d(4.5, 2.0, 4.5));
+    context.assertTrue(BatHang.isHanging(vampire), "the bat hangs");
+    context.assertTrue(
+        vampire.getPos().distanceTo(spot) < 0.01, "under its block: " + vampire.getPos());
+    context.assertEquals(BatForm.effort(vampire), BatEffort.RESTING, "a hanging bat rests");
+    TestPlayers.finish(context, vampire);
+  }
+
+  @GameTest(templateName = ARENA, batchId = NIGHT, tickLimit = 20)
+  public void aBatDoesNotHangFromTheSideOfABlock(final TestContext context) {
+    final ServerPlayerEntity vampire = beast(context, BAT_FORM);
+    Powers.cast(vampire, BAT_FORM);
+    context.setBlockState(ROOST, Blocks.STONE);
+    context.assertEquals(use(context, vampire, Direction.NORTH), ActionResult.FAIL, "refused");
+    context.assertFalse(BatHang.isHanging(vampire), "the bat does not hang");
+    TestPlayers.finish(context, vampire);
+  }
+
+  @GameTest(templateName = ARENA, batchId = NIGHT, tickLimit = 20)
+  public void aHangingBatLetsGoWhenItsBlockGoes(final TestContext context) {
+    final ServerPlayerEntity vampire = hangingBat(context);
+    context.setBlockState(ROOST, Blocks.AIR);
+    context.runAtTick(
+        5,
+        () -> {
+          context.assertFalse(BatHang.isHanging(vampire), "the bat lets go");
+          context.assertTrue(BatForm.isBat(vampire), "and is still a bat");
+          TestPlayers.finish(context, vampire);
+        });
+  }
+
+  @GameTest(templateName = ARENA, batchId = NIGHT, tickLimit = 20)
+  public void aHangingBatMovedOffItsSpotLetsGo(final TestContext context) {
+    final ServerPlayerEntity vampire = hangingBat(context);
+    final Vec3d aside = context.getAbsolute(new Vec3d(6.5, 2.0, 4.5));
+    vampire.refreshPositionAndAngles(aside.x, aside.y, aside.z, 0.0F, 0.0F);
+    BatHang.afterMove(vampire);
+    context.assertFalse(BatHang.isHanging(vampire), "the bat lets go");
+    TestPlayers.finish(context, vampire);
+  }
+
+  @GameTest(templateName = ARENA, batchId = NIGHT, tickLimit = 20)
+  public void aBatDoesNotHangWhereABlockIsInTheWay(final TestContext context) {
+    final ServerPlayerEntity vampire = beast(context, BAT_FORM);
+    Powers.cast(vampire, BAT_FORM);
+    final Vec3d aside = context.getAbsolute(new Vec3d(5.5, 2.0, 4.5));
+    vampire.refreshPositionAndAngles(aside.x, aside.y, aside.z, 0.0F, 0.0F);
+    context.setBlockState(ROOST, Blocks.STONE);
+    context.setBlockState(STAND, Blocks.STONE);
+    context.assertEquals(use(context, vampire, Direction.DOWN), ActionResult.FAIL, "refused");
+    context.assertFalse(BatHang.isHanging(vampire), "the bat does not hang");
+    TestPlayers.finish(context, vampire);
+  }
+
+  @GameTest(templateName = ARENA, batchId = NIGHT, tickLimit = 20)
+  public void aHangingBatWithNoRoomBelowStaysABat(final TestContext context) {
+    final ServerPlayerEntity vampire = hangingBat(context);
+    context.assertEquals(
+        Powers.cast(vampire, BAT_FORM), PowerUse.Verdict.CRAMPED, "no room to hang down");
+    context.assertTrue(BatHang.isHanging(vampire), "the bat still hangs");
     TestPlayers.finish(context, vampire);
   }
 
@@ -357,6 +430,26 @@ public class BatFormGameTest implements FabricGameTest {
           context.assertFalse(BatForm.isBat(vampire), "the sun forces the bat back");
           TestPlayers.finish(context, vampire);
         });
+  }
+
+  private static ServerPlayerEntity hangingBat(final TestContext context) {
+    final ServerPlayerEntity vampire = beast(context, BAT_FORM);
+    Powers.cast(vampire, BAT_FORM);
+    context.setBlockState(ROOST, Blocks.STONE);
+    context.assertEquals(use(context, vampire, Direction.DOWN), ActionResult.SUCCESS, "hangs");
+    return vampire;
+  }
+
+  private static ActionResult use(
+      final TestContext context, final ServerPlayerEntity vampire, final Direction side) {
+    final BlockPos roost = context.getAbsolutePos(ROOST);
+    return UseBlockCallback.EVENT
+        .invoker()
+        .interact(
+            vampire,
+            context.getWorld(),
+            Hand.MAIN_HAND,
+            new BlockHitResult(Vec3d.ofCenter(roost), side, roost, false));
   }
 
   private static VampireEntity aloftBat(final TestContext context) {

@@ -27,7 +27,7 @@ class MobSettingsTest {
   @DisplayName("the constructor clamps every chance to a percentage")
   void clamps(final int given, final int kept) {
     final MobSettings settings =
-        new MobSettings(given, given, 30, 15, 8, 14, 60, given, 64, 40, 16, 24, 50, 32);
+        new MobSettings(given, given, 30, 15, 8, 14, 60, given, 64, 40, 16, 24);
     assertEquals(kept, settings.vampireBatSpawnChance());
     assertEquals(kept, settings.batEscortChance());
     assertEquals(kept, settings.vampireOutingChance());
@@ -38,7 +38,7 @@ class MobSettingsTest {
   @DisplayName("the constructor clamps the levitation timings, and 0 is allowed")
   void clampsLevitation(final int given, final int kept) {
     final MobSettings settings =
-        new MobSettings(100, 40, given, given, 8, 14, 60, 50, 64, 40, 16, 24, 50, 32);
+        new MobSettings(100, 40, given, given, 8, 14, 60, 50, 64, 40, 16, 24);
     assertEquals(kept, settings.vampireLevitateSeconds());
     assertEquals(kept, settings.vampireLandSeconds());
   }
@@ -49,8 +49,7 @@ class MobSettingsTest {
   void clampsHiss(final int given, final int kept) {
     assertEquals(
         kept,
-        new MobSettings(100, 40, 30, 15, given, 14, 60, 50, 64, 40, 16, 24, 50, 32)
-            .vampireHissSeconds());
+        new MobSettings(100, 40, 30, 15, given, 14, 60, 50, 64, 40, 16, 24).vampireHissSeconds());
   }
 
   @ParameterizedTest(name = "threshold {0} is kept as {1}")
@@ -59,7 +58,7 @@ class MobSettingsTest {
   void clampsHungerThreshold(final int given, final int kept) {
     assertEquals(
         kept,
-        new MobSettings(100, 40, 30, 15, 8, given, 60, 50, 64, 40, 16, 24, 50, 32)
+        new MobSettings(100, 40, 30, 15, 8, given, 60, 50, 64, 40, 16, 24)
             .vampireHungerThreshold());
   }
 
@@ -69,7 +68,7 @@ class MobSettingsTest {
   void clampsBloodDrain(final int given, final int kept) {
     assertEquals(
         kept,
-        new MobSettings(100, 40, 30, 15, 8, 14, given, 50, 64, 40, 16, 24, 50, 32)
+        new MobSettings(100, 40, 30, 15, 8, 14, given, 50, 64, 40, 16, 24)
             .vampireBloodDrainSeconds());
   }
 
@@ -78,7 +77,7 @@ class MobSettingsTest {
   @DisplayName("the feeding and chase ranges reach past a structure but not across the world")
   void clampsRanges(final int given, final int kept) {
     final MobSettings settings =
-        new MobSettings(100, 40, 30, 15, 8, 14, 60, 50, given, given, 16, 24, 50, 32);
+        new MobSettings(100, 40, 30, 15, 8, 14, 60, 50, given, given, 16, 24);
     assertEquals(kept, settings.vampireFeedingRange());
     assertEquals(kept, settings.vampireChaseRange());
   }
@@ -89,8 +88,7 @@ class MobSettingsTest {
   void clampsHomeRadius(final int given, final int kept) {
     assertEquals(
         kept,
-        new MobSettings(100, 40, 30, 15, 8, 14, 60, 50, 64, 40, given, 24, 50, 32)
-            .vampireHomeRadius());
+        new MobSettings(100, 40, 30, 15, 8, 14, 60, 50, 64, 40, given, 24).vampireHomeRadius());
   }
 
   @ParameterizedTest(name = "{0} blocks is kept as {1}")
@@ -99,27 +97,6 @@ class MobSettingsTest {
   void clampsAlertRange(final int given, final int kept) {
     assertEquals(
         kept,
-        new MobSettings(100, 40, 30, 15, 8, 14, 60, 50, 64, 40, 16, given, 50, 32)
-            .vampireAlertRange());
-  }
-
-  @ParameterizedTest(name = "{0} percent is kept as {1}")
-  @CsvSource({"-10, 0", "0, 0", "50, 50", "200, 200", "350, 200"})
-  @DisplayName("the Eldest gains between nothing and twice its health for each extra player")
-  void clampsEldestHealth(final int given, final int kept) {
-    assertEquals(
-        kept,
-        new MobSettings(100, 40, 30, 15, 8, 14, 60, 50, 64, 40, 16, 24, given, 32)
-            .eldestHealthPerPlayer());
-  }
-
-  @ParameterizedTest(name = "{0} blocks is kept as {1}")
-  @CsvSource({"0, 8", "8, 8", "32, 32", "64, 64", "200, 64"})
-  @DisplayName("the Eldest counts players within a room or a castle, never the world")
-  void clampsEldestCrowdRange(final int given, final int kept) {
-    assertEquals(
-        kept,
-        new MobSettings(100, 40, 30, 15, 8, 14, 60, 50, 64, 40, 16, 24, 50, given)
-            .eldestCrowdRange());
+        new MobSettings(100, 40, 30, 15, 8, 14, 60, 50, 64, 40, 16, given).vampireAlertRange());
   }
 }

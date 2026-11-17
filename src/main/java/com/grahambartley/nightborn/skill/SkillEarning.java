@@ -1,5 +1,6 @@
 package com.grahambartley.nightborn.skill;
 
+import com.grahambartley.nightborn.config.RitualSettings;
 import com.grahambartley.nightborn.config.SkillSettings;
 import com.grahambartley.nightborn.vampire.Vampires;
 import net.minecraft.entity.player.PlayerEntity;
@@ -34,12 +35,12 @@ public final class SkillEarning {
     return grantHunterPoints(hunter, huntPoints(settings, stageRank));
   }
 
-  public static boolean fromSharedHunt(final PlayerEntity hunter, final SkillSettings settings) {
-    return grantHunterPoints(hunter, settings.eldestPoints());
-  }
-
   public static boolean fromContract(final PlayerEntity hunter, final SkillSettings settings) {
     return grantHunterPoints(hunter, settings.contractPoints());
+  }
+
+  public static boolean fromEldest(final PlayerEntity hunter, final RitualSettings settings) {
+    return grantHunterPoints(hunter, settings.eldestPoints());
   }
 
   private static boolean grantHunterPoints(final PlayerEntity hunter, final int points) {

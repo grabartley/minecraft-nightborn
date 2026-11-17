@@ -11,7 +11,7 @@ import net.minecraft.util.math.ColumnPos;
 import net.minecraft.world.Heightmap;
 import net.minecraft.world.gen.structure.Structure;
 
-public record Summit(int reach, int spacing, int minHeight) {
+public record Summit(int reach, int spacing, int minHeight, int maxHeight) {
 
   public static final int FARTHEST_REACH = 64;
   public static final int WIDEST_SPACING = 16;
@@ -29,7 +29,10 @@ public record Summit(int reach, int spacing, int minHeight) {
                           .forGetter(Summit::spacing),
                       Codec.intRange(LOWEST, HIGHEST)
                           .optionalFieldOf("min_height", LOWEST)
-                          .forGetter(Summit::minHeight))
+                          .forGetter(Summit::minHeight),
+                      Codec.intRange(LOWEST, HIGHEST)
+                          .optionalFieldOf("max_height", HIGHEST)
+                          .forGetter(Summit::maxHeight))
                   .apply(instance, Summit::new));
 
   public List<ColumnPos> samples(final ColumnPos start) {
@@ -54,7 +57,9 @@ public record Summit(int reach, int spacing, int minHeight) {
                         .reversed())
                 .thenComparing(Comparator.comparingInt(ColumnPos::x).reversed())
                 .thenComparing(Comparator.comparingInt(ColumnPos::z).reversed()))
-        .filter(point -> heights.applyAsInt(point) >= minHeight);
+        .filter(
+            point ->
+                heights.applyAsInt(point) >= minHeight && heights.applyAsInt(point) <= maxHeight);
   }
 
   public Optional<ColumnPos> peak(final Structure.Context context, final ColumnPos start) {

@@ -1,5 +1,6 @@
 package com.grahambartley.nightborn.client.fog;
 
+import com.grahambartley.nightborn.client.ritual.RitualGloom;
 import com.grahambartley.nightborn.client.structure.NearbyStructure;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
@@ -18,10 +19,11 @@ public final class StructureFog {
   }
 
   private static void tick(final MinecraftClient client) {
-    if (NearbyStructure.zone().isEmpty() && shown == 0.0F) {
+    final float gloom = RitualGloom.strength(client.player);
+    if (NearbyStructure.zone().isEmpty() && gloom == 0.0F && shown == 0.0F) {
       return;
     }
-    shown = FogDepth.approach(shown, NearbyStructure.closeness(client.player));
+    shown = FogDepth.approach(shown, Math.max(NearbyStructure.closeness(client.player), gloom));
   }
 
   public static void apply() {

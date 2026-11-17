@@ -13,7 +13,7 @@
   "project_start_to_heightmap": "WORLD_SURFACE_WG",
   "max_distance_from_center": 64,
   "footing": { "dry": true, "max_rise": 30 },
-  "summit": { "reach": 48, "spacing": 8, "min_height": 100 },
+  "summit": { "reach": 48, "spacing": 8, "min_height": 100, "max_height": 250 },
   "household": {
     "resident": "nightborn:vampire",
     "residents": 20,

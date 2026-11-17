@@ -26,6 +26,7 @@ public final class Fighting {
       final CombatSettings settings) {
     if (!fighting) {
       casting.cancel();
+      moves.rest();
       return;
     }
     casting.tick(fighter, combat);

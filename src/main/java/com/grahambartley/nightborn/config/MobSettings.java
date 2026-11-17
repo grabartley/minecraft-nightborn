@@ -14,9 +14,7 @@ public record MobSettings(
     int vampireFeedingRange,
     int vampireChaseRange,
     int vampireHomeRadius,
-    int vampireAlertRange,
-    int eldestHealthPerPlayer,
-    int eldestCrowdRange) {
+    int vampireAlertRange) {
 
   static final String SECTION = "mobs";
 
@@ -61,12 +59,6 @@ public record MobSettings(
   public static final IntSetting VAMPIRE_ALERT_RANGE =
       new IntSetting(SECTION, "vampireAlertRange", 24, 4, 64, c -> c.mobs().vampireAlertRange());
 
-  public static final IntSetting ELDEST_HEALTH_PER_PLAYER =
-      new IntSetting(
-          SECTION, "eldestHealthPerPlayer", 50, 0, 200, c -> c.mobs().eldestHealthPerPlayer());
-  public static final IntSetting ELDEST_CROWD_RANGE =
-      new IntSetting(SECTION, "eldestCrowdRange", 32, 8, 64, c -> c.mobs().eldestCrowdRange());
-
   public static final List<Setting<?>> SETTINGS =
       List.of(
           VAMPIRE_BAT_SPAWN_CHANCE,
@@ -80,9 +72,7 @@ public record MobSettings(
           VAMPIRE_FEEDING_RANGE,
           VAMPIRE_CHASE_RANGE,
           VAMPIRE_HOME_RADIUS,
-          VAMPIRE_ALERT_RANGE,
-          ELDEST_HEALTH_PER_PLAYER,
-          ELDEST_CROWD_RANGE);
+          VAMPIRE_ALERT_RANGE);
 
   public MobSettings {
     vampireBatSpawnChance = VAMPIRE_BAT_SPAWN_CHANCE.clamp(vampireBatSpawnChance);
@@ -97,8 +87,6 @@ public record MobSettings(
     vampireChaseRange = VAMPIRE_CHASE_RANGE.clamp(vampireChaseRange);
     vampireHomeRadius = VAMPIRE_HOME_RADIUS.clamp(vampireHomeRadius);
     vampireAlertRange = VAMPIRE_ALERT_RANGE.clamp(vampireAlertRange);
-    eldestHealthPerPlayer = ELDEST_HEALTH_PER_PLAYER.clamp(eldestHealthPerPlayer);
-    eldestCrowdRange = ELDEST_CROWD_RANGE.clamp(eldestCrowdRange);
   }
 
   static MobSettings from(final SettingValues values) {
@@ -114,8 +102,6 @@ public record MobSettings(
         values.get(VAMPIRE_FEEDING_RANGE),
         values.get(VAMPIRE_CHASE_RANGE),
         values.get(VAMPIRE_HOME_RADIUS),
-        values.get(VAMPIRE_ALERT_RANGE),
-        values.get(ELDEST_HEALTH_PER_PLAYER),
-        values.get(ELDEST_CROWD_RANGE));
+        values.get(VAMPIRE_ALERT_RANGE));
   }
 }

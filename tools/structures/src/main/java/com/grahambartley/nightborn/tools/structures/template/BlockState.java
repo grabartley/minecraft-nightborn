@@ -64,16 +64,6 @@ public final class BlockState {
     return new Parsed(match.group(1), properties);
   }
 
-  public static String withProps(final String state, final Object... keysAndValues) {
-    final Parsed parsed = parse(state);
-    final Map<String, String> properties = new LinkedHashMap<>(parsed.properties());
-    for (int i = 0; i < keysAndValues.length; i += 2) {
-      properties.put(
-          (String) keysAndValues[i], text(keysAndValues[i + 1]).toLowerCase(Locale.ROOT));
-    }
-    return of(parsed.block(), properties);
-  }
-
   public static String full(final String state) {
     return state.contains(":") ? state : MC + state;
   }

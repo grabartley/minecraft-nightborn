@@ -13,7 +13,7 @@ public record StageSkills(
   public static final int MOST_SKILLS = 64;
 
   public static final StageSkills NONE =
-      new StageSkills(ConstantIntProvider.create(0), Map.of(), 1, false);
+      new StageSkills(ConstantIntProvider.create(0), Map.of(), 1);
 
   public static final Codec<StageSkills> CODEC =
       RecordCodecBuilder.create(
@@ -36,8 +36,9 @@ public record StageSkills(
     weights = Map.copyOf(weights);
   }
 
-  public int wanted(final int open, final int rolled) {
-    return every ? open : Math.max(0, Math.min(rolled, open - 1));
+  public StageSkills(
+      final IntProvider count, final Map<Identifier, Integer> weights, final int otherWeight) {
+    this(count, weights, otherWeight, false);
   }
 
   public int weight(final Identifier skill) {

@@ -13,12 +13,17 @@ import net.minecraft.util.math.MathHelper;
 public enum VampireRig implements StringIdentifiable {
   MALE("male", ClothingCut.MALE, Figure.FLAT, Figure.FLAT, "vampire"),
   FEMALE("female", ClothingCut.FEMALE, 0.7F, 1.3F, "vampire"),
-  LORD("lord", ClothingCut.MALE, Figure.FLAT, Figure.FLAT, "vampire_lord");
+  LORD("lord", ClothingCut.MALE, Figure.FLAT, Figure.FLAT, "vampire_lord"),
+  ELDEST_MALE("eldest_male", ClothingCut.MALE, Figure.FLAT, Figure.FLAT, "vampire_eldest"),
+  ELDEST_FEMALE("eldest_female", ClothingCut.FEMALE, 0.7F, 1.3F, "vampire_eldest");
 
   public static final Codec<VampireRig> CODEC = StringIdentifiable.createCodec(VampireRig::values);
 
   public static final Set<VampireRig> COMMON =
       Collections.unmodifiableSet(EnumSet.of(MALE, FEMALE));
+
+  public static final Set<VampireRig> ELDEST =
+      Collections.unmodifiableSet(EnumSet.of(ELDEST_MALE, ELDEST_FEMALE));
 
   private final String id;
   private final ClothingCut cut;
@@ -37,10 +42,6 @@ public enum VampireRig implements StringIdentifiable {
     this.smallestBust = smallestBust;
     this.largestBust = largestBust;
     this.clips = clips;
-  }
-
-  public static VampireRig eitherCommon(final boolean coin) {
-    return coin ? MALE : FEMALE;
   }
 
   public float bust(final double roll) {

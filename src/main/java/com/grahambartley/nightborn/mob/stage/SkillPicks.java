@@ -46,13 +46,28 @@ public final class SkillPicks {
     return open;
   }
 
+  public static int most(final int wanted, final int treeSize) {
+    return Math.max(0, Math.min(wanted, treeSize - 1));
+  }
+
   public static List<Identifier> pick(
       final Map<Identifier, Skill> tree,
       final StageSkills weights,
       final int wanted,
       final DoubleSupplier rolls) {
+    return take(tree, weights, most(wanted, tree.size()), rolls);
+  }
+
+  public static List<Identifier> every(final Map<Identifier, Skill> tree) {
+    return take(tree, StageSkills.NONE, tree.size(), () -> 0.0);
+  }
+
+  private static List<Identifier> take(
+      final Map<Identifier, Skill> tree,
+      final StageSkills weights,
+      final int count,
+      final DoubleSupplier rolls) {
     final List<Identifier> owned = new ArrayList<>();
-    final int count = weights.wanted(tree.size(), wanted);
     final Map<Identifier, Skill> sorted = new TreeMap<>(tree);
     while (owned.size() < count) {
       final List<Identifier> open =

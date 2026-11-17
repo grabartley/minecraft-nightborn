@@ -30,34 +30,44 @@ class SummitTest {
     return Stream.of(
         Arguments.of(
             "a peak north east of the start",
-            new Summit(48, 12, 100),
+            new Summit(48, 12, 100, 320),
             cone(new ColumnPos(184, -344), 200),
             Optional.of(new ColumnPos(184, -344))),
         Arguments.of(
             "a peak between samples takes the nearest sample to it",
-            new Summit(48, 12, 100),
+            new Summit(48, 12, 100, 320),
             cone(new ColumnPos(189, -344), 200),
             Optional.of(new ColumnPos(184, -344))),
         Arguments.of(
             "a peak beyond reach takes the highest ground in reach",
-            new Summit(48, 12, 100),
+            new Summit(48, 12, 100, 320),
             cone(new ColumnPos(400, -320), 300),
             Optional.of(new ColumnPos(208, -320))),
         Arguments.of(
-            "level ground keeps the start", new Summit(48, 12, 100), flat, Optional.of(START)),
+            "level ground keeps the start", new Summit(48, 12, 100, 320), flat, Optional.of(START)),
         Arguments.of(
             "a hill under the lowest height is refused",
-            new Summit(48, 12, 130),
+            new Summit(48, 12, 130, 320),
             cone(START, 129),
             Optional.empty()),
         Arguments.of(
             "a hill at the lowest height is taken",
-            new Summit(48, 12, 130),
+            new Summit(48, 12, 130, 320),
             cone(START, 130),
             Optional.of(START)),
         Arguments.of(
+            "a peak over the highest height is refused",
+            new Summit(48, 12, 100, 250),
+            cone(START, 251),
+            Optional.empty()),
+        Arguments.of(
+            "a peak at the highest height is taken",
+            new Summit(48, 12, 100, 250),
+            cone(START, 250),
+            Optional.of(START)),
+        Arguments.of(
             "no reach keeps the start",
-            new Summit(0, 8, 0),
+            new Summit(0, 8, 0, 320),
             cone(new ColumnPos(170, -320), 200),
             Optional.of(START)));
   }
@@ -77,7 +87,7 @@ class SummitTest {
   @CsvSource({"48, 12, 81", "48, 16, 49", "0, 8, 1", "10, 8, 10", "64, 1, 16641"})
   @DisplayName("samples cover the reach on a grid and always include the start")
   void samples(final int reach, final int spacing, final int count) {
-    final List<ColumnPos> samples = new Summit(reach, spacing, 0).samples(START);
+    final List<ColumnPos> samples = new Summit(reach, spacing, 0, 320).samples(START);
     assertEquals(count, samples.size());
     assertTrue(samples.contains(START));
     assertTrue(
@@ -100,6 +110,8 @@ class SummitTest {
         "{\"reach\": 16, \"spacing\": 0} | false",
         "{\"reach\": 16, \"spacing\": 17} | false",
         "{\"reach\": 16, \"min_height\": 321} | false",
+        "{\"reach\": 16, \"max_height\": 250} | true",
+        "{\"reach\": 16, \"max_height\": 321} | false",
         "{} | false"
       })
   @DisplayName("a summit search reaches at most 64 blocks on a grid of 1 to 16")
@@ -111,12 +123,13 @@ class SummitTest {
   @ParameterizedTest(name = "{0}")
   @CsvSource(
       delimiter = '|',
-      value = {"{\"reach\": 20} | 8 | -64"})
+      value = {"{\"reach\": 20} | 8 | -64 | 320"})
   @DisplayName("a summit search samples every 8 blocks and takes any height unless told otherwise")
-  void defaults(final String json, final int spacing, final int minHeight) {
+  void defaults(final String json, final int spacing, final int minHeight, final int maxHeight) {
     final Summit summit =
         Summit.CODEC.parse(JsonOps.INSTANCE, JsonParser.parseString(json)).getOrThrow();
     assertEquals(spacing, summit.spacing());
     assertEquals(minHeight, summit.minHeight());
+    assertEquals(maxHeight, summit.maxHeight());
   }
 }

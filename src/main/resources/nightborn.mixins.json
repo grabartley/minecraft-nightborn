@@ -25,6 +25,7 @@
 		"SleepManagerMixin",
 		"TippedArrowRecipeMixin",
 		"VillagerEntityMixin",
+		"WardenEntityMixin",
 		"WorldMixin"
 	],
 	"injectors": {

@@ -29,10 +29,6 @@ public final class HandLoan {
     return taken;
   }
 
-  public boolean lent() {
-    return kept != null;
-  }
-
   public void write(final NbtCompound nbt, final RegistryWrapper.WrapperLookup registries) {
     if (kept == null) {
       return;

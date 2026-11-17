@@ -45,22 +45,16 @@ class StageSkillsTest {
         loads, StageSkills.CODEC.parse(JsonOps.INSTANCE, JsonParser.parseString(json)).isSuccess());
   }
 
-  @ParameterizedTest(name = "every {0}, {1} open, rolled {2}: wants {3}")
-  @CsvSource({
-    "false, 4, 0, 0",
-    "false, 4, 2, 2",
-    "false, 4, 4, 3",
-    "false, 4, 9, 3",
-    "false, 4, -1, 0",
-    "false, 0, 1, 0",
-    "true, 4, 0, 4",
-    "true, 30, 2, 30",
-    "true, 0, 5, 0"
-  })
-  @DisplayName("a stage never wants every skill unless it is the one that holds them all")
-  void wanted(final boolean every, final int open, final int rolled, final int wanted) {
-    final StageSkills skills = parse("{\"count\": 0, \"every\": " + every + "}");
-    assertEquals(wanted, skills.wanted(open, rolled));
-    assertEquals(every, skills.every());
+  @ParameterizedTest(name = "{0}: {1}")
+  @CsvSource(
+      delimiter = '|',
+      value = {
+        "{\"count\": 0} | false",
+        "{\"count\": 0, \"every\": false} | false",
+        "{\"count\": 0, \"every\": true} | true"
+      })
+  @DisplayName("a stage takes every skill only when its data says so")
+  void every(final String json, final boolean every) {
+    assertEquals(every, parse(json).every());
   }
 }

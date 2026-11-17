@@ -21,6 +21,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 @ExtendWith(MinecraftBootstrapExtension.class)
@@ -53,24 +54,11 @@ class SkillPicksTest {
             .keySet());
   }
 
-  @ParameterizedTest(name = "seed {0}")
-  @ValueSource(longs = {1, 2, 3})
-  @DisplayName("a stage that holds every skill picks the whole tree, mob-only skills it names too")
-  void picksEverySkill(final long seed) {
-    final Random random = new Random(seed);
-    final StageSkills every =
-        new StageSkills(
-            net.minecraft.util.math.intprovider.ConstantIntProvider.create(0),
-            Map.of(RALLY, 1),
-            1,
-            true);
-    final List<Identifier> picks =
-        SkillPicks.pick(
-            SkillPicks.forStage(VAMPIRE, StageFixtures.BRANCHES, every),
-            every,
-            0,
-            random::nextDouble);
-    assertEquals(Set.of(THICK, RUSH, STRENGTH, NOBLE_BLOOD, RALLY), Set.copyOf(picks));
+  @ParameterizedTest(name = "wants {0} of {1}: {2}")
+  @CsvSource({"0, 4, 0", "2, 4, 2", "3, 4, 3", "4, 4, 3", "9, 4, 3", "-1, 4, 0", "1, 0, 0"})
+  @DisplayName("a vampire mob never holds every skill, which only the Eldest does")
+  void most(final int wanted, final int treeSize, final int most) {
+    assertEquals(most, SkillPicks.most(wanted, treeSize));
   }
 
   @ParameterizedTest(name = "seed {0}")
@@ -102,5 +90,17 @@ class SkillPicksTest {
     assertEquals(
         List.of(NOBLE_BLOOD),
         SkillPicks.pick(VAMPIRE, StageFixtures.weights(Map.of(NOBLE_BLOOD, 1), 0), 3, () -> 0.5));
+  }
+
+  @Test
+  @DisplayName("taking every skill takes the whole tree, each after the skills it needs")
+  void every() {
+    final List<Identifier> picks = SkillPicks.every(VAMPIRE);
+    assertEquals(VAMPIRE.keySet(), Set.copyOf(picks));
+    assertEquals(VAMPIRE.size(), picks.size());
+    for (int i = 0; i < picks.size(); i++) {
+      assertTrue(
+          picks.subList(0, i).containsAll(VAMPIRE.get(picks.get(i)).requires()), picks.toString());
+    }
   }
 }

@@ -95,6 +95,13 @@
         { "type": "minecraft:item", "name": "nightborn:trophy_mount", "weight": 2 },
         { "type": "minecraft:item", "name": "minecraft:golden_apple", "weight": 2 }
       ]
+    },
+    {
+      "rolls": 1,
+      "conditions": [{ "condition": "minecraft:random_chance", "chance": 0.2 }],
+      "entries": [
+        { "type": "minecraft:item", "name": "nightborn:castle_signet", "conditions": [{ "condition": "minecraft:location_check", "predicate": { "structures": "nightborn:castle" } }] }
+      ]
     }
   ]
 }

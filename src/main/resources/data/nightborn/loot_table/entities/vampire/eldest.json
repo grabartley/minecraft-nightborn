@@ -32,14 +32,14 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "minecraft:gold_block",
+          "name": "minecraft:gold_ingot",
           "functions": [
             {
               "function": "minecraft:set_count",
               "count": {
                 "type": "minecraft:uniform",
-                "min": 2,
-                "max": 4
+                "min": 12,
+                "max": 20
               }
             }
           ]
@@ -51,14 +51,14 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "minecraft:emerald_block",
+          "name": "minecraft:emerald",
           "functions": [
             {
               "function": "minecraft:set_count",
               "count": {
                 "type": "minecraft:uniform",
-                "min": 1,
-                "max": 3
+                "min": 8,
+                "max": 14
               }
             }
           ]
@@ -76,8 +76,8 @@
               "function": "minecraft:set_count",
               "count": {
                 "type": "minecraft:uniform",
-                "min": 6,
-                "max": 10
+                "min": 5,
+                "max": 9
               }
             }
           ]
@@ -89,14 +89,14 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "minecraft:netherite_scrap",
+          "name": "minecraft:netherite_ingot",
           "functions": [
             {
               "function": "minecraft:set_count",
               "count": {
                 "type": "minecraft:uniform",
-                "min": 2,
-                "max": 4
+                "min": 1,
+                "max": 2
               }
             }
           ]
@@ -123,6 +123,25 @@
       ]
     },
     {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:totem_of_undying",
+          "functions": [
+            {
+              "function": "minecraft:set_count",
+              "count": {
+                "type": "minecraft:uniform",
+                "min": 1,
+                "max": 1
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
       "rolls": 2,
       "entries": [
         {
@@ -139,6 +158,17 @@
         {
           "type": "minecraft:item",
           "name": "nightborn:silver_sword",
+          "functions": [
+            {
+              "function": "minecraft:enchant_with_levels",
+              "levels": 39,
+              "options": "#minecraft:on_random_loot"
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "nightborn:silver_axe",
           "functions": [
             {
               "function": "minecraft:enchant_with_levels",

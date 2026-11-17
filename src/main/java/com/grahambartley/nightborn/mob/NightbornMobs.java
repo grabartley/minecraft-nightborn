@@ -65,7 +65,7 @@ public final class NightbornMobs {
 
   public static final Item ELDEST_SPAWN_EGG =
       registerEgg(
-          "eldest_spawn_egg", new SpawnEggItem(ELDEST, 0x120608, 0x8C1420, new Item.Settings()));
+          "eldest_spawn_egg", new SpawnEggItem(ELDEST, 0x120408, 0x8A0F1C, new Item.Settings()));
 
   public static final Item VAMPIRE_BAT_SPAWN_EGG =
       registerEgg(
