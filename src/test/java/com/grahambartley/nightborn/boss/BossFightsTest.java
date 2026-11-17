@@ -172,6 +172,7 @@ class BossFightsTest {
                         look.idle(),
                         look.walk(),
                         look.form(),
+                        look.formEnter(),
                         look.fly(),
                         look.flyForm(),
                         look.enterClip()));

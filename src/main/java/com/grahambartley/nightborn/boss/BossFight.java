@@ -316,12 +316,12 @@ public final class BossFight {
     return true;
   }
 
-  public ShownForm shown(final Optional<BossFightPlan> plan, final boolean downed) {
+  public ShownForm shown(final Optional<BossFightPlan> plan, final boolean downed, final long now) {
     return plan.map(
             p ->
                 p.phase(phases.index())
                     .look()
-                    .shown(flight.flying(), downed, p.clips().downedForm()))
+                    .shown(flight.flying(), downed, changing(now), p.clips().downedForm()))
         .orElse(ShownForm.NONE)
         .blazing(blazing(plan));
   }

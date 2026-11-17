@@ -18,6 +18,7 @@ class PhaseLookTest {
           "beast_idle",
           "beast_walk",
           "form_beast",
+          "form_unfurl",
           "fly",
           "form_fly",
           "roar_beast",
@@ -31,6 +32,7 @@ class PhaseLookTest {
             "blood_idle",
             "blood_walk",
             "form_blood",
+            "form_retract",
             "",
             "",
             "roar_blood",
@@ -40,6 +42,7 @@ class PhaseLookTest {
                 JsonOps.INSTANCE,
                 JsonParser.parseString(
                     "{\"idle\":\"blood_idle\",\"walk\":\"blood_walk\",\"form\":\"form_blood\","
+                        + "\"form_enter\":\"form_retract\","
                         + "\"enter_clip\":\"roar_blood\",\"held\":\"minecraft:stick\"}"))
             .getOrThrow());
     assertEquals(
@@ -47,40 +50,46 @@ class PhaseLookTest {
         PhaseLook.CODEC.parse(JsonOps.INSTANCE, JsonParser.parseString("{}")).getOrThrow());
   }
 
-  @ParameterizedTest(name = "flying {0}, downed {1}: idle {2}, walk {3}, form {4}")
+  @ParameterizedTest(name = "flying {0}, downed {1}, changing {2}: idle {3}, walk {4}, form {5}")
   @CsvSource(
       value = {
-        "false, false, beast_idle, beast_walk, form_beast",
-        "true, false, fly, fly, form_fly",
-        "false, true, '', '', form_downed",
-        "true, true, '', '', form_downed"
+        "false, false, false, beast_idle, beast_walk, form_beast",
+        "true, false, false, fly, fly, form_fly",
+        "false, false, true, beast_idle, beast_walk, form_unfurl",
+        "true, false, true, beast_idle, beast_walk, form_unfurl",
+        "false, true, false, '', '', form_downed",
+        "true, true, true, '', '', form_downed"
       })
-  @DisplayName("the look shown follows the ground, the air and the floor it lies on")
+  @DisplayName(
+      "the look shown follows the ground, the air, a phase change and the floor it lies on")
   void shows(
       final boolean flying,
       final boolean downed,
+      final boolean changing,
       final String idle,
       final String walk,
       final String form) {
     assertEquals(
-        new ShownForm(idle, walk, form, false), BEAST.shown(flying, downed, "form_downed"));
+        new ShownForm(idle, walk, form, false),
+        BEAST.shown(flying, downed, changing, "form_downed"));
   }
 
   @Test
   @DisplayName("a phase with no flying or downed clips keeps its own form")
   void fallsBackToItsForm() {
     final PhaseLook court =
-        new PhaseLook("idle_ancient", "court_walk", "form_court", "", "", "", Optional.empty());
+        new PhaseLook("idle_ancient", "court_walk", "form_court", "", "", "", "", Optional.empty());
     assertEquals(
         new ShownForm("idle_ancient", "court_walk", "form_court", false),
-        court.shown(true, false, ""));
-    assertEquals(new ShownForm("", "", "form_court", false), court.shown(false, true, ""));
+        court.shown(true, false, true, ""));
+    assertEquals(new ShownForm("", "", "form_court", false), court.shown(false, true, false, ""));
   }
 
   @ParameterizedTest(name = "enter clip \"{0}\": plays {1}")
   @CsvSource(value = {"roar_beast, roar_beast", "'', hiss"})
   @DisplayName("a phase with no clip of its own falls back to the fight's change clip")
   void enters(final String clip, final String plays) {
-    assertEquals(plays, new PhaseLook("", "", "", "", "", clip, Optional.empty()).enters("hiss"));
+    assertEquals(
+        plays, new PhaseLook("", "", "", "", "", "", clip, Optional.empty()).enters("hiss"));
   }
 }

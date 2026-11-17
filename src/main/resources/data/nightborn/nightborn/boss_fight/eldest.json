@@ -173,7 +173,8 @@
         "form": "form_beast",
         "fly": "fly",
         "fly_form": "form_fly",
-        "enter_clip": "roar_beast"
+        "enter_clip": "roar_beast",
+        "form_enter": "form_unfurl"
       }
     },
     {
@@ -275,7 +276,8 @@
         "walk": "blood_walk",
         "form": "form_blood",
         "enter_clip": "roar_blood",
-        "held": "nightborn:eldest_blade"
+        "held": "nightborn:eldest_blade",
+        "form_enter": "form_retract"
       }
     }
   ],

@@ -160,7 +160,8 @@ public class EldestEntity extends BossVampireEntity implements BlazingEyes {
     if (fight.arena().isEmpty()) {
       fight.claim(new Arena(getBlockPos(), ServerConfigService.current().ritual().arenaRadius()));
     }
-    dataTracker.set(FORM, fight.shown(plan(), Downed.state(this) != null).encode());
+    dataTracker.set(
+        FORM, fight.shown(plan(), Downed.state(this) != null, getWorld().getTime()).encode());
     if (rising && age >= RISE_AFTER_TICKS) {
       rising = false;
       plan()
