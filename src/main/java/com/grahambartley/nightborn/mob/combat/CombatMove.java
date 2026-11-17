@@ -5,6 +5,7 @@ import com.grahambartley.nightborn.mob.stage.StageCombat;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.function.Function;
+import java.util.function.IntSupplier;
 import net.minecraft.util.Identifier;
 
 public enum CombatMove {
@@ -52,9 +53,9 @@ public enum CombatMove {
   public static boolean dodgesWithPower(
       final boolean threatened,
       final boolean wasThreatened,
-      final int roll,
+      final IntSupplier roll,
       final StageCombat combat) {
-    return threatened && !wasThreatened && roll < combat.powerDodgeChance();
+    return threatened && !wasThreatened && roll.getAsInt() < combat.powerDodgeChance();
   }
 
   public static Optional<CombatMove> decide(

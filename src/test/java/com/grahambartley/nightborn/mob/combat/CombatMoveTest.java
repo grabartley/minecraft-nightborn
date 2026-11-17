@@ -59,9 +59,27 @@ class CombatMoveTest {
   @DisplayName("a vampire dodges with a power once for each new swing or aimed shot")
   void dodgesWithPower(
       final boolean threatened, final boolean wasThreatened, final int roll, final boolean dodges) {
-    assertEquals(dodges, CombatMove.dodgesWithPower(threatened, wasThreatened, roll, ELDER));
+    assertEquals(dodges, CombatMove.dodgesWithPower(threatened, wasThreatened, () -> roll, ELDER));
     assertEquals(
-        false, CombatMove.dodgesWithPower(threatened, wasThreatened, roll, StageCombat.PLAIN));
+        false,
+        CombatMove.dodgesWithPower(threatened, wasThreatened, () -> roll, StageCombat.PLAIN));
+  }
+
+  @ParameterizedTest(name = "threatened {0}, was {1}: rolls {2}")
+  @CsvSource({"true, false, 1", "true, true, 0", "false, true, 0", "false, false, 0"})
+  @DisplayName("the dice are only thrown for a new threat")
+  void rollsOnlyForANewThreat(
+      final boolean threatened, final boolean wasThreatened, final int rolls) {
+    final int[] thrown = new int[1];
+    CombatMove.dodgesWithPower(
+        threatened,
+        wasThreatened,
+        () -> {
+          thrown[0]++;
+          return 0;
+        },
+        ELDER);
+    assertEquals(rolls, thrown[0]);
   }
 
   @ParameterizedTest(name = "{0}")

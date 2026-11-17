@@ -35,7 +35,7 @@ public final class CombatMoves {
     final boolean wasThreatened = threatened;
     threatened = threat.at(distance, settings);
     if (CombatMove.dodgesWithPower(
-            threatened, wasThreatened, fighter.getRandom().nextInt(100), combat)
+            threatened, wasThreatened, () -> fighter.getRandom().nextInt(100), combat)
         && dodgeWithPower(fighter, distance, combat)) {
       nextMove = now + (long) combat.thinkTicks() * settings.moveCooldownThinks();
       return;
@@ -67,12 +67,16 @@ public final class CombatMoves {
   private static boolean dodgeWithPower(
       final MobEntity fighter, final double distance, final StageCombat combat) {
     return PowerChoice.dodge(
-            PowerCasting.options(fighter),
+            PowerCasting.options(fighter, true),
             distance,
             BloodAttachment.get(fighter),
             combat.bloodFloor())
         .map(option -> Powers.cast(fighter, option.power()) == PowerUse.Verdict.READY)
         .orElse(false);
+  }
+
+  public void rest() {
+    threatened = false;
   }
 
   public static Vec3d impulse(
