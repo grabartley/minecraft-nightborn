@@ -7,7 +7,7 @@ import net.minecraft.util.Identifier;
 
 public record VampireLook(VampireRig rig, Identifier texture, List<Identifier> eras, int weight) {
 
-  public static final int MAX_WEIGHT = 1000;
+  public static final int MAX_WEIGHT = Weighted.MAX_WEIGHT;
 
   public static final Codec<VampireLook> CODEC =
       RecordCodecBuilder.create(

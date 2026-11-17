@@ -1,5 +1,6 @@
 package com.grahambartley.nightborn.mob;
 
+import com.grahambartley.nightborn.guild.HunterVoice;
 import com.grahambartley.nightborn.mob.look.VampireRig;
 import com.grahambartley.nightborn.mob.look.VampireVoice;
 import com.grahambartley.nightborn.sound.NightbornSounds;
@@ -26,13 +27,9 @@ public final class MobSounds {
   public static final SoundEvent VAMPIRE_BAT_DEATH =
       NightbornSounds.register("entity.vampire_bat.death");
 
-  static final List<VampireVoice> HUNTER_VOICES =
-      List.of(VampireVoice.AMBIENT, VampireVoice.HURT, VampireVoice.DEATH);
-
   private static final Map<VampireRig, Map<VampireVoice, SoundEvent>> VOICES =
       voices(VAMPIRE, Arrays.asList(VampireVoice.values()), Set.of(VampireRig.values()));
-  private static final Map<VampireRig, Map<VampireVoice, SoundEvent>> HUNTERS =
-      voices(HUNTER, HUNTER_VOICES, VampireRig.COMMON);
+  private static final Map<VampireRig, Map<HunterVoice, SoundEvent>> HUNTERS = hunterVoices();
 
   private MobSounds() {}
 
@@ -42,17 +39,32 @@ public final class MobSounds {
     return VOICES.get(rig).get(voice);
   }
 
-  public static SoundEvent hunter(final VampireRig rig, final VampireVoice voice) {
-    final SoundEvent sound = HUNTERS.getOrDefault(rig, Map.of()).get(voice);
-    if (sound == null) {
-      throw new IllegalArgumentException(
-          "hunters have no " + rig.asString() + " " + voice.id() + " voice");
+  public static SoundEvent hunter(final VampireRig rig, final HunterVoice voice) {
+    final Map<HunterVoice, SoundEvent> voices = HUNTERS.get(rig);
+    if (voices == null) {
+      throw new IllegalArgumentException("hunters have no " + rig.asString() + " voice");
     }
-    return sound;
+    return voices.get(voice);
   }
 
   static String voicePath(final String speaker, final VampireRig rig, final VampireVoice voice) {
-    return "entity." + speaker + "." + rig.asString() + "." + voice.id();
+    return voicePath(speaker, rig, voice.id());
+  }
+
+  static String voicePath(final String speaker, final VampireRig rig, final String voice) {
+    return "entity." + speaker + "." + rig.asString() + "." + voice;
+  }
+
+  private static Map<VampireRig, Map<HunterVoice, SoundEvent>> hunterVoices() {
+    final Map<VampireRig, Map<HunterVoice, SoundEvent>> voices = new EnumMap<>(VampireRig.class);
+    for (final VampireRig rig : new TreeSet<>(VampireRig.COMMON)) {
+      final Map<HunterVoice, SoundEvent> sounds = new EnumMap<>(HunterVoice.class);
+      for (final HunterVoice voice : HunterVoice.values()) {
+        sounds.put(voice, NightbornSounds.register(voicePath(HUNTER, rig, voice.id())));
+      }
+      voices.put(rig, sounds);
+    }
+    return voices;
   }
 
   private static Map<VampireRig, Map<VampireVoice, SoundEvent>> voices(

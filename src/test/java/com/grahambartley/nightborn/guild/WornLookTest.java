@@ -10,16 +10,31 @@ import org.junit.jupiter.params.provider.CsvSource;
 
 class WornLookTest {
 
-  @ParameterizedTest(name = "{0} then {1}: resolved {2} times")
-  @CsvSource({"a, a, 1", "a, b, 2", "'', '', 1", "'', a, 2"})
-  void resolvesATextureOnlyWhenTheLookChanges(
-      final String first, final String second, final int resolved) {
+  @ParameterizedTest(name = "{0} {1} then {2} {3}: resolved {4} times")
+  @CsvSource({
+    "MALE, a, MALE, a, 1",
+    "MALE, a, MALE, b, 2",
+    "MALE, '', MALE, '', 1",
+    "MALE, '', MALE, a, 2",
+    "MALE, '', FEMALE, '', 2",
+    "MALE, a, FEMALE, a, 2"
+  })
+  void resolvesATextureOnlyWhenTheRigOrLookChanges(
+      final HunterRig firstRig,
+      final String first,
+      final HunterRig secondRig,
+      final String second,
+      final int resolved) {
     final List<String> asked = new ArrayList<>();
     final WornLook worn = new WornLook();
-    for (final String look : List.of(first, second, second)) {
+    final List<HunterRig> rigs = List.of(firstRig, secondRig, secondRig);
+    final List<String> looks = List.of(first, second, second);
+    for (int i = 0; i < looks.size(); i++) {
+      final String look = looks.get(i);
       assertEquals(
           Identifier.of("nightborn", "look_" + look),
           worn.texture(
+              rigs.get(i),
               look,
               id -> {
                 asked.add(id);

@@ -29,8 +29,16 @@ class HunterDataCheckTest {
           Identifier.of("nightborn", "master"),
           new HunterLook(HunterRig.GUILD_MASTER, STAKE, 1));
 
+  private static final Identifier CRUCIFIX = Identifier.of("nightborn", "crucifix");
+
   private static HunterKit kit(final Identifier weapon, final Identifier bolt) {
-    return new HunterKit(weapon, Optional.ofNullable(bolt), Optional.empty(), false, 1);
+    return kit(weapon, bolt, null);
+  }
+
+  private static HunterKit kit(
+      final Identifier weapon, final Identifier bolt, final Identifier crucifix) {
+    return new HunterKit(
+        weapon, Optional.ofNullable(bolt), Optional.ofNullable(crucifix), false, 1);
   }
 
   static Stream<Arguments> data() {
@@ -52,6 +60,13 @@ class HunterDataCheckTest {
             Map.of(KIT, kit(GONE, null)),
             List.of("nightborn:kit uses nightborn:gone, which is not an item")),
         Arguments.of(
+            "a good crucifix kit", EVERY_RIG, Map.of(KIT, kit(STAKE, null, CRUCIFIX)), List.of()),
+        Arguments.of(
+            "a crucifix that wards nothing",
+            EVERY_RIG,
+            Map.of(KIT, kit(STAKE, null, BOLT)),
+            List.of("nightborn:kit raises nightborn:bolt, which is not a crucifix")),
+        Arguments.of(
             "a bolt with no crossbow",
             EVERY_RIG,
             Map.of(KIT, kit(STAKE, BOLT)),
@@ -68,6 +83,10 @@ class HunterDataCheckTest {
     assertEquals(
         problems,
         HunterDataCheck.problems(
-            looks, kits, Set.of(STAKE, CROSSBOW, BOLT)::contains, CROSSBOW::equals));
+            looks,
+            kits,
+            Set.of(STAKE, CROSSBOW, BOLT, CRUCIFIX)::contains,
+            CROSSBOW::equals,
+            CRUCIFIX::equals));
   }
 }

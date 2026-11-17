@@ -1,5 +1,6 @@
 package com.grahambartley.nightborn.guild;
 
+import com.grahambartley.nightborn.mob.MobSounds;
 import com.grahambartley.nightborn.server.ServerConfigService;
 import com.grahambartley.nightborn.vampire.Vampires;
 import java.util.Optional;
@@ -44,7 +45,6 @@ import software.bernie.geckolib.util.GeckoLibUtil;
 public class GuildMasterEntity extends MerchantEntity implements GeoEntity, HunterLooking {
 
   static final String LAST_RESTOCK = "LastRestock";
-  static final String LOOK_KEY = "Look";
   static final int HEAD_SHAKE_TICKS = 40;
   static final int ANIMATION_BLEND_TICKS = 4;
   static final int TENT_REACH = 3;
@@ -149,10 +149,10 @@ public class GuildMasterEntity extends MerchantEntity implements GeoEntity, Hunt
     if (getWorld().isClient()) {
       return;
     }
-    CampHome.keep(this, TENT_REACH);
-    if (dataTracker.get(LOOK).isEmpty()) {
-      dataTracker.set(LOOK, GuildData.pickLook(getRegistryManager(), rig(), getRandom()));
+    if (!hasPositionTarget()) {
+      wear(dataTracker.get(LOOK));
     }
+    CampHome.keep(this, TENT_REACH);
     final PlayerEntity customer = getCustomer();
     if (customer != null && Vampires.isVampire(customer)) {
       resetCustomer();
@@ -177,6 +177,10 @@ public class GuildMasterEntity extends MerchantEntity implements GeoEntity, Hunt
     playSound(SoundEvents.ENTITY_VILLAGER_YES, getSoundVolume(), getSoundPitch());
   }
 
+  private void wear(final String look) {
+    dataTracker.set(LOOK, GuildData.wornLook(look, getRegistryManager(), rig(), getRandom()));
+  }
+
   @Override
   public HunterRig rig() {
     return HunterRig.GUILD_MASTER;
@@ -185,7 +189,7 @@ public class GuildMasterEntity extends MerchantEntity implements GeoEntity, Hunt
   @Override
   public Identifier texture() {
     return worn.texture(
-        dataTracker.get(LOOK), look -> GuildData.texture(getRegistryManager(), look, rig()));
+        rig(), dataTracker.get(LOOK), look -> GuildData.texture(getRegistryManager(), look, rig()));
   }
 
   @Override
@@ -206,17 +210,19 @@ public class GuildMasterEntity extends MerchantEntity implements GeoEntity, Hunt
   @Override
   @Nullable
   protected SoundEvent getAmbientSound() {
-    return hasCustomer() ? SoundEvents.ENTITY_VILLAGER_TRADE : SoundEvents.ENTITY_VILLAGER_AMBIENT;
+    return hasCustomer()
+        ? SoundEvents.ENTITY_VILLAGER_TRADE
+        : MobSounds.hunter(rig().figure(), HunterVoice.AMBIENT);
   }
 
   @Override
   protected SoundEvent getHurtSound(final DamageSource source) {
-    return SoundEvents.ENTITY_VILLAGER_HURT;
+    return MobSounds.hunter(rig().figure(), HunterVoice.HURT);
   }
 
   @Override
   protected SoundEvent getDeathSound() {
-    return SoundEvents.ENTITY_VILLAGER_DEATH;
+    return MobSounds.hunter(rig().figure(), HunterVoice.DEATH);
   }
 
   @Override
@@ -234,7 +240,7 @@ public class GuildMasterEntity extends MerchantEntity implements GeoEntity, Hunt
   public void writeCustomDataToNbt(final NbtCompound nbt) {
     super.writeCustomDataToNbt(nbt);
     nbt.putLong(LAST_RESTOCK, lastRestock);
-    nbt.putString(LOOK_KEY, dataTracker.get(LOOK));
+    nbt.putString(GuildData.LOOK_KEY, dataTracker.get(LOOK));
     CampHome.write(this, nbt);
   }
 
@@ -242,7 +248,9 @@ public class GuildMasterEntity extends MerchantEntity implements GeoEntity, Hunt
   public void readCustomDataFromNbt(final NbtCompound nbt) {
     super.readCustomDataFromNbt(nbt);
     lastRestock = nbt.getLong(LAST_RESTOCK);
-    dataTracker.set(LOOK, nbt.getString(LOOK_KEY));
+    if (!getWorld().isClient()) {
+      wear(nbt.getString(GuildData.LOOK_KEY));
+    }
     CampHome.read(this, nbt, TENT_REACH);
   }
 
@@ -259,7 +267,8 @@ public class GuildMasterEntity extends MerchantEntity implements GeoEntity, Hunt
                             handSwinging,
                             dataTracker.get(TRADING),
                             false,
-                            state.getLimbSwingAmount())
+                            state.getLimbSwingAmount(),
+                            false)
                         .clip())));
   }
 

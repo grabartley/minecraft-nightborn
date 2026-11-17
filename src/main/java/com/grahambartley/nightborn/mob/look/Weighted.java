@@ -6,6 +6,8 @@ import java.util.function.ToIntFunction;
 
 public final class Weighted {
 
+  public static final int MAX_WEIGHT = 1000;
+
   private Weighted() {}
 
   public static <T> Optional<T> pick(

@@ -18,22 +18,20 @@ import net.minecraft.util.Identifier;
 
 final class HunterTactics {
 
-  static final int THROW_COOLDOWN_TICKS = 160;
   static final float BOLT_SPEED = 1.6F;
   static final float BOLT_SPREAD = 6.0F;
   static final float THROW_SPEED = 0.75F;
   static final float THROW_SPREAD = 8.0F;
-  static final double ARC = 0.2;
 
   private final HunterEntity hunter;
   private final HunterActionTimer timer = new HunterActionTimer();
-  private int throwCooldown;
+  private final DrawnWeapon drawn = new DrawnWeapon();
 
   HunterTactics(final HunterEntity hunter) {
     this.hunter = hunter;
   }
 
-  void equip(final HunterKit kit) {
+  private void draw(final HunterKit kit) {
     final ItemStack weapon = stack(Optional.of(kit.weapon()));
     kit.bolt()
         .ifPresent(
@@ -42,18 +40,33 @@ final class HunterTactics {
                     DataComponentTypes.CHARGED_PROJECTILES,
                     ChargedProjectilesComponent.of(stack(Optional.of(bolt)))));
     hunter.equipStack(EquipmentSlot.MAINHAND, weapon);
+    hunter.playSound(SoundEvents.ITEM_ARMOR_EQUIP_LEATHER.value(), 1.0F, 1.0F);
+    hunter.speak(HunterVoice.ALERT);
   }
 
   void shoot() {
-    timer.begin(HunterAction.CROSSBOW_SHOT);
+    if (timer.begin(HunterAction.CROSSBOW_SHOT)) {
+      hunter.playSound(SoundEvents.ITEM_CROSSBOW_LOADING_END.value(), 1.0F, 1.0F);
+    }
+  }
+
+  private void ready(final HunterKit kit, final boolean hunting) {
+    final boolean armed = drawn.tick(hunting);
+    if (armed == hunter.armed()) {
+      return;
+    }
+    hunter.setArmed(armed);
+    if (armed) {
+      draw(kit);
+    } else {
+      hunter.equipStack(EquipmentSlot.MAINHAND, ItemStack.EMPTY);
+    }
   }
 
   void tick(final HunterKit kit) {
-    if (throwCooldown > 0) {
-      throwCooldown--;
-    }
     final LivingEntity target = hunter.getTarget();
     final boolean hunting = target != null && target.isAlive();
+    ready(kit, hunting);
     if (timer.tick() == HunterActionTimer.Step.RELEASE && hunting) {
       release(kit, target);
     }
@@ -66,15 +79,18 @@ final class HunterTactics {
             ? HunterAction.support(
                 hunter.getVisibilityCache().canSee(target),
                 hunter.distanceTo(target),
-                kit.holyWater() && throwCooldown == 0,
+                kit.holyWater() && timer.canThrow(),
                 kit.crucifix().isPresent(),
                 ServerConfigService.current().wards().crucifixRange())
             : HunterAction.NONE;
     if (support == HunterAction.THROW_HOLY_WATER && timer.begin(support)) {
-      throwCooldown = THROW_COOLDOWN_TICKS;
       hold(splash());
+    } else if (support == HunterAction.RAISE_CRUCIFIX) {
+      if (hold(stack(kit.crucifix()))) {
+        hunter.playSound(SoundEvents.ITEM_ARMOR_EQUIP_GOLD.value(), 1.0F, 1.0F);
+      }
     } else {
-      hold(support == HunterAction.RAISE_CRUCIFIX ? stack(kit.crucifix()) : ItemStack.EMPTY);
+      hold(ItemStack.EMPTY);
     }
     hunter.show(timer.busy() ? timer.action() : support);
   }
@@ -109,15 +125,16 @@ final class HunterTactics {
       final float spread) {
     final double dx = target.getX() - hunter.getX();
     final double dz = target.getZ() - hunter.getZ();
-    final double rise = aimY - projectile.getY() + Math.sqrt(dx * dx + dz * dz) * ARC;
-    projectile.setVelocity(dx, rise, dz, speed, spread);
+    projectile.setVelocity(dx, Aim.rise(aimY, projectile.getY(), dx, dz), dz, speed, spread);
     hunter.getWorld().spawnEntity(projectile);
   }
 
-  private void hold(final ItemStack stack) {
-    if (!ItemStack.areEqual(hunter.getOffHandStack(), stack)) {
-      hunter.equipStack(EquipmentSlot.OFFHAND, stack);
+  private boolean hold(final ItemStack stack) {
+    if (ItemStack.areEqual(hunter.getOffHandStack(), stack)) {
+      return false;
     }
+    hunter.equipStack(EquipmentSlot.OFFHAND, stack);
+    return true;
   }
 
   private static ItemStack splash() {

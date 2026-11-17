@@ -4,9 +4,9 @@ import com.grahambartley.nightborn.mob.MobSounds;
 import com.grahambartley.nightborn.mob.look.BustNbt;
 import com.grahambartley.nightborn.mob.look.Figure;
 import com.grahambartley.nightborn.mob.look.VampireRig;
-import com.grahambartley.nightborn.mob.look.VampireVoice;
 import com.grahambartley.nightborn.vampire.Vampires;
 import java.util.Optional;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
@@ -28,6 +28,7 @@ import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.mob.PathAwareEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.World;
@@ -43,7 +44,6 @@ public class HunterEntity extends PathAwareEntity
     implements GeoEntity, HunterLooking, RangedAttackMob {
 
   static final String FEMALE_KEY = "Female";
-  static final String LOOK_KEY = "Look";
   static final String KIT_KEY = "Kit";
   static final int ANIMATION_BLEND_TICKS = 4;
   static final int CAMP_REACH = 12;
@@ -56,6 +56,8 @@ public class HunterEntity extends PathAwareEntity
       DataTracker.registerData(HunterEntity.class, TrackedDataHandlerRegistry.STRING);
   private static final TrackedData<Integer> ACTION =
       DataTracker.registerData(HunterEntity.class, TrackedDataHandlerRegistry.INTEGER);
+  private static final TrackedData<Boolean> ARMED =
+      DataTracker.registerData(HunterEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
 
   private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
   private final HunterTactics tactics = new HunterTactics(this);
@@ -86,12 +88,13 @@ public class HunterEntity extends PathAwareEntity
     builder.add(BUST, Figure.FLAT);
     builder.add(LOOK, "");
     builder.add(ACTION, HunterAction.NONE.ordinal());
+    builder.add(ARMED, false);
   }
 
   @Override
   protected void initGoals() {
     goalSelector.add(0, new SwimGoal(this));
-    goalSelector.add(1, new CrossbowGoal(this, () -> kit != null && kit.ranged()));
+    goalSelector.add(1, new CrossbowGoal(this, this::standsOff));
     goalSelector.add(2, new MeleeAttackGoal(this, 1.15, true));
     goalSelector.add(4, new GoToWalkTargetGoal(this, 0.8));
     goalSelector.add(5, new WanderAroundFarGoal(this, 0.6));
@@ -119,12 +122,53 @@ public class HunterEntity extends PathAwareEntity
   @Override
   public Identifier texture() {
     return worn.texture(
-        dataTracker.get(LOOK), look -> GuildData.texture(getRegistryManager(), look, rig()));
+        rig(), dataTracker.get(LOOK), look -> GuildData.texture(getRegistryManager(), look, rig()));
   }
 
   @Override
   public void shootAt(final LivingEntity target, final float pullProgress) {
     tactics.shoot();
+  }
+
+  public String look() {
+    return dataTracker.get(LOOK);
+  }
+
+  public String kit() {
+    return kitId;
+  }
+
+  public boolean standsOff() {
+    return kit != null && kit.ranged();
+  }
+
+  public boolean armed() {
+    return dataTracker.get(ARMED);
+  }
+
+  void setArmed(final boolean armed) {
+    dataTracker.set(ARMED, armed);
+  }
+
+  void speak(final HunterVoice voice) {
+    playSound(MobSounds.hunter(figure(), voice), getSoundVolume(), getSoundPitch());
+  }
+
+  @Override
+  public boolean tryAttack(final Entity target) {
+    final boolean struck = super.tryAttack(target);
+    if (struck) {
+      speak(HunterVoice.STRIKE);
+    }
+    return struck;
+  }
+
+  @Override
+  public boolean onKilledOther(final ServerWorld world, final LivingEntity other) {
+    if (Vampires.isVampire(other)) {
+      speak(HunterVoice.CHEER);
+    }
+    return super.onKilledOther(world, other);
   }
 
   void show(final HunterAction action) {
@@ -169,8 +213,7 @@ public class HunterEntity extends PathAwareEntity
   }
 
   private void wear(final String look) {
-    dataTracker.set(
-        LOOK, look.isEmpty() ? GuildData.pickLook(getRegistryManager(), rig(), getRandom()) : look);
+    dataTracker.set(LOOK, GuildData.wornLook(look, getRegistryManager(), rig(), getRandom()));
   }
 
   public void arm(final String wanted) {
@@ -182,24 +225,21 @@ public class HunterEntity extends PathAwareEntity
             .map(Identifier::toString)
             .orElse("");
     kit = kits.get(Identifier.tryParse(kitId));
-    if (kit != null) {
-      tactics.equip(kit);
-    }
   }
 
   @Override
   protected SoundEvent getAmbientSound() {
-    return MobSounds.hunter(figure(), VampireVoice.AMBIENT);
+    return MobSounds.hunter(figure(), HunterVoice.AMBIENT);
   }
 
   @Override
   protected SoundEvent getHurtSound(final DamageSource source) {
-    return MobSounds.hunter(figure(), VampireVoice.HURT);
+    return MobSounds.hunter(figure(), HunterVoice.HURT);
   }
 
   @Override
   protected SoundEvent getDeathSound() {
-    return MobSounds.hunter(figure(), VampireVoice.DEATH);
+    return MobSounds.hunter(figure(), HunterVoice.DEATH);
   }
 
   private VampireRig figure() {
@@ -221,7 +261,7 @@ public class HunterEntity extends PathAwareEntity
     super.writeCustomDataToNbt(nbt);
     nbt.putBoolean(FEMALE_KEY, dataTracker.get(FEMALE));
     BustNbt.write(nbt, bust());
-    nbt.putString(LOOK_KEY, dataTracker.get(LOOK));
+    nbt.putString(GuildData.LOOK_KEY, dataTracker.get(LOOK));
     nbt.putString(KIT_KEY, kitId);
     CampHome.write(this, nbt);
   }
@@ -232,7 +272,7 @@ public class HunterEntity extends PathAwareEntity
     dataTracker.set(FEMALE, nbt.getBoolean(FEMALE_KEY));
     dataTracker.set(BUST, BustNbt.read(nbt, figure()));
     if (!getWorld().isClient()) {
-      wear(nbt.getString(LOOK_KEY));
+      wear(nbt.getString(GuildData.LOOK_KEY));
       arm(nbt.getString(KIT_KEY));
     }
     CampHome.read(this, nbt, CAMP_REACH);
@@ -251,7 +291,8 @@ public class HunterEntity extends PathAwareEntity
                             handSwinging,
                             false,
                             isSprinting() || isAttacking(),
-                            state.getLimbSwingAmount())
+                            state.getLimbSwingAmount(),
+                            armed())
                         .clip())));
     controllers.add(new AnimationController<>(this, "action", ANIMATION_BLEND_TICKS, this::act));
   }

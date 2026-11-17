@@ -5,6 +5,8 @@ import software.bernie.geckolib.animation.RawAnimation;
 
 public enum HunterPose {
   IDLE("idle", true),
+  IDLE_CALM("idle_calm", true),
+  WALK_CALM("walk_calm", true),
   WALK("walk", true),
   RUN("run", true),
   STAKE_STRIKE("stake_strike", false),
@@ -31,7 +33,8 @@ public enum HunterPose {
       final boolean swinging,
       final boolean trading,
       final boolean sprinting,
-      final float limbSwing) {
+      final float limbSwing,
+      final boolean armed) {
     if (swinging) {
       return STAKE_STRIKE;
     }
@@ -39,8 +42,11 @@ public enum HunterPose {
       return TRADE;
     }
     if (Gait.of(limbSwing) == Gait.STILL) {
-      return IDLE;
+      return armed ? IDLE : IDLE_CALM;
     }
-    return sprinting ? RUN : WALK;
+    if (sprinting) {
+      return RUN;
+    }
+    return armed ? WALK : WALK_CALM;
   }
 }

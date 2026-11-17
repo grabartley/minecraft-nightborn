@@ -1,6 +1,7 @@
 package com.grahambartley.nightborn.guild;
 
 import com.grahambartley.nightborn.Nightborn;
+import com.grahambartley.nightborn.ward.WardTags;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,6 +29,8 @@ public final class GuildData {
   public static final RegistryKey<Registry<HunterKit>> KIT =
       RegistryKey.ofRegistry(Identifier.of(Nightborn.MOD_ID, "hunter_kit"));
 
+  public static final String LOOK_KEY = "Look";
+
   private GuildData() {}
 
   static void register() {
@@ -45,7 +48,8 @@ public final class GuildData {
             looks(registries),
             kits(registries),
             id -> item(id).isPresent(),
-            id -> item(id).filter(CrossbowItem.class::isInstance).isPresent())
+            id -> item(id).filter(CrossbowItem.class::isInstance).isPresent(),
+            id -> item(id).filter(i -> i.getDefaultStack().isIn(WardTags.CRUCIFIXES)).isPresent())
         .forEach(problem -> Nightborn.LOGGER.error("Bad hunter data: {}", problem));
   }
 
@@ -59,6 +63,14 @@ public final class GuildData {
 
   public static Map<Identifier, HunterKit> kits(final DynamicRegistryManager registries) {
     return copy(registries, KIT);
+  }
+
+  public static String wornLook(
+      final String saved,
+      final DynamicRegistryManager registries,
+      final HunterRig rig,
+      final Random random) {
+    return saved.isEmpty() ? pickLook(registries, rig, random) : saved;
   }
 
   public static String pickLook(

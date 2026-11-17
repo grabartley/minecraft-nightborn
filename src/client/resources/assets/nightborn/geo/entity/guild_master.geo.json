@@ -761,6 +761,33 @@
 					]
 				},
 				{
+					"name": "muff",
+					"parent": "body",
+					"pivot": [
+						0,
+						15,
+						0
+					],
+					"cubes": [
+						{
+							"origin": [
+								-4,
+								13,
+								-2
+							],
+							"size": [
+								8,
+								4,
+								4
+							],
+							"uv": [
+								0,
+								66
+							]
+						}
+					]
+				},
+				{
 					"name": "right_leg",
 					"parent": "root",
 					"pivot": [

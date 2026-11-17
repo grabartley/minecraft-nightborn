@@ -55,4 +55,17 @@ class HunterActionTimerTest {
     assertEquals(false, timer.busy());
     assertEquals(Step.IDLE, timer.tick());
   }
+
+  @ParameterizedTest(name = "after {0} ticks: can throw {1}")
+  @CsvSource({"0, false", "16, false", "159, false", "160, true", "400, true"})
+  void waitsBetweenThrows(final int ticks, final boolean ready) {
+    final HunterActionTimer timer = new HunterActionTimer();
+    assertEquals(true, timer.canThrow());
+    assertEquals(true, timer.begin(HunterAction.THROW_HOLY_WATER));
+    for (int tick = 0; tick < ticks; tick++) {
+      timer.tick();
+    }
+    assertEquals(ready, timer.canThrow());
+    assertEquals(ready, timer.begin(HunterAction.THROW_HOLY_WATER));
+  }
 }

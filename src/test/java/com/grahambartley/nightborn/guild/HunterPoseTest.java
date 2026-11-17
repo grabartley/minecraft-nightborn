@@ -7,31 +7,45 @@ import org.junit.jupiter.params.provider.CsvSource;
 
 class HunterPoseTest {
 
-  @ParameterizedTest(name = "swing {0}, trade {1}, sprint {2}, limb swing {3}: {4}")
+  @ParameterizedTest(name = "swing {0}, trade {1}, sprint {2}, limb swing {3}, armed {4}: {5}")
   @CsvSource({
-    "true, true, true, 0.5, STAKE_STRIKE",
-    "true, false, false, 0.0, STAKE_STRIKE",
-    "false, true, false, 0.5, TRADE",
-    "false, false, false, 0.0, IDLE",
-    "false, false, true, 0.0, IDLE",
-    "false, false, true, 0.05, IDLE",
-    "false, false, false, 0.3, WALK",
-    "false, false, false, 0.55, WALK",
-    "false, false, true, 0.3, RUN",
-    "false, false, false, 0.8, WALK",
-    "false, false, true, 0.8, RUN"
+    "true, true, true, 0.5, true, STAKE_STRIKE",
+    "true, false, false, 0.0, false, STAKE_STRIKE",
+    "false, true, false, 0.5, false, TRADE",
+    "false, false, false, 0.0, true, IDLE",
+    "false, false, true, 0.0, true, IDLE",
+    "false, false, true, 0.05, true, IDLE",
+    "false, false, false, 0.3, true, WALK",
+    "false, false, false, 0.55, true, WALK",
+    "false, false, true, 0.3, true, RUN",
+    "false, false, false, 0.8, true, WALK",
+    "false, false, true, 0.8, true, RUN",
+    "false, false, false, 0.0, false, IDLE_CALM",
+    "false, false, true, 0.05, false, IDLE_CALM",
+    "false, false, false, 0.3, false, WALK_CALM",
+    "false, false, false, 0.8, false, WALK_CALM",
+    "false, false, true, 0.3, false, RUN"
   })
   void picksTheClipForWhatTheHunterIsDoing(
       final boolean swinging,
       final boolean trading,
       final boolean sprinting,
       final float limbSwing,
+      final boolean armed,
       final HunterPose pose) {
-    assertEquals(pose, HunterPose.of(swinging, trading, sprinting, limbSwing));
+    assertEquals(pose, HunterPose.of(swinging, trading, sprinting, limbSwing, armed));
   }
 
   @ParameterizedTest(name = "{0} plays {1}")
-  @CsvSource({"IDLE, idle", "WALK, walk", "RUN, run", "STAKE_STRIKE, stake_strike", "TRADE, trade"})
+  @CsvSource({
+    "IDLE, idle",
+    "WALK, walk",
+    "RUN, run",
+    "STAKE_STRIKE, stake_strike",
+    "TRADE, trade",
+    "IDLE_CALM, idle_calm",
+    "WALK_CALM, walk_calm"
+  })
   void playsTheClipOfTheSameName(final HunterPose pose, final String clip) {
     assertEquals(clip, pose.animation());
   }

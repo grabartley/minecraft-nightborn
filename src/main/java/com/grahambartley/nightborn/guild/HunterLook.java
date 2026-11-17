@@ -1,6 +1,5 @@
 package com.grahambartley.nightborn.guild;
 
-import com.grahambartley.nightborn.mob.look.VampireLook;
 import com.grahambartley.nightborn.mob.look.Weighted;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -21,7 +20,7 @@ public record HunterLook(HunterRig rig, Identifier texture, int weight) {
                   .group(
                       HunterRig.CODEC.fieldOf("rig").forGetter(HunterLook::rig),
                       Identifier.CODEC.fieldOf("texture").forGetter(HunterLook::texture),
-                      Codec.intRange(1, VampireLook.MAX_WEIGHT)
+                      Codec.intRange(1, Weighted.MAX_WEIGHT)
                           .optionalFieldOf("weight", 1)
                           .forGetter(HunterLook::weight))
                   .apply(instance, HunterLook::new));

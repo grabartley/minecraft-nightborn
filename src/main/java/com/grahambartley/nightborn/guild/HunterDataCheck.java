@@ -16,7 +16,8 @@ public final class HunterDataCheck {
       final Map<Identifier, HunterLook> looks,
       final Map<Identifier, HunterKit> kits,
       final Predicate<Identifier> isItem,
-      final Predicate<Identifier> isCrossbow) {
+      final Predicate<Identifier> isCrossbow,
+      final Predicate<Identifier> isCrucifix) {
     final List<String> problems = new ArrayList<>();
     for (final HunterRig rig : HunterRig.values()) {
       if (looks.values().stream().noneMatch(look -> look.rig() == rig)) {
@@ -33,6 +34,11 @@ public final class HunterDataCheck {
                   .flatMap(items -> items)
                   .filter(isItem.negate())
                   .forEach(item -> problems.add(id + " uses " + item + ", which is not an item"));
+              kit.crucifix()
+                  .filter(isItem)
+                  .filter(isCrucifix.negate())
+                  .ifPresent(
+                      item -> problems.add(id + " raises " + item + ", which is not a crucifix"));
               if (kit.ranged() && isItem.test(kit.weapon()) && !isCrossbow.test(kit.weapon())) {
                 problems.add(id + " has a bolt but " + kit.weapon() + " is not a crossbow");
               }
