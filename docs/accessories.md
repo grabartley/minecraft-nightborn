@@ -30,6 +30,26 @@ Of the 56 with a gift, 19 work only for a vampire, 23 only for a human, 8 for an
 - Every piece but a ring is drawn on the wearer, on both player models (WORN-2).
 - Materials and motifs: tarnished gold, silver, jet, garnet, emerald, bone, velvet and lace. Old, worn and a little sinister, never clean or bright.
 
+## Clothing The Mod Already Has
+
+The mod's clothing stays, and two pieces move to the slot that now fits them. Nothing a player owns is lost: an item in an old world is the same item and goes in its new slot.
+
+| Piece | Slot today | Slot from now on |
+|---|---|---|
+| Top Hat | Head | Head, unchanged |
+| Mourning Veil | Head | Face. It is one of the 80 accessories, a plain one |
+| High-Collared Cape | Chest | Back. It is one of the 80 accessories, a plain one |
+| Frock Coat, Corset, Doublet | Chest | Chest, unchanged |
+| Breeches, Trousers, Long Skirt | Legs | Legs, unchanged |
+| Buckled Shoes, Riding Boots | Feet | Feet, unchanged |
+| Crown, Mantle and Boots of the Eldest | Armour | Armour, unchanged |
+
+- A piece that moves keeps its name, look, recipe, dye and cuts. It no longer gives armour, as no accessory does, and it no longer wears out.
+- A back piece takes the mod's chest enchantments (Batwing, Mistcloak, Thrift) and a face piece takes its headwear ones (Nocturne, Shroud), and no other accessory takes any. The same enchantment on two worn pieces counts once, at the higher level.
+- With the veil gone from the head, the head needs a second piece (WEAR-1). A new Wide-Brimmed Hat joins the Top Hat: a dark felt hat with a low crown, crafted from 4 wool and 1 leather, dyed like the rest.
+- Vampire and hunter mobs keep wearing the veil and the cape as they do today, and still wear only what a player can craft (WEAR-5).
+- Dressed To Kill still asks for clothing in all four armour slots, and Dressed To The Nines for an accessory in every slot.
+
 ## Where Pieces Are Found
 
 | Source | What it gives |
@@ -104,7 +124,7 @@ Capes and cloaks sway as the wearer moves and are drawn over armour and coats.
 | Name | Look | Works for | Gift | Found |
 |---|---|---|---|---|
 | Velvet Cape | A short cape that can be dyed | Anyone | None | Crafted: 3 wool and 1 string |
-| Opera Cloak | Black outside, red silk inside, high collar | Anyone | None | Crafted: 2 black wool, 2 red wool and 1 gold nugget |
+| High-Collared Cape | The cape the mod already has: black outside, red inside, with a high collar, and it can be dyed | Anyone | None | Crafted, with the recipe it has today |
 | Tattered Shroud | Grey, torn and trailing | Anyone | None | Crafted: 3 string and 2 cobwebs |
 | Fur-Trimmed Mantle | Heavy wool with a fur collar | Anyone | None | Crafted: 3 wool and 2 rabbit hide |
 | Half Cape | Worn over one shoulder, can be dyed | Anyone | None | Crafted: 2 wool and 1 string |
@@ -146,11 +166,11 @@ Capes and cloaks sway as the wearer moves and are drawn over armour and coats.
 
 | Name | Look | Works for | Gift | Found |
 |---|---|---|---|---|
-| Black Lace Veil | A short veil over the eyes | Anyone | None | Crafted: 2 string and 1 black dye |
+| Mourning Veil | The veil the mod already has: black lace over the face, and it can be dyed | Anyone | None | Crafted, with the recipe it has today |
 | Domino Mask | A plain black half mask | Anyone | None | Crafted: 1 leather and 1 black dye |
 | Wire Spectacles | Round lenses in thin wire | Anyone | None | Crafted: 2 glass panes and 1 iron nugget |
 | Plain Monocle | One lens on a cord | Anyone | None | Crafted: 1 glass pane and 1 gold nugget |
-| Mourning Veil | A long black veil to the chin | Vampire | The flinch from garlic and crucifixes is half as large | Castle |
+| Widow's Veil | A long, heavy black veil to the chin | Vampire | The flinch from garlic and crucifixes is half as large | Castle |
 | Smoked Spectacles | Dark round lenses | Vampire | The glow of the wearer's eyes shows from half as far | Ruined manor |
 | Porcelain Mask | A white face with no expression | Vampire | A village that sees the wearer feed does not learn their face | Mountain castle |
 | Death Mask | A grey cast of a sleeping face | Vampire | Rises from being downed 10% sooner | Vampire trial |

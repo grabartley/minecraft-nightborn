@@ -690,7 +690,7 @@ Some of those who survive a player do not forget them.
 | DECOR-8 | Gothic music discs, one per track, play in a gramophone or a jukebox. They are found only in vampire structures: in their loot and in their gramophones (HOME-20) |
 | WEAR-1 | Gothic clothing from several centuries, with at least two pieces for each armour slot, enough to dress at least 10 distinct looks. Each piece has a male and a female cut, and is drawn in the cut that fits its wearer: the female cut on a slim-armed player model, the male cut on a wide one. Female chest pieces follow the bust at its size: the corset cups it, the frock coat opens over a cravat and the doublet's stomacher runs down over it. A vanilla chestplate flattens it |
 | WEAR-2 | Clothing is worn in the armour slots in place of armour, protects and wears out like leather, and is mended with wool, or with leather for shoes and boots. It is drawn as an outer layer over the body, so a coat hangs over any armour worn in the other slots, and coat tails sway as the wearer walks |
-| WEAR-3 | Clothing takes the vanilla armour enchantments for its slot and eight of the mod's own, which come from the enchanting table, books on an anvil, librarians, loot and the gear mobs spawn with, like any vanilla enchantment that is not a treasure: Nocturne on headwear sees in the dark at night, Batwing on chest pieces falls further before taking damage, Gliding Step on legwear steps up a full block, Hush on shoes and boots sneaks faster, Shroud on headwear is noticed by hunters and villagers from less far, Mistcloak on chest pieces carries Vanish further, Warding on legwear dulls garlic and crucifixes a little, and Thrift on chest pieces slows blood drain |
+| WEAR-3 | Clothing takes the vanilla armour enchantments for its slot and eight of the mod's own, which come from the enchanting table, books on an anvil, librarians, loot and the gear mobs spawn with, like any vanilla enchantment that is not a treasure: Nocturne on headwear sees in the dark at night, Batwing on chest pieces falls further before taking damage, Gliding Step on legwear steps up a full block, Hush on shoes and boots sneaks faster, Shroud on headwear is noticed by hunters and villagers from less far, Mistcloak on chest pieces carries Vanish further, Warding on legwear dulls garlic and crucifixes a little, and Thrift on chest pieces slows blood drain. A cape or cloak takes the chest enchantments and a face piece the headwear ones, and the same enchantment on two worn pieces counts once, at the higher level |
 | WEAR-4 | Clothing whose colour is part of the look is dyed like leather, in a crafting grid with dyes, and a water cauldron washes the dye out. Only the cloth takes the dye: trims, buttons and buckles keep their own colours |
 | WEAR-5 | Every outfit a vampire mob wears is made of clothing a player can craft |
 | WEAR-6 | Three curses are found only on loot, on clothing, weapons and accessories: Thirst drains blood faster, Sunmarked takes more damage from the sun, and Beacon lets hunters find the wearer from further off |
@@ -828,6 +828,22 @@ The mod has its own tab, lined with tufted burgundy leather and brass studs. It 
 | ADV-45 | Inquire Within | Draining the Grand Inquisitor |
 | ADV-46 | Tried And Tested | Completing a trial |
 | ADV-48 | Sworn In | Joining the guild |
+| ADV-49 | Blood Type | Tasting every kind of prey that gives a blood gift (FEED-15) |
+| ADV-50 | Property Ladder | Entering every kind of vampire structure: a crypt, a ruined manor, an underground lair, a castle and a mountain castle |
+| ADV-51 | Ring Leader | Owning all three rings of one boss at once |
+| ADV-52 | Stage Fright | Staking a fledgling, an adult, an elder and an ancient |
+| ADV-53 | Thicker Than Water | Learning every skill of one bloodline |
+| ADV-54 | By The Book | Learning every skill of one hunter path |
+| ADV-55 | Cover To Cover | Filling every page of a journal |
+| ADV-56 | Staff Meeting | Keeping a thrall, a ghostly familiar and a human familiar at the same time |
+| ADV-57 | The Full Treatment | Hitting one vampire with garlic, holy water, silver and a stake before it falls |
+| ADV-58 | Well Tried | Completing every trial of one side |
+| ADV-59 | Mirror, Mirror | Raising a hand mirror at yourself as a vampire |
+| ADV-60 | Light Lunch | Bringing up food as a vampire |
+| ADV-61 | Hang In There | Hanging upside down as a bat from dusk to dawn |
+| ADV-62 | Careful What You Wish For | Calling a boss as the wrong side: starting the ritual as a vampire, or ringing the hunter's bell as a human |
+| ADV-64 | Garlic Bread | Eating bread as a human with garlic in the other hand |
+| ADV-65 | Cross Purposes | Holding a crucifix in each hand as a human |
 
 | ID | Requirement |
 |---|---|
@@ -839,6 +855,7 @@ The mod has its own tab, lined with tufted burgundy leather and brass studs. It 
 | ADV-26 | Icons use the mod's own items where one fits. A vampire lord counts for Lord Of The Manner by being in the `nightborn:vampire_lords` entity tag |
 | ADV-27 | Names may be tuned, but each stays short, clever and in plain English |
 | ADV-47 | The vampire advancements ADV-28 to ADV-37 and ADV-45 branch from No Reflection On You, except Something In The Blood, which branches from House Call. Sworn In branches from Stake Holder and is a goal, and the hunter advancements ADV-39 to ADV-41 and ADV-44 branch from it. Nothing Personal, Smoke And Mirrors, Dressed To The Nines and Tried And Tested branch from the root. Older Than Dirt, Full House, Master Of The Hunt, Last Of The Line and Inquire Within are challenges, and Nothing To See Here and Smoke And Mirrors stay hidden until earned |
+| ADV-63 | ADV-49 to ADV-58 are set challenges, earned by doing every one of a set, as vanilla's are. Each is a challenge, shows its progress as a count and lists what is still missing. Blood Type, Thicker Than Water and Staff Meeting branch from No Reflection On You, Stage Fright, By The Book and The Full Treatment from Sworn In, and Property Ladder, Ring Leader, Cover To Cover and Well Tried from the root. ADV-59 to ADV-62, ADV-64 and ADV-65 stay hidden until earned and branch from the root. No advancement asks for a deed that a mastery feat already asks for (CHAL-2) |
 
 **Enforcement:** server.
 

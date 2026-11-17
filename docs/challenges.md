@@ -4,6 +4,22 @@ This is the locked list of every trial and mastery feat, the charges a house cre
 
 Every number here is the default and lives in data. Nobody building these chooses a name, a condition or a reward of their own. If something is missing, ask.
 
+## How The Goals Fit Together
+
+The mod has five kinds of goal. Each has its own job, and no deed is asked for by two of them at the same size.
+
+| Kind | Job | How many | Pays | Where it is listed |
+|---|---|---|---|---|
+| Advancement | Marks a first: the first bite, the first stake, each stage and rank. It teaches the mod | 36 | A goal gives 50 experience, the rest give none | ADV-1 to ADV-48 in `docs/prd.md`, less the hidden ones |
+| Set challenge | Do every one of a set, as vanilla's set challenges ask. Shows a count and what is missing | 10 | 100 experience | ADV-49 to ADV-58 |
+| Hidden advancement | A secret or an odd moment, found by doing it. Never needed for anything | 10 | None | ADV-6, ADV-12, ADV-37, ADV-42, ADV-59 to ADV-62, ADV-64 and ADV-65 |
+| Trial | A task to do again and again. Three on offer for each side, changed every 7 days | 20 for each side | Skill experience, and sometimes an accessory the first time | Below |
+| Mastery feat | The hardest deeds, done once | 12 | A title and a trophy block, and sometimes an accessory | Below |
+
+The ladder runs from easy to hard: an advancement for doing a thing once, a trial for doing it well and often, a set challenge for doing all of its kind, and a feat for doing it the hard way. Ending a nemesis shows the ladder: Nothing Personal for the first, the trials Old Grudge and Old Enemy each time one is on offer, and the feat Three Graves for the third.
+
+Both sides get the same share. Of the set challenges, three are for vampires, three for hunters and four for anyone. Of the hidden ones, six are earned as a vampire, two as a human and two by anyone.
+
 ## Trials
 
 Each side has three on offer at a time, drawn from its list of 20 and changed every 7 in-game days. A trial is only drawn for a player who meets its gate, a stage for a vampire or a rank for a hunter. Every hunter is at least an Initiate, so a hunter trial with no gate is open to all of them. Each pays once each time it is drawn.
