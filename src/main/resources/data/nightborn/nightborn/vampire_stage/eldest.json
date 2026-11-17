@@ -21,7 +21,7 @@
     "dash_chance": 65,
     "dodge_chance": 60,
     "power_dodge_chance": 85,
-    "retreat_health": 10
+    "retreat_health": 0
   },
   "look": {
     "idle": "idle_ancient"

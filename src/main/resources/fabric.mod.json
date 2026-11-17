@@ -66,6 +66,8 @@
       "com.grahambartley.nightborn.gametest.VampireStructureGameTest",
       "com.grahambartley.nightborn.gametest.VampireLordGameTest",
       "com.grahambartley.nightborn.gametest.EldestGameTest",
+      "com.grahambartley.nightborn.gametest.EldestFightGameTest",
+      "com.grahambartley.nightborn.gametest.EldestSpoilsGameTest",
       "com.grahambartley.nightborn.gametest.RitualGameTest",
       "com.grahambartley.nightborn.gametest.VampireStageGameTest",
       "com.grahambartley.nightborn.gametest.LevitationGameTest",

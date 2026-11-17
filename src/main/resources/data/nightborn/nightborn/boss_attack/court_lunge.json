@@ -1,0 +1,20 @@
+{
+  "min_range": 5.0,
+  "max_range": 12.0,
+  "weight": 2,
+  "cooldown_ticks": 120,
+  "tell_ticks": 18,
+  "tell_clip": "blood_rush_tell",
+  "tell_sound": "minecraft:item.trident.return",
+  "clip": "dash",
+  "sound": "minecraft:entity.breeze.wind_burst",
+  "zone": {
+    "shape": "line",
+    "radius": 1.25,
+    "length": 10.0,
+    "motion": "leap",
+    "lift": 0.6,
+    "damage": 10.0,
+    "knock": 1.0
+  }
+}

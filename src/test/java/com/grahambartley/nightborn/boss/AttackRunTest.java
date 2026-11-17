@@ -1,0 +1,63 @@
+package com.grahambartley.nightborn.boss;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import java.util.Optional;
+import net.minecraft.util.Identifier;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+
+class AttackRunTest {
+
+  private static final Identifier SOUND = Identifier.ofVanilla("entity.bat.takeoff");
+
+  private static AttackRun run(final int tellTicks, final int flurryHits) {
+    final Optional<FlurryAttack> flurry =
+        flurryHits > 0
+            ? Optional.of(new FlurryAttack(flurryHits, 5, 4.0F, 3.0F, 0.0F))
+            : Optional.empty();
+    final Optional<Identifier> power =
+        flurryHits > 0 ? Optional.empty() : Optional.of(Identifier.of("nightborn", "lord/rally"));
+    return new AttackRun(
+        Identifier.of("nightborn", "test"),
+        new BossAttack(
+            0.0F,
+            8.0F,
+            1,
+            0,
+            tellTicks,
+            "hiss",
+            SOUND,
+            "attack",
+            SOUND,
+            power,
+            Optional.empty(),
+            flurry,
+            Optional.empty()),
+        100L);
+  }
+
+  @ParameterizedTest(name = "tell {0}, {1} flurry hits, at time {2}: {3}, strike tick {4}")
+  @CsvSource({
+    "10, 0, 100, TELL, -10",
+    "10, 0, 109, TELL, -1",
+    "10, 0, 110, STRIKE, 0",
+    "10, 0, 111, DONE, 1",
+    "10, 3, 110, STRIKE, 0",
+    "10, 3, 125, STRIKE, 15",
+    "10, 3, 126, DONE, 16",
+    "10, 3, 90, TELL, -10"
+  })
+  @DisplayName("an attack tells, strikes for as long as its kind lasts, then is done")
+  void stages(
+      final int tellTicks,
+      final int hits,
+      final long now,
+      final AttackRun.Stage stage,
+      final int strikeTick) {
+    final AttackRun run = run(tellTicks, hits);
+    assertEquals(stage, run.stage(now));
+    assertEquals(strikeTick, run.strikeTick(now));
+  }
+}

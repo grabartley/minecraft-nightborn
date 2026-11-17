@@ -18,10 +18,13 @@ public final class GothicMusic {
   private GothicMusic() {}
 
   public static MusicSound choose(
-      final MusicSound vanilla, final Optional<MusicSound> structure, final boolean night) {
+      final MusicSound vanilla,
+      final Optional<MusicSound> boss,
+      final Optional<MusicSound> structure,
+      final boolean night) {
     if (KEPT.contains(vanilla)) {
       return vanilla;
     }
-    return structure.orElse(night ? NIGHT : vanilla);
+    return boss.or(() -> structure).orElse(night ? NIGHT : vanilla);
   }
 }

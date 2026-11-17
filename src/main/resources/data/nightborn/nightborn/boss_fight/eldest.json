@@ -1,0 +1,65 @@
+{
+  "phases": [
+    {
+      "name": "court",
+      "health": 30,
+      "color": "red",
+      "gap_ticks": 50,
+      "powers": [
+        "nightborn:core/blood_rush",
+        "nightborn:noble/dark_court",
+        "nightborn:core/vanish"
+      ],
+      "attacks": [
+        "nightborn:court_flurry",
+        "nightborn:court_lunge",
+        "nightborn:court_gaze",
+        "nightborn:court_rally"
+      ],
+      "music": "nightborn:music.boss.eldest"
+    },
+    {
+      "name": "beast",
+      "health": 35,
+      "color": "yellow",
+      "gap_ticks": 40,
+      "powers": [
+        "nightborn:beast/long_leap",
+        "nightborn:lord/bat_swarm",
+        "nightborn:core/blood_rush"
+      ],
+      "attacks": [
+        "nightborn:beast_pounce",
+        "nightborn:beast_swarm",
+        "nightborn:beast_claws",
+        "nightborn:court_lunge"
+      ],
+      "music": "nightborn:music.boss.eldest"
+    },
+    {
+      "name": "blood",
+      "health": 35,
+      "color": "purple",
+      "gap_ticks": 30,
+      "powers": [
+        "nightborn:occult/shadow_step",
+        "nightborn:occult/grave_fog",
+        "nightborn:occult/summon_familiar",
+        "nightborn:core/vanish"
+      ],
+      "attacks": [
+        "nightborn:blood_pools",
+        "nightborn:blood_step",
+        "nightborn:blood_drain",
+        "nightborn:beast_pounce",
+        "nightborn:court_flurry"
+      ],
+      "music": "nightborn:music.boss.eldest_final"
+    }
+  ],
+  "change_ticks": 60,
+  "change_clip": "hiss",
+  "change_sound": "minecraft:entity.warden.roar",
+  "change_knock": 1.6,
+  "change_range": 7.0
+}

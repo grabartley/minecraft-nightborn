@@ -1,5 +1,6 @@
 package com.grahambartley.nightborn.ritual;
 
+import com.grahambartley.nightborn.boss.Arena;
 import com.grahambartley.nightborn.config.RitualSettings;
 import com.grahambartley.nightborn.mob.EldestEntity;
 import com.grahambartley.nightborn.mob.NightbornMobs;
@@ -75,6 +76,7 @@ public final class Ritual {
     eldest.refreshPositionAndAngles(
         spot.getX() + 0.5, spot.getY(), spot.getZ() + 0.5, facing.asRotation(), 0.0F);
     eldest.initialize(world, world.getLocalDifficulty(spot), SpawnReason.MOB_SUMMONED, null);
+    eldest.claimArena(new Arena(altar, settings.arenaRadius()));
     eldest.scaleFor(near(world, altar, settings.fightRange()).size(), settings);
     world.spawnEntityAndPassengers(eldest);
     strike(world, spot);

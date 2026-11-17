@@ -1,16 +1,28 @@
 package com.grahambartley.nightborn.mob;
 
 import com.grahambartley.nightborn.Nightborn;
+import com.grahambartley.nightborn.boss.Arena;
+import com.grahambartley.nightborn.boss.BossFight;
+import com.grahambartley.nightborn.boss.BossFightPlan;
+import com.grahambartley.nightborn.boss.BossFights;
+import com.grahambartley.nightborn.boss.BossPhase;
+import com.grahambartley.nightborn.boss.FightRules;
+import com.grahambartley.nightborn.boss.HoldGroundGoal;
+import com.grahambartley.nightborn.boss.PhaseTrack;
 import com.grahambartley.nightborn.config.RitualSettings;
+import com.grahambartley.nightborn.downed.Downed;
 import com.grahambartley.nightborn.eldest.EldestFoes;
 import com.grahambartley.nightborn.eldest.EldestHealth;
 import com.grahambartley.nightborn.eldest.FightRoll;
+import com.grahambartley.nightborn.gear.Staking;
+import com.grahambartley.nightborn.lord.BossBarLook;
 import com.grahambartley.nightborn.mob.goal.HouseholdLifeGoal;
 import com.grahambartley.nightborn.mob.look.VampireRig;
 import com.grahambartley.nightborn.server.ServerConfigService;
 import com.grahambartley.nightborn.structure.HouseholdArrival;
 import com.grahambartley.nightborn.vampire.Vampires;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import net.minecraft.entity.EntityData;
@@ -32,9 +44,11 @@ import org.jetbrains.annotations.Nullable;
 public class EldestEntity extends BossVampireEntity {
 
   public static final Identifier STAGE = Identifier.of(Nightborn.MOD_ID, "eldest");
+  public static final Identifier FIGHT = Identifier.of(Nightborn.MOD_ID, "eldest");
   public static final int ROOM_RADIUS = 6;
 
   private final FightRoll fightRoll = new FightRoll();
+  private final BossFight fight = new BossFight();
 
   public EldestEntity(final EntityType<? extends EldestEntity> type, final World world) {
     super(type, world);
@@ -50,7 +64,88 @@ public class EldestEntity extends BossVampireEntity {
   public void settleAt(final BlockPos home) {
     super.settleAt(home);
     homeLife().keepTo(getBlockPos(), ROOM_RADIUS);
+    fight.claim(new Arena(getBlockPos(), ServerConfigService.current().ritual().roomArenaRadius()));
     leaveRoutine();
+  }
+
+  public void claimArena(final Arena arena) {
+    fight.claim(arena);
+  }
+
+  public BossFight fight() {
+    return fight;
+  }
+
+  private Optional<BossFightPlan> plan() {
+    return BossFights.fight(getWorld().getRegistryManager(), FIGHT);
+  }
+
+  @Override
+  protected void mobTick() {
+    super.mobTick();
+    tickFight();
+  }
+
+  public void tickFight() {
+    if (fight.arena().isEmpty()) {
+      fight.claim(new Arena(getBlockPos(), ServerConfigService.current().ritual().arenaRadius()));
+    }
+    final RitualSettings settings = ServerConfigService.current().ritual();
+    fight.tick(
+        this,
+        plan(),
+        new FightRules(
+            settings.arenaEmptyTicks(), settings.stakeWindowSeconds() * 20, settings.riseHealth()),
+        fightRoll::clear);
+  }
+
+  @Override
+  protected void showBar() {
+    final Optional<BossFightPlan> plan = plan();
+    if (plan.isEmpty() || Downed.state(this) != null) {
+      super.showBar();
+      return;
+    }
+    final BossPhase phase = plan.get().phase(fight.phase());
+    presence()
+        .update(
+            BossBarLook.phase(phase.color(), phase.translationKey()).title(getDisplayName()),
+            phase.color(),
+            PhaseTrack.barPercent(
+                getHealth(),
+                fight.floorHealth(this, plan.get()),
+                fight.ceilingHealth(this, plan.get())));
+  }
+
+  @Override
+  protected boolean barShowsOnSight() {
+    return false;
+  }
+
+  @Override
+  protected boolean preoccupied() {
+    return fight.busy(getWorld().getTime());
+  }
+
+  @Override
+  protected boolean casts(final Identifier power) {
+    return fight.casts(plan(), power);
+  }
+
+  @Override
+  public boolean canTarget(final LivingEntity target) {
+    return fight.holds(target.getPos()) && super.canTarget(target);
+  }
+
+  @Override
+  protected void applyDamage(final DamageSource source, final float amount) {
+    super.applyDamage(source, fight.cap(this, plan(), source, amount));
+  }
+
+  @Override
+  public void onRemoved() {
+    fight.end(this);
+    super.onRemoved();
   }
 
   private void leaveRoutine() {
@@ -84,6 +179,7 @@ public class EldestEntity extends BossVampireEntity {
   @Override
   protected void initGoals() {
     super.initGoals();
+    goalSelector.add(0, new HoldGroundGoal(this, this::preoccupied));
     targetSelector.add(
         2,
         new ActiveTargetGoal<>(
@@ -125,9 +221,18 @@ public class EldestEntity extends BossVampireEntity {
 
   @Override
   public boolean damage(final DamageSource source, final float amount) {
+    if (EldestFoes.shrugsOff(
+        fight.changing(getWorld().getTime()),
+        source.getAttacker() != null && !fight.holds(source.getAttacker().getPos()),
+        Staking.finishesVampire(source))) {
+      return false;
+    }
     final boolean hurt = super.damage(source, amount);
     if (hurt && source.getAttacker() instanceof PlayerEntity player) {
       fightRoll.join(player.getUuid());
+    }
+    if (hurt && !getWorld().isClient()) {
+      fight.hurt(this, plan(), amount);
     }
     return hurt;
   }
@@ -146,12 +251,14 @@ public class EldestEntity extends BossVampireEntity {
   public void writeCustomDataToNbt(final NbtCompound nbt) {
     super.writeCustomDataToNbt(nbt);
     fightRoll.write(nbt);
+    fight.write(nbt);
   }
 
   @Override
   public void readCustomDataFromNbt(final NbtCompound nbt) {
     super.readCustomDataFromNbt(nbt);
     fightRoll.read(nbt);
+    fight.read(nbt);
     leaveRoutine();
   }
 }

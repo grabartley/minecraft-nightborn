@@ -316,13 +316,22 @@ public class VampireEntity extends HostileEntity
     fighting.tick(
         this,
         Fighting.fights(
-            getTarget() != null,
+            getTarget() != null && !preoccupied(),
             Downed.state(this) != null,
             isSleeping(),
             retreat.active(),
             Weakened.sources(this).level(false) > 0),
         stage().combat(),
-        ServerConfigService.current().combat());
+        ServerConfigService.current().combat(),
+        this::casts);
+  }
+
+  protected boolean preoccupied() {
+    return false;
+  }
+
+  protected boolean casts(final Identifier power) {
+    return true;
   }
 
   @Override

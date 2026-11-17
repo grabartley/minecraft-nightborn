@@ -1,6 +1,7 @@
 {
   "replace": false,
   "values": [
-    "#nightborn:enchantable/head_clothing"
+    "#nightborn:enchantable/head_clothing",
+    "nightborn:eldest_crown"
   ]
 }

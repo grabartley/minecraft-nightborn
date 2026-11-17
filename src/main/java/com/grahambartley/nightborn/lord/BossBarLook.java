@@ -22,6 +22,10 @@ public record BossBarLook(BossBar.Color color, Optional<String> state) {
     };
   }
 
+  public static BossBarLook phase(final BossBar.Color color, final String key) {
+    return new BossBarLook(color, Optional.of(key));
+  }
+
   public Text title(final Text name) {
     return state.<Text>map(key -> Text.translatable(key, name)).orElse(name);
   }

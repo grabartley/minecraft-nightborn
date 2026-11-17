@@ -34,6 +34,18 @@ class BossBarLookTest {
     assertEquals(title, key);
   }
 
+  @ParameterizedTest(name = "{0} in {1}")
+  @CsvSource({"nightborn.boss.phase.court, RED", "nightborn.boss.phase.blood, PURPLE"})
+  @DisplayName("a phase gives the bar its own colour and puts the boss's name in its title")
+  void phase(final String key, final BossBar.Color color) {
+    final BossBarLook look = BossBarLook.phase(color, key);
+    assertEquals(color, look.color());
+    final TranslatableTextContent title =
+        (TranslatableTextContent) look.title(Text.literal("The Eldest")).getContent();
+    assertEquals(key, title.getKey());
+    assertEquals("The Eldest", ((Text) title.getArgs()[0]).getString());
+  }
+
   @ParameterizedTest(name = "{0} of {1} -> {2}")
   @CsvSource({
     "150, 150, 1.0",

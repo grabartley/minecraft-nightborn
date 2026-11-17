@@ -183,7 +183,8 @@ public final class VanishGameTest implements FabricGameTest {
           final Vec3d start = vampire.getPos();
           vampire.setTarget(attacker);
           attacker.handSwinging = true;
-          new CombatMoves().tick(vampire, ALWAYS_DODGES, ServerConfigService.current().combat());
+          new CombatMoves()
+              .tick(vampire, ALWAYS_DODGES, ServerConfigService.current().combat(), power -> true);
           context.assertTrue(
               VanishAttachment.isGone(vampire), "the vampire vanished from the swing");
           context.assertTrue(
@@ -209,7 +210,8 @@ public final class VanishGameTest implements FabricGameTest {
         () -> {
           vampire.setTarget(attacker);
           attacker.handSwinging = true;
-          new CombatMoves().tick(vampire, ALWAYS_DODGES, ServerConfigService.current().combat());
+          new CombatMoves()
+              .tick(vampire, ALWAYS_DODGES, ServerConfigService.current().combat(), power -> true);
           context.assertFalse(
               VanishAttachment.isGone(vampire), "a vampire without the skill stays in sight");
           vampire.discard();

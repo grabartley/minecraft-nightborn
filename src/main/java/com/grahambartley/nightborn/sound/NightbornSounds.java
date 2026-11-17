@@ -20,6 +20,8 @@ public final class NightbornSounds {
   public static final SoundEvent STONE_COFFIN_OPEN = register("block.stone_coffin.open");
   public static final SoundEvent STONE_COFFIN_CLOSE = register("block.stone_coffin.close");
   public static final SoundEvent MUSIC_GOTHIC = register("music.gothic");
+  public static final SoundEvent MUSIC_BOSS_ELDEST = register("music.boss.eldest");
+  public static final SoundEvent MUSIC_BOSS_ELDEST_FINAL = register("music.boss.eldest_final");
 
   private NightbornSounds() {}
 

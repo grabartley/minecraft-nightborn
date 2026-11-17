@@ -8,6 +8,11 @@ public final class EldestFoes {
     return !vampire || player && struck;
   }
 
+  public static boolean shrugsOff(
+      final boolean changing, final boolean fromOutside, final boolean finishing) {
+    return !finishing && (changing || fromOutside);
+  }
+
   public static boolean seeksOut(final boolean vampire, final boolean peaceful) {
     return !vampire && !peaceful;
   }

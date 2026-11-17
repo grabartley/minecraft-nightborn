@@ -1,0 +1,58 @@
+package com.grahambartley.nightborn.boss;
+
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+import java.util.List;
+import java.util.Optional;
+import net.minecraft.entity.boss.BossBar;
+import net.minecraft.util.Identifier;
+
+public record BossPhase(
+    String name,
+    int health,
+    BossBar.Color color,
+    List<Identifier> powers,
+    List<Identifier> attacks,
+    int gapTicks,
+    Optional<Identifier> music) {
+
+  static final String KEY = "nightborn.boss.phase.";
+
+  static final Codec<BossBar.Color> COLOR =
+      Codec.STRING.xmap(BossBar.Color::byName, BossBar.Color::getName);
+
+  public static final Codec<BossPhase> CODEC =
+      RecordCodecBuilder.create(
+          instance ->
+              instance
+                  .group(
+                      Codec.STRING.fieldOf("name").forGetter(BossPhase::name),
+                      Codec.intRange(1, 1000).fieldOf("health").forGetter(BossPhase::health),
+                      COLOR.optionalFieldOf("color", BossBar.Color.RED).forGetter(BossPhase::color),
+                      Identifier.CODEC
+                          .listOf()
+                          .optionalFieldOf("powers", List.of())
+                          .forGetter(BossPhase::powers),
+                      Identifier.CODEC
+                          .listOf()
+                          .optionalFieldOf("attacks", List.of())
+                          .forGetter(BossPhase::attacks),
+                      Codec.intRange(1, 1200)
+                          .optionalFieldOf("gap_ticks", 60)
+                          .forGetter(BossPhase::gapTicks),
+                      Identifier.CODEC.optionalFieldOf("music").forGetter(BossPhase::music))
+                  .apply(instance, BossPhase::new));
+
+  public BossPhase {
+    powers = List.copyOf(powers);
+    attacks = List.copyOf(attacks);
+  }
+
+  public String translationKey() {
+    return KEY + name;
+  }
+
+  public boolean casts(final Identifier power) {
+    return powers.contains(power);
+  }
+}

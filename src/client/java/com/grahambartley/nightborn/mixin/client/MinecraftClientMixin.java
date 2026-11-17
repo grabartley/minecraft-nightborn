@@ -1,5 +1,6 @@
 package com.grahambartley.nightborn.mixin.client;
 
+import com.grahambartley.nightborn.client.boss.BossArenaView;
 import com.grahambartley.nightborn.client.structure.NearbyStructure;
 import com.grahambartley.nightborn.core.NightTime;
 import com.grahambartley.nightborn.sound.GothicMusic;
@@ -22,6 +23,8 @@ abstract class MinecraftClientMixin {
     final boolean night =
         world != null
             && NightTime.isNight(world.getDimension().hasFixedTime(), world.getTimeOfDay());
-    info.setReturnValue(GothicMusic.choose(info.getReturnValue(), NearbyStructure.music(), night));
+    info.setReturnValue(
+        GothicMusic.choose(
+            info.getReturnValue(), BossArenaView.music(), NearbyStructure.music(), night));
   }
 }

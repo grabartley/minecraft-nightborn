@@ -1,6 +1,7 @@
 {
   "replace": false,
   "values": [
-    "#nightborn:enchantable/chest_clothing"
+    "#nightborn:enchantable/chest_clothing",
+    "nightborn:eldest_mantle"
   ]
 }

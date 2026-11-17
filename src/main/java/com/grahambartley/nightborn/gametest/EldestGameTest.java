@@ -99,7 +99,8 @@ public class EldestGameTest implements FabricGameTest {
     context.assertTrue(eldest.cannotDespawn(), "the Eldest never despawns");
     eldest.onStartedTrackingBy(player);
     context.assertTrue(
-        eldest.presence().bar().getPlayers().contains(player), "a player near it sees its bar");
+        !eldest.presence().bar().getPlayers().contains(player),
+        "seeing it from outside its arena shows no bar");
     eldest.onStoppedTrackingBy(player);
     context.complete();
   }

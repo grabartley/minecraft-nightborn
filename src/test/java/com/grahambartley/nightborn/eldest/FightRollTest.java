@@ -45,4 +45,19 @@ class FightRollTest {
     assertTrue(roll.has(fighter));
     assertEquals(Set.of(fighter), roll.fighters());
   }
+
+  @ParameterizedTest(name = "{0} fighters")
+  @ValueSource(ints = {0, 1, 5})
+  @DisplayName("clearing the roll forgets every fighter, so each can join again")
+  void clears(final int count) {
+    final FightRoll roll = new FightRoll();
+    for (int i = 0; i < count; i++) {
+      roll.join(new UUID(i, i));
+    }
+    roll.clear();
+    assertEquals(Set.of(), roll.fighters());
+    for (int i = 0; i < count; i++) {
+      assertTrue(roll.join(new UUID(i, i)));
+    }
+  }
 }

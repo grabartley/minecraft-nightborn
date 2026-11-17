@@ -1,0 +1,17 @@
+{
+  "max_range": 4.0,
+  "weight": 3,
+  "cooldown_ticks": 60,
+  "tell_ticks": 10,
+  "tell_clip": "hiss",
+  "tell_sound": "minecraft:entity.ravager.attack",
+  "clip": "attack",
+  "sound": "minecraft:entity.player.attack.sweep",
+  "flurry": {
+    "hits": 4,
+    "every_ticks": 6,
+    "damage": 5.0,
+    "reach": 3.0,
+    "lunge": 0.5
+  }
+}

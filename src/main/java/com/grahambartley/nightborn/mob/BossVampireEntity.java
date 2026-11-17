@@ -24,7 +24,15 @@ public abstract class BossVampireEntity extends VampireEntity {
   @Override
   protected void mobTick() {
     super.mobTick();
+    showBar();
+  }
+
+  protected void showBar() {
     presence.update(this);
+  }
+
+  protected boolean barShowsOnSight() {
+    return true;
   }
 
   @Override
@@ -36,13 +44,17 @@ public abstract class BossVampireEntity extends VampireEntity {
   @Override
   public void onStartedTrackingBy(final ServerPlayerEntity player) {
     super.onStartedTrackingBy(player);
-    presence.show(player);
+    if (barShowsOnSight()) {
+      presence.show(player);
+    }
   }
 
   @Override
   public void onStoppedTrackingBy(final ServerPlayerEntity player) {
     super.onStoppedTrackingBy(player);
-    presence.hide(player);
+    if (barShowsOnSight()) {
+      presence.hide(player);
+    }
   }
 
   @Override

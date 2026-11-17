@@ -1,6 +1,7 @@
 package com.grahambartley.nightborn.mob;
 
 import com.grahambartley.nightborn.Nightborn;
+import com.grahambartley.nightborn.eldest.PetBatEntity;
 import com.grahambartley.nightborn.mob.household.Temperaments;
 import com.grahambartley.nightborn.mob.look.VampireLooks;
 import com.grahambartley.nightborn.mob.stage.VampireStages;
@@ -54,6 +55,14 @@ public final class NightbornMobs {
               .eyeHeight(0.45F)
               .maxTrackingRange(5));
 
+  public static final EntityType<PetBatEntity> PET_BAT =
+      register(
+          "pet_bat",
+          EntityType.Builder.<PetBatEntity>create(PetBatEntity::new, SpawnGroup.MISC)
+              .dimensions(0.6F, 0.9F)
+              .eyeHeight(0.45F)
+              .maxTrackingRange(8));
+
   public static final Item VAMPIRE_SPAWN_EGG =
       registerEgg(
           "vampire_spawn_egg", new SpawnEggItem(VAMPIRE, 0x2A0A10, 0xD8CEC2, new Item.Settings()));
@@ -84,6 +93,7 @@ public final class NightbornMobs {
     FabricDefaultAttributeRegistry.register(ELDEST, VampireEntity.createVampireAttributes());
     FabricDefaultAttributeRegistry.register(
         VAMPIRE_BAT, VampireBatEntity.createVampireBatAttributes());
+    FabricDefaultAttributeRegistry.register(PET_BAT, VampireBatEntity.createVampireBatAttributes());
     ItemGroupEvents.modifyEntriesEvent(ItemGroups.SPAWN_EGGS)
         .register(
             entries -> {
