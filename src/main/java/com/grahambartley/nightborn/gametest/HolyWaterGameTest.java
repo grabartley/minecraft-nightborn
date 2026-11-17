@@ -112,6 +112,7 @@ public class HolyWaterGameTest implements FabricGameTest {
     final var factories =
         TradeOffers.PROFESSION_TO_LEVELED_TRADE.get(VillagerProfession.CLERIC).get(2);
     final var villager = context.spawnEntity(EntityType.VILLAGER, new BlockPos(4, 2, 4));
+    villager.setAiDisabled(true);
     boolean blesses = false;
     for (final TradeOffers.Factory factory : factories) {
       final TradeOffer offer = factory.create(villager, Random.create(0));
