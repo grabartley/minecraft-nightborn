@@ -19,7 +19,8 @@ public record BossPhase(
     PhaseDefence defence,
     Optional<PhaseVoice> voice,
     Optional<PhaseFlight> flight,
-    Optional<PhaseAmbience> ambience) {
+    Optional<PhaseAmbience> ambience,
+    PhaseLook look) {
 
   static final String KEY = "nightborn.boss.phase.";
 
@@ -55,7 +56,10 @@ public record BossPhase(
                       PhaseFlight.CODEC.optionalFieldOf("flight").forGetter(BossPhase::flight),
                       PhaseAmbience.CODEC
                           .optionalFieldOf("ambience")
-                          .forGetter(BossPhase::ambience))
+                          .forGetter(BossPhase::ambience),
+                      PhaseLook.CODEC
+                          .optionalFieldOf("look", PhaseLook.PLAIN)
+                          .forGetter(BossPhase::look))
                   .apply(instance, BossPhase::new));
 
   public BossPhase {

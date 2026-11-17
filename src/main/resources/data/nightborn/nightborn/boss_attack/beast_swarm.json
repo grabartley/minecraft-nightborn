@@ -4,9 +4,9 @@
   "weight": 2,
   "cooldown_ticks": 200,
   "tell_ticks": 30,
-  "tell_clip": "mesmerise",
+  "tell_clip": "swarm_tell",
   "tell_sound": "minecraft:entity.evoker.prepare_summon",
-  "clip": "hiss",
+  "clip": "swarm",
   "sound": "minecraft:entity.bat.takeoff",
   "zone": {
     "shape": "line",

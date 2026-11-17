@@ -34,6 +34,11 @@ public record WardAttack(
     return Math.sin(2.0 * Math.PI * index / count) * spread;
   }
 
+  public static boolean broke(
+      final boolean wasHeld, final boolean held, final boolean busy, final boolean silent) {
+    return wasHeld && !held && !busy && !silent;
+  }
+
   public static boolean spent(final int alive, final long age, final int ticks) {
     return alive > 0 && age >= ticks;
   }

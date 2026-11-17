@@ -4,9 +4,9 @@
   "weight": 2,
   "cooldown_ticks": 400,
   "tell_ticks": 20,
-  "tell_clip": "blood_rush_tell",
+  "tell_clip": "siphon_tell",
   "tell_sound": "minecraft:block.conduit.activate",
-  "clip": "drain",
+  "clip": "siphon",
   "sound": "minecraft:block.conduit.ambient",
   "drain": {
     "ticks": 120,

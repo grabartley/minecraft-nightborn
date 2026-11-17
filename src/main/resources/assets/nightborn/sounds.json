@@ -792,52 +792,6 @@
       }
     ]
   },
-  "entity.vampire.eldest_female.ambient": {
-    "subtitle": "subtitles.nightborn.entity.vampire.ambient",
-    "sounds": [
-      "nightborn:entity/vampire/female/ambient1",
-      "nightborn:entity/vampire/female/ambient2",
-      "nightborn:entity/vampire/female/ambient3"
-    ]
-  },
-  "entity.vampire.eldest_female.argue": {
-    "subtitle": "subtitles.nightborn.entity.vampire.argue",
-    "sounds": [
-      "nightborn:entity/vampire/female/argue1",
-      "nightborn:entity/vampire/female/argue2",
-      "nightborn:entity/vampire/female/argue3"
-    ]
-  },
-  "entity.vampire.eldest_female.death": {
-    "subtitle": "subtitles.nightborn.entity.vampire.death",
-    "sounds": [
-      "nightborn:entity/vampire/female/death1",
-      "nightborn:entity/vampire/female/death2"
-    ]
-  },
-  "entity.vampire.eldest_female.hiss": {
-    "subtitle": "subtitles.nightborn.entity.vampire.hiss",
-    "sounds": [
-      "nightborn:entity/vampire/female/hiss1",
-      "nightborn:entity/vampire/female/hiss2"
-    ]
-  },
-  "entity.vampire.eldest_female.hurt": {
-    "subtitle": "subtitles.nightborn.entity.vampire.hurt",
-    "sounds": [
-      "nightborn:entity/vampire/female/hurt1",
-      "nightborn:entity/vampire/female/hurt2",
-      "nightborn:entity/vampire/female/hurt3"
-    ]
-  },
-  "entity.vampire.eldest_female.talk": {
-    "subtitle": "subtitles.nightborn.entity.vampire.talk",
-    "sounds": [
-      "nightborn:entity/vampire/female/talk1",
-      "nightborn:entity/vampire/female/talk2",
-      "nightborn:entity/vampire/female/talk3"
-    ]
-  },
   "block.ritual_altar.relic_place": {
     "subtitle": "subtitles.nightborn.block.ritual_altar.relic_place",
     "sounds": [

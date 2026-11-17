@@ -120,6 +120,7 @@ public final class BossFight {
     }
     hits.clear();
     BossReactions.guard(boss, attacker, defence);
+    show(boss, plan.map(p -> p.clips().guard()).orElse(""));
     attacks.counter(boss, defence.counters(), foes(boss), now);
     return true;
   }
@@ -144,6 +145,7 @@ public final class BossFight {
             == PhaseDefence.Reaction.BREAK_AWAY) {
       hits.clear();
       BossReactions.breakAway(boss, attacker, defence, arena);
+      show(boss, plan.map(p -> p.clips().breakAway()).orElse(""));
       attacks.counter(boss, defence.counters(), foes(boss), now);
     }
     attacks.hurt(amount);
@@ -215,6 +217,7 @@ public final class BossFight {
         now);
     flight.tick(
         boss,
+        plan.map(BossFightPlan::clips).orElse(FightClips.NONE),
         plan.flatMap(p -> p.phase(phases.index()).flight()),
         arena,
         engaged && boss.getTarget() != null,
@@ -227,6 +230,7 @@ public final class BossFight {
     }
     attacks.tick(
         boss,
+        plan.get().clips().stagger(),
         plan.get().phase(phases.index()),
         inside.stream().filter(boss::canTarget).toList(),
         ceilingHealth(boss, plan.get()),
@@ -293,6 +297,9 @@ public final class BossFight {
       staking = false;
       return false;
     }
+    if (attacks.busy()) {
+      boss.showPower("");
+    }
     attacks.cancel();
     if (downed.isDowned()) {
       if (!staking) {
@@ -307,6 +314,22 @@ public final class BossFight {
         plan.map(p -> PhaseTrack.ceiling(p.shares(), p.phases().size() - 1)).orElse(1.0);
     boss.setHealth(rules.risen(boss.getMaxHealth(), lastShare));
     return true;
+  }
+
+  public ShownForm shown(final Optional<BossFightPlan> plan, final boolean downed) {
+    return plan.map(
+            p ->
+                p.phase(phases.index())
+                    .look()
+                    .shown(flight.flying(), downed, p.clips().downedForm()))
+        .orElse(ShownForm.NONE)
+        .blazing(blazing(plan));
+  }
+
+  private static void show(final BossVampireEntity boss, final String clip) {
+    if (!clip.isEmpty()) {
+      boss.showPower(clip);
+    }
   }
 
   public boolean flying() {
@@ -327,6 +350,7 @@ public final class BossFight {
     final int index = phases.index();
     final double progress = PhaseBodies.progress(changeUntil, now, plan.changeTicks());
     PhaseBodies.apply(boss, plan, index, progress);
+    PhaseArms.hold(boss, plan.phase(index).look().held());
     plan.phase(index)
         .voice()
         .filter(voice -> boss.getTarget() != null && voice.speaksAt(now - phaseBegan))
@@ -354,7 +378,7 @@ public final class BossFight {
     BossReactions.returnTo(boss, start);
     BossReactions.strike(boss);
     boss.getNavigation().stop();
-    boss.showPower(plan.changeClip());
+    boss.showPower(plan.phase(phases.index()).look().enters(plan.changeClip()));
     boss.playSound(SoundEvent.of(plan.changeSound()), ROAR, 0.8F);
     if (boss.getWorld() instanceof ServerWorld world) {
       world.spawnParticles(

@@ -4,9 +4,9 @@
   "weight": 3,
   "cooldown_ticks": 100,
   "tell_ticks": 16,
-  "tell_clip": "blood_rush_tell",
+  "tell_clip": "step_tell",
   "tell_sound": "minecraft:entity.phantom.swoop",
-  "clip": "attack",
+  "clip": "step",
   "sound": "minecraft:entity.illusioner.mirror_move",
   "zone": {
     "radius": 3.0,

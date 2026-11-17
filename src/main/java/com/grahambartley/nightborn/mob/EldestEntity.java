@@ -9,6 +9,7 @@ import com.grahambartley.nightborn.boss.BossPhase;
 import com.grahambartley.nightborn.boss.FightRules;
 import com.grahambartley.nightborn.boss.HoldGroundGoal;
 import com.grahambartley.nightborn.boss.PhaseTrack;
+import com.grahambartley.nightborn.boss.ShownForm;
 import com.grahambartley.nightborn.boss.StanceGoal;
 import com.grahambartley.nightborn.config.RitualSettings;
 import com.grahambartley.nightborn.core.BlazingEyes;
@@ -45,6 +46,9 @@ import net.minecraft.entity.ai.goal.RevengeGoal;
 import net.minecraft.entity.ai.goal.SwimGoal;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.damage.DamageType;
+import net.minecraft.entity.data.DataTracker;
+import net.minecraft.entity.data.TrackedData;
+import net.minecraft.entity.data.TrackedDataHandlerRegistry;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.registry.RegistryKeys;
@@ -57,6 +61,10 @@ import net.minecraft.world.LocalDifficulty;
 import net.minecraft.world.ServerWorldAccess;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
+import software.bernie.geckolib.animation.AnimatableManager;
+import software.bernie.geckolib.animation.AnimationController;
+import software.bernie.geckolib.animation.PlayState;
+import software.bernie.geckolib.animation.RawAnimation;
 
 public class EldestEntity extends BossVampireEntity implements BlazingEyes {
 
@@ -66,12 +74,53 @@ public class EldestEntity extends BossVampireEntity implements BlazingEyes {
   public static final TagKey<DamageType> SHRUGS_OFF =
       TagKey.of(RegistryKeys.DAMAGE_TYPE, Identifier.of(Nightborn.MOD_ID, "eldest_shrugs_off"));
 
+  static final int FORM_BLEND_TICKS = 14;
+  static final int RISE_AFTER_TICKS = 6;
+  private static final TrackedData<String> FORM =
+      DataTracker.registerData(EldestEntity.class, TrackedDataHandlerRegistry.STRING);
+
   private final FightRoll fightRoll = new FightRoll();
+  private boolean rising;
   private final BossFight fight = new BossFight();
 
   public EldestEntity(final EntityType<? extends EldestEntity> type, final World world) {
     super(type, world);
     this.experiencePoints = 100;
+  }
+
+  @Override
+  protected void initDataTracker(final DataTracker.Builder builder) {
+    super.initDataTracker(builder);
+    builder.add(FORM, "");
+  }
+
+  public ShownForm shownForm() {
+    return ShownForm.decode(dataTracker.get(FORM));
+  }
+
+  public void riseFromRitual() {
+    rising = true;
+  }
+
+  @Override
+  protected Optional<RawAnimation> poseClip(final VampirePose pose) {
+    return shownForm()
+        .clip(pose.still(), pose == VampirePose.WALK || pose == VampirePose.RUN)
+        .map(ClipCache::once);
+  }
+
+  @Override
+  public void registerControllers(final AnimatableManager.ControllerRegistrar controllers) {
+    super.registerControllers(controllers);
+    controllers.add(
+        new AnimationController<>(
+            this,
+            "form",
+            FORM_BLEND_TICKS,
+            state -> {
+              final String form = shownForm().form();
+              return form.isEmpty() ? PlayState.STOP : state.setAndContinue(ClipCache.once(form));
+            }));
   }
 
   @Override
@@ -110,6 +159,14 @@ public class EldestEntity extends BossVampireEntity implements BlazingEyes {
   public void tickFight() {
     if (fight.arena().isEmpty()) {
       fight.claim(new Arena(getBlockPos(), ServerConfigService.current().ritual().arenaRadius()));
+    }
+    dataTracker.set(FORM, fight.shown(plan(), Downed.state(this) != null).encode());
+    if (rising && age >= RISE_AFTER_TICKS) {
+      rising = false;
+      plan()
+          .map(p -> p.clips().summon())
+          .filter(clip -> !clip.isEmpty())
+          .ifPresent(this::showAction);
     }
     final RitualSettings settings = ServerConfigService.current().ritual();
     fight.tick(
@@ -153,7 +210,7 @@ public class EldestEntity extends BossVampireEntity implements BlazingEyes {
 
   @Override
   public boolean eyesBlaze() {
-    return fight.blazing(plan());
+    return getWorld().isClient() ? shownForm().blazing() : fight.blazing(plan());
   }
 
   @Override

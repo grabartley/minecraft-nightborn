@@ -60,4 +60,22 @@ class WardAttackTest {
         (Math.atan2(ward.offsetZ(index), ward.offsetX(index)) + 2.0 * Math.PI) % (2.0 * Math.PI),
         1.0E-9);
   }
+
+  @ParameterizedTest(name = "was held {0}, held {1}, busy {2}, silent {3}: staggers {4}")
+  @CsvSource({
+    "true, false, false, false, true",
+    "true, true, false, false, false",
+    "false, false, false, false, false",
+    "true, false, true, false, false",
+    "true, false, false, true, false"
+  })
+  @DisplayName("the boss reels once when its ward falls, unless it is mid attack or has no clip")
+  void broke(
+      final boolean wasHeld,
+      final boolean held,
+      final boolean busy,
+      final boolean silent,
+      final boolean staggers) {
+    assertEquals(staggers, WardAttack.broke(wasHeld, held, busy, silent));
+  }
 }

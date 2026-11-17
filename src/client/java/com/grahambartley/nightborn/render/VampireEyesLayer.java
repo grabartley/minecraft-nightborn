@@ -1,5 +1,6 @@
 package com.grahambartley.nightborn.render;
 
+import com.grahambartley.nightborn.core.EyeGlow;
 import com.grahambartley.nightborn.mob.VampireEntity;
 import com.grahambartley.nightborn.vampire.VisibleStateAttachment;
 import net.minecraft.client.render.LightmapTextureManager;
@@ -32,7 +33,7 @@ public class VampireEyesLayer extends GeoRenderLayer<VampireEntity> {
     if (vampire.isInvisible() || !VisibleStateAttachment.get(vampire).eyesGlowing()) {
       return;
     }
-    final RenderLayer eyes = RenderLayer.getEyes(vampire.rig().eyes());
+    final RenderLayer eyes = RenderLayer.getEyes(vampire.rig().eyes(EyeGlow.blazing(vampire)));
     getRenderer()
         .reRender(
             bakedModel,

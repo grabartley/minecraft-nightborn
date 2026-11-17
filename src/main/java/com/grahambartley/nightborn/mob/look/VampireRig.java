@@ -14,16 +14,14 @@ public enum VampireRig implements StringIdentifiable {
   MALE("male", ClothingCut.MALE, Figure.FLAT, Figure.FLAT, "vampire"),
   FEMALE("female", ClothingCut.FEMALE, 0.7F, 1.3F, "vampire"),
   LORD("lord", ClothingCut.MALE, Figure.FLAT, Figure.FLAT, "vampire_lord"),
-  ELDEST_MALE("eldest_male", ClothingCut.MALE, Figure.FLAT, Figure.FLAT, "vampire_eldest"),
-  ELDEST_FEMALE("eldest_female", ClothingCut.FEMALE, 0.7F, 1.3F, "vampire_eldest");
+  ELDEST_MALE("eldest_male", ClothingCut.MALE, Figure.FLAT, Figure.FLAT, "vampire_eldest");
 
   public static final Codec<VampireRig> CODEC = StringIdentifiable.createCodec(VampireRig::values);
 
   public static final Set<VampireRig> COMMON =
       Collections.unmodifiableSet(EnumSet.of(MALE, FEMALE));
 
-  public static final Set<VampireRig> ELDEST =
-      Collections.unmodifiableSet(EnumSet.of(ELDEST_MALE, ELDEST_FEMALE));
+  public static final Set<VampireRig> ELDEST = Collections.unmodifiableSet(EnumSet.of(ELDEST_MALE));
 
   private final String id;
   private final ClothingCut cut;
@@ -66,6 +64,12 @@ public enum VampireRig implements StringIdentifiable {
 
   public Identifier eyes() {
     return Identifier.of(Nightborn.MOD_ID, "textures/entity/vampire/" + id + "_eyes.png");
+  }
+
+  public Identifier eyes(final boolean blazing) {
+    return blazing && ELDEST.contains(this)
+        ? Identifier.of(Nightborn.MOD_ID, "textures/entity/vampire/" + id + "_eyes_blazing.png")
+        : eyes();
   }
 
   public static Identifier playerClips() {

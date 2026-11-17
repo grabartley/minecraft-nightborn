@@ -25,6 +25,7 @@ public class VampireRenderer extends GeoEntityRenderer<VampireEntity> {
     addRenderLayer(new VampireStageMarksLayer(this));
     addRenderLayer(new VampireEyesLayer(this));
     addRenderLayer(new RigArmorLayer<>(this, this::getAnimatable));
+    addRenderLayer(new HandItemGeoLayer<>(this));
   }
 
   @Override

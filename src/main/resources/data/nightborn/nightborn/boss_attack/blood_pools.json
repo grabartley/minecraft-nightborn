@@ -3,9 +3,9 @@
   "weight": 2,
   "cooldown_ticks": 240,
   "tell_ticks": 24,
-  "tell_clip": "mesmerise",
+  "tell_clip": "pools_tell",
   "tell_sound": "minecraft:entity.evoker.prepare_attack",
-  "clip": "hiss",
+  "clip": "pools",
   "sound": "minecraft:block.sculk.spread",
   "zone": {
     "radius": 2.5,

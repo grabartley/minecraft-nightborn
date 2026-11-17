@@ -3,9 +3,9 @@
   "weight": 3,
   "cooldown_ticks": 60,
   "tell_ticks": 10,
-  "tell_clip": "hiss",
+  "tell_clip": "claws_tell",
   "tell_sound": "minecraft:entity.ravager.attack",
-  "clip": "attack",
+  "clip": "claws",
   "sound": "minecraft:entity.player.attack.sweep",
   "flurry": {
     "hits": 4,

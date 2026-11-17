@@ -4,9 +4,9 @@
   "weight": 2,
   "cooldown_ticks": 300,
   "tell_ticks": 24,
-  "tell_clip": "mesmerise",
+  "tell_clip": "gaze_tell",
   "tell_sound": "minecraft:entity.illusioner.prepare_mirror",
-  "clip": "mesmerise",
+  "clip": "gaze",
   "sound": "minecraft:entity.illusioner.cast_spell",
   "gaze": {
     "range": 14.0,

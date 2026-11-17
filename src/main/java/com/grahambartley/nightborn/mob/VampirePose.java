@@ -104,6 +104,10 @@ public enum VampirePose {
     };
   }
 
+  public boolean still() {
+    return this == IDLE || this == IDLE_LOOK || this == IDLE_LISTEN;
+  }
+
   public static VampirePose coffin(final boolean rising, final boolean standingCoffin) {
     if (!rising) {
       return COFFIN_SLEEP;

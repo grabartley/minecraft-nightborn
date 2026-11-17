@@ -72,6 +72,11 @@
             "pitch": 1.0
           }
         ]
+      },
+      "look": {
+        "idle": "idle_ancient",
+        "walk": "court_walk",
+        "form": "form_court"
       }
     },
     {
@@ -161,6 +166,14 @@
             "pitch": 0.6
           }
         ]
+      },
+      "look": {
+        "idle": "beast_idle",
+        "walk": "beast_walk",
+        "form": "form_beast",
+        "fly": "fly",
+        "fly_form": "form_fly",
+        "enter_clip": "roar_beast"
       }
     },
     {
@@ -256,6 +269,13 @@
             "pitch": 0.5
           }
         ]
+      },
+      "look": {
+        "idle": "blood_idle",
+        "walk": "blood_walk",
+        "form": "form_blood",
+        "enter_clip": "roar_blood",
+        "held": "nightborn:eldest_blade"
       }
     }
   ],
@@ -263,5 +283,14 @@
   "change_clip": "hiss",
   "change_sound": "minecraft:entity.warden.roar",
   "change_knock": 2.0,
-  "change_range": 8.0
+  "change_range": 8.0,
+  "clips": {
+    "summon": "summon",
+    "guard": "guard",
+    "break_away": "break_away",
+    "stagger": "stagger",
+    "takeoff": "takeoff",
+    "land": "fly_land",
+    "downed_form": "form_downed"
+  }
 }

@@ -21,8 +21,7 @@ class VampireRigTest {
     "male, MALE, MALE",
     "female, FEMALE, FEMALE",
     "lord, LORD, MALE",
-    "eldest_male, ELDEST_MALE, MALE",
-    "eldest_female, ELDEST_FEMALE, FEMALE"
+    "eldest_male, ELDEST_MALE, MALE"
   })
   @DisplayName("a rig reads from data and fits clothing of its own cut")
   void readsAndFits(final String id, final VampireRig rig, final ClothingCut cut) {
@@ -42,13 +41,7 @@ class VampireRigTest {
   }
 
   @ParameterizedTest(name = "{0} shares the household clips: {1}")
-  @CsvSource({
-    "MALE, true",
-    "FEMALE, true",
-    "LORD, false",
-    "ELDEST_MALE, false",
-    "ELDEST_FEMALE, false"
-  })
+  @CsvSource({"MALE, true", "FEMALE, true", "LORD, false", "ELDEST_MALE, false"})
   @DisplayName("household rigs share one clip file and only they are common")
   void sharesClips(final VampireRig rig, final boolean common) {
     assertEquals(common, rig.clips().equals(VampireRig.playerClips()));
@@ -56,14 +49,8 @@ class VampireRigTest {
   }
 
   @ParameterizedTest(name = "{0} is an Eldest rig: {1}")
-  @CsvSource({
-    "MALE, false",
-    "FEMALE, false",
-    "LORD, false",
-    "ELDEST_MALE, true",
-    "ELDEST_FEMALE, true"
-  })
-  @DisplayName("the Eldest has a man's rig and a woman's, sharing one clip file")
+  @CsvSource({"MALE, false", "FEMALE, false", "LORD, false", "ELDEST_MALE, true"})
+  @DisplayName("the Eldest is always a man, with a rig and clip file of his own")
   void eldestRigs(final VampireRig rig, final boolean eldest) {
     assertEquals(eldest, VampireRig.ELDEST.contains(rig));
     assertEquals(eldest, rig.clips().equals(VampireRig.ELDEST_MALE.clips()));
@@ -100,5 +87,21 @@ class VampireRigTest {
 
   private static Path asset(final String root, final Identifier id) {
     return Path.of(root).resolve(id.getNamespace()).resolve(id.getPath());
+  }
+
+  @ParameterizedTest(name = "{0} blazing {1}: its own rage glow {2}")
+  @CsvSource({
+    "ELDEST_MALE, true, true",
+    "ELDEST_MALE, false, false",
+    "LORD, true, false",
+    "MALE, true, false",
+    "FEMALE, false, false"
+  })
+  @DisplayName("only the Eldest swaps to a stronger glow when its eyes blaze, and the art ships")
+  void blazingEyes(final VampireRig rig, final boolean blazing, final boolean swaps) {
+    assertEquals(swaps, !rig.eyes(blazing).equals(rig.eyes()));
+    assertTrue(
+        Files.exists(asset("src/main/resources/assets", rig.eyes(blazing))),
+        rig.eyes(blazing).toString());
   }
 }
