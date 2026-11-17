@@ -77,16 +77,18 @@ public final class Levitation {
   }
 
   public static boolean holdsFloatPose(final LivingEntity entity) {
-    return LevitationRules.holdsFloatPose(
-        isLevitating(entity),
-        entity
-            .getWorld()
-            .isSpaceEmpty(
-                entity,
-                entity
-                    .getDimensions(EntityPose.STANDING)
-                    .getBoxAt(entity.getPos())
-                    .contract(POSE_FIT_MARGIN)));
+    return isLevitating(entity) && LevitationRules.holdsFloatPose(true, hasRoomToStand(entity));
+  }
+
+  private static boolean hasRoomToStand(final LivingEntity entity) {
+    return entity
+        .getWorld()
+        .isSpaceEmpty(
+            entity,
+            entity
+                .getDimensions(EntityPose.STANDING)
+                .getBoxAt(entity.getPos())
+                .contract(POSE_FIT_MARGIN));
   }
 
   public static boolean start(final LivingEntity vampire) {
