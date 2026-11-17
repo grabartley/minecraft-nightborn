@@ -8,7 +8,6 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import java.util.List;
 import java.util.Optional;
 import net.minecraft.registry.entry.RegistryEntry;
-import net.minecraft.structure.PoolStructurePiece;
 import net.minecraft.structure.StructureLiquidSettings;
 import net.minecraft.structure.StructurePiecesCollector;
 import net.minecraft.structure.StructurePiecesList;
@@ -205,40 +204,39 @@ public final class VampireStructure extends Structure {
       return position;
     }
     final StructurePiecesCollector pieces = position.get().generate();
-    final int lift =
+    final Optional<Threshold> threshold =
         footing
             .get()
             .entrance()
-            .flatMap(name -> threshold(context, pieces, name))
-            .map(threshold -> threshold.lift(footing.get().surface(context, threshold.outside())))
-            .orElse(0);
+            .flatMap(
+                name ->
+                    Threshold.in(
+                        pieces.toList().pieces(),
+                        name,
+                        context.structureTemplateManager(),
+                        context.random()));
+    final int lift = threshold.map(way -> way.lift(surface(context, way.outside()))).orElse(0);
+    if (!footing.get().allowsLift(lift)) {
+      return Optional.empty();
+    }
     pieces.shift(lift);
     final BlockPos placed = position.get().position().up(lift);
-    return footing
-            .get()
-            .fits(context, pieces.getBoundingBox(), new ColumnPos(placed.getX(), placed.getZ()))
+    final ColumnPos approach =
+        threshold.map(Threshold::outside).orElse(new ColumnPos(placed.getX(), placed.getZ()));
+    return footing.get().fits(context, pieces.getBoundingBox(), approach)
         ? Optional.of(new StructurePosition(placed, Either.right(pieces)))
         : Optional.empty();
   }
 
-  private static Optional<Threshold> threshold(
-      final Context context, final StructurePiecesCollector pieces, final Identifier name) {
-    return pieces.toList().pieces().stream()
-        .filter(PoolStructurePiece.class::isInstance)
-        .map(PoolStructurePiece.class::cast)
-        .map(
-            piece ->
-                Threshold.named(
-                    name,
-                    piece
-                        .getPoolElement()
-                        .getStructureBlockInfos(
-                            context.structureTemplateManager(),
-                            piece.getPos(),
-                            piece.getRotation(),
-                            context.random())))
-        .flatMap(Optional::stream)
-        .findFirst();
+  private static int surface(final Context context, final ColumnPos point) {
+    return context
+        .chunkGenerator()
+        .getHeight(
+            point.x(),
+            point.z(),
+            Heightmap.Type.WORLD_SURFACE_WG,
+            context.world(),
+            context.noiseConfig());
   }
 
   @Override

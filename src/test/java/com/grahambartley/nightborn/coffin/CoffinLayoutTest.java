@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.stream.Stream;
 import net.minecraft.block.enums.BedPart;
 import net.minecraft.entity.EntityDimensions;
-import net.minecraft.entity.EntityPose;
 import net.minecraft.util.function.BooleanBiFunction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
@@ -243,18 +242,5 @@ class CoffinLayoutTest {
     assertFalse(
         VoxelShapes.matchesAnywhere(VoxelShapes.cuboid(body), coffin, BooleanBiFunction.ONLY_FIRST),
         "the body " + body + " pokes out of the coffin");
-  }
-
-  @ParameterizedTest(name = "standing coffin {0}, sleeper {1}: rests {2}")
-  @CsvSource({
-    "true, SLEEPING, STANDING",
-    "true, STANDING, STANDING",
-    "true, CROUCHING, STANDING",
-    "false, SLEEPING, SLEEPING",
-    "false, STANDING, STANDING"
-  })
-  void aSleeperInAStandingCoffinIsNeverLeftLyingDown(
-      final boolean standing, final EntityPose current, final EntityPose rests) {
-    assertEquals(rests, CoffinLayout.restingPose(standing, current));
   }
 }

@@ -214,8 +214,9 @@ public class VomitGameTest implements FabricGameTest {
               10 - config.wards().eatenBlood(),
               "blood brought up with the garlic");
           context.assertTrue(
-              vampire.getMaxHealth() - vampire.getHealth() > config.blood().vomitDamage(),
-              "hurt more than by other food: " + Diagnostics.of(vampire));
+              vampire.getMaxHealth() - vampire.getHealth()
+                  >= config.blood().vomitDamage() + config.wards().eatenDamage(),
+              "hurt by the vomiting and the garlic together: " + Diagnostics.of(vampire));
           context.assertTrue(
               Weakened.sources(vampire).sources().containsKey(GarlicMeal.WEAKENED_SOURCE),
               "weakened by the garlic it ate: " + Diagnostics.of(vampire));

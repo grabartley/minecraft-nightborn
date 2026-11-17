@@ -1,10 +1,12 @@
 package com.grahambartley.nightborn.vomit;
 
 import com.grahambartley.nightborn.blood.BloodAttachment;
-import com.grahambartley.nightborn.config.NightbornConfig;
+import com.grahambartley.nightborn.config.BloodSettings;
+import com.grahambartley.nightborn.config.WardSettings;
 import com.grahambartley.nightborn.network.PlayerCue;
 import com.grahambartley.nightborn.network.PlayerCues;
 import com.grahambartley.nightborn.vampire.NightbornDamage;
+import com.grahambartley.nightborn.weakened.Weakened;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerEntity;
@@ -25,18 +27,17 @@ public final class Vomiting {
   }
 
   public static ItemStack swallow(
-      final PlayerEntity vampire, final ItemStack stack, final NightbornConfig config) {
+      final PlayerEntity vampire,
+      final ItemStack stack,
+      final BloodSettings blood,
+      final WardSettings wards) {
     final ItemStack leftBehind = Consumables.leftBehind(stack);
     vampire.incrementStat(Stats.USED.getOrCreateStat(stack.getItem()));
     if (vampire instanceof ServerPlayerEntity server) {
-      final GarlicMeal.Toll toll =
-          GarlicMeal.toll(
-              GarlicMeal.is(stack),
-              config.blood().vomitDamage(),
-              NAUSEA_TICKS,
-              BloodAttachment.get(server),
-              config.wards());
-      GarlicMeal.sicken(server, toll);
+      final GarlicMeal.Toll plain =
+          GarlicMeal.Toll.plain(blood.vomitDamage(), NAUSEA_TICKS, BloodAttachment.get(server));
+      final GarlicMeal.Toll toll = GarlicMeal.is(stack) ? GarlicMeal.worsen(plain, wards) : plain;
+      sicken(server, toll);
       throwUp(server, toll.damage(), toll.nauseaTicks());
     }
     final boolean creative = vampire.isInCreativeMode();
@@ -64,6 +65,15 @@ public final class Vomiting {
       return Leftover.HAND_BACK_CONTAINER;
     }
     return noContainer ? Leftover.KEEP : Leftover.POCKET_CONTAINER;
+  }
+
+  private static void sicken(final ServerPlayerEntity vampire, final GarlicMeal.Toll toll) {
+    if (toll.weakenTicks() > 0) {
+      Weakened.add(vampire, GarlicMeal.WEAKENED_SOURCE, toll.weakenStrength(), toll.weakenTicks());
+    }
+    if (toll.blood() != BloodAttachment.get(vampire)) {
+      BloodAttachment.set(vampire, toll.blood());
+    }
   }
 
   static void throwUp(final ServerPlayerEntity vampire, final int damage, final int nauseaTicks) {

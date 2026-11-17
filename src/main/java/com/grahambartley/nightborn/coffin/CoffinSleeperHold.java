@@ -23,7 +23,8 @@ public final class CoffinSleeperHold {
     }
     final Direction facing = state.get(BedBlock.FACING);
     final boolean standing = state.get(CoffinBlock.STANDING);
-    final EntityPose pose = CoffinLayout.restingPose(standing, sleeper.getPose());
+    final EntityPose pose =
+        CoffinSleepers.restingPose(CoffinSleepers.upright(sleeper), sleeper.getPose());
     if (pose != sleeper.getPose()) {
       sleeper.setPose(pose);
     }

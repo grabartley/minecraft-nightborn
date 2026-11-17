@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Optional;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.JigsawBlock;
+import net.minecraft.block.entity.JigsawBlockEntity;
 import net.minecraft.block.enums.Orientation;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.structure.StructureTemplate;
@@ -26,7 +27,7 @@ class ThresholdTest {
   private static StructureTemplate.StructureBlockInfo jigsaw(
       final BlockPos pos, final Orientation orientation, final String name) {
     final NbtCompound nbt = new NbtCompound();
-    nbt.putString(Threshold.NAME_KEY, name);
+    nbt.putString(JigsawBlockEntity.NAME_KEY, name);
     return new StructureTemplate.StructureBlockInfo(
         pos, Blocks.JIGSAW.getDefaultState().with(JigsawBlock.ORIENTATION, orientation), nbt);
   }

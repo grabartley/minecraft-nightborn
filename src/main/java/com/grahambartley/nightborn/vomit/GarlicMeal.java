@@ -1,10 +1,7 @@
 package com.grahambartley.nightborn.vomit;
 
-import com.grahambartley.nightborn.blood.BloodAttachment;
 import com.grahambartley.nightborn.config.WardSettings;
 import com.grahambartley.nightborn.ward.WardTags;
-import com.grahambartley.nightborn.weakened.Weakened;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 
 public final class GarlicMeal {
@@ -13,7 +10,12 @@ public final class GarlicMeal {
   static final int NAUSEA_FACTOR = 3;
   private static final int TICKS_PER_SECOND = 20;
 
-  public record Toll(int damage, int nauseaTicks, int weakenStrength, int weakenTicks, int blood) {}
+  public record Toll(int damage, int nauseaTicks, int weakenStrength, int weakenTicks, int blood) {
+
+    public static Toll plain(final int vomitDamage, final int nauseaTicks, final int blood) {
+      return new Toll(vomitDamage, nauseaTicks, 0, 0, blood);
+    }
+  }
 
   private GarlicMeal() {}
 
@@ -21,29 +23,12 @@ public final class GarlicMeal {
     return stack.isIn(WardTags.GARLIC);
   }
 
-  public static Toll toll(
-      final boolean garlic,
-      final int vomitDamage,
-      final int nauseaTicks,
-      final int blood,
-      final WardSettings wards) {
-    if (!garlic) {
-      return new Toll(vomitDamage, nauseaTicks, 0, 0, blood);
-    }
+  public static Toll worsen(final Toll plain, final WardSettings wards) {
     return new Toll(
-        vomitDamage + wards.eatenDamage(),
-        nauseaTicks * NAUSEA_FACTOR,
+        plain.damage() + wards.eatenDamage(),
+        plain.nauseaTicks() * NAUSEA_FACTOR,
         wards.touchStrength(),
         wards.eatenSeconds() * TICKS_PER_SECOND,
-        Math.max(0, blood - wards.eatenBlood()));
-  }
-
-  static void sicken(final PlayerEntity vampire, final Toll toll) {
-    if (toll.weakenTicks() > 0) {
-      Weakened.add(vampire, WEAKENED_SOURCE, toll.weakenStrength(), toll.weakenTicks());
-    }
-    if (toll.blood() != BloodAttachment.get(vampire)) {
-      BloodAttachment.set(vampire, toll.blood());
-    }
+        Math.max(0, plain.blood() - wards.eatenBlood()));
   }
 }

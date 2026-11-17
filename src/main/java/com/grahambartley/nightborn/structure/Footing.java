@@ -11,7 +11,12 @@ import net.minecraft.util.math.ColumnPos;
 import net.minecraft.world.Heightmap;
 import net.minecraft.world.gen.structure.Structure;
 
-public record Footing(boolean dry, int maxRise, int spacing, Optional<Identifier> entrance) {
+public record Footing(
+    boolean dry,
+    int maxRise,
+    int spacing,
+    Optional<Identifier> entrance,
+    Optional<Integer> maxLift) {
 
   public static final int WIDEST_SPACING = 16;
   public static final int STEEPEST_RISE = 64;
@@ -28,7 +33,10 @@ public record Footing(boolean dry, int maxRise, int spacing, Optional<Identifier
                       Codec.intRange(1, WIDEST_SPACING)
                           .optionalFieldOf("spacing", 8)
                           .forGetter(Footing::spacing),
-                      Identifier.CODEC.optionalFieldOf("entrance").forGetter(Footing::entrance))
+                      Identifier.CODEC.optionalFieldOf("entrance").forGetter(Footing::entrance),
+                      Codec.intRange(0, STEEPEST_RISE)
+                          .optionalFieldOf("max_lift")
+                          .forGetter(Footing::maxLift))
                   .apply(instance, Footing::new));
 
   public record Column(int surface, int floor) {
@@ -36,6 +44,10 @@ public record Footing(boolean dry, int maxRise, int spacing, Optional<Identifier
     public boolean underWater() {
       return surface > floor;
     }
+  }
+
+  public boolean allowsLift(final int lift) {
+    return Math.abs(lift) <= maxLift.orElse(maxRise);
   }
 
   public boolean accepts(final List<Column> columns) {
@@ -83,10 +95,6 @@ public record Footing(boolean dry, int maxRise, int spacing, Optional<Identifier
     }
     steps.add(max);
     return steps;
-  }
-
-  public int surface(final Structure.Context context, final ColumnPos point) {
-    return height(context, point, Heightmap.Type.WORLD_SURFACE_WG);
   }
 
   private static int height(

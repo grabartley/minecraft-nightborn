@@ -11,6 +11,7 @@ import net.minecraft.block.BedBlock;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.entity.EntityPose;
 import net.minecraft.fluid.FluidState;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
@@ -19,6 +20,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.MethodSource;
 
 @ExtendWith(MinecraftBootstrapExtension.class)
@@ -157,5 +159,18 @@ class CoffinSleepersTest {
         return -64;
       }
     };
+  }
+
+  @ParameterizedTest(name = "upright {0}, sleeper {1}: rests {2}")
+  @CsvSource({
+    "true, SLEEPING, STANDING",
+    "true, STANDING, STANDING",
+    "true, CROUCHING, STANDING",
+    "false, SLEEPING, SLEEPING",
+    "false, STANDING, STANDING"
+  })
+  void anUprightSleeperIsNeverLeftLyingDown(
+      final boolean standing, final EntityPose current, final EntityPose rests) {
+    assertEquals(rests, CoffinSleepers.restingPose(standing, current));
   }
 }

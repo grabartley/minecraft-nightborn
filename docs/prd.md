@@ -296,7 +296,7 @@ How weakened a vampire is scales with how strong the source is. By default each 
 | ID | Requirement |
 |---|---|
 | WEAK-1 | Each Garlic String weakens vampires within 8 blocks. More strings in range weaken more, up to a cap |
-| WEAK-2 | Touching garlic, by walking through garlic crops or brushing a Garlic String, or holding garlic, weakens a vampire greatly, far more than a string in range |
+| WEAK-2 | Touching garlic, by walking through garlic crops or brushing a Garlic String, or holding garlic, weakens a vampire greatly, far more than a string in range. Eating garlic weakens just as much and for far longer (FEED-3) |
 | WEAK-3 | Holding a Crucifix in either hand weakens and slows vampires within 6 blocks who can see it, players and mobs alike, and stops them biting the holder |
 | WEAK-4 | A crucifix shape in the world, or a crucifix hung on a wall (DECOR-4), weakens vampires within 8 blocks who can see it |
 | WEAK-5 | Holy water hurts vampires and weakens them for a short time, whether splashed, lingering, fired as a bolt or carried as a coating on a weapon or ammo (GEAR-9). It does nothing to anyone else |

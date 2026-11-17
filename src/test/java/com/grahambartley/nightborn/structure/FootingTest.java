@@ -19,7 +19,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 class FootingTest {
 
-  private static final Footing DRY = new Footing(true, 4, 8, Optional.empty());
+  private static final Footing DRY = new Footing(true, 4, 8, Optional.empty(), Optional.empty());
 
   static Stream<Arguments> grounds() {
     final Footing.Column field = new Footing.Column(70, 70);
@@ -30,7 +30,7 @@ class FootingTest {
             "one corner in a river", DRY, List.of(field, new Footing.Column(63, 60)), false),
         Arguments.of(
             "a river is fine when water is allowed",
-            new Footing(false, 10, 8, Optional.empty()),
+            new Footing(false, 10, 8, Optional.empty(), Optional.empty()),
             List.of(field, new Footing.Column(63, 60)),
             true),
         Arguments.of(
@@ -57,7 +57,7 @@ class FootingTest {
   @CsvSource({"38, 8, 6", "16, 8, 3", "1, 8, 1", "17, 16, 2"})
   void samplesReachEveryEdgeOfTheBox(final int width, final int spacing, final int perSide) {
     final List<ColumnPos> samples =
-        new Footing(true, 4, spacing, Optional.empty())
+        new Footing(true, 4, spacing, Optional.empty(), Optional.empty())
             .samples(new BlockBox(0, 0, 0, width - 1, 10, width - 1), new ColumnPos(-3, -4));
     assertEquals(perSide * perSide + 1, samples.size());
     assertEquals(new ColumnPos(-3, -4), samples.getFirst());
@@ -71,7 +71,7 @@ class FootingTest {
         Footing.CODEC
             .parse(JsonOps.INSTANCE, JsonParser.parseString("{\"max_rise\": 4}"))
             .getOrThrow();
-    assertEquals(new Footing(true, 4, 8, Optional.empty()), footing);
+    assertEquals(new Footing(true, 4, 8, Optional.empty(), Optional.empty()), footing);
   }
 
   @Test
@@ -84,7 +84,29 @@ class FootingTest {
                     "{\"max_rise\": 6, \"entrance\": \"nightborn:castle_entrance\"}"))
             .getOrThrow();
     assertEquals(
-        new Footing(true, 6, 8, Optional.of(Identifier.of("nightborn", "castle_entrance"))),
+        new Footing(
+            true,
+            6,
+            8,
+            Optional.of(Identifier.of("nightborn", "castle_entrance")),
+            Optional.empty()),
         footing);
+  }
+
+  @ParameterizedTest(name = "rise {0}, lift limit {1}: a move of {2} is allowed: {3}")
+  @CsvSource({
+    "4, , 4, true",
+    "4, , -4, true",
+    "4, , 5, false",
+    "30, 10, 10, true",
+    "30, 10, -11, false",
+    "30, 0, 0, true",
+    "30, 0, 1, false"
+  })
+  void aStructureMovesOnlyAsFarAsItsDataAllows(
+      final int rise, final Integer limit, final int lift, final boolean allowed) {
+    assertEquals(
+        allowed,
+        new Footing(true, rise, 8, Optional.empty(), Optional.ofNullable(limit)).allowsLift(lift));
   }
 }
