@@ -19,6 +19,14 @@ public final class Hunting {
     return !peaceful && (!openSky || NightTime.isNight(fixedTime, timeOfDay));
   }
 
+  public static boolean batSearches(final boolean hasPrey, final int age, final int interval) {
+    return !hasPrey && age % interval == 0;
+  }
+
+  public static boolean batSwoops(final boolean hasPrey, final int biteCooldown) {
+    return hasPrey && biteCooldown == 0;
+  }
+
   public record Pursuit(
       boolean huntingHours,
       boolean hungry,

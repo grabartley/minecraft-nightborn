@@ -11,6 +11,7 @@ import com.grahambartley.nightborn.mob.NightbornMobs;
 import com.grahambartley.nightborn.mob.VampireEntity;
 import com.grahambartley.nightborn.skill.PowerUse;
 import com.grahambartley.nightborn.skill.Powers;
+import java.util.List;
 import net.fabricmc.fabric.api.event.player.UseEntityCallback;
 import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
 import net.minecraft.block.Blocks;
@@ -132,6 +133,32 @@ public class MindGameTest implements FabricGameTest {
           zombie.tryAttack(villager);
           context.assertEquals(
               villager.getHealth(), before, "a mesmerised mob's blow does nothing");
+          TestPlayers.finish(context, vampire);
+        });
+  }
+
+  @GameTest(templateName = ARENA, batchId = BATCH, tickLimit = TestPlayers.READY + 10)
+  public void aMesmerisedMobIsHeldInPlaceWhileAFreeOneKeepsItsStride(final TestContext context) {
+    final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(1, 2, 1));
+    final ZombieEntity held = context.spawnEntity(EntityType.ZOMBIE, new BlockPos(4, 2, 4));
+    final ZombieEntity free = context.spawnEntity(EntityType.ZOMBIE, new BlockPos(6, 2, 6));
+    held.setAiDisabled(true);
+    free.setAiDisabled(true);
+    context.runAtTick(
+        TestPlayers.READY,
+        () -> {
+          Mesmerise.land(vampire, held, NobleSkills.power(context));
+          for (final ZombieEntity walker : List.of(held, free)) {
+            walker.setForwardSpeed(1.0F);
+            walker.setSidewaysSpeed(1.0F);
+            walker.setUpwardSpeed(1.0F);
+          }
+          context.assertTrue(MindFeatures.hold(held), "the mesmerised mob skips its own thinking");
+          context.assertEquals(held.forwardSpeed, 0.0F, "it stops walking forward");
+          context.assertEquals(held.sidewaysSpeed, 0.0F, "it stops stepping sideways");
+          context.assertEquals(held.upwardSpeed, 0.0F, "it stops rising");
+          context.assertFalse(MindFeatures.hold(free), "a free mob keeps thinking for itself");
+          context.assertEquals(free.forwardSpeed, 1.0F, "and keeps walking");
           TestPlayers.finish(context, vampire);
         });
   }
