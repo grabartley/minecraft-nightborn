@@ -1,6 +1,7 @@
 package com.grahambartley.nightborn.skill;
 
 import com.grahambartley.nightborn.Nightborn;
+import com.grahambartley.nightborn.downed.Downed;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentRegistry;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentType;
 import net.minecraft.entity.LivingEntity;
@@ -24,9 +25,10 @@ public final class Mending {
     if (mend == null) {
       return;
     }
-    if (entity.isAlive()) {
+    final boolean helpless = !entity.isAlive() || Downed.helpless(entity);
+    if (!helpless) {
       entity.heal(mend.perTick());
     }
-    entity.setAttached(TYPE, entity.isAlive() ? mend.next() : null);
+    entity.setAttached(TYPE, mend.next(helpless));
   }
 }

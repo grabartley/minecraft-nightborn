@@ -39,7 +39,7 @@ public final class VampireTransitions {
     }
     FactionAttachment.set(player, Faction.VAMPIRE);
     MilestoneCriterion.reach(player, Milestone.TURNED);
-    BloodAttachment.set(player, BloodAttachment.FULL);
+    BloodAttachment.set(player, BloodAttachment.max(player));
     player.getHungerManager().setFoodLevel(BloodAttachment.FULL);
     player.resetStat(Stats.CUSTOM.getOrCreateStat(Stats.TIME_SINCE_REST));
     player.addStatusEffect(

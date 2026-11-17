@@ -18,9 +18,16 @@ class MendTest {
     while (mend != null) {
       healed += mend.perTick();
       steps++;
-      mend = mend.next();
+      mend = mend.next(false);
     }
     assertEquals(ticks, steps);
     assertEquals(health, healed, 0.001F);
+  }
+
+  @ParameterizedTest(name = "{0} ticks left, helpless {1}: carries on {2}")
+  @CsvSource({"5, false, true", "5, true, false", "1, false, false", "1, true, false"})
+  @DisplayName("a mend stops at once when its caster is downed or dead")
+  void stopsWhenHelpless(final int ticksLeft, final boolean helpless, final boolean carriesOn) {
+    assertEquals(carriesOn, new Mend(0.1F, ticksLeft).next(helpless) != null);
   }
 }
