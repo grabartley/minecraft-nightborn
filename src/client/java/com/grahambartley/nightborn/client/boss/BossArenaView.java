@@ -16,6 +16,7 @@ public final class BossArenaView {
   private static int boss = NONE;
   private static Optional<Arena> arena = Optional.empty();
   private static Optional<MusicSound> music = Optional.empty();
+  private static boolean fighting;
 
   private BossArenaView() {}
 
@@ -32,12 +33,14 @@ public final class BossArenaView {
     boss = payload.arena().isPresent() ? payload.boss() : NONE;
     arena = payload.arena();
     music = music(payload);
+    fighting = payload.arena().isPresent() && payload.fighting();
   }
 
   private static void forget() {
     boss = NONE;
     arena = Optional.empty();
     music = Optional.empty();
+    fighting = false;
   }
 
   static boolean applies(final int shown, final int sender, final boolean entering) {
@@ -53,6 +56,10 @@ public final class BossArenaView {
 
   public static Optional<Arena> arena() {
     return arena;
+  }
+
+  public static boolean fighting() {
+    return fighting;
   }
 
   public static Optional<MusicSound> music() {

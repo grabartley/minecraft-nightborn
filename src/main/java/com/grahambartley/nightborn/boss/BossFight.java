@@ -38,6 +38,7 @@ public final class BossFight {
   @Nullable private Vec3d start;
   private long phaseBegan;
   private final BossFlight flight = new BossFlight();
+  private final BossAmbience ambience = new BossAmbience();
   @Nullable private Arena arena;
   private long changeUntil;
   private boolean staking;
@@ -180,6 +181,7 @@ public final class BossFight {
             phases.index(),
             boss.getHealth() < boss.getMaxHealth() - PhaseTrack.SLACK,
             downed != null);
+    ArenaSeal.hold(world, arena, roll.inside());
     final List<ServerPlayerEntity> inside =
         world.getPlayers(
             player ->
@@ -196,6 +198,13 @@ public final class BossFight {
       return;
     }
     keepIn(boss);
+    ambience.tick(
+        world,
+        arena,
+        inside,
+        plan.flatMap(p -> p.phase(phases.index()).ambience()),
+        engaged && downed == null,
+        now);
     flight.tick(
         boss,
         plan.flatMap(p -> p.phase(phases.index()).flight()),

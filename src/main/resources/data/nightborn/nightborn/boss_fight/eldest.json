@@ -38,6 +38,40 @@
           "nightborn:court_lunge",
           "nightborn:court_gaze"
         ]
+      },
+      "ambience": {
+        "min_ticks": 500,
+        "max_ticks": 1100,
+        "cues": [
+          {
+            "sound": "minecraft:block.bell.resonate",
+            "weight": 3,
+            "volume": 1.0,
+            "pitch": 0.5
+          },
+          {
+            "sound": "minecraft:block.bell.use",
+            "weight": 2,
+            "volume": 0.9,
+            "pitch": 0.5
+          },
+          {
+            "weight": 2,
+            "lightning": true
+          },
+          {
+            "sound": "minecraft:entity.witch.celebrate",
+            "weight": 1,
+            "volume": 0.7,
+            "pitch": 0.6
+          },
+          {
+            "sound": "nightborn:boss.eldest.organ",
+            "weight": 1,
+            "volume": 0.8,
+            "pitch": 1.0
+          }
+        ]
       }
     },
     {
@@ -88,6 +122,44 @@
         "counters": [
           "nightborn:beast_pounce",
           "nightborn:beast_screech"
+        ]
+      },
+      "ambience": {
+        "min_ticks": 400,
+        "max_ticks": 900,
+        "cues": [
+          {
+            "weight": 2,
+            "lightning": true
+          },
+          {
+            "weight": 2,
+            "lightning": true
+          },
+          {
+            "sound": "minecraft:entity.ghast.scream",
+            "weight": 2,
+            "volume": 0.7,
+            "pitch": 0.6
+          },
+          {
+            "sound": "minecraft:block.bell.resonate",
+            "weight": 2,
+            "volume": 1.0,
+            "pitch": 0.5
+          },
+          {
+            "sound": "minecraft:ambient.cave",
+            "weight": 2,
+            "volume": 1.0,
+            "pitch": 0.8
+          },
+          {
+            "sound": "minecraft:entity.witch.celebrate",
+            "weight": 1,
+            "volume": 0.7,
+            "pitch": 0.6
+          }
         ]
       }
     },
@@ -143,6 +215,46 @@
           "nightborn:blood_step",
           "nightborn:blood_pools",
           "nightborn:beast_pounce"
+        ]
+      },
+      "ambience": {
+        "min_ticks": 300,
+        "max_ticks": 700,
+        "cues": [
+          {
+            "sound": "nightborn:boss.eldest.organ",
+            "weight": 3,
+            "volume": 0.9,
+            "pitch": 0.8
+          },
+          {
+            "weight": 2,
+            "lightning": true
+          },
+          {
+            "sound": "minecraft:entity.ghast.scream",
+            "weight": 2,
+            "volume": 0.8,
+            "pitch": 0.5
+          },
+          {
+            "sound": "minecraft:entity.evoker.celebrate",
+            "weight": 2,
+            "volume": 0.8,
+            "pitch": 0.5
+          },
+          {
+            "sound": "minecraft:entity.witch.celebrate",
+            "weight": 2,
+            "volume": 0.8,
+            "pitch": 0.5
+          },
+          {
+            "sound": "minecraft:block.bell.use",
+            "weight": 2,
+            "volume": 1.0,
+            "pitch": 0.5
+          }
         ]
       }
     }

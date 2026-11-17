@@ -22,4 +22,16 @@ class BossFlightTest {
       final boolean airborne, final boolean weightless, final boolean bat, final boolean grounds) {
     assertEquals(grounds, BossFlight.grounds(airborne, weightless, bat));
   }
+
+  @ParameterizedTest(name = "wants the air {0}, weakened {1}: flies {2}")
+  @CsvSource({
+    "true, false, true",
+    "true, true, false",
+    "false, false, false",
+    "false, true, false"
+  })
+  @DisplayName("garlic, silver and the like keep a boss on the ground")
+  void flies(final boolean wantsTheAir, final boolean weakened, final boolean flies) {
+    assertEquals(flies, BossFlight.flies(wantsTheAir, weakened));
+  }
 }

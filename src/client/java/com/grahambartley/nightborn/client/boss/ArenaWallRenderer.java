@@ -8,19 +8,20 @@ import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.math.ColorHelper;
 import net.minecraft.util.math.Vec3d;
-import org.joml.Matrix4f;
 
 public final class ArenaWallRenderer {
 
   static final Identifier TEXTURE = Identifier.ofVanilla("textures/misc/forcefield.png");
   static final int FULL_BRIGHT = 0xF000F0;
-  static final int RED = 0x7A;
-  static final int GREEN = 0x0E;
-  static final int BLUE = 0x18;
-  static final float DRIFT = 0.004F;
-  static final float TILE = 2.0F;
+
+  private record Veil(
+      float inset, float tile, float climb, float swirl, float alpha, double tintLead) {}
+
+  static final Veil[] VEILS = {
+    new Veil(0.0F, 2.0F, 0.006F, 0.002F, 1.0F, 0.0),
+    new Veil(0.12F, 3.5F, -0.011F, -0.005F, 0.7F, Math.PI)
+  };
 
   private ArenaWallRenderer() {}
 
@@ -34,48 +35,67 @@ public final class ArenaWallRenderer {
     final Vec3d camera = context.camera().getPos();
     final double fromWall =
         Math.hypot(camera.x - arena.midX(), camera.z - arena.midZ()) - arena.radius();
-    final int colour =
-        ColorHelper.Argb.getArgb((int) (ArenaWallShape.alpha(fromWall) * 255.0F), RED, GREEN, BLUE);
-    final float drift =
-        (context.world().getTime() + context.tickCounter().getTickDelta(false)) * DRIFT;
+    final float time = context.world().getTime() + context.tickCounter().getTickDelta(false);
+    final float strength = ArenaWallShape.strength(BossArenaView.fighting());
+    final float alpha = ArenaWallShape.alpha(fromWall) * ArenaWallShape.pulse(time * strength);
     final VertexConsumer buffer = consumers.getBuffer(RenderLayer.getEntityTranslucent(TEXTURE));
-    final float low = arena.centre().getY() - arena.below();
-    final float high = arena.centre().getY() + arena.above();
-    final int segments = ArenaWallShape.segments(arena.radius());
     matrices.push();
     matrices.translate(arena.midX() - camera.x, -camera.y, arena.midZ() - camera.z);
-    final Matrix4f matrix = matrices.peek().getPositionMatrix();
-    for (int i = 0; i < segments; i++) {
-      final float x0 = (float) ArenaWallShape.x(i, segments, arena.radius());
-      final float z0 = (float) ArenaWallShape.z(i, segments, arena.radius());
-      final float x1 = (float) ArenaWallShape.x(i + 1, segments, arena.radius());
-      final float z1 = (float) ArenaWallShape.z(i + 1, segments, arena.radius());
-      final float u0 = i / TILE;
-      final float u1 = (i + 1) / TILE;
-      final float v0 = drift;
-      final float v1 = drift + (high - low) / TILE;
-      corner(matrices, buffer, matrix, x0, low, z0, u0, v1, colour);
-      corner(matrices, buffer, matrix, x1, low, z1, u1, v1, colour);
-      corner(matrices, buffer, matrix, x1, high, z1, u1, v0, colour);
-      corner(matrices, buffer, matrix, x0, high, z0, u0, v0, colour);
+    for (final Veil veil : VEILS) {
+      veil(matrices, buffer, arena, veil, time, strength, alpha);
     }
     matrices.pop();
+  }
+
+  private static void veil(
+      final MatrixStack matrices,
+      final VertexConsumer buffer,
+      final Arena arena,
+      final Veil veil,
+      final float time,
+      final float strength,
+      final float alpha) {
+    final float low = arena.centre().getY() - arena.below();
+    final float rise = (float) (arena.below() + arena.above()) / ArenaWallShape.ROWS;
+    final int segments = ArenaWallShape.segments(arena.radius());
+    for (int i = 0; i < segments; i++) {
+      for (int row = 0; row < ArenaWallShape.ROWS; row++) {
+        final float y0 = low + row * rise;
+        final float y1 = y0 + rise;
+        corner(matrices, buffer, arena, veil, i, segments, y0, time, strength, alpha);
+        corner(matrices, buffer, arena, veil, i + 1, segments, y0, time, strength, alpha);
+        corner(matrices, buffer, arena, veil, i + 1, segments, y1, time, strength, alpha);
+        corner(matrices, buffer, arena, veil, i, segments, y1, time, strength, alpha);
+      }
+    }
   }
 
   private static void corner(
       final MatrixStack matrices,
       final VertexConsumer buffer,
-      final Matrix4f matrix,
-      final float x,
+      final Arena arena,
+      final Veil veil,
+      final int segment,
+      final int segments,
       final float y,
-      final float z,
-      final float u,
-      final float v,
-      final int colour) {
+      final float time,
+      final float strength,
+      final float alpha) {
+    final double angle = 2.0 * Math.PI * (segment % segments) / segments;
+    final double reach =
+        arena.radius() - veil.inset() + ArenaWallShape.ripple(angle, y, time, strength);
+    final int tint = ArenaWallShape.tint(angle + veil.tintLead(), time * strength);
     buffer
-        .vertex(matrix, x, y, z)
-        .color(colour)
-        .texture(u, v)
+        .vertex(
+            matrices.peek().getPositionMatrix(),
+            (float) (Math.cos(angle) * reach),
+            y,
+            (float) (Math.sin(angle) * reach))
+        .color(
+            tint >> 16 & 0xFF, tint >> 8 & 0xFF, tint & 0xFF, (int) (alpha * veil.alpha() * 255.0F))
+        .texture(
+            segment / veil.tile() + time * veil.swirl() * strength,
+            (0.0F - y) / veil.tile() + time * veil.climb() * strength)
         .overlay(OverlayTexture.DEFAULT_UV)
         .light(FULL_BRIGHT)
         .normal(matrices.peek(), 0.0F, 1.0F, 0.0F);

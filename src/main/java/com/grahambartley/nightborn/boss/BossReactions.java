@@ -9,6 +9,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
 public final class BossReactions {
@@ -60,11 +61,15 @@ public final class BossReactions {
   }
 
   public static void strike(final MobEntity boss) {
-    final LightningEntity bolt = EntityType.LIGHTNING_BOLT.create(boss.getWorld());
+    strike(boss.getWorld(), boss.getPos());
+  }
+
+  public static void strike(final World world, final Vec3d at) {
+    final LightningEntity bolt = EntityType.LIGHTNING_BOLT.create(world);
     if (bolt != null) {
-      bolt.refreshPositionAfterTeleport(boss.getPos());
+      bolt.refreshPositionAfterTeleport(at);
       bolt.setCosmetic(true);
-      boss.getWorld().spawnEntity(bolt);
+      world.spawnEntity(bolt);
     }
   }
 }

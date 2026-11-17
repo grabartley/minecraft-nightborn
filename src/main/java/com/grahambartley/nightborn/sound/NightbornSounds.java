@@ -22,6 +22,7 @@ public final class NightbornSounds {
   public static final SoundEvent MUSIC_GOTHIC = register("music.gothic");
   public static final SoundEvent MUSIC_BOSS_ELDEST = register("music.boss.eldest");
   public static final SoundEvent MUSIC_BOSS_ELDEST_FINAL = register("music.boss.eldest_final");
+  public static final SoundEvent BOSS_ELDEST_ORGAN = register("boss.eldest.organ");
 
   private NightbornSounds() {}
 

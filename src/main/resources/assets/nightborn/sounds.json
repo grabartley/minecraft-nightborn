@@ -340,6 +340,12 @@
       { "name": "minecraft:block/grindstone/grindstone3", "pitch": 0.5 }
     ]
   },
+  "boss.eldest.organ": {
+    "subtitle": "subtitles.nightborn.boss.eldest.organ",
+    "sounds": [
+      "nightborn:boss/organ_sting"
+    ]
+  },
   "music.boss.eldest": {
     "sounds": [
       {

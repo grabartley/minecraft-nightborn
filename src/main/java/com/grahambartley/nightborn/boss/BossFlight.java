@@ -2,6 +2,7 @@ package com.grahambartley.nightborn.boss;
 
 import com.grahambartley.nightborn.batform.BatForm;
 import com.grahambartley.nightborn.levitation.Levitation;
+import com.grahambartley.nightborn.weakened.Weakened;
 import java.util.Optional;
 import net.minecraft.entity.mob.MobEntity;
 
@@ -11,6 +12,10 @@ public final class BossFlight {
 
   public boolean flying() {
     return flying;
+  }
+
+  public static boolean flies(final boolean wantsTheAir, final boolean weakened) {
+    return wantsTheAir && !weakened;
   }
 
   public static boolean grounds(final boolean airborne, final boolean aloft, final boolean bat) {
@@ -27,8 +32,9 @@ public final class BossFlight {
       final long sinceLanding,
       final long now) {
     final boolean airborne =
-        flight.map(f -> f.airborne(fighting, held, diving, sinceLanding)).orElse(false)
-            && (Levitation.isLevitating(boss) || Levitation.start(boss));
+        flies(
+            flight.map(f -> f.airborne(fighting, held, diving, sinceLanding)).orElse(false),
+            Weakened.sources(boss).level(false) > 0);
     if (airborne) {
       boss.setNoGravity(true);
       boss.setVelocity(flight.get().steer(boss.getPos(), flight.get().spot(arena, now)));
