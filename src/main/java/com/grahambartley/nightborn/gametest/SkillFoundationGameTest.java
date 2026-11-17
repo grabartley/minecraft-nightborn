@@ -16,6 +16,9 @@ import com.grahambartley.nightborn.skill.TreeProgress;
 import java.util.Optional;
 import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.world.ServerWorld;
+import net.minecraft.test.AfterBatch;
+import net.minecraft.test.BeforeBatch;
 import net.minecraft.test.GameTest;
 import net.minecraft.test.TestContext;
 import net.minecraft.util.Identifier;
@@ -24,6 +27,7 @@ import net.minecraft.util.math.BlockPos;
 public class SkillFoundationGameTest implements FabricGameTest {
 
   static final String ARENA = "nightborn:vampire_arena";
+  static final String NIGHT_BATCH = "skillFoundationNight";
   static final BlockPos STAND = new BlockPos(3, 2, 4);
   static final Identifier THICK_BLOOD = Identifier.of("nightborn", "core/thick_blood");
   static final Identifier BLOOD_RUSH = Identifier.of("nightborn", "core/blood_rush");
@@ -114,7 +118,17 @@ public class SkillFoundationGameTest implements FabricGameTest {
     TestPlayers.finish(context, vampire);
   }
 
-  @GameTest(templateName = ARENA, tickLimit = 200)
+  @BeforeBatch(batchId = NIGHT_BATCH)
+  public void pinNight(final ServerWorld world) {
+    WorldClock.freeze(world, WorldClock.MIDNIGHT);
+  }
+
+  @AfterBatch(batchId = NIGHT_BATCH)
+  public void unpinNight(final ServerWorld world) {
+    WorldClock.release(world);
+  }
+
+  @GameTest(templateName = ARENA, batchId = NIGHT_BATCH, tickLimit = 200)
   public void bloodHealingHealsSixHealthOverThreeSeconds(final TestContext context) {
     final ServerPlayerEntity vampire = TestPlayers.vampire(context, STAND);
     SkillAttachment.set(
