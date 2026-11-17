@@ -27,9 +27,8 @@ public final class PhaseTrack {
     return index <= 0 ? 1.0 : floor(shares, index - 1);
   }
 
-  public static float cap(
-      final float amount, final float health, final float floorHealth, final boolean uncapped) {
-    return uncapped ? amount : Math.min(amount, Math.max(0.0F, health - floorHealth));
+  public static float held(final float health, final float floorHealth, final boolean uncapped) {
+    return uncapped ? health : Math.max(health, floorHealth);
   }
 
   public static boolean spent(final float health, final float floorHealth, final boolean last) {

@@ -91,18 +91,19 @@ public final class BossFight {
   }
 
   public float cap(
-      final LivingEntity boss,
-      final Optional<BossFightPlan> plan,
-      final boolean finishing,
-      final float amount) {
-    return plan.map(
-            p ->
-                PhaseTrack.cap(
-                    p.phase(phases.index()).body().limit(amount, finishing),
+      final Optional<BossFightPlan> plan, final boolean finishing, final float amount) {
+    return plan.map(p -> p.phase(phases.index()).body().limit(amount, finishing)).orElse(amount);
+  }
+
+  public void hold(
+      final LivingEntity boss, final Optional<BossFightPlan> plan, final boolean finishing) {
+    plan.ifPresent(
+        p ->
+            boss.setHealth(
+                PhaseTrack.held(
                     boss.getHealth(),
                     floorHealth(boss, p),
-                    phases.last(p.phases().size()) || finishing))
-        .orElse(amount);
+                    phases.last(p.phases().size()) || finishing)));
   }
 
   public boolean guards(

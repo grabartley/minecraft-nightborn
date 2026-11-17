@@ -178,8 +178,9 @@ public class EldestEntity extends BossVampireEntity implements BlazingEyes {
 
   @Override
   protected void applyDamage(final DamageSource source, final float amount) {
-    super.applyDamage(
-        source, fight.cap(this, plan(), NightbornDamage.killsVampires(source), amount));
+    final boolean finishing = NightbornDamage.killsVampires(source);
+    super.applyDamage(source, fight.cap(plan(), finishing, amount));
+    fight.hold(this, plan(), finishing);
   }
 
   @Override

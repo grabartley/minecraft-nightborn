@@ -34,23 +34,18 @@ class PhaseTrackTest {
     assertEquals(ceiling, PhaseTrack.ceiling(shares(text), index), 1.0E-9);
   }
 
-  @ParameterizedTest(name = "{0} damage at {1} health over a floor of {2}, uncapped {3}: {4}")
+  @ParameterizedTest(name = "health {0} over a floor of {1}, uncapped {2}: held at {3}")
   @CsvSource({
-    "10, 100, 70, false, 10",
-    "40, 100, 70, false, 30",
-    "40, 70, 70, false, 0",
-    "40, 60, 70, false, 0",
-    "40, 100, 70, true, 40",
-    "500, 20, 0, false, 20"
+    "90, 70, false, 90",
+    "70, 70, false, 70",
+    "40, 70, false, 70",
+    "-500, 70, false, 70",
+    "40, 70, true, 40",
+    "-500, 0, false, 0"
   })
-  @DisplayName("a blow cannot carry past the end of a phase unless it is uncapped")
-  void caps(
-      final float amount,
-      final float health,
-      final float floor,
-      final boolean uncapped,
-      final float dealt) {
-    assertEquals(dealt, PhaseTrack.cap(amount, health, floor, uncapped), 1.0E-6F);
+  @DisplayName("a blow cannot carry health below the end of a phase unless it is uncapped")
+  void holds(final float health, final float floor, final boolean uncapped, final float held) {
+    assertEquals(held, PhaseTrack.held(health, floor, uncapped), 1.0E-6F);
   }
 
   @ParameterizedTest(name = "health {0} over a floor of {1}, last phase {2}: spent {3}")
