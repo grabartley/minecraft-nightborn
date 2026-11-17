@@ -9,6 +9,7 @@ import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.tag.TagKey;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.Nullable;
 
 public final class NightbornDamage {
 
@@ -39,7 +40,7 @@ public final class NightbornDamage {
         world.getRegistryManager().get(RegistryKeys.DAMAGE_TYPE).entryOf(STAKE), hunter);
   }
 
-  public static DamageSource lancet(final World world, final Entity bleeder) {
+  public static DamageSource lancet(final World world, @Nullable final Entity bleeder) {
     return new DamageSource(
         world.getRegistryManager().get(RegistryKeys.DAMAGE_TYPE).entryOf(LANCET), bleeder);
   }

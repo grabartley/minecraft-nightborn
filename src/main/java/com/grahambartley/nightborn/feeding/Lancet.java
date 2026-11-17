@@ -105,7 +105,7 @@ public final class Lancet {
     final ServerWorld world = bleeder.getServerWorld();
     final float draw = draw();
     final float before = creature.getHealth();
-    creature.damage(NightbornDamage.lancet(world, bleeder), draw);
+    creature.damage(NightbornDamage.lancet(world, creature == bleeder ? null : bleeder), draw);
     final float taken = BloodValue.taken(before, creature.getHealth());
     bleeder.swingHand(hand, true);
     if (taken < ServerConfigService.current().feeding().bottleSize()) {

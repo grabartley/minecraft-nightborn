@@ -29,7 +29,6 @@ public class BiteSicknessGameTest implements FabricGameTest {
   static final String CLOCK_BATCH = "sickness-clock";
   static final String EFFECT_BATCH = "sickness-effect";
   static final int NIGHT_SKIPPED = 7000;
-  static final int SAME_STAGE_RUN = 20000;
 
   @GameTest(templateName = ARENA, tickLimit = 40)
   public void aBiteStartsTheSicknessAndShowsIt(final TestContext context) {
@@ -163,7 +162,8 @@ public class BiteSicknessGameTest implements FabricGameTest {
         () -> {
           context.assertTrue(
               human.hasStatusEffect(BiteSicknessEffect.ENTRY), "the sickness shows first");
-          BiteSicknessAttachment.set(human, SAME_STAGE_RUN);
+          BiteSicknessAttachment.set(
+              human, SicknessStage.totalTicks(turning.sicknessDays()) / (SicknessStage.STAGES * 2));
         });
     context.runAtTick(
         60,

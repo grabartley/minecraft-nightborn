@@ -46,7 +46,10 @@ public final class FeedingSessions {
             !world.isClient && finishing(player) ? ActionResult.FAIL : ActionResult.PASS);
     ServerLivingEntityEvents.AFTER_DAMAGE.register(
         (entity, source, dealt, taken, blocked) -> {
-          if (taken > 0.0F && finishing(entity) && entity instanceof ServerPlayerEntity vampire) {
+          if (taken > 0.0F
+              && source.getAttacker() != null
+              && finishing(entity)
+              && entity instanceof ServerPlayerEntity vampire) {
             interrupt(vampire);
           }
         });

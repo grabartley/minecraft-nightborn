@@ -28,11 +28,13 @@ public class FinisherBiteGameTest implements FabricGameTest {
   @BeforeBatch(batchId = BATCH)
   public void clearBites(final ServerWorld world) {
     FeedingSessions.clearAll();
+    WorldClock.freeze(world, WorldClock.MIDNIGHT);
   }
 
   @AfterBatch(batchId = BATCH)
   public void clearBitesAfter(final ServerWorld world) {
     FeedingSessions.clearAll();
+    WorldClock.release(world);
   }
 
   private static CowEntity hurtCow(final TestContext context, final float health) {
@@ -111,7 +113,7 @@ public class FinisherBiteGameTest implements FabricGameTest {
         () -> {
           bite(context, vampire, cow);
           context.assertTrue(FeedingSessions.finishing(vampire), "the finisher takes hold");
-          vampire.damage(context.getWorld().getDamageSources().generic(), 2.0F);
+          vampire.damage(context.getWorld().getDamageSources().mobAttack(cow), 2.0F);
           context.assertFalse(FeedingSessions.isFeeding(vampire), "the blow breaks the bite");
         });
     context.runAtTick(
