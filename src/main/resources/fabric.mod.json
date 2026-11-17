@@ -35,6 +35,7 @@
       "com.grahambartley.nightborn.gametest.FactionGameTest",
       "com.grahambartley.nightborn.gametest.FeedingGameTest",
       "com.grahambartley.nightborn.gametest.DownedGameTest",
+      "com.grahambartley.nightborn.gametest.DownedTargetingGameTest",
       "com.grahambartley.nightborn.gametest.HardcoreVampireDeathGameTest",
       "com.grahambartley.nightborn.gametest.SunGameTest",
       "com.grahambartley.nightborn.gametest.BiteSicknessGameTest",

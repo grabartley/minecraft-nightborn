@@ -4,6 +4,7 @@ import com.grahambartley.nightborn.coffin.CoffinLayout;
 import com.grahambartley.nightborn.coffin.CoffinRise;
 import com.grahambartley.nightborn.coffin.CoffinSleeperHold;
 import com.grahambartley.nightborn.coffin.CoffinSleepers;
+import com.grahambartley.nightborn.downed.DownedTargeting;
 import com.grahambartley.nightborn.levitation.Levitation;
 import com.grahambartley.nightborn.levitation.LevitationMotion;
 import com.grahambartley.nightborn.server.ServerConfigService;
@@ -53,6 +54,17 @@ abstract class LivingEntityMixin {
   private void nightborn$phantomsIgnoreVampires(
       final LivingEntity target, final CallbackInfoReturnable<Boolean> cir) {
     if ((Object) this instanceof PhantomEntity && Vampires.isVampire(target)) {
+      cir.setReturnValue(false);
+    }
+  }
+
+  @Inject(
+      method = "canTarget(Lnet/minecraft/entity/LivingEntity;)Z",
+      at = @At("HEAD"),
+      cancellable = true)
+  private void nightborn$onlyHuntersTargetTheDowned(
+      final LivingEntity target, final CallbackInfoReturnable<Boolean> cir) {
+    if (DownedTargeting.spares((LivingEntity) (Object) this, target)) {
       cir.setReturnValue(false);
     }
   }
