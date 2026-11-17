@@ -431,11 +431,11 @@ The hunter tree starts with Tracking, an active power that points toward the nea
 | GUILD-3 | The Guild Master sells hunter gear and writes contracts on paper, such as staking vampires, staking an elder, or clearing a vampire structure by staking the last of its household. His offers and contracts are data, he trades through the vanilla trading screen, and his stock renews each day |
 | GUILD-4 | Contracts pay in emeralds, silver and gear, on top of the hunter points HUNT-2 gives. A contract is an item that keeps its own count. One stake marks one open contract. A vampire player counts as a fledgling against a contract that asks for an older vampire, and a vampire who lives alone is the last of its household. A fulfilled contract, in either hand, is handed to a Guild Master, who takes it and pays once |
 | GUILD-5 | A vampire player cannot trade or take contracts with any Guild Master |
-| GUILD-6 | Hunters also travel. A hunter party of 4 to 8 hunter mobs and one Guild Master appears now and then on the surface of the overworld near a player, the way a vanilla pillager patrol does. They are the same mobs as a hunter camp's, so they fight, trade, give contracts and are named as GUILD-2 to GUILD-5 and NAME-1 say. Only how they appear, and that they travel, is different |
+| GUILD-6 | Hunters also travel. A hunter party of 4 to 8 hunter mobs and one Guild Master appears now and then on the surface of the overworld near a player, the way a vanilla pillager patrol does. They are the same mobs as a hunter camp's, so they fight, trade, give contracts and are named as GUILD-2 to GUILD-5 and NAME-1 say. Only how they appear, and that they travel, is different. The biomes parties appear in are data |
 | GUILD-7 | A party wanders one area looking for vampires, then moves on to a new area. It keeps together around its Guild Master. A party on the move that no player has been near for some time leaves the world, as a patrol does. A party in camp never does |
-| GUILD-8 | As evening falls a party pitches a temporary camp where it is: a lit campfire and tents, each with a bed inside. It pitches only on clear natural ground, and may clear trees and plants that are in the way. It never breaks, replaces or moves a block a player placed, and never pitches beside anything built. With no such ground in reach it walks on and goes without a camp that night. The tents, the layout of the camp, and the blocks that count as natural ground or as trees and plants are data |
+| GUILD-8 | As evening falls a party pitches a temporary camp where it is: a lit campfire and tents, each with a bed inside. It pitches only where every block of the site is natural ground, a tree or a plant, and may clear the trees and plants. Any other block on or beside the site rules it out, so a party never breaks, replaces or moves anything a player built. With no such ground in reach it walks on and goes without a camp that night. The tents, the layout of the camp, and the blocks that count as natural ground or as trees and plants are data |
 | GUILD-9 | A party stays in one area for one night as a rule, never fewer than one and never more than three. By night some of the party sleep in the tents and the rest stay awake and search the ground around the camp. By day they wander the area and come back to the camp at evening. Nights are counted by the world's clock, so a party whose stay ran out while its chunks were unloaded breaks camp when they load |
-| GUILD-10 | On its last morning the party puts out the fire, takes down its tents and beds and moves on. Only the unlit campfire stays behind. The tents and beds of a temporary camp drop nothing, whoever removes them (SAFE-1). A camp whose party is all dead stands until someone breaks it |
+| GUILD-10 | On its last morning the party puts out the fire, takes down its tents and beds and moves on. Only the unlit campfire stays behind. The tents and beds of a temporary camp drop nothing, whoever removes them (SAFE-1). A player whose spawn was a tent's bed loses it as with any broken bed. A camp whose party is all dead stands until someone breaks it |
 | GUILD-11 | Now and then, at night, vampire bats fall on a pitched temporary camp and bite the hunters (HOME-10). The hunters awake fight them, the sleepers wake and join, and the fight lasts until the bats are dead or gone |
 
 **Enforcement:** server.
@@ -751,7 +751,7 @@ There is no singleplayer mode in this mod. A single-player world is an integrate
 | SAFE-3 | A bad config file never stops a server starting (CFG-3, CFG-4) |
 | SAFE-4 | Every payload is size-limited and checked, including skill purchases, familiar orders and the names owners give (NAME-8) |
 | SAFE-5 | Skill points are never created except by FEED-12, HUNT-1, HUNT-2, RITE-6 and CFG-8 |
-| SAFE-6 | A hunter party never changes a block a player placed, and its temporary camp gives no items (GUILD-8, GUILD-10) |
+| SAFE-6 | A hunter party never changes a block a player built (GUILD-8), and the tents and beds of its temporary camp drop nothing (GUILD-10) |
 
 ### Performance
 
@@ -786,7 +786,7 @@ There is no singleplayer mode in this mod. A single-player world is an integrate
 | Relics placed on a ritual altar | kept | kept | not applicable | not applicable | kept to the last save |
 | An Eldest, summoned or in a mountain castle, and its fight | kept with its chunk | kept | not applicable | not applicable | kept to the last save |
 | Whether a mountain castle's Eldest has been ended | kept | kept | not applicable | not applicable | kept to the last save |
-| A hunter party, its temporary camp and the nights it has left | kept | kept | not applicable | not applicable | kept to the last save |
+| A hunter party, its temporary camp and the nights it has left | kept, except a party on the move that leaves the world (GUILD-7) | kept | not applicable | not applicable | kept to the last save |
 | Contracts in progress | not applicable | kept | kept | kept | kept to the last save |
 | Settings | not applicable | kept | not applicable | not applicable | written atomically |
 
