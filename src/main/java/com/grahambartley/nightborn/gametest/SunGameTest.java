@@ -1,8 +1,10 @@
 package com.grahambartley.nightborn.gametest;
 
 import com.grahambartley.nightborn.mob.NightbornMobs;
+import com.grahambartley.nightborn.mob.ShadeRules;
 import com.grahambartley.nightborn.mob.VampireEntity;
 import com.grahambartley.nightborn.sun.DirectSun;
+import com.grahambartley.nightborn.vampire.NightbornDamage;
 import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.EntityType;
@@ -135,12 +137,25 @@ public class SunGameTest implements FabricGameTest {
     final boolean[] sunk = new boolean[1];
     context.runAtEveryTick(
         () -> {
-          sunk[0] |= vampire.inPowderSnow;
-          if (vampire.isAlive()) {
+          if (!vampire.isAlive()) {
+            context.assertTrue(sunk[0], "the vampire stood in powder snow");
+            context.assertTrue(
+                vampire.getRecentDamageSource() != null
+                    && vampire.getRecentDamageSource().isOf(NightbornDamage.SUN),
+                "the sun kills the vampire in powder snow");
+            context.complete();
             return;
           }
-          context.assertTrue(sunk[0], "the vampire stood in powder snow");
-          context.complete();
+          if (context.getTick() < IGNITED || !vampire.inPowderSnow) {
+            return;
+          }
+          sunk[0] = true;
+          context.assertTrue(
+              DirectSun.on(vampire),
+              "the sun reaches a vampire in powder snow, tick " + context.getTick());
+          context.assertTrue(
+              ShadeRules.endangered(vampire),
+              "a vampire in powder snow still seeks shade, tick " + context.getTick());
         });
   }
 
