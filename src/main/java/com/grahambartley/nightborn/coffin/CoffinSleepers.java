@@ -3,7 +3,6 @@ package com.grahambartley.nightborn.coffin;
 import java.util.Optional;
 import net.minecraft.block.BedBlock;
 import net.minecraft.block.BlockState;
-import net.minecraft.entity.EntityPose;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
@@ -26,10 +25,6 @@ public final class CoffinSleepers {
 
   public static boolean upright(final LivingEntity sleeper) {
     return inStandingCoffin(sleeper) || CoffinRise.rising(sleeper);
-  }
-
-  public static EntityPose restingPose(final boolean upright, final EntityPose current) {
-    return upright ? EntityPose.STANDING : current;
   }
 
   public static boolean inStandingCoffin(final LivingEntity sleeper) {

@@ -56,7 +56,6 @@ import net.minecraft.util.math.ColumnPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.intprovider.ConstantIntProvider;
 import net.minecraft.util.math.random.Random;
-import net.minecraft.world.Heightmap;
 import net.minecraft.world.gen.chunk.placement.RandomSpreadStructurePlacement;
 import net.minecraft.world.gen.chunk.placement.StructurePlacement;
 import net.minecraft.world.gen.chunk.placement.StructurePlacementCalculator;
@@ -300,15 +299,7 @@ public class VampireStructureGameTest implements FabricGameTest {
                         world.getRandom()));
     context.assertTrue(threshold.isPresent(), id + " finds its entrance among its placed pieces");
     final ColumnPos outside = threshold.get().outside();
-    final int surface =
-        generation
-            .chunkGenerator()
-            .getHeight(
-                outside.x(),
-                outside.z(),
-                Heightmap.Type.WORLD_SURFACE_WG,
-                world,
-                generation.noiseConfig());
+    final int surface = Footing.surface(generation, outside);
     context.assertEquals(
         threshold.get().floor().getY(),
         surface - 1,

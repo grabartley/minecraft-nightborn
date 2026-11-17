@@ -96,8 +96,7 @@ class FootingTest {
   @ParameterizedTest(name = "rise {0}, lift limit {1}: a move of {2} is allowed: {3}")
   @CsvSource({
     "4, , 4, true",
-    "4, , -4, true",
-    "4, , 5, false",
+    "4, , -40, true",
     "30, 10, 10, true",
     "30, 10, -11, false",
     "30, 0, 0, true",

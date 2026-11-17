@@ -215,8 +215,10 @@ public final class VampireStructure extends Structure {
                         name,
                         context.structureTemplateManager(),
                         context.random()));
-    final int lift = threshold.map(way -> way.lift(surface(context, way.outside()))).orElse(0);
-    if (!footing.get().allowsLift(lift)) {
+    final int lift =
+        threshold.map(way -> way.lift(Footing.surface(context, way.outside()))).orElse(0);
+    if (threshold.isEmpty() && footing.get().entrance().isPresent()
+        || !footing.get().allowsLift(lift)) {
       return Optional.empty();
     }
     pieces.shift(lift);
@@ -226,17 +228,6 @@ public final class VampireStructure extends Structure {
     return footing.get().fits(context, pieces.getBoundingBox(), approach)
         ? Optional.of(new StructurePosition(placed, Either.right(pieces)))
         : Optional.empty();
-  }
-
-  private static int surface(final Context context, final ColumnPos point) {
-    return context
-        .chunkGenerator()
-        .getHeight(
-            point.x(),
-            point.z(),
-            Heightmap.Type.WORLD_SURFACE_WG,
-            context.world(),
-            context.noiseConfig());
   }
 
   @Override

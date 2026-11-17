@@ -78,7 +78,7 @@ abstract class PlayerEntityMixin {
   private void nightborn$sleepStandingInAStandingCoffin(final CallbackInfo ci) {
     final PlayerEntity self = (PlayerEntity) (Object) this;
     if (CoffinSleepers.upright(self)) {
-      self.setPose(CoffinSleepers.restingPose(true, self.getPose()));
+      self.setPose(EntityPose.STANDING);
       ci.cancel();
     }
   }

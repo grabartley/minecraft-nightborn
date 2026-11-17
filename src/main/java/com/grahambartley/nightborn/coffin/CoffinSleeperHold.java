@@ -23,10 +23,8 @@ public final class CoffinSleeperHold {
     }
     final Direction facing = state.get(BedBlock.FACING);
     final boolean standing = state.get(CoffinBlock.STANDING);
-    final EntityPose pose =
-        CoffinSleepers.restingPose(CoffinSleepers.upright(sleeper), sleeper.getPose());
-    if (pose != sleeper.getPose()) {
-      sleeper.setPose(pose);
+    if (CoffinSleepers.upright(sleeper) && sleeper.getPose() != EntityPose.STANDING) {
+      sleeper.setPose(EntityPose.STANDING);
     }
     final boolean rising = CoffinRise.rising(sleeper);
     final Vec3d spot =

@@ -47,7 +47,7 @@ public record Footing(
   }
 
   public boolean allowsLift(final int lift) {
-    return Math.abs(lift) <= maxLift.orElse(maxRise);
+    return maxLift.map(limit -> Math.abs(lift) <= limit).orElse(true);
   }
 
   public boolean accepts(final List<Column> columns) {
@@ -82,8 +82,7 @@ public record Footing(
     for (final ColumnPos point : samples(box, start)) {
       columns.add(
           new Column(
-              height(context, point, Heightmap.Type.WORLD_SURFACE_WG),
-              height(context, point, Heightmap.Type.OCEAN_FLOOR_WG)));
+              surface(context, point), height(context, point, Heightmap.Type.OCEAN_FLOOR_WG)));
     }
     return accepts(columns);
   }
@@ -95,6 +94,10 @@ public record Footing(
     }
     steps.add(max);
     return steps;
+  }
+
+  public static int surface(final Structure.Context context, final ColumnPos point) {
+    return height(context, point, Heightmap.Type.WORLD_SURFACE_WG);
   }
 
   private static int height(
