@@ -421,7 +421,9 @@ public class OccultGameTest implements FabricGameTest {
           goal.tick();
           context.assertEquals(familiar.mode(), FamiliarMode.SCOUT, "at its range it is not done");
           context.assertTrue(
-              heading(familiar).distanceTo(vampire.getPos()) < vampire.getHeight(),
+              heading(familiar)
+                      .distanceTo(vampire.getPos().add(0.0, vampire.getHeight() * 0.6, 0.0))
+                  < 0.01,
               "from its range it turns back to its owner");
           familiar.setPosition(vampire.getPos());
           goal.tick();

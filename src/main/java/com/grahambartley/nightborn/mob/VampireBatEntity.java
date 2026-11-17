@@ -65,12 +65,13 @@ public class VampireBatEntity extends BatEntity implements GeoEntity {
 
   @Override
   protected void mobTick() {
-    if (!hunt()) {
+    hunt();
+    if (!isSwooping()) {
       super.mobTick();
     }
   }
 
-  public boolean hunt() {
+  public void hunt() {
     if (biteCooldown > 0) {
       biteCooldown--;
     }
@@ -83,7 +84,7 @@ public class VampireBatEntity extends BatEntity implements GeoEntity {
     final boolean swooping = Hunting.batSwoops(prey != null, biteCooldown);
     dataTracker.set(SWOOPING, swooping);
     if (!swooping) {
-      return false;
+      return;
     }
     if (isRoosting()) {
       setRoosting(false);
@@ -97,7 +98,6 @@ public class VampireBatEntity extends BatEntity implements GeoEntity {
     if (squaredDistanceTo(prey) < BITE_REACH * BITE_REACH) {
       bite(prey);
     }
-    return true;
   }
 
   private void bite(final LivingEntity victim) {

@@ -138,7 +138,7 @@ public class MindGameTest implements FabricGameTest {
   }
 
   @GameTest(templateName = ARENA, batchId = BATCH, tickLimit = TestPlayers.READY + 10)
-  public void aMesmerisedMobIsHeldInPlaceWhileAnotherWalksOn(final TestContext context) {
+  public void aMesmerisedMobIsHeldInPlaceWhileAFreeOneKeepsItsStride(final TestContext context) {
     final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(1, 2, 1));
     final ZombieEntity held = context.spawnEntity(EntityType.ZOMBIE, new BlockPos(4, 2, 4));
     final ZombieEntity free = context.spawnEntity(EntityType.ZOMBIE, new BlockPos(6, 2, 6));

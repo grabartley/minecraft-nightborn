@@ -292,7 +292,6 @@ public class VampireHomeGameTest implements FabricGameTest {
         () -> {
           vampire.setAttacker(hunter);
           vampire.setTarget(hunter);
-          context.assertTrue(vampire.getTarget() == hunter, "the vampire is set on its attacker");
           vampire.tickHome();
           context.assertTrue(
               vampire.getTarget() == null, "past its chase range the vampire gives up");

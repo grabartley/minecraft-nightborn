@@ -60,21 +60,21 @@ public class VampireBatGameTest implements FabricGameTest {
     final boolean[] bitten = {false};
     context.runAtEveryTick(
         () -> {
-          final boolean hunting = huntStep(bat);
+          final boolean swoopedEarlier = swooped[0];
+          huntStep(bat);
+          swooped[0] |= bat.isSwooping();
           if (context.getTick() <= TestPlayers.READY || bitten[0]) {
             return;
           }
-          swooped[0] |= hunting;
           if (human.getHealth() < human.getMaxHealth()) {
             bitten[0] = true;
-            context.assertTrue(swooped[0], "the bat swoops before it bites");
+            context.assertTrue(swoopedEarlier, "the bat swoops before it bites");
             context.assertTrue(
                 BiteSicknessAttachment.isSick(human), "the bat's bite starts sickness");
             context.assertTrue(bat.isAlive(), "the bat bit and lived");
             context.waitAndRun(
                 2,
                 () -> {
-                  context.assertFalse(bat.hunt(), "the bat breaks off after a bite");
                   context.assertFalse(bat.isSwooping(), "the bat stops swooping after a bite");
                   TestPlayers.finish(context, human);
                 });
@@ -92,7 +92,7 @@ public class VampireBatGameTest implements FabricGameTest {
     final ServerPlayerEntity human = TestPlayers.human(context, new BlockPos(5, 2, 4));
     context.runAtEveryTick(
         () -> {
-          context.assertFalse(bat.hunt(), "a bat in the open by day does not hunt");
+          huntStep(bat);
           context.assertFalse(bat.isSwooping(), "a bat in the open by day does not swoop");
         });
     context.runAtTick(
@@ -104,12 +104,11 @@ public class VampireBatGameTest implements FabricGameTest {
         });
   }
 
-  private static boolean huntStep(final VampireBatEntity bat) {
-    final boolean hunting = bat.hunt();
-    if (hunting) {
+  private static void huntStep(final VampireBatEntity bat) {
+    bat.hunt();
+    if (bat.isSwooping()) {
       bat.move(MovementType.SELF, bat.getVelocity());
     }
-    return hunting;
   }
 
   private static VampireBatEntity hunter(final TestContext context) {
