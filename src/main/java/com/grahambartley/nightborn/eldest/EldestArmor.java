@@ -30,7 +30,7 @@ public final class EldestArmor {
             ENCHANTABILITY,
             netherite.equipSound(),
             () -> Ingredient.ofItems(EldestSpoils.ASH),
-            List.of(new ArmorMaterial.Layer(Identifier.ofVanilla("netherite"))),
+            List.of(new ArmorMaterial.Layer(Identifier.of(Nightborn.MOD_ID, "eldest"))),
             netherite.toughness(),
             netherite.knockbackResistance()));
   }
