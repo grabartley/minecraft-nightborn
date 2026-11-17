@@ -13,6 +13,8 @@ import net.minecraft.world.gen.structure.Structure;
 
 public record Summit(int reach, int spacing, int minHeight, int maxHeight) {
 
+  private record Sample(ColumnPos point, int height) {}
+
   public static final int FARTHEST_REACH = 64;
   public static final int WIDEST_SPACING = 16;
   static final int LOWEST = -64;
@@ -50,16 +52,19 @@ public record Summit(int reach, int spacing, int minHeight, int maxHeight) {
 
   public Optional<ColumnPos> peak(final ColumnPos start, final ToIntFunction<ColumnPos> heights) {
     return samples(start).stream()
-        .filter(
-            point ->
-                heights.applyAsInt(point) >= minHeight && heights.applyAsInt(point) <= maxHeight)
+        .map(point -> new Sample(point, heights.applyAsInt(point)))
+        .filter(sample -> sample.height() >= minHeight && sample.height() <= maxHeight)
         .max(
-            Comparator.comparingInt(heights::applyAsInt)
+            Comparator.comparingInt(Sample::height)
                 .thenComparing(
-                    Comparator.comparingLong((ColumnPos point) -> distanceSquared(point, start))
+                    Comparator.comparingLong(
+                            (Sample sample) -> distanceSquared(sample.point(), start))
                         .reversed())
-                .thenComparing(Comparator.comparingInt(ColumnPos::x).reversed())
-                .thenComparing(Comparator.comparingInt(ColumnPos::z).reversed()));
+                .thenComparing(
+                    Comparator.comparingInt((Sample sample) -> sample.point().x()).reversed())
+                .thenComparing(
+                    Comparator.comparingInt((Sample sample) -> sample.point().z()).reversed()))
+        .map(Sample::point);
   }
 
   public Optional<ColumnPos> peak(final Structure.Context context, final ColumnPos start) {

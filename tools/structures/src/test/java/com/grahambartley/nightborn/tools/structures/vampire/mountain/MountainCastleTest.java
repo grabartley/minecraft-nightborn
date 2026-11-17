@@ -195,7 +195,8 @@ class MountainCastleTest {
     assertEquals(layout.chapel(), !find(t, "blood_pool").isEmpty());
   }
 
-  @ParameterizedTest(name = "{0}: both wall walks are clear from end to end")
+  @ParameterizedTest(
+      name = "{0}: every stretch of wall walk and every doorway onto it is two blocks clear")
   @MethodSource("layouts")
   void nothingHangsOverAWallWalk(final MountainCastle.Layout layout) {
     final Template t = MountainCastle.build(layout);
@@ -216,9 +217,11 @@ class MountainCastleTest {
   @MethodSource("layouts")
   void theEastWalkIsOnePath(final MountainCastle.Layout layout) {
     final Template t = MountainCastle.build(layout);
-    for (int z = 13; z <= 38; z++) {
-      assertEquals("minecraft:air", t.get(55, Ramparts.TOP + 1, z), "walk at z " + z);
-      assertEquals("minecraft:air", t.get(55, Ramparts.TOP + 2, z), "headroom at z " + z);
+    final int x = Crag.UPPER_EAST - Ramparts.THICK + 1;
+    for (int z = Chapel.NORTH - 5; z <= Chapel.SOUTH + 2; z++) {
+      for (int up = 1; up <= Ramparts.WALK_HEADROOM; up++) {
+        assertEquals("minecraft:air", t.get(x, Ramparts.TOP + up, z), "walk at z " + z);
+      }
     }
   }
 }

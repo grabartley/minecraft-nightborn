@@ -87,6 +87,9 @@ class HallWingTest {
     assertTrue(t.get(x, y, HallWing.NORTH + 1).contains("dark_oak_stairs[facing=east"));
     assertEquals(BlockState.AIR, t.get(x, y + 1, HallWing.NORTH + 1));
     assertEquals(BlockState.AIR, t.get(x, y + 2, HallWing.NORTH + 1));
+    assertTrue(
+        t.get(HallWing.WEST + 3, HallWing.LOFT + 1, HallWing.NORTH + 1).contains("dark_oak_fence"),
+        "a rail closes the open end of the stairwell");
   }
 
   @ParameterizedTest(name = "the {0} floor holds {1}")

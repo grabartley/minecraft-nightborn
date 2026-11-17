@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.google.gson.JsonParser;
 import com.grahambartley.nightborn.MinecraftBootstrapExtension;
+import com.mojang.serialization.DataResult;
 import com.mojang.serialization.JsonOps;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -73,7 +74,7 @@ class HouseholdTest {
         loads, Household.CODEC.parse(JsonOps.INSTANCE, JsonParser.parseString(json)).isSuccess());
   }
 
-  private static com.mojang.serialization.DataResult<Household> ceilinged(final String ceiling) {
+  private static DataResult<Household> ceilinged(final String ceiling) {
     return Household.CODEC.parse(
         JsonOps.INSTANCE,
         JsonParser.parseString(
