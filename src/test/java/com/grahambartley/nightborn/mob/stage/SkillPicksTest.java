@@ -91,4 +91,16 @@ class SkillPicksTest {
         List.of(NOBLE_BLOOD),
         SkillPicks.pick(VAMPIRE, StageFixtures.weights(Map.of(NOBLE_BLOOD, 1), 0), 3, () -> 0.5));
   }
+
+  @Test
+  @DisplayName("taking every skill takes the whole tree, each after the skills it needs")
+  void every() {
+    final List<Identifier> picks = SkillPicks.every(VAMPIRE);
+    assertEquals(VAMPIRE.keySet(), Set.copyOf(picks));
+    assertEquals(VAMPIRE.size(), picks.size());
+    for (int i = 0; i < picks.size(); i++) {
+      assertTrue(
+          picks.subList(0, i).containsAll(VAMPIRE.get(picks.get(i)).requires()), picks.toString());
+    }
+  }
 }

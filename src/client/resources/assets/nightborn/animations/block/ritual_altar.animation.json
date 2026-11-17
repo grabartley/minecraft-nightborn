@@ -1,0 +1,100 @@
+{
+	"format_version": "1.8.0",
+	"animations": {
+		"idle": {
+			"loop": true,
+			"animation_length": 1,
+			"bones": {
+				"sigil": {
+					"position": {
+						"0.0": [
+							"0",
+							"0",
+							"0"
+						]
+					}
+				}
+			}
+		},
+		"relics_placed": {
+			"loop": true,
+			"animation_length": 2,
+			"bones": {
+				"sigil": {
+					"position": {
+						"0.0": {
+							"post": [
+								"0",
+								"0.5",
+								"0"
+							],
+							"lerp_mode": "catmullrom"
+						},
+						"1.0": {
+							"post": [
+								"0",
+								"1",
+								"0"
+							],
+							"lerp_mode": "catmullrom"
+						},
+						"2.0": {
+							"post": [
+								"0",
+								"0.5",
+								"0"
+							],
+							"lerp_mode": "catmullrom"
+						}
+					}
+				}
+			}
+		},
+		"ritual_active": {
+			"loop": true,
+			"animation_length": 2,
+			"bones": {
+				"sigil": {
+					"rotation": {
+						"0.0": [
+							"0",
+							"0",
+							"0"
+						],
+						"2.0": [
+							"0",
+							"-360",
+							"0"
+						]
+					},
+					"position": {
+						"0.0": {
+							"post": [
+								"0",
+								"3",
+								"0"
+							],
+							"lerp_mode": "catmullrom"
+						},
+						"1.0": {
+							"post": [
+								"0",
+								"5",
+								"0"
+							],
+							"lerp_mode": "catmullrom"
+						},
+						"2.0": {
+							"post": [
+								"0",
+								"3",
+								"0"
+							],
+							"lerp_mode": "catmullrom"
+						}
+					}
+				}
+			}
+		}
+	}
+}

@@ -86,7 +86,8 @@ class NightbornConfigTest {
             "mobs",
             "familiars",
             "combat",
-            "structures"),
+            "structures",
+            "ritual"),
         NightbornConfig.sections());
   }
 

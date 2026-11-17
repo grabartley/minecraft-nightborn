@@ -114,6 +114,57 @@
           "chance": 0.35
         }
       ]
+    },
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "nightborn:castle_signet",
+          "conditions": [
+            {
+              "condition": "nightborn:lives_in",
+              "structures": "nightborn:castle"
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "nightborn:crypt_reliquary",
+          "conditions": [
+            {
+              "condition": "nightborn:lives_in",
+              "structures": "nightborn:crypt"
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "nightborn:manor_locket",
+          "conditions": [
+            {
+              "condition": "nightborn:lives_in",
+              "structures": "nightborn:ruined_manor"
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "nightborn:lair_fang",
+          "conditions": [
+            {
+              "condition": "nightborn:lives_in",
+              "structures": "nightborn:underground_lair"
+            }
+          ]
+        }
+      ],
+      "conditions": [
+        {
+          "condition": "minecraft:random_chance",
+          "chance": 0.3
+        }
+      ]
     }
   ]
 }

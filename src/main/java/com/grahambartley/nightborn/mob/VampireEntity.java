@@ -264,6 +264,11 @@ public class VampireEntity extends HostileEntity
   }
 
   @Override
+  public Optional<BlockPos> home() {
+    return homeLife.home();
+  }
+
+  @Override
   public boolean tryAttack(final Entity target) {
     return hunt.bite(this, target);
   }
@@ -383,7 +388,11 @@ public class VampireEntity extends HostileEntity
 
   @Override
   public boolean canTarget(final LivingEntity target) {
-    return !Vampires.isVampire(target) && super.canTarget(target);
+    return fights(target) && super.canTarget(target);
+  }
+
+  protected boolean fights(final LivingEntity target) {
+    return !Vampires.isVampire(target);
   }
 
   @Override

@@ -38,6 +38,14 @@ public final class NightbornMobs {
               .eyeHeight(VAMPIRE_EYES)
               .maxTrackingRange(10));
 
+  public static final EntityType<EldestEntity> ELDEST =
+      register(
+          "eldest",
+          EntityType.Builder.create(EldestEntity::new, SpawnGroup.MONSTER)
+              .dimensions(VAMPIRE_WIDTH, VAMPIRE_HEIGHT)
+              .eyeHeight(VAMPIRE_EYES)
+              .maxTrackingRange(10));
+
   public static final EntityType<VampireBatEntity> VAMPIRE_BAT =
       register(
           "vampire_bat",
@@ -55,6 +63,10 @@ public final class NightbornMobs {
           "vampire_lord_spawn_egg",
           new SpawnEggItem(VAMPIRE_LORD, 0x3A0610, 0xB8902E, new Item.Settings()));
 
+  public static final Item ELDEST_SPAWN_EGG =
+      registerEgg(
+          "eldest_spawn_egg", new SpawnEggItem(ELDEST, 0x120408, 0x8A0F1C, new Item.Settings()));
+
   public static final Item VAMPIRE_BAT_SPAWN_EGG =
       registerEgg(
           "vampire_bat_spawn_egg",
@@ -69,6 +81,7 @@ public final class NightbornMobs {
     Temperaments.register();
     FabricDefaultAttributeRegistry.register(VAMPIRE, VampireEntity.createVampireAttributes());
     FabricDefaultAttributeRegistry.register(VAMPIRE_LORD, VampireEntity.createVampireAttributes());
+    FabricDefaultAttributeRegistry.register(ELDEST, VampireEntity.createVampireAttributes());
     FabricDefaultAttributeRegistry.register(
         VAMPIRE_BAT, VampireBatEntity.createVampireBatAttributes());
     ItemGroupEvents.modifyEntriesEvent(ItemGroups.SPAWN_EGGS)
@@ -76,6 +89,7 @@ public final class NightbornMobs {
             entries -> {
               entries.add(VAMPIRE_SPAWN_EGG);
               entries.add(VAMPIRE_LORD_SPAWN_EGG);
+              entries.add(ELDEST_SPAWN_EGG);
               entries.add(VAMPIRE_BAT_SPAWN_EGG);
             });
     MobSpawns.register();

@@ -47,13 +47,14 @@ public final class VampireStaging {
     final VampireStage stage = VampireStages.stage(registries, id).orElse(VampireStage.PLAIN);
     final Map<Identifier, Skill> skills = Skills.allSkills(registries);
     final Map<Identifier, SkillBranch> branches = Skills.allBranches(registries);
+    final Map<Identifier, Skill> open =
+        SkillPicks.forStage(
+            SkillPicks.ofTree(skills, branches, SkillTree.VAMPIRE), branches, stage.skills());
     final List<Identifier> picks =
-        SkillPicks.pick(
-            SkillPicks.forStage(
-                SkillPicks.ofTree(skills, branches, SkillTree.VAMPIRE), branches, stage.skills()),
-            stage.skills(),
-            stage.skills().count().get(random),
-            random::nextDouble);
+        stage.skills().every()
+            ? SkillPicks.every(open)
+            : SkillPicks.pick(
+                open, stage.skills(), stage.skills().count().get(random), random::nextDouble);
     SkillAttachment.set(vampire, SkillTree.VAMPIRE, learned(picks, skills, branches));
     StageStats.apply(vampire, stage.body());
     SkillAttributes.apply(vampire);
