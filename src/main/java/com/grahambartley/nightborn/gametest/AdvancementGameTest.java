@@ -156,6 +156,8 @@ public class AdvancementGameTest implements FabricGameTest {
     final ServerPlayerEntity vampire = TestPlayers.vampire(context, STAND);
     final CowEntity cow = context.spawnEntity(EntityType.COW, STAND.east());
     final VillagerEntity villager = context.spawnEntity(EntityType.VILLAGER, STAND.west());
+    cow.setAiDisabled(true);
+    villager.setAiDisabled(true);
     MilestoneCriterion.reach(vampire, Milestone.FED, cow);
     context.assertTrue(TestAdvancements.done(context, vampire, "first_blood"), "any creature");
     context.assertFalse(
