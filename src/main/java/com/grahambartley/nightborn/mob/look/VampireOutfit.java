@@ -29,7 +29,7 @@ public record VampireOutfit(
                       VampireRig.CODEC.fieldOf("rig").forGetter(VampireOutfit::rig),
                       Identifier.CODEC.fieldOf("era").forGetter(VampireOutfit::era),
                       Piece.CODEC.listOf().fieldOf("pieces").forGetter(VampireOutfit::pieces),
-                      Codec.intRange(1, VampireLook.MAX_WEIGHT)
+                      Codec.intRange(1, Weighted.MAX_WEIGHT)
                           .optionalFieldOf("weight", 1)
                           .forGetter(VampireOutfit::weight))
                   .apply(instance, VampireOutfit::new));

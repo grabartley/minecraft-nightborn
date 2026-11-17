@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.grahambartley.nightborn.MinecraftBootstrapExtension;
+import com.grahambartley.nightborn.guild.HunterVoice;
 import com.grahambartley.nightborn.mob.look.VampireRig;
 import com.grahambartley.nightborn.mob.look.VampireVoice;
 import java.io.IOException;
@@ -33,24 +34,40 @@ class MobSoundsTest {
 
   static Stream<Arguments> hunterVoices() {
     return VampireRig.COMMON.stream()
-        .flatMap(rig -> MobSounds.HUNTER_VOICES.stream().map(v -> Arguments.of(rig, v)));
+        .flatMap(rig -> Arrays.stream(HunterVoice.values()).map(v -> Arguments.of(rig, v)));
   }
 
   @ParameterizedTest(name = "{0} {1}")
   @MethodSource("hunterVoices")
-  @DisplayName("hunters speak with their own male and female voices, defined in sounds.json")
-  void hunterVoiceIsDefined(final VampireRig rig, final VampireVoice voice) throws IOException {
-    final String path = MobSounds.voicePath(MobSounds.HUNTER, rig, voice);
+  @DisplayName("hunters speak as villagers, male and female, with a translated subtitle")
+  void hunterVoiceIsDefined(final VampireRig rig, final HunterVoice voice) throws IOException {
+    final String path = MobSounds.voicePath(MobSounds.HUNTER, rig, voice.id());
     assertEquals("nightborn:" + path, MobSounds.hunter(rig, voice).getId().toString());
     final JsonObject sounds =
         JsonParser.parseString(Files.readString(ASSETS.resolve("sounds.json"))).getAsJsonObject();
     assertTrue(sounds.has(path), path);
+    final JsonObject event = sounds.getAsJsonObject(path);
+    final JsonObject lang =
+        JsonParser.parseString(Files.readString(ASSETS.resolve("lang/en_us.json")))
+            .getAsJsonObject();
+    assertTrue(lang.has(event.get("subtitle").getAsString()), path);
+    event
+        .getAsJsonArray("sounds")
+        .forEach(
+            sound ->
+                assertTrue(
+                    sound
+                        .getAsJsonObject()
+                        .get("name")
+                        .getAsString()
+                        .startsWith("minecraft:mob/villager/"),
+                    path));
   }
 
   @ParameterizedTest(name = "{0} {1}")
-  @CsvSource({"MALE, HISS", "LORD, AMBIENT", "LORD, HURT"})
-  @DisplayName("asking for a voice hunters do not have fails loudly")
-  void hunterHasNoSuchVoice(final VampireRig rig, final VampireVoice voice) {
+  @CsvSource({"LORD, AMBIENT", "LORD, HURT", "ELDEST_MALE, CHEER"})
+  @DisplayName("asking for a hunter voice on a rig hunters do not have fails loudly")
+  void hunterHasNoSuchVoice(final VampireRig rig, final HunterVoice voice) {
     assertThrows(IllegalArgumentException.class, () -> MobSounds.hunter(rig, voice));
   }
 

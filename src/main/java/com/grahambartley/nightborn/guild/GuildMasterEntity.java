@@ -1,5 +1,6 @@
 package com.grahambartley.nightborn.guild;
 
+import com.grahambartley.nightborn.mob.MobSounds;
 import com.grahambartley.nightborn.server.ServerConfigService;
 import com.grahambartley.nightborn.vampire.Vampires;
 import java.util.Optional;
@@ -31,6 +32,7 @@ import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
+import net.minecraft.util.Identifier;
 import net.minecraft.village.TradeOffer;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
@@ -49,8 +51,11 @@ public class GuildMasterEntity extends MerchantEntity implements GeoEntity, Hunt
 
   private static final TrackedData<Boolean> TRADING =
       DataTracker.registerData(GuildMasterEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
+  private static final TrackedData<String> LOOK =
+      DataTracker.registerData(GuildMasterEntity.class, TrackedDataHandlerRegistry.STRING);
 
   private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
+  private final WornLook worn = new WornLook();
   private long lastRestock;
 
   public GuildMasterEntity(final EntityType<? extends MerchantEntity> type, final World world) {
@@ -67,6 +72,7 @@ public class GuildMasterEntity extends MerchantEntity implements GeoEntity, Hunt
   protected void initDataTracker(final DataTracker.Builder builder) {
     super.initDataTracker(builder);
     builder.add(TRADING, false);
+    builder.add(LOOK, "");
   }
 
   @Override
@@ -143,6 +149,9 @@ public class GuildMasterEntity extends MerchantEntity implements GeoEntity, Hunt
     if (getWorld().isClient()) {
       return;
     }
+    if (!hasPositionTarget()) {
+      wear(dataTracker.get(LOOK));
+    }
     CampHome.keep(this, TENT_REACH);
     final PlayerEntity customer = getCustomer();
     if (customer != null && Vampires.isVampire(customer)) {
@@ -168,9 +177,19 @@ public class GuildMasterEntity extends MerchantEntity implements GeoEntity, Hunt
     playSound(SoundEvents.ENTITY_VILLAGER_YES, getSoundVolume(), getSoundPitch());
   }
 
+  private void wear(final String look) {
+    dataTracker.set(LOOK, GuildData.wornLook(look, getRegistryManager(), rig(), getRandom()));
+  }
+
   @Override
-  public HunterLook look() {
-    return HunterLook.GUILD_MASTER;
+  public HunterRig rig() {
+    return HunterRig.GUILD_MASTER;
+  }
+
+  @Override
+  public Identifier texture() {
+    return worn.texture(
+        rig(), dataTracker.get(LOOK), look -> GuildData.texture(getRegistryManager(), look, rig()));
   }
 
   @Override
@@ -191,17 +210,19 @@ public class GuildMasterEntity extends MerchantEntity implements GeoEntity, Hunt
   @Override
   @Nullable
   protected SoundEvent getAmbientSound() {
-    return hasCustomer() ? SoundEvents.ENTITY_VILLAGER_TRADE : SoundEvents.ENTITY_VILLAGER_AMBIENT;
+    return hasCustomer()
+        ? SoundEvents.ENTITY_VILLAGER_TRADE
+        : MobSounds.hunter(rig().figure(), HunterVoice.AMBIENT);
   }
 
   @Override
   protected SoundEvent getHurtSound(final DamageSource source) {
-    return SoundEvents.ENTITY_VILLAGER_HURT;
+    return MobSounds.hunter(rig().figure(), HunterVoice.HURT);
   }
 
   @Override
   protected SoundEvent getDeathSound() {
-    return SoundEvents.ENTITY_VILLAGER_DEATH;
+    return MobSounds.hunter(rig().figure(), HunterVoice.DEATH);
   }
 
   @Override
@@ -219,6 +240,7 @@ public class GuildMasterEntity extends MerchantEntity implements GeoEntity, Hunt
   public void writeCustomDataToNbt(final NbtCompound nbt) {
     super.writeCustomDataToNbt(nbt);
     nbt.putLong(LAST_RESTOCK, lastRestock);
+    nbt.putString(GuildData.LOOK_KEY, dataTracker.get(LOOK));
     CampHome.write(this, nbt);
   }
 
@@ -226,6 +248,9 @@ public class GuildMasterEntity extends MerchantEntity implements GeoEntity, Hunt
   public void readCustomDataFromNbt(final NbtCompound nbt) {
     super.readCustomDataFromNbt(nbt);
     lastRestock = nbt.getLong(LAST_RESTOCK);
+    if (!getWorld().isClient()) {
+      wear(nbt.getString(GuildData.LOOK_KEY));
+    }
     CampHome.read(this, nbt, TENT_REACH);
   }
 
@@ -242,7 +267,8 @@ public class GuildMasterEntity extends MerchantEntity implements GeoEntity, Hunt
                             handSwinging,
                             dataTracker.get(TRADING),
                             false,
-                            state.getLimbSwingAmount())
+                            state.getLimbSwingAmount(),
+                            false)
                         .clip())));
   }
 
