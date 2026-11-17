@@ -2,6 +2,7 @@ package com.grahambartley.nightborn.command;
 
 import com.grahambartley.nightborn.Nightborn;
 import com.grahambartley.nightborn.blood.BloodAttachment;
+import com.grahambartley.nightborn.blood.BloodCapacity;
 import com.grahambartley.nightborn.config.TurningSettings;
 import com.grahambartley.nightborn.downed.Downed;
 import com.grahambartley.nightborn.downed.DownedState;
@@ -36,6 +37,7 @@ final class PlayerCommand {
                 .then(CommandManager.literal("turn").executes(PlayerCommand::turn))
                 .then(CommandManager.literal("cure").executes(PlayerCommand::cure))
                 .then(CommandManager.literal("info").executes(PlayerCommand::info))
+                .then(StageCommand.node())
                 .then(SkillsCommand.node()));
   }
 
@@ -94,6 +96,7 @@ final class PlayerCommand {
                   Text.translatable(
                       "nightborn.faction." + FactionAttachment.get(player).asString()),
                   BloodAttachment.get(player),
+                  BloodCapacity.of(player),
                   sickness,
                   downedText),
           false);

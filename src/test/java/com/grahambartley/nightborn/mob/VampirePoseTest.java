@@ -113,6 +113,7 @@ class VampirePoseTest {
     "COFFIN_SLEEP, true",
     "COFFIN_RISE, true",
     "COFFIN_STEP_OUT, true",
+    "FLINCH, false",
     "WEAKENED, false",
     "WEAKENED_WALK, false",
     "LEVITATE, false",

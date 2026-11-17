@@ -23,7 +23,8 @@ public record NightbornConfig(
     FamiliarSettings familiars,
     CombatSettings combat,
     StructureSettings structures,
-    RitualSettings ritual) {
+    RitualSettings ritual,
+    AgeSettings age) {
 
   public static final List<Setting<?>> SETTINGS =
       Stream.of(
@@ -46,7 +47,8 @@ public record NightbornConfig(
               FamiliarSettings.SETTINGS,
               CombatSettings.SETTINGS,
               StructureSettings.SETTINGS,
-              RitualSettings.SETTINGS)
+              RitualSettings.SETTINGS,
+              AgeSettings.SETTINGS)
           .flatMap(List::stream)
           .toList();
 
@@ -73,7 +75,8 @@ public record NightbornConfig(
         FamiliarSettings.from(values),
         CombatSettings.from(values),
         StructureSettings.from(values),
-        RitualSettings.from(values));
+        RitualSettings.from(values),
+        AgeSettings.from(values));
   }
 
   public SettingValues values() {

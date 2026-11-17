@@ -1,6 +1,7 @@
 package com.grahambartley.nightborn.mixin.client;
 
 import com.grahambartley.nightborn.blood.BloodAttachment;
+import com.grahambartley.nightborn.blood.BloodCapacity;
 import com.grahambartley.nightborn.client.BloodBar;
 import com.grahambartley.nightborn.vampire.Vampires;
 import net.minecraft.client.gui.DrawContext;
@@ -22,7 +23,7 @@ abstract class InGameHudMixin {
       final int right,
       final CallbackInfo ci) {
     if (Vampires.isVampire(player)) {
-      BloodBar.draw(context, BloodAttachment.get(player), top, right);
+      BloodBar.draw(context, BloodAttachment.get(player), BloodCapacity.of(player), top, right);
       ci.cancel();
     }
   }

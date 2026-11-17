@@ -34,6 +34,26 @@ class BloodAttachmentTest {
     assertEquals(read, BloodAttachment.get(player));
   }
 
+  @ParameterizedTest(name = "{0} extra, set {1} -> {2}")
+  @CsvSource({"2, 35, 22", "2, 21, 21", "6, 26, 26", "6, 20, 20", "0, 21, 20"})
+  @DisplayName("an older vampire's larger bar holds more blood")
+  void holdsMoreWithALargerBar(final int extra, final int set, final int read) {
+    final FakeAttachmentTarget player = new FakeAttachmentTarget();
+    BloodCapacity.setExtra(player, extra);
+    BloodAttachment.set(player, set);
+    assertEquals(read, BloodAttachment.get(player));
+  }
+
+  @Test
+  @DisplayName("blood above a bar that shrinks is cut back to the new bar")
+  void shrinkingBarCutsBlood() {
+    final FakeAttachmentTarget player = new FakeAttachmentTarget();
+    BloodCapacity.setExtra(player, 6);
+    BloodAttachment.set(player, 25);
+    BloodCapacity.setExtra(player, 2);
+    assertEquals(22, BloodAttachment.get(player));
+  }
+
   @Test
   @DisplayName("setting the same value again does not write, so nothing re-syncs")
   void unchangedDoesNotWrite() {

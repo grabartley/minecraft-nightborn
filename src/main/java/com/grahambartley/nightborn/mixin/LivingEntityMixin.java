@@ -1,5 +1,6 @@
 package com.grahambartley.nightborn.mixin;
 
+import com.grahambartley.nightborn.age.Ageing;
 import com.grahambartley.nightborn.batform.BatFlightMotion;
 import com.grahambartley.nightborn.coffin.CoffinLayout;
 import com.grahambartley.nightborn.coffin.CoffinRise;
@@ -25,6 +26,7 @@ import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.mob.PhantomEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
@@ -53,6 +55,9 @@ abstract class LivingEntityMixin {
     Vanish.tick(self);
     if (Vampires.isVampire(self)) {
       VampireTicker.tick(self);
+      if (self instanceof ServerPlayerEntity player) {
+        Ageing.tick(player);
+      }
     }
   }
 

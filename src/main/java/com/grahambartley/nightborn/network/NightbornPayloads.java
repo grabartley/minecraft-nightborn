@@ -14,6 +14,8 @@ public final class NightbornPayloads {
     PayloadTypeRegistry.playS2C().register(RitualGloomPayload.ID, RitualGloomPayload.CODEC);
     PayloadTypeRegistry.playS2C().register(BossArenaPayload.ID, BossArenaPayload.CODEC);
     PayloadTypeRegistry.playS2C().register(OpenNamingPayload.ID, OpenNamingPayload.CODEC);
+    PayloadTypeRegistry.playS2C().register(StageNamePayload.ID, StageNamePayload.CODEC);
+    PayloadTypeRegistry.playS2C().register(MirrorPayload.ID, MirrorPayload.CODEC);
     PayloadTypeRegistry.playC2S().register(EditConfigPayload.ID, EditConfigPayload.CODEC);
     PayloadTypeRegistry.playC2S().register(BuySkillPayload.ID, BuySkillPayload.CODEC);
     PayloadTypeRegistry.playC2S().register(UsePowerPayload.ID, UsePowerPayload.CODEC);

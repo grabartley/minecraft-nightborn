@@ -21,7 +21,7 @@ public final class BloodAttachment {
           ID,
           builder ->
               builder
-                  .persistent(Codec.intRange(0, FULL))
+                  .persistent(Codec.intRange(0, FULL + BloodCapacity.MOST_EXTRA))
                   .syncWith(PacketCodecs.VAR_INT.cast(), AttachmentSyncPredicate.targetOnly()));
 
   private BloodAttachment() {}
@@ -29,13 +29,18 @@ public final class BloodAttachment {
   public static void register() {}
 
   public static int get(final AttachmentTarget target) {
-    return target.getAttachedOrElse(TYPE, FULL);
+    final int capacity = BloodCapacity.of(target);
+    return Math.min(capacity, target.getAttachedOrElse(TYPE, capacity));
   }
 
   public static void set(final AttachmentTarget target, final int blood) {
-    final Integer stored = Math.max(0, Math.min(FULL, blood)) == FULL ? null : Math.max(0, blood);
+    final Integer stored = stored(blood, BloodCapacity.of(target));
     if (!Objects.equals(stored, target.getAttached(TYPE))) {
       target.setAttached(TYPE, stored);
     }
+  }
+
+  static Integer stored(final int blood, final int capacity) {
+    return blood >= capacity ? null : Math.max(0, blood);
   }
 }

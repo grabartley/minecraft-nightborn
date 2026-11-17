@@ -22,6 +22,9 @@ public final class StageDataCheck {
     } else if (stages.values().stream().allMatch(stage -> stage.weight() == 0)) {
       problems.add("no vampire stage has any weight");
     }
+    if (!stages.isEmpty() && stages.values().stream().noneMatch(s -> s.age().isPresent())) {
+      problems.add("no vampire stage is open to players");
+    }
     new TreeMap<>(stages)
         .forEach(
             (id, stage) -> {
