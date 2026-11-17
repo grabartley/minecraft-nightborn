@@ -47,4 +47,25 @@ class BossFightPlanTest {
     assertEquals(1.5F, plan.changeKnock());
     assertEquals(6.0F, plan.changeRange());
   }
+
+  @ParameterizedTest(name = "names a summon clip: {1}")
+  @CsvSource(
+      delimiter = '|',
+      value = {
+        ",\"clips\":{\"summon\":\"summon\",\"guard\":\"guard\"} | summon | guard",
+        "'' | '' | ''"
+      })
+  @DisplayName("a fight reads the clips it names and plays none when it names none")
+  void clips(final String extra, final String summon, final String guard) {
+    final BossFightPlan plan =
+        BossFightPlan.CODEC
+            .parse(
+                JsonOps.INSTANCE,
+                JsonParser.parseString(
+                    TWO_PHASES.substring(0, TWO_PHASES.length() - 1) + extra + "}"))
+            .getOrThrow();
+    assertEquals(summon, plan.clips().summon());
+    assertEquals(guard, plan.clips().guard());
+    assertEquals(extra.isEmpty(), plan.clips().equals(FightClips.NONE));
+  }
 }

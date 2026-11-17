@@ -88,7 +88,7 @@ public final class BossAttacks {
 
   public <T extends MobEntity & PowerShow> void tick(
       final T boss,
-      final String staggerClip,
+      final FightClips clips,
       final BossPhase phase,
       final List<? extends LivingEntity> foes,
       final float healCeiling,
@@ -98,8 +98,8 @@ public final class BossAttacks {
     }
     tickHazards(boss, world, now);
     final boolean held = ward.holds(now);
-    if (WardAttack.broke(warded, held, run != null, staggerClip.isEmpty())) {
-      boss.showPower(staggerClip);
+    if (BossWard.broke(warded, held, run != null, clips.stagger().isEmpty())) {
+      boss.showPower(clips.stagger());
     }
     warded = held;
     ward.expire(now);
@@ -290,7 +290,7 @@ public final class BossAttacks {
   }
 
   private void finish(final PowerShow boss, final BossPhase phase, final long now) {
-    if (run != null && AttackRun.loops(run.attack().strikeTicks())) {
+    if (run != null && AttackRun.holdsStrike(run.attack().strikeTicks())) {
       boss.showPower("");
     }
     if (run != null) {

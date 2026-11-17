@@ -11,10 +11,10 @@ import net.minecraft.util.StringIdentifiable;
 import net.minecraft.util.math.MathHelper;
 
 public enum VampireRig implements StringIdentifiable {
-  MALE("male", ClothingCut.MALE, Figure.FLAT, Figure.FLAT, "vampire"),
-  FEMALE("female", ClothingCut.FEMALE, 0.7F, 1.3F, "vampire"),
-  LORD("lord", ClothingCut.MALE, Figure.FLAT, Figure.FLAT, "vampire_lord"),
-  ELDEST_MALE("eldest_male", ClothingCut.MALE, Figure.FLAT, Figure.FLAT, "vampire_eldest");
+  MALE("male", ClothingCut.MALE, Figure.FLAT, Figure.FLAT, "vampire", false),
+  FEMALE("female", ClothingCut.FEMALE, 0.7F, 1.3F, "vampire", false),
+  LORD("lord", ClothingCut.MALE, Figure.FLAT, Figure.FLAT, "vampire_lord", false),
+  ELDEST_MALE("eldest_male", ClothingCut.MALE, Figure.FLAT, Figure.FLAT, "vampire_eldest", true);
 
   public static final Codec<VampireRig> CODEC = StringIdentifiable.createCodec(VampireRig::values);
 
@@ -28,18 +28,21 @@ public enum VampireRig implements StringIdentifiable {
   private final float smallestBust;
   private final float largestBust;
   private final String clips;
+  private final boolean rages;
 
   VampireRig(
       final String id,
       final ClothingCut cut,
       final float smallestBust,
       final float largestBust,
-      final String clips) {
+      final String clips,
+      final boolean rages) {
     this.id = id;
     this.cut = cut;
     this.smallestBust = smallestBust;
     this.largestBust = largestBust;
     this.clips = clips;
+    this.rages = rages;
   }
 
   public float bust(final double roll) {
@@ -67,7 +70,7 @@ public enum VampireRig implements StringIdentifiable {
   }
 
   public Identifier eyes(final boolean blazing) {
-    return blazing && ELDEST.contains(this)
+    return blazing && rages
         ? Identifier.of(Nightborn.MOD_ID, "textures/entity/vampire/" + id + "_eyes_blazing.png")
         : eyes();
   }

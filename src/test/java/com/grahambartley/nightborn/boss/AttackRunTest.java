@@ -72,10 +72,10 @@ class AttackRunTest {
     assertEquals(drains, run.drains(now));
   }
 
-  @ParameterizedTest(name = "{0} strike ticks: loops {1}")
+  @ParameterizedTest(name = "{0} strike ticks: held {1}")
   @CsvSource({"0, false", "1, true", "40, true"})
-  @DisplayName("only a strike that lasts plays a looping clip that must be stopped")
-  void loops(final int strikeTicks, final boolean loops) {
-    assertEquals(loops, AttackRun.loops(strikeTicks));
+  @DisplayName("only a strike that lasts keeps its clip going until it is told to stop")
+  void holdsStrike(final int strikeTicks, final boolean held) {
+    assertEquals(held, AttackRun.holdsStrike(strikeTicks));
   }
 }

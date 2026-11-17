@@ -189,5 +189,18 @@ class BossFightsTest {
                 named.downedForm()))
         .filter(clip -> !clip.isEmpty())
         .forEach(clip -> assertTrue(clips.contains(clip), clip));
+    plan.phases().stream()
+        .flatMap(phase -> phase.look().held().stream())
+        .forEach(
+            held ->
+                assertTrue(
+                    Files.exists(
+                        Path.of(
+                            "src/main/resources/assets/"
+                                + held.getNamespace()
+                                + "/models/item/"
+                                + held.getPath()
+                                + ".json")),
+                    held.toString()));
   }
 }

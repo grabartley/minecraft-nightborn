@@ -34,7 +34,7 @@ public record AttackRun(Identifier id, BossAttack attack, long startedAt) {
     return age(now) - attack.tellTicks();
   }
 
-  public static boolean loops(final int strikeTicks) {
+  public static boolean holdsStrike(final int strikeTicks) {
     return strikeTicks > 0;
   }
 }

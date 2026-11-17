@@ -230,7 +230,7 @@ public final class BossFight {
     }
     attacks.tick(
         boss,
-        plan.get().clips().stagger(),
+        plan.get().clips(),
         plan.get().phase(phases.index()),
         inside.stream().filter(boss::canTarget).toList(),
         ceilingHealth(boss, plan.get()),
