@@ -31,7 +31,8 @@ public class DownedTargetingGameTest implements FabricGameTest {
           EntityType.WITHER,
           EntityType.ELDER_GUARDIAN,
           EntityType.ENDER_DRAGON,
-          NightbornMobs.VAMPIRE);
+          EntityType.ENDERMAN,
+          EntityType.PIGLIN_BRUTE);
   static final List<EntityType<? extends MobEntity>> HUNTERS =
       List.of(GuildMobs.HUNTER, GuildMobs.GUILD_MASTER);
 
@@ -67,8 +68,6 @@ public class DownedTargetingGameTest implements FabricGameTest {
             context.assertTrue(mob.canTarget(vampire), name + " may target a standing vampire");
             put(vampire, Phase.DOWNED);
             context.assertFalse(mob.canTarget(vampire), name + " may not target a downed one");
-            mob.setTarget(vampire);
-            context.assertTrue(mob.getTarget() == null, name + " never takes it as a target");
             vampire.removeAttached(Downed.TYPE);
           }
           context.complete();
@@ -90,18 +89,18 @@ public class DownedTargetingGameTest implements FabricGameTest {
   }
 
   @GameTest(templateName = ARENA, tickLimit = TestPlayers.READY + 20)
-  public void noMobTakesADownedVampirePlayerAsItsTarget(final TestContext context) {
+  public void aMobDropsAVampirePlayerThatGoesDown(final TestContext context) {
     final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(4, 2, 4));
     context.runAtTick(
         TestPlayers.READY,
         () -> {
           final MobEntity zombie = beside(context, EntityType.ZOMBIE, vampire);
           zombie.setTarget(vampire);
-          context.assertTrue(zombie.getTarget() == vampire, "a standing vampire player is taken");
-          zombie.setTarget(null);
+          DownedTargeting.forget(zombie);
+          context.assertTrue(zombie.getTarget() == vampire, "a standing vampire player is kept");
           put(vampire, Phase.DOWNED);
-          zombie.setTarget(vampire);
-          context.assertTrue(zombie.getTarget() == null, "a downed vampire player is not");
+          DownedTargeting.forget(zombie);
+          context.assertTrue(zombie.getTarget() == null, "a downed vampire player is dropped");
           TestPlayers.finish(context, vampire);
         });
   }
@@ -128,7 +127,8 @@ public class DownedTargetingGameTest implements FabricGameTest {
             put(vampire, Phase.ESCAPING);
             context.assertTrue(mob.canTarget(vampire), name + " may target it once it escapes");
             mob.setTarget(vampire);
-            context.assertTrue(mob.getTarget() == vampire, name + " takes it again");
+            DownedTargeting.forget(mob);
+            context.assertTrue(mob.getTarget() == vampire, name + " keeps it as a target again");
             mob.setTarget(null);
             vampire.removeAttached(Downed.TYPE);
           }
@@ -147,9 +147,8 @@ public class DownedTargetingGameTest implements FabricGameTest {
             final MobEntity mob = beside(context, type, vampire);
             final String name = EntityType.getId(type).getPath();
             mob.setTarget(vampire);
-            context.assertTrue(mob.getTarget() == vampire, name + " takes a downed target");
             DownedTargeting.forget(mob);
-            context.assertTrue(mob.getTarget() == vampire, name + " keeps it");
+            context.assertTrue(mob.getTarget() == vampire, name + " keeps a downed target");
           }
           context.assertTrue(
               beside(context, GuildMobs.HUNTER, vampire).canTarget(vampire),
