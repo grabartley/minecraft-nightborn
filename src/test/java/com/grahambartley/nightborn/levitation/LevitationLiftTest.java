@@ -51,9 +51,21 @@ class LevitationLiftTest {
   @Test
   @DisplayName("a sneak sink covers a 20 block drop in a few seconds, far faster than the float")
   void sneakSinkIsFast() {
-    final double ticks = 20.0 / LevitationLift.SNEAK_SINK_SPEED;
-    assertTrue(ticks <= 80.0, "took " + ticks + " ticks");
-    assertTrue(LevitationLift.SNEAK_SINK_SPEED >= 5.0 * LevitationLift.SINK_SPEED);
+    final int sneaking = ticksToFall(20.0, true);
+    final int floating = ticksToFall(20.0, false);
+    assertTrue(sneaking <= 80, "took " + sneaking + " ticks");
+    assertTrue(floating >= 5 * sneaking, "the float took " + floating + " ticks");
+  }
+
+  private static int ticksToFall(final double drop, final boolean sinksFast) {
+    final double hover = 64.0 + LevitationLift.HOVER_HEIGHT;
+    double feet = hover + drop;
+    int ticks = 0;
+    while (feet > hover + 0.01 && ticks < 10_000) {
+      feet += LevitationLift.verticalVelocity(feet, OptionalDouble.of(64.0), sinksFast);
+      ticks++;
+    }
+    return ticks;
   }
 
   @Test

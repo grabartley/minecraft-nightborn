@@ -76,15 +76,27 @@ class LevitationRulesTest {
     assertEquals(lands, LevitationRules.landsOnSneak(sinksFast, onGround));
   }
 
-  @ParameterizedTest(name = "crouching {0}, levitating {1}: {2}")
+  @ParameterizedTest(name = "levitating {0}, room to stand {1}: {2}")
+  @CsvSource({
+    "true, true, true",
+    "true, false, false",
+    "false, true, false",
+    "false, false, false"
+  })
+  @DisplayName("a levitating vampire holds the float pose wherever it has room to stand")
+  void holdsFloatPose(final boolean levitating, final boolean roomToStand, final boolean holds) {
+    assertEquals(holds, LevitationRules.holdsFloatPose(levitating, roomToStand));
+  }
+
+  @ParameterizedTest(name = "crouching {0}, holds float pose {1}: {2}")
   @CsvSource({
     "true, false, true",
     "true, true, false",
     "false, true, false",
     "false, false, false"
   })
-  @DisplayName("sneak never crouches a levitating vampire, so the float pose stays")
-  void crouches(final boolean crouching, final boolean levitating, final boolean crouches) {
-    assertEquals(crouches, LevitationRules.crouches(crouching, levitating));
+  @DisplayName("sneak never crouches a vampire that holds the float pose")
+  void crouches(final boolean crouching, final boolean holdsFloatPose, final boolean crouches) {
+    assertEquals(crouches, LevitationRules.crouches(crouching, holdsFloatPose));
   }
 }

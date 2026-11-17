@@ -28,7 +28,7 @@ abstract class ClientPlayerEntityMixin {
   @ModifyReturnValue(method = "isInSneakingPose", at = @At("RETURN"))
   private boolean nightborn$noCrouchWhileLevitating(final boolean crouching) {
     return LevitationRules.crouches(
-        crouching, Levitation.isLevitating((ClientPlayerEntity) (Object) this));
+        crouching, Levitation.holdsFloatPose((ClientPlayerEntity) (Object) this));
   }
 
   @ModifyExpressionValue(

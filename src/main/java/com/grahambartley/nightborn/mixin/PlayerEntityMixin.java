@@ -83,9 +83,9 @@ abstract class PlayerEntityMixin {
   }
 
   @Inject(method = "updatePose", at = @At("HEAD"), cancellable = true)
-  private void nightborn$keepTheFloatPoseWhileSinking(final CallbackInfo ci) {
+  private void nightborn$keepTheFloatPoseWhileLevitating(final CallbackInfo ci) {
     final PlayerEntity self = (PlayerEntity) (Object) this;
-    if (Levitation.sinksFast(self)) {
+    if (Levitation.holdsFloatPose(self)) {
       self.setPose(EntityPose.STANDING);
       ci.cancel();
     }

@@ -11,6 +11,7 @@ import net.fabricmc.fabric.api.attachment.v1.AttachmentRegistry;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentSyncPredicate;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentType;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.minecraft.entity.EntityPose;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
@@ -39,6 +40,7 @@ public final class Levitation {
       AttachmentRegistry.create(Identifier.of(Nightborn.MOD_ID, "levitation_toggled_at"));
 
   static final int SET_DOWN_FALL_TICKS = 100;
+  static final double POSE_FIT_MARGIN = 1.0E-7;
 
   static final String REFUSED = "nightborn.levitation.refused";
 
@@ -74,6 +76,19 @@ public final class Levitation {
         isLevitating(entity), entity instanceof PlayerEntity, entity.isSneaking());
   }
 
+  public static boolean holdsFloatPose(final LivingEntity entity) {
+    return LevitationRules.holdsFloatPose(
+        isLevitating(entity),
+        entity
+            .getWorld()
+            .isSpaceEmpty(
+                entity,
+                entity
+                    .getDimensions(EntityPose.STANDING)
+                    .getBoxAt(entity.getPos())
+                    .contract(POSE_FIT_MARGIN)));
+  }
+
   public static boolean start(final LivingEntity vampire) {
     if (!LevitationRules.mayLevitate(
         Vampires.isVampire(vampire),
@@ -92,6 +107,12 @@ public final class Levitation {
     }
     if (entity.hasAttached(GUARD)) {
       entity.removeAttached(GUARD);
+    }
+  }
+
+  public static void touchDown(final ServerPlayerEntity player, final boolean onGround) {
+    if (LevitationRules.landsOnSneak(sinksFast(player), onGround)) {
+      land(player);
     }
   }
 
@@ -114,10 +135,6 @@ public final class Levitation {
       return;
     }
     vampire.fallDistance = 0.0F;
-    if (LevitationRules.landsOnSneak(sinksFast(vampire), vampire.isOnGround())) {
-      land(vampire);
-      return;
-    }
     if (vampire instanceof ServerPlayerEntity player) {
       guard(player);
     }

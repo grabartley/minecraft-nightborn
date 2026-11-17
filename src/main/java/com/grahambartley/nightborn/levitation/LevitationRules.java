@@ -24,8 +24,12 @@ public final class LevitationRules {
     return sinksFast && onGround;
   }
 
-  public static boolean crouches(final boolean crouching, final boolean levitating) {
-    return crouching && !levitating;
+  public static boolean holdsFloatPose(final boolean levitating, final boolean roomToStand) {
+    return levitating && roomToStand;
+  }
+
+  public static boolean crouches(final boolean crouching, final boolean holdsFloatPose) {
+    return crouching && !holdsFloatPose;
   }
 
   public static boolean toggleReady(final Long lastToggle, final long now) {

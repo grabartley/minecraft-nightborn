@@ -12,6 +12,7 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.decoration.ArmorStandEntity;
 import net.minecraft.entity.effect.StatusEffects;
+import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.test.AfterBatch;
@@ -253,8 +254,8 @@ public class LevitationGameTest implements FabricGameTest {
         () -> {
           context.assertTrue(
               Levitation.isLevitating(vampire), "levitating first: " + Diagnostics.of(vampire));
-          vampire.setOnGround(true);
           vampire.setSneaking(true);
+          vampire.networkHandler.onPlayerMove(new PlayerMoveC2SPacket.OnGroundOnly(true));
         });
     context.runAtTick(
         TestPlayers.READY + 10,
@@ -280,8 +281,8 @@ public class LevitationGameTest implements FabricGameTest {
     context.runAtTick(
         TestPlayers.READY + 5,
         () -> {
-          vampire.setOnGround(false);
           vampire.setSneaking(true);
+          vampire.networkHandler.onPlayerMove(new PlayerMoveC2SPacket.OnGroundOnly(false));
         });
     context.runAtTick(
         TestPlayers.READY + 15,
