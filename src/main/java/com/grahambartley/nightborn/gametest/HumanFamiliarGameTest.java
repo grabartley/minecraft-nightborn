@@ -84,6 +84,9 @@ public class HumanFamiliarGameTest implements FabricGameTest {
               "the contract slot holds the familiar");
           context.assertEquals(contract.getCount(), 1, "hiring uses up one contract");
           context.assertTrue(
+              NameGameTest.inFamiliarPools(context, familiar.getName().getString()),
+              "the familiar holds a name from the familiar pools from the moment it is hired");
+          context.assertTrue(
               TestAdvancements.done(context, vampire, "good_help_is_hard_to_find"),
               "hiring grants Good Help Is Hard To Find");
           TestPlayers.finish(context, vampire);

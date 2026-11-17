@@ -23,6 +23,6 @@
     "power_dodge_chance": 70,
     "retreat_health": 20
   },
-  "look": { "idle": "idle_ancient" },
+  "look": { "idle": "idle_ancient", "name_color": "dark_purple" },
   "loot": "nightborn:entities/vampire/lord"
 }

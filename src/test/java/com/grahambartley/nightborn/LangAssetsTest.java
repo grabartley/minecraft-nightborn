@@ -10,6 +10,9 @@ import com.grahambartley.nightborn.clothing.ClothingPiece;
 import com.grahambartley.nightborn.config.NightbornConfig;
 import com.grahambartley.nightborn.config.Setting;
 import com.grahambartley.nightborn.faction.Faction;
+import com.grahambartley.nightborn.name.Epithets;
+import com.grahambartley.nightborn.name.NameDisplay;
+import com.grahambartley.nightborn.name.NameRules;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -28,6 +31,8 @@ class LangAssetsTest {
 
   private static final Path LANG = Path.of("src/main/resources/assets/nightborn/lang");
   private static final Path ENCHANTMENTS = Path.of("src/main/resources/data/nightborn/enchantment");
+  private static final Path NAME_POOLS =
+      Path.of("src/main/resources/data/nightborn/nightborn/name_pool");
   private static final Pattern PLACEHOLDER = Pattern.compile("%(?:\\d+\\$)?s|%%");
 
   static Stream<String> languages() {
@@ -51,7 +56,7 @@ class LangAssetsTest {
 
   @Test
   @DisplayName(
-      "every setting, section, faction, blood quality, clothing piece and enchantment has its English text")
+      "every setting, section, faction, blood quality, clothing piece, enchantment, naming problem and epithet has its English text")
   void englishCoversTheCode() throws IOException {
     final JsonObject english = read("en_us");
     final List<String> needed = new ArrayList<>();
@@ -75,6 +80,21 @@ class LangAssetsTest {
           file ->
               needed.add(
                   "enchantment.nightborn." + file.getFileName().toString().replace(".json", "")));
+    }
+    needed.add(NameDisplay.WITH_EPITHET);
+    for (final NameRules.Problem problem : NameRules.Problem.values()) {
+      needed.add(problem.translationKey());
+    }
+    for (final String pool : List.of("vampire_epithets", "eldest_epithets")) {
+      JsonParser.parseString(
+              Files.readString(NAME_POOLS.resolve(pool + ".json"), StandardCharsets.UTF_8))
+          .getAsJsonObject()
+          .getAsJsonArray("names")
+          .forEach(
+              epithet -> {
+                needed.add(Epithets.key(epithet.getAsString(), false));
+                needed.add(Epithets.key(epithet.getAsString(), true));
+              });
     }
     needed.forEach(key -> assertTrue(english.has(key), key));
   }

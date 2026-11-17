@@ -5,12 +5,12 @@ import com.grahambartley.nightborn.skill.SkillPurchase;
 import com.grahambartley.nightborn.skill.SkillTree;
 import net.minecraft.util.Identifier;
 
-public record SkillTheme(SkillTree tree, int title, int text, int muted) {
+public record SkillTheme(SkillTree tree, int title, int text, int muted, int problem) {
 
   public static SkillTheme of(final SkillTree tree) {
     return switch (tree) {
-      case VAMPIRE -> new SkillTheme(tree, 0xE6C77A, 0xD8C8B0, 0x7A6A5A);
-      case HUNTER -> new SkillTheme(tree, 0xD6DEE2, 0xC8C0B4, 0x6E6A64);
+      case VAMPIRE -> new SkillTheme(tree, 0xE6C77A, 0xD8C8B0, 0x7A6A5A, 0xC0504A);
+      case HUNTER -> new SkillTheme(tree, 0xD6DEE2, 0xC8C0B4, 0x6E6A64, 0xB85A4E);
     };
   }
 

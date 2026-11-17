@@ -109,6 +109,9 @@ public class ThrallGameTest implements FabricGameTest {
           context.assertTrue(villager.isRemoved(), "the villager became something else");
           context.assertEquals(thralls.size(), 1, "one thrall stands where the villager was");
           context.assertTrue(thralls.get(0).isOwnedBy(vampire), "the thrall serves the vampire");
+          context.assertTrue(
+              NameGameTest.inFamiliarPools(context, thralls.get(0).getName().getString()),
+              "the thrall holds a name from the familiar pools from the moment it is bound");
           context.assertEquals(
               thralls.get(0).getVillagerData().getProfession(),
               VillagerProfession.FARMER,

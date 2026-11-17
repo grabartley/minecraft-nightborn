@@ -1,10 +1,13 @@
 package com.grahambartley.nightborn.occult;
 
+import com.grahambartley.nightborn.name.MobNaming;
+import com.grahambartley.nightborn.name.NameBearer;
 import com.grahambartley.nightborn.occult.goal.FamiliarAttackGoal;
 import com.grahambartley.nightborn.occult.goal.FamiliarFollowGoal;
 import com.grahambartley.nightborn.occult.goal.FamiliarScoutGoal;
 import com.grahambartley.nightborn.occult.goal.FamiliarTargetGoal;
 import com.grahambartley.nightborn.servant.Servant;
+import com.grahambartley.nightborn.servant.ServantDeaths;
 import com.grahambartley.nightborn.servant.Servants;
 import java.util.Optional;
 import java.util.UUID;
@@ -49,7 +52,8 @@ import software.bernie.geckolib.animation.AnimatableManager;
 import software.bernie.geckolib.animation.AnimationController;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
-public class GhostlyFamiliarEntity extends PathAwareEntity implements GeoEntity, Servant {
+public class GhostlyFamiliarEntity extends PathAwareEntity
+    implements GeoEntity, Servant, NameBearer {
 
   static final FamiliarPower DEFAULT_POWER =
       new FamiliarPower(1200, 10.0F, 3.0F, 24.0F, 200, 8.0F, 200, 9);
@@ -150,12 +154,19 @@ public class GhostlyFamiliarEntity extends PathAwareEntity implements GeoEntity,
   }
 
   @Override
+  public void onDeath(final DamageSource source) {
+    super.onDeath(source);
+    ServantDeaths.tell(this, owner());
+  }
+
+  @Override
   public void tick() {
     noClip = mode().passesThroughBlocks();
     super.tick();
     if (getWorld().isClient || !isAlive()) {
       return;
     }
+    MobNaming.ensure(this);
     ticksLeft--;
     dataTracker.set(FADING, FamiliarRules.fading(ticksLeft));
     if (ticksLeft <= 0) {
