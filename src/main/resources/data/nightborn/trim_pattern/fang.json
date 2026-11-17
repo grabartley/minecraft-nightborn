@@ -1,0 +1,7 @@
+{
+  "asset_id": "minecraft:silence",
+  "description": {
+    "translate": "trim_pattern.nightborn.fang"
+  },
+  "template_item": "nightborn:fang_armor_trim_smithing_template"
+}

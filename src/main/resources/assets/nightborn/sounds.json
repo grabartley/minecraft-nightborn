@@ -560,6 +560,36 @@
       }
     ]
   },
+  "boss.eldest.organ": {
+    "subtitle": "subtitles.nightborn.boss.eldest.organ",
+    "sounds": [
+      "nightborn:boss/organ_sting"
+    ]
+  },
+  "music.boss.eldest": {
+    "sounds": [
+      {
+        "name": "nightborn:music/toccata_and_fugue",
+        "stream": true
+      }
+    ]
+  },
+  "music.boss.eldest_final": {
+    "sounds": [
+      {
+        "name": "nightborn:music/dies_irae",
+        "stream": true
+      }
+    ]
+  },
+  "music_disc.eldest": {
+    "sounds": [
+      {
+        "name": "nightborn:music/dies_irae",
+        "stream": true
+      }
+    ]
+  },
   "music.gothic": {
     "sounds": [
       {

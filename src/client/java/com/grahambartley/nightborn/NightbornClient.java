@@ -1,8 +1,12 @@
 package com.grahambartley.nightborn;
 
 import com.grahambartley.nightborn.ammo.AmmoEntities;
+import com.grahambartley.nightborn.boss.BossEntities;
 import com.grahambartley.nightborn.client.CoatingTooltip;
 import com.grahambartley.nightborn.client.VampireClientFeatures;
+import com.grahambartley.nightborn.client.boss.ArenaWallRenderer;
+import com.grahambartley.nightborn.client.boss.BossArenaView;
+import com.grahambartley.nightborn.client.boss.EldestSetTooltip;
 import com.grahambartley.nightborn.client.familiar.HumanFamiliarRenderer;
 import com.grahambartley.nightborn.client.fog.StructureFog;
 import com.grahambartley.nightborn.client.gore.SplatterModels;
@@ -41,6 +45,7 @@ import com.grahambartley.nightborn.render.RitualAltarRenderer;
 import com.grahambartley.nightborn.render.VampireBatRenderer;
 import com.grahambartley.nightborn.render.VampireRenderer;
 import com.grahambartley.nightborn.render.WeaponRackRenderer;
+import com.grahambartley.nightborn.render.ZoneMarkRenderer;
 import com.grahambartley.nightborn.ritual.RitualAltarBlockEntity;
 import com.grahambartley.nightborn.ritual.RitualBlocks;
 import com.grahambartley.nightborn.thrall.Thralls;
@@ -48,6 +53,7 @@ import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
 import net.fabricmc.fabric.api.client.rendering.v1.BuiltinItemRendererRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
+import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.block.entity.BlockEntityRendererFactories;
@@ -112,6 +118,8 @@ public class NightbornClient implements ClientModInitializer {
     EntityRendererRegistry.register(NightbornMobs.VAMPIRE_LORD, VampireRenderer::new);
     EntityRendererRegistry.register(NightbornMobs.ELDEST, VampireRenderer::new);
     EntityRendererRegistry.register(NightbornMobs.VAMPIRE_BAT, VampireBatRenderer::new);
+    EntityRendererRegistry.register(BossEntities.ZONE_MARK, ZoneMarkRenderer::new);
+    EntityRendererRegistry.register(NightbornMobs.PET_BAT, VampireBatRenderer::new);
     EntityRendererRegistry.register(Familiars.HUMAN_FAMILIAR, HumanFamiliarRenderer::new);
     EntityRendererRegistry.register(Thralls.THRALL, ThrallRenderer::new);
     EntityRendererRegistry.register(
@@ -127,6 +135,9 @@ public class NightbornClient implements ClientModInitializer {
     NearbyStructure.register();
     StructureFog.register();
     RitualGloom.register();
+    BossArenaView.register();
+    EldestSetTooltip.register();
+    WorldRenderEvents.AFTER_ENTITIES.register(ArenaWallRenderer::render);
     NamingDialogue.register();
     StructureAmbiencePlayer.register();
     CoatingTooltip.register();

@@ -38,10 +38,11 @@ public final class VampireTicker {
     final boolean feeding = FeedingSessions.isFeeding(vampire);
     final boolean eyes =
         EyeGlow.glowing(
-            feeding,
-            FeedingSessions.ticksSinceFed(vampire, vampire.getWorld().getTime()),
-            vampire.getHealth(),
-            vampire.getMaxHealth());
+                feeding,
+                FeedingSessions.ticksSinceFed(vampire, vampire.getWorld().getTime()),
+                vampire.getHealth(),
+                vampire.getMaxHealth())
+            || EyeGlow.blazing(vampire);
     VisibleStateAttachment.set(
         vampire, new VisibleState(eyes, feeding, downed != null && downed.isDowned(), weakened));
   }

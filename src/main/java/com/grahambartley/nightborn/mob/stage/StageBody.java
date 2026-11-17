@@ -8,7 +8,7 @@ public record StageBody(double health, double speed, double damage) {
   public static final StageBody SAME = new StageBody(0.0, 0.0, 0.0);
 
   static final double MIN = -0.9;
-  static final double MAX = 10.0;
+  static final double MAX = 30.0;
 
   public static final Codec<StageBody> CODEC =
       RecordCodecBuilder.create(

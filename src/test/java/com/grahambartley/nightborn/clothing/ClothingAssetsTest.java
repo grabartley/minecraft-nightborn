@@ -63,9 +63,9 @@ class ClothingAssetsTest {
             .map(piece -> "nightborn:" + piece.id())
             .collect(Collectors.toSet()),
         values(clothingTag));
-    assertEquals(
-        Set.of("#nightborn:enchantable/" + SLOT_TAGS.get(type) + "_clothing"),
-        values("minecraft/tags/item/" + VANILLA_SLOT_TAGS.get(type) + ".json"));
+    assertTrue(
+        values("minecraft/tags/item/" + VANILLA_SLOT_TAGS.get(type) + ".json")
+            .contains("#nightborn:enchantable/" + SLOT_TAGS.get(type) + "_clothing"));
   }
 
   @Test

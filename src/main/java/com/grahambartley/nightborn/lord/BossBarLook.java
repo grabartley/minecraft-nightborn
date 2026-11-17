@@ -11,6 +11,8 @@ public record BossBarLook(BossBar.Color color, Optional<String> state) {
 
   static final String DOWNED_KEY = "nightborn.boss.downed";
   static final String ESCAPING_KEY = "nightborn.boss.escaping";
+  static final String WARDED_KEY = "nightborn.boss.warded";
+  static final String FEEDING_KEY = "nightborn.boss.feeding";
 
   public static BossBarLook of(@Nullable final DownedState.Phase phase) {
     if (phase == null) {
@@ -20,6 +22,19 @@ public record BossBarLook(BossBar.Color color, Optional<String> state) {
       case DOWNED -> new BossBarLook(BossBar.Color.WHITE, Optional.of(DOWNED_KEY));
       case ESCAPING -> new BossBarLook(BossBar.Color.PURPLE, Optional.of(ESCAPING_KEY));
     };
+  }
+
+  public static Optional<BossBarLook> state(final boolean warded, final boolean feeding) {
+    if (warded) {
+      return Optional.of(new BossBarLook(BossBar.Color.BLUE, Optional.of(WARDED_KEY)));
+    }
+    return feeding
+        ? Optional.of(new BossBarLook(BossBar.Color.GREEN, Optional.of(FEEDING_KEY)))
+        : Optional.empty();
+  }
+
+  public static BossBarLook phase(final BossBar.Color color, final String key) {
+    return new BossBarLook(color, Optional.of(key));
   }
 
   public Text title(final Text name) {

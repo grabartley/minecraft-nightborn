@@ -224,6 +224,10 @@ public class VampireEntity extends HostileEntity
     return hunt.hunts(this, target);
   }
 
+  public boolean attacksOnSight(final LivingEntity target) {
+    return false;
+  }
+
   public boolean hungry() {
     return blood.hungry(this, ServerConfigService.current());
   }
@@ -312,8 +316,10 @@ public class VampireEntity extends HostileEntity
     tickHome();
     hissing.tickWard(this);
     if (!BatForm.isBat(this)) {
-      fight();
-      levitateAboutHome();
+      fightAsVampire();
+      if (levitatesAtWill()) {
+        levitateAboutHome();
+      }
     }
   }
 
@@ -321,17 +327,21 @@ public class VampireEntity extends HostileEntity
     hunt.tick(this, this::setOutToFeed);
   }
 
-  private void fight() {
+  protected void fightAsVampire() {
     fighting.tick(
         this,
         Fighting.fights(
             getTarget() != null,
             Downed.state(this) != null,
             isSleeping(),
-            retreat.active(),
+            retreat != null && retreat.active(),
             Weakened.sources(this).level(false) > 0),
         stage().combat(),
         ServerConfigService.current().combat());
+  }
+
+  protected boolean levitatesAtWill() {
+    return true;
   }
 
   @Override

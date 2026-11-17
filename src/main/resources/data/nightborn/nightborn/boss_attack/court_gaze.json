@@ -1,0 +1,18 @@
+{
+  "min_range": 3.0,
+  "max_range": 14.0,
+  "weight": 2,
+  "cooldown_ticks": 300,
+  "tell_ticks": 24,
+  "tell_clip": "mesmerise",
+  "tell_sound": "minecraft:entity.illusioner.prepare_mirror",
+  "clip": "mesmerise",
+  "sound": "minecraft:entity.illusioner.cast_spell",
+  "gaze": {
+    "range": 14.0,
+    "stare_ticks": 30,
+    "duration_ticks": 100,
+    "player_duration_ticks": 80,
+    "player_slowness": 6
+  }
+}

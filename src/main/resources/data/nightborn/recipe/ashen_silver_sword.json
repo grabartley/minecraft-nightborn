@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:smithing_transform",
+  "template": [],
+  "base": {
+    "item": "nightborn:silver_sword"
+  },
+  "addition": {
+    "item": "nightborn:eldest_ash"
+  },
+  "result": {
+    "id": "nightborn:ashen_silver_sword"
+  }
+}

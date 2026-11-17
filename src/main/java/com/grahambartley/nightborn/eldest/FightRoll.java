@@ -18,6 +18,10 @@ public final class FightRoll {
     return fighters.add(fighter);
   }
 
+  public void clear() {
+    fighters.clear();
+  }
+
   public boolean has(final UUID fighter) {
     return fighters.contains(fighter);
   }

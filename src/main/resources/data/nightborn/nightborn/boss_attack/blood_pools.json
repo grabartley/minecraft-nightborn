@@ -1,0 +1,17 @@
+{
+  "max_range": 24.0,
+  "weight": 2,
+  "cooldown_ticks": 240,
+  "tell_ticks": 24,
+  "tell_clip": "mesmerise",
+  "tell_sound": "minecraft:entity.evoker.prepare_attack",
+  "clip": "hiss",
+  "sound": "minecraft:block.sculk.spread",
+  "zone": {
+    "radius": 2.5,
+    "anchor": "every_foe",
+    "damage": 5.0,
+    "linger_ticks": 160,
+    "linger_every": 10
+  }
+}

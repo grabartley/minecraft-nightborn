@@ -23,7 +23,7 @@ public record MesmerisePower(
                       Codec.intRange(1, 6000)
                           .fieldOf("player_duration_ticks")
                           .forGetter(MesmerisePower::playerDurationTicks),
-                      Codec.intRange(0, 4)
+                      Codec.intRange(0, 6)
                           .fieldOf("player_slowness")
                           .forGetter(MesmerisePower::playerSlowness))
                   .apply(instance, MesmerisePower::new));

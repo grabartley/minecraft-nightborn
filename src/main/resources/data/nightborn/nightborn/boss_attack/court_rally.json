@@ -1,0 +1,17 @@
+{
+  "max_range": 20.0,
+  "weight": 1,
+  "cooldown_ticks": 600,
+  "tell_ticks": 20,
+  "tell_clip": "mesmerise",
+  "tell_sound": "minecraft:entity.evoker.prepare_summon",
+  "clip": "hiss",
+  "sound": "minecraft:event.raid.horn",
+  "ward": {
+    "entity": "nightborn:vampire",
+    "count": 2,
+    "spread": 3.0,
+    "ticks": 600,
+    "shields": false
+  }
+}

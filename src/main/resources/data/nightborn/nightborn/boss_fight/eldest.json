@@ -1,0 +1,267 @@
+{
+  "phases": [
+    {
+      "name": "court",
+      "health": 30,
+      "color": "red",
+      "gap_ticks": 50,
+      "attacks": [
+        "nightborn:court_flurry",
+        "nightborn:court_lunge",
+        "nightborn:court_gaze",
+        "nightborn:court_rally",
+        "nightborn:court_vanish",
+        "nightborn:court_rush"
+      ],
+      "stance": {
+        "near": 2.0,
+        "far": 4.0,
+        "speed": 1.1,
+        "strafe_ticks": 30
+      },
+      "music": "nightborn:music.boss.eldest",
+      "body": {
+        "attributes": {
+          "minecraft:generic.armor": 8,
+          "minecraft:generic.knockback_resistance": 0.6
+        },
+        "max_hit": 14
+      },
+      "defence": {
+        "guard_hits": 4,
+        "window_ticks": 60,
+        "break_damage": 45,
+        "break_away": 8,
+        "guard_knock": 1.2,
+        "retarget_chance": 30,
+        "counters": [
+          "nightborn:court_lunge",
+          "nightborn:court_gaze"
+        ]
+      },
+      "ambience": {
+        "min_ticks": 500,
+        "max_ticks": 1100,
+        "cues": [
+          {
+            "sound": "minecraft:block.bell.resonate",
+            "weight": 3,
+            "volume": 1.0,
+            "pitch": 0.5
+          },
+          {
+            "sound": "minecraft:block.bell.use",
+            "weight": 2,
+            "volume": 0.9,
+            "pitch": 0.5
+          },
+          {
+            "weight": 2,
+            "lightning": true
+          },
+          {
+            "sound": "minecraft:entity.witch.celebrate",
+            "weight": 1,
+            "volume": 0.7,
+            "pitch": 0.6
+          },
+          {
+            "sound": "nightborn:boss.eldest.organ",
+            "weight": 1,
+            "volume": 0.8,
+            "pitch": 1.0
+          }
+        ]
+      }
+    },
+    {
+      "name": "beast",
+      "health": 35,
+      "color": "yellow",
+      "gap_ticks": 40,
+      "attacks": [
+        "nightborn:beast_pounce",
+        "nightborn:beast_swarm",
+        "nightborn:beast_screech",
+        "nightborn:beast_claws",
+        "nightborn:beast_ward",
+        "nightborn:court_rush",
+        "nightborn:beast_bats"
+      ],
+      "stance": {
+        "near": 0.0,
+        "far": 3.5,
+        "speed": 1.35,
+        "strafe_ticks": 20
+      },
+      "music": "nightborn:music.boss.eldest",
+      "body": {
+        "attributes": {
+          "minecraft:generic.armor": 12,
+          "minecraft:generic.armor_toughness": 4,
+          "minecraft:generic.attack_damage": 3,
+          "minecraft:generic.knockback_resistance": 0.8,
+          "minecraft:generic.scale": 0.12,
+          "minecraft:generic.movement_speed": 0.03
+        },
+        "max_hit": 12
+      },
+      "flight": {
+        "height": 6,
+        "radius": 9,
+        "speed": 0.3,
+        "ground_ticks": 80
+      },
+      "defence": {
+        "guard_hits": 3,
+        "window_ticks": 60,
+        "break_damage": 36,
+        "break_away": 10,
+        "guard_knock": 1.5,
+        "retarget_chance": 40,
+        "counters": [
+          "nightborn:beast_pounce",
+          "nightborn:beast_screech"
+        ]
+      },
+      "ambience": {
+        "min_ticks": 400,
+        "max_ticks": 900,
+        "cues": [
+          {
+            "weight": 2,
+            "lightning": true
+          },
+          {
+            "weight": 2,
+            "lightning": true
+          },
+          {
+            "sound": "minecraft:entity.ghast.scream",
+            "weight": 2,
+            "volume": 0.7,
+            "pitch": 0.6
+          },
+          {
+            "sound": "minecraft:block.bell.resonate",
+            "weight": 2,
+            "volume": 1.0,
+            "pitch": 0.5
+          },
+          {
+            "sound": "minecraft:ambient.cave",
+            "weight": 2,
+            "volume": 1.0,
+            "pitch": 0.8
+          },
+          {
+            "sound": "minecraft:entity.witch.celebrate",
+            "weight": 1,
+            "volume": 0.7,
+            "pitch": 0.6
+          }
+        ]
+      }
+    },
+    {
+      "name": "blood",
+      "health": 35,
+      "color": "purple",
+      "gap_ticks": 30,
+      "attacks": [
+        "nightborn:blood_pools",
+        "nightborn:blood_step",
+        "nightborn:blood_drain",
+        "nightborn:court_gaze",
+        "nightborn:beast_pounce",
+        "nightborn:court_flurry",
+        "nightborn:beast_ward",
+        "nightborn:court_vanish",
+        "nightborn:blood_fog",
+        "nightborn:blood_familiar"
+      ],
+      "stance": {
+        "near": 4.0,
+        "far": 9.0,
+        "speed": 1.25,
+        "strafe_ticks": 25
+      },
+      "music": "nightborn:music.boss.eldest_final",
+      "body": {
+        "attributes": {
+          "minecraft:generic.armor": 16,
+          "minecraft:generic.armor_toughness": 8,
+          "minecraft:generic.attack_damage": 6,
+          "minecraft:generic.knockback_resistance": 1.0,
+          "minecraft:generic.scale": 0.35,
+          "minecraft:generic.movement_speed": 0.06
+        },
+        "max_hit": 10,
+        "blazing_eyes": true
+      },
+      "voice": {
+        "sound": "minecraft:entity.warden.angry",
+        "every_ticks": 100,
+        "pitch": 0.6
+      },
+      "defence": {
+        "guard_hits": 3,
+        "window_ticks": 80,
+        "break_damage": 30,
+        "break_away": 10,
+        "guard_knock": 1.8,
+        "retarget_chance": 50,
+        "counters": [
+          "nightborn:blood_step",
+          "nightborn:blood_pools",
+          "nightborn:beast_pounce"
+        ]
+      },
+      "ambience": {
+        "min_ticks": 300,
+        "max_ticks": 700,
+        "cues": [
+          {
+            "sound": "nightborn:boss.eldest.organ",
+            "weight": 3,
+            "volume": 0.9,
+            "pitch": 0.8
+          },
+          {
+            "weight": 2,
+            "lightning": true
+          },
+          {
+            "sound": "minecraft:entity.ghast.scream",
+            "weight": 2,
+            "volume": 0.8,
+            "pitch": 0.5
+          },
+          {
+            "sound": "minecraft:entity.evoker.celebrate",
+            "weight": 2,
+            "volume": 0.8,
+            "pitch": 0.5
+          },
+          {
+            "sound": "minecraft:entity.witch.celebrate",
+            "weight": 2,
+            "volume": 0.8,
+            "pitch": 0.5
+          },
+          {
+            "sound": "minecraft:block.bell.use",
+            "weight": 2,
+            "volume": 1.0,
+            "pitch": 0.5
+          }
+        ]
+      }
+    }
+  ],
+  "change_ticks": 80,
+  "change_clip": "hiss",
+  "change_sound": "minecraft:entity.warden.roar",
+  "change_knock": 2.0,
+  "change_range": 8.0
+}

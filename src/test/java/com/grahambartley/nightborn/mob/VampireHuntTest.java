@@ -66,6 +66,13 @@ class VampireHuntTest {
     assertEquals(letsGo, VampireHunt.letsGo(downed, () -> dropsPursuit));
   }
 
+  @ParameterizedTest(name = "provoked {0}, attacks on sight {1}: pressed {2}")
+  @CsvSource({"false, false, false", "true, false, true", "false, true, true", "true, true, true"})
+  @DisplayName("a vampire presses a target that provoked it or that it attacks on sight")
+  void pressed(final boolean provoked, final boolean onSight, final boolean pressed) {
+    assertEquals(pressed, VampireHunt.pressed(provoked, onSight));
+  }
+
   @ParameterizedTest(name = "downed {0}: weighs the pursuit {1}")
   @CsvSource({"true, false", "false, true"})
   @DisplayName("a downed vampire lets go without weighing the pursuit")

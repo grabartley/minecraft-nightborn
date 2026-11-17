@@ -1,6 +1,8 @@
 {
   "replace": false,
   "values": [
-    "nightborn:silver_sword"
+    "nightborn:silver_sword",
+    "nightborn:ashen_silver_sword",
+    "nightborn:eldest_blade"
   ]
 }

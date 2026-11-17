@@ -89,52 +89,14 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "minecraft:netherite_ingot",
+          "name": "nightborn:eldest_ash",
           "functions": [
             {
               "function": "minecraft:set_count",
               "count": {
                 "type": "minecraft:uniform",
-                "min": 1,
-                "max": 2
-              }
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "rolls": 1,
-      "entries": [
-        {
-          "type": "minecraft:item",
-          "name": "minecraft:enchanted_golden_apple",
-          "functions": [
-            {
-              "function": "minecraft:set_count",
-              "count": {
-                "type": "minecraft:uniform",
-                "min": 1,
-                "max": 2
-              }
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "rolls": 1,
-      "entries": [
-        {
-          "type": "minecraft:item",
-          "name": "minecraft:totem_of_undying",
-          "functions": [
-            {
-              "function": "minecraft:set_count",
-              "count": {
-                "type": "minecraft:uniform",
-                "min": 1,
-                "max": 1
+                "min": 2,
+                "max": 4
               }
             }
           ]
@@ -146,7 +108,23 @@
       "entries": [
         {
           "type": "minecraft:item",
+          "name": "minecraft:netherite_ingot",
+          "weight": 3
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:enchanted_golden_apple",
+          "weight": 3
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:totem_of_undying",
+          "weight": 2
+        },
+        {
+          "type": "minecraft:item",
           "name": "minecraft:book",
+          "weight": 4,
           "functions": [
             {
               "function": "minecraft:enchant_with_levels",
@@ -158,6 +136,7 @@
         {
           "type": "minecraft:item",
           "name": "nightborn:silver_sword",
+          "weight": 2,
           "functions": [
             {
               "function": "minecraft:enchant_with_levels",
@@ -169,6 +148,7 @@
         {
           "type": "minecraft:item",
           "name": "nightborn:silver_axe",
+          "weight": 2,
           "functions": [
             {
               "function": "minecraft:enchant_with_levels",
@@ -176,6 +156,92 @@
               "options": "#minecraft:on_random_loot"
             }
           ]
+        }
+      ]
+    },
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:empty",
+          "weight": 376
+        },
+        {
+          "type": "minecraft:item",
+          "name": "nightborn:eldest_blade",
+          "weight": 4
+        },
+        {
+          "type": "minecraft:item",
+          "name": "nightborn:eldest_crown",
+          "weight": 5
+        },
+        {
+          "type": "minecraft:item",
+          "name": "nightborn:eldest_mantle",
+          "weight": 5
+        },
+        {
+          "type": "minecraft:item",
+          "name": "nightborn:eldest_greaves",
+          "weight": 5
+        },
+        {
+          "type": "minecraft:item",
+          "name": "nightborn:eldest_boots",
+          "weight": 5
+        }
+      ]
+    },
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:empty",
+          "weight": 90
+        },
+        {
+          "type": "minecraft:item",
+          "name": "nightborn:fang_armor_trim_smithing_template",
+          "weight": 5
+        },
+        {
+          "type": "minecraft:item",
+          "name": "nightborn:sigil_armor_trim_smithing_template",
+          "weight": 5
+        }
+      ]
+    },
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:empty",
+          "weight": 67
+        },
+        {
+          "type": "minecraft:item",
+          "name": "nightborn:eldest_skull",
+          "weight": 8
+        },
+        {
+          "type": "minecraft:item",
+          "name": "nightborn:music_disc_eldest",
+          "weight": 5
+        }
+      ]
+    },
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:empty",
+          "weight": 499
+        },
+        {
+          "type": "minecraft:item",
+          "name": "nightborn:tame_bat",
+          "weight": 1
         }
       ]
     }

@@ -1,0 +1,17 @@
+{
+  "max_range": 4.5,
+  "weight": 3,
+  "cooldown_ticks": 80,
+  "tell_ticks": 14,
+  "tell_clip": "blood_rush_tell",
+  "tell_sound": "minecraft:entity.evoker.prepare_attack",
+  "clip": "attack",
+  "sound": "minecraft:entity.player.attack.sweep",
+  "flurry": {
+    "hits": 3,
+    "every_ticks": 8,
+    "damage": 7.0,
+    "reach": 3.5,
+    "lunge": 0.35
+  }
+}

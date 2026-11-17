@@ -99,7 +99,8 @@ public class EldestGameTest implements FabricGameTest {
     context.assertTrue(eldest.cannotDespawn(), "the Eldest never despawns");
     eldest.onStartedTrackingBy(player);
     context.assertTrue(
-        eldest.presence().bar().getPlayers().contains(player), "a player near it sees its bar");
+        !eldest.presence().bar().getPlayers().contains(player),
+        "seeing it from outside its arena shows no bar");
     eldest.onStoppedTrackingBy(player);
     context.complete();
   }
@@ -118,6 +119,21 @@ public class EldestGameTest implements FabricGameTest {
     eldest.scaleFor(1, settings);
     context.assertTrue(eldest.getMaxHealth() == alone, "one player leaves it as it was");
     context.complete();
+  }
+
+  @GameTest(templateName = ARENA, batchId = NIGHT_BATCH, tickLimit = 200)
+  public void theEldestKeepsAfterAHumanWhoNeverStruckIt(final TestContext context) {
+    final EldestEntity eldest = eldest(context);
+    final ServerPlayerEntity human = TestPlayers.human(context, new BlockPos(2, 2, 2));
+    context.runAtTick(
+        TestPlayers.READY,
+        () -> {
+          eldest.setTarget(human);
+          eldest.tickHome();
+          context.assertTrue(
+              eldest.getTarget() == human, "the Eldest keeps a human it attacks on sight");
+          context.complete();
+        });
   }
 
   @GameTest(templateName = ARENA, batchId = NIGHT_BATCH, tickLimit = 200)

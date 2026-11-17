@@ -1,0 +1,17 @@
+{
+  "min_range": 5.0,
+  "max_range": 18.0,
+  "weight": 3,
+  "cooldown_ticks": 100,
+  "tell_ticks": 16,
+  "tell_clip": "blood_rush_tell",
+  "tell_sound": "minecraft:entity.phantom.swoop",
+  "clip": "attack",
+  "sound": "minecraft:entity.illusioner.mirror_move",
+  "zone": {
+    "radius": 3.0,
+    "motion": "step",
+    "damage": 14.0,
+    "knock": 1.0
+  }
+}

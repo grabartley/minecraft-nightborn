@@ -40,6 +40,10 @@ public final class VampireHunt {
         && !dropsPursuit.getAsBoolean();
   }
 
+  public static boolean pressed(final boolean provoked, final boolean onSight) {
+    return provoked || onSight;
+  }
+
   public static boolean letsGo(final boolean downed, final BooleanSupplier dropsPursuit) {
     return downed || dropsPursuit.getAsBoolean();
   }
@@ -69,7 +73,9 @@ public final class VampireHunt {
                     pursuit(
                         vampire,
                         target,
-                        Grudge.provoked(grudge.against(target), Prey.isPrey(target)))))) {
+                        pressed(
+                            Grudge.provoked(grudge.against(target), Prey.isPrey(target)),
+                            vampire.attacksOnSight(target)))))) {
       grudge.forgive(target);
       vampire.setTarget(null);
     }

@@ -34,6 +34,40 @@ class BossBarLookTest {
     assertEquals(title, key);
   }
 
+  @ParameterizedTest(name = "{0} in {1}")
+  @CsvSource({"nightborn.boss.phase.court, RED", "nightborn.boss.phase.blood, PURPLE"})
+  @DisplayName("a phase gives the bar its own colour and puts the boss's name in its title")
+  void phase(final String key, final BossBar.Color color) {
+    final BossBarLook look = BossBarLook.phase(color, key);
+    assertEquals(color, look.color());
+    final TranslatableTextContent title =
+        (TranslatableTextContent) look.title(Text.literal("The Eldest")).getContent();
+    assertEquals(key, title.getKey());
+    assertEquals("The Eldest", ((Text) title.getArgs()[0]).getString());
+  }
+
+  @ParameterizedTest(name = "warded {0}, feeding {1}: {2} {3}")
+  @CsvSource({
+    "true, false, BLUE, nightborn.boss.warded",
+    "true, true, BLUE, nightborn.boss.warded",
+    "false, true, GREEN, nightborn.boss.feeding",
+    "false, false, , "
+  })
+  @DisplayName("a warded or feeding boss says so on its bar, and warded comes first")
+  void state(
+      final boolean warded, final boolean feeding, final BossBar.Color color, final String key) {
+    final var look = BossBarLook.state(warded, feeding);
+    assertEquals(key == null, look.isEmpty());
+    look.ifPresent(
+        shown -> {
+          assertEquals(color, shown.color());
+          assertEquals(
+              key,
+              ((TranslatableTextContent) shown.title(Text.literal("The Eldest")).getContent())
+                  .getKey());
+        });
+  }
+
   @ParameterizedTest(name = "{0} of {1} -> {2}")
   @CsvSource({
     "150, 150, 1.0",

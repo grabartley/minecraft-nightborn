@@ -1,0 +1,7 @@
+{
+  "asset_id": "minecraft:ward",
+  "description": {
+    "translate": "trim_pattern.nightborn.sigil"
+  },
+  "template_item": "nightborn:sigil_armor_trim_smithing_template"
+}

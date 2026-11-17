@@ -1,6 +1,7 @@
 {
   "replace": false,
   "values": [
-    "#nightborn:enchantable/legs_clothing"
+    "#nightborn:enchantable/legs_clothing",
+    "nightborn:eldest_greaves"
   ]
 }

@@ -49,6 +49,12 @@ public final class BossPresence {
     bar.setPercent(BossBarLook.percent(health, maxHealth));
   }
 
+  public void update(final Text title, final BossBar.Color color, final float percent) {
+    bar.setName(title);
+    bar.setColor(color);
+    bar.setPercent(percent);
+  }
+
   public ServerBossBar bar() {
     return bar;
   }
