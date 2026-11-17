@@ -6,6 +6,7 @@ public final class VampireSize {
 
   public static final float BASE_HEIGHT = 1.95F;
   public static final float BASE_WIDTH = 0.6F;
+  public static final float DOORWAY_WIDTH = 0.6F;
 
   private VampireSize() {}
 
@@ -24,6 +25,7 @@ public final class VampireSize {
   public static EntityDimensions dimensions(
       final EntityDimensions base, final float height, final float width) {
     final float scale = scale(height);
-    return base.scaled(clampWidth(width) * scale, scale);
+    final float widest = DOORWAY_WIDTH / base.width();
+    return base.scaled(Math.min(widest, clampWidth(width) * scale), scale);
   }
 }

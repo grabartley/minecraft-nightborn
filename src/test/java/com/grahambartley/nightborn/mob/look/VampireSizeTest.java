@@ -15,10 +15,13 @@ class VampireSizeTest {
     "1.5, 1.0, 0.4615, 1.5, 1.3077",
     "2.0, 0.88, 0.5415, 2.0, 1.7436",
     "1.6, 1.14, 0.5612, 1.6, 1.3949",
-    "9.0, 9.0, 1.3846, 3.0, 2.6154",
+    "1.85, 1.14, 0.6, 1.85, 1.6128",
+    "1.78, 1.14, 0.6, 1.78, 1.5518",
+    "9.0, 9.0, 0.6, 3.0, 2.6154",
     "0.1, 0.1, 0.1538, 1.0, 0.8718"
   })
-  @DisplayName("the hitbox and eye height follow the vampire's height and build, within limits")
+  @DisplayName(
+      "the hitbox and eye height follow the vampire's height and build, never wider than a doorway")
   void dimensions(
       final float height,
       final float width,
