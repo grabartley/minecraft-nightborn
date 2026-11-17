@@ -4,6 +4,7 @@ import com.grahambartley.nightborn.Nightborn;
 import java.util.function.Function;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.fabricmc.fabric.api.registry.CompostingChanceRegistry;
+import net.minecraft.component.type.FoodComponent;
 import net.minecraft.item.AliasedBlockItem;
 import net.minecraft.item.AxeItem;
 import net.minecraft.item.Item;
@@ -44,8 +45,13 @@ public final class GearItems {
                   settings.attributeModifiers(
                       AxeItem.createAttributeModifiers(SilverMaterial.SILVER, 6.0F, -3.1F))));
 
+  public static final FoodComponent GARLIC_FOOD =
+      new FoodComponent.Builder().nutrition(2).saturationModifier(0.3F).build();
+
   public static final Item GARLIC =
-      item("garlic", settings -> new AliasedBlockItem(GearBlocks.GARLIC, settings));
+      item(
+          "garlic",
+          settings -> new AliasedBlockItem(GearBlocks.GARLIC, settings.food(GARLIC_FOOD)));
   public static final Item GOLD_CRUCIFIX =
       item(
           "gold_crucifix",

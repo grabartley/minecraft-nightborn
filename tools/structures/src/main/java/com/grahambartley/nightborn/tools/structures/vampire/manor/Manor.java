@@ -13,6 +13,8 @@ public final class Manor {
   public static final Layout TOWER = new Layout("vampire/manor/tower", false, true);
   public static final List<Layout> LAYOUTS = List.of(TURRET, TOWER);
 
+  public static final String ENTRANCE = "nightborn:manor_entrance";
+
   public static final int SIZE_X = 48;
   public static final int SIZE_Y = 34;
   public static final int SIZE_Z = 44;
@@ -66,6 +68,7 @@ public final class Manor {
     Glasshouse.build(t, layout.fallenGlasshouse());
     Ivy.grow(t);
     Grounds.build(t);
+    t.entrance(MID_X, 0, SIZE_Z - 1, ENTRANCE, "south");
     return t;
   }
 }

@@ -9,6 +9,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.grahambartley.nightborn.MinecraftBootstrapExtension;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashSet;
@@ -113,5 +114,27 @@ class MusicDiscsTest {
     final Set<String> registered = new HashSet<>();
     MusicDiscs.all().forEach(disc -> registered.add(Registries.ITEM.getId(disc).toString()));
     assertEquals(registered, tagged);
+  }
+
+  static Stream<String> discSoundFiles() throws IOException {
+    final JsonObject sounds = json(ASSETS.resolve("sounds.json"));
+    return sounds.keySet().stream()
+        .filter(event -> event.startsWith("music_disc."))
+        .flatMap(
+            event ->
+                sounds.getAsJsonObject(event).getAsJsonArray("sounds").asList().stream()
+                    .map(sound -> sound.getAsJsonObject().get("name").getAsString()));
+  }
+
+  @ParameterizedTest(name = "{0} is mono, so it fades with distance from what plays it")
+  @MethodSource("discSoundFiles")
+  void everyDiscTrackIsMono(final String sound) throws IOException {
+    final byte[] ogg =
+        Files.readAllBytes(
+            ASSETS.resolve("sounds").resolve(Identifier.of(sound).getPath() + ".ogg"));
+    final String header = new String(ogg, 0, 256, StandardCharsets.ISO_8859_1);
+    final int identification = header.indexOf("\u0001vorbis");
+    assertTrue(identification >= 0, sound);
+    assertEquals(1, ogg[identification + 11]);
   }
 }

@@ -120,6 +120,11 @@ public final class Template {
     jigsaw(x, y, z, "up_north", name, EMPTY, EMPTY, below, "rollable");
   }
 
+  public void entrance(
+      final int x, final int y, final int z, final String name, final String outward) {
+    jigsaw(x, y, z, outward + "_up", name, EMPTY, EMPTY, get(x, y, z), "aligned");
+  }
+
   public void jigsaw(
       final int x,
       final int y,

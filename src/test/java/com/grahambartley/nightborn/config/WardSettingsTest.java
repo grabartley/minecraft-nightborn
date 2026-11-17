@@ -49,10 +49,19 @@ class WardSettingsTest {
   @DisplayName("the constructor clamps values into bounds")
   void clamps() {
     assertEquals(
-        new WardSettings(1, 0, 0, 0, 1, 1, 0, 1, 0, 0),
-        new WardSettings(-1, -1, -1, -1, -1, -1, -1, -1, -1, -1));
+        new WardSettings(1, 0, 0, 0, 1, 1, 0, 1, 0, 0, 0, 1, 0),
+        new WardSettings(-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1));
     assertEquals(
-        new WardSettings(32, 100, 100, 100, 30, 32, 100, 32, 100, 100),
-        new WardSettings(99, 999, 999, 999, 99, 99, 999, 99, 999, 999));
+        new WardSettings(32, 100, 100, 100, 30, 32, 100, 32, 100, 100, 40, 600, 20),
+        new WardSettings(99, 999, 999, 999, 99, 99, 999, 99, 999, 999, 999, 999, 999));
+  }
+
+  @Test
+  @DisplayName("eating garlic hurts far more than other food and weakens far longer than a touch")
+  void eatingGarlicIsTheWorstMeal() {
+    final NightbornConfig defaults = NightbornConfig.DEFAULTS;
+    assertEquals(true, defaults.wards().eatenDamage() >= 2 * defaults.blood().vomitDamage());
+    assertEquals(true, defaults.wards().eatenSeconds() >= 10 * defaults.wards().touchSeconds());
+    assertEquals(true, defaults.wards().eatenBlood() > 0);
   }
 }

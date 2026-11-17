@@ -204,13 +204,29 @@ public final class VampireStructure extends Structure {
       return position;
     }
     final StructurePiecesCollector pieces = position.get().generate();
-    return footing
+    final Optional<Threshold> threshold =
+        footing
             .get()
-            .fits(
-                context,
-                pieces.getBoundingBox(),
-                new ColumnPos(position.get().position().getX(), position.get().position().getZ()))
-        ? Optional.of(new StructurePosition(position.get().position(), Either.right(pieces)))
+            .entrance()
+            .flatMap(
+                name ->
+                    Threshold.in(
+                        pieces.toList().pieces(),
+                        name,
+                        context.structureTemplateManager(),
+                        context.random()));
+    final int lift =
+        threshold.map(way -> way.lift(Footing.surface(context, way.outside()))).orElse(0);
+    if (threshold.isEmpty() && footing.get().entrance().isPresent()
+        || !footing.get().allowsLift(lift)) {
+      return Optional.empty();
+    }
+    pieces.shift(lift);
+    final BlockPos placed = position.get().position().up(lift);
+    final ColumnPos approach =
+        threshold.map(Threshold::outside).orElse(new ColumnPos(placed.getX(), placed.getZ()));
+    return footing.get().fits(context, pieces.getBoundingBox(), approach)
+        ? Optional.of(new StructurePosition(placed, Either.right(pieces)))
         : Optional.empty();
   }
 

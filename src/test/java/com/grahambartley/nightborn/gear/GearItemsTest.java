@@ -8,6 +8,8 @@ import com.grahambartley.nightborn.MinecraftBootstrapExtension;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.stream.Stream;
+import net.minecraft.component.DataComponentTypes;
+import net.minecraft.component.type.FoodComponent;
 import net.minecraft.item.AliasedBlockItem;
 import net.minecraft.item.AxeItem;
 import net.minecraft.item.Item;
@@ -67,5 +69,16 @@ class GearItemsTest {
     assertInstanceOf(type, item);
     assertTrue(Files.exists(ASSETS.resolve("models/item/" + name + ".json")));
     assertTrue(Files.exists(ASSETS.resolve("textures/item/" + name + ".png")));
+  }
+
+  @Test
+  @DisplayName("garlic is a small meal that still plants its crop")
+  void garlicIsFoodAndSeed() {
+    final FoodComponent food = GearItems.GARLIC.getDefaultStack().get(DataComponentTypes.FOOD);
+    assertEquals(GearItems.GARLIC_FOOD, food);
+    assertEquals(2, food.nutrition());
+    assertTrue(food.saturation() > 0);
+    assertEquals(
+        GearBlocks.GARLIC, assertInstanceOf(AliasedBlockItem.class, GearItems.GARLIC).getBlock());
   }
 }
