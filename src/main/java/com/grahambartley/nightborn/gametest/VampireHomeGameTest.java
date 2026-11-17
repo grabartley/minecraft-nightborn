@@ -52,11 +52,11 @@ public class VampireHomeGameTest implements FabricGameTest {
   static final int ATTACKER_FORGOTTEN = 120;
   static final int HURT_COOLDOWN = 20;
 
-  private int outingChanceBefore;
-  private int mobDrainBefore;
-  private int levitationDrainBefore;
-  private int dawnOutingChanceBefore;
-  private Difficulty difficultyBefore;
+  private static int outingChanceBefore;
+  private static int mobDrainBefore;
+  private static int levitationDrainBefore;
+  private static int dawnOutingChanceBefore;
+  private static Difficulty difficultyBefore;
 
   @BeforeBatch(batchId = DAY_BATCH)
   public void pinNoon(final ServerWorld world) {

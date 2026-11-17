@@ -21,7 +21,7 @@ public class VampireBatGameTest implements FabricGameTest {
   static final String NOON_BATCH = "vampire-bat-noon";
   static final int HUNT_WINDOW = 80;
 
-  private int turnChanceBefore;
+  private static int turnChanceBefore;
 
   @BeforeBatch(batchId = COVER_BATCH)
   public void everyBatBiteTurns(final ServerWorld world) {
