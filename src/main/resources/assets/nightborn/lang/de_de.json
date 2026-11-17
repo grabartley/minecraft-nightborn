@@ -155,6 +155,8 @@
   "nightborn.setting.core.levitationDrainSeconds.tooltip": "Wie schnell Schweben Blut verbraucht, zusätzlich zum üblichen Verbrauch",
   "nightborn.setting.core.batDrainSeconds": "Sekunden pro Blut als Fledermaus",
   "nightborn.setting.core.batDrainSeconds.tooltip": "Wie schnell die Fledermausgestalt Blut verbraucht, zusätzlich zum üblichen Verbrauch",
+  "nightborn.setting.core.batSprintDrainSeconds": "Sekunden pro Blut als sprintende Fledermaus",
+  "nightborn.setting.core.batSprintDrainSeconds.tooltip": "Wie schnell das Fliegen im Sprint als Fledermaus Blut verbraucht, zusätzlich zum üblichen Verbrauch",
   "nightborn.setting.core.batHeavyDamage": "Schwerer Treffer für eine Fledermaus",
   "nightborn.setting.core.batHeavyDamage.tooltip": "Schaden eines einzelnen Treffers, der einen Vampir aus der Fledermausgestalt zwingt",
   "nightborn.setting.weakened.slowness": "Langsamkeit bei voller Schwächung (%)",

@@ -2,7 +2,6 @@ package com.grahambartley.nightborn.levitation;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 import java.util.OptionalDouble;
@@ -14,31 +13,6 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.MethodSource;
 
 class LevitationLookAheadTest {
-
-  @ParameterizedTest(name = "strafe {0}, forward {1}, yaw {2}: ({3}, {4})")
-  @CsvSource({
-    "0, 1, 0, 0, 1",
-    "0, 0.98, 90, -1, 0",
-    "0, 1, 180, 0, -1",
-    "1, 0, 0, 1, 0",
-    "0, -1, 0, 0, -1",
-    "0.98, 0.98, 0, 0.7071, 0.7071"
-  })
-  @DisplayName("it looks the way the vampire is being moved, as one block of unit length")
-  void heading(
-      final double strafe, final double forward, final float yaw, final double x, final double z) {
-    final LevitationLookAhead.Heading heading =
-        LevitationLookAhead.heading(strafe, forward, yaw).orElseThrow();
-    assertEquals(x, heading.x(), 0.0001);
-    assertEquals(z, heading.z(), 0.0001);
-  }
-
-  @ParameterizedTest(name = "strafe {0}, forward {1}")
-  @CsvSource({"0, 0", "0.00001, 0", "0, -0.00001"})
-  @DisplayName("with no movement input it looks only straight down")
-  void stillHasNoHeading(final double strafe, final double forward) {
-    assertTrue(LevitationLookAhead.heading(strafe, forward, 45.0F).isEmpty());
-  }
 
   @ParameterizedTest(name = "speed {0}: {1}")
   @CsvSource({

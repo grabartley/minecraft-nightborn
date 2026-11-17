@@ -1,5 +1,6 @@
 package com.grahambartley.nightborn.mixin;
 
+import com.grahambartley.nightborn.batform.BatFlightMotion;
 import com.grahambartley.nightborn.coffin.CoffinLayout;
 import com.grahambartley.nightborn.coffin.CoffinRise;
 import com.grahambartley.nightborn.coffin.CoffinSleeperHold;
@@ -40,6 +41,8 @@ abstract class LivingEntityMixin {
 
   @Shadow @Final private static TrackedData<Optional<BlockPos>> SLEEPING_POSITION;
 
+  @Shadow protected boolean jumping;
+
   @Inject(method = "tick", at = @At("TAIL"))
   private void nightborn$tickVampire(final CallbackInfo ci) {
     final LivingEntity self = (LivingEntity) (Object) this;
@@ -79,6 +82,15 @@ abstract class LivingEntityMixin {
     final LivingEntity self = (LivingEntity) (Object) this;
     if (LevitationMotion.drives(self)) {
       LevitationMotion.hover(self, movementInput);
+    }
+  }
+
+  @Inject(method = "travel", at = @At("HEAD"), cancellable = true)
+  private void nightborn$flyAsABat(final Vec3d movementInput, final CallbackInfo ci) {
+    final LivingEntity self = (LivingEntity) (Object) this;
+    if (BatFlightMotion.drives(self)) {
+      BatFlightMotion.travel(self, movementInput, jumping);
+      ci.cancel();
     }
   }
 

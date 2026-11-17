@@ -31,6 +31,7 @@ import net.minecraft.registry.Registry;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.Vec3d;
 
 public final class BatForm {
 
@@ -47,10 +48,13 @@ public final class BatForm {
   public static final SoundEvent ENTER_SOUND = sound("power.bat_form.enter");
   public static final SoundEvent LEAVE_SOUND = sound("power.bat_form.leave");
 
+  static final double FLOOR_PROBE = 0.1;
+
   private BatForm() {}
 
   public static void register() {
     BatFormLimits.register();
+    BatHang.register();
     ServerLivingEntityEvents.AFTER_DAMAGE.register(BatForm::afterDamage);
   }
 
@@ -77,7 +81,7 @@ public final class BatForm {
     vampire.setAttached(TYPE, true);
     vampire.calculateDimensions();
     if (vampire instanceof ServerPlayerEntity player) {
-      BatFlight.lift(player);
+      stopCreativeFlight(player);
       MilestoneCriterion.reach(player, Milestone.BAT_FORM);
     } else {
       vampire.setNoGravity(true);
@@ -89,13 +93,19 @@ public final class BatForm {
     if (!isBat(vampire)) {
       return true;
     }
-    if (!roomToStand(vampire)) {
+    final Vec3d feet = standingFeet(vampire);
+    if (!vampire.getWorld().isSpaceEmpty(vampire, standingDimensions(vampire).getBoxAt(feet))) {
       return false;
+    }
+    if (BatHang.isHanging(vampire)) {
+      BatHang.release(vampire);
+      vampire.requestTeleport(feet.x, feet.y, feet.z);
     }
     vampire.removeAttached(TYPE);
     vampire.calculateDimensions();
     if (vampire instanceof ServerPlayerEntity player) {
-      BatFlight.ground(player);
+      player.interactionManager.getGameMode().setAbilities(player.getAbilities());
+      player.sendAbilitiesUpdate();
     } else {
       vampire.setNoGravity(false);
     }
@@ -120,16 +130,41 @@ public final class BatForm {
     }
     vampire.fallDistance = 0.0F;
     if (vampire instanceof ServerPlayerEntity player) {
-      BatFlight.keep(player);
+      BatHang.tick(player);
     }
   }
 
-  static boolean roomToStand(final LivingEntity vampire) {
-    final EntityDimensions standing =
-        vampire instanceof BatShifter shifter
-            ? shifter.standingDimensions()
-            : PlayerEntity.STANDING_DIMENSIONS.scaled(vampire.getScale());
-    return vampire.getWorld().isSpaceEmpty(vampire, standing.getBoxAt(vampire.getPos()));
+  public static BatEffort effort(final LivingEntity vampire) {
+    return BatEffort.of(
+        isBat(vampire), BatHang.isHanging(vampire) || perched(vampire), vampire.isSprinting());
+  }
+
+  private static boolean perched(final LivingEntity vampire) {
+    return vampire instanceof PlayerEntity
+        && BatFormRules.perched(
+            vampire.isOnGround(),
+            !vampire
+                .getWorld()
+                .isSpaceEmpty(vampire, vampire.getBoundingBox().offset(0.0, -FLOOR_PROBE, 0.0)));
+  }
+
+  private static void stopCreativeFlight(final ServerPlayerEntity player) {
+    if (player.getAbilities().flying) {
+      player.getAbilities().flying = false;
+      player.sendAbilitiesUpdate();
+    }
+  }
+
+  private static EntityDimensions standingDimensions(final LivingEntity vampire) {
+    return vampire instanceof BatShifter shifter
+        ? shifter.standingDimensions()
+        : PlayerEntity.STANDING_DIMENSIONS.scaled(vampire.getScale());
+  }
+
+  private static Vec3d standingFeet(final LivingEntity vampire) {
+    return BatHang.anchor(vampire)
+        .map(anchor -> BatHangRules.standingFeet(anchor, standingDimensions(vampire).height()))
+        .orElse(vampire.getPos());
   }
 
   private static void afterDamage(

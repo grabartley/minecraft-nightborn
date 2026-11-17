@@ -155,6 +155,8 @@
   "nightborn.setting.core.levitationDrainSeconds.tooltip": "La vitesse à laquelle la lévitation épuise le sang, en plus de l'épuisement habituel",
   "nightborn.setting.core.batDrainSeconds": "Secondes par sang en chauve-souris",
   "nightborn.setting.core.batDrainSeconds.tooltip": "La vitesse à laquelle la forme de chauve-souris épuise le sang, en plus de l'épuisement habituel",
+  "nightborn.setting.core.batSprintDrainSeconds": "Secondes par sang en sprint de chauve-souris",
+  "nightborn.setting.core.batSprintDrainSeconds.tooltip": "La vitesse à laquelle voler en sprint en chauve-souris épuise le sang, en plus de l'épuisement habituel",
   "nightborn.setting.core.batHeavyDamage": "Coup violent pour une chauve-souris",
   "nightborn.setting.core.batHeavyDamage.tooltip": "Dégâts d'un seul coup qui forcent un vampire à quitter sa forme de chauve-souris",
   "nightborn.setting.weakened.slowness": "Lenteur à l'affaiblissement maximal (%)",

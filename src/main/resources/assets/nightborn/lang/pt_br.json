@@ -155,6 +155,8 @@
   "nightborn.setting.core.levitationDrainSeconds.tooltip": "Quão rápido levitar esgota o sangue, além do gasto normal",
   "nightborn.setting.core.batDrainSeconds": "Segundos por sangue como morcego",
   "nightborn.setting.core.batDrainSeconds.tooltip": "Quão rápido a forma de morcego esgota o sangue, além do gasto normal",
+  "nightborn.setting.core.batSprintDrainSeconds": "Segundos por sangue ao correr como morcego",
+  "nightborn.setting.core.batSprintDrainSeconds.tooltip": "Quão rápido voar em disparada como morcego esgota o sangue, além do gasto normal",
   "nightborn.setting.core.batHeavyDamage": "Golpe forte para um morcego",
   "nightborn.setting.core.batHeavyDamage.tooltip": "Dano de um único golpe que tira um vampiro da forma de morcego",
   "nightborn.setting.weakened.slowness": "Lentidão com fraqueza máxima (%)",

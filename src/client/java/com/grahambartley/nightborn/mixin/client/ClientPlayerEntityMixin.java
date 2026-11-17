@@ -35,10 +35,10 @@ abstract class ClientPlayerEntityMixin {
       method = "tickMovement",
       at =
           @At(
-              value = "INVOKE",
-              target =
-                  "Lnet/minecraft/client/network/ClientPlayerInteractionManager;isFlyingLocked()Z"))
-  private boolean nightborn$aBatAlwaysFlies(final boolean locked) {
-    return BatFormRules.flightLocked(locked, BatForm.isBat((ClientPlayerEntity) (Object) this));
+              value = "FIELD",
+              target = "Lnet/minecraft/entity/player/PlayerAbilities;allowFlying:Z"))
+  private boolean nightborn$aBatHasNoCreativeFlight(final boolean allowFlying) {
+    return BatFormRules.creativeFlight(
+        allowFlying, BatForm.isBat((ClientPlayerEntity) (Object) this));
   }
 }

@@ -155,6 +155,8 @@
   "nightborn.setting.core.levitationDrainSeconds.tooltip": "悬浮额外消耗血液的速度，叠加在平常消耗之上",
   "nightborn.setting.core.batDrainSeconds": "蝙蝠形态时每点血液秒数",
   "nightborn.setting.core.batDrainSeconds.tooltip": "蝙蝠形态额外消耗血液的速度，叠加在平常消耗之上",
+  "nightborn.setting.core.batSprintDrainSeconds": "蝙蝠形态疾飞时每点血液秒数",
+  "nightborn.setting.core.batSprintDrainSeconds.tooltip": "蝙蝠形态疾飞额外消耗血液的速度，叠加在平常消耗之上",
   "nightborn.setting.core.batHeavyDamage": "蝙蝠形态的重击伤害",
   "nightborn.setting.core.batHeavyDamage.tooltip": "单次攻击造成此伤害即会迫使吸血鬼脱离蝙蝠形态",
   "nightborn.setting.weakened.slowness": "完全虚弱时的减速（%）",

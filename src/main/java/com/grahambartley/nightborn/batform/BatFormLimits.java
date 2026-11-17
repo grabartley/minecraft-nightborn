@@ -28,7 +28,9 @@ public final class BatFormLimits {
         (player, world, hand) ->
             new TypedActionResult<>(verdict(BatForm.isBat(player)), player.getStackInHand(hand)));
     UseBlockCallback.EVENT.register(
-        BEFORE_OTHERS, (player, world, hand, hit) -> verdict(BatForm.isBat(player)));
+        BEFORE_OTHERS,
+        (player, world, hand, hit) ->
+            BatForm.isBat(player) ? BatHang.use(player, world, hit) : ActionResult.PASS);
     UseEntityCallback.EVENT.register(
         BEFORE_OTHERS, (player, world, hand, entity, hit) -> verdict(BatForm.isBat(player)));
     AttackEntityCallback.EVENT.register(

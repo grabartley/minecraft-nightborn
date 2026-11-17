@@ -1,5 +1,7 @@
 package com.grahambartley.nightborn.mixin;
 
+import com.grahambartley.nightborn.batform.BatForm;
+import com.grahambartley.nightborn.batform.BatHang;
 import com.grahambartley.nightborn.levitation.Levitation;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket;
@@ -23,13 +25,19 @@ abstract class ServerPlayNetworkHandlerMixin {
               value = "INVOKE",
               target =
                   "Lnet/minecraft/server/network/ServerPlayerEntity;hasStatusEffect(Lnet/minecraft/registry/entry/RegistryEntry;)Z"))
-  private boolean nightborn$levitatingIsNotFloating(final boolean levitationEffect) {
-    return levitationEffect || Levitation.isLevitating(player);
+  private boolean nightborn$hoveringIsNotFloating(final boolean levitationEffect) {
+    return levitationEffect || Levitation.isLevitating(player) || BatForm.isBat(player);
   }
 
   @Inject(method = "onPlayerMove", at = @At("RETURN"))
   private void nightborn$sneakLandsALevitatingPlayer(
       final PlayerMoveC2SPacket packet, final CallbackInfo ci) {
     Levitation.touchDown(player, packet.isOnGround());
+  }
+
+  @Inject(method = "onPlayerMove", at = @At("RETURN"))
+  private void nightborn$aBatMovedOffItsSpotLetsGo(
+      final PlayerMoveC2SPacket packet, final CallbackInfo ci) {
+    BatHang.afterMove(player);
   }
 }

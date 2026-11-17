@@ -37,6 +37,8 @@ public final class VampireClientFeatures {
         "key.nightborn.levitate", GLFW.GLFW_KEY_H, ToggleLevitationPayload.INSTANCE);
     PayloadKey.register(
         "key.nightborn.turning_bite", GLFW.GLFW_KEY_J, ToggleTurningBitePayload.INSTANCE);
+    BatHangInput.register();
+    BatHangView.register();
     VampirePlayerClips.register();
     VomitFx.register();
     BloodFx.register();
