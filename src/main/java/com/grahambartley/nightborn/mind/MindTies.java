@@ -1,7 +1,6 @@
 package com.grahambartley.nightborn.mind;
 
 import com.grahambartley.nightborn.Nightborn;
-import java.util.Optional;
 import java.util.UUID;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentRegistry;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentType;
@@ -39,12 +38,6 @@ public final class MindTies {
 
   public static boolean charmedBy(final LivingEntity entity, final Entity charmer) {
     return tiedTo(entity, MindEffect.CHARMED, CHARMED_BY, charmer);
-  }
-
-  public static Optional<UUID> mesmeriser(final LivingEntity entity) {
-    return mesmerised(entity)
-        ? Optional.ofNullable(entity.getAttached(MESMERISED_BY))
-        : Optional.empty();
   }
 
   static boolean tiedTo(
