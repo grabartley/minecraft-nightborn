@@ -391,6 +391,30 @@ public class StandingCoffinGameTest implements FabricGameTest {
         });
   }
 
+  @GameTest(templateName = CoffinStage.YARD, batchId = DAY, tickLimit = 20)
+  public void aVampireMobLoadedAsleepInAStandingCoffinStandsBackUp(final TestContext context) {
+    final BlockPos head = CoffinStage.standing(context, new BlockPos(2, 2, 4), Direction.NORTH);
+    CoffinStage.roof(context);
+    final VampireEntity vampire = context.spawnEntity(NightbornMobs.VAMPIRE, new BlockPos(2, 2, 6));
+    vampire.setAiDisabled(true);
+    context.runAtTick(
+        2,
+        () -> {
+          vampire.sleep(context.getAbsolutePos(head));
+          vampire.setPose(EntityPose.SLEEPING);
+        });
+    context.runAtTick(
+        6,
+        () -> {
+          context.assertTrue(vampire.isSleeping(), "the mob still sleeps");
+          context.assertTrue(
+              vampire.getPose() == EntityPose.STANDING,
+              "a mob given the lying pose, as a saved sleeper is on load, stands again, got "
+                  + vampire.getPose());
+          context.complete();
+        });
+  }
+
   @GameTest(templateName = CoffinStage.YARD, batchId = DAY, tickLimit = 60)
   public void aSleepingVampireMobCannotBePushedOutThroughTheCoffin(final TestContext context) {
     final BlockPos standingHead =

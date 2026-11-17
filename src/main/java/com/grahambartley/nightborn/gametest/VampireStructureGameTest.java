@@ -163,8 +163,17 @@ public class VampireStructureGameTest implements FabricGameTest {
             .get(Identifier.of(Nightborn.MOD_ID, "crypt"));
     context.assertTrue(
         crypt instanceof VampireStructure vampire
-            && vampire.footing().equals(Optional.of(new Footing(true, 4, 8))),
-        "the crypt keeps to dry ground that rises 4 blocks or less, got " + crypt);
+            && vampire
+                .footing()
+                .equals(
+                    Optional.of(
+                        new Footing(
+                            true,
+                            4,
+                            8,
+                            Optional.of(Identifier.of(Nightborn.MOD_ID, "crypt_entrance"))))),
+        "the crypt keeps to dry ground that rises 4 blocks or less and names its entrance, got "
+            + crypt);
     context.complete();
   }
 

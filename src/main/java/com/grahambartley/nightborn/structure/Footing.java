@@ -4,12 +4,14 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockBox;
 import net.minecraft.util.math.ColumnPos;
 import net.minecraft.world.Heightmap;
 import net.minecraft.world.gen.structure.Structure;
 
-public record Footing(boolean dry, int maxRise, int spacing) {
+public record Footing(boolean dry, int maxRise, int spacing, Optional<Identifier> entrance) {
 
   public static final int WIDEST_SPACING = 16;
   public static final int STEEPEST_RISE = 64;
@@ -25,7 +27,8 @@ public record Footing(boolean dry, int maxRise, int spacing) {
                           .forGetter(Footing::maxRise),
                       Codec.intRange(1, WIDEST_SPACING)
                           .optionalFieldOf("spacing", 8)
-                          .forGetter(Footing::spacing))
+                          .forGetter(Footing::spacing),
+                      Identifier.CODEC.optionalFieldOf("entrance").forGetter(Footing::entrance))
                   .apply(instance, Footing::new));
 
   public record Column(int surface, int floor) {
@@ -80,6 +83,10 @@ public record Footing(boolean dry, int maxRise, int spacing) {
     }
     steps.add(max);
     return steps;
+  }
+
+  public int surface(final Structure.Context context, final ColumnPos point) {
+    return height(context, point, Heightmap.Type.WORLD_SURFACE_WG);
   }
 
   private static int height(

@@ -8,6 +8,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import java.util.List;
 import java.util.Optional;
 import net.minecraft.registry.entry.RegistryEntry;
+import net.minecraft.structure.PoolStructurePiece;
 import net.minecraft.structure.StructureLiquidSettings;
 import net.minecraft.structure.StructurePiecesCollector;
 import net.minecraft.structure.StructurePiecesList;
@@ -204,14 +205,40 @@ public final class VampireStructure extends Structure {
       return position;
     }
     final StructurePiecesCollector pieces = position.get().generate();
+    final int lift =
+        footing
+            .get()
+            .entrance()
+            .flatMap(name -> threshold(context, pieces, name))
+            .map(threshold -> threshold.lift(footing.get().surface(context, threshold.outside())))
+            .orElse(0);
+    pieces.shift(lift);
+    final BlockPos placed = position.get().position().up(lift);
     return footing
             .get()
-            .fits(
-                context,
-                pieces.getBoundingBox(),
-                new ColumnPos(position.get().position().getX(), position.get().position().getZ()))
-        ? Optional.of(new StructurePosition(position.get().position(), Either.right(pieces)))
+            .fits(context, pieces.getBoundingBox(), new ColumnPos(placed.getX(), placed.getZ()))
+        ? Optional.of(new StructurePosition(placed, Either.right(pieces)))
         : Optional.empty();
+  }
+
+  private static Optional<Threshold> threshold(
+      final Context context, final StructurePiecesCollector pieces, final Identifier name) {
+    return pieces.toList().pieces().stream()
+        .filter(PoolStructurePiece.class::isInstance)
+        .map(PoolStructurePiece.class::cast)
+        .map(
+            piece ->
+                Threshold.named(
+                    name,
+                    piece
+                        .getPoolElement()
+                        .getStructureBlockInfos(
+                            context.structureTemplateManager(),
+                            piece.getPos(),
+                            piece.getRotation(),
+                            context.random())))
+        .flatMap(Optional::stream)
+        .findFirst();
   }
 
   @Override

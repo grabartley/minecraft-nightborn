@@ -101,4 +101,16 @@ class TemplateTest {
     assertEquals(BlockState.full(below), data.get("final_state"));
     assertEquals("minecraft:empty", data.get("pool"));
   }
+
+  @ParameterizedTest(name = "an entrance facing {0} keeps the {1} floor it stands in")
+  @CsvSource({"south, dirt_path", "west, minecraft:stone"})
+  void anEntranceFacesOutAndLeavesTheFloorItReplaced(final String outward, final String floor) {
+    t.set(2, 0, 3, floor);
+    t.entrance(2, 0, 3, "nightborn:way_in", outward);
+    assertEquals("minecraft:jigsaw[orientation=" + outward + "_up]", t.get(2, 0, 3));
+    final Map<String, Object> data = t.blockData().get(new Pos(2, 0, 3));
+    assertEquals("nightborn:way_in", data.get("name"));
+    assertEquals(BlockState.full(floor), data.get("final_state"));
+    assertEquals("minecraft:empty", data.get("pool"));
+  }
 }

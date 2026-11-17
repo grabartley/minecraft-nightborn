@@ -122,7 +122,7 @@ abstract class LivingEntityMixin {
       final Operation<ItemStack> original) {
     if (user instanceof PlayerEntity player
         && Consumables.rejectedBy(stack, Vampires.isVampire(player))) {
-      return Vomiting.swallow(player, stack, ServerConfigService.current().blood());
+      return Vomiting.swallow(player, stack, ServerConfigService.current());
     }
     return original.call(stack, world, user);
   }
@@ -140,7 +140,7 @@ abstract class LivingEntityMixin {
 
   @Inject(method = "sleep", at = @At("TAIL"))
   private void nightborn$standInAStandingCoffin(final BlockPos pos, final CallbackInfo ci) {
-    CoffinSleeperHold.settle((LivingEntity) (Object) this);
+    CoffinSleeperHold.hold((LivingEntity) (Object) this);
   }
 
   @Inject(method = "tick", at = @At("TAIL"))

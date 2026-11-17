@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.grahambartley.nightborn.coffin.CoffinStyle;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -25,6 +26,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 class CoffinArtTest {
 
   private static final double HALF_PIXEL = 0.5 / 16.0;
+  private static final double STONE_RIM = 4.0;
   private static final Identifier SOURCE = Identifier.of("nightborn", "textures/block/source.png");
 
   @ParameterizedTest(name = "{0}")
@@ -137,5 +139,31 @@ class CoffinArtTest {
 
   private static JsonArray bones(final CoffinStyle style) throws IOException {
     return GeoAssets.bones(GeoAssets.file(CoffinArt.geo(style)));
+  }
+
+  @ParameterizedTest(name = "stone {0}: the lid tips up on its long edge and never slides off")
+  @CsvSource({"open", "close", "opened", "closed"})
+  @DisplayName(
+      "a stone lid stays over its own coffin, so it never passes through what is beside it")
+  void theStoneLidStaysOverItsCoffin(final String clip) throws IOException {
+    final JsonObject lid =
+        GeoAssets.animations(GeoAssets.file(CoffinArt.animation(CoffinStyle.STONE)))
+            .getAsJsonObject(clip)
+            .getAsJsonObject("bones")
+            .getAsJsonObject("lid");
+    for (final JsonElement key : lid.getAsJsonObject("position").asMap().values()) {
+      final JsonArray slide = key.getAsJsonArray();
+      assertTrue(Math.abs(slide.get(0).getAsDouble()) <= STONE_RIM, clip + " slides " + slide);
+      assertEquals(0.0, slide.get(1).getAsDouble());
+      assertEquals(0.0, slide.get(2).getAsDouble());
+    }
+    for (final JsonElement key : lid.getAsJsonObject("rotation").asMap().values()) {
+      final JsonArray tilt = key.getAsJsonArray();
+      assertEquals(0.0, tilt.get(0).getAsDouble());
+      assertEquals(0.0, tilt.get(1).getAsDouble());
+      assertTrue(
+          tilt.get(2).getAsDouble() <= 0.0 && tilt.get(2).getAsDouble() > -90.0,
+          clip + " tilts " + tilt);
+    }
   }
 }

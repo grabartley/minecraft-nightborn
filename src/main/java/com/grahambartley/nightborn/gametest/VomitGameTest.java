@@ -3,10 +3,15 @@ package com.grahambartley.nightborn.gametest;
 import com.grahambartley.nightborn.blood.BloodAttachment;
 import com.grahambartley.nightborn.blood.BloodBottleItem;
 import com.grahambartley.nightborn.blood.BloodQuality;
+import com.grahambartley.nightborn.config.NightbornConfig;
 import com.grahambartley.nightborn.downed.Downed;
+import com.grahambartley.nightborn.gear.GearItems;
 import com.grahambartley.nightborn.holy.HolyWater;
+import com.grahambartley.nightborn.server.ServerConfigService;
 import com.grahambartley.nightborn.vampire.NightbornDamage;
 import com.grahambartley.nightborn.vomit.Consumables;
+import com.grahambartley.nightborn.vomit.GarlicMeal;
+import com.grahambartley.nightborn.weakened.Weakened;
 import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.PotionContentsComponent;
@@ -174,6 +179,49 @@ public class VomitGameTest implements FabricGameTest {
           context.assertTrue(human.getHungerManager().getFoodLevel() > 10, "fed");
           context.assertFalse(human.hasStatusEffect(StatusEffects.NAUSEA), "not sick");
           TestPlayers.finish(context, human);
+        });
+  }
+
+  @GameTest(templateName = ARENA, batchId = BATCH, tickLimit = 140)
+  public void aHumanEatsGarlicAndIsFed(final TestContext context) {
+    final ServerPlayerEntity human = TestPlayers.human(context, new BlockPos(3, 1, 4));
+    human.getHungerManager().setFoodLevel(10);
+    swallow(context, human, new ItemStack(GearItems.GARLIC));
+    context.runAtTick(
+        FINISHED,
+        () -> {
+          context.assertEquals(
+              human.getHungerManager().getFoodLevel(),
+              10 + GearItems.GARLIC_FOOD.nutrition(),
+              "garlic feeds a human");
+          context.assertFalse(human.hasStatusEffect(StatusEffects.NAUSEA), "not sick");
+          TestPlayers.finish(context, human);
+        });
+  }
+
+  @GameTest(templateName = ARENA, batchId = BATCH, tickLimit = 140)
+  public void aVampireEatingGarlicIsHurtBadlyWeakenedAndLosesBlood(final TestContext context) {
+    final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(3, 1, 4));
+    final NightbornConfig config = ServerConfigService.current();
+    BloodAttachment.set(vampire, 10);
+    swallow(context, vampire, new ItemStack(GearItems.GARLIC, 2));
+    context.runAtTick(
+        FINISHED,
+        () -> {
+          context.assertEquals(vampire.getMainHandStack().getCount(), 1, "one garlic used up");
+          context.assertEquals(
+              BloodAttachment.get(vampire),
+              10 - config.wards().eatenBlood(),
+              "blood brought up with the garlic");
+          context.assertTrue(
+              vampire.getMaxHealth() - vampire.getHealth() > config.blood().vomitDamage(),
+              "hurt more than by other food: " + Diagnostics.of(vampire));
+          context.assertTrue(
+              Weakened.sources(vampire).sources().containsKey(GarlicMeal.WEAKENED_SOURCE),
+              "weakened by the garlic it ate: " + Diagnostics.of(vampire));
+          context.assertTrue(vampire.hasStatusEffect(StatusEffects.NAUSEA), "nauseous");
+          context.assertTrue(vampire.isAlive(), "alive");
+          TestPlayers.finish(context, vampire);
         });
   }
 

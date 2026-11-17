@@ -1,6 +1,7 @@
 package com.grahambartley.nightborn.vomit;
 
-import com.grahambartley.nightborn.config.BloodSettings;
+import com.grahambartley.nightborn.blood.BloodAttachment;
+import com.grahambartley.nightborn.config.NightbornConfig;
 import com.grahambartley.nightborn.network.PlayerCue;
 import com.grahambartley.nightborn.network.PlayerCues;
 import com.grahambartley.nightborn.vampire.NightbornDamage;
@@ -24,11 +25,19 @@ public final class Vomiting {
   }
 
   public static ItemStack swallow(
-      final PlayerEntity vampire, final ItemStack stack, final BloodSettings settings) {
+      final PlayerEntity vampire, final ItemStack stack, final NightbornConfig config) {
     final ItemStack leftBehind = Consumables.leftBehind(stack);
     vampire.incrementStat(Stats.USED.getOrCreateStat(stack.getItem()));
     if (vampire instanceof ServerPlayerEntity server) {
-      throwUp(server, settings.vomitDamage());
+      final GarlicMeal.Toll toll =
+          GarlicMeal.toll(
+              GarlicMeal.is(stack),
+              config.blood().vomitDamage(),
+              NAUSEA_TICKS,
+              BloodAttachment.get(server),
+              config.wards());
+      GarlicMeal.sicken(server, toll);
+      throwUp(server, toll.damage(), toll.nauseaTicks());
     }
     final boolean creative = vampire.isInCreativeMode();
     if (!creative) {
@@ -57,9 +66,9 @@ public final class Vomiting {
     return noContainer ? Leftover.KEEP : Leftover.POCKET_CONTAINER;
   }
 
-  static void throwUp(final ServerPlayerEntity vampire, final int damage) {
+  static void throwUp(final ServerPlayerEntity vampire, final int damage, final int nauseaTicks) {
     vampire.addStatusEffect(
-        new StatusEffectInstance(StatusEffects.NAUSEA, NAUSEA_TICKS, 0, false, false, true));
+        new StatusEffectInstance(StatusEffects.NAUSEA, nauseaTicks, 0, false, false, true));
     PlayerCues.send(vampire, PlayerCue.VOMIT);
     if (damage > 0) {
       vampire.damage(NightbornDamage.vomit(vampire.getWorld()), damage);

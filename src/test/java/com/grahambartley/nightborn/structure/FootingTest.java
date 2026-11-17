@@ -6,7 +6,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import com.google.gson.JsonParser;
 import com.mojang.serialization.JsonOps;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Stream;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockBox;
 import net.minecraft.util.math.ColumnPos;
 import org.junit.jupiter.api.Test;
@@ -17,7 +19,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 class FootingTest {
 
-  private static final Footing DRY = new Footing(true, 4, 8);
+  private static final Footing DRY = new Footing(true, 4, 8, Optional.empty());
 
   static Stream<Arguments> grounds() {
     final Footing.Column field = new Footing.Column(70, 70);
@@ -28,7 +30,7 @@ class FootingTest {
             "one corner in a river", DRY, List.of(field, new Footing.Column(63, 60)), false),
         Arguments.of(
             "a river is fine when water is allowed",
-            new Footing(false, 10, 8),
+            new Footing(false, 10, 8, Optional.empty()),
             List.of(field, new Footing.Column(63, 60)),
             true),
         Arguments.of(
@@ -55,7 +57,7 @@ class FootingTest {
   @CsvSource({"38, 8, 6", "16, 8, 3", "1, 8, 1", "17, 16, 2"})
   void samplesReachEveryEdgeOfTheBox(final int width, final int spacing, final int perSide) {
     final List<ColumnPos> samples =
-        new Footing(true, 4, spacing)
+        new Footing(true, 4, spacing, Optional.empty())
             .samples(new BlockBox(0, 0, 0, width - 1, 10, width - 1), new ColumnPos(-3, -4));
     assertEquals(perSide * perSide + 1, samples.size());
     assertEquals(new ColumnPos(-3, -4), samples.getFirst());
@@ -69,6 +71,20 @@ class FootingTest {
         Footing.CODEC
             .parse(JsonOps.INSTANCE, JsonParser.parseString("{\"max_rise\": 4}"))
             .getOrThrow();
-    assertEquals(new Footing(true, 4, 8), footing);
+    assertEquals(new Footing(true, 4, 8, Optional.empty()), footing);
+  }
+
+  @Test
+  void dataNamesTheEntranceToLevelWithTheGround() {
+    final Footing footing =
+        Footing.CODEC
+            .parse(
+                JsonOps.INSTANCE,
+                JsonParser.parseString(
+                    "{\"max_rise\": 6, \"entrance\": \"nightborn:castle_entrance\"}"))
+            .getOrThrow();
+    assertEquals(
+        new Footing(true, 6, 8, Optional.of(Identifier.of("nightborn", "castle_entrance"))),
+        footing);
   }
 }

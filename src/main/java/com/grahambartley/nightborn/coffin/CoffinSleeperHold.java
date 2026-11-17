@@ -12,15 +12,7 @@ public final class CoffinSleeperHold {
 
   private CoffinSleeperHold() {}
 
-  public static void settle(final LivingEntity sleeper) {
-    hold(sleeper, true);
-  }
-
   public static void hold(final LivingEntity sleeper) {
-    hold(sleeper, false);
-  }
-
-  private static void hold(final LivingEntity sleeper, final boolean settling) {
     final BlockPos head = sleeper.getSleepingPosition().orElse(null);
     if (head == null) {
       return;
@@ -31,8 +23,9 @@ public final class CoffinSleeperHold {
     }
     final Direction facing = state.get(BedBlock.FACING);
     final boolean standing = state.get(CoffinBlock.STANDING);
-    if (settling && standing) {
-      sleeper.setPose(EntityPose.STANDING);
+    final EntityPose pose = CoffinLayout.restingPose(standing, sleeper.getPose());
+    if (pose != sleeper.getPose()) {
+      sleeper.setPose(pose);
     }
     final boolean rising = CoffinRise.rising(sleeper);
     final Vec3d spot =

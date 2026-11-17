@@ -15,6 +15,7 @@ public final class MountainCastle {
   public static final List<Layout> LAYOUTS = List.of(EYRIE, BASTION);
 
   public static final String ANCHOR = "nightborn:mountain_castle_summit";
+  public static final String ENTRANCE = "nightborn:mountain_castle_entrance";
 
   public static final int SIZE = 63;
   public static final int HEIGHT = 96;
@@ -72,6 +73,7 @@ public final class MountainCastle {
     Wards.build(t, layout);
     Crag.skirt(t);
     t.anchor(MID, UP, MID, ANCHOR, KEEP.base());
+    t.entrance(MID, LOW, Barbican.SOUTH, ENTRANCE, "south");
     Connections.connect(t);
     return t;
   }

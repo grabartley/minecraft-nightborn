@@ -3,6 +3,7 @@ package com.grahambartley.nightborn.coffin;
 import java.util.List;
 import net.minecraft.block.enums.BedPart;
 import net.minecraft.entity.EntityDimensions;
+import net.minecraft.entity.EntityPose;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
@@ -78,6 +79,10 @@ public final class CoffinLayout {
     return rising && !standing
         ? heels(head, facing, standingEyeHeight)
         : restingSpot(head, facing, standing);
+  }
+
+  public static EntityPose restingPose(final boolean standing, final EntityPose current) {
+    return standing ? EntityPose.STANDING : current;
   }
 
   public static boolean facesOut(final boolean standing, final boolean rising) {
