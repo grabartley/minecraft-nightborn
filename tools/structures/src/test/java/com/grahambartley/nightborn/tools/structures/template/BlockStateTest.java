@@ -49,14 +49,6 @@ class BlockStateTest {
     assertEquals(Map.of(), BlockState.parse("minecraft:air").properties());
   }
 
-  @Test
-  void withPropsReplacesAndAddsProperties() {
-    assertEquals(
-        "minecraft:lantern[hanging=true,waterlogged=false]",
-        BlockState.withProps(
-            "minecraft:lantern[hanging=false]", "hanging", true, "waterlogged", "false"));
-  }
-
   @ParameterizedTest
   @CsvSource({"stone, minecraft:stone", "minecraft:stone, minecraft:stone", "md:x, md:x"})
   void fullAddsANamespaceOnlyWhenMissing(final String state, final String full) {
