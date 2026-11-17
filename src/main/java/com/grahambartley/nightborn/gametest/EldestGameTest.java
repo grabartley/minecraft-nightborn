@@ -1,9 +1,11 @@
 package com.grahambartley.nightborn.gametest;
 
+import com.grahambartley.nightborn.Nightborn;
 import com.grahambartley.nightborn.gear.Staking;
 import com.grahambartley.nightborn.mind.Mesmerise;
 import com.grahambartley.nightborn.mob.EldestEntity;
 import com.grahambartley.nightborn.mob.NightbornMobs;
+import com.grahambartley.nightborn.mob.goal.HouseholdLifeGoal;
 import com.grahambartley.nightborn.mob.look.VampireRig;
 import com.grahambartley.nightborn.mob.stage.SkillPicks;
 import com.grahambartley.nightborn.server.ServerConfigService;
@@ -14,11 +16,18 @@ import com.grahambartley.nightborn.skill.SkillEarning;
 import com.grahambartley.nightborn.skill.SkillTree;
 import com.grahambartley.nightborn.skill.Skills;
 import com.grahambartley.nightborn.skill.TreeProgress;
+import com.grahambartley.nightborn.structure.HeadSeat;
+import com.grahambartley.nightborn.structure.VampireStructure;
 import com.grahambartley.nightborn.vampire.NightbornDamage;
 import com.grahambartley.nightborn.vampire.Vampires;
 import java.util.Map;
+import java.util.Optional;
 import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
 import net.minecraft.entity.SpawnReason;
+import net.minecraft.loot.LootTable;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.RegistryKeys;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.test.AfterBatch;
@@ -27,6 +36,7 @@ import net.minecraft.test.GameTest;
 import net.minecraft.test.TestContext;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.gen.structure.Structure;
 
 public class EldestGameTest implements FabricGameTest {
 
@@ -189,5 +199,110 @@ public class EldestGameTest implements FabricGameTest {
 
   private static int points(final ServerPlayerEntity player) {
     return SkillAttachment.get(player, SkillTree.HUNTER).earned();
+  }
+
+  @GameTest(templateName = ARENA, tickLimit = 20)
+  public void anEldestSettledInACastleKeepsToItsRoom(final TestContext context) {
+    final EldestEntity eldest = eldest(context);
+    final BlockPos home = context.getAbsolutePos(CENTRE).down(20);
+    eldest.settleAt(home);
+    context.assertEquals(
+        eldest.homeLife().home(), Optional.of(home), "it shares the household's home");
+    context.assertEquals(
+        eldest.homeLife().room(),
+        Optional.of(eldest.getBlockPos()),
+        "its room is where it was settled");
+    context.assertTrue(
+        eldest.goalSelector.getGoals().stream()
+            .noneMatch(goal -> goal.getGoal() instanceof HouseholdLifeGoal),
+        "it takes no part in the household's routine");
+    context.assertTrue(!eldest.homeLife().out(eldest, true), "it never goes out to feed");
+    final NbtCompound saved = new NbtCompound();
+    eldest.writeCustomDataToNbt(saved);
+    final EldestEntity loaded = context.spawnEntity(NightbornMobs.ELDEST, CENTRE.north());
+    loaded.setAiDisabled(true);
+    loaded.readCustomDataFromNbt(saved);
+    context.assertEquals(
+        loaded.homeLife().room(), eldest.homeLife().room(), "its room survives a save and load");
+    context.assertTrue(
+        loaded.goalSelector.getGoals().stream()
+            .noneMatch(goal -> goal.getGoal() instanceof HouseholdLifeGoal),
+        "and it still keeps out of the routine");
+    context.complete();
+  }
+
+  @GameTest(templateName = ARENA, tickLimit = 20)
+  public void aSummonedEldestHasNoRoom(final TestContext context) {
+    final EldestEntity eldest = eldest(context);
+    context.assertEquals(eldest.homeLife().room(), Optional.empty(), "it keeps to no room");
+    context.complete();
+  }
+
+  @GameTest(templateName = ARENA, tickLimit = 20)
+  public void aCastlesEldestSizesItselfWhenAFightBegins(final TestContext context) {
+    final EldestEntity eldest = eldest(context);
+    eldest.settleAt(context.getAbsolutePos(CENTRE).down(20));
+    final float alone = eldest.getMaxHealth();
+    final ServerPlayerEntity first = context.createMockCreativeServerPlayerInWorld();
+    final ServerPlayerEntity second = context.createMockCreativeServerPlayerInWorld();
+    first.refreshPositionAndAngles(eldest.getX() + 1.0, eldest.getY(), eldest.getZ(), 0.0F, 0.0F);
+    second.refreshPositionAndAngles(eldest.getX() - 1.0, eldest.getY(), eldest.getZ(), 0.0F, 0.0F);
+    eldest.setTarget(first);
+    context.assertTrue(
+        eldest.getMaxHealth() > alone,
+        "two players near make it tougher: " + alone + " to " + eldest.getMaxHealth());
+    final float grown = eldest.getMaxHealth();
+    eldest.setHealth(grown / 2.0F);
+    eldest.setTarget(null);
+    eldest.setTarget(second);
+    context.assertTrue(
+        eldest.getMaxHealth() == grown && eldest.getHealth() == grown / 2.0F,
+        "a hurt Eldest that finds a new target is not healed");
+    context.complete();
+  }
+
+  @GameTest(templateName = ARENA, tickLimit = 20)
+  public void theShippedMountainCastleHoldsTwentyAndSeatsTheEldestOnTop(final TestContext context) {
+    final var registries = context.getWorld().getRegistryManager();
+    final Structure structure =
+        registries
+            .get(RegistryKeys.STRUCTURE)
+            .get(Identifier.of(Nightborn.MOD_ID, "mountain_castle"));
+    context.assertTrue(
+        structure instanceof VampireStructure, "the mountain castle loads, got " + structure);
+    final VampireStructure castle = (VampireStructure) structure;
+    context.assertTrue(
+        castle.household().residents().getMin() == 20
+            && castle.household().residents().getMax() == 20,
+        "twenty vampires live there");
+    context.assertTrue(
+        castle
+            .household()
+            .head()
+            .filter(
+                head ->
+                    head.resident().value() == NightbornMobs.ELDEST
+                        && head.seat() == HeadSeat.HIGHEST)
+            .isPresent(),
+        "the Eldest takes the highest room");
+    context.assertTrue(castle.summit().isPresent(), "it looks for a summit");
+    context.assertTrue(
+        registries
+                .get(RegistryKeys.STRUCTURE_SET)
+                .get(Identifier.of(Nightborn.MOD_ID, "mountain_castle"))
+            != null,
+        "its structure set loads");
+    context.assertTrue(
+        context
+                .getWorld()
+                .getServer()
+                .getReloadableRegistries()
+                .getLootTable(
+                    RegistryKey.of(
+                        RegistryKeys.LOOT_TABLE,
+                        Identifier.of(Nightborn.MOD_ID, "chests/mountain_castle")))
+            != LootTable.EMPTY,
+        "its chest loot loads");
+    context.complete();
   }
 }

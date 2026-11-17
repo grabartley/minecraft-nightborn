@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.grahambartley.nightborn.tools.structures.template.Pos;
 import com.grahambartley.nightborn.tools.structures.template.Template;
+import com.grahambartley.nightborn.tools.structures.vampire.StructureWalk;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -21,7 +22,7 @@ class ManorTest {
   }
 
   static Set<Pos> walk(final Template t) {
-    return ManorWalk.from(t, new Pos(Manor.MID_X, 1, Manor.SIZE_Z - 1));
+    return StructureWalk.from(t, new Pos(Manor.MID_X, 1, Manor.SIZE_Z - 1));
   }
 
   static List<Pos> find(final Template t, final String block) {
@@ -64,7 +65,7 @@ class ManorTest {
     }
     for (final String thing : List.of("_coffin", ":chest", ":lectern")) {
       for (final Pos at : find(t, thing)) {
-        assertTrue(ManorWalk.beside(reached, at.x(), at.y(), at.z()), thing + " " + at);
+        assertTrue(StructureWalk.beside(reached, at.x(), at.y(), at.z()), thing + " " + at);
       }
     }
   }

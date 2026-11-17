@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/cube_all",
+  "textures": {
+    "all": "nightborn:block/worn_limewashed_bricks"
+  }
+}

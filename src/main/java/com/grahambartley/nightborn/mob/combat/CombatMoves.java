@@ -1,8 +1,11 @@
 package com.grahambartley.nightborn.mob.combat;
 
+import com.grahambartley.nightborn.blood.BloodAttachment;
 import com.grahambartley.nightborn.config.CombatSettings;
 import com.grahambartley.nightborn.mob.stage.StageCombat;
 import com.grahambartley.nightborn.skill.PowerShow;
+import com.grahambartley.nightborn.skill.PowerUse;
+import com.grahambartley.nightborn.skill.Powers;
 import com.grahambartley.nightborn.vampire.Impulse;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.mob.MobEntity;
@@ -15,25 +18,33 @@ import net.minecraft.util.math.Vec3d;
 public final class CombatMoves {
 
   private long nextMove;
+  private boolean threatened;
 
   public <T extends MobEntity & PowerShow> void tick(
       final T fighter, final StageCombat combat, final CombatSettings settings) {
     final LivingEntity target = fighter.getTarget();
     final long now = fighter.getWorld().getTime();
-    if (target == null || now < nextMove || !fighter.isOnGround()) {
+    if (target == null) {
+      threatened = false;
       return;
     }
-    nextMove = now + combat.thinkTicks();
+    final double distance = fighter.distanceTo(target);
     final CombatMove.Threat threat =
         new CombatMove.Threat(
             target.handSwinging, target.isUsingItem() && ranged(target.getActiveItem()));
-    CombatMove.decide(
-            fighter.distanceTo(target),
-            true,
-            threat,
-            fighter.getRandom().nextInt(100),
-            combat,
-            settings)
+    final boolean wasThreatened = threatened;
+    threatened = threat.at(distance, settings);
+    if (CombatMove.dodgesWithPower(
+            threatened, wasThreatened, () -> fighter.getRandom().nextInt(100), combat)
+        && dodgeWithPower(fighter, distance, combat)) {
+      nextMove = now + (long) combat.thinkTicks() * settings.moveCooldownThinks();
+      return;
+    }
+    if (now < nextMove || !fighter.isOnGround()) {
+      return;
+    }
+    nextMove = now + combat.thinkTicks();
+    CombatMove.decide(distance, true, threat, fighter.getRandom().nextInt(100), combat, settings)
         .ifPresent(
             move -> {
               final Vec3d toward = target.getPos().subtract(fighter.getPos());
@@ -51,6 +62,21 @@ public final class CombatMoves {
               fighter.playSound(SoundEvent.of(move.sound()), 1.0F, 1.0F);
               nextMove = now + (long) combat.thinkTicks() * settings.moveCooldownThinks();
             });
+  }
+
+  private static boolean dodgeWithPower(
+      final MobEntity fighter, final double distance, final StageCombat combat) {
+    return PowerChoice.dodge(
+            PowerCasting.options(fighter, true),
+            distance,
+            BloodAttachment.get(fighter),
+            combat.bloodFloor())
+        .map(option -> Powers.cast(fighter, option.power()) == PowerUse.Verdict.READY)
+        .orElse(false);
+  }
+
+  public void rest() {
+    threatened = false;
   }
 
   public static Vec3d impulse(

@@ -193,11 +193,9 @@ public final class DecorBlocks {
   }
 
   private static void registerFamily(final BuildingFamily family) {
-    final AbstractBlock.Settings settings =
-        family.material() == BuildingFamily.Material.STONE
-            ? AbstractBlock.Settings.copy(Blocks.POLISHED_BLACKSTONE_BRICKS)
-            : AbstractBlock.Settings.copy(Blocks.DARK_OAK_PLANKS).mapColor(MapColor.BLACK);
-    final Block base = register(family.baseId(), s -> FamilyMember.BASE.create(null, s), settings);
+    final Block base =
+        register(
+            family.baseId(), s -> FamilyMember.BASE.create(null, s), settings(family.material()));
     family.members().stream()
         .filter(member -> member != FamilyMember.BASE)
         .sorted()
@@ -207,6 +205,16 @@ public final class DecorBlocks {
                     member.idFor(family.baseId()),
                     s -> member.create(base, s),
                     AbstractBlock.Settings.copy(base)));
+  }
+
+  private static AbstractBlock.Settings settings(final BuildingFamily.Material material) {
+    return switch (material) {
+      case STONE -> AbstractBlock.Settings.copy(Blocks.POLISHED_BLACKSTONE_BRICKS);
+      case PALE_STONE ->
+          AbstractBlock.Settings.copy(Blocks.STONE_BRICKS).mapColor(MapColor.OFF_WHITE);
+      case CLAY -> AbstractBlock.Settings.copy(Blocks.BRICKS).mapColor(MapColor.TERRACOTTA_RED);
+      case WOOD -> AbstractBlock.Settings.copy(Blocks.DARK_OAK_PLANKS).mapColor(MapColor.BLACK);
+    };
   }
 
   private static Block register(

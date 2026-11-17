@@ -39,10 +39,6 @@ public record Turret(boolean round) {
     return x == CX - 2 && (z == CZ - 2 || z == CZ - 3);
   }
 
-  public static boolean outsideHouse(final int x, final int z) {
-    return x >= MAIN_E || z >= MAIN_S;
-  }
-
   public int roofTop() {
     return WALL_TOP + 2 + 2 * RADIUS;
   }

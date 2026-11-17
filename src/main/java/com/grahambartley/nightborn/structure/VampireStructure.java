@@ -83,7 +83,10 @@ public final class VampireStructure extends Structure {
                               .forGetter(VampireStructure::ambience),
                           Footing.CODEC
                               .optionalFieldOf("footing")
-                              .forGetter(structure -> structure.footing))
+                              .forGetter(structure -> structure.footing),
+                          Summit.CODEC
+                              .optionalFieldOf("summit")
+                              .forGetter(structure -> structure.summit))
                       .apply(instance, VampireStructure::new))
           .validate(VampireStructure::staysInReach);
 
@@ -101,6 +104,7 @@ public final class VampireStructure extends Structure {
   private final boolean spawnsVampireBats;
   private final StructureAmbience ambience;
   private final Optional<Footing> footing;
+  private final Optional<Summit> summit;
 
   public VampireStructure(
       final Config config,
@@ -117,7 +121,8 @@ public final class VampireStructure extends Structure {
       final Household household,
       final boolean spawnsVampireBats,
       final StructureAmbience ambience,
-      final Optional<Footing> footing) {
+      final Optional<Footing> footing,
+      final Optional<Summit> summit) {
     super(config);
     this.startPool = startPool;
     this.startJigsawName = startJigsawName;
@@ -133,6 +138,7 @@ public final class VampireStructure extends Structure {
     this.spawnsVampireBats = spawnsVampireBats;
     this.ambience = ambience;
     this.footing = footing;
+    this.summit = summit;
   }
 
   public boolean spawnsVampireBats() {
@@ -147,16 +153,24 @@ public final class VampireStructure extends Structure {
     return footing;
   }
 
+  public Optional<Summit> summit() {
+    return summit;
+  }
+
   public Household household() {
     return household;
   }
 
   private static DataResult<VampireStructure> staysInReach(final VampireStructure structure) {
-    return StructureReach.fits(structure.maxDistanceFromCenter, structure.getTerrainAdaptation())
+    return StructureReach.fits(
+            structure.maxDistanceFromCenter,
+            structure.getTerrainAdaptation(),
+            structure.summit.map(Summit::reach).orElse(0))
         ? DataResult.success(structure)
         : DataResult.error(
             () ->
-                "A vampire structure's reach including terrain adaptation must not exceed "
+                "A vampire structure's reach including terrain adaptation and its summit search"
+                    + " must not exceed "
                     + JigsawStructure.MAX_SIZE);
   }
 
@@ -166,7 +180,13 @@ public final class VampireStructure extends Structure {
     final int y =
         startHeight.get(
             context.random(), new HeightContext(context.chunkGenerator(), context.world()));
-    final BlockPos start = new BlockPos(chunk.getStartX(), y, chunk.getStartZ());
+    final ColumnPos corner = new ColumnPos(chunk.getStartX(), chunk.getStartZ());
+    final Optional<ColumnPos> ground =
+        summit.isPresent() ? summit.get().peak(context, corner) : Optional.of(corner);
+    if (ground.isEmpty()) {
+      return Optional.empty();
+    }
+    final BlockPos start = new BlockPos(ground.get().x(), y, ground.get().z());
     final Optional<StructurePosition> position =
         StructurePoolBasedGenerator.generate(
             context,

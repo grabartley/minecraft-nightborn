@@ -23,6 +23,36 @@ class HuntingTest {
     assertEquals(hunts, Hunting.batHunts(peaceful, false, time, openSky));
   }
 
+  @ParameterizedTest(name = "has prey {0}, age {1}: searches {2}")
+  @CsvSource({
+    "false, 0, true",
+    "false, 20, true",
+    "false, 40, true",
+    "false, 1, false",
+    "false, 19, false",
+    "false, 21, false",
+    "true, 0, false",
+    "true, 20, false",
+    "true, 7, false"
+  })
+  @DisplayName("a bat with no prey looks for some once every search interval")
+  void batSearches(final boolean hasPrey, final int age, final boolean searches) {
+    assertEquals(searches, Hunting.batSearches(hasPrey, age, 20));
+  }
+
+  @ParameterizedTest(name = "has prey {0}, bite cooldown {1}: swoops {2}")
+  @CsvSource({
+    "true, 0, true",
+    "true, 1, false",
+    "true, 50, false",
+    "false, 0, false",
+    "false, 50, false"
+  })
+  @DisplayName("a bat swoops only at prey and only once its last bite has worn off")
+  void batSwoops(final boolean hasPrey, final int biteCooldown, final boolean swoops) {
+    assertEquals(swoops, Hunting.batSwoops(hasPrey, biteCooldown));
+  }
+
   @ParameterizedTest(
       name = "hours {0}, hungry {1}, endangered {2}, provoked {3}, out of range {4}: drops {5}")
   @CsvSource({

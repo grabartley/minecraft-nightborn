@@ -27,6 +27,18 @@
     "nightborn:ritual_altar",
     "nightborn:silver_ore",
     "nightborn:silver_wall_crucifix",
-    "nightborn:stone_brick_coffin"
+    "nightborn:stone_brick_coffin",
+    "nightborn:limewashed_bricks",
+    "nightborn:limewashed_brick_stairs",
+    "nightborn:limewashed_brick_slab",
+    "nightborn:limewashed_brick_wall",
+    "nightborn:worn_limewashed_bricks",
+    "nightborn:worn_limewashed_brick_stairs",
+    "nightborn:worn_limewashed_brick_slab",
+    "nightborn:worn_limewashed_brick_wall",
+    "nightborn:clay_roof_tiles",
+    "nightborn:clay_roof_tile_stairs",
+    "nightborn:clay_roof_tile_slab",
+    "nightborn:plaster"
   ]
 }

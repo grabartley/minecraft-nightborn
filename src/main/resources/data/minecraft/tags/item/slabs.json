@@ -3,6 +3,9 @@
   "values": [
     "nightborn:cracked_gothic_stone_brick_slab",
     "nightborn:gothic_stone_brick_slab",
-    "nightborn:mossy_gothic_stone_brick_slab"
+    "nightborn:mossy_gothic_stone_brick_slab",
+    "nightborn:limewashed_brick_slab",
+    "nightborn:worn_limewashed_brick_slab",
+    "nightborn:clay_roof_tile_slab"
   ]
 }

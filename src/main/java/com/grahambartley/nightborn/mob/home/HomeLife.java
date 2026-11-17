@@ -16,6 +16,8 @@ import org.jetbrains.annotations.Nullable;
 public final class HomeLife {
 
   static final String HOME_KEY = "Home";
+  static final String ROOM_KEY = "Room";
+  static final String ROOM_RADIUS_KEY = "RoomRadius";
   static final String COFFIN_KEY = "Coffin";
   static final String OUTING_KEY = "OutingNight";
   static final String DECIDED_KEY = "DecidedNight";
@@ -23,6 +25,8 @@ public final class HomeLife {
   static final long CLAIM_RETRY_TICKS = 1200L;
 
   @Nullable private BlockPos home;
+  @Nullable private BlockPos room;
+  private int roomRadius;
   @Nullable private BlockPos coffin;
   private long outingNight = NightRoutine.NO_NIGHT;
   private long decidedNight = NightRoutine.NO_NIGHT;
@@ -32,6 +36,17 @@ public final class HomeLife {
     this.home = home.toImmutable();
     this.coffin = null;
     this.nextClaim = 0L;
+  }
+
+  public void keepTo(final BlockPos room, final int radius) {
+    this.room = room.toImmutable();
+    this.roomRadius = radius;
+    this.coffin = null;
+    this.nextClaim = 0L;
+  }
+
+  public Optional<BlockPos> room() {
+    return Optional.ofNullable(room);
   }
 
   public Optional<BlockPos> home() {
@@ -48,7 +63,7 @@ public final class HomeLife {
   }
 
   public boolean out(final PathAwareEntity vampire, final boolean hungry) {
-    if (home == null) {
+    if (home == null || room != null) {
       return false;
     }
     return NightRoutine.out(
@@ -99,7 +114,8 @@ public final class HomeLife {
     }
     final long time = world.getTimeOfDay();
     final long night = NightRoutine.night(time);
-    if (NightRoutine.decidesTonight(bedtime(vampire), decidedNight, night, hungry)) {
+    if (room == null
+        && NightRoutine.decidesTonight(bedtime(vampire), decidedNight, night, hungry)) {
       decidedNight = night;
       if (NightRoutine.goesOut(
           vampire.getRandom().nextInt(100), config.mobs().vampireOutingChance())) {
@@ -107,15 +123,14 @@ public final class HomeLife {
         onOuting.run();
       }
     }
+    final int radius =
+        NightRoutine.homeRadius(room != null, roomRadius, config.mobs().vampireHomeRadius());
     vampire.setPositionTarget(
-        home,
+        anchor(),
         NightRoutine.leash(
-            provoked,
-            out(vampire, hungry),
-            config.mobs().vampireFeedingRange(),
-            config.mobs().vampireHomeRadius()));
+            provoked, out(vampire, hungry), config.mobs().vampireFeedingRange(), radius));
     if (vampire.age % COFFIN_CHECK_TICKS == 0) {
-      checkCoffin(world, vampire, config.mobs().vampireHomeRadius());
+      checkCoffin(world, vampire, radius);
     }
   }
 
@@ -127,6 +142,10 @@ public final class HomeLife {
   public void write(final NbtCompound nbt) {
     if (home != null) {
       nbt.putLong(HOME_KEY, home.asLong());
+    }
+    if (room != null) {
+      nbt.putLong(ROOM_KEY, room.asLong());
+      nbt.putInt(ROOM_RADIUS_KEY, roomRadius);
     }
     if (coffin != null) {
       nbt.putLong(COFFIN_KEY, coffin.asLong());
@@ -140,6 +159,11 @@ public final class HomeLife {
         nbt.contains(HOME_KEY, NbtElement.LONG_TYPE)
             ? BlockPos.fromLong(nbt.getLong(HOME_KEY))
             : null;
+    room =
+        nbt.contains(ROOM_KEY, NbtElement.LONG_TYPE)
+            ? BlockPos.fromLong(nbt.getLong(ROOM_KEY))
+            : null;
+    roomRadius = nbt.getInt(ROOM_RADIUS_KEY);
     coffin =
         nbt.contains(COFFIN_KEY, NbtElement.LONG_TYPE)
             ? BlockPos.fromLong(nbt.getLong(COFFIN_KEY))
@@ -158,15 +182,21 @@ public final class HomeLife {
     if (coffin != null && !HomeCoffins.keeps(world, coffin, vampire.getUuid()).orElse(true)) {
       coffin = null;
     }
-    if (coffin == null && world.getTime() >= nextClaim && HomeCoffins.loaded(world, home)) {
-      coffin = HomeCoffins.claim(world, home, radius, vampire.getUuid()).orElse(null);
+    if (coffin == null && world.getTime() >= nextClaim && HomeCoffins.loaded(world, anchor())) {
+      coffin = HomeCoffins.claim(world, anchor(), radius, vampire.getUuid()).orElse(null);
       if (coffin == null) {
         nextClaim = world.getTime() + CLAIM_RETRY_TICKS;
       }
     }
   }
 
+  @Nullable
+  private BlockPos anchor() {
+    return room != null ? room : home;
+  }
+
   private double distanceSquared(final Vec3d pos) {
-    return home == null ? 0.0 : pos.squaredDistanceTo(Vec3d.ofBottomCenter(home));
+    final BlockPos anchor = anchor();
+    return anchor == null ? 0.0 : pos.squaredDistanceTo(Vec3d.ofBottomCenter(anchor));
   }
 }

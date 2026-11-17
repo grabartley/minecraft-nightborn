@@ -69,4 +69,31 @@ class HomeLifeTest {
     life.write(saved);
     assertEquals(nbt, saved);
   }
+
+  @ParameterizedTest(name = "room at y {0} with radius {1}")
+  @CsvSource({"69, 6", "-20, 3", "300, 12"})
+  @DisplayName("the room a vampire keeps to survives a save and load beside its home")
+  void keepsItsRoom(final int y, final int radius) {
+    final HomeLife life = new HomeLife();
+    final BlockPos home = new BlockPos(10, 48, 10);
+    final BlockPos room = new BlockPos(10, y, 10);
+    life.settle(home);
+    life.keepTo(room, radius);
+    final NbtCompound nbt = new NbtCompound();
+    life.write(nbt);
+    final HomeLife loaded = new HomeLife();
+    loaded.read(nbt);
+    assertEquals(Optional.of(home), loaded.home());
+    assertEquals(Optional.of(room), loaded.room());
+    assertEquals(radius, nbt.getInt(HomeLife.ROOM_RADIUS_KEY));
+  }
+
+  @ParameterizedTest(name = "home {0}")
+  @MethodSource("homes")
+  @DisplayName("a vampire that was never given a room has none")
+  void noRoom(final Optional<BlockPos> home) {
+    final HomeLife life = new HomeLife();
+    home.ifPresent(life::settle);
+    assertEquals(Optional.empty(), life.room());
+  }
 }

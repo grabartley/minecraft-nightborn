@@ -7,7 +7,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 class BatFormRendererTest {
@@ -26,11 +26,12 @@ class BatFormRendererTest {
     assertTrue(Files.exists(Path.of(file)), file);
   }
 
-  @ParameterizedTest(name = "swing {0}")
-  @CsvSource({"0.0", "1.0"})
+  @ParameterizedTest(name = "{0}")
+  @EnumSource(BatFormClip.class)
   @DisplayName("every clip bat form plays ships in the vampire bat's animations")
-  void playsShippedClips(final float swing) throws IOException {
-    final String clip = BatFormAnimatable.pose(swing).animation();
-    assertTrue(GeoAssets.animations(CLIPS).has(clip), clip);
+  void playsShippedClips(final BatFormClip clip) throws IOException {
+    for (final String animation : clip.animations()) {
+      assertTrue(GeoAssets.animations(CLIPS).has(animation), animation);
+    }
   }
 }

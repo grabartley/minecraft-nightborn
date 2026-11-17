@@ -44,7 +44,7 @@ public final class BloodTicker {
                 vampire.getWorld().getGameRules().getBoolean(GameRules.NATURAL_REGENERATION)
                     && (downed == null || !downed.isDowned()),
                 BloodMetabolism.flightDrainSeconds(
-                    BatForm.isBat(vampire), Levitation.isLevitating(vampire), config.core()),
+                    BatForm.effort(vampire), Levitation.isLevitating(vampire), config.core()),
                 vampire.age),
             drainSeconds);
     BloodAttachment.set(vampire, outcome.blood());

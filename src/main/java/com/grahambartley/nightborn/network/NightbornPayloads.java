@@ -19,5 +19,6 @@ public final class NightbornPayloads {
         .register(ToggleLevitationPayload.ID, ToggleLevitationPayload.CODEC);
     PayloadTypeRegistry.playC2S()
         .register(ToggleTurningBitePayload.ID, ToggleTurningBitePayload.CODEC);
+    PayloadTypeRegistry.playC2S().register(ReleaseBatHangPayload.ID, ReleaseBatHangPayload.CODEC);
   }
 }

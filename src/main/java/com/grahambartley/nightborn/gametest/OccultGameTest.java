@@ -354,6 +354,32 @@ public class OccultGameTest implements FabricGameTest {
   }
 
   @GameTest(templateName = ARENA, batchId = BATCH, tickLimit = TestPlayers.READY + 10)
+  public void shadowStepStopsShortOfAMagmaFloor(final TestContext context) {
+    final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(1, 2, 4));
+    for (int x = 5; x <= 7; x++) {
+      context.setBlockState(new BlockPos(x, 1, 4), Blocks.MAGMA_BLOCK);
+    }
+    context.setBlockState(new BlockPos(8, 2, 4), Blocks.STONE);
+    context.setBlockState(new BlockPos(8, 3, 4), Blocks.STONE);
+    OccultSkills.learn(vampire, OccultSkills.GRAVE_FOG, OccultSkills.SHADOW_STEP);
+    final double startX = context.getAbsolute(Vec3d.ofBottomCenter(new BlockPos(1, 2, 4))).x;
+    context.runAtTick(
+        TestPlayers.READY,
+        () -> {
+          vampire.setYaw(-90.0F);
+          vampire.setPitch(0.0F);
+          context.assertEquals(
+              Powers.cast(vampire, OccultSkills.SHADOW_STEP),
+              PowerUse.Verdict.READY,
+              "the step was taken");
+          final double east = vampire.getX() - startX;
+          context.assertTrue(east >= 1.99, "the caster still stepped forward, by " + east);
+          context.assertTrue(east <= 3.01, "the caster stopped before the magma, at " + east);
+          end(context, vampire);
+        });
+  }
+
+  @GameTest(templateName = ARENA, batchId = BATCH, tickLimit = TestPlayers.READY + 10)
   public void shadowStepLandsOnAGlassFloor(final TestContext context) {
     stepOnto(context, Blocks.GLASS.getDefaultState(), 1, 0.0);
   }
@@ -368,31 +394,49 @@ public class OccultGameTest implements FabricGameTest {
     stepOnto(context, Blocks.STONE_BRICK_SLAB.getDefaultState(), 1, -0.5);
   }
 
-  @GameTest(templateName = ARENA, batchId = BATCH, tickLimit = TestPlayers.READY + 45)
-  public void aScoutFliesOutAhead(final TestContext context) {
+  @GameTest(templateName = ARENA, batchId = BATCH, tickLimit = TestPlayers.READY + 10)
+  public void aScoutFliesOutAheadAndComesBack(final TestContext context) {
     final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(1, 2, 4));
     final GhostlyFamiliarEntity familiar =
         context.spawnEntity(GhostlyFamiliars.GHOSTLY_FAMILIAR, new BlockPos(2, 2, 4));
     familiar.summon(
         vampire.getUuid(), new FamiliarPower(1200, 10.0F, 3.0F, 4.0F, 200, 8.0F, 200, 9));
-    final Vec3d start = familiar.getPos();
-    final double[] farthest = new double[1];
+    familiar.setAiDisabled(true);
+    final FamiliarScoutGoal goal = new FamiliarScoutGoal(familiar);
     context.runAtTick(
         TestPlayers.READY,
         () -> {
           vampire.setYaw(-90.0F);
           vampire.setPitch(0.0F);
+          context.assertFalse(goal.canStart(), "a familiar that was not sent out does not scout");
           familiar.order(FamiliarMode.SCOUT, vampire);
-        });
-    context.runAtEveryTick(
-        () -> farthest[0] = Math.max(farthest[0], familiar.getPos().distanceTo(start)));
-    context.runAtTick(
-        TestPlayers.READY + 40,
-        () -> {
+          context.assertTrue(goal.canStart(), "a familiar sent out starts scouting");
+          final Vec3d ahead = familiar.scoutTarget();
           context.assertTrue(
-              farthest[0] >= 3.0, "the scout flew out to its range, only " + farthest[0]);
+              ahead.x - vampire.getX() >= 3.0, "the scout is sent out ahead of its owner");
+          goal.start();
+          goal.tick();
+          context.assertTrue(heading(familiar).distanceTo(ahead) < 0.01, "it flies out ahead");
+          familiar.setPosition(ahead);
+          goal.tick();
+          context.assertEquals(familiar.mode(), FamiliarMode.SCOUT, "at its range it is not done");
+          context.assertTrue(
+              heading(familiar)
+                      .distanceTo(vampire.getPos().add(0.0, vampire.getHeight() * 0.6, 0.0))
+                  < 0.01,
+              "from its range it turns back to its owner");
+          familiar.setPosition(vampire.getPos());
+          goal.tick();
+          context.assertEquals(familiar.mode(), FamiliarMode.FIGHT, "back home the scout is over");
           end(context, vampire);
         });
+  }
+
+  private static Vec3d heading(final GhostlyFamiliarEntity familiar) {
+    return new Vec3d(
+        familiar.getMoveControl().getTargetX(),
+        familiar.getMoveControl().getTargetY(),
+        familiar.getMoveControl().getTargetZ());
   }
 
   @GameTest(templateName = ARENA, batchId = BATCH, tickLimit = 10)

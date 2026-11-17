@@ -56,6 +56,11 @@ public final class NightRoutine {
     return out ? Math.max(homeRadius, feedingRange) : homeRadius;
   }
 
+  public static int homeRadius(
+      final boolean keepsToRoom, final int roomRadius, final int homeRadius) {
+    return keepsToRoom ? Math.min(roomRadius, homeRadius) : homeRadius;
+  }
+
   public static int leash(
       final boolean provoked, final boolean out, final int feedingRange, final int homeRadius) {
     return provoked ? UNLEASHED : roamRadius(out, feedingRange, homeRadius);

@@ -1,0 +1,10 @@
+{
+  "type": "minecraft:stonecutting",
+  "ingredient": {
+    "item": "nightborn:worn_limewashed_bricks"
+  },
+  "result": {
+    "id": "nightborn:worn_limewashed_brick_wall",
+    "count": 1
+  }
+}

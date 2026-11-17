@@ -1,5 +1,6 @@
 package com.grahambartley.nightborn.mixin;
 
+import com.grahambartley.nightborn.batform.BatFlightMotion;
 import com.grahambartley.nightborn.coffin.CoffinLayout;
 import com.grahambartley.nightborn.coffin.CoffinRise;
 import com.grahambartley.nightborn.coffin.CoffinSleeperHold;
@@ -10,6 +11,7 @@ import com.grahambartley.nightborn.levitation.LevitationMotion;
 import com.grahambartley.nightborn.server.ServerConfigService;
 import com.grahambartley.nightborn.vampire.VampireTicker;
 import com.grahambartley.nightborn.vampire.Vampires;
+import com.grahambartley.nightborn.vanish.Vanish;
 import com.grahambartley.nightborn.vomit.Consumables;
 import com.grahambartley.nightborn.vomit.Vomiting;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
@@ -39,10 +41,16 @@ abstract class LivingEntityMixin {
 
   @Shadow @Final private static TrackedData<Optional<BlockPos>> SLEEPING_POSITION;
 
+  @Shadow protected boolean jumping;
+
   @Inject(method = "tick", at = @At("TAIL"))
   private void nightborn$tickVampire(final CallbackInfo ci) {
     final LivingEntity self = (LivingEntity) (Object) this;
-    if (!self.getWorld().isClient && Vampires.isVampire(self)) {
+    if (self.getWorld().isClient) {
+      return;
+    }
+    Vanish.tick(self);
+    if (Vampires.isVampire(self)) {
       VampireTicker.tick(self);
     }
   }
@@ -74,6 +82,15 @@ abstract class LivingEntityMixin {
     final LivingEntity self = (LivingEntity) (Object) this;
     if (LevitationMotion.drives(self)) {
       LevitationMotion.hover(self, movementInput);
+    }
+  }
+
+  @Inject(method = "travel", at = @At("HEAD"), cancellable = true)
+  private void nightborn$flyAsABat(final Vec3d movementInput, final CallbackInfo ci) {
+    final LivingEntity self = (LivingEntity) (Object) this;
+    if (BatFlightMotion.drives(self)) {
+      BatFlightMotion.travel(self, movementInput, jumping);
+      ci.cancel();
     }
   }
 

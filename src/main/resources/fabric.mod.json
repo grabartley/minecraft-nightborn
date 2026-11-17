@@ -78,7 +78,8 @@
       "com.grahambartley.nightborn.gametest.HolyWaterGameTest",
       "com.grahambartley.nightborn.gametest.HunterAmmoGameTest",
       "com.grahambartley.nightborn.gametest.ClothingGameTest",
-      "com.grahambartley.nightborn.gametest.CoatingGameTest"
+      "com.grahambartley.nightborn.gametest.CoatingGameTest",
+      "com.grahambartley.nightborn.gametest.VanishGameTest"
     ]
   },
   "mixins": [

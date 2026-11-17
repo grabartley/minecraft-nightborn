@@ -228,6 +228,7 @@ public class HunterCampGameTest implements FabricGameTest {
   @GameTest(templateName = ARENA, tickLimit = TestPlayers.READY + 20)
   public void huntersHuntVampiresAndLeaveHumansAlone(final TestContext context) {
     final HunterEntity hunter = context.spawnEntity(GuildMobs.HUNTER, new BlockPos(2, 2, 2));
+    hunter.setAiDisabled(true);
     final VampireEntity mob = context.spawnEntity(NightbornMobs.VAMPIRE, new BlockPos(6, 2, 6));
     mob.setAiDisabled(true);
     final ServerPlayerEntity human = TestPlayers.human(context, new BlockPos(2, 2, 6));

@@ -31,6 +31,6 @@ class PowerAimTest {
                 SkillPower.CODEC
                     .parse(JsonOps.INSTANCE, JsonParser.parseString(json))
                     .getOrThrow());
-    assertSame(PowerAim.NONE, PowerAim.of(null, power));
+    assertSame(PowerAim.NONE, PowerAim.of(null, power, PowerHeading.NONE));
   }
 }

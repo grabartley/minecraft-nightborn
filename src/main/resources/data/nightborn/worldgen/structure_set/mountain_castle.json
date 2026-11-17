@@ -1,0 +1,12 @@
+{
+  "structures": [
+    { "structure": "nightborn:mountain_castle", "weight": 1 }
+  ],
+  "placement": {
+    "type": "nightborn:rare_spread",
+    "rarity": "vampire_structures",
+    "salt": 905117342,
+    "spacing": 64,
+    "separation": 32
+  }
+}

@@ -55,26 +55,32 @@ class HouseholdSpotsTest {
         HouseholdSpots.choose(row(12), 4, Random.create(seed), List.of()));
   }
 
-  @ParameterizedTest(name = "{0} -> {1}")
+  @ParameterizedTest(name = "{2}: {0} -> {1}")
   @CsvSource(
       delimiter = '|',
       value = {
-        "0,70,0;3,64,0;0,64,4|0,70,0",
-        "1,64,1;0,80,0;0,72,0|0,72,0",
-        "5,64,5;-5,60,-5|-5,60,-5",
-        "2,64,0|2,64,0"
+        "0,70,0;3,64,0;0,64,4|0,70,0|LOWEST",
+        "1,64,1;0,80,0;0,72,0|0,72,0|LOWEST",
+        "5,64,5;-5,60,-5|-5,60,-5|LOWEST",
+        "2,64,0|2,64,0|LOWEST",
+        "1,64,1;0,80,0;0,72,0|0,80,0|HIGHEST",
+        "0,64,0;0,70,0;0,90,0;1,99,0|0,90,0|HIGHEST",
+        "5,64,5;-5,60,-5|5,64,5|HIGHEST"
       })
-  @DisplayName("the head takes the spot nearest the middle across the floor, lowest floor first")
-  void middle(final String spots, final String expected) {
+  @DisplayName(
+      "the head takes the spot nearest the middle across the floor, on the lowest or the highest"
+          + " floor as its household says")
+  void middle(final String spots, final String expected, final HeadSeat seat) {
     final List<BlockPos> floor =
         java.util.Arrays.stream(spots.split(";")).map(HouseholdSpotsTest::pos).toList();
-    assertEquals(pos(expected), HouseholdSpots.middle(floor, new BlockPos(0, 70, 0)).orElseThrow());
+    assertEquals(
+        pos(expected), HouseholdSpots.middle(floor, new BlockPos(0, 70, 0), seat).orElseThrow());
   }
 
   @org.junit.jupiter.api.Test
   @DisplayName("an empty heart has no seat for a head")
   void noMiddle() {
-    assertTrue(HouseholdSpots.middle(List.of(), BlockPos.ORIGIN).isEmpty());
+    assertTrue(HouseholdSpots.middle(List.of(), BlockPos.ORIGIN, HeadSeat.LOWEST).isEmpty());
   }
 
   @ParameterizedTest(name = "seed {0}")

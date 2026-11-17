@@ -11,6 +11,7 @@ import com.grahambartley.nightborn.mob.NightbornMobs;
 import com.grahambartley.nightborn.mob.VampireEntity;
 import com.grahambartley.nightborn.skill.PowerUse;
 import com.grahambartley.nightborn.skill.Powers;
+import java.util.List;
 import net.fabricmc.fabric.api.event.player.UseEntityCallback;
 import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
 import net.minecraft.block.Blocks;
@@ -28,7 +29,6 @@ import net.minecraft.test.GameTest;
 import net.minecraft.test.TestContext;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
 import net.minecraft.village.TradeOffer;
 import net.minecraft.village.VillagerProfession;
 
@@ -117,31 +117,48 @@ public class MindGameTest implements FabricGameTest {
         });
   }
 
-  @GameTest(templateName = ARENA, batchId = BATCH, tickLimit = TestPlayers.READY + 60)
-  public void aMesmerisedMobStandsStillAndCannotHurtAnyone(final TestContext context) {
+  @GameTest(templateName = ARENA, batchId = BATCH, tickLimit = TestPlayers.READY + 20)
+  public void aMesmerisedMobDropsItsTargetAndCannotHurtAnyone(final TestContext context) {
     final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(1, 2, 1));
     final ZombieEntity zombie = context.spawnEntity(EntityType.ZOMBIE, new BlockPos(4, 2, 4));
+    zombie.setAiDisabled(true);
     final VillagerEntity villager = stillVillager(context, new BlockPos(7, 2, 7));
-    final Vec3d[] start = new Vec3d[1];
     context.runAtTick(
         TestPlayers.READY,
         () -> {
           zombie.setTarget(villager);
           Mesmerise.land(vampire, zombie, NobleSkills.power(context));
-          start[0] = zombie.getPos();
           context.assertTrue(zombie.getTarget() == null, "the mob let go of its target");
-        });
-    context.runAtTick(
-        TestPlayers.READY + 50,
-        () -> {
           final float before = villager.getHealth();
           zombie.tryAttack(villager);
           context.assertEquals(
               villager.getHealth(), before, "a mesmerised mob's blow does nothing");
-          context.assertTrue(
-              zombie.getPos().subtract(start[0]).horizontalLength() < 0.1,
-              "the mob stood still, it moved "
-                  + zombie.getPos().subtract(start[0]).horizontalLength());
+          TestPlayers.finish(context, vampire);
+        });
+  }
+
+  @GameTest(templateName = ARENA, batchId = BATCH, tickLimit = TestPlayers.READY + 10)
+  public void aMesmerisedMobIsHeldInPlaceWhileAFreeOneKeepsItsStride(final TestContext context) {
+    final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(1, 2, 1));
+    final ZombieEntity held = context.spawnEntity(EntityType.ZOMBIE, new BlockPos(4, 2, 4));
+    final ZombieEntity free = context.spawnEntity(EntityType.ZOMBIE, new BlockPos(6, 2, 6));
+    held.setAiDisabled(true);
+    free.setAiDisabled(true);
+    context.runAtTick(
+        TestPlayers.READY,
+        () -> {
+          Mesmerise.land(vampire, held, NobleSkills.power(context));
+          for (final ZombieEntity walker : List.of(held, free)) {
+            walker.setForwardSpeed(1.0F);
+            walker.setSidewaysSpeed(1.0F);
+            walker.setUpwardSpeed(1.0F);
+          }
+          context.assertTrue(MindFeatures.hold(held), "the mesmerised mob skips its own thinking");
+          context.assertEquals(held.forwardSpeed, 0.0F, "it stops walking forward");
+          context.assertEquals(held.sidewaysSpeed, 0.0F, "it stops stepping sideways");
+          context.assertEquals(held.upwardSpeed, 0.0F, "it stops rising");
+          context.assertFalse(MindFeatures.hold(free), "a free mob keeps thinking for itself");
+          context.assertEquals(free.forwardSpeed, 1.0F, "and keeps walking");
           TestPlayers.finish(context, vampire);
         });
   }
@@ -221,6 +238,7 @@ public class MindGameTest implements FabricGameTest {
   public void aMesmerisedCreeperLetsItsFuseGoOut(final TestContext context) {
     final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(1, 2, 1));
     final CreeperEntity creeper = context.spawnEntity(EntityType.CREEPER, new BlockPos(5, 2, 5));
+    creeper.setAiDisabled(true);
     context.runAtTick(
         TestPlayers.READY,
         () -> {

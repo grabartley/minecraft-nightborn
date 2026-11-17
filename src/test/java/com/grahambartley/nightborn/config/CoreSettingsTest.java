@@ -26,10 +26,10 @@ class CoreSettingsTest {
   @Test
   @DisplayName("the constructor clamps values into bounds")
   void clamps() {
-    assertEquals(new CoreSettings(0, 0, 0, 1, 1, 1), new CoreSettings(-1, -1, -1, 0, 0, 0));
+    assertEquals(new CoreSettings(0, 0, 0, 1, 1, 1, 1), new CoreSettings(-1, -1, -1, 0, 0, 0, 0));
     assertEquals(
-        new CoreSettings(20, 100, 100, 600, 600, 100),
-        new CoreSettings(21, 101, 101, 601, 601, 101));
+        new CoreSettings(20, 100, 100, 600, 600, 600, 100),
+        new CoreSettings(21, 101, 101, 601, 601, 601, 101));
   }
 
   @ParameterizedTest(name = "{0}: {1}")
@@ -39,11 +39,12 @@ class CoreSettingsTest {
     "nightJump, 20",
     "levitationDrainSeconds, 120",
     "batDrainSeconds, 30",
+    "batSprintDrainSeconds, 15",
     "batHeavyDamage, 6"
   })
   @DisplayName(
       "each core setting starts at its default, with levitation costing a blood every two minutes"
-          + " and bat form one every thirty seconds")
+          + " and bat form one every thirty seconds, or fifteen at a sprint")
   void defaults(final String key, final int value) {
     assertEquals(
         value,
