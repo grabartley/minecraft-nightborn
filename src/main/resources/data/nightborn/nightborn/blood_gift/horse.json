@@ -1,0 +1,12 @@
+{
+  "prey": ["minecraft:horse", "minecraft:donkey", "minecraft:mule"],
+  "name": "nightborn.blood_gift.horse",
+  "seconds": 60,
+  "modifiers": [
+    {
+      "attribute": "minecraft:generic.movement_speed",
+      "amount": 0.2,
+      "operation": "add_multiplied_total"
+    }
+  ]
+}

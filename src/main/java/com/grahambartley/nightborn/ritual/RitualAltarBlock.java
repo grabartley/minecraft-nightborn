@@ -1,9 +1,15 @@
 package com.grahambartley.nightborn.ritual;
 
 import com.grahambartley.nightborn.core.NightSight;
+import com.grahambartley.nightborn.decor.ChaliceBlock;
+import com.grahambartley.nightborn.decor.ChaliceContents;
+import com.grahambartley.nightborn.decor.ChalicePour;
+import com.grahambartley.nightborn.decor.ChaliceUse;
+import com.grahambartley.nightborn.decor.DecorBlocks;
 import com.grahambartley.nightborn.server.ServerConfigService;
 import com.grahambartley.nightborn.vampire.Vampires;
 import com.mojang.serialization.MapCodec;
+import java.util.Optional;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockRenderType;
 import net.minecraft.block.BlockState;
@@ -107,14 +113,16 @@ public class RitualAltarBlock extends BlockWithEntity {
       final ItemStack held,
       final PlayerEntity player,
       final World world) {
+    final Optional<ChaliceContents> chalice = altar.chalice();
     return AltarUse.decide(
-        new AltarUse.Altar(altar.active(), altar.relics().size(), RitualItems.relicsNeeded()),
+        new AltarUse.Altar(
+            altar.active(),
+            chalice.isPresent(),
+            chalice.map(ChaliceContents::empty).orElse(true),
+            chalice.map(ChaliceContents::full).orElse(false)),
         new AltarUse.Hand(
-            held.isEmpty(),
-            held.isIn(RitualItems.RELICS),
-            altar.holds(held.getItem()),
-            player.isSneaking()),
-        !Vampires.isVampire(player),
+            held.isEmpty(), held.isOf(DecorBlocks.CHALICE.asItem()), player.isSneaking()),
+        Vampires.isVampire(player),
         NightSight.isNight(world));
   }
 
@@ -134,15 +142,19 @@ public class RitualAltarBlock extends BlockWithEntity {
     if (use == AltarUse.BUSY) {
       return ItemActionResult.CONSUME;
     }
-    if (use != AltarUse.PLACE) {
-      return ItemActionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+    if (use == AltarUse.SET_CHALICE) {
+      if (!world.isClient) {
+        altar.setChalice(ChaliceBlock.contents(stack));
+        stack.decrementUnlessCreative(1, player);
+        world.playSound(null, pos, RitualSounds.RELIC_PLACE, SoundCategory.BLOCKS, 1.0F, 1.0F);
+        world.emitGameEvent(player, GameEvent.BLOCK_CHANGE, pos);
+      }
+      return ItemActionResult.success(world.isClient);
     }
-    if (!world.isClient) {
-      altar.place(stack.splitUnlessCreative(1, player));
-      world.playSound(null, pos, RitualSounds.RELIC_PLACE, SoundCategory.BLOCKS, 1.0F, 1.0F);
-      world.emitGameEvent(player, GameEvent.BLOCK_CHANGE, pos);
+    if (use == AltarUse.POUR && pour(altar, world, pos, player, hand)) {
+      return ItemActionResult.success(world.isClient);
     }
-    return ItemActionResult.success(world.isClient);
+    return ItemActionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
   }
 
   @Override
@@ -156,13 +168,36 @@ public class RitualAltarBlock extends BlockWithEntity {
       return ActionResult.PASS;
     }
     final AltarUse use = decide(altar, player.getMainHandStack(), player, world);
-    if (use == AltarUse.PASS || use == AltarUse.PLACE) {
+    if (use == AltarUse.PASS || use == AltarUse.SET_CHALICE) {
       return ActionResult.PASS;
+    }
+    if (use == AltarUse.POUR) {
+      return pour(altar, world, pos, player, Hand.MAIN_HAND)
+          ? ActionResult.success(world.isClient)
+          : ActionResult.PASS;
     }
     if (world instanceof ServerWorld server) {
       act(use, server, pos, altar, player);
     }
     return ActionResult.success(world.isClient);
+  }
+
+  private static boolean pour(
+      final RitualAltarBlockEntity altar,
+      final World world,
+      final BlockPos pos,
+      final PlayerEntity player,
+      final Hand hand) {
+    final ChaliceContents contents = altar.chalice().orElseThrow();
+    final Optional<ChalicePour> pour =
+        ChaliceUse.decide(contents, player.getStackInHand(hand), player);
+    if (pour.isEmpty()) {
+      return false;
+    }
+    if (!world.isClient) {
+      altar.setChalice(ChaliceUse.apply(pour.get(), contents, world, pos, player, hand));
+    }
+    return true;
   }
 
   private static void act(
@@ -172,14 +207,17 @@ public class RitualAltarBlock extends BlockWithEntity {
       final RitualAltarBlockEntity altar,
       final PlayerEntity player) {
     use.refusal().ifPresent(key -> player.sendMessage(Text.translatable(key), true));
-    if (use == AltarUse.TAKE) {
-      player.setStackInHand(Hand.MAIN_HAND, altar.take());
+    if (use == AltarUse.TAKE_CHALICE) {
+      altar
+          .takeChalice()
+          .ifPresent(
+              contents -> player.setStackInHand(Hand.MAIN_HAND, ChaliceBlock.item(contents)));
       world.playSound(null, pos, RitualSounds.RELIC_TAKE, SoundCategory.BLOCKS, 1.0F, 1.0F);
       world.emitGameEvent(player, GameEvent.BLOCK_CHANGE, pos);
     }
     if (use == AltarUse.START) {
       final var settings = ServerConfigService.current().ritual();
-      altar.begin(settings.buildUpTicks());
+      altar.begin(settings.buildUpTicks(), Vampires.isVampire(player) ? player.getUuid() : null);
       Ritual.begin(world, pos, settings);
       world.emitGameEvent(player, GameEvent.BLOCK_ACTIVATE, pos);
     }
@@ -198,7 +236,17 @@ public class RitualAltarBlock extends BlockWithEntity {
         Ritual.lift(server, pos, ServerConfigService.current().ritual().fightRange());
       }
       altar
-          .relics()
+          .chalice()
+          .ifPresent(
+              contents ->
+                  ItemScatterer.spawn(
+                      world,
+                      pos.getX(),
+                      pos.getY(),
+                      pos.getZ(),
+                      ChaliceBlock.item(ChaliceContents.EMPTY)));
+      altar
+          .oldRelics()
           .forEach(stack -> ItemScatterer.spawn(world, pos.getX(), pos.getY(), pos.getZ(), stack));
     }
     super.onStateReplaced(state, world, pos, newState, moved);

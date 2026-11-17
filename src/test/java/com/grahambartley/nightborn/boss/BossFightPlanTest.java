@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import com.google.gson.JsonParser;
 import com.mojang.serialization.JsonOps;
 import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -67,5 +68,29 @@ class BossFightPlanTest {
     assertEquals(summon, plan.clips().summon());
     assertEquals(guard, plan.clips().guard());
     assertEquals(extra.isEmpty(), plan.clips().equals(FightClips.NONE));
+  }
+
+  @ParameterizedTest(name = "roll {0} with {1} lines says {2}")
+  @CsvSource(
+      delimiter = '|',
+      value = {
+        "0 | \"a\",\"b\",\"c\" | a",
+        "1 | \"a\",\"b\",\"c\" | b",
+        "5 | \"a\",\"b\",\"c\" | c",
+        "-1 | \"a\",\"b\",\"c\" | c",
+        "7 | '' | ''"
+      })
+  @DisplayName("a summoner hears one of the fight's lines, or none when it has none")
+  void summonerLine(final int roll, final String lines, final String said) {
+    final BossFightPlan plan =
+        BossFightPlan.CODEC
+            .parse(
+                JsonOps.INSTANCE,
+                JsonParser.parseString(
+                    TWO_PHASES.substring(0, TWO_PHASES.length() - 1)
+                        + (lines.isEmpty() ? "" : ",\"summoner_lines\":[" + lines + "]")
+                        + "}"))
+            .getOrThrow();
+    assertEquals(said.isEmpty() ? Optional.empty() : Optional.of(said), plan.summonerLine(roll));
   }
 }

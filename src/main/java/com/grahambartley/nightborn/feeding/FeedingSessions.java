@@ -1,5 +1,6 @@
 package com.grahambartley.nightborn.feeding;
 
+import com.grahambartley.nightborn.blood.BloodGifts;
 import com.grahambartley.nightborn.blood.BloodQuality;
 import com.grahambartley.nightborn.config.NightbornConfig;
 import com.grahambartley.nightborn.server.ServerConfigService;
@@ -7,10 +8,13 @@ import com.grahambartley.nightborn.ward.Wards;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
+import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
+import net.fabricmc.fabric.api.event.player.AttackEntityCallback;
 import net.fabricmc.fabric.api.event.player.UseEntityCallback;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.minecraft.entity.Entity;
@@ -19,6 +23,8 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Nullable;
 
 public final class FeedingSessions {
@@ -34,6 +40,15 @@ public final class FeedingSessions {
 
   public static void register() {
     UseEntityCallback.EVENT.register(FeedingInteraction::onUse);
+    AttackEntityCallback.EVENT.register(
+        (player, world, hand, entity, hit) ->
+            finishing(player) ? ActionResult.FAIL : ActionResult.PASS);
+    ServerLivingEntityEvents.AFTER_DAMAGE.register(
+        (entity, source, dealt, taken, blocked) -> {
+          if (taken > 0.0F && finishing(entity) && entity instanceof ServerPlayerEntity vampire) {
+            interrupt(vampire);
+          }
+        });
     ServerTickEvents.END_SERVER_TICK.register(FeedingSessions::tick);
     ServerLifecycleEvents.SERVER_STOPPED.register(server -> clearAll());
     ServerPlayConnectionEvents.DISCONNECT.register((handler, server) -> end(handler.getPlayer()));
@@ -53,6 +68,11 @@ public final class FeedingSessions {
     return SESSIONS.containsKey(vampire.getUuid());
   }
 
+  public static boolean finishing(final Entity vampire) {
+    final FeedingSession session = SESSIONS.get(vampire.getUuid());
+    return session != null && session.finisher();
+  }
+
   public static long ticksSinceFed(final Entity vampire, final long now) {
     final Long last = LAST_FED.get(vampire.getUuid());
     return last == null ? -1 : now - last;
@@ -66,7 +86,10 @@ public final class FeedingSessions {
   }
 
   static void hold(
-      final ServerPlayerEntity vampire, final LivingEntity victim, final BloodQuality quality) {
+      final ServerPlayerEntity vampire,
+      final LivingEntity victim,
+      final BloodQuality quality,
+      final boolean finisher) {
     final long now = vampire.getServerWorld().getTime();
     if (now < SHAKEN_OFF_UNTIL.getOrDefault(vampire.getUuid(), Long.MIN_VALUE)) {
       return;
@@ -76,8 +99,29 @@ public final class FeedingSessions {
       current.held(now);
       return;
     }
+    if (current != null && current.finisher()) {
+      return;
+    }
     end(vampire);
-    SESSIONS.put(vampire.getUuid(), new FeedingSession(victim.getUuid(), quality, now));
+    final Optional<Identifier> gift =
+        BloodGifts.forPrey(vampire.getServerWorld().getRegistryManager(), victim.getType());
+    SESSIONS.put(
+        vampire.getUuid(),
+        finisher
+            ? FeedingSession.finisher(
+                victim.getUuid(),
+                quality,
+                gift,
+                now,
+                ServerConfigService.current().feeding().finisherDrainTicks())
+            : FeedingSession.bite(victim.getUuid(), quality, gift, now));
+  }
+
+  private static void interrupt(final ServerPlayerEntity vampire) {
+    final FeedingSession session = SESSIONS.remove(vampire.getUuid());
+    if (session != null) {
+      finish(vampire, session, ServerConfigService.current());
+    }
   }
 
   private static void tick(final MinecraftServer server) {
@@ -105,6 +149,15 @@ public final class FeedingSessions {
         sessions.remove();
         finish(vampire, victim, session, config);
         continue;
+      }
+      if (session.finisherDue(now)) {
+        sessions.remove();
+        Feeder.finishOff(world, vampire, victim, session, config);
+        finish(vampire, victim, session, config);
+        continue;
+      }
+      if (session.finisher()) {
+        VictimHold.apply(vampire, session.biterAnchorAt(vampire.getPos()));
       }
       if (session.drinkDue(now)) {
         final Feeder.Result result = Feeder.drink(world, vampire, victim, session, config);

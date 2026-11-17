@@ -71,6 +71,7 @@ public final class Grotto {
     Furnishing.candelabra(t, 27, y, 5);
     Furnishing.candelabra(t, 27, y, 9);
     Furnishing.chest(t, 27, y, 3, "west");
+    Furnishing.oldBloodFont(t, 27, y, 11);
   }
 
   private static void hearth(final Template t) {

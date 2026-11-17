@@ -81,6 +81,7 @@ public final class Ossuary {
     Furnishing.candelabra(t, 1, 1, NORTH);
     Furnishing.candelabra(t, 1, 1, SOUTH);
     Furnishing.gramophone(t, 2, 1, SOUTH, "north");
+    Furnishing.oldBloodFont(t, 2, 1, NORTH);
   }
 
   private static String vault(final String facing) {

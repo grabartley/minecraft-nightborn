@@ -22,14 +22,29 @@ class TurningSettingsTest {
     assertEquals(setting.defaultValue(), setting.get(NightbornConfig.DEFAULTS));
   }
 
-  @ParameterizedTest(name = "chance {0} kept as {1}, days {2} kept as {3}")
-  @CsvSource({"-5, 0, 0, 1", "0, 0, 1, 1", "40, 40, 7, 7", "100, 100, 30, 30", "250, 100, 99, 30"})
-  @DisplayName("the constructor clamps every chance and the sickness length into bounds")
-  void clamps(final int chance, final int keptChance, final int days, final int keptDays) {
-    final TurningSettings settings = new TurningSettings(chance, chance, chance, true, days);
-    assertEquals(keptChance, settings.biteTurnChance());
-    assertEquals(keptChance, settings.vampireMobTurnChance());
-    assertEquals(keptChance, settings.vampireBatTurnChance());
+  @ParameterizedTest(
+      name = "percent {0} kept as {1}, per thousand {2} kept as {3}, days {4} kept as {5}")
+  @CsvSource({
+    "-5, 0, -5, 0, 0, 1",
+    "0, 0, 0, 0, 1, 1",
+    "40, 40, 1, 1, 7, 7",
+    "100, 100, 1000, 1000, 30, 30",
+    "250, 100, 4000, 1000, 99, 30"
+  })
+  @DisplayName("the constructor clamps every chance, cost and length into bounds")
+  void clamps(
+      final int percent,
+      final int keptPercent,
+      final int perThousand,
+      final int keptPerThousand,
+      final int days,
+      final int keptDays) {
+    final TurningSettings settings =
+        new TurningSettings(percent, perThousand, percent, true, days, days);
+    assertEquals(keptPercent, settings.biteTurnChance());
+    assertEquals(keptPerThousand, settings.batTurnChancePerThousand());
+    assertEquals(keptPercent, settings.turningBiteBloodCost());
     assertEquals(keptDays, settings.sicknessDays());
+    assertEquals(Math.max(1, Math.min(60, days)), settings.oldBloodRefillDays());
   }
 }

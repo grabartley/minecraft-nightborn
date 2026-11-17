@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "filled=false": {
+      "model": "nightborn:block/old_blood_font"
+    },
+    "filled=true": {
+      "model": "nightborn:block/old_blood_font_filled"
+    }
+  }
+}

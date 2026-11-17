@@ -15,6 +15,7 @@ public final class VampireAttributes {
 
   public static final double MOST_REDUCED = 0.2;
   public static final double MOST_EXTRA_BLOOD = 40.0;
+  public static final double MOST_PREY_SENSE = 64.0;
 
   public static final RegistryEntry<EntityAttribute> DARK_SIGHT =
       register("dark_sight", 0.0, 0.0, 1.0);
@@ -36,6 +37,12 @@ public final class VampireAttributes {
       register("rise_health", 0.0, 0.0, 1.0);
   public static final RegistryEntry<EntityAttribute> POWER_COOLDOWN =
       register("power_cooldown", 1.0, MOST_REDUCED, 1.0);
+  public static final RegistryEntry<EntityAttribute> PREY_SENSE =
+      register("prey_sense", 0.0, 0.0, MOST_PREY_SENSE);
+  public static final RegistryEntry<EntityAttribute> DRAIN_RESISTANCE =
+      register("drain_resistance", 0.0, 0.0, 1.0);
+  public static final RegistryEntry<EntityAttribute> POTION_RESISTANCE =
+      register("potion_resistance", 0.0, 0.0, 1.0);
 
   public static final List<RegistryEntry<EntityAttribute>> ALL =
       List.of(
@@ -48,7 +55,10 @@ public final class VampireAttributes {
           EXTRA_BLOOD,
           DOWNED_TIME,
           RISE_HEALTH,
-          POWER_COOLDOWN);
+          POWER_COOLDOWN,
+          PREY_SENSE,
+          DRAIN_RESISTANCE,
+          POTION_RESISTANCE);
 
   private VampireAttributes() {}
 

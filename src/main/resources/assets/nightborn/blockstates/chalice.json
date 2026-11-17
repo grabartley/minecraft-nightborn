@@ -3,14 +3,68 @@
     "blood=empty": {
       "model": "nightborn:block/chalice"
     },
-    "blood=animal": {
-      "model": "nightborn:block/chalice_full"
+    "blood=animal,bottles=1": {
+      "model": "nightborn:block/chalice_1"
     },
-    "blood=villager": {
-      "model": "nightborn:block/chalice_full"
+    "blood=animal,bottles=2": {
+      "model": "nightborn:block/chalice_2"
     },
-    "blood=player": {
-      "model": "nightborn:block/chalice_full"
+    "blood=animal,bottles=3": {
+      "model": "nightborn:block/chalice_3"
+    },
+    "blood=animal,bottles=4": {
+      "model": "nightborn:block/chalice_4"
+    },
+    "blood=animal,bottles=5": {
+      "model": "nightborn:block/chalice_5"
+    },
+    "blood=animal,bottles=6": {
+      "model": "nightborn:block/chalice_6"
+    },
+    "blood=animal,bottles=7": {
+      "model": "nightborn:block/chalice_7"
+    },
+    "blood=villager,bottles=1": {
+      "model": "nightborn:block/chalice_1"
+    },
+    "blood=villager,bottles=2": {
+      "model": "nightborn:block/chalice_2"
+    },
+    "blood=villager,bottles=3": {
+      "model": "nightborn:block/chalice_3"
+    },
+    "blood=villager,bottles=4": {
+      "model": "nightborn:block/chalice_4"
+    },
+    "blood=villager,bottles=5": {
+      "model": "nightborn:block/chalice_5"
+    },
+    "blood=villager,bottles=6": {
+      "model": "nightborn:block/chalice_6"
+    },
+    "blood=villager,bottles=7": {
+      "model": "nightborn:block/chalice_7"
+    },
+    "blood=player,bottles=1": {
+      "model": "nightborn:block/chalice_1"
+    },
+    "blood=player,bottles=2": {
+      "model": "nightborn:block/chalice_2"
+    },
+    "blood=player,bottles=3": {
+      "model": "nightborn:block/chalice_3"
+    },
+    "blood=player,bottles=4": {
+      "model": "nightborn:block/chalice_4"
+    },
+    "blood=player,bottles=5": {
+      "model": "nightborn:block/chalice_5"
+    },
+    "blood=player,bottles=6": {
+      "model": "nightborn:block/chalice_6"
+    },
+    "blood=player,bottles=7": {
+      "model": "nightborn:block/chalice_7"
     }
   }
 }

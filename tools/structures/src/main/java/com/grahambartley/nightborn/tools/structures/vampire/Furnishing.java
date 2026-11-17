@@ -14,6 +14,7 @@ public final class Furnishing {
   public static final String PORTRAIT = "nightborn:portrait";
   public static final int PORTRAITS = 3;
   public static final String GRAMOPHONE = "nightborn:gramophone";
+  public static final String OLD_BLOOD_FONT = "nightborn:old_blood_font";
   public static final List<String> DISCS =
       List.of(
           "nightborn:music_disc_prelude_in_a_minor",
@@ -127,6 +128,10 @@ public final class Furnishing {
   public static void chalice(
       final Template t, final int x, final int y, final int z, final String blood) {
     t.set(x, y, z, BlockState.of("nightborn:chalice", "blood", blood));
+  }
+
+  public static void oldBloodFont(final Template t, final int x, final int y, final int z) {
+    t.set(x, y, z, BlockState.of(OLD_BLOOD_FONT, "filled", true));
   }
 
   public static String splatter(final String facing, final int splat) {

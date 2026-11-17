@@ -1,0 +1,12 @@
+{
+  "prey": "minecraft:witch",
+  "name": "nightborn.blood_gift.witch",
+  "seconds": 60,
+  "modifiers": [
+    {
+      "attribute": "nightborn:potion_resistance",
+      "amount": 0.5,
+      "operation": "add_value"
+    }
+  ]
+}

@@ -17,8 +17,14 @@ class NightbornConfigTest {
 
   static Stream<Arguments> prdStartingValues() {
     return Stream.of(
-        Arguments.of(TurningSettings.SICKNESS_DAYS, 3),
+        Arguments.of(TurningSettings.SICKNESS_DAYS, 1),
         Arguments.of(TurningSettings.BITE_TURN_CHANCE, 100),
+        Arguments.of(TurningSettings.BAT_TURN_CHANCE_PER_THOUSAND, 1),
+        Arguments.of(TurningSettings.TURNING_BITE_BLOOD_COST, 50),
+        Arguments.of(TurningSettings.OLD_BLOOD_REFILL_DAYS, 7),
+        Arguments.of(FeedingSettings.FINISHER_HEALTH_PERCENT, 25),
+        Arguments.of(FeedingSettings.FINISHER_DRAIN_TICKS, 30),
+        Arguments.of(FeedingSettings.FINISHER_HEAL, 4),
         Arguments.of(DownedSettings.DOWNED_SECONDS, 30),
         Arguments.of(DownedSettings.ESCAPE_SECONDS, 60),
         Arguments.of(DownedSettings.RECOVER_HEALTH, 20));

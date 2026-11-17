@@ -5,6 +5,7 @@ import com.grahambartley.nightborn.config.NightbornConfig;
 import com.grahambartley.nightborn.server.ServerConfigService;
 import com.grahambartley.nightborn.vampire.Vampires;
 import java.util.List;
+import java.util.Optional;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
@@ -12,10 +13,13 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUsage;
 import net.minecraft.item.Items;
 import net.minecraft.item.tooltip.TooltipType;
+import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
+import net.minecraft.util.Formatting;
 import net.minecraft.util.Hand;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.UseAction;
 import net.minecraft.world.World;
@@ -23,15 +27,25 @@ import net.minecraft.world.World;
 public class BloodBottleItem extends Item {
 
   static final int DRINK_TICKS = 32;
+  static final String GIFT_TOOLTIP = "item.nightborn.blood_bottle.gift";
 
   public BloodBottleItem(final Settings settings) {
     super(settings);
   }
 
   public static ItemStack of(final BloodQuality quality) {
+    return of(quality, Optional.empty());
+  }
+
+  public static ItemStack of(final BloodQuality quality, final Optional<Identifier> gift) {
     final ItemStack stack = new ItemStack(BloodItems.BLOOD_BOTTLE);
     stack.set(BloodItems.BLOOD_QUALITY, quality);
+    gift.ifPresent(id -> stack.set(BloodItems.BLOOD_GIFT, id));
     return stack;
+  }
+
+  public static Optional<Identifier> giftOf(final ItemStack stack) {
+    return Optional.ofNullable(stack.get(BloodItems.BLOOD_GIFT));
   }
 
   public static BloodQuality qualityOf(final ItemStack stack) {
@@ -67,6 +81,9 @@ public class BloodBottleItem extends Item {
   public ItemStack finishUsing(final ItemStack stack, final World world, final LivingEntity user) {
     if (!world.isClient && user instanceof PlayerEntity player && Vampires.isVampire(player)) {
       drink(player, qualityOf(stack));
+      if (player instanceof ServerPlayerEntity vampire) {
+        giftOf(stack).ifPresent(gift -> BloodGiftGrants.grant(vampire, gift, BloodGift.BOTTLED));
+      }
       player.playSound(SoundEvents.ENTITY_GENERIC_DRINK, 1.0F, 1.0F);
       return ItemUsage.exchangeStack(stack, player, new ItemStack(Items.GLASS_BOTTLE), false);
     }
@@ -94,5 +111,13 @@ public class BloodBottleItem extends Item {
         Text.translatable(
                 "item.nightborn.blood_bottle.quality", Text.translatable(quality.translationKey()))
             .formatted(quality.colour()));
+    final RegistryWrapper.WrapperLookup registries = context.getRegistryLookup();
+    giftOf(stack)
+        .flatMap(id -> registries == null ? Optional.empty() : BloodGifts.byId(registries, id))
+        .ifPresent(
+            gift ->
+                tooltip.add(
+                    Text.translatable(GIFT_TOOLTIP, Text.translatable(gift.name()))
+                        .formatted(Formatting.DARK_PURPLE)));
   }
 }

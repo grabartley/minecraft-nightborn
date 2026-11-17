@@ -21,7 +21,8 @@ public final class BloodMetabolism {
       Difficulty difficulty,
       boolean naturalRegeneration,
       int flightDrainSeconds,
-      int age) {}
+      int age,
+      double drainResistance) {}
 
   public record Outcome(int blood, float exhaustion, boolean heals) {}
 
@@ -31,9 +32,10 @@ public final class BloodMetabolism {
     final boolean peaceful = state.difficulty() == Difficulty.PEACEFUL;
     float exhaustion = state.exhaustion();
     if (!peaceful) {
-      exhaustion += drainPerTick(restingDrainSeconds);
+      final float kept = (float) (1.0 - Math.max(0.0, Math.min(1.0, state.drainResistance())));
+      exhaustion += drainPerTick(restingDrainSeconds) * kept;
       if (state.flightDrainSeconds() > GROUNDED) {
-        exhaustion += drainPerTick(state.flightDrainSeconds());
+        exhaustion += drainPerTick(state.flightDrainSeconds()) * kept;
       }
     }
     int blood = state.blood();

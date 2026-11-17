@@ -39,10 +39,10 @@ class RitualAltarBlockTest {
         RitualBlocks.ALTAR
             .getDefaultState()
             .with(RitualAltarBlock.FACING, from)
-            .with(RitualAltarBlock.PHASE, AltarPhase.RELICS_PLACED);
+            .with(RitualAltarBlock.PHASE, AltarPhase.READY);
     final BlockState turned = state.rotate(rotation);
     assertEquals(to, turned.get(RitualAltarBlock.FACING));
-    assertEquals(AltarPhase.RELICS_PLACED, turned.get(RitualAltarBlock.PHASE));
+    assertEquals(AltarPhase.READY, turned.get(RitualAltarBlock.PHASE));
   }
 
   @ParameterizedTest(name = "{0} mirrored {1} faces {2}")

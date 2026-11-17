@@ -106,9 +106,7 @@ public final class VampireHunt {
             vampire,
             victim,
             (float) vampire.getAttributeValue(EntityAttributes.GENERIC_ATTACK_DAMAGE),
-            config.turning().vampireMobTurnChance(),
-            MobSounds.VAMPIRE_BITE,
-            config.turning());
+            MobSounds.VAMPIRE_BITE);
     if (bitten) {
       vampire.onAttacking(victim);
       if (Prey.hasDrinkableBlood(victim)) {

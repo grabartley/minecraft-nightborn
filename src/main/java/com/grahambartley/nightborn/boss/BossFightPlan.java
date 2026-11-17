@@ -3,6 +3,7 @@ package com.grahambartley.nightborn.boss;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import java.util.List;
+import java.util.Optional;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.dynamic.Codecs;
 
@@ -13,7 +14,8 @@ public record BossFightPlan(
     Identifier changeSound,
     float changeKnock,
     float changeRange,
-    FightClips clips) {
+    FightClips clips,
+    List<String> summonerLines) {
 
   public static final Codec<BossFightPlan> CODEC =
       RecordCodecBuilder.create(
@@ -38,11 +40,22 @@ public record BossFightPlan(
                           .forGetter(BossFightPlan::changeRange),
                       FightClips.CODEC
                           .optionalFieldOf("clips", FightClips.NONE)
-                          .forGetter(BossFightPlan::clips))
+                          .forGetter(BossFightPlan::clips),
+                      Codec.STRING
+                          .listOf()
+                          .optionalFieldOf("summoner_lines", List.of())
+                          .forGetter(BossFightPlan::summonerLines))
                   .apply(instance, BossFightPlan::new));
 
   public BossFightPlan {
     phases = List.copyOf(phases);
+    summonerLines = List.copyOf(summonerLines);
+  }
+
+  public Optional<String> summonerLine(final int roll) {
+    return summonerLines.isEmpty()
+        ? Optional.empty()
+        : Optional.of(summonerLines.get(Math.floorMod(roll, summonerLines.size())));
   }
 
   public List<Integer> shares() {

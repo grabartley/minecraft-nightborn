@@ -4,7 +4,7 @@ import net.minecraft.util.StringIdentifiable;
 
 public enum AltarPhase implements StringIdentifiable {
   IDLE("idle"),
-  RELICS_PLACED("relics_placed"),
+  READY("relics_placed"),
   RITUAL_ACTIVE("ritual_active");
 
   static final int ACTIVE_LIGHT = 10;
@@ -15,11 +15,11 @@ public enum AltarPhase implements StringIdentifiable {
     this.id = id;
   }
 
-  public static AltarPhase of(final boolean active, final int placed) {
+  public static AltarPhase of(final boolean active, final boolean ready) {
     if (active) {
       return RITUAL_ACTIVE;
     }
-    return placed > 0 ? RELICS_PLACED : IDLE;
+    return ready ? READY : IDLE;
   }
 
   public String clip() {

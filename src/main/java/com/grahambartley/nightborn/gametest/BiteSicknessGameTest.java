@@ -197,13 +197,7 @@ public class BiteSicknessGameTest implements FabricGameTest {
   }
 
   private static TurningSettings withDays(final int days) {
-    final TurningSettings current = ServerConfigService.current().turning();
-    return new TurningSettings(
-        current.biteTurnChance(),
-        current.vampireMobTurnChance(),
-        current.vampireBatTurnChance(),
-        current.playersCanTurnPlayers(),
-        days);
+    return ServerConfigService.current().with(TurningSettings.SICKNESS_DAYS, days).turning();
   }
 
   private static void eatGoldenApple(final TestContext context, final ServerPlayerEntity player) {

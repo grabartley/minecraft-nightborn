@@ -173,6 +173,7 @@ public final class DonjonRooms {
           t, MountainCastle.BURGUNDY, mid + dx + dx / 2, y + 1, Donjon.NORTH + 1, 4, "south");
     }
     Furnishing.portrait(t, mid, y + 3, Donjon.NORTH + 1, "south");
+    Furnishing.oldBloodFont(t, mid + 2, y + 1, DAIS_SOUTH);
     Furnishing.portrait(t, Donjon.WEST + 1, y + 1, Donjon.NORTH + 6, "east");
     Furnishing.portrait(t, Donjon.EAST - 1, y + 1, Donjon.NORTH + 6, "west");
     Furnishing.chest(t, Donjon.WEST + 1, y, Donjon.NORTH + 1, "east", MountainCastle.LOOT);

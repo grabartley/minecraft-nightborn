@@ -294,5 +294,11 @@
     "takeoff": "takeoff",
     "land": "fly_land",
     "downed_form": "form_downed"
-  }
+  },
+  "summoner_lines": [
+    "nightborn.eldest.summoner.1",
+    "nightborn.eldest.summoner.2",
+    "nightborn.eldest.summoner.3",
+    "nightborn.eldest.summoner.4"
+  ]
 }

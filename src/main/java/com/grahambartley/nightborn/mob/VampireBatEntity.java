@@ -2,6 +2,7 @@ package com.grahambartley.nightborn.mob;
 
 import com.grahambartley.nightborn.config.NightbornConfig;
 import com.grahambartley.nightborn.server.ServerConfigService;
+import com.grahambartley.nightborn.sickness.BiteSickness;
 import com.grahambartley.nightborn.sun.DirectSun;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
@@ -106,10 +107,9 @@ public class VampireBatEntity extends BatEntity implements GeoEntity {
         this,
         victim,
         (float) getAttributeValue(EntityAttributes.GENERIC_ATTACK_DAMAGE),
-        config.turning().vampireBatTurnChance(),
-        MobSounds.VAMPIRE_BAT_BITE,
-        config.turning())) {
+        MobSounds.VAMPIRE_BAT_BITE)) {
       getWorld().sendEntityStatus(this, BITE_STATUS);
+      BiteSickness.startFromBatBite(victim, getRandom(), config.turning());
     }
     biteCooldown = BITE_COOLDOWN_TICKS;
     setVelocity(getVelocity().multiply(-0.6, 0.5, -0.6).add(0.0, 0.3, 0.0));

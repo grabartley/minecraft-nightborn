@@ -28,6 +28,7 @@ import com.grahambartley.nightborn.server.ServerConfigService;
 import com.grahambartley.nightborn.structure.HouseholdArrival;
 import com.grahambartley.nightborn.vampire.NightbornDamage;
 import com.grahambartley.nightborn.vampire.Vampires;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -53,7 +54,9 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.tag.TagKey;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.sound.SoundEvents;
+import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.Difficulty;
@@ -75,11 +78,15 @@ public class EldestEntity extends BossVampireEntity implements BlazingEyes {
       TagKey.of(RegistryKeys.DAMAGE_TYPE, Identifier.of(Nightborn.MOD_ID, "eldest_shrugs_off"));
 
   static final int FORM_BLEND_TICKS = 14;
+  static final String CHAT_LINE = "chat.type.text";
   static final int RISE_AFTER_TICKS = 6;
   private static final TrackedData<String> FORM =
       DataTracker.registerData(EldestEntity.class, TrackedDataHandlerRegistry.STRING);
 
+  static final String SUMMONER_KEY = "Summoner";
+
   private final FightRoll fightRoll = new FightRoll();
+  @Nullable private UUID summoner;
   private boolean rising;
   private final BossFight fight = new BossFight();
 
@@ -100,6 +107,22 @@ public class EldestEntity extends BossVampireEntity implements BlazingEyes {
 
   public void riseFromRitual() {
     rising = true;
+  }
+
+  public void calledBy(final UUID vampire, final List<ServerPlayerEntity> near) {
+    summoner = vampire;
+    plan()
+        .flatMap(fight -> fight.summonerLine(getRandom().nextInt(Integer.MAX_VALUE)))
+        .ifPresent(
+            line -> {
+              final Text said =
+                  Text.translatable(CHAT_LINE, getDisplayName(), Text.translatable(line));
+              near.forEach(player -> player.sendMessage(said, false));
+            });
+  }
+
+  public boolean summonedBy(final Entity entity) {
+    return entity.getUuid().equals(summoner);
   }
 
   @Override
@@ -304,7 +327,9 @@ public class EldestEntity extends BossVampireEntity implements BlazingEyes {
   public boolean attacksOnSight(final LivingEntity target) {
     return target instanceof PlayerEntity
         && EldestFoes.seeksOut(
-            Vampires.isVampire(target), getWorld().getDifficulty() == Difficulty.PEACEFUL);
+            Vampires.isVampire(target),
+            getWorld().getDifficulty() == Difficulty.PEACEFUL,
+            summonedBy(target));
   }
 
   @Override
@@ -329,7 +354,8 @@ public class EldestEntity extends BossVampireEntity implements BlazingEyes {
     return EldestFoes.fights(
         Vampires.isVampire(target),
         target instanceof PlayerEntity,
-        fightRoll.has(target.getUuid()));
+        fightRoll.has(target.getUuid()),
+        summonedBy(target));
   }
 
   @Override
@@ -374,6 +400,9 @@ public class EldestEntity extends BossVampireEntity implements BlazingEyes {
     super.writeCustomDataToNbt(nbt);
     fightRoll.write(nbt);
     fight.write(nbt);
+    if (summoner != null) {
+      nbt.putUuid(SUMMONER_KEY, summoner);
+    }
   }
 
   @Override
@@ -381,6 +410,7 @@ public class EldestEntity extends BossVampireEntity implements BlazingEyes {
     super.readCustomDataFromNbt(nbt);
     fightRoll.read(nbt);
     fight.read(nbt);
+    summoner = nbt.containsUuid(SUMMONER_KEY) ? nbt.getUuid(SUMMONER_KEY) : null;
     leaveRoutine();
   }
 }

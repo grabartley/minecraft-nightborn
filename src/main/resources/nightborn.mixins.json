@@ -3,6 +3,8 @@
 	"package": "com.grahambartley.nightborn.mixin",
 	"compatibilityLevel": "JAVA_21",
 	"mixins": [
+		"AreaEffectCloudEntityMixin",
+		"ArrowEntityMixin",
 		"BedBlockMixin",
 		"CreeperEntityMixin",
 		"CrossbowItemMixin",
@@ -21,6 +23,7 @@
 		"PhantomSpawnerMixin",
 		"PistonHandlerMixin",
 		"PlayerEntityMixin",
+		"PotionEntityMixin",
 		"ServerPlayNetworkHandlerMixin",
 		"ServerPlayerEntityMixin",
 		"ServerWorldMixin",

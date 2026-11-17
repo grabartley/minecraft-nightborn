@@ -25,9 +25,9 @@ class FeedingSettingsTest {
   @Test
   @DisplayName("the constructor clamps values into bounds")
   void clamps() {
-    final FeedingSettings low = new FeedingSettings(0, -1, -1, -1, 0);
-    assertEquals(new FeedingSettings(1, 0, 0, 0, 1), low);
-    final FeedingSettings high = new FeedingSettings(50, 500, 5000, 500, 50);
-    assertEquals(new FeedingSettings(20, 100, 600, 64, 20), high);
+    final FeedingSettings low = new FeedingSettings(0, -1, -1, -1, 0, 0, 0, 0, -1);
+    assertEquals(new FeedingSettings(1, 0, 0, 0, 1, 1, 1, 5, 0), low);
+    final FeedingSettings high = new FeedingSettings(50, 500, 5000, 500, 50, 50, 500, 500, 50);
+    assertEquals(new FeedingSettings(20, 100, 600, 64, 20, 20, 100, 200, 40), high);
   }
 }

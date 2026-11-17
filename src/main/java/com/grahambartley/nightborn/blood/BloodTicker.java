@@ -7,6 +7,7 @@ import com.grahambartley.nightborn.config.NightbornConfig;
 import com.grahambartley.nightborn.downed.Downed;
 import com.grahambartley.nightborn.downed.DownedState;
 import com.grahambartley.nightborn.levitation.Levitation;
+import com.grahambartley.nightborn.vampire.VampireAttributes;
 import com.grahambartley.nightborn.weakened.Weakened;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.HungerManager;
@@ -54,7 +55,8 @@ public final class BloodTicker {
                     && (downed == null || !downed.isDowned()),
                 BloodMetabolism.flightDrainSeconds(
                     BatForm.effort(vampire), Levitation.isLevitating(vampire), config.core()),
-                vampire.age),
+                vampire.age,
+                VampireAttributes.value(vampire, VampireAttributes.DRAIN_RESISTANCE)),
             drainSeconds);
     BloodAttachment.set(vampire, outcome.blood());
     if (outcome.heals()) {

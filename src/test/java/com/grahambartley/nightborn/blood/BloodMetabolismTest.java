@@ -21,7 +21,7 @@ class BloodMetabolismTest {
       final Difficulty difficulty,
       final int age) {
     return new BloodMetabolism.State(
-        blood, exhaustion, health, 40.0F, difficulty, true, BloodMetabolism.GROUNDED, age);
+        blood, exhaustion, health, 40.0F, difficulty, true, BloodMetabolism.GROUNDED, age, 0.0);
   }
 
   @ParameterizedTest(name = "drain every {0} s")
@@ -46,7 +46,8 @@ class BloodMetabolismTest {
                   Difficulty.NORMAL,
                   true,
                   BloodMetabolism.GROUNDED,
-                  tick),
+                  tick,
+                  0.0),
               seconds);
       blood = outcome.blood();
       exhaustion = outcome.exhaustion();
@@ -106,7 +107,15 @@ class BloodMetabolismTest {
     final BloodMetabolism.Outcome outcome =
         BloodMetabolism.tick(
             new BloodMetabolism.State(
-                20, 0.0F, 30.0F, 40.0F, Difficulty.NORMAL, false, BloodMetabolism.GROUNDED, 200),
+                20,
+                0.0F,
+                30.0F,
+                40.0F,
+                Difficulty.NORMAL,
+                false,
+                BloodMetabolism.GROUNDED,
+                200,
+                0.0),
             600);
     assertFalse(outcome.heals());
   }
@@ -121,7 +130,7 @@ class BloodMetabolismTest {
       final BloodMetabolism.Outcome outcome =
           BloodMetabolism.tick(
               new BloodMetabolism.State(
-                  blood, exhaustion, 40.0F, 40.0F, Difficulty.NORMAL, true, seconds, tick),
+                  blood, exhaustion, 40.0F, 40.0F, Difficulty.NORMAL, true, seconds, tick, 0.0),
               600);
       blood = outcome.blood();
       exhaustion = outcome.exhaustion();
@@ -134,7 +143,9 @@ class BloodMetabolismTest {
   void peacefulFlightIsFree() {
     final BloodMetabolism.Outcome outcome =
         BloodMetabolism.tick(
-            new BloodMetabolism.State(10, 3.99F, 40.0F, 40.0F, Difficulty.PEACEFUL, true, 1, 1), 5);
+            new BloodMetabolism.State(
+                10, 3.99F, 40.0F, 40.0F, Difficulty.PEACEFUL, true, 1, 1, 0.0),
+            5);
     assertEquals(10, outcome.blood());
   }
 
@@ -165,5 +176,31 @@ class BloodMetabolismTest {
     assertEquals(
         expected,
         BloodMetabolism.flightDrainSeconds(bat, levitating, NightbornConfig.DEFAULTS.core()));
+  }
+
+  @ParameterizedTest(name = "resistance {0} over {1} ticks leaves {2} blood")
+  @CsvSource({"0.0, 1201, 19", "1.0, 2401, 20", "0.5, 1201, 20", "0.5, 2401, 19", "2.0, 2401, 20"})
+  @DisplayName("drain resistance slows the resting and flight drain, and a full one stops it")
+  void drainResistance(final double resistance, final int ticks, final int left) {
+    int blood = 20;
+    float exhaustion = 0.0F;
+    for (int tick = 1; tick <= ticks; tick++) {
+      final BloodMetabolism.Outcome outcome =
+          BloodMetabolism.tick(
+              new BloodMetabolism.State(
+                  blood,
+                  exhaustion,
+                  40.0F,
+                  40.0F,
+                  Difficulty.NORMAL,
+                  true,
+                  BloodMetabolism.GROUNDED,
+                  tick,
+                  resistance),
+              60);
+      blood = outcome.blood();
+      exhaustion = outcome.exhaustion();
+    }
+    assertEquals(left, blood);
   }
 }

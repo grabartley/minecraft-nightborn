@@ -3,7 +3,6 @@ package com.grahambartley.nightborn.gametest;
 import com.grahambartley.nightborn.Nightborn;
 import com.grahambartley.nightborn.blood.BloodAttachment;
 import com.grahambartley.nightborn.config.DownedSettings;
-import com.grahambartley.nightborn.config.TurningSettings;
 import com.grahambartley.nightborn.downed.Downed;
 import com.grahambartley.nightborn.downed.DownedRules;
 import com.grahambartley.nightborn.downed.DownedState;
@@ -48,14 +47,12 @@ public class VampireMobGameTest implements FabricGameTest {
   static final String YARD = "nightborn:vampire_yard";
   static final String NOON_BATCH = "vampire-mob-noon";
   static final String DAWN_BATCH = "vampire-mob-dawn";
-  static final String BITE_BATCH = "vampire-mob-bite";
   static final int BEFORE_DAWN = 22500;
   static final int TRIES = 40;
   static final String NIGHT_BATCH = "vampire-mob-night";
   static final int ESCAPED_AT = 110;
   static final int LIGHT_SETTLED = 20;
 
-  private static int mobTurnChanceBefore;
   private static int downedSecondsBefore;
 
   @BeforeBatch(batchId = NOON_BATCH)
@@ -92,22 +89,6 @@ public class VampireMobGameTest implements FabricGameTest {
     ServerConfigService.update(
         world.getServer(),
         ServerConfigService.current().with(DownedSettings.DOWNED_SECONDS, downedSecondsBefore));
-  }
-
-  @BeforeBatch(batchId = BITE_BATCH)
-  public void everyBiteTurns(final ServerWorld world) {
-    mobTurnChanceBefore = ServerConfigService.current().turning().vampireMobTurnChance();
-    ServerConfigService.update(
-        world.getServer(),
-        ServerConfigService.current().with(TurningSettings.VAMPIRE_MOB_TURN_CHANCE, 100));
-  }
-
-  @AfterBatch(batchId = BITE_BATCH)
-  public void restoreTurnChances(final ServerWorld world) {
-    ServerConfigService.update(
-        world.getServer(),
-        ServerConfigService.current()
-            .with(TurningSettings.VAMPIRE_MOB_TURN_CHANCE, mobTurnChanceBefore));
   }
 
   @GameTest(templateName = ARENA, tickLimit = 20)
@@ -350,8 +331,8 @@ public class VampireMobGameTest implements FabricGameTest {
         });
   }
 
-  @GameTest(templateName = ARENA, batchId = BITE_BATCH, tickLimit = TestPlayers.READY + 10)
-  public void aVampireMobBiteCanStartBiteSickness(final TestContext context) {
+  @GameTest(templateName = ARENA, tickLimit = TestPlayers.READY + 10)
+  public void aVampireMobBiteFeedsButNeverStartsBiteSickness(final TestContext context) {
     final VampireEntity vampire = still(context, new BlockPos(4, 2, 4));
     final ServerPlayerEntity human = TestPlayers.human(context, new BlockPos(5, 2, 4));
     context.runAtTick(
@@ -360,7 +341,8 @@ public class VampireMobGameTest implements FabricGameTest {
           final float before = human.getHealth();
           context.assertTrue(vampire.tryAttack(human), "a vampire mob bites a human");
           context.assertTrue(human.getHealth() < before, "the bite draws blood");
-          context.assertTrue(BiteSicknessAttachment.isSick(human), "the bite starts sickness");
+          context.assertFalse(
+              BiteSicknessAttachment.isSick(human), "a vampire mob's bite never turns");
           context.assertTrue(
               TestAdvancements.done(context, human, "love_bites"), "a bite earns Love Bites");
           TestPlayers.finish(context, human);

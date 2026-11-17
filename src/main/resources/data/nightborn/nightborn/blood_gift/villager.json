@@ -1,0 +1,12 @@
+{
+  "prey": "minecraft:villager",
+  "name": "nightborn.blood_gift.villager",
+  "seconds": 60,
+  "modifiers": [
+    {
+      "attribute": "nightborn:drain_resistance",
+      "amount": 1.0,
+      "operation": "add_value"
+    }
+  ]
+}
