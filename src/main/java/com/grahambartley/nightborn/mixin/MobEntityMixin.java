@@ -18,9 +18,7 @@ abstract class MobEntityMixin {
 
   @Inject(method = "tickNewAi", at = @At("HEAD"), cancellable = true)
   private void nightborn$standStillWhileMesmerised(final CallbackInfo ci) {
-    final MobEntity self = (MobEntity) (Object) this;
-    if (MindFeatures.stilled(self)) {
-      MindFeatures.holdStill(self);
+    if (MindFeatures.hold((MobEntity) (Object) this)) {
       ci.cancel();
     }
   }

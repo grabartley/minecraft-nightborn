@@ -8,6 +8,7 @@ import com.grahambartley.nightborn.config.MobSettings;
 import com.grahambartley.nightborn.levitation.Levitation;
 import com.grahambartley.nightborn.mob.NightbornMobs;
 import com.grahambartley.nightborn.mob.VampireEntity;
+import com.grahambartley.nightborn.mob.goal.SleepInCoffinGoal;
 import com.grahambartley.nightborn.mob.goal.WatchStrangerGoal;
 import com.grahambartley.nightborn.mob.home.HomeCoffins;
 import com.grahambartley.nightborn.server.ServerConfigService;
@@ -141,7 +142,8 @@ public class VampireHomeGameTest implements FabricGameTest {
     final BlockPos free = CoffinStage.coffin(context, new BlockPos(6, 2, 1), Direction.SOUTH);
     final UUID someoneElse = UUID.randomUUID();
     CoffinOwnership.claim(context.getWorld(), context.getAbsolutePos(taken), someoneElse);
-    final VampireEntity vampire = household(context, new BlockPos(4, 2, 4), taken);
+    final VampireEntity vampire =
+        keepingHouse(context, household(context, new BlockPos(4, 2, 4), taken));
     context.runAtTick(
         CLAIM_WAIT,
         () -> {
@@ -174,16 +176,27 @@ public class VampireHomeGameTest implements FabricGameTest {
   @GameTest(templateName = ARENA, batchId = DAY_BATCH, tickLimit = CLAIM_WAIT + 40)
   public void aVampireLiesDownInItsCoffinAtBedtime(final TestContext context) {
     final BlockPos head = CoffinStage.coffin(context, new BlockPos(4, 2, 2), Direction.SOUTH);
-    final VampireEntity vampire = household(context, new BlockPos(5, 2, 3), head);
-    context.runAtEveryTick(
+    final VampireEntity vampire =
+        keepingHouse(context, household(context, new BlockPos(5, 2, 3), head));
+    final SleepInCoffinGoal goal = new SleepInCoffinGoal(vampire);
+    context.assertFalse(goal.canStart(), "with no coffin of its own it has nowhere to lie down");
+    context.runAtTick(
+        CLAIM_WAIT,
         () -> {
-          if (vampire.isSleeping()) {
-            context.assertEquals(
-                vampire.getSleepingPosition().orElse(null),
-                context.getAbsolutePos(head),
-                "it sleeps in its own coffin");
-            context.complete();
-          }
+          context.assertEquals(
+              vampire.homeLife().coffin().orElse(null),
+              context.getAbsolutePos(head),
+              "it has claimed its coffin");
+          context.assertTrue(goal.canStart(), "at bedtime it makes for its coffin");
+          goal.start();
+          goal.tick();
+          context.assertTrue(vampire.isSleeping(), "beside its coffin it lies down");
+          context.assertEquals(
+              vampire.getSleepingPosition().orElse(null),
+              context.getAbsolutePos(head),
+              "it sleeps in its own coffin");
+          context.assertFalse(goal.canStart(), "a sleeping vampire does not look for bed again");
+          context.complete();
         });
   }
 
@@ -210,6 +223,8 @@ public class VampireHomeGameTest implements FabricGameTest {
     context.runAtTick(
         5,
         () -> {
+          hungry.tickHome();
+          fed.tickHome();
           context.assertEquals(
               hungry.getPositionTargetRange(),
               (float) ServerConfigService.current().mobs().vampireFeedingRange(),
@@ -269,7 +284,7 @@ public class VampireHomeGameTest implements FabricGameTest {
 
   @GameTest(templateName = ARENA, tickLimit = TestPlayers.READY + 20)
   public void aProvokedVampireGivesUpTheChaseFarFromHome(final TestContext context) {
-    final VampireEntity vampire = context.spawnEntity(NightbornMobs.VAMPIRE, new BlockPos(2, 2, 2));
+    final VampireEntity vampire = VampireMobGameTest.still(context, new BlockPos(2, 2, 2));
     vampire.settleAt(context.getAbsolutePos(new BlockPos(2, 2, 2)).add(FAR_AWAY, 0, 0));
     final ServerPlayerEntity hunter = TestPlayers.human(context, new BlockPos(6, 2, 6));
     context.runAtTick(
@@ -277,10 +292,8 @@ public class VampireHomeGameTest implements FabricGameTest {
         () -> {
           vampire.setAttacker(hunter);
           vampire.setTarget(hunter);
-        });
-    context.runAtTick(
-        TestPlayers.READY + 10,
-        () -> {
+          context.assertTrue(vampire.getTarget() == hunter, "the vampire is set on its attacker");
+          vampire.tickHome();
           context.assertTrue(
               vampire.getTarget() == null, "past its chase range the vampire gives up");
           TestPlayers.finish(context, hunter);
@@ -399,6 +412,7 @@ public class VampireHomeGameTest implements FabricGameTest {
     context.runAtTick(
         5,
         () -> {
+          vampire.tickHome();
           context.assertTrue(vampire.homeLife().headsHome(vampire), "dawn is near: head home");
           context.assertEquals(
               vampire.getPositionTargetRange(),
@@ -491,7 +505,8 @@ public class VampireHomeGameTest implements FabricGameTest {
 
   @GameTest(templateName = ARENA, tickLimit = CLAIM_WAIT + 10)
   public void aVampireKeepsItsCoffinWhileTheCoffinIsUnloaded(final TestContext context) {
-    final VampireEntity vampire = context.spawnEntity(NightbornMobs.VAMPIRE, new BlockPos(4, 2, 4));
+    final VampireEntity vampire =
+        keepingHouse(context, VampireMobGameTest.still(context, new BlockPos(4, 2, 4)));
     final BlockPos away = context.getAbsolutePos(new BlockPos(4, 2, 4)).add(UNLOADED, 0, 0);
     final NbtCompound nbt = new NbtCompound();
     vampire.writeNbt(nbt);
@@ -515,7 +530,8 @@ public class VampireHomeGameTest implements FabricGameTest {
   @GameTest(templateName = ARENA, tickLimit = CLAIM_WAIT + 10)
   public void aVampireThatDiesFreesItsCoffin(final TestContext context) {
     final BlockPos head = CoffinStage.coffin(context, new BlockPos(4, 2, 1), Direction.SOUTH);
-    final VampireEntity vampire = household(context, new BlockPos(4, 2, 5), head);
+    final VampireEntity vampire =
+        keepingHouse(context, household(context, new BlockPos(4, 2, 5), head));
     context.runAtTick(
         CLAIM_WAIT,
         () -> {
@@ -530,7 +546,8 @@ public class VampireHomeGameTest implements FabricGameTest {
   @GameTest(templateName = ARENA, tickLimit = CLAIM_WAIT + DEATH_TICKS + 10)
   public void aStrangerCannotBreakALivingVampiresCoffin(final TestContext context) {
     final BlockPos head = CoffinStage.coffin(context, new BlockPos(4, 2, 1), Direction.SOUTH);
-    final VampireEntity vampire = household(context, new BlockPos(4, 2, 5), head);
+    final VampireEntity vampire =
+        keepingHouse(context, household(context, new BlockPos(4, 2, 5), head));
     final ServerPlayerEntity stranger = TestPlayers.human(context, new BlockPos(2, 2, 3));
     context.runAtTick(
         CLAIM_WAIT,
@@ -559,8 +576,10 @@ public class VampireHomeGameTest implements FabricGameTest {
     final BlockPos left = CoffinStage.coffin(context, new BlockPos(2, 2, 1), Direction.SOUTH);
     final BlockPos right = CoffinStage.coffin(context, new BlockPos(6, 2, 1), Direction.SOUTH);
     final BlockPos home = new BlockPos(4, 2, 4);
-    final VampireEntity first = household(context, new BlockPos(3, 2, 5), home);
-    final VampireEntity second = household(context, new BlockPos(5, 2, 5), home);
+    final VampireEntity first =
+        keepingHouse(context, household(context, new BlockPos(3, 2, 5), home));
+    final VampireEntity second =
+        keepingHouse(context, household(context, new BlockPos(5, 2, 5), home));
     context.runAtTick(
         CLAIM_WAIT,
         () -> {
@@ -578,8 +597,19 @@ public class VampireHomeGameTest implements FabricGameTest {
 
   private static VampireEntity household(
       final TestContext context, final BlockPos relative, final BlockPos home) {
-    final VampireEntity vampire = context.spawnEntity(NightbornMobs.VAMPIRE, relative);
+    final VampireEntity vampire = VampireMobGameTest.still(context, relative);
     vampire.settleAt(context.getAbsolutePos(home == null ? relative : home));
+    return vampire;
+  }
+
+  private static VampireEntity keepingHouse(
+      final TestContext context, final VampireEntity vampire) {
+    context.runAtEveryTick(
+        () -> {
+          if (vampire.isAlive()) {
+            vampire.tickHome();
+          }
+        });
     return vampire;
   }
 
