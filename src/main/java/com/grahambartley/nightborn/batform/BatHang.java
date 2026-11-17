@@ -65,7 +65,11 @@ public final class BatHang {
   public static boolean hang(final ServerPlayerEntity player, final BlockPos anchor) {
     final Vec3d spot = BatHangRules.spot(anchor);
     if (!holds(player.getWorld(), anchor)
-        || !player.getWorld().isSpaceEmpty(player, BatForm.dimensions().getBoxAt(spot))) {
+        || !player
+            .getWorld()
+            .isSpaceEmpty(
+                player,
+                BatHangRules.sweep(player.getBoundingBox(), BatForm.dimensions().getBoxAt(spot)))) {
       return false;
     }
     player.requestTeleport(spot.x, spot.y, spot.z);

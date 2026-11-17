@@ -170,6 +170,29 @@ public class BatFormGameTest implements FabricGameTest {
   }
 
   @GameTest(templateName = ARENA, batchId = NIGHT, tickLimit = 20)
+  public void aHangingBatMovedOffItsSpotLetsGo(final TestContext context) {
+    final ServerPlayerEntity vampire = hangingBat(context);
+    final Vec3d aside = context.getAbsolute(new Vec3d(6.5, 2.0, 4.5));
+    vampire.refreshPositionAndAngles(aside.x, aside.y, aside.z, 0.0F, 0.0F);
+    BatHang.afterMove(vampire);
+    context.assertFalse(BatHang.isHanging(vampire), "the bat lets go");
+    TestPlayers.finish(context, vampire);
+  }
+
+  @GameTest(templateName = ARENA, batchId = NIGHT, tickLimit = 20)
+  public void aBatDoesNotHangWhereABlockIsInTheWay(final TestContext context) {
+    final ServerPlayerEntity vampire = beast(context, BAT_FORM);
+    Powers.cast(vampire, BAT_FORM);
+    final Vec3d aside = context.getAbsolute(new Vec3d(5.5, 2.0, 4.5));
+    vampire.refreshPositionAndAngles(aside.x, aside.y, aside.z, 0.0F, 0.0F);
+    context.setBlockState(ROOST, Blocks.STONE);
+    context.setBlockState(STAND, Blocks.STONE);
+    context.assertEquals(use(context, vampire, Direction.DOWN), ActionResult.FAIL, "refused");
+    context.assertFalse(BatHang.isHanging(vampire), "the bat does not hang");
+    TestPlayers.finish(context, vampire);
+  }
+
+  @GameTest(templateName = ARENA, batchId = NIGHT, tickLimit = 20)
   public void aHangingBatWithNoRoomBelowStaysABat(final TestContext context) {
     final ServerPlayerEntity vampire = hangingBat(context);
     context.assertEquals(

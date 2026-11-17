@@ -1,6 +1,6 @@
 package com.grahambartley.nightborn.batform;
 
-import com.grahambartley.nightborn.levitation.LevitationLookAhead;
+import com.grahambartley.nightborn.movement.MoveHeading;
 import net.minecraft.util.math.Vec3d;
 
 public final class BatFlightModel {
@@ -65,7 +65,7 @@ public final class BatFlightModel {
     if (controls.jumping()) {
       return new Vec3d(velocity.x, TAKE_OFF, velocity.z);
     }
-    return LevitationLookAhead.heading(controls.strafe(), controls.forward(), controls.yaw())
+    return MoveHeading.of(controls.strafe(), controls.forward(), controls.yaw())
         .map(heading -> new Vec3d(heading.x() * CRAWL_SPEED, -GRIP, heading.z() * CRAWL_SPEED))
         .orElse(new Vec3d(0.0, -GRIP, 0.0));
   }

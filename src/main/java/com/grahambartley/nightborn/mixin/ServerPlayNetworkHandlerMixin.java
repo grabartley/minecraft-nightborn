@@ -25,7 +25,7 @@ abstract class ServerPlayNetworkHandlerMixin {
               value = "INVOKE",
               target =
                   "Lnet/minecraft/server/network/ServerPlayerEntity;hasStatusEffect(Lnet/minecraft/registry/entry/RegistryEntry;)Z"))
-  private boolean nightborn$levitatingIsNotFloating(final boolean levitationEffect) {
+  private boolean nightborn$hoveringIsNotFloating(final boolean levitationEffect) {
     return levitationEffect || Levitation.isLevitating(player) || BatForm.isBat(player);
   }
 
@@ -33,6 +33,11 @@ abstract class ServerPlayNetworkHandlerMixin {
   private void nightborn$sneakLandsALevitatingPlayer(
       final PlayerMoveC2SPacket packet, final CallbackInfo ci) {
     Levitation.touchDown(player, packet.isOnGround());
+  }
+
+  @Inject(method = "onPlayerMove", at = @At("RETURN"))
+  private void nightborn$aBatMovedOffItsSpotLetsGo(
+      final PlayerMoveC2SPacket packet, final CallbackInfo ci) {
     BatHang.afterMove(player);
   }
 }

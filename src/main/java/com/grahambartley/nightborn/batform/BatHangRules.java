@@ -1,6 +1,7 @@
 package com.grahambartley.nightborn.batform;
 
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
 
 public final class BatHangRules {
@@ -35,8 +36,16 @@ public final class BatHangRules {
     return distanceFromSpot > SLIP;
   }
 
-  public static boolean letsGo(
-      final boolean hanging, final boolean jumping, final boolean forward) {
-    return hanging && (jumping || forward);
+  public static Box sweep(final Box body, final Box hung) {
+    return body.union(hung);
+  }
+
+  public static boolean armed(
+      final boolean hanging, final boolean pressing, final boolean wasArmed) {
+    return hanging && (wasArmed || !pressing);
+  }
+
+  public static boolean letsGo(final boolean armed, final boolean pressing) {
+    return armed && pressing;
   }
 }

@@ -2,6 +2,7 @@ package com.grahambartley.nightborn.client;
 
 import com.grahambartley.nightborn.batform.BatHang;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.util.math.MathHelper;
 
@@ -16,11 +17,17 @@ public final class BatHangView {
 
   static void register() {
     ClientTickEvents.END_CLIENT_TICK.register(BatHangView::tick);
+    ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> reset());
   }
 
   private static void tick(final MinecraftClient client) {
     before = now;
     now = step(now, client.player != null && BatHang.isHanging(client.player));
+  }
+
+  private static void reset() {
+    before = 0.0F;
+    now = 0.0F;
   }
 
   public static float roll(final boolean thirdPerson, final float tickDelta) {

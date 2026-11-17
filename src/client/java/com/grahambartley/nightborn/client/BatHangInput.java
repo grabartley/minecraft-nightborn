@@ -10,6 +10,8 @@ import net.minecraft.client.network.ClientPlayerEntity;
 
 final class BatHangInput {
 
+  private static boolean armed;
+
   private BatHangInput() {}
 
   static void register() {
@@ -18,12 +20,16 @@ final class BatHangInput {
 
   private static void tick(final MinecraftClient client) {
     final ClientPlayerEntity player = client.player;
-    if (player != null
-        && client.currentScreen == null
-        && BatHangRules.letsGo(
-            BatHang.isHanging(player), player.input.jumping, player.input.hasForwardMovement())
+    if (player == null) {
+      armed = false;
+      return;
+    }
+    final boolean pressing = player.input.jumping || player.input.hasForwardMovement();
+    if (client.currentScreen == null
+        && BatHangRules.letsGo(armed, pressing)
         && ClientPlayNetworking.canSend(ReleaseBatHangPayload.ID)) {
       ClientPlayNetworking.send(ReleaseBatHangPayload.INSTANCE);
     }
+    armed = BatHangRules.armed(BatHang.isHanging(player), pressing, armed);
   }
 }
