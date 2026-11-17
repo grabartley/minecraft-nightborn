@@ -17,6 +17,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.stream.Stream;
 import net.minecraft.util.Identifier;
@@ -65,6 +66,25 @@ class VampireStagesTest {
       assertTrue(older.combat().bloodFloor() < younger.combat().bloodFloor());
       assertTrue(older.combat().thinkTicks() < younger.combat().thinkTicks());
     }
+  }
+
+  @Test
+  @DisplayName("the Eldest's stage is never rolled, tops the lord and holds every vampire skill")
+  void eldestHoldsEverySkill() {
+    final VampireStage eldest = stages().get(Identifier.of("nightborn", "eldest"));
+    final VampireStage lord = stages().get(Identifier.of("nightborn", "lord"));
+    final Map<Identifier, SkillBranch> branches = read("nightborn/skill_branch", SkillBranch.CODEC);
+    final Map<Identifier, Skill> tree =
+        SkillPicks.ofTree(read("nightborn/skill", Skill.CODEC), branches, SkillTree.VAMPIRE);
+    assertEquals(0, eldest.weight());
+    assertTrue(eldest.skills().every());
+    assertTrue(eldest.rank() > lord.rank());
+    assertTrue(eldest.body().health() > lord.body().health());
+    assertTrue(eldest.body().damage() > lord.body().damage());
+    assertTrue(eldest.combat().thinkTicks() < lord.combat().thinkTicks());
+    assertEquals(
+        tree.keySet(),
+        Set.copyOf(SkillPicks.every(SkillPicks.forStage(tree, branches, eldest.skills()))));
   }
 
   static Stream<VampireStage> wild() {

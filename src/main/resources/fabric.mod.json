@@ -35,6 +35,7 @@
       "com.grahambartley.nightborn.gametest.FactionGameTest",
       "com.grahambartley.nightborn.gametest.FeedingGameTest",
       "com.grahambartley.nightborn.gametest.DownedGameTest",
+      "com.grahambartley.nightborn.gametest.DownedTargetingGameTest",
       "com.grahambartley.nightborn.gametest.HardcoreVampireDeathGameTest",
       "com.grahambartley.nightborn.gametest.SunGameTest",
       "com.grahambartley.nightborn.gametest.BiteSicknessGameTest",
@@ -62,6 +63,8 @@
       "com.grahambartley.nightborn.gametest.VampireBatSpawnGameTest",
       "com.grahambartley.nightborn.gametest.VampireStructureGameTest",
       "com.grahambartley.nightborn.gametest.VampireLordGameTest",
+      "com.grahambartley.nightborn.gametest.EldestGameTest",
+      "com.grahambartley.nightborn.gametest.RitualGameTest",
       "com.grahambartley.nightborn.gametest.VampireStageGameTest",
       "com.grahambartley.nightborn.gametest.LevitationGameTest",
       "com.grahambartley.nightborn.gametest.BatFormGameTest",
@@ -74,7 +77,8 @@
       "com.grahambartley.nightborn.gametest.HolyWaterGameTest",
       "com.grahambartley.nightborn.gametest.HunterAmmoGameTest",
       "com.grahambartley.nightborn.gametest.ClothingGameTest",
-      "com.grahambartley.nightborn.gametest.CoatingGameTest"
+      "com.grahambartley.nightborn.gametest.CoatingGameTest",
+      "com.grahambartley.nightborn.gametest.VanishGameTest"
     ]
   },
   "mixins": [

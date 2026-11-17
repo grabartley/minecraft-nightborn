@@ -43,7 +43,8 @@ class MobPowerUseTest {
             12,
             Identifier.of("minecraft", "entity.warden.sonic_charge"),
             "blood_rush_tell",
-            Optional.of("blood_rush")),
+            Optional.of("blood_rush"),
+            false),
         parse(VALID));
   }
 
@@ -55,6 +56,20 @@ class MobPowerUseTest {
             "{\"max_range\":8,\"tell_ticks\":5,\"tell_sound\":\"minecraft:block.bell.use\",\"tell_clip\":\"stare\"}");
     assertEquals(0.0F, use.minRange());
     assertTrue(use.clip().isEmpty());
+    assertFalse(use.dodge());
+  }
+
+  @ParameterizedTest(name = "dodge {0}")
+  @ValueSource(booleans = {true, false})
+  @DisplayName("a mob use says whether the power is cast as a dodge")
+  void dodge(final boolean dodge) {
+    assertEquals(
+        dodge,
+        parse(
+                "{\"max_range\":32,\"tell_ticks\":1,\"tell_sound\":\"minecraft:block.bell.use\",\"tell_clip\":\"dodge\",\"dodge\":"
+                    + dodge
+                    + "}")
+            .dodge());
   }
 
   @ParameterizedTest(name = "{0}")

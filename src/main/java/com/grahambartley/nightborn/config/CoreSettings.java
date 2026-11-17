@@ -8,6 +8,7 @@ public record CoreSettings(
     int nightJump,
     int levitationDrainSeconds,
     int batDrainSeconds,
+    int batSprintDrainSeconds,
     int batHeavyDamage) {
 
   static final String SECTION = "core";
@@ -23,6 +24,9 @@ public record CoreSettings(
           SECTION, "levitationDrainSeconds", 120, 1, 600, c -> c.core().levitationDrainSeconds());
   public static final IntSetting BAT_DRAIN_SECONDS =
       new IntSetting(SECTION, "batDrainSeconds", 30, 1, 600, c -> c.core().batDrainSeconds());
+  public static final IntSetting BAT_SPRINT_DRAIN_SECONDS =
+      new IntSetting(
+          SECTION, "batSprintDrainSeconds", 15, 1, 600, c -> c.core().batSprintDrainSeconds());
   public static final IntSetting BAT_HEAVY_DAMAGE =
       new IntSetting(SECTION, "batHeavyDamage", 6, 1, 100, c -> c.core().batHeavyDamage());
 
@@ -33,6 +37,7 @@ public record CoreSettings(
           NIGHT_JUMP,
           LEVITATION_DRAIN_SECONDS,
           BAT_DRAIN_SECONDS,
+          BAT_SPRINT_DRAIN_SECONDS,
           BAT_HEAVY_DAMAGE);
 
   public CoreSettings {
@@ -41,6 +46,7 @@ public record CoreSettings(
     nightJump = NIGHT_JUMP.clamp(nightJump);
     levitationDrainSeconds = LEVITATION_DRAIN_SECONDS.clamp(levitationDrainSeconds);
     batDrainSeconds = BAT_DRAIN_SECONDS.clamp(batDrainSeconds);
+    batSprintDrainSeconds = BAT_SPRINT_DRAIN_SECONDS.clamp(batSprintDrainSeconds);
     batHeavyDamage = BAT_HEAVY_DAMAGE.clamp(batHeavyDamage);
   }
 
@@ -51,6 +57,7 @@ public record CoreSettings(
         values.get(NIGHT_JUMP),
         values.get(LEVITATION_DRAIN_SECONDS),
         values.get(BAT_DRAIN_SECONDS),
+        values.get(BAT_SPRINT_DRAIN_SECONDS),
         values.get(BAT_HEAVY_DAMAGE));
   }
 }

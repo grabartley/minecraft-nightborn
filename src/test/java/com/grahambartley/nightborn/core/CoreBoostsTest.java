@@ -9,7 +9,7 @@ import org.junit.jupiter.params.provider.CsvSource;
 
 class CoreBoostsTest {
 
-  private static final CoreSettings SETTINGS = new CoreSettings(4, 20, 30, 20, 30, 6);
+  private static final CoreSettings SETTINGS = new CoreSettings(4, 20, 30, 20, 30, 15, 6);
   private static final BloodSettings BLOOD =
       new BloodSettings(30, 50, 100, 150, 60, 60, 10, 300, 10, 50, 50, 4);
 

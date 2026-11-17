@@ -48,7 +48,20 @@ class StageDataCheckTest {
         Arguments.of(
             "a stage wanting every skill",
             Map.of(ELDER, elder(4, Map.of())),
-            List.of("nightborn:elder may want every vampire skill, which only the Eldest has")));
+            List.of("nightborn:elder may want every vampire skill, which only the Eldest has")),
+        Arguments.of(
+            "a stage that takes every skill on purpose",
+            Map.of(
+                ELDER,
+                new VampireStage(
+                    5,
+                    1,
+                    StageBody.SAME,
+                    new StageSkills(ConstantIntProvider.create(0), Map.of(), 1, true),
+                    StageCombat.PLAIN,
+                    StageLook.PLAIN,
+                    Optional.empty())),
+            List.of()));
   }
 
   @ParameterizedTest(name = "{0}")

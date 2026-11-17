@@ -31,6 +31,11 @@ public final class DownedRules {
     return state != null && state.isDowned();
   }
 
+  public static boolean spares(
+      final boolean targetHelpless, final boolean attackerIsMob, final boolean attackerHunts) {
+    return targetHelpless && attackerIsMob && !attackerHunts;
+  }
+
   public static boolean flees(@Nullable final DownedState state) {
     return state != null && !state.isDowned();
   }

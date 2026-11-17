@@ -354,6 +354,32 @@ public class OccultGameTest implements FabricGameTest {
   }
 
   @GameTest(templateName = ARENA, batchId = BATCH, tickLimit = TestPlayers.READY + 10)
+  public void shadowStepStopsShortOfAMagmaFloor(final TestContext context) {
+    final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(1, 2, 4));
+    for (int x = 5; x <= 7; x++) {
+      context.setBlockState(new BlockPos(x, 1, 4), Blocks.MAGMA_BLOCK);
+    }
+    context.setBlockState(new BlockPos(8, 2, 4), Blocks.STONE);
+    context.setBlockState(new BlockPos(8, 3, 4), Blocks.STONE);
+    OccultSkills.learn(vampire, OccultSkills.GRAVE_FOG, OccultSkills.SHADOW_STEP);
+    final double startX = context.getAbsolute(Vec3d.ofBottomCenter(new BlockPos(1, 2, 4))).x;
+    context.runAtTick(
+        TestPlayers.READY,
+        () -> {
+          vampire.setYaw(-90.0F);
+          vampire.setPitch(0.0F);
+          context.assertEquals(
+              Powers.cast(vampire, OccultSkills.SHADOW_STEP),
+              PowerUse.Verdict.READY,
+              "the step was taken");
+          final double east = vampire.getX() - startX;
+          context.assertTrue(east >= 1.99, "the caster still stepped forward, by " + east);
+          context.assertTrue(east <= 3.01, "the caster stopped before the magma, at " + east);
+          end(context, vampire);
+        });
+  }
+
+  @GameTest(templateName = ARENA, batchId = BATCH, tickLimit = TestPlayers.READY + 10)
   public void shadowStepLandsOnAGlassFloor(final TestContext context) {
     stepOnto(context, Blocks.GLASS.getDefaultState(), 1, 0.0);
   }

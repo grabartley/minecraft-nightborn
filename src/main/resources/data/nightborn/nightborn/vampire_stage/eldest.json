@@ -1,0 +1,30 @@
+{
+  "rank": 5,
+  "weight": 0,
+  "body": {
+    "health": 9.0,
+    "speed": 0.3,
+    "damage": 2.0
+  },
+  "skills": {
+    "count": 0,
+    "every": true,
+    "weights": {
+      "nightborn:lord/rally": 1,
+      "nightborn:lord/bat_swarm": 1
+    }
+  },
+  "combat": {
+    "blood_floor": 0,
+    "think_ticks": 8,
+    "leap_chance": 70,
+    "dash_chance": 65,
+    "dodge_chance": 60,
+    "power_dodge_chance": 85,
+    "retreat_health": 10
+  },
+  "look": {
+    "idle": "idle_ancient"
+  },
+  "loot": "nightborn:entities/vampire/eldest"
+}

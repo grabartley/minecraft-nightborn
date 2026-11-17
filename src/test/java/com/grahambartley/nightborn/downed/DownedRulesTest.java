@@ -49,6 +49,23 @@ class DownedRulesTest {
     assertEquals(flees, DownedRules.flees(current));
   }
 
+  @ParameterizedTest(name = "helpless {0}, mob {1}, hunter {2}: spared {3}")
+  @CsvSource({
+    "true, true, false, true",
+    "true, true, true, false",
+    "true, false, false, false",
+    "true, false, true, false",
+    "false, true, false, false",
+    "false, true, true, false",
+    "false, false, false, false",
+    "false, false, true, false"
+  })
+  @DisplayName("only a mob that is no hunter spares a helpless vampire")
+  void spares(
+      final boolean helpless, final boolean mob, final boolean hunter, final boolean spared) {
+    assertEquals(spared, DownedRules.spares(helpless, mob, hunter));
+  }
+
   @ParameterizedTest(name = "state {0}, stake blow {1}: staked {2}")
   @CsvSource({
     "STANDING, true, false",

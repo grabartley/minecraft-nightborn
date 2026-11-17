@@ -34,7 +34,7 @@ public final class StageDataCheck {
                         }
                       });
               final int open = SkillPicks.forStage(vampireSkills, branches, stage.skills()).size();
-              if (stage.skills().count().getMax() >= open && open > 0) {
+              if (!stage.skills().every() && stage.skills().count().getMax() >= open && open > 0) {
                 problems.add(id + " may want every vampire skill, which only the Eldest has");
               }
             });

@@ -24,5 +24,6 @@ public final class NightbornStructures {
 
   public static void initialize() {
     StructureZoneTracker.register();
+    LivesInLootCondition.register();
   }
 }

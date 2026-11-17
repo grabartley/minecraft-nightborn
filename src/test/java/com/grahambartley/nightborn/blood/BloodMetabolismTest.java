@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import com.grahambartley.nightborn.batform.BatEffort;
 import com.grahambartley.nightborn.config.NightbornConfig;
 import net.minecraft.world.Difficulty;
 import org.junit.jupiter.api.DisplayName;
@@ -148,9 +149,19 @@ class BloodMetabolismTest {
   }
 
   @ParameterizedTest(name = "bat {0}, levitating {1} -> {2} s")
-  @CsvSource({"true, false, 30", "true, true, 30", "false, true, 120", "false, false, 0"})
-  @DisplayName("a bat drains at the bat rate, a levitating vampire at the levitation rate")
-  void flightDrainSeconds(final boolean bat, final boolean levitating, final int expected) {
+  @CsvSource({
+    "FLYING, false, 30",
+    "FLYING, true, 30",
+    "SPRINTING, false, 15",
+    "RESTING, false, 0",
+    "RESTING, true, 0",
+    "NONE, true, 120",
+    "NONE, false, 0"
+  })
+  @DisplayName(
+      "a flying bat drains at the bat rate, faster at a sprint and not at all while it rests, and"
+          + " a levitating vampire at the levitation rate")
+  void flightDrainSeconds(final BatEffort bat, final boolean levitating, final int expected) {
     assertEquals(
         expected,
         BloodMetabolism.flightDrainSeconds(bat, levitating, NightbornConfig.DEFAULTS.core()));
