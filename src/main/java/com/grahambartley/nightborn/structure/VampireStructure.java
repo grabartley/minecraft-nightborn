@@ -215,16 +215,28 @@ public final class VampireStructure extends Structure {
                         name,
                         context.structureTemplateManager(),
                         context.random()));
-    final int lift =
-        threshold.map(way -> way.lift(Footing.surface(context, way.outside()))).orElse(0);
+    final BlockPos move =
+        threshold
+            .map(
+                way -> {
+                  final ColumnPos meets = summit.isPresent() ? ground.get() : way.outside();
+                  return way.moveOnto(meets, Footing.surface(context, meets));
+                })
+            .orElse(BlockPos.ORIGIN);
     if (threshold.isEmpty() && footing.get().entrance().isPresent()
-        || !footing.get().allowsLift(lift)) {
+        || !footing.get().allowsLift(move.getY())) {
       return Optional.empty();
     }
-    pieces.shift(lift);
-    final BlockPos placed = position.get().position().up(lift);
+    pieces
+        .toList()
+        .pieces()
+        .forEach(piece -> piece.translate(move.getX(), move.getY(), move.getZ()));
+    final BlockPos placed = position.get().position().add(move);
     final ColumnPos approach =
-        threshold.map(Threshold::outside).orElse(new ColumnPos(placed.getX(), placed.getZ()));
+        threshold
+            .map(way -> way.outside())
+            .map(out -> new ColumnPos(out.x() + move.getX(), out.z() + move.getZ()))
+            .orElse(new ColumnPos(placed.getX(), placed.getZ()));
     return footing.get().fits(context, pieces.getBoundingBox(), approach)
         ? Optional.of(new StructurePosition(placed, Either.right(pieces)))
         : Optional.empty();

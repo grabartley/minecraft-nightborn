@@ -578,7 +578,7 @@ Vampires are rare. They live in households hidden in five kinds of structure, ea
 
 | ID | Requirement |
 |---|---|
-| HOME-1 | Each structure type generates rarely, in biomes that suit it, and blends into the land around it. A structure on the surface sets its height by its way in: the floor of its gate or door is level with the ground just outside it, on flat land, on a slope and on a mountain top alike, so a player can always walk in |
+| HOME-1 | Each structure type generates rarely, in biomes that suit it, and blends into the land around it. A structure on the surface sets its height by its way in: the floor of its gate or door is level with the ground just outside it, on flat land and on a slope, and a mountain castle stands so its gate opens onto the very top of its mountain, so a player can always walk in |
 | HOME-2 | Each structure holds several vampires. A mountain castle holds twenty-one by default (HOME-22) |
 | HOME-3 | Each type has several layouts, chosen at random |
 | HOME-4 | Fog hangs around and inside every vampire structure, thicker near its heart |
