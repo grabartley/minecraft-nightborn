@@ -17,10 +17,12 @@ public class HunterRenderer<T extends LivingEntity & GeoEntity & HunterLooking>
     extends GeoEntityRenderer<T> {
 
   static final float SHADOW_RADIUS = 0.5F;
+  static final float VILLAGER_SCALE = 0.9375F;
 
   public HunterRenderer(final EntityRendererFactory.Context context) {
     super(context, new HunterModel<>());
     this.shadowRadius = SHADOW_RADIUS;
+    withScale(VILLAGER_SCALE);
     addRenderLayer(new HandItemGeoLayer<>(this));
   }
 

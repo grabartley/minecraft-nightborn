@@ -5,12 +5,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.registry.DynamicRegistries;
+import net.minecraft.item.CrossbowItem;
+import net.minecraft.item.Item;
 import net.minecraft.registry.DynamicRegistryManager;
+import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.random.Random;
 
 public final class GuildData {
 
@@ -18,20 +23,59 @@ public final class GuildData {
       RegistryKey.ofRegistry(Identifier.of(Nightborn.MOD_ID, "guild_offer"));
   public static final RegistryKey<Registry<HunterContract>> CONTRACT =
       RegistryKey.ofRegistry(Identifier.of(Nightborn.MOD_ID, "hunter_contract"));
+  public static final RegistryKey<Registry<HunterLook>> LOOK =
+      RegistryKey.ofRegistry(Identifier.of(Nightborn.MOD_ID, "hunter_look"));
+  public static final RegistryKey<Registry<HunterKit>> KIT =
+      RegistryKey.ofRegistry(Identifier.of(Nightborn.MOD_ID, "hunter_kit"));
 
   private GuildData() {}
 
   static void register() {
     DynamicRegistries.register(OFFER, GuildOffer.CODEC);
     DynamicRegistries.registerSynced(CONTRACT, HunterContract.CODEC);
+    DynamicRegistries.registerSynced(LOOK, HunterLook.CODEC);
+    DynamicRegistries.register(KIT, HunterKit.CODEC);
+    ServerLifecycleEvents.SERVER_STARTED.register(server -> check(server.getRegistryManager()));
+    ServerLifecycleEvents.END_DATA_PACK_RELOAD.register(
+        (server, resources, success) -> check(server.getRegistryManager()));
+  }
+
+  private static void check(final DynamicRegistryManager registries) {
+    HunterDataCheck.problems(
+            looks(registries),
+            kits(registries),
+            id -> item(id).isPresent(),
+            id -> item(id).filter(CrossbowItem.class::isInstance).isPresent())
+        .forEach(problem -> Nightborn.LOGGER.error("Bad hunter data: {}", problem));
   }
 
   public static List<GuildOffer> offers(final DynamicRegistryManager registries) {
-    final Map<Identifier, GuildOffer> offers = new HashMap<>();
-    registries
-        .getOptional(OFFER)
-        .ifPresent(registry -> registry.getIds().forEach(id -> offers.put(id, registry.get(id))));
-    return GuildOffer.inOrder(offers);
+    return GuildOffer.inOrder(copy(registries, OFFER));
+  }
+
+  public static Map<Identifier, HunterLook> looks(final DynamicRegistryManager registries) {
+    return copy(registries, LOOK);
+  }
+
+  public static Map<Identifier, HunterKit> kits(final DynamicRegistryManager registries) {
+    return copy(registries, KIT);
+  }
+
+  public static String pickLook(
+      final DynamicRegistryManager registries, final HunterRig rig, final Random random) {
+    return HunterLook.pick(looks(registries), rig, random.nextDouble())
+        .map(Identifier::toString)
+        .orElse("");
+  }
+
+  public static Identifier texture(
+      final DynamicRegistryManager registries, final String lookId, final HunterRig rig) {
+    return HunterLook.texture(
+        looks(registries), Optional.ofNullable(Identifier.tryParse(lookId)), rig);
+  }
+
+  public static Optional<Item> item(final Identifier id) {
+    return Registries.ITEM.getOrEmpty(id);
   }
 
   public static Optional<HunterContract> contract(
@@ -40,5 +84,14 @@ public final class GuildData {
         .getOptionalWrapper(CONTRACT)
         .flatMap(wrapper -> wrapper.getOptional(RegistryKey.of(CONTRACT, id)))
         .map(entry -> entry.value());
+  }
+
+  private static <T> Map<Identifier, T> copy(
+      final DynamicRegistryManager registries, final RegistryKey<Registry<T>> key) {
+    final Map<Identifier, T> entries = new HashMap<>();
+    registries
+        .getOptional(key)
+        .ifPresent(registry -> registry.getIds().forEach(id -> entries.put(id, registry.get(id))));
+    return entries;
   }
 }

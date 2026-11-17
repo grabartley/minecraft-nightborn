@@ -72,6 +72,10 @@ class EntityClipAssetsTest {
     "vampire, leap, left_arm",
     "hunter, stake_strike, right_arm",
     "hunter, trade, right_arm",
+    "hunter, crossbow_shot, right_arm",
+    "hunter, crossbow_shot, left_arm",
+    "hunter, raise_crucifix, left_arm",
+    "hunter, throw_holy_water, left_arm",
     "ghostly_familiar, fight, right_arm",
     "ghostly_familiar, fight, left_arm"
   })
@@ -116,6 +120,9 @@ class EntityClipAssetsTest {
     "vampire, dodge",
     "vampire, idle_ancient",
     "vampire, mourn",
+    "hunter, idle",
+    "hunter, walk",
+    "hunter, run",
     "ghostly_familiar, float",
     "ghostly_familiar, scout",
     "ghostly_familiar, carry"

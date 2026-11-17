@@ -1,33 +1,49 @@
 package com.grahambartley.nightborn.guild;
 
-import com.grahambartley.nightborn.Nightborn;
+import com.grahambartley.nightborn.mob.look.VampireLook;
+import com.grahambartley.nightborn.mob.look.Weighted;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.TreeMap;
 import net.minecraft.util.Identifier;
 
-public enum HunterLook {
-  MALE("hunter_male", "hunter/male"),
-  FEMALE("hunter_female", "hunter/female"),
-  GUILD_MASTER("guild_master", "hunter/guild_master");
+public record HunterLook(HunterRig rig, Identifier texture, int weight) {
 
-  public static final Identifier ANIMATION =
-      Identifier.of(Nightborn.MOD_ID, "animations/entity/hunter.animation.json");
+  public static final Identifier MISSING = Identifier.ofVanilla("missingno");
 
-  private final Identifier geo;
-  private final Identifier texture;
+  public static final Codec<HunterLook> CODEC =
+      RecordCodecBuilder.create(
+          instance ->
+              instance
+                  .group(
+                      HunterRig.CODEC.fieldOf("rig").forGetter(HunterLook::rig),
+                      Identifier.CODEC.fieldOf("texture").forGetter(HunterLook::texture),
+                      Codec.intRange(1, VampireLook.MAX_WEIGHT)
+                          .optionalFieldOf("weight", 1)
+                          .forGetter(HunterLook::weight))
+                  .apply(instance, HunterLook::new));
 
-  HunterLook(final String geo, final String texture) {
-    this.geo = Identifier.of(Nightborn.MOD_ID, "geo/entity/" + geo + ".geo.json");
-    this.texture = Identifier.of(Nightborn.MOD_ID, "textures/entity/" + texture + ".png");
+  public static Optional<Identifier> pick(
+      final Map<Identifier, HunterLook> looks, final HunterRig rig, final double roll) {
+    return Weighted.pick(worn(looks, rig), entry -> entry.getValue().weight(), roll)
+        .map(Map.Entry::getKey);
   }
 
-  public Identifier geo() {
-    return geo;
+  public static Identifier texture(
+      final Map<Identifier, HunterLook> looks, final Optional<Identifier> id, final HunterRig rig) {
+    return id.map(looks::get)
+        .filter(look -> look.rig() == rig)
+        .or(() -> worn(looks, rig).stream().findFirst().map(Map.Entry::getValue))
+        .map(HunterLook::texture)
+        .orElse(MISSING);
   }
 
-  public Identifier texture() {
-    return texture;
-  }
-
-  public static HunterLook hunter(final boolean female) {
-    return female ? FEMALE : MALE;
+  private static List<Map.Entry<Identifier, HunterLook>> worn(
+      final Map<Identifier, HunterLook> looks, final HunterRig rig) {
+    return new TreeMap<>(looks)
+        .entrySet().stream().filter(entry -> entry.getValue().rig() == rig).toList();
   }
 }

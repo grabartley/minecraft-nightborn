@@ -31,6 +31,7 @@ import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
+import net.minecraft.util.Identifier;
 import net.minecraft.village.TradeOffer;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
@@ -43,14 +44,18 @@ import software.bernie.geckolib.util.GeckoLibUtil;
 public class GuildMasterEntity extends MerchantEntity implements GeoEntity, HunterLooking {
 
   static final String LAST_RESTOCK = "LastRestock";
+  static final String LOOK_KEY = "Look";
   static final int HEAD_SHAKE_TICKS = 40;
   static final int ANIMATION_BLEND_TICKS = 4;
   static final int TENT_REACH = 3;
 
   private static final TrackedData<Boolean> TRADING =
       DataTracker.registerData(GuildMasterEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
+  private static final TrackedData<String> LOOK =
+      DataTracker.registerData(GuildMasterEntity.class, TrackedDataHandlerRegistry.STRING);
 
   private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
+  private final WornLook worn = new WornLook();
   private long lastRestock;
 
   public GuildMasterEntity(final EntityType<? extends MerchantEntity> type, final World world) {
@@ -67,6 +72,7 @@ public class GuildMasterEntity extends MerchantEntity implements GeoEntity, Hunt
   protected void initDataTracker(final DataTracker.Builder builder) {
     super.initDataTracker(builder);
     builder.add(TRADING, false);
+    builder.add(LOOK, "");
   }
 
   @Override
@@ -144,6 +150,9 @@ public class GuildMasterEntity extends MerchantEntity implements GeoEntity, Hunt
       return;
     }
     CampHome.keep(this, TENT_REACH);
+    if (dataTracker.get(LOOK).isEmpty()) {
+      dataTracker.set(LOOK, GuildData.pickLook(getRegistryManager(), rig(), getRandom()));
+    }
     final PlayerEntity customer = getCustomer();
     if (customer != null && Vampires.isVampire(customer)) {
       resetCustomer();
@@ -169,8 +178,14 @@ public class GuildMasterEntity extends MerchantEntity implements GeoEntity, Hunt
   }
 
   @Override
-  public HunterLook look() {
-    return HunterLook.GUILD_MASTER;
+  public HunterRig rig() {
+    return HunterRig.GUILD_MASTER;
+  }
+
+  @Override
+  public Identifier texture() {
+    return worn.texture(
+        dataTracker.get(LOOK), look -> GuildData.texture(getRegistryManager(), look, rig()));
   }
 
   @Override
@@ -219,6 +234,7 @@ public class GuildMasterEntity extends MerchantEntity implements GeoEntity, Hunt
   public void writeCustomDataToNbt(final NbtCompound nbt) {
     super.writeCustomDataToNbt(nbt);
     nbt.putLong(LAST_RESTOCK, lastRestock);
+    nbt.putString(LOOK_KEY, dataTracker.get(LOOK));
     CampHome.write(this, nbt);
   }
 
@@ -226,6 +242,7 @@ public class GuildMasterEntity extends MerchantEntity implements GeoEntity, Hunt
   public void readCustomDataFromNbt(final NbtCompound nbt) {
     super.readCustomDataFromNbt(nbt);
     lastRestock = nbt.getLong(LAST_RESTOCK);
+    dataTracker.set(LOOK, nbt.getString(LOOK_KEY));
     CampHome.read(this, nbt, TENT_REACH);
   }
 

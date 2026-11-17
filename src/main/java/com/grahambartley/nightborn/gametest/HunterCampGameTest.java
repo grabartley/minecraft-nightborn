@@ -343,7 +343,8 @@ public class HunterCampGameTest implements FabricGameTest {
           loaded.readNbt(saved);
           context.assertEquals(
               loaded.getPositionTarget(), hunter.getPositionTarget(), "the camp is kept");
-          context.assertEquals(loaded.look(), hunter.look(), "and so is its look");
+          context.assertEquals(loaded.rig(), hunter.rig(), "and so is its rig");
+          context.assertEquals(loaded.texture(), hunter.texture(), "and its look");
           context.complete();
         });
   }

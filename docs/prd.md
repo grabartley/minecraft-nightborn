@@ -421,8 +421,8 @@ The hunter tree starts with Tracking, an active power that points toward the nea
 
 | ID | Requirement |
 |---|---|
-| GUILD-1 | Hunter camps generate rarely in the open country of the overworld (plains, meadows and savannas), each with a few hunter mobs and a Guild Master. Hunters are men and women, and a woman hunter has a bust sized the same way as a vampire woman's (HOME-18) |
-| GUILD-2 | Hunter mobs attack vampire players and vampire mobs on sight with stakes, so a vampire they bring down is finished. They leave humans alone and do not fight back when a human hits them. Hunters and the Guild Master stay near their camp |
+| GUILD-1 | Hunter camps generate rarely in the open country of the overworld (plains, meadows and savannas), each with a few hunter mobs and a Guild Master. Hunters and the Guild Master are villagers, not humans: the villager head with its long nose and heavy brow, in villager skin tones and proportions. Hunters are weathered men and women in long coats, wide hats and leather, in at least 4 looks each, and a woman hunter has a bust sized the same way as a vampire woman's (HOME-18). The Guild Master is an older, better dressed villager who wears a mark of rank, in at least 2 looks |
+| GUILD-2 | Hunter mobs attack vampire players and vampire mobs on sight with stakes, so a vampire they bring down is finished. Each hunter carries one kit: a stake in the hand, or a crossbow that fires stake bolts from a distance. A hunter whose kit has a crucifix holds it up at a vampire within its reach (WEAK-3) and puts it away after, and one whose kit has holy water throws a flask at a vampire too far to strike, then waits before throwing another. They leave humans alone and do not fight back when a human hits them. Hunters and the Guild Master stay near their camp |
 | GUILD-3 | The Guild Master sells hunter gear and writes contracts on paper, such as staking vampires, staking an elder, or clearing a vampire structure by staking the last of its household. His offers and contracts are data, he trades through the vanilla trading screen, and his stock renews each day |
 | GUILD-4 | Contracts pay in emeralds, silver and gear, on top of the hunter points HUNT-2 gives. A contract is an item that keeps its own count. One stake marks one open contract. A vampire player counts as a fledgling against a contract that asks for an older vampire, and a vampire who lives alone is the last of its household. A fulfilled contract, in either hand, is handed to a Guild Master, who takes it and pays once |
 | GUILD-5 | A vampire player cannot trade or take contracts at a camp |
@@ -780,7 +780,7 @@ There is no singleplayer mode in this mod. A single-player world is an integrate
 | COMPAT-2 | Mod Menu, JEI and EMI are optional. Without them, the mod works fully |
 | COMPAT-3 | Nightborn needs no other mod in the family |
 | COMPAT-4 | Vanilla undead behave as they do without the mod, except CORE-9, and beds and night sleeping work as normal for humans |
-| COMPAT-5 | Feeding lists, crucifix materials, the foods and drinks a vampire can keep down, structures, loot, relic chances, trades, and vampire mob stages, skills, looks, sizes, builds and outfits can be changed by data packs |
+| COMPAT-5 | Feeding lists, crucifix materials, the foods and drinks a vampire can keep down, structures, loot, relic chances, trades, vampire mob stages, skills, looks, sizes, builds and outfits, and hunter looks and kits can be changed by data packs |
 | COMPAT-6 | Shipped languages: English, German, Spanish, French, Brazilian Portuguese, Russian and Simplified Chinese |
 | COMPAT-7 | Every declared dependency is used |
 
