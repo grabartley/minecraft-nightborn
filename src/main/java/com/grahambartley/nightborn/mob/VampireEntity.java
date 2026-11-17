@@ -193,6 +193,7 @@ public class VampireEntity extends HostileEntity
     goalSelector.add(0, new LieDownedGoal(this));
     goalSelector.add(0, new BatFlightGoal(this));
     goalSelector.add(1, new SwimGoal(this));
+    DoorPassage.allow(this);
     goalSelector.add(1, new FleeWhileEscapingGoal(this, 1.4));
     goalSelector.add(2, new SeekShadeGoal(this, 1.3));
     goalSelector.add(3, new AvoidSunlightGoal(this));
