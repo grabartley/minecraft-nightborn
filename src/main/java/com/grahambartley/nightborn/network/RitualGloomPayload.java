@@ -24,6 +24,14 @@ public record RitualGloomPayload(BlockPos altar, int buildUpTicks, int range)
           RitualGloomPayload::range,
           RitualGloomPayload::new);
 
+  public static RitualGloomPayload lifted(final BlockPos altar) {
+    return new RitualGloomPayload(altar, 0, 0);
+  }
+
+  public boolean lifts() {
+    return range <= 0;
+  }
+
   @Override
   public Id<? extends CustomPayload> getId() {
     return ID;

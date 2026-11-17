@@ -7,7 +7,6 @@ import com.grahambartley.nightborn.network.RitualGloomPayload;
 import com.grahambartley.nightborn.smoke.SmokeParticles;
 import com.grahambartley.nightborn.structure.StandingSpot;
 import java.util.List;
-import java.util.Optional;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LightningEntity;
@@ -44,6 +43,11 @@ public final class Ritual {
     world.playSound(null, altar, RitualSounds.BUILD_UP, SoundCategory.BLOCKS, LOUD, 1.0F);
   }
 
+  public static void lift(final ServerWorld world, final BlockPos altar, final int range) {
+    final RitualGloomPayload lifted = RitualGloomPayload.lifted(altar);
+    near(world, altar, range).forEach(player -> ServerPlayNetworking.send(player, lifted));
+  }
+
   public static void tick(final ServerWorld world, final BlockPos altar, final RitualBuildUp at) {
     final Vec3d top = Vec3d.ofCenter(altar).add(0.0, 0.6, 0.0);
     world.spawnParticles(
@@ -58,14 +62,14 @@ public final class Ritual {
     }
   }
 
-  public static Optional<EldestEntity> summon(
+  public static boolean summon(
       final ServerWorld world,
       final BlockPos altar,
       final Direction facing,
       final RitualSettings settings) {
     final EldestEntity eldest = NightbornMobs.ELDEST.create(world);
     if (eldest == null) {
-      return Optional.empty();
+      return false;
     }
     final BlockPos spot = SummonSpot.pick(altar, facing, pos -> stands(world, pos));
     eldest.refreshPositionAndAngles(
@@ -85,7 +89,7 @@ public final class Ritual {
         0.4,
         0.05);
     world.playSound(null, altar, RitualSounds.SUMMON, SoundCategory.HOSTILE, LOUD, 1.0F);
-    return Optional.of(eldest);
+    return true;
   }
 
   private static boolean stands(final ServerWorld world, final BlockPos pos) {

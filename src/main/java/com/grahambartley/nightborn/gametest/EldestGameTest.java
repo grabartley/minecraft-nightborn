@@ -149,6 +149,29 @@ public class EldestGameTest implements FabricGameTest {
   }
 
   @GameTest(templateName = ARENA, batchId = NIGHT_BATCH, tickLimit = 200)
+  public void theSunEndingTheEldestPaysTheHumanWhoFought(final TestContext context) {
+    final EldestEntity eldest = eldest(context);
+    final ServerPlayerEntity hunter = TestPlayers.human(context, new BlockPos(2, 2, 2));
+    final int eldestPoints = ServerConfigService.current().ritual().eldestPoints();
+    context.runAtTick(
+        TestPlayers.READY,
+        () -> {
+          eldest.damage(context.getWorld().getDamageSources().playerAttack(hunter), 1.0F);
+          eldest.timeUntilRegen = 0;
+          eldest.damage(NightbornDamage.sun(context.getWorld()), Float.MAX_VALUE);
+        });
+    context.runAtTick(
+        TestPlayers.READY + 5,
+        () -> {
+          context.assertTrue(!eldest.isAlive(), "the sun ends the Eldest");
+          context.assertTrue(
+              points(hunter) == eldestPoints,
+              "the hunter earns " + eldestPoints + ", not " + points(hunter));
+          TestPlayers.finish(context, hunter);
+        });
+  }
+
+  @GameTest(templateName = ARENA, batchId = NIGHT_BATCH, tickLimit = 200)
   public void anEldestOnlyFightsAVampirePlayerWhoStruckIt(final TestContext context) {
     final EldestEntity eldest = eldest(context);
     final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(2, 2, 2));

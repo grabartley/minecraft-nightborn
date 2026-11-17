@@ -99,6 +99,11 @@ public class EldestEntity extends BossVampireEntity {
   }
 
   @Override
+  protected boolean isDisallowedInPeaceful() {
+    return false;
+  }
+
+  @Override
   public void writeCustomDataToNbt(final NbtCompound nbt) {
     super.writeCustomDataToNbt(nbt);
     fightRoll.write(nbt);

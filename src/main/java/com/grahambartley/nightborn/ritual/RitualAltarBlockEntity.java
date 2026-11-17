@@ -88,10 +88,11 @@ public class RitualAltarBlockEntity extends BlockEntity implements GeoBlockEntit
       return;
     }
     final RitualSettings settings = ServerConfigService.current().ritual();
-    altar.relics.clear();
+    if (Ritual.summon(server, pos, state.get(RitualAltarBlock.FACING), settings)) {
+      altar.relics.clear();
+    }
     altar.elapsed = IDLE;
     altar.changed();
-    Ritual.summon(server, pos, state.get(RitualAltarBlock.FACING), settings);
   }
 
   private void changed() {

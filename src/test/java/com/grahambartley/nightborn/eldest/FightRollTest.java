@@ -45,15 +45,4 @@ class FightRollTest {
     assertTrue(roll.has(fighter));
     assertEquals(Set.of(fighter), roll.fighters());
   }
-
-  @Test
-  @DisplayName("the roll stops growing at its limit")
-  void capped() {
-    final FightRoll roll = new FightRoll();
-    for (int i = 0; i < FightRoll.MOST; i++) {
-      assertTrue(roll.join(new UUID(7, i)));
-    }
-    assertFalse(roll.join(new UUID(8, 0)));
-    assertEquals(FightRoll.MOST, roll.fighters().size());
-  }
 }

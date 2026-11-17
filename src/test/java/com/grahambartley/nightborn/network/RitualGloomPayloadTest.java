@@ -1,6 +1,8 @@
 package com.grahambartley.nightborn.network;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
@@ -26,5 +28,14 @@ class RitualGloomPayloadTest {
     final ByteBuf buf = Unpooled.buffer();
     RitualGloomPayload.CODEC.encode(buf, gloom);
     assertEquals(gloom, RitualGloomPayload.CODEC.decode(buf));
+  }
+
+  @ParameterizedTest(name = "{0}")
+  @MethodSource("glooms")
+  @DisplayName("only the payload sent when a ritual is cut short lifts the gloom")
+  void lifts(final RitualGloomPayload gloom) {
+    assertFalse(gloom.lifts());
+    assertTrue(RitualGloomPayload.lifted(gloom.altar()).lifts());
+    assertEquals(gloom.altar(), RitualGloomPayload.lifted(gloom.altar()).altar());
   }
 }

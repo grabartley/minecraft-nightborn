@@ -11,12 +11,11 @@ import net.minecraft.nbt.NbtList;
 public final class FightRoll {
 
   static final String KEY = "Fighters";
-  static final int MOST = 256;
 
   private final Set<UUID> fighters = new LinkedHashSet<>();
 
   public boolean join(final UUID fighter) {
-    return fighters.size() < MOST && fighters.add(fighter);
+    return fighters.add(fighter);
   }
 
   public boolean has(final UUID fighter) {

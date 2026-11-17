@@ -194,6 +194,9 @@ public class RitualAltarBlock extends BlockWithEntity {
       final boolean moved) {
     if (!state.isOf(newState.getBlock())
         && world.getBlockEntity(pos) instanceof RitualAltarBlockEntity altar) {
+      if (altar.active() && world instanceof ServerWorld server) {
+        Ritual.lift(server, pos, ServerConfigService.current().ritual().fightRange());
+      }
       altar
           .relics()
           .forEach(stack -> ItemScatterer.spawn(world, pos.getX(), pos.getY(), pos.getZ(), stack));
