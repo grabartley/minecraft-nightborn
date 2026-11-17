@@ -12,8 +12,9 @@ import com.grahambartley.nightborn.skill.Powers;
 import com.grahambartley.nightborn.skill.SkillAttachment;
 import com.grahambartley.nightborn.skill.SkillTree;
 import com.grahambartley.nightborn.skill.TreeProgress;
-import com.grahambartley.nightborn.vanish.Vanish;
+import com.grahambartley.nightborn.vanish.VanishAttachment;
 import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
+import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -100,24 +101,23 @@ public final class VanishGameTest implements FabricGameTest {
     context.runAtTick(
         TestPlayers.READY,
         () -> {
-          context.assertFalse(Vanish.isGone(vampire), "it is seen before it vanishes");
+          context.assertFalse(VanishAttachment.isGone(vampire), "it is seen before it vanishes");
           Powers.cast(vampire, VANISH, PowerHeading.FORWARD);
-          context.assertTrue(Vanish.isGone(vampire), "it is gone as soon as it vanishes");
+          context.assertTrue(VanishAttachment.isGone(vampire), "it is gone as soon as it vanishes");
           context.assertEquals(BloodAttachment.get(vampire), FULL_BLOOD - 1, "it cost one blood");
         });
     context.runAtTick(
         TestPlayers.READY + GONE_TICKS + 2,
         () -> {
-          context.assertFalse(Vanish.isGone(vampire), "it is back a moment later");
+          context.assertFalse(VanishAttachment.isGone(vampire), "it is back a moment later");
           TestPlayers.finish(context, vampire);
         });
   }
 
-  @GameTest(templateName = ARENA, batchId = BATCH, tickLimit = TestPlayers.READY + 10)
-  public void vanishStopsShortOfLava(final TestContext context) {
+  private static void stopsShortOf(final TestContext context, final Block floor) {
     final ServerPlayerEntity vampire = TestPlayers.vampire(context, CENTRE);
-    context.setBlockState(new BlockPos(4, 1, 7), Blocks.LAVA);
-    context.setBlockState(new BlockPos(4, 1, 8), Blocks.LAVA);
+    context.setBlockState(new BlockPos(4, 1, 7), floor);
+    context.setBlockState(new BlockPos(4, 1, 8), floor);
     learn(vampire);
     context.runAtTick(
         TestPlayers.READY,
@@ -131,12 +131,21 @@ public final class VanishGameTest implements FabricGameTest {
               "the vampire vanished");
           final double south = vampire.getZ() - start.z;
           context.assertTrue(south >= 1.99, "it still went forward, by " + south);
-          context.assertTrue(south <= 2.2, "it stopped on the last dry floor, at " + south);
-          context.assertFalse(vampire.isInLava(), "it is not in the lava");
+          context.assertTrue(south <= 2.2, "it stopped on the last safe floor, at " + south);
           context.setBlockState(new BlockPos(4, 1, 7), Blocks.BEDROCK);
           context.setBlockState(new BlockPos(4, 1, 8), Blocks.BEDROCK);
           TestPlayers.finish(context, vampire);
         });
+  }
+
+  @GameTest(templateName = ARENA, batchId = BATCH, tickLimit = TestPlayers.READY + 10)
+  public void vanishStopsShortOfLava(final TestContext context) {
+    stopsShortOf(context, Blocks.LAVA);
+  }
+
+  @GameTest(templateName = ARENA, batchId = BATCH, tickLimit = TestPlayers.READY + 10)
+  public void vanishStopsShortOfAMagmaFloor(final TestContext context) {
+    stopsShortOf(context, Blocks.MAGMA_BLOCK);
   }
 
   @GameTest(templateName = ARENA, batchId = BATCH, tickLimit = TestPlayers.READY + 10)
@@ -157,7 +166,7 @@ public final class VanishGameTest implements FabricGameTest {
               "there is nowhere to go");
           context.assertTrue(vampire.getPos().distanceTo(start) < 0.01, "the vampire stays put");
           context.assertEquals(BloodAttachment.get(vampire), FULL_BLOOD, "a refused use is free");
-          context.assertFalse(Vanish.isGone(vampire), "and it stays in sight");
+          context.assertFalse(VanishAttachment.isGone(vampire), "and it stays in sight");
           TestPlayers.finish(context, vampire);
         });
   }
@@ -175,7 +184,8 @@ public final class VanishGameTest implements FabricGameTest {
           vampire.setTarget(attacker);
           attacker.handSwinging = true;
           new CombatMoves().tick(vampire, ALWAYS_DODGES, ServerConfigService.current().combat());
-          context.assertTrue(Vanish.isGone(vampire), "the vampire vanished from the swing");
+          context.assertTrue(
+              VanishAttachment.isGone(vampire), "the vampire vanished from the swing");
           context.assertTrue(
               vampire.getPos().distanceTo(start) >= 2.0,
               "it moved well away, by " + vampire.getPos().distanceTo(start));
@@ -200,7 +210,8 @@ public final class VanishGameTest implements FabricGameTest {
           vampire.setTarget(attacker);
           attacker.handSwinging = true;
           new CombatMoves().tick(vampire, ALWAYS_DODGES, ServerConfigService.current().combat());
-          context.assertFalse(Vanish.isGone(vampire), "a vampire without the skill stays in sight");
+          context.assertFalse(
+              VanishAttachment.isGone(vampire), "a vampire without the skill stays in sight");
           vampire.discard();
           TestPlayers.finish(context, attacker);
         });

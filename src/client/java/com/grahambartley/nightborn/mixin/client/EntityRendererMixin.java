@@ -1,7 +1,7 @@
 package com.grahambartley.nightborn.mixin.client;
 
 import com.grahambartley.nightborn.render.CoffinSleeperView;
-import com.grahambartley.nightborn.vanish.Vanish;
+import com.grahambartley.nightborn.vanish.VanishAttachment;
 import net.minecraft.client.render.Frustum;
 import net.minecraft.client.render.entity.EntityRenderer;
 import net.minecraft.entity.Entity;
@@ -22,7 +22,7 @@ abstract class EntityRendererMixin<T extends Entity> {
       final double y,
       final double z,
       final CallbackInfoReturnable<Boolean> cir) {
-    if (Vanish.isGone(entity)
+    if (VanishAttachment.isGone(entity)
         || (entity instanceof LivingEntity sleeper && CoffinSleeperView.hidden(sleeper))) {
       cir.setReturnValue(false);
     }

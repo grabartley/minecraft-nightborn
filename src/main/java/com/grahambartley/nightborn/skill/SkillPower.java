@@ -7,6 +7,7 @@ import com.grahambartley.nightborn.occult.FogPower;
 import com.grahambartley.nightborn.occult.ShadowStepPower;
 import com.grahambartley.nightborn.vanish.VanishPower;
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.DataResult;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import java.util.List;
 import java.util.Optional;
@@ -31,35 +32,44 @@ public record SkillPower(
     Optional<MobPowerUse> mob) {
 
   public static final Codec<SkillPower> CODEC =
-      RecordCodecBuilder.create(
-          instance ->
-              instance
-                  .group(
-                      Codec.intRange(0, 20).fieldOf("blood").forGetter(SkillPower::blood),
-                      Codec.intRange(0, 72000)
-                          .fieldOf("cooldown_ticks")
-                          .forGetter(SkillPower::cooldownTicks),
-                      StatusEffectInstance.CODEC
-                          .listOf()
-                          .optionalFieldOf("effects", List.of())
-                          .forGetter(SkillPower::effects),
-                      Identifier.CODEC.optionalFieldOf("sound").forGetter(SkillPower::sound),
-                      TrackPower.CODEC.optionalFieldOf("track").forGetter(SkillPower::track),
-                      BatFormPower.CODEC.optionalFieldOf("bat_form").forGetter(SkillPower::batForm),
-                      LeapPower.CODEC.optionalFieldOf("leap").forGetter(SkillPower::leap),
-                      MesmerisePower.CODEC
-                          .optionalFieldOf("mesmerise")
-                          .forGetter(SkillPower::mesmerise),
-                      FamiliarPower.CODEC
-                          .optionalFieldOf("familiar")
-                          .forGetter(SkillPower::familiar),
-                      FogPower.CODEC.optionalFieldOf("fog").forGetter(SkillPower::fog),
-                      ShadowStepPower.CODEC
-                          .optionalFieldOf("shadow_step")
-                          .forGetter(SkillPower::shadowStep),
-                      VanishPower.CODEC.optionalFieldOf("vanish").forGetter(SkillPower::vanish),
-                      RallyPower.CODEC.optionalFieldOf("rally").forGetter(SkillPower::rally),
-                      SummonPower.CODEC.optionalFieldOf("summon").forGetter(SkillPower::summon),
-                      MobPowerUse.CODEC.optionalFieldOf("mob").forGetter(SkillPower::mob))
-                  .apply(instance, SkillPower::new));
+      RecordCodecBuilder.<SkillPower>create(
+              instance ->
+                  instance
+                      .group(
+                          Codec.intRange(0, 20).fieldOf("blood").forGetter(SkillPower::blood),
+                          Codec.intRange(0, 72000)
+                              .fieldOf("cooldown_ticks")
+                              .forGetter(SkillPower::cooldownTicks),
+                          StatusEffectInstance.CODEC
+                              .listOf()
+                              .optionalFieldOf("effects", List.of())
+                              .forGetter(SkillPower::effects),
+                          Identifier.CODEC.optionalFieldOf("sound").forGetter(SkillPower::sound),
+                          TrackPower.CODEC.optionalFieldOf("track").forGetter(SkillPower::track),
+                          BatFormPower.CODEC
+                              .optionalFieldOf("bat_form")
+                              .forGetter(SkillPower::batForm),
+                          LeapPower.CODEC.optionalFieldOf("leap").forGetter(SkillPower::leap),
+                          MesmerisePower.CODEC
+                              .optionalFieldOf("mesmerise")
+                              .forGetter(SkillPower::mesmerise),
+                          FamiliarPower.CODEC
+                              .optionalFieldOf("familiar")
+                              .forGetter(SkillPower::familiar),
+                          FogPower.CODEC.optionalFieldOf("fog").forGetter(SkillPower::fog),
+                          ShadowStepPower.CODEC
+                              .optionalFieldOf("shadow_step")
+                              .forGetter(SkillPower::shadowStep),
+                          VanishPower.CODEC.optionalFieldOf("vanish").forGetter(SkillPower::vanish),
+                          RallyPower.CODEC.optionalFieldOf("rally").forGetter(SkillPower::rally),
+                          SummonPower.CODEC.optionalFieldOf("summon").forGetter(SkillPower::summon),
+                          MobPowerUse.CODEC.optionalFieldOf("mob").forGetter(SkillPower::mob))
+                      .apply(instance, SkillPower::new))
+          .validate(SkillPower::oneMove);
+
+  private static DataResult<SkillPower> oneMove(final SkillPower power) {
+    return power.shadowStep().isPresent() && power.vanish().isPresent()
+        ? DataResult.error(() -> "A power moves its caster by shadow_step or by vanish, not both")
+        : DataResult.success(power);
+  }
 }
