@@ -2,6 +2,7 @@ package com.grahambartley.nightborn.tools.structures.vampire.mountain;
 
 import com.grahambartley.nightborn.tools.structures.template.BlockState;
 import com.grahambartley.nightborn.tools.structures.template.Template;
+import java.util.List;
 
 public record Turret(int cx, int cz, int radius, int base, int top, boolean round, int walk) {
 
@@ -43,8 +44,8 @@ public record Turret(int cx, int cz, int radius, int base, int top, boolean roun
       }
     }
     windows(t);
-    ladder(t);
     doors(t);
+    ladder(t);
     Spire.raise(t, cx, cz, radius + 1, top + 1, round, ROOF_LAYERS);
   }
 
@@ -57,10 +58,46 @@ public record Turret(int cx, int cz, int radius, int base, int top, boolean roun
     }
   }
 
-  private void ladder(final Template t) {
-    final int x = cx - radius + 1;
+  private record Climb(int x, int z, int backX, int backZ, String facing) {}
+
+  private List<Climb> climbs() {
+    return List.of(
+        new Climb(cx - radius + 1, cz - 1, -1, 0, "east"),
+        new Climb(cx + radius - 1, cz + 1, 1, 0, "west"),
+        new Climb(cx + 1, cz - radius + 1, 0, -1, "south"),
+        new Climb(cx - 1, cz + radius - 1, 0, 1, "north"));
+  }
+
+  public static boolean solid(final String state) {
+    return state != null
+        && !BlockState.AIR.equals(state)
+        && !state.contains("pane")
+        && !state.contains("glass")
+        && !state.contains("bars");
+  }
+
+  private boolean solidBehind(final Template t, final Climb climb) {
     for (int y = base + 1; y < top; y++) {
-      t.set(x, y, cz - 1, BlockState.of("ladder", "facing", "east", "waterlogged", false));
+      if (!solid(t.get(climb.x() + climb.backX(), y, climb.z() + climb.backZ()))) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  private void ladder(final Template t) {
+    final Climb climb =
+        climbs().stream()
+            .filter(c -> solidBehind(t, c))
+            .findFirst()
+            .orElseThrow(
+                () -> new IllegalStateException("No solid wall for the ladder in " + this));
+    for (int y = base + 1; y < top; y++) {
+      t.set(
+          climb.x(),
+          y,
+          climb.z(),
+          BlockState.of("ladder", "facing", climb.facing(), "waterlogged", false));
     }
   }
 

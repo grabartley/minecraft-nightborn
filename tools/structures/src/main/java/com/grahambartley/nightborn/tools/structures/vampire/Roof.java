@@ -76,6 +76,9 @@ public final class Roof {
       if (low == high) {
         return y + 1;
       }
+      if (k == 0) {
+        sealEave(t, ridge, from, to, lowWall, highWall, y, gable);
+      }
       if (k > 0) {
         for (int c = low + 1; c < high; c++) {
           end(t, ridge, from, c, y, gable);
@@ -83,6 +86,26 @@ public final class Roof {
         }
       }
       k++;
+    }
+  }
+
+  private static void sealEave(
+      final Template t,
+      final Axis ridge,
+      final int from,
+      final int to,
+      final int lowWall,
+      final int highWall,
+      final int y,
+      final Stone gable) {
+    for (int a = Math.min(from, to); a <= Math.max(from, to); a++) {
+      for (int c = lowWall; c <= highWall; c++) {
+        final boolean wallLine = a == from || a == to || c == lowWall || c == highWall;
+        final String there = t.get(ridge.x(a, c), y, ridge.z(a, c));
+        if (wallLine && (there == null || BlockState.AIR.equals(there))) {
+          end(t, ridge, a, c, y, gable);
+        }
+      }
     }
   }
 
