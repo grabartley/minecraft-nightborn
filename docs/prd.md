@@ -16,7 +16,7 @@ Minecraft has no vampires, and nothing that hunts them. Its undead are mindless 
 
 ### What The Mod Is
 
-Nightborn adds vampires and the people who hunt them. A human turns by choice, by drinking the old blood at the heart of a vampire's house or by a vampire player's turning bite, and once in a great while a vampire bat's bite does it. If the sickness is not cured in time you turn. As a vampire you live on blood, sleep through the day in a coffin, and nothing but direct sun or a stake can finish you. Anything else only brings you down. You grow through a skill tree, picking two of three bloodlines, Noble, Beast and Occult, and you grow older, from fledgling to ancient, until you lead a household of your own. Humans can fight back. Garlic, crucifixes, holy water, silver and the stake all hurt vampires, and every human earns hunter skills by killing them, picks two of four paths and rises through the guild's ranks. Vampires are rare. They live in households hidden in fog, in castles, crypts, ruined manors, deep lairs and, rarest of all, castles on the tops of mountains, and a cleared house does not stay empty for ever. Hunters keep camps of their own and send out parties that wander the land. Each vampire is someone: a name and an epithet, a look, a voice, a stage of age and powers of its own, and one that gets away from you remembers. Villages notice what feeds on them. Each side has a boss. Hunters summon the Eldest, a vampire with every power, and each mountain castle holds one of its own, met only once. The Grand Inquisitor, the head of the guild, comes for a vampire who has killed too many hunters.
+Nightborn adds vampires and the people who hunt them. A human turns by choice, by drinking the old blood at the heart of a vampire structure or by a vampire player's turning bite, and once in a great while a vampire bat's bite does it. If the sickness is not cured in time you turn. As a vampire you live on blood, sleep through the day in a coffin, and nothing but direct sun or a stake can finish you. Anything else only brings you down. You grow through a skill tree, picking two of three bloodlines, Noble, Beast and Occult, and you grow older, from fledgling to ancient, until you lead a household of your own. Humans can fight back. Garlic, crucifixes, holy water, silver and the stake all hurt vampires, and a human who proves themselves and joins the guild earns hunter skills by killing them, picks two of four paths and rises through its ranks. Vampires are rare. They live in households hidden in fog, in castles, crypts, ruined manors, deep lairs and, rarest of all, castles on the tops of mountains, and a cleared house does not stay empty for ever. Hunters keep camps of their own and send out parties that wander the land. Each vampire is someone: a name and an epithet, a look, a voice, a stage of age and powers of its own, and one that gets away from you remembers. Villages notice what feeds on them. Each side has a boss. Hunters summon the Eldest, a vampire with every power, and each mountain castle holds one of its own, met only once. The Grand Inquisitor, the head of the guild, comes for a vampire who has killed too many hunters.
 
 ### Experience It Aims For
 
@@ -55,7 +55,7 @@ Nightborn adds vampires and the people who hunt them. A human turns by choice, b
 - **Not a werewolf or general monster mod.** Vampires and hunters only.
 - **No cure after turning.** A cure works only during the sickness.
 - **No vampire that feeds on anything but blood.**
-- **Not a claims or protection mod.** Garlic weakens vampires. It does not stop them breaking blocks. The one protected block is an assigned coffin (COFFIN-13).
+- **Not a claims or protection mod.** Garlic weakens vampires. It does not stop them breaking blocks. The only protected blocks are an assigned coffin (COFFIN-13) and an old blood font (TURN-9).
 - **No change to vanilla undead.** Zombies, skeletons and phantoms behave as they always have, except that phantoms never come for vampires (CORE-9).
 
 ## 2. Release Scope
@@ -76,7 +76,7 @@ This document specifies the Nightborn alpha line for Minecraft 1.21.1 on Fabric.
 |---|---|
 | Vampire raids on villages | Structures and their households carry the world first |
 | A true reflection in a placed mirror | The hand mirror covers the test (FACT-6), and drawn reflections fight shader mods |
-| Vampires needing an invitation to enter a home | Needs a notion of home ownership, which the mod does not have |
+| Vampires needing an invitation to enter a home | Only a vampire's house has an owner (HOUSE-1). A villager's or a human player's home has none |
 | Changing bloodlines once chosen | Choices are meant to stick. A reset can come later if play shows the need |
 | Hiding vampire markers on map mods | Vanilla maps come first (CORE-5) |
 
@@ -90,19 +90,19 @@ This document specifies the Nightborn alpha line for Minecraft 1.21.1 on Fabric.
 | How bad is the sun? | Lethal. Direct sun sets a vampire on fire | SUN-1 |
 | What replaces hunger? | Blood | FEED-1 |
 | How do powers grow? | A skill tree with three bloodlines, of which you invest in two, bought with experience that takes about a hundred nights to fill, and four stages of age | LINE-1 to LINE-3, SKILL-1, AGE-1 |
-| Who is a hunter? | Any human who kills vampires. They pick two of four paths and rise through four ranks | HUNT-1, HUNT-3, RANK-1 |
+| Who is a hunter? | A human who has proved themselves and been sworn into the guild. They pick two of four paths and rise through four ranks | HUNT-10, HUNT-3, RANK-1 |
 | How does a vampire die? | Only to direct sun or a stake. Anything else brings it down, greatly weakened, until it recovers and escapes | CORE-7, CORE-8 |
 | What happens on death? | Respawn at your assigned coffin, which death by the sun or a stake unassigns, sending you to world spawn. A stake costs skill progress. A server can make a vampire's death a full reset instead | COFFIN-4, COFFIN-5, COFFIN-13, SKILL-6, CORE-10 |
-| PvP? | Vampires and hunters are factions, and PvP follows the server's own setting | FACT-1 to FACT-4 |
+| PvP? | Vampires and hunters are factions, and PvP follows the server's own setting, all but a duel for a house | FACT-1 to FACT-6, HOUSE-8 |
 
 ## 3. Actors
 
 | Actor | What they need |
 |---|---|
 | **Vampire** | To feed, survive the sun, grow their bloodlines, grow older and keep a coffin |
-| **Lord** | The vampire who leads a household. To fill it, keep it fed and defend it |
+| **Lord of a house** | The vampire player who leads a house, not a castle's vampire lord (HOME-7). To fill it, keep it fed and defend it |
 | **Human** | To stay human, or cure a bite in time, and to fight back |
-| **Hunter** | Any human who hunts. To track, ward against and kill vampires, and earn skills for it |
+| **Hunter** | A human who has joined the guild (HUNT-10). To track, ward against and kill vampires, and earn skills and rank for it |
 | **Sick player** | Bitten and not yet turned. To know how long they have and how to cure it |
 | **Owner** | The vampire a thrall, ghostly familiar or human familiar serves |
 | **Villager** | Fed on, mesmerised, turned into a thrall or hired as a familiar. Reacts only when it sees a bite |
@@ -166,6 +166,7 @@ This document specifies the Nightborn alpha line for Minecraft 1.21.1 on Fabric.
 | Hunter camp | A generated camp of hunter mobs, home to a Guild Master |
 | Hunter party | A Guild Master and 4 to 8 hunter mobs who travel together and keep no hunter camp |
 | Temporary camp | The campfire and tents a hunter party pitches for one to three nights |
+| Veteran hunter | A named hunter mob who leads the parties the guild sends against older vampires (GUILD-12) |
 | Nemesis | A vampire or hunter mob that holds a grudge against one player and comes back for them |
 | Suspicion | How sure a village is that a vampire is at work in it |
 | Known face | A vampire player a village has seen for what they are |
@@ -174,6 +175,7 @@ This document specifies the Nightborn alpha line for Minecraft 1.21.1 on Fabric.
 | Journal | One of the two guide books, the hunter's and the vampire's |
 | Command wheel | The ring of actions that opens when a player uses someone they lead or deal with |
 | Faction | Vampire or human. Every player is in exactly one |
+| Hunter | A human player sworn into the guild, or a hunter mob |
 
 ### Who Can Be Fed On
 
@@ -202,15 +204,15 @@ A human turns by drinking old blood at the heart of a vampire structure, by a va
 
 | ID | Requirement |
 |---|---|
-| TURN-1 | Bite sickness starts on a human in three ways: drinking old blood (TURN-9), a vampire player's turning bite (TURN-8), and a vampire bat's bite, one time in a thousand by default. Bite resistance (HUNT-4) lowers the chance from a bat and from a turning bite. A vampire mob's bite never starts it and only feeds (FEED-4, FEED-5), and nor does a vampire player's feeding bite |
+| TURN-1 | Bite sickness starts on a human in three ways: drinking old blood (TURN-9), a vampire player's turning bite (TURN-8), and a vampire bat's bite. By default a turning bite starts it every time and a bat's bite one time in a thousand, less against a human with bite resistance (HUNT-4). A vampire mob's bite never starts it and only feeds (FEED-4, FEED-5), and nor does a vampire player's feeding bite |
 | TURN-2 | A vampire player can bite a human player only where the server allows PvP |
 | TURN-3 | Bite sickness lasts 1 in-game day by default, and gets worse in three equal stages over its length: hunger, then the vanilla Weakness effect, then slowness in daylight. The time already run counts against the current sickness length, so a changed length applies at once to a player already sick, and a player whose sickness has already run longer than the new length turns at once. Time skipped by sleeping counts toward it, whether beds skip the night or coffins skip the day (COFFIN-2) |
 | TURN-4 | A sick player is shown the sickness and the time left, as a status effect and a sign on screen |
-| TURN-5 | When the sickness runs out, the player turns. They keep their inventory, start with a full blood bar and get the vampire core |
+| TURN-5 | When the sickness runs out, the player turns, which is a moment (FACT-7). They keep their inventory, start with a full blood bar and get the vampire core |
 | TURN-6 | A player who turns stops earning hunter skills, and their hunter tree is set aside. It comes back if an operator makes them human again |
 | TURN-7 | Another bite during the sickness does not restart or lengthen it |
 | TURN-8 | A vampire player's bite feeds by default. They switch it between feeding and turning with a key they can rebind. Each switch is confirmed on screen, and a sign with its own icon stays on screen while the turning bite is on (ACC-1). A turning bite feeds like any other bite (FEED-4 to FEED-12), and the bite's mode is fixed when it first draws blood. One that starts the sickness costs the vampire a large share of their blood, half a full bar by default, and a vampire with less cannot turn anyone. Where the server stops players turning players (CFG-5), a turning bite on a player feeds only. A vampire made human loses the choice, so a player who turns again starts with a feeding bite. Vampire mobs and bats do not choose |
-| TURN-9 | Every vampire structure keeps old blood in a font at its heart. The font is found only there and cannot be crafted, moved or broken. A human who uses it with an empty hand drinks, which starts the sickness and empties it. Nothing can carry the blood away, and a vampire gets nothing from it. It refills over some days, 7 by default while its household lives and twice as long without one. A household that is fed lets a human it has no quarrel with walk in and drink (HOME-11). The vampire's journal lies beside it (GUIDE-2) |
+| TURN-9 | Every vampire structure keeps old blood in a font at its heart. The font is found only there and cannot be crafted, moved or broken. A human who uses it with an empty hand drinks, which starts the sickness and empties it. Nothing can carry the blood away, and a vampire gets nothing from it. It refills over some days, 7 by default while its household lives and twice as long without one. A household that is fed lets a human it has no quarrel with walk in and drink (HOME-11). |
 
 **Not supported:** turning by any means other than these and an operator command; turning a villager into a vampire; carrying old blood away.
 
@@ -262,7 +264,8 @@ Sneak and use on a creature to bite it, and keep holding to drink. Let go to sto
 | FEED-13 | A villager that sees a vampire feed panics and flees, rings the village bell, and the village treats the vampire as it treats a player who hurt a villager, through vanilla gossip, and the village's suspicion rises (SUSP-1). A villager that sees nothing acts as normal |
 | FEED-14 | A starving vampire grows more weakened over time, up to the cap (WEAK-9). Its powers and levitation stop, then its night speed and jump fade, and its bare-hand damage shrinks. After a while it loses health slowly, down to half a heart on any difficulty but Peaceful. Starving never downs or kills a vampire. Any blood stops it growing, and the weakness fades as the bar refills |
 | FEED-15 | Fresh blood also gives a short gift by the kind of prey it came from, on top of its quality. By default a horse gives speed, a wolf makes nearby prey stand out, a villager quickens healing, an illager gives strength and a witch resistance to potions. A Blood Bottle keeps the gift at half strength and shows it. A new gift replaces the last. Which prey gives what, how strong and for how long is data |
-| FEED-16 | A vampire can bite an enemy that is below a share of its health, a quarter by default, in the middle of a fight, without sneaking. It is a fast drain: the enemy dies, and the vampire heals and gains blood and experience as from any drain (FEED-6, FEED-12). The vampire cannot move or strike while it drinks, and a blow breaks the bite. It works only on creatures that can be fed on, and on a player only with PvP on (TURN-2) |
+| FEED-16 | A vampire can bite an enemy that is below a share of its health, a quarter by default, in the middle of a fight, without sneaking. It is a fast drain: the enemy dies, the vampire is healed a little, and it gains blood and experience as from any drain (FEED-6, FEED-12). The vampire cannot move or strike while it drinks, and a blow breaks the bite. It works only on creatures that can be fed on, and on a player only with PvP on (TURN-2) |
+
 **Not supported:** feeding on the list's excluded creatures; feeding through blocks; a human drinking blood.
 
 **Enforcement:** server. The client sends the bite request; the server checks reach, the target and the faction.
@@ -346,7 +349,7 @@ A vampire player ages as a vampire mob does. Time opens each stage and a deed re
 | ID | Requirement |
 |---|---|
 | AGE-1 | Every vampire player has a stage, one of the four a vampire mob has (HOME-15). A newly turned player is a fledgling |
-| AGE-2 | A stage opens once the player has lived a number of nights as a vampire and drunk a total of blood. A night counts when the player is online as a vampire for most of it |
+| AGE-2 | A stage opens once the player has lived a number of nights as a vampire and drunk a total of blood. A night counts when the player is online as a vampire for most of it, and a night that sleepers skip counts whole |
 | AGE-3 | An open stage is reached by its deed, and a deed done before the stage opened counts when it opens |
 | AGE-4 | Each stage gives more health, harder blows, a larger blood bar and slower blood drain, about what that stage gives a vampire mob. Age adds no weakness |
 | AGE-5 | A stage also opens the deepest skills of the tree (SKILL-2), a larger household (HOUSE-3) and a name colour (NAME-3) |
@@ -462,15 +465,15 @@ A vampire who has come of age can found a house: a household of their own, of va
 
 | ID | Requirement |
 |---|---|
-| HOUSE-1 | A vampire founds a house in one of two places: at their own assigned coffin, or in a vampire structure whose household is all gone, by sleeping in the coffin of its old head. A claimed structure's fog, music, old blood and coffins then serve the new house. A mountain castle can be claimed once its Eldest is ended (HOME-23). A vampire leads one house and holds one structure at a time, and founding again moves the house |
+| HOUSE-1 | A vampire who is an adult or older founds a house in one of two places: at their own assigned coffin, or in a vampire structure whose household is all gone, by sleeping in the coffin of its old head. A claimed structure's fog, music, old blood and coffins then serve the new house. A mountain castle can be claimed once its Eldest is ended (HOME-23). A vampire leads one house and holds one structure at a time, and founding again moves the house |
 | HOUSE-2 | The founder is the lord. The lord invites a vampire player of a lower stage from the command wheel (WHEEL-2), who accepts or declines, belongs to one house at a time and can leave at any time. The lord invites an NPC vampire of a lower stage by using a full gold chalice on it, which the invitation empties. It leaves the household it had, if any, and walks to the house, where it needs a free coffin. The head of a household cannot be invited |
 | HOUSE-3 | A house holds as many members as its lord's stage allows, players and NPC members together, as the table says |
-| HOUSE-4 | NPC members live at the house as a household lives in its structure (HOME-5, HOME-6, HOME-13): they keep its routine, sleep in its coffins and go out to feed. They bring Blood Bottles home to a chalice or chest the lord marks, and they defend the house, its lord and its members against anyone who attacks them, within HOME-11 |
+| HOUSE-4 | NPC members live at the house as a household lives in its structure (HOME-5, HOME-6, HOME-13): they keep its routine, sleep in its coffins and go out to feed. They bring Blood Bottles home to a chalice or chest the lord marks, and they defend the house, its lord and its members against any human or hunter who attacks them, and against a vampire only as HOME-11 allows |
 | HOUSE-5 | The lord orders an NPC member from the command wheel: follow, stay, guard a place, go out to feed, bring blood home, or leave the house |
 | HOUSE-6 | The lord names the house in the naming dialogue (NAME-6, NAME-8) and gives it a crest, a charge and two colours chosen from a set. A crest banner, crafted from a banner, shows it. The house name follows each member's name (NAME-11) |
 | HOUSE-7 | Members can open, sleep in and be assigned any coffin of the house (COFFIN-4) |
 | HOUSE-8 | A member of the lord's stage or older can challenge for the house by declaring it at the lord's coffin. When both next stand there, a circle seals them in a duel nobody else can enter or affect, whatever the PvP setting. The first one downed loses, is not staked and gets up at once. The winner is the lord and the loser stays a member. A lord who does not answer within three nights loses the house. A lost challenge cannot be repeated for seven nights |
-| HOUSE-9 | When the lord is staked the oldest member player inherits, the longest in the house if two are of an age. With no member player the house falls: its NPC members become wild vampires and its structure is unclaimed. A lord can also hand the house to a member or disband it |
+| HOUSE-9 | When the lord is staked, made human again (CFG-8) or reset by a hardcore death (CORE-10), the oldest member player inherits, the longest in the house if two are of an age. With no member player the house falls: its NPC members become wild vampires and its structure is unclaimed. A lord can also hand the house to a member or disband it |
 | HOUSE-10 | A house is a target. A hunter party may raid it by day (GUILD-13, GUILD-14), and a human player can at any time |
 
 **Not supported:** leading more than one house; inviting a vampire as old as the lord or older; turning a villager into a member.
@@ -481,7 +484,7 @@ A vampire who has come of age can found a house: a household of their own, of va
 
 **Actor:** Human, hunter. Any player for the lancet (GEAR-10).
 
-Every human is a hunter in waiting. Killing vampires earns hunter points.
+Every human can fight vampires with stake, silver, garlic and holy water. One who proves themselves and joins the guild is a hunter, and only a hunter grows: hunter experience, the tree, ranks, contracts and trials all begin with the oath.
 
 The hunter tree starts with Tracking, an active power that points toward the nearest vampire for a short time. Beyond it lie four paths, of which a hunter picks two. The gifts that last are player attributes (`nightborn:bite_resistance`, `nightborn:mesmerise_resistance` and `nightborn:faith`) that skills raise, so the features that use them read one number and never the skills themselves. A hunter must be online when the sun finishes the vampire to be paid.
 
@@ -494,29 +497,30 @@ The hunter tree starts with Tracking, an active power that points toward the nea
 
 | ID | Requirement |
 |---|---|
-| HUNT-1 | Any human player earns hunter points by staking vampire mobs and vampire players, or by downing one that the sun finishes before its escape ends. Downing alone earns nothing. A vampire, mob or player, pays more for each stage it has above fledgling (HOME-15, AGE-1). No pledge is needed. The Eldest also pays hunters, as RITE-6 says |
+| HUNT-1 | A hunter earns hunter points by staking vampire mobs and vampire players, or by downing one that the sun finishes before its escape ends. Downing alone earns nothing. A vampire, mob or player, pays more for each stage it has above fledgling (HOME-15, AGE-1). The Eldest also pays hunters, as RITE-6 says |
 | HUNT-2 | Contracts from the Guild Master earn hunter points as well as their reward |
-| HUNT-3 | The hunter tree has four paths: Trapper, Faithful, Slayer and Seeker, each of about ten skills. Spending a first point in a path chooses it, and once two are chosen the others are locked, as bloodlines are (LINE-2, LINE-3) |
+| HUNT-3 | The hunter tree has four paths: Trapper, Faithful, Slayer and Seeker, each of about ten skills. Spending a first point in a path chooses it, and once two are chosen the others are locked, as bloodlines are (LINE-2, LINE-3). Hunter skills bought in an older world are reset |
 | HUNT-4 | The paths give what the table says. Bite resistance lets a human break free of a feeding bite sooner (FEED-7), shortens the Weakness after it (FEED-5) and lowers the chance of the sickness (TURN-1). Skills, their ranks, costs and the rank each needs are data |
 | HUNT-5 | Tracking shows the direction of the nearest vampire within range for a short time |
 | HUNT-6 | A hunter's active skills sit on the power bar (SKILL-4). They cost no blood and each has a cooldown |
 | HUNT-7 | A vampire mob a hunter has wounded leaves a trail that the hunter's Tracking follows until dawn, back to its coffin. A contract for a vampire or a household comes with a rough map of the region its house lies in (GUILD-3) |
-| HUNT-8 | Noise wakes a sleeping house. Running, jumping, breaking or placing blocks, opening a coffin lid and fighting each make noise, and enough of it wakes the vampires asleep within its reach, who rise and fight (COFFIN-12). Sneaking makes none, and Hush (WEAR-3) makes less. How loud each act is and how far it carries are data |
+| HUNT-8 | Noise wakes a sleeping house. Running, jumping, breaking or placing blocks, opening a coffin lid and fighting each make noise, and enough of it wakes the vampires asleep within its reach, who rise and fight (COFFIN-12). Sneaking makes none. How loud each act is and how far it carries are data |
 | HUNT-9 | A house is guarded by day. An NPC household keeps a thrall or two of its own and, some days, one member awake, and a player's house has whoever its lord set to stand watch (FAM-9). A guard that sees an intruder wakes the house |
+| HUNT-10 | A human joins the guild in two steps. They prove themselves by staking a vampire, then ask a Guild Master, of a camp or a party, to swear them in from the command wheel (WHEEL-2). The oath makes them a hunter of the lowest rank (RANK-1), gives them the hunter's journal (GUIDE-2) and is a moment (FACT-7). A human who has not joined earns no hunter experience, and a vampire can never join |
 
 | Rank | Deed |
 |---|---|
-| Initiate | Being human |
+| Initiate | Joining the guild (HUNT-10) |
 | Hunter | Staking an adult or older |
 | Veteran | Clearing a household by staking the last of it |
 | Master | Ending the Eldest |
 
 | ID | Requirement |
 |---|---|
-| RANK-1 | Every human has a rank in the guild. A rank is reached by earning a total of hunter experience and doing its deed, and a deed done early counts |
+| RANK-1 | Every hunter has a rank in the guild. A rank is reached by earning a total of hunter experience and doing its deed, and a deed done early counts |
 | RANK-2 | Each rank gives more health and more damage against vampires, and nothing against anyone else |
 | RANK-3 | A rank also opens the deepest hunter skills (SKILL-2), better stock and harder contracts from Guild Masters (GUILD-3) |
-| RANK-4 | A rank is never lost, and is set aside with the hunter tree if its holder turns (TURN-6). A mark of rank, a shape as well as a colour, is drawn beside a human's name for everyone |
+| RANK-4 | A rank is never lost, and is set aside with the hunter tree if its holder turns (TURN-6). A mark of rank, a shape as well as a colour, is drawn beside a hunter's name for everyone. A human who has not joined has none. A vampire player shows the rank that was set aside when they turned, or none, so the mark never gives them away (FACT-4) |
 
 | ID | Requirement |
 |---|---|
@@ -530,7 +534,7 @@ The hunter tree starts with Tracking, an active power that points toward the nea
 | GEAR-8 | Garlic grows wild in plains and around villages, can be farmed, and is crafted into Garlic Strings |
 | GEAR-9 | Holy water or garlic can be applied to any weapon or ammo in a crafting grid. The coating gives extra damage against vampires and weakens them briefly, always less than silver does, and does nothing to anyone else. On a weapon it lasts a set number of hits on vampires or a set time, whichever runs out first; on ammo it lasts until fired, and Infinity never saves a coated arrow. A coated item shows its own sheen, holy water or garlic, wherever it is drawn, and the sheen goes when the coating wears off |
 | GEAR-10 | A lancet is crafted from an iron ingot and a stick. Any player, human or vampire, uses it on a living creature that can be fed on (see Who Can Be Fed On) while carrying an empty Glass Bottle. It hurts the creature, fills one Blood Bottle of that creature's quality (FEED-11) and wears a little. It never takes a creature's last health, so it cannot kill, and never draws blood the creature does not have (CS-4). The creature takes it as it takes any other blow. A human who uses it while sneaking, aimed at no creature, bleeds themself the same way for a bottle of player quality. It does not work on another player. Bottling with a lancet earns no skill points (FEED-12). How much it hurts is a server setting (CFG-5) |
-| GEAR-11 | Weapons take six new enchantments, found as any vanilla enchantment that is not a treasure is. Three work only in a vampire's hand: Bloodletting gives a little blood with each blow, Exsanguinate opens the finisher bite at higher health (FEED-16), and Nightfall hits harder at night. Three work only against vampires: Consecration makes a coating last longer (GEAR-9), Staking lets a stake finish a vampire at higher health (WEAK-7), and Daybreak hits them harder by day |
+| GEAR-11 | Weapons take six new enchantments, found as any vanilla enchantment that is not a treasure is. Three work only in a vampire's hand: Bloodletting gives a little blood with each blow, Exsanguinate opens the finisher bite at higher health (FEED-16), and Nightfall hits harder at night. Three work only against vampires: Consecration makes a coating last longer (GEAR-9), Heartseeker makes a stake hit harder (WEAK-7), and Daybreak hits them harder by day |
 
 **Enforcement:** server.
 
@@ -542,8 +546,8 @@ The hunter tree starts with Tracking, an active power that points toward the nea
 |---|---|
 | GUILD-1 | Hunter camps generate rarely in the open country of the overworld (plains, meadows and savannas), each with a few hunter mobs and a Guild Master. Hunters and the Guild Master are villagers, not humans: the villager head with its long nose and heavy brow, in villager skin tones and proportions. Hunters are weathered men and women in long coats, wide hats and leather, in at least 4 looks each, and a woman hunter has a bust sized the same way as a vampire woman's (HOME-18). The Guild Master is an older, better dressed villager who wears a mark of rank, in at least 2 looks. At ease they all stand and walk with their arms folded as villagers do, and unfold them to trade or to fight |
 | GUILD-2 | Hunter mobs attack vampire players and vampire mobs on sight with stakes, so a vampire they bring down is finished. Each hunter carries one kit: a stake in the hand, or a crossbow that fires stake bolts from a distance. A hunter whose kit has a crucifix holds it up at a vampire within its reach (WEAK-3) and puts it away after, and one whose kit has holy water throws a flask at a vampire too far to strike, then waits before throwing another. A hunter keeps its hands empty until it has a vampire to hunt, then draws its weapon, and puts it away a few seconds after the hunt ends. Hunters and the Guild Master speak with villager voices, lower for a man and higher for a woman: they mutter at rest, call out when they sight a vampire, grunt at each strike and cheer when one is staked. They leave humans alone and do not fight back when a human hits them, except as INQ-6 says. Hunters and the Guild Master of a hunter camp stay near it, and those of a hunter party stay with their party (GUILD-7) |
-| GUILD-3 | The Guild Master sells hunter gear and writes contracts on paper, such as staking vampires, staking an elder, or clearing a vampire structure by staking the last of its household. He also offers trials (CHAL-1) and tells a hunter their rank and what the next needs (RANK-1). His offers and contracts are data, grow with the hunter's rank (RANK-3), are reached from the command wheel (WHEEL-2), trade through the vanilla trading screen, and renew each day |
-| GUILD-4 | Contracts pay in emeralds, silver and gear, on top of the hunter points HUNT-2 gives. A contract is an item that keeps its own count. One stake marks one open contract. A vampire player counts as a fledgling against a contract that asks for an older vampire, and a vampire who lives alone is the last of its household. A fulfilled contract, in either hand, is handed to a Guild Master, who takes it and pays once |
+| GUILD-3 | The Guild Master sells hunter gear and writes contracts on paper, such as staking vampires, staking an elder, or clearing a vampire structure by staking the last of its household. He trades with any human, and swears in one who has proved themselves (HUNT-10). To a hunter he also gives contracts and trials (CHAL-1), and tells them their rank and what the next needs (RANK-1). His offers and contracts are data, grow with the hunter's rank (RANK-3), are reached from the command wheel (WHEEL-2), trade through the vanilla trading screen, and renew each day |
+| GUILD-4 | Contracts pay in emeralds, silver and gear, on top of the hunter points HUNT-2 gives. A contract is an item that keeps its own count. One stake marks one open contract. A vampire player counts at their stage (AGE-1), and a vampire who lives alone is the last of its household. A fulfilled contract, in either hand, is handed to a Guild Master, who takes it and pays once |
 | GUILD-5 | A vampire player cannot trade, take contracts or trials, or hold a rank with any Guild Master |
 | GUILD-6 | Hunters also travel. A hunter party of 4 to 8 hunter mobs and one Guild Master appears now and then on the surface of the overworld near a player, the way a vanilla pillager patrol does. They are the same mobs as a hunter camp's, so they fight, trade, give contracts and are named as GUILD-2 to GUILD-5 and NAME-1 say. Only how they appear, and that they travel, is different. The biomes parties appear in are data |
 | GUILD-7 | A party wanders one area looking for vampires, then moves on to a new area. It keeps together around its Guild Master. A party on the move that no player has been near for some time leaves the world, as a patrol does. A party in camp never does |
@@ -552,7 +556,7 @@ The hunter tree starts with Tracking, an active power that points toward the nea
 | GUILD-10 | On its last morning the party puts out the fire, takes down its tents and beds and moves on. Only the unlit campfire stays behind. The tents and beds of a temporary camp drop nothing, whoever removes them (SAFE-1). A player whose spawn was a tent's bed loses it as with any broken bed. A camp whose party is all dead stands until someone breaks it |
 | GUILD-11 | Now and then, at night, vampire bats fall on a pitched temporary camp and bite the hunters (HOME-10). The hunters awake fight them, the sleepers wake and join, and the fight lasts until the bats are dead or gone |
 | GUILD-12 | A veteran hunter is a named hunter mob (NAME-1), stronger than a hunter and armed with silver, with attacks of its own that each have a pose and a sound before they land. One leads every party the guild sends against an elder or an ancient. Veterans, their kits and their attacks are data |
-| GUILD-13 | The guild sends a party against a vampire player whose notoriety passes the first threshold (INQ-1), or who is a known face in a hunted village (SUSP-3). It is a hunter party (GUILD-6) sized and armed to its quarry's stage: more hunters, silver, crucifixes and holy water for an older one. It goes to the vampire's house by day and stakes whoever sleeps there, or comes by night for a vampire with no house. It opens doors and coffin lids, and breaks, places and takes nothing (SAFE-6). It leaves when its quarry is staked, when it is beaten, or at the next dusk |
+| GUILD-13 | The guild sends a party against a vampire player whose notoriety passes the first threshold (INQ-1), or who is a known face in a hunted village (SUSP-3). It is a hunter party (GUILD-6) with no Guild Master, sized and armed to its quarry's stage: up to twelve hunters, with more silver, crucifixes and holy water for an older one. It goes to the vampire's house by day and stakes whoever sleeps there, or comes by night for a vampire with no house. It opens doors and coffin lids, and breaks, places and takes nothing (SAFE-6). It leaves when its quarry is staked, when it is beaten, or at the next dusk |
 | GUILD-14 | A hunter party on the move (GUILD-7) that comes within sight of a vampire player's house by day raids it the same way, sent or not |
 
 **Enforcement:** server.
@@ -578,12 +582,12 @@ Vampires are rare. They live in households hidden in five kinds of structure, ea
 | HOME-3 | Each type has several layouts, chosen at random |
 | HOME-4 | Fog hangs around and inside every vampire structure, thicker near its heart |
 | HOME-5 | A household feels lived in: its vampires have their own personality and hobbies, talk to and argue with each other, react to each other's deaths, follow a nightly routine and use the furniture of their home: chairs, candles, drapes, books and gramophones. They open wooden doors and close them behind them as villagers do, and leave iron doors shut. At dusk a household gathers at its heart, lights its candles and opens its drapes. Through the night each vampire sits, reads, talks with a housemate or wanders the house as its temperament leans, and a hot temper on either side turns talk into an argument. Before dawn they put out the candles and draw the drapes. A vampire whose housemate dies within reach mourns it for a while, even one asleep in its coffin |
-| HOME-6 | Household vampires settle under a roof, never in the open sun, sleep in coffins by day and wake at dusk. Each structure holds the coffins (DECOR-5) that suit it, by default: stone brick and gothic stone brick coffins in crypts, deepslate brick and polished blackstone brick in underground lairs, dark oak and spruce in ruined manors, dark oak in a castle with gothic stone brick around its heart, and gothic stone brick and dark oak in a mountain castle. A data pack can change these (HOME-12) |
+| HOME-6 | Household vampires settle under a roof, never in the open sun, sleep in coffins by day, all but one who may keep watch (HUNT-9), and wake at dusk. Each structure holds the coffins (DECOR-5) that suit it, by default: stone brick and gothic stone brick coffins in crypts, deepslate brick and polished blackstone brick in underground lairs, dark oak and spruce in ruined manors, dark oak in a castle with gothic stone brick around its heart, and gothic stone brick and dark oak in a mountain castle. A data pack can change these (HOME-12) |
 | HOME-7 | A castle's vampire lord is a boss with a health bar and its own powers: it calls every vampire of its household nearby onto its foe, and calls a swarm of vampire bats to its side. These powers are skills only vampire mobs can hold, never shown on a player's tree. The lord has a body of its own, settles in front of its throne and takes a stage above ancient that no other vampire rolls. It is downed and escapes like any vampire, its bar turns white while it is downed and purple while it escapes, and only a stake or the sun ends the fight |
 | HOME-8 | Structures hold loot chests with gear, Blood Bottles, decor, gothic music discs (DECOR-8), relics (RITE-1) and rare items found nowhere else. A mountain castle holds no relic |
 | HOME-9 | Vampire mobs live in vampire structures and in players' houses (HOUSE-2), as members of a household, all but the few wild ones (HOME-25). Each remembers its structure and its own coffin, which starts assigned to it (COFFIN-4), so it cannot be broken until that vampire dies to the sun or a stake. A member never spawns at random anywhere else and never despawns |
 | HOME-10 | Vampire bats spawn rarely, and only underground where a vanilla bat could spawn, inside a vampire structure, or about a temporary camp they attack (GUILD-11). Under cover, or at night in the open, they swoop at warm-blooded creatures and bite them (TURN-1). A vampire bat is bigger and darker than a vanilla bat, with soot fur, burgundy wings and red eyes that always glow. It hangs wrapped in its wings, flies, swoops on its prey and bites |
-| HOME-11 | Vampire mobs attack only when hungry or provoked. Being hurt, or a housemate being hurt nearby, provokes them, and a provoked vampire fights its attacker by day or night, fed or hungry, until it must escape the sun, falls back at low health, is downed, or the attacker leaves. A fed vampire may watch, follow or warn off a stranger, but does not attack. They never fight another vampire, whether a mob or a player, with three exceptions: a nemesis fights its quarry (NEM-4), a house duel is fought (HOUSE-8), and one struck by a vampire of its own stage or older fights back. On Peaceful they never hunt players |
+| HOME-11 | Vampire mobs attack only when hungry or provoked. Being hurt, or a housemate being hurt nearby, provokes them, and a provoked vampire fights its attacker by day or night, fed or hungry, until it must escape the sun, falls back at low health, is downed, or the attacker leaves. A fed vampire may watch, follow or warn off a stranger, but does not attack. They never fight another vampire, whether a mob or a player, with three exceptions: a nemesis fights its quarry (NEM-4), a house duel is fought (HOUSE-8), and one struck by a vampire of its own stage or older fights back, as a vampire lord and the Eldest do against any vampire that strikes them (HOME-7, RITE-7). On Peaceful they never hunt players |
 | HOME-12 | Structure layouts, the coffins each structure holds, loot, relic chances, structure spawn rates, the biomes each structure generates in, household sizes and the vampire that heads a household, vampire stages and their odds per structure type, the skills vampire mobs pick, their temperaments and hobbies, the blocks they read at and the lights they tend, their looks, sizes, builds and outfits, the name pools and epithets, the name colour of each stage and of the Eldest, and the biomes and structures vampire bats spawn in are data, changed by a data pack |
 | HOME-13 | Vampire mobs have blood that drains over time. A hungry vampire may leave its structure at night to hunt humans, villagers and animals within a range of home. Not every vampire leaves every night, so a household is rarely empty, and one setting out sometimes brings one or two vampire bats. Each heads back once it has fed, or in time to reach its coffin by dawn. One caught out at dawn seeks shade (SUN-4). A lair household is sealed in rock and cannot leave (see the underground lair row) |
 | HOME-14 | A provoked vampire gives up the chase past a range from its structure and goes home |
@@ -598,7 +602,7 @@ Vampires are rare. They live in households hidden in five kinds of structure, ea
 | HOME-23 | The highest room of a mountain castle's keep belongs to the Eldest of RITE-3, who fights as RITE-4 and RITE-9 to RITE-16 say and treats players as RITE-7 says. It sleeps by day in its own coffin in that room, keeps to that room at night, takes no part in the household's routine (HOME-5) and never leaves the castle to feed. Its arena is that room (RITE-9). Ending it needs no ritual and no relic, and gives what RITE-6 says. Once a stake or the sun ends it, that castle never has an Eldest again |
 | HOME-24 | A vampire structure whose household is all gone, and that no player has claimed (HOUSE-1), does not stay empty. After a time drawn between 15 and 40 days by default, a whole new household moves in at once, as when the structure was generated. A mountain castle's Eldest never returns (HOME-23) |
 | HOME-25 | Very rarely a wild vampire appears at night, far from any player, and travels alone, sheltering from the sun by day. One that comes upon an empty, unclaimed vampire structure always claims it, and a new household arrives with it (HOME-24). One that no player has been near for some time leaves the world, as a hunter party does (GUILD-7) |
-| HOME-26 | A new player meets signs of vampires in their first days. A wild vampire watches them from a distance on one of their first nights, leaves when approached and never attacks. Drained animals lie in the country round a vampire structure, and a vampire bat may watch from a branch. Villagers near a structure mutter about it, and a cartographer or a cleric sells a rumour map to the nearest one. A hunter party crosses their path early, trades, offers a first contract and warns of the nearest house (GUILD-6). How soon and how often is data |
+| HOME-26 | A new player meets signs of vampires in their first days. A wild vampire watches them from a distance on one of their first nights, leaves when approached and never attacks. Drained animals lie in the country round a vampire structure, and a vampire bat may watch from a branch. Villagers near a structure mutter about it, and a cartographer or a cleric sells a rumour map to the nearest one. A hunter party crosses their path early, trades, tells them how to join the guild (HUNT-10) and warns of the nearest house (GUILD-6). How soon and how often is data |
 
 **Not supported:** a household replacing its losses one by one; vampire mobs appearing outside a household, other than wild vampires.
 
@@ -614,7 +618,7 @@ A village notices what feeds on it. A careful vampire keeps one for years. A car
 |---|---|
 | Wary | Doors shut at dusk, villagers stay in at night and charge strangers more after dark |
 | Warded | Villagers hang garlic strings by their doors and raise a crucifix at the bell |
-| Hunted | The village sends for the guild. A hunter party comes and stays to guard it |
+| Hunted | The village sends for the guild. A hunter party comes, camps beside it and guards it for as long as it is hunted, GUILD-9 notwithstanding |
 
 | ID | Requirement |
 |---|---|
@@ -635,9 +639,9 @@ Some of those who survive a player do not forget them.
 
 | ID | Requirement |
 |---|---|
-| NEM-1 | A named mob can become one player's nemesis: a vampire mob that a human downed and that escaped (CORE-8), a hunter mob that lived through a fight with a vampire player, and the head of an NPC household that a vampire player struck or drew a member away from (HOUSE-2) |
+| NEM-1 | A named mob can become one player's nemesis: a vampire mob that a human downed and that escaped (CORE-8), a hunter mob that lived through a fight with a vampire player, and a member of an NPC household that a vampire player struck or drew a housemate away from (HOUSE-2). No boss and no vampire of an underground lair becomes one, since neither leaves home (HOME-7, HOME-13, HOME-23) |
 | NEM-2 | A player has at most three nemeses at once, and no more are made while they have three. A nemesis belongs to one player and is an ordinary mob to everyone else |
-| NEM-3 | A nemesis grows. Each time it survives a fight with its quarry it heals, and gains a stage or a skill if it is a vampire or a better kit if it is a hunter. It may take a new epithet that tells the story, such as the Twice-Staked (NAME-2) |
+| NEM-3 | A nemesis grows. Each time it survives a fight with its quarry it heals, and gains a stage or a skill if it is a vampire or a better kit if it is a hunter. It may take a new epithet that tells the story, such as the Unbowed (NAME-2) |
 | NEM-4 | A nemesis comes for its quarry on a night it chooses, wherever they are on the surface, alone or with one or two of its own. It goes home after, and never despawns. Nights between its visits are a server setting |
 | NEM-5 | A nemesis speaks to its quarry in chat, under its name, when it sights them, when it downs them and when it flees. Its lines are data and are translated (ACC-5) |
 | NEM-6 | Ending a nemesis pays far more experience than an ordinary kill and drops a keepsake that bears its name |
@@ -684,11 +688,11 @@ Some of those who survive a player do not forget them.
 | DECOR-7 | A gramophone, crafted from a jukebox, gold ingots and ebony planks and facing the player who placed it, plays any music disc as a jukebox does, with the same hopper, redstone and comparator behaviour, and animates while it plays |
 | DECOR-8 | Gothic music discs, one per track, play in a gramophone or a jukebox. They are found only in vampire structures: in their loot and in their gramophones (HOME-20) |
 | WEAR-1 | Gothic clothing from several centuries, with at least two pieces for each armour slot, enough to dress at least 10 distinct looks. Each piece has a male and a female cut, and is drawn in the cut that fits its wearer: the female cut on a slim-armed player model, the male cut on a wide one. Female chest pieces follow the bust at its size: the corset cups it, the frock coat opens over a cravat and the doublet's stomacher runs down over it. A vanilla chestplate flattens it |
-| WEAR-2 | Clothing is worn in the armour slots in place of armour, protects and wears out like leather, and is mended with wool, or with leather for shoes and boots. It is drawn as an outer layer over the body, so a coat or cape hangs over any armour worn in the other slots, and capes and coat tails sway as the wearer walks |
-| WEAR-3 | Clothing takes the vanilla armour enchantments for its slot and eight of the mod's own, which come from the enchanting table, books on an anvil, librarians, loot and the gear mobs spawn with, like any vanilla enchantment that is not a treasure: Nocturne on headwear sees in the dark at night, Batwing on chest pieces falls further before taking damage, Gliding Step on legwear steps up a full block, Hush on shoes and boots sneaks faster, Shroud is noticed by hunters and villagers from less far, Mistcloak carries Vanish further, Warding dulls garlic and crucifixes a little, and Thrift slows blood drain |
-| WEAR-6 | Three curses are found only on loot, on clothing, weapons and accessories: Thirst drains blood faster, Sunmarked burns sooner in the sun, and Beacon lets hunters find the wearer from further off |
+| WEAR-2 | Clothing is worn in the armour slots in place of armour, protects and wears out like leather, and is mended with wool, or with leather for shoes and boots. It is drawn as an outer layer over the body, so a coat hangs over any armour worn in the other slots, and coat tails sway as the wearer walks |
+| WEAR-3 | Clothing takes the vanilla armour enchantments for its slot and eight of the mod's own, which come from the enchanting table, books on an anvil, librarians, loot and the gear mobs spawn with, like any vanilla enchantment that is not a treasure: Nocturne on headwear sees in the dark at night, Batwing on chest pieces falls further before taking damage, Gliding Step on legwear steps up a full block, Hush on shoes and boots sneaks faster, Shroud on headwear is noticed by hunters and villagers from less far, Mistcloak on chest pieces carries Vanish further, Warding on legwear dulls garlic and crucifixes a little, and Thrift on chest pieces slows blood drain |
 | WEAR-4 | Clothing whose colour is part of the look is dyed like leather, in a crafting grid with dyes, and a water cauldron washes the dye out. Only the cloth takes the dye: trims, buttons and buckles keep their own colours |
 | WEAR-5 | Every outfit a vampire mob wears is made of clothing a player can craft |
+| WEAR-6 | Three curses are found only on loot, on clothing, weapons and accessories: Thirst drains blood faster, Sunmarked burns sooner in the sun, and Beacon lets hunters find the wearer from further off |
 
 **Enforcement:** server.
 
@@ -699,8 +703,8 @@ Some of those who survive a player do not forget them.
 | ID | Requirement |
 |---|---|
 | WORN-1 | A player has eight accessory slots beside their armour: two rings, a necklace, a back, gloves, a belt, a face and a brooch |
-| WORN-2 | Capes and cloaks are worn on the back, so they hang over whatever is worn on the chest (WEAR-2). Veils, masks and spectacles are worn on the face. Every accessory but a ring is drawn on its wearer |
-| WORN-3 | The mod has about 80 accessories. The plain ones are for looks and are crafted. The rest each carry one gift and are found, never crafted: in the loot of vampire structures and hunter camps, from the Eldest and the Grand Inquisitor (RITE-12, INQ-15), and as the reward of a stage (AGE-5), a rank (RANK-3), a trial or a mastery feat (CHAL-1, CHAL-2) |
+| WORN-2 | Capes and cloaks are worn on the back, so they hang over whatever is worn on the chest and sway as the wearer walks. Veils, masks and spectacles are worn on the face. Every accessory but a ring is drawn on its wearer |
+| WORN-3 | The mod has about 80 accessories. The plain ones are for looks and are crafted. The rest each carry one gift and are found, never crafted: in the loot of vampire structures and hunter camps, from the Eldest and the Grand Inquisitor (RITE-12, INQ-15), and as the reward of some trials and mastery feats (CHAL-1, CHAL-2) |
 | WORN-4 | A gift is small and particular to this mod: a ring that slows blood drain, a pendant that holds one bottle of blood for a sip in need, a crucifix on a chain that wards at short range with no hand, a bandolier that carries bolts and flasks. Some work only for a vampire, some only for a human, and each boss drops rings of its own |
 | WORN-5 | Gifts stay fair. An accessory carries one gift, two of the same accessory give it once, and no gift removes a weakness (WEAK-1 to WEAK-10) or lets a vampire walk in the sun |
 | WORN-6 | Accessories, their slots, gifts, numbers and where each is found are data |
@@ -726,12 +730,13 @@ Some of those who survive a player do not forget them.
 
 | ID | Requirement |
 |---|---|
-| FACT-1 | Every player is a vampire or a human. Humans earn hunter skills; vampires earn bloodline skills |
-| FACT-2 | Combat between players follows the server's PvP setting. With PvP on, vampires and humans can fight and bite |
+| FACT-1 | Every player is a vampire or a human. A human who joins the guild is a hunter and earns hunter skills (HUNT-10). Vampires earn bloodline skills |
+| FACT-2 | Combat between players follows the server's PvP setting. With PvP on, vampires and humans can fight and bite. A duel for a house is fought whatever the setting (HOUSE-8) |
 | FACT-3 | A player's faction is shown in the player list only if the server turns it on. It is off by default |
 | FACT-4 | Otherwise, vampires, humans and sick players are told apart only by what other players can see: eyes, being weakened, effects, a flinch (FACT-5) and a mirror (FACT-6). Nothing else gives a vampire player away to a human (NAME-3) |
 | FACT-5 | A vampire, player or mob, flinches for a moment when it first comes to the edge of the reach of garlic or a crucifix (WEAK-1 to WEAK-4), before it is weakened enough to stoop (WEAK-8) |
 | FACT-6 | A hand mirror is crafted from glass and a gold ingot. Used on a player or a mob nearby, it opens a small framed glass for its user that shows the one it was raised at, or an empty frame if they are a vampire. The one it was raised at sees and hears it raised |
+| FACT-7 | Choosing a side is a moment: turning into a vampire (TURN-5) and being sworn into the guild (HUNT-10). A short ceremony plays where the player stands. For a turning, their heartbeat stops, the light about them sinks to the colours of night and a bell tolls. For an oath, the Guild Master raises a crucifix, the hunters present salute and a horn sounds. The player sees it as a cutscene, in third person, the view circling them for a few seconds, and it ends on a card that names what they have become. They cannot act or be hurt while it plays, it never flashes, and a client option skips the camera. Players near see and hear the ceremony, but a human sees no more of a turning than TURN-5 shows. Each gives its journal (GUIDE-2) and an advancement (ADV-3, ADV-48) |
 
 **Enforcement:** server.
 
@@ -748,13 +753,13 @@ Some of those who survive a player do not forget them.
 | CFG-5 | Options cover every area of the mod, as the table below lists |
 | CFG-6 | A settings screen through Mod Menu shows the same server options and shares their validation with the commands |
 | CFG-7 | An option that only changes what one player sees, such as gore, is a client setting saved on that player's device. Every player can change it on the settings screen, whatever their operator level |
-| CFG-8 | Operators can turn, cure, set the points, stage and rank and reset the bloodlines and paths of any player, read and set any vampire's notoriety (INQ-1), disband any house, and release any human familiar |
+| CFG-8 | Operators can turn, cure, swear in, set the points, stage and rank and reset the bloodlines and paths of any player, read and set any vampire's notoriety (INQ-1), disband any house, and release any human familiar |
 
 Every number this document calls a default, a setting or tunable is an option here.
 
 | Area | Options |
 |---|---|
-| Turning and sickness | The bat's turn chance, the blood a turning bite costs, sickness length, how fast old blood refills, and whether players can turn players |
+| Turning and sickness | The turn chance of a turning bite and of a bat's bite, the blood a turning bite costs, sickness length, how fast old blood refills, and whether players can turn players |
 | Sun and weaknesses | Sun damage, how long a parasol lasts, garlic and crucifix ranges, stake and silver damage, the damage, hits, time and weakening of each weapon coating, and the strength, time, radius and cloud time of a garlic bomb |
 | Blood and feeding | Blood drain and blood values, the drain while levitating and in bat form, flying and at a sprint, how fast starving weakens and hurts and how much it takes from night gifts and bare hands, the damage from bringing up food or potions, how much a lancet hurts, feeding range, and the health below which a finisher bite opens |
 | Being a vampire | The downed and escape times, hardcore vampire deaths, and the nights, blood and gifts of each stage |
@@ -820,6 +825,7 @@ The mod has its own tab, lined with tufted burgundy leather and brass studs. It 
 | ADV-44 | Last Of The Line | Ending the Eldest |
 | ADV-45 | Inquire Within | Draining the Grand Inquisitor |
 | ADV-46 | Tried And Tested | Completing a trial |
+| ADV-48 | Sworn In | Joining the guild |
 
 | ID | Requirement |
 |---|---|
@@ -830,14 +836,23 @@ The mod has its own tab, lined with tufted burgundy leather and brass studs. It 
 | ADV-25 | An advancement earned in steps shows its progress: Strings Attached counts the strings weakening you at once, and Old Blood counts bloodlines chosen |
 | ADV-26 | Icons use the mod's own items where one fits. A vampire lord counts for Lord Of The Manner by being in the `nightborn:vampire_lords` entity tag |
 | ADV-27 | Names may be tuned, but each stays short, clever and in plain English |
-| ADV-47 | The vampire advancements ADV-28 to ADV-37 and ADV-45 branch from No Reflection On You, except Something In The Blood, which branches from House Call. The hunter advancements ADV-39 to ADV-42 and ADV-44 branch from Stake Holder. Nothing Personal, Dressed To The Nines and Tried And Tested branch from the root. Older Than Dirt, Full House, Master Of The Hunt, Last Of The Line and Inquire Within are challenges, and Nothing To See Here and Smoke And Mirrors stay hidden until earned |
-| CHAL-1 | Each side has three trials on offer at a time, drawn from a list and changed every 7 in-game days by default. A vampire reads theirs in their journal (GUIDE-3) and a hunter takes theirs from a Guild Master (GUILD-3). A trial is a feat with a condition, such as feeding unseen in a warded village or clearing a house by day without waking it, and pays skill experience once. Trials are data |
-| CHAL-2 | A mastery feat is a hard deed done once, such as ending a boss in no armour, reaching ancient without ever being staked or clearing a mountain castle alone. Each gives a title the player may show after their name (NAME-12) and a trophy block of its own. Feats are data |
+| ADV-47 | The vampire advancements ADV-28 to ADV-37 and ADV-45 branch from No Reflection On You, except Something In The Blood, which branches from House Call. Sworn In branches from Stake Holder and is a goal, and the hunter advancements ADV-39 to ADV-42 and ADV-44 branch from it. Nothing Personal, Dressed To The Nines and Tried And Tested branch from the root. Older Than Dirt, Full House, Master Of The Hunt, Last Of The Line and Inquire Within are challenges, and Nothing To See Here and Smoke And Mirrors stay hidden until earned |
+
+**Enforcement:** server.
+
+### 5.25 Take On Trials And Feats
+
+**Actor:** Any player.
+
+| ID | Requirement |
+|---|---|
+| CHAL-1 | Each side has three trials on offer at a time, drawn from a list and changed every 7 in-game days by default. A vampire reads theirs in their journal (GUIDE-3) and a hunter takes theirs from a Guild Master (GUILD-3). A trial is a feat with a condition, such as feeding on three villagers in one night unseen or clearing a house by day without waking it, and pays skill experience once, and some pay an accessory as well (WORN-3). Trials are data |
+| CHAL-2 | A mastery feat is a hard deed done once, such as ending a boss in no armour, reaching ancient without ever being staked or clearing a mountain castle alone. Each gives a title the player may show after their name (NAME-12) and a trophy block of its own, and some an accessory as well (WORN-3). Feats are data |
 | CHAL-3 | The first player on a server to reach ancient, to reach Master, to end the Eldest and to drain the Grand Inquisitor is recorded, and the deed is announced to everyone. A vampire's is announced without their name unless the server shows factions (FACT-3) |
 
 **Enforcement:** server.
 
-### 5.25 Summon The Eldest
+### 5.26 Summon The Eldest
 
 **Actor:** Human, hunter, vampire.
 
@@ -850,13 +865,13 @@ The Eldest is among the oldest vampires there are, with every power of every blo
 | RITE-3 | The ritual summons the Eldest beside the altar: a vampire, always a man, crowned and robed, with every skill in the vampire tree, all three bloodlines at once. It does not fight, move or live as other vampires do (HOME-15 to HOME-17): it fights only as RITE-9 to RITE-16 say. It is a boss for MIND-4. Its health grows with the number of players near when it appears, by a share for each player after the first that is a server setting (CFG-5) |
 | RITE-4 | Only a stake or the sun ends the Eldest (CORE-7, CORE-8). It never escapes from its arena (RITE-9). When its last phase (RITE-10) is beaten it is downed, and its bar says so. Hunters then have a short time to stake it. If nobody does, it rises again with a share of its last phase's health. The time and the share are server settings (CFG-5) |
 | RITE-5 | The ritual drinks the chalice dry when the Eldest appears and leaves the chalice on the altar. Breaking the altar during the build-up stops the ritual and drops the altar and its chalice, and the blood spills as from any broken chalice (DECOR-3). The altar can be used again each time its chalice is filled, so the fight can be repeated. An altar from an older world, crafted without relics, works the same way, and drops any relics left on it as items when its chunk first loads |
-| RITE-6 | Ending the Eldest gives a large number of hunter points to every human who took part in the fight by striking it at least once, and loot found nowhere else (RITE-12). A summoned Eldest and a mountain castle's Eldest give the same points and roll one shared loot table |
+| RITE-6 | Ending the Eldest gives a large number of hunter points to every hunter who took part in the fight by striking it at least once, and loot found nowhere else (RITE-12). A summoned Eldest and a mountain castle's Eldest give the same points and roll one shared loot table |
 | RITE-7 | The Eldest attacks humans on sight, hungry or not, and ignores vampire players unless they strike it (HOME-11). Vampire players can fight on either side as the PvP setting allows (FACT-2). A vampire can start the ritual too, and the Eldest still comes, but it turns on the vampire who called it: it says a line of outrage, shown in chat under its name to everyone near, and treats that vampire as it treats a human. Its lines are data and are translated (ACC-5) |
 | RITE-8 | The Eldest is not the castle's vampire lord (HOME-7). It appears only through the ritual and in mountain castles (HOME-23) |
 | RITE-9 | The Eldest fights in an arena. The ritual seals a circle round the altar with a wall of dark red fog that is never still: it ripples, beats like a heart and runs slowly through blood red, violet and near black, and it stirs harder while a fight is on. It changes smoothly and never flashes. A mountain castle's Eldest has the room it keeps to. The Eldest never leaves its arena, targets nobody outside it and cannot be hurt from outside it, nor by fire, lava, falls and the like, which a damage type tag lists. Its boss bar and its music (RITE-13) reach only players inside. The wall lets anyone walk in and lets nobody out: a player inside who crosses it, on foot, mounted, thrown or by any other means, is put back where they last stood inside. A player leaves only by dying or when the Eldest is ended. The wall holds only those the Eldest attacks on sight (RITE-7), so not vampires it ignores or players in creative mode, and it holds nobody while the Eldest sleeps. When no living player has been inside for a short time, however far away they went, the Eldest returns to its first phase at full health and forgets who fought it. The wall falls when the Eldest is ended. The size of each arena and the empty time are server settings (CFG-5) |
 | RITE-10 | The fight has three phases, each with its own share of the Eldest's health, and the bar names the phase and shows what is left of it. No blow carries past the end of a phase, not even a stake. Only the sun does. At the end of a phase the Eldest steps back to where the fight began, roars under a bolt of lightning, throws back everyone close and cannot be hurt while it changes. It comes out of each change stronger: better armoured, harder hitting, faster and visibly larger. The Court is a duel on foot: chains of blows a shield stops, a lunge along a marked line, two lesser vampires called to its side for a while, and a gaze that roots one hunter to the spot for a few seconds unless they break its line of sight first. The Beast takes to the air and circles the arena out of a blade's reach, so hunters need bows and bolts, or something that weakens a vampire, which keeps it on the ground. It dives onto a marked spot, sends a swarm down a marked line, screeches a mark under every hunter, and after each dive stays on the ground for a moment, open to a blade, before it rises again. The Blood is the Eldest enraged: larger again, its eyes blazing, growling. It steps through shadow to strike a marked spot, leaves pools of blood that hurt to stand in, uses the gaze and the dive, and drains a hunter to heal itself until enough blows break the drain. In the Beast and the Blood it can also call a ward of vampire bats, each outlined so it can be found: while one lives the Eldest takes no harm. Keepers and called vampires go when their time is up, when the fight ends and when the world is loaded again. Each phase also has vampire powers among its attacks, announced like any other: the Court vanishes and quickens itself, the Beast quickens itself and looses bats, and the Blood vanishes, raises grave fog and summons a familiar. Phases, attacks and their numbers are data |
 | RITE-11 | Every attack and every state of RITE-10 can be read at once. Each attack has a pose and a sound before it lands, and one that hits the ground has a mark on the floor that shows exactly where. The mark is drawn as a model, not as particles, so it shows on any particle setting (ACC-1). An attack hurts only those still in its mark, in its reach or in its line of sight when it lands. The bar turns blue and says the Eldest is warded while its keepers live, and green and says it is feeding while it drains. A guarded blow rings like a shield. Each phase also looks different at a glance. The Court stands and walks like a king with empty hands and its wings folded on its back. The Beast hunches, opens its wings as it changes, spreads them wide for that phase only and beats them when it flies. The Blood folds them away again as it changes, stands tall with eyes and veins that blaze, and draws the Blade of the Eldest, the same blade and the same crown, mantle, greaves and boots it can drop (RITE-12). It rises from the floor when the ritual summons it, roars and changes shape between phases, and has its own pose for a guard, a break away, taking off, landing and the moment its ward falls. Which clip, form and weapon each phase uses is data |
-| RITE-12 | The Eldest's loot is one loot table. Every kill gives treasure and the ash of the Eldest, which turns a silver sword, axe or stake into ashen silver at a smithing table: tougher and sharper, and still silver to a vampire. Very rarely it drops the Blade of the Eldest, which gives back a share of each blow as health, or one of four pieces of its armour, as strong as netherite. Wearing all four with the blade in hand steals more life and adds health. Rarely it drops one of two armour trim templates. Now and then it drops its skull, a trophy block, or the music disc of its last phase. Once in a great while it drops a tame vampire bat, which circles its owner, cannot be hurt and returns to their pack when they use it while sneaking. The shares and the health are server settings (CFG-5) and the chances are loot table data |
+| RITE-12 | The Eldest's loot is one loot table. Every kill gives treasure and the ash of the Eldest, which turns a silver sword, axe or stake into ashen silver at a smithing table: tougher and sharper, and still silver to a vampire. Very rarely it drops the Blade of the Eldest, which gives back a share of each blow as health, or one of four pieces of its armour, as strong as netherite. Wearing all four with the blade in hand steals more life and adds health. Rarely it drops one of two armour trim templates or one of its rings (WORN-4). Now and then it drops its skull, a trophy block, or the music disc of its last phase. Once in a great while it drops a tame vampire bat, which circles its owner, cannot be hurt and returns to their pack when they use it while sneaking. The shares and the health are server settings (CFG-5) and the chances are loot table data |
 | RITE-13 | The fight has its own music: one piece for the first two phases and another for the last. It plays only for players inside the arena while a fight is on, in place of any other music, and stops when they leave or the fight ends. While a fight is on, players inside also hear something now and then from a list each phase carries: a tolling bell, an organ, a scream, laughter, or a bolt of harmless lightning on the wall, whose thunder carries beyond it. These come well apart, so they unsettle without wearing thin, and how often is data |
 | RITE-14 | Every rule of RITE-9 to RITE-13, RITE-15 and RITE-16 holds for both the summoned Eldest and a mountain castle's Eldest |
 | RITE-15 | The Eldest defends itself. No single blow takes more than a set amount of its health, and that amount falls each phase. After a few blows in quick succession it guards the next one, takes nothing and throws the attacker back if they stand close. When it has taken enough damage in a short time it breaks away to open ground inside the arena. After a guard or a break away it answers at once with one of that phase's counter attacks that can reach its target. A blow from a hunter it is not facing may turn it on that hunter. It will not ride in a boat or a minecart. Every number is data |
@@ -866,7 +881,7 @@ The Eldest is among the oldest vampires there are, with every power of every blo
 
 **Enforcement:** server.
 
-### 5.26 Face The Grand Inquisitor
+### 5.27 Face The Grand Inquisitor
 
 **Actor:** Vampire, human.
 
@@ -887,15 +902,15 @@ The Grand Inquisitor is the head of the hunters' guild: an old villager, a zealo
 | INQ-11 | Every attack and every state can be read at once, as RITE-11 says for the Eldest: a pose and a sound before each attack, a mark drawn as a model for each one that hits the ground, and harm only to those still in its mark, reach or line of sight when it lands. The bar turns green and says he is at prayer while he heals. Each phase also looks different at a glance. The Hunt wears a long coat and a wide hat and carries a crossbow. The Faith bares his head and carries the great crucifix and a flask. The Pyre casts the crucifix aside and draws the greatsword, the same sword, hat, coat, greaves and boots he can drop (INQ-15). He has his own pose for arriving, each change of phase, a guard, a break away, kneeling in prayer, being downed and rising again. Which clip and weapon each phase uses is data |
 | INQ-12 | He defends himself as RITE-15 says and moves as RITE-16 says, with his own numbers and stances. The Hunt keeps well back from his target, the Faith holds a few paces off, and the Pyre closes to a blade's length. Stances are data |
 | INQ-13 | He dies like no hunter. When his last phase is beaten he is downed: he falls to his knees and his bar says so. Vampires then have a short time to feed on him, and a bite held until he is drained ends him. It is a feeding bite whatever the vampire chose (TURN-8), his blood is of player quality, and he never resists. If nobody drains him he rises again with a share of his last phase's health. A human he turned on (INQ-6) ends him with any blow while he is downed, which gives the loot of INQ-15, pays the vampires who struck him as INQ-15 says and the human nothing, and changes nobody's notoriety. The time, how long the drain takes and the share are server settings (CFG-5) |
-| INQ-14 | Draining him sets the notoriety of every vampire who struck him back to zero and ends the hunt, so the fight can be earned again. A vampire who dies in the fight, staked or burned by the sun, loses a share of their notoriety, half by default, and a staked one pays the usual penalty as well (SKILL-6). The fight also ends when every player he attacks on sight (INQ-6) is dead. He then leaves, the wall falls and the hunt he came on is over: a vampire whose notoriety is still past the threshold is hunted afresh, with new nights of warning and a new man (INQ-5). If instead the arena empties while such a player still lives, such as his quarry leaving the server, he leaves after a short time. On a hunt, the hunt stays on and the same man comes again the next nightfall, at full health in his first phase. After a ring of the bell he does not come back and the seal is spent. The share and the time are server settings (CFG-5) |
-| INQ-15 | Ending him gives a large number of vampire skill points to every vampire player who struck him at least once, and loot found nowhere else, from one loot table. Every kill gives treasure and the Inquisitor's mail, which lines a piece of gothic clothing (WEAR-1) at a smithing table: as strong as diamond, and keeping its look, dye and enchantments. Very rarely he drops the Inquisitor's Greatsword, which gives a vampire who wields it a share of each blow back as blood, or one of four pieces of his armour, the hat, coat, greaves and boots, as strong as netherite. A vampire wearing all four with the greatsword in hand gets more blood from each blow, holds more blood and loses it more slowly. Rarely he drops one of two armour trim templates. Now and then he drops his broken crucifix, a trophy block that wards no one, or the music disc of his last phase. Once in a great while he drops a tame hawk, which behaves as the Eldest's tame vampire bat does (RITE-12). The shares, the blood and the drain are server settings (CFG-5) and the chances are loot table data |
+| INQ-14 | Draining him sets the notoriety of every vampire who struck him back to zero and ends the hunt, so the fight can be earned again. A vampire who dies in the fight, staked or burned by the sun, loses a share of their notoriety, half by default, and a staked one pays the usual penalty as well (SKILL-6). The fight also ends when every player he attacks on sight (INQ-6) is dead. He then leaves, the wall falls and the hunt he came on is over: a vampire whose notoriety is still past the second threshold (INQ-1) is hunted afresh, with new nights of warning and a new man (INQ-5). If instead the arena empties while such a player still lives, such as his quarry leaving the server, he leaves after a short time. On a hunt, the hunt stays on and the same man comes again the next nightfall, at full health in his first phase. After a ring of the bell he does not come back and the seal is spent. The share and the time are server settings (CFG-5) |
+| INQ-15 | Ending him gives a large number of vampire skill points to every vampire player who struck him at least once, and loot found nowhere else, from one loot table. Every kill gives treasure and the Inquisitor's mail, which lines a piece of gothic clothing (WEAR-1) at a smithing table: as strong as diamond, and keeping its look, dye and enchantments. Very rarely he drops the Inquisitor's Greatsword, which gives a vampire who wields it a share of each blow back as blood, or one of four pieces of his armour, the hat, coat, greaves and boots, as strong as netherite. A vampire wearing all four with the greatsword in hand gets more blood from each blow, holds more blood and loses it more slowly. Rarely he drops one of two armour trim templates or one of his rings (WORN-4). Now and then he drops his broken crucifix, a trophy block that wards no one, or the music disc of his last phase. Once in a great while he drops a tame hawk, which behaves as the Eldest's tame vampire bat does (RITE-12). The shares, the blood and the drain are server settings (CFG-5) and the chances are loot table data |
 | INQ-16 | The fight has its own music: one piece for the Hunt and the Faith and another for the Pyre. It plays as RITE-13 says for the Eldest's, and players inside also hear something now and then from a list each phase carries: a tolling bell, a choir, a hunting horn, a hammer on a stake, or a prayer muttered close by. How often is data |
 
 **Not supported:** a hunt for a vampire mob; a Grand Inquisitor in a hunter camp or a hunter party; turning him, binding him as a thrall or hiring him; seeing a notoriety as a number.
 
 **Enforcement:** server.
 
-### 5.27 Know Them By Name
+### 5.28 Know Them By Name
 
 **Actor:** Any player, owner.
 
@@ -920,27 +935,27 @@ Vampire mobs, hunters, Guild Masters, the Grand Inquisitor, familiars and thrall
 
 **Enforcement:** server. The client draws the name tags and the dialogue, and sends the name the owner chose.
 
-### 5.28 Read The Journals
+### 5.29 Read The Journals
 
 **Actor:** Any player.
 
 | ID | Requirement |
 |---|---|
 | GUIDE-1 | The mod's guide is two journals, built on Patchouli, which the mod requires (COMPAT-1): the hunter's journal and the vampire's journal. Each has its own cover and pages in the mod's style (LINE-7) |
-| GUIDE-2 | A human gets the hunter's journal from the first Guild Master they deal with, and finds it in hunter camp loot. A vampire's journal lies beside every old blood font (TURN-9), and a player who turns without one is given it |
+| GUIDE-2 | A journal is given only when a player chooses a side (FACT-7): the hunter's journal when a human is sworn into the guild, and the vampire's journal when a player turns. Neither is found or crafted, and a player who loses theirs gets another from a Guild Master or an old blood font (TURN-9) |
 | GUIDE-3 | A journal fills in as its reader discovers things: an entry stays hidden until the advancement behind it is earned. It also shows what changes: a hunter's contracts in hand, and a vampire's trials on offer (CHAL-1) and nemeses (NEM-7) |
 | GUIDE-4 | Every page is translated into every shipped language (ACC-5) |
 
 **Enforcement:** the client draws the journals. The server decides what is unlocked.
 
-### 5.29 Give Orders With The Wheel
+### 5.30 Give Orders With The Wheel
 
 **Actor:** Owner, lord, human.
 
 | ID | Requirement |
 |---|---|
 | WHEEL-1 | Using someone a player leads or deals with opens the command wheel: a ring of that person's actions, each an icon with a label. The player points at one and lets go to choose it. An item in the hand that has a use of its own on them, such as a lancet, a name tag, emeralds for wages or a chalice for an invitation, does that instead |
-| WHEEL-2 | The wheel opens for a player's own thralls and familiars (MIND-6, FAM-1, FAM-4, FAM-6, FAM-9), for the NPC members and player members of their house (HOUSE-2, HOUSE-5, HOUSE-8, HOUSE-9), and for Guild Masters and hunters, where a human trades, takes contracts and trials, asks their rank and asks for news of the nearest house (GUILD-3). It shows only the actions that player may take |
+| WHEEL-2 | The wheel opens for a player's own thralls and familiars (MIND-6, FAM-1, FAM-4, FAM-6, FAM-9), for the NPC members and player members of their house and a younger vampire player a lord may invite (HOUSE-2, HOUSE-5, HOUSE-8, HOUSE-9), and for Guild Masters and hunters, where a human trades, joins the guild, takes contracts and trials, asks their rank and asks for news of the nearest house (GUILD-3, HUNT-10). It shows only the actions that player may take |
 | WHEEL-3 | The wheel is styled as the skill screens are (LINE-7). The server checks every action chosen from it (PERM-1) |
 
 **Enforcement:** server. The client draws the wheel and sends the choice.
@@ -955,7 +970,7 @@ A modified client is assumed. Hiding a control is never the enforcement of a rul
 |---|---|---|---|---|
 | Bite a creature | No | Yes | Yes | Yes, as a vampire |
 | Bite a player | No | Only with PvP on | Only with PvP on | Only with PvP on |
-| Earn and spend hunter points | Yes | No | No | Through CFG-8 |
+| Earn and spend hunter points | Once sworn into the guild | No | No | Through CFG-8 |
 | Earn and spend vampire points | No | Yes | Yes | Through CFG-8 |
 | Sleep in a coffin | No | Yes | Yes | Yes, as a vampire |
 | Break an unassigned coffin | Yes | Yes | Yes | Yes |
@@ -970,8 +985,9 @@ A modified client is assumed. Hiding a control is never the enforcement of a rul
 | Name a thrall or familiar in the naming dialogue | No | Only their own | Only their own | No |
 | Rename a vampire mob, hunter, Guild Master, familiar or thrall with a name tag | Yes | Yes | Yes | Yes |
 | Hurt a thrall or familiar | Yes | Yes | Yes | Yes |
-| Trade, take contracts and trials, or hold a rank with a Guild Master | Yes | No | No | Yes, as a human |
-| Found a house, and invite, order or release its members | No | Only as its lord | Only as its lord | Through CFG-8 |
+| Trade with a Guild Master | Yes | No | No | Yes, as a human |
+| Take contracts and trials, or hold a rank | Once sworn into the guild | No | No | Yes, as a hunter |
+| Found a house, and invite, order or release its members | No | Only as its lord | Only as its lord | Only to disband one (CFG-8) |
 | Challenge for a house | No | Only a member of the lord's stage or older | Only a member of the lord's stage or older | No |
 | Raise a hand mirror at someone | Yes | Yes | Yes | Yes |
 | Wear accessories | Yes | Yes | Yes | Yes |
@@ -1019,11 +1035,11 @@ There is no singleplayer mode in this mod. A single-player world is an integrate
 |---|---|
 | CS-1 | Two vampires feeding on one victim share its blood. Neither can take more than it has |
 | CS-2 | Two players using one coffin: the first lies down, the second is refused |
-| CS-8 | An owner breaking their assigned coffin while another vampire sleeps in it wakes the sleeper and frees the coffin once |
-| CS-9 | A coffin catching fire as a vampire lies down in it ends with the vampire awake and burning, never asleep in a burning coffin |
 | CS-3 | A victim drained and killed in the same tick by a vampire and another attacker dies once and drops loot once |
 | CS-4 | Two players filling Blood Bottles from one victim, by feeding or with a lancet, never create blood it did not have |
 | CS-5 | A player cured and turned in the same tick ends in one defined state: the cure wins if it landed before the sickness ran out |
+| CS-8 | An owner breaking their assigned coffin while another vampire sleeps in it wakes the sleeper and frees the coffin once |
+| CS-9 | A coffin catching fire as a vampire lies down in it ends with the vampire awake and burning, never asleep in a burning coffin |
 | CS-10 | Two vampires draining a downed Grand Inquisitor, or a drain and a blow that would each end him in the same tick, end him once: one loot roll, and one payment of points to each vampire who struck him |
 
 ### Per-Player State
@@ -1051,7 +1067,7 @@ There is no singleplayer mode in this mod. A single-player world is an integrate
 | ID | Requirement |
 |---|---|
 | SAFE-1 | No game mechanic duplicates or deletes any item the mod handles. Bottling blood, contracts and trades conserve items |
-| SAFE-2 | Blood is never created except by feeding (FEED-4), turning (TURN-5), respawning as the persistence grid says, a human bleeding themself with a lancet (GEAR-10), and the blows of the Inquisitor's Greatsword (INQ-15) |
+| SAFE-2 | Blood is never created except by feeding (FEED-4), turning (TURN-5), respawning as the persistence grid says, a human bleeding themself with a lancet (GEAR-10), and the blows of the Inquisitor's Greatsword (INQ-15) and of a weapon with Bloodletting (GEAR-11) |
 | SAFE-3 | A bad config file never stops a server starting (CFG-3, CFG-4) |
 | SAFE-4 | Every payload is size-limited and checked, including skill purchases, familiar orders and the names owners give (NAME-8) |
 | SAFE-5 | Skill experience and points are never created except by FEED-12, HUNT-1, HUNT-2, RITE-6, INQ-15, NEM-6, CHAL-1 and CFG-8 |
@@ -1097,7 +1113,8 @@ There is no singleplayer mode in this mod. A single-player world is an integrate
 | A hunter party, its temporary camp and the nights it has left | kept, except a party on the move that leaves the world (GUILD-7) | kept | not applicable | not applicable | kept to the last save |
 | Contracts in progress | not applicable | kept | kept | kept | kept to the last save |
 | Stage, nights lived and blood drunk | not applicable | kept | kept, except CORE-10 | kept, and nights do not count while offline | kept to the last save |
-| Rank, hunter paths and skill experience | not applicable | kept | kept, except SKILL-6 and CORE-10 | kept | kept to the last save |
+| Whether a human has joined the guild, and their rank | not applicable | kept | kept, except CORE-10 | kept | kept to the last save |
+| Hunter paths and skill experience | not applicable | kept | kept, except SKILL-6 and CORE-10 | kept | kept to the last save |
 | The power bar's slots, titles and feats | not applicable | kept | kept, except CORE-10 | kept | kept to the last save |
 | A house, its lord, members, name, crest and structure | kept | kept | passes on when the lord is staked (HOUSE-9) | kept | kept to the last save |
 | Old blood and how full it is | kept | kept | not applicable | not applicable | kept to the last save |
