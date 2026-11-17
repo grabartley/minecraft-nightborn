@@ -1,0 +1,16 @@
+{
+  "max_range": 32.0,
+  "weight": 3,
+  "cooldown_ticks": 120,
+  "tell_ticks": 22,
+  "tell_clip": "mesmerise",
+  "tell_sound": "minecraft:entity.phantom.swoop",
+  "clip": "hiss",
+  "sound": "minecraft:entity.bat.takeoff",
+  "zone": {
+    "radius": 2.5,
+    "anchor": "every_foe",
+    "damage": 8.0,
+    "knock": 0.6
+  }
+}

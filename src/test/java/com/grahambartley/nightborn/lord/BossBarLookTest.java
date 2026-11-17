@@ -46,6 +46,28 @@ class BossBarLookTest {
     assertEquals("The Eldest", ((Text) title.getArgs()[0]).getString());
   }
 
+  @ParameterizedTest(name = "warded {0}, feeding {1}: {2} {3}")
+  @CsvSource({
+    "true, false, BLUE, nightborn.boss.warded",
+    "true, true, BLUE, nightborn.boss.warded",
+    "false, true, GREEN, nightborn.boss.feeding",
+    "false, false, , "
+  })
+  @DisplayName("a warded or feeding boss says so on its bar, and warded comes first")
+  void state(
+      final boolean warded, final boolean feeding, final BossBar.Color color, final String key) {
+    final var look = BossBarLook.state(warded, feeding);
+    assertEquals(key == null, look.isEmpty());
+    look.ifPresent(
+        shown -> {
+          assertEquals(color, shown.color());
+          assertEquals(
+              key,
+              ((TranslatableTextContent) shown.title(Text.literal("The Eldest")).getContent())
+                  .getKey());
+        });
+  }
+
   @ParameterizedTest(name = "{0} of {1} -> {2}")
   @CsvSource({
     "150, 150, 1.0",

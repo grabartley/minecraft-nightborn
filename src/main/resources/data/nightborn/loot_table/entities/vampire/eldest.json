@@ -164,7 +164,7 @@
       "entries": [
         {
           "type": "minecraft:empty",
-          "weight": 176
+          "weight": 376
         },
         {
           "type": "minecraft:item",
@@ -198,17 +198,17 @@
       "entries": [
         {
           "type": "minecraft:empty",
-          "weight": 84
+          "weight": 90
         },
         {
           "type": "minecraft:item",
           "name": "nightborn:fang_armor_trim_smithing_template",
-          "weight": 8
+          "weight": 5
         },
         {
           "type": "minecraft:item",
           "name": "nightborn:sigil_armor_trim_smithing_template",
-          "weight": 8
+          "weight": 5
         }
       ]
     },
@@ -217,17 +217,17 @@
       "entries": [
         {
           "type": "minecraft:empty",
-          "weight": 75
+          "weight": 67
         },
         {
           "type": "minecraft:item",
           "name": "nightborn:eldest_skull",
-          "weight": 15
+          "weight": 8
         },
         {
           "type": "minecraft:item",
           "name": "nightborn:music_disc_eldest",
-          "weight": 10
+          "weight": 5
         }
       ]
     },
@@ -236,7 +236,7 @@
       "entries": [
         {
           "type": "minecraft:empty",
-          "weight": 249
+          "weight": 499
         },
         {
           "type": "minecraft:item",

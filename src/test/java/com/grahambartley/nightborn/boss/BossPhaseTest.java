@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import com.google.gson.JsonParser;
 import com.mojang.serialization.JsonOps;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import net.minecraft.entity.boss.BossBar;
 import net.minecraft.util.Identifier;
@@ -33,7 +34,9 @@ class BossPhaseTest {
   }
 
   @Test
-  @DisplayName("a phase reads its colour, powers, attacks and music, with plain defaults")
+  @DisplayName(
+      "a phase reads its colour, powers, attacks, music, body, defence, voice and flight, with"
+          + " plain defaults")
   void reads() {
     final BossPhase full =
         BossPhase.CODEC
@@ -43,7 +46,16 @@ class BossPhaseTest {
                     "{\"name\":\"blood\",\"health\":35,\"color\":\"purple\",\"gap_ticks\":30,"
                         + "\"powers\":[\"nightborn:occult/grave_fog\"],"
                         + "\"attacks\":[\"nightborn:blood_pools\"],"
-                        + "\"music\":\"nightborn:music.boss.eldest_final\"}"))
+                        + "\"music\":\"nightborn:music.boss.eldest_final\","
+                        + "\"body\":{\"attributes\":{\"minecraft:generic.armor\":16},"
+                        + "\"max_hit\":10,\"glowing\":true},"
+                        + "\"defence\":{\"guard_hits\":3,\"window_ticks\":80,"
+                        + "\"break_damage\":30,\"break_away\":10,\"guard_knock\":1.8,"
+                        + "\"retarget_chance\":50,\"counters\":[\"nightborn:blood_step\"]},"
+                        + "\"voice\":{\"sound\":\"minecraft:entity.warden.angry\","
+                        + "\"every_ticks\":100,\"pitch\":0.6},"
+                        + "\"flight\":{\"height\":6,\"radius\":9,\"speed\":0.3,"
+                        + "\"ground_ticks\":80}}"))
             .getOrThrow();
     assertEquals(
         new BossPhase(
@@ -53,14 +65,30 @@ class BossPhaseTest {
             List.of(Identifier.of("nightborn", "occult/grave_fog")),
             List.of(Identifier.of("nightborn", "blood_pools")),
             30,
-            Optional.of(Identifier.of("nightborn", "music.boss.eldest_final"))),
+            Optional.of(Identifier.of("nightborn", "music.boss.eldest_final")),
+            new PhaseBody(Map.of(Identifier.ofVanilla("generic.armor"), 16.0), 10.0F, true),
+            new PhaseDefence(
+                3, 80, 30.0F, 10.0F, 1.8F, 50, List.of(Identifier.of("nightborn", "blood_step"))),
+            Optional.of(new PhaseVoice(Identifier.ofVanilla("entity.warden.angry"), 100, 0.6F)),
+            Optional.of(new PhaseFlight(6.0F, 9.0F, 0.3F, 80))),
         full);
     final BossPhase plain =
         BossPhase.CODEC
             .parse(JsonOps.INSTANCE, JsonParser.parseString("{\"name\":\"court\",\"health\":30}"))
             .getOrThrow();
     assertEquals(
-        new BossPhase("court", 30, BossBar.Color.RED, List.of(), List.of(), 60, Optional.empty()),
+        new BossPhase(
+            "court",
+            30,
+            BossBar.Color.RED,
+            List.of(),
+            List.of(),
+            60,
+            Optional.empty(),
+            PhaseBody.PLAIN,
+            PhaseDefence.NONE,
+            Optional.empty(),
+            Optional.empty()),
         plain);
   }
 
@@ -76,6 +104,10 @@ class BossPhaseTest {
             List.of(Identifier.of("nightborn", "core/vanish")),
             List.of(),
             60,
+            Optional.empty(),
+            PhaseBody.PLAIN,
+            PhaseDefence.NONE,
+            Optional.empty(),
             Optional.empty());
     assertEquals(casts, phase.casts(Identifier.of(power)));
     assertEquals("nightborn.boss.phase.court", phase.translationKey());

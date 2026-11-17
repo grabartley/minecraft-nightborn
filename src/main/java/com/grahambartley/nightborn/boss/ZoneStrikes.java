@@ -10,7 +10,7 @@ import net.minecraft.util.math.Box;
 public final class ZoneStrikes {
 
   static final double ZONE_HEIGHT = 3.0;
-  static final int FLOOR_SEARCH = 6;
+  static final int FLOOR_SEARCH = 16;
 
   private ZoneStrikes() {}
 

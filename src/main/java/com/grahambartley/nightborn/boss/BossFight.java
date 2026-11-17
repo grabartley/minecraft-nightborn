@@ -3,6 +3,7 @@ package com.grahambartley.nightborn.boss;
 import com.grahambartley.nightborn.downed.Downed;
 import com.grahambartley.nightborn.downed.DownedState;
 import com.grahambartley.nightborn.landing.Landing;
+import com.grahambartley.nightborn.levitation.Levitation;
 import com.grahambartley.nightborn.mob.BossVampireEntity;
 import com.grahambartley.nightborn.network.BossArenaPayload;
 import com.grahambartley.nightborn.smoke.SmokeParticles;
@@ -12,6 +13,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -29,10 +31,15 @@ public final class BossFight {
   static final String CHANGE_KEY = "BossChangeUntil";
   static final String STAKING_KEY = "BossStaking";
   static final String OCCUPIED_KEY = "BossLastOccupied";
+  static final String START_KEY = "BossStart";
 
   private final PhaseTrack phases = new PhaseTrack();
   private final ArenaRoll roll = new ArenaRoll();
   private final BossAttacks attacks = new BossAttacks();
+  private final HitLog hits = new HitLog();
+  @Nullable private Vec3d start;
+  private long phaseBegan;
+  private boolean flying;
   @Nullable private Arena arena;
   private long changeUntil;
   private boolean staking;
@@ -55,6 +62,22 @@ public final class BossFight {
     return attacks.busy() || changing(now);
   }
 
+  public boolean untouchable(final long now) {
+    return changing(now) || attacks.warded(now);
+  }
+
+  public boolean warded(final long now) {
+    return attacks.warded(now);
+  }
+
+  public boolean draining(final long now) {
+    return attacks.draining(now);
+  }
+
+  public boolean glowing(final Optional<BossFightPlan> plan) {
+    return plan.map(p -> p.phase(phases.index()).body().glowing()).orElse(false);
+  }
+
   public boolean changing(final long now) {
     return now < changeUntil;
   }
@@ -75,15 +98,52 @@ public final class BossFight {
     return plan.map(
             p ->
                 PhaseTrack.cap(
-                    amount,
+                    p.phase(phases.index()).body().limit(amount, finishing),
                     boss.getHealth(),
                     floorHealth(boss, p),
                     phases.last(p.phases().size()) || finishing))
         .orElse(amount);
   }
 
+  public boolean guards(
+      final BossVampireEntity boss,
+      final Optional<BossFightPlan> plan,
+      @Nullable final Entity attacker) {
+    final long now = boss.getWorld().getTime();
+    final PhaseDefence defence =
+        plan.map(p -> p.phase(phases.index()).defence()).orElse(PhaseDefence.NONE);
+    if (attacker == null
+        || defence.before(hits.hits(now, defence.windowTicks())) != PhaseDefence.Reaction.GUARD) {
+      return false;
+    }
+    hits.clear();
+    BossReactions.guard(boss, attacker, defence);
+    attacks.counter(boss, defence.counters(), foes(boss), now);
+    return true;
+  }
+
   public void hurt(
-      final BossVampireEntity boss, final Optional<BossFightPlan> plan, final float amount) {
+      final BossVampireEntity boss,
+      final Optional<BossFightPlan> plan,
+      @Nullable final Entity attacker,
+      final float amount) {
+    final long now = boss.getWorld().getTime();
+    final PhaseDefence defence =
+        plan.map(p -> p.phase(phases.index()).defence()).orElse(PhaseDefence.NONE);
+    hits.add(now, amount);
+    if (attacker instanceof LivingEntity foe
+        && boss.canTarget(foe)
+        && defence.retargets(foe == boss.getTarget(), boss.getRandom().nextInt(100))) {
+      boss.setTarget(foe);
+    }
+    if (attacker != null
+        && !attacks.busy()
+        && defence.after(hits.damage(now, defence.windowTicks()))
+            == PhaseDefence.Reaction.BREAK_AWAY) {
+      hits.clear();
+      BossReactions.breakAway(boss, attacker, defence, arena);
+      attacks.counter(boss, defence.counters(), foes(boss), now);
+    }
     attacks.hurt(amount);
     plan.filter(
             p ->
@@ -109,6 +169,10 @@ public final class BossFight {
       return;
     }
     final long now = world.getTime();
+    if (start == null) {
+      start = boss.getPos();
+    }
+    plan.ifPresent(p -> embody(boss, p, now));
     final DownedState downed = Downed.state(boss);
     final boolean engaged =
         FightRules.engaged(
@@ -132,6 +196,7 @@ public final class BossFight {
       return;
     }
     keepIn(boss);
+    fly(boss, plan, engaged, downed != null, now);
     if (finishing(boss, plan, rules, downed) || changing(now) || plan.isEmpty()) {
       return;
     }
@@ -218,6 +283,63 @@ public final class BossFight {
     return true;
   }
 
+  public boolean flying() {
+    return flying;
+  }
+
+  private void fly(
+      final BossVampireEntity boss,
+      final Optional<BossFightPlan> plan,
+      final boolean engaged,
+      final boolean downed,
+      final long now) {
+    final Optional<PhaseFlight> flight = plan.flatMap(p -> p.phase(phases.index()).flight());
+    final boolean airborne =
+        flight
+            .map(
+                f ->
+                    f.airborne(
+                        engaged && boss.getTarget() != null,
+                        downed || changing(now),
+                        attacks.moving(),
+                        now - attacks.landedAt()))
+            .orElse(false);
+    if (airborne) {
+      boss.setNoGravity(true);
+      Levitation.start(boss);
+      boss.setVelocity(flight.get().steer(boss.getPos(), flight.get().spot(arena, now)));
+      boss.velocityModified = true;
+      boss.fallDistance = 0.0F;
+    } else if (flying) {
+      boss.setNoGravity(false);
+      Levitation.setDown(boss);
+    }
+    flying = airborne;
+  }
+
+  private List<ServerPlayerEntity> foes(final BossVampireEntity boss) {
+    return boss.getWorld() instanceof ServerWorld world && arena != null
+        ? world.getPlayers(
+            player ->
+                player.isAlive()
+                    && arena.holds(player.getX(), player.getY(), player.getZ())
+                    && boss.canTarget(player))
+        : List.of();
+  }
+
+  private void embody(final BossVampireEntity boss, final BossFightPlan plan, final long now) {
+    final int index = phases.index();
+    final double progress =
+        changing(now) && plan.changeTicks() > 0
+            ? 1.0 - (double) (changeUntil - now) / plan.changeTicks()
+            : 1.0;
+    PhaseBodies.apply(boss, plan, index, progress);
+    plan.phase(index)
+        .voice()
+        .filter(voice -> boss.getTarget() != null && voice.speaksAt(now - phaseBegan))
+        .ifPresent(voice -> boss.playSound(SoundEvent.of(voice.sound()), ROAR, voice.pitch()));
+  }
+
   private void keepIn(final BossVampireEntity boss) {
     final Vec3d pos = boss.getPos();
     if (arena.holds(pos.x, pos.y, pos.z)) {
@@ -233,7 +355,11 @@ public final class BossFight {
   private void change(final BossVampireEntity boss, final BossFightPlan plan) {
     phases.advance(plan.phases().size());
     changeUntil = boss.getWorld().getTime() + plan.changeTicks();
+    phaseBegan = boss.getWorld().getTime();
     attacks.cancel();
+    hits.clear();
+    BossReactions.returnTo(boss, start);
+    BossReactions.strike(boss);
     boss.getNavigation().stop();
     boss.showPower(plan.changeClip());
     boss.playSound(SoundEvent.of(plan.changeSound()), ROAR, 0.8F);
@@ -263,7 +389,9 @@ public final class BossFight {
   private void reset(final BossVampireEntity boss) {
     phases.reset();
     attacks.cancel();
+    hits.clear();
     changeUntil = 0L;
+    BossReactions.returnTo(boss, start);
     boss.setTarget(null);
     boss.getNavigation().stop();
     boss.setHealth(boss.getMaxHealth());
@@ -274,6 +402,9 @@ public final class BossFight {
     nbt.putLong(CHANGE_KEY, changeUntil);
     nbt.putBoolean(STAKING_KEY, staking);
     nbt.putLong(OCCUPIED_KEY, lastOccupied);
+    if (start != null) {
+      nbt.put(START_KEY, BossReactions.list(start));
+    }
     if (arena != null) {
       arena.write(nbt);
     }
@@ -284,6 +415,7 @@ public final class BossFight {
     changeUntil = nbt.getLong(CHANGE_KEY);
     staking = nbt.getBoolean(STAKING_KEY);
     lastOccupied = nbt.contains(OCCUPIED_KEY) ? nbt.getLong(OCCUPIED_KEY) : NEVER;
+    start = BossReactions.vec(nbt, START_KEY).orElse(start);
     arena = Arena.read(nbt).orElse(arena);
   }
 }

@@ -776,5 +776,7 @@
   "nightborn.setting.ritual.setLifeSteal": "Robo de vida del conjunto completo (%)",
   "nightborn.setting.ritual.setLifeSteal.tooltip": "Parte del daño de cada golpe que devuelve la hoja cuando se llevan con ella las cuatro piezas de armadura",
   "nightborn.setting.ritual.setHealth": "Vida del conjunto completo",
-  "nightborn.setting.ritual.setHealth.tooltip": "Puntos de vida adicionales que añade el conjunto completo del Más Antiguo"
+  "nightborn.setting.ritual.setHealth.tooltip": "Puntos de vida adicionales que añade el conjunto completo del Más Antiguo",
+  "nightborn.boss.warded": "%s está protegido: acaba con sus guardianes",
+  "nightborn.boss.feeding": "%s se alimenta: golpéalo"
 }

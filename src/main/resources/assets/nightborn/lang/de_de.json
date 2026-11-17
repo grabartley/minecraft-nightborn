@@ -776,5 +776,7 @@
   "nightborn.setting.ritual.setLifeSteal": "Lebensraub des vollen Sets (%)",
   "nightborn.setting.ritual.setLifeSteal.tooltip": "Anteil des Schadens jedes Hiebs, den die Klinge zurückgibt, wenn alle vier Rüstungsteile dazu getragen werden",
   "nightborn.setting.ritual.setHealth": "Leben des vollen Sets",
-  "nightborn.setting.ritual.setHealth.tooltip": "Zusätzliche Lebenspunkte durch das volle Set des Ältesten"
+  "nightborn.setting.ritual.setHealth.tooltip": "Zusätzliche Lebenspunkte durch das volle Set des Ältesten",
+  "nightborn.boss.warded": "%s ist geschützt: erschlage die Wächter",
+  "nightborn.boss.feeding": "%s nährt sich: schlag zu"
 }

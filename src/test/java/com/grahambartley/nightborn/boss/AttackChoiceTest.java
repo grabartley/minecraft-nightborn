@@ -30,6 +30,8 @@ class AttackChoiceTest {
             Optional.of(Identifier.of("nightborn", "lord/rally")),
             Optional.empty(),
             Optional.empty(),
+            Optional.empty(),
+            Optional.empty(),
             Optional.empty()),
         readyAt);
   }

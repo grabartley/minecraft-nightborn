@@ -1,0 +1,16 @@
+{
+  "max_range": 32.0,
+  "weight": 2,
+  "cooldown_ticks": 900,
+  "tell_ticks": 24,
+  "tell_clip": "mesmerise",
+  "tell_sound": "minecraft:entity.evoker.prepare_summon",
+  "clip": "hiss",
+  "sound": "minecraft:block.beacon.activate",
+  "ward": {
+    "entity": "nightborn:vampire_bat",
+    "count": 3,
+    "spread": 3.0,
+    "ticks": 500
+  }
+}

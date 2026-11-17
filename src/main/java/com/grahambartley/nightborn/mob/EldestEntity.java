@@ -10,6 +10,8 @@ import com.grahambartley.nightborn.boss.FightRules;
 import com.grahambartley.nightborn.boss.HoldGroundGoal;
 import com.grahambartley.nightborn.boss.PhaseTrack;
 import com.grahambartley.nightborn.config.RitualSettings;
+import com.grahambartley.nightborn.core.BlazingEyes;
+import com.grahambartley.nightborn.decor.SeatEntity;
 import com.grahambartley.nightborn.downed.Downed;
 import com.grahambartley.nightborn.eldest.EldestFoes;
 import com.grahambartley.nightborn.eldest.EldestHealth;
@@ -25,6 +27,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityData;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
@@ -36,6 +39,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.tag.TagKey;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.Difficulty;
@@ -44,7 +48,7 @@ import net.minecraft.world.ServerWorldAccess;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
-public class EldestEntity extends BossVampireEntity {
+public class EldestEntity extends BossVampireEntity implements BlazingEyes {
 
   public static final Identifier STAGE = Identifier.of(Nightborn.MOD_ID, "eldest");
   public static final Identifier FIGHT = Identifier.of(Nightborn.MOD_ID, "eldest");
@@ -113,6 +117,19 @@ public class EldestEntity extends BossVampireEntity {
       super.showBar();
       return;
     }
+    final long now = getWorld().getTime();
+    final Optional<BossBarLook> state = BossBarLook.state(fight.warded(now), fight.draining(now));
+    if (state.isPresent()) {
+      presence()
+          .update(
+              state.get().title(getDisplayName()),
+              state.get().color(),
+              PhaseTrack.barPercent(
+                  getHealth(),
+                  fight.floorHealth(this, plan.get()),
+                  fight.ceilingHealth(this, plan.get())));
+      return;
+    }
     final BossPhase phase = plan.get().phase(fight.phase());
     presence()
         .update(
@@ -122,6 +139,21 @@ public class EldestEntity extends BossVampireEntity {
                 getHealth(),
                 fight.floorHealth(this, plan.get()),
                 fight.ceilingHealth(this, plan.get())));
+  }
+
+  @Override
+  public boolean eyesBlaze() {
+    return fight.glowing(plan());
+  }
+
+  @Override
+  public boolean startRiding(final Entity vehicle, final boolean force) {
+    return vehicle instanceof SeatEntity && super.startRiding(vehicle, force);
+  }
+
+  @Override
+  protected boolean levitatesAtWill() {
+    return !fight.flying();
   }
 
   @Override
@@ -187,7 +219,7 @@ public class EldestEntity extends BossVampireEntity {
   @Override
   protected void initGoals() {
     super.initGoals();
-    goalSelector.add(0, new HoldGroundGoal(this, this::preoccupied));
+    goalSelector.add(0, new HoldGroundGoal(this, () -> preoccupied() || fight.flying()));
     targetSelector.add(
         2,
         new ActiveTargetGoal<>(
@@ -229,11 +261,18 @@ public class EldestEntity extends BossVampireEntity {
 
   @Override
   public boolean damage(final DamageSource source, final float amount) {
+    final boolean finishing = NightbornDamage.killsVampires(source);
     if (EldestFoes.shrugsOff(
-        fight.changing(getWorld().getTime()),
+        fight.untouchable(getWorld().getTime()),
         source.getAttacker() != null && !fight.holds(source.getAttacker().getPos()),
         source.isIn(SHRUGS_OFF),
-        NightbornDamage.killsVampires(source))) {
+        finishing)) {
+      if (fight.warded(getWorld().getTime())) {
+        playSound(SoundEvents.ITEM_SHIELD_BLOCK, 1.0F, 1.4F);
+      }
+      return false;
+    }
+    if (!finishing && !getWorld().isClient() && fight.guards(this, plan(), source.getAttacker())) {
       return false;
     }
     final boolean hurt = super.damage(source, amount);
@@ -241,7 +280,7 @@ public class EldestEntity extends BossVampireEntity {
       fightRoll.join(player.getUuid());
     }
     if (hurt && !getWorld().isClient()) {
-      fight.hurt(this, plan(), amount);
+      fight.hurt(this, plan(), source.getAttacker(), amount);
     }
     return hurt;
   }

@@ -34,6 +34,8 @@ class AttackRunTest {
             power,
             Optional.empty(),
             flurry,
+            Optional.empty(),
+            Optional.empty(),
             Optional.empty()),
         100L);
   }

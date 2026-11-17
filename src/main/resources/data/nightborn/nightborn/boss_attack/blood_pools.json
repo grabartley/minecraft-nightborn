@@ -10,7 +10,7 @@
   "zone": {
     "radius": 2.5,
     "anchor": "every_foe",
-    "damage": 4.0,
+    "damage": 5.0,
     "linger_ticks": 160,
     "linger_every": 10
   }

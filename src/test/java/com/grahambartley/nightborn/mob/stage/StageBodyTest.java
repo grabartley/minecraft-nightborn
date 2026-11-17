@@ -18,9 +18,10 @@ class StageBodyTest {
         "{\"health\": 1.5, \"speed\": 0.2, \"damage\": 0.9} | true",
         "{\"health\": -0.9} | true",
         "{\"health\": -1.0} | false",
-        "{\"damage\": 10.1} | false"
+        "{\"damage\": 30.0} | true",
+        "{\"damage\": 30.1} | false"
       })
-  @DisplayName("each part of a stage's body scales between -0.9 and 10 times the base")
+  @DisplayName("each part of a stage's body scales between -0.9 and 30 times the base")
   void bounds(final String json, final boolean loads) {
     assertEquals(
         loads, StageBody.CODEC.parse(JsonOps.INSTANCE, JsonParser.parseString(json)).isSuccess());

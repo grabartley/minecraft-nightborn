@@ -776,5 +776,7 @@
   "nightborn.setting.ritual.setLifeSteal": "全套吸血（%）",
   "nightborn.setting.ritual.setLifeSteal.tooltip": "四件盔甲与刃同时穿戴时，刃将每次攻击伤害的多少转为生命",
   "nightborn.setting.ritual.setHealth": "全套生命值",
-  "nightborn.setting.ritual.setHealth.tooltip": "始祖全套装备增加的额外生命值"
+  "nightborn.setting.ritual.setHealth.tooltip": "始祖全套装备增加的额外生命值",
+  "nightborn.boss.warded": "%s受到庇护：消灭守卫",
+  "nightborn.boss.feeding": "%s正在进食：攻击它"
 }

@@ -1,6 +1,6 @@
 {
   "min_range": 4.0,
-  "max_range": 16.0,
+  "max_range": 28.0,
   "weight": 3,
   "cooldown_ticks": 100,
   "tell_ticks": 22,

@@ -7,6 +7,10 @@ public final class EyeGlow {
 
   private EyeGlow() {}
 
+  public static boolean blazing(final Object creature) {
+    return creature instanceof BlazingEyes eyes && eyes.eyesBlaze();
+  }
+
   public static boolean glowing(
       final boolean feeding, final long ticksSinceFed, final float health, final float maxHealth) {
     return feeding

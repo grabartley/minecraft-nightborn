@@ -1,6 +1,7 @@
 package com.grahambartley.nightborn.boss;
 
 import com.grahambartley.nightborn.landing.Landing;
+import com.grahambartley.nightborn.mind.Gazes;
 import com.grahambartley.nightborn.occult.ShadowStep;
 import com.grahambartley.nightborn.skill.PowerShow;
 import com.grahambartley.nightborn.skill.Powers;
@@ -34,9 +35,49 @@ public final class BossAttacks {
   private float drainTaken;
   private long nextAttack;
   private boolean cut;
+  private long landedAt = Long.MIN_VALUE / 2;
+  private final BossWard ward = new BossWard();
 
   public boolean busy() {
     return run != null;
+  }
+
+  public boolean moving() {
+    return run != null
+        && run.attack().zone().map(zone -> zone.motion() != ZoneAttack.Motion.STAY).orElse(false);
+  }
+
+  public long landedAt() {
+    return landedAt;
+  }
+
+  public boolean warded(final long now) {
+    return ward.holds(now);
+  }
+
+  public boolean draining(final long now) {
+    return run != null
+        && run.attack().drain().isPresent()
+        && run.stage(now) == AttackRun.Stage.STRIKE;
+  }
+
+  public <T extends MobEntity & PowerShow> void counter(
+      final T boss,
+      final List<Identifier> counters,
+      final List<? extends LivingEntity> foes,
+      final long now) {
+    final LivingEntity target = boss.getTarget();
+    if (run != null
+        || target == null
+        || counters.isEmpty()
+        || !(boss.getWorld() instanceof ServerWorld world)) {
+      return;
+    }
+    final Identifier id = counters.get(boss.getRandom().nextInt(counters.size()));
+    BossFights.attack(world.getRegistryManager(), id)
+        .ifPresent(
+            attack ->
+                begin(boss, world, new AttackChoice.Option(id, attack, now), target, foes, now));
   }
 
   public void hurt(final float amount) {
@@ -70,6 +111,7 @@ public final class BossAttacks {
     shapes.clear();
     hazards.forEach(hazard -> hazard.mark().discard());
     hazards.clear();
+    ward.drop();
     run = null;
     cut = false;
     leapFrom = null;
@@ -155,6 +197,11 @@ public final class BossAttacks {
       boss.showPower(attack.clip());
       boss.playSound(SoundEvent.of(attack.sound()), LOUD, 1.0F);
       attack.power().ifPresent(power -> Powers.cast(boss, power));
+      attack.ward().ifPresent(keepers -> ward.raise(boss, world, keepers, now));
+      attack
+          .gaze()
+          .filter(gaze -> boss.getTarget() != null)
+          .ifPresent(gaze -> Gazes.start(boss, boss.getTarget(), gaze));
       attack.zone().ifPresent(zone -> burst(boss, world, zone, now));
     }
     attack
@@ -180,6 +227,7 @@ public final class BossAttacks {
                 }
               });
       boss.setVelocity(Vec3d.ZERO);
+      landedAt = now;
     }
     for (int i = 0; i < shapes.size(); i++) {
       final ZoneShape shape = shapes.get(i);

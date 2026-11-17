@@ -16,7 +16,26 @@
         "nightborn:court_gaze",
         "nightborn:court_rally"
       ],
-      "music": "nightborn:music.boss.eldest"
+      "music": "nightborn:music.boss.eldest",
+      "body": {
+        "attributes": {
+          "minecraft:generic.armor": 8,
+          "minecraft:generic.knockback_resistance": 0.6
+        },
+        "max_hit": 14
+      },
+      "defence": {
+        "guard_hits": 4,
+        "window_ticks": 60,
+        "break_damage": 45,
+        "break_away": 8,
+        "guard_knock": 1.2,
+        "retarget_chance": 30,
+        "counters": [
+          "nightborn:court_lunge",
+          "nightborn:court_gaze"
+        ]
+      }
     },
     {
       "name": "beast",
@@ -31,10 +50,40 @@
       "attacks": [
         "nightborn:beast_pounce",
         "nightborn:beast_swarm",
+        "nightborn:beast_screech",
         "nightborn:beast_claws",
-        "nightborn:court_lunge"
+        "nightborn:beast_ward"
       ],
-      "music": "nightborn:music.boss.eldest"
+      "music": "nightborn:music.boss.eldest",
+      "body": {
+        "attributes": {
+          "minecraft:generic.armor": 12,
+          "minecraft:generic.armor_toughness": 4,
+          "minecraft:generic.attack_damage": 3,
+          "minecraft:generic.knockback_resistance": 0.8,
+          "minecraft:generic.scale": 0.12,
+          "minecraft:generic.movement_speed": 0.03
+        },
+        "max_hit": 12
+      },
+      "flight": {
+        "height": 6,
+        "radius": 9,
+        "speed": 0.3,
+        "ground_ticks": 80
+      },
+      "defence": {
+        "guard_hits": 3,
+        "window_ticks": 60,
+        "break_damage": 36,
+        "break_away": 10,
+        "guard_knock": 1.5,
+        "retarget_chance": 40,
+        "counters": [
+          "nightborn:beast_pounce",
+          "nightborn:beast_screech"
+        ]
+      }
     },
     {
       "name": "blood",
@@ -51,15 +100,47 @@
         "nightborn:blood_pools",
         "nightborn:blood_step",
         "nightborn:blood_drain",
+        "nightborn:court_gaze",
         "nightborn:beast_pounce",
-        "nightborn:court_flurry"
+        "nightborn:court_flurry",
+        "nightborn:beast_ward"
       ],
-      "music": "nightborn:music.boss.eldest_final"
+      "music": "nightborn:music.boss.eldest_final",
+      "body": {
+        "attributes": {
+          "minecraft:generic.armor": 16,
+          "minecraft:generic.armor_toughness": 8,
+          "minecraft:generic.attack_damage": 6,
+          "minecraft:generic.knockback_resistance": 1.0,
+          "minecraft:generic.scale": 0.35,
+          "minecraft:generic.movement_speed": 0.06
+        },
+        "max_hit": 10,
+        "glowing": true
+      },
+      "voice": {
+        "sound": "minecraft:entity.warden.angry",
+        "every_ticks": 100,
+        "pitch": 0.6
+      },
+      "defence": {
+        "guard_hits": 3,
+        "window_ticks": 80,
+        "break_damage": 30,
+        "break_away": 10,
+        "guard_knock": 1.8,
+        "retarget_chance": 50,
+        "counters": [
+          "nightborn:blood_step",
+          "nightborn:blood_pools",
+          "nightborn:beast_pounce"
+        ]
+      }
     }
   ],
-  "change_ticks": 60,
+  "change_ticks": 80,
   "change_clip": "hiss",
   "change_sound": "minecraft:entity.warden.roar",
-  "change_knock": 1.6,
-  "change_range": 7.0
+  "change_knock": 2.0,
+  "change_range": 8.0
 }

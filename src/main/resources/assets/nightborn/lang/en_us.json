@@ -776,5 +776,7 @@
   "nightborn.setting.ritual.setLifeSteal": "Full Set Life Steal (%)",
   "nightborn.setting.ritual.setLifeSteal.tooltip": "Share of each blow's damage the blade gives back when all four armor pieces are worn with it",
   "nightborn.setting.ritual.setHealth": "Full Set Health",
-  "nightborn.setting.ritual.setHealth.tooltip": "Extra health points the full set of the Eldest adds"
+  "nightborn.setting.ritual.setHealth.tooltip": "Extra health points the full set of the Eldest adds",
+  "nightborn.boss.warded": "%s is warded: slay its keepers",
+  "nightborn.boss.feeding": "%s is feeding: strike it"
 }

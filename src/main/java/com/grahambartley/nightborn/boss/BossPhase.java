@@ -14,7 +14,11 @@ public record BossPhase(
     List<Identifier> powers,
     List<Identifier> attacks,
     int gapTicks,
-    Optional<Identifier> music) {
+    Optional<Identifier> music,
+    PhaseBody body,
+    PhaseDefence defence,
+    Optional<PhaseVoice> voice,
+    Optional<PhaseFlight> flight) {
 
   static final String KEY = "nightborn.boss.phase.";
 
@@ -40,7 +44,15 @@ public record BossPhase(
                       Codec.intRange(1, 1200)
                           .optionalFieldOf("gap_ticks", 60)
                           .forGetter(BossPhase::gapTicks),
-                      Identifier.CODEC.optionalFieldOf("music").forGetter(BossPhase::music))
+                      Identifier.CODEC.optionalFieldOf("music").forGetter(BossPhase::music),
+                      PhaseBody.CODEC
+                          .optionalFieldOf("body", PhaseBody.PLAIN)
+                          .forGetter(BossPhase::body),
+                      PhaseDefence.CODEC
+                          .optionalFieldOf("defence", PhaseDefence.NONE)
+                          .forGetter(BossPhase::defence),
+                      PhaseVoice.CODEC.optionalFieldOf("voice").forGetter(BossPhase::voice),
+                      PhaseFlight.CODEC.optionalFieldOf("flight").forGetter(BossPhase::flight))
                   .apply(instance, BossPhase::new));
 
   public BossPhase {

@@ -776,5 +776,7 @@
   "nightborn.setting.ritual.setLifeSteal": "Roubo de vida do conjunto completo (%)",
   "nightborn.setting.ritual.setLifeSteal.tooltip": "Parte do dano de cada golpe que a lâmina devolve quando as quatro peças de armadura são usadas com ela",
   "nightborn.setting.ritual.setHealth": "Vida do conjunto completo",
-  "nightborn.setting.ritual.setHealth.tooltip": "Pontos de vida extras que o conjunto completo do Ancião dá"
+  "nightborn.setting.ritual.setHealth.tooltip": "Pontos de vida extras que o conjunto completo do Ancião dá",
+  "nightborn.boss.warded": "%s está protegido: mate seus guardiões",
+  "nightborn.boss.feeding": "%s está se alimentando: ataque"
 }

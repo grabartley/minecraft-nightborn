@@ -11,7 +11,7 @@
   "zone": {
     "radius": 3.0,
     "motion": "step",
-    "damage": 11.0,
+    "damage": 14.0,
     "knock": 1.0
   }
 }

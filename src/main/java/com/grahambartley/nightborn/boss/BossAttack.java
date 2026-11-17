@@ -1,5 +1,6 @@
 package com.grahambartley.nightborn.boss;
 
+import com.grahambartley.nightborn.skill.MesmerisePower;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -20,7 +21,9 @@ public record BossAttack(
     Optional<Identifier> power,
     Optional<ZoneAttack> zone,
     Optional<FlurryAttack> flurry,
-    Optional<DrainAttack> drain) {
+    Optional<DrainAttack> drain,
+    Optional<MesmerisePower> gaze,
+    Optional<WardAttack> ward) {
 
   public static final Codec<BossAttack> CODEC =
       RecordCodecBuilder.<BossAttack>create(
@@ -51,18 +54,22 @@ public record BossAttack(
                           FlurryAttack.CODEC
                               .optionalFieldOf("flurry")
                               .forGetter(BossAttack::flurry),
-                          DrainAttack.CODEC.optionalFieldOf("drain").forGetter(BossAttack::drain))
+                          DrainAttack.CODEC.optionalFieldOf("drain").forGetter(BossAttack::drain),
+                          MesmerisePower.CODEC.optionalFieldOf("gaze").forGetter(BossAttack::gaze),
+                          WardAttack.CODEC.optionalFieldOf("ward").forGetter(BossAttack::ward))
                       .apply(instance, BossAttack::new))
           .validate(BossAttack::oneKind);
 
   static DataResult<BossAttack> oneKind(final BossAttack attack) {
     final long kinds =
-        Stream.of(attack.power, attack.zone, attack.flurry, attack.drain)
+        Stream.of(attack.power, attack.zone, attack.flurry, attack.drain, attack.gaze, attack.ward)
             .filter(Optional::isPresent)
             .count();
     if (kinds != 1) {
       return DataResult.error(
-          () -> "A boss attack needs exactly one of power, zone, flurry or drain, got " + kinds);
+          () ->
+              "A boss attack needs exactly one of power, zone, flurry, drain, gaze or ward, got "
+                  + kinds);
     }
     return attack.minRange <= attack.maxRange
         ? DataResult.success(attack)

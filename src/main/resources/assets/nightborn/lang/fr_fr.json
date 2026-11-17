@@ -776,5 +776,7 @@
   "nightborn.setting.ritual.setLifeSteal": "Vol de vie de l'ensemble complet (%)",
   "nightborn.setting.ritual.setLifeSteal.tooltip": "Part des dégâts de chaque coup que la lame rend quand les quatre pièces d'armure sont portées avec elle",
   "nightborn.setting.ritual.setHealth": "Vie de l'ensemble complet",
-  "nightborn.setting.ritual.setHealth.tooltip": "Points de vie supplémentaires apportés par l'ensemble complet de l'Aîné"
+  "nightborn.setting.ritual.setHealth.tooltip": "Points de vie supplémentaires apportés par l'ensemble complet de l'Aîné",
+  "nightborn.boss.warded": "%s est protégé : abattez ses gardiens",
+  "nightborn.boss.feeding": "%s se nourrit : frappez-le"
 }

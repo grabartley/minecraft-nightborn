@@ -3,11 +3,14 @@ package com.grahambartley.nightborn.boss;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.google.gson.JsonParser;
+import com.grahambartley.nightborn.MinecraftBootstrapExtension;
 import com.mojang.serialization.JsonOps;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
+@ExtendWith(MinecraftBootstrapExtension.class)
 class BossAttackTest {
 
   private static final String COMMON =
@@ -19,12 +22,20 @@ class BossAttackTest {
   private static final String DRAIN =
       "\"drain\":{\"ticks\":120,\"damage\":2,\"heal\":6,\"break_damage\":18}";
 
+  private static final String GAZE =
+      "\"gaze\":{\"range\":14,\"stare_ticks\":30,\"duration_ticks\":100,"
+          + "\"player_duration_ticks\":80,\"player_slowness\":6}";
+  private static final String WARD =
+      "\"ward\":{\"entity\":\"minecraft:bat\",\"count\":3,\"ticks\":500}";
+
   private static String kind(final String name) {
     return switch (name) {
       case "power" -> POWER;
       case "zone" -> ZONE;
       case "flurry" -> FLURRY;
       case "drain" -> DRAIN;
+      case "gaze" -> GAZE;
+      case "ward" -> WARD;
       default -> throw new IllegalArgumentException(name);
     };
   }
@@ -45,6 +56,9 @@ class BossAttackTest {
         "zone | '' | true",
         "flurry | '' | true",
         "drain | '' | true",
+        "gaze | '' | true",
+        "ward | '' | true",
+        "gaze ward | '' | false",
         "'' | '' | false",
         "power zone | '' | false",
         "flurry drain | '' | false",
@@ -63,7 +77,7 @@ class BossAttackTest {
   }
 
   @ParameterizedTest(name = "a {0} strikes for {1} ticks")
-  @CsvSource({"power, 0", "zone, 0", "flurry, 24", "drain, 120"})
+  @CsvSource({"power, 0", "zone, 0", "flurry, 24", "drain, 120", "gaze, 0", "ward, 0"})
   @DisplayName("a flurry and a drain hold the boss for their length, a power and a zone do not")
   void strikeTicks(final String kind, final int ticks) {
     final BossAttack attack =

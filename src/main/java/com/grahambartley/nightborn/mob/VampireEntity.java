@@ -304,7 +304,9 @@ public class VampireEntity extends HostileEntity
     hissing.tickWard(this);
     if (!BatForm.isBat(this)) {
       fight();
-      levitateAboutHome();
+      if (levitatesAtWill()) {
+        levitateAboutHome();
+      }
     }
   }
 
@@ -324,6 +326,10 @@ public class VampireEntity extends HostileEntity
         stage().combat(),
         ServerConfigService.current().combat(),
         this::casts);
+  }
+
+  protected boolean levitatesAtWill() {
+    return true;
   }
 
   protected boolean preoccupied() {

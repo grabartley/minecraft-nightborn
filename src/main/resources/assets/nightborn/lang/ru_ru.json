@@ -776,5 +776,7 @@
   "nightborn.setting.ritual.setLifeSteal": "Кража жизни полного комплекта (%)",
   "nightborn.setting.ritual.setLifeSteal.tooltip": "Доля урона каждого удара, которую возвращает клинок, когда с ним надеты все четыре части брони",
   "nightborn.setting.ritual.setHealth": "Здоровье полного комплекта",
-  "nightborn.setting.ritual.setHealth.tooltip": "Дополнительные очки здоровья от полного комплекта Старейшего"
+  "nightborn.setting.ritual.setHealth.tooltip": "Дополнительные очки здоровья от полного комплекта Старейшего",
+  "nightborn.boss.warded": "%s под защитой: убейте стражей",
+  "nightborn.boss.feeding": "%s кормится: бейте его"
 }
