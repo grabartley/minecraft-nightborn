@@ -17,6 +17,7 @@ Every number here is the default, and lives in data or a server setting. Nobody 
 - **Pinned:** a pinned target cannot move or use a power that moves it. It can still attack and use its other powers. A boss cannot be pinned.
 - After a stagger or a pin ends, the same target cannot be staggered or pinned again for 3 seconds.
 - **Weakness I:** the vanilla effect, not a vampire's own weakening.
+- **Healing prayers:** Mend, Sanctuary and Judgement.
 
 ## Rules Every Skill Follows
 
@@ -80,7 +81,7 @@ The ruler. Wins with other people's hands.
 | Dark Court | Passive | 3 | Blood Bond | Adult | | | 2 more thralls |
 | Dread Presence | Power | 3 | Noble Blood | Adult | 3 | 60 | For 12 seconds, within a radius of 8 blocks: weak mobs flee, villagers cower and cannot ring the bell, and hunter mobs deal 20% less damage. A human player in reach has Slowness I unless their mesmerise resistance stops it, checked as Mesmerise checks it |
 | Blood Tithe | Passive | 3 ranks: 2, 2, 3 | Blood Bond | Adult | | | While a thrall or a member of the vampire's house is within 12 blocks, the nearest takes 10%, 20%, then 30% of the damage dealt to the vampire, and gives 1 blood point every 30, 20, then 10 seconds |
-| Glamour | Power | 3 | Silver Tongue | Elder | 5 | 180 | For 30 seconds the vampire passes as human: no flinch, a full face in a hand mirror, a human's name to everyone, and villagers see no vampire signs. It ends on feeding, using another power or being hit. The sun still burns |
+| Glamour | Power | 3 | Silver Tongue | Elder | 5 | 180 | For 30 seconds the vampire passes as human to everyone, vampires included: no flinch, a full face in a hand mirror, a human's name colour, no glow in the eyes and no stoop when weakened, and villagers see no vampire signs. It ends on feeding, using another power or being hit. The sun still burns |
 | Sovereign's Gaze | Power | 4 | Command and Dread Presence | Ancient | 6 | 300 | Capstone. Mesmerises every mob and villager the vampire has a clear line of sight to within a radius of 12 blocks for 10 seconds, and every human player there for 3, whether they look back or not. Mesmerise resistance works against it as it does against Mesmerise |
 | Born To Rule | Passive | 3 | Sovereign's Gaze | Ancient | | | Thralls and NPC members of the vampire's house have 25% more health and damage, and Noble cooldowns are 20% shorter |
 
@@ -97,7 +98,7 @@ The sorcerer. Shadow, fog and the dead.
 | Spirit Pact | Passive | 3 ranks: 2, 2, 3 | Summon Familiar | None | | | Rank 1 allows 1 more familiar. Ranks 2 and 3 each give familiars 25% more health |
 | Hex | Power | 2 | Occult Blood | None | 2 | 30 | Curses a target within 16 blocks for 20 seconds, 10 for a player: the vampire sees it through walls, it has Weakness I, and its healing is halved |
 | Shadow Veil | Power | 3 | Shadow Step | Adult | 4 | 45 | Unseen for 10 seconds |
-| Blood Ward | Power | 3 | Grave Fog | Adult | 4 | 90 | Draws a circle with a radius of 4 blocks for 30 seconds. A human who stands in it has Slowness I and takes 1 damage each second, and blessings and healing prayers do nothing inside it. Garlic, crucifixes, holy water and consecrated ground work as ever |
+| Blood Ward | Power | 3 | Grave Fog | Adult | 4 | 90 | Draws a circle with a radius of 4 blocks for 30 seconds. A human who stands in it has Slowness I and takes 1 damage each second. Inside it a Blessing cannot be cast and healing prayers do not heal. A weapon already blessed or alight still works, and so do garlic, crucifixes, holy water and consecrated ground. Where it overlaps a Consecrate circle, both work |
 | Mist Form | Power | 3 | Shadow Veil | Elder | 4 | 60 | For 8 seconds the vampire is mist: it drifts through doors, bars, fences, trapdoors and gaps, and blades and bolts pass through it. It cannot attack, feed or use items. Sun, fire and holy water hurt it twice as much |
 | Raise The Dead | Power | 3 | Summon Familiar | Elder | 5 | 120 | Three restless dead rise from the ground and fight for 30 seconds. Each has 20 health and deals 4 damage. They attack whatever the vampire attacks and whatever attacks the vampire |
 | Black Mass | Power | 4 | Mist Form and Raise The Dead | Ancient | 6 | 300 | Capstone. For 15 seconds, within a radius of 12 blocks: fog fills the air, bats swarm and deal 1 damage each second to hunter mobs and to anything that has attacked the vampire or been attacked by it in the last 10 seconds, and the vampire's Shadow Step costs nothing and has no cooldown |
@@ -120,13 +121,13 @@ The fight is won before it starts.
 | Skill | Kind | Ranks and cost | Needs | Gate | Cooldown | What it does |
 |---|---|---|---|---|---|---|
 | Field Craft | Passive | 3 ranks: 1, 1, 2 | Tracking | None | | Sets traps 25% faster each rank, and a vampire cannot see the hunter's traps from more than 6, 4, then 2 blocks |
-| Snare | Power | 2 | Field Craft | None | 20 | Sets a hidden trap that pins a vampire for 3 seconds, 2 for a player. A bat or a vampire in Mist Form is not caught. Two can be set at once |
-| Bait | Power | 2 | Field Craft | None | 60 | Sets out blood. Hungry vampire mobs within 24 blocks come to it, and a vampire player near it smells it |
+| Snare | Power | 2 | Field Craft | None | 20 | Sets a hidden trap on the block looked at within 4 blocks. It lasts 5 minutes and pins a vampire that steps on it for 3 seconds, 2 for a player. A bat or a vampire in Mist Form is not caught. Two can be set at once |
+| Bait | Power | 2 | Field Craft | None | 60 | Sets out blood on the block looked at within 4 blocks for 60 seconds. Hungry vampire mobs within 24 blocks come to it, and a vampire player within 8 blocks is told they smell blood |
 | Net Shot | Power | 2 | Snare | None | 25 | Fires a net up to 24 blocks. It drags a bat, a levitating vampire or one in a leap to the ground, forces it out of Bat Form or Night Terror, and keeps it on the ground for 5 seconds |
 | Quick Hands | Passive | 3 ranks: 1, 2, 2 | Snare | None | | 1 more snare can be set at once each rank |
 | Trap Sense | Passive | 2 | Snare | None | | The hunter sees their own and their allies' traps outlined, and never sets off an ally's |
-| Silver Edge | Passive | 3 ranks: 2, 2, 3 | Net Shot | Hunter | | Traps and nets deal 2 more silver damage each rank |
-| Flash Trap | Power | 3 | Snare | Hunter | 60 | Sets a trap that bursts when a vampire comes within 3 blocks: 6 damage that burns as the sun does, and 3 seconds of blindness. One can be set at once |
+| Silver Edge | Passive | 3 ranks: 2, 2, 3 | Net Shot | Hunter |  | A snare or a net deals 2 silver damage each rank to the vampire it catches, and a flash trap 2 more each rank |
+| Flash Trap | Power | 3 | Snare | Hunter | 60 | Sets a trap on the block looked at within 4 blocks. It lasts 5 minutes and bursts when a vampire comes within 3 blocks: 6 damage that burns as the sun does, and 3 seconds of blindness. One can be set at once |
 | Killing Ground | Power | 4 | Flash Trap and Net Shot | Master | 300 | Capstone. Marks a circle with a radius of 10 blocks for 20 seconds. Traps inside reset the moment they spring, and a vampire inside cannot use Vanish, Shadow Step, Bat Form or Mist Form |
 | Master Trapper | Passive | 3 | Killing Ground | Master | | Trapper cooldowns are 20% shorter, and a pinned vampire takes 25% more damage |
 
@@ -138,10 +139,10 @@ Faith as a weapon, and the one who keeps the others alive.
 |---|---|---|---|---|---|---|
 | Faith | Passive | 3 ranks: 2, 2, 3 | Tracking | None | | 1 more faith each rank, which makes crucifixes and holy water stronger |
 | Mend | Power | 2 | Faith | None | 45 | Heals the hunter and every human within a radius of 6 blocks for 6 health |
-| Rebuke | Power | 2 | Faith | None | 30 | With a crucifix in hand, or a Crucifix On A Chain worn, throws back every vampire in front of the hunter within 8 blocks and stops their powers for 2 seconds |
+| Rebuke | Power | 2 | Faith | None | 30 | With a crucifix in hand, or a Crucifix On A Chain worn, throws back every vampire within 8 blocks in a quarter circle in front of the hunter, and stops their powers for 2 seconds |
 | Blessing | Power | 2 | Faith | None | 90 | Blesses the hunter's weapon, or the weapon of an ally they look at, for 60 seconds. A blessed weapon works as one coated with holy water (GEAR-9), with no limit on its hits until the time ends |
 | Grace | Passive | 3 ranks: 1, 2, 2 | Mend | None | | The hunter's healing prayers heal 25% more each rank |
-| Blood Fire | Power | 3 | Blessing | Hunter | 120 | The hunter cuts themself for 4 health and lights their weapon. For 90 seconds it burns bright, lights the dark around it, deals 3 more damage as fire and sets a vampire alight. A vampire does not heal while it burns |
+| Blood Fire | Power | 3 | Blessing | Hunter | 120 | The hunter cuts themself for 4 health and lights their weapon. For 90 seconds it burns bright and glows in the dark, deals 3 more damage as fire and sets a vampire alight. A vampire does not heal while it burns. A weapon can be blessed and alight at once |
 | Sanctuary | Power | 3 | Mend | Hunter | 120 | A prayer of 10 seconds. Humans within a radius of 8 blocks heal 1 health each second, are freed from mesmerise and cannot be mesmerised or cowed by Dread Presence |
 | Consecrate | Power | 3 | Rebuke | Veteran | 120 | Blesses the ground in a circle with a radius of 5 blocks for 30 seconds. A vampire inside is weakened as by a crucifix, is forced out of Bat Form and Night Terror, and cannot levitate or use Vanish or Bat Form |
 | Judgement | Power | 4 | Consecrate and Sanctuary | Master | 300 | Capstone. Calls a pillar of holy light with a radius of 2 blocks on a spot within 16 blocks for 5 seconds. It deals 3 damage each second to a vampire inside, burning as the sun does, and heals a human inside 2 health each second |
@@ -154,15 +155,15 @@ The duellist. Reads a vampire's move and punishes it.
 | Skill | Kind | Ranks and cost | Needs | Gate | Cooldown | What it does |
 |---|---|---|---|---|---|---|
 | Bite Ward | Passive | 3 ranks: 2, 2, 3 | Tracking | None |  | 0.35 more bite resistance at ranks 1 and 2, and 0.1 more at rank 3, 0.8 in all (HUNT-4) |
-| Sidestep | Power | 2 | Tracking | None | 6 | A quick dash of 4 blocks the way the hunter is moving. Nothing can touch them for a blink. Dodging a vampire's attack at the last moment staggers the vampire for 1.5 seconds |
-| Stake Throw | Power | 2 | Tracking | None | 10 | Throws a stake from the inventory up to 20 blocks for 4 damage. It staggers a vampire for 1 second, knocks it out of the air, and can be picked up again |
+| Sidestep | Power | 2 | Tracking | None | 6 | A quick dash of 4 blocks the way the hunter is moving. Nothing can touch them for 0.3 seconds. If a vampire's attack would have landed within 0.25 seconds of the dash starting, the vampire is staggered for 1.5 seconds |
+| Stake Throw | Power | 2 | Tracking | None | 10 | Throws a stake from the inventory up to 20 blocks for 4 damage. It staggers a vampire for 1 second, knocks it out of the air, and can be picked up again. A thrown stake never stakes: it deals damage only |
 | Vampire Slayer | Passive | 3 ranks: 1, 2, 2 | Bite Ward | None | | 1 more damage against vampires each rank |
-| Riposte | Power | 2 | Sidestep | None | 12 | A guard held for half a second. A dash, a leap or a pounce that meets it is turned back, and the vampire is staggered for 2 seconds |
+| Riposte | Power | 2 | Sidestep | None | 12 | A guard held for half a second. A Long Leap, a Pounce, a Shadow Step or a vampire mob's leap, dash or lunge that meets it is turned back, and the vampire is staggered for 2 seconds |
 | Quick Shot | Power | 2 | Stake Throw | None | 15 | Fires a loaded crossbow at once, with no time to raise it |
 | Tough As Oak | Passive | 3 ranks: 1, 2, 2 | Bite Ward | None | | 2 more health each rank |
 | Heartstrike | Power | 3 | Riposte | Hunter | 30 | A lunge of 5 blocks with a stake in hand. A vampire up to an elder that is snared, netted, pinned or staggered by a Riposte or a dodge, and below 40% health, is downed at once, not staked. Any other vampire takes a stake's blow with half as much damage again |
 | Last Stand | Passive | 3 | Tough As Oak | Veteran | 180 | When health falls below 25%, for 8 seconds the hunter cannot be bitten or mesmerised and deals 3 more damage |
-| Onslaught | Power | 4 | Heartstrike and Last Stand | Master | 300 | Capstone. For 6 seconds the hunter strikes twice as fast and deals half as much damage again to vampires. A blow on a vampire below 30% health downs it, up to an elder, and it must still be staked. An ancient takes double damage |
+| Onslaught | Power | 4 | Heartstrike and Last Stand | Master | 300 | Capstone. For 6 seconds the hunter strikes twice as fast and deals half as much damage again to vampires. A blow on a vampire below 30% health downs it, up to an elder, and it must still be staked. An ancient is never downed by it |
 | Slayer's Calm | Passive | 3 | Onslaught | Master | | Slayer cooldowns are 20% shorter, and a dodge that staggers gives Sidestep back at once |
 
 ### Seeker
@@ -179,8 +180,8 @@ Nothing hides from a Seeker.
 | Mark Quarry | Power | 2 | Keen Tracking | None | 60 | Marks one creature or player in sight within 24 blocks, vampire or not. For 60 seconds it shows through walls, and a marked vampire takes 15% more damage from the hunter. Its trail stays for Tracking until dawn or its death. Shadow Veil, Mist Form and Glamour hide the outline while they last. One mark at a time |
 | Grave Listener | Passive | 2 | Sixth Sense | None | | While the hunter sneaks, sleeping vampires within 12 blocks are heard and faintly outlined through walls |
 | True Sight | Power | 3 | Sixth Sense | Hunter | 60 | For 6 seconds the hunter sees every vampire within 24 blocks outlined, through walls and whether it is hidden by Vanish, Shadow Veil, Mist Form or Glamour. A vampire player who is seen is told |
-| Revelation | Power | 4 | True Sight and Mark Quarry | Master | 300 | Capstone. For 20 seconds every vampire within 48 blocks is marked for the hunter and for every human within 16 blocks of them, and Shadow Veil, Mist Form and Glamour fail for those vampires |
-| Hunter's Patience | Passive | 3 | Revelation | Master | | Seeker cooldowns are 20% shorter, and the hunter's allies also deal 10% more damage to their marked quarry |
+| Revelation | Power | 4 | True Sight and Mark Quarry | Master | 300 | Capstone. For 20 seconds every vampire within 48 blocks is marked for the hunter and for every human within 16 blocks of them, and Shadow Veil, Mist Form and Glamour fail for those vampires. A vampire player who is marked is told |
+| Hunter's Patience | Passive | 3 | Revelation | Master |  | Seeker cooldowns are 20% shorter, and the hunter's allies also deal 10% more damage to a vampire the hunter has marked |
 
 ## Skills The Mod Already Has
 
@@ -194,7 +195,7 @@ Nothing built is lost. Every skill a player can learn today keeps its name and e
 
 Hunter skills bought in an older world are reset and their points given back (HUNT-3).
 
-The skills only vampire mobs have, Bat Swarm and Rally, stay as they are and cannot be learned by a player.
+The skills only vampire mobs have, Bat Swarm and Call To Arms, stay as they are and cannot be learned by a player.
 
 ## New Art These Skills Need
 

@@ -26,6 +26,7 @@ Of the 56 with a gift, 19 work only for a vampire, 23 only for a human, 8 for an
 - Two of the same piece give the gift once. Different pieces with the same kind of gift add up, but no resistance or reduction passes 80% in all, whatever is learned and worn together.
 - No gift, alone or with others, removes a vampire weakness or lets a vampire walk in the sun.
 - A piece that works only for a vampire does nothing on a human, and the other way round. Its tooltip says who it works for.
+- A piece that holds items is filled and emptied as a bundle is. It keeps what it holds when taken off, and drops it on death as an inventory does.
 - A stage or a rank never gives an accessory.
 - Every piece but a ring is drawn on the wearer, on both player models (WORN-2).
 - Materials and motifs: tarnished gold, silver, jet, garnet, emerald, bone, velvet and lace. Old, worn and a little sinister, never clean or bright.
@@ -42,9 +43,11 @@ The mod's clothing stays, and two pieces move to the slot that now fits them. No
 | Frock Coat, Corset, Doublet | Chest | Chest, unchanged |
 | Breeches, Trousers, Long Skirt | Legs | Legs, unchanged |
 | Buckled Shoes, Riding Boots | Feet | Feet, unchanged |
-| Crown, Mantle and Boots of the Eldest | Armour | Armour, unchanged |
+| Crown, Mantle, Greaves and Boots of the Eldest | Armour | Armour, unchanged |
 
 - A piece that moves keeps its name, look, recipe, dye and cuts. It no longer gives armour, as no accessory does, and it no longer wears out.
+- A vanilla enchantment already on a piece that moves stays on the item and does nothing.
+- When an older world loads, a veil or a cape still worn in its old slot moves to its new slot if that is free, or to the inventory, or is dropped at the player's feet if the inventory is full.
 - A back piece takes the mod's chest enchantments (Batwing, Mistcloak, Thrift) and a face piece takes its headwear ones (Nocturne, Shroud), and no other accessory takes any, except the three curses, which are found on any of them (WEAR-6). The same enchantment on two worn pieces counts once, at the higher level.
 - With the veil gone from the head, the head needs a second piece (WEAR-1). A new Wide-Brimmed Hat joins the Top Hat: a dark felt hat with a low crown, crafted from 4 wool and 1 leather, dyed like the rest. It is clothing, worn on the head, and its model is made through the `bbmodel` MCP in both cuts like every other piece.
 - Vampire and hunter mobs keep wearing the veil and the cape as they do today, and still wear only what a player can craft (WEAR-5).
@@ -79,9 +82,9 @@ Vampire structures hold hunter pieces too: they are what is left of hunters who 
 | Blessed Ring | Plain silver, cut with a cross | Human | A tenth more bite resistance | Crypt |
 | Saint's Ring | Gold, set with a tiny bone | Human | A blessing on a weapon lasts 25% longer | Hunter trial |
 | Tracker's Ring | Brass, cut with a compass rose | Human | Tracking's cooldown is 20% shorter | Ruined manor |
-| Ring Of Vigil | Iron, set with a pale blue stone | Human | A chill, shown and heard, when a vampire mob is within 12 blocks. A vampire player never sets it off | Castle |
+| Ring Of Vigil | Iron, set with a pale blue stone | Human | A chill, shown and heard, when an awake vampire mob is within 12 blocks. A vampire player never sets it off | Castle |
 | Widow's Ring | Black enamel and a lock of hair under glass | Anyone | 1 more luck when opening a chest | Crypt |
-| Moonstone Ring | A milky stone that catches the light | Human | Sees a little better outdoors at night | Underground lair |
+| Moonstone Ring | A milky stone that catches the light | Human | Takes 10% less damage at night | Underground lair |
 | Ring Of The Court | Gold, crowned, set with a ruby | Human | Mesmerise and dread last half as long on the wearer | The Eldest |
 | Ring Of The Beast | Bone, carved as a bat's skull | Human | Fall damage is halved | The Eldest |
 | Ring Of The Blood | A glass ring with dark blood sealed in it | Human | A blow on a vampire heals the wearer 1 health, once every 2 seconds | The Eldest |
@@ -99,7 +102,7 @@ Vampire structures hold hunter pieces too: they are what is left of hunters who 
 | Blood Vial Pendant | A stoppered glass vial on a chain | Vampire | Holds one Blood Bottle, drunk by itself when the blood bar runs dry | Castle |
 | Raven Locket | A locket shaped as a raven's head | Vampire | Familiars last 25% longer | Underground lair |
 | Choker Of Thorns | Black iron thorns on a ribbon | Vampire | A feeding bite gives 10% more blood | Vampire trial |
-| Crucifix On A Chain | A small silver crucifix | Human | Wards as a held crucifix does at half the range, with no hand | Castle |
+| Crucifix On A Chain | A small silver crucifix | Human | Weakens and slows a vampire as a held crucifix does, at half the range, with no hand. It does not stop a bite | Castle |
 | Garlic Sachet | A linen pouch on a cord | Human | A vampire mob's bite is 15% more likely to be broken | Crypt |
 | Saint's Medal | A worn bronze medal | Human | Healing prayers heal 20% more | Hunter trial |
 | Keepsake Locket | A gold locket with a painted face inside | Anyone | Villagers' prices are 5% lower | Ruined manor |
@@ -156,9 +159,9 @@ Capes and cloaks sway as the wearer moves and are drawn over armour and coats.
 | Brass-Buckled Belt | Dark leather and a square buckle | Anyone | None | Crafted: 2 leather and 1 gold nugget |
 | Silk Sash | A wide sash that can be dyed | Anyone | None | Crafted: 2 wool |
 | Cellarer's Belt | Leather with loops for bottles | Vampire | A Blood Bottle gives 10% more blood when drunk | Ruined manor |
-| Bandolier | A strap across the chest with loops and pouches | Human | Holds 2 stacks of bolts and 4 flasks, used from the belt before the inventory | Castle |
+| Bandolier | A strap across the chest with loops and pouches | Human | Holds 2 stacks of bolts and 4 splash holy water potions, used from the belt before the inventory | Castle |
 | Stake Loops | A belt hung with wooden stakes | Human | Holds 6 stakes. A new one comes to hand when the held one breaks | Crypt |
-| Flask Belt | A belt of small padded pockets | Human | Holds 6 flasks of holy water or garlic, thrown from the belt first | Underground lair |
+| Flask Belt | A belt of small padded pockets for bottles | Human | Holds 6 splash or lingering holy water potions, thrown from the belt before the inventory | Underground lair |
 | Trapper's Pouch | A hide pouch of wire and springs | Human | Snares and flash traps can be set again 15% sooner | Hunter trial |
 | Sturdy Girdle | Thick leather and iron plates | Anyone | A tenth more resistance to being knocked back | Ruined manor |
 

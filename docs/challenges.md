@@ -6,7 +6,7 @@ Every number here is the default and lives in data. Nobody building these choose
 
 ## How The Goals Fit Together
 
-The mod has five kinds of goal. Each has its own job, and no deed is asked for by two of them at the same size.
+The mod has five kinds of goal. Each has its own job. A trial may ask again for a deed an advancement marks, since a trial is done again and again. No two goals of the same kind ask for the same deed, and no advancement asks for what a mastery feat asks for.
 
 | Kind | Job | How many | Pays | Where it is listed |
 |---|---|---|---|---|
@@ -22,7 +22,7 @@ Both sides get the same share. Of the set challenges, three are for vampires, th
 
 ## Trials
 
-Each player has three on offer at a time, drawn from their side's list of 20 and changed every 7 in-game days. A trial is only drawn for a player who meets its gate, a stage for a vampire or a rank for a hunter. Every hunter is at least an Initiate, so a hunter trial with no gate is open to all of them. A trial that needs a skill is drawn only for a player who owns it: Wings needs Bat Form, Bound needs Mesmerise, Sprung needs Snare, Net Shot or Flash Trap, Shepherd needs Mend, and Out Of The Air needs Net Shot or Stake Throw. Each pays once each time it is drawn.
+Each player has three on offer at a time, drawn from their side's list of 20 and changed every 7 in-game days. Trials a player has not yet finished are drawn before ones they have. A trial is only drawn for a player who meets its gate, a stage for a vampire or a rank for a hunter. Every hunter is at least an Initiate, so a hunter trial with no gate is open to all of them. A trial that needs a skill is drawn only for a player who owns it: Wings needs Bat Form, Bound needs Blood Bond, Sprung needs Snare, Net Shot or Flash Trap, Shepherd needs Mend, and Out Of The Air needs Net Shot or Stake Throw. Each pays once each time it is drawn.
 
 **Pay:** a small trial pays a quarter of the experience the player's next point costs, a medium one half and a large one all of it. A trial that names an accessory pays it the first time only.
 
@@ -44,7 +44,7 @@ Each player has three on offer at a time, drawn from their side's list of 20 and
 | 10 | Nobody Saw | Bring a Wary village's suspicion down until it is no longer Wary | Adult | Medium |
 | 11 | Hunters Hunted | Kill 6 hunter mobs in one night | Adult | Medium |
 | 12 | House Guest | Invite a vampire into your house | Adult | Medium |
-| 13 | Home Delivery | Have servants or house members bring home 10 Blood Bottles | Adult | Small |
+| 13 | Home Delivery | Have thralls, human familiars or house members bring home 10 Blood Bottles | Adult | Small |
 | 14 | A Fine Vintage | Feed on a villager of each of 5 professions | Adult | Medium, and the Choker Of Thorns |
 | 15 | Camp Fire | Kill every hunter of a hunter camp or party | Elder | Large |
 | 16 | No Survivors | Beat a raiding party sent against you | Elder | Large |
@@ -59,7 +59,7 @@ Each player has three on offer at a time, drawn from their side's list of 20 and
 |---|---|---|---|---|
 | 1 | Bat Season | Kill 3 vampire bats | None | Small |
 | 2 | Shaken Off | Break free of 3 feeding bites | None | Small |
-| 3 | Well Stocked | Coat a weapon with garlic and with holy water, and use both on vampires | None | Small |
+| 3 | Well Stocked | Hit a vampire with a weapon coated with garlic and one coated with holy water | None | Small |
 | 4 | Clean Kill | Stake 3 vampires in one night | None | Medium |
 | 5 | On The Trail | Follow a wounded vampire to its coffin before dawn | None | Medium, and the Guild Badge |
 | 6 | Sun's Work | Down 3 vampires that the sun then finishes | None | Medium |
@@ -70,11 +70,11 @@ Each player has three on offer at a time, drawn from their side's list of 20 and
 | 11 | Sprung | Catch 5 vampires in snares, nets or flash traps | Hunter | Medium, and the Trapper's Pouch |
 | 12 | Shepherd | Heal allies for 100 health with prayers | Hunter | Medium, and the Saint's Ring |
 | 13 | Out Of The Air | Bring 5 bats or levitating vampires to the ground | Hunter | Medium |
-| 14 | Seen Through | Reveal 3 hidden vampires with True Sight or a hand mirror | Hunter | Medium, and the Lantern-Lens Goggles |
+| 14 | Seen Through | Find out 3 vampires: one hidden by Vanish, Shadow Veil, Mist Form or Glamour and seen with True Sight, or a vampire player who shows an empty frame in a hand mirror | Hunter | Medium, and the Lantern-Lens Goggles |
 | 15 | Elder Care | Stake an elder | Veteran | Large |
 | 16 | House Clearance | Clear a castle | Veteran | Large |
 | 17 | Old Enemy | End a nemesis | Veteran | Large |
-| 18 | Unbitten | Stake 10 vampires without being bitten | Veteran | Large |
+| 18 | Unbitten | Stake 10 vampires without being bitten. A bite sets the count back to nothing | Veteran | Large |
 | 19 | Head Of The House | Stake the lord of a house | Veteran | Large |
 | 20 | Long Night | Summon and end the Eldest | Veteran | Large |
 
@@ -87,13 +87,13 @@ A feat is done once. Each gives a title the player may show after their name and
 | Never Staked | Reach ancient without ever being staked | Vampire | the Undying | A cracked stake under a glass dome | |
 | Bare To The Blade | Drain the Grand Inquisitor with nothing in the four armour slots, clothing included. Accessories are allowed | Vampire | the Defiant | His broken greatsword, mounted | |
 | A Ghost At The Feast | Feed on 100 villagers unseen. A feeding that is seen does not count, and does not reset the count | Vampire | the Unseen | An empty gilt mirror frame | Opera Mask |
-| The Scourge | Beat a raiding party of twelve alone | Vampire | the Scourge | A stand of twelve hunters' hats | |
+| The Scourge | Beat a raiding party of twelve with no other player within 64 blocks. Only an ancient faces twelve. Thralls, familiars and NPC house members may help | Vampire | the Scourge | A stand of twelve hunters' hats | |
 | A Full Table | Hold a claimed mountain castle with a full house for 7 nights | Vampire | the Sovereign | A small gilt throne | Lord's Mantle |
 | No Armour, No Fear | End the Eldest with nothing in the four armour slots, clothing included. Accessories are allowed | Hunter | the Fearless | The Eldest's crown on a velvet cushion | |
 | Alone In The Dark | Clear a mountain castle with no other player within 64 blocks at any time | Hunter | the Lone Blade | A notched silver sword in a stone | |
 | The Quiet Hand | Clear 5 houses by day without waking one | Hunter | the Quiet Hand | A pair of soft boots on a stand | |
 | Older Than Sin | Stake an ancient | Hunter | the Ancient's Bane | An urn of ash with a brass plate | |
-| Never Bitten | Reach Master without ever being bitten | Hunter | the Unbitten | A garlic wreath cast in bronze | |
+| Never Bitten | Reach Master without being bitten since joining the guild | Hunter | the Unbitten | A garlic wreath cast in bronze | |
 | Three Graves | End 3 nemeses | Anyone | the Relentless | Three small headstones | |
 | The Cabinet | Own 60 different accessories at once, counting what is worn, in the inventory and in the ender chest | Anyone | the Collector | A glass-fronted cabinet of curios | |
 
@@ -114,8 +114,8 @@ A veteran leads every raiding party sent against an elder or an ancient (GUILD-1
 | Attack | Pose before it lands | What it does | Used when | Cooldown |
 |---|---|---|---|---|
 | Silver Chain | Swings a chain overhead for 1 second | Throws it up to 12 blocks. A vampire it hits is dragged to the veteran, is forced out of Bat Form and cannot leave the ground for 3 seconds. Vanish, Shadow Step or a wall between them stops it | A vampire is out of reach, in the air or in bat form | 15 seconds |
-| Bolt Volley | Kneels and levels the crossbow for 1.5 seconds, with a line marked on the floor | Fires 3 coated bolts along the line | A vampire is 8 to 20 blocks away | 12 seconds |
-| Holy Water Arc | Draws its arm back for 1 second, with the landing spots marked | Throws 3 flasks in an arc. Each leaves a pool with a radius of 1 block for 6 seconds that weakens and hurts a vampire standing in it | Two or more vampires are near, or one stands still | 20 seconds |
+| Bolt Volley | Kneels and levels the crossbow for 1.5 seconds, with a line marked on the floor | Fires 3 bolts coated with holy water along the line | A vampire is 8 to 20 blocks away | 12 seconds |
+| Holy Water Arc | Draws its arm back for 1 second, with the landing spots marked | Throws 3 splash holy water potions in an arc. Each leaves a pool with a radius of 1 block for 6 seconds that weakens and hurts a vampire standing in it | Two or more vampires are near, or one stands still | 20 seconds |
 | Rallying Cry | Raises its sword and shouts for 1 second | Hunters within a radius of 16 blocks heal 6 health, move faster for 8 seconds and are freed from mesmerise | An ally is mesmerised or the party has lost half its health | 45 seconds |
 
 ## Art And Feel
