@@ -741,6 +741,8 @@
   "nightborn.setting.ritual.fightRange": "Радиус ритуала",
   "nightborn.setting.ritual.fightRange.tooltip": "На каком расстоянии от алтаря, в блоках, игроки видят нарастание и учитываются в здоровье Старейшего",
   "item.nightborn.eldest_ash": "Прах Старейшего",
+  "item.nightborn.fang_armor_trim_smithing_template": "Кузнечный шаблон",
+  "item.nightborn.sigil_armor_trim_smithing_template": "Кузнечный шаблон",
   "item.nightborn.ashen_silver_sword": "Меч из пепельного серебра",
   "item.nightborn.ashen_silver_axe": "Топор из пепельного серебра",
   "item.nightborn.ashen_silver_stake": "Кол из пепельного серебра",

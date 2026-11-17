@@ -387,6 +387,26 @@ public class EldestFightGameTest implements FabricGameTest {
     context.complete();
   }
 
+  @GameTest(templateName = ARENA, tickLimit = 200)
+  public void theWallPutsBackAPlayerWhoLeavesTheArena(final TestContext context) {
+    final EldestEntity eldest = inArena(context);
+    final ServerPlayerEntity player = TestPlayers.human(context, new BlockPos(4, 2, 3));
+    final Arena arena = eldest.fight().arena().orElseThrow();
+    context.runAtTick(
+        TestPlayers.READY,
+        () -> {
+          eldest.tickFight();
+          final Vec3d outside = context.getAbsolute(new Vec3d(4.5, 2.0, 4.5)).add(9.0, 0.0, 0.0);
+          player.setPosition(outside);
+          context.assertFalse(arena.holds(outside.x, outside.y, outside.z), "the spot is outside");
+          eldest.tickFight();
+          context.assertTrue(
+              arena.holds(player.getX(), player.getY(), player.getZ()),
+              "the wall put the player back inside, not at " + player.getPos());
+          context.complete();
+        });
+  }
+
   @GameTest(templateName = ARENA, tickLimit = 40)
   public void aMarkCoversItsShapeAndGoesWhenItsTimeIsUp(final TestContext context) {
     final Vec3d at = context.getAbsolute(new Vec3d(4.5, 2.0, 4.5));

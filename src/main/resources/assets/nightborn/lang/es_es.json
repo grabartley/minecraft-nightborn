@@ -741,6 +741,8 @@
   "nightborn.setting.ritual.fightRange": "Alcance del ritual",
   "nightborn.setting.ritual.fightRange.tooltip": "A qué distancia del altar, en bloques, los jugadores ven la preparación y cuentan para la vida del Más Antiguo",
   "item.nightborn.eldest_ash": "Ceniza del Más Antiguo",
+  "item.nightborn.fang_armor_trim_smithing_template": "Plantilla de herrería",
+  "item.nightborn.sigil_armor_trim_smithing_template": "Plantilla de herrería",
   "item.nightborn.ashen_silver_sword": "Espada de plata cenicienta",
   "item.nightborn.ashen_silver_axe": "Hacha de plata cenicienta",
   "item.nightborn.ashen_silver_stake": "Estaca de plata cenicienta",

@@ -741,6 +741,8 @@
   "nightborn.setting.ritual.fightRange": "Alcance do ritual",
   "nightborn.setting.ritual.fightRange.tooltip": "A que distância do altar, em blocos, os jogadores veem a preparação e contam para a vida do Ancião",
   "item.nightborn.eldest_ash": "Cinza do Ancião",
+  "item.nightborn.fang_armor_trim_smithing_template": "Molde de ferraria",
+  "item.nightborn.sigil_armor_trim_smithing_template": "Molde de ferraria",
   "item.nightborn.ashen_silver_sword": "Espada de prata cinzenta",
   "item.nightborn.ashen_silver_axe": "Machado de prata cinzenta",
   "item.nightborn.ashen_silver_stake": "Estaca de prata cinzenta",

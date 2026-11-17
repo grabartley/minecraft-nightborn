@@ -741,6 +741,8 @@
   "nightborn.setting.ritual.fightRange": "Ritual Range",
   "nightborn.setting.ritual.fightRange.tooltip": "How far from the altar, in blocks, players see the build-up and count towards the Eldest's health",
   "item.nightborn.eldest_ash": "Ash of the Eldest",
+  "item.nightborn.fang_armor_trim_smithing_template": "Smithing Template",
+  "item.nightborn.sigil_armor_trim_smithing_template": "Smithing Template",
   "item.nightborn.ashen_silver_sword": "Ashen Silver Sword",
   "item.nightborn.ashen_silver_axe": "Ashen Silver Axe",
   "item.nightborn.ashen_silver_stake": "Ashen Silver Stake",

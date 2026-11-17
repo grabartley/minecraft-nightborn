@@ -741,6 +741,8 @@
   "nightborn.setting.ritual.fightRange": "Portée du rituel",
   "nightborn.setting.ritual.fightRange.tooltip": "Distance à l'autel, en blocs, à laquelle les joueurs voient la montée et comptent pour la vie de l'Aîné",
   "item.nightborn.eldest_ash": "Cendre de l'Aîné",
+  "item.nightborn.fang_armor_trim_smithing_template": "Modèle de forge",
+  "item.nightborn.sigil_armor_trim_smithing_template": "Modèle de forge",
   "item.nightborn.ashen_silver_sword": "Épée en argent cendré",
   "item.nightborn.ashen_silver_axe": "Hache en argent cendré",
   "item.nightborn.ashen_silver_stake": "Pieu en argent cendré",

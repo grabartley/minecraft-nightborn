@@ -741,6 +741,8 @@
   "nightborn.setting.ritual.fightRange": "仪式范围",
   "nightborn.setting.ritual.fightRange.tooltip": "距祭坛多少格内的玩家能看到酝酿过程并计入始祖的生命值",
   "item.nightborn.eldest_ash": "始祖之灰",
+  "item.nightborn.fang_armor_trim_smithing_template": "锻造模板",
+  "item.nightborn.sigil_armor_trim_smithing_template": "锻造模板",
   "item.nightborn.ashen_silver_sword": "灰银剑",
   "item.nightborn.ashen_silver_axe": "灰银斧",
   "item.nightborn.ashen_silver_stake": "灰银木桩",
