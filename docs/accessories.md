@@ -17,17 +17,17 @@ Every number here is the default and lives in data. Nobody building or drawing a
 | Face | 4 | 10 | 14 |
 | **All** | **24** | **56** | **80** |
 
-Of the 56 with a gift, 19 work only for a vampire, 22 only for a human, 9 for anyone, and 6 are boss rings.
+Of the 56 with a gift, 19 work only for a vampire, 23 only for a human, 8 for anyone, and 6 are boss rings.
 
 ## Rules Every Accessory Follows
 
 - Plain pieces are for looks, carry no gift and are crafted. Every other piece carries one gift and is found, never crafted.
 - A gift is small. It makes its wearer a little better at what they already do, and never does the job of a skill.
-- Two of the same piece give the gift once. Different pieces with the same kind of gift add up.
+- Two of the same piece give the gift once. Different pieces with the same kind of gift add up, but no resistance or reduction passes 80% in all, whatever is learned and worn together.
 - No gift, alone or with others, removes a vampire weakness or lets a vampire walk in the sun.
 - A piece that works only for a vampire does nothing on a human, and the other way round. Its tooltip says who it works for.
 - A stage or a rank never gives an accessory.
-- Every piece is drawn on the wearer, on both player models.
+- Every piece but a ring is drawn on the wearer, on both player models (WORN-2).
 - Materials and motifs: tarnished gold, silver, jet, garnet, emerald, bone, velvet and lace. Old, worn and a little sinister, never clean or bright.
 
 ## Where Pieces Are Found
@@ -37,8 +37,8 @@ Of the 56 with a gift, 19 work only for a vampire, 22 only for a human, 9 for an
 | Crypt, ruined manor, underground lair | The common pieces, in their chests |
 | Castle | The rarer pieces |
 | Mountain castle | The rarest pieces that are not boss rings |
-| The Eldest | The three Eldest rings, one each time, and never one the player's side already holds while another is missing |
-| The Grand Inquisitor | The three Inquisitor rings, the same way |
+| The Eldest | The three Eldest rings. It drops one rarely (RITE-12), and never one a player who struck it already owns while they lack another |
+| The Grand Inquisitor | The three Inquisitor rings, the same way (INQ-15) |
 | Vampire trial, hunter trial | Named in `docs/challenges.md` |
 | Mastery feat | Named in `docs/challenges.md` |
 
@@ -61,13 +61,13 @@ Vampire structures hold hunter pieces too: they are what is left of hunters who 
 | Tracker's Ring | Brass, cut with a compass rose | Human | Tracking's cooldown is 20% shorter | Ruined manor |
 | Ring Of Vigil | Iron, set with a pale blue stone | Human | A chill, shown and heard, when a vampire is within 12 blocks | Castle |
 | Widow's Ring | Black enamel and a lock of hair under glass | Anyone | 1 more luck when opening a chest | Crypt |
-| Moonstone Ring | A milky stone that catches the light | Anyone | Sees a little better outdoors at night | Underground lair |
+| Moonstone Ring | A milky stone that catches the light | Human | Sees a little better outdoors at night | Underground lair |
 | Ring Of The Court | Gold, crowned, set with a ruby | Human | Mesmerise and dread last half as long on the wearer | The Eldest |
 | Ring Of The Beast | Bone, carved as a bat's skull | Human | Fall damage is halved, and 10% more speed at night | The Eldest |
 | Ring Of The Blood | A glass ring with dark blood sealed in it | Human | A blow on a vampire heals the wearer 1 health, once every 2 seconds | The Eldest |
 | Ring Of The Hunt | Blackened iron, cut with a crossbow | Vampire | Bolts and thrown stakes deal 25% less damage | The Grand Inquisitor |
 | Ring Of The Faith | Silver gone grey, its cross worn smooth | Vampire | Holy water weakens for 30% less time | The Grand Inquisitor |
-| Ring Of The Pyre | Scorched gold, set with an ember-red stone | Vampire | Fire deals half damage, though the sun does not | The Grand Inquisitor |
+| Ring Of The Pyre | Scorched gold, set with an ember-red stone | Vampire | Fire not lit by the sun deals half damage. The sun's burn is unchanged | The Grand Inquisitor |
 
 ## Necklaces
 
@@ -94,7 +94,7 @@ Vampire structures hold hunter pieces too: they are what is left of hunters who 
 | Bat Brooch | A gold bat with garnet eyes | Vampire | Bat Form costs 1 less blood, never less than 1 | Ruined manor |
 | Rose Brooch | An enamel rose, half wilted | Vampire | Being seen feeding raises a village's suspicion 20% less | Castle |
 | Guild Badge | A brass badge of the guild | Human | A Guild Master's prices are 10% lower | Hunter trial |
-| Sunburst Brooch | A gold sun with long rays | Human | Holy water splashes 1 block wider | Crypt |
+| Sunburst Brooch | A gold sun with long rays | Human | Holy water splashes over a radius 1 block greater | Crypt |
 | Spider Brooch | A black spider with a red stone | Anyone | Cobwebs do not slow the wearer | Underground lair |
 
 ## Back
@@ -151,7 +151,7 @@ Capes and cloaks sway as the wearer moves and are drawn over armour and coats.
 | Wire Spectacles | Round lenses in thin wire | Anyone | None | Crafted: 2 glass panes and 1 iron nugget |
 | Plain Monocle | One lens on a cord | Anyone | None | Crafted: 1 glass pane and 1 gold nugget |
 | Mourning Veil | A long black veil to the chin | Vampire | The flinch from garlic and crucifixes is half as large | Castle |
-| Smoked Spectacles | Dark round lenses | Vampire | Hides the glow of the wearer's eyes | Ruined manor |
+| Smoked Spectacles | Dark round lenses | Vampire | The glow of the wearer's eyes shows from half as far | Ruined manor |
 | Porcelain Mask | A white face with no expression | Vampire | A village that sees the wearer feed does not learn their face | Mountain castle |
 | Death Mask | A grey cast of a sleeping face | Vampire | Rises from being downed 10% sooner | Vampire trial |
 | Hunter's Monocle | Brass, with a cross-hair lens | Human | Shows the health and stage of a vampire mob the wearer looks at | Castle |
@@ -160,3 +160,10 @@ Capes and cloaks sway as the wearer moves and are drawn over armour and coats.
 | Lantern-Lens Goggles | Thick amber lenses in leather | Human | Sees through Grave Fog | Hunter trial |
 | Plague Mask | A long leather beak | Anyone | Lingering potion clouds affect the wearer for half as long | Crypt |
 | Opera Mask | A gilded half mask on a ribbon | Anyone | The wearer's name does not show from more than 8 blocks | Mastery feat |
+
+## Art And Feel
+
+- It must be fun. Being a vampire or a hunter is a power fantasy, and everything here should make the player feel strong, feared and clever.
+- Keep it balanced: every power and gift has a cost or a counter on the other side.
+- Everything looks and sounds like it belongs with the rest of the mod. The LOOK rows of `docs/prd.md` are the whole style brief: dark gothic, played straight.
+- The art bar is AAA Minecraft studio quality. Every model, clip and texture is made in a Blockbench project through the `bbmodel` MCP and is a GeckoLib model or clip. Flat item sprites are made through the `item-sprite` skill. Nothing is posed or animated in code, and no art file is edited by hand.

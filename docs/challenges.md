@@ -6,7 +6,7 @@ Every number here is the default and lives in data. Nobody building these choose
 
 ## Trials
 
-Each side has three on offer at a time, drawn from its list of 20 and changed every 7 in-game days. A trial is only drawn for a player who meets its gate. Each pays once each time it is drawn.
+Each side has three on offer at a time, drawn from its list of 20 and changed every 7 in-game days. A trial is only drawn for a player who meets its gate, a stage for a vampire or a rank for a hunter. Every hunter is at least an Initiate, so a hunter trial with no gate is open to all of them. Each pays once each time it is drawn.
 
 **Pay:** a small trial pays a quarter of the experience the player's next point costs, a medium one half and a large one all of it. A trial that names an accessory pays it the first time only.
 
@@ -18,14 +18,14 @@ Each side has three on offer at a time, drawn from its list of 20 and changed ev
 |---|---|---|---|---|
 | 1 | A Light Supper | Feed on 5 animals in one night | None | Small |
 | 2 | Unwatched | Feed on 3 villagers in one night, unseen | None | Medium |
-| 3 | Cellar Stock | Fill 7 Blood Bottles and set a full chalice | None | Small |
+| 3 | Cellar Stock | Fill a gold chalice with 7 Blood Bottles | None | Small |
 | 4 | Up All Day | Sleep a full day in a coffin and wake rested 3 times | None | Small |
 | 5 | Wings | Fly 1,000 blocks in bat form in one night | None | Small |
 | 6 | The Last Drop | Kill 5 enemies with a finisher bite | None | Medium |
 | 7 | A Varied Diet | Take the blood gift of 4 different kinds of prey in one night | None | Medium |
 | 8 | Out In The Sun | Walk 200 blocks in direct sun under a parasol | None | Small |
 | 9 | Bound | Bind a thrall and keep it alive for 3 nights | Adult | Medium, and the Thrall-Keeper's Ring |
-| 10 | Nobody Saw | Bring a Wary village back to calm | Adult | Medium |
+| 10 | Nobody Saw | Bring a Wary village's suspicion down until it is no longer Wary | Adult | Medium |
 | 11 | Hunters Hunted | Kill 6 hunter mobs in one night | Adult | Medium |
 | 12 | House Guest | Invite a vampire into your house | Adult | Medium |
 | 13 | Home Delivery | Have servants or house members bring home 10 Blood Bottles | Adult | Small |
@@ -41,14 +41,14 @@ Each side has three on offer at a time, drawn from its list of 20 and changed ev
 
 | # | Name | Do this | Gate | Pay |
 |---|---|---|---|---|
-| 1 | Bat Season | Kill 10 vampire bats in one night | Initiate | Small |
-| 2 | Shaken Off | Break free of 3 feeding bites | Initiate | Small |
-| 3 | Well Stocked | Coat a weapon with garlic and with holy water, and use both on vampires | Initiate | Small |
-| 4 | Clean Kill | Stake 3 vampires in one night | Initiate | Medium |
-| 5 | On The Trail | Follow a wounded vampire to its coffin before dawn | Initiate | Medium, and the Guild Badge |
-| 6 | Sun's Work | Down 3 vampires that the sun then finishes | Initiate | Medium |
-| 7 | Watchman | Stake a vampire inside a village | Initiate | Medium |
-| 8 | Paid In Full | Finish 3 contracts | Initiate | Medium, and the Saint's Medal |
+| 1 | Bat Season | Kill 3 vampire bats | None | Small |
+| 2 | Shaken Off | Break free of 3 feeding bites | None | Small |
+| 3 | Well Stocked | Coat a weapon with garlic and with holy water, and use both on vampires | None | Small |
+| 4 | Clean Kill | Stake 3 vampires in one night | None | Medium |
+| 5 | On The Trail | Follow a wounded vampire to its coffin before dawn | None | Medium, and the Guild Badge |
+| 6 | Sun's Work | Down 3 vampires that the sun then finishes | None | Medium |
+| 7 | Watchman | Stake a vampire inside a village | None | Medium |
+| 8 | Paid In Full | Finish 3 contracts | None | Medium, and the Saint's Medal |
 | 9 | Light Sleeper | Stake a vampire asleep in its coffin | Hunter | Medium |
 | 10 | Not A Sound | Clear a house by day without waking it | Hunter | Large, and the Warden's Cape |
 | 11 | Sprung | Catch 5 vampires in snares, nets or flash traps | Hunter | Medium, and the Trapper's Pouch |
@@ -69,8 +69,8 @@ A feat is done once. Each gives a title the player may show after their name and
 | Feat | Do this | Side | Title | Trophy | Also gives |
 |---|---|---|---|---|---|
 | Never Staked | Reach ancient without ever being staked | Vampire | the Undying | A cracked stake under a glass dome | |
-| Bare To The Blade | Drain the Grand Inquisitor while wearing no armour | Vampire | the Unbowed | His broken greatsword, mounted | |
-| A Ghost At The Feast | Feed on 100 villagers without once being seen | Vampire | the Unseen | An empty gilt mirror frame | Opera Mask |
+| Bare To The Blade | Drain the Grand Inquisitor while wearing no armour | Vampire | the Defiant | His broken greatsword, mounted | |
+| A Ghost At The Feast | Feed on 100 villagers unseen. A feeding that is seen does not count, and does not reset the count | Vampire | the Unseen | An empty gilt mirror frame | Opera Mask |
 | The Scourge | Beat a raiding party of twelve alone | Vampire | the Scourge | A stand of twelve hunters' hats | |
 | A Full Table | Hold a mountain castle with a full house of six | Vampire | the Sovereign | A small gilt throne | Lord's Mantle |
 | No Armour, No Fear | End the Eldest while wearing no armour | Hunter | the Fearless | The Eldest's crown on a velvet cushion | |
@@ -79,11 +79,11 @@ A feat is done once. Each gives a title the player may show after their name and
 | Older Than Sin | Stake an ancient | Hunter | Ancient's Bane | An urn of ash with a brass plate | |
 | Never Bitten | Reach Master without ever being bitten | Hunter | the Unbitten | A garlic wreath cast in bronze | |
 | Three Graves | End 3 nemeses | Anyone | the Relentless | Three small headstones | |
-| The Cabinet | Hold 60 different accessories at once across worn slots and storage | Anyone | the Collector | A glass-fronted cabinet of curios | |
+| The Cabinet | Own 60 different accessories at once, counting what is worn, in the inventory and in the ender chest | Anyone | the Collector | A glass-fronted cabinet of curios | |
 
 ## Server Firsts
 
-Four deeds are recorded once for a server and announced to everyone (CHAL-3): the first to reach ancient, the first to reach Master, the first to end the Eldest and the first to drain the Grand Inquisitor.
+See CHAL-3 in `docs/prd.md`. There are four, and no more are added here.
 
 ## Crest Charges
 
@@ -97,7 +97,14 @@ A veteran leads every raiding party sent against an elder or an ancient (GUILD-1
 
 | Attack | Pose before it lands | What it does | Used when | Cooldown |
 |---|---|---|---|---|
-| Silver Chain | Swings a chain overhead for 1 second | Throws it up to 12 blocks. A vampire it hits is dragged to the veteran and cannot leave the ground for 3 seconds. A sidestep or a wall stops it | A vampire is out of reach, in the air or in bat form | 15 seconds |
+| Silver Chain | Swings a chain overhead for 1 second | Throws it up to 12 blocks. A vampire it hits is dragged to the veteran is forced out of Bat Form, and cannot leave the ground for 3 seconds. Vanish, Shadow Step or a wall between them stops it | A vampire is out of reach, in the air or in bat form | 15 seconds |
 | Bolt Volley | Kneels and levels the crossbow for 1.5 seconds, with a line marked on the floor | Fires 3 coated bolts along the line | A vampire is 8 to 20 blocks away | 12 seconds |
-| Holy Water Arc | Draws its arm back for 1 second, with the landing spots marked | Throws 3 flasks in an arc. Each leaves a pool 2 blocks wide for 6 seconds that weakens and hurts a vampire standing in it | Two or more vampires are near, or one stands still | 20 seconds |
-| Rallying Cry | Raises its sword and shouts for 1 second | Hunters within 16 blocks heal 6 health, move faster for 8 seconds and are freed from mesmerise | An ally is mesmerised or the party has lost half its health | 45 seconds |
+| Holy Water Arc | Draws its arm back for 1 second, with the landing spots marked | Throws 3 flasks in an arc. Each leaves a pool with a radius of 1 block for 6 seconds that weakens and hurts a vampire standing in it | Two or more vampires are near, or one stands still | 20 seconds |
+| Rallying Cry | Raises its sword and shouts for 1 second | Hunters within a radius of 16 blocks heal 6 health, move faster for 8 seconds and are freed from mesmerise | An ally is mesmerised or the party has lost half its health | 45 seconds |
+
+## Art And Feel
+
+- It must be fun. Being a vampire or a hunter is a power fantasy, and everything here should make the player feel strong, feared and clever.
+- Keep it balanced: every power and gift has a cost or a counter on the other side.
+- Everything looks and sounds like it belongs with the rest of the mod. The LOOK rows of `docs/prd.md` are the whole style brief: dark gothic, played straight.
+- The art bar is AAA Minecraft studio quality. Every model, clip and texture is made in a Blockbench project through the `bbmodel` MCP and is a GeckoLib model or clip. Flat item sprites are made through the `item-sprite` skill. Nothing is posed or animated in code, and no art file is edited by hand.

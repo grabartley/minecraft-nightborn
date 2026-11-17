@@ -369,9 +369,9 @@ The vampire tree has the core and three bloodlines. A vampire player spends poin
 
 | Bloodline | What it gives |
 |---|---|
-| **Noble** | Mesmerise, command, thralls, charm, dread and passing as human |
-| **Beast** | Bat form, stronger bare hands, speed, a long leap, a pounce, a frenzy and hearing heartbeats |
-| **Occult** | Ghostly familiars, Grave Fog, Shadow Step, Shadow Veil, a hex, a ward of blood, mist form and the raised dead |
+| **Noble** | The ruler: minds bent, servants kept and a human face worn |
+| **Beast** | The predator: bat form, claws, speed and the leap |
+| **Occult** | The sorcerer: familiars, fog, shadow and the dead |
 
 The core starts with Thick Blood (more health), Grave Strength (harder blows), Blood Rush, an active power that burns blood for a short burst of speed and strength, and Vanish, an active power that takes the vampire out of sight in a puff of smoke and brings it back a moment later a few blocks away. A player vanishes the way their movement keys point, or behind them when none is held. The vampire only ever lands on solid floor with room to stand, never in fluid or fire, and never through a wall. If the full distance is not safe it lands short, and if nowhere is safe the power is refused and costs nothing. Vanish uses the smoke and sound of bat form (BAT-1) where the vampire leaves and where it returns. The first skill of each bloodline chooses it and gives a small lasting gift: tougher skin for Noble, safer falls for Beast and longer reach for Occult.
 
@@ -491,10 +491,10 @@ The hunter tree starts with Tracking, an active power that points toward the nea
 
 | Path | What it gives |
 |---|---|
-| **Trapper** | Snares, nets that bring a flier down, traps that burst with light, and bait. The fight is won before it starts |
-| **Faithful** | Stronger crucifixes and holy water, a burst from a raised crucifix that throws vampires back, consecrated ground, a blessing on a weapon, prayers that heal and shield the minds of those near, and a weapon set alight with the hunter's own blood |
-| **Slayer** | A sidestep, a guard that turns a vampire's rush back on it, a thrown stake, a quick crossbow shot, a staking lunge that downs a vampire caught off balance, and bite resistance |
-| **Seeker** | Tracking that reaches further, fresh blood trails made visible, a sleeping vampire heard through a wall, a warning when a vampire stalks the hunter, a mark on a quarry, a reading of what a vampire left behind, and a few seconds of sight that sees through every disguise, which a vampire player is told of |
+| **Trapper** | Traps, nets and bait. The fight is won before it starts |
+| **Faithful** | Faith as a weapon: stronger holy things, prayers that heal, and a blade blessed or set alight |
+| **Slayer** | The duellist: dodges, counters, stakes thrown and driven home, and bite resistance |
+| **Seeker** | Senses: longer tracking, warnings, a mark on a quarry, and sight that sees through a disguise, which a vampire player is told of |
 
 | ID | Requirement |
 |---|---|
@@ -734,8 +734,8 @@ Some of those who survive a player do not forget them.
 | FACT-1 | Every player is a vampire or a human. A human who joins the guild is a hunter and earns hunter skills (HUNT-10). Vampires earn bloodline skills |
 | FACT-2 | Combat between players follows the server's PvP setting. With PvP on, vampires and humans can fight and bite. A duel for a house is fought whatever the setting (HOUSE-8) |
 | FACT-3 | A player's faction is shown in the player list only if the server turns it on. It is off by default |
-| FACT-4 | Otherwise, vampires, humans and sick players are told apart only by what other players can see: eyes, being weakened, effects, a flinch (FACT-5) and a mirror (FACT-6). No name, mark, list or screen gives a vampire player away to a human (NAME-3, RANK-4). What they do, and those who know them, still can: a Seeker's read (HUNT-4), a hunter mob that sights them (GUILD-2) and a village that knows their face (SUSP-3) |
-| FACT-5 | A vampire, player or mob, flinches for a moment when it first comes to the edge of the reach of garlic or a crucifix (WEAK-1 to WEAK-4), before it is weakened enough to stoop (WEAK-8) |
+| FACT-4 | Otherwise, vampires, humans and sick players are told apart only by what other players can see: eyes, being weakened, effects, a flinch (FACT-5) and a mirror (FACT-6). No name, mark, list or screen gives a vampire player away to a human (NAME-3, RANK-4). What they do, and those who know them, still can: a Seeker's True Sight (HUNT-4), a hunter mob that sights them (GUILD-2) and a village that knows their face (SUSP-3) |
+| FACT-5 | A vampire, player or mob, flinches for a moment when it first comes to the edge of the reach of garlic or a crucifix (WEAK-1 to WEAK-4), before it is weakened enough to stoop (WEAK-8). A vampire under Glamour, a Noble power, does not flinch and shows in a mirror until the power ends (`docs/skills.md`) |
 | FACT-6 | A hand mirror is crafted from glass and a gold ingot. Used on a player or a mob nearby, it opens a small framed glass for its user that shows the one it was raised at, or an empty frame if they are a vampire. The one it was raised at sees and hears it raised |
 | FACT-7 | Choosing a side is a moment: turning into a vampire (TURN-5) and being sworn into the guild (HUNT-10). A short ceremony plays where the player stands. For a turning, their heartbeat stops, the light about them sinks to the colours of night and a bell tolls. For an oath, the Guild Master raises a crucifix, the hunters present salute and a horn sounds. The player sees it as a cutscene, in third person, the view circling them for a few seconds, and it ends on a card that names what they have become. They cannot act or be hurt while it plays, it never flashes, and a client option skips the camera. Players near see and hear the ceremony, but a human sees no more of a turning than TURN-5 shows. Each gives its journal (GUIDE-2) and an advancement (ADV-3, ADV-48) |
 
