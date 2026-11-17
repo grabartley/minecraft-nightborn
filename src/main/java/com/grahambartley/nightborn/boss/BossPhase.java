@@ -11,7 +11,7 @@ public record BossPhase(
     String name,
     int health,
     BossBar.Color color,
-    List<Identifier> powers,
+    PhaseStance stance,
     List<Identifier> attacks,
     int gapTicks,
     Optional<Identifier> music,
@@ -33,10 +33,9 @@ public record BossPhase(
                       Codec.STRING.fieldOf("name").forGetter(BossPhase::name),
                       Codec.intRange(1, 1000).fieldOf("health").forGetter(BossPhase::health),
                       COLOR.optionalFieldOf("color", BossBar.Color.RED).forGetter(BossPhase::color),
-                      Identifier.CODEC
-                          .listOf()
-                          .optionalFieldOf("powers", List.of())
-                          .forGetter(BossPhase::powers),
+                      PhaseStance.CODEC
+                          .optionalFieldOf("stance", PhaseStance.DEFAULT)
+                          .forGetter(BossPhase::stance),
                       Identifier.CODEC
                           .listOf()
                           .optionalFieldOf("attacks", List.of())
@@ -56,15 +55,10 @@ public record BossPhase(
                   .apply(instance, BossPhase::new));
 
   public BossPhase {
-    powers = List.copyOf(powers);
     attacks = List.copyOf(attacks);
   }
 
   public String translationKey() {
     return KEY + name;
-  }
-
-  public boolean casts(final Identifier power) {
-    return powers.contains(power);
   }
 }

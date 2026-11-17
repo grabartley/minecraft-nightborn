@@ -18,7 +18,6 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundEvent;
-import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Vec3d;
 import org.jetbrains.annotations.Nullable;
 
@@ -85,8 +84,8 @@ public final class BossFight {
     return arena == null || arena.holds(pos.x, pos.y, pos.z);
   }
 
-  public boolean casts(final Optional<BossFightPlan> plan, final Identifier power) {
-    return plan.map(p -> p.phase(phases.index()).casts(power)).orElse(true);
+  public Optional<PhaseStance> stance(final Optional<BossFightPlan> plan) {
+    return plan.map(p -> p.phase(phases.index()).stance());
   }
 
   public float cap(

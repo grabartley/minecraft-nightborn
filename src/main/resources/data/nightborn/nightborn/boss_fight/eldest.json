@@ -5,17 +5,21 @@
       "health": 30,
       "color": "red",
       "gap_ticks": 50,
-      "powers": [
-        "nightborn:core/blood_rush",
-        "nightborn:noble/dark_court",
-        "nightborn:core/vanish"
-      ],
       "attacks": [
         "nightborn:court_flurry",
         "nightborn:court_lunge",
         "nightborn:court_gaze",
-        "nightborn:court_rally"
+        "nightborn:court_rally",
+        "nightborn:court_vanish",
+        "nightborn:court_rush",
+        "nightborn:court_dark"
       ],
+      "stance": {
+        "near": 2.0,
+        "far": 4.0,
+        "speed": 1.1,
+        "strafe_ticks": 30
+      },
       "music": "nightborn:music.boss.eldest",
       "body": {
         "attributes": {
@@ -42,18 +46,21 @@
       "health": 35,
       "color": "yellow",
       "gap_ticks": 40,
-      "powers": [
-        "nightborn:beast/long_leap",
-        "nightborn:lord/bat_swarm",
-        "nightborn:core/blood_rush"
-      ],
       "attacks": [
         "nightborn:beast_pounce",
         "nightborn:beast_swarm",
         "nightborn:beast_screech",
         "nightborn:beast_claws",
-        "nightborn:beast_ward"
+        "nightborn:beast_ward",
+        "nightborn:court_rush",
+        "nightborn:beast_bats"
       ],
+      "stance": {
+        "near": 0.0,
+        "far": 3.5,
+        "speed": 1.35,
+        "strafe_ticks": 20
+      },
       "music": "nightborn:music.boss.eldest",
       "body": {
         "attributes": {
@@ -90,12 +97,6 @@
       "health": 35,
       "color": "purple",
       "gap_ticks": 30,
-      "powers": [
-        "nightborn:occult/shadow_step",
-        "nightborn:occult/grave_fog",
-        "nightborn:occult/summon_familiar",
-        "nightborn:core/vanish"
-      ],
       "attacks": [
         "nightborn:blood_pools",
         "nightborn:blood_step",
@@ -103,8 +104,17 @@
         "nightborn:court_gaze",
         "nightborn:beast_pounce",
         "nightborn:court_flurry",
-        "nightborn:beast_ward"
+        "nightborn:beast_ward",
+        "nightborn:court_vanish",
+        "nightborn:blood_fog",
+        "nightborn:blood_familiar"
       ],
+      "stance": {
+        "near": 4.0,
+        "far": 9.0,
+        "speed": 1.25,
+        "strafe_ticks": 25
+      },
       "music": "nightborn:music.boss.eldest_final",
       "body": {
         "attributes": {

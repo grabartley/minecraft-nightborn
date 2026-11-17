@@ -1,0 +1,12 @@
+{
+  "min_range": 6.0,
+  "max_range": 24.0,
+  "weight": 1,
+  "cooldown_ticks": 600,
+  "tell_ticks": 18,
+  "tell_clip": "mesmerise",
+  "tell_sound": "minecraft:block.beacon.activate",
+  "clip": "hiss",
+  "sound": "minecraft:entity.ravager.roar",
+  "power": "nightborn:core/blood_rush"
+}

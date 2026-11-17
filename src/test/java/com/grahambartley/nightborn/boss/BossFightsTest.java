@@ -74,8 +74,7 @@ class BossFightsTest {
   @ParameterizedTest(name = "{0}")
   @MethodSource("fights")
   @DisplayName(
-      "every shipped boss fight loads, names only attacks and powers that exist, and titles every"
-          + " phase")
+      "every shipped boss fight loads, names only attacks that exist, and titles every" + " phase")
   void fightLoads(final Path file) throws IOException {
     final DataResult<BossFightPlan> parsed = parse(BossFightPlan.CODEC, file);
     assertTrue(parsed.isSuccess(), () -> parsed.error().orElseThrow().message());
@@ -92,10 +91,6 @@ class BossFightsTest {
         assertTrue(shipped.contains(counter), phase.name() + " counters with a missing " + counter);
       }
       assertTrue(english.contains("\"" + phase.translationKey() + "\""), phase.translationKey());
-      for (final Identifier power : phase.powers()) {
-        assertTrue(
-            Files.exists(SKILLS.resolve(power.getPath() + ".json")), power + " is not a skill");
-      }
     }
   }
 

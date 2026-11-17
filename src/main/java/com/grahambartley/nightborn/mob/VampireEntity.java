@@ -307,7 +307,7 @@ public class VampireEntity extends HostileEntity
     tickHome();
     hissing.tickWard(this);
     if (!BatForm.isBat(this)) {
-      fight();
+      fightAsVampire();
       if (levitatesAtWill()) {
         levitateAboutHome();
       }
@@ -318,29 +318,20 @@ public class VampireEntity extends HostileEntity
     hunt.tick(this, this::setOutToFeed);
   }
 
-  private void fight() {
+  protected void fightAsVampire() {
     fighting.tick(
         this,
         Fighting.fights(
-            getTarget() != null && !preoccupied(),
+            getTarget() != null,
             Downed.state(this) != null,
             isSleeping(),
             retreat.active(),
             Weakened.sources(this).level(false) > 0),
         stage().combat(),
-        ServerConfigService.current().combat(),
-        this::casts);
+        ServerConfigService.current().combat());
   }
 
   protected boolean levitatesAtWill() {
-    return true;
-  }
-
-  protected boolean preoccupied() {
-    return false;
-  }
-
-  protected boolean casts(final Identifier power) {
     return true;
   }
 

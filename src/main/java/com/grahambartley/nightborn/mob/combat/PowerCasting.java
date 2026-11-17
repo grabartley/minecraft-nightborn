@@ -9,7 +9,6 @@ import com.grahambartley.nightborn.skill.SkillAttachment;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Predicate;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.sound.SoundEvent;
@@ -21,8 +20,7 @@ public final class PowerCasting {
   @Nullable private Tell telling;
   private long nextThink;
 
-  public <T extends MobEntity & PowerShow> void tick(
-      final T caster, final StageCombat combat, final Predicate<Identifier> casts) {
+  public <T extends MobEntity & PowerShow> void tick(final T caster, final StageCombat combat) {
     final long now = caster.getWorld().getTime();
     final LivingEntity target = caster.getTarget();
     if (telling != null) {
@@ -40,7 +38,7 @@ public final class PowerCasting {
     }
     nextThink = now + combat.thinkTicks();
     PowerChoice.choose(
-            options(caster, false, casts),
+            options(caster, false),
             caster.distanceTo(target),
             BloodAttachment.get(caster),
             combat.bloodFloor())
@@ -63,11 +61,9 @@ public final class PowerCasting {
     caster.playSound(SoundEvent.of(use.tellSound()), 1.0F, 1.0F);
   }
 
-  static List<PowerChoice.Option> options(
-      final LivingEntity caster, final boolean dodge, final Predicate<Identifier> casts) {
+  static List<PowerChoice.Option> options(final LivingEntity caster, final boolean dodge) {
     final List<PowerChoice.Option> options = new ArrayList<>();
-    for (final Identifier id :
-        SkillAttachment.owned(caster).ownedInOrder().stream().filter(casts).toList()) {
+    for (final Identifier id : SkillAttachment.owned(caster).ownedInOrder()) {
       Powers.power(caster, id)
           .filter(power -> power.mob().map(use -> use.dodge() == dodge).orElse(false))
           .ifPresent(

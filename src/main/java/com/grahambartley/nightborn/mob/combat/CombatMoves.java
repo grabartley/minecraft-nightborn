@@ -7,14 +7,12 @@ import com.grahambartley.nightborn.skill.PowerShow;
 import com.grahambartley.nightborn.skill.PowerUse;
 import com.grahambartley.nightborn.skill.Powers;
 import com.grahambartley.nightborn.vampire.Impulse;
-import java.util.function.Predicate;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.RangedWeaponItem;
 import net.minecraft.item.TridentItem;
 import net.minecraft.sound.SoundEvent;
-import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Vec3d;
 
 public final class CombatMoves {
@@ -23,10 +21,7 @@ public final class CombatMoves {
   private boolean threatened;
 
   public <T extends MobEntity & PowerShow> void tick(
-      final T fighter,
-      final StageCombat combat,
-      final CombatSettings settings,
-      final Predicate<Identifier> casts) {
+      final T fighter, final StageCombat combat, final CombatSettings settings) {
     final LivingEntity target = fighter.getTarget();
     final long now = fighter.getWorld().getTime();
     if (target == null) {
@@ -41,7 +36,7 @@ public final class CombatMoves {
     threatened = threat.at(distance, settings);
     if (CombatMove.dodgesWithPower(
             threatened, wasThreatened, () -> fighter.getRandom().nextInt(100), combat)
-        && dodgeWithPower(fighter, distance, combat, casts)) {
+        && dodgeWithPower(fighter, distance, combat)) {
       nextMove = now + (long) combat.thinkTicks() * settings.moveCooldownThinks();
       return;
     }
@@ -70,12 +65,9 @@ public final class CombatMoves {
   }
 
   private static boolean dodgeWithPower(
-      final MobEntity fighter,
-      final double distance,
-      final StageCombat combat,
-      final Predicate<Identifier> casts) {
+      final MobEntity fighter, final double distance, final StageCombat combat) {
     return PowerChoice.dodge(
-            PowerCasting.options(fighter, true, casts),
+            PowerCasting.options(fighter, true),
             distance,
             BloodAttachment.get(fighter),
             combat.bloodFloor())

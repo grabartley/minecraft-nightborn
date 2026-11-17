@@ -3,9 +3,7 @@ package com.grahambartley.nightborn.mob.combat;
 import com.grahambartley.nightborn.config.CombatSettings;
 import com.grahambartley.nightborn.mob.stage.StageCombat;
 import com.grahambartley.nightborn.skill.PowerShow;
-import java.util.function.Predicate;
 import net.minecraft.entity.mob.MobEntity;
-import net.minecraft.util.Identifier;
 
 public final class Fighting {
 
@@ -25,16 +23,15 @@ public final class Fighting {
       final T fighter,
       final boolean fighting,
       final StageCombat combat,
-      final CombatSettings settings,
-      final Predicate<Identifier> casts) {
+      final CombatSettings settings) {
     if (!fighting) {
       casting.cancel();
       moves.rest();
       return;
     }
-    casting.tick(fighter, combat, casts);
+    casting.tick(fighter, combat);
     if (!casting.telling()) {
-      moves.tick(fighter, combat, settings, casts);
+      moves.tick(fighter, combat, settings);
     }
   }
 }

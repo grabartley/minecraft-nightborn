@@ -9,6 +9,7 @@ import com.grahambartley.nightborn.boss.BossPhase;
 import com.grahambartley.nightborn.boss.FightRules;
 import com.grahambartley.nightborn.boss.HoldGroundGoal;
 import com.grahambartley.nightborn.boss.PhaseTrack;
+import com.grahambartley.nightborn.boss.StanceGoal;
 import com.grahambartley.nightborn.config.RitualSettings;
 import com.grahambartley.nightborn.core.BlazingEyes;
 import com.grahambartley.nightborn.decor.SeatEntity;
@@ -18,6 +19,9 @@ import com.grahambartley.nightborn.eldest.EldestHealth;
 import com.grahambartley.nightborn.eldest.FightRoll;
 import com.grahambartley.nightborn.lord.BossBarLook;
 import com.grahambartley.nightborn.mob.goal.HouseholdLifeGoal;
+import com.grahambartley.nightborn.mob.goal.LieDownedGoal;
+import com.grahambartley.nightborn.mob.goal.SeekShadeGoal;
+import com.grahambartley.nightborn.mob.goal.SleepInCoffinGoal;
 import com.grahambartley.nightborn.mob.look.VampireRig;
 import com.grahambartley.nightborn.server.ServerConfigService;
 import com.grahambartley.nightborn.structure.HouseholdArrival;
@@ -33,6 +37,12 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.ai.goal.ActiveTargetGoal;
+import net.minecraft.entity.ai.goal.AvoidSunlightGoal;
+import net.minecraft.entity.ai.goal.GoToWalkTargetGoal;
+import net.minecraft.entity.ai.goal.LookAroundGoal;
+import net.minecraft.entity.ai.goal.LookAtEntityGoal;
+import net.minecraft.entity.ai.goal.RevengeGoal;
+import net.minecraft.entity.ai.goal.SwimGoal;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.damage.DamageType;
 import net.minecraft.entity.player.PlayerEntity;
@@ -161,15 +171,12 @@ public class EldestEntity extends BossVampireEntity implements BlazingEyes {
     return false;
   }
 
-  @Override
-  protected boolean preoccupied() {
+  private boolean preoccupied() {
     return fight.busy(getWorld().getTime());
   }
 
   @Override
-  protected boolean casts(final Identifier power) {
-    return fight.casts(plan(), power);
-  }
+  protected void fightAsVampire() {}
 
   @Override
   public boolean canTarget(final LivingEntity target) {
@@ -219,8 +226,18 @@ public class EldestEntity extends BossVampireEntity implements BlazingEyes {
 
   @Override
   protected void initGoals() {
-    super.initGoals();
+    goalSelector.add(0, new LieDownedGoal(this));
     goalSelector.add(0, new HoldGroundGoal(this, () -> preoccupied() || fight.flying()));
+    goalSelector.add(1, new SwimGoal(this));
+    DoorPassage.allow(this);
+    goalSelector.add(2, new SeekShadeGoal(this, 1.3));
+    goalSelector.add(3, new AvoidSunlightGoal(this));
+    goalSelector.add(3, new SleepInCoffinGoal(this));
+    goalSelector.add(4, new StanceGoal(this, () -> fight.stance(plan())));
+    goalSelector.add(5, new GoToWalkTargetGoal(this, 1.0));
+    goalSelector.add(9, new LookAtEntityGoal(this, PlayerEntity.class, 8.0F));
+    goalSelector.add(9, new LookAroundGoal(this));
+    targetSelector.add(1, new RevengeGoal(this));
     targetSelector.add(
         2, new ActiveTargetGoal<>(this, PlayerEntity.class, 10, true, false, this::attacksOnSight));
   }
