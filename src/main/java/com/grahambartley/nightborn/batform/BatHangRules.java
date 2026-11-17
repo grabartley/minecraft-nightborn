@@ -1,7 +1,6 @@
 package com.grahambartley.nightborn.batform;
 
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
 
 public final class BatHangRules {
@@ -9,7 +8,6 @@ public final class BatHangRules {
   static final double HANG_DROP = 1.0;
   static final double REACH_UP = 3.5;
   static final double REACH_ASIDE = 1.5;
-  static final double OVERLAP = 0.01;
   static final double SLIP = 0.25;
 
   private BatHangRules() {}
@@ -21,7 +19,7 @@ public final class BatHangRules {
       final double ceilingY,
       final double aside) {
     final double gap = ceilingY - headY;
-    return underside && !hanging && gap >= -OVERLAP && gap <= REACH_UP && aside <= REACH_ASIDE;
+    return underside && !hanging && gap >= 0.0 && gap <= REACH_UP && aside <= REACH_ASIDE;
   }
 
   public static Vec3d spot(final BlockPos anchor) {
@@ -34,10 +32,6 @@ public final class BatHangRules {
 
   public static boolean slips(final double distanceFromSpot) {
     return distanceFromSpot > SLIP;
-  }
-
-  public static Box sweep(final Box body, final Box hung) {
-    return body.union(hung);
   }
 
   public static boolean armed(

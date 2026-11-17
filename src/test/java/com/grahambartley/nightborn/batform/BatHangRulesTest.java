@@ -3,7 +3,6 @@ package com.grahambartley.nightborn.batform;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -18,6 +17,7 @@ class BatHangRulesTest {
     "true, false, 60.5, 64, 1.5, true",
     "false, false, 62.9, 64, 0.2, false",
     "true, true, 62.9, 64, 0.2, false",
+    "true, false, 64.005, 64, 0.0, false",
     "true, false, 64.5, 64, 0.2, false",
     "true, false, 60.4, 64, 0.2, false",
     "true, false, 62.9, 64, 1.6, false"
@@ -81,21 +81,5 @@ class BatHangRulesTest {
   @DisplayName("a fresh press of jump or forward lets a hanging bat go")
   void letsGo(final boolean armed, final boolean pressing, final boolean expected) {
     assertEquals(expected, BatHangRules.letsGo(armed, pressing));
-  }
-
-  @ParameterizedTest(name = "body at ({0}, {1}, {2})")
-  @CsvSource({"0.5, 60.0, 0.5", "1.9, 61.0, 0.5", "0.5, 62.0, -0.9"})
-  @DisplayName(
-      "the way up to the hang spot covers the bat where it is, where it will hang and between")
-  void sweep(final double x, final double y, final double z) {
-    final Box body = new Box(x - 0.3, y, z - 0.3, x + 0.3, y + 0.9, z + 0.3);
-    final Box hung = new Box(0.2, 63.0, 0.2, 0.8, 63.9, 0.8);
-    final Box swept = BatHangRules.sweep(body, hung);
-    assertEquals(Math.min(body.minX, hung.minX), swept.minX);
-    assertEquals(Math.max(body.maxX, hung.maxX), swept.maxX);
-    assertEquals(body.minY, swept.minY);
-    assertEquals(hung.maxY, swept.maxY);
-    assertEquals(Math.min(body.minZ, hung.minZ), swept.minZ);
-    assertEquals(Math.max(body.maxZ, hung.maxZ), swept.maxZ);
   }
 }

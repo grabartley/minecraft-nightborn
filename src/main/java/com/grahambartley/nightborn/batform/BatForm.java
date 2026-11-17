@@ -103,7 +103,10 @@ public final class BatForm {
     }
     vampire.removeAttached(TYPE);
     vampire.calculateDimensions();
-    if (!(vampire instanceof PlayerEntity)) {
+    if (vampire instanceof ServerPlayerEntity player) {
+      player.interactionManager.getGameMode().setAbilities(player.getAbilities());
+      player.sendAbilitiesUpdate();
+    } else {
       vampire.setNoGravity(false);
     }
     SmokePoof.burst(vampire, LEAVE_SOUND);

@@ -54,28 +54,34 @@ public final class BatHang {
         Math.max(Math.abs(player.getX() - spot.x), Math.abs(player.getZ() - spot.z)))) {
       return ActionResult.FAIL;
     }
-    if (world.isClient) {
-      return ActionResult.SUCCESS;
+    if (!clear(player, anchor)) {
+      return ActionResult.FAIL;
     }
-    return player instanceof ServerPlayerEntity server && hang(server, anchor)
-        ? ActionResult.SUCCESS
-        : ActionResult.FAIL;
+    if (player instanceof ServerPlayerEntity server) {
+      hang(server, anchor);
+    }
+    return ActionResult.SUCCESS;
   }
 
   public static boolean hang(final ServerPlayerEntity player, final BlockPos anchor) {
-    final Vec3d spot = BatHangRules.spot(anchor);
-    if (!holds(player.getWorld(), anchor)
-        || !player
-            .getWorld()
-            .isSpaceEmpty(
-                player,
-                BatHangRules.sweep(player.getBoundingBox(), BatForm.dimensions().getBoxAt(spot)))) {
+    if (!clear(player, anchor)) {
       return false;
     }
+    final Vec3d spot = BatHangRules.spot(anchor);
     player.requestTeleport(spot.x, spot.y, spot.z);
     player.setVelocity(Vec3d.ZERO);
     player.setAttached(TYPE, anchor);
     return true;
+  }
+
+  private static boolean clear(final PlayerEntity player, final BlockPos anchor) {
+    final World world = player.getWorld();
+    return holds(world, anchor)
+        && world.isSpaceEmpty(
+            player,
+            player
+                .getBoundingBox()
+                .union(BatForm.dimensions().getBoxAt(BatHangRules.spot(anchor))));
   }
 
   public static void release(final Entity entity) {
