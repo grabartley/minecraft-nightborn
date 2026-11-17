@@ -32,6 +32,19 @@ class PhaseStanceTest {
     assertEquals(side, new PhaseStance(4.0F, 9.0F, 1.0, 25).side(age));
   }
 
+  @ParameterizedTest(name = "an input of {0} at speed {1}: {2}")
+  @CsvSource({
+    "0.5, 1.0, 0.5",
+    "0.5, 1.3, 0.65",
+    "-0.6, 1.3, -0.78",
+    "0.5, 3.0, 1.0",
+    "-0.6, 3.0, -1.0"
+  })
+  @DisplayName("a faster stance sidesteps and backs off faster, up to a full stride")
+  void paced(final float input, final double speed, final float paced) {
+    assertEquals(paced, new PhaseStance(4.0F, 9.0F, speed, 25).paced(input), 1.0E-6F);
+  }
+
   @ParameterizedTest(name = "{0}: {1}")
   @CsvSource(
       delimiter = '|',

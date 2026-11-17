@@ -39,6 +39,7 @@ public final class BossFight {
   private long phaseBegan;
   private final BossFlight flight = new BossFlight();
   private final BossAmbience ambience = new BossAmbience();
+  private final ArenaSeal seal = new ArenaSeal();
   @Nullable private Arena arena;
   private long changeUntil;
   private boolean staking;
@@ -181,7 +182,14 @@ public final class BossFight {
             phases.index(),
             boss.getHealth() < boss.getMaxHealth() - PhaseTrack.SLACK,
             downed != null);
-    ArenaSeal.hold(world, arena, roll.inside());
+    seal.hold(
+        world,
+        arena,
+        player ->
+            !boss.isSleeping()
+                && boss.attacksOnSight(player)
+                && !player.isCreative()
+                && player.canTakeDamage());
     final List<ServerPlayerEntity> inside =
         world.getPlayers(
             player ->
@@ -227,6 +235,7 @@ public final class BossFight {
 
   public void end(final BossVampireEntity boss) {
     attacks.cancel();
+    seal.release();
     if (boss.getWorld() instanceof ServerWorld world) {
       send(world, roll.clear(), BossArenaPayload.left(boss.getId()));
     }

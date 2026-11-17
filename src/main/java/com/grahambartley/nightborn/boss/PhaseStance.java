@@ -47,6 +47,10 @@ public record PhaseStance(float near, float far, double speed, int strafeTicks) 
     return distance < near ? Move.BACK : Move.CIRCLE;
   }
 
+  public float paced(final float input) {
+    return (float) Math.max(-1.0, Math.min(1.0, input * speed));
+  }
+
   public float side(final int age) {
     return (age / strafeTicks) % 2 == 0 ? SIDESTEP : 0.0F - SIDESTEP;
   }

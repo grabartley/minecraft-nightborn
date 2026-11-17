@@ -325,7 +325,7 @@ public class VampireEntity extends HostileEntity
             getTarget() != null,
             Downed.state(this) != null,
             isSleeping(),
-            retreat.active(),
+            retreat != null && retreat.active(),
             Weakened.sources(this).level(false) > 0),
         stage().combat(),
         ServerConfigService.current().combat());

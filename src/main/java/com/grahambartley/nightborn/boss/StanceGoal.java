@@ -63,8 +63,8 @@ public final class StanceGoal extends Goal {
           mob.getNavigation().startMovingTo(target, now.speed());
         }
       }
-      case BACK -> sidestep(target, BACKPEDAL, now.side(age));
-      case CIRCLE -> sidestep(target, 0.0F, now.side(age));
+      case BACK -> sidestep(target, now.paced(BACKPEDAL), now.paced(now.side(age)));
+      case CIRCLE -> sidestep(target, 0.0F, now.paced(now.side(age)));
     }
     age++;
   }
