@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.function.Function;
 import net.minecraft.sound.SoundEvent;
 
 public final class MobSounds {
@@ -28,8 +29,19 @@ public final class MobSounds {
       NightbornSounds.register("entity.vampire_bat.death");
 
   private static final Map<VampireRig, Map<VampireVoice, SoundEvent>> VOICES =
-      voices(VAMPIRE, Arrays.asList(VampireVoice.values()), Set.of(VampireRig.values()));
-  private static final Map<VampireRig, Map<HunterVoice, SoundEvent>> HUNTERS = hunterVoices();
+      voices(
+          VAMPIRE,
+          VampireVoice.class,
+          Arrays.asList(VampireVoice.values()),
+          VampireVoice::id,
+          Set.of(VampireRig.values()));
+  private static final Map<VampireRig, Map<HunterVoice, SoundEvent>> HUNTERS =
+      voices(
+          HUNTER,
+          HunterVoice.class,
+          Arrays.asList(HunterVoice.values()),
+          HunterVoice::id,
+          VampireRig.COMMON);
 
   private MobSounds() {}
 
@@ -55,25 +67,19 @@ public final class MobSounds {
     return "entity." + speaker + "." + rig.asString() + "." + voice;
   }
 
-  private static Map<VampireRig, Map<HunterVoice, SoundEvent>> hunterVoices() {
-    final Map<VampireRig, Map<HunterVoice, SoundEvent>> voices = new EnumMap<>(VampireRig.class);
-    for (final VampireRig rig : new TreeSet<>(VampireRig.COMMON)) {
-      final Map<HunterVoice, SoundEvent> sounds = new EnumMap<>(HunterVoice.class);
-      for (final HunterVoice voice : HunterVoice.values()) {
-        sounds.put(voice, NightbornSounds.register(voicePath(HUNTER, rig, voice.id())));
-      }
-      voices.put(rig, sounds);
-    }
-    return voices;
-  }
-
-  private static Map<VampireRig, Map<VampireVoice, SoundEvent>> voices(
-      final String speaker, final List<VampireVoice> spoken, final Set<VampireRig> rigs) {
-    final Map<VampireRig, Map<VampireVoice, SoundEvent>> voices = new EnumMap<>(VampireRig.class);
+  private static <V extends Enum<V>> Map<VampireRig, Map<V, SoundEvent>> voices(
+      final String speaker,
+      final Class<V> kind,
+      final List<V> spoken,
+      final Function<V, String> id,
+      final Set<VampireRig> rigs) {
+    final Map<VampireRig, Map<V, SoundEvent>> voices = new EnumMap<>(VampireRig.class);
     for (final VampireRig rig : new TreeSet<>(rigs)) {
-      final Map<VampireVoice, SoundEvent> sounds = new EnumMap<>(VampireVoice.class);
+      final Map<V, SoundEvent> sounds = new EnumMap<>(kind);
       spoken.forEach(
-          voice -> sounds.put(voice, NightbornSounds.register(voicePath(speaker, rig, voice))));
+          voice ->
+              sounds.put(
+                  voice, NightbornSounds.register(voicePath(speaker, rig, id.apply(voice)))));
       voices.put(rig, sounds);
     }
     return voices;

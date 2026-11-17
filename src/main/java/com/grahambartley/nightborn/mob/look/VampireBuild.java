@@ -24,7 +24,7 @@ public record VampireBuild(float width, float minHeight, float maxHeight, int we
                       Codec.floatRange(MIN_HEIGHT, MAX_HEIGHT)
                           .fieldOf("max_height")
                           .forGetter(VampireBuild::maxHeight),
-                      Codec.intRange(1, VampireLook.MAX_WEIGHT)
+                      Codec.intRange(1, Weighted.MAX_WEIGHT)
                           .optionalFieldOf("weight", 1)
                           .forGetter(VampireBuild::weight))
                   .apply(instance, VampireBuild::new));

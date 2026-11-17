@@ -11,8 +11,11 @@ import com.grahambartley.nightborn.mob.NightbornMobs;
 import com.grahambartley.nightborn.mob.VampireEntity;
 import com.grahambartley.nightborn.ward.Wards;
 import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
+import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.projectile.thrown.PotionEntity;
 import net.minecraft.item.CrossbowItem;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.test.GameTest;
 import net.minecraft.test.TestContext;
 import net.minecraft.util.math.BlockPos;
@@ -177,10 +180,35 @@ public class HunterTacticsGameTest implements FabricGameTest {
               1,
               "one flask of holy water is in the air");
           context.assertTrue(hunter.getOffHandStack().isEmpty(), "and its hand is empty again");
-          fight(hunter, HunterAction.THROW_HOLY_WATER.lengthTicks());
-          context.assertTrue(
-              hunter.action() != HunterAction.THROW_HOLY_WATER,
+          fight(hunter, HunterAction.THROW_HOLY_WATER.lengthTicks() * 2);
+          context.assertEquals(
+              context
+                  .getWorld()
+                  .getEntitiesByClass(
+                      PotionEntity.class,
+                      context.getTestBox(),
+                      potion -> HolyWater.isHolyWater(potion.getStack()))
+                  .size(),
+              1,
               "it does not throw again straight away");
+          context.complete();
+        });
+  }
+
+  @GameTest(templateName = ARENA, tickLimit = START + 20)
+  public void aHunterSavedWithAWeaponInHandLoadsAtEaseWithEmptyHands(final TestContext context) {
+    final HunterEntity hunter = hunter(context, new BlockPos(4, 2, 4));
+    context.runAtTick(
+        START,
+        () -> {
+          hunter.equipStack(EquipmentSlot.MAINHAND, new ItemStack(GearItems.WOODEN_STAKE));
+          final NbtCompound saved = new NbtCompound();
+          hunter.writeNbt(saved);
+          final HunterEntity loaded = GuildMobs.HUNTER.create(context.getWorld());
+          loaded.readNbt(saved);
+          loaded.fight();
+          context.assertFalse(loaded.armed(), "a loaded hunter with nothing to hunt is at ease");
+          context.assertTrue(loaded.getMainHandStack().isEmpty(), "with nothing in its hand");
           context.complete();
         });
   }

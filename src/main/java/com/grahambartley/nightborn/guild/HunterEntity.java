@@ -27,6 +27,7 @@ import net.minecraft.entity.data.TrackedDataHandlerRegistry;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.mob.PathAwareEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundEvent;
@@ -272,6 +273,8 @@ public class HunterEntity extends PathAwareEntity
     dataTracker.set(FEMALE, nbt.getBoolean(FEMALE_KEY));
     dataTracker.set(BUST, BustNbt.read(nbt, figure()));
     if (!getWorld().isClient()) {
+      equipStack(EquipmentSlot.MAINHAND, ItemStack.EMPTY);
+      equipStack(EquipmentSlot.OFFHAND, ItemStack.EMPTY);
       wear(nbt.getString(GuildData.LOOK_KEY));
       arm(nbt.getString(KIT_KEY));
     }
