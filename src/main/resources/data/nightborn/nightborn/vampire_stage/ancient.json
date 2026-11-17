@@ -15,6 +15,9 @@
     "power_dodge_chance": 60,
     "retreat_health": 40
   },
-  "look": { "idle": "idle_ancient", "marks": "nightborn:textures/entity/vampire/stage/ancient" },
+  "look": {
+    "idle": "idle_ancient",
+    "name_color": "red", "marks": "nightborn:textures/entity/vampire/stage/ancient"
+  },
   "loot": "nightborn:entities/vampire/ancient"
 }

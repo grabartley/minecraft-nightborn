@@ -37,6 +37,9 @@ import com.grahambartley.nightborn.mob.stage.Staged;
 import com.grahambartley.nightborn.mob.stage.VampireStage;
 import com.grahambartley.nightborn.mob.stage.VampireStages;
 import com.grahambartley.nightborn.mob.stage.VampireStaging;
+import com.grahambartley.nightborn.name.MobNaming;
+import com.grahambartley.nightborn.name.NameBearer;
+import com.grahambartley.nightborn.name.NameStyle;
 import com.grahambartley.nightborn.occult.OccultAttributes;
 import com.grahambartley.nightborn.server.ServerConfigService;
 import com.grahambartley.nightborn.skill.PowerShow;
@@ -80,6 +83,7 @@ import net.minecraft.nbt.NbtElement;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundEvent;
+import net.minecraft.text.TextColor;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
@@ -98,6 +102,7 @@ public class VampireEntity extends HostileEntity
         Figure,
         GeoEntity,
         HouseholdMember,
+        NameBearer,
         PowerShow,
         RigWearer,
         SkillHolder,
@@ -107,6 +112,7 @@ public class VampireEntity extends HostileEntity
   static final String HEIGHT_KEY = "Height";
   static final String WIDTH_KEY = "Width";
   static final String STAGE_KEY = "Stage";
+  static final String EPITHET_KEY = "Epithet";
   static final String MOURN_CLIP = "mourn";
 
   private static final TrackedData<String> LOOK =
@@ -125,6 +131,8 @@ public class VampireEntity extends HostileEntity
       DataTracker.registerData(VampireEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
   private static final TrackedData<Float> BUST =
       DataTracker.registerData(VampireEntity.class, TrackedDataHandlerRegistry.FLOAT);
+  private static final TrackedData<String> EPITHET =
+      DataTracker.registerData(VampireEntity.class, TrackedDataHandlerRegistry.STRING);
 
   private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
   private final VampireAnimator animator = new VampireAnimator();
@@ -164,6 +172,7 @@ public class VampireEntity extends HostileEntity
     builder.add(ACTION_SEQUENCE, 0);
     builder.add(READING, false);
     builder.add(BUST, Figure.FLAT);
+    builder.add(EPITHET, "");
   }
 
   @Override
@@ -281,6 +290,7 @@ public class VampireEntity extends HostileEntity
       calculateDimensions();
     }
     if (!getWorld().isClient() && isAlive()) {
+      MobNaming.ensure(this);
       blood.tick(this, ServerConfigService.current());
       if (isSleeping() && !homeLife.bedtime(this) && !CoffinRise.rising(this)) {
         wakeUp();
@@ -355,6 +365,31 @@ public class VampireEntity extends HostileEntity
   public VampireStage stage() {
     return VampireStages.stage(getWorld().getRegistryManager(), stageId())
         .orElse(VampireStage.PLAIN);
+  }
+
+  @Override
+  public NameStyle nameStyle() {
+    return NameStyle.VAMPIRE;
+  }
+
+  @Override
+  public boolean bearsWomansName() {
+    return rig() == VampireRig.FEMALE;
+  }
+
+  @Override
+  public String epithet() {
+    return dataTracker.get(EPITHET);
+  }
+
+  @Override
+  public void bearEpithet(final String epithet) {
+    dataTracker.set(EPITHET, epithet);
+  }
+
+  @Override
+  public Optional<TextColor> nameColour() {
+    return stage().look().nameColor();
   }
 
   @Override
@@ -572,6 +607,7 @@ public class VampireEntity extends HostileEntity
     nbt.putFloat(WIDTH_KEY, width());
     BustNbt.write(nbt, bust());
     nbt.putString(STAGE_KEY, dataTracker.get(STAGE));
+    nbt.putString(EPITHET_KEY, epithet());
     homeLife.write(nbt);
     householdLife.write(nbt, getRegistryManager());
     blood.write(nbt);
@@ -585,6 +621,7 @@ public class VampireEntity extends HostileEntity
     returnHand();
     blood.read(nbt);
     dataTracker.set(STAGE, nbt.getString(STAGE_KEY));
+    bearEpithet(nbt.getString(EPITHET_KEY));
     undressed = nbt.contains(LOOK_KEY) && !nbt.contains(LOOK_KEY, NbtElement.STRING_TYPE);
     if (nbt.contains(LOOK_KEY, NbtElement.STRING_TYPE)) {
       final Identifier look = Identifier.tryParse(nbt.getString(LOOK_KEY));

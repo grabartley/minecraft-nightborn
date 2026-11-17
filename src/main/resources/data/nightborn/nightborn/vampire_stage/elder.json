@@ -15,6 +15,9 @@
     "power_dodge_chance": 50,
     "retreat_health": 35
   },
-  "look": { "idle": "idle_elder", "marks": "nightborn:textures/entity/vampire/stage/elder" },
+  "look": {
+    "idle": "idle_elder",
+    "name_color": "gold", "marks": "nightborn:textures/entity/vampire/stage/elder"
+  },
   "loot": "nightborn:entities/vampire/elder"
 }

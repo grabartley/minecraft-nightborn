@@ -7,6 +7,7 @@ import com.grahambartley.nightborn.eldest.EldestHealth;
 import com.grahambartley.nightborn.eldest.FightRoll;
 import com.grahambartley.nightborn.mob.goal.HouseholdLifeGoal;
 import com.grahambartley.nightborn.mob.look.VampireRig;
+import com.grahambartley.nightborn.name.NameStyle;
 import com.grahambartley.nightborn.server.ServerConfigService;
 import com.grahambartley.nightborn.structure.HouseholdArrival;
 import com.grahambartley.nightborn.vampire.Vampires;
@@ -130,6 +131,11 @@ public class EldestEntity extends BossVampireEntity {
       fightRoll.join(player.getUuid());
     }
     return hurt;
+  }
+
+  @Override
+  public NameStyle nameStyle() {
+    return NameStyle.ELDEST;
   }
 
   @Override

@@ -56,6 +56,7 @@
       "com.grahambartley.nightborn.gametest.StakeGameTest",
       "com.grahambartley.nightborn.gametest.SilverGameTest",
       "com.grahambartley.nightborn.gametest.VampireMobGameTest",
+      "com.grahambartley.nightborn.gametest.NameGameTest",
       "com.grahambartley.nightborn.gametest.HumanFamiliarGameTest",
       "com.grahambartley.nightborn.gametest.MindGameTest",
       "com.grahambartley.nightborn.gametest.ThrallGameTest",

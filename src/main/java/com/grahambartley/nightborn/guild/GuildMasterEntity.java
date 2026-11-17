@@ -1,6 +1,9 @@
 package com.grahambartley.nightborn.guild;
 
 import com.grahambartley.nightborn.mob.MobSounds;
+import com.grahambartley.nightborn.name.MobNaming;
+import com.grahambartley.nightborn.name.NameBearer;
+import com.grahambartley.nightborn.name.NameStyle;
 import com.grahambartley.nightborn.server.ServerConfigService;
 import com.grahambartley.nightborn.vampire.Vampires;
 import java.util.Optional;
@@ -42,7 +45,8 @@ import software.bernie.geckolib.animation.AnimatableManager;
 import software.bernie.geckolib.animation.AnimationController;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
-public class GuildMasterEntity extends MerchantEntity implements GeoEntity, HunterLooking {
+public class GuildMasterEntity extends MerchantEntity
+    implements GeoEntity, HunterLooking, NameBearer {
 
   static final String LAST_RESTOCK = "LastRestock";
   static final int HEAD_SHAKE_TICKS = 40;
@@ -153,6 +157,7 @@ public class GuildMasterEntity extends MerchantEntity implements GeoEntity, Hunt
       wear(dataTracker.get(LOOK));
     }
     CampHome.keep(this, TENT_REACH);
+    MobNaming.ensure(this);
     final PlayerEntity customer = getCustomer();
     if (customer != null && Vampires.isVampire(customer)) {
       resetCustomer();
@@ -179,6 +184,16 @@ public class GuildMasterEntity extends MerchantEntity implements GeoEntity, Hunt
 
   private void wear(final String look) {
     dataTracker.set(LOOK, GuildData.wornLook(look, getRegistryManager(), rig(), getRandom()));
+  }
+
+  @Override
+  public NameStyle nameStyle() {
+    return NameStyle.HUNTER;
+  }
+
+  @Override
+  public boolean bearsWomansName() {
+    return false;
   }
 
   @Override

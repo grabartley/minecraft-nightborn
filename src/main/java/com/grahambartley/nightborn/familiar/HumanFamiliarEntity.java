@@ -5,6 +5,10 @@ import com.grahambartley.nightborn.familiar.goal.GuardCoffinGoal;
 import com.grahambartley.nightborn.familiar.goal.RetaliateGoal;
 import com.grahambartley.nightborn.familiar.goal.RunErrandGoal;
 import com.grahambartley.nightborn.familiar.goal.StayHomeGoal;
+import com.grahambartley.nightborn.name.MobNaming;
+import com.grahambartley.nightborn.name.NameBearer;
+import com.grahambartley.nightborn.name.NameStyle;
+import com.grahambartley.nightborn.servant.ServantDeaths;
 import java.util.Optional;
 import java.util.UUID;
 import net.minecraft.entity.EntityType;
@@ -42,7 +46,7 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
 public class HumanFamiliarEntity extends PathAwareEntity
-    implements VillagerDataContainer, InventoryOwner {
+    implements VillagerDataContainer, InventoryOwner, NameBearer {
 
   public static final int CARRY_SLOTS = 8;
 
@@ -133,6 +137,12 @@ public class HumanFamiliarEntity extends PathAwareEntity
   }
 
   @Override
+  public void tick() {
+    super.tick();
+    MobNaming.ensure(this);
+  }
+
+  @Override
   protected void mobTick() {
     super.mobTick();
     if (age % 20 == 0) {
@@ -145,6 +155,7 @@ public class HumanFamiliarEntity extends PathAwareEntity
     super.onDeath(source);
     if (owner != null && getWorld() instanceof ServerWorld world) {
       FamiliarRegistry.of(world.getServer()).free(owner, getUuid());
+      ServantDeaths.tell(this, owner());
     }
   }
 
@@ -154,6 +165,21 @@ public class HumanFamiliarEntity extends PathAwareEntity
     for (final ItemStack stack : carried.clearToList()) {
       dropStack(stack);
     }
+  }
+
+  @Override
+  public NameStyle nameStyle() {
+    return NameStyle.FAMILIAR;
+  }
+
+  @Override
+  public boolean bearsWomansName() {
+    return false;
+  }
+
+  @Override
+  public Optional<UUID> namedBy() {
+    return owner();
   }
 
   @Override

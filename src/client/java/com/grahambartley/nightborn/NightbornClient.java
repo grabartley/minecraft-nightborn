@@ -7,6 +7,7 @@ import com.grahambartley.nightborn.client.familiar.HumanFamiliarRenderer;
 import com.grahambartley.nightborn.client.fog.StructureFog;
 import com.grahambartley.nightborn.client.gore.SplatterModels;
 import com.grahambartley.nightborn.client.guild.HunterRenderer;
+import com.grahambartley.nightborn.client.name.NamingDialogue;
 import com.grahambartley.nightborn.client.occult.GhostlyFamiliarRenderer;
 import com.grahambartley.nightborn.client.ritual.RitualGloom;
 import com.grahambartley.nightborn.client.state.ClientStateService;
@@ -126,6 +127,7 @@ public class NightbornClient implements ClientModInitializer {
     NearbyStructure.register();
     StructureFog.register();
     RitualGloom.register();
+    NamingDialogue.register();
     StructureAmbiencePlayer.register();
     CoatingTooltip.register();
   }

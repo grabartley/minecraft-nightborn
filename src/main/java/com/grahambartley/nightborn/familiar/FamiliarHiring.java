@@ -3,6 +3,7 @@ package com.grahambartley.nightborn.familiar;
 import com.grahambartley.nightborn.advancement.Milestone;
 import com.grahambartley.nightborn.advancement.MilestoneCriterion;
 import com.grahambartley.nightborn.config.FamiliarSettings;
+import com.grahambartley.nightborn.name.ServantNaming;
 import com.grahambartley.nightborn.server.ServerConfigService;
 import com.grahambartley.nightborn.vampire.Vampires;
 import java.util.List;
@@ -88,6 +89,7 @@ public final class FamiliarHiring {
       }
     }
     registry.bind(player.getUuid(), familiar.getUuid());
+    ServantNaming.offer(player, familiar);
     contract.decrementUnlessCreative(1, player);
     MilestoneCriterion.reach(player, Milestone.FAMILIAR_HIRED);
     world.playSound(

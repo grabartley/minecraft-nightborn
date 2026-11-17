@@ -4,6 +4,7 @@ import com.grahambartley.nightborn.Nightborn;
 import com.grahambartley.nightborn.config.MindSettings;
 import com.grahambartley.nightborn.mind.MindAttributes;
 import com.grahambartley.nightborn.mind.MindTies;
+import com.grahambartley.nightborn.name.ServantNaming;
 import com.grahambartley.nightborn.server.ServerConfigService;
 import java.util.UUID;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
@@ -85,6 +86,7 @@ public final class Thralls {
     thrall.bind(vampire.getUuid(), data, memory);
     thrall.setHealth(villager.getHealth());
     registry.bind(vampire.getUuid(), thrall.getUuid());
+    ServantNaming.offer(vampire, thrall);
     final ServerWorld world = vampire.getServerWorld();
     world.spawnParticles(
         ParticleTypes.SOUL, thrall.getX(), thrall.getEyeY(), thrall.getZ(), 8, 0.3, 0.4, 0.3, 0.01);

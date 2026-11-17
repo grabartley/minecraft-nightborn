@@ -10,6 +10,6 @@
     "dodge_chance": 5,
     "power_dodge_chance": 10
   },
-  "look": { "idle": "idle_fledgling" },
+  "look": { "idle": "idle_fledgling", "name_color": "gray" },
   "loot": "nightborn:entities/vampire/fledgling"
 }
