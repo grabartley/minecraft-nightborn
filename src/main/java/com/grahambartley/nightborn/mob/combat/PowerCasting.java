@@ -38,7 +38,7 @@ public final class PowerCasting {
     }
     nextThink = now + combat.thinkTicks();
     PowerChoice.choose(
-            options(caster),
+            options(caster, false),
             caster.distanceTo(target),
             BloodAttachment.get(caster),
             combat.bloodFloor())
@@ -61,11 +61,11 @@ public final class PowerCasting {
     caster.playSound(SoundEvent.of(use.tellSound()), 1.0F, 1.0F);
   }
 
-  static List<PowerChoice.Option> options(final LivingEntity caster) {
+  static List<PowerChoice.Option> options(final LivingEntity caster, final boolean dodge) {
     final List<PowerChoice.Option> options = new ArrayList<>();
     for (final Identifier id : SkillAttachment.owned(caster).ownedInOrder()) {
       Powers.power(caster, id)
-          .filter(power -> power.mob().isPresent())
+          .filter(power -> power.mob().map(use -> use.dodge() == dodge).orElse(false))
           .ifPresent(
               power ->
                   options.add(

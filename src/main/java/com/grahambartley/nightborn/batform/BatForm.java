@@ -11,7 +11,7 @@ import com.grahambartley.nightborn.mob.NightbornMobs;
 import com.grahambartley.nightborn.server.ServerConfigService;
 import com.grahambartley.nightborn.skill.BatFormPower;
 import com.grahambartley.nightborn.skill.Powers;
-import com.grahambartley.nightborn.smoke.SmokeParticles;
+import com.grahambartley.nightborn.smoke.SmokePoof;
 import com.grahambartley.nightborn.sun.DirectSun;
 import com.grahambartley.nightborn.weakened.Weakened;
 import com.mojang.serialization.Codec;
@@ -29,7 +29,6 @@ import net.minecraft.network.codec.PacketCodecs;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;
 
@@ -47,9 +46,6 @@ public final class BatForm {
 
   public static final SoundEvent ENTER_SOUND = sound("power.bat_form.enter");
   public static final SoundEvent LEAVE_SOUND = sound("power.bat_form.leave");
-
-  static final int SMOKE_COUNT = 30;
-  static final double SMOKE_SPEED = 0.02;
 
   private BatForm() {}
 
@@ -86,7 +82,7 @@ public final class BatForm {
     } else {
       vampire.setNoGravity(true);
     }
-    poof(vampire, ENTER_SOUND);
+    SmokePoof.burst(vampire, ENTER_SOUND);
   }
 
   public static boolean leave(final LivingEntity vampire) {
@@ -103,7 +99,7 @@ public final class BatForm {
     } else {
       vampire.setNoGravity(false);
     }
-    poof(vampire, LEAVE_SOUND);
+    SmokePoof.burst(vampire, LEAVE_SOUND);
     return true;
   }
 
@@ -146,31 +142,5 @@ public final class BatForm {
     if (isBat(entity) && BatFormRules.heavyHit(damageTaken, settings.batHeavyDamage())) {
       leave(entity);
     }
-  }
-
-  private static void poof(final LivingEntity vampire, final SoundEvent sound) {
-    if (!(vampire.getWorld() instanceof ServerWorld world)) {
-      return;
-    }
-    final EntityDimensions shape = vampire.getDimensions(vampire.getPose());
-    world.spawnParticles(
-        SmokeParticles.VAMPIRE_SMOKE,
-        vampire.getX(),
-        vampire.getBodyY(0.5),
-        vampire.getZ(),
-        SMOKE_COUNT,
-        shape.width() / 2.0,
-        shape.height() / 2.0,
-        shape.width() / 2.0,
-        SMOKE_SPEED);
-    world.playSound(
-        null,
-        vampire.getX(),
-        vampire.getY(),
-        vampire.getZ(),
-        sound,
-        vampire.getSoundCategory(),
-        1.0F,
-        1.0F);
   }
 }

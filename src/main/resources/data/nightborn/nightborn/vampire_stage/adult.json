@@ -8,6 +8,7 @@
     "leap_chance": 30,
     "dash_chance": 15,
     "dodge_chance": 15,
+    "power_dodge_chance": 35,
     "retreat_health": 25
   },
   "loot": "nightborn:entities/vampire/adult"

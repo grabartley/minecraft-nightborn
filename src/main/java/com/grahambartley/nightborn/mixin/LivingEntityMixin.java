@@ -10,6 +10,7 @@ import com.grahambartley.nightborn.levitation.LevitationMotion;
 import com.grahambartley.nightborn.server.ServerConfigService;
 import com.grahambartley.nightborn.vampire.VampireTicker;
 import com.grahambartley.nightborn.vampire.Vampires;
+import com.grahambartley.nightborn.vanish.Vanish;
 import com.grahambartley.nightborn.vomit.Consumables;
 import com.grahambartley.nightborn.vomit.Vomiting;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
@@ -42,7 +43,11 @@ abstract class LivingEntityMixin {
   @Inject(method = "tick", at = @At("TAIL"))
   private void nightborn$tickVampire(final CallbackInfo ci) {
     final LivingEntity self = (LivingEntity) (Object) this;
-    if (!self.getWorld().isClient && Vampires.isVampire(self)) {
+    if (self.getWorld().isClient) {
+      return;
+    }
+    Vanish.tick(self);
+    if (Vampires.isVampire(self)) {
       VampireTicker.tick(self);
     }
   }

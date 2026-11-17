@@ -30,11 +30,28 @@ class StageCombatTest {
         "{\"leap_chance\": 101} | false",
         "{\"dash_chance\": -1} | false",
         "{\"dodge_chance\": 100} | true",
+        "{\"power_dodge_chance\": 100} | true",
+        "{\"power_dodge_chance\": 101} | false",
+        "{\"power_dodge_chance\": -1} | false",
         "{\"retreat_health\": 101} | false"
       })
   @DisplayName("blood floors stay within a blood bar and chances within 0 to 100")
   void bounds(final String json, final boolean loads) {
     assertEquals(
         loads, StageCombat.CODEC.parse(JsonOps.INSTANCE, JsonParser.parseString(json)).isSuccess());
+  }
+
+  @ParameterizedTest(name = "{0}")
+  @CsvSource({"0", "35", "100"})
+  @DisplayName("a stage reads how often it dodges with a power")
+  void powerDodgeChance(final int chance) {
+    assertEquals(
+        chance,
+        StageCombat.CODEC
+            .parse(
+                JsonOps.INSTANCE,
+                JsonParser.parseString("{\"power_dodge_chance\": " + chance + "}"))
+            .getOrThrow()
+            .powerDodgeChance());
   }
 }

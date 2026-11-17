@@ -209,6 +209,8 @@
   "skill.nightborn.core.grave_strength.description": "Seus golpes batem mais forte",
   "skill.nightborn.core.blood_rush": "Ímpeto de sangue",
   "skill.nightborn.core.blood_rush.description": "Queima sangue para um breve impulso de velocidade e força",
+  "skill.nightborn.core.vanish": "Desvanecer",
+  "skill.nightborn.core.vanish.description": "Desvaneça em fumaça e reapareça alguns passos na direção em que você se move, ou atrás de você se estiver parado",
   "skill.nightborn.noble.noble_blood": "Sangue nobre",
   "skill.nightborn.noble.noble_blood.description": "Escolhe a linhagem Nobre. O velho orgulho endurece sua pele",
   "skill.nightborn.beast.beast_blood": "Sangue de fera",
