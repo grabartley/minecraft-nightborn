@@ -195,7 +195,7 @@ public class SkillGameTest implements FabricGameTest {
     context.assertTrue(
         vampire
                 .getAttributeInstance(EntityAttributes.GENERIC_ARMOR)
-                .getModifier(Identifier.of("nightborn", "skill/nightborn/noble/noble_blood/0"))
+                .getModifier(Identifier.of("nightborn", "skill/nightborn/noble/noble_blood/0/0"))
             != null,
         "a skill still in the data keeps applying");
     TestPlayers.finish(context, vampire);

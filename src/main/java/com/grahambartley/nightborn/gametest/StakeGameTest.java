@@ -101,7 +101,9 @@ public class StakeGameTest implements FabricGameTest {
           context.assertTrue(vampire.isDead(), "the vampire is staked");
           context.assertFalse(Vampires.isVampire(vampire), "hardcore death made it human");
           context.assertEquals(
-              SkillAttachment.get(hunter, SkillTree.HUNTER).earned(), 3, "the staker is paid");
+              SkillAttachment.get(hunter, SkillTree.HUNTER).earned(),
+              TestPlayers.pointsFor(ServerConfigService.current().skills().huntExperience()),
+              "the staker is paid");
           context.assertTrue(
               TestAdvancements.done(context, hunter, "stake_holder"), "staking earns Stake Holder");
           TestPlayers.finish(context, hunter, vampire);
@@ -207,7 +209,9 @@ public class StakeGameTest implements FabricGameTest {
           context.assertEquals(
               SkillAttachment.get(vampire, SkillTree.VAMPIRE).earned(), 18, "it lost 10%");
           context.assertEquals(
-              SkillAttachment.get(hunter, SkillTree.HUNTER).earned(), 3, "the staker is paid");
+              SkillAttachment.get(hunter, SkillTree.HUNTER).earned(),
+              TestPlayers.pointsFor(ServerConfigService.current().skills().huntExperience()),
+              "the staker is paid");
           TestPlayers.finish(context, hunter, vampire);
         });
   }

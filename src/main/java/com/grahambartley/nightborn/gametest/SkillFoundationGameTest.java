@@ -125,12 +125,13 @@ public class SkillFoundationGameTest implements FabricGameTest {
     context.runAtTick(
         TestPlayers.READY,
         () -> {
-          BloodAttachment.set(vampire, 8);
+          BloodAttachment.set(vampire, BloodAttachment.FULL);
           vampire.setHealth(4.0F);
           before[0] = vampire.getHealth();
           context.assertEquals(
               Powers.cast(vampire, BLOOD_HEALING), PowerUse.Verdict.READY, "the power casts");
-          context.assertEquals(BloodAttachment.get(vampire), 6, "it costs two blood");
+          context.assertEquals(
+              BloodAttachment.get(vampire), BloodAttachment.FULL - 2, "it costs two blood");
         });
     context.runAtTick(
         TestPlayers.READY + 30,
