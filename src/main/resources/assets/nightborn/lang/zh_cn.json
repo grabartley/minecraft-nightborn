@@ -748,6 +748,7 @@
   "nightborn.naming.hint": "最多 %s 个字符",
   "nightborn.naming.problem.empty": "名字不能为空",
   "nightborn.naming.problem.too_long": "名字最多 %s 个字符",
+  "nightborn.name.with_epithet": "%2$s%1$s",
   "epithet.nightborn.abbey_haunter.male": "修院幽魂",
   "epithet.nightborn.abbey_haunter.female": "修院幽魂",
   "epithet.nightborn.abhorred.male": "遭憎者",

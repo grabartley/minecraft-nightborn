@@ -17,7 +17,7 @@ class NameBearerTest {
     bearer.bearEpithet("the Pale");
     assertEquals(female, bearer.bearsWomansName());
     assertEquals("", bearer.epithet());
-    assertEquals(Optional.empty(), bearer.nameColour());
+    assertEquals(Optional.empty(), bearer.nameColor());
     assertEquals(Optional.empty(), bearer.namedBy());
   }
 }

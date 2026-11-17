@@ -382,7 +382,7 @@ public class VampireEntity extends HostileEntity
   }
 
   @Override
-  public Optional<TextColor> nameColour() {
+  public Optional<TextColor> nameColor() {
     return stage().look().nameColor();
   }
 

@@ -20,8 +20,11 @@ class NameDisplayTest {
     final Text shown =
         NameDisplay.shown(Text.literal("Aurelian the Pale"), "the Pale", female, Optional.empty());
     assertEquals("Aurelian the Pale", shown.getString());
+    final TranslatableTextContent pattern = (TranslatableTextContent) shown.getContent();
+    assertEquals(NameDisplay.WITH_EPITHET, pattern.getKey());
+    assertEquals("Aurelian", ((Text) pattern.getArgs()[0]).getString());
     final TranslatableTextContent epithet =
-        (TranslatableTextContent) shown.getSiblings().getFirst().getContent();
+        (TranslatableTextContent) ((Text) pattern.getArgs()[1]).getContent();
     assertEquals(key, epithet.getKey());
     assertEquals("the Pale", epithet.getFallback());
   }
@@ -72,7 +75,7 @@ class NameDisplayTest {
           }
 
           @Override
-          public Optional<TextColor> nameColour() {
+          public Optional<TextColor> nameColor() {
             return Optional.ofNullable(own).map(TextColor::fromFormatting);
           }
         };

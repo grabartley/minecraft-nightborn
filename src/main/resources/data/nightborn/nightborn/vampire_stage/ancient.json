@@ -17,7 +17,8 @@
   },
   "look": {
     "idle": "idle_ancient",
-    "name_color": "red", "marks": "nightborn:textures/entity/vampire/stage/ancient"
+    "name_color": "red",
+    "marks": "nightborn:textures/entity/vampire/stage/ancient"
   },
   "loot": "nightborn:entities/vampire/ancient"
 }

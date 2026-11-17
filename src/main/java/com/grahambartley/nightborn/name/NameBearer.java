@@ -14,7 +14,7 @@ public interface NameBearer {
 
   default void bearEpithet(final String epithet) {}
 
-  default Optional<TextColor> nameColour() {
+  default Optional<TextColor> nameColor() {
     return Optional.empty();
   }
 

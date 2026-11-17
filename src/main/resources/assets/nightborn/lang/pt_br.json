@@ -748,6 +748,7 @@
   "nightborn.naming.hint": "Até %s caracteres",
   "nightborn.naming.problem.empty": "Um nome não pode ficar vazio",
   "nightborn.naming.problem.too_long": "Um nome pode ter no máximo %s caracteres",
+  "nightborn.name.with_epithet": "%s %s",
   "epithet.nightborn.abbey_haunter.male": "o Assombro da Abadia",
   "epithet.nightborn.abbey_haunter.female": "a Assombração da Abadia",
   "epithet.nightborn.abhorred.male": "o Abominado",

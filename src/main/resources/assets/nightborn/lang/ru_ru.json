@@ -748,6 +748,7 @@
   "nightborn.naming.hint": "До %s символов",
   "nightborn.naming.problem.empty": "Имя не может быть пустым",
   "nightborn.naming.problem.too_long": "Имя может содержать не более %s символов",
+  "nightborn.name.with_epithet": "%s %s",
   "epithet.nightborn.abbey_haunter.male": "Призрак аббатства",
   "epithet.nightborn.abbey_haunter.female": "Призрак аббатства",
   "epithet.nightborn.abhorred.male": "Ненавистный",

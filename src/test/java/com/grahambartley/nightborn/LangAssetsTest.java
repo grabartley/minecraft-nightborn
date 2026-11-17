@@ -11,6 +11,7 @@ import com.grahambartley.nightborn.config.NightbornConfig;
 import com.grahambartley.nightborn.config.Setting;
 import com.grahambartley.nightborn.faction.Faction;
 import com.grahambartley.nightborn.name.Epithets;
+import com.grahambartley.nightborn.name.NameDisplay;
 import com.grahambartley.nightborn.name.NameRules;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -80,6 +81,7 @@ class LangAssetsTest {
               needed.add(
                   "enchantment.nightborn." + file.getFileName().toString().replace(".json", "")));
     }
+    needed.add(NameDisplay.WITH_EPITHET);
     for (final NameRules.Problem problem : NameRules.Problem.values()) {
       needed.add(problem.translationKey());
     }

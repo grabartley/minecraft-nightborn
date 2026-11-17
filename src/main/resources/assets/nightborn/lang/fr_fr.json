@@ -748,6 +748,7 @@
   "nightborn.naming.hint": "Jusqu'à %s caractères",
   "nightborn.naming.problem.empty": "Un nom ne peut pas être vide",
   "nightborn.naming.problem.too_long": "Un nom peut compter au plus %s caractères",
+  "nightborn.name.with_epithet": "%s %s",
   "epithet.nightborn.abbey_haunter.male": "le Hanteur de l'Abbaye",
   "epithet.nightborn.abbey_haunter.female": "la Hanteuse de l'Abbaye",
   "epithet.nightborn.abhorred.male": "l'Abhorré",
