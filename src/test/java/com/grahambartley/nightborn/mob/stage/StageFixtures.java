@@ -54,7 +54,7 @@ final class StageFixtures {
   }
 
   static StageSkills weights(final Map<Identifier, Integer> weights, final int other) {
-    return new StageSkills(ConstantIntProvider.create(0), weights, other);
+    return new StageSkills(ConstantIntProvider.create(0), weights, other, false);
   }
 
   static VampireStage stage(final int rank, final int weight) {

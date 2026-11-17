@@ -22,11 +22,16 @@ class StageDataCheckTest {
   private static final Identifier ELDER = Identifier.of("nightborn", "elder");
 
   private static VampireStage elder(final int count, final Map<Identifier, Integer> weights) {
+    return elder(count, weights, false);
+  }
+
+  private static VampireStage elder(
+      final int count, final Map<Identifier, Integer> weights, final boolean every) {
     return new VampireStage(
         2,
         10,
         StageBody.SAME,
-        new StageSkills(ConstantIntProvider.create(count), weights, 1),
+        new StageSkills(ConstantIntProvider.create(count), weights, 1, every),
         StageCombat.PLAIN,
         StageLook.PLAIN,
         Optional.empty());
@@ -48,7 +53,11 @@ class StageDataCheckTest {
         Arguments.of(
             "a stage wanting every skill",
             Map.of(ELDER, elder(4, Map.of())),
-            List.of("nightborn:elder may want every vampire skill, which only the Eldest has")));
+            List.of("nightborn:elder may want every vampire skill, which only the Eldest has")),
+        Arguments.of(
+            "a stage that says it holds every skill",
+            Map.of(ELDER, elder(0, Map.of(), true)),
+            List.of()));
   }
 
   @ParameterizedTest(name = "{0}")

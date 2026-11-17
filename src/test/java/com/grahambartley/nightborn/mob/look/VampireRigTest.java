@@ -75,4 +75,12 @@ class VampireRigTest {
   private static Path asset(final String root, final Identifier id) {
     return Path.of(root).resolve(id.getNamespace()).resolve(id.getPath());
   }
+
+  @ParameterizedTest(name = "coin {0} is {1}")
+  @CsvSource({"true, MALE", "false, FEMALE"})
+  @DisplayName("a coin flip picks a man or a woman at even odds")
+  void eitherCommon(final boolean coin, final VampireRig rig) {
+    assertEquals(rig, VampireRig.eitherCommon(coin));
+    assertEquals(true, VampireRig.COMMON.contains(rig));
+  }
 }

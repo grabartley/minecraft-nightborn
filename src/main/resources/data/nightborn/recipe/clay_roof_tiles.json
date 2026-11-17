@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "pattern": [
+    "TT",
+    "TT"
+  ],
+  "key": {
+    "T": {
+      "item": "minecraft:terracotta"
+    }
+  },
+  "result": {
+    "id": "nightborn:clay_roof_tiles",
+    "count": 4
+  }
+}

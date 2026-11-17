@@ -34,6 +34,10 @@ public final class SkillEarning {
     return grantHunterPoints(hunter, huntPoints(settings, stageRank));
   }
 
+  public static boolean fromSharedHunt(final PlayerEntity hunter, final SkillSettings settings) {
+    return grantHunterPoints(hunter, settings.eldestPoints());
+  }
+
   public static boolean fromContract(final PlayerEntity hunter, final SkillSettings settings) {
     return grantHunterPoints(hunter, settings.contractPoints());
   }

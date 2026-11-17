@@ -2,6 +2,7 @@ package com.grahambartley.nightborn.hunter;
 
 import com.grahambartley.nightborn.advancement.Milestone;
 import com.grahambartley.nightborn.advancement.MilestoneCriterion;
+import com.grahambartley.nightborn.config.SkillSettings;
 import com.grahambartley.nightborn.downed.Downed;
 import com.grahambartley.nightborn.downed.DownedState;
 import com.grahambartley.nightborn.gear.Staking;
@@ -10,6 +11,7 @@ import com.grahambartley.nightborn.server.ServerConfigService;
 import com.grahambartley.nightborn.skill.SkillEarning;
 import com.grahambartley.nightborn.vampire.NightbornDamage;
 import com.grahambartley.nightborn.vampire.Vampires;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
@@ -56,22 +58,35 @@ public final class HuntRewards {
             Downed.state(vampire),
             source.isOf(NightbornDamage.SUN),
             staker)
-        .map(id -> server.getPlayerManager().getPlayer(id))
         .ifPresent(
-            hunter -> {
-              if (staker.isPresent()) {
+            finisher -> {
+              final ServerPlayerEntity hunter = server.getPlayerManager().getPlayer(finisher);
+              if (hunter != null && staker.isPresent()) {
                 MilestoneCriterion.reach(hunter, Milestone.VAMPIRE_STAKED);
               }
-              reward(hunter, vampire, message);
+              if (vampire instanceof SharedHunt shared) {
+                FightRoll.sharers(Optional.of(finisher), shared.tookPart()).stream()
+                    .map(id -> server.getPlayerManager().getPlayer(id))
+                    .filter(Objects::nonNull)
+                    .forEach(sharer -> pay(sharer, vampire, message, true));
+              } else if (hunter != null) {
+                pay(hunter, vampire, message, false);
+              }
             });
   }
 
-  private static void reward(
-      final ServerPlayerEntity hunter, final LivingEntity vampire, final String message) {
-    if (!SkillEarning.fromHunt(
-        hunter,
-        ServerConfigService.current().skills(),
-        vampire instanceof Staged staged ? staged.stageRank() : 0)) {
+  private static void pay(
+      final ServerPlayerEntity hunter,
+      final LivingEntity vampire,
+      final String message,
+      final boolean shared) {
+    final SkillSettings settings = ServerConfigService.current().skills();
+    final boolean paid =
+        shared
+            ? SkillEarning.fromSharedHunt(hunter, settings)
+            : SkillEarning.fromHunt(
+                hunter, settings, vampire instanceof Staged staged ? staged.stageRank() : 0);
+    if (!paid) {
       return;
     }
     hunter.sendMessage(Text.translatable(message, vampire.getDisplayName()), true);

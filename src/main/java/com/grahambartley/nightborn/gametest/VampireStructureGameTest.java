@@ -10,6 +10,7 @@ import com.grahambartley.nightborn.mob.VampireLordEntity;
 import com.grahambartley.nightborn.server.ServerConfigService;
 import com.grahambartley.nightborn.structure.FogZone;
 import com.grahambartley.nightborn.structure.Footing;
+import com.grahambartley.nightborn.structure.HeadSeat;
 import com.grahambartley.nightborn.structure.Household;
 import com.grahambartley.nightborn.structure.HouseholdHead;
 import com.grahambartley.nightborn.structure.HouseholdSpawner;
@@ -301,7 +302,9 @@ public class VampireStructureGameTest implements FabricGameTest {
             Map.of(),
             Optional.of(
                 new HouseholdHead(
-                    Registries.ENTITY_TYPE.getEntry(NightbornMobs.VAMPIRE_LORD), Map.of())));
+                    Registries.ENTITY_TYPE.getEntry(NightbornMobs.VAMPIRE_LORD),
+                    Map.of(),
+                    HeadSeat.LOWEST)));
     final List<Entity> settled =
         HouseholdSpawner.settle(context.getWorld(), box, box, household, Random.create(5L));
     settled.forEach(resident -> ((MobEntity) resident).setAiDisabled(true));

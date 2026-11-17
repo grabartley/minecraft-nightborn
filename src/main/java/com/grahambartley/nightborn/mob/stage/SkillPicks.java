@@ -46,17 +46,13 @@ public final class SkillPicks {
     return open;
   }
 
-  public static int most(final int wanted, final int treeSize) {
-    return Math.max(0, Math.min(wanted, treeSize - 1));
-  }
-
   public static List<Identifier> pick(
       final Map<Identifier, Skill> tree,
       final StageSkills weights,
       final int wanted,
       final DoubleSupplier rolls) {
     final List<Identifier> owned = new ArrayList<>();
-    final int count = most(wanted, tree.size());
+    final int count = weights.wanted(tree.size(), wanted);
     final Map<Identifier, Skill> sorted = new TreeMap<>(tree);
     while (owned.size() < count) {
       final List<Identifier> open =

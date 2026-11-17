@@ -93,6 +93,7 @@ public class NightbornClient implements ClientModInitializer {
     EntityRendererRegistry.register(DecorEntities.SEAT, EmptyEntityRenderer::new);
     EntityRendererRegistry.register(NightbornMobs.VAMPIRE, VampireRenderer::new);
     EntityRendererRegistry.register(NightbornMobs.VAMPIRE_LORD, VampireRenderer::new);
+    EntityRendererRegistry.register(NightbornMobs.ELDEST, VampireRenderer::new);
     EntityRendererRegistry.register(NightbornMobs.VAMPIRE_BAT, VampireBatRenderer::new);
     EntityRendererRegistry.register(Familiars.HUMAN_FAMILIAR, HumanFamiliarRenderer::new);
     EntityRendererRegistry.register(Thralls.THRALL, ThrallRenderer::new);

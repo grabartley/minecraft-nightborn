@@ -40,7 +40,10 @@ public final class HouseholdSpawner {
     final List<BlockPos> held = new ArrayList<>();
     household
         .head()
-        .flatMap(head -> HouseholdSpots.middle(spots, centre).map(spot -> Map.entry(head, spot)))
+        .flatMap(
+            head ->
+                HouseholdSpots.middle(spots, centre, head.seat())
+                    .map(spot -> Map.entry(head, spot)))
         .ifPresent(
             seat -> {
               held.add(seat.getValue());

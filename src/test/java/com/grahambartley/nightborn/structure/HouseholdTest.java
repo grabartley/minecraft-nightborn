@@ -25,14 +25,16 @@ class HouseholdTest {
         "minecraft:zombie | 3 | true",
         "minecraft:zombie | 0 | true",
         "minecraft:zombie | 16 | true",
-        "minecraft:zombie | 17 | false",
+        "minecraft:zombie | 20 | true",
+        "minecraft:zombie | 32 | true",
+        "minecraft:zombie | 33 | false",
         "minecraft:zombie | -1 | false",
         "minecraft:bat | {\"type\": \"minecraft:uniform\", \"min_inclusive\": 2, \"max_inclusive\": 4} | true",
-        "minecraft:zombie | {\"type\": \"minecraft:uniform\", \"min_inclusive\": 2, \"max_inclusive\": 20} | false",
+        "minecraft:zombie | {\"type\": \"minecraft:uniform\", \"min_inclusive\": 2, \"max_inclusive\": 40} | false",
         "nightborn:no_such_thing | 3 | false",
         "Not An Id | 3 | false"
       })
-  @DisplayName("a household names a real entity type and between 0 and 16 residents")
+  @DisplayName("a household names a real entity type and between 0 and 32 residents")
   void validates(final String resident, final String residents, final boolean loads) {
     assertEquals(loads, loads(resident, residents));
   }

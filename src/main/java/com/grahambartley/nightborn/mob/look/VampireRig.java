@@ -39,6 +39,10 @@ public enum VampireRig implements StringIdentifiable {
     this.clips = clips;
   }
 
+  public static VampireRig eitherCommon(final boolean coin) {
+    return coin ? MALE : FEMALE;
+  }
+
   public float bust(final double roll) {
     return MathHelper.lerp((float) MathHelper.clamp(roll, 0.0, 1.0), smallestBust, largestBust);
   }

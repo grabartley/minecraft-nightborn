@@ -8,7 +8,8 @@ public record SkillSettings(
     int huntPoints,
     int stagePoints,
     int stakePenalty,
-    int contractPoints) {
+    int contractPoints,
+    int eldestPoints) {
 
   static final String SECTION = "skills";
 
@@ -24,6 +25,8 @@ public record SkillSettings(
       new IntSetting(SECTION, "stakePenalty", 10, 0, 100, c -> c.skills().stakePenalty());
   public static final IntSetting CONTRACT_POINTS =
       new IntSetting(SECTION, "contractPoints", 5, 0, 50, c -> c.skills().contractPoints());
+  public static final IntSetting ELDEST_POINTS =
+      new IntSetting(SECTION, "eldestPoints", 60, 0, 500, c -> c.skills().eldestPoints());
 
   public static final List<Setting<?>> SETTINGS =
       List.of(
@@ -32,7 +35,8 @@ public record SkillSettings(
           HUNT_POINTS,
           STAGE_POINTS,
           STAKE_PENALTY,
-          CONTRACT_POINTS);
+          CONTRACT_POINTS,
+          ELDEST_POINTS);
 
   public SkillSettings {
     bloodPerPoint = BLOOD_PER_POINT.clamp(bloodPerPoint);
@@ -41,6 +45,7 @@ public record SkillSettings(
     stagePoints = STAGE_POINTS.clamp(stagePoints);
     stakePenalty = STAKE_PENALTY.clamp(stakePenalty);
     contractPoints = CONTRACT_POINTS.clamp(contractPoints);
+    eldestPoints = ELDEST_POINTS.clamp(eldestPoints);
   }
 
   static SkillSettings from(final SettingValues values) {
@@ -50,6 +55,7 @@ public record SkillSettings(
         values.get(HUNT_POINTS),
         values.get(STAGE_POINTS),
         values.get(STAKE_PENALTY),
-        values.get(CONTRACT_POINTS));
+        values.get(CONTRACT_POINTS),
+        values.get(ELDEST_POINTS));
   }
 }

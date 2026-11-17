@@ -17,7 +17,7 @@ public record Household(
     Map<Identifier, Integer> stages,
     Optional<HouseholdHead> head) {
 
-  public static final int LARGEST_HOUSEHOLD = 16;
+  public static final int LARGEST_HOUSEHOLD = 32;
 
   public static final Codec<Household> CODEC =
       RecordCodecBuilder.create(

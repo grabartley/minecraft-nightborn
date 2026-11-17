@@ -58,8 +58,38 @@ class HouseholdHeadTest {
         new HouseholdHead(
             net.minecraft.registry.Registries.ENTITY_TYPE.getEntry(
                 com.grahambartley.nightborn.mob.NightbornMobs.VAMPIRE_LORD),
-            odds);
+            odds,
+            HeadSeat.LOWEST);
     odds.clear();
     assertEquals(count, head.stages().size());
+  }
+
+  @ParameterizedTest(name = "{0} seats its head {1}")
+  @CsvSource(
+      delimiter = '|',
+      value = {
+        "{\"resident\": \"nightborn:vampire_lord\"} | LOWEST",
+        "{\"resident\": \"nightborn:eldest\", \"seat\": \"highest\"} | HIGHEST",
+        "{\"resident\": \"nightborn:eldest\", \"seat\": \"lowest\"} | LOWEST"
+      })
+  @DisplayName("a head takes the lowest floor unless its household seats it on the highest")
+  void seats(final String json, final HeadSeat seat) {
+    assertEquals(
+        seat,
+        HouseholdHead.CODEC
+            .parse(JsonOps.INSTANCE, JsonParser.parseString(json))
+            .getOrThrow()
+            .seat());
+  }
+
+  @ParameterizedTest(name = "{0}")
+  @CsvSource(
+      delimiter = '|',
+      value = {"{\"resident\": \"nightborn:eldest\", \"seat\": \"middle\"}"})
+  @DisplayName("a seat that is not a floor is rejected")
+  void rejectsUnknownSeat(final String json) {
+    assertEquals(
+        false,
+        HouseholdHead.CODEC.parse(JsonOps.INSTANCE, JsonParser.parseString(json)).isSuccess());
   }
 }

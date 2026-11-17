@@ -1,4 +1,4 @@
-package com.grahambartley.nightborn.tools.structures.vampire.manor;
+package com.grahambartley.nightborn.tools.structures.vampire;
 
 import com.grahambartley.nightborn.tools.structures.template.Pos;
 import com.grahambartley.nightborn.tools.structures.template.Template;
@@ -8,7 +8,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-final class ManorWalk {
+public final class StructureWalk {
 
   private static final List<String> OPEN =
       List.of(
@@ -25,9 +25,9 @@ final class ManorWalk {
           ":candle");
   private static final int MAX_DROP = 3;
 
-  private ManorWalk() {}
+  private StructureWalk() {}
 
-  static boolean open(final String state) {
+  public static boolean open(final String state) {
     if (state == null) {
       return false;
     }
@@ -35,23 +35,23 @@ final class ManorWalk {
     return OPEN.stream().anyMatch(block::endsWith);
   }
 
-  static boolean stair(final String state) {
+  public static boolean stair(final String state) {
     return state != null
         && state.replaceAll("\\[.*", "").endsWith("_stairs")
         && state.contains("half=bottom");
   }
 
-  static boolean backOn(final String stair, final int[] step) {
+  public static boolean backOn(final String stair, final int[] step) {
     final String toward =
         step[0] == 1 ? "west" : step[0] == -1 ? "east" : step[1] == 1 ? "north" : "south";
     return stair.contains("facing=" + toward);
   }
 
-  static boolean ladder(final String state) {
+  public static boolean ladder(final String state) {
     return state != null && state.startsWith("minecraft:ladder");
   }
 
-  static boolean stands(final Template t, final int x, final int y, final int z) {
+  public static boolean stands(final Template t, final int x, final int y, final int z) {
     if (!t.inside(x, y, z) || !t.inside(x, y + 1, z) || y < 1) {
       return false;
     }
@@ -62,7 +62,7 @@ final class ManorWalk {
         && (ladder(feet) || !open(below) || ladder(below));
   }
 
-  static Set<Pos> from(final Template t, final Pos start) {
+  public static Set<Pos> from(final Template t, final Pos start) {
     final Set<Pos> seen = new HashSet<>();
     final Deque<Pos> queue = new ArrayDeque<>();
     seen.add(start);
@@ -101,7 +101,7 @@ final class ManorWalk {
     return seen;
   }
 
-  static boolean beside(final Set<Pos> reached, final int x, final int y, final int z) {
+  public static boolean beside(final Set<Pos> reached, final int x, final int y, final int z) {
     for (final int[] step : new int[][] {{1, 0}, {-1, 0}, {0, 1}, {0, -1}}) {
       for (int dy = -1; dy <= 1; dy++) {
         if (reached.contains(new Pos(x + step[0], y + dy, z + step[1]))) {

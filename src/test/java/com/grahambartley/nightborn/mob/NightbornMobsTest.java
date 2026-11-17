@@ -19,7 +19,8 @@ class NightbornMobsTest {
   static Stream<Arguments> vampires() {
     return Stream.of(
         Arguments.of("nightborn:vampire", NightbornMobs.VAMPIRE),
-        Arguments.of("nightborn:vampire_lord", NightbornMobs.VAMPIRE_LORD));
+        Arguments.of("nightborn:vampire_lord", NightbornMobs.VAMPIRE_LORD),
+        Arguments.of("nightborn:eldest", NightbornMobs.ELDEST));
   }
 
   @ParameterizedTest(name = "{0}")
