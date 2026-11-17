@@ -55,7 +55,7 @@ public class SkillGameTest implements FabricGameTest {
   static final Identifier BEAST = Identifier.of("nightborn", "beast/beast_blood");
   static final Identifier OCCULT = Identifier.of("nightborn", "occult/occult_blood");
   static final Identifier THICK_BLOOD_MODIFIER =
-      Identifier.of("nightborn", "skill/nightborn/core/thick_blood/0");
+      Identifier.of("nightborn", "skill/nightborn/core/thick_blood/0/0");
 
   @BeforeBatch(batchId = BATCH)
   public void onePointPerBlood(final ServerWorld world) {
@@ -64,7 +64,9 @@ public class SkillGameTest implements FabricGameTest {
         world.getServer(),
         ServerConfigService.current()
             .with(FeedingSettings.RESIST_CHANCE, 0)
-            .with(SkillSettings.BLOOD_PER_POINT, 1));
+            .with(
+                SkillSettings.BLOOD_EXPERIENCE, SkillSettings.FIRST_POINT_EXPERIENCE.defaultValue())
+            .with(SkillSettings.POINT_COST_RISE, 0));
   }
 
   @AfterBatch(batchId = BATCH)
@@ -74,7 +76,8 @@ public class SkillGameTest implements FabricGameTest {
         world.getServer(),
         ServerConfigService.current()
             .with(FeedingSettings.RESIST_CHANCE, FeedingSettings.RESIST_CHANCE.defaultValue())
-            .with(SkillSettings.BLOOD_PER_POINT, SkillSettings.BLOOD_PER_POINT.defaultValue()));
+            .with(SkillSettings.BLOOD_EXPERIENCE, SkillSettings.BLOOD_EXPERIENCE.defaultValue())
+            .with(SkillSettings.POINT_COST_RISE, SkillSettings.POINT_COST_RISE.defaultValue()));
   }
 
   @GameTest(templateName = EMPTY_STRUCTURE, batchId = BATCH, tickLimit = 20)
@@ -192,7 +195,7 @@ public class SkillGameTest implements FabricGameTest {
     context.assertTrue(
         vampire
                 .getAttributeInstance(EntityAttributes.GENERIC_ARMOR)
-                .getModifier(Identifier.of("nightborn", "skill/nightborn/noble/noble_blood/0"))
+                .getModifier(Identifier.of("nightborn", "skill/nightborn/noble/noble_blood/0/0"))
             != null,
         "a skill still in the data keeps applying");
     TestPlayers.finish(context, vampire);
@@ -294,7 +297,7 @@ public class SkillGameTest implements FabricGameTest {
           context.assertFalse(victim.isAlive(), "the villager was drained");
           context.assertEquals(
               SkillAttachment.get(vampire, SkillTree.VAMPIRE).earned(),
-              3 + SkillSettings.DRAIN_BONUS_POINTS.defaultValue(),
+              3 + 1,
               "three villager blood plus the drain bonus");
           TestPlayers.finish(context, vampire);
         });
@@ -368,7 +371,7 @@ public class SkillGameTest implements FabricGameTest {
     context.assertTrue(
         vampire
                 .getAttributeInstance(EntityAttributes.GENERIC_MAX_HEALTH)
-                .getModifier(Identifier.of("nightborn", "skill/nightborn/core/thick_blood/0"))
+                .getModifier(Identifier.of("nightborn", "skill/nightborn/core/thick_blood/0/0"))
             == null,
         "a refunded skill stops applying");
     TestPlayers.finish(context, vampire);

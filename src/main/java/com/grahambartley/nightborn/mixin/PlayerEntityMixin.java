@@ -12,6 +12,7 @@ import com.grahambartley.nightborn.mind.MindAttributes;
 import com.grahambartley.nightborn.occult.OccultAttributes;
 import com.grahambartley.nightborn.server.ServerConfigService;
 import com.grahambartley.nightborn.sickness.BiteSickness;
+import com.grahambartley.nightborn.vampire.VampireAttributes;
 import com.grahambartley.nightborn.vampire.Vampires;
 import com.grahambartley.nightborn.vampire.VisibleStateAttachment;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
@@ -46,6 +47,7 @@ abstract class PlayerEntityMixin {
     HunterAttributes.addTo(cir.getReturnValue());
     MindAttributes.addTo(cir.getReturnValue());
     OccultAttributes.addTo(cir.getReturnValue());
+    VampireAttributes.addTo(cir.getReturnValue());
   }
 
   @Inject(method = "canConsume", at = @At("HEAD"), cancellable = true)

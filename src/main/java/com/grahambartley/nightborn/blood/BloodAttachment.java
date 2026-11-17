@@ -21,7 +21,7 @@ public final class BloodAttachment {
           ID,
           builder ->
               builder
-                  .persistent(Codec.intRange(0, FULL + BloodCapacity.MOST_EXTRA))
+                  .persistent(Codec.intRange(0, BloodCapacity.MOST))
                   .syncWith(PacketCodecs.VAR_INT.cast(), AttachmentSyncPredicate.targetOnly()));
 
   private BloodAttachment() {}

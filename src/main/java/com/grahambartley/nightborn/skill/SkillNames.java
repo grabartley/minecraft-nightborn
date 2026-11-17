@@ -21,6 +21,10 @@ public final class SkillNames {
     return "skill_branch." + id.getNamespace() + "." + id.getPath();
   }
 
+  public static String stage(final Identifier id) {
+    return "vampire_stage." + id.getNamespace() + "." + id.getPath();
+  }
+
   public static Text bloodlines(final List<Identifier> bloodlines) {
     if (bloodlines.isEmpty()) {
       return Text.translatable("nightborn.command.player.skills.none");

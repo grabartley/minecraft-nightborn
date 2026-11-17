@@ -14,4 +14,11 @@ class NightSightTest {
   void refreshesBeforeTheFlicker(final int ticksLeft, final boolean refresh) {
     assertEquals(refresh, NightSight.needsRefresh(ticksLeft));
   }
+
+  @ParameterizedTest(name = "night {0}, dark sight {1}: sees {2}")
+  @CsvSource({"true, false, true", "false, false, false", "false, true, true", "true, true, true"})
+  @DisplayName("a vampire sees in the dark at night, and at any hour with dark sight")
+  void sees(final boolean night, final boolean darkSight, final boolean sees) {
+    assertEquals(sees, NightSight.sees(night, darkSight));
+  }
 }

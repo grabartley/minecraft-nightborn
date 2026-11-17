@@ -6,7 +6,7 @@ public record SkillPointsRow(int iconX, int countX, int detailX, int width) {
   public static final int SIZED_FOR = 999;
   public static final int COUNT_SCALE = 2;
   public static final int COUNT_TOP = 1;
-  public static final int DETAIL_TOP = 5;
+  public static final int DETAIL_TOP = 0;
   static final int FONT_HEIGHT = 9;
   public static final int HEIGHT = Math.max(ICON, COUNT_TOP + FONT_HEIGHT * COUNT_SCALE);
   static final int GAP = 4;

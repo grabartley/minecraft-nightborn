@@ -4,11 +4,16 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Nullable;
 
 public record TreeProgress(
-    int earned, float blood, List<BoughtSkill> bought, List<Identifier> bloodlines) {
+    int earned,
+    float experience,
+    List<BoughtSkill> bought,
+    List<Identifier> bloodlines,
+    Optional<PowerLayout> bar) {
 
   public static final int MAX_POINTS = 100_000;
 
@@ -23,8 +28,8 @@ public record TreeProgress(
                           .optionalFieldOf("earned", 0)
                           .forGetter(TreeProgress::earned),
                       Codec.floatRange(0.0F, Float.MAX_VALUE)
-                          .optionalFieldOf("blood", 0.0F)
-                          .forGetter(TreeProgress::blood),
+                          .optionalFieldOf("experience", 0.0F)
+                          .forGetter(TreeProgress::experience),
                       BoughtSkill.CODEC
                           .listOf()
                           .optionalFieldOf("bought", List.of())
@@ -32,14 +37,23 @@ public record TreeProgress(
                       Identifier.CODEC
                           .listOf()
                           .optionalFieldOf("bloodlines", List.of())
-                          .forGetter(TreeProgress::bloodlines))
+                          .forGetter(TreeProgress::bloodlines),
+                      PowerLayout.CODEC.optionalFieldOf("bar").forGetter(TreeProgress::bar))
                   .apply(instance, TreeProgress::new));
 
   public TreeProgress {
     earned = Math.max(0, Math.min(MAX_POINTS, earned));
-    blood = Math.max(0.0F, blood);
+    experience = Math.max(0.0F, experience);
     bought = List.copyOf(bought);
     bloodlines = List.copyOf(bloodlines);
+  }
+
+  public TreeProgress(
+      final int earned,
+      final float experience,
+      final List<BoughtSkill> bought,
+      final List<Identifier> bloodlines) {
+    this(earned, experience, bought, bloodlines, Optional.empty());
   }
 
   public int spent() {
@@ -50,12 +64,16 @@ public record TreeProgress(
     return Math.max(0, earned - spent());
   }
 
+  public int rank(final Identifier skill) {
+    return (int) bought.stream().filter(b -> b.skill().equals(skill)).count();
+  }
+
   public boolean owns(final Identifier skill) {
-    return bought.stream().anyMatch(b -> b.skill().equals(skill));
+    return rank(skill) > 0;
   }
 
   public List<Identifier> ownedInOrder() {
-    return bought.stream().map(BoughtSkill::skill).toList();
+    return bought.stream().map(BoughtSkill::skill).distinct().toList();
   }
 
   public boolean isEmpty() {
@@ -67,20 +85,18 @@ public record TreeProgress(
   }
 
   public TreeProgress withEarned(final int points) {
-    return new TreeProgress(points, blood, bought, bloodlines);
+    return new TreeProgress(points, experience, bought, bloodlines, bar);
   }
 
-  public TreeProgress addPoints(final int points) {
-    return withEarned(earned + Math.max(0, points));
+  public TreeProgress withBar(final PowerLayout layout) {
+    return new TreeProgress(earned, experience, bought, bloodlines, Optional.of(layout));
   }
 
-  public TreeProgress addBlood(final float worth, final int bloodPerPoint) {
-    if (worth <= 0.0F || bloodPerPoint <= 0) {
-      return this;
-    }
-    final float total = blood + worth;
-    final int points = (int) Math.floor(total / bloodPerPoint);
-    return new TreeProgress(earned + points, total - points * bloodPerPoint, bought, bloodlines);
+  public TreeProgress addExperience(
+      final float gained, final int firstCost, final int risePercent) {
+    final SkillCurve.Gain gain =
+        SkillCurve.add(earned, experience, gained, firstCost, risePercent, MAX_POINTS);
+    return new TreeProgress(gain.earned(), gain.experience(), bought, bloodlines, bar);
   }
 
   public TreeProgress buy(
@@ -91,10 +107,20 @@ public record TreeProgress(
     if (bloodline != null && !nextLines.contains(bloodline)) {
       nextLines.add(bloodline);
     }
-    return new TreeProgress(earned, blood, nextBought, nextLines);
+    return new TreeProgress(earned, experience, nextBought, nextLines, bar);
+  }
+
+  public TreeProgress keeping(
+      final int points, final List<BoughtSkill> kept, final List<Identifier> lines) {
+    return new TreeProgress(
+        points,
+        experience,
+        kept,
+        lines,
+        bar.map(layout -> layout.keeping(id -> kept.stream().anyMatch(b -> b.skill().equals(id)))));
   }
 
   public TreeProgress refundAll() {
-    return new TreeProgress(earned, blood, List.of(), List.of());
+    return keeping(earned, List.of(), List.of());
   }
 }

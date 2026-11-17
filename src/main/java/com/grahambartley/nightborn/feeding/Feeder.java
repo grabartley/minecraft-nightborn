@@ -16,6 +16,7 @@ import com.grahambartley.nightborn.skill.SkillEarning;
 import com.grahambartley.nightborn.sound.NightbornSounds;
 import com.grahambartley.nightborn.thrall.Thralls;
 import com.grahambartley.nightborn.vampire.NightbornDamage;
+import com.grahambartley.nightborn.vampire.VampireAttributes;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.damage.DamageSource;
@@ -49,7 +50,10 @@ final class Feeder {
       final NightbornConfig config) {
     final Drinking.Sip sip =
         Drinking.next(
-            victim.getHealth(), config.feeding().drinkPerSecond(), session.atLastHealth());
+            victim.getHealth(),
+            config.feeding().drinkPerSecond()
+                * (float) VampireAttributes.value(vampire, VampireAttributes.FEEDING_SPEED),
+            session.atLastHealth());
     session.atLastHealth(sip.atLastHealth());
     final DamageSource bite = NightbornDamage.bite(world, vampire);
     float taken = 0.0F;
@@ -88,7 +92,7 @@ final class Feeder {
       }
       return Result.DRAINED;
     }
-    if (resists(victim, config, world.getRandom())) {
+    if (resists(vampire, victim, config, world.getRandom())) {
       breakFree(vampire, victim);
       return Result.RESISTED;
     }
@@ -170,13 +174,18 @@ final class Feeder {
   }
 
   private static boolean resists(
-      final LivingEntity victim, final NightbornConfig config, final Random random) {
+      final LivingEntity vampire,
+      final LivingEntity victim,
+      final NightbornConfig config,
+      final Random random) {
     return random.nextFloat()
-        < ResistChance.of(
-            victim.getHealth(),
-            victim.getMaxHealth(),
-            config.feeding().resistChance(),
-            victim.isSleeping() || MindTies.mesmerised(victim));
+        < ResistChance.held(
+            ResistChance.of(
+                victim.getHealth(),
+                victim.getMaxHealth(),
+                config.feeding().resistChance(),
+                victim.isSleeping() || MindTies.mesmerised(victim)),
+            VampireAttributes.value(vampire, VampireAttributes.VICTIM_STRUGGLE));
   }
 
   private static void breakFree(final ServerPlayerEntity vampire, final LivingEntity victim) {

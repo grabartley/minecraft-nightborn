@@ -44,6 +44,10 @@ public record PowerCooldowns(Map<Identifier, Long> readyAt) {
     return new PowerCooldowns(next);
   }
 
+  public static int shortened(final int cooldownTicks, final double factor) {
+    return (int) Math.max(0L, Math.round(cooldownTicks * Math.max(0.0, factor)));
+  }
+
   public static float fraction(final long ticksLeft, final int cooldownTicks) {
     if (cooldownTicks <= 0 || ticksLeft <= 0) {
       return 0.0F;

@@ -29,7 +29,7 @@ class RitualSettingsTest {
         new RitualSettings(20, 0, 0, 8, 8, 4, 20, 5, 1, 0, 0, 0),
         new RitualSettings(19, -1, -1, 7, 7, 3, 19, 4, 0, -1, -1, -1));
     assertEquals(
-        new RitualSettings(1200, 500, 500, 128, 48, 32, 1200, 120, 100, 100, 100, 20),
-        new RitualSettings(1201, 501, 501, 129, 49, 33, 1201, 121, 101, 101, 101, 21));
+        new RitualSettings(1200, 50000, 500, 128, 48, 32, 1200, 120, 100, 100, 100, 20),
+        new RitualSettings(1201, 50001, 501, 129, 49, 33, 1201, 121, 101, 101, 101, 21));
   }
 }

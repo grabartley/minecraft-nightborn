@@ -149,7 +149,7 @@ public class HunterCampGameTest implements FabricGameTest {
           context.assertTrue(count(human, GearItems.SILVER_INGOT) > 0, "and silver");
           context.assertEquals(
               SkillAttachment.get(human, SkillTree.HUNTER).earned() - before,
-              ServerConfigService.current().skills().contractPoints(),
+              TestPlayers.pointsFor(ServerConfigService.current().skills().contractExperience()),
               "and hunter points");
           final int emeralds = count(human, Items.EMERALD);
           master.interactMob(human, Hand.MAIN_HAND);

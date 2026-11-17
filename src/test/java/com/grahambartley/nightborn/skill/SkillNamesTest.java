@@ -34,6 +34,16 @@ class SkillNamesTest {
     assertEquals(key, SkillNames.branch(Identifier.of(id)));
   }
 
+  @ParameterizedTest(name = "{0} -> {1}")
+  @CsvSource({
+    "nightborn:elder, vampire_stage.nightborn.elder",
+    "apack:old, vampire_stage.apack.old"
+  })
+  @DisplayName("a stage's name key follows its id")
+  void stage(final String id, final String key) {
+    assertEquals(key, SkillNames.stage(Identifier.of(id)));
+  }
+
   @ParameterizedTest(name = "[{0}]")
   @CsvSource(
       delimiter = '|',

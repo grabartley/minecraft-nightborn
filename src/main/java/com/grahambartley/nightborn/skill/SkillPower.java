@@ -29,6 +29,7 @@ public record SkillPower(
     Optional<VanishPower> vanish,
     Optional<RallyPower> rally,
     Optional<SummonPower> summon,
+    Optional<HealPower> heal,
     Optional<MobPowerUse> mob) {
 
   public static final Codec<SkillPower> CODEC =
@@ -63,6 +64,7 @@ public record SkillPower(
                           VanishPower.CODEC.optionalFieldOf("vanish").forGetter(SkillPower::vanish),
                           RallyPower.CODEC.optionalFieldOf("rally").forGetter(SkillPower::rally),
                           SummonPower.CODEC.optionalFieldOf("summon").forGetter(SkillPower::summon),
+                          HealPower.CODEC.optionalFieldOf("heal").forGetter(SkillPower::heal),
                           MobPowerUse.CODEC.optionalFieldOf("mob").forGetter(SkillPower::mob))
                       .apply(instance, SkillPower::new))
           .validate(SkillPower::oneMove);

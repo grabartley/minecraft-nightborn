@@ -160,8 +160,12 @@ public class EldestGameTest implements FabricGameTest {
     context.runAtTick(
         TestPlayers.READY + 5,
         () -> {
-          final int eldestPoints = config.ritual().eldestPoints();
-          final int stakePoints = SkillEarning.huntPoints(config.skills(), eldest.stageRank());
+          final int eldestPoints = TestPlayers.pointsFor(config.ritual().eldestExperience());
+          final int stakePoints =
+              TestPlayers.pointsFor(
+                      config.ritual().eldestExperience()
+                          + SkillEarning.huntExperience(config.skills(), eldest.stageRank()))
+                  - eldestPoints;
           context.assertTrue(!eldest.isAlive(), "the stake ends the Eldest");
           context.assertTrue(
               points(helper) == eldestPoints,
@@ -178,7 +182,8 @@ public class EldestGameTest implements FabricGameTest {
   public void theSunEndingTheEldestPaysTheHumanWhoFought(final TestContext context) {
     final EldestEntity eldest = eldest(context);
     final ServerPlayerEntity hunter = TestPlayers.human(context, new BlockPos(2, 2, 2));
-    final int eldestPoints = ServerConfigService.current().ritual().eldestPoints();
+    final int eldestPoints =
+        TestPlayers.pointsFor(ServerConfigService.current().ritual().eldestExperience());
     context.runAtTick(
         TestPlayers.READY,
         () -> {

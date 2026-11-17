@@ -50,8 +50,23 @@ class SkillPicksTest {
             : Set.of(THICK, RUSH, STRENGTH, NOBLE_BLOOD);
     assertEquals(
         expected,
-        SkillPicks.forStage(VAMPIRE, StageFixtures.BRANCHES, StageFixtures.weights(weights, 1))
+        SkillPicks.forStage(
+                VAMPIRE, StageFixtures.BRANCHES, StageFixtures.weights(weights, 1), skill -> true)
             .keySet());
+  }
+
+  @ParameterizedTest(name = "stage rank {0} reaches the gated skill: {1}")
+  @CsvSource({"0, false", "1, false", "2, true", "3, true"})
+  @DisplayName("a skill that needs a stage is on offer only to a stage that has reached it")
+  void gated(final int rank, final boolean offered) {
+    assertEquals(
+        offered,
+        SkillPicks.forStage(
+                VAMPIRE,
+                StageFixtures.BRANCHES,
+                StageFixtures.weights(Map.of(), 1),
+                skill -> skill != VAMPIRE.get(RUSH) || rank >= 2)
+            .containsKey(RUSH));
   }
 
   @ParameterizedTest(name = "wants {0} of {1}: {2}")

@@ -1,0 +1,30 @@
+{
+  "branch": "nightborn:core",
+  "requires": [
+    "nightborn:core/thick_blood"
+  ],
+  "icon": "nightborn:skills/icon/blood_bond",
+  "column": 2,
+  "row": 2,
+  "ranks": [
+    {
+      "cost": 2
+    }
+  ],
+  "power": {
+    "blood": 2,
+    "cooldown_ticks": 400,
+    "heal": {
+      "health": 6.0,
+      "ticks": 60
+    },
+    "sound": "minecraft:block.respawn_anchor.charge",
+    "mob": {
+      "max_range": 20.0,
+      "tell_ticks": 12,
+      "tell_sound": "minecraft:entity.warden.heartbeat",
+      "tell_clip": "blood_rush_tell",
+      "clip": "blood_rush"
+    }
+  }
+}

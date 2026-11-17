@@ -2,6 +2,7 @@ package com.grahambartley.nightborn.mob.stage;
 
 import com.grahambartley.nightborn.skill.Skill;
 import com.grahambartley.nightborn.skill.SkillBranch;
+import com.grahambartley.nightborn.skill.SkillRank;
 import com.grahambartley.nightborn.skill.SkillTree;
 import java.util.List;
 import java.util.Map;
@@ -44,13 +45,12 @@ final class StageFixtures {
   static Skill skill(final Identifier branch, final int cost, final Identifier... requires) {
     return new Skill(
         branch,
-        cost,
         List.of(requires),
         Identifier.of("nightborn", "icon"),
         0,
         0,
-        List.of(),
-        0.0,
+        Optional.empty(),
+        List.of(SkillRank.costing(cost)),
         Optional.empty());
   }
 

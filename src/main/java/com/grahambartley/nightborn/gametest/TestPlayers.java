@@ -1,5 +1,8 @@
 package com.grahambartley.nightborn.gametest;
 
+import com.grahambartley.nightborn.config.SkillSettings;
+import com.grahambartley.nightborn.server.ServerConfigService;
+import com.grahambartley.nightborn.skill.TreeProgress;
 import com.grahambartley.nightborn.vampire.VampireTransitions;
 import com.mojang.authlib.GameProfile;
 import io.netty.channel.embedded.EmbeddedChannel;
@@ -63,6 +66,13 @@ final class TestPlayers {
   static void disconnectEveryone(final MinecraftServer server) {
     List.copyOf(server.getPlayerManager().getPlayerList())
         .forEach(server.getPlayerManager()::remove);
+  }
+
+  static int pointsFor(final int experience) {
+    final SkillSettings settings = ServerConfigService.current().skills();
+    return TreeProgress.EMPTY
+        .addExperience(experience, settings.firstPointExperience(), settings.pointCostRise())
+        .earned();
   }
 
   static void finish(final TestContext context, final ServerPlayerEntity... players) {

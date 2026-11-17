@@ -120,7 +120,7 @@ public class AdvancementGameTest implements FabricGameTest {
   @GameTest(templateName = ARENA, tickLimit = 20)
   public void aSecondBloodlineEarnsOldBloodInTwoSteps(final TestContext context) {
     final ServerPlayerEntity vampire = TestPlayers.vampire(context, STAND);
-    SkillAttachment.set(vampire, SkillTree.VAMPIRE, TreeProgress.EMPTY.addPoints(20));
+    SkillAttachment.set(vampire, SkillTree.VAMPIRE, TreeProgress.EMPTY.withEarned(20));
     SkillShop.buy(vampire, Identifier.of(Nightborn.MOD_ID, "core/thick_blood"));
     context.assertEquals(
         SkillShop.buy(vampire, Identifier.of(Nightborn.MOD_ID, "noble/noble_blood")),

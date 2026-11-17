@@ -15,4 +15,8 @@ public final class ResistChance {
     final float vigour = Math.min(health, maxHealth) / maxHealth;
     return Math.min(1.0F, resistPercent / 100.0F * strength * vigour);
   }
+
+  public static float held(final float chance, final double struggle) {
+    return (float) (chance * Math.max(0.0, Math.min(1.0, struggle)));
+  }
 }

@@ -4,7 +4,7 @@ import java.util.List;
 
 public record RitualSettings(
     int buildUpTicks,
-    int eldestPoints,
+    int eldestExperience,
     int eldestHealthPerPlayer,
     int fightRange,
     int arenaRadius,
@@ -20,8 +20,9 @@ public record RitualSettings(
 
   public static final IntSetting BUILD_UP_TICKS =
       new IntSetting(SECTION, "buildUpTicks", 200, 20, 1200, c -> c.ritual().buildUpTicks());
-  public static final IntSetting ELDEST_POINTS =
-      new IntSetting(SECTION, "eldestPoints", 40, 0, 500, c -> c.ritual().eldestPoints());
+  public static final IntSetting ELDEST_EXPERIENCE =
+      new IntSetting(
+          SECTION, "eldestExperience", 4000, 0, 50000, c -> c.ritual().eldestExperience());
   public static final IntSetting ELDEST_HEALTH_PER_PLAYER =
       new IntSetting(
           SECTION, "eldestHealthPerPlayer", 50, 0, 500, c -> c.ritual().eldestHealthPerPlayer());
@@ -48,7 +49,7 @@ public record RitualSettings(
   public static final List<Setting<?>> SETTINGS =
       List.of(
           BUILD_UP_TICKS,
-          ELDEST_POINTS,
+          ELDEST_EXPERIENCE,
           ELDEST_HEALTH_PER_PLAYER,
           FIGHT_RANGE,
           ARENA_RADIUS,
@@ -62,7 +63,7 @@ public record RitualSettings(
 
   public RitualSettings {
     buildUpTicks = BUILD_UP_TICKS.clamp(buildUpTicks);
-    eldestPoints = ELDEST_POINTS.clamp(eldestPoints);
+    eldestExperience = ELDEST_EXPERIENCE.clamp(eldestExperience);
     eldestHealthPerPlayer = ELDEST_HEALTH_PER_PLAYER.clamp(eldestHealthPerPlayer);
     fightRange = FIGHT_RANGE.clamp(fightRange);
     arenaRadius = ARENA_RADIUS.clamp(arenaRadius);
@@ -78,7 +79,7 @@ public record RitualSettings(
   static RitualSettings from(final SettingValues values) {
     return new RitualSettings(
         values.get(BUILD_UP_TICKS),
-        values.get(ELDEST_POINTS),
+        values.get(ELDEST_EXPERIENCE),
         values.get(ELDEST_HEALTH_PER_PLAYER),
         values.get(FIGHT_RANGE),
         values.get(ARENA_RADIUS),

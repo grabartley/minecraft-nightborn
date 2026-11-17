@@ -11,6 +11,8 @@ import com.grahambartley.nightborn.downed.DownedTargeting;
 import com.grahambartley.nightborn.levitation.Levitation;
 import com.grahambartley.nightborn.levitation.LevitationMotion;
 import com.grahambartley.nightborn.server.ServerConfigService;
+import com.grahambartley.nightborn.skill.Mending;
+import com.grahambartley.nightborn.vampire.Gloom;
 import com.grahambartley.nightborn.vampire.VampireTicker;
 import com.grahambartley.nightborn.vampire.Vampires;
 import com.grahambartley.nightborn.vanish.Vanish;
@@ -23,6 +25,7 @@ import net.minecraft.entity.EntityDimensions;
 import net.minecraft.entity.EntityPose;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.data.TrackedData;
+import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.mob.PhantomEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -53,6 +56,7 @@ abstract class LivingEntityMixin {
       return;
     }
     Vanish.tick(self);
+    Mending.tick(self);
     if (Vampires.isVampire(self)) {
       VampireTicker.tick(self);
       if (self instanceof ServerPlayerEntity player) {
@@ -107,6 +111,15 @@ abstract class LivingEntityMixin {
     if (!self.isOnGround() && Levitation.isLevitating(self)) {
       cir.setReturnValue(LevitationMotion.airSpeed(self));
     }
+  }
+
+  @ModifyVariable(
+      method =
+          "addStatusEffect(Lnet/minecraft/entity/effect/StatusEffectInstance;Lnet/minecraft/entity/Entity;)Z",
+      at = @At("HEAD"),
+      argsOnly = true)
+  private StatusEffectInstance nightborn$gloomPassesSooner(final StatusEffectInstance effect) {
+    return Gloom.lessen((LivingEntity) (Object) this, effect);
   }
 
   @ModifyVariable(method = "updateLimbs(F)V", at = @At("HEAD"), argsOnly = true)

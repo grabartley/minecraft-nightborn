@@ -2,6 +2,7 @@ package com.grahambartley.nightborn.skill;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import com.grahambartley.nightborn.skill.SkillPurchase.Verdict;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -27,7 +28,20 @@ class SkillPurchaseTest {
   static final SkillBranch HUNTER = new SkillBranch(SkillTree.HUNTER, false, 0);
 
   static Skill skill(final Identifier branch, final int cost, final Identifier... requires) {
-    return new Skill(branch, cost, List.of(requires), ROOT, 0, 0, List.of(), 0.0, Optional.empty());
+    return ranked(branch, List.of(cost), requires);
+  }
+
+  static Skill ranked(
+      final Identifier branch, final List<Integer> costs, final Identifier... requires) {
+    return new Skill(
+        branch,
+        List.of(requires),
+        ROOT,
+        0,
+        0,
+        Optional.empty(),
+        costs.stream().map(SkillRank::costing).toList(),
+        Optional.empty());
   }
 
   static TreeProgress twoBloodlines(final int earned) {
@@ -161,6 +175,61 @@ class SkillPurchaseTest {
             SkillPurchase.Verdict.TOO_FEW_POINTS));
   }
 
+  static Stream<Arguments> rankCases() {
+    final Skill ranked = ranked(CORE, List.of(1, 2, 3));
+    final TreeProgress one = TreeProgress.EMPTY.withEarned(3).buy(ROOT, 1, null);
+    return Stream.of(
+        Arguments.of("first rank", TreeProgress.EMPTY.withEarned(1), true, Verdict.ALLOWED),
+        Arguments.of("second rank, affordable", one, true, Verdict.ALLOWED),
+        Arguments.of("second rank, too dear", one.withEarned(2), true, Verdict.TOO_FEW_POINTS),
+        Arguments.of(
+            "every rank held",
+            TreeProgress.EMPTY
+                .withEarned(9)
+                .buy(ROOT, 1, null)
+                .buy(ROOT, 2, null)
+                .buy(ROOT, 3, null),
+            true,
+            Verdict.OWNED),
+        Arguments.of(
+            "below its stage", TreeProgress.EMPTY.withEarned(9), false, Verdict.NEEDS_STAGE),
+        Arguments.of(
+            "below its stage and short of points", TreeProgress.EMPTY, false, Verdict.NEEDS_STAGE));
+  }
+
+  @ParameterizedTest(name = "{0} -> {3}")
+  @MethodSource("rankCases")
+  @DisplayName(
+      "ranks are bought in turn at their own cost, and a skill above the buyer's stage is"
+          + " refused")
+  void ranksAndStages(
+      final String name,
+      final TreeProgress progress,
+      final boolean stageReached,
+      final Verdict expected) {
+    assertEquals(
+        expected,
+        SkillPurchase.check(
+            progress,
+            SkillTree.VAMPIRE,
+            ROOT,
+            ranked(CORE, List.of(1, 2, 3)),
+            CORE_BRANCH,
+            stageReached));
+  }
+
+  @Test
+  @DisplayName("each rank bought is paid for at its own cost")
+  void paysPerRank() {
+    final Skill ranked = ranked(CORE, List.of(1, 2, 3));
+    TreeProgress progress = TreeProgress.EMPTY.withEarned(6);
+    for (int rank = 1; rank <= 3; rank++) {
+      progress = SkillPurchase.apply(progress, ROOT, ranked, CORE_BRANCH);
+      assertEquals(rank, progress.rank(ROOT));
+    }
+    assertEquals(6, progress.spent());
+  }
+
   @ParameterizedTest(name = "{0} -> {6}")
   @MethodSource("cases")
   @DisplayName("the server checks tree, ownership, bloodline limit, order and points")
@@ -172,7 +241,7 @@ class SkillPurchaseTest {
       final Skill skill,
       final SkillBranch branch,
       final SkillPurchase.Verdict expected) {
-    assertEquals(expected, SkillPurchase.check(progress, tree, id, skill, branch));
+    assertEquals(expected, SkillPurchase.check(progress, tree, id, skill, branch, true));
   }
 
   @Test

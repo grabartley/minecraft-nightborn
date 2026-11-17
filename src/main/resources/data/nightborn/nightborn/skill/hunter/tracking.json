@@ -1,13 +1,20 @@
 {
   "branch": "nightborn:hunter",
-  "cost": 1,
   "icon": "nightborn:skills/icon/tracking",
   "column": 1,
   "row": 0,
+  "ranks": [
+    {
+      "cost": 1
+    }
+  ],
   "power": {
     "blood": 0,
     "cooldown_ticks": 1200,
-    "track": { "range": 64, "duration_ticks": 200 },
+    "track": {
+      "range": 64,
+      "duration_ticks": 200
+    },
     "sound": "minecraft:item.lodestone_compass.lock"
   }
 }

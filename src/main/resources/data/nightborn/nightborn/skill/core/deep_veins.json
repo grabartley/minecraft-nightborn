@@ -1,0 +1,42 @@
+{
+  "branch": "nightborn:core",
+  "requires": [
+    "nightborn:core/blood_healing"
+  ],
+  "icon": "nightborn:skills/icon/thick_blood",
+  "column": 2,
+  "row": 3,
+  "stage": "nightborn:adult",
+  "ranks": [
+    {
+      "cost": 2,
+      "attributes": [
+        {
+          "attribute": "nightborn:extra_blood",
+          "amount": 2.0,
+          "operation": "add_value"
+        }
+      ]
+    },
+    {
+      "cost": 3,
+      "attributes": [
+        {
+          "attribute": "nightborn:extra_blood",
+          "amount": 2.0,
+          "operation": "add_value"
+        }
+      ]
+    },
+    {
+      "cost": 3,
+      "attributes": [
+        {
+          "attribute": "nightborn:extra_blood",
+          "amount": 2.0,
+          "operation": "add_value"
+        }
+      ]
+    }
+  ]
+}

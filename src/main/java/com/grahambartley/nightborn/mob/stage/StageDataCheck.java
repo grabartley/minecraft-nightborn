@@ -36,11 +36,24 @@ public final class StageDataCheck {
                           problems.add(id + " weighs " + skill + ", which is not a vampire skill");
                         }
                       });
-              final int open = SkillPicks.forStage(vampireSkills, branches, stage.skills()).size();
+              final int open =
+                  SkillPicks.forStage(
+                          vampireSkills,
+                          branches,
+                          stage.skills(),
+                          skill -> StageGate.open(StageGate.needed(stages, skill), stage.rank()))
+                      .size();
               if (!stage.skills().every() && stage.skills().count().getMax() >= open && open > 0) {
                 problems.add(id + " may want every vampire skill, which only the Eldest has");
               }
             });
+    new TreeMap<>(vampireSkills)
+        .forEach(
+            (id, skill) ->
+                skill
+                    .stage()
+                    .filter(stage -> !stages.containsKey(stage))
+                    .ifPresent(stage -> problems.add(id + " needs unknown stage " + stage)));
     return problems;
   }
 }

@@ -19,6 +19,7 @@ public final class NightbornPayloads {
     PayloadTypeRegistry.playC2S().register(EditConfigPayload.ID, EditConfigPayload.CODEC);
     PayloadTypeRegistry.playC2S().register(BuySkillPayload.ID, BuySkillPayload.CODEC);
     PayloadTypeRegistry.playC2S().register(UsePowerPayload.ID, UsePowerPayload.CODEC);
+    PayloadTypeRegistry.playC2S().register(SetPowerSlotPayload.ID, SetPowerSlotPayload.CODEC);
     PayloadTypeRegistry.playC2S()
         .register(ToggleLevitationPayload.ID, ToggleLevitationPayload.CODEC);
     PayloadTypeRegistry.playC2S()

@@ -22,13 +22,12 @@ class SkillDataCheckTest {
   static Skill skill(final String branch, final int column, final int row, final String... needs) {
     return new Skill(
         id(branch),
-        1,
         Stream.of(needs).map(SkillDataCheckTest::id).toList(),
         id("icon"),
         column,
         row,
-        List.of(),
-        0.0,
+        Optional.empty(),
+        List.of(SkillRank.costing(1)),
         Optional.empty());
   }
 

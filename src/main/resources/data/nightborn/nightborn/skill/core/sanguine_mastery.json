@@ -1,0 +1,22 @@
+{
+  "branch": "nightborn:core",
+  "requires": [
+    "nightborn:core/deep_veins"
+  ],
+  "icon": "nightborn:skills/icon/blood_rush",
+  "column": 2,
+  "row": 4,
+  "stage": "nightborn:elder",
+  "ranks": [
+    {
+      "cost": 3,
+      "attributes": [
+        {
+          "attribute": "nightborn:power_cooldown",
+          "amount": -0.1,
+          "operation": "add_multiplied_total"
+        }
+      ]
+    }
+  ]
+}

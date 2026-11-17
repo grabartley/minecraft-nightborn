@@ -11,9 +11,9 @@ import com.grahambartley.nightborn.occult.FogClouds;
 import com.grahambartley.nightborn.occult.GhostlyFamiliars;
 import com.grahambartley.nightborn.occult.ShadowStep;
 import com.grahambartley.nightborn.sun.DirectSun;
+import com.grahambartley.nightborn.vampire.VampireAttributes;
 import com.grahambartley.nightborn.vanish.Vanish;
 import com.grahambartley.nightborn.weakened.Weakened;
-import java.util.List;
 import java.util.Optional;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.entity.LivingEntity;
@@ -48,9 +48,8 @@ public final class Powers {
     }
     final Registry<Skill> skills =
         Skills.skills(player.getServerWorld().getRegistryManager()).orElse(null);
-    final List<Identifier> bar = PowerBar.slots(skills, SkillAttachment.owned(player));
-    final PowerUse.Verdict verdict =
-        cast(player, slot >= 0 && slot < bar.size() ? bar.get(slot) : null, heading);
+    final PowerLayout bar = PowerBar.layout(skills, SkillAttachment.owned(player));
+    final PowerUse.Verdict verdict = cast(player, bar.at(slot).orElse(null), heading);
     if (verdict != PowerUse.Verdict.READY && verdict != PowerUse.Verdict.NO_POWER) {
       player.sendMessage(Text.translatable(verdict.translationKey()), true);
     }
@@ -76,6 +75,11 @@ public final class Powers {
     return caster instanceof MobEntity mob && mob.getTarget() != null
         ? mob.getTarget().getPos().subtract(caster.getPos())
         : caster.getRotationVector();
+  }
+
+  public static int cooldownTicks(final LivingEntity caster, final SkillPower power) {
+    return PowerCooldowns.shortened(
+        power.cooldownTicks(), VampireAttributes.value(caster, VampireAttributes.POWER_COOLDOWN));
   }
 
   public static Optional<BatFormPower> ownedBatForm(final LivingEntity caster) {
@@ -137,7 +141,7 @@ public final class Powers {
     }
     final long now = caster.getWorld().getTime();
     PowerCooldownAttachment.set(
-        caster, PowerCooldownAttachment.get(caster).start(id, now, power.cooldownTicks()));
+        caster, PowerCooldownAttachment.get(caster).start(id, now, cooldownTicks(caster, power)));
     for (final StatusEffectInstance effect : power.effects()) {
       caster.addStatusEffect(new StatusEffectInstance(effect), caster);
     }
@@ -153,6 +157,7 @@ public final class Powers {
               vanish -> Vanish.go(caster, aim.stepTo(), vanish),
               () -> ShadowStep.step(caster, aim.stepTo()));
     }
+    power.heal().ifPresent(heal -> Mending.start(caster, heal));
     power.familiar().ifPresent(familiar -> GhostlyFamiliars.summon(caster, familiar));
     power.fog().ifPresent(fog -> FogClouds.spawn(caster, fog));
     power.rally().ifPresent(rally -> Rally.call(caster, rally));

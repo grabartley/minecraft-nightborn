@@ -25,6 +25,13 @@ class ResistChanceTest {
     assertEquals(expected, ResistChance.of(health, max, percent, false), 0.0001F);
   }
 
+  @ParameterizedTest(name = "chance {0} against a grip of {1}: {2}")
+  @CsvSource({"0.1, 1.0, 0.1", "0.1, 0.9, 0.09", "0.1, 0.729, 0.0729", "0.5, 0, 0", "0.5, 3, 0.5"})
+  @DisplayName("a stronger grip lowers the chance to break free by a share of what it is")
+  void held(final float chance, final double struggle, final float expected) {
+    assertEquals(expected, ResistChance.held(chance, struggle), 0.0001F);
+  }
+
   @Test
   @DisplayName("a bigger creature resists more than a smaller one at the same share of health")
   void biggerResistsMore() {

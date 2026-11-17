@@ -17,27 +17,50 @@ class TreeProgressTest {
   static final Identifier THICK = Identifier.of("nightborn", "core/thick_blood");
   static final Identifier NOBLE = Identifier.of("nightborn", "noble");
 
-  @ParameterizedTest(
-      name = "{1} blood at {2} per point from {0} banked gives {3} points and {4} banked")
+  @ParameterizedTest(name = "{1} experience on {0} banked gives {2} points and {3} banked")
   @CsvSource({
-    "0, 10, 20, 0, 10",
-    "10, 10, 20, 1, 0",
-    "15, 50, 20, 3, 5",
-    "0, 0, 20, 0, 0",
-    "0, -4, 20, 0, 0",
-    "0, 7.5, 1, 7, 0.5"
+    "0, 50, 0, 50",
+    "50, 50, 1, 0",
+    "0, 203, 2, 0",
+    "0, 300, 2, 97",
+    "0, 0, 0, 0",
+    "0, -4, 0, 0",
+    "99.5, 0.5, 1, 0"
   })
-  @DisplayName("blood banks toward points and whole points are paid out")
-  void banksBlood(
-      final float banked,
-      final float worth,
-      final int perPoint,
-      final int points,
-      final float left) {
+  @DisplayName("experience banks toward points, and each point costs more than the last")
+  void banksExperience(final float banked, final float gained, final int points, final float left) {
     final TreeProgress after =
-        new TreeProgress(0, banked, List.of(), List.of()).addBlood(worth, perPoint);
+        new TreeProgress(0, banked, List.of(), List.of()).addExperience(gained, 100, 3);
     assertEquals(points, after.earned());
-    assertEquals(left, after.blood(), 0.0001F);
+    assertEquals(left, after.experience(), 0.0001F);
+  }
+
+  @ParameterizedTest(name = "bought {0} times: rank {0}")
+  @CsvSource({"0", "1", "3"})
+  @DisplayName("a skill's rank is how many times it was bought, and it is listed once")
+  void ranks(final int times) {
+    TreeProgress progress = TreeProgress.EMPTY.withEarned(20);
+    for (int i = 0; i < times; i++) {
+      progress = progress.buy(THICK, 1, null);
+    }
+    assertEquals(times, progress.rank(THICK));
+    assertEquals(times > 0, progress.owns(THICK));
+    assertEquals(times > 0 ? List.of(THICK) : List.of(), progress.ownedInOrder());
+  }
+
+  @Test
+  @DisplayName("losing skills clears their slots on the power bar and keeps the rest")
+  void keepingClearsTheBar() {
+    final Identifier other = Identifier.of("nightborn", "core/other");
+    final TreeProgress progress =
+        TreeProgress.EMPTY
+            .withEarned(5)
+            .buy(THICK, 1, null)
+            .buy(other, 1, null)
+            .withBar(PowerLayout.inOrder(List.of(THICK, other)));
+    final TreeProgress kept = progress.keeping(4, List.of(new BoughtSkill(THICK, 1)), List.of());
+    assertEquals(PowerLayout.inOrder(List.of(THICK)), kept.bar().orElseThrow());
+    assertEquals(4, kept.earned());
   }
 
   @ParameterizedTest(name = "earned {0}, paid {1} -> free {2}")
@@ -62,12 +85,13 @@ class TreeProgressTest {
   }
 
   @Test
-  @DisplayName("a refund keeps earned points and banked blood but clears skills and bloodlines")
+  @DisplayName(
+      "a refund keeps earned points and banked experience but clears skills and bloodlines")
   void refund() {
     final TreeProgress refunded =
         new TreeProgress(6, 3.0F, List.of(new BoughtSkill(THICK, 2)), List.of(NOBLE)).refundAll();
     assertEquals(6, refunded.free());
-    assertEquals(3.0F, refunded.blood());
+    assertEquals(3.0F, refunded.experience());
     assertFalse(refunded.owns(THICK));
     assertTrue(refunded.bloodlines().isEmpty());
   }
@@ -83,7 +107,8 @@ class TreeProgressTest {
   @DisplayName("progress survives a save and load unchanged")
   void roundTrips() {
     final TreeProgress progress =
-        new TreeProgress(9, 4.25F, List.of(new BoughtSkill(THICK, 1)), List.of(NOBLE));
+        new TreeProgress(9, 4.25F, List.of(new BoughtSkill(THICK, 1)), List.of(NOBLE))
+            .withBar(PowerLayout.inOrder(List.of(THICK)).place(3, NOBLE));
     final TreeProgress loaded =
         TreeProgress.CODEC
             .parse(

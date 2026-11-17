@@ -2,11 +2,13 @@ package com.grahambartley.nightborn.screen;
 
 import com.grahambartley.nightborn.skill.Skill;
 
-public record SkillLayout(int left, int top, int width, int height, int branchWidth) {
+public record SkillLayout(int left, int top, int width, int height, int branchWidth, int rowStep) {
 
   public static final int NODE = 22;
   static final int ROW_STEP = 28;
+  static final int MIN_ROW_STEP = NODE + 1;
   static final int HEADER = 56;
+  static final int BAR_GAP = 6;
   static final int POINTS_TOP = 20;
   static final int BANNER = 13;
   static final int BANNER_PAD = 8;
@@ -30,17 +32,20 @@ public record SkillLayout(int left, int top, int width, int height, int branchWi
         Math.max(MIN_BRANCH_WIDTH, Math.min(MAX_BRANCH_WIDTH, (screenWidth - PAD * 4) / count));
     final int width =
         Math.max(branchWidth * count + PAD * 2, Math.max(MIN_WIDTH, headerWidth + PAD * 2));
-    final int height =
-        HEADER
-            + ROW_STEP * Math.max(1, Math.min(rows, Skill.MAX_ROW + 1))
-            - (ROW_STEP - NODE)
-            + PAD * 2;
+    final int shownRows = Math.max(1, Math.min(rows, Skill.MAX_ROW + 1));
+    final int fixed = HEADER + NODE + BAR_GAP + PowerBarRow.SLOT + PAD * 2;
+    final int rowStep =
+        shownRows == 1
+            ? ROW_STEP
+            : Math.max(MIN_ROW_STEP, Math.min(ROW_STEP, (screenHeight - fixed) / (shownRows - 1)));
+    final int height = fixed + rowStep * (shownRows - 1);
     return new SkillLayout(
         Math.max(0, (screenWidth - width) / 2),
         Math.max(0, (screenHeight - height) / 2),
         width,
         height,
-        branchWidth);
+        branchWidth,
+        rowStep);
   }
 
   public int branchLeft(final int index, final int branches) {
@@ -60,7 +65,11 @@ public record SkillLayout(int left, int top, int width, int height, int branchWi
   }
 
   public int nodeY(final int row) {
-    return top + HEADER + row * ROW_STEP;
+    return top + HEADER + row * rowStep;
+  }
+
+  public int powerBarY() {
+    return top + height - PAD - PowerBarRow.SLOT;
   }
 
   public int pointsY() {

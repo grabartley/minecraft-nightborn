@@ -1,13 +1,19 @@
 {
   "branch": "nightborn:lord",
-  "cost": 1,
   "icon": "nightborn:skills/icon/dark_court",
   "column": 0,
   "row": 0,
+  "ranks": [
+    {
+      "cost": 1
+    }
+  ],
   "power": {
     "blood": 3,
     "cooldown_ticks": 400,
-    "rally": { "range": 32 },
+    "rally": {
+      "range": 32
+    },
     "sound": "minecraft:event.raid.horn",
     "mob": {
       "min_range": 0.0,

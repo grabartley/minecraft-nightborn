@@ -21,6 +21,13 @@ class BloodCapacityTest {
     assertEquals(capacity, BloodCapacity.of(player));
   }
 
+  @ParameterizedTest(name = "{0} from age and {1} from skills -> {2}")
+  @CsvSource({"0, 0, 20", "2, 4, 26", "0, 6, 26", "40, 40, 100", "99, 99, 100", "-1, -3, 20"})
+  @DisplayName("age and skills both add to the bar, each within its own cap")
+  void ageAndSkills(final int age, final double skills, final int capacity) {
+    assertEquals(capacity, BloodCapacity.capacity(age, skills));
+  }
+
   @Test
   @DisplayName("a mob or a fledgling stores nothing and has the plain bar")
   void absentIsPlain() {

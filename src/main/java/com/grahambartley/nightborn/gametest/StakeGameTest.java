@@ -101,7 +101,9 @@ public class StakeGameTest implements FabricGameTest {
           context.assertTrue(vampire.isDead(), "the vampire is staked");
           context.assertFalse(Vampires.isVampire(vampire), "hardcore death made it human");
           context.assertEquals(
-              SkillAttachment.get(hunter, SkillTree.HUNTER).earned(), 3, "the staker is paid");
+              SkillAttachment.get(hunter, SkillTree.HUNTER).earned(),
+              TestPlayers.pointsFor(ServerConfigService.current().skills().huntExperience()),
+              "the staker is paid");
           context.assertTrue(
               TestAdvancements.done(context, hunter, "stake_holder"), "staking earns Stake Holder");
           TestPlayers.finish(context, hunter, vampire);
@@ -117,7 +119,7 @@ public class StakeGameTest implements FabricGameTest {
     context.runAtTick(
         TestPlayers.READY,
         () -> {
-          SkillAttachment.set(vampire, SkillTree.VAMPIRE, TreeProgress.EMPTY.addPoints(2));
+          SkillAttachment.set(vampire, SkillTree.VAMPIRE, TreeProgress.EMPTY.withEarned(2));
           SkillShop.buy(vampire, core);
           SkillShop.buy(vampire, noble);
           final TreeProgress before = SkillAttachment.get(vampire, SkillTree.VAMPIRE);
@@ -200,14 +202,16 @@ public class StakeGameTest implements FabricGameTest {
     context.runAtTick(
         TestPlayers.READY,
         () -> {
-          SkillAttachment.set(vampire, SkillTree.VAMPIRE, TreeProgress.EMPTY.addPoints(20));
+          SkillAttachment.set(vampire, SkillTree.VAMPIRE, TreeProgress.EMPTY.withEarned(20));
           vampire.setHealth(1.0F);
           vampire.damage(hunter.getDamageSources().playerAttack(hunter), 5.0F);
           context.assertTrue(vampire.isDead(), "the vampire is staked");
           context.assertEquals(
               SkillAttachment.get(vampire, SkillTree.VAMPIRE).earned(), 18, "it lost 10%");
           context.assertEquals(
-              SkillAttachment.get(hunter, SkillTree.HUNTER).earned(), 3, "the staker is paid");
+              SkillAttachment.get(hunter, SkillTree.HUNTER).earned(),
+              TestPlayers.pointsFor(ServerConfigService.current().skills().huntExperience()),
+              "the staker is paid");
           TestPlayers.finish(context, hunter, vampire);
         });
   }
@@ -220,7 +224,7 @@ public class StakeGameTest implements FabricGameTest {
     context.runAtTick(
         TestPlayers.READY,
         () -> {
-          SkillAttachment.set(rival, SkillTree.VAMPIRE, TreeProgress.EMPTY.addPoints(5));
+          SkillAttachment.set(rival, SkillTree.VAMPIRE, TreeProgress.EMPTY.withEarned(5));
           vampire.setHealth(1.0F);
           vampire.damage(rival.getDamageSources().playerAttack(rival), 5.0F);
           context.assertTrue(vampire.isDead(), "any stake kills, whoever holds it");

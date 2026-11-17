@@ -6,6 +6,8 @@ import com.grahambartley.nightborn.screen.SkillTheme;
 import com.grahambartley.nightborn.skill.PowerBar;
 import com.grahambartley.nightborn.skill.PowerCooldownAttachment;
 import com.grahambartley.nightborn.skill.PowerCooldowns;
+import com.grahambartley.nightborn.skill.PowerLayout;
+import com.grahambartley.nightborn.skill.Powers;
 import com.grahambartley.nightborn.skill.Skill;
 import com.grahambartley.nightborn.skill.SkillAttachment;
 import com.grahambartley.nightborn.skill.SkillPower;
@@ -42,7 +44,7 @@ public final class PowerBarHud {
     }
     final Registry<Skill> skills = Skills.skills(client.world.getRegistryManager()).orElse(null);
     final SkillTree tree = SkillTree.of(player);
-    final List<Identifier> bar = PowerBar.slots(skills, SkillAttachment.get(player, tree));
+    final PowerLayout bar = PowerBar.layout(skills, SkillAttachment.get(player, tree));
     if (bar.isEmpty()) {
       return;
     }
@@ -54,34 +56,44 @@ public final class PowerBarHud {
         PowerBarLayout.slots(
             context.getScaledWindowWidth(),
             context.getScaledWindowHeight(),
-            bar.size(),
+            bar.used(),
             offhandOnRight,
             indicatorOnRight);
     final PowerCooldowns cooldowns = PowerCooldownAttachment.get(player);
     final long now = client.world.getTime();
     final int blood = BloodAttachment.get(player);
     final Identifier slot = SkillTheme.of(tree).powerSlot();
-    for (int i = 0; i < bar.size(); i++) {
-      final Skill skill = skills.get(bar.get(i));
-      final SkillPower power = skill.power().orElseThrow();
+    for (int i = 0; i < bar.used(); i++) {
       final PowerBarLayout.Point at = points.get(i);
-      drawSlot(
-          context, client, slot, at, skill, power, cooldowns.ticksLeft(bar.get(i), now), blood, i);
+      context.drawGuiTexture(slot, at.x(), at.y(), PowerBarLayout.SLOT, PowerBarLayout.SLOT);
+      final Identifier id = bar.at(i).orElse(null);
+      if (id != null) {
+        final Skill skill = skills.get(id);
+        final SkillPower power = skill.power().orElseThrow();
+        drawPower(
+            context,
+            client,
+            at,
+            skill,
+            power,
+            cooldowns.ticksLeft(id, now),
+            Powers.cooldownTicks(player, power),
+            blood);
+      }
+      drawKey(context, client, at, i);
     }
   }
 
-  private static void drawSlot(
+  private static void drawPower(
       final DrawContext context,
       final MinecraftClient client,
-      final Identifier slotSprite,
       final PowerBarLayout.Point at,
       final Skill skill,
       final SkillPower power,
       final long ticksLeft,
-      final int blood,
-      final int slot) {
+      final int cooldownTicks,
+      final int blood) {
     final int size = PowerBarLayout.SLOT;
-    context.drawGuiTexture(slotSprite, at.x(), at.y(), size, size);
     final int inset = (size - PowerSlotView.ICON) / 2;
     final boolean thirsty = blood < power.blood();
     if (thirsty) {
@@ -90,7 +102,7 @@ public final class PowerBarHud {
     context.drawGuiTexture(
         skill.icon(), at.x() + inset, at.y() + inset, PowerSlotView.ICON, PowerSlotView.ICON);
     context.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-    final float shade = PowerCooldowns.fraction(ticksLeft, power.cooldownTicks());
+    final float shade = PowerCooldowns.fraction(ticksLeft, cooldownTicks);
     if (shade > 0.0F) {
       final int top = PowerSlotView.shadeTop(shade);
       context.drawGuiTexture(
@@ -116,6 +128,14 @@ public final class PowerBarHud {
           at.y() + inset + PowerSlotView.ICON / 2 + 1,
           COST_COLOUR);
     }
+  }
+
+  private static void drawKey(
+      final DrawContext context,
+      final MinecraftClient client,
+      final PowerBarLayout.Point at,
+      final int slot) {
+    final int inset = (PowerBarLayout.SLOT - PowerSlotView.ICON) / 2;
     final String key =
         PowerSlotView.keyLabel(
             SkillKeys.power(slot).getBoundKeyLocalizedText().getString(),

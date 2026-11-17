@@ -48,8 +48,12 @@ public final class DownedRules {
     return human ? Optional.of(attacker) : Optional.empty();
   }
 
-  public static DownedState downed(final DownedSettings settings, final Optional<UUID> hunter) {
-    return new DownedState(Phase.DOWNED, settings.downedSeconds() * 20, hunter);
+  public static DownedState downed(
+      final DownedSettings settings, final Optional<UUID> hunter, final double timeFactor) {
+    return new DownedState(
+        Phase.DOWNED,
+        (int) Math.max(1L, Math.round(settings.downedSeconds() * 20 * timeFactor)),
+        hunter);
   }
 
   public static Step tick(final DownedState state, final DownedSettings settings) {
@@ -62,7 +66,9 @@ public final class DownedRules {
     return new Step(null, Change.ESCAPED);
   }
 
-  public static float recoveredHealth(final float maxHealth, final DownedSettings settings) {
-    return Math.max(1.0F, maxHealth * settings.recoverHealth() / 100.0F);
+  public static float recoveredHealth(
+      final float maxHealth, final DownedSettings settings, final double riseShare) {
+    return Math.max(
+        1.0F, maxHealth * (float) Math.max(settings.recoverHealth() / 100.0, riseShare));
   }
 }

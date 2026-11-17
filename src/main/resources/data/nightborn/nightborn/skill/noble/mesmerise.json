@@ -1,10 +1,16 @@
 {
   "branch": "nightborn:noble",
-  "cost": 2,
-  "requires": ["nightborn:noble/noble_blood"],
+  "requires": [
+    "nightborn:noble/noble_blood"
+  ],
   "icon": "nightborn:skills/icon/mesmerise",
   "column": 1,
   "row": 1,
+  "ranks": [
+    {
+      "cost": 2
+    }
+  ],
   "power": {
     "blood": 2,
     "cooldown_ticks": 300,

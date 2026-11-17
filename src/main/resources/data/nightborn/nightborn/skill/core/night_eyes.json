@@ -1,0 +1,41 @@
+{
+  "branch": "nightborn:core",
+  "requires": [
+    "nightborn:core/thick_blood"
+  ],
+  "icon": "nightborn:skills/icon/shadow_veil",
+  "column": 1,
+  "row": 2,
+  "ranks": [
+    {
+      "cost": 1,
+      "attributes": [
+        {
+          "attribute": "nightborn:dark_sight",
+          "amount": 1.0,
+          "operation": "add_value"
+        }
+      ]
+    },
+    {
+      "cost": 1,
+      "attributes": [
+        {
+          "attribute": "nightborn:gloom_resistance",
+          "amount": 0.5,
+          "operation": "add_value"
+        }
+      ]
+    },
+    {
+      "cost": 2,
+      "attributes": [
+        {
+          "attribute": "nightborn:fog_sight",
+          "amount": 1.0,
+          "operation": "add_value"
+        }
+      ]
+    }
+  ]
+}
