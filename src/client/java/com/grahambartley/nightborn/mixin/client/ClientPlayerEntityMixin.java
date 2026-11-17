@@ -5,6 +5,7 @@ import com.grahambartley.nightborn.batform.BatFormRules;
 import com.grahambartley.nightborn.levitation.Levitation;
 import com.grahambartley.nightborn.levitation.LevitationRules;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
+import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import net.minecraft.client.network.ClientPlayerEntity;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -22,6 +23,12 @@ abstract class ClientPlayerEntityMixin {
   private boolean nightborn$sprintStartsWhileLevitating(final boolean onGround) {
     return LevitationRules.movesAsGrounded(
         onGround, Levitation.isLevitating((ClientPlayerEntity) (Object) this));
+  }
+
+  @ModifyReturnValue(method = "isInSneakingPose", at = @At("RETURN"))
+  private boolean nightborn$noCrouchWhileLevitating(final boolean crouching) {
+    return LevitationRules.crouches(
+        crouching, Levitation.holdsFloatPose((ClientPlayerEntity) (Object) this));
   }
 
   @ModifyExpressionValue(
