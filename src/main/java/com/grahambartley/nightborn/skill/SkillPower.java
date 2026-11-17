@@ -5,6 +5,7 @@ import com.grahambartley.nightborn.lord.SummonPower;
 import com.grahambartley.nightborn.occult.FamiliarPower;
 import com.grahambartley.nightborn.occult.FogPower;
 import com.grahambartley.nightborn.occult.ShadowStepPower;
+import com.grahambartley.nightborn.vanish.VanishPower;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import java.util.List;
@@ -24,6 +25,7 @@ public record SkillPower(
     Optional<FamiliarPower> familiar,
     Optional<FogPower> fog,
     Optional<ShadowStepPower> shadowStep,
+    Optional<VanishPower> vanish,
     Optional<RallyPower> rally,
     Optional<SummonPower> summon,
     Optional<MobPowerUse> mob) {
@@ -55,6 +57,7 @@ public record SkillPower(
                       ShadowStepPower.CODEC
                           .optionalFieldOf("shadow_step")
                           .forGetter(SkillPower::shadowStep),
+                      VanishPower.CODEC.optionalFieldOf("vanish").forGetter(SkillPower::vanish),
                       RallyPower.CODEC.optionalFieldOf("rally").forGetter(SkillPower::rally),
                       SummonPower.CODEC.optionalFieldOf("summon").forGetter(SkillPower::summon),
                       MobPowerUse.CODEC.optionalFieldOf("mob").forGetter(SkillPower::mob))

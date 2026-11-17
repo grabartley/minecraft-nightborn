@@ -40,6 +40,7 @@ class SkillPowerTest {
     assertTrue(power.familiar().isEmpty());
     assertTrue(power.fog().isEmpty());
     assertTrue(power.shadowStep().isEmpty());
+    assertTrue(power.vanish().isEmpty());
     assertTrue(power.rally().isEmpty());
     assertTrue(power.summon().isEmpty());
     assertTrue(power.mob().isEmpty());
@@ -155,5 +156,25 @@ class SkillPowerTest {
     assertEquals(1200, power.familiar().orElseThrow().lifetimeTicks());
     assertEquals(4.0F, power.fog().orElseThrow().radius());
     assertEquals(16.0F, power.shadowStep().orElseThrow().range());
+  }
+
+  @ParameterizedTest(name = "{0} blocks, gone {1} ticks")
+  @org.junit.jupiter.params.provider.CsvSource({"4, 5", "2, 1", "8, 20"})
+  @DisplayName("a power can vanish the caster a set distance for a set time")
+  void vanishes(final float distance, final int goneTicks) {
+    final SkillPower power =
+        SkillPower.CODEC
+            .parse(
+                JsonOps.INSTANCE,
+                JsonParser.parseString(
+                    "{\"blood\":1,\"cooldown_ticks\":100,\"vanish\":{\"distance\":"
+                        + distance
+                        + ",\"gone_ticks\":"
+                        + goneTicks
+                        + "}}"))
+            .getOrThrow();
+    assertEquals(distance, power.vanish().orElseThrow().distance());
+    assertEquals(goneTicks, power.vanish().orElseThrow().goneTicks());
+    assertTrue(power.shadowStep().isEmpty());
   }
 }

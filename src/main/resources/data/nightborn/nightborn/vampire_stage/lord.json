@@ -20,6 +20,7 @@
     "leap_chance": 65,
     "dash_chance": 60,
     "dodge_chance": 55,
+    "power_dodge_chance": 70,
     "retreat_health": 20
   },
   "look": { "idle": "idle_ancient" },

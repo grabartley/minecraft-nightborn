@@ -1,6 +1,7 @@
 package com.grahambartley.nightborn.skill;
 
 import com.grahambartley.nightborn.Nightborn;
+import com.grahambartley.nightborn.vanish.Vanish;
 import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
@@ -19,6 +20,7 @@ public final class SkillFeatures {
     PowerCooldownAttachment.register();
     SkillShop.register();
     Powers.register();
+    Vanish.register();
     Tracking.register();
     ServerPlayConnectionEvents.JOIN.register(
         (handler, sender, server) -> SkillAttributes.apply(handler.getPlayer()));

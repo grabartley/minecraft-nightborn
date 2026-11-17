@@ -209,6 +209,8 @@
   "skill.nightborn.core.grave_strength.description": "Твои удары бьют сильнее",
   "skill.nightborn.core.blood_rush": "Прилив крови",
   "skill.nightborn.core.blood_rush.description": "Сжечь кровь ради короткого рывка скорости и силы",
+  "skill.nightborn.core.vanish": "Исчезновение",
+  "skill.nightborn.core.vanish.description": "Исчезните в дыму и появитесь в нескольких шагах по ходу движения или позади себя, если стоите на месте",
   "skill.nightborn.noble.noble_blood": "Кровь знати",
   "skill.nightborn.noble.noble_blood.description": "Выбирает линию Знати. Древняя гордость закаляет кожу",
   "skill.nightborn.beast.beast_blood": "Кровь зверя",

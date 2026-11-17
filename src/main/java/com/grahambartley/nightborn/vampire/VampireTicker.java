@@ -10,6 +10,7 @@ import com.grahambartley.nightborn.feeding.FeedingSessions;
 import com.grahambartley.nightborn.levitation.Levitation;
 import com.grahambartley.nightborn.server.ServerConfigService;
 import com.grahambartley.nightborn.sun.SunBurn;
+import com.grahambartley.nightborn.vanish.Vanish;
 import com.grahambartley.nightborn.ward.Wards;
 import com.grahambartley.nightborn.weakened.Weakened;
 import net.minecraft.entity.LivingEntity;
@@ -19,6 +20,7 @@ public final class VampireTicker {
   private VampireTicker() {}
 
   public static void tick(final LivingEntity vampire) {
+    Vanish.tick(vampire);
     if (!vampire.isAlive()) {
       VisibleStateAttachment.set(vampire, VisibleState.NONE);
       return;

@@ -12,6 +12,7 @@
     "leap_chance": 45,
     "dash_chance": 35,
     "dodge_chance": 30,
+    "power_dodge_chance": 50,
     "retreat_health": 35
   },
   "look": { "idle": "idle_elder", "marks": "nightborn:textures/entity/vampire/stage/elder" },

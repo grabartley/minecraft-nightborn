@@ -16,7 +16,7 @@ import org.junit.jupiter.params.provider.EnumSource;
 class CombatMoveTest {
 
   private static final CombatSettings SETTINGS = NightbornConfig.DEFAULTS.combat();
-  private static final StageCombat ELDER = new StageCombat(3, 20, 45, 35, 30, 35);
+  private static final StageCombat ELDER = new StageCombat(3, 20, 45, 35, 30, 50, 35);
 
   @ParameterizedTest(name = "{0} blocks, ground {1}, swing {2}, aim {3}, roll {4}: {5}")
   @CsvSource({
@@ -45,6 +45,23 @@ class CombatMoveTest {
         move.equals("NONE") ? Optional.empty() : Optional.of(CombatMove.valueOf(move)),
         CombatMove.decide(
             distance, onGround, new CombatMove.Threat(swinging, aiming), roll, ELDER, SETTINGS));
+  }
+
+  @ParameterizedTest(name = "threatened {0}, was {1}, roll {2}: {3}")
+  @CsvSource({
+    "true, false, 0, true",
+    "true, false, 49, true",
+    "true, false, 50, false",
+    "true, true, 0, false",
+    "false, true, 0, false",
+    "false, false, 0, false"
+  })
+  @DisplayName("a vampire dodges with a power once for each new swing or aimed shot")
+  void dodgesWithPower(
+      final boolean threatened, final boolean wasThreatened, final int roll, final boolean dodges) {
+    assertEquals(dodges, CombatMove.dodgesWithPower(threatened, wasThreatened, roll, ELDER));
+    assertEquals(
+        false, CombatMove.dodgesWithPower(threatened, wasThreatened, roll, StageCombat.PLAIN));
   }
 
   @ParameterizedTest(name = "{0}")
@@ -79,5 +96,5 @@ class CombatMoveTest {
             distance, true, new CombatMove.Threat(false, false), 0, LEAP_ONLY, settings));
   }
 
-  private static final StageCombat LEAP_ONLY = new StageCombat(0, 20, 100, 0, 0, 0);
+  private static final StageCombat LEAP_ONLY = new StageCombat(0, 20, 100, 0, 0, 0, 0);
 }

@@ -209,6 +209,8 @@
   "skill.nightborn.core.grave_strength.description": "你的攻击更加有力",
   "skill.nightborn.core.blood_rush": "血之奔涌",
   "skill.nightborn.core.blood_rush.description": "燃烧血液，短时间内提升速度与力量",
+  "skill.nightborn.core.vanish": "消隐",
+  "skill.nightborn.core.vanish.description": "化作烟雾消失，并在移动方向几步之外重现；若静止不动，则出现在身后",
   "skill.nightborn.noble.noble_blood": "贵族之血",
   "skill.nightborn.noble.noble_blood.description": "选择贵族血脉。古老的傲气让你的皮肤更坚硬",
   "skill.nightborn.beast.beast_blood": "野兽之血",

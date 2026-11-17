@@ -49,6 +49,14 @@ public enum CombatMove {
     }
   }
 
+  public static boolean dodgesWithPower(
+      final boolean threatened,
+      final boolean wasThreatened,
+      final int roll,
+      final StageCombat combat) {
+    return threatened && !wasThreatened && roll < combat.powerDodgeChance();
+  }
+
   public static Optional<CombatMove> decide(
       final double distance,
       final boolean onGround,

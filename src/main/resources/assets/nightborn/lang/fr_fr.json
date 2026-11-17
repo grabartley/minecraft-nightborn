@@ -209,6 +209,8 @@
   "skill.nightborn.core.grave_strength.description": "Tes coups frappent plus fort",
   "skill.nightborn.core.blood_rush": "Afflux de sang",
   "skill.nightborn.core.blood_rush.description": "Brûle du sang pour un court regain de vitesse et de force",
+  "skill.nightborn.core.vanish": "Disparition",
+  "skill.nightborn.core.vanish.description": "Disparais dans la fumée et réapparais quelques pas dans le sens de ta marche, ou derrière toi si tu restes immobile",
   "skill.nightborn.noble.noble_blood": "Sang noble",
   "skill.nightborn.noble.noble_blood.description": "Choisit la lignée Noble. Un vieil orgueil durcit ta peau",
   "skill.nightborn.beast.beast_blood": "Sang de bête",
