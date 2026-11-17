@@ -3,8 +3,10 @@ package com.grahambartley.nightborn.structure;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockBox;
 import net.minecraft.util.math.ColumnPos;
@@ -50,20 +52,25 @@ public record Footing(
     return maxLift.map(limit -> Math.abs(lift) <= limit).orElse(true);
   }
 
-  public boolean accepts(final List<Column> columns) {
-    if (columns.isEmpty()) {
-      return false;
-    }
+  public boolean accepts(final Stream<Column> columns) {
     int lowest = Integer.MAX_VALUE;
     int highest = Integer.MIN_VALUE;
-    for (final Column column : columns) {
+    final Iterator<Column> each = columns.iterator();
+    if (!each.hasNext()) {
+      return false;
+    }
+    while (each.hasNext()) {
+      final Column column = each.next();
       if (dry && column.underWater()) {
         return false;
       }
       lowest = Math.min(lowest, column.floor());
       highest = Math.max(highest, column.floor());
+      if (highest - lowest > maxRise) {
+        return false;
+      }
     }
-    return highest - lowest <= maxRise;
+    return true;
   }
 
   public List<ColumnPos> samples(final BlockBox box, final ColumnPos start) {
@@ -78,13 +85,13 @@ public record Footing(
   }
 
   public boolean fits(final Structure.Context context, final BlockBox box, final ColumnPos start) {
-    final List<Column> columns = new ArrayList<>();
-    for (final ColumnPos point : samples(box, start)) {
-      columns.add(
-          new Column(
-              surface(context, point), height(context, point, Heightmap.Type.OCEAN_FLOOR_WG)));
-    }
-    return accepts(columns);
+    return accepts(
+        samples(box, start).stream()
+            .map(
+                point ->
+                    new Column(
+                        surface(context, point),
+                        height(context, point, Heightmap.Type.OCEAN_FLOOR_WG))));
   }
 
   private List<Integer> steps(final int min, final int max) {

@@ -23,6 +23,7 @@ import net.minecraft.util.math.ColumnPos;
 import net.minecraft.util.math.random.Random;
 import net.minecraft.world.Heightmap;
 import net.minecraft.world.StructureWorldAccess;
+import net.minecraft.world.biome.source.BiomeCoords;
 import net.minecraft.world.gen.HeightContext;
 import net.minecraft.world.gen.StructureAccessor;
 import net.minecraft.world.gen.chunk.ChunkGenerator;
@@ -232,6 +233,9 @@ public final class VampireStructure extends Structure {
         .pieces()
         .forEach(piece -> piece.translate(move.getX(), move.getY(), move.getZ()));
     final BlockPos placed = position.get().position().add(move);
+    if (!inBiome(context, placed)) {
+      return Optional.empty();
+    }
     final ColumnPos approach =
         threshold
             .map(way -> way.outside())
@@ -240,6 +244,20 @@ public final class VampireStructure extends Structure {
     return footing.get().fits(context, pieces.getBoundingBox(), approach)
         ? Optional.of(new StructurePosition(placed, Either.right(pieces)))
         : Optional.empty();
+  }
+
+  private static boolean inBiome(final Context context, final BlockPos at) {
+    return context
+        .biomePredicate()
+        .test(
+            context
+                .chunkGenerator()
+                .getBiomeSource()
+                .getBiome(
+                    BiomeCoords.fromBlock(at.getX()),
+                    BiomeCoords.fromBlock(at.getY()),
+                    BiomeCoords.fromBlock(at.getZ()),
+                    context.noiseConfig().getMultiNoiseSampler()));
   }
 
   @Override

@@ -3,6 +3,7 @@ package com.grahambartley.nightborn.tools.structures.vampire.mountain;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import com.grahambartley.nightborn.tools.structures.template.Facing;
 import com.grahambartley.nightborn.tools.structures.template.Pos;
 import com.grahambartley.nightborn.tools.structures.template.Template;
 import com.grahambartley.nightborn.tools.structures.vampire.Coffins;
@@ -225,5 +226,29 @@ class MountainCastleTest {
         assertEquals("minecraft:air", t.get(x, Ramparts.TOP + up, z), "walk at z " + z);
       }
     }
+  }
+
+  static boolean backedBySolidWall(final Template t, final Pos hung) {
+    final String state = t.get(hung.x(), hung.y(), hung.z());
+    final String facing = state.replaceAll(".*facing=(\\w+).*", "$1");
+    final Pos step = Facing.STEP.get(facing);
+    final String back = t.get(hung.x() - step.x(), hung.y(), hung.z() - step.z());
+    return Turret.solid(back) && !StructureWalk.open(back);
+  }
+
+  @ParameterizedTest(name = "{0}: every {1} hangs on a solid wall, never a window or a doorway")
+  @MethodSource("hungThings")
+  void hungThingsSitOnSolidWall(final MountainCastle.Layout layout, final String block) {
+    final Template t = MountainCastle.build(layout);
+    final List<Pos> loose =
+        find(t, block).stream().filter(hung -> !backedBySolidWall(t, hung)).toList();
+    assertEquals(List.of(), loose);
+  }
+
+  static Stream<Arguments> hungThings() {
+    return layouts()
+        .flatMap(
+            layout ->
+                Stream.of(Arguments.of(layout, ":portrait"), Arguments.of(layout, ":ladder")));
   }
 }
