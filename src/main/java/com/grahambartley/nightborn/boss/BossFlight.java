@@ -2,6 +2,7 @@ package com.grahambartley.nightborn.boss;
 
 import com.grahambartley.nightborn.batform.BatForm;
 import com.grahambartley.nightborn.levitation.Levitation;
+import com.grahambartley.nightborn.skill.PowerShow;
 import com.grahambartley.nightborn.weakened.Weakened;
 import java.util.Optional;
 import net.minecraft.entity.mob.MobEntity;
@@ -22,8 +23,9 @@ public final class BossFlight {
     return !airborne && aloft && !bat;
   }
 
-  public void tick(
-      final MobEntity boss,
+  public <T extends MobEntity & PowerShow> void tick(
+      final T boss,
+      final FightClips clips,
       final Optional<PhaseFlight> flight,
       final Arena arena,
       final boolean fighting,
@@ -44,6 +46,10 @@ public final class BossFlight {
         false, boss.hasNoGravity() || Levitation.isLevitating(boss), BatForm.isBat(boss))) {
       boss.setNoGravity(false);
       Levitation.land(boss);
+    }
+    final String edge = FightClips.flightEdge(flying, airborne, clips);
+    if (!edge.isEmpty()) {
+      boss.showPower(edge);
     }
     flying = airborne;
   }

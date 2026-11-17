@@ -42,4 +42,16 @@ class ShownActionTest {
     }
     assertEquals(showing, action.showing(Set.of("mourn")));
   }
+
+  @ParameterizedTest(name = "current {0}, blank clip {1}: stops {2}")
+  @CsvSource({
+    "true, true, true",
+    "true, false, false",
+    "false, true, false",
+    "false, false, false"
+  })
+  @DisplayName("a blank clip sent after a looping one stops it")
+  void stops(final boolean current, final boolean blank, final boolean stops) {
+    assertEquals(stops, ShownAction.stops(current, blank));
+  }
 }

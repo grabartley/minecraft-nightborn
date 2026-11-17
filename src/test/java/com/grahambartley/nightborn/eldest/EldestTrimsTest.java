@@ -47,4 +47,24 @@ class EldestTrimsTest {
     assertEquals("minecraft:smithing_trim", recipe.get("type").getAsString());
     assertEquals(template, recipe.getAsJsonObject("template").get("item").getAsString());
   }
+
+  @ParameterizedTest(name = "{0}")
+  @MethodSource("trims")
+  @DisplayName("each trim draws its own pattern, shipped for armour and leggings and in the atlas")
+  void drawsItsOwnPattern(final String name, final RegistryKey<ArmorTrimPattern> key)
+      throws IOException {
+    assertEquals(
+        "nightborn:" + name,
+        json(DATA.resolve("trim_pattern/" + name + ".json")).get("asset_id").getAsString());
+    final Path assets = Path.of("src/main/resources/assets");
+    final String atlas =
+        Files.readString(
+            assets.resolve("minecraft/atlases/armor_trims.json"), StandardCharsets.UTF_8);
+    for (final String suffix : new String[] {"", "_leggings"}) {
+      assertTrue(
+          Files.exists(
+              assets.resolve("nightborn/textures/trims/models/armor/" + name + suffix + ".png")));
+      assertTrue(atlas.contains("\"nightborn:trims/models/armor/" + name + suffix + "\""));
+    }
+  }
 }

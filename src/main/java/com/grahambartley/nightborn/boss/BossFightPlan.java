@@ -12,7 +12,8 @@ public record BossFightPlan(
     String changeClip,
     Identifier changeSound,
     float changeKnock,
-    float changeRange) {
+    float changeRange,
+    FightClips clips) {
 
   public static final Codec<BossFightPlan> CODEC =
       RecordCodecBuilder.create(
@@ -34,7 +35,10 @@ public record BossFightPlan(
                           .forGetter(BossFightPlan::changeKnock),
                       Codec.floatRange(0.0F, 32.0F)
                           .optionalFieldOf("change_range", 6.0F)
-                          .forGetter(BossFightPlan::changeRange))
+                          .forGetter(BossFightPlan::changeRange),
+                      FightClips.CODEC
+                          .optionalFieldOf("clips", FightClips.NONE)
+                          .forGetter(BossFightPlan::clips))
                   .apply(instance, BossFightPlan::new));
 
   public BossFightPlan {

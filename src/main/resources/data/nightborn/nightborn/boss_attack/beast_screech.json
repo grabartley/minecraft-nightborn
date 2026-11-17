@@ -3,9 +3,9 @@
   "weight": 3,
   "cooldown_ticks": 120,
   "tell_ticks": 22,
-  "tell_clip": "mesmerise",
+  "tell_clip": "screech_tell",
   "tell_sound": "minecraft:entity.phantom.swoop",
-  "clip": "hiss",
+  "clip": "screech",
   "sound": "minecraft:entity.bat.takeoff",
   "zone": {
     "radius": 2.5,

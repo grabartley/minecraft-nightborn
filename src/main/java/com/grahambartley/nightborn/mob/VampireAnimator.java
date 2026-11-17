@@ -59,7 +59,10 @@ public final class VampireAnimator {
               shownPose =
                   pose == VampirePose.IDLE ? IdleFidget.pose(vampire.getId(), vampire.age) : pose;
               final PlayState play =
-                  state.setAndContinue(StageClips.clip(shownPose, vampire.stage().look()));
+                  state.setAndContinue(
+                      vampire
+                          .poseClip(shownPose)
+                          .orElseGet(() -> StageClips.clip(shownPose, vampire.stage().look())));
               landingEdge.shown(
                   pose == VampirePose.LAND,
                   pose == VampirePose.LAND && state.getController().hasAnimationFinished());

@@ -31,6 +31,10 @@ public final class ShownAction {
     return false;
   }
 
+  public static boolean stops(final boolean current, final boolean blank) {
+    return current && blank;
+  }
+
   public void end() {
     playing = false;
   }
@@ -45,7 +49,9 @@ public final class ShownAction {
       state.getController().forceAnimationReset();
       return state.setAndContinue(ClipCache.once(clip));
     }
-    if (!playing || state.getController().hasAnimationFinished()) {
+    if (stops(seen == sequence, clip.isEmpty())
+        || !playing
+        || state.getController().hasAnimationFinished()) {
       end();
       return PlayState.STOP;
     }

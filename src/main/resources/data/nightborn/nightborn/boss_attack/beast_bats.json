@@ -3,9 +3,9 @@
   "weight": 1,
   "cooldown_ticks": 500,
   "tell_ticks": 20,
-  "tell_clip": "mesmerise",
+  "tell_clip": "bats_tell",
   "tell_sound": "minecraft:entity.bat.takeoff",
-  "clip": "hiss",
+  "clip": "bats",
   "sound": "minecraft:entity.bat.loop",
   "power": "nightborn:lord/bat_swarm"
 }

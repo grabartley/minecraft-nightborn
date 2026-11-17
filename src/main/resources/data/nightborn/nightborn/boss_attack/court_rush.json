@@ -4,9 +4,9 @@
   "weight": 1,
   "cooldown_ticks": 600,
   "tell_ticks": 18,
-  "tell_clip": "mesmerise",
+  "tell_clip": "rush_tell",
   "tell_sound": "minecraft:block.beacon.activate",
-  "clip": "hiss",
+  "clip": "rush",
   "sound": "minecraft:entity.ravager.roar",
   "power": "nightborn:core/blood_rush"
 }

@@ -34,6 +34,7 @@ public final class BossAttacks {
   private float drainTaken;
   private long nextAttack;
   private boolean cut;
+  private boolean warded;
   private long landedAt = Long.MIN_VALUE / 2;
   private final BossWard ward = new BossWard();
   private final BossWard court = new BossWard();
@@ -87,6 +88,7 @@ public final class BossAttacks {
 
   public <T extends MobEntity & PowerShow> void tick(
       final T boss,
+      final FightClips clips,
       final BossPhase phase,
       final List<? extends LivingEntity> foes,
       final float healCeiling,
@@ -95,6 +97,11 @@ public final class BossAttacks {
       return;
     }
     tickHazards(boss, world, now);
+    final boolean held = ward.holds(now);
+    if (BossWard.broke(warded, held, run != null, clips.stagger().isEmpty())) {
+      boss.showPower(clips.stagger());
+    }
+    warded = held;
     ward.expire(now);
     court.expire(now);
     if (run == null) {
@@ -104,7 +111,7 @@ public final class BossAttacks {
     switch (cut ? AttackRun.Stage.DONE : run.stage(now)) {
       case TELL -> tell(boss, now);
       case STRIKE -> strike(boss, world, healCeiling, now);
-      case DONE -> finish(phase, now);
+      case DONE -> finish(boss, phase, now);
     }
   }
 
@@ -282,7 +289,10 @@ public final class BossAttacks {
     cut = step == DrainAttack.Step.BROKEN || step == DrainAttack.Step.DONE;
   }
 
-  private void finish(final BossPhase phase, final long now) {
+  private void finish(final PowerShow boss, final BossPhase phase, final long now) {
+    if (run != null && AttackRun.holdsStrike(run.attack().strikeTicks())) {
+      boss.showPower("");
+    }
     if (run != null) {
       readyAt.put(run.id(), now + run.attack().cooldownTicks());
     }

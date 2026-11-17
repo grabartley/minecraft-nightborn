@@ -3,9 +3,9 @@
   "weight": 1,
   "cooldown_ticks": 700,
   "tell_ticks": 22,
-  "tell_clip": "mesmerise",
+  "tell_clip": "fog_tell",
   "tell_sound": "minecraft:block.sculk_shrieker.shriek",
-  "clip": "hiss",
+  "clip": "fog",
   "sound": "minecraft:entity.wither.ambient",
   "power": "nightborn:occult/grave_fog"
 }

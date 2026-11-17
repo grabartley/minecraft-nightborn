@@ -94,6 +94,7 @@ import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.AnimatableManager;
+import software.bernie.geckolib.animation.RawAnimation;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 public class VampireEntity extends HostileEntity
@@ -660,6 +661,10 @@ public class VampireEntity extends HostileEntity
   @Override
   public void registerControllers(final AnimatableManager.ControllerRegistrar controllers) {
     animator.register(this, controllers);
+  }
+
+  protected Optional<RawAnimation> poseClip(final VampirePose pose) {
+    return Optional.empty();
   }
 
   public VampirePose shownPose() {

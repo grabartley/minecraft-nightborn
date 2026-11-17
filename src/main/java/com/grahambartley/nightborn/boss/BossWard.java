@@ -26,6 +26,11 @@ public final class BossWard {
         });
   }
 
+  public static boolean broke(
+      final boolean wasHeld, final boolean held, final boolean busy, final boolean silent) {
+    return wasHeld && !held && !busy && !silent;
+  }
+
   public static boolean orphaned(final boolean taggedOnLoad) {
     return taggedOnLoad;
   }

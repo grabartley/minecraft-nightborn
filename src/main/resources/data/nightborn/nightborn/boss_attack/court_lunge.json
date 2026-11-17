@@ -4,9 +4,9 @@
   "weight": 2,
   "cooldown_ticks": 120,
   "tell_ticks": 18,
-  "tell_clip": "blood_rush_tell",
+  "tell_clip": "lunge_tell",
   "tell_sound": "minecraft:item.trident.return",
-  "clip": "dash",
+  "clip": "lunge",
   "sound": "minecraft:entity.breeze.wind_burst",
   "zone": {
     "shape": "line",

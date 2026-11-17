@@ -79,6 +79,7 @@ public final class Ritual {
     eldest.claimArena(new Arena(altar, settings.arenaRadius()));
     eldest.scaleFor(near(world, altar, settings.fightRange()).size(), settings);
     world.spawnEntityAndPassengers(eldest);
+    eldest.riseFromRitual();
     strike(world, spot);
     world.spawnParticles(
         SmokeParticles.VAMPIRE_SMOKE,

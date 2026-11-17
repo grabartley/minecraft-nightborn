@@ -82,4 +82,13 @@ class ArenaWallShapeTest {
   void mix(final double blend, final String colour) {
     assertEquals(Integer.parseInt(colour, 16), ArenaWallShape.mix(0x000000, 0xFF8040, blend));
   }
+
+  @ParameterizedTest(name = "at tick {0} the shapes show {1}")
+  @CsvSource({"0, 0.0", "60, 0.25", "120, 1.0", "180, 0.25", "240, 0.0", "360, 1.0"})
+  @DisplayName("the shapes in the fog surface and sink smoothly and never flash")
+  void surfacing(final double time, final float shown) {
+    assertEquals(shown, ArenaWallShape.surfacing(time), 0.0001F);
+    assertTrue(
+        Math.abs(ArenaWallShape.surfacing(time + 1.0) - ArenaWallShape.surfacing(time)) < 0.03F);
+  }
 }

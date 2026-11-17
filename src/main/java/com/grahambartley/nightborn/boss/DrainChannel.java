@@ -1,8 +1,8 @@
 package com.grahambartley.nightborn.boss;
 
+import com.grahambartley.nightborn.gore.GoreParticles;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.mob.MobEntity;
-import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.math.Vec3d;
@@ -27,7 +27,7 @@ public final class DrainChannel {
     final int steps = Math.max(1, (int) (span.length() * 2.0));
     for (int i = 0; i <= steps; i++) {
       final Vec3d at = from.add(span.multiply((double) i / steps));
-      world.spawnParticles(ParticleTypes.DAMAGE_INDICATOR, at.x, at.y, at.z, 1, 0.0, 0.0, 0.0, 0.0);
+      world.spawnParticles(GoreParticles.DROP, at.x, at.y, at.z, 1, 0.0, 0.0, 0.0, 0.0);
     }
     world.playSoundFromEntity(
         null, boss, SoundEvents.ENTITY_WARDEN_HEARTBEAT, boss.getSoundCategory(), LOUD, 1.2F);

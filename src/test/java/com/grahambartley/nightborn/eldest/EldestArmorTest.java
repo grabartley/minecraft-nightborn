@@ -4,6 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.grahambartley.nightborn.MinecraftBootstrapExtension;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import net.minecraft.item.ArmorItem;
 import net.minecraft.item.ArmorMaterial;
 import net.minecraft.item.ArmorMaterials;
@@ -14,6 +16,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 @ExtendWith(MinecraftBootstrapExtension.class)
 class EldestArmorTest {
@@ -46,5 +49,22 @@ class EldestArmorTest {
             .repairIngredient()
             .get()
             .test(new ItemStack(EldestSpoils.ASH)));
+  }
+
+  @ParameterizedTest(name = "layer {0}")
+  @ValueSource(ints = {1, 2})
+  @DisplayName("the Eldest's armour wears its own textures, and both layers ship")
+  void wearsItsOwnLayers(final int layer) {
+    final ArmorMaterial eldest = EldestArmor.MATERIAL.value();
+    assertEquals(1, eldest.layers().size());
+    assertEquals(
+        "nightborn:textures/models/armor/eldest_layer_" + layer + ".png",
+        eldest.layers().get(0).getTexture(layer == 2).toString());
+    assertTrue(
+        Files.exists(
+            Path.of(
+                "src/main/resources/assets/nightborn/textures/models/armor/eldest_layer_"
+                    + layer
+                    + ".png")));
   }
 }

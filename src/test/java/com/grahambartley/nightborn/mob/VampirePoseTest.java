@@ -197,4 +197,19 @@ class VampirePoseTest {
             .getAsJsonObject("animations");
     assertTrue(animations.has(pose.animation()), pose.animation());
   }
+
+  @ParameterizedTest(name = "{0} is standing still: {1}")
+  @CsvSource({
+    "IDLE, true",
+    "IDLE_LOOK, true",
+    "IDLE_LISTEN, true",
+    "WALK, false",
+    "RUN, false",
+    "DOWNED, false",
+    "SIT, false"
+  })
+  @DisplayName("only the idle poses count as standing still")
+  void still(final VampirePose pose, final boolean still) {
+    assertEquals(still, pose.still());
+  }
 }

@@ -133,4 +133,74 @@ class BossFightsTest {
   private static Optional<BossAttack> parse(final Path file) throws IOException {
     return parse(BossAttack.CODEC, file).result();
   }
+
+  private static Set<String> eldestClips() throws IOException {
+    return JsonParser.parseString(
+            Files.readString(
+                Path.of(
+                    "src/client/resources/assets/nightborn/animations/entity/"
+                        + "vampire_eldest.animation.json"),
+                StandardCharsets.UTF_8))
+        .getAsJsonObject()
+        .getAsJsonObject("animations")
+        .keySet();
+  }
+
+  @ParameterizedTest(name = "{0}")
+  @MethodSource("attacks")
+  @DisplayName("every attack's wind-up and strike clips ship in the Eldest's animations")
+  void attackClipsShip(final Path file) throws IOException {
+    final BossAttack attack = parse(BossAttack.CODEC, file).getOrThrow();
+    final Set<String> clips = eldestClips();
+    assertTrue(clips.contains(attack.tellClip()), attack.tellClip());
+    assertTrue(clips.contains(attack.clip()), attack.clip());
+  }
+
+  @ParameterizedTest(name = "{0}")
+  @MethodSource("fights")
+  @DisplayName("every clip a fight and its phases name ships in the Eldest's animations")
+  void fightClipsShip(final Path file) throws IOException {
+    final BossFightPlan plan = parse(BossFightPlan.CODEC, file).getOrThrow();
+    final Set<String> clips = eldestClips();
+    final FightClips named = plan.clips();
+    final Stream<String> phases =
+        plan.phases().stream()
+            .map(BossPhase::look)
+            .flatMap(
+                look ->
+                    Stream.of(
+                        look.idle(),
+                        look.walk(),
+                        look.form(),
+                        look.formEnter(),
+                        look.fly(),
+                        look.flyForm(),
+                        look.enterClip()));
+    Stream.concat(
+            phases,
+            Stream.of(
+                plan.changeClip(),
+                named.summon(),
+                named.guard(),
+                named.breakAway(),
+                named.stagger(),
+                named.takeoff(),
+                named.land(),
+                named.downedForm()))
+        .filter(clip -> !clip.isEmpty())
+        .forEach(clip -> assertTrue(clips.contains(clip), clip));
+    plan.phases().stream()
+        .flatMap(phase -> phase.look().held().stream())
+        .forEach(
+            held ->
+                assertTrue(
+                    Files.exists(
+                        Path.of(
+                            "src/main/resources/assets/"
+                                + held.getNamespace()
+                                + "/models/item/"
+                                + held.getPath()
+                                + ".json")),
+                    held.toString()));
+  }
 }

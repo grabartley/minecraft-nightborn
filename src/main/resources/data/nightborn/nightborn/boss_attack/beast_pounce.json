@@ -4,9 +4,9 @@
   "weight": 3,
   "cooldown_ticks": 100,
   "tell_ticks": 22,
-  "tell_clip": "leap",
+  "tell_clip": "pounce_tell",
   "tell_sound": "minecraft:entity.ravager.roar",
-  "clip": "land",
+  "clip": "pounce",
   "sound": "minecraft:entity.warden.attack_impact",
   "zone": {
     "radius": 3.0,

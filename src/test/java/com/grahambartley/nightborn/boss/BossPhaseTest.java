@@ -71,7 +71,8 @@ class BossPhaseTest {
                 3, 80, 30.0F, 10.0F, 1.8F, 50, List.of(Identifier.of("nightborn", "blood_step"))),
             Optional.of(new PhaseVoice(Identifier.ofVanilla("entity.warden.angry"), 100, 0.6F)),
             Optional.of(new PhaseFlight(6.0F, 9.0F, 0.3F, 80)),
-            Optional.empty()),
+            Optional.empty(),
+            PhaseLook.PLAIN),
         full);
     final BossPhase plain =
         BossPhase.CODEC
@@ -90,7 +91,8 @@ class BossPhaseTest {
             PhaseDefence.NONE,
             Optional.empty(),
             Optional.empty(),
-            Optional.empty()),
+            Optional.empty(),
+            PhaseLook.PLAIN),
         plain);
   }
 }

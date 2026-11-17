@@ -11,6 +11,7 @@ import com.grahambartley.nightborn.boss.ZoneStrikes;
 import com.grahambartley.nightborn.config.RitualSettings;
 import com.grahambartley.nightborn.downed.Downed;
 import com.grahambartley.nightborn.downed.DownedState;
+import com.grahambartley.nightborn.eldest.EldestSpoils;
 import com.grahambartley.nightborn.gear.GearItems;
 import com.grahambartley.nightborn.mob.EldestEntity;
 import com.grahambartley.nightborn.mob.NightbornMobs;
@@ -319,6 +320,30 @@ public class EldestFightGameTest implements FabricGameTest {
           context.assertTrue(eldest.eyesBlaze(), "and its eyes blaze");
           context.complete();
         });
+  }
+
+  @GameTest(templateName = ARENA, tickLimit = 20)
+  public void eachPhaseHasItsOwnLookAndOnlyTheLastDrawsTheBlade(final TestContext context) {
+    final EldestEntity eldest = inArena(context);
+    eldest.tickFight();
+    context.assertTrue(
+        eldest.shownForm().form().equals("form_court"), "the Court shows " + eldest.shownForm());
+    context.assertTrue(eldest.getMainHandStack().isEmpty(), "the Court fights empty handed");
+    atPhase(eldest, 1);
+    eldest.tickFight();
+    context.assertTrue(
+        eldest.shownForm().form().equals("form_beast"), "the Beast shows " + eldest.shownForm());
+    context.assertTrue(
+        eldest.shownForm().walk().equals("beast_walk"), "the Beast has its own walk");
+    context.assertTrue(eldest.getMainHandStack().isEmpty(), "the Beast fights empty handed");
+    atPhase(eldest, 2);
+    eldest.tickFight();
+    context.assertTrue(
+        eldest.shownForm().form().equals("form_blood"), "the Blood shows " + eldest.shownForm());
+    context.assertTrue(eldest.shownForm().blazing(), "its glow is told to those watching");
+    context.assertTrue(
+        eldest.getMainHandStack().isOf(EldestSpoils.BLADE), "the Blood draws its blade");
+    context.complete();
   }
 
   @GameTest(templateName = ARENA, tickLimit = 20)
