@@ -20,12 +20,15 @@ class BossArenaPayloadTest {
     final Optional<Arena> arena = Optional.of(new Arena(new BlockPos(-1200, 70, 3000), 16));
     final Optional<Identifier> music = Optional.of(Identifier.of("nightborn", "music.boss.eldest"));
     return Stream.of(
-        BossArenaPayload.left(),
-        new BossArenaPayload(arena, false, Optional.empty()),
-        new BossArenaPayload(arena, false, music),
-        new BossArenaPayload(arena, true, music),
+        BossArenaPayload.left(7),
+        new BossArenaPayload(0, arena, false, Optional.empty()),
+        new BossArenaPayload(1, arena, false, music),
+        new BossArenaPayload(2147483647, arena, true, music),
         new BossArenaPayload(
-            Optional.of(new Arena(new BlockPos(29_000_000, 319, -29_000_000), 48)), true, music));
+            12,
+            Optional.of(Arena.room(new BlockPos(29_000_000, 319, -29_000_000), 48)),
+            true,
+            music));
   }
 
   @ParameterizedTest(name = "{0}")
@@ -38,9 +41,10 @@ class BossArenaPayloadTest {
   }
 
   @Test
-  @DisplayName("leaving carries no arena, no fight and no music")
+  @DisplayName("leaving names the boss and carries no arena, no fight and no music")
   void left() {
     assertEquals(
-        new BossArenaPayload(Optional.empty(), false, Optional.empty()), BossArenaPayload.left());
+        new BossArenaPayload(7, Optional.empty(), false, Optional.empty()),
+        BossArenaPayload.left(7));
   }
 }

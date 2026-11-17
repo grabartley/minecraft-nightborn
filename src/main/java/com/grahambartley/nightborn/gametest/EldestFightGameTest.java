@@ -9,15 +9,18 @@ import com.grahambartley.nightborn.boss.ZoneStrikes;
 import com.grahambartley.nightborn.config.RitualSettings;
 import com.grahambartley.nightborn.downed.Downed;
 import com.grahambartley.nightborn.downed.DownedState;
+import com.grahambartley.nightborn.gear.GearItems;
 import com.grahambartley.nightborn.mob.EldestEntity;
 import com.grahambartley.nightborn.server.ServerConfigService;
 import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.passive.PigEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.test.GameTest;
 import net.minecraft.test.TestContext;
+import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 
@@ -124,20 +127,85 @@ public class EldestFightGameTest implements FabricGameTest {
     context.complete();
   }
 
-  @GameTest(templateName = ARENA, tickLimit = 20)
+  @GameTest(templateName = ARENA, tickLimit = 300)
   public void anArenaLeftEmptyResetsTheFight(final TestContext context) {
     final EldestEntity eldest = inArena(context);
-    eldest.damage(context.getWorld().getDamageSources().generic(), HUGE);
-    context.assertTrue(eldest.fight().phase() == 1, "the fight is under way");
     final int emptyTicks = ServerConfigService.current().ritual().arenaEmptyTicks();
-    for (int tick = 0; tick < emptyTicks - 1; tick++) {
-      eldest.tickFight();
-    }
-    context.assertTrue(eldest.fight().phase() == 1, "it holds its phase until the time is up");
+    eldest.damage(context.getWorld().getDamageSources().generic(), HUGE);
     eldest.tickFight();
-    context.assertTrue(eldest.fight().phase() == 0, "it starts again from its first phase");
+    context.assertTrue(eldest.fight().phase() == 1, "the fight is under way");
+    context.runAtTick(
+        emptyTicks / 2,
+        () -> {
+          eldest.tickFight();
+          context.assertTrue(eldest.fight().phase() == 1, "it holds its phase until time is up");
+        });
+    context.runAtTick(
+        emptyTicks + 5L,
+        () -> {
+          eldest.tickFight();
+          context.assertTrue(eldest.fight().phase() == 0, "it starts again from its first phase");
+          context.assertTrue(eldest.getHealth() == eldest.getMaxHealth(), "at full health");
+          context.complete();
+        });
+  }
+
+  @GameTest(templateName = ARENA, tickLimit = 20)
+  public void aFightLeftForLongerThanTheEmptyTimeResetsOnLoad(final TestContext context) {
+    final EldestEntity eldest = inArena(context);
+    eldest.damage(context.getWorld().getDamageSources().generic(), HUGE);
+    eldest.tickFight();
+    final NbtCompound saved = new NbtCompound();
+    eldest.fight().write(saved);
+    saved.putLong("BossLastOccupied", context.getWorld().getTime() - 100_000L);
+    eldest.fight().read(saved);
+    context.assertTrue(eldest.fight().phase() == 1, "the saved fight is half done");
+    eldest.tickFight();
+    context.assertTrue(eldest.fight().phase() == 0, "coming back long after finds it reset");
     context.assertTrue(eldest.getHealth() == eldest.getMaxHealth(), "at full health");
     context.complete();
+  }
+
+  @GameTest(templateName = ARENA, tickLimit = 20)
+  public void theStakeWindowIsNotGivenAgainAfterALoad(final TestContext context) {
+    final EldestEntity eldest = inArena(context);
+    atPhase(eldest, 2);
+    eldest.setHealth(eldest.getMaxHealth() * 0.2F);
+    eldest.damage(context.getWorld().getDamageSources().generic(), HUGE);
+    eldest.tickFight();
+    eldest.setAttached(Downed.TYPE, Downed.state(eldest).next(DownedState.Phase.DOWNED, 40));
+    final NbtCompound saved = new NbtCompound();
+    eldest.fight().write(saved);
+    eldest.fight().read(saved);
+    eldest.tickFight();
+    context.assertTrue(
+        Downed.state(eldest).ticksLeft() == 40,
+        "the window keeps running down, it shows " + Downed.state(eldest).ticksLeft());
+    context.complete();
+  }
+
+  @GameTest(templateName = ARENA, tickLimit = 200)
+  public void aStakeCannotSkipAPhaseOfAStandingEldest(final TestContext context) {
+    final EldestEntity eldest = inArena(context);
+    final ServerPlayerEntity hunter = TestPlayers.human(context, new BlockPos(4, 2, 2));
+    context.runAtTick(
+        TestPlayers.READY,
+        () -> {
+          hunter.setStackInHand(Hand.MAIN_HAND, new ItemStack(GearItems.WOODEN_STAKE));
+          final float floor = eldest.getMaxHealth() * FIRST_FLOOR;
+          eldest.damage(context.getWorld().getDamageSources().playerAttack(hunter), HUGE);
+          context.assertTrue(eldest.isAlive(), "a stake does not end a standing Eldest");
+          context.assertTrue(Downed.state(eldest) == null, "nor down it");
+          context.assertTrue(
+              Math.abs(eldest.getHealth() - floor) <= 0.51F,
+              "the blow stops at the first phase's floor of " + floor + ": " + eldest.getHealth());
+          eldest.timeUntilRegen = 0;
+          context.assertTrue(
+              !eldest.damage(context.getWorld().getDamageSources().playerAttack(hunter), 5.0F),
+              "and a stake cannot hurt it while it changes phase");
+          eldest.discard();
+          TestPlayers.finish(context, hunter);
+        });
   }
 
   @GameTest(templateName = ARENA, tickLimit = 200)

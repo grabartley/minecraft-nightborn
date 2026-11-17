@@ -9,8 +9,11 @@ public final class EldestFoes {
   }
 
   public static boolean shrugsOff(
-      final boolean changing, final boolean fromOutside, final boolean finishing) {
-    return !finishing && (changing || fromOutside);
+      final boolean changing,
+      final boolean fromOutside,
+      final boolean surroundings,
+      final boolean finishing) {
+    return !finishing && (changing || fromOutside || surroundings);
   }
 
   public static boolean seeksOut(final boolean vampire, final boolean peaceful) {

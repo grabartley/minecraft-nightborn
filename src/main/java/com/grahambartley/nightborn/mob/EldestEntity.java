@@ -14,12 +14,12 @@ import com.grahambartley.nightborn.downed.Downed;
 import com.grahambartley.nightborn.eldest.EldestFoes;
 import com.grahambartley.nightborn.eldest.EldestHealth;
 import com.grahambartley.nightborn.eldest.FightRoll;
-import com.grahambartley.nightborn.gear.Staking;
 import com.grahambartley.nightborn.lord.BossBarLook;
 import com.grahambartley.nightborn.mob.goal.HouseholdLifeGoal;
 import com.grahambartley.nightborn.mob.look.VampireRig;
 import com.grahambartley.nightborn.server.ServerConfigService;
 import com.grahambartley.nightborn.structure.HouseholdArrival;
+import com.grahambartley.nightborn.vampire.NightbornDamage;
 import com.grahambartley.nightborn.vampire.Vampires;
 import java.util.Map;
 import java.util.Optional;
@@ -31,8 +31,11 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.ai.goal.ActiveTargetGoal;
 import net.minecraft.entity.damage.DamageSource;
+import net.minecraft.entity.damage.DamageType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.registry.RegistryKeys;
+import net.minecraft.registry.tag.TagKey;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.Difficulty;
@@ -46,6 +49,8 @@ public class EldestEntity extends BossVampireEntity {
   public static final Identifier STAGE = Identifier.of(Nightborn.MOD_ID, "eldest");
   public static final Identifier FIGHT = Identifier.of(Nightborn.MOD_ID, "eldest");
   public static final int ROOM_RADIUS = 6;
+  public static final TagKey<DamageType> SHRUGS_OFF =
+      TagKey.of(RegistryKeys.DAMAGE_TYPE, Identifier.of(Nightborn.MOD_ID, "eldest_shrugs_off"));
 
   private final FightRoll fightRoll = new FightRoll();
   private final BossFight fight = new BossFight();
@@ -64,7 +69,8 @@ public class EldestEntity extends BossVampireEntity {
   public void settleAt(final BlockPos home) {
     super.settleAt(home);
     homeLife().keepTo(getBlockPos(), ROOM_RADIUS);
-    fight.claim(new Arena(getBlockPos(), ServerConfigService.current().ritual().roomArenaRadius()));
+    fight.claim(
+        Arena.room(getBlockPos(), ServerConfigService.current().ritual().roomArenaRadius()));
     leaveRoutine();
   }
 
@@ -84,6 +90,7 @@ public class EldestEntity extends BossVampireEntity {
   protected void mobTick() {
     super.mobTick();
     tickFight();
+    showBar();
   }
 
   public void tickFight() {
@@ -139,7 +146,8 @@ public class EldestEntity extends BossVampireEntity {
 
   @Override
   protected void applyDamage(final DamageSource source, final float amount) {
-    super.applyDamage(source, fight.cap(this, plan(), source, amount));
+    super.applyDamage(
+        source, fight.cap(this, plan(), NightbornDamage.killsVampires(source), amount));
   }
 
   @Override
@@ -224,7 +232,8 @@ public class EldestEntity extends BossVampireEntity {
     if (EldestFoes.shrugsOff(
         fight.changing(getWorld().getTime()),
         source.getAttacker() != null && !fight.holds(source.getAttacker().getPos()),
-        Staking.finishesVampire(source))) {
+        source.isIn(SHRUGS_OFF),
+        NightbornDamage.killsVampires(source))) {
       return false;
     }
     final boolean hurt = super.damage(source, amount);

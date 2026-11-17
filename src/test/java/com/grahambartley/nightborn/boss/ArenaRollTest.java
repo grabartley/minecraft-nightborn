@@ -1,8 +1,6 @@
 package com.grahambartley.nightborn.boss;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
 import java.util.Set;
@@ -40,31 +38,6 @@ class ArenaRollTest {
     assertEquals(players(left), change.left());
     assertEquals(players(entered).isEmpty() && players(left).isEmpty(), change.none());
     assertEquals(players(now), roll.inside());
-  }
-
-  @ParameterizedTest(name = "{0} empty steps, limit {1}: {2}")
-  @CsvSource({"0, 1, false", "4, 5, false", "5, 5, true", "9, 5, true"})
-  @DisplayName("the arena counts how long it has stood empty")
-  void emptyFor(final int steps, final int limit, final boolean empty) {
-    final ArenaRoll roll = new ArenaRoll();
-    for (int i = 0; i < steps; i++) {
-      roll.step(Set.of());
-    }
-    assertEquals(empty, roll.emptyFor(limit));
-  }
-
-  @Test
-  @DisplayName("a player stepping in starts the empty count again")
-  void resetsCount() {
-    final ArenaRoll roll = new ArenaRoll();
-    roll.step(Set.of());
-    roll.step(Set.of());
-    assertTrue(roll.emptyFor(2));
-    roll.step(players("7"));
-    assertFalse(roll.emptyFor(1));
-    roll.step(Set.of());
-    assertTrue(roll.emptyFor(1));
-    assertFalse(roll.emptyFor(2));
   }
 
   @Test

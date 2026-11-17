@@ -30,6 +30,7 @@ class BossArenaViewTest {
     final Optional<MusicSound> music =
         BossArenaView.music(
             new BossArenaPayload(
+                3,
                 inside ? Optional.of(new Arena(BlockPos.ORIGIN, 16)) : Optional.empty(),
                 fighting,
                 track ? Optional.of(TRACK) : Optional.empty()));
@@ -41,5 +42,19 @@ class BossArenaViewTest {
           assertEquals(0, sound.getMaxDelay());
           assertEquals(true, sound.shouldReplaceCurrentMusic());
         });
+  }
+
+  @ParameterizedTest(name = "showing boss {0}, word from boss {1}, entering {2}: applies {3}")
+  @CsvSource({
+    "-1, 5, true, true",
+    "-1, 5, false, true",
+    "5, 5, false, true",
+    "5, 9, false, false",
+    "5, 9, true, true",
+    "5, 5, true, true"
+  })
+  @DisplayName("one boss leaving never clears the arena another boss is showing")
+  void applies(final int shown, final int sender, final boolean entering, final boolean applies) {
+    assertEquals(applies, BossArenaView.applies(shown, sender, entering));
   }
 }

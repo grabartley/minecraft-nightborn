@@ -53,16 +53,20 @@ class FightRulesTest {
     assertEquals(engaged, FightRules.engaged(target, phase, hurt, downed));
   }
 
-  @ParameterizedTest(name = "engaged {0}, empty long enough {1}, downed {2}: resets {3}")
+  @ParameterizedTest(name = "engaged {0}, empty for {1} ticks, downed {2}: resets {3}")
   @CsvSource({
-    "true, true, false, true",
-    "true, false, false, false",
-    "false, true, false, false",
-    "true, true, true, false"
+    "true, 100, false, true",
+    "true, 5000000, false, true",
+    "true, 99, false, false",
+    "true, 0, false, false",
+    "false, 100, false, false",
+    "true, 100, true, false"
   })
-  @DisplayName("an empty arena resets a fight that is on, but not while the boss lies downed")
+  @DisplayName(
+      "an arena empty for a hundred ticks resets a fight that is on, however long the players were"
+          + " away, but not while the boss lies downed")
   void resets(
-      final boolean engaged, final boolean empty, final boolean downed, final boolean resets) {
-    assertEquals(resets, new FightRules(100, 300, 30).resets(engaged, empty, downed));
+      final boolean engaged, final long emptyFor, final boolean downed, final boolean resets) {
+    assertEquals(resets, new FightRules(100, 300, 30).resets(engaged, emptyFor, downed));
   }
 }

@@ -2,7 +2,6 @@ package com.grahambartley.nightborn.boss;
 
 import com.grahambartley.nightborn.downed.Downed;
 import com.grahambartley.nightborn.downed.DownedState;
-import com.grahambartley.nightborn.gear.Staking;
 import com.grahambartley.nightborn.landing.Landing;
 import com.grahambartley.nightborn.mob.BossVampireEntity;
 import com.grahambartley.nightborn.network.BossArenaPayload;
@@ -14,7 +13,6 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
@@ -27,6 +25,10 @@ public final class BossFight {
 
   static final float ROAR = 4.0F;
   static final double EDGE = 1.5;
+  static final long NEVER = -1L;
+  static final String CHANGE_KEY = "BossChangeUntil";
+  static final String STAKING_KEY = "BossStaking";
+  static final String OCCUPIED_KEY = "BossLastOccupied";
 
   private final PhaseTrack phases = new PhaseTrack();
   private final ArenaRoll roll = new ArenaRoll();
@@ -34,6 +36,7 @@ public final class BossFight {
   @Nullable private Arena arena;
   private long changeUntil;
   private boolean staking;
+  private long lastOccupied = NEVER;
   @Nullable private BossArenaPayload told;
 
   public Optional<Arena> arena() {
@@ -67,7 +70,7 @@ public final class BossFight {
   public float cap(
       final LivingEntity boss,
       final Optional<BossFightPlan> plan,
-      final DamageSource source,
+      final boolean finishing,
       final float amount) {
     return plan.map(
             p ->
@@ -75,7 +78,7 @@ public final class BossFight {
                     amount,
                     boss.getHealth(),
                     floorHealth(boss, p),
-                    phases.last(p.phases().size()) || Staking.finishesVampire(source)))
+                    phases.last(p.phases().size()) || finishing))
         .orElse(amount);
   }
 
@@ -120,7 +123,10 @@ public final class BossFight {
                     && !player.isSpectator()
                     && arena.holds(player.getX(), player.getY(), player.getZ()));
     announce(boss, world, plan, inside, engaged);
-    if (rules.resets(engaged, roll.emptyFor(rules.emptyTicks()), downed != null)) {
+    if (!inside.isEmpty() || lastOccupied == NEVER) {
+      lastOccupied = now;
+    }
+    if (rules.resets(engaged, now - lastOccupied, downed != null)) {
       reset(boss);
       onReset.run();
       return;
@@ -140,7 +146,7 @@ public final class BossFight {
   public void end(final BossVampireEntity boss) {
     attacks.cancel();
     if (boss.getWorld() instanceof ServerWorld world) {
-      send(world, roll.clear(), BossArenaPayload.left());
+      send(world, roll.clear(), BossArenaPayload.left(boss.getId()));
     }
     boss.presence().hideAll();
   }
@@ -155,7 +161,10 @@ public final class BossFight {
         roll.step(inside.stream().map(ServerPlayerEntity::getUuid).collect(Collectors.toSet()));
     final BossArenaPayload here =
         new BossArenaPayload(
-            Optional.of(arena), engaged, plan.flatMap(p -> p.phase(phases.index()).music()));
+            boss.getId(),
+            Optional.of(arena),
+            engaged,
+            plan.flatMap(p -> p.phase(phases.index()).music()));
     for (final ServerPlayerEntity player : inside) {
       if (change.entered().contains(player.getUuid())) {
         boss.presence().show(player);
@@ -168,7 +177,7 @@ public final class BossFight {
       final ServerPlayerEntity player = world.getServer().getPlayerManager().getPlayer(gone);
       if (player != null) {
         boss.presence().hide(player);
-        ServerPlayNetworking.send(player, BossArenaPayload.left());
+        ServerPlayNetworking.send(player, BossArenaPayload.left(boss.getId()));
       }
     }
     told = here;
@@ -262,6 +271,9 @@ public final class BossFight {
 
   public void write(final NbtCompound nbt) {
     phases.write(nbt);
+    nbt.putLong(CHANGE_KEY, changeUntil);
+    nbt.putBoolean(STAKING_KEY, staking);
+    nbt.putLong(OCCUPIED_KEY, lastOccupied);
     if (arena != null) {
       arena.write(nbt);
     }
@@ -269,6 +281,9 @@ public final class BossFight {
 
   public void read(final NbtCompound nbt) {
     phases.read(nbt);
+    changeUntil = nbt.getLong(CHANGE_KEY);
+    staking = nbt.getBoolean(STAKING_KEY);
+    lastOccupied = nbt.contains(OCCUPIED_KEY) ? nbt.getLong(OCCUPIED_KEY) : NEVER;
     arena = Arena.read(nbt).orElse(arena);
   }
 }

@@ -17,8 +17,7 @@ public record FightRules(int emptyTicks, int stakeWindowTicks, int risePercent) 
     return hasTarget || phase > 0 || hurt || downed;
   }
 
-  public boolean resets(
-      final boolean engaged, final boolean emptyLongEnough, final boolean downed) {
-    return engaged && emptyLongEnough && !downed;
+  public boolean resets(final boolean engaged, final long emptyFor, final boolean downed) {
+    return engaged && emptyFor >= emptyTicks && !downed;
   }
 }

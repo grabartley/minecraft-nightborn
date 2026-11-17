@@ -60,6 +60,24 @@ class ArenaTest {
     assertTrue(ARENA.holds(pulled.x, pulled.y, pulled.z));
   }
 
+  @ParameterizedTest(name = "{0} blocks from the floor of a room: inside {1}")
+  @CsvSource({
+    "0, true",
+    "-1, true",
+    "-1.1, false",
+    "-6, false",
+    "8, true",
+    "8.1, false",
+    "16, false"
+  })
+  @DisplayName(
+      "a room's arena stops one block under its floor and eight above, so it never reaches the rooms below")
+  void room(final double up, final boolean inside) {
+    final Arena room = Arena.room(new BlockPos(10, 64, -20), 10);
+    assertEquals(inside, room.holds(10.5, 64.0 + up, -19.5));
+    assertEquals(new Arena(new BlockPos(10, 64, -20), 10, 1, 8), room);
+  }
+
   @ParameterizedTest(name = "radius {0} becomes {1}")
   @CsvSource({"-3, 4", "0, 4", "4, 4", "5, 5", "48, 48"})
   @DisplayName("an arena is never smaller than four blocks")
@@ -67,11 +85,12 @@ class ArenaTest {
     assertEquals(kept, new Arena(BlockPos.ORIGIN, given).radius());
   }
 
-  @ParameterizedTest(name = "centre ({0}, {1}, {2}) radius {3}")
-  @CsvSource({"0, 0, 0, 4", "10, 64, -20, 16", "-29000000, 319, 29000000, 48"})
+  @ParameterizedTest(name = "centre ({0}, {1}, {2}) radius {3}, {4} below and {5} above")
+  @CsvSource({"0, 0, 0, 4, 6, 16", "10, 64, -20, 16, 1, 8", "-29000000, 319, 29000000, 48, 0, 1"})
   @DisplayName("an arena survives a save and a trip across the network")
-  void roundTrips(final int x, final int y, final int z, final int radius) {
-    final Arena arena = new Arena(new BlockPos(x, y, z), radius);
+  void roundTrips(
+      final int x, final int y, final int z, final int radius, final int below, final int above) {
+    final Arena arena = new Arena(new BlockPos(x, y, z), radius, below, above);
     final NbtCompound nbt = new NbtCompound();
     arena.write(nbt);
     assertEquals(Optional.of(arena), Arena.read(nbt));

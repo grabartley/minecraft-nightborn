@@ -36,23 +36,26 @@ class EldestFoesTest {
   }
 
   @ParameterizedTest(
-      name = "changing phase {0}, struck from outside {1}, a finishing blow {2}: {3}")
+      name = "changing phase {0}, from outside {1}, from its surroundings {2}, finishing {3}: {4}")
   @CsvSource({
-    "false, false, false, false",
-    "true, false, false, true",
-    "false, true, false, true",
-    "true, true, false, true",
-    "true, false, true, false",
-    "false, true, true, false"
+    "false, false, false, false, false",
+    "true, false, false, false, true",
+    "false, true, false, false, true",
+    "false, false, true, false, true",
+    "true, true, true, false, true",
+    "true, false, false, true, false",
+    "false, true, false, true, false",
+    "false, false, true, true, false"
   })
   @DisplayName(
-      "the Eldest shrugs off blows while it changes phase and from outside its arena, but never a"
-          + " stake or the sun")
+      "the Eldest shrugs off blows while it changes phase, from outside its arena and from fire,"
+          + " falls and the like, but never what finishes a vampire")
   void shrugsOff(
       final boolean changing,
       final boolean fromOutside,
+      final boolean surroundings,
       final boolean finishing,
       final boolean shrugged) {
-    assertEquals(shrugged, EldestFoes.shrugsOff(changing, fromOutside, finishing));
+    assertEquals(shrugged, EldestFoes.shrugsOff(changing, fromOutside, surroundings, finishing));
   }
 }

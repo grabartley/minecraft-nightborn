@@ -9,7 +9,8 @@ import net.minecraft.network.codec.PacketCodecs;
 import net.minecraft.network.packet.CustomPayload;
 import net.minecraft.util.Identifier;
 
-public record BossArenaPayload(Optional<Arena> arena, boolean fighting, Optional<Identifier> music)
+public record BossArenaPayload(
+    int boss, Optional<Arena> arena, boolean fighting, Optional<Identifier> music)
     implements CustomPayload {
 
   public static final CustomPayload.Id<BossArenaPayload> ID =
@@ -17,6 +18,8 @@ public record BossArenaPayload(Optional<Arena> arena, boolean fighting, Optional
 
   public static final PacketCodec<ByteBuf, BossArenaPayload> CODEC =
       PacketCodec.tuple(
+          PacketCodecs.VAR_INT,
+          BossArenaPayload::boss,
           PacketCodecs.optional(Arena.PACKET_CODEC),
           BossArenaPayload::arena,
           PacketCodecs.BOOL,
@@ -25,8 +28,8 @@ public record BossArenaPayload(Optional<Arena> arena, boolean fighting, Optional
           BossArenaPayload::music,
           BossArenaPayload::new);
 
-  public static BossArenaPayload left() {
-    return new BossArenaPayload(Optional.empty(), false, Optional.empty());
+  public static BossArenaPayload left(final int boss) {
+    return new BossArenaPayload(boss, Optional.empty(), false, Optional.empty());
   }
 
   @Override

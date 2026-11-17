@@ -39,8 +39,8 @@ public final class ArenaWallRenderer {
     final float drift =
         (context.world().getTime() + context.tickCounter().getTickDelta(false)) * DRIFT;
     final VertexConsumer buffer = consumers.getBuffer(RenderLayer.getEntityTranslucent(TEXTURE));
-    final float low = arena.centre().getY() - Arena.BELOW;
-    final float high = arena.centre().getY() + Arena.ABOVE;
+    final float low = arena.centre().getY() - arena.below();
+    final float high = arena.centre().getY() + arena.above();
     final int segments = ArenaWallShape.segments(arena.radius());
     matrices.push();
     matrices.translate(arena.midX() - camera.x, -camera.y, arena.midZ() - camera.z);

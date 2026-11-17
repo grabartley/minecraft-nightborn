@@ -52,9 +52,7 @@ public abstract class BossVampireEntity extends VampireEntity {
   @Override
   public void onStoppedTrackingBy(final ServerPlayerEntity player) {
     super.onStoppedTrackingBy(player);
-    if (barShowsOnSight()) {
-      presence.hide(player);
-    }
+    presence.hide(player);
   }
 
   @Override
