@@ -21,6 +21,11 @@ public record Threshold(BlockPos floor, Direction out) {
     return new ColumnPos(step.getX(), step.getZ());
   }
 
+  public BlockPos moveOnto(final ColumnPos ground, final int surface) {
+    final ColumnPos outside = outside();
+    return new BlockPos(ground.x() - outside.x(), lift(surface), ground.z() - outside.z());
+  }
+
   public int lift(final int surface) {
     return surface - 1 - floor.getY();
   }

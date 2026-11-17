@@ -64,4 +64,25 @@ class ThresholdTest {
         found ? Optional.of(new Threshold(pos, orientation.getFacing())) : Optional.empty(),
         threshold);
   }
+
+  @ParameterizedTest(
+      name = "an entrance facing {0} moved onto {1},{2} at surface {3} shifts by {4},{5},{6}")
+  @CsvSource({
+    "SOUTH, 3, 10, 65, 0, 0, 0",
+    "SOUTH, 3, 10, 70, 0, 5, 0",
+    "SOUTH, 40, -7, 120, 37, 55, -17",
+    "WEST, 0, 0, 60, -2, -5, -9"
+  })
+  void movesTheStructureSoTheGroundBeforeItsEntranceIsTheGivenColumn(
+      final Direction out,
+      final int x,
+      final int z,
+      final int surface,
+      final int dx,
+      final int dy,
+      final int dz) {
+    assertEquals(
+        new BlockPos(dx, dy, dz),
+        new Threshold(new BlockPos(3, 64, 9), out).moveOnto(new ColumnPos(x, z), surface));
+  }
 }
