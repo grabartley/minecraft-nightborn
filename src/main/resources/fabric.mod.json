@@ -41,6 +41,7 @@
       "com.grahambartley.nightborn.gametest.SunGameTest",
       "com.grahambartley.nightborn.gametest.BiteSicknessGameTest",
       "com.grahambartley.nightborn.gametest.VampireCoreGameTest",
+      "com.grahambartley.nightborn.gametest.VampireDoorGameTest",
       "com.grahambartley.nightborn.gametest.WeakenedGameTest",
       "com.grahambartley.nightborn.gametest.SettingsGameTest",
       "com.grahambartley.nightborn.gametest.PlayerFeedingGameTest",

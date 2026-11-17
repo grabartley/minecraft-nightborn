@@ -44,11 +44,16 @@ public final class VampireLookGameTest implements FabricGameTest {
     context.assertTrue(
         Math.abs(
                 vampire.getWidth()
-                    - VampireSize.BASE_WIDTH
-                        * vampire.width()
-                        * VampireSize.scale(vampire.height()))
+                    - Math.min(
+                        VampireSize.MAX_HITBOX_WIDTH,
+                        VampireSize.BASE_WIDTH
+                            * vampire.width()
+                            * VampireSize.scale(vampire.height())))
             < TOLERANCE,
-        "the hitbox is as wide as the build: " + vampire.getWidth());
+        "the hitbox is as wide as the build, up to a doorway: " + vampire.getWidth());
+    context.assertTrue(
+        vampire.getWidth() <= 0.6F + TOLERANCE,
+        "the hitbox clears an open door: " + vampire.getWidth());
     context.complete();
   }
 }

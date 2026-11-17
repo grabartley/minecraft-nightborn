@@ -15,10 +15,13 @@ class VampireSizeTest {
     "1.5, 1.0, 0.4615, 1.5, 1.3077",
     "2.0, 0.88, 0.5415, 2.0, 1.7436",
     "1.6, 1.14, 0.5612, 1.6, 1.3949",
-    "9.0, 9.0, 1.3846, 3.0, 2.6154",
+    "1.85, 1.14, 0.6, 1.85, 1.6128",
+    "1.78, 1.14, 0.6, 1.78, 1.5518",
+    "9.0, 9.0, 0.6, 3.0, 2.6154",
     "0.1, 0.1, 0.1538, 1.0, 0.8718"
   })
-  @DisplayName("the hitbox and eye height follow the vampire's height and build, within limits")
+  @DisplayName(
+      "the hitbox and eye height follow the vampire's height and build, never wider than a doorway")
   void dimensions(
       final float height,
       final float width,
@@ -30,6 +33,14 @@ class VampireSizeTest {
     assertEquals(hitWidth, sized.width(), 1.0E-3F);
     assertEquals(hitHeight, sized.height(), 1.0E-3F);
     assertEquals(eyes, sized.eyeHeight(), 1.0E-3F);
+  }
+
+  @ParameterizedTest(name = "a {0} wide body at build {1} is {2} wide")
+  @CsvSource({"0.4, 1.0, 0.4", "0.4, 1.5, 0.6", "1.2, 1.0, 0.6", "1.2, 0.5, 0.6", "0.3, 1.5, 0.45"})
+  @DisplayName("the widest hitbox is 0.6 blocks whatever the body it starts from")
+  void widest(final float baseWidth, final float width, final float hitWidth) {
+    final EntityDimensions base = EntityDimensions.changing(baseWidth, 1.95F);
+    assertEquals(hitWidth, VampireSize.dimensions(base, 1.95F, width).width(), 1.0E-3F);
   }
 
   @ParameterizedTest(name = "{0} tall draws at {1}")
