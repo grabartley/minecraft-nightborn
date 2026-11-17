@@ -126,6 +126,24 @@ public class SunGameTest implements FabricGameTest {
         });
   }
 
+  @GameTest(templateName = YARD, batchId = BATCH, skyAccess = true, tickLimit = BURN_OUT_TICKS)
+  public void powderSnowDoesNotShelterAVampireMobFromTheSun(final TestContext context) {
+    final BlockPos feet = new BlockPos(4, 2, 4);
+    context.setBlockState(feet, Blocks.POWDER_SNOW);
+    final VampireEntity vampire = context.spawnEntity(NightbornMobs.VAMPIRE, feet);
+    vampire.setAiDisabled(true);
+    final boolean[] sunk = new boolean[1];
+    context.runAtEveryTick(
+        () -> {
+          sunk[0] |= vampire.inPowderSnow;
+          if (vampire.isAlive()) {
+            return;
+          }
+          context.assertTrue(sunk[0], "the vampire stood in powder snow");
+          context.complete();
+        });
+  }
+
   @GameTest(
       templateName = YARD,
       batchId = BATCH,

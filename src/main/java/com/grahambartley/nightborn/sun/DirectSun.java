@@ -12,12 +12,8 @@ public final class DirectSun {
   private DirectSun() {}
 
   public static boolean exposed(
-      final boolean day,
-      final boolean openSky,
-      final boolean wet,
-      final boolean inPowderSnow,
-      final boolean inClosedCoffin) {
-    return day && openSky && !wet && !inPowderSnow && !inClosedCoffin;
+      final boolean day, final boolean openSky, final boolean wet, final boolean inClosedCoffin) {
+    return day && openSky && !wet && !inClosedCoffin;
   }
 
   public static boolean burns(
@@ -25,10 +21,8 @@ public final class DirectSun {
       final float brightnessAtEyes,
       final boolean openSky,
       final boolean wet,
-      final boolean inPowderSnow,
       final boolean inClosedCoffin) {
-    return brightnessAtEyes > BRIGHT_ENOUGH_TO_BURN
-        && exposed(day, openSky, wet, inPowderSnow, inClosedCoffin);
+    return brightnessAtEyes > BRIGHT_ENOUGH_TO_BURN && exposed(day, openSky, wet, inClosedCoffin);
   }
 
   public static boolean on(final LivingEntity entity) {
@@ -37,25 +31,15 @@ public final class DirectSun {
         entity.getBrightnessAtEyes(),
         openSkyAbove(entity),
         entity.isWet(),
-        inPowderSnow(entity),
         CoffinSleepers.shelteredBy(entity));
   }
 
   public static boolean under(final LivingEntity entity, final boolean sunUp) {
-    return exposed(
-        sunUp,
-        openSkyAbove(entity),
-        entity.isWet(),
-        inPowderSnow(entity),
-        CoffinSleepers.shelteredBy(entity));
+    return exposed(sunUp, openSkyAbove(entity), entity.isWet(), CoffinSleepers.shelteredBy(entity));
   }
 
   public static boolean openSkyAbove(final LivingEntity entity) {
     final World world = entity.getWorld();
     return world.isSkyVisible(BlockPos.ofFloored(entity.getX(), entity.getEyeY(), entity.getZ()));
-  }
-
-  private static boolean inPowderSnow(final LivingEntity entity) {
-    return entity.inPowderSnow || entity.wasInPowderSnow;
   }
 }
