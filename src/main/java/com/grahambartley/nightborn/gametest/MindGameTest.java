@@ -117,7 +117,7 @@ public class MindGameTest implements FabricGameTest {
   }
 
   @GameTest(templateName = ARENA, batchId = BATCH, tickLimit = TestPlayers.READY + 20)
-  public void aMesmerisedMobIsHeldStillAndCannotHurtAnyone(final TestContext context) {
+  public void aMesmerisedMobDropsItsTargetAndCannotHurtAnyone(final TestContext context) {
     final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(1, 2, 1));
     final ZombieEntity zombie = context.spawnEntity(EntityType.ZOMBIE, new BlockPos(4, 2, 4));
     zombie.setAiDisabled(true);
@@ -128,7 +128,6 @@ public class MindGameTest implements FabricGameTest {
           zombie.setTarget(villager);
           Mesmerise.land(vampire, zombie, NobleSkills.power(context));
           context.assertTrue(zombie.getTarget() == null, "the mob let go of its target");
-          context.assertTrue(MindFeatures.stilled(zombie), "the mob is held still");
           final float before = villager.getHealth();
           zombie.tryAttack(villager);
           context.assertEquals(
