@@ -5,6 +5,7 @@ import com.grahambartley.nightborn.network.StageNamePayload;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientEntityEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.entity.Entity;
@@ -24,6 +25,7 @@ public final class StageNameView {
         StageNamePayload.ID,
         (payload, context) -> remember(STAGES, payload.entityId(), payload.stage()));
     ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> STAGES.clear());
+    ClientEntityEvents.ENTITY_UNLOAD.register((entity, world) -> STAGES.remove(entity.getId()));
   }
 
   static void remember(

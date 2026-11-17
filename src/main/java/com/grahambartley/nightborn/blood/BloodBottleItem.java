@@ -47,10 +47,10 @@ public class BloodBottleItem extends Item {
   }
 
   public static void drink(final PlayerEntity player, final BloodQuality quality) {
-    final int restored = bloodRestored(quality, ServerConfigService.current());
-    BloodAttachment.set(player, BloodAttachment.get(player) + restored);
+    final int before = BloodAttachment.get(player);
+    BloodAttachment.set(player, before + bloodRestored(quality, ServerConfigService.current()));
     if (player instanceof ServerPlayerEntity vampire) {
-      Ageing.drank(vampire, restored);
+      Ageing.drank(vampire, BloodAttachment.get(player) - before);
     }
   }
 

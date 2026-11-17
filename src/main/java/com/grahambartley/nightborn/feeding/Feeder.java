@@ -147,8 +147,9 @@ final class Feeder {
     final BloodValue.Split split = BloodValue.split(pending);
     session.pendingBlood(split.remainder());
     if (split.whole() > 0) {
-      BloodAttachment.set(vampire, BloodAttachment.get(vampire) + split.whole());
-      Ageing.drank(vampire, split.whole());
+      final int before = BloodAttachment.get(vampire);
+      BloodAttachment.set(vampire, before + split.whole());
+      Ageing.drank(vampire, BloodAttachment.get(vampire) - before);
     }
   }
 

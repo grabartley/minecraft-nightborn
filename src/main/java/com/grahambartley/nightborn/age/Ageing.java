@@ -63,13 +63,6 @@ public final class Ageing {
     settle(vampire, progress, ServerConfigService.current().age());
   }
 
-  public static void creditDeed(final ServerPlayerEntity vampire, final int rank) {
-    if (Vampires.isVampire(vampire)) {
-      settle(
-          vampire, AgeAttachment.get(vampire).withDeed(rank), ServerConfigService.current().age());
-    }
-  }
-
   public static boolean setRank(final ServerPlayerEntity vampire, final int rank) {
     final AgeProgress progress = AgeAttachment.get(vampire);
     if (!Vampires.isVampire(vampire) || progress.rank() == rank) {
@@ -90,11 +83,13 @@ public final class Ageing {
       final ServerPlayerEntity vampire, final AgeProgress progress, final AgeSettings settings) {
     final AgeLadder ladder = AgeLadder.of(vampire.getRegistryManager());
     final AgeProgress settled = AgeRules.advance(progress, ladder.size(), settings.needs());
-    final boolean older = settled.rank() > AgeAttachment.get(vampire).rank();
+    final int before = AgeAttachment.get(vampire).rank();
     AgeAttachment.set(vampire, settled);
-    if (older) {
+    if (settled.rank() > before) {
       changed(vampire);
-      ladder.rung(settled.rank()).ifPresent(rung -> herald(vampire, rung));
+      for (int rank = before + 1; rank <= settled.rank(); rank++) {
+        ladder.rung(rank).ifPresent(rung -> herald(vampire, rung));
+      }
     }
   }
 
