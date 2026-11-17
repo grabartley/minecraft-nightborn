@@ -374,6 +374,18 @@ public class EldestFightGameTest implements FabricGameTest {
     context.complete();
   }
 
+  @GameTest(templateName = ARENA, tickLimit = 20)
+  public void anEldestLoadedWeightlessOutsideItsFlyingPhaseComesBackToTheGround(
+      final TestContext context) {
+    final EldestEntity eldest = inArena(context);
+    eldest.setNoGravity(true);
+    eldest.tickFight();
+    context.assertFalse(
+        eldest.hasNoGravity(), "an Eldest that is not flying has its weight back after a load");
+    context.assertFalse(eldest.fight().flying(), "and it does not count as flying");
+    context.complete();
+  }
+
   @GameTest(templateName = ARENA, tickLimit = 40)
   public void aMarkCoversItsShapeAndGoesWhenItsTimeIsUp(final TestContext context) {
     final Vec3d at = context.getAbsolute(new Vec3d(4.5, 2.0, 4.5));

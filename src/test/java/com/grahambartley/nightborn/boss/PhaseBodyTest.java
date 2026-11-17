@@ -19,10 +19,10 @@ class PhaseBodyTest {
       delimiter = '|',
       value = {
         "{} | true",
-        "{\"attributes\":{\"minecraft:generic.armor\":12,\"minecraft:generic.scale\":0.35},\"max_hit\":10,\"glowing\":true} | true",
+        "{\"attributes\":{\"minecraft:generic.armor\":12,\"minecraft:generic.scale\":0.35},\"max_hit\":10,\"blazing_eyes\":true} | true",
         "{\"max_hit\":-1} | false",
         "{\"attributes\":{\"minecraft:generic.armor\":65}} | false",
-        "{\"glowing\":\"yes\"} | false"
+        "{\"blazing_eyes\":\"yes\"} | false"
       })
   @DisplayName("a body is a set of attribute bonuses, a hardest hit and whether the eyes blaze")
   void parses(final String json, final boolean loads) {

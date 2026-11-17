@@ -22,6 +22,14 @@ public record AttackRun(Identifier id, BossAttack attack, long startedAt) {
     return age <= attack.tellTicks() + attack.strikeTicks() ? Stage.STRIKE : Stage.DONE;
   }
 
+  public boolean moves() {
+    return attack.zone().map(zone -> zone.motion() != ZoneAttack.Motion.STAY).orElse(false);
+  }
+
+  public boolean drains(final long now) {
+    return attack.drain().isPresent() && stage(now) == Stage.STRIKE;
+  }
+
   public int strikeTick(final long now) {
     return age(now) - attack.tellTicks();
   }

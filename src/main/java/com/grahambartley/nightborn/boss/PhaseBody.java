@@ -5,7 +5,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import java.util.Map;
 import net.minecraft.util.Identifier;
 
-public record PhaseBody(Map<Identifier, Double> attributes, float maxHit, boolean glowing) {
+public record PhaseBody(Map<Identifier, Double> attributes, float maxHit, boolean blazingEyes) {
 
   public static final PhaseBody PLAIN = new PhaseBody(Map.of(), 0.0F, false);
 
@@ -20,7 +20,9 @@ public record PhaseBody(Map<Identifier, Double> attributes, float maxHit, boolea
                       Codec.floatRange(0.0F, 1000.0F)
                           .optionalFieldOf("max_hit", 0.0F)
                           .forGetter(PhaseBody::maxHit),
-                      Codec.BOOL.optionalFieldOf("glowing", false).forGetter(PhaseBody::glowing))
+                      Codec.BOOL
+                          .optionalFieldOf("blazing_eyes", false)
+                          .forGetter(PhaseBody::blazingEyes))
                   .apply(instance, PhaseBody::new));
 
   public PhaseBody {

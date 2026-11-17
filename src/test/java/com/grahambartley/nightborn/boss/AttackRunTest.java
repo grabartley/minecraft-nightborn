@@ -62,4 +62,13 @@ class AttackRunTest {
     assertEquals(stage, run.stage(now));
     assertEquals(strikeTick, run.strikeTick(now));
   }
+
+  @ParameterizedTest(name = "a flurry at time {0}: moves {1}, drains {2}")
+  @CsvSource({"100, false, false", "112, false, false"})
+  @DisplayName("an attack with no zone and no drain neither moves the boss nor drains")
+  void plain(final long now, final boolean moves, final boolean drains) {
+    final AttackRun run = run(10, 3);
+    assertEquals(moves, run.moves());
+    assertEquals(drains, run.drains(now));
+  }
 }

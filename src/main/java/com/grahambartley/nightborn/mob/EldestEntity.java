@@ -143,12 +143,12 @@ public class EldestEntity extends BossVampireEntity implements BlazingEyes {
 
   @Override
   public boolean eyesBlaze() {
-    return fight.glowing(plan());
+    return fight.blazing(plan());
   }
 
   @Override
   public boolean startRiding(final Entity vehicle, final boolean force) {
-    return vehicle instanceof SeatEntity && super.startRiding(vehicle, force);
+    return EldestFoes.mounts(vehicle instanceof SeatEntity) && super.startRiding(vehicle, force);
   }
 
   @Override
@@ -276,12 +276,13 @@ public class EldestEntity extends BossVampireEntity implements BlazingEyes {
     if (!finishing && !getWorld().isClient() && fight.guards(this, plan(), source.getAttacker())) {
       return false;
     }
+    final float before = getHealth();
     final boolean hurt = super.damage(source, amount);
     if (hurt && source.getAttacker() instanceof PlayerEntity player) {
       fightRoll.join(player.getUuid());
     }
     if (hurt && !getWorld().isClient()) {
-      fight.hurt(this, plan(), source.getAttacker(), amount);
+      fight.hurt(this, plan(), source.getAttacker(), Math.max(0.0F, before - getHealth()));
     }
     return hurt;
   }

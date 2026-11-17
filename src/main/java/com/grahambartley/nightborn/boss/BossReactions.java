@@ -2,23 +2,18 @@ package com.grahambartley.nightborn.boss;
 
 import com.grahambartley.nightborn.landing.Landing;
 import com.grahambartley.nightborn.occult.ShadowStep;
-import java.util.Optional;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LightningEntity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.mob.MobEntity;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtDouble;
-import net.minecraft.nbt.NbtElement;
-import net.minecraft.nbt.NbtList;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.math.Vec3d;
 import org.jetbrains.annotations.Nullable;
 
 public final class BossReactions {
 
-  static final float LOUD = 2.0F;
+  static final double CLOSE = 5.0;
   static final double EDGE = 2.0;
 
   private BossReactions() {}
@@ -32,11 +27,16 @@ public final class BossReactions {
     return arena == null ? wanted : arena.pullIn(wanted, EDGE);
   }
 
+  public static boolean throwsBack(final float knock, final double distance) {
+    return knock > 0.0F && distance <= CLOSE;
+  }
+
   public static void guard(
       final MobEntity boss, final Entity attacker, final PhaseDefence defence) {
-    boss.playSound(SoundEvents.ITEM_SHIELD_BLOCK, LOUD, 0.7F);
+    boss.playSound(SoundEvents.ITEM_SHIELD_BLOCK, BossAttacks.LOUD, 0.7F);
     boss.swingHand(boss.getActiveHand());
-    if (attacker instanceof LivingEntity foe && defence.guardKnock() > 0.0F) {
+    if (attacker instanceof LivingEntity foe
+        && throwsBack(defence.guardKnock(), boss.distanceTo(foe))) {
       foe.takeKnockback(defence.guardKnock(), boss.getX() - foe.getX(), boss.getZ() - foe.getZ());
       foe.velocityModified = true;
     }
@@ -66,20 +66,5 @@ public final class BossReactions {
       bolt.setCosmetic(true);
       boss.getWorld().spawnEntity(bolt);
     }
-  }
-
-  public static NbtList list(final Vec3d vec) {
-    final NbtList list = new NbtList();
-    list.add(NbtDouble.of(vec.x));
-    list.add(NbtDouble.of(vec.y));
-    list.add(NbtDouble.of(vec.z));
-    return list;
-  }
-
-  public static Optional<Vec3d> vec(final NbtCompound nbt, final String key) {
-    final NbtList list = nbt.getList(key, NbtElement.DOUBLE_TYPE);
-    return list.size() == 3
-        ? Optional.of(new Vec3d(list.getDouble(0), list.getDouble(1), list.getDouble(2)))
-        : Optional.empty();
   }
 }

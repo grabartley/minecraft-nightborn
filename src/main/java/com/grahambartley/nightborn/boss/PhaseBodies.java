@@ -29,6 +29,12 @@ public final class PhaseBodies {
     return PhaseBody.blend(before, now, progress);
   }
 
+  public static double progress(final long changeUntil, final long now, final int changeTicks) {
+    return now >= changeUntil || changeTicks <= 0
+        ? 1.0
+        : Math.max(0.0, 1.0 - (double) (changeUntil - now) / changeTicks);
+  }
+
   public static Identifier modifier(final Identifier attribute) {
     return Identifier.of(Nightborn.MOD_ID, "boss/phase/" + attribute.getPath());
   }

@@ -44,6 +44,21 @@ class PhaseBodiesTest {
     assertEquals(value, PhaseBodies.value(PLAN, Identifier.of(attribute), phase, progress), 1.0E-9);
   }
 
+  @ParameterizedTest(name = "change ends at {0}, now {1}, lasting {2}: {3}")
+  @CsvSource({
+    "180, 100, 80, 0.0",
+    "180, 140, 80, 0.5",
+    "180, 180, 80, 1.0",
+    "180, 500, 80, 1.0",
+    "0, 500, 80, 1.0",
+    "180, 100, 0, 1.0",
+    "400, 100, 80, 0.0"
+  })
+  @DisplayName("the change runs from nothing to done over its length, and is done when it is over")
+  void progress(final long until, final long now, final int ticks, final double progress) {
+    assertEquals(progress, PhaseBodies.progress(until, now, ticks), 1.0E-9);
+  }
+
   @Test
   @DisplayName("every attribute any phase names is kept up to date, each under its own modifier")
   void named() {

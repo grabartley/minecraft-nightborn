@@ -58,4 +58,11 @@ class EldestFoesTest {
       final boolean shrugged) {
     assertEquals(shrugged, EldestFoes.shrugsOff(changing, fromOutside, surroundings, finishing));
   }
+
+  @ParameterizedTest(name = "a seat {0}: mounts {1}")
+  @CsvSource({"true, true", "false, false"})
+  @DisplayName("the Eldest sits in a chair but never rides a boat or a cart")
+  void mounts(final boolean seat, final boolean mounts) {
+    assertEquals(mounts, EldestFoes.mounts(seat));
+  }
 }

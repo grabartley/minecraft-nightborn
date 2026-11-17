@@ -116,7 +116,7 @@
           "minecraft:generic.movement_speed": 0.06
         },
         "max_hit": 10,
-        "glowing": true
+        "blazing_eyes": true
       },
       "voice": {
         "sound": "minecraft:entity.warden.angry",

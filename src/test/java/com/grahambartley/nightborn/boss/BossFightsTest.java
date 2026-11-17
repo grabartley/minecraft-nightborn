@@ -88,6 +88,9 @@ class BossFightsTest {
     final String english = Files.readString(LANG, StandardCharsets.UTF_8);
     for (final BossPhase phase : plan.phases()) {
       assertFalse(phase.attacks().isEmpty(), phase.name() + " has no attacks");
+      for (final Identifier counter : phase.defence().counters()) {
+        assertTrue(shipped.contains(counter), phase.name() + " counters with a missing " + counter);
+      }
       assertTrue(english.contains("\"" + phase.translationKey() + "\""), phase.translationKey());
       for (final Identifier power : phase.powers()) {
         assertTrue(

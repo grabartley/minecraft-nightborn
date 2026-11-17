@@ -2,8 +2,6 @@ package com.grahambartley.nightborn.boss;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import java.util.Optional;
-import net.minecraft.nbt.NbtCompound;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import org.junit.jupiter.api.DisplayName;
@@ -32,13 +30,10 @@ class BossReactionsTest {
     assertEquals(64.0, to.y, 1.0E-9);
   }
 
-  @ParameterizedTest(name = "({0}, {1}, {2})")
-  @CsvSource({"0, 0, 0", "10.5, 64.25, -20.75", "-29999999.5, 319, 29999999.5"})
-  @DisplayName("a spot survives a save, and a save without one reads as none")
-  void savesASpot(final double x, final double y, final double z) {
-    final NbtCompound nbt = new NbtCompound();
-    nbt.put("Spot", BossReactions.list(new Vec3d(x, y, z)));
-    assertEquals(Optional.of(new Vec3d(x, y, z)), BossReactions.vec(nbt, "Spot"));
-    assertEquals(Optional.empty(), BossReactions.vec(nbt, "Other"));
+  @ParameterizedTest(name = "a knock of {0} at {1} blocks: thrown back {2}")
+  @CsvSource({"1.5, 2.0, true", "1.5, 5.0, true", "1.5, 5.1, false", "0, 2.0, false"})
+  @DisplayName("a guard throws back only an attacker close enough to have struck by hand")
+  void throwsBack(final float knock, final double distance, final boolean thrown) {
+    assertEquals(thrown, BossReactions.throwsBack(knock, distance));
   }
 }

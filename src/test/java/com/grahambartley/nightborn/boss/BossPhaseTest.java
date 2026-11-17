@@ -48,7 +48,7 @@ class BossPhaseTest {
                         + "\"attacks\":[\"nightborn:blood_pools\"],"
                         + "\"music\":\"nightborn:music.boss.eldest_final\","
                         + "\"body\":{\"attributes\":{\"minecraft:generic.armor\":16},"
-                        + "\"max_hit\":10,\"glowing\":true},"
+                        + "\"max_hit\":10,\"blazing_eyes\":true},"
                         + "\"defence\":{\"guard_hits\":3,\"window_ticks\":80,"
                         + "\"break_damage\":30,\"break_away\":10,\"guard_knock\":1.8,"
                         + "\"retarget_chance\":50,\"counters\":[\"nightborn:blood_step\"]},"

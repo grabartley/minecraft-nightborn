@@ -43,8 +43,7 @@ public final class BossAttacks {
   }
 
   public boolean moving() {
-    return run != null
-        && run.attack().zone().map(zone -> zone.motion() != ZoneAttack.Motion.STAY).orElse(false);
+    return run != null && run.moves();
   }
 
   public long landedAt() {
@@ -56,9 +55,7 @@ public final class BossAttacks {
   }
 
   public boolean draining(final long now) {
-    return run != null
-        && run.attack().drain().isPresent()
-        && run.stage(now) == AttackRun.Stage.STRIKE;
+    return run != null && run.drains(now);
   }
 
   public <T extends MobEntity & PowerShow> void counter(
@@ -73,11 +70,15 @@ public final class BossAttacks {
         || !(boss.getWorld() instanceof ServerWorld world)) {
       return;
     }
-    final Identifier id = counters.get(boss.getRandom().nextInt(counters.size()));
-    BossFights.attack(world.getRegistryManager(), id)
-        .ifPresent(
-            attack ->
-                begin(boss, world, new AttackChoice.Option(id, attack, now), target, foes, now));
+    final List<AttackChoice.Option> options = new ArrayList<>();
+    for (final Identifier id : counters) {
+      BossFights.attack(world.getRegistryManager(), id)
+          .ifPresent(
+              attack ->
+                  options.add(new AttackChoice.Option(id, attack, readyAt.getOrDefault(id, 0L))));
+    }
+    AttackChoice.choose(options, boss.distanceTo(target), now, boss.getRandom()::nextInt)
+        .ifPresent(option -> begin(boss, world, option, target, foes, now));
   }
 
   public void hurt(final float amount) {

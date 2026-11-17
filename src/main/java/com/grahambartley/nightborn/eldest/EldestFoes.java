@@ -16,6 +16,10 @@ public final class EldestFoes {
     return !finishing && (changing || fromOutside || surroundings);
   }
 
+  public static boolean mounts(final boolean seat) {
+    return seat;
+  }
+
   public static boolean seeksOut(final boolean vampire, final boolean peaceful) {
     return !vampire && !peaceful;
   }

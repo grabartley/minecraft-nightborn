@@ -3,7 +3,6 @@ package com.grahambartley.nightborn.boss;
 import com.grahambartley.nightborn.downed.Downed;
 import com.grahambartley.nightborn.downed.DownedState;
 import com.grahambartley.nightborn.landing.Landing;
-import com.grahambartley.nightborn.levitation.Levitation;
 import com.grahambartley.nightborn.mob.BossVampireEntity;
 import com.grahambartley.nightborn.network.BossArenaPayload;
 import com.grahambartley.nightborn.smoke.SmokeParticles;
@@ -39,7 +38,7 @@ public final class BossFight {
   private final HitLog hits = new HitLog();
   @Nullable private Vec3d start;
   private long phaseBegan;
-  private boolean flying;
+  private final BossFlight flight = new BossFlight();
   @Nullable private Arena arena;
   private long changeUntil;
   private boolean staking;
@@ -74,8 +73,8 @@ public final class BossFight {
     return attacks.draining(now);
   }
 
-  public boolean glowing(final Optional<BossFightPlan> plan) {
-    return plan.map(p -> p.phase(phases.index()).body().glowing()).orElse(false);
+  public boolean blazing(final Optional<BossFightPlan> plan) {
+    return plan.map(p -> p.phase(phases.index()).body().blazingEyes()).orElse(false);
   }
 
   public boolean changing(final long now) {
@@ -114,6 +113,7 @@ public final class BossFight {
     final PhaseDefence defence =
         plan.map(p -> p.phase(phases.index()).defence()).orElse(PhaseDefence.NONE);
     if (attacker == null
+        || Downed.state(boss) != null
         || defence.before(hits.hits(now, defence.windowTicks())) != PhaseDefence.Reaction.GUARD) {
       return false;
     }
@@ -197,7 +197,15 @@ public final class BossFight {
       return;
     }
     keepIn(boss);
-    fly(boss, plan, engaged, downed != null, now);
+    flight.tick(
+        boss,
+        plan.flatMap(p -> p.phase(phases.index()).flight()),
+        arena,
+        engaged && boss.getTarget() != null,
+        downed != null || changing(now),
+        attacks.moving(),
+        now - attacks.landedAt(),
+        now);
     if (finishing(boss, plan, rules, downed) || changing(now) || plan.isEmpty()) {
       return;
     }
@@ -285,37 +293,7 @@ public final class BossFight {
   }
 
   public boolean flying() {
-    return flying;
-  }
-
-  private void fly(
-      final BossVampireEntity boss,
-      final Optional<BossFightPlan> plan,
-      final boolean engaged,
-      final boolean downed,
-      final long now) {
-    final Optional<PhaseFlight> flight = plan.flatMap(p -> p.phase(phases.index()).flight());
-    final boolean airborne =
-        flight
-            .map(
-                f ->
-                    f.airborne(
-                        engaged && boss.getTarget() != null,
-                        downed || changing(now),
-                        attacks.moving(),
-                        now - attacks.landedAt()))
-            .orElse(false);
-    if (airborne) {
-      boss.setNoGravity(true);
-      Levitation.start(boss);
-      boss.setVelocity(flight.get().steer(boss.getPos(), flight.get().spot(arena, now)));
-      boss.velocityModified = true;
-      boss.fallDistance = 0.0F;
-    } else if (flying) {
-      boss.setNoGravity(false);
-      Levitation.setDown(boss);
-    }
-    flying = airborne;
+    return flight.flying();
   }
 
   private List<ServerPlayerEntity> foes(final BossVampireEntity boss) {
@@ -330,10 +308,7 @@ public final class BossFight {
 
   private void embody(final BossVampireEntity boss, final BossFightPlan plan, final long now) {
     final int index = phases.index();
-    final double progress =
-        changing(now) && plan.changeTicks() > 0
-            ? 1.0 - (double) (changeUntil - now) / plan.changeTicks()
-            : 1.0;
+    final double progress = PhaseBodies.progress(changeUntil, now, plan.changeTicks());
     PhaseBodies.apply(boss, plan, index, progress);
     plan.phase(index)
         .voice()
@@ -404,7 +379,7 @@ public final class BossFight {
     nbt.putBoolean(STAKING_KEY, staking);
     nbt.putLong(OCCUPIED_KEY, lastOccupied);
     if (start != null) {
-      nbt.put(START_KEY, BossReactions.list(start));
+      nbt.put(START_KEY, SpotNbt.list(start));
     }
     if (arena != null) {
       arena.write(nbt);
@@ -416,7 +391,7 @@ public final class BossFight {
     changeUntil = nbt.getLong(CHANGE_KEY);
     staking = nbt.getBoolean(STAKING_KEY);
     lastOccupied = nbt.contains(OCCUPIED_KEY) ? nbt.getLong(OCCUPIED_KEY) : NEVER;
-    start = BossReactions.vec(nbt, START_KEY).orElse(start);
+    start = SpotNbt.vec(nbt, START_KEY).orElse(start);
     arena = Arena.read(nbt).orElse(arena);
   }
 }
