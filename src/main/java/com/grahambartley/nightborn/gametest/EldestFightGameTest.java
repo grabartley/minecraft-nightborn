@@ -30,6 +30,7 @@ import net.minecraft.test.TestContext;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.GameMode;
 
 public class EldestFightGameTest implements FabricGameTest {
 
@@ -85,16 +86,24 @@ public class EldestFightGameTest implements FabricGameTest {
     context.runAtTick(
         TestPlayers.READY,
         () -> {
-          eldest.tickFight();
-          context.assertTrue(
-              eldest.presence().bar().getPlayers().contains(player),
-              "a player inside the arena sees the bar");
+          final Vec3d inside = player.getPos();
           final Vec3d above = context.getAbsolute(new Vec3d(4.5, 2.0 + Arena.ABOVE + 4.0, 2.5));
           player.refreshPositionAndAngles(above.x, above.y, above.z, 0.0F, 0.0F);
           eldest.tickFight();
           context.assertTrue(
               !eldest.presence().bar().getPlayers().contains(player),
-              "a player who leaves the arena loses the bar");
+              "a player outside the arena sees no bar");
+          player.refreshPositionAndAngles(inside.x, inside.y, inside.z, 0.0F, 0.0F);
+          eldest.tickFight();
+          context.assertTrue(
+              eldest.presence().bar().getPlayers().contains(player),
+              "a player inside the arena sees the bar");
+          player.changeGameMode(GameMode.CREATIVE);
+          player.refreshPositionAndAngles(above.x, above.y, above.z, 0.0F, 0.0F);
+          eldest.tickFight();
+          context.assertTrue(
+              !eldest.presence().bar().getPlayers().contains(player),
+              "a player the wall does not hold loses the bar when they leave");
           eldest.discard();
           TestPlayers.finish(context, player);
         });
