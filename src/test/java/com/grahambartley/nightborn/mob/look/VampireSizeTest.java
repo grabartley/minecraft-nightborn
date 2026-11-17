@@ -35,6 +35,14 @@ class VampireSizeTest {
     assertEquals(eyes, sized.eyeHeight(), 1.0E-3F);
   }
 
+  @ParameterizedTest(name = "a {0} wide body at build {1} is {2} wide")
+  @CsvSource({"0.4, 1.0, 0.4", "0.4, 1.5, 0.6", "1.2, 1.0, 0.6", "1.2, 0.5, 0.6", "0.3, 1.5, 0.45"})
+  @DisplayName("the widest hitbox is 0.6 blocks whatever the body it starts from")
+  void widest(final float baseWidth, final float width, final float hitWidth) {
+    final EntityDimensions base = EntityDimensions.changing(baseWidth, 1.95F);
+    assertEquals(hitWidth, VampireSize.dimensions(base, 1.95F, width).width(), 1.0E-3F);
+  }
+
   @ParameterizedTest(name = "{0} tall draws at {1}")
   @CsvSource({"1.95, 1.0", "1.5, 0.7692", "2.0, 1.0256"})
   @DisplayName("the model is drawn at the same scale as the hitbox")
