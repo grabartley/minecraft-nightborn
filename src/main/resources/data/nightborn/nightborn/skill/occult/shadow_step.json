@@ -1,10 +1,16 @@
 {
   "branch": "nightborn:occult",
-  "cost": 2,
-  "requires": ["nightborn:occult/grave_fog"],
+  "requires": [
+    "nightborn:occult/grave_fog"
+  ],
   "icon": "nightborn:skills/icon/shadow_step",
   "column": 2,
   "row": 2,
+  "ranks": [
+    {
+      "cost": 2
+    }
+  ],
   "power": {
     "blood": 2,
     "cooldown_ticks": 200,

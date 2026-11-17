@@ -45,6 +45,20 @@ class PowerCooldownsTest {
     assertEquals(share, PowerCooldowns.fraction(left, cooldown), 0.0001F);
   }
 
+  @ParameterizedTest(name = "{0} ticks at {1}: {2}")
+  @CsvSource({
+    "600, 1.0, 600",
+    "600, 0.9, 540",
+    "100, 0.2, 20",
+    "5, 0.5, 3",
+    "600, -1, 0",
+    "0, 0.9, 0"
+  })
+  @DisplayName("a skill shortens every cooldown by its share")
+  void shortened(final int ticks, final double factor, final int shortened) {
+    assertEquals(shortened, PowerCooldowns.shortened(ticks, factor));
+  }
+
   @Test
   @DisplayName("cooldowns survive saving and the network unchanged")
   void roundTrips() {

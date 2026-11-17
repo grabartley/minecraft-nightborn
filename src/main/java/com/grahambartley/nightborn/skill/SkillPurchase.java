@@ -15,6 +15,7 @@ public final class SkillPurchase {
     OWNED,
     BLOODLINE_LOCKED,
     NEEDS_SKILL,
+    NEEDS_STAGE,
     TOO_FEW_POINTS;
 
     public String translationKey() {
@@ -29,14 +30,16 @@ public final class SkillPurchase {
       final SkillTree playerTree,
       final Identifier id,
       @Nullable final Skill skill,
-      @Nullable final SkillBranch branch) {
+      @Nullable final SkillBranch branch,
+      final boolean stageReached) {
     if (skill == null || branch == null || !branch.learnable()) {
       return Verdict.UNKNOWN;
     }
     if (branch.tree() != playerTree) {
       return Verdict.WRONG_TREE;
     }
-    if (progress.owns(id)) {
+    final int rank = progress.rank(id);
+    if (rank >= skill.maxRank()) {
       return Verdict.OWNED;
     }
     if (locked(progress, skill.branch(), branch)) {
@@ -45,7 +48,10 @@ public final class SkillPurchase {
     if (!skill.requires().stream().allMatch(progress::owns)) {
       return Verdict.NEEDS_SKILL;
     }
-    if (progress.free() < skill.cost()) {
+    if (!stageReached) {
+      return Verdict.NEEDS_STAGE;
+    }
+    if (progress.free() < skill.nextCost(rank)) {
       return Verdict.TOO_FEW_POINTS;
     }
     return Verdict.ALLOWED;
@@ -63,7 +69,9 @@ public final class SkillPurchase {
       final Identifier id,
       final Skill skill,
       final SkillBranch branch) {
-    return progress.buy(id, skill.cost(), bloodline(skill, branch));
+    final TreeProgress bought =
+        progress.buy(id, skill.nextCost(progress.rank(id)), bloodline(skill, branch));
+    return skill.active() ? PowerBar.learned(bought, id) : bought;
   }
 
   @Nullable

@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.function.DoubleSupplier;
+import java.util.function.Predicate;
 import net.minecraft.util.Identifier;
 
 public final class SkillPicks {
@@ -34,12 +35,15 @@ public final class SkillPicks {
   public static Map<Identifier, Skill> forStage(
       final Map<Identifier, Skill> tree,
       final Map<Identifier, SkillBranch> branches,
-      final StageSkills stage) {
+      final StageSkills stage,
+      final Predicate<Skill> reached) {
     final Map<Identifier, Skill> open = new HashMap<>();
     tree.forEach(
         (id, skill) -> {
           final SkillBranch branch = branches.get(skill.branch());
-          if (branch != null && (branch.learnable() || stage.weights().containsKey(id))) {
+          if (branch != null
+              && (branch.learnable() || stage.weights().containsKey(id))
+              && reached.test(skill)) {
             open.put(id, skill);
           }
         });

@@ -1,11 +1,21 @@
 {
   "branch": "nightborn:hunter",
-  "cost": 3,
-  "requires": ["nightborn:hunter/iron_will"],
+  "requires": [
+    "nightborn:hunter/iron_will"
+  ],
   "icon": "nightborn:skills/icon/clear_mind",
   "column": 2,
   "row": 2,
-  "attributes": [
-    { "attribute": "nightborn:mesmerise_resistance", "amount": 0.35, "operation": "add_value" }
+  "ranks": [
+    {
+      "cost": 3,
+      "attributes": [
+        {
+          "attribute": "nightborn:mesmerise_resistance",
+          "amount": 0.35,
+          "operation": "add_value"
+        }
+      ]
+    }
   ]
 }

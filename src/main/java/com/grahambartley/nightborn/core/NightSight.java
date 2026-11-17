@@ -24,6 +24,10 @@ public final class NightSight {
     }
   }
 
+  public static boolean sees(final boolean night, final boolean darkSight) {
+    return night || darkSight;
+  }
+
   static boolean needsRefresh(final int ticksLeft) {
     return ticksLeft < REFRESH_BELOW;
   }

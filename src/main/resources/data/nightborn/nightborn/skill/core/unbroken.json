@@ -1,0 +1,27 @@
+{
+  "branch": "nightborn:core",
+  "requires": [
+    "nightborn:core/iron_grip"
+  ],
+  "icon": "nightborn:skills/icon/iron_will",
+  "column": 0,
+  "row": 3,
+  "stage": "nightborn:elder",
+  "ranks": [
+    {
+      "cost": 3,
+      "attributes": [
+        {
+          "attribute": "nightborn:downed_time",
+          "amount": -0.25,
+          "operation": "add_multiplied_total"
+        },
+        {
+          "attribute": "nightborn:rise_health",
+          "amount": 0.3,
+          "operation": "add_value"
+        }
+      ]
+    }
+  ]
+}

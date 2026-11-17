@@ -83,7 +83,7 @@ class DownedRulesTest {
   @Test
   @DisplayName("a vampire lies downed for the set time, gets up, escapes, then is free")
   void fullCycle() {
-    DownedState state = DownedRules.downed(SETTINGS, Optional.empty());
+    DownedState state = DownedRules.downed(SETTINGS, Optional.empty(), 1.0);
     assertEquals(new DownedState(Phase.DOWNED, 600), state);
     DownedRules.Change change = DownedRules.Change.NONE;
     int ticks = 0;
@@ -106,14 +106,29 @@ class DownedRulesTest {
     assertNull(state);
   }
 
-  @ParameterizedTest(name = "max {0} at {1}%: {2}")
-  @CsvSource({"40, 20, 8", "20, 20, 4", "40, 1, 1", "2, 20, 1", "40, 100, 40"})
-  @DisplayName("a vampire gets up with its share of health, never less than one")
-  void recovery(final float max, final int percent, final float health) {
+  @ParameterizedTest(name = "max {0} at {1}% with a skill share of {2}: {3}")
+  @CsvSource({
+    "40, 20, 0, 8",
+    "20, 20, 0, 4",
+    "40, 1, 0, 1",
+    "2, 20, 0, 1",
+    "40, 100, 0, 40",
+    "40, 20, 0.3, 12",
+    "40, 50, 0.3, 20"
+  })
+  @DisplayName("a vampire gets up with the larger of the set share and its skill's share of health")
+  void recovery(final float max, final int percent, final double share, final float health) {
     assertEquals(
         health,
-        DownedRules.recoveredHealth(max, new DownedSettings(30, 60, percent, false)),
+        DownedRules.recoveredHealth(max, new DownedSettings(30, 60, percent, false), share),
         0.0001F);
+  }
+
+  @ParameterizedTest(name = "factor {0}: {1} ticks")
+  @CsvSource({"1.0, 600", "0.75, 450", "0.2, 120", "0.0, 1"})
+  @DisplayName("a skill shortens the time a vampire lies downed")
+  void downedTime(final double factor, final int ticks) {
+    assertEquals(ticks, DownedRules.downed(SETTINGS, Optional.empty(), factor).ticksLeft());
   }
 
   @ParameterizedTest(name = "human attacker {0}: remembered {1}")
@@ -130,7 +145,7 @@ class DownedRulesTest {
   void remembersTheHunter() {
     final Optional<UUID> hunter =
         Optional.of(UUID.fromString("00000000-0000-0000-0000-000000000047"));
-    DownedState state = DownedRules.downed(SETTINGS, hunter);
+    DownedState state = DownedRules.downed(SETTINGS, hunter, 1.0);
     assertEquals(new DownedState(Phase.DOWNED, 600, hunter), state);
     while (state != null && state.isDowned()) {
       state = DownedRules.tick(state, SETTINGS).state();

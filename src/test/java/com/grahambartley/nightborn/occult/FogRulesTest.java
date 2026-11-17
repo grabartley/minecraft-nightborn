@@ -29,21 +29,25 @@ class FogRulesTest {
     assertEquals(expected, FogRules.covers(distanceSquared, radius));
   }
 
-  @ParameterizedTest(name = "alive {0}, caster {1}, serves {2}, spectating {3} -> {4}")
+  @ParameterizedTest(
+      name = "alive {0}, caster {1}, serves {2}, spectating {3}, sees through {4} -> {5}")
   @CsvSource({
-    "true, false, false, false, true",
-    "false, false, false, false, false",
-    "true, true, false, false, false",
-    "true, false, true, false, false",
-    "true, false, false, true, false"
+    "true, false, false, false, false, true",
+    "false, false, false, false, false, false",
+    "true, true, false, false, false, false",
+    "true, false, true, false, false, false",
+    "true, false, false, true, false, false",
+    "true, false, false, false, true, false"
   })
-  @DisplayName("a fog spares its caster, those who serve them and spectators")
+  @DisplayName(
+      "a fog spares its caster, those who serve them, spectators and those who see through fog")
   void touches(
       final boolean alive,
       final boolean caster,
       final boolean serves,
       final boolean spectating,
+      final boolean seesThrough,
       final boolean expected) {
-    assertEquals(expected, FogRules.touches(alive, caster, serves, spectating));
+    assertEquals(expected, FogRules.touches(alive, caster, serves, spectating, seesThrough));
   }
 }

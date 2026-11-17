@@ -49,7 +49,10 @@ public final class VampireStaging {
     final Map<Identifier, SkillBranch> branches = Skills.allBranches(registries);
     final Map<Identifier, Skill> open =
         SkillPicks.forStage(
-            SkillPicks.ofTree(skills, branches, SkillTree.VAMPIRE), branches, stage.skills());
+            SkillPicks.ofTree(skills, branches, SkillTree.VAMPIRE),
+            branches,
+            stage.skills(),
+            skill -> StageGate.open(StageGate.needed(registries, skill), stage.rank()));
     final List<Identifier> picks =
         stage.skills().every()
             ? SkillPicks.every(open)
@@ -71,7 +74,7 @@ public final class VampireStaging {
       final Skill skill = skills.get(id);
       progress =
           progress.buy(
-              id, skill.cost(), SkillPurchase.bloodline(skill, branches.get(skill.branch())));
+              id, skill.nextCost(0), SkillPurchase.bloodline(skill, branches.get(skill.branch())));
     }
     return progress.withEarned(progress.spent());
   }

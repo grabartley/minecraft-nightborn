@@ -9,7 +9,7 @@ public final class Drinking {
   public record Sip(float take, boolean drains, boolean atLastHealth) {}
 
   public static Sip next(
-      final float health, final int drinkPerSecond, final boolean wasAtLastHealth) {
+      final float health, final float drinkPerSecond, final boolean wasAtLastHealth) {
     if (health <= 0.0F) {
       return new Sip(0.0F, false, false);
     }

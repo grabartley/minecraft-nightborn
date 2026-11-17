@@ -44,7 +44,8 @@ public final class EldestRewards {
   }
 
   private static void reward(final ServerPlayerEntity hunter, final EldestEntity eldest) {
-    if (!SkillEarning.fromEldest(hunter, ServerConfigService.current().ritual())) {
+    if (!SkillEarning.fromEldest(
+        hunter, ServerConfigService.current().ritual(), ServerConfigService.current().skills())) {
       return;
     }
     hunter.sendMessage(Text.translatable(MESSAGE, eldest.getDisplayName()), false);

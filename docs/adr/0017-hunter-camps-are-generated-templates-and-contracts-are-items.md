@@ -10,7 +10,7 @@ Hunter camps generate rarely in the overworld with a few hunters and a Guild Mas
 
 **The Guild Master is a vanilla merchant.** He uses vanilla's trading screen, so trades move items the way villager trades do. His offers come from the `nightborn:guild_offer` registry and renew each in-game day. The server checks the faction on every interaction and closes the screen if a trading player turns, so a vampire never trades.
 
-**A contract is an item.** The `nightborn:hunter_contract` registry holds what each contract asks for and the loot table it pays. The item stores the contract id and how many are done, so progress follows the item, survives a restart and needs no player data. When a human stakes a vampire, the first open contract in their inventory that the stake meets moves on by one, so one stake never fills two contracts. Clearing a household counts when the staked vampire has no living housemate within reach of its home. A fulfilled contract is handed to a Guild Master, who takes it and pays its loot table and the `contractPoints` setting, so each contract pays once.
+**A contract is an item.** The `nightborn:hunter_contract` registry holds what each contract asks for and the loot table it pays. The item stores the contract id and how many are done, so progress follows the item, survives a restart and needs no player data. When a human stakes a vampire, the first open contract in their inventory that the stake meets moves on by one, so one stake never fills two contracts. Clearing a household counts when the staked vampire has no living housemate within reach of its home. A fulfilled contract is handed to a Guild Master, who takes it and pays its loot table and the `contractExperience` setting, so each contract pays once.
 
 ## Consequences
 

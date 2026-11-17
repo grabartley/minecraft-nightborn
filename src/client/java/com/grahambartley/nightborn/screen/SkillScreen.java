@@ -2,10 +2,16 @@ package com.grahambartley.nightborn.screen;
 
 import com.grahambartley.nightborn.client.PowerSlotView;
 import com.grahambartley.nightborn.client.SkillKeys;
+import com.grahambartley.nightborn.client.SyncedServerConfig;
+import com.grahambartley.nightborn.config.SkillSettings;
+import com.grahambartley.nightborn.mob.stage.StageGate;
 import com.grahambartley.nightborn.network.BuySkillPayload;
+import com.grahambartley.nightborn.skill.PowerBar;
+import com.grahambartley.nightborn.skill.PowerLayout;
 import com.grahambartley.nightborn.skill.Skill;
 import com.grahambartley.nightborn.skill.SkillAttachment;
 import com.grahambartley.nightborn.skill.SkillBranch;
+import com.grahambartley.nightborn.skill.SkillCurve;
 import com.grahambartley.nightborn.skill.SkillLookup;
 import com.grahambartley.nightborn.skill.SkillNames;
 import com.grahambartley.nightborn.skill.SkillPurchase;
@@ -23,11 +29,16 @@ import net.minecraft.registry.DynamicRegistryManager;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
+import org.jetbrains.annotations.Nullable;
 
 public final class SkillScreen extends Screen {
 
   static final int LINE_WIDTH = 2;
   static final float DIM = 0.45F;
+  static final float RANK_SCALE = 0.5F;
+  static final int BAR_BACK = 0xFF140C0C;
+  static final int OPAQUE = 0xFF000000;
+  static final float DRAG_Z = 300.0F;
 
   private final Map<Identifier, Skill> skills = new HashMap<>();
   private final Map<Identifier, SkillTreeView.Node> nodes = new HashMap<>();
@@ -36,6 +47,7 @@ public final class SkillScreen extends Screen {
   private SkillTree shownTree;
   private SkillTheme theme;
   private SkillLayout layout;
+  @Nullable private PowerDrag drag;
 
   public SkillScreen() {
     super(Text.translatable("nightborn.skills.title"));
@@ -60,7 +72,10 @@ public final class SkillScreen extends Screen {
         SkillPointsRow.centred(
             0,
             textRenderer.getWidth(most),
-            textRenderer.getWidth(Text.translatable("nightborn.skills.earned_spent", most, most)));
+            Math.max(
+                textRenderer.getWidth(
+                    Text.translatable("nightborn.skills.earned_spent", most, most)),
+                ExperienceBar.MIN_WIDTH));
     layout =
         SkillLayout.of(
             width, height, branches.size(), SkillTreeView.rows(nodes, branches), widest.width());
@@ -112,13 +127,21 @@ public final class SkillScreen extends Screen {
         final int x = layout.nodeX(b, branches.size(), skill.column());
         final int y = layout.nodeY(skill.row());
         final SkillPurchase.Verdict verdict = verdict(id, progress);
-        drawNode(context, x, y, skill, verdict);
+        drawNode(context, x, y, skill, progress.rank(id), verdict);
         if (SkillLayout.contains(x, y, mouseX, mouseY)) {
-          tooltip = SkillTooltip.lines(id, skill, verdict, theme.title());
+          tooltip =
+              SkillTooltip.lines(
+                  id, SkillTooltip.Facts.of(skill, progress.rank(id)), verdict, theme.title());
         }
       }
     }
-    if (tooltip != null) {
+    final List<Text> barTip = drawPowerBar(context, progress, centre, mouseX, mouseY);
+    if (barTip != null) {
+      tooltip = barTip;
+    }
+    if (drag != null) {
+      drawDragged(context, mouseX, mouseY);
+    } else if (tooltip != null) {
       ThemedTooltip.draw(context, textRenderer, theme, tooltip, mouseX, mouseY);
     }
   }
@@ -133,8 +156,8 @@ public final class SkillScreen extends Screen {
     final Text detail =
         Text.translatable("nightborn.skills.earned_spent", progress.earned(), progress.spent());
     final int countWidth = textRenderer.getWidth(count);
-    final SkillPointsRow row =
-        SkillPointsRow.centred(centre, countWidth, textRenderer.getWidth(detail));
+    final int detailWidth = Math.max(textRenderer.getWidth(detail), ExperienceBar.MIN_WIDTH);
+    final SkillPointsRow row = SkillPointsRow.centred(centre, countWidth, detailWidth);
     final int top = layout.pointsY();
     context.drawGuiTexture(
         theme.point(), row.iconX(), top, SkillPointsRow.ICON, SkillPointsRow.ICON);
@@ -146,10 +169,119 @@ public final class SkillScreen extends Screen {
     context.getMatrices().pop();
     context.drawTextWithShadow(
         textRenderer, detail, row.detailX(), top + SkillPointsRow.DETAIL_TOP, theme.muted());
+    final List<Text> experience =
+        drawExperience(
+            context, progress, ExperienceBar.under(row, top, detailWidth), mouseX, mouseY);
     if (row.overPoints(top, mouseX, mouseY, countWidth)) {
       return List.of(Text.translatable("nightborn.skills.free_points", progress.free()));
     }
-    return null;
+    return experience;
+  }
+
+  private List<Text> drawExperience(
+      final DrawContext context,
+      final TreeProgress progress,
+      final ExperienceBar bar,
+      final int mouseX,
+      final int mouseY) {
+    final SkillSettings settings = SyncedServerConfig.get().skills();
+    final int cost =
+        SkillCurve.cost(
+            progress.earned(), settings.firstPointExperience(), settings.pointCostRise());
+    context.fill(bar.left(), bar.top(), bar.right(), bar.bottom(), OPAQUE | theme.muted());
+    context.fill(bar.innerLeft(), bar.innerTop(), bar.innerRight(), bar.innerBottom(), BAR_BACK);
+    context.fill(
+        bar.innerLeft(),
+        bar.innerTop(),
+        bar.innerLeft()
+            + bar.filled(
+                SkillCurve.fraction(
+                    progress.earned(),
+                    progress.experience(),
+                    settings.firstPointExperience(),
+                    settings.pointCostRise())),
+        bar.innerBottom(),
+        OPAQUE | theme.problem());
+    context.drawCenteredTextWithShadow(
+        textRenderer,
+        Text.translatable(
+            "nightborn.skills.experience", ExperienceBar.shown(progress.experience()), cost),
+        bar.centre(),
+        bar.top() + 1,
+        theme.text());
+    return bar.contains(mouseX, mouseY)
+        ? List.of(Text.translatable("nightborn.skills.experience.tooltip"))
+        : null;
+  }
+
+  private List<Text> drawPowerBar(
+      final DrawContext context,
+      final TreeProgress progress,
+      final int centre,
+      final int mouseX,
+      final int mouseY) {
+    final PowerBarRow row = PowerBarRow.centred(centre, layout.powerBarY());
+    final PowerLayout bar =
+        PowerBar.layout(progress, id -> skills.containsKey(id) && skills.get(id).active());
+    final int inset = (PowerBarRow.SLOT - PowerSlotView.ICON) / 2;
+    final int over = row.slotAt(mouseX, mouseY);
+    List<Text> tooltip = null;
+    for (int slot = 0; slot < PowerLayout.SLOTS; slot++) {
+      final int x = row.slotX(slot);
+      context.drawGuiTexture(theme.powerSlot(), x, row.top(), PowerBarRow.SLOT, PowerBarRow.SLOT);
+      final Identifier id = bar.at(slot).orElse(null);
+      final boolean lifted = drag != null && drag.fromSlot() == slot;
+      if (id != null && !lifted) {
+        context.drawGuiTexture(
+            skills.get(id).icon(),
+            x + inset,
+            row.top() + inset,
+            PowerSlotView.ICON,
+            PowerSlotView.ICON);
+      }
+      drawSmall(
+          context,
+          PowerSlotView.keyLabel(
+              SkillKeys.power(slot).getBoundKeyLocalizedText().getString(),
+              SkillKeys.power(slot).isUnbound()),
+          x + inset - 1,
+          row.top() + inset - 1,
+          theme.text());
+      if (slot == over) {
+        tooltip =
+            id == null
+                ? List.of(Text.translatable("nightborn.skills.bar.empty"))
+                : List.of(
+                    Text.translatable(SkillNames.skill(id)),
+                    Text.translatable("nightborn.skills.bar.filled"));
+      }
+    }
+    return tooltip;
+  }
+
+  private void drawDragged(final DrawContext context, final int mouseX, final int mouseY) {
+    final Skill skill = skills.get(drag.skill());
+    if (skill == null) {
+      return;
+    }
+    context.getMatrices().push();
+    context.getMatrices().translate(0.0F, 0.0F, DRAG_Z);
+    context.drawGuiTexture(
+        skill.icon(),
+        mouseX - PowerSlotView.ICON / 2,
+        mouseY - PowerSlotView.ICON / 2,
+        PowerSlotView.ICON,
+        PowerSlotView.ICON);
+    context.getMatrices().pop();
+  }
+
+  private void drawSmall(
+      final DrawContext context, final String text, final int x, final int y, final int colour) {
+    context.getMatrices().push();
+    context.getMatrices().translate(x, y, 0.0F);
+    context.getMatrices().scale(RANK_SCALE, RANK_SCALE, 1.0F);
+    context.drawTextWithShadow(textRenderer, text, 0, 0, colour);
+    context.getMatrices().pop();
   }
 
   private void drawBranchTitle(
@@ -205,24 +337,50 @@ public final class SkillScreen extends Screen {
       final int x,
       final int y,
       final Skill skill,
+      final int rank,
       final SkillPurchase.Verdict verdict) {
-    context.drawGuiTexture(theme.frame(verdict), x, y, SkillLayout.NODE, SkillLayout.NODE);
+    final SkillPurchase.Verdict look = SkillTreeView.look(verdict, rank > 0);
+    context.drawGuiTexture(theme.frame(look), x, y, SkillLayout.NODE, SkillLayout.NODE);
     final int inset = (SkillLayout.NODE - PowerSlotView.ICON) / 2;
-    if (SkillTreeView.dimmed(verdict)) {
+    if (SkillTreeView.dimmed(look)) {
       context.setShaderColor(DIM, DIM, DIM, 1.0F);
     }
     context.drawGuiTexture(
         skill.icon(), x + inset, y + inset, PowerSlotView.ICON, PowerSlotView.ICON);
     context.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+    if (skill.maxRank() > 1) {
+      drawSmall(
+          context,
+          rank + "/" + skill.maxRank(),
+          x + inset,
+          y + SkillLayout.NODE - inset - 4,
+          rank > 0 ? theme.title() : theme.text());
+    }
   }
 
   private SkillPurchase.Verdict verdict(final Identifier id, final TreeProgress progress) {
-    return SkillLookup.of(client.world.getRegistryManager(), progress, shownTree, id).verdict();
+    return SkillLookup.of(
+            client.world.getRegistryManager(),
+            progress,
+            shownTree,
+            id,
+            StageGate.rankOf(client.player))
+        .verdict();
   }
 
   @Override
   public boolean mouseClicked(final double mouseX, final double mouseY, final int button) {
     if (button == 0) {
+      final TreeProgress held = progress();
+      final PowerBarRow row =
+          PowerBarRow.centred(layout.left() + layout.width() / 2, layout.powerBarY());
+      final int slot = row.slotAt(mouseX, mouseY);
+      if (slot != PowerBarRow.NONE) {
+        PowerBar.layout(held, id -> skills.containsKey(id) && skills.get(id).active())
+            .at(slot)
+            .ifPresent(id -> drag = new PowerDrag(id, slot));
+        return true;
+      }
       for (int b = 0; b < branches.size(); b++) {
         for (final Identifier id : SkillTreeView.skillsIn(branches.get(b), nodes)) {
           final Skill skill = skills.get(id);
@@ -236,6 +394,8 @@ public final class SkillScreen extends Screen {
               client
                   .getSoundManager()
                   .play(PositionedSoundInstance.master(SoundEvents.UI_BUTTON_CLICK, 1.0F));
+            } else if (skill.active() && held.owns(id)) {
+              drag = PowerDrag.fromTree(id);
             }
             return true;
           }
@@ -243,6 +403,25 @@ public final class SkillScreen extends Screen {
       }
     }
     return super.mouseClicked(mouseX, mouseY, button);
+  }
+
+  @Override
+  public boolean mouseReleased(final double mouseX, final double mouseY, final int button) {
+    if (button == 0 && drag != null) {
+      final PowerBarRow row =
+          PowerBarRow.centred(layout.left() + layout.width() / 2, layout.powerBarY());
+      drag.drop(row.slotAt(mouseX, mouseY))
+          .ifPresent(
+              payload -> {
+                ClientPlayNetworking.send(payload);
+                client
+                    .getSoundManager()
+                    .play(PositionedSoundInstance.master(SoundEvents.UI_BUTTON_CLICK, 1.2F));
+              });
+      drag = null;
+      return true;
+    }
+    return super.mouseReleased(mouseX, mouseY, button);
   }
 
   @Override

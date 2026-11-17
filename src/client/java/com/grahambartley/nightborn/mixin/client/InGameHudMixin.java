@@ -22,7 +22,7 @@ abstract class InGameHudMixin {
       final int right,
       final CallbackInfo ci) {
     if (Vampires.isVampire(player)) {
-      BloodBar.draw(context, BloodAttachment.get(player), top, right);
+      BloodBar.draw(context, BloodAttachment.get(player), BloodAttachment.max(player), top, right);
       ci.cancel();
     }
   }

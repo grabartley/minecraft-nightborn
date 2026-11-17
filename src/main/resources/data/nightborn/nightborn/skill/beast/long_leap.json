@@ -1,14 +1,23 @@
 {
   "branch": "nightborn:beast",
-  "cost": 2,
-  "requires": ["nightborn:beast/swift_prowl"],
+  "requires": [
+    "nightborn:beast/swift_prowl"
+  ],
   "icon": "nightborn:skills/icon/long_leap",
   "column": 2,
   "row": 2,
+  "ranks": [
+    {
+      "cost": 2
+    }
+  ],
   "power": {
     "blood": 1,
     "cooldown_ticks": 100,
-    "leap": { "forward": 1.4, "up": 0.55 },
+    "leap": {
+      "forward": 1.4,
+      "up": 0.55
+    },
     "sound": "minecraft:entity.goat.long_jump",
     "mob": {
       "min_range": 5.0,

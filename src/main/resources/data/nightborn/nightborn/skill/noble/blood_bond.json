@@ -1,11 +1,21 @@
 {
   "branch": "nightborn:noble",
-  "cost": 2,
-  "requires": ["nightborn:noble/mesmerise"],
+  "requires": [
+    "nightborn:noble/mesmerise"
+  ],
   "icon": "nightborn:skills/icon/blood_bond",
   "column": 0,
   "row": 2,
-  "attributes": [
-    { "attribute": "nightborn:thrall_limit", "amount": 1.0, "operation": "add_value" }
+  "ranks": [
+    {
+      "cost": 2,
+      "attributes": [
+        {
+          "attribute": "nightborn:thrall_limit",
+          "amount": 1.0,
+          "operation": "add_value"
+        }
+      ]
+    }
   ]
 }

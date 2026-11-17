@@ -9,19 +9,30 @@ import org.junit.jupiter.params.provider.CsvSource;
 
 class SkillEarningTest {
 
+  static SkillSettings settings(final int perBlood, final int perKill, final int perStage) {
+    return new SkillSettings(100, 3, perBlood, 100, perKill, perStage, 10, 500);
+  }
+
   @ParameterizedTest(name = "{0} per kill, {1} per stage, rank {2}: {3}")
   @CsvSource({
-    "3, 2, 0, 3",
-    "3, 2, 1, 5",
-    "3, 2, 3, 9",
-    "3, 0, 3, 3",
-    "0, 2, 2, 4",
+    "300, 200, 0, 300",
+    "300, 200, 1, 500",
+    "300, 200, 3, 900",
+    "300, 0, 3, 300",
+    "0, 200, 2, 400",
     "0, 0, 3, 0",
-    "3, 2, -1, 3"
+    "300, 200, -1, 300"
   })
-  @DisplayName("an older vampire is worth more hunter points")
-  void huntPoints(final int perKill, final int perStage, final int rank, final int points) {
+  @DisplayName("an older vampire is worth more hunter experience")
+  void huntExperience(final int perKill, final int perStage, final int rank, final int experience) {
+    assertEquals(experience, SkillEarning.huntExperience(settings(5, perKill, perStage), rank));
+  }
+
+  @ParameterizedTest(name = "{0} blood at {1} each: {2}")
+  @CsvSource({"1, 5, 5", "0.5, 5, 2.5", "4, 0, 0", "0, 5, 0", "-2, 5, 0", "20, 5, 100"})
+  @DisplayName("blood pays experience by its worth, and never less than nothing")
+  void bloodExperience(final float worth, final int perBlood, final float experience) {
     assertEquals(
-        points, SkillEarning.huntPoints(new SkillSettings(20, 1, perKill, perStage, 10, 5), rank));
+        experience, SkillEarning.bloodExperience(worth, settings(perBlood, 300, 200)), 0.0001F);
   }
 }

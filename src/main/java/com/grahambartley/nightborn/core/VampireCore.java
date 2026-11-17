@@ -6,6 +6,7 @@ import com.grahambartley.nightborn.config.BloodSettings;
 import com.grahambartley.nightborn.config.CoreSettings;
 import com.grahambartley.nightborn.skill.SkillBareHands;
 import com.grahambartley.nightborn.vampire.Modifiers;
+import com.grahambartley.nightborn.vampire.VampireAttributes;
 import com.grahambartley.nightborn.weakened.Weakened;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.attribute.EntityAttributeModifier.Operation;
@@ -34,7 +35,8 @@ public final class VampireCore {
             night,
             starving(vampire),
             SkillBareHands.damage(vampire)));
-    if (night && vampire instanceof PlayerEntity) {
+    if (vampire instanceof PlayerEntity
+        && NightSight.sees(night, VampireAttributes.has(vampire, VampireAttributes.DARK_SIGHT))) {
       NightSight.keep(vampire);
     }
   }

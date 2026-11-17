@@ -1,11 +1,21 @@
 {
   "branch": "nightborn:noble",
-  "cost": 1,
-  "requires": ["nightborn:noble/mesmerise"],
+  "requires": [
+    "nightborn:noble/mesmerise"
+  ],
   "icon": "nightborn:skills/icon/silver_tongue",
   "column": 2,
   "row": 2,
-  "attributes": [
-    { "attribute": "nightborn:charm", "amount": 1.0, "operation": "add_value" }
+  "ranks": [
+    {
+      "cost": 1,
+      "attributes": [
+        {
+          "attribute": "nightborn:charm",
+          "amount": 1.0,
+          "operation": "add_value"
+        }
+      ]
+    }
   ]
 }

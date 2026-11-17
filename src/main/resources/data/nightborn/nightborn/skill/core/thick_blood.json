@@ -1,10 +1,38 @@
 {
   "branch": "nightborn:core",
-  "cost": 1,
   "icon": "nightborn:skills/icon/thick_blood",
   "column": 1,
   "row": 0,
-  "attributes": [
-    { "attribute": "minecraft:generic.max_health", "amount": 0.1, "operation": "add_multiplied_total" }
+  "ranks": [
+    {
+      "cost": 1,
+      "attributes": [
+        {
+          "attribute": "minecraft:generic.max_health",
+          "amount": 0.1,
+          "operation": "add_multiplied_total"
+        }
+      ]
+    },
+    {
+      "cost": 2,
+      "attributes": [
+        {
+          "attribute": "minecraft:generic.max_health",
+          "amount": 0.1,
+          "operation": "add_multiplied_total"
+        }
+      ]
+    },
+    {
+      "cost": 3,
+      "attributes": [
+        {
+          "attribute": "minecraft:generic.max_health",
+          "amount": 0.1,
+          "operation": "add_multiplied_total"
+        }
+      ]
+    }
   ]
 }

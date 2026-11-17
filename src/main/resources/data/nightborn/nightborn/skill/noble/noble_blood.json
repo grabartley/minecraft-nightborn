@@ -1,10 +1,18 @@
 {
   "branch": "nightborn:noble",
-  "cost": 1,
   "icon": "nightborn:skills/icon/noble_blood",
   "column": 1,
   "row": 0,
-  "attributes": [
-    { "attribute": "minecraft:generic.armor", "amount": 2.0, "operation": "add_value" }
+  "ranks": [
+    {
+      "cost": 1,
+      "attributes": [
+        {
+          "attribute": "minecraft:generic.armor",
+          "amount": 2.0,
+          "operation": "add_value"
+        }
+      ]
+    }
   ]
 }

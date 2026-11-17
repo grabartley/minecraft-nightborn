@@ -33,7 +33,10 @@ class SkillLayoutTest {
       }
     }
     final int lastRow = layout.nodeY(rows - 1) + SkillLayout.NODE;
-    assertTrue(lastRow <= layout.top() + layout.height(), "last row inside the panel");
+    assertTrue(lastRow <= layout.powerBarY(), "last row above the power bar");
+    assertTrue(
+        layout.powerBarY() + PowerBarRow.SLOT <= layout.top() + layout.height(),
+        "power bar inside the panel");
   }
 
   @ParameterizedTest(name = "columns {0} and {1}")

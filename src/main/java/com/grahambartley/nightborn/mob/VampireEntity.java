@@ -46,6 +46,7 @@ import com.grahambartley.nightborn.skill.SkillHolder;
 import com.grahambartley.nightborn.skill.SkillTree;
 import com.grahambartley.nightborn.structure.HouseholdArrival;
 import com.grahambartley.nightborn.structure.HouseholdMember;
+import com.grahambartley.nightborn.vampire.VampireAttributes;
 import com.grahambartley.nightborn.vampire.Vampires;
 import com.grahambartley.nightborn.weakened.Weakened;
 import java.util.Map;
@@ -152,13 +153,14 @@ public class VampireEntity extends HostileEntity
   }
 
   public static DefaultAttributeContainer.Builder createVampireAttributes() {
-    return OccultAttributes.addTo(
-        MindAttributes.addTo(
-            HostileEntity.createHostileAttributes()
-                .add(EntityAttributes.GENERIC_MAX_HEALTH, 30.0)
-                .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.3)
-                .add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 4.0)
-                .add(EntityAttributes.GENERIC_FOLLOW_RANGE, 32.0)));
+    return VampireAttributes.addTo(
+        OccultAttributes.addTo(
+            MindAttributes.addTo(
+                HostileEntity.createHostileAttributes()
+                    .add(EntityAttributes.GENERIC_MAX_HEALTH, 30.0)
+                    .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.3)
+                    .add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 4.0)
+                    .add(EntityAttributes.GENERIC_FOLLOW_RANGE, 32.0))));
   }
 
   @Override

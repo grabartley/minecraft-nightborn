@@ -46,6 +46,13 @@ public final class SkillTreeView {
         + 1;
   }
 
+  public static SkillPurchase.Verdict look(
+      final SkillPurchase.Verdict verdict, final boolean owned) {
+    return owned && verdict != SkillPurchase.Verdict.ALLOWED
+        ? SkillPurchase.Verdict.OWNED
+        : verdict;
+  }
+
   public static boolean dimmed(final SkillPurchase.Verdict verdict) {
     return verdict != SkillPurchase.Verdict.OWNED && verdict != SkillPurchase.Verdict.ALLOWED;
   }

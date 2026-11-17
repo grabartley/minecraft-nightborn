@@ -6,6 +6,7 @@ import com.grahambartley.nightborn.feeding.FeedingSessions;
 import com.grahambartley.nightborn.gear.Staking;
 import com.grahambartley.nightborn.server.ServerConfigService;
 import com.grahambartley.nightborn.vampire.Modifiers;
+import com.grahambartley.nightborn.vampire.VampireAttributes;
 import com.grahambartley.nightborn.vampire.Vampires;
 import com.grahambartley.nightborn.vampire.VisibleStateAttachment;
 import java.util.Optional;
@@ -81,7 +82,10 @@ public final class Downed {
   public static void down(
       final LivingEntity vampire, final DownedSettings settings, final Optional<UUID> hunter) {
     vampire.setHealth(LAST_HEALTH);
-    vampire.setAttached(TYPE, DownedRules.downed(settings, hunter));
+    vampire.setAttached(
+        TYPE,
+        DownedRules.downed(
+            settings, hunter, VampireAttributes.value(vampire, VampireAttributes.DOWNED_TIME)));
     FeedingSessions.end(vampire);
     vampire
         .getWorld()
@@ -104,7 +108,11 @@ public final class Downed {
     vampire.setAttached(TYPE, step.state());
     switch (step.change()) {
       case STOOD_UP -> {
-        vampire.setHealth(DownedRules.recoveredHealth(vampire.getMaxHealth(), settings));
+        vampire.setHealth(
+            DownedRules.recoveredHealth(
+                vampire.getMaxHealth(),
+                settings,
+                VampireAttributes.value(vampire, VampireAttributes.RISE_HEALTH)));
         vampire
             .getWorld()
             .playSound(

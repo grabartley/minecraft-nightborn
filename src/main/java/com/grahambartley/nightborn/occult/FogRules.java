@@ -22,7 +22,8 @@ public final class FogRules {
       final boolean alive,
       final boolean caster,
       final boolean servesCaster,
-      final boolean spectating) {
-    return alive && !caster && !servesCaster && !spectating;
+      final boolean spectating,
+      final boolean seesThrough) {
+    return alive && !caster && !servesCaster && !spectating && !seesThrough;
   }
 }

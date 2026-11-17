@@ -29,7 +29,10 @@ public final class SkillAttributes {
       for (final Identifier id : owned.ownedInOrder()) {
         final Skill skill = skills.get(id);
         if (skill != null) {
-          wanted.putAll(modifiers(id, skill.attributes()));
+          final List<SkillRank> held = skill.held(owned.rank(id));
+          for (int rank = 0; rank < held.size(); rank++) {
+            wanted.putAll(modifiers(id, rank, held.get(rank).attributes()));
+          }
         }
       }
     }
@@ -46,17 +49,18 @@ public final class SkillAttributes {
   }
 
   static Map<Identifier, SkillAttribute> modifiers(
-      final Identifier skill, final List<SkillAttribute> attributes) {
+      final Identifier skill, final int rank, final List<SkillAttribute> attributes) {
     final Map<Identifier, SkillAttribute> modifiers = new HashMap<>();
     for (int i = 0; i < attributes.size(); i++) {
-      modifiers.put(modifierId(skill, i), attributes.get(i));
+      modifiers.put(modifierId(skill, rank, i), attributes.get(i));
     }
     return modifiers;
   }
 
-  static Identifier modifierId(final Identifier skill, final int index) {
+  static Identifier modifierId(final Identifier skill, final int rank, final int index) {
     return Identifier.of(
-        Nightborn.MOD_ID, PREFIX + skill.getNamespace() + "/" + skill.getPath() + "/" + index);
+        Nightborn.MOD_ID,
+        PREFIX + skill.getNamespace() + "/" + skill.getPath() + "/" + rank + "/" + index);
   }
 
   static boolean stray(

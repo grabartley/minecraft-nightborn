@@ -1,11 +1,21 @@
 {
   "branch": "nightborn:hunter",
-  "cost": 2,
-  "requires": ["nightborn:hunter/tracking"],
+  "requires": [
+    "nightborn:hunter/tracking"
+  ],
   "icon": "nightborn:skills/icon/faith",
   "column": 1,
   "row": 1,
-  "attributes": [
-    { "attribute": "nightborn:faith", "amount": 1.0, "operation": "add_value" }
+  "ranks": [
+    {
+      "cost": 2,
+      "attributes": [
+        {
+          "attribute": "nightborn:faith",
+          "amount": 1.0,
+          "operation": "add_value"
+        }
+      ]
+    }
   ]
 }

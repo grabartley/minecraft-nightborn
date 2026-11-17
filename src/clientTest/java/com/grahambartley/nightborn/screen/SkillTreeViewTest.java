@@ -74,6 +74,18 @@ class SkillTreeViewTest {
     assertEquals(!open, SkillTreeView.dimmed(verdict));
   }
 
+  @ParameterizedTest(name = "{0}")
+  @EnumSource(SkillPurchase.Verdict.class)
+  @DisplayName("a skill with a rank held looks owned unless its next rank can be bought now")
+  void look(final SkillPurchase.Verdict verdict) {
+    assertEquals(verdict, SkillTreeView.look(verdict, false));
+    assertEquals(
+        verdict == SkillPurchase.Verdict.ALLOWED
+            ? SkillPurchase.Verdict.ALLOWED
+            : SkillPurchase.Verdict.OWNED,
+        SkillTreeView.look(verdict, true));
+  }
+
   @ParameterizedTest(name = "from {0},{1} to {2},{3}")
   @CsvSource({"50, 40, 20, 70", "50, 40, 80, 70", "50, 40, 50, 70"})
   @DisplayName("a requirement line runs down, across and down, joined with no gaps")

@@ -84,7 +84,8 @@ class VampireStagesTest {
     assertTrue(eldest.combat().thinkTicks() < lord.combat().thinkTicks());
     assertEquals(
         tree.keySet(),
-        Set.copyOf(SkillPicks.every(SkillPicks.forStage(tree, branches, eldest.skills()))));
+        Set.copyOf(
+            SkillPicks.every(SkillPicks.forStage(tree, branches, eldest.skills(), skill -> true))));
   }
 
   static Stream<VampireStage> wild() {

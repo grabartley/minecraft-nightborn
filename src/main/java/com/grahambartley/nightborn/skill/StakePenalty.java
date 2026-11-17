@@ -32,7 +32,7 @@ public final class StakePenalty {
             .filter(
                 line -> !belongs(removed, line, bloodlineOf) || belongs(kept, line, bloodlineOf))
             .toList();
-    return new TreeProgress(earned, progress.blood(), kept, bloodlines);
+    return progress.keeping(earned, kept, bloodlines);
   }
 
   private static boolean belongs(
