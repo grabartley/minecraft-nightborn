@@ -52,7 +52,7 @@ public class WardGameTest implements FabricGameTest {
   static final String SHORT_RANGE = "ward-short-range";
   static final int SHORT = 3;
 
-  private NightbornConfig beforeBites = NightbornConfig.DEFAULTS;
+  private static NightbornConfig beforeBites = NightbornConfig.DEFAULTS;
 
   @BeforeBatch(batchId = BITES)
   public void pvpOnAndNoStruggling(final ServerWorld world) {
@@ -68,7 +68,7 @@ public class WardGameTest implements FabricGameTest {
     ServerConfigService.update(world.getServer(), beforeBites);
   }
 
-  private NightbornConfig beforeShortRange = NightbornConfig.DEFAULTS;
+  private static NightbornConfig beforeShortRange = NightbornConfig.DEFAULTS;
 
   @BeforeBatch(batchId = SHORT_RANGE)
   public void shortRanges(final ServerWorld world) {

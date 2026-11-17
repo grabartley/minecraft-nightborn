@@ -55,8 +55,8 @@ public class VampireMobGameTest implements FabricGameTest {
   static final int ESCAPED_AT = 110;
   static final int LIGHT_SETTLED = 20;
 
-  private int mobTurnChanceBefore;
-  private int downedSecondsBefore;
+  private static int mobTurnChanceBefore;
+  private static int downedSecondsBefore;
 
   @BeforeBatch(batchId = NOON_BATCH)
   public void pinNoon(final ServerWorld world) {
