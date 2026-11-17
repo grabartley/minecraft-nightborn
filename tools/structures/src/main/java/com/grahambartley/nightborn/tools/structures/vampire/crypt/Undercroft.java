@@ -86,7 +86,7 @@ public final class Undercroft {
     Furnishing.table(t, 6, 1, 6);
     Furnishing.chair(t, 5, 1, 6, "east");
     Furnishing.chair(t, 7, 1, 6, "west");
-    Furnishing.chalice(t, 6, 2, 6, "empty");
+    Furnishing.gramophone(t, 6, 2, 6, "south");
     t.set(
         2, 1, 10, BlockState.of("lectern", "facing", "east", "has_book", false, "powered", false));
     t.set(1, 1, 11, "bookshelf");

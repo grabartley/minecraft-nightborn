@@ -23,13 +23,15 @@ class FurnitureKindTest {
         Arguments.of(DecorBlocks.ORNATE_CHAIR, FurnitureKind.SEAT),
         Arguments.of(DecorBlocks.BURGUNDY_VELVET_DRAPE, FurnitureKind.DRAPE),
         Arguments.of(DecorBlocks.EMERALD_VELVET_DRAPE, FurnitureKind.DRAPE),
+        Arguments.of(DecorBlocks.GRAMOPHONE, FurnitureKind.GRAMOPHONE),
+        Arguments.of(Blocks.JUKEBOX, null),
         Arguments.of(Blocks.STONE, null),
         Arguments.of(Blocks.OAK_STAIRS, null));
   }
 
   @ParameterizedTest(name = "{0}: {1}")
   @MethodSource("blocks")
-  @DisplayName("chairs and drapes are known by their block")
+  @DisplayName("chairs, drapes and gramophones are known by their block")
   void byBlock(final Block block, final FurnitureKind kind) {
     assertEquals(Optional.ofNullable(kind), FurnitureKind.of(block.getDefaultState()));
   }

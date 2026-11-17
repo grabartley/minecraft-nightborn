@@ -50,7 +50,9 @@ class ConfigPacketCodecTest {
   void clampsHostileValues() {
     final ByteBuf buf = Unpooled.buffer();
     ConfigPacketCodec.write(NightbornConfig.DEFAULTS, buf);
-    buf.setByte(1, 0x7F);
+    final ByteBuf countOnly = Unpooled.buffer();
+    PacketCodecs.VAR_INT.encode(countOnly, NightbornConfig.SETTINGS.size());
+    buf.setByte(countOnly.readableBytes(), 0x7F);
     final NightbornConfig read = ConfigPacketCodec.read(buf);
     assertEquals(100, read.turning().biteTurnChance());
   }

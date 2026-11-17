@@ -1,0 +1,8 @@
+{
+  "sound_event": "nightborn:music_disc.adagio_in_f_minor",
+  "description": {
+    "translate": "jukebox_song.nightborn.adagio_in_f_minor"
+  },
+  "length_in_seconds": 486.49,
+  "comparator_output": 4
+}

@@ -102,6 +102,13 @@
       "entries": [
         { "type": "minecraft:item", "name": "nightborn:castle_signet", "conditions": [{ "condition": "minecraft:location_check", "predicate": { "structures": "nightborn:castle" } }] }
       ]
+    },
+    {
+      "rolls": 1,
+      "conditions": [{ "condition": "minecraft:random_chance", "chance": 0.3 }],
+      "entries": [
+        { "type": "minecraft:tag", "name": "nightborn:music_discs", "expand": true }
+      ]
     }
   ]
 }

@@ -1,6 +1,7 @@
 package com.grahambartley.nightborn.decor;
 
 import com.grahambartley.nightborn.Nightborn;
+import com.grahambartley.nightborn.gramophone.GramophoneBlockEntity;
 import net.minecraft.block.Block;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.registry.Registries;
@@ -25,6 +26,13 @@ public final class DecorBlockEntities {
           Registries.BLOCK_ENTITY_TYPE,
           Identifier.of(Nightborn.MOD_ID, "weapon_rack"),
           BlockEntityType.Builder.create(WeaponRackBlockEntity::new, DecorBlocks.WEAPON_RACK)
+              .build());
+
+  public static final BlockEntityType<GramophoneBlockEntity> GRAMOPHONE =
+      Registry.register(
+          Registries.BLOCK_ENTITY_TYPE,
+          Identifier.of(Nightborn.MOD_ID, "gramophone"),
+          BlockEntityType.Builder.create(GramophoneBlockEntity::new, DecorBlocks.GRAMOPHONE)
               .build());
 
   private DecorBlockEntities() {}

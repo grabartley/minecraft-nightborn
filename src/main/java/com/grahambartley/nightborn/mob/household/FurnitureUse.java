@@ -4,6 +4,7 @@ import com.grahambartley.nightborn.decor.ChairBlock;
 import com.grahambartley.nightborn.decor.DrapeBlock;
 import com.grahambartley.nightborn.decor.FlameToggle;
 import com.grahambartley.nightborn.decor.LightableFurnitureBlock;
+import com.grahambartley.nightborn.gramophone.GramophoneBlockEntity;
 import net.minecraft.block.AbstractCandleBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -32,6 +33,16 @@ public final class FurnitureUse {
 
   public static boolean is(final ServerWorld world, final BlockPos pos, final FurnitureKind kind) {
     return FurnitureKind.of(world.getBlockState(pos)).filter(kind::equals).isPresent();
+  }
+
+  public static boolean gramophoneReady(final ServerWorld world, final BlockPos pos) {
+    return world.getBlockEntity(pos) instanceof GramophoneBlockEntity gramophone
+        && gramophone.ready();
+  }
+
+  public static boolean startGramophone(final ServerWorld world, final BlockPos pos) {
+    return world.getBlockEntity(pos) instanceof GramophoneBlockEntity gramophone
+        && gramophone.play();
   }
 
   public static boolean needs(final ServerWorld world, final BlockPos pos, final Chore chore) {

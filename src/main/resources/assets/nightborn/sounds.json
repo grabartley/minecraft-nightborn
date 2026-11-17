@@ -579,5 +579,37 @@
         "pitch": 0.6
       }
     ]
+  },
+  "music_disc.prelude_in_a_minor": {
+    "sounds": [
+      {
+        "name": "nightborn:music/prelude_in_a_minor",
+        "stream": true
+      }
+    ]
+  },
+  "music_disc.variation_25": {
+    "sounds": [
+      {
+        "name": "nightborn:music/variation_25",
+        "stream": true
+      }
+    ]
+  },
+  "music_disc.la_malinconia": {
+    "sounds": [
+      {
+        "name": "nightborn:music/la_malinconia",
+        "stream": true
+      }
+    ]
+  },
+  "music_disc.adagio_in_f_minor": {
+    "sounds": [
+      {
+        "name": "nightborn:music/adagio_in_f_minor",
+        "stream": true
+      }
+    ]
   }
 }

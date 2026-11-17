@@ -5,6 +5,7 @@ import com.grahambartley.nightborn.tools.structures.template.BlockState;
 import com.grahambartley.nightborn.tools.structures.template.Facing;
 import com.grahambartley.nightborn.tools.structures.template.Pos;
 import com.grahambartley.nightborn.tools.structures.template.Template;
+import java.util.List;
 
 public final class Furnishing {
 
@@ -12,6 +13,13 @@ public final class Furnishing {
   public static final String BOOK = "minecraft:writable_book";
   public static final String PORTRAIT = "nightborn:portrait";
   public static final int PORTRAITS = 3;
+  public static final String GRAMOPHONE = "nightborn:gramophone";
+  public static final List<String> DISCS =
+      List.of(
+          "nightborn:music_disc_prelude_in_a_minor",
+          "nightborn:music_disc_variation_25",
+          "nightborn:music_disc_la_malinconia",
+          "nightborn:music_disc_adagio_in_f_minor");
 
   private Furnishing() {}
 
@@ -76,6 +84,22 @@ public final class Furnishing {
         y,
         z,
         BlockState.of(PORTRAIT, "facing", facing, "portrait", Stone.roll(x, y, z) % PORTRAITS));
+  }
+
+  public static void gramophone(
+      final Template t, final int x, final int y, final int z, final String facing) {
+    t.set(
+        x,
+        y,
+        z,
+        BlockState.of(GRAMOPHONE, "facing", facing, "has_record", true, "playing", false),
+        Nbt.compound(
+            "id",
+            GRAMOPHONE,
+            "RecordItem",
+            Nbt.compound("id", DISCS.get(Stone.roll(x, y, z) % DISCS.size()), "count", 1),
+            "Ambient",
+            true));
   }
 
   public static void candles(

@@ -14,7 +14,9 @@
 		"ItemRendererMixin",
 		"ItemModelsMixin",
 		"MinecraftClientMixin",
-		"PlayerEntityRendererMixin"
+		"MusicTrackerMixin",
+		"PlayerEntityRendererMixin",
+		"WorldRendererAccessor"
 	],
 	"injectors": {
 		"defaultRequire": 1

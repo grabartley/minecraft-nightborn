@@ -34,7 +34,8 @@ class HobbyChoiceTest {
         Arguments.of(NightPhase.PASTIME, all, 0.99, Hobby.READ),
         Arguments.of(NightPhase.PASTIME, EnumSet.of(Hobby.SIT, Hobby.STROLL), 0.99, Hobby.SIT),
         Arguments.of(NightPhase.PASTIME, EnumSet.of(Hobby.CONVERSE, Hobby.STROLL), 0.5, null),
-        Arguments.of(NightPhase.WIND_DOWN, all, 0.3, Hobby.READ));
+        Arguments.of(NightPhase.WIND_DOWN, all, 0.3, Hobby.READ),
+        Arguments.of(NightPhase.PASTIME, EnumSet.of(Hobby.GRAMOPHONE, Hobby.STROLL), 0.5, null));
   }
 
   @ParameterizedTest(name = "{0}, can do {1}, roll {2}: {3}")

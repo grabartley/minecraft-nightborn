@@ -77,7 +77,7 @@ public final class Grotto {
     Furnishing.table(t, 11, 1, 11);
     Furnishing.chair(t, 10, 1, 11, "east");
     Furnishing.chair(t, 12, 1, 11, "west");
-    Furnishing.candles(t, 11, 2, 11, 3, false);
+    Furnishing.gramophone(t, 11, 2, 11, "south");
     t.set(9, 1, 12, Furnishing.splatter("south", 2));
     t.set(13, 1, 3, Furnishing.splatter("east", 1));
   }

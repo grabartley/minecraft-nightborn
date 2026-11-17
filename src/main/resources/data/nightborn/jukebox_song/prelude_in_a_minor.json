@@ -1,0 +1,8 @@
+{
+  "sound_event": "nightborn:music_disc.prelude_in_a_minor",
+  "description": {
+    "translate": "jukebox_song.nightborn.prelude_in_a_minor"
+  },
+  "length_in_seconds": 197.63,
+  "comparator_output": 1
+}

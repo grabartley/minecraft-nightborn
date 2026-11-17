@@ -241,6 +241,7 @@ public final class Keep {
       Furnishing.chalice(t, x, Castle.FLOOR + 1, 25, "villager");
       Furnishing.candles(t, x, Castle.FLOOR + 1, 27, 3, false);
     }
+    Furnishing.gramophone(t, Castle.MID - 3, Castle.FLOOR + 1, 26, "east");
     for (int z = 24; z <= 27; z++) {
       Furnishing.chair(t, Castle.MID - 4, Castle.FLOOR, z, "east");
       Furnishing.chair(t, Castle.MID + 4, Castle.FLOOR, z, "west");

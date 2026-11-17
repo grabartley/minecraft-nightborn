@@ -23,6 +23,7 @@ import com.grahambartley.nightborn.decor.DecorEntities;
 import com.grahambartley.nightborn.decor.FurnitureBlockEntity;
 import com.grahambartley.nightborn.familiar.Familiars;
 import com.grahambartley.nightborn.gear.GearBlocks;
+import com.grahambartley.nightborn.gramophone.GramophoneBlockEntity;
 import com.grahambartley.nightborn.guild.GuildMobs;
 import com.grahambartley.nightborn.mob.NightbornMobs;
 import com.grahambartley.nightborn.occult.GhostlyFamiliars;
@@ -34,6 +35,7 @@ import com.grahambartley.nightborn.render.CoffinArt;
 import com.grahambartley.nightborn.render.CoffinRenderer;
 import com.grahambartley.nightborn.render.FurnitureBlockRenderer;
 import com.grahambartley.nightborn.render.GeoBlockItemRenderer;
+import com.grahambartley.nightborn.render.GramophoneRenderer;
 import com.grahambartley.nightborn.render.RitualAltarRenderer;
 import com.grahambartley.nightborn.render.VampireBatRenderer;
 import com.grahambartley.nightborn.render.VampireRenderer;
@@ -65,6 +67,11 @@ public class NightbornClient implements ClientModInitializer {
         RitualBlocks.ALTAR,
         new GeoBlockItemRenderer<>(
             RitualBlocks.ALTAR, RitualAltarRenderer::new, RitualAltarBlockEntity::new));
+    BlockEntityRendererFactories.register(DecorBlockEntities.GRAMOPHONE, GramophoneRenderer::new);
+    BuiltinItemRendererRegistry.INSTANCE.register(
+        DecorBlocks.GRAMOPHONE,
+        new GeoBlockItemRenderer<>(
+            DecorBlocks.GRAMOPHONE, GramophoneRenderer::new, GramophoneBlockEntity::new));
     SplatterModels.register();
     Coffins.all()
         .forEach(

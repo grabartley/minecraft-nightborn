@@ -11,7 +11,13 @@ import org.junit.jupiter.params.provider.CsvSource;
 class HobbyTest {
 
   @ParameterizedTest(name = "{1} reads as {0}")
-  @CsvSource({"SIT, sit", "READ, read", "CONVERSE, converse", "STROLL, stroll"})
+  @CsvSource({
+    "SIT, sit",
+    "READ, read",
+    "CONVERSE, converse",
+    "STROLL, stroll",
+    "GRAMOPHONE, gramophone"
+  })
   @DisplayName("each hobby is named in data by its lower case id")
   void readsFromData(final Hobby hobby, final String id) {
     assertEquals(id, hobby.asString());

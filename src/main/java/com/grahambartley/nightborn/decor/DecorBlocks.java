@@ -1,6 +1,7 @@
 package com.grahambartley.nightborn.decor;
 
 import com.grahambartley.nightborn.Nightborn;
+import com.grahambartley.nightborn.gramophone.GramophoneBlock;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -141,6 +142,12 @@ public final class DecorBlocks {
           settings -> new StatueBlock(settings, GARGOYLE_SHAPE),
           AbstractBlock.Settings.copy(Blocks.STONE).mapColor(MapColor.STONE_GRAY).nonOpaque());
 
+  public static final Block GRAMOPHONE =
+      register(
+          "gramophone",
+          GramophoneBlock::new,
+          AbstractBlock.Settings.copy(Blocks.JUKEBOX).mapColor(MapColor.BLACK).nonOpaque());
+
   static {
     BuildingFamily.ALL.forEach(DecorBlocks::registerFamily);
   }
@@ -157,6 +164,7 @@ public final class DecorBlocks {
     flammable.add(TROPHY_MOUNT, WOOD_BURN, WOOD_SPREAD);
     flammable.add(PORTRAIT, WOOD_BURN, WOOD_SPREAD);
     flammable.add(WANTED_POSTER, CLOTH_BURN, CLOTH_SPREAD);
+    flammable.add(GRAMOPHONE, WOOD_BURN, WOOD_SPREAD);
     BuildingFamily.ALL.stream()
         .filter(family -> family.material() == BuildingFamily.Material.WOOD)
         .flatMap(family -> family.ids().stream())

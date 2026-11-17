@@ -46,6 +46,7 @@ public final class BloodPoolDen {
     Furnishing.chair(t, CENTRE - 5, 1, CENTRE, "east");
     Furnishing.candelabra(t, CENTRE - 4, 1, CENTRE - 4);
     Furnishing.candelabra(t, CENTRE + 4, 1, CENTRE + 4);
+    Furnishing.gramophone(t, CENTRE + 4, 1, CENTRE - 4, "west");
     t.set(CENTRE + 4, 1, CENTRE - 1, Furnishing.splatter("west", 1));
     t.set(CENTRE - 1, 1, CENTRE - 4, Furnishing.splatter("north", 3));
     t.set(CENTRE - 4, 1, CENTRE + 2, Furnishing.splatter("east", 0));

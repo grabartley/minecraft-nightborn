@@ -16,10 +16,10 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 
-class RitualAltarModelTest {
+class RitualAltarRendererTest {
 
-  private static final Path GEO = GeoAssets.file(FurnitureArt.geo(RitualAltarModel.ART));
-  private static final Path CLIPS = GeoAssets.file(FurnitureArt.animation(RitualAltarModel.ART));
+  private static final Path GEO = GeoAssets.file(FurnitureArt.geo(RitualAltarRenderer.ART));
+  private static final Path CLIPS = GeoAssets.file(FurnitureArt.animation(RitualAltarRenderer.ART));
 
   @Test
   @DisplayName("the altar's sheet ships at the size its geometry maps")

@@ -8,7 +8,8 @@ public enum Hobby implements StringIdentifiable {
   SIT,
   READ,
   CONVERSE,
-  STROLL;
+  STROLL,
+  GRAMOPHONE;
 
   public static final Codec<Hobby> CODEC = StringIdentifiable.createCodec(Hobby::values);
 

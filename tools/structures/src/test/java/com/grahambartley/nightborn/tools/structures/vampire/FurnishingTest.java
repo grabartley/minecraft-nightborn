@@ -5,6 +5,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.grahambartley.nightborn.tools.structures.template.Pos;
 import com.grahambartley.nightborn.tools.structures.template.Template;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -74,8 +82,7 @@ class FurnishingTest {
     assertTrue(t.get(2, 1, 2).contains("facing=" + facing));
     assertTrue(t.get(2, 1, 2).contains("has_book=true"));
     assertEquals(
-        Furnishing.BOOK,
-        ((java.util.Map<?, ?>) t.blockData().get(new Pos(2, 1, 2)).get("Book")).get("id"));
+        Furnishing.BOOK, ((Map<?, ?>) t.blockData().get(new Pos(2, 1, 2)).get("Book")).get("id"));
   }
 
   @ParameterizedTest(name = "a portrait at {0},{1},{2} hangs facing {3}")
@@ -91,7 +98,7 @@ class FurnishingTest {
   @Test
   void portraitsVaryAcrossAWall() {
     final Template t = new Template("vampire/test", 1, 1, 30);
-    final java.util.Set<String> sitters = new java.util.HashSet<>();
+    final Set<String> sitters = new HashSet<>();
     for (int z = 0; z < 30; z++) {
       Furnishing.portrait(t, 0, 0, z, "east");
       sitters.add(t.get(0, 0, z).replaceAll(".*portrait=(\\d).*", "$1"));
@@ -108,5 +115,44 @@ class FurnishingTest {
     assertTrue(t.get(1, 1, 1).contains("lit=false"));
     assertTrue(t.get(2, 1, 1).contains("lit=false"));
     assertTrue(t.get(3, 1, 1).contains("candles=2") && t.get(3, 1, 1).contains("lit=false"));
+  }
+
+  @ParameterizedTest(name = "a gramophone at {0},{1},{2} facing {3} holds a disc it starts itself")
+  @CsvSource({"1, 1, 1, east", "2, 3, 1, west", "4, 2, 3, south"})
+  void gramophonesComeLoaded(final int x, final int y, final int z, final String facing) {
+    final Template t = new Template("vampire/test", 6, 5, 6);
+    Furnishing.gramophone(t, x, y, z, facing);
+    final Map<String, Object> data = t.blockData().get(new Pos(x, y, z));
+    assertTrue(t.get(x, y, z).startsWith(Furnishing.GRAMOPHONE + "["));
+    assertTrue(t.get(x, y, z).contains("facing=" + facing));
+    assertTrue(t.get(x, y, z).contains("has_record=true"));
+    assertTrue(t.get(x, y, z).contains("playing=false"));
+    assertEquals(Furnishing.GRAMOPHONE, data.get("id"));
+    assertEquals(true, data.get("Ambient"));
+    assertTrue(Furnishing.DISCS.contains(((Map<?, ?>) data.get("RecordItem")).get("id")));
+  }
+
+  @Test
+  void gramophoneDiscsVaryAcrossAHouse() {
+    final Template t = new Template("vampire/test", 1, 1, 40);
+    final Set<Object> discs = new HashSet<>();
+    for (int z = 0; z < 40; z++) {
+      Furnishing.gramophone(t, 0, 0, z, "east");
+      discs.add(((Map<?, ?>) t.blockData().get(new Pos(0, 0, z)).get("RecordItem")).get("id"));
+    }
+    assertEquals(Furnishing.DISCS.size(), discs.size());
+  }
+
+  @Test
+  void structureDiscsAreExactlyTheDiscsTheModTags() throws IOException {
+    final String tag =
+        Files.readString(
+            Path.of("../../src/main/resources/data/nightborn/tags/item/music_discs.json"));
+    final Set<String> tagged = new HashSet<>();
+    final Matcher ids = Pattern.compile("\"(nightborn:[a-z0-9_]+)\"").matcher(tag);
+    while (ids.find()) {
+      tagged.add(ids.group(1));
+    }
+    assertEquals(tagged, Set.copyOf(Furnishing.DISCS));
   }
 }

@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "decorations",
+  "pattern": [
+    "GGG",
+    "PJP",
+    "PPP"
+  ],
+  "key": {
+    "G": {
+      "item": "minecraft:gold_ingot"
+    },
+    "J": {
+      "item": "minecraft:jukebox"
+    },
+    "P": {
+      "item": "nightborn:ebony_planks"
+    }
+  },
+  "result": {
+    "id": "nightborn:gramophone",
+    "count": 1
+  }
+}

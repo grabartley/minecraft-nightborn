@@ -10,6 +10,7 @@ import com.grahambartley.nightborn.decor.DecorItemGroup;
 import com.grahambartley.nightborn.faction.FactionAttachment;
 import com.grahambartley.nightborn.familiar.Familiars;
 import com.grahambartley.nightborn.gear.GearFeatures;
+import com.grahambartley.nightborn.gramophone.MusicDiscs;
 import com.grahambartley.nightborn.guild.GuildFeatures;
 import com.grahambartley.nightborn.hunter.HunterFeatures;
 import com.grahambartley.nightborn.mind.MindFeatures;
@@ -35,6 +36,7 @@ public class Nightborn implements ModInitializer {
     FactionAttachment.register();
     DecorBlocks.initialize();
     DecorBlockEntities.initialize();
+    MusicDiscs.initialize();
     Coffins.initialize();
     DecorEntities.initialize();
     DecorItemGroup.initialize();

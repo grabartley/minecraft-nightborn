@@ -3,6 +3,7 @@ package com.grahambartley.nightborn.mob.household;
 import com.grahambartley.nightborn.Nightborn;
 import com.grahambartley.nightborn.decor.ChairBlock;
 import com.grahambartley.nightborn.decor.DrapeBlock;
+import com.grahambartley.nightborn.gramophone.GramophoneBlock;
 import java.util.Optional;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -15,7 +16,8 @@ public enum FurnitureKind {
   SEAT,
   BOOKS,
   LIGHT,
-  DRAPE;
+  DRAPE,
+  GRAMOPHONE;
 
   public static final TagKey<Block> READING =
       TagKey.of(RegistryKeys.BLOCK, Identifier.of(Nightborn.MOD_ID, "vampire_reading"));
@@ -28,6 +30,9 @@ public enum FurnitureKind {
     }
     if (state.getBlock() instanceof DrapeBlock) {
       return Optional.of(DRAPE);
+    }
+    if (state.getBlock() instanceof GramophoneBlock) {
+      return Optional.of(GRAMOPHONE);
     }
     if (state.isIn(READING)) {
       return Optional.of(BOOKS);
