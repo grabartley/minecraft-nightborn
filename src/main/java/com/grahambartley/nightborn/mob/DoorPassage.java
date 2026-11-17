@@ -11,10 +11,7 @@ public final class DoorPassage {
   private DoorPassage() {}
 
   public static void allow(final MobEntity mob) {
-    if (!(mob.getNavigation() instanceof MobNavigation navigation)) {
-      return;
-    }
-    navigation.setCanPathThroughDoors(true);
+    ((MobNavigation) mob.getNavigation()).setCanPathThroughDoors(true);
     mob.goalSelector.add(PRIORITY, new LongDoorInteractGoal(mob, true));
   }
 }

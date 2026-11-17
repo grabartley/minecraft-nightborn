@@ -45,6 +45,7 @@ public class VampireDoorGameTest implements FabricGameTest {
   private static VampireEntity vampire(final TestContext context) {
     final VampireEntity vampire = context.spawnEntity(NightbornMobs.VAMPIRE, NEAR);
     vampire.setAiDisabled(true);
+    vampire.setOnGround(true);
     return vampire;
   }
 
@@ -98,7 +99,8 @@ public class VampireDoorGameTest implements FabricGameTest {
             return;
           }
           goal.stop();
-          context.assertTrue(vampire.getZ() > doorway, "the vampire is through the doorway");
+          context.assertTrue(
+              vampire.getZ() > doorway, "the vampire is past the door when it closes");
           context.assertFalse(open(context), "the vampire closed the door behind it");
           context.complete();
         });
@@ -113,8 +115,8 @@ public class VampireDoorGameTest implements FabricGameTest {
         START,
         () -> {
           final Path path = pathAcross(context, vampire);
-          context.assertFalse(
-              path != null && path.reachesTarget(), "no path leads through an iron door");
+          context.assertTrue(path != null, "the vampire still looks for a way across");
+          context.assertFalse(path.reachesTarget(), "no path leads through an iron door");
           context.assertFalse(walkInto(vampire, path, goal), "an iron door never starts the goal");
           context.assertFalse(open(context), "the iron door stays shut");
           context.complete();
