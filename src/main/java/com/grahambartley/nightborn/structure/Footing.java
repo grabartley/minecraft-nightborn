@@ -88,10 +88,10 @@ public record Footing(
     return accepts(
         samples(box, start).stream()
             .map(
-                point -> {
-                  final int floor = height(context, point, Heightmap.Type.OCEAN_FLOOR_WG);
-                  return new Column(dry ? surface(context, point) : floor, floor);
-                }));
+                point ->
+                    new Column(
+                        surface(context, point),
+                        height(context, point, Heightmap.Type.OCEAN_FLOOR_WG))));
   }
 
   private List<Integer> steps(final int min, final int max) {

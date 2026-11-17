@@ -117,4 +117,24 @@ class DonjonRoomsTest {
       final int x, final int y, final int z, final String block) {
     assertTrue(built().get(x, y, z).contains(block), built().get(x, y, z));
   }
+
+  @ParameterizedTest(name = "storey {0}: the portrait at {1} hangs on solid wall facing {2}")
+  @CsvSource({
+    "1, 38, west",
+    "1, 24, east",
+    "2, 38, west",
+    "2, 24, east",
+    "3, 38, west",
+    "3, 24, east",
+    "6, 24, east",
+    "6, 38, west"
+  })
+  void sidePortraitsHangOnSolidWall(final int storey, final int x, final String facing) {
+    final Template t = built();
+    final int y = Donjon.floor(storey) + 2;
+    final int z = Donjon.NORTH + 6;
+    assertTrue(t.get(x, y, z).contains("portrait"), t.get(x, y, z));
+    final int back = facing.equals("west") ? x + 1 : x - 1;
+    assertTrue(Turret.solid(t.get(back, y, z)), t.get(back, y, z));
+  }
 }

@@ -1,6 +1,7 @@
 package com.grahambartley.nightborn.tools.structures.vampire;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.grahambartley.nightborn.tools.structures.template.Template;
@@ -74,6 +75,6 @@ class RoofTest {
     t.set(3, 4, 5, wallTop);
     Roof.gable(t, Axis.X, 3, 6, 1, 9, 4, SLATE, WALL);
     assertEquals(wallTop, t.get(3, 4, 5));
-    assertEquals(null, t.get(4, 4, 5));
+    assertNull(t.get(4, 4, 5));
   }
 }

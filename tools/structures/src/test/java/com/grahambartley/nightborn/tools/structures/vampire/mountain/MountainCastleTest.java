@@ -233,11 +233,7 @@ class MountainCastleTest {
     final String facing = state.replaceAll(".*facing=(\\w+).*", "$1");
     final Pos step = Facing.STEP.get(facing);
     final String back = t.get(hung.x() - step.x(), hung.y(), hung.z() - step.z());
-    return back != null
-        && !StructureWalk.open(back)
-        && !back.contains("pane")
-        && !back.contains("glass")
-        && !back.contains("bars");
+    return Turret.solid(back) && !StructureWalk.open(back);
   }
 
   @ParameterizedTest(name = "{0}: every {1} hangs on a solid wall, never a window or a doorway")

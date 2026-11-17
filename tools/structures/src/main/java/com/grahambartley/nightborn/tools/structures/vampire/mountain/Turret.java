@@ -68,10 +68,17 @@ public record Turret(int cx, int cz, int radius, int base, int top, boolean roun
         new Climb(cx - 1, cz + radius - 1, 0, 1, "north"));
   }
 
+  public static boolean solid(final String state) {
+    return state != null
+        && !BlockState.AIR.equals(state)
+        && !state.contains("pane")
+        && !state.contains("glass")
+        && !state.contains("bars");
+  }
+
   private boolean solidBehind(final Template t, final Climb climb) {
     for (int y = base + 1; y < top; y++) {
-      final String back = t.get(climb.x() + climb.backX(), y, climb.z() + climb.backZ());
-      if (back == null || BlockState.AIR.equals(back) || back.contains("pane")) {
+      if (!solid(t.get(climb.x() + climb.backX(), y, climb.z() + climb.backZ()))) {
         return false;
       }
     }
@@ -80,7 +87,11 @@ public record Turret(int cx, int cz, int radius, int base, int top, boolean roun
 
   private void ladder(final Template t) {
     final Climb climb =
-        climbs().stream().filter(c -> solidBehind(t, c)).findFirst().orElse(climbs().get(0));
+        climbs().stream()
+            .filter(c -> solidBehind(t, c))
+            .findFirst()
+            .orElseThrow(
+                () -> new IllegalStateException("No solid wall for the ladder in " + this));
     for (int y = base + 1; y < top; y++) {
       t.set(
           climb.x(),
