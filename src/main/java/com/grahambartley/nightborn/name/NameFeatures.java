@@ -8,5 +8,6 @@ public final class NameFeatures {
     NamePools.register();
     NameStyles.register();
     ServantNaming.register();
+    StageNames.register();
   }
 }

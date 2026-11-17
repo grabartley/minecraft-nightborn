@@ -22,7 +22,7 @@ class PlayerCueTest {
   }
 
   @ParameterizedTest(name = "index {0} -> {1}")
-  @CsvSource({"-1, VOMIT", "2, VOMIT", "99, VOMIT"})
+  @CsvSource({"-1, VOMIT", "3, VOMIT", "99, VOMIT"})
   @DisplayName("an index no cue owns falls back to the first cue instead of failing")
   void unknownIndex(final int index, final PlayerCue expected) {
     final ByteBuf buf = Unpooled.buffer();

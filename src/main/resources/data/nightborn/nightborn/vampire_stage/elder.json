@@ -20,5 +20,17 @@
     "name_color": "gold",
     "marks": "nightborn:textures/entity/vampire/stage/elder"
   },
-  "loot": "nightborn:entities/vampire/elder"
+  "loot": "nightborn:entities/vampire/elder",
+  "age": {
+    "name": {
+      "translate": "nightborn.stage.elder"
+    },
+    "deed": {
+      "act": "end",
+      "victims": "nightborn:deed/elder",
+      "description": {
+        "translate": "nightborn.age.deed.elder"
+      }
+    }
+  }
 }

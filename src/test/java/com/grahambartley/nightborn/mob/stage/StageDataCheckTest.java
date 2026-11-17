@@ -29,7 +29,8 @@ class StageDataCheckTest {
         new StageSkills(ConstantIntProvider.create(count), weights, 1),
         StageCombat.PLAIN,
         StageLook.PLAIN,
-        Optional.empty());
+        Optional.empty(),
+        Optional.of(StageFixtures.age("elder")));
   }
 
   static Stream<Arguments> stages() {
@@ -60,8 +61,23 @@ class StageDataCheckTest {
                     new StageSkills(ConstantIntProvider.create(0), Map.of(), 1, true),
                     StageCombat.PLAIN,
                     StageLook.PLAIN,
+                    Optional.empty(),
+                    Optional.of(StageFixtures.age("eldest")))),
+            List.of()),
+        Arguments.of(
+            "no stage a player can be",
+            Map.of(
+                ELDER,
+                new VampireStage(
+                    2,
+                    10,
+                    StageBody.SAME,
+                    new StageSkills(ConstantIntProvider.create(1), Map.of(), 1),
+                    StageCombat.PLAIN,
+                    StageLook.PLAIN,
+                    Optional.empty(),
                     Optional.empty())),
-            List.of()));
+            List.of("no vampire stage is open to players")));
   }
 
   @ParameterizedTest(name = "{0}")

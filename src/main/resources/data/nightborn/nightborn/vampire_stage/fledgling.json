@@ -11,5 +11,10 @@
     "power_dodge_chance": 10
   },
   "look": { "idle": "idle_fledgling", "name_color": "gray" },
-  "loot": "nightborn:entities/vampire/fledgling"
+  "loot": "nightborn:entities/vampire/fledgling",
+  "age": {
+    "name": {
+      "translate": "nightborn.stage.fledgling"
+    }
+  }
 }

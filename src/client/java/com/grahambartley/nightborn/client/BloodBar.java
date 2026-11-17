@@ -16,9 +16,14 @@ public final class BloodBar {
   private BloodBar() {}
 
   public static void draw(
-      final DrawContext context, final int blood, final int top, final int right) {
-    for (int i = 0; i < ICONS; i++) {
-      final int x = right - i * STEP - ICON_SIZE;
+      final DrawContext context,
+      final int blood,
+      final int capacity,
+      final int top,
+      final int right) {
+    final BloodBarLayout layout = BloodBarLayout.of(capacity);
+    for (int i = layout.icons() - 1; i >= 0; i--) {
+      final int x = layout.left(right, i);
       context.drawGuiTexture(EMPTY, x, top, ICON_SIZE, ICON_SIZE);
       final Identifier fill = BloodBarIcons.fill(i, blood);
       if (fill != null) {

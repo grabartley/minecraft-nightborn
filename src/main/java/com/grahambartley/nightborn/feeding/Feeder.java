@@ -2,6 +2,8 @@ package com.grahambartley.nightborn.feeding;
 
 import com.grahambartley.nightborn.advancement.Milestone;
 import com.grahambartley.nightborn.advancement.MilestoneCriterion;
+import com.grahambartley.nightborn.age.AgeDeeds;
+import com.grahambartley.nightborn.age.Ageing;
 import com.grahambartley.nightborn.blood.BloodAttachment;
 import com.grahambartley.nightborn.blood.BloodBottleItem;
 import com.grahambartley.nightborn.blood.BloodValue;
@@ -81,6 +83,7 @@ final class Feeder {
     if (!victim.isAlive()) {
       if (sip.drains()) {
         SkillEarning.fromDrain(vampire, config.skills());
+        AgeDeeds.drained(vampire, victim);
         PlayerCues.send(vampire, PlayerCue.DRAIN);
       }
       return Result.DRAINED;
@@ -145,6 +148,7 @@ final class Feeder {
     session.pendingBlood(split.remainder());
     if (split.whole() > 0) {
       BloodAttachment.set(vampire, BloodAttachment.get(vampire) + split.whole());
+      Ageing.drank(vampire, split.whole());
     }
   }
 

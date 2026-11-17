@@ -2,6 +2,7 @@ package com.grahambartley.nightborn.vampire;
 
 import com.grahambartley.nightborn.advancement.Milestone;
 import com.grahambartley.nightborn.advancement.MilestoneCriterion;
+import com.grahambartley.nightborn.age.Ageing;
 import com.grahambartley.nightborn.blood.BloodAttachment;
 import com.grahambartley.nightborn.blood.StarvingAttachment;
 import com.grahambartley.nightborn.coffin.CoffinOwnership;
@@ -13,6 +14,7 @@ import com.grahambartley.nightborn.faction.FactionPlayerList;
 import com.grahambartley.nightborn.feeding.FeedingSessions;
 import com.grahambartley.nightborn.feeding.TurningBite;
 import com.grahambartley.nightborn.levitation.Levitation;
+import com.grahambartley.nightborn.name.StageNames;
 import com.grahambartley.nightborn.sickness.BiteSicknessAttachment;
 import com.grahambartley.nightborn.sickness.BiteSicknessEffect;
 import com.grahambartley.nightborn.skill.SkillAttributes;
@@ -56,6 +58,7 @@ public final class VampireTransitions {
     SkillAttributes.apply(player);
     player.sendMessage(Text.translatable("nightborn.turning.turned"), false);
     FactionPlayerList.refresh(player);
+    StageNames.changed(player);
   }
 
   public static void makeHuman(final ServerPlayerEntity player) {
@@ -63,6 +66,7 @@ public final class VampireTransitions {
     player.removeStatusEffect(BiteSicknessEffect.ENTRY);
     FeedingSessions.end(player);
     FactionAttachment.set(player, Faction.HUMAN);
+    Ageing.clear(player);
     BloodAttachment.set(player, BloodAttachment.FULL);
     Downed.clear(player);
     Weakened.clear(player);

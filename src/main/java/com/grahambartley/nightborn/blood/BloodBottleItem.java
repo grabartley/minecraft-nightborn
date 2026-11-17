@@ -1,5 +1,6 @@
 package com.grahambartley.nightborn.blood;
 
+import com.grahambartley.nightborn.age.Ageing;
 import com.grahambartley.nightborn.config.NightbornConfig;
 import com.grahambartley.nightborn.server.ServerConfigService;
 import com.grahambartley.nightborn.vampire.Vampires;
@@ -11,6 +12,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUsage;
 import net.minecraft.item.Items;
 import net.minecraft.item.tooltip.TooltipType;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.Hand;
@@ -45,9 +47,11 @@ public class BloodBottleItem extends Item {
   }
 
   public static void drink(final PlayerEntity player, final BloodQuality quality) {
-    BloodAttachment.set(
-        player,
-        BloodAttachment.get(player) + bloodRestored(quality, ServerConfigService.current()));
+    final int restored = bloodRestored(quality, ServerConfigService.current());
+    BloodAttachment.set(player, BloodAttachment.get(player) + restored);
+    if (player instanceof ServerPlayerEntity vampire) {
+      Ageing.drank(vampire, restored);
+    }
   }
 
   @Override

@@ -1,7 +1,11 @@
 package com.grahambartley.nightborn.screen;
 
+import com.grahambartley.nightborn.age.AgeAttachment;
+import com.grahambartley.nightborn.age.AgeLadder;
+import com.grahambartley.nightborn.age.AgeProgress;
 import com.grahambartley.nightborn.client.PowerSlotView;
 import com.grahambartley.nightborn.client.SkillKeys;
+import com.grahambartley.nightborn.client.SyncedServerConfig;
 import com.grahambartley.nightborn.network.BuySkillPayload;
 import com.grahambartley.nightborn.skill.Skill;
 import com.grahambartley.nightborn.skill.SkillAttachment;
@@ -118,8 +122,30 @@ public final class SkillScreen extends Screen {
         }
       }
     }
+    if (shownTree == SkillTree.VAMPIRE) {
+      drawAge(context, centre);
+    }
     if (tooltip != null) {
       ThemedTooltip.draw(context, textRenderer, theme, tooltip, mouseX, mouseY);
+    }
+  }
+
+  private void drawAge(final DrawContext context, final int centre) {
+    final AgeProgress progress = AgeAttachment.get(client.player);
+    final AgeLadder ladder = AgeLadder.of(client.world.getRegistryManager());
+    final List<Text> lines =
+        AgeLine.lines(
+            ladder.rung(progress.rank()).map(rung -> rung.age().name()),
+            AgeLine.ahead(progress, ladder, SyncedServerConfig.get().age().needs()));
+    final int top =
+        AgeLine.top(layout.top() + layout.height(), height, lines.size(), textRenderer.fontHeight);
+    for (int line = 0; line < lines.size(); line++) {
+      context.drawCenteredTextWithShadow(
+          textRenderer,
+          lines.get(line),
+          centre,
+          top + line * (textRenderer.fontHeight + AgeLine.LINE_GAP),
+          line == 0 ? theme.title() : theme.muted());
     }
   }
 

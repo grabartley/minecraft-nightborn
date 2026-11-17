@@ -1,5 +1,7 @@
 package com.grahambartley.nightborn.blood;
 
+import com.grahambartley.nightborn.age.AgeAttachment;
+import com.grahambartley.nightborn.age.AgeGifts;
 import com.grahambartley.nightborn.batform.BatForm;
 import com.grahambartley.nightborn.config.NightbornConfig;
 import com.grahambartley.nightborn.downed.Downed;
@@ -22,7 +24,14 @@ public final class BloodTicker {
   public static void tick(
       final PlayerEntity vampire, final HungerManager hunger, final NightbornConfig config) {
     hunger.setExhaustion(
-        metabolise(vampire, hunger.getExhaustion(), config.blood().restingDrainSeconds(), config));
+        metabolise(
+            vampire,
+            hunger.getExhaustion(),
+            AgeGifts.drainSeconds(
+                config.blood().restingDrainSeconds(),
+                AgeAttachment.get(vampire).rank(),
+                config.age().stageDrainSlower()),
+            config));
     hunger.setFoodLevel(BloodAttachment.FULL);
     hunger.setSaturationLevel(PINNED_SATURATION);
   }
