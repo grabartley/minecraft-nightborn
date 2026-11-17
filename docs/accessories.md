@@ -45,8 +45,8 @@ The mod's clothing stays, and two pieces move to the slot that now fits them. No
 | Crown, Mantle and Boots of the Eldest | Armour | Armour, unchanged |
 
 - A piece that moves keeps its name, look, recipe, dye and cuts. It no longer gives armour, as no accessory does, and it no longer wears out.
-- A back piece takes the mod's chest enchantments (Batwing, Mistcloak, Thrift) and a face piece takes its headwear ones (Nocturne, Shroud), and no other accessory takes any. The same enchantment on two worn pieces counts once, at the higher level.
-- With the veil gone from the head, the head needs a second piece (WEAR-1). A new Wide-Brimmed Hat joins the Top Hat: a dark felt hat with a low crown, crafted from 4 wool and 1 leather, dyed like the rest.
+- A back piece takes the mod's chest enchantments (Batwing, Mistcloak, Thrift) and a face piece takes its headwear ones (Nocturne, Shroud), and no other accessory takes any, except the three curses, which are found on any of them (WEAR-6). The same enchantment on two worn pieces counts once, at the higher level.
+- With the veil gone from the head, the head needs a second piece (WEAR-1). A new Wide-Brimmed Hat joins the Top Hat: a dark felt hat with a low crown, crafted from 4 wool and 1 leather, dyed like the rest. It is clothing, worn on the head, and its model is made through the `bbmodel` MCP in both cuts like every other piece.
 - Vampire and hunter mobs keep wearing the veil and the cape as they do today, and still wear only what a player can craft (WEAR-5).
 - Dressed To Kill still asks for clothing in all four armour slots, and Dressed To The Nines for an accessory in every slot.
 
@@ -79,11 +79,11 @@ Vampire structures hold hunter pieces too: they are what is left of hunters who 
 | Blessed Ring | Plain silver, cut with a cross | Human | A tenth more bite resistance | Crypt |
 | Saint's Ring | Gold, set with a tiny bone | Human | A blessing on a weapon lasts 25% longer | Hunter trial |
 | Tracker's Ring | Brass, cut with a compass rose | Human | Tracking's cooldown is 20% shorter | Ruined manor |
-| Ring Of Vigil | Iron, set with a pale blue stone | Human | A chill, shown and heard, when a vampire is within 12 blocks | Castle |
+| Ring Of Vigil | Iron, set with a pale blue stone | Human | A chill, shown and heard, when a vampire mob is within 12 blocks. A vampire player never sets it off | Castle |
 | Widow's Ring | Black enamel and a lock of hair under glass | Anyone | 1 more luck when opening a chest | Crypt |
 | Moonstone Ring | A milky stone that catches the light | Human | Sees a little better outdoors at night | Underground lair |
 | Ring Of The Court | Gold, crowned, set with a ruby | Human | Mesmerise and dread last half as long on the wearer | The Eldest |
-| Ring Of The Beast | Bone, carved as a bat's skull | Human | Fall damage is halved, and 10% more speed at night | The Eldest |
+| Ring Of The Beast | Bone, carved as a bat's skull | Human | Fall damage is halved | The Eldest |
 | Ring Of The Blood | A glass ring with dark blood sealed in it | Human | A blow on a vampire heals the wearer 1 health, once every 2 seconds | The Eldest |
 | Ring Of The Hunt | Blackened iron, cut with a crossbow | Vampire | Bolts and thrown stakes deal 25% less damage | The Grand Inquisitor |
 | Ring Of The Faith | Silver gone grey, its cross worn smooth | Vampire | Holy water weakens for 30% less time | The Grand Inquisitor |
@@ -132,7 +132,7 @@ Capes and cloaks sway as the wearer moves and are drawn over armour and coats.
 | Nightglider's Cloak | Thin and ribbed like a wing | Vampire | Levitating drains 15% less blood | Mountain castle |
 | Lord's Mantle | Burgundy velvet and ermine | Vampire | NPC members of the wearer's house within 16 blocks deal 10% more damage | Mastery feat |
 | Pilgrim's Cloak | Rough brown wool with a scallop shell | Human | Heals 1 health every 10 seconds in daylight | Crypt |
-| Stalker's Cloak | Mottled grey and green | Human | 20% less noise in a vampire's house | Ruined manor |
+| Stalker's Cloak | Mottled grey and green | Human | 10% less noise in a vampire's house | Ruined manor |
 | Warden's Cape | Dark blue with a silver clasp | Human | A tenth more mesmerise resistance | Hunter trial |
 | Traveller's Cloak | Oiled canvas, hooded | Anyone | Never freezes and does not sink in powder snow | Underground lair |
 
@@ -146,7 +146,7 @@ Capes and cloaks sway as the wearer moves and are drawn over armour and coats.
 | Clawed Gauntlets | Black leather with iron talons | Vampire | Bare hands deal 1 more damage | Underground lair |
 | Silk Gloves | White silk, spotless | Vampire | Feeding is noticed from 30% less far | Ruined manor |
 | Stakewright's Gloves | Thick hide, scarred | Human | A stake's blow deals 10% more damage | Crypt |
-| Silver-Threaded Gloves | Grey leather stitched with silver | Human | Breaks free of a bite 15% sooner | Castle |
+| Silver-Threaded Gloves | Grey leather stitched with silver | Human | Breaks free of a bite 15% sooner, applied after bite resistance | Castle |
 | Gravedigger's Mitts | Heavy, earth-stained | Anyone | Digs dirt, gravel and sand 20% faster | Crypt |
 
 ## Belts
@@ -172,12 +172,12 @@ Capes and cloaks sway as the wearer moves and are drawn over armour and coats.
 | Plain Monocle | One lens on a cord | Anyone | None | Crafted: 1 glass pane and 1 gold nugget |
 | Widow's Veil | A long, heavy black veil to the chin | Vampire | The flinch from garlic and crucifixes is half as large | Castle |
 | Smoked Spectacles | Dark round lenses | Vampire | The glow of the wearer's eyes shows from half as far | Ruined manor |
-| Porcelain Mask | A white face with no expression | Vampire | A village that sees the wearer feed does not learn their face | Mountain castle |
+| Porcelain Mask | A white face with no expression | Vampire | A village that sees the wearer feed is half as likely to learn their face | Mountain castle |
 | Death Mask | A grey cast of a sleeping face | Vampire | Rises from being downed 10% sooner | Vampire trial |
 | Hunter's Monocle | Brass, with a cross-hair lens | Human | Shows the health and stage of a vampire mob the wearer looks at | Castle |
 | Confessor's Veil | White linen across the mouth | Human | A tenth more mesmerise resistance | Crypt |
 | Garlic-Soaked Scarf | A stained scarf across the nose | Human | The Weakness after a bite lasts 25% less time | Underground lair |
-| Lantern-Lens Goggles | Thick amber lenses in leather | Human | Sees through Grave Fog | Hunter trial |
+| Lantern-Lens Goggles | Thick amber lenses in leather | Human | Sees through Grave Fog. Its slowness still applies | Hunter trial |
 | Plague Mask | A long leather beak | Anyone | Lingering potion clouds affect the wearer for half as long | Crypt |
 | Opera Mask | A gilded half mask on a ribbon | Anyone | The wearer's name does not show from more than 8 blocks | Mastery feat |
 

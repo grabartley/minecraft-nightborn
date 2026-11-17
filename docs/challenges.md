@@ -10,7 +10,7 @@ The mod has five kinds of goal. Each has its own job, and no deed is asked for b
 
 | Kind | Job | How many | Pays | Where it is listed |
 |---|---|---|---|---|
-| Advancement | Marks a first: the first bite, the first stake, each stage and rank. It teaches the mod | 36 | A goal gives 50 experience, the rest give none | ADV-1 to ADV-48 in `docs/prd.md`, less the hidden ones |
+| Advancement | Marks a first: the first bite, the first stake, each stage and rank. It teaches the mod | 36 | A goal gives 50 experience and a challenge 100, as ADV-24 says. The rest give none | ADV-1 to ADV-48 in `docs/prd.md`, less the hidden ones |
 | Set challenge | Do every one of a set, as vanilla's set challenges ask. Shows a count and what is missing | 10 | 100 experience | ADV-49 to ADV-58 |
 | Hidden advancement | A secret or an odd moment, found by doing it. Never needed for anything | 10 | None | ADV-6, ADV-12, ADV-37, ADV-42, ADV-59 to ADV-62, ADV-64 and ADV-65 |
 | Trial | A task to do again and again. Three on offer for each side, changed every 7 days | 20 for each side | Skill experience, and sometimes an accessory the first time | Below |
@@ -22,11 +22,11 @@ Both sides get the same share. Of the set challenges, three are for vampires, th
 
 ## Trials
 
-Each side has three on offer at a time, drawn from its list of 20 and changed every 7 in-game days. A trial is only drawn for a player who meets its gate, a stage for a vampire or a rank for a hunter. Every hunter is at least an Initiate, so a hunter trial with no gate is open to all of them. Each pays once each time it is drawn.
+Each player has three on offer at a time, drawn from their side's list of 20 and changed every 7 in-game days. A trial is only drawn for a player who meets its gate, a stage for a vampire or a rank for a hunter. Every hunter is at least an Initiate, so a hunter trial with no gate is open to all of them. A trial that needs a skill is drawn only for a player who owns it: Wings needs Bat Form, Bound needs Mesmerise, Sprung needs Snare, Net Shot or Flash Trap, Shepherd needs Mend, and Out Of The Air needs Net Shot or Stake Throw. Each pays once each time it is drawn.
 
 **Pay:** a small trial pays a quarter of the experience the player's next point costs, a medium one half and a large one all of it. A trial that names an accessory pays it the first time only.
 
-**Rules for every trial:** the count starts when the trial is taken and resets if it leaves the offer. "Unseen" means no villager, hunter or human player saw the act. "In one night" means between one dusk and the next dawn.
+**Rules for every trial:** a vampire's count starts when the trial comes on offer, and a hunter's when they take it from a Guild Master. It resets if the trial leaves the offer. To clear a house or a castle is to stake the last of its household. "Unseen" means no villager, hunter or human player saw the act. "In one night" means between one dusk and the next dawn.
 
 ### Vampire Trials
 
@@ -85,14 +85,14 @@ A feat is done once. Each gives a title the player may show after their name and
 | Feat | Do this | Side | Title | Trophy | Also gives |
 |---|---|---|---|---|---|
 | Never Staked | Reach ancient without ever being staked | Vampire | the Undying | A cracked stake under a glass dome | |
-| Bare To The Blade | Drain the Grand Inquisitor while wearing no armour | Vampire | the Defiant | His broken greatsword, mounted | |
+| Bare To The Blade | Drain the Grand Inquisitor with nothing in the four armour slots, clothing included. Accessories are allowed | Vampire | the Defiant | His broken greatsword, mounted | |
 | A Ghost At The Feast | Feed on 100 villagers unseen. A feeding that is seen does not count, and does not reset the count | Vampire | the Unseen | An empty gilt mirror frame | Opera Mask |
 | The Scourge | Beat a raiding party of twelve alone | Vampire | the Scourge | A stand of twelve hunters' hats | |
-| A Full Table | Hold a mountain castle with a full house of six | Vampire | the Sovereign | A small gilt throne | Lord's Mantle |
-| No Armour, No Fear | End the Eldest while wearing no armour | Hunter | the Fearless | The Eldest's crown on a velvet cushion | |
-| Alone In The Dark | Clear a mountain castle with no other player near | Hunter | the Lone Blade | A notched silver sword in a stone | |
+| A Full Table | Hold a claimed mountain castle with a full house for 7 nights | Vampire | the Sovereign | A small gilt throne | Lord's Mantle |
+| No Armour, No Fear | End the Eldest with nothing in the four armour slots, clothing included. Accessories are allowed | Hunter | the Fearless | The Eldest's crown on a velvet cushion | |
+| Alone In The Dark | Clear a mountain castle with no other player within 64 blocks at any time | Hunter | the Lone Blade | A notched silver sword in a stone | |
 | The Quiet Hand | Clear 5 houses by day without waking one | Hunter | the Quiet Hand | A pair of soft boots on a stand | |
-| Older Than Sin | Stake an ancient | Hunter | Ancient's Bane | An urn of ash with a brass plate | |
+| Older Than Sin | Stake an ancient | Hunter | the Ancient's Bane | An urn of ash with a brass plate | |
 | Never Bitten | Reach Master without ever being bitten | Hunter | the Unbitten | A garlic wreath cast in bronze | |
 | Three Graves | End 3 nemeses | Anyone | the Relentless | Three small headstones | |
 | The Cabinet | Own 60 different accessories at once, counting what is worn, in the inventory and in the ender chest | Anyone | the Collector | A glass-fronted cabinet of curios | |
@@ -103,7 +103,7 @@ See CHAL-3 in `docs/prd.md`. There are four, and no more are added here.
 
 ## Crest Charges
 
-A house crest is one charge and two colours (HOUSE-6). The colours are any two of the 16 dye colours. The charges are these twelve:
+A house crest is a charge and two colours (HOUSE-6). The colours are any two of the 16 dye colours. The charges are these twelve:
 
 Bat, chalice, rose, tower, key, crescent moon, raven, serpent, crown, dagger, thorn branch, skull.
 
@@ -113,7 +113,7 @@ A veteran leads every raiding party sent against an elder or an ancient (GUILD-1
 
 | Attack | Pose before it lands | What it does | Used when | Cooldown |
 |---|---|---|---|---|
-| Silver Chain | Swings a chain overhead for 1 second | Throws it up to 12 blocks. A vampire it hits is dragged to the veteran is forced out of Bat Form, and cannot leave the ground for 3 seconds. Vanish, Shadow Step or a wall between them stops it | A vampire is out of reach, in the air or in bat form | 15 seconds |
+| Silver Chain | Swings a chain overhead for 1 second | Throws it up to 12 blocks. A vampire it hits is dragged to the veteran, is forced out of Bat Form and cannot leave the ground for 3 seconds. Vanish, Shadow Step or a wall between them stops it | A vampire is out of reach, in the air or in bat form | 15 seconds |
 | Bolt Volley | Kneels and levels the crossbow for 1.5 seconds, with a line marked on the floor | Fires 3 coated bolts along the line | A vampire is 8 to 20 blocks away | 12 seconds |
 | Holy Water Arc | Draws its arm back for 1 second, with the landing spots marked | Throws 3 flasks in an arc. Each leaves a pool with a radius of 1 block for 6 seconds that weakens and hurts a vampire standing in it | Two or more vampires are near, or one stands still | 20 seconds |
 | Rallying Cry | Raises its sword and shouts for 1 second | Hunters within a radius of 16 blocks heal 6 health, move faster for 8 seconds and are freed from mesmerise | An ally is mesmerised or the party has lost half its health | 45 seconds |
