@@ -24,7 +24,25 @@ class BuildingFamilyTest {
                 "gothic_stone_brick_wall")),
         Arguments.of(
             "ebony_planks", List.of("ebony_planks", "ebony_stairs", "ebony_slab", "ebony_fence")),
-        Arguments.of("carved_gothic_stone", List.of("carved_gothic_stone")));
+        Arguments.of("carved_gothic_stone", List.of("carved_gothic_stone")),
+        Arguments.of(
+            "limewashed_bricks",
+            List.of(
+                "limewashed_bricks",
+                "limewashed_brick_stairs",
+                "limewashed_brick_slab",
+                "limewashed_brick_wall")),
+        Arguments.of(
+            "worn_limewashed_bricks",
+            List.of(
+                "worn_limewashed_bricks",
+                "worn_limewashed_brick_stairs",
+                "worn_limewashed_brick_slab",
+                "worn_limewashed_brick_wall")),
+        Arguments.of(
+            "clay_roof_tiles",
+            List.of("clay_roof_tiles", "clay_roof_tile_stairs", "clay_roof_tile_slab")),
+        Arguments.of("plaster", List.of("plaster")));
   }
 
   @ParameterizedTest(name = "{0} family lists {1}")

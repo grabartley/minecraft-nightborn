@@ -19,7 +19,7 @@ public enum FamilyMember {
   private record Stem(String baseSuffix, String memberSuffix) {}
 
   private static final List<Stem> STEMS =
-      List.of(new Stem("_bricks", "_brick"), new Stem("_planks", ""));
+      List.of(new Stem("_bricks", "_brick"), new Stem("_tiles", "_tile"), new Stem("_planks", ""));
 
   private final String suffix;
   private final BiFunction<Block, AbstractBlock.Settings, Block> factory;
