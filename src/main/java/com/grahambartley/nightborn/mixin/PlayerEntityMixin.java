@@ -7,6 +7,7 @@ import com.grahambartley.nightborn.coffin.RestRules;
 import com.grahambartley.nightborn.config.NightbornConfig;
 import com.grahambartley.nightborn.core.VampireCore;
 import com.grahambartley.nightborn.hunter.HunterAttributes;
+import com.grahambartley.nightborn.levitation.Levitation;
 import com.grahambartley.nightborn.mind.MindAttributes;
 import com.grahambartley.nightborn.occult.OccultAttributes;
 import com.grahambartley.nightborn.server.ServerConfigService;
@@ -76,6 +77,15 @@ abstract class PlayerEntityMixin {
   private void nightborn$sleepStandingInAStandingCoffin(final CallbackInfo ci) {
     final PlayerEntity self = (PlayerEntity) (Object) this;
     if (CoffinSleepers.upright(self)) {
+      self.setPose(EntityPose.STANDING);
+      ci.cancel();
+    }
+  }
+
+  @Inject(method = "updatePose", at = @At("HEAD"), cancellable = true)
+  private void nightborn$keepTheFloatPoseWhileSinking(final CallbackInfo ci) {
+    final PlayerEntity self = (PlayerEntity) (Object) this;
+    if (Levitation.sinksFast(self)) {
       self.setPose(EntityPose.STANDING);
       ci.cancel();
     }

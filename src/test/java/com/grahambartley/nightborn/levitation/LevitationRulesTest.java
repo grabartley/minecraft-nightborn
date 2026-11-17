@@ -46,4 +46,45 @@ class LevitationRulesTest {
   void movesAsGrounded(final boolean onGround, final boolean levitating, final boolean grounded) {
     assertEquals(grounded, LevitationRules.movesAsGrounded(onGround, levitating));
   }
+
+  @ParameterizedTest(name = "levitating {0}, player {1}, sneaking {2}: {3}")
+  @CsvSource({
+    "true, true, true, true",
+    "true, true, false, false",
+    "true, false, true, false",
+    "false, true, true, false",
+    "false, false, false, false"
+  })
+  @DisplayName("only a levitating player holding sneak sinks fast, never a mob")
+  void sinksFast(
+      final boolean levitating,
+      final boolean player,
+      final boolean sneaking,
+      final boolean sinksFast) {
+    assertEquals(sinksFast, LevitationRules.sinksFast(levitating, player, sneaking));
+  }
+
+  @ParameterizedTest(name = "sinks fast {0}, on ground {1}: {2}")
+  @CsvSource({
+    "true, true, true",
+    "true, false, false",
+    "false, true, false",
+    "false, false, false"
+  })
+  @DisplayName("a fast sink that reaches the ground lands the vampire")
+  void landsOnSneak(final boolean sinksFast, final boolean onGround, final boolean lands) {
+    assertEquals(lands, LevitationRules.landsOnSneak(sinksFast, onGround));
+  }
+
+  @ParameterizedTest(name = "crouching {0}, levitating {1}: {2}")
+  @CsvSource({
+    "true, false, true",
+    "true, true, false",
+    "false, true, false",
+    "false, false, false"
+  })
+  @DisplayName("sneak never crouches a levitating vampire, so the float pose stays")
+  void crouches(final boolean crouching, final boolean levitating, final boolean crouches) {
+    assertEquals(crouches, LevitationRules.crouches(crouching, levitating));
+  }
 }

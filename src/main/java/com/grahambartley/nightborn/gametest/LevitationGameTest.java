@@ -7,6 +7,7 @@ import com.grahambartley.nightborn.mob.VampireEntity;
 import com.grahambartley.nightborn.vampire.VampireTransitions;
 import com.grahambartley.nightborn.weakened.Weakened;
 import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
+import net.minecraft.entity.EntityPose;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.decoration.ArmorStandEntity;
@@ -234,6 +235,61 @@ public class LevitationGameTest implements FabricGameTest {
         () -> {
           context.assertTrue(
               Levitation.isLevitating(vampire), "still levitating: " + Diagnostics.of(vampire));
+          TestPlayers.finish(context, vampire);
+        });
+  }
+
+  @GameTest(
+      templateName = YARD,
+      batchId = BATCH,
+      skyAccess = true,
+      tickLimit = TestPlayers.READY + 20)
+  public void sneakingOnTheGroundLandsALevitatingPlayer(final TestContext context) {
+    final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(4, 2, 4));
+    context.runAtTick(TestPlayers.READY, () -> Levitation.request(vampire));
+    holdAt(context, vampire, 0.0);
+    context.runAtTick(
+        TestPlayers.READY + 5,
+        () -> {
+          context.assertTrue(
+              Levitation.isLevitating(vampire), "levitating first: " + Diagnostics.of(vampire));
+          vampire.setOnGround(true);
+          vampire.setSneaking(true);
+        });
+    context.runAtTick(
+        TestPlayers.READY + 10,
+        () -> {
+          context.assertFalse(
+              Levitation.isLevitating(vampire), "sneak landed it: " + Diagnostics.of(vampire));
+          context.assertFalse(
+              vampire.hasStatusEffect(StatusEffects.SLOW_FALLING),
+              "a chosen landing needs no gentle set down");
+          TestPlayers.finish(context, vampire);
+        });
+  }
+
+  @GameTest(
+      templateName = YARD,
+      batchId = BATCH,
+      skyAccess = true,
+      tickLimit = TestPlayers.READY + 20)
+  public void sneakingInTheAirKeepsLevitatingAndTheFloatPose(final TestContext context) {
+    final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(4, 2, 4));
+    context.runAtTick(TestPlayers.READY, () -> Levitation.request(vampire));
+    holdAt(context, vampire, HOVER);
+    context.runAtTick(
+        TestPlayers.READY + 5,
+        () -> {
+          vampire.setOnGround(false);
+          vampire.setSneaking(true);
+        });
+    context.runAtTick(
+        TestPlayers.READY + 15,
+        () -> {
+          context.assertTrue(
+              Levitation.isLevitating(vampire), "still levitating: " + Diagnostics.of(vampire));
+          context.assertTrue(
+              vampire.getPose() == EntityPose.STANDING, "no crouch pose: " + vampire.getPose());
           TestPlayers.finish(context, vampire);
         });
   }

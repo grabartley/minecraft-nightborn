@@ -15,6 +15,19 @@ public final class LevitationRules {
     return onGround || levitating;
   }
 
+  public static boolean sinksFast(
+      final boolean levitating, final boolean player, final boolean sneaking) {
+    return levitating && player && sneaking;
+  }
+
+  public static boolean landsOnSneak(final boolean sinksFast, final boolean onGround) {
+    return sinksFast && onGround;
+  }
+
+  public static boolean crouches(final boolean crouching, final boolean levitating) {
+    return crouching && !levitating;
+  }
+
   public static boolean toggleReady(final Long lastToggle, final long now) {
     return lastToggle == null || now < lastToggle || now - lastToggle >= TOGGLE_COOLDOWN_TICKS;
   }

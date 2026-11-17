@@ -12,6 +12,7 @@ public final class LevitationLift {
   static final double MIN_RISE = 0.05;
   static final double SETTLE_SHARE = 0.3;
   static final double SINK_SPEED = 0.05;
+  static final double SNEAK_SINK_SPEED = 0.375;
 
   private LevitationLift() {}
 
@@ -19,7 +20,11 @@ public final class LevitationLift {
     return levitating ? feetY - HOVER_HEIGHT : feetY;
   }
 
-  public static double verticalVelocity(final double feetY, final OptionalDouble surface) {
+  public static double verticalVelocity(
+      final double feetY, final OptionalDouble surface, final boolean sinksFast) {
+    if (sinksFast) {
+      return -SNEAK_SINK_SPEED;
+    }
     if (surface.isEmpty()) {
       return -SINK_SPEED;
     }

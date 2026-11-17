@@ -69,6 +69,11 @@ public final class Levitation {
     return entity.getAttachedOrElse(TYPE, false);
   }
 
+  public static boolean sinksFast(final LivingEntity entity) {
+    return LevitationRules.sinksFast(
+        isLevitating(entity), entity instanceof PlayerEntity, entity.isSneaking());
+  }
+
   public static boolean start(final LivingEntity vampire) {
     if (!LevitationRules.mayLevitate(
         Vampires.isVampire(vampire),
@@ -109,6 +114,10 @@ public final class Levitation {
       return;
     }
     vampire.fallDistance = 0.0F;
+    if (LevitationRules.landsOnSneak(sinksFast(vampire), vampire.isOnGround())) {
+      land(vampire);
+      return;
+    }
     if (vampire instanceof ServerPlayerEntity player) {
       guard(player);
     }
