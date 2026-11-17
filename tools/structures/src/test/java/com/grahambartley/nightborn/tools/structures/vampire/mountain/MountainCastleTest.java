@@ -194,4 +194,31 @@ class MountainCastleTest {
     assertEquals(layout.chapel(), find(t, ":skeleton_skull").isEmpty());
     assertEquals(layout.chapel(), !find(t, "blood_pool").isEmpty());
   }
+
+  @ParameterizedTest(name = "{0}: both wall walks are clear from end to end")
+  @MethodSource("layouts")
+  void nothingHangsOverAWallWalk(final MountainCastle.Layout layout) {
+    final Template t = MountainCastle.build(layout);
+    for (int x = 0; x < MountainCastle.SIZE; x++) {
+      for (int z = 0; z < MountainCastle.SIZE; z++) {
+        final int walk = Ramparts.top(x, z) + 1;
+        if (Crag.level(x, z) == Crag.NONE
+            || !Ramparts.onWalk(x, z)
+            || !"minecraft:air".equals(t.get(x, walk, z))) {
+          continue;
+        }
+        assertEquals("minecraft:air", t.get(x, walk + 1, z), "over the walk at " + x + "," + z);
+      }
+    }
+  }
+
+  @ParameterizedTest(name = "{0}: the east walk runs from tower to tower")
+  @MethodSource("layouts")
+  void theEastWalkIsOnePath(final MountainCastle.Layout layout) {
+    final Template t = MountainCastle.build(layout);
+    for (int z = 13; z <= 38; z++) {
+      assertEquals("minecraft:air", t.get(55, Ramparts.TOP + 1, z), "walk at z " + z);
+      assertEquals("minecraft:air", t.get(55, Ramparts.TOP + 2, z), "headroom at z " + z);
+    }
+  }
 }

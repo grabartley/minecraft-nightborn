@@ -95,6 +95,7 @@ public final class Donjon {
     for (int z = FLIGHT_FOOT - STOREY + 2; z <= FLIGHT_FOOT - 2; z++) {
       t.set(rail, from + STOREY + 1, z, Parts.fence());
     }
+    t.set(x, from + STOREY + 1, FLIGHT_FOOT - 1, Parts.fence());
   }
 
   private static void windows(final Template t) {

@@ -56,9 +56,14 @@ class SummitTest {
             cone(START, 130),
             Optional.of(START)),
         Arguments.of(
-            "a peak over the highest height is refused",
+            "a peak over the highest height gives way to the highest ground under it",
             new Summit(48, 12, 100, 250),
             cone(START, 251),
+            Optional.of(new ColumnPos(148, -320))),
+        Arguments.of(
+            "ground that is all over the highest height is refused",
+            new Summit(48, 12, 100, 250),
+            (ToIntFunction<ColumnPos>) point -> 300,
             Optional.empty()),
         Arguments.of(
             "a peak at the highest height is taken",

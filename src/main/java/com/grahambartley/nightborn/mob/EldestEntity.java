@@ -68,7 +68,7 @@ public class EldestEntity extends BossVampireEntity {
             target != null,
             getHealth() >= getMaxHealth());
     super.setTarget(target);
-    if (rescales) {
+    if (rescales && !getWorld().isClient()) {
       final RitualSettings settings = ServerConfigService.current().ritual();
       scaleFor(
           getWorld()

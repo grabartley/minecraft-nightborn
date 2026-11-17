@@ -9,8 +9,8 @@ import com.grahambartley.nightborn.tools.structures.vampire.Roof;
 
 public final class Chapel {
 
-  public static final int WEST = 42;
-  public static final int EAST = 54;
+  public static final int WEST = 43;
+  public static final int EAST = 53;
   public static final int NORTH = 18;
   public static final int SOUTH = 36;
   public static final int GROUND = MountainCastle.UP;

@@ -57,6 +57,9 @@ class DonjonTest {
     }
     assertEquals(
         "minecraft:dark_oak_planks", t.get(x, Donjon.floor(storey + 1), Donjon.FLIGHT_FOOT));
+    assertTrue(
+        t.get(x, Donjon.floor(storey + 1) + 1, Donjon.FLIGHT_FOOT - 1).contains("dark_oak_fence"),
+        "a rail closes the open end of the stairwell");
   }
 
   @ParameterizedTest(name = "{0},{1},{2} is {3}")

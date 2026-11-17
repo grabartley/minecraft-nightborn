@@ -72,4 +72,33 @@ class HouseholdTest {
     assertEquals(
         loads, Household.CODEC.parse(JsonOps.INSTANCE, JsonParser.parseString(json)).isSuccess());
   }
+
+  private static com.mojang.serialization.DataResult<Household> ceilinged(final String ceiling) {
+    return Household.CODEC.parse(
+        JsonOps.INSTANCE,
+        JsonParser.parseString(
+            "{\"resident\": \"minecraft:zombie\", \"residents\": 3" + ceiling + "}"));
+  }
+
+  @ParameterizedTest(name = "ceiling {0}, floor at {1}, heart top {2}: looks up to {3}")
+  @CsvSource({"6, 68, 190, 76", "6, 186, 190, 190", "64, 60, 100, 100", "1, 10, 90, 13"})
+  @DisplayName("a household with a ceiling counts a roof only that far over a resident's head")
+  void shelterTop(final int ceiling, final int floor, final int heartTop, final int top) {
+    assertEquals(
+        top, ceilinged(", \"ceiling\": " + ceiling).getOrThrow().shelterTop(floor, heartTop));
+  }
+
+  @ParameterizedTest(name = "floor at {0}, heart top {1}")
+  @CsvSource({"68, 190", "10, 40"})
+  @DisplayName("a household with no ceiling counts any roof in its heart")
+  void noCeiling(final int floor, final int heartTop) {
+    assertEquals(heartTop, ceilinged("").getOrThrow().shelterTop(floor, heartTop));
+  }
+
+  @ParameterizedTest(name = "ceiling {0} loads: {1}")
+  @CsvSource({"1, true", "64, true", "0, false", "65, false", "-3, false"})
+  @DisplayName("a ceiling is between 1 and 64 blocks")
+  void ceilingBounds(final int ceiling, final boolean loads) {
+    assertEquals(loads, ceilinged(", \"ceiling\": " + ceiling).isSuccess());
+  }
 }

@@ -109,6 +109,7 @@ public final class HallWing {
     for (int x = WEST + 4; x <= WEST + 6; x++) {
       t.set(x, LOFT + 1, NORTH + 2, Parts.fence());
     }
+    t.set(WEST + 3, LOFT + 1, NORTH + 1, Parts.fence());
   }
 
   private static void feast(final Template t) {

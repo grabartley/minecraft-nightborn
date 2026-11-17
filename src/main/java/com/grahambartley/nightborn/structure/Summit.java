@@ -50,16 +50,16 @@ public record Summit(int reach, int spacing, int minHeight, int maxHeight) {
 
   public Optional<ColumnPos> peak(final ColumnPos start, final ToIntFunction<ColumnPos> heights) {
     return samples(start).stream()
+        .filter(
+            point ->
+                heights.applyAsInt(point) >= minHeight && heights.applyAsInt(point) <= maxHeight)
         .max(
             Comparator.comparingInt(heights::applyAsInt)
                 .thenComparing(
                     Comparator.comparingLong((ColumnPos point) -> distanceSquared(point, start))
                         .reversed())
                 .thenComparing(Comparator.comparingInt(ColumnPos::x).reversed())
-                .thenComparing(Comparator.comparingInt(ColumnPos::z).reversed()))
-        .filter(
-            point ->
-                heights.applyAsInt(point) >= minHeight && heights.applyAsInt(point) <= maxHeight);
+                .thenComparing(Comparator.comparingInt(ColumnPos::z).reversed()));
   }
 
   public Optional<ColumnPos> peak(final Structure.Context context, final ColumnPos start) {

@@ -35,7 +35,7 @@ public final class HouseholdSpawner {
         || centre.getZ() > chunkBox.getMaxZ()) {
       return List.of();
     }
-    final List<BlockPos> spots = spots(world, chunkBox, heart);
+    final List<BlockPos> spots = spots(world, chunkBox, heart, household);
     final List<Entity> settled = new ArrayList<>();
     final List<BlockPos> held = new ArrayList<>();
     household
@@ -101,7 +101,10 @@ public final class HouseholdSpawner {
   }
 
   private static List<BlockPos> spots(
-      final StructureWorldAccess world, final BlockBox chunkBox, final BlockBox heart) {
+      final StructureWorldAccess world,
+      final BlockBox chunkBox,
+      final BlockBox heart,
+      final Household household) {
     final List<BlockPos> spots = new ArrayList<>();
     final int minX = Math.max(heart.getMinX(), chunkBox.getMinX());
     final int maxX = Math.min(heart.getMaxX(), chunkBox.getMaxX());
@@ -116,7 +119,8 @@ public final class HouseholdSpawner {
                   world.getBlockState(floor),
                   world.getBlockState(floor.up()),
                   world.getBlockState(floor.up(2)))
-              && StandingSpot.sheltered(above(world, floor, heart.getMaxY()))) {
+              && StandingSpot.sheltered(
+                  above(world, floor, household.shelterTop(floor.getY(), heart.getMaxY())))) {
             spots.add(floor.up().toImmutable());
           }
         }

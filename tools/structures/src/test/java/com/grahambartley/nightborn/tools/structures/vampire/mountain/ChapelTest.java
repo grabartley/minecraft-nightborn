@@ -22,18 +22,18 @@ class ChapelTest {
 
   @ParameterizedTest(name = "{0},{1},{2} is {3}")
   @CsvSource({
-    "42, 36, 19, limewashed_bricks",
-    "54, 41, 30, limewashed_bricks",
+    "43, 36, 19, limewashed_bricks",
+    "53, 41, 30, limewashed_bricks",
     "48, 36, 27, air",
-    "42, 33, 27, air",
-    "42, 36, 26, half=top",
-    "42, 37, 27, limewashed_bricks",
-    "42, 36, 21, gothic_stained_glass_pane",
-    "42, 39, 33, gothic_stained_glass_pane",
+    "43, 33, 27, air",
+    "43, 36, 26, half=top",
+    "43, 37, 27, limewashed_bricks",
+    "43, 36, 21, gothic_stained_glass_pane",
+    "43, 39, 33, gothic_stained_glass_pane",
     "48, 41, 18, gothic_stained_glass_pane",
     "47, 39, 18, gothic_stained_glass_pane",
-    "41, 42, 27, clay_roof_tile_stairs",
-    "42, 43, 27, clay_roof_tiles"
+    "42, 42, 27, clay_roof_tile_stairs",
+    "43, 43, 27, clay_roof_tiles"
   })
   void aTallNaveWithStainedLancetsUnderATiledRoof(
       final int x, final int y, final int z, final String block) {
@@ -57,7 +57,7 @@ class ChapelTest {
     "46, 33, 20, candelabra",
     "50, 33, 20, candelabra",
     "44, 38, 19, burgundy_velvet_drape",
-    "53, 33, 19, chest",
+    "52, 33, 19, chest",
     "48, 33, 34, blood_pool"
   })
   void anAltarStandsAtTheNorthEnd(final int x, final int y, final int z, final String block) {

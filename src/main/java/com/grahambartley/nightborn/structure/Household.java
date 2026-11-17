@@ -15,9 +15,12 @@ public record Household(
     RegistryEntry<EntityType<?>> resident,
     IntProvider residents,
     Map<Identifier, Integer> stages,
-    Optional<HouseholdHead> head) {
+    Optional<HouseholdHead> head,
+    Optional<Integer> ceiling) {
 
   public static final int LARGEST_HOUSEHOLD = 32;
+  public static final int HIGHEST_CEILING = 64;
+  static final int HEADROOM = 2;
 
   public static final Codec<Household> CODEC =
       RecordCodecBuilder.create(
@@ -34,10 +37,17 @@ public record Household(
                       Codec.unboundedMap(Identifier.CODEC, Codec.intRange(0, StageOdds.HEAVIEST))
                           .optionalFieldOf("stages", Map.of())
                           .forGetter(Household::stages),
-                      HouseholdHead.CODEC.optionalFieldOf("head").forGetter(Household::head))
+                      HouseholdHead.CODEC.optionalFieldOf("head").forGetter(Household::head),
+                      Codec.intRange(1, HIGHEST_CEILING)
+                          .optionalFieldOf("ceiling")
+                          .forGetter(Household::ceiling))
                   .apply(instance, Household::new));
 
   public Household {
     stages = Map.copyOf(stages);
+  }
+
+  public int shelterTop(final int floorY, final int heartTop) {
+    return ceiling.map(height -> Math.min(heartTop, floorY + HEADROOM + height)).orElse(heartTop);
   }
 }
