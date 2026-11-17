@@ -109,4 +109,47 @@ class FurnishingTest {
     assertTrue(t.get(2, 1, 1).contains("lit=false"));
     assertTrue(t.get(3, 1, 1).contains("candles=2") && t.get(3, 1, 1).contains("lit=false"));
   }
+
+  @ParameterizedTest(name = "a gramophone at {0},{1},{2} facing {3} holds a disc it starts itself")
+  @CsvSource({"1, 1, 1, east", "2, 3, 1, west", "4, 2, 3, south"})
+  void gramophonesComeLoaded(final int x, final int y, final int z, final String facing) {
+    final Template t = new Template("vampire/test", 6, 5, 6);
+    Furnishing.gramophone(t, x, y, z, facing);
+    final java.util.Map<String, Object> data = t.blockData().get(new Pos(x, y, z));
+    assertTrue(t.get(x, y, z).startsWith(Furnishing.GRAMOPHONE + "["));
+    assertTrue(t.get(x, y, z).contains("facing=" + facing));
+    assertTrue(t.get(x, y, z).contains("has_record=true"));
+    assertTrue(t.get(x, y, z).contains("playing=false"));
+    assertEquals(Furnishing.GRAMOPHONE, data.get("id"));
+    assertEquals(true, data.get("Ambient"));
+    assertTrue(Furnishing.DISCS.contains(((java.util.Map<?, ?>) data.get("RecordItem")).get("id")));
+  }
+
+  @Test
+  void gramophoneDiscsVaryAcrossAHouse() {
+    final Template t = new Template("vampire/test", 1, 1, 40);
+    final java.util.Set<Object> discs = new java.util.HashSet<>();
+    for (int z = 0; z < 40; z++) {
+      Furnishing.gramophone(t, 0, 0, z, "east");
+      discs.add(
+          ((java.util.Map<?, ?>) t.blockData().get(new Pos(0, 0, z)).get("RecordItem")).get("id"));
+    }
+    assertEquals(Furnishing.DISCS.size(), discs.size());
+  }
+
+  @ParameterizedTest(name = "{0} is a disc the mod ships")
+  @org.junit.jupiter.params.provider.MethodSource("discs")
+  void everyDiscIsAnItemTheModShips(final String disc) {
+    assertTrue(
+        java.nio.file.Files.exists(
+            java.nio.file.Path.of(
+                "../../src/main/resources/assets/nightborn/models/item/"
+                    + disc.substring(disc.indexOf(':') + 1)
+                    + ".json")),
+        disc);
+  }
+
+  static java.util.List<String> discs() {
+    return Furnishing.DISCS;
+  }
 }

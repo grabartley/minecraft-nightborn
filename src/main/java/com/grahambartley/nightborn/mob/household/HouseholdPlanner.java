@@ -84,7 +84,13 @@ public final class HouseholdPlanner {
             furniture.getOrDefault(FurnitureKind.BOOKS, List.of()),
             spot -> FurnitureUse.is(world, spot, FurnitureKind.BOOKS),
             vampire.getRandom().nextInt(Integer.MAX_VALUE));
+    final Optional<BlockPos> gramophone =
+        FurniturePick.any(
+            furniture.getOrDefault(FurnitureKind.GRAMOPHONE, List.of()),
+            spot -> FurnitureUse.gramophoneReady(world, spot),
+            vampire.getRandom().nextInt(Integer.MAX_VALUE));
     final Set<Hobby> available = EnumSet.of(Hobby.STROLL);
+    gramophone.ifPresent(spot -> available.add(Hobby.GRAMOPHONE));
     seat.ifPresent(spot -> available.add(Hobby.SIT));
     books.ifPresent(spot -> available.add(Hobby.READ));
     partner.ifPresent(mate -> available.add(Hobby.CONVERSE));
@@ -94,6 +100,7 @@ public final class HouseholdPlanner {
       case READ -> new ReadTask(vampire, world, books.orElseThrow(), ticks);
       case CONVERSE -> converse(vampire, world, now, temperament, partner.orElseThrow());
       case STROLL -> StrollTask.around(vampire, ticks);
+      case GRAMOPHONE -> new GramophoneTask(vampire, world, gramophone.orElseThrow(), ticks);
     };
   }
 
@@ -108,7 +115,7 @@ public final class HouseholdPlanner {
                       Chore.forLight(phase, FurnitureUse.lit(state))
                           .filter(chore -> chore != Chore.LIGHT || FurnitureUse.lightable(state));
                   case DRAPE -> Chore.forDrape(phase, FurnitureUse.open(state));
-                  case SEAT, BOOKS -> Optional.empty();
+                  case SEAT, BOOKS, GRAMOPHONE -> Optional.empty();
                 });
   }
 

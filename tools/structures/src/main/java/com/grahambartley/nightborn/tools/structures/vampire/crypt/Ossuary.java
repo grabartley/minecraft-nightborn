@@ -80,6 +80,7 @@ public final class Ossuary {
     Furnishing.chalice(t, 1, 2, 7, "player");
     Furnishing.candelabra(t, 1, 1, NORTH);
     Furnishing.candelabra(t, 1, 1, SOUTH);
+    Furnishing.gramophone(t, 2, 1, SOUTH, "north");
   }
 
   private static String vault(final String facing) {
