@@ -58,4 +58,22 @@ class RoofTest {
     assertTrue(t.get(4, 5, 9).startsWith(second), t.get(4, 5, 9));
     assertTrue(t.get(4, 6, 2).startsWith("minecraft:deepslate_tile_stairs"));
   }
+
+  @ParameterizedTest(name = "an overhanging roof closes the wall top at {0},{1} under its eave")
+  @CsvSource({"3, 1", "3, 5", "6, 9", "4, 1", "5, 9", "6, 5"})
+  void overhangSealsTheCourseBetweenWallAndRoof(final int along, final int across) {
+    final Template t = new Template("vampire/test", 12, 14, 12);
+    Roof.gable(t, Axis.X, 3, 6, 1, 9, 4, SLATE, WALL);
+    assertEquals("minecraft:stone_bricks", t.get(along, 4, across));
+  }
+
+  @ParameterizedTest(name = "sealing the eave keeps the {0} already on the wall top")
+  @CsvSource({"minecraft:dark_oak_log", "minecraft:glass_pane"})
+  void sealingKeepsWhatIsAlreadyThere(final String wallTop) {
+    final Template t = new Template("vampire/test", 12, 14, 12);
+    t.set(3, 4, 5, wallTop);
+    Roof.gable(t, Axis.X, 3, 6, 1, 9, 4, SLATE, WALL);
+    assertEquals(wallTop, t.get(3, 4, 5));
+    assertEquals(null, t.get(4, 4, 5));
+  }
 }

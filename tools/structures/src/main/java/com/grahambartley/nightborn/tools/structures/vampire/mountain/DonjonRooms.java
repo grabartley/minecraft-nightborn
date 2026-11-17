@@ -94,8 +94,8 @@ public final class DonjonRooms {
     Furnishing.candles(t, mid, y + 1, mid + 2, 2 + storey % 2, false);
     final String drape = storey % 2 == 0 ? MountainCastle.EMERALD : MountainCastle.BURGUNDY;
     Furnishing.drape(t, drape, mid, y, Donjon.NORTH + 1, 3, "south");
-    Furnishing.portrait(t, Donjon.EAST - 1, y + 1, Donjon.NORTH + 4, "west");
-    Furnishing.portrait(t, Donjon.WEST + 1, y + 1, Donjon.NORTH + 4, "east");
+    Furnishing.portrait(t, Donjon.EAST - 1, y + 1, Donjon.NORTH + 6, "west");
+    Furnishing.portrait(t, Donjon.WEST + 1, y + 1, Donjon.NORTH + 6, "east");
     if (upright(storey) == FEWER_UPRIGHT) {
       for (int dy = 0; dy < 3; dy++) {
         t.set(mid + 5, y + dy, Donjon.SOUTH - 1, "bookshelf");

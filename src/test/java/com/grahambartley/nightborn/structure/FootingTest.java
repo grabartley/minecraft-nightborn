@@ -7,6 +7,7 @@ import com.google.gson.JsonParser;
 import com.mojang.serialization.JsonOps;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockBox;
@@ -50,7 +51,26 @@ class FootingTest {
       final Footing footing,
       final List<Footing.Column> columns,
       final boolean accepted) {
-    assertEquals(accepted, footing.accepts(columns));
+    assertEquals(accepted, footing.accepts(columns.stream()));
+  }
+
+  @ParameterizedTest(name = "{0}: stops after {1} of the columns")
+  @CsvSource({
+    "the second column is under water, 2, 63, 60",
+    "the second column breaks the rise, 2, 80, 80",
+    "every column is level, 4, 70, 70"
+  })
+  void stopsSamplingAtTheFirstBadColumn(
+      final String name, final int pulled, final int surface, final int floor) {
+    final AtomicInteger count = new AtomicInteger();
+    final List<Footing.Column> columns =
+        List.of(
+            new Footing.Column(70, 70),
+            new Footing.Column(surface, floor),
+            new Footing.Column(70, 70),
+            new Footing.Column(70, 70));
+    DRY.accepts(columns.stream().peek(column -> count.incrementAndGet()));
+    assertEquals(pulled, count.get());
   }
 
   @ParameterizedTest(name = "a box {0} wide sampled every {1} has {2} points a side")
