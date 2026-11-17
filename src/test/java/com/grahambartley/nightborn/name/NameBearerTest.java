@@ -9,13 +9,13 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 class NameBearerTest {
 
-  @ParameterizedTest(name = "female={0}")
-  @ValueSource(booleans = {false, true})
-  @DisplayName("a bearer with nothing of its own has no epithet, colour or namer")
-  void defaults(final boolean female) {
-    final NameBearer bearer = () -> female;
-    bearer.bearEpithet("the Pale");
-    assertEquals(female, bearer.bearsWomansName());
+  @ParameterizedTest(name = "offered \"{0}\"")
+  @ValueSource(strings = {"the Pale", "", "the Eldest"})
+  @DisplayName("a bearer with nothing of its own is no woman and has no epithet, colour or namer")
+  void defaults(final String offered) {
+    final NameBearer bearer = new NameBearer() {};
+    bearer.bearEpithet(offered);
+    assertEquals(false, bearer.bearsWomansName());
     assertEquals("", bearer.epithet());
     assertEquals(Optional.empty(), bearer.nameColor());
     assertEquals(Optional.empty(), bearer.namedBy());

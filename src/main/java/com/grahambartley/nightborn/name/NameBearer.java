@@ -6,7 +6,9 @@ import net.minecraft.text.TextColor;
 
 public interface NameBearer {
 
-  boolean bearsWomansName();
+  default boolean bearsWomansName() {
+    return false;
+  }
 
   default String epithet() {
     return "";

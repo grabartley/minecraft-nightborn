@@ -167,11 +167,6 @@ public class HumanFamiliarEntity extends PathAwareEntity
   }
 
   @Override
-  public boolean bearsWomansName() {
-    return false;
-  }
-
-  @Override
   public Optional<UUID> namedBy() {
     return owner();
   }

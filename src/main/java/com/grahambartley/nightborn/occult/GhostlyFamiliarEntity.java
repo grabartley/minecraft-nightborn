@@ -154,11 +154,6 @@ public class GhostlyFamiliarEntity extends PathAwareEntity
   }
 
   @Override
-  public boolean bearsWomansName() {
-    return false;
-  }
-
-  @Override
   public void onDeath(final DamageSource source) {
     super.onDeath(source);
     ServantDeaths.tell(this, owner());

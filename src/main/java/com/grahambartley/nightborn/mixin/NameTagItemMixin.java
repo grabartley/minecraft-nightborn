@@ -30,11 +30,11 @@ abstract class NameTagItemMixin {
       return;
     }
     final NameRules.Verdict verdict = NameRules.checkTag(stack.get(DataComponentTypes.CUSTOM_NAME));
-    if (!verdict.ok()) {
+    if (!verdict.ok() || !mob.isAlive()) {
       cir.setReturnValue(ActionResult.PASS);
       return;
     }
-    if (!user.getWorld().isClient() && mob.isAlive()) {
+    if (!user.getWorld().isClient()) {
       bearer.bearEpithet("");
       MobNaming.give(mob, verdict.name().orElseThrow());
       mob.setPersistent();

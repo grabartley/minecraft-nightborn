@@ -3,7 +3,6 @@ package com.grahambartley.nightborn.name;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.registry.DynamicRegistryManager;
 import net.minecraft.server.world.ServerWorld;
@@ -26,12 +25,15 @@ public final class MobNaming {
   }
 
   public static Optional<String> suggestion(final MobEntity mob) {
+    if (!(mob instanceof NameBearer bearer) || !(mob.getWorld() instanceof ServerWorld world)) {
+      return Optional.empty();
+    }
     return NameStyles.of(mob)
         .flatMap(
             style ->
                 NameDraw.pick(
-                    names(mob.getRegistryManager(), style.poolsFor(false)),
-                    Set.of(),
+                    names(world.getRegistryManager(), style.poolsFor(bearer.bearsWomansName())),
+                    KinNames.taken(kin(mob, world, style)).givens(),
                     mob.getRandom()::nextInt));
   }
 

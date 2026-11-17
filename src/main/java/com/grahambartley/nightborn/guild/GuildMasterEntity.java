@@ -186,11 +186,6 @@ public class GuildMasterEntity extends MerchantEntity
   }
 
   @Override
-  public boolean bearsWomansName() {
-    return false;
-  }
-
-  @Override
   public HunterRig rig() {
     return HunterRig.GUILD_MASTER;
   }
