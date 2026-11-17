@@ -24,6 +24,7 @@
     "retreat_health": 10
   },
   "look": {
+    "name_color": "dark_red",
     "idle": "idle_ancient"
   },
   "loot": "nightborn:entities/vampire/eldest"

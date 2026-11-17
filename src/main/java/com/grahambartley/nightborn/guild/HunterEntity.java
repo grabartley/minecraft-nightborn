@@ -4,6 +4,8 @@ import com.grahambartley.nightborn.mob.MobSounds;
 import com.grahambartley.nightborn.mob.look.BustNbt;
 import com.grahambartley.nightborn.mob.look.Figure;
 import com.grahambartley.nightborn.mob.look.VampireRig;
+import com.grahambartley.nightborn.name.MobNaming;
+import com.grahambartley.nightborn.name.NameBearer;
 import com.grahambartley.nightborn.vampire.Vampires;
 import java.util.Optional;
 import net.minecraft.entity.Entity;
@@ -42,7 +44,7 @@ import software.bernie.geckolib.animation.PlayState;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 public class HunterEntity extends PathAwareEntity
-    implements GeoEntity, HunterLooking, RangedAttackMob {
+    implements GeoEntity, HunterLooking, NameBearer, RangedAttackMob {
 
   static final String FEMALE_KEY = "Female";
   static final String KIT_KEY = "Kit";
@@ -181,6 +183,11 @@ public class HunterEntity extends PathAwareEntity
   }
 
   @Override
+  public boolean bearsWomansName() {
+    return dataTracker.get(FEMALE);
+  }
+
+  @Override
   public float bust() {
     return dataTracker.get(BUST);
   }
@@ -188,9 +195,13 @@ public class HunterEntity extends PathAwareEntity
   @Override
   public void tick() {
     super.tick();
-    if (!getWorld().isClient() && !hasPositionTarget()) {
+    if (getWorld().isClient()) {
+      return;
+    }
+    if (!hasPositionTarget()) {
       settle();
     }
+    MobNaming.ensure(this);
   }
 
   @Override

@@ -1,6 +1,9 @@
 package com.grahambartley.nightborn.thrall;
 
+import com.grahambartley.nightborn.name.MobNaming;
+import com.grahambartley.nightborn.name.NameBearer;
 import com.grahambartley.nightborn.servant.Servant;
+import com.grahambartley.nightborn.servant.ServantDeaths;
 import com.grahambartley.nightborn.servant.Servants;
 import com.grahambartley.nightborn.thrall.goal.ThrallFollowGoal;
 import com.grahambartley.nightborn.thrall.goal.ThrallPostGoal;
@@ -38,7 +41,8 @@ import net.minecraft.village.VillagerType;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
-public class ThrallEntity extends PathAwareEntity implements VillagerDataContainer, Servant {
+public class ThrallEntity extends PathAwareEntity
+    implements VillagerDataContainer, Servant, NameBearer {
 
   static final int CHECK_BOND_TICKS = 20;
 
@@ -105,6 +109,7 @@ public class ThrallEntity extends PathAwareEntity implements VillagerDataContain
   @Override
   public void tick() {
     super.tick();
+    MobNaming.ensure(this);
     if (age % CHECK_BOND_TICKS == 0 && isAlive() && getWorld() instanceof ServerWorld world) {
       Thralls.checkBond(world, this);
     }
@@ -115,7 +120,13 @@ public class ThrallEntity extends PathAwareEntity implements VillagerDataContain
     super.onDeath(source);
     if (getWorld() instanceof ServerWorld world) {
       owner().ifPresent(id -> ThrallRegistry.of(world.getServer()).free(id, getUuid()));
+      ServantDeaths.tell(this, owner());
     }
+  }
+
+  @Override
+  public Optional<UUID> namedBy() {
+    return owner();
   }
 
   @Override

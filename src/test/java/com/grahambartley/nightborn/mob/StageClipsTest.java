@@ -10,7 +10,8 @@ import org.junit.jupiter.params.provider.EnumSource;
 
 class StageClipsTest {
 
-  private static final StageLook ELDER = new StageLook(Optional.of("idle_elder"), Optional.empty());
+  private static final StageLook ELDER =
+      new StageLook(Optional.of("idle_elder"), Optional.empty(), Optional.empty());
 
   @ParameterizedTest(name = "{0}")
   @EnumSource(VampirePose.class)
