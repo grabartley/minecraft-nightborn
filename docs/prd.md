@@ -16,7 +16,7 @@ Minecraft has no vampires, and nothing that hunts them. Its undead are mindless 
 
 ### What The Mod Is
 
-Nightborn adds vampires and the people who hunt them. A bite from a vampire mob or a vampire bat may start a sickness, and a vampire player chooses whether their bite does. If it is not cured in time you turn. As a vampire you live on blood, sleep through the day in a coffin, and nothing but direct sun or a stake can finish you. Anything else only brings you down. You grow through a skill tree and pick two of three bloodlines: Noble, Beast and Occult. Each gives powers the others do not, such as bat form, mesmerising, thralls and ghostly familiars. Humans can fight back. Garlic, crucifixes, holy water, silver and the stake all hurt vampires, and every human earns hunter skills by killing them. Vampires are rare. They live in households hidden in fog, in castles, crypts, ruined manors, deep lairs and, rarest of all, castles on the tops of mountains, and hunters keep camps of their own. Each vampire is someone: a look, a voice, a stage of age and powers of its own. A hunter who gathers a relic from a castle, a crypt, a ruined manor and an underground lair can summon the Eldest, a vampire with every power, again and again. Each mountain castle holds an Eldest of its own, met only once.
+Nightborn adds vampires and the people who hunt them. A bite from a vampire mob or a vampire bat may start a sickness, and a vampire player chooses whether their bite does. If it is not cured in time you turn. As a vampire you live on blood, sleep through the day in a coffin, and nothing but direct sun or a stake can finish you. Anything else only brings you down. You grow through a skill tree and pick two of three bloodlines: Noble, Beast and Occult. Each gives powers the others do not, such as bat form, mesmerising, thralls and ghostly familiars. Humans can fight back. Garlic, crucifixes, holy water, silver and the stake all hurt vampires, and every human earns hunter skills by killing them. Vampires are rare. They live in households hidden in fog, in castles, crypts, ruined manors, deep lairs and, rarest of all, castles on the tops of mountains, and hunters keep camps of their own and send out parties that wander the land, camping a night or so before they move on. Each vampire is someone: a name and an epithet, a look, a voice, a stage of age and powers of its own. Hunters, familiars and thralls have names too. A hunter who gathers a relic from a castle, a crypt, a ruined manor and an underground lair can summon the Eldest, a vampire with every power, again and again. Each mountain castle holds an Eldest of its own, met only once.
 
 ### Experience It Aims For
 
@@ -43,6 +43,7 @@ Nightborn adds vampires and the people who hunt them. A bite from a vampire mob 
 | The day belongs to vampires too | Coffins skip the day the way beds skip the night (COFFIN-1 to COFFIN-14) |
 | An endgame for hunters | A repeatable ritual summons the Eldest, a boss with every vampire power, fought in three phases inside a sealed arena, and one waits once at the top of every mountain castle (RITE-1 to RITE-15, HOME-23) |
 | Help in the daylight | A human familiar runs errands and guards your coffin, and might betray you (FAM-1 to FAM-8) |
+| Everyone has a name | Vampires, hunters, familiars and thralls each carry a name, shown above them and in chat. A vampire's ends in an epithet and takes the colour of its age (NAME-1 to NAME-10) |
 
 ### Non-Goals
 
@@ -141,10 +142,14 @@ This document specifies the Nightborn alpha line for Minecraft 1.21.1 on Fabric.
 | Household | The vampires who live in one vampire structure |
 | Stage | How old and strong a vampire mob is: fledgling, adult, elder or ancient |
 | Hungry | A vampire mob whose blood has fallen below its hunger threshold |
+| Name pool | A list of given names a mob's name is drawn from. There are six: men's and women's for vampires, for hunters and for familiars |
+| Epithet | The title after a vampire mob's given name, such as "the Relentless" |
 | Relic | A rare item found in a castle, crypt, ruined manor or underground lair, used in the ritual |
 | The Eldest | A boss vampire with every vampire skill (RITE-3, HOME-23) |
 | Vampire structure | A castle, mountain castle, crypt, ruined manor or underground lair, home to a household |
 | Hunter camp | A generated camp of hunter mobs, home to a Guild Master |
+| Hunter party | A Guild Master and 4 to 8 hunter mobs who travel together and keep no hunter camp |
+| Temporary camp | The campfire and tents a hunter party pitches for one to three nights |
 | Faction | Vampire or human. Every player is in exactly one |
 
 ### Who Can Be Fed On
@@ -359,7 +364,7 @@ The core starts with Thick Blood (more health), Grave Strength (harder blows), B
 | MIND-2 | A mesmerised villager can be charmed by talking to it: for a while it trades with that vampire as with a hero of the village. Silver Tongue gives the charm, as the `nightborn:charm` attribute |
 | MIND-3 | A mesmerised player is slowed and cannot hurt the vampire who mesmerised them for a short time. They are never frozen |
 | MIND-4 | Bosses cannot be mesmerised. Hunter skills resist it (HUNT-4) |
-| MIND-5 | Sipping from a mesmerised villager can make it a thrall. A thrall follows its owner and fights for them |
+| MIND-5 | Sipping from a mesmerised villager can make it a thrall. A thrall follows its owner and fights for them. Binding one opens the naming dialogue (NAME-6) |
 | MIND-6 | A thrall can be told to follow, stay or guard a place. Its owner gives the order by using it with an empty hand, and a guard fights monsters near its post |
 | MIND-7 | A vampire has a limit on thralls, raised by Noble skills: Blood Bond allows one and Dark Court two more, as the `nightborn:thrall_limit` attribute |
 | MIND-8 | A thrall whose owner dies stays where it is until they return |
@@ -374,9 +379,9 @@ The core starts with Thick Blood (more health), Grave Strength (harder blows), B
 
 | ID | Requirement |
 |---|---|
-| FAM-1 | An Occult vampire can summon ghostly familiars that fight for them, carry items and scout ahead. Summon Familiar allows one at a time and Spirit Pact one more, as the `nightborn:familiar_limit` attribute; summoning past the limit sends the oldest away. The owner changes its task by using it with an empty hand, hands it items while it carries and takes them back by sneaking. A scout flies the way its owner looks and makes the creatures and people it passes glow for a while |
+| FAM-1 | An Occult vampire can summon ghostly familiars that fight for them, carry items and scout ahead. Summon Familiar allows one at a time and Spirit Pact one more, as the `nightborn:familiar_limit` attribute; summoning past the limit sends the oldest away. Each takes a name as it appears (NAME-7). The owner changes its task by using it with an empty hand, hands it items while it carries and takes them back by sneaking. A scout flies the way its owner looks and makes the creatures and people it passes glow for a while |
 | FAM-2 | Ghostly familiars last a set time, cost blood to summon and pass through blocks only while scouting. One that fades or dies drops what it carried |
-| FAM-3 | Any vampire can hire one grown villager as a human familiar by using a Familiar's Contract on it. The contract is crafted from paper, a feather and a Blood Bottle, and is used up. The familiar keeps the villager's biome look in a servant's livery but leaves its trade behind |
+| FAM-3 | Any vampire can hire one grown villager as a human familiar by using a Familiar's Contract on it. The contract is crafted from paper, a feather and a Blood Bottle, and is used up. Hiring opens the naming dialogue (NAME-6). The familiar keeps the villager's biome look in a servant's livery but leaves its trade behind |
 | FAM-4 | A human familiar works in daylight: it carries items between chests the owner marks, trades with villagers for the owner and guards the owner's assigned coffin. The owner sneaks and uses a chest or barrel they can open with an empty hand: the first one marked is the fetch chest, the next is the deliver chest, and using a marked chest again clears it. Which blocks count is the `nightborn:familiar_errand_chests` block tag. On each errand the familiar takes a stack from the fetch chest, buys what it can afford from the nearest villager, and puts everything into the deliver chest. Its trades use up the villager's offers but give no experience to anyone. It drives off monsters near the coffin, other than creepers and vampires, and at night it stays by the coffin |
 | FAM-5 | A human familiar has loyalty. Good treatment raises it. Being fed on, hurt or left without pay lowers it. The owner pays wages by using emeralds on it, a set number of days per emerald, up to a set number of days ahead. Each paid day raises loyalty and each unpaid day lowers it |
 | FAM-6 | A human familiar with low loyalty may secretly turn to the hunters, then attack its owner while they sleep. Its loyalty is never shown as a number: using it with an empty hand tells the owner whether it seems devoted, content, uneasy or resentful, and a turned familiar always seems content and still takes wages. A turned familiar stops running errands |
@@ -422,10 +427,16 @@ The hunter tree starts with Tracking, an active power that points toward the nea
 | ID | Requirement |
 |---|---|
 | GUILD-1 | Hunter camps generate rarely in the open country of the overworld (plains, meadows and savannas), each with a few hunter mobs and a Guild Master. Hunters are men and women, and a woman hunter has a bust sized the same way as a vampire woman's (HOME-18) |
-| GUILD-2 | Hunter mobs attack vampire players and vampire mobs on sight with stakes, so a vampire they bring down is finished. They leave humans alone and do not fight back when a human hits them. Hunters and the Guild Master stay near their camp |
+| GUILD-2 | Hunter mobs attack vampire players and vampire mobs on sight with stakes, so a vampire they bring down is finished. They leave humans alone and do not fight back when a human hits them. Hunters and the Guild Master of a hunter camp stay near it, and those of a hunter party stay with their party (GUILD-7) |
 | GUILD-3 | The Guild Master sells hunter gear and writes contracts on paper, such as staking vampires, staking an elder, or clearing a vampire structure by staking the last of its household. His offers and contracts are data, he trades through the vanilla trading screen, and his stock renews each day |
 | GUILD-4 | Contracts pay in emeralds, silver and gear, on top of the hunter points HUNT-2 gives. A contract is an item that keeps its own count. One stake marks one open contract. A vampire player counts as a fledgling against a contract that asks for an older vampire, and a vampire who lives alone is the last of its household. A fulfilled contract, in either hand, is handed to a Guild Master, who takes it and pays once |
-| GUILD-5 | A vampire player cannot trade or take contracts at a camp |
+| GUILD-5 | A vampire player cannot trade or take contracts with any Guild Master |
+| GUILD-6 | Hunters also travel. A hunter party of 4 to 8 hunter mobs and one Guild Master appears now and then on the surface of the overworld near a player, the way a vanilla pillager patrol does. They are the same mobs as a hunter camp's, so they fight, trade, give contracts and are named as GUILD-2 to GUILD-5 and NAME-1 say. Only how they appear, and that they travel, is different. The biomes parties appear in are data |
+| GUILD-7 | A party wanders one area looking for vampires, then moves on to a new area. It keeps together around its Guild Master. A party on the move that no player has been near for some time leaves the world, as a patrol does. A party in camp never does |
+| GUILD-8 | As evening falls a party pitches a temporary camp where it is: a lit campfire and tents, each with a bed inside. It pitches only where every block of the site is natural ground, a tree or a plant, and may clear the trees and plants. Any other block on or beside the site rules it out, so a party never breaks, replaces or moves anything a player built. With no such ground in reach it walks on and goes without a camp that night. The tents, the layout of the camp, and the blocks that count as natural ground or as trees and plants are data |
+| GUILD-9 | A party stays in one area for one night as a rule, never fewer than one and never more than three. By night some of the party sleep in the tents and the rest stay awake and search the ground around the camp. By day they wander the area and come back to the camp at evening. Nights are counted by the world's clock, so a party whose stay ran out while its chunks were unloaded breaks camp when they load |
+| GUILD-10 | On its last morning the party puts out the fire, takes down its tents and beds and moves on. Only the unlit campfire stays behind. The tents and beds of a temporary camp drop nothing, whoever removes them (SAFE-1). A player whose spawn was a tent's bed loses it as with any broken bed. A camp whose party is all dead stands until someone breaks it |
+| GUILD-11 | Now and then, at night, vampire bats fall on a pitched temporary camp and bite the hunters (HOME-10). The hunters awake fight them, the sleepers wake and join, and the fight lasts until the bats are dead or gone |
 
 **Enforcement:** server.
 
@@ -454,9 +465,9 @@ Vampires are rare. They live in households hidden in five kinds of structure, ea
 | HOME-7 | A castle's vampire lord is a boss with a health bar and its own powers: it calls every vampire of its household nearby onto its foe, and calls a swarm of vampire bats to its side. These powers are skills only vampire mobs can hold, never shown on a player's tree. The lord has a body of its own, settles in front of its throne and takes a stage above ancient that no other vampire rolls. It is downed and escapes like any vampire, its bar turns white while it is downed and purple while it escapes, and only a stake or the sun ends the fight |
 | HOME-8 | Structures hold loot chests with gear, Blood Bottles, decor, gothic music discs (DECOR-8), relics (RITE-1) and rare items found nowhere else. A mountain castle holds no relic |
 | HOME-9 | Vampire mobs live only in vampire structures, as members of a household. Each remembers its structure and its own coffin, which starts assigned to it (COFFIN-4), so it cannot be broken until that vampire dies to the sun or a stake. They never spawn at random anywhere else, and never despawn |
-| HOME-10 | Vampire bats spawn rarely, and only underground where a vanilla bat could spawn, or inside a vampire structure. Under cover, or at night in the open, they swoop at warm-blooded creatures and bite them (TURN-1). A vampire bat is bigger and darker than a vanilla bat, with soot fur, burgundy wings and red eyes that always glow. It hangs wrapped in its wings, flies, swoops on its prey and bites |
+| HOME-10 | Vampire bats spawn rarely, and only underground where a vanilla bat could spawn, inside a vampire structure, or about a temporary camp they attack (GUILD-11). Under cover, or at night in the open, they swoop at warm-blooded creatures and bite them (TURN-1). A vampire bat is bigger and darker than a vanilla bat, with soot fur, burgundy wings and red eyes that always glow. It hangs wrapped in its wings, flies, swoops on its prey and bites |
 | HOME-11 | Vampire mobs attack only when hungry or provoked. Being hurt, or a housemate being hurt nearby, provokes them, and a provoked vampire fights its attacker by day or night, fed or hungry, until it must escape the sun, falls back at low health, is downed, or the attacker leaves. A fed vampire may watch, follow or warn off a stranger, but does not attack. They never fight another vampire, whether a mob or a player, even one that hits them, and on Peaceful they never hunt players |
-| HOME-12 | Structure layouts, the coffins each structure holds, loot, relic chances, structure spawn rates, the biomes each structure generates in, household sizes and the vampire that heads a household, vampire stages and their odds per structure type, the skills vampire mobs pick, their temperaments and hobbies, the blocks they read at and the lights they tend, their looks, sizes, builds and outfits, and the biomes and structures vampire bats spawn in are data, changed by a data pack |
+| HOME-12 | Structure layouts, the coffins each structure holds, loot, relic chances, structure spawn rates, the biomes each structure generates in, household sizes and the vampire that heads a household, vampire stages and their odds per structure type, the skills vampire mobs pick, their temperaments and hobbies, the blocks they read at and the lights they tend, their looks, sizes, builds and outfits, the name pools and epithets, the name colour of each stage and of the Eldest, and the biomes and structures vampire bats spawn in are data, changed by a data pack |
 | HOME-13 | Vampire mobs have blood that drains over time. A hungry vampire may leave its structure at night to hunt humans, villagers and animals within a range of home. Not every vampire leaves every night, so a household is rarely empty, and one setting out sometimes brings one or two vampire bats. Each heads back once it has fed, or in time to reach its coffin by dawn. One caught out at dawn seeks shade (SUN-4). Their bites can start bite sickness (TURN-1). A lair household is sealed in rock and cannot leave (see the underground lair row) |
 | HOME-14 | A provoked vampire gives up the chase past a range from its structure and goes home |
 | HOME-15 | Each vampire mob has a stage, fledgling, adult, elder or ancient, which sets its health, speed, damage, how many skills it has and how much blood it can spend on powers. Its skills come from the vampire tree and, unlike a player's, may come from all three bloodlines. The older a vampire and the more skills it has, the rarer it is, the harder it fights, and the more hunter points (HUNT-1) and the better loot it gives. Only the Eldest has every skill (RITE-3) |
@@ -554,7 +565,7 @@ Vampires are rare. They live in households hidden in five kinds of structure, ea
 | CFG-2 | Settings are saved per world as JSON in the world save directory |
 | CFG-3 | A missing file gives defaults. A broken file gives defaults, is logged and is kept |
 | CFG-4 | Out-of-range values are clamped on load |
-| CFG-5 | Options cover turn chances, sickness length, sun damage, blood drain and values, garlic and crucifix ranges, skill point rates, the staking penalty, stake and silver damage, the damage, hits, time and weakening of each weapon coating, the strength, time, radius and cloud time of a garlic bomb, the downed and escape times, the damage from vomiting food or potions, the blood drain while levitating and in bat form, flying and at a sprint, how fast starving weakens and hurts and how much it takes from night gifts and bare hands, the coffin sleep share, the chance a sip binds a thrall and how long a charm lasts, hardcore vampire deaths, spawn rates, vampire structure and hunter camp rates, hunter points per contract, vampire mob hunger threshold and blood drain, how often hungry vampire mobs go out to feed, how far they roam about home and how far a hurt one calls its housemates, how often vampire mobs hiss, how often vampire mobs rise to levitate and land, how far and how hard vampire mobs leap, dash and dodge and when they dodge, how long and how far they fall back and when they come again, a human familiar's starting loyalty, wages, loyalty gains and losses, betrayal threshold and chance, and guard and errand ranges, feeding range and chase range, how often structure gramophones play and how near a player must be, the rewards for older vampires and the Eldest, how long the ritual builds, how far it reaches and how much health each extra player gives the Eldest, the size of the Eldest's arenas, how long an empty arena takes to reset the fight, how long hunters have to stake it and how much health it rises with, how much life its blade and its full set steal and how much health the set adds, and whether players can turn players, whether Nocturne works and how strong Batwing, Gliding Step and Hush are |
+| CFG-5 | Options cover turn chances, sickness length, sun damage, blood drain and values, garlic and crucifix ranges, skill point rates, the staking penalty, stake and silver damage, the damage, hits, time and weakening of each weapon coating, the strength, time, radius and cloud time of a garlic bomb, the downed and escape times, the damage from vomiting food or potions, the blood drain while levitating and in bat form, flying and at a sprint, how fast starving weakens and hurts and how much it takes from night gifts and bare hands, the coffin sleep share, the chance a sip binds a thrall and how long a charm lasts, hardcore vampire deaths, spawn rates, vampire structure and hunter camp rates, how often hunter parties appear, how many hunters they hold, how many nights they camp and how often vampire bats attack a camp, hunter points per contract, vampire mob hunger threshold and blood drain, how often hungry vampire mobs go out to feed, how far they roam about home and how far a hurt one calls its housemates, how often vampire mobs hiss, how often vampire mobs rise to levitate and land, how far and how hard vampire mobs leap, dash and dodge and when they dodge, how long and how far they fall back and when they come again, a human familiar's starting loyalty, wages, loyalty gains and losses, betrayal threshold and chance, and guard and errand ranges, feeding range and chase range, how often structure gramophones play and how near a player must be, the rewards for older vampires and the Eldest, how long the ritual builds, how far it reaches and how much health each extra player gives the Eldest, the size of the Eldest's arenas, how long an empty arena takes to reset the fight, how long hunters have to stake it and how much health it rises with, how much life its blade and its full set steal and how much health the set adds, and whether players can turn players, whether Nocturne works and how strong Batwing, Gliding Step and Hush are |
 | CFG-6 | A settings screen through Mod Menu shows the same server options and shares their validation with the commands |
 | CFG-7 | An option that only changes what one player sees, such as gore, is a client setting saved on that player's device. Every player can change it on the settings screen, whatever their operator level |
 | CFG-8 | Operators can turn, cure, set points and reset the bloodlines of any player, and release any human familiar |
@@ -630,6 +641,29 @@ The Eldest is among the oldest vampires there are, with every power of every blo
 
 **Enforcement:** server.
 
+### 5.21 Know Them By Name
+
+**Actor:** Any player, owner.
+
+Vampire mobs, hunters, Guild Masters, familiars and thralls each have a name. Vampire bats and vanilla mobs do not.
+
+| ID | Requirement |
+|---|---|
+| NAME-1 | Every vampire mob, hunter mob and Guild Master has a given name, drawn at random when it spawns. It keeps its name, and a vampire its epithet, until someone renames it (NAME-9). A man's comes from the men's pool for his kind and a woman's from the women's pool (HOME-18, GUILD-1, RITE-3). Vampires have 250 men's and 250 women's names and hunters have 250 of each, so 500 different vampire names and 500 different hunter names, each fitting its group and the mod's tone (LOOK-1 to LOOK-4). A Guild Master draws from the hunter pools. No two members of one household, one camp or one hunter party share a given name while the pool allows it. A vampire, hunter or Guild Master from an older world that has no name is given one when it loads |
+| NAME-2 | Every vampire mob but the Eldest has a name that ends in an epithet, drawn at random from a pool of 500 when it spawns, so it reads as a given name and a title. No two members of one household share an epithet while the pool allows it. The Eldest's epithet is always "the Eldest", which is not one of the 500. Hunters, Guild Masters, familiars and thralls have no epithet |
+| NAME-3 | A name is drawn above its bearer as a vanilla name tag is, without the player having to look straight at it, whenever the player has a clear line of sight to the bearer within vanilla's range. It is never drawn through blocks, so a name does not give away a vampire behind a wall or in a closed coffin, and it is hidden when vanilla would hide it, such as while the bearer is invisible. A vampire mob's name takes the colour of its stage, by default grey for a fledgling, white for an adult, gold for an elder, red for an ancient, dark purple for a vampire lord and dark red for the Eldest (HOME-12). A hunter's and a Guild Master's name is blue. A familiar's and a thrall's name is the normal name colour. The colour comes from what the bearer is and is not stored in the name, so a renamed mob keeps it. A boss bar shows its boss's name. Colour is never the only sign of a stage: an older stage also looks older (HOME-18, ACC-1) |
+| NAME-4 | A name is stored as the entity's vanilla custom name, epithet included, so entity selectors such as `@e[name=...]`, `/data`, other commands and other mods read it as they read any named mob. A selector matches the English name |
+| NAME-5 | Chat lines that refer to a named mob use its name, in its colour, as vanilla does for any named mob. A player's death message names the vampire or hunter that killed them, and a familiar's or thrall's death is told to its owner as a pet's is |
+| NAME-6 | Hiring a human familiar (FAM-3) or binding a thrall (MIND-5) opens a naming dialogue for its owner, styled as the vampire skill screen is (LINE-7) and never a plain menu. Its name field starts filled with a name drawn at random from the familiar pools, 250 men's and 250 women's names, all different, picked without regard to gender. The owner keeps it or types any other name and confirms. Neither is ever without a name: it holds the suggested one from the moment it is hired or bound, so closing the dialogue or leaving the server keeps it |
+| NAME-7 | A ghostly familiar takes a name at random from the familiar pools each time it is summoned, with no dialogue, since it is summoned often and fades (FAM-2) |
+| NAME-8 | A name a player enters, in the dialogue or on a name tag, is trimmed of spaces at both ends, has control and formatting characters removed, and must then be 1 to 32 characters long. The dialogue will not confirm a name that fails and says why. The server applies the same rules again, and takes a name from the dialogue only from the owner, for their own familiar or thrall (SAFE-4, PERM-1). A name that fails on the server changes nothing |
+| NAME-9 | A vanilla name tag renames any vampire mob, hunter, Guild Master, familiar or thrall, used by any player as on any vanilla mob. A tag whose name fails NAME-8 does nothing and is not used up. The new name replaces the whole name, epithet included. A released familiar keeps its name as a villager (FAM-8), and a released thrall keeps its name too |
+| NAME-10 | Given names are proper names and are the same in every language. Each epithet is translated into every shipped language |
+
+**Not supported:** a naming dialogue for a vampire mob, hunter or Guild Master; an epithet for anyone but a vampire mob; a filter on the words a player may use in a name.
+
+**Enforcement:** server. The client draws the name tags and the dialogue, and sends the name the owner chose.
+
 ## 6. Permissions
 
 A modified client is assumed. Hiding a control is never the enforcement of a rule. Decor and structure blocks have no owner, as a placed bed has none. A coffin has an owner only while it is assigned (COFFIN-13). Thralls and familiars have one owner.
@@ -650,8 +684,10 @@ A modified client is assumed. Hiding a control is never the enforcement of a rul
 | Open an occupied coffin | Yes, sneaking with an empty hand | Yes, sneaking with an empty hand | Yes, sneaking with an empty hand | Yes, sneaking with an empty hand |
 | Start the ritual | Yes | No | No | Yes, as a human |
 | Command a thrall or familiar | No | Only their own | Only their own | No |
+| Name a thrall or familiar in the naming dialogue | No | Only their own | Only their own | No |
+| Rename a vampire mob, hunter, Guild Master, familiar or thrall with a name tag | Yes | Yes | Yes | Yes |
 | Hurt a thrall or familiar | Yes | Yes | Yes | Yes |
-| Trade or take contracts at a hunter camp | Yes | No | No | Yes, as a human |
+| Trade or take contracts with a Guild Master | Yes | No | No | Yes, as a human |
 | Turn, cure or reset a player | No | No | No | Yes |
 | Change server settings | No | No | No | Yes |
 
@@ -678,6 +714,7 @@ There is no singleplayer mode in this mod. A single-player world is an integrate
 | Sun, weakness and their sources | Draws smoke, fire and the weakness sign |
 | Bat form, landing and hanging | Moves the bat, draws it and the poof, and turns the view upside down while hanging |
 | Thralls, familiars and loyalty | Draws them |
+| Names, epithets, their colours and who may set one | Draws the name tags and the naming dialogue, and sends the name the owner chose |
 | Household behaviour and structures | Draws fog and plays ambience |
 | Who is on which map | Draws the map it is sent |
 | Gore events | Decides how much gore to draw (GORE-3) |
@@ -719,8 +756,9 @@ There is no singleplayer mode in this mod. A single-player world is an integrate
 | SAFE-1 | No game mechanic duplicates or deletes any item the mod handles. Bottling blood, contracts and trades conserve items |
 | SAFE-2 | Blood is never created except by feeding (FEED-4), turning (TURN-5) and respawning, as the persistence grid says |
 | SAFE-3 | A bad config file never stops a server starting (CFG-3, CFG-4) |
-| SAFE-4 | Every payload is size-limited and checked, including skill purchases and familiar orders |
+| SAFE-4 | Every payload is size-limited and checked, including skill purchases, familiar orders and the names owners give (NAME-8) |
 | SAFE-5 | Skill points are never created except by FEED-12, HUNT-1, HUNT-2, RITE-6 and CFG-8 |
+| SAFE-6 | A hunter party never changes a block a player built (GUILD-8), and the tents and beds of its temporary camp drop nothing (GUILD-10) |
 
 ### Performance
 
@@ -732,6 +770,7 @@ There is no singleplayer mode in this mod. A single-player world is an integrate
 | PERF-4 | Fog and ambience cost nothing outside the range of a vampire structure |
 | PERF-5 | A household's routine costs nothing while its chunks are unloaded |
 | PERF-6 | Structure placement never loads extra chunks |
+| PERF-7 | A hunter party costs nothing while its chunks are unloaded, and pitching or taking down a temporary camp never loads extra chunks |
 
 ### Persistence
 
@@ -749,9 +788,12 @@ There is no singleplayer mode in this mod. A single-player world is an integrate
 | Human familiar loyalty | kept | kept | kept | kept | kept to the last save |
 | Household members and state, including members out feeding | kept | kept | not applicable | not applicable | kept to the last save |
 | A vampire mob's stage, skills, look, size, blood and hunger | kept | kept | not applicable | not applicable | kept to the last save |
+| The name of a vampire mob, hunter or Guild Master, and a vampire's epithet | kept | kept | not applicable | not applicable | kept to the last save |
+| The name of a familiar or thrall | kept with its chunk | kept | kept | kept | kept to the last save |
 | Relics placed on a ritual altar | kept | kept | not applicable | not applicable | kept to the last save |
 | An Eldest, summoned or in a mountain castle, and its fight | kept with its chunk | kept | not applicable | not applicable | kept to the last save |
 | Whether a mountain castle's Eldest has been ended | kept | kept | not applicable | not applicable | kept to the last save |
+| A hunter party, its temporary camp and the nights it has left | kept, except a party on the move that leaves the world (GUILD-7) | kept | not applicable | not applicable | kept to the last save |
 | Contracts in progress | not applicable | kept | kept | kept | kept to the last save |
 | Settings | not applicable | kept | not applicable | not applicable | written atomically |
 
@@ -777,7 +819,7 @@ There is no singleplayer mode in this mod. A single-player world is an integrate
 | ACC-2 | No meaning relies on particles alone. Sun damage, bat form, weakness, vomiting and a burning coffin all have sound and an on-screen sign |
 | ACC-3 | Gore can be reduced or turned off (GORE-3) |
 | ACC-4 | Fog never hides a threat completely within 8 blocks |
-| ACC-5 | Every string is translated into every shipped language |
+| ACC-5 | Every string is translated into every shipped language, except given names (NAME-10) |
 
 ### Compatibility
 
@@ -787,7 +829,7 @@ There is no singleplayer mode in this mod. A single-player world is an integrate
 | COMPAT-2 | Mod Menu, JEI and EMI are optional. Without them, the mod works fully |
 | COMPAT-3 | Nightborn needs no other mod in the family |
 | COMPAT-4 | Vanilla undead behave as they do without the mod, except CORE-9, and beds and night sleeping work as normal for humans |
-| COMPAT-5 | Feeding lists, crucifix materials, the foods and drinks a vampire can keep down, structures, loot, relic chances, trades, and vampire mob stages, skills, looks, sizes, builds and outfits can be changed by data packs |
+| COMPAT-5 | Feeding lists, crucifix materials, the foods and drinks a vampire can keep down, structures, temporary camp layouts, loot, relic chances, trades, name pools and epithets, and vampire mob stages, skills, looks, sizes, builds and outfits can be changed by data packs |
 | COMPAT-6 | Shipped languages: English, German, Spanish, French, Brazilian Portuguese, Russian and Simplified Chinese |
 | COMPAT-7 | Every declared dependency is used |
 
