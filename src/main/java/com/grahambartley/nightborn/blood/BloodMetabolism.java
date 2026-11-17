@@ -1,5 +1,6 @@
 package com.grahambartley.nightborn.blood;
 
+import com.grahambartley.nightborn.batform.BatEffort;
 import com.grahambartley.nightborn.config.CoreSettings;
 import net.minecraft.world.Difficulty;
 
@@ -51,11 +52,13 @@ public final class BloodMetabolism {
   }
 
   public static int flightDrainSeconds(
-      final boolean bat, final boolean levitating, final CoreSettings settings) {
-    if (bat) {
-      return settings.batDrainSeconds();
-    }
-    return levitating ? settings.levitationDrainSeconds() : GROUNDED;
+      final BatEffort bat, final boolean levitating, final CoreSettings settings) {
+    return switch (bat) {
+      case SPRINTING -> settings.batSprintDrainSeconds();
+      case FLYING -> settings.batDrainSeconds();
+      case RESTING -> GROUNDED;
+      case NONE -> levitating ? settings.levitationDrainSeconds() : GROUNDED;
+    };
   }
 
   private static float drainPerTick(final int secondsPerBlood) {

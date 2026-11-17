@@ -155,6 +155,8 @@
   "nightborn.setting.core.levitationDrainSeconds.tooltip": "Как быстро левитация расходует кровь, сверх обычного расхода",
   "nightborn.setting.core.batDrainSeconds": "Секунд на единицу крови в облике летучей мыши",
   "nightborn.setting.core.batDrainSeconds.tooltip": "Как быстро облик летучей мыши расходует кровь, сверх обычного расхода",
+  "nightborn.setting.core.batSprintDrainSeconds": "Секунд на единицу крови при рывке в облике летучей мыши",
+  "nightborn.setting.core.batSprintDrainSeconds.tooltip": "Как быстро полёт рывком в облике летучей мыши расходует кровь, сверх обычного расхода",
   "nightborn.setting.core.batHeavyDamage": "Тяжёлый удар для летучей мыши",
   "nightborn.setting.core.batHeavyDamage.tooltip": "Урон от одного удара, который выбивает вампира из облика летучей мыши",
   "nightborn.setting.weakened.slowness": "Замедление при полном ослаблении (%)",

@@ -91,11 +91,28 @@ class BatFormRulesTest {
         BatFormRules.warded(WeakenedSources.NONE.with(source, strength, 20), shippedForcedBy()));
   }
 
-  @ParameterizedTest(name = "locked {0}, bat {1} -> {2}")
-  @CsvSource({"false, false, false", "true, false, true", "false, true, true", "true, true, true"})
-  @DisplayName("a bat keeps flying on the ground, as a spectator does")
-  void flightLocked(final boolean locked, final boolean bat, final boolean expected) {
-    assertEquals(expected, BatFormRules.flightLocked(locked, bat));
+  @ParameterizedTest(name = "may fly {0}, bat {1} -> {2}")
+  @CsvSource({
+    "false, false, false",
+    "true, false, true",
+    "false, true, false",
+    "true, true, false"
+  })
+  @DisplayName("a bat never flies as a creative player does")
+  void creativeFlight(final boolean allowFlying, final boolean bat, final boolean expected) {
+    assertEquals(expected, BatFormRules.creativeFlight(allowFlying, bat));
+  }
+
+  @ParameterizedTest(name = "on ground {0}, floor below {1} -> {2}")
+  @CsvSource({
+    "true, true, true",
+    "true, false, false",
+    "false, true, false",
+    "false, false, false"
+  })
+  @DisplayName("a bat is perched only when it says it landed and there is a floor under it")
+  void perched(final boolean onGround, final boolean floorBelow, final boolean expected) {
+    assertEquals(expected, BatFormRules.perched(onGround, floorBelow));
   }
 
   @ParameterizedTest(name = "{0} damage against {1} -> {2}")
