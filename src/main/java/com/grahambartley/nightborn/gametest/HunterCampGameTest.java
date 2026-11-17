@@ -353,7 +353,7 @@ public class HunterCampGameTest implements FabricGameTest {
   }
 
   @GameTest(templateName = ARENA, batchId = PLACED_CAMP, tickLimit = 20)
-  public void aPlacedCampHoldsArmedHuntersAndAGuildMaster(final TestContext context) {
+  public void aPlacedCampHoldsKittedHuntersAndAGuildMaster(final TestContext context) {
     final ServerWorld world = context.getWorld();
     final BlockPos origin = context.getAbsolutePos(new BlockPos(0, 1, 0)).up(CLEAR_OF_OTHER_TESTS);
     final StructureTemplate camp =
