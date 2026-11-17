@@ -343,13 +343,17 @@ public class HunterCampGameTest implements FabricGameTest {
           loaded.readNbt(saved);
           context.assertEquals(
               loaded.getPositionTarget(), hunter.getPositionTarget(), "the camp is kept");
-          context.assertEquals(loaded.look(), hunter.look(), "and so is its look");
+          context.assertEquals(loaded.rig(), hunter.rig(), "and so is its rig");
+          context.assertFalse(hunter.look().isEmpty(), "it has a look");
+          context.assertEquals(loaded.look(), hunter.look(), "which is kept");
+          context.assertFalse(hunter.kit().isEmpty(), "it has a kit");
+          context.assertEquals(loaded.kit(), hunter.kit(), "which is kept too");
           context.complete();
         });
   }
 
   @GameTest(templateName = ARENA, batchId = PLACED_CAMP, tickLimit = 20)
-  public void aPlacedCampHoldsArmedHuntersAndAGuildMaster(final TestContext context) {
+  public void aPlacedCampHoldsKittedHuntersAndAGuildMaster(final TestContext context) {
     final ServerWorld world = context.getWorld();
     final BlockPos origin = context.getAbsolutePos(new BlockPos(0, 1, 0)).up(CLEAR_OF_OTHER_TESTS);
     final StructureTemplate camp =
@@ -370,10 +374,7 @@ public class HunterCampGameTest implements FabricGameTest {
           hunters.forEach(HunterEntity::tick);
           context.assertEquals(masters.size(), 1, "with one Guild Master");
           hunters.forEach(
-              hunter ->
-                  context.assertTrue(
-                      hunter.getMainHandStack().isOf(GearItems.WOODEN_STAKE),
-                      "every hunter carries a stake"));
+              hunter -> context.assertFalse(hunter.kit().isEmpty(), "every hunter has a kit"));
           context.assertTrue(
               world.getBlockState(origin.add(8, 1, 10)).isOf(Blocks.CAMPFIRE),
               "a campfire burns at the heart of the camp");

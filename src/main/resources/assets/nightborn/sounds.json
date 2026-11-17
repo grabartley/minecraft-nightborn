@@ -2,47 +2,95 @@
   "entity.vampire.lord.ambient": {
     "subtitle": "subtitles.nightborn.entity.vampire.ambient",
     "sounds": [
-      { "name": "nightborn:entity/vampire/male/ambient1", "pitch": 0.85 },
-      { "name": "nightborn:entity/vampire/male/ambient2", "pitch": 0.85 },
-      { "name": "nightborn:entity/vampire/male/ambient3", "pitch": 0.85 }
+      {
+        "name": "nightborn:entity/vampire/male/ambient1",
+        "pitch": 0.85
+      },
+      {
+        "name": "nightborn:entity/vampire/male/ambient2",
+        "pitch": 0.85
+      },
+      {
+        "name": "nightborn:entity/vampire/male/ambient3",
+        "pitch": 0.85
+      }
     ]
   },
   "entity.vampire.lord.hurt": {
     "subtitle": "subtitles.nightborn.entity.vampire.hurt",
     "sounds": [
-      { "name": "nightborn:entity/vampire/male/hurt1", "pitch": 0.85 },
-      { "name": "nightborn:entity/vampire/male/hurt2", "pitch": 0.85 },
-      { "name": "nightborn:entity/vampire/male/hurt3", "pitch": 0.85 }
+      {
+        "name": "nightborn:entity/vampire/male/hurt1",
+        "pitch": 0.85
+      },
+      {
+        "name": "nightborn:entity/vampire/male/hurt2",
+        "pitch": 0.85
+      },
+      {
+        "name": "nightborn:entity/vampire/male/hurt3",
+        "pitch": 0.85
+      }
     ]
   },
   "entity.vampire.lord.death": {
     "subtitle": "subtitles.nightborn.entity.vampire.death",
     "sounds": [
-      { "name": "nightborn:entity/vampire/male/death1", "pitch": 0.85 },
-      { "name": "nightborn:entity/vampire/male/death2", "pitch": 0.85 }
+      {
+        "name": "nightborn:entity/vampire/male/death1",
+        "pitch": 0.85
+      },
+      {
+        "name": "nightborn:entity/vampire/male/death2",
+        "pitch": 0.85
+      }
     ]
   },
   "entity.vampire.lord.hiss": {
     "subtitle": "subtitles.nightborn.entity.vampire.hiss",
     "sounds": [
-      { "name": "nightborn:entity/vampire/male/hiss1", "pitch": 0.85 },
-      { "name": "nightborn:entity/vampire/male/hiss2", "pitch": 0.85 }
+      {
+        "name": "nightborn:entity/vampire/male/hiss1",
+        "pitch": 0.85
+      },
+      {
+        "name": "nightborn:entity/vampire/male/hiss2",
+        "pitch": 0.85
+      }
     ]
   },
   "entity.vampire.lord.talk": {
     "subtitle": "subtitles.nightborn.entity.vampire.talk",
     "sounds": [
-      { "name": "nightborn:entity/vampire/male/talk1", "pitch": 0.85 },
-      { "name": "nightborn:entity/vampire/male/talk2", "pitch": 0.85 },
-      { "name": "nightborn:entity/vampire/male/talk3", "pitch": 0.85 }
+      {
+        "name": "nightborn:entity/vampire/male/talk1",
+        "pitch": 0.85
+      },
+      {
+        "name": "nightborn:entity/vampire/male/talk2",
+        "pitch": 0.85
+      },
+      {
+        "name": "nightborn:entity/vampire/male/talk3",
+        "pitch": 0.85
+      }
     ]
   },
   "entity.vampire.lord.argue": {
     "subtitle": "subtitles.nightborn.entity.vampire.argue",
     "sounds": [
-      { "name": "nightborn:entity/vampire/male/argue1", "pitch": 0.85 },
-      { "name": "nightborn:entity/vampire/male/argue2", "pitch": 0.85 },
-      { "name": "nightborn:entity/vampire/male/argue3", "pitch": 0.85 }
+      {
+        "name": "nightborn:entity/vampire/male/argue1",
+        "pitch": 0.85
+      },
+      {
+        "name": "nightborn:entity/vampire/male/argue2",
+        "pitch": 0.85
+      },
+      {
+        "name": "nightborn:entity/vampire/male/argue3",
+        "pitch": 0.85
+      }
     ]
   },
   "entity.vampire.male.ambient": {
@@ -101,22 +149,197 @@
   "entity.hunter.male.ambient": {
     "subtitle": "subtitles.nightborn.entity.hunter.ambient",
     "sounds": [
-      "nightborn:entity/hunter/male/ambient1",
-      "nightborn:entity/hunter/male/ambient2"
+      {
+        "name": "minecraft:mob/villager/idle1",
+        "pitch": 0.85
+      },
+      {
+        "name": "minecraft:mob/villager/idle2",
+        "pitch": 0.85
+      },
+      {
+        "name": "minecraft:mob/villager/idle3",
+        "pitch": 0.85
+      }
     ]
   },
   "entity.hunter.male.hurt": {
     "subtitle": "subtitles.nightborn.entity.hunter.hurt",
     "sounds": [
-      "nightborn:entity/hunter/male/hurt1",
-      "nightborn:entity/hunter/male/hurt2",
-      "nightborn:entity/hunter/male/hurt3"
+      {
+        "name": "minecraft:mob/villager/hit1",
+        "pitch": 0.85
+      },
+      {
+        "name": "minecraft:mob/villager/hit2",
+        "pitch": 0.85
+      },
+      {
+        "name": "minecraft:mob/villager/hit3",
+        "pitch": 0.85
+      },
+      {
+        "name": "minecraft:mob/villager/hit4",
+        "pitch": 0.85
+      }
     ]
   },
   "entity.hunter.male.death": {
     "subtitle": "subtitles.nightborn.entity.hunter.death",
     "sounds": [
-      "nightborn:entity/hunter/male/death"
+      {
+        "name": "minecraft:mob/villager/death",
+        "pitch": 0.85
+      }
+    ]
+  },
+  "entity.hunter.male.alert": {
+    "subtitle": "subtitles.nightborn.entity.hunter.alert",
+    "sounds": [
+      {
+        "name": "minecraft:mob/villager/haggle1",
+        "pitch": 0.85
+      },
+      {
+        "name": "minecraft:mob/villager/haggle2",
+        "pitch": 0.85
+      },
+      {
+        "name": "minecraft:mob/villager/haggle3",
+        "pitch": 0.85
+      }
+    ]
+  },
+  "entity.hunter.male.strike": {
+    "subtitle": "subtitles.nightborn.entity.hunter.strike",
+    "sounds": [
+      {
+        "name": "minecraft:mob/villager/no1",
+        "pitch": 0.85
+      },
+      {
+        "name": "minecraft:mob/villager/no2",
+        "pitch": 0.85
+      },
+      {
+        "name": "minecraft:mob/villager/no3",
+        "pitch": 0.85
+      }
+    ]
+  },
+  "entity.hunter.male.cheer": {
+    "subtitle": "subtitles.nightborn.entity.hunter.cheer",
+    "sounds": [
+      {
+        "name": "minecraft:mob/villager/yes1",
+        "pitch": 0.85
+      },
+      {
+        "name": "minecraft:mob/villager/yes2",
+        "pitch": 0.85
+      },
+      {
+        "name": "minecraft:mob/villager/yes3",
+        "pitch": 0.85
+      }
+    ]
+  },
+  "entity.hunter.female.ambient": {
+    "subtitle": "subtitles.nightborn.entity.hunter.ambient",
+    "sounds": [
+      {
+        "name": "minecraft:mob/villager/idle1",
+        "pitch": 1.2
+      },
+      {
+        "name": "minecraft:mob/villager/idle2",
+        "pitch": 1.2
+      },
+      {
+        "name": "minecraft:mob/villager/idle3",
+        "pitch": 1.2
+      }
+    ]
+  },
+  "entity.hunter.female.hurt": {
+    "subtitle": "subtitles.nightborn.entity.hunter.hurt",
+    "sounds": [
+      {
+        "name": "minecraft:mob/villager/hit1",
+        "pitch": 1.2
+      },
+      {
+        "name": "minecraft:mob/villager/hit2",
+        "pitch": 1.2
+      },
+      {
+        "name": "minecraft:mob/villager/hit3",
+        "pitch": 1.2
+      },
+      {
+        "name": "minecraft:mob/villager/hit4",
+        "pitch": 1.2
+      }
+    ]
+  },
+  "entity.hunter.female.death": {
+    "subtitle": "subtitles.nightborn.entity.hunter.death",
+    "sounds": [
+      {
+        "name": "minecraft:mob/villager/death",
+        "pitch": 1.2
+      }
+    ]
+  },
+  "entity.hunter.female.alert": {
+    "subtitle": "subtitles.nightborn.entity.hunter.alert",
+    "sounds": [
+      {
+        "name": "minecraft:mob/villager/haggle1",
+        "pitch": 1.2
+      },
+      {
+        "name": "minecraft:mob/villager/haggle2",
+        "pitch": 1.2
+      },
+      {
+        "name": "minecraft:mob/villager/haggle3",
+        "pitch": 1.2
+      }
+    ]
+  },
+  "entity.hunter.female.strike": {
+    "subtitle": "subtitles.nightborn.entity.hunter.strike",
+    "sounds": [
+      {
+        "name": "minecraft:mob/villager/no1",
+        "pitch": 1.2
+      },
+      {
+        "name": "minecraft:mob/villager/no2",
+        "pitch": 1.2
+      },
+      {
+        "name": "minecraft:mob/villager/no3",
+        "pitch": 1.2
+      }
+    ]
+  },
+  "entity.hunter.female.cheer": {
+    "subtitle": "subtitles.nightborn.entity.hunter.cheer",
+    "sounds": [
+      {
+        "name": "minecraft:mob/villager/yes1",
+        "pitch": 1.2
+      },
+      {
+        "name": "minecraft:mob/villager/yes2",
+        "pitch": 1.2
+      },
+      {
+        "name": "minecraft:mob/villager/yes3",
+        "pitch": 1.2
+      }
     ]
   },
   "entity.vampire.female.ambient": {
@@ -170,27 +393,6 @@
     "sounds": [
       "nightborn:entity/vampire/female/retch1",
       "nightborn:entity/vampire/female/retch2"
-    ]
-  },
-  "entity.hunter.female.ambient": {
-    "subtitle": "subtitles.nightborn.entity.hunter.ambient",
-    "sounds": [
-      "nightborn:entity/hunter/female/ambient1",
-      "nightborn:entity/hunter/female/ambient2",
-      "nightborn:entity/hunter/female/ambient3"
-    ]
-  },
-  "entity.hunter.female.hurt": {
-    "subtitle": "subtitles.nightborn.entity.hunter.hurt",
-    "sounds": [
-      "nightborn:entity/hunter/female/hurt1",
-      "nightborn:entity/hunter/female/hurt2"
-    ]
-  },
-  "entity.hunter.female.death": {
-    "subtitle": "subtitles.nightborn.entity.hunter.death",
-    "sounds": [
-      "nightborn:entity/hunter/female/death"
     ]
   },
   "entity.vampire.bite": {
@@ -327,17 +529,35 @@
   "block.stone_coffin.open": {
     "subtitle": "subtitles.nightborn.block.stone_coffin.open",
     "sounds": [
-      { "name": "minecraft:block/grindstone/grindstone1", "pitch": 0.6 },
-      { "name": "minecraft:block/grindstone/grindstone2", "pitch": 0.6 },
-      { "name": "minecraft:block/grindstone/grindstone3", "pitch": 0.6 }
+      {
+        "name": "minecraft:block/grindstone/grindstone1",
+        "pitch": 0.6
+      },
+      {
+        "name": "minecraft:block/grindstone/grindstone2",
+        "pitch": 0.6
+      },
+      {
+        "name": "minecraft:block/grindstone/grindstone3",
+        "pitch": 0.6
+      }
     ]
   },
   "block.stone_coffin.close": {
     "subtitle": "subtitles.nightborn.block.stone_coffin.close",
     "sounds": [
-      { "name": "minecraft:block/grindstone/grindstone1", "pitch": 0.5 },
-      { "name": "minecraft:block/grindstone/grindstone2", "pitch": 0.5 },
-      { "name": "minecraft:block/grindstone/grindstone3", "pitch": 0.5 }
+      {
+        "name": "minecraft:block/grindstone/grindstone1",
+        "pitch": 0.5
+      },
+      {
+        "name": "minecraft:block/grindstone/grindstone2",
+        "pitch": 0.5
+      },
+      {
+        "name": "minecraft:block/grindstone/grindstone3",
+        "pitch": 0.5
+      }
     ]
   },
   "boss.eldest.organ": {
@@ -481,47 +701,95 @@
   "entity.vampire.eldest_male.ambient": {
     "subtitle": "subtitles.nightborn.entity.vampire.ambient",
     "sounds": [
-      { "name": "nightborn:entity/vampire/male/ambient1", "pitch": 0.85 },
-      { "name": "nightborn:entity/vampire/male/ambient2", "pitch": 0.85 },
-      { "name": "nightborn:entity/vampire/male/ambient3", "pitch": 0.85 }
+      {
+        "name": "nightborn:entity/vampire/male/ambient1",
+        "pitch": 0.85
+      },
+      {
+        "name": "nightborn:entity/vampire/male/ambient2",
+        "pitch": 0.85
+      },
+      {
+        "name": "nightborn:entity/vampire/male/ambient3",
+        "pitch": 0.85
+      }
     ]
   },
   "entity.vampire.eldest_male.argue": {
     "subtitle": "subtitles.nightborn.entity.vampire.argue",
     "sounds": [
-      { "name": "nightborn:entity/vampire/male/argue1", "pitch": 0.85 },
-      { "name": "nightborn:entity/vampire/male/argue2", "pitch": 0.85 },
-      { "name": "nightborn:entity/vampire/male/argue3", "pitch": 0.85 }
+      {
+        "name": "nightborn:entity/vampire/male/argue1",
+        "pitch": 0.85
+      },
+      {
+        "name": "nightborn:entity/vampire/male/argue2",
+        "pitch": 0.85
+      },
+      {
+        "name": "nightborn:entity/vampire/male/argue3",
+        "pitch": 0.85
+      }
     ]
   },
   "entity.vampire.eldest_male.death": {
     "subtitle": "subtitles.nightborn.entity.vampire.death",
     "sounds": [
-      { "name": "nightborn:entity/vampire/male/death1", "pitch": 0.85 },
-      { "name": "nightborn:entity/vampire/male/death2", "pitch": 0.85 }
+      {
+        "name": "nightborn:entity/vampire/male/death1",
+        "pitch": 0.85
+      },
+      {
+        "name": "nightborn:entity/vampire/male/death2",
+        "pitch": 0.85
+      }
     ]
   },
   "entity.vampire.eldest_male.hiss": {
     "subtitle": "subtitles.nightborn.entity.vampire.hiss",
     "sounds": [
-      { "name": "nightborn:entity/vampire/male/hiss1", "pitch": 0.85 },
-      { "name": "nightborn:entity/vampire/male/hiss2", "pitch": 0.85 }
+      {
+        "name": "nightborn:entity/vampire/male/hiss1",
+        "pitch": 0.85
+      },
+      {
+        "name": "nightborn:entity/vampire/male/hiss2",
+        "pitch": 0.85
+      }
     ]
   },
   "entity.vampire.eldest_male.hurt": {
     "subtitle": "subtitles.nightborn.entity.vampire.hurt",
     "sounds": [
-      { "name": "nightborn:entity/vampire/male/hurt1", "pitch": 0.85 },
-      { "name": "nightborn:entity/vampire/male/hurt2", "pitch": 0.85 },
-      { "name": "nightborn:entity/vampire/male/hurt3", "pitch": 0.85 }
+      {
+        "name": "nightborn:entity/vampire/male/hurt1",
+        "pitch": 0.85
+      },
+      {
+        "name": "nightborn:entity/vampire/male/hurt2",
+        "pitch": 0.85
+      },
+      {
+        "name": "nightborn:entity/vampire/male/hurt3",
+        "pitch": 0.85
+      }
     ]
   },
   "entity.vampire.eldest_male.talk": {
     "subtitle": "subtitles.nightborn.entity.vampire.talk",
     "sounds": [
-      { "name": "nightborn:entity/vampire/male/talk1", "pitch": 0.85 },
-      { "name": "nightborn:entity/vampire/male/talk2", "pitch": 0.85 },
-      { "name": "nightborn:entity/vampire/male/talk3", "pitch": 0.85 }
+      {
+        "name": "nightborn:entity/vampire/male/talk1",
+        "pitch": 0.85
+      },
+      {
+        "name": "nightborn:entity/vampire/male/talk2",
+        "pitch": 0.85
+      },
+      {
+        "name": "nightborn:entity/vampire/male/talk3",
+        "pitch": 0.85
+      }
     ]
   },
   "entity.vampire.eldest_female.ambient": {
