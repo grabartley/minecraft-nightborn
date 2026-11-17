@@ -12,7 +12,7 @@
   "start_height": { "absolute": -32 },
   "project_start_to_heightmap": "WORLD_SURFACE_WG",
   "max_distance_from_center": 64,
-  "footing": { "dry": true, "max_rise": 30 },
+  "footing": { "dry": true, "max_rise": 30, "entrance": "nightborn:mountain_castle_entrance", "max_lift": 10 },
   "summit": { "reach": 48, "spacing": 16, "min_height": 100, "max_height": 250 },
   "household": {
     "resident": "nightborn:vampire",

@@ -2,7 +2,7 @@ package com.grahambartley.nightborn.skill;
 
 import com.grahambartley.nightborn.advancement.Milestone;
 import com.grahambartley.nightborn.advancement.MilestoneCriterion;
-import com.grahambartley.nightborn.mob.stage.StageGate;
+import com.grahambartley.nightborn.age.StageRanks;
 import com.grahambartley.nightborn.network.BuySkillPayload;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.registry.DynamicRegistryManager;
@@ -26,7 +26,7 @@ public final class SkillShop {
     final SkillTree tree = SkillTree.of(player);
     final TreeProgress progress = SkillAttachment.get(player, tree);
     final SkillLookup lookup =
-        SkillLookup.of(registries, progress, tree, id, StageGate.rankOf(player));
+        SkillLookup.of(registries, progress, tree, id, StageRanks.of(player));
     if (lookup.verdict() != SkillPurchase.Verdict.ALLOWED) {
       player.sendMessage(Text.translatable(lookup.verdict().translationKey()), true);
       return lookup.verdict();

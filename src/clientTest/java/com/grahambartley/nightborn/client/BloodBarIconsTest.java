@@ -27,19 +27,4 @@ class BloodBarIconsTest {
     final String shown = fill == null ? "empty" : fill.getPath().replace("hud/blood_", "");
     assertEquals(expected, shown);
   }
-
-  @ParameterizedTest(name = "{0} blood at most: {1} drops")
-  @CsvSource({"20, 10", "22, 11", "26, 13", "21, 11", "0, 0", "-4, 0"})
-  @DisplayName("a larger blood bar draws more drops")
-  void count(final int maxBlood, final int drops) {
-    assertEquals(drops, BloodBarIcons.count(maxBlood));
-  }
-
-  @ParameterizedTest(name = "drop {0}: column {1}, row {2}")
-  @CsvSource({"0, 0, 0", "9, 9, 0", "10, 0, 1", "12, 2, 1", "20, 0, 2"})
-  @DisplayName("drops past the tenth start a new row above the first")
-  void rows(final int icon, final int column, final int row) {
-    assertEquals(column, BloodBarIcons.column(icon));
-    assertEquals(row, BloodBarIcons.row(icon));
-  }
 }

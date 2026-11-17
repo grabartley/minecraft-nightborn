@@ -17,6 +17,7 @@ import com.grahambartley.nightborn.structure.HouseholdSpawner;
 import com.grahambartley.nightborn.structure.RareSpreadPlacement;
 import com.grahambartley.nightborn.structure.StructureZone;
 import com.grahambartley.nightborn.structure.StructureZoneTracker;
+import com.grahambartley.nightborn.structure.Threshold;
 import com.grahambartley.nightborn.structure.VampireStructure;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.JsonOps;
@@ -38,12 +39,15 @@ import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.RegistryOps;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.structure.StructurePlacementData;
 import net.minecraft.structure.StructureSet;
 import net.minecraft.structure.StructureStart;
+import net.minecraft.structure.StructureTemplate;
 import net.minecraft.test.AfterBatch;
 import net.minecraft.test.BeforeBatch;
 import net.minecraft.test.GameTest;
 import net.minecraft.test.TestContext;
+import net.minecraft.util.BlockRotation;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockBox;
 import net.minecraft.util.math.BlockPos;
@@ -163,8 +167,18 @@ public class VampireStructureGameTest implements FabricGameTest {
             .get(Identifier.of(Nightborn.MOD_ID, "crypt"));
     context.assertTrue(
         crypt instanceof VampireStructure vampire
-            && vampire.footing().equals(Optional.of(new Footing(true, 4, 8))),
-        "the crypt keeps to dry ground that rises 4 blocks or less, got " + crypt);
+            && vampire
+                .footing()
+                .equals(
+                    Optional.of(
+                        new Footing(
+                            true,
+                            4,
+                            8,
+                            Optional.of(Identifier.of(Nightborn.MOD_ID, "crypt_entrance")),
+                            Optional.empty()))),
+        "the crypt keeps to dry ground that rises 4 blocks or less and names its entrance, got "
+            + crypt);
     context.complete();
   }
 
@@ -234,17 +248,7 @@ public class VampireStructureGameTest implements FabricGameTest {
             .get(RegistryKeys.STRUCTURE)
             .get(Identifier.of(Nightborn.MOD_ID, "crypt"));
     final BlockPos origin = context.getAbsolutePos(BlockPos.ORIGIN);
-    final Structure.Context generation =
-        new Structure.Context(
-            world.getRegistryManager(),
-            world.getChunkManager().getChunkGenerator(),
-            world.getChunkManager().getChunkGenerator().getBiomeSource(),
-            world.getChunkManager().getNoiseConfig(),
-            world.getStructureTemplateManager(),
-            world.getSeed(),
-            new ChunkPos(origin),
-            world,
-            biome -> true);
+    final Structure.Context generation = generationAt(context);
     final BlockBox churchyard = BlockBox.create(origin, origin.add(37, 20, 22));
     context.assertTrue(
         crypt instanceof VampireStructure vampire
@@ -254,6 +258,95 @@ public class VampireStructureGameTest implements FabricGameTest {
                 .get()
                 .fits(generation, churchyard, new ColumnPos(origin.getX(), origin.getZ())),
         "the crypt footing accepts the flat dry test ground");
+    context.complete();
+  }
+
+  private static Structure.Context generationAt(final TestContext context) {
+    final ServerWorld world = context.getWorld();
+    return new Structure.Context(
+        world.getRegistryManager(),
+        world.getChunkManager().getChunkGenerator(),
+        world.getChunkManager().getChunkGenerator().getBiomeSource(),
+        world.getChunkManager().getNoiseConfig(),
+        world.getStructureTemplateManager(),
+        world.getSeed(),
+        new ChunkPos(context.getAbsolutePos(BlockPos.ORIGIN)),
+        world,
+        biome -> true);
+  }
+
+  private static void entranceMeetsTheGround(final TestContext context, final String id) {
+    final ServerWorld world = context.getWorld();
+    final Structure structure =
+        world
+            .getRegistryManager()
+            .get(RegistryKeys.STRUCTURE)
+            .get(Identifier.of(Nightborn.MOD_ID, id));
+    final Structure.Context generation = generationAt(context);
+    final Optional<Structure.StructurePosition> position =
+        structure.getValidStructurePosition(generation);
+    context.assertTrue(position.isPresent(), id + " accepts the flat dry test ground");
+    final Optional<Threshold> threshold =
+        ((VampireStructure) structure)
+            .footing()
+            .flatMap(Footing::entrance)
+            .flatMap(
+                name ->
+                    Threshold.in(
+                        position.get().generate().toList().pieces(),
+                        name,
+                        world.getStructureTemplateManager(),
+                        world.getRandom()));
+    context.assertTrue(threshold.isPresent(), id + " finds its entrance among its placed pieces");
+    final ColumnPos outside = threshold.get().outside();
+    final int surface = Footing.surface(generation, outside);
+    context.assertEquals(
+        threshold.get().floor().getY(),
+        surface - 1,
+        id + " entrance floor is level with the ground outside it");
+    context.assertTrue(
+        threshold.get().out().getAxis().isHorizontal(), id + " entrance faces out sideways");
+    context.complete();
+  }
+
+  @GameTest(templateName = ARENA, tickLimit = 20)
+  public void theCryptEntranceMeetsTheGround(final TestContext context) {
+    entranceMeetsTheGround(context, "crypt");
+  }
+
+  @GameTest(templateName = ARENA, tickLimit = 20)
+  public void theCastleEntranceMeetsTheGround(final TestContext context) {
+    entranceMeetsTheGround(context, "castle");
+  }
+
+  @GameTest(templateName = ARENA, tickLimit = 20)
+  public void theRuinedManorEntranceMeetsTheGround(final TestContext context) {
+    entranceMeetsTheGround(context, "ruined_manor");
+  }
+
+  @GameTest(templateName = ARENA, tickLimit = 20)
+  public void theMountainCastleCarriesItsEntranceOnEveryTurn(final TestContext context) {
+    final ServerWorld world = context.getWorld();
+    for (final String layout : List.of("eyrie", "bastion")) {
+      final StructureTemplate template =
+          world
+              .getStructureTemplateManager()
+              .getTemplateOrBlank(
+                  Identifier.of(Nightborn.MOD_ID, "vampire/mountain_castle/" + layout));
+      for (final BlockRotation rotation : BlockRotation.values()) {
+        final Optional<Threshold> threshold =
+            Threshold.named(
+                Identifier.of(Nightborn.MOD_ID, "mountain_castle_entrance"),
+                template.getInfosForBlock(
+                    BlockPos.ORIGIN,
+                    new StructurePlacementData().setRotation(rotation),
+                    Blocks.JIGSAW,
+                    true));
+        context.assertTrue(
+            threshold.isPresent() && threshold.get().out().getAxis().isHorizontal(),
+            layout + " turned " + rotation + " has an entrance facing out, got " + threshold);
+      }
+    }
     context.complete();
   }
 

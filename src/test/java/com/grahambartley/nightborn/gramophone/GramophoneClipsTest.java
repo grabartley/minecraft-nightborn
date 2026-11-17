@@ -23,17 +23,17 @@ class GramophoneClipsTest {
 
   static Stream<Arguments> changes() {
     return Stream.of(
-        Arguments.of(GramophoneState.EMPTY, GramophoneState.PLAYING, "insert,playing"),
-        Arguments.of(GramophoneState.EMPTY, GramophoneState.LOADED, "insert,loaded"),
+        Arguments.of(GramophoneState.EMPTY, GramophoneState.PLAYING, "playing"),
+        Arguments.of(GramophoneState.EMPTY, GramophoneState.LOADED, "loaded"),
         Arguments.of(GramophoneState.LOADED, GramophoneState.PLAYING, "playing"),
         Arguments.of(GramophoneState.PLAYING, GramophoneState.LOADED, "stop,loaded"),
-        Arguments.of(GramophoneState.PLAYING, GramophoneState.EMPTY, "eject,idle"),
-        Arguments.of(GramophoneState.LOADED, GramophoneState.EMPTY, "eject,idle"));
+        Arguments.of(GramophoneState.PLAYING, GramophoneState.EMPTY, "idle"),
+        Arguments.of(GramophoneState.LOADED, GramophoneState.EMPTY, "idle"));
   }
 
   @ParameterizedTest(name = "{0} to {1}: {2}")
   @MethodSource("changes")
-  @DisplayName("each change plays its clip once and then holds the new state")
+  @DisplayName("a disc shows or goes at once, and only a stopping platter winds down first")
   void change(final GramophoneState before, final GramophoneState now, final String clips) {
     final GramophoneClips seen = new GramophoneClips();
     seen.observe(before);

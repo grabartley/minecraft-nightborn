@@ -6,6 +6,7 @@ import com.grahambartley.nightborn.config.WardSettings;
 import com.grahambartley.nightborn.hunter.HunterAttributes;
 import com.grahambartley.nightborn.vampire.Vampires;
 import com.grahambartley.nightborn.weakened.Weakened;
+import com.grahambartley.nightborn.weakened.WeakenedSources;
 import java.util.List;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
@@ -47,9 +48,17 @@ public final class Wards {
     if (stringStrength > 0) {
       MilestoneCriterion.reach(vampire, Milestone.GARLIC_STRINGS, strings);
     }
+    final WeakenedSources before = Weakened.sources(vampire);
+    final int crucifix = crucifixes(world, vampire, settings);
+    final int shape = shapes(world, vampire, settings);
     Weakened.set(vampire, STRINGS, stringStrength, LINGER_TICKS);
-    Weakened.set(vampire, CRUCIFIX, crucifixes(world, vampire, settings), LINGER_TICKS);
-    Weakened.set(vampire, SHAPE, shapes(world, vampire, settings), LINGER_TICKS);
+    Weakened.set(vampire, CRUCIFIX, crucifix, LINGER_TICKS);
+    Weakened.set(vampire, SHAPE, shape, LINGER_TICKS);
+    if (Flinch.starts(
+        Flinch.inReach(before.strength(STRINGS), before.strength(CRUCIFIX), before.strength(SHAPE)),
+        Flinch.inReach(stringStrength, crucifix, shape))) {
+      Flinch.show(vampire);
+    }
   }
 
   public static void touch(final Entity entity, final WardSettings settings) {

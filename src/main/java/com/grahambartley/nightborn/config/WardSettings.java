@@ -12,7 +12,10 @@ public record WardSettings(
     int crucifixStrength,
     int shapeRange,
     int shapeStrength,
-    int faithBonus) {
+    int faithBonus,
+    int eatenDamage,
+    int eatenSeconds,
+    int eatenBlood) {
 
   static final String SECTION = "wards";
 
@@ -37,6 +40,13 @@ public record WardSettings(
   public static final IntSetting FAITH_BONUS =
       new IntSetting(SECTION, "faithBonus", 25, 0, 100, c -> c.wards().faithBonus());
 
+  public static final IntSetting EATEN_DAMAGE =
+      new IntSetting(SECTION, "eatenDamage", 12, 0, 40, c -> c.wards().eatenDamage());
+  public static final IntSetting EATEN_SECONDS =
+      new IntSetting(SECTION, "eatenSeconds", 60, 1, 600, c -> c.wards().eatenSeconds());
+  public static final IntSetting EATEN_BLOOD =
+      new IntSetting(SECTION, "eatenBlood", 6, 0, 20, c -> c.wards().eatenBlood());
+
   public static final List<Setting<?>> SETTINGS =
       List.of(
           STRING_RANGE,
@@ -48,7 +58,10 @@ public record WardSettings(
           CRUCIFIX_STRENGTH,
           SHAPE_RANGE,
           SHAPE_STRENGTH,
-          FAITH_BONUS);
+          FAITH_BONUS,
+          EATEN_DAMAGE,
+          EATEN_SECONDS,
+          EATEN_BLOOD);
 
   public WardSettings {
     stringRange = STRING_RANGE.clamp(stringRange);
@@ -61,6 +74,9 @@ public record WardSettings(
     shapeRange = SHAPE_RANGE.clamp(shapeRange);
     shapeStrength = SHAPE_STRENGTH.clamp(shapeStrength);
     faithBonus = FAITH_BONUS.clamp(faithBonus);
+    eatenDamage = EATEN_DAMAGE.clamp(eatenDamage);
+    eatenSeconds = EATEN_SECONDS.clamp(eatenSeconds);
+    eatenBlood = EATEN_BLOOD.clamp(eatenBlood);
   }
 
   static WardSettings from(final SettingValues values) {
@@ -74,6 +90,9 @@ public record WardSettings(
         values.get(CRUCIFIX_STRENGTH),
         values.get(SHAPE_RANGE),
         values.get(SHAPE_STRENGTH),
-        values.get(FAITH_BONUS));
+        values.get(FAITH_BONUS),
+        values.get(EATEN_DAMAGE),
+        values.get(EATEN_SECONDS),
+        values.get(EATEN_BLOOD));
   }
 }

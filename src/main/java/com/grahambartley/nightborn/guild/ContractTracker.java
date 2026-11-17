@@ -1,10 +1,10 @@
 package com.grahambartley.nightborn.guild;
 
+import com.grahambartley.nightborn.age.StageRanks;
 import com.grahambartley.nightborn.downed.Downed;
 import com.grahambartley.nightborn.gear.Staking;
 import com.grahambartley.nightborn.mob.VampireEntity;
 import com.grahambartley.nightborn.mob.home.Housemates;
-import com.grahambartley.nightborn.mob.stage.Staged;
 import com.grahambartley.nightborn.vampire.Vampires;
 import java.util.ArrayList;
 import java.util.List;
@@ -41,9 +41,7 @@ public final class ContractTracker {
             hunter ->
                 credit(
                     hunter,
-                    new HunterContract.Stake(
-                        victim instanceof Staged staged ? staged.stageRank() : 0,
-                        householdCleared(victim))));
+                    new HunterContract.Stake(StageRanks.of(victim), householdCleared(victim))));
   }
 
   public static void credit(final ServerPlayerEntity hunter, final HunterContract.Stake stake) {

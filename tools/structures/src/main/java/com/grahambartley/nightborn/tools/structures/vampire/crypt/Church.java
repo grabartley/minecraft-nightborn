@@ -15,6 +15,7 @@ public final class Church {
   public static final Layout TOWER = new Layout("vampire/crypt/church_tower", true);
   public static final Layout BELLCOTE = new Layout("vampire/crypt/church_bellcote", false);
   public static final String VESTRY = "nightborn:church_vestry";
+  public static final String ENTRANCE = "nightborn:crypt_entrance";
 
   public static final int SIZE_X = 38;
   public static final int SIZE_Y = 23;
@@ -50,6 +51,7 @@ public final class Church {
     }
     furnish(t);
     lawn(t);
+    t.entrance(13, 0, YARD_Z - 1, ENTRANCE, "south");
     t.jigsaw(
         STAIR_X,
         0,

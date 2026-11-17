@@ -9,6 +9,7 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Set;
 import javax.imageio.ImageIO;
 import net.minecraft.util.Identifier;
 import org.junit.jupiter.api.DisplayName;
@@ -38,9 +39,7 @@ class GramophoneRendererTest {
     GramophoneClips.IDLE + ", true",
     GramophoneClips.LOADED + ", true",
     GramophoneClips.PLAYING + ", true",
-    GramophoneClips.INSERT + ", false",
-    GramophoneClips.STOP + ", false",
-    GramophoneClips.EJECT + ", false"
+    GramophoneClips.STOP + ", false"
   })
   @DisplayName("every clip the gramophone asks for exists and only moves bones the model has")
   void everyClipExists(final String name, final boolean loops) throws IOException {
@@ -50,5 +49,25 @@ class GramophoneRendererTest {
         clip.get("loop").getAsJsonPrimitive().isBoolean() && clip.get("loop").getAsBoolean();
     assertEquals(loops, looping);
     assertTrue(GeoAssets.boneNames(GEO).containsAll(clip.getAsJsonObject("bones").keySet()));
+  }
+
+  @ParameterizedTest(name = "{0} shows the disc: {1}")
+  @CsvSource({
+    GramophoneClips.IDLE + ", false",
+    GramophoneClips.LOADED + ", true",
+    GramophoneClips.PLAYING + ", true",
+    GramophoneClips.STOP + ", true"
+  })
+  @DisplayName("the disc is on the platter from the first frame of a clip, or not there at all")
+  void theDiscShowsOrHidesAtOnce(final String name, final boolean shown) throws IOException {
+    final JsonObject record =
+        GeoAssets.animations(CLIPS)
+            .getAsJsonObject(name)
+            .getAsJsonObject("bones")
+            .getAsJsonObject("record");
+    assertTrue(!record.has("position"), name);
+    final JsonObject scale = record.getAsJsonObject("scale");
+    assertEquals(Set.of("0.0"), scale.keySet());
+    assertEquals(shown ? 1.0 : 0.0, scale.getAsJsonArray("0.0").get(0).getAsDouble(), name);
   }
 }

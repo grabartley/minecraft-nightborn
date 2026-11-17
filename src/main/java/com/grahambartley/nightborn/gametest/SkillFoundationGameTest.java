@@ -1,6 +1,7 @@
 package com.grahambartley.nightborn.gametest;
 
 import com.grahambartley.nightborn.blood.BloodAttachment;
+import com.grahambartley.nightborn.blood.BloodCapacity;
 import com.grahambartley.nightborn.skill.PowerBar;
 import com.grahambartley.nightborn.skill.PowerBarEdits;
 import com.grahambartley.nightborn.skill.PowerLayout;
@@ -105,13 +106,13 @@ public class SkillFoundationGameTest implements FabricGameTest {
   @GameTest(templateName = ARENA, tickLimit = 20)
   public void deepVeinsMakesTheBloodBarLarger(final TestContext context) {
     final ServerPlayerEntity vampire = TestPlayers.vampire(context, STAND);
-    context.assertEquals(BloodAttachment.max(vampire), BloodAttachment.FULL, "twenty to start");
+    context.assertEquals(BloodCapacity.of(vampire), BloodAttachment.FULL, "twenty to start");
     SkillAttachment.set(
         vampire,
         SkillTree.VAMPIRE,
         TreeProgress.EMPTY.withEarned(5).buy(DEEP_VEINS, 2, null).buy(DEEP_VEINS, 3, null));
     SkillAttributes.apply(vampire);
-    context.assertEquals(BloodAttachment.max(vampire), BloodAttachment.FULL + 4, "two ranks");
+    context.assertEquals(BloodCapacity.of(vampire), BloodAttachment.FULL + 4, "two ranks");
     BloodAttachment.set(vampire, 100);
     context.assertEquals(
         BloodAttachment.get(vampire), BloodAttachment.FULL + 4, "the bar fills to its new size");

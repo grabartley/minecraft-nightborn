@@ -20,5 +20,17 @@
     "name_color": "red",
     "marks": "nightborn:textures/entity/vampire/stage/ancient"
   },
-  "loot": "nightborn:entities/vampire/ancient"
+  "loot": "nightborn:entities/vampire/ancient",
+  "age": {
+    "name": {
+      "translate": "nightborn.stage.ancient"
+    },
+    "deed": {
+      "act": "drain",
+      "victims": "nightborn:deed/ancient",
+      "description": {
+        "translate": "nightborn.age.deed.ancient"
+      }
+    }
+  }
 }

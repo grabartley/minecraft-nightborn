@@ -7,6 +7,7 @@ import com.grahambartley.nightborn.skill.SkillTree;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.intprovider.ConstantIntProvider;
 
@@ -65,6 +66,11 @@ final class StageFixtures {
         StageSkills.NONE,
         StageCombat.PLAIN,
         StageLook.PLAIN,
-        Optional.empty());
+        Optional.empty(),
+        Optional.of(age("stage " + rank)));
+  }
+
+  static StageAge age(final String name) {
+    return new StageAge(Text.literal(name), Optional.empty());
   }
 }

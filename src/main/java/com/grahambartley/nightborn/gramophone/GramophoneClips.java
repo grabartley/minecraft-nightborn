@@ -7,10 +7,8 @@ public final class GramophoneClips {
 
   public static final String IDLE = "idle";
   public static final String LOADED = "loaded";
-  public static final String INSERT = "insert";
   public static final String PLAYING = "playing";
   public static final String STOP = "stop";
-  public static final String EJECT = "eject";
 
   private GramophoneState seen;
 
@@ -24,12 +22,9 @@ public final class GramophoneClips {
   }
 
   static List<String> change(final GramophoneState before, final GramophoneState now) {
-    return switch (now) {
-      case EMPTY -> List.of(EJECT, IDLE);
-      case LOADED ->
-          before == GramophoneState.PLAYING ? List.of(STOP, LOADED) : List.of(INSERT, LOADED);
-      case PLAYING -> before == GramophoneState.EMPTY ? List.of(INSERT, PLAYING) : List.of(PLAYING);
-    };
+    return before == GramophoneState.PLAYING && now == GramophoneState.LOADED
+        ? List.of(STOP, LOADED)
+        : List.of(hold(now));
   }
 
   static String hold(final GramophoneState state) {

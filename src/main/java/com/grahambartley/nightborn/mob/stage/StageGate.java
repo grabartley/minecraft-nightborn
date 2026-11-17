@@ -5,7 +5,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.OptionalInt;
 import java.util.function.Function;
-import net.minecraft.entity.Entity;
 import net.minecraft.registry.DynamicRegistryManager;
 import net.minecraft.util.Identifier;
 
@@ -25,10 +24,6 @@ public final class StageGate {
 
   public static OptionalInt needed(final Map<Identifier, VampireStage> stages, final Skill skill) {
     return needed(skill, id -> Optional.ofNullable(stages.get(id)));
-  }
-
-  public static int rankOf(final Entity entity) {
-    return entity instanceof Staged staged ? staged.stageRank() : 0;
   }
 
   private static OptionalInt needed(

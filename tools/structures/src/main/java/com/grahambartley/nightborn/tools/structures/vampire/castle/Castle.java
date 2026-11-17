@@ -14,6 +14,8 @@ public final class Castle {
   public static final Layout RUINED = new Layout("vampire/castle/ruined", false, true, false);
   public static final List<Layout> LAYOUTS = List.of(BASTIONS, RUINED);
 
+  public static final String ENTRANCE = "nightborn:castle_entrance";
+
   public static final int SIZE = 41;
   public static final int HEIGHT = 40;
   public static final int MID = SIZE / 2;
@@ -58,6 +60,7 @@ public final class Castle {
     }
     Gatehouse.build(t);
     Keep.build(t);
+    t.entrance(MID, GROUND, Gatehouse.SOUTH, ENTRANCE, "south");
     return t;
   }
 

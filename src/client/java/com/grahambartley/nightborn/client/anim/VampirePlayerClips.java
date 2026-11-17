@@ -66,7 +66,8 @@ public final class VampirePlayerClips {
                 VampireClips.seconds(VampirePose.LAND),
                 VampireClips.seconds(VampirePose.VOMIT),
                 VampireClips.seconds(VampirePose.DRAIN),
-                VampireClips.seconds(VampirePose.RISE)));
+                VampireClips.seconds(VampirePose.RISE),
+                VampireClips.seconds(VampirePose.FLINCH)));
   }
 
   public static Optional<VampirePose> action(final PlayerEntity player) {
@@ -101,6 +102,7 @@ public final class VampirePlayerClips {
         VomitFx.started(player);
       }
       case DRAIN -> state(player).drain(player.age);
+      case FLINCH -> state(player).flinch(player.age);
     }
   }
 

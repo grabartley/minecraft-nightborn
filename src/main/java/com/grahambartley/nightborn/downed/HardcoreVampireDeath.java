@@ -1,6 +1,7 @@
 package com.grahambartley.nightborn.downed;
 
 import com.grahambartley.nightborn.Nightborn;
+import com.grahambartley.nightborn.age.Ageing;
 import com.grahambartley.nightborn.coffin.CoffinOwnership;
 import com.grahambartley.nightborn.coffin.CoffinRespawn;
 import com.grahambartley.nightborn.faction.Faction;
@@ -43,6 +44,7 @@ public final class HardcoreVampireDeath {
 
   static void reset(final ServerPlayerEntity player) {
     FactionAttachment.set(player, Faction.HUMAN);
+    Ageing.clear(player);
     BiteSicknessAttachment.clear(player);
     TurningBite.set(player, false);
     SkillAttachment.clear(player);

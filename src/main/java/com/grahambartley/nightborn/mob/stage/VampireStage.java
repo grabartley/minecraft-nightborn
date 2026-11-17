@@ -14,7 +14,8 @@ public record VampireStage(
     StageSkills skills,
     StageCombat combat,
     StageLook look,
-    Optional<RegistryKey<LootTable>> loot) {
+    Optional<RegistryKey<LootTable>> loot,
+    Optional<StageAge> age) {
 
   public static final int HIGHEST_RANK = 15;
 
@@ -26,6 +27,7 @@ public record VampireStage(
           StageSkills.NONE,
           StageCombat.PLAIN,
           StageLook.PLAIN,
+          Optional.empty(),
           Optional.empty());
 
   public static final Codec<VampireStage> CODEC =
@@ -51,6 +53,7 @@ public record VampireStage(
                           .forGetter(VampireStage::look),
                       RegistryKey.createCodec(RegistryKeys.LOOT_TABLE)
                           .optionalFieldOf("loot")
-                          .forGetter(VampireStage::loot))
+                          .forGetter(VampireStage::loot),
+                      StageAge.CODEC.optionalFieldOf("age").forGetter(VampireStage::age))
                   .apply(instance, VampireStage::new));
 }

@@ -12,5 +12,17 @@
     "retreat_health": 25
   },
   "look": { "name_color": "white" },
-  "loot": "nightborn:entities/vampire/adult"
+  "loot": "nightborn:entities/vampire/adult",
+  "age": {
+    "name": {
+      "translate": "nightborn.stage.adult"
+    },
+    "deed": {
+      "act": "drain",
+      "victims": "nightborn:deed/adult",
+      "description": {
+        "translate": "nightborn.age.deed.adult"
+      }
+    }
+  }
 }

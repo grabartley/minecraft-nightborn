@@ -12,7 +12,8 @@ import org.junit.jupiter.params.provider.CsvSource;
 
 class PlayerClipStateTest {
 
-  static final PlayerClipState.Lengths LENGTHS = new PlayerClipState.Lengths(0.7, 2.6, 1.4, 1.6);
+  static final PlayerClipState.Lengths LENGTHS =
+      new PlayerClipState.Lengths(0.7, 2.6, 1.4, 1.6, 0.5);
 
   private static PlayerClipState.Situation still() {
     return new PlayerClipState.Situation(false, false, 0.0, false, false, false, Optional.empty());
@@ -181,5 +182,34 @@ class PlayerClipStateTest {
     state.tick(5, false, false);
     assertEquals("VANILLA", clip(state, 6, still()));
     assertTrue(Double.isNaN(state.vomitingSeconds(6)));
+  }
+
+  @ParameterizedTest(name = "{0} ticks after flinching, weakened {1}: {2}")
+  @CsvSource({
+    "0, false, FLINCH",
+    "9, false, FLINCH",
+    "10, false, VANILLA",
+    "0, true, FLINCH",
+    "10, true, WEAKENED"
+  })
+  @DisplayName("a flinch plays once, before the stoop of a weakened vampire")
+  void flinches(final int after, final boolean weakened, final String expected) {
+    final PlayerClipState state = new PlayerClipState();
+    state.flinch(20);
+    assertEquals(
+        expected,
+        clip(
+            state,
+            20 + after,
+            new PlayerClipState.Situation(
+                false, false, 0.0, false, false, weakened, Optional.empty())));
+  }
+
+  @Test
+  @DisplayName("a levitating vampire keeps floating through a flinch")
+  void levitationOutranksAFlinch() {
+    final PlayerClipState state = new PlayerClipState();
+    state.flinch(20);
+    assertEquals("LEVITATE", clip(state, 21, levitating()));
   }
 }

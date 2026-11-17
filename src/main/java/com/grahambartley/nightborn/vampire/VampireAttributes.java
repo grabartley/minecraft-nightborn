@@ -14,8 +14,7 @@ import net.minecraft.util.Identifier;
 public final class VampireAttributes {
 
   public static final double MOST_REDUCED = 0.2;
-  public static final double BASE_BLOOD = 20.0;
-  public static final double MOST_BLOOD = 60.0;
+  public static final double MOST_EXTRA_BLOOD = 40.0;
 
   public static final RegistryEntry<EntityAttribute> DARK_SIGHT =
       register("dark_sight", 0.0, 0.0, 1.0);
@@ -29,8 +28,8 @@ public final class VampireAttributes {
       register("feeding_speed", 1.0, 1.0, 4.0);
   public static final RegistryEntry<EntityAttribute> RESTRAINT_BREAK_SPEED =
       register("restraint_break_speed", 1.0, 1.0, 4.0);
-  public static final RegistryEntry<EntityAttribute> MAX_BLOOD =
-      register("max_blood", BASE_BLOOD, BASE_BLOOD, MOST_BLOOD);
+  public static final RegistryEntry<EntityAttribute> EXTRA_BLOOD =
+      register("extra_blood", 0.0, 0.0, MOST_EXTRA_BLOOD);
   public static final RegistryEntry<EntityAttribute> DOWNED_TIME =
       register("downed_time", 1.0, MOST_REDUCED, 1.0);
   public static final RegistryEntry<EntityAttribute> RISE_HEALTH =
@@ -46,7 +45,7 @@ public final class VampireAttributes {
           VICTIM_STRUGGLE,
           FEEDING_SPEED,
           RESTRAINT_BREAK_SPEED,
-          MAX_BLOOD,
+          EXTRA_BLOOD,
           DOWNED_TIME,
           RISE_HEALTH,
           POWER_COOLDOWN);

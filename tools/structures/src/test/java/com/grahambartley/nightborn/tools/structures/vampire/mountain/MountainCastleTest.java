@@ -160,10 +160,12 @@ class MountainCastleTest {
   @MethodSource("layouts")
   void anchorsAtTheKeep(final MountainCastle.Layout layout) {
     final Template t = MountainCastle.build(layout);
-    final List<Pos> jigsaws = find(t, ":jigsaw");
+    final List<Pos> anchors =
+        find(t, ":jigsaw").stream()
+            .filter(at -> MountainCastle.ANCHOR.equals(t.blockData().get(at).get("name")))
+            .toList();
     assertEquals(
-        List.of(new Pos(MountainCastle.MID, MountainCastle.UP, MountainCastle.MID)), jigsaws);
-    assertEquals(MountainCastle.ANCHOR, t.blockData().get(jigsaws.getFirst()).get("name"));
+        List.of(new Pos(MountainCastle.MID, MountainCastle.UP, MountainCastle.MID)), anchors);
   }
 
   @ParameterizedTest(name = "{0}: every lantern hangs from or stands on something solid")

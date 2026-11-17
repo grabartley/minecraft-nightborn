@@ -11,7 +11,7 @@
   "start_height": { "absolute": -1 },
   "project_start_to_heightmap": "WORLD_SURFACE_WG",
   "max_distance_from_center": 48,
-  "footing": { "dry": true, "max_rise": 6 },
+  "footing": { "dry": true, "max_rise": 6, "entrance": "nightborn:castle_entrance" },
   "household": {
     "resident": "nightborn:vampire",
     "residents": { "type": "minecraft:uniform", "min_inclusive": 4, "max_inclusive": 6 },
