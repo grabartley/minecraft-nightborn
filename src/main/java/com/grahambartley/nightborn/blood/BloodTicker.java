@@ -56,7 +56,7 @@ public final class BloodTicker {
                 BloodMetabolism.flightDrainSeconds(
                     BatForm.effort(vampire), Levitation.isLevitating(vampire), config.core()),
                 vampire.age,
-                VampireAttributes.value(vampire, VampireAttributes.DRAIN_RESISTANCE)),
+                VampireAttributes.value(vampire, VampireAttributes.HEALING_SPEED)),
             drainSeconds);
     BloodAttachment.set(vampire, outcome.blood());
     if (outcome.heals()) {

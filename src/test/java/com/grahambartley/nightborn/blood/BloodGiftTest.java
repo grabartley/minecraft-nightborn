@@ -49,7 +49,7 @@ class BloodGiftTest {
         Arguments.of("horse", EntityType.DONKEY, "minecraft:generic.movement_speed", 0.2),
         Arguments.of("horse", EntityType.MULE, "minecraft:generic.movement_speed", 0.2),
         Arguments.of("wolf", EntityType.WOLF, "nightborn:prey_sense", 12.0),
-        Arguments.of("villager", EntityType.VILLAGER, "nightborn:drain_resistance", 1.0),
+        Arguments.of("villager", EntityType.VILLAGER, "nightborn:healing_speed", 1.0),
         Arguments.of("witch", EntityType.WITCH, "nightborn:potion_resistance", 0.5));
   }
 

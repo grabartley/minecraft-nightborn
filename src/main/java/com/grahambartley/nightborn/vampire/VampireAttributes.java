@@ -16,6 +16,7 @@ public final class VampireAttributes {
   public static final double MOST_REDUCED = 0.2;
   public static final double MOST_EXTRA_BLOOD = 40.0;
   public static final double MOST_PREY_SENSE = 64.0;
+  public static final double MOST_HEALING_SPEED = 4.0;
 
   public static final RegistryEntry<EntityAttribute> DARK_SIGHT =
       register("dark_sight", 0.0, 0.0, 1.0);
@@ -39,8 +40,8 @@ public final class VampireAttributes {
       register("power_cooldown", 1.0, MOST_REDUCED, 1.0);
   public static final RegistryEntry<EntityAttribute> PREY_SENSE =
       register("prey_sense", 0.0, 0.0, MOST_PREY_SENSE);
-  public static final RegistryEntry<EntityAttribute> DRAIN_RESISTANCE =
-      register("drain_resistance", 0.0, 0.0, 1.0);
+  public static final RegistryEntry<EntityAttribute> HEALING_SPEED =
+      register("healing_speed", 0.0, 0.0, MOST_HEALING_SPEED);
   public static final RegistryEntry<EntityAttribute> POTION_RESISTANCE =
       register("potion_resistance", 0.0, 0.0, 1.0);
 
@@ -57,7 +58,7 @@ public final class VampireAttributes {
           RISE_HEALTH,
           POWER_COOLDOWN,
           PREY_SENSE,
-          DRAIN_RESISTANCE,
+          HEALING_SPEED,
           POTION_RESISTANCE);
 
   private VampireAttributes() {}

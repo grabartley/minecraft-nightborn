@@ -178,29 +178,24 @@ class BloodMetabolismTest {
         BloodMetabolism.flightDrainSeconds(bat, levitating, NightbornConfig.DEFAULTS.core()));
   }
 
-  @ParameterizedTest(name = "resistance {0} over {1} ticks leaves {2} blood")
-  @CsvSource({"0.0, 1201, 19", "1.0, 2401, 20", "0.5, 1201, 20", "0.5, 2401, 19", "2.0, 2401, 20"})
-  @DisplayName("drain resistance slows the resting and flight drain, and a full one stops it")
-  void drainResistance(final double resistance, final int ticks, final int left) {
-    int blood = 20;
-    float exhaustion = 0.0F;
-    for (int tick = 1; tick <= ticks; tick++) {
-      final BloodMetabolism.Outcome outcome =
-          BloodMetabolism.tick(
-              new BloodMetabolism.State(
-                  blood,
-                  exhaustion,
-                  40.0F,
-                  40.0F,
-                  Difficulty.NORMAL,
-                  true,
-                  BloodMetabolism.GROUNDED,
-                  tick,
-                  resistance),
-              60);
-      blood = outcome.blood();
-      exhaustion = outcome.exhaustion();
-    }
-    assertEquals(left, blood);
+  @ParameterizedTest(name = "healing speed {0}: a pulse every {1} ticks")
+  @CsvSource({"0.0, 200", "0.5, 133", "1.0, 100", "3.0, 50", "-1.0, 200"})
+  @DisplayName("a healing gift brings the healing pulse sooner, twice as often when fresh")
+  void healingSpeed(final double speed, final int pulse) {
+    assertEquals(pulse, BloodMetabolism.pulseTicks(speed));
+    assertTrue(
+        BloodMetabolism.tick(
+                new BloodMetabolism.State(
+                    20,
+                    0.0F,
+                    30.0F,
+                    40.0F,
+                    Difficulty.NORMAL,
+                    true,
+                    BloodMetabolism.GROUNDED,
+                    pulse,
+                    speed),
+                600)
+            .heals());
   }
 }

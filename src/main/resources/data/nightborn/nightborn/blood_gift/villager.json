@@ -4,7 +4,7 @@
   "seconds": 60,
   "modifiers": [
     {
-      "attribute": "nightborn:drain_resistance",
+      "attribute": "nightborn:healing_speed",
       "amount": 1.0,
       "operation": "add_value"
     }
