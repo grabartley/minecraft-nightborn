@@ -447,5 +447,137 @@
       "nightborn:ambient/oneshot/stone1",
       "nightborn:ambient/oneshot/stone2"
     ]
+  },
+  "entity.vampire.eldest_male.ambient": {
+    "subtitle": "subtitles.nightborn.entity.vampire.ambient",
+    "sounds": [
+      { "name": "nightborn:entity/vampire/male/ambient1", "pitch": 0.85 },
+      { "name": "nightborn:entity/vampire/male/ambient2", "pitch": 0.85 },
+      { "name": "nightborn:entity/vampire/male/ambient3", "pitch": 0.85 }
+    ]
+  },
+  "entity.vampire.eldest_male.argue": {
+    "subtitle": "subtitles.nightborn.entity.vampire.argue",
+    "sounds": [
+      { "name": "nightborn:entity/vampire/male/argue1", "pitch": 0.85 },
+      { "name": "nightborn:entity/vampire/male/argue2", "pitch": 0.85 },
+      { "name": "nightborn:entity/vampire/male/argue3", "pitch": 0.85 }
+    ]
+  },
+  "entity.vampire.eldest_male.death": {
+    "subtitle": "subtitles.nightborn.entity.vampire.death",
+    "sounds": [
+      { "name": "nightborn:entity/vampire/male/death1", "pitch": 0.85 },
+      { "name": "nightborn:entity/vampire/male/death2", "pitch": 0.85 }
+    ]
+  },
+  "entity.vampire.eldest_male.hiss": {
+    "subtitle": "subtitles.nightborn.entity.vampire.hiss",
+    "sounds": [
+      { "name": "nightborn:entity/vampire/male/hiss1", "pitch": 0.85 },
+      { "name": "nightborn:entity/vampire/male/hiss2", "pitch": 0.85 }
+    ]
+  },
+  "entity.vampire.eldest_male.hurt": {
+    "subtitle": "subtitles.nightborn.entity.vampire.hurt",
+    "sounds": [
+      { "name": "nightborn:entity/vampire/male/hurt1", "pitch": 0.85 },
+      { "name": "nightborn:entity/vampire/male/hurt2", "pitch": 0.85 },
+      { "name": "nightborn:entity/vampire/male/hurt3", "pitch": 0.85 }
+    ]
+  },
+  "entity.vampire.eldest_male.talk": {
+    "subtitle": "subtitles.nightborn.entity.vampire.talk",
+    "sounds": [
+      { "name": "nightborn:entity/vampire/male/talk1", "pitch": 0.85 },
+      { "name": "nightborn:entity/vampire/male/talk2", "pitch": 0.85 },
+      { "name": "nightborn:entity/vampire/male/talk3", "pitch": 0.85 }
+    ]
+  },
+  "entity.vampire.eldest_female.ambient": {
+    "subtitle": "subtitles.nightborn.entity.vampire.ambient",
+    "sounds": [
+      "nightborn:entity/vampire/female/ambient1",
+      "nightborn:entity/vampire/female/ambient2",
+      "nightborn:entity/vampire/female/ambient3"
+    ]
+  },
+  "entity.vampire.eldest_female.argue": {
+    "subtitle": "subtitles.nightborn.entity.vampire.argue",
+    "sounds": [
+      "nightborn:entity/vampire/female/argue1",
+      "nightborn:entity/vampire/female/argue2",
+      "nightborn:entity/vampire/female/argue3"
+    ]
+  },
+  "entity.vampire.eldest_female.death": {
+    "subtitle": "subtitles.nightborn.entity.vampire.death",
+    "sounds": [
+      "nightborn:entity/vampire/female/death1",
+      "nightborn:entity/vampire/female/death2"
+    ]
+  },
+  "entity.vampire.eldest_female.hiss": {
+    "subtitle": "subtitles.nightborn.entity.vampire.hiss",
+    "sounds": [
+      "nightborn:entity/vampire/female/hiss1",
+      "nightborn:entity/vampire/female/hiss2"
+    ]
+  },
+  "entity.vampire.eldest_female.hurt": {
+    "subtitle": "subtitles.nightborn.entity.vampire.hurt",
+    "sounds": [
+      "nightborn:entity/vampire/female/hurt1",
+      "nightborn:entity/vampire/female/hurt2",
+      "nightborn:entity/vampire/female/hurt3"
+    ]
+  },
+  "entity.vampire.eldest_female.talk": {
+    "subtitle": "subtitles.nightborn.entity.vampire.talk",
+    "sounds": [
+      "nightborn:entity/vampire/female/talk1",
+      "nightborn:entity/vampire/female/talk2",
+      "nightborn:entity/vampire/female/talk3"
+    ]
+  },
+  "block.ritual_altar.relic_place": {
+    "subtitle": "subtitles.nightborn.block.ritual_altar.relic_place",
+    "sounds": [
+      {
+        "name": "minecraft:entity.item_frame.add_item",
+        "type": "event",
+        "pitch": 0.8
+      }
+    ]
+  },
+  "block.ritual_altar.relic_take": {
+    "subtitle": "subtitles.nightborn.block.ritual_altar.relic_take",
+    "sounds": [
+      {
+        "name": "minecraft:entity.item_frame.remove_item",
+        "type": "event",
+        "pitch": 0.8
+      }
+    ]
+  },
+  "block.ritual_altar.build_up": {
+    "subtitle": "subtitles.nightborn.block.ritual_altar.build_up",
+    "sounds": [
+      {
+        "name": "minecraft:ambient.soul_sand_valley.mood",
+        "type": "event",
+        "pitch": 0.7
+      }
+    ]
+  },
+  "block.ritual_altar.summon": {
+    "subtitle": "subtitles.nightborn.block.ritual_altar.summon",
+    "sounds": [
+      {
+        "name": "minecraft:entity.lightning_bolt.thunder",
+        "type": "event",
+        "pitch": 0.6
+      }
+    ]
   }
 }

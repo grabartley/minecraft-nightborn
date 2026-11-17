@@ -44,4 +44,17 @@ class StageSkillsTest {
     assertEquals(
         loads, StageSkills.CODEC.parse(JsonOps.INSTANCE, JsonParser.parseString(json)).isSuccess());
   }
+
+  @ParameterizedTest(name = "{0}: {1}")
+  @CsvSource(
+      delimiter = '|',
+      value = {
+        "{\"count\": 0} | false",
+        "{\"count\": 0, \"every\": false} | false",
+        "{\"count\": 0, \"every\": true} | true"
+      })
+  @DisplayName("a stage takes every skill only when its data says so")
+  void every(final String json, final boolean every) {
+    assertEquals(every, parse(json).every());
+  }
 }

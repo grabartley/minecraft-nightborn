@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "GDG",
+    "SBS",
+    "SSS"
+  ],
+  "key": {
+    "G": {
+      "item": "minecraft:gold_ingot"
+    },
+    "D": {
+      "item": "nightborn:burgundy_velvet_drape"
+    },
+    "S": {
+      "item": "nightborn:gothic_stone_bricks"
+    },
+    "B": {
+      "item": "nightborn:blood_bottle"
+    }
+  },
+  "result": {
+    "id": "nightborn:ritual_altar",
+    "count": 1
+  }
+}

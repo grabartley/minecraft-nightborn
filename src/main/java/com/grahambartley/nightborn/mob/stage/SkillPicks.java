@@ -55,8 +55,19 @@ public final class SkillPicks {
       final StageSkills weights,
       final int wanted,
       final DoubleSupplier rolls) {
+    return take(tree, weights, most(wanted, tree.size()), rolls);
+  }
+
+  public static List<Identifier> every(final Map<Identifier, Skill> tree) {
+    return take(tree, StageSkills.NONE, tree.size(), () -> 0.0);
+  }
+
+  private static List<Identifier> take(
+      final Map<Identifier, Skill> tree,
+      final StageSkills weights,
+      final int count,
+      final DoubleSupplier rolls) {
     final List<Identifier> owned = new ArrayList<>();
-    final int count = most(wanted, tree.size());
     final Map<Identifier, Skill> sorted = new TreeMap<>(tree);
     while (owned.size() < count) {
       final List<Identifier> open =

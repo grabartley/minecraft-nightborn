@@ -7,7 +7,8 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.math.intprovider.ConstantIntProvider;
 import net.minecraft.util.math.intprovider.IntProvider;
 
-public record StageSkills(IntProvider count, Map<Identifier, Integer> weights, int otherWeight) {
+public record StageSkills(
+    IntProvider count, Map<Identifier, Integer> weights, int otherWeight, boolean every) {
 
   public static final int MOST_SKILLS = 64;
 
@@ -27,11 +28,17 @@ public record StageSkills(IntProvider count, Map<Identifier, Integer> weights, i
                           .forGetter(StageSkills::weights),
                       Codec.intRange(0, StageOdds.HEAVIEST)
                           .optionalFieldOf("other_weight", 1)
-                          .forGetter(StageSkills::otherWeight))
+                          .forGetter(StageSkills::otherWeight),
+                      Codec.BOOL.optionalFieldOf("every", false).forGetter(StageSkills::every))
                   .apply(instance, StageSkills::new));
 
   public StageSkills {
     weights = Map.copyOf(weights);
+  }
+
+  public StageSkills(
+      final IntProvider count, final Map<Identifier, Integer> weights, final int otherWeight) {
+    this(count, weights, otherWeight, false);
   }
 
   public int weight(final Identifier skill) {
