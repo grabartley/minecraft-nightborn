@@ -16,10 +16,10 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
-class GramophoneModelTest {
+class GramophoneRendererTest {
 
-  private static final Path GEO = GeoAssets.file(FurnitureArt.geo(GramophoneModel.ART));
-  private static final Path CLIPS = GeoAssets.file(FurnitureArt.animation(GramophoneModel.ART));
+  private static final Path GEO = GeoAssets.file(FurnitureArt.geo(GramophoneRenderer.ART));
+  private static final Path CLIPS = GeoAssets.file(FurnitureArt.animation(GramophoneRenderer.ART));
 
   @Test
   @DisplayName("the gramophone's sheet ships at the size its geometry maps")

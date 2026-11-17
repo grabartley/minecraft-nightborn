@@ -6,11 +6,13 @@ import software.bernie.geckolib.renderer.GeoBlockRenderer;
 
 public class GramophoneRenderer extends GeoBlockRenderer<GramophoneBlockEntity> {
 
+  static final String ART = "gramophone";
+
   public GramophoneRenderer(final BlockEntityRendererFactory.Context context) {
     this();
   }
 
   public GramophoneRenderer() {
-    super(new GramophoneModel());
+    super(new FixedArtModel<>(ART));
   }
 }

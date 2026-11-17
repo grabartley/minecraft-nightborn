@@ -18,12 +18,14 @@ import software.bernie.geckolib.renderer.GeoBlockRenderer;
 
 public class RitualAltarRenderer extends GeoBlockRenderer<RitualAltarBlockEntity> {
 
+  static final String ART = "ritual_altar";
+
   public RitualAltarRenderer(final BlockEntityRendererFactory.Context context) {
     this();
   }
 
   public RitualAltarRenderer() {
-    super(new RitualAltarModel());
+    super(new FixedArtModel<>(ART));
   }
 
   @Override

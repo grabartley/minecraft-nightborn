@@ -6,7 +6,9 @@ import net.minecraft.util.math.Vec3d;
 
 public final class GramophoneEarshot {
 
-  public static final double RANGE = 64.0;
+  static final float RECORD_VOLUME = 4.0F;
+  static final double BLOCKS_PER_VOLUME = 16.0;
+  public static final double RANGE = RECORD_VOLUME * BLOCKS_PER_VOLUME;
 
   private GramophoneEarshot() {}
 

@@ -64,7 +64,10 @@ public final class GroundFloor {
     Furnishing.table(t, 17, SEAT, 12);
     Furnishing.table(t, 17, SEAT, 13);
     Furnishing.candelabra(t, 17, SEAT + 1, 12);
-    Furnishing.gramophone(t, 17, SEAT + 1, 13, "west");
+    t.set(
+        17, SEAT + 1, 13, BlockState.of("candle", "candles", 2, "lit", true, "waterlogged", false));
+    Furnishing.table(t, 17, SEAT, 14);
+    Furnishing.gramophone(t, 17, SEAT + 1, 14, "west");
     Furnishing.chair(t, 16, SEAT, 12, "east");
     Furnishing.chair(t, 18, SEAT, 13, "west");
     Furnishing.chair(t, 15, SEAT, 10, "south");

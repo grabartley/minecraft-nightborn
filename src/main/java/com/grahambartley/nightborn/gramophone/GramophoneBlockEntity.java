@@ -38,6 +38,7 @@ public class GramophoneBlockEntity extends BlockEntity
   public static final String RECORD_KEY = "RecordItem";
   static final String TICKS_KEY = "ticks_since_song_started";
   public static final String AMBIENT_KEY = "Ambient";
+  static final String WAIT_KEY = "AmbientWait";
   private static final String CONTROLLER = "disc";
   private static final double DROP_HEIGHT = 1.01;
   private static final float DROP_SPREAD = 0.7F;
@@ -119,9 +120,13 @@ public class GramophoneBlockEntity extends BlockEntity
             this.pos.getY() + 0.5,
             this.pos.getZ() + 0.5,
             settings.gramophoneRange());
+    final int before = this.wait;
     this.wait =
         GramophoneAmbience.step(
-            this.wait, near, settings.gramophoneSeconds(), server.getRandom().nextDouble());
+            before, near, settings.gramophoneSeconds(), server.getRandom().nextDouble());
+    if (this.wait != before) {
+      this.markDirty();
+    }
     if (GramophoneAmbience.due(this.wait)) {
       this.wait = GramophoneAmbience.UNSET;
       this.play();
@@ -173,6 +178,10 @@ public class GramophoneBlockEntity extends BlockEntity
             ? ItemStack.fromNbt(registries, nbt.getCompound(RECORD_KEY)).orElse(ItemStack.EMPTY)
             : ItemStack.EMPTY;
     this.ambient = nbt.getBoolean(AMBIENT_KEY);
+    this.wait =
+        nbt.contains(WAIT_KEY, NbtElement.INT_TYPE)
+            ? nbt.getInt(WAIT_KEY)
+            : GramophoneAmbience.UNSET;
     if (nbt.contains(TICKS_KEY, NbtElement.LONG_TYPE)) {
       JukeboxSong.getSongEntryFromStack(registries, this.record)
           .ifPresent(song -> this.manager.setValues(song, nbt.getLong(TICKS_KEY)));
@@ -190,6 +199,9 @@ public class GramophoneBlockEntity extends BlockEntity
     }
     if (this.ambient) {
       nbt.putBoolean(AMBIENT_KEY, true);
+    }
+    if (this.wait != GramophoneAmbience.UNSET) {
+      nbt.putInt(WAIT_KEY, this.wait);
     }
   }
 
