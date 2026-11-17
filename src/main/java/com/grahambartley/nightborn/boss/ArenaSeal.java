@@ -1,5 +1,7 @@
 package com.grahambartley.nightborn.boss;
 
+import com.grahambartley.nightborn.gore.GoreParticles;
+import com.grahambartley.nightborn.smoke.SmokeParticles;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Predicate;
@@ -43,6 +45,10 @@ public final class ArenaSeal {
 
   private static void putBack(
       final ServerWorld world, final ServerPlayerEntity player, final Vec3d to) {
+    final Vec3d from = player.getPos();
+    world.spawnParticles(
+        SmokeParticles.VAMPIRE_SMOKE, from.x, from.y + 1.0, from.z, 24, 0.3, 0.6, 0.3, 0.02);
+    world.spawnParticles(GoreParticles.DROP, to.x, to.y + 1.0, to.z, 16, 0.3, 0.5, 0.3, 0.05);
     player.stopRiding();
     player.requestTeleport(to.x, to.y, to.z);
     player.setVelocity(Vec3d.ZERO);
