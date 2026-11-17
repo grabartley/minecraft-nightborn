@@ -21,6 +21,7 @@ class WardAttackTest {
       value = {
         "{\"entity\":\"nightborn:vampire_bat\",\"count\":3,\"ticks\":500} | true",
         "{\"entity\":\"minecraft:bat\",\"count\":8,\"spread\":3,\"ticks\":20} | true",
+        "{\"entity\":\"nightborn:vampire\",\"count\":2,\"ticks\":600,\"shields\":false} | true",
         "{\"entity\":\"minecraft:bat\",\"count\":0,\"ticks\":500} | false",
         "{\"entity\":\"minecraft:bat\",\"count\":9,\"ticks\":500} | false",
         "{\"entity\":\"minecraft:bat\",\"count\":3,\"ticks\":10} | false",
@@ -40,12 +41,19 @@ class WardAttackTest {
     assertEquals(holds, WardAttack.holds(alive, age, 500));
   }
 
+  @ParameterizedTest(name = "{0} keepers alive, {1} ticks old: spent {2}")
+  @CsvSource({"3, 0, false", "1, 499, false", "1, 500, true", "2, 900, true", "0, 900, false"})
+  @DisplayName("keepers still standing when their time runs out are sent away")
+  void spent(final int alive, final long age, final boolean spent) {
+    assertEquals(spent, WardAttack.spent(alive, age, 500));
+  }
+
   @ParameterizedTest(name = "keeper {0} of {1}")
   @CsvSource({"0, 3", "1, 3", "2, 3", "0, 1", "5, 8"})
   @DisplayName("the keepers appear in a ring round the boss")
   void ring(final int index, final int count) {
     final WardAttack ward =
-        new WardAttack(Registries.ENTITY_TYPE.getEntry(EntityType.BAT), count, 3.0F, 500);
+        new WardAttack(Registries.ENTITY_TYPE.getEntry(EntityType.BAT), count, 3.0F, 500, true);
     assertEquals(3.0, Math.hypot(ward.offsetX(index), ward.offsetZ(index)), 1.0E-9);
     assertEquals(
         2.0 * Math.PI * index / count,

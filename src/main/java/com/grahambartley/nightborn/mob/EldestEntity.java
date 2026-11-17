@@ -163,7 +163,7 @@ public class EldestEntity extends BossVampireEntity implements BlazingEyes {
 
   @Override
   protected boolean levitatesAtWill() {
-    return !fight.flying();
+    return false;
   }
 
   @Override

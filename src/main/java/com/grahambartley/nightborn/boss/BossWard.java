@@ -50,10 +50,11 @@ public final class BossWard {
         mob.initialize(
             world, world.getLocalDifficulty(mob.getBlockPos()), SpawnReason.MOB_SUMMONED, null);
         if (boss.getTarget() != null) {
+          mob.setAttacker(boss.getTarget());
           mob.setTarget(boss.getTarget());
         }
       }
-      keeper.setGlowing(true);
+      keeper.setGlowing(ward.shields());
       world.spawnEntityAndPassengers(keeper);
       keeper.addCommandTag(KEEPER);
       keepers.add(keeper);
@@ -63,6 +64,12 @@ public final class BossWard {
   public boolean holds(final long now) {
     keepers.removeIf(keeper -> !(keeper instanceof LivingEntity living) || !living.isAlive());
     return WardAttack.holds(keepers.size(), now - raisedAt, ticks);
+  }
+
+  public void expire(final long now) {
+    if (WardAttack.spent(keepers.size(), now - raisedAt, ticks)) {
+      drop();
+    }
   }
 
   public void drop() {

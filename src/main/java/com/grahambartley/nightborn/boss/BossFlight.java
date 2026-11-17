@@ -13,9 +13,8 @@ public final class BossFlight {
     return flying;
   }
 
-  public static boolean grounds(
-      final boolean airborne, final boolean weightless, final boolean bat) {
-    return !airborne && weightless && !bat;
+  public static boolean grounds(final boolean airborne, final boolean aloft, final boolean bat) {
+    return !airborne && aloft && !bat;
   }
 
   public void tick(
@@ -35,7 +34,8 @@ public final class BossFlight {
       boss.setVelocity(flight.get().steer(boss.getPos(), flight.get().spot(arena, now)));
       boss.velocityModified = true;
       boss.fallDistance = 0.0F;
-    } else if (grounds(false, boss.hasNoGravity(), BatForm.isBat(boss))) {
+    } else if (grounds(
+        false, boss.hasNoGravity() || Levitation.isLevitating(boss), BatForm.isBat(boss))) {
       boss.setNoGravity(false);
       Levitation.land(boss);
     }

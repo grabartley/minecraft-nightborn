@@ -67,8 +67,9 @@ class BossFightsTest {
         .ifPresent(
             power ->
                 assertTrue(
-                    Files.exists(SKILLS.resolve(power.getPath() + ".json")),
-                    power + " is not a skill"));
+                    Files.exists(SKILLS.resolve(power.getPath() + ".json"))
+                        && read(SKILLS.resolve(power.getPath() + ".json")).contains("\"power\""),
+                    power + " is not a skill with a power to cast"));
   }
 
   @ParameterizedTest(name = "{0}")
@@ -91,6 +92,14 @@ class BossFightsTest {
         assertTrue(shipped.contains(counter), phase.name() + " counters with a missing " + counter);
       }
       assertTrue(english.contains("\"" + phase.translationKey() + "\""), phase.translationKey());
+    }
+  }
+
+  private static String read(final Path file) {
+    try {
+      return Files.readString(file, StandardCharsets.UTF_8);
+    } catch (final IOException e) {
+      return "";
     }
   }
 

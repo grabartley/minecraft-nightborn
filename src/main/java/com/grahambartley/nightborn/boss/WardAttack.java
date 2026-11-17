@@ -6,7 +6,8 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.entry.RegistryEntry;
 
-public record WardAttack(RegistryEntry<EntityType<?>> entity, int count, float spread, int ticks) {
+public record WardAttack(
+    RegistryEntry<EntityType<?>> entity, int count, float spread, int ticks, boolean shields) {
 
   public static final Codec<WardAttack> CODEC =
       RecordCodecBuilder.create(
@@ -21,7 +22,8 @@ public record WardAttack(RegistryEntry<EntityType<?>> entity, int count, float s
                       Codec.floatRange(0.5F, 8.0F)
                           .optionalFieldOf("spread", 3.0F)
                           .forGetter(WardAttack::spread),
-                      Codec.intRange(20, 6000).fieldOf("ticks").forGetter(WardAttack::ticks))
+                      Codec.intRange(20, 6000).fieldOf("ticks").forGetter(WardAttack::ticks),
+                      Codec.BOOL.optionalFieldOf("shields", true).forGetter(WardAttack::shields))
                   .apply(instance, WardAttack::new));
 
   public double offsetX(final int index) {
@@ -30,6 +32,10 @@ public record WardAttack(RegistryEntry<EntityType<?>> entity, int count, float s
 
   public double offsetZ(final int index) {
     return Math.sin(2.0 * Math.PI * index / count) * spread;
+  }
+
+  public static boolean spent(final int alive, final long age, final int ticks) {
+    return alive > 0 && age >= ticks;
   }
 
   public static boolean holds(final int alive, final long age, final int ticks) {

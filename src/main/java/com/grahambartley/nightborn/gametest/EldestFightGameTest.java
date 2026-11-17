@@ -334,7 +334,8 @@ public class EldestFightGameTest implements FabricGameTest {
     ward.raise(
         eldest,
         context.getWorld(),
-        new WardAttack(Registries.ENTITY_TYPE.getEntry(NightbornMobs.VAMPIRE_BAT), 3, 2.0F, 500),
+        new WardAttack(
+            Registries.ENTITY_TYPE.getEntry(NightbornMobs.VAMPIRE_BAT), 3, 2.0F, 500, true),
         now);
     final List<VampireBatEntity> keepers =
         context

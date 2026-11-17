@@ -4,7 +4,6 @@ import com.grahambartley.nightborn.landing.Landing;
 import com.grahambartley.nightborn.mind.Gazes;
 import com.grahambartley.nightborn.occult.ShadowStep;
 import com.grahambartley.nightborn.skill.PowerShow;
-import com.grahambartley.nightborn.skill.Powers;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -37,6 +36,7 @@ public final class BossAttacks {
   private boolean cut;
   private long landedAt = Long.MIN_VALUE / 2;
   private final BossWard ward = new BossWard();
+  private final BossWard court = new BossWard();
 
   public boolean busy() {
     return run != null;
@@ -95,6 +95,8 @@ public final class BossAttacks {
       return;
     }
     tickHazards(boss, world, now);
+    ward.expire(now);
+    court.expire(now);
     if (run == null) {
       choose(boss, world, phase, foes, now);
       return;
@@ -113,6 +115,7 @@ public final class BossAttacks {
     hazards.forEach(hazard -> hazard.mark().discard());
     hazards.clear();
     ward.drop();
+    court.drop();
     run = null;
     cut = false;
     leapFrom = null;
@@ -197,8 +200,11 @@ public final class BossAttacks {
     if (tick == 0) {
       boss.showPower(attack.clip());
       boss.playSound(SoundEvent.of(attack.sound()), LOUD, 1.0F);
-      attack.power().ifPresent(power -> Powers.cast(boss, power));
-      attack.ward().ifPresent(keepers -> ward.raise(boss, world, keepers, now));
+      attack.power().ifPresent(power -> BossPowers.cast(boss, power));
+      attack
+          .ward()
+          .ifPresent(
+              keepers -> (keepers.shields() ? ward : court).raise(boss, world, keepers, now));
       attack
           .gaze()
           .filter(gaze -> boss.getTarget() != null)

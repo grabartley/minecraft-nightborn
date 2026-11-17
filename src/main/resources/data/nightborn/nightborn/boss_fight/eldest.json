@@ -11,8 +11,7 @@
         "nightborn:court_gaze",
         "nightborn:court_rally",
         "nightborn:court_vanish",
-        "nightborn:court_rush",
-        "nightborn:court_dark"
+        "nightborn:court_rush"
       ],
       "stance": {
         "near": 2.0,
