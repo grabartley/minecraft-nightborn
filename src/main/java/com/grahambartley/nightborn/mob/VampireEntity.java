@@ -216,6 +216,10 @@ public class VampireEntity extends HostileEntity
     return hunt.hunts(this, target);
   }
 
+  public boolean attacksOnSight(final LivingEntity target) {
+    return false;
+  }
+
   public boolean hungry() {
     return blood.hungry(this, ServerConfigService.current());
   }

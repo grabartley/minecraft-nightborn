@@ -222,17 +222,14 @@ public class EldestEntity extends BossVampireEntity implements BlazingEyes {
     super.initGoals();
     goalSelector.add(0, new HoldGroundGoal(this, () -> preoccupied() || fight.flying()));
     targetSelector.add(
-        2,
-        new ActiveTargetGoal<>(
-            this,
-            PlayerEntity.class,
-            10,
-            true,
-            false,
-            player ->
-                EldestFoes.seeksOut(
-                    Vampires.isVampire(player),
-                    getWorld().getDifficulty() == Difficulty.PEACEFUL)));
+        2, new ActiveTargetGoal<>(this, PlayerEntity.class, 10, true, false, this::attacksOnSight));
+  }
+
+  @Override
+  public boolean attacksOnSight(final LivingEntity target) {
+    return target instanceof PlayerEntity
+        && EldestFoes.seeksOut(
+            Vampires.isVampire(target), getWorld().getDifficulty() == Difficulty.PEACEFUL);
   }
 
   @Override

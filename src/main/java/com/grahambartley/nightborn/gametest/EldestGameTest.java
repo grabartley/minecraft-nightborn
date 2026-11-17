@@ -122,6 +122,21 @@ public class EldestGameTest implements FabricGameTest {
   }
 
   @GameTest(templateName = ARENA, batchId = NIGHT_BATCH, tickLimit = 200)
+  public void theEldestKeepsAfterAHumanWhoNeverStruckIt(final TestContext context) {
+    final EldestEntity eldest = eldest(context);
+    final ServerPlayerEntity human = TestPlayers.human(context, new BlockPos(2, 2, 2));
+    context.runAtTick(
+        TestPlayers.READY,
+        () -> {
+          eldest.setTarget(human);
+          eldest.tickHome();
+          context.assertTrue(
+              eldest.getTarget() == human, "the Eldest keeps a human it attacks on sight");
+          context.complete();
+        });
+  }
+
+  @GameTest(templateName = ARENA, batchId = NIGHT_BATCH, tickLimit = 200)
   public void stakingTheEldestPaysEveryHumanWhoFought(final TestContext context) {
     final EldestEntity eldest = eldest(context);
     final ServerPlayerEntity staker = TestPlayers.human(context, new BlockPos(2, 2, 2));
