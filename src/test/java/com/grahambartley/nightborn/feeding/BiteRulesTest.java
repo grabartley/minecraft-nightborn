@@ -33,13 +33,13 @@ class BiteRulesTest {
             new Biter(true, false, true, false),
             COW,
             true,
-            Decision.NOT_SNEAKING_EMPTY_HANDED),
+            Decision.NOT_A_BITE),
         Arguments.of(
             "a held item is not a bite",
             new Biter(true, true, false, false),
             COW,
             true,
-            Decision.NOT_SNEAKING_EMPTY_HANDED),
+            Decision.NOT_A_BITE),
         Arguments.of(
             "a downed vampire cannot feed",
             new Biter(true, true, true, true),
@@ -101,7 +101,7 @@ class BiteRulesTest {
             new Biter(true, false, false, false),
             new Target(true, false, false, true, false, true),
             true,
-            Decision.NOT_SNEAKING_EMPTY_HANDED),
+            Decision.NOT_A_BITE),
         Arguments.of(
             "a finisher on a player needs PvP",
             new Biter(true, false, true, false),
@@ -168,29 +168,39 @@ class BiteRulesTest {
     assertEquals(drinkable, BiteRules.drinkable(warmBlood, vampire));
   }
 
-  @ParameterizedTest(name = "human {0}, turning {1}, allowed {2}, first {3}, roll {4} of {5}: {6}")
+  @ParameterizedTest(name = "human {0}, roll {1} of {2}: {3}")
   @CsvSource({
-    "true, true, true, true, 999, 1000, true",
-    "true, true, true, true, 500, 500, false",
-    "true, true, true, true, 499, 500, true",
-    "true, true, true, true, 0, 1, true",
-    "true, true, true, true, 1, 1, false",
-    "false, true, true, true, 0, 1000, false",
-    "true, false, true, true, 0, 1000, false",
-    "true, true, false, true, 0, 1000, false",
-    "true, true, true, false, 0, 1000, false"
+    "true, 999, 1000, true",
+    "true, 500, 500, false",
+    "true, 499, 500, true",
+    "true, 0, 1, true",
+    "true, 1, 1, false",
+    "false, 0, 1000, false"
   })
-  @DisplayName(
-      "a bite starts sickness only in a human, as a turning bite, when allowed, once, and by chance")
-  void startsSickness(
+  @DisplayName("a bite starts sickness only in a human, and by chance")
+  void startsSickness(final boolean human, final int roll, final int chance, final boolean starts) {
+    assertEquals(starts, BiteRules.startsSickness(human, roll, chance));
+  }
+
+  @ParameterizedTest(name = "turning {0}, human {1}, allowed {2}, blood {3} of {4}: {5}")
+  @CsvSource({
+    "true, true, true, 20, 10, MAY_TURN",
+    "true, true, true, 10, 10, MAY_TURN",
+    "true, true, true, 9, 10, TOO_LITTLE_BLOOD",
+    "false, true, true, 20, 10, FEEDS",
+    "true, false, true, 20, 10, FEEDS",
+    "true, true, false, 20, 10, FEEDS",
+    "false, true, true, 2, 10, FEEDS"
+  })
+  @DisplayName("a turning bite may turn a human only when allowed and paid for in blood")
+  void turning(
+      final boolean turningBite,
       final boolean human,
-      final boolean turning,
       final boolean allowed,
-      final boolean first,
-      final int roll,
-      final int chance,
-      final boolean starts) {
-    assertEquals(starts, BiteRules.startsSickness(human, turning, allowed, first, roll, chance));
+      final int blood,
+      final int cost,
+      final BiteRules.Turning expected) {
+    assertEquals(expected, BiteRules.turning(turningBite, human, allowed, blood, cost));
   }
 
   @ParameterizedTest(name = "{0}% is {1} per thousand")

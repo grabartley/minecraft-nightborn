@@ -78,8 +78,25 @@ public final class BloodGiftGrants {
     }
   }
 
-  static void end(final ServerPlayerEntity player) {
+  public static void end(final ServerPlayerEntity player) {
+    final ActiveGift active = player.getAttached(ACTIVE);
     player.removeAttached(ACTIVE);
+    player.removeStatusEffect(BloodGiftEffect.ENTRY);
+    final Optional<BloodGift> gift =
+        active == null
+            ? Optional.empty()
+            : BloodGifts.byId(player.getRegistryManager(), active.gift());
+    if (gift.isPresent()) {
+      final List<GiftModifier> modifiers = gift.get().modifiers();
+      for (int index = 0; index < modifiers.size(); index++) {
+        final EntityAttributeInstance instance =
+            player.getAttributeInstance(modifiers.get(index).attribute());
+        if (instance != null) {
+          instance.removeModifier(GiftModifier.id(index));
+        }
+      }
+      return;
+    }
     Registries.ATTRIBUTE
         .streamEntries()
         .map(player::getAttributeInstance)

@@ -1,7 +1,6 @@
 package com.grahambartley.nightborn.blood;
 
 import com.grahambartley.nightborn.Nightborn;
-import com.grahambartley.nightborn.feeding.Lancet;
 import com.grahambartley.nightborn.feeding.LancetItem;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.minecraft.component.ComponentType;
@@ -59,6 +58,5 @@ public final class BloodItems {
               }
             });
     ItemGroupEvents.modifyEntriesEvent(ItemGroups.TOOLS).register(entries -> entries.add(LANCET));
-    Lancet.register();
   }
 }

@@ -10,7 +10,6 @@ import com.grahambartley.nightborn.server.ServerConfigService;
 import com.grahambartley.nightborn.vampire.NightbornDamage;
 import com.grahambartley.nightborn.vampire.Vampires;
 import java.util.Optional;
-import net.fabricmc.fabric.api.event.player.UseEntityCallback;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
@@ -34,10 +33,6 @@ import org.jetbrains.annotations.Nullable;
 public final class Lancet {
 
   private Lancet() {}
-
-  public static void register() {
-    UseEntityCallback.EVENT.register(Lancet::onUse);
-  }
 
   static ActionResult onUse(
       final PlayerEntity player,

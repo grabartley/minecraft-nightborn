@@ -94,7 +94,7 @@ public class OldBloodFontBlock extends BlockWithEntity {
         FontDrink.decide(
             player.getMainHandStack().isEmpty(),
             Vampires.isVampire(player),
-            font.full(),
+            world.getBlockState(pos).get(FILLED),
             BiteSicknessAttachment.isSick(player));
     if (drink == FontDrink.PASS) {
       return ActionResult.PASS;

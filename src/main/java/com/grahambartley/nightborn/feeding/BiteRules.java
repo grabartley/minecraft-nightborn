@@ -11,7 +11,7 @@ public final class BiteRules {
     BITE,
     FINISH,
     NOT_A_VAMPIRE,
-    NOT_SNEAKING_EMPTY_HANDED,
+    NOT_A_BITE,
     HELPLESS,
     NO_WARM_BLOOD,
     WARDED,
@@ -53,18 +53,27 @@ public final class BiteRules {
     return maxHealth > 0.0F && health > 0.0F && health < maxHealth * thresholdPercent / PERCENT;
   }
 
-  public static boolean startsSickness(
-      final boolean victimIsHumanPlayer,
+  public enum Turning {
+    FEEDS,
+    TOO_LITTLE_BLOOD,
+    MAY_TURN
+  }
+
+  public static Turning turning(
       final boolean turningBite,
+      final boolean humanVictim,
       final boolean playersCanTurnPlayers,
-      final boolean firstRoll,
-      final int roll,
-      final int chancePerThousand) {
-    return victimIsHumanPlayer
-        && turningBite
-        && playersCanTurnPlayers
-        && firstRoll
-        && roll < chancePerThousand;
+      final int blood,
+      final int cost) {
+    if (!turningBite || !humanVictim || !playersCanTurnPlayers) {
+      return Turning.FEEDS;
+    }
+    return blood < cost ? Turning.TOO_LITTLE_BLOOD : Turning.MAY_TURN;
+  }
+
+  public static boolean startsSickness(
+      final boolean victimIsHumanPlayer, final int roll, final int chancePerThousand) {
+    return victimIsHumanPlayer && roll < chancePerThousand;
   }
 
   public static int perThousand(final int percent) {
@@ -80,7 +89,7 @@ public final class BiteRules {
       return Decision.NOT_A_VAMPIRE;
     }
     if (!biter.emptyHand() || !biter.sneaking() && !target.finishable()) {
-      return Decision.NOT_SNEAKING_EMPTY_HANDED;
+      return Decision.NOT_A_BITE;
     }
     if (!target.alive() || !drinkable(target.warmBlood(), target.vampire())) {
       return Decision.NO_WARM_BLOOD;

@@ -49,37 +49,24 @@ public final class BiteSickness {
   }
 
   public static boolean startFromTurningBite(
-      final LivingEntity victim,
-      final boolean firstRoll,
-      final Random random,
-      final TurningSettings settings) {
+      final LivingEntity victim, final Random random, final TurningSettings settings) {
     return startFromBite(
-        victim,
-        BiteRules.perThousand(settings.biteTurnChance()),
-        settings.playersCanTurnPlayers(),
-        firstRoll,
-        random,
-        settings);
+        victim, BiteRules.perThousand(settings.biteTurnChance()), random, settings);
   }
 
   public static boolean startFromBatBite(
       final LivingEntity victim, final Random random, final TurningSettings settings) {
-    return startFromBite(victim, settings.batTurnChancePerThousand(), true, true, random, settings);
+    return startFromBite(victim, settings.batTurnChancePerThousand(), random, settings);
   }
 
   private static boolean startFromBite(
       final LivingEntity victim,
       final int chancePerThousand,
-      final boolean allowed,
-      final boolean firstRoll,
       final Random random,
       final TurningSettings settings) {
     return victim instanceof ServerPlayerEntity human
         && BiteRules.startsSickness(
             !Vampires.isVampire(human),
-            true,
-            allowed,
-            firstRoll,
             random.nextInt(BiteRules.PER_THOUSAND),
             BiteResistance.sicknessChance(
                 chancePerThousand, human.getAttributeValue(HunterAttributes.BITE_RESISTANCE)))

@@ -5,6 +5,7 @@ import com.grahambartley.nightborn.advancement.MilestoneCriterion;
 import com.grahambartley.nightborn.age.Ageing;
 import com.grahambartley.nightborn.blood.BloodAttachment;
 import com.grahambartley.nightborn.blood.BloodCapacity;
+import com.grahambartley.nightborn.blood.BloodGiftGrants;
 import com.grahambartley.nightborn.blood.StarvingAttachment;
 import com.grahambartley.nightborn.coffin.CoffinOwnership;
 import com.grahambartley.nightborn.core.VampireCore;
@@ -74,6 +75,7 @@ public final class VampireTransitions {
     StarvingAttachment.set(player, 0);
     Levitation.setDown(player);
     TurningBite.set(player, false);
+    BloodGiftGrants.end(player);
     VisibleStateAttachment.set(player, VisibleState.NONE);
     VampireCore.remove(player);
     CoffinOwnership.release(player.server, player.getUuid());

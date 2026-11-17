@@ -208,20 +208,23 @@ final class Feeder {
       final FeedingSession session,
       final NightbornConfig config,
       final Random random) {
-    if (!TurningBite.isOn(vampire)
-        || !(victim instanceof ServerPlayerEntity human)
-        || Vampires.isVampire(human)
-        || !config.turning().playersCanTurnPlayers()
-        || !session.rollTurnOnce()) {
+    if (!session.rollTurnOnce()) {
       return;
     }
     final int cost =
         BiteRules.turningCost(BloodCapacity.of(vampire), config.turning().turningBiteBloodCost());
-    if (BloodAttachment.get(vampire) < cost) {
+    final BiteRules.Turning turning =
+        BiteRules.turning(
+            TurningBite.isOn(vampire),
+            victim instanceof ServerPlayerEntity && !Vampires.isVampire(victim),
+            config.turning().playersCanTurnPlayers(),
+            BloodAttachment.get(vampire),
+            cost);
+    if (turning == BiteRules.Turning.TOO_LITTLE_BLOOD) {
       vampire.sendMessage(Text.translatable(TOO_LITTLE_BLOOD), true);
-      return;
     }
-    if (BiteSickness.startFromTurningBite(human, true, random, config.turning())) {
+    if (turning == BiteRules.Turning.MAY_TURN
+        && BiteSickness.startFromTurningBite(victim, random, config.turning())) {
       BloodAttachment.set(vampire, BloodAttachment.get(vampire) - cost);
     }
   }

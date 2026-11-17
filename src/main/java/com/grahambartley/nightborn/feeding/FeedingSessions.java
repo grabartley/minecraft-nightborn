@@ -39,10 +39,11 @@ public final class FeedingSessions {
   private FeedingSessions() {}
 
   public static void register() {
+    UseEntityCallback.EVENT.register(Lancet::onUse);
     UseEntityCallback.EVENT.register(FeedingInteraction::onUse);
     AttackEntityCallback.EVENT.register(
         (player, world, hand, entity, hit) ->
-            finishing(player) ? ActionResult.FAIL : ActionResult.PASS);
+            !world.isClient && finishing(player) ? ActionResult.FAIL : ActionResult.PASS);
     ServerLivingEntityEvents.AFTER_DAMAGE.register(
         (entity, source, dealt, taken, blocked) -> {
           if (taken > 0.0F && finishing(entity) && entity instanceof ServerPlayerEntity vampire) {
