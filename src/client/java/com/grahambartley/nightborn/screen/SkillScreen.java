@@ -9,6 +9,7 @@ import com.grahambartley.nightborn.client.SkillKeys;
 import com.grahambartley.nightborn.client.SyncedServerConfig;
 import com.grahambartley.nightborn.config.SkillSettings;
 import com.grahambartley.nightborn.network.BuySkillPayload;
+import com.grahambartley.nightborn.rank.GuildRanks;
 import com.grahambartley.nightborn.skill.PowerBar;
 import com.grahambartley.nightborn.skill.PowerLayout;
 import com.grahambartley.nightborn.skill.Skill;
@@ -393,7 +394,8 @@ public final class SkillScreen extends Screen {
             progress,
             shownTree,
             id,
-            StageRanks.of(client.player))
+            StageRanks.of(client.player),
+            GuildRanks.of(client.player))
         .verdict();
   }
 

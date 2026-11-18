@@ -8,7 +8,8 @@ import net.minecraft.network.codec.PacketCodecs;
 import net.minecraft.network.packet.CustomPayload;
 import net.minecraft.util.Identifier;
 
-public record StageNamePayload(int entityId, Optional<Identifier> stage) implements CustomPayload {
+public record StageNamePayload(int entityId, Optional<Identifier> stage, Optional<Identifier> rank)
+    implements CustomPayload {
 
   public static final CustomPayload.Id<StageNamePayload> ID =
       new CustomPayload.Id<>(Identifier.of(Nightborn.MOD_ID, "stage_name"));
@@ -19,6 +20,8 @@ public record StageNamePayload(int entityId, Optional<Identifier> stage) impleme
           StageNamePayload::entityId,
           PacketCodecs.optional(Identifier.PACKET_CODEC),
           StageNamePayload::stage,
+          PacketCodecs.optional(Identifier.PACKET_CODEC),
+          StageNamePayload::rank,
           StageNamePayload::new);
 
   @Override

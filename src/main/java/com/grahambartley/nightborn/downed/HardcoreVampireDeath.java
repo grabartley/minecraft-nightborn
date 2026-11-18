@@ -6,6 +6,8 @@ import com.grahambartley.nightborn.coffin.CoffinOwnership;
 import com.grahambartley.nightborn.coffin.CoffinRespawn;
 import com.grahambartley.nightborn.faction.Faction;
 import com.grahambartley.nightborn.faction.FactionAttachment;
+import com.grahambartley.nightborn.faction.Oath;
+import com.grahambartley.nightborn.faction.OathAttachment;
 import com.grahambartley.nightborn.familiar.FamiliarRelease;
 import com.grahambartley.nightborn.feeding.TurningBite;
 import com.grahambartley.nightborn.hunt.Hunts;
@@ -50,6 +52,7 @@ public final class HardcoreVampireDeath {
     BiteSicknessAttachment.clear(player);
     TurningBite.set(player, false);
     SkillAttachment.clear(player);
+    OathAttachment.set(player, Oath.NONE);
     PowerCooldownAttachment.set(player, PowerCooldowns.NONE);
     player.getEnderChestInventory().clear();
     if (player.getServerWorld().getGameRules().getBoolean(GameRules.KEEP_INVENTORY)) {

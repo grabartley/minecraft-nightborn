@@ -12,6 +12,7 @@ public final class GuildWheel {
         .add(new GuildOathOrder())
         .add(new GuildCounterOrders(GuildCounter.Kind.GEAR))
         .add(new GuildCounterOrders(GuildCounter.Kind.CONTRACTS))
+        .add(new GuildRankOrder())
         .add(new GuildRumour());
   }
 }

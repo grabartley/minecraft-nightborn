@@ -14,6 +14,7 @@ public record Skill(
     int column,
     int row,
     Optional<Identifier> stage,
+    Optional<Identifier> rank,
     List<SkillRank> ranks,
     Optional<SkillPower> power) {
 
@@ -39,6 +40,7 @@ public record Skill(
                               .optionalFieldOf("row", 0)
                               .forGetter(Skill::row),
                           Identifier.CODEC.optionalFieldOf("stage").forGetter(Skill::stage),
+                          Identifier.CODEC.optionalFieldOf("rank").forGetter(Skill::rank),
                           SkillRank.CODEC
                               .listOf(1, MAX_RANKS)
                               .fieldOf("ranks")

@@ -1,5 +1,6 @@
 package com.grahambartley.nightborn.config;
 
+import com.grahambartley.nightborn.rank.RankNeeds;
 import java.util.List;
 
 public record SkillSettings(
@@ -10,7 +11,12 @@ public record SkillSettings(
     int huntExperience,
     int stageExperience,
     int stakePenalty,
-    int contractExperience) {
+    int contractExperience,
+    int hunterRankPoints,
+    int veteranRankPoints,
+    int masterRankPoints,
+    int rankHealth,
+    int rankDamageTenths) {
 
   static final String SECTION = "skills";
 
@@ -34,6 +40,18 @@ public record SkillSettings(
       new IntSetting(
           SECTION, "contractExperience", 500, 0, 10000, c -> c.skills().contractExperience());
 
+  public static final IntSetting HUNTER_RANK_POINTS =
+      new IntSetting(SECTION, "hunterRankPoints", 5, 0, 1000, c -> c.skills().hunterRankPoints());
+  public static final IntSetting VETERAN_RANK_POINTS =
+      new IntSetting(
+          SECTION, "veteranRankPoints", 20, 0, 1000, c -> c.skills().veteranRankPoints());
+  public static final IntSetting MASTER_RANK_POINTS =
+      new IntSetting(SECTION, "masterRankPoints", 45, 0, 1000, c -> c.skills().masterRankPoints());
+  public static final IntSetting RANK_HEALTH =
+      new IntSetting(SECTION, "rankHealth", 2, 0, 40, c -> c.skills().rankHealth());
+  public static final IntSetting RANK_DAMAGE_TENTHS =
+      new IntSetting(SECTION, "rankDamageTenths", 5, 0, 100, c -> c.skills().rankDamageTenths());
+
   public static final List<Setting<?>> SETTINGS =
       List.of(
           FIRST_POINT_EXPERIENCE,
@@ -43,7 +61,12 @@ public record SkillSettings(
           HUNT_EXPERIENCE,
           STAGE_EXPERIENCE,
           STAKE_PENALTY,
-          CONTRACT_EXPERIENCE);
+          CONTRACT_EXPERIENCE,
+          HUNTER_RANK_POINTS,
+          VETERAN_RANK_POINTS,
+          MASTER_RANK_POINTS,
+          RANK_HEALTH,
+          RANK_DAMAGE_TENTHS);
 
   public SkillSettings {
     firstPointExperience = FIRST_POINT_EXPERIENCE.clamp(firstPointExperience);
@@ -54,6 +77,15 @@ public record SkillSettings(
     stageExperience = STAGE_EXPERIENCE.clamp(stageExperience);
     stakePenalty = STAKE_PENALTY.clamp(stakePenalty);
     contractExperience = CONTRACT_EXPERIENCE.clamp(contractExperience);
+    hunterRankPoints = HUNTER_RANK_POINTS.clamp(hunterRankPoints);
+    veteranRankPoints = VETERAN_RANK_POINTS.clamp(veteranRankPoints);
+    masterRankPoints = MASTER_RANK_POINTS.clamp(masterRankPoints);
+    rankHealth = RANK_HEALTH.clamp(rankHealth);
+    rankDamageTenths = RANK_DAMAGE_TENTHS.clamp(rankDamageTenths);
+  }
+
+  public RankNeeds rankNeeds() {
+    return new RankNeeds(List.of(hunterRankPoints, veteranRankPoints, masterRankPoints));
   }
 
   static SkillSettings from(final SettingValues values) {
@@ -65,6 +97,11 @@ public record SkillSettings(
         values.get(HUNT_EXPERIENCE),
         values.get(STAGE_EXPERIENCE),
         values.get(STAKE_PENALTY),
-        values.get(CONTRACT_EXPERIENCE));
+        values.get(CONTRACT_EXPERIENCE),
+        values.get(HUNTER_RANK_POINTS),
+        values.get(VETERAN_RANK_POINTS),
+        values.get(MASTER_RANK_POINTS),
+        values.get(RANK_HEALTH),
+        values.get(RANK_DAMAGE_TENTHS));
   }
 }

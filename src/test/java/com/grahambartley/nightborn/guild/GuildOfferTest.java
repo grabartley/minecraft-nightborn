@@ -4,6 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.grahambartley.nightborn.MinecraftBootstrapExtension;
+import com.grahambartley.nightborn.rank.GuildRank;
+import com.grahambartley.nightborn.rank.RankLadder;
 import java.io.IOException;
 import java.util.Map;
 import java.util.Optional;
@@ -68,10 +70,49 @@ class GuildOfferTest {
               new TradedItem(Items.EMERALD),
               Optional.empty(),
               new ItemStack(Items.PAPER, parts[0].length()),
-              1));
+              1,
+              Optional.empty()));
     }
     assertEquals(
         java.util.Arrays.stream(expected.split(", ")).map(String::length).toList(),
         GuildOffer.inOrder(byId).stream().map(offer -> offer.gives().getCount()).toList());
+  }
+
+  @ParameterizedTest(name = "rank {0} -> needs {1}")
+  @CsvSource({
+    "'', 0",
+    "nightborn:initiate, 0",
+    "nightborn:hunter, 1",
+    "nightborn:master, 3",
+    "nightborn:lost, 16"
+  })
+  void anOfferNeedsTheRankItNames(final String rank, final int needs) {
+    final RankLadder ladder =
+        new RankLadder(
+            Stream.of("initiate", "hunter", "veteran", "master")
+                .map(path -> new RankLadder.Rung(Identifier.of("nightborn", path), null))
+                .toList());
+    final GuildOffer offer =
+        new GuildOffer(
+            0,
+            new TradedItem(Items.EMERALD),
+            Optional.empty(),
+            new ItemStack(Items.PAPER),
+            1,
+            Optional.ofNullable(rank.isEmpty() ? null : Identifier.of(rank)));
+    assertEquals(needs, offer.needs(ladder));
+  }
+
+  @Test
+  void everyShippedRankedOfferNamesAShippedRank() throws IOException {
+    final Map<String, GuildRank> ranks = GuildDataFiles.load("guild_rank", GuildRank.CODEC);
+    GuildDataFiles.load("guild_offer", GuildOffer.CODEC)
+        .values()
+        .forEach(
+            offer ->
+                offer
+                    .rank()
+                    .ifPresent(
+                        id -> assertTrue(ranks.containsKey(id.getPath()), id + " is not a rank")));
   }
 }

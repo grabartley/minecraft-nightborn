@@ -14,8 +14,9 @@ class OathAttachmentTest {
   static Stream<Arguments> stored() {
     return Stream.of(
         Arguments.of(Oath.NONE, false),
-        Arguments.of(new Oath(true, false), true),
-        Arguments.of(new Oath(true, true), true));
+        Arguments.of(new Oath(true, false, 0, 0), true),
+        Arguments.of(new Oath(true, true, 0, 0), true),
+        Arguments.of(new Oath(true, true, 3, 14), true));
   }
 
   @ParameterizedTest(name = "{0} stores data: {1}")
@@ -23,7 +24,7 @@ class OathAttachmentTest {
   @DisplayName("a player reads back their oath, and one with none costs nothing")
   void readsBack(final Oath oath, final boolean storesData) {
     final FakeAttachmentTarget player = new FakeAttachmentTarget();
-    OathAttachment.set(player, new Oath(true, true));
+    OathAttachment.set(player, new Oath(true, true, 0, 0));
     OathAttachment.set(player, oath);
     assertEquals(oath, OathAttachment.get(player));
     assertEquals(storesData, player.hasAttached(OathAttachment.TYPE));
@@ -33,12 +34,13 @@ class OathAttachmentTest {
     return Stream.of(
         Arguments.of("saved with the player", OathAttachment.TYPE.isPersistent(), true),
         Arguments.of("kept through death", OathAttachment.TYPE.copyOnDeath(), true),
-        Arguments.of("sent to clients", OathAttachment.TYPE.isSynced(), false));
+        Arguments.of("sent to its own player", OathAttachment.TYPE.isSynced(), true));
   }
 
   @ParameterizedTest(name = "{0}: {2}")
   @MethodSource("rules")
-  @DisplayName("the oath stays on the server and survives death and reloads")
+  @DisplayName(
+      "the oath and rank survive death and reloads, and reach only their own player's skill screen")
   void persistence(final String rule, final boolean actual, final boolean expected) {
     assertEquals(expected, actual, rule);
   }

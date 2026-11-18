@@ -1,0 +1,9 @@
+{
+  "order": 2,
+  "name": { "translate": "guild_rank.nightborn.veteran" },
+  "mark": { "glyph": "✦", "color": "blue" },
+  "deed": {
+    "act": "clear_household",
+    "description": { "translate": "nightborn.rank.deed.veteran" }
+  }
+}

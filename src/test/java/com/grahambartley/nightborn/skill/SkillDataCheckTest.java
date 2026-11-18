@@ -27,6 +27,7 @@ class SkillDataCheckTest {
         column,
         row,
         Optional.empty(),
+        Optional.empty(),
         List.of(SkillRank.costing(1)),
         Optional.empty());
   }

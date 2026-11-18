@@ -59,7 +59,7 @@ public final class ContractTracker {
             });
   }
 
-  static boolean householdCleared(final LivingEntity victim) {
+  public static boolean householdCleared(final LivingEntity victim) {
     if (!(victim instanceof VampireEntity vampire)) {
       return false;
     }

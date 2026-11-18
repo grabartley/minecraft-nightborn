@@ -2,6 +2,7 @@ package com.grahambartley.nightborn.mixin;
 
 import com.grahambartley.nightborn.coating.Coatings;
 import com.grahambartley.nightborn.gear.VampireBane;
+import com.grahambartley.nightborn.rank.RankBody;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.damage.DamageSource;
@@ -23,7 +24,11 @@ abstract class EnchantmentHelperMixin {
       final DamageSource source,
       final float baseDamage,
       final CallbackInfoReturnable<Float> cir) {
-    cir.setReturnValue(VampireBane.strike(stack, target, cir.getReturnValueF()));
+    cir.setReturnValue(
+        RankBody.strike(
+            source.getAttacker(),
+            target,
+            VampireBane.strike(stack, target, cir.getReturnValueF())));
   }
 
   @Inject(method = "getAmmoUse", at = @At("RETURN"), cancellable = true)

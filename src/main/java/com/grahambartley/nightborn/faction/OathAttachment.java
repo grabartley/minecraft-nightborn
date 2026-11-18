@@ -2,6 +2,7 @@ package com.grahambartley.nightborn.faction;
 
 import com.grahambartley.nightborn.Nightborn;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentRegistry;
+import net.fabricmc.fabric.api.attachment.v1.AttachmentSyncPredicate;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentTarget;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentType;
 import net.minecraft.util.Identifier;
@@ -11,7 +12,13 @@ public final class OathAttachment {
   public static final Identifier ID = Identifier.of(Nightborn.MOD_ID, "oath");
 
   public static final AttachmentType<Oath> TYPE =
-      AttachmentRegistry.create(ID, builder -> builder.persistent(Oath.CODEC).copyOnDeath());
+      AttachmentRegistry.create(
+          ID,
+          builder ->
+              builder
+                  .persistent(Oath.CODEC)
+                  .copyOnDeath()
+                  .syncWith(Oath.PACKET_CODEC.cast(), AttachmentSyncPredicate.targetOnly()));
 
   private OathAttachment() {}
 
@@ -22,6 +29,9 @@ public final class OathAttachment {
   }
 
   public static void set(final AttachmentTarget target, final Oath oath) {
+    if (oath.equals(get(target))) {
+      return;
+    }
     target.setAttached(TYPE, Oath.NONE.equals(oath) ? null : oath);
   }
 }

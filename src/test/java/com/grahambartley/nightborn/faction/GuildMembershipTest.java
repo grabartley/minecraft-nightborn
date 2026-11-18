@@ -37,7 +37,7 @@ class GuildMembershipTest {
       final boolean sworn,
       final boolean told,
       final boolean provenAfter) {
-    final FakeAttachmentTarget player = player(vampire, false, new Oath(proven, sworn));
+    final FakeAttachmentTarget player = player(vampire, false, new Oath(proven, sworn, 0, 0));
     assertEquals(told, GuildMembership.prove(player));
     assertEquals(provenAfter, OathAttachment.get(player).proven());
   }
@@ -52,7 +52,7 @@ class GuildMembershipTest {
   @DisplayName("an operator or a Guild Master swears in any human who is not yet a hunter")
   void swear(
       final boolean vampire, final boolean proven, final boolean sworn, final boolean swornNow) {
-    final FakeAttachmentTarget player = player(vampire, false, new Oath(proven, sworn));
+    final FakeAttachmentTarget player = player(vampire, false, new Oath(proven, sworn, 0, 0));
     assertEquals(swornNow, GuildMembership.swear(player));
     assertEquals(!vampire, GuildMembership.isHunter(player));
   }
@@ -71,7 +71,7 @@ class GuildMembershipTest {
       final boolean sworn,
       final boolean may,
       final boolean hunter) {
-    final FakeAttachmentTarget player = player(vampire, false, new Oath(proven, sworn));
+    final FakeAttachmentTarget player = player(vampire, false, new Oath(proven, sworn, 0, 0));
     assertEquals(may, GuildMembership.maySwear(player));
     assertEquals(hunter, GuildMembership.isHunter(player));
   }
@@ -80,7 +80,7 @@ class GuildMembershipTest {
   @CsvSource({"false, false", "true, false"})
   @DisplayName("hunter points alone never make an unsworn human a hunter")
   void pointsAlone(final boolean proven, final boolean hunter) {
-    final FakeAttachmentTarget player = player(false, true, new Oath(proven, false));
+    final FakeAttachmentTarget player = player(false, true, new Oath(proven, false, 0, 0));
     assertEquals(hunter, GuildMembership.isHunter(player));
     assertEquals(proven, GuildMembership.maySwear(player));
   }

@@ -25,6 +25,10 @@ public final class SkillNames {
     return "vampire_stage." + id.getNamespace() + "." + id.getPath();
   }
 
+  public static String guildRank(final Identifier id) {
+    return "guild_rank." + id.getNamespace() + "." + id.getPath();
+  }
+
   public static Text lines(final List<Identifier> lines) {
     if (lines.isEmpty()) {
       return Text.translatable("nightborn.command.player.skills.none");

@@ -1,0 +1,10 @@
+{
+  "order": 1,
+  "name": { "translate": "guild_rank.nightborn.hunter" },
+  "mark": { "glyph": "◆", "color": "blue" },
+  "deed": {
+    "act": "stake",
+    "minimum_stage": 1,
+    "description": { "translate": "nightborn.rank.deed.hunter" }
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "order": 3,
+  "name": { "translate": "guild_rank.nightborn.master" },
+  "mark": { "glyph": "✠", "color": "blue" },
+  "deed": {
+    "act": "end_eldest",
+    "description": { "translate": "nightborn.rank.deed.master" }
+  }
+}

@@ -3,7 +3,9 @@ package com.grahambartley.nightborn.name;
 import com.grahambartley.nightborn.age.AgeAttachment;
 import com.grahambartley.nightborn.age.AgeLadder;
 import com.grahambartley.nightborn.faction.FactionPlayerList;
+import com.grahambartley.nightborn.faction.OathAttachment;
 import com.grahambartley.nightborn.network.StageNamePayload;
+import com.grahambartley.nightborn.rank.RankLadder;
 import com.grahambartley.nightborn.server.ServerConfigService;
 import com.grahambartley.nightborn.vampire.Vampires;
 import java.util.Optional;
@@ -63,6 +65,7 @@ public final class StageNames {
                 stage,
                 Vampires.isVampire(bearer),
                 Vampires.isVampire(viewer),
-                FactionPlayerList.shown())));
+                FactionPlayerList.shown()),
+            RankLadder.of(bearer.getRegistryManager()).markOf(OathAttachment.get(bearer))));
   }
 }
