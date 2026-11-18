@@ -764,7 +764,7 @@
   "nightborn.guild.gear": "交易",
   "nightborn.guild.contracts": "接受契约",
   "nightborn.guild.rumour": "打听消息",
-  "nightborn.guild.rumour.told": "%1$s 说，传闻%3$s约 %2$s 格处有一座吸血鬼之家",
+  "nightborn.guild.rumour.told": "%1$s 说，传闻%4$s约 %3$s 格处，%5$s, %6$s 附近，有一座吸血鬼之家（%2$s）",
   "nightborn.guild.rumour.none": "%s 没听说附近有吸血鬼之家",
   "nightborn.guild.nothing": "公会大师今天没有这类东西可以提供",
   "nightborn.bearing.north": "北方",

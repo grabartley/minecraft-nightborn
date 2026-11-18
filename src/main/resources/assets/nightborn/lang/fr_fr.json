@@ -764,7 +764,7 @@
   "nightborn.guild.gear": "Commercer",
   "nightborn.guild.contracts": "Prendre des contrats",
   "nightborn.guild.rumour": "Demander des nouvelles",
-  "nightborn.guild.rumour.told": "%1$s dit qu'une maison de vampires se trouverait à quelque %2$s blocs %3$s",
+  "nightborn.guild.rumour.told": "%1$s dit qu'une maison de vampires se trouverait à quelque %3$s blocs %4$s, près de %5$s, %6$s (%2$s)",
   "nightborn.guild.rumour.none": "%s n'a entendu parler d'aucune maison de vampires près d'ici",
   "nightborn.guild.nothing": "Le Maître de la guilde n'a rien de tel à offrir aujourd'hui",
   "nightborn.bearing.north": "au nord",
