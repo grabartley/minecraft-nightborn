@@ -19,6 +19,10 @@ public final class HouseCommand {
   static final String ACCEPT = "accept";
   static final String DECLINE = "decline";
   static final String LEAVE = "leave";
+  static final String NAME = "name";
+  static final String DISBAND = "disband";
+  static final String NAMED = "nightborn.house.info.named";
+  static final String CHALLENGED = "nightborn.house.info.challenged";
   static final String NONE = "nightborn.house.info.none";
   static final String LED = "nightborn.house.info.led";
   static final String MEMBER = "nightborn.house.info.member";
@@ -45,7 +49,11 @@ public final class HouseCommand {
                     .executes(context -> ok(HouseInvites.answer(player(context), false))))
             .then(
                 CommandManager.literal(LEAVE)
-                    .executes(context -> ok(HouseInvites.leave(player(context))))));
+                    .executes(context -> ok(HouseInvites.leave(player(context)))))
+            .then(
+                CommandManager.literal(NAME)
+                    .executes(context -> ok(HouseNaming.offer(player(context)))))
+            .then(CommandManager.literal(DISBAND).executes(HouseCommand::disband)));
   }
 
   private static int info(final CommandContext<ServerCommandSource> context)
@@ -64,6 +72,17 @@ public final class HouseCommand {
             ? Text.translatable(LED, found.size(), Lordship.capacity(player))
             : Text.translatable(MEMBER, name(server, found.lord())),
         false);
+    found
+        .identity()
+        .name()
+        .ifPresent(name -> player.sendMessage(Text.translatable(NAMED, name), false));
+    found
+        .challenges()
+        .pending()
+        .ifPresent(
+            challenge ->
+                player.sendMessage(
+                    Text.translatable(CHALLENGED, name(server, challenge.challenger())), false));
     final Optional<GlobalPos> place = HousePlace.of(server, found);
     place.ifPresent(
         at ->
@@ -84,7 +103,17 @@ public final class HouseCommand {
     return 1;
   }
 
-  private static Text name(final MinecraftServer server, final UUID player) {
+  private static int disband(final CommandContext<ServerCommandSource> context)
+      throws CommandSyntaxException {
+    final ServerPlayerEntity lord = player(context);
+    if (!HouseSuccession.disband(lord.getServer(), lord.getUuid())) {
+      lord.sendMessage(Text.translatable(HouseNaming.NOT_LORD), true);
+      return 0;
+    }
+    return 1;
+  }
+
+  static Text name(final MinecraftServer server, final UUID player) {
     final ServerPlayerEntity online = server.getPlayerManager().getPlayer(player);
     if (online != null) {
       return online.getDisplayName();

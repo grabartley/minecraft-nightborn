@@ -7,12 +7,14 @@ import com.grahambartley.nightborn.coffin.CoffinRise;
 import com.grahambartley.nightborn.coffin.CoffinSleepers;
 import com.grahambartley.nightborn.coffin.RestRules;
 import com.grahambartley.nightborn.faction.FactionPlayerList;
+import com.grahambartley.nightborn.house.duel.DuelGuard;
 import com.grahambartley.nightborn.vampire.Vampires;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.mojang.datafixers.util.Either;
 import java.util.Set;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerEntity.SleepFailureReason;
 import net.minecraft.network.packet.s2c.play.PositionFlag;
 import net.minecraft.registry.RegistryKey;
@@ -37,6 +39,14 @@ abstract class ServerPlayerEntityMixin {
   private void nightborn$showFaction(final CallbackInfoReturnable<Text> cir) {
     if (FactionPlayerList.shown()) {
       cir.setReturnValue(FactionPlayerList.listName((ServerPlayerEntity) (Object) this, true));
+    }
+  }
+
+  @Inject(method = "shouldDamagePlayer", at = @At("HEAD"), cancellable = true)
+  private void nightborn$duelWhateverThePvpSetting(
+      final PlayerEntity attacker, final CallbackInfoReturnable<Boolean> cir) {
+    if (DuelGuard.forcesPvp(((ServerPlayerEntity) (Object) this).getUuid(), attacker.getUuid())) {
+      cir.setReturnValue(true);
     }
   }
 

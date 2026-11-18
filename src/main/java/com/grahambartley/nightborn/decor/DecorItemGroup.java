@@ -13,11 +13,12 @@ import net.minecraft.util.Identifier;
 public final class DecorItemGroup {
 
   public static final String TRANSLATION_KEY = "itemGroup.nightborn.decor";
+  public static final Identifier ID = Identifier.of(Nightborn.MOD_ID, "decor");
 
   public static final ItemGroup DECOR =
       Registry.register(
           Registries.ITEM_GROUP,
-          Identifier.of(Nightborn.MOD_ID, "decor"),
+          ID,
           FabricItemGroup.builder()
               .icon(() -> new ItemStack(DecorBlocks.CANDELABRA))
               .displayName(Text.translatable(TRANSLATION_KEY))

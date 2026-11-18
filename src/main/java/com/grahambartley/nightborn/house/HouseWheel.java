@@ -21,6 +21,8 @@ public final class HouseWheel {
     CommandWheel.subject(VampireEntity.class, SkillTree.VAMPIRE).add(new MemberOrders());
     CommandWheel.subject(PlayerEntity.class, SkillTree.VAMPIRE)
         .add(new HouseInvite())
+        .add(new HouseChallengeAction())
+        .add(new HouseHandover())
         .add(new HouseLeave());
     UseEntityCallback.EVENT.register(HouseWheel::onUse);
   }

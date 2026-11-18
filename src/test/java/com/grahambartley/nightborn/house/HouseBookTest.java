@@ -73,4 +73,14 @@ class HouseBookTest {
     assertEquals(1, book.all().size());
     assertEquals(false, book.of(STRANGER).isPresent());
   }
+
+  @ParameterizedTest(name = "remove {0}")
+  @CsvSource({"00000000-0000-0000-0000-000000000001, 0", "00000000-0000-0000-0000-000000000004, 1"})
+  @DisplayName("removing a house by its lord frees its members, and a stranger removes nothing")
+  void remove(final UUID lord, final int left) {
+    final HouseBook book = book();
+    book.remove(lord);
+    assertEquals(left, book.all().size());
+    assertEquals(left == 1, book.of(PLAYER).isPresent());
+  }
 }
