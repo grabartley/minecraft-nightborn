@@ -80,7 +80,7 @@ class TreeProgressTest {
     final TreeProgress twice = once.buy(Identifier.of("nightborn", "noble/other"), 1, NOBLE);
     assertTrue(twice.owns(THICK));
     assertEquals(3, twice.spent());
-    assertEquals(List.of(NOBLE), twice.bloodlines());
+    assertEquals(List.of(NOBLE), twice.lines());
     assertEquals(List.of(THICK, Identifier.of("nightborn", "noble/other")), twice.ownedInOrder());
   }
 
@@ -93,7 +93,7 @@ class TreeProgressTest {
     assertEquals(6, refunded.free());
     assertEquals(3.0F, refunded.experience());
     assertFalse(refunded.owns(THICK));
-    assertTrue(refunded.bloodlines().isEmpty());
+    assertTrue(refunded.lines().isEmpty());
   }
 
   @ParameterizedTest(name = "earned {0} stored as {1}")

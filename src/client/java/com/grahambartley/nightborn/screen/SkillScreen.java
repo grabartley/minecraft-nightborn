@@ -134,7 +134,11 @@ public final class SkillScreen extends Screen {
         if (SkillLayout.contains(x, y, mouseX, mouseY)) {
           tooltip =
               SkillTooltip.lines(
-                  id, SkillTooltip.Facts.of(skill, progress.rank(id)), verdict, theme.title());
+                  id,
+                  SkillTooltip.Facts.of(skill, progress.rank(id)),
+                  verdict,
+                  shownTree,
+                  theme.title());
         }
       }
     }
@@ -314,7 +318,7 @@ public final class SkillScreen extends Screen {
     final Identifier id = branches.get(index);
     final int centre = layout.branchLeft(index, branches.size()) + layout.branchWidth() / 2;
     final boolean locked = SkillPurchase.locked(progress, id, branchData.get(id));
-    final boolean chosen = progress.bloodlines().contains(id);
+    final boolean chosen = progress.lines().contains(id);
     final Text title =
         Text.translatable(SkillNames.branch(id)).styled(style -> style.withStrikethrough(locked));
     final int bannerWidth = layout.bannerWidth(textRenderer.getWidth(title));

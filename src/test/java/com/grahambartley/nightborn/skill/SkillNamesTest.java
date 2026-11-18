@@ -53,10 +53,10 @@ class SkillNamesTest {
         "nightborn:noble,nightborn:beast|skill_branch.nightborn.noble, skill_branch.nightborn.beast"
       })
   @DisplayName("chosen bloodlines are listed by their translated names, or as none")
-  void bloodlines(final String ids, final String keys) {
+  void lines(final String ids, final String keys) {
     final List<Identifier> bloodlines =
         ids.isEmpty() ? List.of() : Stream.of(ids.split(",")).map(Identifier::of).toList();
-    final Text text = SkillNames.bloodlines(bloodlines);
+    final Text text = SkillNames.lines(bloodlines);
     final List<String> parts = new ArrayList<>();
     collect(text, parts);
     assertEquals(keys, String.join("", parts));

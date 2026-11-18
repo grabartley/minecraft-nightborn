@@ -55,7 +55,8 @@ final class SkillsCommand {
                       progress.spent(),
                       progress.free(),
                       progress.ownedInOrder().size(),
-                      SkillNames.bloodlines(progress.bloodlines())),
+                      Text.translatable(tree.linesKey()),
+                      SkillNames.lines(progress.lines())),
               false);
     }
     return 1;

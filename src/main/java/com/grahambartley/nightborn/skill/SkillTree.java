@@ -9,15 +9,17 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.StringIdentifiable;
 
 public enum SkillTree implements StringIdentifiable {
-  VAMPIRE("vampire"),
-  HUNTER("hunter");
+  VAMPIRE("vampire", 0),
+  HUNTER("hunter", 1);
 
   public static final Codec<SkillTree> CODEC = StringIdentifiable.createCodec(SkillTree::values);
 
   private final String id;
+  private final int revision;
 
-  SkillTree(final String id) {
+  SkillTree(final String id, final int revision) {
     this.id = id;
+    this.revision = revision;
   }
 
   public static SkillTree of(final Faction faction) {
@@ -39,6 +41,14 @@ public enum SkillTree implements StringIdentifiable {
 
   public String translationKey() {
     return "nightborn.skill_tree." + id;
+  }
+
+  public String linesKey() {
+    return translationKey() + ".lines";
+  }
+
+  public int revision() {
+    return revision;
   }
 
   @Override

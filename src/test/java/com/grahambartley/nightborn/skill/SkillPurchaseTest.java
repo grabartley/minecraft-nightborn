@@ -26,6 +26,11 @@ class SkillPurchaseTest {
   static final SkillBranch CORE_BRANCH = new SkillBranch(SkillTree.VAMPIRE, false, 0);
   static final SkillBranch BLOODLINE = new SkillBranch(SkillTree.VAMPIRE, true, 1);
   static final SkillBranch HUNTER = new SkillBranch(SkillTree.HUNTER, false, 0);
+  static final SkillBranch PATH = new SkillBranch(SkillTree.HUNTER, true, 1);
+  static final Identifier SLAYER = Identifier.of("nightborn", "slayer");
+  static final Identifier SEEKER = Identifier.of("nightborn", "seeker");
+  static final Identifier FAITHFUL = Identifier.of("nightborn", "faithful");
+  static final Identifier TRACKING = Identifier.of("nightborn", "hunter/tracking");
 
   static Skill skill(final Identifier branch, final int cost, final Identifier... requires) {
     return ranked(branch, List.of(cost), requires);
@@ -51,8 +56,48 @@ class SkillPurchaseTest {
         .buy(Identifier.of("nightborn", "beast/entry"), 1, BEAST);
   }
 
+  static TreeProgress twoPaths(final int earned) {
+    return TreeProgress.EMPTY
+        .withEarned(earned)
+        .buy(TRACKING, 1, null)
+        .buy(Identifier.of("nightborn", "hunter/bite_ward"), 2, SLAYER)
+        .buy(Identifier.of("nightborn", "hunter/iron_will"), 2, SEEKER);
+  }
+
   static Stream<Arguments> cases() {
     return Stream.of(
+        Arguments.of(
+            "first hunter path",
+            TreeProgress.EMPTY.withEarned(9).buy(TRACKING, 1, null),
+            SkillTree.HUNTER,
+            Identifier.of("nightborn", "hunter/faith"),
+            skill(FAITHFUL, 2, TRACKING),
+            PATH,
+            SkillPurchase.Verdict.ALLOWED),
+        Arguments.of(
+            "third hunter path",
+            twoPaths(20),
+            SkillTree.HUNTER,
+            Identifier.of("nightborn", "hunter/faith"),
+            skill(FAITHFUL, 2, TRACKING),
+            PATH,
+            SkillPurchase.Verdict.LINE_LOCKED),
+        Arguments.of(
+            "next rank in a chosen hunter path",
+            twoPaths(20),
+            SkillTree.HUNTER,
+            Identifier.of("nightborn", "hunter/bite_ward"),
+            ranked(SLAYER, List.of(2, 2, 3), TRACKING),
+            PATH,
+            SkillPurchase.Verdict.ALLOWED),
+        Arguments.of(
+            "hunter root after two paths",
+            twoPaths(20),
+            SkillTree.HUNTER,
+            Identifier.of("nightborn", "hunter/other"),
+            skill(Identifier.of("nightborn", "hunter"), 1),
+            HUNTER,
+            SkillPurchase.Verdict.ALLOWED),
         Arguments.of(
             "affordable root",
             TreeProgress.EMPTY.withEarned(1),
@@ -116,7 +161,7 @@ class SkillPurchaseTest {
             OCCULT_ENTRY,
             skill(OCCULT, 1),
             BLOODLINE,
-            SkillPurchase.Verdict.BLOODLINE_LOCKED),
+            SkillPurchase.Verdict.LINE_LOCKED),
         Arguments.of(
             "third bloodline with no points",
             twoBloodlines(2),
@@ -124,7 +169,7 @@ class SkillPurchaseTest {
             OCCULT_ENTRY,
             skill(OCCULT, 1),
             BLOODLINE,
-            SkillPurchase.Verdict.BLOODLINE_LOCKED),
+            SkillPurchase.Verdict.LINE_LOCKED),
         Arguments.of(
             "second skill in a chosen bloodline",
             twoBloodlines(9),
@@ -249,16 +294,19 @@ class SkillPurchaseTest {
   void choosesBloodlines() {
     final TreeProgress afterCore =
         SkillPurchase.apply(TreeProgress.EMPTY.withEarned(3), ROOT, skill(CORE, 1), CORE_BRANCH);
-    assertEquals(List.of(), afterCore.bloodlines());
+    assertEquals(List.of(), afterCore.lines());
     final TreeProgress afterOccult =
         SkillPurchase.apply(afterCore, OCCULT_ENTRY, skill(OCCULT, 1), BLOODLINE);
-    assertEquals(List.of(OCCULT), afterOccult.bloodlines());
+    assertEquals(List.of(OCCULT), afterOccult.lines());
     assertEquals(1, afterOccult.free());
   }
 
   static Stream<Arguments> bloodlines() {
     return Stream.of(
         Arguments.of("a bloodline skill", skill(NOBLE, 1), BLOODLINE, NOBLE),
+        Arguments.of("a hunter path skill", skill(SLAYER, 2), PATH, SLAYER),
+        Arguments.of(
+            "a hunter root skill", skill(Identifier.of("nightborn", "hunter"), 1), HUNTER, null),
         Arguments.of("a core skill", skill(CORE, 1), CORE_BRANCH, null),
         Arguments.of("an unknown skill", null, BLOODLINE, null),
         Arguments.of("an unknown branch", skill(NOBLE, 1), null, null));
@@ -267,8 +315,26 @@ class SkillPurchaseTest {
   @ParameterizedTest(name = "{0}")
   @MethodSource("bloodlines")
   @DisplayName("only a skill in a bloodline branch belongs to a bloodline")
-  void bloodline(
-      final String name, final Skill skill, final SkillBranch branch, final Identifier line) {
-    assertEquals(line, SkillPurchase.bloodline(skill, branch));
+  void line(final String name, final Skill skill, final SkillBranch branch, final Identifier line) {
+    assertEquals(line, SkillPurchase.line(skill, branch));
+  }
+
+  static Stream<Arguments> messages() {
+    return Stream.of(
+        Arguments.of(
+            Verdict.LINE_LOCKED, SkillTree.VAMPIRE, "nightborn.skills.verdict.line_locked.vampire"),
+        Arguments.of(
+            Verdict.LINE_LOCKED, SkillTree.HUNTER, "nightborn.skills.verdict.line_locked.hunter"),
+        Arguments.of(Verdict.OWNED, SkillTree.VAMPIRE, "nightborn.skills.verdict.owned"),
+        Arguments.of(Verdict.OWNED, SkillTree.HUNTER, "nightborn.skills.verdict.owned"),
+        Arguments.of(
+            Verdict.TOO_FEW_POINTS, SkillTree.HUNTER, "nightborn.skills.verdict.too_few_points"));
+  }
+
+  @ParameterizedTest(name = "{0} in the {1} tree")
+  @MethodSource("messages")
+  @DisplayName("a refused third choice names bloodlines for vampires and paths for hunters")
+  void message(final Verdict verdict, final SkillTree tree, final String key) {
+    assertEquals(key, verdict.translationKey(tree));
   }
 }

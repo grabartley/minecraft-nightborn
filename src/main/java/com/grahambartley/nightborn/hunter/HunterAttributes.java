@@ -14,7 +14,7 @@ import net.minecraft.util.Identifier;
 
 public final class HunterAttributes {
 
-  static final double MAX_RESISTANCE = 1.0;
+  static final double MAX_RESISTANCE = 0.8;
   static final double MAX_FAITH = 10.0;
 
   public static final RegistryEntry<EntityAttribute> BITE_RESISTANCE =

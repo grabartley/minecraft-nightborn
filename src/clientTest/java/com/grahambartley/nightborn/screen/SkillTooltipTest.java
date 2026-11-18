@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.grahambartley.nightborn.skill.SkillNames;
 import com.grahambartley.nightborn.skill.SkillPurchase;
+import com.grahambartley.nightborn.skill.SkillTree;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -15,7 +16,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.CsvSource;
-import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.MethodSource;
 
 class SkillTooltipTest {
@@ -68,7 +68,8 @@ class SkillTooltipTest {
       "before buying, a skill shows what it does, its ranks, its cost, what it needs and its stage")
   void showsWhatItDoes(
       final String name, final SkillTooltip.Facts facts, final List<String> shown) {
-    final List<Text> lines = SkillTooltip.lines(ID, facts, SkillPurchase.Verdict.ALLOWED, TITLE);
+    final List<Text> lines =
+        SkillTooltip.lines(ID, facts, SkillPurchase.Verdict.ALLOWED, SkillTree.VAMPIRE, TITLE);
     final List<String> expected =
         Stream.concat(Stream.of(SkillNames.skill(ID), SkillNames.description(ID)), shown.stream())
             .toList();
@@ -76,22 +77,31 @@ class SkillTooltipTest {
         expected, lines.subList(0, lines.size() - 1).stream().map(SkillTooltipTest::key).toList());
   }
 
-  @ParameterizedTest(name = "{0}")
-  @EnumSource(SkillPurchase.Verdict.class)
+  static Stream<Arguments> verdicts() {
+    return Stream.of(SkillTree.values())
+        .flatMap(
+            tree ->
+                Stream.of(SkillPurchase.Verdict.values())
+                    .map(verdict -> Arguments.of(tree, verdict)));
+  }
+
+  @ParameterizedTest(name = "{0} {1}")
+  @MethodSource("verdicts")
   @DisplayName("the last line says whether it can be bought, and why not")
-  void status(final SkillPurchase.Verdict verdict) {
+  void status(final SkillTree tree, final SkillPurchase.Verdict verdict) {
     assertEquals(
         verdict == SkillPurchase.Verdict.ALLOWED
             ? "nightborn.skills.click_to_buy"
-            : verdict.translationKey(),
-        key(SkillTooltip.status(verdict, 0)));
+            : verdict.translationKey(tree),
+        key(SkillTooltip.status(verdict, tree, 0)));
   }
 
   @ParameterizedTest(name = "rank {0} held: {1}")
   @CsvSource({"0, nightborn.skills.click_to_buy", "1, nightborn.skills.click_to_rank"})
   @DisplayName("a skill with a rank already held offers its next rank")
   void nextRank(final int rank, final String key) {
-    assertEquals(key, key(SkillTooltip.status(SkillPurchase.Verdict.ALLOWED, rank)));
+    assertEquals(
+        key, key(SkillTooltip.status(SkillPurchase.Verdict.ALLOWED, SkillTree.HUNTER, rank)));
   }
 
   @ParameterizedTest(name = "rank {0} of a power: hint shown {1}")
@@ -103,6 +113,7 @@ class SkillTooltipTest {
             ID,
             new SkillTooltip.Facts(2, rank, 1, List.of(), Optional.empty(), RUSH),
             rank > 0 ? SkillPurchase.Verdict.OWNED : SkillPurchase.Verdict.ALLOWED,
+            SkillTree.VAMPIRE,
             TITLE);
     assertEquals(hinted, key(lines.get(lines.size() - 1)).equals("nightborn.skills.bar.drag"));
   }
@@ -115,6 +126,7 @@ class SkillTooltipTest {
                 ID,
                 new SkillTooltip.Facts(3, 0, 1, List.of(), Optional.of(ELDER), Optional.empty()),
                 SkillPurchase.Verdict.NEEDS_STAGE,
+                SkillTree.VAMPIRE,
                 TITLE)
             .get(3);
     assertEquals(
@@ -126,7 +138,9 @@ class SkillTooltipTest {
   @DisplayName("the power line shows its blood cost and cooldown in seconds")
   void powerArgs() {
     final Text line =
-        SkillTooltip.lines(ID, facts(List.of(), RUSH), SkillPurchase.Verdict.ALLOWED, TITLE).get(3);
+        SkillTooltip.lines(
+                ID, facts(List.of(), RUSH), SkillPurchase.Verdict.ALLOWED, SkillTree.VAMPIRE, TITLE)
+            .get(3);
     assertEquals(List.of(3, 30L), List.of(((TranslatableTextContent) line.getContent()).getArgs()));
   }
 
@@ -147,7 +161,12 @@ class SkillTooltipTest {
   void titleColour(final String colour) {
     final int rgb = Integer.decode(colour);
     final Text title =
-        SkillTooltip.lines(ID, facts(List.of(), Optional.empty()), SkillPurchase.Verdict.OWNED, rgb)
+        SkillTooltip.lines(
+                ID,
+                facts(List.of(), Optional.empty()),
+                SkillPurchase.Verdict.OWNED,
+                SkillTree.HUNTER,
+                rgb)
             .get(0);
     assertEquals(rgb, title.getStyle().getColor().getRgb());
   }
