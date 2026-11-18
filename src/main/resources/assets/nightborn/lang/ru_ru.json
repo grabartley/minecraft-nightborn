@@ -2324,6 +2324,7 @@
   "nightborn.house.leave.member_left": "%s покидает ваш дом",
   "nightborn.house.leave.lord": "Лорд не может покинуть собственный дом",
   "nightborn.house.leave.not_member": "Вы не принадлежите ни к одному дому",
+  "nightborn.house.leave.duelling": "Нельзя покинуть дом посреди поединка",
   "nightborn.house.wheel.invite": "Пригласить в свой дом",
   "nightborn.house.wheel.leave": "Покинуть дом",
   "nightborn.house.order.follow": "Следовать",

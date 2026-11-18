@@ -105,7 +105,9 @@ public final class HouseSuccessionGameTest implements FabricGameTest {
               HouseDuels.of(lord.getUuid()).isPresent(),
               "the duel begins when both stand together");
           final float before = lord.getHealth();
+          context.getWorld().getServer().setPvpEnabled(true);
           lord.damage(context.getWorld().getDamageSources().playerAttack(outsider), 4.0F);
+          context.getWorld().getServer().setPvpEnabled(false);
           context.assertTrue(
               lord.getHealth() == before, "nobody outside the duel can hurt a fighter");
           lord.damage(

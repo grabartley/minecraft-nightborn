@@ -2324,6 +2324,7 @@
   "nightborn.house.leave.member_left": "%s leaves your house",
   "nightborn.house.leave.lord": "A lord cannot leave their own house",
   "nightborn.house.leave.not_member": "You belong to no house",
+  "nightborn.house.leave.duelling": "You cannot leave the house in the middle of a duel",
   "nightborn.house.wheel.invite": "Invite into Your House",
   "nightborn.house.wheel.leave": "Leave the House",
   "nightborn.house.order.follow": "Follow",

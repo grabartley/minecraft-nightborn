@@ -2324,6 +2324,7 @@
   "nightborn.house.leave.member_left": "%s deja tu casa",
   "nightborn.house.leave.lord": "Un señor no puede dejar su propia casa",
   "nightborn.house.leave.not_member": "No perteneces a ninguna casa",
+  "nightborn.house.leave.duelling": "No puedes dejar la casa en mitad de un duelo",
   "nightborn.house.wheel.invite": "Invitar a tu casa",
   "nightborn.house.wheel.leave": "Dejar la casa",
   "nightborn.house.order.follow": "Seguir",

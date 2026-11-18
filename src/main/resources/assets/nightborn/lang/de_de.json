@@ -2324,6 +2324,7 @@
   "nightborn.house.leave.member_left": "%s verlässt dein Haus",
   "nightborn.house.leave.lord": "Ein Fürst kann sein eigenes Haus nicht verlassen",
   "nightborn.house.leave.not_member": "Du gehörst zu keinem Haus",
+  "nightborn.house.leave.duelling": "Du kannst das Haus nicht mitten in einem Duell verlassen",
   "nightborn.house.wheel.invite": "In dein Haus einladen",
   "nightborn.house.wheel.leave": "Das Haus verlassen",
   "nightborn.house.order.follow": "Folgen",

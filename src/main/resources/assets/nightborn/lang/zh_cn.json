@@ -2324,6 +2324,7 @@
   "nightborn.house.leave.member_left": "%s 离开了你的家族",
   "nightborn.house.leave.lord": "领主不能离开自己的家族",
   "nightborn.house.leave.not_member": "你不属于任何家族",
+  "nightborn.house.leave.duelling": "决斗中不能离开家族",
   "nightborn.house.wheel.invite": "邀请加入你的家族",
   "nightborn.house.wheel.leave": "离开家族",
   "nightborn.house.order.follow": "跟随",
