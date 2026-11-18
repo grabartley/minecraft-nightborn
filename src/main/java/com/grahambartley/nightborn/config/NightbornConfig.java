@@ -23,6 +23,7 @@ public record NightbornConfig(
     FamiliarSettings familiars,
     CombatSettings combat,
     StructureSettings structures,
+    PartySettings parties,
     RitualSettings ritual,
     AgeSettings age) {
 
@@ -47,6 +48,7 @@ public record NightbornConfig(
               FamiliarSettings.SETTINGS,
               CombatSettings.SETTINGS,
               StructureSettings.SETTINGS,
+              PartySettings.SETTINGS,
               RitualSettings.SETTINGS,
               AgeSettings.SETTINGS)
           .flatMap(List::stream)
@@ -75,6 +77,7 @@ public record NightbornConfig(
         FamiliarSettings.from(values),
         CombatSettings.from(values),
         StructureSettings.from(values),
+        PartySettings.from(values),
         RitualSettings.from(values),
         AgeSettings.from(values));
   }

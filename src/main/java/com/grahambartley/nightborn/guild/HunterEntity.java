@@ -1,6 +1,7 @@
 package com.grahambartley.nightborn.guild;
 
 import com.grahambartley.nightborn.mob.MobSounds;
+import com.grahambartley.nightborn.mob.VampireBatEntity;
 import com.grahambartley.nightborn.mob.look.BustNbt;
 import com.grahambartley.nightborn.mob.look.Figure;
 import com.grahambartley.nightborn.mob.look.VampireRig;
@@ -109,7 +110,14 @@ public class HunterEntity extends PathAwareEntity
 
   static boolean hunts(final LivingEntity target) {
     return HunterTargets.hunts(
-        Vampires.isVampire(target), target instanceof PlayerEntity player && player.isCreative());
+        Vampires.isVampire(target),
+        target instanceof VampireBatEntity bat && bat.raidsCamp(),
+        target instanceof PlayerEntity player && player.isCreative());
+  }
+
+  @Override
+  public boolean canMoveVoluntarily() {
+    return !isSleeping() && super.canMoveVoluntarily();
   }
 
   @Override

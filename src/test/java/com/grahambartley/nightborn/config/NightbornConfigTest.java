@@ -93,6 +93,7 @@ class NightbornConfigTest {
             "familiars",
             "combat",
             "structures",
+            "parties",
             "ritual",
             "age"),
         NightbornConfig.sections());

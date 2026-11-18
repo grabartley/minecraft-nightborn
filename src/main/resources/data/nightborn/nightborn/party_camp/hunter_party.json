@@ -1,0 +1,487 @@
+{
+  "campfire": [
+    0,
+    0,
+    0
+  ],
+  "tents": [
+    {
+      "at": [
+        -3,
+        0,
+        2
+      ],
+      "pieces": [
+        {
+          "pos": [
+            -1,
+            0,
+            0
+          ],
+          "state": {
+            "Name": "minecraft:brown_wool"
+          }
+        },
+        {
+          "pos": [
+            -1,
+            0,
+            1
+          ],
+          "state": {
+            "Name": "minecraft:brown_wool"
+          }
+        },
+        {
+          "pos": [
+            -1,
+            0,
+            2
+          ],
+          "state": {
+            "Name": "minecraft:brown_wool"
+          }
+        },
+        {
+          "pos": [
+            1,
+            0,
+            0
+          ],
+          "state": {
+            "Name": "minecraft:brown_wool"
+          }
+        },
+        {
+          "pos": [
+            1,
+            0,
+            1
+          ],
+          "state": {
+            "Name": "minecraft:brown_wool"
+          }
+        },
+        {
+          "pos": [
+            1,
+            0,
+            2
+          ],
+          "state": {
+            "Name": "minecraft:brown_wool"
+          }
+        },
+        {
+          "pos": [
+            0,
+            0,
+            2
+          ],
+          "state": {
+            "Name": "minecraft:brown_wool"
+          }
+        },
+        {
+          "pos": [
+            -1,
+            1,
+            1
+          ],
+          "state": {
+            "Name": "minecraft:brown_wool"
+          }
+        },
+        {
+          "pos": [
+            0,
+            1,
+            0
+          ],
+          "state": {
+            "Name": "minecraft:brown_wool"
+          }
+        },
+        {
+          "pos": [
+            0,
+            1,
+            1
+          ],
+          "state": {
+            "Name": "minecraft:brown_wool"
+          }
+        },
+        {
+          "pos": [
+            0,
+            1,
+            2
+          ],
+          "state": {
+            "Name": "minecraft:brown_wool"
+          }
+        },
+        {
+          "pos": [
+            1,
+            1,
+            1
+          ],
+          "state": {
+            "Name": "minecraft:brown_wool"
+          }
+        },
+        {
+          "pos": [
+            0,
+            0,
+            0
+          ],
+          "state": {
+            "Name": "minecraft:brown_bed",
+            "Properties": {
+              "facing": "south",
+              "part": "foot",
+              "occupied": "false"
+            }
+          }
+        },
+        {
+          "pos": [
+            0,
+            0,
+            1
+          ],
+          "state": {
+            "Name": "minecraft:brown_bed",
+            "Properties": {
+              "facing": "south",
+              "part": "head",
+              "occupied": "false"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "at": [
+        3,
+        0,
+        2
+      ],
+      "pieces": [
+        {
+          "pos": [
+            -1,
+            0,
+            0
+          ],
+          "state": {
+            "Name": "minecraft:brown_wool"
+          }
+        },
+        {
+          "pos": [
+            -1,
+            0,
+            1
+          ],
+          "state": {
+            "Name": "minecraft:brown_wool"
+          }
+        },
+        {
+          "pos": [
+            -1,
+            0,
+            2
+          ],
+          "state": {
+            "Name": "minecraft:brown_wool"
+          }
+        },
+        {
+          "pos": [
+            1,
+            0,
+            0
+          ],
+          "state": {
+            "Name": "minecraft:brown_wool"
+          }
+        },
+        {
+          "pos": [
+            1,
+            0,
+            1
+          ],
+          "state": {
+            "Name": "minecraft:brown_wool"
+          }
+        },
+        {
+          "pos": [
+            1,
+            0,
+            2
+          ],
+          "state": {
+            "Name": "minecraft:brown_wool"
+          }
+        },
+        {
+          "pos": [
+            0,
+            0,
+            2
+          ],
+          "state": {
+            "Name": "minecraft:brown_wool"
+          }
+        },
+        {
+          "pos": [
+            -1,
+            1,
+            1
+          ],
+          "state": {
+            "Name": "minecraft:brown_wool"
+          }
+        },
+        {
+          "pos": [
+            0,
+            1,
+            0
+          ],
+          "state": {
+            "Name": "minecraft:brown_wool"
+          }
+        },
+        {
+          "pos": [
+            0,
+            1,
+            1
+          ],
+          "state": {
+            "Name": "minecraft:brown_wool"
+          }
+        },
+        {
+          "pos": [
+            0,
+            1,
+            2
+          ],
+          "state": {
+            "Name": "minecraft:brown_wool"
+          }
+        },
+        {
+          "pos": [
+            1,
+            1,
+            1
+          ],
+          "state": {
+            "Name": "minecraft:brown_wool"
+          }
+        },
+        {
+          "pos": [
+            0,
+            0,
+            0
+          ],
+          "state": {
+            "Name": "minecraft:brown_bed",
+            "Properties": {
+              "facing": "south",
+              "part": "foot",
+              "occupied": "false"
+            }
+          }
+        },
+        {
+          "pos": [
+            0,
+            0,
+            1
+          ],
+          "state": {
+            "Name": "minecraft:brown_bed",
+            "Properties": {
+              "facing": "south",
+              "part": "head",
+              "occupied": "false"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "at": [
+        0,
+        0,
+        -2
+      ],
+      "rotation": "clockwise_180",
+      "pieces": [
+        {
+          "pos": [
+            -1,
+            0,
+            0
+          ],
+          "state": {
+            "Name": "minecraft:brown_wool"
+          }
+        },
+        {
+          "pos": [
+            -1,
+            0,
+            1
+          ],
+          "state": {
+            "Name": "minecraft:brown_wool"
+          }
+        },
+        {
+          "pos": [
+            -1,
+            0,
+            2
+          ],
+          "state": {
+            "Name": "minecraft:brown_wool"
+          }
+        },
+        {
+          "pos": [
+            1,
+            0,
+            0
+          ],
+          "state": {
+            "Name": "minecraft:brown_wool"
+          }
+        },
+        {
+          "pos": [
+            1,
+            0,
+            1
+          ],
+          "state": {
+            "Name": "minecraft:brown_wool"
+          }
+        },
+        {
+          "pos": [
+            1,
+            0,
+            2
+          ],
+          "state": {
+            "Name": "minecraft:brown_wool"
+          }
+        },
+        {
+          "pos": [
+            0,
+            0,
+            2
+          ],
+          "state": {
+            "Name": "minecraft:brown_wool"
+          }
+        },
+        {
+          "pos": [
+            -1,
+            1,
+            1
+          ],
+          "state": {
+            "Name": "minecraft:brown_wool"
+          }
+        },
+        {
+          "pos": [
+            0,
+            1,
+            0
+          ],
+          "state": {
+            "Name": "minecraft:brown_wool"
+          }
+        },
+        {
+          "pos": [
+            0,
+            1,
+            1
+          ],
+          "state": {
+            "Name": "minecraft:brown_wool"
+          }
+        },
+        {
+          "pos": [
+            0,
+            1,
+            2
+          ],
+          "state": {
+            "Name": "minecraft:brown_wool"
+          }
+        },
+        {
+          "pos": [
+            1,
+            1,
+            1
+          ],
+          "state": {
+            "Name": "minecraft:brown_wool"
+          }
+        },
+        {
+          "pos": [
+            0,
+            0,
+            0
+          ],
+          "state": {
+            "Name": "minecraft:brown_bed",
+            "Properties": {
+              "facing": "south",
+              "part": "foot",
+              "occupied": "false"
+            }
+          }
+        },
+        {
+          "pos": [
+            0,
+            0,
+            1
+          ],
+          "state": {
+            "Name": "minecraft:brown_bed",
+            "Properties": {
+              "facing": "south",
+              "part": "head",
+              "occupied": "false"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
