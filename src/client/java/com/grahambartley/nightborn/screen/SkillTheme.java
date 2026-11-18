@@ -11,9 +11,9 @@ public record SkillTheme(
   public static SkillTheme of(final SkillTree tree) {
     return switch (tree) {
       case VAMPIRE ->
-          new SkillTheme(tree, 0xE6C77A, 0xD8C8B0, 0x7A6A5A, 0xC0504A, 0x60E86A5A, 0xFFB8963E);
+          new SkillTheme(tree, 0xE6C77A, 0xD8C8B0, 0x7A6A5A, 0xC0504A, 0x48F08A50, 0xFFB8963E);
       case HUNTER ->
-          new SkillTheme(tree, 0xD6DEE2, 0xC8C0B4, 0x6E6A64, 0xB85A4E, 0x60D8E4EA, 0xFF8A9298);
+          new SkillTheme(tree, 0xD6DEE2, 0xC8C0B4, 0x6E6A64, 0xB85A4E, 0x38E8EEF2, 0xFF8A9298);
     };
   }
 

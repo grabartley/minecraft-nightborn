@@ -3,7 +3,7 @@ package com.grahambartley.nightborn.client.moment;
 public final class CeremonyTitle {
 
   static final float LARGEST = 2.0F;
-  static final int MARGIN = 12;
+  static final int MARGIN = 24;
 
   private CeremonyTitle() {}
 
