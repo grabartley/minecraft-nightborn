@@ -1,5 +1,6 @@
 package com.grahambartley.nightborn.house;
 
+import com.grahambartley.nightborn.age.StageRanks;
 import com.grahambartley.nightborn.blood.BloodQuality;
 import com.grahambartley.nightborn.core.NightTime;
 import com.grahambartley.nightborn.mob.VampireEntity;
@@ -8,6 +9,7 @@ import com.grahambartley.nightborn.mob.home.NightRoutine;
 import com.grahambartley.nightborn.servant.FollowRules;
 import com.grahambartley.nightborn.servant.Stance;
 import com.grahambartley.nightborn.structure.HouseholdRoll;
+import com.grahambartley.nightborn.wild.WandererAttachment;
 import java.util.Optional;
 import java.util.UUID;
 import net.minecraft.entity.LivingEntity;
@@ -77,18 +79,16 @@ public final class MemberLife {
 
   public static void join(final ServerWorld world, final VampireEntity member, final House house) {
     leaveOldHousehold(world, member);
+    WandererAttachment.clear(member);
     member.householdTie().join(house.lord());
     final Houses houses = Houses.get(world.getServer());
-    houses.put(house.withNpc(member.getUuid()));
+    houses.put(house.withNpc(member.getUuid()).ranked(member.getUuid(), StageRanks.of(member)));
     houses.ledBy(house.lord()).ifPresent(joined -> settle(world, member, joined));
   }
 
   public static void goWild(final ServerWorld world, final VampireEntity member) {
-    member
-        .householdTie()
-        .lord()
-        .flatMap(Houses.get(world.getServer())::ledBy)
-        .ifPresent(house -> Houses.get(world.getServer()).put(house.without(member.getUuid())));
+    final Houses houses = Houses.get(world.getServer());
+    houses.of(member.getUuid()).ifPresent(house -> houses.put(house.without(member.getUuid())));
     member.householdTie().leave();
     member.homeLife().release(world, member);
     member.homeLife().wander();
@@ -101,21 +101,25 @@ public final class MemberLife {
 
   public static Optional<House> houseOf(final MinecraftServer server, final VampireEntity member) {
     final UUID self = member.getUuid();
-    return member
-        .householdTie()
-        .lord()
-        .flatMap(Houses.get(server)::ledBy)
-        .filter(house -> house.npcs().contains(self));
+    final HouseholdTie tie = member.householdTie();
+    final Optional<House> house =
+        tie.lord()
+            .flatMap(lord -> Houses.get(server).of(self))
+            .filter(found -> found.npcs().contains(self));
+    house
+        .filter(found -> tie.lord().filter(found.lord()::equals).isEmpty())
+        .ifPresent(found -> tie.join(found.lord()));
+    return house;
   }
 
   private static void leaveOldHousehold(final ServerWorld world, final VampireEntity member) {
     final MinecraftServer server = world.getServer();
     final UUID self = member.getUuid();
-    member
-        .householdTie()
-        .lord()
-        .flatMap(Houses.get(server)::ledBy)
-        .ifPresent(house -> Houses.get(server).put(house.without(self)));
+    final Houses houses = Houses.get(server);
+    houses
+        .of(self)
+        .filter(house -> house.npcs().contains(self))
+        .ifPresent(house -> houses.put(house.without(self)));
     if (member.householdTie().lord().isEmpty()) {
       member
           .homeLife()

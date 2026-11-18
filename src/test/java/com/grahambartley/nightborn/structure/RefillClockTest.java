@@ -2,6 +2,7 @@ package com.grahambartley.nightborn.structure;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.util.Optional;
 import java.util.UUID;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -62,5 +63,46 @@ class RefillClockTest {
       record = record.refillingAt(refillAt);
     }
     assertEquals(redraws, RefillClock.redraws(record, now, 40));
+  }
+
+  @ParameterizedTest(name = "{0}")
+  @CsvSource({
+    "empty and unclaimed with no time, true, -1, 0, false, DRAW",
+    "empty and unclaimed before its time, true, 360000, 0, false, WAIT",
+    "empty and unclaimed at its time, true, 360000, 360000, false, ARRIVE",
+    "clock turned back past the most days, true, 960000, -1000, false, DRAW",
+    "claimed with a time drawn, true, 360000, 0, true, CLEAR",
+    "claimed with no time, true, -1, 0, true, WAIT",
+    "claimed and past its time, true, 360000, 900000, true, CLEAR",
+    "still lived in, false, -1, 0, false, WAIT"
+  })
+  @DisplayName("a claimed structure keeps no refill time, so its clock starts when it is let go")
+  void step(
+      final String name,
+      final boolean gone,
+      final long refillAt,
+      final long now,
+      final boolean claimed,
+      final RefillClock.Step step) {
+    HouseholdRecord record =
+        gone ? HouseholdRecord.NONE : HouseholdRecord.NONE.enlisted(new UUID(0, 1));
+    if (refillAt >= 0) {
+      record = record.refillingAt(refillAt);
+    }
+    assertEquals(step, RefillClock.step(record, now, 40, claimed));
+  }
+
+  @ParameterizedTest(name = "refill at {0}")
+  @CsvSource({"-1", "360000"})
+  @DisplayName("clearing a refill time leaves the household and its head coffin as they were")
+  void unscheduled(final long refillAt) {
+    HouseholdRecord record = HouseholdRecord.NONE;
+    if (refillAt >= 0) {
+      record = record.refillingAt(refillAt);
+    }
+    final HouseholdRecord cleared = record.unscheduled();
+    assertEquals(Optional.empty(), cleared.refillAt());
+    assertEquals(record.living(), cleared.living());
+    assertEquals(record.headCoffin(), cleared.headCoffin());
   }
 }

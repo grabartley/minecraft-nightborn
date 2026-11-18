@@ -1,6 +1,7 @@
 package com.grahambartley.nightborn.network;
 
 import com.grahambartley.nightborn.Nightborn;
+import com.grahambartley.nightborn.name.NameRules;
 import io.netty.buffer.ByteBuf;
 import java.util.Optional;
 import net.minecraft.network.codec.PacketCodec;
@@ -9,7 +10,11 @@ import net.minecraft.network.packet.CustomPayload;
 import net.minecraft.util.Identifier;
 
 public record StageNamePayload(
-    int entityId, Optional<Identifier> stage, Optional<Identifier> rank, Optional<Identifier> title)
+    int entityId,
+    Optional<Identifier> stage,
+    Optional<Identifier> rank,
+    Optional<Identifier> title,
+    Optional<String> house)
     implements CustomPayload {
 
   public static final CustomPayload.Id<StageNamePayload> ID =
@@ -25,6 +30,8 @@ public record StageNamePayload(
           StageNamePayload::rank,
           PacketCodecs.optional(Identifier.PACKET_CODEC),
           StageNamePayload::title,
+          PacketCodecs.optional(PacketCodecs.string(NameRules.MAX_SENT_LENGTH)),
+          StageNamePayload::house,
           StageNamePayload::new);
 
   @Override

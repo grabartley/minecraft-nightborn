@@ -86,4 +86,20 @@ class StageNameViewTest {
             ? titled.getString()
             : ((TranslatableTextContent) titled.getContent()).getKey());
   }
+
+  @ParameterizedTest(name = "{0} of house {1}")
+  @CsvSource({"Mina, Valcourt, true", "Abe, '', false"})
+  @DisplayName("a house name follows the name it belongs to, and none leaves the name alone")
+  void housed(final String name, final String house, final boolean shown) {
+    final Text housed =
+        StageNameView.housed(Text.literal(name), Optional.of(house).filter(h -> !h.isEmpty()));
+    if (!shown) {
+      assertEquals(name, housed.getString());
+      return;
+    }
+    final TranslatableTextContent content = (TranslatableTextContent) housed.getContent();
+    assertEquals(StageNameView.HOUSED, content.getKey());
+    assertEquals(name, ((Text) content.getArgs()[0]).getString());
+    assertEquals(house, content.getArgs()[1]);
+  }
 }
