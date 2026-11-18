@@ -17,7 +17,7 @@ public final class StakePenalty {
   public static TreeProgress apply(
       final TreeProgress progress,
       final int percent,
-      final Function<Identifier, Optional<Identifier>> bloodlineOf) {
+      final Function<Identifier, Optional<Identifier>> lineOf) {
     final int earned = progress.earned() - pointsLost(progress.earned(), percent);
     final List<BoughtSkill> kept = new ArrayList<>(progress.bought());
     final List<BoughtSkill> removed = new ArrayList<>();
@@ -28,9 +28,8 @@ public final class StakePenalty {
       spent -= last.paid();
     }
     final List<Identifier> bloodlines =
-        progress.bloodlines().stream()
-            .filter(
-                line -> !belongs(removed, line, bloodlineOf) || belongs(kept, line, bloodlineOf))
+        progress.lines().stream()
+            .filter(line -> !belongs(removed, line, lineOf) || belongs(kept, line, lineOf))
             .toList();
     return progress.keeping(earned, kept, bloodlines);
   }
@@ -38,8 +37,7 @@ public final class StakePenalty {
   private static boolean belongs(
       final List<BoughtSkill> skills,
       final Identifier line,
-      final Function<Identifier, Optional<Identifier>> bloodlineOf) {
-    return skills.stream()
-        .anyMatch(b -> bloodlineOf.apply(b.skill()).filter(line::equals).isPresent());
+      final Function<Identifier, Optional<Identifier>> lineOf) {
+    return skills.stream().anyMatch(b -> lineOf.apply(b.skill()).filter(line::equals).isPresent());
   }
 }

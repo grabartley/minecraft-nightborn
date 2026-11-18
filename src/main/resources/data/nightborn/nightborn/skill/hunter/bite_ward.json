@@ -1,11 +1,11 @@
 {
-  "branch": "nightborn:hunter",
+  "branch": "nightborn:slayer",
   "requires": [
     "nightborn:hunter/tracking"
   ],
   "icon": "nightborn:skills/icon/bite_ward",
   "column": 0,
-  "row": 1,
+  "row": 0,
   "ranks": [
     {
       "cost": 2,
@@ -13,6 +13,26 @@
         {
           "attribute": "nightborn:bite_resistance",
           "amount": 0.35,
+          "operation": "add_value"
+        }
+      ]
+    },
+    {
+      "cost": 2,
+      "attributes": [
+        {
+          "attribute": "nightborn:bite_resistance",
+          "amount": 0.35,
+          "operation": "add_value"
+        }
+      ]
+    },
+    {
+      "cost": 3,
+      "attributes": [
+        {
+          "attribute": "nightborn:bite_resistance",
+          "amount": 0.1,
           "operation": "add_value"
         }
       ]

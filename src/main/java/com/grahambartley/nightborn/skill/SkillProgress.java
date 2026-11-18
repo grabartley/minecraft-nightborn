@@ -16,10 +16,10 @@ public record SkillProgress(TreeProgress vampire, TreeProgress hunter) {
           instance ->
               instance
                   .group(
-                      TreeProgress.CODEC
+                      TreeRevision.codec(SkillTree.VAMPIRE)
                           .optionalFieldOf("vampire", TreeProgress.EMPTY)
                           .forGetter(SkillProgress::vampire),
-                      TreeProgress.CODEC
+                      TreeRevision.codec(SkillTree.HUNTER)
                           .optionalFieldOf("hunter", TreeProgress.EMPTY)
                           .forGetter(SkillProgress::hunter))
                   .apply(instance, SkillProgress::new));

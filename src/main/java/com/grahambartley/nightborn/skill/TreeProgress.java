@@ -1,6 +1,7 @@
 package com.grahambartley.nightborn.skill;
 
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,15 +13,15 @@ public record TreeProgress(
     int earned,
     float experience,
     List<BoughtSkill> bought,
-    List<Identifier> bloodlines,
+    List<Identifier> lines,
     Optional<PowerLayout> bar) {
 
   public static final int MAX_POINTS = 100_000;
 
   public static final TreeProgress EMPTY = new TreeProgress(0, 0.0F, List.of(), List.of());
 
-  public static final Codec<TreeProgress> CODEC =
-      RecordCodecBuilder.create(
+  public static final MapCodec<TreeProgress> MAP_CODEC =
+      RecordCodecBuilder.mapCodec(
           instance ->
               instance
                   .group(
@@ -37,23 +38,25 @@ public record TreeProgress(
                       Identifier.CODEC
                           .listOf()
                           .optionalFieldOf("bloodlines", List.of())
-                          .forGetter(TreeProgress::bloodlines),
+                          .forGetter(TreeProgress::lines),
                       PowerLayout.CODEC.optionalFieldOf("bar").forGetter(TreeProgress::bar))
                   .apply(instance, TreeProgress::new));
+
+  public static final Codec<TreeProgress> CODEC = MAP_CODEC.codec();
 
   public TreeProgress {
     earned = Math.max(0, Math.min(MAX_POINTS, earned));
     experience = Math.max(0.0F, experience);
     bought = List.copyOf(bought);
-    bloodlines = List.copyOf(bloodlines);
+    lines = List.copyOf(lines);
   }
 
   public TreeProgress(
       final int earned,
       final float experience,
       final List<BoughtSkill> bought,
-      final List<Identifier> bloodlines) {
-    this(earned, experience, bought, bloodlines, Optional.empty());
+      final List<Identifier> lines) {
+    this(earned, experience, bought, lines, Optional.empty());
   }
 
   public int spent() {
@@ -85,38 +88,37 @@ public record TreeProgress(
   }
 
   public TreeProgress withEarned(final int points) {
-    return new TreeProgress(points, experience, bought, bloodlines, bar);
+    return new TreeProgress(points, experience, bought, lines, bar);
   }
 
   public TreeProgress withBar(final PowerLayout layout) {
-    return new TreeProgress(earned, experience, bought, bloodlines, Optional.of(layout));
+    return new TreeProgress(earned, experience, bought, lines, Optional.of(layout));
   }
 
   public TreeProgress addExperience(
       final float gained, final int firstCost, final int risePercent) {
     final SkillCurve.Gain gain =
         SkillCurve.add(earned, experience, gained, firstCost, risePercent, MAX_POINTS);
-    return new TreeProgress(gain.earned(), gain.experience(), bought, bloodlines, bar);
+    return new TreeProgress(gain.earned(), gain.experience(), bought, lines, bar);
   }
 
-  public TreeProgress buy(
-      final Identifier skill, final int cost, @Nullable final Identifier bloodline) {
+  public TreeProgress buy(final Identifier skill, final int cost, @Nullable final Identifier line) {
     final List<BoughtSkill> nextBought = new ArrayList<>(bought);
     nextBought.add(new BoughtSkill(skill, cost));
-    final List<Identifier> nextLines = new ArrayList<>(bloodlines);
-    if (bloodline != null && !nextLines.contains(bloodline)) {
-      nextLines.add(bloodline);
+    final List<Identifier> nextLines = new ArrayList<>(lines);
+    if (line != null && !nextLines.contains(line)) {
+      nextLines.add(line);
     }
     return new TreeProgress(earned, experience, nextBought, nextLines, bar);
   }
 
   public TreeProgress keeping(
-      final int points, final List<BoughtSkill> kept, final List<Identifier> lines) {
+      final int points, final List<BoughtSkill> kept, final List<Identifier> keptLines) {
     return new TreeProgress(
         points,
         experience,
         kept,
-        lines,
+        keptLines,
         bar.map(layout -> layout.keeping(id -> kept.stream().anyMatch(b -> b.skill().equals(id)))));
   }
 

@@ -29,13 +29,15 @@ final class TestPlayers {
   static final int READY = JOIN_PROTECTION_TICKS + 2;
 
   static final String NAME_PREFIX = "nb-";
+  static final String VANILLA_MOCK = "test-mock-player";
 
   private static final AtomicInteger NAMES = new AtomicInteger();
 
   static {
     ServerPlayConnectionEvents.INIT.register(
         (handler, server) -> {
-          if (handler.player.getGameProfile().getName().startsWith(NAME_PREFIX)) {
+          final String name = handler.player.getGameProfile().getName();
+          if (name.startsWith(NAME_PREFIX) || name.equals(VANILLA_MOCK)) {
             handler.onCustomPayload(
                 new CustomPayloadC2SPacket(
                     new RegistrationPayload(
@@ -46,6 +48,8 @@ final class TestPlayers {
   }
 
   private TestPlayers() {}
+
+  static void acceptSync() {}
 
   static ServerPlayerEntity human(final TestContext context, final BlockPos relative) {
     final MinecraftServer server = context.getWorld().getServer();

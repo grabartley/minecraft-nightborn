@@ -6,7 +6,7 @@ The vampire tree has a core and three bloodlines, and the hunter tree comes late
 
 ## Decision
 
-Skills and branches are two dynamic registries, `nightborn:skill` and `nightborn:skill_branch`, registered with Fabric's `DynamicRegistries.registerSynced`. Their files live in `data/<namespace>/nightborn/skill/` and `data/<namespace>/nightborn/skill_branch/`. A branch names its tree and whether it is a bloodline. A skill names its branch, cost, required skills, icon sprite, place on the screen, attribute modifiers and, for an active skill, a power with its blood cost, cooldown, effects and sound.
+Skills and branches are two dynamic registries, `nightborn:skill` and `nightborn:skill_branch`, registered with Fabric's `DynamicRegistries.registerSynced`. Their files live in `data/<namespace>/nightborn/skill/` and `data/<namespace>/nightborn/skill_branch/`. A branch names its tree and whether it is a line, a bloodline in the vampire tree or a path in the hunter tree, of which a player chooses two. A skill names its branch, cost, required skills, icon sprite, place on the screen, attribute modifiers and, for an active skill, a power with its blood cost, cooldown, effects and sound.
 
 A player's points and bought skills are one attachment, `nightborn:skills`, with a separate record per tree. It keeps each purchase and what was paid, in order, and the bloodlines chosen. Power cooldowns are a second attachment. Both are saved, kept through death and synced only to their player (ADR 0002).
 

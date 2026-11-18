@@ -74,7 +74,7 @@ public final class VampireStaging {
       final Skill skill = skills.get(id);
       progress =
           progress.buy(
-              id, skill.nextCost(0), SkillPurchase.bloodline(skill, branches.get(skill.branch())));
+              id, skill.nextCost(0), SkillPurchase.line(skill, branches.get(skill.branch())));
     }
     return progress.withEarned(progress.spent());
   }

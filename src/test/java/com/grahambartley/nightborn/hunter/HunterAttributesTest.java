@@ -22,8 +22,8 @@ class HunterAttributesTest {
 
   static Stream<Arguments> attributes() {
     return Stream.of(
-        Arguments.of(HunterAttributes.BITE_RESISTANCE, "bite_resistance", 1.0),
-        Arguments.of(HunterAttributes.MESMERISE_RESISTANCE, "mesmerise_resistance", 1.0),
+        Arguments.of(HunterAttributes.BITE_RESISTANCE, "bite_resistance", 0.8),
+        Arguments.of(HunterAttributes.MESMERISE_RESISTANCE, "mesmerise_resistance", 0.8),
         Arguments.of(HunterAttributes.FAITH, "faith", 10.0));
   }
 

@@ -28,12 +28,14 @@ public final class SkillShop {
     final SkillLookup lookup =
         SkillLookup.of(registries, progress, tree, id, StageRanks.of(player));
     if (lookup.verdict() != SkillPurchase.Verdict.ALLOWED) {
-      player.sendMessage(Text.translatable(lookup.verdict().translationKey()), true);
+      player.sendMessage(Text.translatable(lookup.verdict().translationKey(tree)), true);
       return lookup.verdict();
     }
     final TreeProgress bought = SkillPurchase.apply(progress, id, lookup.skill(), lookup.branch());
     SkillAttachment.set(player, tree, bought);
-    MilestoneCriterion.reach(player, Milestone.BLOODLINES, bought.bloodlines().size());
+    if (countsBloodlines(tree)) {
+      MilestoneCriterion.reach(player, Milestone.BLOODLINES, bought.lines().size());
+    }
     SkillAttributes.apply(player);
     player.sendMessage(bought(id, bought.rank(id), lookup.skill().maxRank()), true);
     player
@@ -46,6 +48,10 @@ public final class SkillShop {
             0.8F,
             0.7F);
     return lookup.verdict();
+  }
+
+  static boolean countsBloodlines(final SkillTree tree) {
+    return tree == SkillTree.VAMPIRE;
   }
 
   static Text bought(final Identifier id, final int rank, final int maxRank) {

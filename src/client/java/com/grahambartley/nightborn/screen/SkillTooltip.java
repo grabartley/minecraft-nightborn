@@ -4,6 +4,7 @@ import com.grahambartley.nightborn.client.PowerSlotView;
 import com.grahambartley.nightborn.skill.Skill;
 import com.grahambartley.nightborn.skill.SkillNames;
 import com.grahambartley.nightborn.skill.SkillPurchase;
+import com.grahambartley.nightborn.skill.SkillTree;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -42,6 +43,7 @@ public final class SkillTooltip {
       final Identifier id,
       final Facts facts,
       final SkillPurchase.Verdict verdict,
+      final SkillTree tree,
       final int titleColour) {
     final List<Text> lines = new ArrayList<>();
     lines.add(
@@ -76,7 +78,7 @@ public final class SkillTooltip {
                             "nightborn.skills.stage", Text.translatable(SkillNames.stage(stage)))
                         .formatted(Formatting.WHITE)));
     facts.power().ifPresent(shown -> lines.add(powerLine(shown)));
-    lines.add(status(verdict, facts.rank()));
+    lines.add(status(verdict, tree, facts.rank()));
     if (facts.power().isPresent() && facts.rank() > 0) {
       lines.add(Text.translatable("nightborn.skills.bar.drag").formatted(Formatting.GRAY));
     }
@@ -92,14 +94,15 @@ public final class SkillTooltip {
     return line.formatted(Formatting.DARK_RED);
   }
 
-  static Text status(final SkillPurchase.Verdict verdict, final int rank) {
+  static Text status(final SkillPurchase.Verdict verdict, final SkillTree tree, final int rank) {
     return switch (verdict) {
       case ALLOWED ->
           Text.translatable(
                   rank > 0 ? "nightborn.skills.click_to_rank" : "nightborn.skills.click_to_buy")
               .formatted(Formatting.GREEN);
-      case OWNED -> Text.translatable(verdict.translationKey()).formatted(Formatting.DARK_GREEN);
-      default -> Text.translatable(verdict.translationKey()).formatted(Formatting.RED);
+      case OWNED ->
+          Text.translatable(verdict.translationKey(tree)).formatted(Formatting.DARK_GREEN);
+      default -> Text.translatable(verdict.translationKey(tree)).formatted(Formatting.RED);
     };
   }
 }
