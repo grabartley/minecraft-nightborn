@@ -93,6 +93,7 @@ public final class Undercroft {
     t.set(1, 2, 11, "bookshelf");
     t.set(1, 3, 11, "cobweb");
     Furnishing.chest(t, 1, 1, 5, "east");
+    Furnishing.oldBloodFont(t, 2, 1, 6);
     Furnishing.chandelier(t, 6, 4, 6);
     Furnishing.chandelier(t, 6, 4, 10);
     t.set(11, 3, 5, "cobweb");

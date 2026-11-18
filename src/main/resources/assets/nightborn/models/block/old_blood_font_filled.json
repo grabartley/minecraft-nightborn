@@ -1,0 +1,1417 @@
+{
+	"format_version": "1.21.6",
+	"credit": "Made with Blockbench",
+	"textures": {
+		"particle": "nightborn:block/gothic_stone_bricks",
+		"bricks": "nightborn:block/gothic_stone_bricks",
+		"carved": "nightborn:block/carved_gothic_stone",
+		"carved_top": "nightborn:block/carved_gothic_stone_top",
+		"blood": "nightborn:block/blood"
+	},
+	"elements": [
+		{
+			"name": "plinth",
+			"from": [
+				2,
+				0,
+				2
+			],
+			"to": [
+				14,
+				2,
+				14
+			],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [
+					8,
+					1,
+					8
+				]
+			},
+			"faces": {
+				"north": {
+					"uv": [
+						0,
+						0,
+						12,
+						2
+					],
+					"texture": "#bricks"
+				},
+				"east": {
+					"uv": [
+						0,
+						0,
+						12,
+						2
+					],
+					"texture": "#bricks"
+				},
+				"south": {
+					"uv": [
+						0,
+						0,
+						12,
+						2
+					],
+					"texture": "#bricks"
+				},
+				"west": {
+					"uv": [
+						0,
+						0,
+						12,
+						2
+					],
+					"texture": "#bricks"
+				},
+				"up": {
+					"uv": [
+						0,
+						0,
+						12,
+						12
+					],
+					"texture": "#bricks"
+				},
+				"down": {
+					"uv": [
+						0,
+						0,
+						12,
+						12
+					],
+					"texture": "#bricks"
+				}
+			}
+		},
+		{
+			"name": "plinth_step",
+			"from": [
+				3,
+				2,
+				3
+			],
+			"to": [
+				13,
+				3,
+				13
+			],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [
+					8,
+					2.5,
+					8
+				]
+			},
+			"faces": {
+				"north": {
+					"uv": [
+						0,
+						0,
+						10,
+						1
+					],
+					"texture": "#carved_top"
+				},
+				"east": {
+					"uv": [
+						0,
+						0,
+						10,
+						1
+					],
+					"texture": "#carved_top"
+				},
+				"south": {
+					"uv": [
+						0,
+						0,
+						10,
+						1
+					],
+					"texture": "#carved_top"
+				},
+				"west": {
+					"uv": [
+						0,
+						0,
+						10,
+						1
+					],
+					"texture": "#carved_top"
+				},
+				"up": {
+					"uv": [
+						0,
+						0,
+						10,
+						10
+					],
+					"texture": "#carved_top"
+				},
+				"down": {
+					"uv": [
+						0,
+						0,
+						10,
+						10
+					],
+					"texture": "#carved_top"
+				}
+			}
+		},
+		{
+			"name": "shaft",
+			"from": [
+				5,
+				3,
+				5
+			],
+			"to": [
+				11,
+				9,
+				11
+			],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [
+					8,
+					6,
+					8
+				]
+			},
+			"faces": {
+				"north": {
+					"uv": [
+						0,
+						0,
+						6,
+						6
+					],
+					"texture": "#carved"
+				},
+				"east": {
+					"uv": [
+						0,
+						0,
+						6,
+						6
+					],
+					"texture": "#carved"
+				},
+				"south": {
+					"uv": [
+						0,
+						0,
+						6,
+						6
+					],
+					"texture": "#carved"
+				},
+				"west": {
+					"uv": [
+						0,
+						0,
+						6,
+						6
+					],
+					"texture": "#carved"
+				},
+				"up": {
+					"uv": [
+						0,
+						0,
+						6,
+						6
+					],
+					"texture": "#carved"
+				},
+				"down": {
+					"uv": [
+						0,
+						0,
+						6,
+						6
+					],
+					"texture": "#carved"
+				}
+			}
+		},
+		{
+			"name": "colonnette_nw",
+			"from": [
+				4,
+				3,
+				4
+			],
+			"to": [
+				5.5,
+				9,
+				5.5
+			],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [
+					4.75,
+					6,
+					4.75
+				]
+			},
+			"faces": {
+				"north": {
+					"uv": [
+						0,
+						0,
+						1.5,
+						6
+					],
+					"texture": "#bricks"
+				},
+				"east": {
+					"uv": [
+						0,
+						0,
+						1.5,
+						6
+					],
+					"texture": "#bricks"
+				},
+				"south": {
+					"uv": [
+						0,
+						0,
+						1.5,
+						6
+					],
+					"texture": "#bricks"
+				},
+				"west": {
+					"uv": [
+						0,
+						0,
+						1.5,
+						6
+					],
+					"texture": "#bricks"
+				},
+				"up": {
+					"uv": [
+						0,
+						0,
+						1.5,
+						1.5
+					],
+					"texture": "#bricks"
+				},
+				"down": {
+					"uv": [
+						0,
+						0,
+						1.5,
+						1.5
+					],
+					"texture": "#bricks"
+				}
+			}
+		},
+		{
+			"name": "colonnette_ne",
+			"from": [
+				10.5,
+				3,
+				4
+			],
+			"to": [
+				12,
+				9,
+				5.5
+			],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [
+					11.25,
+					6,
+					4.75
+				]
+			},
+			"faces": {
+				"north": {
+					"uv": [
+						0,
+						0,
+						1.5,
+						6
+					],
+					"texture": "#bricks"
+				},
+				"east": {
+					"uv": [
+						0,
+						0,
+						1.5,
+						6
+					],
+					"texture": "#bricks"
+				},
+				"south": {
+					"uv": [
+						0,
+						0,
+						1.5,
+						6
+					],
+					"texture": "#bricks"
+				},
+				"west": {
+					"uv": [
+						0,
+						0,
+						1.5,
+						6
+					],
+					"texture": "#bricks"
+				},
+				"up": {
+					"uv": [
+						0,
+						0,
+						1.5,
+						1.5
+					],
+					"texture": "#bricks"
+				},
+				"down": {
+					"uv": [
+						0,
+						0,
+						1.5,
+						1.5
+					],
+					"texture": "#bricks"
+				}
+			}
+		},
+		{
+			"name": "colonnette_sw",
+			"from": [
+				4,
+				3,
+				10.5
+			],
+			"to": [
+				5.5,
+				9,
+				12
+			],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [
+					4.75,
+					6,
+					11.25
+				]
+			},
+			"faces": {
+				"north": {
+					"uv": [
+						0,
+						0,
+						1.5,
+						6
+					],
+					"texture": "#bricks"
+				},
+				"east": {
+					"uv": [
+						0,
+						0,
+						1.5,
+						6
+					],
+					"texture": "#bricks"
+				},
+				"south": {
+					"uv": [
+						0,
+						0,
+						1.5,
+						6
+					],
+					"texture": "#bricks"
+				},
+				"west": {
+					"uv": [
+						0,
+						0,
+						1.5,
+						6
+					],
+					"texture": "#bricks"
+				},
+				"up": {
+					"uv": [
+						0,
+						0,
+						1.5,
+						1.5
+					],
+					"texture": "#bricks"
+				},
+				"down": {
+					"uv": [
+						0,
+						0,
+						1.5,
+						1.5
+					],
+					"texture": "#bricks"
+				}
+			}
+		},
+		{
+			"name": "colonnette_se",
+			"from": [
+				10.5,
+				3,
+				10.5
+			],
+			"to": [
+				12,
+				9,
+				12
+			],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [
+					11.25,
+					6,
+					11.25
+				]
+			},
+			"faces": {
+				"north": {
+					"uv": [
+						0,
+						0,
+						1.5,
+						6
+					],
+					"texture": "#bricks"
+				},
+				"east": {
+					"uv": [
+						0,
+						0,
+						1.5,
+						6
+					],
+					"texture": "#bricks"
+				},
+				"south": {
+					"uv": [
+						0,
+						0,
+						1.5,
+						6
+					],
+					"texture": "#bricks"
+				},
+				"west": {
+					"uv": [
+						0,
+						0,
+						1.5,
+						6
+					],
+					"texture": "#bricks"
+				},
+				"up": {
+					"uv": [
+						0,
+						0,
+						1.5,
+						1.5
+					],
+					"texture": "#bricks"
+				},
+				"down": {
+					"uv": [
+						0,
+						0,
+						1.5,
+						1.5
+					],
+					"texture": "#bricks"
+				}
+			}
+		},
+		{
+			"name": "corbel",
+			"from": [
+				3,
+				9,
+				3
+			],
+			"to": [
+				13,
+				10,
+				13
+			],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [
+					8,
+					9.5,
+					8
+				]
+			},
+			"faces": {
+				"north": {
+					"uv": [
+						0,
+						0,
+						10,
+						1
+					],
+					"texture": "#carved_top"
+				},
+				"east": {
+					"uv": [
+						0,
+						0,
+						10,
+						1
+					],
+					"texture": "#carved_top"
+				},
+				"south": {
+					"uv": [
+						0,
+						0,
+						10,
+						1
+					],
+					"texture": "#carved_top"
+				},
+				"west": {
+					"uv": [
+						0,
+						0,
+						10,
+						1
+					],
+					"texture": "#carved_top"
+				},
+				"up": {
+					"uv": [
+						0,
+						0,
+						10,
+						10
+					],
+					"texture": "#carved_top"
+				},
+				"down": {
+					"uv": [
+						0,
+						0,
+						10,
+						10
+					],
+					"texture": "#carved_top"
+				}
+			}
+		},
+		{
+			"name": "basin_floor",
+			"from": [
+				1.5,
+				10,
+				1.5
+			],
+			"to": [
+				14.5,
+				11,
+				14.5
+			],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [
+					8,
+					10.5,
+					8
+				]
+			},
+			"faces": {
+				"north": {
+					"uv": [
+						0,
+						0,
+						13,
+						1
+					],
+					"texture": "#bricks"
+				},
+				"east": {
+					"uv": [
+						0,
+						0,
+						13,
+						1
+					],
+					"texture": "#bricks"
+				},
+				"south": {
+					"uv": [
+						0,
+						0,
+						13,
+						1
+					],
+					"texture": "#bricks"
+				},
+				"west": {
+					"uv": [
+						0,
+						0,
+						13,
+						1
+					],
+					"texture": "#bricks"
+				},
+				"up": {
+					"uv": [
+						0,
+						0,
+						13,
+						13
+					],
+					"texture": "#bricks"
+				},
+				"down": {
+					"uv": [
+						0,
+						0,
+						13,
+						13
+					],
+					"texture": "#bricks"
+				}
+			}
+		},
+		{
+			"name": "wall_north",
+			"from": [
+				1.5,
+				11,
+				1.5
+			],
+			"to": [
+				14.5,
+				14.5,
+				3
+			],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [
+					8,
+					12.75,
+					2.25
+				]
+			},
+			"faces": {
+				"north": {
+					"uv": [
+						0,
+						0,
+						13,
+						3.5
+					],
+					"texture": "#carved"
+				},
+				"east": {
+					"uv": [
+						0,
+						0,
+						1.5,
+						3.5
+					],
+					"texture": "#carved"
+				},
+				"south": {
+					"uv": [
+						0,
+						0,
+						13,
+						3.5
+					],
+					"texture": "#carved"
+				},
+				"west": {
+					"uv": [
+						0,
+						0,
+						1.5,
+						3.5
+					],
+					"texture": "#carved"
+				},
+				"up": {
+					"uv": [
+						0,
+						0,
+						13,
+						1.5
+					],
+					"texture": "#carved"
+				},
+				"down": {
+					"uv": [
+						0,
+						0,
+						13,
+						1.5
+					],
+					"texture": "#carved"
+				}
+			}
+		},
+		{
+			"name": "wall_south",
+			"from": [
+				1.5,
+				11,
+				13
+			],
+			"to": [
+				14.5,
+				14.5,
+				14.5
+			],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [
+					8,
+					12.75,
+					13.75
+				]
+			},
+			"faces": {
+				"north": {
+					"uv": [
+						0,
+						0,
+						13,
+						3.5
+					],
+					"texture": "#carved"
+				},
+				"east": {
+					"uv": [
+						0,
+						0,
+						1.5,
+						3.5
+					],
+					"texture": "#carved"
+				},
+				"south": {
+					"uv": [
+						0,
+						0,
+						13,
+						3.5
+					],
+					"texture": "#carved"
+				},
+				"west": {
+					"uv": [
+						0,
+						0,
+						1.5,
+						3.5
+					],
+					"texture": "#carved"
+				},
+				"up": {
+					"uv": [
+						0,
+						0,
+						13,
+						1.5
+					],
+					"texture": "#carved"
+				},
+				"down": {
+					"uv": [
+						0,
+						0,
+						13,
+						1.5
+					],
+					"texture": "#carved"
+				}
+			}
+		},
+		{
+			"name": "wall_west",
+			"from": [
+				1.5,
+				11,
+				3
+			],
+			"to": [
+				3,
+				14.5,
+				13
+			],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [
+					2.25,
+					12.75,
+					8
+				]
+			},
+			"faces": {
+				"north": {
+					"uv": [
+						0,
+						0,
+						1.5,
+						3.5
+					],
+					"texture": "#carved"
+				},
+				"east": {
+					"uv": [
+						0,
+						0,
+						10,
+						3.5
+					],
+					"texture": "#carved"
+				},
+				"south": {
+					"uv": [
+						0,
+						0,
+						1.5,
+						3.5
+					],
+					"texture": "#carved"
+				},
+				"west": {
+					"uv": [
+						0,
+						0,
+						10,
+						3.5
+					],
+					"texture": "#carved"
+				},
+				"up": {
+					"uv": [
+						0,
+						0,
+						1.5,
+						10
+					],
+					"texture": "#carved"
+				},
+				"down": {
+					"uv": [
+						0,
+						0,
+						1.5,
+						10
+					],
+					"texture": "#carved"
+				}
+			}
+		},
+		{
+			"name": "wall_east",
+			"from": [
+				13,
+				11,
+				3
+			],
+			"to": [
+				14.5,
+				14.5,
+				13
+			],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [
+					13.75,
+					12.75,
+					8
+				]
+			},
+			"faces": {
+				"north": {
+					"uv": [
+						0,
+						0,
+						1.5,
+						3.5
+					],
+					"texture": "#carved"
+				},
+				"east": {
+					"uv": [
+						0,
+						0,
+						10,
+						3.5
+					],
+					"texture": "#carved"
+				},
+				"south": {
+					"uv": [
+						0,
+						0,
+						1.5,
+						3.5
+					],
+					"texture": "#carved"
+				},
+				"west": {
+					"uv": [
+						0,
+						0,
+						10,
+						3.5
+					],
+					"texture": "#carved"
+				},
+				"up": {
+					"uv": [
+						0,
+						0,
+						1.5,
+						10
+					],
+					"texture": "#carved"
+				},
+				"down": {
+					"uv": [
+						0,
+						0,
+						1.5,
+						10
+					],
+					"texture": "#carved"
+				}
+			}
+		},
+		{
+			"name": "rim_north",
+			"from": [
+				1,
+				14.5,
+				1
+			],
+			"to": [
+				15,
+				15.5,
+				2.5
+			],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [
+					8,
+					15,
+					1.75
+				]
+			},
+			"faces": {
+				"north": {
+					"uv": [
+						0,
+						0,
+						14,
+						1
+					],
+					"texture": "#carved_top"
+				},
+				"east": {
+					"uv": [
+						0,
+						0,
+						1.5,
+						1
+					],
+					"texture": "#carved_top"
+				},
+				"south": {
+					"uv": [
+						0,
+						0,
+						14,
+						1
+					],
+					"texture": "#carved_top"
+				},
+				"west": {
+					"uv": [
+						0,
+						0,
+						1.5,
+						1
+					],
+					"texture": "#carved_top"
+				},
+				"up": {
+					"uv": [
+						0,
+						0,
+						14,
+						1.5
+					],
+					"texture": "#carved_top"
+				},
+				"down": {
+					"uv": [
+						0,
+						0,
+						14,
+						1.5
+					],
+					"texture": "#carved_top"
+				}
+			}
+		},
+		{
+			"name": "rim_south",
+			"from": [
+				1,
+				14.5,
+				13.5
+			],
+			"to": [
+				15,
+				15.5,
+				15
+			],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [
+					8,
+					15,
+					14.25
+				]
+			},
+			"faces": {
+				"north": {
+					"uv": [
+						0,
+						0,
+						14,
+						1
+					],
+					"texture": "#carved_top"
+				},
+				"east": {
+					"uv": [
+						0,
+						0,
+						1.5,
+						1
+					],
+					"texture": "#carved_top"
+				},
+				"south": {
+					"uv": [
+						0,
+						0,
+						14,
+						1
+					],
+					"texture": "#carved_top"
+				},
+				"west": {
+					"uv": [
+						0,
+						0,
+						1.5,
+						1
+					],
+					"texture": "#carved_top"
+				},
+				"up": {
+					"uv": [
+						0,
+						0,
+						14,
+						1.5
+					],
+					"texture": "#carved_top"
+				},
+				"down": {
+					"uv": [
+						0,
+						0,
+						14,
+						1.5
+					],
+					"texture": "#carved_top"
+				}
+			}
+		},
+		{
+			"name": "rim_west",
+			"from": [
+				1,
+				14.5,
+				2.5
+			],
+			"to": [
+				2.5,
+				15.5,
+				13.5
+			],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [
+					1.75,
+					15,
+					8
+				]
+			},
+			"faces": {
+				"north": {
+					"uv": [
+						0,
+						0,
+						1.5,
+						1
+					],
+					"texture": "#carved_top"
+				},
+				"east": {
+					"uv": [
+						0,
+						0,
+						11,
+						1
+					],
+					"texture": "#carved_top"
+				},
+				"south": {
+					"uv": [
+						0,
+						0,
+						1.5,
+						1
+					],
+					"texture": "#carved_top"
+				},
+				"west": {
+					"uv": [
+						0,
+						0,
+						11,
+						1
+					],
+					"texture": "#carved_top"
+				},
+				"up": {
+					"uv": [
+						0,
+						0,
+						1.5,
+						11
+					],
+					"texture": "#carved_top"
+				},
+				"down": {
+					"uv": [
+						0,
+						0,
+						1.5,
+						11
+					],
+					"texture": "#carved_top"
+				}
+			}
+		},
+		{
+			"name": "rim_east",
+			"from": [
+				13.5,
+				14.5,
+				2.5
+			],
+			"to": [
+				15,
+				15.5,
+				13.5
+			],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [
+					14.25,
+					15,
+					8
+				]
+			},
+			"faces": {
+				"north": {
+					"uv": [
+						0,
+						0,
+						1.5,
+						1
+					],
+					"texture": "#carved_top"
+				},
+				"east": {
+					"uv": [
+						0,
+						0,
+						11,
+						1
+					],
+					"texture": "#carved_top"
+				},
+				"south": {
+					"uv": [
+						0,
+						0,
+						1.5,
+						1
+					],
+					"texture": "#carved_top"
+				},
+				"west": {
+					"uv": [
+						0,
+						0,
+						11,
+						1
+					],
+					"texture": "#carved_top"
+				},
+				"up": {
+					"uv": [
+						0,
+						0,
+						1.5,
+						11
+					],
+					"texture": "#carved_top"
+				},
+				"down": {
+					"uv": [
+						0,
+						0,
+						1.5,
+						11
+					],
+					"texture": "#carved_top"
+				}
+			}
+		},
+		{
+			"name": "blood",
+			"from": [
+				3,
+				11,
+				3
+			],
+			"to": [
+				13,
+				14,
+				13
+			],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [
+					8,
+					12.5,
+					8
+				]
+			},
+			"faces": {
+				"north": {
+					"uv": [
+						0,
+						0,
+						10,
+						3
+					],
+					"texture": "#blood"
+				},
+				"east": {
+					"uv": [
+						0,
+						0,
+						10,
+						3
+					],
+					"texture": "#blood"
+				},
+				"south": {
+					"uv": [
+						0,
+						0,
+						10,
+						3
+					],
+					"texture": "#blood"
+				},
+				"west": {
+					"uv": [
+						0,
+						0,
+						10,
+						3
+					],
+					"texture": "#blood"
+				},
+				"up": {
+					"uv": [
+						0,
+						0,
+						10,
+						10
+					],
+					"texture": "#blood"
+				},
+				"down": {
+					"uv": [
+						0,
+						0,
+						10,
+						10
+					],
+					"texture": "#blood"
+				}
+			}
+		}
+	]
+}

@@ -1,0 +1,12 @@
+{
+  "prey": "minecraft:wolf",
+  "name": "nightborn.blood_gift.wolf",
+  "seconds": 60,
+  "modifiers": [
+    {
+      "attribute": "nightborn:prey_sense",
+      "amount": 12.0,
+      "operation": "add_value"
+    }
+  ]
+}

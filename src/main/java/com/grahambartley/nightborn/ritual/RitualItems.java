@@ -8,7 +8,6 @@ import net.minecraft.item.ItemGroups;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKeys;
-import net.minecraft.registry.entry.RegistryEntryList;
 import net.minecraft.registry.tag.TagKey;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Rarity;
@@ -30,10 +29,6 @@ public final class RitualItems {
   public static void register() {
     ItemGroupEvents.modifyEntriesEvent(ItemGroups.INGREDIENTS)
         .register(entries -> ALL.forEach(entries::add));
-  }
-
-  public static int relicsNeeded() {
-    return Registries.ITEM.getEntryList(RELICS).map(RegistryEntryList::size).orElse(0);
   }
 
   private static Item relic(final String name) {

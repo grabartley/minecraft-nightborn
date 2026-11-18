@@ -8,31 +8,40 @@ import org.junit.jupiter.params.provider.CsvSource;
 
 class EldestFoesTest {
 
-  @ParameterizedTest(name = "vampire={0} player={1} struck={2} -> {3}")
+  @ParameterizedTest(name = "vampire={0} player={1} struck={2} summoner={3} -> {4}")
   @CsvSource({
-    "false, true, false, true",
-    "false, false, false, true",
-    "true, true, false, false",
-    "true, true, true, true",
-    "true, false, true, false",
-    "true, false, false, false"
+    "false, true, false, false, true",
+    "false, false, false, false, true",
+    "true, true, false, false, false",
+    "true, true, true, false, true",
+    "true, true, false, true, true",
+    "true, false, true, false, false",
+    "true, false, false, true, false",
+    "true, false, false, false, false"
   })
-  @DisplayName("the Eldest fights humans, and a vampire player only once struck by one")
+  @DisplayName("the Eldest fights humans, and a vampire player once struck by one or who called it")
   void fights(
-      final boolean vampire, final boolean player, final boolean struck, final boolean fights) {
-    assertEquals(fights, EldestFoes.fights(vampire, player, struck));
+      final boolean vampire,
+      final boolean player,
+      final boolean struck,
+      final boolean summoner,
+      final boolean fights) {
+    assertEquals(fights, EldestFoes.fights(vampire, player, struck, summoner));
   }
 
-  @ParameterizedTest(name = "vampire={0} peaceful={1} -> {2}")
+  @ParameterizedTest(name = "vampire={0} peaceful={1} summoner={2} -> {3}")
   @CsvSource({
-    "false, false, true",
-    "false, true, false",
-    "true, false, false",
-    "true, true, false"
+    "false, false, false, true",
+    "false, true, false, false",
+    "true, false, false, false",
+    "true, true, false, false",
+    "true, false, true, true",
+    "true, true, true, false"
   })
-  @DisplayName("the Eldest seeks out humans, but not on Peaceful")
-  void seeksOut(final boolean vampire, final boolean peaceful, final boolean seeks) {
-    assertEquals(seeks, EldestFoes.seeksOut(vampire, peaceful));
+  @DisplayName("the Eldest seeks out humans and the vampire who called it, but not on Peaceful")
+  void seeksOut(
+      final boolean vampire, final boolean peaceful, final boolean summoner, final boolean seeks) {
+    assertEquals(seeks, EldestFoes.seeksOut(vampire, peaceful, summoner));
   }
 
   @ParameterizedTest(

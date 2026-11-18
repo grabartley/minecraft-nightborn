@@ -1,23 +1,18 @@
 package com.grahambartley.nightborn.decor;
 
-import com.grahambartley.nightborn.blood.BloodBottleItem;
-import com.grahambartley.nightborn.blood.BloodItems;
-import com.grahambartley.nightborn.blood.BloodQuality;
-import com.grahambartley.nightborn.vampire.Vampires;
 import com.mojang.serialization.MapCodec;
+import java.util.Optional;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.ShapeContext;
+import net.minecraft.component.DataComponentTypes;
+import net.minecraft.component.type.BlockStateComponent;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.ItemUsage;
-import net.minecraft.item.Items;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvent;
-import net.minecraft.sound.SoundEvents;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.EnumProperty;
+import net.minecraft.state.property.IntProperty;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.ItemActionResult;
@@ -29,19 +24,20 @@ import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldAccess;
 import net.minecraft.world.WorldView;
-import net.minecraft.world.event.GameEvent;
 
 public class ChaliceBlock extends Block {
 
   public static final EnumProperty<ChaliceBlood> BLOOD =
       EnumProperty.of("blood", ChaliceBlood.class);
+  public static final IntProperty BOTTLES = IntProperty.of("bottles", 1, ChaliceContents.CAPACITY);
   public static final MapCodec<ChaliceBlock> CODEC = createCodec(ChaliceBlock::new);
 
   private static final VoxelShape SHAPE = Block.createCuboidShape(5, 0, 5, 11, 12, 11);
 
   public ChaliceBlock(final Settings settings) {
     super(settings);
-    this.setDefaultState(this.getStateManager().getDefaultState().with(BLOOD, ChaliceBlood.EMPTY));
+    this.setDefaultState(
+        this.getStateManager().getDefaultState().with(BLOOD, ChaliceBlood.EMPTY).with(BOTTLES, 1));
   }
 
   @Override
@@ -51,7 +47,7 @@ public class ChaliceBlock extends Block {
 
   @Override
   protected void appendProperties(final StateManager.Builder<Block, BlockState> builder) {
-    builder.add(BLOOD);
+    builder.add(BLOOD, BOTTLES);
   }
 
   @Override
@@ -81,14 +77,31 @@ public class ChaliceBlock extends Block {
         : super.getStateForNeighborUpdate(state, direction, neighborState, world, pos, neighborPos);
   }
 
-  public static ChalicePour.Held held(final ItemStack stack) {
-    if (stack.isEmpty()) {
-      return ChalicePour.Held.EMPTY_HAND;
+  public static ChaliceContents contents(final BlockState state) {
+    return new ChaliceContents(state.get(BLOOD), state.get(BOTTLES));
+  }
+
+  public static ChaliceContents contents(final ItemStack chalice) {
+    return contents(
+        chalice
+            .getOrDefault(DataComponentTypes.BLOCK_STATE, BlockStateComponent.DEFAULT)
+            .applyToState(DecorBlocks.CHALICE.getDefaultState()));
+  }
+
+  public static ItemStack item(final ChaliceContents contents) {
+    final ItemStack chalice = new ItemStack(DecorBlocks.CHALICE);
+    if (!contents.empty()) {
+      chalice.set(
+          DataComponentTypes.BLOCK_STATE,
+          BlockStateComponent.DEFAULT
+              .with(BLOOD, contents.blood())
+              .with(BOTTLES, contents.stateBottles()));
     }
-    if (stack.isOf(BloodItems.BLOOD_BOTTLE)) {
-      return ChalicePour.Held.BLOOD_BOTTLE;
-    }
-    return stack.isOf(Items.GLASS_BOTTLE) ? ChalicePour.Held.GLASS_BOTTLE : ChalicePour.Held.OTHER;
+    return chalice;
+  }
+
+  public static BlockState with(final BlockState state, final ChaliceContents contents) {
+    return state.with(BLOOD, contents.blood()).with(BOTTLES, contents.stateBottles());
   }
 
   @Override
@@ -100,29 +113,18 @@ public class ChaliceBlock extends Block {
       final PlayerEntity player,
       final Hand hand,
       final BlockHitResult hit) {
-    final ChaliceBlood contents = state.get(BLOOD);
-    final ChalicePour pour =
-        ChalicePour.decide(contents, held(stack), Vampires.isVampire(player)).orElse(null);
-    if (pour == ChalicePour.FILL) {
-      if (!world.isClient) {
-        final BloodQuality quality = BloodBottleItem.qualityOf(stack);
-        player.setStackInHand(
-            hand, ItemUsage.exchangeStack(stack, player, new ItemStack(Items.GLASS_BOTTLE)));
-        this.change(
-            world, pos, state, ChaliceBlood.of(quality), player, SoundEvents.ITEM_BOTTLE_EMPTY);
-      }
-      return ItemActionResult.success(world.isClient);
+    final Optional<ChalicePour> pour = ChaliceUse.decide(contents(state), stack, player);
+    if (pour.isEmpty() || pour.get() == ChalicePour.DRINK) {
+      return ItemActionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
     }
-    if (pour == ChalicePour.BOTTLE) {
-      if (!world.isClient) {
-        final BloodQuality quality = contents.quality().orElseThrow();
-        player.setStackInHand(
-            hand, ItemUsage.exchangeStack(stack, player, BloodBottleItem.of(quality)));
-        this.change(world, pos, state, ChaliceBlood.EMPTY, player, SoundEvents.ITEM_BOTTLE_FILL);
-      }
-      return ItemActionResult.success(world.isClient);
+    if (!world.isClient) {
+      store(
+          world,
+          pos,
+          state,
+          ChaliceUse.apply(pour.get(), contents(state), world, pos, player, hand));
     }
-    return ItemActionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+    return ItemActionResult.success(world.isClient);
   }
 
   @Override
@@ -132,33 +134,28 @@ public class ChaliceBlock extends Block {
       final BlockPos pos,
       final PlayerEntity player,
       final BlockHitResult hit) {
-    final ChaliceBlood contents = state.get(BLOOD);
     final boolean drinks =
-        ChalicePour.decide(contents, held(player.getMainHandStack()), Vampires.isVampire(player))
+        ChaliceUse.decide(contents(state), player.getMainHandStack(), player)
             .filter(pour -> pour == ChalicePour.DRINK)
             .isPresent();
     if (!drinks) {
       return ActionResult.PASS;
     }
     if (!world.isClient) {
-      BloodBottleItem.drink(player, contents.quality().orElseThrow());
-      this.change(world, pos, state, ChaliceBlood.EMPTY, player, SoundEvents.ENTITY_GENERIC_DRINK);
+      store(
+          world,
+          pos,
+          state,
+          ChaliceUse.apply(ChalicePour.DRINK, contents(state), world, pos, player, Hand.MAIN_HAND));
     }
     return ActionResult.success(world.isClient);
   }
 
-  private void change(
-      final World world,
-      final BlockPos pos,
-      final BlockState state,
-      final ChaliceBlood contents,
-      final PlayerEntity player,
-      final SoundEvent sound) {
-    world.setBlockState(pos, state.with(BLOOD, contents), Block.NOTIFY_ALL);
-    world.playSound(null, pos, sound, SoundCategory.BLOCKS, 1.0f, 1.0f);
-    world.emitGameEvent(
-        player,
-        contents == ChaliceBlood.EMPTY ? GameEvent.FLUID_PICKUP : GameEvent.FLUID_PLACE,
-        pos);
+  private static void store(
+      final World world, final BlockPos pos, final BlockState state, final ChaliceContents next) {
+    final BlockState changed = with(state, next);
+    if (changed != state) {
+      world.setBlockState(pos, changed, Block.NOTIFY_ALL);
+    }
   }
 }

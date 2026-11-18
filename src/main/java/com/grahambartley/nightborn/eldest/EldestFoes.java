@@ -4,8 +4,9 @@ public final class EldestFoes {
 
   private EldestFoes() {}
 
-  public static boolean fights(final boolean vampire, final boolean player, final boolean struck) {
-    return !vampire || player && struck;
+  public static boolean fights(
+      final boolean vampire, final boolean player, final boolean struck, final boolean summoner) {
+    return !vampire || player && (struck || summoner);
   }
 
   public static boolean shrugsOff(
@@ -20,7 +21,8 @@ public final class EldestFoes {
     return seat;
   }
 
-  public static boolean seeksOut(final boolean vampire, final boolean peaceful) {
-    return !vampire && !peaceful;
+  public static boolean seeksOut(
+      final boolean vampire, final boolean peaceful, final boolean summoner) {
+    return (!vampire || summoner) && !peaceful;
   }
 }

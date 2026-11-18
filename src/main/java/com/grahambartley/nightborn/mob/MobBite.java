@@ -3,9 +3,7 @@ package com.grahambartley.nightborn.mob;
 import com.grahambartley.nightborn.advancement.Milestone;
 import com.grahambartley.nightborn.advancement.MilestoneCriterion;
 import com.grahambartley.nightborn.blood.BloodValue;
-import com.grahambartley.nightborn.config.TurningSettings;
 import com.grahambartley.nightborn.feeding.FeedingSessions;
-import com.grahambartley.nightborn.sickness.BiteSickness;
 import com.grahambartley.nightborn.vampire.NightbornDamage;
 import com.grahambartley.nightborn.vampire.Vampires;
 import com.grahambartley.nightborn.ward.Wards;
@@ -22,9 +20,7 @@ public final class MobBite {
       final MobEntity biter,
       final LivingEntity victim,
       final float damage,
-      final int turnChance,
-      final SoundEvent sound,
-      final TurningSettings turning) {
+      final SoundEvent sound) {
     if (!(biter.getWorld() instanceof ServerWorld world) || Wards.wards(victim)) {
       return false;
     }
@@ -40,7 +36,6 @@ public final class MobBite {
         FeedingSessions.fed(biter, world.getTime());
       }
     }
-    BiteSickness.startFromBite(victim, turnChance, true, true, true, world.getRandom(), turning);
     return true;
   }
 }

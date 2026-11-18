@@ -21,7 +21,8 @@ public final class BloodMetabolism {
       Difficulty difficulty,
       boolean naturalRegeneration,
       int flightDrainSeconds,
-      int age) {}
+      int age,
+      double healingSpeed) {}
 
   public record Outcome(int blood, float exhaustion, boolean heals) {}
 
@@ -44,11 +45,15 @@ public final class BloodMetabolism {
       }
     }
     final boolean heals =
-        state.age() % PULSE_TICKS == 0
+        state.age() % pulseTicks(state.healingSpeed()) == 0
             && state.naturalRegeneration()
             && blood > HEAL_ABOVE
             && state.health() < state.maxHealth();
     return new Outcome(blood, Math.min(exhaustion, MAX_EXHAUSTION), heals);
+  }
+
+  public static int pulseTicks(final double healingSpeed) {
+    return Math.max(1, (int) Math.round(PULSE_TICKS / (1.0 + Math.max(0.0, healingSpeed))));
   }
 
   public static int flightDrainSeconds(

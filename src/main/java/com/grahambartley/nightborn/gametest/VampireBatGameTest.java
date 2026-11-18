@@ -25,10 +25,10 @@ public class VampireBatGameTest implements FabricGameTest {
 
   @BeforeBatch(batchId = COVER_BATCH)
   public void everyBatBiteTurns(final ServerWorld world) {
-    turnChanceBefore = ServerConfigService.current().turning().vampireBatTurnChance();
+    turnChanceBefore = ServerConfigService.current().turning().batTurnChancePerThousand();
     ServerConfigService.update(
         world.getServer(),
-        ServerConfigService.current().with(TurningSettings.VAMPIRE_BAT_TURN_CHANCE, 100));
+        ServerConfigService.current().with(TurningSettings.BAT_TURN_CHANCE_PER_THOUSAND, 1000));
   }
 
   @AfterBatch(batchId = COVER_BATCH)
@@ -36,7 +36,7 @@ public class VampireBatGameTest implements FabricGameTest {
     ServerConfigService.update(
         world.getServer(),
         ServerConfigService.current()
-            .with(TurningSettings.VAMPIRE_BAT_TURN_CHANCE, turnChanceBefore));
+            .with(TurningSettings.BAT_TURN_CHANCE_PER_THOUSAND, turnChanceBefore));
   }
 
   @BeforeBatch(batchId = NOON_BATCH)

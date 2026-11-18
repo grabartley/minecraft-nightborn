@@ -215,6 +215,7 @@ public final class Church {
     t.set(29, 1, 10, "polished_andesite");
     Furnishing.candles(t, 29, 2, 8, 2, true);
     Furnishing.candles(t, 29, 2, 10, 2, true);
+    Furnishing.oldBloodFont(t, 28, 1, 11);
   }
 
   private static void churchyard(final Template t, final Layout layout) {

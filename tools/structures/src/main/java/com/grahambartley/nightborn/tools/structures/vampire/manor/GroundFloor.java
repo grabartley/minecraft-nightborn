@@ -46,6 +46,7 @@ public final class GroundFloor {
     t.set(21, SEAT, 18, "potted_fern");
     t.set(21, SEAT, 26, "potted_fern");
     Furnishing.chest(t, 20, SEAT, 26, "north");
+    Furnishing.oldBloodFont(t, 20, SEAT, 22);
     Furnishing.portrait(t, 21, F0 + 3, 22, "west");
   }
 

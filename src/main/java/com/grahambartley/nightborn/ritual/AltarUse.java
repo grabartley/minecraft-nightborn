@@ -3,22 +3,19 @@ package com.grahambartley.nightborn.ritual;
 import java.util.Optional;
 
 public enum AltarUse {
-  PLACE(null),
-  TAKE(null),
+  SET_CHALICE(null),
+  TAKE_CHALICE(null),
+  POUR(null),
   START(null),
   BUSY(null),
-  NOT_HUMAN("nightborn.ritual.not_human"),
+  NO_CHALICE("nightborn.ritual.no_chalice"),
+  NOT_FULL("nightborn.ritual.not_full"),
   NOT_NIGHT("nightborn.ritual.not_night"),
   PASS(null);
 
-  public record Hand(boolean empty, boolean relic, boolean alreadyPlaced, boolean sneaking) {}
+  public record Hand(boolean empty, boolean chalice, boolean sneaking) {}
 
-  public record Altar(boolean active, int placed, int needed) {
-
-    boolean complete() {
-      return needed > 0 && placed >= needed;
-    }
-  }
+  public record Altar(boolean active, boolean chaliceSet, boolean empty, boolean full) {}
 
   private final String refusal;
 
@@ -27,23 +24,29 @@ public enum AltarUse {
   }
 
   public static AltarUse decide(
-      final Altar altar, final Hand hand, final boolean human, final boolean night) {
+      final Altar altar, final Hand hand, final boolean vampire, final boolean night) {
     if (altar.active()) {
       return BUSY;
     }
-    if (hand.relic()) {
-      return hand.alreadyPlaced() ? PASS : PLACE;
+    if (!altar.chaliceSet()) {
+      if (hand.chalice()) {
+        return SET_CHALICE;
+      }
+      return hand.empty() ? NO_CHALICE : PASS;
     }
-    if (!hand.empty() || altar.placed() == 0) {
-      return PASS;
+    if (!hand.empty()) {
+      return POUR;
     }
-    if (hand.sneaking() || !altar.complete()) {
-      return TAKE;
+    if (hand.sneaking()) {
+      return TAKE_CHALICE;
     }
-    if (!human) {
-      return NOT_HUMAN;
+    if (altar.full() && night) {
+      return START;
     }
-    return night ? START : NOT_NIGHT;
+    if (vampire && !altar.empty()) {
+      return POUR;
+    }
+    return altar.full() ? NOT_NIGHT : NOT_FULL;
   }
 
   public Optional<String> refusal() {

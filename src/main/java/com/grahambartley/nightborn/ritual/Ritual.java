@@ -8,6 +8,7 @@ import com.grahambartley.nightborn.network.RitualGloomPayload;
 import com.grahambartley.nightborn.smoke.SmokeParticles;
 import com.grahambartley.nightborn.structure.StandingSpot;
 import java.util.List;
+import java.util.UUID;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LightningEntity;
@@ -20,6 +21,7 @@ import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
+import org.jetbrains.annotations.Nullable;
 
 public final class Ritual {
 
@@ -67,7 +69,8 @@ public final class Ritual {
       final ServerWorld world,
       final BlockPos altar,
       final Direction facing,
-      final RitualSettings settings) {
+      final RitualSettings settings,
+      @Nullable final UUID summoner) {
     final EldestEntity eldest = NightbornMobs.ELDEST.create(world);
     if (eldest == null) {
       return false;
@@ -80,6 +83,9 @@ public final class Ritual {
     eldest.scaleFor(near(world, altar, settings.fightRange()).size(), settings);
     world.spawnEntityAndPassengers(eldest);
     eldest.riseFromRitual();
+    if (summoner != null) {
+      eldest.calledBy(summoner, near(world, altar, settings.fightRange()));
+    }
     strike(world, spot);
     world.spawnParticles(
         SmokeParticles.VAMPIRE_SMOKE,

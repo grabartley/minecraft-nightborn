@@ -263,6 +263,7 @@ public final class Keep {
     Furnishing.chalice(t, Castle.MID, y + 1, NORTH + 2, "player");
     Furnishing.candelabra(t, Castle.MID - 1, y, NORTH + 1);
     Furnishing.candelabra(t, Castle.MID + 1, y, NORTH + 1);
+    Furnishing.oldBloodFont(t, Castle.MID, y, NORTH + 5);
     Furnishing.chest(t, EAST - 1, y, NORTH + 5, "west", Castle.LOOT);
     t.set(WEST + 4, y, NORTH + 1, "cobweb");
     t.set(EAST - 4, SECOND - 1, NORTH + 1, "cobweb");

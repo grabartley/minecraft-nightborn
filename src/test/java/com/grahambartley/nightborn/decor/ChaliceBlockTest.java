@@ -3,11 +3,7 @@ package com.grahambartley.nightborn.decor;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.grahambartley.nightborn.MinecraftBootstrapExtension;
-import com.grahambartley.nightborn.blood.BloodBottleItem;
-import com.grahambartley.nightborn.blood.BloodQuality;
 import java.util.stream.Stream;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -17,24 +13,33 @@ import org.junit.jupiter.params.provider.MethodSource;
 @ExtendWith(MinecraftBootstrapExtension.class)
 class ChaliceBlockTest {
 
-  static Stream<Arguments> heldItems() {
+  static Stream<Arguments> contents() {
     return Stream.of(
-        Arguments.of(ItemStack.EMPTY, ChalicePour.Held.EMPTY_HAND),
-        Arguments.of(BloodBottleItem.of(BloodQuality.PLAYER), ChalicePour.Held.BLOOD_BOTTLE),
-        Arguments.of(BloodBottleItem.of(BloodQuality.ANIMAL), ChalicePour.Held.BLOOD_BOTTLE),
-        Arguments.of(new ItemStack(Items.GLASS_BOTTLE), ChalicePour.Held.GLASS_BOTTLE),
-        Arguments.of(new ItemStack(Items.POTION), ChalicePour.Held.OTHER),
-        Arguments.of(new ItemStack(Items.GOLD_INGOT), ChalicePour.Held.OTHER));
+        Arguments.of(ChaliceContents.EMPTY),
+        Arguments.of(new ChaliceContents(ChaliceBlood.ANIMAL, 1)),
+        Arguments.of(new ChaliceContents(ChaliceBlood.VILLAGER, 4)),
+        Arguments.of(new ChaliceContents(ChaliceBlood.PLAYER, 7)));
   }
 
-  @ParameterizedTest(name = "{0} -> {1}")
-  @MethodSource("heldItems")
-  void sortsWhatThePlayerHolds(final ItemStack stack, final ChalicePour.Held held) {
-    assertEquals(held, ChaliceBlock.held(stack));
+  @ParameterizedTest(name = "{0}")
+  @MethodSource("contents")
+  void keepsItsContentsInItsState(final ChaliceContents contents) {
+    assertEquals(
+        contents,
+        ChaliceBlock.contents(ChaliceBlock.with(DecorBlocks.CHALICE.getDefaultState(), contents)));
   }
 
   @Test
   void isPlacedEmpty() {
-    assertEquals(ChaliceBlood.EMPTY, DecorBlocks.CHALICE.getDefaultState().get(ChaliceBlock.BLOOD));
+    assertEquals(
+        ChaliceContents.EMPTY, ChaliceBlock.contents(DecorBlocks.CHALICE.getDefaultState()));
+  }
+
+  @Test
+  void aChaliceFromAnOlderWorldKeepsTheBottleItHeld() {
+    assertEquals(
+        new ChaliceContents(ChaliceBlood.ANIMAL, 1),
+        ChaliceBlock.contents(
+            DecorBlocks.CHALICE.getDefaultState().with(ChaliceBlock.BLOOD, ChaliceBlood.ANIMAL)));
   }
 }

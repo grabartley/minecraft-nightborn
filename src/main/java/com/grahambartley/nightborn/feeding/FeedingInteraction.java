@@ -2,6 +2,7 @@ package com.grahambartley.nightborn.feeding;
 
 import com.grahambartley.nightborn.blood.BloodQuality;
 import com.grahambartley.nightborn.downed.Downed;
+import com.grahambartley.nightborn.server.ServerConfigService;
 import com.grahambartley.nightborn.vampire.Vampires;
 import com.grahambartley.nightborn.ward.Wards;
 import java.util.Optional;
@@ -43,14 +44,18 @@ final class FeedingInteraction {
                 Vampires.isVampire(victim),
                 victim instanceof PlayerEntity,
                 victim.isAlive(),
-                Wards.wards(victim)),
+                Wards.wards(victim),
+                BiteRules.finishable(
+                    victim.getHealth(),
+                    victim.getMaxHealth(),
+                    ServerConfigService.current().feeding().finisherHealthPercent())),
             pvp);
     if (!decision.claimsTheInteraction()) {
       return ActionResult.PASS;
     }
     if (player instanceof ServerPlayerEntity vampire) {
-      if (decision.bites()) {
-        FeedingSessions.hold(vampire, victim, quality.orElseThrow());
+      if (decision.bites() || decision.finishes()) {
+        FeedingSessions.hold(vampire, victim, quality.orElseThrow(), decision.finishes());
       } else if (decision == BiteRules.Decision.PVP_OFF) {
         vampire.sendMessage(Text.translatable("nightborn.feeding.pvp_off"), true);
       } else if (decision == BiteRules.Decision.WARDED) {

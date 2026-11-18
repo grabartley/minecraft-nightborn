@@ -5,7 +5,9 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.grahambartley.nightborn.blood.BloodQuality;
+import java.util.Optional;
 import java.util.UUID;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Vec3d;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -15,7 +17,7 @@ import org.junit.jupiter.params.provider.CsvSource;
 class FeedingSessionTest {
 
   private static FeedingSession session() {
-    return new FeedingSession(UUID.randomUUID(), BloodQuality.ANIMAL, 100);
+    return FeedingSession.bite(UUID.randomUUID(), BloodQuality.ANIMAL, Optional.empty(), 100);
   }
 
   @ParameterizedTest(name = "held at 100, now {0}: released {1}")
@@ -80,5 +82,40 @@ class FeedingSessionTest {
     session.took(2.0F);
     session.took(1.5F);
     assertEquals(3.5F, session.totalTaken(), 0.0001F);
+  }
+
+  @ParameterizedTest(name = "drain of {0} ticks begun at 100, now {1}: due {2}")
+  @CsvSource({"30, 129, false", "30, 130, true", "30, 500, true", "0, 101, true", "5, 104, false"})
+  @DisplayName("a finisher drains once its time is up, never sips, and never lets go early")
+  void finisher(final int drainTicks, final long now, final boolean due) {
+    final FeedingSession finisher =
+        FeedingSession.finisher(
+            UUID.randomUUID(), BloodQuality.VILLAGER, Optional.empty(), 100, drainTicks);
+    assertTrue(finisher.finisher());
+    assertEquals(due, finisher.finisherDue(now));
+    assertFalse(finisher.drinkDue(now));
+    assertFalse(finisher.released(now + 1000));
+  }
+
+  @ParameterizedTest(name = "gift {0}")
+  @CsvSource({"nightborn:horse", "nightborn:wolf"})
+  @DisplayName("a plain bite is never a finisher and carries the prey's gift")
+  void plainBite(final String gift) {
+    final FeedingSession bite =
+        FeedingSession.bite(
+            UUID.randomUUID(), BloodQuality.ANIMAL, Optional.of(Identifier.of(gift)), 100);
+    assertFalse(bite.finisher());
+    assertFalse(bite.finisherDue(10_000));
+    assertEquals(Optional.of(Identifier.of(gift)), bite.gift());
+  }
+
+  @ParameterizedTest(name = "biter first at {0}, then {1}")
+  @CsvSource({"1.0, 2.0", "-3.0, 8.0"})
+  @DisplayName("the biter's anchor is where the bite began")
+  void biterAnchor(final double first, final double then) {
+    final FeedingSession session = session();
+    assertEquals(
+        new Vec3d(first, 64.0, first), session.biterAnchorAt(new Vec3d(first, 64.0, first)));
+    assertEquals(new Vec3d(first, 64.0, first), session.biterAnchorAt(new Vec3d(then, 64.0, then)));
   }
 }

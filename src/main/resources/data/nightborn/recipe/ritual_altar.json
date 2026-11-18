@@ -2,13 +2,22 @@
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "pattern": [
-    "GDG",
+    "CDR",
     "SBS",
-    "SSS"
+    "LSF"
   ],
   "key": {
-    "G": {
-      "item": "minecraft:gold_ingot"
+    "C": {
+      "item": "nightborn:castle_signet"
+    },
+    "R": {
+      "item": "nightborn:crypt_reliquary"
+    },
+    "L": {
+      "item": "nightborn:manor_locket"
+    },
+    "F": {
+      "item": "nightborn:lair_fang"
     },
     "D": {
       "item": "nightborn:burgundy_velvet_drape"

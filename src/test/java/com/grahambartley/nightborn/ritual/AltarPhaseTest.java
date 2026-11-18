@@ -8,22 +8,21 @@ import org.junit.jupiter.params.provider.CsvSource;
 
 class AltarPhaseTest {
 
-  @ParameterizedTest(name = "active={0} placed={1} -> {2}")
+  @ParameterizedTest(name = "active={0} ready={1} -> {2}")
   @CsvSource({
-    "false, 0, IDLE, idle, 0",
-    "false, 1, RELICS_PLACED, relics_placed, 0",
-    "false, 4, RELICS_PLACED, relics_placed, 0",
-    "true, 4, RITUAL_ACTIVE, ritual_active, 10",
-    "true, 0, RITUAL_ACTIVE, ritual_active, 10"
+    "false, false, IDLE, idle, 0",
+    "false, true, READY, relics_placed, 0",
+    "true, true, RITUAL_ACTIVE, ritual_active, 10",
+    "true, false, RITUAL_ACTIVE, ritual_active, 10"
   })
-  @DisplayName("the altar's phase follows its relics and its ritual, and names its clip")
+  @DisplayName("the altar's phase follows its full chalice and its ritual, and names its clip")
   void of(
       final boolean active,
-      final int placed,
+      final boolean ready,
       final AltarPhase phase,
       final String clip,
       final int light) {
-    assertEquals(phase, AltarPhase.of(active, placed));
+    assertEquals(phase, AltarPhase.of(active, ready));
     assertEquals(clip, phase.clip());
     assertEquals(clip, phase.asString());
     assertEquals(light, phase.light());

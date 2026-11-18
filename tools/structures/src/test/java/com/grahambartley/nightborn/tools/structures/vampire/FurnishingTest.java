@@ -155,4 +155,13 @@ class FurnishingTest {
     }
     assertEquals(tagged, Set.copyOf(Furnishing.DISCS));
   }
+
+  @ParameterizedTest(name = "an old blood font at {0},{1},{2} stands full")
+  @CsvSource({"1, 1, 1", "3, 2, 4"})
+  void oldBloodFontsStandFull(final int x, final int y, final int z) {
+    final Template t = new Template("vampire/test", 6, 5, 6);
+    Furnishing.oldBloodFont(t, x, y, z);
+    assertEquals(Furnishing.OLD_BLOOD_FONT + "[filled=true]", t.get(x, y, z));
+    assertEquals(1, t.cells().values().stream().filter(s -> s.contains("old_blood_font")).count());
+  }
 }
