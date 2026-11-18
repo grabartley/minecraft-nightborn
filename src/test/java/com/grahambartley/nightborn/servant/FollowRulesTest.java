@@ -68,4 +68,11 @@ class FollowRulesTest {
   void guards(final Stance mode, final double fromPost, final boolean expected) {
     assertEquals(expected, FollowRules.guards(mode, fromPost));
   }
+
+  @ParameterizedTest(name = "{0} -> {1}")
+  @CsvSource({"FOLLOW, -1", "STAY, 1", "GUARD, 8"})
+  @DisplayName("a follower roams freely, a stayer keeps to its spot and a guard to its ground")
+  void leash(final Stance mode, final int radius) {
+    assertEquals(radius, FollowRules.leash(mode));
+  }
 }
