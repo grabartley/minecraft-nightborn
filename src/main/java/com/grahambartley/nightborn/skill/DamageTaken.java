@@ -23,7 +23,12 @@ public final class DamageTaken {
     }
     final float worn = WornDamage.scale(entity, source, amount);
     final float formed = MistForm.harm(entity, source, worn * WingedForm.damageTaken(entity));
-    return floored(amount, BloodTithe.share(entity, formed));
+    final float kept = BloodTithe.share(entity, formed);
+    final float taken = floored(amount, kept);
+    if (taken > kept) {
+      BloodTithe.settle(entity, formed, taken);
+    }
+    return taken;
   }
 
   public static float floored(final float original, final float reduced) {

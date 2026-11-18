@@ -32,7 +32,7 @@ public final class Glamour {
   public static void register() {
     ServerLivingEntityEvents.AFTER_DAMAGE.register(
         (entity, source, base, taken, blocked) -> {
-          if (on(entity) && taken > 0.0F) {
+          if (on(entity) && taken > 0.0F && source.getAttacker() != null) {
             end(entity);
           }
         });

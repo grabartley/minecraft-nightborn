@@ -18,6 +18,10 @@ public final class TitheRules {
     return Math.max(0.0, Math.min(MindAttributes.MOST_TITHE_SHARE, share));
   }
 
+  public static float spared(final float formed, final float taken) {
+    return formed <= 0.0F ? 0.0F : Math.max(0.0F, (formed - taken) / formed);
+  }
+
   public static float owed(final float taken, final double share) {
     final double clamped = clampShare(share);
     return taken <= 0.0F || clamped >= 1.0 ? 0.0F : (float) (taken * clamped / (1.0 - clamped));

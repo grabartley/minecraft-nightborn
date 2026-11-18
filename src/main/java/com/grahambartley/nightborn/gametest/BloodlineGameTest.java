@@ -11,6 +11,8 @@ import com.grahambartley.nightborn.mind.Glamour;
 import com.grahambartley.nightborn.mind.MindEffect;
 import com.grahambartley.nightborn.mind.MindTies;
 import com.grahambartley.nightborn.occult.Circles;
+import com.grahambartley.nightborn.occult.MistForm;
+import com.grahambartley.nightborn.occult.MistState;
 import com.grahambartley.nightborn.occult.RestlessDead;
 import com.grahambartley.nightborn.occult.RestlessDeadEntity;
 import com.grahambartley.nightborn.servant.Servants;
@@ -341,6 +343,27 @@ public class BloodlineGameTest implements FabricGameTest {
               ActionResult.FAIL,
               "mist cannot bite");
           context.assertFalse(FeedingSessions.isFeeding(vampire), "no feeding starts");
+          TestPlayers.finish(context, vampire);
+        });
+  }
+
+  @GameTest(templateName = ARENA, batchId = BATCH, tickLimit = LIMIT)
+  public void mistHoldsWhileInsideAFence(final TestContext context) {
+    final BlockPos fence = new BlockPos(4, 2, 4);
+    context.setBlockState(fence, Blocks.OAK_FENCE);
+    final ServerPlayerEntity vampire = TestPlayers.vampire(context, fence);
+    learn(vampire, OCCULT, "occult_blood", "grave_fog", "shadow_step", "shadow_veil", "mist_form");
+    context.runAtTick(
+        TestPlayers.READY,
+        () -> {
+          Powers.cast(vampire, id("occult/mist_form"));
+          vampire.setAttached(MistForm.TYPE, new MistState(context.getWorld().getTime(), 2.0F));
+          MistForm.tick(vampire);
+          context.assertTrue(MistForm.on(vampire), "mist holds inside the fence");
+          context.setBlockState(fence, Blocks.AIR);
+          vampire.setAttached(MistForm.TYPE, new MistState(context.getWorld().getTime(), 2.0F));
+          MistForm.tick(vampire);
+          context.assertFalse(MistForm.on(vampire), "mist ends once there is room");
           TestPlayers.finish(context, vampire);
         });
   }

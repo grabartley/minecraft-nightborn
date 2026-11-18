@@ -75,7 +75,7 @@ public final class MistForm {
                 ? PlayerEntity.STANDING_DIMENSIONS
                 : vampire.getType().getDimensions())
             .scaled(vampire.getScale());
-    return vampire.getWorld().isSpaceEmpty(vampire, standing.getBoxAt(vampire.getPos()));
+    return vampire.getWorld().isSpaceEmpty(standing.getBoxAt(vampire.getPos()));
   }
 
   public static boolean on(final Entity entity) {

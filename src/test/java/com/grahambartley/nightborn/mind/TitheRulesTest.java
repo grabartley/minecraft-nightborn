@@ -34,4 +34,11 @@ class TitheRulesTest {
     }
     assertEquals(seconds, elapsed);
   }
+
+  @ParameterizedTest(name = "{0} after the forms, {1} taken: share {2}")
+  @CsvSource({"10, 7, 0.3", "10, 10, 0", "10, 12, 0", "0, 0, 0"})
+  @DisplayName("when the cap lifts a blow back up, the bearer pays only what was really spared")
+  void spared(final float formed, final float taken, final float share) {
+    assertEquals(share, TitheRules.spared(formed, taken), 1.0E-6);
+  }
 }

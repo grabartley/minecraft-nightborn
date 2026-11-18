@@ -47,6 +47,12 @@ public final class BloodTithe {
     return TitheRules.kept(amount, share);
   }
 
+  public static void settle(final LivingEntity vampire, final float formed, final float taken) {
+    if (vampire.getAttached(OWED) != null) {
+      vampire.setAttached(OWED, TitheRules.spared(formed, taken));
+    }
+  }
+
   static void pass(final LivingEntity vampire, final DamageSource source, final float taken) {
     final Float share = vampire.getAttached(OWED);
     if (share == null) {
