@@ -5,15 +5,15 @@ import com.grahambartley.nightborn.config.MindSettings;
 import com.grahambartley.nightborn.feeding.FeedingSessions;
 import com.grahambartley.nightborn.mind.Gazes;
 import com.grahambartley.nightborn.mind.Mesmerise;
+import com.grahambartley.nightborn.servant.Stance;
+import com.grahambartley.nightborn.servant.goal.StanceTargetGoal;
 import com.grahambartley.nightborn.server.ServerConfigService;
 import com.grahambartley.nightborn.thrall.BindRules;
 import com.grahambartley.nightborn.thrall.ThrallEntity;
-import com.grahambartley.nightborn.thrall.ThrallMode;
 import com.grahambartley.nightborn.thrall.ThrallOrders;
 import com.grahambartley.nightborn.thrall.ThrallRegistry;
 import com.grahambartley.nightborn.thrall.Thralls;
 import com.grahambartley.nightborn.thrall.VillagerMemory;
-import com.grahambartley.nightborn.thrall.goal.ThrallTargetGoal;
 import com.grahambartley.nightborn.wheel.CommandWheel;
 import java.util.List;
 import java.util.UUID;
@@ -173,23 +173,23 @@ public class ThrallGameTest implements FabricGameTest {
           context.assertFalse(
               CommandWheel.open(stranger, thrall), "a stranger gets no wheel for it");
           context.assertFalse(
-              WheelUse.forge(stranger, thrall, ThrallOrders.ID, ThrallMode.STAY.ordinal()),
+              WheelUse.forge(stranger, thrall, ThrallOrders.ID, Stance.STAY.ordinal()),
               "a forged choice for someone else's thrall is refused");
-          context.assertEquals(thrall.mode(), ThrallMode.FOLLOW, "a stranger cannot order it");
+          context.assertEquals(thrall.mode(), Stance.FOLLOW, "a stranger cannot order it");
           context.assertTrue(
-              WheelUse.pick(owner, thrall, ThrallOrders.ID, ThrallMode.STAY.ordinal()),
+              WheelUse.pick(owner, thrall, ThrallOrders.ID, Stance.STAY.ordinal()),
               "the owner picks stay on the wheel");
-          context.assertEquals(thrall.mode(), ThrallMode.STAY, "the owner told it to stay");
+          context.assertEquals(thrall.mode(), Stance.STAY, "the owner told it to stay");
           context.assertTrue(
-              WheelUse.pick(owner, thrall, ThrallOrders.ID, ThrallMode.GUARD.ordinal()),
+              WheelUse.pick(owner, thrall, ThrallOrders.ID, Stance.GUARD.ordinal()),
               "the owner picks guard on the wheel");
-          context.assertEquals(thrall.mode(), ThrallMode.GUARD, "the owner told it to guard");
+          context.assertEquals(thrall.mode(), Stance.GUARD, "the owner told it to guard");
           context.assertTrue(
-              WheelUse.pick(owner, thrall, ThrallOrders.ID, ThrallMode.FOLLOW.ordinal()),
+              WheelUse.pick(owner, thrall, ThrallOrders.ID, Stance.FOLLOW.ordinal()),
               "the owner picks follow on the wheel");
-          context.assertEquals(thrall.mode(), ThrallMode.FOLLOW, "the owner told it to follow");
+          context.assertEquals(thrall.mode(), Stance.FOLLOW, "the owner told it to follow");
           context.assertFalse(
-              WheelUse.forge(owner, thrall, ThrallOrders.ID, ThrallMode.STAY.ordinal()),
+              WheelUse.forge(owner, thrall, ThrallOrders.ID, Stance.STAY.ordinal()),
               "each wheel takes one choice, so an old one cannot be replayed");
           TestPlayers.finish(context, owner, stranger);
         });
@@ -224,14 +224,14 @@ public class ThrallGameTest implements FabricGameTest {
         () -> {
           owner.attack(zombie);
           context.assertTrue(owner.getAttacking() == zombie, "the owner struck the zombie");
-          final ThrallTargetGoal goal = new ThrallTargetGoal(thrall);
+          final StanceTargetGoal goal = new StanceTargetGoal(thrall, thrall);
           context.assertTrue(goal.canStart(), "the thrall found someone to fight");
           goal.start();
           context.assertTrue(thrall.getTarget() == zombie, "it went for the zombie");
           thrall.setTarget(null);
           owner.age += 200;
           context.assertFalse(
-              new ThrallTargetGoal(thrall).canStart(),
+              new StanceTargetGoal(thrall, thrall).canStart(),
               "long after the owner's blow the thrall leaves the zombie be");
           TestPlayers.finish(context, owner);
         });
@@ -338,12 +338,13 @@ public class ThrallGameTest implements FabricGameTest {
         () -> {
           thrall.setAttacker(owner);
           context.assertFalse(
-              new ThrallTargetGoal(thrall).canStart(), "a blow from its owner is forgiven");
+              new StanceTargetGoal(thrall, thrall).canStart(), "a blow from its owner is forgiven");
           thrall.setAttacker(fellow);
           context.assertFalse(
-              new ThrallTargetGoal(thrall).canStart(), "a blow from a fellow thrall is forgiven");
+              new StanceTargetGoal(thrall, thrall).canStart(),
+              "a blow from a fellow thrall is forgiven");
           thrall.setAttacker(zombie);
-          final ThrallTargetGoal goal = new ThrallTargetGoal(thrall);
+          final StanceTargetGoal goal = new StanceTargetGoal(thrall, thrall);
           context.assertTrue(goal.canStart(), "a zombie's blow is answered");
           goal.start();
           context.assertTrue(thrall.getTarget() == zombie, "it fights back");
@@ -358,13 +359,14 @@ public class ThrallGameTest implements FabricGameTest {
     final ThrallEntity follower = bound(context, owner, new BlockPos(4, 2, 4));
     final ZombieEntity zombie = context.spawnEntity(EntityType.ZOMBIE, new BlockPos(6, 2, 6));
     zombie.setAiDisabled(true);
-    guard.order(ThrallMode.GUARD);
+    guard.order(Stance.GUARD);
     context.runAtTick(
         TestPlayers.READY,
         () -> {
           context.assertFalse(
-              new ThrallTargetGoal(follower).canStart(), "a follower leaves the zombie be");
-          final ThrallTargetGoal goal = new ThrallTargetGoal(guard);
+              new StanceTargetGoal(follower, follower).canStart(),
+              "a follower leaves the zombie be");
+          final StanceTargetGoal goal = new StanceTargetGoal(guard, guard);
           context.assertTrue(goal.canStart(), "the guard sees the zombie by its post");
           goal.start();
           context.assertTrue(guard.getTarget() == zombie, "the guard goes for it");
@@ -391,7 +393,7 @@ public class ThrallGameTest implements FabricGameTest {
         () -> {
           context.assertTrue(villager.getHealth() < villager.getMaxHealth(), "the owner fed");
           context.assertFalse(
-              new ThrallTargetGoal(thrall).canStart(), "the thrall leaves the meal alone");
+              new StanceTargetGoal(thrall, thrall).canStart(), "the thrall leaves the meal alone");
           FeedingSessions.end(owner);
           TestPlayers.finish(context, owner);
         });

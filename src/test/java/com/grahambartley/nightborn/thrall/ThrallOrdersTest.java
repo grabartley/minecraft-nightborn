@@ -2,6 +2,7 @@ package com.grahambartley.nightborn.thrall;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import com.grahambartley.nightborn.servant.Stance;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -18,8 +19,7 @@ class ThrallOrdersTest {
     "STAY, true, FOLLOW, false"
   })
   @DisplayName("the wheel marks the thrall's order as current only while it has no day job")
-  void current(
-      final ThrallMode mode, final boolean onAJob, final ThrallMode shown, final boolean current) {
+  void current(final Stance mode, final boolean onAJob, final Stance shown, final boolean current) {
     assertEquals(current, ThrallOrders.current(mode, onAJob, shown));
   }
 
