@@ -117,7 +117,7 @@ public class AccessoryGameTest implements FabricGameTest {
   }
 
   @GameTest(templateName = ARENA, tickLimit = WORN + 10)
-  public void aRingOfThePyreHalvesFireNotLitByTheSun(final TestContext context) {
+  public void aRingOfThePyreHalvesAFlamesBurn(final TestContext context) {
     final ServerPlayerEntity ringed = TestPlayers.vampire(context, SPOT);
     final ServerPlayerEntity bare = TestPlayers.vampire(context, SPOT.east(2));
     slot(ringed, AccessorySlot.RING)

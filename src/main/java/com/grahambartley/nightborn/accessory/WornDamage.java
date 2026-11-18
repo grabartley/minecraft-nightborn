@@ -27,8 +27,10 @@ public final class WornDamage {
     }
     final Entity direct = source.getSource();
     final boolean fire =
-        source.isIn(DamageTypeTags.IS_FIRE)
-            && !(source.isOf(DamageTypes.ON_FIRE) && SunFire.burning(target));
+        unsunnedFire(
+            source.isIn(DamageTypeTags.IS_FIRE),
+            source.isOf(DamageTypes.ON_FIRE),
+            SunFire.burning(target));
     return GiftScale.amount(
         amount,
         factor(
@@ -38,6 +40,11 @@ public final class WornDamage {
             GiftAttributes.value(target, GiftAttributes.HUNTER_SHOT_DAMAGE),
             fire,
             GiftAttributes.value(target, GiftAttributes.FIRE_DAMAGE)));
+  }
+
+  public static boolean unsunnedFire(
+      final boolean fire, final boolean burning, final boolean sunLit) {
+    return fire && !(burning && sunLit);
   }
 
   public static double factor(

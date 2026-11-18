@@ -18,6 +18,12 @@ public final class SunFire {
         LIT_UNTIL, burning.getWorld().getTime() + (long) Math.ceil(seconds * 20.0F));
   }
 
+  static void out(final Entity entity) {
+    if (entity.hasAttached(LIT_UNTIL)) {
+      entity.removeAttached(LIT_UNTIL);
+    }
+  }
+
   public static boolean burning(final Entity entity) {
     return litBySun(
         entity.getWorld().getTime(), entity.getAttachedOrElse(LIT_UNTIL, Long.MIN_VALUE));

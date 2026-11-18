@@ -21,4 +21,17 @@ class WornDamageTest {
   void factor(final boolean night, final boolean shot, final boolean fire, final double factor) {
     assertEquals(factor, WornDamage.factor(night, 0.9, shot, 0.75, fire, 0.5), 1.0E-9);
   }
+
+  @ParameterizedTest(name = "fire {0}, burning {1}, sun-lit {2}: {3}")
+  @CsvSource({
+    "true, true, true, false",
+    "true, true, false, true",
+    "true, false, true, true",
+    "false, false, false, false"
+  })
+  @DisplayName("burning the sun lit is never softened, but a flame or lava touched in the sun is")
+  void unsunnedFire(
+      final boolean fire, final boolean burning, final boolean sunLit, final boolean softened) {
+    assertEquals(softened, WornDamage.unsunnedFire(fire, burning, sunLit));
+  }
 }
