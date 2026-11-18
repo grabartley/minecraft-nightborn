@@ -37,8 +37,8 @@ class ClothingModelAssetsTest {
   @DisplayName("every piece ships each cut on the armour bones of its slot")
   void eachCutShipsOnItsSlotBones(final ClothingPiece piece, final ClothingCut cut)
       throws IOException {
-    assertTrue(Files.exists(GeoAssets.mainFile(ClothingArt.texture(piece, cut))));
-    final Set<String> bones = GeoAssets.boneNames(GeoAssets.file(ClothingArt.geo(piece, cut)));
+    assertTrue(Files.exists(GeoAssets.mainFile(ClothingArt.texture(piece.id(), cut))));
+    final Set<String> bones = GeoAssets.boneNames(GeoAssets.file(ClothingArt.geo(piece.id(), cut)));
     assertTrue(bones.containsAll(SLOT_BONES.get(piece.type())), bones.toString());
     assertTrue(
         bones.stream().anyMatch(ClothingArt::isDyed) || !piece.dyeable(),
@@ -51,6 +51,33 @@ class ClothingModelAssetsTest {
   void shipsTheMotionClips(final ClothingPiece piece) throws IOException {
     assertEquals(
         Set.of(ClothingMotion.IDLE.clip(), ClothingMotion.WALK.clip()),
-        GeoAssets.animations(GeoAssets.file(ClothingArt.animation(piece))).keySet());
+        GeoAssets.animations(GeoAssets.file(ClothingArt.animation(piece.id()))).keySet());
+  }
+
+  @ParameterizedTest(name = "{0}")
+  @MethodSource("accessories")
+  @DisplayName("every drawn accessory ships both cuts and its motion clips")
+  void drawnAccessoriesShipTheirArt(final String id) throws IOException {
+    if (!Files.exists(GeoAssets.file(ClothingArt.geo(id, ClothingCut.MALE)))) {
+      return;
+    }
+    for (final ClothingCut cut : ClothingCut.values()) {
+      assertTrue(Files.exists(GeoAssets.file(ClothingArt.geo(id, cut))));
+      assertTrue(Files.exists(GeoAssets.mainFile(ClothingArt.texture(id, cut))));
+    }
+    assertEquals(
+        Set.of(ClothingMotion.IDLE.clip(), ClothingMotion.WALK.clip()),
+        GeoAssets.animations(GeoAssets.file(ClothingArt.animation(id))).keySet());
+  }
+
+  static java.util.stream.Stream<String> accessories() throws IOException {
+    try (java.util.stream.Stream<java.nio.file.Path> files =
+        Files.list(
+            java.nio.file.Path.of("src/main/resources/data/nightborn/nightborn/accessory"))) {
+      return files
+          .map(file -> file.getFileName().toString().replace(".json", ""))
+          .toList()
+          .stream();
+    }
   }
 }

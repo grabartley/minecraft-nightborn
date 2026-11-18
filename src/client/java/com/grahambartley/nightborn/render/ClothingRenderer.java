@@ -1,7 +1,7 @@
 package com.grahambartley.nightborn.render;
 
 import com.grahambartley.nightborn.clothing.ClothingCut;
-import com.grahambartley.nightborn.clothing.ClothingItem;
+import com.grahambartley.nightborn.clothing.Dressed;
 import com.grahambartley.nightborn.mob.VampireEntity;
 import com.grahambartley.nightborn.mob.look.Figure;
 import net.minecraft.client.model.ModelPart;
@@ -14,21 +14,24 @@ import net.minecraft.client.util.SkinTextures;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EquipmentSlot;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import software.bernie.geckolib.animatable.GeoItem;
 import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.renderer.specialty.DyeableGeoArmorRenderer;
 import software.bernie.geckolib.util.Color;
 
-public class ClothingRenderer extends DyeableGeoArmorRenderer<ClothingItem> {
+public class ClothingRenderer<T extends Item & GeoItem & Dressed>
+    extends DyeableGeoArmorRenderer<T> {
 
-  private final ClothingModel clothing;
+  private final ClothingModel<T> clothing;
   private boolean drawnByPart;
 
   public ClothingRenderer() {
-    this(new ClothingModel());
+    this(new ClothingModel<>());
   }
 
-  private ClothingRenderer(final ClothingModel model) {
+  private ClothingRenderer(final ClothingModel<T> model) {
     super(model);
     this.clothing = model;
   }
@@ -84,7 +87,7 @@ public class ClothingRenderer extends DyeableGeoArmorRenderer<ClothingItem> {
   @Override
   public void renderRecursively(
       final MatrixStack poseStack,
-      final ClothingItem animatable,
+      final T animatable,
       final GeoBone bone,
       final RenderLayer renderType,
       final VertexConsumerProvider bufferSource,
@@ -116,8 +119,7 @@ public class ClothingRenderer extends DyeableGeoArmorRenderer<ClothingItem> {
   }
 
   @Override
-  public Color getRenderColor(
-      final ClothingItem item, final float partialTick, final int packedLight) {
+  public Color getRenderColor(final T item, final float partialTick, final int packedLight) {
     return Color.WHITE;
   }
 
@@ -128,7 +130,9 @@ public class ClothingRenderer extends DyeableGeoArmorRenderer<ClothingItem> {
 
   @Override
   protected Color getColorForBone(final GeoBone bone) {
-    return Color.ofOpaque(((ClothingItem) this.currentStack.getItem()).color(this.currentStack));
+    return Color.ofOpaque(
+        ((Dressed) this.currentStack.getItem())
+            .color(this.currentStack, this.currentEntity.getWorld().getRegistryManager()));
   }
 
   private static ClothingCut cut(final Entity entity) {

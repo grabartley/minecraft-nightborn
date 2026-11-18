@@ -68,18 +68,14 @@ public class ClothingGameTest implements FabricGameTest {
   private static final List<Power> POWERS =
       List.of(
           new Power("nocturne", EquipmentSlot.HEAD, ClothingPiece.TOP_HAT),
-          new Power("batwing", EquipmentSlot.CHEST, ClothingPiece.HIGH_COLLARED_CAPE),
+          new Power("batwing", EquipmentSlot.CHEST, ClothingPiece.DOUBLET),
           new Power("gliding_step", EquipmentSlot.LEGS, ClothingPiece.TROUSERS),
           new Power("hush", EquipmentSlot.FEET, ClothingPiece.RIDING_BOOTS));
 
   private static final List<Raise> RAISES =
       List.of(
           new Raise(
-              "batwing",
-              ClothingPiece.HIGH_COLLARED_CAPE,
-              3,
-              EntityAttributes.GENERIC_SAFE_FALL_DISTANCE,
-              3.0),
+              "batwing", ClothingPiece.CORSET, 3, EntityAttributes.GENERIC_SAFE_FALL_DISTANCE, 3.0),
           new Raise(
               "gliding_step",
               ClothingPiece.LONG_SKIRT,

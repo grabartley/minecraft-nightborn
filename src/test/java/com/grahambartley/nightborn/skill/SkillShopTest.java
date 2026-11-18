@@ -28,4 +28,11 @@ class SkillShopTest {
       assertEquals(rank, content.getArgs()[1]);
     }
   }
+
+  @ParameterizedTest(name = "{0}: {1}")
+  @CsvSource({"VAMPIRE, true", "HUNTER, false"})
+  @DisplayName("only a vampire's bloodlines count toward Old Blood, never a hunter's paths")
+  void countsBloodlines(final SkillTree tree, final boolean counts) {
+    assertEquals(counts, SkillShop.countsBloodlines(tree));
+  }
 }

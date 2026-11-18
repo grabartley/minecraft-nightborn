@@ -1,6 +1,7 @@
 package com.grahambartley.nightborn.vanish;
 
 import com.grahambartley.nightborn.batform.BatForm;
+import com.grahambartley.nightborn.clothing.WornAttributes;
 import com.grahambartley.nightborn.feeding.FeedingSessions;
 import com.grahambartley.nightborn.landing.Landing;
 import com.grahambartley.nightborn.skill.PowerHeading;
@@ -24,7 +25,12 @@ public final class Vanish {
         VanishSpots.headings(foe != null, held, caster.getRandom().nextBoolean())) {
       final Optional<Vec3d> spot =
           Landing.reach(
-              caster, VanishSpots.wanted(caster.getEyePos(), facing, heading, power.distance()));
+              caster,
+              VanishSpots.wanted(
+                  caster.getEyePos(),
+                  facing,
+                  heading,
+                  power.distance() + WornAttributes.value(caster, WornAttributes.VANISH_REACH)));
       if (spot.isPresent()) {
         return spot;
       }

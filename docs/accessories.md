@@ -37,7 +37,7 @@ The mod's clothing stays, and two pieces move to the slot that now fits them. No
 
 | Piece | Slot today | Slot from now on |
 |---|---|---|
-| Top Hat | Head | Head, unchanged |
+| Tricorne, Top Hat | Head | Head, unchanged |
 | Mourning Veil | Head | Face. It is one of the 80 accessories, a plain one |
 | High-Collared Cape | Chest | Back. It is one of the 80 accessories, a plain one |
 | Frock Coat, Corset, Doublet | Chest | Chest, unchanged |

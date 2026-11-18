@@ -21,8 +21,12 @@ class ManorTest {
     return Manor.LAYOUTS.stream();
   }
 
+  static Pos start() {
+    return new Pos(Manor.MID_X, 1, Manor.SIZE_Z - 1);
+  }
+
   static Set<Pos> walk(final Template t) {
-    return StructureWalk.from(t, new Pos(Manor.MID_X, 1, Manor.SIZE_Z - 1));
+    return StructureWalk.from(t, start());
   }
 
   static List<Pos> find(final Template t, final String block) {
@@ -162,17 +166,13 @@ class ManorTest {
     }
   }
 
-  @ParameterizedTest(name = "{0}: without its ladder the study is out of reach")
+  @ParameterizedTest(name = "{0}: a vampire walks up to the study without a ladder")
   @MethodSource("layouts")
-  void theStudyIsOnlyReachedByItsLadder(final Manor.Layout layout) {
+  void aVampireWalksUpToTheStudy(final Manor.Layout layout) {
     final Template t = Manor.build(layout);
+    assertTrue(find(t, ":ladder").isEmpty());
     final Pos study = new Pos(Turret.CX, Turret.STUDY + 1, Turret.CZ - 1);
-    for (final Pos ladder : find(t, ":ladder")) {
-      if (ladder.y() > Manor.F1) {
-        t.set(ladder.x(), ladder.y(), ladder.z(), "minecraft:air");
-      }
-    }
-    assertTrue(!walk(t).contains(study));
+    assertTrue(StructureWalk.mob(t, start()).contains(study));
   }
 
   @ParameterizedTest(name = "{0}: {1} can be walked to")

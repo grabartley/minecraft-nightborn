@@ -26,7 +26,6 @@ class GroundFloorTest {
     "17, 4, 28, ornate_table",
     "17, 5, 28, chalice",
     "19, 4, 14, lectern",
-    "14, 4, 10, ladder",
     "35, 4, 18, ornate_table",
     "35, 5, 18, candelabra",
     "34, 4, 19, ornate_chair",

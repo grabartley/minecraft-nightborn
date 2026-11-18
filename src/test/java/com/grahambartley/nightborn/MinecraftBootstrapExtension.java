@@ -1,11 +1,13 @@
 package com.grahambartley.nightborn;
 
+import com.grahambartley.nightborn.accessory.AccessoryFeatures;
 import com.grahambartley.nightborn.ammo.AmmoItems;
 import com.grahambartley.nightborn.clothing.ClothingFeatures;
 import com.grahambartley.nightborn.coffin.Coffins;
 import com.grahambartley.nightborn.decor.DecorBlockEntities;
 import com.grahambartley.nightborn.decor.DecorBlocks;
 import com.grahambartley.nightborn.decor.DecorEntities;
+import com.grahambartley.nightborn.enchant.EnchantFeatures;
 import com.grahambartley.nightborn.gear.GearBlocks;
 import com.grahambartley.nightborn.gear.GearItems;
 import com.grahambartley.nightborn.guild.ContractItems;
@@ -43,7 +45,9 @@ public final class MinecraftBootstrapExtension implements BeforeAllCallback {
     MindEffect.register();
     GearBlocks.initialize();
     GearItems.register();
+    EnchantFeatures.register();
     ClothingFeatures.register();
+    AccessoryFeatures.register();
     AmmoItems.register();
     Objects.requireNonNull(HolyWater.POTION);
     Objects.requireNonNull(ContractItems.HUNTER_CONTRACT);

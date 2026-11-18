@@ -25,6 +25,7 @@
     "name": {
       "translate": "nightborn.stage.elder"
     },
+    "notoriety": 1.5,
     "deed": {
       "act": "end",
       "victims": "nightborn:deed/elder",

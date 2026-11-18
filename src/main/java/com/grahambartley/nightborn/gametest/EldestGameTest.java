@@ -79,10 +79,11 @@ public class EldestGameTest implements FabricGameTest {
     for (final Identifier skill : tree.keySet()) {
       context.assertTrue(learned.owns(skill), "the Eldest lacks " + skill);
     }
-    final long bloodlines = branches.values().stream().filter(SkillBranch::bloodline).count();
+    final long bloodlines =
+        branches.values().stream().filter(b -> b.line() && b.tree() == SkillTree.VAMPIRE).count();
     context.assertTrue(
-        learned.bloodlines().size() == bloodlines,
-        "it holds " + learned.bloodlines().size() + " of " + bloodlines + " bloodlines");
+        learned.lines().size() == bloodlines,
+        "it holds " + learned.lines().size() + " of " + bloodlines + " bloodlines");
     context.complete();
   }
 

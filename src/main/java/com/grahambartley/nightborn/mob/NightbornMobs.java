@@ -88,9 +88,9 @@ public final class NightbornMobs {
     VampireLooks.register();
     VampireStages.register();
     Temperaments.register();
-    FabricDefaultAttributeRegistry.register(VAMPIRE, VampireEntity.createVampireAttributes());
-    FabricDefaultAttributeRegistry.register(VAMPIRE_LORD, VampireEntity.createVampireAttributes());
-    FabricDefaultAttributeRegistry.register(ELDEST, VampireEntity.createVampireAttributes());
+    FabricDefaultAttributeRegistry.register(VAMPIRE, VampireMobAttributes.create());
+    FabricDefaultAttributeRegistry.register(VAMPIRE_LORD, VampireMobAttributes.create());
+    FabricDefaultAttributeRegistry.register(ELDEST, VampireMobAttributes.create());
     FabricDefaultAttributeRegistry.register(
         VAMPIRE_BAT, VampireBatEntity.createVampireBatAttributes());
     FabricDefaultAttributeRegistry.register(PET_BAT, VampireBatEntity.createVampireBatAttributes());

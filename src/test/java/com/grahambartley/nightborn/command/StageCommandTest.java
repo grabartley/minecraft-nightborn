@@ -45,7 +45,8 @@ class StageCommandTest {
                             StageDeed.Act.DRAIN,
                             TagKey.of(RegistryKeys.ENTITY_TYPE, id),
                             Text.literal("deed " + rank)))
-                    : Optional.empty())));
+                    : Optional.empty(),
+                StageAge.PLAIN_NOTORIETY)));
   }
 
   static final AgeLadder LADDER =

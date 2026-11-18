@@ -1,5 +1,6 @@
 package com.grahambartley.nightborn.vampire;
 
+import com.grahambartley.nightborn.accessory.AccessoryGifts;
 import com.grahambartley.nightborn.advancement.Milestone;
 import com.grahambartley.nightborn.advancement.MilestoneCriterion;
 import com.grahambartley.nightborn.age.Ageing;
@@ -15,6 +16,7 @@ import com.grahambartley.nightborn.faction.FactionAttachment;
 import com.grahambartley.nightborn.faction.FactionPlayerList;
 import com.grahambartley.nightborn.feeding.FeedingSessions;
 import com.grahambartley.nightborn.feeding.TurningBite;
+import com.grahambartley.nightborn.hunt.Hunts;
 import com.grahambartley.nightborn.levitation.Levitation;
 import com.grahambartley.nightborn.moment.Moment;
 import com.grahambartley.nightborn.moment.Moments;
@@ -51,6 +53,7 @@ public final class VampireTransitions {
     player.getHungerManager().setFoodLevel(BloodAttachment.FULL);
     player.resetStat(Stats.CUSTOM.getOrCreateStat(Stats.TIME_SINCE_REST));
     SkillAttributes.apply(player);
+    AccessoryGifts.apply(player);
     player.sendMessage(Text.translatable("nightborn.turning.turned"), false);
     FactionPlayerList.refresh(player);
     StageNames.changed(player);
@@ -63,6 +66,7 @@ public final class VampireTransitions {
     FeedingSessions.end(player);
     FactionAttachment.set(player, Faction.HUMAN);
     Ageing.clear(player);
+    Hunts.clear(player);
     BloodAttachment.set(player, BloodAttachment.FULL);
     Downed.clear(player);
     Weakened.clear(player);
@@ -74,6 +78,7 @@ public final class VampireTransitions {
     VampireCore.remove(player);
     CoffinOwnership.release(player.server, player.getUuid());
     SkillAttributes.apply(player);
+    AccessoryGifts.apply(player);
     player.resetStat(Stats.CUSTOM.getOrCreateStat(Stats.TIME_SINCE_REST));
     FactionPlayerList.refresh(player);
   }

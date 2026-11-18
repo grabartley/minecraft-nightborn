@@ -46,6 +46,20 @@ public record Tower(int cx, int cz, int radius, int height, boolean round) {
     roof(t);
   }
 
+  public void buildSolid(final Template t, final Stone stone) {
+    for (int x = cx - radius; x <= cx + radius; x++) {
+      for (int z = cz - radius; z <= cz + radius; z++) {
+        if (!inside(x, z, radius) || !t.inside(x, 0, z)) {
+          continue;
+        }
+        for (int y = 0; y <= height; y++) {
+          t.set(x, y, z, y < Castle.FLOOR ? Castle.PLINTH.at(x, y, z) : stone.at(x, y, z));
+        }
+      }
+    }
+    roof(t);
+  }
+
   private static boolean isFloor(final int y, final int[] floors) {
     for (final int floor : floors) {
       if (floor == y) {
@@ -80,7 +94,7 @@ public record Tower(int cx, int cz, int radius, int height, boolean round) {
             if (!inside(x, z, r - 1)) {
               t.set(x, y, z, layer == 0 ? Castle.ROOF.full() : Castle.SHINGLE);
             } else {
-              t.set(x, y, z, BlockState.AIR);
+              t.set(x, y, z, Castle.ROOF.full());
             }
           }
         }

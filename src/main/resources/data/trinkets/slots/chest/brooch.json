@@ -1,0 +1,7 @@
+{
+  "icon": "nightborn:gui/slots/brooch",
+  "order": -512,
+  "validator_predicates": [
+    "trinkets:tag"
+  ]
+}

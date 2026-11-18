@@ -1,6 +1,8 @@
 package com.grahambartley.nightborn.guild;
 
 import com.grahambartley.nightborn.gear.GearItems;
+import com.grahambartley.nightborn.guild.party.HunterParty;
+import com.grahambartley.nightborn.guild.party.PartyLeader;
 import com.grahambartley.nightborn.mob.MobSounds;
 import com.grahambartley.nightborn.name.MobNaming;
 import com.grahambartley.nightborn.name.NameBearer;
@@ -30,6 +32,7 @@ import net.minecraft.entity.passive.PassiveEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtOps;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundEvent;
@@ -56,6 +59,8 @@ public class GuildMasterEntity extends MerchantEntity
   static final int ANIMATION_BLEND_TICKS = 4;
   static final int TENT_REACH = 3;
   static final float LOOK_TURN = 30.0F;
+  static final String PARTY_KEY = "Party";
+  @Nullable private HunterParty party;
 
   private static final TrackedData<Boolean> TRADING =
       DataTracker.registerData(GuildMasterEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
@@ -176,6 +181,9 @@ public class GuildMasterEntity extends MerchantEntity
     }
     CampHome.keep(this, TENT_REACH);
     MobNaming.ensure(this);
+    if (party != null && age % PartyLeader.TICKS == 0 && getWorld() instanceof ServerWorld world) {
+      party = PartyLeader.tick(world, this, party);
+    }
     final PlayerEntity customer = getCustomer();
     if (customer != null && Vampires.isVampire(customer)) {
       resetCustomer();
@@ -295,6 +303,21 @@ public class GuildMasterEntity extends MerchantEntity
     nbt.putLong(LAST_RESTOCK, lastRestock);
     nbt.putString(GuildData.LOOK_KEY, dataTracker.get(LOOK));
     CampHome.write(this, nbt);
+    if (party != null) {
+      HunterParty.CODEC
+          .encodeStart(NbtOps.INSTANCE, party)
+          .result()
+          .ifPresent(saved -> nbt.put(PARTY_KEY, saved));
+    }
+  }
+
+  @Nullable
+  public HunterParty party() {
+    return party;
+  }
+
+  public void lead(final HunterParty led) {
+    party = led;
   }
 
   @Override
@@ -305,6 +328,10 @@ public class GuildMasterEntity extends MerchantEntity
       wear(nbt.getString(GuildData.LOOK_KEY));
     }
     CampHome.read(this, nbt, TENT_REACH);
+    party =
+        nbt.contains(PARTY_KEY)
+            ? HunterParty.CODEC.parse(NbtOps.INSTANCE, nbt.get(PARTY_KEY)).result().orElse(null)
+            : null;
     lowerCrucifix();
   }
 

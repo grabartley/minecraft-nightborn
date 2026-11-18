@@ -1,11 +1,13 @@
 package com.grahambartley.nightborn.render;
 
 import com.grahambartley.nightborn.clothing.ClothingCut;
-import com.grahambartley.nightborn.clothing.ClothingItem;
+import com.grahambartley.nightborn.clothing.Dressed;
+import net.minecraft.item.Item;
 import net.minecraft.util.Identifier;
+import software.bernie.geckolib.animatable.GeoItem;
 import software.bernie.geckolib.model.GeoModel;
 
-public class ClothingModel extends GeoModel<ClothingItem> {
+public class ClothingModel<T extends Item & GeoItem & Dressed> extends GeoModel<T> {
 
   private ClothingCut cut = ClothingCut.MALE;
 
@@ -14,17 +16,17 @@ public class ClothingModel extends GeoModel<ClothingItem> {
   }
 
   @Override
-  public Identifier getModelResource(final ClothingItem item) {
-    return ClothingArt.geo(item.piece(), this.cut);
+  public Identifier getModelResource(final T item) {
+    return ClothingArt.geo(item.artId(), this.cut);
   }
 
   @Override
-  public Identifier getTextureResource(final ClothingItem item) {
-    return ClothingArt.texture(item.piece(), this.cut);
+  public Identifier getTextureResource(final T item) {
+    return ClothingArt.texture(item.artId(), this.cut);
   }
 
   @Override
-  public Identifier getAnimationResource(final ClothingItem item) {
-    return ClothingArt.animation(item.piece());
+  public Identifier getAnimationResource(final T item) {
+    return ClothingArt.animation(item.artId());
   }
 }

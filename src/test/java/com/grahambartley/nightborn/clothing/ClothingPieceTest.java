@@ -31,9 +31,8 @@ class ClothingPieceTest {
   @CsvSource({
     "TRICORNE, tricorne, HELMET, CLOTH, true",
     "TOP_HAT, top_hat, HELMET, CLOTH, true",
-    "MOURNING_VEIL, mourning_veil, HELMET, CLOTH, true",
+    "WIDE_BRIMMED_HAT, wide_brimmed_hat, HELMET, CLOTH, true",
     "FROCK_COAT, frock_coat, CHESTPLATE, CLOTH, true",
-    "HIGH_COLLARED_CAPE, high_collared_cape, CHESTPLATE, CLOTH, true",
     "CORSET, corset, CHESTPLATE, CLOTH, true",
     "DOUBLET, doublet, CHESTPLATE, CLOTH, true",
     "BREECHES, breeches, LEGGINGS, CLOTH, true",

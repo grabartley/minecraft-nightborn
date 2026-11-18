@@ -27,7 +27,7 @@ public final class CoatingTooltip {
                             Math.min(1, lines.size()),
                             lines(
                                 coat,
-                                CoatingTerms.of(coat.coating(), SyncedServerConfig.get()),
+                                CoatingTerms.of(coat.coating(), SyncedServerConfig.get(), stack),
                                 LiveCoating.now(),
                                 stack.isIn(Coatings.AMMO)))));
   }

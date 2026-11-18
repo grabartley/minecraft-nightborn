@@ -1,5 +1,6 @@
 package com.grahambartley.nightborn;
 
+import com.grahambartley.nightborn.accessory.AccessoryFeatures;
 import com.grahambartley.nightborn.advancement.MilestoneCriterion;
 import com.grahambartley.nightborn.clothing.ClothingFeatures;
 import com.grahambartley.nightborn.coffin.Coffins;
@@ -7,12 +8,14 @@ import com.grahambartley.nightborn.decor.DecorBlockEntities;
 import com.grahambartley.nightborn.decor.DecorBlocks;
 import com.grahambartley.nightborn.decor.DecorEntities;
 import com.grahambartley.nightborn.decor.DecorItemGroup;
+import com.grahambartley.nightborn.enchant.EnchantFeatures;
 import com.grahambartley.nightborn.faction.FactionAttachment;
 import com.grahambartley.nightborn.faction.OathAttachment;
 import com.grahambartley.nightborn.familiar.Familiars;
 import com.grahambartley.nightborn.gear.GearFeatures;
 import com.grahambartley.nightborn.gramophone.MusicDiscs;
 import com.grahambartley.nightborn.guild.GuildFeatures;
+import com.grahambartley.nightborn.hunt.HuntFeatures;
 import com.grahambartley.nightborn.hunter.HunterFeatures;
 import com.grahambartley.nightborn.mind.MindFeatures;
 import com.grahambartley.nightborn.mirror.MirrorItems;
@@ -58,9 +61,12 @@ public class Nightborn implements ModInitializer {
     MirrorItems.register();
     HunterFeatures.register();
     GuildFeatures.register();
+    HuntFeatures.register();
     MindFeatures.register();
     OccultFeatures.register();
+    EnchantFeatures.register();
     ClothingFeatures.register();
+    AccessoryFeatures.register();
     NightbornStructures.initialize();
     RitualFeatures.register();
     LOGGER.info("Nightborn initialised");

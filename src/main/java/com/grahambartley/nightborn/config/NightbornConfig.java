@@ -24,8 +24,10 @@ public record NightbornConfig(
     ServantSettings servants,
     CombatSettings combat,
     StructureSettings structures,
+    PartySettings parties,
     RitualSettings ritual,
-    AgeSettings age) {
+    AgeSettings age,
+    HuntSettings hunt) {
 
   public static final List<Setting<?>> SETTINGS =
       Stream.of(
@@ -49,8 +51,10 @@ public record NightbornConfig(
               ServantSettings.SETTINGS,
               CombatSettings.SETTINGS,
               StructureSettings.SETTINGS,
+              PartySettings.SETTINGS,
               RitualSettings.SETTINGS,
-              AgeSettings.SETTINGS)
+              AgeSettings.SETTINGS,
+              HuntSettings.SETTINGS)
           .flatMap(List::stream)
           .toList();
 
@@ -78,8 +82,10 @@ public record NightbornConfig(
         ServantSettings.from(values),
         CombatSettings.from(values),
         StructureSettings.from(values),
+        PartySettings.from(values),
         RitualSettings.from(values),
-        AgeSettings.from(values));
+        AgeSettings.from(values),
+        HuntSettings.from(values));
   }
 
   public SettingValues values() {

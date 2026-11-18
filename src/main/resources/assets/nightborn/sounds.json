@@ -864,5 +864,45 @@
         "stream": true
       }
     ]
+  },
+  "item.hunters_bell.ring": {
+    "subtitle": "subtitles.nightborn.item.hunters_bell.ring",
+    "sounds": [
+      {
+        "name": "minecraft:block.bell.use",
+        "type": "event",
+        "pitch": 1.4
+      }
+    ]
+  },
+  "event.hunt.warning_toll": {
+    "subtitle": "subtitles.nightborn.event.hunt.warning_toll",
+    "sounds": [
+      {
+        "name": "minecraft:block.bell.use",
+        "type": "event",
+        "pitch": 0.6
+      }
+    ]
+  },
+  "event.hunt.bells_answer": {
+    "subtitle": "subtitles.nightborn.event.hunt.bells_answer",
+    "sounds": [
+      {
+        "name": "minecraft:block.bell.resonate",
+        "type": "event",
+        "pitch": 0.8
+      }
+    ]
+  },
+  "event.hunt.arrival": {
+    "subtitle": "subtitles.nightborn.event.hunt.arrival",
+    "sounds": [
+      {
+        "name": "minecraft:block.bell.use",
+        "type": "event",
+        "pitch": 0.6
+      }
+    ]
   }
 }

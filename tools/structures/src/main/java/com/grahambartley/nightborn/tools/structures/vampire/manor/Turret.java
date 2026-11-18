@@ -16,7 +16,8 @@ public record Turret(boolean round) {
   public static final int RADIUS = 3;
   public static final int STUDY = TOP;
   public static final int WALL_TOP = STUDY + 6;
-  public static final int LADDER_Z = CZ + 2;
+  public static final int STAIR_X = CX + 1;
+  public static final int STAIR_FOOT_Z = CZ + 2;
 
   public boolean inside(final int x, final int z, final int r) {
     if (r < 0) {
@@ -53,9 +54,36 @@ public record Turret(boolean round) {
     }
     windows(t);
     roof(t);
-    for (int y = F1 + 1; y <= STUDY; y++) {
-      t.set(
-          ladderX(), y, LADDER_Z, BlockState.of("ladder", "facing", "east", "waterlogged", false));
+    stair(t);
+    bookcase(t);
+  }
+
+  private void bookcase(final Template t) {
+    final int x = STAIR_X + 1;
+    for (int z = CZ - RADIUS; z <= CZ + RADIUS; z++) {
+      if (!inside(x, z, RADIUS - 1)) {
+        continue;
+      }
+      for (int y = F1 + 1; y < STUDY - 1; y++) {
+        t.set(x, y, z, "bookshelf");
+      }
+      for (int y = STUDY + 1; y < STUDY + 4; y++) {
+        t.set(x, y, z, "bookshelf");
+      }
+    }
+  }
+
+  private static void stair(final Template t) {
+    for (int i = 0; i <= STUDY - F1 - 1; i++) {
+      final int y = F1 + 1 + i;
+      final int z = STAIR_FOOT_Z - i;
+      for (int below = F1 + 1; below < y; below++) {
+        t.set(STAIR_X, below, z, Manor.PLANKS);
+      }
+      t.set(STAIR_X, y, z, Parts.stair("dark_oak_stairs", "north"));
+      for (int above = y + 1; above <= Math.min(y + 3, STUDY); above++) {
+        t.set(STAIR_X, above, z, BlockState.AIR);
+      }
     }
   }
 
@@ -84,10 +112,6 @@ public record Turret(boolean round) {
         }
       }
     }
-  }
-
-  public int ladderX() {
-    return round ? CX - 1 : CX - 2;
   }
 
   private int diagonal() {
@@ -125,7 +149,7 @@ public record Turret(boolean round) {
           continue;
         }
         if (inside(x, z, r - 1)) {
-          t.set(x, y, z, BlockState.AIR);
+          t.set(x, y, z, Manor.SLATE.full());
         } else {
           t.set(
               x, y, z, full ? Manor.SLATE.full() : Parts.stair(Manor.SLATE.stairs(), inward(x, z)));

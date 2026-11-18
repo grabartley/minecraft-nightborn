@@ -44,4 +44,11 @@ class CoatingTermsTest {
             .with(CoatingSettings.GARLIC_HITS, 9);
     assertEquals(coating == Coating.HOLY_WATER ? 7 : 9, CoatingTerms.of(coating, config).hits());
   }
+
+  @ParameterizedTest(name = "{0} hits allowed: {1}")
+  @CsvSource({"10, 10", "0, 0", "-3, 0"})
+  @DisplayName("a weapon's coating can be allowed more hits, never fewer than none")
+  void withHits(final int allowed, final int expected) {
+    assertEquals(expected, new CoatingTerms(2, 8, 100, 3, 40).withHits(allowed).hits());
+  }
 }

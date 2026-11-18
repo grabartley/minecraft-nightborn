@@ -2,12 +2,14 @@ package com.grahambartley.nightborn.mixin;
 
 import com.grahambartley.nightborn.age.Ageing;
 import com.grahambartley.nightborn.batform.BatFlightMotion;
+import com.grahambartley.nightborn.clothing.Noticing;
 import com.grahambartley.nightborn.coffin.CoffinLayout;
 import com.grahambartley.nightborn.coffin.CoffinRise;
 import com.grahambartley.nightborn.coffin.CoffinSleeperHold;
 import com.grahambartley.nightborn.coffin.CoffinSleepers;
 import com.grahambartley.nightborn.config.NightbornConfig;
 import com.grahambartley.nightborn.downed.DownedTargeting;
+import com.grahambartley.nightborn.hunt.Hunts;
 import com.grahambartley.nightborn.levitation.Levitation;
 import com.grahambartley.nightborn.levitation.LevitationMotion;
 import com.grahambartley.nightborn.server.ServerConfigService;
@@ -21,6 +23,7 @@ import com.grahambartley.nightborn.vomit.Vomiting;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import java.util.Optional;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityDimensions;
 import net.minecraft.entity.EntityPose;
 import net.minecraft.entity.LivingEntity;
@@ -63,6 +66,9 @@ abstract class LivingEntityMixin {
         Ageing.tick(player);
       }
     }
+    if (self instanceof ServerPlayerEntity player) {
+      Hunts.tick(player);
+    }
   }
 
   @Inject(
@@ -85,6 +91,13 @@ abstract class LivingEntityMixin {
     if (DownedTargeting.spares((LivingEntity) (Object) this, target)) {
       cir.setReturnValue(false);
     }
+  }
+
+  @Inject(method = "getAttackDistanceScalingFactor", at = @At("RETURN"), cancellable = true)
+  private void nightborn$noticedByHunters(
+      final Entity observer, final CallbackInfoReturnable<Double> cir) {
+    cir.setReturnValue(
+        cir.getReturnValueD() * Noticing.towards((LivingEntity) (Object) this, observer));
   }
 
   @Inject(method = "travel", at = @At("HEAD"))

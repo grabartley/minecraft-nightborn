@@ -8,8 +8,11 @@ import com.grahambartley.nightborn.tools.structures.nbt.Nbt;
 import com.grahambartley.nightborn.tools.structures.nbt.NbtList;
 import com.grahambartley.nightborn.tools.structures.template.Pos;
 import com.grahambartley.nightborn.tools.structures.template.Template;
+import com.grahambartley.nightborn.tools.structures.vampire.StructureAudit;
+import com.grahambartley.nightborn.tools.structures.vampire.StructureWalk;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -130,5 +133,19 @@ class HunterCampTest {
     assertTrue(CAMP.get(x, y, z).contains("facing=" + facing));
     final String behind = CAMP.get(x + dx, y, z + dz);
     assertTrue(behind.endsWith("_wool") || behind.contains("spruce_log"), behind);
+  }
+
+  @Test
+  void everyTentAndTheFireCanBeWalkedTo() {
+    final Pos fire = new Pos(HunterCamp.HEART_X, 1, 0);
+    final Set<Pos> reached = StructureWalk.from(CAMP, fire);
+    assertEquals(List.of(), StructureAudit.sealedFloors(CAMP, reached));
+    assertEquals(List.of(), StructureAudit.doorsLeadingNowhere(CAMP, reached));
+    assertEquals(List.of(), StructureAudit.humanOnly(reached, StructureWalk.mob(CAMP, fire), CAMP));
+  }
+
+  @Test
+  void everyDecorationIsHeld() {
+    assertEquals(List.of(), StructureAudit.loose(CAMP));
   }
 }

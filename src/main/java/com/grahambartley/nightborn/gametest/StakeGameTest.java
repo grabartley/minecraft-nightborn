@@ -124,14 +124,14 @@ public class StakeGameTest implements FabricGameTest {
           SkillShop.buy(vampire, noble);
           final TreeProgress before = SkillAttachment.get(vampire, SkillTree.VAMPIRE);
           context.assertTrue(
-              before.owns(noble) && before.bloodlines().size() == 1, "bought into a bloodline");
+              before.owns(noble) && before.lines().size() == 1, "bought into a bloodline");
           vampire.setHealth(1.0F);
           vampire.damage(hunter.getDamageSources().playerAttack(hunter), 5.0F);
           final TreeProgress after = SkillAttachment.get(vampire, SkillTree.VAMPIRE);
           context.assertEquals(after.earned(), 1, "it lost one point");
           context.assertTrue(after.owns(core), "the older core skill is kept");
           context.assertFalse(after.owns(noble), "the newest skill is gone");
-          context.assertTrue(after.bloodlines().isEmpty(), "the bloodline is free again");
+          context.assertTrue(after.lines().isEmpty(), "the bloodline is free again");
           TestPlayers.finish(context, hunter, vampire);
         });
   }

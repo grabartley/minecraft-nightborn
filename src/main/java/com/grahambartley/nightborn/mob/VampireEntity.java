@@ -9,7 +9,6 @@ import com.grahambartley.nightborn.core.VampireCore;
 import com.grahambartley.nightborn.decor.SeatEntity;
 import com.grahambartley.nightborn.downed.Downed;
 import com.grahambartley.nightborn.levitation.Levitation;
-import com.grahambartley.nightborn.mind.MindAttributes;
 import com.grahambartley.nightborn.mob.combat.Fighting;
 import com.grahambartley.nightborn.mob.goal.BatFlightGoal;
 import com.grahambartley.nightborn.mob.goal.FleeWhileEscapingGoal;
@@ -39,14 +38,12 @@ import com.grahambartley.nightborn.mob.stage.VampireStages;
 import com.grahambartley.nightborn.mob.stage.VampireStaging;
 import com.grahambartley.nightborn.name.MobNaming;
 import com.grahambartley.nightborn.name.NameBearer;
-import com.grahambartley.nightborn.occult.OccultAttributes;
 import com.grahambartley.nightborn.server.ServerConfigService;
 import com.grahambartley.nightborn.skill.PowerShow;
 import com.grahambartley.nightborn.skill.SkillHolder;
 import com.grahambartley.nightborn.skill.SkillTree;
 import com.grahambartley.nightborn.structure.HouseholdArrival;
 import com.grahambartley.nightborn.structure.HouseholdMember;
-import com.grahambartley.nightborn.vampire.VampireAttributes;
 import com.grahambartley.nightborn.vampire.Vampires;
 import com.grahambartley.nightborn.weakened.Weakened;
 import java.util.Map;
@@ -68,8 +65,6 @@ import net.minecraft.entity.ai.goal.MeleeAttackGoal;
 import net.minecraft.entity.ai.goal.RevengeGoal;
 import net.minecraft.entity.ai.goal.SwimGoal;
 import net.minecraft.entity.ai.goal.WanderAroundFarGoal;
-import net.minecraft.entity.attribute.DefaultAttributeContainer;
-import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.data.TrackedData;
@@ -150,17 +145,6 @@ public class VampireEntity extends HostileEntity
   public VampireEntity(final EntityType<? extends VampireEntity> type, final World world) {
     super(type, world);
     this.experiencePoints = 10;
-  }
-
-  public static DefaultAttributeContainer.Builder createVampireAttributes() {
-    return VampireAttributes.addTo(
-        OccultAttributes.addTo(
-            MindAttributes.addTo(
-                HostileEntity.createHostileAttributes()
-                    .add(EntityAttributes.GENERIC_MAX_HEALTH, 30.0)
-                    .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.3)
-                    .add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 4.0)
-                    .add(EntityAttributes.GENERIC_FOLLOW_RANGE, 32.0))));
   }
 
   @Override

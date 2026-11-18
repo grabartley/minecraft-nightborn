@@ -88,16 +88,14 @@ public final class Undercroft {
     Furnishing.chair(t, 7, 1, 6, "west");
     Furnishing.gramophone(t, 6, 2, 6, "south");
     t.set(
-        2, 1, 10, BlockState.of("lectern", "facing", "east", "has_book", false, "powered", false));
-    t.set(1, 1, 11, "bookshelf");
-    t.set(1, 2, 11, "bookshelf");
+        1, 1, 10, BlockState.of("lectern", "facing", "east", "has_book", false, "powered", false));
     t.set(1, 3, 11, "cobweb");
     Furnishing.chest(t, 1, 1, 5, "east");
-    Furnishing.oldBloodFont(t, 2, 1, 6);
+    Furnishing.oldBloodFont(t, 1, 1, 6);
     Furnishing.chandelier(t, 6, 4, 6);
     Furnishing.chandelier(t, 6, 4, 10);
     t.set(11, 3, 5, "cobweb");
-    t.set(9, 1, 11, BlockState.of("skeleton_skull", "rotation", 8));
+    t.set(8, 1, 11, BlockState.of("skeleton_skull", "rotation", 8));
     Furnishing.candles(t, 3, 1, 11, 3, false);
     t.set(6, 0, 8, "nightborn:carved_gothic_stone");
   }

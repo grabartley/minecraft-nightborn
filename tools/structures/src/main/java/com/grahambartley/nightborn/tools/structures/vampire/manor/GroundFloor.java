@@ -59,9 +59,6 @@ public final class GroundFloor {
     shelves(t, 13, 13, 14, 14);
     shelves(t, 13, 16, 16, 16);
     shelves(t, 18, 20, 16, 16);
-    for (int y = SEAT; y <= SEAT + 3; y++) {
-      t.set(14, y, 10, BlockState.of("ladder", "facing", "south", "waterlogged", false));
-    }
     Furnishing.table(t, 17, SEAT, 12);
     Furnishing.table(t, 17, SEAT, 13);
     Furnishing.candelabra(t, 17, SEAT + 1, 12);
@@ -71,8 +68,8 @@ public final class GroundFloor {
     Furnishing.gramophone(t, 17, SEAT + 1, 14, "west");
     Furnishing.chair(t, 16, SEAT, 12, "east");
     Furnishing.chair(t, 18, SEAT, 13, "west");
-    Furnishing.chair(t, 15, SEAT, 10, "south");
-    Furnishing.chair(t, 19, SEAT, 10, "south");
+    Furnishing.chair(t, 15, SEAT, 9, "south");
+    Furnishing.chair(t, 19, SEAT, 9, "south");
     Furnishing.lectern(t, 19, SEAT, 14, "west");
     t.set(13, CEILING, 9, "cobweb");
     t.set(21, CEILING, 16, "cobweb");
@@ -89,23 +86,21 @@ public final class GroundFloor {
   }
 
   private static void diningRoom(final Template t) {
-    for (int z = 17; z <= 20; z++) {
+    for (int z = 17; z <= 19; z++) {
       Furnishing.table(t, 35, SEAT, z);
       Furnishing.chair(t, 34, SEAT, z, "east");
       Furnishing.chair(t, 36, SEAT, z, "west");
     }
     Furnishing.chair(t, 35, SEAT, 16, "south");
-    Furnishing.chair(t, 35, SEAT, 21, "north");
     Furnishing.candelabra(t, 35, SEAT + 1, 18);
-    Furnishing.candelabra(t, 35, SEAT + 1, 20);
     Furnishing.chalice(t, 35, SEAT + 1, 17, "full");
     Furnishing.chalice(t, 35, SEAT + 1, 19, "full");
     Furnishing.chandelier(t, 35, CEILING, 18);
-    for (final int x : new int[] {37, 38}) {
+    for (final int x : new int[] {38, 39}) {
       t.set(x, SEAT, 16, Parts.hood("dark_oak_stairs", "north"));
     }
-    Furnishing.chalice(t, 37, SEAT + 1, 16, "empty");
-    Furnishing.candles(t, 38, SEAT + 1, 16, 3, false);
+    Furnishing.chalice(t, 38, SEAT + 1, 16, "empty");
+    Furnishing.candles(t, 39, SEAT + 1, 16, 3, false);
     Furnishing.table(t, 41, SEAT, 23);
     Furnishing.chair(t, 40, SEAT, 23, "east");
     Furnishing.chair(t, 41, SEAT, 22, "south");

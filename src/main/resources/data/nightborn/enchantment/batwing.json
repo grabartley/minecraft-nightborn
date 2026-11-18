@@ -25,6 +25,9 @@
   "slots": [
     "chest"
   ],
-  "supported_items": "#nightborn:enchantable/chest_clothing",
+  "supported_items": "#nightborn:enchantable/chestwear",
+  "trinkets:slots": [
+    "chest/back"
+  ],
   "weight": 2
 }

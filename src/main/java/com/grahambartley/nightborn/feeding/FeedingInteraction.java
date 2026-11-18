@@ -2,6 +2,7 @@ package com.grahambartley.nightborn.feeding;
 
 import com.grahambartley.nightborn.blood.BloodQuality;
 import com.grahambartley.nightborn.downed.Downed;
+import com.grahambartley.nightborn.enchant.EnchantedValues;
 import com.grahambartley.nightborn.moment.Moments;
 import com.grahambartley.nightborn.server.ServerConfigService;
 import com.grahambartley.nightborn.vampire.Vampires;
@@ -49,7 +50,11 @@ final class FeedingInteraction {
                 BiteRules.finishable(
                     victim.getHealth(),
                     victim.getMaxHealth(),
-                    ServerConfigService.current().feeding().finisherHealthPercent())),
+                    Math.round(
+                        EnchantedValues.apply(
+                            player.getMainHandStack(),
+                            EnchantedValues.FINISHER_HEALTH,
+                            ServerConfigService.current().feeding().finisherHealthPercent())))),
             pvp);
     if (!decision.claimsTheInteraction()) {
       return ActionResult.PASS;

@@ -33,6 +33,7 @@ import com.grahambartley.nightborn.gramophone.GramophoneBlockEntity;
 import com.grahambartley.nightborn.guild.GuildMobs;
 import com.grahambartley.nightborn.mob.NightbornMobs;
 import com.grahambartley.nightborn.occult.GhostlyFamiliars;
+import com.grahambartley.nightborn.render.AccessoryRenderer;
 import com.grahambartley.nightborn.render.AmmoModels;
 import com.grahambartley.nightborn.render.BoltEntityRenderer;
 import com.grahambartley.nightborn.render.ClothingColors;
@@ -132,6 +133,7 @@ public class NightbornClient implements ClientModInitializer {
     AmmoModels.register();
     ClothingRenderProviders.use(item -> new ClothingRenderProvider());
     ClothingColors.register();
+    AccessoryRenderer.register();
     VampireClientFeatures.register();
     NearbyStructure.register();
     StructureFog.register();

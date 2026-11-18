@@ -97,10 +97,43 @@ class SkillTest {
             .collect(Collectors.groupingBy(Skill::branch, Collectors.counting()));
     for (final String line : List.of("noble", "beast", "occult")) {
       final Identifier id = Identifier.of("nightborn", line);
-      assertTrue(branches.get(id).bloodline(), line);
+      assertTrue(branches.get(id).line(), line);
       assertTrue(skillsPerBranch.getOrDefault(id, 0L) > 0, line);
     }
-    assertFalse(branches.get(Identifier.of("nightborn", "core")).bloodline());
+    assertFalse(branches.get(Identifier.of("nightborn", "core")).line());
+  }
+
+  @ParameterizedTest(name = "{0}")
+  @CsvSource({
+    "trapper, ''",
+    "faithful, hunter/faith",
+    "slayer, hunter/bite_ward",
+    "seeker, hunter/iron_will"
+  })
+  @DisplayName("the hunter tree ships four paths, and each skill it had moves into one")
+  void huntingPathsShip(final String path, final String moved) throws IOException {
+    final Identifier id = Identifier.of("nightborn", path);
+    final SkillBranch branch = shippedBranches().get(id);
+    assertEquals(SkillTree.HUNTER, branch.tree());
+    assertTrue(branch.line(), path);
+    if (!moved.isEmpty()) {
+      assertEquals(id, shippedSkills().get(Identifier.of("nightborn", moved)).branch());
+    }
+  }
+
+  @ParameterizedTest(name = "{0}")
+  @CsvSource({"hunter/bite_ward, 0.8", "hunter/iron_will, 0.8", "hunter/faith, 3.0"})
+  @DisplayName("a hunter's resistances reach 0.8 at the last rank, and faith one point a rank")
+  void hunterRanksAddUp(final String skill, final double total) throws IOException {
+    final Skill shipped = shippedSkills().get(Identifier.of("nightborn", skill));
+    assertEquals(3, shipped.maxRank());
+    assertEquals(
+        total,
+        shipped.ranks().stream()
+            .flatMap(rank -> rank.attributes().stream())
+            .mapToDouble(SkillAttribute::amount)
+            .sum(),
+        1.0E-9);
   }
 
   @ParameterizedTest(name = "{0}")

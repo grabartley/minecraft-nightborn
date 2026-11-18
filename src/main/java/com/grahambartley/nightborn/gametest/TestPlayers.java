@@ -10,8 +10,11 @@ import io.netty.channel.embedded.EmbeddedChannel;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
+import net.fabricmc.fabric.impl.networking.RegistrationPayload;
 import net.minecraft.network.ClientConnection;
 import net.minecraft.network.NetworkSide;
+import net.minecraft.network.packet.c2s.common.CustomPayloadC2SPacket;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ConnectedClientData;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -19,21 +22,41 @@ import net.minecraft.test.TestContext;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.GameMode;
+import org.ladysnake.cca.internal.entity.CardinalComponentsEntity;
 
 final class TestPlayers {
 
   static final int JOIN_PROTECTION_TICKS = 60;
   static final int READY = JOIN_PROTECTION_TICKS + 2;
 
+  static final String NAME_PREFIX = "nb-";
+  static final String VANILLA_MOCK = "test-mock-player";
+
   private static final AtomicInteger NAMES = new AtomicInteger();
 
+  static {
+    ServerPlayConnectionEvents.INIT.register(
+        (handler, server) -> {
+          final String name = handler.player.getGameProfile().getName();
+          if (name.startsWith(NAME_PREFIX) || name.equals(VANILLA_MOCK)) {
+            handler.onCustomPayload(
+                new CustomPayloadC2SPacket(
+                    new RegistrationPayload(
+                        RegistrationPayload.REGISTER,
+                        List.of(CardinalComponentsEntity.PACKET_ID.id()))));
+          }
+        });
+  }
+
   private TestPlayers() {}
+
+  static void acceptSync() {}
 
   static ServerPlayerEntity human(final TestContext context, final BlockPos relative) {
     final MinecraftServer server = context.getWorld().getServer();
     final ConnectedClientData data =
         ConnectedClientData.createDefault(
-            new GameProfile(UUID.randomUUID(), "nb-" + NAMES.incrementAndGet()), false);
+            new GameProfile(UUID.randomUUID(), NAME_PREFIX + NAMES.incrementAndGet()), false);
     final ServerPlayerEntity player =
         new ServerPlayerEntity(
             server, context.getWorld(), data.gameProfile(), data.syncedOptions());

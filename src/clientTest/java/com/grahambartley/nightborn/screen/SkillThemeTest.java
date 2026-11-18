@@ -133,7 +133,7 @@ class SkillThemeTest {
         Arguments.of(SkillPurchase.Verdict.ALLOWED, "frame_available"),
         Arguments.of(SkillPurchase.Verdict.NEEDS_SKILL, "frame_locked"),
         Arguments.of(SkillPurchase.Verdict.TOO_FEW_POINTS, "frame_locked"),
-        Arguments.of(SkillPurchase.Verdict.BLOODLINE_LOCKED, "frame_locked"));
+        Arguments.of(SkillPurchase.Verdict.LINE_LOCKED, "frame_locked"));
   }
 
   @ParameterizedTest(name = "{0} -> {1}")

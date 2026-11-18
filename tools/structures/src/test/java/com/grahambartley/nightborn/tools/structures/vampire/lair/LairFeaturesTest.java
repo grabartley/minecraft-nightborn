@@ -20,19 +20,18 @@ class LairFeaturesTest {
     return t;
   }
 
-  @ParameterizedTest(name = "{2} blocks from the centre is {3}")
+  @ParameterizedTest(name = "{2} blocks from the centre is {3} over {4}")
   @CsvSource({
-    "7, 7, 0, nightborn:blood_pool",
-    "9, 7, 2, nightborn:blood_pool",
-    "10, 7, 3, minecraft:polished_blackstone_bricks"
+    "7, 7, 0, nightborn:blood_pool, minecraft:polished_blackstone_bricks",
+    "9, 7, 2, nightborn:blood_pool, minecraft:polished_blackstone_bricks",
+    "10, 7, 3, minecraft:polished_blackstone_brick_slab, minecraft:polished_blackstone_bricks"
   })
-  void thePoolIsRingedByAKerb(final int x, final int z, final int r, final String floor) {
+  void thePoolLiesOnDressedStoneRingedByAKerb(
+      final int x, final int z, final int r, final String surface, final String floor) {
     final Template t = room();
     LairFeatures.pool(t, 7, 7, 2.5, 2.5);
+    assertTrue(t.get(x, 1, z).startsWith(surface), t.get(x, 1, z));
     assertEquals(floor, t.get(x, 0, z));
-    if (floor.contains("blackstone")) {
-      assertTrue(t.get(x, 1, z).startsWith("minecraft:polished_blackstone_brick_slab"));
-    }
   }
 
   @ParameterizedTest(name = "an oval pool {0} wide keeps its kerb one block thick at {1},{2}")

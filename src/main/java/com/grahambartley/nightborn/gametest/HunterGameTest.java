@@ -37,14 +37,12 @@ public class HunterGameTest implements FabricGameTest {
   static final Identifier BITE_WARD = Identifier.of("nightborn", "hunter/bite_ward");
   static final Identifier FAITH = Identifier.of("nightborn", "hunter/faith");
   static final Identifier IRON_WILL = Identifier.of("nightborn", "hunter/iron_will");
-  static final Identifier[] HUNTER_SKILLS = {
-    TRACKING,
-    BITE_WARD,
-    FAITH,
-    IRON_WILL,
-    Identifier.of("nightborn", "hunter/steeled_blood"),
-    Identifier.of("nightborn", "hunter/devotion"),
-    Identifier.of("nightborn", "hunter/clear_mind")
+  static final Identifier[] HUNTER_SKILLS = {TRACKING, BITE_WARD, FAITH, IRON_WILL};
+  static final Identifier[] PATHS = {
+    Identifier.of("nightborn", "trapper"),
+    Identifier.of("nightborn", "faithful"),
+    Identifier.of("nightborn", "slayer"),
+    Identifier.of("nightborn", "seeker")
   };
 
   @BeforeBatch(batchId = PVP)
@@ -66,7 +64,28 @@ public class HunterGameTest implements FabricGameTest {
     for (final Identifier id : HUNTER_SKILLS) {
       context.assertTrue(Skills.skill(registries, id) != null, "skill " + id + " loads");
     }
+    for (final Identifier id : PATHS) {
+      final SkillBranch path = Skills.branch(registries, id);
+      context.assertTrue(
+          path != null && path.tree() == SkillTree.HUNTER && path.line(),
+          "path " + id + " loads as a hunter path");
+    }
     context.complete();
+  }
+
+  @GameTest(templateName = ARENA, tickLimit = 20)
+  public void aHunterKeepsToTwoPaths(final TestContext context) {
+    final ServerPlayerEntity hunter = TestPlayers.human(context, new BlockPos(3, 2, 4));
+    SkillAttachment.set(hunter, SkillTree.HUNTER, TreeProgress.EMPTY.withEarned(10));
+    context.assertEquals(SkillShop.buy(hunter, TRACKING), SkillPurchase.Verdict.ALLOWED, "root");
+    context.assertEquals(SkillShop.buy(hunter, BITE_WARD), SkillPurchase.Verdict.ALLOWED, "slayer");
+    context.assertEquals(SkillShop.buy(hunter, IRON_WILL), SkillPurchase.Verdict.ALLOWED, "seeker");
+    context.assertEquals(
+        SkillShop.buy(hunter, FAITH), SkillPurchase.Verdict.LINE_LOCKED, "a third path is refused");
+    final TreeProgress after = SkillAttachment.get(hunter, SkillTree.HUNTER);
+    context.assertFalse(after.owns(FAITH), "the third path skill is not owned");
+    context.assertEquals(after.free(), 5, "the refused purchase cost nothing");
+    TestPlayers.finish(context, hunter);
   }
 
   @GameTest(templateName = ARENA, batchId = PVP, tickLimit = TestPlayers.READY + 40)
