@@ -5,6 +5,7 @@ import com.grahambartley.nightborn.config.RaidSettings;
 import com.grahambartley.nightborn.server.ServerConfigService;
 import com.grahambartley.nightborn.vampire.Vampires;
 import java.util.List;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
@@ -37,8 +38,8 @@ public final class HouseNoise {
     LEVELS.forget(sleeper.getUuid());
   }
 
-  static void clear() {
-    LEVELS.clear();
+  static void register() {
+    ServerLifecycleEvents.SERVER_STOPPED.register(server -> LEVELS.clear());
   }
 
   private static void carry(

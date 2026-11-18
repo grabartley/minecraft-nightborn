@@ -53,7 +53,6 @@ public final class Trails {
         TRAILS.remove(hunter.getUuid());
         return Optional.empty();
       }
-      drip(world, hunter, living);
       return Optional.of(living.getPos());
     }
     return trail.coffin().map(Vec3d::ofBottomCenter);
@@ -79,19 +78,26 @@ public final class Trails {
             TrailRules.until(world.getTime(), world.getTimeOfDay())));
   }
 
-  private static void drip(
-      final ServerWorld world, final ServerPlayerEntity hunter, final LivingEntity quarry) {
-    world.spawnParticles(
-        hunter,
-        GoreParticles.DROP,
-        false,
-        quarry.getX(),
-        quarry.getY() + 0.1,
-        quarry.getZ(),
-        DROPS,
-        0.25,
-        0.0,
-        0.25,
-        0.0);
+  public static void drip(final ServerPlayerEntity hunter) {
+    final Trail trail = TRAILS.get(hunter.getUuid());
+    if (trail == null
+        || !(hunter.getServerWorld().getEntity(trail.quarry()) instanceof LivingEntity quarry)
+        || !quarry.isAlive()) {
+      return;
+    }
+    hunter
+        .getServerWorld()
+        .spawnParticles(
+            hunter,
+            GoreParticles.DROP,
+            false,
+            quarry.getX(),
+            quarry.getY() + 0.1,
+            quarry.getZ(),
+            DROPS,
+            0.25,
+            0.0,
+            0.25,
+            0.0);
   }
 }

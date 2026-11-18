@@ -24,7 +24,7 @@ public final class ContractMaps {
         hunter,
         nearest ->
             nearest.ifPresentOrElse(
-                house -> hand(hunter, map(world, house.pos())),
+                house -> hunter.getInventory().offerOrDrop(map(world, house.pos())),
                 () ->
                     hunter.sendMessage(
                         Text.translatable("nightborn.guild.rumour.none", teller), false)));
@@ -42,11 +42,5 @@ public final class ContractMaps {
     FilledMapItem.fillExplorationMap(world, map);
     map.set(DataComponentTypes.ITEM_NAME, Text.translatable("nightborn.contract.map"));
     return map;
-  }
-
-  private static void hand(final ServerPlayerEntity hunter, final ItemStack map) {
-    if (!hunter.giveItemStack(map)) {
-      hunter.dropItem(map, false);
-    }
   }
 }

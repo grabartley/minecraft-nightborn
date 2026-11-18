@@ -83,6 +83,7 @@ public final class Tracking {
 
   private static void show(final ServerPlayerEntity hunter, final int range) {
     final Optional<Vec3d> trail = Trails.lead(hunter);
+    trail.ifPresent(lead -> Trails.drip(hunter));
     final Text message =
         trail
             .map(lead -> pointer(hunter, lead, "nightborn.tracking.trail"))

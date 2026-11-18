@@ -58,10 +58,10 @@ public final class VampireHunt {
         () -> Prey.isPrey(target),
         () ->
             Prey.spared(
-                    vampire.getWorld().getDifficulty() == Difficulty.PEACEFUL,
-                    target instanceof PlayerEntity)
-                || target instanceof ThrallEntity thrall
-                    && Housemates.share(thrall.house(), vampire.homeLife().home()),
+                vampire.getWorld().getDifficulty() == Difficulty.PEACEFUL,
+                target instanceof PlayerEntity,
+                target instanceof ThrallEntity thrall
+                    && Housemates.share(thrall.house(), vampire.homeLife().home())),
         () -> Hunting.dropsTarget(pursuit(vampire, target, false)));
   }
 

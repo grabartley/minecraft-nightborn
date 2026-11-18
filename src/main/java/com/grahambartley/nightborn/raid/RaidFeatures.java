@@ -6,6 +6,7 @@ public final class RaidFeatures {
 
   public static void register() {
     RaidData.register();
+    HouseNoise.register();
     NoiseSources.register();
     Trails.register();
   }

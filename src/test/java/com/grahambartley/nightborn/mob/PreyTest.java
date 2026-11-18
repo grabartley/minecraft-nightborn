@@ -46,15 +46,20 @@ class PreyTest {
     assertEquals(bites, Prey.mayBite(downed, vampire, prey, provoked));
   }
 
-  @ParameterizedTest(name = "peaceful {0}, player {1}: spared {2}")
+  @ParameterizedTest(name = "peaceful {0}, player {1}, own house thrall {2}: spared {3}")
   @CsvSource({
-    "true, true, true",
-    "true, false, false",
-    "false, true, false",
-    "false, false, false"
+    "true, true, false, true",
+    "true, false, false, false",
+    "false, true, false, false",
+    "false, false, false, false",
+    "false, false, true, true",
+    "true, false, true, true"
   })
-  @DisplayName("on peaceful a vampire mob never hunts players, but still hunts animals")
-  void spared(final boolean peaceful, final boolean player, final boolean spared) {
-    assertEquals(spared, Prey.spared(peaceful, player));
+  @DisplayName(
+      "on peaceful a vampire mob never hunts players, and it never feeds on its own house's"
+          + " thralls")
+  void spared(
+      final boolean peaceful, final boolean player, final boolean ownThrall, final boolean spared) {
+    assertEquals(spared, Prey.spared(peaceful, player, ownThrall));
   }
 }

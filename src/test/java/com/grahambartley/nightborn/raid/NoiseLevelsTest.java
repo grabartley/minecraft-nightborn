@@ -38,19 +38,20 @@ class NoiseLevelsTest {
     final NoiseLevels levels = new NoiseLevels();
     levels.hear(SLEEPER, first, 0L, 1);
     levels.hear(OTHER, second, 0L, 1);
-    assertEquals(first, levels.level(SLEEPER, 0L, 1), 1e-9);
-    assertEquals(second, levels.level(OTHER, 0L, 1), 1e-9);
+    assertEquals(first, levels.hear(SLEEPER, 0.0, 0L, 1), 1e-9);
+    assertEquals(second, levels.hear(OTHER, 0.0, 0L, 1), 1e-9);
   }
 
-  @ParameterizedTest(name = "settled {0} ticks later keeps {1}")
-  @CsvSource({"0, 2", "40, 1", "120, 0"})
-  @DisplayName("sleepers whose noise has died away are let go")
-  void settles(final long later, final int kept) {
+  @ParameterizedTest(name = "settled {0} ticks later: {1} and {2} left")
+  @CsvSource({"0, 6, 2", "40, 4, 0", "120, 0, 0"})
+  @DisplayName("letting go of quiet sleepers never changes what a sleeper still hears")
+  void settles(final long later, final double first, final double second) {
     final NoiseLevels levels = new NoiseLevels();
     levels.hear(SLEEPER, 6.0, 0L, 1);
     levels.hear(OTHER, 2.0, 0L, 1);
     levels.settle(later, 1);
-    assertEquals(kept, levels.size());
+    assertEquals(first, levels.hear(SLEEPER, 0.0, later, 1), 1e-9);
+    assertEquals(second, levels.hear(OTHER, 0.0, later, 1), 1e-9);
   }
 
   @ParameterizedTest(name = "heard {0} then forgotten, next {1}")

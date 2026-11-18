@@ -38,11 +38,7 @@ public final class NoiseSources {
         (entity, source, base, taken, blocked) -> blow(entity, source));
     ServerPlayConnectionEvents.DISCONNECT.register(
         (handler, server) -> LAST.remove(handler.getPlayer().getUuid()));
-    ServerLifecycleEvents.SERVER_STOPPED.register(
-        server -> {
-          LAST.clear();
-          HouseNoise.clear();
-        });
+    ServerLifecycleEvents.SERVER_STOPPED.register(server -> LAST.clear());
   }
 
   private static void blow(final LivingEntity hurt, final DamageSource source) {
