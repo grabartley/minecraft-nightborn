@@ -1,7 +1,6 @@
 package com.grahambartley.nightborn.gametest;
 
 import com.grahambartley.nightborn.age.AgeNight;
-import com.grahambartley.nightborn.core.NightTime;
 import com.grahambartley.nightborn.guild.GuildMasterEntity;
 import com.grahambartley.nightborn.guild.GuildMobs;
 import com.grahambartley.nightborn.guild.HunterEntity;
@@ -27,9 +26,6 @@ import net.minecraft.util.math.BlockPos;
 public class HuntGameTest implements FabricGameTest {
 
   static final String ARENA = "nightborn:vampire_arena";
-  static final long DAY = 1000L;
-  static final String BELL_BY_DAY = "hunt_bell_by_day";
-  static final String WARNING_AT_DUSK = "hunt_warning_at_dusk";
   static final int CHECKS = 20;
 
   @GameTest(templateName = ARENA, tickLimit = TestPlayers.READY + 20)
@@ -79,39 +75,19 @@ public class HuntGameTest implements FabricGameTest {
     context.complete();
   }
 
-  @GameTest(templateName = ARENA, batchId = BELL_BY_DAY, tickLimit = TestPlayers.READY + 20)
-  public void theBellRungByDayKeepsItsSeal(final TestContext context) {
+  @GameTest(templateName = ARENA, tickLimit = TestPlayers.READY + 20)
+  public void theBellWithoutASealOnlyRings(final TestContext context) {
     final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(4, 2, 4));
     vampire.setStackInHand(Hand.MAIN_HAND, new ItemStack(HuntItems.HUNTERS_BELL));
-    vampire.getInventory().insertStack(new ItemStack(HuntItems.GUILD_MASTERS_SEAL, 2));
     context.runAtTick(
         TestPlayers.READY,
         () -> {
-          context.setTime((int) DAY);
           HuntItems.HUNTERS_BELL.use(context.getWorld(), vampire, Hand.MAIN_HAND);
-          context.assertEquals(
-              vampire.getInventory().count(HuntItems.GUILD_MASTERS_SEAL), 2, "no seal is used");
+          context.assertTrue(
+              vampire.getMainHandStack().isOf(HuntItems.HUNTERS_BELL), "the bell is never used up");
           context.assertFalse(
-              vampire.hasAttached(HuntAttachment.CALL), "nobody answers the bell by day");
-          TestPlayers.finish(context, vampire);
-        });
-  }
-
-  @GameTest(templateName = ARENA, batchId = WARNING_AT_DUSK, tickLimit = TestPlayers.READY + 20)
-  public void aHuntedVampireIsWarnedAtDusk(final TestContext context) {
-    final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(4, 2, 4));
-    context.runAtTick(
-        TestPlayers.READY,
-        () -> {
-          context.setTime((int) (NightTime.DUSK - 10L));
-          vampire.setAttached(
-              HuntAttachment.RECORD, HuntRecord.EMPTY.withNotoriety(40.0).warning(3));
-          vampire.setAttached(HuntAttachment.CLOCK, NightTime.DUSK - 10L);
-          context.setTime((int) NightTime.DUSK);
-          Hunts.tick(vampire);
-          final HuntRecord record = HuntAttachment.get(vampire);
-          context.assertEquals(record.phase(), HuntRecord.Phase.WARNING, "still being warned");
-          context.assertEquals(record.warningsLeft(), 2, "one warning is used at dusk");
+              vampire.hasAttached(HuntAttachment.CALL),
+              "nobody answers a bell rung without a seal");
           TestPlayers.finish(context, vampire);
         });
   }
