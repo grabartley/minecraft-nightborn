@@ -1,0 +1,29 @@
+{
+  "parent": "nightborn:root",
+  "display": {
+    "icon": {
+      "id": "minecraft:bread"
+    },
+    "title": {
+      "translate": "advancements.nightborn.light_lunch.title"
+    },
+    "description": {
+      "translate": "advancements.nightborn.light_lunch.description"
+    },
+    "frame": "task",
+    "hidden": true
+  },
+  "criteria": {
+    "brought_up": {
+      "trigger": "nightborn:deed",
+      "conditions": {
+        "deed": "nightborn:food_brought_up"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "brought_up"
+    ]
+  ]
+}

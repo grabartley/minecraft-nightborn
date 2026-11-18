@@ -6,6 +6,7 @@ import com.grahambartley.nightborn.accessory.GiftScale;
 import com.grahambartley.nightborn.advancement.Milestone;
 import com.grahambartley.nightborn.advancement.MilestoneCriterion;
 import com.grahambartley.nightborn.config.GearSettings;
+import com.grahambartley.nightborn.gear.Banes;
 import com.grahambartley.nightborn.gear.GearItems;
 import com.grahambartley.nightborn.hunter.FaithBoost;
 import com.grahambartley.nightborn.hunter.HunterAttributes;
@@ -14,6 +15,7 @@ import com.grahambartley.nightborn.sickness.BiteSickness;
 import com.grahambartley.nightborn.sound.NightbornSounds;
 import com.grahambartley.nightborn.vampire.Vampires;
 import com.grahambartley.nightborn.weakened.Weakened;
+import java.util.EnumSet;
 import java.util.Optional;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.fabricmc.fabric.api.object.builder.v1.trade.TradeOfferHelper;
@@ -155,6 +157,7 @@ public final class HolyWater {
             dose.ticks(), GiftAttributes.value(vampire, GiftAttributes.HOLY_WATER_TIME)));
     if (attacker != vampire) {
       MilestoneCriterion.reach(attacker, Milestone.HOLY_WATER_HIT);
+      Banes.struck(attacker, vampire, EnumSet.of(Banes.Bane.HOLY_WATER));
     }
     if (dose.damage() > 0.0F) {
       vampire.damage(

@@ -1,5 +1,8 @@
 package com.grahambartley.nightborn.ritual;
 
+import com.grahambartley.nightborn.challenge.Deed;
+import com.grahambartley.nightborn.challenge.DeedKinds;
+import com.grahambartley.nightborn.challenge.Deeds;
 import com.grahambartley.nightborn.core.NightSight;
 import com.grahambartley.nightborn.decor.ChaliceBlock;
 import com.grahambartley.nightborn.decor.ChaliceContents;
@@ -219,6 +222,9 @@ public class RitualAltarBlock extends BlockWithEntity {
       final var settings = ServerConfigService.current().ritual();
       altar.begin(settings.buildUpTicks(), Vampires.isVampire(player) ? player.getUuid() : null);
       Ritual.begin(world, pos, settings);
+      if (Vampires.isVampire(player)) {
+        Deeds.record(player, Deed.of(DeedKinds.WRONG_CALL).with(DeedKinds.BOSS, "eldest"));
+      }
       world.emitGameEvent(player, GameEvent.BLOCK_ACTIVATE, pos);
     }
   }

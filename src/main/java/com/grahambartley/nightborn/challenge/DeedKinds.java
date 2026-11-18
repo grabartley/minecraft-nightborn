@@ -35,6 +35,22 @@ public final class DeedKinds {
   public static final Identifier BITTEN = live("bitten");
   public static final Identifier RANK_REACHED = live("rank_reached");
   public static final Identifier ACCESSORIES_HELD = live("accessories_held");
+  public static final Identifier ACCESSORIES_WORN = live("accessories_worn");
+  public static final Identifier OLD_BLOOD_DRUNK = live("old_blood_drunk");
+  public static final Identifier HOUSE_FOUNDED = live("house_founded");
+  public static final Identifier INQUISITOR_ENDED = live("inquisitor_ended");
+  public static final Identifier TRIAL_COMPLETED = live("trial_completed");
+  public static final Identifier STRUCTURE_ENTERED = live("structure_entered");
+  public static final Identifier STAFF_KEPT = live("staff_kept");
+  public static final Identifier CRUCIFIXES_HELD = live("crucifixes_held");
+  public static final Identifier BANES_DEALT = live("banes_dealt");
+  public static final Identifier SKILL_LEARNED = live("skill_learned");
+  public static final Identifier JOURNAL_PAGES = live("journal_pages");
+  public static final Identifier MIRROR_SELF = live("mirror_self");
+  public static final Identifier FOOD_BROUGHT_UP = live("food_brought_up");
+  public static final Identifier HUNG_THROUGH_NIGHT = live("hung_through_night");
+  public static final Identifier WRONG_CALL = live("wrong_call");
+  public static final Identifier ATE = live("ate");
 
   public static final String TOP = "top";
   public static final String ANIMAL = "animal";
@@ -62,6 +78,23 @@ public final class DeedKinds {
   public static final String STAKER = "staker";
   public static final String RANK = "rank";
   public static final String VAMPIRE = "vampire";
+  public static final String GIFT = "gift";
+  public static final String WARDED = "warded";
+  public static final String HOUSEHOLD = "household";
+  public static final String TRIAL = "trial";
+  public static final String SIDE = "side";
+  public static final String DISTINCT = "distinct";
+  public static final String STRUCTURE = "structure";
+  public static final String SLOTS = "slots";
+  public static final String KINDS = "kinds";
+  public static final String BANES = "banes";
+  public static final String TREE = "tree";
+  public static final String LINE = "line";
+  public static final String SHARE = "share";
+  public static final String JOURNAL = "journal";
+  public static final String FOOD = "food";
+  public static final String GARLIC_IN_OTHER_HAND = "garlic_in_other_hand";
+  public static final String BOSS = "boss";
 
   private DeedKinds() {}
 

@@ -11,10 +11,12 @@ import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.minecraft.registry.RegistryKeys;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.structure.StructureStart;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.chunk.Chunk;
 
@@ -39,7 +41,7 @@ public final class StructureZoneTracker {
     }
     for (final ServerPlayerEntity player : server.getPlayerManager().getPlayerList()) {
       final Optional<StructureZone> zone = zoneAround(player);
-      StructureVisits.visit(player, zone.map(StructureZone::area));
+      StructureVisits.visit(player, zone);
       if (!zone.equals(SENT.getOrDefault(player.getUuid(), Optional.empty()))) {
         SENT.put(player.getUuid(), zone);
         ServerPlayNetworking.send(player, new StructureZonePayload(zone));
@@ -63,13 +65,20 @@ public final class StructureZoneTracker {
   private static void collect(
       final ServerWorld world, final Chunk chunk, final List<StructureZone> zones) {
     for (final StructureStart start : VampireStructureStarts.referencedBy(world, chunk)) {
-      zoneOf(start).ifPresent(zones::add);
+      zoneOf(world, start).ifPresent(zones::add);
     }
   }
 
-  private static Optional<StructureZone> zoneOf(final StructureStart start) {
+  private static Optional<StructureZone> zoneOf(
+      final ServerWorld world, final StructureStart start) {
+    final Identifier structure =
+        world.getRegistryManager().get(RegistryKeys.STRUCTURE).getId(start.getStructure());
     final StructureAmbience ambience = ((VampireStructure) start.getStructure()).ambience();
     return StructureHeart.of(start.getChildren())
-        .map(heart -> new StructureZone(FogZone.around(heart, start.getBoundingBox()), ambience));
+        .filter(heart -> structure != null)
+        .map(
+            heart ->
+                new StructureZone(
+                    structure, FogZone.around(heart, start.getBoundingBox()), ambience));
   }
 }

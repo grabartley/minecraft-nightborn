@@ -1,0 +1,34 @@
+{
+  "parent": "nightborn:no_reflection_on_you",
+  "display": {
+    "icon": {
+      "id": "nightborn:ash_urn"
+    },
+    "title": {
+      "translate": "advancements.nightborn.older_than_dirt.title"
+    },
+    "description": {
+      "translate": "advancements.nightborn.older_than_dirt.description"
+    },
+    "frame": "challenge"
+  },
+  "criteria": {
+    "ancient": {
+      "trigger": "nightborn:deed",
+      "conditions": {
+        "deed": "nightborn:stage_reached",
+        "facts": {
+          "stage": "nightborn:ancient"
+        }
+      }
+    }
+  },
+  "requirements": [
+    [
+      "ancient"
+    ]
+  ],
+  "rewards": {
+    "experience": 100
+  }
+}

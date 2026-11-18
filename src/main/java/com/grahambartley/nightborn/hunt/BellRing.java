@@ -1,9 +1,13 @@
 package com.grahambartley.nightborn.hunt;
 
+import com.grahambartley.nightborn.challenge.Deed;
+import com.grahambartley.nightborn.challenge.DeedKinds;
+import com.grahambartley.nightborn.challenge.Deeds;
 import com.grahambartley.nightborn.config.HuntSettings;
 import com.grahambartley.nightborn.inquisitor.GrandInquisitorEntity;
 import com.grahambartley.nightborn.inquisitor.InquisitorArrival;
 import com.grahambartley.nightborn.server.ServerConfigService;
+import com.grahambartley.nightborn.vampire.Vampires;
 import java.util.Optional;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.particle.ParticleTypes;
@@ -45,6 +49,9 @@ final class BellRing {
     }
     player.setAttached(HuntAttachment.CALL, BellCall.rung(settings.bellBuildUpTicks()));
     player.sendMessage(Text.translatable("nightborn.hunt.bell.answered"), false);
+    if (!Vampires.isVampire(player)) {
+      Deeds.record(player, Deed.of(DeedKinds.WRONG_CALL).with(DeedKinds.BOSS, "grand_inquisitor"));
+    }
   }
 
   static void tick(final ServerPlayerEntity player) {

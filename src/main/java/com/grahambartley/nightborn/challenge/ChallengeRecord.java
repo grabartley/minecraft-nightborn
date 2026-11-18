@@ -5,6 +5,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import io.netty.buffer.ByteBuf;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import net.minecraft.network.codec.PacketCodec;
 import net.minecraft.network.codec.PacketCodecs;
@@ -78,5 +79,13 @@ public record ChallengeRecord(
 
   public boolean isEmpty() {
     return equals(EMPTY);
+  }
+
+  public int finishedOf(final Side side, final Map<Identifier, Trial> trials) {
+    return (int)
+        finished.stream()
+            .map(trials::get)
+            .filter(trial -> trial != null && trial.side() == side)
+            .count();
   }
 }

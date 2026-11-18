@@ -1,7 +1,5 @@
 package com.grahambartley.nightborn.challenge;
 
-import com.grahambartley.nightborn.accessory.AccessoryItem;
-import com.grahambartley.nightborn.accessory.AccessoryOwnership;
 import com.grahambartley.nightborn.age.AgeAttachment;
 import com.grahambartley.nightborn.age.AgeLadder;
 import com.grahambartley.nightborn.config.ChallengeSettings;
@@ -40,7 +38,7 @@ public final class OfferKeeper {
     }
     for (final ServerPlayerEntity player : server.getPlayerManager().getPlayerList()) {
       refresh(player);
-      countAccessories(player);
+      KeptDeeds.check(player);
     }
   }
 
@@ -97,13 +95,5 @@ public final class OfferKeeper {
     final RankLadder ladder = RankLadder.of(player.getRegistryManager());
     return new TrialEligibility(
         side, OathAttachment.get(player).rank(), ladder::rankOf, skills::owns, DeedKinds.live());
-  }
-
-  private static void countAccessories(final ServerPlayerEntity player) {
-    final long held =
-        AccessoryOwnership.items(player).stream().filter(AccessoryItem.class::isInstance).count();
-    if (held > 0) {
-      Deeds.record(player, Deed.of(DeedKinds.ACCESSORIES_HELD).times((int) held));
-    }
   }
 }

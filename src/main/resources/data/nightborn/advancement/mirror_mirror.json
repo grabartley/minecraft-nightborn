@@ -1,0 +1,29 @@
+{
+  "parent": "nightborn:root",
+  "display": {
+    "icon": {
+      "id": "nightborn:hand_mirror"
+    },
+    "title": {
+      "translate": "advancements.nightborn.mirror_mirror.title"
+    },
+    "description": {
+      "translate": "advancements.nightborn.mirror_mirror.description"
+    },
+    "frame": "task",
+    "hidden": true
+  },
+  "criteria": {
+    "self": {
+      "trigger": "nightborn:deed",
+      "conditions": {
+        "deed": "nightborn:mirror_self"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "self"
+    ]
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "parent": "nightborn:no_reflection_on_you",
+  "display": {
+    "icon": {
+      "id": "nightborn:lancet"
+    },
+    "title": {
+      "translate": "advancements.nightborn.inquire_within.title"
+    },
+    "description": {
+      "translate": "advancements.nightborn.inquire_within.description"
+    },
+    "frame": "challenge"
+  },
+  "criteria": {
+    "ended": {
+      "trigger": "nightborn:deed",
+      "conditions": {
+        "deed": "nightborn:inquisitor_ended"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "ended"
+    ]
+  ],
+  "rewards": {
+    "experience": 100
+  }
+}

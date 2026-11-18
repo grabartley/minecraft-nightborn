@@ -1,0 +1,28 @@
+{
+  "parent": "nightborn:root",
+  "display": {
+    "icon": {
+      "id": "nightborn:hunter_contract"
+    },
+    "title": {
+      "translate": "advancements.nightborn.tried_and_tested.title"
+    },
+    "description": {
+      "translate": "advancements.nightborn.tried_and_tested.description"
+    },
+    "frame": "task"
+  },
+  "criteria": {
+    "trial": {
+      "trigger": "nightborn:deed",
+      "conditions": {
+        "deed": "nightborn:trial_completed"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "trial"
+    ]
+  ]
+}

@@ -3,6 +3,9 @@ package com.grahambartley.nightborn.gametest;
 import com.grahambartley.nightborn.Nightborn;
 import com.grahambartley.nightborn.advancement.Milestone;
 import com.grahambartley.nightborn.advancement.MilestoneCriterion;
+import com.grahambartley.nightborn.challenge.Deed;
+import com.grahambartley.nightborn.challenge.DeedKinds;
+import com.grahambartley.nightborn.challenge.Deeds;
 import com.grahambartley.nightborn.clothing.ClothingItems;
 import com.grahambartley.nightborn.clothing.ClothingPiece;
 import com.grahambartley.nightborn.gear.GearItems;
@@ -14,6 +17,7 @@ import com.grahambartley.nightborn.skill.SkillShop;
 import com.grahambartley.nightborn.skill.SkillTree;
 import com.grahambartley.nightborn.skill.TreeProgress;
 import com.grahambartley.nightborn.vampire.VampireTransitions;
+import com.grahambartley.nightborn.vomit.Meals;
 import java.util.List;
 import java.util.Objects;
 import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
@@ -27,6 +31,7 @@ import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.passive.CowEntity;
 import net.minecraft.entity.passive.VillagerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.test.GameTest;
 import net.minecraft.test.TestContext;
@@ -67,7 +72,46 @@ public class AdvancementGameTest implements FabricGameTest {
           new Expected("old_blood", "no_reflection_on_you", AdvancementFrame.GOAL, 50, false),
           new Expected(
               "good_help_is_hard_to_find", "no_reflection_on_you", AdvancementFrame.TASK, 0, true),
-          new Expected("lord_of_the_manner", "house_call", AdvancementFrame.CHALLENGE, 100, false));
+          new Expected("lord_of_the_manner", "house_call", AdvancementFrame.CHALLENGE, 100, false),
+          new Expected("something_in_the_blood", "house_call", AdvancementFrame.TASK, 0, false),
+          new Expected("coming_of_age", "no_reflection_on_you", AdvancementFrame.TASK, 0, false),
+          new Expected("elder_statesman", "no_reflection_on_you", AdvancementFrame.TASK, 0, false),
+          new Expected(
+              "older_than_dirt", "no_reflection_on_you", AdvancementFrame.CHALLENGE, 100, false),
+          new Expected("house_rules", "no_reflection_on_you", AdvancementFrame.TASK, 0, false),
+          new Expected(
+              "full_house", "no_reflection_on_you", AdvancementFrame.CHALLENGE, 100, false),
+          new Expected("last_bite", "no_reflection_on_you", AdvancementFrame.TASK, 0, false),
+          new Expected(
+              "nothing_to_see_here", "no_reflection_on_you", AdvancementFrame.TASK, 0, true),
+          new Expected(
+              "inquire_within", "no_reflection_on_you", AdvancementFrame.CHALLENGE, 100, false),
+          new Expected(
+              "blood_type", "no_reflection_on_you", AdvancementFrame.CHALLENGE, 100, false),
+          new Expected(
+              "thicker_than_water", "no_reflection_on_you", AdvancementFrame.CHALLENGE, 100, false),
+          new Expected(
+              "staff_meeting", "no_reflection_on_you", AdvancementFrame.CHALLENGE, 100, false),
+          new Expected("rank_and_file", "sworn_in", AdvancementFrame.TASK, 0, false),
+          new Expected("master_of_the_hunt", "sworn_in", AdvancementFrame.CHALLENGE, 100, false),
+          new Expected("rude_awakening", "sworn_in", AdvancementFrame.TASK, 0, false),
+          new Expected("last_of_the_line", "sworn_in", AdvancementFrame.CHALLENGE, 100, false),
+          new Expected("stage_fright", "sworn_in", AdvancementFrame.CHALLENGE, 100, false),
+          new Expected("by_the_book", "sworn_in", AdvancementFrame.CHALLENGE, 100, false),
+          new Expected("the_full_treatment", "sworn_in", AdvancementFrame.CHALLENGE, 100, false),
+          new Expected("smoke_and_mirrors", "root", AdvancementFrame.TASK, 0, true),
+          new Expected("dressed_to_the_nines", "root", AdvancementFrame.TASK, 0, false),
+          new Expected("tried_and_tested", "root", AdvancementFrame.TASK, 0, false),
+          new Expected("property_ladder", "root", AdvancementFrame.CHALLENGE, 100, false),
+          new Expected("ring_leader", "root", AdvancementFrame.CHALLENGE, 100, false),
+          new Expected("cover_to_cover", "root", AdvancementFrame.CHALLENGE, 100, false),
+          new Expected("well_tried", "root", AdvancementFrame.CHALLENGE, 100, false),
+          new Expected("mirror_mirror", "root", AdvancementFrame.TASK, 0, true),
+          new Expected("light_lunch", "root", AdvancementFrame.TASK, 0, true),
+          new Expected("hang_in_there", "root", AdvancementFrame.TASK, 0, true),
+          new Expected("careful_what_you_wish_for", "root", AdvancementFrame.TASK, 0, true),
+          new Expected("garlic_bread", "root", AdvancementFrame.TASK, 0, true),
+          new Expected("cross_purposes", "root", AdvancementFrame.TASK, 0, true));
 
   @GameTest(templateName = ARENA, tickLimit = 20)
   public void theTabIsTheTreeThePrdDescribes(final TestContext context) {
@@ -225,5 +269,44 @@ public class AdvancementGameTest implements FabricGameTest {
               TestAdvancements.done(context, human, "dressed_to_kill"), "the full set");
           TestPlayers.finish(context, human);
         });
+  }
+
+  @GameTest(templateName = ARENA, tickLimit = 20)
+  public void reachingAdulthoodEarnsComingOfAge(final TestContext context) {
+    final ServerPlayerEntity vampire = TestPlayers.vampire(context, STAND);
+    Deeds.record(
+        vampire,
+        Deed.of(DeedKinds.STAGE_REACHED)
+            .with(DeedKinds.STAGE, Identifier.of(Nightborn.MOD_ID, "adult")));
+    context.assertTrue(TestAdvancements.done(context, vampire, "coming_of_age"), "adult");
+    context.assertFalse(
+        TestAdvancements.done(context, vampire, "elder_statesman"), "an adult is no elder");
+    TestPlayers.finish(context, vampire);
+  }
+
+  @GameTest(templateName = ARENA, tickLimit = 20)
+  public void keepingEveryKindOfServantCountsUpToStaffMeeting(final TestContext context) {
+    final ServerPlayerEntity vampire = TestPlayers.vampire(context, STAND);
+    Deeds.record(vampire, Deed.of(DeedKinds.STAFF_KEPT).with(DeedKinds.KINDS, 2));
+    final AdvancementProgress two = TestAdvancements.progress(context, vampire, "staff_meeting");
+    context.assertFalse(two.isDone(), "two kinds are not three");
+    context.assertEquals(
+        two.getProgressBarPercentage(), 2.0F / 3.0F, "two of three kinds show as progress");
+    Deeds.record(vampire, Deed.of(DeedKinds.STAFF_KEPT).with(DeedKinds.KINDS, 3));
+    context.assertTrue(
+        TestAdvancements.done(context, vampire, "staff_meeting"), "all three kinds at once");
+    TestPlayers.finish(context, vampire);
+  }
+
+  @GameTest(templateName = ARENA, tickLimit = 20)
+  public void eatingBreadWithGarlicInTheOtherHandEarnsGarlicBread(final TestContext context) {
+    final ServerPlayerEntity bare = TestPlayers.human(context, STAND);
+    final ServerPlayerEntity garlic = TestPlayers.human(context, STAND);
+    garlic.setStackInHand(Hand.OFF_HAND, new ItemStack(GearItems.GARLIC));
+    Meals.eaten(bare, new ItemStack(Items.BREAD));
+    Meals.eaten(garlic, new ItemStack(Items.BREAD));
+    context.assertFalse(TestAdvancements.done(context, bare, "garlic_bread"), "plain bread");
+    context.assertTrue(TestAdvancements.done(context, garlic, "garlic_bread"), "garlic bread");
+    TestPlayers.finish(context, bare, garlic);
   }
 }

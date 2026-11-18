@@ -1,0 +1,31 @@
+{
+  "parent": "nightborn:sworn_in",
+  "display": {
+    "icon": {
+      "id": "nightborn:oak_coffin"
+    },
+    "title": {
+      "translate": "advancements.nightborn.rude_awakening.title"
+    },
+    "description": {
+      "translate": "advancements.nightborn.rude_awakening.description"
+    },
+    "frame": "task"
+  },
+  "criteria": {
+    "asleep": {
+      "trigger": "nightborn:deed",
+      "conditions": {
+        "deed": "nightborn:vampire_staked",
+        "facts": {
+          "in_coffin": "true"
+        }
+      }
+    }
+  },
+  "requirements": [
+    [
+      "asleep"
+    ]
+  ]
+}

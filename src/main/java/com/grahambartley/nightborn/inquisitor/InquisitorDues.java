@@ -1,5 +1,8 @@
 package com.grahambartley.nightborn.inquisitor;
 
+import com.grahambartley.nightborn.challenge.Deed;
+import com.grahambartley.nightborn.challenge.DeedKinds;
+import com.grahambartley.nightborn.challenge.Deeds;
 import com.grahambartley.nightborn.hunt.Hunts;
 import com.grahambartley.nightborn.server.ServerConfigService;
 import com.grahambartley.nightborn.skill.SkillEarning;
@@ -41,6 +44,7 @@ public final class InquisitorDues {
               player,
               ServerConfigService.current().inquisitor().experience(),
               ServerConfigService.current().skills());
+      case ENDED -> Deeds.record(player, Deed.of(DeedKinds.INQUISITOR_ENDED));
     }
   }
 }

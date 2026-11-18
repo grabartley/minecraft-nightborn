@@ -1,0 +1,31 @@
+{
+  "parent": "nightborn:no_reflection_on_you",
+  "display": {
+    "icon": {
+      "id": "nightborn:small_gilt_throne"
+    },
+    "title": {
+      "translate": "advancements.nightborn.elder_statesman.title"
+    },
+    "description": {
+      "translate": "advancements.nightborn.elder_statesman.description"
+    },
+    "frame": "task"
+  },
+  "criteria": {
+    "elder": {
+      "trigger": "nightborn:deed",
+      "conditions": {
+        "deed": "nightborn:stage_reached",
+        "facts": {
+          "stage": "nightborn:elder"
+        }
+      }
+    }
+  },
+  "requirements": [
+    [
+      "elder"
+    ]
+  ]
+}

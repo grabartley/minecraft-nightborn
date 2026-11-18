@@ -1,0 +1,82 @@
+{
+  "parent": "nightborn:no_reflection_on_you",
+  "display": {
+    "icon": {
+      "id": "nightborn:blood_fountain"
+    },
+    "title": {
+      "translate": "advancements.nightborn.thicker_than_water.title"
+    },
+    "description": {
+      "translate": "advancements.nightborn.thicker_than_water.description"
+    },
+    "frame": "challenge"
+  },
+  "criteria": {
+    "quarter_1": {
+      "trigger": "nightborn:deed",
+      "conditions": {
+        "deed": "nightborn:skill_learned",
+        "facts": {
+          "tree": "vampire"
+        },
+        "at_least": {
+          "share": 25
+        }
+      }
+    },
+    "quarter_2": {
+      "trigger": "nightborn:deed",
+      "conditions": {
+        "deed": "nightborn:skill_learned",
+        "facts": {
+          "tree": "vampire"
+        },
+        "at_least": {
+          "share": 50
+        }
+      }
+    },
+    "quarter_3": {
+      "trigger": "nightborn:deed",
+      "conditions": {
+        "deed": "nightborn:skill_learned",
+        "facts": {
+          "tree": "vampire"
+        },
+        "at_least": {
+          "share": 75
+        }
+      }
+    },
+    "quarter_4": {
+      "trigger": "nightborn:deed",
+      "conditions": {
+        "deed": "nightborn:skill_learned",
+        "facts": {
+          "tree": "vampire"
+        },
+        "at_least": {
+          "share": 100
+        }
+      }
+    }
+  },
+  "requirements": [
+    [
+      "quarter_1"
+    ],
+    [
+      "quarter_2"
+    ],
+    [
+      "quarter_3"
+    ],
+    [
+      "quarter_4"
+    ]
+  ],
+  "rewards": {
+    "experience": 100
+  }
+}

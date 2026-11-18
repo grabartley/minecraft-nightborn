@@ -2,6 +2,7 @@ package com.grahambartley.nightborn.accessory;
 
 import dev.emi.trinkets.api.TrinketsApi;
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -22,6 +23,22 @@ public final class AccessoryOwnership {
     TrinketsApi.getTrinketComponent(player)
         .ifPresent(component -> component.forEach((ref, stack) -> stacks.add(stack)));
     return collect(stacks);
+  }
+
+  public static Set<AccessorySlot> worn(final PlayerEntity player) {
+    final Set<AccessorySlot> slots = EnumSet.noneOf(AccessorySlot.class);
+    TrinketsApi.getTrinketComponent(player)
+        .ifPresent(
+            component ->
+                component.forEach(
+                    (ref, stack) -> {
+                      if (!stack.isEmpty()) {
+                        final var type = ref.inventory().getSlotType();
+                        AccessorySlot.byId(type.getGroup() + "/" + type.getName())
+                            .ifPresent(slots::add);
+                      }
+                    }));
+    return slots;
   }
 
   public static Set<Item> collect(final Iterable<ItemStack> stacks) {

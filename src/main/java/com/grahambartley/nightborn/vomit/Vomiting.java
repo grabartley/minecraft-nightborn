@@ -1,6 +1,9 @@
 package com.grahambartley.nightborn.vomit;
 
 import com.grahambartley.nightborn.blood.BloodAttachment;
+import com.grahambartley.nightborn.challenge.Deed;
+import com.grahambartley.nightborn.challenge.DeedKinds;
+import com.grahambartley.nightborn.challenge.Deeds;
 import com.grahambartley.nightborn.config.BloodSettings;
 import com.grahambartley.nightborn.config.WardSettings;
 import com.grahambartley.nightborn.network.PlayerCue;
@@ -41,6 +44,7 @@ public final class Vomiting {
       final GarlicMeal.Toll toll = GarlicMeal.is(stack) ? GarlicMeal.worsen(plain, wards) : plain;
       sicken(server, toll);
       throwUp(server, toll.damage(), toll.nauseaTicks());
+      Deeds.record(server, Deed.of(DeedKinds.FOOD_BROUGHT_UP));
     }
     final boolean creative = vampire.isInCreativeMode();
     if (!creative) {

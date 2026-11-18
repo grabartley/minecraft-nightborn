@@ -37,6 +37,9 @@ public final class Mirror {
             SoundCategory.PLAYERS,
             1.0F,
             1.0F);
+    if (subject == user && Vampires.isVampire(user)) {
+      Deeds.record(user, Deed.of(DeedKinds.MIRROR_SELF));
+    }
     if (subject != user && subject instanceof ServerPlayerEntity watched) {
       watched.sendMessage(Text.translatable(RAISED_AT_YOU, user.getDisplayName()), true);
       if (!reflects(Vampires.isVampire(watched))) {

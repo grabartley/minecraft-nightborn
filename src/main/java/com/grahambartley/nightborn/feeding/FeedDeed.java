@@ -14,7 +14,11 @@ public final class FeedDeed {
 
   private FeedDeed() {}
 
-  static Deed of(final LivingEntity victim, final boolean seen, final boolean giftTaken) {
+  static Deed of(
+      final LivingEntity victim,
+      final boolean seen,
+      final Optional<Identifier> giftTaken,
+      final boolean warded) {
     final Optional<Identifier> profession =
         victim instanceof VillagerEntity villager
             ? Optional.of(villager.getVillagerData().getProfession())
@@ -27,7 +31,8 @@ public final class FeedDeed {
         victim instanceof VillagerEntity,
         profession,
         seen,
-        giftTaken);
+        giftTaken,
+        warded);
   }
 
   public static Deed of(
@@ -36,14 +41,19 @@ public final class FeedDeed {
       final boolean villager,
       final Optional<Identifier> profession,
       final boolean seen,
-      final boolean giftTaken) {
+      final Optional<Identifier> giftTaken,
+      final boolean warded) {
     Deed deed =
         Deed.of(DeedKinds.FED)
             .with(DeedKinds.PREY, prey)
             .with(DeedKinds.ANIMAL, animal)
             .with(DeedKinds.VILLAGER, villager)
             .with(DeedKinds.SEEN, seen)
-            .with(DeedKinds.GIFTED, giftTaken);
+            .with(DeedKinds.GIFTED, giftTaken.isPresent())
+            .with(DeedKinds.WARDED, warded);
+    if (giftTaken.isPresent()) {
+      deed = deed.with(DeedKinds.GIFT, giftTaken.get());
+    }
     if (profession.isPresent()) {
       deed = deed.with(DeedKinds.PROFESSION, profession.get());
     }

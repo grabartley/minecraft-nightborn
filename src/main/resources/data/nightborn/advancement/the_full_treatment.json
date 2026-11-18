@@ -1,0 +1,70 @@
+{
+  "parent": "nightborn:sworn_in",
+  "display": {
+    "icon": {
+      "id": "nightborn:silver_stake"
+    },
+    "title": {
+      "translate": "advancements.nightborn.the_full_treatment.title"
+    },
+    "description": {
+      "translate": "advancements.nightborn.the_full_treatment.description"
+    },
+    "frame": "challenge"
+  },
+  "criteria": {
+    "banes_1": {
+      "trigger": "nightborn:deed",
+      "conditions": {
+        "deed": "nightborn:banes_dealt",
+        "at_least": {
+          "banes": 1
+        }
+      }
+    },
+    "banes_2": {
+      "trigger": "nightborn:deed",
+      "conditions": {
+        "deed": "nightborn:banes_dealt",
+        "at_least": {
+          "banes": 2
+        }
+      }
+    },
+    "banes_3": {
+      "trigger": "nightborn:deed",
+      "conditions": {
+        "deed": "nightborn:banes_dealt",
+        "at_least": {
+          "banes": 3
+        }
+      }
+    },
+    "banes_4": {
+      "trigger": "nightborn:deed",
+      "conditions": {
+        "deed": "nightborn:banes_dealt",
+        "at_least": {
+          "banes": 4
+        }
+      }
+    }
+  },
+  "requirements": [
+    [
+      "banes_1"
+    ],
+    [
+      "banes_2"
+    ],
+    [
+      "banes_3"
+    ],
+    [
+      "banes_4"
+    ]
+  ],
+  "rewards": {
+    "experience": 100
+  }
+}

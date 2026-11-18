@@ -26,6 +26,7 @@ import com.grahambartley.nightborn.thrall.Thralls;
 import com.grahambartley.nightborn.vampire.NightbornDamage;
 import com.grahambartley.nightborn.vampire.VampireAttributes;
 import com.grahambartley.nightborn.vampire.Vampires;
+import com.grahambartley.nightborn.village.VillageSuspicion;
 import com.grahambartley.nightborn.village.VillageVictims;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.attribute.EntityAttributes;
@@ -199,7 +200,13 @@ final class Feeder {
       Thralls.mayBind(vampire, victim, session.totalTaken());
     }
     if (victim != null && session.totalTaken() > 0.0F) {
-      Deeds.record(vampire, FeedDeed.of(victim, session.seen(), session.giftTaken()));
+      Deeds.record(
+          vampire,
+          FeedDeed.of(
+              victim,
+              session.seen(),
+              session.gift().filter(gift -> session.giftTaken()),
+              VillageSuspicion.warded(vampire.getServerWorld(), victim.getBlockPos())));
     }
   }
 

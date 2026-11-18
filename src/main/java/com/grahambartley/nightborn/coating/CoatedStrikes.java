@@ -4,6 +4,7 @@ import com.grahambartley.nightborn.challenge.Deed;
 import com.grahambartley.nightborn.challenge.DeedKinds;
 import com.grahambartley.nightborn.challenge.Deeds;
 import com.grahambartley.nightborn.clothing.WornAttributes;
+import com.grahambartley.nightborn.gear.Banes;
 import com.grahambartley.nightborn.gear.VampireBane;
 import com.grahambartley.nightborn.server.ServerConfigService;
 import com.grahambartley.nightborn.vampire.Vampires;
@@ -46,18 +47,20 @@ public final class CoatedStrikes {
       case AMMO -> {
         final Coat coat = ammo.get(Coatings.COAT);
         weaken(target, coat.coating(), terms(coat, ammo));
-        coatedHit(source, coat.coating());
+        coatedHit(target, source, coat.coating());
       }
       case WEAPON -> {
         final Coating coating = weapon.get(Coatings.COAT).coating();
         spend(target, weapon);
-        coatedHit(source, coating);
+        coatedHit(target, source, coating);
       }
       case NONE -> {}
     }
   }
 
-  private static void coatedHit(final DamageSource source, final Coating coating) {
+  private static void coatedHit(
+      final LivingEntity target, final DamageSource source, final Coating coating) {
+    Banes.struck(source.getAttacker(), target, Banes.of(coating));
     Deeds.record(
         source.getAttacker(),
         Deed.of(DeedKinds.COATED_HIT).with(DeedKinds.COATING, coating.asString()));

@@ -47,6 +47,10 @@ public record House(
         lord, Optional.empty(), Optional.of(anchor), List.of(), List.of(), Optional.empty());
   }
 
+  public int household() {
+    return size() + 1;
+  }
+
   public int size() {
     return players.size() + npcs.size();
   }

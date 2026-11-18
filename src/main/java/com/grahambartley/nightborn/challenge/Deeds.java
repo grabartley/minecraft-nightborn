@@ -1,5 +1,6 @@
 package com.grahambartley.nightborn.challenge;
 
+import com.grahambartley.nightborn.advancement.DeedCriterion;
 import com.grahambartley.nightborn.faction.GuildMembership;
 import com.grahambartley.nightborn.vampire.Vampires;
 import java.util.Optional;
@@ -44,6 +45,7 @@ public final class Deeds {
     }
     ChallengeRewards.pay(player, outcome, context);
     ServerFirsts.offer(player, deed);
+    DeedCriterion.done(player, deed);
   }
 
   public static Optional<Side> side(final PlayerEntity player) {

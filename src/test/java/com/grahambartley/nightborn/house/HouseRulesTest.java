@@ -189,4 +189,18 @@ class HouseRulesTest {
       final boolean expected) {
     assertEquals(expected, HouseRules.marksStore(main, sneaking, bottle, vampire, store));
   }
+
+  @ParameterizedTest(name = "{0}, led before {1} -> founds {2}")
+  @CsvSource({
+    "FOUND, false, true",
+    "CLAIM, false, true",
+    "CLAIM, true, false",
+    "NONE, false, false",
+    "LIVED_IN, false, false",
+    "CLAIMED, false, false"
+  })
+  @DisplayName("only a new house counts as founded, not a house moved to a claimed seat")
+  void founds(final HouseRules.Founding verdict, final boolean ledBefore, final boolean expected) {
+    assertEquals(expected, HouseRules.founds(verdict, ledBefore));
+  }
 }

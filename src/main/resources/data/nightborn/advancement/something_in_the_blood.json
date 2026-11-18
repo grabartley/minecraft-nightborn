@@ -1,0 +1,28 @@
+{
+  "parent": "nightborn:house_call",
+  "display": {
+    "icon": {
+      "id": "nightborn:blood_pool"
+    },
+    "title": {
+      "translate": "advancements.nightborn.something_in_the_blood.title"
+    },
+    "description": {
+      "translate": "advancements.nightborn.something_in_the_blood.description"
+    },
+    "frame": "task"
+  },
+  "criteria": {
+    "drank": {
+      "trigger": "nightborn:deed",
+      "conditions": {
+        "deed": "nightborn:old_blood_drunk"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "drank"
+    ]
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "parent": "nightborn:no_reflection_on_you",
+  "display": {
+    "icon": {
+      "id": "nightborn:blood_bottle"
+    },
+    "title": {
+      "translate": "advancements.nightborn.coming_of_age.title"
+    },
+    "description": {
+      "translate": "advancements.nightborn.coming_of_age.description"
+    },
+    "frame": "task"
+  },
+  "criteria": {
+    "adult": {
+      "trigger": "nightborn:deed",
+      "conditions": {
+        "deed": "nightborn:stage_reached",
+        "facts": {
+          "stage": "nightborn:adult"
+        }
+      }
+    }
+  },
+  "requirements": [
+    [
+      "adult"
+    ]
+  ]
+}

@@ -17,6 +17,7 @@ import com.grahambartley.nightborn.sickness.BiteSickness;
 import com.grahambartley.nightborn.vampire.VampireAttributes;
 import com.grahambartley.nightborn.vampire.Vampires;
 import com.grahambartley.nightborn.vampire.VisibleStateAttachment;
+import com.grahambartley.nightborn.vomit.Meals;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
 import net.minecraft.component.type.FoodComponent;
@@ -106,6 +107,7 @@ abstract class PlayerEntityMixin {
       final CallbackInfoReturnable<ItemStack> cir) {
     if ((Object) this instanceof ServerPlayerEntity player) {
       BiteSickness.onEaten(player, stack);
+      Meals.eaten(player, stack);
     }
   }
 

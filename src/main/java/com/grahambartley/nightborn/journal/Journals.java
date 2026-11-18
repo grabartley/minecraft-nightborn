@@ -19,7 +19,10 @@ public final class Journals {
     JournalLogAttachment.register();
     JournalItems.register();
     ServerPlayConnectionEvents.JOIN.register(
-        (handler, sender, server) -> catchUp(handler.getPlayer()));
+        (handler, sender, server) -> {
+          catchUp(handler.getPlayer());
+          JournalPages.later(handler.getPlayer());
+        });
   }
 
   public static void give(final ServerPlayerEntity player, final Journal journal) {

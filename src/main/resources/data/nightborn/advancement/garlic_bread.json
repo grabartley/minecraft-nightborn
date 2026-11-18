@@ -1,0 +1,33 @@
+{
+  "parent": "nightborn:root",
+  "display": {
+    "icon": {
+      "id": "nightborn:garlic"
+    },
+    "title": {
+      "translate": "advancements.nightborn.garlic_bread.title"
+    },
+    "description": {
+      "translate": "advancements.nightborn.garlic_bread.description"
+    },
+    "frame": "task",
+    "hidden": true
+  },
+  "criteria": {
+    "ate": {
+      "trigger": "nightborn:deed",
+      "conditions": {
+        "deed": "nightborn:ate",
+        "facts": {
+          "food": "minecraft:bread",
+          "garlic_in_other_hand": "true"
+        }
+      }
+    }
+  },
+  "requirements": [
+    [
+      "ate"
+    ]
+  ]
+}

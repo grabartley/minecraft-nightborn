@@ -1,0 +1,58 @@
+{
+  "parent": "nightborn:sworn_in",
+  "display": {
+    "icon": {
+      "id": "nightborn:wooden_stake"
+    },
+    "title": {
+      "translate": "advancements.nightborn.stage_fright.title"
+    },
+    "description": {
+      "translate": "advancements.nightborn.stage_fright.description"
+    },
+    "frame": "challenge"
+  },
+  "criteria": {
+    "fledgling": {
+      "trigger": "nightborn:deed",
+      "conditions": {
+        "deed": "nightborn:vampire_staked",
+        "facts": {
+          "stage_rank": "0"
+        }
+      }
+    },
+    "adult": {
+      "trigger": "nightborn:deed",
+      "conditions": {
+        "deed": "nightborn:vampire_staked",
+        "facts": {
+          "stage_rank": "1"
+        }
+      }
+    },
+    "elder": {
+      "trigger": "nightborn:deed",
+      "conditions": {
+        "deed": "nightborn:vampire_staked",
+        "facts": {
+          "stage_rank": "2"
+        }
+      }
+    }
+  },
+  "requirements": [
+    [
+      "fledgling"
+    ],
+    [
+      "adult"
+    ],
+    [
+      "elder"
+    ]
+  ],
+  "rewards": {
+    "experience": 100
+  }
+}

@@ -23,9 +23,12 @@ class StructureZonePayloadTest {
         Optional.empty(),
         Optional.of(
             new StructureZone(
-                new FogZone(0.0, 64.0, 0.0, -10, 60, -10, 10, 70, 10), StructureAmbience.SILENT)),
+                Identifier.of("nightborn", "crypt"),
+                new FogZone(0.0, 64.0, 0.0, -10, 60, -10, 10, 70, 10),
+                StructureAmbience.SILENT)),
         Optional.of(
             new StructureZone(
+                Identifier.of("nightborn", "ruined_manor"),
                 new FogZone(-1200.5, -40.0, 3000.25, -1300, -60, 2900, -1100, 20, 3100),
                 new StructureAmbience(
                     Optional.of(Identifier.of("nightborn", "ambient.manor.loop")),

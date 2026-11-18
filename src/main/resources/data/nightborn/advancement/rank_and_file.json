@@ -1,0 +1,31 @@
+{
+  "parent": "nightborn:sworn_in",
+  "display": {
+    "icon": {
+      "id": "nightborn:guild_badge"
+    },
+    "title": {
+      "translate": "advancements.nightborn.rank_and_file.title"
+    },
+    "description": {
+      "translate": "advancements.nightborn.rank_and_file.description"
+    },
+    "frame": "task"
+  },
+  "criteria": {
+    "hunter": {
+      "trigger": "nightborn:deed",
+      "conditions": {
+        "deed": "nightborn:rank_reached",
+        "facts": {
+          "rank": "nightborn:hunter"
+        }
+      }
+    }
+  },
+  "requirements": [
+    [
+      "hunter"
+    ]
+  ]
+}
