@@ -218,7 +218,9 @@ public class VampireEntity extends HostileEntity
     targetSelector.add(1, new RevengeGoal(this));
     targetSelector.add(2, new StanceTargetGoal(this, memberStance));
     targetSelector.add(
-        2, new HouseGuardGoal(this, homeLife::home, () -> HouseWatch.onWatch(this), this::hiss));
+        2,
+        new HouseGuardGoal(
+            this, () -> homeLife.home(), () -> HouseWatch.onWatch(this), this::hiss));
     targetSelector.add(
         2, new ActiveTargetGoal<>(this, LivingEntity.class, 10, true, false, this::hunts));
   }
