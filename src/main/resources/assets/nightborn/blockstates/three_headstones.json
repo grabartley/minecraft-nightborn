@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "nightborn:block/trophy/three_headstones"
+    },
+    "facing=east": {
+      "model": "nightborn:block/trophy/three_headstones",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "nightborn:block/trophy/three_headstones",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "nightborn:block/trophy/three_headstones",
+      "y": 270
+    }
+  }
+}

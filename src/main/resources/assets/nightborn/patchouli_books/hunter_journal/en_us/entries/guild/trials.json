@@ -1,0 +1,17 @@
+{
+  "name": "nightborn.journal.hunter.trials",
+  "icon": "minecraft:writable_book",
+  "category": "nightborn:guild",
+  "advancement": "nightborn:sworn_in",
+  "secret": true,
+  "sortnum": 4,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "nightborn.journal.hunter.trials.1"
+    },
+    {
+      "type": "nightborn:trials"
+    }
+  ]
+}

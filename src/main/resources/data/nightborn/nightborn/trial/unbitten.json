@@ -1,0 +1,16 @@
+{
+  "name": {
+    "translate": "nightborn.trial.unbitten"
+  },
+  "description": {
+    "translate": "nightborn.trial.unbitten.description"
+  },
+  "side": "hunter",
+  "deed": "nightborn:vampire_staked",
+  "count": 10,
+  "reset_by": {
+    "deed": "nightborn:bitten"
+  },
+  "gate": "nightborn:veteran",
+  "size": "large"
+}

@@ -1,0 +1,15 @@
+{
+  "name": {
+    "translate": "nightborn.trial.head_of_the_house"
+  },
+  "description": {
+    "translate": "nightborn.trial.head_of_the_house.description"
+  },
+  "side": "hunter",
+  "deed": "nightborn:vampire_staked",
+  "facts": {
+    "lord": "true"
+  },
+  "gate": "nightborn:veteran",
+  "size": "large"
+}

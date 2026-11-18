@@ -1,0 +1,17 @@
+{
+  "name": {
+    "translate": "nightborn.trial.out_of_the_air"
+  },
+  "description": {
+    "translate": "nightborn.trial.out_of_the_air.description"
+  },
+  "side": "hunter",
+  "deed": "nightborn:grounded",
+  "count": 5,
+  "gate": "nightborn:hunter",
+  "skills": [
+    "nightborn:trapper/net_shot",
+    "nightborn:slayer/stake_throw"
+  ],
+  "size": "medium"
+}

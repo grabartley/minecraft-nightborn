@@ -47,4 +47,18 @@ class VillageStepTest {
   void comparesSteps(final VillageStep step, final VillageStep other, final boolean atLeast) {
     assertEquals(atLeast, step.atLeast(other));
   }
+
+  @ParameterizedTest(name = "{0} to {1} has eased: {2}")
+  @CsvSource({
+    "WARY, CALM, true",
+    "HUNTED, CALM, true",
+    "WARY, WARY, false",
+    "WARDED, WARY, false",
+    "CALM, CALM, false",
+    "CALM, WARY, false"
+  })
+  @DisplayName("a village has eased only when it drops from Wary or worse to calm")
+  void eased(final VillageStep before, final VillageStep after, final boolean eased) {
+    assertEquals(eased, VillageStep.eased(before, after));
+  }
 }

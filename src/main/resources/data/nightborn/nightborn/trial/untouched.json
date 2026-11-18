@@ -1,0 +1,16 @@
+{
+  "name": {
+    "translate": "nightborn.trial.untouched"
+  },
+  "description": {
+    "translate": "nightborn.trial.untouched.description"
+  },
+  "side": "vampire",
+  "deed": "nightborn:night_lived",
+  "count": 10,
+  "reset_by": {
+    "deed": "nightborn:downed"
+  },
+  "gate": "nightborn:elder",
+  "size": "large"
+}

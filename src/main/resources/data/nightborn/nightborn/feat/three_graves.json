@@ -1,0 +1,15 @@
+{
+  "name": {
+    "translate": "nightborn.feat.three_graves"
+  },
+  "description": {
+    "translate": "nightborn.feat.three_graves.description"
+  },
+  "title": {
+    "translate": "nightborn.feat.three_graves.title"
+  },
+  "side": "anyone",
+  "deed": "nightborn:nemesis_ended",
+  "count": 3,
+  "trophy": "nightborn:three_headstones"
+}

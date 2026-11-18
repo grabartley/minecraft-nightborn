@@ -1,0 +1,12 @@
+{
+  "name": {
+    "translate": "nightborn.trial.out_in_the_sun"
+  },
+  "description": {
+    "translate": "nightborn.trial.out_in_the_sun.description"
+  },
+  "side": "vampire",
+  "deed": "nightborn:parasol_walked",
+  "count": 200,
+  "size": "small"
+}

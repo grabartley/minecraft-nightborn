@@ -1,0 +1,17 @@
+{
+  "name": "nightborn.journal.vampire.trials",
+  "icon": "minecraft:writable_book",
+  "category": "nightborn:growth",
+  "advancement": "nightborn:no_reflection_on_you",
+  "secret": true,
+  "sortnum": 9,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "nightborn.journal.vampire.trials.1"
+    },
+    {
+      "type": "nightborn:trials"
+    }
+  ]
+}

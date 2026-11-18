@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "nightborn:block/trophy/bronze_garlic_wreath"
+    },
+    "facing=east": {
+      "model": "nightborn:block/trophy/bronze_garlic_wreath",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "nightborn:block/trophy/bronze_garlic_wreath",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "nightborn:block/trophy/bronze_garlic_wreath",
+      "y": 270
+    }
+  }
+}

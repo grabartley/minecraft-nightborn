@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "nightborn:block/trophy/silver_sword_in_stone"
+    },
+    "facing=east": {
+      "model": "nightborn:block/trophy/silver_sword_in_stone",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "nightborn:block/trophy/silver_sword_in_stone",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "nightborn:block/trophy/silver_sword_in_stone",
+      "y": 270
+    }
+  }
+}

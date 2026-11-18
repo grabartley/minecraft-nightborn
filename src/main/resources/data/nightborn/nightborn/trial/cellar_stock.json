@@ -1,0 +1,11 @@
+{
+  "name": {
+    "translate": "nightborn.trial.cellar_stock"
+  },
+  "description": {
+    "translate": "nightborn.trial.cellar_stock.description"
+  },
+  "side": "vampire",
+  "deed": "nightborn:chalice_filled",
+  "size": "small"
+}

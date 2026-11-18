@@ -1,0 +1,15 @@
+{
+  "name": {
+    "translate": "nightborn.trial.camp_fire"
+  },
+  "description": {
+    "translate": "nightborn.trial.camp_fire.description"
+  },
+  "side": "vampire",
+  "deed": "nightborn:hunter_killed",
+  "facts": {
+    "last": "true"
+  },
+  "gate": "nightborn:elder",
+  "size": "large"
+}

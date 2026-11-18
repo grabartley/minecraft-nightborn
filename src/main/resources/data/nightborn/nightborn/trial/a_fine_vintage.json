@@ -1,0 +1,19 @@
+{
+  "name": {
+    "translate": "nightborn.trial.a_fine_vintage"
+  },
+  "description": {
+    "translate": "nightborn.trial.a_fine_vintage.description"
+  },
+  "side": "vampire",
+  "deed": "nightborn:fed",
+  "facts": {
+    "villager": "true"
+  },
+  "count": 5,
+  "measure": "distinct",
+  "key": "profession",
+  "gate": "nightborn:adult",
+  "size": "medium",
+  "reward": "nightborn:choker_of_thorns"
+}

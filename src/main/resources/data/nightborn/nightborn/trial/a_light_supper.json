@@ -1,0 +1,16 @@
+{
+  "name": {
+    "translate": "nightborn.trial.a_light_supper"
+  },
+  "description": {
+    "translate": "nightborn.trial.a_light_supper.description"
+  },
+  "side": "vampire",
+  "deed": "nightborn:fed",
+  "facts": {
+    "animal": "true"
+  },
+  "count": 5,
+  "within": "one_night",
+  "size": "small"
+}

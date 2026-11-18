@@ -1,0 +1,8 @@
+{
+  "components": [
+    {
+      "type": "patchouli:custom",
+      "class": "com.grahambartley.nightborn.client.journal.MasteryFeatsComponent"
+    }
+  ]
+}

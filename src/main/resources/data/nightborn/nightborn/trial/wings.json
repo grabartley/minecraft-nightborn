@@ -1,0 +1,16 @@
+{
+  "name": {
+    "translate": "nightborn.trial.wings"
+  },
+  "description": {
+    "translate": "nightborn.trial.wings.description"
+  },
+  "side": "vampire",
+  "deed": "nightborn:bat_flown",
+  "count": 1000,
+  "within": "one_night",
+  "skills": [
+    "nightborn:beast/bat_form"
+  ],
+  "size": "small"
+}

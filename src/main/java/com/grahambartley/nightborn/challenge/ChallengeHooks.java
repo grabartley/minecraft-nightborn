@@ -42,19 +42,19 @@ public final class ChallengeHooks {
       Deeds.record(source.getAttacker(), Deed.of(DeedKinds.VAMPIRE_BAT_KILLED));
       return;
     }
-    if (!Vampires.isVampire(victim)) {
-      return;
-    }
     final boolean staked = Staking.staked(source);
-    if (staked && victim instanceof ServerPlayerEntity player) {
-      Deeds.record(player, Deed.of(DeedKinds.STAKED));
-    }
     final Optional<UUID> staker = staked ? Downed.hunter(source) : Optional.empty();
     if (victim instanceof EldestEntity eldest) {
       if (EldestRewards.pays(staked, source.isOf(NightbornDamage.SUN))) {
         eldestEnded(server, eldest, staker);
       }
       return;
+    }
+    if (!Vampires.isVampire(victim)) {
+      return;
+    }
+    if (staked && victim instanceof ServerPlayerEntity player) {
+      Deeds.record(player, Deed.of(DeedKinds.STAKED));
     }
     staker
         .map(id -> server.getPlayerManager().getPlayer(id))

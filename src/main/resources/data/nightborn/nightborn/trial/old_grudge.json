@@ -1,0 +1,13 @@
+{
+  "name": {
+    "translate": "nightborn.trial.old_grudge"
+  },
+  "description": {
+    "translate": "nightborn.trial.old_grudge.description"
+  },
+  "side": "vampire",
+  "deed": "nightborn:nemesis_ended",
+  "gate": "nightborn:elder",
+  "size": "large",
+  "reward": "nightborn:death_mask"
+}

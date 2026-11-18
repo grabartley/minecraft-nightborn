@@ -1,0 +1,15 @@
+{
+  "name": {
+    "translate": "nightborn.trial.light_sleeper"
+  },
+  "description": {
+    "translate": "nightborn.trial.light_sleeper.description"
+  },
+  "side": "hunter",
+  "deed": "nightborn:vampire_staked",
+  "facts": {
+    "in_coffin": "true"
+  },
+  "gate": "nightborn:hunter",
+  "size": "medium"
+}

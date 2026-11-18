@@ -1,0 +1,12 @@
+{
+  "name": {
+    "translate": "nightborn.trial.old_enemy"
+  },
+  "description": {
+    "translate": "nightborn.trial.old_enemy.description"
+  },
+  "side": "hunter",
+  "deed": "nightborn:nemesis_ended",
+  "gate": "nightborn:veteran",
+  "size": "large"
+}

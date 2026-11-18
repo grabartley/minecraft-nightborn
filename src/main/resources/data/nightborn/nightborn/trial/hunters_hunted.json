@@ -1,0 +1,14 @@
+{
+  "name": {
+    "translate": "nightborn.trial.hunters_hunted"
+  },
+  "description": {
+    "translate": "nightborn.trial.hunters_hunted.description"
+  },
+  "side": "vampire",
+  "deed": "nightborn:hunter_killed",
+  "count": 6,
+  "within": "one_night",
+  "gate": "nightborn:adult",
+  "size": "medium"
+}

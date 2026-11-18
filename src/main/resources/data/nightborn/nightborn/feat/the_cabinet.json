@@ -1,0 +1,16 @@
+{
+  "name": {
+    "translate": "nightborn.feat.the_cabinet"
+  },
+  "description": {
+    "translate": "nightborn.feat.the_cabinet.description"
+  },
+  "title": {
+    "translate": "nightborn.feat.the_cabinet.title"
+  },
+  "side": "anyone",
+  "deed": "nightborn:accessories_held",
+  "count": 60,
+  "measure": "most",
+  "trophy": "nightborn:curio_cabinet"
+}

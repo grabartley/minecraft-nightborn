@@ -1,0 +1,16 @@
+{
+  "name": {
+    "translate": "nightborn.trial.not_a_sound"
+  },
+  "description": {
+    "translate": "nightborn.trial.not_a_sound.description"
+  },
+  "side": "hunter",
+  "deed": "nightborn:household_cleared_unwoken",
+  "facts": {
+    "by_day": "true"
+  },
+  "gate": "nightborn:hunter",
+  "size": "large",
+  "reward": "nightborn:wardens_cape"
+}

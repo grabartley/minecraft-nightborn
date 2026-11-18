@@ -1,0 +1,15 @@
+{
+  "name": {
+    "translate": "nightborn.trial.long_night"
+  },
+  "description": {
+    "translate": "nightborn.trial.long_night.description"
+  },
+  "side": "hunter",
+  "deed": "nightborn:eldest_ended",
+  "facts": {
+    "summoner": "true"
+  },
+  "gate": "nightborn:veteran",
+  "size": "large"
+}

@@ -1,0 +1,12 @@
+{
+  "name": {
+    "translate": "nightborn.trial.shaken_off"
+  },
+  "description": {
+    "translate": "nightborn.trial.shaken_off.description"
+  },
+  "side": "hunter",
+  "deed": "nightborn:bite_broken",
+  "count": 3,
+  "size": "small"
+}

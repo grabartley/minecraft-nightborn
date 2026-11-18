@@ -1,0 +1,20 @@
+{
+  "name": {
+    "translate": "nightborn.feat.the_scourge"
+  },
+  "description": {
+    "translate": "nightborn.feat.the_scourge.description"
+  },
+  "title": {
+    "translate": "nightborn.feat.the_scourge.title"
+  },
+  "side": "vampire",
+  "deed": "nightborn:raiding_party_beaten",
+  "facts": {
+    "size": "12"
+  },
+  "at_least": {
+    "nearest_player": 64
+  },
+  "trophy": "nightborn:hunters_hat_stand"
+}

@@ -1,0 +1,20 @@
+{
+  "name": {
+    "translate": "nightborn.feat.a_ghost_at_the_feast"
+  },
+  "description": {
+    "translate": "nightborn.feat.a_ghost_at_the_feast.description"
+  },
+  "title": {
+    "translate": "nightborn.feat.a_ghost_at_the_feast.title"
+  },
+  "side": "vampire",
+  "deed": "nightborn:fed",
+  "facts": {
+    "villager": "true",
+    "seen": "false"
+  },
+  "count": 100,
+  "trophy": "nightborn:empty_gilt_mirror",
+  "reward": "nightborn:opera_mask"
+}

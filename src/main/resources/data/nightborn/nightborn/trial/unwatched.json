@@ -1,0 +1,17 @@
+{
+  "name": {
+    "translate": "nightborn.trial.unwatched"
+  },
+  "description": {
+    "translate": "nightborn.trial.unwatched.description"
+  },
+  "side": "vampire",
+  "deed": "nightborn:fed",
+  "facts": {
+    "villager": "true",
+    "seen": "false"
+  },
+  "count": 3,
+  "within": "one_night",
+  "size": "medium"
+}

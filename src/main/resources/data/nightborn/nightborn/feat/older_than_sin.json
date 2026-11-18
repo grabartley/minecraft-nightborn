@@ -1,0 +1,17 @@
+{
+  "name": {
+    "translate": "nightborn.feat.older_than_sin"
+  },
+  "description": {
+    "translate": "nightborn.feat.older_than_sin.description"
+  },
+  "title": {
+    "translate": "nightborn.feat.older_than_sin.title"
+  },
+  "side": "hunter",
+  "deed": "nightborn:vampire_staked",
+  "at_least": {
+    "stage_rank": 3
+  },
+  "trophy": "nightborn:ash_urn"
+}

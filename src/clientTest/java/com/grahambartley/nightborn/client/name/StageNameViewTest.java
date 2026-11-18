@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Optional;
 import net.minecraft.text.Text;
 import net.minecraft.text.TextColor;
+import net.minecraft.text.TranslatableTextContent;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import org.junit.jupiter.api.DisplayName;
@@ -71,5 +72,18 @@ class StageNameViewTest {
   void plainWithoutAMark() {
     final Text name = Text.literal("Lucy");
     assertSame(name, StageNameView.marked(name, Optional.empty()));
+  }
+
+  @ParameterizedTest(name = "{0} with title {1} reads {2}")
+  @CsvSource({"Mina, the Undying, Mina the Undying", "Abe, '', Abe"})
+  @DisplayName("a worn title follows the name, and none leaves the name alone")
+  void titled(final String name, final String title, final String shown) {
+    final Optional<Text> worn = Optional.of(title).filter(t -> !t.isEmpty()).map(Text::literal);
+    final Text titled = StageNameView.titled(Text.literal(name), worn);
+    assertEquals(
+        worn.isEmpty() ? name : StageNameView.TITLED,
+        worn.isEmpty()
+            ? titled.getString()
+            : ((TranslatableTextContent) titled.getContent()).getKey());
   }
 }

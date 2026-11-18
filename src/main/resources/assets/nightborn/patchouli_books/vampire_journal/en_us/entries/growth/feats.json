@@ -1,0 +1,17 @@
+{
+  "name": "nightborn.journal.vampire.feats",
+  "icon": "nightborn:cracked_stake_dome",
+  "category": "nightborn:growth",
+  "advancement": "nightborn:no_reflection_on_you",
+  "secret": true,
+  "sortnum": 10,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "nightborn.journal.vampire.feats.1"
+    },
+    {
+      "type": "nightborn:feats"
+    }
+  ]
+}

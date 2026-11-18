@@ -9,18 +9,12 @@ import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.registry.RegistryWrapper;
-import net.minecraft.text.OrderedText;
 import net.minecraft.text.Text;
 import vazkii.patchouli.api.IComponentRenderContext;
 import vazkii.patchouli.api.ICustomComponent;
 import vazkii.patchouli.api.IVariable;
 
 public final class ContractsInHandComponent implements ICustomComponent {
-
-  private static final int WIDTH = 116;
-  private static final int BOTTOM = 156;
-  private static final int GAP = 4;
-  private static final int TITLE_GAP = 14;
 
   private transient int x;
   private transient int y;
@@ -48,11 +42,8 @@ public final class ContractsInHandComponent implements ICustomComponent {
         ContractLines.inHand(
             Iterables.concat(player.getInventory().main, player.getInventory().offHand),
             player.getRegistryManager());
-    final Text title =
-        Text.translatable("nightborn.journal.contracts.title").setStyle(context.getFont());
-    graphics.drawText(
-        font, title, x + (WIDTH - font.getWidth(title)) / 2, y, context.getHeaderColor(), false);
-    int top = y + TITLE_GAP;
+    int top =
+        JournalPageText.title(graphics, font, "nightborn.journal.contracts.title", x, y, context);
     if (contracts.isEmpty()) {
       draw(graphics, font, Text.translatable("nightborn.journal.contracts.none"), top, context);
       return;
@@ -61,8 +52,8 @@ public final class ContractsInHandComponent implements ICustomComponent {
       for (final ContractLines.Line line : contract) {
         top = draw(graphics, font, line.text(), top, context);
       }
-      top += GAP;
-      if (top >= BOTTOM) {
+      top += JournalPageText.GAP;
+      if (top >= JournalPageText.BOTTOM) {
         return;
       }
     }
@@ -74,15 +65,7 @@ public final class ContractsInHandComponent implements ICustomComponent {
       final Text text,
       final int top,
       final IComponentRenderContext context) {
-    int line = top;
-    for (final OrderedText row : font.wrapLines(text.copy().setStyle(context.getFont()), WIDTH)) {
-      if (line + font.fontHeight > BOTTOM) {
-        return BOTTOM;
-      }
-      graphics.drawText(font, row, x, line, context.getTextColor(), false);
-      line += font.fontHeight;
-    }
-    return line;
+    return JournalPageText.wrapped(graphics, font, text, x, top, context.getTextColor(), context);
   }
 
   @Override
