@@ -122,6 +122,9 @@ class JournalTest {
     keys.add(book.get("name").getAsString());
     keys.add(book.get("landing_text").getAsString());
     keys.add("item." + journal.id().toTranslationKey());
+    keys.add(
+        journal == Journal.HUNTER ? "nightborn.guild.journal" : "nightborn.journal.contracts.none");
+    keys.add("nightborn.journal.contracts.title");
     for (final JsonObject category : all(contents(journal).resolve("categories"))) {
       keys.add(category.get("name").getAsString());
       keys.add(category.get("description").getAsString());

@@ -3,6 +3,7 @@ package com.grahambartley.nightborn.journal;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.mojang.serialization.JsonOps;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Stream;
@@ -54,5 +55,14 @@ class JournalLogTest {
             .parse(
                 JsonOps.INSTANCE, JournalLog.CODEC.encodeStart(JsonOps.INSTANCE, log).getOrThrow())
             .getOrThrow());
+  }
+
+  @ParameterizedTest(name = "{0}")
+  @MethodSource("logs")
+  @DisplayName("a log always saves its journals in the same order")
+  void savesInOrder(final Set<Journal> given) {
+    final List<Journal> saved = new JournalLog(given).inOrder();
+    assertEquals(given.size(), saved.size());
+    assertEquals(saved.stream().sorted().toList(), saved);
   }
 }

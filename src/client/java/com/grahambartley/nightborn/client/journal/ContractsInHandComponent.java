@@ -20,6 +20,7 @@ public final class ContractsInHandComponent implements ICustomComponent {
   private static final int WIDTH = 116;
   private static final int BOTTOM = 156;
   private static final int GAP = 4;
+  private static final int TITLE_GAP = 14;
 
   private transient int x;
   private transient int y;
@@ -47,7 +48,11 @@ public final class ContractsInHandComponent implements ICustomComponent {
         ContractLines.inHand(
             Iterables.concat(player.getInventory().main, player.getInventory().offHand),
             player.getRegistryManager());
-    int top = y;
+    final Text title =
+        Text.translatable("nightborn.journal.contracts.title").setStyle(context.getFont());
+    graphics.drawText(
+        font, title, x + (WIDTH - font.getWidth(title)) / 2, y, context.getHeaderColor(), false);
+    int top = y + TITLE_GAP;
     if (contracts.isEmpty()) {
       draw(graphics, font, Text.translatable("nightborn.journal.contracts.none"), top, context);
       return;
