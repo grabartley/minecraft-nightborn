@@ -50,7 +50,7 @@ class VampireStructureStartsTest {
 
   @ParameterizedTest(name = "{0} spans {1}")
   @MethodSource("boxes")
-  @DisplayName("a box counts as loaded only when every chunk under it is")
+  @DisplayName("a box lists every chunk it reaches into")
   void chunksUnder(final BlockBox box, final List<ChunkPos> chunks) {
     assertEquals(chunks, VampireStructureStarts.chunksUnder(box));
   }

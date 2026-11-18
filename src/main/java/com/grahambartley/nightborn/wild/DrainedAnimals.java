@@ -112,6 +112,7 @@ public final class DrainedAnimals {
               if (!due(body.getAttachedOrElse(FALLS_AT, now), now)) {
                 return false;
               }
+              body.removeAttached(FALLS_AT);
               body.damage(world.getDamageSources().create(NightbornDamage.BITE), Float.MAX_VALUE);
               return true;
             });
