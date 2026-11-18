@@ -87,7 +87,10 @@ public class SkillGameTest implements FabricGameTest {
       context.assertTrue(Skills.skill(registries, id) != null, "skill " + id + " loads");
     }
     context.assertTrue(
-        Skills.branches(registries).orElseThrow().stream().filter(b -> b.bloodline()).count() == 3,
+        Skills.branches(registries).orElseThrow().stream()
+                .filter(b -> b.line() && b.tree() == SkillTree.VAMPIRE)
+                .count()
+            == 3,
         "three bloodlines load");
     context.complete();
   }
@@ -100,7 +103,7 @@ public class SkillGameTest implements FabricGameTest {
     context.assertEquals(SkillShop.buy(vampire, BEAST), SkillPurchase.Verdict.ALLOWED, "second");
     context.assertEquals(
         SkillShop.buy(vampire, OCCULT),
-        SkillPurchase.Verdict.BLOODLINE_LOCKED,
+        SkillPurchase.Verdict.LINE_LOCKED,
         "a third bloodline is refused");
     final TreeProgress after = SkillAttachment.get(vampire, SkillTree.VAMPIRE);
     context.assertFalse(after.owns(OCCULT), "the third bloodline skill is not owned");
@@ -366,7 +369,7 @@ public class SkillGameTest implements FabricGameTest {
         .executeWithPrefix(source, "nightborn player " + name + " skills vampire reset");
     final TreeProgress after = SkillAttachment.get(vampire, SkillTree.VAMPIRE);
     context.assertTrue(after.bought().isEmpty(), "skills are refunded");
-    context.assertTrue(after.bloodlines().isEmpty(), "bloodlines are reset");
+    context.assertTrue(after.lines().isEmpty(), "bloodlines are reset");
     context.assertEquals(after.free(), 4, "every spent point comes back");
     context.assertTrue(
         vampire

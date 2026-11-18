@@ -3,12 +3,15 @@ package com.grahambartley.nightborn.skill;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import com.google.gson.JsonParser;
+import com.mojang.serialization.JsonOps;
 import io.netty.buffer.Unpooled;
 import java.util.List;
 import net.minecraft.util.Identifier;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.EnumSource;
 
 class SkillProgressTest {
@@ -40,5 +43,20 @@ class SkillProgressTest {
     final var buf = Unpooled.buffer();
     SkillProgress.PACKET_CODEC.encode(buf, progress);
     assertEquals(progress, SkillProgress.PACKET_CODEC.decode(buf));
+  }
+
+  @ParameterizedTest(name = "{0}")
+  @CsvSource(
+      delimiter = '|',
+      value = {
+        "{\"hunter\":{\"earned\":5,\"bought\":[{\"skill\":\"nightborn:hunter/devotion\",\"paid\":3}]}}|0|5",
+        "{\"hunter\":{\"earned\":5,\"bought\":[{\"skill\":\"nightborn:hunter/tracking\",\"paid\":1}],\"revision\":1}}|1|4"
+      })
+  @DisplayName("hunter skills bought before paths are refunded on load")
+  void refundsAnOldHunterTree(final String json, final int bought, final int free) {
+    final SkillProgress loaded =
+        SkillProgress.CODEC.parse(JsonOps.INSTANCE, JsonParser.parseString(json)).getOrThrow();
+    assertEquals(bought, loaded.hunter().bought().size());
+    assertEquals(free, loaded.hunter().free());
   }
 }

@@ -38,7 +38,7 @@ class VampireStagingTest {
     assertEquals(picks, progress.ownedInOrder());
     assertEquals(spent, progress.spent());
     assertEquals(0, progress.free());
-    assertEquals(bloodlines, progress.bloodlines());
+    assertEquals(bloodlines, progress.lines());
   }
 
   @ParameterizedTest(name = "\"{0}\" reads as {1}")

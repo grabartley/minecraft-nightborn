@@ -33,7 +33,7 @@ public final class StakedVampires {
     final DynamicRegistryManager registries = player.getServerWorld().getRegistryManager();
     final TreeProgress before = SkillAttachment.get(player, SkillTree.VAMPIRE);
     final TreeProgress after =
-        StakePenalty.apply(before, percent, skill -> Skills.bloodlineOf(registries, skill));
+        StakePenalty.apply(before, percent, skill -> Skills.lineOf(registries, skill));
     SkillAttachment.set(player, SkillTree.VAMPIRE, after);
     final int lost = before.earned() - after.earned();
     if (lost > 0) {

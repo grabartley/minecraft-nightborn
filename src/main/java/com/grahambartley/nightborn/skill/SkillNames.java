@@ -25,16 +25,16 @@ public final class SkillNames {
     return "vampire_stage." + id.getNamespace() + "." + id.getPath();
   }
 
-  public static Text bloodlines(final List<Identifier> bloodlines) {
-    if (bloodlines.isEmpty()) {
+  public static Text lines(final List<Identifier> lines) {
+    if (lines.isEmpty()) {
       return Text.translatable("nightborn.command.player.skills.none");
     }
     final MutableText names = Text.empty();
-    for (int i = 0; i < bloodlines.size(); i++) {
+    for (int i = 0; i < lines.size(); i++) {
       if (i > 0) {
         names.append(", ");
       }
-      names.append(Text.translatable(branch(bloodlines.get(i))));
+      names.append(Text.translatable(branch(lines.get(i))));
     }
     return names;
   }
