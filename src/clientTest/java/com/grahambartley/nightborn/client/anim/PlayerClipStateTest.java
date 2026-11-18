@@ -214,8 +214,8 @@ class PlayerClipStateTest {
     "30, true, false, FEED",
     "30, false, false, VANILLA",
     "30, false, true, DRAIN",
-    "5, false, false, VANILLA",
-    "5, false, true, DRAIN"
+    "5, false, false, FINISHER_BITE",
+    "5, false, true, FINISHER_BITE"
   })
   @DisplayName(
       "the finisher bite plays once over feeding and draining while the bite holds, then feeding"
@@ -241,6 +241,10 @@ class PlayerClipStateTest {
   void brokenFinisherStaysBroken() {
     final PlayerClipState state = new PlayerClipState();
     state.finisher(300);
+    clip(
+        state,
+        302,
+        new PlayerClipState.Situation(false, false, 0.0, false, true, false, Optional.empty()));
     assertEquals(
         "VANILLA",
         clip(
@@ -253,6 +257,27 @@ class PlayerClipStateTest {
         clip(
             state,
             310,
+            new PlayerClipState.Situation(
+                false, false, 0.0, false, true, false, Optional.empty())));
+  }
+
+  @Test
+  @DisplayName("the finisher plays from its cue even before the feeding flag reaches the client")
+  void finisherCueArrivesFirst() {
+    final PlayerClipState state = new PlayerClipState();
+    state.finisher(300);
+    assertEquals(
+        "FINISHER_BITE",
+        clip(
+            state,
+            300,
+            new PlayerClipState.Situation(
+                false, false, 0.0, false, false, false, Optional.empty())));
+    assertEquals(
+        "FINISHER_BITE",
+        clip(
+            state,
+            301,
             new PlayerClipState.Situation(
                 false, false, 0.0, false, true, false, Optional.empty())));
   }

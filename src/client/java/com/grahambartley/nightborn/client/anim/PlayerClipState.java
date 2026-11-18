@@ -20,6 +20,7 @@ public final class PlayerClipState {
 
   private final EndingEdge landing = new EndingEdge();
   private final EndingEdge standing = new EndingEdge();
+  private final EndingEdge biting = new EndingEdge();
   private final OneShot land = new OneShot();
   private final OneShot rise = new OneShot();
   private final OneShot vomit = new OneShot();
@@ -66,7 +67,7 @@ public final class PlayerClipState {
     if (rise.playing(lengths.rise(), age)) {
       return Optional.of(VampirePose.RISE);
     }
-    if (!situation.feeding()) {
+    if (biting.ended(situation.feeding())) {
       finisher.clear();
     }
     if (finisher.playing(lengths.finisher(), age)) {
