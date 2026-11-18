@@ -1,0 +1,10 @@
+{
+  "works_for": "vampire",
+  "gifts": [
+    {
+      "attribute": "nightborn:blood_drain",
+      "amount": -0.1,
+      "operation": "add_value"
+    }
+  ]
+}

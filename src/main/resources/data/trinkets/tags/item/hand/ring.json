@@ -1,6 +1,25 @@
 {
   "replace": false,
   "values": [
-    "nightborn:onyx_ring"
+    "nightborn:gold_band",
+    "nightborn:iron_signet",
+    "nightborn:onyx_ring",
+    "nightborn:pearl_ring",
+    "nightborn:garnet_signet",
+    "nightborn:bloodstone_ring",
+    "nightborn:jet_band",
+    "nightborn:thrall_keepers_ring",
+    "nightborn:blessed_ring",
+    "nightborn:saints_ring",
+    "nightborn:trackers_ring",
+    "nightborn:ring_of_vigil",
+    "nightborn:widows_ring",
+    "nightborn:moonstone_ring",
+    "nightborn:ring_of_the_court",
+    "nightborn:ring_of_the_beast",
+    "nightborn:ring_of_the_blood",
+    "nightborn:ring_of_the_hunt",
+    "nightborn:ring_of_the_faith",
+    "nightborn:ring_of_the_pyre"
   ]
 }

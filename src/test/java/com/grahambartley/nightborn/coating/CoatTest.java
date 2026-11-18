@@ -30,7 +30,7 @@ class CoatTest {
       final int hits,
       final long ticks,
       final boolean worn) {
-    final Coat coat = new Coat(coating, used, started);
+    final Coat coat = new Coat(coating, used, started, 0);
     assertEquals(hits, coat.hitsLeft(TERMS));
     assertEquals(ticks, coat.ticksLeft(TERMS, now));
     assertEquals(worn, coat.worn(TERMS, now));
@@ -41,14 +41,14 @@ class CoatTest {
   @DisplayName("the clock starts once, and each strike counts one hit")
   void startsAndStrikes(final Coating coating) {
     final Coat started = Coat.fresh(coating).startingAt(40L).startingAt(90L).struck().struck();
-    assertEquals(new Coat(coating, 2, 40L), started);
+    assertEquals(new Coat(coating, 2, 40L, 0), started);
   }
 
   @ParameterizedTest(name = "{0}")
   @EnumSource(Coating.class)
   @DisplayName("a coat saves and loads unchanged")
   void roundTrips(final Coating coating) {
-    final Coat coat = new Coat(coating, 3, 1234L);
+    final Coat coat = new Coat(coating, 3, 1234L, 0);
     assertEquals(
         coat,
         Coat.CODEC
@@ -66,7 +66,7 @@ class CoatTest {
   @DisplayName("a worn coat is spent on a weapon, and ammo keeps its coat until fired")
   void live(
       final int used, final long started, final long now, final boolean ammo, final boolean live) {
-    assertEquals(live, new Coat(Coating.GARLIC, used, started).live(TERMS, now, ammo));
+    assertEquals(live, new Coat(Coating.GARLIC, used, started, 0).live(TERMS, now, ammo));
   }
 
   @ParameterizedTest(name = "{0} used, started {1}, strike at {2}: {3}")
@@ -74,7 +74,7 @@ class CoatTest {
   @DisplayName("a strike starts the clock, counts a hit, and wears the coat off on its last hit")
   void afterStrike(final int used, final long started, final long now, final String left) {
     assertEquals(
-        expected(left), new Coat(Coating.HOLY_WATER, used, started).afterStrike(TERMS, now));
+        expected(left), new Coat(Coating.HOLY_WATER, used, started, 0).afterStrike(TERMS, now));
   }
 
   @ParameterizedTest(name = "{0} used, started {1}, checked at {2}: {3}")
@@ -82,7 +82,26 @@ class CoatTest {
   @DisplayName("an inventory check starts the clock once and drops a worn coat")
   void afterCheck(final int used, final long started, final long now, final String left) {
     assertEquals(
-        expected(left), new Coat(Coating.HOLY_WATER, used, started).afterCheck(TERMS, now));
+        expected(left), new Coat(Coating.HOLY_WATER, used, started, 0).afterCheck(TERMS, now));
+  }
+
+  @ParameterizedTest(name = "{0}, bonus {1}, lasts x{2}: bonus {3}")
+  @CsvSource({
+    "HOLY_WATER, 0, 1.25, 50",
+    "HOLY_WATER, 0, 1.0, 0",
+    "HOLY_WATER, 30, 1.25, 30",
+    "GARLIC, 0, 1.25, 0"
+  })
+  @DisplayName("a blessing is stamped once with the holder's extra time, and garlic never is")
+  void blessedFor(final Coating coating, final int bonus, final double lasts, final int stamped) {
+    assertEquals(stamped, new Coat(coating, 0, 100L, bonus).blessedFor(TERMS, lasts).bonusTicks());
+  }
+
+  @ParameterizedTest(name = "bonus {0}, now {1}: {2} ticks left")
+  @CsvSource({"0, 250, 50", "50, 250, 100", "50, 350, 0"})
+  @DisplayName("a stamped blessing outlasts a plain one by its bonus")
+  void bonusLasts(final int bonus, final long now, final long left) {
+    assertEquals(left, new Coat(Coating.HOLY_WATER, 0, 100L, bonus).ticksLeft(TERMS, now));
   }
 
   private static java.util.Optional<Coat> expected(final String left) {
@@ -91,6 +110,6 @@ class CoatTest {
     }
     final String[] parts = left.split(", ");
     return java.util.Optional.of(
-        new Coat(Coating.HOLY_WATER, Integer.parseInt(parts[0]), Long.parseLong(parts[1])));
+        new Coat(Coating.HOLY_WATER, Integer.parseInt(parts[0]), Long.parseLong(parts[1]), 0));
   }
 }

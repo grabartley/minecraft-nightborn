@@ -96,6 +96,161 @@
       "entries": [
         { "type": "minecraft:tag", "name": "nightborn:music_discs", "expand": true }
       ]
+    },
+    {
+      "rolls": 1,
+      "conditions": [
+        {
+          "condition": "minecraft:random_chance",
+          "chance": 0.2
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "nightborn:blessed_ring",
+          "conditions": [
+            {
+              "condition": "minecraft:location_check",
+              "predicate": {
+                "structures": "nightborn:crypt"
+              }
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "nightborn:widows_ring",
+          "conditions": [
+            {
+              "condition": "minecraft:location_check",
+              "predicate": {
+                "structures": "nightborn:crypt"
+              }
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "nightborn:garlic_sachet",
+          "conditions": [
+            {
+              "condition": "minecraft:location_check",
+              "predicate": {
+                "structures": "nightborn:crypt"
+              }
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "nightborn:sunburst_brooch",
+          "conditions": [
+            {
+              "condition": "minecraft:location_check",
+              "predicate": {
+                "structures": "nightborn:crypt"
+              }
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "nightborn:bloodstone_ring",
+          "conditions": [
+            {
+              "condition": "minecraft:location_check",
+              "predicate": {
+                "structures": "nightborn:ruined_manor"
+              }
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "nightborn:trackers_ring",
+          "conditions": [
+            {
+              "condition": "minecraft:location_check",
+              "predicate": {
+                "structures": "nightborn:ruined_manor"
+              }
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "nightborn:keepsake_locket",
+          "conditions": [
+            {
+              "condition": "minecraft:location_check",
+              "predicate": {
+                "structures": "nightborn:ruined_manor"
+              }
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "nightborn:bat_brooch",
+          "conditions": [
+            {
+              "condition": "minecraft:location_check",
+              "predicate": {
+                "structures": "nightborn:ruined_manor"
+              }
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "nightborn:jet_band",
+          "conditions": [
+            {
+              "condition": "minecraft:location_check",
+              "predicate": {
+                "structures": "nightborn:underground_lair"
+              }
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "nightborn:moonstone_ring",
+          "conditions": [
+            {
+              "condition": "minecraft:location_check",
+              "predicate": {
+                "structures": "nightborn:underground_lair"
+              }
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "nightborn:raven_locket",
+          "conditions": [
+            {
+              "condition": "minecraft:location_check",
+              "predicate": {
+                "structures": "nightborn:underground_lair"
+              }
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "nightborn:spider_brooch",
+          "conditions": [
+            {
+              "condition": "minecraft:location_check",
+              "predicate": {
+                "structures": "nightborn:underground_lair"
+              }
+            }
+          ]
+        }
+      ]
     }
   ]
 }

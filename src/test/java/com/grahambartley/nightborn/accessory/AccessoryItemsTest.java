@@ -39,6 +39,6 @@ class AccessoryItemsTest {
   @Test
   @DisplayName("asking for a piece that does not exist fails loudly")
   void unknown() {
-    assertThrows(IllegalArgumentException.class, () -> AccessoryItems.of("gold_band"));
+    assertThrows(IllegalArgumentException.class, () -> AccessoryItems.of("no_such_piece"));
   }
 }

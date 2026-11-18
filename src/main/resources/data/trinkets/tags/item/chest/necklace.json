@@ -1,6 +1,15 @@
 {
   "replace": false,
   "values": [
-    "nightborn:velvet_choker"
+    "nightborn:pearl_strand",
+    "nightborn:velvet_choker",
+    "nightborn:gold_chain",
+    "nightborn:blood_vial_pendant",
+    "nightborn:raven_locket",
+    "nightborn:choker_of_thorns",
+    "nightborn:crucifix_on_a_chain",
+    "nightborn:garlic_sachet",
+    "nightborn:saints_medal",
+    "nightborn:keepsake_locket"
   ]
 }

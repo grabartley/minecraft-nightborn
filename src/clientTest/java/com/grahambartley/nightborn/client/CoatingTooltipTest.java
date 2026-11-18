@@ -32,7 +32,7 @@ class CoatingTooltipTest {
       final String key,
       final String args) {
     final List<Text> lines =
-        CoatingTooltip.lines(new Coat(coating, used, started), TERMS, 2000L, ammo);
+        CoatingTooltip.lines(new Coat(coating, used, started, 0), TERMS, 2000L, ammo);
     assertEquals(coating.translationKey(), key(lines.get(0)));
     assertEquals(key, key(lines.get(1)));
     final Object[] actual = ((TranslatableTextContent) lines.get(1).getContent()).getArgs();

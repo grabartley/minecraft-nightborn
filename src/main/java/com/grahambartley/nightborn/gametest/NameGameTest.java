@@ -272,7 +272,8 @@ public class NameGameTest implements FabricGameTest {
     final ServerPlayerEntity owner = context.createMockCreativeServerPlayerInWorld();
     final GhostlyFamiliarEntity ghost =
         context.spawnEntity(GhostlyFamiliars.GHOSTLY_FAMILIAR, new BlockPos(3, 2, 3));
-    ghost.summon(owner.getUuid(), new FamiliarPower(200, 10.0F, 3.0F, 24.0F, 200, 8.0F, 200, 9));
+    final FamiliarPower power = new FamiliarPower(200, 10.0F, 3.0F, 24.0F, 200, 8.0F, 200, 9);
+    ghost.summon(owner.getUuid(), power, power.lifetimeTicks());
     ghost.setAiDisabled(true);
     context.runAtTick(
         NAMED,

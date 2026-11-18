@@ -1,0 +1,10 @@
+{
+  "works_for": "vampire",
+  "gifts": [
+    {
+      "attribute": "nightborn:familiar_time",
+      "amount": 0.25,
+      "operation": "add_value"
+    }
+  ]
+}

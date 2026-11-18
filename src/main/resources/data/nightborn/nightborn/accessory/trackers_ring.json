@@ -1,0 +1,10 @@
+{
+  "works_for": "human",
+  "gifts": [
+    {
+      "attribute": "nightborn:tracking_cooldown",
+      "amount": -0.2,
+      "operation": "add_value"
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "works_for": "human",
+  "gifts": [
+    {
+      "attribute": "nightborn:strike_heal",
+      "amount": 1.0,
+      "operation": "add_value"
+    },
+    {
+      "attribute": "nightborn:strike_heal_interval",
+      "amount": 40.0,
+      "operation": "add_value"
+    }
+  ]
+}

@@ -1,6 +1,8 @@
 package com.grahambartley.nightborn.mind;
 
 import com.grahambartley.nightborn.Nightborn;
+import com.grahambartley.nightborn.accessory.GiftAttributes;
+import com.grahambartley.nightborn.accessory.GiftScale;
 import com.grahambartley.nightborn.hunter.HunterAttributes;
 import com.grahambartley.nightborn.skill.MesmerisePower;
 import java.util.Locale;
@@ -121,7 +123,9 @@ public final class Mesmerise {
   static void apply(
       final LivingEntity caster, final LivingEntity target, final MesmerisePower power) {
     final boolean player = target instanceof PlayerEntity;
-    final int ticks = power.durationFor(player);
+    final int ticks =
+        GiftScale.ticks(
+            power.durationFor(player), GiftAttributes.value(target, GiftAttributes.MIND_TIME));
     target.setAttached(MindTies.MESMERISED_BY, caster.getUuid());
     target.addStatusEffect(new StatusEffectInstance(MindEffect.MESMERISED, ticks), caster);
     if (player) {

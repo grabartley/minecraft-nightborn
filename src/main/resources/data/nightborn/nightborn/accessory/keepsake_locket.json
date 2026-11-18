@@ -1,0 +1,9 @@
+{
+  "gifts": [
+    {
+      "attribute": "nightborn:villager_price",
+      "amount": -0.05,
+      "operation": "add_value"
+    }
+  ]
+}

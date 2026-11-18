@@ -1,0 +1,10 @@
+{
+  "works_for": "vampire",
+  "gifts": [
+    {
+      "attribute": "nightborn:finisher_blood",
+      "amount": 2.0,
+      "operation": "add_value"
+    }
+  ]
+}

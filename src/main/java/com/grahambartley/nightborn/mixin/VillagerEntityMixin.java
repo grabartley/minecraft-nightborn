@@ -1,5 +1,7 @@
 package com.grahambartley.nightborn.mixin;
 
+import com.grahambartley.nightborn.accessory.GiftAttributes;
+import com.grahambartley.nightborn.accessory.GiftPrices;
 import com.grahambartley.nightborn.mind.Charm;
 import com.grahambartley.nightborn.village.NightMarkup;
 import com.grahambartley.nightborn.village.VillageSuspicion;
@@ -20,6 +22,7 @@ abstract class VillagerEntityMixin {
   private void nightborn$charmedPrices(final PlayerEntity player, final CallbackInfo ci) {
     final VillagerEntity villager = (VillagerEntity) (Object) this;
     Charm.discount(villager, player);
+    GiftPrices.discount(villager.getOffers(), player, GiftAttributes.VILLAGER_PRICE);
     NightMarkup.charge(villager, player);
   }
 

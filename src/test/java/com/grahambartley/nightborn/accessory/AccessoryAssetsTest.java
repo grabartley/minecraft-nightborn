@@ -76,11 +76,10 @@ class AccessoryAssetsTest {
 
   @ParameterizedTest(name = "{0}")
   @MethodSource("com.grahambartley.nightborn.accessory.AccessoriesTest#ids")
-  @DisplayName("each piece ships its sprite, recipe and, unless it is a ring, its worn model")
+  @DisplayName("each piece ships its sprite and, unless it is a ring, its worn model")
   void shipsItsFiles(final String piece) throws IOException {
     assertTrue(Files.exists(ASSETS.resolve("models/item/" + piece + ".json")));
     assertTrue(Files.exists(ASSETS.resolve("textures/item/" + piece + ".png")));
-    assertTrue(Files.exists(DATA.resolve("nightborn/recipe/" + piece + ".json")));
     final boolean drawn = slotOf(piece).drawn();
     for (final String cut : List.of("male", "female")) {
       assertEquals(
@@ -90,6 +89,15 @@ class AccessoryAssetsTest {
     }
     assertEquals(
         drawn, Files.exists(CLIENT.resolve("animations/armor/" + piece + ".animation.json")));
+  }
+
+  @ParameterizedTest(name = "{0}")
+  @MethodSource("com.grahambartley.nightborn.accessory.AccessoriesTest#ids")
+  @DisplayName("a plain piece is crafted, and a piece with a gift is only ever found")
+  void craftedOnlyWhenPlain(final String piece) throws IOException {
+    final JsonObject data = read("nightborn/nightborn/accessory/" + piece + ".json");
+    final boolean plain = !data.has("gifts") && !data.has("holds");
+    assertEquals(plain, Files.exists(DATA.resolve("nightborn/recipe/" + piece + ".json")), piece);
   }
 
   private static AccessorySlot slotOf(final String piece) throws IOException {

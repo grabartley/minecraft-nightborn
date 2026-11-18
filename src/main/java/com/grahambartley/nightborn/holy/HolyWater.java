@@ -1,6 +1,8 @@
 package com.grahambartley.nightborn.holy;
 
 import com.grahambartley.nightborn.Nightborn;
+import com.grahambartley.nightborn.accessory.GiftAttributes;
+import com.grahambartley.nightborn.accessory.GiftScale;
 import com.grahambartley.nightborn.advancement.Milestone;
 import com.grahambartley.nightborn.advancement.MilestoneCriterion;
 import com.grahambartley.nightborn.config.GearSettings;
@@ -145,7 +147,12 @@ public final class HolyWater {
     if (dose.isEmpty()) {
       return;
     }
-    Weakened.add(vampire, WEAKENED_SOURCE, dose.strength(), dose.ticks());
+    Weakened.add(
+        vampire,
+        WEAKENED_SOURCE,
+        dose.strength(),
+        GiftScale.ticks(
+            dose.ticks(), GiftAttributes.value(vampire, GiftAttributes.HOLY_WATER_TIME)));
     if (attacker != vampire) {
       MilestoneCriterion.reach(attacker, Milestone.HOLY_WATER_HIT);
     }

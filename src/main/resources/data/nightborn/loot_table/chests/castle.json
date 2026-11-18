@@ -109,6 +109,77 @@
       "entries": [
         { "type": "minecraft:tag", "name": "nightborn:music_discs", "expand": true }
       ]
+    },
+    {
+      "rolls": 1,
+      "conditions": [
+        {
+          "condition": "minecraft:random_chance",
+          "chance": 0.15
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "nightborn:garnet_signet",
+          "conditions": [
+            {
+              "condition": "minecraft:location_check",
+              "predicate": {
+                "structures": "nightborn:castle"
+              }
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "nightborn:ring_of_vigil",
+          "conditions": [
+            {
+              "condition": "minecraft:location_check",
+              "predicate": {
+                "structures": "nightborn:castle"
+              }
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "nightborn:blood_vial_pendant",
+          "conditions": [
+            {
+              "condition": "minecraft:location_check",
+              "predicate": {
+                "structures": "nightborn:castle"
+              }
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "nightborn:crucifix_on_a_chain",
+          "conditions": [
+            {
+              "condition": "minecraft:location_check",
+              "predicate": {
+                "structures": "nightborn:castle"
+              }
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "nightborn:rose_brooch",
+          "conditions": [
+            {
+              "condition": "minecraft:location_check",
+              "predicate": {
+                "structures": "nightborn:castle"
+              }
+            }
+          ]
+        }
+      ]
     }
   ]
 }

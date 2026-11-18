@@ -31,7 +31,7 @@ class CoatingsTest {
       final boolean live) {
     final ItemStack sword = new ItemStack(Items.IRON_SWORD);
     if (coated) {
-      sword.set(Coatings.COAT, new Coat(Coating.HOLY_WATER, used, started));
+      sword.set(Coatings.COAT, new Coat(Coating.HOLY_WATER, used, started, 0));
     }
     assertEquals(live, Coatings.live(sword, NightbornConfig.DEFAULTS, now).isPresent());
     assertEquals(coated, Coatings.of(sword).isPresent());

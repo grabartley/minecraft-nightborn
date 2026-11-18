@@ -1,0 +1,10 @@
+{
+  "works_for": "vampire",
+  "gifts": [
+    {
+      "attribute": "nightborn:power_cooldown",
+      "amount": -0.08,
+      "operation": "add_value"
+    }
+  ]
+}

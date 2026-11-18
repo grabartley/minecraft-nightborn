@@ -10,6 +10,7 @@ import com.grahambartley.nightborn.boss.BossFights;
 import com.grahambartley.nightborn.boss.BossHealth;
 import com.grahambartley.nightborn.boss.FightRoll;
 import com.grahambartley.nightborn.boss.FightRules;
+import com.grahambartley.nightborn.boss.Fought;
 import com.grahambartley.nightborn.boss.HoldGroundGoal;
 import com.grahambartley.nightborn.boss.ShownForm;
 import com.grahambartley.nightborn.boss.StanceGoal;
@@ -65,7 +66,7 @@ import software.bernie.geckolib.animation.AnimatableManager;
 import software.bernie.geckolib.animation.AnimationController;
 import software.bernie.geckolib.animation.PlayState;
 
-public class GrandInquisitorEntity extends HunterEntity implements ArenaBoss, BiteQuarry {
+public class GrandInquisitorEntity extends HunterEntity implements ArenaBoss, BiteQuarry, Fought {
 
   public static final Identifier FIGHT = Identifier.of(Nightborn.MOD_ID, "grand_inquisitor");
   public static final TagKey<DamageType> SHRUGS_OFF =
@@ -178,6 +179,7 @@ public class GrandInquisitorEntity extends HunterEntity implements ArenaBoss, Bi
     return fight;
   }
 
+  @Override
   public Set<UUID> fighters() {
     return roll.fighters();
   }

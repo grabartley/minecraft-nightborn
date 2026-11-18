@@ -1,5 +1,6 @@
 package com.grahambartley.nightborn.mixin;
 
+import com.grahambartley.nightborn.accessory.GiftAttributes;
 import com.grahambartley.nightborn.batform.BatForm;
 import com.grahambartley.nightborn.batform.BatShape;
 import com.grahambartley.nightborn.clothing.WornAttributes;
@@ -50,6 +51,7 @@ abstract class PlayerEntityMixin {
     OccultAttributes.addTo(cir.getReturnValue());
     VampireAttributes.addTo(cir.getReturnValue());
     WornAttributes.addTo(cir.getReturnValue());
+    GiftAttributes.addTo(cir.getReturnValue());
   }
 
   @Inject(method = "canConsume", at = @At("HEAD"), cancellable = true)

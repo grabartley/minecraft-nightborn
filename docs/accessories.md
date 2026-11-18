@@ -71,8 +71,8 @@ Vampire structures hold hunter pieces too: they are what is left of hunters who 
 
 | Name | Look | Works for | Gift | Found |
 |---|---|---|---|---|
-| Gold Band | A plain worn gold ring | Anyone | None | Crafted: 1 gold ingot |
-| Iron Signet | A dull iron ring with a blank seal | Anyone | None | Crafted: 1 iron ingot |
+| Gold Band | A plain worn gold ring | Anyone | None | Cut at a stonecutter from 1 gold ingot |
+| Iron Signet | A dull iron ring with a blank seal | Anyone | None | Cut at a stonecutter from 1 iron ingot |
 | Onyx Ring | A black stone in tarnished silver | Anyone | None | Crafted: 1 gold nugget and 1 coal |
 | Pearl Ring | A small pearl in gold | Anyone | None | Crafted: 1 gold nugget and 1 nautilus shell |
 | Garnet Signet | A deep red stone cut with a bat | Vampire | Blood drains 10% slower | Castle |
@@ -103,7 +103,7 @@ Vampire structures hold hunter pieces too: they are what is left of hunters who 
 | Raven Locket | A locket shaped as a raven's head | Vampire | Familiars last 25% longer | Underground lair |
 | Choker Of Thorns | Black iron thorns on a ribbon | Vampire | A feeding bite gives 10% more blood | Vampire trial |
 | Crucifix On A Chain | A small silver crucifix | Human | Weakens and slows a vampire as a held crucifix does, at half the range, with no hand. It does not stop a bite | Castle |
-| Garlic Sachet | A linen pouch on a cord | Human | A vampire mob's bite is 15% more likely to be broken | Crypt |
+| Garlic Sachet | A linen pouch on a cord | Human | A vampire mob's bite is 15% more likely to be broken. A mob's bite cannot otherwise be broken, so it breaks 15% of the time | Crypt |
 | Saint's Medal | A worn bronze medal | Human | Healing prayers heal 20% more | Hunter trial |
 | Keepsake Locket | A gold locket with a painted face inside | Anyone | Villagers' prices are 5% lower | Ruined manor |
 
@@ -117,7 +117,7 @@ Vampire structures hold hunter pieces too: they are what is left of hunters who 
 | Bat Brooch | A gold bat with garnet eyes | Vampire | Bat Form costs 1 less blood, never less than 1 | Ruined manor |
 | Rose Brooch | An enamel rose, half wilted | Vampire | Being seen feeding raises a village's suspicion 20% less | Castle |
 | Guild Badge | A brass badge of the guild | Human | A Guild Master's prices are 10% lower | Hunter trial |
-| Sunburst Brooch | A gold sun with long rays | Human | Holy water splashes over a radius 1 block greater | Crypt |
+| Sunburst Brooch | A gold sun with long rays | Human | Holy water splashes over a radius 1 block greater. Its strength fades over the wider radius, so it lands a little stronger at each distance | Crypt |
 | Spider Brooch | A black spider with a red stone | Anyone | Cobwebs do not slow the wearer | Underground lair |
 
 ## Back

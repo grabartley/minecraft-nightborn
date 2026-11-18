@@ -7,7 +7,7 @@ import java.util.Optional;
 import net.minecraft.network.codec.PacketCodec;
 import net.minecraft.network.codec.PacketCodecs;
 
-public record Coat(Coating coating, int hitsUsed, long startedAt) {
+public record Coat(Coating coating, int hitsUsed, long startedAt, int bonusTicks) {
 
   public static final long NOT_STARTED = -1L;
 
@@ -22,7 +22,10 @@ public record Coat(Coating coating, int hitsUsed, long startedAt) {
                           .forGetter(Coat::hitsUsed),
                       Codec.LONG
                           .optionalFieldOf("started_at", NOT_STARTED)
-                          .forGetter(Coat::startedAt))
+                          .forGetter(Coat::startedAt),
+                      Codec.intRange(0, Integer.MAX_VALUE)
+                          .optionalFieldOf("bonus_ticks", 0)
+                          .forGetter(Coat::bonusTicks))
                   .apply(instance, Coat::new));
 
   public static final PacketCodec<ByteBuf, Coat> PACKET_CODEC =
@@ -33,10 +36,12 @@ public record Coat(Coating coating, int hitsUsed, long startedAt) {
           Coat::hitsUsed,
           PacketCodecs.VAR_LONG,
           Coat::startedAt,
+          PacketCodecs.VAR_INT,
+          Coat::bonusTicks,
           Coat::new);
 
   public static Coat fresh(final Coating coating) {
-    return new Coat(coating, 0, NOT_STARTED);
+    return new Coat(coating, 0, NOT_STARTED, 0);
   }
 
   public boolean started() {
@@ -44,11 +49,11 @@ public record Coat(Coating coating, int hitsUsed, long startedAt) {
   }
 
   public Coat startingAt(final long now) {
-    return started() ? this : new Coat(coating, hitsUsed, now);
+    return started() ? this : new Coat(coating, hitsUsed, now, bonusTicks);
   }
 
   public Coat struck() {
-    return new Coat(coating, hitsUsed + 1, startedAt);
+    return new Coat(coating, hitsUsed + 1, startedAt, bonusTicks);
   }
 
   public int hitsLeft(final CoatingTerms terms) {
@@ -56,7 +61,16 @@ public record Coat(Coating coating, int hitsUsed, long startedAt) {
   }
 
   public long ticksLeft(final CoatingTerms terms, final long now) {
-    return started() ? Math.max(0L, startedAt + terms.ticks() - now) : terms.ticks();
+    final long lasts = (long) terms.ticks() + bonusTicks;
+    return started() ? Math.max(0L, startedAt + lasts - now) : lasts;
+  }
+
+  public Coat blessedFor(final CoatingTerms terms, final double lastsFactor) {
+    if (coating != Coating.HOLY_WATER || bonusTicks > 0) {
+      return this;
+    }
+    final int bonus = (int) Math.max(0L, Math.round(terms.ticks() * (lastsFactor - 1.0)));
+    return bonus == 0 ? this : new Coat(coating, hitsUsed, startedAt, bonus);
   }
 
   public boolean worn(final CoatingTerms terms, final long now) {

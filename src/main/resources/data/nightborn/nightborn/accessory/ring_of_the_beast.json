@@ -1,0 +1,10 @@
+{
+  "works_for": "human",
+  "gifts": [
+    {
+      "attribute": "minecraft:generic.fall_damage_multiplier",
+      "amount": -0.5,
+      "operation": "add_value"
+    }
+  ]
+}

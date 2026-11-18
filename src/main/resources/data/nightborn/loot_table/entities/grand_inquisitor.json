@@ -39,6 +39,31 @@
           ]
         }
       ]
+    },
+    {
+      "rolls": 1,
+      "conditions": [
+        {
+          "condition": "minecraft:random_chance",
+          "chance": 0.08
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "nightborn:ring_of_the_hunt",
+          "functions": [
+            {
+              "function": "nightborn:pick_unowned",
+              "items": [
+                "nightborn:ring_of_the_hunt",
+                "nightborn:ring_of_the_faith",
+                "nightborn:ring_of_the_pyre"
+              ]
+            }
+          ]
+        }
+      ]
     }
   ]
 }

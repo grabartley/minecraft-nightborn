@@ -1,5 +1,7 @@
 package com.grahambartley.nightborn.village;
 
+import com.grahambartley.nightborn.accessory.GiftAttributes;
+import com.grahambartley.nightborn.accessory.GiftScale;
 import com.grahambartley.nightborn.config.VillageSettings;
 import com.grahambartley.nightborn.core.NightTime;
 import com.grahambartley.nightborn.familiar.FamiliarRegistry;
@@ -60,10 +62,23 @@ public final class VillageSuspicion {
       final BlockPos bell,
       final SuspicionCause cause,
       final Optional<UUID> face) {
-    final int amount = VillageData.amount(world.getRegistryManager(), cause);
+    final int amount =
+        GiftScale.count(
+            VillageData.amount(world.getRegistryManager(), cause),
+            feedingShare(world, cause, face));
     if (amount > 0) {
       update(world, bell, record -> record.raised(amount, night(world), face));
     }
+  }
+
+  private static double feedingShare(
+      final ServerWorld world, final SuspicionCause cause, final Optional<UUID> face) {
+    if (cause != SuspicionCause.SEEN_FEEDING) {
+      return 1.0;
+    }
+    return face.map(id -> world.getServer().getPlayerManager().getPlayer(id))
+        .map(vampire -> GiftAttributes.value(vampire, GiftAttributes.FEEDING_SUSPICION))
+        .orElse(1.0);
   }
 
   public static void victim(

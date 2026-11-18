@@ -25,6 +25,9 @@ public final class SunBurn {
   }
 
   public static boolean tick(final LivingEntity vampire, final SunSettings settings) {
+    if (!vampire.isOnFire()) {
+      SunFire.out(vampire);
+    }
     if (!(vampire.getWorld() instanceof ServerWorld world) || !DirectSun.on(vampire)) {
       return false;
     }
@@ -32,6 +35,7 @@ public final class SunBurn {
       return true;
     }
     vampire.setOnFireFor(FIRE_SECONDS);
+    SunFire.lit(vampire, FIRE_SECONDS);
     VampireSigns.shown(vampire, SuspicionCause.SEEN_BURNING);
     world.spawnParticles(
         SmokeParticles.VAMPIRE_SMOKE,

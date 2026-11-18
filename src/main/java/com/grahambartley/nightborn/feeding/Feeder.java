@@ -1,5 +1,6 @@
 package com.grahambartley.nightborn.feeding;
 
+import com.grahambartley.nightborn.accessory.GiftAttributes;
 import com.grahambartley.nightborn.advancement.Milestone;
 import com.grahambartley.nightborn.advancement.MilestoneCriterion;
 import com.grahambartley.nightborn.age.AgeDeeds;
@@ -77,7 +78,12 @@ final class Feeder {
       final float worth =
           BloodValue.worth(taken, session.quality().worthPercent(config), BloodValue.FRESH_PERCENT);
       SkillEarning.fromBlood(vampire, worth, config.skills());
-      keep(vampire, session, taken, worth, config);
+      keep(
+          vampire,
+          session,
+          taken,
+          BiteGifts.feeding(worth, GiftAttributes.value(vampire, GiftAttributes.FEEDING_BLOOD)),
+          config);
       world.playSound(
           null,
           vampire.getBlockPos(),
@@ -125,7 +131,10 @@ final class Feeder {
     final float worth =
         BloodValue.worth(taken, session.quality().worthPercent(config), BloodValue.FRESH_PERCENT);
     SkillEarning.fromBlood(vampire, worth, config.skills());
-    drinkFresh(vampire, session, worth);
+    drinkFresh(
+        vampire,
+        session,
+        BiteGifts.finisher(worth, GiftAttributes.value(vampire, GiftAttributes.FINISHER_BLOOD)));
     world.playSound(
         null,
         vampire.getBlockPos(),

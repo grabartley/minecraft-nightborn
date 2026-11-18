@@ -1,5 +1,6 @@
 package com.grahambartley.nightborn.coating;
 
+import com.grahambartley.nightborn.accessory.GiftAttributes;
 import com.grahambartley.nightborn.server.ServerConfigService;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
@@ -30,7 +31,10 @@ public final class CoatingClock {
       if (coat == null || Coatings.isAmmo(stack)) {
         continue;
       }
-      coat.afterCheck(CoatingTerms.of(coat.coating(), ServerConfigService.current(), stack), now)
+      final CoatingTerms terms =
+          CoatingTerms.of(coat.coating(), ServerConfigService.current(), stack);
+      coat.blessedFor(terms, GiftAttributes.value(player, GiftAttributes.BLESSING_TIME))
+          .afterCheck(terms, now)
           .ifPresentOrElse(
               left -> {
                 if (!left.equals(coat)) {
