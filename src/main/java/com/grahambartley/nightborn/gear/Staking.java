@@ -13,7 +13,15 @@ public final class Staking {
   private Staking() {}
 
   public static boolean isStakeBlow(final DamageSource source) {
-    return isStakeStrike(source) || VampireBane.ammo(source).isIn(VampireBane.STAKE_AMMO);
+    return isStakeBlow(
+        source.isIn(NightbornDamage.STAKES),
+        isStakeStrike(source),
+        VampireBane.ammo(source).isIn(VampireBane.STAKE_AMMO));
+  }
+
+  static boolean isStakeBlow(
+      final boolean alreadyStaked, final boolean stakeStrike, final boolean stakeAmmo) {
+    return !alreadyStaked && (stakeStrike || stakeAmmo);
   }
 
   static boolean isStakeStrike(final DamageSource source) {

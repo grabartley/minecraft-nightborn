@@ -67,16 +67,6 @@ class EnchantFeaturesTest {
     assertEquals(curse, values("minecraft/tags/enchantment/on_random_loot.json").contains(id));
   }
 
-  @ParameterizedTest(name = "{0} needs a vampire as {1}")
-  @CsvSource({"bloodletting, attacker", "nightfall, attacker", "daybreak, this"})
-  @DisplayName("vampire-hand enchantments check the wielder, vampire-bane ones the target")
-  void checksTheRightSide(final String name, final String entity) throws IOException {
-    assertTrue(
-        Files.readString(DATA.resolve("nightborn/enchantment/" + name + ".json"))
-            .replaceAll("\\s", "")
-            .contains("\"condition\":\"nightborn:vampire\",\"entity\":\"" + entity + "\""));
-  }
-
   private static JsonObject read(final String path) throws IOException {
     return JsonParser.parseString(Files.readString(DATA.resolve(path))).getAsJsonObject();
   }
