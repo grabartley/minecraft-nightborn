@@ -30,7 +30,6 @@ public class CommandWheelScreen extends Screen {
   static final int CAPTION_PAD = 6;
   static final float STEP_DEGREES = 2.5F;
   static final int RING = 192;
-  static final int RIM = 4;
 
   private final int entityId;
   private final SkillTheme theme;
@@ -73,9 +72,10 @@ public class CommandWheelScreen extends Screen {
   }
 
   private void drawRing(final DrawContext context) {
-    context.drawGuiTexture(
-        theme.wheelRing(), width / 2 - RING / 2, height / 2 - RING / 2, RING, RING);
-    if (client == null || entries.size() < 2 && hovered < 0) {
+    final int centreX = width / 2;
+    final int centreY = height / 2;
+    context.drawGuiTexture(theme.wheelRing(), centreX - RING / 2, centreY - RING / 2, RING, RING);
+    if (client == null || !WheelRing.drawsOverlay(entries.size(), hovered)) {
       return;
     }
     final float scale = (float) client.getWindow().getScaleFactor();
@@ -88,27 +88,27 @@ public class CommandWheelScreen extends Screen {
     RenderSystem.setShader(GameRenderer::getPositionColorProgram);
     final BufferBuilder buffer =
         Tessellator.getInstance().begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
-    final float centreX = width / 2.0F * scale;
-    final float centreY = height / 2.0F * scale;
-    final float inner = (WheelRing.INNER + RIM) * scale;
-    final float outer = (WheelRing.OUTER - RIM) * scale;
+    final float x = centreX * scale;
+    final float y = centreY * scale;
+    final float inner = WheelRing.glowInner() * scale;
+    final float outer = WheelRing.glowOuter() * scale;
     for (int index = 0; index < entries.size(); index++) {
       final float start = WheelRing.startDegrees(index, entries.size());
       final float end = WheelRing.endDegrees(index, entries.size());
-      if (entries.size() > 1) {
+      if (WheelRing.hasSpokes(entries.size())) {
         sector(
             buffer,
             matrix,
-            centreX,
-            centreY,
+            x,
+            y,
             inner,
             outer,
-            start - WheelRing.GAP_DEGREES,
+            WheelRing.spokeStartDegrees(index, entries.size()),
             start,
             theme.ringEdge());
       }
       if (index == hovered) {
-        sector(buffer, matrix, centreX, centreY, inner, outer, start, end, theme.ringHover());
+        sector(buffer, matrix, x, y, inner, outer, start, end, theme.ringHover());
       }
     }
     BufferRenderer.drawWithGlobalProgram(buffer.end());

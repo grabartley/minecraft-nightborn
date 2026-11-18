@@ -3,15 +3,30 @@ package com.grahambartley.nightborn.wheel;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+import com.grahambartley.nightborn.challenge.GuildTrialOrder;
+import com.grahambartley.nightborn.familiar.AskAfter;
+import com.grahambartley.nightborn.familiar.ErrandOrders;
+import com.grahambartley.nightborn.guild.GuildCounter;
+import com.grahambartley.nightborn.guild.GuildJournalOrder;
+import com.grahambartley.nightborn.guild.GuildOathOrder;
+import com.grahambartley.nightborn.guild.GuildRankOrder;
+import com.grahambartley.nightborn.guild.GuildRumour;
+import com.grahambartley.nightborn.house.MemberOrder;
+import com.grahambartley.nightborn.occult.FamiliarMode;
+import com.grahambartley.nightborn.servant.Stance;
+import com.grahambartley.nightborn.servant.job.DayJob;
+import com.grahambartley.nightborn.servant.job.ScoutOrders;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.stream.Stream;
 import javax.imageio.ImageIO;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.MethodSource;
 
 class WheelEntryTest {
 
@@ -58,6 +73,36 @@ class WheelEntryTest {
       final BufferedImage image = ImageIO.read(in);
       assertEquals(16, image.getWidth());
       assertEquals(16, image.getHeight());
+    }
+  }
+
+  static Stream<Identifier> namedIcons() {
+    return Stream.of(
+            Stream.of(Stance.values()).map(Stance::icon),
+            Stream.of(MemberOrder.values()).map(MemberOrder::icon),
+            Stream.of(DayJob.values()).map(DayJob::icon),
+            Stream.of(FamiliarMode.values()).map(FamiliarMode::icon),
+            Stream.of(GuildCounter.Kind.values()).map(GuildCounter.Kind::icon),
+            Stream.of(
+                ErrandOrders.ICON,
+                AskAfter.ICON,
+                ScoutOrders.PLACE_ICON,
+                GuildRumour.ICON,
+                GuildRankOrder.ICON,
+                GuildOathOrder.ICON,
+                GuildJournalOrder.ICON,
+                GuildTrialOrder.ICON))
+        .flatMap(icons -> icons);
+  }
+
+  @ParameterizedTest(name = "{0}")
+  @MethodSource("namedIcons")
+  @DisplayName("every icon a wheel action names has its sprite")
+  void namedIconShips(final Identifier icon) throws IOException {
+    try (InputStream in =
+        WheelEntryTest.class.getResourceAsStream(
+            "/assets/nightborn/textures/gui/sprites/" + icon.getPath() + ".png")) {
+      assertNotNull(in, icon.toString());
     }
   }
 }

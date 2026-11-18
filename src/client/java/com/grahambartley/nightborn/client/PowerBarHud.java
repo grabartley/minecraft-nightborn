@@ -68,7 +68,7 @@ public final class PowerBarHud {
       final PowerBarLayout.Point at = points.get(i);
       final Identifier id = bar.at(i).orElse(null);
       context.drawGuiTexture(
-          theme.powerSlot(PowerSlotLook.of(id != null, false, false)),
+          theme.powerSlot(id != null ? PowerSlotLook.FILLED : PowerSlotLook.EMPTY),
           at.x(),
           at.y(),
           PowerBarLayout.SLOT,
