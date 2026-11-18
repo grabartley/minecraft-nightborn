@@ -3,7 +3,7 @@
   "requires": [
     "nightborn:core/grave_strength"
   ],
-  "icon": "nightborn:skills/icon/beast_claws",
+  "icon": "nightborn:skills/icon/iron_grip",
   "column": 0,
   "row": 2,
   "ranks": [

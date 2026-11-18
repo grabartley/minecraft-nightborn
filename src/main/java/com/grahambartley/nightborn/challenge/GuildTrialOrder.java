@@ -2,7 +2,6 @@ package com.grahambartley.nightborn.challenge;
 
 import com.grahambartley.nightborn.Nightborn;
 import com.grahambartley.nightborn.guild.GuildMasterEntity;
-import com.grahambartley.nightborn.journal.Journal;
 import com.grahambartley.nightborn.wheel.WheelAction;
 import com.grahambartley.nightborn.wheel.WheelEntry;
 import java.util.ArrayList;
@@ -15,6 +14,7 @@ import net.minecraft.util.Identifier;
 
 public final class GuildTrialOrder implements WheelAction<GuildMasterEntity> {
 
+  public static final Identifier ICON = WheelEntry.icon("trials");
   public static final Identifier ID = Identifier.of(Nightborn.MOD_ID, "guild_trial");
   static final String TAKE = "nightborn.guild.trial";
   static final String TAKEN = "nightborn.guild.trial.taken";
@@ -38,8 +38,7 @@ public final class GuildTrialOrder implements WheelAction<GuildMasterEntity> {
       if (!trial.taken()) {
         final Text name =
             name(player, trial.trial()).orElse(Text.literal(trial.trial().toString()));
-        entries.add(
-            new WheelEntry(ID, index, Journal.HUNTER.id(), Text.translatable(TAKE, name), false));
+        entries.add(new WheelEntry(ID, index, ICON, Text.translatable(TAKE, name), false));
       }
     }
     return entries;

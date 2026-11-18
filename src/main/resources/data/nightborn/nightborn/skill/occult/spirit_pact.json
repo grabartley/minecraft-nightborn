@@ -16,6 +16,26 @@
           "operation": "add_value"
         }
       ]
+    },
+    {
+      "cost": 2,
+      "attributes": [
+        {
+          "attribute": "nightborn:familiar_health",
+          "amount": 0.25,
+          "operation": "add_value"
+        }
+      ]
+    },
+    {
+      "cost": 3,
+      "attributes": [
+        {
+          "attribute": "nightborn:familiar_health",
+          "amount": 0.25,
+          "operation": "add_value"
+        }
+      ]
     }
   ]
 }

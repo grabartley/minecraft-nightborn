@@ -1,0 +1,40 @@
+{
+  "branch": "nightborn:occult",
+  "requires": [
+    "nightborn:occult/occult_blood"
+  ],
+  "icon": "nightborn:skills/icon/occult_blood",
+  "column": 1,
+  "row": 1,
+  "ranks": [
+    {
+      "cost": 2
+    }
+  ],
+  "power": {
+    "blood": 2,
+    "cooldown_ticks": 600,
+    "hex": {
+      "range": 16.0,
+      "duration_ticks": 400,
+      "player_duration_ticks": 200,
+      "healing": 0.5,
+      "effects": [
+        {
+          "id": "minecraft:weakness",
+          "amplifier": 0,
+          "duration": 400,
+          "show_icon": true
+        }
+      ]
+    },
+    "sound": "minecraft:entity.witch.celebrate",
+    "mob": {
+      "min_range": 3.0,
+      "max_range": 16.0,
+      "tell_ticks": 10,
+      "tell_sound": "minecraft:entity.evoker.prepare_attack",
+      "tell_clip": "mesmerise"
+    }
+  }
+}

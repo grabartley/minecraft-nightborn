@@ -1,6 +1,5 @@
 package com.grahambartley.nightborn.mixin;
 
-import com.grahambartley.nightborn.accessory.WornDamage;
 import com.grahambartley.nightborn.age.Ageing;
 import com.grahambartley.nightborn.batform.BatFlightMotion;
 import com.grahambartley.nightborn.clothing.Noticing;
@@ -13,9 +12,12 @@ import com.grahambartley.nightborn.downed.DownedTargeting;
 import com.grahambartley.nightborn.hunt.Hunts;
 import com.grahambartley.nightborn.levitation.Levitation;
 import com.grahambartley.nightborn.levitation.LevitationMotion;
+import com.grahambartley.nightborn.occult.Hexes;
 import com.grahambartley.nightborn.rank.Ranking;
 import com.grahambartley.nightborn.server.ServerConfigService;
+import com.grahambartley.nightborn.skill.DamageTaken;
 import com.grahambartley.nightborn.skill.Mending;
+import com.grahambartley.nightborn.skill.PowerTicks;
 import com.grahambartley.nightborn.sun.ParasolShade;
 import com.grahambartley.nightborn.vampire.Gloom;
 import com.grahambartley.nightborn.vampire.VampireTicker;
@@ -65,6 +67,7 @@ abstract class LivingEntityMixin {
     Vanish.tick(self);
     Mending.tick(self);
     ParasolShade.tick(self, ServerConfigService.current().sun());
+    PowerTicks.tick(self);
     if (Vampires.isVampire(self)) {
       VampireTicker.tick(self);
       if (self instanceof ServerPlayerEntity player) {
@@ -143,7 +146,12 @@ abstract class LivingEntityMixin {
 
   @ModifyVariable(method = "damage", at = @At("HEAD"), argsOnly = true)
   private float nightborn$wornDamage(final float amount, final DamageSource source) {
-    return WornDamage.scale((LivingEntity) (Object) this, source, amount);
+    return DamageTaken.scale((LivingEntity) (Object) this, source, amount);
+  }
+
+  @ModifyVariable(method = "heal", at = @At("HEAD"), argsOnly = true)
+  private float nightborn$hexedHealing(final float amount) {
+    return Hexes.heal((LivingEntity) (Object) this, amount);
   }
 
   @ModifyVariable(method = "updateLimbs(F)V", at = @At("HEAD"), argsOnly = true)

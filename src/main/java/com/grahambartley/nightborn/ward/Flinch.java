@@ -1,5 +1,6 @@
 package com.grahambartley.nightborn.ward;
 
+import com.grahambartley.nightborn.mind.Glamour;
 import com.grahambartley.nightborn.mob.VampirePose;
 import com.grahambartley.nightborn.network.PlayerCue;
 import com.grahambartley.nightborn.network.PlayerCues;
@@ -20,6 +21,9 @@ public final class Flinch {
   }
 
   public static void show(final LivingEntity vampire) {
+    if (Glamour.on(vampire)) {
+      return;
+    }
     if (vampire instanceof ServerPlayerEntity player) {
       PlayerCues.send(player, PlayerCue.FLINCH);
     } else if (vampire instanceof PowerShow mob) {

@@ -16,7 +16,8 @@ public record SkillSettings(
     int veteranRankPoints,
     int masterRankPoints,
     int rankHealth,
-    int rankDamageTenths) {
+    int rankDamageTenths,
+    int holdGraceSeconds) {
 
   static final String SECTION = "skills";
 
@@ -52,6 +53,9 @@ public record SkillSettings(
   public static final IntSetting RANK_DAMAGE_TENTHS =
       new IntSetting(SECTION, "rankDamageTenths", 5, 0, 100, c -> c.skills().rankDamageTenths());
 
+  public static final IntSetting HOLD_GRACE_SECONDS =
+      new IntSetting(SECTION, "holdGraceSeconds", 3, 0, 60, c -> c.skills().holdGraceSeconds());
+
   public static final List<Setting<?>> SETTINGS =
       List.of(
           FIRST_POINT_EXPERIENCE,
@@ -66,7 +70,8 @@ public record SkillSettings(
           VETERAN_RANK_POINTS,
           MASTER_RANK_POINTS,
           RANK_HEALTH,
-          RANK_DAMAGE_TENTHS);
+          RANK_DAMAGE_TENTHS,
+          HOLD_GRACE_SECONDS);
 
   public SkillSettings {
     firstPointExperience = FIRST_POINT_EXPERIENCE.clamp(firstPointExperience);
@@ -82,6 +87,7 @@ public record SkillSettings(
     masterRankPoints = MASTER_RANK_POINTS.clamp(masterRankPoints);
     rankHealth = RANK_HEALTH.clamp(rankHealth);
     rankDamageTenths = RANK_DAMAGE_TENTHS.clamp(rankDamageTenths);
+    holdGraceSeconds = HOLD_GRACE_SECONDS.clamp(holdGraceSeconds);
   }
 
   public RankNeeds rankNeeds() {
@@ -102,6 +108,7 @@ public record SkillSettings(
         values.get(VETERAN_RANK_POINTS),
         values.get(MASTER_RANK_POINTS),
         values.get(RANK_HEALTH),
-        values.get(RANK_DAMAGE_TENTHS));
+        values.get(RANK_DAMAGE_TENTHS),
+        values.get(HOLD_GRACE_SECONDS));
   }
 }

@@ -15,12 +15,26 @@ public final class MindAttributes {
 
   static final double MAX_CHARM = 5.0;
   static final double MAX_THRALLS = 16.0;
+  public static final double MOST_TITHE_SHARE = 0.8;
+  static final double MOST_TITHE_RATE = 60.0;
+  static final double MOST_VIGOUR = 1.0;
+  static final double MOST_TITHE_RANGE = 32.0;
 
   public static final RegistryEntry<EntityAttribute> CHARM = register("charm", MAX_CHARM);
   public static final RegistryEntry<EntityAttribute> THRALL_LIMIT =
       register("thrall_limit", MAX_THRALLS);
 
-  public static final List<RegistryEntry<EntityAttribute>> ALL = List.of(CHARM, THRALL_LIMIT);
+  public static final RegistryEntry<EntityAttribute> TITHE_SHARE =
+      register("tithe_share", MOST_TITHE_SHARE);
+  public static final RegistryEntry<EntityAttribute> TITHE_RATE =
+      register("tithe_rate", MOST_TITHE_RATE);
+  public static final RegistryEntry<EntityAttribute> TITHE_RANGE =
+      register("tithe_range", MOST_TITHE_RANGE);
+  public static final RegistryEntry<EntityAttribute> SERVANT_VIGOUR =
+      register("servant_vigour", MOST_VIGOUR);
+
+  public static final List<RegistryEntry<EntityAttribute>> ALL =
+      List.of(CHARM, THRALL_LIMIT, TITHE_SHARE, TITHE_RATE, TITHE_RANGE, SERVANT_VIGOUR);
 
   private MindAttributes() {}
 
@@ -38,6 +52,13 @@ public final class MindAttributes {
 
   public static int thrallLimit(final LivingEntity entity) {
     return level(entity, THRALL_LIMIT);
+  }
+
+  public static double value(
+      final LivingEntity entity, final RegistryEntry<EntityAttribute> attribute) {
+    return entity.getAttributes().hasAttribute(attribute)
+        ? entity.getAttributeValue(attribute)
+        : 0.0;
   }
 
   static int level(final LivingEntity entity, final RegistryEntry<EntityAttribute> attribute) {

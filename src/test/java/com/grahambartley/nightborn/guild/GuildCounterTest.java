@@ -29,8 +29,8 @@ class GuildCounterTest {
 
   @ParameterizedTest(name = "{0} -> {1}, {2}")
   @CsvSource({
-    "GEAR, nightborn.guild.gear, minecraft:emerald",
-    "CONTRACTS, nightborn.guild.contracts, nightborn:hunter_contract"
+    "GEAR, nightborn.guild.gear, nightborn:wheel/trade",
+    "CONTRACTS, nightborn.guild.contracts, nightborn:wheel/contracts"
   })
   @DisplayName("each counter has its own label and icon on the wheel")
   void wheel(final GuildCounter.Kind kind, final String key, final String icon) {

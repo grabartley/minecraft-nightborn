@@ -18,7 +18,7 @@ import net.minecraft.util.Identifier;
 public final class HouseChallengeAction implements WheelAction<PlayerEntity> {
 
   public static final Identifier ID = Identifier.of(Nightborn.MOD_ID, "house_challenge");
-  static final Identifier ICON = Identifier.of("minecraft", "iron_sword");
+  static final Identifier ICON = WheelEntry.icon("challenge");
   static final String LABEL = "nightborn.house.wheel.challenge";
   static final String DECLARED_TO_LORD = "nightborn.house.challenge.received";
 

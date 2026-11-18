@@ -13,12 +13,12 @@ class MemberOrderTest {
 
   @ParameterizedTest(name = "{0}")
   @CsvSource({
-    "FOLLOW, minecraft:lead, FOLLOW",
-    "STAY, minecraft:campfire, STAY",
-    "GUARD, minecraft:iron_sword, GUARD",
-    "FEED, nightborn:blood_splatter, ",
-    "BRING_BLOOD, nightborn:blood_bottle, ",
-    "LEAVE, minecraft:oak_door, "
+    "FOLLOW, nightborn:wheel/follow, FOLLOW",
+    "STAY, nightborn:wheel/stay, STAY",
+    "GUARD, nightborn:wheel/guard, GUARD",
+    "FEED, nightborn:wheel/feed, ",
+    "BRING_BLOOD, nightborn:wheel/bring_blood, ",
+    "LEAVE, nightborn:wheel/leave, "
   })
   @DisplayName("each order has its own icon, label and cue, and the stances map to theirs")
   void wheel(final MemberOrder order, final String icon, final Stance stance) {

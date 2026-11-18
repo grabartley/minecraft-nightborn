@@ -19,7 +19,7 @@ public record Skill(
     Optional<SkillPower> power) {
 
   public static final int MAX_COLUMN = 2;
-  public static final int MAX_ROW = 5;
+  public static final int MAX_ROW = 6;
   public static final int MAX_RANKS = 3;
 
   public static final Codec<Skill> CODEC =

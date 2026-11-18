@@ -203,7 +203,7 @@ The skills only vampire mobs have, Bat Swarm and Call To Arms, stay as they are 
 - A net, a snare and a flash trap.
 - A weapon alight for Blood Fire, drawn on any weapon.
 - The circles of Blood Ward, Consecrate and Killing Ground, and the pillar of Judgement, drawn as models so they show under any shader.
-- An icon for every new skill.
+- An icon for every skill, at `textures/gui/sprites/skills/icon/<id>.png`. The id is the skill's name in lower case with spaces as underscores and apostrophes dropped, such as `sovereigns_gaze`.
 
 ## Art And Feel
 

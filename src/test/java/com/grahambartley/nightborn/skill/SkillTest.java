@@ -2,6 +2,7 @@ package com.grahambartley.nightborn.skill;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.google.gson.JsonObject;
@@ -9,6 +10,7 @@ import com.google.gson.JsonParser;
 import com.grahambartley.nightborn.MinecraftBootstrapExtension;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.JsonOps;
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -18,6 +20,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import javax.imageio.ImageIO;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.util.Identifier;
 import org.junit.jupiter.api.DisplayName;
@@ -141,7 +144,7 @@ class SkillTest {
       delimiter = '|',
       value = {
         "{\"branch\":\"nightborn:core\",\"ranks\":[{\"cost\":1}],\"icon\":\"nightborn:x\",\"column\":3}",
-        "{\"branch\":\"nightborn:core\",\"ranks\":[{\"cost\":1}],\"icon\":\"nightborn:x\",\"row\":6}",
+        "{\"branch\":\"nightborn:core\",\"ranks\":[{\"cost\":1}],\"icon\":\"nightborn:x\",\"row\":7}",
         "{\"branch\":\"nightborn:core\",\"ranks\":[{\"cost\":-1}],\"icon\":\"nightborn:x\"}",
         "{\"ranks\":[{\"cost\":1}],\"icon\":\"nightborn:x\"}",
         "{\"branch\":\"nightborn:core\",\"ranks\":[],\"icon\":\"nightborn:x\"}",
@@ -259,5 +262,102 @@ class SkillTest {
             .getOrThrow();
     assertEquals(
         expected.isEmpty() ? Optional.empty() : Optional.of(Identifier.of(expected)), skill.rank());
+  }
+
+  @ParameterizedTest(name = "{0}")
+  @CsvSource({
+    "thick_blood",
+    "grave_strength",
+    "vanish",
+    "blood_rush",
+    "night_eyes",
+    "blood_healing",
+    "iron_grip",
+    "deep_veins",
+    "unbroken",
+    "sanguine_mastery",
+    "beast_blood",
+    "beast_claws",
+    "swift_prowl",
+    "long_leap",
+    "bat_form",
+    "hear_heartbeats",
+    "pounce",
+    "blood_frenzy",
+    "night_terror",
+    "apex_predator",
+    "noble_blood",
+    "mesmerise",
+    "silver_tongue",
+    "blood_bond",
+    "command",
+    "dark_court",
+    "dread_presence",
+    "blood_tithe",
+    "glamour",
+    "sovereigns_gaze",
+    "born_to_rule",
+    "occult_blood",
+    "grave_fog",
+    "summon_familiar",
+    "shadow_step",
+    "spirit_pact",
+    "hex",
+    "shadow_veil",
+    "blood_ward",
+    "mist_form",
+    "raise_the_dead",
+    "black_mass",
+    "beyond_the_veil",
+    "tracking",
+    "field_craft",
+    "snare",
+    "bait",
+    "net_shot",
+    "quick_hands",
+    "trap_sense",
+    "silver_edge",
+    "flash_trap",
+    "killing_ground",
+    "master_trapper",
+    "faith",
+    "mend",
+    "rebuke",
+    "blessing",
+    "grace",
+    "blood_fire",
+    "sanctuary",
+    "consecrate",
+    "judgement",
+    "unshaken_faith",
+    "bite_ward",
+    "sidestep",
+    "stake_throw",
+    "vampire_slayer",
+    "riposte",
+    "quick_shot",
+    "tough_as_oak",
+    "heartstrike",
+    "last_stand",
+    "onslaught",
+    "slayers_calm",
+    "keen_tracking",
+    "iron_will",
+    "sixth_sense",
+    "soft_step",
+    "read_the_scene",
+    "mark_quarry",
+    "grave_listener",
+    "true_sight",
+    "revelation",
+    "hunters_patience"
+  })
+  @DisplayName("every skill in the skill lists has a 16 by 16 icon of its own")
+  void iconShips(final String name) throws IOException {
+    final BufferedImage image =
+        ImageIO.read(SPRITES.resolve("skills/icon/" + name + ".png").toFile());
+    assertNotNull(image, name);
+    assertEquals(16, image.getWidth());
+    assertEquals(16, image.getHeight());
   }
 }

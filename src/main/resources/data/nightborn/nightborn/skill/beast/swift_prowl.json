@@ -16,6 +16,26 @@
           "operation": "add_multiplied_total"
         }
       ]
+    },
+    {
+      "cost": 2,
+      "attributes": [
+        {
+          "attribute": "minecraft:generic.movement_speed",
+          "amount": 0.1,
+          "operation": "add_multiplied_total"
+        }
+      ]
+    },
+    {
+      "cost": 2,
+      "attributes": [
+        {
+          "attribute": "minecraft:generic.movement_speed",
+          "amount": 0.1,
+          "operation": "add_multiplied_total"
+        }
+      ]
     }
   ]
 }

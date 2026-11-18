@@ -13,7 +13,7 @@ import net.minecraft.util.TypedActionResult;
 
 public final class BatFormLimits {
 
-  static final Identifier BEFORE_OTHERS = Identifier.of(Nightborn.MOD_ID, "bat_form_limits");
+  public static final Identifier BEFORE_OTHERS = Identifier.of(Nightborn.MOD_ID, "bat_form_limits");
 
   private BatFormLimits() {}
 
@@ -34,7 +34,9 @@ public final class BatFormLimits {
     UseEntityCallback.EVENT.register(
         BEFORE_OTHERS, (player, world, hand, entity, hit) -> verdict(BatForm.isBat(player)));
     AttackEntityCallback.EVENT.register(
-        BEFORE_OTHERS, (player, world, hand, entity, hit) -> verdict(BatForm.isBat(player)));
+        BEFORE_OTHERS,
+        (player, world, hand, entity, hit) ->
+            verdict(BatForm.isBat(player) && !WingedForm.on(player)));
     AttackBlockCallback.EVENT.register(
         BEFORE_OTHERS, (player, world, hand, pos, direction) -> verdict(BatForm.isBat(player)));
   }

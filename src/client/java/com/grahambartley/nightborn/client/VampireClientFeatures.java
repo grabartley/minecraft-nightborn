@@ -6,6 +6,7 @@ import com.grahambartley.nightborn.client.gore.BloodFx;
 import com.grahambartley.nightborn.client.mirror.MirrorScreen;
 import com.grahambartley.nightborn.client.moment.CeremonyView;
 import com.grahambartley.nightborn.client.name.StageNameView;
+import com.grahambartley.nightborn.client.sight.RevealView;
 import com.grahambartley.nightborn.client.smoke.SmokeFx;
 import com.grahambartley.nightborn.client.sun.ParasolModel;
 import com.grahambartley.nightborn.client.vomit.VomitFx;
@@ -48,6 +49,7 @@ public final class VampireClientFeatures {
     StageNameView.register();
     MirrorScreen.register();
     ParasolModel.register();
+    RevealView.register();
     VomitFx.register();
     BloodFx.register();
     SmokeFx.register();

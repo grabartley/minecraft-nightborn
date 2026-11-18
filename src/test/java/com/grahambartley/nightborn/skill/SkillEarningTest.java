@@ -10,7 +10,7 @@ import org.junit.jupiter.params.provider.CsvSource;
 class SkillEarningTest {
 
   static SkillSettings settings(final int perBlood, final int perKill, final int perStage) {
-    return new SkillSettings(100, 3, perBlood, 100, perKill, perStage, 10, 500, 5, 20, 45, 2, 5);
+    return new SkillSettings(100, 3, perBlood, 100, perKill, perStage, 10, 500, 5, 20, 45, 2, 5, 3);
   }
 
   @ParameterizedTest(name = "{0} per kill, {1} per stage, rank {2}: {3}")

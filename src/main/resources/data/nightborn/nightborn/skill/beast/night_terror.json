@@ -1,0 +1,48 @@
+{
+  "branch": "nightborn:beast",
+  "requires": [
+    "nightborn:beast/pounce",
+    "nightborn:beast/blood_frenzy"
+  ],
+  "icon": "nightborn:skills/icon/bat_form",
+  "column": 1,
+  "row": 4,
+  "stage": "nightborn:ancient",
+  "ranks": [
+    {
+      "cost": 4
+    }
+  ],
+  "power": {
+    "blood": 6,
+    "cooldown_ticks": 6000,
+    "winged_form": {
+      "duration_ticks": 400,
+      "attributes": [
+        {
+          "attribute": "minecraft:generic.attack_damage",
+          "amount": 6.0,
+          "operation": "add_value"
+        }
+      ],
+      "damage_taken": 0.5,
+      "roar_radius": 8.0,
+      "roar_stagger_ticks": 30,
+      "roar_staggers": "nightborn:roar_staggers",
+      "scale": 2.5,
+      "forced_by": [
+        "garlic_strings",
+        "garlic_touch",
+        "garlic_bomb",
+        "holy_water"
+      ]
+    },
+    "mob": {
+      "min_range": 0.0,
+      "max_range": 16.0,
+      "tell_ticks": 14,
+      "tell_sound": "minecraft:entity.ravager.roar",
+      "tell_clip": "hiss"
+    }
+  }
+}

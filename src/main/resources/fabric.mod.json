@@ -89,6 +89,7 @@
       "com.grahambartley.nightborn.gametest.OldBloodFontGameTest",
       "com.grahambartley.nightborn.gametest.FinisherBiteGameTest",
       "com.grahambartley.nightborn.gametest.BloodGiftGameTest",
+      "com.grahambartley.nightborn.gametest.BloodlineGameTest",
       "com.grahambartley.nightborn.gametest.VampireStageGameTest",
       "com.grahambartley.nightborn.gametest.LevitationGameTest",
       "com.grahambartley.nightborn.gametest.BatFormGameTest",

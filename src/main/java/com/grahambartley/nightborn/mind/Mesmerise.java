@@ -5,6 +5,7 @@ import com.grahambartley.nightborn.accessory.GiftAttributes;
 import com.grahambartley.nightborn.accessory.GiftScale;
 import com.grahambartley.nightborn.hunter.HunterAttributes;
 import com.grahambartley.nightborn.skill.MesmerisePower;
+import com.grahambartley.nightborn.skill.PowerSight;
 import java.util.Locale;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
@@ -15,7 +16,6 @@ import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.projectile.ProjectileUtil;
 import net.minecraft.particle.DustParticleEffect;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.tag.TagKey;
@@ -25,7 +25,6 @@ import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.math.Vec3d;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
@@ -43,7 +42,7 @@ public final class Mesmerise {
   @Nullable
   public static LivingEntity target(final LivingEntity caster, final double range) {
     final LivingEntity candidate =
-        caster instanceof MobEntity mob ? mob.getTarget() : looked(caster, range);
+        caster instanceof MobEntity mob ? mob.getTarget() : PowerSight.looked(caster, range);
     return candidate != null && holds(caster, candidate, range) ? candidate : null;
   }
 
@@ -57,21 +56,6 @@ public final class Mesmerise {
             toward.length(),
             range,
             caster.canSee(target));
-  }
-
-  @Nullable
-  private static LivingEntity looked(final LivingEntity caster, final double range) {
-    final Vec3d eye = caster.getEyePos();
-    final Vec3d reach = caster.getRotationVec(1.0F).multiply(range);
-    final EntityHitResult hit =
-        ProjectileUtil.raycast(
-            caster,
-            eye,
-            eye.add(reach),
-            caster.getBoundingBox().stretch(reach).expand(1.0),
-            entity -> entity instanceof LivingEntity && !entity.isSpectator() && entity.canHit(),
-            range * range);
-    return hit != null && hit.getEntity() instanceof LivingEntity living ? living : null;
   }
 
   public static void staring(final ServerWorld world, final LivingEntity target) {
@@ -95,6 +79,19 @@ public final class Mesmerise {
 
   public static MesmeriseRules.Outcome land(
       final LivingEntity caster, final LivingEntity target, final MesmerisePower power) {
+    final MesmeriseRules.Outcome outcome = quietly(caster, target, power);
+    if (caster instanceof PlayerEntity player) {
+      player.sendMessage(
+          Text.translatable(
+              "nightborn.mesmerise." + outcome.name().toLowerCase(Locale.ROOT),
+              target.getDisplayName()),
+          true);
+    }
+    return outcome;
+  }
+
+  public static MesmeriseRules.Outcome quietly(
+      final LivingEntity caster, final LivingEntity target, final MesmerisePower power) {
     final MesmeriseRules.Outcome outcome =
         MesmeriseRules.land(
             MesmeriseRules.immune(
@@ -109,13 +106,6 @@ public final class Mesmerise {
             caster.getRandom().nextFloat());
     if (outcome == MesmeriseRules.Outcome.MESMERISED) {
       apply(caster, target, power);
-    }
-    if (caster instanceof PlayerEntity player) {
-      player.sendMessage(
-          Text.translatable(
-              "nightborn.mesmerise." + outcome.name().toLowerCase(Locale.ROOT),
-              target.getDisplayName()),
-          true);
     }
     return outcome;
   }

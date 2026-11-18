@@ -3,7 +3,7 @@
   "requires": [
     "nightborn:core/thick_blood"
   ],
-  "icon": "nightborn:skills/icon/shadow_veil",
+  "icon": "nightborn:skills/icon/night_eyes",
   "column": 1,
   "row": 2,
   "ranks": [

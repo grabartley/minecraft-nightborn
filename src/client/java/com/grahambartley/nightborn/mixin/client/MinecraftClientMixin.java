@@ -2,6 +2,7 @@ package com.grahambartley.nightborn.mixin.client;
 
 import com.grahambartley.nightborn.blood.PreySense;
 import com.grahambartley.nightborn.client.boss.BossArenaView;
+import com.grahambartley.nightborn.client.sight.RevealView;
 import com.grahambartley.nightborn.client.structure.NearbyStructure;
 import com.grahambartley.nightborn.core.NightTime;
 import com.grahambartley.nightborn.sound.GothicMusic;
@@ -34,6 +35,9 @@ abstract class MinecraftClientMixin {
             player.squaredDistanceTo(entity),
             entity instanceof LivingEntity,
             entity == player)) {
+      info.setReturnValue(true);
+    }
+    if (RevealView.colour(entity).isPresent()) {
       info.setReturnValue(true);
     }
   }

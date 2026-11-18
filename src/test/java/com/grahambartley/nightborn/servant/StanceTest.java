@@ -18,9 +18,9 @@ class StanceTest {
 
   @ParameterizedTest(name = "{0} -> {1}, {2}")
   @CsvSource({
-    "FOLLOW, nightborn.thrall.order.follow, minecraft:lead",
-    "STAY, nightborn.thrall.order.stay, minecraft:campfire",
-    "GUARD, nightborn.thrall.order.guard, minecraft:iron_sword"
+    "FOLLOW, nightborn.thrall.order.follow, nightborn:wheel/follow",
+    "STAY, nightborn.thrall.order.stay, nightborn:wheel/stay",
+    "GUARD, nightborn.thrall.order.guard, nightborn:wheel/guard"
   })
   @DisplayName("each order has its own label and icon on the command wheel")
   void wheel(final Stance mode, final String label, final String icon) {

@@ -1,23 +1,24 @@
 package com.grahambartley.nightborn.house;
 
 import com.grahambartley.nightborn.servant.Stance;
+import com.grahambartley.nightborn.wheel.WheelEntry;
 import java.util.Locale;
 import java.util.Optional;
 import net.minecraft.util.Identifier;
 
 public enum MemberOrder {
-  FOLLOW("minecraft:lead", Stance.FOLLOW),
-  STAY("minecraft:campfire", Stance.STAY),
-  GUARD("minecraft:iron_sword", Stance.GUARD),
-  FEED("nightborn:blood_splatter", null),
-  BRING_BLOOD("nightborn:blood_bottle", null),
-  LEAVE("minecraft:oak_door", null);
+  FOLLOW("follow", Stance.FOLLOW),
+  STAY("stay", Stance.STAY),
+  GUARD("guard", Stance.GUARD),
+  FEED("feed", null),
+  BRING_BLOOD("bring_blood", null),
+  LEAVE("leave", null);
 
   private final Identifier icon;
   private final Stance stance;
 
   MemberOrder(final String icon, final Stance stance) {
-    this.icon = Identifier.of(icon);
+    this.icon = WheelEntry.icon(icon);
     this.stance = stance;
   }
 

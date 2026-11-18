@@ -2,6 +2,8 @@ package com.grahambartley.nightborn.skill;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.util.List;
+import net.minecraft.util.Identifier;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -28,5 +30,38 @@ class PowerGiftsTest {
   void cooldown(
       final double general, final boolean tracking, final double share, final double factor) {
     assertEquals(factor, PowerGifts.cooldown(general, tracking, share), 1.0E-9);
+  }
+
+  @ParameterizedTest(name = "cost {0}, bat {1}, bat cut {2}, line cut {3}: {4}")
+  @CsvSource({
+    "6, false, 0.0, 1, 5",
+    "1, false, 0.0, 1, 1",
+    "3, true, -1.0, 1, 1",
+    "0, false, 0.0, 1, 0",
+    "4, false, 0.0, 0, 4"
+  })
+  @DisplayName("a bloodline gift cuts a power's blood, never below one")
+  void bloodlineBlood(
+      final int cost, final boolean bat, final double batCut, final int lineCut, final int paid) {
+    assertEquals(paid, PowerGifts.blood(cost, bat, batCut, lineCut));
+  }
+
+  @ParameterizedTest(name = "general {0}, line cut {1}: {2}")
+  @CsvSource({"1.0, 0.2, 0.8", "0.9, 0.2, 0.72", "0.2, 0.2, 0.2", "1.0, 0.0, 1.0"})
+  @DisplayName("a bloodline gift shortens cooldowns on top of the rest, never past 80%")
+  void bloodlineCooldown(final double general, final double cut, final double factor) {
+    assertEquals(factor, PowerGifts.cooldown(general, false, 1.0, cut), 1.0E-9);
+  }
+
+  @ParameterizedTest(name = "cuts {0} and {1}")
+  @CsvSource({"0.2, 0.2, 0.4", "0.5, 0.5, 0.8"})
+  @DisplayName("gifts add up, never past the cap")
+  void sums(final double one, final double two, final double total) {
+    final List<PowerGift> gifts =
+        List.of(
+            new PowerGift(Identifier.of("nightborn:beast"), 1, one),
+            new PowerGift(Identifier.of("nightborn:beast"), 1, two));
+    assertEquals(total, PowerGifts.cooldownCut(gifts), 1.0E-9);
+    assertEquals(2, PowerGifts.bloodCut(gifts));
   }
 }

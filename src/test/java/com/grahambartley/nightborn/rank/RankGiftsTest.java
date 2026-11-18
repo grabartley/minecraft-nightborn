@@ -10,7 +10,7 @@ import org.junit.jupiter.params.provider.CsvSource;
 class RankGiftsTest {
 
   static SkillSettings settings(final int health, final int damageTenths) {
-    return new SkillSettings(100, 3, 5, 100, 300, 200, 10, 500, 5, 20, 45, health, damageTenths);
+    return new SkillSettings(100, 3, 5, 100, 300, 200, 10, 500, 5, 20, 45, health, damageTenths, 3);
   }
 
   @ParameterizedTest(name = "rank {0}, {1} health, {2} tenths -> {3} health, {4} damage")

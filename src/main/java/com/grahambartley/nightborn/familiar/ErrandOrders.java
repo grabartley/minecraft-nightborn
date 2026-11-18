@@ -12,7 +12,7 @@ import net.minecraft.util.Identifier;
 public final class ErrandOrders implements WheelAction<HumanFamiliarEntity> {
 
   public static final Identifier ID = Identifier.of(Nightborn.MOD_ID, "errands");
-  public static final Identifier ICON = Identifier.ofVanilla("chest");
+  public static final Identifier ICON = WheelEntry.icon("carry");
 
   @Override
   public Identifier id() {

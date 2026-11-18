@@ -1,5 +1,6 @@
 package com.grahambartley.nightborn.skill;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
 import com.google.gson.JsonParser;
@@ -9,6 +10,7 @@ import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 @ExtendWith(MinecraftBootstrapExtension.class)
@@ -32,5 +34,24 @@ class PowerAimTest {
                     .parse(JsonOps.INSTANCE, JsonParser.parseString(json))
                     .getOrThrow());
     assertSame(PowerAim.NONE, PowerAim.of(null, power, PowerHeading.NONE));
+  }
+
+  @ParameterizedTest(name = "{0}: aims {1}, reach {2}")
+  @CsvSource(
+      delimiter = '|',
+      value = {
+        "{\"blood\":2,\"cooldown_ticks\":400,\"pounce\":{\"range\":10,\"pin_ticks\":40,\"player_pin_ticks\":20}} | true | 10",
+        "{\"blood\":2,\"cooldown_ticks\":600,\"hex\":{\"range\":16,\"duration_ticks\":400,\"player_duration_ticks\":200,\"healing\":0.5}} | true | 16",
+        "{\"blood\":2,\"cooldown_ticks\":600,\"command\":{\"range\":12,\"duration_ticks\":600}} | true | 0",
+        "{\"blood\":5,\"cooldown_ticks\":3600,\"glamour\":{\"duration_ticks\":600}} | false | 0"
+      })
+  @DisplayName("a pounce or a hex aims at one creature in reach, and a command at one held")
+  void aims(final String json, final boolean aims, final float reach) {
+    final SkillPower power =
+        SkillPower.CODEC.parse(JsonOps.INSTANCE, JsonParser.parseString(json)).getOrThrow();
+    assertEquals(aims, PowerAim.aims(power));
+    assertEquals(reach, PowerAim.targetRange(power).orElse(0.0F));
+    assertEquals(PowerAim.targetRange(power).isPresent(), PowerAim.NONE.unseen(power));
+    assertEquals(power.command().isPresent(), PowerAim.NONE.subjectless(power));
   }
 }

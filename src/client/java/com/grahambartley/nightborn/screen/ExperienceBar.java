@@ -5,7 +5,7 @@ public record ExperienceBar(int left, int top, int width) {
   public static final int MIN_WIDTH = 90;
   public static final int HEIGHT = 9;
   public static final int ROW_OFFSET = 10;
-  static final int BORDER = 1;
+  static final int BORDER = 2;
 
   public static ExperienceBar under(final SkillPointsRow row, final int rowTop, final int width) {
     return new ExperienceBar(row.detailX(), rowTop + ROW_OFFSET, width);

@@ -10,10 +10,22 @@ import org.junit.jupiter.params.provider.CsvSource;
 class ExperienceBarTest {
 
   @ParameterizedTest(name = "{0} of the way: {1} px")
-  @CsvSource({"0, 0", "0.5, 59", "1, 118", "1.4, 118", "-0.2, 0"})
+  @CsvSource({"0, 0", "0.5, 58", "1, 116", "1.4, 116", "-0.2, 0"})
   @DisplayName("the fill grows with the experience banked and stays inside the frame")
   void filled(final float fraction, final int pixels) {
     assertEquals(pixels, new ExperienceBar(0, 0, 120).filled(fraction));
+  }
+
+  @ParameterizedTest(name = "bar at {0},{1}")
+  @CsvSource({"0, 0", "40, 50"})
+  @DisplayName("the fill sits inside the frame's two pixel rim")
+  void inner(final int left, final int top) {
+    final ExperienceBar bar = new ExperienceBar(left, top, 120);
+    assertEquals(left + 2, bar.innerLeft());
+    assertEquals(top + 2, bar.innerTop());
+    assertEquals(left + 118, bar.innerRight());
+    assertEquals(top + ExperienceBar.HEIGHT - 2, bar.innerBottom());
+    assertEquals(bar.innerRight() - bar.innerLeft(), bar.filled(1.0F));
   }
 
   @ParameterizedTest(name = "{0} shown as {1}")

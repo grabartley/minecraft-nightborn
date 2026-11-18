@@ -4,11 +4,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 import com.grahambartley.nightborn.MinecraftBootstrapExtension;
-import com.grahambartley.nightborn.gear.GearItems;
 import com.grahambartley.nightborn.wheel.WheelEntry;
 import java.util.List;
-import net.minecraft.registry.Registries;
 import net.minecraft.text.TranslatableTextContent;
+import net.minecraft.util.Identifier;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -25,7 +24,7 @@ class GuildOathOrderTest {
     assertEquals(1, entries.size());
     final WheelEntry oath = entries.getFirst();
     assertEquals(GuildOathOrder.ID, oath.action());
-    assertEquals(Registries.ITEM.getId(GearItems.GOLD_CRUCIFIX), oath.icon());
+    assertEquals(Identifier.of("nightborn", "wheel/oath"), oath.icon());
     assertEquals(
         "nightborn.guild.oath", ((TranslatableTextContent) oath.label().getContent()).getKey());
     assertNotEquals(new GuildCounterOrders(kind).id(), oath.action());

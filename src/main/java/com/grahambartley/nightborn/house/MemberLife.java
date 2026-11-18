@@ -3,10 +3,12 @@ package com.grahambartley.nightborn.house;
 import com.grahambartley.nightborn.age.StageRanks;
 import com.grahambartley.nightborn.blood.BloodQuality;
 import com.grahambartley.nightborn.core.NightTime;
+import com.grahambartley.nightborn.mind.MindAttributes;
 import com.grahambartley.nightborn.mob.VampireEntity;
 import com.grahambartley.nightborn.mob.home.HouseholdTie;
 import com.grahambartley.nightborn.mob.home.NightRoutine;
 import com.grahambartley.nightborn.servant.FollowRules;
+import com.grahambartley.nightborn.servant.ServantVigour;
 import com.grahambartley.nightborn.servant.Stance;
 import com.grahambartley.nightborn.structure.HouseholdRoll;
 import com.grahambartley.nightborn.wild.WandererAttachment;
@@ -32,6 +34,12 @@ public final class MemberLife {
     final HouseholdTie tie = member.householdTie();
     if (member.age % REVIEW_TICKS == 0) {
       review(world, member, tie);
+      houseOf(world.getServer(), member)
+          .map(house -> world.getServer().getPlayerManager().getPlayer(house.lord()))
+          .ifPresent(
+              lord ->
+                  ServantVigour.apply(
+                      member, MindAttributes.value(lord, MindAttributes.SERVANT_VIGOUR)));
     }
     tie.stance()
         .ifPresent(

@@ -21,39 +21,47 @@ class PowerUseTest {
 
   @ParameterizedTest(
       name =
-          "power {0}, downed {1}, bat {2}, weakened {3}, sunlit {4}, cooling {5}, blood {6}/{7},"
-              + " unseen {8}, nowhere {9} -> {10}")
+          "power {0}, downed {1}, held {2}, winged {3}, bat {4}, weakened {5}, sunlit {6},"
+              + " cooling {7}, blood {8}/{9}, unseen {10}, nowhere {11}, no subject {12} -> {13}")
   @CsvSource({
-    "true, false, false, false, false, 0, 10, 3, false, false, READY",
-    "true, false, false, false, false, 0, 3, 3, false, false, READY",
-    "true, false, false, false, false, 0, 0, 0, false, false, READY",
-    "false, false, false, false, false, 0, 20, 0, false, false, NO_POWER",
-    "true, true, false, false, false, 0, 20, 3, false, false, HELPLESS",
-    "true, true, false, true, false, 40, 0, 3, true, false, HELPLESS",
-    "true, false, false, true, false, 0, 20, 3, false, false, WEAKENED",
-    "true, false, false, false, false, 1, 20, 3, false, false, COOLING",
-    "true, false, false, false, false, 1, 20, 3, true, false, COOLING",
-    "true, false, false, false, false, 0, 2, 3, false, false, THIRSTY",
-    "true, false, false, false, false, 0, 2, 3, true, false, THIRSTY",
-    "true, false, true, false, false, 0, 20, 3, false, false, AS_A_BAT",
-    "true, false, true, true, false, 1, 0, 3, false, false, AS_A_BAT",
-    "true, false, true, false, false, 0, 20, 3, true, true, AS_A_BAT",
-    "true, true, true, false, false, 0, 20, 3, false, false, HELPLESS",
-    "true, false, false, false, true, 0, 20, 3, false, false, SUNLIT",
-    "true, false, false, true, true, 0, 20, 3, false, false, WEAKENED",
-    "true, false, false, false, true, 5, 20, 3, false, false, SUNLIT",
-    "true, false, false, false, true, 0, 20, 3, true, true, SUNLIT",
-    "true, false, false, false, false, 0, 20, 3, true, false, UNSEEN",
-    "true, false, false, false, false, 0, 20, 3, true, true, UNSEEN",
-    "true, false, false, false, false, 0, 20, 3, false, true, NOWHERE",
-    "true, false, false, false, false, 0, 2, 3, false, true, THIRSTY"
+    "true, false, false, false, false, false, false, 0, 10, 3, false, false, false, READY",
+    "true, false, false, false, false, false, false, 0, 3, 3, false, false, false, READY",
+    "true, false, false, false, false, false, false, 0, 0, 0, false, false, false, READY",
+    "false, false, false, false, false, false, false, 0, 20, 0, false, false, false, NO_POWER",
+    "true, true, false, false, false, false, false, 0, 20, 3, false, false, false, HELPLESS",
+    "true, true, true, true, false, true, false, 40, 0, 3, true, false, false, HELPLESS",
+    "true, false, true, false, false, false, false, 0, 20, 3, false, false, false, HELD",
+    "true, false, true, true, true, true, false, 5, 0, 3, true, true, true, HELD",
+    "true, false, false, true, false, false, false, 0, 20, 3, false, false, false, IN_WINGED_FORM",
+    "true, false, false, true, true, false, false, 0, 20, 3, false, false, false, IN_WINGED_FORM",
+    "true, false, false, false, false, true, false, 0, 20, 3, false, false, false, WEAKENED",
+    "true, false, false, false, false, false, false, 1, 20, 3, false, false, false, COOLING",
+    "true, false, false, false, false, false, false, 1, 20, 3, true, false, false, COOLING",
+    "true, false, false, false, false, false, false, 0, 2, 3, false, false, false, THIRSTY",
+    "true, false, false, false, false, false, false, 0, 2, 3, true, false, false, THIRSTY",
+    "true, false, false, false, true, false, false, 0, 20, 3, false, false, false, AS_A_BAT",
+    "true, false, false, false, true, true, false, 1, 0, 3, false, false, false, AS_A_BAT",
+    "true, false, false, false, true, false, false, 0, 20, 3, true, true, false, AS_A_BAT",
+    "true, true, false, false, true, false, false, 0, 20, 3, false, false, false, HELPLESS",
+    "true, false, false, false, false, false, true, 0, 20, 3, false, false, false, SUNLIT",
+    "true, false, false, false, false, true, true, 0, 20, 3, false, false, false, WEAKENED",
+    "true, false, false, false, false, false, true, 5, 20, 3, false, false, false, SUNLIT",
+    "true, false, false, false, false, false, true, 0, 20, 3, true, true, false, SUNLIT",
+    "true, false, false, false, false, false, false, 0, 20, 3, true, false, false, UNSEEN",
+    "true, false, false, false, false, false, false, 0, 20, 3, true, true, true, UNSEEN",
+    "true, false, false, false, false, false, false, 0, 20, 3, false, true, false, NOWHERE",
+    "true, false, false, false, false, false, false, 0, 2, 3, false, true, false, THIRSTY",
+    "true, false, false, false, false, false, false, 0, 20, 3, false, false, true, NO_SUBJECT",
+    "true, false, false, false, false, false, false, 0, 20, 3, false, true, true, NOWHERE"
   })
   @DisplayName(
-      "a power is refused while downed, in bat form, weakened, in the sun, cooling, short of"
-          + " blood, with nothing to stare at or nowhere to step")
+      "a power is refused while downed, held, in winged form, in bat form, weakened, in the sun,"
+          + " cooling, short of blood, with nothing to aim at, nowhere to step or no one to order")
   void checks(
       final boolean hasPower,
       final boolean helpless,
+      final boolean held,
+      final boolean winged,
       final boolean bat,
       final boolean weakened,
       final boolean sunlit,
@@ -62,11 +70,25 @@ class PowerUseTest {
       final int cost,
       final boolean unseen,
       final boolean nowhere,
+      final boolean subjectless,
       final PowerUse.Verdict expected) {
     assertEquals(
         expected,
         PowerUse.check(
-            hasPower, helpless, bat, weakened, sunlit, cooling, blood, cost, unseen, nowhere));
+            new PowerUse.Situation(
+                hasPower,
+                helpless,
+                held,
+                winged,
+                bat,
+                weakened,
+                sunlit,
+                cooling,
+                blood,
+                cost,
+                unseen,
+                nowhere,
+                subjectless)));
   }
 
   @ParameterizedTest(name = "{0}")

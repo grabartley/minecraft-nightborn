@@ -1,0 +1,62 @@
+{
+  "branch": "nightborn:noble",
+  "requires": [
+    "nightborn:noble/blood_bond"
+  ],
+  "icon": "nightborn:skills/icon/blood_bond",
+  "column": 0,
+  "row": 4,
+  "stage": "nightborn:adult",
+  "ranks": [
+    {
+      "cost": 2,
+      "attributes": [
+        {
+          "attribute": "nightborn:tithe_share",
+          "amount": 0.1,
+          "operation": "add_value"
+        },
+        {
+          "attribute": "nightborn:tithe_rate",
+          "amount": 2.0,
+          "operation": "add_value"
+        },
+        {
+          "attribute": "nightborn:tithe_range",
+          "amount": 12.0,
+          "operation": "add_value"
+        }
+      ]
+    },
+    {
+      "cost": 2,
+      "attributes": [
+        {
+          "attribute": "nightborn:tithe_share",
+          "amount": 0.1,
+          "operation": "add_value"
+        },
+        {
+          "attribute": "nightborn:tithe_rate",
+          "amount": 1.0,
+          "operation": "add_value"
+        }
+      ]
+    },
+    {
+      "cost": 3,
+      "attributes": [
+        {
+          "attribute": "nightborn:tithe_share",
+          "amount": 0.1,
+          "operation": "add_value"
+        },
+        {
+          "attribute": "nightborn:tithe_rate",
+          "amount": 3.0,
+          "operation": "add_value"
+        }
+      ]
+    }
+  ]
+}
