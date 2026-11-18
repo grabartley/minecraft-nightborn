@@ -14,6 +14,7 @@ public final class SavedStarts {
   public static final String STRUCTURES = "structures";
   public static final String STARTS = "starts";
   public static final String INVALID = "INVALID";
+  public static final int FIRST_STARTS_LAYOUT = 2860;
 
   private SavedStarts() {}
 
@@ -25,7 +26,9 @@ public final class SavedStarts {
 
   public static Optional<Boolean> has(
       final NbtElement saved, final Identifier structure, final int currentVersion) {
-    if (!(saved instanceof NbtCompound chunk) || chunk.getInt(DATA_VERSION) != currentVersion) {
+    if (!(saved instanceof NbtCompound chunk)
+        || chunk.getInt(DATA_VERSION) < FIRST_STARTS_LAYOUT
+        || chunk.getInt(DATA_VERSION) > currentVersion) {
       return Optional.empty();
     }
     final NbtCompound starts = chunk.getCompound(STRUCTURES).getCompound(STARTS);

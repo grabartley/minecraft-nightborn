@@ -102,10 +102,11 @@ public final class ScoutOrders<T extends PathAwareEntity & DayWorker> implements
     NearestStructures.eachOf(world, SCOUT_TARGETS, from, range)
         .thenAcceptAsync(
             found -> {
-              if (!player.isDisconnected()
-                  && !worker.isRemoved()
-                  && player.currentScreenHandler == player.playerScreenHandler
-                  && player.canInteractWithEntity(worker, CommandWheel.REACH_SLACK)) {
+              if (stillAsking(
+                  player.isDisconnected(),
+                  worker.isRemoved(),
+                  player.currentScreenHandler != player.playerScreenHandler,
+                  player.canInteractWithEntity(worker, CommandWheel.REACH_SLACK))) {
                 show(
                     player,
                     worker,
@@ -137,6 +138,14 @@ public final class ScoutOrders<T extends PathAwareEntity & DayWorker> implements
         theme,
         Text.translatable("nightborn.scout.where", worker.getDisplayName()),
         entries);
+  }
+
+  static boolean stillAsking(
+      final boolean disconnected,
+      final boolean workerGone,
+      final boolean screenOpen,
+      final boolean inReach) {
+    return !disconnected && !workerGone && !screenOpen && inReach;
   }
 
   static Text label(final BlockPos from, final Found place) {

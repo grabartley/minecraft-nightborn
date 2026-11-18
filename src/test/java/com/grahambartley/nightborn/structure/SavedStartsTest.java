@@ -38,12 +38,22 @@ class SavedStartsTest {
     assertEquals(Optional.of(present), SavedStarts.has(chunk(VERSION, startId), LAIR, VERSION));
   }
 
-  @ParameterizedTest(name = "saved at version {0} -> unknown")
-  @CsvSource({"3953", "1493", "0"})
-  @DisplayName("a chunk saved by another game version is left to the seed")
-  void otherVersion(final int version) {
+  @ParameterizedTest(name = "saved at version {0} -> {1}")
+  @CsvSource({
+    "3955, true",
+    "3953, true",
+    "2860, true",
+    "2859, unknown",
+    "1493, unknown",
+    "0, unknown",
+    "3956, unknown"
+  })
+  @DisplayName(
+      "a chunk saved with today's starts layout is trusted, and older or newer ones are left to"
+          + " the seed")
+  void versions(final int version, final String trusted) {
     assertEquals(
-        Optional.empty(),
+        "unknown".equals(trusted) ? Optional.empty() : Optional.of(true),
         SavedStarts.has(chunk(version, "nightborn:underground_lair"), LAIR, VERSION));
   }
 

@@ -4,9 +4,13 @@ import com.grahambartley.nightborn.Nightborn;
 import com.grahambartley.nightborn.server.ServerConfigService;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CancellationException;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.RejectedExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.function.Supplier;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.minecraft.SharedConstants;
 import net.minecraft.nbt.scanner.SelectiveNbtCollector;
@@ -26,6 +30,7 @@ import net.minecraft.world.gen.structure.Structure;
 public final class NearestStructures {
 
   public static final long DAY_TICKS = 24000L;
+  public static final long SCAN_SECONDS = 5L;
 
   private static final NearestStructureCache CACHE = new NearestStructureCache();
   private static volatile ExecutorService searcher;
@@ -73,15 +78,22 @@ public final class NearestStructures {
             .<List<RegistryEntry<Structure>>>map(list -> list.stream().toList())
             .orElse(List.of());
     return CACHE
-        .find(
-            ask,
-            () -> CompletableFuture.supplyAsync(() -> locate(world, entries, from, range), running))
+        .find(ask, () -> search(running, () -> locate(world, entries, from, range)))
         .whenComplete(
             (found, error) -> {
               if (error != null) {
                 Nightborn.LOGGER.warn("Structure search for {} failed", tag.id(), error);
               }
             });
+  }
+
+  static CompletableFuture<List<Found>> search(
+      final ExecutorService running, final Supplier<List<Found>> walk) {
+    try {
+      return CompletableFuture.supplyAsync(walk, running);
+    } catch (final RejectedExecutionException stopped) {
+      return CompletableFuture.failedFuture(stopped);
+    }
   }
 
   private static List<Found> locate(
@@ -97,11 +109,15 @@ public final class NearestStructures {
       final Identifier id = entry.getKey().orElseThrow().getValue();
       for (final StructurePlacement placement : placements.getPlacements(entry)) {
         if (!(placement instanceof RandomSpreadStructurePlacement spread)) {
+          Nightborn.LOGGER.warn("Structure search cannot walk the placement of {}", id);
           continue;
         }
         for (final ChunkPos probe :
             SpreadCells.probes(
                 new ChunkPos(from), SpreadCells.chunks(range), spread.getSpacing())) {
+          if (Thread.currentThread().isInterrupted()) {
+            throw new CancellationException("Server stopped");
+          }
           final ChunkPos start =
               spread.getStartChunk(placements.getStructureSeed(), probe.x, probe.z);
           final BlockPos at = spread.getLocatePos(start);
@@ -123,7 +139,13 @@ public final class NearestStructures {
       final Identifier id,
       final ChunkPos start) {
     final SelectiveNbtCollector saved = SavedStarts.collector();
-    world.getChunkManager().chunkLoadingManager.getWorker().scanChunk(start, saved).join();
+    world
+        .getChunkManager()
+        .chunkLoadingManager
+        .getWorker()
+        .scanChunk(start, saved)
+        .completeOnTimeout(null, SCAN_SECONDS, TimeUnit.SECONDS)
+        .join();
     return SavedStarts.has(
             saved.getRoot(), id, SharedConstants.getGameVersion().getSaveVersion().getId())
         .orElseGet(() -> possible(world, generator, structure, start));
