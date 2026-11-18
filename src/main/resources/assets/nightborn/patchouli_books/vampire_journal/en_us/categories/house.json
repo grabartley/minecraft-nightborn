@@ -1,0 +1,7 @@
+{
+  "name": "nightborn.journal.vampire.category.house",
+  "description": "nightborn.journal.vampire.category.house.description",
+  "icon": "nightborn:oak_coffin",
+  "sortnum": 2,
+  "secret": true
+}

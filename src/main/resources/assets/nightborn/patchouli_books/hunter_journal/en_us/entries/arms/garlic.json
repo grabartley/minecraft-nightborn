@@ -1,0 +1,14 @@
+{
+  "name": "nightborn.journal.hunter.garlic",
+  "icon": "nightborn:garlic",
+  "category": "nightborn:arms",
+  "advancement": "nightborn:garlic_breath",
+  "secret": true,
+  "sortnum": 10,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "nightborn.journal.hunter.garlic.1"
+    }
+  ]
+}

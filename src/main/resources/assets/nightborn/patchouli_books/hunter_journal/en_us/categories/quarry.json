@@ -1,0 +1,7 @@
+{
+  "name": "nightborn.journal.hunter.category.quarry",
+  "description": "nightborn.journal.hunter.category.quarry.description",
+  "icon": "nightborn:wooden_stake",
+  "sortnum": 1,
+  "secret": true
+}

@@ -1,5 +1,7 @@
 package com.grahambartley.nightborn.oldblood;
 
+import com.grahambartley.nightborn.journal.Journal;
+import com.grahambartley.nightborn.journal.Journals;
 import com.grahambartley.nightborn.sickness.BiteSickness;
 import com.grahambartley.nightborn.sickness.BiteSicknessAttachment;
 import com.grahambartley.nightborn.vampire.Vampires;
@@ -95,12 +97,16 @@ public class OldBloodFontBlock extends BlockWithEntity {
             player.getMainHandStack().isEmpty(),
             Vampires.isVampire(player),
             world.getBlockState(pos).get(FILLED),
-            BiteSicknessAttachment.isSick(player));
+            BiteSicknessAttachment.isSick(player),
+            Journals.carries(player, Journal.VAMPIRE));
     if (drink == FontDrink.PASS) {
       return ActionResult.PASS;
     }
     if (player instanceof ServerPlayerEntity human) {
       drink.refusal().ifPresent(key -> human.sendMessage(Text.translatable(key), true));
+      if (drink == FontDrink.JOURNAL) {
+        Journals.give(human, Journal.VAMPIRE);
+      }
       if (drink == FontDrink.DRINKS && BiteSickness.startFromOldBlood(human)) {
         font.drain(world.getTime());
         world.playSound(

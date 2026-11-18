@@ -1,0 +1,14 @@
+{
+  "name": "nightborn.journal.vampire.the_eldest",
+  "icon": "nightborn:ritual_altar",
+  "category": "nightborn:house",
+  "advancement": "nightborn:house_call",
+  "secret": true,
+  "sortnum": 12,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "nightborn.journal.vampire.the_eldest.1"
+    }
+  ]
+}

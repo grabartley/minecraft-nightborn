@@ -1,0 +1,17 @@
+{
+  "name": "nightborn.journal.hunter.contracts",
+  "icon": "nightborn:hunter_contract",
+  "category": "nightborn:guild",
+  "advancement": "nightborn:sworn_in",
+  "secret": true,
+  "sortnum": 3,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "nightborn.journal.hunter.contracts.1"
+    },
+    {
+      "type": "nightborn:contracts"
+    }
+  ]
+}

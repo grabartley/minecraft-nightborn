@@ -1,0 +1,22 @@
+{
+  "name": "nightborn.journal.vampire.blood",
+  "icon": "nightborn:blood_bottle",
+  "category": "nightborn:change",
+  "advancement": "nightborn:no_reflection_on_you",
+  "secret": true,
+  "sortnum": 1,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "nightborn.journal.vampire.blood.1"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "nightborn.journal.vampire.blood.2"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "nightborn.journal.vampire.blood.3"
+    }
+  ]
+}

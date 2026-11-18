@@ -17,6 +17,8 @@ import com.grahambartley.nightborn.faction.FactionPlayerList;
 import com.grahambartley.nightborn.feeding.FeedingSessions;
 import com.grahambartley.nightborn.feeding.TurningBite;
 import com.grahambartley.nightborn.hunt.Hunts;
+import com.grahambartley.nightborn.journal.Journal;
+import com.grahambartley.nightborn.journal.Journals;
 import com.grahambartley.nightborn.levitation.Levitation;
 import com.grahambartley.nightborn.moment.Moment;
 import com.grahambartley.nightborn.moment.Moments;
@@ -57,6 +59,7 @@ public final class VampireTransitions {
     player.sendMessage(Text.translatable("nightborn.turning.turned"), false);
     FactionPlayerList.refresh(player);
     StageNames.changed(player);
+    Journals.give(player, Journal.VAMPIRE);
     return true;
   }
 

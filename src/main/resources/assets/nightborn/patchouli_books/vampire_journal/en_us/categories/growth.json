@@ -1,0 +1,7 @@
+{
+  "name": "nightborn.journal.vampire.category.growth",
+  "description": "nightborn.journal.vampire.category.growth.description",
+  "icon": "nightborn:blood_bottle",
+  "sortnum": 1,
+  "secret": true
+}

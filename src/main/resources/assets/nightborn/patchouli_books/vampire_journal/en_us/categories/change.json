@@ -1,0 +1,7 @@
+{
+  "name": "nightborn.journal.vampire.category.change",
+  "description": "nightborn.journal.vampire.category.change.description",
+  "icon": "nightborn:vampire_journal",
+  "sortnum": 0,
+  "secret": true
+}
