@@ -71,8 +71,9 @@ public final class JournalPages {
     return (int) (open * 100 / pages.size());
   }
 
-  public static boolean counted(final boolean hidden, final AdvancementFrame frame) {
-    return !hidden && frame != AdvancementFrame.CHALLENGE;
+  public static boolean counted(
+      final boolean hidden, final AdvancementFrame frame, final int steps) {
+    return !hidden && !(frame == AdvancementFrame.CHALLENGE && steps > 1);
   }
 
   private static boolean counted(final AdvancementEntry entry) {
@@ -80,7 +81,12 @@ public final class JournalPages {
         && entry
             .value()
             .display()
-            .map(display -> counted(display.isHidden(), display.getFrame()))
+            .map(
+                display ->
+                    counted(
+                        display.isHidden(),
+                        display.getFrame(),
+                        entry.value().requirements().getLength()))
             .orElse(false);
   }
 

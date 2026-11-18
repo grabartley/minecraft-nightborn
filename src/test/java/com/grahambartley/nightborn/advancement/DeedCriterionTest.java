@@ -21,6 +21,7 @@ import net.minecraft.util.Identifier;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
@@ -139,5 +140,65 @@ class DeedCriterionTest {
             .get("slots")
             .getAsInt();
     assertEquals(AccessorySlot.values().length, slots);
+  }
+
+  private static JsonObject criteria(final String file) throws IOException {
+    return JsonParser.parseString(Files.readString(ADVANCEMENTS.resolve(file)))
+        .getAsJsonObject()
+        .getAsJsonObject("criteria");
+  }
+
+  private static List<String> fact(final JsonObject criteria, final String key) {
+    return criteria.keySet().stream()
+        .map(name -> criteria.getAsJsonObject(name).getAsJsonObject("conditions"))
+        .map(conditions -> conditions.getAsJsonObject("facts").get(key).getAsString())
+        .sorted()
+        .toList();
+  }
+
+  private static List<String> ids(final Path folder, final String type) throws IOException {
+    try (Stream<Path> files = Files.list(folder)) {
+      final List<String> found = new ArrayList<>();
+      for (final Path file : files.sorted().toList()) {
+        final JsonObject json = JsonParser.parseString(Files.readString(file)).getAsJsonObject();
+        if (type == null || type.equals(json.get("type").getAsString())) {
+          found.add("nightborn:" + file.getFileName().toString().replace(".json", ""));
+        }
+      }
+      return found;
+    }
+  }
+
+  @ParameterizedTest(name = "{0} covers {2}")
+  @CsvSource({
+    "blood_type.json, gift, src/main/resources/data/nightborn/nightborn/blood_gift, ''",
+    "property_ladder.json, structure, src/main/resources/data/nightborn/worldgen/structure,"
+        + " nightborn:vampire_structure"
+  })
+  void aSetChallengeCoversExactlyTheSetInData(
+      final String file, final String key, final String folder, final String type)
+      throws IOException {
+    assertEquals(ids(Path.of(folder), type.isEmpty() ? null : type), fact(criteria(file), key));
+  }
+
+  @ParameterizedTest(name = "{0}")
+  @ValueSource(strings = {"ring_leader.json"})
+  void everyRingInRingLeaderIsAnAccessory(final String file) throws IOException {
+    final JsonObject criteria = criteria(file);
+    for (final String name : criteria.keySet()) {
+      for (final String ring :
+          criteria
+              .getAsJsonObject(name)
+              .getAsJsonObject("conditions")
+              .getAsJsonObject("facts")
+              .keySet()) {
+        assertTrue(
+            Files.exists(
+                Path.of(
+                    "src/main/resources/data/nightborn/nightborn/accessory",
+                    Identifier.of(ring).getPath() + ".json")),
+            name + " names " + ring);
+      }
+    }
   }
 }

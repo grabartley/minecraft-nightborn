@@ -46,15 +46,16 @@ class JournalPagesTest {
         share, JournalPages.share(gates(pages), id -> !secret.contains(id), open::contains));
   }
 
-  @ParameterizedTest(name = "hidden {0}, {1} -> {2}")
+  @ParameterizedTest(name = "hidden {0}, {1} of {2} steps -> {3}")
   @CsvSource({
-    "false, TASK, true",
-    "false, GOAL, true",
-    "false, CHALLENGE, false",
-    "true, TASK, false"
+    "false, TASK, 1, true",
+    "false, GOAL, 2, true",
+    "false, CHALLENGE, 1, true",
+    "false, CHALLENGE, 5, false",
+    "true, TASK, 1, false"
   })
-  void hiddenAndChallengePagesAreNotCounted(
-      final boolean hidden, final AdvancementFrame frame, final boolean counted) {
-    assertEquals(counted, JournalPages.counted(hidden, frame));
+  void pagesBehindHiddenAdvancementsAndSetChallengesAreNotCounted(
+      final boolean hidden, final AdvancementFrame frame, final int steps, final boolean counted) {
+    assertEquals(counted, JournalPages.counted(hidden, frame, steps));
   }
 }

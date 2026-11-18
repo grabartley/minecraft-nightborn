@@ -19,7 +19,7 @@
       "conditions": {
         "deed": "nightborn:wrong_call",
         "facts": {
-          "boss": "eldest"
+          "boss": "nightborn:eldest"
         }
       }
     },
@@ -28,7 +28,7 @@
       "conditions": {
         "deed": "nightborn:wrong_call",
         "facts": {
-          "boss": "grand_inquisitor"
+          "boss": "nightborn:grand_inquisitor"
         }
       }
     }

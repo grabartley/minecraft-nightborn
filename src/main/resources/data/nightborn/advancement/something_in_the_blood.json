@@ -10,7 +10,8 @@
     "description": {
       "translate": "advancements.nightborn.something_in_the_blood.description"
     },
-    "frame": "task"
+    "frame": "task",
+    "announce_to_chat": false
   },
   "criteria": {
     "drank": {

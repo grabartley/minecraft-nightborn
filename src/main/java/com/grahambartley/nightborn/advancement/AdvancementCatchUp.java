@@ -6,6 +6,7 @@ import com.grahambartley.nightborn.challenge.Deed;
 import com.grahambartley.nightborn.challenge.DeedKinds;
 import com.grahambartley.nightborn.faction.GuildMembership;
 import com.grahambartley.nightborn.faction.OathAttachment;
+import com.grahambartley.nightborn.house.House;
 import com.grahambartley.nightborn.house.Houses;
 import com.grahambartley.nightborn.rank.RankLadder;
 import com.grahambartley.nightborn.skill.LineShare;
@@ -58,8 +59,9 @@ public final class AdvancementCatchUp {
                         LineShare.percent(skills, SkillAttachment.get(player, branch.tree()), id)));
               }
             });
-    final boolean leadsHouse = Houses.get(player.getServer()).ledBy(player.getUuid()).isPresent();
-    deeds(stages, ranks, shares, leadsHouse).forEach(deed -> DeedCriterion.done(player, deed));
+    final int household =
+        Houses.get(player.getServer()).ledBy(player.getUuid()).map(House::household).orElse(0);
+    deeds(stages, ranks, shares, household).forEach(deed -> DeedCriterion.done(player, deed));
   }
 
   static List<Identifier> reached(final int rank, final List<Identifier> ladder) {
@@ -70,7 +72,7 @@ public final class AdvancementCatchUp {
       final List<Identifier> stages,
       final List<Identifier> ranks,
       final List<LineShareDone> shares,
-      final boolean leadsHouse) {
+      final int household) {
     final List<Deed> deeds = new ArrayList<>();
     stages.forEach(
         stage -> deeds.add(Deed.of(DeedKinds.STAGE_REACHED).with(DeedKinds.STAGE, stage)));
@@ -84,8 +86,9 @@ public final class AdvancementCatchUp {
                         .with(DeedKinds.TREE, done.tree().asString())
                         .with(DeedKinds.LINE, done.line())
                         .with(DeedKinds.SHARE, done.share())));
-    if (leadsHouse) {
+    if (household > 0) {
       deeds.add(Deed.of(DeedKinds.HOUSE_FOUNDED));
+      deeds.add(Deed.of(DeedKinds.HOUSE_GUEST).with(DeedKinds.HOUSEHOLD, household));
     }
     return deeds;
   }
