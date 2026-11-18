@@ -8,7 +8,7 @@ import software.bernie.geckolib.animatable.client.GeoRenderProvider;
 
 public class ClothingRenderProvider implements GeoRenderProvider {
 
-  private ClothingRenderer renderer;
+  private ClothingRenderer<?> renderer;
 
   @Override
   public <T extends LivingEntity> BipedEntityModel<?> getGeoArmorRenderer(
@@ -17,7 +17,7 @@ public class ClothingRenderProvider implements GeoRenderProvider {
       final EquipmentSlot slot,
       final BipedEntityModel<T> original) {
     if (this.renderer == null) {
-      this.renderer = new ClothingRenderer();
+      this.renderer = new ClothingRenderer<>();
     }
     return this.renderer;
   }

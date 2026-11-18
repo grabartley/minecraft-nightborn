@@ -1,5 +1,6 @@
 package com.grahambartley.nightborn.vampire;
 
+import com.grahambartley.nightborn.accessory.AccessoryGifts;
 import com.grahambartley.nightborn.advancement.Milestone;
 import com.grahambartley.nightborn.advancement.MilestoneCriterion;
 import com.grahambartley.nightborn.age.Ageing;
@@ -58,6 +59,7 @@ public final class VampireTransitions {
             1.0F,
             0.5F);
     SkillAttributes.apply(player);
+    AccessoryGifts.apply(player);
     player.sendMessage(Text.translatable("nightborn.turning.turned"), false);
     FactionPlayerList.refresh(player);
     StageNames.changed(player);
@@ -80,6 +82,7 @@ public final class VampireTransitions {
     VampireCore.remove(player);
     CoffinOwnership.release(player.server, player.getUuid());
     SkillAttributes.apply(player);
+    AccessoryGifts.apply(player);
     player.resetStat(Stats.CUSTOM.getOrCreateStat(Stats.TIME_SINCE_REST));
     FactionPlayerList.refresh(player);
   }

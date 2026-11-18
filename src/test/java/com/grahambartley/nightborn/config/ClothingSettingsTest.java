@@ -25,7 +25,11 @@ class ClothingSettingsTest {
   @Test
   @DisplayName("the constructor clamps values into bounds")
   void clamps() {
-    assertEquals(new ClothingSettings(true, 0, 0, 0), new ClothingSettings(true, -1, -1, -1));
-    assertEquals(new ClothingSettings(false, 5, 10, 30), new ClothingSettings(false, 6, 11, 31));
+    assertEquals(
+        new ClothingSettings(true, 0, 0, 0, 0, 0, 0, 0),
+        new ClothingSettings(true, -1, -1, -1, -1, -1, -1, -1));
+    assertEquals(
+        new ClothingSettings(false, 5, 10, 30, 25, 3, 25, 25),
+        new ClothingSettings(false, 6, 11, 31, 26, 4, 26, 26));
   }
 }

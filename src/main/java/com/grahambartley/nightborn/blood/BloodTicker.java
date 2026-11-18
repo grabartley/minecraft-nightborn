@@ -3,6 +3,7 @@ package com.grahambartley.nightborn.blood;
 import com.grahambartley.nightborn.age.AgeAttachment;
 import com.grahambartley.nightborn.age.AgeGifts;
 import com.grahambartley.nightborn.batform.BatForm;
+import com.grahambartley.nightborn.clothing.WornAttributes;
 import com.grahambartley.nightborn.config.NightbornConfig;
 import com.grahambartley.nightborn.downed.Downed;
 import com.grahambartley.nightborn.downed.DownedState;
@@ -43,6 +44,7 @@ public final class BloodTicker {
       final int drainSeconds,
       final NightbornConfig config) {
     final DownedState downed = Downed.state(vampire);
+    final double drainRate = WornAttributes.value(vampire, WornAttributes.BLOOD_DRAIN);
     final BloodMetabolism.Outcome outcome =
         BloodMetabolism.tick(
             new BloodMetabolism.State(
@@ -53,11 +55,13 @@ public final class BloodTicker {
                 vampire.getWorld().getDifficulty(),
                 vampire.getWorld().getGameRules().getBoolean(GameRules.NATURAL_REGENERATION)
                     && (downed == null || !downed.isDowned()),
-                BloodMetabolism.flightDrainSeconds(
-                    BatForm.effort(vampire), Levitation.isLevitating(vampire), config.core()),
+                BloodMetabolism.atRate(
+                    BloodMetabolism.flightDrainSeconds(
+                        BatForm.effort(vampire), Levitation.isLevitating(vampire), config.core()),
+                    drainRate),
                 vampire.age,
                 VampireAttributes.value(vampire, VampireAttributes.HEALING_SPEED)),
-            drainSeconds);
+            BloodMetabolism.atRate(drainSeconds, drainRate));
     BloodAttachment.set(vampire, outcome.blood());
     if (outcome.heals()) {
       vampire.heal(1.0F);

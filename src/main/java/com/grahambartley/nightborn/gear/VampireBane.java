@@ -3,6 +3,7 @@ package com.grahambartley.nightborn.gear;
 import com.grahambartley.nightborn.Nightborn;
 import com.grahambartley.nightborn.coating.CoatedStrikes;
 import com.grahambartley.nightborn.config.GearSettings;
+import com.grahambartley.nightborn.enchant.EnchantedValues;
 import com.grahambartley.nightborn.server.ServerConfigService;
 import com.grahambartley.nightborn.vampire.Vampires;
 import net.minecraft.entity.Entity;
@@ -28,6 +29,17 @@ public final class VampireBane {
   public static float bonus(final ItemStack weapon, final Entity target) {
     return bonus(weapon, target, STAKES, SILVER_WEAPONS)
         + CoatedStrikes.weaponBonus(weapon, target);
+  }
+
+  public static float strike(final ItemStack weapon, final Entity target, final float damage) {
+    final float total = damage + bonus(weapon, target);
+    return seeksTheHeart(weapon.isIn(STAKES), Vampires.isVampire(target))
+        ? EnchantedValues.apply(weapon, EnchantedValues.STAKE_DAMAGE, total)
+        : total;
+  }
+
+  public static boolean seeksTheHeart(final boolean stake, final boolean vampire) {
+    return stake && vampire;
   }
 
   public static float ammoBonus(final ItemStack ammo, final Entity target) {

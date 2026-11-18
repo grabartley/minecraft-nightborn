@@ -1,10 +1,12 @@
 package com.grahambartley.nightborn.gametest;
 
-import com.grahambartley.nightborn.clothing.ClothingItem;
+import com.grahambartley.nightborn.clothing.Dressed;
 import com.grahambartley.nightborn.mob.VampireEntity;
+import com.grahambartley.nightborn.mob.look.OutfitDressing;
 import com.grahambartley.nightborn.mob.look.VampireLook;
 import com.grahambartley.nightborn.mob.look.VampireSize;
 import java.util.List;
+import java.util.Optional;
 import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.SpawnReason;
@@ -34,8 +36,9 @@ public final class VampireLookGameTest implements FabricGameTest {
     for (final EquipmentSlot slot :
         List.of(EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET)) {
       context.assertTrue(
-          vampire.getEquippedStack(slot).getItem() instanceof ClothingItem clothing
-              && clothing.piece().type().getEquipmentSlot() == slot,
+          vampire.getEquippedStack(slot).getItem() instanceof Dressed
+              && OutfitDressing.slot(vampire.getEquippedStack(slot).getItem())
+                  .equals(Optional.of(slot)),
           look.rig().asString() + " vampire wears craftable clothing in " + slot.getName());
     }
     context.assertTrue(

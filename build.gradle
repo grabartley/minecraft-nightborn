@@ -32,6 +32,10 @@ repositories {
 		name = 'BlameJared'
 		url 'https://maven.blamejared.com/'
 	}
+	maven {
+		name = 'Ladysnake Libs'
+		url 'https://maven.ladysnake.org/releases'
+	}
 }
 
 loom {
@@ -86,6 +90,7 @@ dependencies {
 	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 	modImplementation "software.bernie.geckolib:geckolib-fabric-1.21.1:${project.geckolib_version}"
+	modImplementation "dev.emi:trinkets:${project.trinkets_version}"
 
 	modCompileOnly "com.terraformersmc:modmenu:${project.modmenu_version}"
 	modLocalRuntime "com.terraformersmc:modmenu:${project.modmenu_version}"
@@ -216,16 +221,16 @@ tasks.register("verifyMainSourceSideSafety") {
 	}
 }
 
-tasks.register("verifyNoBundledRecipeViewers") {
+tasks.register("verifyNoBundledMods") {
 	group = "verification"
-	description = "Fails if the remapped jar bundles Mod Menu, JEI, or EMI code, directly or as a nested jar"
+	description = "Fails if the remapped jar bundles Mod Menu, JEI, EMI or Trinkets code, directly or as a nested jar"
 
 	def remappedJar = tasks.named("remapJar").flatMap { it.archiveFile }
 	inputs.file(remappedJar)
 
 	doLast {
-		def bundledPrefixes = ["mezz/jei/", "dev/emi/", "com/terraformersmc/modmenu/"]
-		def bundledModIds = ["jei", "emi", "modmenu"]
+		def bundledPrefixes = ["mezz/jei/", "dev/emi/", "com/terraformersmc/modmenu/", "org/ladysnake/cca/"]
+		def bundledModIds = ["jei", "emi", "modmenu", "trinkets", "cardinal-components-base", "cardinal-components-entity"]
 		def violations = []
 
 		def scan
@@ -252,7 +257,7 @@ tasks.register("verifyNoBundledRecipeViewers") {
 
 		if (!violations.isEmpty()) {
 			throw new GradleException(
-				"Recipe viewer code bundled into the mod jar:\n" + violations.join("\n"))
+				"Optional or required mod code bundled into the mod jar:\n" + violations.join("\n"))
 		}
 	}
 }
@@ -260,7 +265,7 @@ tasks.register("verifyNoBundledRecipeViewers") {
 check {
 	dependsOn spotlessCheck
 	dependsOn verifyMainSourceSideSafety
-	dependsOn verifyNoBundledRecipeViewers
+	dependsOn verifyNoBundledMods
 	dependsOn clientTest
 }
 
@@ -317,6 +322,7 @@ modrinth {
 	dependencies {
 		required.project 'fabric-api'
 		required.project 'geckolib'
+		required.project 'trinkets'
 	}
 }
 
@@ -344,5 +350,6 @@ tasks.register('curseforge', TaskPublishCurseForge) {
 		mainFile.addEnvironment('Client', 'Server')
 		mainFile.addRequirement('fabric-api')
 		mainFile.addRequirement('geckolib')
+		mainFile.addRequirement('trinkets')
 	}
 }

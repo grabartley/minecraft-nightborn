@@ -8,6 +8,10 @@ import net.minecraft.test.TestContext;
 
 public class NightbornBootGameTest implements FabricGameTest {
 
+  static {
+    TestPlayers.acceptSync();
+  }
+
   @GameTest(templateName = FabricGameTest.EMPTY_STRUCTURE, tickLimit = 20)
   public void modIsLoadedOnTheServer(TestContext context) {
     context.assertTrue(

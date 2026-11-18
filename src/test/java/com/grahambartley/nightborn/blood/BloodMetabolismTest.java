@@ -198,4 +198,19 @@ class BloodMetabolismTest {
                 600)
             .heals());
   }
+
+  @ParameterizedTest(name = "{0}s per blood at rate {1}: {2}s")
+  @CsvSource({
+    "60, 1.0, 60",
+    "60, 0.95, 63",
+    "60, 0.85, 71",
+    "60, 1.25, 48",
+    "60, 0.2, 300",
+    "0, 0.5, 0",
+    "1, 3.0, 1"
+  })
+  @DisplayName("Thrift slows the drain and Thirst speeds it, and grounded stays grounded")
+  void atRate(final int seconds, final double rate, final int expected) {
+    assertEquals(expected, BloodMetabolism.atRate(seconds, rate));
+  }
 }

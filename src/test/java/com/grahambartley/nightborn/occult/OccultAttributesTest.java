@@ -4,7 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.grahambartley.nightborn.MinecraftBootstrapExtension;
-import com.grahambartley.nightborn.mob.VampireEntity;
+import com.grahambartley.nightborn.mob.VampireMobAttributes;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;
 import net.minecraft.entity.player.PlayerEntity;
 import org.junit.jupiter.api.DisplayName;
@@ -34,7 +34,7 @@ class OccultAttributesTest {
     final DefaultAttributeContainer attributes =
         who.equals("player")
             ? PlayerEntity.createPlayerAttributes().build()
-            : VampireEntity.createVampireAttributes().build();
+            : VampireMobAttributes.create().build();
     assertTrue(attributes.has(OccultAttributes.FAMILIAR_LIMIT));
   }
 }

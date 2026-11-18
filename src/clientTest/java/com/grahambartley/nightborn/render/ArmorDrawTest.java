@@ -13,9 +13,10 @@ class ArmorDrawTest {
     "true, false, VANILLA",
     "true, true, GECKO",
     "false, false, NONE",
-    "false, true, NONE"
+    "false, true, GECKO"
   })
-  @DisplayName("worn armour is drawn by its own GeckoLib model when it has one, else as vanilla")
+  @DisplayName(
+      "a worn piece with a GeckoLib model is drawn by it, other armour as vanilla, else nothing")
   void picksHowToDraw(final boolean armour, final boolean geckoModel, final ArmorDraw draw) {
     assertEquals(draw, ArmorDraw.of(armour, geckoModel));
   }

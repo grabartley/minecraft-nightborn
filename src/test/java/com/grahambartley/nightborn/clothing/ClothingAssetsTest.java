@@ -13,10 +13,12 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import net.minecraft.item.ArmorItem;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.EnumSource;
 
 class ClothingAssetsTest {
@@ -69,14 +71,26 @@ class ClothingAssetsTest {
   }
 
   @Test
-  @DisplayName("vanilla's dyeable tag holds exactly the dyeable pieces")
+  @DisplayName("vanilla's dyeable tag holds exactly the dyeable clothing and accessories")
   void dyeableTagMatchesThePieces() throws IOException {
     assertEquals(
-        Arrays.stream(ClothingPiece.values())
-            .filter(ClothingPiece::dyeable)
-            .map(piece -> "nightborn:" + piece.id())
+        Stream.concat(
+                Arrays.stream(ClothingPiece.values())
+                    .filter(ClothingPiece::dyeable)
+                    .map(piece -> "nightborn:" + piece.id()),
+                Stream.of("nightborn:mourning_veil", "nightborn:high_collared_cape"))
             .collect(Collectors.toSet()),
         values("minecraft/tags/item/dyeable.json"));
+  }
+
+  @ParameterizedTest(name = "{0} takes {1}")
+  @CsvSource({"headwear, head_clothing, head/face", "chestwear, chest_clothing, chest/back"})
+  @DisplayName("the head and chest enchantments reach the face and back accessories too")
+  void wornTagsJoinClothingAndAccessories(
+      final String tag, final String clothing, final String accessorySlot) throws IOException {
+    assertEquals(
+        Set.of("#nightborn:enchantable/" + clothing, "#trinkets:" + accessorySlot),
+        values("nightborn/tags/item/enchantable/" + tag + ".json"));
   }
 
   private static Set<String> values(final String tag) throws IOException {

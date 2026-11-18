@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "nightborn:item/wide_brimmed_hat",
+    "layer1": "nightborn:item/wide_brimmed_hat_overlay"
+  }
+}

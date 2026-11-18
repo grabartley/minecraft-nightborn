@@ -1,5 +1,6 @@
 package com.grahambartley.nightborn.mob.look;
 
+import com.grahambartley.nightborn.accessory.AccessorySlot;
 import com.grahambartley.nightborn.clothing.ClothingItem;
 import java.util.EnumMap;
 import java.util.Map;
@@ -19,7 +20,9 @@ public final class OutfitDressing {
   private OutfitDressing() {}
 
   public static Optional<EquipmentSlot> slot(final Item item) {
-    return item instanceof ArmorItem armor ? Optional.of(armor.getSlotType()) : Optional.empty();
+    return item instanceof ArmorItem armor
+        ? Optional.of(armor.getSlotType())
+        : AccessorySlot.fitting(new ItemStack(item)).map(AccessorySlot::body);
   }
 
   public static Map<EquipmentSlot, ItemStack> stacks(

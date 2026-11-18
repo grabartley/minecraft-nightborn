@@ -1,5 +1,6 @@
 package com.grahambartley.nightborn.feeding;
 
+import com.grahambartley.nightborn.clothing.Noticing;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.BooleanSupplier;
@@ -26,8 +27,9 @@ public final class VillagerWitnesses {
       final LivingEntity vampire,
       final LivingEntity victim,
       final FeedingSession session,
-      final int range,
+      final int witnessRange,
       final DamageSource bite) {
+    final int range = Noticing.byVillagers(vampire, witnessRange);
     if (range <= 0) {
       return false;
     }

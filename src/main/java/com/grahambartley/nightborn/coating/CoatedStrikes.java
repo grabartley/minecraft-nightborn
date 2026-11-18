@@ -1,8 +1,11 @@
 package com.grahambartley.nightborn.coating;
 
+import com.grahambartley.nightborn.clothing.WornAttributes;
 import com.grahambartley.nightborn.gear.VampireBane;
 import com.grahambartley.nightborn.server.ServerConfigService;
 import com.grahambartley.nightborn.vampire.Vampires;
+import com.grahambartley.nightborn.ward.WardStrength;
+import com.grahambartley.nightborn.ward.Wards;
 import com.grahambartley.nightborn.weakened.Weakened;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
@@ -39,7 +42,7 @@ public final class CoatedStrikes {
         source.isIn(Coatings.WEAPON_STRIKES))) {
       case AMMO -> {
         final Coat coat = ammo.get(Coatings.COAT);
-        weaken(target, coat.coating(), terms(coat));
+        weaken(target, coat.coating(), terms(coat, ammo));
       }
       case WEAPON -> spend(target, weapon);
       case NONE -> {}
@@ -49,7 +52,7 @@ public final class CoatedStrikes {
   private static void spend(final LivingEntity target, final ItemStack weapon) {
     final long now = target.getWorld().getTime();
     final Coat coat = weapon.get(Coatings.COAT);
-    final CoatingTerms terms = terms(coat);
+    final CoatingTerms terms = terms(coat, weapon);
     if (coat.live(terms, now, false)) {
       weaken(target, coat.coating(), terms);
     }
@@ -66,7 +69,16 @@ public final class CoatedStrikes {
 
   private static void weaken(
       final LivingEntity vampire, final Coating coating, final CoatingTerms terms) {
-    Weakened.add(vampire, coating.weakenedSource(), terms.weakenStrength(), terms.weakenTicks());
+    final int strength =
+        weakening(
+            coating.weakenedSource(),
+            terms.weakenStrength(),
+            WornAttributes.value(vampire, WornAttributes.WARD_RESISTANCE));
+    Weakened.add(vampire, coating.weakenedSource(), strength, terms.weakenTicks());
+  }
+
+  static int weakening(final String source, final int strength, final double wardResistance) {
+    return Wards.TOUCH.equals(source) ? WardStrength.dulled(strength, wardResistance) : strength;
   }
 
   private static float bonus(final ItemStack stack, final Entity target) {
@@ -74,11 +86,11 @@ public final class CoatedStrikes {
       return 0.0F;
     }
     return Coatings.live(stack, ServerConfigService.current(), target.getWorld().getTime())
-        .map(coat -> (float) terms(coat).damage())
+        .map(coat -> (float) terms(coat, stack).damage())
         .orElse(0.0F);
   }
 
-  private static CoatingTerms terms(final Coat coat) {
-    return CoatingTerms.of(coat.coating(), ServerConfigService.current());
+  private static CoatingTerms terms(final Coat coat, final ItemStack stack) {
+    return CoatingTerms.of(coat.coating(), ServerConfigService.current(), stack);
   }
 }

@@ -69,14 +69,14 @@ public class VampireBatSpawnGameTest implements FabricGameTest {
     context.setBlockState(SPOT, Blocks.AIR);
     context.setBlockState(SPOT.up(), Blocks.AIR);
     final BlockPos spot = context.getAbsolutePos(SPOT);
-    context.runAtTick(
-        LIGHT_SETTLED,
+    context.assertTrue(
+        spot.getY() < context.getWorld().getSeaLevel(), "the cave is below sea level");
+    context.runAtEveryTick(
         () -> {
-          context.assertTrue(
-              spot.getY() < context.getWorld().getSeaLevel(), "the cave is below sea level");
-          context.assertTrue(context.getWorld().getLightLevel(spot) == 0, "the cave is fully dark");
-          context.assertTrue(spawns(context, spot), "a vampire bat spawns in the dark cave");
-          context.complete();
+          if (context.getTick() >= LIGHT_SETTLED && context.getWorld().getLightLevel(spot) == 0) {
+            context.assertTrue(spawns(context, spot), "a vampire bat spawns in the dark cave");
+            context.complete();
+          }
         });
   }
 

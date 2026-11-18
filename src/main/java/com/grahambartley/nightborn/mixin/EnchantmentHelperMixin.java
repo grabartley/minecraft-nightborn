@@ -23,7 +23,7 @@ abstract class EnchantmentHelperMixin {
       final DamageSource source,
       final float baseDamage,
       final CallbackInfoReturnable<Float> cir) {
-    cir.setReturnValue(cir.getReturnValueF() + VampireBane.bonus(stack, target));
+    cir.setReturnValue(VampireBane.strike(stack, target, cir.getReturnValueF()));
   }
 
   @Inject(method = "getAmmoUse", at = @At("RETURN"), cancellable = true)

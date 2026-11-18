@@ -24,6 +24,9 @@
   "slots": [
     "head"
   ],
-  "supported_items": "#nightborn:enchantable/head_clothing",
+  "supported_items": "#nightborn:enchantable/headwear",
+  "trinkets:slots": [
+    "head/face"
+  ],
   "weight": 2
 }

@@ -2,6 +2,7 @@ package com.grahambartley.nightborn.mixin;
 
 import com.grahambartley.nightborn.batform.BatForm;
 import com.grahambartley.nightborn.batform.BatShape;
+import com.grahambartley.nightborn.clothing.WornAttributes;
 import com.grahambartley.nightborn.coffin.CoffinSleepers;
 import com.grahambartley.nightborn.coffin.RestRules;
 import com.grahambartley.nightborn.config.NightbornConfig;
@@ -48,6 +49,7 @@ abstract class PlayerEntityMixin {
     MindAttributes.addTo(cir.getReturnValue());
     OccultAttributes.addTo(cir.getReturnValue());
     VampireAttributes.addTo(cir.getReturnValue());
+    WornAttributes.addTo(cir.getReturnValue());
   }
 
   @Inject(method = "canConsume", at = @At("HEAD"), cancellable = true)

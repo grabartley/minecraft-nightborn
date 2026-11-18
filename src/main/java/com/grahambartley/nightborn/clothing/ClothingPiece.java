@@ -6,9 +6,8 @@ import net.minecraft.item.ArmorItem;
 public enum ClothingPiece {
   TRICORNE(ArmorItem.Type.HELMET, ClothingFabric.CLOTH, 0x24201F),
   TOP_HAT(ArmorItem.Type.HELMET, ClothingFabric.CLOTH, 0x1C1A1D),
-  MOURNING_VEIL(ArmorItem.Type.HELMET, ClothingFabric.CLOTH, 0x1A1719),
+  WIDE_BRIMMED_HAT(ArmorItem.Type.HELMET, ClothingFabric.CLOTH, 0x211D1E),
   FROCK_COAT(ArmorItem.Type.CHESTPLATE, ClothingFabric.CLOTH, 0x2B2326),
-  HIGH_COLLARED_CAPE(ArmorItem.Type.CHESTPLATE, ClothingFabric.CLOTH, 0x5A1A24),
   CORSET(ArmorItem.Type.CHESTPLATE, ClothingFabric.CLOTH, 0x1F4A3A),
   DOUBLET(ArmorItem.Type.CHESTPLATE, ClothingFabric.CLOTH, 0x4A1C2A),
   BREECHES(ArmorItem.Type.LEGGINGS, ClothingFabric.CLOTH, 0x2A2427),

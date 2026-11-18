@@ -2,6 +2,7 @@ package com.grahambartley.nightborn.ward;
 
 import com.grahambartley.nightborn.advancement.Milestone;
 import com.grahambartley.nightborn.advancement.MilestoneCriterion;
+import com.grahambartley.nightborn.clothing.WornAttributes;
 import com.grahambartley.nightborn.config.WardSettings;
 import com.grahambartley.nightborn.hunter.HunterAttributes;
 import com.grahambartley.nightborn.vampire.Vampires;
@@ -44,13 +45,15 @@ public final class Wards {
     }
     final int strings = stringsAround(world, vampire, settings);
     final int stringStrength =
-        WardStrength.strings(strings, settings.stringStrength(), settings.stringCap());
+        dulled(
+            vampire,
+            WardStrength.strings(strings, settings.stringStrength(), settings.stringCap()));
     if (stringStrength > 0) {
       MilestoneCriterion.reach(vampire, Milestone.GARLIC_STRINGS, strings);
     }
     final WeakenedSources before = Weakened.sources(vampire);
-    final int crucifix = crucifixes(world, vampire, settings);
-    final int shape = shapes(world, vampire, settings);
+    final int crucifix = dulled(vampire, crucifixes(world, vampire, settings));
+    final int shape = dulled(vampire, shapes(world, vampire, settings));
     Weakened.set(vampire, STRINGS, stringStrength, LINGER_TICKS);
     Weakened.set(vampire, CRUCIFIX, crucifix, LINGER_TICKS);
     Weakened.set(vampire, SHAPE, shape, LINGER_TICKS);
@@ -64,8 +67,16 @@ public final class Wards {
   public static void touch(final Entity entity, final WardSettings settings) {
     if (entity instanceof LivingEntity living && Vampires.isVampire(living)) {
       Weakened.add(
-          living, TOUCH, settings.touchStrength(), settings.touchSeconds() * TICKS_PER_SECOND);
+          living,
+          TOUCH,
+          dulled(living, settings.touchStrength()),
+          settings.touchSeconds() * TICKS_PER_SECOND);
     }
+  }
+
+  public static int dulled(final LivingEntity vampire, final int strength) {
+    return WardStrength.dulled(
+        strength, WornAttributes.value(vampire, WornAttributes.WARD_RESISTANCE));
   }
 
   public static boolean wards(final LivingEntity entity) {

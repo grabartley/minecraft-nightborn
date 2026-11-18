@@ -53,4 +53,16 @@ class VampireBaneTest {
         VampireBane.ammo(new DamageSource(RegistryEntry.of(new DamageType("generic", 0.0F))))
             .isEmpty());
   }
+
+  @ParameterizedTest(name = "stake {0}, vampire {1}: Heartseeker {2}")
+  @CsvSource({
+    "true, true, true",
+    "true, false, false",
+    "false, true, false",
+    "false, false, false"
+  })
+  @DisplayName("Heartseeker sharpens only a stake's blow on a vampire")
+  void seeksTheHeart(final boolean stake, final boolean vampire, final boolean seeks) {
+    assertEquals(seeks, VampireBane.seeksTheHeart(stake, vampire));
+  }
 }
