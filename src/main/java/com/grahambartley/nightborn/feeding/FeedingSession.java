@@ -29,6 +29,8 @@ public final class FeedingSession {
   private float pendingBlood;
   private float heldForBottles;
   private float totalTaken;
+  private boolean seen;
+  private boolean giftTaken;
 
   FeedingSession(
       final UUID victim,
@@ -153,5 +155,21 @@ public final class FeedingSession {
 
   void heldForBottles(final float value) {
     heldForBottles = value;
+  }
+
+  void markSeen() {
+    seen = true;
+  }
+
+  boolean seen() {
+    return seen;
+  }
+
+  void markGiftTaken() {
+    giftTaken = true;
+  }
+
+  boolean giftTaken() {
+    return giftTaken;
   }
 }

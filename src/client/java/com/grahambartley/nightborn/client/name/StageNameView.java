@@ -1,5 +1,7 @@
 package com.grahambartley.nightborn.client.name;
 
+import com.grahambartley.nightborn.challenge.ChallengeData;
+import com.grahambartley.nightborn.challenge.Feat;
 import com.grahambartley.nightborn.mob.stage.VampireStages;
 import com.grahambartley.nightborn.network.StageNamePayload;
 import com.grahambartley.nightborn.rank.GuildRank;
@@ -19,8 +21,11 @@ import net.minecraft.util.Identifier;
 
 public final class StageNameView {
 
+  static final String TITLED = "nightborn.name.with_title";
+
   private static final Map<Integer, Identifier> STAGES = new HashMap<>();
   private static final Map<Integer, Identifier> RANKS = new HashMap<>();
+  private static final Map<Integer, Identifier> TITLES = new HashMap<>();
 
   private StageNameView() {}
 
@@ -30,16 +35,19 @@ public final class StageNameView {
         (payload, context) -> {
           remember(STAGES, payload.entityId(), payload.stage());
           remember(RANKS, payload.entityId(), payload.rank());
+          remember(TITLES, payload.entityId(), payload.title());
         });
     ClientPlayConnectionEvents.DISCONNECT.register(
         (handler, client) -> {
           STAGES.clear();
           RANKS.clear();
+          TITLES.clear();
         });
     ClientEntityEvents.ENTITY_UNLOAD.register(
         (entity, world) -> {
           STAGES.remove(entity.getId());
           RANKS.remove(entity.getId());
+          TITLES.remove(entity.getId());
         });
   }
 
@@ -60,7 +68,17 @@ public final class StageNameView {
         Optional.ofNullable(RANKS.get(entity.getId()))
             .flatMap(id -> RankData.rank(entity.getRegistryManager(), id))
             .map(GuildRank::mark);
-    return marked(coloured(name, color), mark);
+    final Optional<Text> title =
+        Optional.ofNullable(TITLES.get(entity.getId()))
+            .flatMap(
+                id ->
+                    entity.getRegistryManager().getOptional(ChallengeData.FEAT).map(r -> r.get(id)))
+            .map(Feat::title);
+    return marked(coloured(titled(name, title), color), mark);
+  }
+
+  static Text titled(final Text name, final Optional<Text> title) {
+    return title.<Text>map(shown -> Text.translatable(TITLED, name, shown)).orElse(name);
   }
 
   static Text coloured(final Text name, final Optional<TextColor> color) {

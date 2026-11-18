@@ -36,6 +36,24 @@ public final class DecorBlocks {
       VoxelShapes.union(
           Block.createCuboidShape(2, 0, 2, 14, 2, 14),
           Block.createCuboidShape(3, 2, 1, 13, 16, 15));
+  private static final VoxelShape FEAT_TROPHY_SHAPE =
+      VoxelShapes.union(
+          Block.createCuboidShape(2, 0, 2, 14, 2, 14),
+          Block.createCuboidShape(3, 2, 3, 13, 14, 13));
+  public static final List<String> FEAT_TROPHIES =
+      List.of(
+          "cracked_stake_dome",
+          "broken_greatsword_mount",
+          "empty_gilt_mirror",
+          "hunters_hat_stand",
+          "small_gilt_throne",
+          "eldest_crown_cushion",
+          "silver_sword_in_stone",
+          "soft_boots_stand",
+          "ash_urn",
+          "bronze_garlic_wreath",
+          "three_headstones",
+          "curio_cabinet");
   private static final VoxelShape TROPHY_SHAPE =
       VoxelShapes.union(
           Block.createCuboidShape(4, 1, 15, 12, 15, 16),
@@ -150,6 +168,14 @@ public final class DecorBlocks {
 
   static {
     BuildingFamily.ALL.forEach(DecorBlocks::registerFamily);
+    FEAT_TROPHIES.forEach(
+        id ->
+            register(
+                id,
+                settings -> new StatueBlock(settings, FEAT_TROPHY_SHAPE),
+                AbstractBlock.Settings.copy(Blocks.POLISHED_BLACKSTONE)
+                    .mapColor(MapColor.BLACK)
+                    .nonOpaque()));
   }
 
   private DecorBlocks() {}

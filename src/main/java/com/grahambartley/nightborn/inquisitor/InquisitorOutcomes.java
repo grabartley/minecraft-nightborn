@@ -1,5 +1,9 @@
 package com.grahambartley.nightborn.inquisitor;
 
+import com.grahambartley.nightborn.challenge.Deed;
+import com.grahambartley.nightborn.challenge.DeedFacts;
+import com.grahambartley.nightborn.challenge.DeedKinds;
+import com.grahambartley.nightborn.challenge.Deeds;
 import com.grahambartley.nightborn.vampire.NightbornDamage;
 import com.grahambartley.nightborn.vampire.Vampires;
 import java.util.List;
@@ -117,6 +121,18 @@ public final class InquisitorOutcomes {
                     .quarry()
                     .map(quarry -> quarry.turnedOn(source.getAttacker().getUuid()))
                     .orElse(false));
+    if (death == Death.DRAINED && source.getAttacker() instanceof ServerPlayerEntity drainer) {
+      Deeds.record(
+          drainer,
+          Deed.of(DeedKinds.INQUISITOR_DRAINED)
+              .with(
+                  DeedKinds.RANG_BELL,
+                  inquisitor
+                      .quarry()
+                      .filter(q -> q.bell() && q.player().equals(drainer.getUuid()))
+                      .isPresent())
+              .with(DeedKinds.ARMOURED, DeedFacts.armoured(drainer)));
+    }
     inquisitor
         .quarry()
         .ifPresent(

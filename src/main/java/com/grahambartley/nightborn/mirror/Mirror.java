@@ -1,5 +1,8 @@
 package com.grahambartley.nightborn.mirror;
 
+import com.grahambartley.nightborn.challenge.Deed;
+import com.grahambartley.nightborn.challenge.DeedKinds;
+import com.grahambartley.nightborn.challenge.Deeds;
 import com.grahambartley.nightborn.network.MirrorPayload;
 import com.grahambartley.nightborn.vampire.Vampires;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
@@ -36,6 +39,11 @@ public final class Mirror {
             1.0F);
     if (subject != user && subject instanceof ServerPlayerEntity watched) {
       watched.sendMessage(Text.translatable(RAISED_AT_YOU, user.getDisplayName()), true);
+      if (!reflects(Vampires.isVampire(watched))) {
+        Deeds.record(
+            user,
+            Deed.of(DeedKinds.SEEN_THROUGH).with(DeedKinds.VAMPIRE, watched.getUuidAsString()));
+      }
     }
   }
 }

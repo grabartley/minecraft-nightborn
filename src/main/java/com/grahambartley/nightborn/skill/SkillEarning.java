@@ -60,6 +60,26 @@ public final class SkillEarning {
     return true;
   }
 
+  public static float fromTrial(
+      final PlayerEntity player,
+      final SkillTree tree,
+      final float share,
+      final SkillSettings settings) {
+    final TreeProgress progress = SkillAttachment.get(player, tree);
+    final float experience =
+        trialExperience(
+            progress.earned(), share, settings.firstPointExperience(), settings.pointCostRise());
+    if (experience > 0.0F) {
+      gain(player, tree, experience, settings);
+    }
+    return experience;
+  }
+
+  public static float trialExperience(
+      final int earned, final float share, final int firstCost, final int risePercent) {
+    return Math.max(0.0F, share) * SkillCurve.cost(earned, firstCost, risePercent);
+  }
+
   static boolean paysVampire(final boolean vampire, final int experience) {
     return vampire && experience > 0;
   }

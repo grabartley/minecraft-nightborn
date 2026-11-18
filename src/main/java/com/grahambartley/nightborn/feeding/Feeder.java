@@ -11,6 +11,9 @@ import com.grahambartley.nightborn.blood.BloodCapacity;
 import com.grahambartley.nightborn.blood.BloodGift;
 import com.grahambartley.nightborn.blood.BloodGiftGrants;
 import com.grahambartley.nightborn.blood.BloodValue;
+import com.grahambartley.nightborn.challenge.Deed;
+import com.grahambartley.nightborn.challenge.DeedKinds;
+import com.grahambartley.nightborn.challenge.Deeds;
 import com.grahambartley.nightborn.config.NightbornConfig;
 import com.grahambartley.nightborn.hunter.HunterAttributes;
 import com.grahambartley.nightborn.mind.MindTies;
@@ -74,6 +77,9 @@ final class Feeder {
       if (taken > 0.0F) {
         MilestoneCriterion.reach(victim, Milestone.BITTEN);
         MilestoneCriterion.reach(vampire, Milestone.FED, victim);
+        if (session.totalTaken() == taken) {
+          Deeds.record(victim, Deed.of(DeedKinds.BITTEN));
+        }
       }
       final float worth =
           BloodValue.worth(taken, session.quality().worthPercent(config), BloodValue.FRESH_PERCENT);
@@ -93,10 +99,16 @@ final class Feeder {
           NightbornSounds.variedPitch(world.getRandom()));
       mayStartSickness(vampire, victim, session, config, world.getRandom());
     }
-    if (VillagerWitnesses.alert(
-            world, vampire, victim, session, config.feeding().witnessRange(), bite)
-        && taken > 0.0F) {
+    final boolean villagersSaw =
+        VillagerWitnesses.alert(
+            world, vampire, victim, session, config.feeding().witnessRange(), bite);
+    if (villagersSaw && taken > 0.0F) {
       MilestoneCriterion.reach(vampire, Milestone.FED_WATCHED);
+    }
+    if (taken > 0.0F
+        && (villagersSaw
+            || FeedingWitnesses.anySees(world, vampire, victim, config.feeding().witnessRange()))) {
+      session.markSeen();
     }
     if (!victim.isAlive()) {
       if (sip.drains()) {
@@ -127,6 +139,15 @@ final class Feeder {
     if (taken > 0.0F) {
       MilestoneCriterion.reach(victim, Milestone.BITTEN);
       MilestoneCriterion.reach(vampire, Milestone.FED, victim);
+      if (session.totalTaken() == taken) {
+        Deeds.record(victim, Deed.of(DeedKinds.BITTEN));
+      }
+    }
+    if (taken > 0.0F
+        && (!VillagerWitnesses.witnesses(world, vampire, victim, config.feeding().witnessRange())
+                .isEmpty()
+            || FeedingWitnesses.anySees(world, vampire, victim, config.feeding().witnessRange()))) {
+      session.markSeen();
     }
     final float worth =
         BloodValue.worth(taken, session.quality().worthPercent(config), BloodValue.FRESH_PERCENT);
@@ -148,6 +169,7 @@ final class Feeder {
       SkillEarning.fromDrain(vampire, config.skills());
       AgeDeeds.drained(vampire, victim);
       PlayerCues.send(vampire, PlayerCue.DRAIN);
+      Deeds.record(vampire, Deed.of(DeedKinds.FINISHER_KILL));
     }
   }
 
@@ -173,6 +195,9 @@ final class Feeder {
       }
       VillageVictims.bitten(vampire.getServerWorld(), victim);
       Thralls.mayBind(vampire, victim, session.totalTaken());
+    }
+    if (victim != null && session.totalTaken() > 0.0F) {
+      Deeds.record(vampire, FeedDeed.of(victim, session.seen(), session.giftTaken()));
     }
   }
 
@@ -210,8 +235,9 @@ final class Feeder {
       BloodAttachment.set(vampire, before + split.whole());
       Ageing.drank(vampire, BloodAttachment.get(vampire) - before);
     }
-    if (worth > 0.0F) {
-      session.gift().ifPresent(gift -> BloodGiftGrants.grant(vampire, gift, BloodGift.FRESH));
+    if (worth > 0.0F && session.gift().isPresent()) {
+      BloodGiftGrants.grant(vampire, session.gift().get(), BloodGift.FRESH);
+      session.markGiftTaken();
     }
   }
 
@@ -266,6 +292,7 @@ final class Feeder {
   }
 
   private static void breakFree(final ServerPlayerEntity vampire, final LivingEntity victim) {
+    Deeds.record(victim, Deed.of(DeedKinds.BITE_BROKEN));
     vampire.takeKnockback(
         RESIST_PUSH, victim.getX() - vampire.getX(), victim.getZ() - vampire.getZ());
     vampire.velocityModified = true;

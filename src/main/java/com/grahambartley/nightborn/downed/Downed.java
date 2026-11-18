@@ -1,6 +1,9 @@
 package com.grahambartley.nightborn.downed;
 
 import com.grahambartley.nightborn.Nightborn;
+import com.grahambartley.nightborn.challenge.Deed;
+import com.grahambartley.nightborn.challenge.DeedKinds;
+import com.grahambartley.nightborn.challenge.Deeds;
 import com.grahambartley.nightborn.config.DownedSettings;
 import com.grahambartley.nightborn.feeding.FeedingSessions;
 import com.grahambartley.nightborn.gear.Staking;
@@ -87,6 +90,7 @@ public final class Downed {
         DownedRules.downed(
             settings, hunter, VampireAttributes.value(vampire, VampireAttributes.DOWNED_TIME)));
     FeedingSessions.end(vampire);
+    Deeds.record(vampire, Deed.of(DeedKinds.DOWNED));
     vampire
         .getWorld()
         .playSound(

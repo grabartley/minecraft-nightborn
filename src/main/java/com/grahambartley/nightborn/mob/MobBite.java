@@ -4,6 +4,9 @@ import com.grahambartley.nightborn.accessory.GiftAttributes;
 import com.grahambartley.nightborn.advancement.Milestone;
 import com.grahambartley.nightborn.advancement.MilestoneCriterion;
 import com.grahambartley.nightborn.blood.BloodValue;
+import com.grahambartley.nightborn.challenge.Deed;
+import com.grahambartley.nightborn.challenge.DeedKinds;
+import com.grahambartley.nightborn.challenge.Deeds;
 import com.grahambartley.nightborn.feeding.FeedingSessions;
 import com.grahambartley.nightborn.vampire.NightbornDamage;
 import com.grahambartley.nightborn.vampire.Vampires;
@@ -36,6 +39,7 @@ public final class MobBite {
         biter.getRandom().nextFloat(),
         GiftAttributes.value(victim, GiftAttributes.MOB_BITE_BREAK))) {
       shakeOff(world, biter, victim);
+      Deeds.record(victim, Deed.of(DeedKinds.BITE_BROKEN));
       return false;
     }
     final float before = victim.getHealth();
@@ -44,6 +48,9 @@ public final class MobBite {
     }
     world.playSound(null, biter.getBlockPos(), sound, biter.getSoundCategory(), 0.8F, 0.6F);
     MilestoneCriterion.reach(victim, Milestone.BITTEN);
+    if (Vampires.isVampire(biter)) {
+      Deeds.record(victim, Deed.of(DeedKinds.BITTEN));
+    }
     if (Prey.hasDrinkableBlood(victim)) {
       biter.heal(BloodValue.taken(before, victim.getHealth()));
       if (Vampires.isVampire(biter)) {

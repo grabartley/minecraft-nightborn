@@ -1,5 +1,8 @@
 package com.grahambartley.nightborn.rank;
 
+import com.grahambartley.nightborn.challenge.Deed;
+import com.grahambartley.nightborn.challenge.DeedKinds;
+import com.grahambartley.nightborn.challenge.Deeds;
 import com.grahambartley.nightborn.config.SkillSettings;
 import com.grahambartley.nightborn.faction.GuildMembership;
 import com.grahambartley.nightborn.faction.Oath;
@@ -70,6 +73,16 @@ public final class Ranking {
     changed(player);
     for (int rank = before.rank() + 1; rank <= settled.rank(); rank++) {
       ladder.rung(rank).ifPresent(rung -> herald(player, rung));
+      final int reached = rank;
+      ladder
+          .rung(rank)
+          .ifPresent(
+              rung ->
+                  Deeds.record(
+                      player,
+                      Deed.of(DeedKinds.RANK_REACHED)
+                          .with(DeedKinds.RANK, rung.id())
+                          .with(DeedKinds.TOP, reached == ladder.size() - 1)));
     }
   }
 
