@@ -20,6 +20,7 @@ import net.minecraft.util.math.Box;
 import net.minecraft.util.math.ChunkSectionPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.random.Random;
+import net.minecraft.world.GameRules;
 import net.minecraft.world.Heightmap;
 import net.minecraft.world.World;
 
@@ -37,7 +38,9 @@ public final class HunterPartySpawner {
   }
 
   private static void tick(final ServerWorld world) {
-    if (world.getRegistryKey() != World.OVERWORLD) {
+    if (world.getRegistryKey() != World.OVERWORLD
+        || !world.getGameRules().getBoolean(GameRules.DO_MOB_SPAWNING)
+        || !world.getGameRules().getBoolean(GameRules.DO_PATROL_SPAWNING)) {
       return;
     }
     final PartySettings settings = ServerConfigService.current().parties();
@@ -96,6 +99,7 @@ public final class HunterPartySpawner {
     if (master == null) {
       return Optional.empty();
     }
+    master.setPersistent();
     final List<UUID> members = new ArrayList<>();
     for (int i = 0; i < hunters; i++) {
       final int x = spot.getX() + random.nextBetween(-SPREAD, SPREAD);
@@ -104,6 +108,7 @@ public final class HunterPartySpawner {
           new BlockPos(x, world.getTopY(Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, x, z), z);
       final HunterEntity hunter = place(world, GuildMobs.HUNTER, at);
       if (hunter != null) {
+        hunter.join(master.getUuid());
         members.add(hunter.getUuid());
       }
     }
@@ -119,7 +124,6 @@ public final class HunterPartySpawner {
     }
     mob.refreshPositionAndAngles(at, world.getRandom().nextFloat() * 360.0F, 0.0F);
     mob.initialize(world, world.getLocalDifficulty(at), SpawnReason.EVENT, null);
-    mob.setPersistent();
     world.spawnEntityAndPassengers(mob);
     return mob;
   }

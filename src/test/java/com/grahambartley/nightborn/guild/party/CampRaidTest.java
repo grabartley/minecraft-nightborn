@@ -8,21 +8,16 @@ import org.junit.jupiter.params.provider.CsvSource;
 
 class CampRaidTest {
 
-  @ParameterizedTest(name = "night {0}, pitched {1}, rolled {2}, hit {3}: attack {4}")
+  @ParameterizedTest(name = "night {0}, pitched {1}, rolled tonight {2}: roll {3}")
   @CsvSource({
-    "true, true, false, true, true",
-    "true, true, false, false, false",
-    "false, true, false, true, false",
-    "true, false, false, true, false",
-    "true, true, true, true, false"
+    "true, true, false, true",
+    "false, true, false, false",
+    "true, false, false, false",
+    "true, true, true, false"
   })
-  void attacksOnlyAPitchedCampOnceANight(
-      final boolean night,
-      final boolean pitched,
-      final boolean rolled,
-      final boolean hit,
-      final boolean attacks) {
-    assertEquals(attacks, CampRaid.attacks(night, pitched, rolled, hit));
+  void rollsForAnAttackOnceANightOnAPitchedCamp(
+      final boolean night, final boolean pitched, final boolean rolled, final boolean due) {
+    assertEquals(due, CampRaid.due(night, pitched, rolled));
   }
 
   @ParameterizedTest(name = "sleepers {0} blocks from the fire: {1} wake")

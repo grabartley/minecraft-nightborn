@@ -99,4 +99,18 @@ class BloodStainsTest {
       assertTrue(stain.y() <= 2, "stain at " + stain);
     }
   }
+
+  @ParameterizedTest(name = "{0} names {1}: {2}")
+  @CsvSource({
+    "nightborn:cracked_gothic_stone_bricks, rack, false",
+    "nightborn:weapon_rack, rack, true",
+    "nightborn:mossy_gothic_stone_bricks, moss, false",
+    "minecraft:moss_block, moss, true",
+    "minecraft:sandstone, sand, false",
+    "minecraft:dirt_path, dirt_path, true",
+    "'minecraft:oak_stairs[facing=north]', stairs, true"
+  })
+  void matchesWholeWordsOfTheBlockName(final String state, final String word, final boolean named) {
+    assertEquals(named, BloodStains.named(state, word));
+  }
 }

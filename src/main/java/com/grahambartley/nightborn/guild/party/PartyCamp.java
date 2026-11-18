@@ -22,15 +22,11 @@ public final class PartyCamp {
   private PartyCamp() {}
 
   public static CampSite.Ground ground(final BlockState state) {
-    if (state.isAir()) {
-      return CampSite.Ground.AIR;
-    }
-    if (state.isIn(PartyData.CLEARABLE)) {
-      return CampSite.Ground.CLEARABLE;
-    }
-    return state.isIn(PartyData.GROUND) && state.getFluidState().isEmpty()
-        ? CampSite.Ground.NATURAL
-        : CampSite.Ground.BUILT;
+    return CampSite.classify(
+        state.isAir(),
+        state.isIn(PartyData.CLEARABLE),
+        state.isIn(PartyData.GROUND),
+        state.getFluidState().isEmpty());
   }
 
   public static Optional<BlockPos> site(
@@ -55,15 +51,12 @@ public final class PartyCamp {
 
   private static boolean loaded(
       final ServerWorld world, final int x, final int z, final CampSite.Bounds bounds) {
-    for (final int ox : new int[] {bounds.minX() - 1, bounds.maxX() + 1}) {
-      for (final int oz : new int[] {bounds.minZ() - 1, bounds.maxZ() + 1}) {
-        if (!world.isChunkLoaded(
-            ChunkSectionPos.getSectionCoord(x + ox), ChunkSectionPos.getSectionCoord(z + oz))) {
-          return false;
-        }
-      }
-    }
-    return true;
+    return CampSite.corners(bounds).stream()
+        .allMatch(
+            corner ->
+                world.isChunkLoaded(
+                    ChunkSectionPos.getSectionCoord(x + corner[0]),
+                    ChunkSectionPos.getSectionCoord(z + corner[1])));
   }
 
   public static HunterParty.Camp pitch(
@@ -71,10 +64,13 @@ public final class PartyCamp {
     final CampSite.Bounds bounds = layout.bounds();
     for (int dx = bounds.minX(); dx <= bounds.maxX(); dx++) {
       for (int dz = bounds.minZ(); dz <= bounds.maxZ(); dz++) {
-        for (int dy = 0; dy <= bounds.height(); dy++) {
+        for (int dy = 0; dy <= bounds.height() + CampSite.CROWN; dy++) {
           final BlockPos at = centre.add(dx, dy, dz);
-          if (ground(world.getBlockState(at)) == CampSite.Ground.CLEARABLE) {
+          final CampSite.Ground ground = ground(world.getBlockState(at));
+          if (ground == CampSite.Ground.CLEARABLE) {
             world.setBlockState(at, Blocks.AIR.getDefaultState(), Block.NOTIFY_LISTENERS);
+          } else if (dy > bounds.height()) {
+            break;
           }
         }
       }
@@ -101,8 +97,7 @@ public final class PartyCamp {
     final CampClaims claims = CampClaims.of(world);
     for (final BlockPos at : camp.blocks()) {
       final BlockState state = world.getBlockState(at);
-      if (claims.holds(at, state)) {
-        claims.release(at, state);
+      if (claims.release(at, state)) {
         world.setBlockState(at, Blocks.AIR.getDefaultState(), Block.NOTIFY_LISTENERS);
       }
     }

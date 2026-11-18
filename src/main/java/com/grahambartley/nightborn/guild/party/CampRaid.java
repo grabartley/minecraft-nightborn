@@ -9,9 +9,9 @@ public final class CampRaid {
 
   private CampRaid() {}
 
-  public static boolean attacks(
-      final boolean night, final boolean pitched, final boolean rolledTonight, final boolean hit) {
-    return night && pitched && !rolledTonight && hit;
+  public static boolean due(
+      final boolean night, final boolean pitched, final boolean rolledTonight) {
+    return night && pitched && !rolledTonight;
   }
 
   public static List<Integer> wakers(final List<Double> sleeperDistances) {

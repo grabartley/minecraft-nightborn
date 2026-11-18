@@ -1,5 +1,6 @@
 package com.grahambartley.nightborn.guild;
 
+import com.grahambartley.nightborn.guild.party.PartyMember;
 import com.grahambartley.nightborn.mob.MobSounds;
 import com.grahambartley.nightborn.mob.VampireBatEntity;
 import com.grahambartley.nightborn.mob.look.BustNbt;
@@ -9,6 +10,7 @@ import com.grahambartley.nightborn.name.MobNaming;
 import com.grahambartley.nightborn.name.NameBearer;
 import com.grahambartley.nightborn.vampire.Vampires;
 import java.util.Optional;
+import java.util.UUID;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.EquipmentSlot;
@@ -36,6 +38,7 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.AnimatableManager;
@@ -51,6 +54,8 @@ public class HunterEntity extends PathAwareEntity
   static final String KIT_KEY = "Kit";
   static final int ANIMATION_BLEND_TICKS = 4;
   static final int CAMP_REACH = 12;
+  static final String PARTY_LEADER_KEY = "PartyLeader";
+  @Nullable private UUID partyLeader;
 
   private static final TrackedData<Boolean> FEMALE =
       DataTracker.registerData(HunterEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
@@ -210,6 +215,13 @@ public class HunterEntity extends PathAwareEntity
       settle();
     }
     MobNaming.ensure(this);
+    if (PartyMember.wakes(isSleeping(), getWorld().getTimeOfDay())) {
+      wakeUp();
+    }
+  }
+
+  public void join(final UUID leader) {
+    partyLeader = leader;
   }
 
   @Override
@@ -273,7 +285,17 @@ public class HunterEntity extends PathAwareEntity
 
   @Override
   public boolean cannotDespawn() {
-    return true;
+    return PartyMember.staysInWorld(partyLeader != null, leaderNear());
+  }
+
+  private boolean leaderNear() {
+    if (partyLeader == null || !(getWorld() instanceof ServerWorld world)) {
+      return false;
+    }
+    final Entity leader = world.getEntity(partyLeader);
+    return leader != null
+        && leader.isAlive()
+        && leader.squaredDistanceTo(this) < PartyMember.LEADER_NEAR * PartyMember.LEADER_NEAR;
   }
 
   @Override
@@ -284,6 +306,9 @@ public class HunterEntity extends PathAwareEntity
     nbt.putString(GuildData.LOOK_KEY, dataTracker.get(LOOK));
     nbt.putString(KIT_KEY, kitId);
     CampHome.write(this, nbt);
+    if (partyLeader != null) {
+      nbt.putUuid(PARTY_LEADER_KEY, partyLeader);
+    }
   }
 
   @Override
@@ -298,6 +323,7 @@ public class HunterEntity extends PathAwareEntity
       arm(nbt.getString(KIT_KEY));
     }
     CampHome.read(this, nbt, CAMP_REACH);
+    partyLeader = nbt.containsUuid(PARTY_LEADER_KEY) ? nbt.getUuid(PARTY_LEADER_KEY) : null;
   }
 
   @Override

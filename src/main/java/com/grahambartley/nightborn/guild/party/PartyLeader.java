@@ -48,7 +48,7 @@ public final class PartyLeader {
     final long time = world.getTimeOfDay();
     final long day = PartySchedule.day(time);
     final Random random = master.getRandom();
-    party = raid(world, party, members, settings, time, day, random);
+    party = raid(world, party, settings, time, day, random);
     switch (PartySchedule.step(
         time, party.pitched(), party.campDay(), party.nights(), party.lastTriedDay())) {
       case PITCH -> party = pitch(world, master, party, settings, day, random);
@@ -98,7 +98,16 @@ public final class PartyLeader {
       final PartySettings settings) {
     final HunterParty.Camp camp = party.camp().orElseThrow();
     if (!CampRaid.over(CampBats.raidersNear(world, camp.fire()))) {
-      members.forEach(member -> wake(member, camp.fire(), WATCH_REACH));
+      final List<HunterEntity> sleeping =
+          members.stream().filter(HunterEntity::isSleeping).toList();
+      CampRaid.wakers(
+              sleeping.stream()
+                  .map(member -> Math.sqrt(member.getBlockPos().getSquaredDistance(camp.fire())))
+                  .toList())
+          .forEach(i -> wake(sleeping.get(i), camp.fire(), WATCH_REACH));
+      members.stream()
+          .filter(member -> !member.isSleeping())
+          .forEach(member -> member.setPositionTarget(camp.fire(), WATCH_REACH));
       return;
     }
     final int sleepers =
@@ -144,28 +153,17 @@ public final class PartyLeader {
   private static HunterParty raid(
       final ServerWorld world,
       final HunterParty party,
-      final List<HunterEntity> members,
       final PartySettings settings,
       final long time,
       final long day,
       final Random random) {
-    if (!PartySchedule.night(time) || !party.pitched() || party.lastRaidDay() == day) {
+    if (!CampRaid.due(PartySchedule.night(time), party.pitched(), party.lastRaidDay() == day)) {
       return party;
     }
-    final HunterParty rolled = party.raidRolled(day);
-    if (!CampRaid.attacks(
-        true, true, false, PartyRoll.succeeds(random::nextInt, settings.campBatChance()))) {
-      return rolled;
+    if (PartyRoll.succeeds(random::nextInt, settings.campBatChance())) {
+      CampBats.raid(world, party.camp().orElseThrow().fire(), settings.campBatCount(), random);
     }
-    final BlockPos fire = party.camp().orElseThrow().fire();
-    CampBats.raid(world, fire, settings.campBatCount(), random);
-    final List<HunterEntity> sleeping = members.stream().filter(HunterEntity::isSleeping).toList();
-    CampRaid.wakers(
-            sleeping.stream()
-                .map(member -> Math.sqrt(member.getBlockPos().getSquaredDistance(fire)))
-                .toList())
-        .forEach(i -> wake(sleeping.get(i), fire, WATCH_REACH));
-    return rolled;
+    return party.raidRolled(day);
   }
 
   private static void wake(final PathAwareEntity member, final BlockPos home, final int reach) {

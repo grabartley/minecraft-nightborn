@@ -15,21 +15,21 @@ public final class BloodStains {
   public static final String POOL = "nightborn:blood_pool";
   public static final int SHAPES = 4;
   static final List<String> SIDES = List.of("north", "east", "south", "west");
-  static final List<String> KEEP_CLEAR_OF = List.of("_door", "_stairs", ":ladder", "_coffin");
+  static final List<String> KEEP_CLEAR_OF = List.of("door", "stairs", "ladder", "coffin");
   static final List<String> NOT_GROUND =
       List.of(
-          "_stairs",
-          "_slab",
-          "_carpet",
-          "_fence",
-          "_wall",
-          "_pane",
-          "_door",
-          "_trapdoor",
-          "_leaves",
+          "stairs",
+          "slab",
+          "carpet",
+          "fence",
+          "wall",
+          "pane",
+          "door",
+          "trapdoor",
+          "leaves",
           "glass",
           "bars",
-          "_coffin",
+          "coffin",
           "chest",
           "lectern",
           "table",
@@ -37,7 +37,7 @@ public final class BloodStains {
           "candelabra",
           "barrel",
           "bookshelf",
-          "_bed",
+          "bed",
           "font",
           "fountain",
           "gramophone",
@@ -73,7 +73,8 @@ public final class BloodStains {
           "garlic",
           "bell",
           "cauldron",
-          "pot");
+          "pot",
+          "potted");
 
   private BloodStains() {}
 
@@ -153,8 +154,12 @@ public final class BloodStains {
     if (state == null || BlockState.AIR.equals(state)) {
       return false;
     }
-    final String block = state.replaceAll("\\[.*", "");
-    return NOT_GROUND.stream().noneMatch(block::contains);
+    return NOT_GROUND.stream().noneMatch(word -> named(state, word));
+  }
+
+  static boolean named(final String state, final String word) {
+    final String path = state.replaceAll("\\[.*", "").replaceAll(".*:", "");
+    return ("_" + path + "_").contains("_" + word + "_");
   }
 
   private static boolean roofed(final Template t, final int x, final int y, final int z) {
@@ -171,7 +176,7 @@ public final class BloodStains {
       for (int dz = -1; dz <= 1; dz++) {
         for (int dy = -1; dy <= 1; dy++) {
           final String there = t.get(x + dx, y + dy, z + dz);
-          if (there != null && KEEP_CLEAR_OF.stream().anyMatch(there::contains)) {
+          if (there != null && KEEP_CLEAR_OF.stream().anyMatch(word -> named(there, word))) {
             return true;
           }
         }
