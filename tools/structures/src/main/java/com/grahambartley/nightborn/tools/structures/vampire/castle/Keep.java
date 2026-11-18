@@ -244,8 +244,13 @@ public final class Keep {
     }
     Furnishing.gramophone(t, Castle.MID - 3, Castle.FLOOR + 1, 26, "east");
     for (int z = 24; z <= 27; z++) {
-      Furnishing.chair(t, Castle.MID - 4, Castle.FLOOR, z, "east");
-      Furnishing.chair(t, Castle.MID + 4, Castle.FLOOR, z, "west");
+      if (z == COLUMNS_Z[1]) {
+        Furnishing.candelabra(t, Castle.MID - 4, Castle.FLOOR, z);
+        Furnishing.candelabra(t, Castle.MID + 4, Castle.FLOOR, z);
+      } else {
+        Furnishing.chair(t, Castle.MID - 4, Castle.FLOOR, z, "east");
+        Furnishing.chair(t, Castle.MID + 4, Castle.FLOOR, z, "west");
+      }
     }
     for (final int z : new int[] {21, 28}) {
       t.set(

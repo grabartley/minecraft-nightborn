@@ -99,11 +99,15 @@ public final class Roof {
       final String block) {
     for (int x = x0; x <= x1; x++) {
       for (int z = z0; z <= z1; z++) {
-        for (int y = fromY; y < t.sizeY() && BlockState.AIR.equals(t.get(x, y, z)); y++) {
+        for (int y = fromY; y < t.sizeY() && empty(t.get(x, y, z)); y++) {
           t.set(x, y, z, block);
         }
       }
     }
+  }
+
+  private static boolean empty(final String state) {
+    return state == null || BlockState.AIR.equals(state);
   }
 
   private static void sealEave(

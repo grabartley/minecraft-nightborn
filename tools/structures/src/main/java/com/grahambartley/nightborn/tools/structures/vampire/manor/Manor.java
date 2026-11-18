@@ -64,7 +64,7 @@ public final class Manor {
     turret.build(t);
     StairHall.build(t);
     GroundFloor.build(t);
-    Bedchambers.build(t, turret);
+    Bedchambers.build(t);
     Glasshouse.build(t, layout.fallenGlasshouse());
     Ivy.grow(t);
     Grounds.build(t);
