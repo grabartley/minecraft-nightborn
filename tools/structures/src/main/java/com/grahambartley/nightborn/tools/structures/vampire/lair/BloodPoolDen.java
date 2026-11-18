@@ -33,6 +33,7 @@ public final class BloodPoolDen {
     LairShrine.cut(t, 22, CENTRE, "west", DEEPSLATE_COFFIN);
     LairShrine.cut(t, 2, 6, "east", BLACKSTONE_COFFIN);
     LairShrine.cut(t, 22, 17, "west", BLACKSTONE_COFFIN);
+    LairCave.sealPockets(t);
     gathering(t);
     altar(t);
     remains(t);

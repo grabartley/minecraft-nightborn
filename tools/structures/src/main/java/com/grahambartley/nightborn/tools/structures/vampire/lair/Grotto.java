@@ -33,6 +33,7 @@ public final class Grotto {
     ledge(t);
     LairShrine.cut(t, 6, 2, "south", DEEPSLATE_COFFIN);
     LairShrine.cut(t, 15, 12, "north", BLACKSTONE_COFFIN);
+    LairCave.sealPockets(t);
     hearth(t);
     LairFeatures.readingCorner(t, 2, 4, 7, "east");
     LairFeatures.bones(t, 2, 3, 4);

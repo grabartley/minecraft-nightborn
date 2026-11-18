@@ -31,13 +31,9 @@ public final class LairShrine {
         final int line = depth0 + sign * (d + 1);
         final int cx = wall.x(a, line);
         final int cz = wall.z(a, line);
-        final int top = HEIGHT - Math.abs(a - along) / 2;
+        final int top = Math.max(HEIGHT - Math.abs(a - along) / 2, LairCave.roof(t, cx, cz));
         for (int y = 1; y <= top; y++) {
           t.set(cx, y, cz, d == 0 && y <= 4 ? DRESSED.at(cx, y, cz) : LairCave.ROCK.at(cx, y, cz));
-        }
-        final String above = t.get(cx, top + 1, cz);
-        if (above != null && above.contains("pointed_dripstone")) {
-          t.set(cx, top + 1, cz, LairCave.ROCK.at(cx, top + 1, cz));
         }
       }
     }

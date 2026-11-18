@@ -33,6 +33,22 @@ public final class LairCave {
     }
   }
 
+  public static void sealPockets(final Template t) {
+    for (int x = 1; x < t.sizeX() - 1; x++) {
+      for (int z = 1; z < t.sizeZ() - 1; z++) {
+        if (BlockState.AIR.equals(t.get(x, 1, z))
+            && !BlockState.AIR.equals(t.get(x + 1, 1, z))
+            && !BlockState.AIR.equals(t.get(x - 1, 1, z))
+            && !BlockState.AIR.equals(t.get(x, 1, z + 1))
+            && !BlockState.AIR.equals(t.get(x, 1, z - 1))) {
+          for (int y = 1; y < t.sizeY() && BlockState.AIR.equals(t.get(x, y, z)); y++) {
+            t.set(x, y, z, ROCK.at(x, y, z));
+          }
+        }
+      }
+    }
+  }
+
   public static int roof(final Template t, final int x, final int z) {
     if (x < SHELL || z < SHELL || x >= t.sizeX() - SHELL || z >= t.sizeZ() - SHELL) {
       return 0;
