@@ -1,6 +1,5 @@
 package com.grahambartley.nightborn.sun;
 
-import com.grahambartley.nightborn.Nightborn;
 import com.grahambartley.nightborn.batform.BatForm;
 import com.grahambartley.nightborn.levitation.Levitation;
 import java.util.Optional;
@@ -8,21 +7,13 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Hand;
-import net.minecraft.util.Identifier;
-import org.jetbrains.annotations.Nullable;
 
 public final class Parasols {
-
-  public static final Identifier OPEN_PREDICATE = Identifier.of(Nightborn.MOD_ID, "open");
 
   private Parasols() {}
 
   public static boolean isOpen(final ItemStack stack) {
     return stack.isOf(ParasolItems.PARASOL) && stack.getOrDefault(ParasolItems.OPEN, false);
-  }
-
-  public static float openness(final ItemStack stack, @Nullable final LivingEntity holder) {
-    return isOpen(stack) && holder != null && inHand(holder, stack) ? 1.0F : 0.0F;
   }
 
   public static boolean inHand(final LivingEntity holder, final ItemStack stack) {

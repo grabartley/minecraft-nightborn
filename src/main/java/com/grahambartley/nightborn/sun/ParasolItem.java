@@ -9,8 +9,14 @@ import net.minecraft.registry.tag.ItemTags;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
+import software.bernie.geckolib.animatable.GeoItem;
+import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.animation.AnimatableManager;
+import software.bernie.geckolib.util.GeckoLibUtil;
 
-public class ParasolItem extends Item {
+public class ParasolItem extends Item implements GeoItem {
+
+  private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
 
   public ParasolItem(final Settings settings) {
     super(settings);
@@ -58,5 +64,13 @@ public class ParasolItem extends Item {
   @Override
   public int getEnchantability() {
     return 0;
+  }
+
+  @Override
+  public void registerControllers(final AnimatableManager.ControllerRegistrar controllers) {}
+
+  @Override
+  public AnimatableInstanceCache getAnimatableInstanceCache() {
+    return this.cache;
   }
 }

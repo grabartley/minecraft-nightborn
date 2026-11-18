@@ -1,17 +1,24 @@
 package com.grahambartley.nightborn.client.sun;
 
-import com.grahambartley.nightborn.sun.ParasolItems;
-import com.grahambartley.nightborn.sun.Parasols;
-import net.minecraft.client.item.ModelPredicateProviderRegistry;
+import com.grahambartley.nightborn.Nightborn;
+import com.grahambartley.nightborn.sun.ParasolItem;
+import net.minecraft.util.Identifier;
+import software.bernie.geckolib.model.GeoModel;
 
-public final class ParasolModel {
+public class ParasolModel extends GeoModel<ParasolItem> {
 
-  private ParasolModel() {}
+  @Override
+  public Identifier getModelResource(final ParasolItem parasol) {
+    return Identifier.of(Nightborn.MOD_ID, "geo/item/parasol.geo.json");
+  }
 
-  public static void register() {
-    ModelPredicateProviderRegistry.register(
-        ParasolItems.PARASOL,
-        Parasols.OPEN_PREDICATE,
-        (stack, world, entity, seed) -> Parasols.openness(stack, entity));
+  @Override
+  public Identifier getTextureResource(final ParasolItem parasol) {
+    return Identifier.of(Nightborn.MOD_ID, "textures/item/parasol.png");
+  }
+
+  @Override
+  public Identifier getAnimationResource(final ParasolItem parasol) {
+    return Identifier.of(Nightborn.MOD_ID, "animations/item/parasol.animation.json");
   }
 }
