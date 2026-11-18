@@ -46,4 +46,25 @@ class StageAgeTest {
   void needsAName() {
     assertTrue(StageAge.CODEC.parse(JsonOps.INSTANCE, JsonParser.parseString("{}")).isError());
   }
+
+  @ParameterizedTest(name = "{0} gives {1}")
+  @CsvSource({
+    "'{\"name\":\"Fledgling\"}', 1.0",
+    "'{\"name\":\"Adult\",\"notoriety\":1.25}', 1.25",
+    "'{\"name\":\"Ancient\",\"notoriety\":2}', 2.0"
+  })
+  @DisplayName("a stage weighs its kills on notoriety, plainly when it says nothing")
+  void notoriety(final String json, final double weight) {
+    assertEquals(weight, parse(json).notoriety());
+  }
+
+  @Test
+  @DisplayName("a stage cannot take notoriety away")
+  void notorietyIsNeverNegative() {
+    assertTrue(
+        StageAge.CODEC
+            .parse(
+                JsonOps.INSTANCE, JsonParser.parseString("{\"name\":\"Adult\",\"notoriety\":-1}"))
+            .isError());
+  }
 }

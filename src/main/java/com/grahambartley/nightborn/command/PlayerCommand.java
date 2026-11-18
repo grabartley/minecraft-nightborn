@@ -38,6 +38,7 @@ final class PlayerCommand {
                 .then(CommandManager.literal("cure").executes(PlayerCommand::cure))
                 .then(CommandManager.literal("info").executes(PlayerCommand::info))
                 .then(StageCommand.node())
+                .then(NotorietyCommand.node())
                 .then(SkillsCommand.node()));
   }
 

@@ -6,7 +6,9 @@ import java.util.Optional;
 import net.minecraft.text.Text;
 import net.minecraft.text.TextCodecs;
 
-public record StageAge(Text name, Optional<StageDeed> deed) {
+public record StageAge(Text name, Optional<StageDeed> deed, double notoriety) {
+
+  public static final double PLAIN_NOTORIETY = 1.0;
 
   public static final Codec<StageAge> CODEC =
       RecordCodecBuilder.create(
@@ -14,6 +16,13 @@ public record StageAge(Text name, Optional<StageDeed> deed) {
               instance
                   .group(
                       TextCodecs.CODEC.fieldOf("name").forGetter(StageAge::name),
-                      StageDeed.CODEC.optionalFieldOf("deed").forGetter(StageAge::deed))
+                      StageDeed.CODEC.optionalFieldOf("deed").forGetter(StageAge::deed),
+                      Codec.doubleRange(0.0, Double.MAX_VALUE)
+                          .optionalFieldOf("notoriety", PLAIN_NOTORIETY)
+                          .forGetter(StageAge::notoriety))
                   .apply(instance, StageAge::new));
+
+  public StageAge(final Text name, final Optional<StageDeed> deed) {
+    this(name, deed, PLAIN_NOTORIETY);
+  }
 }

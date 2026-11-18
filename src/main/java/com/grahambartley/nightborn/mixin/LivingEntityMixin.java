@@ -9,6 +9,7 @@ import com.grahambartley.nightborn.coffin.CoffinSleeperHold;
 import com.grahambartley.nightborn.coffin.CoffinSleepers;
 import com.grahambartley.nightborn.config.NightbornConfig;
 import com.grahambartley.nightborn.downed.DownedTargeting;
+import com.grahambartley.nightborn.hunt.Hunts;
 import com.grahambartley.nightborn.levitation.Levitation;
 import com.grahambartley.nightborn.levitation.LevitationMotion;
 import com.grahambartley.nightborn.server.ServerConfigService;
@@ -64,6 +65,9 @@ abstract class LivingEntityMixin {
       if (self instanceof ServerPlayerEntity player) {
         Ageing.tick(player);
       }
+    }
+    if (self instanceof ServerPlayerEntity player) {
+      Hunts.tick(player);
     }
   }
 

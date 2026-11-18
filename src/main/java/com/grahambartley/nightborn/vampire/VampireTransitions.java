@@ -16,6 +16,7 @@ import com.grahambartley.nightborn.faction.FactionAttachment;
 import com.grahambartley.nightborn.faction.FactionPlayerList;
 import com.grahambartley.nightborn.feeding.FeedingSessions;
 import com.grahambartley.nightborn.feeding.TurningBite;
+import com.grahambartley.nightborn.hunt.Hunts;
 import com.grahambartley.nightborn.levitation.Levitation;
 import com.grahambartley.nightborn.name.StageNames;
 import com.grahambartley.nightborn.sickness.BiteSicknessAttachment;
@@ -71,6 +72,7 @@ public final class VampireTransitions {
     FeedingSessions.end(player);
     FactionAttachment.set(player, Faction.HUMAN);
     Ageing.clear(player);
+    Hunts.clear(player);
     BloodAttachment.set(player, BloodAttachment.FULL);
     Downed.clear(player);
     Weakened.clear(player);

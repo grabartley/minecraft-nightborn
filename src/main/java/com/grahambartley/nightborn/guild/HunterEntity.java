@@ -222,6 +222,10 @@ public class HunterEntity extends PathAwareEntity
     partyLeader = leader;
   }
 
+  public Optional<UUID> partyLeader() {
+    return Optional.ofNullable(partyLeader);
+  }
+
   @Override
   protected void mobTick() {
     super.mobTick();

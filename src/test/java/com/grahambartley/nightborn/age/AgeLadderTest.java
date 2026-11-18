@@ -4,21 +4,25 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import com.grahambartley.nightborn.MinecraftBootstrapExtension;
 import com.grahambartley.nightborn.mob.stage.StageAge;
 import com.grahambartley.nightborn.mob.stage.StageBody;
 import com.grahambartley.nightborn.mob.stage.StageCombat;
 import com.grahambartley.nightborn.mob.stage.StageLook;
 import com.grahambartley.nightborn.mob.stage.StageSkills;
 import com.grahambartley.nightborn.mob.stage.VampireStage;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
+@ExtendWith(MinecraftBootstrapExtension.class)
 class AgeLadderTest {
 
   static Identifier id(final String path) {
@@ -77,5 +81,29 @@ class AgeLadderTest {
   void paysAsItsStage(final int rank, final int stageRank) {
     assertEquals(stageRank, LADDER.stageRank(rank));
     assertTrue(AgeLadder.of(Map.of()).stageRank(rank) == 0);
+  }
+
+  @ParameterizedTest(name = "rung {0} weighs kills by {1}")
+  @CsvSource({"0, 1.0", "1, 1.25", "2, 1.5", "3, 2.0", "9, 2.0"})
+  @DisplayName("an older player's kills weigh more on their notoriety")
+  void weighsNotoriety(final int rank, final double multiplier) {
+    final double[] weights = {1.0, 1.25, 1.5, 2.0};
+    final Map<Identifier, VampireStage> stages = new HashMap<>();
+    for (int stage = 0; stage < weights.length; stage++) {
+      stages.put(
+          id("stage_" + stage),
+          new VampireStage(
+              stage,
+              1,
+              StageBody.SAME,
+              StageSkills.NONE,
+              StageCombat.PLAIN,
+              StageLook.PLAIN,
+              Optional.empty(),
+              Optional.of(
+                  new StageAge(Text.literal("stage " + stage), Optional.empty(), weights[stage]))));
+    }
+    assertEquals(multiplier, AgeLadder.of(stages).notoriety(rank));
+    assertEquals(StageAge.PLAIN_NOTORIETY, AgeLadder.of(Map.of()).notoriety(rank));
   }
 }

@@ -15,6 +15,7 @@
   "age": {
     "name": {
       "translate": "nightborn.stage.fledgling"
-    }
+    },
+    "notoriety": 1
   }
 }
