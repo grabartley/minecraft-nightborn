@@ -10,6 +10,8 @@ import com.grahambartley.nightborn.tools.structures.vampire.crypt.CryptStair;
 import com.grahambartley.nightborn.tools.structures.vampire.lair.Grotto;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Stream;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -143,6 +145,77 @@ class VampireStructuresTest {
     assertTrue(
         StructureWalk.beside(StructureWalk.from(home, from), font.x(), font.y(), font.z()),
         "font at " + font + " from " + from);
+  }
+
+  static Stream<Arguments> walks() {
+    final Pos stairFoot =
+        new Pos(
+            CryptStair.OFFSET_X + CryptStair.FOOT_X, 1, CryptStair.OFFSET_Z + CryptStair.STAIR_Z);
+    return VampireStructures.build().stream()
+        .map(
+            home ->
+                Arguments.of(
+                    home.path(),
+                    switch (home.path()) {
+                      case "vampire/crypt/undercroft", "vampire/crypt/ossuary" -> stairFoot;
+                      case "vampire/lair/den" -> new Pos(5, 1, 16);
+                      case "vampire/lair/grotto" ->
+                          new Pos(Grotto.LEDGE - 2, 1, Grotto.SPRING_Z);
+                      default -> entrance(home).offset(0, 1, 0);
+                    }));
+  }
+
+  private static Template home(final String path) {
+    return VampireStructures.build().stream()
+        .filter(t -> t.path().equals(path))
+        .findFirst()
+        .orElseThrow();
+  }
+
+  @Test
+  void theMobWalkFitsTheTallestShippedVampire() {
+    assertEquals(2, StructureWalk.MOB.headroom());
+    assertTrue(TallestVampire.height() <= StructureWalk.MOB.headroom());
+    assertTrue(TallestVampire.height() > StructureWalk.MOB.headroom() - 1);
+  }
+
+  @ParameterizedTest(name = "{0}: a vampire walks to every coffin, chair, table and lectern")
+  @MethodSource("walks")
+  void aVampireWalksToEveryPieceItsHouseholdUses(final String path, final Pos start) {
+    final Template home = home(path);
+    assertEquals(List.of(), StructureAudit.unreachedHousehold(home, StructureWalk.mob(home, start)));
+  }
+
+  @ParameterizedTest(name = "{0}: a vampire walks everywhere a person can, with no ladder")
+  @MethodSource("walks")
+  void aVampireWalksEverywhereAPersonCan(final String path, final Pos start) {
+    final Template home = home(path);
+    assertEquals(
+        List.of(),
+        StructureAudit.humanOnly(
+            StructureWalk.from(home, start), StructureWalk.mob(home, start), home));
+  }
+
+  @ParameterizedTest(name = "{0}: no floor under a roof is left out of reach")
+  @MethodSource("walks")
+  void noFloorIsSealedOff(final String path, final Pos start) {
+    final Template home = home(path);
+    assertEquals(
+        List.of(), StructureAudit.sealedFloors(home, StructureWalk.from(home, start)));
+  }
+
+  @ParameterizedTest(name = "{0}: every door is walked through from both sides")
+  @MethodSource("walks")
+  void everyDoorLeadsSomewhere(final String path, final Pos start) {
+    final Template home = home(path);
+    final Set<Pos> reached = StructureWalk.from(home, start);
+    assertEquals(List.of(), StructureAudit.doorsLeadingNowhere(home, reached));
+  }
+
+  @ParameterizedTest(name = "{0}: wall decor hangs on solid wall and floor decor stands on solid floor")
+  @MethodSource("walks")
+  void everyDecorationIsHeld(final String path, final Pos start) {
+    assertEquals(List.of(), StructureAudit.loose(home(path)));
   }
 
   private static Pos entrance(final Template home) {

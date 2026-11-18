@@ -58,6 +58,7 @@ public final class HunterCamp {
     }
     camp.fill(5, 0, 1, 11, 0, 5, "coarse_dirt");
     camp.fill(1, 0, 9, 4, 0, 13, "coarse_dirt");
+    camp.fill(14, 0, 1, 15, 0, 5, "coarse_dirt");
     for (int x = FIRE_X - TRODDEN; x <= FIRE_X + TRODDEN; x++) {
       for (int z = FIRE_Z - TRODDEN; z <= FIRE_Z + TRODDEN; z++) {
         camp.set(x, 0, z, "dirt_path");
