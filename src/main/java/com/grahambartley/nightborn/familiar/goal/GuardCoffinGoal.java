@@ -2,6 +2,7 @@ package com.grahambartley.nightborn.familiar.goal;
 
 import com.grahambartley.nightborn.familiar.HomeRules;
 import com.grahambartley.nightborn.familiar.HumanFamiliarEntity;
+import com.grahambartley.nightborn.servant.job.WatchRules;
 import com.grahambartley.nightborn.server.ServerConfigService;
 import com.grahambartley.nightborn.vampire.Vampires;
 import net.minecraft.entity.ai.goal.ActiveTargetGoal;
@@ -23,8 +24,9 @@ public class GuardCoffinGoal extends ActiveTargetGoal<HostileEntity> {
                 .filter(
                     home ->
                         HomeRules.drivesOff(
-                            intruder instanceof CreeperEntity
-                                || intruder.getType().isIn(Vampires.VAMPIRE_MOBS),
+                            WatchRules.spared(
+                                intruder instanceof CreeperEntity,
+                                intruder.getType().isIn(Vampires.VAMPIRE_MOBS)),
                             intruder.getBlockPos().getSquaredDistance(home),
                             ServerConfigService.current().familiars().guardRange()))
                 .isPresent());

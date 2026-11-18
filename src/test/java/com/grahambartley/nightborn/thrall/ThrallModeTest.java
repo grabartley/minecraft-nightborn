@@ -2,6 +2,7 @@ package com.grahambartley.nightborn.thrall;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import net.minecraft.util.Identifier;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -9,10 +10,22 @@ import org.junit.jupiter.params.provider.CsvSource;
 class ThrallModeTest {
 
   @ParameterizedTest(name = "{0} -> {1}")
-  @CsvSource({"FOLLOW, STAY", "STAY, GUARD", "GUARD, FOLLOW"})
-  @DisplayName("each order moves the thrall on to the next of follow, stay and guard")
-  void next(final ThrallMode mode, final ThrallMode expected) {
-    assertEquals(expected, mode.next());
+  @CsvSource({"0, FOLLOW", "1, STAY", "2, GUARD", "-1, FOLLOW", "3, FOLLOW"})
+  @DisplayName("a wheel choice maps to its order, and anything outside the orders follows")
+  void byIndex(final int index, final ThrallMode expected) {
+    assertEquals(expected, ThrallMode.byIndex(index));
+  }
+
+  @ParameterizedTest(name = "{0} -> {1}, {2}")
+  @CsvSource({
+    "FOLLOW, nightborn.thrall.order.follow, minecraft:lead",
+    "STAY, nightborn.thrall.order.stay, minecraft:campfire",
+    "GUARD, nightborn.thrall.order.guard, minecraft:iron_sword"
+  })
+  @DisplayName("each order has its own label and icon on the command wheel")
+  void wheel(final ThrallMode mode, final String label, final String icon) {
+    assertEquals(label, mode.labelKey());
+    assertEquals(Identifier.of(icon), mode.icon());
   }
 
   @ParameterizedTest(name = "{0}")

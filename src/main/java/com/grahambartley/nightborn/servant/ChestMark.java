@@ -1,4 +1,4 @@
-package com.grahambartley.nightborn.familiar;
+package com.grahambartley.nightborn.servant;
 
 import java.util.Locale;
 
@@ -8,6 +8,6 @@ public enum ChestMark {
   CLEARED;
 
   public String translationKey() {
-    return "nightborn.familiar.mark." + name().toLowerCase(Locale.ROOT);
+    return "nightborn.servant.mark." + name().toLowerCase(Locale.ROOT);
   }
 }

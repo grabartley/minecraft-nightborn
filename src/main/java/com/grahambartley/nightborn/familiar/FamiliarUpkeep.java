@@ -1,12 +1,11 @@
 package com.grahambartley.nightborn.familiar;
 
-import com.grahambartley.nightborn.coffin.CoffinBlock;
+import com.grahambartley.nightborn.coffin.AssignedCoffin;
 import com.grahambartley.nightborn.config.FamiliarSettings;
 import com.grahambartley.nightborn.server.ServerConfigService;
 import java.util.UUID;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.math.BlockPos;
 
 public final class FamiliarUpkeep {
 
@@ -53,12 +52,8 @@ public final class FamiliarUpkeep {
   private static void followCoffin(
       final HumanFamiliarEntity familiar, final ServerWorld world, final UUID owner) {
     final ServerPlayerEntity player = world.getServer().getPlayerManager().getPlayer(owner);
-    if (player == null || player.getSpawnPointDimension() != world.getRegistryKey()) {
-      return;
-    }
-    final BlockPos coffin = player.getSpawnPointPosition();
-    if (coffin != null && world.getBlockState(coffin).getBlock() instanceof CoffinBlock) {
-      familiar.home(coffin);
+    if (player != null) {
+      AssignedCoffin.in(player, world).ifPresent(familiar::home);
     }
   }
 }

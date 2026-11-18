@@ -27,7 +27,7 @@ class StructureSettingsTest {
   @DisplayName(
       "the constructor clamps both rarities to between a quarter and four times the spacing")
   void clamps(final int given, final int kept) {
-    final StructureSettings settings = new StructureSettings(given, given, 300, 24);
+    final StructureSettings settings = new StructureSettings(given, given, 300, 24, 1024);
     assertEquals(kept, settings.structureRarity());
     assertEquals(kept, settings.campRarity());
   }
@@ -37,8 +37,15 @@ class StructureSettingsTest {
   @DisplayName("the constructor clamps how often and how near a structure gramophone plays")
   void clampsGramophones(
       final int seconds, final int range, final int keptSeconds, final int keptRange) {
-    final StructureSettings settings = new StructureSettings(100, 100, seconds, range);
+    final StructureSettings settings = new StructureSettings(100, 100, seconds, range, 1024);
     assertEquals(keptSeconds, settings.gramophoneSeconds());
     assertEquals(keptRange, settings.gramophoneRange());
+  }
+
+  @ParameterizedTest(name = "a rumour range of {0} is kept as {1}")
+  @CsvSource({"0, 128", "128, 128", "1024, 1024", "4096, 4096", "9000, 4096"})
+  @DisplayName("the constructor clamps how far a Guild Master's rumours reach")
+  void clampsRumours(final int range, final int kept) {
+    assertEquals(kept, new StructureSettings(100, 100, 300, 24, range).rumourRange());
   }
 }

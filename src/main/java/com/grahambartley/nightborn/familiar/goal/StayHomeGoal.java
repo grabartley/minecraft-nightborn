@@ -21,6 +21,9 @@ public class StayHomeGoal extends Goal {
 
   @Override
   public boolean canStart() {
+    if (familiar.job().isPresent() && FamiliarClock.isWorkingHours(familiar.getWorld())) {
+      return false;
+    }
     return familiar
         .home()
         .filter(home -> !familiar.getBlockPos().isWithinDistance(home, range()))
