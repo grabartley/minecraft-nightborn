@@ -1,7 +1,12 @@
 package com.grahambartley.nightborn.wheel;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.io.InputStream;
+import javax.imageio.ImageIO;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import org.junit.jupiter.api.DisplayName;
@@ -34,5 +39,25 @@ class WheelEntryTest {
         WheelEntry.of(ACTION, Identifier.ofVanilla("lead"), Text.literal("Follow"), current);
     assertEquals(WheelEntry.NO_ARGUMENT, entry.argument());
     assertEquals(current, entry.current());
+  }
+
+  @ParameterizedTest(name = "{0}")
+  @CsvSource({
+    "follow", "stay", "guard", "fight", "feed", "bring_blood", "leave", "gather",
+    "fetch_blood", "scout", "stand_watch", "trade", "contracts", "trials", "rank", "news",
+    "invite", "hand_over", "challenge", "carry", "ask_after", "place", "oath", "journal"
+  })
+  @DisplayName("every wheel icon is a sprite of its own that ships in the mod")
+  void icon(final String name) throws IOException {
+    final Identifier icon = WheelEntry.icon(name);
+    assertEquals(Identifier.of("nightborn", "wheel/" + name), icon);
+    try (InputStream in =
+        WheelEntryTest.class.getResourceAsStream(
+            "/assets/nightborn/textures/gui/sprites/" + icon.getPath() + ".png")) {
+      assertNotNull(in, icon.toString());
+      final BufferedImage image = ImageIO.read(in);
+      assertEquals(16, image.getWidth());
+      assertEquals(16, image.getHeight());
+    }
   }
 }

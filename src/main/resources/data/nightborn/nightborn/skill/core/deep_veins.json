@@ -3,7 +3,7 @@
   "requires": [
     "nightborn:core/blood_healing"
   ],
-  "icon": "nightborn:skills/icon/thick_blood",
+  "icon": "nightborn:skills/icon/deep_veins",
   "column": 2,
   "row": 3,
   "stage": "nightborn:adult",

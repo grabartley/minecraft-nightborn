@@ -12,7 +12,7 @@ import net.minecraft.util.Identifier;
 public final class HouseHandover implements WheelAction<PlayerEntity> {
 
   public static final Identifier ID = Identifier.of(Nightborn.MOD_ID, "house_handover");
-  static final Identifier ICON = Identifier.of(Nightborn.MOD_ID, "crest_banner");
+  static final Identifier ICON = WheelEntry.icon("hand_over");
   static final String LABEL = "nightborn.house.wheel.handover";
 
   @Override

@@ -40,8 +40,6 @@ public final class SkillScreen extends Screen {
   static final int LINE_WIDTH = 2;
   static final float DIM = 0.45F;
   static final float RANK_SCALE = 0.5F;
-  static final int BAR_BACK = 0xFF140C0C;
-  static final int OPAQUE = 0xFF000000;
   static final float DRAG_Z = 300.0F;
 
   private final Map<Identifier, Skill> skills = new HashMap<>();
@@ -218,20 +216,27 @@ public final class SkillScreen extends Screen {
     final int cost =
         SkillCurve.cost(
             progress.earned(), settings.firstPointExperience(), settings.pointCostRise());
-    context.fill(bar.left(), bar.top(), bar.right(), bar.bottom(), OPAQUE | theme.muted());
-    context.fill(bar.innerLeft(), bar.innerTop(), bar.innerRight(), bar.innerBottom(), BAR_BACK);
-    context.fill(
-        bar.innerLeft(),
-        bar.innerTop(),
-        bar.innerLeft()
-            + bar.filled(
-                SkillCurve.fraction(
-                    progress.earned(),
-                    progress.experience(),
-                    settings.firstPointExperience(),
-                    settings.pointCostRise())),
-        bar.innerBottom(),
-        OPAQUE | theme.problem());
+    context.drawGuiTexture(
+        theme.experienceBar(),
+        bar.left(),
+        bar.top(),
+        bar.right() - bar.left(),
+        ExperienceBar.HEIGHT);
+    final int filled =
+        bar.filled(
+            SkillCurve.fraction(
+                progress.earned(),
+                progress.experience(),
+                settings.firstPointExperience(),
+                settings.pointCostRise()));
+    if (filled > 0) {
+      context.drawGuiTexture(
+          theme.experienceFill(),
+          bar.innerLeft(),
+          bar.innerTop(),
+          filled,
+          bar.innerBottom() - bar.innerTop());
+    }
     context.drawCenteredTextWithShadow(
         textRenderer,
         Text.translatable(
@@ -258,9 +263,14 @@ public final class SkillScreen extends Screen {
     List<Text> tooltip = null;
     for (int slot = 0; slot < PowerLayout.SLOTS; slot++) {
       final int x = row.slotX(slot);
-      context.drawGuiTexture(theme.powerSlot(), x, row.top(), PowerBarRow.SLOT, PowerBarRow.SLOT);
       final Identifier id = bar.at(slot).orElse(null);
       final boolean lifted = drag != null && drag.fromSlot() == slot;
+      context.drawGuiTexture(
+          theme.powerSlot(PowerSlotLook.of(id != null, lifted, drag != null && slot == over)),
+          x,
+          row.top(),
+          PowerBarRow.SLOT,
+          PowerBarRow.SLOT);
       if (id != null && !lifted) {
         context.drawGuiTexture(
             skills.get(id).icon(),

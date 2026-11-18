@@ -1,17 +1,18 @@
 package com.grahambartley.nightborn.occult;
 
+import com.grahambartley.nightborn.wheel.WheelEntry;
 import java.util.Locale;
 import net.minecraft.util.Identifier;
 
 public enum FamiliarMode {
-  FIGHT("minecraft:iron_sword"),
-  CARRY("minecraft:chest"),
-  SCOUT("minecraft:ender_eye");
+  FIGHT("fight"),
+  CARRY("carry"),
+  SCOUT("scout");
 
   private final Identifier icon;
 
   FamiliarMode(final String icon) {
-    this.icon = Identifier.of(icon);
+    this.icon = WheelEntry.icon(icon);
   }
 
   public Identifier icon() {

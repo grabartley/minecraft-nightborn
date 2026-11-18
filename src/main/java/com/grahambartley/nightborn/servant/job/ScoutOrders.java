@@ -32,7 +32,7 @@ public final class ScoutOrders<T extends PathAwareEntity & DayWorker> implements
   public static final TagKey<Structure> SCOUT_TARGETS =
       TagKey.of(RegistryKeys.STRUCTURE, Identifier.of(Nightborn.MOD_ID, "scout_targets"));
   public static final Identifier ICON = DayJob.SCOUT.icon();
-  public static final Identifier PLACE_ICON = Identifier.ofVanilla("filled_map");
+  public static final Identifier PLACE_ICON = WheelEntry.icon("place");
 
   private static final Map<UUID, Offer> OFFERED = new ConcurrentHashMap<>();
 

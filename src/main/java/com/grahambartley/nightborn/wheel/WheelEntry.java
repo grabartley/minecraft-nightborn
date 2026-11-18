@@ -1,5 +1,6 @@
 package com.grahambartley.nightborn.wheel;
 
+import com.grahambartley.nightborn.Nightborn;
 import net.minecraft.network.RegistryByteBuf;
 import net.minecraft.network.codec.PacketCodec;
 import net.minecraft.network.codec.PacketCodecs;
@@ -29,6 +30,10 @@ public record WheelEntry(
   public static WheelEntry of(
       final Identifier action, final Identifier icon, final Text label, final boolean current) {
     return new WheelEntry(action, NO_ARGUMENT, icon, label, current);
+  }
+
+  public static Identifier icon(final String name) {
+    return Identifier.of(Nightborn.MOD_ID, "wheel/" + name);
   }
 
   public boolean names(final Identifier chosenAction, final int chosenArgument) {

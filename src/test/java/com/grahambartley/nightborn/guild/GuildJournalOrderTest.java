@@ -4,11 +4,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 import com.grahambartley.nightborn.MinecraftBootstrapExtension;
-import com.grahambartley.nightborn.journal.Journal;
 import com.grahambartley.nightborn.wheel.WheelEntry;
 import java.util.List;
-import net.minecraft.registry.Registries;
 import net.minecraft.text.TranslatableTextContent;
+import net.minecraft.util.Identifier;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -25,8 +24,7 @@ class GuildJournalOrderTest {
     assertEquals(1, entries.size());
     final WheelEntry journal = entries.getFirst();
     assertEquals(GuildJournalOrder.ID, journal.action());
-    assertEquals(Journal.HUNTER.id(), journal.icon());
-    assertEquals(true, Registries.ITEM.containsId(journal.icon()));
+    assertEquals(Identifier.of("nightborn", "wheel/journal"), journal.icon());
     assertEquals(
         "nightborn.guild.journal",
         ((TranslatableTextContent) journal.label().getContent()).getKey());

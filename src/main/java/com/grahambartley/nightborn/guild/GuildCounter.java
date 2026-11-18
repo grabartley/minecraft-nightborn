@@ -1,5 +1,6 @@
 package com.grahambartley.nightborn.guild;
 
+import com.grahambartley.nightborn.wheel.WheelEntry;
 import java.util.List;
 import java.util.Locale;
 import net.minecraft.entity.player.PlayerEntity;
@@ -14,13 +15,13 @@ import org.jetbrains.annotations.Nullable;
 public final class GuildCounter implements Merchant {
 
   public enum Kind {
-    GEAR("minecraft:emerald"),
-    CONTRACTS("nightborn:hunter_contract");
+    GEAR("trade"),
+    CONTRACTS("contracts");
 
     private final Identifier icon;
 
     Kind(final String icon) {
-      this.icon = Identifier.of(icon);
+      this.icon = WheelEntry.icon(icon);
     }
 
     public boolean openTo(final boolean vampire, final boolean hunter) {

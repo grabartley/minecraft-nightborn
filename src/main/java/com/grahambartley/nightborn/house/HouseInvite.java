@@ -12,7 +12,7 @@ import net.minecraft.util.Identifier;
 public final class HouseInvite implements WheelAction<PlayerEntity> {
 
   public static final Identifier ID = Identifier.of(Nightborn.MOD_ID, "house_invite");
-  static final Identifier ICON = Identifier.of(Nightborn.MOD_ID, "chalice");
+  static final Identifier ICON = WheelEntry.icon("invite");
   static final String LABEL = "nightborn.house.wheel.invite";
 
   @Override

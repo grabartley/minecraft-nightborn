@@ -3,7 +3,7 @@
   "requires": [
     "nightborn:core/thick_blood"
   ],
-  "icon": "nightborn:skills/icon/blood_bond",
+  "icon": "nightborn:skills/icon/blood_healing",
   "column": 2,
   "row": 2,
   "ranks": [

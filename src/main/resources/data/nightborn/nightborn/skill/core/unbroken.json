@@ -3,7 +3,7 @@
   "requires": [
     "nightborn:core/iron_grip"
   ],
-  "icon": "nightborn:skills/icon/iron_will",
+  "icon": "nightborn:skills/icon/unbroken",
   "column": 0,
   "row": 3,
   "stage": "nightborn:elder",

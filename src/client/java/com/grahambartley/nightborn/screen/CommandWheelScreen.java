@@ -2,7 +2,6 @@ package com.grahambartley.nightborn.screen;
 
 import com.grahambartley.nightborn.network.ChooseWheelPayload;
 import com.grahambartley.nightborn.network.OpenWheelPayload;
-import com.grahambartley.nightborn.skill.SkillPurchase;
 import com.grahambartley.nightborn.wheel.WheelEntry;
 import com.mojang.blaze3d.systems.RenderSystem;
 import java.util.List;
@@ -16,8 +15,6 @@ import net.minecraft.client.render.Tessellator;
 import net.minecraft.client.render.VertexFormat;
 import net.minecraft.client.render.VertexFormats;
 import net.minecraft.client.sound.PositionedSoundInstance;
-import net.minecraft.item.ItemStack;
-import net.minecraft.registry.Registries;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.MathHelper;
@@ -32,7 +29,8 @@ public class CommandWheelScreen extends Screen {
   static final int CAPTION_GAP = 8;
   static final int CAPTION_PAD = 6;
   static final float STEP_DEGREES = 2.5F;
-  static final float EDGE = 1.5F;
+  static final int RING = 192;
+  static final int RIM = 4;
 
   private final int entityId;
   private final SkillTheme theme;
@@ -75,7 +73,9 @@ public class CommandWheelScreen extends Screen {
   }
 
   private void drawRing(final DrawContext context) {
-    if (client == null) {
+    context.drawGuiTexture(
+        theme.wheelRing(), width / 2 - RING / 2, height / 2 - RING / 2, RING, RING);
+    if (client == null || entries.size() < 2 && hovered < 0) {
       return;
     }
     final float scale = (float) client.getWindow().getScaleFactor();
@@ -90,24 +90,26 @@ public class CommandWheelScreen extends Screen {
         Tessellator.getInstance().begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
     final float centreX = width / 2.0F * scale;
     final float centreY = height / 2.0F * scale;
-    final float inner = WheelRing.INNER * scale;
-    final float outer = WheelRing.OUTER * scale;
-    final float edge = EDGE * scale;
+    final float inner = (WheelRing.INNER + RIM) * scale;
+    final float outer = (WheelRing.OUTER - RIM) * scale;
     for (int index = 0; index < entries.size(); index++) {
       final float start = WheelRing.startDegrees(index, entries.size());
       final float end = WheelRing.endDegrees(index, entries.size());
-      sector(
-          buffer,
-          matrix,
-          centreX,
-          centreY,
-          inner,
-          outer,
-          start,
-          end,
-          index == hovered ? theme.ringHover() : theme.ring());
-      sector(buffer, matrix, centreX, centreY, outer - edge, outer, start, end, theme.ringEdge());
-      sector(buffer, matrix, centreX, centreY, inner, inner + edge, start, end, theme.ringEdge());
+      if (entries.size() > 1) {
+        sector(
+            buffer,
+            matrix,
+            centreX,
+            centreY,
+            inner,
+            outer,
+            start - WheelRing.GAP_DEGREES,
+            start,
+            theme.ringEdge());
+      }
+      if (index == hovered) {
+        sector(buffer, matrix, centreX, centreY, inner, outer, start, end, theme.ringHover());
+      }
     }
     BufferRenderer.drawWithGlobalProgram(buffer.end());
     RenderSystem.enableCull();
@@ -148,14 +150,12 @@ public class CommandWheelScreen extends Screen {
       final int x = width / 2 + WheelRing.iconX(index, entries.size());
       final int y = height / 2 + WheelRing.iconY(index, entries.size());
       context.drawGuiTexture(
-          theme.frame(
-              entry.current() ? SkillPurchase.Verdict.OWNED : SkillPurchase.Verdict.ALLOWED),
+          theme.wheelSlot(index == hovered, entry.current()),
           x - FRAME / 2,
           y - FRAME / 2,
           FRAME,
           FRAME);
-      context.drawItem(
-          new ItemStack(Registries.ITEM.get(entry.icon())), x - ICON / 2, y - ICON / 2);
+      context.drawGuiTexture(entry.icon(), x - ICON / 2, y - ICON / 2, ICON, ICON);
     }
   }
 

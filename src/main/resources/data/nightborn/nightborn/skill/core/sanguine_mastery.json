@@ -3,7 +3,7 @@
   "requires": [
     "nightborn:core/deep_veins"
   ],
-  "icon": "nightborn:skills/icon/blood_rush",
+  "icon": "nightborn:skills/icon/sanguine_mastery",
   "column": 2,
   "row": 4,
   "stage": "nightborn:elder",
