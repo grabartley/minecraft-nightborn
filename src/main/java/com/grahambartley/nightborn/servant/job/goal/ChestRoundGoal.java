@@ -143,6 +143,9 @@ public abstract class ChestRoundGoal<T extends PathAwareEntity & DayWorker> exte
     final boolean deliveredAll = worker.getInventory().isEmpty();
     if (deliveredAll && !nothingLeft) {
       stock(into);
+      if (!readyToWork()) {
+        ErrandTransfer.deliverAll(worker.getInventory(), into);
+      }
     }
     final Leg next = RoundRules.afterChest(deliveredAll, readyToWork(), nothingLeft);
     idle = next == Leg.END;
