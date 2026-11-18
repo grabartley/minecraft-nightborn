@@ -19,7 +19,7 @@ class DeedKindsTest {
     "nightborn:journal_pages, true",
     "nightborn:wrong_call, true",
     "nightborn:parasol_walked, false",
-    "nightborn:nemesis_ended, false",
+    "nightborn:nemesis_ended, true",
     "nightborn:trapped, false"
   })
   void onlyDeedsTheGameReportsAreLive(final String kind, final boolean live) {

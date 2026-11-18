@@ -7,6 +7,7 @@ import com.grahambartley.nightborn.challenge.Deeds;
 import com.grahambartley.nightborn.config.DownedSettings;
 import com.grahambartley.nightborn.feeding.FeedingSessions;
 import com.grahambartley.nightborn.gear.Staking;
+import com.grahambartley.nightborn.nemesis.Nemeses;
 import com.grahambartley.nightborn.server.ServerConfigService;
 import com.grahambartley.nightborn.vampire.Modifiers;
 import com.grahambartley.nightborn.vampire.VampireAttributes;
@@ -127,7 +128,8 @@ public final class Downed {
                 0.6F,
                 0.6F);
       }
-      case ESCAPED, NONE -> {}
+      case ESCAPED -> Nemeses.escaped(vampire, state.downedBy());
+      case NONE -> {}
     }
     final DownedState now = step.state();
     pin(vampire, now != null && now.isDowned());
