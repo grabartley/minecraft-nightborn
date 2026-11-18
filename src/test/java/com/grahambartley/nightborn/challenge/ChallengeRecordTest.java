@@ -36,4 +36,29 @@ class ChallengeRecordTest {
     assertEquals(offered, ChallengeRecord.PACKET_CODEC.decode(buf));
     assertEquals(false, offered.isEmpty());
   }
+
+  @ParameterizedTest(
+      name = "a shelved {0} offer with taken {1} and done {2} survives saving and sync")
+  @CsvSource({"VAMPIRE, true, true", "HUNTER, true, false", "HUNTER, false, false"})
+  void aShelvedOfferSurvivesSavingAndSync(
+      final Side side, final boolean taken, final boolean done) {
+    final Identifier trial = Identifier.of("nightborn", "watchman");
+    final TrialOffer shelved =
+        new TrialOffer(
+            Optional.of(side),
+            4L,
+            List.of(new OfferedTrial(trial, taken, done, new Tally(1, List.of(), 3L))));
+    final ChallengeRecord record =
+        ChallengeRecord.EMPTY.finishing(trial).withShelved(TrialOffer.NONE, List.of(shelved));
+    assertEquals(
+        record,
+        ChallengeRecord.CODEC
+            .parse(
+                JsonOps.INSTANCE,
+                ChallengeRecord.CODEC.encodeStart(JsonOps.INSTANCE, record).getOrThrow())
+            .getOrThrow());
+    final ByteBuf buf = Unpooled.buffer();
+    ChallengeRecord.PACKET_CODEC.encode(buf, record);
+    assertEquals(record, ChallengeRecord.PACKET_CODEC.decode(buf));
+  }
 }

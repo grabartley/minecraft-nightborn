@@ -72,7 +72,9 @@ public final class OfferKeeper {
             renewed -> {
               ChallengeAttachment.set(player, renewed);
               final TrialOffer offer = renewed.offer();
-              if (!offer.trials().isEmpty() && offer.side().isPresent()) {
+              if (!offer.trials().isEmpty()
+                  && offer.side().isPresent()
+                  && !record.shelved().contains(offer)) {
                 player.sendMessage(
                     Text.translatable(RENEWED + offer.side().get().asString()), true);
               }
