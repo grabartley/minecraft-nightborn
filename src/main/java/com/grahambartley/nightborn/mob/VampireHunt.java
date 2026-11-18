@@ -7,8 +7,10 @@ import com.grahambartley.nightborn.downed.Downed;
 import com.grahambartley.nightborn.house.MemberLife;
 import com.grahambartley.nightborn.mob.combat.Grudge;
 import com.grahambartley.nightborn.mob.home.HomeLife;
+import com.grahambartley.nightborn.mob.home.Housemates;
 import com.grahambartley.nightborn.mob.home.MobBlood;
 import com.grahambartley.nightborn.server.ServerConfigService;
+import com.grahambartley.nightborn.thrall.ThrallEntity;
 import com.grahambartley.nightborn.vampire.Vampires;
 import java.util.function.BooleanSupplier;
 import net.minecraft.entity.Entity;
@@ -56,8 +58,10 @@ public final class VampireHunt {
         () -> Prey.isPrey(target),
         () ->
             Prey.spared(
-                vampire.getWorld().getDifficulty() == Difficulty.PEACEFUL,
-                target instanceof PlayerEntity),
+                    vampire.getWorld().getDifficulty() == Difficulty.PEACEFUL,
+                    target instanceof PlayerEntity)
+                || target instanceof ThrallEntity thrall
+                    && Housemates.share(thrall.house(), vampire.homeLife().home()),
         () -> Hunting.dropsTarget(pursuit(vampire, target, false)));
   }
 

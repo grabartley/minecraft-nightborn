@@ -10,7 +10,7 @@ public final class NightRoutine {
   static final double BLOCKS_PER_TICK_PER_SPEED = 0.25;
   static final double PATH_MARGIN = 2.0;
   static final long SETTLE_TICKS = 600L;
-  static final int COFFIN_REACH_HOMES = 2;
+  public static final int COFFIN_REACH_HOMES = 2;
 
   private NightRoutine() {}
 

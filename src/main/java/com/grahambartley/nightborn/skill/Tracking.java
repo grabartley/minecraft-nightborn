@@ -1,5 +1,6 @@
 package com.grahambartley.nightborn.skill;
 
+import com.grahambartley.nightborn.raid.Trails;
 import com.grahambartley.nightborn.vampire.Vampires;
 import java.util.HashMap;
 import java.util.List;
@@ -14,6 +15,7 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.math.Box;
+import net.minecraft.util.math.Vec3d;
 import org.jetbrains.annotations.Nullable;
 
 public final class Tracking {
@@ -80,19 +82,25 @@ public final class Tracking {
   }
 
   private static void show(final ServerPlayerEntity hunter, final int range) {
+    final Optional<Vec3d> trail = Trails.lead(hunter);
     final Text message =
-        nearest(hunter, range)
-            .<Text>map(
-                vampire ->
-                    Text.translatable(
-                            "nightborn.tracking.found",
-                            TrackingDirection.arrow(
-                                vampire.getX() - hunter.getX(),
-                                vampire.getZ() - hunter.getZ(),
-                                hunter.getYaw()))
-                        .formatted(Formatting.GOLD))
+        trail
+            .map(lead -> pointer(hunter, lead, "nightborn.tracking.trail"))
+            .or(
+                () ->
+                    nearest(hunter, range)
+                        .map(
+                            vampire ->
+                                pointer(hunter, vampire.getPos(), "nightborn.tracking.found")))
             .orElseGet(
                 () -> Text.translatable("nightborn.tracking.none").formatted(Formatting.GRAY));
     hunter.sendMessage(message, true);
+  }
+
+  private static Text pointer(final ServerPlayerEntity hunter, final Vec3d at, final String key) {
+    return Text.translatable(
+            key,
+            TrackingDirection.arrow(at.x - hunter.getX(), at.z - hunter.getZ(), hunter.getYaw()))
+        .formatted(Formatting.GOLD);
   }
 }

@@ -254,6 +254,11 @@ public class GuildMasterEntity extends MerchantEntity
   @Override
   protected void afterUsing(final TradeOffer offer) {
     playSound(SoundEvents.ENTITY_VILLAGER_YES, getSoundVolume(), getSoundPitch());
+    if (offer.getSellItem().isOf(ContractItems.HUNTER_CONTRACT)
+        && getCustomer() instanceof ServerPlayerEntity hunter
+        && getWorld() instanceof ServerWorld world) {
+      ContractMaps.give(world, this, hunter);
+    }
   }
 
   private void wear(final String look) {
