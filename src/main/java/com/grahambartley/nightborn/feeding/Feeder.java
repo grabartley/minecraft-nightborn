@@ -172,7 +172,6 @@ final class Feeder {
       vampire.heal(config.feeding().finisherHeal());
       SkillEarning.fromDrain(vampire, config.skills());
       AgeDeeds.drained(vampire, victim);
-      PlayerCues.send(vampire, PlayerCue.DRAIN);
       Deeds.record(vampire, Deed.of(DeedKinds.FINISHER_KILL));
     }
   }

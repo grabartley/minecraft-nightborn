@@ -16,15 +16,23 @@ public final class PlayerClipState {
       Optional<VampirePose> coffin) {}
 
   public record Lengths(
-      double land, double vomit, double drain, double rise, double flinch, double smallFlinch) {}
+      double land,
+      double vomit,
+      double drain,
+      double rise,
+      double flinch,
+      double finisher,
+      double smallFlinch) {}
 
   private final EndingEdge landing = new EndingEdge();
   private final EndingEdge standing = new EndingEdge();
+  private final EndingEdge biting = new EndingEdge();
   private final OneShot land = new OneShot();
   private final OneShot rise = new OneShot();
   private final OneShot vomit = new OneShot();
   private final OneShot drain = new OneShot();
   private final OneShot flinch = new OneShot();
+  private final OneShot finisher = new OneShot();
   private boolean smallFlinch;
 
   public void tick(final double age, final boolean levitating, final boolean downed) {
@@ -49,6 +57,10 @@ public final class PlayerClipState {
     flinch.start(age);
   }
 
+  public void finisher(final double age) {
+    finisher.start(age);
+  }
+
   public double vomitingSeconds(final double age) {
     return vomit.seconds(age);
   }
@@ -66,6 +78,12 @@ public final class PlayerClipState {
     }
     if (rise.playing(lengths.rise(), age)) {
       return Optional.of(VampirePose.RISE);
+    }
+    if (biting.ended(situation.feeding())) {
+      finisher.clear();
+    }
+    if (finisher.playing(lengths.finisher(), age)) {
+      return Optional.of(VampirePose.FINISHER_BITE);
     }
     if (drain.playing(lengths.drain(), age)) {
       return Optional.of(VampirePose.DRAIN);

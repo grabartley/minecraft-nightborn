@@ -68,6 +68,7 @@ public final class VampirePlayerClips {
                 VampireClips.seconds(VampirePose.DRAIN),
                 VampireClips.seconds(VampirePose.RISE),
                 VampireClips.seconds(VampirePose.FLINCH),
+                VampireClips.seconds(VampirePose.FINISHER_BITE),
                 VampireClips.seconds(VampirePose.SMALL_FLINCH)));
   }
 
@@ -104,6 +105,7 @@ public final class VampirePlayerClips {
       }
       case DRAIN -> state(player).drain(player.age);
       case FLINCH -> state(player).flinch(player.age);
+      case FINISHER -> state(player).finisher(player.age);
       case SMALL_FLINCH -> state(player).flinch(player.age, true);
     }
   }
