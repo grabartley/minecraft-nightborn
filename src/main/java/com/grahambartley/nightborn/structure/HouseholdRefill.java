@@ -78,7 +78,11 @@ public final class HouseholdRefill {
     final List<Entity> arrivals =
         HouseholdSpawner.settle(
             world, heart.get(), heart.get(), structure.household().returning(), world.getRandom());
-    final Set<UUID> living = arrivals.stream().map(Entity::getUuid).collect(Collectors.toSet());
+    final Set<UUID> living =
+        arrivals.stream()
+            .filter(HouseholdMember.class::isInstance)
+            .map(Entity::getUuid)
+            .collect(Collectors.toSet());
     HouseholdRoll.get(world.getServer())
         .refilled(GlobalPos.create(world.getRegistryKey(), home), living);
     Nightborn.LOGGER.debug("A new household of {} moved in at {}", living.size(), home);
