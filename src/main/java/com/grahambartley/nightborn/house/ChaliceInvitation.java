@@ -25,7 +25,7 @@ public final class ChaliceInvitation {
 
   private ChaliceInvitation() {}
 
-  static ActionResult onUse(
+  public static ActionResult onUse(
       final PlayerEntity player,
       final World world,
       final Hand hand,
