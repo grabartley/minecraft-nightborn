@@ -71,7 +71,8 @@ public final class InquisitorOutcomes {
           List.of(
               InquisitorLedger.Owed.CLEAR_NOTORIETY,
               InquisitorLedger.Owed.END_VISIT,
-              InquisitorLedger.Owed.PAY);
+              InquisitorLedger.Owed.PAY,
+              InquisitorLedger.Owed.ENDED);
       case STRUCK_DOWN -> List.of(InquisitorLedger.Owed.PAY);
       case OTHER -> List.of();
     };

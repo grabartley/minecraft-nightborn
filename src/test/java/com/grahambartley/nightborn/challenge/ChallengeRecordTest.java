@@ -6,7 +6,9 @@ import com.mojang.serialization.JsonOps;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -60,5 +62,40 @@ class ChallengeRecordTest {
     final ByteBuf buf = Unpooled.buffer();
     ChallengeRecord.PACKET_CODEC.encode(buf, record);
     assertEquals(record, ChallengeRecord.PACKET_CODEC.decode(buf));
+  }
+
+  private static Trial trialFor(final Side side) {
+    return new Trial(
+        Text.literal("t"),
+        Text.literal("d"),
+        side,
+        new DeedGoal(
+            DeedMatch.of(Identifier.of("nightborn", "fed")),
+            1,
+            DeedGoal.Measure.TOTAL,
+            Optional.empty(),
+            DeedGoal.Within.ANY_TIME,
+            Optional.empty()),
+        Optional.empty(),
+        List.of(),
+        TrialSize.SMALL,
+        Optional.empty());
+  }
+
+  @ParameterizedTest(name = "{0} trials finished: {1}")
+  @CsvSource({"VAMPIRE, 2", "HUNTER, 1", "ANYONE, 0"})
+  void countsFinishedTrialsOfOneSide(final Side side, final int expected) {
+    final Identifier bite = Identifier.of("nightborn", "bite");
+    final Identifier drink = Identifier.of("nightborn", "drink");
+    final Identifier stake = Identifier.of("nightborn", "stake");
+    final Identifier gone = Identifier.of("nightborn", "gone");
+    final ChallengeRecord record =
+        ChallengeRecord.EMPTY.finishing(bite).finishing(drink).finishing(stake).finishing(gone);
+    final Map<Identifier, Trial> trials =
+        Map.of(
+            bite, trialFor(Side.VAMPIRE),
+            drink, trialFor(Side.VAMPIRE),
+            stake, trialFor(Side.HUNTER));
+    assertEquals(expected, record.finishedOf(side, trials));
   }
 }

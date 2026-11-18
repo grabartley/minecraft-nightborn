@@ -1,0 +1,82 @@
+{
+  "parent": "nightborn:root",
+  "display": {
+    "icon": {
+      "id": "nightborn:crypt_reliquary"
+    },
+    "title": {
+      "translate": "advancements.nightborn.property_ladder.title"
+    },
+    "description": {
+      "translate": "advancements.nightborn.property_ladder.description"
+    },
+    "frame": "challenge"
+  },
+  "criteria": {
+    "crypt": {
+      "trigger": "nightborn:deed",
+      "conditions": {
+        "deed": "nightborn:structure_entered",
+        "facts": {
+          "structure": "nightborn:crypt"
+        }
+      }
+    },
+    "ruined_manor": {
+      "trigger": "nightborn:deed",
+      "conditions": {
+        "deed": "nightborn:structure_entered",
+        "facts": {
+          "structure": "nightborn:ruined_manor"
+        }
+      }
+    },
+    "underground_lair": {
+      "trigger": "nightborn:deed",
+      "conditions": {
+        "deed": "nightborn:structure_entered",
+        "facts": {
+          "structure": "nightborn:underground_lair"
+        }
+      }
+    },
+    "castle": {
+      "trigger": "nightborn:deed",
+      "conditions": {
+        "deed": "nightborn:structure_entered",
+        "facts": {
+          "structure": "nightborn:castle"
+        }
+      }
+    },
+    "mountain_castle": {
+      "trigger": "nightborn:deed",
+      "conditions": {
+        "deed": "nightborn:structure_entered",
+        "facts": {
+          "structure": "nightborn:mountain_castle"
+        }
+      }
+    }
+  },
+  "requirements": [
+    [
+      "crypt"
+    ],
+    [
+      "ruined_manor"
+    ],
+    [
+      "underground_lair"
+    ],
+    [
+      "castle"
+    ],
+    [
+      "mountain_castle"
+    ]
+  ],
+  "rewards": {
+    "experience": 100
+  }
+}

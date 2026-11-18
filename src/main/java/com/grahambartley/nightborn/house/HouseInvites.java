@@ -99,7 +99,7 @@ public final class HouseInvites {
                     house
                         .withPlayer(guest.getUuid())
                         .ranked(guest.getUuid(), StageRanks.of(guest))));
-    Deeds.record(lord, Deed.of(DeedKinds.HOUSE_GUEST));
+    guestArrived(lord, houses);
     guest.sendMessage(Text.translatable(WELCOMED, lord.getDisplayName()), false);
     lord.sendMessage(Text.translatable(ARRIVED, guest.getDisplayName()), false);
     guest.playSoundToPlayer(
@@ -130,6 +130,14 @@ public final class HouseInvites {
       lord.sendMessage(Text.translatable(MEMBER_LEFT, member.getDisplayName()), false);
     }
     return true;
+  }
+
+  static void guestArrived(final ServerPlayerEntity lord, final Houses houses) {
+    Deeds.record(
+        lord,
+        Deed.of(DeedKinds.HOUSE_GUEST)
+            .with(
+                DeedKinds.HOUSEHOLD, houses.ledBy(lord.getUuid()).map(House::household).orElse(1)));
   }
 
   private static void leaveAny(final Houses houses, final UUID player) {

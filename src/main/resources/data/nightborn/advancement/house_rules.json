@@ -1,0 +1,28 @@
+{
+  "parent": "nightborn:no_reflection_on_you",
+  "display": {
+    "icon": {
+      "id": "nightborn:candelabra"
+    },
+    "title": {
+      "translate": "advancements.nightborn.house_rules.title"
+    },
+    "description": {
+      "translate": "advancements.nightborn.house_rules.description"
+    },
+    "frame": "task"
+  },
+  "criteria": {
+    "founded": {
+      "trigger": "nightborn:deed",
+      "conditions": {
+        "deed": "nightborn:house_founded"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "founded"
+    ]
+  ]
+}

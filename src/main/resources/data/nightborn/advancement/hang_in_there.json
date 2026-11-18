@@ -1,0 +1,29 @@
+{
+  "parent": "nightborn:root",
+  "display": {
+    "icon": {
+      "id": "nightborn:tame_bat"
+    },
+    "title": {
+      "translate": "advancements.nightborn.hang_in_there.title"
+    },
+    "description": {
+      "translate": "advancements.nightborn.hang_in_there.description"
+    },
+    "frame": "task",
+    "hidden": true
+  },
+  "criteria": {
+    "dusk_to_dawn": {
+      "trigger": "nightborn:deed",
+      "conditions": {
+        "deed": "nightborn:hung_through_night"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "dusk_to_dawn"
+    ]
+  ]
+}

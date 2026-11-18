@@ -54,6 +54,12 @@ public final class VillageSuspicion {
         : nearestBell(world, entity.getBlockPos());
   }
 
+  public static boolean warded(final ServerWorld world, final BlockPos pos) {
+    return nearestBell(world, pos)
+        .filter(bell -> step(world, bell).atLeast(VillageStep.WARDED))
+        .isPresent();
+  }
+
   public static VillageRecord current(final ServerWorld world, final BlockPos bell) {
     return update(world, bell, UnaryOperator.identity());
   }

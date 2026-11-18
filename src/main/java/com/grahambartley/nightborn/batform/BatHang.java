@@ -1,6 +1,9 @@
 package com.grahambartley.nightborn.batform;
 
 import com.grahambartley.nightborn.Nightborn;
+import com.grahambartley.nightborn.challenge.Deed;
+import com.grahambartley.nightborn.challenge.DeedKinds;
+import com.grahambartley.nightborn.challenge.Deeds;
 import com.grahambartley.nightborn.network.ReleaseBatHangPayload;
 import java.util.Optional;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentRegistry;
@@ -27,6 +30,9 @@ public final class BatHang {
               builder
                   .persistent(BlockPos.CODEC)
                   .syncWith(BlockPos.PACKET_CODEC.cast(), AttachmentSyncPredicate.all()));
+
+  static final AttachmentType<Long> SINCE =
+      AttachmentRegistry.create(Identifier.of(Nightborn.MOD_ID, "bat_hang_since"));
 
   private BatHang() {}
 
@@ -71,6 +77,7 @@ public final class BatHang {
     player.requestTeleport(spot.x, spot.y, spot.z);
     player.setVelocity(Vec3d.ZERO);
     player.setAttached(TYPE, anchor);
+    player.setAttached(SINCE, player.getWorld().getTimeOfDay());
     return true;
   }
 
@@ -88,12 +95,20 @@ public final class BatHang {
     if (isHanging(entity)) {
       entity.removeAttached(TYPE);
     }
+    entity.removeAttached(SINCE);
   }
 
   static void tick(final ServerPlayerEntity player) {
     anchor(player)
         .filter(anchor -> !holds(player.getWorld(), anchor))
         .ifPresent(anchor -> release(player));
+    final Long since = player.getAttached(SINCE);
+    if (since != null
+        && isHanging(player)
+        && BatHangRules.hungThroughNight(since, player.getWorld().getTimeOfDay())) {
+      player.removeAttached(SINCE);
+      Deeds.record(player, Deed.of(DeedKinds.HUNG_THROUGH_NIGHT));
+    }
   }
 
   public static void afterMove(final ServerPlayerEntity player) {

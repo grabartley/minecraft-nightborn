@@ -1,5 +1,8 @@
 package com.grahambartley.nightborn.house.duel;
 
+import com.grahambartley.nightborn.challenge.Deed;
+import com.grahambartley.nightborn.challenge.DeedKinds;
+import com.grahambartley.nightborn.challenge.Deeds;
 import com.grahambartley.nightborn.config.DownedSettings;
 import com.grahambartley.nightborn.config.HouseSettings;
 import com.grahambartley.nightborn.core.NightTime;
@@ -246,6 +249,7 @@ public final class HouseDuels {
     final UUID winner = duel.foe(loser).orElse(duel.lord());
     if (loser.equals(duel.lord())) {
       HouseSuccession.pass(server, house.get(), house.get().ledBy(duel.challenger(), true), WON);
+      Deeds.record(server, Optional.of(duel.challenger()), Deed.of(DeedKinds.HOUSE_WON));
       tell(server, loser, Text.translatable(LOST));
       return;
     }

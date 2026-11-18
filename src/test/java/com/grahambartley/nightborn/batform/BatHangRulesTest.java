@@ -82,4 +82,20 @@ class BatHangRulesTest {
   void letsGo(final boolean armed, final boolean pressing, final boolean expected) {
     assertEquals(expected, BatHangRules.letsGo(armed, pressing));
   }
+
+  @ParameterizedTest(name = "hung at {0}, now {1} -> {2}")
+  @CsvSource({
+    "12000, 23000, true",
+    "13000, 23000, true",
+    "12000, 22999, false",
+    "13001, 23000, false",
+    "13001, 47000, true",
+    "36000, 47000, true",
+    "0, 11000, false",
+    "18000, 46999, false"
+  })
+  void aWholeNightRunsFromTheFirstDuskToItsDawn(
+      final long since, final long now, final boolean expected) {
+    assertEquals(expected, BatHangRules.hungThroughNight(since, now));
+  }
 }

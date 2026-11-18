@@ -1,0 +1,34 @@
+{
+  "parent": "nightborn:sworn_in",
+  "display": {
+    "icon": {
+      "id": "nightborn:guild_masters_seal"
+    },
+    "title": {
+      "translate": "advancements.nightborn.master_of_the_hunt.title"
+    },
+    "description": {
+      "translate": "advancements.nightborn.master_of_the_hunt.description"
+    },
+    "frame": "challenge"
+  },
+  "criteria": {
+    "master": {
+      "trigger": "nightborn:deed",
+      "conditions": {
+        "deed": "nightborn:rank_reached",
+        "facts": {
+          "rank": "nightborn:master"
+        }
+      }
+    }
+  },
+  "requirements": [
+    [
+      "master"
+    ]
+  ],
+  "rewards": {
+    "experience": 100
+  }
+}

@@ -3,6 +3,9 @@ package com.grahambartley.nightborn.skill;
 import com.grahambartley.nightborn.advancement.Milestone;
 import com.grahambartley.nightborn.advancement.MilestoneCriterion;
 import com.grahambartley.nightborn.age.StageRanks;
+import com.grahambartley.nightborn.challenge.Deed;
+import com.grahambartley.nightborn.challenge.DeedKinds;
+import com.grahambartley.nightborn.challenge.Deeds;
 import com.grahambartley.nightborn.network.BuySkillPayload;
 import com.grahambartley.nightborn.rank.GuildRanks;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
@@ -37,6 +40,16 @@ public final class SkillShop {
     SkillAttachment.set(player, tree, bought);
     if (countsBloodlines(tree)) {
       MilestoneCriterion.reach(player, Milestone.BLOODLINES, bought.lines().size());
+    }
+    if (lookup.branch().line()) {
+      final Identifier line = lookup.skill().branch();
+      Deeds.record(
+          player,
+          Deed.of(DeedKinds.SKILL_LEARNED)
+              .with(DeedKinds.TREE, tree.asString())
+              .with(DeedKinds.LINE, line)
+              .with(
+                  DeedKinds.SHARE, LineShare.percent(Skills.allSkills(registries), bought, line)));
     }
     SkillAttributes.apply(player);
     player.sendMessage(bought(id, bought.rank(id), lookup.skill().maxRank()), true);

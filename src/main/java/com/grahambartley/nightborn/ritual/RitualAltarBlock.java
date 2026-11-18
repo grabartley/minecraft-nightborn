@@ -1,5 +1,9 @@
 package com.grahambartley.nightborn.ritual;
 
+import com.grahambartley.nightborn.Nightborn;
+import com.grahambartley.nightborn.challenge.Deed;
+import com.grahambartley.nightborn.challenge.DeedKinds;
+import com.grahambartley.nightborn.challenge.Deeds;
 import com.grahambartley.nightborn.core.NightSight;
 import com.grahambartley.nightborn.decor.ChaliceBlock;
 import com.grahambartley.nightborn.decor.ChaliceContents;
@@ -32,6 +36,7 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.BlockMirror;
 import net.minecraft.util.BlockRotation;
 import net.minecraft.util.Hand;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.ItemActionResult;
 import net.minecraft.util.ItemScatterer;
 import net.minecraft.util.hit.BlockHitResult;
@@ -219,6 +224,12 @@ public class RitualAltarBlock extends BlockWithEntity {
       final var settings = ServerConfigService.current().ritual();
       altar.begin(settings.buildUpTicks(), Vampires.isVampire(player) ? player.getUuid() : null);
       Ritual.begin(world, pos, settings);
+      if (Vampires.isVampire(player)) {
+        Deeds.record(
+            player,
+            Deed.of(DeedKinds.WRONG_CALL)
+                .with(DeedKinds.BOSS, Identifier.of(Nightborn.MOD_ID, "eldest")));
+      }
       world.emitGameEvent(player, GameEvent.BLOCK_ACTIVATE, pos);
     }
   }

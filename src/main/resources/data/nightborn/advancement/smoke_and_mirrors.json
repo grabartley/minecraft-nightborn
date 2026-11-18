@@ -1,0 +1,29 @@
+{
+  "parent": "nightborn:root",
+  "display": {
+    "icon": {
+      "id": "nightborn:hand_mirror"
+    },
+    "title": {
+      "translate": "advancements.nightborn.smoke_and_mirrors.title"
+    },
+    "description": {
+      "translate": "advancements.nightborn.smoke_and_mirrors.description"
+    },
+    "frame": "task",
+    "hidden": true
+  },
+  "criteria": {
+    "seen_through": {
+      "trigger": "nightborn:deed",
+      "conditions": {
+        "deed": "nightborn:seen_through"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "seen_through"
+    ]
+  ]
+}

@@ -1,6 +1,9 @@
 package com.grahambartley.nightborn.house;
 
 import com.grahambartley.nightborn.age.AgeAttachment;
+import com.grahambartley.nightborn.challenge.Deed;
+import com.grahambartley.nightborn.challenge.DeedKinds;
+import com.grahambartley.nightborn.challenge.Deeds;
 import com.grahambartley.nightborn.coffin.CoffinBlock;
 import com.grahambartley.nightborn.coffin.CoffinOwnership;
 import com.grahambartley.nightborn.structure.HouseholdRoll;
@@ -65,6 +68,9 @@ public final class HouseFounding {
           houses.put(
               led.orElseGet(() -> House.founded(self, coffin)).anchoredAt(coffin).seatedAt(home));
       case NONE, LIVED_IN, CLAIMED -> {}
+    }
+    if (HouseRules.founds(verdict, led.isPresent())) {
+      Deeds.record(player, Deed.of(DeedKinds.HOUSE_FOUNDED));
     }
     verdict.key().ifPresent(key -> cue(player, key, verdict));
     if ((verdict == HouseRules.Founding.FOUND || verdict == HouseRules.Founding.CLAIM)

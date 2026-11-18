@@ -1,0 +1,28 @@
+{
+  "parent": "nightborn:no_reflection_on_you",
+  "display": {
+    "icon": {
+      "id": "nightborn:castle_signet"
+    },
+    "title": {
+      "translate": "advancements.nightborn.regime_change.title"
+    },
+    "description": {
+      "translate": "advancements.nightborn.regime_change.description"
+    },
+    "frame": "task"
+  },
+  "criteria": {
+    "won": {
+      "trigger": "nightborn:deed",
+      "conditions": {
+        "deed": "nightborn:house_won"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "won"
+    ]
+  ]
+}

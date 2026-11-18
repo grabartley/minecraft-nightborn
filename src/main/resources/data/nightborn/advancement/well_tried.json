@@ -1,0 +1,202 @@
+{
+  "parent": "nightborn:root",
+  "display": {
+    "icon": {
+      "id": "nightborn:saints_medal"
+    },
+    "title": {
+      "translate": "advancements.nightborn.well_tried.title"
+    },
+    "description": {
+      "translate": "advancements.nightborn.well_tried.description"
+    },
+    "frame": "challenge"
+  },
+  "criteria": {
+    "trials_1": {
+      "trigger": "nightborn:deed",
+      "conditions": {
+        "deed": "nightborn:trial_completed",
+        "at_least": {
+          "distinct": 1
+        }
+      }
+    },
+    "trials_2": {
+      "trigger": "nightborn:deed",
+      "conditions": {
+        "deed": "nightborn:trial_completed",
+        "at_least": {
+          "distinct": 2
+        }
+      }
+    },
+    "trials_3": {
+      "trigger": "nightborn:deed",
+      "conditions": {
+        "deed": "nightborn:trial_completed",
+        "at_least": {
+          "distinct": 3
+        }
+      }
+    },
+    "trials_4": {
+      "trigger": "nightborn:deed",
+      "conditions": {
+        "deed": "nightborn:trial_completed",
+        "at_least": {
+          "distinct": 4
+        }
+      }
+    },
+    "trials_5": {
+      "trigger": "nightborn:deed",
+      "conditions": {
+        "deed": "nightborn:trial_completed",
+        "at_least": {
+          "distinct": 5
+        }
+      }
+    },
+    "trials_6": {
+      "trigger": "nightborn:deed",
+      "conditions": {
+        "deed": "nightborn:trial_completed",
+        "at_least": {
+          "distinct": 6
+        }
+      }
+    },
+    "trials_7": {
+      "trigger": "nightborn:deed",
+      "conditions": {
+        "deed": "nightborn:trial_completed",
+        "at_least": {
+          "distinct": 7
+        }
+      }
+    },
+    "trials_8": {
+      "trigger": "nightborn:deed",
+      "conditions": {
+        "deed": "nightborn:trial_completed",
+        "at_least": {
+          "distinct": 8
+        }
+      }
+    },
+    "trials_9": {
+      "trigger": "nightborn:deed",
+      "conditions": {
+        "deed": "nightborn:trial_completed",
+        "at_least": {
+          "distinct": 9
+        }
+      }
+    },
+    "trials_10": {
+      "trigger": "nightborn:deed",
+      "conditions": {
+        "deed": "nightborn:trial_completed",
+        "at_least": {
+          "distinct": 10
+        }
+      }
+    },
+    "trials_11": {
+      "trigger": "nightborn:deed",
+      "conditions": {
+        "deed": "nightborn:trial_completed",
+        "at_least": {
+          "distinct": 11
+        }
+      }
+    },
+    "trials_12": {
+      "trigger": "nightborn:deed",
+      "conditions": {
+        "deed": "nightborn:trial_completed",
+        "at_least": {
+          "distinct": 12
+        }
+      }
+    },
+    "trials_13": {
+      "trigger": "nightborn:deed",
+      "conditions": {
+        "deed": "nightborn:trial_completed",
+        "at_least": {
+          "distinct": 13
+        }
+      }
+    },
+    "trials_14": {
+      "trigger": "nightborn:deed",
+      "conditions": {
+        "deed": "nightborn:trial_completed",
+        "at_least": {
+          "distinct": 14
+        }
+      }
+    },
+    "trials_15": {
+      "trigger": "nightborn:deed",
+      "conditions": {
+        "deed": "nightborn:trial_completed",
+        "at_least": {
+          "distinct": 15
+        }
+      }
+    }
+  },
+  "requirements": [
+    [
+      "trials_1"
+    ],
+    [
+      "trials_2"
+    ],
+    [
+      "trials_3"
+    ],
+    [
+      "trials_4"
+    ],
+    [
+      "trials_5"
+    ],
+    [
+      "trials_6"
+    ],
+    [
+      "trials_7"
+    ],
+    [
+      "trials_8"
+    ],
+    [
+      "trials_9"
+    ],
+    [
+      "trials_10"
+    ],
+    [
+      "trials_11"
+    ],
+    [
+      "trials_12"
+    ],
+    [
+      "trials_13"
+    ],
+    [
+      "trials_14"
+    ],
+    [
+      "trials_15"
+    ]
+  ],
+  "rewards": {
+    "experience": 100
+  }
+}

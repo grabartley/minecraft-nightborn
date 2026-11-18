@@ -104,6 +104,7 @@ class HouseTest {
   void size(final House house, final int size) {
     assertEquals(size, house.size());
     assertEquals(size + 1, house.everyone().count());
+    assertEquals(size + 1, house.household());
   }
 
   static Stream<Arguments> places() {

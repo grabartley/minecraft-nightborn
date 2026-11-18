@@ -13,6 +13,11 @@ class DeedKindsTest {
     "nightborn:fed, true",
     "nightborn:vampire_staked, true",
     "nightborn:accessories_held, true",
+    "nightborn:accessories_worn, true",
+    "nightborn:trial_completed, true",
+    "nightborn:banes_dealt, true",
+    "nightborn:journal_pages, true",
+    "nightborn:wrong_call, true",
     "nightborn:parasol_walked, false",
     "nightborn:nemesis_ended, false",
     "nightborn:trapped, false"

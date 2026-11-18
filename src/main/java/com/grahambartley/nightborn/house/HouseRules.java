@@ -104,6 +104,10 @@ public final class HouseRules {
     return size >= capacity ? Invite.FULL : Invite.WELCOME;
   }
 
+  public static boolean founds(final Founding verdict, final boolean ledBefore) {
+    return verdict == Founding.FOUND || (verdict == Founding.CLAIM && !ledBefore);
+  }
+
   public static Founding founding(
       final int ageRank,
       final boolean leadsHouse,

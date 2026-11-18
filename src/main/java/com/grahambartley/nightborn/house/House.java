@@ -70,6 +70,10 @@ public record House(
         Map.of());
   }
 
+  public int household() {
+    return size() + 1;
+  }
+
   public int size() {
     return players.size() + npcs.size();
   }
