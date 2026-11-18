@@ -16,6 +16,7 @@ import com.grahambartley.nightborn.levitation.LevitationMotion;
 import com.grahambartley.nightborn.rank.Ranking;
 import com.grahambartley.nightborn.server.ServerConfigService;
 import com.grahambartley.nightborn.skill.Mending;
+import com.grahambartley.nightborn.sun.ParasolShade;
 import com.grahambartley.nightborn.vampire.Gloom;
 import com.grahambartley.nightborn.vampire.VampireTicker;
 import com.grahambartley.nightborn.vampire.Vampires;
@@ -63,6 +64,7 @@ abstract class LivingEntityMixin {
     }
     Vanish.tick(self);
     Mending.tick(self);
+    ParasolShade.tick(self, ServerConfigService.current().sun());
     if (Vampires.isVampire(self)) {
       VampireTicker.tick(self);
       if (self instanceof ServerPlayerEntity player) {

@@ -48,6 +48,7 @@
       "com.grahambartley.nightborn.gametest.DownedTargetingGameTest",
       "com.grahambartley.nightborn.gametest.HardcoreVampireDeathGameTest",
       "com.grahambartley.nightborn.gametest.SunGameTest",
+      "com.grahambartley.nightborn.gametest.ParasolGameTest",
       "com.grahambartley.nightborn.gametest.BiteSicknessGameTest",
       "com.grahambartley.nightborn.gametest.VampireCoreGameTest",
       "com.grahambartley.nightborn.gametest.VampireDoorGameTest",

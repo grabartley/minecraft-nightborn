@@ -10,6 +10,7 @@ public enum Milestone implements StringIdentifiable {
   FED,
   FED_WATCHED,
   SUN_SURVIVED,
+  PARASOL_SHADE,
   BAT_FORM,
   GARLIC_STRINGS,
   DAY_SKIPPED,

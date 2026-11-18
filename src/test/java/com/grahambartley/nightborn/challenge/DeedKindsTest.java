@@ -18,7 +18,8 @@ class DeedKindsTest {
     "nightborn:banes_dealt, true",
     "nightborn:journal_pages, true",
     "nightborn:wrong_call, true",
-    "nightborn:parasol_walked, false",
+    "nightborn:parasol_walked, true",
+    "nightborn:woke_rested, true",
     "nightborn:nemesis_ended, false",
     "nightborn:trapped, false"
   })

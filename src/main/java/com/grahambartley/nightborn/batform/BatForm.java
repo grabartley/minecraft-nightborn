@@ -4,6 +4,8 @@ import com.grahambartley.nightborn.Nightborn;
 import com.grahambartley.nightborn.advancement.Milestone;
 import com.grahambartley.nightborn.advancement.MilestoneCriterion;
 import com.grahambartley.nightborn.blood.BloodAttachment;
+import com.grahambartley.nightborn.challenge.DeedKinds;
+import com.grahambartley.nightborn.challenge.TravelLog;
 import com.grahambartley.nightborn.config.CoreSettings;
 import com.grahambartley.nightborn.feeding.FeedingSessions;
 import com.grahambartley.nightborn.levitation.Levitation;
@@ -53,6 +55,8 @@ public final class BatForm {
 
   static final double FLOOR_PROBE = 0.1;
 
+  private static final TravelLog FLIGHTS = new TravelLog(DeedKinds.BAT_FLOWN);
+
   private BatForm() {}
 
   public static void register() {
@@ -60,7 +64,7 @@ public final class BatForm {
     BatHang.register();
     ServerLivingEntityEvents.AFTER_DAMAGE.register(BatForm::afterDamage);
     ServerPlayConnectionEvents.DISCONNECT.register(
-        (handler, server) -> BatFlightLog.forget(handler.getPlayer().getUuid()));
+        (handler, server) -> FLIGHTS.forget(handler.getPlayer().getUuid()));
   }
 
   private static SoundEvent sound(final String path) {
@@ -137,7 +141,7 @@ public final class BatForm {
     vampire.fallDistance = 0.0F;
     if (vampire instanceof ServerPlayerEntity player) {
       BatHang.tick(player);
-      BatFlightLog.tick(player);
+      FLIGHTS.step(player);
     }
   }
 

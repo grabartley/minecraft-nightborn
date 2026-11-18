@@ -9,6 +9,7 @@ import com.grahambartley.nightborn.blood.BloodCapacity;
 import com.grahambartley.nightborn.blood.BloodGiftGrants;
 import com.grahambartley.nightborn.blood.StarvingAttachment;
 import com.grahambartley.nightborn.coffin.CoffinOwnership;
+import com.grahambartley.nightborn.coffin.Rested;
 import com.grahambartley.nightborn.core.VampireCore;
 import com.grahambartley.nightborn.downed.Downed;
 import com.grahambartley.nightborn.faction.Faction;
@@ -80,6 +81,7 @@ public final class VampireTransitions {
     BloodGiftGrants.end(player);
     VisibleStateAttachment.set(player, VisibleState.NONE);
     VampireCore.remove(player);
+    Rested.remove(player);
     CoffinOwnership.release(player.server, player.getUuid());
     HouseSuccession.noLongerVampire(player.server, player.getUuid());
     SkillAttributes.apply(player);

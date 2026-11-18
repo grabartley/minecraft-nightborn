@@ -73,6 +73,7 @@ public final class CoffinRise {
             until(sleeper),
             sleeper.getWorld().getTime());
     if (wake == RiseRules.Wake.BEGIN) {
+      DayRest.woke(sleeper);
       begin(sleeper);
     }
     return wake != RiseRules.Wake.WAKE;

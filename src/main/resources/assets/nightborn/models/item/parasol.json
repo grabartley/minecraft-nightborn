@@ -1,0 +1,14 @@
+{
+  "parent": "minecraft:item/handheld",
+  "textures": {
+    "layer0": "nightborn:item/parasol"
+  },
+  "overrides": [
+    {
+      "predicate": {
+        "nightborn:open": 1
+      },
+      "model": "nightborn:item/parasol_open"
+    }
+  ]
+}
