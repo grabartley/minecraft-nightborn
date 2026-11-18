@@ -47,4 +47,8 @@ public record ZoneHit(
   public static boolean wounds(final float damage) {
     return damage > 0.0F;
   }
+
+  public static boolean lays(final boolean wounds, final boolean landed) {
+    return landed || !wounds;
+  }
 }

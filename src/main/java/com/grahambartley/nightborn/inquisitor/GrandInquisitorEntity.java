@@ -330,19 +330,6 @@ public class GrandInquisitorEntity extends HunterEntity implements ArenaBoss, Bi
       return;
     }
     fight.claim(new Arena(hunted.getBlockPos(), settings.arenaRadius()));
-    BossHealth.scale(
-        this,
-        CROWD,
-        world
-            .getPlayers(
-                player ->
-                    player.isAlive()
-                        && !player.isSpectator()
-                        && !player.isCreative()
-                        && Vampires.isVampire(player)
-                        && player.squaredDistanceTo(this) <= CROWD_REACH * CROWD_REACH)
-            .size(),
-        settings.healthPerVampire());
     playSound(SoundEvents.BLOCK_BELL_RESONATE, 4.0F, 0.6F);
   }
 
@@ -367,6 +354,22 @@ public class GrandInquisitorEntity extends HunterEntity implements ArenaBoss, Bi
     if (ending != InquisitorEnding.NONE && Downed.state(this) == null) {
       InquisitorOutcomes.leave(this, world, ending);
     }
+  }
+
+  public void scaleToCrowd(final ServerWorld world, final InquisitorSettings settings) {
+    BossHealth.scale(
+        this,
+        CROWD,
+        world
+            .getPlayers(
+                player ->
+                    player.isAlive()
+                        && !player.isSpectator()
+                        && !player.isCreative()
+                        && Vampires.isVampire(player)
+                        && player.squaredDistanceTo(this) <= CROWD_REACH * CROWD_REACH)
+            .size(),
+        settings.healthPerVampire());
   }
 
   private boolean forgotten(final ServerWorld world) {
@@ -449,7 +452,11 @@ public class GrandInquisitorEntity extends HunterEntity implements ArenaBoss, Bi
         source.getAttacker() instanceof PlayerEntity player
             && quarry != null
             && quarry.turnedOn(player.getUuid());
-    if (!InquisitorDrain.ends(bitten, Vampires.isVampire(source.getAttacker()), turned)) {
+    if (!InquisitorDrain.ends(
+        bitten,
+        Vampires.isVampire(source.getAttacker()),
+        turned,
+        source.getAttacker() != null && !fight.holds(source.getAttacker().getPos()))) {
       return false;
     }
     if (bitten && source.getAttacker() instanceof PlayerEntity biter) {

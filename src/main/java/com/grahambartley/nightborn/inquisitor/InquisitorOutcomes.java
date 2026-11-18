@@ -1,10 +1,8 @@
 package com.grahambartley.nightborn.inquisitor;
 
-import com.grahambartley.nightborn.hunt.Hunts;
-import com.grahambartley.nightborn.server.ServerConfigService;
-import com.grahambartley.nightborn.skill.SkillEarning;
 import com.grahambartley.nightborn.vampire.NightbornDamage;
 import com.grahambartley.nightborn.vampire.Vampires;
+import java.util.List;
 import java.util.UUID;
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.minecraft.entity.LivingEntity;
@@ -55,6 +53,26 @@ public final class InquisitorOutcomes {
     return ending == InquisitorEnding.EMPTY && !bell;
   }
 
+  public static List<InquisitorLedger.Owed> owedOnLeaving(
+      final InquisitorEnding ending, final boolean bell) {
+    return List.of(
+        comesBack(ending, bell)
+            ? InquisitorLedger.Owed.COME_BACK
+            : InquisitorLedger.Owed.END_VISIT);
+  }
+
+  public static List<InquisitorLedger.Owed> owedToFighter(final Death death) {
+    return switch (death) {
+      case DRAINED ->
+          List.of(
+              InquisitorLedger.Owed.CLEAR_NOTORIETY,
+              InquisitorLedger.Owed.END_VISIT,
+              InquisitorLedger.Owed.PAY);
+      case STRUCK_DOWN -> List.of(InquisitorLedger.Owed.PAY);
+      case OTHER -> List.of();
+    };
+  }
+
   public static void leave(
       final GrandInquisitorEntity inquisitor,
       final ServerWorld world,
@@ -62,17 +80,9 @@ public final class InquisitorOutcomes {
     inquisitor
         .quarry()
         .ifPresent(
-            quarry -> {
-              final ServerPlayerEntity hunted =
-                  world.getServer().getPlayerManager().getPlayer(quarry.player());
-              if (hunted != null) {
-                if (comesBack(ending, quarry.bell())) {
-                  Hunts.returnLater(hunted);
-                } else {
-                  Hunts.endVisit(hunted);
-                }
-              }
-            });
+            quarry ->
+                InquisitorDues.owe(
+                    world.getServer(), quarry.player(), owedOnLeaving(ending, quarry.bell())));
     world.spawnParticles(
         ParticleTypes.END_ROD,
         inquisitor.getX(),
@@ -109,31 +119,26 @@ public final class InquisitorOutcomes {
                     .orElse(false));
     inquisitor
         .quarry()
-        .map(quarry -> server.getPlayerManager().getPlayer(quarry.player()))
-        .ifPresent(Hunts::endVisit);
+        .ifPresent(
+            quarry ->
+                InquisitorDues.owe(
+                    server, quarry.player(), List.of(InquisitorLedger.Owed.END_VISIT)));
     if (!pays(death)) {
       return;
     }
     for (final UUID id : inquisitor.fighters()) {
-      reward(server.getPlayerManager().getPlayer(id), inquisitor, death);
+      InquisitorDues.owe(server, id, owedToFighter(death));
+      tell(server.getPlayerManager().getPlayer(id), inquisitor, death);
     }
   }
 
-  private static void reward(
+  private static void tell(
       @Nullable final ServerPlayerEntity vampire,
       final GrandInquisitorEntity inquisitor,
       final Death death) {
     if (vampire == null || !Vampires.isVampire(vampire)) {
       return;
     }
-    if (clearsNotoriety(death)) {
-      Hunts.set(vampire, 0.0);
-      Hunts.endVisit(vampire);
-    }
-    SkillEarning.fromInquisitor(
-        vampire,
-        ServerConfigService.current().inquisitor().experience(),
-        ServerConfigService.current().skills());
     vampire.sendMessage(
         Text.translatable(clearsNotoriety(death) ? DRAINED : ENDED, inquisitor.getDisplayName()),
         false);

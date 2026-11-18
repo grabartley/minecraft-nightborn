@@ -41,12 +41,14 @@ public final class ZoneStrikes {
                     && entity.isAlive()
                     && boss.canTarget(entity)
                     && shape.contains(entity.getX(), entity.getZ()))) {
-      if (ZoneHit.wounds(damage)
-          && victim.damage(source(world, boss, hit), damage)
-          && knock > 0.0F) {
+      final boolean wounds = ZoneHit.wounds(damage);
+      final boolean landed = wounds && victim.damage(source(world, boss, hit), damage);
+      if (landed && knock > 0.0F) {
         victim.takeKnockback(knock, boss.getX() - victim.getX(), boss.getZ() - victim.getZ());
       }
-      ZoneHits.apply(victim, hit);
+      if (ZoneHit.lays(wounds, landed)) {
+        ZoneHits.apply(victim, hit);
+      }
     }
   }
 

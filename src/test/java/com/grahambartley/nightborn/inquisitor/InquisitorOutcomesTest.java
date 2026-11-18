@@ -39,4 +39,25 @@ class InquisitorOutcomesTest {
   void comesBack(final InquisitorEnding ending, final boolean bell, final boolean back) {
     assertEquals(back, InquisitorOutcomes.comesBack(ending, bell));
   }
+
+  @ParameterizedTest(name = "{0} after a bell {1}: {2}")
+  @CsvSource({"EMPTY, false, COME_BACK", "EMPTY, true, END_VISIT", "WON, false, END_VISIT"})
+  @DisplayName("his quarry is owed a return or an end to the visit when he leaves")
+  void owedOnLeaving(
+      final InquisitorEnding ending, final boolean bell, final InquisitorLedger.Owed owed) {
+    assertEquals(java.util.List.of(owed), InquisitorOutcomes.owedOnLeaving(ending, bell));
+  }
+
+  @ParameterizedTest(name = "{0}: {1}")
+  @CsvSource(
+      delimiter = '|',
+      value = {"DRAINED | CLEAR_NOTORIETY END_VISIT PAY", "STRUCK_DOWN | PAY", "OTHER | ''"})
+  @DisplayName("each vampire who struck him is owed what his ending pays")
+  void owedToFighter(final InquisitorOutcomes.Death death, final String owed) {
+    assertEquals(
+        owed.isBlank()
+            ? java.util.List.of()
+            : java.util.Arrays.stream(owed.split(" ")).map(InquisitorLedger.Owed::valueOf).toList(),
+        InquisitorOutcomes.owedToFighter(death));
+  }
 }

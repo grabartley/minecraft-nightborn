@@ -3,6 +3,7 @@ package com.grahambartley.nightborn.inquisitor;
 import com.grahambartley.nightborn.hunt.ArrivalSpot;
 import com.grahambartley.nightborn.hunt.HuntSounds;
 import com.grahambartley.nightborn.name.MobNaming;
+import com.grahambartley.nightborn.server.ServerConfigService;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -46,6 +47,7 @@ public final class InquisitorArrival {
     final List<ServerPlayerEntity> near =
         world.getPlayers(player -> player.squaredDistanceTo(inquisitor) <= HEARING * HEARING);
     inquisitor.hunt(quarry, bell, near);
+    inquisitor.scaleToCrowd(world, ServerConfigService.current().inquisitor());
     world.playSound(
         null, at, HuntSounds.ARRIVAL, SoundCategory.HOSTILE, ARRIVAL_VOLUME, ARRIVAL_PITCH);
     quarry.sendMessage(Text.translatable("nightborn.hunt.arrived"), false);

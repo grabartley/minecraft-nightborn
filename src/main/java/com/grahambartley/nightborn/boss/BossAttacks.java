@@ -33,7 +33,7 @@ public final class BossAttacks {
   @Nullable private Vec3d leapFrom;
   @Nullable private Vec3d leapTo;
   private double markY;
-  private float drainTaken;
+  private float takenThisRun;
   private long nextAttack;
   private boolean cut;
   private boolean warded;
@@ -93,7 +93,7 @@ public final class BossAttacks {
   }
 
   public void hurt(final float amount) {
-    drainTaken += amount;
+    takenThisRun += amount;
   }
 
   public <T extends MobEntity & PowerShow> void tick(
@@ -176,7 +176,7 @@ public final class BossAttacks {
       final long now) {
     final BossAttack attack = option.attack();
     run = new AttackRun(option.id(), attack, now);
-    drainTaken = 0.0F;
+    takenThisRun = 0.0F;
     boss.getNavigation().stop();
     boss.showPower(attack.tellClip());
     boss.playSound(SoundEvent.of(attack.tellSound()), LOUD, 1.0F);
@@ -253,7 +253,7 @@ public final class BossAttacks {
       final ChannelAttack channel,
       final float healCeiling,
       final int tick) {
-    final ChannelAttack.Step step = channel.step(tick, drainTaken);
+    final ChannelAttack.Step step = channel.step(tick, takenThisRun);
     if (step == ChannelAttack.Step.MEND) {
       boss.setHealth(DrainAttack.healed(boss.getHealth(), channel.heal(), healCeiling));
       world.spawnParticles(
@@ -334,7 +334,7 @@ public final class BossAttacks {
     final LivingEntity foe = boss.getTarget();
     final boolean alive = foe != null && foe.isAlive() && boss.canSee(foe);
     final DrainAttack.Step step =
-        drain.step(tick, drainTaken, alive, foe == null ? 0.0 : boss.distanceTo(foe));
+        drain.step(tick, takenThisRun, alive, foe == null ? 0.0 : boss.distanceTo(foe));
     if (step == DrainAttack.Step.PULSE && foe != null) {
       DrainChannel.pulse(boss, world, foe, drain, healCeiling);
     }

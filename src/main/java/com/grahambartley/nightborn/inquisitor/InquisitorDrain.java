@@ -16,7 +16,10 @@ public final class InquisitorDrain {
   }
 
   public static boolean ends(
-      final boolean bitten, final boolean byVampire, final boolean byTurnedHuman) {
-    return bitten && byVampire || byTurnedHuman;
+      final boolean bitten,
+      final boolean byVampire,
+      final boolean byTurnedHuman,
+      final boolean fromOutside) {
+    return !fromOutside && (bitten && byVampire || byTurnedHuman);
   }
 }

@@ -47,4 +47,11 @@ class ZoneHitTest {
         ZoneHit.PLAIN,
         ZoneHit.CODEC.parse(JsonOps.INSTANCE, JsonParser.parseString("{}")).getOrThrow());
   }
+
+  @ParameterizedTest(name = "wounds {0}, landed {1}: lays effects {2}")
+  @CsvSource({"false, false, true", "true, true, true", "true, false, false"})
+  @DisplayName("a harmless mark always lays its effects, a harmful one only when its blow lands")
+  void lays(final boolean wounds, final boolean landed, final boolean lays) {
+    assertEquals(lays, ZoneHit.lays(wounds, landed));
+  }
 }

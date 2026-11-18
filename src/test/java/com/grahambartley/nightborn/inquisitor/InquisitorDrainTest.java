@@ -23,17 +23,26 @@ class InquisitorDrainTest {
   }
 
   @ParameterizedTest(
-      name = "a bite {0} from a vampire {1}, or a blow from the human he turned on {2}: ends {3}")
+      name = "bite {0}, from a vampire {1}, from the turned human {2}, from outside {3}: ends {4}")
   @CsvSource({
-    "true, true, false, true",
-    "true, false, false, false",
-    "false, true, false, false",
-    "false, false, true, true",
-    "false, false, false, false"
+    "true, true, false, false, true",
+    "true, false, false, false, false",
+    "false, true, false, false, false",
+    "false, false, true, false, true",
+    "false, false, false, false, false",
+    "true, true, false, true, false",
+    "false, false, true, true, false"
   })
-  @DisplayName("on his knees only a vampire's bite or the turned-on human's blow can end him")
-  void ends(final boolean bitten, final boolean vampire, final boolean turned, final boolean ends) {
-    assertEquals(ends, InquisitorDrain.ends(bitten, vampire, turned));
+  @DisplayName(
+      "on his knees only a vampire's bite or the turned-on human's blow ends him, and never from"
+          + " outside the arena")
+  void ends(
+      final boolean bitten,
+      final boolean vampire,
+      final boolean turned,
+      final boolean outside,
+      final boolean ends) {
+    assertEquals(ends, InquisitorDrain.ends(bitten, vampire, turned, outside));
   }
 
   @ParameterizedTest(name = "a drain of {0} seconds")

@@ -27,6 +27,7 @@ class HuntAttachmentTest {
   void callNotSaved() {
     assertFalse(HuntAttachment.CALL.isPersistent());
     assertFalse(HuntAttachment.CLOCK.isPersistent());
+    assertFalse(HuntAttachment.MISSING.isPersistent());
   }
 
   @Test
@@ -38,15 +39,18 @@ class HuntAttachmentTest {
 
   @ParameterizedTest(name = "notoriety {0}")
   @CsvSource({"0.5", "31", "200"})
-  @DisplayName("clearing forgets notoriety, the hunt, the clock and any ringing bell")
+  @DisplayName(
+      "clearing forgets notoriety, the hunt, the clock, any ringing bell and a missing man")
   void clears(final double notoriety) {
     final FakeAttachmentTarget player = new FakeAttachmentTarget();
     player.setAttached(HuntAttachment.RECORD, HuntRecord.EMPTY.withNotoriety(notoriety).warning(2));
     player.setAttached(HuntAttachment.CLOCK, 99L);
     player.setAttached(HuntAttachment.CALL, BellCall.rung(200));
+    player.setAttached(HuntAttachment.MISSING, 12);
     HuntAttachment.clear(player);
     assertEquals(HuntRecord.EMPTY, HuntAttachment.get(player));
     assertFalse(player.hasAttached(HuntAttachment.CLOCK));
     assertFalse(player.hasAttached(HuntAttachment.CALL));
+    assertFalse(player.hasAttached(HuntAttachment.MISSING));
   }
 }
