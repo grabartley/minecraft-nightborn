@@ -18,6 +18,7 @@ import com.grahambartley.nightborn.guild.GuildFeatures;
 import com.grahambartley.nightborn.house.HouseFeatures;
 import com.grahambartley.nightborn.hunt.HuntFeatures;
 import com.grahambartley.nightborn.hunter.HunterFeatures;
+import com.grahambartley.nightborn.journal.Journals;
 import com.grahambartley.nightborn.mind.MindFeatures;
 import com.grahambartley.nightborn.mirror.MirrorItems;
 import com.grahambartley.nightborn.mob.NightbornMobs;
@@ -63,6 +64,7 @@ public class Nightborn implements ModInitializer {
     MirrorItems.register();
     HunterFeatures.register();
     GuildFeatures.register();
+    Journals.register();
     RankFeatures.register();
     HuntFeatures.register();
     MindFeatures.register();

@@ -9,24 +9,30 @@ import org.junit.jupiter.params.provider.EnumSource;
 
 class FontDrinkTest {
 
-  @ParameterizedTest(name = "empty hand {0}, vampire {1}, full {2}, sick {3} -> {4}")
+  @ParameterizedTest(name = "empty hand {0}, vampire {1}, full {2}, sick {3}, journal {4} -> {5}")
   @CsvSource({
-    "true, false, true, false, DRINKS",
-    "true, false, false, false, DRY",
-    "true, false, true, true, ALREADY_SICK",
-    "true, false, false, true, DRY",
-    "false, false, true, false, PASS",
-    "true, true, true, false, PASS",
-    "true, true, false, false, PASS"
+    "true, false, true, false, false, DRINKS",
+    "true, false, true, false, true, DRINKS",
+    "true, false, false, false, false, DRY",
+    "true, false, true, true, false, ALREADY_SICK",
+    "true, false, false, true, false, DRY",
+    "false, false, true, false, false, PASS",
+    "true, true, true, false, true, PASS",
+    "true, true, false, false, true, PASS",
+    "true, true, true, false, false, JOURNAL",
+    "true, true, false, false, false, JOURNAL",
+    "false, true, true, false, false, PASS"
   })
-  @DisplayName("a human with an empty hand drinks a full font, and a vampire gets nothing")
+  @DisplayName(
+      "a human with an empty hand drinks a full font, and a vampire gets only a lost journal back")
   void decides(
       final boolean emptyHand,
       final boolean vampire,
       final boolean full,
       final boolean sick,
+      final boolean carriesJournal,
       final FontDrink expected) {
-    assertEquals(expected, FontDrink.decide(emptyHand, vampire, full, sick));
+    assertEquals(expected, FontDrink.decide(emptyHand, vampire, full, sick, carriesJournal));
   }
 
   @ParameterizedTest(name = "{0}")

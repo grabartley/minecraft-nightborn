@@ -1,0 +1,7 @@
+{
+  "name": "nightborn.journal.hunter.category.arms",
+  "description": "nightborn.journal.hunter.category.arms.description",
+  "icon": "nightborn:silver_sword",
+  "sortnum": 2,
+  "secret": true
+}

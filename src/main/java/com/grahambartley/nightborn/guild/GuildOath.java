@@ -3,6 +3,8 @@ package com.grahambartley.nightborn.guild;
 import com.grahambartley.nightborn.advancement.Milestone;
 import com.grahambartley.nightborn.advancement.MilestoneCriterion;
 import com.grahambartley.nightborn.faction.GuildMembership;
+import com.grahambartley.nightborn.journal.Journal;
+import com.grahambartley.nightborn.journal.Journals;
 import com.grahambartley.nightborn.moment.Moment;
 import com.grahambartley.nightborn.moment.MomentState;
 import com.grahambartley.nightborn.moment.Moments;
@@ -29,6 +31,7 @@ public final class GuildOath {
     player.sendMessage(Text.translatable(SWORN), false);
     master.ifPresent(giver -> giver.swearIn(player, state.cameraTicks()));
     Ranking.sworn(player);
+    Journals.give(player, Journal.HUNTER);
     salute(player);
     return true;
   }

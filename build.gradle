@@ -91,6 +91,7 @@ dependencies {
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 	modImplementation "software.bernie.geckolib:geckolib-fabric-1.21.1:${project.geckolib_version}"
 	modImplementation "dev.emi:trinkets:${project.trinkets_version}"
+	modImplementation "vazkii.patchouli:Patchouli:${project.patchouli_version}"
 
 	modCompileOnly "com.terraformersmc:modmenu:${project.modmenu_version}"
 	modLocalRuntime "com.terraformersmc:modmenu:${project.modmenu_version}"
@@ -223,14 +224,14 @@ tasks.register("verifyMainSourceSideSafety") {
 
 tasks.register("verifyNoBundledMods") {
 	group = "verification"
-	description = "Fails if the remapped jar bundles Mod Menu, JEI, EMI or Trinkets code, directly or as a nested jar"
+	description = "Fails if the remapped jar bundles Mod Menu, JEI, EMI, Trinkets or Patchouli code, directly or as a nested jar"
 
 	def remappedJar = tasks.named("remapJar").flatMap { it.archiveFile }
 	inputs.file(remappedJar)
 
 	doLast {
-		def bundledPrefixes = ["mezz/jei/", "dev/emi/", "com/terraformersmc/modmenu/", "org/ladysnake/cca/"]
-		def bundledModIds = ["jei", "emi", "modmenu", "trinkets", "cardinal-components-base", "cardinal-components-entity"]
+		def bundledPrefixes = ["mezz/jei/", "dev/emi/", "com/terraformersmc/modmenu/", "org/ladysnake/cca/", "vazkii/patchouli/"]
+		def bundledModIds = ["jei", "emi", "modmenu", "trinkets", "patchouli", "cardinal-components-base", "cardinal-components-entity"]
 		def violations = []
 
 		def scan
@@ -323,6 +324,7 @@ modrinth {
 		required.project 'fabric-api'
 		required.project 'geckolib'
 		required.project 'trinkets'
+		required.project 'patchouli'
 	}
 }
 
@@ -351,5 +353,6 @@ tasks.register('curseforge', TaskPublishCurseForge) {
 		mainFile.addRequirement('fabric-api')
 		mainFile.addRequirement('geckolib')
 		mainFile.addRequirement('trinkets')
+		mainFile.addRequirement('patchouli')
 	}
 }

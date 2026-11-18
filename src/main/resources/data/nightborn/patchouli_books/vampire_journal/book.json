@@ -1,0 +1,19 @@
+{
+  "name": "nightborn.journal.vampire.name",
+  "landing_text": "nightborn.journal.vampire.landing",
+  "i18n": true,
+  "use_resource_pack": true,
+  "dont_generate_book": true,
+  "custom_book_item": "nightborn:vampire_journal",
+  "book_texture": "patchouli:textures/gui/book_red.png",
+  "show_progress": true,
+  "show_toasts": true,
+  "text_overflow_mode": "resize",
+  "text_color": "24121A",
+  "header_color": "5A0F1F",
+  "nameplate_color": "B8964A",
+  "link_color": "6E1426",
+  "link_hover_color": "9E1F38",
+  "progress_bar_color": "6E1426",
+  "progress_bar_background": "D8CFC0"
+}

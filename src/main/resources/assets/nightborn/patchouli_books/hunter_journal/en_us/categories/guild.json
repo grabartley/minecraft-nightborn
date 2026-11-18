@@ -1,0 +1,7 @@
+{
+  "name": "nightborn.journal.hunter.category.guild",
+  "description": "nightborn.journal.hunter.category.guild.description",
+  "icon": "nightborn:hunter_journal",
+  "sortnum": 0,
+  "secret": true
+}

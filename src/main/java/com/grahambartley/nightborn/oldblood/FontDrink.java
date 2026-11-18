@@ -4,6 +4,7 @@ import java.util.Optional;
 
 public enum FontDrink {
   DRINKS(null),
+  JOURNAL(null),
   PASS(null),
   DRY("nightborn.old_blood.dry"),
   ALREADY_SICK("nightborn.old_blood.already_sick");
@@ -15,9 +16,16 @@ public enum FontDrink {
   }
 
   public static FontDrink decide(
-      final boolean emptyHand, final boolean vampire, final boolean full, final boolean sick) {
-    if (!emptyHand || vampire) {
+      final boolean emptyHand,
+      final boolean vampire,
+      final boolean full,
+      final boolean sick,
+      final boolean carriesJournal) {
+    if (!emptyHand) {
       return PASS;
+    }
+    if (vampire) {
+      return carriesJournal ? PASS : JOURNAL;
     }
     if (!full) {
       return DRY;

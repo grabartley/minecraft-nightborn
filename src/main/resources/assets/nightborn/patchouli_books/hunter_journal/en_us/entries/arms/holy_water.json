@@ -1,0 +1,18 @@
+{
+  "name": "nightborn.journal.hunter.holy_water",
+  "icon": "nightborn:holy_water_bolt",
+  "category": "nightborn:arms",
+  "advancement": "nightborn:holy_moly",
+  "secret": true,
+  "sortnum": 9,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "nightborn.journal.hunter.holy_water.1"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "nightborn.journal.hunter.holy_water.2"
+    }
+  ]
+}

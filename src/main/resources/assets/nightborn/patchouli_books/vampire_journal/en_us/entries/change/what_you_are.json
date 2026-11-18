@@ -1,0 +1,18 @@
+{
+  "name": "nightborn.journal.vampire.what_you_are",
+  "icon": "nightborn:vampire_journal",
+  "category": "nightborn:change",
+  "advancement": "nightborn:no_reflection_on_you",
+  "secret": true,
+  "sortnum": 0,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "nightborn.journal.vampire.what_you_are.1"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "nightborn.journal.vampire.what_you_are.2"
+    }
+  ]
+}

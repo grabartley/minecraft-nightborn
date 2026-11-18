@@ -1,0 +1,18 @@
+{
+  "name": "nightborn.journal.hunter.weaknesses",
+  "icon": "nightborn:garlic_string",
+  "category": "nightborn:quarry",
+  "advancement": "nightborn:sworn_in",
+  "secret": true,
+  "sortnum": 5,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "nightborn.journal.hunter.weaknesses.1"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "nightborn.journal.hunter.weaknesses.2"
+    }
+  ]
+}

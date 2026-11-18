@@ -30,6 +30,7 @@
       "com.grahambartley.nightborn.gametest.NightbornBootGameTest",
       "com.grahambartley.nightborn.gametest.AdvancementGameTest",
       "com.grahambartley.nightborn.gametest.OathGameTest",
+      "com.grahambartley.nightborn.gametest.JournalGameTest",
       "com.grahambartley.nightborn.gametest.AgeGameTest",
       "com.grahambartley.nightborn.gametest.HuntGameTest",
       "com.grahambartley.nightborn.gametest.HiddenVampireGameTest",
@@ -116,6 +117,7 @@
     "java": ">=21",
     "fabric-api": ">=0.116.12+1.21.1",
     "geckolib": ">=4.7",
-    "trinkets": ">=3.10.0"
+    "trinkets": ">=3.10.0",
+    "patchouli": ">=1.21.1-92"
   }
 }
