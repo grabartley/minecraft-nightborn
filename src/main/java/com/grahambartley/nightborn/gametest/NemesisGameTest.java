@@ -1,0 +1,136 @@
+package com.grahambartley.nightborn.gametest;
+
+import com.grahambartley.nightborn.downed.Downed;
+import com.grahambartley.nightborn.downed.DownedState;
+import com.grahambartley.nightborn.guild.GuildMobs;
+import com.grahambartley.nightborn.guild.HunterEntity;
+import com.grahambartley.nightborn.mob.NightbornMobs;
+import com.grahambartley.nightborn.mob.VampireEntity;
+import com.grahambartley.nightborn.name.MobNaming;
+import com.grahambartley.nightborn.nemesis.NemesisAttachment;
+import com.grahambartley.nightborn.nemesis.NemesisGrowth;
+import com.grahambartley.nightborn.nemesis.NemesisItems;
+import com.grahambartley.nightborn.nemesis.NemesisLedger;
+import com.grahambartley.nightborn.nemesis.NemesisMaking;
+import com.grahambartley.nightborn.nemesis.NemesisMark;
+import com.grahambartley.nightborn.server.ServerConfigService;
+import java.util.List;
+import java.util.Optional;
+import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
+import net.minecraft.entity.ItemEntity;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.test.GameTest;
+import net.minecraft.test.TestContext;
+import net.minecraft.util.math.BlockPos;
+
+public class NemesisGameTest implements FabricGameTest {
+
+  static final String ARENA = "nightborn:vampire_arena";
+  static final BlockPos PLAYER = new BlockPos(4, 2, 4);
+
+  private static HunterEntity hunter(final TestContext context, final int x) {
+    final HunterEntity hunter = context.spawnEntity(GuildMobs.HUNTER, new BlockPos(x, 2, 1));
+    hunter.setAiDisabled(true);
+    MobNaming.ensure(hunter);
+    return hunter;
+  }
+
+  @GameTest(templateName = ARENA, tickLimit = TestPlayers.READY + 20)
+  public void aVampireHoldsThreeNemesesAndNeverAFourth(final TestContext context) {
+    final ServerPlayerEntity vampire = TestPlayers.vampire(context, PLAYER);
+    final List<HunterEntity> hunters =
+        List.of(hunter(context, 1), hunter(context, 3), hunter(context, 5), hunter(context, 7));
+    context.runAtTick(
+        TestPlayers.READY,
+        () -> {
+          final List<Boolean> made =
+              hunters.stream()
+                  .map(hunter -> NemesisMaking.make(hunter, vampire.getUuid()))
+                  .toList();
+          context.assertEquals(made, List.of(true, true, true, false), "three made, never four");
+          context.assertEquals(
+              NemesisLedger.of(context.getWorld().getServer()).of(vampire.getUuid()).size(),
+              3,
+              "the ledger holds three");
+          context.assertTrue(hunters.get(0).isPersistent(), "a nemesis never leaves the world");
+          context.assertTrue(
+              NemesisAttachment.get(hunters.get(3)).isEmpty(), "the fourth stays ordinary");
+          TestPlayers.finish(context, vampire);
+        });
+  }
+
+  @GameTest(templateName = ARENA, tickLimit = TestPlayers.READY + 20)
+  public void aNemesisKeepsItsGrudgeAndGrowthThroughASave(final TestContext context) {
+    final ServerPlayerEntity vampire = TestPlayers.vampire(context, PLAYER);
+    final HunterEntity hunter = hunter(context, 1);
+    context.runAtTick(
+        TestPlayers.READY,
+        () -> {
+          NemesisMaking.make(hunter, vampire.getUuid());
+          NemesisGrowth.grow(
+              context.getWorld(), hunter, NemesisAttachment.get(hunter).orElseThrow());
+          final NbtCompound saved = new NbtCompound();
+          hunter.writeNbt(saved);
+          final HunterEntity loaded = GuildMobs.HUNTER.create(context.getWorld());
+          loaded.readNbt(saved);
+          final Optional<NemesisMark> mark = NemesisAttachment.get(loaded);
+          context.assertEquals(
+              mark.map(NemesisMark::quarry), Optional.of(vampire.getUuid()), "the grudge");
+          context.assertEquals(mark.map(NemesisMark::growths), Optional.of(1), "the growth");
+          context.assertEquals(loaded.getMaxHealth(), 30.0F, "a better kit, a quarter more");
+          loaded.discard();
+          TestPlayers.finish(context, vampire);
+        });
+  }
+
+  @GameTest(templateName = ARENA, tickLimit = TestPlayers.READY + 20)
+  public void aVampireThatEscapesItsHunterBecomesTheirNemesis(final TestContext context) {
+    final ServerPlayerEntity human = TestPlayers.human(context, PLAYER);
+    final VampireEntity vampire = context.spawnEntity(NightbornMobs.VAMPIRE, new BlockPos(2, 2, 2));
+    vampire.setAiDisabled(true);
+    context.runAtTick(
+        TestPlayers.READY,
+        () -> {
+          MobNaming.ensure(vampire);
+          vampire.setAttached(
+              Downed.TYPE,
+              new DownedState(DownedState.Phase.ESCAPING, 1, Optional.of(human.getUuid())));
+          Downed.tick(vampire, ServerConfigService.current().downed());
+          context.assertEquals(
+              NemesisAttachment.get(vampire).map(NemesisMark::quarry),
+              Optional.of(human.getUuid()),
+              "the human who downed it is its quarry");
+          TestPlayers.finish(context, human);
+        });
+  }
+
+  @GameTest(templateName = ARENA, tickLimit = TestPlayers.READY + 20)
+  public void endingANemesisDropsAKeepsakeBearingItsName(final TestContext context) {
+    final ServerPlayerEntity vampire = TestPlayers.vampire(context, PLAYER);
+    final HunterEntity hunter = hunter(context, 1);
+    context.runAtTick(
+        TestPlayers.READY,
+        () -> {
+          NemesisMaking.make(hunter, vampire.getUuid());
+          final String name = hunter.getName().getString();
+          hunter.damage(vampire.getDamageSources().playerAttack(vampire), 1000.0F);
+          final List<ItemEntity> keepsakes =
+              context
+                  .getWorld()
+                  .getEntitiesByClass(
+                      ItemEntity.class,
+                      context.getTestBox(),
+                      item -> item.getStack().isOf(NemesisItems.BROKEN_STAKE));
+          context.assertEquals(keepsakes.size(), 1, "one keepsake");
+          context.assertTrue(
+              keepsakes.get(0).getStack().getName().getString().contains(name),
+              "the keepsake bears its name");
+          context.assertTrue(
+              NemesisLedger.of(context.getWorld().getServer()).of(vampire.getUuid()).isEmpty(),
+              "the grudge is over");
+          keepsakes.forEach(ItemEntity::discard);
+          TestPlayers.finish(context, vampire);
+        });
+  }
+}

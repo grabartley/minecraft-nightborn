@@ -30,6 +30,7 @@
       "com.grahambartley.nightborn.gametest.NightbornBootGameTest",
       "com.grahambartley.nightborn.gametest.RaidGameTest",
       "com.grahambartley.nightborn.gametest.AdvancementGameTest",
+      "com.grahambartley.nightborn.gametest.NemesisGameTest",
       "com.grahambartley.nightborn.gametest.ChallengeGameTest",
       "com.grahambartley.nightborn.gametest.VillageSuspicionGameTest",
       "com.grahambartley.nightborn.gametest.OathGameTest",

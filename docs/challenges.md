@@ -26,7 +26,7 @@ Each player has three on offer at a time, drawn from their side's list of 20 and
 
 **Pay:** a small trial pays a quarter of the experience the player's next point costs, a medium one half and a large one all of it. A trial that names an accessory pays it the first time only.
 
-**Rules for every trial:** a vampire's count starts when the trial comes on offer, and a hunter's when they take it from a Guild Master. It resets if the trial leaves the offer. To clear a house or a castle is to stake the last of its household. "Unseen" means no villager, hunter or human player saw the act. "In one night" means between one dusk and the next dawn. A trial whose deed belongs to a feature that has not shipped yet, such as the parasol, a nemesis or a hunter trap, is never drawn until that feature ships.
+**Rules for every trial:** a vampire's count starts when the trial comes on offer, and a hunter's when they take it from a Guild Master. It resets if the trial leaves the offer. To clear a house or a castle is to stake the last of its household. "Unseen" means no villager, hunter or human player saw the act. "In one night" means between one dusk and the next dawn. A trial whose deed belongs to a feature that has not shipped yet, such as the parasol or a hunter trap, is never drawn until that feature ships.
 
 ### Vampire Trials
 

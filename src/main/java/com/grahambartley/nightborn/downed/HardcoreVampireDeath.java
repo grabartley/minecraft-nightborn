@@ -12,6 +12,7 @@ import com.grahambartley.nightborn.familiar.FamiliarRelease;
 import com.grahambartley.nightborn.feeding.TurningBite;
 import com.grahambartley.nightborn.house.HouseSuccession;
 import com.grahambartley.nightborn.hunt.Hunts;
+import com.grahambartley.nightborn.nemesis.Nemeses;
 import com.grahambartley.nightborn.server.ServerConfigService;
 import com.grahambartley.nightborn.sickness.BiteSicknessAttachment;
 import com.grahambartley.nightborn.skill.PowerCooldownAttachment;
@@ -48,6 +49,7 @@ public final class HardcoreVampireDeath {
 
   static void reset(final ServerPlayerEntity player) {
     FactionAttachment.set(player, Faction.HUMAN);
+    Nemeses.forget(player);
     OathAttachment.set(player, Oath.NONE);
     Ageing.clear(player);
     Hunts.clear(player);

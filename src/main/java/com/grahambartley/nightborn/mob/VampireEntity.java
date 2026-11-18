@@ -32,6 +32,7 @@ import com.grahambartley.nightborn.mob.stage.VampireStages;
 import com.grahambartley.nightborn.mob.stage.VampireStaging;
 import com.grahambartley.nightborn.name.MobNaming;
 import com.grahambartley.nightborn.name.NameBearer;
+import com.grahambartley.nightborn.nemesis.Nemeses;
 import com.grahambartley.nightborn.server.ServerConfigService;
 import com.grahambartley.nightborn.skill.PowerShow;
 import com.grahambartley.nightborn.skill.SkillHolder;
@@ -180,7 +181,7 @@ public class VampireEntity extends HostileEntity
   }
 
   public boolean attacksOnSight(final LivingEntity target) {
-    return MemberLife.guards(this, target);
+    return MemberLife.guards(this, target) || Nemeses.isQuarry(this, target);
   }
 
   public boolean hungry() {
@@ -392,7 +393,8 @@ public class VampireEntity extends HostileEntity
   }
 
   protected boolean fights(final LivingEntity target) {
-    return !Vampires.isVampire(target)
+    return Nemeses.isQuarry(this, target)
+        || !Vampires.isVampire(target)
         || VampireFeud.answers(
             target == getAttacker(), StageRanks.of(target), stageRank(), answersEveryVampire());
   }

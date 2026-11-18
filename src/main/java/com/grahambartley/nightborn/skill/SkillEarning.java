@@ -60,6 +60,18 @@ public final class SkillEarning {
     return true;
   }
 
+  public static boolean fromNemesis(
+      final PlayerEntity quarry, final int experience, final SkillSettings settings) {
+    if (!Vampires.isVampire(quarry)) {
+      return grantHunter(quarry, experience, settings);
+    }
+    if (!paysVampire(true, experience)) {
+      return false;
+    }
+    gain(quarry, SkillTree.VAMPIRE, experience, settings);
+    return true;
+  }
+
   public static float fromTrial(
       final PlayerEntity player,
       final SkillTree tree,

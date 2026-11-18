@@ -76,6 +76,7 @@ public final class PartyLeader {
         .filter(HunterEntity.class::isInstance)
         .map(HunterEntity.class::cast)
         .filter(HunterEntity::isAlive)
+        .filter(member -> member.partyLeader().isPresent())
         .toList();
   }
 
