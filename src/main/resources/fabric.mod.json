@@ -94,6 +94,7 @@
       "com.grahambartley.nightborn.gametest.VampireHomeGameTest",
       "com.grahambartley.nightborn.gametest.HouseholdLifeGameTest",
       "com.grahambartley.nightborn.gametest.HouseGameTest",
+      "com.grahambartley.nightborn.gametest.WildGameTest",
       "com.grahambartley.nightborn.gametest.StarvationGameTest",
       "com.grahambartley.nightborn.gametest.VomitGameTest",
       "com.grahambartley.nightborn.gametest.GoreGameTest",

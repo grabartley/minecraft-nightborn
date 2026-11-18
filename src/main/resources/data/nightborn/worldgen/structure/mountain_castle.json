@@ -23,7 +23,8 @@
     "head": {
       "resident": "nightborn:eldest",
       "stages": { "nightborn:eldest": 1 },
-      "seat": "highest"
+      "seat": "highest",
+      "returns": false
     }
   },
   "ambience": {

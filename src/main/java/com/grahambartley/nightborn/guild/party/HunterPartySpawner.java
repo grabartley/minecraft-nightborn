@@ -1,6 +1,7 @@
 package com.grahambartley.nightborn.guild.party;
 
 import com.grahambartley.nightborn.config.PartySettings;
+import com.grahambartley.nightborn.core.SurfaceSpots;
 import com.grahambartley.nightborn.guild.GuildMasterEntity;
 import com.grahambartley.nightborn.guild.GuildMobs;
 import com.grahambartley.nightborn.guild.HunterEntity;
@@ -17,8 +18,6 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
-import net.minecraft.util.math.ChunkSectionPos;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.random.Random;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.Heightmap;
@@ -38,9 +37,7 @@ public final class HunterPartySpawner {
   }
 
   private static void tick(final ServerWorld world) {
-    if (world.getRegistryKey() != World.OVERWORLD
-        || !world.getGameRules().getBoolean(GameRules.DO_MOB_SPAWNING)
-        || !world.getGameRules().getBoolean(GameRules.DO_PATROL_SPAWNING)) {
+    if (!spawnsParties(world)) {
       return;
     }
     final PartySettings settings = ServerConfigService.current().parties();
@@ -57,11 +54,22 @@ public final class HunterPartySpawner {
     if (players.isEmpty()) {
       return;
     }
-    final ServerPlayerEntity player = players.get(random.nextInt(players.size()));
-    spot(world, player.getBlockPos(), random)
+    gatherNear(world, players.get(random.nextInt(players.size())), random);
+  }
+
+  public static boolean spawnsParties(final ServerWorld world) {
+    return world.getRegistryKey() == World.OVERWORLD
+        && world.getGameRules().getBoolean(GameRules.DO_MOB_SPAWNING)
+        && world.getGameRules().getBoolean(GameRules.DO_PATROL_SPAWNING);
+  }
+
+  public static Optional<GuildMasterEntity> gatherNear(
+      final ServerWorld world, final ServerPlayerEntity player, final Random random) {
+    final PartySettings settings = ServerConfigService.current().parties();
+    return spot(world, player.getBlockPos(), random)
         .filter(spot -> world.getBiome(spot).isIn(PartyData.BIOMES))
         .filter(spot -> noPartyNear(world, spot))
-        .ifPresent(
+        .flatMap(
             spot ->
                 gather(
                     world,
@@ -73,17 +81,7 @@ public final class HunterPartySpawner {
 
   public static Optional<BlockPos> spot(
       final ServerWorld world, final BlockPos near, final Random random) {
-    final float angle = random.nextFloat() * MathHelper.TAU;
-    final int distance = random.nextBetween(NEAR_MIN, NEAR_MAX);
-    final int x = near.getX() + Math.round(MathHelper.cos(angle) * distance);
-    final int z = near.getZ() + Math.round(MathHelper.sin(angle) * distance);
-    if (!world.isChunkLoaded(
-        ChunkSectionPos.getSectionCoord(x), ChunkSectionPos.getSectionCoord(z))) {
-      return Optional.empty();
-    }
-    final BlockPos spot =
-        new BlockPos(x, world.getTopY(Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, x, z), z);
-    return world.getFluidState(spot.down()).isEmpty() ? Optional.of(spot) : Optional.empty();
+    return SurfaceSpots.around(world, near, NEAR_MIN, NEAR_MAX, random);
   }
 
   private static boolean noPartyNear(final ServerWorld world, final BlockPos spot) {

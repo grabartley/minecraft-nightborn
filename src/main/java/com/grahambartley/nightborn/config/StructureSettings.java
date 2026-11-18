@@ -7,7 +7,11 @@ public record StructureSettings(
     int campRarity,
     int gramophoneSeconds,
     int gramophoneRange,
-    int rumourRange) {
+    int rumourRange,
+    int refillMinDays,
+    int refillMaxDays,
+    int wildVampireChance,
+    int wildVampireDistance) {
 
   static final String SECTION = "structures";
 
@@ -24,8 +28,28 @@ public record StructureSettings(
   public static final IntSetting RUMOUR_RANGE =
       new IntSetting(SECTION, "rumourRange", 1024, 128, 4096, c -> c.structures().rumourRange());
 
+  public static final IntSetting REFILL_MIN_DAYS =
+      new IntSetting(SECTION, "refillMinDays", 15, 1, 365, c -> c.structures().refillMinDays());
+  public static final IntSetting REFILL_MAX_DAYS =
+      new IntSetting(SECTION, "refillMaxDays", 40, 1, 365, c -> c.structures().refillMaxDays());
+  public static final IntSetting WILD_VAMPIRE_CHANCE =
+      new IntSetting(
+          SECTION, "wildVampireChance", 2, 0, 100, c -> c.structures().wildVampireChance());
+  public static final IntSetting WILD_VAMPIRE_DISTANCE =
+      new IntSetting(
+          SECTION, "wildVampireDistance", 128, 64, 512, c -> c.structures().wildVampireDistance());
+
   public static final List<Setting<?>> SETTINGS =
-      List.of(STRUCTURE_RARITY, CAMP_RARITY, GRAMOPHONE_SECONDS, GRAMOPHONE_RANGE, RUMOUR_RANGE);
+      List.of(
+          STRUCTURE_RARITY,
+          CAMP_RARITY,
+          GRAMOPHONE_SECONDS,
+          GRAMOPHONE_RANGE,
+          RUMOUR_RANGE,
+          REFILL_MIN_DAYS,
+          REFILL_MAX_DAYS,
+          WILD_VAMPIRE_CHANCE,
+          WILD_VAMPIRE_DISTANCE);
 
   public StructureSettings {
     structureRarity = STRUCTURE_RARITY.clamp(structureRarity);
@@ -33,6 +57,10 @@ public record StructureSettings(
     gramophoneSeconds = GRAMOPHONE_SECONDS.clamp(gramophoneSeconds);
     gramophoneRange = GRAMOPHONE_RANGE.clamp(gramophoneRange);
     rumourRange = RUMOUR_RANGE.clamp(rumourRange);
+    refillMinDays = REFILL_MIN_DAYS.clamp(refillMinDays);
+    refillMaxDays = Math.max(refillMinDays, REFILL_MAX_DAYS.clamp(refillMaxDays));
+    wildVampireChance = WILD_VAMPIRE_CHANCE.clamp(wildVampireChance);
+    wildVampireDistance = WILD_VAMPIRE_DISTANCE.clamp(wildVampireDistance);
   }
 
   static StructureSettings from(final SettingValues values) {
@@ -41,6 +69,10 @@ public record StructureSettings(
         values.get(CAMP_RARITY),
         values.get(GRAMOPHONE_SECONDS),
         values.get(GRAMOPHONE_RANGE),
-        values.get(RUMOUR_RANGE));
+        values.get(RUMOUR_RANGE),
+        values.get(REFILL_MIN_DAYS),
+        values.get(REFILL_MAX_DAYS),
+        values.get(WILD_VAMPIRE_CHANCE),
+        values.get(WILD_VAMPIRE_DISTANCE));
   }
 }

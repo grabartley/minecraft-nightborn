@@ -29,6 +29,10 @@ public final class HouseholdLedger {
     return records.containsKey(home) && change(home, record -> record.forgot(vampire));
   }
 
+  public boolean known(final GlobalPos home) {
+    return records.containsKey(home);
+  }
+
   public HouseholdRecord record(final GlobalPos home) {
     return records.getOrDefault(home, HouseholdRecord.NONE);
   }

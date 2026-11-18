@@ -9,18 +9,9 @@ import com.grahambartley.nightborn.config.NightbornConfig;
 import com.grahambartley.nightborn.core.VampireCore;
 import com.grahambartley.nightborn.decor.SeatEntity;
 import com.grahambartley.nightborn.downed.Downed;
-import com.grahambartley.nightborn.house.BringBloodHomeGoal;
 import com.grahambartley.nightborn.house.MemberLife;
-import com.grahambartley.nightborn.house.MemberStance;
 import com.grahambartley.nightborn.mob.combat.Fighting;
-import com.grahambartley.nightborn.mob.goal.BatFlightGoal;
-import com.grahambartley.nightborn.mob.goal.FleeWhileEscapingGoal;
-import com.grahambartley.nightborn.mob.goal.HouseholdLifeGoal;
-import com.grahambartley.nightborn.mob.goal.LieDownedGoal;
 import com.grahambartley.nightborn.mob.goal.RetreatGoal;
-import com.grahambartley.nightborn.mob.goal.SeekShadeGoal;
-import com.grahambartley.nightborn.mob.goal.SleepInCoffinGoal;
-import com.grahambartley.nightborn.mob.goal.WatchStrangerGoal;
 import com.grahambartley.nightborn.mob.home.HomeLife;
 import com.grahambartley.nightborn.mob.home.HouseholdTie;
 import com.grahambartley.nightborn.mob.home.MobBlood;
@@ -41,11 +32,6 @@ import com.grahambartley.nightborn.mob.stage.VampireStages;
 import com.grahambartley.nightborn.mob.stage.VampireStaging;
 import com.grahambartley.nightborn.name.MobNaming;
 import com.grahambartley.nightborn.name.NameBearer;
-import com.grahambartley.nightborn.raid.HouseGuardGoal;
-import com.grahambartley.nightborn.raid.HouseWatch;
-import com.grahambartley.nightborn.servant.goal.StanceFollowGoal;
-import com.grahambartley.nightborn.servant.goal.StancePostGoal;
-import com.grahambartley.nightborn.servant.goal.StanceTargetGoal;
 import com.grahambartley.nightborn.server.ServerConfigService;
 import com.grahambartley.nightborn.skill.PowerShow;
 import com.grahambartley.nightborn.skill.SkillHolder;
@@ -54,6 +40,7 @@ import com.grahambartley.nightborn.structure.HouseholdArrival;
 import com.grahambartley.nightborn.structure.HouseholdMember;
 import com.grahambartley.nightborn.vampire.Vampires;
 import com.grahambartley.nightborn.weakened.Weakened;
+import com.grahambartley.nightborn.wild.Wanderers;
 import java.util.Map;
 import java.util.Optional;
 import net.minecraft.entity.Entity;
@@ -64,15 +51,6 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.SpawnReason;
-import net.minecraft.entity.ai.goal.ActiveTargetGoal;
-import net.minecraft.entity.ai.goal.AvoidSunlightGoal;
-import net.minecraft.entity.ai.goal.GoToWalkTargetGoal;
-import net.minecraft.entity.ai.goal.LookAroundGoal;
-import net.minecraft.entity.ai.goal.LookAtEntityGoal;
-import net.minecraft.entity.ai.goal.MeleeAttackGoal;
-import net.minecraft.entity.ai.goal.RevengeGoal;
-import net.minecraft.entity.ai.goal.SwimGoal;
-import net.minecraft.entity.ai.goal.WanderAroundFarGoal;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.data.TrackedData;
@@ -194,35 +172,7 @@ public class VampireEntity extends HostileEntity
 
   @Override
   protected void initGoals() {
-    goalSelector.add(0, new LieDownedGoal(this));
-    goalSelector.add(0, new BatFlightGoal(this));
-    goalSelector.add(1, new SwimGoal(this));
-    DoorPassage.allow(this);
-    goalSelector.add(1, new FleeWhileEscapingGoal(this, 1.4));
-    goalSelector.add(2, new SeekShadeGoal(this, 1.3));
-    goalSelector.add(3, new AvoidSunlightGoal(this));
-    goalSelector.add(3, new SleepInCoffinGoal(this));
-    retreat = new RetreatGoal(this, () -> stage().combat().retreatHealth());
-    goalSelector.add(3, retreat);
-    goalSelector.add(4, new MeleeAttackGoal(this, 1.15, false));
-    final MemberStance memberStance = new MemberStance(this);
-    goalSelector.add(4, new StancePostGoal(this, memberStance));
-    goalSelector.add(4, new StanceFollowGoal(this, memberStance));
-    goalSelector.add(5, new GoToWalkTargetGoal(this, 1.0));
-    goalSelector.add(6, new BringBloodHomeGoal(this));
-    goalSelector.add(6, new WatchStrangerGoal(this));
-    goalSelector.add(7, new HouseholdLifeGoal(this));
-    goalSelector.add(8, new WanderAroundFarGoal(this, 0.8));
-    goalSelector.add(9, new LookAtEntityGoal(this, PlayerEntity.class, 8.0F));
-    goalSelector.add(9, new LookAroundGoal(this));
-    targetSelector.add(1, new RevengeGoal(this));
-    targetSelector.add(2, new StanceTargetGoal(this, memberStance));
-    targetSelector.add(
-        2,
-        new HouseGuardGoal(
-            this, () -> homeLife.home(), () -> HouseWatch.onWatch(this), this::hiss));
-    targetSelector.add(
-        2, new ActiveTargetGoal<>(this, LivingEntity.class, 10, true, false, this::hunts));
+    retreat = VampireGoals.addTo(this, goalSelector, targetSelector);
   }
 
   public boolean hunts(final LivingEntity target) {
@@ -438,7 +388,7 @@ public class VampireEntity extends HostileEntity
 
   @Override
   public boolean canTarget(final LivingEntity target) {
-    return fights(target) && super.canTarget(target);
+    return fights(target) && !Wanderers.holdsBack(this) && super.canTarget(target);
   }
 
   protected boolean fights(final LivingEntity target) {

@@ -46,7 +46,8 @@ class HouseholdRecordTest {
     return Stream.of(
         Arguments.of(HouseholdRecord.NONE),
         Arguments.of(HouseholdRecord.NONE.enlisted(FIRST).headSleepsAt(COFFIN)),
-        Arguments.of(new HouseholdRecord(Set.of(FIRST, SECOND), Optional.empty())));
+        Arguments.of(
+            new HouseholdRecord(Set.of(FIRST, SECOND), Optional.empty(), Optional.of(48000L))));
   }
 
   @ParameterizedTest(name = "{index}")
@@ -83,5 +84,63 @@ class HouseholdRecordTest {
   void enlistsOnce(final HouseholdRecord record) {
     final HouseholdRecord once = record.enlisted(FIRST);
     org.junit.jupiter.api.Assertions.assertSame(once, once.enlisted(FIRST));
+  }
+
+  static Stream<Arguments> refills() {
+    final HouseholdRecord cleared = HouseholdRecord.NONE.enlisted(FIRST).forgot(FIRST);
+    return Stream.of(
+        Arguments.of("an empty household with no time yet", cleared, 100L, true, false),
+        Arguments.of(
+            "an empty household before its time", cleared.refillingAt(200L), 100L, false, false),
+        Arguments.of(
+            "an empty household at its time", cleared.refillingAt(200L), 200L, false, true),
+        Arguments.of(
+            "an empty household past its time", cleared.refillingAt(200L), 900L, false, true),
+        Arguments.of(
+            "a living household is never timed",
+            HouseholdRecord.NONE.enlisted(FIRST).refillingAt(200L),
+            900L,
+            false,
+            false),
+        Arguments.of(
+            "a member arriving forgets the time",
+            cleared.refillingAt(200L).enlisted(SECOND),
+            900L,
+            false,
+            false),
+        Arguments.of(
+            "a household that moved in is no longer waiting",
+            cleared.refillingAt(200L).refilledBy(Set.of(FIRST, SECOND)),
+            900L,
+            false,
+            false));
+  }
+
+  @ParameterizedTest(name = "{0}")
+  @MethodSource("refills")
+  @DisplayName("an empty household waits for a time drawn once, then is due from that time on")
+  void refill(
+      final String name,
+      final HouseholdRecord record,
+      final long now,
+      final boolean awaitsTime,
+      final boolean due) {
+    assertEquals(awaitsTime, record.awaitsRefillTime());
+    assertEquals(due, record.refillDue(now));
+  }
+
+  @ParameterizedTest(name = "{0} arrivals")
+  @MethodSource("arrivals")
+  @DisplayName("a new household replaces the living and keeps the head's coffin")
+  void refilledBy(final Set<UUID> arrivals) {
+    final HouseholdRecord refilled =
+        HouseholdRecord.NONE.headSleepsAt(COFFIN).refillingAt(5L).refilledBy(arrivals);
+    assertEquals(arrivals, refilled.living());
+    assertEquals(Optional.of(COFFIN), refilled.headCoffin());
+    assertEquals(Optional.empty(), refilled.refillAt());
+  }
+
+  static Stream<Set<UUID>> arrivals() {
+    return Stream.of(Set.of(), Set.of(FIRST), Set.of(FIRST, SECOND));
   }
 }
