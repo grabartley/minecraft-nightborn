@@ -18,6 +18,7 @@
 		"EntityNavigationMixin",
 		"ExplosionMixin",
 		"HungerManagerMixin",
+		"ItemEntityMixin",
 		"LivingEntityMixin",
 		"LootableInventoryMixin",
 		"MapStateMixin",

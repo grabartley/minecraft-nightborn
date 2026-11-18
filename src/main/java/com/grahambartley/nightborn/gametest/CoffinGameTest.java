@@ -172,6 +172,8 @@ public class CoffinGameTest implements FabricGameTest {
           final long time = Math.floorMod(context.getWorld().getTimeOfDay(), NightTime.DAY_LENGTH);
           context.assertTrue(time >= NightTime.DUSK, "dusk has come, time " + time);
           context.assertFalse(vampire.isSleeping(), "the vampire rises at dusk");
+          context.assertFalse(
+              vampire.hasStatusEffect(RestedEffect.ENTRY), "a nap before dusk is not a whole day");
           context.assertTrue(
               context.getBlockState(head).get(CoffinBlock.OPEN), "the lid opens as they rise");
           TestPlayers.finish(context, vampire);

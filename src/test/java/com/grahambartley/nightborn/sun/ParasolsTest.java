@@ -41,6 +41,15 @@ class ParasolsTest {
     assertEquals(0.0F, Parasols.openness(stack, null));
   }
 
+  @ParameterizedTest(name = "{0}: open after folding false")
+  @MethodSource("stacks")
+  @DisplayName("a dropped parasol folds shut")
+  void folds(final String name, final ItemStack stack, final boolean open) {
+    final ItemStack dropped = stack.copy();
+    Parasols.fold(dropped);
+    assertFalse(Parasols.isOpen(dropped));
+  }
+
   @Test
   @DisplayName("a parasol is held one at a time and lasts its full durability")
   void oneAtATime() {

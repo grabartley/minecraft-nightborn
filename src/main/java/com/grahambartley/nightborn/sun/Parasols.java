@@ -4,7 +4,6 @@ import com.grahambartley.nightborn.Nightborn;
 import com.grahambartley.nightborn.batform.BatForm;
 import com.grahambartley.nightborn.levitation.Levitation;
 import com.mojang.serialization.Codec;
-import java.util.Arrays;
 import java.util.Optional;
 import net.minecraft.component.ComponentType;
 import net.minecraft.entity.LivingEntity;
@@ -61,9 +60,16 @@ public final class Parasols {
   }
 
   public static Optional<Hand> openHand(final LivingEntity holder) {
-    return Arrays.stream(Hand.values())
-        .filter(hand -> isOpen(holder.getStackInHand(hand)))
-        .findFirst();
+    if (isOpen(holder.getMainHandStack())) {
+      return Optional.of(Hand.MAIN_HAND);
+    }
+    return isOpen(holder.getOffHandStack()) ? Optional.of(Hand.OFF_HAND) : Optional.empty();
+  }
+
+  public static void fold(final ItemStack stack) {
+    if (stack.isOf(PARASOL)) {
+      stack.remove(OPEN);
+    }
   }
 
   public static void setOpen(final LivingEntity holder, final ItemStack stack, final boolean open) {

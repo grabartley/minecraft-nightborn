@@ -16,6 +16,7 @@ import com.grahambartley.nightborn.skill.SkillAttachment;
 import com.grahambartley.nightborn.skill.SkillPower;
 import com.grahambartley.nightborn.skill.SkillTree;
 import com.grahambartley.nightborn.skill.Skills;
+import com.grahambartley.nightborn.sun.Parasols;
 import com.grahambartley.nightborn.ward.Wards;
 import com.grahambartley.nightborn.weakened.Weakened;
 import java.util.ArrayList;
@@ -31,6 +32,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.passive.CowEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.registry.DynamicRegistryManager;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
@@ -413,6 +415,24 @@ public class BatFormGameTest implements FabricGameTest {
     context.assertFalse(BatForm.isBat(vampire), "it stays on its feet");
     context.assertEquals(
         BloodAttachment.get(vampire), BloodAttachment.FULL, "the refusal costs no blood");
+    TestPlayers.finish(context, vampire);
+  }
+
+  @GameTest(
+      templateName = YARD,
+      batchId = DAY,
+      skyAccess = true,
+      tickLimit = TestPlayers.READY + 10)
+  public void anOpenParasolDoesNotLetBatFormIntoTheSun(final TestContext context) {
+    final ServerPlayerEntity vampire = beast(context, BAT_FORM);
+    final ItemStack parasol = new ItemStack(Parasols.PARASOL);
+    vampire.setStackInHand(Hand.MAIN_HAND, parasol);
+    Parasols.setOpen(vampire, parasol, true);
+    context.assertEquals(
+        Powers.cast(vampire, BAT_FORM),
+        PowerUse.Verdict.SUNLIT,
+        "shifting would close the parasol, so the sun still refuses bat form");
+    context.assertTrue(Parasols.isOpen(parasol), "the parasol stays open");
     TestPlayers.finish(context, vampire);
   }
 
