@@ -36,4 +36,15 @@ class ChallengeRecordTest {
     assertEquals(offered, ChallengeRecord.PACKET_CODEC.decode(buf));
     assertEquals(false, offered.isEmpty());
   }
+
+  @ParameterizedTest(name = "paid in period {0}, asked about period {1}: {2}")
+  @CsvSource({"3, 3, true", "3, 4, false"})
+  void remembersWhatPaidOnlyForItsPeriod(final long paidIn, final long asked, final boolean paid) {
+    final Identifier trial = Identifier.of("nightborn", "wings");
+    final ChallengeRecord record =
+        ChallengeRecord.EMPTY
+            .withOffer(new TrialOffer(Optional.of(Side.VAMPIRE), paidIn, List.of()))
+            .finishing(trial);
+    assertEquals(paid, record.paid().in(asked).contains(trial));
+  }
 }

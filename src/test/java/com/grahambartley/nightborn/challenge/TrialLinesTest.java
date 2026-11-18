@@ -6,6 +6,7 @@ import com.grahambartley.nightborn.MinecraftBootstrapExtension;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.OptionalLong;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableTextContent;
 import net.minecraft.util.Identifier;
@@ -49,7 +50,8 @@ class TrialLinesTest {
             List.of(
                 new OfferedTrial(ID, taken, done, new Tally(counted, List.of(), 0L)),
                 OfferedTrial.fresh(Identifier.of("nightborn", "gone"), true)));
-    final List<TrialLines.Line> lines = TrialLines.of(offer, Map.of(ID, TRIAL));
+    final List<TrialLines.Line> lines =
+        TrialLines.of(offer, Map.of(ID, TRIAL), OptionalLong.of(0L));
     assertEquals(1, lines.size());
     assertEquals(key, ((TranslatableTextContent) lines.get(0).status().getContent()).getKey());
     assertEquals("Stake 3 vampires in one night", lines.get(0).description().getString());

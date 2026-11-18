@@ -6,6 +6,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
+import java.util.Set;
 import net.minecraft.util.Identifier;
 
 public final class TrialDraw {
@@ -20,7 +21,8 @@ public final class TrialDraw {
       final long period,
       final List<Candidate> open,
       final int size,
-      final long seed) {
+      final long seed,
+      final Set<Identifier> paidThisPeriod) {
     if (current.current(side, period)) {
       return Optional.empty();
     }
@@ -32,7 +34,13 @@ public final class TrialDraw {
         new TrialOffer(
             side,
             period,
-            draw(open, size, seed).stream().map(id -> OfferedTrial.fresh(id, taken)).toList()));
+            draw(open, size, seed).stream()
+                .map(
+                    id ->
+                        paidThisPeriod.contains(id)
+                            ? new OfferedTrial(id, true, true, Tally.EMPTY)
+                            : OfferedTrial.fresh(id, taken))
+                .toList()));
   }
 
   public static List<Identifier> draw(

@@ -2,6 +2,7 @@ package com.grahambartley.nightborn.challenge;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.OptionalLong;
@@ -100,5 +101,15 @@ class DeedGoalTest {
             Tally.EMPTY,
             Deed.of(FED).with("animal", false).with("prey", "villager"),
             OptionalLong.empty()));
+  }
+
+  @ParameterizedTest(name = "counted on night {0}, shown on night {1}: {2}")
+  @CsvSource({"4, 4, 2", "4, 5, 0", "4, -1, 0"})
+  void aOneNightCountShowsNothingOnceItsNightIsOver(
+      final long counted, final long shown, final int progress) {
+    final DeedGoal goal = goal(5, DeedGoal.Measure.TOTAL, DeedGoal.Within.ONE_NIGHT, false);
+    final Tally tally = new Tally(2, List.of(), counted);
+    assertEquals(
+        progress, goal.progress(tally, shown < 0 ? OptionalLong.empty() : OptionalLong.of(shown)));
   }
 }

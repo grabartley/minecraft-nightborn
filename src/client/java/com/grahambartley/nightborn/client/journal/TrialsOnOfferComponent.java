@@ -1,6 +1,7 @@
 package com.grahambartley.nightborn.client.journal;
 
 import com.grahambartley.nightborn.challenge.ChallengeAttachment;
+import com.grahambartley.nightborn.challenge.ChallengeClock;
 import com.grahambartley.nightborn.challenge.ChallengeData;
 import com.grahambartley.nightborn.challenge.TrialLines;
 import java.util.List;
@@ -42,7 +43,8 @@ public final class TrialsOnOfferComponent implements ICustomComponent {
     final List<TrialLines.Line> lines =
         TrialLines.of(
             ChallengeAttachment.get(player).offer(),
-            ChallengeData.trials(player.getRegistryManager()));
+            ChallengeData.trials(player.getRegistryManager()),
+            ChallengeClock.night(player.getWorld().getTimeOfDay()));
     int top =
         JournalPageText.title(graphics, font, "nightborn.journal.trials.title", x, y, context);
     if (lines.isEmpty()) {

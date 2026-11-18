@@ -93,17 +93,18 @@ public final class Ageing {
     if (settled.rank() > before) {
       changed(vampire);
       for (int rank = before + 1; rank <= settled.rank(); rank++) {
-        ladder.rung(rank).ifPresent(rung -> herald(vampire, rung));
-        final int reached = rank;
+        final boolean top = ladder.top(rank);
         ladder
             .rung(rank)
             .ifPresent(
-                rung ->
-                    Deeds.record(
-                        vampire,
-                        Deed.of(DeedKinds.STAGE_REACHED)
-                            .with(DeedKinds.STAGE, rung.id())
-                            .with(DeedKinds.TOP, reached == ladder.size() - 1)));
+                rung -> {
+                  herald(vampire, rung);
+                  Deeds.record(
+                      vampire,
+                      Deed.of(DeedKinds.STAGE_REACHED)
+                          .with(DeedKinds.STAGE, rung.id())
+                          .with(DeedKinds.TOP, top));
+                });
       }
     }
   }

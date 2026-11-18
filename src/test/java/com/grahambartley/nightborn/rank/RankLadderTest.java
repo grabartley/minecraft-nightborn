@@ -61,4 +61,11 @@ class RankLadderTest {
   private static Identifier id(final String path) {
     return Identifier.of("nightborn", path);
   }
+
+  @ParameterizedTest(name = "rank {0} is the top: {1}")
+  @CsvSource({"3, true", "2, false", "0, false", "4, false"})
+  @DisplayName("only Master is the top of the ladder")
+  void top(final int rank, final boolean top) {
+    assertEquals(top, RankFixtures.LADDER.top(rank));
+  }
 }

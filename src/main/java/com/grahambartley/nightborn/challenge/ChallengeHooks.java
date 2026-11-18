@@ -1,5 +1,6 @@
 package com.grahambartley.nightborn.challenge;
 
+import com.grahambartley.nightborn.Nightborn;
 import com.grahambartley.nightborn.age.StageRanks;
 import com.grahambartley.nightborn.coffin.CoffinSleepers;
 import com.grahambartley.nightborn.downed.Downed;
@@ -17,20 +18,35 @@ import com.grahambartley.nightborn.vampire.Vampires;
 import com.grahambartley.nightborn.village.VillageSuspicion;
 import java.util.Optional;
 import java.util.UUID;
+import net.fabricmc.fabric.api.attachment.v1.AttachmentRegistry;
+import net.fabricmc.fabric.api.attachment.v1.AttachmentType;
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 
 public final class ChallengeHooks {
 
+  static final AttachmentType<Boolean> STAKED_ASLEEP =
+      AttachmentRegistry.create(Identifier.of(Nightborn.MOD_ID, "staked_asleep"));
+
   private ChallengeHooks() {}
 
   static void register() {
+    ServerLivingEntityEvents.ALLOW_DAMAGE.register(ChallengeHooks::allowDamage);
     ServerLivingEntityEvents.AFTER_DEATH.register(ChallengeHooks::afterDeath);
+  }
+
+  private static boolean allowDamage(
+      final LivingEntity victim, final DamageSource source, final float amount) {
+    if (Staking.staked(source)) {
+      victim.setAttached(STAKED_ASLEEP, CoffinSleepers.inCoffin(victim));
+    }
+    return true;
   }
 
   private static void afterDeath(final LivingEntity victim, final DamageSource source) {
@@ -85,7 +101,7 @@ public final class ChallengeHooks {
         Deed.of(DeedKinds.VAMPIRE_STAKED)
             .with(DeedKinds.STAGE_RANK, StageRanks.of(victim))
             .with(DeedKinds.IN_VILLAGE, VillageSuspicion.bellFor(world, victim).isPresent())
-            .with(DeedKinds.IN_COFFIN, CoffinSleepers.inCoffin(victim))
+            .with(DeedKinds.IN_COFFIN, victim.getAttachedOrElse(STAKED_ASLEEP, false))
             .with(DeedKinds.LORD, lord(world, victim)));
     if (ContractTracker.householdCleared(victim)) {
       Deeds.record(

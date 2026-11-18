@@ -106,6 +106,7 @@ final class Feeder {
       MilestoneCriterion.reach(vampire, Milestone.FED_WATCHED);
     }
     if (taken > 0.0F
+        && !session.seen()
         && (villagersSaw
             || FeedingWitnesses.anySees(world, vampire, victim, config.feeding().witnessRange()))) {
       session.markSeen();
@@ -144,6 +145,7 @@ final class Feeder {
       }
     }
     if (taken > 0.0F
+        && !session.seen()
         && (!VillagerWitnesses.witnesses(world, vampire, victim, config.feeding().witnessRange())
                 .isEmpty()
             || FeedingWitnesses.anySees(world, vampire, victim, config.feeding().witnessRange()))) {

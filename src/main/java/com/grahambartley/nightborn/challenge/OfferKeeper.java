@@ -67,7 +67,8 @@ public final class OfferKeeper {
             period,
             open,
             settings.trialsOnOffer(),
-            player.getUuid().getMostSignificantBits() ^ period)
+            player.getUuid().getMostSignificantBits() ^ period,
+            record.paid().in(period))
         .ifPresent(
             offer -> {
               ChallengeAttachment.set(player, record.withOffer(offer));

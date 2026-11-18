@@ -72,17 +72,18 @@ public final class Ranking {
     OathAttachment.set(player, settled);
     changed(player);
     for (int rank = before.rank() + 1; rank <= settled.rank(); rank++) {
-      ladder.rung(rank).ifPresent(rung -> herald(player, rung));
-      final int reached = rank;
+      final boolean top = ladder.top(rank);
       ladder
           .rung(rank)
           .ifPresent(
-              rung ->
-                  Deeds.record(
-                      player,
-                      Deed.of(DeedKinds.RANK_REACHED)
-                          .with(DeedKinds.RANK, rung.id())
-                          .with(DeedKinds.TOP, reached == ladder.size() - 1)));
+              rung -> {
+                herald(player, rung);
+                Deeds.record(
+                    player,
+                    Deed.of(DeedKinds.RANK_REACHED)
+                        .with(DeedKinds.RANK, rung.id())
+                        .with(DeedKinds.TOP, top));
+              });
     }
   }
 

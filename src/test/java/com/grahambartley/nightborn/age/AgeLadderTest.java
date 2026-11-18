@@ -108,4 +108,11 @@ class AgeLadderTest {
     assertEquals(multiplier, AgeLadder.of(stages).notoriety(rank));
     assertEquals(StageAge.PLAIN_NOTORIETY, AgeLadder.of(Map.of()).notoriety(rank));
   }
+
+  @ParameterizedTest(name = "rung {0} is the top: {1}")
+  @CsvSource({"3, true", "2, false", "0, false", "4, false"})
+  @DisplayName("only the oldest stage open to players is the top")
+  void top(final int rank, final boolean top) {
+    assertEquals(top, LADDER.top(rank));
+  }
 }

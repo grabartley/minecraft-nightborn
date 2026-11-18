@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.IntStream;
 import net.minecraft.util.Identifier;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -38,13 +39,14 @@ class TrialDrawTest {
   @CsvSource({"VAMPIRE, true", "HUNTER, false"})
   void aVampireHoldsItsTrialsAtOnceAndAHunterMustTakeThem(final Side side, final boolean taken) {
     final TrialOffer offer =
-        TrialDraw.renewed(TrialOffer.NONE, Optional.of(side), 2L, candidates(4, 0), 3, 11L)
+        TrialDraw.renewed(
+                TrialOffer.NONE, Optional.of(side), 2L, candidates(4, 0), 3, 11L, Set.of())
             .orElseThrow();
     assertEquals(3, offer.trials().size());
     assertTrue(offer.trials().stream().allMatch(trial -> trial.taken() == taken));
     assertEquals(
         Optional.empty(),
-        TrialDraw.renewed(offer, Optional.of(side), 2L, candidates(4, 0), 3, 11L));
+        TrialDraw.renewed(offer, Optional.of(side), 2L, candidates(4, 0), 3, 11L, Set.of()));
   }
 
   @ParameterizedTest(name = "a player with no side and offer {0} is left with none")
@@ -53,11 +55,32 @@ class TrialDrawTest {
     final TrialOffer before =
         hadOne
             ? TrialDraw.renewed(
-                    TrialOffer.NONE, Optional.of(Side.HUNTER), 1L, candidates(3, 0), 3, 1L)
+                    TrialOffer.NONE,
+                    Optional.of(Side.HUNTER),
+                    1L,
+                    candidates(3, 0),
+                    3,
+                    1L,
+                    Set.of())
                 .orElseThrow()
             : TrialOffer.NONE;
     assertEquals(
         hadOne ? Optional.of(TrialOffer.NONE) : Optional.empty(),
-        TrialDraw.renewed(before, Optional.empty(), 1L, candidates(3, 0), 3, 1L));
+        TrialDraw.renewed(before, Optional.empty(), 1L, candidates(3, 0), 3, 1L, Set.of()));
+  }
+
+  @ParameterizedTest(name = "a {0} who changes side and back in one period finds paid trials done")
+  @CsvSource({"VAMPIRE", "HUNTER"})
+  void aTrialAlreadyPaidThisPeriodComesBackDone(final Side side) {
+    final List<TrialDraw.Candidate> pool = candidates(3, 0);
+    final TrialOffer first =
+        TrialDraw.renewed(TrialOffer.NONE, Optional.of(side), 5L, pool, 3, 7L, Set.of())
+            .orElseThrow();
+    final Identifier paid = first.trials().get(0).trial();
+    final TrialOffer again =
+        TrialDraw.renewed(TrialOffer.NONE, Optional.of(side), 5L, pool, 3, 7L, Set.of(paid))
+            .orElseThrow();
+    assertEquals(true, again.find(paid).orElseThrow().done());
+    assertEquals(2L, again.trials().stream().filter(trial -> !trial.done()).count());
   }
 }

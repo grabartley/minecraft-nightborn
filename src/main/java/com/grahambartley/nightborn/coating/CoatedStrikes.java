@@ -49,8 +49,9 @@ public final class CoatedStrikes {
         coatedHit(source, coat.coating());
       }
       case WEAPON -> {
+        final Coating coating = weapon.get(Coatings.COAT).coating();
         spend(target, weapon);
-        coatedHit(source, weapon.get(Coatings.COAT).coating());
+        coatedHit(source, coating);
       }
       case NONE -> {}
     }

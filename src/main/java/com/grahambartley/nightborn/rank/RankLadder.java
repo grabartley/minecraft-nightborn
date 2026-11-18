@@ -35,6 +35,10 @@ public record RankLadder(List<Rung> rungs) {
     return rungs.size();
   }
 
+  public boolean top(final int rank) {
+    return rank == rungs.size() - 1;
+  }
+
   public Optional<Rung> rung(final int rank) {
     return rank >= 0 && rank < rungs.size() ? Optional.of(rungs.get(rank)) : Optional.empty();
   }

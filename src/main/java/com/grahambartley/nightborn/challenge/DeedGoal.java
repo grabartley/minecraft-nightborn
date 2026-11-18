@@ -85,6 +85,13 @@ public record DeedGoal(
     };
   }
 
+  public int progress(final Tally tally, final OptionalLong now) {
+    if (within == Within.ONE_NIGHT && (now.isEmpty() || tally.night() != now.getAsLong())) {
+      return 0;
+    }
+    return progress(tally);
+  }
+
   public int progress(final Tally tally) {
     return Math.min(count, measure == Measure.DISTINCT ? tally.seen().size() : tally.total());
   }

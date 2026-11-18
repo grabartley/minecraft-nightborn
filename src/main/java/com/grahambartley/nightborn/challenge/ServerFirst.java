@@ -8,7 +8,7 @@ import net.minecraft.util.StringIdentifiable;
 public enum ServerFirst implements StringIdentifiable {
   ANCIENT(new DeedMatch(DeedKinds.STAGE_REACHED, Map.of(DeedKinds.TOP, "true"), Map.of())),
   MASTER(new DeedMatch(DeedKinds.RANK_REACHED, Map.of(DeedKinds.TOP, "true"), Map.of())),
-  ELDEST(DeedMatch.of(DeedKinds.ELDEST_ENDED)),
+  ELDEST(new DeedMatch(DeedKinds.ELDEST_ENDED, Map.of(DeedKinds.STAKER, "true"), Map.of())),
   INQUISITOR(DeedMatch.of(DeedKinds.INQUISITOR_DRAINED));
 
   public static final Codec<ServerFirst> CODEC =
