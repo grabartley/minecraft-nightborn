@@ -7,6 +7,7 @@ import com.grahambartley.nightborn.guild.HunterEntity;
 import com.grahambartley.nightborn.mob.NightbornMobs;
 import com.grahambartley.nightborn.mob.VampireEntity;
 import com.grahambartley.nightborn.name.MobNaming;
+import com.grahambartley.nightborn.nemesis.Nemeses;
 import com.grahambartley.nightborn.nemesis.NemesisAttachment;
 import com.grahambartley.nightborn.nemesis.NemesisEntry;
 import com.grahambartley.nightborn.nemesis.NemesisGrowth;
@@ -14,6 +15,7 @@ import com.grahambartley.nightborn.nemesis.NemesisItems;
 import com.grahambartley.nightborn.nemesis.NemesisLedger;
 import com.grahambartley.nightborn.nemesis.NemesisMaking;
 import com.grahambartley.nightborn.nemesis.NemesisMark;
+import com.grahambartley.nightborn.nemesis.NemesisVisits;
 import com.grahambartley.nightborn.server.ServerConfigService;
 import com.grahambartley.nightborn.skill.SkillAttachment;
 import com.grahambartley.nightborn.skill.SkillTree;
@@ -22,6 +24,7 @@ import java.util.Optional;
 import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.ItemEntity;
+import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.test.GameTest;
@@ -185,6 +188,98 @@ public class NemesisGameTest implements FabricGameTest {
                   .snapshot();
           context.assertEquals(saved.getFloat("Health"), 7.0F, "the health it left with");
           TestPlayers.finish(context, vampire);
+        });
+  }
+
+  private static void clearHunters(final TestContext context) {
+    context
+        .getWorld()
+        .getEntitiesByClass(HunterEntity.class, context.getTestBox().expand(6.0), hunter -> true)
+        .forEach(HunterEntity::discard);
+  }
+
+  @GameTest(templateName = ARENA, tickLimit = TestPlayers.READY + 20)
+  public void aNemesisAwayFromHomeComesBackFromItsSavedState(final TestContext context) {
+    final ServerPlayerEntity vampire = TestPlayers.vampire(context, PLAYER);
+    final HunterEntity hunter = hunter(context, 1);
+    context.runAtTick(
+        TestPlayers.READY,
+        () -> {
+          NemesisMaking.make(hunter, vampire.getUuid());
+          NemesisGrowth.grow(
+              context.getWorld(), hunter, NemesisAttachment.get(hunter).orElseThrow());
+          hunter.remove(Entity.RemovalReason.UNLOADED_TO_CHUNK);
+          final NemesisLedger ledger = NemesisLedger.of(context.getWorld().getServer());
+          final NemesisEntry entry =
+              ledger.entry(vampire.getUuid(), hunter.getUuid()).orElseThrow();
+          final BlockPos at = context.getAbsolutePos(new BlockPos(6, 2, 6));
+          final MobEntity copy = NemesisVisits.comeTo(ledger, vampire, entry, at, 0L).orElseThrow();
+          context.assertTrue(copy != hunter, "a copy comes from its saved state");
+          context.assertEquals(copy.getUuid(), hunter.getUuid(), "the same nemesis");
+          context.assertEquals(copy.getBlockPos(), at, "at the arrival spot");
+          context.assertEquals(copy.getMaxHealth(), 30.0F, "its growth came with it");
+          context.assertEquals(
+              NemesisAttachment.get(copy).map(NemesisMark::token), Optional.of(1), "a new token");
+          final NemesisEntry visited =
+              ledger.entry(vampire.getUuid(), hunter.getUuid()).orElseThrow();
+          context.assertEquals(visited.token(), 1, "the ledger follows the new copy");
+          context.assertTrue(visited.nextVisit() >= 5L, "the next visit is nights away");
+          context.assertTrue(copy.getTarget() == vampire, "it comes for its quarry");
+          clearHunters(context);
+          TestPlayers.finish(context, vampire);
+        });
+  }
+
+  @GameTest(templateName = ARENA, tickLimit = TestPlayers.READY + 20)
+  public void aLoadedNemesisIsMovedToItsQuarry(final TestContext context) {
+    final ServerPlayerEntity vampire = TestPlayers.vampire(context, PLAYER);
+    final HunterEntity hunter = hunter(context, 1);
+    context.runAtTick(
+        TestPlayers.READY,
+        () -> {
+          NemesisMaking.make(hunter, vampire.getUuid());
+          final NemesisLedger ledger = NemesisLedger.of(context.getWorld().getServer());
+          final BlockPos at = context.getAbsolutePos(new BlockPos(6, 2, 6));
+          final MobEntity moved =
+              NemesisVisits.comeTo(
+                      ledger,
+                      vampire,
+                      ledger.entry(vampire.getUuid(), hunter.getUuid()).orElseThrow(),
+                      at,
+                      0L)
+                  .orElseThrow();
+          context.assertTrue(moved == hunter, "the loaded nemesis itself comes");
+          context.assertEquals(moved.getBlockPos(), at, "at the arrival spot");
+          context.assertEquals(
+              ledger.entry(vampire.getUuid(), hunter.getUuid()).orElseThrow().token(),
+              0,
+              "no copy, so no new token");
+          clearHunters(context);
+          TestPlayers.finish(context, vampire);
+        });
+  }
+
+  @GameTest(templateName = ARENA, tickLimit = TestPlayers.READY + 60)
+  public void anOlderCopyOfAnEndedNemesisLeavesAndAForgottenOneStays(final TestContext context) {
+    final ServerPlayerEntity vampire = TestPlayers.vampire(context, PLAYER);
+    final ServerPlayerEntity other = TestPlayers.vampire(context, PLAYER.east(2));
+    final HunterEntity ended = hunter(context, 1);
+    final HunterEntity forgotten = hunter(context, 3);
+    context.runAtTick(
+        TestPlayers.READY,
+        () -> {
+          NemesisMaking.make(ended, vampire.getUuid());
+          NemesisMaking.make(forgotten, other.getUuid());
+          NemesisLedger.of(context.getWorld().getServer()).end(vampire.getUuid(), ended.getUuid());
+          Nemeses.forget(other);
+        });
+    context.runAtTick(
+        TestPlayers.READY + 40,
+        () -> {
+          context.assertTrue(ended.isRemoved(), "an ended nemesis leaves no copy behind");
+          context.assertFalse(forgotten.isRemoved(), "a forgotten nemesis lives on");
+          context.assertTrue(NemesisAttachment.get(forgotten).isEmpty(), "as an ordinary hunter");
+          TestPlayers.finish(context, vampire, other);
         });
   }
 }

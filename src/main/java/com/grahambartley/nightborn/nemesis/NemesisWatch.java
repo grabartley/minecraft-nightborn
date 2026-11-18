@@ -46,14 +46,11 @@ public final class NemesisWatch {
                               mob.getRemovalReason() == null || mob.getRemovalReason().shouldSave(),
                               mob.getHealth() > 0.0F))
                   .ifPresent(
-                      entry -> {
-                        final var snapshot = NemesisMaking.snapshot(mob);
-                        if (!snapshot.isEmpty()) {
+                      entry ->
                           ledger.put(
                               mark.quarry(),
-                              entry.withSnapshot(mob.getName().getString(), snapshot));
-                        }
-                      });
+                              entry.withSnapshot(
+                                  mob.getName().getString(), NemesisMaking.snapshot(mob))));
             });
   }
 
@@ -78,16 +75,26 @@ public final class NemesisWatch {
         continue;
       }
       final Optional<NemesisMark> mark = NemesisAttachment.get(mob);
-      final Optional<NemesisEntry> entry =
-          mark.flatMap(held -> ledger.entry(held.quarry(), mob.getUuid()));
-      if (mark.isEmpty() || entry.isEmpty()) {
-        NemesisAttachment.clear(mob);
+      if (mark.isEmpty()) {
         LOADED.remove(mob.getUuid());
-      } else if (!entry.get().current(mark.get())) {
-        LOADED.remove(mob.getUuid());
-        mob.remove(Entity.RemovalReason.CHANGED_DIMENSION);
-      } else {
-        watch(mob, server.getPlayerManager().getPlayer(mark.get().quarry()));
+        continue;
+      }
+      final Optional<NemesisEntry> entry = ledger.entry(mark.get().quarry(), mob.getUuid());
+      switch (NemesisRules.fate(
+          entry.isPresent(),
+          entry.filter(held -> held.current(mark.get())).isPresent(),
+          ledger.ended(mob.getUuid()),
+          ledger.released(mob.getUuid()),
+          mark.get().token())) {
+        case KEEP -> watch(mob, server.getPlayerManager().getPlayer(mark.get().quarry()));
+        case CLEAR -> {
+          NemesisAttachment.clear(mob);
+          LOADED.remove(mob.getUuid());
+        }
+        case REMOVE -> {
+          LOADED.remove(mob.getUuid());
+          mob.remove(Entity.RemovalReason.CHANGED_DIMENSION);
+        }
       }
     }
   }

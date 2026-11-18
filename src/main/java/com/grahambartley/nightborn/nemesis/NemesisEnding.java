@@ -50,7 +50,7 @@ public final class NemesisEnding {
     if (entry.isEmpty()) {
       return;
     }
-    ledger.remove(mark.quarry(), mob.getUuid());
+    ledger.end(mark.quarry(), mob.getUuid());
     final Optional<UUID> ender =
         NemesisRules.ender(
             Optional.ofNullable(source.getAttacker())

@@ -265,4 +265,28 @@ class NemesisRulesTest {
       final boolean current, final boolean savable, final boolean living, final boolean keeps) {
     assertEquals(keeps, NemesisRules.keepsSnapshot(current, savable, living));
   }
+
+  @ParameterizedTest(name = "held {0}, current {1}, ended {2}, released token {3}, token {4}: {5}")
+  @CsvSource({
+    "true, true, false, -1, 0, KEEP",
+    "true, false, false, -1, 0, REMOVE",
+    "false, false, true, -1, 0, REMOVE",
+    "false, false, false, 2, 2, CLEAR",
+    "false, false, false, 2, 1, REMOVE",
+    "false, false, false, -1, 4, CLEAR"
+  })
+  @DisplayName(
+      "an older copy goes, a forgotten nemesis stays as an ordinary mob, an ended one never returns")
+  void fate(
+      final boolean held,
+      final boolean current,
+      final boolean ended,
+      final int released,
+      final int token,
+      final NemesisRules.Fate fate) {
+    assertEquals(
+        fate,
+        NemesisRules.fate(
+            held, current, ended, released < 0 ? Optional.empty() : Optional.of(released), token));
+  }
 }

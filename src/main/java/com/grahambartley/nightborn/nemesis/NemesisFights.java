@@ -29,7 +29,7 @@ public final class NemesisFights {
   }
 
   private static final Map<Key, Fight> FIGHTS = new HashMap<>();
-  private static final Set<UUID> TOLD_DOWNED = new HashSet<>();
+  private static final Set<Key> TOLD_DOWNED = new HashSet<>();
 
   private NemesisFights() {}
 
@@ -44,7 +44,7 @@ public final class NemesisFights {
       note(mob, player, false);
       if (Nemeses.isQuarry(mob, player)
           && Downed.helpless(player)
-          && TOLD_DOWNED.add(player.getUuid())) {
+          && TOLD_DOWNED.add(new Key(mob.getUuid(), player.getUuid()))) {
         NemesisTaunts.say(mob, player, Moment.DOWNED);
       }
     }
@@ -52,8 +52,8 @@ public final class NemesisFights {
 
   static void tick(final MinecraftServer server) {
     TOLD_DOWNED.removeIf(
-        id -> {
-          final ServerPlayerEntity player = server.getPlayerManager().getPlayer(id);
+        told -> {
+          final ServerPlayerEntity player = server.getPlayerManager().getPlayer(told.player());
           return player == null || !Downed.helpless(player);
         });
     final long now = server.getOverworld().getTime();

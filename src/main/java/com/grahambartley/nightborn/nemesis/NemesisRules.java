@@ -7,6 +7,12 @@ import java.util.UUID;
 
 public final class NemesisRules {
 
+  public enum Fate {
+    KEEP,
+    CLEAR,
+    REMOVE
+  }
+
   public enum Arrival {
     MOVE,
     COPY,
@@ -65,6 +71,21 @@ public final class NemesisRules {
       return sameWorld ? Arrival.MOVE : Arrival.WAIT;
     }
     return saved ? Arrival.COPY : Arrival.WAIT;
+  }
+
+  public static Fate fate(
+      final boolean held,
+      final boolean current,
+      final boolean ended,
+      final Optional<Integer> released,
+      final int token) {
+    if (held) {
+      return current ? Fate.KEEP : Fate.REMOVE;
+    }
+    if (ended) {
+      return Fate.REMOVE;
+    }
+    return released.filter(kept -> kept != token).isPresent() ? Fate.REMOVE : Fate.CLEAR;
   }
 
   public static boolean keepsSnapshot(

@@ -55,10 +55,19 @@ public final class NemesisVisits {
     if (spot.isEmpty()) {
       return false;
     }
-    final BlockPos at = spot.get();
+    return comeTo(ledger, quarry, entry, spot.get(), night).isPresent();
+  }
+
+  public static Optional<MobEntity> comeTo(
+      final NemesisLedger ledger,
+      final ServerPlayerEntity quarry,
+      final NemesisEntry entry,
+      final BlockPos at,
+      final long night) {
+    final ServerWorld world = quarry.getServerWorld();
     final Optional<MobEntity> nemesis = arrive(world, entry, at);
     if (nemesis.isEmpty()) {
-      return false;
+      return Optional.empty();
     }
     final MobEntity mob = nemesis.get();
     final VillageSettings settings = ServerConfigService.current().villages();
@@ -83,7 +92,7 @@ public final class NemesisVisits {
                 companion(world, mob, at, quarry, found.kind().spread());
               }
             });
-    return true;
+    return nemesis;
   }
 
   private static Optional<MobEntity> arrive(

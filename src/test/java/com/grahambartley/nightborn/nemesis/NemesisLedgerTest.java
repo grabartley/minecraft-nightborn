@@ -76,4 +76,25 @@ class NemesisLedgerTest {
     assertEquals(Optional.of(entry(2).visited(next, token)), loaded.entry(QUARRY, entry(2).mob()));
     assertEquals(Set.of(QUARRY), loaded.quarries());
   }
+
+  @ParameterizedTest(name = "{0} held, ends {1}, the rest forgotten")
+  @CsvSource({"3, 0", "2, 1"})
+  @DisplayName("an ended nemesis and a forgotten one are remembered through a save")
+  void remembersEndedAndReleased(final int held, final int ended) {
+    final NemesisLedger ledger = new NemesisLedger();
+    IntStream.range(0, held).forEach(n -> ledger.add(QUARRY, entry(n).visited(n, n + 1), 3));
+    ledger.end(QUARRY, entry(ended).mob());
+    ledger.forget(QUARRY);
+    final NemesisLedger loaded =
+        NemesisLedger.fromNbt(ledger.writeNbt(new NbtCompound(), null), null);
+    IntStream.range(0, held)
+        .forEach(
+            n -> {
+              assertEquals(n == ended, loaded.ended(entry(n).mob()));
+              assertEquals(
+                  n == ended ? Optional.empty() : Optional.of(n + 1),
+                  loaded.released(entry(n).mob()));
+            });
+    assertEquals(Set.of(), loaded.quarries());
+  }
 }
