@@ -5,6 +5,7 @@ import com.grahambartley.nightborn.boss.BossFightPlan;
 import com.grahambartley.nightborn.boss.BossFights;
 import com.grahambartley.nightborn.boss.BossWard;
 import com.grahambartley.nightborn.boss.WardAttack;
+import com.grahambartley.nightborn.boss.ZoneHit;
 import com.grahambartley.nightborn.boss.ZoneMarkEntity;
 import com.grahambartley.nightborn.boss.ZoneShape;
 import com.grahambartley.nightborn.boss.ZoneStrikes;
@@ -18,6 +19,7 @@ import com.grahambartley.nightborn.mob.NightbornMobs;
 import com.grahambartley.nightborn.mob.VampireBatEntity;
 import com.grahambartley.nightborn.server.ServerConfigService;
 import java.util.List;
+import java.util.Optional;
 import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.attribute.EntityAttributes;
@@ -369,7 +371,7 @@ public class EldestFightGameTest implements FabricGameTest {
         eldest,
         context.getWorld(),
         new WardAttack(
-            Registries.ENTITY_TYPE.getEntry(NightbornMobs.VAMPIRE_BAT), 3, 2.0F, 500, true),
+            Registries.ENTITY_TYPE.getEntry(NightbornMobs.VAMPIRE_BAT), 3, 2.0F, 500, true, 0),
         now);
     final List<VampireBatEntity> keepers =
         context
@@ -401,7 +403,8 @@ public class EldestFightGameTest implements FabricGameTest {
         ZoneShape.circle(marked.getX(), marked.getZ(), 1.5),
         marked.getY(),
         4.0F,
-        0.0F);
+        0.0F,
+        ZoneHit.PLAIN);
     context.assertTrue(marked.getHealth() < marked.getMaxHealth(), "the one in the mark is hurt");
     context.assertTrue(clear.getHealth() == clear.getMaxHealth(), "the one outside is not");
     context.assertTrue(
@@ -445,7 +448,8 @@ public class EldestFightGameTest implements FabricGameTest {
   public void aMarkCoversItsShapeAndGoesWhenItsTimeIsUp(final TestContext context) {
     final Vec3d at = context.getAbsolute(new Vec3d(4.5, 2.0, 4.5));
     final ZoneMarkEntity mark =
-        ZoneMarkEntity.place(context.getWorld(), ZoneShape.circle(at.x, at.z, 2.5), at.y);
+        ZoneMarkEntity.place(
+            context.getWorld(), ZoneShape.circle(at.x, at.z, 2.5), at.y, Optional.empty());
     context.assertTrue(mark.radius() == 2.5F && !mark.line(), "it is a circle of 2.5 blocks");
     context.assertTrue(!mark.lingering(), "it starts as a warning");
     mark.linger(10);

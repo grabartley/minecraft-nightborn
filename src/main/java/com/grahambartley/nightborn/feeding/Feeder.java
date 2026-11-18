@@ -101,7 +101,7 @@ final class Feeder {
       }
       return Result.DRAINED;
     }
-    if (resists(vampire, victim, config, world.getRandom())) {
+    if (BiteQuarry.struggles(victim) && resists(vampire, victim, config, world.getRandom())) {
       breakFree(vampire, victim);
       return Result.RESISTED;
     }

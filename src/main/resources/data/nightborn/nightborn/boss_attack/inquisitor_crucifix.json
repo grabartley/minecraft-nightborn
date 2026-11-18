@@ -1,0 +1,14 @@
+{
+  "max_range": 16.0,
+  "weight": 2,
+  "cooldown_ticks": 300,
+  "tell_ticks": 20,
+  "tell_clip": "raise_crucifix",
+  "tell_sound": "minecraft:block.bell.use",
+  "clip": "raise_crucifix",
+  "sound": "minecraft:block.beacon.activate",
+  "channel": {
+    "ticks": 100,
+    "held": "nightborn:gold_crucifix"
+  }
+}

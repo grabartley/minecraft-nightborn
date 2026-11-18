@@ -3,8 +3,10 @@ package com.grahambartley.nightborn.network;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.grahambartley.nightborn.boss.Arena;
+import com.grahambartley.nightborn.boss.ArenaWall;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 import net.minecraft.util.Identifier;
@@ -21,14 +23,27 @@ class BossArenaPayloadTest {
     final Optional<Identifier> music = Optional.of(Identifier.of("nightborn", "music.boss.eldest"));
     return Stream.of(
         BossArenaPayload.left(7),
-        new BossArenaPayload(0, arena, false, Optional.empty()),
-        new BossArenaPayload(1, arena, false, music),
-        new BossArenaPayload(2147483647, arena, true, music),
+        new BossArenaPayload(0, arena, false, Optional.empty(), Optional.empty()),
+        new BossArenaPayload(1, arena, false, music, Optional.empty()),
+        new BossArenaPayload(2147483647, arena, true, music, Optional.empty()),
         new BossArenaPayload(
             12,
             Optional.of(Arena.room(new BlockPos(29_000_000, 319, -29_000_000), 48)),
             true,
-            music));
+            music,
+            Optional.empty()),
+        new BossArenaPayload(
+            3,
+            arena,
+            true,
+            music,
+            Optional.of(
+                new ArenaWall(
+                    Identifier.of("nightborn", "textures/entity/boss/arena_light.png"),
+                    Identifier.of("nightborn", "textures/entity/boss/arena_light_shapes.png"),
+                    List.of(0xFFF6DC, 0xE8D9A8),
+                    120,
+                    true))));
   }
 
   @ParameterizedTest(name = "{0}")
@@ -41,10 +56,10 @@ class BossArenaPayloadTest {
   }
 
   @Test
-  @DisplayName("leaving names the boss and carries no arena, no fight and no music")
+  @DisplayName("leaving names the boss and carries no arena, no fight, no music and no wall")
   void left() {
     assertEquals(
-        new BossArenaPayload(7, Optional.empty(), false, Optional.empty()),
+        new BossArenaPayload(7, Optional.empty(), false, Optional.empty(), Optional.empty()),
         BossArenaPayload.left(7));
   }
 }

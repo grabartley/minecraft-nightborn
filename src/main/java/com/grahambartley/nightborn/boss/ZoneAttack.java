@@ -2,6 +2,10 @@ package com.grahambartley.nightborn.boss;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.IntStream;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.StringIdentifiable;
 
 public record ZoneAttack(
@@ -14,7 +18,10 @@ public record ZoneAttack(
     float damage,
     float knock,
     int lingerTicks,
-    int lingerEvery) {
+    int lingerEvery,
+    ZoneHit hit,
+    ZoneFan fan,
+    Optional<Identifier> mark) {
 
   public enum Shape implements StringIdentifiable {
     CIRCLE("circle"),
@@ -104,8 +111,33 @@ public record ZoneAttack(
                           .forGetter(ZoneAttack::lingerTicks),
                       Codec.intRange(1, 200)
                           .optionalFieldOf("linger_every", 10)
-                          .forGetter(ZoneAttack::lingerEvery))
+                          .forGetter(ZoneAttack::lingerEvery),
+                      ZoneHit.CODEC
+                          .optionalFieldOf("hit", ZoneHit.PLAIN)
+                          .forGetter(ZoneAttack::hit),
+                      ZoneFan.CODEC
+                          .optionalFieldOf("fan", ZoneFan.SINGLE)
+                          .forGetter(ZoneAttack::fan),
+                      Identifier.CODEC.optionalFieldOf("mark").forGetter(ZoneAttack::mark))
                   .apply(instance, ZoneAttack::new));
+
+  public List<ZoneShape> fanned(
+      final double selfX, final double selfZ, final double foeX, final double foeZ) {
+    if (shape != Shape.LINE) {
+      return List.of(at(selfX, selfZ, foeX, foeZ));
+    }
+    final double dx = foeX - selfX;
+    final double dz = foeZ - selfZ;
+    return IntStream.range(0, fan.count())
+        .mapToObj(
+            index -> {
+              final double turn = fan.turn(index);
+              final double cos = Math.cos(turn);
+              final double sin = Math.sin(turn);
+              return at(selfX, selfZ, selfX + dx * cos - dz * sin, selfZ + dx * sin + dz * cos);
+            })
+        .toList();
+  }
 
   public ZoneShape at(
       final double selfX, final double selfZ, final double foeX, final double foeZ) {

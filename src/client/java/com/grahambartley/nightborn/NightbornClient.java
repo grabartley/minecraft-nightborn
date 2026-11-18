@@ -31,6 +31,7 @@ import com.grahambartley.nightborn.familiar.Familiars;
 import com.grahambartley.nightborn.gear.GearBlocks;
 import com.grahambartley.nightborn.gramophone.GramophoneBlockEntity;
 import com.grahambartley.nightborn.guild.GuildMobs;
+import com.grahambartley.nightborn.inquisitor.InquisitorMobs;
 import com.grahambartley.nightborn.mob.NightbornMobs;
 import com.grahambartley.nightborn.occult.GhostlyFamiliars;
 import com.grahambartley.nightborn.render.AccessoryRenderer;
@@ -128,6 +129,7 @@ public class NightbornClient implements ClientModInitializer {
         GhostlyFamiliars.GHOSTLY_FAMILIAR, GhostlyFamiliarRenderer::new);
     EntityRendererRegistry.register(GuildMobs.HUNTER, HunterRenderer::new);
     EntityRendererRegistry.register(GuildMobs.GUILD_MASTER, HunterRenderer::new);
+    EntityRendererRegistry.register(InquisitorMobs.GRAND_INQUISITOR, HunterRenderer::new);
     EntityRendererRegistry.register(AmmoEntities.BOLT, BoltEntityRenderer::new);
     EntityRendererRegistry.register(AmmoEntities.GARLIC_BOMB, FlyingItemEntityRenderer::new);
     AmmoModels.register();

@@ -1,0 +1,25 @@
+{
+  "min_range": 3.0,
+  "max_range": 18.0,
+  "weight": 3,
+  "cooldown_ticks": 120,
+  "tell_ticks": 22,
+  "tell_clip": "throw_holy_water",
+  "tell_sound": "minecraft:entity.witch.throw",
+  "clip": "throw_holy_water",
+  "sound": "minecraft:entity.splash_potion.break",
+  "zone": {
+    "radius": 2.0,
+    "anchor": "every_foe",
+    "damage": 4.0,
+    "hit": {
+      "damage_type": "nightborn:holy_water",
+      "weaken": {
+        "source": "holy_water",
+        "strength": 2,
+        "ticks": 100
+      }
+    },
+    "mark": "nightborn:holy_water"
+  }
+}

@@ -14,6 +14,7 @@ public final class HuntRules {
 
   public record Dusk(HuntRecord record, int warned) {}
 
+  static final int LOST_CHECKS = 30;
   static final float FARTHEST_TOLL = 0.3F;
   static final float NEAREST_TOLL = 1.0F;
 
@@ -87,6 +88,10 @@ public final class HuntRules {
     final long from = Math.max(previous, now - NightTime.DAY_LENGTH);
     return Math.floorDiv(now - boundary, NightTime.DAY_LENGTH)
         > Math.floorDiv(from - boundary, NightTime.DAY_LENGTH);
+  }
+
+  public static boolean lost(final boolean dead, final int missingChecks) {
+    return dead || missingChecks >= LOST_CHECKS;
   }
 
   public static float tollVolume(final int left, final int nights) {

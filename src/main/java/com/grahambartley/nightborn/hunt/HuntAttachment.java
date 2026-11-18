@@ -17,6 +17,9 @@ public final class HuntAttachment {
       AttachmentRegistry.create(
           Identifier.of(Nightborn.MOD_ID, "hunt_clock"), builder -> builder.copyOnDeath());
 
+  public static final AttachmentType<Integer> MISSING =
+      AttachmentRegistry.create(Identifier.of(Nightborn.MOD_ID, "hunt_missing"));
+
   public static final AttachmentType<BellCall> CALL =
       AttachmentRegistry.create(Identifier.of(Nightborn.MOD_ID, "bell_call"));
 
@@ -32,5 +35,6 @@ public final class HuntAttachment {
     target.removeAttached(RECORD);
     target.removeAttached(CLOCK);
     target.removeAttached(CALL);
+    target.removeAttached(MISSING);
   }
 }

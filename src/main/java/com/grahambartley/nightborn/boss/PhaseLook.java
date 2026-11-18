@@ -13,9 +13,11 @@ public record PhaseLook(
     String fly,
     String flyForm,
     String enterClip,
-    Optional<Identifier> held) {
+    Optional<Identifier> held,
+    Optional<Identifier> skin) {
 
-  public static final PhaseLook PLAIN = new PhaseLook("", "", "", "", "", "", "", Optional.empty());
+  public static final PhaseLook PLAIN =
+      new PhaseLook("", "", "", "", "", "", "", Optional.empty(), Optional.empty());
 
   public static final Codec<PhaseLook> CODEC =
       RecordCodecBuilder.create(
@@ -33,7 +35,8 @@ public record PhaseLook(
                       Codec.STRING
                           .optionalFieldOf("enter_clip", "")
                           .forGetter(PhaseLook::enterClip),
-                      Identifier.CODEC.optionalFieldOf("held").forGetter(PhaseLook::held))
+                      Identifier.CODEC.optionalFieldOf("held").forGetter(PhaseLook::held),
+                      Identifier.CODEC.optionalFieldOf("skin").forGetter(PhaseLook::skin))
                   .apply(instance, PhaseLook::new));
 
   public String enters(final String fallback) {

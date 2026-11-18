@@ -23,7 +23,8 @@ public record BossAttack(
     Optional<FlurryAttack> flurry,
     Optional<DrainAttack> drain,
     Optional<MesmerisePower> gaze,
-    Optional<WardAttack> ward) {
+    Optional<WardAttack> ward,
+    Optional<ChannelAttack> channel) {
 
   public static final Codec<BossAttack> CODEC =
       RecordCodecBuilder.<BossAttack>create(
@@ -56,19 +57,30 @@ public record BossAttack(
                               .forGetter(BossAttack::flurry),
                           DrainAttack.CODEC.optionalFieldOf("drain").forGetter(BossAttack::drain),
                           MesmerisePower.CODEC.optionalFieldOf("gaze").forGetter(BossAttack::gaze),
-                          WardAttack.CODEC.optionalFieldOf("ward").forGetter(BossAttack::ward))
+                          WardAttack.CODEC.optionalFieldOf("ward").forGetter(BossAttack::ward),
+                          ChannelAttack.CODEC
+                              .optionalFieldOf("channel")
+                              .forGetter(BossAttack::channel))
                       .apply(instance, BossAttack::new))
           .validate(BossAttack::oneKind);
 
   static DataResult<BossAttack> oneKind(final BossAttack attack) {
     final long kinds =
-        Stream.of(attack.power, attack.zone, attack.flurry, attack.drain, attack.gaze, attack.ward)
+        Stream.of(
+                attack.power,
+                attack.zone,
+                attack.flurry,
+                attack.drain,
+                attack.gaze,
+                attack.ward,
+                attack.channel)
             .filter(Optional::isPresent)
             .count();
     if (kinds != 1) {
       return DataResult.error(
           () ->
-              "A boss attack needs exactly one of power, zone, flurry, drain, gaze or ward, got "
+              "A boss attack needs exactly one of power, zone, flurry, drain, gaze, ward or channel,"
+                  + " got "
                   + kinds);
     }
     return attack.minRange <= attack.maxRange
@@ -81,6 +93,10 @@ public record BossAttack(
   }
 
   public int strikeTicks() {
-    return flurry.map(FlurryAttack::ticks).or(() -> drain.map(DrainAttack::ticks)).orElse(0);
+    return flurry
+        .map(FlurryAttack::ticks)
+        .or(() -> drain.map(DrainAttack::ticks))
+        .or(() -> channel.map(ChannelAttack::ticks))
+        .orElse(0);
   }
 }

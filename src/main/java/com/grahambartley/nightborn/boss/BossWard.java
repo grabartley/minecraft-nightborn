@@ -16,6 +16,7 @@ public final class BossWard {
   private final List<Entity> keepers = new ArrayList<>();
   private long raisedAt;
   private int ticks;
+  private boolean gathering;
 
   public static void register() {
     ServerEntityEvents.ENTITY_LOAD.register(
@@ -35,12 +36,22 @@ public final class BossWard {
     return taggedOnLoad;
   }
 
+  public static boolean keeper(final Entity entity) {
+    return entity.getCommandTags().contains(KEEPER);
+  }
+
   public void raise(
       final MobEntity boss, final ServerWorld world, final WardAttack ward, final long now) {
-    drop();
+    if (ward.gathers()) {
+      keepers.removeIf(keeper -> !keeper.isAlive());
+    } else {
+      drop();
+    }
     raisedAt = now;
     ticks = ward.ticks();
-    for (int i = 0; i < ward.count(); i++) {
+    gathering = ward.gathers();
+    final int calling = ward.called(keepers.size());
+    for (int i = 0; i < calling; i++) {
       final Entity keeper = ward.entity().value().create(world);
       if (keeper == null) {
         continue;
@@ -54,6 +65,9 @@ public final class BossWard {
       if (keeper instanceof MobEntity mob) {
         mob.initialize(
             world, world.getLocalDifficulty(mob.getBlockPos()), SpawnReason.MOB_SUMMONED, null);
+        if (mob instanceof SwornAlly ally && boss instanceof ArenaBoss arenaBoss) {
+          arenaBoss.sworn().forEach(ally::swear);
+        }
         if (boss.getTarget() != null) {
           mob.setAttacker(boss.getTarget());
           mob.setTarget(boss.getTarget());
@@ -71,8 +85,12 @@ public final class BossWard {
     return WardAttack.holds(keepers.size(), now - raisedAt, ticks);
   }
 
+  public boolean gathering() {
+    return gathering;
+  }
+
   public void expire(final long now) {
-    if (WardAttack.spent(keepers.size(), now - raisedAt, ticks)) {
+    if (!gathering && WardAttack.spent(keepers.size(), now - raisedAt, ticks)) {
       drop();
     }
   }
@@ -80,5 +98,6 @@ public final class BossWard {
   public void drop() {
     keepers.forEach(Entity::discard);
     keepers.clear();
+    gathering = false;
   }
 }

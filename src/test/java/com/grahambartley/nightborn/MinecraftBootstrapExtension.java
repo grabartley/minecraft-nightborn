@@ -2,6 +2,7 @@ package com.grahambartley.nightborn;
 
 import com.grahambartley.nightborn.accessory.AccessoryFeatures;
 import com.grahambartley.nightborn.ammo.AmmoItems;
+import com.grahambartley.nightborn.ammo.GarlicFumesEffect;
 import com.grahambartley.nightborn.clothing.ClothingFeatures;
 import com.grahambartley.nightborn.coffin.Coffins;
 import com.grahambartley.nightborn.decor.DecorBlockEntities;
@@ -11,6 +12,7 @@ import com.grahambartley.nightborn.enchant.EnchantFeatures;
 import com.grahambartley.nightborn.gear.GearBlocks;
 import com.grahambartley.nightborn.gear.GearItems;
 import com.grahambartley.nightborn.guild.ContractItems;
+import com.grahambartley.nightborn.guild.GuildMobs;
 import com.grahambartley.nightborn.holy.HolyWater;
 import com.grahambartley.nightborn.hunter.HunterAttributes;
 import com.grahambartley.nightborn.journal.JournalItems;
@@ -54,5 +56,7 @@ public final class MinecraftBootstrapExtension implements BeforeAllCallback {
     Objects.requireNonNull(ContractItems.HUNTER_CONTRACT);
     Objects.requireNonNull(JournalItems.HUNTER_JOURNAL);
     Objects.requireNonNull(NightbornMobs.VAMPIRE_BAT);
+    Objects.requireNonNull(GuildMobs.HUNTER);
+    Objects.requireNonNull(GarlicFumesEffect.ENTRY);
   }
 }

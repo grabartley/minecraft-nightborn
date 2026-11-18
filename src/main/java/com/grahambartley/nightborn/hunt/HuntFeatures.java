@@ -9,7 +9,6 @@ public final class HuntFeatures {
     HuntSounds.initialize();
     HuntItems.register();
     HuntData.register();
-    StandIn.register();
     NotorietyAward.register();
   }
 }

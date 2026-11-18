@@ -15,7 +15,8 @@ public record BossFightPlan(
     float changeKnock,
     float changeRange,
     FightClips clips,
-    List<String> summonerLines) {
+    List<String> summonerLines,
+    Optional<ArenaWall> wall) {
 
   public static final Codec<BossFightPlan> CODEC =
       RecordCodecBuilder.create(
@@ -44,7 +45,8 @@ public record BossFightPlan(
                       Codec.STRING
                           .listOf()
                           .optionalFieldOf("summoner_lines", List.of())
-                          .forGetter(BossFightPlan::summonerLines))
+                          .forGetter(BossFightPlan::summonerLines),
+                      ArenaWall.CODEC.optionalFieldOf("wall").forGetter(BossFightPlan::wall))
                   .apply(instance, BossFightPlan::new));
 
   public BossFightPlan {

@@ -149,6 +149,7 @@ public final class FeedingSessions {
           || !victim.isAlive()
           || session.released(now)
           || Wards.wards(victim)
+          || BiteQuarry.guards(victim)
           || !inReach(vampire, victim)) {
         sessions.remove();
         finish(vampire, victim, session, config);

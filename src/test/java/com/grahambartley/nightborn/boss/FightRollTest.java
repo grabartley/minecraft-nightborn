@@ -1,4 +1,4 @@
-package com.grahambartley.nightborn.eldest;
+package com.grahambartley.nightborn.boss;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;

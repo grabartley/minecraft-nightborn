@@ -63,9 +63,29 @@ class ArenaWallShapeTest {
   @ValueSource(doubles = {0.0, 2.8, 5.0, 9.0, 14.0, 27.9, 1000.5})
   @DisplayName("the wall beats like a heart between its resting glow and full strength")
   void pulse(final double time) {
-    final float pulse = ArenaWallShape.pulse(time);
+    final float pulse = ArenaWallShape.pulse(time, ArenaWallShape.BEAT_TICKS, false);
     assertTrue(pulse >= ArenaWallShape.REST && pulse <= 1.0F, "pulse " + pulse);
-    assertEquals(pulse, ArenaWallShape.pulse(time + ArenaWallShape.BEAT_TICKS), 1.0E-4F);
+    assertEquals(
+        pulse,
+        ArenaWallShape.pulse(time + ArenaWallShape.BEAT_TICKS, ArenaWallShape.BEAT_TICKS, false),
+        1.0E-4F);
+  }
+
+  @ParameterizedTest(name = "a breath of {0} ticks")
+  @ValueSource(floats = {120.0F, 200.0F, 400.0F})
+  @DisplayName("a breathing wall swells and fades slowly, never jumping between ticks")
+  void breathes(final float beat) {
+    float lowest = 1.0F;
+    float highest = 0.0F;
+    for (int tick = 0; tick < beat * 2; tick++) {
+      final float now = ArenaWallShape.pulse(tick, beat, true);
+      final float next = ArenaWallShape.pulse(tick + 1, beat, true);
+      assertTrue(Math.abs(next - now) < 0.01F, "jumps at tick " + tick);
+      lowest = Math.min(lowest, now);
+      highest = Math.max(highest, now);
+    }
+    assertEquals(ArenaWallShape.REST, lowest, 1.0E-3F);
+    assertEquals(1.0F, highest, 1.0E-3F);
   }
 
   @ParameterizedTest(name = "{0} of a turn round the wall: #{1}")
@@ -73,7 +93,9 @@ class ArenaWallShapeTest {
   @DisplayName("the wall's colour runs through its palette twice round the ring")
   void tint(final double turn, final String colour) {
     assertEquals(
-        Integer.parseInt(colour, 16), ArenaWallShape.tint(turn * 2.0 * Math.PI, 0.0), colour);
+        Integer.parseInt(colour, 16),
+        ArenaWallShape.tint(ArenaWallShape.PALETTE, turn * 2.0 * Math.PI, 0.0),
+        colour);
   }
 
   @ParameterizedTest(name = "{0} of the way: #{1}")

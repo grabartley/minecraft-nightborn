@@ -25,7 +25,9 @@ class BossFightPlanTest {
         "{\"change_clip\":\"hiss\",\"change_sound\":\"minecraft:entity.warden.roar\"} | false",
         "{\"phases\":[{\"name\":\"court\",\"health\":30}],\"change_sound\":\"minecraft:entity.warden.roar\"} | false",
         "{\"phases\":[{\"name\":\"court\",\"health\":30}],\"change_clip\":\"hiss\",\"change_sound\":\"minecraft:entity.warden.roar\",\"change_ticks\":601} | false",
-        "{\"phases\":[{\"name\":\"court\",\"health\":30}],\"change_clip\":\"hiss\",\"change_sound\":\"minecraft:entity.warden.roar\",\"change_knock\":9} | false"
+        "{\"phases\":[{\"name\":\"court\",\"health\":30}],\"change_clip\":\"hiss\",\"change_sound\":\"minecraft:entity.warden.roar\",\"change_knock\":9} | false",
+        "{\"phases\":[{\"name\":\"hunt\",\"health\":30}],\"change_clip\":\"hiss\",\"change_sound\":\"minecraft:entity.warden.roar\",\"wall\":{\"fog\":\"a:b\",\"shapes\":\"a:c\",\"palette\":[\"#FFFFFF\"],\"beat_ticks\":120,\"breathes\":true}} | true",
+        "{\"phases\":[{\"name\":\"hunt\",\"health\":30}],\"change_clip\":\"hiss\",\"change_sound\":\"minecraft:entity.warden.roar\",\"wall\":{\"fog\":\"a:b\",\"shapes\":\"a:c\",\"palette\":[],\"beat_ticks\":120}} | false"
       })
   @DisplayName("a fight needs at least one phase and a clip and sound for the change between them")
   void parses(final String json, final boolean loads) {

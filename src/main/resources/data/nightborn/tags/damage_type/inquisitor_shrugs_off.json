@@ -1,0 +1,21 @@
+{
+  "values": [
+    "minecraft:lava",
+    "minecraft:in_fire",
+    "minecraft:on_fire",
+    "minecraft:campfire",
+    "minecraft:hot_floor",
+    "minecraft:in_wall",
+    "minecraft:cramming",
+    "minecraft:falling_block",
+    "minecraft:falling_anvil",
+    "minecraft:falling_stalactite",
+    "minecraft:stalagmite",
+    "minecraft:cactus",
+    "minecraft:sweet_berry_bush",
+    "minecraft:fall",
+    "minecraft:drown",
+    "minecraft:freeze",
+    "minecraft:lightning_bolt"
+  ]
+}

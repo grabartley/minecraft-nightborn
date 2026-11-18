@@ -69,4 +69,11 @@ class FightRulesTest {
       final boolean engaged, final long emptyFor, final boolean downed, final boolean resets) {
     assertEquals(resets, new FightRules(100, 300, 30).resets(engaged, emptyFor, downed));
   }
+
+  @ParameterizedTest(name = "empty for {0} ticks")
+  @CsvSource({"0", "100", "5000000"})
+  @DisplayName("a boss with no empty-arena rule never resets its fight")
+  void neverResets(final long emptyFor) {
+    assertEquals(false, new FightRules(0, 300, 30).resets(true, emptyFor, false));
+  }
 }

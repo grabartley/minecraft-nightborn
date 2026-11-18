@@ -89,7 +89,8 @@ public final class Lancet {
             Vampires.isVampire(creature),
             creature instanceof PlayerEntity,
             creature.isAlive(),
-            creature.getHealth()),
+            creature.getHealth(),
+            BiteQuarry.guards(creature)),
         emptyBottle,
         draw());
   }

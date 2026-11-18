@@ -26,7 +26,31 @@ class HuntRecordTest {
         Arguments.of(HuntRecord.EMPTY.withNotoriety(31).warning(2)),
         Arguments.of(HuntRecord.EMPTY.withNotoriety(31).due()),
         Arguments.of(HuntRecord.EMPTY.withNotoriety(31).visitedBy(MAN)),
-        Arguments.of(HuntRecord.EMPTY.withNotoriety(31).ended(4, 10)));
+        Arguments.of(HuntRecord.EMPTY.withNotoriety(31).ended(4, 10)),
+        Arguments.of(HuntRecord.EMPTY.withNotoriety(31).visitedBy(MAN).named("Ezra")));
+  }
+
+  @ParameterizedTest(name = "{0}")
+  @CsvSource({"Ezra the Grand Inquisitor", "Silas the Grand Inquisitor"})
+  @DisplayName("the man of a hunt is kept until the hunt ends, then forgotten")
+  void keepsTheMan(final String name) {
+    final HuntRecord named = HuntRecord.EMPTY.withNotoriety(31).visitedBy(MAN).named(name);
+    assertEquals(Optional.of(name), named.returning().man());
+    assertEquals(Optional.of(name), named.returning().due().visitedBy(MAN).man());
+    assertEquals(Optional.empty(), named.ended(4, 10).man());
+  }
+
+  @ParameterizedTest(name = "notoriety {0}")
+  @CsvSource({"31", "120"})
+  @DisplayName("a man who left an empty arena is due again at the next dusk, with no warning")
+  void returnsAtDusk(final double notoriety) {
+    final HuntRecord returning =
+        HuntRecord.EMPTY.withNotoriety(notoriety).visitedBy(MAN).returning();
+    assertEquals(HuntRecord.Phase.WARNING, returning.phase());
+    assertEquals(0, returning.warningsLeft());
+    final HuntRules.Dusk dusk = HuntRules.dusk(returning);
+    assertEquals(HuntRecord.Phase.DUE, dusk.record().phase());
+    assertEquals(0, dusk.warned());
   }
 
   @ParameterizedTest(name = "{0}")
@@ -51,7 +75,9 @@ class HuntRecordTest {
     assertEquals(Optional.empty(), HuntRecord.EMPTY.visitedBy(MAN).due().visitor());
     assertEquals(
         Optional.empty(),
-        new HuntRecord(1, HuntRecord.Phase.DUE, 0, Optional.of(MAN), HuntRecord.NEVER).visitor());
+        new HuntRecord(
+                1, HuntRecord.Phase.DUE, 0, Optional.of(MAN), HuntRecord.NEVER, Optional.empty())
+            .visitor());
   }
 
   @ParameterizedTest(
@@ -98,5 +124,15 @@ class HuntRecordTest {
     record = hunted ? record.warning(1) : record;
     assertEquals(idle, record.idle(night));
     assertTrue(HuntRecord.EMPTY.idle(0));
+  }
+
+  @ParameterizedTest(name = "named {0}")
+  @CsvSource({"Ezra the Grand Inquisitor", "''"})
+  @DisplayName("a visit remembers the man and, when he has one, his name")
+  void visitedByName(final String name) {
+    final Optional<String> given = name.isEmpty() ? Optional.empty() : Optional.of(name);
+    final HuntRecord visited = HuntRecord.EMPTY.withNotoriety(31).visitedBy(MAN, given);
+    assertEquals(Optional.of(MAN), visited.visitor());
+    assertEquals(given, visited.man());
   }
 }

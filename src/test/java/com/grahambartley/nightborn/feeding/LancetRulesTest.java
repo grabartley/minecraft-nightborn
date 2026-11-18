@@ -16,6 +16,16 @@ class LancetRulesTest {
     assertEquals(draw, LancetRules.draw(hurt, bottle));
   }
 
+  @ParameterizedTest(name = "guarded with warm blood {0} and health {1} -> {2}")
+  @CsvSource({"true, 20, GUARDED", "true, 2, GUARDED", "false, 20, NO_WARM_BLOOD"})
+  @DisplayName("a boss still standing cannot be bled until it is down")
+  void guarded(final boolean warmBlood, final float health, final LancetRules expected) {
+    assertEquals(
+        expected,
+        LancetRules.onCreature(
+            new LancetRules.Creature(warmBlood, false, false, true, health, true), true, 4.0F));
+  }
+
   @ParameterizedTest(
       name = "warm {0}, vampire {1}, player {2}, alive {3}, health {4}, bottle {5} -> {6}")
   @CsvSource({
@@ -43,7 +53,7 @@ class LancetRulesTest {
     assertEquals(
         expected,
         LancetRules.onCreature(
-            new LancetRules.Creature(warmBlood, vampire, player, alive, health),
+            new LancetRules.Creature(warmBlood, vampire, player, alive, health, false),
             emptyBottle,
             4.0F));
   }

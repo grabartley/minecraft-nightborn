@@ -22,6 +22,7 @@ class PhaseLookTest {
           "fly",
           "form_fly",
           "roar_beast",
+          Optional.empty(),
           Optional.empty());
 
   @Test
@@ -36,14 +37,16 @@ class PhaseLookTest {
             "",
             "",
             "roar_blood",
-            Optional.of(Identifier.ofVanilla("stick"))),
+            Optional.of(Identifier.ofVanilla("stick")),
+            Optional.of(Identifier.of("nightborn", "textures/entity/grand_inquisitor/pyre.png"))),
         PhaseLook.CODEC
             .parse(
                 JsonOps.INSTANCE,
                 JsonParser.parseString(
                     "{\"idle\":\"blood_idle\",\"walk\":\"blood_walk\",\"form\":\"form_blood\","
                         + "\"form_enter\":\"form_retract\","
-                        + "\"enter_clip\":\"roar_blood\",\"held\":\"minecraft:stick\"}"))
+                        + "\"enter_clip\":\"roar_blood\",\"held\":\"minecraft:stick\","
+                        + "\"skin\":\"nightborn:textures/entity/grand_inquisitor/pyre.png\"}"))
             .getOrThrow());
     assertEquals(
         PhaseLook.PLAIN,
@@ -78,7 +81,16 @@ class PhaseLookTest {
   @DisplayName("a phase with no flying or downed clips keeps its own form")
   void fallsBackToItsForm() {
     final PhaseLook court =
-        new PhaseLook("idle_ancient", "court_walk", "form_court", "", "", "", "", Optional.empty());
+        new PhaseLook(
+            "idle_ancient",
+            "court_walk",
+            "form_court",
+            "",
+            "",
+            "",
+            "",
+            Optional.empty(),
+            Optional.empty());
     assertEquals(
         new ShownForm("idle_ancient", "court_walk", "form_court", false),
         court.shown(true, false, true, ""));
@@ -90,6 +102,8 @@ class PhaseLookTest {
   @DisplayName("a phase with no clip of its own falls back to the fight's change clip")
   void enters(final String clip, final String plays) {
     assertEquals(
-        plays, new PhaseLook("", "", "", "", "", "", clip, Optional.empty()).enters("hiss"));
+        plays,
+        new PhaseLook("", "", "", "", "", "", clip, Optional.empty(), Optional.empty())
+            .enters("hiss"));
   }
 }

@@ -1,7 +1,6 @@
 package com.grahambartley.nightborn.client.guild;
 
 import com.grahambartley.nightborn.guild.HunterLooking;
-import com.grahambartley.nightborn.guild.HunterRig;
 import com.grahambartley.nightborn.render.HeadLook;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.Identifier;
@@ -17,7 +16,7 @@ public class HunterModel<T extends LivingEntity & GeoEntity & HunterLooking> ext
 
   @Override
   public Identifier getModelResource(final T hunter) {
-    return hunter.rig().geo();
+    return hunter.geo();
   }
 
   @Override
@@ -27,7 +26,7 @@ public class HunterModel<T extends LivingEntity & GeoEntity & HunterLooking> ext
 
   @Override
   public Identifier getAnimationResource(final T hunter) {
-    return HunterRig.ANIMATION;
+    return hunter.animation();
   }
 
   @Override

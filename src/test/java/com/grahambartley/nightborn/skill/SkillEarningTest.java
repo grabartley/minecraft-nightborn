@@ -42,4 +42,11 @@ class SkillEarningTest {
     assertEquals(
         experience, SkillEarning.bloodExperience(worth, settings(perBlood, 300, 200)), 0.0001F);
   }
+
+  @ParameterizedTest(name = "vampire {0}, experience {1}: paid {2}")
+  @CsvSource({"true, 4000, true", "true, 0, false", "true, -1, false", "false, 4000, false"})
+  @DisplayName("only a vampire is paid for the Grand Inquisitor, and only when the reward is set")
+  void paysVampire(final boolean vampire, final int experience, final boolean paid) {
+    assertEquals(paid, SkillEarning.paysVampire(vampire, experience));
+  }
 }

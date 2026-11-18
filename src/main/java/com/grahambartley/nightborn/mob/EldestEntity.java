@@ -2,13 +2,13 @@ package com.grahambartley.nightborn.mob;
 
 import com.grahambartley.nightborn.Nightborn;
 import com.grahambartley.nightborn.boss.Arena;
+import com.grahambartley.nightborn.boss.BossBars;
 import com.grahambartley.nightborn.boss.BossFight;
 import com.grahambartley.nightborn.boss.BossFightPlan;
 import com.grahambartley.nightborn.boss.BossFights;
-import com.grahambartley.nightborn.boss.BossPhase;
+import com.grahambartley.nightborn.boss.FightRoll;
 import com.grahambartley.nightborn.boss.FightRules;
 import com.grahambartley.nightborn.boss.HoldGroundGoal;
-import com.grahambartley.nightborn.boss.PhaseTrack;
 import com.grahambartley.nightborn.boss.ShownForm;
 import com.grahambartley.nightborn.boss.StanceGoal;
 import com.grahambartley.nightborn.config.RitualSettings;
@@ -17,8 +17,6 @@ import com.grahambartley.nightborn.decor.SeatEntity;
 import com.grahambartley.nightborn.downed.Downed;
 import com.grahambartley.nightborn.eldest.EldestFoes;
 import com.grahambartley.nightborn.eldest.EldestHealth;
-import com.grahambartley.nightborn.eldest.FightRoll;
-import com.grahambartley.nightborn.lord.BossBarLook;
 import com.grahambartley.nightborn.mob.goal.HouseholdLifeGoal;
 import com.grahambartley.nightborn.mob.goal.LieDownedGoal;
 import com.grahambartley.nightborn.mob.goal.SeekShadeGoal;
@@ -203,33 +201,7 @@ public class EldestEntity extends BossVampireEntity implements BlazingEyes {
 
   @Override
   protected void showBar() {
-    final Optional<BossFightPlan> plan = plan();
-    if (plan.isEmpty() || Downed.state(this) != null) {
-      super.showBar();
-      return;
-    }
-    final long now = getWorld().getTime();
-    final Optional<BossBarLook> state = BossBarLook.state(fight.warded(now), fight.draining(now));
-    if (state.isPresent()) {
-      presence()
-          .update(
-              state.get().title(getDisplayName()),
-              state.get().color(),
-              PhaseTrack.barPercent(
-                  getHealth(),
-                  fight.floorHealth(this, plan.get()),
-                  fight.ceilingHealth(this, plan.get())));
-      return;
-    }
-    final BossPhase phase = plan.get().phase(fight.phase());
-    presence()
-        .update(
-            BossBarLook.phase(phase.color(), phase.translationKey()).title(getDisplayName()),
-            phase.color(),
-            PhaseTrack.barPercent(
-                getHealth(),
-                fight.floorHealth(this, plan.get()),
-                fight.ceilingHealth(this, plan.get())));
+    BossBars.show(this, fight, plan());
   }
 
   @Override

@@ -51,6 +51,19 @@ public final class SkillEarning {
     return grantHunter(hunter, ritual.eldestExperience(), settings);
   }
 
+  public static boolean fromInquisitor(
+      final PlayerEntity vampire, final int experience, final SkillSettings settings) {
+    if (!paysVampire(Vampires.isVampire(vampire), experience)) {
+      return false;
+    }
+    gain(vampire, SkillTree.VAMPIRE, experience, settings);
+    return true;
+  }
+
+  static boolean paysVampire(final boolean vampire, final int experience) {
+    return vampire && experience > 0;
+  }
+
   static boolean paysHunter(final boolean sworn, final int experience) {
     return sworn && experience > 0;
   }

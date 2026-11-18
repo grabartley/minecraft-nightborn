@@ -5,6 +5,7 @@ import com.grahambartley.nightborn.downed.DownedTargeting;
 import com.grahambartley.nightborn.guild.GuildMasterEntity;
 import com.grahambartley.nightborn.guild.HunterEntity;
 import com.grahambartley.nightborn.guild.party.PartyMember;
+import com.grahambartley.nightborn.inquisitor.GrandInquisitorEntity;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Predicate;
@@ -89,7 +90,7 @@ public final class BandCheck {
                 other != victim
                     && other.isAlive()
                     && other.getType().isIn(DownedTargeting.HUNTERS)
-                    && !StandIn.is(other)
+                    && !(other instanceof GrandInquisitorEntity)
                     && bandmate.test(other))
         .isEmpty();
   }

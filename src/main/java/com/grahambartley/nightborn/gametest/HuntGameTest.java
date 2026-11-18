@@ -1,14 +1,10 @@
 package com.grahambartley.nightborn.gametest;
 
-import com.grahambartley.nightborn.age.AgeNight;
 import com.grahambartley.nightborn.guild.GuildMasterEntity;
 import com.grahambartley.nightborn.guild.GuildMobs;
 import com.grahambartley.nightborn.guild.HunterEntity;
 import com.grahambartley.nightborn.hunt.HuntAttachment;
 import com.grahambartley.nightborn.hunt.HuntItems;
-import com.grahambartley.nightborn.hunt.HuntRecord;
-import com.grahambartley.nightborn.hunt.Hunts;
-import com.grahambartley.nightborn.hunt.StandIn;
 import java.util.ArrayList;
 import java.util.List;
 import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
@@ -88,32 +84,6 @@ public class HuntGameTest implements FabricGameTest {
           context.assertFalse(
               vampire.hasAttached(HuntAttachment.CALL),
               "nobody answers a bell rung without a seal");
-          TestPlayers.finish(context, vampire);
-        });
-  }
-
-  @GameTest(templateName = ARENA, tickLimit = TestPlayers.READY + 40)
-  public void theVisitEndsWhenTheGrandInquisitorDies(final TestContext context) {
-    final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(2, 2, 4));
-    final HunterEntity man = context.spawnEntity(GuildMobs.HUNTER, new BlockPos(5, 2, 4));
-    man.setAiDisabled(true);
-    man.addCommandTag(StandIn.TAG);
-    context.runAtTick(
-        TestPlayers.READY,
-        () -> {
-          vampire.setAttached(
-              HuntAttachment.RECORD, HuntRecord.EMPTY.withNotoriety(40.0).visitedBy(man.getUuid()));
-          man.damage(vampire.getDamageSources().playerAttack(vampire), 1000.0F);
-          for (int tick = 0; tick < CHECKS; tick++) {
-            vampire.age++;
-            Hunts.tick(vampire);
-          }
-          final HuntRecord record = HuntAttachment.get(vampire);
-          context.assertEquals(record.phase(), HuntRecord.Phase.NONE, "the hunt is over");
-          context.assertEquals(record.notoriety(), 40.0, "his death adds no notoriety");
-          context.assertTrue(
-              record.quietNightsLeft(AgeNight.index(Hunts.time(vampire))) > 0,
-              "quiet nights begin");
           TestPlayers.finish(context, vampire);
         });
   }

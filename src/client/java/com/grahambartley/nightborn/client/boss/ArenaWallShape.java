@@ -33,8 +33,12 @@ public final class ArenaWallShape {
             + SHIVER * Math.sin(height * 0.9 - time * 0.11 + angle * 3.0));
   }
 
-  public static float pulse(final double time) {
-    final double beat = (time % BEAT_TICKS) / BEAT_TICKS;
+  public static float pulse(final double time, final float beatTicks, final boolean breathes) {
+    if (breathes) {
+      final double breath = 0.5 - 0.5 * Math.cos(2.0 * Math.PI * time / beatTicks);
+      return (float) (REST + (1.0 - REST) * breath);
+    }
+    final double beat = (time % beatTicks) / beatTicks;
     final double first = Math.exp(-Math.pow((beat - 0.10) / 0.06, 2.0));
     final double second = Math.exp(-Math.pow((beat - 0.32) / 0.06, 2.0));
     return (float) (REST + (1.0 - REST) * Math.min(1.0, first + 0.7 * second));
@@ -45,13 +49,13 @@ public final class ArenaWallShape {
     return (float) (wave * wave);
   }
 
-  public static int tint(final double angle, final double time) {
+  public static int tint(final int[] palette, final double angle, final double time) {
     final double turn = angle / (2.0 * Math.PI) * TURNS + time * CREEP;
-    final double at = (turn - Math.floor(turn)) * PALETTE.length;
-    final int from = (int) Math.floor(at) % PALETTE.length;
-    final int to = (from + 1) % PALETTE.length;
+    final double at = (turn - Math.floor(turn)) * palette.length;
+    final int from = (int) Math.floor(at) % palette.length;
+    final int to = (from + 1) % palette.length;
     final double blend = at - Math.floor(at);
-    return mix(PALETTE[from], PALETTE[to], blend);
+    return mix(palette[from], palette[to], blend);
   }
 
   static int mix(final int from, final int to, final double blend) {

@@ -2,6 +2,8 @@ package com.grahambartley.nightborn.client.boss;
 
 import com.grahambartley.nightborn.Nightborn;
 import com.grahambartley.nightborn.boss.Arena;
+import com.grahambartley.nightborn.boss.ArenaWall;
+import java.util.Optional;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext;
 import net.minecraft.client.render.OverlayTexture;
 import net.minecraft.client.render.RenderLayer;
@@ -19,8 +21,24 @@ public final class ArenaWallRenderer {
       Identifier.of(Nightborn.MOD_ID, "textures/entity/boss/arena_shapes.png");
   static final int FULL_BRIGHT = 0xF000F0;
 
+  private record Look(
+      Identifier fog, Identifier shapes, int[] palette, float beat, boolean breathes) {
+
+    static Look of(final Optional<ArenaWall> wall) {
+      return wall.map(
+              w ->
+                  new Look(
+                      w.fog(),
+                      w.shapes(),
+                      w.palette().stream().mapToInt(Integer::intValue).toArray(),
+                      w.beatTicks(),
+                      w.breathes()))
+          .orElse(new Look(FOG, SHAPES, ArenaWallShape.PALETTE, ArenaWallShape.BEAT_TICKS, false));
+    }
+  }
+
   private record Veil(
-      Identifier texture,
+      boolean shapes,
       boolean surfaces,
       float inset,
       float tile,
@@ -30,9 +48,9 @@ public final class ArenaWallRenderer {
       double tintLead) {}
 
   static final Veil[] VEILS = {
-    new Veil(FOG, false, 0.0F, 6.0F, 0.006F, 0.002F, 1.0F, 0.0),
-    new Veil(FOG, false, 0.12F, 9.0F, -0.011F, -0.005F, 0.7F, Math.PI),
-    new Veil(SHAPES, true, 0.2F, 8.0F, 0.003F, 0.0015F, 1.0F, Math.PI / 2.0)
+    new Veil(false, false, 0.0F, 6.0F, 0.006F, 0.002F, 1.0F, 0.0),
+    new Veil(false, false, 0.12F, 9.0F, -0.011F, -0.005F, 0.7F, Math.PI),
+    new Veil(true, true, 0.2F, 8.0F, 0.003F, 0.0015F, 1.0F, Math.PI / 2.0)
   };
 
   private ArenaWallRenderer() {}
@@ -49,16 +67,21 @@ public final class ArenaWallRenderer {
         Math.hypot(camera.x - arena.midX(), camera.z - arena.midZ()) - arena.radius();
     final float time = context.world().getTime() + context.tickCounter().getTickDelta(false);
     final float strength = ArenaWallShape.strength(BossArenaView.fighting());
-    final float alpha = ArenaWallShape.alpha(fromWall) * ArenaWallShape.pulse(time * strength);
+    final Look look = Look.of(BossArenaView.wall());
+    final float alpha =
+        ArenaWallShape.alpha(fromWall)
+            * ArenaWallShape.pulse(time * strength, look.beat(), look.breathes());
     matrices.push();
     matrices.translate(arena.midX() - camera.x, -camera.y, arena.midZ() - camera.z);
     for (final Veil veil : VEILS) {
       final VertexConsumer buffer =
-          consumers.getBuffer(RenderLayer.getEntityTranslucent(veil.texture()));
+          consumers.getBuffer(
+              RenderLayer.getEntityTranslucent(veil.shapes() ? look.shapes() : look.fog()));
       veil(
           matrices,
           buffer,
           arena,
+          look,
           veil,
           time,
           strength,
@@ -71,6 +94,7 @@ public final class ArenaWallRenderer {
       final MatrixStack matrices,
       final VertexConsumer buffer,
       final Arena arena,
+      final Look look,
       final Veil veil,
       final float time,
       final float strength,
@@ -82,10 +106,10 @@ public final class ArenaWallRenderer {
       for (int row = 0; row < ArenaWallShape.ROWS; row++) {
         final float y0 = low + row * rise;
         final float y1 = y0 + rise;
-        corner(matrices, buffer, arena, veil, i, segments, y0, time, strength, alpha);
-        corner(matrices, buffer, arena, veil, i + 1, segments, y0, time, strength, alpha);
-        corner(matrices, buffer, arena, veil, i + 1, segments, y1, time, strength, alpha);
-        corner(matrices, buffer, arena, veil, i, segments, y1, time, strength, alpha);
+        corner(matrices, buffer, arena, look, veil, i, segments, y0, time, strength, alpha);
+        corner(matrices, buffer, arena, look, veil, i + 1, segments, y0, time, strength, alpha);
+        corner(matrices, buffer, arena, look, veil, i + 1, segments, y1, time, strength, alpha);
+        corner(matrices, buffer, arena, look, veil, i, segments, y1, time, strength, alpha);
       }
     }
   }
@@ -94,6 +118,7 @@ public final class ArenaWallRenderer {
       final MatrixStack matrices,
       final VertexConsumer buffer,
       final Arena arena,
+      final Look look,
       final Veil veil,
       final int segment,
       final int segments,
@@ -104,7 +129,7 @@ public final class ArenaWallRenderer {
     final double angle = 2.0 * Math.PI * (segment % segments) / segments;
     final double reach =
         arena.radius() - veil.inset() + ArenaWallShape.ripple(angle, y, time, strength);
-    final int tint = ArenaWallShape.tint(angle + veil.tintLead(), time * strength);
+    final int tint = ArenaWallShape.tint(look.palette(), angle + veil.tintLead(), time * strength);
     buffer
         .vertex(
             matrices.peek().getPositionMatrix(),

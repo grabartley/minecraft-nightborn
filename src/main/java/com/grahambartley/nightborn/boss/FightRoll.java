@@ -1,4 +1,4 @@
-package com.grahambartley.nightborn.eldest;
+package com.grahambartley.nightborn.boss;
 
 import java.util.LinkedHashSet;
 import java.util.Set;

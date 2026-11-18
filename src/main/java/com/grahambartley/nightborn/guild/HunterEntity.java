@@ -1,5 +1,7 @@
 package com.grahambartley.nightborn.guild;
 
+import com.grahambartley.nightborn.boss.BossWard;
+import com.grahambartley.nightborn.boss.SwornAlly;
 import com.grahambartley.nightborn.guild.party.PartyMember;
 import com.grahambartley.nightborn.mob.MobSounds;
 import com.grahambartley.nightborn.mob.VampireBatEntity;
@@ -9,7 +11,9 @@ import com.grahambartley.nightborn.mob.look.VampireRig;
 import com.grahambartley.nightborn.name.MobNaming;
 import com.grahambartley.nightborn.name.NameBearer;
 import com.grahambartley.nightborn.vampire.Vampires;
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
@@ -47,7 +51,7 @@ import software.bernie.geckolib.animation.PlayState;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 public class HunterEntity extends PathAwareEntity
-    implements GeoEntity, HunterLooking, NameBearer, RangedAttackMob {
+    implements GeoEntity, HunterLooking, NameBearer, RangedAttackMob, SwornAlly {
 
   static final String FEMALE_KEY = "Female";
   static final String KIT_KEY = "Kit";
@@ -55,6 +59,7 @@ public class HunterEntity extends PathAwareEntity
   static final int CAMP_REACH = 12;
   static final String PARTY_LEADER_KEY = "PartyLeader";
   @Nullable private UUID partyLeader;
+  private final Set<UUID> sworn = new HashSet<>();
 
   private static final TrackedData<Boolean> FEMALE =
       DataTracker.registerData(HunterEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
@@ -126,7 +131,26 @@ public class HunterEntity extends PathAwareEntity
 
   @Override
   public boolean canTarget(final LivingEntity target) {
-    return hunts(target) && super.canTarget(target);
+    return foeOf(target) && super.canTarget(target);
+  }
+
+  protected boolean foeOf(final LivingEntity target) {
+    return hunts(target) || sworn.contains(target.getUuid());
+  }
+
+  @Override
+  public void swear(final UUID foe) {
+    sworn.add(foe);
+  }
+
+  @Override
+  protected boolean shouldDropLoot() {
+    return !BossWard.keeper(this) && super.shouldDropLoot();
+  }
+
+  @Override
+  public boolean shouldDropXp() {
+    return !BossWard.keeper(this) && super.shouldDropXp();
   }
 
   @Override
@@ -239,7 +263,7 @@ public class HunterEntity extends PathAwareEntity
     }
   }
 
-  private void settle() {
+  protected void settle() {
     CampHome.keep(this, CAMP_REACH);
     dataTracker.set(FEMALE, getRandom().nextBoolean());
     dataTracker.set(BUST, figure().bust(getRandom().nextDouble()));
