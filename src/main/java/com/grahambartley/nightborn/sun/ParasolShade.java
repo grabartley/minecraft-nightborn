@@ -15,7 +15,14 @@ public final class ParasolShade {
   static final AttachmentType<Long> SUN_TICKS =
       AttachmentRegistry.create(Identifier.of(Nightborn.MOD_ID, "parasol_sun_ticks"));
 
+  static final AttachmentType<Long> SHADED_AT =
+      AttachmentRegistry.create(Identifier.of(Nightborn.MOD_ID, "parasol_shaded_at"));
+
   private ParasolShade() {}
+
+  public static long shadedAt(final LivingEntity holder) {
+    return holder.getAttachedOrElse(SHADED_AT, Long.MIN_VALUE);
+  }
 
   public static void tick(final LivingEntity holder, final SunSettings settings) {
     final Optional<Hand> hand = Parasols.openHand(holder);
@@ -37,6 +44,7 @@ public final class ParasolShade {
       parasol.damage(worn, holder, LivingEntity.getSlotForHand(hand.get()));
     }
     if (!parasol.isEmpty()) {
+      holder.setAttached(SHADED_AT, holder.getWorld().getTime());
       ParasolWalks.step(holder);
     }
   }

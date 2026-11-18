@@ -259,9 +259,13 @@ public class CoffinGameTest implements FabricGameTest {
     context.runAtTick(
         TestPlayers.READY + SLEEP_READY,
         () -> {
+          final long now = context.getWorld().getTimeOfDay();
           context.assertTrue(
-              context.getWorld().isDay() && resting.isSleeping(),
-              "one of two vampires resting does not skip a full share day");
+              !NightTime.isNight(false, now) && resting.isSleeping(),
+              "one of two vampires resting does not skip a full share day, time "
+                  + now
+                  + ": "
+                  + Diagnostics.of(resting));
           context.getWorld().setTimeOfDay(day[0] + NightTime.DAY_LENGTH + NightTime.DUSK - 5L);
         });
     context.runAtTick(

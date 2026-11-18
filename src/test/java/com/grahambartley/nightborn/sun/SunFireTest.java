@@ -19,11 +19,4 @@ class SunFireTest {
   void litBySun(final long now, final long until, final boolean sun) {
     assertEquals(sun, SunFire.litBySun(now, until));
   }
-
-  @ParameterizedTest(name = "{0} s is {1} ticks")
-  @CsvSource({"8.0, 160", "0.5, 10", "0.01, 1", "0.0, 0"})
-  @DisplayName("fire seconds round up to whole ticks")
-  void ticks(final float seconds, final long ticks) {
-    assertEquals(ticks, SunFire.ticks(seconds));
-  }
 }

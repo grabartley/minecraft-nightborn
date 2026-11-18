@@ -9,7 +9,6 @@ import com.grahambartley.nightborn.sound.NightbornSounds;
 import com.grahambartley.nightborn.vampire.NightbornDamage;
 import com.grahambartley.nightborn.village.SuspicionCause;
 import com.grahambartley.nightborn.village.VampireSigns;
-import java.util.OptionalLong;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.server.world.ServerWorld;
 
@@ -25,9 +24,8 @@ public final class SunBurn {
     return (float) (sunDamage * sunmarked);
   }
 
-  public static boolean due(final long now, final OptionalLong litUntil) {
-    return litUntil.isEmpty()
-        || now >= litUntil.getAsLong() - SunFire.ticks(FIRE_SECONDS) + BURN_INTERVAL_TICKS;
+  public static boolean due(final int age, final long now, final long shadedAt) {
+    return age % BURN_INTERVAL_TICKS == 0 || shadedAt == now - 1L;
   }
 
   public static boolean tick(final LivingEntity vampire, final SunSettings settings) {
@@ -37,7 +35,7 @@ public final class SunBurn {
     if (!(vampire.getWorld() instanceof ServerWorld world) || !DirectSun.on(vampire)) {
       return false;
     }
-    if (!due(world.getTime(), SunFire.litUntil(vampire))) {
+    if (!due(vampire.age, world.getTime(), ParasolShade.shadedAt(vampire))) {
       return true;
     }
     vampire.setOnFireFor(FIRE_SECONDS);
