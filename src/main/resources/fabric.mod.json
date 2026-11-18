@@ -90,6 +90,8 @@
       "com.grahambartley.nightborn.gametest.HolyWaterGameTest",
       "com.grahambartley.nightborn.gametest.HunterAmmoGameTest",
       "com.grahambartley.nightborn.gametest.ClothingGameTest",
+      "com.grahambartley.nightborn.gametest.AccessoryGameTest",
+      "com.grahambartley.nightborn.gametest.EnchantGameTest",
       "com.grahambartley.nightborn.gametest.CoatingGameTest",
       "com.grahambartley.nightborn.gametest.VanishGameTest"
     ]
@@ -107,6 +109,7 @@
     "minecraft": "~1.21.1",
     "java": ">=21",
     "fabric-api": ">=0.116.12+1.21.1",
-    "geckolib": ">=4.7"
+    "geckolib": ">=4.7",
+    "trinkets": ">=3.10.0"
   }
 }

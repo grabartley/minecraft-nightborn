@@ -17,6 +17,13 @@ public final class WardStrength {
         WeakenedSources.CAP);
   }
 
+  public static int dulled(final int strength, final double resistance) {
+    if (strength <= 0) {
+      return 0;
+    }
+    return Math.max(1, (int) Math.round(strength * (1.0 - Math.max(0.0, resistance))));
+  }
+
   private static int clamp(final long value, final int cap) {
     return WeakenedSources.clampStrength(Math.min(cap, value));
   }

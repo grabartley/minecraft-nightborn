@@ -10,6 +10,7 @@ public final class BloodMetabolism {
   static final int PULSE_TICKS = 200;
   static final int HEAL_ABOVE = BloodAttachment.FULL / 2;
   static final float MAX_EXHAUSTION = 40.0F;
+  static final double MIN_RATE = 0.01;
 
   private BloodMetabolism() {}
 
@@ -64,6 +65,13 @@ public final class BloodMetabolism {
       case RESTING -> GROUNDED;
       case NONE -> levitating ? settings.levitationDrainSeconds() : GROUNDED;
     };
+  }
+
+  public static int atRate(final int secondsPerBlood, final double drainRate) {
+    if (secondsPerBlood <= GROUNDED) {
+      return secondsPerBlood;
+    }
+    return Math.max(1, (int) Math.round(secondsPerBlood / Math.max(MIN_RATE, drainRate)));
   }
 
   private static float drainPerTick(final int secondsPerBlood) {

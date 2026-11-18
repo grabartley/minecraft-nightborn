@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "W": {
+      "tag": "minecraft:wool"
+    },
+    "L": {
+      "item": "minecraft:leather"
+    }
+  },
+  "pattern": [
+    "WLW",
+    "W W"
+  ],
+  "result": {
+    "count": 1,
+    "id": "nightborn:wide_brimmed_hat"
+  }
+}

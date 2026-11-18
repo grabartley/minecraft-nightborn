@@ -2,7 +2,7 @@ package com.grahambartley.nightborn.render;
 
 import com.grahambartley.nightborn.Nightborn;
 import com.grahambartley.nightborn.clothing.ClothingCut;
-import com.grahambartley.nightborn.clothing.ClothingPiece;
+import com.grahambartley.nightborn.clothing.Garment;
 import net.minecraft.util.Identifier;
 
 public final class ClothingArt {
@@ -11,15 +11,15 @@ public final class ClothingArt {
 
   private ClothingArt() {}
 
-  public static Identifier geo(final ClothingPiece piece, final ClothingCut cut) {
+  public static Identifier geo(final Garment piece, final ClothingCut cut) {
     return id("geo/armor/" + piece.id() + "_" + cut.id() + ".geo.json");
   }
 
-  public static Identifier texture(final ClothingPiece piece, final ClothingCut cut) {
+  public static Identifier texture(final Garment piece, final ClothingCut cut) {
     return id("textures/armor/" + piece.id() + "_" + cut.id() + ".png");
   }
 
-  public static Identifier animation(final ClothingPiece piece) {
+  public static Identifier animation(final Garment piece) {
     return id("animations/armor/" + piece.id() + ".animation.json");
   }
 

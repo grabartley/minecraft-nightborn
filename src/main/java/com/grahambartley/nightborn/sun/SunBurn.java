@@ -2,6 +2,7 @@ package com.grahambartley.nightborn.sun;
 
 import com.grahambartley.nightborn.advancement.Milestone;
 import com.grahambartley.nightborn.advancement.MilestoneCriterion;
+import com.grahambartley.nightborn.clothing.WornAttributes;
 import com.grahambartley.nightborn.config.SunSettings;
 import com.grahambartley.nightborn.smoke.SmokeParticles;
 import com.grahambartley.nightborn.sound.NightbornSounds;
@@ -42,7 +43,11 @@ public final class SunBurn {
         vampire.getSoundCategory(),
         0.7F,
         NightbornSounds.variedPitch(vampire.getRandom()));
-    if (vampire.damage(NightbornDamage.sun(world), settings.sunDamage()) && vampire.isAlive()) {
+    if (vampire.damage(
+            NightbornDamage.sun(world),
+            (float)
+                (settings.sunDamage() * WornAttributes.value(vampire, WornAttributes.SUN_DAMAGE)))
+        && vampire.isAlive()) {
       MilestoneCriterion.reach(vampire, Milestone.SUN_SURVIVED);
     }
     return true;

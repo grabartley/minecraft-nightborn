@@ -30,7 +30,7 @@ public final class CoatingClock {
       if (coat == null || Coatings.isAmmo(stack)) {
         continue;
       }
-      coat.afterCheck(CoatingTerms.of(coat.coating(), ServerConfigService.current()), now)
+      coat.afterCheck(CoatingTerms.of(coat.coating(), ServerConfigService.current(), stack), now)
           .ifPresentOrElse(
               left -> {
                 if (!left.equals(coat)) {

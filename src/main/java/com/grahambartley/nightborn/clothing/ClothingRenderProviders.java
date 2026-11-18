@@ -5,16 +5,15 @@ import software.bernie.geckolib.animatable.client.GeoRenderProvider;
 
 public final class ClothingRenderProviders {
 
-  private static Function<ClothingItem, GeoRenderProvider> factory =
-      item -> GeoRenderProvider.DEFAULT;
+  private static Function<Dressed, GeoRenderProvider> factory = item -> GeoRenderProvider.DEFAULT;
 
   private ClothingRenderProviders() {}
 
-  public static void use(final Function<ClothingItem, GeoRenderProvider> source) {
+  public static void use(final Function<Dressed, GeoRenderProvider> source) {
     factory = source;
   }
 
-  static GeoRenderProvider forItem(final ClothingItem item) {
+  public static GeoRenderProvider forItem(final Dressed item) {
     return factory.apply(item);
   }
 }

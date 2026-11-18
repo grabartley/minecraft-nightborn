@@ -1,0 +1,84 @@
+{
+	"format_version": "1.12.0",
+	"minecraft:geometry": [
+		{
+			"description": {
+				"identifier": "geometry.velvet_choker_female",
+				"texture_width": 64,
+				"texture_height": 64,
+				"visible_bounds_width": 2,
+				"visible_bounds_height": 3.5,
+				"visible_bounds_offset": [
+					0,
+					1.25,
+					0
+				]
+			},
+			"bones": [
+				{
+					"name": "armorBody",
+					"pivot": [
+						0,
+						24,
+						0
+					]
+				},
+				{
+					"name": "choker_band",
+					"parent": "armorBody",
+					"pivot": [
+						0,
+						24,
+						0
+					],
+					"cubes": [
+						{
+							"origin": [
+								-4,
+								23,
+								-2
+							],
+							"size": [
+								8,
+								1,
+								4
+							],
+							"inflate": 0.6,
+							"uv": [
+								0,
+								0
+							]
+						}
+					]
+				},
+				{
+					"name": "choker_drop",
+					"parent": "armorBody",
+					"pivot": [
+						0,
+						23,
+						-2.9
+					],
+					"cubes": [
+						{
+							"origin": [
+								-1,
+								20.5,
+								-3.6
+							],
+							"size": [
+								2,
+								3,
+								1
+							],
+							"uv": [
+								0,
+								8
+							]
+						}
+					]
+				}
+			]
+		}
+	]
+}

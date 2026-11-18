@@ -1,0 +1,58 @@
+{
+  "anvil_cost": 4,
+  "description": {
+    "translate": "enchantment.nightborn.bloodletting"
+  },
+  "effects": {
+    "minecraft:post_attack": [
+      {
+        "affected": "attacker",
+        "enchanted": "attacker",
+        "effect": {
+          "type": "nightborn:bloodletting",
+          "blows": {
+            "type": "minecraft:lookup",
+            "values": [
+              4,
+              3,
+              2
+            ],
+            "fallback": {
+              "type": "minecraft:linear",
+              "base": 2,
+              "per_level_above_first": 0
+            }
+          }
+        },
+        "requirements": {
+          "condition": "minecraft:all_of",
+          "terms": [
+            {
+              "condition": "nightborn:vampire",
+              "entity": "attacker"
+            },
+            {
+              "condition": "nightborn:has_blood",
+              "entity": "this"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "max_cost": {
+    "base": 60,
+    "per_level_above_first": 10
+  },
+  "max_level": 3,
+  "min_cost": {
+    "base": 10,
+    "per_level_above_first": 10
+  },
+  "primary_items": "#minecraft:enchantable/sword",
+  "slots": [
+    "mainhand"
+  ],
+  "supported_items": "#minecraft:enchantable/weapon",
+  "weight": 2
+}

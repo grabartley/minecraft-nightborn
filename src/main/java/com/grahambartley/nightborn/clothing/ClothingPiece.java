@@ -3,12 +3,11 @@ package com.grahambartley.nightborn.clothing;
 import java.util.Locale;
 import net.minecraft.item.ArmorItem;
 
-public enum ClothingPiece {
+public enum ClothingPiece implements Garment {
   TRICORNE(ArmorItem.Type.HELMET, ClothingFabric.CLOTH, 0x24201F),
   TOP_HAT(ArmorItem.Type.HELMET, ClothingFabric.CLOTH, 0x1C1A1D),
-  MOURNING_VEIL(ArmorItem.Type.HELMET, ClothingFabric.CLOTH, 0x1A1719),
+  WIDE_BRIMMED_HAT(ArmorItem.Type.HELMET, ClothingFabric.CLOTH, 0x211D1E),
   FROCK_COAT(ArmorItem.Type.CHESTPLATE, ClothingFabric.CLOTH, 0x2B2326),
-  HIGH_COLLARED_CAPE(ArmorItem.Type.CHESTPLATE, ClothingFabric.CLOTH, 0x5A1A24),
   CORSET(ArmorItem.Type.CHESTPLATE, ClothingFabric.CLOTH, 0x1F4A3A),
   DOUBLET(ArmorItem.Type.CHESTPLATE, ClothingFabric.CLOTH, 0x4A1C2A),
   BREECHES(ArmorItem.Type.LEGGINGS, ClothingFabric.CLOTH, 0x2A2427),
@@ -29,6 +28,7 @@ public enum ClothingPiece {
     this.undyedColor = undyedColor;
   }
 
+  @Override
   public String id() {
     return name().toLowerCase(Locale.ROOT);
   }
@@ -45,10 +45,12 @@ public enum ClothingPiece {
     return this.type.getMaxDamage(LEATHER_DURABILITY_MULTIPLIER);
   }
 
+  @Override
   public boolean dyeable() {
     return this.fabric.dyeable();
   }
 
+  @Override
   public int undyedColor() {
     return this.undyedColor;
   }

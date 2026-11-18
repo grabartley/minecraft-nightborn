@@ -1,0 +1,17 @@
+{
+  "values": [
+    "#nightborn:enchantable/head_clothing",
+    "#nightborn:enchantable/chest_clothing",
+    "#nightborn:enchantable/legs_clothing",
+    "#nightborn:enchantable/feet_clothing",
+    "#minecraft:enchantable/weapon",
+    "#trinkets:hand/ring",
+    "#trinkets:offhand/ring",
+    "#trinkets:chest/necklace",
+    "#trinkets:chest/back",
+    "#trinkets:hand/glove",
+    "#trinkets:legs/belt",
+    "#trinkets:head/face",
+    "#trinkets:chest/brooch"
+  ]
+}

@@ -1,6 +1,7 @@
 package com.grahambartley.nightborn.mob.look;
 
-import com.grahambartley.nightborn.clothing.ClothingItem;
+import com.grahambartley.nightborn.accessory.AccessorySlot;
+import com.grahambartley.nightborn.clothing.Dressed;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.Optional;
@@ -19,7 +20,9 @@ public final class OutfitDressing {
   private OutfitDressing() {}
 
   public static Optional<EquipmentSlot> slot(final Item item) {
-    return item instanceof ArmorItem armor ? Optional.of(armor.getSlotType()) : Optional.empty();
+    return item instanceof ArmorItem armor
+        ? Optional.of(armor.getSlotType())
+        : AccessorySlot.fitting(new ItemStack(item)).map(AccessorySlot::body);
   }
 
   public static Map<EquipmentSlot, ItemStack> stacks(
@@ -38,8 +41,8 @@ public final class OutfitDressing {
 
   private static ItemStack stack(final Item item, final Optional<Integer> color) {
     final ItemStack stack = new ItemStack(item);
-    if (item instanceof ClothingItem clothing
-        ? clothing.piece().dyeable()
+    if (item instanceof Dressed dressed
+        ? dressed.garment().dyeable()
         : stack.isIn(ItemTags.DYEABLE)) {
       color.ifPresent(
           rgb -> stack.set(DataComponentTypes.DYED_COLOR, new DyedColorComponent(rgb, true)));

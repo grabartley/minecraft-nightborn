@@ -106,12 +106,12 @@ public final class RigArmorLayer<T extends GeoAnimatable> extends GeoRenderLayer
       geo.prepForRender(wearing, stack, piece.slot(), model, bufferSource, partialTick, 0, 0, 0, 0);
       geo.applyBoneVisibilityByPart(piece.slot(), part, model);
       geo.render(poseStack, null, packedLight, packedOverlay, Color.WHITE.argbInt());
-    } else {
+    } else if (stack.getItem() instanceof ArmorItem armor) {
       render(
           poseStack,
           bufferSource,
           stack,
-          ((ArmorItem) stack.getItem()).getMaterial(),
+          armor.getMaterial(),
           piece.slot(),
           part,
           packedLight,

@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.google.gson.JsonParser;
 import com.grahambartley.nightborn.MinecraftBootstrapExtension;
+import com.grahambartley.nightborn.accessory.AccessorySlot;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.JsonOps;
 import java.io.IOException;
@@ -38,7 +39,30 @@ class VampireLooksTest {
             read("vampire_look", VampireLook.CODEC),
             read("vampire_outfit", VampireOutfit.CODEC),
             read("vampire_build", VampireBuild.CODEC),
-            VampireLooks::slotOf));
+            id -> VampireLooks.slotOf(id).or(() -> accessorySlot(id))));
+  }
+
+  private static java.util.Optional<net.minecraft.entity.EquipmentSlot> accessorySlot(
+      final Identifier item) {
+    return Stream.of(AccessorySlot.values())
+        .filter(slot -> taggedIn(slot, item))
+        .findFirst()
+        .map(AccessorySlot::body);
+  }
+
+  private static boolean taggedIn(final AccessorySlot slot, final Identifier item) {
+    final Path tag = Path.of("src/main/resources/data/trinkets/tags/item/" + slot.id() + ".json");
+    try {
+      return Files.exists(tag)
+          && JsonParser.parseString(Files.readString(tag))
+              .getAsJsonObject()
+              .getAsJsonArray("values")
+              .asList()
+              .stream()
+              .anyMatch(value -> value.getAsString().equals(item.toString()));
+    } catch (final IOException e) {
+      throw new java.io.UncheckedIOException(e);
+    }
   }
 
   @Test

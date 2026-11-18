@@ -50,7 +50,8 @@ public final class Coatings {
   public static Optional<Coat> live(
       final ItemStack stack, final NightbornConfig config, final long now) {
     return of(stack)
-        .filter(coat -> coat.live(CoatingTerms.of(coat.coating(), config), now, isAmmo(stack)));
+        .filter(
+            coat -> coat.live(CoatingTerms.of(coat.coating(), config, stack), now, isAmmo(stack)));
   }
 
   public static boolean isAmmo(final ItemStack stack) {

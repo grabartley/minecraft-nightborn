@@ -1,5 +1,6 @@
 package com.grahambartley.nightborn;
 
+import com.grahambartley.nightborn.accessory.AccessoryFeatures;
 import com.grahambartley.nightborn.advancement.MilestoneCriterion;
 import com.grahambartley.nightborn.clothing.ClothingFeatures;
 import com.grahambartley.nightborn.coffin.Coffins;
@@ -7,6 +8,7 @@ import com.grahambartley.nightborn.decor.DecorBlockEntities;
 import com.grahambartley.nightborn.decor.DecorBlocks;
 import com.grahambartley.nightborn.decor.DecorEntities;
 import com.grahambartley.nightborn.decor.DecorItemGroup;
+import com.grahambartley.nightborn.enchant.EnchantFeatures;
 import com.grahambartley.nightborn.faction.FactionAttachment;
 import com.grahambartley.nightborn.familiar.Familiars;
 import com.grahambartley.nightborn.gear.GearFeatures;
@@ -52,7 +54,9 @@ public class Nightborn implements ModInitializer {
     GuildFeatures.register();
     MindFeatures.register();
     OccultFeatures.register();
+    EnchantFeatures.register();
     ClothingFeatures.register();
+    AccessoryFeatures.register();
     NightbornStructures.initialize();
     RitualFeatures.register();
     LOGGER.info("Nightborn initialised");
