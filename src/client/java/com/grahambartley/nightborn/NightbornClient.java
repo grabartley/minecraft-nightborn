@@ -34,6 +34,7 @@ import com.grahambartley.nightborn.guild.GuildMobs;
 import com.grahambartley.nightborn.inquisitor.InquisitorMobs;
 import com.grahambartley.nightborn.mob.NightbornMobs;
 import com.grahambartley.nightborn.occult.GhostlyFamiliars;
+import com.grahambartley.nightborn.occult.RestlessDead;
 import com.grahambartley.nightborn.render.AccessoryRenderer;
 import com.grahambartley.nightborn.render.AmmoModels;
 import com.grahambartley.nightborn.render.BoltEntityRenderer;
@@ -44,6 +45,7 @@ import com.grahambartley.nightborn.render.CoffinRenderer;
 import com.grahambartley.nightborn.render.FurnitureBlockRenderer;
 import com.grahambartley.nightborn.render.GeoBlockItemRenderer;
 import com.grahambartley.nightborn.render.GramophoneRenderer;
+import com.grahambartley.nightborn.render.RestlessDeadRenderer;
 import com.grahambartley.nightborn.render.RitualAltarRenderer;
 import com.grahambartley.nightborn.render.VampireBatRenderer;
 import com.grahambartley.nightborn.render.VampireRenderer;
@@ -127,6 +129,7 @@ public class NightbornClient implements ClientModInitializer {
     EntityRendererRegistry.register(Thralls.THRALL, ThrallRenderer::new);
     EntityRendererRegistry.register(
         GhostlyFamiliars.GHOSTLY_FAMILIAR, GhostlyFamiliarRenderer::new);
+    EntityRendererRegistry.register(RestlessDead.TYPE, RestlessDeadRenderer::new);
     EntityRendererRegistry.register(GuildMobs.HUNTER, HunterRenderer::new);
     EntityRendererRegistry.register(GuildMobs.GUILD_MASTER, HunterRenderer::new);
     EntityRendererRegistry.register(InquisitorMobs.GRAND_INQUISITOR, HunterRenderer::new);

@@ -1,0 +1,29 @@
+{
+  "branch": "nightborn:occult",
+  "requires": [
+    "nightborn:occult/black_mass"
+  ],
+  "icon": "nightborn:skills/icon/spirit_pact",
+  "column": 1,
+  "row": 6,
+  "stage": "nightborn:ancient",
+  "ranks": [
+    {
+      "cost": 3,
+      "attributes": [
+        {
+          "attribute": "nightborn:familiar_time",
+          "amount": 0.5,
+          "operation": "add_value"
+        }
+      ],
+      "power_gifts": [
+        {
+          "branch": "nightborn:occult",
+          "blood_cut": 1,
+          "cooldown_cut": 0.2
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "branch": "nightborn:noble",
+  "requires": [
+    "nightborn:noble/mesmerise"
+  ],
+  "icon": "nightborn:skills/icon/mesmerise",
+  "column": 1,
+  "row": 2,
+  "ranks": [
+    {
+      "cost": 2
+    }
+  ],
+  "power": {
+    "blood": 2,
+    "cooldown_ticks": 600,
+    "command": {
+      "range": 12.0,
+      "duration_ticks": 600
+    },
+    "sound": "minecraft:entity.illusioner.cast_spell",
+    "mob": {
+      "min_range": 0.0,
+      "max_range": 12.0,
+      "tell_ticks": 10,
+      "tell_sound": "minecraft:entity.illusioner.prepare_mirror",
+      "tell_clip": "mesmerise"
+    }
+  }
+}

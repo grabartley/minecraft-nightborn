@@ -8,6 +8,7 @@
 		"ArrowEntityMixin",
 		"BedBlockMixin",
 		"BlockItemMixin",
+		"BlockStateCollisionMixin",
 		"CobwebBlockMixin",
 		"CreeperEntityMixin",
 		"CrossbowItemMixin",

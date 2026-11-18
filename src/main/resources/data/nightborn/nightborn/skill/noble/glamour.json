@@ -1,0 +1,23 @@
+{
+  "branch": "nightborn:noble",
+  "requires": [
+    "nightborn:noble/silver_tongue"
+  ],
+  "icon": "nightborn:skills/icon/silver_tongue",
+  "column": 2,
+  "row": 3,
+  "stage": "nightborn:elder",
+  "ranks": [
+    {
+      "cost": 3
+    }
+  ],
+  "power": {
+    "blood": 5,
+    "cooldown_ticks": 3600,
+    "glamour": {
+      "duration_ticks": 600
+    },
+    "sound": "minecraft:entity.illusioner.mirror_move"
+  }
+}

@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import com.google.gson.JsonParser;
 import com.grahambartley.nightborn.MinecraftBootstrapExtension;
 import com.mojang.serialization.JsonOps;
+import java.util.Optional;
 import net.minecraft.entity.EntityType;
 import net.minecraft.registry.Registries;
 import net.minecraft.util.math.intprovider.ConstantIntProvider;
@@ -46,7 +47,28 @@ class SummonPowerTest {
   void offset(final double roll, final float spread, final double offset) {
     final SummonPower power =
         new SummonPower(
-            Registries.ENTITY_TYPE.getEntry(EntityType.BAT), ConstantIntProvider.create(1), spread);
+            Registries.ENTITY_TYPE.getEntry(EntityType.BAT),
+            ConstantIntProvider.create(1),
+            spread,
+            Optional.empty(),
+            Optional.empty(),
+            Optional.empty());
     assertEquals(offset, power.offset(roll), 1.0E-6);
+  }
+
+  @ParameterizedTest(name = "{0}")
+  @CsvSource(
+      delimiter = '|',
+      value = {
+        "{\"entity\":\"minecraft:zombie\",\"count\":3,\"lifetime_ticks\":600,\"health\":20,\"damage\":4} | 600 | 20 | 4",
+        "{\"entity\":\"minecraft:bat\",\"count\":3} | 0 | 0 | 0"
+      })
+  @DisplayName("a summon may set how long its creatures stay and how strong they are")
+  void binds(final String json, final int lifetime, final float health, final float damage) {
+    final SummonPower power =
+        SummonPower.CODEC.parse(JsonOps.INSTANCE, JsonParser.parseString(json)).getOrThrow();
+    assertEquals(lifetime, power.lifetimeTicks().orElse(0));
+    assertEquals(health, power.health().orElse(0.0F));
+    assertEquals(damage, power.damage().orElse(0.0F));
   }
 }

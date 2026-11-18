@@ -10,5 +10,10 @@ public final class OccultFeatures {
     GhostlyFamiliars.register();
     FamiliarModeOrders.register();
     FogClouds.register();
+    RestlessDead.register();
+    Hexes.register();
+    MistForm.register();
+    Circles.register();
+    Swarms.register();
   }
 }

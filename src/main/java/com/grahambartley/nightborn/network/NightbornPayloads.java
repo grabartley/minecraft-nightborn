@@ -16,6 +16,7 @@ public final class NightbornPayloads {
     PayloadTypeRegistry.playS2C().register(OpenNamingPayload.ID, OpenNamingPayload.CODEC);
     PayloadTypeRegistry.playS2C().register(StageNamePayload.ID, StageNamePayload.CODEC);
     PayloadTypeRegistry.playS2C().register(MirrorPayload.ID, MirrorPayload.CODEC);
+    PayloadTypeRegistry.playS2C().register(RevealPayload.ID, RevealPayload.CODEC);
     PayloadTypeRegistry.playS2C().register(OpenWheelPayload.ID, OpenWheelPayload.CODEC);
     PayloadTypeRegistry.playC2S().register(EditConfigPayload.ID, EditConfigPayload.CODEC);
     PayloadTypeRegistry.playC2S().register(BuySkillPayload.ID, BuySkillPayload.CODEC);

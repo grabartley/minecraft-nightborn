@@ -45,7 +45,8 @@ public final class BiteRules {
       boolean alive,
       boolean warded,
       boolean finishable,
-      boolean guarded) {}
+      boolean guarded,
+      boolean pinned) {}
 
   public static boolean drinkable(final boolean warmBlood, final boolean vampire) {
     return warmBlood && !vampire;
@@ -91,7 +92,7 @@ public final class BiteRules {
     if (!biter.vampire()) {
       return Decision.NOT_A_VAMPIRE;
     }
-    if (!biter.emptyHand() || !biter.sneaking() && !target.finishable()) {
+    if (!biter.emptyHand() || !biter.sneaking() && !target.finishable() && !target.pinned()) {
       return Decision.NOT_A_BITE;
     }
     if (!target.alive() || !drinkable(target.warmBlood(), target.vampire())) {
@@ -109,6 +110,6 @@ public final class BiteRules {
     if (target.player() && !pvp) {
       return Decision.PVP_OFF;
     }
-    return biter.sneaking() ? Decision.BITE : Decision.FINISH;
+    return biter.sneaking() || !target.finishable() ? Decision.BITE : Decision.FINISH;
   }
 }

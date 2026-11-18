@@ -141,7 +141,7 @@ class SkillTest {
       delimiter = '|',
       value = {
         "{\"branch\":\"nightborn:core\",\"ranks\":[{\"cost\":1}],\"icon\":\"nightborn:x\",\"column\":3}",
-        "{\"branch\":\"nightborn:core\",\"ranks\":[{\"cost\":1}],\"icon\":\"nightborn:x\",\"row\":6}",
+        "{\"branch\":\"nightborn:core\",\"ranks\":[{\"cost\":1}],\"icon\":\"nightborn:x\",\"row\":7}",
         "{\"branch\":\"nightborn:core\",\"ranks\":[{\"cost\":-1}],\"icon\":\"nightborn:x\"}",
         "{\"ranks\":[{\"cost\":1}],\"icon\":\"nightborn:x\"}",
         "{\"branch\":\"nightborn:core\",\"ranks\":[],\"icon\":\"nightborn:x\"}",

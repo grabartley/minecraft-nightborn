@@ -30,5 +30,6 @@
       "tell_sound": "minecraft:entity.evoker.prepare_attack",
       "tell_clip": "hiss"
     }
-  }
+  },
+  "stage": "nightborn:adult"
 }

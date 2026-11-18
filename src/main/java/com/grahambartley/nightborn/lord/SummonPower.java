@@ -2,12 +2,19 @@ package com.grahambartley.nightborn.lord;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import java.util.Optional;
 import net.minecraft.entity.EntityType;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.util.math.intprovider.IntProvider;
 
-public record SummonPower(RegistryEntry<EntityType<?>> entity, IntProvider count, float spread) {
+public record SummonPower(
+    RegistryEntry<EntityType<?>> entity,
+    IntProvider count,
+    float spread,
+    Optional<Integer> lifetimeTicks,
+    Optional<Float> health,
+    Optional<Float> damage) {
 
   public static final int MOST = 8;
 
@@ -25,7 +32,16 @@ public record SummonPower(RegistryEntry<EntityType<?>> entity, IntProvider count
                           .forGetter(SummonPower::count),
                       Codec.floatRange(0.0F, 8.0F)
                           .optionalFieldOf("spread", 1.5F)
-                          .forGetter(SummonPower::spread))
+                          .forGetter(SummonPower::spread),
+                      Codec.intRange(1, 72000)
+                          .optionalFieldOf("lifetime_ticks")
+                          .forGetter(SummonPower::lifetimeTicks),
+                      Codec.floatRange(1.0F, 1024.0F)
+                          .optionalFieldOf("health")
+                          .forGetter(SummonPower::health),
+                      Codec.floatRange(0.0F, 1024.0F)
+                          .optionalFieldOf("damage")
+                          .forGetter(SummonPower::damage))
                   .apply(instance, SummonPower::new));
 
   public double offset(final double roll) {

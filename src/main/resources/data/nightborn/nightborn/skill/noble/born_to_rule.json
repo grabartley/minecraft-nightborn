@@ -1,0 +1,28 @@
+{
+  "branch": "nightborn:noble",
+  "requires": [
+    "nightborn:noble/sovereigns_gaze"
+  ],
+  "icon": "nightborn:skills/icon/dark_court",
+  "column": 1,
+  "row": 5,
+  "stage": "nightborn:ancient",
+  "ranks": [
+    {
+      "cost": 3,
+      "attributes": [
+        {
+          "attribute": "nightborn:servant_vigour",
+          "amount": 0.25,
+          "operation": "add_value"
+        }
+      ],
+      "power_gifts": [
+        {
+          "branch": "nightborn:noble",
+          "cooldown_cut": 0.2
+        }
+      ]
+    }
+  ]
+}

@@ -13,6 +13,26 @@
           "operation": "add_value"
         }
       ]
+    },
+    {
+      "cost": 2,
+      "attributes": [
+        {
+          "attribute": "minecraft:generic.armor",
+          "amount": 2.0,
+          "operation": "add_value"
+        }
+      ]
+    },
+    {
+      "cost": 2,
+      "attributes": [
+        {
+          "attribute": "minecraft:generic.armor",
+          "amount": 2.0,
+          "operation": "add_value"
+        }
+      ]
     }
   ]
 }

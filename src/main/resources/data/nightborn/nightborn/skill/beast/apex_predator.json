@@ -1,0 +1,22 @@
+{
+  "branch": "nightborn:beast",
+  "requires": [
+    "nightborn:beast/night_terror"
+  ],
+  "icon": "nightborn:skills/icon/beast_claws",
+  "column": 1,
+  "row": 5,
+  "stage": "nightborn:ancient",
+  "ranks": [
+    {
+      "cost": 3,
+      "power_gifts": [
+        {
+          "branch": "nightborn:beast",
+          "blood_cut": 1,
+          "cooldown_cut": 0.2
+        }
+      ]
+    }
+  ]
+}

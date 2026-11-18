@@ -1,0 +1,24 @@
+{
+  "branch": "nightborn:beast",
+  "requires": [
+    "nightborn:beast/beast_blood"
+  ],
+  "icon": "nightborn:skills/icon/beast_blood",
+  "column": 1,
+  "row": 2,
+  "stage": "nightborn:adult",
+  "ranks": [
+    {
+      "cost": 2
+    }
+  ],
+  "power": {
+    "blood": 1,
+    "cooldown_ticks": 600,
+    "sense": {
+      "range": 24.0,
+      "duration_ticks": 160
+    },
+    "sound": "minecraft:entity.warden.heartbeat"
+  }
+}

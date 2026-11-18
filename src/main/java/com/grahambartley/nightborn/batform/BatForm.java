@@ -17,6 +17,7 @@ import com.grahambartley.nightborn.village.SuspicionCause;
 import com.grahambartley.nightborn.village.VampireSigns;
 import com.grahambartley.nightborn.weakened.Weakened;
 import com.mojang.serialization.Codec;
+import java.util.List;
 import java.util.Optional;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentRegistry;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentSyncPredicate;
@@ -76,6 +77,10 @@ public final class BatForm {
     return NightbornMobs.VAMPIRE_BAT.getDimensions();
   }
 
+  public static EntityDimensions dimensions(final Entity entity) {
+    return dimensions().scaled(WingedForm.scale(entity));
+  }
+
   public static void enter(final LivingEntity vampire) {
     if (isBat(vampire)) {
       return;
@@ -108,6 +113,7 @@ public final class BatForm {
       vampire.requestTeleport(feet.x, feet.y, feet.z);
     }
     vampire.removeAttached(TYPE);
+    WingedForm.left(vampire);
     vampire.calculateDimensions();
     if (vampire instanceof ServerPlayerEntity player) {
       player.interactionManager.getGameMode().setAbilities(player.getAbilities());
@@ -123,17 +129,21 @@ public final class BatForm {
     if (!isBat(vampire)) {
       return;
     }
-    final Optional<BatFormPower> form = Powers.ownedBatForm(vampire);
+    final Optional<List<String>> forcing =
+        WingedForm.forcedBy(vampire)
+            .or(() -> Powers.ownedBatForm(vampire).map(BatFormPower::forcedBy));
     if (BatFormRules.forcedOut(
             DirectSun.on(vampire),
             downed,
-            form.map(power -> BatFormRules.warded(Weakened.sources(vampire), power.forcedBy()))
+            forcing
+                .map(forced -> BatFormRules.warded(Weakened.sources(vampire), forced))
                 .orElse(false),
             BloodAttachment.get(vampire),
-            form.isPresent())
+            forcing.isPresent())
         && leave(vampire)) {
       return;
     }
+    WingedForm.tick(vampire);
     vampire.fallDistance = 0.0F;
     if (vampire instanceof ServerPlayerEntity player) {
       BatHang.tick(player);
@@ -143,7 +153,9 @@ public final class BatForm {
 
   public static BatEffort effort(final LivingEntity vampire) {
     return BatEffort.of(
-        isBat(vampire), BatHang.isHanging(vampire) || perched(vampire), vampire.isSprinting());
+        isBat(vampire) && !WingedForm.on(vampire),
+        BatHang.isHanging(vampire) || perched(vampire),
+        vampire.isSprinting());
   }
 
   private static boolean perched(final LivingEntity vampire) {

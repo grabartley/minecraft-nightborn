@@ -1,0 +1,23 @@
+{
+  "branch": "nightborn:occult",
+  "requires": [
+    "nightborn:occult/shadow_veil"
+  ],
+  "icon": "nightborn:skills/icon/shadow_veil",
+  "column": 2,
+  "row": 4,
+  "stage": "nightborn:elder",
+  "ranks": [
+    {
+      "cost": 3
+    }
+  ],
+  "power": {
+    "blood": 4,
+    "cooldown_ticks": 1200,
+    "mist": {
+      "duration_ticks": 160,
+      "harm": 2.0
+    }
+  }
+}

@@ -19,15 +19,22 @@ public final class MindFeatures {
     MindTies.register();
     Thralls.register();
     Gazes.register();
+    Commands.register();
+    Dreads.register();
+    Glamour.register();
     ServerLivingEntityEvents.ALLOW_DAMAGE.register(MindFeatures::allowDamage);
     UseEntityCallback.EVENT.register(Charm::onUse);
   }
 
   public static boolean stilled(final LivingEntity entity) {
-    return entity instanceof MobEntity && MindTies.mesmerised(entity);
+    return entity instanceof MobEntity
+        && (MindTies.mesmerised(entity) || entity.hasStatusEffect(MindEffect.COWED));
   }
 
   public static boolean hold(final MobEntity mob) {
+    if (Commands.drive(mob)) {
+      return true;
+    }
     if (!stilled(mob)) {
       return false;
     }

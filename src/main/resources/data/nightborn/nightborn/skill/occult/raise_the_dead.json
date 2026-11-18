@@ -1,0 +1,35 @@
+{
+  "branch": "nightborn:occult",
+  "requires": [
+    "nightborn:occult/summon_familiar"
+  ],
+  "icon": "nightborn:skills/icon/summon_familiar",
+  "column": 0,
+  "row": 3,
+  "stage": "nightborn:elder",
+  "ranks": [
+    {
+      "cost": 3
+    }
+  ],
+  "power": {
+    "blood": 5,
+    "cooldown_ticks": 2400,
+    "summon": {
+      "entity": "nightborn:restless_dead",
+      "count": 3,
+      "spread": 2.0,
+      "lifetime_ticks": 600,
+      "health": 20.0,
+      "damage": 4.0
+    },
+    "sound": "minecraft:entity.zombie_villager.cure",
+    "mob": {
+      "min_range": 0.0,
+      "max_range": 16.0,
+      "tell_ticks": 14,
+      "tell_sound": "minecraft:entity.evoker.prepare_summon",
+      "tell_clip": "mesmerise"
+    }
+  }
+}

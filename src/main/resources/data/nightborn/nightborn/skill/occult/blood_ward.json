@@ -1,0 +1,41 @@
+{
+  "branch": "nightborn:occult",
+  "requires": [
+    "nightborn:occult/grave_fog"
+  ],
+  "icon": "nightborn:skills/icon/grave_fog",
+  "column": 1,
+  "row": 2,
+  "stage": "nightborn:adult",
+  "ranks": [
+    {
+      "cost": 3
+    }
+  ],
+  "power": {
+    "blood": 4,
+    "cooldown_ticks": 1800,
+    "circle": {
+      "radius": 4.0,
+      "duration_ticks": 600,
+      "damage": 1.0,
+      "effects": [
+        {
+          "id": "minecraft:slowness",
+          "amplifier": 0,
+          "duration": 30,
+          "show_icon": true
+        }
+      ],
+      "stops_prayers": true
+    },
+    "sound": "minecraft:block.respawn_anchor.charge",
+    "mob": {
+      "min_range": 0.0,
+      "max_range": 4.0,
+      "tell_ticks": 12,
+      "tell_sound": "minecraft:entity.evoker.prepare_attack",
+      "tell_clip": "hiss"
+    }
+  }
+}

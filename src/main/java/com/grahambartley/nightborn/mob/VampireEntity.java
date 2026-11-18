@@ -159,7 +159,7 @@ public class VampireEntity extends HostileEntity
   @Override
   public EntityDimensions getBaseDimensions(final EntityPose pose) {
     if (BatForm.isBat(this)) {
-      return BatForm.dimensions();
+      return BatForm.dimensions(this);
     }
     return VampireSize.dimensions(super.getBaseDimensions(pose), height(), width());
   }

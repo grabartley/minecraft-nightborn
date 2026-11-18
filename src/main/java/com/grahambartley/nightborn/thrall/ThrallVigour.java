@@ -2,6 +2,8 @@ package com.grahambartley.nightborn.thrall;
 
 import com.grahambartley.nightborn.Nightborn;
 import com.grahambartley.nightborn.accessory.GiftAttributes;
+import com.grahambartley.nightborn.mind.MindAttributes;
+import com.grahambartley.nightborn.servant.ServantVigour;
 import com.grahambartley.nightborn.vampire.Modifiers;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.attribute.EntityAttributes;
@@ -27,6 +29,7 @@ public final class ThrallVigour {
   }
 
   private static void apply(final ThrallEntity thrall, final ServerPlayerEntity master) {
+    ServantVigour.apply(thrall, MindAttributes.value(master, MindAttributes.SERVANT_VIGOUR));
     final double bonus = bonus(GiftAttributes.value(master, GiftAttributes.THRALL_HEALTH));
     if (bonus <= 0.0) {
       Modifiers.remove(thrall, EntityAttributes.GENERIC_MAX_HEALTH, MODIFIER);
