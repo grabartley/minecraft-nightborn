@@ -102,4 +102,26 @@ class HouseholdTest {
   void ceilingBounds(final int ceiling, final boolean loads) {
     assertEquals(loads, ceilinged(", \"ceiling\": " + ceiling).isSuccess());
   }
+
+  @ParameterizedTest(name = "{0}: head after a refill {1}")
+  @CsvSource(
+      delimiter = '|',
+      value = {
+        "{\"resident\": \"nightborn:vampire_lord\"} | true",
+        "{\"resident\": \"nightborn:eldest\", \"returns\": false} | false",
+        "none | false"
+      })
+  @DisplayName("a household that moves in again brings its head only if that head returns")
+  void returning(final String head, final boolean keepsHead) {
+    final String json =
+        "{\"resident\": \"minecraft:zombie\", \"residents\": 2"
+            + ("none".equals(head) ? "" : ", \"head\": " + head)
+            + "}";
+    final Household household =
+        Household.CODEC.parse(JsonOps.INSTANCE, JsonParser.parseString(json)).getOrThrow();
+    final Household returning = household.returning();
+    assertEquals(keepsHead, returning.head().isPresent());
+    assertEquals(household.residents(), returning.residents());
+    assertEquals(household.resident(), returning.resident());
+  }
 }

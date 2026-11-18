@@ -59,7 +59,8 @@ class HouseholdHeadTest {
             net.minecraft.registry.Registries.ENTITY_TYPE.getEntry(
                 com.grahambartley.nightborn.mob.NightbornMobs.VAMPIRE_LORD),
             odds,
-            HeadSeat.LOWEST);
+            HeadSeat.LOWEST,
+            true);
     odds.clear();
     assertEquals(count, head.stages().size());
   }
@@ -91,5 +92,23 @@ class HouseholdHeadTest {
     assertEquals(
         false,
         HouseholdHead.CODEC.parse(JsonOps.INSTANCE, JsonParser.parseString(json)).isSuccess());
+  }
+
+  @ParameterizedTest(name = "{0}: returns {1}")
+  @CsvSource(
+      delimiter = '|',
+      value = {
+        "{\"resident\": \"nightborn:vampire_lord\"} | true",
+        "{\"resident\": \"nightborn:vampire_lord\", \"returns\": true} | true",
+        "{\"resident\": \"nightborn:eldest\", \"returns\": false} | false"
+      })
+  @DisplayName("a head returns with a new household unless its data says it never does")
+  void returns(final String json, final boolean returns) {
+    assertEquals(
+        returns,
+        HouseholdHead.CODEC
+            .parse(JsonOps.INSTANCE, JsonParser.parseString(json))
+            .getOrThrow()
+            .returns());
   }
 }

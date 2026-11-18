@@ -47,6 +47,12 @@ public record Household(
     stages = Map.copyOf(stages);
   }
 
+  public Household returning() {
+    return head.filter(HouseholdHead::returns).isPresent() || head.isEmpty()
+        ? this
+        : new Household(resident, residents, stages, Optional.empty(), ceiling);
+  }
+
   public int shelterTop(final int floorY, final int heartTop) {
     return ceiling.map(height -> Math.min(heartTop, floorY + HEADROOM + height)).orElse(heartTop);
   }

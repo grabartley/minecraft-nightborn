@@ -36,6 +36,7 @@ import com.grahambartley.nightborn.sun.SunShafts;
 import com.grahambartley.nightborn.vampire.VampireFeatures;
 import com.grahambartley.nightborn.village.VillageFeatures;
 import com.grahambartley.nightborn.wheel.CommandWheel;
+import com.grahambartley.nightborn.wild.WildFeatures;
 import net.fabricmc.api.ModInitializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -82,6 +83,7 @@ public class Nightborn implements ModInitializer {
     RitualFeatures.register();
     HouseFeatures.register();
     VillageFeatures.register();
+    WildFeatures.register();
     ChallengeFeatures.register();
     LOGGER.info("Nightborn initialised");
   }

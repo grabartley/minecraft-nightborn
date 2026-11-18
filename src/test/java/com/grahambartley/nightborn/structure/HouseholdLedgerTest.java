@@ -53,4 +53,17 @@ class HouseholdLedgerTest {
     assertEquals(false, ledger.forget(MANOR, VAMPIRE));
     assertEquals(false, ledger.records().containsKey(MANOR));
   }
+
+  @ParameterizedTest(name = "{0}: known {1}")
+  @CsvSource({"crypt, true", "manor, true", "elsewhere, false"})
+  @DisplayName("only a household the ledger has recorded is known to it")
+  void known(final String home, final boolean known) {
+    final GlobalPos pos =
+        switch (home) {
+          case "crypt" -> CRYPT;
+          case "manor" -> MANOR;
+          default -> at(500, 64, 500);
+        };
+    assertEquals(known, ledger().known(pos));
+  }
 }

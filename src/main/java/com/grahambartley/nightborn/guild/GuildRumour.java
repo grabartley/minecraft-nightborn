@@ -47,6 +47,10 @@ public final class GuildRumour implements WheelAction<GuildMasterEntity> {
   @Override
   public void perform(
       final ServerPlayerEntity player, final GuildMasterEntity master, final WheelEntry chosen) {
+    tell(player, master);
+  }
+
+  public static void tell(final ServerPlayerEntity player, final GuildMasterEntity master) {
     if (!(master.getWorld() instanceof ServerWorld world)) {
       return;
     }

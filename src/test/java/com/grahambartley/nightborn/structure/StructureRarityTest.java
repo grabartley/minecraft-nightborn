@@ -16,7 +16,9 @@ class StructureRarityTest {
   })
   void eachKindReadsItsOwnSetting(
       final StructureRarity rarity, final int structures, final int camps, final int percent) {
-    assertEquals(percent, rarity.percent(new StructureSettings(structures, camps, 300, 24, 1024)));
+    assertEquals(
+        percent,
+        rarity.percent(new StructureSettings(structures, camps, 300, 24, 1024, 15, 40, 2, 128)));
   }
 
   @ParameterizedTest(name = "{0} is written {1}")

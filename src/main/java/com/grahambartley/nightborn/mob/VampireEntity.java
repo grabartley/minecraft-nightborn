@@ -52,6 +52,9 @@ import com.grahambartley.nightborn.structure.HouseholdArrival;
 import com.grahambartley.nightborn.structure.HouseholdMember;
 import com.grahambartley.nightborn.vampire.Vampires;
 import com.grahambartley.nightborn.weakened.Weakened;
+import com.grahambartley.nightborn.wild.Wanderers;
+import com.grahambartley.nightborn.wild.WatchFromAfarGoal;
+import com.grahambartley.nightborn.wild.WildTravelGoal;
 import java.util.Map;
 import java.util.Optional;
 import net.minecraft.entity.Entity;
@@ -195,6 +198,7 @@ public class VampireEntity extends HostileEntity
     goalSelector.add(0, new LieDownedGoal(this));
     goalSelector.add(0, new BatFlightGoal(this));
     goalSelector.add(1, new SwimGoal(this));
+    goalSelector.add(1, new WatchFromAfarGoal(this));
     DoorPassage.allow(this);
     goalSelector.add(1, new FleeWhileEscapingGoal(this, 1.4));
     goalSelector.add(2, new SeekShadeGoal(this, 1.3));
@@ -210,6 +214,7 @@ public class VampireEntity extends HostileEntity
     goalSelector.add(6, new BringBloodHomeGoal(this));
     goalSelector.add(6, new WatchStrangerGoal(this));
     goalSelector.add(7, new HouseholdLifeGoal(this));
+    goalSelector.add(7, new WildTravelGoal(this));
     goalSelector.add(8, new WanderAroundFarGoal(this, 0.8));
     goalSelector.add(9, new LookAtEntityGoal(this, PlayerEntity.class, 8.0F));
     goalSelector.add(9, new LookAroundGoal(this));
@@ -432,7 +437,7 @@ public class VampireEntity extends HostileEntity
 
   @Override
   public boolean canTarget(final LivingEntity target) {
-    return fights(target) && super.canTarget(target);
+    return fights(target) && !Wanderers.holdsBack(this) && super.canTarget(target);
   }
 
   protected boolean fights(final LivingEntity target) {
