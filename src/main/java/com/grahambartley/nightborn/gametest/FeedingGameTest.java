@@ -41,6 +41,7 @@ public class FeedingGameTest implements FabricGameTest {
 
   static final String BATCH = "feeding";
   static final String RESISTING = "feeding-resisting";
+  static final String WITNESSED = "feeding-witnessed";
   static final String ARENA = "nightborn:vampire_arena";
   static final double WALK_STEP = 0.15;
 
@@ -375,7 +376,17 @@ public class FeedingGameTest implements FabricGameTest {
         });
   }
 
-  @GameTest(templateName = ARENA, batchId = BATCH, tickLimit = 80)
+  @BeforeBatch(batchId = WITNESSED)
+  public void witnessedNeverResists(final ServerWorld world) {
+    neverResist(world);
+  }
+
+  @AfterBatch(batchId = WITNESSED)
+  public void witnessedRestoresResist(final ServerWorld world) {
+    restoreResist(world);
+  }
+
+  @GameTest(templateName = ARENA, batchId = WITNESSED, tickLimit = 80)
   public void aWitnessWhoReachesTheBellMakesTheFeederAKnownFace(final TestContext context) {
     final BlockPos bell = new BlockPos(7, 2, 6);
     context.setBlockState(bell, Blocks.BELL);
@@ -401,7 +412,10 @@ public class FeedingGameTest implements FabricGameTest {
               Villages.of(context.getWorld())
                   .at(context.getAbsolutePos(bell))
                   .orElse(VillageRecord.fresh(0L));
-          context.assertEquals(record.suspicion(), 25, "a bite seen and told adds 25");
+          context.assertEquals(
+              record.suspicion(),
+              cow.isAlive() ? 25 : 30,
+              "a bite seen and told adds 25, and a drained animal 5 more");
           context.assertTrue(
               record.knows(vampire.getUuid()), "the feeder is a known face in the village");
           TestPlayers.finish(context, vampire);
