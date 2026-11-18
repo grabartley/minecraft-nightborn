@@ -30,22 +30,42 @@ class ChallengeRulesTest {
     assertEquals(verdict, ChallengeRules.declare(member, stage, lordStage, pending, barred));
   }
 
-  @ParameterizedTest(name = "declared night 10, now {0}, apart {1} -> {2}")
+  @ParameterizedTest(name = "offered {0} nights, last {1}, now {2}, apart {3} -> {4}")
   @CsvSource({
-    "10, , WAITING",
-    "13, , WAITING",
-    "14, , UNANSWERED",
-    "14, 2.0, UNANSWERED",
-    "11, 5.9, MEET",
-    "11, 6.0, MEET",
-    "11, 6.1, WAITING"
+    "0, 10, 10, , WAITING",
+    "2, 12, 13, , WAITING",
+    "3, 13, 13, , WAITING",
+    "3, 13, 14, , UNANSWERED",
+    "3, 13, 30, 2.0, UNANSWERED",
+    "0, 10, 30, , WAITING",
+    "1, 11, 11, 5.9, MEET",
+    "1, 11, 11, 6.0, MEET",
+    "1, 11, 11, 6.1, WAITING"
   })
-  @DisplayName("a lord who never meets the challenger within three whole nights loses the house")
-  void outcome(final long night, final Double apart, final ChallengeRules.Outcome outcome) {
+  @DisplayName(
+      "a lord loses the house only after three whole nights the challenger could be met on")
+  void outcome(
+      final int offered,
+      final long lastOffered,
+      final long night,
+      final Double apart,
+      final ChallengeRules.Outcome outcome) {
     assertEquals(
         outcome,
         ChallengeRules.outcome(
-            new Challenge(PLAYER, 10L), night, 3, Optional.ofNullable(apart), 6));
+            new Challenge(PLAYER, 10L, offered, lastOffered),
+            night,
+            3,
+            Optional.ofNullable(apart),
+            6));
+  }
+
+  @ParameterizedTest(name = "lord standing {0}, challenger standing {1} -> lord loses {2}")
+  @CsvSource({"true, true,", "false, false,", "false, true, true", "true, false, false"})
+  @DisplayName("a fighter who leaves the circle loses, and if both leave nobody does")
+  void absence(final boolean lord, final boolean challenger, final Boolean lordLoses) {
+    assertEquals(
+        Optional.ofNullable(lordLoses), ChallengeRules.lordLosesByAbsence(lord, challenger));
   }
 
   @ParameterizedTest(name = "lost on night {0} with {1} nights -> barred until {2}")

@@ -60,7 +60,7 @@ public final class HouseChallengeAction implements WheelAction<PlayerEntity> {
                         house
                             .challenges()
                             .declared(
-                                new Challenge(
+                                Challenge.declared(
                                     player.getUuid(), HouseDuels.night(player.getServer()))))));
     lord.sendMessage(
         Text.translatable(

@@ -25,6 +25,7 @@ import net.minecraft.util.DyeColor;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.GlobalPos;
+import net.minecraft.world.GameMode;
 
 public final class HouseSuccessionGameTest implements FabricGameTest {
 
@@ -32,6 +33,7 @@ public final class HouseSuccessionGameTest implements FabricGameTest {
   static final int ADULT = 1;
   static final BlockPos LORD_AT = new BlockPos(3, 2, 3);
   static final BlockPos MEMBER_AT = new BlockPos(5, 2, 3);
+  static final BlockPos OUTSIDER_AT = new BlockPos(1, 2, 1);
   static final int DUEL_TICKS = 40;
   static final String DUEL_BATCH = "house-duel";
 
@@ -76,9 +78,13 @@ public final class HouseSuccessionGameTest implements FabricGameTest {
   public void aLordDownedInTheDuelLosesTheHouseAndGetsUp(final TestContext context) {
     final ServerPlayerEntity lord = TestPlayers.vampire(context, LORD_AT);
     final ServerPlayerEntity challenger = TestPlayers.vampire(context, MEMBER_AT);
+    final ServerPlayerEntity outsider = TestPlayers.vampire(context, OUTSIDER_AT);
+    final boolean pvp = context.getWorld().getServer().isPvpEnabled();
     context.runAtTick(
         TestPlayers.READY,
         () -> {
+          context.getWorld().getServer().setPvpEnabled(false);
+          outsider.changeGameMode(GameMode.SPECTATOR);
           Ageing.setRank(lord, ADULT);
           Ageing.setRank(challenger, ADULT);
           final House house = house(context, lord, challenger);
@@ -88,7 +94,7 @@ public final class HouseSuccessionGameTest implements FabricGameTest {
                       house
                           .challenges()
                           .declared(
-                              new Challenge(
+                              Challenge.declared(
                                   challenger.getUuid(),
                                   HouseDuels.night(context.getWorld().getServer())))));
         });
@@ -98,6 +104,10 @@ public final class HouseSuccessionGameTest implements FabricGameTest {
           context.assertTrue(
               HouseDuels.of(lord.getUuid()).isPresent(),
               "the duel begins when both stand together");
+          final float before = lord.getHealth();
+          lord.damage(context.getWorld().getDamageSources().playerAttack(outsider), 4.0F);
+          context.assertTrue(
+              lord.getHealth() == before, "nobody outside the duel can hurt a fighter");
           lord.damage(
               context.getWorld().getDamageSources().playerAttack(challenger), Float.MAX_VALUE);
           context.assertTrue(lord.isAlive(), "the loser is not ended");
@@ -107,7 +117,8 @@ public final class HouseSuccessionGameTest implements FabricGameTest {
               Optional.of(challenger.getUuid()),
               "the challenger is lord and the loser stays a member");
           context.assertTrue(HouseDuels.of(lord.getUuid()).isEmpty(), "the circle opens");
-          TestPlayers.finish(context, lord, challenger);
+          context.getWorld().getServer().setPvpEnabled(pvp);
+          TestPlayers.finish(context, lord, challenger, outsider);
         });
   }
 

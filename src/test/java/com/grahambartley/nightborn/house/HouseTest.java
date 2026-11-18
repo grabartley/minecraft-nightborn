@@ -44,7 +44,7 @@ class HouseTest {
                         Optional.of(
                             new Crest(CrestCharge.RAVEN, DyeColor.PURPLE, DyeColor.YELLOW))))
                 .withChallenges(
-                    HouseChallenges.NONE.lost(NPC, 12L).declared(new Challenge(PLAYER, 4L)))),
+                    HouseChallenges.NONE.lost(NPC, 12L).declared(Challenge.declared(PLAYER, 4L)))),
         Arguments.of(
             new House(
                 LORD,
@@ -162,9 +162,9 @@ class HouseTest {
             .withNpc(NPC)
             .ranked(LORD, 3)
             .ranked(PLAYER, 2)
-            .withChallenges(HouseChallenges.NONE.declared(new Challenge(PLAYER, 5L)));
+            .withChallenges(HouseChallenges.NONE.declared(Challenge.declared(PLAYER, 5L)));
     return Stream.of(
-        Arguments.of(house, true, List.of(STRANGER, LORD), true),
+        Arguments.of(house, true, List.of(LORD, STRANGER), true),
         Arguments.of(house, false, List.of(STRANGER), false));
   }
 
@@ -203,7 +203,7 @@ class HouseTest {
             .withPlayer(PLAYER)
             .withPlayer(STRANGER)
             .withChallenges(
-                HouseChallenges.NONE.lost(STRANGER, 20L).declared(new Challenge(PLAYER, 3L)));
+                HouseChallenges.NONE.lost(STRANGER, 20L).declared(Challenge.declared(PLAYER, 3L)));
     final House left = house.without(leaver);
     assertEquals(pendingKept, left.challenges().pending().isPresent());
     assertEquals(leaver.equals(STRANGER), !left.challenges().barred(STRANGER, 10L));

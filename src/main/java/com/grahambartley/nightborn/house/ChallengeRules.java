@@ -49,10 +49,15 @@ public final class ChallengeRules {
       final int answerNights,
       final Optional<Double> apart,
       final int reach) {
-    if (night - challenge.night() > answerNights) {
+    if (challenge.offered() >= answerNights && night > challenge.lastOffered()) {
       return Outcome.UNANSWERED;
     }
     return apart.filter(distance -> distance <= reach).isPresent() ? Outcome.MEET : Outcome.WAITING;
+  }
+
+  public static Optional<Boolean> lordLosesByAbsence(
+      final boolean lordStanding, final boolean challengerStanding) {
+    return lordStanding == challengerStanding ? Optional.empty() : Optional.of(!lordStanding);
   }
 
   public static long barredUntil(final long night, final int repeatNights) {

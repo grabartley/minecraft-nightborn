@@ -139,7 +139,7 @@ public record House(
             heir,
             seat,
             anchor,
-            formerLordStays ? adding(members, lord) : members,
+            formerLordStays ? Stream.concat(Stream.of(lord), members.stream()).toList() : members,
             npcs,
             store,
             identity,

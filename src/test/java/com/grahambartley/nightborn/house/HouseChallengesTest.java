@@ -18,8 +18,9 @@ class HouseChallengesTest {
   static Stream<Arguments> challenges() {
     return Stream.of(
         Arguments.of(HouseChallenges.NONE),
-        Arguments.of(HouseChallenges.NONE.declared(new Challenge(PLAYER, 3L))),
-        Arguments.of(HouseChallenges.NONE.lost(NPC, 19L).declared(new Challenge(PLAYER, -2L))));
+        Arguments.of(HouseChallenges.NONE.declared(Challenge.declared(PLAYER, 3L))),
+        Arguments.of(
+            HouseChallenges.NONE.lost(NPC, 19L).declared(Challenge.declared(PLAYER, -2L))));
   }
 
   @ParameterizedTest(name = "{index}")
@@ -40,7 +41,7 @@ class HouseChallengesTest {
   @DisplayName("losing a challenge settles it and bars the loser for a while")
   void lost(final long night, final boolean barred) {
     final HouseChallenges after =
-        HouseChallenges.NONE.declared(new Challenge(PLAYER, 9L)).lost(PLAYER, 18L);
+        HouseChallenges.NONE.declared(Challenge.declared(PLAYER, 9L)).lost(PLAYER, 18L);
     assertEquals(Optional.empty(), after.pending());
     assertEquals(barred, after.barred(PLAYER, night));
     assertEquals(false, after.barred(NPC, night));

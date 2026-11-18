@@ -29,13 +29,17 @@ class HouseSuccessionTest {
         Arguments.of(house, PLAYER, true),
         Arguments.of(house, STRANGER, false),
         Arguments.of(house, NPC, false),
-        Arguments.of(house, LORD, false));
+        Arguments.of(house, LORD, false),
+        Arguments.of(
+            house.withChallenges(HouseChallenges.NONE.declared(Challenge.declared(STRANGER, 2L))),
+            PLAYER,
+            false));
   }
 
   @ParameterizedTest(name = "{1} -> {2}")
   @MethodSource("heirs")
-  @DisplayName("a house passes only to a player member who is an adult or older")
-  void mayInherit(final House house, final UUID member, final boolean may) {
-    assertEquals(may, HouseSuccession.mayInherit(house, member));
+  @DisplayName("a lord hands the house only to an adult player member, and never while challenged")
+  void mayHandOver(final House house, final UUID member, final boolean may) {
+    assertEquals(may, HouseSuccession.mayHandOver(house, member));
   }
 }

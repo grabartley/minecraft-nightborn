@@ -25,7 +25,7 @@ public final class HouseHandover implements WheelAction<PlayerEntity> {
     return Houses.get(lord.getServer())
         .ledBy(lord.getUuid())
         .map(house -> HouseRanks.refreshed(lord.getServer(), house))
-        .filter(house -> HouseSuccession.mayInherit(house, member.getUuid()))
+        .filter(house -> HouseSuccession.mayHandOver(house, member.getUuid()))
         .isPresent();
   }
 

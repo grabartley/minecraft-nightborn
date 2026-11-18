@@ -94,15 +94,18 @@ public final class HouseDuels {
     final ServerPlayerEntity lord = server.getPlayerManager().getPlayer(house.lord());
     final ServerPlayerEntity challenger =
         server.getPlayerManager().getPlayer(challenge.challenger());
+    final Challenge counted = ready(challenger) ? challenge.offeredOn(night) : challenge;
+    if (!counted.equals(challenge)) {
+      Houses.get(server).put(house.withChallenges(house.challenges().declared(counted)));
+    }
     final Optional<Double> apart =
         ready(lord) && ready(challenger) && lord.getWorld() == challenger.getWorld()
             ? Optional.of((double) lord.distanceTo(challenger))
             : Optional.empty();
     switch (ChallengeRules.outcome(
-        challenge, night, settings.answerNights(), apart, settings.duelReach())) {
+        counted, night, settings.answerNights(), apart, settings.duelReach())) {
       case UNANSWERED ->
-          HouseSuccession.pass(
-              server, house, house.ledBy(challenge.challenger(), true), UNANSWERED);
+          HouseSuccession.pass(server, house, house.ledBy(counted.challenger(), true), UNANSWERED);
       case MEET -> begin(lord, challenger, settings);
       case WAITING -> {}
     }
@@ -149,12 +152,19 @@ public final class HouseDuels {
     final ServerPlayerEntity lord = server.getPlayerManager().getPlayer(duel.lord());
     final ServerPlayerEntity challenger = server.getPlayerManager().getPlayer(duel.challenger());
     if (world == null
-        || !standing(lord, world)
-        || !standing(challenger, world)
         || Houses.get(server)
             .ledBy(duel.lord())
             .flatMap(house -> house.challenges().pending())
             .isEmpty()) {
+      finish(server, fight);
+      return;
+    }
+    final boolean lordStanding = standing(lord, world);
+    final Optional<Boolean> lordAbsent =
+        ChallengeRules.lordLosesByAbsence(lordStanding, standing(challenger, world));
+    if (lordAbsent.isPresent() || !lordStanding) {
+      lordAbsent.ifPresent(
+          lordLeft -> settle(server, duel, lordLeft ? duel.lord() : duel.challenger()));
       finish(server, fight);
       return;
     }

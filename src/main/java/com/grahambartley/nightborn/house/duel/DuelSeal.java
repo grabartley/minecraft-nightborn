@@ -3,6 +3,7 @@ package com.grahambartley.nightborn.house.duel;
 import com.grahambartley.nightborn.boss.Arena;
 import com.grahambartley.nightborn.smoke.SmokeParticles;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import net.minecraft.entity.LivingEntity;
@@ -21,12 +22,18 @@ public final class DuelSeal {
 
   public void hold(final ServerWorld world, final HouseDuel duel) {
     final Arena arena = duel.arena();
+    for (final UUID fighter : List.of(duel.lord(), duel.challenger())) {
+      if (world.getEntity(fighter) instanceof LivingEntity living && living.isAlive()) {
+        keepIn(world, living, arena, living.getPos());
+      }
+    }
     for (final LivingEntity entity :
-        world.getEntitiesByClass(LivingEntity.class, bounds(arena), LivingEntity::isAlive)) {
+        world.getEntitiesByClass(
+            LivingEntity.class,
+            bounds(arena),
+            entity -> entity.isAlive() && !duel.involves(entity.getUuid()))) {
       final Vec3d pos = entity.getPos();
-      if (duel.involves(entity.getUuid())) {
-        keepIn(world, entity, arena, pos);
-      } else if (!entity.isSpectator() && arena.holds(pos.x, pos.y, pos.z)) {
+      if (!entity.isSpectator() && arena.holds(pos.x, pos.y, pos.z)) {
         move(world, entity, DuelRules.pushOut(arena, pos));
       }
     }

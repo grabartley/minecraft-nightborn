@@ -59,7 +59,8 @@ public final class HouseSuccession {
   }
 
   public static void pass(
-      final MinecraftServer server, final House before, final House after, final String heirKey) {
+      final MinecraftServer server, final House before, final House passed, final String heirKey) {
+    final House after = HouseRanks.refreshed(server, passed);
     final int capacity = ServerConfigService.current().houses().members(after.rank(after.lord()));
     final House kept = Succession.trimmed(after, capacity);
     Houses.get(server).replace(before.lord(), kept);
@@ -86,7 +87,7 @@ public final class HouseSuccession {
     return Houses.get(server)
         .ledBy(lord.getUuid())
         .map(house -> HouseRanks.refreshed(server, house))
-        .filter(house -> mayInherit(house, member.getUuid()))
+        .filter(house -> mayHandOver(house, member.getUuid()))
         .map(
             house -> {
               pass(server, house, house.ledBy(member.getUuid(), true), HANDED);
@@ -95,8 +96,10 @@ public final class HouseSuccession {
         .orElse(false);
   }
 
-  public static boolean mayInherit(final House house, final UUID member) {
-    return house.players().contains(member) && HouseRules.mayFound(house.rank(member));
+  public static boolean mayHandOver(final House house, final UUID member) {
+    return house.players().contains(member)
+        && HouseRules.mayFound(house.rank(member))
+        && house.challenges().pending().isEmpty();
   }
 
   public static boolean disband(final MinecraftServer server, final UUID lord) {

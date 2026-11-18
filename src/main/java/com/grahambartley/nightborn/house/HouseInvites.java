@@ -1,5 +1,6 @@
 package com.grahambartley.nightborn.house;
 
+import com.grahambartley.nightborn.age.StageRanks;
 import com.grahambartley.nightborn.challenge.Deed;
 import com.grahambartley.nightborn.challenge.DeedKinds;
 import com.grahambartley.nightborn.challenge.Deeds;
@@ -88,7 +89,14 @@ public final class HouseInvites {
     }
     final Houses houses = Houses.get(server);
     leaveAny(houses, guest.getUuid());
-    houses.ledBy(lordId).ifPresent(house -> houses.put(house.withPlayer(guest.getUuid())));
+    houses
+        .ledBy(lordId)
+        .ifPresent(
+            house ->
+                houses.put(
+                    house
+                        .withPlayer(guest.getUuid())
+                        .ranked(guest.getUuid(), StageRanks.of(guest))));
     Deeds.record(lord, Deed.of(DeedKinds.HOUSE_GUEST));
     guest.sendMessage(Text.translatable(WELCOMED, lord.getDisplayName()), false);
     lord.sendMessage(Text.translatable(ARRIVED, guest.getDisplayName()), false);
