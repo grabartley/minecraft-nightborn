@@ -44,6 +44,7 @@ public class OccultGameTest implements FabricGameTest {
   static final String BATCH = "occult";
   static final int SHORT_LIFE = 40;
   static final int SCOUT_TICKS = 20;
+  static final BlockPos BEYOND_PICKUP_REACH = new BlockPos(0, 2, 4);
 
   @BeforeBatch(batchId = BATCH)
   public void clearFog(final ServerWorld world) {
@@ -171,7 +172,7 @@ public class OccultGameTest implements FabricGameTest {
 
   @GameTest(templateName = ARENA, batchId = BATCH, tickLimit = TestPlayers.READY + SHORT_LIFE + 10)
   public void aFamiliarFadesWhenItsTimeIsUpAndDropsWhatItCarried(final TestContext context) {
-    final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(2, 2, 4));
+    final ServerPlayerEntity vampire = TestPlayers.vampire(context, BEYOND_PICKUP_REACH);
     final GhostlyFamiliarEntity[] familiar = new GhostlyFamiliarEntity[1];
     context.runAtTick(
         TestPlayers.READY,
