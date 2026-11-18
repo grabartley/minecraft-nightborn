@@ -338,7 +338,12 @@ public class EldestEntity extends BossVampireEntity implements BlazingEyes {
       final LocalDifficulty difficulty,
       final SpawnReason spawnReason,
       @Nullable final EntityData entityData) {
-    return super.initialize(world, difficulty, spawnReason, new HouseholdArrival(Map.of(STAGE, 1)));
+    return super.initialize(
+        world,
+        difficulty,
+        spawnReason,
+        new HouseholdArrival(
+            Map.of(STAGE, 1), entityData instanceof HouseholdArrival arrival && arrival.head()));
   }
 
   public void scaleFor(final int players, final RitualSettings settings) {

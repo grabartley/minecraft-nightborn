@@ -26,6 +26,7 @@ import net.minecraft.test.AfterBatch;
 import net.minecraft.test.BeforeBatch;
 import net.minecraft.test.GameTest;
 import net.minecraft.test.TestContext;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.Difficulty;
@@ -341,9 +342,11 @@ public class VampireHomeGameTest implements FabricGameTest {
       templateName = ARENA,
       batchId = NIGHT_BATCH,
       tickLimit = TestPlayers.READY + HURT_COOLDOWN + 10)
-  public void aVampireNeverFightsBackAgainstAnotherVampire(final TestContext context) {
+  public void aVampireFightsBackOnlyAgainstAVampireOfItsStageOrOlder(final TestContext context) {
     final VampireEntity vampire = VampireMobGameTest.still(context, new BlockPos(2, 2, 2));
     final VampireEntity kin = VampireMobGameTest.still(context, new BlockPos(6, 2, 6));
+    vampire.becomeStage(Identifier.of("nightborn", "elder"));
+    kin.becomeStage(Identifier.of("nightborn", "ancient"));
     vampire.settleAt(context.getAbsolutePos(new BlockPos(2, 2, 2)).add(PAST_HOME, 0, 0));
     final ServerPlayerEntity player = TestPlayers.vampire(context, new BlockPos(3, 2, 2));
     context.runAtTick(
@@ -351,22 +354,19 @@ public class VampireHomeGameTest implements FabricGameTest {
         () -> {
           vampire.damage(vampire.getDamageSources().playerAttack(player), 1.0F);
           vampire.tickHome();
-          context.assertFalse(vampire.canTarget(player), "a vampire player is never its target");
-          context.assertFalse(vampire.canTarget(kin), "nor is a vampire mob");
+          context.assertFalse(
+              vampire.canTarget(player), "a younger vampire player is never its target");
           context.assertFalse(
               vampire.isInWalkTargetRange(player.getBlockPos()),
-              "being hit by a vampire player does not take it off its home leash");
+              "a younger vampire's blow does not take it off its home leash");
         });
     context.runAtTick(
         TestPlayers.READY + HURT_COOLDOWN,
         () -> {
           context.assertTrue(
               vampire.damage(vampire.getDamageSources().mobAttack(kin), 1.0F),
-              "a vampire mob hits it");
-          vampire.tickHome();
-          context.assertFalse(
-              vampire.isInWalkTargetRange(kin.getBlockPos()),
-              "nor does being hit by a vampire mob");
+              "an older vampire mob hits it");
+          context.assertTrue(vampire.canTarget(kin), "it fights back against an older vampire");
           TestPlayers.finish(context, player);
         });
   }

@@ -1,4 +1,4 @@
-package com.grahambartley.nightborn.thrall;
+package com.grahambartley.nightborn.servant;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -19,7 +19,7 @@ class FollowRulesTest {
   })
   @DisplayName("a following thrall closes in on its owner and waits when the owner is gone")
   void follows(
-      final ThrallMode mode,
+      final Stance mode,
       final boolean here,
       final double distance,
       final boolean starts,
@@ -52,7 +52,7 @@ class FollowRulesTest {
     "GUARD, 9.0, true"
   })
   @DisplayName("a staying thrall keeps to its spot and a guard to its ground")
-  void returnsToPost(final ThrallMode mode, final double fromPost, final boolean expected) {
+  void returnsToPost(final Stance mode, final double fromPost, final boolean expected) {
     assertEquals(expected, FollowRules.returnsToPost(mode, fromPost));
   }
 
@@ -65,7 +65,14 @@ class FollowRulesTest {
     "FOLLOW, 1.0, false"
   })
   @DisplayName("only a guard goes after monsters near its post")
-  void guards(final ThrallMode mode, final double fromPost, final boolean expected) {
+  void guards(final Stance mode, final double fromPost, final boolean expected) {
     assertEquals(expected, FollowRules.guards(mode, fromPost));
+  }
+
+  @ParameterizedTest(name = "{0} -> {1}")
+  @CsvSource({"FOLLOW, -1", "STAY, 1", "GUARD, 8"})
+  @DisplayName("a follower roams freely, a stayer keeps to its spot and a guard to its ground")
+  void leash(final Stance mode, final int radius) {
+    assertEquals(radius, FollowRules.leash(mode));
   }
 }

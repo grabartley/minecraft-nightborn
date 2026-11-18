@@ -1,5 +1,6 @@
 package com.grahambartley.nightborn.mob;
 
+import com.grahambartley.nightborn.age.StageRanks;
 import com.grahambartley.nightborn.batform.BatForm;
 import com.grahambartley.nightborn.batform.BatShape;
 import com.grahambartley.nightborn.batform.BatShifter;
@@ -8,7 +9,9 @@ import com.grahambartley.nightborn.config.NightbornConfig;
 import com.grahambartley.nightborn.core.VampireCore;
 import com.grahambartley.nightborn.decor.SeatEntity;
 import com.grahambartley.nightborn.downed.Downed;
-import com.grahambartley.nightborn.levitation.Levitation;
+import com.grahambartley.nightborn.house.BringBloodHomeGoal;
+import com.grahambartley.nightborn.house.MemberLife;
+import com.grahambartley.nightborn.house.MemberStance;
 import com.grahambartley.nightborn.mob.combat.Fighting;
 import com.grahambartley.nightborn.mob.goal.BatFlightGoal;
 import com.grahambartley.nightborn.mob.goal.FleeWhileEscapingGoal;
@@ -19,10 +22,10 @@ import com.grahambartley.nightborn.mob.goal.SeekShadeGoal;
 import com.grahambartley.nightborn.mob.goal.SleepInCoffinGoal;
 import com.grahambartley.nightborn.mob.goal.WatchStrangerGoal;
 import com.grahambartley.nightborn.mob.home.HomeLife;
+import com.grahambartley.nightborn.mob.home.HouseholdTie;
 import com.grahambartley.nightborn.mob.home.MobBlood;
 import com.grahambartley.nightborn.mob.household.HouseholdBonds;
 import com.grahambartley.nightborn.mob.household.HouseholdLife;
-import com.grahambartley.nightborn.mob.household.HouseholdPlanner;
 import com.grahambartley.nightborn.mob.household.SeatedHeight;
 import com.grahambartley.nightborn.mob.look.BustNbt;
 import com.grahambartley.nightborn.mob.look.Figure;
@@ -38,6 +41,9 @@ import com.grahambartley.nightborn.mob.stage.VampireStages;
 import com.grahambartley.nightborn.mob.stage.VampireStaging;
 import com.grahambartley.nightborn.name.MobNaming;
 import com.grahambartley.nightborn.name.NameBearer;
+import com.grahambartley.nightborn.servant.goal.StanceFollowGoal;
+import com.grahambartley.nightborn.servant.goal.StancePostGoal;
+import com.grahambartley.nightborn.servant.goal.StanceTargetGoal;
 import com.grahambartley.nightborn.server.ServerConfigService;
 import com.grahambartley.nightborn.skill.PowerShow;
 import com.grahambartley.nightborn.skill.SkillHolder;
@@ -134,6 +140,7 @@ public class VampireEntity extends HostileEntity
   private final VampireAnimator animator = new VampireAnimator();
   private final BatShape batShape = new BatShape();
   private final HomeLife homeLife = new HomeLife();
+  private final HouseholdTie householdTie = new HouseholdTie();
   private final HouseholdLife householdLife = new HouseholdLife();
   private final MobBlood blood = new MobBlood();
   private final Fighting fighting = new Fighting();
@@ -196,13 +203,18 @@ public class VampireEntity extends HostileEntity
     retreat = new RetreatGoal(this, () -> stage().combat().retreatHealth());
     goalSelector.add(3, retreat);
     goalSelector.add(4, new MeleeAttackGoal(this, 1.15, false));
+    final MemberStance memberStance = new MemberStance(this);
+    goalSelector.add(4, new StancePostGoal(this, memberStance));
+    goalSelector.add(4, new StanceFollowGoal(this, memberStance));
     goalSelector.add(5, new GoToWalkTargetGoal(this, 1.0));
+    goalSelector.add(6, new BringBloodHomeGoal(this));
     goalSelector.add(6, new WatchStrangerGoal(this));
     goalSelector.add(7, new HouseholdLifeGoal(this));
     goalSelector.add(8, new WanderAroundFarGoal(this, 0.8));
     goalSelector.add(9, new LookAtEntityGoal(this, PlayerEntity.class, 8.0F));
     goalSelector.add(9, new LookAroundGoal(this));
     targetSelector.add(1, new RevengeGoal(this));
+    targetSelector.add(2, new StanceTargetGoal(this, memberStance));
     targetSelector.add(
         2, new ActiveTargetGoal<>(this, LivingEntity.class, 10, true, false, this::hunts));
   }
@@ -212,15 +224,19 @@ public class VampireEntity extends HostileEntity
   }
 
   public boolean attacksOnSight(final LivingEntity target) {
-    return false;
+    return MemberLife.guards(this, target);
   }
 
   public boolean hungry() {
-    return blood.hungry(this, ServerConfigService.current());
+    return blood.hungry(this, ServerConfigService.current()) || MemberLife.onErrand(this);
   }
 
   public HomeLife homeLife() {
     return homeLife;
+  }
+
+  public HouseholdTie householdTie() {
+    return householdTie;
   }
 
   public HouseholdLife householdLife() {
@@ -305,13 +321,14 @@ public class VampireEntity extends HostileEntity
     if (!BatForm.isBat(this)) {
       fightAsVampire();
       if (levitatesAtWill()) {
-        levitateAboutHome();
+        MobLevitation.drift(this);
       }
     }
   }
 
   public void tickHome() {
     hunt.tick(this, this::setOutToFeed);
+    MemberLife.tick(this);
   }
 
   protected void fightAsVampire() {
@@ -419,14 +436,25 @@ public class VampireEntity extends HostileEntity
   }
 
   protected boolean fights(final LivingEntity target) {
-    return !Vampires.isVampire(target);
+    return !Vampires.isVampire(target)
+        || VampireFeud.answers(
+            target == getAttacker(), StageRanks.of(target), stageRank(), answersEveryVampire());
+  }
+
+  protected boolean answersEveryVampire() {
+    return false;
+  }
+
+  @Override
+  public boolean isAngryAt(final PlayerEntity player) {
+    return VampireFeud.angryAt(Vampires.isVampire(player), getTarget() == player);
   }
 
   @Override
   public void setAttacker(@Nullable final LivingEntity attacker) {
     super.setAttacker(attacker);
     if (attacker != null) {
-      hunt.provokedBy(attacker);
+      hunt.provokedBy(attacker, fights(attacker));
     }
   }
 
@@ -478,7 +506,7 @@ public class VampireEntity extends HostileEntity
   @Override
   public void remove(final RemovalReason reason) {
     if (reason.shouldDestroy() && getWorld() instanceof ServerWorld world) {
-      homeLife.release(world, this);
+      MemberLife.ended(world, this);
     }
     super.remove(reason);
   }
@@ -511,24 +539,6 @@ public class VampireEntity extends HostileEntity
     hissing.hiss(this);
   }
 
-  private void levitateAboutHome() {
-    final boolean levitating = Levitation.isLevitating(this);
-    if (MobLevitation.wants(
-            levitating,
-            getTarget() != null,
-            HouseholdPlanner.settled(this),
-            random.nextFloat(),
-            ServerConfigService.current().mobs())
-        == levitating) {
-      return;
-    }
-    if (levitating) {
-      Levitation.setDown(this);
-    } else {
-      Levitation.start(this);
-    }
-  }
-
   @Override
   public EntityData initialize(
       final ServerWorldAccess world,
@@ -540,6 +550,9 @@ public class VampireEntity extends HostileEntity
     VampireCore.tick(this, config.core(), config.blood());
     setHealth(getMaxHealth());
     blood.start(this, random.nextInt(Integer.MAX_VALUE), config);
+    if (entityData instanceof HouseholdArrival arrival && arrival.head()) {
+      householdTie.becomeHead();
+    }
     dataTracker.set(
         STAGE,
         VampireStaging.begin(
@@ -600,6 +613,7 @@ public class VampireEntity extends HostileEntity
     nbt.putString(STAGE_KEY, dataTracker.get(STAGE));
     nbt.putString(EPITHET_KEY, epithet());
     homeLife.write(nbt);
+    householdTie.write(nbt);
     householdLife.write(nbt, getRegistryManager());
     blood.write(nbt);
   }
@@ -608,6 +622,7 @@ public class VampireEntity extends HostileEntity
   public void readCustomDataFromNbt(final NbtCompound nbt) {
     super.readCustomDataFromNbt(nbt);
     homeLife.read(nbt);
+    householdTie.read(nbt);
     householdLife.read(nbt, getRegistryManager());
     returnHand();
     blood.read(nbt);

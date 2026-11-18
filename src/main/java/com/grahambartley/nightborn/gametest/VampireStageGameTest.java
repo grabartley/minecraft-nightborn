@@ -35,7 +35,7 @@ public class VampireStageGameTest implements FabricGameTest {
         context.getWorld(),
         context.getWorld().getLocalDifficulty(vampire.getBlockPos()),
         SpawnReason.STRUCTURE,
-        new HouseholdArrival(Map.of(ANCIENT, 1)));
+        new HouseholdArrival(Map.of(ANCIENT, 1), false));
     context.assertEquals(vampire.stageId(), ANCIENT, "the household's only stage is picked");
     context.complete();
   }

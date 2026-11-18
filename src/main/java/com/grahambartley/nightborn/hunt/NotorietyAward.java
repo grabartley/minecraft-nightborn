@@ -2,6 +2,7 @@ package com.grahambartley.nightborn.hunt;
 
 import com.grahambartley.nightborn.age.AgeAttachment;
 import com.grahambartley.nightborn.age.AgeLadder;
+import com.grahambartley.nightborn.mob.VampireEntity;
 import com.grahambartley.nightborn.servant.Servants;
 import com.grahambartley.nightborn.servant.job.DayWorker;
 import com.grahambartley.nightborn.vampire.Vampires;
@@ -52,7 +53,12 @@ public final class NotorietyAward {
 
   static Optional<UUID> master(final Entity killer) {
     return Servants.masterOf(killer)
-        .or(() -> killer instanceof DayWorker worker ? worker.owner() : Optional.empty());
+        .or(() -> killer instanceof DayWorker worker ? worker.owner() : Optional.empty())
+        .or(
+            () ->
+                killer instanceof VampireEntity member
+                    ? member.householdTie().lord()
+                    : Optional.empty());
   }
 
   @Nullable

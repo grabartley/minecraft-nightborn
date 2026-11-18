@@ -5,6 +5,11 @@ import com.grahambartley.nightborn.name.NameBearer;
 import com.grahambartley.nightborn.servant.Servant;
 import com.grahambartley.nightborn.servant.ServantDeaths;
 import com.grahambartley.nightborn.servant.Servants;
+import com.grahambartley.nightborn.servant.Stance;
+import com.grahambartley.nightborn.servant.Stanced;
+import com.grahambartley.nightborn.servant.goal.StanceFollowGoal;
+import com.grahambartley.nightborn.servant.goal.StancePostGoal;
+import com.grahambartley.nightborn.servant.goal.StanceTargetGoal;
 import com.grahambartley.nightborn.servant.job.DayWorker;
 import com.grahambartley.nightborn.servant.job.JobOrder;
 import com.grahambartley.nightborn.servant.job.goal.FetchBloodGoal;
@@ -12,9 +17,6 @@ import com.grahambartley.nightborn.servant.job.goal.GatherGoal;
 import com.grahambartley.nightborn.servant.job.goal.ScoutGoal;
 import com.grahambartley.nightborn.servant.job.goal.StandWatchGoal;
 import com.grahambartley.nightborn.servant.job.goal.WatchTargetGoal;
-import com.grahambartley.nightborn.thrall.goal.ThrallFollowGoal;
-import com.grahambartley.nightborn.thrall.goal.ThrallPostGoal;
-import com.grahambartley.nightborn.thrall.goal.ThrallTargetGoal;
 import com.grahambartley.nightborn.wheel.CommandWheel;
 import java.util.Optional;
 import java.util.UUID;
@@ -31,6 +33,7 @@ import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
 import net.minecraft.entity.mob.MobEntity;
+import net.minecraft.entity.mob.Monster;
 import net.minecraft.entity.mob.PathAwareEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.SimpleInventory;
@@ -52,7 +55,7 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
 public class ThrallEntity extends PathAwareEntity
-    implements VillagerDataContainer, Servant, NameBearer, DayWorker {
+    implements VillagerDataContainer, Servant, NameBearer, DayWorker, Stanced {
 
   static final int CHECK_BOND_TICKS = 20;
 
@@ -68,7 +71,7 @@ public class ThrallEntity extends PathAwareEntity
   private static final String MEMORY = "VillagerMemory";
   private static final String JOB = "Job";
 
-  private ThrallMode mode = ThrallMode.FOLLOW;
+  private Stance mode = Stance.FOLLOW;
   @Nullable private BlockPos post;
   private VillagerMemory memory = VillagerMemory.NONE;
   private final SimpleInventory carried = new SimpleInventory(DayWorker.CARRY_SLOTS);
@@ -102,11 +105,11 @@ public class ThrallEntity extends PathAwareEntity
     goalSelector.add(2, new GatherGoal<>(this));
     goalSelector.add(2, new FetchBloodGoal<>(this));
     goalSelector.add(2, new StandWatchGoal<>(this));
-    goalSelector.add(3, new ThrallPostGoal(this));
-    goalSelector.add(4, new ThrallFollowGoal(this));
+    goalSelector.add(3, new StancePostGoal(this, this));
+    goalSelector.add(4, new StanceFollowGoal(this, this));
     goalSelector.add(7, new LookAtEntityGoal(this, PlayerEntity.class, 6.0F));
     goalSelector.add(8, new LookAroundGoal(this));
-    targetSelector.add(1, new ThrallTargetGoal(this));
+    targetSelector.add(1, new StanceTargetGoal(this, this));
     targetSelector.add(2, new WatchTargetGoal<>(this));
   }
 
@@ -114,7 +117,7 @@ public class ThrallEntity extends PathAwareEntity
     dataTracker.set(OWNER_UUID, Optional.of(boundTo));
     setVillagerData(data);
     memory = kept;
-    mode = ThrallMode.FOLLOW;
+    mode = Stance.FOLLOW;
     post = getBlockPos();
     job = null;
     setPersistent();
@@ -214,15 +217,32 @@ public class ThrallEntity extends PathAwareEntity
     return memory;
   }
 
-  public ThrallMode mode() {
+  public Stance mode() {
     return mode;
   }
 
+  @Override
+  public Optional<Stance> stance() {
+    return Optional.of(mode);
+  }
+
+  @Override
+  @Nullable
+  public LivingEntity leaderHere() {
+    return ownerHere();
+  }
+
+  @Override
+  public boolean guardsAgainst(final LivingEntity intruder) {
+    return intruder instanceof Monster;
+  }
+
+  @Override
   public BlockPos post() {
     return post == null ? getBlockPos() : post;
   }
 
-  public void order(final ThrallMode next) {
+  public void order(final Stance next) {
     mode = next;
     post = getBlockPos().toImmutable();
     job = null;
@@ -237,7 +257,7 @@ public class ThrallEntity extends PathAwareEntity
   @Override
   public void assign(final JobOrder order) {
     job = order;
-    mode = ThrallMode.STAY;
+    mode = Stance.STAY;
     post = order.place();
     getNavigation().stop();
   }
@@ -245,7 +265,7 @@ public class ThrallEntity extends PathAwareEntity
   @Override
   public void dismiss() {
     job = null;
-    mode = ThrallMode.STAY;
+    mode = Stance.STAY;
   }
 
   @Override
@@ -280,7 +300,7 @@ public class ThrallEntity extends PathAwareEntity
     super.readCustomDataFromNbt(nbt);
     dataTracker.set(
         OWNER_UUID, nbt.containsUuid(OWNER) ? Optional.of(nbt.getUuid(OWNER)) : Optional.empty());
-    mode = ThrallMode.byName(nbt.getString(MODE));
+    mode = Stance.byName(nbt.getString(MODE));
     post = NbtHelper.toBlockPos(nbt, POST).orElse(null);
     if (nbt.contains(VILLAGER)) {
       VillagerData.CODEC

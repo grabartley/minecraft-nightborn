@@ -96,4 +96,29 @@ class HomeLifeTest {
     home.ifPresent(life::settle);
     assertEquals(Optional.empty(), life.room());
   }
+
+  @ParameterizedTest(name = "home {0}")
+  @MethodSource("homes")
+  @DisplayName("a vampire that wanders off forgets its home and its coffin")
+  void wander(final Optional<BlockPos> home) {
+    final HomeLife life = new HomeLife();
+    home.ifPresent(life::settle);
+    life.keepTo(new BlockPos(1, 2, 3), 4);
+    life.wander();
+    assertEquals(Optional.empty(), life.home());
+    assertEquals(Optional.empty(), life.room());
+    assertEquals(Optional.empty(), life.coffin());
+  }
+
+  @ParameterizedTest(name = "sent out on night {0}")
+  @CsvSource({"0", "5", "-2", "1000"})
+  @DisplayName("a vampire sent out keeps that night's outing through a save and load")
+  void sendOut(final long night) {
+    final HomeLife life = new HomeLife();
+    life.sendOut(night);
+    final NbtCompound nbt = new NbtCompound();
+    life.write(nbt);
+    assertEquals(night, nbt.getLong(HomeLife.OUTING_KEY));
+    assertEquals(night, nbt.getLong(HomeLife.DECIDED_KEY));
+  }
 }

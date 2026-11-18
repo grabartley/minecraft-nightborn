@@ -2,6 +2,7 @@ package com.grahambartley.nightborn.thrall;
 
 import com.grahambartley.nightborn.Nightborn;
 import com.grahambartley.nightborn.servant.OrderCue;
+import com.grahambartley.nightborn.servant.Stance;
 import com.grahambartley.nightborn.wheel.WheelAction;
 import com.grahambartley.nightborn.wheel.WheelEntry;
 import java.util.Arrays;
@@ -26,7 +27,7 @@ public final class ThrallOrders implements WheelAction<ThrallEntity> {
 
   @Override
   public List<WheelEntry> entries(final ServerPlayerEntity player, final ThrallEntity thrall) {
-    return Arrays.stream(ThrallMode.values())
+    return Arrays.stream(Stance.values())
         .map(
             mode ->
                 new WheelEntry(
@@ -38,15 +39,14 @@ public final class ThrallOrders implements WheelAction<ThrallEntity> {
         .toList();
   }
 
-  public static boolean current(
-      final ThrallMode mode, final boolean onAJob, final ThrallMode shown) {
+  public static boolean current(final Stance mode, final boolean onAJob, final Stance shown) {
     return !onAJob && mode == shown;
   }
 
   @Override
   public void perform(
       final ServerPlayerEntity player, final ThrallEntity thrall, final WheelEntry chosen) {
-    final ThrallMode mode = ThrallMode.byIndex(chosen.argument());
+    final Stance mode = Stance.byIndex(chosen.argument());
     thrall.order(mode);
     OrderCue.obey(
         thrall, player, Text.translatable(mode.translationKey(), thrall.getDisplayName()));

@@ -183,4 +183,20 @@ class NightRoutineTest {
   void homeRadius(final boolean keeps, final int room, final int home, final int radius) {
     assertEquals(radius, NightRoutine.homeRadius(keeps, room, home));
   }
+
+  @ParameterizedTest(name = "fixed {0}, time {1} -> night {2}")
+  @CsvSource({
+    "false, 13000, 0",
+    "false, 22999, 0",
+    "false, 23000, 1",
+    "false, 6000, 0",
+    "false, 30000, 1",
+    "false, 37000, 1",
+    "false, 47000, 2",
+    "true, 18000, 1"
+  })
+  @DisplayName("an outing ordered by night is for tonight, and one ordered by day waits for dusk")
+  void comingNight(final boolean fixed, final long time, final long night) {
+    assertEquals(night, NightRoutine.comingNight(fixed, time));
+  }
 }
