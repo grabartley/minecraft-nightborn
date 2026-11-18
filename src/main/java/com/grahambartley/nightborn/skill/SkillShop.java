@@ -33,7 +33,7 @@ public final class SkillShop {
     }
     final TreeProgress bought = SkillPurchase.apply(progress, id, lookup.skill(), lookup.branch());
     SkillAttachment.set(player, tree, bought);
-    if (tree == SkillTree.VAMPIRE) {
+    if (countsBloodlines(tree)) {
       MilestoneCriterion.reach(player, Milestone.BLOODLINES, bought.lines().size());
     }
     SkillAttributes.apply(player);
@@ -48,6 +48,10 @@ public final class SkillShop {
             0.8F,
             0.7F);
     return lookup.verdict();
+  }
+
+  static boolean countsBloodlines(final SkillTree tree) {
+    return tree == SkillTree.VAMPIRE;
   }
 
   static Text bought(final Identifier id, final int rank, final int maxRank) {

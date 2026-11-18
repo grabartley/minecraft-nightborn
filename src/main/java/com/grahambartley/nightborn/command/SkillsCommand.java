@@ -43,23 +43,22 @@ final class SkillsCommand {
     for (final ServerPlayerEntity player :
         EntityArgumentType.getPlayers(context, PlayerCommand.TARGETS)) {
       final TreeProgress progress = SkillAttachment.get(player, tree);
-      context
-          .getSource()
-          .sendFeedback(
-              () ->
-                  Text.translatable(
-                      "nightborn.command.player.skills",
-                      player.getName(),
-                      Text.translatable(tree.translationKey()),
-                      progress.earned(),
-                      progress.spent(),
-                      progress.free(),
-                      progress.ownedInOrder().size(),
-                      Text.translatable(tree.linesKey()),
-                      SkillNames.lines(progress.lines())),
-              false);
+      context.getSource().sendFeedback(() -> summary(player.getName(), tree, progress), false);
     }
     return 1;
+  }
+
+  static Text summary(final Text name, final SkillTree tree, final TreeProgress progress) {
+    return Text.translatable(
+        "nightborn.command.player.skills",
+        name,
+        Text.translatable(tree.translationKey()),
+        progress.earned(),
+        progress.spent(),
+        progress.free(),
+        progress.ownedInOrder().size(),
+        Text.translatable(tree.linesKey()),
+        SkillNames.lines(progress.lines()));
   }
 
   private static int setPoints(
