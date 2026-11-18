@@ -5,6 +5,7 @@ import com.grahambartley.nightborn.advancement.MilestoneCriterion;
 import com.grahambartley.nightborn.age.StageRanks;
 import com.grahambartley.nightborn.downed.Downed;
 import com.grahambartley.nightborn.downed.DownedState;
+import com.grahambartley.nightborn.faction.GuildMembership;
 import com.grahambartley.nightborn.gear.Staking;
 import com.grahambartley.nightborn.server.ServerConfigService;
 import com.grahambartley.nightborn.skill.SkillEarning;
@@ -23,6 +24,8 @@ import net.minecraft.text.Text;
 import org.jetbrains.annotations.Nullable;
 
 public final class HuntRewards {
+
+  static final String PROVEN = "nightborn.oath.proven";
 
   private HuntRewards() {}
 
@@ -61,6 +64,9 @@ public final class HuntRewards {
             hunter -> {
               if (staker.isPresent()) {
                 MilestoneCriterion.reach(hunter, Milestone.VAMPIRE_STAKED);
+                if (GuildMembership.prove(hunter)) {
+                  hunter.sendMessage(Text.translatable(PROVEN), false);
+                }
               }
               reward(hunter, vampire, message);
             });

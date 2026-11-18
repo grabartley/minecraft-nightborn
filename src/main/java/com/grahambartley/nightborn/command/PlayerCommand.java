@@ -7,6 +7,7 @@ import com.grahambartley.nightborn.config.TurningSettings;
 import com.grahambartley.nightborn.downed.Downed;
 import com.grahambartley.nightborn.downed.DownedState;
 import com.grahambartley.nightborn.faction.FactionAttachment;
+import com.grahambartley.nightborn.guild.GuildOath;
 import com.grahambartley.nightborn.server.ServerConfigService;
 import com.grahambartley.nightborn.sickness.BiteSickness;
 import com.grahambartley.nightborn.sickness.BiteSicknessAttachment;
@@ -17,6 +18,7 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import java.util.Collection;
+import java.util.Optional;
 import java.util.function.Predicate;
 import net.minecraft.command.argument.EntityArgumentType;
 import net.minecraft.server.command.CommandManager;
@@ -36,6 +38,7 @@ final class PlayerCommand {
             CommandManager.argument(TARGETS, EntityArgumentType.players())
                 .then(CommandManager.literal("turn").executes(PlayerCommand::turn))
                 .then(CommandManager.literal("cure").executes(PlayerCommand::cure))
+                .then(CommandManager.literal("swear").executes(PlayerCommand::swear))
                 .then(CommandManager.literal("info").executes(PlayerCommand::info))
                 .then(StageCommand.node())
                 .then(SkillsCommand.node()));
@@ -43,16 +46,12 @@ final class PlayerCommand {
 
   private static int turn(final CommandContext<ServerCommandSource> context)
       throws CommandSyntaxException {
-    return forEach(
-        context,
-        "turn",
-        player -> {
-          if (Vampires.isVampire(player)) {
-            return false;
-          }
-          VampireTransitions.turn(player);
-          return true;
-        });
+    return forEach(context, "turn", VampireTransitions::turnInCeremony);
+  }
+
+  private static int swear(final CommandContext<ServerCommandSource> context)
+      throws CommandSyntaxException {
+    return forEach(context, "swear", player -> GuildOath.swear(player, Optional.empty()));
   }
 
   private static int cure(final CommandContext<ServerCommandSource> context)

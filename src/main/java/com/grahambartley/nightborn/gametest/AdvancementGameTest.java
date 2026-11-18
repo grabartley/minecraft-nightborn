@@ -47,6 +47,7 @@ public class AdvancementGameTest implements FabricGameTest {
           new Expected("root", null, AdvancementFrame.TASK, 0, false),
           new Expected("love_bites", "root", AdvancementFrame.TASK, 0, false),
           new Expected("stake_holder", "root", AdvancementFrame.TASK, 0, false),
+          new Expected("sworn_in", "stake_holder", AdvancementFrame.GOAL, 50, false),
           new Expected("holy_moly", "root", AdvancementFrame.TASK, 0, false),
           new Expected("silver_lining", "root", AdvancementFrame.TASK, 0, false),
           new Expected("garlic_breath", "root", AdvancementFrame.TASK, 0, false),

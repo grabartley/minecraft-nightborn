@@ -139,8 +139,8 @@ public class EldestGameTest implements FabricGameTest {
   @GameTest(templateName = ARENA, batchId = NIGHT_BATCH, tickLimit = 200)
   public void stakingTheEldestPaysEveryHumanWhoFought(final TestContext context) {
     final EldestEntity eldest = eldest(context);
-    final ServerPlayerEntity staker = TestPlayers.human(context, new BlockPos(2, 2, 2));
-    final ServerPlayerEntity helper = TestPlayers.human(context, new BlockPos(6, 2, 2));
+    final ServerPlayerEntity staker = TestPlayers.hunter(context, new BlockPos(2, 2, 2));
+    final ServerPlayerEntity helper = TestPlayers.hunter(context, new BlockPos(6, 2, 2));
     final ServerPlayerEntity watcher = TestPlayers.human(context, new BlockPos(2, 2, 6));
     final var config = ServerConfigService.current();
     context.runAtTick(
@@ -181,7 +181,7 @@ public class EldestGameTest implements FabricGameTest {
   @GameTest(templateName = ARENA, batchId = NIGHT_BATCH, tickLimit = 200)
   public void theSunEndingTheEldestPaysTheHumanWhoFought(final TestContext context) {
     final EldestEntity eldest = eldest(context);
-    final ServerPlayerEntity hunter = TestPlayers.human(context, new BlockPos(2, 2, 2));
+    final ServerPlayerEntity hunter = TestPlayers.hunter(context, new BlockPos(2, 2, 2));
     final int eldestPoints =
         TestPlayers.pointsFor(ServerConfigService.current().ritual().eldestExperience());
     context.runAtTick(

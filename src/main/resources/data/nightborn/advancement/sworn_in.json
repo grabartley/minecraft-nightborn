@@ -1,0 +1,31 @@
+{
+  "parent": "nightborn:stake_holder",
+  "display": {
+    "icon": {
+      "id": "nightborn:gold_crucifix"
+    },
+    "title": {
+      "translate": "advancements.nightborn.sworn_in.title"
+    },
+    "description": {
+      "translate": "advancements.nightborn.sworn_in.description"
+    },
+    "frame": "goal"
+  },
+  "criteria": {
+    "sworn_in": {
+      "trigger": "nightborn:milestone",
+      "conditions": {
+        "milestone": "sworn_in"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "sworn_in"
+    ]
+  ],
+  "rewards": {
+    "experience": 50
+  }
+}

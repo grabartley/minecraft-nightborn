@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 public final class ClientStateJson {
 
   private static final String GORE = "gore";
+  private static final String SKIP_CEREMONY_CAMERA = "skipCeremonyCamera";
 
   public static final ConfigFormat<ClientState> FORMAT =
       ConfigFormat.of(ClientState.DEFAULTS, ClientStateJson::read, ClientStateJson::write);
@@ -24,12 +25,14 @@ public final class ClientStateJson {
   public static ConfigFormat.Read<ClientState> read(final JsonObject root) {
     final List<String> problems = new ArrayList<>();
     final GoreLevel gore = readGore(root.get(GORE), problems);
-    return new ConfigFormat.Read<>(new ClientState(gore), problems);
+    final boolean skip = readSkip(root.get(SKIP_CEREMONY_CAMERA), problems);
+    return new ConfigFormat.Read<>(new ClientState(gore, skip), problems);
   }
 
   public static JsonObject write(final ClientState state) {
     final JsonObject root = new JsonObject();
     root.addProperty(GORE, state.gore().id());
+    root.addProperty(SKIP_CEREMONY_CAMERA, state.skipCeremonyCamera());
     return root;
   }
 
@@ -46,5 +49,17 @@ public final class ClientStateJson {
       problems.add(GORE + " is not one of " + KNOWN + ", using " + fallback.id());
     }
     return level.orElse(fallback);
+  }
+
+  private static boolean readSkip(final JsonElement element, final List<String> problems) {
+    final boolean fallback = ClientState.DEFAULTS.skipCeremonyCamera();
+    if (element == null) {
+      return fallback;
+    }
+    if (element.isJsonPrimitive() && element.getAsJsonPrimitive().isBoolean()) {
+      return element.getAsBoolean();
+    }
+    problems.add(SKIP_CEREMONY_CAMERA + " is not true or false, using " + fallback);
+    return fallback;
   }
 }

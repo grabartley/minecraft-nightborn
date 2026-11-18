@@ -108,6 +108,18 @@ public final class NightbornSettingsScreen extends Screen {
                 (button, level) -> device = device.withGore(level));
     gore.setTooltip(Tooltip.of(Text.translatable("nightborn.client.gore.tooltip")));
     list.addRow(gore);
+    final CyclingButtonWidget<Boolean> ceremony =
+        CyclingButtonWidget.onOffBuilder(device.skipCeremonyCamera())
+            .build(
+                0,
+                0,
+                WIDGET_WIDTH,
+                WIDGET_HEIGHT,
+                Text.translatable("nightborn.client.skip_ceremony_camera"),
+                (button, skip) -> device = device.withSkipCeremonyCamera(skip));
+    ceremony.setTooltip(
+        Tooltip.of(Text.translatable("nightborn.client.skip_ceremony_camera.tooltip")));
+    list.addRow(ceremony);
   }
 
   private ClickableWidget widgetFor(final Setting<?> setting) {

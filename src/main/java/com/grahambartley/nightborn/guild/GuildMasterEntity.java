@@ -1,5 +1,6 @@
 package com.grahambartley.nightborn.guild;
 
+import com.grahambartley.nightborn.gear.GearItems;
 import com.grahambartley.nightborn.mob.MobSounds;
 import com.grahambartley.nightborn.name.MobNaming;
 import com.grahambartley.nightborn.name.NameBearer;
@@ -9,6 +10,7 @@ import com.grahambartley.nightborn.wheel.CommandWheel;
 import java.util.Optional;
 import java.util.stream.Stream;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.ai.goal.GoToWalkTargetGoal;
 import net.minecraft.entity.ai.goal.LookAroundGoal;
 import net.minecraft.entity.ai.goal.LookAtCustomerGoal;
@@ -43,6 +45,7 @@ import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.AnimatableManager;
 import software.bernie.geckolib.animation.AnimationController;
+import software.bernie.geckolib.animation.PlayState;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 public class GuildMasterEntity extends MerchantEntity
@@ -52,15 +55,20 @@ public class GuildMasterEntity extends MerchantEntity
   static final int HEAD_SHAKE_TICKS = 40;
   static final int ANIMATION_BLEND_TICKS = 4;
   static final int TENT_REACH = 3;
+  static final float LOOK_TURN = 30.0F;
 
   private static final TrackedData<Boolean> TRADING =
       DataTracker.registerData(GuildMasterEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
   private static final TrackedData<String> LOOK =
       DataTracker.registerData(GuildMasterEntity.class, TrackedDataHandlerRegistry.STRING);
+  private static final TrackedData<Boolean> SWEARING =
+      DataTracker.registerData(GuildMasterEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
 
   private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
   private final WornLook worn = new WornLook();
   private long lastRestock;
+  private int swearTicks;
+  @Nullable private ServerPlayerEntity sworn;
 
   public GuildMasterEntity(final EntityType<? extends MerchantEntity> type, final World world) {
     super(type, world);
@@ -77,6 +85,7 @@ public class GuildMasterEntity extends MerchantEntity
     super.initDataTracker(builder);
     builder.add(TRADING, false);
     builder.add(LOOK, "");
+    builder.add(SWEARING, false);
   }
 
   @Override
@@ -175,6 +184,36 @@ public class GuildMasterEntity extends MerchantEntity
       }
     }
     dataTracker.set(TRADING, hasCustomer());
+    keepSwearing();
+  }
+
+  void swearIn(final ServerPlayerEntity player, final int ticks) {
+    swearTicks = ticks;
+    sworn = player;
+    setEquipmentDropChance(EquipmentSlot.OFFHAND, 0.0F);
+    equipStack(EquipmentSlot.OFFHAND, new ItemStack(GearItems.GOLD_CRUCIFIX));
+    playSound(SoundEvents.ITEM_ARMOR_EQUIP_GOLD.value(), getSoundVolume(), 1.0F);
+    keepSwearing();
+  }
+
+  private void keepSwearing() {
+    if (swearTicks > 0) {
+      swearTicks--;
+      if (sworn != null && !sworn.isRemoved()) {
+        getLookControl().lookAt(sworn, LOOK_TURN, LOOK_TURN);
+      }
+      if (swearTicks == 0) {
+        sworn = null;
+        lowerCrucifix();
+      }
+    }
+    dataTracker.set(SWEARING, swearTicks > 0);
+  }
+
+  private void lowerCrucifix() {
+    if (getOffHandStack().isOf(GearItems.GOLD_CRUCIFIX)) {
+      equipStack(EquipmentSlot.OFFHAND, ItemStack.EMPTY);
+    }
   }
 
   @Override
@@ -266,6 +305,7 @@ public class GuildMasterEntity extends MerchantEntity
       wear(nbt.getString(GuildData.LOOK_KEY));
     }
     CampHome.read(this, nbt, TENT_REACH);
+    lowerCrucifix();
   }
 
   @Override
@@ -284,6 +324,15 @@ public class GuildMasterEntity extends MerchantEntity
                             state.getLimbSwingAmount(),
                             false)
                         .clip())));
+    controllers.add(
+        new AnimationController<>(
+            this,
+            "action",
+            ANIMATION_BLEND_TICKS,
+            state ->
+                dataTracker.get(SWEARING)
+                    ? state.setAndContinue(HunterAction.RAISE_CRUCIFIX.clip())
+                    : PlayState.STOP));
   }
 
   @Override

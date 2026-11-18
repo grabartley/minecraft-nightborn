@@ -22,6 +22,10 @@ public final class GuildCounter implements Merchant {
       this.icon = Identifier.of(icon);
     }
 
+    public boolean openTo(final boolean vampire, final boolean hunter) {
+      return this == CONTRACTS ? hunter : !vampire;
+    }
+
     public Identifier icon() {
       return icon;
     }

@@ -1,6 +1,7 @@
 package com.grahambartley.nightborn.guild;
 
 import com.grahambartley.nightborn.Nightborn;
+import com.grahambartley.nightborn.faction.GuildMembership;
 import com.grahambartley.nightborn.vampire.Vampires;
 import com.grahambartley.nightborn.wheel.WheelAction;
 import com.grahambartley.nightborn.wheel.WheelEntry;
@@ -27,7 +28,7 @@ public final class GuildCounterOrders implements WheelAction<GuildMasterEntity> 
 
   @Override
   public boolean allows(final ServerPlayerEntity player, final GuildMasterEntity master) {
-    return !Vampires.isVampire(player);
+    return kind.openTo(Vampires.isVampire(player), GuildMembership.isHunter(player));
   }
 
   @Override

@@ -30,4 +30,22 @@ class GuildCounterTest {
     assertEquals(key, kind.translationKey());
     assertEquals(icon, kind.icon().toString());
   }
+
+  @ParameterizedTest(name = "{0}, vampire {1}, hunter {2} -> {3}")
+  @CsvSource({
+    "GEAR, false, false, true",
+    "GEAR, false, true, true",
+    "GEAR, true, false, false",
+    "CONTRACTS, false, false, false",
+    "CONTRACTS, false, true, true",
+    "CONTRACTS, true, false, false"
+  })
+  @DisplayName("any human may buy gear, but only a sworn hunter may take contracts")
+  void openTo(
+      final GuildCounter.Kind kind,
+      final boolean vampire,
+      final boolean hunter,
+      final boolean open) {
+    assertEquals(open, kind.openTo(vampire, hunter));
+  }
 }

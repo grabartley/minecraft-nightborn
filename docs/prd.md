@@ -776,7 +776,7 @@ Every number this document calls a default, a setting or tunable is an option he
 | The Grand Inquisitor | His reward, the notoriety at which the guild sends a party and at which he hunts, how fast notoriety fades, the quiet nights after a visit, how many nights he warns, how late in the night he may come, how long the bell's build-up lasts, how much health each extra vampire gives him, the size of his arena, how long vampires have to drain him, how long the drain takes and how much health he rises with, how much notoriety a vampire who dies in his fight loses, how long he waits in an empty arena, how much blood his greatsword and his full set give back, and how much blood the set adds and how much it slows the drain |
 | Clothing | Whether Nocturne works, and how strong Batwing, Gliding Step, Hush, Shroud, Mistcloak, Warding and Thrift are |
 | Challenges | How many trials are on offer and how often they change |
-| Players | Whether the player list shows factions (FACT-3) |
+| Players | Whether the player list shows factions (FACT-3), and how long the camera and the card of a ceremony last and how far away it is seen and heard (FACT-7) |
 
 **Enforcement:** server.
 

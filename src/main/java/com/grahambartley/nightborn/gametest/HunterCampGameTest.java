@@ -119,10 +119,10 @@ public class HunterCampGameTest implements FabricGameTest {
   }
 
   @GameTest(templateName = ARENA, tickLimit = TestPlayers.READY + 20)
-  public void theGuildMasterSellsGearAndContractsToAHumanAtSeparateCounters(
+  public void theGuildMasterSellsGearAndContractsToAHunterAtSeparateCounters(
       final TestContext context) {
     final GuildMasterEntity master = guildMaster(context);
-    final ServerPlayerEntity human = TestPlayers.human(context, new BlockPos(2, 2, 4));
+    final ServerPlayerEntity human = TestPlayers.hunter(context, new BlockPos(2, 2, 4));
     context.runAtTick(
         START,
         () -> {
@@ -176,7 +176,7 @@ public class HunterCampGameTest implements FabricGameTest {
   @GameTest(templateName = ARENA, tickLimit = TestPlayers.READY + 20)
   public void aFulfilledContractPaysOnceAndIsHandedIn(final TestContext context) {
     final GuildMasterEntity master = guildMaster(context);
-    final ServerPlayerEntity human = TestPlayers.human(context, new BlockPos(2, 2, 4));
+    final ServerPlayerEntity human = TestPlayers.hunter(context, new BlockPos(2, 2, 4));
     human.setStackInHand(Hand.MAIN_HAND, contract(STAKE_THREE, 3));
     context.runAtTick(
         START,

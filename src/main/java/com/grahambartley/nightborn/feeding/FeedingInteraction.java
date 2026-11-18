@@ -2,6 +2,7 @@ package com.grahambartley.nightborn.feeding;
 
 import com.grahambartley.nightborn.blood.BloodQuality;
 import com.grahambartley.nightborn.downed.Downed;
+import com.grahambartley.nightborn.moment.Moments;
 import com.grahambartley.nightborn.server.ServerConfigService;
 import com.grahambartley.nightborn.vampire.Vampires;
 import com.grahambartley.nightborn.ward.Wards;
@@ -38,7 +39,7 @@ final class FeedingInteraction {
                 Vampires.isVampire(player),
                 player.isSneaking(),
                 player.getMainHandStack().isEmpty(),
-                Downed.helpless(player)),
+                Downed.helpless(player) || Moments.locked(player)),
             new BiteRules.Target(
                 quality.isPresent(),
                 Vampires.isVampire(victim),

@@ -29,6 +29,7 @@
     "fabric-gametest": [
       "com.grahambartley.nightborn.gametest.NightbornBootGameTest",
       "com.grahambartley.nightborn.gametest.AdvancementGameTest",
+      "com.grahambartley.nightborn.gametest.OathGameTest",
       "com.grahambartley.nightborn.gametest.AgeGameTest",
       "com.grahambartley.nightborn.gametest.HiddenVampireGameTest",
       "com.grahambartley.nightborn.gametest.DecorGameTest",
