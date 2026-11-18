@@ -2030,7 +2030,7 @@
   "nightborn.command.player.stage.unknown": "Kein Vampirspieler kann die Stufe %s haben",
   "nightborn.command.player.stage.done": "Stufe von %s gesetzt",
   "nightborn.command.player.stage.unchanged": "%s ist kein Vampir oder hat diese Stufe bereits",
-  "nightborn.command.player.rank": "%s: %s, %s Jägerpunkte verdient, vollbrachte Taten %s",
+  "nightborn.command.player.rank": "%s: %s, %s Jägerpunkte verdient, %s von %s Taten vollbracht",
   "nightborn.command.player.rank.none": "%s ist der Gilde nicht beigetreten",
   "nightborn.command.player.rank.unknown": "Kein Jäger kann den Rang %s haben",
   "nightborn.command.player.rank.done": "Rang von %s gesetzt",

@@ -2030,7 +2030,7 @@
   "nightborn.command.player.stage.unknown": "Ningún jugador vampiro puede tener la etapa %s",
   "nightborn.command.player.stage.done": "Etapa de %s establecida",
   "nightborn.command.player.stage.unchanged": "%s no es un vampiro o ya está en esa etapa",
-  "nightborn.command.player.rank": "%s: %s, %s puntos de cazador ganados, hazañas cumplidas %s",
+  "nightborn.command.player.rank": "%s: %s, %s puntos de cazador ganados, %s de %s hazañas cumplidas",
   "nightborn.command.player.rank.none": "%s no ha entrado en el gremio",
   "nightborn.command.player.rank.unknown": "Ningún cazador puede tener el rango %s",
   "nightborn.command.player.rank.done": "Rango de %s establecido",

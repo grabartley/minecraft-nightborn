@@ -2030,7 +2030,7 @@
   "nightborn.command.player.stage.unknown": "Aucun joueur vampire ne peut avoir le stade %s",
   "nightborn.command.player.stage.done": "Stade de %s défini",
   "nightborn.command.player.stage.unchanged": "%s n'est pas un vampire ou a déjà ce stade",
-  "nightborn.command.player.rank": "%s : %s, %s points de chasseur gagnés, hauts faits accomplis %s",
+  "nightborn.command.player.rank": "%s : %s, %s points de chasseur gagnés, %s hauts faits accomplis sur %s",
   "nightborn.command.player.rank.none": "%s n'a pas rejoint la guilde",
   "nightborn.command.player.rank.unknown": "Aucun chasseur ne peut avoir le rang %s",
   "nightborn.command.player.rank.done": "Rang de %s défini",

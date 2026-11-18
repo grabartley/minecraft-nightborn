@@ -50,9 +50,12 @@ public final class Ranking {
   }
 
   public static void settle(final ServerPlayerEntity player) {
+    final Oath before = OathAttachment.get(player);
+    if (!GuildMembership.isHunter(player)) {
+      return;
+    }
     final SkillSettings settings = ServerConfigService.current().skills();
     final RankLadder ladder = RankLadder.of(player.getRegistryManager());
-    final Oath before = OathAttachment.get(player);
     final Oath settled =
         RankRules.advance(
             before,

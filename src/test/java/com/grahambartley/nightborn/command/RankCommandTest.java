@@ -31,10 +31,10 @@ class RankCommandTest {
                 : Optional.empty()));
   }
 
-  @ParameterizedTest(name = "deeds {0} -> {1}")
-  @CsvSource({"0, 0/3", "2, 1/3", "6, 2/3", "14, 3/3", "1, 0/3"})
+  @ParameterizedTest(name = "deeds {0} -> {1} of 3")
+  @CsvSource({"0, 0", "2, 1", "6, 2", "14, 3", "1, 0"})
   @DisplayName("an operator reads how many of the ladder's deeds a hunter has done")
-  void deeds(final int deeds, final String shown) {
+  void deeds(final int deeds, final int done) {
     final RankLadder ladder =
         new RankLadder(
             List.of(
@@ -42,6 +42,7 @@ class RankCommandTest {
                 rung("hunter", true),
                 rung("veteran", true),
                 rung("master", true)));
-    assertEquals(shown, RankCommand.deeds(ladder, new Oath(true, true, 0, deeds)));
+    assertEquals(done, RankCommand.deedsDone(ladder, new Oath(true, true, 0, deeds)));
+    assertEquals(3, RankCommand.deedsAll(ladder));
   }
 }

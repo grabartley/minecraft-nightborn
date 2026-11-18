@@ -2030,7 +2030,7 @@
   "nightborn.command.player.stage.unknown": "Nenhum jogador vampiro pode ter o estágio %s",
   "nightborn.command.player.stage.done": "Estágio de %s definido",
   "nightborn.command.player.stage.unchanged": "%s não é um vampiro ou já está nesse estágio",
-  "nightborn.command.player.rank": "%s: %s, %s pontos de caçador ganhos, feitos cumpridos %s",
+  "nightborn.command.player.rank": "%s: %s, %s pontos de caçador ganhos, %s de %s feitos cumpridos",
   "nightborn.command.player.rank.none": "%s não entrou para a guilda",
   "nightborn.command.player.rank.unknown": "Nenhum caçador pode ter o posto %s",
   "nightborn.command.player.rank.done": "Posto de %s definido",

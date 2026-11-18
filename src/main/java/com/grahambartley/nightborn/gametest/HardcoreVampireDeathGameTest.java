@@ -5,6 +5,8 @@ import com.grahambartley.nightborn.coffin.CoffinOwnership;
 import com.grahambartley.nightborn.config.DownedSettings;
 import com.grahambartley.nightborn.faction.Faction;
 import com.grahambartley.nightborn.faction.FactionAttachment;
+import com.grahambartley.nightborn.faction.Oath;
+import com.grahambartley.nightborn.faction.OathAttachment;
 import com.grahambartley.nightborn.feeding.TurningBite;
 import com.grahambartley.nightborn.server.ServerConfigService;
 import com.grahambartley.nightborn.skill.SkillAttachment;
@@ -66,6 +68,7 @@ public class HardcoreVampireDeathGameTest implements FabricGameTest {
                 Identifier.of("nightborn", "noble")));
     SkillAttachment.set(dead, SkillTree.HUNTER, TreeProgress.EMPTY.withEarned(2));
     TurningBite.set(dead, true);
+    OathAttachment.set(dead, new Oath(true, true, 2, 6));
     ThrallRegistry.of(context.getWorld().getServer()).bind(dead.getUuid(), UUID.randomUUID());
     final BlockPos coffin = CoffinStage.coffin(context, new BlockPos(2, 2, 2), Direction.EAST);
     CoffinOwnership.claim(context.getWorld(), context.getAbsolutePos(coffin), dead.getUuid());
@@ -83,6 +86,8 @@ public class HardcoreVampireDeathGameTest implements FabricGameTest {
                   .getPlayerManager()
                   .respawnPlayer(dead, false, Entity.RemovalReason.KILLED);
           context.assertEquals(FactionAttachment.get(respawned), Faction.HUMAN, "comes back human");
+          context.assertEquals(
+              OathAttachment.get(respawned), Oath.NONE, "the oath and guild rank are cleared");
           context.assertFalse(TurningBite.isOn(respawned), "the turning bite is cleared");
           context.assertEquals(
               ThrallRegistry.of(context.getWorld().getServer()).count(respawned.getUuid()),

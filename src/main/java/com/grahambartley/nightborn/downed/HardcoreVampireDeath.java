@@ -47,12 +47,12 @@ public final class HardcoreVampireDeath {
 
   static void reset(final ServerPlayerEntity player) {
     FactionAttachment.set(player, Faction.HUMAN);
+    OathAttachment.set(player, Oath.NONE);
     Ageing.clear(player);
     Hunts.clear(player);
     BiteSicknessAttachment.clear(player);
     TurningBite.set(player, false);
     SkillAttachment.clear(player);
-    OathAttachment.set(player, Oath.NONE);
     PowerCooldownAttachment.set(player, PowerCooldowns.NONE);
     player.getEnderChestInventory().clear();
     if (player.getServerWorld().getGameRules().getBoolean(GameRules.KEEP_INVENTORY)) {

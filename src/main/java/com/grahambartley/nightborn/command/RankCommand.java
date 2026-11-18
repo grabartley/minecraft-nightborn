@@ -61,23 +61,28 @@ final class RankCommand {
                               .map(rung -> rung.rank().name())
                               .orElse(Text.literal(Integer.toString(oath.rank()))),
                           SkillAttachment.get(player, SkillTree.HUNTER).earned(),
-                          deeds(ladder, oath))
+                          deedsDone(ladder, oath),
+                          deedsAll(ladder))
                       : Text.translatable("nightborn.command.player.rank.none", player.getName()),
               false);
     }
     return 1;
   }
 
-  static String deeds(final RankLadder ladder, final Oath oath) {
+  static int deedsDone(final RankLadder ladder, final Oath oath) {
     int done = 0;
+    for (int rank = 0; rank < ladder.size(); rank++) {
+      done += ladder.deed(rank).isPresent() && oath.deedDone(rank) ? 1 : 0;
+    }
+    return done;
+  }
+
+  static int deedsAll(final RankLadder ladder) {
     int all = 0;
     for (int rank = 0; rank < ladder.size(); rank++) {
-      if (ladder.deed(rank).isPresent()) {
-        all++;
-        done += oath.deedDone(rank) ? 1 : 0;
-      }
+      all += ladder.deed(rank).isPresent() ? 1 : 0;
     }
-    return done + "/" + all;
+    return all;
   }
 
   private static int set(final CommandContext<ServerCommandSource> context)

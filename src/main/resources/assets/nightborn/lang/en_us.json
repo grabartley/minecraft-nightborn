@@ -2030,7 +2030,7 @@
   "nightborn.command.player.stage.unknown": "No vampire player can be the stage %s",
   "nightborn.command.player.stage.done": "Set %s's stage",
   "nightborn.command.player.stage.unchanged": "%s is not a vampire or is already at that stage",
-  "nightborn.command.player.rank": "%s: %s, %s hunter points earned, deeds done %s",
+  "nightborn.command.player.rank": "%s: %s, %s hunter points earned, %s of %s deeds done",
   "nightborn.command.player.rank.none": "%s has not joined the guild",
   "nightborn.command.player.rank.unknown": "No hunter can hold the rank %s",
   "nightborn.command.player.rank.done": "Set %s's rank",

@@ -1,6 +1,7 @@
 package com.grahambartley.nightborn.gametest;
 
 import com.grahambartley.nightborn.faction.OathAttachment;
+import com.grahambartley.nightborn.gear.GearItems;
 import com.grahambartley.nightborn.guild.GuildOath;
 import com.grahambartley.nightborn.mob.NightbornMobs;
 import com.grahambartley.nightborn.mob.VampireEntity;
@@ -19,9 +20,11 @@ import java.util.Optional;
 import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.mob.ZombieEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.test.GameTest;
 import net.minecraft.test.TestContext;
+import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 
@@ -71,6 +74,26 @@ public class RankGameTest implements FabricGameTest {
         Optional.of(Identifier.of("nightborn", "veteran")),
         "the mark that was set aside");
     context.complete();
+  }
+
+  @GameTest(templateName = "nightborn:vampire_arena", tickLimit = TestPlayers.READY + 20)
+  public void stakingAnAdultVampireDoesTheHuntersDeed(final TestContext context) {
+    final ServerPlayerEntity hunter = TestPlayers.hunter(context, new BlockPos(2, 2, 4));
+    hunter.setStackInHand(Hand.MAIN_HAND, new ItemStack(GearItems.WOODEN_STAKE));
+    final VampireEntity vampire = context.spawnEntity(NightbornMobs.VAMPIRE, new BlockPos(4, 2, 4));
+    vampire.setAiDisabled(true);
+    vampire.becomeStage(Identifier.of("nightborn", "adult"));
+    context.runAtTick(
+        TestPlayers.READY,
+        () -> {
+          vampire.damage(vampire.getDamageSources().generic(), 1000.0F);
+          vampire.damage(hunter.getDamageSources().playerAttack(hunter), 1.0F);
+          context.assertFalse(vampire.isAlive(), "the vampire is staked");
+          context.assertTrue(OathAttachment.get(hunter).deedDone(1), "the Hunter deed is done");
+          context.assertFalse(
+              OathAttachment.get(hunter).deedDone(2), "a lone vampire with no home clears nothing");
+          TestPlayers.finish(context, hunter);
+        });
   }
 
   private static ServerPlayerEntity sworn(final TestContext context) {

@@ -2030,7 +2030,7 @@
   "nightborn.command.player.stage.unknown": "У игрока-вампира не может быть ступени %s",
   "nightborn.command.player.stage.done": "Ступень игрока %s установлена",
   "nightborn.command.player.stage.unchanged": "%s не вампир или уже на этой ступени",
-  "nightborn.command.player.rank": "%s: %s, заработано очков охотника: %s, совершено деяний: %s",
+  "nightborn.command.player.rank": "%s: %s, заработано очков охотника: %s, совершено деяний: %s из %s",
   "nightborn.command.player.rank.none": "%s не вступал в гильдию",
   "nightborn.command.player.rank.unknown": "У охотника не может быть ранга %s",
   "nightborn.command.player.rank.done": "Ранг игрока %s установлен",

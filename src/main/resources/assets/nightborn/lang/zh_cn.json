@@ -2030,7 +2030,7 @@
   "nightborn.command.player.stage.unknown": "吸血鬼玩家不能处于阶段 %s",
   "nightborn.command.player.stage.done": "已设置 %s 的阶段",
   "nightborn.command.player.stage.unchanged": "%s 不是吸血鬼，或已处于该阶段",
-  "nightborn.command.player.rank": "%s：%s，已获得 %s 点猎人技能点，已完成功绩 %s",
+  "nightborn.command.player.rank": "%s：%s，已获得 %s 点猎人技能点，已完成功绩 %s/%s",
   "nightborn.command.player.rank.none": "%s 尚未加入公会",
   "nightborn.command.player.rank.unknown": "猎人不能处于位阶 %s",
   "nightborn.command.player.rank.done": "已设置 %s 的位阶",
