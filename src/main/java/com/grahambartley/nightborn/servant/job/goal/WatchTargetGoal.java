@@ -77,7 +77,7 @@ public class WatchTargetGoal<T extends PathAwareEntity & DayWorker> extends Trac
             WatchRules.intrudes(
                     living instanceof Monster,
                     living.getType().isIn(DownedTargeting.HUNTERS),
-                    living instanceof CreeperEntity || Vampires.isVampire(living))
+                    WatchRules.spared(living instanceof CreeperEntity, Vampires.isVampire(living)))
                 && WatchRules.watched(living.squaredDistanceTo(centre), range)
                 && ServantTargets.mayAttack(worker, living));
   }

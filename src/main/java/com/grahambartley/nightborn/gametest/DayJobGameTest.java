@@ -1,5 +1,7 @@
 package com.grahambartley.nightborn.gametest;
 
+import com.grahambartley.nightborn.blood.BloodItems;
+import com.grahambartley.nightborn.config.ServantSettings;
 import com.grahambartley.nightborn.downed.DownedTargeting;
 import com.grahambartley.nightborn.guild.GuildMobs;
 import com.grahambartley.nightborn.guild.HunterEntity;
@@ -12,9 +14,11 @@ import com.grahambartley.nightborn.servant.job.Harvest;
 import com.grahambartley.nightborn.servant.job.JobOrder;
 import com.grahambartley.nightborn.servant.job.ScoutReport;
 import com.grahambartley.nightborn.servant.job.ScoutTrip;
+import com.grahambartley.nightborn.servant.job.goal.FetchBloodGoal;
 import com.grahambartley.nightborn.servant.job.goal.GatherGoal;
 import com.grahambartley.nightborn.servant.job.goal.ScoutGoal;
 import com.grahambartley.nightborn.servant.job.goal.WatchTargetGoal;
+import com.grahambartley.nightborn.server.ServerConfigService;
 import com.grahambartley.nightborn.thrall.ThrallEntity;
 import com.grahambartley.nightborn.thrall.ThrallRegistry;
 import com.grahambartley.nightborn.thrall.Thralls;
@@ -26,7 +30,11 @@ import net.minecraft.block.CropBlock;
 import net.minecraft.block.LeavesBlock;
 import net.minecraft.block.entity.ChestBlockEntity;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.mob.MobEntity;
+import net.minecraft.entity.passive.CowEntity;
+import net.minecraft.inventory.SimpleInventory;
+import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
@@ -45,10 +53,16 @@ public class DayJobGameTest implements FabricGameTest {
   static final String SCOUT = "day-jobs-scout";
   static final String WATCH = "day-jobs-watch";
   static final int NOON = 6000;
+  static final int ROUND_TICKS = 20;
+  static final int BLOOD_TICKS = 60;
 
   @BeforeBatch(batchId = GATHER)
   public void dayForGathering(final ServerWorld world) {
     freezeDay(world);
+    ServerConfigService.update(
+        world.getServer(),
+        ServerConfigService.current()
+            .with(ServantSettings.GATHER_RANGE, ServantSettings.GATHER_RANGE.min()));
   }
 
   @BeforeBatch(batchId = SCOUT)
@@ -64,6 +78,10 @@ public class DayJobGameTest implements FabricGameTest {
   @AfterBatch(batchId = GATHER)
   public void thawAfterGathering(final ServerWorld world) {
     thaw(world);
+    ServerConfigService.update(
+        world.getServer(),
+        ServerConfigService.current()
+            .with(ServantSettings.GATHER_RANGE, ServantSettings.GATHER_RANGE.defaultValue()));
   }
 
   @AfterBatch(batchId = SCOUT)
@@ -125,19 +143,16 @@ public class DayJobGameTest implements FabricGameTest {
           final GatherGoal<ThrallEntity> gather = new GatherGoal<>(thrall);
           context.assertTrue(gather.canStart(), "a marked chest lets the work begin");
           gather.start();
-          gather.tick();
+          for (int step = 0; step < ROUND_TICKS && gather.shouldContinue(); step++) {
+            gather.tick();
+          }
+          context.assertFalse(gather.shouldContinue(), "the round ends once the field is bare");
           context.checkBlockState(
               crop,
               state -> state.isOf(Blocks.WHEAT) && !((CropBlock) Blocks.WHEAT).isMature(state),
               () -> "the wheat is reaped and sown again");
-          context.assertEquals(
-              thrall.getInventory().count(Items.WHEAT), 1, "the thrall carries the wheat");
-          final int seeds = thrall.getInventory().count(Items.WHEAT_SEEDS);
-          gather.tick();
-          gather.tick();
           final ChestBlockEntity filled = context.getBlockEntity(chest);
           context.assertEquals(filled.count(Items.WHEAT), 1, "the wheat reaches the chest");
-          context.assertEquals(filled.count(Items.WHEAT_SEEDS), seeds, "and every spare seed");
           context.assertTrue(thrall.getInventory().isEmpty(), "nothing is kept back or lost");
           TestPlayers.finish(context, owner);
         });
@@ -156,14 +171,106 @@ public class DayJobGameTest implements FabricGameTest {
         beam.up(), Blocks.OAK_LEAVES.getDefaultState().with(LeavesBlock.PERSISTENT, true));
     final ServerWorld world = context.getWorld();
     context.assertEquals(
-        Harvest.kind(world, context.getAbsolutePos(tree)),
+        Harvest.kind(world, context.getAbsolutePos(tree), new SimpleInventory(1)),
         GatherTarget.WOOD,
         "a log under living leaves is a tree");
     context.assertEquals(
-        Harvest.kind(world, context.getAbsolutePos(beam)),
+        Harvest.kind(world, context.getAbsolutePos(beam), new SimpleInventory(1)),
         GatherTarget.NONE,
         "a log under placed leaves is a player's work");
     context.complete();
+  }
+
+  @GameTest(templateName = ARENA, batchId = GATHER, tickLimit = TestPlayers.READY + 20)
+  public void oreIsMinedOnlyWithAPickaxeFromTheChestWhichWears(final TestContext context) {
+    final ServerPlayerEntity owner = TestPlayers.vampire(context, new BlockPos(2, 2, 2));
+    final BlockPos iron = new BlockPos(4, 2, 5);
+    final BlockPos diamond = new BlockPos(5, 2, 4);
+    final BlockPos chest = new BlockPos(4, 2, 3);
+    context.setBlockState(iron, Blocks.IRON_ORE);
+    context.setBlockState(diamond, Blocks.DIAMOND_ORE);
+    context.setBlockState(chest, Blocks.CHEST);
+    final ChestBlockEntity box = context.getBlockEntity(chest);
+    box.setStack(0, new ItemStack(Items.STONE_PICKAXE));
+    context.runAtTick(
+        TestPlayers.READY,
+        () -> {
+          final ThrallEntity thrall = thrall(context, owner, new BlockPos(4, 2, 4));
+          ChestMarking.mark(owner, context.getAbsolutePos(chest));
+          thrall.assign(JobOrder.at(DayJob.GATHER, thrall.getBlockPos()));
+          final GatherGoal<ThrallEntity> gather = new GatherGoal<>(thrall);
+          context.assertTrue(gather.canStart(), "the work begins");
+          gather.start();
+          for (int step = 0; step < ROUND_TICKS && gather.shouldContinue(); step++) {
+            gather.tick();
+          }
+          context.expectBlock(Blocks.AIR, iron);
+          context.expectBlock(Blocks.DIAMOND_ORE, diamond);
+          context.assertEquals(box.count(Items.RAW_IRON), 1, "the iron comes home");
+          context.assertEquals(box.count(Items.STONE_PICKAXE), 1, "and so does the pickaxe");
+          context.assertEquals(
+              box.getStack(0).getDamage() + box.getStack(1).getDamage(),
+              1,
+              "worn by the one block it mined");
+          TestPlayers.finish(context, owner);
+        });
+  }
+
+  @GameTest(templateName = ARENA, batchId = GATHER, tickLimit = TestPlayers.READY + 60)
+  public void aServantSetToFetchBloodBottlesAnAnimalWithoutKillingIt(final TestContext context) {
+    final ServerPlayerEntity owner = TestPlayers.vampire(context, new BlockPos(2, 2, 2));
+    final BlockPos chest = new BlockPos(4, 2, 3);
+    context.setBlockState(chest, Blocks.CHEST);
+    final ChestBlockEntity box = context.getBlockEntity(chest);
+    box.setStack(0, new ItemStack(BloodItems.LANCET));
+    box.setStack(1, new ItemStack(Items.GLASS_BOTTLE, 2));
+    final CowEntity cow = still(context, EntityType.COW, new BlockPos(4, 2, 5));
+    context.runAtTick(
+        TestPlayers.READY,
+        () -> {
+          final ThrallEntity thrall = thrall(context, owner, new BlockPos(4, 2, 4));
+          ChestMarking.mark(owner, context.getAbsolutePos(chest));
+          context.assertTrue(
+              WheelUse.pick(owner, thrall, DayJobOrders.ID, DayJob.FETCH_BLOOD.ordinal()),
+              "the owner sets the thrall to fetch blood");
+          final FetchBloodGoal<ThrallEntity> fetch = new FetchBloodGoal<>(thrall);
+          context.assertTrue(fetch.canStart(), "the work begins");
+          fetch.start();
+          for (int step = 0; step < BLOOD_TICKS && fetch.shouldContinue(); step++) {
+            fetch.tick();
+          }
+          context.assertTrue(cow.isAlive(), "the lancet never kills");
+          final int blood = box.count(BloodItems.BLOOD_BOTTLE);
+          context.assertTrue(blood >= 1, "blood comes home in bottles");
+          context.assertEquals(
+              blood + box.count(Items.GLASS_BOTTLE), 2, "every bottle is accounted for");
+          context.assertEquals(box.count(BloodItems.LANCET), 1, "the lancet comes back");
+          context.assertTrue(thrall.getInventory().isEmpty(), "nothing is kept back");
+          TestPlayers.finish(context, owner);
+        });
+  }
+
+  @GameTest(templateName = ARENA, batchId = GATHER, tickLimit = TestPlayers.READY + 5)
+  public void aFreedThrallDropsWhatItCarried(final TestContext context) {
+    final ServerPlayerEntity owner = TestPlayers.vampire(context, new BlockPos(2, 2, 2));
+    context.runAtTick(
+        TestPlayers.READY,
+        () -> {
+          final ThrallEntity thrall = thrall(context, owner, new BlockPos(4, 2, 4));
+          thrall.getInventory().addStack(new ItemStack(Items.WHEAT, 12));
+          context.assertTrue(Thralls.free(thrall), "the thrall is freed");
+          context.assertEquals(
+              context
+                  .getWorld()
+                  .getEntitiesByClass(ItemEntity.class, context.getTestBox(), item -> true)
+                  .stream()
+                  .mapToInt(
+                      item -> item.getStack().isOf(Items.WHEAT) ? item.getStack().getCount() : 0)
+                  .sum(),
+              12,
+              "its wheat is on the ground");
+          TestPlayers.finish(context, owner);
+        });
   }
 
   @GameTest(templateName = ARENA, batchId = SCOUT, tickLimit = TestPlayers.READY + 20)

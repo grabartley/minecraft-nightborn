@@ -749,6 +749,8 @@
   "nightborn.familiar.ask_after": "问问近况",
   "nightborn.job.gather": "采集与耕作",
   "nightborn.job.gather.ordered": "%s 会在这里采集并装满你的箱子",
+  "nightborn.job.fetch_blood": "取血",
+  "nightborn.job.fetch_blood.ordered": "%s 会在这里给动物放血，并把瓶子送到你的箱子里",
   "nightborn.job.scout": "侦察",
   "nightborn.job.scout.ordered": "%1$s 出发前去侦察：%2$s",
   "nightborn.job.stand_watch": "站岗",

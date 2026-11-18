@@ -8,24 +8,34 @@ import org.junit.jupiter.params.provider.CsvSource;
 
 class GatherTargetTest {
 
-  @ParameterizedTest(name = "crop {0}, ripe {1}, wood {2}, tree {3}, ore {4} -> {5}")
+  @ParameterizedTest(name = "crop {0}, ripe {1}, wood {2}, tree {3}, ore {4}, pickaxe {5} -> {6}")
   @CsvSource({
-    "true, true, false, false, false, CROP",
-    "true, false, false, false, false, NONE",
-    "false, false, true, true, false, WOOD",
-    "false, false, true, false, false, NONE",
-    "false, false, false, false, true, ORE",
-    "false, false, false, false, false, NONE"
+    "true, true, false, false, false, false, CROP",
+    "true, false, false, false, false, false, NONE",
+    "false, false, true, true, false, false, WOOD",
+    "false, false, true, false, false, false, NONE",
+    "false, false, false, false, true, true, ORE",
+    "false, false, false, false, true, false, NONE",
+    "false, false, false, false, false, false, NONE"
   })
-  @DisplayName("a servant takes ripe crops, the logs of a tree and ore, never planks a player laid")
+  @DisplayName(
+      "a servant takes ripe crops, the logs of a tree, and ore only with a pickaxe that can mine it")
   void of(
       final boolean crop,
       final boolean ripe,
       final boolean wood,
       final boolean tree,
       final boolean ore,
+      final boolean pickaxe,
       final GatherTarget target) {
-    assertEquals(target, GatherTarget.of(crop, ripe, wood, tree, ore));
+    assertEquals(target, GatherTarget.of(crop, ripe, wood, tree, ore, pickaxe));
+  }
+
+  @ParameterizedTest(name = "{0} -> {1}")
+  @CsvSource({"CROP, false", "WOOD, false", "ORE, true", "NONE, false"})
+  @DisplayName("only mining ore wears the pickaxe")
+  void wears(final GatherTarget target, final boolean wears) {
+    assertEquals(wears, target.wearsThePickaxe());
   }
 
   @ParameterizedTest(name = "{0} -> {1}")

@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.minecraft.entity.mob.PathAwareEntity;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.tag.TagKey;
@@ -33,11 +34,19 @@ public final class ScoutOrders<T extends PathAwareEntity & DayWorker> implements
   public static final Identifier ICON = DayJob.SCOUT.icon();
   public static final Identifier PLACE_ICON = Identifier.ofVanilla("filled_map");
 
+  private static final Map<UUID, Offer> OFFERED = new ConcurrentHashMap<>();
+
+  record Offer(UUID worker, List<Found> places) {}
+
   private final SkillTree theme;
-  private final Map<UUID, List<Found>> offered = new ConcurrentHashMap<>();
 
   public ScoutOrders(final SkillTree theme) {
     this.theme = theme;
+  }
+
+  public static void register() {
+    ServerPlayConnectionEvents.DISCONNECT.register(
+        (handler, server) -> OFFERED.remove(handler.getPlayer().getUuid()));
   }
 
   @Override
@@ -69,11 +78,13 @@ public final class ScoutOrders<T extends PathAwareEntity & DayWorker> implements
       offer(player, worker, world);
       return;
     }
-    final List<Found> places = offered.remove(player.getUuid());
-    if (places == null || chosen.argument() < 0 || chosen.argument() >= places.size()) {
+    final Offer offer = OFFERED.remove(player.getUuid());
+    if (offer == null
+        || !offer.worker().equals(worker.getUuid())
+        || chosen.argument() >= offer.places().size()) {
       return;
     }
-    final Found place = places.get(chosen.argument());
+    final Found place = offer.places().get(chosen.argument());
     worker.assign(
         JobOrder.scout(worker.getBlockPos(), ScoutTrip.to(place.pos(), place.structure())));
     OrderCue.obey(
@@ -99,7 +110,7 @@ public final class ScoutOrders<T extends PathAwareEntity & DayWorker> implements
           Text.translatable("nightborn.scout.nowhere", worker.getDisplayName()), true);
       return;
     }
-    offered.put(player.getUuid(), places);
+    OFFERED.put(player.getUuid(), new Offer(worker.getUuid(), places));
     final List<WheelEntry> entries = new ArrayList<>();
     for (int index = 0; index < places.size(); index++) {
       entries.add(new WheelEntry(ID, index, PLACE_ICON, label(from, places.get(index)), false));

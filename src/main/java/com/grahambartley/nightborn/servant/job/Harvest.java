@@ -20,60 +20,85 @@ import net.minecraft.util.math.Direction;
 
 public final class Harvest {
 
-  public static final TagKey<Block> CROPS = tag("gather_crops");
-  public static final TagKey<Block> WOOD = tag("gather_wood");
-  public static final TagKey<Block> ORES = tag("gather_ores");
+  public static final TagKey<Block> CROPS = blocks("gather_crops");
+  public static final TagKey<Block> WOOD = blocks("gather_wood");
+  public static final TagKey<Block> ORES = blocks("gather_ores");
+  public static final TagKey<Item> TOOLS =
+      TagKey.of(RegistryKeys.ITEM, Identifier.of(Nightborn.MOD_ID, "gather_tools"));
+
+  public enum Reap {
+    REAPED,
+    GONE,
+    NO_ROOM,
+    TOO_MUCH
+  }
 
   private Harvest() {}
 
-  private static TagKey<Block> tag(final String path) {
+  private static TagKey<Block> blocks(final String path) {
     return TagKey.of(RegistryKeys.BLOCK, Identifier.of(Nightborn.MOD_ID, path));
   }
 
-  public static GatherTarget kind(final ServerWorld world, final BlockPos pos) {
+  public static GatherTarget kind(
+      final ServerWorld world, final BlockPos pos, final SimpleInventory carried) {
     final BlockState state = world.getBlockState(pos);
     final boolean wood = state.isIn(WOOD);
+    final boolean ore = state.isIn(ORES);
     return GatherTarget.of(
         state.isIn(CROPS),
         state.getBlock() instanceof CropBlock crop && crop.isMature(state),
         wood,
         wood && inATree(world, pos),
-        state.isIn(ORES));
+        ore,
+        ore && !pickaxeFor(carried, state).isEmpty());
   }
 
-  public static boolean reap(
+  public static ItemStack pickaxeFor(final SimpleInventory carried, final BlockState state) {
+    return JobSupplies.first(carried, stack -> stack.isIn(TOOLS) && stack.isSuitableFor(state));
+  }
+
+  public static BlockPos base(final ServerWorld world, final BlockPos pos) {
+    BlockPos at = pos;
+    while (world.getBlockState(at.down()).isIn(WOOD) && !world.isOutOfHeightLimit(at.down())) {
+      at = at.down();
+    }
+    return at.toImmutable();
+  }
+
+  public static Reap reap(
       final ServerWorld world,
       final BlockPos pos,
       final MobEntity worker,
       final SimpleInventory carried) {
-    final GatherTarget kind = kind(world, pos);
+    final GatherTarget kind = kind(world, pos, carried);
     if (kind == GatherTarget.NONE) {
-      return false;
+      return Reap.GONE;
     }
-    final List<BlockPos> felled = kind == GatherTarget.WOOD ? trunk(world, pos) : List.of(pos);
     final BlockState first = world.getBlockState(pos);
+    final ItemStack tool = kind.wearsThePickaxe() ? pickaxeFor(carried, first) : ItemStack.EMPTY;
+    final List<BlockPos> felled = kind == GatherTarget.WOOD ? trunk(world, pos) : List.of(pos);
     final List<ItemStack> drops = new ArrayList<>();
     for (final BlockPos block : felled) {
       drops.addAll(
           Block.getDroppedStacks(
-              world.getBlockState(block),
-              world,
-              block,
-              world.getBlockEntity(block),
-              worker,
-              ItemStack.EMPTY));
+              world.getBlockState(block), world, block, world.getBlockEntity(block), worker, tool));
     }
     if (!CarryRoom.fits(carried, drops)) {
-      return false;
+      return CarryRoom.fits(new SimpleInventory(carried.size()), drops)
+          ? Reap.NO_ROOM
+          : Reap.TOO_MUCH;
     }
     for (final BlockPos block : felled) {
       world.breakBlock(block, false, worker);
+    }
+    if (!tool.isEmpty()) {
+      tool.damage(1, world, null, item -> {});
     }
     drops.forEach(carried::addStack);
     if (kind.replants()) {
       replant(world, pos, first, carried);
     }
-    return true;
+    return Reap.REAPED;
   }
 
   private static void replant(

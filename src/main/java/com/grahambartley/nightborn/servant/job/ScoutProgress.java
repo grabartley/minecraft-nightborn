@@ -14,6 +14,11 @@ public record ScoutProgress(double best, int sinceBest) {
     return sinceBest >= giveUpTicks;
   }
 
+  public static boolean underway(
+      final boolean returning, final boolean daytime, final boolean awayFromHome) {
+    return returning || daytime || awayFromHome;
+  }
+
   public static boolean arrived(final double distanceSquared, final int sight) {
     return distanceSquared <= (double) sight * sight;
   }

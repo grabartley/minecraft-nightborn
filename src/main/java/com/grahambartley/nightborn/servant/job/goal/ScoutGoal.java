@@ -84,15 +84,15 @@ public class ScoutGoal<T extends PathAwareEntity & DayWorker> extends Goal {
     }
     final ScoutTrip trip = current.get();
     final boolean check = ticks++ % ScoutTicket.REFRESH_TICKS == 0;
-    if (check) {
-      ScoutTicket.keep(world, worker);
-    }
     final BlockPos goal = trip.returning() ? order.place() : trip.target();
     final double distanceSquared = ScoutChoices.flatDistanceSquared(worker.getBlockPos(), goal);
     final int sight = ServerConfigService.current().servants().scoutSight();
     if (ScoutProgress.arrived(distanceSquared, trip.returning() ? HOME_REACH : sight)) {
       arrive(world, order, trip, sight);
       return;
+    }
+    if (check) {
+      ScoutTicket.keep(world, worker);
     }
     if (check) {
       progress = progress.step(Math.sqrt(distanceSquared), ScoutTicket.REFRESH_TICKS);

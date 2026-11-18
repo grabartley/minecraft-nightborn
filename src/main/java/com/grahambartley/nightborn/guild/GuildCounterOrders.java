@@ -32,9 +32,7 @@ public final class GuildCounterOrders implements WheelAction<GuildMasterEntity> 
 
   @Override
   public List<WheelEntry> entries(final ServerPlayerEntity player, final GuildMasterEntity master) {
-    return List.of(
-        WheelEntry.of(
-            id, Identifier.of(kind.icon()), Text.translatable(kind.translationKey()), false));
+    return List.of(WheelEntry.of(id, kind.icon(), Text.translatable(kind.translationKey()), false));
   }
 
   @Override

@@ -32,8 +32,10 @@ public final class DayJobOrders<T extends PathAwareEntity & DayWorker> implement
   @Override
   public List<WheelEntry> entries(final ServerPlayerEntity player, final T worker) {
     final List<WheelEntry> entries = new ArrayList<>();
-    if (place(player, worker, DayJob.GATHER).isPresent()) {
-      entries.add(entry(worker, DayJob.GATHER));
+    for (final DayJob job : List.of(DayJob.GATHER, DayJob.FETCH_BLOOD)) {
+      if (place(player, worker, job).isPresent()) {
+        entries.add(entry(worker, job));
+      }
     }
     if (place(player, worker, DayJob.STAND_WATCH).isPresent()) {
       entries.add(entry(worker, DayJob.STAND_WATCH));
@@ -64,7 +66,7 @@ public final class DayJobOrders<T extends PathAwareEntity & DayWorker> implement
       return Optional.empty();
     }
     return switch (job) {
-      case GATHER ->
+      case GATHER, FETCH_BLOOD ->
           Optional.of(worker.getBlockPos().toImmutable())
               .filter(here -> JobChest.near(world, player.getUuid(), here).isPresent());
       case STAND_WATCH -> AssignedCoffin.in(player, world);

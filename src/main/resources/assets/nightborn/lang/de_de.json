@@ -749,6 +749,8 @@
   "nightborn.familiar.ask_after": "Nach dem Befinden fragen",
   "nightborn.job.gather": "Sammeln und ernten",
   "nightborn.job.gather.ordered": "%s sammelt hier und füllt deine Truhe",
+  "nightborn.job.fetch_blood": "Blut holen",
+  "nightborn.job.fetch_blood.ordered": "%s lässt hier Tiere zur Ader und bringt die Flaschen zu deiner Truhe",
   "nightborn.job.scout": "Auskundschaften",
   "nightborn.job.scout.ordered": "%1$s bricht zum Auskundschaften auf: %2$s",
   "nightborn.job.stand_watch": "Wache halten",

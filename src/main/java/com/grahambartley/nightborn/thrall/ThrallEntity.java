@@ -7,6 +7,7 @@ import com.grahambartley.nightborn.servant.ServantDeaths;
 import com.grahambartley.nightborn.servant.Servants;
 import com.grahambartley.nightborn.servant.job.DayWorker;
 import com.grahambartley.nightborn.servant.job.JobOrder;
+import com.grahambartley.nightborn.servant.job.goal.FetchBloodGoal;
 import com.grahambartley.nightborn.servant.job.goal.GatherGoal;
 import com.grahambartley.nightborn.servant.job.goal.ScoutGoal;
 import com.grahambartley.nightborn.servant.job.goal.StandWatchGoal;
@@ -99,6 +100,7 @@ public class ThrallEntity extends PathAwareEntity
     goalSelector.add(1, new MeleeAttackGoal(this, 1.0, true));
     goalSelector.add(2, new ScoutGoal<>(this));
     goalSelector.add(2, new GatherGoal<>(this));
+    goalSelector.add(2, new FetchBloodGoal<>(this));
     goalSelector.add(2, new StandWatchGoal<>(this));
     goalSelector.add(3, new ThrallPostGoal(this));
     goalSelector.add(4, new ThrallFollowGoal(this));

@@ -7,6 +7,7 @@ import net.minecraft.util.StringIdentifiable;
 
 public enum DayJob implements StringIdentifiable {
   GATHER("minecraft:iron_hoe"),
+  FETCH_BLOOD("nightborn:lancet"),
   SCOUT("minecraft:spyglass"),
   STAND_WATCH("minecraft:bell");
 

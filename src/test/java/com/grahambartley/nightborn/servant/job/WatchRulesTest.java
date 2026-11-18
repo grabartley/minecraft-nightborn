@@ -40,4 +40,11 @@ class WatchRulesTest {
   void watched(final double distanceSquared, final int range, final boolean watched) {
     assertEquals(watched, WatchRules.watched(distanceSquared, range));
   }
+
+  @ParameterizedTest(name = "creeper {0}, vampire {1} -> {2}")
+  @CsvSource({"true, false, true", "false, true, true", "false, false, false"})
+  @DisplayName("a guard leaves creepers and vampires be, on watch and at the coffin alike")
+  void spared(final boolean creeper, final boolean vampire, final boolean spared) {
+    assertEquals(spared, WatchRules.spared(creeper, vampire));
+  }
 }

@@ -28,6 +28,6 @@ class GuildCounterTest {
   @DisplayName("each counter has its own label and icon on the wheel")
   void wheel(final GuildCounter.Kind kind, final String key, final String icon) {
     assertEquals(key, kind.translationKey());
-    assertEquals(icon, kind.icon());
+    assertEquals(icon, kind.icon().toString());
   }
 }

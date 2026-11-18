@@ -10,6 +10,7 @@ import com.grahambartley.nightborn.name.NameBearer;
 import com.grahambartley.nightborn.servant.ServantDeaths;
 import com.grahambartley.nightborn.servant.job.DayWorker;
 import com.grahambartley.nightborn.servant.job.JobOrder;
+import com.grahambartley.nightborn.servant.job.goal.FetchBloodGoal;
 import com.grahambartley.nightborn.servant.job.goal.GatherGoal;
 import com.grahambartley.nightborn.servant.job.goal.ScoutGoal;
 import com.grahambartley.nightborn.servant.job.goal.StandWatchGoal;
@@ -100,6 +101,7 @@ public class HumanFamiliarEntity extends PathAwareEntity
     goalSelector.add(2, new MeleeAttackGoal(this, 1.0, true));
     goalSelector.add(3, new ScoutGoal<>(this));
     goalSelector.add(3, new GatherGoal<>(this));
+    goalSelector.add(3, new FetchBloodGoal<>(this));
     goalSelector.add(3, new StandWatchGoal<>(this));
     goalSelector.add(3, new RunErrandGoal(this));
     goalSelector.add(4, new StayHomeGoal(this));

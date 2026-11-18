@@ -39,4 +39,17 @@ class ScoutProgressTest {
   void arrived(final double distanceSquared, final int sight, final boolean arrived) {
     assertEquals(arrived, ScoutProgress.arrived(distanceSquared, sight));
   }
+
+  @ParameterizedTest(name = "returning {0}, day {1}, away {2} -> {3}")
+  @CsvSource({
+    "false, true, false, true",
+    "false, false, false, false",
+    "false, false, true, true",
+    "true, false, false, true"
+  })
+  @DisplayName("a scout sets out only by day, but once on its way it keeps going through the night")
+  void underway(
+      final boolean returning, final boolean day, final boolean away, final boolean underway) {
+    assertEquals(underway, ScoutProgress.underway(returning, day, away));
+  }
 }

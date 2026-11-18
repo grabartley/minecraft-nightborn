@@ -13,6 +13,10 @@ public final class WatchRules {
     return hunter || (monster && !spared);
   }
 
+  public static boolean spared(final boolean creeper, final boolean vampire) {
+    return creeper || vampire;
+  }
+
   public static boolean watched(final double distanceSquared, final int watchRange) {
     return distanceSquared <= (double) watchRange * watchRange;
   }

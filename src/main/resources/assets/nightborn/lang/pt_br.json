@@ -749,6 +749,8 @@
   "nightborn.familiar.ask_after": "Perguntar como está",
   "nightborn.job.gather": "Colher e cultivar",
   "nightborn.job.gather.ordered": "%s vai colher aqui e encher seu baú",
+  "nightborn.job.fetch_blood": "Buscar sangue",
+  "nightborn.job.fetch_blood.ordered": "%s vai sangrar animais aqui e levar as garrafas ao seu baú",
   "nightborn.job.scout": "Explorar",
   "nightborn.job.scout.ordered": "%1$s parte para explorar: %2$s",
   "nightborn.job.stand_watch": "Montar guarda",

@@ -57,7 +57,7 @@ public final class CommandWheel {
       return ActionResult.PASS;
     }
     if (!(player instanceof ServerPlayerEntity server)) {
-      return ActionResult.PASS;
+      return ActionResult.SUCCESS;
     }
     return open(server, target) ? ActionResult.CONSUME : ActionResult.PASS;
   }
@@ -104,10 +104,11 @@ public final class CommandWheel {
     final Optional<WheelEntry> chosen =
         menu.find(payload.entityId(), payload.action(), payload.argument());
     final Entity target = player.getServerWorld().getEntityById(payload.entityId());
-    if (chosen.isEmpty()
-        || target == null
-        || !target.isAlive()
-        || !player.canInteractWithEntity(target, REACH_SLACK)) {
+    if (!WheelChoice.accepted(
+        chosen.isPresent(),
+        target != null,
+        target != null && target.isAlive(),
+        target != null && player.canInteractWithEntity(target, REACH_SLACK))) {
       return false;
     }
     return SUBJECTS.stream()

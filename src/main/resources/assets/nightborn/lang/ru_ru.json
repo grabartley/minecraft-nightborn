@@ -749,6 +749,8 @@
   "nightborn.familiar.ask_after": "Спросить, как дела",
   "nightborn.job.gather": "Собирать и возделывать",
   "nightborn.job.gather.ordered": "%s будет собирать здесь и наполнять ваш сундук",
+  "nightborn.job.fetch_blood": "Добывать кровь",
+  "nightborn.job.fetch_blood.ordered": "%s будет пускать кровь животным здесь и приносить бутылки в ваш сундук",
   "nightborn.job.scout": "Разведать",
   "nightborn.job.scout.ordered": "%1$s отправляется на разведку: %2$s",
   "nightborn.job.stand_watch": "Нести дозор",

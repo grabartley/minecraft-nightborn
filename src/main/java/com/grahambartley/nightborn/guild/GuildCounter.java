@@ -4,6 +4,7 @@ import java.util.Locale;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.sound.SoundEvent;
+import net.minecraft.util.Identifier;
 import net.minecraft.village.Merchant;
 import net.minecraft.village.TradeOffer;
 import net.minecraft.village.TradeOfferList;
@@ -15,13 +16,13 @@ public final class GuildCounter implements Merchant {
     GEAR("minecraft:emerald"),
     CONTRACTS("nightborn:hunter_contract");
 
-    private final String icon;
+    private final Identifier icon;
 
     Kind(final String icon) {
-      this.icon = icon;
+      this.icon = Identifier.of(icon);
     }
 
-    public String icon() {
+    public Identifier icon() {
       return icon;
     }
 

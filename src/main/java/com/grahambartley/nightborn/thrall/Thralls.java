@@ -14,6 +14,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.SpawnGroup;
 import net.minecraft.entity.ai.brain.MemoryModuleType;
 import net.minecraft.entity.passive.VillagerEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.registry.Registries;
@@ -129,6 +130,9 @@ public final class Thralls {
   }
 
   static void release(final ThrallEntity thrall) {
+    for (final ItemStack stack : thrall.getInventory().clearToList()) {
+      thrall.dropStack(stack);
+    }
     final VillagerData data = thrall.getVillagerData();
     final VillagerEntity villager = thrall.convertTo(EntityType.VILLAGER, true);
     if (villager != null) {

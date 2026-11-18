@@ -14,6 +14,7 @@ class DayJobTest {
   @ParameterizedTest(name = "{0}")
   @CsvSource({
     "GATHER, nightborn.job.gather, minecraft:iron_hoe",
+    "FETCH_BLOOD, nightborn.job.fetch_blood, nightborn:lancet",
     "SCOUT, nightborn.job.scout, minecraft:spyglass",
     "STAND_WATCH, nightborn.job.stand_watch, minecraft:bell"
   })
@@ -25,7 +26,14 @@ class DayJobTest {
   }
 
   @ParameterizedTest(name = "{0} -> {1}")
-  @CsvSource({"0, GATHER", "1, SCOUT", "2, STAND_WATCH", "-1, GATHER", "7, GATHER"})
+  @CsvSource({
+    "0, GATHER",
+    "1, FETCH_BLOOD",
+    "2, SCOUT",
+    "3, STAND_WATCH",
+    "-1, GATHER",
+    "7, GATHER"
+  })
   @DisplayName("a wheel argument maps to its job, and anything else to gathering")
   void byIndex(final int index, final DayJob job) {
     assertEquals(job, DayJob.byIndex(index));

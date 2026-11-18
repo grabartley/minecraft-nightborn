@@ -749,6 +749,8 @@
   "nightborn.familiar.ask_after": "Demander comment il va",
   "nightborn.job.gather": "Récolter et cultiver",
   "nightborn.job.gather.ordered": "%s récoltera ici et remplira votre coffre",
+  "nightborn.job.fetch_blood": "Rapporter du sang",
+  "nightborn.job.fetch_blood.ordered": "%s saignera des animaux ici et rapportera les fioles à votre coffre",
   "nightborn.job.scout": "Reconnaître",
   "nightborn.job.scout.ordered": "%1$s part en reconnaissance : %2$s",
   "nightborn.job.stand_watch": "Monter la garde",

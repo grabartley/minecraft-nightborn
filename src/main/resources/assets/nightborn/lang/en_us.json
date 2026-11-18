@@ -749,6 +749,8 @@
   "nightborn.familiar.ask_after": "Ask how they are",
   "nightborn.job.gather": "Gather and farm",
   "nightborn.job.gather.ordered": "%s will gather here and fill your chest",
+  "nightborn.job.fetch_blood": "Fetch blood",
+  "nightborn.job.fetch_blood.ordered": "%s will bleed animals here and bring the bottles to your chest",
   "nightborn.job.scout": "Scout",
   "nightborn.job.scout.ordered": "%1$s sets out to scout: %2$s",
   "nightborn.job.stand_watch": "Stand watch",
