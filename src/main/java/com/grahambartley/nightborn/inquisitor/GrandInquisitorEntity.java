@@ -462,7 +462,7 @@ public class GrandInquisitorEntity extends HunterEntity implements ArenaBoss, Bi
     if (bitten && source.getAttacker() instanceof PlayerEntity biter) {
       roll.join(biter.getUuid());
     }
-    final float taken = turned ? getHealth() : InquisitorDrain.taken(getHealth(), amount);
+    final float taken = turned ? Float.MAX_VALUE : InquisitorDrain.taken(getHealth(), amount);
     return super.damage(source, taken);
   }
 
