@@ -7,6 +7,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.grahambartley.nightborn.MinecraftBootstrapExtension;
+import com.grahambartley.nightborn.accessory.AccessorySlot;
 import com.grahambartley.nightborn.challenge.Deed;
 import com.grahambartley.nightborn.challenge.DeedKinds;
 import com.mojang.serialization.JsonOps;
@@ -123,5 +124,20 @@ class DeedCriterionTest {
     assertTrue(
         DeedKinds.live().contains(read(conditions.toString()).match().deed()),
         where + " names a deed the game reports");
+  }
+
+  @ParameterizedTest(name = "{0}")
+  @ValueSource(strings = {"dressed_to_the_nines.json"})
+  void everySlotMeansEveryAccessorySlot(final String file) throws IOException {
+    final int slots =
+        JsonParser.parseString(Files.readString(ADVANCEMENTS.resolve(file)))
+            .getAsJsonObject()
+            .getAsJsonObject("criteria")
+            .getAsJsonObject("every_slot")
+            .getAsJsonObject("conditions")
+            .getAsJsonObject("at_least")
+            .get("slots")
+            .getAsInt();
+    assertEquals(AccessorySlot.values().length, slots);
   }
 }

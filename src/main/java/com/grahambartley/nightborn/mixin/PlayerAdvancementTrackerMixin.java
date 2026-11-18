@@ -14,7 +14,7 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(PlayerAdvancementTracker.class)
 abstract class PlayerAdvancementTrackerMixin {
@@ -23,10 +23,15 @@ abstract class PlayerAdvancementTrackerMixin {
 
   @Shadow @Final private PlayerManager playerManager;
 
-  @Inject(method = "method_53637", at = @At("HEAD"))
+  @Inject(method = "grantCriterion", at = @At("RETURN"))
   private void nightborn$turnTheJournalPages(
-      final AdvancementEntry advancement, final AdvancementDisplay display, final CallbackInfo ci) {
-    JournalPages.later(this.owner);
+      final AdvancementEntry advancement,
+      final String criterion,
+      final CallbackInfoReturnable<Boolean> cir) {
+    if (cir.getReturnValueZ()
+        && ((PlayerAdvancementTracker) (Object) this).getProgress(advancement).isDone()) {
+      JournalPages.later(this.owner);
+    }
   }
 
   @Redirect(

@@ -2,7 +2,7 @@
   "parent": "nightborn:root",
   "display": {
     "icon": {
-      "id": "nightborn:garlic"
+      "id": "minecraft:bread"
     },
     "title": {
       "translate": "advancements.nightborn.garlic_bread.title"

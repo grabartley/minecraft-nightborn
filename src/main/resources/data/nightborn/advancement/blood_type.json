@@ -2,7 +2,7 @@
   "parent": "nightborn:no_reflection_on_you",
   "display": {
     "icon": {
-      "id": "nightborn:blood_bottle_animal"
+      "id": "nightborn:blood_vial_pendant"
     },
     "title": {
       "translate": "advancements.nightborn.blood_type.title"

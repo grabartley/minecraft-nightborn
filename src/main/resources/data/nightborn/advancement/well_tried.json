@@ -2,7 +2,7 @@
   "parent": "nightborn:root",
   "display": {
     "icon": {
-      "id": "nightborn:wanted_poster"
+      "id": "nightborn:saints_medal"
     },
     "title": {
       "translate": "advancements.nightborn.well_tried.title"

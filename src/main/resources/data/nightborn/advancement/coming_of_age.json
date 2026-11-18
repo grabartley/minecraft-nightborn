@@ -2,7 +2,7 @@
   "parent": "nightborn:no_reflection_on_you",
   "display": {
     "icon": {
-      "id": "nightborn:blood_bottle"
+      "id": "nightborn:portrait"
     },
     "title": {
       "translate": "advancements.nightborn.coming_of_age.title"

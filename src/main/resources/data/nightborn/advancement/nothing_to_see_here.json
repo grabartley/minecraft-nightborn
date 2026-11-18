@@ -2,7 +2,7 @@
   "parent": "nightborn:no_reflection_on_you",
   "display": {
     "icon": {
-      "id": "nightborn:empty_gilt_mirror"
+      "id": "nightborn:bronze_garlic_wreath"
     },
     "title": {
       "translate": "advancements.nightborn.nothing_to_see_here.title"

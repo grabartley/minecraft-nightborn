@@ -40,8 +40,10 @@ public final class StructureZoneTracker {
       return;
     }
     for (final ServerPlayerEntity player : server.getPlayerManager().getPlayerList()) {
-      final Optional<StructureZone> zone = zoneAround(player);
-      StructureVisits.visit(player, zone);
+      final Optional<Placed> placed = placedAround(player);
+      final Optional<StructureZone> zone = placed.map(Placed::zone);
+      StructureVisits.visit(
+          player, zone.map(StructureZone::area), placed.flatMap(Placed::structure));
       if (!zone.equals(SENT.getOrDefault(player.getUuid(), Optional.empty()))) {
         SENT.put(player.getUuid(), zone);
         ServerPlayNetworking.send(player, new StructureZonePayload(zone));
@@ -50,35 +52,42 @@ public final class StructureZoneTracker {
   }
 
   public static Optional<StructureZone> zoneAround(final ServerPlayerEntity player) {
+    return placedAround(player).map(Placed::zone);
+  }
+
+  private static Optional<Placed> placedAround(final ServerPlayerEntity player) {
     final ServerWorld world = player.getServerWorld();
     final ChunkPos centre = player.getChunkPos();
-    final List<StructureZone> zones = new ArrayList<>();
+    final List<Placed> zones = new ArrayList<>();
     for (int dx = -CHUNK_RADIUS; dx <= CHUNK_RADIUS; dx++) {
       for (int dz = -CHUNK_RADIUS; dz <= CHUNK_RADIUS; dz++) {
         Optional.ofNullable(world.getChunkManager().getWorldChunk(centre.x + dx, centre.z + dz))
             .ifPresent(chunk -> collect(world, chunk, zones));
       }
     }
-    return StructureZones.deepest(zones, player.getX(), player.getEyeY(), player.getZ());
+    return StructureZones.deepest(
+            zones.stream().map(Placed::zone).toList(),
+            player.getX(),
+            player.getEyeY(),
+            player.getZ())
+        .flatMap(deepest -> zones.stream().filter(placed -> placed.zone() == deepest).findFirst());
   }
 
   private static void collect(
-      final ServerWorld world, final Chunk chunk, final List<StructureZone> zones) {
+      final ServerWorld world, final Chunk chunk, final List<Placed> zones) {
     for (final StructureStart start : VampireStructureStarts.referencedBy(world, chunk)) {
-      zoneOf(world, start).ifPresent(zones::add);
+      final Optional<Identifier> structure =
+          Optional.ofNullable(
+              world.getRegistryManager().get(RegistryKeys.STRUCTURE).getId(start.getStructure()));
+      zoneOf(start).ifPresent(zone -> zones.add(new Placed(zone, structure)));
     }
   }
 
-  private static Optional<StructureZone> zoneOf(
-      final ServerWorld world, final StructureStart start) {
-    final Identifier structure =
-        world.getRegistryManager().get(RegistryKeys.STRUCTURE).getId(start.getStructure());
+  private record Placed(StructureZone zone, Optional<Identifier> structure) {}
+
+  private static Optional<StructureZone> zoneOf(final StructureStart start) {
     final StructureAmbience ambience = ((VampireStructure) start.getStructure()).ambience();
     return StructureHeart.of(start.getChildren())
-        .filter(heart -> structure != null)
-        .map(
-            heart ->
-                new StructureZone(
-                    structure, FogZone.around(heart, start.getBoundingBox()), ambience));
+        .map(heart -> new StructureZone(FogZone.around(heart, start.getBoundingBox()), ambience));
   }
 }

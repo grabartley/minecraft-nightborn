@@ -28,14 +28,6 @@ public final class ChallengeRewards {
       final Trial trial = context.trials().get(done.trial());
       if (trial != null) {
         payTrial(player, trial, done.firstTime());
-        Deeds.record(
-            player,
-            Deed.of(DeedKinds.TRIAL_COMPLETED)
-                .with(DeedKinds.TRIAL, done.trial())
-                .with(DeedKinds.SIDE, trial.side().asString())
-                .with(
-                    DeedKinds.DISTINCT,
-                    outcome.record().finishedOf(trial.side(), context.trials())));
       }
     }
     for (final Identifier id : outcome.feats()) {

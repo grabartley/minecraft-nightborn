@@ -68,7 +68,11 @@ public final class Banes {
   }
 
   public static Set<Bane> of(final Coating coating) {
-    return EnumSet.of(coating == Coating.GARLIC ? Bane.GARLIC : Bane.HOLY_WATER);
+    return EnumSet.of(
+        switch (coating) {
+          case GARLIC -> Bane.GARLIC;
+          case HOLY_WATER -> Bane.HOLY_WATER;
+        });
   }
 
   static Set<Bane> of(final DamageSource source) {

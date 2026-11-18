@@ -2,7 +2,7 @@
   "parent": "nightborn:root",
   "display": {
     "icon": {
-      "id": "nightborn:hand_mirror"
+      "id": "nightborn:empty_gilt_mirror"
     },
     "title": {
       "translate": "advancements.nightborn.mirror_mirror.title"

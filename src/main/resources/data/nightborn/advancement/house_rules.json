@@ -2,7 +2,7 @@
   "parent": "nightborn:no_reflection_on_you",
   "display": {
     "icon": {
-      "id": "nightborn:crest_banner"
+      "id": "nightborn:candelabra"
     },
     "title": {
       "translate": "advancements.nightborn.house_rules.title"

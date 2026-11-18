@@ -2,7 +2,7 @@
   "parent": "nightborn:no_reflection_on_you",
   "display": {
     "icon": {
-      "id": "nightborn:blood_fountain"
+      "id": "nightborn:bloodstone_ring"
     },
     "title": {
       "translate": "advancements.nightborn.thicker_than_water.title"

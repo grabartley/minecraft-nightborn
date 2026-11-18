@@ -2,7 +2,7 @@
   "parent": "nightborn:root",
   "display": {
     "icon": {
-      "id": "minecraft:bread"
+      "id": "minecraft:rotten_flesh"
     },
     "title": {
       "translate": "advancements.nightborn.light_lunch.title"

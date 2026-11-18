@@ -2,7 +2,7 @@
   "parent": "nightborn:no_reflection_on_you",
   "display": {
     "icon": {
-      "id": "nightborn:blood_splatter"
+      "id": "nightborn:lair_fang"
     },
     "title": {
       "translate": "advancements.nightborn.last_bite.title"

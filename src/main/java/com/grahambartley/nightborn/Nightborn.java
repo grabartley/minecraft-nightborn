@@ -1,6 +1,7 @@
 package com.grahambartley.nightborn;
 
 import com.grahambartley.nightborn.accessory.AccessoryFeatures;
+import com.grahambartley.nightborn.advancement.AdvancementCatchUp;
 import com.grahambartley.nightborn.advancement.DeedCriterion;
 import com.grahambartley.nightborn.advancement.MilestoneCriterion;
 import com.grahambartley.nightborn.challenge.ChallengeFeatures;
@@ -51,6 +52,7 @@ public class Nightborn implements ModInitializer {
   public void onInitialize() {
     MilestoneCriterion.register();
     DeedCriterion.register();
+    AdvancementCatchUp.register();
     NightbornSounds.initialize();
     FactionAttachment.register();
     OathAttachment.register();

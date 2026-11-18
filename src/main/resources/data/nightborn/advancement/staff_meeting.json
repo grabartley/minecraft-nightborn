@@ -2,7 +2,7 @@
   "parent": "nightborn:no_reflection_on_you",
   "display": {
     "icon": {
-      "id": "nightborn:familiars_contract"
+      "id": "nightborn:thrall_keepers_ring"
     },
     "title": {
       "translate": "advancements.nightborn.staff_meeting.title"

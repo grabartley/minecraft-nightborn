@@ -2,7 +2,7 @@
   "parent": "nightborn:sworn_in",
   "display": {
     "icon": {
-      "id": "nightborn:wooden_stake"
+      "id": "nightborn:ashen_silver_stake"
     },
     "title": {
       "translate": "advancements.nightborn.stage_fright.title"
