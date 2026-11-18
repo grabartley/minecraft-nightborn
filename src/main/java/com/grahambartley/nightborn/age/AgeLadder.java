@@ -50,6 +50,12 @@ public record AgeLadder(List<Rung> rungs) {
     return Optional.empty();
   }
 
+  public double notoriety(final int rank) {
+    return rung(Math.min(rank, rungs.size() - 1))
+        .map(rung -> rung.age().notoriety())
+        .orElse(StageAge.PLAIN_NOTORIETY);
+  }
+
   public int stageRank(final int rank) {
     return rung(Math.min(rank, rungs.size() - 1)).map(rung -> rung.stage().rank()).orElse(0);
   }

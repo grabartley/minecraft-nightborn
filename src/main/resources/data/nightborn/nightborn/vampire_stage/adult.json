@@ -17,6 +17,7 @@
     "name": {
       "translate": "nightborn.stage.adult"
     },
+    "notoriety": 1.25,
     "deed": {
       "act": "drain",
       "victims": "nightborn:deed/adult",

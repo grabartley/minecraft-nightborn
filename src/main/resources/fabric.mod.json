@@ -30,6 +30,7 @@
       "com.grahambartley.nightborn.gametest.NightbornBootGameTest",
       "com.grahambartley.nightborn.gametest.AdvancementGameTest",
       "com.grahambartley.nightborn.gametest.AgeGameTest",
+      "com.grahambartley.nightborn.gametest.HuntGameTest",
       "com.grahambartley.nightborn.gametest.HiddenVampireGameTest",
       "com.grahambartley.nightborn.gametest.DecorGameTest",
       "com.grahambartley.nightborn.gametest.GramophoneGameTest",
