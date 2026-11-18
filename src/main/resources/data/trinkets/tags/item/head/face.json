@@ -1,6 +1,19 @@
 {
   "replace": false,
   "values": [
-    "nightborn:mourning_veil"
+    "nightborn:mourning_veil",
+    "nightborn:domino_mask",
+    "nightborn:wire_spectacles",
+    "nightborn:plain_monocle",
+    "nightborn:widows_veil",
+    "nightborn:smoked_spectacles",
+    "nightborn:porcelain_mask",
+    "nightborn:death_mask",
+    "nightborn:hunters_monocle",
+    "nightborn:confessors_veil",
+    "nightborn:garlic_soaked_scarf",
+    "nightborn:lantern_lens_goggles",
+    "nightborn:plague_mask",
+    "nightborn:opera_mask"
   ]
 }

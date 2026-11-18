@@ -178,6 +178,66 @@
               }
             }
           ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "nightborn:cloak_of_dusk",
+          "conditions": [
+            {
+              "condition": "minecraft:location_check",
+              "predicate": {
+                "structures": "nightborn:castle"
+              }
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "nightborn:silver_threaded_gloves",
+          "conditions": [
+            {
+              "condition": "minecraft:location_check",
+              "predicate": {
+                "structures": "nightborn:castle"
+              }
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "nightborn:bandolier",
+          "conditions": [
+            {
+              "condition": "minecraft:location_check",
+              "predicate": {
+                "structures": "nightborn:castle"
+              }
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "nightborn:widows_veil",
+          "conditions": [
+            {
+              "condition": "minecraft:location_check",
+              "predicate": {
+                "structures": "nightborn:castle"
+              }
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "nightborn:hunters_monocle",
+          "conditions": [
+            {
+              "condition": "minecraft:location_check",
+              "predicate": {
+                "structures": "nightborn:castle"
+              }
+            }
+          ]
         }
       ]
     }

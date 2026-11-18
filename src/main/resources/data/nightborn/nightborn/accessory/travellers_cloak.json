@@ -1,0 +1,9 @@
+{
+  "gifts": [
+    {
+      "attribute": "nightborn:frost_ward",
+      "amount": 1.0,
+      "operation": "add_value"
+    }
+  ]
+}

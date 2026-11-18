@@ -1,5 +1,6 @@
 package com.grahambartley.nightborn.mixin;
 
+import com.grahambartley.nightborn.accessory.WornClouds;
 import com.grahambartley.nightborn.blood.PotionWard;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
@@ -25,6 +26,7 @@ abstract class AreaEffectCloudEntityMixin {
       final StatusEffectInstance effect,
       final Entity source,
       final Operation<Boolean> original) {
-    return original.call(target, PotionWard.ward(target, effect), source);
+    return original.call(
+        target, WornClouds.shorten(target, PotionWard.ward(target, effect)), source);
   }
 }

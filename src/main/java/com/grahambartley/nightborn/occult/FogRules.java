@@ -1,5 +1,9 @@
 package com.grahambartley.nightborn.occult;
 
+import net.minecraft.entity.effect.StatusEffect;
+import net.minecraft.entity.effect.StatusEffects;
+import net.minecraft.registry.entry.RegistryEntry;
+
 public final class FogRules {
 
   static final int PULSE_TICKS = 10;
@@ -25,5 +29,13 @@ public final class FogRules {
       final boolean spectating,
       final boolean seesThrough) {
     return alive && !caster && !servesCaster && !spectating && !seesThrough;
+  }
+
+  public static boolean blinds(final RegistryEntry<StatusEffect> effect) {
+    return effect.matches(StatusEffects.BLINDNESS) || effect.matches(StatusEffects.DARKNESS);
+  }
+
+  public static boolean reaches(final boolean blinding, final boolean clearSight) {
+    return !(blinding && clearSight);
   }
 }

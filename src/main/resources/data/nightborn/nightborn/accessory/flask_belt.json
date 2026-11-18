@@ -1,0 +1,13 @@
+{
+  "works_for": "human",
+  "holds": [
+    {
+      "items": [
+        "minecraft:splash_potion",
+        "minecraft:lingering_potion"
+      ],
+      "count": 6,
+      "potion": "nightborn:holy_water"
+    }
+  ]
+}

@@ -23,6 +23,7 @@ public final class GiftAttributes {
   public static final double MOST_INTERVAL_TICKS = 200.0;
   public static final double MOST_RADIUS = 4.0;
   public static final double MOST_COST_CUT = 8.0;
+  public static final double MOST_EXTRA_DAMAGE = 4.0;
 
   public static final RegistryEntry<EntityAttribute> FINISHER_BLOOD =
       register("finisher_blood", 0.0, 0.0, MOST_EXTRA_BLOOD);
@@ -72,6 +73,50 @@ public final class GiftAttributes {
       register("chest_luck", 0.0, 0.0, MOST_LUCK);
   public static final RegistryEntry<EntityAttribute> COBWEB_SLOW =
       register("cobweb_slow", 1.0, 0.0, 1.0);
+  public static final RegistryEntry<EntityAttribute> LEVITATION_DRAIN =
+      register("levitation_drain", 1.0, LEAST_SHARE, 1.0);
+  public static final RegistryEntry<EntityAttribute> HOUSE_DAMAGE =
+      register("house_damage", 1.0, 1.0, MOST_BOOST);
+  public static final RegistryEntry<EntityAttribute> HOUSE_DAMAGE_RANGE =
+      register("house_damage_range", 0.0, 0.0, MOST_RANGE);
+  public static final RegistryEntry<EntityAttribute> DAYLIGHT_HEAL =
+      register("daylight_heal", 0.0, 0.0, MOST_HEAL);
+  public static final RegistryEntry<EntityAttribute> DAYLIGHT_HEAL_INTERVAL =
+      register("daylight_heal_interval", 0.0, 0.0, MOST_INTERVAL_TICKS);
+  public static final RegistryEntry<EntityAttribute> HOUSE_NOISE =
+      register("house_noise", 1.0, LEAST_SHARE, 1.0);
+  public static final RegistryEntry<EntityAttribute> FROST_WARD =
+      register("frost_ward", 0.0, 0.0, 1.0);
+  public static final RegistryEntry<EntityAttribute> BARE_HAND_DAMAGE =
+      register("bare_hand_damage", 0.0, 0.0, MOST_EXTRA_DAMAGE);
+  public static final RegistryEntry<EntityAttribute> FEEDING_NOTICE =
+      register("feeding_notice", 1.0, LEAST_SHARE, 1.0);
+  public static final RegistryEntry<EntityAttribute> STAKE_DAMAGE =
+      register("stake_damage", 1.0, 1.0, MOST_BOOST);
+  public static final RegistryEntry<EntityAttribute> BITE_ESCAPE =
+      register("bite_escape", 1.0, 1.0, MOST_BOOST);
+  public static final RegistryEntry<EntityAttribute> SOIL_DIG_SPEED =
+      register("soil_dig_speed", 1.0, 1.0, MOST_BOOST);
+  public static final RegistryEntry<EntityAttribute> BOTTLE_BLOOD =
+      register("bottle_blood", 1.0, 1.0, MOST_BOOST);
+  public static final RegistryEntry<EntityAttribute> TRAP_COOLDOWN =
+      register("trap_cooldown", 1.0, LEAST_SHARE, 1.0);
+  public static final RegistryEntry<EntityAttribute> FLINCH_SIZE =
+      register("flinch_size", 1.0, LEAST_SHARE, 1.0);
+  public static final RegistryEntry<EntityAttribute> DUSK_SIGHT =
+      register("dusk_sight", 0.0, 0.0, 1.0);
+  public static final RegistryEntry<EntityAttribute> FACE_LEARNING =
+      register("face_learning", 1.0, LEAST_SHARE, 1.0);
+  public static final RegistryEntry<EntityAttribute> VAMPIRE_INSIGHT =
+      register("vampire_insight", 0.0, 0.0, 1.0);
+  public static final RegistryEntry<EntityAttribute> BITE_WEAKNESS_TIME =
+      register("bite_weakness_time", 1.0, LEAST_SHARE, 1.0);
+  public static final RegistryEntry<EntityAttribute> FOG_CLEAR_SIGHT =
+      register("fog_clear_sight", 0.0, 0.0, 1.0);
+  public static final RegistryEntry<EntityAttribute> CLOUD_TIME =
+      register("cloud_time", 1.0, LEAST_SHARE, 1.0);
+  public static final RegistryEntry<EntityAttribute> NAME_RANGE =
+      register("name_range", 0.0, 0.0, MOST_RANGE);
 
   public static final List<RegistryEntry<EntityAttribute>> ALL =
       List.of(
@@ -98,7 +143,29 @@ public final class GiftAttributes {
           GUILD_PRICE,
           VILLAGER_PRICE,
           CHEST_LUCK,
-          COBWEB_SLOW);
+          COBWEB_SLOW,
+          LEVITATION_DRAIN,
+          HOUSE_DAMAGE,
+          HOUSE_DAMAGE_RANGE,
+          DAYLIGHT_HEAL,
+          DAYLIGHT_HEAL_INTERVAL,
+          HOUSE_NOISE,
+          FROST_WARD,
+          BARE_HAND_DAMAGE,
+          FEEDING_NOTICE,
+          STAKE_DAMAGE,
+          BITE_ESCAPE,
+          SOIL_DIG_SPEED,
+          BOTTLE_BLOOD,
+          TRAP_COOLDOWN,
+          FLINCH_SIZE,
+          DUSK_SIGHT,
+          FACE_LEARNING,
+          VAMPIRE_INSIGHT,
+          BITE_WEAKNESS_TIME,
+          FOG_CLEAR_SIGHT,
+          CLOUD_TIME,
+          NAME_RANGE);
 
   private GiftAttributes() {}
 

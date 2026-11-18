@@ -43,7 +43,7 @@ public final class VillagerWitnesses {
       final LivingEntity vampire,
       @Nullable final LivingEntity victim,
       final int witnessRange) {
-    final int range = Noticing.byVillagers(vampire, witnessRange);
+    final int range = Noticing.feeding(vampire, witnessRange);
     if (range <= 0) {
       return List.of();
     }

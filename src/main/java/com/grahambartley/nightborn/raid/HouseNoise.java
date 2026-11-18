@@ -1,5 +1,6 @@
 package com.grahambartley.nightborn.raid;
 
+import com.grahambartley.nightborn.accessory.GiftAttributes;
 import com.grahambartley.nightborn.coffin.CoffinSleepers;
 import com.grahambartley.nightborn.config.RaidSettings;
 import com.grahambartley.nightborn.server.ServerConfigService;
@@ -48,7 +49,11 @@ public final class HouseNoise {
     final long now = world.getTime();
     for (final LivingEntity sleeper : sleepers(world, maker, kind.reach())) {
       final double level =
-          LEVELS.hear(sleeper.getUuid(), kind.loudness(), now, settings.noiseFade());
+          LEVELS.hear(
+              sleeper.getUuid(),
+              kind.loudness() * GiftAttributes.value(maker, GiftAttributes.HOUSE_NOISE),
+              now,
+              settings.noiseFade());
       if (Noise.wakes(level, settings.wakeNoise())) {
         HouseAlarm.wake(world, sleeper, maker);
       }

@@ -25,6 +25,7 @@ public enum VampirePose {
   DRAIN("drain", Play.ONCE, Hold.ARMS_AND_HEAD),
   RISE("rise", Play.ONCE, Hold.ARMS_AND_HEAD),
   FLINCH("land", Play.ONCE),
+  SMALL_FLINCH("idle_look", Play.ONCE),
   WEAKENED("weakened", Play.LOOP),
   WEAKENED_WALK("weakened_walk", Play.LOOP),
   COFFIN_SLEEP("coffin_sleep", Play.HOLD, Hold.ARMS_HEAD_AND_HANDS),

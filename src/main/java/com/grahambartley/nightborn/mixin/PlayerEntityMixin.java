@@ -1,6 +1,8 @@
 package com.grahambartley.nightborn.mixin;
 
+import com.grahambartley.nightborn.accessory.BeltAmmo;
 import com.grahambartley.nightborn.accessory.GiftAttributes;
+import com.grahambartley.nightborn.accessory.WornDigging;
 import com.grahambartley.nightborn.batform.BatForm;
 import com.grahambartley.nightborn.batform.BatShape;
 import com.grahambartley.nightborn.clothing.WornAttributes;
@@ -20,7 +22,9 @@ import com.grahambartley.nightborn.vampire.Vampires;
 import com.grahambartley.nightborn.vampire.VisibleStateAttachment;
 import com.grahambartley.nightborn.vomit.Meals;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
+import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
+import net.minecraft.block.BlockState;
 import net.minecraft.component.type.FoodComponent;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityDimensions;
@@ -165,5 +169,16 @@ abstract class PlayerEntityMixin {
         | nightborn$mistShape.changed(MistForm.on(self))) {
       self.calculateDimensions();
     }
+  }
+
+  @Inject(method = "getProjectileType", at = @At("HEAD"), cancellable = true)
+  private void nightborn$beltAmmoBeforeInventory(
+      final ItemStack weapon, final CallbackInfoReturnable<ItemStack> cir) {
+    BeltAmmo.draw((PlayerEntity) (Object) this, weapon).ifPresent(cir::setReturnValue);
+  }
+
+  @ModifyReturnValue(method = "getBlockBreakingSpeed", at = @At("RETURN"))
+  private float nightborn$soilDigsFaster(final float speed, final BlockState state) {
+    return WornDigging.speed((PlayerEntity) (Object) this, state, speed);
   }
 }

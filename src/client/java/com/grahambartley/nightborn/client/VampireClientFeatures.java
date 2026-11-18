@@ -1,6 +1,7 @@
 package com.grahambartley.nightborn.client;
 
 import com.grahambartley.nightborn.blood.BloodItems;
+import com.grahambartley.nightborn.client.accessory.InsightReadout;
 import com.grahambartley.nightborn.client.anim.VampirePlayerClips;
 import com.grahambartley.nightborn.client.gore.BloodFx;
 import com.grahambartley.nightborn.client.mirror.MirrorScreen;
@@ -35,6 +36,7 @@ public final class VampireClientFeatures {
           }
         });
     HudRenderCallback.EVENT.register(VampireHud::render);
+    HudRenderCallback.EVENT.register(InsightReadout::render);
     HudRenderCallback.EVENT.register(PowerBarHud::render);
     SkillKeys.register();
     PayloadKey.register(

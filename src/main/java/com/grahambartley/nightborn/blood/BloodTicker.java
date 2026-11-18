@@ -1,5 +1,6 @@
 package com.grahambartley.nightborn.blood;
 
+import com.grahambartley.nightborn.accessory.GiftAttributes;
 import com.grahambartley.nightborn.accessory.WornStores;
 import com.grahambartley.nightborn.age.AgeAttachment;
 import com.grahambartley.nightborn.age.AgeGifts;
@@ -60,7 +61,11 @@ public final class BloodTicker {
                 BloodMetabolism.atRate(
                     BloodMetabolism.flightDrainSeconds(
                         BatForm.effort(vampire), Levitation.isLevitating(vampire), config.core()),
-                    drainRate),
+                    BloodMetabolism.flightRate(
+                        BatForm.effort(vampire),
+                        Levitation.isLevitating(vampire),
+                        drainRate,
+                        GiftAttributes.value(vampire, GiftAttributes.LEVITATION_DRAIN))),
                 vampire.age,
                 VampireAttributes.value(vampire, VampireAttributes.HEALING_SPEED)),
             BloodMetabolism.atRate(drainSeconds, drainRate));

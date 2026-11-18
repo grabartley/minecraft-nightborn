@@ -1,0 +1,10 @@
+{
+  "works_for": "human",
+  "gifts": [
+    {
+      "attribute": "nightborn:bite_escape",
+      "amount": 0.15,
+      "operation": "add_value"
+    }
+  ]
+}

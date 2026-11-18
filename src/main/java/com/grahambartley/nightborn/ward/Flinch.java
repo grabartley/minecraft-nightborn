@@ -1,5 +1,6 @@
 package com.grahambartley.nightborn.ward;
 
+import com.grahambartley.nightborn.accessory.GiftAttributes;
 import com.grahambartley.nightborn.mind.Glamour;
 import com.grahambartley.nightborn.mob.VampirePose;
 import com.grahambartley.nightborn.network.PlayerCue;
@@ -24,10 +25,15 @@ public final class Flinch {
     if (Glamour.on(vampire)) {
       return;
     }
+    final boolean small = small(GiftAttributes.value(vampire, GiftAttributes.FLINCH_SIZE));
     if (vampire instanceof ServerPlayerEntity player) {
-      PlayerCues.send(player, PlayerCue.FLINCH);
+      PlayerCues.send(player, small ? PlayerCue.SMALL_FLINCH : PlayerCue.FLINCH);
     } else if (vampire instanceof PowerShow mob) {
-      mob.showPower(VampirePose.FLINCH.animation());
+      mob.showPower((small ? VampirePose.SMALL_FLINCH : VampirePose.FLINCH).animation());
     }
+  }
+
+  public static boolean small(final double size) {
+    return size < 1.0;
   }
 }

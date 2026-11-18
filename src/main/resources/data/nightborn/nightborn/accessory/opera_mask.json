@@ -1,0 +1,9 @@
+{
+  "gifts": [
+    {
+      "attribute": "nightborn:name_range",
+      "amount": 8.0,
+      "operation": "add_value"
+    }
+  ]
+}

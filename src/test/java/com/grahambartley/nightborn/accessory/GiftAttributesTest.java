@@ -38,7 +38,29 @@ class GiftAttributesTest {
     "guild_price, 1.0, 0.2, 1.0",
     "villager_price, 1.0, 0.2, 1.0",
     "chest_luck, 0.0, 0.0, 4.0",
-    "cobweb_slow, 1.0, 0.0, 1.0"
+    "cobweb_slow, 1.0, 0.0, 1.0",
+    "levitation_drain, 1.0, 0.2, 1.0",
+    "house_damage, 1.0, 1.0, 2.0",
+    "house_damage_range, 0.0, 0.0, 32.0",
+    "daylight_heal, 0.0, 0.0, 4.0",
+    "daylight_heal_interval, 0.0, 0.0, 200.0",
+    "house_noise, 1.0, 0.2, 1.0",
+    "frost_ward, 0.0, 0.0, 1.0",
+    "bare_hand_damage, 0.0, 0.0, 4.0",
+    "feeding_notice, 1.0, 0.2, 1.0",
+    "stake_damage, 1.0, 1.0, 2.0",
+    "bite_escape, 1.0, 1.0, 2.0",
+    "soil_dig_speed, 1.0, 1.0, 2.0",
+    "bottle_blood, 1.0, 1.0, 2.0",
+    "trap_cooldown, 1.0, 0.2, 1.0",
+    "flinch_size, 1.0, 0.2, 1.0",
+    "dusk_sight, 0.0, 0.0, 1.0",
+    "face_learning, 1.0, 0.2, 1.0",
+    "vampire_insight, 0.0, 0.0, 1.0",
+    "bite_weakness_time, 1.0, 0.2, 1.0",
+    "fog_clear_sight, 0.0, 0.0, 1.0",
+    "cloud_time, 1.0, 0.2, 1.0",
+    "name_range, 0.0, 0.0, 32.0"
   })
   @DisplayName("each gift starts neutral, and no reduction passes 80%")
   void bounds(final String path, final double base, final double min, final double max) {
@@ -58,6 +80,6 @@ class GiftAttributesTest {
   @Test
   @DisplayName("every gift attribute is listed once")
   void allListed() {
-    assertEquals(24, GiftAttributes.ALL.stream().distinct().count());
+    assertEquals(46, GiftAttributes.ALL.stream().distinct().count());
   }
 }

@@ -1,6 +1,17 @@
 {
   "replace": false,
   "values": [
-    "nightborn:high_collared_cape"
+    "nightborn:high_collared_cape",
+    "nightborn:velvet_cape",
+    "nightborn:tattered_shroud",
+    "nightborn:fur_trimmed_mantle",
+    "nightborn:half_cape",
+    "nightborn:cloak_of_dusk",
+    "nightborn:nightgliders_cloak",
+    "nightborn:lords_mantle",
+    "nightborn:pilgrims_cloak",
+    "nightborn:stalkers_cloak",
+    "nightborn:wardens_cape",
+    "nightborn:travellers_cloak"
   ]
 }

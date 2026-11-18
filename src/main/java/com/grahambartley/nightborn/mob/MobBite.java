@@ -37,7 +37,8 @@ public final class MobBite {
     }
     if (breaks(
         biter.getRandom().nextFloat(),
-        GiftAttributes.value(victim, GiftAttributes.MOB_BITE_BREAK))) {
+        GiftAttributes.value(victim, GiftAttributes.MOB_BITE_BREAK)
+            * GiftAttributes.value(victim, GiftAttributes.BITE_ESCAPE))) {
       shakeOff(world, biter, victim);
       Deeds.record(victim, Deed.of(DeedKinds.BITE_BROKEN));
       return false;

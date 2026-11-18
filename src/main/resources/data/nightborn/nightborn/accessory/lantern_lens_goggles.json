@@ -1,0 +1,10 @@
+{
+  "works_for": "human",
+  "gifts": [
+    {
+      "attribute": "nightborn:fog_clear_sight",
+      "amount": 1.0,
+      "operation": "add_value"
+    }
+  ]
+}

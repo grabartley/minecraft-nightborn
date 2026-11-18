@@ -119,4 +119,85 @@ class AccessoryAssetsTest {
     values.forEach(value -> out.add(value.getAsString()));
     return out;
   }
+
+  @ParameterizedTest(name = "{0} in {1}")
+  @CsvSource({
+    "cloak_of_dusk, castle, castle",
+    "nightgliders_cloak, mountain_castle, mountain_castle",
+    "pilgrims_cloak, vampire_structure, crypt",
+    "stalkers_cloak, vampire_structure, ruined_manor",
+    "travellers_cloak, vampire_structure, underground_lair",
+    "clawed_gauntlets, vampire_structure, underground_lair",
+    "silk_gloves, vampire_structure, ruined_manor",
+    "stakewrights_gloves, vampire_structure, crypt",
+    "silver_threaded_gloves, castle, castle",
+    "gravediggers_mitts, vampire_structure, crypt",
+    "cellarers_belt, vampire_structure, ruined_manor",
+    "bandolier, castle, castle",
+    "stake_loops, vampire_structure, crypt",
+    "flask_belt, vampire_structure, underground_lair",
+    "sturdy_girdle, vampire_structure, ruined_manor",
+    "widows_veil, castle, castle",
+    "smoked_spectacles, vampire_structure, ruined_manor",
+    "porcelain_mask, mountain_castle, mountain_castle",
+    "hunters_monocle, castle, castle",
+    "confessors_veil, vampire_structure, crypt",
+    "garlic_soaked_scarf, vampire_structure, underground_lair",
+    "plague_mask, vampire_structure, crypt"
+  })
+  @DisplayName("each found piece is in the chests of the structure that holds it, and only there")
+  void foundWhereItBelongs(final String piece, final String table, final String structure)
+      throws IOException {
+    final List<String> places = new java.util.ArrayList<>();
+    for (final JsonElement pool :
+        read("nightborn/loot_table/chests/" + table + ".json").getAsJsonArray("pools")) {
+      for (final JsonElement entry : pool.getAsJsonObject().getAsJsonArray("entries")) {
+        final JsonObject item = entry.getAsJsonObject();
+        if (item.has("name") && item.get("name").getAsString().equals("nightborn:" + piece)) {
+          places.add(
+              item.getAsJsonArray("conditions")
+                  .get(0)
+                  .getAsJsonObject()
+                  .getAsJsonObject("predicate")
+                  .get("structures")
+                  .getAsString());
+        }
+      }
+    }
+    assertEquals(List.of("nightborn:" + structure), places);
+  }
+
+  @ParameterizedTest(name = "{0} pays {1}")
+  @CsvSource({
+    "trial/not_a_sound, wardens_cape",
+    "trial/old_grudge, death_mask",
+    "trial/seen_through, lantern_lens_goggles",
+    "trial/sprung, trappers_pouch",
+    "feat/a_full_table, lords_mantle",
+    "feat/a_ghost_at_the_feast, opera_mask"
+  })
+  @DisplayName("a trial or feat that names a piece pays one that exists")
+  void rewardsExist(final String challenge, final String piece) throws IOException {
+    assertEquals(
+        "nightborn:" + piece,
+        read("nightborn/nightborn/" + challenge + ".json").get("reward").getAsString());
+    assertTrue(AccessoryItems.IDS.contains(piece));
+  }
+
+  @Test
+  @DisplayName("no two shapeless recipes take the same ingredients, so each piece has its own")
+  void shapelessRecipesDiffer() throws IOException {
+    final Set<List<String>> seen = new HashSet<>();
+    try (var files = Files.list(DATA.resolve("nightborn/recipe"))) {
+      for (final Path file : files.toList()) {
+        final JsonObject recipe = JsonParser.parseString(Files.readString(file)).getAsJsonObject();
+        if (recipe.get("type").getAsString().equals("minecraft:crafting_shapeless")) {
+          final List<String> ingredients = new java.util.ArrayList<>();
+          recipe.getAsJsonArray("ingredients").forEach(i -> ingredients.add(i.toString()));
+          ingredients.sort(null);
+          assertTrue(seen.add(ingredients), file.getFileName() + " repeats " + ingredients);
+        }
+      }
+    }
+  }
 }

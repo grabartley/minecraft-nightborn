@@ -1,7 +1,9 @@
 {
   "works_for": "vampire",
-  "holds": {
-    "items": ["nightborn:blood_bottle"],
-    "count": 1
-  }
+  "holds": [
+    {
+      "items": ["nightborn:blood_bottle"],
+      "count": 1
+    }
+  ]
 }
