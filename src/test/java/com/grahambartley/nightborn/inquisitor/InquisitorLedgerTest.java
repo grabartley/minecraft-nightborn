@@ -31,4 +31,16 @@ class InquisitorLedgerTest {
     assertEquals(owed(names), loaded.settle(AWAY));
     assertEquals(List.of(), loaded.settle(AWAY));
   }
+
+  @ParameterizedTest(name = "\"{0}\"")
+  @CsvSource({"not-a-player", "''"})
+  @DisplayName("a damaged entry is skipped and the rest of the ledger still loads")
+  void skipsDamagedEntries(final String key) {
+    final NbtCompound nbt = new InquisitorLedger().writeNbt(new NbtCompound(), null);
+    final InquisitorLedger good = new InquisitorLedger();
+    good.owe(AWAY, owed("PAY"));
+    good.writeNbt(nbt, null);
+    nbt.put(key, new net.minecraft.nbt.NbtList());
+    assertEquals(owed("PAY"), InquisitorLedger.fromNbt(nbt, null).settle(AWAY));
+  }
 }

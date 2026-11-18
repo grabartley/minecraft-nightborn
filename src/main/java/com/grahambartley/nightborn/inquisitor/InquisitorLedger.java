@@ -66,6 +66,13 @@ public final class InquisitorLedger extends PersistentState {
       final NbtCompound nbt, final RegistryWrapper.WrapperLookup registries) {
     final InquisitorLedger ledger = new InquisitorLedger();
     for (final String key : nbt.getKeys()) {
+      final UUID player;
+      try {
+        player = UUID.fromString(key);
+      } catch (final IllegalArgumentException damaged) {
+        Nightborn.LOGGER.warn("Skipping debts for a damaged player id {}", key);
+        continue;
+      }
       final List<Owed> due = new ArrayList<>();
       for (final NbtElement element : nbt.getList(key, NbtElement.STRING_TYPE)) {
         try {
@@ -74,7 +81,7 @@ public final class InquisitorLedger extends PersistentState {
           Nightborn.LOGGER.warn("Skipping an unknown debt {} for {}", element.asString(), key);
         }
       }
-      ledger.owed.put(UUID.fromString(key), due);
+      ledger.owed.put(player, due);
     }
     return ledger;
   }
