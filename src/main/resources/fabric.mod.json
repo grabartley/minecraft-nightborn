@@ -28,6 +28,7 @@
     ],
     "fabric-gametest": [
       "com.grahambartley.nightborn.gametest.NightbornBootGameTest",
+      "com.grahambartley.nightborn.gametest.RaidGameTest",
       "com.grahambartley.nightborn.gametest.AdvancementGameTest",
       "com.grahambartley.nightborn.gametest.ChallengeGameTest",
       "com.grahambartley.nightborn.gametest.VillageSuspicionGameTest",

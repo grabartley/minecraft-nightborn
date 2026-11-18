@@ -112,6 +112,9 @@ public final class Thralls {
   }
 
   static void checkBond(final ServerWorld world, final ThrallEntity thrall) {
+    if (thrall.house().isPresent()) {
+      return;
+    }
     final boolean kept =
         thrall
             .owner()

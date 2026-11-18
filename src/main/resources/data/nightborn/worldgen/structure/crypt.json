@@ -16,6 +16,7 @@
   "household": {
     "resident": "nightborn:vampire",
     "residents": { "type": "minecraft:uniform", "min_inclusive": 2, "max_inclusive": 4 },
+    "thralls": { "type": "minecraft:uniform", "min_inclusive": 1, "max_inclusive": 2 },
     "stages": { "nightborn:fledgling": 45, "nightborn:adult": 40, "nightborn:elder": 15 }
   },
   "ambience": {

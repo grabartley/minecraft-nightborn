@@ -1,5 +1,7 @@
 package com.grahambartley.nightborn.coffin;
 
+import com.grahambartley.nightborn.raid.HouseNoise;
+import com.grahambartley.nightborn.raid.NoiseAct;
 import com.grahambartley.nightborn.sound.NightbornSounds;
 import com.grahambartley.nightborn.vampire.Vampires;
 import com.mojang.serialization.MapCodec;
@@ -17,6 +19,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.item.ItemStack;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.state.StateManager;
@@ -169,7 +172,13 @@ public class CoffinBlock extends BedBlock {
     switch (CoffinUse.of(
         headState.get(OCCUPIED), player.isSneaking(), Vampires.isVampire(player))) {
       case REFUSE_OCCUPIED -> player.sendMessage(Text.translatable(RestRules.OCCUPIED), true);
-      case TOGGLE_LID -> this.setLid(world, head, headState, !headState.get(OPEN), player);
+      case TOGGLE_LID -> {
+        final boolean opening = !headState.get(OPEN);
+        this.setLid(world, head, headState, opening, player);
+        if (opening && player instanceof ServerPlayerEntity opener) {
+          HouseNoise.make(opener, NoiseAct.LID);
+        }
+      }
       case REST ->
           player
               .trySleep(head)

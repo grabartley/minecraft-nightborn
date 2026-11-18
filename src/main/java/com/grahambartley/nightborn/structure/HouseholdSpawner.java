@@ -1,5 +1,7 @@
 package com.grahambartley.nightborn.structure;
 
+import com.grahambartley.nightborn.thrall.ThrallEntity;
+import com.grahambartley.nightborn.thrall.Thralls;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -58,11 +60,34 @@ public final class HouseholdSpawner {
                   .ifPresent(settled::add);
             });
     final int count = household.residents().get(random);
-    for (final BlockPos spot : HouseholdSpots.choose(spots, count, random, held)) {
+    final List<BlockPos> beds = HouseholdSpots.choose(spots, count, random, held);
+    for (final BlockPos spot : beds) {
       spawn(world, household.resident().value(), spot, household.stages(), false, centre, random)
           .ifPresent(settled::add);
     }
+    held.addAll(beds);
+    for (final BlockPos spot :
+        HouseholdSpots.choose(spots, household.thralls().get(random), random, held)) {
+      thrall(world, spot, centre, random).ifPresent(settled::add);
+    }
     return settled;
+  }
+
+  private static Optional<Entity> thrall(
+      final StructureWorldAccess world,
+      final BlockPos spot,
+      final BlockPos centre,
+      final Random random) {
+    final ThrallEntity thrall = Thralls.THRALL.create(world.toServerWorld());
+    if (thrall == null) {
+      return Optional.empty();
+    }
+    thrall.refreshPositionAndAngles(
+        spot.getX() + 0.5, spot.getY(), spot.getZ() + 0.5, random.nextFloat() * FULL_TURN, 0);
+    thrall.initialize(world, world.getLocalDifficulty(spot), SpawnReason.STRUCTURE, null);
+    thrall.keepHouse(centre);
+    world.spawnEntityAndPassengers(thrall);
+    return Optional.of(thrall);
   }
 
   private static Optional<Entity> spawn(

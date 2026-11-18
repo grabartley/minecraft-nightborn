@@ -9,6 +9,7 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.intprovider.ConstantIntProvider;
 import net.minecraft.util.math.intprovider.IntProvider;
 
 public record Household(
@@ -16,10 +17,12 @@ public record Household(
     IntProvider residents,
     Map<Identifier, Integer> stages,
     Optional<HouseholdHead> head,
-    Optional<Integer> ceiling) {
+    Optional<Integer> ceiling,
+    IntProvider thralls) {
 
   public static final int LARGEST_HOUSEHOLD = 32;
   public static final int HIGHEST_CEILING = 64;
+  public static final int MOST_THRALLS = 8;
   static final int HEADROOM = 2;
 
   public static final Codec<Household> CODEC =
@@ -40,7 +43,10 @@ public record Household(
                       HouseholdHead.CODEC.optionalFieldOf("head").forGetter(Household::head),
                       Codec.intRange(1, HIGHEST_CEILING)
                           .optionalFieldOf("ceiling")
-                          .forGetter(Household::ceiling))
+                          .forGetter(Household::ceiling),
+                      IntProvider.createValidatingCodec(0, MOST_THRALLS)
+                          .optionalFieldOf("thralls", ConstantIntProvider.ZERO)
+                          .forGetter(Household::thralls))
                   .apply(instance, Household::new));
 
   public Household {
@@ -50,7 +56,7 @@ public record Household(
   public Household returning() {
     return head.filter(HouseholdHead::returns).isPresent() || head.isEmpty()
         ? this
-        : new Household(resident, residents, stages, Optional.empty(), ceiling);
+        : new Household(resident, residents, stages, Optional.empty(), ceiling, thralls);
   }
 
   public int shelterTop(final int floorY, final int heartTop) {

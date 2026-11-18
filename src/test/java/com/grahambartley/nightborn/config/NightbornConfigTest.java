@@ -95,6 +95,7 @@ class NightbornConfigTest {
             "combat",
             "structures",
             "parties",
+            "raids",
             "ritual",
             "age",
             "inquisitor",

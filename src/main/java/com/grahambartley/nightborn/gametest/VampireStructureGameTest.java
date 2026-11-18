@@ -19,6 +19,7 @@ import com.grahambartley.nightborn.structure.StructureZone;
 import com.grahambartley.nightborn.structure.StructureZoneTracker;
 import com.grahambartley.nightborn.structure.Threshold;
 import com.grahambartley.nightborn.structure.VampireStructure;
+import com.grahambartley.nightborn.thrall.ThrallEntity;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.JsonOps;
 import java.util.List;
@@ -108,7 +109,8 @@ public class VampireStructureGameTest implements FabricGameTest {
         ConstantIntProvider.create(residents),
         Map.of(),
         Optional.empty(),
-        Optional.empty());
+        Optional.empty(),
+        ConstantIntProvider.ZERO);
   }
 
   static String structureJson(final int reach) {
@@ -387,6 +389,35 @@ public class VampireStructureGameTest implements FabricGameTest {
   }
 
   @GameTest(templateName = ARENA, tickLimit = 20)
+  public void aHouseholdKeepsItsThrallsAtHome(final TestContext context) {
+    final BlockBox box = arena(context);
+    final Household household =
+        new Household(
+            Registries.ENTITY_TYPE.getEntry(NightbornMobs.VAMPIRE),
+            ConstantIntProvider.create(1),
+            Map.of(),
+            Optional.empty(),
+            Optional.empty(),
+            ConstantIntProvider.create(2));
+    final List<Entity> settled =
+        HouseholdSpawner.settle(context.getWorld(), box, box, household, Random.create(5L));
+    settled.forEach(resident -> ((MobEntity) resident).setAiDisabled(true));
+    final List<ThrallEntity> thralls =
+        settled.stream()
+            .filter(ThrallEntity.class::isInstance)
+            .map(ThrallEntity.class::cast)
+            .toList();
+    context.assertTrue(thralls.size() == 2, "two thralls settle, not " + thralls.size());
+    context.assertTrue(
+        thralls.stream().allMatch(thrall -> thrall.house().equals(Optional.of(box.getCenter()))),
+        "each thrall keeps the household's home");
+    context.assertTrue(
+        thralls.stream().allMatch(thrall -> thrall.owner().isEmpty()),
+        "a house thrall serves no player");
+    context.complete();
+  }
+
+  @GameTest(templateName = ARENA, tickLimit = 20)
   public void aHouseholdSeatsItsHeadAtTheMiddleOfItsHeart(final TestContext context) {
     final BlockBox box = arena(context);
     final Household household =
@@ -400,7 +431,8 @@ public class VampireStructureGameTest implements FabricGameTest {
                     Map.of(),
                     HeadSeat.LOWEST,
                     true)),
-            Optional.empty());
+            Optional.empty(),
+            ConstantIntProvider.ZERO);
     final List<Entity> settled =
         HouseholdSpawner.settle(context.getWorld(), box, box, household, Random.create(5L));
     settled.forEach(resident -> ((MobEntity) resident).setAiDisabled(true));

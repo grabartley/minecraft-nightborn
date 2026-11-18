@@ -123,5 +123,27 @@ class HouseholdTest {
     assertEquals(keepsHead, returning.head().isPresent());
     assertEquals(household.residents(), returning.residents());
     assertEquals(household.resident(), returning.resident());
+    assertEquals(household.thralls(), returning.thralls());
+  }
+
+  @ParameterizedTest(name = "thralls {0}: loads {1}, keeps between {2} and {3}")
+  @CsvSource(
+      delimiter = '|',
+      value = {
+        " | true | 0 | 0",
+        ", \"thralls\": 2 | true | 2 | 2",
+        ", \"thralls\": {\"type\": \"minecraft:uniform\", \"min_inclusive\": 1, \"max_inclusive\": 2} | true | 1 | 2",
+        ", \"thralls\": 8 | true | 8 | 8",
+        ", \"thralls\": 9 | false | 0 | 0",
+        ", \"thralls\": -1 | false | 0 | 0"
+      })
+  @DisplayName("a household keeps no thralls unless its data gives it up to eight")
+  void thralls(final String thralls, final boolean loads, final int least, final int most) {
+    final DataResult<Household> household = ceilinged(thralls == null ? "" : thralls);
+    assertEquals(loads, household.isSuccess());
+    if (loads) {
+      assertEquals(least, household.getOrThrow().thralls().getMin());
+      assertEquals(most, household.getOrThrow().thralls().getMax());
+    }
   }
 }
