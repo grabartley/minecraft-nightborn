@@ -12,7 +12,10 @@ public record VillageSettings(
     int giftsPerNight,
     int reportSeconds,
     int nightMarkup,
-    int villageReach) {
+    int villageReach,
+    int nemesisVisitFewest,
+    int nemesisVisitMost,
+    int nemesisLimit) {
 
   static final String SECTION = "villages";
 
@@ -36,6 +39,13 @@ public record VillageSettings(
       new IntSetting(SECTION, "nightMarkup", 25, 0, 200, c -> c.villages().nightMarkup());
   public static final IntSetting VILLAGE_REACH =
       new IntSetting(SECTION, "villageReach", 48, 16, 128, c -> c.villages().villageReach());
+  public static final IntSetting NEMESIS_VISIT_FEWEST =
+      new IntSetting(
+          SECTION, "nemesisVisitFewest", 5, 1, 100, c -> c.villages().nemesisVisitFewest());
+  public static final IntSetting NEMESIS_VISIT_MOST =
+      new IntSetting(SECTION, "nemesisVisitMost", 10, 1, 100, c -> c.villages().nemesisVisitMost());
+  public static final IntSetting NEMESIS_LIMIT =
+      new IntSetting(SECTION, "nemesisLimit", 3, 0, 10, c -> c.villages().nemesisLimit());
 
   public static final List<Setting<?>> SETTINGS =
       List.of(
@@ -48,7 +58,10 @@ public record VillageSettings(
           GIFTS_PER_NIGHT,
           REPORT_SECONDS,
           NIGHT_MARKUP,
-          VILLAGE_REACH);
+          VILLAGE_REACH,
+          NEMESIS_VISIT_FEWEST,
+          NEMESIS_VISIT_MOST,
+          NEMESIS_LIMIT);
 
   public VillageSettings {
     waryAt = WARY_AT.clamp(waryAt);
@@ -61,6 +74,9 @@ public record VillageSettings(
     reportSeconds = REPORT_SECONDS.clamp(reportSeconds);
     nightMarkup = NIGHT_MARKUP.clamp(nightMarkup);
     villageReach = VILLAGE_REACH.clamp(villageReach);
+    nemesisVisitFewest = NEMESIS_VISIT_FEWEST.clamp(nemesisVisitFewest);
+    nemesisVisitMost = Math.max(nemesisVisitFewest, NEMESIS_VISIT_MOST.clamp(nemesisVisitMost));
+    nemesisLimit = NEMESIS_LIMIT.clamp(nemesisLimit);
   }
 
   static VillageSettings from(final SettingValues values) {
@@ -74,6 +90,9 @@ public record VillageSettings(
         values.get(GIFTS_PER_NIGHT),
         values.get(REPORT_SECONDS),
         values.get(NIGHT_MARKUP),
-        values.get(VILLAGE_REACH));
+        values.get(VILLAGE_REACH),
+        values.get(NEMESIS_VISIT_FEWEST),
+        values.get(NEMESIS_VISIT_MOST),
+        values.get(NEMESIS_LIMIT));
   }
 }

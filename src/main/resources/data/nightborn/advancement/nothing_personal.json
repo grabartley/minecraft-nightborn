@@ -1,0 +1,28 @@
+{
+  "parent": "nightborn:root",
+  "display": {
+    "icon": {
+      "id": "nightborn:lock_of_hair"
+    },
+    "title": {
+      "translate": "advancements.nightborn.nothing_personal.title"
+    },
+    "description": {
+      "translate": "advancements.nightborn.nothing_personal.description"
+    },
+    "frame": "task"
+  },
+  "criteria": {
+    "nemesis": {
+      "trigger": "nightborn:deed",
+      "conditions": {
+        "deed": "nightborn:nemesis_ended"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "nemesis"
+    ]
+  ]
+}

@@ -1,0 +1,29 @@
+{
+  "entity": "nightborn:vampire",
+  "keepsake": "nightborn:lock_of_hair",
+  "epithets": "nightborn:nemesis_epithets",
+  "epithet_chance": 0.5,
+  "ages": true,
+  "experience_times": 5,
+  "companions": 2,
+  "fight_end_seconds": 30,
+  "sight": 32,
+  "spread": 2,
+  "lines": {
+    "sighted": [
+      "nightborn.nemesis.vampire.sighted.1",
+      "nightborn.nemesis.vampire.sighted.2",
+      "nightborn.nemesis.vampire.sighted.3"
+    ],
+    "downed": [
+      "nightborn.nemesis.vampire.downed.1",
+      "nightborn.nemesis.vampire.downed.2",
+      "nightborn.nemesis.vampire.downed.3"
+    ],
+    "fled": [
+      "nightborn.nemesis.vampire.fled.1",
+      "nightborn.nemesis.vampire.fled.2",
+      "nightborn.nemesis.vampire.fled.3"
+    ]
+  }
+}

@@ -5,6 +5,8 @@ import com.grahambartley.nightborn.decor.ChaliceContents;
 import com.grahambartley.nightborn.decor.DecorBlocks;
 import com.grahambartley.nightborn.mob.VampireEntity;
 import com.grahambartley.nightborn.mob.look.VampireVoice;
+import com.grahambartley.nightborn.nemesis.Nemeses;
+import java.util.Optional;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -15,6 +17,7 @@ import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.hit.EntityHitResult;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
@@ -52,11 +55,14 @@ public final class ChaliceInvitation {
       lord.sendMessage(Text.translatable(verdict.key(), guest.getDisplayName()), true);
       return ActionResult.SUCCESS;
     }
+    final Optional<BlockPos> formerHome =
+        guest.householdTie().lord().isEmpty() ? guest.home() : Optional.empty();
     Houses.get(lord.getServer())
         .ledBy(lord.getUuid())
         .ifPresent(
             house -> {
               MemberLife.join(lord.getServerWorld(), guest, house);
+              Nemeses.drewAway(lord.getServerWorld(), guest, formerHome, lord.getUuid());
               HouseInvites.guestArrived(lord, Houses.get(lord.getServer()));
             });
     if (!lord.getAbilities().creativeMode) {

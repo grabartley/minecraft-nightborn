@@ -33,7 +33,9 @@ class VillageStepTest {
   @DisplayName("the steps follow the server's settings")
   void followsSettings(final int suspicion, final VillageStep step) {
     assertEquals(
-        step, VillageStep.of(suspicion, new VillageSettings(10, 20, 30, 2, 5, 2, 3, 10, 25, 48)));
+        step,
+        VillageStep.of(
+            suspicion, new VillageSettings(10, 20, 30, 2, 5, 2, 3, 10, 25, 48, 5, 10, 3)));
   }
 
   @ParameterizedTest(name = "{0} at least {1}: {2}")

@@ -1,0 +1,129 @@
+package com.grahambartley.nightborn.nemesis;
+
+import com.grahambartley.nightborn.nemesis.NemesisLines.Moment;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.mob.MobEntity;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.world.ServerWorld;
+
+public final class NemesisWatch {
+
+  private static final Map<UUID, MobEntity> LOADED = new HashMap<>();
+  private static final Set<UUID> SIGHTED = new HashSet<>();
+
+  private NemesisWatch() {}
+
+  static void loaded(final Entity entity, final ServerWorld world) {
+    if (entity instanceof MobEntity mob && NemesisAttachment.get(mob).isPresent()) {
+      LOADED.put(mob.getUuid(), mob);
+    }
+  }
+
+  static void unloaded(final Entity entity, final ServerWorld world) {
+    if (!(entity instanceof MobEntity mob) || LOADED.get(mob.getUuid()) != mob) {
+      return;
+    }
+    LOADED.remove(mob.getUuid());
+    SIGHTED.remove(mob.getUuid());
+    NemesisAttachment.get(mob)
+        .ifPresent(
+            mark -> {
+              final NemesisLedger ledger = NemesisLedger.of(world.getServer());
+              ledger
+                  .entry(mark.quarry(), mob.getUuid())
+                  .filter(
+                      entry ->
+                          NemesisRules.keepsSnapshot(
+                              entry.current(mark),
+                              mob.getRemovalReason() == null || mob.getRemovalReason().shouldSave(),
+                              mob.getHealth() > 0.0F))
+                  .ifPresent(
+                      entry ->
+                          ledger.put(
+                              mark.quarry(),
+                              entry.withSnapshot(
+                                  mob.getName().getString(), NemesisMaking.snapshot(mob))));
+            });
+  }
+
+  static void track(final MobEntity mob) {
+    LOADED.put(mob.getUuid(), mob);
+  }
+
+  static Optional<MobEntity> loadedAnywhere(final MinecraftServer server, final UUID id) {
+    for (final ServerWorld world : server.getWorlds()) {
+      if (world.getEntity(id) instanceof MobEntity mob && mob.isAlive()) {
+        return Optional.of(mob);
+      }
+    }
+    return Optional.empty();
+  }
+
+  static void tick(final MinecraftServer server) {
+    final NemesisLedger ledger = NemesisLedger.of(server);
+    for (final MobEntity mob : List.copyOf(LOADED.values())) {
+      if (mob.isRemoved()) {
+        LOADED.remove(mob.getUuid());
+        continue;
+      }
+      final Optional<NemesisMark> mark = NemesisAttachment.get(mob);
+      if (mark.isEmpty()) {
+        LOADED.remove(mob.getUuid());
+        continue;
+      }
+      final Optional<NemesisEntry> entry = ledger.entry(mark.get().quarry(), mob.getUuid());
+      switch (NemesisRules.fate(
+          entry.isPresent(),
+          entry.filter(held -> held.current(mark.get())).isPresent(),
+          ledger.ended(mob.getUuid()),
+          ledger.released(mob.getUuid()),
+          mark.get().token())) {
+        case KEEP -> watch(mob, server.getPlayerManager().getPlayer(mark.get().quarry()));
+        case CLEAR -> {
+          NemesisAttachment.clear(mob);
+          LOADED.remove(mob.getUuid());
+        }
+        case REMOVE -> {
+          LOADED.remove(mob.getUuid());
+          mob.remove(Entity.RemovalReason.CHANGED_DIMENSION);
+        }
+      }
+    }
+  }
+
+  static void clear() {
+    LOADED.clear();
+    SIGHTED.clear();
+  }
+
+  private static void watch(final MobEntity mob, final ServerPlayerEntity quarry) {
+    final double sight =
+        NemesisKinds.of(mob).map(found -> (double) found.kind().sight()).orElse(0.0);
+    final boolean near =
+        quarry != null
+            && quarry.getWorld() == mob.getWorld()
+            && quarry.isAlive()
+            && !quarry.isSpectator()
+            && !quarry.isCreative()
+            && mob.squaredDistanceTo(quarry) <= sight * sight
+            && mob.canSee(quarry);
+    if (near && mob.getTarget() == null && mob.canTarget(quarry)) {
+      mob.setTarget(quarry);
+    }
+    if (near && mob.getTarget() == quarry) {
+      if (SIGHTED.add(mob.getUuid())) {
+        NemesisTaunts.say(mob, quarry, Moment.SIGHTED);
+      }
+    } else if (mob.getTarget() == null) {
+      SIGHTED.remove(mob.getUuid());
+    }
+  }
+}

@@ -100,6 +100,7 @@ public class AdvancementGameTest implements FabricGameTest {
           new Expected("stage_fright", "sworn_in", AdvancementFrame.CHALLENGE, 100, false),
           new Expected("by_the_book", "sworn_in", AdvancementFrame.CHALLENGE, 100, false),
           new Expected("the_full_treatment", "sworn_in", AdvancementFrame.CHALLENGE, 100, false),
+          new Expected("nothing_personal", "root", AdvancementFrame.TASK, 0, false),
           new Expected("smoke_and_mirrors", "root", AdvancementFrame.TASK, 0, true),
           new Expected("dressed_to_the_nines", "root", AdvancementFrame.TASK, 0, false),
           new Expected("tried_and_tested", "root", AdvancementFrame.TASK, 0, false),
