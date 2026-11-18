@@ -23,7 +23,6 @@ public final class CeremonyView {
   static final int CARD_WIDTH = 192;
   static final int CARD_HEIGHT = 48;
   static final int TITLE_COLOUR = 0xE8D9B0;
-  static final float TITLE_SCALE = 2.0F;
   static final float FAINTEST = 0.02F;
 
   @Nullable private static Perspective before;
@@ -124,7 +123,8 @@ public final class CeremonyView {
     final Text title = Text.translatable(state.moment().cardKey());
     context.getMatrices().push();
     context.getMatrices().translate(width / 2.0F, height / 2.0F, 0.0F);
-    context.getMatrices().scale(TITLE_SCALE, TITLE_SCALE, 1.0F);
+    final float scale = CeremonyTitle.scale(client.textRenderer.getWidth(title), CARD_WIDTH);
+    context.getMatrices().scale(scale, scale, 1.0F);
     context.drawCenteredTextWithShadow(
         client.textRenderer,
         title,
