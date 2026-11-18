@@ -271,7 +271,9 @@ public class NemesisGameTest implements FabricGameTest {
           NemesisMaking.make(ended, vampire.getUuid());
           NemesisMaking.make(forgotten, other.getUuid());
           NemesisLedger.of(context.getWorld().getServer()).end(vampire.getUuid(), ended.getUuid());
+          final NemesisMark mark = NemesisAttachment.get(forgotten).orElseThrow();
           Nemeses.forget(other);
+          forgotten.setAttached(NemesisAttachment.TYPE, mark);
         });
     context.runAtTick(
         TestPlayers.READY + 40,
