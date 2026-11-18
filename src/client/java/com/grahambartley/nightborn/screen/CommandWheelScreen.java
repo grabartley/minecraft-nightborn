@@ -32,6 +32,7 @@ public class CommandWheelScreen extends Screen {
   static final int CAPTION_GAP = 8;
   static final int CAPTION_PAD = 6;
   static final float STEP_DEGREES = 2.5F;
+  static final float EDGE = 1.5F;
 
   private final int entityId;
   private final SkillTheme theme;
@@ -87,17 +88,26 @@ public class CommandWheelScreen extends Screen {
     RenderSystem.setShader(GameRenderer::getPositionColorProgram);
     final BufferBuilder buffer =
         Tessellator.getInstance().begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
+    final float centreX = width / 2.0F * scale;
+    final float centreY = height / 2.0F * scale;
+    final float inner = WheelRing.INNER * scale;
+    final float outer = WheelRing.OUTER * scale;
+    final float edge = EDGE * scale;
     for (int index = 0; index < entries.size(); index++) {
+      final float start = WheelRing.startDegrees(index, entries.size());
+      final float end = WheelRing.endDegrees(index, entries.size());
       sector(
           buffer,
           matrix,
-          width / 2.0F * scale,
-          height / 2.0F * scale,
-          WheelRing.INNER * scale,
-          WheelRing.OUTER * scale,
-          WheelRing.startDegrees(index, entries.size()),
-          WheelRing.endDegrees(index, entries.size()),
+          centreX,
+          centreY,
+          inner,
+          outer,
+          start,
+          end,
           index == hovered ? theme.ringHover() : theme.ring());
+      sector(buffer, matrix, centreX, centreY, outer - edge, outer, start, end, theme.ringEdge());
+      sector(buffer, matrix, centreX, centreY, inner, inner + edge, start, end, theme.ringEdge());
     }
     BufferRenderer.drawWithGlobalProgram(buffer.end());
     RenderSystem.enableCull();
@@ -159,20 +169,23 @@ public class CommandWheelScreen extends Screen {
                 .findFirst()
                 .map(WheelEntry::label)
                 .orElse(Text.empty());
-    final int lineHeight = textRenderer.fontHeight + 2;
-    final int boxWidth =
-        Math.max(textRenderer.getWidth(heading), textRenderer.getWidth(line)) + CAPTION_PAD * 2;
-    final int boxHeight = lineHeight * 2 + CAPTION_PAD * 2 - 2;
-    final int left = width / 2 - boxWidth / 2;
+    final int titleWidth = textRenderer.getWidth(heading) + CAPTION_PAD * 2;
+    final int lineWidth = Math.max(titleWidth, textRenderer.getWidth(line) + CAPTION_PAD * 2);
+    final int plate = textRenderer.fontHeight + CAPTION_PAD;
     final int top = height / 2 + WheelRing.OUTER + CAPTION_GAP;
-    context.drawGuiTexture(theme.tooltip(), left, top, boxWidth, boxHeight);
+    context.drawGuiTexture(theme.header(), width / 2 - titleWidth / 2, top, titleWidth, plate);
     context.drawCenteredTextWithShadow(
-        textRenderer, heading, width / 2, top + CAPTION_PAD, theme.title());
+        textRenderer, heading, width / 2, top + CAPTION_PAD / 2 + 1, theme.title());
+    if (line.getString().isEmpty()) {
+      return;
+    }
+    final int lineTop = top + plate + 2;
+    context.drawGuiTexture(theme.tooltip(), width / 2 - lineWidth / 2, lineTop, lineWidth, plate);
     context.drawCenteredTextWithShadow(
         textRenderer,
         line,
         width / 2,
-        top + CAPTION_PAD + lineHeight,
+        lineTop + CAPTION_PAD / 2 + 1,
         hovered >= 0 ? theme.text() : theme.muted());
   }
 

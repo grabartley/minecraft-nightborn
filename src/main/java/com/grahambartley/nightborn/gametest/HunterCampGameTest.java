@@ -16,6 +16,7 @@ import com.grahambartley.nightborn.structure.RareSpreadPlacement;
 import com.grahambartley.nightborn.structure.StructureRarity;
 import com.grahambartley.nightborn.vampire.VampireTransitions;
 import com.grahambartley.nightborn.wheel.CommandWheel;
+import com.grahambartley.nightborn.wheel.WheelEntry;
 import java.util.List;
 import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
 import net.minecraft.block.Blocks;
@@ -40,6 +41,9 @@ import net.minecraft.village.TradeOffer;
 import net.minecraft.village.TradeOfferList;
 
 public class HunterCampGameTest implements FabricGameTest {
+
+  static final Identifier GEAR = Identifier.of("nightborn", "guild_gear");
+  static final Identifier CONTRACTS = Identifier.of("nightborn", "guild_contracts");
 
   static final String ARENA = "nightborn:vampire_arena";
   static final int START = 2;
@@ -126,8 +130,7 @@ public class HunterCampGameTest implements FabricGameTest {
               master.interactMob(human, Hand.MAIN_HAND).isAccepted(), "using him opens the wheel");
           context.assertFalse(master.hasCustomer(), "the wheel comes before any trade");
           context.assertTrue(
-              WheelUse.pick(human, master, Identifier.of("nightborn", "guild_gear"), -1),
-              "the human picks trade");
+              WheelUse.pick(human, master, GEAR, WheelEntry.NO_ARGUMENT), "the human picks trade");
           context.assertTrue(master.getCustomer() == human, "the human is trading");
           context.assertTrue(
               offered(human).stream()
@@ -141,7 +144,7 @@ public class HunterCampGameTest implements FabricGameTest {
               "no contracts at the gear counter");
           human.closeHandledScreen();
           context.assertTrue(
-              WheelUse.pick(human, master, Identifier.of("nightborn", "guild_contracts"), -1),
+              WheelUse.pick(human, master, CONTRACTS, WheelEntry.NO_ARGUMENT),
               "the human picks contracts");
           context.assertTrue(
               !offered(human).isEmpty()
@@ -323,7 +326,7 @@ public class HunterCampGameTest implements FabricGameTest {
     context.runAtTick(
         START,
         () -> {
-          WheelUse.pick(human, master, Identifier.of("nightborn", "guild_gear"), -1);
+          WheelUse.pick(human, master, GEAR, WheelEntry.NO_ARGUMENT);
           context.assertTrue(master.getCustomer() == human, "the human is trading");
           VampireTransitions.turn(human);
         });
@@ -345,18 +348,18 @@ public class HunterCampGameTest implements FabricGameTest {
         START,
         () -> {
           context.getWorld().setTimeOfDay(1000L);
-          master.interactMob(human, Hand.MAIN_HAND);
+          WheelUse.pick(human, master, GEAR, WheelEntry.NO_ARGUMENT);
           final TradeOffer first = master.getOffers().getFirst();
           while (!first.isDisabled()) {
             first.use();
           }
-          master.setCustomer(null);
-          master.interactMob(human, Hand.MAIN_HAND);
+          human.closeHandledScreen();
+          WheelUse.pick(human, master, GEAR, WheelEntry.NO_ARGUMENT);
           context.assertTrue(
               master.getOffers().getFirst().isDisabled(), "stock stays sold out the same day");
-          master.setCustomer(null);
+          human.closeHandledScreen();
           context.getWorld().setTimeOfDay(1000L + GuildRestock.DAY_TICKS);
-          master.interactMob(human, Hand.MAIN_HAND);
+          WheelUse.pick(human, master, GEAR, WheelEntry.NO_ARGUMENT);
           context.assertFalse(
               master.getOffers().getFirst().isDisabled(), "a new day brings new stock");
           TestPlayers.finish(context, human);
