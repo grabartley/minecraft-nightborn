@@ -6,12 +6,15 @@ import com.grahambartley.nightborn.blood.BloodQuality;
 import com.grahambartley.nightborn.decor.ChaliceBlock;
 import com.grahambartley.nightborn.decor.ChaliceContents;
 import com.grahambartley.nightborn.servant.ChestMarking;
+import com.grahambartley.nightborn.servant.MarkRules;
+import com.grahambartley.nightborn.vampire.Vampires;
 import java.util.Optional;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.HopperBlockEntity;
+import net.minecraft.block.entity.LockableContainerBlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
@@ -32,6 +35,7 @@ public final class BloodStore {
   static final String MARKED = "nightborn.house.store.marked";
   static final String CLEARED = "nightborn.house.store.cleared";
   static final String NO_HOUSE = "nightborn.house.store.no_house";
+  static final String LOCKED = "nightborn.house.store.locked";
 
   private BloodStore() {}
 
@@ -42,10 +46,12 @@ public final class BloodStore {
   static ActionResult onUseBlock(
       final PlayerEntity player, final World world, final Hand hand, final BlockHitResult hit) {
     final BlockPos pos = hit.getBlockPos();
-    if (hand != Hand.MAIN_HAND
-        || !player.isSneaking()
-        || !player.getMainHandStack().isOf(BloodItems.BLOOD_BOTTLE)
-        || !holdsBlood(world, pos)) {
+    if (!HouseRules.marksStore(
+        hand == Hand.MAIN_HAND,
+        player.isSneaking(),
+        player.getMainHandStack().isOf(BloodItems.BLOOD_BOTTLE),
+        Vampires.isVampire(player),
+        holdsBlood(world, pos))) {
       return ActionResult.PASS;
     }
     if (!(player instanceof ServerPlayerEntity lord)) {
@@ -55,6 +61,15 @@ public final class BloodStore {
     final Optional<House> house = houses.ledBy(lord.getUuid());
     if (house.isEmpty()) {
       lord.sendMessage(Text.translatable(NO_HOUSE), true);
+      return ActionResult.SUCCESS;
+    }
+    final BlockEntity container = world.getBlockEntity(pos);
+    if (!MarkRules.mayMark(
+        true,
+        lord.canModifyAt(world, pos),
+        !(container instanceof LockableContainerBlockEntity lockable)
+            || lockable.checkUnlocked(lord))) {
+      lord.sendMessage(Text.translatable(LOCKED), true);
       return ActionResult.SUCCESS;
     }
     final House marked = house.get().storeToggled(GlobalPos.create(world.getRegistryKey(), pos));

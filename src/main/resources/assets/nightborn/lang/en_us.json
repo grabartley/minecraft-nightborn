@@ -2158,5 +2158,6 @@
   "nightborn.house.info.member": "You belong to the house of %s",
   "nightborn.house.info.seated": "The house stands in a structure at %s, %s, %s",
   "nightborn.house.info.anchored": "The house stands by the lord's coffin at %s, %s, %s",
-  "nightborn.house.info.store": "Its blood is brought to %s, %s, %s"
+  "nightborn.house.info.store": "Its blood is brought to %s, %s, %s",
+  "nightborn.house.store.locked": "You may not mark that for your house's blood"
 }

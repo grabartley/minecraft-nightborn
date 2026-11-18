@@ -2158,5 +2158,6 @@
   "nightborn.house.info.member": "Вы принадлежите дому %s",
   "nightborn.house.info.seated": "Дом стоит в постройке на %s, %s, %s",
   "nightborn.house.info.anchored": "Дом стоит у гроба лорда на %s, %s, %s",
-  "nightborn.house.info.store": "Его кровь приносят на %s, %s, %s"
+  "nightborn.house.info.store": "Его кровь приносят на %s, %s, %s",
+  "nightborn.house.store.locked": "Вы не можете отметить это для крови вашего дома"
 }

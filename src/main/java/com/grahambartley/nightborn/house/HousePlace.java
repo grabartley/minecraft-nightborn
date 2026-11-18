@@ -10,11 +10,14 @@ public final class HousePlace {
   private HousePlace() {}
 
   public static Optional<GlobalPos> of(final MinecraftServer server, final House house) {
-    final Optional<GlobalPos> lordsCoffin =
+    return house.place(
         house.seat().isPresent()
             ? Optional.empty()
-            : CoffinOwnersState.get(server).coffinOf(house.lord());
-    final Optional<GlobalPos> place = house.place(lordsCoffin);
+            : CoffinOwnersState.get(server).coffinOf(house.lord()));
+  }
+
+  public static Optional<GlobalPos> follow(final MinecraftServer server, final House house) {
+    final Optional<GlobalPos> place = of(server, house);
     if (house.seat().isEmpty() && place.isPresent() && !place.equals(house.anchor())) {
       Houses.get(server).put(house.anchoredAt(place.get()));
     }

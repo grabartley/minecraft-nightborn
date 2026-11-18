@@ -76,4 +76,12 @@ class HouseholdRecordTest {
   void headSleepsIn(final HouseholdRecord record, final GlobalPos coffin, final boolean head) {
     assertEquals(head, record.headSleepsIn(coffin));
   }
+
+  @ParameterizedTest(name = "{index}")
+  @MethodSource("records")
+  @DisplayName("enlisting a vampire the household already counts changes nothing")
+  void enlistsOnce(final HouseholdRecord record) {
+    final HouseholdRecord once = record.enlisted(FIRST);
+    org.junit.jupiter.api.Assertions.assertSame(once, once.enlisted(FIRST));
+  }
 }

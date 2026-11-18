@@ -2158,5 +2158,6 @@
   "nightborn.house.info.member": "你属于 %s 的家族",
   "nightborn.house.info.seated": "家族位于 %s, %s, %s 的建筑中",
   "nightborn.house.info.anchored": "家族位于领主棺材旁，坐标 %s, %s, %s",
-  "nightborn.house.info.store": "家族的血会送到 %s, %s, %s"
+  "nightborn.house.info.store": "家族的血会送到 %s, %s, %s",
+  "nightborn.house.store.locked": "你不能将此处指定为家族存血之处"
 }

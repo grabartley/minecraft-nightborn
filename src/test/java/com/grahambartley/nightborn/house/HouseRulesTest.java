@@ -149,4 +149,44 @@ class HouseRulesTest {
       final boolean expected) {
     assertEquals(expected, HouseRules.opensWheel(main, empty, sneaking, spectator, subject));
   }
+
+  @ParameterizedTest(name = "own {0}, leads {1}, gone {2} -> {3}")
+  @CsvSource({
+    "true, false, false, FOUND",
+    "false, false, false, LIVED_IN",
+    "true, true, false, LIVED_IN",
+    "true, false, true, CLAIM"
+  })
+  @DisplayName(
+      "a vampire's own coffin near a household that still lives founds a house of their own")
+  void ownCoffinNearALivingHousehold(
+      final boolean own,
+      final boolean leads,
+      final boolean gone,
+      final HouseRules.Founding expected) {
+    assertEquals(
+        expected,
+        HouseRules.founding(
+            1, leads, false, own, Optional.of(new HouseRules.Claim(gone, false, false))));
+  }
+
+  @ParameterizedTest(name = "main {0}, sneaking {1}, bottle {2}, vampire {3}, store {4} -> {5}")
+  @CsvSource({
+    "true, true, true, true, true, true",
+    "false, true, true, true, true, false",
+    "true, false, true, true, true, false",
+    "true, true, false, true, true, false",
+    "true, true, true, false, true, false",
+    "true, true, true, true, false, false"
+  })
+  @DisplayName("only a vampire sneaking with a Blood Bottle at a chalice or chest marks the store")
+  void marksStore(
+      final boolean main,
+      final boolean sneaking,
+      final boolean bottle,
+      final boolean vampire,
+      final boolean store,
+      final boolean expected) {
+    assertEquals(expected, HouseRules.marksStore(main, sneaking, bottle, vampire, store));
+  }
 }

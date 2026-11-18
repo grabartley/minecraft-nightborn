@@ -150,7 +150,7 @@ public final class MemberLife {
 
   private static void settle(
       final ServerWorld world, final VampireEntity member, final House house) {
-    HousePlace.of(world.getServer(), house)
+    HousePlace.follow(world.getServer(), house)
         .filter(place -> place.dimension().equals(world.getRegistryKey()))
         .filter(place -> member.homeLife().home().filter(place.pos()::equals).isEmpty())
         .ifPresent(place -> member.homeLife().settle(place.pos()));

@@ -4,6 +4,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -38,6 +39,7 @@ public final class HouseInvites {
   static void register() {
     ServerPlayConnectionEvents.DISCONNECT.register(
         (handler, server) -> PENDING.remove(handler.getPlayer().getUuid()));
+    ServerLifecycleEvents.SERVER_STOPPED.register(server -> PENDING.clear());
   }
 
   public static void invite(final ServerPlayerEntity lord, final ServerPlayerEntity guest) {

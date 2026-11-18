@@ -2158,5 +2158,6 @@
   "nightborn.house.info.member": "Du gehörst zum Haus von %s",
   "nightborn.house.info.seated": "Das Haus steht in einem Bauwerk bei %s, %s, %s",
   "nightborn.house.info.anchored": "Das Haus steht beim Sarg des Fürsten bei %s, %s, %s",
-  "nightborn.house.info.store": "Sein Blut wird nach %s, %s, %s gebracht"
+  "nightborn.house.info.store": "Sein Blut wird nach %s, %s, %s gebracht",
+  "nightborn.house.store.locked": "Das darfst du nicht für das Blut deines Hauses bestimmen"
 }

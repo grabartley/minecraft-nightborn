@@ -56,6 +56,15 @@ public final class HouseRules {
     return mainHand && emptyHand && !sneaking && !spectator && houseSubject;
   }
 
+  public static boolean marksStore(
+      final boolean mainHand,
+      final boolean sneaking,
+      final boolean bottle,
+      final boolean vampire,
+      final boolean store) {
+    return mainHand && sneaking && bottle && vampire && store;
+  }
+
   public static boolean intruder(
       final boolean player, final boolean vampire, final boolean exempt, final boolean hunter) {
     return hunter || (player && !vampire && !exempt);
@@ -104,10 +113,11 @@ public final class HouseRules {
     if (!mayFound(ageRank) || memberElsewhere) {
       return Founding.NONE;
     }
-    if (claim.isPresent()) {
-      return claim.get().decide();
-    }
-    return ownCoffin && !leadsHouse ? Founding.FOUND : Founding.NONE;
+    final Founding atCoffin = ownCoffin && !leadsHouse ? Founding.FOUND : Founding.NONE;
+    final Founding claimed = claim.map(Claim::decide).orElse(Founding.NONE);
+    return claimed == Founding.LIVED_IN && atCoffin == Founding.FOUND
+        ? Founding.FOUND
+        : claim.isPresent() ? claimed : atCoffin;
   }
 
   public record Claim(boolean householdGone, boolean claimedByOther, boolean heldAlready) {

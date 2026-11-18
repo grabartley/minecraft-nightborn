@@ -40,6 +40,9 @@ public final class ChaliceInvitation {
     if (!(player instanceof ServerPlayerEntity lord)) {
       return ActionResult.SUCCESS;
     }
+    if (Houses.get(lord.getServer()).ledBy(lord.getUuid()).isEmpty()) {
+      return ActionResult.PASS;
+    }
     if (!ChaliceBlock.contents(chalice).full()) {
       lord.sendMessage(Text.translatable(NOT_FULL), true);
       return ActionResult.SUCCESS;

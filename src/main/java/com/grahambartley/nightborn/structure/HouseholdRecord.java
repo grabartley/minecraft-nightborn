@@ -34,6 +34,9 @@ public record HouseholdRecord(Set<UUID> living, Optional<GlobalPos> headCoffin) 
   }
 
   public HouseholdRecord enlisted(final UUID vampire) {
+    if (living.contains(vampire)) {
+      return this;
+    }
     final Set<UUID> grown = new HashSet<>(living);
     grown.add(vampire);
     return new HouseholdRecord(grown, headCoffin);

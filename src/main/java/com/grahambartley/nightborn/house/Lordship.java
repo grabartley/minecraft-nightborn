@@ -34,6 +34,10 @@ public final class Lordship {
             guest instanceof BossVampireEntity
                 || guest instanceof VampireEntity vampire && vampire.householdTie().head(),
             guest instanceof PlayerEntity && houses.ledBy(guest.getUuid()).isPresent(),
-            guest.getWorld() == lord.getWorld()));
+            guest.getWorld() == lord.getWorld()
+                && house
+                    .flatMap(led -> HousePlace.of(lord.getServer(), led))
+                    .filter(place -> place.dimension().equals(guest.getWorld().getRegistryKey()))
+                    .isPresent()));
   }
 }

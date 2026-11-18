@@ -203,8 +203,9 @@ public class VampireEntity extends HostileEntity
     retreat = new RetreatGoal(this, () -> stage().combat().retreatHealth());
     goalSelector.add(3, retreat);
     goalSelector.add(4, new MeleeAttackGoal(this, 1.15, false));
-    goalSelector.add(4, new StancePostGoal(this, new MemberStance(this)));
-    goalSelector.add(4, new StanceFollowGoal(this, new MemberStance(this)));
+    final MemberStance memberStance = new MemberStance(this);
+    goalSelector.add(4, new StancePostGoal(this, memberStance));
+    goalSelector.add(4, new StanceFollowGoal(this, memberStance));
     goalSelector.add(5, new GoToWalkTargetGoal(this, 1.0));
     goalSelector.add(6, new BringBloodHomeGoal(this));
     goalSelector.add(6, new WatchStrangerGoal(this));
@@ -213,7 +214,7 @@ public class VampireEntity extends HostileEntity
     goalSelector.add(9, new LookAtEntityGoal(this, PlayerEntity.class, 8.0F));
     goalSelector.add(9, new LookAroundGoal(this));
     targetSelector.add(1, new RevengeGoal(this));
-    targetSelector.add(2, new StanceTargetGoal(this, new MemberStance(this)));
+    targetSelector.add(2, new StanceTargetGoal(this, memberStance));
     targetSelector.add(
         2, new ActiveTargetGoal<>(this, LivingEntity.class, 10, true, false, this::hunts));
   }
