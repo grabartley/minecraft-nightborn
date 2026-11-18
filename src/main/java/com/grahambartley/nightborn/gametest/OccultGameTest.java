@@ -4,6 +4,7 @@ import com.grahambartley.nightborn.blood.BloodAttachment;
 import com.grahambartley.nightborn.mob.NightbornMobs;
 import com.grahambartley.nightborn.mob.VampireEntity;
 import com.grahambartley.nightborn.occult.FamiliarMode;
+import com.grahambartley.nightborn.occult.FamiliarModeOrders;
 import com.grahambartley.nightborn.occult.FamiliarPower;
 import com.grahambartley.nightborn.occult.FogClouds;
 import com.grahambartley.nightborn.occult.GhostlyFamiliarEntity;
@@ -153,8 +154,14 @@ public class OccultGameTest implements FabricGameTest {
         TestPlayers.READY,
         () -> {
           familiar.interact(stranger, Hand.MAIN_HAND);
+          context.assertFalse(
+              WheelUse.pick(
+                  stranger, familiar, FamiliarModeOrders.ID, FamiliarMode.CARRY.ordinal()),
+              "a stranger gets no wheel for it");
           context.assertEquals(familiar.mode(), FamiliarMode.FIGHT, "a stranger cannot order it");
-          familiar.interact(vampire, Hand.MAIN_HAND);
+          context.assertTrue(
+              WheelUse.pick(vampire, familiar, FamiliarModeOrders.ID, FamiliarMode.CARRY.ordinal()),
+              "its owner picks carry on the wheel");
           context.assertEquals(familiar.mode(), FamiliarMode.CARRY, "its owner sets it carrying");
           vampire.setStackInHand(Hand.MAIN_HAND, new ItemStack(Items.BREAD, 5));
           familiar.interact(vampire, Hand.MAIN_HAND);

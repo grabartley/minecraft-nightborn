@@ -1,4 +1,4 @@
-package com.grahambartley.nightborn.familiar;
+package com.grahambartley.nightborn.servant;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -36,6 +36,10 @@ public record ChestMarks(Optional<GlobalPos> fetch, Optional<GlobalPos> deliver)
   public ChestMarks without(final GlobalPos chest) {
     return new ChestMarks(
         fetch.filter(pos -> !pos.equals(chest)), deliver.filter(pos -> !pos.equals(chest)));
+  }
+
+  public Optional<GlobalPos> workChest() {
+    return deliver.or(() -> fetch);
   }
 
   public boolean complete() {

@@ -3,6 +3,7 @@ package com.grahambartley.nightborn.familiar;
 import com.grahambartley.nightborn.config.FamiliarSettings;
 import com.grahambartley.nightborn.server.ServerConfigService;
 import com.grahambartley.nightborn.vampire.NightbornDamage;
+import com.grahambartley.nightborn.wheel.CommandWheel;
 import java.util.OptionalLong;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.damage.DamageSource;
@@ -24,24 +25,20 @@ public final class FamiliarCare {
   static ActionResult interact(
       final HumanFamiliarEntity familiar, final PlayerEntity player, final Hand hand) {
     final ItemStack stack = player.getStackInHand(hand);
+    final boolean server = familiar.getWorld() instanceof ServerWorld;
     return switch (CareRules.choose(
-        familiar.isOwnedBy(player),
+        !server || familiar.isOwnedBy(player),
         hand == Hand.MAIN_HAND,
         stack.isOf(Items.EMERALD),
-        stack.isEmpty(),
         player.getOffHandStack().isOf(Items.EMERALD))) {
       case PAY -> {
-        pay(familiar, player, stack);
-        yield ActionResult.CONSUME;
+        if (server) {
+          pay(familiar, player, stack);
+        }
+        yield ActionResult.success(!server);
       }
-      case MOOD -> {
-        player.sendMessage(
-            Text.translatable(
-                FamiliarMood.of(familiar.loyalty(), familiar.turned()).translationKey()),
-            true);
-        yield ActionResult.CONSUME;
-      }
-      case NONE -> ActionResult.PASS;
+      case OTHER_HAND -> ActionResult.PASS;
+      case NONE -> CommandWheel.use(player, hand, familiar);
     };
   }
 

@@ -9,5 +9,6 @@ public final class GuildFeatures {
     ContractItems.register();
     GuildMobs.register();
     ContractTracker.register();
+    GuildWheel.register();
   }
 }

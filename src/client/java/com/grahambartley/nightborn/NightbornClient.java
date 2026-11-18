@@ -18,6 +18,7 @@ import com.grahambartley.nightborn.client.state.ClientStateService;
 import com.grahambartley.nightborn.client.structure.NearbyStructure;
 import com.grahambartley.nightborn.client.structure.StructureAmbiencePlayer;
 import com.grahambartley.nightborn.client.thrall.ThrallRenderer;
+import com.grahambartley.nightborn.client.wheel.WheelDialogue;
 import com.grahambartley.nightborn.clothing.ClothingRenderProviders;
 import com.grahambartley.nightborn.coffin.CoffinBlockEntity;
 import com.grahambartley.nightborn.coffin.Coffins;
@@ -141,6 +142,7 @@ public class NightbornClient implements ClientModInitializer {
     EldestSetTooltip.register();
     WorldRenderEvents.AFTER_ENTITIES.register(ArenaWallRenderer::render);
     NamingDialogue.register();
+    WheelDialogue.register();
     StructureAmbiencePlayer.register();
     CoatingTooltip.register();
   }

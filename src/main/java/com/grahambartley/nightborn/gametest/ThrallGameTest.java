@@ -9,10 +9,12 @@ import com.grahambartley.nightborn.server.ServerConfigService;
 import com.grahambartley.nightborn.thrall.BindRules;
 import com.grahambartley.nightborn.thrall.ThrallEntity;
 import com.grahambartley.nightborn.thrall.ThrallMode;
+import com.grahambartley.nightborn.thrall.ThrallOrders;
 import com.grahambartley.nightborn.thrall.ThrallRegistry;
 import com.grahambartley.nightborn.thrall.Thralls;
 import com.grahambartley.nightborn.thrall.VillagerMemory;
 import com.grahambartley.nightborn.thrall.goal.ThrallTargetGoal;
+import com.grahambartley.nightborn.wheel.CommandWheel;
 import java.util.List;
 import java.util.UUID;
 import net.fabricmc.fabric.api.event.player.UseEntityCallback;
@@ -160,19 +162,35 @@ public class ThrallGameTest implements FabricGameTest {
   }
 
   @GameTest(templateName = ARENA, batchId = BATCH, tickLimit = TestPlayers.READY + 5)
-  public void onlyItsOwnerOrdersAThrallToFollowStayOrGuard(final TestContext context) {
+  public void onlyItsOwnerOrdersAThrallToFollowStayOrGuardFromTheWheel(final TestContext context) {
     final ServerPlayerEntity owner = TestPlayers.vampire(context, new BlockPos(3, 2, 4));
     final ServerPlayerEntity stranger = TestPlayers.vampire(context, new BlockPos(5, 2, 4));
     final ThrallEntity thrall = bound(context, owner, new BlockPos(4, 2, 4));
+    thrall.setAiDisabled(true);
     context.runAtTick(
         TestPlayers.READY,
         () -> {
-          stranger.interact(thrall, Hand.MAIN_HAND);
+          context.assertFalse(
+              CommandWheel.open(stranger, thrall), "a stranger gets no wheel for it");
+          context.assertFalse(
+              WheelUse.forge(stranger, thrall, ThrallOrders.ID, ThrallMode.STAY.ordinal()),
+              "a forged choice for someone else's thrall is refused");
           context.assertEquals(thrall.mode(), ThrallMode.FOLLOW, "a stranger cannot order it");
-          owner.interact(thrall, Hand.MAIN_HAND);
+          context.assertTrue(
+              WheelUse.pick(owner, thrall, ThrallOrders.ID, ThrallMode.STAY.ordinal()),
+              "the owner picks stay on the wheel");
           context.assertEquals(thrall.mode(), ThrallMode.STAY, "the owner told it to stay");
-          owner.interact(thrall, Hand.MAIN_HAND);
+          context.assertTrue(
+              WheelUse.pick(owner, thrall, ThrallOrders.ID, ThrallMode.GUARD.ordinal()),
+              "the owner picks guard on the wheel");
           context.assertEquals(thrall.mode(), ThrallMode.GUARD, "the owner told it to guard");
+          context.assertTrue(
+              WheelUse.pick(owner, thrall, ThrallOrders.ID, ThrallMode.FOLLOW.ordinal()),
+              "the owner picks follow on the wheel");
+          context.assertEquals(thrall.mode(), ThrallMode.FOLLOW, "the owner told it to follow");
+          context.assertFalse(
+              WheelUse.forge(owner, thrall, ThrallOrders.ID, ThrallMode.STAY.ordinal()),
+              "each wheel takes one choice, so an old one cannot be replayed");
           TestPlayers.finish(context, owner, stranger);
         });
   }

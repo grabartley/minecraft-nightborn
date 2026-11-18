@@ -1,9 +1,7 @@
 package com.grahambartley.nightborn.gametest;
 
 import com.grahambartley.nightborn.config.FamiliarSettings;
-import com.grahambartley.nightborn.familiar.ChestMark;
 import com.grahambartley.nightborn.familiar.FamiliarHiring;
-import com.grahambartley.nightborn.familiar.FamiliarOrders;
 import com.grahambartley.nightborn.familiar.FamiliarRegistry;
 import com.grahambartley.nightborn.familiar.FamiliarRelease;
 import com.grahambartley.nightborn.familiar.FamiliarUpkeep;
@@ -13,6 +11,9 @@ import com.grahambartley.nightborn.familiar.HumanFamiliarEntity;
 import com.grahambartley.nightborn.familiar.goal.BetrayOwnerGoal;
 import com.grahambartley.nightborn.familiar.goal.RetaliateGoal;
 import com.grahambartley.nightborn.familiar.goal.RunErrandGoal;
+import com.grahambartley.nightborn.servant.ChestMark;
+import com.grahambartley.nightborn.servant.ChestMarking;
+import com.grahambartley.nightborn.servant.ServantChests;
 import com.grahambartley.nightborn.server.ServerConfigService;
 import com.grahambartley.nightborn.vampire.NightbornDamage;
 import java.util.Optional;
@@ -281,11 +282,11 @@ public class HumanFamiliarGameTest implements FabricGameTest {
           final HumanFamiliarEntity familiar = hired(context, vampire);
           familiar.setAiDisabled(true);
           context.assertTrue(
-              FamiliarOrders.mark(vampire, context.getAbsolutePos(fetch))
+              ChestMarking.mark(vampire, context.getAbsolutePos(fetch))
                   .equals(Optional.of(ChestMark.FETCH)),
               "the first marked chest is the fetch chest");
           context.assertTrue(
-              FamiliarOrders.mark(vampire, context.getAbsolutePos(deliver))
+              ChestMarking.mark(vampire, context.getAbsolutePos(deliver))
                   .equals(Optional.of(ChestMark.DELIVER)),
               "the second marked chest is the deliver chest");
           final RunErrandGoal errand = new RunErrandGoal(familiar);
@@ -329,17 +330,17 @@ public class HumanFamiliarGameTest implements FabricGameTest {
         TestPlayers.READY,
         () -> {
           context.assertTrue(
-              FamiliarOrders.mark(vampire, context.getAbsolutePos(barrel)).isEmpty(),
+              ChestMarking.mark(vampire, context.getAbsolutePos(barrel)).isEmpty(),
               "a vampire without a familiar marks nothing");
           hired(context, vampire);
           context.assertTrue(
-              FamiliarOrders.mark(vampire, context.getAbsolutePos(locked)).isEmpty(),
+              ChestMarking.mark(vampire, context.getAbsolutePos(locked)).isEmpty(),
               "a chest the owner cannot open is refused");
           context.assertTrue(
-              FamiliarOrders.mark(vampire, context.getAbsolutePos(furnace)).isEmpty(),
+              ChestMarking.mark(vampire, context.getAbsolutePos(furnace)).isEmpty(),
               "a furnace is not an errand chest");
           context.assertTrue(
-              FamiliarOrders.mark(vampire, context.getAbsolutePos(barrel))
+              ChestMarking.mark(vampire, context.getAbsolutePos(barrel))
                   .equals(Optional.of(ChestMark.FETCH)),
               "a barrel can be marked");
           TestPlayers.finish(context, vampire);
@@ -386,8 +387,8 @@ public class HumanFamiliarGameTest implements FabricGameTest {
         () -> {
           final HumanFamiliarEntity familiar = hired(context, vampire);
           familiar.setAiDisabled(true);
-          FamiliarOrders.mark(vampire, context.getAbsolutePos(fetch));
-          FamiliarOrders.mark(vampire, context.getAbsolutePos(deliver));
+          ChestMarking.mark(vampire, context.getAbsolutePos(fetch));
+          ChestMarking.mark(vampire, context.getAbsolutePos(deliver));
           final NbtCompound lock = new NbtCompound();
           lock.putString("Lock", "crypt key");
           from.read(lock, context.getWorld().getRegistryManager());
@@ -401,10 +402,8 @@ public class HumanFamiliarGameTest implements FabricGameTest {
           context.assertEquals(from.count(Items.WHEAT), 30, "nothing is taken from a locked chest");
           context.assertTrue(familiar.getInventory().isEmpty(), "the familiar carries nothing");
           context.assertTrue(
-              FamiliarRegistry.of(context.getWorld().getServer())
-                  .bondOf(vampire.getUuid())
-                  .orElseThrow()
-                  .marks()
+              ServantChests.of(context.getWorld().getServer())
+                  .marksOf(vampire.getUuid())
                   .fetch()
                   .isEmpty(),
               "the locked chest is forgotten");
@@ -458,8 +457,8 @@ public class HumanFamiliarGameTest implements FabricGameTest {
         TestPlayers.READY,
         () -> {
           familiar[0] = hired(context, vampire);
-          FamiliarOrders.mark(vampire, context.getAbsolutePos(fetch));
-          FamiliarOrders.mark(vampire, context.getAbsolutePos(deliver));
+          ChestMarking.mark(vampire, context.getAbsolutePos(fetch));
+          ChestMarking.mark(vampire, context.getAbsolutePos(deliver));
         });
     context.runAtEveryTick(
         () -> {

@@ -1,6 +1,9 @@
 package com.grahambartley.nightborn.familiar;
 
 import com.grahambartley.nightborn.Nightborn;
+import com.grahambartley.nightborn.servant.ChestMarking;
+import com.grahambartley.nightborn.servant.ServantChests;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
 import net.minecraft.entity.EntityType;
@@ -36,6 +39,10 @@ public final class Familiars {
         HUMAN_FAMILIAR, HumanFamiliarEntity.createFamiliarAttributes());
     ItemGroupEvents.modifyEntriesEvent(ItemGroups.TOOLS).register(entries -> entries.add(CONTRACT));
     FamiliarHiring.register();
-    FamiliarOrders.register();
+    ChestMarking.countServants(
+        (server, owner) -> FamiliarRegistry.of(server).bondOf(owner).isPresent());
+    ServerLifecycleEvents.SERVER_STARTED.register(
+        server -> ServantChests.of(server).adopt(FamiliarRegistry.of(server).takeLegacyMarks()));
+    FamiliarWheel.register();
   }
 }

@@ -1,5 +1,6 @@
 package com.grahambartley.nightborn.familiar;
 
+import com.grahambartley.nightborn.servant.ChestMarks;
 import com.mojang.serialization.Codec;
 import java.util.HashMap;
 import java.util.Map;
@@ -18,11 +19,15 @@ public final class FamiliarRegistry extends PersistentState {
   private static final String BONDS = "bonds";
   private static final Codec<Map<UUID, FamiliarBond>> BONDS_CODEC =
       Codec.unboundedMap(Uuids.STRING_CODEC, FamiliarBond.CODEC);
+  private static final Codec<Map<UUID, ChestMarks>> LEGACY_MARKS_CODEC =
+      Codec.unboundedMap(
+          Uuids.STRING_CODEC, ChestMarks.CODEC.optionalFieldOf("marks", ChestMarks.NONE).codec());
 
   private static final PersistentState.Type<FamiliarRegistry> TYPE =
       new PersistentState.Type<>(FamiliarRegistry::new, FamiliarRegistry::fromNbt, null);
 
   private final Map<UUID, FamiliarBond> bonds = new HashMap<>();
+  private final Map<UUID, ChestMarks> legacyMarks = new HashMap<>();
 
   FamiliarRegistry() {}
 
@@ -39,13 +44,17 @@ public final class FamiliarRegistry extends PersistentState {
   }
 
   public void bind(final UUID owner, final UUID familiar) {
-    bonds.put(owner, new FamiliarBond(familiar, ChestMarks.NONE));
+    bonds.put(owner, new FamiliarBond(familiar));
     markDirty();
   }
 
-  public void update(final UUID owner, final FamiliarBond bond) {
-    bonds.put(owner, bond);
-    markDirty();
+  public Map<UUID, ChestMarks> takeLegacyMarks() {
+    final Map<UUID, ChestMarks> taken = Map.copyOf(legacyMarks);
+    if (!taken.isEmpty()) {
+      legacyMarks.clear();
+      markDirty();
+    }
+    return taken;
   }
 
   public void free(final UUID owner, final UUID familiar) {
@@ -77,6 +86,17 @@ public final class FamiliarRegistry extends PersistentState {
       final NbtCompound nbt, final RegistryWrapper.WrapperLookup registries) {
     final FamiliarRegistry registry = new FamiliarRegistry();
     BONDS_CODEC.parse(NbtOps.INSTANCE, nbt.get(BONDS)).result().ifPresent(registry.bonds::putAll);
+    LEGACY_MARKS_CODEC
+        .parse(NbtOps.INSTANCE, nbt.get(BONDS))
+        .result()
+        .ifPresent(
+            marks ->
+                marks.forEach(
+                    (owner, kept) -> {
+                      if (!kept.equals(ChestMarks.NONE)) {
+                        registry.legacyMarks.put(owner, kept);
+                      }
+                    }));
     return registry;
   }
 }

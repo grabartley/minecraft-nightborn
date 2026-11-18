@@ -5,6 +5,7 @@ import com.grahambartley.nightborn.config.MindSettings;
 import com.grahambartley.nightborn.mind.MindAttributes;
 import com.grahambartley.nightborn.mind.MindTies;
 import com.grahambartley.nightborn.name.ServantNaming;
+import com.grahambartley.nightborn.servant.ChestMarking;
 import com.grahambartley.nightborn.server.ServerConfigService;
 import java.util.UUID;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
@@ -13,6 +14,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.SpawnGroup;
 import net.minecraft.entity.ai.brain.MemoryModuleType;
 import net.minecraft.entity.passive.VillagerEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.registry.Registries;
@@ -42,6 +44,8 @@ public final class Thralls {
 
   public static void register() {
     FabricDefaultAttributeRegistry.register(THRALL, ThrallEntity.createThrallAttributes());
+    ThrallWheel.register();
+    ChestMarking.countServants((server, owner) -> ThrallRegistry.of(server).count(owner) > 0);
   }
 
   public static BindRules.Outcome mayBind(
@@ -126,6 +130,9 @@ public final class Thralls {
   }
 
   static void release(final ThrallEntity thrall) {
+    for (final ItemStack stack : thrall.getInventory().clearToList()) {
+      thrall.dropStack(stack);
+    }
     final VillagerData data = thrall.getVillagerData();
     final VillagerEntity villager = thrall.convertTo(EntityType.VILLAGER, true);
     if (villager != null) {
