@@ -379,11 +379,13 @@ public class FeedingGameTest implements FabricGameTest {
   @BeforeBatch(batchId = WITNESSED)
   public void witnessedNeverResists(final ServerWorld world) {
     neverResist(world);
+    WorldClock.freeze(world, WorldClock.MIDNIGHT);
   }
 
   @AfterBatch(batchId = WITNESSED)
   public void witnessedRestoresResist(final ServerWorld world) {
     restoreResist(world);
+    WorldClock.release(world);
   }
 
   @GameTest(templateName = ARENA, batchId = WITNESSED, tickLimit = 80)
