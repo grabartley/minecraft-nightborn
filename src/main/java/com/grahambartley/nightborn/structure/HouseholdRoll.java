@@ -45,8 +45,8 @@ public final class HouseholdRoll extends PersistentState {
     return ledger.record(home);
   }
 
-  public Optional<GlobalPos> homeFor(final GlobalPos coffin, final int reach) {
-    return ledger.homeFor(coffin, reach);
+  public Optional<GlobalPos> homeOfHeadCoffin(final GlobalPos coffin) {
+    return ledger.homeOfHeadCoffin(coffin);
   }
 
   @Override

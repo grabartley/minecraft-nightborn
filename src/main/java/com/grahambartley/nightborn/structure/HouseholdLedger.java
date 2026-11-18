@@ -1,6 +1,5 @@
 package com.grahambartley.nightborn.structure;
 
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -34,24 +33,11 @@ public final class HouseholdLedger {
     return records.getOrDefault(home, HouseholdRecord.NONE);
   }
 
-  public Optional<GlobalPos> homeFor(final GlobalPos coffin, final int reach) {
-    final Optional<GlobalPos> headOf =
-        records.entrySet().stream()
-            .filter(entry -> entry.getValue().headSleepsIn(coffin))
-            .map(Map.Entry::getKey)
-            .findFirst();
-    return headOf.or(
-        () ->
-            records.entrySet().stream()
-                .filter(entry -> entry.getValue().headCoffin().isEmpty())
-                .map(Map.Entry::getKey)
-                .filter(
-                    home ->
-                        home.dimension().equals(coffin.dimension())
-                            && home.pos().isWithinDistance(coffin.pos(), reach))
-                .min(
-                    Comparator.comparingDouble(
-                        home -> home.pos().getSquaredDistance(coffin.pos()))));
+  public Optional<GlobalPos> homeOfHeadCoffin(final GlobalPos coffin) {
+    return records.entrySet().stream()
+        .filter(entry -> entry.getValue().headSleepsIn(coffin))
+        .map(Map.Entry::getKey)
+        .findFirst();
   }
 
   public Map<GlobalPos, HouseholdRecord> records() {

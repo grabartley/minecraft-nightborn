@@ -3,7 +3,6 @@ package com.grahambartley.nightborn.house;
 import com.grahambartley.nightborn.age.AgeAttachment;
 import com.grahambartley.nightborn.coffin.CoffinBlock;
 import com.grahambartley.nightborn.coffin.CoffinOwnership;
-import com.grahambartley.nightborn.server.ServerConfigService;
 import com.grahambartley.nightborn.structure.HouseholdRoll;
 import com.grahambartley.nightborn.vampire.Vampires;
 import java.util.Optional;
@@ -44,8 +43,7 @@ public final class HouseFounding {
     final Houses houses = Houses.get(world.getServer());
     final Optional<House> led = houses.ledBy(self);
     final HouseholdRoll roll = HouseholdRoll.get(world.getServer());
-    final Optional<GlobalPos> home =
-        roll.homeFor(coffin, ServerConfigService.current().mobs().vampireHomeRadius());
+    final Optional<GlobalPos> home = roll.homeOfHeadCoffin(coffin);
     final HouseRules.Founding verdict =
         HouseRules.founding(
             AgeAttachment.get(player).rank(),

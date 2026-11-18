@@ -30,23 +30,13 @@ class HouseholdLedgerTest {
     return ledger;
   }
 
-  @ParameterizedTest(name = "coffin {0}, {1}, {2} within {3} -> {4}")
-  @CsvSource({
-    "2, 40, 1, 16, crypt",
-    "3, 40, 1, 16, none",
-    "1005, 70, 0, 16, manor",
-    "1030, 70, 0, 16, none",
-    "500, 70, 0, 16, none"
-  })
-  @DisplayName("a coffin leads to its household by its head's coffin, or by nearness when unknown")
-  void homeFor(final int x, final int y, final int z, final int reach, final String home) {
-    final Optional<GlobalPos> expected =
-        switch (home) {
-          case "crypt" -> Optional.of(CRYPT);
-          case "manor" -> Optional.of(MANOR);
-          default -> Optional.empty();
-        };
-    assertEquals(expected, ledger().homeFor(at(x, y, z), reach));
+  @ParameterizedTest(name = "coffin {0}, {1}, {2} -> {3}")
+  @CsvSource({"2, 40, 1, crypt", "3, 40, 1, none", "1005, 70, 0, none", "1000, 70, 0, none"})
+  @DisplayName("only the coffin its head slept in leads to a household")
+  void homeOfHeadCoffin(final int x, final int y, final int z, final String home) {
+    assertEquals(
+        home.equals("crypt") ? Optional.of(CRYPT) : Optional.empty(),
+        ledger().homeOfHeadCoffin(at(x, y, z)));
   }
 
   @ParameterizedTest(name = "enlist twice {0}")
