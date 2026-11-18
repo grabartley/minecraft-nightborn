@@ -21,8 +21,4 @@ public record StageAge(Text name, Optional<StageDeed> deed, double notoriety) {
                           .optionalFieldOf("notoriety", PLAIN_NOTORIETY)
                           .forGetter(StageAge::notoriety))
                   .apply(instance, StageAge::new));
-
-  public StageAge(final Text name, final Optional<StageDeed> deed) {
-    this(name, deed, PLAIN_NOTORIETY);
-  }
 }

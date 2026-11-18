@@ -8,6 +8,7 @@ public record BellCall(int elapsed, int total) {
   static final double FARTHEST_ANSWER = 48.0;
   static final double NEAREST_ANSWER = 8.0;
   static final int MOST_LIGHT = 10;
+  static final int CHECK_TICKS = 20;
 
   public static BellCall rung(final int total) {
     return new BellCall(0, total);
@@ -20,6 +21,19 @@ public record BellCall(int elapsed, int total) {
       final boolean openSky,
       final boolean busy) {
     return hasSeal && !busy && HuntRules.canArrive(overworld, openSky, inWindow);
+  }
+
+  public static boolean holds(
+      final boolean alive, final boolean openSky, final boolean inWindow, final boolean done) {
+    return alive && openSky && (inWindow || !done);
+  }
+
+  public boolean checks() {
+    return elapsed % CHECK_TICKS == 0;
+  }
+
+  public boolean triesArrival() {
+    return done() && (elapsed - total) % CHECK_TICKS == 0;
   }
 
   public BellCall advanced() {

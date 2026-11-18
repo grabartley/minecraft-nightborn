@@ -2079,5 +2079,6 @@
   "nightborn.setting.hunt.latestArrival": "最晚到来时间",
   "nightborn.setting.hunt.latestArrival.tooltip": "大审判官最晚可以在夜里的哪个时间（以刻计）到来。18000 为午夜",
   "nightborn.setting.hunt.bellBuildUpTicks": "钟声前奏（刻）",
-  "nightborn.setting.hunt.bellBuildUpTicks.tooltip": "敲响猎人之钟后，回应的钟声持续多少刻，他才会到来"
+  "nightborn.setting.hunt.bellBuildUpTicks.tooltip": "敲响猎人之钟后，回应的钟声持续多少刻，他才会到来",
+  "subtitles.nightborn.event.hunt.arrival": "大审判官到来"
 }

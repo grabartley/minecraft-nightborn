@@ -21,8 +21,7 @@ final class HuntVisits {
           arriving(player, now, settings)
               ? StandIn.arrive(player).map(record::visitedBy).orElse(record)
               : record;
-      case VISIT ->
-          gone(player, record) ? record.ended(AgeNight.index(now), settings.quietNights()) : record;
+      case VISIT -> gone(player, record) ? left(record, now, settings) : record;
       case NONE, WARNING -> record;
     };
   }
@@ -41,6 +40,12 @@ final class HuntVisits {
             player.getServerWorld().getRegistryKey() == World.OVERWORLD,
             underOpenSky(player),
             HuntRules.inArrivalWindow(now, settings));
+  }
+
+  private static HuntRecord left(
+      final HuntRecord record, final long now, final HuntSettings settings) {
+    record.visitor().ifPresent(StandIn::left);
+    return record.ended(AgeNight.index(now), settings.quietNights());
   }
 
   private static boolean gone(final ServerPlayerEntity player, final HuntRecord record) {

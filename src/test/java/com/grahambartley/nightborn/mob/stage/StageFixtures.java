@@ -71,6 +71,6 @@ final class StageFixtures {
   }
 
   static StageAge age(final String name) {
-    return new StageAge(Text.literal(name), Optional.empty());
+    return new StageAge(Text.literal(name), Optional.empty(), StageAge.PLAIN_NOTORIETY);
   }
 }

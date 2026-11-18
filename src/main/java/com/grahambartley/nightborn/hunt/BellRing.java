@@ -2,6 +2,8 @@ package com.grahambartley.nightborn.hunt;
 
 import com.grahambartley.nightborn.config.HuntSettings;
 import com.grahambartley.nightborn.server.ServerConfigService;
+import java.util.Optional;
+import java.util.UUID;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -49,21 +51,29 @@ final class BellRing {
     if (call == null) {
       return;
     }
-    if (!player.isAlive() || !HuntVisits.underOpenSky(player)) {
+    final BellCall next = call.advanced();
+    if (next.checks()
+        && !BellCall.holds(
+            player.isAlive(),
+            HuntVisits.underOpenSky(player),
+            HuntRules.inArrivalWindow(Hunts.time(player), ServerConfigService.current().hunt()),
+            next.done())) {
       player.removeAttached(HuntAttachment.CALL);
       player.sendMessage(Text.translatable("nightborn.hunt.bell.unanswered"), false);
       return;
     }
-    final BellCall next = call.advanced();
     if (next.answers()) {
       answer(player, next);
     }
-    if (!next.done()) {
-      player.setAttached(HuntAttachment.CALL, next);
-      return;
+    if (next.triesArrival()) {
+      final Optional<UUID> man = StandIn.arrive(player);
+      if (man.isPresent()) {
+        player.removeAttached(HuntAttachment.CALL);
+        Hunts.visited(player, man.get());
+        return;
+      }
     }
-    player.removeAttached(HuntAttachment.CALL);
-    StandIn.arrive(player).ifPresent(man -> Hunts.visited(player, man));
+    player.setAttached(HuntAttachment.CALL, next);
   }
 
   static int sealSlot(final PlayerInventory inventory) {

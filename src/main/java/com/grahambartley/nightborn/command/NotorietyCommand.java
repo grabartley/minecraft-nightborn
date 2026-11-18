@@ -23,7 +23,6 @@ import net.minecraft.text.Text;
 final class NotorietyCommand {
 
   private static final String NOTORIETY = "notoriety";
-  static final double MOST = 100000.0;
 
   private NotorietyCommand() {}
 
@@ -31,7 +30,7 @@ final class NotorietyCommand {
     return CommandManager.literal(NOTORIETY)
         .executes(NotorietyCommand::show)
         .then(
-            CommandManager.argument(NOTORIETY, DoubleArgumentType.doubleArg(0.0, MOST))
+            CommandManager.argument(NOTORIETY, DoubleArgumentType.doubleArg(0.0))
                 .executes(NotorietyCommand::set));
   }
 

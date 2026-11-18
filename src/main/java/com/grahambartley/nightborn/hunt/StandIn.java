@@ -3,8 +3,11 @@ package com.grahambartley.nightborn.hunt;
 import com.grahambartley.nightborn.guild.GuildMobs;
 import com.grahambartley.nightborn.guild.HunterEntity;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.SpawnReason;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -22,13 +25,16 @@ public final class StandIn {
 
   private StandIn() {}
 
+  private static final Set<UUID> WALKING = ConcurrentHashMap.newKeySet();
+
   static void register() {
     ServerEntityEvents.ENTITY_LOAD.register(
         (entity, world) -> {
-          if (is(entity)) {
+          if (is(entity) && !WALKING.contains(entity.getUuid())) {
             entity.discard();
           }
         });
+    ServerLifecycleEvents.SERVER_STOPPED.register(server -> WALKING.clear());
   }
 
   public static boolean is(final Entity entity) {
@@ -52,20 +58,26 @@ public final class StandIn {
     man.setCustomName(Text.translatable("nightborn.hunt.stand_in"));
     man.setCustomNameVisible(true);
     man.setPersistent();
-    world.spawnEntity(man);
     man.addCommandTag(TAG);
+    WALKING.add(man.getUuid());
+    world.spawnEntity(man);
     man.lookAtEntity(quarry, 360.0F, 360.0F);
     if (man.canTarget(quarry)) {
       man.setTarget(quarry);
     }
     man.getNavigation().startMovingTo(quarry, WALK_SPEED);
     world.playSound(
-        null, at, HuntSounds.WARNING_TOLL, SoundCategory.HOSTILE, ARRIVAL_VOLUME, ARRIVAL_PITCH);
+        null, at, HuntSounds.ARRIVAL, SoundCategory.HOSTILE, ARRIVAL_VOLUME, ARRIVAL_PITCH);
     quarry.sendMessage(Text.translatable("nightborn.hunt.arrived"), false);
     return Optional.of(man.getUuid());
   }
 
+  static void left(final UUID man) {
+    WALKING.remove(man);
+  }
+
   static void dismiss(final ServerWorld world, final UUID man) {
+    left(man);
     final Entity entity = world.getEntity(man);
     if (entity != null && is(entity)) {
       entity.discard();

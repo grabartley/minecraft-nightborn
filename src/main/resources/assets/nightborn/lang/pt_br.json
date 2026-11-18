@@ -2079,5 +2079,6 @@
   "nightborn.setting.hunt.latestArrival": "Chegada mais tardia (hora)",
   "nightborn.setting.hunt.latestArrival.tooltip": "Hora mais tardia da noite, em ticks, em que o Grande Inquisidor pode chegar. 18000 é meia-noite",
   "nightborn.setting.hunt.bellBuildUpTicks": "Prelúdio dos sinos (ticks)",
-  "nightborn.setting.hunt.bellBuildUpTicks.tooltip": "Quanto tempo, em ticks, duram os sinos que respondem depois que um sino de caçador toca, antes que ele chegue"
+  "nightborn.setting.hunt.bellBuildUpTicks.tooltip": "Quanto tempo, em ticks, duram os sinos que respondem depois que um sino de caçador toca, antes que ele chegue",
+  "subtitles.nightborn.event.hunt.arrival": "O Grande Inquisidor chega"
 }

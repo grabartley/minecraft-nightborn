@@ -2079,5 +2079,6 @@
   "nightborn.setting.hunt.latestArrival": "Latest Arrival (time)",
   "nightborn.setting.hunt.latestArrival.tooltip": "Latest time of night, in ticks, at which the Grand Inquisitor may arrive. 18000 is midnight",
   "nightborn.setting.hunt.bellBuildUpTicks": "Bell Build-up (ticks)",
-  "nightborn.setting.hunt.bellBuildUpTicks.tooltip": "How long, in ticks, the answering bells last after a hunter's bell is rung before he arrives"
+  "nightborn.setting.hunt.bellBuildUpTicks.tooltip": "How long, in ticks, the answering bells last after a hunter's bell is rung before he arrives",
+  "subtitles.nightborn.event.hunt.arrival": "The Grand Inquisitor arrives"
 }

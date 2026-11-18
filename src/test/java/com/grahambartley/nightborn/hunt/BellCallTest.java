@@ -63,4 +63,42 @@ class BellCallTest {
     assertEquals(new BellCall(total, total), call);
     assertEquals(true, call.done());
   }
+
+  @ParameterizedTest(name = "alive {0}, sky {1}, window {2}, done {3}: holds {4}")
+  @CsvSource({
+    "true, true, true, false, true",
+    "true, true, false, false, true",
+    "true, true, true, true, true",
+    "true, true, false, true, false",
+    "false, true, true, false, false",
+    "true, false, true, false, false"
+  })
+  @DisplayName(
+      "the call holds while the ringer lives under open sky, and he keeps trying until midnight")
+  void holds(
+      final boolean alive,
+      final boolean sky,
+      final boolean window,
+      final boolean done,
+      final boolean holds) {
+    assertEquals(holds, BellCall.holds(alive, sky, window, done));
+  }
+
+  @ParameterizedTest(name = "tick {0} of {1}: checks {2}, tries to arrive {3}")
+  @CsvSource({
+    "0, 200, true, false",
+    "10, 200, false, false",
+    "199, 200, false, false",
+    "200, 200, true, true",
+    "201, 200, false, false",
+    "220, 200, true, true",
+    "230, 200, false, false"
+  })
+  @DisplayName(
+      "checks run once a second, and once the bells are done he tries to arrive each second")
+  void retries(final int elapsed, final int total, final boolean checks, final boolean tries) {
+    final BellCall call = new BellCall(elapsed, total);
+    assertEquals(checks, call.checks());
+    assertEquals(tries, call.triesArrival());
+  }
 }

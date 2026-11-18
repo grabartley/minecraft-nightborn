@@ -39,7 +39,9 @@ class AgeLadderTest {
         StageLook.PLAIN,
         Optional.empty(),
         forPlayers
-            ? Optional.of(new StageAge(Text.literal("stage " + rank), Optional.empty()))
+            ? Optional.of(
+                new StageAge(
+                    Text.literal("stage " + rank), Optional.empty(), StageAge.PLAIN_NOTORIETY))
             : Optional.empty());
   }
 

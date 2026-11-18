@@ -2079,5 +2079,6 @@
   "nightborn.setting.hunt.latestArrival": "Самое позднее прибытие (время)",
   "nightborn.setting.hunt.latestArrival.tooltip": "Самое позднее время ночи в тиках, когда может прибыть Великий инквизитор. 18000 — полночь",
   "nightborn.setting.hunt.bellBuildUpTicks": "Нарастание колоколов (тики)",
-  "nightborn.setting.hunt.bellBuildUpTicks.tooltip": "Сколько тиков звучат ответные колокола после звона колокола охотника, прежде чем он прибудет"
+  "nightborn.setting.hunt.bellBuildUpTicks.tooltip": "Сколько тиков звучат ответные колокола после звона колокола охотника, прежде чем он прибудет",
+  "subtitles.nightborn.event.hunt.arrival": "Прибывает Великий инквизитор"
 }

@@ -2079,5 +2079,6 @@
   "nightborn.setting.hunt.latestArrival": "Arrivée la plus tardive (heure)",
   "nightborn.setting.hunt.latestArrival.tooltip": "Heure la plus tardive de la nuit, en ticks, à laquelle le Grand Inquisiteur peut arriver. 18000 correspond à minuit",
   "nightborn.setting.hunt.bellBuildUpTicks": "Montée des cloches (ticks)",
-  "nightborn.setting.hunt.bellBuildUpTicks.tooltip": "Durée, en ticks, des cloches qui répondent après qu'une cloche de chasseur a sonné, avant son arrivée"
+  "nightborn.setting.hunt.bellBuildUpTicks.tooltip": "Durée, en ticks, des cloches qui répondent après qu'une cloche de chasseur a sonné, avant son arrivée",
+  "subtitles.nightborn.event.hunt.arrival": "Le Grand Inquisiteur arrive"
 }

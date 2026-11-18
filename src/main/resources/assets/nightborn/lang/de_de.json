@@ -2079,5 +2079,6 @@
   "nightborn.setting.hunt.latestArrival": "Späteste Ankunft (Zeit)",
   "nightborn.setting.hunt.latestArrival.tooltip": "Späteste Nachtzeit in Ticks, zu der der Großinquisitor ankommen darf. 18000 ist Mitternacht",
   "nightborn.setting.hunt.bellBuildUpTicks": "Glocken-Aufbau (Ticks)",
-  "nightborn.setting.hunt.bellBuildUpTicks.tooltip": "Wie lange in Ticks die antwortenden Glocken nach dem Läuten einer Jägerglocke dauern, bevor er ankommt"
+  "nightborn.setting.hunt.bellBuildUpTicks.tooltip": "Wie lange in Ticks die antwortenden Glocken nach dem Läuten einer Jägerglocke dauern, bevor er ankommt",
+  "subtitles.nightborn.event.hunt.arrival": "Der Großinquisitor trifft ein"
 }

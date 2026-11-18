@@ -894,5 +894,15 @@
         "pitch": 0.8
       }
     ]
+  },
+  "event.hunt.arrival": {
+    "subtitle": "subtitles.nightborn.event.hunt.arrival",
+    "sounds": [
+      {
+        "name": "minecraft:block.bell.use",
+        "type": "event",
+        "pitch": 0.6
+      }
+    ]
   }
 }

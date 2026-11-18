@@ -7,6 +7,7 @@ public final class HuntSounds {
 
   public static final SoundEvent BELL_RING = NightbornSounds.register("item.hunters_bell.ring");
   public static final SoundEvent WARNING_TOLL = NightbornSounds.register("event.hunt.warning_toll");
+  public static final SoundEvent ARRIVAL = NightbornSounds.register("event.hunt.arrival");
   public static final SoundEvent BELLS_ANSWER = NightbornSounds.register("event.hunt.bells_answer");
 
   private HuntSounds() {}
