@@ -33,7 +33,7 @@ final class BellRing {
             || HuntAttachment.get(player).phase() == HuntRecord.Phase.VISIT;
     if (!BellCall.calls(
         seal >= 0,
-        HuntRules.inArrivalWindow(Hunts.time(player), settings),
+        HuntRules.fitsArrivalWindow(Hunts.time(player), settings.bellBuildUpTicks(), settings),
         world.getRegistryKey() == World.OVERWORLD,
         HuntVisits.underOpenSky(player),
         busy)) {

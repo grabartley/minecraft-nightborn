@@ -70,6 +70,11 @@ public final class HuntRules {
     return time >= NightTime.DUSK && time < settings.latestArrival();
   }
 
+  public static boolean fitsArrivalWindow(
+      final long timeOfDay, final int span, final HuntSettings settings) {
+    return inArrivalWindow(timeOfDay, settings) && inArrivalWindow(timeOfDay + span, settings);
+  }
+
   public static boolean canArrive(
       final boolean overworld, final boolean openSky, final boolean inWindow) {
     return overworld && openSky && inWindow;

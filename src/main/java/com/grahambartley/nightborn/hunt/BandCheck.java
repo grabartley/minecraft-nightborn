@@ -1,13 +1,13 @@
 package com.grahambartley.nightborn.hunt;
 
 import com.grahambartley.nightborn.Nightborn;
+import com.grahambartley.nightborn.downed.DownedTargeting;
 import com.grahambartley.nightborn.guild.GuildMasterEntity;
 import com.grahambartley.nightborn.guild.HunterEntity;
 import com.grahambartley.nightborn.guild.party.PartyMember;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Predicate;
-import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.mob.PathAwareEntity;
 import net.minecraft.registry.RegistryKeys;
@@ -24,8 +24,6 @@ public final class BandCheck {
 
   public static final TagKey<Structure> CAMPS =
       TagKey.of(RegistryKeys.STRUCTURE, Identifier.of(Nightborn.MOD_ID, "hunter_camps"));
-  public static final TagKey<EntityType<?>> HUNTERS =
-      TagKey.of(RegistryKeys.ENTITY_TYPE, Identifier.of(Nightborn.MOD_ID, "hunters"));
   static final double CAMP_REACH = 16.0;
 
   private BandCheck() {}
@@ -90,7 +88,7 @@ public final class BandCheck {
             other ->
                 other != victim
                     && other.isAlive()
-                    && other.getType().isIn(HUNTERS)
+                    && other.getType().isIn(DownedTargeting.HUNTERS)
                     && !StandIn.is(other)
                     && bandmate.test(other))
         .isEmpty();

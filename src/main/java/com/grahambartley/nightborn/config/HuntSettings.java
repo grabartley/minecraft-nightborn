@@ -12,7 +12,7 @@ public record HuntSettings(
     int latestArrival,
     int bellBuildUpTicks) {
 
-  static final String SECTION = "hunt";
+  static final String SECTION = "inquisitor";
 
   public static final IntSetting RAID_NOTORIETY =
       new IntSetting(SECTION, "raidNotoriety", 15, 1, 1000, c -> c.hunt().raidNotoriety());

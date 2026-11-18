@@ -97,7 +97,6 @@ class HuntRecordTest {
     HuntRecord record = HuntRecord.EMPTY.withNotoriety(notoriety).ended(3, 10);
     record = hunted ? record.warning(1) : record;
     assertEquals(idle, record.idle(night));
-    assertEquals(hunted, record.hunted());
     assertTrue(HuntRecord.EMPTY.idle(0));
   }
 }

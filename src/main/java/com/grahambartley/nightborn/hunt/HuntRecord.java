@@ -61,10 +61,6 @@ public record HuntRecord(
     visitor = phase == Phase.VISIT ? visitor : Optional.empty();
   }
 
-  public boolean hunted() {
-    return phase != Phase.NONE;
-  }
-
   public boolean quiet(final long night) {
     return night < quietUntil;
   }

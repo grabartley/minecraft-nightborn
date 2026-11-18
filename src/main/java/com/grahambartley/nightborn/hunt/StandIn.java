@@ -31,7 +31,7 @@ public final class StandIn {
     ServerEntityEvents.ENTITY_LOAD.register(
         (entity, world) -> {
           if (is(entity) && !WALKING.contains(entity.getUuid())) {
-            entity.discard();
+            world.getServer().execute(entity::discard);
           }
         });
     ServerLifecycleEvents.SERVER_STOPPED.register(server -> WALKING.clear());
@@ -60,7 +60,10 @@ public final class StandIn {
     man.setPersistent();
     man.addCommandTag(TAG);
     WALKING.add(man.getUuid());
-    world.spawnEntity(man);
+    if (!world.spawnEntity(man)) {
+      WALKING.remove(man.getUuid());
+      return Optional.empty();
+    }
     man.lookAtEntity(quarry, 360.0F, 360.0F);
     if (man.canTarget(quarry)) {
       man.setTarget(quarry);

@@ -164,4 +164,18 @@ class HuntRulesTest {
   void lines(final int left, final String line) {
     assertEquals(line, HuntRules.warningLine(left));
   }
+
+  @ParameterizedTest(name = "rung at {0} with a {1}-tick build-up: fits {2}")
+  @CsvSource({
+    "13000, 200, true",
+    "17799, 200, true",
+    "17800, 200, false",
+    "17850, 200, false",
+    "12900, 200, false",
+    "37000, 200, true"
+  })
+  @DisplayName("a bell only calls him when the whole build-up ends before the latest arrival")
+  void fitsWindow(final long time, final int span, final boolean fits) {
+    assertEquals(fits, HuntRules.fitsArrivalWindow(time, span, SETTINGS));
+  }
 }

@@ -97,7 +97,7 @@ class NightbornConfigTest {
             "parties",
             "ritual",
             "age",
-            "hunt"),
+            "inquisitor"),
         NightbornConfig.sections());
   }
 
