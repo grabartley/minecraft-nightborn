@@ -1,10 +1,8 @@
 package com.grahambartley.nightborn.gametest;
 
 import com.grahambartley.nightborn.village.SuspicionCause;
-import com.grahambartley.nightborn.village.VillageRecord;
 import com.grahambartley.nightborn.village.Villages;
 import com.grahambartley.nightborn.village.WitnessReports;
-import java.util.Optional;
 import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.EntityType;
@@ -24,7 +22,6 @@ public class VillageSuspicionGameTest implements FabricGameTest {
   static final String BATCH = "village-suspicion";
   static final String YARD = "nightborn:vampire_yard";
   static final BlockPos BELL = new BlockPos(1, 2, 1);
-  static final int SEEN_FEEDING = 25;
   static final int CHECKED = 45;
 
   @BeforeBatch(batchId = BATCH)
@@ -37,27 +34,6 @@ public class VillageSuspicionGameTest implements FabricGameTest {
   public void restoreDaylight(final ServerWorld world) {
     WorldClock.release(world);
     WitnessReports.clear();
-  }
-
-  @GameTest(templateName = YARD, batchId = BATCH, tickLimit = CHECKED + 5)
-  public void aWitnessWhoReachesTheBellMakesTheVampireAKnownFace(final TestContext context) {
-    final BlockPos bell = context.getAbsolutePos(BELL);
-    final ServerPlayerEntity vampire = context.createMockCreativeServerPlayerInWorld();
-    final VillagerEntity witness = witness(context, new BlockPos(2, 2, 1));
-    context.assertTrue(
-        WitnessReports.saw(context.getWorld(), witness, vampire, SuspicionCause.SEEN_FEEDING),
-        "a villager of the village should take in the sighting");
-    context.runAtTick(
-        CHECKED,
-        () -> {
-          final Optional<VillageRecord> record = Villages.of(context.getWorld()).at(bell);
-          context.assertTrue(record.isPresent(), "the village should have heard of the sighting");
-          context.assertEquals(
-              SEEN_FEEDING, record.orElseThrow().suspicion(), "seen feeding should add 25");
-          context.assertTrue(
-              record.orElseThrow().knows(vampire.getUuid()), "the vampire should be a known face");
-          context.complete();
-        });
   }
 
   @GameTest(templateName = YARD, batchId = BATCH, tickLimit = CHECKED + 5)

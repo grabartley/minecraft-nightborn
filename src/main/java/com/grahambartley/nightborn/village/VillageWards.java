@@ -2,6 +2,7 @@ package com.grahambartley.nightborn.village;
 
 import com.grahambartley.nightborn.gear.GarlicStringBlock;
 import com.grahambartley.nightborn.gear.GearBlocks;
+import com.grahambartley.nightborn.guild.party.CampClaims;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -33,23 +34,35 @@ public final class VillageWards {
       final VillageRecord record,
       final List<VillagerEntity> villagers) {
     final List<BlockPos> standing =
-        record.wards().stream().filter(pos -> isWard(world.getBlockState(pos))).toList();
+        record.wards().stream().filter(pos -> standing(world, pos)).toList();
     final long night = VillageSuspicion.night(world);
     if (hangs(step, !standing.isEmpty(), record.wardNight() == night)) {
       return record.hung(night, hang(world, bell, villagers));
     }
     if (takesDown(step, !standing.isEmpty())) {
-      standing.forEach(pos -> world.removeBlock(pos, false));
-      return record.withWards(List.of());
+      return takeDown(world, record.withWards(standing));
     }
     return record.withWards(standing);
   }
 
   static VillageRecord takeDown(final ServerWorld world, final VillageRecord record) {
-    record.wards().stream()
-        .filter(pos -> isWard(world.getBlockState(pos)))
-        .forEach(pos -> world.removeBlock(pos, false));
-    return record.withWards(List.of());
+    final CampClaims claims = CampClaims.of(world);
+    final List<BlockPos> left = new ArrayList<>();
+    for (final BlockPos pos : record.wards()) {
+      if (!world.isChunkLoaded(pos)) {
+        left.add(pos);
+        continue;
+      }
+      final BlockState state = world.getBlockState(pos);
+      if (claims.release(pos, state)) {
+        world.removeBlock(pos, false);
+      }
+    }
+    return record.withWards(left);
+  }
+
+  private static boolean standing(final ServerWorld world, final BlockPos pos) {
+    return !world.isChunkLoaded(pos) || CampClaims.of(world).holds(pos, world.getBlockState(pos));
   }
 
   private static List<BlockPos> hang(
@@ -76,13 +89,10 @@ public final class VillageWards {
       final BlockState state = ward.with(HorizontalFacingBlock.FACING, spot.facing());
       if (world.isAir(spot.pos()) && state.canPlaceAt(world, spot.pos())) {
         world.setBlockState(spot.pos(), state, Block.NOTIFY_ALL);
+        CampClaims.of(world).claim(spot.pos(), state);
         return Optional.of(spot.pos());
       }
     }
     return Optional.empty();
-  }
-
-  private static boolean isWard(final BlockState state) {
-    return state.isOf(GearBlocks.GARLIC_STRING) || state.isOf(GearBlocks.GOLD_WALL_CRUCIFIX);
   }
 }

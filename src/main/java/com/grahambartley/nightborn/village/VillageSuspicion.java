@@ -83,7 +83,7 @@ public final class VillageSuspicion {
       final ServerWorld world, final VillagerEntity villager, final PlayerEntity giver) {
     final VillageSettings settings = settings();
     bellOf(villager)
-        .filter(bell -> current(world, bell).knows(giver.getUuid()))
+        .filter(bell -> knows(world, bell, giver.getUuid()))
         .ifPresent(
             bell ->
                 update(

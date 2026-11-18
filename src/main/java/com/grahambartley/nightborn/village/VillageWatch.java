@@ -41,6 +41,7 @@ public final class VillageWatch {
     if (!(world.getBlockState(bell).getBlock() instanceof BellBlock)) {
       VillageWards.takeDown(world, Villages.of(world).at(bell).orElseThrow());
       Villages.of(world).forget(bell);
+      VillageDoors.forget(world, bell);
       return;
     }
     VillageRecord record = VillageSuspicion.current(world, bell);

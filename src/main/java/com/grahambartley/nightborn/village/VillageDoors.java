@@ -84,6 +84,10 @@ public final class VillageDoors {
         || villager.getBrain().hasMemoryModule(MemoryModuleType.HURT_BY);
   }
 
+  static void forget(final ServerWorld world, final BlockPos bell) {
+    SHUT.remove(GlobalPos.create(world.getRegistryKey(), bell));
+  }
+
   static void clear() {
     SHUT.clear();
   }
