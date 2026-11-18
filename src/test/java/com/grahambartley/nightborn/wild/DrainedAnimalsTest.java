@@ -3,9 +3,7 @@ package com.grahambartley.nightborn.wild;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.grahambartley.nightborn.core.SurfaceSpots;
-import java.util.UUID;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -33,6 +31,6 @@ class DrainedAnimalsTest {
   @CsvSource({"100, 99, false", "100, 100, true", "100, 140, true"})
   @DisplayName("a drained animal falls once it has stood for a moment where players can see it")
   void due(final long at, final long now, final boolean falls) {
-    assertEquals(falls, new DrainedAnimals.Fall(World.OVERWORLD, new UUID(0, 1), at).due(now));
+    assertEquals(falls, DrainedAnimals.due(at, now));
   }
 }

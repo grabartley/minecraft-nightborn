@@ -32,6 +32,34 @@ class NightLogTest {
     assertEquals(isNew, NightLog.begun(coming, played, 5, DAY).isNew(night, 5));
   }
 
+  @ParameterizedTest(
+      name = "first seen before night {0}, clock moved to night {1}: night {2} new {3}")
+  @CsvSource({
+    "500, 502, 502, true",
+    "500, 502, 505, false",
+    "500, 0, 0, true",
+    "500, 0, 4, true",
+    "500, 0, 5, false",
+    "500, 0, 500, false",
+    "500, 498, 502, true",
+    "500, 498, 503, false"
+  })
+  @DisplayName("turning the clock back keeps a player's first nights where they were")
+  void seen(final long coming, final long movedTo, final long night, final boolean isNew) {
+    assertEquals(
+        isNew, NightLog.begun(coming, 0, 5, DAY).seen(movedTo).seen(night).isNew(night, 5));
+  }
+
+  @ParameterizedTest(name = "rolled night {0}, clock moved back to {1}: rolled {2}")
+  @CsvSource({"600, 100, 100, true", "600, 100, 101, false", "600, 700, 600, true"})
+  @DisplayName("turning the clock back keeps tonight's roll and today's mutter")
+  void seenKeepsTonight(final long at, final long movedTo, final long asked, final boolean done) {
+    final NightLog log =
+        NightLog.begun(0, 0, 5, DAY).seen(at).rolledOn(at).mutteredTo(at).seen(movedTo);
+    assertEquals(done, log.rolled(asked));
+    assertEquals(done, log.mutteredOn(asked));
+  }
+
   @ParameterizedTest(name = "rolled {0}, asked {1}: {2}")
   @CsvSource({"3, 3, true", "3, 4, false"})
   @DisplayName("each night is rolled once")
@@ -62,7 +90,8 @@ class NightLogTest {
     return Stream.of(
         Arguments.of(NightLog.begun(4, 0, 5, DAY)),
         Arguments.of(NightLog.begun(4, 0, 5, DAY).rolledOn(4).watchedOnce()),
-        Arguments.of(NightLog.begun(4, 0, 5, DAY).metParty(MASTER).mutteredTo(3)));
+        Arguments.of(NightLog.begun(4, 0, 5, DAY).metParty(MASTER).mutteredTo(3)),
+        Arguments.of(NightLog.begun(4, 0, 5, DAY).seen(9).seen(2)));
   }
 
   @ParameterizedTest(name = "{index}")

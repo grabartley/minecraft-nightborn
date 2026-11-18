@@ -55,4 +55,46 @@ class WildRulesTest {
   void backsOff(final double distanceSquared, final int keep, final boolean backs) {
     assertEquals(backs, WildRules.backsOff(distanceSquared, keep));
   }
+
+  @ParameterizedTest(name = "{0}")
+  @CsvSource({
+    "new human by day, false, true, false, false, true, 20, true",
+    "party already met, true, true, false, false, true, 20, false",
+    "no longer new, false, false, false, false, true, 20, false",
+    "at night, false, true, true, false, true, 20, false",
+    "a vampire, false, true, false, true, true, 20, false",
+    "party spawning off, false, true, false, false, false, 20, false",
+    "party chance set to 0, false, true, false, false, true, 0, false"
+  })
+  @DisplayName("a new human meets one hunter party by day, while parties are on")
+  void meetsParty(
+      final String name,
+      final boolean partyMet,
+      final boolean isNew,
+      final boolean night,
+      final boolean vampire,
+      final boolean spawnsParties,
+      final int partyChance,
+      final boolean meets) {
+    assertEquals(
+        meets, WildRules.meetsParty(partyMet, isNew, night, vampire, spawnsParties, partyChance));
+  }
+
+  @ParameterizedTest(name = "{0}")
+  @CsvSource({
+    "alive and near, true, 100, false, true",
+    "at the edge of reach, true, 256, false, true",
+    "too far, true, 257, false, false",
+    "master dead, false, 100, false, false",
+    "player turned, true, 100, true, false"
+  })
+  @DisplayName("the guild master greets a human player who comes within reach")
+  void greets(
+      final String name,
+      final boolean alive,
+      final double distanceSquared,
+      final boolean vampire,
+      final boolean greets) {
+    assertEquals(greets, WildRules.greets(alive, distanceSquared, vampire));
+  }
 }

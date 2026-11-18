@@ -54,7 +54,7 @@ public record Household(
   }
 
   public Household returning() {
-    return head.filter(HouseholdHead::returns).isPresent() || head.isEmpty()
+    return head.map(HouseholdHead::returns).orElse(true)
         ? this
         : new Household(resident, residents, stages, Optional.empty(), ceiling, thralls);
   }

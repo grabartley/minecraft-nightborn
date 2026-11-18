@@ -9,9 +9,17 @@ public final class RefillClock {
 
   public static long drawn(
       final long now, final int minDays, final int maxDays, final IntUnaryOperator nextInt) {
-    final int low = Math.min(minDays, maxDays);
-    final int high = Math.max(minDays, maxDays);
-    return now + (low + (long) nextInt.applyAsInt(high - low + 1)) * NightTime.DAY_LENGTH;
+    return now
+        + (minDays + (long) nextInt.applyAsInt(maxDays - minDays + 1)) * NightTime.DAY_LENGTH;
+  }
+
+  public static boolean redraws(final HouseholdRecord record, final long now, final int maxDays) {
+    return record.awaitsRefillTime()
+        || record.gone()
+            && record
+                .refillAt()
+                .filter(at -> at - now > (long) maxDays * NightTime.DAY_LENGTH)
+                .isPresent();
   }
 
   public static boolean mayArrive(

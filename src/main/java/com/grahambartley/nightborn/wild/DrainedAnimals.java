@@ -3,10 +3,18 @@ package com.grahambartley.nightborn.wild;
 import com.grahambartley.nightborn.Nightborn;
 import com.grahambartley.nightborn.core.SurfaceSpots;
 import com.grahambartley.nightborn.vampire.NightbornDamage;
-import java.util.ArrayList;
+import com.mojang.serialization.Codec;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
+import net.fabricmc.fabric.api.attachment.v1.AttachmentRegistry;
+import net.fabricmc.fabric.api.attachment.v1.AttachmentType;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.mob.MobEntity;
@@ -36,9 +44,26 @@ public final class DrainedAnimals {
   static final String LOOT_KEY = "DeathLootTable";
   static final long FALL_DELAY = 20L;
 
-  private static final List<Fall> FALLING = new ArrayList<>();
+  static final AttachmentType<Long> FALLS_AT =
+      AttachmentRegistry.create(
+          Identifier.of(Nightborn.MOD_ID, "drained_falls_at"),
+          builder -> builder.persistent(Codec.LONG));
+
+  private static final Map<RegistryKey<World>, Set<UUID>> FALLING = new HashMap<>();
 
   private DrainedAnimals() {}
+
+  static void register() {
+    ServerEntityEvents.ENTITY_LOAD.register(
+        (entity, world) -> {
+          if (entity.hasAttached(FALLS_AT)) {
+            falling(world).add(entity.getUuid());
+          }
+        });
+    ServerEntityEvents.ENTITY_UNLOAD.register(
+        (entity, world) -> falling(world).remove(entity.getUuid()));
+    ServerLifecycleEvents.SERVER_STOPPED.register(server -> FALLING.clear());
+  }
 
   static boolean fall(
       final ServerWorld world, final ServerPlayerEntity player, final Random random) {
@@ -70,34 +95,34 @@ public final class DrainedAnimals {
     body.readNbt(nbt);
     body.setSilent(true);
     body.setAiDisabled(true);
+    body.setAttached(FALLS_AT, world.getTime() + FALL_DELAY);
     world.spawnEntity(body);
-    FALLING.add(new Fall(world.getRegistryKey(), body.getUuid(), world.getTime() + FALL_DELAY));
+    falling(world).add(body.getUuid());
     return true;
   }
 
   static void tick(final ServerWorld world) {
     final long now = world.getTime();
-    FALLING.removeIf(
-        fall -> {
-          if (!fall.world().equals(world.getRegistryKey()) || !fall.due(now)) {
-            return false;
-          }
-          if (world.getEntity(fall.body()) instanceof MobEntity body && body.isAlive()) {
-            body.damage(world.getDamageSources().create(NightbornDamage.BITE), Float.MAX_VALUE);
-          }
-          return true;
-        });
+    falling(world)
+        .removeIf(
+            id -> {
+              if (!(world.getEntity(id) instanceof MobEntity body) || !body.isAlive()) {
+                return true;
+              }
+              if (!due(body.getAttachedOrElse(FALLS_AT, now), now)) {
+                return false;
+              }
+              body.damage(world.getDamageSources().create(NightbornDamage.BITE), Float.MAX_VALUE);
+              return true;
+            });
   }
 
-  static void forgetAll() {
-    FALLING.clear();
+  static boolean due(final long at, final long now) {
+    return now >= at;
   }
 
-  record Fall(RegistryKey<World> world, UUID body, long at) {
-
-    boolean due(final long now) {
-      return now >= at;
-    }
+  private static Set<UUID> falling(final ServerWorld world) {
+    return FALLING.computeIfAbsent(world.getRegistryKey(), key -> new HashSet<>());
   }
 
   static float ahead(final float yawDegrees, final float roll) {

@@ -22,14 +22,14 @@ public final class VillagerMutters {
 
   private VillagerMutters() {}
 
-  static void listen(
+  static NightLog listen(
       final ServerWorld world,
       final ServerPlayerEntity player,
       final NightLog log,
       final int range) {
     final long today = Math.floorDiv(world.getTimeOfDay(), NightTime.DAY_LENGTH);
     if (Vampires.isVampire(player) || log.mutteredOn(today)) {
-      return;
+      return log;
     }
     final Optional<VillagerEntity> near =
         world
@@ -40,7 +40,7 @@ public final class VillagerMutters {
             .stream()
             .min(Comparator.comparingDouble(villager -> villager.squaredDistanceTo(player)));
     if (near.isEmpty()) {
-      return;
+      return log;
     }
     final VillagerEntity villager = near.get();
     final BlockPos from = villager.getBlockPos();
@@ -53,16 +53,13 @@ public final class VillagerMutters {
                     .filter(house -> villager.isAlive() && !player.isDisconnected())
                     .ifPresent(
                         house -> {
-                          NightLogAttachment.get(player)
-                              .ifPresent(
-                                  current ->
-                                      NightLogAttachment.set(player, current.mutteredTo(today)));
                           villager.playSound(
                               SoundEvents.ENTITY_VILLAGER_AMBIENT, 1.0F, villager.getSoundPitch());
                           player.sendMessage(
                               mutter(villager.getDisplayName(), from, house.pos(), line), false);
                         }),
             world.getServer());
+    return log.mutteredTo(today);
   }
 
   static Text mutter(

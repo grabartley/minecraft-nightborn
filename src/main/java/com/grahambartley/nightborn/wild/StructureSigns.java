@@ -15,7 +15,8 @@ public final class StructureSigns {
   static void show(
       final ServerWorld world, final ServerPlayerEntity player, final int chance, final int range) {
     final Random random = world.getRandom();
-    if (!WildRules.rolls(random.nextInt(WildRules.PERCENT), chance)) {
+    if (!WildVampires.spawns(world)
+        || !WildRules.rolls(random.nextInt(WildRules.PERCENT), chance)) {
       return;
     }
     final BlockPos from = player.getBlockPos();

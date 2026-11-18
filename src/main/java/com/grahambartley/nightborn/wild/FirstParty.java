@@ -5,14 +5,13 @@ import com.grahambartley.nightborn.guild.GuildMasterEntity;
 import com.grahambartley.nightborn.guild.GuildRumour;
 import com.grahambartley.nightborn.guild.party.HunterPartySpawner;
 import com.grahambartley.nightborn.mob.home.NightRoutine;
+import com.grahambartley.nightborn.server.ServerConfigService;
 import com.grahambartley.nightborn.vampire.Vampires;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
 
 public final class FirstParty {
-
-  static final double GREETING_REACH = 16.0;
 
   private FirstParty() {}
 
@@ -23,11 +22,13 @@ public final class FirstParty {
       final int firstNights) {
     final boolean fixed = world.getDimension().hasFixedTime();
     final long time = world.getTimeOfDay();
-    if (log.partyMet()
-        || !log.isNew(NightRoutine.comingNight(fixed, time), firstNights)
-        || NightTime.isNight(fixed, time)
-        || Vampires.isVampire(player)
-        || !HunterPartySpawner.spawnsParties(world)) {
+    if (!WildRules.meetsParty(
+        log.partyMet(),
+        log.isNew(NightRoutine.comingNight(fixed, time), firstNights),
+        NightTime.isNight(fixed, time),
+        Vampires.isVampire(player),
+        HunterPartySpawner.spawnsParties(world),
+        ServerConfigService.current().parties().partyChance())) {
       return log;
     }
     return HunterPartySpawner.gatherNear(world, player, world.getRandom())
@@ -49,9 +50,8 @@ public final class FirstParty {
       return log.greeted();
     }
     if (!(world.getEntity(log.greeter().get()) instanceof GuildMasterEntity master)
-        || !master.isAlive()
-        || master.squaredDistanceTo(player) > GREETING_REACH * GREETING_REACH
-        || Vampires.isVampire(player)) {
+        || !WildRules.greets(
+            master.isAlive(), master.squaredDistanceTo(player), Vampires.isVampire(player))) {
       return log;
     }
     player.sendMessage(

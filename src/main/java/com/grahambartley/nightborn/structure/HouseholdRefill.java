@@ -15,9 +15,7 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.structure.StructureStart;
 import net.minecraft.util.math.BlockBox;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.ChunkSectionPos;
 import net.minecraft.util.math.GlobalPos;
-import net.minecraft.world.chunk.WorldChunk;
 
 public final class HouseholdRefill {
 
@@ -44,7 +42,7 @@ public final class HouseholdRefill {
               if (!home.dimension().equals(world.getRegistryKey())) {
                 return;
               }
-              if (record.awaitsRefillTime()) {
+              if (RefillClock.redraws(record, now, settings.refillMaxDays())) {
                 roll.refillAt(
                     home,
                     RefillClock.drawn(
@@ -69,9 +67,11 @@ public final class HouseholdRefill {
     if (!mayArrive(world, home)) {
       return false;
     }
-    final Optional<StructureStart> start = startAt(world, home);
+    final Optional<StructureStart> start = VampireStructureStarts.startAt(world, home);
     final Optional<BlockBox> heart = start.flatMap(found -> StructureHeart.of(found.getChildren()));
-    if (start.isEmpty() || heart.isEmpty() || !loaded(world, heart.get())) {
+    if (start.isEmpty()
+        || heart.isEmpty()
+        || !VampireStructureStarts.whollyLoaded(world, heart.get())) {
       return false;
     }
     final VampireStructure structure = (VampireStructure) start.get().getStructure();
@@ -82,55 +82,6 @@ public final class HouseholdRefill {
     HouseholdRoll.get(world.getServer())
         .refilled(GlobalPos.create(world.getRegistryKey(), home), living);
     Nightborn.LOGGER.debug("A new household of {} moved in at {}", living.size(), home);
-    return true;
-  }
-
-  public static Optional<BlockPos> homeContaining(final ServerWorld world, final BlockPos pos) {
-    final WorldChunk chunk = chunkAt(world, pos);
-    if (chunk == null) {
-      return Optional.empty();
-    }
-    return VampireStructureStarts.referencedBy(world, chunk).stream()
-        .filter(
-            start ->
-                VampireStructureStarts.anyHolds(
-                    start.getChildren().stream().map(piece -> piece.getBoundingBox()).toList(),
-                    pos))
-        .flatMap(start -> StructureHeart.of(start.getChildren()).stream())
-        .map(BlockBox::getCenter)
-        .findFirst();
-  }
-
-  public static Optional<StructureStart> startAt(final ServerWorld world, final BlockPos pos) {
-    final WorldChunk chunk = chunkAt(world, pos);
-    if (chunk == null) {
-      return Optional.empty();
-    }
-    return VampireStructureStarts.referencedBy(world, chunk).stream()
-        .filter(
-            start ->
-                StructureHeart.of(start.getChildren())
-                    .filter(heart -> heart.getCenter().equals(pos))
-                    .isPresent())
-        .findFirst();
-  }
-
-  private static WorldChunk chunkAt(final ServerWorld world, final BlockPos pos) {
-    return world
-        .getChunkManager()
-        .getWorldChunk(
-            ChunkSectionPos.getSectionCoord(pos.getX()),
-            ChunkSectionPos.getSectionCoord(pos.getZ()));
-  }
-
-  private static boolean loaded(final ServerWorld world, final BlockBox box) {
-    for (int x = box.getMinX() >> 4; x <= box.getMaxX() >> 4; x++) {
-      for (int z = box.getMinZ() >> 4; z <= box.getMaxZ() >> 4; z++) {
-        if (!world.isChunkLoaded(x, z)) {
-          return false;
-        }
-      }
-    }
     return true;
   }
 }

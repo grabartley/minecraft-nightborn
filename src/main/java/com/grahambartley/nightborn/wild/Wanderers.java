@@ -8,6 +8,7 @@ import com.grahambartley.nightborn.mob.VampireEntity;
 import com.grahambartley.nightborn.smoke.SmokePoof;
 import com.grahambartley.nightborn.structure.HouseholdRefill;
 import com.grahambartley.nightborn.structure.HouseholdRoll;
+import com.grahambartley.nightborn.structure.VampireStructureStarts;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.TypeFilter;
@@ -54,7 +55,7 @@ public final class Wanderers {
       return;
     }
     WandererAttachment.set(vampire, seen);
-    HouseholdRefill.homeContaining(world, vampire.getBlockPos())
+    VampireStructureStarts.homeContaining(world, vampire.getBlockPos())
         .filter(home -> HouseholdRefill.arrive(world, home))
         .ifPresent(
             home -> {
