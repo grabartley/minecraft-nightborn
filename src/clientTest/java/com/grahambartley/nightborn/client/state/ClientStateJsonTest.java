@@ -40,6 +40,23 @@ class ClientStateJsonTest {
     assertEquals(1, read.problems().size());
   }
 
+  @ParameterizedTest(name = "skip {0}")
+  @ValueSource(booleans = {true, false})
+  @DisplayName("a written ceremony camera choice reads back unchanged")
+  void skipRoundTrips(final boolean skip) {
+    final ClientState state = ClientState.DEFAULTS.withSkipCeremonyCamera(skip);
+    assertEquals(state, ClientStateJson.read(ClientStateJson.write(state)).value());
+  }
+
+  @ParameterizedTest(name = "{0}")
+  @ValueSource(strings = {"\"yes\"", "1", "null", "[true]", "{}"})
+  @DisplayName("a ceremony camera value that is not true or false shows the camera and is reported")
+  void badSkipFallsBack(final String value) {
+    final ConfigFormat.Read<ClientState> read = read("{\"skipCeremonyCamera\":" + value + "}");
+    assertEquals(false, read.value().skipCeremonyCamera());
+    assertEquals(1, read.problems().size());
+  }
+
   private static ConfigFormat.Read<ClientState> read(final String json) {
     return ClientStateJson.read(JsonParser.parseString(json).getAsJsonObject());
   }

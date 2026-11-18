@@ -30,7 +30,8 @@ class MilestoneTest {
     "VAMPIRE_STAKED, vampire_staked",
     "HOLY_WATER_HIT, holy_water_hit",
     "SICKNESS_CURED, sickness_cured",
-    "STRUCTURE_ENTERED, structure_entered"
+    "STRUCTURE_ENTERED, structure_entered",
+    "SWORN_IN, sworn_in"
   })
   void writesItsLowerCaseName(final Milestone milestone, final String id) {
     assertEquals(id, milestone.asString());

@@ -6,6 +6,7 @@ import com.grahambartley.nightborn.downed.Downed;
 import com.grahambartley.nightborn.lord.Rally;
 import com.grahambartley.nightborn.lord.Summons;
 import com.grahambartley.nightborn.mind.Gazes;
+import com.grahambartley.nightborn.moment.Moments;
 import com.grahambartley.nightborn.network.UsePowerPayload;
 import com.grahambartley.nightborn.occult.FogClouds;
 import com.grahambartley.nightborn.occult.GhostlyFamiliars;
@@ -105,7 +106,7 @@ public final class Powers {
       final PowerAim aim) {
     return PowerUse.check(
         power.isPresent(),
-        Downed.helpless(caster),
+        Downed.helpless(caster) || Moments.locked(caster),
         BatForm.isBat(caster),
         Weakened.sources(caster).level(Downed.state(caster) != null) > 0,
         power.flatMap(SkillPower::batForm).isPresent() && DirectSun.on(caster),

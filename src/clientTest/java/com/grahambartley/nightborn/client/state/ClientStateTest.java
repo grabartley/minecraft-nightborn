@@ -7,6 +7,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 class ClientStateTest {
 
@@ -26,6 +27,22 @@ class ClientStateTest {
   @Test
   @DisplayName("a missing gore level is refused")
   void nullRefused() {
-    assertThrows(NullPointerException.class, () -> new ClientState(null));
+    assertThrows(NullPointerException.class, () -> new ClientState(null, false));
+  }
+
+  @ParameterizedTest(name = "skip {0}")
+  @ValueSource(booleans = {true, false})
+  @DisplayName("changing the ceremony camera choice keeps the gore level")
+  void withSkipCeremonyCamera(final boolean skip) {
+    final ClientState state =
+        ClientState.DEFAULTS.withGore(GoreLevel.OFF).withSkipCeremonyCamera(skip);
+    assertEquals(skip, state.skipCeremonyCamera());
+    assertEquals(GoreLevel.OFF, state.gore());
+  }
+
+  @Test
+  @DisplayName("the ceremony camera is shown by default")
+  void cameraShownByDefault() {
+    assertEquals(false, ClientState.DEFAULTS.skipCeremonyCamera());
   }
 }

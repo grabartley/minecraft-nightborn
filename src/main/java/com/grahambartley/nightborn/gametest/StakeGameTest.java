@@ -238,7 +238,7 @@ public class StakeGameTest implements FabricGameTest {
 
   private static ServerPlayerEntity armed(
       final TestContext context, final BlockPos at, final Item weapon) {
-    final ServerPlayerEntity player = TestPlayers.human(context, at);
+    final ServerPlayerEntity player = TestPlayers.hunter(context, at);
     player.setStackInHand(Hand.MAIN_HAND, new ItemStack(weapon));
     return player;
   }

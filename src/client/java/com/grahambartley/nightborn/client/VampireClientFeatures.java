@@ -4,6 +4,7 @@ import com.grahambartley.nightborn.blood.BloodItems;
 import com.grahambartley.nightborn.client.anim.VampirePlayerClips;
 import com.grahambartley.nightborn.client.gore.BloodFx;
 import com.grahambartley.nightborn.client.mirror.MirrorScreen;
+import com.grahambartley.nightborn.client.moment.CeremonyView;
 import com.grahambartley.nightborn.client.name.StageNameView;
 import com.grahambartley.nightborn.client.smoke.SmokeFx;
 import com.grahambartley.nightborn.client.vomit.VomitFx;
@@ -41,6 +42,7 @@ public final class VampireClientFeatures {
         "key.nightborn.turning_bite", GLFW.GLFW_KEY_J, ToggleTurningBitePayload.INSTANCE);
     BatHangInput.register();
     BatHangView.register();
+    CeremonyView.register();
     VampirePlayerClips.register();
     StageNameView.register();
     MirrorScreen.register();

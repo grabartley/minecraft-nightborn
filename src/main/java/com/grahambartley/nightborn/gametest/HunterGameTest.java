@@ -90,7 +90,7 @@ public class HunterGameTest implements FabricGameTest {
 
   @GameTest(templateName = ARENA, batchId = PVP, tickLimit = TestPlayers.READY + 40)
   public void aHumanWhoDownedAVampireEarnsPointsWhenTheSunFinishesIt(final TestContext context) {
-    final ServerPlayerEntity hunter = TestPlayers.human(context, new BlockPos(2, 2, 4));
+    final ServerPlayerEntity hunter = TestPlayers.hunter(context, new BlockPos(2, 2, 4));
     final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(5, 2, 4));
     context.runAtTick(
         TestPlayers.READY,

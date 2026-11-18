@@ -1,6 +1,7 @@
 package com.grahambartley.nightborn.gametest;
 
 import com.grahambartley.nightborn.config.SkillSettings;
+import com.grahambartley.nightborn.faction.GuildMembership;
 import com.grahambartley.nightborn.server.ServerConfigService;
 import com.grahambartley.nightborn.skill.TreeProgress;
 import com.grahambartley.nightborn.vampire.VampireTransitions;
@@ -71,6 +72,12 @@ final class TestPlayers {
             player.playerTick();
           }
         });
+    return player;
+  }
+
+  static ServerPlayerEntity hunter(final TestContext context, final BlockPos relative) {
+    final ServerPlayerEntity player = human(context, relative);
+    GuildMembership.swear(player);
     return player;
   }
 

@@ -2,6 +2,7 @@ package com.grahambartley.nightborn.skill;
 
 import com.grahambartley.nightborn.config.RitualSettings;
 import com.grahambartley.nightborn.config.SkillSettings;
+import com.grahambartley.nightborn.faction.GuildMembership;
 import com.grahambartley.nightborn.vampire.Vampires;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -50,9 +51,13 @@ public final class SkillEarning {
     return grantHunter(hunter, ritual.eldestExperience(), settings);
   }
 
+  static boolean paysHunter(final boolean sworn, final int experience) {
+    return sworn && experience > 0;
+  }
+
   private static boolean grantHunter(
       final PlayerEntity hunter, final int experience, final SkillSettings settings) {
-    if (Vampires.isVampire(hunter) || experience <= 0) {
+    if (!paysHunter(GuildMembership.isHunter(hunter), experience)) {
       return false;
     }
     gain(hunter, SkillTree.HUNTER, experience, settings);

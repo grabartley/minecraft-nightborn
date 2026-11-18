@@ -38,7 +38,7 @@ public final class SicknessTicker {
     final int run = SicknessClock.run(runBefore, step);
     final int left = SicknessStage.ticksLeft(run, settings.sicknessDays());
     if (left <= 0) {
-      VampireTransitions.turn(player);
+      VampireTransitions.turnInCeremony(player);
       return;
     }
     final SicknessStage before = SicknessStage.of(runBefore, settings.sicknessDays());

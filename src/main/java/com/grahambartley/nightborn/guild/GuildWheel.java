@@ -9,6 +9,7 @@ public final class GuildWheel {
 
   static void register() {
     CommandWheel.subject(GuildMasterEntity.class, SkillTree.HUNTER)
+        .add(new GuildOathOrder())
         .add(new GuildCounterOrders(GuildCounter.Kind.GEAR))
         .add(new GuildCounterOrders(GuildCounter.Kind.CONTRACTS))
         .add(new GuildRumour());

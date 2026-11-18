@@ -507,7 +507,7 @@ The hunter tree starts with Tracking, an active power that points toward the nea
 | HUNT-7 | A vampire mob a hunter has wounded leaves a trail that the hunter's Tracking follows until dawn, back to its coffin. A contract for a vampire or a household comes with a rough map of the region its house lies in (GUILD-3) |
 | HUNT-8 | Noise wakes a sleeping house. Running, jumping, breaking or placing blocks, opening a coffin lid and fighting each make noise, and enough of it wakes the vampires asleep within its reach, who rise and fight (COFFIN-12). Sneaking makes none. How loud each act is and how far it carries are data |
 | HUNT-9 | A house is guarded by day. An NPC household keeps a thrall or two of its own and, some days, one member awake, and a player's house has whoever its lord set to stand watch (FAM-9). A guard that sees an intruder wakes the house |
-| HUNT-10 | A human joins the guild in two steps. They prove themselves by staking a vampire, then ask a Guild Master, of a camp or a party, to swear them in from the command wheel (WHEEL-2). The oath makes them a hunter of the lowest rank (RANK-1), and is a moment (FACT-7). A human who has not joined earns no hunter experience, and a vampire can never join. A human from an older world who had hunter points counts as sworn in at the lowest rank, and every player who chose a side before journals existed is given theirs when they next join |
+| HUNT-10 | A human joins the guild in two steps. They prove themselves by staking a vampire, then ask a Guild Master, of a camp or a party, to swear them in from the command wheel (WHEEL-2). The oath makes them a hunter of the lowest rank (RANK-1), and is a moment (FACT-7). A human who has not joined earns no hunter experience, and a vampire can never join. Hunter points alone never make a human a hunter. Every player who chose a side before journals existed is given theirs when they next join |
 
 | Rank | Deed |
 |---|---|
@@ -776,7 +776,7 @@ Every number this document calls a default, a setting or tunable is an option he
 | The Grand Inquisitor | His reward, the notoriety at which the guild sends a party and at which he hunts, how fast notoriety fades, the quiet nights after a visit, how many nights he warns, how late in the night he may come, how long the bell's build-up lasts, how much health each extra vampire gives him, the size of his arena, how long vampires have to drain him, how long the drain takes and how much health he rises with, how much notoriety a vampire who dies in his fight loses, how long he waits in an empty arena, how much blood his greatsword and his full set give back, and how much blood the set adds and how much it slows the drain |
 | Clothing | Whether Nocturne works, and how strong Batwing, Gliding Step, Hush, Shroud, Mistcloak, Warding and Thrift are |
 | Challenges | How many trials are on offer and how often they change |
-| Players | Whether the player list shows factions (FACT-3) |
+| Players | Whether the player list shows factions (FACT-3), and how long the camera and the card of a ceremony last and how far away it is seen and heard (FACT-7) |
 
 **Enforcement:** server.
 

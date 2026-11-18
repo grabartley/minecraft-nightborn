@@ -18,7 +18,8 @@ public enum Milestone implements StringIdentifiable {
   VAMPIRE_STAKED,
   HOLY_WATER_HIT,
   SICKNESS_CURED,
-  STRUCTURE_ENTERED;
+  STRUCTURE_ENTERED,
+  SWORN_IN;
 
   public static final Codec<Milestone> CODEC = StringIdentifiable.createCodec(Milestone::values);
 
