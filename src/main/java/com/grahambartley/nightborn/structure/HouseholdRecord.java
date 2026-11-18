@@ -59,6 +59,10 @@ public record HouseholdRecord(
     return gone() ? new HouseholdRecord(living, headCoffin, Optional.of(time)) : this;
   }
 
+  public HouseholdRecord unscheduled() {
+    return new HouseholdRecord(living, headCoffin, Optional.empty());
+  }
+
   public HouseholdRecord refilledBy(final Set<UUID> arrivals) {
     return new HouseholdRecord(arrivals, headCoffin, Optional.empty());
   }

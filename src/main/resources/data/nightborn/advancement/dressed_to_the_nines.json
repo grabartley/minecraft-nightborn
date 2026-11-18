@@ -1,0 +1,31 @@
+{
+  "parent": "nightborn:root",
+  "display": {
+    "icon": {
+      "id": "nightborn:cameo_brooch"
+    },
+    "title": {
+      "translate": "advancements.nightborn.dressed_to_the_nines.title"
+    },
+    "description": {
+      "translate": "advancements.nightborn.dressed_to_the_nines.description"
+    },
+    "frame": "task"
+  },
+  "criteria": {
+    "every_slot": {
+      "trigger": "nightborn:deed",
+      "conditions": {
+        "deed": "nightborn:accessories_worn",
+        "at_least": {
+          "slots": 8
+        }
+      }
+    }
+  },
+  "requirements": [
+    [
+      "every_slot"
+    ]
+  ]
+}

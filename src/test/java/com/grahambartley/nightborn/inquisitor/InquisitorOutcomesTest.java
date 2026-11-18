@@ -51,7 +51,7 @@ class InquisitorOutcomesTest {
   @ParameterizedTest(name = "{0}: {1}")
   @CsvSource(
       delimiter = '|',
-      value = {"DRAINED | CLEAR_NOTORIETY END_VISIT PAY", "STRUCK_DOWN | PAY", "OTHER | ''"})
+      value = {"DRAINED | CLEAR_NOTORIETY END_VISIT PAY ENDED", "STRUCK_DOWN | PAY", "OTHER | ''"})
   @DisplayName("each vampire who struck him is owed what his ending pays")
   void owedToFighter(final InquisitorOutcomes.Death death, final String owed) {
     assertEquals(

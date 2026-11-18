@@ -25,5 +25,6 @@ public final class GearFeatures {
     AmmoItems.register();
     Coatings.register();
     BaneHitSounds.register();
+    Banes.register();
   }
 }

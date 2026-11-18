@@ -1,5 +1,8 @@
 package com.grahambartley.nightborn.oldblood;
 
+import com.grahambartley.nightborn.challenge.Deed;
+import com.grahambartley.nightborn.challenge.DeedKinds;
+import com.grahambartley.nightborn.challenge.Deeds;
 import com.grahambartley.nightborn.journal.Journal;
 import com.grahambartley.nightborn.journal.Journals;
 import com.grahambartley.nightborn.sickness.BiteSickness;
@@ -109,6 +112,7 @@ public class OldBloodFontBlock extends BlockWithEntity {
       }
       if (drink == FontDrink.DRINKS && BiteSickness.startFromOldBlood(human)) {
         font.drain(world.getTime());
+        Deeds.record(human, Deed.of(DeedKinds.OLD_BLOOD_DRUNK));
         world.playSound(
             null, pos, SoundEvents.ENTITY_GENERIC_DRINK, SoundCategory.BLOCKS, 1.0F, 0.6F);
         world.emitGameEvent(human, GameEvent.FLUID_PICKUP, pos);

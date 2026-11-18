@@ -15,6 +15,8 @@ public final class NightbornPayloads {
     PayloadTypeRegistry.playS2C().register(BossArenaPayload.ID, BossArenaPayload.CODEC);
     PayloadTypeRegistry.playS2C().register(OpenNamingPayload.ID, OpenNamingPayload.CODEC);
     PayloadTypeRegistry.playS2C().register(StageNamePayload.ID, StageNamePayload.CODEC);
+    PayloadTypeRegistry.playS2C().register(HouseNamePayload.ID, HouseNamePayload.CODEC);
+    PayloadTypeRegistry.playS2C().register(OpenHouseNamingPayload.ID, OpenHouseNamingPayload.CODEC);
     PayloadTypeRegistry.playS2C().register(MirrorPayload.ID, MirrorPayload.CODEC);
     PayloadTypeRegistry.playS2C().register(RevealPayload.ID, RevealPayload.CODEC);
     PayloadTypeRegistry.playS2C().register(OpenWheelPayload.ID, OpenWheelPayload.CODEC);
@@ -28,6 +30,7 @@ public final class NightbornPayloads {
         .register(ToggleTurningBitePayload.ID, ToggleTurningBitePayload.CODEC);
     PayloadTypeRegistry.playC2S().register(ReleaseBatHangPayload.ID, ReleaseBatHangPayload.CODEC);
     PayloadTypeRegistry.playC2S().register(NameServantPayload.ID, NameServantPayload.CODEC);
+    PayloadTypeRegistry.playC2S().register(NameHousePayload.ID, NameHousePayload.CODEC);
     PayloadTypeRegistry.playC2S().register(ChooseWheelPayload.ID, ChooseWheelPayload.CODEC);
     PayloadTypeRegistry.playC2S().register(ChooseTitlePayload.ID, ChooseTitlePayload.CODEC);
   }

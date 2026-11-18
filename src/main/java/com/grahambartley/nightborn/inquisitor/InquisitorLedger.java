@@ -20,7 +20,8 @@ public final class InquisitorLedger extends PersistentState {
     END_VISIT,
     COME_BACK,
     CLEAR_NOTORIETY,
-    PAY
+    PAY,
+    ENDED
   }
 
   static final String ID = Nightborn.MOD_ID + "_inquisitor_ledger";

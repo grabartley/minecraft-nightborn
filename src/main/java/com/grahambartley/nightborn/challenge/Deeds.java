@@ -1,13 +1,16 @@
 package com.grahambartley.nightborn.challenge;
 
+import com.grahambartley.nightborn.advancement.DeedCriterion;
 import com.grahambartley.nightborn.faction.GuildMembership;
 import com.grahambartley.nightborn.vampire.Vampires;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.util.Identifier;
 
 public final class Deeds {
 
@@ -43,7 +46,25 @@ public final class Deeds {
       ChallengeAttachment.set(player, outcome.record());
     }
     ChallengeRewards.pay(player, outcome, context);
+    for (final ChallengeProgress.TrialDone done : outcome.trials()) {
+      final Trial trial = context.trials().get(done.trial());
+      if (trial != null) {
+        record(player, completed(done.trial(), trial.side(), outcome.record(), context.trials()));
+      }
+    }
     ServerFirsts.offer(player, deed);
+    DeedCriterion.done(player, deed);
+  }
+
+  static Deed completed(
+      final Identifier trial,
+      final Side side,
+      final ChallengeRecord record,
+      final Map<Identifier, Trial> trials) {
+    return Deed.of(DeedKinds.TRIAL_COMPLETED)
+        .with(DeedKinds.TRIAL, trial)
+        .with(DeedKinds.SIDE, side.asString())
+        .with(DeedKinds.DISTINCT, record.finishedOf(side, trials));
   }
 
   public static Optional<Side> side(final PlayerEntity player) {

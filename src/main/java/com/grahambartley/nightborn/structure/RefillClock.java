@@ -13,7 +13,25 @@ public final class RefillClock {
         + (minDays + (long) nextInt.applyAsInt(maxDays - minDays + 1)) * NightTime.DAY_LENGTH;
   }
 
-  public static boolean redraws(final HouseholdRecord record, final long now, final int maxDays) {
+  public enum Step {
+    WAIT,
+    DRAW,
+    CLEAR,
+    ARRIVE
+  }
+
+  public static Step step(
+      final HouseholdRecord record, final long now, final int maxDays, final boolean claimed) {
+    if (claimed) {
+      return record.refillAt().isPresent() ? Step.CLEAR : Step.WAIT;
+    }
+    if (redraws(record, now, maxDays)) {
+      return Step.DRAW;
+    }
+    return record.refillDue(now) ? Step.ARRIVE : Step.WAIT;
+  }
+
+  static boolean redraws(final HouseholdRecord record, final long now, final int maxDays) {
     return record.awaitsRefillTime()
         || record.gone()
             && record

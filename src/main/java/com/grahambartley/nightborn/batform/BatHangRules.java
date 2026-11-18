@@ -1,5 +1,6 @@
 package com.grahambartley.nightborn.batform;
 
+import com.grahambartley.nightborn.core.NightTime;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 
@@ -41,5 +42,11 @@ public final class BatHangRules {
 
   public static boolean letsGo(final boolean armed, final boolean pressing) {
     return armed && pressing;
+  }
+
+  public static boolean hungThroughNight(final long since, final long now) {
+    final long firstNight =
+        Math.floorDiv(since - NightTime.DUSK + NightTime.DAY_LENGTH - 1, NightTime.DAY_LENGTH);
+    return now >= firstNight * NightTime.DAY_LENGTH + NightTime.DAWN;
   }
 }

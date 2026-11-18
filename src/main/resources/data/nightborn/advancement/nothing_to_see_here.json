@@ -1,0 +1,33 @@
+{
+  "parent": "nightborn:no_reflection_on_you",
+  "display": {
+    "icon": {
+      "id": "nightborn:bronze_garlic_wreath"
+    },
+    "title": {
+      "translate": "advancements.nightborn.nothing_to_see_here.title"
+    },
+    "description": {
+      "translate": "advancements.nightborn.nothing_to_see_here.description"
+    },
+    "frame": "task",
+    "hidden": true
+  },
+  "criteria": {
+    "unseen": {
+      "trigger": "nightborn:deed",
+      "conditions": {
+        "deed": "nightborn:fed",
+        "facts": {
+          "seen": "false",
+          "warded": "true"
+        }
+      }
+    }
+  },
+  "requirements": [
+    [
+      "unseen"
+    ]
+  ]
+}

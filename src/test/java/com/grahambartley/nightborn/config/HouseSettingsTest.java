@@ -33,6 +33,30 @@ class HouseSettingsTest {
   @CsvSource({"-3, 0", "0, 0", "5, 5", "32, 32", "40, 32"})
   @DisplayName("each stage's member count stays in range")
   void clamps(final int members, final int kept) {
-    assertEquals(kept, new HouseSettings(members, members, members, members).adultMembers());
+    assertEquals(
+        kept, new HouseSettings(members, members, members, members, 3, 7, 6, 8).adultMembers());
+  }
+
+  @ParameterizedTest(name = "answer {0}, repeat {1}, reach {2}, radius {3}")
+  @CsvSource({
+    "0, -1, 1, 3, 1, 0, 2, 4",
+    "3, 7, 6, 8, 3, 7, 6, 8",
+    "99, 99, 99, 99, 30, 60, 32, 32"
+  })
+  @DisplayName("the challenge clock and the duel circle stay in range")
+  void clampsChallenges(
+      final int answer,
+      final int repeat,
+      final int reach,
+      final int radius,
+      final int answerKept,
+      final int repeatKept,
+      final int reachKept,
+      final int radiusKept) {
+    final HouseSettings settings = new HouseSettings(2, 2, 2, 2, answer, repeat, reach, radius);
+    assertEquals(answerKept, settings.answerNights());
+    assertEquals(repeatKept, settings.repeatNights());
+    assertEquals(reachKept, settings.duelReach());
+    assertEquals(radiusKept, settings.duelRadius());
   }
 }

@@ -7,15 +7,20 @@ import static com.grahambartley.nightborn.house.HouseFixtures.STRANGER;
 import static com.grahambartley.nightborn.house.HouseFixtures.at;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import com.grahambartley.nightborn.house.crest.Crest;
+import com.grahambartley.nightborn.house.crest.CrestCharge;
 import com.mojang.serialization.JsonOps;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Stream;
+import net.minecraft.util.DyeColor;
 import net.minecraft.util.math.GlobalPos;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.MethodSource;
 
 class HouseTest {
@@ -30,8 +35,27 @@ class HouseTest {
                 .seatedAt(Optional.of(at(500, 70, -20)))
                 .storeToggled(at(3, 64, 3))),
         Arguments.of(
+            House.founded(LORD, at(1, 64, 1))
+                .withPlayer(PLAYER)
+                .ranked(PLAYER, 2)
+                .withIdentity(
+                    new HouseIdentity(
+                        Optional.of("Valcourt"),
+                        Optional.of(
+                            new Crest(CrestCharge.RAVEN, DyeColor.PURPLE, DyeColor.YELLOW))))
+                .withChallenges(
+                    HouseChallenges.NONE.lost(NPC, 12L).declared(Challenge.declared(PLAYER, 4L)))),
+        Arguments.of(
             new House(
-                LORD, Optional.empty(), Optional.empty(), List.of(), List.of(), Optional.empty())));
+                LORD,
+                Optional.empty(),
+                Optional.empty(),
+                List.of(),
+                List.of(),
+                Optional.empty(),
+                HouseIdentity.NONE,
+                HouseChallenges.NONE,
+                Map.of())));
   }
 
   @ParameterizedTest(name = "{index}")
@@ -80,6 +104,7 @@ class HouseTest {
   void size(final House house, final int size) {
     assertEquals(size, house.size());
     assertEquals(size + 1, house.everyone().count());
+    assertEquals(size + 1, house.household());
   }
 
   static Stream<Arguments> places() {
@@ -93,7 +118,15 @@ class HouseTest {
         Arguments.of(founded.seatedAt(Optional.of(seat)), Optional.of(coffin), Optional.of(seat)),
         Arguments.of(
             new House(
-                LORD, Optional.empty(), Optional.empty(), List.of(), List.of(), Optional.empty()),
+                LORD,
+                Optional.empty(),
+                Optional.empty(),
+                List.of(),
+                List.of(),
+                Optional.empty(),
+                HouseIdentity.NONE,
+                HouseChallenges.NONE,
+                Map.of()),
             Optional.empty(),
             Optional.empty()));
   }
@@ -120,5 +153,64 @@ class HouseTest {
   @DisplayName("marking the store again clears it, and marking another moves it")
   void store(final House house, final GlobalPos marked, final Optional<GlobalPos> store) {
     assertEquals(store, house.storeToggled(marked).store());
+  }
+
+  static Stream<Arguments> handovers() {
+    final House house =
+        House.founded(LORD, at(0, 64, 0))
+            .withPlayer(PLAYER)
+            .withPlayer(STRANGER)
+            .withNpc(NPC)
+            .ranked(LORD, 3)
+            .ranked(PLAYER, 2)
+            .withChallenges(HouseChallenges.NONE.declared(Challenge.declared(PLAYER, 5L)));
+    return Stream.of(
+        Arguments.of(house, true, List.of(LORD, STRANGER), true),
+        Arguments.of(house, false, List.of(STRANGER), false));
+  }
+
+  @ParameterizedTest(name = "former lord stays {1}")
+  @MethodSource("handovers")
+  @DisplayName("passing the house makes the heir lord and settles any challenge")
+  void ledBy(
+      final House house,
+      final boolean stays,
+      final List<UUID> players,
+      final boolean formerRankKept) {
+    final House passed = house.ledBy(PLAYER, stays);
+    assertEquals(PLAYER, passed.lord());
+    assertEquals(players, passed.players());
+    assertEquals(List.of(NPC), passed.npcs());
+    assertEquals(Optional.empty(), passed.challenges().pending());
+    assertEquals(formerRankKept, passed.ranks().containsKey(LORD));
+  }
+
+  @ParameterizedTest(name = "{0} -> rank {1}")
+  @CsvSource({"2, 2", "0, 0"})
+  @DisplayName("a member's last known stage is kept until they leave")
+  void ranked(final int rank, final int known) {
+    final House house = House.founded(LORD, at(0, 64, 0)).withPlayer(PLAYER).ranked(PLAYER, rank);
+    assertEquals(known, house.rank(PLAYER));
+    assertEquals(0, house.without(PLAYER).rank(PLAYER));
+    assertEquals(0, house.rank(STRANGER));
+  }
+
+  @ParameterizedTest(name = "{0}")
+  @MethodSource("leavers")
+  @DisplayName("a member who leaves takes their challenge and their bar with them")
+  void leaverForgotten(final UUID leaver, final boolean pendingKept) {
+    final House house =
+        House.founded(LORD, at(0, 64, 0))
+            .withPlayer(PLAYER)
+            .withPlayer(STRANGER)
+            .withChallenges(
+                HouseChallenges.NONE.lost(STRANGER, 20L).declared(Challenge.declared(PLAYER, 3L)));
+    final House left = house.without(leaver);
+    assertEquals(pendingKept, left.challenges().pending().isPresent());
+    assertEquals(leaver.equals(STRANGER), !left.challenges().barred(STRANGER, 10L));
+  }
+
+  static Stream<Arguments> leavers() {
+    return Stream.of(Arguments.of(PLAYER, false), Arguments.of(STRANGER, true));
   }
 }

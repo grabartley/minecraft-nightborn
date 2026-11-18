@@ -47,6 +47,10 @@ public final class HouseholdRoll extends PersistentState {
     dirtyIf(ledger.known(home) && ledger.change(home, record -> record.refillingAt(time)));
   }
 
+  public void unscheduled(final GlobalPos home) {
+    dirtyIf(ledger.change(home, HouseholdRecord::unscheduled));
+  }
+
   public void refilled(final GlobalPos home, final Set<UUID> arrivals) {
     dirtyIf(ledger.change(home, record -> record.refilledBy(arrivals)));
   }

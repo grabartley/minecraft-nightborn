@@ -1,0 +1,29 @@
+{
+  "parent": "nightborn:root",
+  "display": {
+    "icon": {
+      "id": "nightborn:silver_crucifix"
+    },
+    "title": {
+      "translate": "advancements.nightborn.cross_purposes.title"
+    },
+    "description": {
+      "translate": "advancements.nightborn.cross_purposes.description"
+    },
+    "frame": "task",
+    "hidden": true
+  },
+  "criteria": {
+    "both_hands": {
+      "trigger": "nightborn:deed",
+      "conditions": {
+        "deed": "nightborn:crucifixes_held"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "both_hands"
+    ]
+  ]
+}

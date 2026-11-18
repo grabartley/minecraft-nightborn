@@ -27,6 +27,7 @@
 		"PersistentProjectileEntityMixin",
 		"PhantomSpawnerMixin",
 		"PistonHandlerMixin",
+		"PlayerAdvancementTrackerMixin",
 		"PlayerEntityMixin",
 		"PotionEntityMixin",
 		"ServerPlayNetworkHandlerMixin",

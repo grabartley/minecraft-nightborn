@@ -40,6 +40,10 @@ public final class HouseBook {
     byLord.put(house.lord(), house);
   }
 
+  public void remove(final UUID lord) {
+    byLord.remove(lord);
+  }
+
   public Collection<House> all() {
     return List.copyOf(byLord.values());
   }

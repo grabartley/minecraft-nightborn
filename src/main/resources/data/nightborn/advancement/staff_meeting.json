@@ -1,0 +1,58 @@
+{
+  "parent": "nightborn:no_reflection_on_you",
+  "display": {
+    "icon": {
+      "id": "nightborn:thrall_keepers_ring"
+    },
+    "title": {
+      "translate": "advancements.nightborn.staff_meeting.title"
+    },
+    "description": {
+      "translate": "advancements.nightborn.staff_meeting.description"
+    },
+    "frame": "challenge"
+  },
+  "criteria": {
+    "kinds_1": {
+      "trigger": "nightborn:deed",
+      "conditions": {
+        "deed": "nightborn:staff_kept",
+        "at_least": {
+          "kinds": 1
+        }
+      }
+    },
+    "kinds_2": {
+      "trigger": "nightborn:deed",
+      "conditions": {
+        "deed": "nightborn:staff_kept",
+        "at_least": {
+          "kinds": 2
+        }
+      }
+    },
+    "kinds_3": {
+      "trigger": "nightborn:deed",
+      "conditions": {
+        "deed": "nightborn:staff_kept",
+        "at_least": {
+          "kinds": 3
+        }
+      }
+    }
+  },
+  "requirements": [
+    [
+      "kinds_1"
+    ],
+    [
+      "kinds_2"
+    ],
+    [
+      "kinds_3"
+    ]
+  ],
+  "rewards": {
+    "experience": 100
+  }
+}

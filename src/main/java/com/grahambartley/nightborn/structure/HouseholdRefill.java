@@ -36,22 +36,26 @@ public final class HouseholdRefill {
     final HouseholdRoll roll = HouseholdRoll.get(world.getServer());
     final StructureSettings settings = ServerConfigService.current().structures();
     final long now = world.getTimeOfDay();
+    final Houses houses = Houses.get(world.getServer());
     roll.records()
         .forEach(
             (home, record) -> {
               if (!home.dimension().equals(world.getRegistryKey())) {
                 return;
               }
-              if (RefillClock.redraws(record, now, settings.refillMaxDays())) {
-                roll.refillAt(
-                    home,
-                    RefillClock.drawn(
-                        now,
-                        settings.refillMinDays(),
-                        settings.refillMaxDays(),
-                        world.getRandom()::nextInt));
-              } else if (record.refillDue(now)) {
-                arrive(world, home.pos());
+              switch (RefillClock.step(
+                  record, now, settings.refillMaxDays(), houses.holding(home).isPresent())) {
+                case DRAW ->
+                    roll.refillAt(
+                        home,
+                        RefillClock.drawn(
+                            now,
+                            settings.refillMinDays(),
+                            settings.refillMaxDays(),
+                            world.getRandom()::nextInt));
+                case CLEAR -> roll.unscheduled(home);
+                case ARRIVE -> arrive(world, home.pos());
+                case WAIT -> {}
               }
             });
   }

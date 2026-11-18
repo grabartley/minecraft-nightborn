@@ -1,0 +1,42 @@
+{
+  "parent": "nightborn:root",
+  "display": {
+    "icon": {
+      "id": "nightborn:hunters_bell"
+    },
+    "title": {
+      "translate": "advancements.nightborn.careful_what_you_wish_for.title"
+    },
+    "description": {
+      "translate": "advancements.nightborn.careful_what_you_wish_for.description"
+    },
+    "frame": "task",
+    "hidden": true
+  },
+  "criteria": {
+    "ritual": {
+      "trigger": "nightborn:deed",
+      "conditions": {
+        "deed": "nightborn:wrong_call",
+        "facts": {
+          "boss": "nightborn:eldest"
+        }
+      }
+    },
+    "bell": {
+      "trigger": "nightborn:deed",
+      "conditions": {
+        "deed": "nightborn:wrong_call",
+        "facts": {
+          "boss": "nightborn:grand_inquisitor"
+        }
+      }
+    }
+  },
+  "requirements": [
+    [
+      "ritual",
+      "bell"
+    ]
+  ]
+}

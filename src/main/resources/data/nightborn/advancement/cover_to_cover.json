@@ -1,0 +1,70 @@
+{
+  "parent": "nightborn:root",
+  "display": {
+    "icon": {
+      "id": "nightborn:vampire_journal"
+    },
+    "title": {
+      "translate": "advancements.nightborn.cover_to_cover.title"
+    },
+    "description": {
+      "translate": "advancements.nightborn.cover_to_cover.description"
+    },
+    "frame": "challenge"
+  },
+  "criteria": {
+    "quarter_1": {
+      "trigger": "nightborn:deed",
+      "conditions": {
+        "deed": "nightborn:journal_pages",
+        "at_least": {
+          "share": 25
+        }
+      }
+    },
+    "quarter_2": {
+      "trigger": "nightborn:deed",
+      "conditions": {
+        "deed": "nightborn:journal_pages",
+        "at_least": {
+          "share": 50
+        }
+      }
+    },
+    "quarter_3": {
+      "trigger": "nightborn:deed",
+      "conditions": {
+        "deed": "nightborn:journal_pages",
+        "at_least": {
+          "share": 75
+        }
+      }
+    },
+    "quarter_4": {
+      "trigger": "nightborn:deed",
+      "conditions": {
+        "deed": "nightborn:journal_pages",
+        "at_least": {
+          "share": 100
+        }
+      }
+    }
+  },
+  "requirements": [
+    [
+      "quarter_1"
+    ],
+    [
+      "quarter_2"
+    ],
+    [
+      "quarter_3"
+    ],
+    [
+      "quarter_4"
+    ]
+  ],
+  "rewards": {
+    "experience": 100
+  }
+}

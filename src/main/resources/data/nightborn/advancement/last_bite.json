@@ -1,0 +1,28 @@
+{
+  "parent": "nightborn:no_reflection_on_you",
+  "display": {
+    "icon": {
+      "id": "nightborn:lair_fang"
+    },
+    "title": {
+      "translate": "advancements.nightborn.last_bite.title"
+    },
+    "description": {
+      "translate": "advancements.nightborn.last_bite.description"
+    },
+    "frame": "task"
+  },
+  "criteria": {
+    "finisher": {
+      "trigger": "nightborn:deed",
+      "conditions": {
+        "deed": "nightborn:finisher_kill"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "finisher"
+    ]
+  ]
+}

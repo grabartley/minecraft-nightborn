@@ -54,6 +54,19 @@ public final class Houses extends PersistentState {
     }
   }
 
+  public void remove(final UUID lord) {
+    if (book.ledBy(lord).isPresent()) {
+      book.remove(lord);
+      markDirty();
+    }
+  }
+
+  public void replace(final UUID formerLord, final House house) {
+    book.remove(formerLord);
+    book.put(house);
+    markDirty();
+  }
+
   @Override
   public NbtCompound writeNbt(
       final NbtCompound nbt, final RegistryWrapper.WrapperLookup registries) {

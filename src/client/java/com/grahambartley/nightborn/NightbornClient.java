@@ -31,6 +31,7 @@ import com.grahambartley.nightborn.familiar.Familiars;
 import com.grahambartley.nightborn.gear.GearBlocks;
 import com.grahambartley.nightborn.gramophone.GramophoneBlockEntity;
 import com.grahambartley.nightborn.guild.GuildMobs;
+import com.grahambartley.nightborn.house.crest.CrestBanners;
 import com.grahambartley.nightborn.inquisitor.InquisitorMobs;
 import com.grahambartley.nightborn.mob.NightbornMobs;
 import com.grahambartley.nightborn.occult.GhostlyFamiliars;
@@ -42,6 +43,8 @@ import com.grahambartley.nightborn.render.ClothingColors;
 import com.grahambartley.nightborn.render.ClothingRenderProvider;
 import com.grahambartley.nightborn.render.CoffinArt;
 import com.grahambartley.nightborn.render.CoffinRenderer;
+import com.grahambartley.nightborn.render.CrestBannerItemRenderer;
+import com.grahambartley.nightborn.render.CrestBannerRenderer;
 import com.grahambartley.nightborn.render.FurnitureBlockRenderer;
 import com.grahambartley.nightborn.render.GeoBlockItemRenderer;
 import com.grahambartley.nightborn.render.GramophoneRenderer;
@@ -79,6 +82,8 @@ public class NightbornClient implements ClientModInitializer {
         RitualBlocks.ALTAR,
         new GeoBlockItemRenderer<>(
             RitualBlocks.ALTAR, RitualAltarRenderer::new, RitualAltarBlockEntity::new));
+    BlockEntityRendererFactories.register(CrestBanners.BLOCK_ENTITY, CrestBannerRenderer::new);
+    BuiltinItemRendererRegistry.INSTANCE.register(CrestBanners.ITEM, new CrestBannerItemRenderer());
     BlockEntityRendererFactories.register(DecorBlockEntities.GRAMOPHONE, GramophoneRenderer::new);
     BuiltinItemRendererRegistry.INSTANCE.register(
         DecorBlocks.GRAMOPHONE,

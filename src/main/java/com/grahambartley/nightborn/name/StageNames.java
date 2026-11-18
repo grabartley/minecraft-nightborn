@@ -6,6 +6,7 @@ import com.grahambartley.nightborn.challenge.ChallengeAttachment;
 import com.grahambartley.nightborn.challenge.Titles;
 import com.grahambartley.nightborn.faction.FactionPlayerList;
 import com.grahambartley.nightborn.faction.OathAttachment;
+import com.grahambartley.nightborn.house.HouseNames;
 import com.grahambartley.nightborn.mind.Glamour;
 import com.grahambartley.nightborn.network.StageNamePayload;
 import com.grahambartley.nightborn.rank.RankLadder;
@@ -60,20 +61,23 @@ public final class StageNames {
         AgeLadder.of(bearer.getRegistryManager())
             .rung(AgeAttachment.get(bearer).rank())
             .map(AgeLadder.Rung::id);
+    final Optional<Identifier> shownStage =
+        shown(
+            stage,
+            Vampires.isVampire(bearer) && !Glamour.on(bearer),
+            Vampires.isVampire(viewer),
+            FactionPlayerList.shown());
     ServerPlayNetworking.send(
         viewer,
         new StageNamePayload(
             bearer.getId(),
-            shown(
-                stage,
-                Vampires.isVampire(bearer) && !Glamour.on(bearer),
-                Vampires.isVampire(viewer),
-                FactionPlayerList.shown()),
+            shownStage,
             RankLadder.of(bearer.getRegistryManager()).markOf(OathAttachment.get(bearer)),
             Titles.shown(
                 ChallengeAttachment.get(bearer).feats(),
                 Vampires.isVampire(bearer) && !Glamour.on(bearer),
                 Vampires.isVampire(viewer),
-                FactionPlayerList.shown())));
+                FactionPlayerList.shown()),
+            shownStage.flatMap(any -> HouseNames.of(bearer.getServer(), bearer.getUuid()))));
   }
 }

@@ -1,0 +1,31 @@
+{
+  "parent": "nightborn:sworn_in",
+  "display": {
+    "icon": {
+      "id": "nightborn:eldest_crown"
+    },
+    "title": {
+      "translate": "advancements.nightborn.last_of_the_line.title"
+    },
+    "description": {
+      "translate": "advancements.nightborn.last_of_the_line.description"
+    },
+    "frame": "challenge"
+  },
+  "criteria": {
+    "eldest": {
+      "trigger": "nightborn:deed",
+      "conditions": {
+        "deed": "nightborn:eldest_ended"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "eldest"
+    ]
+  ],
+  "rewards": {
+    "experience": 100
+  }
+}

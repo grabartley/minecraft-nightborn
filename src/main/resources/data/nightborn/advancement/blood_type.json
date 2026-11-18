@@ -1,0 +1,82 @@
+{
+  "parent": "nightborn:no_reflection_on_you",
+  "display": {
+    "icon": {
+      "id": "nightborn:blood_vial_pendant"
+    },
+    "title": {
+      "translate": "advancements.nightborn.blood_type.title"
+    },
+    "description": {
+      "translate": "advancements.nightborn.blood_type.description"
+    },
+    "frame": "challenge"
+  },
+  "criteria": {
+    "horse": {
+      "trigger": "nightborn:deed",
+      "conditions": {
+        "deed": "nightborn:fed",
+        "facts": {
+          "gift": "nightborn:horse"
+        }
+      }
+    },
+    "wolf": {
+      "trigger": "nightborn:deed",
+      "conditions": {
+        "deed": "nightborn:fed",
+        "facts": {
+          "gift": "nightborn:wolf"
+        }
+      }
+    },
+    "villager": {
+      "trigger": "nightborn:deed",
+      "conditions": {
+        "deed": "nightborn:fed",
+        "facts": {
+          "gift": "nightborn:villager"
+        }
+      }
+    },
+    "illager": {
+      "trigger": "nightborn:deed",
+      "conditions": {
+        "deed": "nightborn:fed",
+        "facts": {
+          "gift": "nightborn:illager"
+        }
+      }
+    },
+    "witch": {
+      "trigger": "nightborn:deed",
+      "conditions": {
+        "deed": "nightborn:fed",
+        "facts": {
+          "gift": "nightborn:witch"
+        }
+      }
+    }
+  },
+  "requirements": [
+    [
+      "horse"
+    ],
+    [
+      "wolf"
+    ],
+    [
+      "villager"
+    ],
+    [
+      "illager"
+    ],
+    [
+      "witch"
+    ]
+  ],
+  "rewards": {
+    "experience": 100
+  }
+}

@@ -16,6 +16,7 @@ import com.grahambartley.nightborn.faction.FactionAttachment;
 import com.grahambartley.nightborn.faction.FactionPlayerList;
 import com.grahambartley.nightborn.feeding.FeedingSessions;
 import com.grahambartley.nightborn.feeding.TurningBite;
+import com.grahambartley.nightborn.house.HouseSuccession;
 import com.grahambartley.nightborn.hunt.Hunts;
 import com.grahambartley.nightborn.journal.Journal;
 import com.grahambartley.nightborn.journal.Journals;
@@ -80,6 +81,7 @@ public final class VampireTransitions {
     VisibleStateAttachment.set(player, VisibleState.NONE);
     VampireCore.remove(player);
     CoffinOwnership.release(player.server, player.getUuid());
+    HouseSuccession.noLongerVampire(player.server, player.getUuid());
     SkillAttributes.apply(player);
     AccessoryGifts.apply(player);
     player.resetStat(Stats.CUSTOM.getOrCreateStat(Stats.TIME_SINCE_REST));

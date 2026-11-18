@@ -1,0 +1,178 @@
+{
+  "parent": "nightborn:root",
+  "display": {
+    "icon": {
+      "id": "nightborn:ring_of_the_blood"
+    },
+    "title": {
+      "translate": "advancements.nightborn.ring_leader.title"
+    },
+    "description": {
+      "translate": "advancements.nightborn.ring_leader.description"
+    },
+    "frame": "challenge"
+  },
+  "criteria": {
+    "court": {
+      "trigger": "nightborn:deed",
+      "conditions": {
+        "deed": "nightborn:accessories_held",
+        "facts": {
+          "nightborn:ring_of_the_court": "true"
+        }
+      }
+    },
+    "beast": {
+      "trigger": "nightborn:deed",
+      "conditions": {
+        "deed": "nightborn:accessories_held",
+        "facts": {
+          "nightborn:ring_of_the_beast": "true"
+        }
+      }
+    },
+    "blood": {
+      "trigger": "nightborn:deed",
+      "conditions": {
+        "deed": "nightborn:accessories_held",
+        "facts": {
+          "nightborn:ring_of_the_blood": "true"
+        }
+      }
+    },
+    "court_and_beast": {
+      "trigger": "nightborn:deed",
+      "conditions": {
+        "deed": "nightborn:accessories_held",
+        "facts": {
+          "nightborn:ring_of_the_court": "true",
+          "nightborn:ring_of_the_beast": "true"
+        }
+      }
+    },
+    "court_and_blood": {
+      "trigger": "nightborn:deed",
+      "conditions": {
+        "deed": "nightborn:accessories_held",
+        "facts": {
+          "nightborn:ring_of_the_court": "true",
+          "nightborn:ring_of_the_blood": "true"
+        }
+      }
+    },
+    "beast_and_blood": {
+      "trigger": "nightborn:deed",
+      "conditions": {
+        "deed": "nightborn:accessories_held",
+        "facts": {
+          "nightborn:ring_of_the_beast": "true",
+          "nightborn:ring_of_the_blood": "true"
+        }
+      }
+    },
+    "court_and_beast_and_blood": {
+      "trigger": "nightborn:deed",
+      "conditions": {
+        "deed": "nightborn:accessories_held",
+        "facts": {
+          "nightborn:ring_of_the_court": "true",
+          "nightborn:ring_of_the_beast": "true",
+          "nightborn:ring_of_the_blood": "true"
+        }
+      }
+    },
+    "hunt": {
+      "trigger": "nightborn:deed",
+      "conditions": {
+        "deed": "nightborn:accessories_held",
+        "facts": {
+          "nightborn:ring_of_the_hunt": "true"
+        }
+      }
+    },
+    "faith": {
+      "trigger": "nightborn:deed",
+      "conditions": {
+        "deed": "nightborn:accessories_held",
+        "facts": {
+          "nightborn:ring_of_the_faith": "true"
+        }
+      }
+    },
+    "pyre": {
+      "trigger": "nightborn:deed",
+      "conditions": {
+        "deed": "nightborn:accessories_held",
+        "facts": {
+          "nightborn:ring_of_the_pyre": "true"
+        }
+      }
+    },
+    "hunt_and_faith": {
+      "trigger": "nightborn:deed",
+      "conditions": {
+        "deed": "nightborn:accessories_held",
+        "facts": {
+          "nightborn:ring_of_the_hunt": "true",
+          "nightborn:ring_of_the_faith": "true"
+        }
+      }
+    },
+    "hunt_and_pyre": {
+      "trigger": "nightborn:deed",
+      "conditions": {
+        "deed": "nightborn:accessories_held",
+        "facts": {
+          "nightborn:ring_of_the_hunt": "true",
+          "nightborn:ring_of_the_pyre": "true"
+        }
+      }
+    },
+    "faith_and_pyre": {
+      "trigger": "nightborn:deed",
+      "conditions": {
+        "deed": "nightborn:accessories_held",
+        "facts": {
+          "nightborn:ring_of_the_faith": "true",
+          "nightborn:ring_of_the_pyre": "true"
+        }
+      }
+    },
+    "hunt_and_faith_and_pyre": {
+      "trigger": "nightborn:deed",
+      "conditions": {
+        "deed": "nightborn:accessories_held",
+        "facts": {
+          "nightborn:ring_of_the_hunt": "true",
+          "nightborn:ring_of_the_faith": "true",
+          "nightborn:ring_of_the_pyre": "true"
+        }
+      }
+    }
+  },
+  "requirements": [
+    [
+      "court",
+      "beast",
+      "blood",
+      "hunt",
+      "faith",
+      "pyre"
+    ],
+    [
+      "court_and_beast",
+      "court_and_blood",
+      "beast_and_blood",
+      "hunt_and_faith",
+      "hunt_and_pyre",
+      "faith_and_pyre"
+    ],
+    [
+      "court_and_beast_and_blood",
+      "hunt_and_faith_and_pyre"
+    ]
+  ],
+  "rewards": {
+    "experience": 100
+  }
+}
