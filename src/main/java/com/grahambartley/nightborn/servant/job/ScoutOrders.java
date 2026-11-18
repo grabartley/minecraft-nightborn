@@ -102,7 +102,10 @@ public final class ScoutOrders<T extends PathAwareEntity & DayWorker> implements
     NearestStructures.eachOf(world, SCOUT_TARGETS, from, range)
         .thenAcceptAsync(
             found -> {
-              if (!player.isDisconnected() && !worker.isRemoved()) {
+              if (!player.isDisconnected()
+                  && !worker.isRemoved()
+                  && player.currentScreenHandler == player.playerScreenHandler
+                  && player.canInteractWithEntity(worker, CommandWheel.REACH_SLACK)) {
                 show(
                     player,
                     worker,
