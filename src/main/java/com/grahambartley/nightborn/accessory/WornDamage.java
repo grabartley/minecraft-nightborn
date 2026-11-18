@@ -2,11 +2,12 @@ package com.grahambartley.nightborn.accessory;
 
 import com.grahambartley.nightborn.Nightborn;
 import com.grahambartley.nightborn.core.NightSight;
-import com.grahambartley.nightborn.sun.DirectSun;
+import com.grahambartley.nightborn.sun.SunFire;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
+import net.minecraft.entity.damage.DamageTypes;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.tag.DamageTypeTags;
 import net.minecraft.registry.tag.TagKey;
@@ -25,7 +26,9 @@ public final class WornDamage {
       return amount;
     }
     final Entity direct = source.getSource();
-    final boolean fire = source.isIn(DamageTypeTags.IS_FIRE);
+    final boolean fire =
+        source.isIn(DamageTypeTags.IS_FIRE)
+            && !(source.isOf(DamageTypes.ON_FIRE) && SunFire.burning(target));
     return GiftScale.amount(
         amount,
         factor(
@@ -33,7 +36,7 @@ public final class WornDamage {
             GiftAttributes.value(target, GiftAttributes.NIGHT_DAMAGE),
             direct != null && direct.getType().isIn(HUNTER_SHOTS),
             GiftAttributes.value(target, GiftAttributes.HUNTER_SHOT_DAMAGE),
-            fire && !DirectSun.on(target),
+            fire,
             GiftAttributes.value(target, GiftAttributes.FIRE_DAMAGE)));
   }
 

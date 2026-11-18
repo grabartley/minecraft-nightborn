@@ -133,10 +133,6 @@ public class GhostlyFamiliarEntity extends PathAwareEntity
     return navigation;
   }
 
-  public void summon(final UUID master, final FamiliarPower summoned) {
-    summon(master, summoned, summoned.lifetimeTicks());
-  }
-
   public void summon(final UUID master, final FamiliarPower summoned, final int lifetimeTicks) {
     dataTracker.set(OWNER_UUID, Optional.of(master));
     power = summoned;

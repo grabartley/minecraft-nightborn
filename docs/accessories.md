@@ -117,7 +117,7 @@ Vampire structures hold hunter pieces too: they are what is left of hunters who 
 | Bat Brooch | A gold bat with garnet eyes | Vampire | Bat Form costs 1 less blood, never less than 1 | Ruined manor |
 | Rose Brooch | An enamel rose, half wilted | Vampire | Being seen feeding raises a village's suspicion 20% less | Castle |
 | Guild Badge | A brass badge of the guild | Human | A Guild Master's prices are 10% lower | Hunter trial |
-| Sunburst Brooch | A gold sun with long rays | Human | Holy water splashes over a radius 1 block greater | Crypt |
+| Sunburst Brooch | A gold sun with long rays | Human | Holy water splashes over a radius 1 block greater. Its strength fades over the wider radius, so it lands a little stronger at each distance | Crypt |
 | Spider Brooch | A black spider with a red stone | Anyone | Cobwebs do not slow the wearer | Underground lair |
 
 ## Back

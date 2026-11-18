@@ -75,9 +75,9 @@ public final class PowerBarHud {
             client,
             at,
             skill,
-            power,
             cooldowns.ticksLeft(id, now),
             Powers.cooldownTicks(player, power),
+            Powers.bloodCost(player, power),
             blood);
       }
       drawKey(context, client, at, i);
@@ -89,13 +89,13 @@ public final class PowerBarHud {
       final MinecraftClient client,
       final PowerBarLayout.Point at,
       final Skill skill,
-      final SkillPower power,
       final long ticksLeft,
       final int cooldownTicks,
+      final int cost,
       final int blood) {
     final int size = PowerBarLayout.SLOT;
     final int inset = (size - PowerSlotView.ICON) / 2;
-    final boolean thirsty = blood < power.blood();
+    final boolean thirsty = blood < cost;
     if (thirsty) {
       context.setShaderColor(0.5F, 0.3F, 0.3F, 1.0F);
     }
@@ -119,12 +119,12 @@ public final class PowerBarHud {
       context.drawCenteredTextWithShadow(
           client.textRenderer, seconds, at.x() + size / 2, at.y() + inset + 4, READY_COLOUR);
     }
-    if (power.blood() > 0 && shade <= 0.0F) {
-      final String cost = Integer.toString(power.blood());
+    if (cost > 0 && shade <= 0.0F) {
+      final String shown = Integer.toString(cost);
       context.drawTextWithShadow(
           client.textRenderer,
-          cost,
-          at.x() + inset + PowerSlotView.ICON + 1 - client.textRenderer.getWidth(cost),
+          shown,
+          at.x() + inset + PowerSlotView.ICON + 1 - client.textRenderer.getWidth(shown),
           at.y() + inset + PowerSlotView.ICON / 2 + 1,
           COST_COLOUR);
     }

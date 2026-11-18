@@ -32,6 +32,7 @@ public final class SunBurn {
       return true;
     }
     vampire.setOnFireFor(FIRE_SECONDS);
+    SunFire.lit(vampire, FIRE_SECONDS);
     VampireSigns.shown(vampire, SuspicionCause.SEEN_BURNING);
     world.spawnParticles(
         SmokeParticles.VAMPIRE_SMOKE,

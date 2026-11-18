@@ -18,6 +18,11 @@ public final class AccessoryFeatures {
         (handler, sender, server) -> AccessoryMove.fromArmour(handler.getPlayer()));
     ServerLivingEntityEvents.AFTER_DAMAGE.register(StrikeHealing::afterDamage);
     ServerTickEvents.END_SERVER_TICK.register(Vigil::tick);
+    ServerPlayConnectionEvents.DISCONNECT.register(
+        (handler, server) -> {
+          StrikeHealing.forget(handler.getPlayer().getUuid());
+          Vigil.forget(handler.getPlayer().getUuid());
+        });
     ServerLifecycleEvents.SERVER_STOPPED.register(
         server -> {
           StrikeHealing.clearAll();

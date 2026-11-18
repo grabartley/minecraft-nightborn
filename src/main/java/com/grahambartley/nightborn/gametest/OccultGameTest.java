@@ -71,7 +71,7 @@ public class OccultGameTest implements FabricGameTest {
       final TestContext context, final ServerPlayerEntity owner, final FamiliarPower power) {
     final GhostlyFamiliarEntity familiar =
         context.spawnEntity(GhostlyFamiliars.GHOSTLY_FAMILIAR, new BlockPos(4, 2, 4));
-    familiar.summon(owner.getUuid(), power);
+    familiar.summon(owner.getUuid(), power, power.lifetimeTicks());
     familiar.setAiDisabled(true);
     return familiar;
   }
@@ -298,7 +298,7 @@ public class OccultGameTest implements FabricGameTest {
     encase(context, new BlockPos(6, 2, 4));
     final GhostlyFamiliarEntity familiar =
         context.spawnEntity(GhostlyFamiliars.GHOSTLY_FAMILIAR, new BlockPos(6, 2, 4));
-    familiar.summon(vampire.getUuid(), shortScout());
+    familiar.summon(vampire.getUuid(), shortScout(), shortScout().lifetimeTicks());
     familiar.setAiDisabled(true);
     context.runAtTick(
         TestPlayers.READY,
@@ -318,7 +318,7 @@ public class OccultGameTest implements FabricGameTest {
     encase(context, new BlockPos(4, 2, 4));
     final GhostlyFamiliarEntity familiar =
         context.spawnEntity(GhostlyFamiliars.GHOSTLY_FAMILIAR, new BlockPos(4, 2, 4));
-    familiar.summon(UUID.randomUUID(), shortScout());
+    familiar.summon(UUID.randomUUID(), shortScout(), shortScout().lifetimeTicks());
     familiar.setAiDisabled(true);
     context.runAtTick(
         5,
@@ -407,8 +407,8 @@ public class OccultGameTest implements FabricGameTest {
     final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(1, 2, 4));
     final GhostlyFamiliarEntity familiar =
         context.spawnEntity(GhostlyFamiliars.GHOSTLY_FAMILIAR, new BlockPos(2, 2, 4));
-    familiar.summon(
-        vampire.getUuid(), new FamiliarPower(1200, 10.0F, 3.0F, 4.0F, 200, 8.0F, 200, 9));
+    final FamiliarPower scout = new FamiliarPower(1200, 10.0F, 3.0F, 4.0F, 200, 8.0F, 200, 9);
+    familiar.summon(vampire.getUuid(), scout, scout.lifetimeTicks());
     familiar.setAiDisabled(true);
     final FamiliarScoutGoal goal = new FamiliarScoutGoal(familiar);
     context.runAtTick(

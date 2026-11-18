@@ -46,6 +46,10 @@ public final class StrikeHealing {
     return heal > 0.0 && (last == Long.MIN_VALUE || now - last >= (long) intervalTicks);
   }
 
+  public static void forget(final UUID player) {
+    LAST_HEAL.remove(player);
+  }
+
   public static void clearAll() {
     LAST_HEAL.clear();
   }

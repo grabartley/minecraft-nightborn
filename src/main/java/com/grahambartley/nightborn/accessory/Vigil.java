@@ -95,6 +95,10 @@ public final class Vigil {
             0.01);
   }
 
+  public static void forget(final UUID player) {
+    FELT.remove(player);
+  }
+
   public static void clearAll() {
     FELT.clear();
   }

@@ -116,6 +116,27 @@ public class AccessoryGameTest implements FabricGameTest {
     TestPlayers.finish(context, vampire);
   }
 
+  @GameTest(templateName = ARENA, tickLimit = WORN + 10)
+  public void aRingOfThePyreHalvesFireNotLitByTheSun(final TestContext context) {
+    final ServerPlayerEntity ringed = TestPlayers.vampire(context, SPOT);
+    final ServerPlayerEntity bare = TestPlayers.vampire(context, SPOT.east(2));
+    slot(ringed, AccessorySlot.RING)
+        .setStack(0, new ItemStack(AccessoryItems.of("ring_of_the_pyre")));
+    context.runAtTick(
+        WORN,
+        () -> {
+          final float ringedBefore = ringed.getHealth();
+          final float bareBefore = bare.getHealth();
+          ringed.damage(ringed.getDamageSources().inFire(), 4.0F);
+          bare.damage(bare.getDamageSources().inFire(), 4.0F);
+          context.assertEquals(
+              (bareBefore - bare.getHealth()) / 2.0F,
+              ringedBefore - ringed.getHealth(),
+              "the ring halves the burn against a bare vampire");
+          TestPlayers.finish(context, ringed, bare);
+        });
+  }
+
   private static TrinketInventory slot(final ServerPlayerEntity wearer, final AccessorySlot slot) {
     return TrinketsApi.getTrinketComponent(wearer)
         .orElseThrow()
