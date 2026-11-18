@@ -2059,7 +2059,7 @@
   "nightborn.hunt.phase.due": "chega ao cair da noite",
   "nightborn.hunt.phase.visit": "ele chegou",
   "subtitles.nightborn.item.hunters_bell.ring": "Sino de caçador toca",
-  "subtitles.nightborn.event.hunt.warning_toll": "Um sino dobra ao longe",
+  "subtitles.nightborn.event.hunt.warning_toll": "Um sino distante dobra",
   "subtitles.nightborn.event.hunt.bells_answer": "Sinos respondem",
   "nightborn.command.player.notoriety": "%s: notoriedade %s, %s, caçada: %s, %s noites tranquilas restantes",
   "nightborn.command.player.notoriety.human": "%s não é um vampiro",

@@ -14,7 +14,8 @@ public final class HuntAttachment {
           builder -> builder.persistent(HuntRecord.CODEC).copyOnDeath());
 
   public static final AttachmentType<Long> CLOCK =
-      AttachmentRegistry.create(Identifier.of(Nightborn.MOD_ID, "hunt_clock"));
+      AttachmentRegistry.create(
+          Identifier.of(Nightborn.MOD_ID, "hunt_clock"), builder -> builder.copyOnDeath());
 
   public static final AttachmentType<BellCall> CALL =
       AttachmentRegistry.create(Identifier.of(Nightborn.MOD_ID, "bell_call"));

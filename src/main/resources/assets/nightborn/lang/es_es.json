@@ -2059,7 +2059,7 @@
   "nightborn.hunt.phase.due": "llegará al caer la noche",
   "nightborn.hunt.phase.visit": "ha llegado",
   "subtitles.nightborn.item.hunters_bell.ring": "Suena la campana de cazador",
-  "subtitles.nightborn.event.hunt.warning_toll": "Una campana dobla a lo lejos",
+  "subtitles.nightborn.event.hunt.warning_toll": "Dobla una campana lejana",
   "subtitles.nightborn.event.hunt.bells_answer": "Responden campanas",
   "nightborn.command.player.notoriety": "%s: notoriedad %s, %s, caza: %s, %s noches tranquilas restantes",
   "nightborn.command.player.notoriety.human": "%s no es un vampiro",

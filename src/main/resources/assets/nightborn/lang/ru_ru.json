@@ -2059,7 +2059,7 @@
   "nightborn.hunt.phase.due": "придёт с наступлением ночи",
   "nightborn.hunt.phase.visit": "он пришёл",
   "subtitles.nightborn.item.hunters_bell.ring": "Звонит колокол охотника",
-  "subtitles.nightborn.event.hunt.warning_toll": "Вдали звонит колокол",
+  "subtitles.nightborn.event.hunt.warning_toll": "Звонит далёкий колокол",
   "subtitles.nightborn.event.hunt.bells_answer": "Отвечают колокола",
   "nightborn.command.player.notoriety": "%s: дурная слава %s, %s, охота: %s, осталось спокойных ночей: %s",
   "nightborn.command.player.notoriety.human": "%s не вампир",

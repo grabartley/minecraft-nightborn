@@ -2059,7 +2059,7 @@
   "nightborn.hunt.phase.due": "due at nightfall",
   "nightborn.hunt.phase.visit": "he has come",
   "subtitles.nightborn.item.hunters_bell.ring": "Hunter's bell rings",
-  "subtitles.nightborn.event.hunt.warning_toll": "A bell tolls far off",
+  "subtitles.nightborn.event.hunt.warning_toll": "A distant bell tolls",
   "subtitles.nightborn.event.hunt.bells_answer": "Bells answer",
   "nightborn.command.player.notoriety": "%s: notoriety %s, %s, hunt: %s, %s quiet nights left",
   "nightborn.command.player.notoriety.human": "%s is not a vampire",

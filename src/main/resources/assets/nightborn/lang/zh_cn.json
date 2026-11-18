@@ -2059,7 +2059,7 @@
   "nightborn.hunt.phase.due": "将在夜幕降临时到来",
   "nightborn.hunt.phase.visit": "他已到来",
   "subtitles.nightborn.item.hunters_bell.ring": "猎人之钟响起",
-  "subtitles.nightborn.event.hunt.warning_toll": "远处钟声响起",
+  "subtitles.nightborn.event.hunt.warning_toll": "远处的钟声响起",
   "subtitles.nightborn.event.hunt.bells_answer": "钟声回应",
   "nightborn.command.player.notoriety": "%s：恶名 %s，%s，追猎：%s，剩余 %s 个平静之夜",
   "nightborn.command.player.notoriety.human": "%s 不是吸血鬼",

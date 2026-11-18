@@ -24,7 +24,7 @@ public final class BandCheck {
 
   public static final TagKey<Structure> CAMPS =
       TagKey.of(RegistryKeys.STRUCTURE, Identifier.of(Nightborn.MOD_ID, "hunter_camps"));
-  static final double CAMP_REACH = 16.0;
+  static final double CAMP_REACH = 32.0;
 
   private BandCheck() {}
 

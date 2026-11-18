@@ -2059,7 +2059,7 @@
   "nightborn.hunt.phase.due": "attendu à la tombée de la nuit",
   "nightborn.hunt.phase.visit": "il est venu",
   "subtitles.nightborn.item.hunters_bell.ring": "La cloche de chasseur sonne",
-  "subtitles.nightborn.event.hunt.warning_toll": "Une cloche sonne au loin",
+  "subtitles.nightborn.event.hunt.warning_toll": "Une cloche lointaine sonne",
   "subtitles.nightborn.event.hunt.bells_answer": "Des cloches répondent",
   "nightborn.command.player.notoriety": "%s : notoriété %s, %s, traque : %s, %s nuits calmes restantes",
   "nightborn.command.player.notoriety.human": "%s n'est pas un vampire",

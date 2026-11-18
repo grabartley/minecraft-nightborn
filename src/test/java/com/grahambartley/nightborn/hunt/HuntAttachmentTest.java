@@ -29,6 +29,13 @@ class HuntAttachmentTest {
     assertFalse(HuntAttachment.CLOCK.isPersistent());
   }
 
+  @Test
+  @DisplayName("the clock carries over a respawn, so the dusk or dawn on that tick still counts")
+  void clockSurvivesRespawn() {
+    assertTrue(HuntAttachment.CLOCK.copyOnDeath());
+    assertFalse(HuntAttachment.CALL.copyOnDeath());
+  }
+
   @ParameterizedTest(name = "notoriety {0}")
   @CsvSource({"0.5", "31", "200"})
   @DisplayName("clearing forgets notoriety, the hunt, the clock and any ringing bell")
