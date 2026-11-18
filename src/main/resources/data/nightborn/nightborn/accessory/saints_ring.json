@@ -1,0 +1,10 @@
+{
+  "works_for": "human",
+  "gifts": [
+    {
+      "attribute": "nightborn:blessing_time",
+      "amount": 0.25,
+      "operation": "add_value"
+    }
+  ]
+}

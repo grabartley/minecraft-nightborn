@@ -1,5 +1,7 @@
 package com.grahambartley.nightborn.guild;
 
+import com.grahambartley.nightborn.accessory.GiftAttributes;
+import com.grahambartley.nightborn.accessory.GiftPrices;
 import com.grahambartley.nightborn.gear.GearItems;
 import com.grahambartley.nightborn.guild.party.HunterParty;
 import com.grahambartley.nightborn.guild.party.PartyLeader;
@@ -165,6 +167,8 @@ public class GuildMasterEntity extends MerchantEntity
       visitor.sendMessage(Text.translatable("nightborn.guild.nothing"), true);
       return;
     }
+    counter.getOffers().forEach(TradeOffer::clearSpecialPrice);
+    GiftPrices.discount(counter.getOffers(), visitor, GiftAttributes.GUILD_PRICE);
     counter.setCustomer(visitor);
     counter.sendOffers(visitor, getDisplayName(), 1);
   }

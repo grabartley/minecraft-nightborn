@@ -1,5 +1,6 @@
 package com.grahambartley.nightborn.mixin;
 
+import com.grahambartley.nightborn.accessory.WornDamage;
 import com.grahambartley.nightborn.age.Ageing;
 import com.grahambartley.nightborn.batform.BatFlightMotion;
 import com.grahambartley.nightborn.clothing.Noticing;
@@ -28,6 +29,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityDimensions;
 import net.minecraft.entity.EntityPose;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.mob.PhantomEntity;
@@ -135,6 +137,11 @@ abstract class LivingEntityMixin {
       argsOnly = true)
   private StatusEffectInstance nightborn$gloomPassesSooner(final StatusEffectInstance effect) {
     return Gloom.lessen((LivingEntity) (Object) this, effect);
+  }
+
+  @ModifyVariable(method = "damage", at = @At("HEAD"), argsOnly = true)
+  private float nightborn$wornDamage(final float amount, final DamageSource source) {
+    return WornDamage.scale((LivingEntity) (Object) this, source, amount);
   }
 
   @ModifyVariable(method = "updateLimbs(F)V", at = @At("HEAD"), argsOnly = true)

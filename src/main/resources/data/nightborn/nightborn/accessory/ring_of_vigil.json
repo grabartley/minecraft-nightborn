@@ -1,0 +1,10 @@
+{
+  "works_for": "human",
+  "gifts": [
+    {
+      "attribute": "nightborn:vigil_range",
+      "amount": 12.0,
+      "operation": "add_value"
+    }
+  ]
+}

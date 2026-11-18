@@ -1,0 +1,10 @@
+{
+  "works_for": "human",
+  "gifts": [
+    {
+      "attribute": "nightborn:mind_time",
+      "amount": -0.5,
+      "operation": "add_value"
+    }
+  ]
+}

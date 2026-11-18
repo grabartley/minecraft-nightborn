@@ -5,13 +5,19 @@ import com.grahambartley.nightborn.clothing.ClothingRenderProviders;
 import com.grahambartley.nightborn.clothing.Dressed;
 import dev.emi.trinkets.api.TrinketItem;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Consumer;
+import net.minecraft.component.type.BundleContentsComponent;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.inventory.StackReference;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.tooltip.TooltipData;
 import net.minecraft.item.tooltip.TooltipType;
 import net.minecraft.registry.RegistryWrapper;
+import net.minecraft.screen.slot.Slot;
 import net.minecraft.text.Text;
+import net.minecraft.util.ClickType;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
@@ -58,10 +64,75 @@ public class AccessoryItem extends Item implements GeoItem, Dressed {
       final TooltipType type) {
     if (context.getRegistryLookup() != null) {
       Accessories.of(context.getRegistryLookup(), stack)
-          .flatMap(Accessory::worksFor)
-          .map(AccessoryTooltip::worksFor)
-          .ifPresent(tooltip::add);
+          .ifPresent(accessory -> tooltip.addAll(AccessoryTooltip.lines(this, accessory, stack)));
     }
+  }
+
+  @Override
+  public Optional<TooltipData> getTooltipData(final ItemStack stack) {
+    final BundleContentsComponent contents = AccessoryStore.contents(stack);
+    return contents.isEmpty() ? Optional.empty() : Optional.of(contents);
+  }
+
+  @Override
+  public boolean onStackClicked(
+      final ItemStack stack, final Slot slot, final ClickType click, final PlayerEntity player) {
+    final Optional<AccessoryHold> hold = hold(player, stack);
+    if (click != ClickType.RIGHT || hold.isEmpty()) {
+      return false;
+    }
+    final ItemStack other = slot.getStack();
+    if (other.isEmpty()) {
+      AccessoryStore.take(stack)
+          .ifPresent(
+              taken -> {
+                AccessoryStore.soundTake(player);
+                final ItemStack left = slot.insertStack(taken);
+                if (!left.isEmpty()) {
+                  AccessoryStore.put(hold.get(), stack, left);
+                }
+              });
+    } else if (AccessoryStore.room(hold.get(), stack, other) > 0) {
+      final ItemStack moving =
+          slot.takeStackRange(
+              other.getCount(), AccessoryStore.room(hold.get(), stack, other), player);
+      if (AccessoryStore.put(hold.get(), stack, moving) > 0) {
+        AccessoryStore.soundPut(player);
+      }
+      if (!moving.isEmpty()) {
+        slot.insertStack(moving);
+      }
+    }
+    return true;
+  }
+
+  @Override
+  public boolean onClicked(
+      final ItemStack stack,
+      final ItemStack cursor,
+      final Slot slot,
+      final ClickType click,
+      final PlayerEntity player,
+      final StackReference cursorReference) {
+    final Optional<AccessoryHold> hold = hold(player, stack);
+    if (click != ClickType.RIGHT || hold.isEmpty() || !slot.canTakePartial(player)) {
+      return false;
+    }
+    if (cursor.isEmpty()) {
+      AccessoryStore.take(stack)
+          .ifPresent(
+              taken -> {
+                AccessoryStore.soundTake(player);
+                cursorReference.set(taken);
+              });
+    } else if (AccessoryStore.put(hold.get(), stack, cursor) > 0) {
+      AccessoryStore.soundPut(player);
+    }
+    return true;
+  }
+
+  private Optional<AccessoryHold> hold(final PlayerEntity player, final ItemStack stack) {
+    return Accessories.of(player.getWorld().getRegistryManager(), stack).flatMap(Accessory::holds);
   }
 
   @Override

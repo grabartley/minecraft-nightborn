@@ -8,6 +8,7 @@ import com.grahambartley.nightborn.boss.BossFightPlan;
 import com.grahambartley.nightborn.boss.BossFights;
 import com.grahambartley.nightborn.boss.FightRoll;
 import com.grahambartley.nightborn.boss.FightRules;
+import com.grahambartley.nightborn.boss.Fought;
 import com.grahambartley.nightborn.boss.HoldGroundGoal;
 import com.grahambartley.nightborn.boss.ShownForm;
 import com.grahambartley.nightborn.boss.StanceGoal;
@@ -67,7 +68,7 @@ import software.bernie.geckolib.animation.AnimationController;
 import software.bernie.geckolib.animation.PlayState;
 import software.bernie.geckolib.animation.RawAnimation;
 
-public class EldestEntity extends BossVampireEntity implements BlazingEyes {
+public class EldestEntity extends BossVampireEntity implements BlazingEyes, Fought {
 
   public static final Identifier STAGE = Identifier.of(Nightborn.MOD_ID, "eldest");
   public static final Identifier FIGHT = Identifier.of(Nightborn.MOD_ID, "eldest");
@@ -322,6 +323,7 @@ public class EldestEntity extends BossVampireEntity implements BlazingEyes {
     EldestHealth.scale(this, players, settings.eldestHealthPerPlayer());
   }
 
+  @Override
   public Set<UUID> fighters() {
     return fightRoll.fighters();
   }

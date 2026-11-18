@@ -1,6 +1,13 @@
 {
   "replace": false,
   "values": [
-    "nightborn:cameo_brooch"
+    "nightborn:cameo_brooch",
+    "nightborn:jet_brooch",
+    "nightborn:silver_filigree_brooch",
+    "nightborn:bat_brooch",
+    "nightborn:rose_brooch",
+    "nightborn:guild_badge",
+    "nightborn:sunburst_brooch",
+    "nightborn:spider_brooch"
   ]
 }

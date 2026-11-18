@@ -1,0 +1,9 @@
+{
+  "gifts": [
+    {
+      "attribute": "nightborn:cobweb_slow",
+      "amount": -1.0,
+      "operation": "add_value"
+    }
+  ]
+}

@@ -134,10 +134,14 @@ public class GhostlyFamiliarEntity extends PathAwareEntity
   }
 
   public void summon(final UUID master, final FamiliarPower summoned) {
+    summon(master, summoned, summoned.lifetimeTicks());
+  }
+
+  public void summon(final UUID master, final FamiliarPower summoned, final int lifetimeTicks) {
     dataTracker.set(OWNER_UUID, Optional.of(master));
     power = summoned;
     carried = new SimpleInventory(summoned.carrySlots());
-    ticksLeft = summoned.lifetimeTicks();
+    ticksLeft = lifetimeTicks;
     dataTracker.set(SUMMONED, getWorld().getTime());
     applyPower();
     setHealth(getMaxHealth());

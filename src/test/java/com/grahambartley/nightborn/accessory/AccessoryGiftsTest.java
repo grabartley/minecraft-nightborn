@@ -34,7 +34,11 @@ class AccessoryGiftsTest {
         AccessoryGifts.wanted(
                 Map.of(
                     RING,
-                    new Accessory(Optional.ofNullable(only), List.of(SLOWER), Accessory.UNDYED)),
+                    new Accessory(
+                        Optional.ofNullable(only),
+                        List.of(SLOWER),
+                        Optional.empty(),
+                        Accessory.UNDYED)),
                 wearer)
             .size());
   }

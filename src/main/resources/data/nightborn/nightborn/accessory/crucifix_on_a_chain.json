@@ -1,0 +1,10 @@
+{
+  "works_for": "human",
+  "gifts": [
+    {
+      "attribute": "nightborn:worn_ward",
+      "amount": 0.5,
+      "operation": "add_value"
+    }
+  ]
+}

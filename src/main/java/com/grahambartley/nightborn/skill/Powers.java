@@ -1,5 +1,6 @@
 package com.grahambartley.nightborn.skill;
 
+import com.grahambartley.nightborn.accessory.GiftAttributes;
 import com.grahambartley.nightborn.batform.BatForm;
 import com.grahambartley.nightborn.blood.BloodAttachment;
 import com.grahambartley.nightborn.downed.Downed;
@@ -82,7 +83,18 @@ public final class Powers {
 
   public static int cooldownTicks(final LivingEntity caster, final SkillPower power) {
     return PowerCooldowns.shortened(
-        power.cooldownTicks(), VampireAttributes.value(caster, VampireAttributes.POWER_COOLDOWN));
+        power.cooldownTicks(),
+        PowerGifts.cooldown(
+            VampireAttributes.value(caster, VampireAttributes.POWER_COOLDOWN),
+            power.track().isPresent(),
+            GiftAttributes.value(caster, GiftAttributes.TRACKING_COOLDOWN)));
+  }
+
+  public static int bloodCost(final LivingEntity caster, final SkillPower power) {
+    return PowerGifts.blood(
+        power.blood(),
+        power.batForm().isPresent(),
+        GiftAttributes.value(caster, GiftAttributes.BAT_FORM_COST));
   }
 
   public static Optional<BatFormPower> ownedBatForm(final LivingEntity caster) {
@@ -116,7 +128,7 @@ public final class Powers {
             ? 0L
             : PowerCooldownAttachment.get(caster).ticksLeft(id, caster.getWorld().getTime()),
         BloodAttachment.get(caster),
-        power.map(SkillPower::blood).orElse(0),
+        power.map(owned -> bloodCost(caster, owned)).orElse(0),
         power.flatMap(SkillPower::mesmerise).isPresent() && aim.gazeTarget() == null,
         (power.flatMap(SkillPower::shadowStep).isPresent()
                 || power.flatMap(SkillPower::vanish).isPresent())
@@ -139,8 +151,9 @@ public final class Powers {
       return verdict;
     }
     final SkillPower power = owned.orElseThrow();
-    if (power.blood() > 0) {
-      BloodAttachment.set(caster, BloodAttachment.get(caster) - power.blood());
+    final int blood = bloodCost(caster, power);
+    if (blood > 0) {
+      BloodAttachment.set(caster, BloodAttachment.get(caster) - blood);
     }
     final long now = caster.getWorld().getTime();
     PowerCooldownAttachment.set(

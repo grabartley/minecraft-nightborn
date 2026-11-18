@@ -1,0 +1,10 @@
+{
+  "works_for": "vampire",
+  "gifts": [
+    {
+      "attribute": "nightborn:holy_water_time",
+      "amount": -0.3,
+      "operation": "add_value"
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "gifts": [
+    {
+      "attribute": "nightborn:chest_luck",
+      "amount": 1.0,
+      "operation": "add_value"
+    }
+  ]
+}

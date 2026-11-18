@@ -1,0 +1,10 @@
+{
+  "works_for": "human",
+  "gifts": [
+    {
+      "attribute": "nightborn:guild_price",
+      "amount": -0.1,
+      "operation": "add_value"
+    }
+  ]
+}

@@ -95,6 +95,7 @@ public final class Thralls {
     villager.releaseTicketFor(MemoryModuleType.POTENTIAL_JOB_SITE);
     villager.releaseTicketFor(MemoryModuleType.MEETING_POINT);
     thrall.bind(vampire.getUuid(), data, memory);
+    ThrallVigour.follow(vampire.getServerWorld(), thrall);
     thrall.setHealth(villager.getHealth());
     registry.bind(vampire.getUuid(), thrall.getUuid());
     ServantNaming.offer(vampire, thrall);
@@ -118,7 +119,9 @@ public final class Thralls {
             .isPresent();
     if (!kept) {
       release(thrall);
+      return;
     }
+    ThrallVigour.follow(world, thrall);
   }
 
   public static boolean free(final ThrallEntity thrall) {

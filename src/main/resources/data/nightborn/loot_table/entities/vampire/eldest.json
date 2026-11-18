@@ -244,6 +244,31 @@
           "weight": 1
         }
       ]
+    },
+    {
+      "rolls": 1,
+      "conditions": [
+        {
+          "condition": "minecraft:random_chance",
+          "chance": 0.08
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "nightborn:ring_of_the_court",
+          "functions": [
+            {
+              "function": "nightborn:pick_unowned",
+              "items": [
+                "nightborn:ring_of_the_court",
+                "nightborn:ring_of_the_beast",
+                "nightborn:ring_of_the_blood"
+              ]
+            }
+          ]
+        }
+      ]
     }
   ]
 }

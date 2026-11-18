@@ -1,5 +1,6 @@
 package com.grahambartley.nightborn.ward;
 
+import com.grahambartley.nightborn.accessory.GiftAttributes;
 import com.grahambartley.nightborn.advancement.Milestone;
 import com.grahambartley.nightborn.advancement.MilestoneCriterion;
 import com.grahambartley.nightborn.clothing.WornAttributes;
@@ -116,8 +117,7 @@ public final class Wards {
             holder ->
                 holder.isAlive()
                     && !holder.isSpectator()
-                    && holder.squaredDistanceTo(vampire) <= range * range
-                    && wards(holder)
+                    && within(holder, vampire, crucifixReach(holder, range))
                     && vampire.canSee(holder));
     int strongest = 0;
     for (final LivingEntity holder : holders) {
@@ -130,6 +130,19 @@ public final class Wards {
                   settings.faithBonus()));
     }
     return strongest;
+  }
+
+  private static double crucifixReach(final LivingEntity holder, final double range) {
+    return WornWard.reach(
+        holds(holder, WardTags.CRUCIFIXES),
+        Vampires.isVampire(holder),
+        GiftAttributes.value(holder, GiftAttributes.WORN_WARD),
+        range);
+  }
+
+  private static boolean within(
+      final LivingEntity holder, final LivingEntity vampire, final double reach) {
+    return reach > 0.0 && holder.squaredDistanceTo(vampire) <= reach * reach;
   }
 
   private static int shapes(

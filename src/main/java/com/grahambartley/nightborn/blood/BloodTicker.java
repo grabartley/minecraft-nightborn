@@ -1,5 +1,6 @@
 package com.grahambartley.nightborn.blood;
 
+import com.grahambartley.nightborn.accessory.WornStores;
 import com.grahambartley.nightborn.age.AgeAttachment;
 import com.grahambartley.nightborn.age.AgeGifts;
 import com.grahambartley.nightborn.batform.BatForm;
@@ -13,6 +14,7 @@ import com.grahambartley.nightborn.weakened.Weakened;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.HungerManager;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.GameRules;
 
@@ -72,10 +74,16 @@ public final class BloodTicker {
 
   private static void starve(
       final LivingEntity vampire, final int blood, final NightbornConfig config) {
+    final int left =
+        blood <= 0
+                && vampire instanceof ServerPlayerEntity player
+                && WornStores.drinkWhenDry(player)
+            ? BloodAttachment.get(vampire)
+            : blood;
     final Starvation.Outcome starving =
         Starvation.tick(
             StarvingAttachment.get(vampire),
-            blood,
+            left,
             vampire.getHealth(),
             vampire.getWorld().getDifficulty() == Difficulty.PEACEFUL,
             config.blood());

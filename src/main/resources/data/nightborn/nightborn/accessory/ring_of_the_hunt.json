@@ -1,0 +1,10 @@
+{
+  "works_for": "vampire",
+  "gifts": [
+    {
+      "attribute": "nightborn:hunter_shot_damage",
+      "amount": -0.25,
+      "operation": "add_value"
+    }
+  ]
+}

@@ -1,6 +1,8 @@
 package com.grahambartley.nightborn.occult;
 
 import com.grahambartley.nightborn.Nightborn;
+import com.grahambartley.nightborn.accessory.GiftAttributes;
+import com.grahambartley.nightborn.accessory.GiftScale;
 import com.grahambartley.nightborn.servant.Servants;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -74,7 +76,11 @@ public final class GhostlyFamiliars {
             ? ahead
             : caster.getPos().withAxis(Direction.Axis.Y, caster.getBodyY(0.6));
     familiar.refreshPositionAndAngles(at.x, at.y, at.z, caster.getHeadYaw(), 0.0F);
-    familiar.summon(caster.getUuid(), power);
+    familiar.summon(
+        caster.getUuid(),
+        power,
+        GiftScale.ticks(
+            power.lifetimeTicks(), GiftAttributes.value(caster, GiftAttributes.FAMILIAR_TIME)));
     world.spawnEntity(familiar);
     world.spawnParticles(
         ParticleTypes.SOUL,

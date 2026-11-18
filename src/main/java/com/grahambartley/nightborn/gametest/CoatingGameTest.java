@@ -63,7 +63,8 @@ public class CoatingGameTest implements FabricGameTest {
           final ItemStack held = attacker.getMainHandStack();
           held.set(
               Coatings.COAT,
-              new Coat(Coating.HOLY_WATER, terms.hits() - 1, Coatings.of(held).get().startedAt()));
+              new Coat(
+                  Coating.HOLY_WATER, terms.hits() - 1, Coatings.of(held).get().startedAt(), 0));
           swing(attacker, vampire);
           context.assertTrue(Coatings.of(held).isEmpty(), "the last hit wears the coating off");
           context.assertEquals(swing(attacker, vampire), swing(attacker, human), "no bonus left");
