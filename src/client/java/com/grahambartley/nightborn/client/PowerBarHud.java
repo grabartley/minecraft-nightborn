@@ -82,8 +82,8 @@ public final class PowerBarHud {
             at,
             skill,
             cooldowns.ticksLeft(id, now),
-            Powers.cooldownTicks(player, power),
-            Powers.bloodCost(player, power),
+            Powers.cooldownTicks(player, id, power),
+            Powers.bloodCost(player, id, power),
             blood);
       }
       drawKey(context, client, at, i);

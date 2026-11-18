@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.google.gson.JsonParser;
 import com.mojang.serialization.JsonOps;
+import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -22,7 +23,7 @@ class SkillRankTest {
   void reads(final String json, final int cost, final double bareHands) {
     final SkillRank rank =
         SkillRank.CODEC.parse(JsonOps.INSTANCE, JsonParser.parseString(json)).getOrThrow();
-    assertEquals(new SkillRank(cost, java.util.List.of(), bareHands), rank);
+    assertEquals(new SkillRank(cost, List.of(), bareHands, List.of()), rank);
     assertEquals(SkillRank.costing(cost).cost(), rank.cost());
   }
 
@@ -33,11 +34,30 @@ class SkillRankTest {
         "{}",
         "{\"cost\": -1}",
         "{\"cost\": 101}",
-        "{\"cost\": 1, \"bare_hand_damage\": 21}"
+        "{\"cost\": 1, \"bare_hand_damage\": 21}",
+        "{\"cost\": 3, \"power_gifts\": [{\"blood_cut\": 1}]}"
       })
   @DisplayName("a rank with no cost or a value out of bounds is refused")
   void refuses(final String json) {
     assertEquals(
         true, SkillRank.CODEC.parse(JsonOps.INSTANCE, JsonParser.parseString(json)).isError());
+  }
+
+  @ParameterizedTest(name = "{0} -> {1} gifts")
+  @CsvSource(
+      delimiter = ';',
+      value = {
+        "{\"cost\": 3, \"power_gifts\": [{\"branch\": \"nightborn:beast\", \"blood_cut\": 1, \"cooldown_cut\": 0.2}]}; 1",
+        "{\"cost\": 3}; 0"
+      })
+  @DisplayName("a rank may carry gifts for its bloodline's powers")
+  void gifts(final String json, final int count) {
+    assertEquals(
+        count,
+        SkillRank.CODEC
+            .parse(JsonOps.INSTANCE, JsonParser.parseString(json))
+            .getOrThrow()
+            .powerGifts()
+            .size());
   }
 }

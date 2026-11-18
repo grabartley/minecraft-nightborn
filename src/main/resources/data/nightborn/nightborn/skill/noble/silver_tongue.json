@@ -16,6 +16,26 @@
           "operation": "add_value"
         }
       ]
+    },
+    {
+      "cost": 1,
+      "attributes": [
+        {
+          "attribute": "nightborn:charm",
+          "amount": 1.0,
+          "operation": "add_value"
+        }
+      ]
+    },
+    {
+      "cost": 2,
+      "attributes": [
+        {
+          "attribute": "nightborn:charm",
+          "amount": 1.0,
+          "operation": "add_value"
+        }
+      ]
     }
   ]
 }

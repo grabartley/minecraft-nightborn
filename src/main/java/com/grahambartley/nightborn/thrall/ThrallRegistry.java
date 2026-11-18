@@ -36,6 +36,10 @@ public final class ThrallRegistry extends PersistentState {
     return owners.getOrDefault(owner, Set.of()).size();
   }
 
+  public Set<UUID> thralls(final UUID owner) {
+    return Set.copyOf(owners.getOrDefault(owner, Set.of()));
+  }
+
   public boolean keeps(final UUID owner, final UUID thrall) {
     return owners.getOrDefault(owner, Set.of()).contains(thrall);
   }

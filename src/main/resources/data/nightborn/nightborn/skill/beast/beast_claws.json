@@ -10,6 +10,14 @@
     {
       "cost": 1,
       "bare_hand_damage": 2.0
+    },
+    {
+      "cost": 2,
+      "bare_hand_damage": 1.0
+    },
+    {
+      "cost": 2,
+      "bare_hand_damage": 1.0
     }
   ]
 }

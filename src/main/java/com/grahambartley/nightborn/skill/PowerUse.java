@@ -8,6 +8,8 @@ public final class PowerUse {
     READY,
     NO_POWER,
     HELPLESS,
+    HELD,
+    IN_WINGED_FORM,
     AS_A_BAT,
     WEAKENED,
     SUNLIT,
@@ -15,52 +17,67 @@ public final class PowerUse {
     THIRSTY,
     CRAMPED,
     UNSEEN,
-    NOWHERE;
+    NOWHERE,
+    NO_SUBJECT;
 
     public String translationKey() {
       return "nightborn.powers.verdict." + name().toLowerCase(Locale.ROOT);
     }
   }
 
+  public record Situation(
+      boolean hasPower,
+      boolean helpless,
+      boolean held,
+      boolean winged,
+      boolean bat,
+      boolean weakened,
+      boolean sunlit,
+      long cooldownTicksLeft,
+      int blood,
+      int bloodCost,
+      boolean unseen,
+      boolean nowhere,
+      boolean subjectless) {}
+
   private PowerUse() {}
 
-  public static Verdict check(
-      final boolean hasPower,
-      final boolean helpless,
-      final boolean bat,
-      final boolean weakened,
-      final boolean sunlit,
-      final long cooldownTicksLeft,
-      final int blood,
-      final int bloodCost,
-      final boolean unseen,
-      final boolean nowhere) {
-    if (!hasPower) {
+  public static Verdict check(final Situation situation) {
+    if (!situation.hasPower()) {
       return Verdict.NO_POWER;
     }
-    if (helpless) {
+    if (situation.helpless()) {
       return Verdict.HELPLESS;
     }
-    if (bat) {
+    if (situation.held()) {
+      return Verdict.HELD;
+    }
+    if (situation.winged()) {
+      return Verdict.IN_WINGED_FORM;
+    }
+    if (situation.bat()) {
       return Verdict.AS_A_BAT;
     }
-    if (weakened) {
+    if (situation.weakened()) {
       return Verdict.WEAKENED;
     }
-    if (sunlit) {
+    if (situation.sunlit()) {
       return Verdict.SUNLIT;
     }
-    if (cooldownTicksLeft > 0) {
+    if (situation.cooldownTicksLeft() > 0) {
       return Verdict.COOLING;
     }
-    if (blood < bloodCost) {
+    if (situation.blood() < situation.bloodCost()) {
       return Verdict.THIRSTY;
     }
-    if (unseen) {
+    if (situation.unseen()) {
       return Verdict.UNSEEN;
     }
-    if (nowhere) {
+    if (situation.nowhere()) {
       return Verdict.NOWHERE;
+    }
+    if (situation.subjectless()) {
+      return Verdict.NO_SUBJECT;
     }
     return Verdict.READY;
   }

@@ -58,4 +58,16 @@ class ThrallRegistryTest {
     assertEquals(0, registry.freeOwner(OWNER));
     assertEquals(0, registry.count(OWNER));
   }
+
+  @ParameterizedTest(name = "{0} thralls")
+  @ValueSource(ints = {0, 1, 3})
+  @DisplayName("an owner's thralls can be listed")
+  void lists(final int count) {
+    final ThrallRegistry registry = new ThrallRegistry();
+    for (int i = 0; i < count; i++) {
+      registry.bind(OWNER, UUID.randomUUID());
+    }
+    registry.bind(UUID.randomUUID(), UUID.randomUUID());
+    assertEquals(count, registry.thralls(OWNER).size());
+  }
 }

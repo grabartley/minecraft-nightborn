@@ -125,7 +125,11 @@ public class VampireLordGameTest implements FabricGameTest {
             new SummonPower(
                 Registries.ENTITY_TYPE.getEntry(NightbornMobs.VAMPIRE_BAT),
                 ConstantIntProvider.create(3),
-                1.0F));
+                1.0F,
+                1.0F,
+                Optional.empty(),
+                Optional.empty(),
+                Optional.empty()));
     bats.forEach(bat -> ((VampireBatEntity) bat).setAiDisabled(true));
     context.assertTrue(bats.size() == 3, "three bats answer, not " + bats.size());
     for (final Entity bat : bats) {

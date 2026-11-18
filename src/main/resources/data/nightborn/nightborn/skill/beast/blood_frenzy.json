@@ -1,0 +1,51 @@
+{
+  "branch": "nightborn:beast",
+  "requires": [
+    "nightborn:beast/beast_claws"
+  ],
+  "icon": "nightborn:skills/icon/blood_rush",
+  "column": 0,
+  "row": 3,
+  "stage": "nightborn:elder",
+  "ranks": [
+    {
+      "cost": 3
+    }
+  ],
+  "power": {
+    "blood": 3,
+    "cooldown_ticks": 1800,
+    "boost": {
+      "duration_ticks": 200,
+      "attributes": [
+        {
+          "attribute": "minecraft:generic.movement_speed",
+          "amount": 0.3,
+          "operation": "add_multiplied_total"
+        },
+        {
+          "attribute": "minecraft:generic.attack_damage",
+          "amount": 3.0,
+          "operation": "add_value"
+        },
+        {
+          "attribute": "nightborn:blood_drain",
+          "amount": 1.0,
+          "operation": "add_multiplied_base"
+        }
+      ],
+      "kill_ticks": 40,
+      "most_ticks": 400,
+      "rescue_below": 0.25
+    },
+    "sound": "minecraft:entity.wolf.growl",
+    "mob": {
+      "min_range": 0.0,
+      "max_range": 12.0,
+      "tell_ticks": 10,
+      "tell_sound": "minecraft:entity.wolf.growl",
+      "tell_clip": "blood_rush_tell",
+      "clip": "blood_rush"
+    }
+  }
+}

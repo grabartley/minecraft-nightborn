@@ -8,6 +8,7 @@ import com.grahambartley.nightborn.downed.Downed;
 import com.grahambartley.nightborn.downed.DownedState;
 import com.grahambartley.nightborn.feeding.FeedingSessions;
 import com.grahambartley.nightborn.levitation.Levitation;
+import com.grahambartley.nightborn.mind.Glamour;
 import com.grahambartley.nightborn.server.ServerConfigService;
 import com.grahambartley.nightborn.sun.SunBurn;
 import com.grahambartley.nightborn.ward.Wards;
@@ -43,7 +44,14 @@ public final class VampireTicker {
                 vampire.getHealth(),
                 vampire.getMaxHealth())
             || EyeGlow.blazing(vampire);
+    Glamour.tick(vampire);
+    final boolean glamoured = Glamour.on(vampire);
     VisibleStateAttachment.set(
-        vampire, new VisibleState(eyes, feeding, downed != null && downed.isDowned(), weakened));
+        vampire,
+        new VisibleState(
+            eyes && !glamoured,
+            feeding,
+            downed != null && downed.isDowned(),
+            glamoured ? 0 : weakened));
   }
 }

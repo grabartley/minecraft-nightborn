@@ -191,4 +191,40 @@ class SkillPowerTest {
     assertEquals(
         loads, SkillPower.CODEC.parse(JsonOps.INSTANCE, JsonParser.parseString(json)).isSuccess());
   }
+
+  @ParameterizedTest(name = "{0}")
+  @CsvSource(
+      delimiter = '|',
+      value = {
+        "{\"blood\":2,\"cooldown_ticks\":400,\"pounce\":{\"range\":10,\"pin_ticks\":40,\"player_pin_ticks\":20}} | pounce",
+        "{\"blood\":4,\"cooldown_ticks\":1200,\"mist\":{\"duration_ticks\":160,\"harm\":2}} | mist",
+        "{\"blood\":2,\"cooldown_ticks\":600,\"command\":{\"range\":12,\"duration_ticks\":600}} | command",
+        "{\"blood\":5,\"cooldown_ticks\":3600,\"glamour\":{\"duration_ticks\":600}} | glamour",
+        "{\"blood\":1,\"cooldown_ticks\":600,\"sense\":{\"range\":24,\"duration_ticks\":160}} | sense",
+        "{\"blood\":6,\"cooldown_ticks\":6000,\"swarm\":{\"radius\":12,\"duration_ticks\":300,\"damage\":1,\"every_ticks\":20,\"recent_ticks\":200},\"frees\":{\"skills\":[\"nightborn:occult/shadow_step\"],\"duration_ticks\":300}} | swarm"
+      })
+  @DisplayName("a power reads each new kind of effect from its own block")
+  void newBlocks(final String json, final String block) {
+    final SkillPower power =
+        SkillPower.CODEC.parse(JsonOps.INSTANCE, JsonParser.parseString(json)).getOrThrow();
+    assertEquals(block.equals("pounce"), power.pounce().isPresent());
+    assertEquals(block.equals("mist"), power.mist().isPresent());
+    assertEquals(block.equals("command"), power.command().isPresent());
+    assertEquals(block.equals("glamour"), power.glamour().isPresent());
+    assertEquals(block.equals("sense"), power.sense().isPresent());
+    assertEquals(block.equals("swarm"), power.swarm().isPresent() && power.frees().isPresent());
+  }
+
+  @ParameterizedTest(name = "leap {0}, mist {1}: loads {2}")
+  @CsvSource({"true, false, true", "false, true, true", "true, true, false"})
+  @DisplayName("a power that leaps cannot also turn its caster to mist")
+  void oneShape(final boolean leap, final boolean mist, final boolean loads) {
+    final String json =
+        "{\"blood\":1,\"cooldown_ticks\":100"
+            + (leap ? ",\"leap\":{\"forward\":1.4,\"up\":0.55}" : "")
+            + (mist ? ",\"mist\":{\"duration_ticks\":160,\"harm\":2}" : "")
+            + "}";
+    assertEquals(
+        loads, SkillPower.CODEC.parse(JsonOps.INSTANCE, JsonParser.parseString(json)).isSuccess());
+  }
 }

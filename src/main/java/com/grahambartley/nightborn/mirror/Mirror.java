@@ -3,6 +3,7 @@ package com.grahambartley.nightborn.mirror;
 import com.grahambartley.nightborn.challenge.Deed;
 import com.grahambartley.nightborn.challenge.DeedKinds;
 import com.grahambartley.nightborn.challenge.Deeds;
+import com.grahambartley.nightborn.mind.Glamour;
 import com.grahambartley.nightborn.network.MirrorPayload;
 import com.grahambartley.nightborn.vampire.Vampires;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
@@ -28,7 +29,9 @@ public final class Mirror {
 
   public static void raise(final ServerPlayerEntity user, final LivingEntity subject) {
     ServerPlayNetworking.send(
-        user, new MirrorPayload(subject.getId(), reflects(Vampires.isVampire(subject))));
+        user,
+        new MirrorPayload(
+            subject.getId(), reflects(Vampires.isVampire(subject) && !Glamour.on(subject))));
     user.getServerWorld()
         .playSound(
             null,

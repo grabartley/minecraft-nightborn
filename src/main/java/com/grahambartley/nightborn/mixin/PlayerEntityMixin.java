@@ -11,6 +11,7 @@ import com.grahambartley.nightborn.core.VampireCore;
 import com.grahambartley.nightborn.hunter.HunterAttributes;
 import com.grahambartley.nightborn.levitation.Levitation;
 import com.grahambartley.nightborn.mind.MindAttributes;
+import com.grahambartley.nightborn.occult.MistForm;
 import com.grahambartley.nightborn.occult.OccultAttributes;
 import com.grahambartley.nightborn.server.ServerConfigService;
 import com.grahambartley.nightborn.sickness.BiteSickness;
@@ -43,6 +44,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 abstract class PlayerEntityMixin {
 
   @Unique private final BatShape nightborn$batShape = new BatShape();
+
+  @Unique private final BatShape nightborn$mistShape = new BatShape();
 
   @Inject(method = "createPlayerAttributes", at = @At("RETURN"))
   private static void nightborn$hunterAttributes(
@@ -138,7 +141,9 @@ abstract class PlayerEntityMixin {
   private void nightborn$batSized(
       final EntityPose pose, final CallbackInfoReturnable<EntityDimensions> cir) {
     if (BatForm.isBat((PlayerEntity) (Object) this)) {
-      cir.setReturnValue(BatForm.dimensions());
+      cir.setReturnValue(BatForm.dimensions((PlayerEntity) (Object) this));
+    } else if (MistForm.on((PlayerEntity) (Object) this)) {
+      cir.setReturnValue(MistForm.DIMENSIONS);
     }
   }
 
@@ -156,7 +161,8 @@ abstract class PlayerEntityMixin {
   @Inject(method = "tick", at = @At("HEAD"))
   private void nightborn$reshapeOnBatForm(final CallbackInfo ci) {
     final PlayerEntity self = (PlayerEntity) (Object) this;
-    if (nightborn$batShape.changed(BatForm.isBat(self))) {
+    if (nightborn$batShape.changed(BatForm.isBat(self))
+        | nightborn$mistShape.changed(MistForm.on(self))) {
       self.calculateDimensions();
     }
   }

@@ -21,6 +21,7 @@ import com.grahambartley.nightborn.mind.MindAttributes;
 import com.grahambartley.nightborn.mind.MindEffect;
 import com.grahambartley.nightborn.mob.NightbornMobs;
 import com.grahambartley.nightborn.occult.OccultAttributes;
+import com.grahambartley.nightborn.occult.RestlessDead;
 import com.grahambartley.nightborn.vampire.VampireAttributes;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -61,6 +62,7 @@ public final class MinecraftBootstrapExtension implements BeforeAllCallback {
     Objects.requireNonNull(JournalItems.HUNTER_JOURNAL);
     Objects.requireNonNull(NightbornMobs.VAMPIRE_BAT);
     Objects.requireNonNull(GuildMobs.HUNTER);
+    Objects.requireNonNull(RestlessDead.TYPE);
     Objects.requireNonNull(GarlicFumesEffect.ENTRY);
   }
 }

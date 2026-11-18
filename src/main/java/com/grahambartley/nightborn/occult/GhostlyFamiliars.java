@@ -4,6 +4,7 @@ import com.grahambartley.nightborn.Nightborn;
 import com.grahambartley.nightborn.accessory.GiftAttributes;
 import com.grahambartley.nightborn.accessory.GiftScale;
 import com.grahambartley.nightborn.servant.Servants;
+import com.grahambartley.nightborn.vampire.Modifiers;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -12,6 +13,8 @@ import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRe
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.SpawnGroup;
+import net.minecraft.entity.attribute.EntityAttributeModifier;
+import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
@@ -22,6 +25,8 @@ import net.minecraft.util.math.Vec3d;
 import org.jetbrains.annotations.Nullable;
 
 public final class GhostlyFamiliars {
+
+  static final Identifier PACT_HEALTH = Identifier.of(Nightborn.MOD_ID, "familiar/pact_health");
 
   public static final EntityType<GhostlyFamiliarEntity> GHOSTLY_FAMILIAR =
       Registry.register(
@@ -81,6 +86,13 @@ public final class GhostlyFamiliars {
         power,
         GiftScale.ticks(
             power.lifetimeTicks(), GiftAttributes.value(caster, GiftAttributes.FAMILIAR_TIME)));
+    Modifiers.set(
+        familiar,
+        EntityAttributes.GENERIC_MAX_HEALTH,
+        PACT_HEALTH,
+        OccultAttributes.familiarHealth(caster) - 1.0,
+        EntityAttributeModifier.Operation.ADD_MULTIPLIED_BASE);
+    familiar.setHealth(familiar.getMaxHealth());
     world.spawnEntity(familiar);
     world.spawnParticles(
         ParticleTypes.SOUL,

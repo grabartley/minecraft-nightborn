@@ -2,6 +2,7 @@ package com.grahambartley.nightborn.mixin.client;
 
 import com.grahambartley.nightborn.batform.BatForm;
 import com.grahambartley.nightborn.client.anim.VampirePlayerClips;
+import com.grahambartley.nightborn.occult.MistForm;
 import com.grahambartley.nightborn.render.BatFormRenderer;
 import com.grahambartley.nightborn.render.VampirePlayerRenderer;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
@@ -41,7 +42,9 @@ abstract class PlayerEntityRendererMixin {
       final VertexConsumerProvider vertexConsumers,
       final int light,
       final CallbackInfo ci) {
-    if (BatForm.isBat(player)) {
+    if (MistForm.on(player)) {
+      ci.cancel();
+    } else if (BatForm.isBat(player)) {
       nightborn$batForm.render(player, yaw, tickDelta, matrices, vertexConsumers, light);
       ci.cancel();
     } else if (VampirePlayerClips.clip(player).isPresent()) {

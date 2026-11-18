@@ -1,6 +1,7 @@
 package com.grahambartley.nightborn.village;
 
 import com.grahambartley.nightborn.feeding.VillagerWitnesses;
+import com.grahambartley.nightborn.mind.Glamour;
 import com.grahambartley.nightborn.server.ServerConfigService;
 import com.grahambartley.nightborn.vampire.Vampires;
 import net.minecraft.entity.LivingEntity;
@@ -13,7 +14,9 @@ public final class VampireSigns {
   private VampireSigns() {}
 
   public static void shown(final LivingEntity vampire, final SuspicionCause cause) {
-    if (!(vampire instanceof ServerPlayerEntity player) || !Vampires.isVampire(player)) {
+    if (!(vampire instanceof ServerPlayerEntity player)
+        || !Vampires.isVampire(player)
+        || Glamour.on(player)) {
       return;
     }
     final ServerWorld world = player.getServerWorld();

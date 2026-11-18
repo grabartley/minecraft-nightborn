@@ -1,0 +1,43 @@
+{
+  "branch": "nightborn:noble",
+  "requires": [
+    "nightborn:noble/noble_blood"
+  ],
+  "icon": "nightborn:skills/icon/noble_blood",
+  "column": 2,
+  "row": 1,
+  "stage": "nightborn:adult",
+  "ranks": [
+    {
+      "cost": 3
+    }
+  ],
+  "power": {
+    "blood": 3,
+    "cooldown_ticks": 1200,
+    "dread": {
+      "radius": 8.0,
+      "duration_ticks": 240,
+      "flees": "nightborn:dread/flees",
+      "cowers": "nightborn:dread/cowers",
+      "falters": "nightborn:dread/falters",
+      "falter_damage": 0.8,
+      "player_effects": [
+        {
+          "id": "minecraft:slowness",
+          "amplifier": 0,
+          "duration": 20,
+          "show_icon": true
+        }
+      ]
+    },
+    "sound": "minecraft:entity.warden.angry",
+    "mob": {
+      "min_range": 0.0,
+      "max_range": 8.0,
+      "tell_ticks": 12,
+      "tell_sound": "minecraft:entity.evoker.prepare_attack",
+      "tell_clip": "hiss"
+    }
+  }
+}

@@ -1,0 +1,46 @@
+{
+  "branch": "nightborn:occult",
+  "requires": [
+    "nightborn:occult/mist_form",
+    "nightborn:occult/raise_the_dead"
+  ],
+  "icon": "nightborn:skills/icon/grave_fog",
+  "column": 1,
+  "row": 5,
+  "stage": "nightborn:ancient",
+  "ranks": [
+    {
+      "cost": 4
+    }
+  ],
+  "power": {
+    "blood": 6,
+    "cooldown_ticks": 6000,
+    "fog": {
+      "radius": 12.0,
+      "duration_ticks": 300,
+      "effects": []
+    },
+    "swarm": {
+      "radius": 12.0,
+      "duration_ticks": 300,
+      "damage": 1.0,
+      "every_ticks": 20,
+      "recent_ticks": 200
+    },
+    "frees": {
+      "skills": [
+        "nightborn:occult/shadow_step"
+      ],
+      "duration_ticks": 300
+    },
+    "sound": "minecraft:entity.evoker.prepare_summon",
+    "mob": {
+      "min_range": 0.0,
+      "max_range": 12.0,
+      "tell_ticks": 16,
+      "tell_sound": "minecraft:entity.evoker.prepare_summon",
+      "tell_clip": "mesmerise"
+    }
+  }
+}

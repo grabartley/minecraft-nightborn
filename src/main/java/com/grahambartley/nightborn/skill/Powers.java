@@ -2,30 +2,22 @@ package com.grahambartley.nightborn.skill;
 
 import com.grahambartley.nightborn.accessory.GiftAttributes;
 import com.grahambartley.nightborn.batform.BatForm;
+import com.grahambartley.nightborn.batform.WingedForm;
 import com.grahambartley.nightborn.blood.BloodAttachment;
 import com.grahambartley.nightborn.downed.Downed;
-import com.grahambartley.nightborn.lord.Rally;
-import com.grahambartley.nightborn.lord.Summons;
-import com.grahambartley.nightborn.mind.Gazes;
+import com.grahambartley.nightborn.hold.Holds;
 import com.grahambartley.nightborn.moment.Moments;
 import com.grahambartley.nightborn.network.UsePowerPayload;
-import com.grahambartley.nightborn.occult.FogClouds;
-import com.grahambartley.nightborn.occult.GhostlyFamiliars;
-import com.grahambartley.nightborn.occult.ShadowStep;
 import com.grahambartley.nightborn.sun.DirectSun;
 import com.grahambartley.nightborn.vampire.VampireAttributes;
-import com.grahambartley.nightborn.vanish.Vanish;
-import com.grahambartley.nightborn.village.SuspicionCause;
-import com.grahambartley.nightborn.village.VampireSigns;
 import com.grahambartley.nightborn.weakened.Weakened;
+import java.util.List;
 import java.util.Optional;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.registry.Registry;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.sound.SoundEvent;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Vec3d;
@@ -81,20 +73,31 @@ public final class Powers {
         : caster.getRotationVector();
   }
 
-  public static int cooldownTicks(final LivingEntity caster, final SkillPower power) {
+  public static int cooldownTicks(
+      final LivingEntity caster, @Nullable final Identifier id, final SkillPower power) {
+    if (FreePowers.free(caster, id)) {
+      return 0;
+    }
+    final List<PowerGift> gifts = SkillPowerGifts.forPower(caster, id);
     return PowerCooldowns.shortened(
         power.cooldownTicks(),
         PowerGifts.cooldown(
             VampireAttributes.value(caster, VampireAttributes.POWER_COOLDOWN),
             power.track().isPresent(),
-            GiftAttributes.value(caster, GiftAttributes.TRACKING_COOLDOWN)));
+            GiftAttributes.value(caster, GiftAttributes.TRACKING_COOLDOWN),
+            PowerGifts.cooldownCut(gifts)));
   }
 
-  public static int bloodCost(final LivingEntity caster, final SkillPower power) {
+  public static int bloodCost(
+      final LivingEntity caster, @Nullable final Identifier id, final SkillPower power) {
+    if (FreePowers.free(caster, id)) {
+      return 0;
+    }
     return PowerGifts.blood(
         power.blood(),
         power.batForm().isPresent(),
-        GiftAttributes.value(caster, GiftAttributes.BAT_FORM_COST));
+        GiftAttributes.value(caster, GiftAttributes.BAT_FORM_COST),
+        PowerGifts.bloodCut(SkillPowerGifts.forPower(caster, id)));
   }
 
   public static Optional<BatFormPower> ownedBatForm(final LivingEntity caster) {
@@ -113,26 +116,32 @@ public final class Powers {
     return check(caster, id, power, PowerAim.of(caster, power, PowerHeading.NONE));
   }
 
-  private static PowerUse.Verdict check(
+  static PowerUse.Verdict check(
       final LivingEntity caster,
       @Nullable final Identifier id,
       final Optional<SkillPower> power,
       final PowerAim aim) {
+    final boolean shifts =
+        power
+            .map(owned -> owned.batForm().isPresent() || owned.wingedForm().isPresent())
+            .orElse(false);
     return PowerUse.check(
-        power.isPresent(),
-        Downed.helpless(caster) || Moments.locked(caster),
-        BatForm.isBat(caster),
-        Weakened.sources(caster).level(Downed.state(caster) != null) > 0,
-        power.flatMap(SkillPower::batForm).isPresent() && DirectSun.on(caster),
-        id == null
-            ? 0L
-            : PowerCooldownAttachment.get(caster).ticksLeft(id, caster.getWorld().getTime()),
-        BloodAttachment.get(caster),
-        power.map(owned -> bloodCost(caster, owned)).orElse(0),
-        power.flatMap(SkillPower::mesmerise).isPresent() && aim.gazeTarget() == null,
-        (power.flatMap(SkillPower::shadowStep).isPresent()
-                || power.flatMap(SkillPower::vanish).isPresent())
-            && aim.stepTo() == null);
+        new PowerUse.Situation(
+            power.isPresent(),
+            Downed.helpless(caster) || Moments.locked(caster),
+            Holds.stopsPower(caster, power.map(owned -> owned.moves().count() > 0).orElse(false)),
+            WingedForm.on(caster),
+            BatForm.isBat(caster),
+            Weakened.sources(caster).level(Downed.state(caster) != null) > 0,
+            shifts && DirectSun.on(caster),
+            id == null || FreePowers.free(caster, id)
+                ? 0L
+                : PowerCooldownAttachment.get(caster).ticksLeft(id, caster.getWorld().getTime()),
+            BloodAttachment.get(caster),
+            power.map(owned -> bloodCost(caster, id, owned)).orElse(0),
+            power.map(aim::unseen).orElse(false),
+            power.map(aim::nowhere).orElse(false),
+            power.map(aim::subjectless).orElse(false)));
   }
 
   public static PowerUse.Verdict cast(final LivingEntity caster, @Nullable final Identifier id) {
@@ -142,7 +151,9 @@ public final class Powers {
   public static PowerUse.Verdict cast(
       final LivingEntity caster, @Nullable final Identifier id, final PowerHeading heading) {
     final Optional<SkillPower> owned = power(caster, id);
-    if (BatForm.isBat(caster) && owned.flatMap(SkillPower::batForm).isPresent()) {
+    if (BatForm.isBat(caster)
+        && !WingedForm.on(caster)
+        && owned.flatMap(SkillPower::batForm).isPresent()) {
       return BatForm.leave(caster) ? PowerUse.Verdict.READY : PowerUse.Verdict.CRAMPED;
     }
     final PowerAim aim = PowerAim.of(caster, owned, heading);
@@ -151,55 +162,15 @@ public final class Powers {
       return verdict;
     }
     final SkillPower power = owned.orElseThrow();
-    final int blood = bloodCost(caster, power);
+    final int blood = bloodCost(caster, id, power);
     if (blood > 0) {
       BloodAttachment.set(caster, BloodAttachment.get(caster) - blood);
     }
     final long now = caster.getWorld().getTime();
     PowerCooldownAttachment.set(
-        caster, PowerCooldownAttachment.get(caster).start(id, now, cooldownTicks(caster, power)));
-    for (final StatusEffectInstance effect : power.effects()) {
-      caster.addStatusEffect(new StatusEffectInstance(effect), caster);
-    }
-    if (power.batForm().isEmpty()) {
-      VampireSigns.shown(caster, SuspicionCause.SEEN_USING_A_POWER);
-    }
-    power.batForm().ifPresent(form -> BatForm.enter(caster));
-    power.leap().ifPresent(leap -> leap.launch(caster, heading(caster)));
-    if (aim.gazeTarget() != null) {
-      power.mesmerise().ifPresent(mesmerise -> Gazes.start(caster, aim.gazeTarget(), mesmerise));
-    }
-    if (aim.stepTo() != null) {
-      power
-          .vanish()
-          .ifPresentOrElse(
-              vanish -> Vanish.go(caster, aim.stepTo(), vanish),
-              () -> ShadowStep.step(caster, aim.stepTo()));
-    }
-    power.heal().ifPresent(heal -> Mending.start(caster, heal));
-    power.familiar().ifPresent(familiar -> GhostlyFamiliars.summon(caster, familiar));
-    power.fog().ifPresent(fog -> FogClouds.spawn(caster, fog));
-    power.rally().ifPresent(rally -> Rally.call(caster, rally));
-    power.summon().ifPresent(summon -> Summons.call(caster, summon));
-    if (caster instanceof ServerPlayerEntity player) {
-      power.track().ifPresent(track -> Tracking.start(player, track));
-    }
-    if (caster instanceof PowerShow show) {
-      power.mob().flatMap(MobPowerUse::clip).ifPresent(show::showPower);
-    }
-    power
-        .sound()
-        .ifPresent(
-            sound ->
-                caster
-                    .getWorld()
-                    .playSound(
-                        null,
-                        caster.getBlockPos(),
-                        SoundEvent.of(sound),
-                        caster.getSoundCategory(),
-                        1.0F,
-                        1.0F));
+        caster,
+        PowerCooldownAttachment.get(caster).start(id, now, cooldownTicks(caster, id, power)));
+    PowerCasts.apply(caster, id, power, aim);
     return verdict;
   }
 }
