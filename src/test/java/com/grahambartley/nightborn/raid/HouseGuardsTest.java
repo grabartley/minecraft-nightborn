@@ -26,4 +26,24 @@ class HouseGuardsTest {
       final boolean intrudes) {
     assertEquals(intrudes, HouseGuards.intrudes(player, vampire, creative, hunterMob));
   }
+
+  @ParameterizedTest(name = "monster {0}, vampire {1}, keeps a house {2}: guards against {3}")
+  @CsvSource({
+    "true, false, false, true",
+    "true, true, false, true",
+    "true, false, true, true",
+    "true, true, true, false",
+    "false, false, true, false",
+    "false, false, false, false"
+  })
+  @DisplayName(
+      "a player's thrall fights any monster, but a house's thrall never turns on the house's"
+          + " vampires")
+  void guardsAgainst(
+      final boolean monster,
+      final boolean vampire,
+      final boolean keepsHouse,
+      final boolean guards) {
+    assertEquals(guards, HouseGuards.guardsAgainst(monster, vampire, keepsHouse));
+  }
 }

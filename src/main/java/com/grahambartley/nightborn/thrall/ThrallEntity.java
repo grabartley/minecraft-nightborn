@@ -6,6 +6,7 @@ import com.grahambartley.nightborn.challenge.Deeds;
 import com.grahambartley.nightborn.name.MobNaming;
 import com.grahambartley.nightborn.name.NameBearer;
 import com.grahambartley.nightborn.raid.HouseGuardGoal;
+import com.grahambartley.nightborn.raid.HouseGuards;
 import com.grahambartley.nightborn.servant.Servant;
 import com.grahambartley.nightborn.servant.ServantDeaths;
 import com.grahambartley.nightborn.servant.Servants;
@@ -21,6 +22,7 @@ import com.grahambartley.nightborn.servant.job.goal.GatherGoal;
 import com.grahambartley.nightborn.servant.job.goal.ScoutGoal;
 import com.grahambartley.nightborn.servant.job.goal.StandWatchGoal;
 import com.grahambartley.nightborn.servant.job.goal.WatchTargetGoal;
+import com.grahambartley.nightborn.vampire.Vampires;
 import com.grahambartley.nightborn.wheel.CommandWheel;
 import java.util.Optional;
 import java.util.UUID;
@@ -258,7 +260,8 @@ public class ThrallEntity extends PathAwareEntity
 
   @Override
   public boolean guardsAgainst(final LivingEntity intruder) {
-    return intruder instanceof Monster;
+    return HouseGuards.guardsAgainst(
+        intruder instanceof Monster, Vampires.isVampire(intruder), house != null);
   }
 
   @Override

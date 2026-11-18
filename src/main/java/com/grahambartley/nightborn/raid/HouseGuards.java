@@ -14,4 +14,9 @@ public final class HouseGuards {
     }
     return player || hunterMob;
   }
+
+  public static boolean guardsAgainst(
+      final boolean monster, final boolean vampire, final boolean keepsHouse) {
+    return monster && !(keepsHouse && vampire);
+  }
 }
