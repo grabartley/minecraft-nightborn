@@ -6,21 +6,17 @@ import com.grahambartley.nightborn.levitation.Levitation;
 import com.mojang.serialization.Codec;
 import java.util.Arrays;
 import java.util.Optional;
-import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
-import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
-import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.minecraft.component.ComponentType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemGroups;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
 import net.minecraft.network.codec.PacketCodecs;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
+import org.jetbrains.annotations.Nullable;
 
 public final class Parasols {
 
@@ -43,25 +39,12 @@ public final class Parasols {
 
   private Parasols() {}
 
-  public static void register() {
-    ItemGroupEvents.modifyEntriesEvent(ItemGroups.TOOLS)
-        .register(entries -> entries.addAfter(Items.SHEARS, PARASOL));
-    ServerPlayConnectionEvents.DISCONNECT.register(
-        (handler, server) -> ParasolShade.forget(handler.getPlayer().getUuid()));
-    ServerLivingEntityEvents.AFTER_DAMAGE.register(
-        (entity, source, baseDamageTaken, damageTaken, blocked) -> {
-          if (ParasolRules.blow(source.getAttacker() != null, damageTaken, blocked)) {
-            closeAll(entity);
-          }
-        });
-  }
-
   public static boolean isOpen(final ItemStack stack) {
     return stack.isOf(PARASOL) && stack.getOrDefault(OPEN, false);
   }
 
-  public static float openness(final ItemStack stack) {
-    return isOpen(stack) ? 1.0F : 0.0F;
+  public static float openness(final ItemStack stack, @Nullable final LivingEntity holder) {
+    return isOpen(stack) && holder != null && inHand(holder, stack) ? 1.0F : 0.0F;
   }
 
   public static boolean inHand(final LivingEntity holder, final ItemStack stack) {

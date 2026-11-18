@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import com.grahambartley.nightborn.MinecraftBootstrapExtension;
 import com.grahambartley.nightborn.house.House;
 import java.util.Optional;
+import java.util.OptionalLong;
 import java.util.UUID;
 import java.util.stream.Stream;
 import net.minecraft.util.math.BlockPos;
@@ -24,22 +25,52 @@ class RestedRulesTest {
   private static final UUID MEMBER = UUID.fromString("00000000-0000-0000-0000-000000000002");
   private static final UUID STRANGER = UUID.fromString("00000000-0000-0000-0000-000000000003");
 
-  @ParameterizedTest(name = "vampire {0}, coffin {1}, fully asleep {2}, night {3}: rested {4}")
+  @ParameterizedTest(
+      name = "vampire {0}, coffin {1}, fully asleep {2}, night {3}, whole day {4}: rested {5}")
   @CsvSource({
-    "true, true, true, true, true",
-    "false, true, true, true, false",
-    "true, false, true, true, false",
-    "true, true, false, true, false",
-    "true, true, true, false, false"
+    "true, true, true, true, true, true",
+    "false, true, true, true, true, false",
+    "true, false, true, true, true, false",
+    "true, true, false, true, true, false",
+    "true, true, true, false, true, false",
+    "true, true, true, true, false, false"
   })
-  @DisplayName("only a vampire player still asleep in a coffin when dusk comes wakes rested")
+  @DisplayName("only a vampire player who slept the whole day in a coffin wakes rested at dusk")
   void earned(
       final boolean vampire,
       final boolean coffin,
       final boolean asleep,
       final boolean night,
+      final boolean wholeDay,
       final boolean rested) {
-    assertEquals(rested, RestedRules.earned(vampire, coffin, asleep, night));
+    assertEquals(rested, RestedRules.earned(vampire, coffin, asleep, night, wholeDay));
+  }
+
+  @ParameterizedTest(name = "skipped {0}, slept from {1}, waking at {2}: whole day {3}")
+  @CsvSource({
+    "true, -1, 13000, true",
+    "true, 12900, 13000, true",
+    "false, 23000, 37000, true",
+    "false, 24000, 37000, true",
+    "false, 24001, 37000, false",
+    "false, 36900, 37000, false",
+    "false, -1, 37000, false",
+    "false, 0, 13000, true",
+    "false, 1, 13000, false"
+  })
+  @DisplayName("a whole day is a skipped one, or sleep from the first hour after dawn until dusk")
+  void wholeDay(final boolean skipped, final long from, final long wake, final boolean whole) {
+    assertEquals(
+        whole,
+        RestedRules.wholeDay(
+            skipped, from < 0 ? OptionalLong.empty() : OptionalLong.of(from), wake));
+  }
+
+  @ParameterizedTest(name = "waking at {0}: dawn began at {1}")
+  @CsvSource({"13000, -1000", "37000, 23000", "22999, -1000", "23000, 23000", "0, -1000"})
+  @DisplayName("the day being slept through began at the last dawn")
+  void dawnBefore(final long now, final long dawn) {
+    assertEquals(dawn, RestedRules.dawnBefore(now));
   }
 
   @ParameterizedTest(name = "time {0}: {1} ticks to dawn")

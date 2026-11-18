@@ -11,6 +11,6 @@ public final class ParasolModel {
     ModelPredicateProviderRegistry.register(
         Parasols.PARASOL,
         Parasols.OPEN_PREDICATE,
-        (stack, world, entity, seed) -> Parasols.openness(stack));
+        (stack, world, entity, seed) -> Parasols.openness(stack, entity));
   }
 }

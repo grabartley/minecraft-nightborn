@@ -7,6 +7,7 @@ import com.grahambartley.nightborn.coffin.CoffinLayout;
 import com.grahambartley.nightborn.coffin.CoffinRise;
 import com.grahambartley.nightborn.coffin.CoffinSleeperHold;
 import com.grahambartley.nightborn.coffin.CoffinSleepers;
+import com.grahambartley.nightborn.coffin.DaySleep;
 import com.grahambartley.nightborn.config.NightbornConfig;
 import com.grahambartley.nightborn.downed.DownedTargeting;
 import com.grahambartley.nightborn.hunt.Hunts;
@@ -193,6 +194,7 @@ abstract class LivingEntityMixin {
   @Inject(method = "sleep", at = @At("TAIL"))
   private void nightborn$standInAStandingCoffin(final BlockPos pos, final CallbackInfo ci) {
     CoffinSleeperHold.hold((LivingEntity) (Object) this);
+    DaySleep.lay((LivingEntity) (Object) this);
   }
 
   @Inject(method = "tick", at = @At("TAIL"))

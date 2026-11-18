@@ -10,6 +10,8 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.sound.SoundCategory;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 
 public final class DayRest {
@@ -28,9 +30,12 @@ public final class DayRest {
         Vampires.isVampire(player),
         CoffinSleepers.inCoffin(player),
         player.canResetTimeBySleeping(),
-        NightTime.isNight(world.getDimension().hasFixedTime(), world.getTimeOfDay()))) {
+        NightTime.isNight(world.getDimension().hasFixedTime(), world.getTimeOfDay()),
+        DaySleep.wholeDay(player))) {
+      DaySleep.forget(player);
       return;
     }
+    DaySleep.forget(player);
     final int level =
         RestedRules.level(
             Houses.get(world.getServer()).of(player.getUuid()),
@@ -46,6 +51,8 @@ public final class DayRest {
             true));
     player.sendMessage(
         Text.translatable(level == RestedRules.RESTED_AT_HOME ? RESTED_AT_HOME : RESTED), true);
+    player.playSoundToPlayer(
+        SoundEvents.BLOCK_RESPAWN_ANCHOR_SET_SPAWN, SoundCategory.PLAYERS, 0.6F, 0.8F);
     Deeds.record(player, Deed.of(DeedKinds.WOKE_RESTED));
   }
 }

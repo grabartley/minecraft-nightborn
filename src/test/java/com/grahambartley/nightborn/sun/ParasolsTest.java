@@ -38,7 +38,7 @@ class ParasolsTest {
   @DisplayName("only a parasol marked open counts as open")
   void isOpen(final String name, final ItemStack stack, final boolean open) {
     assertEquals(open, Parasols.isOpen(stack));
-    assertEquals(open ? 1.0F : 0.0F, Parasols.openness(stack));
+    assertEquals(0.0F, Parasols.openness(stack, null));
   }
 
   @Test

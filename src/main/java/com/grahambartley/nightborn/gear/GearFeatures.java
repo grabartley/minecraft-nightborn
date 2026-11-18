@@ -6,7 +6,7 @@ import com.grahambartley.nightborn.ammo.GarlicFumesEffect;
 import com.grahambartley.nightborn.coating.Coatings;
 import com.grahambartley.nightborn.holy.HolyWater;
 import com.grahambartley.nightborn.skill.StakedVampires;
-import com.grahambartley.nightborn.sun.Parasols;
+import com.grahambartley.nightborn.sun.ParasolEvents;
 import com.grahambartley.nightborn.ward.WardPoints;
 
 public final class GearFeatures {
@@ -16,7 +16,7 @@ public final class GearFeatures {
   public static void register() {
     GearBlocks.initialize();
     GearItems.register();
-    Parasols.register();
+    ParasolEvents.register();
     SilverOreGeneration.register();
     GarlicGeneration.register();
     WardPoints.register();
