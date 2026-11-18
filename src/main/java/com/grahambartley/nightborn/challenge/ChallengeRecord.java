@@ -11,51 +11,10 @@ import net.minecraft.network.codec.PacketCodecs;
 import net.minecraft.util.Identifier;
 
 public record ChallengeRecord(
-    TrialOffer offer, List<Identifier> finished, PaidTrials paid, FeatLog feats) {
-
-  public record PaidTrials(long period, List<Identifier> trials) {
-
-    public static final PaidTrials NONE = new PaidTrials(TrialOffer.NO_PERIOD, List.of());
-
-    public static final Codec<PaidTrials> CODEC =
-        RecordCodecBuilder.create(
-            instance ->
-                instance
-                    .group(
-                        Codec.LONG
-                            .optionalFieldOf("period", TrialOffer.NO_PERIOD)
-                            .forGetter(PaidTrials::period),
-                        Identifier.CODEC
-                            .listOf()
-                            .optionalFieldOf("trials", List.of())
-                            .forGetter(PaidTrials::trials))
-                    .apply(instance, PaidTrials::new));
-
-    public static final PacketCodec<ByteBuf, PaidTrials> PACKET_CODEC =
-        PacketCodec.tuple(
-            PacketCodecs.VAR_LONG,
-            PaidTrials::period,
-            Identifier.PACKET_CODEC.collect(PacketCodecs.toList()),
-            PaidTrials::trials,
-            PaidTrials::new);
-
-    public PaidTrials {
-      trials = List.copyOf(new LinkedHashSet<>(trials));
-    }
-
-    public Set<Identifier> in(final long now) {
-      return now == period ? Set.copyOf(trials) : Set.of();
-    }
-
-    PaidTrials with(final long now, final Identifier trial) {
-      final Set<Identifier> next = new LinkedHashSet<>(in(now));
-      next.add(trial);
-      return new PaidTrials(now, List.copyOf(next));
-    }
-  }
+    TrialOffer offer, List<Identifier> finished, List<TrialOffer> shelved, FeatLog feats) {
 
   public static final ChallengeRecord EMPTY =
-      new ChallengeRecord(TrialOffer.NONE, List.of(), PaidTrials.NONE, FeatLog.EMPTY);
+      new ChallengeRecord(TrialOffer.NONE, List.of(), List.of(), FeatLog.EMPTY);
 
   public static final Codec<ChallengeRecord> CODEC =
       RecordCodecBuilder.create(
@@ -69,9 +28,10 @@ public record ChallengeRecord(
                           .listOf()
                           .optionalFieldOf("finished", List.of())
                           .forGetter(ChallengeRecord::finished),
-                      PaidTrials.CODEC
-                          .optionalFieldOf("paid", PaidTrials.NONE)
-                          .forGetter(ChallengeRecord::paid),
+                      TrialOffer.CODEC
+                          .listOf()
+                          .optionalFieldOf("shelved", List.of())
+                          .forGetter(ChallengeRecord::shelved),
                       FeatLog.CODEC
                           .optionalFieldOf("feats", FeatLog.EMPTY)
                           .forGetter(ChallengeRecord::feats))
@@ -83,14 +43,15 @@ public record ChallengeRecord(
           ChallengeRecord::offer,
           Identifier.PACKET_CODEC.collect(PacketCodecs.toList()),
           ChallengeRecord::finished,
-          PaidTrials.PACKET_CODEC,
-          ChallengeRecord::paid,
+          TrialOffer.PACKET_CODEC.collect(PacketCodecs.toList()),
+          ChallengeRecord::shelved,
           FeatLog.PACKET_CODEC,
           ChallengeRecord::feats,
           ChallengeRecord::new);
 
   public ChallengeRecord {
     finished = List.copyOf(new LinkedHashSet<>(finished));
+    shelved = List.copyOf(shelved);
   }
 
   public boolean everFinished(final Identifier trial) {
@@ -98,17 +59,21 @@ public record ChallengeRecord(
   }
 
   public ChallengeRecord withOffer(final TrialOffer next) {
-    return new ChallengeRecord(next, finished, paid, feats);
+    return new ChallengeRecord(next, finished, shelved, feats);
   }
 
   public ChallengeRecord withFeats(final FeatLog next) {
-    return new ChallengeRecord(offer, finished, paid, next);
+    return new ChallengeRecord(offer, finished, shelved, next);
   }
 
   public ChallengeRecord finishing(final Identifier trial) {
     final Set<Identifier> next = new LinkedHashSet<>(finished);
     next.add(trial);
-    return new ChallengeRecord(offer, List.copyOf(next), paid.with(offer.period(), trial), feats);
+    return new ChallengeRecord(offer, List.copyOf(next), shelved, feats);
+  }
+
+  public ChallengeRecord withShelved(final TrialOffer next, final List<TrialOffer> kept) {
+    return new ChallengeRecord(next, finished, kept, feats);
   }
 
   public boolean isEmpty() {

@@ -62,16 +62,16 @@ public final class OfferKeeper {
             .map(id -> new TrialDraw.Candidate(id, record.everFinished(id)))
             .toList();
     TrialDraw.renewed(
-            record.offer(),
+            record,
             side,
             period,
             open,
             settings.trialsOnOffer(),
-            player.getUuid().getMostSignificantBits() ^ period,
-            record.paid().in(period))
+            player.getUuid().getMostSignificantBits() ^ period)
         .ifPresent(
-            offer -> {
-              ChallengeAttachment.set(player, record.withOffer(offer));
+            renewed -> {
+              ChallengeAttachment.set(player, renewed);
+              final TrialOffer offer = renewed.offer();
               if (!offer.trials().isEmpty() && offer.side().isPresent()) {
                 player.sendMessage(
                     Text.translatable(RENEWED + offer.side().get().asString()), true);

@@ -101,7 +101,7 @@ public final class ChallengeHooks {
         Deed.of(DeedKinds.VAMPIRE_STAKED)
             .with(DeedKinds.STAGE_RANK, StageRanks.of(victim))
             .with(DeedKinds.IN_VILLAGE, VillageSuspicion.bellFor(world, victim).isPresent())
-            .with(DeedKinds.IN_COFFIN, victim.getAttachedOrElse(STAKED_ASLEEP, false))
+            .with(DeedKinds.IN_COFFIN, Boolean.TRUE.equals(victim.removeAttached(STAKED_ASLEEP)))
             .with(DeedKinds.LORD, lord(world, victim)));
     if (ContractTracker.householdCleared(victim)) {
       Deeds.record(
