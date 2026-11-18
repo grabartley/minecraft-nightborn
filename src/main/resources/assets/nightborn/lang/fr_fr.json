@@ -614,7 +614,7 @@
   "nightborn.setting.raids.watchDays": "Garde tous les (jours)",
   "nightborn.setting.raids.watchDays.tooltip": "Une maisonnée de vampires garde un membre éveillé de jour une fois tous les tant de jours. 0 la désactive",
   "nightborn.setting.raids.contractMapSpread": "Écart de la carte du contrat",
-  "nightborn.setting.raids.contractMapSpread.tooltip": "À quelle distance du centre de la carte d'un contrat la maison de vampires peut se trouver",
+  "nightborn.setting.raids.contractMapSpread.tooltip": "La distance minimale que la carte d'un contrat doit couvrir de chaque côté de son centre. C'est la plus petite carte ordinaire qui y parvient, et la maison s'y trouve quelque part",
   "nightborn.setting.structures.rumourRange": "Portée des rumeurs",
   "nightborn.setting.structures.rumourRange.tooltip": "À quelle distance, en blocs, une maison de vampires peut se trouver pour qu'un Maître de la guilde en ait entendu parler",
   "entity.nightborn.vampire": "Vampire",

@@ -10,7 +10,7 @@ public final class NightRoutine {
   static final double BLOCKS_PER_TICK_PER_SPEED = 0.25;
   static final double PATH_MARGIN = 2.0;
   static final long SETTLE_TICKS = 600L;
-  public static final int COFFIN_REACH_HOMES = 2;
+  static final int COFFIN_REACH_HOMES = 2;
 
   private NightRoutine() {}
 
@@ -97,7 +97,11 @@ public final class NightRoutine {
       final int homeRadius,
       final boolean loaded,
       final boolean free) {
-    final double reach = (double) homeRadius * COFFIN_REACH_HOMES;
+    final double reach = coffinReach(homeRadius);
     return known && distanceSquared <= reach * reach && loaded && free;
+  }
+
+  public static double coffinReach(final int homeRadius) {
+    return (double) homeRadius * COFFIN_REACH_HOMES;
   }
 }

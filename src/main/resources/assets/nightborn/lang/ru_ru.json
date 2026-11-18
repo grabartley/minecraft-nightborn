@@ -614,7 +614,7 @@
   "nightborn.setting.raids.watchDays": "Дозор раз в (дней)",
   "nightborn.setting.raids.watchDays.tooltip": "Семья вампиров оставляет одного члена бодрствовать днём раз в столько дней. 0 отключает",
   "nightborn.setting.raids.contractMapSpread": "Разброс карты контракта",
-  "nightborn.setting.raids.contractMapSpread.tooltip": "Как далеко от центра карты контракта может стоять дом вампиров",
+  "nightborn.setting.raids.contractMapSpread.tooltip": "Наименьшее расстояние, которое карта контракта должна охватывать в каждую сторону от центра. Это самая маленькая обычная карта, которая это может, и дом стоит где-то на ней",
   "nightborn.setting.structures.rumourRange": "Радиус слухов",
   "nightborn.setting.structures.rumourRange.tooltip": "Как далеко, в блоках, может быть дом вампиров, чтобы Мастер гильдии слышал о нём",
   "entity.nightborn.vampire": "Вампир",

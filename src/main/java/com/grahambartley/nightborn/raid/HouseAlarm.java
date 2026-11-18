@@ -28,12 +28,11 @@ public final class HouseAlarm {
     rouse(sleeper, intruder);
   }
 
-  public static int raise(
+  public static void raise(
       final ServerWorld world, final BlockPos home, final LivingEntity intruder) {
-    final int reach =
-        ServerConfigService.current().mobs().vampireHomeRadius() * NightRoutine.COFFIN_REACH_HOMES;
+    final double reach =
+        NightRoutine.coffinReach(ServerConfigService.current().mobs().vampireHomeRadius());
     final Optional<BlockPos> house = Optional.of(home);
-    int woken = 0;
     for (final VampireEntity member :
         world.getEntitiesByClass(
             VampireEntity.class,
@@ -43,9 +42,7 @@ public final class HouseAlarm {
                     && mate.isSleeping()
                     && Housemates.share(house, mate.homeLife().home()))) {
       rouse(member, intruder);
-      woken++;
     }
-    return woken;
   }
 
   public static boolean intruder(final LivingEntity entity) {

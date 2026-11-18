@@ -48,8 +48,7 @@ public final class NoiseSources {
   private static void blow(final LivingEntity hurt, final DamageSource source) {
     if (source.getAttacker() instanceof ServerPlayerEntity attacker) {
       HouseNoise.make(attacker, NoiseAct.BLOW);
-    }
-    if (hurt instanceof ServerPlayerEntity victim) {
+    } else if (source.getAttacker() != null && hurt instanceof ServerPlayerEntity victim) {
       HouseNoise.make(victim, NoiseAct.BLOW);
     }
   }

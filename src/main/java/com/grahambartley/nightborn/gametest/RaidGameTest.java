@@ -66,11 +66,10 @@ public final class RaidGameTest implements FabricGameTest {
   }
 
   @GameTest(templateName = ARENA, batchId = QUIET_BATCH, tickLimit = 20)
-  public void aSneakingHunterWhoOnlyStakesLeavesTheHouseAsleep(final TestContext context) {
+  public void aSingleBlowLeavesTheHouseAsleep(final TestContext context) {
     final BlockPos head = CoffinStage.coffin(context, new BlockPos(1, 2, 1), Direction.SOUTH);
     final VampireEntity sleeper = sleeper(context, head, new BlockPos(1, 2, 4));
     final ServerPlayerEntity hunter = intruder(context, new BlockPos(1, 2, 6));
-    hunter.setSneaking(true);
     context.runAtTick(
         3,
         () -> {

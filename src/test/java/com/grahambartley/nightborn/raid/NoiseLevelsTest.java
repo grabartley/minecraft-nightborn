@@ -4,7 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.UUID;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
@@ -32,14 +31,15 @@ class NoiseLevelsTest {
     assertEquals(expected, level, 1e-9);
   }
 
-  @Test
+  @ParameterizedTest(name = "first {0}, second {1}")
+  @CsvSource({"6, 2", "0.5, 9"})
   @DisplayName("each sleeper keeps its own count")
-  void keepsSleepersApart() {
+  void keepsSleepersApart(final double first, final double second) {
     final NoiseLevels levels = new NoiseLevels();
-    levels.hear(SLEEPER, 6.0, 0L, 1);
-    levels.hear(OTHER, 2.0, 0L, 1);
-    assertEquals(6.0, levels.level(SLEEPER, 0L, 1), 1e-9);
-    assertEquals(2.0, levels.level(OTHER, 0L, 1), 1e-9);
+    levels.hear(SLEEPER, first, 0L, 1);
+    levels.hear(OTHER, second, 0L, 1);
+    assertEquals(first, levels.level(SLEEPER, 0L, 1), 1e-9);
+    assertEquals(second, levels.level(OTHER, 0L, 1), 1e-9);
   }
 
   @ParameterizedTest(name = "settled {0} ticks later keeps {1}")
@@ -53,12 +53,13 @@ class NoiseLevelsTest {
     assertEquals(kept, levels.size());
   }
 
-  @Test
+  @ParameterizedTest(name = "heard {0} then forgotten, next {1}")
+  @CsvSource({"9, 2", "4, 6"})
   @DisplayName("a woken sleeper starts from silence next time")
-  void forgets() {
+  void forgets(final double before, final double next) {
     final NoiseLevels levels = new NoiseLevels();
-    levels.hear(SLEEPER, 9.0, 0L, 1);
+    levels.hear(SLEEPER, before, 0L, 1);
     levels.forget(SLEEPER);
-    assertEquals(2.0, levels.hear(SLEEPER, 2.0, 0L, 1), 1e-9);
+    assertEquals(next, levels.hear(SLEEPER, next, 0L, 1), 1e-9);
   }
 }

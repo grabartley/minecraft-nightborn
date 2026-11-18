@@ -21,7 +21,7 @@ public final class NoiseLevels {
     return level;
   }
 
-  public double level(final UUID sleeper, final long now, final int fadePerSecond) {
+  double level(final UUID sleeper, final long now, final int fadePerSecond) {
     final Heard before = heard.get(sleeper);
     return before == null ? 0.0 : Noise.faded(before.level(), now - before.at(), fadePerSecond);
   }
@@ -39,7 +39,7 @@ public final class NoiseLevels {
                     <= 0.0);
   }
 
-  public int size() {
+  int size() {
     return heard.size();
   }
 

@@ -614,7 +614,7 @@
   "nightborn.setting.raids.watchDays": "Wache alle (Tage)",
   "nightborn.setting.raids.watchDays.tooltip": "Ein Vampirhaushalt lässt einmal in so vielen Tagen ein Mitglied tagsüber wach. 0 schaltet es ab",
   "nightborn.setting.raids.contractMapSpread": "Streuung der Auftragskarte",
-  "nightborn.setting.raids.contractMapSpread.tooltip": "Wie weit von der Mitte der Auftragskarte das Vampirhaus liegen darf",
+  "nightborn.setting.raids.contractMapSpread.tooltip": "Die kleinste Strecke, die eine Auftragskarte zu jeder Seite ihrer Mitte zeigen muss. Es ist die kleinste Vanilla-Karte, die das schafft, und das Haus liegt irgendwo darauf",
   "nightborn.setting.structures.rumourRange": "Gerüchtereichweite",
   "nightborn.setting.structures.rumourRange.tooltip": "Wie weit entfernt, in Blöcken, ein Vampirhaus sein darf, damit ein Gildenmeister davon gehört hat",
   "entity.nightborn.vampire": "Vampir",

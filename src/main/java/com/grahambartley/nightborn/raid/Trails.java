@@ -10,6 +10,7 @@ import java.util.Optional;
 import java.util.UUID;
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
@@ -28,6 +29,8 @@ public final class Trails {
   static void register() {
     ServerLivingEntityEvents.AFTER_DAMAGE.register(
         (entity, source, base, taken, blocked) -> wounded(entity, source, taken));
+    ServerPlayConnectionEvents.DISCONNECT.register(
+        (handler, server) -> TRAILS.remove(handler.getPlayer().getUuid()));
     ServerLifecycleEvents.SERVER_STOPPED.register(server -> TRAILS.clear());
   }
 

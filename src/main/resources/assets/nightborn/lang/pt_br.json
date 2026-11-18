@@ -614,7 +614,7 @@
   "nightborn.setting.raids.watchDays": "Vigia a cada (dias)",
   "nightborn.setting.raids.watchDays.tooltip": "Uma família de vampiros mantém um membro acordado de dia uma vez a cada tantos dias. 0 desliga",
   "nightborn.setting.raids.contractMapSpread": "Margem do mapa do contrato",
-  "nightborn.setting.raids.contractMapSpread.tooltip": "A que distância do centro do mapa de um contrato a casa de vampiros pode ficar",
+  "nightborn.setting.raids.contractMapSpread.tooltip": "A distância mínima que o mapa de um contrato deve cobrir de cada lado do centro. É o menor mapa comum que consegue, e a casa fica em algum lugar nele",
   "nightborn.setting.structures.rumourRange": "Alcance dos rumores",
   "nightborn.setting.structures.rumourRange.tooltip": "A que distância, em blocos, uma casa de vampiros pode estar para um Mestre da Guilda ter ouvido falar dela",
   "entity.nightborn.vampire": "Vampiro",

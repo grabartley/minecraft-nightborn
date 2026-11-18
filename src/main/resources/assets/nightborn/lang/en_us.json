@@ -614,7 +614,7 @@
   "nightborn.setting.raids.watchDays": "Watch Every (days)",
   "nightborn.setting.raids.watchDays.tooltip": "A vampire household keeps one member awake by day once in this many days. 0 turns it off",
   "nightborn.setting.raids.contractMapSpread": "Contract Map Spread",
-  "nightborn.setting.raids.contractMapSpread.tooltip": "How far from the middle of a contract's map the vampire house may lie",
+  "nightborn.setting.raids.contractMapSpread.tooltip": "The least distance a contract's map must cover on each side of its middle. The map is the smallest vanilla map that does, and the house lies somewhere on it",
   "nightborn.setting.structures.rumourRange": "Rumour Range",
   "nightborn.setting.structures.rumourRange.tooltip": "How far away, in blocks, a vampire house can be for a Guild Master to have heard of it",
   "entity.nightborn.vampire": "Vampire",

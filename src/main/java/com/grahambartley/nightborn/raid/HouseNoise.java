@@ -17,7 +17,10 @@ public final class HouseNoise {
   private HouseNoise() {}
 
   public static void make(final ServerPlayerEntity maker, final NoiseAct act) {
-    if (maker.isSpectator() || maker.isCreative() || !maker.isAlive()) {
+    if (maker.isSpectator()
+        || maker.isCreative()
+        || !maker.isAlive()
+        || Vampires.isVampire(maker)) {
       return;
     }
     final ServerWorld world = maker.getServerWorld();

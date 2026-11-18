@@ -22,6 +22,7 @@ import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.mob.ZombieEntity;
 import net.minecraft.entity.passive.VillagerEntity;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
@@ -83,6 +84,28 @@ public class ThrallGameTest implements FabricGameTest {
     return context
         .getWorld()
         .getEntitiesByClass(ThrallEntity.class, new Box(centre, centre).expand(2.0), t -> true);
+  }
+
+  @GameTest(templateName = ARENA, batchId = BATCH, tickLimit = 40)
+  public void aHouseThrallStaysBoundToItsHouseAndRemembersIt(final TestContext context) {
+    final ThrallEntity thrall = context.spawnEntity(Thralls.THRALL, new BlockPos(4, 2, 4));
+    thrall.setAiDisabled(true);
+    final BlockPos home = context.getAbsolutePos(new BlockPos(2, 2, 2));
+    thrall.keepHouse(home);
+    context.runAtTick(
+        30,
+        () -> {
+          context.assertTrue(
+              thrall.isAlive() && !thrall.isRemoved(),
+              "a house thrall with no player master is not set free");
+          final ThrallEntity reloaded = Thralls.THRALL.create(context.getWorld());
+          reloaded.readNbt(thrall.writeNbt(new NbtCompound()));
+          context.assertEquals(
+              reloaded.house().orElse(null), home, "the thrall remembers its house after a reload");
+          context.assertEquals(reloaded.mode(), Stance.STAY, "it keeps to its post");
+          reloaded.discard();
+          context.complete();
+        });
   }
 
   @GameTest(templateName = ARENA, batchId = BATCH, tickLimit = FIRST_DRINK + 10)

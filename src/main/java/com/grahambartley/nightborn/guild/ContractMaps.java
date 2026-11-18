@@ -1,10 +1,7 @@
 package com.grahambartley.nightborn.guild;
 
 import com.grahambartley.nightborn.raid.MapSpread;
-import com.grahambartley.nightborn.servant.job.ScoutChoices;
 import com.grahambartley.nightborn.server.ServerConfigService;
-import com.grahambartley.nightborn.structure.NearestStructures;
-import com.grahambartley.nightborn.structure.NearestStructures.Found;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.FilledMapItem;
@@ -20,24 +17,17 @@ public final class ContractMaps {
 
   public static void give(
       final ServerWorld world, final Entity master, final ServerPlayerEntity hunter) {
-    final BlockPos from = master.getBlockPos();
-    final int range = ServerConfigService.current().structures().rumourRange();
     final Text teller = master.getDisplayName();
-    NearestStructures.eachOf(world, GuildRumour.VAMPIRE_HOUSES, from, range)
-        .thenAcceptAsync(
-            found -> {
-              if (hunter.isDisconnected()) {
-                return;
-              }
-              ScoutChoices.nearest(from, found, range, 1).stream()
-                  .findFirst()
-                  .ifPresentOrElse(
-                      house -> hand(world, hunter, house),
-                      () ->
-                          hunter.sendMessage(
-                              Text.translatable("nightborn.guild.rumour.none", teller), false));
-            },
-            world.getServer());
+    GuildRumour.nearestHouse(
+        world,
+        master.getBlockPos(),
+        hunter,
+        nearest ->
+            nearest.ifPresentOrElse(
+                house -> hand(hunter, map(world, house.pos())),
+                () ->
+                    hunter.sendMessage(
+                        Text.translatable("nightborn.guild.rumour.none", teller), false)));
   }
 
   public static ItemStack map(final ServerWorld world, final BlockPos house) {
@@ -54,9 +44,7 @@ public final class ContractMaps {
     return map;
   }
 
-  private static void hand(
-      final ServerWorld world, final ServerPlayerEntity hunter, final Found house) {
-    final ItemStack map = map(world, house.pos());
+  private static void hand(final ServerPlayerEntity hunter, final ItemStack map) {
     if (!hunter.giveItemStack(map)) {
       hunter.dropItem(map, false);
     }
