@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.grahambartley.nightborn.testing.FakeAttachmentTarget;
 import java.util.stream.Stream;
+import net.minecraft.util.math.Vec3d;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -17,7 +18,7 @@ class MomentAttachmentTest {
   @DisplayName("a player reads back the moment they are in until it is cleared")
   void readsBack(final Moment moment) {
     final FakeAttachmentTarget player = new FakeAttachmentTarget();
-    final MomentState state = new MomentState(moment, 10L, 0.0F, 100, 60);
+    final MomentState state = new MomentState(moment, 10L, 0.0F, Vec3d.ZERO, 100, 60);
     MomentAttachment.set(player, state);
     assertEquals(state, MomentAttachment.get(player));
     MomentAttachment.set(player, null);

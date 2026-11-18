@@ -23,6 +23,7 @@ import net.minecraft.test.GameTest;
 import net.minecraft.test.TestContext;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 
 public class OathGameTest implements FabricGameTest {
 
@@ -109,6 +110,28 @@ public class OathGameTest implements FabricGameTest {
           human.damage(human.getDamageSources().generic(), 5.0F);
           context.assertEquals(human.getHealth(), health, "nothing hurts during the moment");
           context.assertFalse(GuildMembership.maySwear(human), "a vampire can never join");
+          TestPlayers.finish(context, human);
+        });
+  }
+
+  @GameTest(templateName = ARENA, tickLimit = TestPlayers.READY + 20)
+  public void aPlayerShovedDuringAMomentIsPutBackWhereTheyStood(final TestContext context) {
+    final ServerPlayerEntity human = TestPlayers.human(context, new BlockPos(2, 2, 4));
+    final Vec3d[] stood = new Vec3d[1];
+    context.runAtTick(
+        TestPlayers.READY,
+        () -> {
+          context.assertTrue(VampireTransitions.turnInCeremony(human), "the human turns");
+          stood[0] = human.getPos();
+          human.setPosition(stood[0].add(2.0, 0.0, 0.0));
+          human.setVelocity(new Vec3d(1.0, 0.5, 0.0));
+        });
+    context.runAtTick(
+        TestPlayers.READY + 2,
+        () -> {
+          context.assertTrue(
+              human.getPos().squaredDistanceTo(stood[0]) < 1.0E-4, "the player is put back");
+          context.assertTrue(human.getVelocity().equals(Vec3d.ZERO), "and is not moving");
           TestPlayers.finish(context, human);
         });
   }

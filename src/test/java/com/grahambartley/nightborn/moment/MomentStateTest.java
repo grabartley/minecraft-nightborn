@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
+import net.minecraft.util.math.Vec3d;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -11,7 +12,8 @@ import org.junit.jupiter.params.provider.EnumSource;
 
 class MomentStateTest {
 
-  private static final MomentState STATE = new MomentState(Moment.OATH, 1000L, 90.0F, 100, 60);
+  private static final MomentState STATE =
+      new MomentState(Moment.OATH, 1000L, 90.0F, new Vec3d(10.5, 64.0, -3.5), 100, 60);
 
   @ParameterizedTest(name = "{0} ticks in -> {1}")
   @CsvSource({"0, CAMERA", "99.5, CAMERA", "100, CARD", "159.9, CARD", "160, OVER", "500, OVER"})
@@ -39,9 +41,23 @@ class MomentStateTest {
   @EnumSource(Moment.class)
   @DisplayName("a moment reaches the client unchanged")
   void syncs(final Moment moment) {
-    final MomentState state = new MomentState(moment, 123456789L, -45.5F, 100, 60);
+    final MomentState state =
+        new MomentState(moment, 123456789L, -45.5F, new Vec3d(-29999984.5, 319.0, 0.125), 100, 60);
     final ByteBuf buffer = Unpooled.buffer();
     MomentState.PACKET_CODEC.encode(buffer, state);
     assertEquals(state, MomentState.PACKET_CODEC.decode(buffer));
+  }
+
+  @ParameterizedTest(name = "at {0} {1} {2} -> drifted {3}")
+  @CsvSource({
+    "10.5, 64.0, -3.5, false",
+    "10.5005, 64.0, -3.5, false",
+    "10.6, 64.0, -3.5, true",
+    "10.5, 63.5, -3.5, true",
+    "12.0, 64.0, 1.0, true"
+  })
+  @DisplayName("a player held in a moment is put back once anything moves them off their spot")
+  void drifted(final double x, final double y, final double z, final boolean drifted) {
+    assertEquals(drifted, STATE.drifted(new Vec3d(x, y, z)));
   }
 }

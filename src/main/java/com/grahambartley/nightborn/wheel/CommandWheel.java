@@ -1,6 +1,7 @@
 package com.grahambartley.nightborn.wheel;
 
 import com.grahambartley.nightborn.Nightborn;
+import com.grahambartley.nightborn.moment.Moments;
 import com.grahambartley.nightborn.network.ChooseWheelPayload;
 import com.grahambartley.nightborn.network.OpenWheelPayload;
 import com.grahambartley.nightborn.skill.SkillTree;
@@ -98,7 +99,7 @@ public final class CommandWheel {
 
   public static boolean choose(final ServerPlayerEntity player, final ChooseWheelPayload payload) {
     final WheelMenu menu = MENUS.remove(player.getUuid());
-    if (menu == null) {
+    if (menu == null || Moments.locked(player)) {
       return false;
     }
     final Optional<WheelEntry> chosen =

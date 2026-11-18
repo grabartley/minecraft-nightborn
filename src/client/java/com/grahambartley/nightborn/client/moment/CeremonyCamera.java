@@ -7,6 +7,7 @@ public final class CeremonyCamera {
   public record Shot(float yaw, float pitch, float distance) {}
 
   static final float FULL_TURN = 360.0F;
+  static final float NEAREST = 1.0F;
   static final float FARTHEST = 4.0F;
   static final float HIGHEST_PITCH = 20.0F;
 
@@ -16,6 +17,9 @@ public final class CeremonyCamera {
     final float t = MathHelper.clamp(progress, 0.0F, 1.0F);
     final float eased = t * t * (3.0F - 2.0F * t);
     final float away = MathHelper.sin(MathHelper.PI * t);
-    return new Shot(startYaw + FULL_TURN * eased, HIGHEST_PITCH * away, FARTHEST * away);
+    return new Shot(
+        startYaw + FULL_TURN * eased,
+        HIGHEST_PITCH * away,
+        MathHelper.lerp(away, NEAREST, FARTHEST));
   }
 }

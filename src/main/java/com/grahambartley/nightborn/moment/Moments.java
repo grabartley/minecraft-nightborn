@@ -24,6 +24,7 @@ import net.minecraft.sound.SoundCategory;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.TypedActionResult;
+import net.minecraft.util.math.Vec3d;
 
 public final class Moments {
 
@@ -61,17 +62,21 @@ public final class Moments {
     return MomentAttachment.get(entity) != null;
   }
 
-  public static void begin(final ServerPlayerEntity player, final Moment moment) {
+  public static MomentState begin(final ServerPlayerEntity player, final Moment moment) {
     final FactionSettings settings = ServerConfigService.current().factions();
-    MomentAttachment.set(
-        player,
+    player.stopRiding();
+    final MomentState state =
         new MomentState(
             moment,
             player.getServerWorld().getTime(),
             player.getYaw(),
+            player.getPos(),
             settings.ceremonySeconds() * TICKS_PER_SECOND,
-            settings.titleCardSeconds() * TICKS_PER_SECOND));
+            settings.titleCardSeconds() * TICKS_PER_SECOND);
+    MomentAttachment.set(player, state);
     hold(player, true);
+    pin(player, state);
+    return state;
   }
 
   private static void tick(final MinecraftServer server) {
@@ -91,6 +96,7 @@ public final class Moments {
       return;
     }
     hold(player, true);
+    pin(player, state);
     for (final MomentCue cue :
         MomentSchedule.sounding(state.moment(), elapsed, state.cameraTicks())) {
       show(player, state.moment(), cue);
@@ -129,6 +135,23 @@ public final class Moments {
               PARTICLE_SPREAD,
               PARTICLE_SPREAD,
               0.0);
+    }
+  }
+
+  private static void pin(final ServerPlayerEntity player, final MomentState state) {
+    if (player.hasVehicle()) {
+      player.stopRiding();
+    }
+    if (player.isFallFlying()) {
+      player.stopFallFlying();
+    }
+    if (player.getAbilities().flying) {
+      player.getAbilities().flying = false;
+      player.sendAbilitiesUpdate();
+    }
+    player.setVelocity(Vec3d.ZERO);
+    if (state.drifted(player.getPos())) {
+      player.requestTeleport(state.at().getX(), state.at().getY(), state.at().getZ());
     }
   }
 

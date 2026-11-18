@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.grahambartley.nightborn.moment.Moment;
 import com.grahambartley.nightborn.moment.MomentState;
+import net.minecraft.util.math.Vec3d;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -13,7 +14,7 @@ import org.junit.jupiter.params.provider.EnumSource;
 class CeremonyFadeTest {
 
   private static MomentState state(final Moment moment) {
-    return new MomentState(moment, 0L, 0.0F, 100, 60);
+    return new MomentState(moment, 0L, 0.0F, Vec3d.ZERO, 100, 60);
   }
 
   @ParameterizedTest(name = "{0} ticks in -> card {1}")

@@ -4,7 +4,6 @@ import com.grahambartley.nightborn.advancement.Milestone;
 import com.grahambartley.nightborn.advancement.MilestoneCriterion;
 import com.grahambartley.nightborn.faction.GuildMembership;
 import com.grahambartley.nightborn.moment.Moment;
-import com.grahambartley.nightborn.moment.MomentAttachment;
 import com.grahambartley.nightborn.moment.MomentState;
 import com.grahambartley.nightborn.moment.Moments;
 import com.grahambartley.nightborn.server.ServerConfigService;
@@ -16,7 +15,6 @@ import net.minecraft.util.math.Box;
 public final class GuildOath {
 
   static final String SWORN = "nightborn.oath.sworn";
-  static final float LOOK_TURN = 30.0F;
 
   private GuildOath() {}
 
@@ -26,11 +24,9 @@ public final class GuildOath {
       return false;
     }
     MilestoneCriterion.reach(player, Milestone.SWORN_IN);
-    Moments.begin(player, Moment.OATH);
+    final MomentState state = Moments.begin(player, Moment.OATH);
     player.sendMessage(Text.translatable(SWORN), false);
-    final MomentState state = MomentAttachment.get(player);
-    final int ticks = state == null ? 0 : state.cameraTicks();
-    master.ifPresent(giver -> giver.swearIn(player, ticks));
+    master.ifPresent(giver -> giver.swearIn(player, state.cameraTicks()));
     salute(player);
     return true;
   }
@@ -44,7 +40,9 @@ public final class GuildOath {
                 HunterEntity.class,
                 Box.of(player.getPos(), range * 2.0, range * 2.0, range * 2.0),
                 hunter -> hunter.isAlive() && hunter.squaredDistanceTo(player) <= range * range)) {
-      hunter.getLookControl().lookAt(player, LOOK_TURN, LOOK_TURN);
+      hunter
+          .getLookControl()
+          .lookAt(player, GuildMasterEntity.LOOK_TURN, GuildMasterEntity.LOOK_TURN);
       hunter.speak(HunterVoice.CHEER);
     }
   }

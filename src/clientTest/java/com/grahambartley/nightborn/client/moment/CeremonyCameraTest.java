@@ -10,14 +10,14 @@ class CeremonyCameraTest {
 
   @ParameterizedTest(name = "start {0}, progress {1} -> yaw {2}, pitch {3}, distance {4}")
   @CsvSource({
-    "0, 0, 0, 0, 0",
+    "0, 0, 0, 0, 1",
     "0, 0.5, 180, 20, 4",
-    "0, 1, 360, 0, 0",
+    "0, 1, 360, 0, 1",
     "90, 0.5, 270, 20, 4",
-    "0, -1, 0, 0, 0",
-    "0, 2, 360, 0, 0"
+    "0, -1, 0, 0, 1",
+    "0, 2, 360, 0, 1"
   })
-  @DisplayName("the view leaves the player, circles them once and returns to them")
+  @DisplayName("the view steps out behind the player, circles them once and returns, never inside their head")
   void orbit(
       final float start,
       final float progress,

@@ -24,15 +24,11 @@ public record Oath(boolean proven, boolean sworn) {
     return new Oath(true, true);
   }
 
-  public boolean keeps(final boolean hasHunterProgress) {
-    return sworn || hasHunterProgress;
+  public boolean hunter(final boolean vampire) {
+    return !vampire && sworn;
   }
 
-  public boolean hunter(final boolean vampire, final boolean hasHunterProgress) {
-    return !vampire && keeps(hasHunterProgress);
-  }
-
-  public boolean maySwear(final boolean vampire, final boolean hasHunterProgress) {
-    return !vampire && proven && !keeps(hasHunterProgress);
+  public boolean maySwear(final boolean vampire) {
+    return !vampire && proven && !sworn;
   }
 }

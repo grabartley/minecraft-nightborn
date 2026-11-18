@@ -3,15 +3,28 @@ package com.grahambartley.nightborn.moment;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.network.codec.PacketCodec;
 import net.minecraft.network.codec.PacketCodecs;
+import net.minecraft.util.math.Vec3d;
 
 public record MomentState(
-    Moment moment, long startedAt, float yaw, int cameraTicks, int cardTicks) {
+    Moment moment, long startedAt, float yaw, Vec3d at, int cameraTicks, int cardTicks) {
 
   public enum Phase {
     CAMERA,
     CARD,
     OVER
   }
+
+  static final double DRIFT = 1.0E-3;
+
+  private static final PacketCodec<ByteBuf, Vec3d> POSITION_CODEC =
+      PacketCodec.tuple(
+          PacketCodecs.DOUBLE,
+          Vec3d::getX,
+          PacketCodecs.DOUBLE,
+          Vec3d::getY,
+          PacketCodecs.DOUBLE,
+          Vec3d::getZ,
+          Vec3d::new);
 
   public static final PacketCodec<ByteBuf, MomentState> PACKET_CODEC =
       PacketCodec.tuple(
@@ -21,11 +34,17 @@ public record MomentState(
           MomentState::startedAt,
           PacketCodecs.FLOAT,
           MomentState::yaw,
+          POSITION_CODEC,
+          MomentState::at,
           PacketCodecs.VAR_INT,
           MomentState::cameraTicks,
           PacketCodecs.VAR_INT,
           MomentState::cardTicks,
           MomentState::new);
+
+  public boolean drifted(final Vec3d position) {
+    return position.squaredDistanceTo(at) > DRIFT * DRIFT;
+  }
 
   public int totalTicks() {
     return cameraTicks + cardTicks;
