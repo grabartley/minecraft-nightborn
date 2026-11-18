@@ -71,7 +71,7 @@ public final class HunterPartySpawner {
                     random));
   }
 
-  static Optional<BlockPos> spot(
+  public static Optional<BlockPos> spot(
       final ServerWorld world, final BlockPos near, final Random random) {
     final float angle = random.nextFloat() * MathHelper.TAU;
     final int distance = random.nextBetween(NEAR_MIN, NEAR_MAX);

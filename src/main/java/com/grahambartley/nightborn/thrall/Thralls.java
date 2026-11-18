@@ -7,6 +7,9 @@ import com.grahambartley.nightborn.mind.MindTies;
 import com.grahambartley.nightborn.name.ServantNaming;
 import com.grahambartley.nightborn.servant.ChestMarking;
 import com.grahambartley.nightborn.server.ServerConfigService;
+import com.grahambartley.nightborn.village.TakenNeighbour;
+import com.grahambartley.nightborn.village.VillageSuspicion;
+import java.util.Optional;
 import java.util.UUID;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
 import net.minecraft.entity.EntityType;
@@ -26,6 +29,7 @@ import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.village.VillagerData;
 
 public final class Thralls {
@@ -79,10 +83,13 @@ public final class Thralls {
     final VillagerData data = villager.getVillagerData();
     final VillagerMemory memory =
         VillagerMemory.of(villager, villager.getRegistryManager().getOps(NbtOps.INSTANCE));
+    final Optional<BlockPos> bell = VillageSuspicion.bellOf(villager);
     final ThrallEntity thrall = villager.convertTo(THRALL, true);
     if (thrall == null) {
       return;
     }
+    VillageSuspicion.taken(
+        vampire.getServerWorld(), bell, new TakenNeighbour(vampire.getUuid(), thrall.getUuid()));
     villager.releaseTicketFor(MemoryModuleType.HOME);
     villager.releaseTicketFor(MemoryModuleType.JOB_SITE);
     villager.releaseTicketFor(MemoryModuleType.POTENTIAL_JOB_SITE);

@@ -13,6 +13,8 @@ import com.grahambartley.nightborn.skill.BatFormPower;
 import com.grahambartley.nightborn.skill.Powers;
 import com.grahambartley.nightborn.smoke.SmokePoof;
 import com.grahambartley.nightborn.sun.DirectSun;
+import com.grahambartley.nightborn.village.SuspicionCause;
+import com.grahambartley.nightborn.village.VampireSigns;
 import com.grahambartley.nightborn.weakened.Weakened;
 import com.mojang.serialization.Codec;
 import java.util.Optional;
@@ -87,6 +89,7 @@ public final class BatForm {
       vampire.setNoGravity(true);
     }
     SmokePoof.burst(vampire, ENTER_SOUND);
+    VampireSigns.shown(vampire, SuspicionCause.SEEN_IN_BAT_FORM);
   }
 
   public static boolean leave(final LivingEntity vampire) {

@@ -5,6 +5,8 @@ import com.grahambartley.nightborn.batform.BatForm;
 import com.grahambartley.nightborn.downed.Downed;
 import com.grahambartley.nightborn.network.ToggleLevitationPayload;
 import com.grahambartley.nightborn.vampire.Vampires;
+import com.grahambartley.nightborn.village.SuspicionCause;
+import com.grahambartley.nightborn.village.VampireSigns;
 import com.grahambartley.nightborn.weakened.Weakened;
 import com.mojang.serialization.Codec;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentRegistry;
@@ -100,6 +102,7 @@ public final class Levitation {
       return false;
     }
     vampire.setAttached(TYPE, true);
+    VampireSigns.shown(vampire, SuspicionCause.SEEN_LEVITATING);
     return true;
   }
 

@@ -14,6 +14,8 @@ import com.grahambartley.nightborn.occult.ShadowStep;
 import com.grahambartley.nightborn.sun.DirectSun;
 import com.grahambartley.nightborn.vampire.VampireAttributes;
 import com.grahambartley.nightborn.vanish.Vanish;
+import com.grahambartley.nightborn.village.SuspicionCause;
+import com.grahambartley.nightborn.village.VampireSigns;
 import com.grahambartley.nightborn.weakened.Weakened;
 import java.util.Optional;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
@@ -145,6 +147,9 @@ public final class Powers {
         caster, PowerCooldownAttachment.get(caster).start(id, now, cooldownTicks(caster, power)));
     for (final StatusEffectInstance effect : power.effects()) {
       caster.addStatusEffect(new StatusEffectInstance(effect), caster);
+    }
+    if (power.batForm().isEmpty()) {
+      VampireSigns.shown(caster, SuspicionCause.SEEN_USING_A_POWER);
     }
     power.batForm().ifPresent(form -> BatForm.enter(caster));
     power.leap().ifPresent(leap -> leap.launch(caster, heading(caster)));

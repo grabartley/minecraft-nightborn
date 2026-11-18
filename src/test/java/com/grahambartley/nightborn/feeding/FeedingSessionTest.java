@@ -56,15 +56,12 @@ class FeedingSessionTest {
   }
 
   @Test
-  @DisplayName("each witness is alerted once and the bell rings once")
+  @DisplayName("each witness is alerted once")
   void witnessesOnce() {
     final FeedingSession session = session();
     final UUID villager = UUID.randomUUID();
     assertTrue(session.firstSighting(villager));
     assertFalse(session.firstSighting(villager));
-    assertFalse(session.bellRung());
-    session.markBellRung();
-    assertTrue(session.bellRung());
   }
 
   @Test

@@ -10,7 +10,7 @@ import net.minecraft.nbt.NbtOps;
 import net.minecraft.util.math.BlockPos;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
+import org.junit.jupiter.params.provider.CsvSource;
 
 class HunterPartyTest {
 
@@ -23,10 +23,12 @@ class HunterPartyTest {
         List.of(UUID.randomUUID(), UUID.randomUUID()), new BlockPos(1, 64, 1), 100L);
   }
 
-  @ParameterizedTest(name = "pitched {0} survives a save and load")
-  @ValueSource(booleans = {true, false})
-  void survivesASaveAndLoad(final boolean pitched) {
-    final HunterParty party = pitched ? party().pitch(CAMP, 2, 4L) : party();
+  @ParameterizedTest(name = "pitched {0}, guarding {1} survives a save and load")
+  @CsvSource({"true, true", "true, false", "false, true", "false, false"})
+  void survivesASaveAndLoad(final boolean pitched, final boolean guarding) {
+    final HunterParty gathered =
+        guarding ? party().guarding(Optional.of(new BlockPos(30, 64, 30))) : party();
+    final HunterParty party = pitched ? gathered.pitch(CAMP, 2, 4L) : gathered;
     final HunterParty loaded =
         HunterParty.CODEC
             .parse(
@@ -66,5 +68,15 @@ class HunterPartyTest {
     final HunterParty seen = party().seen(500L).raidRolled(3L);
     assertEquals(500L, seen.lastPlayerNear());
     assertEquals(3L, seen.lastRaidDay());
+  }
+
+  @ParameterizedTest(name = "guarding {0}")
+  @CsvSource({"true", "false"})
+  void guardingAVillageCentresTheAreaOnItsBellAndReleasingKeepsTheArea(final boolean guarding) {
+    final BlockPos bell = new BlockPos(40, 64, -12);
+    final HunterParty guarded = party().guarding(Optional.of(bell));
+    final HunterParty party = guarding ? guarded : guarded.guarding(Optional.empty());
+    assertEquals(guarding, party.guarding());
+    assertEquals(bell, party.area());
   }
 }

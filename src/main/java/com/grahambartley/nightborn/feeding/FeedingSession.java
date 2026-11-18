@@ -25,7 +25,6 @@ public final class FeedingSession {
   private long lastHeldTick;
   private long nextDrinkTick;
   private boolean atLastHealth;
-  private boolean bellRung;
   private boolean turnRolled;
   private float pendingBlood;
   private float heldForBottles;
@@ -122,14 +121,6 @@ public final class FeedingSession {
 
   boolean firstSighting(final UUID witness) {
     return alertedWitnesses.add(witness);
-  }
-
-  boolean bellRung() {
-    return bellRung;
-  }
-
-  void markBellRung() {
-    bellRung = true;
   }
 
   boolean rollTurnOnce() {

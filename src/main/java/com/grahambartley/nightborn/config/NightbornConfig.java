@@ -28,7 +28,8 @@ public record NightbornConfig(
     RitualSettings ritual,
     AgeSettings age,
     HuntSettings hunt,
-    HouseSettings houses) {
+    HouseSettings houses,
+    VillageSettings villages) {
 
   public static final List<Setting<?>> SETTINGS =
       Stream.of(
@@ -56,7 +57,8 @@ public record NightbornConfig(
               RitualSettings.SETTINGS,
               AgeSettings.SETTINGS,
               HuntSettings.SETTINGS,
-              HouseSettings.SETTINGS)
+              HouseSettings.SETTINGS,
+              VillageSettings.SETTINGS)
           .flatMap(List::stream)
           .toList();
 
@@ -88,7 +90,8 @@ public record NightbornConfig(
         RitualSettings.from(values),
         AgeSettings.from(values),
         HuntSettings.from(values),
-        HouseSettings.from(values));
+        HouseSettings.from(values),
+        VillageSettings.from(values));
   }
 
   public SettingValues values() {

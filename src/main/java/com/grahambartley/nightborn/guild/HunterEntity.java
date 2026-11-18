@@ -108,6 +108,7 @@ public class HunterEntity extends PathAwareEntity
     goalSelector.add(5, new WanderAroundFarGoal(this, 0.6));
     goalSelector.add(6, new LookAtEntityGoal(this, PlayerEntity.class, 8.0F));
     goalSelector.add(7, new LookAroundGoal(this));
+    targetSelector.add(0, new KnownFaceTargetGoal(this));
     targetSelector.add(1, new HunterTargetGoal(this));
   }
 

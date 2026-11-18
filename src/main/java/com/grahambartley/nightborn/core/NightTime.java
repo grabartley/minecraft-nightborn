@@ -15,4 +15,8 @@ public final class NightTime {
     final long time = Math.floorMod(timeOfDay, DAY_LENGTH);
     return time >= DUSK && time < DAWN;
   }
+
+  public static long night(final long timeOfDay) {
+    return Math.floorDiv(timeOfDay - DUSK, DAY_LENGTH);
+  }
 }
