@@ -69,6 +69,7 @@ class VillageRecordTest {
             VillageRecord.NEVER,
             0,
             VillageRecord.NEVER,
+            VillageRecord.NEVER,
             List.of(FACE),
             List.of(),
             List.of());
@@ -162,5 +163,13 @@ class VillageRecordTest {
     assertEquals(record, loaded);
     assertTrue(loaded.wards().contains(new BlockPos(4, 70, -9)));
     assertFalse(loaded.taken().isEmpty());
+  }
+
+  @ParameterizedTest(name = "hung on night {0}")
+  @CsvSource({"2", "6"})
+  void remembersTheNightTheWardsWentUp(final long night) {
+    final VillageRecord hung = at(60).hung(night, List.of(new BlockPos(1, 64, 1)));
+    assertEquals(night, hung.wardNight());
+    assertEquals(List.of(new BlockPos(1, 64, 1)), hung.wards());
   }
 }

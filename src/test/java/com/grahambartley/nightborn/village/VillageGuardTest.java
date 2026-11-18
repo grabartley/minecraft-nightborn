@@ -20,4 +20,18 @@ class VillageGuardTest {
       final boolean guarded, final boolean sent, final boolean spawning, final boolean sends) {
     assertEquals(sends, VillageGuard.sends(guarded, sent, spawning));
   }
+
+  @ParameterizedTest(name = "bell loaded {0}, standing {1}, {2}: keeps guarding {3}")
+  @CsvSource({
+    "true, true, HUNTED, true",
+    "true, true, WARDED, false",
+    "true, true, CALM, false",
+    "true, false, HUNTED, false",
+    "false, false, CALM, true"
+  })
+  @DisplayName("a party guards only while its village stands and is hunted")
+  void keepsGuarding(
+      final boolean loaded, final boolean stands, final VillageStep step, final boolean keeps) {
+    assertEquals(keeps, VillageGuard.keepsGuarding(loaded, stands, step));
+  }
 }

@@ -4,6 +4,7 @@ import com.grahambartley.nightborn.config.PartySettings;
 import com.grahambartley.nightborn.guild.GuildMasterEntity;
 import com.grahambartley.nightborn.guild.HunterEntity;
 import com.grahambartley.nightborn.server.ServerConfigService;
+import com.grahambartley.nightborn.village.VillageGuard;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -35,6 +36,9 @@ public final class PartyLeader {
     final long now = world.getTime();
     HunterParty party =
         world.getClosestPlayer(master, PLAYER_NEAR) != null ? start.seen(now) : start;
+    if (party.guards().filter(bell -> !VillageGuard.stillGuarded(world, bell)).isPresent()) {
+      party = party.guarding(Optional.empty());
+    }
     final List<HunterEntity> members = members(world, party);
     if (PartySchedule.leaves(
         party.pitched(),

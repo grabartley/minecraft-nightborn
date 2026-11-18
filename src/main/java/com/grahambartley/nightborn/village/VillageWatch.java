@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Optional;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
+import net.minecraft.block.BellBlock;
 import net.minecraft.entity.passive.VillagerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
@@ -37,6 +38,11 @@ public final class VillageWatch {
   }
 
   static void watch(final ServerWorld world, final BlockPos bell) {
+    if (!(world.getBlockState(bell).getBlock() instanceof BellBlock)) {
+      VillageWards.takeDown(world, Villages.of(world).at(bell).orElseThrow());
+      Villages.of(world).forget(bell);
+      return;
+    }
     VillageRecord record = VillageSuspicion.current(world, bell);
     final VillageStep step = VillageStep.of(record.suspicion(), VillageSuspicion.settings());
     final List<VillagerEntity> villagers =
@@ -45,7 +51,7 @@ public final class VillageWatch {
             new Box(bell).expand(VillageSuspicion.settings().villageReach()),
             villager -> VillageSuspicion.bellOf(villager).equals(Optional.of(bell)));
     VillageDoors.keep(world, bell, step, villagers);
-    record = record.withWards(VillageWards.keep(world, bell, step, record.wards(), villagers));
+    record = VillageWards.keep(world, bell, step, record, villagers);
     record = VillageGuard.keep(world, bell, step, record);
     KnownFaces.shun(world, bell, record);
     Villages.of(world).put(bell, record);

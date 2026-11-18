@@ -27,7 +27,7 @@ public final class VillageDoors {
   static final double AT_HOME = 3.0;
   static final float HOME_SPEED = 0.6F;
 
-  private static final Map<BlockPos, Long> SHUT = new HashMap<>();
+  private static final Map<GlobalPos, Long> SHUT = new HashMap<>();
 
   private VillageDoors() {}
 
@@ -39,8 +39,9 @@ public final class VillageDoors {
     return night && step.atLeast(VillageStep.WARY);
   }
 
-  public static boolean sendsHome(final boolean sleeping, final double squaredDistanceToHome) {
-    return !sleeping && squaredDistanceToHome > AT_HOME * AT_HOME;
+  public static boolean sendsHome(
+      final boolean sleeping, final boolean busy, final double squaredDistanceToHome) {
+    return !sleeping && !busy && squaredDistanceToHome > AT_HOME * AT_HOME;
   }
 
   static void keep(
@@ -53,8 +54,8 @@ public final class VillageDoors {
       return;
     }
     final long night = VillageSuspicion.night(world);
-    if (shutsTonight(night, SHUT.get(bell))) {
-      SHUT.put(bell, night);
+    if (shutsTonight(night, SHUT.get(GlobalPos.create(world.getRegistryKey(), bell)))) {
+      SHUT.put(GlobalPos.create(world.getRegistryKey(), bell), night);
       for (final BlockPos door : doors(world, villagers)) {
         final BlockState state = world.getBlockState(door);
         if (state.getBlock() instanceof DoorBlock block && block.isOpen(state)) {
@@ -66,13 +67,21 @@ public final class VillageDoors {
       home(villager)
           .filter(
               home ->
-                  sendsHome(villager.isSleeping(), villager.getBlockPos().getSquaredDistance(home)))
+                  sendsHome(
+                      villager.isSleeping(),
+                      busy(world, villager),
+                      villager.getBlockPos().getSquaredDistance(home)))
           .ifPresent(
               home ->
                   villager
                       .getBrain()
                       .remember(MemoryModuleType.WALK_TARGET, new WalkTarget(home, HOME_SPEED, 1)));
     }
+  }
+
+  private static boolean busy(final ServerWorld world, final VillagerEntity villager) {
+    return WitnessReports.running(world, villager)
+        || villager.getBrain().hasMemoryModule(MemoryModuleType.HURT_BY);
   }
 
   static void clear() {

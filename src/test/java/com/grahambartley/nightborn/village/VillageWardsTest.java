@@ -8,20 +8,32 @@ import org.junit.jupiter.params.provider.CsvSource;
 
 class VillageWardsTest {
 
-  @ParameterizedTest(name = "{0} with wards up {1}: hang {2}, take down {3}")
+  @ParameterizedTest(name = "{0} with wards up {1}, hung tonight {2}: hang {3}")
   @CsvSource({
     "CALM, false, false, false",
     "WARY, false, false, false",
-    "WARY, true, false, true",
-    "WARDED, false, true, false",
+    "WARDED, false, false, true",
     "WARDED, true, false, false",
-    "HUNTED, false, true, false",
-    "CALM, true, false, true"
+    "WARDED, false, true, false",
+    "HUNTED, false, false, true"
   })
-  @DisplayName("wards go up at Warded and come down when the village falls below it")
-  void hangsAndTakesDown(
-      final VillageStep step, final boolean hung, final boolean hangs, final boolean takesDown) {
-    assertEquals(hangs, VillageWards.hangs(step, hung));
+  @DisplayName(
+      "wards go up at Warded, at most once a night, so taken wards are not hung again at once")
+  void hangs(
+      final VillageStep step, final boolean hung, final boolean tonight, final boolean hangs) {
+    assertEquals(hangs, VillageWards.hangs(step, hung, tonight));
+  }
+
+  @ParameterizedTest(name = "{0} with wards up {1}: take down {2}")
+  @CsvSource({
+    "CALM, true, true",
+    "WARY, true, true",
+    "WARDED, true, false",
+    "HUNTED, true, false",
+    "CALM, false, false"
+  })
+  @DisplayName("wards come down when the village falls below Warded")
+  void takesDown(final VillageStep step, final boolean hung, final boolean takesDown) {
     assertEquals(takesDown, VillageWards.takesDown(step, hung));
   }
 }

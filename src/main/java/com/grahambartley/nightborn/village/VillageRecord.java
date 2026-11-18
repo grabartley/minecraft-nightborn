@@ -18,6 +18,7 @@ public record VillageRecord(
     long giftNight,
     int giftsTonight,
     long sentNight,
+    long wardNight,
     List<UUID> faces,
     List<TakenNeighbour> taken,
     List<BlockPos> wards) {
@@ -39,6 +40,7 @@ public record VillageRecord(
                       Codec.LONG.fieldOf("gift_night").forGetter(VillageRecord::giftNight),
                       Codec.INT.fieldOf("gifts_tonight").forGetter(VillageRecord::giftsTonight),
                       Codec.LONG.fieldOf("sent_night").forGetter(VillageRecord::sentNight),
+                      Codec.LONG.fieldOf("ward_night").forGetter(VillageRecord::wardNight),
                       Uuids.INT_STREAM_CODEC
                           .listOf()
                           .fieldOf("faces")
@@ -59,7 +61,7 @@ public record VillageRecord(
 
   public static VillageRecord fresh(final long night) {
     return new VillageRecord(
-        0, night, NEVER, NEVER, NEVER, 0, NEVER, List.of(), List.of(), List.of());
+        0, night, NEVER, NEVER, NEVER, 0, NEVER, NEVER, List.of(), List.of(), List.of());
   }
 
   public VillageRecord settled(
@@ -81,6 +83,7 @@ public record VillageRecord(
         giftNight,
         giftsTonight,
         sentNight,
+        wardNight,
         faces,
         taken,
         wards);
@@ -97,6 +100,7 @@ public record VillageRecord(
         giftNight,
         giftsTonight,
         sentNight,
+        wardNight,
         known,
         taken,
         wards);
@@ -114,6 +118,7 @@ public record VillageRecord(
         giftNight,
         giftsTonight,
         sentNight,
+        wardNight,
         faces,
         taken,
         wards);
@@ -132,6 +137,7 @@ public record VillageRecord(
         night,
         given + 1,
         sentNight,
+        wardNight,
         faces,
         taken,
         wards);
@@ -162,6 +168,7 @@ public record VillageRecord(
         giftNight,
         giftsTonight,
         sentNight,
+        wardNight,
         faces,
         all,
         wards);
@@ -176,6 +183,22 @@ public record VillageRecord(
         giftNight,
         giftsTonight,
         sentNight,
+        wardNight,
+        faces,
+        taken,
+        placed);
+  }
+
+  public VillageRecord hung(final long night, final List<BlockPos> placed) {
+    return new VillageRecord(
+        suspicion,
+        settledNight,
+        incidentNight,
+        charmNight,
+        giftNight,
+        giftsTonight,
+        sentNight,
+        night,
         faces,
         taken,
         placed);
@@ -190,6 +213,7 @@ public record VillageRecord(
         giftNight,
         giftsTonight,
         night,
+        wardNight,
         faces,
         taken,
         wards);

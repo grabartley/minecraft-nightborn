@@ -1,5 +1,6 @@
 package com.grahambartley.nightborn.guild;
 
+import com.grahambartley.nightborn.vampire.Vampires;
 import com.grahambartley.nightborn.village.VillageSuspicion;
 import java.util.Optional;
 import java.util.UUID;
@@ -15,11 +16,17 @@ public class KnownFaceTargetGoal extends ActiveTargetGoal<PlayerEntity> {
     super(hunter, PlayerEntity.class, true, target -> knownTo(hunter, target));
   }
 
+  public static boolean hunts(final boolean knownThere, final boolean vampire) {
+    return knownThere && vampire;
+  }
+
   static boolean knownTo(final HunterEntity hunter, final LivingEntity target) {
     return hunter.getWorld() instanceof ServerWorld world
-        && guarded(world, hunter.partyLeader())
-            .filter(bell -> VillageSuspicion.knows(world, bell, target.getUuid()))
-            .isPresent();
+        && hunts(
+            guarded(world, hunter.partyLeader())
+                .filter(bell -> VillageSuspicion.knows(world, bell, target.getUuid()))
+                .isPresent(),
+            Vampires.isVampire(target));
   }
 
   private static Optional<BlockPos> guarded(final ServerWorld world, final Optional<UUID> leader) {

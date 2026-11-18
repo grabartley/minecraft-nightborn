@@ -27,7 +27,7 @@ public final class WitnessReports {
   static final float RUN_SPEED = 0.7F;
 
   private static final Map<RegistryKey<World>, List<WitnessReport>> RUNNING = new HashMap<>();
-  private static final List<WitnessReport> TOLD = new ArrayList<>();
+  private static final Map<RegistryKey<World>, List<WitnessReport>> TOLD = new HashMap<>();
 
   private WitnessReports() {}
 
@@ -45,14 +45,13 @@ public final class WitnessReports {
     if (bell.isEmpty()) {
       return false;
     }
-    final long night = VillageSuspicion.night(world);
-    TOLD.removeIf(told -> told.night() != night);
+    final int reportTicks = reportTicks();
+    final List<WitnessReport> told = told(world, reportTicks);
     final WitnessReport report =
-        new WitnessReport(
-            witness.getUuid(), vampire.getUuid(), cause, bell.get(), world.getTime(), night);
+        new WitnessReport(witness.getUuid(), vampire.getUuid(), cause, bell.get(), world.getTime());
     final List<WitnessReport> running =
         RUNNING.computeIfAbsent(world.getRegistryKey(), key -> new ArrayList<>());
-    if (TOLD.stream().anyMatch(report::sameEvent)
+    if (told.stream().anyMatch(other -> report.sameEvent(other, reportTicks))
         || running.stream().anyMatch(report::sameSighting)) {
       return false;
     }
@@ -65,7 +64,7 @@ public final class WitnessReports {
     if (running == null || running.isEmpty() || world.getTime() % CHECK_TICKS != 0) {
       return;
     }
-    final int reportTicks = ServerConfigService.current().villages().reportSeconds() * 20;
+    final int reportTicks = reportTicks();
     final Iterator<WitnessReport> reports = running.iterator();
     while (reports.hasNext()) {
       final WitnessReport report = reports.next();
@@ -99,10 +98,12 @@ public final class WitnessReports {
 
   private static void tell(
       final ServerWorld world, final VillagerEntity witness, final WitnessReport report) {
-    if (TOLD.stream().anyMatch(report::sameEvent)) {
+    final int reportTicks = reportTicks();
+    final List<WitnessReport> told = told(world, reportTicks);
+    if (told.stream().anyMatch(other -> report.sameEvent(other, reportTicks))) {
       return;
     }
-    TOLD.add(report);
+    told.add(report);
     ringBell(world, witness, report.bell());
     VillageSuspicion.raise(world, report.bell(), report.cause(), Optional.of(report.vampire()));
   }
@@ -116,6 +117,22 @@ public final class WitnessReports {
     if (state.getBlock() instanceof BellBlock block) {
       block.ring(witness, world, bell, null);
     }
+  }
+
+  public static boolean running(final ServerWorld world, final VillagerEntity witness) {
+    return RUNNING.getOrDefault(world.getRegistryKey(), List.of()).stream()
+        .anyMatch(report -> report.witness().equals(witness.getUuid()));
+  }
+
+  private static List<WitnessReport> told(final ServerWorld world, final int reportTicks) {
+    final List<WitnessReport> told =
+        TOLD.computeIfAbsent(world.getRegistryKey(), key -> new ArrayList<>());
+    told.removeIf(report -> report.stale(world.getTime(), reportTicks * 2));
+    return told;
+  }
+
+  private static int reportTicks() {
+    return ServerConfigService.current().villages().reportSeconds() * 20;
   }
 
   public static void clear() {

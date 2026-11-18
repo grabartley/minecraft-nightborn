@@ -7,9 +7,11 @@ import com.grahambartley.nightborn.guild.party.PartyRoll;
 import com.grahambartley.nightborn.server.ServerConfigService;
 import java.util.List;
 import java.util.Optional;
+import net.minecraft.block.BellBlock;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
+import net.minecraft.util.math.ChunkSectionPos;
 import net.minecraft.util.math.random.Random;
 import net.minecraft.world.GameRules;
 
@@ -22,16 +24,33 @@ public final class VillageGuard {
     return !guarded && !sentTonight && spawning;
   }
 
+  public static boolean keepsGuarding(
+      final boolean bellLoaded, final boolean bellStands, final VillageStep step) {
+    return !bellLoaded || bellStands && step == VillageStep.HUNTED;
+  }
+
+  public static boolean stillGuarded(final ServerWorld world, final BlockPos bell) {
+    final boolean loaded =
+        world.isChunkLoaded(
+            ChunkSectionPos.getSectionCoord(bell.getX()),
+            ChunkSectionPos.getSectionCoord(bell.getZ()));
+    return keepsGuarding(
+        loaded,
+        loaded && world.getBlockState(bell).getBlock() instanceof BellBlock,
+        VillageStep.of(
+            Villages.of(world).at(bell).map(VillageRecord::suspicion).orElse(0),
+            VillageSuspicion.settings()));
+  }
+
   static VillageRecord keep(
       final ServerWorld world,
       final BlockPos bell,
       final VillageStep step,
       final VillageRecord record) {
-    final List<GuildMasterEntity> guards = guards(world, bell);
     if (step != VillageStep.HUNTED) {
-      guards.forEach(master -> master.lead(master.party().guarding(Optional.empty())));
       return record;
     }
+    final List<GuildMasterEntity> guards = guards(world, bell);
     final long night = VillageSuspicion.night(world);
     if (!sends(
         !guards.isEmpty(),

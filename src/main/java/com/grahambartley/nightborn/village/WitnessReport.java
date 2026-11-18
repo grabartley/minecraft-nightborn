@@ -4,7 +4,7 @@ import java.util.UUID;
 import net.minecraft.util.math.BlockPos;
 
 public record WitnessReport(
-    UUID witness, UUID vampire, SuspicionCause cause, BlockPos bell, long seenAt, long night) {
+    UUID witness, UUID vampire, SuspicionCause cause, BlockPos bell, long seenAt) {
 
   public static final double AT_BELL = 3.0;
 
@@ -27,17 +27,18 @@ public record WitnessReport(
         : Outcome.RUNNING;
   }
 
-  public boolean sameEvent(final WitnessReport other) {
+  public boolean sameEvent(final WitnessReport other, final int reportTicks) {
     return vampire.equals(other.vampire)
         && cause == other.cause
         && bell.equals(other.bell)
-        && night == other.night;
+        && Math.abs(seenAt - other.seenAt) < reportTicks;
   }
 
   public boolean sameSighting(final WitnessReport other) {
-    return witness.equals(other.witness)
-        && vampire.equals(other.vampire)
-        && cause == other.cause
-        && night == other.night;
+    return witness.equals(other.witness) && vampire.equals(other.vampire) && cause == other.cause;
+  }
+
+  public boolean stale(final long now, final int reportTicks) {
+    return now - seenAt >= reportTicks;
   }
 }

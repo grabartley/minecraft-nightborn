@@ -17,30 +17,39 @@ public final class VillageWards {
 
   private VillageWards() {}
 
-  public static boolean hangs(final VillageStep step, final boolean hung) {
-    return step.atLeast(VillageStep.WARDED) && !hung;
+  public static boolean hangs(
+      final VillageStep step, final boolean hung, final boolean hungTonight) {
+    return step.atLeast(VillageStep.WARDED) && !hung && !hungTonight;
   }
 
   public static boolean takesDown(final VillageStep step, final boolean hung) {
     return !step.atLeast(VillageStep.WARDED) && hung;
   }
 
-  static List<BlockPos> keep(
+  static VillageRecord keep(
       final ServerWorld world,
       final BlockPos bell,
       final VillageStep step,
-      final List<BlockPos> wards,
+      final VillageRecord record,
       final List<VillagerEntity> villagers) {
-    if (hangs(step, !wards.isEmpty())) {
-      return hang(world, bell, villagers);
+    final List<BlockPos> standing =
+        record.wards().stream().filter(pos -> isWard(world.getBlockState(pos))).toList();
+    final long night = VillageSuspicion.night(world);
+    if (hangs(step, !standing.isEmpty(), record.wardNight() == night)) {
+      return record.hung(night, hang(world, bell, villagers));
     }
-    if (takesDown(step, !wards.isEmpty())) {
-      wards.stream()
-          .filter(pos -> isWard(world.getBlockState(pos)))
-          .forEach(pos -> world.removeBlock(pos, false));
-      return List.of();
+    if (takesDown(step, !standing.isEmpty())) {
+      standing.forEach(pos -> world.removeBlock(pos, false));
+      return record.withWards(List.of());
     }
-    return wards;
+    return record.withWards(standing);
+  }
+
+  static VillageRecord takeDown(final ServerWorld world, final VillageRecord record) {
+    record.wards().stream()
+        .filter(pos -> isWard(world.getBlockState(pos)))
+        .forEach(pos -> world.removeBlock(pos, false));
+    return record.withWards(List.of());
   }
 
   private static List<BlockPos> hang(

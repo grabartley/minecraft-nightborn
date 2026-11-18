@@ -21,11 +21,18 @@ class VillageDoorsTest {
     assertEquals(shuts, VillageDoors.shuts(step, night));
   }
 
-  @ParameterizedTest(name = "asleep {0}, {1} blocks² from home: sent home {2}")
-  @CsvSource({"false, 100, true", "false, 9, false", "true, 100, false", "false, 10, true"})
-  @DisplayName("villagers out of doors at night are sent home")
-  void sendsHome(final boolean sleeping, final double distance, final boolean home) {
-    assertEquals(home, VillageDoors.sendsHome(sleeping, distance));
+  @ParameterizedTest(name = "asleep {0}, busy {1}, {2} blocks² from home: sent home {3}")
+  @CsvSource({
+    "false, false, 100, true",
+    "false, false, 9, false",
+    "true, false, 100, false",
+    "false, false, 10, true",
+    "false, true, 100, false"
+  })
+  @DisplayName("villagers out at night are sent home, unless running for the bell or fleeing")
+  void sendsHome(
+      final boolean sleeping, final boolean busy, final double distance, final boolean home) {
+    assertEquals(home, VillageDoors.sendsHome(sleeping, busy, distance));
   }
 
   @ParameterizedTest(name = "night {0}, last shut on {1}: shuts again {2}")

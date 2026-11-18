@@ -40,6 +40,12 @@ public final class Villages extends PersistentState {
     }
   }
 
+  public void forget(final BlockPos bell) {
+    if (records.remove(bell.asLong()) != null) {
+      markDirty();
+    }
+  }
+
   public Map<BlockPos, VillageRecord> all() {
     final Map<BlockPos, VillageRecord> all = new HashMap<>();
     records.forEach((key, record) -> all.put(BlockPos.fromLong(key), record));
