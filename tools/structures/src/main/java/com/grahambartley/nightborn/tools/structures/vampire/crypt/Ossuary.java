@@ -29,6 +29,7 @@ public final class Ossuary {
     charnel(t, 10, 11, 9, SKULLS_SOUTH);
     altar(t);
     Furnishing.standingCoffin(t, Undercroft.GOTHIC_COFFIN, 11, 1, 7, "east");
+    Furnishing.chest(t, 9, 1, SOUTH, "north");
     return t;
   }
 
@@ -50,10 +51,7 @@ public final class Ossuary {
   private static void northChapel(final Template t) {
     t.fill(1, 1, 2, 3, 3, 4, "air");
     Openings.arch(t, Axis.X, 1, 3, 5, 1, 3, CryptStair.STEP);
-    Furnishing.coffin(t, Undercroft.STONE_COFFIN, 1, 1, 3, "east");
-    Furnishing.chest(t, 3, 1, 2, "south");
-    Furnishing.candelabra(t, 1, 1, 2);
-    Furnishing.candelabra(t, 2, 1, 2);
+    Furnishing.coffin(t, Undercroft.STONE_COFFIN, 2, 1, 2, "south");
     Furnishing.candles(t, 3, 1, 4, 2, false);
     t.set(1, 3, 2, "cobweb");
   }
@@ -61,11 +59,9 @@ public final class Ossuary {
   private static void southChapel(final Template t) {
     t.fill(5, 1, 10, 9, 3, 12, "air");
     Openings.arch(t, Axis.X, 6, 8, 9, 1, 3, CryptStair.STEP);
-    Furnishing.coffin(t, Undercroft.GOTHIC_COFFIN, 5, 1, 10, "east");
-    Furnishing.coffin(t, Undercroft.STONE_COFFIN, 8, 1, 10, "east");
-    Furnishing.chair(t, 7, 1, 12, "north");
-    Furnishing.candelabra(t, 5, 1, 12);
-    Furnishing.candelabra(t, 9, 1, 12);
+    Furnishing.coffin(t, Undercroft.GOTHIC_COFFIN, 5, 1, 11, "east");
+    Furnishing.coffin(t, Undercroft.STONE_COFFIN, 8, 1, 11, "east");
+    Furnishing.chandelier(t, 7, 3, 11);
     t.set(9, 3, 12, "cobweb");
   }
 

@@ -97,10 +97,11 @@ class DonjonTest {
     "31, 78, 31, dark_oak_planks",
     "31, 80, 31, dark_oak_planks",
     "40, 78, 31, clay_roof_tile",
-    "34, 70, 38, ladder",
-    "34, 74, 38, ladder"
+    "24, 69, 36, stairs[facing=north",
+    "24, 74, 31, stairs[facing=north",
+    "24, 75, 32, air"
   })
-  void aSealedRoofOnPostsCoversTheWalkAndALadderReachesIt(
+  void aSealedRoofOnPostsCoversTheWalkAndAFlightReachesIt(
       final int x, final int y, final int z, final String block) {
     assertTrue(built().get(x, y, z).contains(block), built().get(x, y, z));
   }

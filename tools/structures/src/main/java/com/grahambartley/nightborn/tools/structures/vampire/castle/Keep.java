@@ -29,6 +29,10 @@ public final class Keep {
   private Keep() {}
 
   public static void build(final Template t) {
+    for (final int[] corner :
+        new int[][] {{WEST, NORTH}, {EAST, NORTH}, {WEST, SOUTH}, {EAST, SOUTH}}) {
+      new Tower(corner[0], corner[1], 2, CEILING + 4, true).buildSolid(t, Castle.WALL);
+    }
     shell(t);
     hallFloor(t);
     northFloors(t);
@@ -39,12 +43,6 @@ public final class Keep {
     bedchamber(t);
     library(t);
     Roof.gable(t, Axis.Z, NORTH, SOUTH, WEST, EAST, CEILING + 1, Castle.ROOF, Castle.WALL);
-    for (final int[] corner :
-        new int[][] {
-          {WEST, NORTH}, {EAST, NORTH}, {WEST, SOUTH}, {EAST, SOUTH}
-        }) {
-      new Tower(corner[0], corner[1], 2, CEILING + 4, true).buildSolid(t, Castle.WALL);
-    }
     Roof.fillAttic(t, WEST + 1, NORTH + 1, EAST - 1, SOUTH - 1, CEILING + 1, Castle.ROOF.full());
   }
 

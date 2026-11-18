@@ -60,10 +60,10 @@ class GrottoTest {
   void theSpringIsAnOvalKerbedWithGapsToStepIn() {
     final int x = Grotto.SPRING_X;
     final int z = Grotto.SPRING_Z;
-    assertEquals(LairFeatures.POOL, GROTTO.get(x, 0, z));
-    assertEquals(LairFeatures.POOL, GROTTO.get(x + 5, 0, z));
+    assertEquals(LairFeatures.POOL, GROTTO.get(x, 1, z));
+    assertEquals(LairFeatures.POOL, GROTTO.get(x + 5, 1, z));
     assertTrue(GROTTO.get(x - 4, 1, z - 2).startsWith("minecraft:polished_blackstone_brick_slab"));
-    assertTrue(!GROTTO.get(x - 5, 0, z - 2).equals(LairFeatures.POOL));
+    assertTrue(!GROTTO.get(x - 5, 1, z - 2).equals(LairFeatures.POOL));
     assertEquals(BlockState.AIR, GROTTO.get(x, 1, z - 3));
     assertEquals(BlockState.AIR, GROTTO.get(x, 1, z + 3));
     assertTrue(GROTTO.get(x + 6, 1, z).startsWith("nightborn:blood_fountain"));

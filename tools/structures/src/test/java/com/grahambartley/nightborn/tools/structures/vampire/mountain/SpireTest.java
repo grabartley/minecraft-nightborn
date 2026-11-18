@@ -61,7 +61,7 @@ class SpireTest {
 
   @ParameterizedTest(name = "round {0}, radius {1}, {2} layers")
   @CsvSource({"true, 5, 2", "false, 5, 2", "false, 9, 1", "true, 1, 2"})
-  void risesRingByRingToACappedFinial(final boolean round, final int radius, final int layers) {
+  void risesRingByRingOverASolidCoreToACappedFinial(final boolean round, final int radius, final int layers) {
     final Template t = new Template("vampire/test", 25, 30, 25);
     final int top = Spire.raise(t, 12, 12, radius, 3, round, layers);
     assertEquals(3 + Spire.height(radius, layers) - 1, top);
@@ -69,6 +69,6 @@ class SpireTest {
     assertEquals("nightborn:clay_roof_tiles", t.get(12, top - 1, 12));
     assertTrue(t.get(12 + radius, 3, 12).startsWith("nightborn:clay_roof_tile"));
     assertEquals(null, t.get(12 + radius + 1, 3, 12));
-    assertEquals(null, t.get(12, 3, 12));
+    assertEquals("nightborn:clay_roof_tiles", t.get(12, 3, 12));
   }
 }

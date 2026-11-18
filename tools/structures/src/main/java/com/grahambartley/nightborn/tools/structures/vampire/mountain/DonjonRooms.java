@@ -180,7 +180,7 @@ public final class DonjonRooms {
     Furnishing.chest(t, Donjon.EAST - 1, y, Donjon.NORTH + 1, "west", MountainCastle.LOOT);
     Furnishing.chandelier(t, mid, Donjon.TERRACE - 1, mid);
     for (int dy = 0; dy < 3; dy++) {
-      for (int z = Donjon.SOUTH - 4; z <= Donjon.SOUTH - 1; z++) {
+      for (int z = Donjon.NORTH + 2; z <= Donjon.NORTH + 4; z++) {
         t.set(Donjon.WEST + 1, y + dy, z, "bookshelf");
       }
     }

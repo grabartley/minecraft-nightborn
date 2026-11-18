@@ -1,15 +1,12 @@
 package com.grahambartley.nightborn.tools.structures.vampire.mountain;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.grahambartley.nightborn.tools.structures.template.BlockState;
-import com.grahambartley.nightborn.tools.structures.template.Facing;
 import com.grahambartley.nightborn.tools.structures.template.Pos;
 import com.grahambartley.nightborn.tools.structures.template.Template;
 import java.util.List;
-import java.util.Map;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
@@ -46,7 +43,7 @@ class TurretTest {
 
   @ParameterizedTest(name = "round {0}")
   @CsvSource({"true", "false"})
-  void standsOnTheRockWithRoomsALadderAndASpire(final boolean round) {
+  void standsOnTheRockWithRoomsAndASpire(final boolean round) {
     final Template t = box();
     final Turret turret = northWest(round);
     turret.build(t);
@@ -57,9 +54,7 @@ class TurretTest {
     assertTrue(t.get(14, MountainCastle.UP + 5, 7).startsWith("nightborn:"), "wall");
     assertTrue(t.get(4, MountainCastle.UP + 3, 7).startsWith("minecraft:glass_pane"));
     assertTrue(t.get(4, Ramparts.TOP + 3, 7).startsWith("minecraft:glass_pane"));
-    for (int y = MountainCastle.UP + 1; y < turret.top(); y++) {
-      assertTrue(t.get(5, y, 6).startsWith("minecraft:ladder"), "ladder at " + y);
-    }
+    assertTrue(t.cells().values().stream().noneMatch(state -> state.contains("ladder")));
     assertTrue(t.get(9, turret.roofTop(), 7).startsWith("minecraft:lightning_rod"));
   }
 
@@ -75,27 +70,39 @@ class TurretTest {
     assertEquals(BlockState.AIR, t.get(7, Ramparts.TOP + 2, 12));
   }
 
-  @ParameterizedTest(name = "turret {0} climbs a ladder facing {1}, on solid wall all the way up")
-  @CsvSource({"0, east", "1, east", "2, east", "3, west", "4, east", "5, east"})
-  void laddersClimbASolidWall(final int index, final String facing) {
+  @ParameterizedTest(name = "a turret of radius {0} winds its stair round {1} cells")
+  @CsvSource({"3, 8", "4, 16", "5, 24"})
+  void theStairLoopKeepsOffTheWallAndTheMiddle(final int radius, final int cells) {
+    final Turret turret = new Turret(20, 20, radius, 0, 12, true, 6);
+    final List<Pos> loop = turret.loop();
+    assertEquals(cells, loop.size());
+    assertEquals(cells, loop.stream().distinct().count());
+    for (int i = 0; i < loop.size(); i++) {
+      final Pos at = loop.get(i);
+      final Pos next = loop.get((i + 1) % loop.size());
+      assertTrue(turret.inside(at.x(), at.z(), radius - 1), "inside at " + at);
+      assertTrue(!turret.inside(at.x(), at.z(), radius - 3), "off the middle at " + at);
+      assertEquals(1, Math.abs(at.x() - next.x()) + Math.abs(at.z() - next.z()), "from " + at);
+    }
+  }
+
+  @ParameterizedTest(name = "turret {0} climbs to its landing at y {1}")
+  @CsvSource({"0, 46", "1, 40", "2, 40", "3, 40", "4, 34", "5, 34"})
+  void aSpiralStairClimbsFromTheWardToTheHighestFloor(final int index, final int landing) {
     final Template t = box();
     Crag.build(t);
     Ramparts.build(t);
     final Turret turret = MountainCastle.turrets(MountainCastle.EYRIE).get(index);
     turret.build(t);
-    final List<Pos> ladders =
-        t.cells().entrySet().stream()
-            .filter(cell -> cell.getValue().startsWith("minecraft:ladder"))
-            .filter(cell -> turret.inside(cell.getKey().x(), cell.getKey().z(), turret.radius()))
-            .map(Map.Entry::getKey)
-            .toList();
-    assertFalse(ladders.isEmpty());
-    final Pos step = Facing.STEP.get(facing);
-    for (final Pos ladder : ladders) {
-      assertTrue(t.get(ladder.x(), ladder.y(), ladder.z()).contains("facing=" + facing));
+    assertEquals(landing, turret.landing());
+    final List<Pos> loop = turret.loop();
+    for (int y = turret.base() + 1; y <= landing; y++) {
+      final Pos at = loop.get(y - turret.base() - 1);
       assertTrue(
-          Turret.solid(t.get(ladder.x() - step.x(), ladder.y(), ladder.z() - step.z())),
-          "behind " + ladder);
+          t.get(at.x(), y, at.z()).contains(MountainCastle.KEEP_STEP + "[facing="),
+          "step at " + at + " y " + y);
+      assertEquals(BlockState.AIR, t.get(at.x(), y + 1, at.z()));
+      assertEquals(BlockState.AIR, t.get(at.x(), y + 2, at.z()));
     }
   }
 
@@ -107,7 +114,7 @@ class TurretTest {
     "nightborn:gothic_stained_glass_pane, false",
     "minecraft:iron_bars, false"
   })
-  void onlyMasonryHoldsALadder(final String state, final boolean solid) {
+  void onlyMasonryCountsAsSolidWall(final String state, final boolean solid) {
     assertEquals(solid, Turret.solid(state));
   }
 }
