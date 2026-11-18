@@ -2,14 +2,17 @@ package com.grahambartley.nightborn.guild.party;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import com.grahambartley.nightborn.MinecraftBootstrapExtension;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.util.math.BlockPos;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
+@ExtendWith(MinecraftBootstrapExtension.class)
 class CampClaimsTest {
 
   private static final BlockPos AT = new BlockPos(3, 70, -2);

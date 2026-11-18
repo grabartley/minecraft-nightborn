@@ -2,15 +2,24 @@ package com.grahambartley.nightborn.guild.party;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import com.google.gson.JsonParser;
+import com.grahambartley.nightborn.MinecraftBootstrapExtension;
+import com.mojang.serialization.JsonOps;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 import net.minecraft.block.BedBlock;
 import net.minecraft.block.Blocks;
+import net.minecraft.block.enums.BedPart;
 import net.minecraft.util.BlockRotation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
+@ExtendWith(MinecraftBootstrapExtension.class)
 class CampLayoutTest {
 
   private static CampLayout tent(final BlockRotation rotation) {
@@ -51,5 +60,25 @@ class CampLayoutTest {
       final int minZ,
       final int maxZ) {
     assertEquals(new CampSite.Bounds(minX, maxX, minZ, maxZ, 2), tent(rotation).bounds());
+  }
+
+  @Test
+  void theShippedCampParsesWithThreeTentsAndThreeBeds() throws Exception {
+    final CampLayout layout =
+        CampLayout.CODEC
+            .parse(
+                JsonOps.INSTANCE,
+                JsonParser.parseString(
+                    Files.readString(
+                        Path.of(
+                            "src/main/resources/data/nightborn/nightborn/party_camp/hunter_party.json"))))
+            .getOrThrow();
+    assertEquals(3, layout.tents().size());
+    assertEquals(
+        3,
+        layout.pieces().stream()
+            .filter(piece -> piece.state().isOf(Blocks.BROWN_BED))
+            .filter(piece -> piece.state().get(BedBlock.PART) == BedPart.HEAD)
+            .count());
   }
 }
