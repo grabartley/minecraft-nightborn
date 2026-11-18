@@ -1,8 +1,10 @@
 package com.grahambartley.nightborn.coating;
 
+import com.grahambartley.nightborn.clothing.WornAttributes;
 import com.grahambartley.nightborn.gear.VampireBane;
 import com.grahambartley.nightborn.server.ServerConfigService;
 import com.grahambartley.nightborn.vampire.Vampires;
+import com.grahambartley.nightborn.ward.WardStrength;
 import com.grahambartley.nightborn.ward.Wards;
 import com.grahambartley.nightborn.weakened.Weakened;
 import net.minecraft.entity.Entity;
@@ -68,10 +70,15 @@ public final class CoatedStrikes {
   private static void weaken(
       final LivingEntity vampire, final Coating coating, final CoatingTerms terms) {
     final int strength =
-        Wards.TOUCH.equals(coating.weakenedSource())
-            ? Wards.dulled(vampire, terms.weakenStrength())
-            : terms.weakenStrength();
+        weakening(
+            coating.weakenedSource(),
+            terms.weakenStrength(),
+            WornAttributes.value(vampire, WornAttributes.WARD_RESISTANCE));
     Weakened.add(vampire, coating.weakenedSource(), strength, terms.weakenTicks());
+  }
+
+  static int weakening(final String source, final int strength, final double wardResistance) {
+    return Wards.TOUCH.equals(source) ? WardStrength.dulled(strength, wardResistance) : strength;
   }
 
   private static float bonus(final ItemStack stack, final Entity target) {

@@ -1,7 +1,7 @@
 package com.grahambartley.nightborn.accessory;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 import com.grahambartley.nightborn.MinecraftBootstrapExtension;
 import com.grahambartley.nightborn.clothing.ClothingPowerEffect;
@@ -13,12 +13,11 @@ import org.junit.jupiter.params.provider.CsvSource;
 @ExtendWith(MinecraftBootstrapExtension.class)
 class AccessoryTrinketTest {
 
-  @ParameterizedTest(name = "{0}")
-  @CsvSource({"chest", "head", "legs"})
-  @DisplayName("an accessory's source never clashes with an armour slot's")
-  void sourcesStayApart(final String slot) {
-    assertTrue(AccessoryTrinket.SOURCE_PREFIX.startsWith("accessory/"));
-    assertTrue(!ClothingPowerEffect.source(slot).startsWith(AccessoryTrinket.SOURCE_PREFIX));
-    assertEquals("slot/" + slot, ClothingPowerEffect.source(slot));
+  @ParameterizedTest(name = "{0}/0 vs armour {1}")
+  @CsvSource({"chest/back, chest", "head/face, head", "legs/belt, legs"})
+  @DisplayName("each accessory slot is its own source, never the armour slot it sits over")
+  void sourcesStayApart(final String slot, final String armour) {
+    assertEquals("accessory/" + slot + "/0", AccessoryTrinket.source(slot + "/0"));
+    assertNotEquals(ClothingPowerEffect.source(armour), AccessoryTrinket.source(slot + "/0"));
   }
 }

@@ -19,7 +19,7 @@ import net.minecraft.util.Identifier;
 
 public final class AccessoryGifts {
 
-  static final String PREFIX = "accessory/";
+  static final String MODIFIER_PREFIX = "accessory/";
 
   private AccessoryGifts() {}
 
@@ -71,7 +71,8 @@ public final class AccessoryGifts {
 
   static Identifier modifierId(final Identifier item, final int index) {
     return Identifier.of(
-        Nightborn.MOD_ID, PREFIX + item.getNamespace() + "/" + item.getPath() + "/" + index);
+        Nightborn.MOD_ID,
+        MODIFIER_PREFIX + item.getNamespace() + "/" + item.getPath() + "/" + index);
   }
 
   static boolean stray(
@@ -79,7 +80,7 @@ public final class AccessoryGifts {
       final RegistryEntry<EntityAttribute> on,
       final Map<Identifier, GiftModifier> wanted) {
     if (!modifier.getNamespace().equals(Nightborn.MOD_ID)
-        || !modifier.getPath().startsWith(PREFIX)) {
+        || !modifier.getPath().startsWith(MODIFIER_PREFIX)) {
       return false;
     }
     final GiftModifier keep = wanted.get(modifier);

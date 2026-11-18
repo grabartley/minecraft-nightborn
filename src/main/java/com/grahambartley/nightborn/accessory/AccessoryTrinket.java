@@ -13,14 +13,14 @@ public final class AccessoryTrinket implements Trinket {
 
   private AccessoryTrinket() {}
 
-  public static String source(final SlotReference slot) {
-    return SOURCE_PREFIX + slot.getId();
+  public static String source(final String slotId) {
+    return SOURCE_PREFIX + slotId;
   }
 
   @Override
   public void onEquip(final ItemStack stack, final SlotReference slot, final LivingEntity entity) {
     if (!entity.getWorld().isClient()) {
-      WornPowers.wear(entity, source(slot), stack);
+      WornPowers.wear(entity, source(slot.getId()), stack);
       AccessoryGifts.apply(entity);
     }
   }
@@ -29,7 +29,7 @@ public final class AccessoryTrinket implements Trinket {
   public void onUnequip(
       final ItemStack stack, final SlotReference slot, final LivingEntity entity) {
     if (!entity.getWorld().isClient()) {
-      WornPowers.takeOff(entity, source(slot));
+      WornPowers.takeOff(entity, source(slot.getId()));
       AccessoryGifts.apply(entity);
     }
   }

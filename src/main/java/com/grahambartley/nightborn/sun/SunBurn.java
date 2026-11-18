@@ -18,6 +18,10 @@ public final class SunBurn {
 
   private SunBurn() {}
 
+  public static float damage(final float sunDamage, final double sunmarked) {
+    return (float) (sunDamage * sunmarked);
+  }
+
   public static boolean tick(final LivingEntity vampire, final SunSettings settings) {
     if (!(vampire.getWorld() instanceof ServerWorld world) || !DirectSun.on(vampire)) {
       return false;
@@ -45,8 +49,7 @@ public final class SunBurn {
         NightbornSounds.variedPitch(vampire.getRandom()));
     if (vampire.damage(
             NightbornDamage.sun(world),
-            (float)
-                (settings.sunDamage() * WornAttributes.value(vampire, WornAttributes.SUN_DAMAGE)))
+            damage(settings.sunDamage(), WornAttributes.value(vampire, WornAttributes.SUN_DAMAGE)))
         && vampire.isAlive()) {
       MilestoneCriterion.reach(vampire, Milestone.SUN_SURVIVED);
     }

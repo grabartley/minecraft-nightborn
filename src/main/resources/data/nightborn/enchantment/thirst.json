@@ -24,7 +24,8 @@
     "per_level_above_first": 0
   },
   "slots": [
-    "any"
+    "armor",
+    "mainhand"
   ],
   "supported_items": "#nightborn:enchantable/cursed",
   "trinkets:slots": [
