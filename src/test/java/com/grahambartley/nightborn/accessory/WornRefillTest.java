@@ -3,6 +3,7 @@ package com.grahambartley.nightborn.accessory;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.grahambartley.nightborn.MinecraftBootstrapExtension;
+import com.grahambartley.nightborn.gear.GearItems;
 import java.util.List;
 import java.util.Optional;
 import net.minecraft.entity.EquipmentSlot;
@@ -36,5 +37,14 @@ class WornRefillTest {
   @DisplayName("only a tool broken in a hand is replaced from the belt")
   void hand(final EquipmentSlot slot, final Hand hand) {
     assertEquals(Optional.ofNullable(hand), WornRefill.hand(slot));
+  }
+
+  @ParameterizedTest(name = "held damage {0}, wooden {1}: same {2}")
+  @CsvSource({"0, true, true", "30, true, true", "0, false, false"})
+  @DisplayName("a worn stake still counts as the same kind as the stake that broke")
+  void sameStake(final int damage, final boolean wooden, final boolean same) {
+    final ItemStack held = new ItemStack(wooden ? GearItems.WOODEN_STAKE : GearItems.SILVER_STAKE);
+    held.setDamage(damage);
+    assertEquals(same, WornRefill.same(held, new ItemStack(GearItems.WOODEN_STAKE)));
   }
 }

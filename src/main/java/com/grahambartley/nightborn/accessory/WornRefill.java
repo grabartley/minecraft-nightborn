@@ -22,12 +22,22 @@ public final class WornRefill {
       return;
     }
     final ItemStack usedUp = new ItemStack(item);
+    final int selected = player.getInventory().selectedSlot;
     server.send(
         new ServerTask(
             server.getTicks(),
             () -> {
-              if (!player.isRemoved() && player.getStackInHand(hand.get()).isEmpty()) {
-                next(player, usedUp).ifPresent(stack -> player.setStackInHand(hand.get(), stack));
+              if (player.isRemoved() || !player.isAlive()) {
+                return;
+              }
+              if (hand.get() == Hand.MAIN_HAND) {
+                if (player.getInventory().getStack(selected).isEmpty()) {
+                  next(player, usedUp)
+                      .ifPresent(stack -> player.getInventory().setStack(selected, stack));
+                }
+              } else if (player.getOffHandStack().isEmpty()) {
+                next(player, usedUp)
+                    .ifPresent(stack -> player.setStackInHand(Hand.OFF_HAND, stack));
               }
             }));
   }
@@ -59,12 +69,16 @@ public final class WornRefill {
   static Predicate<ItemStack> wanted(
       final WornStores.WornStore worn, final AccessoryHold hold, final ItemStack usedUp) {
     final List<ItemStack> held = AccessoryStore.contents(worn.stack()).stream().toList();
-    return like(held, usedUp)
-        ? stack -> ItemStack.areItemsAndComponentsEqual(stack, usedUp)
-        : hold::accepts;
+    return like(held, usedUp) ? stack -> same(stack, usedUp) : hold::accepts;
   }
 
   static boolean like(final List<ItemStack> held, final ItemStack usedUp) {
-    return held.stream().anyMatch(stack -> ItemStack.areItemsAndComponentsEqual(stack, usedUp));
+    return held.stream().anyMatch(stack -> same(stack, usedUp));
+  }
+
+  static boolean same(final ItemStack held, final ItemStack usedUp) {
+    return usedUp.isDamageable()
+        ? held.isOf(usedUp.getItem())
+        : ItemStack.areItemsAndComponentsEqual(held, usedUp);
   }
 }
