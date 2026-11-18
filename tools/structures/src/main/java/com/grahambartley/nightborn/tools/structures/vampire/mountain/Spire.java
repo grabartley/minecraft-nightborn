@@ -58,12 +58,17 @@ public final class Spire {
         final boolean sloped = sloped(r, layer, layers);
         for (int dx = -r; dx <= r; dx++) {
           for (int dz = -r; dz <= r; dz++) {
-            if (onRing(dx, dz, r, round) && t.inside(cx + dx, y, cz + dz)) {
+            if (!t.inside(cx + dx, y, cz + dz)) {
+              continue;
+            }
+            if (onRing(dx, dz, r, round)) {
               t.set(
                   cx + dx,
                   y,
                   cz + dz,
                   sloped ? tile(dx, dz, r, round) : MountainCastle.TILES.full());
+            } else if (within(dx, dz, r - 1, round) && empty(t.get(cx + dx, y, cz + dz))) {
+              t.set(cx + dx, y, cz + dz, MountainCastle.TILES.full());
             }
           }
         }
@@ -76,6 +81,10 @@ public final class Spire {
         cz,
         BlockState.of(FINIAL, "facing", "up", "powered", false, "waterlogged", false));
     return y + 1;
+  }
+
+  private static boolean empty(final String state) {
+    return state == null || BlockState.AIR.equals(state);
   }
 
   private static String stair(final String block, final String facing, final String shape) {

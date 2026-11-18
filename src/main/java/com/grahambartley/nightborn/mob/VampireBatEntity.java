@@ -1,6 +1,7 @@
 package com.grahambartley.nightborn.mob;
 
 import com.grahambartley.nightborn.config.NightbornConfig;
+import com.grahambartley.nightborn.guild.party.PartySchedule;
 import com.grahambartley.nightborn.server.ServerConfigService;
 import com.grahambartley.nightborn.sickness.BiteSickness;
 import com.grahambartley.nightborn.sun.DirectSun;
@@ -13,6 +14,7 @@ import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
 import net.minecraft.entity.passive.BatEntity;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
@@ -40,6 +42,8 @@ public class VampireBatEntity extends BatEntity implements GeoEntity {
 
   private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
   @Nullable private LivingEntity prey;
+  private boolean campRaider;
+  static final String RAIDER_KEY = "CampRaider";
   private int biteCooldown;
   private int biteShownTicks;
 
@@ -143,6 +147,10 @@ public class VampireBatEntity extends BatEntity implements GeoEntity {
   @Override
   public void tick() {
     super.tick();
+    if (campRaider && !getWorld().isClient() && !PartySchedule.night(getWorld().getTimeOfDay())) {
+      discard();
+      return;
+    }
     if (biteShownTicks > 0) {
       biteShownTicks--;
     }
@@ -202,5 +210,26 @@ public class VampireBatEntity extends BatEntity implements GeoEntity {
   @Override
   public AnimatableInstanceCache getAnimatableInstanceCache() {
     return cache;
+  }
+
+  public void raidCamp() {
+    campRaider = true;
+    setPersistent();
+  }
+
+  public boolean raidsCamp() {
+    return campRaider;
+  }
+
+  @Override
+  public void writeCustomDataToNbt(final NbtCompound nbt) {
+    super.writeCustomDataToNbt(nbt);
+    nbt.putBoolean(RAIDER_KEY, campRaider);
+  }
+
+  @Override
+  public void readCustomDataFromNbt(final NbtCompound nbt) {
+    super.readCustomDataFromNbt(nbt);
+    campRaider = nbt.getBoolean(RAIDER_KEY);
   }
 }

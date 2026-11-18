@@ -24,6 +24,7 @@ public final class Church {
   public static final int STAIR_X = 27;
   public static final int STAIR_Z = 4;
   public static final int CLEARANCE = 4;
+  public static final int BELFRY = 13;
 
   static final Stone WALL =
       new Stone("stone_bricks", "mossy_stone_bricks", "cracked_stone_bricks", 14);
@@ -136,15 +137,31 @@ public final class Church {
     t.set(13, 3, 16, WALL.at(13, 3, 16));
   }
 
+  private static void belfryStair(final Template t) {
+    final int[][] ring = {{5, 10}, {4, 10}, {4, 9}, {4, 8}, {5, 8}, {6, 8}, {6, 9}, {6, 10}};
+    for (int y = 1; y < BELFRY; y++) {
+      t.set(5, y, 9, "stone_bricks");
+    }
+    for (int i = 0; i < BELFRY; i++) {
+      final int[] at = ring[i % ring.length];
+      final int[] next = ring[(i + 1) % ring.length];
+      final int y = 1 + i;
+      final String facing =
+          next[0] > at[0] ? "east" : next[0] < at[0] ? "west" : next[1] > at[1] ? "south" : "north";
+      t.set(at[0], y, at[1], stair(TRIM, facing));
+      for (int above = y + 1; above <= Math.min(y + 3, BELFRY); above++) {
+        t.set(at[0], above, at[1], BlockState.AIR);
+      }
+    }
+  }
+
   private static void tower(final Template t) {
     t.fill(3, 0, 7, 7, 0, 11, "stone_bricks");
     WALL.walls(t, 3, 1, 7, 7, 18, 11);
     t.fill(4, 1, 8, 6, 17, 10, "air");
-    t.fill(4, 13, 8, 6, 13, 10, "spruce_planks");
+    t.fill(4, BELFRY, 8, 6, BELFRY, 10, "spruce_planks");
     t.fill(4, 18, 8, 6, 18, 10, "stone_bricks");
-    for (int y = 1; y <= 13; y++) {
-      t.set(4, y, 8, BlockState.of("ladder", "facing", "east", "waterlogged", false));
-    }
+    belfryStair(t);
     WALL.walls(t, 3, 19, 7, 7, 19, 11);
     for (final int[] corner : new int[][] {{3, 7}, {3, 11}, {7, 7}, {7, 11}}) {
       t.set(corner[0], 20, corner[1], "stone_brick_wall");
@@ -215,7 +232,7 @@ public final class Church {
     t.set(29, 1, 10, "polished_andesite");
     Furnishing.candles(t, 29, 2, 8, 2, true);
     Furnishing.candles(t, 29, 2, 10, 2, true);
-    Furnishing.oldBloodFont(t, 28, 1, 11);
+    Furnishing.oldBloodFont(t, 29, 1, 11);
   }
 
   private static void churchyard(final Template t, final Layout layout) {

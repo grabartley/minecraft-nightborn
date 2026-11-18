@@ -16,9 +16,8 @@ class BedchambersTest {
   static void build() {
     rooms = new Template("vampire/test", Manor.SIZE_X, Manor.SIZE_Y, Manor.SIZE_Z);
     ManorShell.build(rooms);
-    final Turret turret = new Turret(true);
-    turret.build(rooms);
-    Bedchambers.build(rooms, turret);
+    new Turret(true).build(rooms);
+    Bedchambers.build(rooms);
   }
 
   @ParameterizedTest(
@@ -61,9 +60,10 @@ class BedchambersTest {
     "34, 10, 20, spruce_coffin",
     "36, 10, 19, spruce_coffin",
     "35, 11, 11, chalice",
-    "40, 15, 22, ornate_chair",
-    "40, 15, 20, lectern",
-    "42, 15, 22, chest",
+    "40, 15, 24, ornate_chair",
+    "38, 15, 22, lectern",
+    "38, 15, 21, chest",
+    "42, 15, 22, bookshelf",
     "14, 11, 18, portrait"
   })
   void furnishesEachChamber(final int x, final int y, final int z, final String block) {

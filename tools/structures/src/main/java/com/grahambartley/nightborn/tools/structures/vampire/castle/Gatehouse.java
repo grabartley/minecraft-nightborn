@@ -13,7 +13,9 @@ public final class Gatehouse {
   public static final int SOUTH = Castle.SIZE - 1;
   public static final int TOP = 14;
   public static final int GATE_HEIGHT = 5;
-  public static final int UPPER_FLOOR = 8;
+  public static final int UPPER_FLOOR = Castle.WALL_TOP;
+  public static final int ROOF_STAIR_Z = NORTH + 1;
+  public static final int ROOF_STAIR_X = WEST + 2;
 
   private Gatehouse() {}
 
@@ -24,7 +26,7 @@ public final class Gatehouse {
         for (int y = 0; y <= TOP; y++) {
           final String stone =
               y < Castle.FLOOR ? Castle.PLINTH.at(x, y, z) : Castle.WALL.at(x, y, z);
-          if (shell || y < Castle.FLOOR + GATE_HEIGHT + 1 || y == UPPER_FLOOR || y == TOP) {
+          if (shell || y <= UPPER_FLOOR || y == TOP) {
             t.set(x, y, z, stone);
           } else {
             t.set(x, y, z, BlockState.AIR);
@@ -46,8 +48,8 @@ public final class Gatehouse {
       t.set(x, Castle.FLOOR + GATE_HEIGHT - 2, SOUTH - 2, "iron_bars");
     }
     for (final int x : new int[] {WEST + 2, EAST - 2}) {
-      t.set(x, UPPER_FLOOR + 3, SOUTH, "iron_bars");
-      t.set(x, UPPER_FLOOR + 4, SOUTH, "iron_bars");
+      t.set(x, UPPER_FLOOR + 1, SOUTH, "iron_bars");
+      t.set(x, UPPER_FLOOR + 2, SOUTH, "iron_bars");
     }
     t.set(
         Castle.MID,
@@ -55,7 +57,46 @@ public final class Gatehouse {
         NORTH,
         BlockState.of("soul_lantern", "hanging", true, "waterlogged", false));
     for (final int x : new int[] {WEST, EAST}) {
-      new Tower(x, SOUTH, 2, TOP + 3, true).build(t, Castle.WALL);
+      new Tower(x, SOUTH, 2, TOP + 3, true).buildSolid(t, Castle.WALL);
+    }
+    walkPassages(t);
+    roofStair(t);
+  }
+
+  private static void walkPassages(final Template t) {
+    final int z = Castle.SIZE - 1 - CurtainWall.THICK + 1;
+    for (int d = 0; d <= 4; d++) {
+      for (int y = UPPER_FLOOR + 1; y <= UPPER_FLOOR + 2; y++) {
+        t.set(WEST - 2 + d, y, z, BlockState.AIR);
+        t.set(EAST + 2 - d, y, z, BlockState.AIR);
+      }
+    }
+  }
+
+  private static void roofStair(final Template t) {
+    for (int i = 0; i <= TOP - UPPER_FLOOR - 1; i++) {
+      final int x = ROOF_STAIR_X + i;
+      final int y = UPPER_FLOOR + 1 + i;
+      for (int below = UPPER_FLOOR + 1; below < y; below++) {
+        t.set(x, below, ROOF_STAIR_Z, Castle.WALL.at(x, below, ROOF_STAIR_Z));
+      }
+      t.set(
+          x,
+          y,
+          ROOF_STAIR_Z,
+          BlockState.of(
+              Castle.STEP,
+              "facing",
+              "east",
+              "half",
+              "bottom",
+              "shape",
+              "straight",
+              "waterlogged",
+              false));
+      if (y < TOP) {
+        t.set(x, TOP, ROOF_STAIR_Z, BlockState.AIR);
+      }
     }
   }
 }

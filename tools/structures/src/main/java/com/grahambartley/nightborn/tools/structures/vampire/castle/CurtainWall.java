@@ -48,7 +48,10 @@ public final class CurtainWall {
         }
         if (top == Castle.WALL_TOP && outerFace(x, z) && (x + z) % 2 == 0) {
           t.set(x, top + 1, z, Castle.WALL.at(x, top + 1, z));
+        } else {
+          t.set(x, top + 1, z, BlockState.AIR);
         }
+        t.set(x, top + 2, z, BlockState.AIR);
       }
     }
     if (layout.ruinedWall()) {

@@ -50,6 +50,7 @@ public final class Barbican {
         MountainCastle.PLASTER,
         true,
         true);
+    Roof.fillAttic(t, WEST + 1, NORTH + 1, EAST - 1, SOUTH - 1, TOP + 1, MountainCastle.PLANKS);
   }
 
   private static void passage(final Template t) {

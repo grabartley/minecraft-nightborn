@@ -94,6 +94,7 @@ class NightbornConfigTest {
             "servants",
             "combat",
             "structures",
+            "parties",
             "ritual",
             "age"),
         NightbornConfig.sections());

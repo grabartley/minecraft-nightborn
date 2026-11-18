@@ -1,36 +1,68 @@
 package com.grahambartley.nightborn.structure;
 
-import com.mojang.datafixers.util.Pair;
+import com.grahambartley.nightborn.Nightborn;
+import com.grahambartley.nightborn.server.ServerConfigService;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CancellationException;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.RejectedExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.function.Supplier;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
+import net.minecraft.SharedConstants;
+import net.minecraft.nbt.scanner.SelectiveNbtCollector;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.entry.RegistryEntry;
-import net.minecraft.registry.entry.RegistryEntryList;
 import net.minecraft.registry.tag.TagKey;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
+import net.minecraft.world.gen.chunk.ChunkGenerator;
+import net.minecraft.world.gen.chunk.placement.RandomSpreadStructurePlacement;
+import net.minecraft.world.gen.chunk.placement.StructurePlacement;
+import net.minecraft.world.gen.chunk.placement.StructurePlacementCalculator;
 import net.minecraft.world.gen.structure.Structure;
 
 public final class NearestStructures {
 
-  public static final int CHUNK_BLOCKS = 16;
   public static final long DAY_TICKS = 24000L;
+  public static final long SCAN_SECONDS = 5L;
 
   private static final NearestStructureCache CACHE = new NearestStructureCache();
+  private static volatile ExecutorService searcher;
 
   private NearestStructures() {}
 
   public static void register() {
-    ServerLifecycleEvents.SERVER_STOPPED.register(server -> CACHE.forget());
+    ServerLifecycleEvents.SERVER_STARTING.register(
+        server ->
+            searcher =
+                Executors.newSingleThreadExecutor(
+                    Thread.ofPlatform().name("Nightborn structure search").daemon().factory()));
+    ServerLifecycleEvents.SERVER_STOPPED.register(
+        server -> {
+          final ExecutorService stopping = searcher;
+          searcher = null;
+          if (stopping != null) {
+            stopping.shutdownNow();
+          }
+          CACHE.forget();
+        });
+    ServerConfigService.onChange((server, config) -> CACHE.forget());
   }
 
   public record Found(Identifier structure, BlockPos pos) {}
 
-  public static List<Found> eachOf(
+  public static CompletableFuture<List<Found>> eachOf(
       final ServerWorld world, final TagKey<Structure> tag, final BlockPos from, final int range) {
+    final ExecutorService running = searcher;
+    if (running == null) {
+      return CompletableFuture.failedFuture(new IllegalStateException("No server is running"));
+    }
     final NearestStructureCache.Ask ask =
         new NearestStructureCache.Ask(
             world.getRegistryKey().getValue(),
@@ -38,43 +70,104 @@ public final class NearestStructures {
             new ChunkPos(from).toLong(),
             range,
             Math.floorDiv(world.getTimeOfDay(), DAY_TICKS));
+    final List<RegistryEntry<Structure>> entries =
+        world
+            .getRegistryManager()
+            .get(RegistryKeys.STRUCTURE)
+            .getEntryList(tag)
+            .<List<RegistryEntry<Structure>>>map(list -> list.stream().toList())
+            .orElse(List.of());
     return CACHE
-        .recall(ask)
-        .orElseGet(
-            () -> {
-              final List<Found> found = locate(world, tag, from, range);
-              CACHE.remember(ask, found);
-              return found;
+        .find(ask, () -> search(running, () -> locate(world, entries, from, range)))
+        .whenComplete(
+            (found, error) -> {
+              if (error != null) {
+                Nightborn.LOGGER.warn("Structure search for {} failed", tag.id(), error);
+              }
             });
+  }
+
+  static CompletableFuture<List<Found>> search(
+      final ExecutorService running, final Supplier<List<Found>> walk) {
+    try {
+      return CompletableFuture.supplyAsync(walk, running);
+    } catch (final RejectedExecutionException stopped) {
+      return CompletableFuture.failedFuture(stopped);
+    }
   }
 
   private static List<Found> locate(
-      final ServerWorld world, final TagKey<Structure> tag, final BlockPos from, final int range) {
+      final ServerWorld world,
+      final List<RegistryEntry<Structure>> entries,
+      final BlockPos from,
+      final int range) {
+    final ChunkGenerator generator = world.getChunkManager().getChunkGenerator();
+    final StructurePlacementCalculator placements =
+        world.getChunkManager().getStructurePlacementCalculator();
     final List<Found> found = new ArrayList<>();
-    world
-        .getRegistryManager()
-        .get(RegistryKeys.STRUCTURE)
-        .getEntryList(tag)
-        .ifPresent(
-            entries -> {
-              for (final RegistryEntry<Structure> entry : entries) {
-                final Pair<BlockPos, RegistryEntry<Structure>> hit =
-                    world
-                        .getChunkManager()
-                        .getChunkGenerator()
-                        .locateStructure(
-                            world, RegistryEntryList.of(entry), from, chunks(range), false);
-                if (hit != null) {
-                  entry
-                      .getKey()
-                      .ifPresent(key -> found.add(new Found(key.getValue(), hit.getFirst())));
-                }
-              }
-            });
+    for (final RegistryEntry<Structure> entry : entries) {
+      final Identifier id = entry.getKey().orElseThrow().getValue();
+      for (final StructurePlacement placement : placements.getPlacements(entry)) {
+        if (!(placement instanceof RandomSpreadStructurePlacement spread)) {
+          Nightborn.LOGGER.warn("Structure search cannot walk the placement of {}", id);
+          continue;
+        }
+        for (final ChunkPos probe :
+            SpreadCells.probes(
+                new ChunkPos(from), SpreadCells.chunks(range), spread.getSpacing())) {
+          if (Thread.currentThread().isInterrupted()) {
+            throw new CancellationException("Server stopped");
+          }
+          final ChunkPos start =
+              spread.getStartChunk(placements.getStructureSeed(), probe.x, probe.z);
+          final BlockPos at = spread.getLocatePos(start);
+          if (SpreadCells.within(from, at, range)
+              && spread.shouldGenerate(placements, start.x, start.z)
+              && present(world, generator, entry.value(), id, start)) {
+            found.add(new Found(id, at));
+          }
+        }
+      }
+    }
     return found;
   }
 
-  public static int chunks(final int blocks) {
-    return Math.max(1, Math.ceilDiv(blocks, CHUNK_BLOCKS));
+  private static boolean present(
+      final ServerWorld world,
+      final ChunkGenerator generator,
+      final Structure structure,
+      final Identifier id,
+      final ChunkPos start) {
+    final SelectiveNbtCollector saved = SavedStarts.collector();
+    world
+        .getChunkManager()
+        .chunkLoadingManager
+        .getWorker()
+        .scanChunk(start, saved)
+        .completeOnTimeout(null, SCAN_SECONDS, TimeUnit.SECONDS)
+        .join();
+    return SavedStarts.has(
+            saved.getRoot(), id, SharedConstants.getGameVersion().getSaveVersion().getId())
+        .orElseGet(() -> possible(world, generator, structure, start));
+  }
+
+  private static boolean possible(
+      final ServerWorld world,
+      final ChunkGenerator generator,
+      final Structure structure,
+      final ChunkPos start) {
+    return structure
+        .getValidStructurePosition(
+            new Structure.Context(
+                world.getRegistryManager(),
+                generator,
+                generator.getBiomeSource(),
+                world.getChunkManager().getNoiseConfig(),
+                world.getStructureTemplateManager(),
+                world.getSeed(),
+                start,
+                world,
+                structure.getValidBiomes()::contains))
+        .isPresent();
   }
 }

@@ -28,7 +28,7 @@ public final class CommandWheel {
   public static final TagKey<Item> KEEPS_OWN_USE =
       TagKey.of(RegistryKeys.ITEM, Identifier.of(Nightborn.MOD_ID, "keeps_own_use"));
 
-  static final double REACH_SLACK = 1.0;
+  public static final double REACH_SLACK = 1.0;
 
   private static final List<WheelSubject<?>> SUBJECTS = new CopyOnWriteArrayList<>();
   private static final Map<UUID, WheelMenu> MENUS = new ConcurrentHashMap<>();

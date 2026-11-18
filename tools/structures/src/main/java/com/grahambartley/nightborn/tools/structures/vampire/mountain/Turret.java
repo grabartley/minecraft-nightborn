@@ -1,13 +1,17 @@
 package com.grahambartley.nightborn.tools.structures.vampire.mountain;
 
 import com.grahambartley.nightborn.tools.structures.template.BlockState;
+import com.grahambartley.nightborn.tools.structures.template.Pos;
 import com.grahambartley.nightborn.tools.structures.template.Template;
+import com.grahambartley.nightborn.tools.structures.vampire.manor.Parts;
+import java.util.ArrayList;
 import java.util.List;
 
 public record Turret(int cx, int cz, int radius, int base, int top, boolean round, int walk) {
 
   public static final int STOREY = 6;
   public static final int ROOF_LAYERS = 2;
+  public static final int STAIR_HEADROOM = 3;
 
   public boolean inside(final int x, final int z, final int r) {
     return Spire.within(x - cx, z - cz, r, round);
@@ -45,7 +49,7 @@ public record Turret(int cx, int cz, int radius, int base, int top, boolean roun
     }
     windows(t);
     doors(t);
-    ladder(t);
+    spiral(t);
     Spire.raise(t, cx, cz, radius + 1, top + 1, round, ROOF_LAYERS);
   }
 
@@ -58,14 +62,59 @@ public record Turret(int cx, int cz, int radius, int base, int top, boolean roun
     }
   }
 
-  private record Climb(int x, int z, int backX, int backZ, String facing) {}
+  public int landing() {
+    int landing = walk;
+    while (landing + STOREY < top) {
+      landing += STOREY;
+    }
+    return landing;
+  }
 
-  private List<Climb> climbs() {
-    return List.of(
-        new Climb(cx - radius + 1, cz - 1, -1, 0, "east"),
-        new Climb(cx + radius - 1, cz + 1, 1, 0, "west"),
-        new Climb(cx + 1, cz - radius + 1, 0, -1, "south"),
-        new Climb(cx - 1, cz + radius - 1, 0, 1, "north"));
+  public List<Pos> loop() {
+    final int d = radius - 2;
+    final List<Pos> loop = new ArrayList<>();
+    for (int x = -d; x < d; x++) {
+      loop.add(new Pos(cx + x, 0, cz - d));
+    }
+    for (int z = -d; z < d; z++) {
+      loop.add(new Pos(cx + d, 0, cz + z));
+    }
+    for (int x = d; x > -d; x--) {
+      loop.add(new Pos(cx + x, 0, cz + d));
+    }
+    for (int z = d; z > -d; z--) {
+      loop.add(new Pos(cx - d, 0, cz + z));
+    }
+    return loop;
+  }
+
+  private void spiral(final Template t) {
+    final List<Pos> loop = loop();
+    final int steps = landing() - base;
+    for (int i = 0; i < steps; i++) {
+      final Pos at = loop.get(i % loop.size());
+      final Pos next = loop.get((i + 1) % loop.size());
+      final int y = base + 1 + i;
+      t.set(at.x(), y, at.z(), Parts.stair(MountainCastle.KEEP_STEP, toward(at, next)));
+      for (int above = y + 1; above <= y + STAIR_HEADROOM && above < top; above++) {
+        t.set(at.x(), above, at.z(), BlockState.AIR);
+      }
+    }
+    if (radius - 2 == 1) {
+      for (int y = base + 1; y < walk; y++) {
+        t.set(cx, y, cz, MountainCastle.WALL.at(cx, y, cz));
+      }
+    }
+  }
+
+  private static String toward(final Pos from, final Pos to) {
+    if (to.x() > from.x()) {
+      return "east";
+    }
+    if (to.x() < from.x()) {
+      return "west";
+    }
+    return to.z() > from.z() ? "south" : "north";
   }
 
   public static boolean solid(final String state) {
@@ -74,31 +123,6 @@ public record Turret(int cx, int cz, int radius, int base, int top, boolean roun
         && !state.contains("pane")
         && !state.contains("glass")
         && !state.contains("bars");
-  }
-
-  private boolean solidBehind(final Template t, final Climb climb) {
-    for (int y = base + 1; y < top; y++) {
-      if (!solid(t.get(climb.x() + climb.backX(), y, climb.z() + climb.backZ()))) {
-        return false;
-      }
-    }
-    return true;
-  }
-
-  private void ladder(final Template t) {
-    final Climb climb =
-        climbs().stream()
-            .filter(c -> solidBehind(t, c))
-            .findFirst()
-            .orElseThrow(
-                () -> new IllegalStateException("No solid wall for the ladder in " + this));
-    for (int y = base + 1; y < top; y++) {
-      t.set(
-          climb.x(),
-          y,
-          climb.z(),
-          BlockState.of("ladder", "facing", climb.facing(), "waterlogged", false));
-    }
   }
 
   private void doors(final Template t) {

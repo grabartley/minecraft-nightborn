@@ -1,0 +1,25 @@
+{
+  "default": {
+    "clusters": 3,
+    "radius": 2,
+    "floor_splatters": 5,
+    "pools": 1,
+    "wall_splatters": 2,
+    "wall_max_height": 1
+  },
+  "structures": {
+    "vampire/crypt/church": {
+      "clusters": 2,
+      "pools": 0
+    },
+    "vampire/castle": {
+      "clusters": 6
+    },
+    "vampire/manor": {
+      "clusters": 6
+    },
+    "vampire/mountain_castle": {
+      "clusters": 10
+    }
+  }
+}

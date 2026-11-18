@@ -3,6 +3,7 @@ package com.grahambartley.nightborn.guild;
 import com.grahambartley.nightborn.Nightborn;
 import com.grahambartley.nightborn.servant.job.Bearing;
 import com.grahambartley.nightborn.servant.job.ScoutChoices;
+import com.grahambartley.nightborn.servant.job.ScoutTrip;
 import com.grahambartley.nightborn.server.ServerConfigService;
 import com.grahambartley.nightborn.structure.NearestStructures;
 import com.grahambartley.nightborn.structure.NearestStructures.Found;
@@ -51,13 +52,21 @@ public final class GuildRumour implements WheelAction<GuildMasterEntity> {
     }
     final BlockPos from = master.getBlockPos();
     final int range = ServerConfigService.current().structures().rumourRange();
-    final Optional<Found> nearest =
-        ScoutChoices.nearest(
-                from, NearestStructures.eachOf(world, VAMPIRE_HOUSES, from, range), range, 1)
-            .stream()
-            .findFirst();
+    final Text teller = master.getDisplayName();
     master.playSound(SoundEvents.ENTITY_VILLAGER_AMBIENT, 1.0F, master.getSoundPitch());
-    player.sendMessage(tale(master.getDisplayName(), from, nearest), false);
+    NearestStructures.eachOf(world, VAMPIRE_HOUSES, from, range)
+        .thenAcceptAsync(
+            found -> {
+              if (!player.isDisconnected()) {
+                player.sendMessage(
+                    tale(
+                        teller,
+                        from,
+                        ScoutChoices.nearest(from, found, range, 1).stream().findFirst()),
+                    false);
+              }
+            },
+            world.getServer());
   }
 
   static Text tale(final Text teller, final BlockPos from, final Optional<Found> nearest) {
@@ -69,8 +78,11 @@ public final class GuildRumour implements WheelAction<GuildMasterEntity> {
               return Text.translatable(
                   "nightborn.guild.rumour.told",
                   teller,
+                  ScoutTrip.placeName(house.structure()),
                   (int) Math.round(Math.sqrt(dx * dx + dz * dz)),
-                  Text.translatable(Bearing.of(dx, dz).translationKey()));
+                  Text.translatable(Bearing.of(dx, dz).translationKey()),
+                  house.pos().getX(),
+                  house.pos().getZ());
             })
         .orElseGet(() -> Text.translatable("nightborn.guild.rumour.none", teller));
   }

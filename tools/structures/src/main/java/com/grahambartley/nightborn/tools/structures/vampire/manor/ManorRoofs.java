@@ -45,6 +45,8 @@ public final class ManorRoofs {
     finial(t, MID_X, dormerRidge, MAIN_S);
     finial(t, MAIN_E, mainRidge, (MAIN_N + MAIN_S) / 2);
     attic(t);
+    Roof.fillAttic(t, WING_W + 1, MAIN_N + 1, WING_E - 1, WING_S - 1, TOP + 1, Manor.PLANKS);
+    Roof.fillAttic(t, WING_E + 1, MAIN_N + 1, MAIN_E - 1, MAIN_S - 1, TOP + 1, Manor.PLANKS);
   }
 
   private static void finial(final Template t, final int x, final int ridge, final int z) {
