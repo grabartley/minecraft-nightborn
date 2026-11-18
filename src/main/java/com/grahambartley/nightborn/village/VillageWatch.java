@@ -3,6 +3,7 @@ package com.grahambartley.nightborn.village;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.minecraft.entity.passive.VillagerEntity;
 import net.minecraft.server.world.ServerWorld;
@@ -18,6 +19,7 @@ public final class VillageWatch {
 
   static void register() {
     ServerTickEvents.END_WORLD_TICK.register(VillageWatch::tick);
+    ServerLifecycleEvents.SERVER_STOPPED.register(server -> VillageDoors.clear());
   }
 
   private static void tick(final ServerWorld world) {
@@ -42,7 +44,7 @@ public final class VillageWatch {
             VillagerEntity.class,
             new Box(bell).expand(VillageSuspicion.settings().villageReach()),
             villager -> VillageSuspicion.bellOf(villager).equals(Optional.of(bell)));
-    VillageDoors.keep(world, step, villagers);
+    VillageDoors.keep(world, bell, step, villagers);
     record = record.withWards(VillageWards.keep(world, bell, step, record.wards(), villagers));
     record = VillageGuard.keep(world, bell, step, record);
     KnownFaces.shun(world, bell, record);

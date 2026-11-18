@@ -23,7 +23,7 @@ public final class NightMarkup {
     if (!(villager.getWorld() instanceof ServerWorld world)) {
       return;
     }
-    final boolean known =
+    final boolean marksUp =
         VillageSuspicion.bellOf(villager)
             .filter(
                 bell ->
@@ -33,7 +33,7 @@ public final class NightMarkup {
                             world.getDimension().hasFixedTime(), world.getTimeOfDay()),
                         customer.hasStatusEffect(StatusEffects.HERO_OF_THE_VILLAGE)))
             .isPresent();
-    if (!known) {
+    if (!marksUp) {
       return;
     }
     final int percent = VillageSuspicion.settings().nightMarkup();

@@ -27,6 +27,13 @@ public record WitnessReport(
         : Outcome.RUNNING;
   }
 
+  public boolean sameEvent(final WitnessReport other) {
+    return vampire.equals(other.vampire)
+        && cause == other.cause
+        && bell.equals(other.bell)
+        && night == other.night;
+  }
+
   public boolean sameSighting(final WitnessReport other) {
     return witness.equals(other.witness)
         && vampire.equals(other.vampire)

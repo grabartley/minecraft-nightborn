@@ -95,7 +95,7 @@ public final class VillageSuspicion {
   }
 
   public static boolean knows(final ServerWorld world, final BlockPos bell, final UUID player) {
-    return Villages.of(world).at(bell).isPresent() && current(world, bell).knows(player);
+    return Villages.of(world).at(bell).filter(record -> record.knows(player)).isPresent();
   }
 
   public static boolean knows(final VillagerEntity villager, final PlayerEntity player) {

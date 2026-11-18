@@ -68,7 +68,10 @@ public record VillageRecord(
       return this;
     }
     final long passed = night - settledNight;
-    final long quiet = passed - (incidentNight >= settledNight && incidentNight < night ? 1 : 0);
+    final long quiet =
+        keptNeighbours > 0
+            ? 0
+            : passed - (incidentNight >= settledNight && incidentNight < night ? 1 : 0);
     final long level = suspicion + passed * keptNeighbours * perNeighbour - quiet * quietFade;
     return new VillageRecord(
         (int) Math.clamp(level, 0, MOST),

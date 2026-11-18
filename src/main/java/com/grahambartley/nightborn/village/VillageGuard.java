@@ -18,11 +18,8 @@ public final class VillageGuard {
   private VillageGuard() {}
 
   public static boolean sends(
-      final VillageStep step,
-      final boolean guarded,
-      final boolean sentTonight,
-      final boolean spawning) {
-    return step == VillageStep.HUNTED && !guarded && !sentTonight && spawning;
+      final boolean guarded, final boolean sentTonight, final boolean spawning) {
+    return !guarded && !sentTonight && spawning;
   }
 
   static VillageRecord keep(
@@ -37,7 +34,6 @@ public final class VillageGuard {
     }
     final long night = VillageSuspicion.night(world);
     if (!sends(
-        step,
         !guards.isEmpty(),
         record.sentNight() == night,
         world.getGameRules().getBoolean(GameRules.DO_MOB_SPAWNING)

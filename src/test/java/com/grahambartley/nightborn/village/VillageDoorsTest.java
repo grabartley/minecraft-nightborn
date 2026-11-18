@@ -27,4 +27,11 @@ class VillageDoorsTest {
   void sendsHome(final boolean sleeping, final double distance, final boolean home) {
     assertEquals(home, VillageDoors.sendsHome(sleeping, distance));
   }
+
+  @ParameterizedTest(name = "night {0}, last shut on {1}: shuts again {2}")
+  @CsvSource({"4, , true", "4, 3, true", "4, 4, false"})
+  @DisplayName("doors are shut once each night, so a door opened later stays open")
+  void shutsOnceANight(final long night, final Long lastShut, final boolean shuts) {
+    assertEquals(shuts, VillageDoors.shutsTonight(night, lastShut));
+  }
 }

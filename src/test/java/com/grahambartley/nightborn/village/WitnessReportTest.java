@@ -48,4 +48,19 @@ class WitnessReportTest {
   private static WitnessReport report(final SuspicionCause cause) {
     return report(cause, 0L);
   }
+
+  @ParameterizedTest(name = "{0} by another witness on night {1} at bell {2}: same event {3}")
+  @CsvSource({
+    "SEEN_FEEDING, 4, 0, true",
+    "SEEN_BURNING, 4, 0, false",
+    "SEEN_FEEDING, 5, 0, false",
+    "SEEN_FEEDING, 4, 9, false"
+  })
+  @DisplayName("one thing seen by many witnesses counts once for their village")
+  void oneEventCountsOnce(
+      final SuspicionCause cause, final long night, final int bellX, final boolean same) {
+    final WitnessReport other =
+        new WitnessReport(UUID.randomUUID(), VAMPIRE, cause, new BlockPos(bellX, 0, 0), 9L, night);
+    assertEquals(same, report(SuspicionCause.SEEN_FEEDING, 4).sameEvent(other));
+  }
 }

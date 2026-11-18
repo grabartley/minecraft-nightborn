@@ -72,11 +72,11 @@ public final class FamiliarHiring {
     }
     final VillagerData data = villager.getVillagerData();
     final BlockPos hiredAt = villager.getBlockPos();
+    final Optional<BlockPos> bell = VillageSuspicion.bellOf(villager);
     villager.releaseTicketFor(MemoryModuleType.HOME);
     villager.releaseTicketFor(MemoryModuleType.JOB_SITE);
     villager.releaseTicketFor(MemoryModuleType.POTENTIAL_JOB_SITE);
     villager.releaseTicketFor(MemoryModuleType.MEETING_POINT);
-    final Optional<BlockPos> bell = VillageSuspicion.bellOf(villager);
     final List<ItemStack> carried = villager.getInventory().clearToList();
     final HumanFamiliarEntity familiar = villager.convertTo(Familiars.HUMAN_FAMILIAR, true);
     if (familiar == null) {

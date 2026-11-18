@@ -2,8 +2,10 @@ package com.grahambartley.nightborn.village;
 
 import com.grahambartley.nightborn.core.NightTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import net.minecraft.block.BlockState;
@@ -16,6 +18,7 @@ import net.minecraft.registry.tag.BlockTags;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.GlobalPos;
+import org.jetbrains.annotations.Nullable;
 
 public final class VillageDoors {
 
@@ -24,7 +27,13 @@ public final class VillageDoors {
   static final double AT_HOME = 3.0;
   static final float HOME_SPEED = 0.6F;
 
+  private static final Map<BlockPos, Long> SHUT = new HashMap<>();
+
   private VillageDoors() {}
+
+  public static boolean shutsTonight(final long night, @Nullable final Long lastShut) {
+    return lastShut == null || lastShut != night;
+  }
 
   public static boolean shuts(final VillageStep step, final boolean night) {
     return night && step.atLeast(VillageStep.WARY);
@@ -35,15 +44,22 @@ public final class VillageDoors {
   }
 
   static void keep(
-      final ServerWorld world, final VillageStep step, final List<VillagerEntity> villagers) {
+      final ServerWorld world,
+      final BlockPos bell,
+      final VillageStep step,
+      final List<VillagerEntity> villagers) {
     if (!shuts(
         step, NightTime.isNight(world.getDimension().hasFixedTime(), world.getTimeOfDay()))) {
       return;
     }
-    for (final BlockPos door : doors(world, villagers)) {
-      final BlockState state = world.getBlockState(door);
-      if (state.getBlock() instanceof DoorBlock block && block.isOpen(state)) {
-        block.setOpen(null, world, state, door, false);
+    final long night = VillageSuspicion.night(world);
+    if (shutsTonight(night, SHUT.get(bell))) {
+      SHUT.put(bell, night);
+      for (final BlockPos door : doors(world, villagers)) {
+        final BlockState state = world.getBlockState(door);
+        if (state.getBlock() instanceof DoorBlock block && block.isOpen(state)) {
+          block.setOpen(null, world, state, door, false);
+        }
       }
     }
     for (final VillagerEntity villager : villagers) {
@@ -59,23 +75,25 @@ public final class VillageDoors {
     }
   }
 
+  static void clear() {
+    SHUT.clear();
+  }
+
   static List<BlockPos> doors(final ServerWorld world, final List<VillagerEntity> villagers) {
     final Set<BlockPos> doors = new LinkedHashSet<>();
-    for (final VillagerEntity villager : villagers) {
-      home(villager)
-          .ifPresent(
-              home -> {
-                for (final BlockPos pos :
-                    BlockPos.iterate(
-                        home.add(-DOOR_REACH, -DOOR_HEIGHT, -DOOR_REACH),
-                        home.add(DOOR_REACH, DOOR_HEIGHT, DOOR_REACH))) {
-                  final BlockState state = world.getBlockState(pos);
-                  if (state.isIn(BlockTags.WOODEN_DOORS)
-                      && state.get(DoorBlock.HALF) == DoubleBlockHalf.LOWER) {
-                    doors.add(pos.toImmutable());
-                  }
-                }
-              });
+    final Set<BlockPos> homes = new LinkedHashSet<>();
+    villagers.forEach(villager -> home(villager).ifPresent(homes::add));
+    for (final BlockPos home : homes) {
+      for (final BlockPos pos :
+          BlockPos.iterate(
+              home.add(-DOOR_REACH, -DOOR_HEIGHT, -DOOR_REACH),
+              home.add(DOOR_REACH, DOOR_HEIGHT, DOOR_REACH))) {
+        final BlockState state = world.getBlockState(pos);
+        if (state.isIn(BlockTags.WOODEN_DOORS)
+            && state.get(DoorBlock.HALF) == DoubleBlockHalf.LOWER) {
+          doors.add(pos.toImmutable());
+        }
+      }
     }
     return new ArrayList<>(doors);
   }

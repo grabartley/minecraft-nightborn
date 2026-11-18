@@ -45,11 +45,14 @@ class VillageRecordTest {
     "25, 0, 1, 0, 0, 25",
     "25, 0, 3, 0, 0, 21",
     "25, 0, 0, -100, 0, 25",
-    "25, 0, 2, -100, 1, 23",
-    "25, 0, 1, -100, 3, 26",
+    "25, 0, 2, -100, 1, 27",
+    "25, 0, 1, -100, 3, 28",
+    "0, 0, 1, -100, 1, 1",
+    "0, 0, 3, -100, 2, 6",
     "3, 0, 5, -100, 0, 0"
   })
-  @DisplayName("each quiet night takes off 2 and each taken neighbour adds 1 a night")
+  @DisplayName(
+      "each quiet night takes off 2, and a night with a taken neighbour is not quiet: each adds 1")
   void settlesByTheClock(
       final int start,
       final long from,

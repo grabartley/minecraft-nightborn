@@ -12,6 +12,9 @@ import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.minecraft.block.BellBlock;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.ai.brain.Brain;
+import net.minecraft.entity.ai.brain.MemoryModuleType;
+import net.minecraft.entity.ai.brain.WalkTarget;
 import net.minecraft.entity.passive.VillagerEntity;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.server.world.ServerWorld;
@@ -21,6 +24,7 @@ import net.minecraft.world.World;
 public final class WitnessReports {
 
   static final int CHECK_TICKS = 20;
+  static final float RUN_SPEED = 0.7F;
 
   private static final Map<RegistryKey<World>, List<WitnessReport>> RUNNING = new HashMap<>();
   private static final List<WitnessReport> TOLD = new ArrayList<>();
@@ -48,7 +52,7 @@ public final class WitnessReports {
             witness.getUuid(), vampire.getUuid(), cause, bell.get(), world.getTime(), night);
     final List<WitnessReport> running =
         RUNNING.computeIfAbsent(world.getRegistryKey(), key -> new ArrayList<>());
-    if (TOLD.stream().anyMatch(report::sameSighting)
+    if (TOLD.stream().anyMatch(report::sameEvent)
         || running.stream().anyMatch(report::sameSighting)) {
       return false;
     }
@@ -76,6 +80,7 @@ public final class WitnessReports {
               world.getTime(),
               reportTicks);
       if (outcome == WitnessReport.Outcome.RUNNING) {
+        runForBell(witness, report.bell());
         continue;
       }
       reports.remove();
@@ -85,8 +90,18 @@ public final class WitnessReports {
     }
   }
 
+  private static void runForBell(final VillagerEntity witness, final BlockPos bell) {
+    final Brain<?> brain = witness.getBrain();
+    brain.forget(MemoryModuleType.HURT_BY);
+    brain.forget(MemoryModuleType.HURT_BY_ENTITY);
+    brain.remember(MemoryModuleType.WALK_TARGET, new WalkTarget(bell, RUN_SPEED, 1));
+  }
+
   private static void tell(
       final ServerWorld world, final VillagerEntity witness, final WitnessReport report) {
+    if (TOLD.stream().anyMatch(report::sameEvent)) {
+      return;
+    }
     TOLD.add(report);
     ringBell(world, witness, report.bell());
     VillageSuspicion.raise(world, report.bell(), report.cause(), Optional.of(report.vampire()));
