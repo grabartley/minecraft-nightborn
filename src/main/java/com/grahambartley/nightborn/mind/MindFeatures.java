@@ -22,6 +22,7 @@ public final class MindFeatures {
     Commands.register();
     Dreads.register();
     Glamour.register();
+    BloodTithe.register();
     ServerLivingEntityEvents.ALLOW_DAMAGE.register(MindFeatures::allowDamage);
     UseEntityCallback.EVENT.register(Charm::onUse);
   }

@@ -1,6 +1,5 @@
 package com.grahambartley.nightborn.mixin;
 
-import com.grahambartley.nightborn.accessory.WornDamage;
 import com.grahambartley.nightborn.age.Ageing;
 import com.grahambartley.nightborn.batform.BatFlightMotion;
 import com.grahambartley.nightborn.clothing.Noticing;
@@ -145,10 +144,7 @@ abstract class LivingEntityMixin {
 
   @ModifyVariable(method = "damage", at = @At("HEAD"), argsOnly = true)
   private float nightborn$wornDamage(final float amount, final DamageSource source) {
-    return DamageTaken.scale(
-        (LivingEntity) (Object) this,
-        source,
-        WornDamage.scale((LivingEntity) (Object) this, source, amount));
+    return DamageTaken.scale((LivingEntity) (Object) this, source, amount);
   }
 
   @ModifyVariable(method = "heal", at = @At("HEAD"), argsOnly = true)

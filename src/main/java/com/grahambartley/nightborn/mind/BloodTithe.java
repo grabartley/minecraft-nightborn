@@ -3,6 +3,7 @@ package com.grahambartley.nightborn.mind;
 import com.grahambartley.nightborn.Nightborn;
 import com.grahambartley.nightborn.blood.BloodAttachment;
 import com.grahambartley.nightborn.house.Houses;
+import com.grahambartley.nightborn.skill.PowerReach;
 import com.grahambartley.nightborn.thrall.ThrallRegistry;
 import java.util.Comparator;
 import java.util.Optional;
@@ -10,8 +11,10 @@ import java.util.UUID;
 import java.util.stream.Stream;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentRegistry;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentType;
+import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Identifier;
 
@@ -22,35 +25,49 @@ public final class BloodTithe {
   static final AttachmentType<Double> PROGRESS =
       AttachmentRegistry.create(Identifier.of(Nightborn.MOD_ID, "tithe_progress"));
 
+  static final AttachmentType<Float> OWED =
+      AttachmentRegistry.create(Identifier.of(Nightborn.MOD_ID, "tithe_owed"));
+
   private static final ThreadLocal<Boolean> PASSING = ThreadLocal.withInitial(() -> false);
 
   private BloodTithe() {}
 
-  public static float share(
-      final LivingEntity vampire, final DamageSource source, final float amount) {
+  public static void register() {
+    ServerLivingEntityEvents.AFTER_DAMAGE.register(
+        (vampire, source, base, taken, blocked) -> pass(vampire, source));
+  }
+
+  public static float share(final LivingEntity vampire, final float amount) {
+    vampire.removeAttached(OWED);
     final double share = MindAttributes.value(vampire, MindAttributes.TITHE_SHARE);
-    if (share <= 0.0 || amount <= 0.0F || PASSING.get()) {
+    if (share <= 0.0 || amount <= 0.0F || PASSING.get() || nearest(vampire).isEmpty()) {
       return amount;
     }
-    final Optional<LivingEntity> bearer = nearest(vampire);
-    if (bearer.isEmpty()) {
-      return amount;
-    }
-    PASSING.set(true);
-    try {
-      bearer.get().damage(source, TitheRules.passed(amount, share));
-    } finally {
-      PASSING.set(false);
-    }
+    vampire.setAttached(OWED, TitheRules.passed(amount, share));
     return TitheRules.kept(amount, share);
+  }
+
+  static void pass(final LivingEntity vampire, final DamageSource source) {
+    final Float owed = vampire.getAttached(OWED);
+    if (owed == null) {
+      return;
+    }
+    vampire.removeAttached(OWED);
+    nearest(vampire)
+        .ifPresent(
+            bearer -> {
+              PASSING.set(true);
+              try {
+                bearer.damage(source, owed);
+              } finally {
+                PASSING.set(false);
+              }
+            });
   }
 
   public static void tick(final LivingEntity vampire) {
     final double rate = MindAttributes.value(vampire, MindAttributes.TITHE_RATE);
-    if (rate <= 0.0 || vampire.age % TICKS_PER_SECOND != 0) {
-      return;
-    }
-    if (nearest(vampire).isEmpty()) {
+    if (rate <= 0.0 || vampire.age % TICKS_PER_SECOND != 0 || nearest(vampire).isEmpty()) {
       return;
     }
     final double progress = TitheRules.gathered(vampire.getAttachedOrElse(PROGRESS, 0.0), rate);
@@ -73,6 +90,7 @@ public final class BloodTithe {
         .filter(entity -> entity instanceof LivingEntity living && living.isAlive())
         .map(LivingEntity.class::cast)
         .filter(living -> living.squaredDistanceTo(vampire) <= range * range)
+        .filter(living -> !(living instanceof PlayerEntity) || PowerReach.pvp(vampire))
         .min(Comparator.comparingDouble(vampire::squaredDistanceTo));
   }
 

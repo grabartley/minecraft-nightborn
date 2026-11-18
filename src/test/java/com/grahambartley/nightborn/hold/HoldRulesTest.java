@@ -28,7 +28,7 @@ class HoldRulesTest {
     final HoldState state =
         new HoldState(
             until > now ? Optional.of(HoldKind.PIN) : Optional.empty(), until, immuneUntil);
-    assertEquals(takes, HoldRules.takes(state, now, boss, true, false));
+    assertEquals(takes, HoldRules.takes(state, now, boss, true));
   }
 
   @ParameterizedTest(name = "now {0}, {1} ticks, grace {2}: until {3}, immune until {4}")
@@ -54,6 +54,6 @@ class HoldRulesTest {
   @CsvSource({"true, false", "false, true"})
   @DisplayName("the dead cannot be held")
   void dead(final boolean dead, final boolean takes) {
-    assertEquals(takes, HoldRules.takes(HoldState.NONE, 0L, false, !dead, false));
+    assertEquals(takes, HoldRules.takes(HoldState.NONE, 0L, false, !dead));
   }
 }

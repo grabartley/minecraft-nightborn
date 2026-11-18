@@ -77,7 +77,7 @@ public final class Holds {
     final long now = target.getWorld().getTime();
     if (!PowerReach.touches(caster, target)
         || !HoldRules.takes(
-            state(target), now, target.getType().isIn(UNHOLDABLE), target.isAlive(), false)) {
+            state(target), now, target.getType().isIn(UNHOLDABLE), target.isAlive())) {
       return false;
     }
     target.setAttached(TYPE, HoldRules.start(kind, now, ticks, graceTicks()));

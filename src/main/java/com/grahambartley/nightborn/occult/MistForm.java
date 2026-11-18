@@ -16,6 +16,7 @@ import net.minecraft.entity.EntityDimensions;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.damage.DamageType;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.tag.TagKey;
@@ -35,6 +36,8 @@ public final class MistForm {
       TagKey.of(RegistryKeys.DAMAGE_TYPE, Identifier.of(Nightborn.MOD_ID, "harms_mist"));
 
   public static final EntityDimensions DIMENSIONS = EntityDimensions.changing(0.5F, 0.5F);
+
+  static final int LINGER_TICKS = 5;
 
   public static final AttachmentType<MistState> TYPE =
       AttachmentRegistry.create(
@@ -58,6 +61,15 @@ public final class MistForm {
         (player, world, hand, entity, hit) -> on(player) ? ActionResult.FAIL : ActionResult.PASS);
     AttackEntityCallback.EVENT.register(
         (player, world, hand, entity, hit) -> on(player) ? ActionResult.FAIL : ActionResult.PASS);
+  }
+
+  static boolean roomToStand(final LivingEntity vampire) {
+    final EntityDimensions standing =
+        (vampire instanceof PlayerEntity
+                ? PlayerEntity.STANDING_DIMENSIONS
+                : vampire.getType().getDimensions())
+            .scaled(vampire.getScale());
+    return vampire.getWorld().isSpaceEmpty(vampire, standing.getBoxAt(vampire.getPos()));
   }
 
   public static boolean on(final Entity entity) {
@@ -90,7 +102,12 @@ public final class MistForm {
       return;
     }
     if (state.over(vampire.getWorld().getTime())) {
-      leave(vampire);
+      if (roomToStand(vampire)) {
+        leave(vampire);
+      } else {
+        vampire.setAttached(
+            TYPE, new MistState(vampire.getWorld().getTime() + LINGER_TICKS, state.harm()));
+      }
       return;
     }
     if (vampire.getWorld() instanceof ServerWorld world && vampire.age % 2 == 0) {

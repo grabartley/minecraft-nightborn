@@ -1,5 +1,6 @@
 package com.grahambartley.nightborn.skill;
 
+import com.grahambartley.nightborn.accessory.WornDamage;
 import com.grahambartley.nightborn.batform.WingedForm;
 import com.grahambartley.nightborn.mind.BloodTithe;
 import com.grahambartley.nightborn.occult.MistForm;
@@ -17,8 +18,9 @@ public final class DamageTaken {
     if (entity.getWorld().isClient || amount <= 0.0F) {
       return amount;
     }
-    final float formed = MistForm.harm(entity, source, amount * WingedForm.damageTaken(entity));
-    return floored(amount, BloodTithe.share(entity, source, formed));
+    final float worn = WornDamage.scale(entity, source, amount);
+    final float formed = MistForm.harm(entity, source, worn * WingedForm.damageTaken(entity));
+    return floored(amount, BloodTithe.share(entity, formed));
   }
 
   public static float floored(final float original, final float reduced) {

@@ -5,6 +5,7 @@ import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.EntityShapeContext;
 import net.minecraft.block.ShapeContext;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.util.shape.VoxelShapes;
@@ -28,7 +29,7 @@ abstract class BlockStateCollisionMixin {
       final ShapeContext context,
       final CallbackInfoReturnable<VoxelShape> cir) {
     if (context instanceof EntityShapeContext entityContext
-        && entityContext.getEntity() != null
+        && entityContext.getEntity() instanceof LivingEntity
         && MistForm.passes(entityContext.getEntity(), (BlockState) (Object) this)) {
       cir.setReturnValue(VoxelShapes.empty());
     }
