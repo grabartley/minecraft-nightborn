@@ -66,6 +66,9 @@ public final class PlayerClipState {
     if (rise.playing(lengths.rise(), age)) {
       return Optional.of(VampirePose.RISE);
     }
+    if (!situation.feeding()) {
+      finisher.clear();
+    }
     if (finisher.playing(lengths.finisher(), age)) {
       return Optional.of(VampirePose.FINISHER_BITE);
     }

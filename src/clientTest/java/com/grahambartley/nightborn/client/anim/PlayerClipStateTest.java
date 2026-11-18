@@ -213,9 +213,13 @@ class PlayerClipStateTest {
     "29, true, true, FINISHER_BITE",
     "30, true, false, FEED",
     "30, false, false, VANILLA",
-    "30, false, true, DRAIN"
+    "30, false, true, DRAIN",
+    "5, false, false, VANILLA",
+    "5, false, true, DRAIN"
   })
-  @DisplayName("the finisher bite plays once over feeding and draining, then feeding carries on")
+  @DisplayName(
+      "the finisher bite plays once over feeding and draining while the bite holds, then feeding"
+          + " carries on")
   void finishes(
       final int after, final boolean feeding, final boolean draining, final String expected) {
     final PlayerClipState state = new PlayerClipState();
@@ -230,6 +234,27 @@ class PlayerClipStateTest {
             300 + after,
             new PlayerClipState.Situation(
                 false, false, 0.0, false, feeding, false, Optional.empty())));
+  }
+
+  @Test
+  @DisplayName("a finisher broken by a blow does not come back when the vampire bites again")
+  void brokenFinisherStaysBroken() {
+    final PlayerClipState state = new PlayerClipState();
+    state.finisher(300);
+    assertEquals(
+        "VANILLA",
+        clip(
+            state,
+            305,
+            new PlayerClipState.Situation(
+                false, false, 0.0, false, false, false, Optional.empty())));
+    assertEquals(
+        "FEED",
+        clip(
+            state,
+            310,
+            new PlayerClipState.Situation(
+                false, false, 0.0, false, true, false, Optional.empty())));
   }
 
   @Test
