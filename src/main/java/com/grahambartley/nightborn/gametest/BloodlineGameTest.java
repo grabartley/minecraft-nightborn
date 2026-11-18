@@ -213,6 +213,7 @@ public class BloodlineGameTest implements FabricGameTest {
   @GameTest(templateName = ARENA, batchId = BATCH, tickLimit = LIMIT)
   public void glamourHidesTheVampireUntilStruck(final TestContext context) {
     final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(4, 2, 4));
+    final PigEntity striker = still(context, EntityType.PIG, new BlockPos(4, 2, 6));
     learn(vampire, NOBLE, "noble_blood", "mesmerise", "silver_tongue", "glamour");
     context.runAtTick(
         TestPlayers.READY,
@@ -222,6 +223,9 @@ public class BloodlineGameTest implements FabricGameTest {
           context.assertTrue(Glamour.on(vampire), "the vampire passes as human");
           vampire.timeUntilRegen = 0;
           vampire.damage(context.getWorld().getDamageSources().generic(), 1.0F);
+          context.assertTrue(Glamour.on(vampire), "harm with no striker leaves the glamour");
+          vampire.timeUntilRegen = 0;
+          vampire.damage(context.getWorld().getDamageSources().mobAttack(striker), 1.0F);
           context.assertFalse(Glamour.on(vampire), "a blow breaks the glamour");
           TestPlayers.finish(context, vampire);
         });
