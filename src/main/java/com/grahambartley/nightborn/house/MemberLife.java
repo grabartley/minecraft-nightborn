@@ -9,6 +9,7 @@ import com.grahambartley.nightborn.mob.home.NightRoutine;
 import com.grahambartley.nightborn.servant.FollowRules;
 import com.grahambartley.nightborn.servant.Stance;
 import com.grahambartley.nightborn.structure.HouseholdRoll;
+import com.grahambartley.nightborn.wild.WandererAttachment;
 import java.util.Optional;
 import java.util.UUID;
 import net.minecraft.entity.LivingEntity;
@@ -78,6 +79,7 @@ public final class MemberLife {
 
   public static void join(final ServerWorld world, final VampireEntity member, final House house) {
     leaveOldHousehold(world, member);
+    WandererAttachment.clear(member);
     member.householdTie().join(house.lord());
     final Houses houses = Houses.get(world.getServer());
     houses.put(house.withNpc(member.getUuid()).ranked(member.getUuid(), StageRanks.of(member)));

@@ -101,7 +101,8 @@ class NightbornConfigTest {
             "inquisitor",
             "households",
             "villages",
-            "challenges"),
+            "challenges",
+            "firstNights"),
         NightbornConfig.sections());
   }
 

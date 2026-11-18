@@ -53,6 +53,12 @@ public record Household(
     stages = Map.copyOf(stages);
   }
 
+  public Household returning() {
+    return head.map(HouseholdHead::returns).orElse(true)
+        ? this
+        : new Household(resident, residents, stages, Optional.empty(), ceiling, thralls);
+  }
+
   public int shelterTop(final int floorY, final int heartTop) {
     return ceiling.map(height -> Math.min(heartTop, floorY + HEADROOM + height)).orElse(heartTop);
   }

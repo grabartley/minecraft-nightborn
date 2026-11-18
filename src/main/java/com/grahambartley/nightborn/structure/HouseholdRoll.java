@@ -1,7 +1,9 @@
 package com.grahambartley.nightborn.structure;
 
 import com.grahambartley.nightborn.Nightborn;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
@@ -39,6 +41,26 @@ public final class HouseholdRoll extends PersistentState {
 
   public void headSleepsAt(final GlobalPos home, final GlobalPos coffin) {
     dirtyIf(ledger.change(home, record -> record.headSleepsAt(coffin)));
+  }
+
+  public void refillAt(final GlobalPos home, final long time) {
+    dirtyIf(ledger.known(home) && ledger.change(home, record -> record.refillingAt(time)));
+  }
+
+  public void unscheduled(final GlobalPos home) {
+    dirtyIf(ledger.change(home, HouseholdRecord::unscheduled));
+  }
+
+  public void refilled(final GlobalPos home, final Set<UUID> arrivals) {
+    dirtyIf(ledger.change(home, record -> record.refilledBy(arrivals)));
+  }
+
+  public boolean known(final GlobalPos home) {
+    return ledger.known(home);
+  }
+
+  public Map<GlobalPos, HouseholdRecord> records() {
+    return ledger.records();
   }
 
   public HouseholdRecord record(final GlobalPos home) {

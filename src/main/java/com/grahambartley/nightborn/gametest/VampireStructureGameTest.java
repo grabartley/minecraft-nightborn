@@ -429,7 +429,8 @@ public class VampireStructureGameTest implements FabricGameTest {
                 new HouseholdHead(
                     Registries.ENTITY_TYPE.getEntry(NightbornMobs.VAMPIRE_LORD),
                     Map.of(),
-                    HeadSeat.LOWEST)),
+                    HeadSeat.LOWEST,
+                    true)),
             Optional.empty(),
             ConstantIntProvider.ZERO);
     final List<Entity> settled =
