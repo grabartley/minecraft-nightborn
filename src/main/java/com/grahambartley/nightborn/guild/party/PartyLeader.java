@@ -4,6 +4,7 @@ import com.grahambartley.nightborn.config.PartySettings;
 import com.grahambartley.nightborn.guild.GuildMasterEntity;
 import com.grahambartley.nightborn.guild.HunterEntity;
 import com.grahambartley.nightborn.server.ServerConfigService;
+import com.grahambartley.nightborn.village.VillageGuard;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -35,9 +36,13 @@ public final class PartyLeader {
     final long now = world.getTime();
     HunterParty party =
         world.getClosestPlayer(master, PLAYER_NEAR) != null ? start.seen(now) : start;
+    if (party.guards().filter(bell -> !VillageGuard.stillGuarded(world, bell)).isPresent()) {
+      party = party.guarding(Optional.empty());
+    }
     final List<HunterEntity> members = members(world, party);
     if (PartySchedule.leaves(
         party.pitched(),
+        party.guarding(),
         now,
         party.lastPlayerNear(),
         (long) settings.partyLeaveMinutes() * TICKS_PER_MINUTE)) {
@@ -50,7 +55,12 @@ public final class PartyLeader {
     final Random random = master.getRandom();
     party = raid(world, party, settings, time, day, random);
     switch (PartySchedule.step(
-        time, party.pitched(), party.campDay(), party.nights(), party.lastTriedDay())) {
+        time,
+        party.pitched(),
+        party.campDay(),
+        party.nights(),
+        party.lastTriedDay(),
+        party.guarding())) {
       case PITCH -> party = pitch(world, master, party, settings, day, random);
       case SLEEP -> settle(world, party, members, settings);
       case WAKE -> roam(party, members);
@@ -80,7 +90,8 @@ public final class PartyLeader {
     final Optional<BlockPos> site =
         layout.flatMap(chosen -> PartyCamp.site(world, master.getBlockPos(), chosen.bounds()));
     if (site.isEmpty()) {
-      return party.triedOn(day, onward(master.getBlockPos(), random));
+      return party.triedOn(
+          day, party.guards().orElseGet(() -> onward(master.getBlockPos(), random)));
     }
     final HunterParty.Camp camp = PartyCamp.pitch(world, site.get(), layout.get());
     master.setPositionTarget(camp.fire(), KEEP_CLOSE);

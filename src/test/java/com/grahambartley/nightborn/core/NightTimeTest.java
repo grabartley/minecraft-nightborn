@@ -24,4 +24,11 @@ class NightTimeTest {
   void night(final boolean fixed, final long time, final boolean night) {
     assertEquals(night, NightTime.isNight(fixed, time));
   }
+
+  @ParameterizedTest(name = "time {0} falls in night {1}")
+  @CsvSource({"0, -1", "12999, -1", "13000, 0", "23000, 0", "36999, 0", "37000, 1", "61000, 2"})
+  @DisplayName("a night runs from one dusk to the next, so the day after belongs to it")
+  void countsNights(final long time, final long night) {
+    assertEquals(night, NightTime.night(time));
+  }
 }

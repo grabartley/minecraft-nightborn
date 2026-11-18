@@ -6,6 +6,8 @@ import com.grahambartley.nightborn.config.WardSettings;
 import com.grahambartley.nightborn.network.PlayerCue;
 import com.grahambartley.nightborn.network.PlayerCues;
 import com.grahambartley.nightborn.vampire.NightbornDamage;
+import com.grahambartley.nightborn.village.SuspicionCause;
+import com.grahambartley.nightborn.village.VampireSigns;
 import com.grahambartley.nightborn.weakened.Weakened;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
@@ -80,6 +82,7 @@ public final class Vomiting {
     vampire.addStatusEffect(
         new StatusEffectInstance(StatusEffects.NAUSEA, nauseaTicks, 0, false, false, true));
     PlayerCues.send(vampire, PlayerCue.VOMIT);
+    VampireSigns.shown(vampire, SuspicionCause.SEEN_BRINGING_UP_FOOD);
     if (damage > 0) {
       vampire.damage(NightbornDamage.vomit(vampire.getWorld()), damage);
     }

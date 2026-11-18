@@ -36,10 +36,11 @@ public final class PartySchedule {
       final boolean pitched,
       final long campDay,
       final int nights,
-      final long lastTriedDay) {
+      final long lastTriedDay,
+      final boolean guarding) {
     final long day = day(timeOfDay);
     if (pitched) {
-      if (day - campDay >= nights) {
+      if (!guarding && day - campDay >= nights) {
         return Step.STRIKE;
       }
       return night(timeOfDay) ? Step.SLEEP : Step.WAKE;
@@ -48,7 +49,11 @@ public final class PartySchedule {
   }
 
   public static boolean leaves(
-      final boolean pitched, final long now, final long lastPlayerNear, final long leaveTicks) {
-    return !pitched && now - lastPlayerNear >= leaveTicks;
+      final boolean pitched,
+      final boolean guarding,
+      final long now,
+      final long lastPlayerNear,
+      final long leaveTicks) {
+    return !pitched && !guarding && now - lastPlayerNear >= leaveTicks;
   }
 }

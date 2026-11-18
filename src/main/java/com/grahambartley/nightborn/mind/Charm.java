@@ -1,6 +1,7 @@
 package com.grahambartley.nightborn.mind;
 
 import com.grahambartley.nightborn.server.ServerConfigService;
+import com.grahambartley.nightborn.village.VillageSuspicion;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
@@ -51,6 +52,7 @@ public final class Charm {
   static void charm(final ServerPlayerEntity vampire, final VillagerEntity villager) {
     final int ticks = ServerConfigService.current().minds().charmSeconds() * 20;
     villager.setAttached(MindTies.CHARMED_BY, vampire.getUuid());
+    VillageSuspicion.charmed(vampire.getServerWorld(), villager);
     villager.addStatusEffect(new StatusEffectInstance(MindEffect.CHARMED, ticks), vampire);
     villager
         .getWorld()

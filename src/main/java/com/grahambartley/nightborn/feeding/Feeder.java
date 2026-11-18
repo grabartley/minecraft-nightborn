@@ -22,6 +22,7 @@ import com.grahambartley.nightborn.thrall.Thralls;
 import com.grahambartley.nightborn.vampire.NightbornDamage;
 import com.grahambartley.nightborn.vampire.VampireAttributes;
 import com.grahambartley.nightborn.vampire.Vampires;
+import com.grahambartley.nightborn.village.VillageVictims;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.damage.DamageSource;
@@ -93,6 +94,7 @@ final class Feeder {
     }
     if (!victim.isAlive()) {
       if (sip.drains()) {
+        VillageVictims.bitten(world, victim);
         SkillEarning.fromDrain(vampire, config.skills());
         AgeDeeds.drained(vampire, victim);
         PlayerCues.send(vampire, PlayerCue.DRAIN);
@@ -132,6 +134,7 @@ final class Feeder {
         0.8F,
         NightbornSounds.variedPitch(world.getRandom()));
     if (!victim.isAlive()) {
+      VillageVictims.bitten(world, victim);
       vampire.heal(config.feeding().finisherHeal());
       SkillEarning.fromDrain(vampire, config.skills());
       AgeDeeds.drained(vampire, victim);
@@ -159,6 +162,7 @@ final class Feeder {
       if (seconds > 0) {
         victim.addStatusEffect(new StatusEffectInstance(StatusEffects.WEAKNESS, seconds * 20));
       }
+      VillageVictims.bitten(vampire.getServerWorld(), victim);
       Thralls.mayBind(vampire, victim, session.totalTaken());
     }
   }

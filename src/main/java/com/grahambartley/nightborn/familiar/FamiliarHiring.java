@@ -6,8 +6,11 @@ import com.grahambartley.nightborn.config.FamiliarSettings;
 import com.grahambartley.nightborn.name.ServantNaming;
 import com.grahambartley.nightborn.server.ServerConfigService;
 import com.grahambartley.nightborn.vampire.Vampires;
+import com.grahambartley.nightborn.village.TakenNeighbour;
+import com.grahambartley.nightborn.village.VillageSuspicion;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 import net.fabricmc.fabric.api.event.player.UseEntityCallback;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.ai.brain.MemoryModuleType;
@@ -69,6 +72,7 @@ public final class FamiliarHiring {
     }
     final VillagerData data = villager.getVillagerData();
     final BlockPos hiredAt = villager.getBlockPos();
+    final Optional<BlockPos> bell = VillageSuspicion.bellOf(villager);
     villager.releaseTicketFor(MemoryModuleType.HOME);
     villager.releaseTicketFor(MemoryModuleType.JOB_SITE);
     villager.releaseTicketFor(MemoryModuleType.POTENTIAL_JOB_SITE);
@@ -89,6 +93,7 @@ public final class FamiliarHiring {
       }
     }
     registry.bind(player.getUuid(), familiar.getUuid());
+    VillageSuspicion.taken(world, bell, new TakenNeighbour(player.getUuid(), familiar.getUuid()));
     ServantNaming.offer(player, familiar);
     contract.decrementUnlessCreative(1, player);
     MilestoneCriterion.reach(player, Milestone.FAMILIAR_HIRED);

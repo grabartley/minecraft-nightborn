@@ -7,6 +7,8 @@ import com.grahambartley.nightborn.config.SunSettings;
 import com.grahambartley.nightborn.smoke.SmokeParticles;
 import com.grahambartley.nightborn.sound.NightbornSounds;
 import com.grahambartley.nightborn.vampire.NightbornDamage;
+import com.grahambartley.nightborn.village.SuspicionCause;
+import com.grahambartley.nightborn.village.VampireSigns;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.server.world.ServerWorld;
 
@@ -30,6 +32,7 @@ public final class SunBurn {
       return true;
     }
     vampire.setOnFireFor(FIRE_SECONDS);
+    VampireSigns.shown(vampire, SuspicionCause.SEEN_BURNING);
     world.spawnParticles(
         SmokeParticles.VAMPIRE_SMOKE,
         vampire.getX(),

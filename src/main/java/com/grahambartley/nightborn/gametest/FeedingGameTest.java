@@ -8,6 +8,9 @@ import com.grahambartley.nightborn.config.FeedingSettings;
 import com.grahambartley.nightborn.feeding.FeedingSessions;
 import com.grahambartley.nightborn.server.ServerConfigService;
 import com.grahambartley.nightborn.vampire.VisibleStateAttachment;
+import com.grahambartley.nightborn.village.VillageRecord;
+import com.grahambartley.nightborn.village.Villages;
+import com.grahambartley.nightborn.village.WitnessReports;
 import net.fabricmc.fabric.api.event.player.UseEntityCallback;
 import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
 import net.minecraft.block.Blocks;
@@ -31,18 +34,21 @@ import net.minecraft.test.GameTest;
 import net.minecraft.test.TestContext;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.GlobalPos;
 import net.minecraft.util.math.Vec3d;
 
 public class FeedingGameTest implements FabricGameTest {
 
   static final String BATCH = "feeding";
   static final String RESISTING = "feeding-resisting";
+  static final String WITNESSED = "feeding-witnessed";
   static final String ARENA = "nightborn:vampire_arena";
   static final double WALK_STEP = 0.15;
 
   @BeforeBatch(batchId = BATCH)
   public void neverResist(final ServerWorld world) {
     FeedingSessions.clearAll();
+    WitnessReports.clear();
     ServerConfigService.update(
         world.getServer(), ServerConfigService.current().with(FeedingSettings.RESIST_CHANCE, 0));
   }
@@ -366,6 +372,54 @@ public class FeedingGameTest implements FabricGameTest {
               "the villager behind the wall acts as normal");
           context.assertEquals(
               hidden.getReputation(vampire), 0, "the hidden villager does not gossip");
+          TestPlayers.finish(context, vampire);
+        });
+  }
+
+  @BeforeBatch(batchId = WITNESSED)
+  public void witnessedNeverResists(final ServerWorld world) {
+    neverResist(world);
+    WorldClock.freeze(world, WorldClock.MIDNIGHT);
+  }
+
+  @AfterBatch(batchId = WITNESSED)
+  public void witnessedRestoresResist(final ServerWorld world) {
+    restoreResist(world);
+    WorldClock.release(world);
+  }
+
+  @GameTest(templateName = ARENA, batchId = WITNESSED, tickLimit = 80)
+  public void aWitnessWhoReachesTheBellMakesTheFeederAKnownFace(final TestContext context) {
+    final BlockPos bell = new BlockPos(7, 2, 6);
+    context.setBlockState(bell, Blocks.BELL);
+    final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(4, 2, 4));
+    final CowEntity cow = still(context.spawnEntity(EntityType.COW, new BlockPos(5, 2, 4)));
+    final VillagerEntity witness =
+        still(context.spawnEntity(EntityType.VILLAGER, new BlockPos(7, 2, 5)));
+    witness
+        .getBrain()
+        .remember(
+            MemoryModuleType.MEETING_POINT,
+            GlobalPos.create(context.getWorld().getRegistryKey(), context.getAbsolutePos(bell)));
+    context.runAtEveryTick(
+        () -> {
+          if (context.getTick() <= 30) {
+            hold(context, vampire, cow);
+          }
+        });
+    context.runAtTick(
+        70,
+        () -> {
+          final VillageRecord record =
+              Villages.of(context.getWorld())
+                  .at(context.getAbsolutePos(bell))
+                  .orElse(VillageRecord.fresh(0L));
+          context.assertEquals(
+              record.suspicion(),
+              cow.isAlive() ? 25 : 30,
+              "a bite seen and told adds 25, and a drained animal 5 more");
+          context.assertTrue(
+              record.knows(vampire.getUuid()), "the feeder is a known face in the village");
           TestPlayers.finish(context, vampire);
         });
   }
