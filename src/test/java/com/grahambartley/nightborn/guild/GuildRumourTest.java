@@ -49,4 +49,11 @@ class GuildRumourTest {
     assertEquals("nightborn.guild.rumour.none", tale.getKey());
     assertEquals("nightborn:vampire_houses", GuildRumour.VAMPIRE_HOUSES.id().toString());
   }
+
+  @ParameterizedTest(name = "{0}")
+  @CsvSource({"nightborn:wheel/news"})
+  @DisplayName("asking for news shows its own wheel icon")
+  void icon(final String icon) {
+    assertEquals(icon, GuildRumour.ICON.toString());
+  }
 }

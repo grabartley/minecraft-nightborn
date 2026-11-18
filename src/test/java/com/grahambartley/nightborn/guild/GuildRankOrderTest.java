@@ -58,4 +58,11 @@ class GuildRankOrderTest {
             .map(line -> ((TranslatableTextContent) line.getContent()).getKey())
             .toList());
   }
+
+  @ParameterizedTest(name = "{0}")
+  @CsvSource({"nightborn:wheel/rank"})
+  @DisplayName("asking for a rank shows its own wheel icon")
+  void icon(final String icon) {
+    assertEquals(icon, GuildRankOrder.ICON.toString());
+  }
 }

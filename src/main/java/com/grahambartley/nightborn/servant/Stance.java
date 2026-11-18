@@ -1,17 +1,18 @@
 package com.grahambartley.nightborn.servant;
 
+import com.grahambartley.nightborn.wheel.WheelEntry;
 import java.util.Locale;
 import net.minecraft.util.Identifier;
 
 public enum Stance {
-  FOLLOW("minecraft:lead"),
-  STAY("minecraft:campfire"),
-  GUARD("minecraft:iron_sword");
+  FOLLOW("follow"),
+  STAY("stay"),
+  GUARD("guard");
 
   private final Identifier icon;
 
   Stance(final String icon) {
-    this.icon = Identifier.of(icon);
+    this.icon = WheelEntry.icon(icon);
   }
 
   public Identifier icon() {

@@ -11,7 +11,7 @@ import net.minecraft.util.Identifier;
 public final class AskAfter implements WheelAction<HumanFamiliarEntity> {
 
   public static final Identifier ID = Identifier.of(Nightborn.MOD_ID, "ask_after");
-  public static final Identifier ICON = Identifier.ofVanilla("poppy");
+  public static final Identifier ICON = WheelEntry.icon("ask_after");
 
   @Override
   public Identifier id() {

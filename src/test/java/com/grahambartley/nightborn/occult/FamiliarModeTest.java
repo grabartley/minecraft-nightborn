@@ -11,9 +11,9 @@ class FamiliarModeTest {
 
   @ParameterizedTest(name = "{0} -> {1}, {2}")
   @CsvSource({
-    "FIGHT, nightborn.familiar.order.fight, minecraft:iron_sword",
-    "CARRY, nightborn.familiar.order.carry, minecraft:chest",
-    "SCOUT, nightborn.familiar.order.scout, minecraft:ender_eye"
+    "FIGHT, nightborn.familiar.order.fight, nightborn:wheel/fight",
+    "CARRY, nightborn.familiar.order.carry, nightborn:wheel/carry",
+    "SCOUT, nightborn.familiar.order.scout, nightborn:wheel/scout"
   })
   @DisplayName("each task has its own label and icon on the command wheel")
   void wheel(final FamiliarMode mode, final String label, final String icon) {

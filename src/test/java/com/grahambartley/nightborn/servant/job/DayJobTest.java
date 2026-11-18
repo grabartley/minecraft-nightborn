@@ -13,10 +13,10 @@ class DayJobTest {
 
   @ParameterizedTest(name = "{0}")
   @CsvSource({
-    "GATHER, nightborn.job.gather, minecraft:iron_hoe",
-    "FETCH_BLOOD, nightborn.job.fetch_blood, nightborn:lancet",
-    "SCOUT, nightborn.job.scout, minecraft:spyglass",
-    "STAND_WATCH, nightborn.job.stand_watch, minecraft:bell"
+    "GATHER, nightborn.job.gather, nightborn:wheel/gather",
+    "FETCH_BLOOD, nightborn.job.fetch_blood, nightborn:wheel/fetch_blood",
+    "SCOUT, nightborn.job.scout, nightborn:wheel/scout",
+    "STAND_WATCH, nightborn.job.stand_watch, nightborn:wheel/stand_watch"
   })
   @DisplayName("each day job has its own label, order message and icon")
   void wheel(final DayJob job, final String key, final String icon) {

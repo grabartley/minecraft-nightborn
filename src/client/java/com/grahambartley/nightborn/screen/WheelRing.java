@@ -6,6 +6,7 @@ public final class WheelRing {
   public static final int INNER = 40;
   public static final int MARGIN = 4;
   public static final float GAP_DEGREES = 1.5F;
+  public static final int RIM = 4;
 
   private WheelRing() {}
 
@@ -32,6 +33,26 @@ public final class WheelRing {
 
   public static float endDegrees(final int index, final int count) {
     return startDegrees(index, count) + 360.0F / count - GAP_DEGREES;
+  }
+
+  public static boolean drawsOverlay(final int count, final int hovered) {
+    return count > 1 || hovered >= 0;
+  }
+
+  public static boolean hasSpokes(final int count) {
+    return count > 1;
+  }
+
+  public static float spokeStartDegrees(final int index, final int count) {
+    return startDegrees(index, count) - GAP_DEGREES;
+  }
+
+  public static int glowInner() {
+    return INNER + RIM;
+  }
+
+  public static int glowOuter() {
+    return OUTER - RIM;
   }
 
   public static int iconX(final int index, final int count) {

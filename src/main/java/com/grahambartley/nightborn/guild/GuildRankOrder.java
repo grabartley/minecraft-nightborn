@@ -22,7 +22,7 @@ import net.minecraft.util.Identifier;
 public final class GuildRankOrder implements WheelAction<GuildMasterEntity> {
 
   public static final Identifier ID = Identifier.of(Nightborn.MOD_ID, "guild_rank");
-  public static final Identifier ICON = Identifier.ofVanilla("goat_horn");
+  public static final Identifier ICON = WheelEntry.icon("rank");
 
   @Override
   public Identifier id() {

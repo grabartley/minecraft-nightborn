@@ -26,7 +26,7 @@ import net.minecraft.world.gen.structure.Structure;
 public final class GuildRumour implements WheelAction<GuildMasterEntity> {
 
   public static final Identifier ID = Identifier.of(Nightborn.MOD_ID, "guild_rumour");
-  public static final Identifier ICON = Identifier.ofVanilla("compass");
+  public static final Identifier ICON = WheelEntry.icon("news");
   public static final TagKey<Structure> VAMPIRE_HOUSES =
       TagKey.of(RegistryKeys.STRUCTURE, Identifier.of(Nightborn.MOD_ID, "vampire_houses"));
 

@@ -14,6 +14,7 @@ import net.minecraft.util.Identifier;
 
 public final class GuildJournalOrder implements WheelAction<GuildMasterEntity> {
 
+  public static final Identifier ICON = WheelEntry.icon("journal");
   public static final Identifier ID = Identifier.of(Nightborn.MOD_ID, "guild_journal");
 
   @Override
@@ -28,9 +29,7 @@ public final class GuildJournalOrder implements WheelAction<GuildMasterEntity> {
 
   @Override
   public List<WheelEntry> entries(final ServerPlayerEntity player, final GuildMasterEntity master) {
-    return List.of(
-        WheelEntry.of(
-            ID, Journal.HUNTER.id(), Text.translatable("nightborn.guild.journal"), false));
+    return List.of(WheelEntry.of(ID, ICON, Text.translatable("nightborn.guild.journal"), false));
   }
 
   @Override

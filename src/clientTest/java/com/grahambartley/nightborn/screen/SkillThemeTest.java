@@ -36,10 +36,17 @@ class SkillThemeTest {
                 theme.header(),
                 theme.tooltip(),
                 theme.point(),
-                theme.powerSlot(),
                 theme.line(false),
-                theme.line(true)),
-            Stream.of(SkillPurchase.Verdict.values()).map(theme::frame))
+                theme.line(true),
+                theme.wheelRing(),
+                theme.wheelSlot(false, false),
+                theme.wheelSlot(false, true),
+                theme.wheelSlot(true, false),
+                theme.experienceBar(),
+                theme.experienceFill()),
+            Stream.concat(
+                Stream.of(SkillPurchase.Verdict.values()).map(theme::frame),
+                Stream.of(PowerSlotLook.values()).map(theme::powerSlot)))
         .distinct()
         .toList();
   }
@@ -71,6 +78,7 @@ class SkillThemeTest {
                     Arguments.of(theme.panel(), "nine_slice"),
                     Arguments.of(theme.header(), "nine_slice"),
                     Arguments.of(theme.tooltip(), "nine_slice"),
+                    Arguments.of(theme.experienceBar(), "nine_slice"),
                     Arguments.of(theme.line(false), "tile"),
                     Arguments.of(theme.line(true), "tile")));
   }
@@ -180,14 +188,63 @@ class SkillThemeTest {
 
   @ParameterizedTest(name = "{0}")
   @EnumSource(SkillTree.class)
-  @DisplayName("the command wheel's ring is see-through a little and brightens under the pointer")
+  @DisplayName("the wheel's hover glow lets the ring show through and its spokes are solid")
   void ringColours(final SkillTree tree) {
     final SkillTheme theme = SkillTheme.of(tree);
-    assertNotEquals(theme.ring(), theme.ringHover());
-    assertTrue((theme.ring() >>> 24) < 0xFF && (theme.ring() >>> 24) > 0x80);
-    assertTrue((theme.ringHover() >>> 24) > (theme.ring() >>> 24));
+    assertTrue((theme.ringHover() >>> 24) < 0x80 && (theme.ringHover() >>> 24) > 0x20);
     assertEquals(0xFF, theme.ringEdge() >>> 24);
+    assertNotEquals(theme.ringHover() & 0xFFFFFF, theme.ringEdge() & 0xFFFFFF);
+  }
+
+  static Stream<Arguments> wheelSlots() {
+    return Stream.of(
+        Arguments.of(false, false, "wheel_slot"),
+        Arguments.of(false, true, "wheel_slot_current"),
+        Arguments.of(true, false, "wheel_slot_hover"),
+        Arguments.of(true, true, "wheel_slot_hover"));
+  }
+
+  @ParameterizedTest(name = "hovered {0}, current {1} -> {2}")
+  @MethodSource("wheelSlots")
+  @DisplayName("a wheel slot lights up under the pointer, and the order in force has its own frame")
+  void wheelSlot(final boolean hovered, final boolean current, final String sprite) {
+    for (final SkillTree tree : SkillTree.values()) {
+      assertEquals(
+          Identifier.of("nightborn", "skills/" + tree.asString() + "/" + sprite),
+          SkillTheme.of(tree).wheelSlot(hovered, current));
+    }
+  }
+
+  static Stream<Arguments> powerSlots() {
+    return Stream.of(
+        Arguments.of(PowerSlotLook.FILLED, "power_slot"),
+        Arguments.of(PowerSlotLook.EMPTY, "power_slot_empty"),
+        Arguments.of(PowerSlotLook.LIFTED, "power_slot_lifted"),
+        Arguments.of(PowerSlotLook.TARGET, "power_slot_drop"));
+  }
+
+  @ParameterizedTest(name = "{0} -> {1}")
+  @MethodSource("powerSlots")
+  @DisplayName("each state of a power bar slot has its own frame")
+  void powerSlot(final PowerSlotLook look, final String sprite) {
+    for (final SkillTree tree : SkillTree.values()) {
+      assertEquals(
+          Identifier.of("nightborn", "skills/" + tree.asString() + "/" + sprite),
+          SkillTheme.of(tree).powerSlot(look));
+    }
+  }
+
+  @ParameterizedTest(name = "{0}")
+  @EnumSource(SkillTree.class)
+  @DisplayName("the wheel ring is drawn at the size the ring's geometry expects")
+  void ringSize(final SkillTree tree) throws IOException {
+    final BufferedImage ring = image(SkillTheme.of(tree).wheelRing());
+    assertEquals(CommandWheelScreen.RING, ring.getWidth());
+    assertEquals(CommandWheelScreen.RING, ring.getHeight());
+    assertTrue(CommandWheelScreen.RING / 2 > WheelRing.OUTER);
+    final int centre = CommandWheelScreen.RING / 2;
+    assertEquals(0, ring.getRGB(centre, centre) >>> 24, "the middle is see-through");
     assertEquals(
-        3, Stream.of(theme.ring(), theme.ringHover(), theme.ringEdge()).distinct().count());
+        0xFF, ring.getRGB(centre, centre - (WheelRing.INNER + WheelRing.OUTER) / 2) >>> 24);
   }
 }

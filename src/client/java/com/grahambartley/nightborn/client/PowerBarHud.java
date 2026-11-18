@@ -2,6 +2,7 @@ package com.grahambartley.nightborn.client;
 
 import com.grahambartley.nightborn.Nightborn;
 import com.grahambartley.nightborn.blood.BloodAttachment;
+import com.grahambartley.nightborn.screen.PowerSlotLook;
 import com.grahambartley.nightborn.screen.SkillTheme;
 import com.grahambartley.nightborn.skill.PowerBar;
 import com.grahambartley.nightborn.skill.PowerCooldownAttachment;
@@ -62,11 +63,16 @@ public final class PowerBarHud {
     final PowerCooldowns cooldowns = PowerCooldownAttachment.get(player);
     final long now = client.world.getTime();
     final int blood = BloodAttachment.get(player);
-    final Identifier slot = SkillTheme.of(tree).powerSlot();
+    final SkillTheme theme = SkillTheme.of(tree);
     for (int i = 0; i < bar.used(); i++) {
       final PowerBarLayout.Point at = points.get(i);
-      context.drawGuiTexture(slot, at.x(), at.y(), PowerBarLayout.SLOT, PowerBarLayout.SLOT);
       final Identifier id = bar.at(i).orElse(null);
+      context.drawGuiTexture(
+          theme.powerSlot(id != null ? PowerSlotLook.FILLED : PowerSlotLook.EMPTY),
+          at.x(),
+          at.y(),
+          PowerBarLayout.SLOT,
+          PowerBarLayout.SLOT);
       if (id != null) {
         final Skill skill = skills.get(id);
         final SkillPower power = skill.power().orElseThrow();

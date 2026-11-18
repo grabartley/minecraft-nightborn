@@ -54,4 +54,11 @@ class ScoutOrdersTest {
       final boolean opens) {
     assertEquals(opens, ScoutOrders.stillAsking(disconnected, gone, screen, reach));
   }
+
+  @ParameterizedTest(name = "{0}")
+  @CsvSource({"nightborn:wheel/place"})
+  @DisplayName("a place to scout shows its own wheel icon")
+  void icon(final String icon) {
+    assertEquals(icon, ScoutOrders.PLACE_ICON.toString());
+  }
 }
