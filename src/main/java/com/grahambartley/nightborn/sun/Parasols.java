@@ -38,6 +38,8 @@ public final class Parasols {
 
   private Parasols() {}
 
+  public static void register() {}
+
   public static boolean isOpen(final ItemStack stack) {
     return stack.isOf(PARASOL) && stack.getOrDefault(OPEN, false);
   }
