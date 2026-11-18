@@ -60,4 +60,21 @@ class AccessoryStoreTest {
     assertEquals(0, AccessoryStore.held(store));
     assertTrue(AccessoryStore.take(store).isEmpty());
   }
+
+  @ParameterizedTest(name = "holding {0}: shows contents {1}")
+  @CsvSource({"0, false", "1, true"})
+  @DisplayName("a store shows what it holds with the game's own bundle tooltip")
+  void tooltip(final int bottles, final boolean shown) {
+    final ItemStack store = pendant();
+    if (bottles > 0) {
+      AccessoryStore.put(
+          new AccessoryHold(List.of(BloodItems.BLOOD_BOTTLE), 1),
+          store,
+          new ItemStack(BloodItems.BLOOD_BOTTLE, bottles));
+    }
+    assertEquals(shown, AccessoryStore.tooltip(store).isPresent());
+    AccessoryStore.tooltip(store)
+        .ifPresent(
+            data -> assertTrue(data instanceof net.minecraft.item.tooltip.BundleTooltipData));
+  }
 }

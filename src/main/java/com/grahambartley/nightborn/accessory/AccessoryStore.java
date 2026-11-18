@@ -5,6 +5,8 @@ import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.BundleContentsComponent;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.tooltip.BundleTooltipData;
+import net.minecraft.item.tooltip.TooltipData;
 import net.minecraft.sound.SoundEvents;
 
 public final class AccessoryStore {
@@ -13,6 +15,11 @@ public final class AccessoryStore {
 
   public static BundleContentsComponent contents(final ItemStack store) {
     return store.getOrDefault(DataComponentTypes.BUNDLE_CONTENTS, BundleContentsComponent.DEFAULT);
+  }
+
+  public static Optional<TooltipData> tooltip(final ItemStack store) {
+    final BundleContentsComponent contents = contents(store);
+    return contents.isEmpty() ? Optional.empty() : Optional.of(new BundleTooltipData(contents));
   }
 
   public static int held(final ItemStack store) {

@@ -7,7 +7,6 @@ import dev.emi.trinkets.api.TrinketItem;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
-import net.minecraft.component.type.BundleContentsComponent;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.StackReference;
 import net.minecraft.item.Item;
@@ -70,8 +69,7 @@ public class AccessoryItem extends Item implements GeoItem, Dressed {
 
   @Override
   public Optional<TooltipData> getTooltipData(final ItemStack stack) {
-    final BundleContentsComponent contents = AccessoryStore.contents(stack);
-    return contents.isEmpty() ? Optional.empty() : Optional.of(contents);
+    return AccessoryStore.tooltip(stack);
   }
 
   @Override
