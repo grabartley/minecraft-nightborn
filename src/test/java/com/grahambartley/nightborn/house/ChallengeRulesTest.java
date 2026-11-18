@@ -3,7 +3,10 @@ package com.grahambartley.nightborn.house;
 import static com.grahambartley.nightborn.house.HouseFixtures.PLAYER;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.util.Arrays;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -83,5 +86,41 @@ class ChallengeRulesTest {
   @DisplayName("each verdict names its own line")
   void key(final ChallengeRules.Verdict verdict, final String key) {
     assertEquals(key, verdict.key());
+  }
+
+  @ParameterizedTest(name = "challenger online on nights {0} -> house lost on night {1}")
+  @CsvSource({
+    "11 12 13 14 15, 14",
+    "11 12 13, 14",
+    "11 13 15 16, 16",
+    "12 12 12 13, -1",
+    "10 11, -1"
+  })
+  @DisplayName(
+      "reviewed night by night, the lord loses once the challenger has been there three whole nights")
+  void reviewsNightByNight(final String online, final long lostOn) {
+    final Set<Long> present =
+        Arrays.stream(online.split(" ")).map(Long::parseLong).collect(Collectors.toSet());
+    Challenge challenge = Challenge.declared(PLAYER, 10L);
+    long lost = -1L;
+    for (long night = 10L; night <= 20L && lost < 0; night++) {
+      for (int review = 0; review < 3 && lost < 0; review++) {
+        final ChallengeRules.Review step =
+            ChallengeRules.review(
+                challenge, night, present.contains(night), 3, Optional.empty(), 6);
+        challenge = step.challenge();
+        if (step.outcome() == ChallengeRules.Outcome.UNANSWERED) {
+          lost = night;
+        }
+      }
+    }
+    assertEquals(lostOn, lost);
+  }
+
+  @ParameterizedTest(name = "pending {0}, operator {1} -> {2}")
+  @CsvSource({"false, false, true", "true, false, false", "true, true, true", "false, true, true"})
+  @DisplayName("a lord cannot disband a challenged house, but an operator can")
+  void mayDisband(final boolean pending, final boolean operator, final boolean may) {
+    assertEquals(may, ChallengeRules.mayDisband(pending, operator));
   }
 }

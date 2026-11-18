@@ -55,6 +55,25 @@ public final class ChallengeRules {
     return apart.filter(distance -> distance <= reach).isPresent() ? Outcome.MEET : Outcome.WAITING;
   }
 
+  public record Review(Challenge challenge, Outcome outcome) {}
+
+  public static Review review(
+      final Challenge challenge,
+      final long night,
+      final boolean challengerReady,
+      final int answerNights,
+      final Optional<Double> apart,
+      final int reach) {
+    final Outcome outcome = outcome(challenge, night, answerNights, apart, reach);
+    return new Review(
+        challengerReady && outcome != Outcome.UNANSWERED ? challenge.offeredOn(night) : challenge,
+        outcome);
+  }
+
+  public static boolean mayDisband(final boolean pendingChallenge, final boolean operator) {
+    return operator || !pendingChallenge;
+  }
+
   public static Optional<Boolean> lordLosesByAbsence(
       final boolean lordStanding, final boolean challengerStanding) {
     return lordStanding == challengerStanding ? Optional.empty() : Optional.of(!lordStanding);

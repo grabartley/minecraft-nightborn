@@ -27,12 +27,9 @@ public final class HouseRanks {
 
   static void register() {
     ServerPlayConnectionEvents.JOIN.register(
-        (handler, sender, server) -> {
-          final Houses houses = Houses.get(server);
-          houses
-              .of(handler.getPlayer().getUuid())
-              .ifPresent(house -> houses.put(refreshed(server, house)));
-        });
+        (handler, sender, server) -> refreshHouseOf(server, handler.getPlayer().getUuid()));
+    ServerPlayConnectionEvents.DISCONNECT.register(
+        (handler, server) -> refreshHouseOf(server, handler.getPlayer().getUuid()));
     ServerTickEvents.END_SERVER_TICK.register(
         server -> {
           if (server.getTicks() % REFRESH_TICKS == 0) {
@@ -40,6 +37,11 @@ public final class HouseRanks {
             houses.all().forEach(house -> houses.put(refreshed(server, house)));
           }
         });
+  }
+
+  private static void refreshHouseOf(final MinecraftServer server, final UUID member) {
+    final Houses houses = Houses.get(server);
+    houses.of(member).ifPresent(house -> houses.put(refreshed(server, house)));
   }
 
   public static House refreshed(final MinecraftServer server, final House house) {

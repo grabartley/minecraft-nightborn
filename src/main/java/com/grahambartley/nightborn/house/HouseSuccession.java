@@ -102,9 +102,12 @@ public final class HouseSuccession {
         && house.challenges().pending().isEmpty();
   }
 
-  public static boolean disband(final MinecraftServer server, final UUID lord) {
+  public static boolean disband(
+      final MinecraftServer server, final UUID lord, final boolean operator) {
     return Houses.get(server)
         .ledBy(lord)
+        .filter(
+            house -> ChallengeRules.mayDisband(house.challenges().pending().isPresent(), operator))
         .map(
             house -> {
               end(server, house, DISBANDED);

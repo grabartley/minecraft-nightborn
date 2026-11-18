@@ -2386,6 +2386,7 @@
   "nightborn.house.succession.handed": "你的领主将家族交予你。家族如今归你所有",
   "nightborn.house.succession.fell": "无人继承，家族就此覆灭",
   "nightborn.house.succession.disbanded": "家族已解散",
+  "nightborn.house.disband.challenged": "家族面临挑战时不能解散",
   "item.nightborn.hunter_journal": "猎人日志",
   "item.nightborn.vampire_journal": "吸血鬼日志",
   "nightborn.guild.journal": "索要新的日志",

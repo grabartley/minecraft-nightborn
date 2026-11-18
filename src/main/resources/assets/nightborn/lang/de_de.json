@@ -2386,6 +2386,7 @@
   "nightborn.house.succession.handed": "Dein Fürst übergibt dir das Haus. Es gehört nun dir",
   "nightborn.house.succession.fell": "Ohne Erben, der es hält, fällt das Haus",
   "nightborn.house.succession.disbanded": "Das Haus ist aufgelöst",
+  "nightborn.house.disband.challenged": "Du kannst das Haus nicht auflösen, solange eine Herausforderung aussteht",
   "item.nightborn.hunter_journal": "Jägertagebuch",
   "item.nightborn.vampire_journal": "Vampirtagebuch",
   "nightborn.guild.journal": "Um ein neues Tagebuch bitten",

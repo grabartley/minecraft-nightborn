@@ -31,7 +31,7 @@ final class HouseAdminCommand {
     final ServerCommandSource source = context.getSource();
     int disbanded = 0;
     for (final GameProfile lord : GameProfileArgumentType.getProfileArgument(context, LORDS)) {
-      if (HouseSuccession.disband(source.getServer(), lord.getId())) {
+      if (HouseSuccession.disband(source.getServer(), lord.getId(), true)) {
         disbanded++;
         Nightborn.LOGGER.info(
             "{} used /nightborn house disband on {}", source.getName(), lord.getName());

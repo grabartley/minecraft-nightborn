@@ -94,18 +94,25 @@ public final class HouseDuels {
     final ServerPlayerEntity lord = server.getPlayerManager().getPlayer(house.lord());
     final ServerPlayerEntity challenger =
         server.getPlayerManager().getPlayer(challenge.challenger());
-    final Challenge counted = ready(challenger) ? challenge.offeredOn(night) : challenge;
-    if (!counted.equals(challenge)) {
-      Houses.get(server).put(house.withChallenges(house.challenges().declared(counted)));
-    }
     final Optional<Double> apart =
         ready(lord) && ready(challenger) && lord.getWorld() == challenger.getWorld()
             ? Optional.of((double) lord.distanceTo(challenger))
             : Optional.empty();
-    switch (ChallengeRules.outcome(
-        counted, night, settings.answerNights(), apart, settings.duelReach())) {
+    final ChallengeRules.Review review =
+        ChallengeRules.review(
+            challenge,
+            night,
+            ready(challenger),
+            settings.answerNights(),
+            apart,
+            settings.duelReach());
+    if (!review.challenge().equals(challenge)) {
+      Houses.get(server).put(house.withChallenges(house.challenges().declared(review.challenge())));
+    }
+    switch (review.outcome()) {
       case UNANSWERED ->
-          HouseSuccession.pass(server, house, house.ledBy(counted.challenger(), true), UNANSWERED);
+          HouseSuccession.pass(
+              server, house, house.ledBy(challenge.challenger(), true), UNANSWERED);
       case MEET -> begin(lord, challenger, settings);
       case WAITING -> {}
     }

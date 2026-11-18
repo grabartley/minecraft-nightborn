@@ -2386,6 +2386,7 @@
   "nightborn.house.succession.handed": "Лорд передаёт вам дом. Теперь он ваш",
   "nightborn.house.succession.fell": "Без наследника, способного его удержать, дом пал",
   "nightborn.house.succession.disbanded": "Дом распущен",
+  "nightborn.house.disband.challenged": "Нельзя распустить дом, пока за него брошен вызов",
   "item.nightborn.hunter_journal": "Дневник охотника",
   "item.nightborn.vampire_journal": "Дневник вампира",
   "nightborn.guild.journal": "Попросить новый дневник",

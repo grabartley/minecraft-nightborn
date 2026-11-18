@@ -3,6 +3,7 @@ package com.grahambartley.nightborn.feeding;
 import com.grahambartley.nightborn.blood.BloodQuality;
 import com.grahambartley.nightborn.downed.Downed;
 import com.grahambartley.nightborn.enchant.EnchantedValues;
+import com.grahambartley.nightborn.house.duel.DuelGuard;
 import com.grahambartley.nightborn.moment.Moments;
 import com.grahambartley.nightborn.server.ServerConfigService;
 import com.grahambartley.nightborn.vampire.Vampires;
@@ -33,7 +34,10 @@ final class FeedingInteraction {
       return ActionResult.PASS;
     }
     final Optional<BloodQuality> quality = BloodQuality.of(victim.getType());
-    final boolean pvp = world.isClient || world.getServer().isPvpEnabled();
+    final boolean pvp =
+        world.isClient
+            || world.getServer().isPvpEnabled()
+            || DuelGuard.forcesPvp(player.getUuid(), victim.getUuid());
     final BiteRules.Decision decision =
         BiteRules.decide(
             new BiteRules.Biter(

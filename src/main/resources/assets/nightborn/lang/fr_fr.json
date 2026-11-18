@@ -2386,6 +2386,7 @@
   "nightborn.house.succession.handed": "Votre seigneur vous remet la maison. Elle est à vous désormais",
   "nightborn.house.succession.fell": "Sans héritier pour la tenir, la maison tombe",
   "nightborn.house.succession.disbanded": "La maison est dissoute",
+  "nightborn.house.disband.challenged": "Vous ne pouvez pas dissoudre la maison tant qu'un défi est en cours",
   "item.nightborn.hunter_journal": "Journal du chasseur",
   "item.nightborn.vampire_journal": "Journal du vampire",
   "nightborn.guild.journal": "Demander un nouveau journal",

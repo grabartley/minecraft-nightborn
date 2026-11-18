@@ -23,6 +23,7 @@ public final class HouseCommand {
   static final String DISBAND = "disband";
   static final String NAMED = "nightborn.house.info.named";
   static final String CHALLENGED = "nightborn.house.info.challenged";
+  static final String CHALLENGED_DISBAND = "nightborn.house.disband.challenged";
   static final String NONE = "nightborn.house.info.none";
   static final String LED = "nightborn.house.info.led";
   static final String MEMBER = "nightborn.house.info.member";
@@ -106,8 +107,13 @@ public final class HouseCommand {
   private static int disband(final CommandContext<ServerCommandSource> context)
       throws CommandSyntaxException {
     final ServerPlayerEntity lord = player(context);
-    if (!HouseSuccession.disband(lord.getServer(), lord.getUuid())) {
+    final Optional<House> led = Houses.get(lord.getServer()).ledBy(lord.getUuid());
+    if (led.isEmpty()) {
       lord.sendMessage(Text.translatable(HouseNaming.NOT_LORD), true);
+      return 0;
+    }
+    if (!HouseSuccession.disband(lord.getServer(), lord.getUuid(), false)) {
+      lord.sendMessage(Text.translatable(CHALLENGED_DISBAND), true);
       return 0;
     }
     return 1;

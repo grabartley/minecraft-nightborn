@@ -2386,6 +2386,7 @@
   "nightborn.house.succession.handed": "Your lord hands you the house. It is yours now",
   "nightborn.house.succession.fell": "With no heir to hold it, the house falls",
   "nightborn.house.succession.disbanded": "The house is disbanded",
+  "nightborn.house.disband.challenged": "You cannot disband the house while a challenge for it is pending",
   "item.nightborn.hunter_journal": "Hunter's Journal",
   "item.nightborn.vampire_journal": "Vampire's Journal",
   "nightborn.guild.journal": "Ask for a new journal",
