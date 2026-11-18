@@ -99,12 +99,25 @@ public final class ScoutOrders<T extends PathAwareEntity & DayWorker> implements
   private void offer(final ServerPlayerEntity player, final T worker, final ServerWorld world) {
     final BlockPos from = worker.getBlockPos();
     final int range = ServerConfigService.current().servants().scoutRange();
-    final List<Found> places =
-        ScoutChoices.nearest(
-            from,
-            NearestStructures.eachOf(world, SCOUT_TARGETS, from, range),
-            range,
-            OpenWheelPayload.MOST_ENTRIES);
+    NearestStructures.eachOf(world, SCOUT_TARGETS, from, range)
+        .thenAcceptAsync(
+            found -> {
+              if (!player.isDisconnected() && !worker.isRemoved()) {
+                show(
+                    player,
+                    worker,
+                    from,
+                    ScoutChoices.nearest(from, found, range, OpenWheelPayload.MOST_ENTRIES));
+              }
+            },
+            world.getServer());
+  }
+
+  private void show(
+      final ServerPlayerEntity player,
+      final T worker,
+      final BlockPos from,
+      final List<Found> places) {
     if (places.isEmpty()) {
       player.sendMessage(
           Text.translatable("nightborn.scout.nowhere", worker.getDisplayName()), true);
