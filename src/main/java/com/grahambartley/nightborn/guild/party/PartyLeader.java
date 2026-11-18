@@ -8,6 +8,7 @@ import com.grahambartley.nightborn.village.VillageGuard;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.UUID;
 import net.minecraft.entity.mob.PathAwareEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
@@ -39,7 +40,7 @@ public final class PartyLeader {
     if (party.guards().filter(bell -> !VillageGuard.stillGuarded(world, bell)).isPresent()) {
       party = party.guarding(Optional.empty());
     }
-    final List<HunterEntity> members = members(world, party);
+    final List<HunterEntity> members = members(world, master.getUuid(), party);
     if (PartySchedule.leaves(
         party.pitched(),
         party.guarding(),
@@ -70,13 +71,14 @@ public final class PartyLeader {
     return party;
   }
 
-  private static List<HunterEntity> members(final ServerWorld world, final HunterParty party) {
+  private static List<HunterEntity> members(
+      final ServerWorld world, final UUID leader, final HunterParty party) {
     return party.members().stream()
         .map(world::getEntity)
         .filter(HunterEntity.class::isInstance)
         .map(HunterEntity.class::cast)
         .filter(HunterEntity::isAlive)
-        .filter(member -> member.partyLeader().isPresent())
+        .filter(member -> PartyMember.follows(member.partyLeader(), leader))
         .toList();
   }
 

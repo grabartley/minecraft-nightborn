@@ -15,6 +15,8 @@ public record NemesisKind(
     int experienceTimes,
     int companions,
     int fightEndSeconds,
+    float sight,
+    int spread,
     NemesisLines lines) {
 
   public static final Codec<NemesisKind> CODEC =
@@ -44,6 +46,12 @@ public record NemesisKind(
                       Codec.intRange(1, 600)
                           .optionalFieldOf("fight_end_seconds", 30)
                           .forGetter(NemesisKind::fightEndSeconds),
+                      Codec.floatRange(1.0F, 128.0F)
+                          .optionalFieldOf("sight", 32.0F)
+                          .forGetter(NemesisKind::sight),
+                      Codec.intRange(0, 8)
+                          .optionalFieldOf("spread", 2)
+                          .forGetter(NemesisKind::spread),
                       NemesisLines.CODEC
                           .optionalFieldOf("lines", NemesisLines.NONE)
                           .forGetter(NemesisKind::lines))

@@ -7,6 +7,12 @@ import java.util.UUID;
 
 public final class NemesisRules {
 
+  public enum Arrival {
+    MOVE,
+    COPY,
+    WAIT
+  }
+
   public record Growth(boolean ages, boolean boosts, boolean retitles) {}
 
   public record Rung(String id, int rank, int weight) {}
@@ -51,6 +57,19 @@ public final class NemesisRules {
       final boolean overworld,
       final boolean openSky) {
     return night >= nextVisit && dark && overworld && openSky;
+  }
+
+  public static Arrival arrival(
+      final boolean loadedCurrent, final boolean sameWorld, final boolean saved) {
+    if (loadedCurrent) {
+      return sameWorld ? Arrival.MOVE : Arrival.WAIT;
+    }
+    return saved ? Arrival.COPY : Arrival.WAIT;
+  }
+
+  public static boolean keepsSnapshot(
+      final boolean current, final boolean savable, final boolean living) {
+    return current && savable && living;
   }
 
   public static Growth growth(

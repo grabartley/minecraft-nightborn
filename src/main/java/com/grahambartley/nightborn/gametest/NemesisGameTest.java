@@ -8,15 +8,19 @@ import com.grahambartley.nightborn.mob.NightbornMobs;
 import com.grahambartley.nightborn.mob.VampireEntity;
 import com.grahambartley.nightborn.name.MobNaming;
 import com.grahambartley.nightborn.nemesis.NemesisAttachment;
+import com.grahambartley.nightborn.nemesis.NemesisEntry;
 import com.grahambartley.nightborn.nemesis.NemesisGrowth;
 import com.grahambartley.nightborn.nemesis.NemesisItems;
 import com.grahambartley.nightborn.nemesis.NemesisLedger;
 import com.grahambartley.nightborn.nemesis.NemesisMaking;
 import com.grahambartley.nightborn.nemesis.NemesisMark;
 import com.grahambartley.nightborn.server.ServerConfigService;
+import com.grahambartley.nightborn.skill.SkillAttachment;
+import com.grahambartley.nightborn.skill.SkillTree;
 import java.util.List;
 import java.util.Optional;
 import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -129,7 +133,57 @@ public class NemesisGameTest implements FabricGameTest {
           context.assertTrue(
               NemesisLedger.of(context.getWorld().getServer()).of(vampire.getUuid()).isEmpty(),
               "the grudge is over");
+          context.assertTrue(
+              SkillAttachment.get(vampire, SkillTree.VAMPIRE).experience() > 0.0F
+                  || SkillAttachment.get(vampire, SkillTree.VAMPIRE).earned() > 0,
+              "the quarry is paid in vampire experience");
           keepsakes.forEach(ItemEntity::discard);
+          TestPlayers.finish(context, vampire);
+        });
+  }
+
+  @GameTest(templateName = ARENA, tickLimit = TestPlayers.READY + 60)
+  public void anOlderCopyLeavesOnceANewerOneHasVisited(final TestContext context) {
+    final ServerPlayerEntity vampire = TestPlayers.vampire(context, PLAYER);
+    final HunterEntity hunter = hunter(context, 1);
+    context.runAtTick(
+        TestPlayers.READY,
+        () -> {
+          NemesisMaking.make(hunter, vampire.getUuid());
+          final NemesisLedger ledger = NemesisLedger.of(context.getWorld().getServer());
+          final NemesisEntry entry =
+              ledger.entry(vampire.getUuid(), hunter.getUuid()).orElseThrow();
+          ledger.put(vampire.getUuid(), entry.visited(entry.nextVisit(), entry.token() + 1));
+        });
+    context.runAtTick(
+        TestPlayers.READY + 40,
+        () -> {
+          context.assertTrue(hunter.isRemoved(), "the stale copy is gone");
+          context.assertTrue(
+              NemesisLedger.of(context.getWorld().getServer())
+                  .entry(vampire.getUuid(), hunter.getUuid())
+                  .isPresent(),
+              "the grudge itself is kept");
+          TestPlayers.finish(context, vampire);
+        });
+  }
+
+  @GameTest(templateName = ARENA, tickLimit = TestPlayers.READY + 20)
+  public void aNemesisLeavingWithItsChunkRefreshesItsSavedState(final TestContext context) {
+    final ServerPlayerEntity vampire = TestPlayers.vampire(context, PLAYER);
+    final HunterEntity hunter = hunter(context, 1);
+    context.runAtTick(
+        TestPlayers.READY,
+        () -> {
+          NemesisMaking.make(hunter, vampire.getUuid());
+          hunter.setHealth(7.0F);
+          hunter.remove(Entity.RemovalReason.UNLOADED_TO_CHUNK);
+          final NbtCompound saved =
+              NemesisLedger.of(context.getWorld().getServer())
+                  .entry(vampire.getUuid(), hunter.getUuid())
+                  .orElseThrow()
+                  .snapshot();
+          context.assertEquals(saved.getFloat("Health"), 7.0F, "the health it left with");
           TestPlayers.finish(context, vampire);
         });
   }

@@ -8,6 +8,8 @@
   "experience_times": 5,
   "companions": 2,
   "fight_end_seconds": 30,
+  "sight": 32,
+  "spread": 2,
   "lines": {
     "sighted": [
       "nightborn.nemesis.hunter.sighted.1",

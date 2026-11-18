@@ -11,7 +11,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.mob.MobEntity;
-import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
@@ -78,9 +77,10 @@ public final class NemesisVisits {
         .ifPresent(
             found -> {
               final int company =
-                  NemesisRules.companions(found.kind().companions(), world.getRandom().nextInt(64));
+                  NemesisRules.companions(
+                      found.kind().companions(), world.getRandom().nextInt(Integer.MAX_VALUE));
               for (int i = 0; i < company; i++) {
-                companion(world, mob, at, quarry);
+                companion(world, mob, at, quarry, found.kind().spread());
               }
             });
     return true;
@@ -88,16 +88,26 @@ public final class NemesisVisits {
 
   private static Optional<MobEntity> arrive(
       final ServerWorld world, final NemesisEntry entry, final BlockPos at) {
-    if (world.getEntity(entry.mob()) instanceof MobEntity loaded && loaded.isAlive()) {
-      loaded.requestTeleport(at.getX() + 0.5, at.getY(), at.getZ() + 0.5);
-      return Optional.of(loaded);
-    }
-    if (entry.snapshot().isEmpty()) {
-      return Optional.empty();
-    }
-    final NbtCompound saved = entry.snapshot().copy();
+    final Optional<MobEntity> loaded =
+        NemesisWatch.loadedAnywhere(world.getServer(), entry.mob())
+            .filter(mob -> NemesisAttachment.get(mob).filter(entry::current).isPresent());
+    return switch (NemesisRules.arrival(
+        loaded.isPresent(),
+        loaded.filter(mob -> mob.getWorld() == world).isPresent(),
+        !entry.snapshot().isEmpty())) {
+      case MOVE -> {
+        loaded.get().requestTeleport(at.getX() + 0.5, at.getY(), at.getZ() + 0.5);
+        yield loaded;
+      }
+      case COPY -> copy(world, entry, at);
+      case WAIT -> Optional.empty();
+    };
+  }
+
+  private static Optional<MobEntity> copy(
+      final ServerWorld world, final NemesisEntry entry, final BlockPos at) {
     final Optional<MobEntity> copy =
-        EntityType.getEntityFromNbt(saved, world)
+        EntityType.getEntityFromNbt(entry.snapshot().copy(), world)
             .filter(MobEntity.class::isInstance)
             .map(MobEntity.class::cast);
     if (copy.isEmpty()) {
@@ -118,13 +128,17 @@ public final class NemesisVisits {
       final ServerWorld world,
       final MobEntity leader,
       final BlockPos at,
-      final ServerPlayerEntity quarry) {
+      final ServerPlayerEntity quarry,
+      final int spread) {
     final Entity made = leader.getType().create(world);
     if (!(made instanceof MobEntity mob)) {
       return;
     }
     final BlockPos column =
-        at.add(world.getRandom().nextInt(5) - 2, 0, world.getRandom().nextInt(5) - 2);
+        at.add(
+            world.getRandom().nextBetween(-spread, spread),
+            0,
+            world.getRandom().nextBetween(-spread, spread));
     if (!world.isChunkLoaded(column.getX() >> 4, column.getZ() >> 4)) {
       return;
     }

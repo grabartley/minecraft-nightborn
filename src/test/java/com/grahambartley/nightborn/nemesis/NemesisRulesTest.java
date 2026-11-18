@@ -29,6 +29,8 @@ class NemesisRulesTest {
         5,
         2,
         30,
+        32.0F,
+        2,
         NemesisLines.NONE);
   }
 
@@ -231,5 +233,36 @@ class NemesisRulesTest {
     assertEquals(
         next.isEmpty() ? Optional.empty() : Optional.of(next),
         NemesisRules.newEpithet(names, current, roll));
+  }
+
+  @ParameterizedTest(name = "loaded current {0}, same world {1}, saved {2}: {3}")
+  @CsvSource({
+    "true, true, true, MOVE",
+    "true, true, false, MOVE",
+    "true, false, true, WAIT",
+    "false, false, true, COPY",
+    "false, true, true, COPY",
+    "false, false, false, WAIT"
+  })
+  @DisplayName("a loaded nemesis is moved, an unloaded one is copied, and never two at once")
+  void arrival(
+      final boolean loaded,
+      final boolean sameWorld,
+      final boolean saved,
+      final NemesisRules.Arrival arrival) {
+    assertEquals(arrival, NemesisRules.arrival(loaded, sameWorld, saved));
+  }
+
+  @ParameterizedTest(name = "current {0}, savable {1}, living {2}: {3}")
+  @CsvSource({
+    "true, true, true, true",
+    "false, true, true, false",
+    "true, false, true, false",
+    "true, true, false, false"
+  })
+  @DisplayName("only the current, living nemesis leaving with its chunk refreshes its saved state")
+  void keepsSnapshot(
+      final boolean current, final boolean savable, final boolean living, final boolean keeps) {
+    assertEquals(keeps, NemesisRules.keepsSnapshot(current, savable, living));
   }
 }

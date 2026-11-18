@@ -16,8 +16,6 @@ import net.minecraft.server.world.ServerWorld;
 
 public final class NemesisWatch {
 
-  static final double SIGHT = 32.0;
-
   private static final Map<UUID, MobEntity> LOADED = new HashMap<>();
   private static final Set<UUID> SIGHTED = new HashSet<>();
 
@@ -41,7 +39,12 @@ public final class NemesisWatch {
               final NemesisLedger ledger = NemesisLedger.of(world.getServer());
               ledger
                   .entry(mark.quarry(), mob.getUuid())
-                  .filter(entry -> entry.current(mark) && mob.isAlive())
+                  .filter(
+                      entry ->
+                          NemesisRules.keepsSnapshot(
+                              entry.current(mark),
+                              mob.getRemovalReason() == null || mob.getRemovalReason().shouldSave(),
+                              mob.getHealth() > 0.0F))
                   .ifPresent(
                       entry -> {
                         final var snapshot = NemesisMaking.snapshot(mob);
@@ -56,6 +59,15 @@ public final class NemesisWatch {
 
   static void track(final MobEntity mob) {
     LOADED.put(mob.getUuid(), mob);
+  }
+
+  static Optional<MobEntity> loadedAnywhere(final MinecraftServer server, final UUID id) {
+    for (final ServerWorld world : server.getWorlds()) {
+      if (world.getEntity(id) instanceof MobEntity mob && mob.isAlive()) {
+        return Optional.of(mob);
+      }
+    }
+    return Optional.empty();
   }
 
   static void tick(final MinecraftServer server) {
@@ -86,13 +98,15 @@ public final class NemesisWatch {
   }
 
   private static void watch(final MobEntity mob, final ServerPlayerEntity quarry) {
+    final double sight =
+        NemesisKinds.of(mob).map(found -> (double) found.kind().sight()).orElse(0.0);
     final boolean near =
         quarry != null
             && quarry.getWorld() == mob.getWorld()
             && quarry.isAlive()
             && !quarry.isSpectator()
             && !quarry.isCreative()
-            && mob.squaredDistanceTo(quarry) <= SIGHT * SIGHT
+            && mob.squaredDistanceTo(quarry) <= sight * sight
             && mob.canSee(quarry);
     if (near && mob.getTarget() == null && mob.canTarget(quarry)) {
       mob.setTarget(quarry);

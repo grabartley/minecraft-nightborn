@@ -24,6 +24,8 @@ class NemesisKindsTest {
         5,
         2,
         30,
+        32.0F,
+        2,
         NemesisLines.NONE);
   }
 

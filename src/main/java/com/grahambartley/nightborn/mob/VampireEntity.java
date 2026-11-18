@@ -393,10 +393,11 @@ public class VampireEntity extends HostileEntity
   }
 
   protected boolean fights(final LivingEntity target) {
-    return Nemeses.isQuarry(this, target)
-        || !Vampires.isVampire(target)
-        || VampireFeud.answers(
-            target == getAttacker(), StageRanks.of(target), stageRank(), answersEveryVampire());
+    return VampireFeud.fights(
+        Nemeses.isQuarry(this, target),
+        Vampires.isVampire(target),
+        VampireFeud.answers(
+            target == getAttacker(), StageRanks.of(target), stageRank(), answersEveryVampire()));
   }
 
   protected boolean answersEveryVampire() {

@@ -5,8 +5,10 @@ import com.grahambartley.nightborn.mob.VampireEntity;
 import com.grahambartley.nightborn.nemesis.NemesisLines.Moment;
 import com.grahambartley.nightborn.vampire.Vampires;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
@@ -27,6 +29,7 @@ public final class NemesisFights {
   }
 
   private static final Map<Key, Fight> FIGHTS = new HashMap<>();
+  private static final Set<UUID> TOLD_DOWNED = new HashSet<>();
 
   private NemesisFights() {}
 
@@ -39,13 +42,20 @@ public final class NemesisFights {
         && source.getAttacker() instanceof MobEntity mob
         && NemesisKinds.of(mob).isPresent()) {
       note(mob, player, false);
-      if (Nemeses.isQuarry(mob, player) && Downed.helpless(player)) {
+      if (Nemeses.isQuarry(mob, player)
+          && Downed.helpless(player)
+          && TOLD_DOWNED.add(player.getUuid())) {
         NemesisTaunts.say(mob, player, Moment.DOWNED);
       }
     }
   }
 
   static void tick(final MinecraftServer server) {
+    TOLD_DOWNED.removeIf(
+        id -> {
+          final ServerPlayerEntity player = server.getPlayerManager().getPlayer(id);
+          return player == null || !Downed.helpless(player);
+        });
     final long now = server.getOverworld().getTime();
     final Iterator<Fight> fights = FIGHTS.values().iterator();
     while (fights.hasNext()) {
@@ -64,8 +74,13 @@ public final class NemesisFights {
     }
   }
 
+  static void settled(final UUID mob, final UUID player) {
+    FIGHTS.remove(new Key(mob, player));
+  }
+
   static void clear() {
     FIGHTS.clear();
+    TOLD_DOWNED.clear();
   }
 
   private static void note(

@@ -45,16 +45,8 @@ public final class NemesisMaking {
                   settings.nemesisLimit())) {
                 return false;
               }
-              NemesisAttachment.set(mob, new NemesisMark(quarry, 0, 0, given(mob)));
-              mob.setPersistent();
-              if (mob instanceof HunterEntity hunter) {
-                hunter.leaveParty();
-              }
-              WandererAttachment.clear(mob);
-              NemesisWatch.track(mob);
               final long night = AgeNight.index(world.getServer().getOverworld().getTimeOfDay());
-              return ledger.add(
-                  quarry,
+              final NemesisEntry entry =
                   new NemesisEntry(
                       mob.getUuid(),
                       found.id(),
@@ -65,8 +57,20 @@ public final class NemesisMaking {
                           settings.nemesisVisitMost(),
                           mob.getRandom().nextInt(Integer.MAX_VALUE)),
                       0,
-                      snapshot(mob)),
-                  settings.nemesisLimit());
+                      new NbtCompound());
+              if (!ledger.add(quarry, entry, settings.nemesisLimit())) {
+                return false;
+              }
+              NemesisAttachment.set(mob, new NemesisMark(quarry, 0, 0, given(mob)));
+              mob.setPersistent();
+              if (mob instanceof HunterEntity hunter) {
+                hunter.leaveParty();
+              }
+              WandererAttachment.clear(mob);
+              NemesisWatch.track(mob);
+              NemesisFights.settled(mob.getUuid(), quarry);
+              ledger.put(quarry, entry.withSnapshot(entry.name(), snapshot(mob)));
+              return true;
             })
         .isPresent();
   }
