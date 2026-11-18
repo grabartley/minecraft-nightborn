@@ -5,6 +5,7 @@ import com.grahambartley.nightborn.servant.job.DayWorker;
 import com.grahambartley.nightborn.servant.job.GatherTarget;
 import com.grahambartley.nightborn.servant.job.Harvest;
 import com.grahambartley.nightborn.servant.job.JobSupplies;
+import com.grahambartley.nightborn.servant.job.PickaxeRank;
 import com.grahambartley.nightborn.servant.job.RoundRules;
 import com.grahambartley.nightborn.servant.job.RoundRules.Step;
 import com.grahambartley.nightborn.server.ServerConfigService;
@@ -19,8 +20,6 @@ import net.minecraft.util.math.Vec3d;
 import org.jetbrains.annotations.Nullable;
 
 public class GatherGoal<T extends PathAwareEntity & DayWorker> extends ChestRoundGoal<T> {
-
-  static final int PICKAXES = 1;
 
   private final Set<BlockPos> skipped = new HashSet<>();
   @Nullable private BlockPos target;
@@ -37,7 +36,8 @@ public class GatherGoal<T extends PathAwareEntity & DayWorker> extends ChestRoun
 
   @Override
   protected void stock(final Inventory chest) {
-    JobSupplies.take(chest, worker.getInventory(), stack -> stack.isIn(Harvest.TOOLS), PICKAXES);
+    JobSupplies.takeBest(
+        chest, worker.getInventory(), stack -> stack.isIn(Harvest.TOOLS), PickaxeRank.BEST_FIRST);
   }
 
   @Override
@@ -72,6 +72,7 @@ public class GatherGoal<T extends PathAwareEntity & DayWorker> extends ChestRoun
       case REAPED -> {
         worker.swingHand(Hand.MAIN_HAND);
         target = null;
+        restartLegClock();
         yield Step.WORKING;
       }
       case GONE -> {

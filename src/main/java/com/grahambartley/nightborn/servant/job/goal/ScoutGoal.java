@@ -47,8 +47,24 @@ public class ScoutGoal<T extends PathAwareEntity & DayWorker> extends Goal {
     return worker.getWorld() instanceof ServerWorld
         && worker.willWork()
         && trip()
-            .filter(trip -> trip.returning() || FamiliarClock.isWorkingHours(worker.getWorld()))
+            .filter(
+                trip ->
+                    ScoutProgress.underway(
+                        trip.returning(),
+                        FamiliarClock.isWorkingHours(worker.getWorld()),
+                        awayFromHome()))
             .isPresent();
+  }
+
+  private boolean awayFromHome() {
+    return worker
+        .job()
+        .filter(
+            order ->
+                !ScoutProgress.arrived(
+                    ScoutChoices.flatDistanceSquared(worker.getBlockPos(), order.place()),
+                    HOME_REACH))
+        .isPresent();
   }
 
   @Override

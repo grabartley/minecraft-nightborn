@@ -33,6 +33,7 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.passive.CowEntity;
+import net.minecraft.entity.passive.WolfEntity;
 import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -53,6 +54,7 @@ public class DayJobGameTest implements FabricGameTest {
   static final String SCOUT = "day-jobs-scout";
   static final String WATCH = "day-jobs-watch";
   static final int NOON = 6000;
+  static final int MIDNIGHT = 18000;
   static final int ROUND_TICKS = 20;
   static final int BLOOD_TICKS = 60;
 
@@ -273,6 +275,32 @@ public class DayJobGameTest implements FabricGameTest {
         });
   }
 
+  @GameTest(templateName = ARENA, batchId = GATHER, tickLimit = TestPlayers.READY + 5)
+  public void aServantFetchingBloodLeavesATamedWolfBe(final TestContext context) {
+    final ServerPlayerEntity owner = TestPlayers.vampire(context, new BlockPos(2, 2, 2));
+    final BlockPos chest = new BlockPos(4, 2, 3);
+    context.setBlockState(chest, Blocks.CHEST);
+    final WolfEntity wolf = still(context, EntityType.WOLF, new BlockPos(4, 2, 5));
+    context.runAtTick(
+        TestPlayers.READY,
+        () -> {
+          wolf.setOwner(owner);
+          final ThrallEntity thrall = thrall(context, owner, new BlockPos(4, 2, 4));
+          thrall.getInventory().addStack(new ItemStack(BloodItems.LANCET));
+          thrall.getInventory().addStack(new ItemStack(Items.GLASS_BOTTLE, 4));
+          ChestMarking.mark(owner, context.getAbsolutePos(chest));
+          thrall.assign(JobOrder.at(DayJob.FETCH_BLOOD, thrall.getBlockPos()));
+          final FetchBloodGoal<ThrallEntity> fetch = new FetchBloodGoal<>(thrall);
+          context.assertTrue(fetch.canStart(), "the work begins");
+          fetch.start();
+          for (int step = 0; step < ROUND_TICKS && fetch.shouldContinue(); step++) {
+            fetch.tick();
+          }
+          context.assertEquals(wolf.getHealth(), wolf.getMaxHealth(), "the owner's wolf is unhurt");
+          TestPlayers.finish(context, owner);
+        });
+  }
+
   @GameTest(templateName = ARENA, batchId = SCOUT, tickLimit = TestPlayers.READY + 20)
   public void aScoutReportsWhoIsThereAndTellsItsOwnerOnceHome(final TestContext context) {
     final ServerPlayerEntity owner = TestPlayers.vampire(context, new BlockPos(1, 2, 1));
@@ -298,8 +326,12 @@ public class DayJobGameTest implements FabricGameTest {
               thrall.job().flatMap(JobOrder::trip).flatMap(ScoutTrip::report),
               Optional.of(new ScoutReport(2, 1, 1, 0)),
               "the scout counts the villagers, the hunter and its own vampire owner");
+          context.getWorld().setTimeOfDay(MIDNIGHT);
+          context.assertTrue(
+              scout.shouldContinue(), "a scout already on its way keeps going through the night");
           thrall.refreshPositionAndAngles(home, 0.0F, 0.0F);
           scout.tick();
+          context.getWorld().setTimeOfDay(NOON);
           context.assertTrue(thrall.job().isEmpty(), "home again, it reports and is done");
           TestPlayers.finish(context, owner);
         });

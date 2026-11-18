@@ -91,9 +91,7 @@ public final class Harvest {
     for (final BlockPos block : felled) {
       world.breakBlock(block, false, worker);
     }
-    if (!tool.isEmpty()) {
-      tool.damage(1, world, null, item -> {});
-    }
+    ToolWear.wear(world, worker, tool);
     drops.forEach(carried::addStack);
     if (kind.replants()) {
       replant(world, pos, first, carried);

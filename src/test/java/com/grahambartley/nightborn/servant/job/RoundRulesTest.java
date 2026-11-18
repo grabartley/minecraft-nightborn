@@ -40,4 +40,11 @@ class RoundRulesTest {
   void stuck(final int ticks, final boolean stuck) {
     assertEquals(stuck, RoundRules.stuck(ticks));
   }
+
+  @ParameterizedTest(name = "idle {0} -> {1} ticks")
+  @CsvSource({"false, 100", "true, 1200"})
+  @DisplayName("a servant with nothing to do rests far longer before it looks again")
+  void restTicks(final boolean idle, final int ticks) {
+    assertEquals(ticks, RoundRules.restTicks(idle));
+  }
 }

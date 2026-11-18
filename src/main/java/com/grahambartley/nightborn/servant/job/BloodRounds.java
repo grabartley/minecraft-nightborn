@@ -6,8 +6,8 @@ public final class BloodRounds {
 
   private BloodRounds() {}
 
-  public static boolean equipped(final boolean lancet, final boolean emptyBottle) {
-    return lancet && emptyBottle;
+  public static boolean prey(final boolean animal, final boolean tame, final boolean spared) {
+    return animal && !tame && !spared;
   }
 
   public static boolean drawsNow(final int ticksSinceLastDraw) {

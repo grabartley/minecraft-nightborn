@@ -45,16 +45,7 @@ public final class Lancet {
       return ActionResult.PASS;
     }
     final Optional<BloodQuality> quality = BloodQuality.of(creature.getType());
-    final LancetRules rule =
-        LancetRules.onCreature(
-            new LancetRules.Creature(
-                quality.isPresent(),
-                Vampires.isVampire(creature),
-                creature instanceof PlayerEntity,
-                creature.isAlive(),
-                creature.getHealth()),
-            hasEmptyBottle(player.getInventory()),
-            draw());
+    final LancetRules rule = ruleFor(creature, hasEmptyBottle(player.getInventory()));
     if (player instanceof ServerPlayerEntity bleeder) {
       if (rule == LancetRules.BLEEDS) {
         bleed(
@@ -89,6 +80,18 @@ public final class Lancet {
       }
     }
     return ActionResult.SUCCESS;
+  }
+
+  public static LancetRules ruleFor(final LivingEntity creature, final boolean emptyBottle) {
+    return LancetRules.onCreature(
+        new LancetRules.Creature(
+            BloodQuality.of(creature.getType()).isPresent(),
+            Vampires.isVampire(creature),
+            creature instanceof PlayerEntity,
+            creature.isAlive(),
+            creature.getHealth()),
+        emptyBottle,
+        draw());
   }
 
   public static float draw() {

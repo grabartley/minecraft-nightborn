@@ -1,5 +1,6 @@
 package com.grahambartley.nightborn.servant.job;
 
+import java.util.Comparator;
 import java.util.function.Predicate;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.inventory.SimpleInventory;
@@ -33,6 +34,33 @@ public final class JobSupplies {
       from.markDirty();
     }
     return moved;
+  }
+
+  public static boolean takeBest(
+      final Inventory from,
+      final SimpleInventory into,
+      final Predicate<ItemStack> wanted,
+      final Comparator<ItemStack> better) {
+    int best = -1;
+    for (int slot = 0; slot < from.size(); slot++) {
+      final ItemStack stack = from.getStack(slot);
+      if (!stack.isEmpty()
+          && wanted.test(stack)
+          && (best < 0 || better.compare(stack, from.getStack(best)) > 0)) {
+        best = slot;
+      }
+    }
+    if (best < 0) {
+      return false;
+    }
+    final ItemStack chosen = from.getStack(best);
+    final ItemStack left = into.addStack(chosen.split(1));
+    if (!left.isEmpty()) {
+      chosen.increment(left.getCount());
+      return false;
+    }
+    from.markDirty();
+    return true;
   }
 
   public static boolean holds(final Inventory carried, final Predicate<ItemStack> wanted) {

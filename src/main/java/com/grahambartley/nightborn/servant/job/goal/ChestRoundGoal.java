@@ -25,13 +25,13 @@ public abstract class ChestRoundGoal<T extends PathAwareEntity & DayWorker> exte
 
   static final double SPEED = 0.7;
   static final double REACH = 2.5;
-  static final int REST_TICKS = 100;
 
   protected final T worker;
   private final DayJob job;
   @Nullable private Leg leg;
   @Nullable private BlockPos chest;
   private boolean nothingLeft;
+  private boolean idle;
   private int ticksOnLeg;
   private long restUntil;
 
@@ -74,6 +74,7 @@ public abstract class ChestRoundGoal<T extends PathAwareEntity & DayWorker> exte
   @Override
   public void start() {
     nothingLeft = false;
+    idle = false;
     enter(Leg.CHEST);
   }
 
@@ -87,7 +88,7 @@ public abstract class ChestRoundGoal<T extends PathAwareEntity & DayWorker> exte
     leg = null;
     forgetTarget();
     worker.getNavigation().stop();
-    restUntil = worker.getWorld().getTime() + REST_TICKS;
+    restUntil = worker.getWorld().getTime() + RoundRules.restTicks(idle);
   }
 
   @Override
@@ -143,7 +144,9 @@ public abstract class ChestRoundGoal<T extends PathAwareEntity & DayWorker> exte
     if (deliveredAll && !nothingLeft) {
       stock(into);
     }
-    enter(RoundRules.afterChest(deliveredAll, readyToWork(), nothingLeft));
+    final Leg next = RoundRules.afterChest(deliveredAll, readyToWork(), nothingLeft);
+    idle = next == Leg.END;
+    enter(next);
   }
 
   private void enter(final Leg next) {

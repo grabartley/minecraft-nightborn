@@ -53,4 +53,32 @@ class JobSuppliesTest {
         carrying,
         JobSupplies.first(carried, stack -> stack.isOf(Items.IRON_PICKAXE)) == carried.getStack(3));
   }
+
+  @ParameterizedTest(name = "{0} then {1} -> takes {2}")
+  @CsvSource({
+    "WOODEN_PICKAXE, IRON_PICKAXE, IRON_PICKAXE",
+    "DIAMOND_PICKAXE, STONE_PICKAXE, DIAMOND_PICKAXE",
+    "WHEAT, STONE_PICKAXE, STONE_PICKAXE"
+  })
+  @DisplayName("a servant takes the best tool in the chest, one of it, and leaves the rest")
+  void takeBest(final String first, final String second, final String taken) {
+    final SimpleInventory chest = new SimpleInventory(27);
+    chest.setStack(0, new ItemStack(item(first)));
+    chest.setStack(1, new ItemStack(item(second)));
+    final SimpleInventory carried = new SimpleInventory(DayWorker.CARRY_SLOTS);
+    assertEquals(
+        true,
+        JobSupplies.takeBest(
+            chest,
+            carried,
+            stack -> stack.getItem() instanceof net.minecraft.item.PickaxeItem,
+            PickaxeRank.BEST_FIRST));
+    assertEquals(1, carried.count(item(taken)));
+    assertEquals(1, chest.count(item(first)) + chest.count(item(second)));
+  }
+
+  private static net.minecraft.item.Item item(final String name) {
+    return net.minecraft.registry.Registries.ITEM.get(
+        net.minecraft.util.Identifier.ofVanilla(name.toLowerCase(java.util.Locale.ROOT)));
+  }
 }
