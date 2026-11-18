@@ -11,7 +11,7 @@ class PounceArcTest {
 
   @ParameterizedTest(name = "to ({0}, {1}, {2})")
   @CsvSource({"10, 0, 0", "6, 2, -4", "1, 0, 1", "0, 3, 8"})
-  @DisplayName("the leap lands on the target when followed tick by tick under gravity")
+  @DisplayName("the leap lands on the target under the game's air drag and gravity")
   void lands(final double x, final double y, final double z) {
     final Vec3d target = new Vec3d(x, y, z);
     Vec3d at = Vec3d.ZERO;
@@ -19,7 +19,7 @@ class PounceArcTest {
     final int ticks = PounceArc.flightTicks(target.horizontalLength());
     for (int i = 0; i < ticks; i++) {
       at = at.add(velocity);
-      velocity = velocity.subtract(0.0, PounceArc.GRAVITY, 0.0);
+      velocity = new Vec3d(velocity.x * 0.91, (velocity.y - 0.08) * 0.98, velocity.z * 0.91);
     }
     assertEquals(x, at.x, 1.0E-6);
     assertEquals(z, at.z, 1.0E-6);
