@@ -598,7 +598,7 @@
   "nightborn.setting.parties.partyMaxNights": "Most Nights in Camp",
   "nightborn.setting.parties.partyMaxNights.tooltip": "The most nights a party stays in one camp, from 1 to 3",
   "nightborn.setting.parties.partyLeaveMinutes": "Party Leaves After (min)",
-  "nightborn.setting.parties.partyLeaveMinutes.tooltip": "How long, in minutes, a party on the move goes with no player near before it leaves the world",
+  "nightborn.setting.parties.partyLeaveMinutes.tooltip": "How long, in minutes, a party on the move or a wild vampire goes with no player near before it leaves the world",
   "nightborn.setting.parties.partySleepers": "Party Sleepers (%)",
   "nightborn.setting.parties.partySleepers.tooltip": "Share of a party that sleeps in the tents at night while the rest keep watch",
   "nightborn.setting.parties.campBatChance": "Camp Bat Attack Chance (%)",

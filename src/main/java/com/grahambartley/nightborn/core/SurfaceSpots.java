@@ -25,13 +25,17 @@ public final class SurfaceSpots {
   public static Optional<BlockPos> at(final ServerWorld world, final BlockPos column) {
     final int x = column.getX();
     final int z = column.getZ();
-    if (!world.isChunkLoaded(
-        ChunkSectionPos.getSectionCoord(x), ChunkSectionPos.getSectionCoord(z))) {
+    if (!loaded(world, x, z)) {
       return Optional.empty();
     }
     final BlockPos spot =
         new BlockPos(x, world.getTopY(Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, x, z), z);
     return world.getFluidState(spot.down()).isEmpty() ? Optional.of(spot) : Optional.empty();
+  }
+
+  public static boolean loaded(final ServerWorld world, final int x, final int z) {
+    return world.isChunkLoaded(
+        ChunkSectionPos.getSectionCoord(x), ChunkSectionPos.getSectionCoord(z));
   }
 
   public static BlockPos offset(final BlockPos near, final float angle, final int distance) {

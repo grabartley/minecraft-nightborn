@@ -64,6 +64,7 @@ public final class WildVampires {
         world.getPlayers(other -> !other.isSpectator()).stream().map(Entity::getBlockPos).toList();
     return SurfaceSpots.around(world, player.getBlockPos(), distance, distance + RING, random)
         .filter(spot -> WildRules.farFromEvery(spot, players, distance))
+        .filter(world::shouldTickEntity)
         .flatMap(spot -> place(world, spot, Wanderer.wild(world.getTime()), random));
   }
 

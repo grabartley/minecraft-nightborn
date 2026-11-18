@@ -2,6 +2,7 @@ package com.grahambartley.nightborn.structure;
 
 import com.grahambartley.nightborn.Nightborn;
 import com.grahambartley.nightborn.config.StructureSettings;
+import com.grahambartley.nightborn.core.SurfaceSpots;
 import com.grahambartley.nightborn.house.Houses;
 import com.grahambartley.nightborn.server.ServerConfigService;
 import java.util.List;
@@ -126,7 +127,7 @@ public final class HouseholdRefill {
   private static boolean loaded(final ServerWorld world, final BlockBox box) {
     for (int x = box.getMinX() >> 4; x <= box.getMaxX() >> 4; x++) {
       for (int z = box.getMinZ() >> 4; z <= box.getMaxZ() >> 4; z++) {
-        if (!world.isChunkLoaded(x, z)) {
+        if (!SurfaceSpots.loaded(world, x << 4, z << 4)) {
           return false;
         }
       }

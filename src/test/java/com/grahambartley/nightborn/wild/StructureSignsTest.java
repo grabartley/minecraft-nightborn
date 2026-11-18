@@ -2,30 +2,16 @@ package com.grahambartley.nightborn.wild;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import com.grahambartley.nightborn.core.SurfaceSpots;
-import net.minecraft.util.math.BlockPos;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
 class StructureSignsTest {
 
-  @ParameterizedTest(name = "facing yaw {0} -> behind at {1}, {2}")
-  @CsvSource({"0, 0, -20", "90, 20, 0", "180, 0, 20", "-90, -20, 0"})
-  @DisplayName("a drained animal is laid behind the player, out of their sight")
-  void behind(final float yaw, final int x, final int z) {
-    assertEquals(
-        new BlockPos(x, 64, z),
-        SurfaceSpots.offset(new BlockPos(0, 64, 0), StructureSigns.behind(yaw, 0.5F), 20));
-  }
-
-  @ParameterizedTest(name = "roll {0} turns at most {1} radians from straight behind")
-  @CsvSource({"0.0, 0.7854", "1.0, 0.7854", "0.5, 0.0"})
-  @DisplayName("the spot behind the player strays no more than an eighth of a turn either way")
-  void spread(final float roll, final float most) {
-    assertEquals(
-        most,
-        Math.abs(StructureSigns.behind(0.0F, roll) - StructureSigns.behind(0.0F, 0.5F)),
-        0.001);
+  @ParameterizedTest(name = "{0} structures in range, disconnected {1}: {2}")
+  @CsvSource({"1, false, true", "3, false, true", "0, false, false", "1, true, false"})
+  @DisplayName("signs show only for a player still here with a vampire structure in range")
+  void nearOne(final int structures, final boolean disconnected, final boolean shows) {
+    assertEquals(shows, StructureSigns.nearOne(structures, disconnected));
   }
 }

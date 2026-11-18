@@ -598,7 +598,7 @@
   "nightborn.setting.parties.partyMaxNights": "Больше всего ночей в лагере",
   "nightborn.setting.parties.partyMaxNights.tooltip": "Наибольшее число ночей, которые отряд проводит в одном лагере, от 1 до 3",
   "nightborn.setting.parties.partyLeaveMinutes": "Отряд уходит через (мин)",
-  "nightborn.setting.parties.partyLeaveMinutes.tooltip": "Сколько минут отряд в пути проводит без игроков рядом, прежде чем покинуть мир",
+  "nightborn.setting.parties.partyLeaveMinutes.tooltip": "Сколько минут отряд в пути или дикий вампир проводит без игроков рядом, прежде чем покинуть мир",
   "nightborn.setting.parties.partySleepers": "Спящие в отряде (%)",
   "nightborn.setting.parties.partySleepers.tooltip": "Доля отряда, которая ночью спит в палатках, пока остальные стоят на страже",
   "nightborn.setting.parties.campBatChance": "Шанс нападения летучих мышей (%)",

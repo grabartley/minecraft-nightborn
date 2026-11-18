@@ -598,7 +598,7 @@
   "nightborn.setting.parties.partyMaxNights": "Meiste Nächte im Lager",
   "nightborn.setting.parties.partyMaxNights.tooltip": "Die meisten Nächte, die ein Trupp in einem Lager bleibt, von 1 bis 3",
   "nightborn.setting.parties.partyLeaveMinutes": "Trupp geht nach (Min.)",
-  "nightborn.setting.parties.partyLeaveMinutes.tooltip": "Wie lange, in Minuten, ein wandernder Trupp ohne Spieler in der Nähe bleibt, bevor er die Welt verlässt",
+  "nightborn.setting.parties.partyLeaveMinutes.tooltip": "Wie lange, in Minuten, ein wandernder Trupp oder ein wilder Vampir ohne Spieler in der Nähe bleibt, bevor er die Welt verlässt",
   "nightborn.setting.parties.partySleepers": "Schläfer im Trupp (%)",
   "nightborn.setting.parties.partySleepers.tooltip": "Anteil eines Trupps, der nachts in den Zelten schläft, während die übrigen Wache halten",
   "nightborn.setting.parties.campBatChance": "Chance auf Fledermausangriff (%)",

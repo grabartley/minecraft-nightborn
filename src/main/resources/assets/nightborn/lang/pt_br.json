@@ -598,7 +598,7 @@
   "nightborn.setting.parties.partyMaxNights": "Máximo de noites acampado",
   "nightborn.setting.parties.partyMaxNights.tooltip": "O maior número de noites que um grupo fica em um acampamento, de 1 a 3",
   "nightborn.setting.parties.partyLeaveMinutes": "O grupo parte após (min)",
-  "nightborn.setting.parties.partyLeaveMinutes.tooltip": "Por quantos minutos um grupo em marcha fica sem jogador por perto antes de deixar o mundo",
+  "nightborn.setting.parties.partyLeaveMinutes.tooltip": "Por quantos minutos um grupo em marcha ou um vampiro selvagem fica sem jogador por perto antes de deixar o mundo",
   "nightborn.setting.parties.partySleepers": "Dorminhocos do grupo (%)",
   "nightborn.setting.parties.partySleepers.tooltip": "Parte de um grupo que dorme nas barracas à noite enquanto o resto monta guarda",
   "nightborn.setting.parties.campBatChance": "Chance de ataque de morcegos (%)",

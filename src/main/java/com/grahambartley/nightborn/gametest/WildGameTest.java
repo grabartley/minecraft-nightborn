@@ -1,16 +1,20 @@
 package com.grahambartley.nightborn.gametest;
 
 import com.grahambartley.nightborn.core.NightTime;
+import com.grahambartley.nightborn.house.House;
+import com.grahambartley.nightborn.house.Houses;
 import com.grahambartley.nightborn.mob.NightbornMobs;
 import com.grahambartley.nightborn.mob.VampireEntity;
 import com.grahambartley.nightborn.structure.HouseholdRefill;
 import com.grahambartley.nightborn.structure.HouseholdRoll;
 import com.grahambartley.nightborn.wild.Wanderer;
 import com.grahambartley.nightborn.wild.WandererAttachment;
+import java.util.Optional;
 import java.util.UUID;
 import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.passive.VillagerEntity;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.test.GameTest;
 import net.minecraft.test.TestContext;
 import net.minecraft.util.math.BlockPos;
@@ -39,7 +43,7 @@ public final class WildGameTest implements FabricGameTest {
   }
 
   @GameTest(templateName = ARENA, tickLimit = 20)
-  public void anEmptiedHouseholdIsGivenADayToRefill(final TestContext context) {
+  public void anEmptiedHouseholdRefillsFifteenToFortyDaysOn(final TestContext context) {
     final HouseholdRoll roll = HouseholdRoll.get(context.getWorld().getServer());
     final GlobalPos home =
         GlobalPos.create(
@@ -55,6 +59,29 @@ public final class WildGameTest implements FabricGameTest {
         "an emptied household refills 15 to 40 days on, not at " + at + " from " + now);
     context.assertFalse(
         roll.record(home).refillDue(now), "a newly emptied household is not refilled at once");
+    context.complete();
+  }
+
+  @GameTest(templateName = ARENA, tickLimit = 20)
+  public void aClaimedStructureNeverRefills(final TestContext context) {
+    final MinecraftServer server = context.getWorld().getServer();
+    final BlockPos home = context.getAbsolutePos(new BlockPos(2, 2, 3));
+    final GlobalPos at = GlobalPos.create(context.getWorld().getRegistryKey(), home);
+    final UUID last = UUID.randomUUID();
+    HouseholdRoll.get(server).enlist(at, last);
+    HouseholdRoll.get(server).forget(at, last);
+    context.assertTrue(
+        HouseholdRefill.mayArrive(context.getWorld(), home),
+        "an emptied, unclaimed structure may take a new household");
+    Houses.get(server)
+        .put(
+            House.founded(UUID.randomUUID(), GlobalPos.create(at.dimension(), home.up()))
+                .seatedAt(Optional.of(at)));
+    context.assertFalse(
+        HouseholdRefill.mayArrive(context.getWorld(), home),
+        "a structure a player has claimed never takes a new household");
+    context.assertFalse(
+        HouseholdRefill.arrive(context.getWorld(), home), "no household moves into it");
     context.complete();
   }
 }
