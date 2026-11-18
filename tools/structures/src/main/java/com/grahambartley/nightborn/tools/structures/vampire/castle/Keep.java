@@ -41,10 +41,11 @@ public final class Keep {
     Roof.gable(t, Axis.Z, NORTH, SOUTH, WEST, EAST, CEILING + 1, Castle.ROOF, Castle.WALL);
     for (final int[] corner :
         new int[][] {
-          {WEST - 1, NORTH - 1}, {EAST + 1, NORTH - 1}, {WEST - 1, SOUTH + 1}, {EAST + 1, SOUTH + 1}
+          {WEST, NORTH}, {EAST, NORTH}, {WEST, SOUTH}, {EAST, SOUTH}
         }) {
-      new Tower(corner[0], corner[1], 2, CEILING + 4, true).build(t, Castle.WALL, CEILING);
+      new Tower(corner[0], corner[1], 2, CEILING + 4, true).buildSolid(t, Castle.WALL);
     }
+    Roof.fillAttic(t, WEST + 1, NORTH + 1, EAST - 1, SOUTH - 1, CEILING + 1, Castle.ROOF.full());
   }
 
   private static void shell(final Template t) {
@@ -259,8 +260,8 @@ public final class Keep {
     final int y = Castle.FLOOR;
     Furnishing.coffin(t, Castle.GOTHIC_COFFIN, Castle.MID - 3, y, NORTH + 3, "north");
     Furnishing.coffin(t, Castle.GOTHIC_COFFIN, Castle.MID + 3, y, NORTH + 3, "north");
-    t.set(Castle.MID, y, NORTH + 2, "nightborn:carved_gothic_stone");
-    Furnishing.chalice(t, Castle.MID, y + 1, NORTH + 2, "player");
+    t.set(Castle.MID, y, NORTH + 1, "nightborn:carved_gothic_stone");
+    Furnishing.chalice(t, Castle.MID, y + 1, NORTH + 1, "player");
     Furnishing.candelabra(t, Castle.MID - 1, y, NORTH + 1);
     Furnishing.candelabra(t, Castle.MID + 1, y, NORTH + 1);
     Furnishing.oldBloodFont(t, Castle.MID, y, NORTH + 5);
