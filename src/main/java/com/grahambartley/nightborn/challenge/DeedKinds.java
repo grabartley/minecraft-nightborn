@@ -54,6 +54,7 @@ public final class DeedKinds {
   public static final Identifier ATE = live("ate");
   public static final Identifier PARASOL_WALKED = live("parasol_walked");
   public static final Identifier WOKE_RESTED = live("woke_rested");
+  public static final Identifier NEMESIS_ENDED = live("nemesis_ended");
 
   public static final String TOP = "top";
   public static final String ANIMAL = "animal";

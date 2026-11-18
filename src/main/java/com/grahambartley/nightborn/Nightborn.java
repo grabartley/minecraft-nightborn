@@ -28,6 +28,7 @@ import com.grahambartley.nightborn.mirror.MirrorItems;
 import com.grahambartley.nightborn.mob.NightbornMobs;
 import com.grahambartley.nightborn.moment.Moments;
 import com.grahambartley.nightborn.name.NameFeatures;
+import com.grahambartley.nightborn.nemesis.NemesisFeatures;
 import com.grahambartley.nightborn.occult.OccultFeatures;
 import com.grahambartley.nightborn.raid.RaidFeatures;
 import com.grahambartley.nightborn.rank.RankFeatures;
@@ -90,6 +91,7 @@ public class Nightborn implements ModInitializer {
     HouseFeatures.register();
     VillageFeatures.register();
     WildFeatures.register();
+    NemesisFeatures.register();
     ChallengeFeatures.register();
     LOGGER.info("Nightborn initialised");
   }

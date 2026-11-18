@@ -247,6 +247,10 @@ public class HunterEntity extends PathAwareEntity
     partyLeader = leader;
   }
 
+  public void leaveParty() {
+    partyLeader = null;
+  }
+
   public Optional<UUID> partyLeader() {
     return Optional.ofNullable(partyLeader);
   }

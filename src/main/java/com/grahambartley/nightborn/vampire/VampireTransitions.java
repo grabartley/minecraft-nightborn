@@ -25,6 +25,7 @@ import com.grahambartley.nightborn.levitation.Levitation;
 import com.grahambartley.nightborn.moment.Moment;
 import com.grahambartley.nightborn.moment.Moments;
 import com.grahambartley.nightborn.name.StageNames;
+import com.grahambartley.nightborn.nemesis.Nemeses;
 import com.grahambartley.nightborn.sickness.BiteSicknessAttachment;
 import com.grahambartley.nightborn.sickness.BiteSicknessEffect;
 import com.grahambartley.nightborn.skill.SkillAttributes;
@@ -52,6 +53,7 @@ public final class VampireTransitions {
       return false;
     }
     FactionAttachment.set(player, Faction.VAMPIRE);
+    Nemeses.forget(player);
     MilestoneCriterion.reach(player, Milestone.TURNED);
     BloodAttachment.set(player, BloodCapacity.of(player));
     player.getHungerManager().setFoodLevel(BloodAttachment.FULL);
@@ -70,6 +72,7 @@ public final class VampireTransitions {
     player.removeStatusEffect(BiteSicknessEffect.ENTRY);
     FeedingSessions.end(player);
     FactionAttachment.set(player, Faction.HUMAN);
+    Nemeses.forget(player);
     Ageing.clear(player);
     Hunts.clear(player);
     BloodAttachment.set(player, BloodAttachment.FULL);

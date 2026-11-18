@@ -15,7 +15,7 @@ class VillageSettingsTest {
   }
 
   private static VillageSettings steps(final int wary, final int warded, final int hunted) {
-    return new VillageSettings(wary, warded, hunted, 2, 5, 2, 3, 10, 25, 48);
+    return new VillageSettings(wary, warded, hunted, 2, 5, 2, 3, 10, 25, 48, 5, 10, 3);
   }
 
   @ParameterizedTest(name = "{0}")
@@ -52,6 +52,18 @@ class VillageSettingsTest {
   @CsvSource({"0, 16", "48, 48", "500, 128"})
   @DisplayName("a village reaches between 16 and 128 blocks from its bell")
   void clampsReach(final int reach, final int kept) {
-    assertEquals(kept, new VillageSettings(25, 50, 75, 2, 5, 2, 3, 10, 25, reach).villageReach());
+    assertEquals(
+        kept, new VillageSettings(25, 50, 75, 2, 5, 2, 3, 10, 25, reach, 5, 10, 3).villageReach());
+  }
+
+  @ParameterizedTest(name = "visits every {0} to {1} nights kept as {2} to {3}")
+  @CsvSource({"5, 10, 5, 10", "10, 5, 10, 10", "0, 0, 1, 1", "500, 500, 100, 100"})
+  @DisplayName("a nemesis waits at least a night, and its longest wait is never its shortest")
+  void ordersVisitNights(
+      final int fewest, final int most, final int keptFewest, final int keptMost) {
+    final VillageSettings settings =
+        new VillageSettings(25, 50, 75, 2, 5, 2, 3, 10, 25, 48, fewest, most, 3);
+    assertEquals(keptFewest, settings.nemesisVisitFewest());
+    assertEquals(keptMost, settings.nemesisVisitMost());
   }
 }
