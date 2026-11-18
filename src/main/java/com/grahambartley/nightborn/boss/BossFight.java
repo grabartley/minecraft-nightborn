@@ -3,7 +3,6 @@ package com.grahambartley.nightborn.boss;
 import com.grahambartley.nightborn.downed.Downed;
 import com.grahambartley.nightborn.downed.DownedState;
 import com.grahambartley.nightborn.landing.Landing;
-import com.grahambartley.nightborn.mob.BossVampireEntity;
 import com.grahambartley.nightborn.network.BossArenaPayload;
 import com.grahambartley.nightborn.smoke.SmokeParticles;
 import java.util.List;
@@ -14,6 +13,7 @@ import java.util.stream.Collectors;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
@@ -74,6 +74,10 @@ public final class BossFight {
     return attacks.draining(now);
   }
 
+  public Optional<ChannelBar> channelBar(final long now) {
+    return attacks.channelBar(now);
+  }
+
   public boolean blazing(final Optional<BossFightPlan> plan) {
     return plan.map(p -> p.phase(phases.index()).body().blazingEyes()).orElse(false);
   }
@@ -106,10 +110,8 @@ public final class BossFight {
                     phases.last(p.phases().size()) || finishing)));
   }
 
-  public boolean guards(
-      final BossVampireEntity boss,
-      final Optional<BossFightPlan> plan,
-      @Nullable final Entity attacker) {
+  public <T extends MobEntity & ArenaBoss> boolean guards(
+      final T boss, final Optional<BossFightPlan> plan, @Nullable final Entity attacker) {
     final long now = boss.getWorld().getTime();
     final PhaseDefence defence =
         plan.map(p -> p.phase(phases.index()).defence()).orElse(PhaseDefence.NONE);
@@ -125,8 +127,8 @@ public final class BossFight {
     return true;
   }
 
-  public void hurt(
-      final BossVampireEntity boss,
+  public <T extends MobEntity & ArenaBoss> void hurt(
+      final T boss,
       final Optional<BossFightPlan> plan,
       @Nullable final Entity attacker,
       final float amount) {
@@ -164,8 +166,8 @@ public final class BossFight {
     return (float) (PhaseTrack.ceiling(plan.shares(), phases.index()) * boss.getMaxHealth());
   }
 
-  public void tick(
-      final BossVampireEntity boss,
+  public <T extends MobEntity & ArenaBoss> void tick(
+      final T boss,
       final Optional<BossFightPlan> plan,
       final FightRules rules,
       final Runnable onReset) {
@@ -237,7 +239,7 @@ public final class BossFight {
         now);
   }
 
-  public void end(final BossVampireEntity boss) {
+  public <T extends MobEntity & ArenaBoss> void end(final T boss) {
     attacks.cancel();
     seal.release();
     if (boss.getWorld() instanceof ServerWorld world) {
@@ -246,8 +248,8 @@ public final class BossFight {
     boss.presence().hideAll();
   }
 
-  private void announce(
-      final BossVampireEntity boss,
+  private <T extends MobEntity & ArenaBoss> void announce(
+      final T boss,
       final ServerWorld world,
       final Optional<BossFightPlan> plan,
       final List<ServerPlayerEntity> inside,
@@ -259,7 +261,8 @@ public final class BossFight {
             boss.getId(),
             Optional.of(arena),
             engaged,
-            plan.flatMap(p -> p.phase(phases.index()).music()));
+            plan.flatMap(p -> p.phase(phases.index()).music()),
+            plan.flatMap(BossFightPlan::wall));
     for (final ServerPlayerEntity player : inside) {
       if (change.entered().contains(player.getUuid())) {
         boss.presence().show(player);
@@ -288,8 +291,8 @@ public final class BossFight {
     }
   }
 
-  private boolean finishing(
-      final BossVampireEntity boss,
+  private <T extends MobEntity & ArenaBoss> boolean finishing(
+      final T boss,
       final Optional<BossFightPlan> plan,
       final FightRules rules,
       @Nullable final DownedState downed) {
@@ -326,7 +329,7 @@ public final class BossFight {
         .blazing(blazing(plan));
   }
 
-  private static void show(final BossVampireEntity boss, final String clip) {
+  private static void show(final ArenaBoss boss, final String clip) {
     if (!clip.isEmpty()) {
       boss.showPower(clip);
     }
@@ -336,7 +339,7 @@ public final class BossFight {
     return flight.flying();
   }
 
-  private List<ServerPlayerEntity> foes(final BossVampireEntity boss) {
+  private List<ServerPlayerEntity> foes(final MobEntity boss) {
     return boss.getWorld() instanceof ServerWorld world && arena != null
         ? world.getPlayers(
             player ->
@@ -346,18 +349,18 @@ public final class BossFight {
         : List.of();
   }
 
-  private void embody(final BossVampireEntity boss, final BossFightPlan plan, final long now) {
+  private void embody(final MobEntity boss, final BossFightPlan plan, final long now) {
     final int index = phases.index();
     final double progress = PhaseBodies.progress(changeUntil, now, plan.changeTicks());
     PhaseBodies.apply(boss, plan, index, progress);
-    PhaseArms.hold(boss, plan.phase(index).look().held());
+    PhaseArms.hold(boss, attacks.held(now).or(() -> plan.phase(index).look().held()));
     plan.phase(index)
         .voice()
         .filter(voice -> boss.getTarget() != null && voice.speaksAt(now - phaseBegan))
         .ifPresent(voice -> boss.playSound(SoundEvent.of(voice.sound()), ROAR, voice.pitch()));
   }
 
-  private void keepIn(final BossVampireEntity boss) {
+  private void keepIn(final MobEntity boss) {
     final Vec3d pos = boss.getPos();
     if (arena.holds(pos.x, pos.y, pos.z)) {
       return;
@@ -369,7 +372,7 @@ public final class BossFight {
     boss.getNavigation().stop();
   }
 
-  private void change(final BossVampireEntity boss, final BossFightPlan plan) {
+  private <T extends MobEntity & ArenaBoss> void change(final T boss, final BossFightPlan plan) {
     phases.advance(plan.phases().size());
     changeUntil = boss.getWorld().getTime() + plan.changeTicks();
     phaseBegan = boss.getWorld().getTime();
@@ -403,7 +406,7 @@ public final class BossFight {
     }
   }
 
-  private void reset(final BossVampireEntity boss) {
+  private <T extends MobEntity & ArenaBoss> void reset(final T boss) {
     phases.reset();
     attacks.cancel();
     hits.clear();

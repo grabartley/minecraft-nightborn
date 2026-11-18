@@ -27,6 +27,8 @@ class BossAttackTest {
           + "\"player_duration_ticks\":80,\"player_slowness\":6}";
   private static final String WARD =
       "\"ward\":{\"entity\":\"minecraft:bat\",\"count\":3,\"ticks\":500}";
+  private static final String CHANNEL =
+      "\"channel\":{\"ticks\":160,\"heal\":3,\"break_damage\":24}";
 
   private static String kind(final String name) {
     return switch (name) {
@@ -36,6 +38,7 @@ class BossAttackTest {
       case "drain" -> DRAIN;
       case "gaze" -> GAZE;
       case "ward" -> WARD;
+      case "channel" -> CHANNEL;
       default -> throw new IllegalArgumentException(name);
     };
   }
@@ -58,6 +61,8 @@ class BossAttackTest {
         "drain | '' | true",
         "gaze | '' | true",
         "ward | '' | true",
+        "channel | '' | true",
+        "channel zone | '' | false",
         "gaze ward | '' | false",
         "'' | '' | false",
         "power zone | '' | false",
@@ -77,8 +82,17 @@ class BossAttackTest {
   }
 
   @ParameterizedTest(name = "a {0} strikes for {1} ticks")
-  @CsvSource({"power, 0", "zone, 0", "flurry, 24", "drain, 120", "gaze, 0", "ward, 0"})
-  @DisplayName("a flurry and a drain hold the boss for their length, a power and a zone do not")
+  @CsvSource({
+    "power, 0",
+    "zone, 0",
+    "flurry, 24",
+    "drain, 120",
+    "gaze, 0",
+    "ward, 0",
+    "channel, 160"
+  })
+  @DisplayName(
+      "a flurry, a drain and a channel hold the boss for their length, a power and a zone do not")
   void strikeTicks(final String kind, final int ticks) {
     final BossAttack attack =
         BossAttack.CODEC

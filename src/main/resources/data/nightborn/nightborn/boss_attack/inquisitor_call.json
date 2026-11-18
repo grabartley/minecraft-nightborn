@@ -1,0 +1,18 @@
+{
+  "max_range": 32.0,
+  "weight": 1,
+  "cooldown_ticks": 400,
+  "tell_ticks": 24,
+  "tell_clip": "raise_crucifix",
+  "tell_sound": "minecraft:entity.evoker.prepare_summon",
+  "clip": "raise_crucifix",
+  "sound": "minecraft:event.raid.horn",
+  "ward": {
+    "entity": "nightborn:hunter",
+    "count": 2,
+    "spread": 3.0,
+    "ticks": 6000,
+    "shields": false,
+    "limit": 4
+  }
+}

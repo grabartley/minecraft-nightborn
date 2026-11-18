@@ -28,6 +28,7 @@ public record NightbornConfig(
     RitualSettings ritual,
     AgeSettings age,
     HuntSettings hunt,
+    InquisitorSettings inquisitor,
     HouseSettings houses,
     VillageSettings villages) {
 
@@ -57,6 +58,7 @@ public record NightbornConfig(
               RitualSettings.SETTINGS,
               AgeSettings.SETTINGS,
               HuntSettings.SETTINGS,
+              InquisitorSettings.SETTINGS,
               HouseSettings.SETTINGS,
               VillageSettings.SETTINGS)
           .flatMap(List::stream)
@@ -90,6 +92,7 @@ public record NightbornConfig(
         RitualSettings.from(values),
         AgeSettings.from(values),
         HuntSettings.from(values),
+        InquisitorSettings.from(values),
         HouseSettings.from(values),
         VillageSettings.from(values));
   }

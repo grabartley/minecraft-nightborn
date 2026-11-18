@@ -1,0 +1,22 @@
+{
+  "min_range": 4.0,
+  "max_range": 20.0,
+  "weight": 3,
+  "cooldown_ticks": 80,
+  "tell_ticks": 24,
+  "tell_clip": "crossbow_shot",
+  "tell_sound": "minecraft:item.crossbow.loading_middle",
+  "clip": "crossbow_shot",
+  "sound": "minecraft:item.crossbow.shoot",
+  "zone": {
+    "shape": "line",
+    "radius": 0.75,
+    "length": 18.0,
+    "damage": 6.0,
+    "fan": {
+      "count": 3,
+      "degrees": 12.0
+    },
+    "mark": "nightborn:bolt_line"
+  }
+}

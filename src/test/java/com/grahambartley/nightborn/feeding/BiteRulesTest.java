@@ -10,14 +10,13 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.CsvSource;
-import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.MethodSource;
 
 class BiteRulesTest {
 
   private static final Biter READY = new Biter(true, true, true, false);
-  private static final Target COW = new Target(true, false, false, true, false, false);
-  private static final Target HUMAN = new Target(true, false, true, true, false, false);
+  private static final Target COW = new Target(true, false, false, true, false, false, false);
+  private static final Target HUMAN = new Target(true, false, true, true, false, false, false);
 
   static Stream<Arguments> cases() {
     return Stream.of(
@@ -41,6 +40,18 @@ class BiteRulesTest {
             true,
             Decision.NOT_A_BITE),
         Arguments.of(
+            "a boss still standing cannot be bitten",
+            READY,
+            new Target(true, false, false, true, false, false, true),
+            true,
+            Decision.GUARDED),
+        Arguments.of(
+            "a downed vampire cannot feed even on a guarded boss",
+            new Biter(true, true, true, true),
+            new Target(true, false, false, true, false, false, true),
+            true,
+            Decision.HELPLESS),
+        Arguments.of(
             "a downed vampire cannot feed",
             new Biter(true, true, true, true),
             COW,
@@ -49,19 +60,19 @@ class BiteRulesTest {
         Arguments.of(
             "no blood in a zombie",
             READY,
-            new Target(false, false, false, true, false, false),
+            new Target(false, false, false, true, false, false, false),
             true,
             Decision.NO_WARM_BLOOD),
         Arguments.of(
             "a vampire's blood is already dead",
             READY,
-            new Target(true, true, true, true, false, false),
+            new Target(true, true, true, true, false, false, false),
             true,
             Decision.NO_WARM_BLOOD),
         Arguments.of(
             "a dead victim gives nothing",
             READY,
-            new Target(true, false, false, false, false, false),
+            new Target(true, false, false, false, false, false, false),
             true,
             Decision.NO_WARM_BLOOD),
         Arguments.of("a human player with PvP on", READY, HUMAN, true, Decision.BITE),
@@ -69,61 +80,61 @@ class BiteRulesTest {
         Arguments.of(
             "a human holding a crucifix",
             READY,
-            new Target(true, false, true, true, true, false),
+            new Target(true, false, true, true, true, false, false),
             true,
             Decision.WARDED),
         Arguments.of(
             "a crucifix wards even with PvP off",
             READY,
-            new Target(true, false, true, true, true, false),
+            new Target(true, false, true, true, true, false, false),
             false,
             Decision.WARDED),
         Arguments.of(
             "a downed vampire is helpless before the crucifix matters",
             new Biter(true, true, true, true),
-            new Target(true, false, true, true, true, false),
+            new Target(true, false, true, true, true, false, false),
             true,
             Decision.HELPLESS),
         Arguments.of(
             "standing over a badly hurt cow is a finisher bite",
             new Biter(true, false, true, false),
-            new Target(true, false, false, true, false, true),
+            new Target(true, false, false, true, false, true, false),
             false,
             Decision.FINISH),
         Arguments.of(
             "sneaking over a badly hurt cow is still a plain bite",
             READY,
-            new Target(true, false, false, true, false, true),
+            new Target(true, false, false, true, false, true, false),
             false,
             Decision.BITE),
         Arguments.of(
             "a held item is never a finisher",
             new Biter(true, false, false, false),
-            new Target(true, false, false, true, false, true),
+            new Target(true, false, false, true, false, true, false),
             true,
             Decision.NOT_A_BITE),
         Arguments.of(
             "a finisher on a player needs PvP",
             new Biter(true, false, true, false),
-            new Target(true, false, true, true, false, true),
+            new Target(true, false, true, true, false, true, false),
             false,
             Decision.PVP_OFF),
         Arguments.of(
             "a finisher on a player with PvP on",
             new Biter(true, false, true, false),
-            new Target(true, false, true, true, false, true),
+            new Target(true, false, true, true, false, true, false),
             true,
             Decision.FINISH),
         Arguments.of(
             "no finisher on a creature with no blood",
             new Biter(true, false, true, false),
-            new Target(false, false, false, true, false, true),
+            new Target(false, false, false, true, false, true, false),
             true,
             Decision.NO_WARM_BLOOD),
         Arguments.of(
             "a downed vampire cannot finish",
             new Biter(true, false, true, true),
-            new Target(true, false, false, true, false, true),
+            new Target(true, false, false, true, false, true, false),
             true,
             Decision.HELPLESS));
   }
@@ -140,20 +151,25 @@ class BiteRulesTest {
     assertEquals(expected, BiteRules.decide(biter, target, pvp));
   }
 
-  @ParameterizedTest(name = "{0}")
-  @EnumSource(Decision.class)
+  @ParameterizedTest(name = "{0}: bites {1}, finishes {2}, claims {3}")
+  @CsvSource({
+    "BITE, true, false, true",
+    "FINISH, false, true, true",
+    "NOT_A_VAMPIRE, false, false, false",
+    "NOT_A_BITE, false, false, false",
+    "HELPLESS, false, false, true",
+    "GUARDED, false, false, true",
+    "NO_WARM_BLOOD, false, false, false",
+    "WARDED, false, false, true",
+    "PVP_OFF, false, false, true"
+  })
   @DisplayName(
       "only a bite or a finisher drinks, and a refused bite still stops other interactions")
-  void claims(final Decision decision) {
-    assertEquals(decision == Decision.BITE, decision.bites());
-    assertEquals(decision == Decision.FINISH, decision.finishes());
-    assertEquals(
-        decision == Decision.BITE
-            || decision == Decision.FINISH
-            || decision == Decision.PVP_OFF
-            || decision == Decision.HELPLESS
-            || decision == Decision.WARDED,
-        decision.claimsTheInteraction());
+  void claims(
+      final Decision decision, final boolean bites, final boolean finishes, final boolean claims) {
+    assertEquals(bites, decision.bites());
+    assertEquals(finishes, decision.finishes());
+    assertEquals(claims, decision.claimsTheInteraction());
   }
 
   @ParameterizedTest(name = "warm blood {0}, vampire {1}: drinkable {2}")

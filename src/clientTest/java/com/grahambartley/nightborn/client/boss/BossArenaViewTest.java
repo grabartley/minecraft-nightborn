@@ -33,7 +33,8 @@ class BossArenaViewTest {
                 3,
                 inside ? Optional.of(new Arena(BlockPos.ORIGIN, 16)) : Optional.empty(),
                 fighting,
-                track ? Optional.of(TRACK) : Optional.empty()));
+                track ? Optional.of(TRACK) : Optional.empty(),
+                Optional.empty()));
     assertEquals(plays, music.isPresent());
     music.ifPresent(
         sound -> {

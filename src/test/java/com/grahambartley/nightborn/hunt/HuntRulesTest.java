@@ -178,4 +178,17 @@ class HuntRulesTest {
   void fitsWindow(final long time, final int span, final boolean fits) {
     assertEquals(fits, HuntRules.fitsArrivalWindow(time, span, SETTINGS));
   }
+
+  @ParameterizedTest(name = "dead {0}, missing for {1} checks: lost {2}")
+  @CsvSource({
+    "true, 0, true",
+    "false, 0, false",
+    "false, 29, false",
+    "false, 30, true",
+    "false, 90, true"
+  })
+  @DisplayName("a visit ends when the man dies, or when he cannot be found for half a minute")
+  void lost(final boolean dead, final int missing, final boolean lost) {
+    assertEquals(lost, HuntRules.lost(dead, missing));
+  }
 }

@@ -1,9 +1,10 @@
 package com.grahambartley.nightborn.hunt;
 
 import com.grahambartley.nightborn.config.HuntSettings;
+import com.grahambartley.nightborn.inquisitor.GrandInquisitorEntity;
+import com.grahambartley.nightborn.inquisitor.InquisitorArrival;
 import com.grahambartley.nightborn.server.ServerConfigService;
 import java.util.Optional;
-import java.util.UUID;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -66,7 +67,8 @@ final class BellRing {
       answer(player, next);
     }
     if (next.triesArrival()) {
-      final Optional<UUID> man = StandIn.arrive(player);
+      final Optional<GrandInquisitorEntity> man =
+          InquisitorArrival.arrive(player, true, HuntAttachment.get(player).man());
       if (man.isPresent()) {
         player.removeAttached(HuntAttachment.CALL);
         Hunts.visited(player, man.get());

@@ -3,8 +3,9 @@ package com.grahambartley.nightborn.hunt;
 import com.grahambartley.nightborn.age.AgeNight;
 import com.grahambartley.nightborn.config.HuntSettings;
 import com.grahambartley.nightborn.core.NightTime;
+import com.grahambartley.nightborn.inquisitor.GrandInquisitorEntity;
+import com.grahambartley.nightborn.inquisitor.InquisitorArrival;
 import com.grahambartley.nightborn.server.ServerConfigService;
-import java.util.UUID;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.text.Text;
@@ -70,14 +71,30 @@ public final class Hunts {
     return true;
   }
 
-  public static void visited(final ServerPlayerEntity quarry, final UUID man) {
-    store(quarry, HuntAttachment.get(quarry).visitedBy(man), AgeNight.index(time(quarry)));
+  public static void visited(final ServerPlayerEntity quarry, final GrandInquisitorEntity man) {
+    HuntRecord record = HuntAttachment.get(quarry).visitedBy(man.getUuid());
+    if (man.getCustomName() != null) {
+      record = record.named(man.getCustomName().getString());
+    }
+    store(quarry, record, AgeNight.index(time(quarry)));
+  }
+
+  public static void endVisit(final ServerPlayerEntity player) {
+    final long night = AgeNight.index(time(player));
+    store(
+        player,
+        HuntAttachment.get(player).ended(night, ServerConfigService.current().hunt().quietNights()),
+        night);
+  }
+
+  public static void returnLater(final ServerPlayerEntity player) {
+    store(player, HuntAttachment.get(player).returning(), AgeNight.index(time(player)));
   }
 
   public static void clear(final ServerPlayerEntity player) {
     HuntAttachment.get(player)
         .visitor()
-        .ifPresent(man -> StandIn.dismiss(player.server.getOverworld(), man));
+        .ifPresent(man -> InquisitorArrival.dismiss(player.server.getOverworld(), man));
     HuntAttachment.clear(player);
   }
 

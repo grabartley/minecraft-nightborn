@@ -32,6 +32,7 @@ class AttackChoiceTest {
             Optional.empty(),
             Optional.empty(),
             Optional.empty(),
+            Optional.empty(),
             Optional.empty()),
         readyAt);
   }

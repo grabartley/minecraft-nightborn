@@ -8,7 +8,12 @@ import net.minecraft.util.StringIdentifiable;
 import net.minecraft.util.Uuids;
 
 public record HuntRecord(
-    double notoriety, Phase phase, int warningsLeft, Optional<UUID> visitor, long quietUntil) {
+    double notoriety,
+    Phase phase,
+    int warningsLeft,
+    Optional<UUID> visitor,
+    long quietUntil,
+    Optional<String> man) {
 
   public enum Phase implements StringIdentifiable {
     NONE("none"),
@@ -33,7 +38,7 @@ public record HuntRecord(
   public static final long NEVER = Long.MIN_VALUE;
 
   public static final HuntRecord EMPTY =
-      new HuntRecord(0.0, Phase.NONE, 0, Optional.empty(), NEVER);
+      new HuntRecord(0.0, Phase.NONE, 0, Optional.empty(), NEVER, Optional.empty());
 
   public static final Codec<HuntRecord> CODEC =
       RecordCodecBuilder.create(
@@ -52,7 +57,8 @@ public record HuntRecord(
                           .forGetter(HuntRecord::visitor),
                       Codec.LONG
                           .optionalFieldOf("quiet_until", NEVER)
-                          .forGetter(HuntRecord::quietUntil))
+                          .forGetter(HuntRecord::quietUntil),
+                      Codec.STRING.optionalFieldOf("man").forGetter(HuntRecord::man))
                   .apply(instance, HuntRecord::new));
 
   public HuntRecord {
@@ -74,24 +80,32 @@ public record HuntRecord(
   }
 
   public HuntRecord withNotoriety(final double value) {
-    return new HuntRecord(value, phase, warningsLeft, visitor, quietUntil);
+    return new HuntRecord(value, phase, warningsLeft, visitor, quietUntil, man);
   }
 
   public HuntRecord warning(final int left) {
-    return new HuntRecord(notoriety, Phase.WARNING, left, Optional.empty(), quietUntil);
+    return new HuntRecord(notoriety, Phase.WARNING, left, Optional.empty(), quietUntil, man);
   }
 
   public HuntRecord due() {
-    return new HuntRecord(notoriety, Phase.DUE, 0, Optional.empty(), quietUntil);
+    return new HuntRecord(notoriety, Phase.DUE, 0, Optional.empty(), quietUntil, man);
   }
 
-  public HuntRecord visitedBy(final UUID man) {
-    return new HuntRecord(notoriety, Phase.VISIT, 0, Optional.of(man), quietUntil);
+  public HuntRecord visitedBy(final UUID visitor) {
+    return new HuntRecord(notoriety, Phase.VISIT, 0, Optional.of(visitor), quietUntil, man);
+  }
+
+  public HuntRecord named(final String name) {
+    return new HuntRecord(notoriety, phase, warningsLeft, visitor, quietUntil, Optional.of(name));
+  }
+
+  public HuntRecord returning() {
+    return warning(0);
   }
 
   public HuntRecord ended(final long night, final int quietNights) {
     final long until =
         quietNights <= 0 ? quietUntil : Math.max(quietUntil, night + quietNights + 1);
-    return new HuntRecord(notoriety, Phase.NONE, 0, Optional.empty(), until);
+    return new HuntRecord(notoriety, Phase.NONE, 0, Optional.empty(), until, Optional.empty());
   }
 }

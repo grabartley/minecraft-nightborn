@@ -1,0 +1,247 @@
+{
+  "phases": [
+    {
+      "name": "hunt",
+      "health": 30,
+      "color": "blue",
+      "gap_ticks": 45,
+      "attacks": [
+        "nightborn:inquisitor_volley",
+        "nightborn:inquisitor_snare",
+        "nightborn:inquisitor_garlic_bomb",
+        "nightborn:inquisitor_call"
+      ],
+      "stance": {
+        "near": 8.0,
+        "far": 12.0,
+        "speed": 1.0,
+        "strafe_ticks": 30
+      },
+      "music": "nightborn:music.boss.inquisitor",
+      "body": {
+        "attributes": {
+          "minecraft:generic.armor": 6,
+          "minecraft:generic.knockback_resistance": 0.5
+        },
+        "max_hit": 14
+      },
+      "defence": {
+        "guard_hits": 4,
+        "window_ticks": 60,
+        "break_damage": 40,
+        "break_away": 8,
+        "guard_knock": 1.2,
+        "retarget_chance": 30,
+        "counters": [
+          "nightborn:inquisitor_snare",
+          "nightborn:inquisitor_volley"
+        ]
+      },
+      "ambience": {
+        "min_ticks": 500,
+        "max_ticks": 1100,
+        "cues": [
+          {
+            "sound": "nightborn:boss.inquisitor.toll",
+            "weight": 3,
+            "volume": 1.0,
+            "pitch": 1.0
+          },
+          {
+            "sound": "nightborn:boss.inquisitor.horn",
+            "weight": 2,
+            "volume": 0.9,
+            "pitch": 1.0
+          },
+          {
+            "sound": "nightborn:boss.inquisitor.hammer",
+            "weight": 2,
+            "volume": 0.9,
+            "pitch": 1.0
+          }
+        ]
+      },
+      "look": {
+        "held": "minecraft:crossbow",
+        "skin": "nightborn:textures/entity/grand_inquisitor/hunt.png"
+      }
+    },
+    {
+      "name": "faith",
+      "health": 35,
+      "color": "white",
+      "gap_ticks": 40,
+      "attacks": [
+        "nightborn:inquisitor_crucifix",
+        "nightborn:inquisitor_holy_water",
+        "nightborn:inquisitor_consecrate",
+        "nightborn:inquisitor_prayer",
+        "nightborn:inquisitor_call"
+      ],
+      "stance": {
+        "near": 4.0,
+        "far": 7.0,
+        "speed": 1.1,
+        "strafe_ticks": 25
+      },
+      "music": "nightborn:music.boss.inquisitor",
+      "body": {
+        "attributes": {
+          "minecraft:generic.armor": 10,
+          "minecraft:generic.armor_toughness": 3,
+          "minecraft:generic.attack_damage": 2,
+          "minecraft:generic.knockback_resistance": 0.7,
+          "minecraft:generic.movement_speed": 0.02
+        },
+        "max_hit": 12
+      },
+      "defence": {
+        "guard_hits": 3,
+        "window_ticks": 60,
+        "break_damage": 34,
+        "break_away": 9,
+        "guard_knock": 1.5,
+        "retarget_chance": 40,
+        "counters": [
+          "nightborn:inquisitor_holy_water",
+          "nightborn:inquisitor_consecrate"
+        ]
+      },
+      "ambience": {
+        "min_ticks": 400,
+        "max_ticks": 900,
+        "cues": [
+          {
+            "sound": "nightborn:boss.inquisitor.toll",
+            "weight": 3,
+            "volume": 1.0,
+            "pitch": 1.0
+          },
+          {
+            "sound": "nightborn:boss.inquisitor.choir",
+            "weight": 2,
+            "volume": 0.9,
+            "pitch": 1.0
+          },
+          {
+            "sound": "nightborn:boss.inquisitor.mutter",
+            "weight": 2,
+            "volume": 0.8,
+            "pitch": 1.0
+          }
+        ]
+      },
+      "look": {
+        "held": "minecraft:splash_potion",
+        "skin": "nightborn:textures/entity/grand_inquisitor/faith.png"
+      }
+    },
+    {
+      "name": "pyre",
+      "health": 35,
+      "color": "yellow",
+      "gap_ticks": 30,
+      "attacks": [
+        "nightborn:inquisitor_blows",
+        "nightborn:inquisitor_fire_sweep",
+        "nightborn:inquisitor_false_dawn",
+        "nightborn:inquisitor_dawn_line"
+      ],
+      "stance": {
+        "near": 0.0,
+        "far": 2.5,
+        "speed": 1.3,
+        "strafe_ticks": 20
+      },
+      "music": "nightborn:music.boss.inquisitor_final",
+      "body": {
+        "attributes": {
+          "minecraft:generic.armor": 14,
+          "minecraft:generic.armor_toughness": 6,
+          "minecraft:generic.attack_damage": 5,
+          "minecraft:generic.knockback_resistance": 0.9,
+          "minecraft:generic.movement_speed": 0.05
+        },
+        "max_hit": 10
+      },
+      "voice": {
+        "sound": "minecraft:entity.villager.no",
+        "every_ticks": 140,
+        "pitch": 0.6
+      },
+      "defence": {
+        "guard_hits": 3,
+        "window_ticks": 80,
+        "break_damage": 28,
+        "break_away": 10,
+        "guard_knock": 1.8,
+        "retarget_chance": 50,
+        "counters": [
+          "nightborn:inquisitor_blows",
+          "nightborn:inquisitor_fire_sweep"
+        ]
+      },
+      "ambience": {
+        "min_ticks": 300,
+        "max_ticks": 700,
+        "cues": [
+          {
+            "sound": "nightborn:boss.inquisitor.toll",
+            "weight": 3,
+            "volume": 1.0,
+            "pitch": 1.0
+          },
+          {
+            "sound": "nightborn:boss.inquisitor.choir",
+            "weight": 2,
+            "volume": 0.9,
+            "pitch": 1.0
+          },
+          {
+            "sound": "nightborn:boss.inquisitor.hammer",
+            "weight": 2,
+            "volume": 0.9,
+            "pitch": 1.0
+          },
+          {
+            "sound": "nightborn:boss.inquisitor.mutter",
+            "weight": 2,
+            "volume": 0.8,
+            "pitch": 1.0
+          }
+        ]
+      },
+      "look": {
+        "held": "nightborn:silver_sword",
+        "skin": "nightborn:textures/entity/grand_inquisitor/pyre.png"
+      }
+    }
+  ],
+  "change_ticks": 80,
+  "change_clip": "raise_crucifix",
+  "change_sound": "nightborn:boss.inquisitor.change",
+  "change_knock": 2.0,
+  "change_range": 8.0,
+  "clips": {
+    "guard": "raise_crucifix",
+    "break_away": "stake_strike"
+  },
+  "summoner_lines": [
+    "nightborn.inquisitor.outrage.1",
+    "nightborn.inquisitor.outrage.2",
+    "nightborn.inquisitor.outrage.3",
+    "nightborn.inquisitor.outrage.4"
+  ],
+  "wall": {
+    "fog": "nightborn:textures/entity/boss/arena_light.png",
+    "shapes": "nightborn:textures/entity/boss/arena_light_shapes.png",
+    "palette": [
+      "#FFF6DC",
+      "#E8D9A8",
+      "#FFFFFF",
+      "#D9C68A"
+    ],
+    "beat_ticks": 120,
+    "breathes": true
+  }
+}

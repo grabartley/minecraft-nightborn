@@ -53,11 +53,22 @@ class WardAttackTest {
   @DisplayName("the keepers appear in a ring round the boss")
   void ring(final int index, final int count) {
     final WardAttack ward =
-        new WardAttack(Registries.ENTITY_TYPE.getEntry(EntityType.BAT), count, 3.0F, 500, true);
+        new WardAttack(Registries.ENTITY_TYPE.getEntry(EntityType.BAT), count, 3.0F, 500, true, 0);
     assertEquals(3.0, Math.hypot(ward.offsetX(index), ward.offsetZ(index)), 1.0E-9);
     assertEquals(
         2.0 * Math.PI * index / count,
         (Math.atan2(ward.offsetZ(index), ward.offsetX(index)) + 2.0 * Math.PI) % (2.0 * Math.PI),
         1.0E-9);
+  }
+
+  @ParameterizedTest(name = "{0} called at most, limit {1}, {2} alive: calls {3}")
+  @CsvSource({"2, 0, 5, 2", "2, 4, 0, 2", "2, 4, 3, 1", "2, 4, 4, 0", "2, 4, 9, 0", "3, 2, 0, 2"})
+  @DisplayName("a call with a limit tops allies up to it, and one without calls its full count")
+  void called(final int count, final int limit, final int alive, final int called) {
+    final WardAttack ward =
+        new WardAttack(
+            Registries.ENTITY_TYPE.getEntry(EntityType.BAT), count, 3.0F, 500, false, limit);
+    assertEquals(limit > 0, ward.gathers());
+    assertEquals(called, ward.called(alive));
   }
 }

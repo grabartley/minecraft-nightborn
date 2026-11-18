@@ -2,6 +2,7 @@ package com.grahambartley.nightborn.boss;
 
 import com.grahambartley.nightborn.gore.GoreParticles;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
@@ -20,7 +21,8 @@ public final class ZoneStrikes {
       final ZoneShape shape,
       final double y,
       final float damage,
-      final float knock) {
+      final float knock,
+      final ZoneHit hit) {
     final double reach = Math.max(shape.radius(), shape.length()) + 1.0;
     final Box box =
         new Box(
@@ -39,10 +41,20 @@ public final class ZoneStrikes {
                     && entity.isAlive()
                     && boss.canTarget(entity)
                     && shape.contains(entity.getX(), entity.getZ()))) {
-      if (victim.damage(boss.getDamageSources().mobAttack(boss), damage) && knock > 0.0F) {
+      if (ZoneHit.wounds(damage)
+          && victim.damage(source(world, boss, hit), damage)
+          && knock > 0.0F) {
         victim.takeKnockback(knock, boss.getX() - victim.getX(), boss.getZ() - victim.getZ());
       }
+      ZoneHits.apply(victim, hit);
     }
+  }
+
+  private static DamageSource source(
+      final ServerWorld world, final MobEntity boss, final ZoneHit hit) {
+    return hit.damageType()
+        .map(type -> world.getDamageSources().create(type, boss))
+        .orElseGet(() -> boss.getDamageSources().mobAttack(boss));
   }
 
   public static void spray(final ServerWorld world, final ZoneShape shape, final double y) {

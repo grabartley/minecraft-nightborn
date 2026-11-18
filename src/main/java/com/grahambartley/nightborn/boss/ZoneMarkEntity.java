@@ -1,11 +1,13 @@
 package com.grahambartley.nightborn.boss;
 
+import java.util.Optional;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.util.Identifier;
 import net.minecraft.world.World;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
@@ -26,6 +28,8 @@ public class ZoneMarkEntity extends Entity implements GeoEntity {
       DataTracker.registerData(ZoneMarkEntity.class, TrackedDataHandlerRegistry.FLOAT);
   private static final TrackedData<Float> LENGTH =
       DataTracker.registerData(ZoneMarkEntity.class, TrackedDataHandlerRegistry.FLOAT);
+  private static final TrackedData<String> LOOK =
+      DataTracker.registerData(ZoneMarkEntity.class, TrackedDataHandlerRegistry.STRING);
   private static final TrackedData<Boolean> LINGERING =
       DataTracker.registerData(ZoneMarkEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
 
@@ -37,8 +41,10 @@ public class ZoneMarkEntity extends Entity implements GeoEntity {
     this.noClip = true;
   }
 
-  public static ZoneMarkEntity place(final World world, final ZoneShape shape, final double y) {
+  public static ZoneMarkEntity place(
+      final World world, final ZoneShape shape, final double y, final Optional<Identifier> look) {
     final ZoneMarkEntity mark = new ZoneMarkEntity(BossEntities.ZONE_MARK, world);
+    mark.dataTracker.set(LOOK, look.map(Identifier::toString).orElse(""));
     mark.dataTracker.set(LINE, shape.line());
     mark.dataTracker.set(RADIUS, (float) shape.radius());
     mark.dataTracker.set(LENGTH, (float) shape.length());
@@ -52,6 +58,7 @@ public class ZoneMarkEntity extends Entity implements GeoEntity {
     builder.add(LINE, false);
     builder.add(RADIUS, 1.0F);
     builder.add(LENGTH, 0.0F);
+    builder.add(LOOK, "");
     builder.add(LINGERING, false);
   }
 
@@ -65,6 +72,11 @@ public class ZoneMarkEntity extends Entity implements GeoEntity {
 
   public float length() {
     return dataTracker.get(LENGTH);
+  }
+
+  public Optional<Identifier> look() {
+    return Optional.ofNullable(Identifier.tryParse(dataTracker.get(LOOK)))
+        .filter(id -> !dataTracker.get(LOOK).isEmpty());
   }
 
   public boolean lingering() {

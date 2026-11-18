@@ -57,4 +57,23 @@ class DirectSunTest {
       final boolean burns) {
     assertEquals(burns, DirectSun.burns(day, brightness, openSky, wet, snow, coffin));
   }
+
+  @ParameterizedTest(name = "lit {0}, wet {1}, powder snow {2}, closed coffin {3}: burns {4}")
+  @CsvSource({
+    "true, false, false, false, true",
+    "false, false, false, false, false",
+    "true, true, false, false, false",
+    "true, false, true, false, false",
+    "true, false, false, true, false"
+  })
+  @DisplayName(
+      "a shaft of false dawn is direct sun at night, and water, snow and a coffin still shield")
+  void shaft(
+      final boolean lit,
+      final boolean wet,
+      final boolean snow,
+      final boolean coffin,
+      final boolean burns) {
+    assertEquals(burns, DirectSun.shaft(lit, wet, snow, coffin));
+  }
 }

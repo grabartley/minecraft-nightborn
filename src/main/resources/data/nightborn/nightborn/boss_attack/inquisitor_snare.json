@@ -1,0 +1,26 @@
+{
+  "max_range": 24.0,
+  "weight": 2,
+  "cooldown_ticks": 160,
+  "tell_ticks": 28,
+  "tell_clip": "throw_holy_water",
+  "tell_sound": "minecraft:block.tripwire.attach",
+  "clip": "throw_holy_water",
+  "sound": "nightborn:boss.inquisitor.snare",
+  "zone": {
+    "radius": 1.5,
+    "anchor": "every_foe",
+    "damage": 2.0,
+    "hit": {
+      "effects": [
+        {
+          "id": "minecraft:slowness",
+          "amplifier": 9,
+          "duration": 60,
+          "show_particles": false
+        }
+      ]
+    },
+    "mark": "nightborn:snare"
+  }
+}

@@ -1,13 +1,18 @@
 package com.grahambartley.nightborn.hunt;
 
-import com.grahambartley.nightborn.age.AgeNight;
 import com.grahambartley.nightborn.config.HuntSettings;
+import com.grahambartley.nightborn.inquisitor.InquisitorArrival;
+import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import net.minecraft.entity.Entity;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.world.World;
 
 final class HuntVisits {
+
+  private static final Map<UUID, Integer> MISSING = new ConcurrentHashMap<>();
 
   private HuntVisits() {}
 
@@ -17,11 +22,8 @@ final class HuntVisits {
       final long now,
       final HuntSettings settings) {
     return switch (record.phase()) {
-      case DUE ->
-          arriving(player, now, settings)
-              ? StandIn.arrive(player).map(record::visitedBy).orElse(record)
-              : record;
-      case VISIT -> gone(player, record) ? left(record, now, settings) : record;
+      case DUE -> arriving(player, now, settings) ? arrive(player, record) : record;
+      case VISIT -> gone(player, record) ? record.returning() : record;
       case NONE, WARNING -> record;
     };
   }
@@ -42,15 +44,27 @@ final class HuntVisits {
             HuntRules.inArrivalWindow(now, settings));
   }
 
-  private static HuntRecord left(
-      final HuntRecord record, final long now, final HuntSettings settings) {
-    record.visitor().ifPresent(StandIn::left);
-    return record.ended(AgeNight.index(now), settings.quietNights());
+  private static HuntRecord arrive(final ServerPlayerEntity player, final HuntRecord record) {
+    return InquisitorArrival.arrive(player, false, record.man())
+        .map(
+            man ->
+                man.getCustomName() == null
+                    ? record.visitedBy(man.getUuid())
+                    : record.visitedBy(man.getUuid()).named(man.getCustomName().getString()))
+        .orElse(record);
   }
 
   private static boolean gone(final ServerPlayerEntity player, final HuntRecord record) {
     final Entity man =
         record.visitor().map(id -> player.server.getOverworld().getEntity(id)).orElse(null);
-    return man == null || !man.isAlive();
+    final int missing = man == null ? MISSING.merge(player.getUuid(), 1, Integer::sum) : 0;
+    if (man != null) {
+      MISSING.remove(player.getUuid());
+    }
+    final boolean lost = HuntRules.lost(man != null && !man.isAlive(), missing);
+    if (lost) {
+      MISSING.remove(player.getUuid());
+    }
+    return lost;
   }
 }

@@ -47,14 +47,16 @@ final class FeedingInteraction {
                 victim instanceof PlayerEntity,
                 victim.isAlive(),
                 Wards.wards(victim),
-                BiteRules.finishable(
-                    victim.getHealth(),
-                    victim.getMaxHealth(),
-                    Math.round(
-                        EnchantedValues.apply(
-                            player.getMainHandStack(),
-                            EnchantedValues.FINISHER_HEALTH,
-                            ServerConfigService.current().feeding().finisherHealthPercent())))),
+                BiteQuarry.finishable(victim)
+                    && BiteRules.finishable(
+                        victim.getHealth(),
+                        victim.getMaxHealth(),
+                        Math.round(
+                            EnchantedValues.apply(
+                                player.getMainHandStack(),
+                                EnchantedValues.FINISHER_HEALTH,
+                                ServerConfigService.current().feeding().finisherHealthPercent()))),
+                BiteQuarry.guards(victim)),
             pvp);
     if (!decision.claimsTheInteraction()) {
       return ActionResult.PASS;
@@ -66,6 +68,8 @@ final class FeedingInteraction {
         vampire.sendMessage(Text.translatable("nightborn.feeding.pvp_off"), true);
       } else if (decision == BiteRules.Decision.WARDED) {
         vampire.sendMessage(Text.translatable("nightborn.feeding.warded"), true);
+      } else if (decision == BiteRules.Decision.GUARDED) {
+        vampire.sendMessage(Text.translatable("nightborn.feeding.guarded"), true);
       }
     }
     return ActionResult.SUCCESS;

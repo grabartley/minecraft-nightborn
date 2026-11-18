@@ -2,6 +2,8 @@ package com.grahambartley.nightborn.hunt;
 
 import com.grahambartley.nightborn.age.AgeAttachment;
 import com.grahambartley.nightborn.age.AgeLadder;
+import com.grahambartley.nightborn.boss.BossWard;
+import com.grahambartley.nightborn.inquisitor.GrandInquisitorEntity;
 import com.grahambartley.nightborn.mob.VampireEntity;
 import com.grahambartley.nightborn.servant.Servants;
 import com.grahambartley.nightborn.servant.job.DayWorker;
@@ -33,7 +35,10 @@ public final class NotorietyAward {
 
   private static void afterDeath(final LivingEntity victim, final DamageSource source) {
     final MinecraftServer server = victim.getServer();
-    if (server == null || victim instanceof PlayerEntity || StandIn.is(victim)) {
+    if (server == null
+        || victim instanceof PlayerEntity
+        || victim instanceof GrandInquisitorEntity
+        || BossWard.keeper(victim)) {
       return;
     }
     final List<NotorietyKill> kills = HuntData.kills(server.getRegistryManager());

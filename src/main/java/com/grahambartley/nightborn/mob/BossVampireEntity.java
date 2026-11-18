@@ -1,5 +1,6 @@
 package com.grahambartley.nightborn.mob;
 
+import com.grahambartley.nightborn.boss.ArenaBoss;
 import com.grahambartley.nightborn.lord.BossPresence;
 import net.minecraft.entity.EntityType;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -7,7 +8,7 @@ import net.minecraft.text.Text;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
-public abstract class BossVampireEntity extends VampireEntity {
+public abstract class BossVampireEntity extends VampireEntity implements ArenaBoss {
 
   private final BossPresence presence;
 
@@ -17,6 +18,7 @@ public abstract class BossVampireEntity extends VampireEntity {
     this.presence = new BossPresence(getDisplayName());
   }
 
+  @Override
   public BossPresence presence() {
     return presence;
   }

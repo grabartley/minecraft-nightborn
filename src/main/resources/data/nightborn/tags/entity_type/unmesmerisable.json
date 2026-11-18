@@ -5,6 +5,7 @@
     "minecraft:wither",
     "minecraft:warden",
     "minecraft:elder_guardian",
-    "nightborn:eldest"
+    "nightborn:eldest",
+    "nightborn:grand_inquisitor"
   ]
 }

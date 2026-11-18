@@ -8,8 +8,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.mob.MobEntity;
+import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;
@@ -57,6 +59,14 @@ public final class BossAttacks {
 
   public boolean draining(final long now) {
     return run != null && run.drains(now);
+  }
+
+  public Optional<ChannelBar> channelBar(final long now) {
+    return run == null ? Optional.empty() : run.channelBar(now);
+  }
+
+  public Optional<Identifier> held(final long now) {
+    return run == null ? Optional.empty() : run.held(now);
   }
 
   public <T extends MobEntity & PowerShow> void counter(
@@ -176,9 +186,13 @@ public final class BossAttacks {
         zone.anchor() == ZoneAttack.Anchor.EVERY_FOE && !foes.isEmpty() ? foes : List.of(target);
     markY = ZoneStrikes.floor(world, zone.anchor() == ZoneAttack.Anchor.SELF ? boss : target);
     for (final LivingEntity anchor : anchors) {
-      final ZoneShape shape = zone.at(boss.getX(), boss.getZ(), anchor.getX(), anchor.getZ());
-      shapes.add(shape);
-      marks.add(ZoneMarkEntity.place(world, shape, ZoneStrikes.floor(world, anchor) + 0.02));
+      for (final ZoneShape shape :
+          zone.fanned(boss.getX(), boss.getZ(), anchor.getX(), anchor.getZ())) {
+        shapes.add(shape);
+        marks.add(
+            ZoneMarkEntity.place(
+                world, shape, ZoneStrikes.floor(world, anchor) + 0.02, zone.mark()));
+      }
     }
     if (zone.motion() == ZoneAttack.Motion.LEAP) {
       final ZoneShape first = shapes.get(0);
@@ -223,6 +237,33 @@ public final class BossAttacks {
         .filter(flurry -> flurry.hitsAt(tick))
         .ifPresent(flurry -> FlurryStrikes.hit(boss, world, flurry));
     attack.drain().ifPresent(drain -> drain(boss, world, drain, healCeiling, tick));
+    attack.channel().ifPresent(channel -> channel(boss, world, channel, healCeiling, tick));
+  }
+
+  private void channel(
+      final MobEntity boss,
+      final ServerWorld world,
+      final ChannelAttack channel,
+      final float healCeiling,
+      final int tick) {
+    final ChannelAttack.Step step = channel.step(tick, drainTaken);
+    if (step == ChannelAttack.Step.MEND) {
+      boss.setHealth(DrainAttack.healed(boss.getHealth(), channel.heal(), healCeiling));
+      world.spawnParticles(
+          ParticleTypes.END_ROD,
+          boss.getX(),
+          boss.getBodyY(0.8),
+          boss.getZ(),
+          6,
+          0.4,
+          0.5,
+          0.4,
+          0.02);
+    }
+    if (step == ChannelAttack.Step.BROKEN) {
+      DrainChannel.snap(boss, world);
+    }
+    cut = step == ChannelAttack.Step.BROKEN || step == ChannelAttack.Step.DONE;
   }
 
   private void burst(
@@ -246,7 +287,7 @@ public final class BossAttacks {
     for (int i = 0; i < shapes.size(); i++) {
       final ZoneShape shape = shapes.get(i);
       final ZoneMarkEntity mark = marks.get(i);
-      ZoneStrikes.harm(boss, world, shape, mark.getY(), zone.damage(), zone.knock());
+      ZoneStrikes.harm(boss, world, shape, mark.getY(), zone.damage(), zone.knock(), zone.hit());
       ZoneStrikes.spray(world, shape, mark.getY());
       if (zone.lingers()) {
         mark.linger(zone.lingerTicks());
@@ -265,7 +306,14 @@ public final class BossAttacks {
     hazards.removeIf(hazard -> now - hazard.from() > hazard.zone().lingerTicks());
     for (final Hazard hazard : hazards) {
       if (hazard.zone().hurtsAt((int) (now - hazard.from()))) {
-        ZoneStrikes.harm(boss, world, hazard.shape(), hazard.y(), hazard.zone().damage(), 0.0F);
+        ZoneStrikes.harm(
+            boss,
+            world,
+            hazard.shape(),
+            hazard.y(),
+            hazard.zone().damage(),
+            0.0F,
+            hazard.zone().hit());
       }
     }
   }

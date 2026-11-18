@@ -1,6 +1,7 @@
 package com.grahambartley.nightborn.client.boss;
 
 import com.grahambartley.nightborn.boss.Arena;
+import com.grahambartley.nightborn.boss.ArenaWall;
 import com.grahambartley.nightborn.network.BossArenaPayload;
 import java.util.Optional;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
@@ -17,6 +18,7 @@ public final class BossArenaView {
   private static Optional<Arena> arena = Optional.empty();
   private static Optional<MusicSound> music = Optional.empty();
   private static boolean fighting;
+  private static Optional<ArenaWall> wall = Optional.empty();
 
   private BossArenaView() {}
 
@@ -34,6 +36,7 @@ public final class BossArenaView {
     arena = payload.arena();
     music = music(payload);
     fighting = payload.arena().isPresent() && payload.fighting();
+    wall = payload.arena().isPresent() ? payload.wall() : Optional.empty();
   }
 
   private static void forget() {
@@ -41,6 +44,7 @@ public final class BossArenaView {
     arena = Optional.empty();
     music = Optional.empty();
     fighting = false;
+    wall = Optional.empty();
   }
 
   static boolean applies(final int shown, final int sender, final boolean entering) {
@@ -56,6 +60,10 @@ public final class BossArenaView {
 
   public static Optional<Arena> arena() {
     return arena;
+  }
+
+  public static Optional<ArenaWall> wall() {
+    return wall;
   }
 
   public static boolean fighting() {

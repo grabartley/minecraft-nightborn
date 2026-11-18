@@ -8,6 +8,7 @@ public enum LancetRules {
   NO_BOTTLE("nightborn.lancet.no_bottle"),
   TOO_WEAK("nightborn.lancet.too_weak"),
   A_PLAYER("nightborn.lancet.player"),
+  GUARDED("nightborn.lancet.guarded"),
   NO_WARM_BLOOD("nightborn.lancet.no_blood");
 
   private final String refusal;
@@ -17,7 +18,12 @@ public enum LancetRules {
   }
 
   public record Creature(
-      boolean warmBlood, boolean vampire, boolean player, boolean alive, float health) {}
+      boolean warmBlood,
+      boolean vampire,
+      boolean player,
+      boolean alive,
+      float health,
+      boolean guarded) {}
 
   public static float draw(final int lancetDamage, final int bottleSize) {
     return Math.max(lancetDamage, bottleSize);
@@ -30,6 +36,9 @@ public enum LancetRules {
     }
     if (!creature.alive() || !BiteRules.drinkable(creature.warmBlood(), creature.vampire())) {
       return NO_WARM_BLOOD;
+    }
+    if (creature.guarded()) {
+      return GUARDED;
     }
     return bleeds(creature.health(), emptyBottle, draw);
   }

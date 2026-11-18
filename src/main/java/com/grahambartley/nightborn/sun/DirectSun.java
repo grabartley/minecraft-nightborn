@@ -31,7 +31,22 @@ public final class DirectSun {
         && exposed(day, openSky, wet, inPowderSnow, inClosedCoffin);
   }
 
+  public static boolean shaft(
+      final boolean lit,
+      final boolean wet,
+      final boolean inPowderSnow,
+      final boolean inClosedCoffin) {
+    return lit && exposed(true, true, wet, inPowderSnow, inClosedCoffin);
+  }
+
   public static boolean on(final LivingEntity entity) {
+    if (shaft(
+        SunShafts.lit(entity),
+        entity.isWet(),
+        inPowderSnow(entity),
+        CoffinSleepers.shelteredBy(entity))) {
+      return true;
+    }
     return burns(
         entity.getWorld().isDay(),
         entity.getBrightnessAtEyes(),

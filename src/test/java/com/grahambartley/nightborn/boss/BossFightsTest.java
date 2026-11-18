@@ -13,11 +13,14 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -134,34 +137,76 @@ class BossFightsTest {
     return parse(BossAttack.CODEC, file).result();
   }
 
-  private static Set<String> eldestClips() throws IOException {
+  static final Map<String, String> RIGS =
+      Map.of("eldest", "vampire_eldest", "grand_inquisitor", "grand_inquisitor");
+
+  private static Set<String> clipsOf(final Path fight) throws IOException {
+    final String fightName = fight.getFileName().toString().replace(".json", "");
+    assertTrue(RIGS.containsKey(fightName), fightName + " has no rig in this test");
     return JsonParser.parseString(
             Files.readString(
                 Path.of(
                     "src/client/resources/assets/nightborn/animations/entity/"
-                        + "vampire_eldest.animation.json"),
+                        + RIGS.get(fightName)
+                        + ".animation.json"),
                 StandardCharsets.UTF_8))
         .getAsJsonObject()
         .getAsJsonObject("animations")
         .keySet();
   }
 
+  private static List<Path> fightsUsing(final Identifier attack) throws IOException {
+    final List<Path> using = new ArrayList<>();
+    for (final Path fight : fights().toList()) {
+      final BossFightPlan plan = parse(BossFightPlan.CODEC, fight).getOrThrow();
+      if (plan.phases().stream()
+          .anyMatch(
+              phase ->
+                  phase.attacks().contains(attack)
+                      || phase.defence().counters().contains(attack))) {
+        using.add(fight);
+      }
+    }
+    return using;
+  }
+
+  private static boolean ships(final Identifier item) {
+    return item.getNamespace().equals("minecraft")
+        ? Registries.ITEM.containsId(item)
+        : Files.exists(
+            Path.of(
+                "src/main/resources/assets/"
+                    + item.getNamespace()
+                    + "/models/item/"
+                    + item.getPath()
+                    + ".json"));
+  }
+
   @ParameterizedTest(name = "{0}")
   @MethodSource("attacks")
-  @DisplayName("every attack's wind-up and strike clips ship in the Eldest's animations")
+  @DisplayName(
+      "every attack is used, and its wind-up and strike clips ship in each boss that uses it")
   void attackClipsShip(final Path file) throws IOException {
     final BossAttack attack = parse(BossAttack.CODEC, file).getOrThrow();
-    final Set<String> clips = eldestClips();
-    assertTrue(clips.contains(attack.tellClip()), attack.tellClip());
-    assertTrue(clips.contains(attack.clip()), attack.clip());
+    final List<Path> using = fightsUsing(id(file));
+    assertFalse(using.isEmpty(), file + " is in no fight");
+    for (final Path fight : using) {
+      final Set<String> clips = clipsOf(fight);
+      assertTrue(clips.contains(attack.tellClip()), attack.tellClip());
+      assertTrue(clips.contains(attack.clip()), attack.clip());
+    }
+    attack
+        .channel()
+        .flatMap(ChannelAttack::held)
+        .ifPresent(held -> assertTrue(ships(held), held.toString()));
   }
 
   @ParameterizedTest(name = "{0}")
   @MethodSource("fights")
-  @DisplayName("every clip a fight and its phases name ships in the Eldest's animations")
+  @DisplayName("every clip a fight and its phases name ships in that boss's animations")
   void fightClipsShip(final Path file) throws IOException {
     final BossFightPlan plan = parse(BossFightPlan.CODEC, file).getOrThrow();
-    final Set<String> clips = eldestClips();
+    final Set<String> clips = clipsOf(file);
     final FightClips named = plan.clips();
     final Stream<String> phases =
         plan.phases().stream()
@@ -191,16 +236,18 @@ class BossFightsTest {
         .forEach(clip -> assertTrue(clips.contains(clip), clip));
     plan.phases().stream()
         .flatMap(phase -> phase.look().held().stream())
+        .forEach(held -> assertTrue(ships(held), held.toString()));
+    plan.phases().stream()
+        .flatMap(phase -> phase.look().skin().stream())
         .forEach(
-            held ->
+            skin ->
                 assertTrue(
                     Files.exists(
                         Path.of(
                             "src/main/resources/assets/"
-                                + held.getNamespace()
-                                + "/models/item/"
-                                + held.getPath()
-                                + ".json")),
-                    held.toString()));
+                                + skin.getNamespace()
+                                + "/"
+                                + skin.getPath())),
+                    skin.toString()));
   }
 }

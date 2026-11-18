@@ -18,6 +18,6 @@ public record FightRules(int emptyTicks, int stakeWindowTicks, int risePercent) 
   }
 
   public boolean resets(final boolean engaged, final long emptyFor, final boolean downed) {
-    return engaged && emptyFor >= emptyTicks && !downed;
+    return emptyTicks > 0 && engaged && emptyFor >= emptyTicks && !downed;
   }
 }

@@ -1,0 +1,25 @@
+{
+  "max_range": 16.0,
+  "weight": 2,
+  "cooldown_ticks": 300,
+  "tell_ticks": 30,
+  "tell_clip": "raise_crucifix",
+  "tell_sound": "minecraft:block.bell.resonate",
+  "clip": "raise_crucifix",
+  "sound": "nightborn:boss.inquisitor.consecrate",
+  "zone": {
+    "radius": 3.5,
+    "damage": 2.0,
+    "linger_ticks": 200,
+    "linger_every": 20,
+    "hit": {
+      "damage_type": "nightborn:holy_water",
+      "weaken": {
+        "source": "consecrated",
+        "strength": 2,
+        "ticks": 40
+      }
+    },
+    "mark": "nightborn:consecrated"
+  }
+}

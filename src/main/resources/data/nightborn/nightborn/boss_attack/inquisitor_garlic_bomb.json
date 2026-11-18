@@ -1,0 +1,24 @@
+{
+  "min_range": 3.0,
+  "max_range": 20.0,
+  "weight": 2,
+  "cooldown_ticks": 200,
+  "tell_ticks": 30,
+  "tell_clip": "throw_holy_water",
+  "tell_sound": "minecraft:entity.witch.throw",
+  "clip": "throw_holy_water",
+  "sound": "minecraft:entity.splash_potion.break",
+  "zone": {
+    "radius": 3.0,
+    "damage": 2.0,
+    "hit": {
+      "effects": [
+        {
+          "id": "nightborn:garlic_fumes",
+          "duration": 1
+        }
+      ]
+    },
+    "mark": "nightborn:garlic"
+  }
+}

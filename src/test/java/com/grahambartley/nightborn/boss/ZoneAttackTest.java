@@ -75,4 +75,36 @@ class ZoneAttackTest {
     assertEquals(lingers, zone.lingers());
     assertEquals(hurts, zone.hurtsAt(tick));
   }
+
+  @ParameterizedTest(name = "{0} lines {1} degrees apart")
+  @CsvSource({"1, 0", "3, 12", "5, 10"})
+  @DisplayName("a fanned line attack aims every line from the boss, spread evenly about the foe")
+  void fans(final int count, final float degrees) {
+    final ZoneAttack volley =
+        zone(
+            "{\"shape\":\"line\",\"radius\":0.75,\"length\":18,\"damage\":6,"
+                + "\"fan\":{\"count\":"
+                + count
+                + ",\"degrees\":"
+                + degrees
+                + "}}");
+    final var lines = volley.fanned(0.0, 0.0, 0.0, 10.0);
+    assertEquals(count, lines.size());
+    for (int i = 0; i < count; i++) {
+      final double turned = Math.toRadians(degrees * (i - (count - 1) / 2.0));
+      assertEquals(0.0, lines.get(i).x(), 1.0E-9);
+      assertEquals(-Math.sin(turned), lines.get(i).headingX(), 1.0E-9);
+      assertEquals(Math.cos(turned), lines.get(i).headingZ(), 1.0E-9);
+    }
+  }
+
+  @ParameterizedTest(name = "{0}")
+  @CsvSource({"nightborn:snare", "nightborn:false_dawn"})
+  @DisplayName("a circle is never fanned and keeps the mark it names")
+  void circlesStaySingle(final String mark) {
+    final ZoneAttack snare =
+        zone("{\"radius\":1.5,\"damage\":2,\"fan\":{\"count\":3},\"mark\":\"" + mark + "\"}");
+    assertEquals(1, snare.fanned(0.0, 0.0, 4.0, 4.0).size());
+    assertEquals(mark, snare.mark().orElseThrow().toString());
+  }
 }

@@ -36,6 +36,7 @@ class AttackRunTest {
             flurry,
             Optional.empty(),
             Optional.empty(),
+            Optional.empty(),
             Optional.empty()),
         100L);
   }
@@ -77,5 +78,30 @@ class AttackRunTest {
   @DisplayName("only a strike that lasts keeps its clip going until it is told to stop")
   void holdsStrike(final int strikeTicks, final boolean held) {
     assertEquals(held, AttackRun.holdsStrike(strikeTicks));
+  }
+
+  @ParameterizedTest(name = "at time {0}: bar {1}, held {2}")
+  @CsvSource({
+    "100, false, false",
+    "119, false, false",
+    "120, true, true",
+    "280, true, true",
+    "281, false, false"
+  })
+  @DisplayName("a channel shows its bar and holds its item only while it strikes")
+  void channels(final long now, final boolean bar, final boolean held) {
+    final BossAttack prayer =
+        BossAttack.CODEC
+            .parse(
+                com.mojang.serialization.JsonOps.INSTANCE,
+                com.google.gson.JsonParser.parseString(
+                    "{\"tell_ticks\":20,\"tell_clip\":\"t\",\"tell_sound\":\"a:b\","
+                        + "\"clip\":\"c\",\"sound\":\"a:b\",\"channel\":{\"ticks\":160,"
+                        + "\"held\":\"nightborn:gold_crucifix\",\"bar\":{\"color\":\"green\","
+                        + "\"key\":\"nightborn.boss.praying\"}}}"))
+            .getOrThrow();
+    final AttackRun run = new AttackRun(Identifier.of("nightborn", "prayer"), prayer, 100L);
+    assertEquals(bar, run.channelBar(now).isPresent());
+    assertEquals(held, run.held(now).isPresent());
   }
 }
