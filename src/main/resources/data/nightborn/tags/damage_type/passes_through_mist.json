@@ -6,7 +6,6 @@
     "minecraft:arrow",
     "minecraft:trident",
     "minecraft:thrown",
-    "minecraft:mob_projectile",
-    "nightborn:stake"
+    "minecraft:mob_projectile"
   ]
 }

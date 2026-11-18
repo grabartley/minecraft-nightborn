@@ -47,7 +47,7 @@ public final class WingedForm {
 
   public static float damageTaken(final Entity entity) {
     final WingedState state = entity.getAttached(TYPE);
-    return state == null ? 1.0F : state.damageTaken();
+    return state == null || state.over(entity.getWorld().getTime()) ? 1.0F : state.damageTaken();
   }
 
   public static Optional<List<String>> forcedBy(final Entity entity) {
@@ -85,6 +85,10 @@ public final class WingedForm {
     }
   }
 
+  public static boolean hears(final boolean listed, final boolean player, final boolean vampire) {
+    return listed || player && !vampire;
+  }
+
   private static void roar(final LivingEntity vampire, final WingedFormPower power) {
     final double radius = power.roarRadius();
     if (radius <= 0.0 || power.roarStaggerTicks() <= 0) {
@@ -98,9 +102,10 @@ public final class WingedForm {
                 new Box(vampire.getBlockPos()).expand(radius),
                 candidate ->
                     candidate.squaredDistanceTo(vampire) <= radius * radius
-                        && (candidate.getType().isIn(power.roarStaggers())
-                            || candidate instanceof PlayerEntity
-                                && !Vampires.isVampire(candidate)))) {
+                        && hears(
+                            candidate.getType().isIn(power.roarStaggers()),
+                            candidate instanceof PlayerEntity,
+                            Vampires.isVampire(candidate)))) {
       Holds.hold(vampire, heard, HoldKind.STAGGER, power.roarStaggerTicks());
     }
   }

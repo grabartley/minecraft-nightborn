@@ -3,6 +3,7 @@ package com.grahambartley.nightborn.gametest;
 import com.grahambartley.nightborn.batform.BatForm;
 import com.grahambartley.nightborn.batform.WingedForm;
 import com.grahambartley.nightborn.blood.BloodAttachment;
+import com.grahambartley.nightborn.feeding.FeedingSessions;
 import com.grahambartley.nightborn.hold.HoldKind;
 import com.grahambartley.nightborn.hold.Holds;
 import com.grahambartley.nightborn.mind.Commands;
@@ -23,6 +24,7 @@ import com.grahambartley.nightborn.skill.SkillAttributes;
 import com.grahambartley.nightborn.skill.SkillTree;
 import com.grahambartley.nightborn.skill.TreeProgress;
 import java.util.List;
+import net.fabricmc.fabric.api.event.player.UseEntityCallback;
 import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.DoorBlock;
@@ -41,6 +43,8 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.test.BeforeBatch;
 import net.minecraft.test.GameTest;
 import net.minecraft.test.TestContext;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 
@@ -214,6 +218,7 @@ public class BloodlineGameTest implements FabricGameTest {
           context.assertEquals(
               Powers.cast(vampire, id("noble/glamour")), PowerUse.Verdict.READY, "glamour cast");
           context.assertTrue(Glamour.on(vampire), "the vampire passes as human");
+          vampire.timeUntilRegen = 0;
           vampire.damage(context.getWorld().getDamageSources().generic(), 1.0F);
           context.assertFalse(Glamour.on(vampire), "a blow breaks the glamour");
           TestPlayers.finish(context, vampire);
@@ -315,6 +320,27 @@ public class BloodlineGameTest implements FabricGameTest {
           context.assertEquals(dead.size(), 3, "three rise");
           context.assertEquals(dead.get(0).getMaxHealth(), 20.0F, "each has twenty health");
           dead.forEach(Entity::discard);
+          TestPlayers.finish(context, vampire);
+        });
+  }
+
+  @GameTest(templateName = ARENA, batchId = BATCH, tickLimit = LIMIT)
+  public void mistCannotBite(final TestContext context) {
+    final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(4, 2, 4));
+    final PigEntity pig = still(context, EntityType.PIG, new BlockPos(4, 2, 5));
+    learn(vampire, OCCULT, "occult_blood", "grave_fog", "shadow_step", "shadow_veil", "mist_form");
+    context.runAtTick(
+        TestPlayers.READY,
+        () -> {
+          Powers.cast(vampire, id("occult/mist_form"));
+          vampire.setSneaking(true);
+          context.assertEquals(
+              UseEntityCallback.EVENT
+                  .invoker()
+                  .interact(vampire, context.getWorld(), Hand.MAIN_HAND, pig, null),
+              ActionResult.FAIL,
+              "mist cannot bite");
+          context.assertFalse(FeedingSessions.isFeeding(vampire), "no feeding starts");
           TestPlayers.finish(context, vampire);
         });
   }

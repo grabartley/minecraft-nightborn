@@ -12,6 +12,7 @@ public record SummonPower(
     RegistryEntry<EntityType<?>> entity,
     IntProvider count,
     float spread,
+    float rise,
     Optional<Integer> lifetimeTicks,
     Optional<Float> health,
     Optional<Float> damage) {
@@ -33,6 +34,9 @@ public record SummonPower(
                       Codec.floatRange(0.0F, 8.0F)
                           .optionalFieldOf("spread", 1.5F)
                           .forGetter(SummonPower::spread),
+                      Codec.floatRange(0.0F, 4.0F)
+                          .optionalFieldOf("rise", 1.0F)
+                          .forGetter(SummonPower::rise),
                       Codec.intRange(1, 72000)
                           .optionalFieldOf("lifetime_ticks")
                           .forGetter(SummonPower::lifetimeTicks),

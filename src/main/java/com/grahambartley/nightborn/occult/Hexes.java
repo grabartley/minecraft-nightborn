@@ -3,6 +3,7 @@ package com.grahambartley.nightborn.occult;
 import com.grahambartley.nightborn.Nightborn;
 import com.grahambartley.nightborn.sight.Sight;
 import com.grahambartley.nightborn.sight.Sights;
+import com.grahambartley.nightborn.skill.PowerReach;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentRegistry;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentType;
 import net.minecraft.entity.LivingEntity;
@@ -29,6 +30,9 @@ public final class Hexes {
 
   public static void cast(
       final LivingEntity caster, final LivingEntity target, final HexPower power) {
+    if (!PowerReach.marks(target)) {
+      return;
+    }
     final int ticks = power.durationFor(target instanceof PlayerEntity);
     final long until = target.getWorld().getTime() + ticks;
     target.setAttached(TYPE, new HexMark(caster.getUuid(), power.healing(), until));

@@ -21,7 +21,8 @@
       "spread": 2.0,
       "lifetime_ticks": 600,
       "health": 20.0,
-      "damage": 4.0
+      "damage": 4.0,
+      "rise": 0.0
     },
     "sound": "minecraft:entity.zombie_villager.cure",
     "mob": {

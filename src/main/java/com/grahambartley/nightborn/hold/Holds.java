@@ -1,6 +1,7 @@
 package com.grahambartley.nightborn.hold;
 
 import com.grahambartley.nightborn.Nightborn;
+import com.grahambartley.nightborn.batform.BatFormLimits;
 import com.grahambartley.nightborn.server.ServerConfigService;
 import com.grahambartley.nightborn.skill.PowerReach;
 import com.grahambartley.nightborn.vampire.Modifiers;
@@ -8,6 +9,7 @@ import java.util.Optional;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentRegistry;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentSyncPredicate;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentType;
+import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.fabricmc.fabric.api.event.player.AttackEntityCallback;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
@@ -44,8 +46,14 @@ public final class Holds {
 
   public static void register() {
     AttackEntityCallback.EVENT.register(
+        BatFormLimits.BEFORE_OTHERS,
         (player, world, hand, entity, hit) ->
             stopsAttacks(player) ? ActionResult.FAIL : ActionResult.PASS);
+    ServerLivingEntityEvents.ALLOW_DAMAGE.register(
+        (entity, source, amount) ->
+            !(source.getAttacker() != null
+                && source.getAttacker() == source.getSource()
+                && stopsAttacks(source.getAttacker())));
   }
 
   public static HoldState state(final Entity entity) {

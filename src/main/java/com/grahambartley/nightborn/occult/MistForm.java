@@ -1,6 +1,7 @@
 package com.grahambartley.nightborn.occult;
 
 import com.grahambartley.nightborn.Nightborn;
+import com.grahambartley.nightborn.batform.BatFormLimits;
 import com.grahambartley.nightborn.smoke.SmokePoof;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentRegistry;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentSyncPredicate;
@@ -25,6 +26,7 @@ import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.TypedActionResult;
+import org.jetbrains.annotations.Nullable;
 
 public final class MistForm {
 
@@ -51,15 +53,19 @@ public final class MistForm {
 
   public static void register() {
     ServerLivingEntityEvents.ALLOW_DAMAGE.register(
-        (entity, source, amount) -> !passesThrough(entity, source));
+        (entity, source, amount) ->
+            !passesThrough(entity, source) && !strikesFromMist(source.getAttacker(), source));
     UseItemCallback.EVENT.register(
+        BatFormLimits.BEFORE_OTHERS,
         (player, world, hand) ->
             on(player)
                 ? TypedActionResult.fail(player.getStackInHand(hand))
                 : TypedActionResult.pass(player.getStackInHand(hand)));
     UseEntityCallback.EVENT.register(
+        BatFormLimits.BEFORE_OTHERS,
         (player, world, hand, entity, hit) -> on(player) ? ActionResult.FAIL : ActionResult.PASS);
     AttackEntityCallback.EVENT.register(
+        BatFormLimits.BEFORE_OTHERS,
         (player, world, hand, entity, hit) -> on(player) ? ActionResult.FAIL : ActionResult.PASS);
   }
 
@@ -78,6 +84,10 @@ public final class MistForm {
 
   public static boolean passes(final Entity entity, final BlockState state) {
     return on(entity) && state.isIn(PASSES);
+  }
+
+  static boolean strikesFromMist(@Nullable final Entity attacker, final DamageSource source) {
+    return attacker != null && attacker == source.getSource() && on(attacker);
   }
 
   public static boolean passesThrough(final Entity entity, final DamageSource source) {

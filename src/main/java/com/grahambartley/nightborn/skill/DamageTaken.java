@@ -15,8 +15,11 @@ public final class DamageTaken {
 
   public static float scale(
       final LivingEntity entity, final DamageSource source, final float amount) {
-    if (entity.getWorld().isClient || amount <= 0.0F) {
+    if (entity.getWorld().isClient) {
       return amount;
+    }
+    if (amount <= 0.0F) {
+      return BloodTithe.share(entity, amount);
     }
     final float worn = WornDamage.scale(entity, source, amount);
     final float formed = MistForm.harm(entity, source, worn * WingedForm.damageTaken(entity));

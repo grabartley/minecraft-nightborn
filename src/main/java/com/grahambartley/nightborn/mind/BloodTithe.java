@@ -34,7 +34,7 @@ public final class BloodTithe {
 
   public static void register() {
     ServerLivingEntityEvents.AFTER_DAMAGE.register(
-        (vampire, source, base, taken, blocked) -> pass(vampire, source));
+        (vampire, source, base, taken, blocked) -> pass(vampire, source, taken));
   }
 
   public static float share(final LivingEntity vampire, final float amount) {
@@ -43,15 +43,16 @@ public final class BloodTithe {
     if (share <= 0.0 || amount <= 0.0F || PASSING.get() || nearest(vampire).isEmpty()) {
       return amount;
     }
-    vampire.setAttached(OWED, TitheRules.passed(amount, share));
+    vampire.setAttached(OWED, (float) TitheRules.clampShare(share));
     return TitheRules.kept(amount, share);
   }
 
-  static void pass(final LivingEntity vampire, final DamageSource source) {
-    final Float owed = vampire.getAttached(OWED);
-    if (owed == null) {
+  static void pass(final LivingEntity vampire, final DamageSource source, final float taken) {
+    final Float share = vampire.getAttached(OWED);
+    if (share == null) {
       return;
     }
+    final float owed = TitheRules.owed(taken, share);
     vampire.removeAttached(OWED);
     nearest(vampire)
         .ifPresent(

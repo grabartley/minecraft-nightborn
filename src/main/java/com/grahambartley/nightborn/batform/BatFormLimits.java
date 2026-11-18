@@ -13,7 +13,7 @@ import net.minecraft.util.TypedActionResult;
 
 public final class BatFormLimits {
 
-  static final Identifier BEFORE_OTHERS = Identifier.of(Nightborn.MOD_ID, "bat_form_limits");
+  public static final Identifier BEFORE_OTHERS = Identifier.of(Nightborn.MOD_ID, "bat_form_limits");
 
   private BatFormLimits() {}
 

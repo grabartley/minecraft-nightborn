@@ -126,6 +126,7 @@ public class VampireLordGameTest implements FabricGameTest {
                 Registries.ENTITY_TYPE.getEntry(NightbornMobs.VAMPIRE_BAT),
                 ConstantIntProvider.create(3),
                 1.0F,
+                1.0F,
                 Optional.empty(),
                 Optional.empty(),
                 Optional.empty()));

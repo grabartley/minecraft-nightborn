@@ -189,7 +189,7 @@ public final class Commands {
                     && CommandRules.commandable(
                         candidate instanceof PlayerEntity,
                         MindTies.mesmerisedBy(candidate, caster),
-                        candidate.getType().isIn(Holds.UNHOLDABLE)))
+                        !PowerReach.marks(candidate)))
         .stream()
         .min(Comparator.comparingDouble(caster::squaredDistanceTo));
   }

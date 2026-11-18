@@ -14,8 +14,6 @@ import net.minecraft.util.math.random.Random;
 
 public final class Summons {
 
-  static final double RISE = 1.0;
-
   private Summons() {}
 
   static void bind(final LivingEntity caster, final MobEntity mob, final SummonPower power) {
@@ -53,7 +51,7 @@ public final class Summons {
       }
       summoned.refreshPositionAndAngles(
           caster.getX() + power.offset(random.nextDouble()),
-          caster.getY() + RISE,
+          caster.getY() + power.rise(),
           caster.getZ() + power.offset(random.nextDouble()),
           random.nextFloat() * 360.0F,
           0.0F);

@@ -1,5 +1,6 @@
 package com.grahambartley.nightborn.skill;
 
+import com.grahambartley.nightborn.hold.Holds;
 import com.grahambartley.nightborn.servant.Servants;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -32,6 +33,14 @@ public final class PowerReach {
         caster instanceof PlayerEntity,
         target instanceof PlayerEntity,
         pvp(caster));
+  }
+
+  public static boolean marks(final boolean boss) {
+    return !boss;
+  }
+
+  public static boolean marks(final LivingEntity target) {
+    return marks(target.getType().isIn(Holds.UNHOLDABLE));
   }
 
   public static boolean pvp(final LivingEntity caster) {

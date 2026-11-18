@@ -50,6 +50,7 @@ class SummonPowerTest {
             Registries.ENTITY_TYPE.getEntry(EntityType.BAT),
             ConstantIntProvider.create(1),
             spread,
+            1.0F,
             Optional.empty(),
             Optional.empty(),
             Optional.empty());
