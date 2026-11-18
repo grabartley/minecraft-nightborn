@@ -25,7 +25,7 @@ public final class Flinch {
     if (Glamour.on(vampire)) {
       return;
     }
-    final boolean small = small(GiftAttributes.value(vampire, GiftAttributes.FLINCH_SIZE));
+    final boolean small = small(GiftAttributes.value(vampire, GiftAttributes.SMALL_FLINCH));
     if (vampire instanceof ServerPlayerEntity player) {
       PlayerCues.send(player, small ? PlayerCue.SMALL_FLINCH : PlayerCue.FLINCH);
     } else if (vampire instanceof PowerShow mob) {
@@ -33,7 +33,7 @@ public final class Flinch {
     }
   }
 
-  public static boolean small(final double size) {
-    return size < 1.0;
+  public static boolean small(final double smallFlinch) {
+    return smallFlinch > 0.0;
   }
 }

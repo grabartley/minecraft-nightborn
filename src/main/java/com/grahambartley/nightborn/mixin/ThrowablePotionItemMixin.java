@@ -1,6 +1,7 @@
 package com.grahambartley.nightborn.mixin;
 
 import com.grahambartley.nightborn.accessory.WornRefill;
+import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.sugar.Share;
 import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 import net.minecraft.entity.player.PlayerEntity;
@@ -27,13 +28,18 @@ abstract class ThrowablePotionItemMixin {
     thrown.set(user.getStackInHand(hand).copy());
   }
 
-  @Inject(method = "use", at = @At("RETURN"))
-  private void nightborn$refillFromBelt(
+  @ModifyReturnValue(method = "use", at = @At("RETURN"))
+  private TypedActionResult<ItemStack> nightborn$refillFromBelt(
+      final TypedActionResult<ItemStack> result,
       final World world,
       final PlayerEntity user,
       final Hand hand,
-      final CallbackInfoReturnable<TypedActionResult<ItemStack>> cir,
       @Share("thrown") final LocalRef<ItemStack> thrown) {
-    WornRefill.refill(user, hand, thrown.get());
+    if (!result.getValue().isEmpty()) {
+      return result;
+    }
+    return WornRefill.next(user, thrown.get())
+        .map(next -> TypedActionResult.success(next, world.isClient()))
+        .orElse(result);
   }
 }

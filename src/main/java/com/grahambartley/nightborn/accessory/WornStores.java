@@ -47,11 +47,14 @@ public final class WornStores {
                 component.forEach(
                     (slot, stack) ->
                         Accessories.of(wearer.getWorld().getRegistryManager(), stack)
-                            .filter(accessory -> !accessory.holds().isEmpty())
-                            .filter(accessory -> accessory.worksFor(faction))
+                            .filter(accessory -> carries(accessory, faction))
                             .ifPresent(
                                 accessory -> stores.add(new WornStore(stack, accessory.holds())))));
     return stores;
+  }
+
+  public static boolean carries(final Accessory accessory, final Faction wearer) {
+    return !accessory.holds().isEmpty() && accessory.worksFor(wearer);
   }
 
   private static void drink(

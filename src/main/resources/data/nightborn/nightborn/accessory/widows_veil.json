@@ -2,8 +2,8 @@
   "works_for": "vampire",
   "gifts": [
     {
-      "attribute": "nightborn:flinch_size",
-      "amount": -0.5,
+      "attribute": "nightborn:small_flinch",
+      "amount": 1.0,
       "operation": "add_value"
     }
   ]

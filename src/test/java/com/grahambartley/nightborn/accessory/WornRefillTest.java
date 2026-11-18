@@ -4,7 +4,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.grahambartley.nightborn.MinecraftBootstrapExtension;
 import java.util.List;
+import java.util.Optional;
+import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.Hand;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -26,5 +29,12 @@ class WornRefillTest {
     final List<ItemStack> held =
         List.of(AccessoryHoldTest.stack(first), AccessoryHoldTest.stack(second));
     assertEquals(same, WornRefill.like(held, AccessoryHoldTest.stack(used)));
+  }
+
+  @ParameterizedTest(name = "{0}: {1}")
+  @CsvSource({"MAINHAND, MAIN_HAND", "OFFHAND, OFF_HAND", "HEAD, ", "FEET, "})
+  @DisplayName("only a tool broken in a hand is replaced from the belt")
+  void hand(final EquipmentSlot slot, final Hand hand) {
+    assertEquals(Optional.ofNullable(hand), WornRefill.hand(slot));
   }
 }

@@ -101,8 +101,8 @@ public final class GiftAttributes {
       register("bottle_blood", 1.0, 1.0, MOST_BOOST);
   public static final RegistryEntry<EntityAttribute> TRAP_COOLDOWN =
       register("trap_cooldown", 1.0, LEAST_SHARE, 1.0);
-  public static final RegistryEntry<EntityAttribute> FLINCH_SIZE =
-      register("flinch_size", 1.0, LEAST_SHARE, 1.0);
+  public static final RegistryEntry<EntityAttribute> SMALL_FLINCH =
+      register("small_flinch", 0.0, 0.0, 1.0);
   public static final RegistryEntry<EntityAttribute> DUSK_SIGHT =
       register("dusk_sight", 0.0, 0.0, 1.0);
   public static final RegistryEntry<EntityAttribute> FACE_LEARNING =
@@ -158,7 +158,7 @@ public final class GiftAttributes {
           SOIL_DIG_SPEED,
           BOTTLE_BLOOD,
           TRAP_COOLDOWN,
-          FLINCH_SIZE,
+          SMALL_FLINCH,
           DUSK_SIGHT,
           FACE_LEARNING,
           VAMPIRE_INSIGHT,

@@ -2411,7 +2411,7 @@
   "attribute.name.nightborn.soil_dig_speed": "Velocidade de cavar solo",
   "attribute.name.nightborn.bottle_blood": "Sangue de garrafas",
   "attribute.name.nightborn.trap_cooldown": "Recarga de armadilhas",
-  "attribute.name.nightborn.flinch_size": "Tamanho do sobressalto",
+  "attribute.name.nightborn.small_flinch": "Sobressalto leve",
   "attribute.name.nightborn.dusk_sight": "Visão de crepúsculo",
   "attribute.name.nightborn.face_learning": "Memória de rostos",
   "attribute.name.nightborn.vampire_insight": "Percepção de vampiros",

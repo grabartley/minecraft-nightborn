@@ -53,7 +53,7 @@ class GiftAttributesTest {
     "soil_dig_speed, 1.0, 1.0, 2.0",
     "bottle_blood, 1.0, 1.0, 2.0",
     "trap_cooldown, 1.0, 0.2, 1.0",
-    "flinch_size, 1.0, 0.2, 1.0",
+    "small_flinch, 0.0, 0.0, 1.0",
     "dusk_sight, 0.0, 0.0, 1.0",
     "face_learning, 1.0, 0.2, 1.0",
     "vampire_insight, 0.0, 0.0, 1.0",

@@ -2411,7 +2411,7 @@
   "attribute.name.nightborn.soil_dig_speed": "Grabgeschwindigkeit im Boden",
   "attribute.name.nightborn.bottle_blood": "Blut aus Flaschen",
   "attribute.name.nightborn.trap_cooldown": "Abklingzeit von Fallen",
-  "attribute.name.nightborn.flinch_size": "Stärke des Zurückzuckens",
+  "attribute.name.nightborn.small_flinch": "Schwaches Zurückzucken",
   "attribute.name.nightborn.dusk_sight": "Dämmerungsblick",
   "attribute.name.nightborn.face_learning": "Gesichter merken",
   "attribute.name.nightborn.vampire_insight": "Vampirkenntnis",

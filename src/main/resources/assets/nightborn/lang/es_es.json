@@ -2411,7 +2411,7 @@
   "attribute.name.nightborn.soil_dig_speed": "Velocidad de cavar tierra",
   "attribute.name.nightborn.bottle_blood": "Sangre de botellas",
   "attribute.name.nightborn.trap_cooldown": "Recarga de trampas",
-  "attribute.name.nightborn.flinch_size": "Tamaño del respingo",
+  "attribute.name.nightborn.small_flinch": "Respingo leve",
   "attribute.name.nightborn.dusk_sight": "Vista de ocaso",
   "attribute.name.nightborn.face_learning": "Reconocimiento de rostros",
   "attribute.name.nightborn.vampire_insight": "Perspicacia vampírica",

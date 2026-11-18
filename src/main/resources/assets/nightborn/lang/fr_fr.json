@@ -2411,7 +2411,7 @@
   "attribute.name.nightborn.soil_dig_speed": "Vitesse de creusage du sol",
   "attribute.name.nightborn.bottle_blood": "Sang des fioles",
   "attribute.name.nightborn.trap_cooldown": "Recharge des pièges",
-  "attribute.name.nightborn.flinch_size": "Ampleur du sursaut",
+  "attribute.name.nightborn.small_flinch": "Petit sursaut",
   "attribute.name.nightborn.dusk_sight": "Vue crépusculaire",
   "attribute.name.nightborn.face_learning": "Mémoire des visages",
   "attribute.name.nightborn.vampire_insight": "Discernement des vampires",

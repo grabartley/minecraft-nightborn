@@ -21,8 +21,10 @@ import java.util.List;
 import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
 import net.minecraft.block.PowderSnowBlock;
 import net.minecraft.component.type.PotionContentsComponent;
+import net.minecraft.entity.EntityType;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.attribute.EntityAttributes;
+import net.minecraft.entity.mob.ZombieEntity;
 import net.minecraft.item.CrossbowItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -164,20 +166,30 @@ public class AccessoryGameTest implements FabricGameTest {
   }
 
   @GameTest(templateName = ARENA, tickLimit = 20)
-  public void aBrokenStakeIsReplacedFromTheLoops(final TestContext context) {
+  public void aStakeBrokenOnABlowIsReplacedFromTheLoops(final TestContext context) {
     final ServerPlayerEntity human = TestPlayers.human(context, SPOT);
+    final ZombieEntity target = context.spawnEntity(EntityType.ZOMBIE, SPOT.east());
+    target.setAiDisabled(true);
     final ItemStack loops = new ItemStack(AccessoryItems.of("stake_loops"));
     AccessoryStore.put(holds(context, loops), loops, new ItemStack(GearItems.SILVER_STAKE));
     slot(human, AccessorySlot.BELT).setStack(0, loops);
     final ItemStack stake = new ItemStack(GearItems.WOODEN_STAKE);
     stake.setDamage(stake.getMaxDamage() - 1);
     human.setStackInHand(Hand.MAIN_HAND, stake);
-    stake.damage(1, human, EquipmentSlot.MAINHAND);
-    context.assertTrue(
-        human.getMainHandStack().isOf(GearItems.SILVER_STAKE), "a stake comes to hand");
-    context.assertEquals(
-        0, AccessoryStore.held(slot(human, AccessorySlot.BELT).getStack(0)), "the loops are empty");
-    TestPlayers.finish(context, human);
+    human.setStackInHand(Hand.OFF_HAND, new ItemStack(Items.TORCH));
+    human.attack(target);
+    context.runAtTick(
+        2,
+        () -> {
+          context.assertTrue(
+              human.getMainHandStack().isOf(GearItems.SILVER_STAKE), "a stake comes to hand");
+          context.assertTrue(human.getOffHandStack().isOf(Items.TORCH), "the off hand is kept");
+          context.assertEquals(
+              0,
+              AccessoryStore.held(slot(human, AccessorySlot.BELT).getStack(0)),
+              "the loops are empty");
+          TestPlayers.finish(context, human);
+        });
   }
 
   @GameTest(templateName = ARENA, tickLimit = 20)
@@ -189,9 +201,10 @@ public class AccessoryGameTest implements FabricGameTest {
         belt,
         PotionContentsComponent.createStack(Items.SPLASH_POTION, HolyWater.POTION));
     slot(human, AccessorySlot.BELT).setStack(0, belt);
-    human.setStackInHand(
-        Hand.MAIN_HAND, PotionContentsComponent.createStack(Items.SPLASH_POTION, HolyWater.POTION));
-    human.getMainHandStack().use(context.getWorld(), human, Hand.MAIN_HAND);
+    final ItemStack held =
+        PotionContentsComponent.createStack(Items.SPLASH_POTION, HolyWater.POTION);
+    human.setStackInHand(Hand.MAIN_HAND, held);
+    human.interactionManager.interactItem(human, context.getWorld(), held, Hand.MAIN_HAND);
     context.assertTrue(
         human.getMainHandStack().isOf(Items.SPLASH_POTION), "a holy water comes to hand");
     context.assertEquals(

@@ -28,8 +28,10 @@ public final class BeltAmmo {
           AccessoryStore.contents(worn.stack()).stream().filter(fits).findFirst();
       if (ammo.isPresent()) {
         final ItemStack drawn = ammo.get().copy();
-        synchronized (DRAWN) {
-          DRAWN.put(shooter, new Draw(worn.stack(), drawn, drawn.copy()));
+        if (!shooter.getWorld().isClient()) {
+          synchronized (DRAWN) {
+            DRAWN.put(shooter, new Draw(worn.stack(), drawn, drawn.copy()));
+          }
         }
         return Optional.of(drawn);
       }
