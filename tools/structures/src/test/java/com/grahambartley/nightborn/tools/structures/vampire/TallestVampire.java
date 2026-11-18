@@ -10,7 +10,8 @@ import java.util.stream.Stream;
 
 public final class TallestVampire {
 
-  static final Path BUILDS = Path.of("../../src/main/resources/data/nightborn/nightborn/vampire_build");
+  static final Path BUILDS =
+      Path.of("../../src/main/resources/data/nightborn/nightborn/vampire_build");
   private static final Pattern MAX_HEIGHT = Pattern.compile("\"max_height\"\\s*:\\s*([0-9.]+)");
 
   private TallestVampire() {}

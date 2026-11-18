@@ -159,8 +159,7 @@ class VampireStructuresTest {
                     switch (home.path()) {
                       case "vampire/crypt/undercroft", "vampire/crypt/ossuary" -> stairFoot;
                       case "vampire/lair/den" -> new Pos(5, 1, 16);
-                      case "vampire/lair/grotto" ->
-                          new Pos(Grotto.LEDGE - 2, 1, Grotto.SPRING_Z);
+                      case "vampire/lair/grotto" -> new Pos(Grotto.LEDGE - 2, 1, Grotto.SPRING_Z);
                       default -> entrance(home).offset(0, 1, 0);
                     }));
   }
@@ -183,7 +182,8 @@ class VampireStructuresTest {
   @MethodSource("walks")
   void aVampireWalksToEveryPieceItsHouseholdUses(final String path, final Pos start) {
     final Template home = home(path);
-    assertEquals(List.of(), StructureAudit.unreachedHousehold(home, StructureWalk.mob(home, start)));
+    assertEquals(
+        List.of(), StructureAudit.unreachedHousehold(home, StructureWalk.mob(home, start)));
   }
 
   @ParameterizedTest(name = "{0}: a vampire walks everywhere a person can, with no ladder")
@@ -200,8 +200,7 @@ class VampireStructuresTest {
   @MethodSource("walks")
   void noFloorIsSealedOff(final String path, final Pos start) {
     final Template home = home(path);
-    assertEquals(
-        List.of(), StructureAudit.sealedFloors(home, StructureWalk.from(home, start)));
+    assertEquals(List.of(), StructureAudit.sealedFloors(home, StructureWalk.from(home, start)));
   }
 
   @ParameterizedTest(name = "{0}: every door is walked through from both sides")
@@ -212,10 +211,24 @@ class VampireStructuresTest {
     assertEquals(List.of(), StructureAudit.doorsLeadingNowhere(home, reached));
   }
 
-  @ParameterizedTest(name = "{0}: wall decor hangs on solid wall and floor decor stands on solid floor")
+  @ParameterizedTest(
+      name = "{0}: wall decor hangs on solid wall and floor decor stands on solid floor")
   @MethodSource("walks")
   void everyDecorationIsHeld(final String path, final Pos start) {
     assertEquals(List.of(), StructureAudit.loose(home(path)));
+  }
+
+  @ParameterizedTest(name = "{0}: blood lies in clusters on its floors and low on its walls")
+  @MethodSource("walks")
+  void everyHomeIsStainedWithBlood(final String path, final Pos start) {
+    final Template home = home(path);
+    final long floor =
+        home.cells().values().stream().filter(state -> state.contains("face=floor")).count();
+    final long wall =
+        home.cells().values().stream().filter(state -> state.contains("face=wall")).count();
+    assertTrue(floor >= BloodStainRules.forPath(path).clusters(), "floor stains " + floor);
+    assertTrue(wall >= 1, "wall stains " + wall);
+    assertEquals(home.cells(), home(path).cells());
   }
 
   private static Pos entrance(final Template home) {
