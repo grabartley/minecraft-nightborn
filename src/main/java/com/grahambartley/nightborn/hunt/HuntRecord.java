@@ -95,6 +95,11 @@ public record HuntRecord(
     return new HuntRecord(notoriety, Phase.VISIT, 0, Optional.of(visitor), quietUntil, man);
   }
 
+  public HuntRecord visitedBy(final UUID visitor, final Optional<String> name) {
+    final HuntRecord visited = visitedBy(visitor);
+    return name.map(visited::named).orElse(visited);
+  }
+
   public HuntRecord named(final String name) {
     return new HuntRecord(notoriety, phase, warningsLeft, visitor, quietUntil, Optional.of(name));
   }

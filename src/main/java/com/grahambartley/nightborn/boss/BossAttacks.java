@@ -126,13 +126,20 @@ public final class BossAttacks {
   }
 
   public void cancel() {
+    interrupt();
+    court.drop();
+  }
+
+  public void interrupt() {
     marks.forEach(ZoneMarkEntity::discard);
     marks.clear();
     shapes.clear();
     hazards.forEach(hazard -> hazard.mark().discard());
     hazards.clear();
     ward.drop();
-    court.drop();
+    if (!court.gathering()) {
+      court.drop();
+    }
     run = null;
     cut = false;
     leapFrom = null;

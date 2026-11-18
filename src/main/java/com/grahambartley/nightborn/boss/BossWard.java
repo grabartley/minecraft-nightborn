@@ -16,6 +16,7 @@ public final class BossWard {
   private final List<Entity> keepers = new ArrayList<>();
   private long raisedAt;
   private int ticks;
+  private boolean gathering;
 
   public static void register() {
     ServerEntityEvents.ENTITY_LOAD.register(
@@ -48,6 +49,7 @@ public final class BossWard {
     }
     raisedAt = now;
     ticks = ward.ticks();
+    gathering = ward.gathers();
     final int calling = ward.called(keepers.size());
     for (int i = 0; i < calling; i++) {
       final Entity keeper = ward.entity().value().create(world);
@@ -83,8 +85,12 @@ public final class BossWard {
     return WardAttack.holds(keepers.size(), now - raisedAt, ticks);
   }
 
+  public boolean gathering() {
+    return gathering;
+  }
+
   public void expire(final long now) {
-    if (WardAttack.spent(keepers.size(), now - raisedAt, ticks)) {
+    if (!gathering && WardAttack.spent(keepers.size(), now - raisedAt, ticks)) {
       drop();
     }
   }
@@ -92,5 +98,6 @@ public final class BossWard {
   public void drop() {
     keepers.forEach(Entity::discard);
     keepers.clear();
+    gathering = false;
   }
 }

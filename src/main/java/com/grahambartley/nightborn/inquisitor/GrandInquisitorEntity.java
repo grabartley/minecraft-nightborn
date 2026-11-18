@@ -14,11 +14,13 @@ import com.grahambartley.nightborn.boss.HoldGroundGoal;
 import com.grahambartley.nightborn.boss.ShownForm;
 import com.grahambartley.nightborn.boss.StanceGoal;
 import com.grahambartley.nightborn.config.InquisitorSettings;
+import com.grahambartley.nightborn.core.IdText;
 import com.grahambartley.nightborn.downed.Downed;
 import com.grahambartley.nightborn.downed.DownedState;
 import com.grahambartley.nightborn.feeding.BiteQuarry;
 import com.grahambartley.nightborn.guild.HunterEntity;
 import com.grahambartley.nightborn.guild.HunterRig;
+import com.grahambartley.nightborn.hunt.HuntAttachment;
 import com.grahambartley.nightborn.lord.BossPresence;
 import com.grahambartley.nightborn.mob.ClipCache;
 import com.grahambartley.nightborn.mob.ShownAction;
@@ -49,6 +51,7 @@ import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.registry.RegistryKeys;
+import net.minecraft.registry.tag.DamageTypeTags;
 import net.minecraft.registry.tag.TagKey;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
@@ -263,9 +266,7 @@ public class GrandInquisitorEntity extends HunterEntity implements ArenaBoss, Bi
 
   @Override
   public Identifier texture() {
-    return Optional.ofNullable(Identifier.tryParse(dataTracker.get(SKIN_SHOWN)))
-        .filter(id -> !dataTracker.get(SKIN_SHOWN).isEmpty())
-        .orElse(SKIN);
+    return IdText.parse(dataTracker.get(SKIN_SHOWN)).orElse(SKIN);
   }
 
   @Override
@@ -309,15 +310,16 @@ public class GrandInquisitorEntity extends HunterEntity implements ArenaBoss, Bi
     final long now = world.getTime();
     dataTracker.set(FORM, fight.shown(plan, Downed.state(this) != null, now).encode());
     dataTracker.set(
-        SKIN_SHOWN,
-        plan.flatMap(p -> p.phase(fight.phase()).look().skin())
-            .map(Identifier::toString)
-            .orElse(""));
+        SKIN_SHOWN, IdText.write(plan.flatMap(p -> p.phase(fight.phase()).look().skin())));
     fight.tick(
         this,
         plan,
         new FightRules(0, settings.drainWindowSeconds() * TICKS_PER_SECOND, settings.riseHealth()),
         () -> {});
+    if (forgotten(world)) {
+      depart();
+      return;
+    }
     watch(world, settings, now);
     BossBars.show(this, fight, plan);
   }
@@ -336,6 +338,7 @@ public class GrandInquisitorEntity extends HunterEntity implements ArenaBoss, Bi
                 player ->
                     player.isAlive()
                         && !player.isSpectator()
+                        && !player.isCreative()
                         && Vampires.isVampire(player)
                         && player.squaredDistanceTo(this) <= CROWD_REACH * CROWD_REACH)
             .size(),
@@ -366,6 +369,19 @@ public class GrandInquisitorEntity extends HunterEntity implements ArenaBoss, Bi
     }
   }
 
+  private boolean forgotten(final ServerWorld world) {
+    if (quarry == null || leaving) {
+      return false;
+    }
+    final PlayerEntity player = world.getServer().getPlayerManager().getPlayer(quarry.player());
+    return player != null
+        && !HuntAttachment.get(player).visitor().filter(getUuid()::equals).isPresent();
+  }
+
+  public Optional<String> givenName() {
+    return Optional.ofNullable(getCustomName()).map(Text::getString);
+  }
+
   private List<ServerPlayerEntity> foesInside(final ServerWorld world) {
     return fight
         .arena()
@@ -375,6 +391,7 @@ public class GrandInquisitorEntity extends HunterEntity implements ArenaBoss, Bi
                     player ->
                         player.isAlive()
                             && !player.isSpectator()
+                            && !player.isCreative()
                             && attacksOnSight(player)
                             && arena.holds(player.getX(), player.getY(), player.getZ())))
         .orElse(List.of());
@@ -399,7 +416,7 @@ public class GrandInquisitorEntity extends HunterEntity implements ArenaBoss, Bi
     if (getWorld().isClient()) {
       return super.damage(source, amount);
     }
-    if (bitable()) {
+    if (bitable() && !source.isIn(DamageTypeTags.BYPASSES_INVULNERABILITY)) {
       return downedBlow(source, amount);
     }
     final long now = getWorld().getTime();
@@ -434,6 +451,9 @@ public class GrandInquisitorEntity extends HunterEntity implements ArenaBoss, Bi
             && quarry.turnedOn(player.getUuid());
     if (!InquisitorDrain.ends(bitten, Vampires.isVampire(source.getAttacker()), turned)) {
       return false;
+    }
+    if (bitten && source.getAttacker() instanceof PlayerEntity biter) {
+      roll.join(biter.getUuid());
     }
     final float taken = turned ? getHealth() : InquisitorDrain.taken(getHealth(), amount);
     return super.damage(source, taken);

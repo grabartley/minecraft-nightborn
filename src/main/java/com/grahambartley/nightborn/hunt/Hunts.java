@@ -72,11 +72,10 @@ public final class Hunts {
   }
 
   public static void visited(final ServerPlayerEntity quarry, final GrandInquisitorEntity man) {
-    HuntRecord record = HuntAttachment.get(quarry).visitedBy(man.getUuid());
-    if (man.getCustomName() != null) {
-      record = record.named(man.getCustomName().getString());
-    }
-    store(quarry, record, AgeNight.index(time(quarry)));
+    store(
+        quarry,
+        HuntAttachment.get(quarry).visitedBy(man.getUuid(), man.givenName()),
+        AgeNight.index(time(quarry)));
   }
 
   public static void endVisit(final ServerPlayerEntity player) {

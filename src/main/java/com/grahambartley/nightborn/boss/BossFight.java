@@ -303,7 +303,7 @@ public final class BossFight {
     if (attacks.busy()) {
       boss.showPower("");
     }
-    attacks.cancel();
+    attacks.interrupt();
     if (downed.isDowned()) {
       if (!staking) {
         staking = true;
@@ -376,7 +376,7 @@ public final class BossFight {
     phases.advance(plan.phases().size());
     changeUntil = boss.getWorld().getTime() + plan.changeTicks();
     phaseBegan = boss.getWorld().getTime();
-    attacks.cancel();
+    attacks.interrupt();
     hits.clear();
     BossReactions.returnTo(boss, start);
     BossReactions.strike(boss);

@@ -111,6 +111,7 @@ public class InquisitorFightGameTest implements FabricGameTest {
         TestPlayers.READY,
         () -> {
           man.hunt(vampire, false, List.of(vampire));
+          hunted(vampire, man);
           man.tickFight();
           final Arena arena = man.bossFight().arena().orElse(null);
           context.assertTrue(arena != null, "the circle seals once he is close");
@@ -336,6 +337,43 @@ public class InquisitorFightGameTest implements FabricGameTest {
               called.stream().allMatch(HunterEntity::isRemoved), "they go when the fight ends");
           man.discard();
           TestPlayers.finish(context, human);
+        });
+  }
+
+  @GameTest(templateName = ARENA, tickLimit = TestPlayers.READY + 20)
+  public void calledHuntersFightOnThroughAChangeOfPhase(final TestContext context) {
+    final GrandInquisitorEntity man = inquisitor(context, new BlockPos(1, 2, 1));
+    final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(7, 2, 7));
+    context.runAtTick(
+        TestPlayers.READY,
+        () -> {
+          final BossFightPlan plan =
+              BossFights.fight(context.getWorld().getRegistryManager(), GrandInquisitorEntity.FIGHT)
+                  .orElseThrow();
+          final BossAttacks attacks = new BossAttacks();
+          final long now = context.getWorld().getTime();
+          man.setTarget(vampire);
+          attacks.counter(
+              man, List.of(Identifier.of("nightborn", "inquisitor_call")), List.of(vampire), now);
+          for (long tick = now; tick <= now + 30; tick++) {
+            attacks.tick(man, plan.clips(), plan.phase(0), List.of(vampire), 300.0F, tick);
+          }
+          final List<HunterEntity> called =
+              context
+                  .getWorld()
+                  .getEntitiesByClass(
+                      HunterEntity.class, context.getTestBox().expand(4.0), BossWard::keeper);
+          called.forEach(hunter -> hunter.setAiDisabled(true));
+          context.assertTrue(called.size() == 2, "he calls two hunters, not " + called.size());
+          attacks.interrupt();
+          context.assertTrue(
+              called.stream().noneMatch(HunterEntity::isRemoved),
+              "they fight on when his phase changes");
+          attacks.cancel();
+          context.assertTrue(
+              called.stream().allMatch(HunterEntity::isRemoved), "they go when the fight ends");
+          man.discard();
+          TestPlayers.finish(context, vampire);
         });
   }
 }

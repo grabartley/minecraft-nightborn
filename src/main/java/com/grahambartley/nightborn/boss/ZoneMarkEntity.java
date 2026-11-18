@@ -1,5 +1,6 @@
 package com.grahambartley.nightborn.boss;
 
+import com.grahambartley.nightborn.core.IdText;
 import java.util.Optional;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
@@ -44,7 +45,7 @@ public class ZoneMarkEntity extends Entity implements GeoEntity {
   public static ZoneMarkEntity place(
       final World world, final ZoneShape shape, final double y, final Optional<Identifier> look) {
     final ZoneMarkEntity mark = new ZoneMarkEntity(BossEntities.ZONE_MARK, world);
-    mark.dataTracker.set(LOOK, look.map(Identifier::toString).orElse(""));
+    mark.dataTracker.set(LOOK, IdText.write(look));
     mark.dataTracker.set(LINE, shape.line());
     mark.dataTracker.set(RADIUS, (float) shape.radius());
     mark.dataTracker.set(LENGTH, (float) shape.length());
@@ -75,8 +76,7 @@ public class ZoneMarkEntity extends Entity implements GeoEntity {
   }
 
   public Optional<Identifier> look() {
-    return Optional.ofNullable(Identifier.tryParse(dataTracker.get(LOOK)))
-        .filter(id -> !dataTracker.get(LOOK).isEmpty());
+    return IdText.parse(dataTracker.get(LOOK));
   }
 
   public boolean lingering() {

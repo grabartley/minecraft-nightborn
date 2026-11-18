@@ -125,4 +125,14 @@ class HuntRecordTest {
     assertEquals(idle, record.idle(night));
     assertTrue(HuntRecord.EMPTY.idle(0));
   }
+
+  @ParameterizedTest(name = "named {0}")
+  @CsvSource({"Ezra the Grand Inquisitor", "''"})
+  @DisplayName("a visit remembers the man and, when he has one, his name")
+  void visitedByName(final String name) {
+    final Optional<String> given = name.isEmpty() ? Optional.empty() : Optional.of(name);
+    final HuntRecord visited = HuntRecord.EMPTY.withNotoriety(31).visitedBy(MAN, given);
+    assertEquals(Optional.of(MAN), visited.visitor());
+    assertEquals(given, visited.man());
+  }
 }
