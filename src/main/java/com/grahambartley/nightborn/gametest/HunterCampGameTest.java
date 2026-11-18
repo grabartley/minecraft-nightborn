@@ -15,6 +15,7 @@ import com.grahambartley.nightborn.skill.SkillTree;
 import com.grahambartley.nightborn.structure.RareSpreadPlacement;
 import com.grahambartley.nightborn.structure.StructureRarity;
 import com.grahambartley.nightborn.vampire.VampireTransitions;
+import com.grahambartley.nightborn.wheel.CommandWheel;
 import java.util.List;
 import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
 import net.minecraft.block.Blocks;
@@ -24,6 +25,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.registry.RegistryKeys;
+import net.minecraft.screen.MerchantScreenHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.structure.StructurePlacementData;
@@ -35,6 +37,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.village.TradeOffer;
+import net.minecraft.village.TradeOfferList;
 
 public class HunterCampGameTest implements FabricGameTest {
 
@@ -104,6 +107,7 @@ public class HunterCampGameTest implements FabricGameTest {
         () -> {
           master.interactMob(vampire, Hand.MAIN_HAND);
           context.assertFalse(master.hasCustomer(), "a vampire cannot trade");
+          context.assertFalse(CommandWheel.open(vampire, master), "nor gets the wheel");
           context.assertEquals(done(vampire, vampire.getInventory().selectedSlot), 3, "no claim");
           context.assertEquals(count(vampire, Items.EMERALD), 0, "nothing is paid");
           TestPlayers.finish(context, vampire);
@@ -111,26 +115,59 @@ public class HunterCampGameTest implements FabricGameTest {
   }
 
   @GameTest(templateName = ARENA, tickLimit = TestPlayers.READY + 20)
-  public void theGuildMasterSellsGearAndContractsToAHuman(final TestContext context) {
+  public void theGuildMasterSellsGearAndContractsToAHumanAtSeparateCounters(
+      final TestContext context) {
     final GuildMasterEntity master = guildMaster(context);
     final ServerPlayerEntity human = TestPlayers.human(context, new BlockPos(2, 2, 4));
     context.runAtTick(
         START,
         () -> {
-          master.interactMob(human, Hand.MAIN_HAND);
+          context.assertTrue(
+              master.interactMob(human, Hand.MAIN_HAND).isAccepted(), "using him opens the wheel");
+          context.assertFalse(master.hasCustomer(), "the wheel comes before any trade");
+          context.assertTrue(
+              WheelUse.pick(human, master, Identifier.of("nightborn", "guild_gear"), -1),
+              "the human picks trade");
           context.assertTrue(master.getCustomer() == human, "the human is trading");
           context.assertTrue(
-              master.getOffers().stream()
+              offered(human).stream()
                   .map(TradeOffer::getSellItem)
                   .anyMatch(stack -> stack.isOf(GearItems.WOODEN_STAKE)),
               "stakes are for sale");
           context.assertTrue(
-              master.getOffers().stream()
+              offered(human).stream()
                   .map(TradeOffer::getSellItem)
-                  .anyMatch(stack -> stack.contains(ContractItems.PROGRESS)),
-              "contracts are on offer");
+                  .noneMatch(stack -> stack.contains(ContractItems.PROGRESS)),
+              "no contracts at the gear counter");
+          human.closeHandledScreen();
+          context.assertTrue(
+              WheelUse.pick(human, master, Identifier.of("nightborn", "guild_contracts"), -1),
+              "the human picks contracts");
+          context.assertTrue(
+              !offered(human).isEmpty()
+                  && offered(human).stream()
+                      .map(TradeOffer::getSellItem)
+                      .allMatch(stack -> stack.contains(ContractItems.PROGRESS)),
+              "only contracts at the contract counter");
+          context.assertEquals(
+              offered(human).size() + gear(master),
+              master.getOffers().size(),
+              "between them the counters offer everything he has");
           TestPlayers.finish(context, human);
         });
+  }
+
+  private static TradeOfferList offered(final ServerPlayerEntity player) {
+    return player.currentScreenHandler instanceof MerchantScreenHandler trading
+        ? trading.getRecipes()
+        : new TradeOfferList();
+  }
+
+  private static int gear(final GuildMasterEntity master) {
+    return (int)
+        master.getOffers().stream()
+            .filter(offer -> !offer.getSellItem().contains(ContractItems.PROGRESS))
+            .count();
   }
 
   @GameTest(templateName = ARENA, tickLimit = TestPlayers.READY + 20)
@@ -152,9 +189,10 @@ public class HunterCampGameTest implements FabricGameTest {
               TestPlayers.pointsFor(ServerConfigService.current().skills().contractExperience()),
               "and hunter points");
           final int emeralds = count(human, Items.EMERALD);
-          master.interactMob(human, Hand.MAIN_HAND);
+          context.assertTrue(
+              master.interactMob(human, Hand.MAIN_HAND).isAccepted(),
+              "a second visit opens the wheel");
           context.assertEquals(count(human, Items.EMERALD), emeralds, "it pays only once");
-          context.assertTrue(master.getCustomer() == human, "a second visit opens the trades");
           TestPlayers.finish(context, human);
         });
   }
@@ -285,7 +323,7 @@ public class HunterCampGameTest implements FabricGameTest {
     context.runAtTick(
         START,
         () -> {
-          master.interactMob(human, Hand.MAIN_HAND);
+          WheelUse.pick(human, master, Identifier.of("nightborn", "guild_gear"), -1);
           context.assertTrue(master.getCustomer() == human, "the human is trading");
           VampireTransitions.turn(human);
         });

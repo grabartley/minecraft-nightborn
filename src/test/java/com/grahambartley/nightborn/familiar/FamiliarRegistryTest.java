@@ -4,9 +4,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import com.grahambartley.nightborn.servant.ChestMarks;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtOps;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.GlobalPos;
 import net.minecraft.world.World;
@@ -46,21 +49,26 @@ class FamiliarRegistryTest {
 
   @ParameterizedTest(name = "fetch {0}, deliver {1}")
   @CsvSource({"true, true", "true, false", "false, false"})
-  @DisplayName("bonds and their marks survive a save and load")
+  @DisplayName("bonds survive a save and load, and older chest marks are handed over once")
   void saves(final boolean fetch, final boolean deliver) {
     final GlobalPos chest = GlobalPos.create(World.OVERWORLD, new BlockPos(3, 70, -9));
-    final FamiliarBond bond =
-        new FamiliarBond(
-            FAMILIAR,
-            new ChestMarks(
-                fetch ? Optional.of(chest) : Optional.empty(),
-                deliver ? Optional.of(chest) : Optional.empty()));
+    final ChestMarks marks =
+        new ChestMarks(
+            fetch ? Optional.of(chest) : Optional.empty(),
+            deliver ? Optional.of(chest) : Optional.empty());
     final FamiliarRegistry registry = new FamiliarRegistry();
-    registry.update(OWNER, bond);
+    registry.bind(OWNER, FAMILIAR);
     registry.bind(OTHER, OTHER);
-    final FamiliarRegistry loaded =
-        FamiliarRegistry.fromNbt(registry.writeNbt(new NbtCompound(), null), null);
-    assertEquals(Optional.of(bond), loaded.bondOf(OWNER));
+    final NbtCompound saved = registry.writeNbt(new NbtCompound(), null);
+    saved
+        .getCompound("bonds")
+        .getCompound(OWNER.toString())
+        .put("marks", ChestMarks.CODEC.encodeStart(NbtOps.INSTANCE, marks).getOrThrow());
+    final FamiliarRegistry loaded = FamiliarRegistry.fromNbt(saved, null);
+    assertEquals(Optional.of(new FamiliarBond(FAMILIAR)), loaded.bondOf(OWNER));
     assertTrue(loaded.keeps(OTHER, OTHER));
+    final Map<UUID, ChestMarks> older = loaded.takeLegacyMarks();
+    assertEquals(fetch || deliver ? Map.of(OWNER, marks) : Map.of(), older);
+    assertTrue(loaded.takeLegacyMarks().isEmpty());
   }
 }

@@ -1,14 +1,14 @@
 package com.grahambartley.nightborn.familiar.goal;
 
-import com.grahambartley.nightborn.familiar.ChestMarks;
 import com.grahambartley.nightborn.familiar.ErrandRules;
 import com.grahambartley.nightborn.familiar.ErrandTransfer;
-import com.grahambartley.nightborn.familiar.FamiliarBond;
 import com.grahambartley.nightborn.familiar.FamiliarClock;
-import com.grahambartley.nightborn.familiar.FamiliarOrders;
 import com.grahambartley.nightborn.familiar.FamiliarRegistry;
 import com.grahambartley.nightborn.familiar.HumanFamiliarEntity;
 import com.grahambartley.nightborn.familiar.TradePick;
+import com.grahambartley.nightborn.servant.ChestMarking;
+import com.grahambartley.nightborn.servant.ChestMarks;
+import com.grahambartley.nightborn.servant.ServantChests;
 import com.grahambartley.nightborn.server.ServerConfigService;
 import java.util.Comparator;
 import java.util.EnumSet;
@@ -56,15 +56,16 @@ public class RunErrandGoal extends Goal {
     if (!(familiar.getWorld() instanceof ServerWorld world)
         || world.getTime() < restUntil
         || familiar.getTarget() != null
+        || familiar.job().isPresent()
         || !FamiliarClock.isWorkingHours(world)) {
       return false;
     }
     final Optional<ChestMarks> marks =
         familiar
             .owner()
-            .flatMap(owner -> FamiliarRegistry.of(world.getServer()).bondOf(owner))
-            .filter(bond -> bond.familiar().equals(familiar.getUuid()))
-            .map(FamiliarBond::marks)
+            .filter(
+                owner -> FamiliarRegistry.of(world.getServer()).keeps(owner, familiar.getUuid()))
+            .map(owner -> ServantChests.of(world.getServer()).marksOf(owner))
             .filter(ChestMarks::complete);
     if (marks.isEmpty()) {
       return false;
@@ -97,6 +98,7 @@ public class RunErrandGoal extends Goal {
     return leg != null
         && ticks < GIVE_UP_TICKS
         && familiar.getTarget() == null
+        && familiar.job().isEmpty()
         && FamiliarClock.isWorkingHours(familiar.getWorld());
   }
 
@@ -185,7 +187,7 @@ public class RunErrandGoal extends Goal {
   }
 
   private boolean stillErrandChest(final BlockPos chest) {
-    if (FamiliarOrders.isErrandChest(familiar.getWorld(), chest)) {
+    if (ChestMarking.isErrandChest(familiar.getWorld(), chest)) {
       return true;
     }
     if (familiar.getWorld() instanceof ServerWorld world) {
@@ -193,7 +195,7 @@ public class RunErrandGoal extends Goal {
           .owner()
           .ifPresent(
               owner ->
-                  FamiliarOrders.forget(
+                  ChestMarking.forget(
                       world.getServer(), owner, GlobalPos.create(world.getRegistryKey(), chest)));
     }
     leg = null;

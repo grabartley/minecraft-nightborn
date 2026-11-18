@@ -1,9 +1,8 @@
 package com.grahambartley.nightborn.occult;
 
+import com.grahambartley.nightborn.wheel.CommandWheel;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
@@ -11,8 +10,7 @@ import net.minecraft.util.Hand;
 public final class FamiliarOrders {
 
   public enum Order {
-    NONE,
-    NEXT_MODE,
+    WHEEL,
     GIVE,
     TAKE_BACK
   }
@@ -24,14 +22,15 @@ public final class FamiliarOrders {
       final boolean mainHand,
       final boolean emptyHand,
       final boolean sneaking,
+      final boolean carrying,
       final FamiliarMode mode) {
     if (!owner || !mainHand) {
-      return Order.NONE;
+      return Order.WHEEL;
     }
     if (emptyHand) {
-      return sneaking ? Order.TAKE_BACK : Order.NEXT_MODE;
+      return sneaking && carrying ? Order.TAKE_BACK : Order.WHEEL;
     }
-    return mode == FamiliarMode.CARRY && !sneaking ? Order.GIVE : Order.NONE;
+    return mode == FamiliarMode.CARRY && !sneaking ? Order.GIVE : Order.WHEEL;
   }
 
   static ActionResult interact(
@@ -43,47 +42,26 @@ public final class FamiliarOrders {
             hand == Hand.MAIN_HAND,
             held.isEmpty(),
             player.isSneaking(),
+            !familiar.carried().isEmpty(),
             familiar.mode());
-    if (order == Order.NONE) {
-      return ActionResult.PASS;
+    if (order == Order.WHEEL) {
+      return CommandWheel.use(player, hand, familiar);
     }
     if (familiar.getWorld().isClient) {
       return ActionResult.SUCCESS;
     }
-    switch (order) {
-      case NEXT_MODE -> {
-        final FamiliarMode next = familiar.mode().next();
-        familiar.order(next, player);
-        tell(player, next.translationKey(), familiar);
+    if (order == Order.GIVE) {
+      final ItemStack left = familiar.carried().addStack(held.copy());
+      if (left.getCount() == held.getCount()) {
+        tell(player, "nightborn.familiar.full", familiar);
+        return ActionResult.CONSUME;
       }
-      case GIVE -> {
-        final ItemStack left = familiar.carried().addStack(held.copy());
-        if (left.getCount() == held.getCount()) {
-          tell(player, "nightborn.familiar.full", familiar);
-          return ActionResult.CONSUME;
-        }
-        player.setStackInHand(hand, left);
-      }
-      case TAKE_BACK -> {
-        if (familiar.carried().isEmpty()) {
-          return ActionResult.PASS;
-        }
-        familiar.returnCarried(player);
-        tell(player, "nightborn.familiar.returned", familiar);
-      }
-      default -> {
-        return ActionResult.PASS;
-      }
+      player.setStackInHand(hand, left);
+    } else {
+      familiar.returnCarried(player);
+      tell(player, "nightborn.familiar.returned", familiar);
     }
-    familiar
-        .getWorld()
-        .playSound(
-            null,
-            familiar.getBlockPos(),
-            SoundEvents.PARTICLE_SOUL_ESCAPE.value(),
-            SoundCategory.NEUTRAL,
-            0.6F,
-            1.2F);
+    FamiliarModeOrders.whisper(familiar);
     return ActionResult.SUCCESS;
   }
 

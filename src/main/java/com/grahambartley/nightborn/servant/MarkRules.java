@@ -1,4 +1,4 @@
-package com.grahambartley.nightborn.familiar;
+package com.grahambartley.nightborn.servant;
 
 public final class MarkRules {
 

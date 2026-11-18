@@ -8,6 +8,12 @@ import com.grahambartley.nightborn.familiar.goal.StayHomeGoal;
 import com.grahambartley.nightborn.name.MobNaming;
 import com.grahambartley.nightborn.name.NameBearer;
 import com.grahambartley.nightborn.servant.ServantDeaths;
+import com.grahambartley.nightborn.servant.job.DayWorker;
+import com.grahambartley.nightborn.servant.job.JobOrder;
+import com.grahambartley.nightborn.servant.job.goal.GatherGoal;
+import com.grahambartley.nightborn.servant.job.goal.ScoutGoal;
+import com.grahambartley.nightborn.servant.job.goal.StandWatchGoal;
+import com.grahambartley.nightborn.servant.job.goal.WatchTargetGoal;
 import java.util.Optional;
 import java.util.UUID;
 import net.minecraft.entity.EntityType;
@@ -45,9 +51,7 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
 public class HumanFamiliarEntity extends PathAwareEntity
-    implements VillagerDataContainer, InventoryOwner, NameBearer {
-
-  public static final int CARRY_SLOTS = 8;
+    implements VillagerDataContainer, InventoryOwner, NameBearer, DayWorker {
 
   private static final TrackedData<VillagerData> VILLAGER_DATA =
       DataTracker.registerData(HumanFamiliarEntity.class, TrackedDataHandlerRegistry.VILLAGER_DATA);
@@ -59,8 +63,9 @@ public class HumanFamiliarEntity extends PathAwareEntity
   private static final String TURNED = "Turned";
   private static final String HOME = "Home";
   private static final String VILLAGER = "VillagerData";
+  private static final String JOB = "Job";
 
-  private final SimpleInventory carried = new SimpleInventory(CARRY_SLOTS);
+  private final SimpleInventory carried = new SimpleInventory(DayWorker.CARRY_SLOTS);
   @Nullable private UUID owner;
   private int loyalty = Loyalty.MAX;
   private long paidThroughDay;
@@ -68,6 +73,7 @@ public class HumanFamiliarEntity extends PathAwareEntity
   private boolean turned;
   @Nullable private BlockPos home;
   private int lastSlightedAge = Integer.MIN_VALUE;
+  @Nullable private JobOrder job;
 
   public HumanFamiliarEntity(final EntityType<? extends PathAwareEntity> type, final World world) {
     super(type, world);
@@ -92,6 +98,9 @@ public class HumanFamiliarEntity extends PathAwareEntity
   protected void initGoals() {
     goalSelector.add(0, new SwimGoal(this));
     goalSelector.add(2, new MeleeAttackGoal(this, 1.0, true));
+    goalSelector.add(3, new ScoutGoal<>(this));
+    goalSelector.add(3, new GatherGoal<>(this));
+    goalSelector.add(3, new StandWatchGoal<>(this));
     goalSelector.add(3, new RunErrandGoal(this));
     goalSelector.add(4, new StayHomeGoal(this));
     goalSelector.add(6, new WanderAroundFarGoal(this, 0.6));
@@ -100,6 +109,7 @@ public class HumanFamiliarEntity extends PathAwareEntity
     targetSelector.add(1, new RetaliateGoal(this));
     targetSelector.add(2, new BetrayOwnerGoal(this));
     targetSelector.add(3, new GuardCoffinGoal(this));
+    targetSelector.add(4, new WatchTargetGoal<>(this));
   }
 
   public void hire(
@@ -115,15 +125,13 @@ public class HumanFamiliarEntity extends PathAwareEntity
     lastDay = today;
     turned = false;
     home = hiredAt;
+    job = null;
     setPersistent();
   }
 
   @Override
   protected ActionResult interactMob(final PlayerEntity player, final Hand hand) {
-    if (getWorld() instanceof ServerWorld && isAlive()) {
-      return FamiliarCare.interact(this, player, hand);
-    }
-    return ActionResult.PASS;
+    return isAlive() ? FamiliarCare.interact(this, player, hand) : ActionResult.PASS;
   }
 
   @Override
@@ -211,8 +219,30 @@ public class HumanFamiliarEntity extends PathAwareEntity
     return carried;
   }
 
+  @Override
   public Optional<UUID> owner() {
     return Optional.ofNullable(owner);
+  }
+
+  @Override
+  public Optional<JobOrder> job() {
+    return Optional.ofNullable(job);
+  }
+
+  @Override
+  public void assign(final JobOrder order) {
+    job = order;
+    getNavigation().stop();
+  }
+
+  @Override
+  public void dismiss() {
+    job = null;
+  }
+
+  @Override
+  public boolean willWork() {
+    return !turned;
   }
 
   public boolean isOwnedBy(final PlayerEntity player) {
@@ -288,6 +318,12 @@ public class HumanFamiliarEntity extends PathAwareEntity
         .encodeStart(NbtOps.INSTANCE, getVillagerData())
         .result()
         .ifPresent(encoded -> nbt.put(VILLAGER, encoded));
+    if (job != null) {
+      JobOrder.CODEC
+          .encodeStart(NbtOps.INSTANCE, job)
+          .result()
+          .ifPresent(saved -> nbt.put(JOB, saved));
+    }
     writeInventory(nbt, getRegistryManager());
   }
 
@@ -306,6 +342,10 @@ public class HumanFamiliarEntity extends PathAwareEntity
           .result()
           .ifPresent(this::setVillagerData);
     }
+    job =
+        nbt.contains(JOB)
+            ? JobOrder.CODEC.parse(NbtOps.INSTANCE, nbt.get(JOB)).result().orElse(null)
+            : null;
     readInventory(nbt, getRegistryManager());
   }
 }

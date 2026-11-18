@@ -177,4 +177,14 @@ class SkillThemeTest {
       throw new IllegalStateException(e);
     }
   }
+
+  @ParameterizedTest(name = "{0}")
+  @EnumSource(SkillTree.class)
+  @DisplayName("the command wheel's ring is see-through a little and brightens under the pointer")
+  void ringColours(final SkillTree tree) {
+    final SkillTheme theme = SkillTheme.of(tree);
+    assertNotEquals(theme.ring(), theme.ringHover());
+    assertTrue((theme.ring() >>> 24) < 0xFF && (theme.ring() >>> 24) > 0x80);
+    assertTrue((theme.ringHover() >>> 24) > (theme.ring() >>> 24));
+  }
 }

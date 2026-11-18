@@ -12,7 +12,7 @@ class GuildVisitTest {
     "true, false, REFUSE",
     "true, true, REFUSE",
     "false, true, CLAIM",
-    "false, false, TRADE"
+    "false, false, WHEEL"
   })
   void vampiresAreRefusedAndHumansClaimOrTrade(
       final boolean vampire, final boolean finished, final GuildVisit visit) {

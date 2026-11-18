@@ -1,4 +1,4 @@
-package com.grahambartley.nightborn.familiar;
+package com.grahambartley.nightborn.servant;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -85,5 +85,20 @@ class ChestMarksTest {
 
   private static ChestMarks marks(final GlobalPos fetch, final GlobalPos deliver) {
     return new ChestMarks(Optional.ofNullable(fetch), Optional.ofNullable(deliver));
+  }
+
+  static Stream<Arguments> workChests() {
+    return Stream.of(
+        Arguments.of(ChestMarks.NONE, null),
+        Arguments.of(marks(A, null), A),
+        Arguments.of(marks(null, B), B),
+        Arguments.of(marks(A, B), B));
+  }
+
+  @ParameterizedTest
+  @MethodSource("workChests")
+  @DisplayName("a day job brings its goods to the deliver chest, or to the only chest marked")
+  void workChest(final ChestMarks marks, final GlobalPos chest) {
+    assertEquals(Optional.ofNullable(chest), marks.workChest());
   }
 }

@@ -5,6 +5,7 @@ import com.grahambartley.nightborn.config.MindSettings;
 import com.grahambartley.nightborn.mind.MindAttributes;
 import com.grahambartley.nightborn.mind.MindTies;
 import com.grahambartley.nightborn.name.ServantNaming;
+import com.grahambartley.nightborn.servant.ChestMarking;
 import com.grahambartley.nightborn.server.ServerConfigService;
 import java.util.UUID;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
@@ -42,6 +43,8 @@ public final class Thralls {
 
   public static void register() {
     FabricDefaultAttributeRegistry.register(THRALL, ThrallEntity.createThrallAttributes());
+    ThrallWheel.register();
+    ChestMarking.countServants((server, owner) -> ThrallRegistry.of(server).count(owner) > 0);
   }
 
   public static BindRules.Outcome mayBind(

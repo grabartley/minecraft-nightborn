@@ -1,8 +1,11 @@
-package com.grahambartley.nightborn.familiar;
+package com.grahambartley.nightborn.servant;
 
 import com.grahambartley.nightborn.Nightborn;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.function.BiPredicate;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -26,15 +29,22 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.GlobalPos;
 import net.minecraft.world.World;
 
-public final class FamiliarOrders {
+public final class ChestMarking {
 
   public static final TagKey<Block> ERRAND_CHESTS =
       TagKey.of(RegistryKeys.BLOCK, Identifier.of(Nightborn.MOD_ID, "familiar_errand_chests"));
 
-  private FamiliarOrders() {}
+  private static final List<BiPredicate<MinecraftServer, UUID>> ROSTERS =
+      new CopyOnWriteArrayList<>();
 
-  static void register() {
-    UseBlockCallback.EVENT.register(FamiliarOrders::onUseBlock);
+  private ChestMarking() {}
+
+  public static void register() {
+    UseBlockCallback.EVENT.register(ChestMarking::onUseBlock);
+  }
+
+  public static void countServants(final BiPredicate<MinecraftServer, UUID> roster) {
+    ROSTERS.add(roster);
   }
 
   private static ActionResult onUseBlock(
@@ -69,30 +79,26 @@ public final class FamiliarOrders {
     final World world = owner.getWorld();
     final BlockPos chestPos = oneHalf(world, pos);
     final BlockEntity container = world.getBlockEntity(chestPos);
-    if (!MarkRules.mayMark(
-        isErrandChest(world, chestPos),
-        owner.canModifyAt(world, chestPos),
-        !(container instanceof LockableContainerBlockEntity lockable)
-            || lockable.checkUnlocked(owner))) {
+    final MinecraftServer server = owner.getServer();
+    if (!leadsServants(server, owner.getUuid())
+        || !MarkRules.mayMark(
+            isErrandChest(world, chestPos),
+            owner.canModifyAt(world, chestPos),
+            !(container instanceof LockableContainerBlockEntity lockable)
+                || lockable.checkUnlocked(owner))) {
       return Optional.empty();
     }
-    final GlobalPos chest = GlobalPos.create(world.getRegistryKey(), chestPos);
-    final FamiliarRegistry registry = FamiliarRegistry.of(owner.getServer());
-    return registry
-        .bondOf(owner.getUuid())
-        .map(
-            bond -> {
-              final ChestMarks.Marked marked = bond.marks().mark(chest);
-              registry.update(owner.getUuid(), bond.withMarks(marked.marks()));
-              return marked.mark();
-            });
+    return Optional.of(
+        ServantChests.of(server)
+            .mark(owner.getUuid(), GlobalPos.create(world.getRegistryKey(), chestPos)));
+  }
+
+  public static boolean leadsServants(final MinecraftServer server, final UUID owner) {
+    return ROSTERS.stream().anyMatch(roster -> roster.test(server, owner));
   }
 
   public static void forget(final MinecraftServer server, final UUID owner, final GlobalPos chest) {
-    final FamiliarRegistry registry = FamiliarRegistry.of(server);
-    registry
-        .bondOf(owner)
-        .ifPresent(bond -> registry.update(owner, bond.withMarks(bond.marks().without(chest))));
+    ServantChests.of(server).forget(owner, chest);
   }
 
   private static BlockPos oneHalf(final World world, final BlockPos pos) {

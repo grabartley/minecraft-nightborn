@@ -2,17 +2,23 @@ package com.grahambartley.nightborn.occult;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import net.minecraft.util.Identifier;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
 class FamiliarModeTest {
 
-  @ParameterizedTest(name = "{0} -> {1}")
-  @CsvSource({"FIGHT, CARRY", "CARRY, SCOUT", "SCOUT, FIGHT"})
-  @DisplayName("speaking to a familiar walks it through fight, carry and scout in turn")
-  void next(final FamiliarMode mode, final FamiliarMode expected) {
-    assertEquals(expected, mode.next());
+  @ParameterizedTest(name = "{0} -> {1}, {2}")
+  @CsvSource({
+    "FIGHT, nightborn.familiar.order.fight, minecraft:iron_sword",
+    "CARRY, nightborn.familiar.order.carry, minecraft:chest",
+    "SCOUT, nightborn.familiar.order.scout, minecraft:ender_eye"
+  })
+  @DisplayName("each task has its own label and icon on the command wheel")
+  void wheel(final FamiliarMode mode, final String label, final String icon) {
+    assertEquals(label, mode.labelKey());
+    assertEquals(Identifier.of(icon), mode.icon());
   }
 
   @ParameterizedTest(name = "{0} -> {1}")
