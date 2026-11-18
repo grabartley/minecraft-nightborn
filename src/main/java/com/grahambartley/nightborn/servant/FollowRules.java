@@ -7,7 +7,18 @@ public final class FollowRules {
   static final double TELEPORT_DISTANCE = 24.0;
   static final double GUARD_RADIUS = 8.0;
 
+  static final int STAY_LEASH = 1;
+  static final int UNLEASHED = -1;
+
   private FollowRules() {}
+
+  public static int leash(final Stance mode) {
+    return switch (mode) {
+      case FOLLOW -> UNLEASHED;
+      case STAY -> STAY_LEASH;
+      case GUARD -> (int) GUARD_RADIUS;
+    };
+  }
 
   public static boolean follows(final Stance mode, final boolean ownerHere, final double distance) {
     return mode == Stance.FOLLOW && ownerHere && distance > START_DISTANCE;

@@ -1,5 +1,6 @@
 package com.grahambartley.nightborn.oldblood;
 
+import com.grahambartley.nightborn.house.Houses;
 import com.grahambartley.nightborn.mob.VampireEntity;
 import com.grahambartley.nightborn.server.ServerConfigService;
 import net.minecraft.block.Block;
@@ -7,8 +8,10 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.registry.RegistryWrapper;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
+import net.minecraft.util.math.GlobalPos;
 import net.minecraft.world.World;
 
 public class OldBloodFontBlockEntity extends BlockEntity {
@@ -68,6 +71,11 @@ public class OldBloodFontBlockEntity extends BlockEntity {
   }
 
   private boolean householdLives(final World world) {
+    if (world instanceof ServerWorld server
+        && Houses.get(server.getServer())
+            .seatNear(GlobalPos.create(world.getRegistryKey(), pos), HOUSEHOLD_REACH)) {
+      return true;
+    }
     return !world
         .getEntitiesByClass(
             VampireEntity.class,

@@ -22,6 +22,11 @@ public abstract class BossVampireEntity extends VampireEntity {
   }
 
   @Override
+  protected boolean answersEveryVampire() {
+    return true;
+  }
+
+  @Override
   protected void mobTick() {
     super.mobTick();
     showBar();

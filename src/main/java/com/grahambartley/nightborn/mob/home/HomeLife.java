@@ -45,6 +45,17 @@ public final class HomeLife {
     this.nextClaim = 0L;
   }
 
+  public void wander() {
+    this.home = null;
+    this.room = null;
+    this.coffin = null;
+  }
+
+  public void sendOut(final long night) {
+    outingNight = night;
+    decidedNight = night;
+  }
+
   public Optional<BlockPos> room() {
     return Optional.ofNullable(room);
   }

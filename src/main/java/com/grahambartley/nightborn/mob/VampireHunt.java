@@ -4,6 +4,7 @@ import com.grahambartley.nightborn.batform.BatForm;
 import com.grahambartley.nightborn.blood.BloodValue;
 import com.grahambartley.nightborn.config.NightbornConfig;
 import com.grahambartley.nightborn.downed.Downed;
+import com.grahambartley.nightborn.house.MemberLife;
 import com.grahambartley.nightborn.mob.combat.Grudge;
 import com.grahambartley.nightborn.mob.home.HomeLife;
 import com.grahambartley.nightborn.mob.home.MobBlood;
@@ -79,11 +80,11 @@ public final class VampireHunt {
       grudge.forgive(target);
       vampire.setTarget(null);
     }
-    homeLife.tick(vampire, blood.hungry(vampire, config), grudge.held(), config, setOutToFeed);
+    homeLife.tick(vampire, vampire.hungry(), grudge.held(), config, setOutToFeed);
   }
 
-  public void provokedBy(final LivingEntity attacker) {
-    if (!Vampires.isVampire(attacker)) {
+  public void provokedBy(final LivingEntity attacker, final boolean answers) {
+    if (!Vampires.isVampire(attacker) || answers) {
       grudge.provoke(attacker);
     }
   }
@@ -101,6 +102,7 @@ public final class VampireHunt {
     vampire.hiss();
     final NightbornConfig config = ServerConfigService.current();
     final float before = victim.getHealth();
+    final boolean out = homeLife.out(vampire, vampire.hungry());
     final boolean bitten =
         MobBite.bite(
             vampire,
@@ -111,6 +113,7 @@ public final class VampireHunt {
       vampire.onAttacking(victim);
       if (Prey.hasDrinkableBlood(victim)) {
         blood.drink(vampire, victim, BloodValue.taken(before, victim.getHealth()), config);
+        MemberLife.fed(vampire, victim, out);
       }
     }
     return bitten;
@@ -119,7 +122,7 @@ public final class VampireHunt {
   private Hunting.Pursuit pursuit(
       final VampireEntity vampire, final LivingEntity target, final boolean provoked) {
     final NightbornConfig config = ServerConfigService.current();
-    final boolean hungry = blood.hungry(vampire, config);
+    final boolean hungry = vampire.hungry();
     return new Hunting.Pursuit(
         Hunting.vampireHunts(vampire.getWorld()),
         hungry,

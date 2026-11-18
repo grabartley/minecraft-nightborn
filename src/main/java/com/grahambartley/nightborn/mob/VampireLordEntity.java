@@ -40,6 +40,7 @@ public class VampireLordEntity extends BossVampireEntity {
   static HouseholdArrival arrival(@Nullable final EntityData given) {
     return given instanceof HouseholdArrival arrival && !arrival.stages().isEmpty()
         ? arrival
-        : new HouseholdArrival(Map.of(STAGE, 1));
+        : new HouseholdArrival(
+            Map.of(STAGE, 1), given instanceof HouseholdArrival arrival && arrival.head());
   }
 }

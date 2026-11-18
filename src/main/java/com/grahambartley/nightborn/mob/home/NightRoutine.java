@@ -18,6 +18,10 @@ public final class NightRoutine {
     return Math.floorDiv(timeOfDay - NightTime.DUSK, NightTime.DAY_LENGTH);
   }
 
+  public static long comingNight(final boolean fixedTime, final long timeOfDay) {
+    return NightTime.isNight(fixedTime, timeOfDay) ? night(timeOfDay) : night(timeOfDay) + 1;
+  }
+
   public static boolean bedtime(final boolean fixedTime, final long timeOfDay) {
     return ShadeRules.sunIsNear(fixedTime, timeOfDay);
   }

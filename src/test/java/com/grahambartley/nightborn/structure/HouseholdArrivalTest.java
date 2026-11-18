@@ -18,7 +18,7 @@ class HouseholdArrivalTest {
   void copies(final int weight) {
     final Map<Identifier, Integer> odds = new HashMap<>();
     odds.put(Identifier.of("nightborn", "elder"), weight);
-    final HouseholdArrival arrival = new HouseholdArrival(odds);
+    final HouseholdArrival arrival = new HouseholdArrival(odds, false);
     odds.clear();
     assertEquals(Map.of(Identifier.of("nightborn", "elder"), weight), arrival.stages());
     assertThrows(UnsupportedOperationException.class, () -> arrival.stages().clear());

@@ -15,6 +15,7 @@ import com.grahambartley.nightborn.familiar.Familiars;
 import com.grahambartley.nightborn.gear.GearFeatures;
 import com.grahambartley.nightborn.gramophone.MusicDiscs;
 import com.grahambartley.nightborn.guild.GuildFeatures;
+import com.grahambartley.nightborn.house.HouseFeatures;
 import com.grahambartley.nightborn.hunt.HuntFeatures;
 import com.grahambartley.nightborn.hunter.HunterFeatures;
 import com.grahambartley.nightborn.mind.MindFeatures;
@@ -69,6 +70,7 @@ public class Nightborn implements ModInitializer {
     AccessoryFeatures.register();
     NightbornStructures.initialize();
     RitualFeatures.register();
+    HouseFeatures.register();
     LOGGER.info("Nightborn initialised");
   }
 }

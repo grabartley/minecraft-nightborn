@@ -25,6 +25,7 @@ public final class HouseholdPlanner {
 
   public static boolean calm(final VampireEntity vampire) {
     return vampire.homeLife().home().isPresent()
+        && vampire.householdTie().stance().isEmpty()
         && HouseholdCalm.calm(
             vampire.isSleeping(),
             vampire.getTarget() != null,

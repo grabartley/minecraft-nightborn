@@ -52,13 +52,14 @@ public final class HouseholdSpawner {
                       seat.getKey().resident().value(),
                       seat.getValue(),
                       seat.getKey().stages(),
+                      true,
                       centre,
                       random)
                   .ifPresent(settled::add);
             });
     final int count = household.residents().get(random);
     for (final BlockPos spot : HouseholdSpots.choose(spots, count, random, held)) {
-      spawn(world, household.resident().value(), spot, household.stages(), centre, random)
+      spawn(world, household.resident().value(), spot, household.stages(), false, centre, random)
           .ifPresent(settled::add);
     }
     return settled;
@@ -69,6 +70,7 @@ public final class HouseholdSpawner {
       final EntityType<?> type,
       final BlockPos spot,
       final Map<Identifier, Integer> stages,
+      final boolean head,
       final BlockPos centre,
       final Random random) {
     final Entity resident = type.create(world.toServerWorld());
@@ -82,7 +84,7 @@ public final class HouseholdSpawner {
           world,
           world.getLocalDifficulty(spot),
           SpawnReason.STRUCTURE,
-          new HouseholdArrival(stages));
+          new HouseholdArrival(stages, head));
       mob.setPersistent();
     }
     if (resident instanceof HouseholdMember member) {
