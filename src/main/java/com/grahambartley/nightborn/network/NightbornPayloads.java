@@ -28,5 +28,6 @@ public final class NightbornPayloads {
     PayloadTypeRegistry.playC2S().register(ReleaseBatHangPayload.ID, ReleaseBatHangPayload.CODEC);
     PayloadTypeRegistry.playC2S().register(NameServantPayload.ID, NameServantPayload.CODEC);
     PayloadTypeRegistry.playC2S().register(ChooseWheelPayload.ID, ChooseWheelPayload.CODEC);
+    PayloadTypeRegistry.playC2S().register(ChooseTitlePayload.ID, ChooseTitlePayload.CODEC);
   }
 }

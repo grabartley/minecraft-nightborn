@@ -3,6 +3,9 @@ package com.grahambartley.nightborn.decor;
 import com.grahambartley.nightborn.blood.BloodBottleItem;
 import com.grahambartley.nightborn.blood.BloodItems;
 import com.grahambartley.nightborn.blood.BloodQuality;
+import com.grahambartley.nightborn.challenge.Deed;
+import com.grahambartley.nightborn.challenge.DeedKinds;
+import com.grahambartley.nightborn.challenge.Deeds;
 import com.grahambartley.nightborn.vampire.Vampires;
 import java.util.Optional;
 import net.minecraft.entity.player.PlayerEntity;
@@ -57,7 +60,11 @@ public final class ChaliceUse {
         final BloodQuality quality = BloodBottleItem.qualityOf(stack);
         player.setStackInHand(
             hand, ItemUsage.exchangeStack(stack, player, new ItemStack(Items.GLASS_BOTTLE)));
-        yield changed(world, pos, player, contents.poured(quality), SoundEvents.ITEM_BOTTLE_EMPTY);
+        final ChaliceContents poured = contents.poured(quality);
+        if (poured.full() && !contents.full()) {
+          Deeds.record(player, Deed.of(DeedKinds.CHALICE_FILLED));
+        }
+        yield changed(world, pos, player, poured, SoundEvents.ITEM_BOTTLE_EMPTY);
       }
       case BOTTLE -> {
         player.setStackInHand(

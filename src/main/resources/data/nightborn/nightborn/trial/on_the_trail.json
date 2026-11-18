@@ -1,0 +1,12 @@
+{
+  "name": {
+    "translate": "nightborn.trial.on_the_trail"
+  },
+  "description": {
+    "translate": "nightborn.trial.on_the_trail.description"
+  },
+  "side": "hunter",
+  "deed": "nightborn:trail_followed",
+  "size": "medium",
+  "reward": "nightborn:guild_badge"
+}

@@ -1,0 +1,12 @@
+{
+  "name": {
+    "translate": "nightborn.trial.nobody_saw"
+  },
+  "description": {
+    "translate": "nightborn.trial.nobody_saw.description"
+  },
+  "side": "vampire",
+  "deed": "nightborn:suspicion_eased",
+  "gate": "nightborn:adult",
+  "size": "medium"
+}

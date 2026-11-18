@@ -99,7 +99,8 @@ class NightbornConfigTest {
             "age",
             "inquisitor",
             "households",
-            "villages"),
+            "villages",
+            "challenges"),
         NightbornConfig.sections());
   }
 

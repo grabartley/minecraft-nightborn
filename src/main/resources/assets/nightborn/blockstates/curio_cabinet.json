@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "nightborn:block/trophy/curio_cabinet"
+    },
+    "facing=east": {
+      "model": "nightborn:block/trophy/curio_cabinet",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "nightborn:block/trophy/curio_cabinet",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "nightborn:block/trophy/curio_cabinet",
+      "y": 270
+    }
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "nightborn:block/trophy/small_gilt_throne"
+    },
+    "facing=east": {
+      "model": "nightborn:block/trophy/small_gilt_throne",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "nightborn:block/trophy/small_gilt_throne",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "nightborn:block/trophy/small_gilt_throne",
+      "y": 270
+    }
+  }
+}

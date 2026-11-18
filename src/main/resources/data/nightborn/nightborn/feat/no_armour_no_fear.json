@@ -1,0 +1,18 @@
+{
+  "name": {
+    "translate": "nightborn.feat.no_armour_no_fear"
+  },
+  "description": {
+    "translate": "nightborn.feat.no_armour_no_fear.description"
+  },
+  "title": {
+    "translate": "nightborn.feat.no_armour_no_fear.title"
+  },
+  "side": "hunter",
+  "deed": "nightborn:eldest_ended",
+  "facts": {
+    "staker": "true",
+    "armoured": "false"
+  },
+  "trophy": "nightborn:eldest_crown_cushion"
+}

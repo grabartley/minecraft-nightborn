@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "nightborn:block/trophy/ash_urn"
+    },
+    "facing=east": {
+      "model": "nightborn:block/trophy/ash_urn",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "nightborn:block/trophy/ash_urn",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "nightborn:block/trophy/ash_urn",
+      "y": 270
+    }
+  }
+}

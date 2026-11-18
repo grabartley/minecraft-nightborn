@@ -2,6 +2,7 @@ package com.grahambartley.nightborn;
 
 import com.grahambartley.nightborn.accessory.AccessoryFeatures;
 import com.grahambartley.nightborn.advancement.MilestoneCriterion;
+import com.grahambartley.nightborn.challenge.ChallengeFeatures;
 import com.grahambartley.nightborn.clothing.ClothingFeatures;
 import com.grahambartley.nightborn.coffin.Coffins;
 import com.grahambartley.nightborn.decor.DecorBlockEntities;
@@ -81,6 +82,7 @@ public class Nightborn implements ModInitializer {
     RitualFeatures.register();
     HouseFeatures.register();
     VillageFeatures.register();
+    ChallengeFeatures.register();
     LOGGER.info("Nightborn initialised");
   }
 }

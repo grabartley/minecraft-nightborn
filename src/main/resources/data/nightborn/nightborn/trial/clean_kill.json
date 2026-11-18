@@ -1,0 +1,13 @@
+{
+  "name": {
+    "translate": "nightborn.trial.clean_kill"
+  },
+  "description": {
+    "translate": "nightborn.trial.clean_kill.description"
+  },
+  "side": "hunter",
+  "deed": "nightborn:vampire_staked",
+  "count": 3,
+  "within": "one_night",
+  "size": "medium"
+}

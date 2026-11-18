@@ -1,0 +1,17 @@
+{
+  "name": {
+    "translate": "nightborn.feat.bare_to_the_blade"
+  },
+  "description": {
+    "translate": "nightborn.feat.bare_to_the_blade.description"
+  },
+  "title": {
+    "translate": "nightborn.feat.bare_to_the_blade.title"
+  },
+  "side": "vampire",
+  "deed": "nightborn:inquisitor_drained",
+  "facts": {
+    "armoured": "false"
+  },
+  "trophy": "nightborn:broken_greatsword_mount"
+}

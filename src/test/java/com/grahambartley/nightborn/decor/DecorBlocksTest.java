@@ -60,7 +60,9 @@ class DecorBlocksTest {
     "wanted_poster, com.grahambartley.nightborn.decor.PictureBlock",
     "trophy_mount, com.grahambartley.nightborn.decor.WallDecorBlock",
     "portrait, com.grahambartley.nightborn.decor.PictureBlock",
-    "gargoyle, com.grahambartley.nightborn.decor.StatueBlock"
+    "gargoyle, com.grahambartley.nightborn.decor.StatueBlock",
+    "ash_urn, com.grahambartley.nightborn.decor.StatueBlock",
+    "curio_cabinet, com.grahambartley.nightborn.decor.StatueBlock"
   })
   void buildsEachMemberFromTheMatchingShape(final String id, final Class<?> kind) {
     assertTrue(kind.isInstance(DecorBlocks.get(id)));

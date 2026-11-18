@@ -1,0 +1,12 @@
+{
+  "name": {
+    "translate": "nightborn.trial.bat_season"
+  },
+  "description": {
+    "translate": "nightborn.trial.bat_season.description"
+  },
+  "side": "hunter",
+  "deed": "nightborn:vampire_bat_killed",
+  "count": 3,
+  "size": "small"
+}

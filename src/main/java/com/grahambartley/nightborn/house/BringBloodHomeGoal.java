@@ -2,6 +2,9 @@ package com.grahambartley.nightborn.house;
 
 import com.grahambartley.nightborn.blood.BloodBottleItem;
 import com.grahambartley.nightborn.blood.BloodQuality;
+import com.grahambartley.nightborn.challenge.Deed;
+import com.grahambartley.nightborn.challenge.DeedKinds;
+import com.grahambartley.nightborn.challenge.Deeds;
 import com.grahambartley.nightborn.mob.VampireEntity;
 import com.grahambartley.nightborn.mob.home.HomeCoffins;
 import java.util.EnumSet;
@@ -63,6 +66,8 @@ public class BringBloodHomeGoal extends Goal {
       if (!BloodStore.deposit(world, store.get(), carried.get())) {
         member.dropStack(BloodBottleItem.of(carried.get()));
       }
+      Deeds.record(
+          world.getServer(), member.householdTie().lord(), Deed.of(DeedKinds.BLOOD_BROUGHT_HOME));
       member.householdTie().delivered();
       return;
     }

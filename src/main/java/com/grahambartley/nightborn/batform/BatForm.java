@@ -22,6 +22,7 @@ import net.fabricmc.fabric.api.attachment.v1.AttachmentRegistry;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentSyncPredicate;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentType;
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityDimensions;
 import net.minecraft.entity.LivingEntity;
@@ -58,6 +59,8 @@ public final class BatForm {
     BatFormLimits.register();
     BatHang.register();
     ServerLivingEntityEvents.AFTER_DAMAGE.register(BatForm::afterDamage);
+    ServerPlayConnectionEvents.DISCONNECT.register(
+        (handler, server) -> BatFlightLog.forget(handler.getPlayer().getUuid()));
   }
 
   private static SoundEvent sound(final String path) {
@@ -134,6 +137,7 @@ public final class BatForm {
     vampire.fallDistance = 0.0F;
     if (vampire instanceof ServerPlayerEntity player) {
       BatHang.tick(player);
+      BatFlightLog.tick(player);
     }
   }
 

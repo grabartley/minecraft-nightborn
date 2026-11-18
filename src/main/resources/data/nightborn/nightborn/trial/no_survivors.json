@@ -1,0 +1,12 @@
+{
+  "name": {
+    "translate": "nightborn.trial.no_survivors"
+  },
+  "description": {
+    "translate": "nightborn.trial.no_survivors.description"
+  },
+  "side": "vampire",
+  "deed": "nightborn:raiding_party_beaten",
+  "gate": "nightborn:elder",
+  "size": "large"
+}

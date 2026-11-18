@@ -1,0 +1,12 @@
+{
+  "name": {
+    "translate": "nightborn.trial.the_last_drop"
+  },
+  "description": {
+    "translate": "nightborn.trial.the_last_drop.description"
+  },
+  "side": "vampire",
+  "deed": "nightborn:finisher_kill",
+  "count": 5,
+  "size": "medium"
+}

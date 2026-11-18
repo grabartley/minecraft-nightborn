@@ -1,0 +1,15 @@
+{
+  "name": {
+    "translate": "nightborn.trial.house_clearance"
+  },
+  "description": {
+    "translate": "nightborn.trial.house_clearance.description"
+  },
+  "side": "hunter",
+  "deed": "nightborn:household_cleared",
+  "facts": {
+    "castle": "true"
+  },
+  "gate": "nightborn:veteran",
+  "size": "large"
+}

@@ -1,0 +1,18 @@
+{
+  "name": {
+    "translate": "nightborn.feat.the_quiet_hand"
+  },
+  "description": {
+    "translate": "nightborn.feat.the_quiet_hand.description"
+  },
+  "title": {
+    "translate": "nightborn.feat.the_quiet_hand.title"
+  },
+  "side": "hunter",
+  "deed": "nightborn:household_cleared_unwoken",
+  "facts": {
+    "by_day": "true"
+  },
+  "count": 5,
+  "trophy": "nightborn:soft_boots_stand"
+}

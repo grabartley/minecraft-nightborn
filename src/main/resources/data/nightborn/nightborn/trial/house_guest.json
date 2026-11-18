@@ -1,0 +1,12 @@
+{
+  "name": {
+    "translate": "nightborn.trial.house_guest"
+  },
+  "description": {
+    "translate": "nightborn.trial.house_guest.description"
+  },
+  "side": "vampire",
+  "deed": "nightborn:house_guest",
+  "gate": "nightborn:adult",
+  "size": "medium"
+}

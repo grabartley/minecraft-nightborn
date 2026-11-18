@@ -2,11 +2,15 @@ package com.grahambartley.nightborn.village;
 
 import com.grahambartley.nightborn.accessory.GiftAttributes;
 import com.grahambartley.nightborn.accessory.GiftScale;
+import com.grahambartley.nightborn.challenge.Deed;
+import com.grahambartley.nightborn.challenge.DeedKinds;
+import com.grahambartley.nightborn.challenge.Deeds;
 import com.grahambartley.nightborn.config.VillageSettings;
 import com.grahambartley.nightborn.core.NightTime;
 import com.grahambartley.nightborn.familiar.FamiliarRegistry;
 import com.grahambartley.nightborn.server.ServerConfigService;
 import com.grahambartley.nightborn.thrall.ThrallRegistry;
+import com.grahambartley.nightborn.vampire.Vampires;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.function.UnaryOperator;
@@ -18,6 +22,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.GlobalPos;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.poi.PointOfInterestStorage;
 import net.minecraft.world.poi.PointOfInterestTypes;
 
@@ -127,11 +132,26 @@ public final class VillageSuspicion {
       final ServerWorld world, final BlockPos bell, final UnaryOperator<VillageRecord> change) {
     final Villages villages = Villages.of(world);
     final long night = night(world);
-    final VillageRecord settled =
-        settle(world, villages.at(bell).orElseGet(() -> VillageRecord.fresh(night)), night);
+    final VillageRecord stored = villages.at(bell).orElseGet(() -> VillageRecord.fresh(night));
+    final VillageRecord settled = settle(world, stored, night);
     final VillageRecord changed = change.apply(settled);
     villages.put(bell, changed);
+    if (VillageStep.eased(
+        VillageStep.of(stored.suspicion(), settings()),
+        VillageStep.of(changed.suspicion(), settings()))) {
+      eased(world, bell);
+    }
     return changed;
+  }
+
+  private static void eased(final ServerWorld world, final BlockPos bell) {
+    final double reach = settings().villageReach();
+    world
+        .getPlayers(
+            player ->
+                Vampires.isVampire(player)
+                    && player.squaredDistanceTo(Vec3d.ofCenter(bell)) <= reach * reach)
+        .forEach(player -> Deeds.record(player, Deed.of(DeedKinds.SUSPICION_EASED)));
   }
 
   private static VillageRecord settle(

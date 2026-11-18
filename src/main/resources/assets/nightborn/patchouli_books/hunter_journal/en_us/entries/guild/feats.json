@@ -1,0 +1,17 @@
+{
+  "name": "nightborn.journal.hunter.feats",
+  "icon": "nightborn:bronze_garlic_wreath",
+  "category": "nightborn:guild",
+  "advancement": "nightborn:sworn_in",
+  "secret": true,
+  "sortnum": 5,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "nightborn.journal.hunter.feats.1"
+    },
+    {
+      "type": "nightborn:feats"
+    }
+  ]
+}

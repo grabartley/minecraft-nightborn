@@ -18,6 +18,10 @@ public enum VillageStep {
     return suspicion >= settings.waryAt() ? WARY : CALM;
   }
 
+  public static boolean eased(final VillageStep before, final VillageStep after) {
+    return before.atLeast(WARY) && !after.atLeast(WARY);
+  }
+
   public boolean atLeast(final VillageStep other) {
     return ordinal() >= other.ordinal();
   }

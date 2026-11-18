@@ -1,0 +1,25 @@
+{
+  "name": {
+    "translate": "nightborn.feat.a_full_table"
+  },
+  "description": {
+    "translate": "nightborn.feat.a_full_table.description"
+  },
+  "title": {
+    "translate": "nightborn.feat.a_full_table.title"
+  },
+  "side": "vampire",
+  "deed": "nightborn:night_lived",
+  "facts": {
+    "castle_full": "true"
+  },
+  "count": 7,
+  "reset_by": {
+    "deed": "nightborn:night_lived",
+    "facts": {
+      "castle_full": "false"
+    }
+  },
+  "trophy": "nightborn:small_gilt_throne",
+  "reward": "nightborn:lords_mantle"
+}

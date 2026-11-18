@@ -1,0 +1,22 @@
+{
+  "name": {
+    "translate": "nightborn.trial.master_of_the_house"
+  },
+  "description": {
+    "translate": "nightborn.trial.master_of_the_house.description"
+  },
+  "side": "vampire",
+  "deed": "nightborn:night_lived",
+  "facts": {
+    "house_full": "true"
+  },
+  "count": 7,
+  "reset_by": {
+    "deed": "nightborn:night_lived",
+    "facts": {
+      "house_full": "false"
+    }
+  },
+  "gate": "nightborn:elder",
+  "size": "large"
+}

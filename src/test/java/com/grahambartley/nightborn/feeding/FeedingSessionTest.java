@@ -115,4 +115,19 @@ class FeedingSessionTest {
         new Vec3d(first, 64.0, first), session.biterAnchorAt(new Vec3d(first, 64.0, first)));
     assertEquals(new Vec3d(first, 64.0, first), session.biterAnchorAt(new Vec3d(then, 64.0, then)));
   }
+
+  @ParameterizedTest(name = "seen marked {0}, gift marked {1}")
+  @CsvSource({"true, false", "false, true", "true, true", "false, false"})
+  @DisplayName("a feeding remembers whether it was seen and whether its gift was taken")
+  void remembersSeenAndGift(final boolean seen, final boolean gift) {
+    final FeedingSession session = session();
+    if (seen) {
+      session.markSeen();
+    }
+    if (gift) {
+      session.markGiftTaken();
+    }
+    assertEquals(seen, session.seen());
+    assertEquals(gift, session.giftTaken());
+  }
 }

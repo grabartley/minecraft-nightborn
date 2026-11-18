@@ -49,4 +49,17 @@ class SkillEarningTest {
   void paysVampire(final boolean vampire, final int experience, final boolean paid) {
     assertEquals(paid, SkillEarning.paysVampire(vampire, experience));
   }
+
+  @ParameterizedTest(name = "a share of {1} with {0} earned, first {2}, rise {3}% pays {4}")
+  @CsvSource({
+    "0, 1.0, 100, 3, 100",
+    "0, 0.25, 100, 3, 25",
+    "0, 0.5, 100, 3, 50",
+    "10, 1.0, 100, 10, 259",
+    "0, -1.0, 100, 3, 0"
+  })
+  void trialExperience(
+      final int earned, final float share, final int first, final int rise, final float paid) {
+    assertEquals(paid, SkillEarning.trialExperience(earned, share, first, rise), 0.0001F);
+  }
 }

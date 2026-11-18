@@ -1,0 +1,19 @@
+{
+  "name": {
+    "translate": "nightborn.trial.sprung"
+  },
+  "description": {
+    "translate": "nightborn.trial.sprung.description"
+  },
+  "side": "hunter",
+  "deed": "nightborn:trapped",
+  "count": 5,
+  "gate": "nightborn:hunter",
+  "skills": [
+    "nightborn:trapper/snare",
+    "nightborn:trapper/net_shot",
+    "nightborn:trapper/flash_trap"
+  ],
+  "size": "medium",
+  "reward": "nightborn:trappers_pouch"
+}

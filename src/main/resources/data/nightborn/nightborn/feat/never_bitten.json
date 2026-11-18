@@ -1,0 +1,20 @@
+{
+  "name": {
+    "translate": "nightborn.feat.never_bitten"
+  },
+  "description": {
+    "translate": "nightborn.feat.never_bitten.description"
+  },
+  "title": {
+    "translate": "nightborn.feat.never_bitten.title"
+  },
+  "side": "hunter",
+  "deed": "nightborn:rank_reached",
+  "facts": {
+    "top": "true"
+  },
+  "spoiled_by": {
+    "deed": "nightborn:bitten"
+  },
+  "trophy": "nightborn:bronze_garlic_wreath"
+}

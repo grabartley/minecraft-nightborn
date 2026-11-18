@@ -1,0 +1,23 @@
+{
+  "name": {
+    "translate": "nightborn.trial.bound"
+  },
+  "description": {
+    "translate": "nightborn.trial.bound.description"
+  },
+  "side": "vampire",
+  "deed": "nightborn:night_lived",
+  "facts": {
+    "thrall": "true"
+  },
+  "count": 3,
+  "reset_by": {
+    "deed": "nightborn:thrall_lost"
+  },
+  "gate": "nightborn:adult",
+  "skills": [
+    "nightborn:noble/blood_bond"
+  ],
+  "size": "medium",
+  "reward": "nightborn:thrall_keepers_ring"
+}

@@ -1,5 +1,8 @@
 package com.grahambartley.nightborn.house;
 
+import com.grahambartley.nightborn.challenge.Deed;
+import com.grahambartley.nightborn.challenge.DeedKinds;
+import com.grahambartley.nightborn.challenge.Deeds;
 import com.grahambartley.nightborn.decor.ChaliceBlock;
 import com.grahambartley.nightborn.decor.ChaliceContents;
 import com.grahambartley.nightborn.decor.DecorBlocks;
@@ -54,7 +57,11 @@ public final class ChaliceInvitation {
     }
     Houses.get(lord.getServer())
         .ledBy(lord.getUuid())
-        .ifPresent(house -> MemberLife.join(lord.getServerWorld(), guest, house));
+        .ifPresent(
+            house -> {
+              MemberLife.join(lord.getServerWorld(), guest, house);
+              Deeds.record(lord, Deed.of(DeedKinds.HOUSE_GUEST));
+            });
     if (!lord.getAbilities().creativeMode) {
       lord.setStackInHand(hand, ChaliceBlock.item(ChaliceContents.EMPTY));
     }

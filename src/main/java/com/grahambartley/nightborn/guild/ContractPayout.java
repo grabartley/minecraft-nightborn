@@ -1,5 +1,8 @@
 package com.grahambartley.nightborn.guild;
 
+import com.grahambartley.nightborn.challenge.Deed;
+import com.grahambartley.nightborn.challenge.DeedKinds;
+import com.grahambartley.nightborn.challenge.Deeds;
 import com.grahambartley.nightborn.config.SkillSettings;
 import com.grahambartley.nightborn.skill.SkillEarning;
 import net.minecraft.item.ItemStack;
@@ -34,6 +37,7 @@ public final class ContractPayout {
             .build(LootContextTypes.GIFT);
     table.generateLoot(parameters).forEach(stack -> hunter.getInventory().offerOrDrop(stack));
     SkillEarning.fromContract(hunter, settings);
+    Deeds.record(hunter, Deed.of(DeedKinds.CONTRACT_FINISHED));
     hunter.sendMessage(Text.translatable("nightborn.contract.paid", contract.description()), true);
     world.playSound(
         null,

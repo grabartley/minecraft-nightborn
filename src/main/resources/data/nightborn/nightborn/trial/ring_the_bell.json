@@ -1,0 +1,15 @@
+{
+  "name": {
+    "translate": "nightborn.trial.ring_the_bell"
+  },
+  "description": {
+    "translate": "nightborn.trial.ring_the_bell.description"
+  },
+  "side": "vampire",
+  "deed": "nightborn:inquisitor_drained",
+  "facts": {
+    "rang_bell": "true"
+  },
+  "gate": "nightborn:elder",
+  "size": "large"
+}

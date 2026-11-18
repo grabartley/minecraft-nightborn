@@ -1,0 +1,12 @@
+{
+  "name": {
+    "translate": "nightborn.trial.suns_work"
+  },
+  "description": {
+    "translate": "nightborn.trial.suns_work.description"
+  },
+  "side": "hunter",
+  "deed": "nightborn:sun_finished",
+  "count": 3,
+  "size": "medium"
+}

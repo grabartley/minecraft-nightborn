@@ -1,0 +1,13 @@
+{
+  "name": {
+    "translate": "nightborn.trial.paid_in_full"
+  },
+  "description": {
+    "translate": "nightborn.trial.paid_in_full.description"
+  },
+  "side": "hunter",
+  "deed": "nightborn:contract_finished",
+  "count": 3,
+  "size": "medium",
+  "reward": "nightborn:saints_medal"
+}

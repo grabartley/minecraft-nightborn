@@ -1,0 +1,16 @@
+{
+  "name": {
+    "translate": "nightborn.trial.seen_through"
+  },
+  "description": {
+    "translate": "nightborn.trial.seen_through.description"
+  },
+  "side": "hunter",
+  "deed": "nightborn:seen_through",
+  "count": 3,
+  "measure": "distinct",
+  "key": "vampire",
+  "gate": "nightborn:hunter",
+  "size": "medium",
+  "reward": "nightborn:lantern_lens_goggles"
+}

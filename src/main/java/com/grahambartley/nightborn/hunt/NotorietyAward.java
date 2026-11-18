@@ -3,6 +3,9 @@ package com.grahambartley.nightborn.hunt;
 import com.grahambartley.nightborn.age.AgeAttachment;
 import com.grahambartley.nightborn.age.AgeLadder;
 import com.grahambartley.nightborn.boss.BossWard;
+import com.grahambartley.nightborn.challenge.Deed;
+import com.grahambartley.nightborn.challenge.DeedKinds;
+import com.grahambartley.nightborn.challenge.Deeds;
 import com.grahambartley.nightborn.inquisitor.GrandInquisitorEntity;
 import com.grahambartley.nightborn.mob.VampireEntity;
 import com.grahambartley.nightborn.servant.Servants;
@@ -51,9 +54,9 @@ public final class NotorietyAward {
     }
     final double multiplier =
         AgeLadder.of(server.getRegistryManager()).notoriety(AgeAttachment.get(vampire).rank());
-    Hunts.add(
-        vampire,
-        NotorietyKill.worth(kills, victim.getType()::isIn, BandCheck.last(victim), multiplier));
+    final boolean last = BandCheck.last(victim);
+    Hunts.add(vampire, NotorietyKill.worth(kills, victim.getType()::isIn, last, multiplier));
+    Deeds.record(vampire, Deed.of(DeedKinds.HUNTER_KILLED).with(DeedKinds.LAST, last));
   }
 
   static Optional<UUID> master(final Entity killer) {

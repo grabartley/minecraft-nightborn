@@ -1,0 +1,20 @@
+{
+  "name": {
+    "translate": "nightborn.feat.never_staked"
+  },
+  "description": {
+    "translate": "nightborn.feat.never_staked.description"
+  },
+  "title": {
+    "translate": "nightborn.feat.never_staked.title"
+  },
+  "side": "vampire",
+  "deed": "nightborn:stage_reached",
+  "facts": {
+    "top": "true"
+  },
+  "spoiled_by": {
+    "deed": "nightborn:staked"
+  },
+  "trophy": "nightborn:cracked_stake_dome"
+}

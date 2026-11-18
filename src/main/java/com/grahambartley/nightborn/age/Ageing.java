@@ -1,5 +1,9 @@
 package com.grahambartley.nightborn.age;
 
+import com.grahambartley.nightborn.challenge.Deed;
+import com.grahambartley.nightborn.challenge.DeedKinds;
+import com.grahambartley.nightborn.challenge.Deeds;
+import com.grahambartley.nightborn.challenge.NightDeeds;
 import com.grahambartley.nightborn.config.AgeSettings;
 import com.grahambartley.nightborn.mob.stage.StageDeed;
 import com.grahambartley.nightborn.name.StageNames;
@@ -28,6 +32,7 @@ public final class Ageing {
       }
       if (step.nightsLived() > 0) {
         settle(vampire, AgeAttachment.get(vampire).lived(step.nightsLived()), settings);
+        NightDeeds.lived(vampire, step.nightsLived());
       }
     }
     AgeBody.apply(vampire, settings);
@@ -88,7 +93,18 @@ public final class Ageing {
     if (settled.rank() > before) {
       changed(vampire);
       for (int rank = before + 1; rank <= settled.rank(); rank++) {
-        ladder.rung(rank).ifPresent(rung -> herald(vampire, rung));
+        final boolean top = ladder.top(rank);
+        ladder
+            .rung(rank)
+            .ifPresent(
+                rung -> {
+                  herald(vampire, rung);
+                  Deeds.record(
+                      vampire,
+                      Deed.of(DeedKinds.STAGE_REACHED)
+                          .with(DeedKinds.STAGE, rung.id())
+                          .with(DeedKinds.TOP, top));
+                });
       }
     }
   }

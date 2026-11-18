@@ -1,0 +1,17 @@
+{
+  "name": {
+    "translate": "nightborn.trial.shepherd"
+  },
+  "description": {
+    "translate": "nightborn.trial.shepherd.description"
+  },
+  "side": "hunter",
+  "deed": "nightborn:prayer_healed",
+  "count": 100,
+  "gate": "nightborn:hunter",
+  "skills": [
+    "nightborn:faithful/mend"
+  ],
+  "size": "medium",
+  "reward": "nightborn:saints_ring"
+}

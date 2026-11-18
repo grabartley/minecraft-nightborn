@@ -1,0 +1,12 @@
+{
+  "name": {
+    "translate": "nightborn.trial.up_all_day"
+  },
+  "description": {
+    "translate": "nightborn.trial.up_all_day.description"
+  },
+  "side": "vampire",
+  "deed": "nightborn:woke_rested",
+  "count": 3,
+  "size": "small"
+}

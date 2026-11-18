@@ -1,0 +1,14 @@
+{
+  "name": {
+    "translate": "nightborn.trial.watchman"
+  },
+  "description": {
+    "translate": "nightborn.trial.watchman.description"
+  },
+  "side": "hunter",
+  "deed": "nightborn:vampire_staked",
+  "facts": {
+    "in_village": "true"
+  },
+  "size": "medium"
+}

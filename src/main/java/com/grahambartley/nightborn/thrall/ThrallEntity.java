@@ -1,5 +1,8 @@
 package com.grahambartley.nightborn.thrall;
 
+import com.grahambartley.nightborn.challenge.Deed;
+import com.grahambartley.nightborn.challenge.DeedKinds;
+import com.grahambartley.nightborn.challenge.Deeds;
 import com.grahambartley.nightborn.name.MobNaming;
 import com.grahambartley.nightborn.name.NameBearer;
 import com.grahambartley.nightborn.servant.Servant;
@@ -142,6 +145,7 @@ public class ThrallEntity extends PathAwareEntity
     super.onDeath(source);
     if (getWorld() instanceof ServerWorld world) {
       owner().ifPresent(id -> ThrallRegistry.of(world.getServer()).free(id, getUuid()));
+      Deeds.record(world.getServer(), owner(), Deed.of(DeedKinds.THRALL_LOST));
       ServantDeaths.tell(this, owner());
     }
   }

@@ -1,0 +1,14 @@
+{
+  "name": {
+    "translate": "nightborn.trial.well_stocked"
+  },
+  "description": {
+    "translate": "nightborn.trial.well_stocked.description"
+  },
+  "side": "hunter",
+  "deed": "nightborn:coated_hit",
+  "count": 2,
+  "measure": "distinct",
+  "key": "coating",
+  "size": "small"
+}

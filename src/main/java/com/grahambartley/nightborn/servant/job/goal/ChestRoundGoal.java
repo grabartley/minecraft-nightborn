@@ -1,5 +1,9 @@
 package com.grahambartley.nightborn.servant.job.goal;
 
+import com.grahambartley.nightborn.blood.BloodItems;
+import com.grahambartley.nightborn.challenge.Deed;
+import com.grahambartley.nightborn.challenge.DeedKinds;
+import com.grahambartley.nightborn.challenge.Deeds;
 import com.grahambartley.nightborn.familiar.ErrandTransfer;
 import com.grahambartley.nightborn.familiar.FamiliarClock;
 import com.grahambartley.nightborn.servant.ChestMarking;
@@ -139,7 +143,15 @@ public abstract class ChestRoundGoal<T extends PathAwareEntity & DayWorker> exte
       enter(Leg.END);
       return;
     }
+    final int bottles = worker.getInventory().count(BloodItems.BLOOD_BOTTLE);
     ErrandTransfer.deliverAll(worker.getInventory(), into);
+    final int delivered = bottles - worker.getInventory().count(BloodItems.BLOOD_BOTTLE);
+    if (delivered > 0) {
+      Deeds.record(
+          world.getServer(),
+          worker.owner(),
+          Deed.of(DeedKinds.BLOOD_BROUGHT_HOME).times(delivered));
+    }
     final boolean deliveredAll = worker.getInventory().isEmpty();
     if (deliveredAll && !nothingLeft) {
       stock(into);

@@ -1,0 +1,13 @@
+{
+  "name": {
+    "translate": "nightborn.trial.home_delivery"
+  },
+  "description": {
+    "translate": "nightborn.trial.home_delivery.description"
+  },
+  "side": "vampire",
+  "deed": "nightborn:blood_brought_home",
+  "count": 10,
+  "gate": "nightborn:adult",
+  "size": "small"
+}
