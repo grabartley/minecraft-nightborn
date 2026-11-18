@@ -50,6 +50,7 @@ final class StageFixtures {
         0,
         0,
         Optional.empty(),
+        Optional.empty(),
         List.of(SkillRank.costing(cost)),
         Optional.empty());
   }

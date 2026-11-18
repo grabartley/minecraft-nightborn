@@ -38,6 +38,7 @@
       "com.grahambartley.nightborn.gametest.HunterCampGameTest",
       "com.grahambartley.nightborn.gametest.BloodHunterDecorGameTest",
       "com.grahambartley.nightborn.gametest.FactionGameTest",
+      "com.grahambartley.nightborn.gametest.RankGameTest",
       "com.grahambartley.nightborn.gametest.FeedingGameTest",
       "com.grahambartley.nightborn.gametest.DownedGameTest",
       "com.grahambartley.nightborn.gametest.DownedTargetingGameTest",

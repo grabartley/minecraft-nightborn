@@ -26,6 +26,7 @@ public final class SkillTooltip {
       int maxRank,
       List<Identifier> requires,
       Optional<Identifier> stage,
+      Optional<Identifier> guildRank,
       Optional<Power> power) {
 
     public static Facts of(final Skill skill, final int rank) {
@@ -35,6 +36,7 @@ public final class SkillTooltip {
           skill.maxRank(),
           skill.requires(),
           skill.stage(),
+          skill.rank(),
           skill.power().map(p -> new Power(p.blood(), p.cooldownTicks())));
     }
   }
@@ -76,6 +78,15 @@ public final class SkillTooltip {
                 lines.add(
                     Text.translatable(
                             "nightborn.skills.stage", Text.translatable(SkillNames.stage(stage)))
+                        .formatted(Formatting.WHITE)));
+    facts
+        .guildRank()
+        .ifPresent(
+            rank ->
+                lines.add(
+                    Text.translatable(
+                            "nightborn.skills.guild_rank",
+                            Text.translatable(SkillNames.guildRank(rank)))
                         .formatted(Formatting.WHITE)));
     facts.power().ifPresent(shown -> lines.add(powerLine(shown)));
     lines.add(status(verdict, tree, facts.rank()));

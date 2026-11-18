@@ -2,6 +2,13 @@ package com.grahambartley.nightborn.guild;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.util.Arrays;
+import java.util.List;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
+import net.minecraft.village.TradeOffer;
+import net.minecraft.village.TradeOfferList;
+import net.minecraft.village.TradedItem;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -47,5 +54,30 @@ class GuildCounterTest {
       final boolean hunter,
       final boolean open) {
     assertEquals(open, kind.openTo(vampire, hunter));
+  }
+
+  @ParameterizedTest(name = "needs {0}, guild rank {1} -> shown {2}")
+  @CsvSource({
+    "'0, 1, 2', 0, '1'",
+    "'0, 1, 2', 1, '1, 2'",
+    "'0, 1, 2', 3, '1, 2, 3'",
+    "'2, 0, 16', 2, '1, 2'",
+    "'0, 0', 0, '1, 2'",
+    "'0', 3, '1'"
+  })
+  @DisplayName("a buyer sees the stock of their own guild rank and every rank below")
+  void tiers(final String needs, final int guildRank, final String shown) {
+    final TradeOfferList all = new TradeOfferList();
+    for (int count = 1; count <= 3; count++) {
+      all.add(
+          new TradeOffer(
+              new TradedItem(Items.EMERALD), new ItemStack(Items.PAPER, count), 1, 0, 0.0F));
+    }
+    final List<Integer> needed = Arrays.stream(needs.split(", ")).map(Integer::parseInt).toList();
+    assertEquals(
+        Arrays.stream(shown.split(", ")).map(Integer::parseInt).toList(),
+        GuildCounter.Kind.GEAR.from(all, needed, guildRank).stream()
+            .map(offer -> offer.getSellItem().getCount())
+            .toList());
   }
 }

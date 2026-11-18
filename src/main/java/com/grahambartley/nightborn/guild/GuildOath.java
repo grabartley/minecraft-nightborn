@@ -6,6 +6,7 @@ import com.grahambartley.nightborn.faction.GuildMembership;
 import com.grahambartley.nightborn.moment.Moment;
 import com.grahambartley.nightborn.moment.MomentState;
 import com.grahambartley.nightborn.moment.Moments;
+import com.grahambartley.nightborn.rank.Ranking;
 import com.grahambartley.nightborn.server.ServerConfigService;
 import java.util.Optional;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -27,6 +28,7 @@ public final class GuildOath {
     final MomentState state = Moments.begin(player, Moment.OATH);
     player.sendMessage(Text.translatable(SWORN), false);
     master.ifPresent(giver -> giver.swearIn(player, state.cameraTicks()));
+    Ranking.sworn(player);
     salute(player);
     return true;
   }

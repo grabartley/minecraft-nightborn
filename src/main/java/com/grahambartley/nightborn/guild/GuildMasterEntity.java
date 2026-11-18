@@ -6,9 +6,14 @@ import com.grahambartley.nightborn.guild.party.PartyLeader;
 import com.grahambartley.nightborn.mob.MobSounds;
 import com.grahambartley.nightborn.name.MobNaming;
 import com.grahambartley.nightborn.name.NameBearer;
+import com.grahambartley.nightborn.rank.GuildRanks;
+import com.grahambartley.nightborn.rank.RankLadder;
 import com.grahambartley.nightborn.server.ServerConfigService;
 import com.grahambartley.nightborn.vampire.Vampires;
 import com.grahambartley.nightborn.wheel.CommandWheel;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 import net.minecraft.entity.EntityType;
@@ -55,6 +60,7 @@ public class GuildMasterEntity extends MerchantEntity
     implements GeoEntity, HunterLooking, NameBearer {
 
   static final String LAST_RESTOCK = "LastRestock";
+  static final String OFFER_RANKS = "OfferRanks";
   static final int HEAD_SHAKE_TICKS = 40;
   static final int ANIMATION_BLEND_TICKS = 4;
   static final int TENT_REACH = 3;
@@ -72,6 +78,7 @@ public class GuildMasterEntity extends MerchantEntity
   private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
   private final WornLook worn = new WornLook();
   private long lastRestock;
+  private List<Integer> offerRanks = new ArrayList<>();
   private int swearTicks;
   @Nullable private ServerPlayerEntity sworn;
 
@@ -152,7 +159,8 @@ public class GuildMasterEntity extends MerchantEntity
       return;
     }
     restockIfNewDay();
-    final GuildCounter counter = new GuildCounter(this, kind.from(getOffers()));
+    final GuildCounter counter =
+        new GuildCounter(this, kind.from(getOffers(), offerRanks, GuildRanks.of(visitor)));
     if (counter.getOffers().isEmpty()) {
       visitor.sendMessage(Text.translatable("nightborn.guild.nothing"), true);
       return;
@@ -163,7 +171,10 @@ public class GuildMasterEntity extends MerchantEntity
 
   private void restockIfNewDay() {
     final long day = GuildRestock.day(getWorld().getTimeOfDay());
-    if (offers == null || offers.isEmpty() || GuildRestock.due(lastRestock, day)) {
+    if (offers == null
+        || offers.isEmpty()
+        || offers.size() != offerRanks.size()
+        || GuildRestock.due(lastRestock, day)) {
       offers = null;
       getOffers();
       lastRestock = day;
@@ -226,10 +237,13 @@ public class GuildMasterEntity extends MerchantEntity
 
   @Override
   protected void fillRecipes() {
+    offerRanks = new ArrayList<>();
     if (getWorld() instanceof ServerWorld world) {
-      GuildData.offers(world.getRegistryManager()).stream()
-          .map(GuildOffer::toTradeOffer)
-          .forEach(offers::add);
+      final RankLadder ladder = RankLadder.of(world.getRegistryManager());
+      for (final GuildOffer offer : GuildData.offers(world.getRegistryManager())) {
+        offers.add(offer.toTradeOffer());
+        offerRanks.add(offer.needs(ladder));
+      }
     }
   }
 
@@ -301,6 +315,7 @@ public class GuildMasterEntity extends MerchantEntity
   public void writeCustomDataToNbt(final NbtCompound nbt) {
     super.writeCustomDataToNbt(nbt);
     nbt.putLong(LAST_RESTOCK, lastRestock);
+    nbt.putIntArray(OFFER_RANKS, offerRanks);
     nbt.putString(GuildData.LOOK_KEY, dataTracker.get(LOOK));
     CampHome.write(this, nbt);
     if (party != null) {
@@ -324,6 +339,7 @@ public class GuildMasterEntity extends MerchantEntity
   public void readCustomDataFromNbt(final NbtCompound nbt) {
     super.readCustomDataFromNbt(nbt);
     lastRestock = nbt.getLong(LAST_RESTOCK);
+    offerRanks = new ArrayList<>(Arrays.stream(nbt.getIntArray(OFFER_RANKS)).boxed().toList());
     if (!getWorld().isClient()) {
       wear(nbt.getString(GuildData.LOOK_KEY));
     }

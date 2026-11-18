@@ -1,8 +1,10 @@
 package com.grahambartley.nightborn.client.name;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
+import com.grahambartley.nightborn.rank.RankMark;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -13,6 +15,7 @@ import net.minecraft.util.Identifier;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.EnumSource;
 
 class StageNameViewTest {
@@ -47,5 +50,26 @@ class StageNameViewTest {
   void plainWithoutAStage() {
     final Text name = Text.literal("Jonathan");
     assertSame(name, StageNameView.coloured(name, Optional.empty()));
+  }
+
+  @ParameterizedTest(name = "{0} in {1}")
+  @CsvSource({"◇, BLUE", "◆, BLUE", "✦, DARK_AQUA", "✠, AQUA"})
+  @DisplayName("a rank mark is drawn before the name in its own colour, leaving the name's alone")
+  void marks(final String glyph, final Formatting colour) {
+    final Text shown =
+        StageNameView.marked(
+            Text.literal("Abraham"),
+            Optional.of(new RankMark(glyph, TextColor.fromFormatting(colour))));
+    assertEquals(glyph + " Abraham", shown.getString());
+    assertEquals(
+        TextColor.fromFormatting(colour), shown.getSiblings().get(0).getStyle().getColor());
+    assertNull(shown.getSiblings().get(2).getStyle().getColor());
+  }
+
+  @Test
+  @DisplayName("a name with no rank mark is drawn unchanged")
+  void plainWithoutAMark() {
+    final Text name = Text.literal("Lucy");
+    assertSame(name, StageNameView.marked(name, Optional.empty()));
   }
 }

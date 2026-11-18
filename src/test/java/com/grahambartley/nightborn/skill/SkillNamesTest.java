@@ -44,6 +44,16 @@ class SkillNamesTest {
     assertEquals(key, SkillNames.stage(Identifier.of(id)));
   }
 
+  @ParameterizedTest(name = "{0} -> {1}")
+  @CsvSource({
+    "nightborn:veteran, guild_rank.nightborn.veteran",
+    "apack:warden, guild_rank.apack.warden"
+  })
+  @DisplayName("a guild rank's name key follows its id")
+  void guildRank(final String id, final String key) {
+    assertEquals(key, SkillNames.guildRank(Identifier.of(id)));
+  }
+
   @ParameterizedTest(name = "[{0}]")
   @CsvSource(
       delimiter = '|',

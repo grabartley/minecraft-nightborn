@@ -45,6 +45,7 @@ class SkillPurchaseTest {
         0,
         0,
         Optional.empty(),
+        Optional.empty(),
         costs.stream().map(SkillRank::costing).toList(),
         Optional.empty());
   }
@@ -221,36 +222,47 @@ class SkillPurchaseTest {
   }
 
   static Stream<Arguments> rankCases() {
-    final Skill ranked = ranked(CORE, List.of(1, 2, 3));
     final TreeProgress one = TreeProgress.EMPTY.withEarned(3).buy(ROOT, 1, null);
+    final TreeProgress rich = TreeProgress.EMPTY.withEarned(9);
     return Stream.of(
-        Arguments.of("first rank", TreeProgress.EMPTY.withEarned(1), true, Verdict.ALLOWED),
-        Arguments.of("second rank, affordable", one, true, Verdict.ALLOWED),
-        Arguments.of("second rank, too dear", one.withEarned(2), true, Verdict.TOO_FEW_POINTS),
+        Arguments.of("first rank", TreeProgress.EMPTY.withEarned(1), true, true, Verdict.ALLOWED),
+        Arguments.of("second rank, affordable", one, true, true, Verdict.ALLOWED),
+        Arguments.of(
+            "second rank, too dear", one.withEarned(2), true, true, Verdict.TOO_FEW_POINTS),
         Arguments.of(
             "every rank held",
-            TreeProgress.EMPTY
-                .withEarned(9)
-                .buy(ROOT, 1, null)
-                .buy(ROOT, 2, null)
-                .buy(ROOT, 3, null),
+            rich.buy(ROOT, 1, null).buy(ROOT, 2, null).buy(ROOT, 3, null),
+            true,
             true,
             Verdict.OWNED),
+        Arguments.of("below its stage", rich, false, true, Verdict.NEEDS_STAGE),
         Arguments.of(
-            "below its stage", TreeProgress.EMPTY.withEarned(9), false, Verdict.NEEDS_STAGE),
+            "below its stage and short of points",
+            TreeProgress.EMPTY,
+            false,
+            true,
+            Verdict.NEEDS_STAGE),
+        Arguments.of("below its guild rank", rich, true, false, Verdict.NEEDS_RANK),
         Arguments.of(
-            "below its stage and short of points", TreeProgress.EMPTY, false, Verdict.NEEDS_STAGE));
+            "below its guild rank and short of points",
+            TreeProgress.EMPTY,
+            true,
+            false,
+            Verdict.NEEDS_RANK),
+        Arguments.of(
+            "below its stage and its guild rank", rich, false, false, Verdict.NEEDS_STAGE));
   }
 
-  @ParameterizedTest(name = "{0} -> {3}")
+  @ParameterizedTest(name = "{0} -> {4}")
   @MethodSource("rankCases")
   @DisplayName(
-      "ranks are bought in turn at their own cost, and a skill above the buyer's stage is"
-          + " refused")
+      "ranks are bought in turn at their own cost, and a skill above the buyer's stage or guild"
+          + " rank is refused")
   void ranksAndStages(
       final String name,
       final TreeProgress progress,
       final boolean stageReached,
+      final boolean rankReached,
       final Verdict expected) {
     assertEquals(
         expected,
@@ -260,7 +272,8 @@ class SkillPurchaseTest {
             ROOT,
             ranked(CORE, List.of(1, 2, 3)),
             CORE_BRANCH,
-            stageReached));
+            stageReached,
+            rankReached));
   }
 
   @Test
@@ -286,7 +299,7 @@ class SkillPurchaseTest {
       final Skill skill,
       final SkillBranch branch,
       final SkillPurchase.Verdict expected) {
-    assertEquals(expected, SkillPurchase.check(progress, tree, id, skill, branch, true));
+    assertEquals(expected, SkillPurchase.check(progress, tree, id, skill, branch, true, true));
   }
 
   @Test

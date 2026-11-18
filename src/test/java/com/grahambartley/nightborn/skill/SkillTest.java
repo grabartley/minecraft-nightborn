@@ -241,4 +241,23 @@ class SkillTest {
         };
     assertTrue(gives, gift);
   }
+
+  @ParameterizedTest(name = "[{0}]")
+  @CsvSource({"'', ''", "nightborn:veteran, nightborn:veteran", "apack:warden, apack:warden"})
+  @DisplayName("a skill may name the guild rank it needs, and needs none when it names none")
+  void readsItsGuildRank(final String rank, final String expected) {
+    final String field = rank.isEmpty() ? "" : ",\"rank\":\"" + rank + "\"";
+    final Skill skill =
+        Skill.CODEC
+            .parse(
+                JsonOps.INSTANCE,
+                JsonParser.parseString(
+                    "{\"branch\":\"nightborn:slayer\",\"icon\":\"nightborn:icon\","
+                        + "\"ranks\":[{\"cost\":2}]"
+                        + field
+                        + "}"))
+            .getOrThrow();
+    assertEquals(
+        expected.isEmpty() ? Optional.empty() : Optional.of(Identifier.of(expected)), skill.rank());
+  }
 }

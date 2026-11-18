@@ -764,7 +764,7 @@ Every number this document calls a default, a setting or tunable is an option he
 | Sun and weaknesses | Sun damage, how long a parasol lasts, garlic and crucifix ranges, the damage, weakened time and blood lost from eating garlic, stake and silver damage, the damage, hits, time and weakening of each weapon coating, and the strength, time, radius and cloud time of a garlic bomb |
 | Blood and feeding | Blood drain and blood values, the drain while levitating and in bat form, flying and at a sprint, how fast starving weakens and hurts and how much it takes from night gifts and bare hands, the damage from bringing up food or potions, how much a lancet hurts, feeding range, and the health below which a finisher bite opens |
 | Being a vampire | The downed and escape times, hardcore vampire deaths, and the nights, blood and gifts of each stage |
-| Skills | How much experience each act pays, how fast a point's cost rises, the staking penalty, and hunter experience per contract and per rank |
+| Skills | How much experience each act pays, how fast a point's cost rises, the staking penalty, hunter experience per contract, the hunter points each guild rank needs, and the health and damage against vampires each rank gives |
 | Coffins and the day | The coffin sleep share and what being rested gives |
 | Minds and servants | The chance a sip binds a thrall, how long a charm lasts, a human familiar's starting loyalty, wages, loyalty gains and losses, betrayal threshold and chance, and guard and errand ranges, and how far servants gather, scout, look about them on arrival and keep watch |
 | Households | How many members each stage allows, how long a lord has to answer a challenge, and how long before it can be repeated |

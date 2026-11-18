@@ -28,6 +28,7 @@ class StageGateTest {
         0,
         0,
         stage.isEmpty() ? Optional.empty() : Optional.of(Identifier.of("nightborn", stage)),
+        Optional.empty(),
         List.of(SkillRank.costing(1)),
         Optional.empty());
   }

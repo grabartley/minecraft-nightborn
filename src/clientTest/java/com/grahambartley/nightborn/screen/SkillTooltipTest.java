@@ -31,9 +31,11 @@ class SkillTooltipTest {
 
   static final Identifier ELDER = Identifier.of("nightborn", "elder");
 
+  static final Identifier VETERAN = Identifier.of("nightborn", "veteran");
+
   static SkillTooltip.Facts facts(
       final List<Identifier> requires, final Optional<SkillTooltip.Power> power) {
-    return new SkillTooltip.Facts(2, 0, 1, requires, Optional.empty(), power);
+    return new SkillTooltip.Facts(2, 0, 1, requires, Optional.empty(), Optional.empty(), power);
   }
 
   static Stream<Arguments> skills() {
@@ -50,22 +52,31 @@ class SkillTooltipTest {
             List.of("nightborn.skills.cost", "nightborn.skills.needs", "nightborn.skills.power")),
         Arguments.of(
             "with ranks left to buy",
-            new SkillTooltip.Facts(2, 1, 3, List.of(), Optional.empty(), Optional.empty()),
+            new SkillTooltip.Facts(
+                2, 1, 3, List.of(), Optional.empty(), Optional.empty(), Optional.empty()),
             List.of("nightborn.skills.rank", "nightborn.skills.cost")),
         Arguments.of(
             "at its last rank",
-            new SkillTooltip.Facts(3, 3, 3, List.of(), Optional.empty(), Optional.empty()),
+            new SkillTooltip.Facts(
+                3, 3, 3, List.of(), Optional.empty(), Optional.empty(), Optional.empty()),
             List.of("nightborn.skills.rank")),
         Arguments.of(
             "needing a stage",
-            new SkillTooltip.Facts(3, 0, 1, List.of(NEED), Optional.of(ELDER), Optional.empty()),
-            List.of("nightborn.skills.cost", "nightborn.skills.needs", "nightborn.skills.stage")));
+            new SkillTooltip.Facts(
+                3, 0, 1, List.of(NEED), Optional.of(ELDER), Optional.empty(), Optional.empty()),
+            List.of("nightborn.skills.cost", "nightborn.skills.needs", "nightborn.skills.stage")),
+        Arguments.of(
+            "needing a guild rank",
+            new SkillTooltip.Facts(
+                4, 0, 1, List.of(), Optional.empty(), Optional.of(VETERAN), Optional.empty()),
+            List.of("nightborn.skills.cost", "nightborn.skills.guild_rank")));
   }
 
   @ParameterizedTest(name = "{0}")
   @MethodSource("skills")
   @DisplayName(
-      "before buying, a skill shows what it does, its ranks, its cost, what it needs and its stage")
+      "before buying, a skill shows what it does, its ranks, its cost, what it needs, its stage"
+          + " and its guild rank")
   void showsWhatItDoes(
       final String name, final SkillTooltip.Facts facts, final List<String> shown) {
     final List<Text> lines =
@@ -111,7 +122,7 @@ class SkillTooltipTest {
     final List<Text> lines =
         SkillTooltip.lines(
             ID,
-            new SkillTooltip.Facts(2, rank, 1, List.of(), Optional.empty(), RUSH),
+            new SkillTooltip.Facts(2, rank, 1, List.of(), Optional.empty(), Optional.empty(), RUSH),
             rank > 0 ? SkillPurchase.Verdict.OWNED : SkillPurchase.Verdict.ALLOWED,
             SkillTree.VAMPIRE,
             TITLE);
@@ -124,7 +135,8 @@ class SkillTooltipTest {
     final Text line =
         SkillTooltip.lines(
                 ID,
-                new SkillTooltip.Facts(3, 0, 1, List.of(), Optional.of(ELDER), Optional.empty()),
+                new SkillTooltip.Facts(
+                    3, 0, 1, List.of(), Optional.of(ELDER), Optional.empty(), Optional.empty()),
                 SkillPurchase.Verdict.NEEDS_STAGE,
                 SkillTree.VAMPIRE,
                 TITLE)

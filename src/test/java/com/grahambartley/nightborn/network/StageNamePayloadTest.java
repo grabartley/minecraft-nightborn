@@ -12,12 +12,21 @@ import org.junit.jupiter.params.provider.CsvSource;
 
 class StageNamePayloadTest {
 
-  @ParameterizedTest(name = "entity {0}, stage {1}")
-  @CsvSource({"0, nightborn:fledgling", "42, nightborn:ancient", "2147483647, other:stage", "7,"})
-  @DisplayName("the bearer and the stage, or no stage, cross the network unchanged")
-  void roundTrips(final int entityId, final String stage) {
+  @ParameterizedTest(name = "entity {0}, stage {1}, rank {2}")
+  @CsvSource({
+    "0, nightborn:fledgling,",
+    "42, nightborn:ancient, nightborn:veteran",
+    "2147483647, other:stage, other:rank",
+    "7, , nightborn:initiate",
+    "8, ,"
+  })
+  @DisplayName("the bearer, the stage and the rank mark, or neither, cross the network unchanged")
+  void roundTrips(final int entityId, final String stage, final String rank) {
     final StageNamePayload payload =
-        new StageNamePayload(entityId, Optional.ofNullable(stage).map(Identifier::of));
+        new StageNamePayload(
+            entityId,
+            Optional.ofNullable(stage).map(Identifier::of),
+            Optional.ofNullable(rank).map(Identifier::of));
     final ByteBuf buf = Unpooled.buffer();
     StageNamePayload.CODEC.encode(buf, payload);
     assertEquals(payload, StageNamePayload.CODEC.decode(buf));

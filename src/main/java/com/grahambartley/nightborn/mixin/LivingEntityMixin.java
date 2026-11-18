@@ -12,6 +12,7 @@ import com.grahambartley.nightborn.downed.DownedTargeting;
 import com.grahambartley.nightborn.hunt.Hunts;
 import com.grahambartley.nightborn.levitation.Levitation;
 import com.grahambartley.nightborn.levitation.LevitationMotion;
+import com.grahambartley.nightborn.rank.Ranking;
 import com.grahambartley.nightborn.server.ServerConfigService;
 import com.grahambartley.nightborn.skill.Mending;
 import com.grahambartley.nightborn.vampire.Gloom;
@@ -68,6 +69,7 @@ abstract class LivingEntityMixin {
     }
     if (self instanceof ServerPlayerEntity player) {
       Hunts.tick(player);
+      Ranking.tick(player);
     }
   }
 

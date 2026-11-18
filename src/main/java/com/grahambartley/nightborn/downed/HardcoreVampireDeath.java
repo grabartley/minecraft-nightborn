@@ -6,6 +6,8 @@ import com.grahambartley.nightborn.coffin.CoffinOwnership;
 import com.grahambartley.nightborn.coffin.CoffinRespawn;
 import com.grahambartley.nightborn.faction.Faction;
 import com.grahambartley.nightborn.faction.FactionAttachment;
+import com.grahambartley.nightborn.faction.Oath;
+import com.grahambartley.nightborn.faction.OathAttachment;
 import com.grahambartley.nightborn.familiar.FamiliarRelease;
 import com.grahambartley.nightborn.feeding.TurningBite;
 import com.grahambartley.nightborn.hunt.Hunts;
@@ -45,6 +47,7 @@ public final class HardcoreVampireDeath {
 
   static void reset(final ServerPlayerEntity player) {
     FactionAttachment.set(player, Faction.HUMAN);
+    OathAttachment.set(player, Oath.NONE);
     Ageing.clear(player);
     Hunts.clear(player);
     BiteSicknessAttachment.clear(player);

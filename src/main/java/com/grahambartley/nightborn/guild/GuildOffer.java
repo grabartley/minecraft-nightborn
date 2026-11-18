@@ -1,5 +1,7 @@
 package com.grahambartley.nightborn.guild;
 
+import com.grahambartley.nightborn.faction.Oath;
+import com.grahambartley.nightborn.rank.RankLadder;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import java.util.Comparator;
@@ -12,7 +14,14 @@ import net.minecraft.village.TradeOffer;
 import net.minecraft.village.TradedItem;
 
 public record GuildOffer(
-    int order, TradedItem wants, Optional<TradedItem> alsoWants, ItemStack gives, int maxUses) {
+    int order,
+    TradedItem wants,
+    Optional<TradedItem> alsoWants,
+    ItemStack gives,
+    int maxUses,
+    Optional<Identifier> rank) {
+
+  public static final int OUT_OF_REACH = Oath.TOP_RANK + 1;
 
   public static final int MOST_USES = 64;
 
@@ -29,7 +38,8 @@ public record GuildOffer(
                       ItemStack.CODEC.fieldOf("gives").forGetter(GuildOffer::gives),
                       Codec.intRange(1, MOST_USES)
                           .optionalFieldOf("max_uses", 1)
-                          .forGetter(GuildOffer::maxUses))
+                          .forGetter(GuildOffer::maxUses),
+                      Identifier.CODEC.optionalFieldOf("rank").forGetter(GuildOffer::rank))
                   .apply(instance, GuildOffer::new));
 
   public static List<GuildOffer> inOrder(final Map<Identifier, GuildOffer> offers) {
@@ -40,6 +50,10 @@ public record GuildOffer(
                 .thenComparing(entry -> entry.getKey().toString()))
         .map(Map.Entry::getValue)
         .toList();
+  }
+
+  public int needs(final RankLadder ladder) {
+    return rank.map(id -> ladder.rankOf(id).orElse(OUT_OF_REACH)).orElse(0);
   }
 
   public TradeOffer toTradeOffer() {

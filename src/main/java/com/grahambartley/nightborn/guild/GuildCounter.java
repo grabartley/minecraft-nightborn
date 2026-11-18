@@ -1,5 +1,6 @@
 package com.grahambartley.nightborn.guild;
 
+import java.util.List;
 import java.util.Locale;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -38,10 +39,14 @@ public final class GuildCounter implements Merchant {
       return "nightborn.guild." + name().toLowerCase(Locale.ROOT);
     }
 
-    public TradeOfferList from(final TradeOfferList all) {
+    public TradeOfferList from(
+        final TradeOfferList all, final List<Integer> needs, final int guildRank) {
       final TradeOfferList shown = new TradeOfferList();
-      for (final TradeOffer offer : all) {
-        if (holds(offer.getSellItem().contains(ContractItems.PROGRESS))) {
+      for (int index = 0; index < all.size(); index++) {
+        final TradeOffer offer = all.get(index);
+        if (index < needs.size()
+            && needs.get(index) <= guildRank
+            && holds(offer.getSellItem().contains(ContractItems.PROGRESS))) {
           shown.add(offer);
         }
       }

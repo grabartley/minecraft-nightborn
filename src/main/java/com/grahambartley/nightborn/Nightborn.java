@@ -24,6 +24,7 @@ import com.grahambartley.nightborn.mob.NightbornMobs;
 import com.grahambartley.nightborn.moment.Moments;
 import com.grahambartley.nightborn.name.NameFeatures;
 import com.grahambartley.nightborn.occult.OccultFeatures;
+import com.grahambartley.nightborn.rank.RankFeatures;
 import com.grahambartley.nightborn.ritual.RitualFeatures;
 import com.grahambartley.nightborn.servant.ServantFeatures;
 import com.grahambartley.nightborn.sound.NightbornSounds;
@@ -62,6 +63,7 @@ public class Nightborn implements ModInitializer {
     MirrorItems.register();
     HunterFeatures.register();
     GuildFeatures.register();
+    RankFeatures.register();
     HuntFeatures.register();
     MindFeatures.register();
     OccultFeatures.register();

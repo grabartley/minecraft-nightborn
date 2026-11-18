@@ -16,6 +16,7 @@ public final class SkillPurchase {
     LINE_LOCKED,
     NEEDS_SKILL,
     NEEDS_STAGE,
+    NEEDS_RANK,
     TOO_FEW_POINTS;
 
     public String translationKey(final SkillTree tree) {
@@ -32,7 +33,8 @@ public final class SkillPurchase {
       final Identifier id,
       @Nullable final Skill skill,
       @Nullable final SkillBranch branch,
-      final boolean stageReached) {
+      final boolean stageReached,
+      final boolean rankReached) {
     if (skill == null || branch == null || !branch.learnable()) {
       return Verdict.UNKNOWN;
     }
@@ -51,6 +53,9 @@ public final class SkillPurchase {
     }
     if (!stageReached) {
       return Verdict.NEEDS_STAGE;
+    }
+    if (!rankReached) {
+      return Verdict.NEEDS_RANK;
     }
     if (progress.free() < skill.nextCost(rank)) {
       return Verdict.TOO_FEW_POINTS;

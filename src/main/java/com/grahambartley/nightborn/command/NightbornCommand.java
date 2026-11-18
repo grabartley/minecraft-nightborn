@@ -42,6 +42,7 @@ public final class NightbornCommand {
         Text.translatable("nightborn.command.help.swear"),
         Text.translatable("nightborn.command.help.info"),
         Text.translatable("nightborn.command.help.stage"),
+        Text.translatable("nightborn.command.help.rank"),
         Text.translatable("nightborn.command.help.skills"),
         Text.translatable("nightborn.command.help.familiar"),
         Text.translatable("nightborn.command.help.thrall"),

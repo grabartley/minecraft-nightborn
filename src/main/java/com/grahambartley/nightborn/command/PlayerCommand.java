@@ -41,6 +41,7 @@ final class PlayerCommand {
                 .then(CommandManager.literal("swear").executes(PlayerCommand::swear))
                 .then(CommandManager.literal("info").executes(PlayerCommand::info))
                 .then(StageCommand.node())
+                .then(RankCommand.node())
                 .then(NotorietyCommand.node())
                 .then(SkillsCommand.node()));
   }

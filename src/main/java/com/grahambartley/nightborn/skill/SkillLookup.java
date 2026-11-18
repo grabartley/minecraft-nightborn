@@ -1,6 +1,7 @@
 package com.grahambartley.nightborn.skill;
 
 import com.grahambartley.nightborn.mob.stage.StageGate;
+import com.grahambartley.nightborn.rank.RankGate;
 import java.util.OptionalInt;
 import java.util.function.Function;
 import net.minecraft.registry.DynamicRegistryManager;
@@ -10,9 +11,9 @@ import org.jetbrains.annotations.Nullable;
 public record SkillLookup(
     @Nullable Skill skill, @Nullable SkillBranch branch, SkillPurchase.Verdict verdict) {
 
-  static boolean stageReached(
-      @Nullable final Skill skill, final Function<Skill, OptionalInt> needed, final int stageRank) {
-    return skill == null || StageGate.open(needed.apply(skill), stageRank);
+  static boolean reached(
+      @Nullable final Skill skill, final Function<Skill, OptionalInt> needed, final int held) {
+    return skill == null || StageGate.open(needed.apply(skill), held);
   }
 
   public static SkillLookup of(
@@ -20,12 +21,20 @@ public record SkillLookup(
       final TreeProgress progress,
       final SkillTree playerTree,
       final Identifier id,
-      final int stageRank) {
+      final int stageRank,
+      final int guildRank) {
     final Skill skill = Skills.skill(registries, id);
     final SkillBranch branch = skill == null ? null : Skills.branch(registries, skill.branch());
-    final boolean stageReached =
-        stageReached(skill, s -> StageGate.needed(registries, s), stageRank);
     return new SkillLookup(
-        skill, branch, SkillPurchase.check(progress, playerTree, id, skill, branch, stageReached));
+        skill,
+        branch,
+        SkillPurchase.check(
+            progress,
+            playerTree,
+            id,
+            skill,
+            branch,
+            reached(skill, s -> StageGate.needed(registries, s), stageRank),
+            reached(skill, s -> RankGate.needed(registries, s), guildRank)));
   }
 }

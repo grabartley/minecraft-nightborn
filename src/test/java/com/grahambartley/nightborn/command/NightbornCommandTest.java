@@ -15,6 +15,7 @@ class NightbornCommandTest {
       strings = {
         "nightborn.command.help.header",
         "nightborn.command.help.skills",
+        "nightborn.command.help.rank",
         "nightborn.command.help.swear",
         "nightborn.command.help.thrall",
         "nightborn.command.help.thrall_free"

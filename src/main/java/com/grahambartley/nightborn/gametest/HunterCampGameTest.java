@@ -1,5 +1,7 @@
 package com.grahambartley.nightborn.gametest;
 
+import com.grahambartley.nightborn.faction.Oath;
+import com.grahambartley.nightborn.faction.OathAttachment;
 import com.grahambartley.nightborn.gear.GearItems;
 import com.grahambartley.nightborn.guild.ContractItems;
 import com.grahambartley.nightborn.guild.ContractProgress;
@@ -123,6 +125,7 @@ public class HunterCampGameTest implements FabricGameTest {
       final TestContext context) {
     final GuildMasterEntity master = guildMaster(context);
     final ServerPlayerEntity human = TestPlayers.hunter(context, new BlockPos(2, 2, 4));
+    OathAttachment.set(human, OathAttachment.get(human).withRank(Oath.TOP_RANK));
     context.runAtTick(
         START,
         () -> {

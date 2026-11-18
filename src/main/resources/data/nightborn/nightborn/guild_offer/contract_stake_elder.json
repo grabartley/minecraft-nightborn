@@ -13,5 +13,6 @@
       }
     }
   },
-  "max_uses": 1
+  "max_uses": 1,
+  "rank": "nightborn:veteran"
 }
