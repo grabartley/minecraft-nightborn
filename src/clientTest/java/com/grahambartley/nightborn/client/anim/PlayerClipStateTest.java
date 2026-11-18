@@ -13,7 +13,7 @@ import org.junit.jupiter.params.provider.CsvSource;
 class PlayerClipStateTest {
 
   static final PlayerClipState.Lengths LENGTHS =
-      new PlayerClipState.Lengths(0.7, 2.6, 1.4, 1.6, 0.5);
+      new PlayerClipState.Lengths(0.7, 2.6, 1.4, 1.6, 0.5, 1.5);
 
   private static PlayerClipState.Situation still() {
     return new PlayerClipState.Situation(false, false, 0.0, false, false, false, Optional.empty());
@@ -203,6 +203,33 @@ class PlayerClipStateTest {
             20 + after,
             new PlayerClipState.Situation(
                 false, false, 0.0, false, false, weakened, Optional.empty())));
+  }
+
+  @ParameterizedTest(
+      name = "{0} ticks after the finisher bite, still feeding {1}, draining {2}: {3}")
+  @CsvSource({
+    "0, true, false, FINISHER_BITE",
+    "29, true, false, FINISHER_BITE",
+    "29, true, true, FINISHER_BITE",
+    "30, true, false, FEED",
+    "30, false, false, VANILLA",
+    "30, false, true, DRAIN"
+  })
+  @DisplayName("the finisher bite plays once over feeding and draining, then feeding carries on")
+  void finishes(
+      final int after, final boolean feeding, final boolean draining, final String expected) {
+    final PlayerClipState state = new PlayerClipState();
+    state.finisher(300);
+    if (draining) {
+      state.drain(300 + after);
+    }
+    assertEquals(
+        expected,
+        clip(
+            state,
+            300 + after,
+            new PlayerClipState.Situation(
+                false, false, 0.0, false, feeding, false, Optional.empty())));
   }
 
   @Test
