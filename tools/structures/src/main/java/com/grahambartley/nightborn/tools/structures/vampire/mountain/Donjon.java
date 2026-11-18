@@ -23,7 +23,6 @@ public final class Donjon {
   public static final int ROOF = TERRACE + 4;
   public static final int FLIGHT_FOOT = SOUTH - 3;
   public static final int HEADROOM = 3;
-  public static final int HATCH_X = MountainCastle.MID + 3;
 
   private Donjon() {}
 
@@ -41,7 +40,7 @@ public final class Donjon {
 
   public static void build(final Template t) {
     shell(t);
-    for (int storey = 0; storey < STOREYS - 1; storey++) {
+    for (int storey = 0; storey < STOREYS; storey++) {
       flight(t, storey);
     }
     windows(t);
@@ -166,10 +165,6 @@ public final class Donjon {
           y,
           MountainCastle.MID + r - 1,
           MountainCastle.PLANKS);
-    }
-    for (int y = EYRIE + 1; y <= TERRACE; y++) {
-      t.set(
-          HATCH_X, y, SOUTH - 1, BlockState.of("ladder", "facing", "north", "waterlogged", false));
     }
   }
 

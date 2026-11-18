@@ -17,10 +17,10 @@ public final class Bedchambers {
 
   private Bedchambers() {}
 
-  public static void build(final Template t, final Turret turret) {
+  public static void build(final Template t) {
     master(t);
     westChamber(t);
-    eastChamber(t, turret);
+    eastChamber(t);
     sittingRoom(t);
     study(t);
   }
@@ -87,7 +87,7 @@ public final class Bedchambers {
     }
   }
 
-  private static void eastChamber(final Template t, final Turret turret) {
+  private static void eastChamber(final Template t) {
     Furnishing.coffin(t, Manor.SPRUCE_COFFIN, 34, SEAT, 20, "north");
     Furnishing.coffin(t, Manor.SPRUCE_COFFIN, 36, SEAT, 19, "north");
     Furnishing.candles(t, 35, SEAT, 19, 3, false);
@@ -96,12 +96,12 @@ public final class Bedchambers {
     for (final int x : new int[] {33, 36}) {
       Furnishing.drape(t, Manor.BURGUNDY, x, SEAT, 21, 4, "north");
     }
-    Furnishing.chair(t, 41, SEAT, 23, "south");
+    Furnishing.chair(t, Turret.CX - 1, SEAT, Turret.CZ + 1, "south");
     Furnishing.portrait(t, 33, SEAT + 1, 20, "east");
     t.set(
-        turret.ladderX() + 1,
+        Turret.CX,
         SEAT,
-        Turret.LADDER_Z,
+        Turret.STAIR_FOOT_Z,
         BlockState.of("candle", "candles", 2, "lit", false, "waterlogged", false));
   }
 
@@ -127,11 +127,12 @@ public final class Bedchambers {
   private static void study(final Template t) {
     final int x = Turret.CX;
     final int z = Turret.CZ;
-    Furnishing.table(t, x + 1, STUDY, z);
-    Furnishing.candelabra(t, x + 1, STUDY + 1, z);
-    Furnishing.chair(t, x, STUDY, z, "east");
-    Furnishing.lectern(t, x, STUDY, z - 2, "south");
-    Furnishing.chest(t, x + 2, STUDY, z, "west");
+    Furnishing.lectern(t, x - 2, STUDY, z, "east");
+    Furnishing.table(t, x - 1, STUDY, z + 2);
+    Furnishing.candelabra(t, x - 1, STUDY + 1, z + 2);
+    Furnishing.chair(t, x, STUDY, z + 2, "west");
+    Furnishing.candelabra(t, x + 1, STUDY, z + 2);
+    Furnishing.chest(t, x - 2, STUDY, z - 1, "east");
     t.set(x + 1, STUDY + 4, z - 1, "cobweb");
   }
 }

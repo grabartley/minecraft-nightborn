@@ -55,7 +55,7 @@ public final class Castle {
     CurtainWall.build(t, layout);
     for (final Tower tower : towers(layout)) {
       tower.build(t, WALL, WALL_TOP);
-      tower.door(t, tower.cx() + Integer.signum(MID - tower.cx()) * tower.radius(), tower.cz());
+      tower.door(t, tower.cx(), tower.cz() + Integer.signum(MID - tower.cz()) * tower.radius());
       CurtainWall.walkwayDoors(t, tower);
     }
     Gatehouse.build(t);

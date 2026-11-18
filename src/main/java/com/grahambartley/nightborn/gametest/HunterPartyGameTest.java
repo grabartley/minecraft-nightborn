@@ -1,0 +1,164 @@
+package com.grahambartley.nightborn.gametest;
+
+import com.grahambartley.nightborn.guild.GuildMasterEntity;
+import com.grahambartley.nightborn.guild.GuildMobs;
+import com.grahambartley.nightborn.guild.HunterEntity;
+import com.grahambartley.nightborn.guild.party.CampBats;
+import com.grahambartley.nightborn.guild.party.CampLayout;
+import com.grahambartley.nightborn.guild.party.CampSite;
+import com.grahambartley.nightborn.guild.party.HunterParty;
+import com.grahambartley.nightborn.guild.party.PartyCamp;
+import com.grahambartley.nightborn.mob.NightbornMobs;
+import com.grahambartley.nightborn.mob.VampireBatEntity;
+import java.util.List;
+import java.util.UUID;
+import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
+import net.minecraft.block.BedBlock;
+import net.minecraft.block.Blocks;
+import net.minecraft.block.CampfireBlock;
+import net.minecraft.block.enums.BedPart;
+import net.minecraft.entity.ItemEntity;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.test.GameTest;
+import net.minecraft.test.TestContext;
+import net.minecraft.util.BlockRotation;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Box;
+import net.minecraft.util.math.Direction;
+import net.minecraft.util.math.random.Random;
+
+public class HunterPartyGameTest implements FabricGameTest {
+
+  static final String ARENA = "nightborn:vampire_arena";
+  static final String BATCH = "hunter_party";
+  static final BlockPos CENTRE = new BlockPos(4, 2, 4);
+  static final BlockPos BED_FOOT = new BlockPos(6, 2, 4);
+  static final BlockPos WOOL = new BlockPos(2, 2, 4);
+  static final CampLayout LAYOUT =
+      new CampLayout(
+          BlockPos.ORIGIN,
+          List.of(
+              new CampLayout.Tent(
+                  BlockPos.ORIGIN,
+                  BlockRotation.NONE,
+                  List.of(
+                      new CampLayout.Piece(
+                          new BlockPos(-2, 0, 0), Blocks.BROWN_WOOL.getDefaultState()),
+                      new CampLayout.Piece(
+                          new BlockPos(2, 0, 0),
+                          Blocks.BROWN_BED
+                              .getDefaultState()
+                              .with(BedBlock.FACING, Direction.SOUTH)),
+                      new CampLayout.Piece(
+                          new BlockPos(2, 0, 1),
+                          Blocks.BROWN_BED
+                              .getDefaultState()
+                              .with(BedBlock.FACING, Direction.SOUTH)
+                              .with(BedBlock.PART, BedPart.HEAD))))));
+
+  private static void meadow(final TestContext context) {
+    for (int x = 0; x < 9; x++) {
+      for (int z = 0; z < 9; z++) {
+        context.setBlockState(new BlockPos(x, 1, z), Blocks.GRASS_BLOCK);
+      }
+    }
+  }
+
+  private static boolean fits(final TestContext context) {
+    final BlockPos centre = context.getAbsolutePos(CENTRE);
+    return CampSite.fits(
+        (dx, dy, dz) -> PartyCamp.ground(context.getWorld().getBlockState(centre.add(dx, dy, dz))),
+        LAYOUT.bounds());
+  }
+
+  private static HunterParty.Camp pitch(final TestContext context) {
+    return PartyCamp.pitch(context.getWorld(), context.getAbsolutePos(CENTRE), LAYOUT);
+  }
+
+  @GameTest(templateName = ARENA, batchId = BATCH)
+  public void aPartyPitchesALitFireTentsAndBedsOnClearMeadow(final TestContext context) {
+    meadow(context);
+    context.setBlockState(WOOL, Blocks.SHORT_GRASS);
+    context.assertTrue(fits(context), "clear meadow takes a camp");
+    final HunterParty.Camp camp = pitch(context);
+    context.checkBlockState(CENTRE, state -> state.get(CampfireBlock.LIT), () -> "a lit fire");
+    context.expectBlock(Blocks.BROWN_WOOL, WOOL);
+    context.expectBlock(Blocks.BROWN_BED, BED_FOOT);
+    context.assertEquals(camp.beds().size(), 1, "one bed to sleep in");
+    context.complete();
+  }
+
+  @GameTest(templateName = ARENA, batchId = BATCH)
+  public void aPartyNeverPitchesBesideAPlayersBuild(final TestContext context) {
+    meadow(context);
+    context.setBlockState(new BlockPos(7, 2, 4), Blocks.COBBLESTONE);
+    context.assertFalse(fits(context), "a built block beside the site rules it out");
+    context.expectBlock(Blocks.COBBLESTONE, new BlockPos(7, 2, 4));
+    context.complete();
+  }
+
+  @GameTest(templateName = ARENA, batchId = BATCH)
+  public void breakingCampLeavesOnlyAnUnlitFire(final TestContext context) {
+    meadow(context);
+    PartyCamp.strike(context.getWorld(), pitch(context));
+    context.checkBlockState(CENTRE, state -> !state.get(CampfireBlock.LIT), () -> "an unlit fire");
+    context.expectBlock(Blocks.AIR, WOOL);
+    context.expectBlock(Blocks.AIR, BED_FOOT);
+    context.complete();
+  }
+
+  @GameTest(templateName = ARENA, batchId = BATCH)
+  public void tentsAndBedsDropNothing(final TestContext context) {
+    meadow(context);
+    pitch(context);
+    context.getWorld().breakBlock(context.getAbsolutePos(WOOL), true);
+    context.getWorld().breakBlock(context.getAbsolutePos(BED_FOOT), true);
+    context.assertTrue(
+        context
+            .getWorld()
+            .getEntitiesByClass(ItemEntity.class, context.getTestBox(), item -> true)
+            .isEmpty(),
+        "nothing dropped");
+    context.complete();
+  }
+
+  @GameTest(templateName = ARENA, batchId = BATCH)
+  public void aPartyAndItsCampSurviveASaveAndLoad(final TestContext context) {
+    meadow(context);
+    final GuildMasterEntity master = context.spawnEntity(GuildMobs.GUILD_MASTER, CENTRE.north(2));
+    master.setAiDisabled(true);
+    final HunterParty party =
+        HunterParty.gathered(List.of(UUID.randomUUID()), context.getAbsolutePos(CENTRE), 0L)
+            .pitch(pitch(context), 2, 0L);
+    master.lead(party);
+    final NbtCompound saved = new NbtCompound();
+    master.writeNbt(saved);
+    final GuildMasterEntity loaded = GuildMobs.GUILD_MASTER.create(context.getWorld());
+    loaded.readNbt(saved);
+    context.assertEquals(loaded.party(), party, "the party, its camp and its nights");
+    loaded.discard();
+    context.complete();
+  }
+
+  @GameTest(templateName = ARENA, batchId = BATCH)
+  public void batsRaidTheCampAndHuntersFightThem(final TestContext context) {
+    final HunterEntity hunter = context.spawnEntity(GuildMobs.HUNTER, CENTRE);
+    hunter.setAiDisabled(true);
+    final VampireBatEntity wild = context.spawnEntity(NightbornMobs.VAMPIRE_BAT, CENTRE.up(2));
+    wild.setAiDisabled(true);
+    CampBats.raid(context.getWorld(), context.getAbsolutePos(CENTRE), 3, Random.create(5));
+    final List<VampireBatEntity> raiders =
+        context
+            .getWorld()
+            .getEntitiesByClass(
+                VampireBatEntity.class,
+                new Box(context.getAbsolutePos(CENTRE)).expand(CampBats.RAID_RANGE),
+                VampireBatEntity::raidsCamp);
+    raiders.forEach(bat -> bat.setAiDisabled(true));
+    context.assertEquals(raiders.size(), 3, "three bats fall on the camp");
+    context.assertTrue(hunter.canTarget(raiders.get(0)), "a hunter fights a raiding bat");
+    context.assertFalse(hunter.canTarget(wild), "a hunter leaves other bats alone");
+    raiders.forEach(VampireBatEntity::discard);
+    context.complete();
+  }
+}

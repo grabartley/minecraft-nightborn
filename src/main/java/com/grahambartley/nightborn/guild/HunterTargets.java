@@ -4,7 +4,7 @@ public final class HunterTargets {
 
   private HunterTargets() {}
 
-  public static boolean hunts(final boolean vampire, final boolean exempt) {
-    return vampire && !exempt;
+  public static boolean hunts(final boolean vampire, final boolean raider, final boolean exempt) {
+    return (vampire || raider) && !exempt;
   }
 }

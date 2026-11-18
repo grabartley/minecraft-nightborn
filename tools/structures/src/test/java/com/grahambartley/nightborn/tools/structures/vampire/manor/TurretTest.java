@@ -41,7 +41,7 @@ class TurretTest {
     }
   }
 
-  @ParameterizedTest(name = "round {0}: rises past the eaves to a capped cone")
+  @ParameterizedTest(name = "round {0}: rises past the eaves to a solid capped cone")
   @ValueSource(booleans = {true, false})
   void risesToACone(final boolean round) {
     final Turret turret = new Turret(round);
@@ -49,7 +49,7 @@ class TurretTest {
     assertTrue(t.get(Turret.CX + Turret.RADIUS, Turret.WALL_TOP - 1, Turret.CZ).contains("bricks"));
     assertEquals("minecraft:deepslate_tiles", t.get(Turret.CX, turret.roofTop(), Turret.CZ));
     assertTrue(t.get(Turret.CX, turret.roofTop() + 1, Turret.CZ).contains(ManorRoofs.FINIAL));
-    assertEquals(BlockState.AIR, t.get(Turret.CX, turret.roofTop() - 1, Turret.CZ));
+    assertEquals("minecraft:deepslate_tiles", t.get(Turret.CX, turret.roofTop() - 1, Turret.CZ));
   }
 
   @ParameterizedTest(name = "round {0}: the wall inside the house at {1},{2} is {3} at y {4}")
@@ -79,14 +79,20 @@ class TurretTest {
     assertEquals(facing, Turret.inward(x, z));
   }
 
-  @ParameterizedTest(name = "round {0}: a ladder climbs to the study")
-  @ValueSource(booleans = {true, false})
-  void aLadderClimbsToTheStudy(final boolean round) {
-    final Turret turret = new Turret(round);
+  @ParameterizedTest(name = "round {0}: step {1} of the stair to the study is at y {2}")
+  @CsvSource({
+    "true, 0, 10, 24",
+    "true, 2, 12, 22",
+    "true, 4, 14, 20",
+    "false, 0, 10, 24",
+    "false, 4, 14, 20"
+  })
+  void aStairClimbsToTheStudy(final boolean round, final int step, final int y, final int z) {
     final Template t = built(round);
-    for (int y = Manor.F1 + 1; y <= Turret.STUDY; y++) {
-      assertTrue(t.get(turret.ladderX(), y, Turret.LADDER_Z).startsWith("minecraft:ladder"));
-    }
-    assertTrue(turret.ring(turret.ladderX() - 1, Turret.LADDER_Z));
+    assertTrue(
+        t.get(Turret.STAIR_X, y, z).startsWith("minecraft:dark_oak_stairs[facing=north"),
+        t.get(Turret.STAIR_X, y, z));
+    assertEquals(BlockState.AIR, t.get(Turret.STAIR_X, y + 1, z));
+    assertEquals(BlockState.AIR, t.get(Turret.STAIR_X, y + 2, z));
   }
 }

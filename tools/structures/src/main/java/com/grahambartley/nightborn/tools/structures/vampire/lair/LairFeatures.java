@@ -34,7 +34,8 @@ public final class LairFeatures {
     for (int x = cx - reachX; x <= cx + reachX; x++) {
       for (int z = cz - reachZ; z <= cz + reachZ; z++) {
         if (inPool(x - cx, z - cz, rx, rz)) {
-          t.set(x, 0, z, POOL);
+          t.set(x, 0, z, RIM);
+          t.set(x, 1, z, POOL);
         } else if (bordersPool(x - cx, z - cz, rx, rz)) {
           t.set(x, 0, z, RIM);
           t.set(x, 1, z, KERB);

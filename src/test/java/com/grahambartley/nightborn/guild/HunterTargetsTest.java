@@ -7,15 +7,17 @@ import org.junit.jupiter.params.provider.CsvSource;
 
 class HunterTargetsTest {
 
-  @ParameterizedTest(name = "vampire {0}, exempt {1}: hunted {2}")
+  @ParameterizedTest(name = "vampire {0}, camp raider {1}, exempt {2}: hunted {3}")
   @CsvSource({
-    "true, false, true",
-    "true, true, false",
-    "false, false, false",
-    "false, true, false"
+    "true, false, false, true",
+    "true, false, true, false",
+    "false, true, false, true",
+    "false, true, true, false",
+    "false, false, false, false",
+    "false, false, true, false"
   })
-  void huntsVampiresAndLeavesHumansAlone(
-      final boolean vampire, final boolean exempt, final boolean hunted) {
-    assertEquals(hunted, HunterTargets.hunts(vampire, exempt));
+  void huntsVampiresAndCampRaidersAndLeavesHumansAlone(
+      final boolean vampire, final boolean raider, final boolean exempt, final boolean hunted) {
+    assertEquals(hunted, HunterTargets.hunts(vampire, raider, exempt));
   }
 }

@@ -24,8 +24,8 @@ class BloodPoolDenTest {
   void aFountainRisesFromTheMiddleOfThePool() {
     final int c = BloodPoolDen.CENTRE;
     assertTrue(DEN.get(c, 1, c).startsWith("nightborn:blood_fountain"));
-    assertEquals(LairFeatures.POOL, DEN.get(c + 1, 0, c));
-    assertEquals(LairFeatures.POOL, DEN.get(c, 0, c - 2));
+    assertEquals(LairFeatures.POOL, DEN.get(c + 1, 1, c));
+    assertEquals(LairFeatures.POOL, DEN.get(c, 1, c - 2));
   }
 
   @ParameterizedTest(name = "a chair at {0},{2} faces the pool ({3})")
