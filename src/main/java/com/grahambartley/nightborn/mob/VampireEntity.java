@@ -446,6 +446,11 @@ public class VampireEntity extends HostileEntity
   }
 
   @Override
+  public boolean isAngryAt(final PlayerEntity player) {
+    return VampireFeud.angryAt(Vampires.isVampire(player), getTarget() == player);
+  }
+
+  @Override
   public void setAttacker(@Nullable final LivingEntity attacker) {
     super.setAttacker(attacker);
     if (attacker != null) {

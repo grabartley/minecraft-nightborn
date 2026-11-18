@@ -26,4 +26,11 @@ class VampireFeudTest {
       final boolean expected) {
     assertEquals(expected, VampireFeud.answers(struck, striker, own, everyStriker));
   }
+
+  @ParameterizedTest(name = "vampire {0}, fighting {1} -> {2}")
+  @CsvSource({"true, false, false", "true, true, true", "false, false, true", "false, true, true"})
+  @DisplayName("a vampire mob keeps a vampire player from resting only while it fights them")
+  void angryAt(final boolean vampire, final boolean fighting, final boolean expected) {
+    assertEquals(expected, VampireFeud.angryAt(vampire, fighting));
+  }
 }

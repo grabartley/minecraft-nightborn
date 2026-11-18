@@ -11,4 +11,8 @@ public final class VampireFeud {
       final boolean answersEveryStriker) {
     return struckBy && (answersEveryStriker || strikerStage >= ownStage);
   }
+
+  public static boolean angryAt(final boolean vampire, final boolean fighting) {
+    return !vampire || fighting;
+  }
 }
