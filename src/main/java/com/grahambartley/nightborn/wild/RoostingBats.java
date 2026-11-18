@@ -46,6 +46,10 @@ public final class RoostingBats {
     return false;
   }
 
+  static boolean hangs(final boolean airBelow, final boolean airTwoBelow) {
+    return airBelow && airTwoBelow;
+  }
+
   static Optional<BlockPos> under(final ServerWorld world, final BlockPos column) {
     if (!SurfaceSpots.loaded(world, column.getX(), column.getZ())) {
       return Optional.empty();
@@ -54,10 +58,10 @@ public final class RoostingBats {
     for (int y = top - 1; y > top - SEARCH; y--) {
       final BlockPos branch = new BlockPos(column.getX(), y, column.getZ());
       final BlockPos below = branch.down();
-      if (world.getBlockState(branch).isSolidBlock(world, branch)
-          && world.isAir(below)
-          && world.isAir(below.down())) {
-        return Optional.of(below);
+      if (world.getBlockState(branch).isSolidBlock(world, branch)) {
+        return hangs(world.isAir(below), world.isAir(below.down()))
+            ? Optional.of(below)
+            : Optional.empty();
       }
     }
     return Optional.empty();

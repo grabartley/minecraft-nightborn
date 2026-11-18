@@ -5,6 +5,7 @@ import com.grahambartley.nightborn.core.NightTime;
 import com.grahambartley.nightborn.guild.party.PartyLeader;
 import com.grahambartley.nightborn.mob.home.NightRoutine;
 import com.grahambartley.nightborn.server.ServerConfigService;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
@@ -22,6 +23,7 @@ public final class WildFeatures {
     NightLogAttachment.register();
     RumourMaps.register();
     ServerTickEvents.END_WORLD_TICK.register(WildFeatures::tick);
+    ServerLifecycleEvents.SERVER_STOPPED.register(server -> DrainedAnimals.forgetAll());
   }
 
   private static void tick(final ServerWorld world) {
@@ -30,6 +32,7 @@ public final class WildFeatures {
     }
     final NightbornConfig config = ServerConfigService.current();
     Wanderers.tick(world, config);
+    DrainedAnimals.tick(world);
     if (world.getRegistryKey() != World.OVERWORLD) {
       return;
     }

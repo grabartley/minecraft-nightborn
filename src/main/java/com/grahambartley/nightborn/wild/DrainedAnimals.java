@@ -3,13 +3,16 @@ package com.grahambartley.nightborn.wild;
 import com.grahambartley.nightborn.Nightborn;
 import com.grahambartley.nightborn.core.SurfaceSpots;
 import com.grahambartley.nightborn.vampire.NightbornDamage;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.registry.Registries;
+import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.registry.tag.TagKey;
@@ -19,6 +22,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.random.Random;
+import net.minecraft.world.World;
 
 public final class DrainedAnimals {
 
@@ -30,6 +34,9 @@ public final class DrainedAnimals {
   static final float SPREAD = MathHelper.HALF_PI;
   static final String NO_LOOT = "minecraft:empty";
   static final String LOOT_KEY = "DeathLootTable";
+  static final long FALL_DELAY = 20L;
+
+  private static final List<Fall> FALLING = new ArrayList<>();
 
   private DrainedAnimals() {}
 
@@ -62,9 +69,35 @@ public final class DrainedAnimals {
     nbt.putString(LOOT_KEY, NO_LOOT);
     body.readNbt(nbt);
     body.setSilent(true);
+    body.setAiDisabled(true);
     world.spawnEntity(body);
-    body.damage(world.getDamageSources().create(NightbornDamage.BITE), Float.MAX_VALUE);
+    FALLING.add(new Fall(world.getRegistryKey(), body.getUuid(), world.getTime() + FALL_DELAY));
     return true;
+  }
+
+  static void tick(final ServerWorld world) {
+    final long now = world.getTime();
+    FALLING.removeIf(
+        fall -> {
+          if (!fall.world().equals(world.getRegistryKey()) || !fall.due(now)) {
+            return false;
+          }
+          if (world.getEntity(fall.body()) instanceof MobEntity body && body.isAlive()) {
+            body.damage(world.getDamageSources().create(NightbornDamage.BITE), Float.MAX_VALUE);
+          }
+          return true;
+        });
+  }
+
+  static void forgetAll() {
+    FALLING.clear();
+  }
+
+  record Fall(RegistryKey<World> world, UUID body, long at) {
+
+    boolean due(final long now) {
+      return now >= at;
+    }
   }
 
   static float ahead(final float yawDegrees, final float roll) {
