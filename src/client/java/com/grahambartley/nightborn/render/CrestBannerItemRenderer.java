@@ -13,6 +13,7 @@ import net.minecraft.util.math.BlockPos;
 public class CrestBannerItemRenderer implements BuiltinItemRendererRegistry.DynamicItemRenderer {
 
   static final float LIFT = 1.25F;
+  static final float CLOTH_TO_POLE = -4.0F / 16.0F;
 
   private CrestBannerRenderer renderer;
   private CrestBannerBlockEntity shown;
@@ -32,7 +33,7 @@ public class CrestBannerItemRenderer implements BuiltinItemRendererRegistry.Dyna
     }
     this.shown.preview(Optional.ofNullable(stack.get(CrestBanners.CREST)));
     matrices.push();
-    matrices.translate(0.0F, LIFT, 0.0F);
+    matrices.translate(0.0F, LIFT, CLOTH_TO_POLE);
     this.renderer.render(this.shown, 0.0F, matrices, vertexConsumers, light, overlay);
     matrices.pop();
   }
