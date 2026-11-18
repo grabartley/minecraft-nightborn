@@ -97,7 +97,11 @@ public final class NightRoutine {
       final int homeRadius,
       final boolean loaded,
       final boolean free) {
-    final double reach = (double) homeRadius * COFFIN_REACH_HOMES;
+    final double reach = coffinReach(homeRadius);
     return known && distanceSquared <= reach * reach && loaded && free;
+  }
+
+  public static double coffinReach(final int homeRadius) {
+    return (double) homeRadius * COFFIN_REACH_HOMES;
   }
 }

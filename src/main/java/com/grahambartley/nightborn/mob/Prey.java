@@ -24,8 +24,9 @@ public final class Prey {
     return hasDrinkableBlood(target) && EntityPredicates.EXCEPT_CREATIVE_OR_SPECTATOR.test(target);
   }
 
-  public static boolean spared(final boolean peaceful, final boolean player) {
-    return peaceful && player;
+  public static boolean spared(
+      final boolean peaceful, final boolean player, final boolean ownHouseThrall) {
+    return peaceful && player || ownHouseThrall;
   }
 
   public static boolean mayBite(

@@ -12,6 +12,7 @@ import com.grahambartley.nightborn.wheel.WheelAction;
 import com.grahambartley.nightborn.wheel.WheelEntry;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Consumer;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.tag.TagKey;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -51,19 +52,23 @@ public final class GuildRumour implements WheelAction<GuildMasterEntity> {
       return;
     }
     final BlockPos from = master.getBlockPos();
-    final int range = ServerConfigService.current().structures().rumourRange();
     final Text teller = master.getDisplayName();
     master.playSound(SoundEvents.ENTITY_VILLAGER_AMBIENT, 1.0F, master.getSoundPitch());
+    nearestHouse(
+        world, from, player, nearest -> player.sendMessage(tale(teller, from, nearest), false));
+  }
+
+  public static void nearestHouse(
+      final ServerWorld world,
+      final BlockPos from,
+      final ServerPlayerEntity asker,
+      final Consumer<Optional<Found>> then) {
+    final int range = ServerConfigService.current().structures().rumourRange();
     NearestStructures.eachOf(world, VAMPIRE_HOUSES, from, range)
         .thenAcceptAsync(
             found -> {
-              if (!player.isDisconnected()) {
-                player.sendMessage(
-                    tale(
-                        teller,
-                        from,
-                        ScoutChoices.nearest(from, found, range, 1).stream().findFirst()),
-                    false);
+              if (!asker.isDisconnected()) {
+                then.accept(ScoutChoices.nearest(from, found, range, 1).stream().findFirst());
               }
             },
             world.getServer());

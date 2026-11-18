@@ -199,4 +199,11 @@ class NightRoutineTest {
   void comingNight(final boolean fixed, final long time, final long night) {
     assertEquals(night, NightRoutine.comingNight(fixed, time));
   }
+
+  @ParameterizedTest(name = "home radius {0}: coffins reach {1}")
+  @CsvSource({"16, 32", "8, 16", "64, 128"})
+  @DisplayName("a vampire's coffin and its household lie within twice its home radius")
+  void coffinReach(final int homeRadius, final double reach) {
+    assertEquals(reach, NightRoutine.coffinReach(homeRadius), 1e-9);
+  }
 }

@@ -41,6 +41,8 @@ import com.grahambartley.nightborn.mob.stage.VampireStages;
 import com.grahambartley.nightborn.mob.stage.VampireStaging;
 import com.grahambartley.nightborn.name.MobNaming;
 import com.grahambartley.nightborn.name.NameBearer;
+import com.grahambartley.nightborn.raid.HouseGuardGoal;
+import com.grahambartley.nightborn.raid.HouseWatch;
 import com.grahambartley.nightborn.servant.goal.StanceFollowGoal;
 import com.grahambartley.nightborn.servant.goal.StancePostGoal;
 import com.grahambartley.nightborn.servant.goal.StanceTargetGoal;
@@ -215,6 +217,10 @@ public class VampireEntity extends HostileEntity
     goalSelector.add(9, new LookAroundGoal(this));
     targetSelector.add(1, new RevengeGoal(this));
     targetSelector.add(2, new StanceTargetGoal(this, memberStance));
+    targetSelector.add(
+        2,
+        new HouseGuardGoal(
+            this, () -> homeLife.home(), () -> HouseWatch.onWatch(this), this::hiss));
     targetSelector.add(
         2, new ActiveTargetGoal<>(this, LivingEntity.class, 10, true, false, this::hunts));
   }

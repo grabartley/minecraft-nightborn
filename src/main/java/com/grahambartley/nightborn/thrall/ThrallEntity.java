@@ -5,6 +5,8 @@ import com.grahambartley.nightborn.challenge.DeedKinds;
 import com.grahambartley.nightborn.challenge.Deeds;
 import com.grahambartley.nightborn.name.MobNaming;
 import com.grahambartley.nightborn.name.NameBearer;
+import com.grahambartley.nightborn.raid.HouseGuardGoal;
+import com.grahambartley.nightborn.raid.HouseGuards;
 import com.grahambartley.nightborn.servant.Servant;
 import com.grahambartley.nightborn.servant.ServantDeaths;
 import com.grahambartley.nightborn.servant.Servants;
@@ -20,6 +22,7 @@ import com.grahambartley.nightborn.servant.job.goal.GatherGoal;
 import com.grahambartley.nightborn.servant.job.goal.ScoutGoal;
 import com.grahambartley.nightborn.servant.job.goal.StandWatchGoal;
 import com.grahambartley.nightborn.servant.job.goal.WatchTargetGoal;
+import com.grahambartley.nightborn.vampire.Vampires;
 import com.grahambartley.nightborn.wheel.CommandWheel;
 import java.util.Optional;
 import java.util.UUID;
@@ -73,12 +76,14 @@ public class ThrallEntity extends PathAwareEntity
   private static final String VILLAGER = "VillagerData";
   private static final String MEMORY = "VillagerMemory";
   private static final String JOB = "Job";
+  private static final String HOUSE = "House";
 
   private Stance mode = Stance.FOLLOW;
   @Nullable private BlockPos post;
   private VillagerMemory memory = VillagerMemory.NONE;
   private final SimpleInventory carried = new SimpleInventory(DayWorker.CARRY_SLOTS);
   @Nullable private JobOrder job;
+  @Nullable private BlockPos house;
 
   public ThrallEntity(final EntityType<? extends PathAwareEntity> type, final World world) {
     super(type, world);
@@ -113,6 +118,13 @@ public class ThrallEntity extends PathAwareEntity
     goalSelector.add(7, new LookAtEntityGoal(this, PlayerEntity.class, 6.0F));
     goalSelector.add(8, new LookAroundGoal(this));
     targetSelector.add(1, new StanceTargetGoal(this, this));
+    targetSelector.add(
+        1,
+        new HouseGuardGoal(
+            this,
+            this::house,
+            () -> true,
+            () -> playSound(SoundEvents.ENTITY_VILLAGER_NO, getSoundVolume(), getSoundPitch())));
     targetSelector.add(2, new WatchTargetGoal<>(this));
   }
 
@@ -124,6 +136,16 @@ public class ThrallEntity extends PathAwareEntity
     post = getBlockPos();
     job = null;
     setPersistent();
+  }
+
+  public void keepHouse(final BlockPos home) {
+    house = home.toImmutable();
+    order(Stance.STAY);
+    setPersistent();
+  }
+
+  public Optional<BlockPos> house() {
+    return Optional.ofNullable(house);
   }
 
   @Override
@@ -238,7 +260,8 @@ public class ThrallEntity extends PathAwareEntity
 
   @Override
   public boolean guardsAgainst(final LivingEntity intruder) {
-    return intruder instanceof Monster;
+    return HouseGuards.guardsAgainst(
+        intruder instanceof Monster, Vampires.isVampire(intruder), house != null);
   }
 
   @Override
@@ -296,6 +319,9 @@ public class ThrallEntity extends PathAwareEntity
           .result()
           .ifPresent(saved -> nbt.put(JOB, saved));
     }
+    if (house != null) {
+      nbt.put(HOUSE, NbtHelper.fromBlockPos(house));
+    }
     writeInventory(nbt, getRegistryManager());
   }
 
@@ -306,6 +332,7 @@ public class ThrallEntity extends PathAwareEntity
         OWNER_UUID, nbt.containsUuid(OWNER) ? Optional.of(nbt.getUuid(OWNER)) : Optional.empty());
     mode = Stance.byName(nbt.getString(MODE));
     post = NbtHelper.toBlockPos(nbt, POST).orElse(null);
+    house = NbtHelper.toBlockPos(nbt, HOUSE).orElse(null);
     if (nbt.contains(VILLAGER)) {
       VillagerData.CODEC
           .parse(NbtOps.INSTANCE, nbt.get(VILLAGER))

@@ -4,6 +4,7 @@ import com.grahambartley.nightborn.downed.Downed;
 import com.grahambartley.nightborn.mob.VampireEntity;
 import com.grahambartley.nightborn.mob.home.HomeCoffins;
 import com.grahambartley.nightborn.mob.home.NightRoutine;
+import com.grahambartley.nightborn.raid.HouseWatch;
 import com.grahambartley.nightborn.server.ServerConfigService;
 import java.util.EnumSet;
 import net.minecraft.entity.ai.goal.Goal;
@@ -92,7 +93,7 @@ public class SleepInCoffinGoal extends Goal {
 
   private boolean readyForBed() {
     return NightRoutine.readyForBed(
-        vampire.homeLife().bedtime(vampire),
+        vampire.homeLife().bedtime(vampire) && !HouseWatch.keepsWatch(vampire),
         vampire.getTarget() != null,
         Downed.state(vampire) != null);
   }
