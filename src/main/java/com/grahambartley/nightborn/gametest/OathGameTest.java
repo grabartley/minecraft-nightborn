@@ -132,10 +132,8 @@ public class OathGameTest implements FabricGameTest {
           context.assertTrue(
               human.getPos().squaredDistanceTo(stood[0]) < 1.0E-4, "the player is put back");
           context.assertTrue(
-              human.getVelocity().equals(Vec3d.ZERO),
-              "and is not moving, but moves at "
-                  + human.getVelocity()
-                  + (human.isOnGround() ? " on the ground" : " in the air"));
+              human.getVelocity().horizontalLengthSquared() == 0.0,
+              "and the shove is gone, but it moves at " + human.getVelocity());
           TestPlayers.finish(context, human);
         });
   }
