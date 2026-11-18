@@ -62,6 +62,7 @@ public final class RaidGameTest implements FabricGameTest {
 
   @GameTest(templateName = ARENA, batchId = WAKE_BATCH, tickLimit = LIMIT)
   public void enoughNoiseWakesTheWholeHouseAgainstTheIntruder(final TestContext context) {
+    CoffinStage.roof(context);
     final BlockPos home = new BlockPos(1, 2, 4);
     final BlockPos first = CoffinStage.coffin(context, new BlockPos(1, 2, 1), Direction.SOUTH);
     final BlockPos second = CoffinStage.coffin(context, new BlockPos(6, 2, 1), Direction.SOUTH);
@@ -86,6 +87,7 @@ public final class RaidGameTest implements FabricGameTest {
 
   @GameTest(templateName = ARENA, batchId = QUIET_BATCH, tickLimit = LIMIT)
   public void aSingleBlowLeavesTheHouseAsleep(final TestContext context) {
+    CoffinStage.roof(context);
     final BlockPos head = CoffinStage.coffin(context, new BlockPos(1, 2, 1), Direction.SOUTH);
     final VampireEntity sleeper = resident(context, head, new BlockPos(1, 2, 4));
     final ServerPlayerEntity hunter = TestPlayers.human(context, new BlockPos(1, 2, 6));
@@ -102,6 +104,7 @@ public final class RaidGameTest implements FabricGameTest {
 
   @GameTest(templateName = ARENA, batchId = GUARD_BATCH, tickLimit = LIMIT)
   public void aGuardThatSeesAnIntruderWakesTheHouse(final TestContext context) {
+    CoffinStage.roof(context);
     final BlockPos home = new BlockPos(1, 2, 4);
     final BlockPos head = CoffinStage.coffin(context, new BlockPos(1, 2, 1), Direction.SOUTH);
     final VampireEntity sleeper = resident(context, head, home);

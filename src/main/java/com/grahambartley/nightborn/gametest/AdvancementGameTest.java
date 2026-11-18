@@ -84,6 +84,8 @@ public class AdvancementGameTest implements FabricGameTest {
           new Expected("regime_change", "no_reflection_on_you", AdvancementFrame.TASK, 0, false),
           new Expected("last_bite", "no_reflection_on_you", AdvancementFrame.TASK, 0, false),
           new Expected(
+              "made_in_the_shade", "no_reflection_on_you", AdvancementFrame.TASK, 0, false),
+          new Expected(
               "nothing_to_see_here", "no_reflection_on_you", AdvancementFrame.TASK, 0, true),
           new Expected(
               "inquire_within", "no_reflection_on_you", AdvancementFrame.CHALLENGE, 100, false),
