@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
-import com.grahambartley.nightborn.accessory.AccessoryPiece;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -75,10 +74,11 @@ class ClothingAssetsTest {
   @DisplayName("vanilla's dyeable tag holds exactly the dyeable clothing and accessories")
   void dyeableTagMatchesThePieces() throws IOException {
     assertEquals(
-        Stream.<Garment>concat(
-                Arrays.stream(ClothingPiece.values()), Arrays.stream(AccessoryPiece.values()))
-            .filter(Garment::dyeable)
-            .map(piece -> "nightborn:" + piece.id())
+        Stream.concat(
+                Arrays.stream(ClothingPiece.values())
+                    .filter(ClothingPiece::dyeable)
+                    .map(piece -> "nightborn:" + piece.id()),
+                Stream.of("nightborn:mourning_veil", "nightborn:high_collared_cape"))
             .collect(Collectors.toSet()),
         values("minecraft/tags/item/dyeable.json"));
   }

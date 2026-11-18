@@ -8,15 +8,15 @@ import net.minecraft.util.Identifier;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.EnumSource;
+import org.junit.jupiter.params.provider.MethodSource;
 
 @ExtendWith(MinecraftBootstrapExtension.class)
 class AccessoryFeaturesTest {
 
   @ParameterizedTest(name = "{0}")
-  @EnumSource(AccessoryPiece.class)
+  @MethodSource("com.grahambartley.nightborn.accessory.AccessoriesTest#ids")
   @DisplayName("registering accessories brings in every piece")
-  void registersEveryPiece(final AccessoryPiece piece) {
-    assertTrue(Registries.ITEM.containsId(Identifier.of("nightborn", piece.id())));
+  void registersEveryPiece(final String piece) {
+    assertTrue(Registries.ITEM.containsId(Identifier.of("nightborn", piece)));
   }
 }

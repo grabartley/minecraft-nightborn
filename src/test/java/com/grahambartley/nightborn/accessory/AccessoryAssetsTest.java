@@ -17,7 +17,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
-import org.junit.jupiter.params.provider.EnumSource;
+import org.junit.jupiter.params.provider.MethodSource;
 
 class AccessoryAssetsTest {
 
@@ -75,23 +75,31 @@ class AccessoryAssetsTest {
   }
 
   @ParameterizedTest(name = "{0}")
-  @EnumSource(AccessoryPiece.class)
-  @DisplayName("each piece ships its sprite, recipe and, when drawn, its worn model in both cuts")
-  void shipsItsFiles(final AccessoryPiece piece) {
-    assertTrue(Files.exists(ASSETS.resolve("models/item/" + piece.id() + ".json")));
-    assertTrue(Files.exists(ASSETS.resolve("textures/item/" + piece.id() + ".png")));
-    assertTrue(Files.exists(DATA.resolve("nightborn/recipe/" + piece.id() + ".json")));
+  @MethodSource("com.grahambartley.nightborn.accessory.AccessoriesTest#ids")
+  @DisplayName("each piece ships its sprite, recipe and, unless it is a ring, its worn model")
+  void shipsItsFiles(final String piece) throws IOException {
+    assertTrue(Files.exists(ASSETS.resolve("models/item/" + piece + ".json")));
+    assertTrue(Files.exists(ASSETS.resolve("textures/item/" + piece + ".png")));
+    assertTrue(Files.exists(DATA.resolve("nightborn/recipe/" + piece + ".json")));
+    final boolean drawn = slotOf(piece).drawn();
     for (final String cut : List.of("male", "female")) {
       assertEquals(
-          piece.drawn(),
-          Files.exists(CLIENT.resolve("geo/armor/" + piece.id() + "_" + cut + ".geo.json")));
+          drawn, Files.exists(CLIENT.resolve("geo/armor/" + piece + "_" + cut + ".geo.json")));
       assertEquals(
-          piece.drawn(),
-          Files.exists(ASSETS.resolve("textures/armor/" + piece.id() + "_" + cut + ".png")));
+          drawn, Files.exists(ASSETS.resolve("textures/armor/" + piece + "_" + cut + ".png")));
     }
     assertEquals(
-        piece.drawn(),
-        Files.exists(CLIENT.resolve("animations/armor/" + piece.id() + ".animation.json")));
+        drawn, Files.exists(CLIENT.resolve("animations/armor/" + piece + ".animation.json")));
+  }
+
+  private static AccessorySlot slotOf(final String piece) throws IOException {
+    for (final AccessorySlot slot : AccessorySlot.values()) {
+      if (strings(read("trinkets/tags/item/" + slot.id() + ".json").getAsJsonArray("values"))
+          .contains("nightborn:" + piece)) {
+        return slot;
+      }
+    }
+    throw new AssertionError(piece + " is in no slot");
   }
 
   private static JsonObject read(final String path) throws IOException {

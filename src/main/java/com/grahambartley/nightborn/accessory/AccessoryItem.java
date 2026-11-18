@@ -3,12 +3,12 @@ package com.grahambartley.nightborn.accessory;
 import com.grahambartley.nightborn.clothing.ClothingMotion;
 import com.grahambartley.nightborn.clothing.ClothingRenderProviders;
 import com.grahambartley.nightborn.clothing.Dressed;
-import com.grahambartley.nightborn.clothing.Garment;
 import java.util.List;
 import java.util.function.Consumer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.tooltip.TooltipType;
+import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.text.Text;
 import software.bernie.geckolib.animatable.GeoItem;
 import software.bernie.geckolib.animatable.client.GeoRenderProvider;
@@ -18,21 +18,22 @@ import software.bernie.geckolib.util.GeckoLibUtil;
 
 public class AccessoryItem extends Item implements GeoItem, Dressed {
 
-  private final AccessoryPiece piece;
+  private final String id;
   private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
 
-  public AccessoryItem(final AccessoryPiece piece, final Settings settings) {
+  public AccessoryItem(final String id, final Settings settings) {
     super(settings);
-    this.piece = piece;
-  }
-
-  public AccessoryPiece piece() {
-    return this.piece;
+    this.id = id;
   }
 
   @Override
-  public Garment garment() {
-    return this.piece;
+  public String artId() {
+    return this.id;
+  }
+
+  @Override
+  public int undyedColor(final RegistryWrapper.WrapperLookup registries) {
+    return Accessories.of(registries, this).map(Accessory::color).orElse(Accessory.UNDYED);
   }
 
   @Override

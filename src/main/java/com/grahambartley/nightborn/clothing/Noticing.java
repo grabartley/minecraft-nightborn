@@ -8,9 +8,8 @@ public final class Noticing {
 
   private Noticing() {}
 
-  public static double scale(
-      final boolean hunter, final double noticeDistance, final double hunterSight) {
-    return hunter ? noticeDistance * hunterSight : 1.0;
+  public static double byHunter(final double noticeDistance, final double hunterSight) {
+    return noticeDistance * hunterSight;
   }
 
   public static int range(final int range, final double noticeDistance) {
@@ -18,8 +17,7 @@ public final class Noticing {
   }
 
   public static double byHunter(final LivingEntity wearer) {
-    return scale(
-        true,
+    return byHunter(
         WornAttributes.value(wearer, WornAttributes.NOTICE_DISTANCE),
         WornAttributes.value(wearer, WornAttributes.HUNTER_SIGHT));
   }

@@ -3,7 +3,6 @@ package com.grahambartley.nightborn.gametest;
 import com.grahambartley.nightborn.Nightborn;
 import com.grahambartley.nightborn.accessory.AccessoryItems;
 import com.grahambartley.nightborn.accessory.AccessoryMove;
-import com.grahambartley.nightborn.accessory.AccessoryPiece;
 import com.grahambartley.nightborn.accessory.AccessorySlot;
 import com.grahambartley.nightborn.clothing.ClothingItems;
 import com.grahambartley.nightborn.clothing.ClothingPiece;
@@ -51,18 +50,15 @@ public class AccessoryGameTest implements FabricGameTest {
   @GameTest(templateName = ARENA, batchId = BATCH, tickLimit = 20)
   public void eachSlotHoldsOnlyWhatBelongsInIt(final TestContext context) {
     final ServerPlayerEntity human = TestPlayers.human(context, SPOT);
-    final ItemStack veil = new ItemStack(AccessoryItems.of(AccessoryPiece.MOURNING_VEIL));
-    final ItemStack cape = new ItemStack(AccessoryItems.of(AccessoryPiece.HIGH_COLLARED_CAPE));
+    final ItemStack veil = new ItemStack(AccessoryItems.of("mourning_veil"));
+    final ItemStack cape = new ItemStack(AccessoryItems.of("high_collared_cape"));
     final ItemStack hat = new ItemStack(ClothingItems.of(ClothingPiece.TOP_HAT));
     context.assertTrue(fits(human, AccessorySlot.FACE, veil), "a veil is worn on the face");
     context.assertFalse(fits(human, AccessorySlot.BACK, veil), "a veil is not worn on the back");
     context.assertTrue(fits(human, AccessorySlot.BACK, cape), "a cape is worn on the back");
     context.assertFalse(fits(human, AccessorySlot.FACE, hat), "a hat is not a face accessory");
     context.assertTrue(
-        fits(
-            human,
-            AccessorySlot.SECOND_RING,
-            new ItemStack(AccessoryItems.of(AccessoryPiece.ONYX_RING))),
+        fits(human, AccessorySlot.SECOND_RING, new ItemStack(AccessoryItems.of("onyx_ring"))),
         "a ring fits the second ring slot");
     context.assertFalse(
         human.getPreferredEquipmentSlot(cape) == EquipmentSlot.CHEST,
@@ -76,7 +72,7 @@ public class AccessoryGameTest implements FabricGameTest {
     final double before = human.getAttributeValue(EntityAttributes.GENERIC_SAFE_FALL_DISTANCE);
     final ItemStack coat = new ItemStack(ClothingItems.of(ClothingPiece.FROCK_COAT));
     coat.addEnchantment(enchantment(context, "batwing"), 1);
-    final ItemStack cape = new ItemStack(AccessoryItems.of(AccessoryPiece.HIGH_COLLARED_CAPE));
+    final ItemStack cape = new ItemStack(AccessoryItems.of("high_collared_cape"));
     cape.addEnchantment(enchantment(context, "batwing"), 3);
     human.equipStack(EquipmentSlot.CHEST, coat);
     slot(human, AccessorySlot.BACK).setStack(0, cape);
@@ -109,14 +105,11 @@ public class AccessoryGameTest implements FabricGameTest {
   @GameTest(templateName = ARENA, batchId = BATCH, tickLimit = 20)
   public void aVeilLeftOnTheHeadMovesToTheFace(final TestContext context) {
     final ServerPlayerEntity human = TestPlayers.human(context, SPOT);
-    human.equipStack(
-        EquipmentSlot.HEAD, new ItemStack(AccessoryItems.of(AccessoryPiece.MOURNING_VEIL)));
+    human.equipStack(EquipmentSlot.HEAD, new ItemStack(AccessoryItems.of("mourning_veil")));
     AccessoryMove.fromArmour(human);
     context.assertTrue(human.getEquippedStack(EquipmentSlot.HEAD).isEmpty(), "the head is free");
     context.assertTrue(
-        slot(human, AccessorySlot.FACE)
-            .getStack(0)
-            .isOf(AccessoryItems.of(AccessoryPiece.MOURNING_VEIL)),
+        slot(human, AccessorySlot.FACE).getStack(0).isOf(AccessoryItems.of("mourning_veil")),
         "the veil is now on the face");
     TestPlayers.finish(context, human);
   }
@@ -125,15 +118,12 @@ public class AccessoryGameTest implements FabricGameTest {
   public void aCapeWithNoRoomOnTheBackGoesToTheInventory(final TestContext context) {
     final ServerPlayerEntity human = TestPlayers.human(context, SPOT);
     slot(human, AccessorySlot.BACK)
-        .setStack(0, new ItemStack(AccessoryItems.of(AccessoryPiece.HIGH_COLLARED_CAPE)));
-    human.equipStack(
-        EquipmentSlot.CHEST, new ItemStack(AccessoryItems.of(AccessoryPiece.HIGH_COLLARED_CAPE)));
+        .setStack(0, new ItemStack(AccessoryItems.of("high_collared_cape")));
+    human.equipStack(EquipmentSlot.CHEST, new ItemStack(AccessoryItems.of("high_collared_cape")));
     AccessoryMove.fromArmour(human);
     context.assertTrue(human.getEquippedStack(EquipmentSlot.CHEST).isEmpty(), "the chest is free");
     context.assertTrue(
-        human
-            .getInventory()
-            .contains(new ItemStack(AccessoryItems.of(AccessoryPiece.HIGH_COLLARED_CAPE))),
+        human.getInventory().contains(new ItemStack(AccessoryItems.of("high_collared_cape"))),
         "the second cape is kept in the inventory");
     TestPlayers.finish(context, human);
   }
@@ -141,7 +131,7 @@ public class AccessoryGameTest implements FabricGameTest {
   @GameTest(templateName = ARENA, batchId = NIGHT_BATCH, tickLimit = CHECK + 10)
   public void nocturneOnAVeilSeesInTheDark(final TestContext context) {
     final ServerPlayerEntity human = TestPlayers.human(context, SPOT);
-    final ItemStack veil = new ItemStack(AccessoryItems.of(AccessoryPiece.MOURNING_VEIL));
+    final ItemStack veil = new ItemStack(AccessoryItems.of("mourning_veil"));
     veil.addEnchantment(enchantment(context, "nocturne"), 1);
     slot(human, AccessorySlot.FACE).setStack(0, veil);
     context.runAtTick(

@@ -3,7 +3,7 @@ package com.grahambartley.nightborn.clothing;
 import java.util.Locale;
 import net.minecraft.item.ArmorItem;
 
-public enum ClothingPiece implements Garment {
+public enum ClothingPiece {
   TRICORNE(ArmorItem.Type.HELMET, ClothingFabric.CLOTH, 0x24201F),
   TOP_HAT(ArmorItem.Type.HELMET, ClothingFabric.CLOTH, 0x1C1A1D),
   WIDE_BRIMMED_HAT(ArmorItem.Type.HELMET, ClothingFabric.CLOTH, 0x211D1E),
@@ -28,7 +28,6 @@ public enum ClothingPiece implements Garment {
     this.undyedColor = undyedColor;
   }
 
-  @Override
   public String id() {
     return name().toLowerCase(Locale.ROOT);
   }
@@ -45,12 +44,10 @@ public enum ClothingPiece implements Garment {
     return this.type.getMaxDamage(LEATHER_DURABILITY_MULTIPLIER);
   }
 
-  @Override
   public boolean dyeable() {
     return this.fabric.dyeable();
   }
 
-  @Override
   public int undyedColor() {
     return this.undyedColor;
   }

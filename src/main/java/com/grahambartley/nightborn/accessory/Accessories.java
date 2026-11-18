@@ -3,6 +3,7 @@ package com.grahambartley.nightborn.accessory;
 import com.grahambartley.nightborn.Nightborn;
 import java.util.Optional;
 import net.fabricmc.fabric.api.event.registry.DynamicRegistries;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
@@ -23,10 +24,18 @@ public final class Accessories {
 
   public static Optional<Accessory> of(
       final RegistryWrapper.WrapperLookup registries, final ItemStack stack) {
-    final Identifier item = Registries.ITEM.getId(stack.getItem());
+    return of(registries, stack.getItem());
+  }
+
+  public static Optional<Accessory> of(
+      final RegistryWrapper.WrapperLookup registries, final Item item) {
+    if (registries == null) {
+      return Optional.empty();
+    }
+    final Identifier id = Registries.ITEM.getId(item);
     return registries
         .getOptionalWrapper(KEY)
-        .flatMap(accessories -> accessories.getOptional(RegistryKey.of(KEY, item)))
+        .flatMap(accessories -> accessories.getOptional(RegistryKey.of(KEY, id)))
         .map(entry -> entry.value());
   }
 }

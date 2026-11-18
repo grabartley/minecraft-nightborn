@@ -2,7 +2,6 @@ package com.grahambartley.nightborn.render;
 
 import com.grahambartley.nightborn.Nightborn;
 import com.grahambartley.nightborn.clothing.ClothingCut;
-import com.grahambartley.nightborn.clothing.Garment;
 import net.minecraft.util.Identifier;
 
 public final class ClothingArt {
@@ -11,16 +10,16 @@ public final class ClothingArt {
 
   private ClothingArt() {}
 
-  public static Identifier geo(final Garment piece, final ClothingCut cut) {
-    return id("geo/armor/" + piece.id() + "_" + cut.id() + ".geo.json");
+  public static Identifier geo(final String id, final ClothingCut cut) {
+    return id("geo/armor/" + id + "_" + cut.id() + ".geo.json");
   }
 
-  public static Identifier texture(final Garment piece, final ClothingCut cut) {
-    return id("textures/armor/" + piece.id() + "_" + cut.id() + ".png");
+  public static Identifier texture(final String id, final ClothingCut cut) {
+    return id("textures/armor/" + id + "_" + cut.id() + ".png");
   }
 
-  public static Identifier animation(final Garment piece) {
-    return id("animations/armor/" + piece.id() + ".animation.json");
+  public static Identifier animation(final String id) {
+    return id("animations/armor/" + id + ".animation.json");
   }
 
   public static boolean isDyed(final String boneName) {

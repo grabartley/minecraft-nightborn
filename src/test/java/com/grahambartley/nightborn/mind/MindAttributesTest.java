@@ -4,7 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.grahambartley.nightborn.MinecraftBootstrapExtension;
-import com.grahambartley.nightborn.mob.VampireEntity;
+import com.grahambartley.nightborn.mob.VampireMobAttributes;
 import java.util.stream.Stream;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;
 import net.minecraft.entity.attribute.EntityAttribute;
@@ -42,7 +42,7 @@ class MindAttributesTest {
   @DisplayName("players and vampire mobs carry the mind attributes their skills raise")
   void carried(final RegistryEntry<EntityAttribute> attribute, final String path) {
     final DefaultAttributeContainer players = PlayerEntity.createPlayerAttributes().build();
-    final DefaultAttributeContainer vampires = VampireEntity.createVampireAttributes().build();
+    final DefaultAttributeContainer vampires = VampireMobAttributes.create().build();
     assertTrue(players.has(attribute), path);
     assertTrue(vampires.has(attribute), path);
   }

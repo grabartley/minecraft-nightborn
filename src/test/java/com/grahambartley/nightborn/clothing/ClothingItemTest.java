@@ -32,8 +32,8 @@ class ClothingItemTest {
   void showsItsColour(final ClothingPiece piece) {
     final ClothingItem item = ClothingItems.of(piece);
     final ItemStack stack = new ItemStack(item);
-    assertEquals(piece.undyedColor(), item.color(stack) & 0xFFFFFF);
+    assertEquals(piece.undyedColor(), item.color(stack, null) & 0xFFFFFF);
     stack.set(DataComponentTypes.DYED_COLOR, new DyedColorComponent(0xB02E26, true));
-    assertEquals(0xB02E26, item.color(stack) & 0xFFFFFF);
+    assertEquals(0xB02E26, item.color(stack, null) & 0xFFFFFF);
   }
 }

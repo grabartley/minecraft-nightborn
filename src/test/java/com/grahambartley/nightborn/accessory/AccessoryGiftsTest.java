@@ -32,7 +32,10 @@ class AccessoryGiftsTest {
     assertEquals(
         gifts,
         AccessoryGifts.wanted(
-                Map.of(RING, new Accessory(Optional.ofNullable(only), List.of(SLOWER))), wearer)
+                Map.of(
+                    RING,
+                    new Accessory(Optional.ofNullable(only), List.of(SLOWER), Accessory.UNDYED)),
+                wearer)
             .size());
   }
 

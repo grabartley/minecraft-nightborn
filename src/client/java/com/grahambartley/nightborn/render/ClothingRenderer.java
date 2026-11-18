@@ -130,7 +130,9 @@ public class ClothingRenderer<T extends Item & GeoItem & Dressed>
 
   @Override
   protected Color getColorForBone(final GeoBone bone) {
-    return Color.ofOpaque(((Dressed) this.currentStack.getItem()).color(this.currentStack));
+    return Color.ofOpaque(
+        ((Dressed) this.currentStack.getItem())
+            .color(this.currentStack, this.currentEntity.getWorld().getRegistryManager()));
   }
 
   private static ClothingCut cut(final Entity entity) {

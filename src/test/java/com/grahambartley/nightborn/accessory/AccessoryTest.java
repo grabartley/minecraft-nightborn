@@ -28,15 +28,29 @@ class AccessoryTest {
   })
   @DisplayName("a piece for one side does nothing on the other, and a plain piece works for all")
   void worksFor(final Faction only, final Faction wearer, final boolean works) {
-    assertEquals(works, new Accessory(Optional.ofNullable(only), List.of()).worksFor(wearer));
+    assertEquals(
+        works,
+        new Accessory(Optional.ofNullable(only), List.of(), Accessory.UNDYED).worksFor(wearer));
   }
 
   @Test
   @DisplayName("an empty data file is a plain piece for anyone with no gift")
   void plainFromEmptyData() {
     assertEquals(
-        new Accessory(Optional.empty(), List.of()),
+        new Accessory(Optional.empty(), List.of(), Accessory.UNDYED),
         Accessory.CODEC.parse(JsonOps.INSTANCE, JsonParser.parseString("{}")).getOrThrow());
+  }
+
+  @ParameterizedTest(name = "{0}")
+  @CsvSource({"#1A1719", "#5A1A24"})
+  @DisplayName("data gives a dyeable piece its undyed colour")
+  void readsAColour(final String colour) {
+    assertEquals(
+        Integer.parseInt(colour.substring(1), 16),
+        Accessory.CODEC
+            .parse(JsonOps.INSTANCE, JsonParser.parseString("{\"color\":\"" + colour + "\"}"))
+            .getOrThrow()
+            .color());
   }
 
   @Test

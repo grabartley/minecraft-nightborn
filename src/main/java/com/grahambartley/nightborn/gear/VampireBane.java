@@ -33,9 +33,13 @@ public final class VampireBane {
 
   public static float strike(final ItemStack weapon, final Entity target, final float damage) {
     final float total = damage + bonus(weapon, target);
-    return weapon.isIn(STAKES) && Vampires.isVampire(target)
+    return seeksTheHeart(weapon.isIn(STAKES), Vampires.isVampire(target))
         ? EnchantedValues.apply(weapon, EnchantedValues.STAKE_DAMAGE, total)
         : total;
+  }
+
+  public static boolean seeksTheHeart(final boolean stake, final boolean vampire) {
+    return stake && vampire;
   }
 
   public static float ammoBonus(final ItemStack ammo, final Entity target) {

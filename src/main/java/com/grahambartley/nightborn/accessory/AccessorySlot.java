@@ -56,6 +56,14 @@ public enum AccessorySlot {
     return this.tag;
   }
 
+  public boolean drawn() {
+    return !this.name.equals("ring");
+  }
+
+  public static boolean drawnIn(final String slotId) {
+    return byId(slotId).map(AccessorySlot::drawn).orElse(false);
+  }
+
   public EquipmentSlot body() {
     return bodyOf(this.group);
   }
@@ -65,7 +73,8 @@ public enum AccessorySlot {
       case "head" -> EquipmentSlot.HEAD;
       case "legs" -> EquipmentSlot.LEGS;
       case "feet" -> EquipmentSlot.FEET;
-      default -> EquipmentSlot.CHEST;
+      case "chest", "hand", "offhand" -> EquipmentSlot.CHEST;
+      default -> throw new IllegalArgumentException("No body part for slot group " + group);
     };
   }
 }

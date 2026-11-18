@@ -24,9 +24,7 @@ public final class AccessoryRenderer implements TrinketRenderer {
   private AccessoryRenderer() {}
 
   public static void register() {
-    AccessoryItems.all().stream()
-        .filter(item -> item.piece().drawn())
-        .forEach(item -> TrinketRendererRegistry.registerRenderer(item, INSTANCE));
+    AccessoryItems.all().forEach(item -> TrinketRendererRegistry.registerRenderer(item, INSTANCE));
   }
 
   @Override
@@ -45,7 +43,8 @@ public final class AccessoryRenderer implements TrinketRenderer {
       final float animationProgress,
       final float headYaw,
       final float headPitch) {
-    if (!(contextModel instanceof BipedEntityModel base)) {
+    if (!(contextModel instanceof BipedEntityModel base)
+        || !AccessorySlot.drawnIn(slot.inventory().getSlotType().getId())) {
       return;
     }
     final EquipmentSlot body = AccessorySlot.bodyOf(slot.inventory().getSlotType().getGroup());

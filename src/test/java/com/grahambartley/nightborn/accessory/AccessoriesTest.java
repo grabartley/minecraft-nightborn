@@ -13,7 +13,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.EnumSource;
+import org.junit.jupiter.params.provider.MethodSource;
 
 @ExtendWith(MinecraftBootstrapExtension.class)
 class AccessoriesTest {
@@ -26,11 +26,15 @@ class AccessoriesTest {
     assertEquals("nightborn:accessory", Accessories.KEY.getValue().toString());
   }
 
+  static java.util.stream.Stream<String> ids() {
+    return AccessoryItems.IDS.stream();
+  }
+
   @ParameterizedTest(name = "{0}")
-  @EnumSource(AccessoryPiece.class)
+  @MethodSource("ids")
   @DisplayName("every piece has a data file that reads cleanly")
-  void eachPieceHasData(final AccessoryPiece piece) throws IOException {
-    final Path file = DATA.resolve(piece.id() + ".json");
+  void eachPieceHasData(final String piece) throws IOException {
+    final Path file = DATA.resolve(piece + ".json");
     assertTrue(Files.exists(file), file.toString());
     assertTrue(
         Accessory.CODEC

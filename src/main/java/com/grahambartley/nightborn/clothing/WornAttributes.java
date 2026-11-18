@@ -15,12 +15,12 @@ public final class WornAttributes {
 
   public static final double MOST_RESISTANCE = 0.8;
   public static final double LEAST_SHARE = 0.2;
-  public static final double MOST_SIGHT = 2.0;
+  public static final double MOST_SIGHT = 1.5;
   public static final double MOST_REACH = 8.0;
   public static final double MOST_MULTIPLIER = 3.0;
 
   public static final RegistryEntry<EntityAttribute> NOTICE_DISTANCE =
-      register("notice_distance", 1.0, LEAST_SHARE, MOST_SIGHT);
+      register("notice_distance", 1.0, LEAST_SHARE, 1.0);
   public static final RegistryEntry<EntityAttribute> HUNTER_SIGHT =
       register("hunter_sight", 1.0, 1.0, MOST_SIGHT);
   public static final RegistryEntry<EntityAttribute> VANISH_REACH =

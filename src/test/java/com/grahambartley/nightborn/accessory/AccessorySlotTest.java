@@ -1,6 +1,7 @@
 package com.grahambartley.nightborn.accessory;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import com.grahambartley.nightborn.MinecraftBootstrapExtension;
 import java.util.Arrays;
@@ -32,6 +33,26 @@ class AccessorySlotTest {
     assertEquals("trinkets:" + id, slot.tag().id().toString());
     assertEquals(body, slot.body());
     assertEquals(Optional.of(slot), AccessorySlot.byId(id));
+  }
+
+  @ParameterizedTest(name = "{0}: drawn {1}")
+  @CsvSource({
+    "hand/ring, false",
+    "offhand/ring, false",
+    "chest/back, true",
+    "head/face, true",
+    "hand/glove, true",
+    "chest/cape, false"
+  })
+  @DisplayName("every piece but a ring is drawn, and only in the mod's own slots")
+  void drawnIn(final String slot, final boolean drawn) {
+    assertEquals(drawn, AccessorySlot.drawnIn(slot));
+  }
+
+  @Test
+  @DisplayName("a slot group with no body part fails loudly")
+  void unknownGroup() {
+    assertThrows(IllegalArgumentException.class, () -> AccessorySlot.bodyOf("charm"));
   }
 
   @ParameterizedTest(name = "{0} -> {1}")

@@ -2,6 +2,7 @@ package com.grahambartley.nightborn.clothing;
 
 import java.util.function.Consumer;
 import net.minecraft.item.ArmorItem;
+import net.minecraft.registry.RegistryWrapper;
 import software.bernie.geckolib.animatable.GeoItem;
 import software.bernie.geckolib.animatable.client.GeoRenderProvider;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
@@ -23,8 +24,13 @@ public class ClothingItem extends ArmorItem implements GeoItem, Dressed {
   }
 
   @Override
-  public Garment garment() {
-    return this.piece;
+  public String artId() {
+    return this.piece.id();
+  }
+
+  @Override
+  public int undyedColor(final RegistryWrapper.WrapperLookup registries) {
+    return this.piece.undyedColor();
   }
 
   @Override

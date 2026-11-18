@@ -17,16 +17,16 @@ public class ClothingModel<T extends Item & GeoItem & Dressed> extends GeoModel<
 
   @Override
   public Identifier getModelResource(final T item) {
-    return ClothingArt.geo(item.garment(), this.cut);
+    return ClothingArt.geo(item.artId(), this.cut);
   }
 
   @Override
   public Identifier getTextureResource(final T item) {
-    return ClothingArt.texture(item.garment(), this.cut);
+    return ClothingArt.texture(item.artId(), this.cut);
   }
 
   @Override
   public Identifier getAnimationResource(final T item) {
-    return ClothingArt.animation(item.garment());
+    return ClothingArt.animation(item.artId());
   }
 }

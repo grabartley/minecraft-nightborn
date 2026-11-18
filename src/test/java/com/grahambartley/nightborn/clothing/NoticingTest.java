@@ -10,17 +10,11 @@ class NoticingTest {
 
   private static final double EPSILON = 1.0E-9;
 
-  @ParameterizedTest(name = "hunter {0}, notice {1}, sight {2}: {3}")
-  @CsvSource({
-    "true, 1.0, 1.0, 1.0",
-    "true, 0.7, 1.0, 0.7",
-    "true, 1.0, 1.5, 1.5",
-    "true, 0.7, 1.5, 1.05",
-    "false, 0.7, 1.5, 1.0"
-  })
-  @DisplayName("Shroud and Beacon change only how far hunters see the wearer")
-  void scale(final boolean hunter, final double notice, final double sight, final double scale) {
-    assertEquals(scale, Noticing.scale(hunter, notice, sight), EPSILON);
+  @ParameterizedTest(name = "notice {0}, sight {1}: {2}")
+  @CsvSource({"1.0, 1.0, 1.0", "0.7, 1.0, 0.7", "1.0, 1.5, 1.5", "0.7, 1.5, 1.05", "0.2, 1.5, 0.3"})
+  @DisplayName("Shroud and Beacon together set how far hunters see the wearer")
+  void byHunter(final double notice, final double sight, final double scale) {
+    assertEquals(scale, Noticing.byHunter(notice, sight), EPSILON);
   }
 
   @ParameterizedTest(name = "range {0} at {1}: {2}")

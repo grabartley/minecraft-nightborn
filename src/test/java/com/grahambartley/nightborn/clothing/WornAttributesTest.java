@@ -16,8 +16,8 @@ class WornAttributesTest {
 
   @ParameterizedTest(name = "{0}: {1} in {2}..{3}")
   @CsvSource({
-    "notice_distance, 1.0, 0.2, 2.0",
-    "hunter_sight, 1.0, 1.0, 2.0",
+    "notice_distance, 1.0, 0.2, 1.0",
+    "hunter_sight, 1.0, 1.0, 1.5",
     "vanish_reach, 0.0, 0.0, 8.0",
     "ward_resistance, 0.0, 0.0, 0.8",
     "blood_drain, 1.0, 0.2, 3.0",

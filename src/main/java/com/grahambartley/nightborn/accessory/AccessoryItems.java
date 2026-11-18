@@ -3,7 +3,6 @@ package com.grahambartley.nightborn.accessory;
 import com.grahambartley.nightborn.Nightborn;
 import com.grahambartley.nightborn.clothing.ClothingItems;
 import dev.emi.trinkets.api.TrinketsApi;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -18,16 +17,29 @@ import net.minecraft.util.Identifier;
 
 public final class AccessoryItems {
 
-  private static final Map<AccessoryPiece, AccessoryItem> ITEMS =
-      Arrays.stream(AccessoryPiece.values())
+  public static final List<String> IDS =
+      List.of(
+          "mourning_veil",
+          "high_collared_cape",
+          "onyx_ring",
+          "velvet_choker",
+          "cameo_brooch",
+          "lace_gloves",
+          "brass_buckled_belt");
+
+  private static final Map<String, AccessoryItem> ITEMS =
+      IDS.stream()
           .collect(Collectors.toUnmodifiableMap(Function.identity(), AccessoryItems::registerItem));
-  private static final List<AccessoryItem> ALL =
-      Arrays.stream(AccessoryPiece.values()).map(ITEMS::get).toList();
+  private static final List<AccessoryItem> ALL = IDS.stream().map(ITEMS::get).toList();
 
   private AccessoryItems() {}
 
-  public static AccessoryItem of(final AccessoryPiece piece) {
-    return ITEMS.get(piece);
+  public static AccessoryItem of(final String id) {
+    final AccessoryItem item = ITEMS.get(id);
+    if (item == null) {
+      throw new IllegalArgumentException("No accessory " + id);
+    }
+    return item;
   }
 
   public static List<AccessoryItem> all() {
@@ -38,20 +50,20 @@ public final class AccessoryItems {
     final List<? extends Item> clothing = ClothingItems.all();
     ItemGroupEvents.modifyEntriesEvent(ItemGroups.COMBAT)
         .register(entries -> entries.addAfter(clothing.getLast(), all().toArray(new Item[0])));
-    all().forEach(item -> TrinketsApi.registerTrinket(item, AccessoryTrinket.INSTANCE));
-    all().stream()
-        .filter(item -> item.piece().dyeable())
+    all()
         .forEach(
-            item ->
-                CauldronBehavior.WATER_CAULDRON_BEHAVIOR
-                    .map()
-                    .put(item, CauldronBehavior.CLEAN_DYEABLE_ITEM));
+            item -> {
+              TrinketsApi.registerTrinket(item, AccessoryTrinket.INSTANCE);
+              CauldronBehavior.WATER_CAULDRON_BEHAVIOR
+                  .map()
+                  .put(item, CauldronBehavior.CLEAN_DYEABLE_ITEM);
+            });
   }
 
-  private static AccessoryItem registerItem(final AccessoryPiece piece) {
+  private static AccessoryItem registerItem(final String id) {
     return Registry.register(
         Registries.ITEM,
-        Identifier.of(Nightborn.MOD_ID, piece.id()),
-        new AccessoryItem(piece, new Item.Settings().maxCount(1)));
+        Identifier.of(Nightborn.MOD_ID, id),
+        new AccessoryItem(id, new Item.Settings().maxCount(1)));
   }
 }

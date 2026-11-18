@@ -20,12 +20,14 @@ class ClothingArtTest {
   @DisplayName("each piece has a model and texture per cut and one set of clips")
   void paths(final ClothingPiece piece, final ClothingCut cut, final String art) {
     assertEquals(
-        Identifier.of("nightborn:geo/armor/" + art + ".geo.json"), ClothingArt.geo(piece, cut));
+        Identifier.of("nightborn:geo/armor/" + art + ".geo.json"),
+        ClothingArt.geo(piece.id(), cut));
     assertEquals(
-        Identifier.of("nightborn:textures/armor/" + art + ".png"), ClothingArt.texture(piece, cut));
+        Identifier.of("nightborn:textures/armor/" + art + ".png"),
+        ClothingArt.texture(piece.id(), cut));
     assertEquals(
         Identifier.of("nightborn:animations/armor/" + piece.id() + ".animation.json"),
-        ClothingArt.animation(piece));
+        ClothingArt.animation(piece.id()));
   }
 
   @ParameterizedTest(name = "{0}: {1}")

@@ -6,8 +6,10 @@ import com.grahambartley.nightborn.blood.BloodCapacity;
 import com.grahambartley.nightborn.clothing.ClothingItems;
 import com.grahambartley.nightborn.clothing.ClothingPiece;
 import com.grahambartley.nightborn.clothing.WornAttributes;
+import com.grahambartley.nightborn.gear.GearItems;
 import com.grahambartley.nightborn.mob.NightbornMobs;
 import com.grahambartley.nightborn.mob.VampireEntity;
+import com.grahambartley.nightborn.server.ServerConfigService;
 import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
@@ -124,6 +126,23 @@ public class EnchantGameTest implements FabricGameTest {
     final ItemStack sword = enchanted(context, "daybreak", 2);
     context.assertEquals(BASE + 2.0F, damage(context, human, sword, vampire), "+2 on a vampire");
     context.assertEquals(BASE, damage(context, human, sword, pig), "nothing on a pig");
+    TestPlayers.finish(context, human);
+  }
+
+  @GameTest(templateName = ARENA, batchId = BATCH, tickLimit = 20)
+  public void heartseekerSharpensAStakeOnAVampire(final TestContext context) {
+    final ServerPlayerEntity human = TestPlayers.human(context, SPOT);
+    final VampireEntity vampire = context.spawnEntity(NightbornMobs.VAMPIRE, PREY);
+    vampire.setAiDisabled(true);
+    final PigEntity pig = context.spawnEntity(EntityType.PIG, new BlockPos(6, 2, 6));
+    pig.setAiDisabled(true);
+    final ItemStack stake = new ItemStack(GearItems.WOODEN_STAKE);
+    stake.addEnchantment(enchantment(context, "heartseeker"), 3);
+    final float staked = BASE + ServerConfigService.current().gear().stakeDamage();
+    context.assertTrue(
+        Math.abs(staked * 1.3F - damage(context, human, stake, vampire)) < 1.0E-4F,
+        "Heartseeker III adds 30% to a stake's blow on a vampire");
+    context.assertEquals(BASE, damage(context, human, stake, pig), "nothing on a pig");
     TestPlayers.finish(context, human);
   }
 
