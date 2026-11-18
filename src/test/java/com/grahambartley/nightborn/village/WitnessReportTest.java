@@ -71,4 +71,11 @@ class WitnessReportTest {
   void forgetsOldActs(final long ticks, final boolean stale) {
     assertEquals(stale, report(SuspicionCause.SEEN_FEEDING).stale(1000L + ticks, 400));
   }
+
+  @ParameterizedTest(name = "creative {0}, spectator {1}: reported {2}")
+  @CsvSource({"false, false, true", "true, false, false", "false, true, false"})
+  @DisplayName("a player in creative or spectator mode is never reported")
+  void reportable(final boolean creative, final boolean spectator, final boolean reported) {
+    assertEquals(reported, WitnessReport.reportable(creative, spectator));
+  }
 }

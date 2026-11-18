@@ -14,6 +14,10 @@ public record WitnessReport(
     SILENCED
   }
 
+  public static boolean reportable(final boolean creative, final boolean spectator) {
+    return !creative && !spectator;
+  }
+
   public Outcome outcome(
       final boolean witnessAlive,
       final double squaredDistanceToBell,

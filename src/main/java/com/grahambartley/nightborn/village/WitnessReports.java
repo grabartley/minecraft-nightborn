@@ -16,6 +16,7 @@ import net.minecraft.entity.ai.brain.Brain;
 import net.minecraft.entity.ai.brain.MemoryModuleType;
 import net.minecraft.entity.ai.brain.WalkTarget;
 import net.minecraft.entity.passive.VillagerEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
@@ -42,7 +43,9 @@ public final class WitnessReports {
       final Entity vampire,
       final SuspicionCause cause) {
     final Optional<BlockPos> bell = VillageSuspicion.bellOf(witness);
-    if (bell.isEmpty()) {
+    if (bell.isEmpty()
+        || vampire instanceof PlayerEntity player
+            && !WitnessReport.reportable(player.isCreative(), player.isSpectator())) {
       return false;
     }
     final int reportTicks = reportTicks();
