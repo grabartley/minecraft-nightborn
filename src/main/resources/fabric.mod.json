@@ -64,6 +64,7 @@
       "com.grahambartley.nightborn.gametest.HumanFamiliarGameTest",
       "com.grahambartley.nightborn.gametest.MindGameTest",
       "com.grahambartley.nightborn.gametest.ThrallGameTest",
+      "com.grahambartley.nightborn.gametest.DayJobGameTest",
       "com.grahambartley.nightborn.gametest.OccultGameTest",
       "com.grahambartley.nightborn.gametest.VampireLookGameTest",
       "com.grahambartley.nightborn.gametest.VampireBatGameTest",

@@ -3,7 +3,11 @@ package com.grahambartley.nightborn.config;
 import java.util.List;
 
 public record StructureSettings(
-    int structureRarity, int campRarity, int gramophoneSeconds, int gramophoneRange) {
+    int structureRarity,
+    int campRarity,
+    int gramophoneSeconds,
+    int gramophoneRange,
+    int rumourRange) {
 
   static final String SECTION = "structures";
 
@@ -17,15 +21,18 @@ public record StructureSettings(
           SECTION, "gramophoneSeconds", 300, 20, 3600, c -> c.structures().gramophoneSeconds());
   public static final IntSetting GRAMOPHONE_RANGE =
       new IntSetting(SECTION, "gramophoneRange", 24, 8, 64, c -> c.structures().gramophoneRange());
+  public static final IntSetting RUMOUR_RANGE =
+      new IntSetting(SECTION, "rumourRange", 1024, 128, 4096, c -> c.structures().rumourRange());
 
   public static final List<Setting<?>> SETTINGS =
-      List.of(STRUCTURE_RARITY, CAMP_RARITY, GRAMOPHONE_SECONDS, GRAMOPHONE_RANGE);
+      List.of(STRUCTURE_RARITY, CAMP_RARITY, GRAMOPHONE_SECONDS, GRAMOPHONE_RANGE, RUMOUR_RANGE);
 
   public StructureSettings {
     structureRarity = STRUCTURE_RARITY.clamp(structureRarity);
     campRarity = CAMP_RARITY.clamp(campRarity);
     gramophoneSeconds = GRAMOPHONE_SECONDS.clamp(gramophoneSeconds);
     gramophoneRange = GRAMOPHONE_RANGE.clamp(gramophoneRange);
+    rumourRange = RUMOUR_RANGE.clamp(rumourRange);
   }
 
   static StructureSettings from(final SettingValues values) {
@@ -33,6 +40,7 @@ public record StructureSettings(
         values.get(STRUCTURE_RARITY),
         values.get(CAMP_RARITY),
         values.get(GRAMOPHONE_SECONDS),
-        values.get(GRAMOPHONE_RANGE));
+        values.get(GRAMOPHONE_RANGE),
+        values.get(RUMOUR_RANGE));
   }
 }

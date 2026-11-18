@@ -45,16 +45,7 @@ public final class Lancet {
       return ActionResult.PASS;
     }
     final Optional<BloodQuality> quality = BloodQuality.of(creature.getType());
-    final LancetRules rule =
-        LancetRules.onCreature(
-            new LancetRules.Creature(
-                quality.isPresent(),
-                Vampires.isVampire(creature),
-                creature instanceof PlayerEntity,
-                creature.isAlive(),
-                creature.getHealth()),
-            hasEmptyBottle(player.getInventory()),
-            draw());
+    final LancetRules rule = ruleFor(creature, hasEmptyBottle(player.getInventory()));
     if (player instanceof ServerPlayerEntity bleeder) {
       if (rule == LancetRules.BLEEDS) {
         bleed(
@@ -91,7 +82,19 @@ public final class Lancet {
     return ActionResult.SUCCESS;
   }
 
-  static float draw() {
+  public static LancetRules ruleFor(final LivingEntity creature, final boolean emptyBottle) {
+    return LancetRules.onCreature(
+        new LancetRules.Creature(
+            BloodQuality.of(creature.getType()).isPresent(),
+            Vampires.isVampire(creature),
+            creature instanceof PlayerEntity,
+            creature.isAlive(),
+            creature.getHealth()),
+        emptyBottle,
+        draw());
+  }
+
+  public static float draw() {
     final FeedingSettings feeding = ServerConfigService.current().feeding();
     return LancetRules.draw(feeding.lancetDamage(), feeding.bottleSize());
   }
@@ -102,24 +105,34 @@ public final class Lancet {
       final LivingEntity creature,
       final BloodQuality quality,
       final Optional<Identifier> gift) {
-    final ServerWorld world = bleeder.getServerWorld();
-    final float draw = draw();
-    final float before = creature.getHealth();
-    creature.damage(NightbornDamage.lancet(world, creature == bleeder ? null : bleeder), draw);
-    final float taken = BloodValue.taken(before, creature.getHealth());
+    final Optional<ItemStack> bottle =
+        drawBottle(bleeder.getServerWorld(), bleeder, creature, quality, gift);
     bleeder.swingHand(hand, true);
-    if (taken < ServerConfigService.current().feeding().bottleSize()) {
+    if (bottle.isEmpty()) {
       return;
     }
     takeEmptyBottle(bleeder.getInventory());
-    final ItemStack bottle = BloodBottleItem.of(quality, gift);
-    if (!BottleStowing.stow(bleeder.getInventory(), bottle)) {
-      bleeder.dropItem(bottle, false);
+    if (!BottleStowing.stow(bleeder.getInventory(), bottle.get())) {
+      bleeder.dropItem(bottle.get(), false);
     }
     bleeder
         .getStackInHand(hand)
         .damage(
             1, bleeder, hand == Hand.MAIN_HAND ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND);
+  }
+
+  public static Optional<ItemStack> drawBottle(
+      final ServerWorld world,
+      final Entity bleeder,
+      final LivingEntity creature,
+      final BloodQuality quality,
+      final Optional<Identifier> gift) {
+    final float before = creature.getHealth();
+    creature.damage(NightbornDamage.lancet(world, creature == bleeder ? null : bleeder), draw());
+    final float taken = BloodValue.taken(before, creature.getHealth());
+    if (taken < ServerConfigService.current().feeding().bottleSize()) {
+      return Optional.empty();
+    }
     world.playSound(
         null,
         creature.getBlockPos(),
@@ -128,6 +141,7 @@ public final class Lancet {
         1.0F,
         0.8F);
     world.emitGameEvent(bleeder, GameEvent.FLUID_PICKUP, creature.getBlockPos());
+    return Optional.of(BloodBottleItem.of(quality, gift));
   }
 
   private static void refuse(final ServerPlayerEntity bleeder, final LancetRules rule) {

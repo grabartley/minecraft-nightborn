@@ -91,6 +91,7 @@ class NightbornConfigTest {
             "clothing",
             "mobs",
             "familiars",
+            "servants",
             "combat",
             "structures",
             "parties",

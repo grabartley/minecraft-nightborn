@@ -1,4 +1,4 @@
-package com.grahambartley.nightborn.familiar;
+package com.grahambartley.nightborn.servant;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -10,11 +10,11 @@ class ChestMarkTest {
 
   @ParameterizedTest(name = "{0}")
   @CsvSource({
-    "FETCH, nightborn.familiar.mark.fetch",
-    "DELIVER, nightborn.familiar.mark.deliver",
-    "CLEARED, nightborn.familiar.mark.cleared"
+    "FETCH, nightborn.servant.mark.fetch",
+    "DELIVER, nightborn.servant.mark.deliver",
+    "CLEARED, nightborn.servant.mark.cleared"
   })
-  @DisplayName("each mark tells the owner what the familiar will do there")
+  @DisplayName("each mark tells the owner what their servants will do there")
   void key(final ChestMark mark, final String key) {
     assertEquals(key, mark.translationKey());
   }

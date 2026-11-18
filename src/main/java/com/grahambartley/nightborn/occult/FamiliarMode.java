@@ -1,14 +1,21 @@
 package com.grahambartley.nightborn.occult;
 
 import java.util.Locale;
+import net.minecraft.util.Identifier;
 
 public enum FamiliarMode {
-  FIGHT,
-  CARRY,
-  SCOUT;
+  FIGHT("minecraft:iron_sword"),
+  CARRY("minecraft:chest"),
+  SCOUT("minecraft:ender_eye");
 
-  public FamiliarMode next() {
-    return values()[(ordinal() + 1) % values().length];
+  private final Identifier icon;
+
+  FamiliarMode(final String icon) {
+    this.icon = Identifier.of(icon);
+  }
+
+  public Identifier icon() {
+    return icon;
   }
 
   public boolean passesThroughBlocks() {
@@ -17,6 +24,10 @@ public enum FamiliarMode {
 
   public String translationKey() {
     return "nightborn.familiar.mode." + name().toLowerCase(Locale.ROOT);
+  }
+
+  public String labelKey() {
+    return "nightborn.familiar.order." + name().toLowerCase(Locale.ROOT);
   }
 
   public static FamiliarMode byIndex(final int index) {

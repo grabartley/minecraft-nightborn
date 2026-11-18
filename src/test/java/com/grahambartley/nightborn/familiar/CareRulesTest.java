@@ -8,26 +8,26 @@ import org.junit.jupiter.params.provider.CsvSource;
 
 class CareRulesTest {
 
-  @ParameterizedTest(
-      name = "owner {0}, main hand {1}, emerald {2}, empty {3}, off-hand emerald {4}: {5}")
+  @ParameterizedTest(name = "owner {0}, main hand {1}, emerald {2}, off-hand emerald {3}: {4}")
   @CsvSource({
-    "true, true, true, false, false, PAY",
-    "true, false, true, false, false, PAY",
-    "true, true, false, true, false, MOOD",
-    "true, true, false, true, true, NONE",
-    "true, false, false, true, false, NONE",
-    "true, true, false, false, false, NONE",
-    "false, true, true, false, false, NONE",
-    "false, true, false, true, false, NONE"
+    "true, true, true, false, PAY",
+    "true, false, true, false, PAY",
+    "true, true, true, true, PAY",
+    "true, true, false, true, OTHER_HAND",
+    "true, false, false, true, NONE",
+    "true, true, false, false, NONE",
+    "false, true, true, false, NONE",
+    "false, true, false, true, NONE"
   })
-  @DisplayName("only the owner pays or asks after mood, and an off-hand emerald pays")
+  @DisplayName(
+      "only the owner pays, an off-hand emerald pays in its turn, and anything else opens the"
+          + " wheel")
   void choose(
       final boolean owner,
       final boolean mainHand,
       final boolean emerald,
-      final boolean empty,
       final boolean offHandEmerald,
       final CareRules.Care care) {
-    assertEquals(care, CareRules.choose(owner, mainHand, emerald, empty, offHandEmerald));
+    assertEquals(care, CareRules.choose(owner, mainHand, emerald, offHandEmerald));
   }
 }

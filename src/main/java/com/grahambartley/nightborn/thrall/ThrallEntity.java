@@ -5,9 +5,17 @@ import com.grahambartley.nightborn.name.NameBearer;
 import com.grahambartley.nightborn.servant.Servant;
 import com.grahambartley.nightborn.servant.ServantDeaths;
 import com.grahambartley.nightborn.servant.Servants;
+import com.grahambartley.nightborn.servant.job.DayWorker;
+import com.grahambartley.nightborn.servant.job.JobOrder;
+import com.grahambartley.nightborn.servant.job.goal.FetchBloodGoal;
+import com.grahambartley.nightborn.servant.job.goal.GatherGoal;
+import com.grahambartley.nightborn.servant.job.goal.ScoutGoal;
+import com.grahambartley.nightborn.servant.job.goal.StandWatchGoal;
+import com.grahambartley.nightborn.servant.job.goal.WatchTargetGoal;
 import com.grahambartley.nightborn.thrall.goal.ThrallFollowGoal;
 import com.grahambartley.nightborn.thrall.goal.ThrallPostGoal;
 import com.grahambartley.nightborn.thrall.goal.ThrallTargetGoal;
+import com.grahambartley.nightborn.wheel.CommandWheel;
 import java.util.Optional;
 import java.util.UUID;
 import net.minecraft.entity.EntityType;
@@ -25,6 +33,8 @@ import net.minecraft.entity.data.TrackedDataHandlerRegistry;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.mob.PathAwareEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.inventory.SimpleInventory;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtHelper;
 import net.minecraft.nbt.NbtOps;
@@ -42,7 +52,7 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
 public class ThrallEntity extends PathAwareEntity
-    implements VillagerDataContainer, Servant, NameBearer {
+    implements VillagerDataContainer, Servant, NameBearer, DayWorker {
 
   static final int CHECK_BOND_TICKS = 20;
 
@@ -56,10 +66,13 @@ public class ThrallEntity extends PathAwareEntity
   private static final String POST = "Post";
   private static final String VILLAGER = "VillagerData";
   private static final String MEMORY = "VillagerMemory";
+  private static final String JOB = "Job";
 
   private ThrallMode mode = ThrallMode.FOLLOW;
   @Nullable private BlockPos post;
   private VillagerMemory memory = VillagerMemory.NONE;
+  private final SimpleInventory carried = new SimpleInventory(DayWorker.CARRY_SLOTS);
+  @Nullable private JobOrder job;
 
   public ThrallEntity(final EntityType<? extends PathAwareEntity> type, final World world) {
     super(type, world);
@@ -85,11 +98,16 @@ public class ThrallEntity extends PathAwareEntity
   protected void initGoals() {
     goalSelector.add(0, new SwimGoal(this));
     goalSelector.add(1, new MeleeAttackGoal(this, 1.0, true));
-    goalSelector.add(2, new ThrallPostGoal(this));
-    goalSelector.add(3, new ThrallFollowGoal(this));
+    goalSelector.add(2, new ScoutGoal<>(this));
+    goalSelector.add(2, new GatherGoal<>(this));
+    goalSelector.add(2, new FetchBloodGoal<>(this));
+    goalSelector.add(2, new StandWatchGoal<>(this));
+    goalSelector.add(3, new ThrallPostGoal(this));
+    goalSelector.add(4, new ThrallFollowGoal(this));
     goalSelector.add(7, new LookAtEntityGoal(this, PlayerEntity.class, 6.0F));
     goalSelector.add(8, new LookAroundGoal(this));
     targetSelector.add(1, new ThrallTargetGoal(this));
+    targetSelector.add(2, new WatchTargetGoal<>(this));
   }
 
   public void bind(final UUID boundTo, final VillagerData data, final VillagerMemory kept) {
@@ -98,12 +116,13 @@ public class ThrallEntity extends PathAwareEntity
     memory = kept;
     mode = ThrallMode.FOLLOW;
     post = getBlockPos();
+    job = null;
     setPersistent();
   }
 
   @Override
   protected ActionResult interactMob(final PlayerEntity player, final Hand hand) {
-    return isAlive() ? ThrallOrders.interact(this, player, hand) : ActionResult.PASS;
+    return isAlive() ? CommandWheel.use(player, hand, this) : ActionResult.PASS;
   }
 
   @Override
@@ -121,6 +140,14 @@ public class ThrallEntity extends PathAwareEntity
     if (getWorld() instanceof ServerWorld world) {
       owner().ifPresent(id -> ThrallRegistry.of(world.getServer()).free(id, getUuid()));
       ServantDeaths.tell(this, owner());
+    }
+  }
+
+  @Override
+  protected void dropInventory() {
+    super.dropInventory();
+    for (final ItemStack stack : carried.clearToList()) {
+      dropStack(stack);
     }
   }
 
@@ -198,7 +225,32 @@ public class ThrallEntity extends PathAwareEntity
   public void order(final ThrallMode next) {
     mode = next;
     post = getBlockPos().toImmutable();
+    job = null;
     getNavigation().stop();
+  }
+
+  @Override
+  public Optional<JobOrder> job() {
+    return Optional.ofNullable(job);
+  }
+
+  @Override
+  public void assign(final JobOrder order) {
+    job = order;
+    mode = ThrallMode.STAY;
+    post = order.place();
+    getNavigation().stop();
+  }
+
+  @Override
+  public void dismiss() {
+    job = null;
+    mode = ThrallMode.STAY;
+  }
+
+  @Override
+  public SimpleInventory getInventory() {
+    return carried;
   }
 
   @Override
@@ -214,6 +266,13 @@ public class ThrallEntity extends PathAwareEntity
         .result()
         .ifPresent(encoded -> nbt.put(VILLAGER, encoded));
     nbt.put(MEMORY, memory.write(new NbtCompound(), getRegistryManager().getOps(NbtOps.INSTANCE)));
+    if (job != null) {
+      JobOrder.CODEC
+          .encodeStart(NbtOps.INSTANCE, job)
+          .result()
+          .ifPresent(saved -> nbt.put(JOB, saved));
+    }
+    writeInventory(nbt, getRegistryManager());
   }
 
   @Override
@@ -231,5 +290,10 @@ public class ThrallEntity extends PathAwareEntity
     }
     memory =
         VillagerMemory.read(nbt.getCompound(MEMORY), getRegistryManager().getOps(NbtOps.INSTANCE));
+    job =
+        nbt.contains(JOB)
+            ? JobOrder.CODEC.parse(NbtOps.INSTANCE, nbt.get(JOB)).result().orElse(null)
+            : null;
+    readInventory(nbt, getRegistryManager());
   }
 }

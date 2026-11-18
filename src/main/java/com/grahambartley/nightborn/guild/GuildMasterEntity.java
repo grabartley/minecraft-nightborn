@@ -7,6 +7,7 @@ import com.grahambartley.nightborn.name.MobNaming;
 import com.grahambartley.nightborn.name.NameBearer;
 import com.grahambartley.nightborn.server.ServerConfigService;
 import com.grahambartley.nightborn.vampire.Vampires;
+import com.grahambartley.nightborn.wheel.CommandWheel;
 import java.util.Optional;
 import java.util.stream.Stream;
 import net.minecraft.entity.EntityType;
@@ -100,30 +101,34 @@ public class GuildMasterEntity extends MerchantEntity
       return super.interactMob(player, hand);
     }
     if (player instanceof ServerPlayerEntity visitor) {
-      visit(visitor);
+      return visit(visitor, hand);
     }
     return ActionResult.success(getWorld().isClient);
   }
 
-  private void visit(final ServerPlayerEntity visitor) {
+  private ActionResult visit(final ServerPlayerEntity visitor, final Hand hand) {
     final Optional<ItemStack> claim =
         Stream.of(visitor.getMainHandStack(), visitor.getOffHandStack())
             .filter(stack -> ContractItems.finished(stack, getRegistryManager()).isPresent())
             .findFirst();
     switch (GuildVisit.of(Vampires.isVampire(visitor), claim.isPresent())) {
-      case REFUSE -> refuse(visitor);
-      case CLAIM ->
-          claim.ifPresent(
-              stack ->
-                  ContractItems.finished(stack, getRegistryManager())
-                      .ifPresent(
-                          contract ->
-                              ContractPayout.pay(
-                                  visitor,
-                                  stack,
-                                  contract,
-                                  ServerConfigService.current().skills())));
-      case TRADE -> openTrades(visitor);
+      case REFUSE -> {
+        refuse(visitor);
+        return ActionResult.CONSUME;
+      }
+      case CLAIM -> {
+        claim.ifPresent(
+            stack ->
+                ContractItems.finished(stack, getRegistryManager())
+                    .ifPresent(
+                        contract ->
+                            ContractPayout.pay(
+                                visitor, stack, contract, ServerConfigService.current().skills())));
+        return ActionResult.CONSUME;
+      }
+      default -> {
+        return CommandWheel.use(visitor, hand, this);
+      }
     }
   }
 
@@ -133,13 +138,18 @@ public class GuildMasterEntity extends MerchantEntity
     visitor.sendMessage(Text.translatable("nightborn.guild.refuse"), true);
   }
 
-  private void openTrades(final ServerPlayerEntity visitor) {
-    restockIfNewDay();
-    if (getOffers().isEmpty()) {
+  void openCounter(final ServerPlayerEntity visitor, final GuildCounter.Kind kind) {
+    if (hasCustomer()) {
       return;
     }
-    setCustomer(visitor);
-    sendOffers(visitor, getDisplayName(), 1);
+    restockIfNewDay();
+    final GuildCounter counter = new GuildCounter(this, kind.from(getOffers()));
+    if (counter.getOffers().isEmpty()) {
+      visitor.sendMessage(Text.translatable("nightborn.guild.nothing"), true);
+      return;
+    }
+    counter.setCustomer(visitor);
+    counter.sendOffers(visitor, getDisplayName(), 1);
   }
 
   private void restockIfNewDay() {

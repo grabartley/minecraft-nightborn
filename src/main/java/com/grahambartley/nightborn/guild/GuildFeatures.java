@@ -14,5 +14,6 @@ public final class GuildFeatures {
     PartyData.register();
     HunterPartySpawner.register();
     ContractTracker.register();
+    GuildWheel.register();
   }
 }
