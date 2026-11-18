@@ -10,7 +10,6 @@ public final class RestedRules {
 
   public static final int RESTED = 0;
   public static final int RESTED_AT_HOME = 1;
-  public static final long MORNING_TICKS = 1000L;
 
   private RestedRules() {}
 
@@ -24,9 +23,13 @@ public final class RestedRules {
   }
 
   public static boolean wholeDay(
-      final boolean skipped, final OptionalLong sleptFrom, final long timeOfDay) {
+      final boolean skipped,
+      final OptionalLong sleptFrom,
+      final long timeOfDay,
+      final int windowSeconds) {
     return skipped
-        || sleptFrom.isPresent() && sleptFrom.getAsLong() <= dawnBefore(timeOfDay) + MORNING_TICKS;
+        || sleptFrom.isPresent()
+            && sleptFrom.getAsLong() <= dawnBefore(timeOfDay) + windowSeconds * 20L;
   }
 
   public static long dawnBefore(final long timeOfDay) {

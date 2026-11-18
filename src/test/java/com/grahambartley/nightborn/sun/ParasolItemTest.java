@@ -32,13 +32,14 @@ class ParasolItemTest {
   void mendedWithWool(final Item ingredient, final boolean mends) {
     assertEquals(
         mends,
-        Parasols.PARASOL.canRepair(new ItemStack(Parasols.PARASOL), new ItemStack(ingredient)));
+        ParasolItems.PARASOL.canRepair(
+            new ItemStack(ParasolItems.PARASOL), new ItemStack(ingredient)));
   }
 
   @Test
   @DisplayName("a parasol takes no enchantment")
   void takesNoEnchantment() {
-    assertFalse(Parasols.PARASOL.isEnchantable(new ItemStack(Parasols.PARASOL)));
-    assertEquals(0, Parasols.PARASOL.getEnchantability());
+    assertFalse(ParasolItems.PARASOL.isEnchantable(new ItemStack(ParasolItems.PARASOL)));
+    assertEquals(0, ParasolItems.PARASOL.getEnchantability());
   }
 }

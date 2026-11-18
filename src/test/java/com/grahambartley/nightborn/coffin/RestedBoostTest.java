@@ -9,7 +9,7 @@ import org.junit.jupiter.params.provider.CsvSource;
 
 class RestedBoostTest {
 
-  private static final CoffinSettings DEFAULTS = new CoffinSettings(50, 10, 1, 15, 2);
+  private static final CoffinSettings DEFAULTS = new CoffinSettings(50, 50, 10, 1, 15, 2);
 
   @ParameterizedTest(name = "level {0}: speed {1}, damage {2}")
   @CsvSource({"-1, 0.0, 0.0", "0, 0.10, 1.0", "1, 0.15, 2.0", "2, 0.15, 2.0"})
@@ -25,7 +25,7 @@ class RestedBoostTest {
   @DisplayName("the server's settings decide what being rested gives")
   void readsSettings(
       final int speed, final int damage, final double gotSpeed, final double gotDamage) {
-    final RestedBoost boost = RestedBoost.of(new CoffinSettings(50, speed, damage, 0, 0), 0);
+    final RestedBoost boost = RestedBoost.of(new CoffinSettings(50, 50, speed, damage, 0, 0), 0);
     assertEquals(gotSpeed, boost.speedMultiplier(), 1.0E-9);
     assertEquals(gotDamage, boost.attackDamage(), 1.0E-9);
   }

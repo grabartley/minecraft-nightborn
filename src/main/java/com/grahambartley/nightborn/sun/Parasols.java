@@ -3,15 +3,9 @@ package com.grahambartley.nightborn.sun;
 import com.grahambartley.nightborn.Nightborn;
 import com.grahambartley.nightborn.batform.BatForm;
 import com.grahambartley.nightborn.levitation.Levitation;
-import com.mojang.serialization.Codec;
 import java.util.Optional;
-import net.minecraft.component.ComponentType;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.network.codec.PacketCodecs;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.Registry;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
@@ -19,29 +13,12 @@ import org.jetbrains.annotations.Nullable;
 
 public final class Parasols {
 
-  public static final ComponentType<Boolean> OPEN =
-      Registry.register(
-          Registries.DATA_COMPONENT_TYPE,
-          Identifier.of(Nightborn.MOD_ID, "parasol_open"),
-          ComponentType.<Boolean>builder()
-              .codec(Codec.BOOL)
-              .packetCodec(PacketCodecs.BOOL)
-              .build());
-
-  public static final Item PARASOL =
-      Registry.register(
-          Registries.ITEM,
-          Identifier.of(Nightborn.MOD_ID, "parasol"),
-          new ParasolItem(new Item.Settings().maxDamage(ParasolWear.DURABILITY)));
-
   public static final Identifier OPEN_PREDICATE = Identifier.of(Nightborn.MOD_ID, "open");
 
   private Parasols() {}
 
-  public static void register() {}
-
   public static boolean isOpen(final ItemStack stack) {
-    return stack.isOf(PARASOL) && stack.getOrDefault(OPEN, false);
+    return stack.isOf(ParasolItems.PARASOL) && stack.getOrDefault(ParasolItems.OPEN, false);
   }
 
   public static float openness(final ItemStack stack, @Nullable final LivingEntity holder) {
@@ -54,7 +31,10 @@ public final class Parasols {
 
   public static boolean closing(final LivingEntity holder) {
     return ParasolRules.closes(
-        holder.isSprinting(), Levitation.isLevitating(holder), BatForm.isBat(holder));
+        holder.isSprinting(),
+        Levitation.isLevitating(holder),
+        BatForm.isBat(holder),
+        holder.isSleeping());
   }
 
   public static boolean shades(final LivingEntity holder) {
@@ -69,8 +49,8 @@ public final class Parasols {
   }
 
   public static void fold(final ItemStack stack) {
-    if (stack.isOf(PARASOL)) {
-      stack.remove(OPEN);
+    if (stack.isOf(ParasolItems.PARASOL)) {
+      stack.remove(ParasolItems.OPEN);
     }
   }
 
@@ -79,9 +59,9 @@ public final class Parasols {
       return;
     }
     if (open) {
-      stack.set(OPEN, true);
+      stack.set(ParasolItems.OPEN, true);
     } else {
-      stack.remove(OPEN);
+      stack.remove(ParasolItems.OPEN);
     }
     holder
         .getWorld()

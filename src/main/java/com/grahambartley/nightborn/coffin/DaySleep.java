@@ -1,6 +1,7 @@
 package com.grahambartley.nightborn.coffin;
 
 import com.grahambartley.nightborn.Nightborn;
+import com.grahambartley.nightborn.server.ServerConfigService;
 import java.util.OptionalLong;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentRegistry;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentType;
@@ -34,7 +35,8 @@ public final class DaySleep {
     return RestedRules.wholeDay(
         sleeper.getAttachedOrElse(SKIPPED, false),
         from == null ? OptionalLong.empty() : OptionalLong.of(from),
-        sleeper.getServerWorld().getTimeOfDay());
+        sleeper.getServerWorld().getTimeOfDay(),
+        ServerConfigService.current().coffins().wholeDayWindow());
   }
 
   static void forget(final ServerPlayerEntity sleeper) {

@@ -21,6 +21,8 @@ import org.junit.jupiter.params.provider.MethodSource;
 @ExtendWith(MinecraftBootstrapExtension.class)
 class RestedRulesTest {
 
+  private static final int WINDOW = 50;
+
   private static final UUID LORD = UUID.fromString("00000000-0000-0000-0000-000000000001");
   private static final UUID MEMBER = UUID.fromString("00000000-0000-0000-0000-000000000002");
   private static final UUID STRANGER = UUID.fromString("00000000-0000-0000-0000-000000000003");
@@ -63,7 +65,15 @@ class RestedRulesTest {
     assertEquals(
         whole,
         RestedRules.wholeDay(
-            skipped, from < 0 ? OptionalLong.empty() : OptionalLong.of(from), wake));
+            skipped, from < 0 ? OptionalLong.empty() : OptionalLong.of(from), wake, WINDOW));
+  }
+
+  @ParameterizedTest(name = "a {0} s window lets a sleeper lie down by {1}")
+  @CsvSource({"0, 23000", "50, 24000", "600, 35000"})
+  @DisplayName("the server's window sets how long after dawn a sleeper may lie down")
+  void window(final int seconds, final long latest) {
+    assertEquals(true, RestedRules.wholeDay(false, OptionalLong.of(latest), 37000, seconds));
+    assertEquals(false, RestedRules.wholeDay(false, OptionalLong.of(latest + 1), 37000, seconds));
   }
 
   @ParameterizedTest(name = "waking at {0}: dawn began at {1}")

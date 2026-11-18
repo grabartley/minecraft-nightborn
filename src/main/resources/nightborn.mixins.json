@@ -35,6 +35,7 @@
 		"ServerPlayerEntityMixin",
 		"ServerWorldMixin",
 		"SleepManagerMixin",
+		"SlotMixin",
 		"TippedArrowRecipeMixin",
 		"VillagerEntityMixin",
 		"WardenEntityMixin",

@@ -3,13 +3,16 @@ package com.grahambartley.nightborn.gametest;
 import com.grahambartley.nightborn.mob.NightbornMobs;
 import com.grahambartley.nightborn.mob.VampireEntity;
 import com.grahambartley.nightborn.sun.DirectSun;
+import com.grahambartley.nightborn.sun.ParasolItems;
 import com.grahambartley.nightborn.sun.ParasolWear;
 import com.grahambartley.nightborn.sun.Parasols;
 import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.mob.ZombieEntity;
+import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.screen.slot.Slot;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.test.AfterBatch;
@@ -102,7 +105,7 @@ public class ParasolGameTest implements FabricGameTest {
       tickLimit = TestPlayers.READY + WALK_TICKS + 5)
   public void aVampirePlayerWalksInTheSunUnderAParasolInTheOffHand(final TestContext context) {
     final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(2, 2, 4));
-    final ItemStack parasol = new ItemStack(Parasols.PARASOL);
+    final ItemStack parasol = new ItemStack(ParasolItems.PARASOL);
     vampire.setStackInHand(Hand.OFF_HAND, parasol);
     Parasols.setOpen(vampire, parasol, true);
     final Vec3d start = context.getAbsolute(new Vec3d(2.5, 2.0, 4.5));
@@ -124,11 +127,59 @@ public class ParasolGameTest implements FabricGameTest {
         });
   }
 
+  @GameTest(
+      templateName = YARD,
+      batchId = BATCH,
+      skyAccess = true,
+      tickLimit = TestPlayers.READY + 5)
+  public void usingAParasolOpensAndClosesIt(final TestContext context) {
+    final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(4, 2, 4));
+    final ItemStack parasol = new ItemStack(ParasolItems.PARASOL);
+    vampire.setStackInHand(Hand.MAIN_HAND, parasol);
+    context.runAtTick(
+        TestPlayers.READY,
+        () -> {
+          parasol.use(context.getWorld(), vampire, Hand.MAIN_HAND);
+          context.assertTrue(Parasols.isOpen(parasol), "using a closed parasol opens it");
+          parasol.use(context.getWorld(), vampire, Hand.MAIN_HAND);
+          context.assertFalse(Parasols.isOpen(parasol), "using an open parasol closes it");
+          vampire.setSprinting(true);
+          parasol.use(context.getWorld(), vampire, Hand.MAIN_HAND);
+          context.assertFalse(Parasols.isOpen(parasol), "it will not open mid sprint");
+          TestPlayers.finish(context, vampire);
+        });
+  }
+
+  @GameTest(templateName = YARD, batchId = BATCH, tickLimit = TestPlayers.READY + 5)
+  public void aParasolPutAwayFoldsShut(final TestContext context) {
+    final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(4, 2, 4));
+    final ItemStack parasol = new ItemStack(ParasolItems.PARASOL);
+    vampire.getInventory().selectedSlot = 0;
+    vampire.getInventory().setStack(0, parasol);
+    Parasols.setOpen(vampire, parasol, true);
+    context.runAtTick(
+        TestPlayers.READY,
+        () -> {
+          context.assertTrue(Parasols.isOpen(parasol), "it stays open while held");
+          vampire.getInventory().selectedSlot = 1;
+        });
+    context.runAtTick(
+        TestPlayers.READY + 2,
+        () -> {
+          context.assertFalse(Parasols.isOpen(parasol), "it folds when the hand lets it go");
+          final ItemStack stored = new ItemStack(ParasolItems.PARASOL);
+          stored.set(ParasolItems.OPEN, true);
+          new Slot(new SimpleInventory(1), 0, 0, 0).setStack(stored);
+          context.assertFalse(Parasols.isOpen(stored), "it folds when put in a container");
+          TestPlayers.finish(context, vampire);
+        });
+  }
+
   @GameTest(templateName = FabricGameTest.EMPTY_STRUCTURE, tickLimit = 2)
   public void woolMendsAParasol(final TestContext context) {
     context.assertTrue(
-        Parasols.PARASOL.canRepair(
-            new ItemStack(Parasols.PARASOL), new ItemStack(Items.BLACK_WOOL)),
+        ParasolItems.PARASOL.canRepair(
+            new ItemStack(ParasolItems.PARASOL), new ItemStack(Items.BLACK_WOOL)),
         "wool mends a parasol");
     context.complete();
   }
@@ -137,7 +188,7 @@ public class ParasolGameTest implements FabricGameTest {
     final VampireEntity vampire = context.spawnEntity(NightbornMobs.VAMPIRE, new BlockPos(4, 2, 4));
     vampire.setAiDisabled(true);
     vampire.setInvulnerable(true);
-    final ItemStack parasol = new ItemStack(Parasols.PARASOL);
+    final ItemStack parasol = new ItemStack(ParasolItems.PARASOL);
     vampire.setStackInHand(Hand.MAIN_HAND, parasol);
     Parasols.setOpen(vampire, parasol, true);
     return vampire;

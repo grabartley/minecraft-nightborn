@@ -16,6 +16,7 @@ import com.grahambartley.nightborn.skill.SkillAttachment;
 import com.grahambartley.nightborn.skill.SkillPower;
 import com.grahambartley.nightborn.skill.SkillTree;
 import com.grahambartley.nightborn.skill.Skills;
+import com.grahambartley.nightborn.sun.ParasolItems;
 import com.grahambartley.nightborn.sun.Parasols;
 import com.grahambartley.nightborn.ward.Wards;
 import com.grahambartley.nightborn.weakened.Weakened;
@@ -425,7 +426,7 @@ public class BatFormGameTest implements FabricGameTest {
       tickLimit = TestPlayers.READY + 10)
   public void anOpenParasolDoesNotLetBatFormIntoTheSun(final TestContext context) {
     final ServerPlayerEntity vampire = beast(context, BAT_FORM);
-    final ItemStack parasol = new ItemStack(Parasols.PARASOL);
+    final ItemStack parasol = new ItemStack(ParasolItems.PARASOL);
     vampire.setStackInHand(Hand.MAIN_HAND, parasol);
     Parasols.setOpen(vampire, parasol, true);
     context.assertEquals(

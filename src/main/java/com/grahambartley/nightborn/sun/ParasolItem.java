@@ -20,12 +20,12 @@ public class ParasolItem extends Item {
   public TypedActionResult<ItemStack> use(
       final World world, final PlayerEntity user, final Hand hand) {
     final ItemStack stack = user.getStackInHand(hand);
-    final boolean opening = !Parasols.isOpen(stack);
-    if (opening && Parasols.closing(user)) {
+    final ParasolRules.Use use = ParasolRules.use(Parasols.isOpen(stack), Parasols.closing(user));
+    if (use == ParasolRules.Use.REFUSE) {
       return TypedActionResult.fail(stack);
     }
     if (!world.isClient) {
-      Parasols.setOpen(user, stack, opening);
+      Parasols.setOpen(user, stack, use == ParasolRules.Use.OPEN);
     }
     return TypedActionResult.success(stack, world.isClient);
   }
