@@ -18,6 +18,7 @@ import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.network.packet.s2c.play.PlaySoundS2CPacket;
 import net.minecraft.registry.entry.RegistryEntry;
+import net.minecraft.registry.tag.DamageTypeTags;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.sound.SoundCategory;
@@ -39,7 +40,9 @@ public final class Moments {
   public static void register() {
     MomentAttachment.register();
     ServerTickEvents.END_SERVER_TICK.register(Moments::tick);
-    ServerLivingEntityEvents.ALLOW_DAMAGE.register((entity, source, amount) -> !locked(entity));
+    ServerLivingEntityEvents.ALLOW_DAMAGE.register(
+        (entity, source, amount) ->
+            !locked(entity) || source.isIn(DamageTypeTags.BYPASSES_INVULNERABILITY));
     AttackEntityCallback.EVENT.register(
         (player, world, hand, entity, hit) ->
             locked(player) ? ActionResult.FAIL : ActionResult.PASS);

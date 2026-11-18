@@ -28,6 +28,13 @@ class SkillEarningTest {
     assertEquals(experience, SkillEarning.huntExperience(settings(5, perKill, perStage), rank));
   }
 
+  @ParameterizedTest(name = "sworn {0}, {1} experience -> paid {2}")
+  @CsvSource({"true, 300, true", "true, 0, false", "true, -5, false", "false, 300, false"})
+  @DisplayName("only a sworn hunter earns hunter experience, and only when there is some to earn")
+  void paysHunter(final boolean sworn, final int experience, final boolean paid) {
+    assertEquals(paid, SkillEarning.paysHunter(sworn, experience));
+  }
+
   @ParameterizedTest(name = "{0} blood at {1} each: {2}")
   @CsvSource({"1, 5, 5", "0.5, 5, 2.5", "4, 0, 0", "0, 5, 0", "-2, 5, 0", "20, 5, 100"})
   @DisplayName("blood pays experience by its worth, and never less than nothing")

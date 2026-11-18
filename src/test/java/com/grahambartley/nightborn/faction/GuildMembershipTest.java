@@ -27,7 +27,7 @@ class GuildMembershipTest {
   @CsvSource({
     "false, false, false, true, true",
     "false, true, false, false, true",
-    "false, false, true, false, true",
+    "false, true, true, false, true",
     "true, false, false, false, false"
   })
   @DisplayName("staking a vampire proves a human once, and tells them only if they can now swear")

@@ -9,7 +9,11 @@ import net.minecraft.sound.SoundEvents;
 public enum MomentCue {
   HEARTBEAT(SoundEvents.ENTITY_WARDEN_HEARTBEAT, 1.0F, 0.7F, ParticleTypes.SMOKE),
   BELL(SoundEvents.BLOCK_BELL_USE, 1.0F, 0.5F, ParticleTypes.SMOKE),
-  HORN(SoundEvents.GOAT_HORN_SOUNDS.get(5), 1.0F, 0.9F, ParticleTypes.END_ROD);
+  HORN(SoundEvents.GOAT_HORN_SOUNDS.get(Horns.CALL), 1.0F, 0.9F, ParticleTypes.END_ROD);
+
+  private static final class Horns {
+    static final int CALL = 5;
+  }
 
   private final RegistryEntry<SoundEvent> sound;
   private final float volume;

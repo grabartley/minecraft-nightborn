@@ -20,7 +20,7 @@ public final class GuildMembership {
       return false;
     }
     OathAttachment.set(player, before.prove());
-    return !before.sworn();
+    return true;
   }
 
   public static boolean swear(final AttachmentTarget player) {

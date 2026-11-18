@@ -51,9 +51,13 @@ public final class SkillEarning {
     return grantHunter(hunter, ritual.eldestExperience(), settings);
   }
 
+  static boolean paysHunter(final boolean sworn, final int experience) {
+    return sworn && experience > 0;
+  }
+
   private static boolean grantHunter(
       final PlayerEntity hunter, final int experience, final SkillSettings settings) {
-    if (!GuildMembership.isHunter(hunter) || experience <= 0) {
+    if (!paysHunter(GuildMembership.isHunter(hunter), experience)) {
       return false;
     }
     gain(hunter, SkillTree.HUNTER, experience, settings);

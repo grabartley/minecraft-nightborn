@@ -17,7 +17,8 @@ class CeremonyCameraTest {
     "0, -1, 0, 0, 1",
     "0, 2, 360, 0, 1"
   })
-  @DisplayName("the view steps out behind the player, circles them once and returns, never inside their head")
+  @DisplayName(
+      "the view steps out behind the player, circles them once and returns, never inside their head")
   void orbit(
       final float start,
       final float progress,
