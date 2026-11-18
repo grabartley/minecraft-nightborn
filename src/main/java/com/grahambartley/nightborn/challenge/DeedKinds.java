@@ -38,6 +38,7 @@ public final class DeedKinds {
   public static final Identifier ACCESSORIES_WORN = live("accessories_worn");
   public static final Identifier OLD_BLOOD_DRUNK = live("old_blood_drunk");
   public static final Identifier HOUSE_FOUNDED = live("house_founded");
+  public static final Identifier HOUSE_WON = live("house_won");
   public static final Identifier INQUISITOR_ENDED = live("inquisitor_ended");
   public static final Identifier TRIAL_COMPLETED = live("trial_completed");
   public static final Identifier STRUCTURE_ENTERED = live("structure_entered");

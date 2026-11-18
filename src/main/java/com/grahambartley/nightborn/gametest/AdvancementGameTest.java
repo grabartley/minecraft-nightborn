@@ -81,6 +81,7 @@ public class AdvancementGameTest implements FabricGameTest {
           new Expected("house_rules", "no_reflection_on_you", AdvancementFrame.TASK, 0, false),
           new Expected(
               "full_house", "no_reflection_on_you", AdvancementFrame.CHALLENGE, 100, false),
+          new Expected("regime_change", "no_reflection_on_you", AdvancementFrame.TASK, 0, false),
           new Expected("last_bite", "no_reflection_on_you", AdvancementFrame.TASK, 0, false),
           new Expected(
               "nothing_to_see_here", "no_reflection_on_you", AdvancementFrame.TASK, 0, true),

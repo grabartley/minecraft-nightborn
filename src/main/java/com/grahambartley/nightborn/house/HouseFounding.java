@@ -73,6 +73,10 @@ public final class HouseFounding {
       Deeds.record(player, Deed.of(DeedKinds.HOUSE_FOUNDED));
     }
     verdict.key().ifPresent(key -> cue(player, key, verdict));
+    if ((verdict == HouseRules.Founding.FOUND || verdict == HouseRules.Founding.CLAIM)
+        && houses.ledBy(self).filter(house -> house.identity().name().isEmpty()).isPresent()) {
+      HouseNaming.offer(player);
+    }
     return verdict;
   }
 

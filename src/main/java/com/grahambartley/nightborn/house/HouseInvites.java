@@ -1,8 +1,10 @@
 package com.grahambartley.nightborn.house;
 
+import com.grahambartley.nightborn.age.StageRanks;
 import com.grahambartley.nightborn.challenge.Deed;
 import com.grahambartley.nightborn.challenge.DeedKinds;
 import com.grahambartley.nightborn.challenge.Deeds;
+import com.grahambartley.nightborn.house.duel.HouseDuels;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
@@ -34,6 +36,7 @@ public final class HouseInvites {
   static final String MEMBER_LEFT = "nightborn.house.leave.member_left";
   static final String LORD_STAYS = "nightborn.house.leave.lord";
   static final String NOT_MEMBER = "nightborn.house.leave.not_member";
+  static final String DUELLING = "nightborn.house.leave.duelling";
 
   private static final Map<UUID, UUID> PENDING = new ConcurrentHashMap<>();
 
@@ -88,7 +91,14 @@ public final class HouseInvites {
     }
     final Houses houses = Houses.get(server);
     leaveAny(houses, guest.getUuid());
-    houses.ledBy(lordId).ifPresent(house -> houses.put(house.withPlayer(guest.getUuid())));
+    houses
+        .ledBy(lordId)
+        .ifPresent(
+            house ->
+                houses.put(
+                    house
+                        .withPlayer(guest.getUuid())
+                        .ranked(guest.getUuid(), StageRanks.of(guest))));
     guestArrived(lord, houses);
     guest.sendMessage(Text.translatable(WELCOMED, lord.getDisplayName()), false);
     lord.sendMessage(Text.translatable(ARRIVED, guest.getDisplayName()), false);
@@ -106,6 +116,10 @@ public final class HouseInvites {
     }
     if (house.get().lord().equals(member.getUuid())) {
       member.sendMessage(Text.translatable(LORD_STAYS), true);
+      return false;
+    }
+    if (HouseDuels.of(member.getUuid()).isPresent()) {
+      member.sendMessage(Text.translatable(DUELLING), true);
       return false;
     }
     houses.put(house.get().without(member.getUuid()));

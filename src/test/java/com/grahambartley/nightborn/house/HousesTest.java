@@ -57,4 +57,31 @@ class HousesTest {
     assertEquals(changed, houses.isDirty());
     assertEquals(Optional.of(changed ? house.withNpc(NPC) : house), houses.ledBy(LORD));
   }
+
+  @ParameterizedTest(name = "lord stays {0}")
+  @ValueSource(booleans = {true, false})
+  @DisplayName("a house passed to an heir is found under the heir alone")
+  void replace(final boolean formerLordStays) {
+    final Houses houses = new Houses();
+    final House house = House.founded(LORD, at(1, 64, 1)).withPlayer(PLAYER).withNpc(NPC);
+    houses.put(house);
+    houses.setDirty(false);
+    houses.replace(LORD, house.ledBy(PLAYER, formerLordStays));
+    assertEquals(true, houses.isDirty());
+    assertEquals(Optional.empty(), houses.ledBy(LORD));
+    assertEquals(PLAYER, houses.of(NPC).orElseThrow().lord());
+    assertEquals(formerLordStays, houses.of(LORD).isPresent());
+  }
+
+  @ParameterizedTest(name = "{0}")
+  @ValueSource(booleans = {true, false})
+  @DisplayName("removing a house marks the state dirty only when there was one")
+  void remove(final boolean led) {
+    final Houses houses = new Houses();
+    houses.put(House.founded(led ? LORD : PLAYER, at(1, 64, 1)));
+    houses.setDirty(false);
+    houses.remove(LORD);
+    assertEquals(led, houses.isDirty());
+    assertEquals(Optional.empty(), houses.ledBy(LORD));
+  }
 }

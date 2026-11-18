@@ -5,6 +5,7 @@ import com.grahambartley.nightborn.blood.Starvation;
 import com.grahambartley.nightborn.coffin.CoffinOwnership;
 import com.grahambartley.nightborn.config.CoreSettings;
 import com.grahambartley.nightborn.config.MobSettings;
+import com.grahambartley.nightborn.config.RaidSettings;
 import com.grahambartley.nightborn.levitation.Levitation;
 import com.grahambartley.nightborn.mob.NightbornMobs;
 import com.grahambartley.nightborn.mob.VampireEntity;
@@ -54,19 +55,26 @@ public class VampireHomeGameTest implements FabricGameTest {
   static final int HURT_COOLDOWN = 20;
 
   private static int outingChanceBefore;
+  private static int watchDaysBefore;
   private static int mobDrainBefore;
   private static int levitationDrainBefore;
   private static int dawnOutingChanceBefore;
   private static Difficulty difficultyBefore;
 
   @BeforeBatch(batchId = DAY_BATCH)
-  public void pinNoon(final ServerWorld world) {
+  public void pinNoonWithNoDayWatch(final ServerWorld world) {
     WorldClock.freeze(world, WorldClock.NOON);
+    watchDaysBefore = ServerConfigService.current().raids().watchDays();
+    ServerConfigService.update(
+        world.getServer(), ServerConfigService.current().with(RaidSettings.WATCH_DAYS, 0));
   }
 
   @AfterBatch(batchId = DAY_BATCH)
-  public void unpinNoon(final ServerWorld world) {
+  public void restoreNoonAndDayWatch(final ServerWorld world) {
     WorldClock.release(world);
+    ServerConfigService.update(
+        world.getServer(),
+        ServerConfigService.current().with(RaidSettings.WATCH_DAYS, watchDaysBefore));
   }
 
   @BeforeBatch(batchId = NIGHT_BATCH)
