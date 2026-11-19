@@ -71,6 +71,7 @@ public class HunterPartyGameTest implements FabricGameTest {
     for (int x = 0; x < 9; x++) {
       for (int z = 0; z < 9; z++) {
         context.setBlockState(new BlockPos(x, 1, z), Blocks.GRASS_BLOCK);
+        context.setBlockState(new BlockPos(x, 4, z), Blocks.AIR);
       }
     }
   }
