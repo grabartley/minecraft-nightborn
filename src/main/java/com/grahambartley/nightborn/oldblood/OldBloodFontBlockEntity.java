@@ -69,6 +69,7 @@ public class OldBloodFontBlockEntity extends BlockEntity implements GeoBlockEnti
     final long now = world.getTime();
     if (full()) {
       updatedAt = now;
+      showLevel();
       return;
     }
     final long elapsed = updatedAt == UNKNOWN ? 0L : now - updatedAt;
@@ -104,6 +105,10 @@ public class OldBloodFontBlockEntity extends BlockEntity implements GeoBlockEnti
 
   private void show() {
     markDirty();
+    showLevel();
+  }
+
+  private void showLevel() {
     if (world == null) {
       return;
     }

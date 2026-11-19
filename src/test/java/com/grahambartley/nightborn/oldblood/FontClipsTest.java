@@ -18,7 +18,9 @@ class FontClipsTest {
     "EMPTY, FULL, refill full",
     "EMPTY, LOW, low",
     "LOW, HALF, half",
-    "HALF, HIGH, high"
+    "HALF, HIGH, high",
+    "FULL, LOW, drink low",
+    "LOW, EMPTY, empty"
   })
   @DisplayName("a level change plays the drink or refill clip before the new level's loop")
   void playsTheChange(final FontLevel before, final FontLevel after, final String clips) {
