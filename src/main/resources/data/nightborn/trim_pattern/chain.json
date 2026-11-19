@@ -1,0 +1,7 @@
+{
+  "asset_id": "nightborn:chain",
+  "description": {
+    "translate": "trim_pattern.nightborn.chain"
+  },
+  "template_item": "nightborn:chain_armor_trim_smithing_template"
+}

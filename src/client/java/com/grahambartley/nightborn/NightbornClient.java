@@ -4,10 +4,11 @@ import com.grahambartley.nightborn.ammo.AmmoEntities;
 import com.grahambartley.nightborn.boss.BossEntities;
 import com.grahambartley.nightborn.client.CoatingTooltip;
 import com.grahambartley.nightborn.client.FlameTooltip;
+import com.grahambartley.nightborn.client.LiningTooltip;
 import com.grahambartley.nightborn.client.VampireClientFeatures;
 import com.grahambartley.nightborn.client.boss.ArenaWallRenderer;
 import com.grahambartley.nightborn.client.boss.BossArenaView;
-import com.grahambartley.nightborn.client.boss.EldestSetTooltip;
+import com.grahambartley.nightborn.client.boss.BossSetTooltip;
 import com.grahambartley.nightborn.client.familiar.HumanFamiliarRenderer;
 import com.grahambartley.nightborn.client.fog.StructureFog;
 import com.grahambartley.nightborn.client.gore.SplatterModels;
@@ -56,6 +57,7 @@ import com.grahambartley.nightborn.render.HunterTentRenderer;
 import com.grahambartley.nightborn.render.OldBloodFontRenderer;
 import com.grahambartley.nightborn.render.RestlessDeadRenderer;
 import com.grahambartley.nightborn.render.RitualAltarRenderer;
+import com.grahambartley.nightborn.render.TameHawkRenderer;
 import com.grahambartley.nightborn.render.VampireBatRenderer;
 import com.grahambartley.nightborn.render.VampireRenderer;
 import com.grahambartley.nightborn.render.WeaponRackRenderer;
@@ -147,6 +149,7 @@ public class NightbornClient implements ClientModInitializer {
     EntityRendererRegistry.register(TrapEntities.NET, FlyingItemEntityRenderer::new);
     EntityRendererRegistry.register(SlayerEntities.THROWN_STAKE, FlyingItemEntityRenderer::new);
     EntityRendererRegistry.register(NightbornMobs.PET_BAT, VampireBatRenderer::new);
+    EntityRendererRegistry.register(InquisitorMobs.TAME_HAWK, TameHawkRenderer::new);
     EntityRendererRegistry.register(Familiars.HUMAN_FAMILIAR, HumanFamiliarRenderer::new);
     EntityRendererRegistry.register(Thralls.THRALL, ThrallRenderer::new);
     EntityRendererRegistry.register(
@@ -167,12 +170,13 @@ public class NightbornClient implements ClientModInitializer {
     StructureFog.register();
     RitualGloom.register();
     BossArenaView.register();
-    EldestSetTooltip.register();
+    BossSetTooltip.register();
     WorldRenderEvents.AFTER_ENTITIES.register(ArenaWallRenderer::render);
     NamingDialogue.register();
     WheelDialogue.register();
     StructureAmbiencePlayer.register();
     CoatingTooltip.register();
+    LiningTooltip.register();
     FlameTooltip.register();
     WispFx.register();
   }

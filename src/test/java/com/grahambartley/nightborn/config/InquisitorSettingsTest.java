@@ -33,9 +33,33 @@ class InquisitorSettingsTest {
       final int loss,
       final int keptLoss) {
     final InquisitorSettings settings =
-        new InquisitorSettings(4000, 50, radius, 20, drain, 30, loss, 30);
+        new InquisitorSettings(4000, 50, radius, 20, drain, 30, loss, 30, 10, 20, 4, 25);
     assertEquals(keptRadius, settings.arenaRadius());
     assertEquals(keptDrain, settings.drainSeconds());
     assertEquals(keptLoss, settings.deathNotorietyLoss());
+  }
+
+  @ParameterizedTest(name = "sword {0}, set {1}, extra {2}, slower {3}")
+  @CsvSource({
+    "10, 20, 4, 25, 10, 20, 4, 25",
+    "-5, -5, -5, -5, 0, 0, 0, 0",
+    "150, 150, 99, 99, 100, 100, 20, 80"
+  })
+  @DisplayName("the greatsword and set amounts are clamped into their ranges on load")
+  void clampsTheSet(
+      final int sword,
+      final int set,
+      final int extra,
+      final int slower,
+      final int keptSword,
+      final int keptSet,
+      final int keptExtra,
+      final int keptSlower) {
+    final InquisitorSettings settings =
+        new InquisitorSettings(4000, 50, 14, 20, 5, 30, 50, 30, sword, set, extra, slower);
+    assertEquals(keptSword, settings.greatswordBlood());
+    assertEquals(keptSet, settings.setBlood());
+    assertEquals(keptExtra, settings.setExtraBlood());
+    assertEquals(keptSlower, settings.setDrainSlower());
   }
 }

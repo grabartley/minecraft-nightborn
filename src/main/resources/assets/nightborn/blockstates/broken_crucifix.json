@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "nightborn:block/broken_crucifix"
+    },
+    "facing=east": {
+      "model": "nightborn:block/broken_crucifix",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "nightborn:block/broken_crucifix",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "nightborn:block/broken_crucifix",
+      "y": 270
+    }
+  }
+}

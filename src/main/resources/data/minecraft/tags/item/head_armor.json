@@ -2,6 +2,7 @@
   "replace": false,
   "values": [
     "#nightborn:enchantable/head_clothing",
-    "nightborn:eldest_crown"
+    "nightborn:eldest_crown",
+    "nightborn:inquisitor_hat"
   ]
 }

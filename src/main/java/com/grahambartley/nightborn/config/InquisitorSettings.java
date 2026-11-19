@@ -10,7 +10,11 @@ public record InquisitorSettings(
     int drainSeconds,
     int riseHealth,
     int deathNotorietyLoss,
-    int emptyArenaSeconds) {
+    int emptyArenaSeconds,
+    int greatswordBlood,
+    int setBlood,
+    int setExtraBlood,
+    int setDrainSlower) {
 
   static final String SECTION = HuntSettings.SECTION;
 
@@ -36,6 +40,15 @@ public record InquisitorSettings(
       new IntSetting(
           SECTION, "emptyArenaSeconds", 30, 5, 600, c -> c.inquisitor().emptyArenaSeconds());
 
+  public static final IntSetting GREATSWORD_BLOOD =
+      new IntSetting(SECTION, "greatswordBlood", 10, 0, 100, c -> c.inquisitor().greatswordBlood());
+  public static final IntSetting SET_BLOOD =
+      new IntSetting(SECTION, "setBlood", 20, 0, 100, c -> c.inquisitor().setBlood());
+  public static final IntSetting SET_EXTRA_BLOOD =
+      new IntSetting(SECTION, "setExtraBlood", 4, 0, 20, c -> c.inquisitor().setExtraBlood());
+  public static final IntSetting SET_DRAIN_SLOWER =
+      new IntSetting(SECTION, "setDrainSlower", 25, 0, 80, c -> c.inquisitor().setDrainSlower());
+
   public static final List<Setting<?>> SETTINGS =
       List.of(
           EXPERIENCE,
@@ -45,7 +58,11 @@ public record InquisitorSettings(
           DRAIN_SECONDS,
           RISE_HEALTH,
           DEATH_NOTORIETY_LOSS,
-          EMPTY_ARENA_SECONDS);
+          EMPTY_ARENA_SECONDS,
+          GREATSWORD_BLOOD,
+          SET_BLOOD,
+          SET_EXTRA_BLOOD,
+          SET_DRAIN_SLOWER);
 
   public InquisitorSettings {
     experience = EXPERIENCE.clamp(experience);
@@ -56,6 +73,10 @@ public record InquisitorSettings(
     riseHealth = RISE_HEALTH.clamp(riseHealth);
     deathNotorietyLoss = DEATH_NOTORIETY_LOSS.clamp(deathNotorietyLoss);
     emptyArenaSeconds = EMPTY_ARENA_SECONDS.clamp(emptyArenaSeconds);
+    greatswordBlood = GREATSWORD_BLOOD.clamp(greatswordBlood);
+    setBlood = SET_BLOOD.clamp(setBlood);
+    setExtraBlood = SET_EXTRA_BLOOD.clamp(setExtraBlood);
+    setDrainSlower = SET_DRAIN_SLOWER.clamp(setDrainSlower);
   }
 
   static InquisitorSettings from(final SettingValues values) {
@@ -67,6 +88,10 @@ public record InquisitorSettings(
         values.get(DRAIN_SECONDS),
         values.get(RISE_HEALTH),
         values.get(DEATH_NOTORIETY_LOSS),
-        values.get(EMPTY_ARENA_SECONDS));
+        values.get(EMPTY_ARENA_SECONDS),
+        values.get(GREATSWORD_BLOOD),
+        values.get(SET_BLOOD),
+        values.get(SET_EXTRA_BLOOD),
+        values.get(SET_DRAIN_SLOWER));
   }
 }

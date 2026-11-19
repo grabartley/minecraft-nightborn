@@ -1,0 +1,9 @@
+{
+  "type": "nightborn:smithing_lining",
+  "template": [],
+  "addition": {
+    "item": "nightborn:inquisitor_mail"
+  },
+  "material": "minecraft:diamond",
+  "durability_multiplier": 33
+}

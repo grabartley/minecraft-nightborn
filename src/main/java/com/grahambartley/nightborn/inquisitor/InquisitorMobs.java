@@ -1,6 +1,7 @@
 package com.grahambartley.nightborn.inquisitor;
 
 import com.grahambartley.nightborn.Nightborn;
+import com.grahambartley.nightborn.mob.VampireBatEntity;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
 import net.minecraft.entity.EntityType;
@@ -27,6 +28,18 @@ public final class InquisitorMobs {
               .makeFireImmune()
               .build(ID));
 
+  static final String HAWK_ID = "tame_hawk";
+
+  public static final EntityType<TameHawkEntity> TAME_HAWK =
+      Registry.register(
+          Registries.ENTITY_TYPE,
+          Identifier.of(Nightborn.MOD_ID, HAWK_ID),
+          EntityType.Builder.<TameHawkEntity>create(TameHawkEntity::new, SpawnGroup.MISC)
+              .dimensions(0.6F, 0.7F)
+              .eyeHeight(0.4F)
+              .maxTrackingRange(8)
+              .build(HAWK_ID));
+
   public static final Item GRAND_INQUISITOR_SPAWN_EGG =
       Registry.register(
           Registries.ITEM,
@@ -38,6 +51,8 @@ public final class InquisitorMobs {
   static void register() {
     FabricDefaultAttributeRegistry.register(
         GRAND_INQUISITOR, GrandInquisitorEntity.createInquisitorAttributes());
+    FabricDefaultAttributeRegistry.register(
+        TAME_HAWK, VampireBatEntity.createVampireBatAttributes());
     ItemGroupEvents.modifyEntriesEvent(ItemGroups.SPAWN_EGGS)
         .register(entries -> entries.add(GRAND_INQUISITOR_SPAWN_EGG));
   }

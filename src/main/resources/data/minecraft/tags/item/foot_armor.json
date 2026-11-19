@@ -2,6 +2,7 @@
   "replace": false,
   "values": [
     "#nightborn:enchantable/feet_clothing",
-    "nightborn:eldest_boots"
+    "nightborn:eldest_boots",
+    "nightborn:inquisitor_boots"
   ]
 }
