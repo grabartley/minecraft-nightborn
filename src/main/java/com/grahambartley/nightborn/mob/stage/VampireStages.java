@@ -1,9 +1,9 @@
 package com.grahambartley.nightborn.mob.stage;
 
 import com.grahambartley.nightborn.Nightborn;
-import com.grahambartley.nightborn.core.DataEntries;
 import com.grahambartley.nightborn.skill.SkillTree;
 import com.grahambartley.nightborn.skill.Skills;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
@@ -37,7 +37,11 @@ public final class VampireStages {
   }
 
   public static Map<Identifier, VampireStage> stages(final DynamicRegistryManager registries) {
-    return DataEntries.copy(registries, STAGE);
+    final Map<Identifier, VampireStage> stages = new HashMap<>();
+    registries
+        .getOptional(STAGE)
+        .ifPresent(registry -> registry.getIds().forEach(id -> stages.put(id, registry.get(id))));
+    return stages;
   }
 
   public static Optional<VampireStage> stage(

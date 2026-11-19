@@ -1,7 +1,7 @@
 package com.grahambartley.nightborn.skill;
 
 import com.grahambartley.nightborn.Nightborn;
-import com.grahambartley.nightborn.core.DataEntries;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
@@ -41,11 +41,11 @@ public final class Skills {
   }
 
   public static Map<Identifier, Skill> allSkills(final DynamicRegistryManager registries) {
-    return DataEntries.copy(skills(registries));
+    return copy(skills(registries));
   }
 
   public static Map<Identifier, SkillBranch> allBranches(final DynamicRegistryManager registries) {
-    return DataEntries.copy(branches(registries));
+    return copy(branches(registries));
   }
 
   @Nullable
@@ -63,5 +63,11 @@ public final class Skills {
     final Skill skill = skill(registries, id);
     final SkillBranch branch = skill == null ? null : branch(registries, skill.branch());
     return Optional.ofNullable(SkillPurchase.line(skill, branch));
+  }
+
+  private static <T> Map<Identifier, T> copy(final Optional<Registry<T>> registry) {
+    final Map<Identifier, T> entries = new HashMap<>();
+    registry.ifPresent(r -> r.getIds().forEach(id -> entries.put(id, r.get(id))));
+    return entries;
   }
 }

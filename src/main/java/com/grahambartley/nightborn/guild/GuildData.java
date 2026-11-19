@@ -1,8 +1,8 @@
 package com.grahambartley.nightborn.guild;
 
 import com.grahambartley.nightborn.Nightborn;
-import com.grahambartley.nightborn.core.DataEntries;
 import com.grahambartley.nightborn.ward.WardTags;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -54,15 +54,15 @@ public final class GuildData {
   }
 
   public static List<GuildOffer> offers(final DynamicRegistryManager registries) {
-    return GuildOffer.inOrder(DataEntries.copy(registries, OFFER));
+    return GuildOffer.inOrder(copy(registries, OFFER));
   }
 
   public static Map<Identifier, HunterLook> looks(final DynamicRegistryManager registries) {
-    return DataEntries.copy(registries, LOOK);
+    return copy(registries, LOOK);
   }
 
   public static Map<Identifier, HunterKit> kits(final DynamicRegistryManager registries) {
-    return DataEntries.copy(registries, KIT);
+    return copy(registries, KIT);
   }
 
   public static String wornLook(
@@ -96,5 +96,14 @@ public final class GuildData {
         .getOptionalWrapper(CONTRACT)
         .flatMap(wrapper -> wrapper.getOptional(RegistryKey.of(CONTRACT, id)))
         .map(entry -> entry.value());
+  }
+
+  private static <T> Map<Identifier, T> copy(
+      final DynamicRegistryManager registries, final RegistryKey<Registry<T>> key) {
+    final Map<Identifier, T> entries = new HashMap<>();
+    registries
+        .getOptional(key)
+        .ifPresent(registry -> registry.getIds().forEach(id -> entries.put(id, registry.get(id))));
+    return entries;
   }
 }

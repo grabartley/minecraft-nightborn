@@ -1,8 +1,9 @@
 package com.grahambartley.nightborn.challenge;
 
 import com.grahambartley.nightborn.Nightborn;
-import com.grahambartley.nightborn.core.DataEntries;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import net.fabricmc.fabric.api.event.registry.DynamicRegistries;
 import net.minecraft.registry.DynamicRegistryManager;
 import net.minecraft.registry.Registry;
@@ -24,10 +25,16 @@ public final class ChallengeData {
   }
 
   public static Map<Identifier, Trial> trials(final DynamicRegistryManager registries) {
-    return DataEntries.copy(registries.getOptional(TRIAL));
+    return copy(registries.getOptional(TRIAL));
   }
 
   public static Map<Identifier, Feat> feats(final DynamicRegistryManager registries) {
-    return DataEntries.copy(registries.getOptional(FEAT));
+    return copy(registries.getOptional(FEAT));
+  }
+
+  private static <T> Map<Identifier, T> copy(final Optional<Registry<T>> registry) {
+    final Map<Identifier, T> entries = new HashMap<>();
+    registry.ifPresent(r -> r.getIds().forEach(id -> entries.put(id, r.get(id))));
+    return entries;
   }
 }

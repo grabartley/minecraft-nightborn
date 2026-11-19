@@ -1,7 +1,6 @@
 package com.grahambartley.nightborn.mob.household;
 
 import com.grahambartley.nightborn.Nightborn;
-import com.grahambartley.nightborn.core.DataEntries;
 import com.grahambartley.nightborn.mob.look.Weighted;
 import java.util.Map;
 import java.util.Optional;
@@ -35,7 +34,12 @@ public final class Temperaments {
   }
 
   public static Map<Identifier, Temperament> all(final DynamicRegistryManager registries) {
-    return new TreeMap<>(DataEntries.copy(registries, TEMPERAMENT));
+    final Map<Identifier, Temperament> temperaments = new TreeMap<>();
+    registries
+        .getOptional(TEMPERAMENT)
+        .ifPresent(
+            registry -> registry.getIds().forEach(id -> temperaments.put(id, registry.get(id))));
+    return temperaments;
   }
 
   public static Temperament of(final DynamicRegistryManager registries, final Identifier id) {

@@ -1,7 +1,7 @@
 package com.grahambartley.nightborn.rank;
 
 import com.grahambartley.nightborn.Nightborn;
-import com.grahambartley.nightborn.core.DataEntries;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import net.fabricmc.fabric.api.event.registry.DynamicRegistries;
@@ -22,7 +22,11 @@ public final class RankData {
   }
 
   public static Map<Identifier, GuildRank> ranks(final DynamicRegistryManager registries) {
-    return DataEntries.copy(registries, RANK);
+    final Map<Identifier, GuildRank> ranks = new HashMap<>();
+    registries
+        .getOptional(RANK)
+        .ifPresent(registry -> registry.getIds().forEach(id -> ranks.put(id, registry.get(id))));
+    return ranks;
   }
 
   public static Optional<GuildRank> rank(
