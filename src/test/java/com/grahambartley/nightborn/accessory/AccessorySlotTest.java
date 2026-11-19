@@ -63,7 +63,7 @@ class AccessorySlotTest {
   })
   @DisplayName("every piece but a ring is drawn, and only in the mod's own slots")
   void drawnIn(final String slot, final boolean drawn) {
-    assertEquals(drawn, AccessorySlot.drawnIn(slot));
+    assertEquals(drawn, AccessorySlot.byId(slot).filter(AccessorySlot::drawn).isPresent());
   }
 
   @Test

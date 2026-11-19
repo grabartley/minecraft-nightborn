@@ -62,10 +62,6 @@ public enum AccessorySlot {
     return !this.name.equals("ring");
   }
 
-  public static boolean drawnIn(final String slotId) {
-    return byId(slotId).map(AccessorySlot::drawn).orElse(false);
-  }
-
   public EquipmentSlot drawnOn() {
     return this.drawnOn;
   }

@@ -5,6 +5,7 @@ import com.grahambartley.nightborn.accessory.AccessorySlot;
 import dev.emi.trinkets.api.SlotReference;
 import dev.emi.trinkets.api.client.TrinketRenderer;
 import dev.emi.trinkets.api.client.TrinketRendererRegistry;
+import java.util.Optional;
 import net.minecraft.client.render.OverlayTexture;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.model.BipedEntityModel;
@@ -43,11 +44,12 @@ public final class AccessoryRenderer implements TrinketRenderer {
       final float animationProgress,
       final float headYaw,
       final float headPitch) {
-    final String slotId = slot.inventory().getSlotType().getId();
-    if (!(contextModel instanceof BipedEntityModel base) || !AccessorySlot.drawnIn(slotId)) {
+    final Optional<AccessorySlot> drawn =
+        AccessorySlot.byId(slot.inventory().getSlotType().getId()).filter(AccessorySlot::drawn);
+    if (!(contextModel instanceof BipedEntityModel base) || drawn.isEmpty()) {
       return;
     }
-    final EquipmentSlot body = AccessorySlot.byId(slotId).orElseThrow().drawnOn();
+    final EquipmentSlot body = drawn.get().drawnOn();
     if (GeoRenderProvider.of(stack).getGeoArmorRenderer(entity, stack, body, base)
         instanceof GeoArmorRenderer<?> renderer) {
       base.copyBipedStateTo(renderer);
