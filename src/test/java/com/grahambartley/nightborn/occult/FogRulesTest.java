@@ -2,6 +2,8 @@ package com.grahambartley.nightborn.occult;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import net.minecraft.registry.Registries;
+import net.minecraft.util.Identifier;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -49,5 +51,22 @@ class FogRulesTest {
       final boolean seesThrough,
       final boolean expected) {
     assertEquals(expected, FogRules.touches(alive, caster, serves, spectating, seesThrough));
+  }
+
+  @ParameterizedTest(name = "{0}: blinds {1}")
+  @CsvSource({"blindness, true", "darkness, true", "slowness, false", "weakness, false"})
+  @DisplayName("only the effects that take sight count as blinding")
+  void blinds(final String effect, final boolean blinds) {
+    assertEquals(
+        blinds,
+        FogRules.blinds(
+            Registries.STATUS_EFFECT.getEntry(Identifier.ofVanilla(effect)).orElseThrow()));
+  }
+
+  @ParameterizedTest(name = "blinding {0}, clear sight {1}: reaches {2}")
+  @CsvSource({"true, true, false", "true, false, true", "false, true, true", "false, false, true"})
+  @DisplayName("clear sight keeps the fog from blinding, while its slowness still lands")
+  void reaches(final boolean blinding, final boolean clearSight, final boolean reaches) {
+    assertEquals(reaches, FogRules.reaches(blinding, clearSight));
   }
 }

@@ -42,4 +42,13 @@ class BloodBottleItemTest {
     assertEquals(quality, BloodBottleItem.qualityOf(bottle));
     assertEquals(kept, BloodBottleItem.giftOf(bottle));
   }
+
+  @ParameterizedTest(name = "{0} at {1}")
+  @CsvSource({"PLAYER, 1.0", "PLAYER, 2.0", "VILLAGER, 2.0", "ANIMAL, 3.0", "PLAYER, 0.0"})
+  @DisplayName("a bottle gift scales the blood a bottle gives before it is rounded")
+  void bloodRestoredWithAShare(final BloodQuality quality, final double share) {
+    final int plain = BloodBottleItem.bloodRestored(quality, NightbornConfig.DEFAULTS);
+    final int gifted = BloodBottleItem.bloodRestored(quality, NightbornConfig.DEFAULTS, share);
+    assertTrue(Math.abs(gifted - plain * share) <= share, gifted + " vs " + plain);
+  }
 }

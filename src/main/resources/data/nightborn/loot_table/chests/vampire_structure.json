@@ -249,6 +249,186 @@
               }
             }
           ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "nightborn:pilgrims_cloak",
+          "conditions": [
+            {
+              "condition": "minecraft:location_check",
+              "predicate": {
+                "structures": "nightborn:crypt"
+              }
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "nightborn:stakewrights_gloves",
+          "conditions": [
+            {
+              "condition": "minecraft:location_check",
+              "predicate": {
+                "structures": "nightborn:crypt"
+              }
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "nightborn:gravediggers_mitts",
+          "conditions": [
+            {
+              "condition": "minecraft:location_check",
+              "predicate": {
+                "structures": "nightborn:crypt"
+              }
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "nightborn:stake_loops",
+          "conditions": [
+            {
+              "condition": "minecraft:location_check",
+              "predicate": {
+                "structures": "nightborn:crypt"
+              }
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "nightborn:confessors_veil",
+          "conditions": [
+            {
+              "condition": "minecraft:location_check",
+              "predicate": {
+                "structures": "nightborn:crypt"
+              }
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "nightborn:plague_mask",
+          "conditions": [
+            {
+              "condition": "minecraft:location_check",
+              "predicate": {
+                "structures": "nightborn:crypt"
+              }
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "nightborn:stalkers_cloak",
+          "conditions": [
+            {
+              "condition": "minecraft:location_check",
+              "predicate": {
+                "structures": "nightborn:ruined_manor"
+              }
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "nightborn:silk_gloves",
+          "conditions": [
+            {
+              "condition": "minecraft:location_check",
+              "predicate": {
+                "structures": "nightborn:ruined_manor"
+              }
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "nightborn:cellarers_belt",
+          "conditions": [
+            {
+              "condition": "minecraft:location_check",
+              "predicate": {
+                "structures": "nightborn:ruined_manor"
+              }
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "nightborn:sturdy_girdle",
+          "conditions": [
+            {
+              "condition": "minecraft:location_check",
+              "predicate": {
+                "structures": "nightborn:ruined_manor"
+              }
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "nightborn:smoked_spectacles",
+          "conditions": [
+            {
+              "condition": "minecraft:location_check",
+              "predicate": {
+                "structures": "nightborn:ruined_manor"
+              }
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "nightborn:travellers_cloak",
+          "conditions": [
+            {
+              "condition": "minecraft:location_check",
+              "predicate": {
+                "structures": "nightborn:underground_lair"
+              }
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "nightborn:clawed_gauntlets",
+          "conditions": [
+            {
+              "condition": "minecraft:location_check",
+              "predicate": {
+                "structures": "nightborn:underground_lair"
+              }
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "nightborn:flask_belt",
+          "conditions": [
+            {
+              "condition": "minecraft:location_check",
+              "predicate": {
+                "structures": "nightborn:underground_lair"
+              }
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "nightborn:garlic_soaked_scarf",
+          "conditions": [
+            {
+              "condition": "minecraft:location_check",
+              "predicate": {
+                "structures": "nightborn:underground_lair"
+              }
+            }
+          ]
         }
       ]
     }

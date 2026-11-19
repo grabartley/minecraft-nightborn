@@ -1,5 +1,6 @@
 package com.grahambartley.nightborn.blood;
 
+import com.grahambartley.nightborn.accessory.GiftAttributes;
 import com.grahambartley.nightborn.age.Ageing;
 import com.grahambartley.nightborn.config.NightbornConfig;
 import com.grahambartley.nightborn.server.ServerConfigService;
@@ -53,16 +54,28 @@ public class BloodBottleItem extends Item {
   }
 
   public static int bloodRestored(final BloodQuality quality, final NightbornConfig config) {
+    return bloodRestored(quality, config, 1.0);
+  }
+
+  public static int bloodRestored(
+      final BloodQuality quality, final NightbornConfig config, final double share) {
     return Math.round(
         BloodValue.worth(
-            config.feeding().bottleSize(),
-            quality.worthPercent(config),
-            config.blood().bottledBlood()));
+                config.feeding().bottleSize(),
+                quality.worthPercent(config),
+                config.blood().bottledBlood())
+            * (float) Math.max(0.0, share));
   }
 
   public static void drink(final PlayerEntity player, final BloodQuality quality) {
+    drink(player, quality, 1.0);
+  }
+
+  public static void drink(
+      final PlayerEntity player, final BloodQuality quality, final double share) {
     final int before = BloodAttachment.get(player);
-    BloodAttachment.set(player, before + bloodRestored(quality, ServerConfigService.current()));
+    BloodAttachment.set(
+        player, before + bloodRestored(quality, ServerConfigService.current(), share));
     if (player instanceof ServerPlayerEntity vampire) {
       Ageing.drank(vampire, BloodAttachment.get(player) - before);
     }
@@ -80,7 +93,7 @@ public class BloodBottleItem extends Item {
   @Override
   public ItemStack finishUsing(final ItemStack stack, final World world, final LivingEntity user) {
     if (!world.isClient && user instanceof PlayerEntity player && Vampires.isVampire(player)) {
-      drink(player, qualityOf(stack));
+      drink(player, qualityOf(stack), GiftAttributes.value(player, GiftAttributes.BOTTLE_BLOOD));
       if (player instanceof ServerPlayerEntity vampire) {
         giftOf(stack).ifPresent(gift -> BloodGiftGrants.grant(vampire, gift, BloodGift.BOTTLED));
       }

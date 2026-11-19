@@ -21,7 +21,16 @@ class BloodMetabolismTest {
       final Difficulty difficulty,
       final int age) {
     return new BloodMetabolism.State(
-        blood, exhaustion, health, 40.0F, difficulty, true, BloodMetabolism.GROUNDED, age, 0.0);
+        blood,
+        exhaustion,
+        health,
+        40.0F,
+        difficulty,
+        true,
+        BloodMetabolism.GROUNDED,
+        age,
+        0.0,
+        false);
   }
 
   @ParameterizedTest(name = "drain every {0} s")
@@ -47,7 +56,8 @@ class BloodMetabolismTest {
                   true,
                   BloodMetabolism.GROUNDED,
                   tick,
-                  0.0),
+                  0.0,
+                  false),
               seconds);
       blood = outcome.blood();
       exhaustion = outcome.exhaustion();
@@ -115,7 +125,8 @@ class BloodMetabolismTest {
                 false,
                 BloodMetabolism.GROUNDED,
                 200,
-                0.0),
+                0.0,
+                false),
             600);
     assertFalse(outcome.heals());
   }
@@ -130,7 +141,16 @@ class BloodMetabolismTest {
       final BloodMetabolism.Outcome outcome =
           BloodMetabolism.tick(
               new BloodMetabolism.State(
-                  blood, exhaustion, 40.0F, 40.0F, Difficulty.NORMAL, true, seconds, tick, 0.0),
+                  blood,
+                  exhaustion,
+                  40.0F,
+                  40.0F,
+                  Difficulty.NORMAL,
+                  true,
+                  seconds,
+                  tick,
+                  0.0,
+                  false),
               600);
       blood = outcome.blood();
       exhaustion = outcome.exhaustion();
@@ -144,9 +164,36 @@ class BloodMetabolismTest {
     final BloodMetabolism.Outcome outcome =
         BloodMetabolism.tick(
             new BloodMetabolism.State(
-                10, 3.99F, 40.0F, 40.0F, Difficulty.PEACEFUL, true, 1, 1, 0.0),
+                10, 3.99F, 40.0F, 40.0F, Difficulty.PEACEFUL, true, 1, 1, 0.0, false),
             5);
     assertEquals(10, outcome.blood());
+  }
+
+  @ParameterizedTest(name = "asleep {0}: blood left {1}")
+  @CsvSource({"true, 20", "false, 19"})
+  @DisplayName("a vampire asleep in a coffin loses no blood")
+  void sleepPausesTheDrain(final boolean asleep, final int left) {
+    int blood = 20;
+    float exhaustion = 0.0F;
+    for (int tick = 1; tick <= 101; tick++) {
+      final BloodMetabolism.Outcome outcome =
+          BloodMetabolism.tick(
+              new BloodMetabolism.State(
+                  blood,
+                  exhaustion,
+                  40.0F,
+                  40.0F,
+                  Difficulty.NORMAL,
+                  true,
+                  BloodMetabolism.GROUNDED,
+                  tick,
+                  0.0,
+                  asleep),
+              5);
+      blood = outcome.blood();
+      exhaustion = outcome.exhaustion();
+    }
+    assertEquals(left, blood);
   }
 
   @ParameterizedTest(name = "exhaustion {0} becomes {1}")
@@ -194,7 +241,8 @@ class BloodMetabolismTest {
                     true,
                     BloodMetabolism.GROUNDED,
                     pulse,
-                    speed),
+                    speed,
+                    false),
                 600)
             .heals());
   }
@@ -212,5 +260,24 @@ class BloodMetabolismTest {
   @DisplayName("Thrift slows the drain and Thirst speeds it, and grounded stays grounded")
   void atRate(final int seconds, final double rate, final int expected) {
     assertEquals(expected, BloodMetabolism.atRate(seconds, rate));
+  }
+
+  @ParameterizedTest(name = "{0}, levitating {1}, rate {2}, share {3}: {4}")
+  @CsvSource({
+    "NONE, true, 1.0, 0.85, 0.85",
+    "NONE, true, 1.2, 0.85, 1.02",
+    "NONE, false, 1.0, 0.85, 1.0",
+    "FLYING, true, 1.0, 0.85, 1.0",
+    "SPRINTING, false, 1.0, 0.85, 1.0",
+    "NONE, true, 1.0, 1.0, 1.0"
+  })
+  @DisplayName("a levitation gift slows only the blood that levitating spends")
+  void flightRate(
+      final BatEffort bat,
+      final boolean levitating,
+      final double rate,
+      final double share,
+      final double expected) {
+    assertEquals(expected, BloodMetabolism.flightRate(bat, levitating, rate, share), 1.0E-9);
   }
 }

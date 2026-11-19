@@ -868,20 +868,23 @@
   "item.hunters_bell.ring": {
     "subtitle": "subtitles.nightborn.item.hunters_bell.ring",
     "sounds": [
-      {
-        "name": "minecraft:block.bell.use",
-        "type": "event",
-        "pitch": 1.4
-      }
+      "nightborn:item/hunters_bell/ring"
     ]
   },
   "event.hunt.warning_toll": {
     "subtitle": "subtitles.nightborn.event.hunt.warning_toll",
     "sounds": [
       {
-        "name": "minecraft:block.bell.use",
-        "type": "event",
-        "pitch": 0.6
+        "name": "nightborn:event/hunt/warning_toll1",
+        "pitch": 1.43
+      },
+      {
+        "name": "nightborn:event/hunt/warning_toll2",
+        "pitch": 1.43
+      },
+      {
+        "name": "nightborn:event/hunt/warning_toll3",
+        "pitch": 1.43
       }
     ]
   },
@@ -889,9 +892,16 @@
     "subtitle": "subtitles.nightborn.event.hunt.bells_answer",
     "sounds": [
       {
-        "name": "minecraft:block.bell.resonate",
-        "type": "event",
-        "pitch": 0.8
+        "name": "nightborn:event/hunt/bells_answer1",
+        "pitch": 1.25
+      },
+      {
+        "name": "nightborn:event/hunt/bells_answer2",
+        "pitch": 1.25
+      },
+      {
+        "name": "nightborn:event/hunt/bells_answer3",
+        "pitch": 1.25
       }
     ]
   },
@@ -899,9 +909,8 @@
     "subtitle": "subtitles.nightborn.event.hunt.arrival",
     "sounds": [
       {
-        "name": "minecraft:block.bell.use",
-        "type": "event",
-        "pitch": 0.6
+        "name": "nightborn:event/hunt/arrival",
+        "pitch": 1.67
       }
     ]
   },
@@ -909,106 +918,79 @@
     "subtitle": "subtitles.nightborn.boss.inquisitor.change",
     "sounds": [
       {
-        "name": "minecraft:block.bell.resonate",
-        "type": "event",
-        "pitch": 0.7
+        "name": "nightborn:boss/inquisitor/change",
+        "pitch": 1.25
       }
     ]
   },
   "boss.inquisitor.snare": {
     "subtitle": "subtitles.nightborn.boss.inquisitor.snare",
     "sounds": [
-      {
-        "name": "minecraft:block.iron_trapdoor.close",
-        "type": "event",
-        "pitch": 0.7
-      }
+      "nightborn:boss/inquisitor/snare1",
+      "nightborn:boss/inquisitor/snare2"
     ]
   },
   "boss.inquisitor.consecrate": {
     "subtitle": "subtitles.nightborn.boss.inquisitor.consecrate",
     "sounds": [
-      {
-        "name": "minecraft:block.beacon.activate",
-        "type": "event",
-        "pitch": 1.4
-      }
+      "nightborn:boss/inquisitor/consecrate"
     ]
   },
   "boss.inquisitor.false_dawn": {
     "subtitle": "subtitles.nightborn.boss.inquisitor.false_dawn",
     "sounds": [
-      {
-        "name": "minecraft:block.beacon.power_select",
-        "type": "event",
-        "pitch": 0.6
-      }
+      "nightborn:boss/inquisitor/false_dawn"
     ]
   },
   "boss.inquisitor.prayer": {
     "subtitle": "subtitles.nightborn.boss.inquisitor.prayer",
     "sounds": [
-      {
-        "name": "minecraft:entity.villager.ambient",
-        "type": "event",
-        "pitch": 0.6
-      }
+      "nightborn:boss/inquisitor/prayer1",
+      "nightborn:boss/inquisitor/prayer2"
     ]
   },
   "boss.inquisitor.toll": {
     "subtitle": "subtitles.nightborn.boss.inquisitor.toll",
     "sounds": [
-      {
-        "name": "minecraft:block.bell.use",
-        "type": "event",
-        "pitch": 0.5
-      }
+      "nightborn:boss/inquisitor/toll1",
+      "nightborn:boss/inquisitor/toll2",
+      "nightborn:boss/inquisitor/toll3"
     ]
   },
   "boss.inquisitor.choir": {
     "subtitle": "subtitles.nightborn.boss.inquisitor.choir",
     "sounds": [
-      {
-        "name": "minecraft:block.beacon.ambient",
-        "type": "event",
-        "pitch": 0.5
-      }
+      "nightborn:boss/inquisitor/choir1",
+      "nightborn:boss/inquisitor/choir2",
+      "nightborn:boss/inquisitor/choir3"
     ]
   },
   "boss.inquisitor.horn": {
     "subtitle": "subtitles.nightborn.boss.inquisitor.horn",
     "sounds": [
-      {
-        "name": "minecraft:event.raid.horn",
-        "type": "event",
-        "pitch": 0.8
-      }
+      "nightborn:boss/inquisitor/horn1",
+      "nightborn:boss/inquisitor/horn2"
     ]
   },
   "boss.inquisitor.hammer": {
     "subtitle": "subtitles.nightborn.boss.inquisitor.hammer",
     "sounds": [
-      {
-        "name": "minecraft:block.anvil.place",
-        "type": "event",
-        "pitch": 0.6
-      }
+      "nightborn:boss/inquisitor/hammer1",
+      "nightborn:boss/inquisitor/hammer2"
     ]
   },
   "boss.inquisitor.mutter": {
     "subtitle": "subtitles.nightborn.boss.inquisitor.mutter",
     "sounds": [
-      {
-        "name": "minecraft:entity.villager.ambient",
-        "type": "event",
-        "pitch": 0.5
-      }
+      "nightborn:boss/inquisitor/mutter1",
+      "nightborn:boss/inquisitor/mutter2",
+      "nightborn:boss/inquisitor/mutter3"
     ]
   },
   "music.boss.inquisitor": {
     "sounds": [
       {
-        "name": "nightborn:music/la_malinconia",
+        "name": "nightborn:music/kyrie",
         "stream": true
       }
     ]
@@ -1016,7 +998,15 @@
   "music.boss.inquisitor_final": {
     "sounds": [
       {
-        "name": "nightborn:music/dies_irae",
+        "name": "nightborn:music/confutatis",
+        "stream": true
+      }
+    ]
+  },
+  "music_disc.inquisitor": {
+    "sounds": [
+      {
+        "name": "nightborn:records/confutatis",
         "stream": true
       }
     ]

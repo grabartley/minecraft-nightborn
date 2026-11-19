@@ -23,7 +23,8 @@ public final class BloodMetabolism {
       boolean naturalRegeneration,
       int flightDrainSeconds,
       int age,
-      double healingSpeed) {}
+      double healingSpeed,
+      boolean asleep) {}
 
   public record Outcome(int blood, float exhaustion, boolean heals) {}
 
@@ -32,7 +33,7 @@ public final class BloodMetabolism {
   public static Outcome tick(final State state, final int restingDrainSeconds) {
     final boolean peaceful = state.difficulty() == Difficulty.PEACEFUL;
     float exhaustion = state.exhaustion();
-    if (!peaceful) {
+    if (!peaceful && !state.asleep()) {
       exhaustion += drainPerTick(restingDrainSeconds);
       if (state.flightDrainSeconds() > GROUNDED) {
         exhaustion += drainPerTick(state.flightDrainSeconds());
@@ -65,6 +66,14 @@ public final class BloodMetabolism {
       case RESTING -> GROUNDED;
       case NONE -> levitating ? settings.levitationDrainSeconds() : GROUNDED;
     };
+  }
+
+  public static double flightRate(
+      final BatEffort bat,
+      final boolean levitating,
+      final double drainRate,
+      final double levitationShare) {
+    return bat == BatEffort.NONE && levitating ? drainRate * levitationShare : drainRate;
   }
 
   public static int atRate(final int secondsPerBlood, final double drainRate) {

@@ -58,6 +58,7 @@ public final class CoffinDayCycle {
     }
     if (world.getGameRules().getBoolean(GameRules.DO_DAYLIGHT_CYCLE)) {
       world.setTimeOfDay(DaySkip.nextDusk(world.getTimeOfDay()));
+      resting.forEach(DaySleep::skipped);
       tell(vampires, Text.translatable(SKIPPING));
       resting.forEach(player -> MilestoneCriterion.reach(player, Milestone.DAY_SKIPPED));
     }

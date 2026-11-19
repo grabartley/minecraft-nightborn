@@ -13,7 +13,7 @@ import org.junit.jupiter.params.provider.CsvSource;
 class PlayerClipStateTest {
 
   static final PlayerClipState.Lengths LENGTHS =
-      new PlayerClipState.Lengths(0.7, 2.6, 1.4, 1.6, 0.5, 1.5);
+      new PlayerClipState.Lengths(0.7, 2.6, 1.4, 1.6, 0.5, 1.5, 0.3);
 
   private static PlayerClipState.Situation still() {
     return new PlayerClipState.Situation(false, false, 0.0, false, false, false, Optional.empty());
@@ -288,5 +288,20 @@ class PlayerClipStateTest {
     final PlayerClipState state = new PlayerClipState();
     state.flinch(20);
     assertEquals("LEVITATE", clip(state, 21, levitating()));
+  }
+
+  @ParameterizedTest(name = "{0} ticks after a small flinch: {1}")
+  @CsvSource({"0, SMALL_FLINCH", "5, SMALL_FLINCH", "6, VANILLA"})
+  @DisplayName("a small flinch plays its own clip for its own length")
+  void smallFlinch(final int after, final String expected) {
+    final PlayerClipState state = new PlayerClipState();
+    state.flinch(20, true);
+    assertEquals(
+        expected,
+        clip(
+            state,
+            20 + after,
+            new PlayerClipState.Situation(
+                false, false, 0.0, false, false, false, Optional.empty())));
   }
 }

@@ -31,11 +31,13 @@ import com.grahambartley.nightborn.familiar.Familiars;
 import com.grahambartley.nightborn.gear.GearBlocks;
 import com.grahambartley.nightborn.gramophone.GramophoneBlockEntity;
 import com.grahambartley.nightborn.guild.GuildMobs;
+import com.grahambartley.nightborn.guild.party.TentBlocks;
 import com.grahambartley.nightborn.house.crest.CrestBanners;
 import com.grahambartley.nightborn.inquisitor.InquisitorMobs;
 import com.grahambartley.nightborn.mob.NightbornMobs;
 import com.grahambartley.nightborn.occult.GhostlyFamiliars;
 import com.grahambartley.nightborn.occult.RestlessDead;
+import com.grahambartley.nightborn.oldblood.OldBloodBlocks;
 import com.grahambartley.nightborn.render.AccessoryRenderer;
 import com.grahambartley.nightborn.render.AmmoModels;
 import com.grahambartley.nightborn.render.BoltEntityRenderer;
@@ -48,6 +50,8 @@ import com.grahambartley.nightborn.render.CrestBannerRenderer;
 import com.grahambartley.nightborn.render.FurnitureBlockRenderer;
 import com.grahambartley.nightborn.render.GeoBlockItemRenderer;
 import com.grahambartley.nightborn.render.GramophoneRenderer;
+import com.grahambartley.nightborn.render.HunterTentRenderer;
+import com.grahambartley.nightborn.render.OldBloodFontRenderer;
 import com.grahambartley.nightborn.render.RestlessDeadRenderer;
 import com.grahambartley.nightborn.render.RitualAltarRenderer;
 import com.grahambartley.nightborn.render.VampireBatRenderer;
@@ -63,6 +67,7 @@ import net.fabricmc.fabric.api.client.rendering.v1.BuiltinItemRendererRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
 import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.block.Block;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.block.entity.BlockEntityRendererFactories;
 import net.minecraft.client.render.entity.EmptyEntityRenderer;
@@ -78,6 +83,8 @@ public class NightbornClient implements ClientModInitializer {
     BlockEntityRendererFactories.register(Coffins.BLOCK_ENTITY, CoffinRenderer::new);
     BlockEntityRendererFactories.register(DecorBlockEntities.WEAPON_RACK, WeaponRackRenderer::new);
     BlockEntityRendererFactories.register(RitualBlocks.ALTAR_ENTITY, RitualAltarRenderer::new);
+    BlockEntityRendererFactories.register(OldBloodBlocks.FONT_ENTITY, OldBloodFontRenderer::new);
+    BlockEntityRendererFactories.register(TentBlocks.HUNTER_TENT_ENTITY, HunterTentRenderer::new);
     BuiltinItemRendererRegistry.INSTANCE.register(
         RitualBlocks.ALTAR,
         new GeoBlockItemRenderer<>(
@@ -119,6 +126,9 @@ public class NightbornClient implements ClientModInitializer {
         DecorBlocks.BLOOD_POOL,
         DecorBlocks.BLOOD_SPLATTER,
         DecorBlocks.CHALICE);
+    BlockRenderLayerMap.INSTANCE.putBlocks(
+        RenderLayer.getCutout(),
+        DecorBlocks.FEAT_TROPHIES.stream().map(DecorBlocks::get).toArray(Block[]::new));
     BlockRenderLayerMap.INSTANCE.putBlocks(
         RenderLayer.getCutoutMipped(), GearBlocks.SILVER_ORE, GearBlocks.DEEPSLATE_SILVER_ORE);
     BlockRenderLayerMap.INSTANCE.putBlocks(

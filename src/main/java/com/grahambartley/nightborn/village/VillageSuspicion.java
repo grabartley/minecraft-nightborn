@@ -1,5 +1,6 @@
 package com.grahambartley.nightborn.village;
 
+import com.grahambartley.nightborn.accessory.FaceLearning;
 import com.grahambartley.nightborn.accessory.GiftAttributes;
 import com.grahambartley.nightborn.accessory.GiftScale;
 import com.grahambartley.nightborn.challenge.Deed;
@@ -78,8 +79,21 @@ public final class VillageSuspicion {
             VillageData.amount(world.getRegistryManager(), cause),
             feedingShare(world, cause, face));
     if (amount > 0) {
-      update(world, bell, record -> record.raised(amount, night(world), face));
+      final Optional<UUID> learned = face.filter(id -> learns(world, cause, id));
+      update(world, bell, record -> record.raised(amount, night(world), learned));
     }
+  }
+
+  private static boolean learns(
+      final ServerWorld world, final SuspicionCause cause, final UUID face) {
+    return cause != SuspicionCause.SEEN_FEEDING
+        || Optional.ofNullable(world.getServer().getPlayerManager().getPlayer(face))
+            .map(
+                vampire ->
+                    FaceLearning.learns(
+                        world.getRandom().nextDouble(),
+                        GiftAttributes.value(vampire, GiftAttributes.FACE_LEARNING)))
+            .orElse(true);
   }
 
   private static double feedingShare(

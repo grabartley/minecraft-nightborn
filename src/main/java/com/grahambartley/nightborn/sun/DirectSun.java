@@ -40,6 +40,10 @@ public final class DirectSun {
   }
 
   public static boolean on(final LivingEntity entity) {
+    return reaches(entity) && !Parasols.shades(entity);
+  }
+
+  public static boolean reaches(final LivingEntity entity) {
     if (shaft(
         SunShafts.lit(entity),
         entity.isWet(),

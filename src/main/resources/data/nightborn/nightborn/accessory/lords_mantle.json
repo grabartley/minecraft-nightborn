@@ -1,0 +1,15 @@
+{
+  "works_for": "vampire",
+  "gifts": [
+    {
+      "attribute": "nightborn:house_damage",
+      "amount": 0.1,
+      "operation": "add_value"
+    },
+    {
+      "attribute": "nightborn:house_damage_range",
+      "amount": 16.0,
+      "operation": "add_value"
+    }
+  ]
+}

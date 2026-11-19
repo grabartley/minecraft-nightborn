@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "nightborn:item/velvet_cape",
+    "layer1": "nightborn:item/velvet_cape_overlay"
+  }
+}

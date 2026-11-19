@@ -10,7 +10,8 @@ public enum PlayerCue {
   VOMIT,
   DRAIN,
   FLINCH,
-  FINISHER;
+  FINISHER,
+  SMALL_FLINCH;
 
   private static final IntFunction<PlayerCue> BY_INDEX =
       ValueLists.createIdToValueFunction(

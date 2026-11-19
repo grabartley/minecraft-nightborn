@@ -75,8 +75,8 @@ public class AccessoryItem extends Item implements GeoItem, Dressed {
   @Override
   public boolean onStackClicked(
       final ItemStack stack, final Slot slot, final ClickType click, final PlayerEntity player) {
-    final Optional<AccessoryHold> hold = hold(player, stack);
-    if (click != ClickType.RIGHT || hold.isEmpty()) {
+    final List<AccessoryHold> holds = holds(player, stack);
+    if (click != ClickType.RIGHT || holds.isEmpty()) {
       return false;
     }
     final ItemStack other = slot.getStack();
@@ -87,14 +87,13 @@ public class AccessoryItem extends Item implements GeoItem, Dressed {
                 AccessoryStore.soundTake(player);
                 final ItemStack left = slot.insertStack(taken);
                 if (!left.isEmpty()) {
-                  AccessoryStore.put(hold.get(), stack, left);
+                  AccessoryStore.put(holds, stack, left);
                 }
               });
-    } else if (AccessoryStore.room(hold.get(), stack, other) > 0) {
+    } else if (AccessoryStore.room(holds, stack, other) > 0) {
       final ItemStack moving =
-          slot.takeStackRange(
-              other.getCount(), AccessoryStore.room(hold.get(), stack, other), player);
-      if (AccessoryStore.put(hold.get(), stack, moving) > 0) {
+          slot.takeStackRange(other.getCount(), AccessoryStore.room(holds, stack, other), player);
+      if (AccessoryStore.put(holds, stack, moving) > 0) {
         AccessoryStore.soundPut(player);
       }
       if (!moving.isEmpty()) {
@@ -112,8 +111,8 @@ public class AccessoryItem extends Item implements GeoItem, Dressed {
       final ClickType click,
       final PlayerEntity player,
       final StackReference cursorReference) {
-    final Optional<AccessoryHold> hold = hold(player, stack);
-    if (click != ClickType.RIGHT || hold.isEmpty() || !slot.canTakePartial(player)) {
+    final List<AccessoryHold> holds = holds(player, stack);
+    if (click != ClickType.RIGHT || holds.isEmpty() || !slot.canTakePartial(player)) {
       return false;
     }
     if (cursor.isEmpty()) {
@@ -123,14 +122,16 @@ public class AccessoryItem extends Item implements GeoItem, Dressed {
                 AccessoryStore.soundTake(player);
                 cursorReference.set(taken);
               });
-    } else if (AccessoryStore.put(hold.get(), stack, cursor) > 0) {
+    } else if (AccessoryStore.put(holds, stack, cursor) > 0) {
       AccessoryStore.soundPut(player);
     }
     return true;
   }
 
-  private Optional<AccessoryHold> hold(final PlayerEntity player, final ItemStack stack) {
-    return Accessories.of(player.getWorld().getRegistryManager(), stack).flatMap(Accessory::holds);
+  private List<AccessoryHold> holds(final PlayerEntity player, final ItemStack stack) {
+    return Accessories.of(player.getWorld().getRegistryManager(), stack)
+        .map(Accessory::holds)
+        .orElse(List.of());
   }
 
   @Override

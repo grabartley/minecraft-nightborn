@@ -3,9 +3,11 @@ package com.grahambartley.nightborn.mixin.client;
 import com.grahambartley.nightborn.blood.BloodAttachment;
 import com.grahambartley.nightborn.blood.BloodCapacity;
 import com.grahambartley.nightborn.client.BloodBar;
+import com.grahambartley.nightborn.client.accessory.DuskTint;
 import com.grahambartley.nightborn.vampire.Vampires;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.hud.InGameHud;
+import net.minecraft.client.render.RenderTickCounter;
 import net.minecraft.entity.player.PlayerEntity;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -26,5 +28,11 @@ abstract class InGameHudMixin {
       BloodBar.draw(context, BloodAttachment.get(player), BloodCapacity.of(player), top, right);
       ci.cancel();
     }
+  }
+
+  @Inject(method = "renderMiscOverlays", at = @At("TAIL"))
+  private void nightborn$duskThroughSmokedLenses(
+      final DrawContext context, final RenderTickCounter tickCounter, final CallbackInfo ci) {
+    DuskTint.draw(context);
   }
 }

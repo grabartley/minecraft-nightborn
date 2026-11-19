@@ -131,7 +131,7 @@ public final class Furnishing {
   }
 
   public static void oldBloodFont(final Template t, final int x, final int y, final int z) {
-    t.set(x, y, z, BlockState.of(OLD_BLOOD_FONT, "filled", true));
+    t.set(x, y, z, BlockState.of(OLD_BLOOD_FONT, "level", "full"));
   }
 
   public static String splatter(final String facing, final int splat) {

@@ -22,7 +22,7 @@ Of the 56 with a gift, 19 work only for a vampire, 23 only for a human, 8 for an
 ## Rules Every Accessory Follows
 
 - Plain pieces are for looks, carry no gift and are crafted. Every other piece carries one gift and is found, never crafted.
-- A gift is small. It makes its wearer a little better at what they already do, and never does the job of a skill.
+- A gift is small. It makes its wearer a little better at what they already do, and never does the job of a skill. A few are for fun and change only how the world looks to the wearer.
 - Two of the same piece give the gift once. Different pieces with the same kind of gift add up, but no resistance or reduction passes 80% in all, whatever is learned and worn together.
 - No gift, alone or with others, removes a vampire weakness or lets a vampire walk in the sun.
 - A piece that works only for a vampire does nothing on a human, and the other way round. Its tooltip says who it works for.
@@ -145,7 +145,7 @@ Capes and cloaks sway as the wearer moves and are drawn over armour and coats.
 |---|---|---|---|---|
 | Lace Gloves | Black lace to the wrist | Anyone | None | Crafted: 2 string |
 | Riding Gloves | Brown leather, worn at the knuckles | Anyone | None | Crafted: 2 leather |
-| Fingerless Gloves | Grey wool with the fingers cut off | Anyone | None | Crafted: 2 wool |
+| Fingerless Gloves | Grey wool with the fingers cut off | Anyone | None | Crafted: 2 wool, one above the other, so it does not clash with carpet |
 | Clawed Gauntlets | Black leather with iron talons | Vampire | Bare hands deal 1 more damage | Underground lair |
 | Silk Gloves | White silk, spotless | Vampire | Feeding is noticed from 30% less far | Ruined manor |
 | Stakewright's Gloves | Thick hide, scarred | Human | A stake's blow deals 10% more damage | Crypt |
@@ -157,11 +157,11 @@ Capes and cloaks sway as the wearer moves and are drawn over armour and coats.
 | Name | Look | Works for | Gift | Found |
 |---|---|---|---|---|
 | Brass-Buckled Belt | Dark leather and a square buckle | Anyone | None | Crafted: 2 leather and 1 gold nugget |
-| Silk Sash | A wide sash that can be dyed | Anyone | None | Crafted: 2 wool |
+| Silk Sash | A wide sash that can be dyed | Anyone | None | Crafted: 2 wool and 1 gold nugget |
 | Cellarer's Belt | Leather with loops for bottles | Vampire | A Blood Bottle gives 10% more blood when drunk | Ruined manor |
-| Bandolier | A strap across the chest with loops and pouches | Human | Holds 2 stacks of bolts and 4 splash holy water potions, used from the belt before the inventory | Castle |
+| Bandolier | A strap across the chest with loops and pouches | Human | Holds 2 stacks of bolts and 4 splash holy water potions. A crossbow loads bolts from the belt before the inventory, and when the last holy water in hand is thrown, the next comes to hand from the belt | Castle |
 | Stake Loops | A belt hung with wooden stakes | Human | Holds 6 stakes. A new one comes to hand when the held one breaks | Crypt |
-| Flask Belt | A belt of small padded pockets for bottles | Human | Holds 6 splash or lingering holy water potions, thrown from the belt before the inventory | Underground lair |
+| Flask Belt | A belt of small padded pockets for bottles | Human | Holds 6 splash or lingering holy water potions. When the last one in hand is thrown, the next comes to hand from the belt | Underground lair |
 | Trapper's Pouch | A hide pouch of wire and springs | Human | Snares and flash traps can be set again 15% sooner | Hunter trial |
 | Sturdy Girdle | Thick leather and iron plates | Anyone | A tenth more resistance to being knocked back | Ruined manor |
 
@@ -173,8 +173,8 @@ Capes and cloaks sway as the wearer moves and are drawn over armour and coats.
 | Domino Mask | A plain black half mask | Anyone | None | Crafted: 1 leather and 1 black dye |
 | Wire Spectacles | Round lenses in thin wire | Anyone | None | Crafted: 2 glass panes and 1 iron nugget |
 | Plain Monocle | One lens on a cord | Anyone | None | Crafted: 1 glass pane and 1 gold nugget |
-| Widow's Veil | A long, heavy black veil to the chin | Vampire | The flinch from garlic and crucifixes is half as large | Castle |
-| Smoked Spectacles | Dark round lenses | Vampire | The glow of the wearer's eyes shows from half as far | Ruined manor |
+| Widow's Veil | A long, heavy black veil to the chin | Vampire | The flinch from garlic and crucifixes is half as large: a smaller flinch of its own is played | Castle |
+| Smoked Spectacles | Dark round lenses | Vampire | Daylight looks like dusk through the lenses. Only the wearer's view changes, and the sun burns as before | Ruined manor |
 | Porcelain Mask | A white face with no expression | Vampire | A village that sees the wearer feed is half as likely to learn their face | Mountain castle |
 | Death Mask | A grey cast of a sleeping face | Vampire | Rises from being downed 10% sooner | Vampire trial |
 | Hunter's Monocle | Brass, with a cross-hair lens | Human | Shows the health and stage of a vampire mob the wearer looks at | Castle |

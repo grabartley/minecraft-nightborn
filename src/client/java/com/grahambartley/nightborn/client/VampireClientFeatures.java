@@ -1,6 +1,7 @@
 package com.grahambartley.nightborn.client;
 
 import com.grahambartley.nightborn.blood.BloodItems;
+import com.grahambartley.nightborn.client.accessory.InsightReadout;
 import com.grahambartley.nightborn.client.anim.VampirePlayerClips;
 import com.grahambartley.nightborn.client.gore.BloodFx;
 import com.grahambartley.nightborn.client.mirror.MirrorScreen;
@@ -8,9 +9,12 @@ import com.grahambartley.nightborn.client.moment.CeremonyView;
 import com.grahambartley.nightborn.client.name.StageNameView;
 import com.grahambartley.nightborn.client.sight.RevealView;
 import com.grahambartley.nightborn.client.smoke.SmokeFx;
+import com.grahambartley.nightborn.client.sun.ParasolRenderer;
 import com.grahambartley.nightborn.client.vomit.VomitFx;
 import com.grahambartley.nightborn.network.ToggleLevitationPayload;
 import com.grahambartley.nightborn.network.ToggleTurningBitePayload;
+import com.grahambartley.nightborn.sun.ParasolItems;
+import net.fabricmc.fabric.api.client.rendering.v1.BuiltinItemRendererRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.fabricmc.fabric.api.client.rendering.v1.LivingEntityFeatureRendererRegistrationCallback;
@@ -35,6 +39,7 @@ public final class VampireClientFeatures {
           }
         });
     HudRenderCallback.EVENT.register(VampireHud::render);
+    HudRenderCallback.EVENT.register(InsightReadout::render);
     HudRenderCallback.EVENT.register(PowerBarHud::render);
     SkillKeys.register();
     PayloadKey.register(
@@ -47,6 +52,7 @@ public final class VampireClientFeatures {
     VampirePlayerClips.register();
     StageNameView.register();
     MirrorScreen.register();
+    BuiltinItemRendererRegistry.INSTANCE.register(ParasolItems.PARASOL, new ParasolRenderer());
     RevealView.register();
     VomitFx.register();
     BloodFx.register();

@@ -161,7 +161,7 @@ class FurnishingTest {
   void oldBloodFontsStandFull(final int x, final int y, final int z) {
     final Template t = new Template("vampire/test", 6, 5, 6);
     Furnishing.oldBloodFont(t, x, y, z);
-    assertEquals(Furnishing.OLD_BLOOD_FONT + "[filled=true]", t.get(x, y, z));
+    assertEquals(Furnishing.OLD_BLOOD_FONT + "[level=full]", t.get(x, y, z));
     assertEquals(1, t.cells().values().stream().filter(s -> s.contains("old_blood_font")).count());
   }
 }

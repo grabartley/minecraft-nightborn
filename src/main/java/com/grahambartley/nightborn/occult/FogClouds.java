@@ -1,5 +1,6 @@
 package com.grahambartley.nightborn.occult;
 
+import com.grahambartley.nightborn.accessory.GiftAttributes;
 import com.grahambartley.nightborn.servant.Servants;
 import com.grahambartley.nightborn.vampire.VampireAttributes;
 import java.util.ArrayList;
@@ -96,8 +97,11 @@ public final class FogClouds {
                         Servants.serves(Servants.masterOf(candidate), cloud.caster()),
                         candidate.isSpectator(),
                         VampireAttributes.has(candidate, VampireAttributes.FOG_SIGHT)))) {
+      final boolean clearSight = GiftAttributes.value(living, GiftAttributes.FOG_CLEAR_SIGHT) > 0.0;
       for (final StatusEffectInstance effect : cloud.power().effects()) {
-        living.addStatusEffect(new StatusEffectInstance(effect), caster);
+        if (FogRules.reaches(FogRules.blinds(effect.getEffectType()), clearSight)) {
+          living.addStatusEffect(new StatusEffectInstance(effect), caster);
+        }
       }
     }
   }

@@ -3,6 +3,9 @@ package com.grahambartley.nightborn.gametest;
 import com.grahambartley.nightborn.coffin.CoffinBlock;
 import com.grahambartley.nightborn.coffin.CoffinLayout;
 import com.grahambartley.nightborn.coffin.CoffinRise;
+import com.grahambartley.nightborn.coffin.Rested;
+import com.grahambartley.nightborn.coffin.RestedEffect;
+import com.grahambartley.nightborn.coffin.RestedRules;
 import com.grahambartley.nightborn.coffin.RiseRules;
 import com.grahambartley.nightborn.config.CoffinSettings;
 import com.grahambartley.nightborn.core.NightTime;
@@ -13,6 +16,7 @@ import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.EntityPose;
 import net.minecraft.entity.ItemEntity;
+import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.item.Items;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
@@ -30,11 +34,13 @@ public class CoffinGameTest implements FabricGameTest {
 
   static final String DAY = "coffin-day";
   static final String SKIP = "coffin-skip";
-  static final String HALF_SHARE = "coffin-half-share";
+  static final String DEFAULT_SHARE = "coffin-default-share";
   static final String NIGHT = "coffin-night";
   static final String BED_SHARE = "coffin-bed-share";
   static final String STORM = "coffin-storm";
   static final String DUSK = "coffin-dusk";
+  static final String WHOLE_DAY = "coffin-whole-day";
+  static final long JUST_AFTER_DAWN = NightTime.DAWN + 200L;
   static final int SLEEP_READY = 105;
   static final double BOUNCE = 0.05;
   private static int shareBefore;
@@ -50,31 +56,41 @@ public class CoffinGameTest implements FabricGameTest {
   }
 
   @BeforeBatch(batchId = SKIP)
-  public void startAtNoon(final ServerWorld world) {
-    WorldClock.runFrom(world, WorldClock.NOON);
-    TestPlayers.disconnectEveryone(world.getServer());
-  }
-
-  @AfterBatch(batchId = SKIP)
-  public void releaseSkip(final ServerWorld world) {
-    WorldClock.release(world);
-  }
-
-  @BeforeBatch(batchId = HALF_SHARE)
-  public void halveTheShare(final ServerWorld world) {
+  public void askEveryVampireToRest(final ServerWorld world) {
     WorldClock.runFrom(world, WorldClock.NOON);
     TestPlayers.disconnectEveryone(world.getServer());
     shareBefore = ServerConfigService.current().coffins().sleepShare();
     ServerConfigService.update(
-        world.getServer(), ServerConfigService.current().with(CoffinSettings.SLEEP_SHARE, 50));
+        world.getServer(), ServerConfigService.current().with(CoffinSettings.SLEEP_SHARE, 100));
   }
 
-  @AfterBatch(batchId = HALF_SHARE)
+  @AfterBatch(batchId = SKIP)
   public void restoreTheShare(final ServerWorld world) {
     WorldClock.release(world);
     ServerConfigService.update(
         world.getServer(),
         ServerConfigService.current().with(CoffinSettings.SLEEP_SHARE, shareBefore));
+  }
+
+  @BeforeBatch(batchId = WHOLE_DAY)
+  public void letTheWholeDayRunUnskipped(final ServerWorld world) {
+    askEveryVampireToRest(world);
+  }
+
+  @AfterBatch(batchId = WHOLE_DAY)
+  public void releaseTheWholeDay(final ServerWorld world) {
+    restoreTheShare(world);
+  }
+
+  @BeforeBatch(batchId = DEFAULT_SHARE)
+  public void startAtNoonWithTheDefaultShare(final ServerWorld world) {
+    WorldClock.runFrom(world, WorldClock.NOON);
+    TestPlayers.disconnectEveryone(world.getServer());
+  }
+
+  @AfterBatch(batchId = DEFAULT_SHARE)
+  public void releaseTheDefaultShare(final ServerWorld world) {
+    WorldClock.release(world);
   }
 
   @BeforeBatch(batchId = NIGHT)
@@ -168,6 +184,8 @@ public class CoffinGameTest implements FabricGameTest {
           final long time = Math.floorMod(context.getWorld().getTimeOfDay(), NightTime.DAY_LENGTH);
           context.assertTrue(time >= NightTime.DUSK, "dusk has come, time " + time);
           context.assertFalse(vampire.isSleeping(), "the vampire rises at dusk");
+          context.assertFalse(
+              vampire.hasStatusEffect(RestedEffect.ENTRY), "a nap before dusk is not a whole day");
           context.assertTrue(
               context.getBlockState(head).get(CoffinBlock.OPEN), "the lid opens as they rise");
           TestPlayers.finish(context, vampire);
@@ -178,7 +196,7 @@ public class CoffinGameTest implements FabricGameTest {
       templateName = CoffinStage.YARD,
       batchId = SKIP,
       tickLimit = TestPlayers.READY + 2 * SLEEP_READY + RiseRules.RISE_TICKS + 20)
-  public void theDayPassesOnlyWhenEveryVampireRests(final TestContext context) {
+  public void aFullShareNeedsEveryVampireToRest(final TestContext context) {
     final BlockPos first = CoffinStage.coffin(context, new BlockPos(2, 2, 6), Direction.NORTH);
     final BlockPos second = CoffinStage.coffin(context, new BlockPos(6, 2, 6), Direction.NORTH);
     CoffinStage.roof(context);
@@ -219,9 +237,51 @@ public class CoffinGameTest implements FabricGameTest {
 
   @GameTest(
       templateName = CoffinStage.YARD,
-      batchId = HALF_SHARE,
+      batchId = WHOLE_DAY,
+      tickLimit = TestPlayers.READY + SLEEP_READY + RiseRules.RISE_TICKS + 30)
+  public void aVampireAsleepFromDawnToDuskWakesRestedWithoutASkip(final TestContext context) {
+    final BlockPos head = CoffinStage.coffin(context, new BlockPos(2, 2, 6), Direction.NORTH);
+    CoffinStage.roof(context);
+    final ServerPlayerEntity resting = TestPlayers.vampire(context, new BlockPos(3, 2, 5));
+    final ServerPlayerEntity awake = TestPlayers.vampire(context, new BlockPos(6, 2, 3));
+    final long[] day = new long[1];
+    context.runAtTick(
+        TestPlayers.READY,
+        () -> {
+          final long now = context.getWorld().getTimeOfDay();
+          day[0] = now - Math.floorMod(now, NightTime.DAY_LENGTH);
+          context.getWorld().setTimeOfDay(day[0] + JUST_AFTER_DAWN);
+          resting.extinguish();
+          awake.extinguish();
+          context.useBlock(head, resting);
+          context.assertTrue(resting.isSleeping(), "a vampire lies down just after dawn");
+        });
+    context.runAtTick(
+        TestPlayers.READY + SLEEP_READY,
+        () -> {
+          final long now = context.getWorld().getTimeOfDay();
+          context.assertTrue(
+              !NightTime.isNight(false, now) && resting.isSleeping(),
+              "one of two vampires resting does not skip a full share day, time "
+                  + now
+                  + ": "
+                  + Diagnostics.of(resting));
+          context.getWorld().setTimeOfDay(day[0] + NightTime.DAY_LENGTH + NightTime.DUSK - 5L);
+        });
+    context.runAtTick(
+        TestPlayers.READY + SLEEP_READY + RiseRules.RISE_TICKS + 20,
+        () -> {
+          context.assertFalse(resting.isSleeping(), "the sleeper rises at dusk");
+          context.expectEntityHasEffect(resting, RestedEffect.ENTRY, RestedRules.RESTED);
+          TestPlayers.finish(context, resting, awake);
+        });
+  }
+
+  @GameTest(
+      templateName = CoffinStage.YARD,
+      batchId = DEFAULT_SHARE,
       tickLimit = TestPlayers.READY + SLEEP_READY + 20)
-  public void theSleepShareSettingLetsHalfTheVampiresPassTheDay(final TestContext context) {
+  public void halfTheVampiresRestingPassTheDayAndWakeRested(final TestContext context) {
     final BlockPos head = CoffinStage.coffin(context, new BlockPos(2, 2, 6), Direction.NORTH);
     CoffinStage.roof(context);
     final ServerPlayerEntity resting = TestPlayers.vampire(context, new BlockPos(3, 2, 5));
@@ -231,6 +291,7 @@ public class CoffinGameTest implements FabricGameTest {
         () -> {
           resting.extinguish();
           awake.extinguish();
+          resting.setHealth(4.0F);
           context.useBlock(head, resting);
         });
     context.runAtTick(
@@ -239,7 +300,19 @@ public class CoffinGameTest implements FabricGameTest {
           final long time = Math.floorMod(context.getWorld().getTimeOfDay(), NightTime.DAY_LENGTH);
           context.assertTrue(
               time >= NightTime.DUSK && time < NightTime.DUSK + SLEEP_READY,
-              "one of two vampires resting passes the day at a 50% share, time " + time);
+              "one of two vampires resting passes the day by default, time " + time);
+          context.expectEntityHasEffect(resting, RestedEffect.ENTRY, RestedRules.RESTED);
+          context.assertTrue(
+              resting.getHealth() == resting.getMaxHealth(),
+              "a whole day's sleep heals in full: " + Diagnostics.of(resting));
+          context.assertTrue(
+              resting
+                      .getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED)
+                      .getModifier(Rested.SPEED)
+                  != null,
+              "the rested vampire is faster for the night");
+          context.assertFalse(
+              awake.hasStatusEffect(RestedEffect.ENTRY), "the vampire who stayed up is not rested");
           TestPlayers.finish(context, resting, awake);
         });
   }
