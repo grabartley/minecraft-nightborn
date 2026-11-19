@@ -18,7 +18,7 @@ public final class LiveCoating {
   }
 
   public static boolean burning(final ItemStack stack) {
-    return stack.contains(Kindling.FLAME) && Kindling.burning(stack, now()).isPresent();
+    return Kindling.burning(stack, now()).isPresent();
   }
 
   static long now() {

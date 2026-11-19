@@ -25,13 +25,12 @@ public final class CoatingLayers extends RenderLayer {
   static final float ITEM_SCALE = 8.0F;
   static final float ENTITY_SCALE = 0.16F;
 
-  private static final Map<CoatingSheen, RenderLayer> ITEM = new EnumMap<>(CoatingSheen.class);
-  private static final Map<CoatingSheen, RenderLayer> TRANSLUCENT =
-      new EnumMap<>(CoatingSheen.class);
-  private static final Map<CoatingSheen, RenderLayer> ENTITY = new EnumMap<>(CoatingSheen.class);
+  private static final Map<WeaponSheen, RenderLayer> ITEM = new EnumMap<>(WeaponSheen.class);
+  private static final Map<WeaponSheen, RenderLayer> TRANSLUCENT = new EnumMap<>(WeaponSheen.class);
+  private static final Map<WeaponSheen, RenderLayer> ENTITY = new EnumMap<>(WeaponSheen.class);
 
   static {
-    for (final CoatingSheen sheen : CoatingSheen.values()) {
+    for (final WeaponSheen sheen : WeaponSheen.values()) {
       ITEM.put(sheen, layer("item", sheen, GLINT_PROGRAM, ITEM_SCALE, false));
       TRANSLUCENT.put(
           sheen, layer("translucent", sheen, TRANSLUCENT_GLINT_PROGRAM, ITEM_SCALE, true));
@@ -62,33 +61,33 @@ public final class CoatingLayers extends RenderLayer {
       final ItemStack stack,
       final VertexConsumerProvider provider,
       final RenderLayer layer) {
-    final CoatingSheen sheen = sheen(stack);
-    if (sheen == null) {
-      return base;
-    }
     final boolean translucent =
         MinecraftClient.isFabulousGraphicsOrBetter()
             && layer == TexturedRenderLayers.getItemEntityTranslucentCull();
-    return VertexConsumers.union(
-        provider.getBuffer((translucent ? TRANSLUCENT : ITEM).get(sheen)), base);
+    return union(base, stack, provider, translucent ? TRANSLUCENT : ITEM);
   }
 
   public static VertexConsumer entity(
       final VertexConsumer base, final ItemStack stack, final VertexConsumerProvider provider) {
-    final CoatingSheen sheen = sheen(stack);
-    return sheen == null
-        ? base
-        : VertexConsumers.union(provider.getBuffer(ENTITY.get(sheen)), base);
+    return union(base, stack, provider, ENTITY);
   }
 
-  private static CoatingSheen sheen(final ItemStack stack) {
-    return CoatingSheen.of(LiveCoating.of(stack).map(Coat::coating), LiveCoating.burning(stack))
-        .orElse(null);
+  private static VertexConsumer union(
+      final VertexConsumer base,
+      final ItemStack stack,
+      final VertexConsumerProvider provider,
+      final Map<WeaponSheen, RenderLayer> layers) {
+    VertexConsumer consumer = base;
+    for (final WeaponSheen sheen :
+        WeaponSheen.of(LiveCoating.of(stack).map(Coat::coating), LiveCoating.burning(stack))) {
+      consumer = VertexConsumers.union(provider.getBuffer(layers.get(sheen)), consumer);
+    }
+    return consumer;
   }
 
   private static RenderLayer layer(
       final String kind,
-      final CoatingSheen sheen,
+      final WeaponSheen sheen,
       final RenderPhase.ShaderProgram program,
       final float scale,
       final boolean translucent) {
@@ -116,7 +115,7 @@ public final class CoatingLayers extends RenderLayer {
         builder.build(false));
   }
 
-  private static void texture(final CoatingSheen sheen, final float scale) {
+  private static void texture(final WeaponSheen sheen, final float scale) {
     final long millis = Util.getMeasuringTimeMs();
     final double speed = MinecraftClient.getInstance().options.getGlintSpeed().getValue();
     RenderSystem.setTextureMatrix(

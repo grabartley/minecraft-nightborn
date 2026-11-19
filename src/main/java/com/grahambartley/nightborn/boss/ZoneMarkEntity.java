@@ -9,6 +9,7 @@ import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
@@ -36,6 +37,8 @@ public class ZoneMarkEntity extends Entity implements GeoEntity {
   private static final TrackedData<Float> RISE =
       DataTracker.registerData(ZoneMarkEntity.class, TrackedDataHandlerRegistry.FLOAT);
 
+  static final double GROUND_LIFT = 0.02;
+
   private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
   private int life = Integer.MAX_VALUE;
 
@@ -53,6 +56,18 @@ public class ZoneMarkEntity extends Entity implements GeoEntity {
     mark.dataTracker.set(LENGTH, (float) shape.length());
     mark.refreshPositionAndAngles(shape.midX(), y, shape.midZ(), shape.yaw(), 0.0F);
     world.spawnEntity(mark);
+    return mark;
+  }
+
+  public static ZoneMarkEntity ground(
+      final World world,
+      final Vec3d at,
+      final double radius,
+      final Identifier look,
+      final int ticks) {
+    final ZoneMarkEntity mark =
+        place(world, ZoneShape.circle(at.x, at.z, radius), at.y + GROUND_LIFT, Optional.of(look));
+    mark.linger(ticks);
     return mark;
   }
 

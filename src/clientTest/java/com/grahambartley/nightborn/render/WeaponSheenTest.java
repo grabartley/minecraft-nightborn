@@ -5,13 +5,15 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.grahambartley.nightborn.coating.Coating;
 import java.nio.file.Files;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.EnumSource;
 
-class CoatingSheenTest {
+class WeaponSheenTest {
 
   @ParameterizedTest(name = "{0} ms at speed {1} over {2}: {3}")
   @CsvSource({
@@ -24,7 +26,7 @@ class CoatingSheenTest {
   })
   @DisplayName("the sheen drifts with time and the glint speed option, and wraps round")
   void drifts(final long millis, final double speed, final float period, final float drift) {
-    assertEquals(drift, CoatingSheen.drift(millis, speed, period), 0.0001F);
+    assertEquals(drift, WeaponSheen.drift(millis, speed, period), 0.0001F);
   }
 
   @ParameterizedTest(name = "{0}")
@@ -33,27 +35,34 @@ class CoatingSheenTest {
   void texture(final Coating coating) {
     assertEquals(
         "nightborn:textures/misc/" + coating.asString() + "_coating.png",
-        CoatingSheen.of(Optional.of(coating), false).orElseThrow().texture().toString());
+        WeaponSheen.of(Optional.of(coating), false).get(0).texture().toString());
   }
 
   @ParameterizedTest(name = "coating {0}, burning {1}: {2}")
-  @CsvSource({
-    "GARLIC, true, BLOOD_FIRE",
-    ", true, BLOOD_FIRE",
-    "HOLY_WATER, false, HOLY_WATER",
-    "GARLIC, false, GARLIC",
-    ", false, "
-  })
-  @DisplayName("a weapon alight shows its flame over any coating, and a bare one shows nothing")
-  void sheen(final Coating coating, final boolean burning, final CoatingSheen sheen) {
+  @CsvSource(
+      delimiter = ';',
+      value = {
+        "GARLIC; true; GARLIC BLOOD_FIRE",
+        "HOLY_WATER; true; HOLY_WATER BLOOD_FIRE",
+        "; true; BLOOD_FIRE",
+        "HOLY_WATER; false; HOLY_WATER",
+        "GARLIC; false; GARLIC",
+        "; false; "
+      })
+  @DisplayName(
+      "a weapon alight shows its flame on top of any coating, and a bare one shows nothing")
+  void sheen(final Coating coating, final boolean burning, final String sheens) {
     assertEquals(
-        Optional.ofNullable(sheen), CoatingSheen.of(Optional.ofNullable(coating), burning));
+        sheens == null
+            ? List.of()
+            : Arrays.stream(sheens.split(" ")).map(WeaponSheen::valueOf).toList(),
+        WeaponSheen.of(Optional.ofNullable(coating), burning));
   }
 
   @ParameterizedTest(name = "{0}")
-  @EnumSource(CoatingSheen.class)
+  @EnumSource(WeaponSheen.class)
   @DisplayName("every sheen ships its texture")
-  void ships(final CoatingSheen sheen) {
+  void ships(final WeaponSheen sheen) {
     assertTrue(Files.exists(GeoAssets.mainFile(sheen.texture())), sheen.texture().toString());
   }
 }

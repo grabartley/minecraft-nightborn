@@ -2,25 +2,27 @@ package com.grahambartley.nightborn.render;
 
 import com.grahambartley.nightborn.Nightborn;
 import com.grahambartley.nightborn.coating.Coating;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import net.minecraft.util.Identifier;
 
-public enum CoatingSheen {
-  HOLY_WATER("holy_water_coating", Coating.HOLY_WATER, 0.0F, 24000L, 0.1F),
-  GARLIC("garlic_coating", Coating.GARLIC, 52000L, 0.0F, -0.35F),
-  BLOOD_FIRE("blood_fire", null, 0.0F, 9000L, 0.0F);
+public enum WeaponSheen {
+  HOLY_WATER("holy_water_coating", Optional.of(Coating.HOLY_WATER), 0.0F, 24000L, 0.1F),
+  GARLIC("garlic_coating", Optional.of(Coating.GARLIC), 52000L, 0.0F, -0.35F),
+  BLOOD_FIRE("blood_fire", Optional.empty(), 0.0F, 9000L, 0.0F);
 
   static final double TIME_SCALE = 8.0;
 
   private final String name;
-  private final Coating coating;
+  private final Optional<Coating> coating;
   private final float acrossPeriod;
   private final float downPeriod;
   private final float tilt;
 
-  CoatingSheen(
+  WeaponSheen(
       final String name,
-      final Coating coating,
+      final Optional<Coating> coating,
       final float acrossPeriod,
       final float downPeriod,
       final float tilt) {
@@ -31,19 +33,14 @@ public enum CoatingSheen {
     this.tilt = tilt;
   }
 
-  public static Optional<CoatingSheen> of(final Optional<Coating> coating, final boolean burning) {
-    if (burning) {
-      return Optional.of(BLOOD_FIRE);
+  public static List<WeaponSheen> of(final Optional<Coating> coating, final boolean burning) {
+    final List<WeaponSheen> sheens = new ArrayList<>();
+    for (final WeaponSheen sheen : values()) {
+      if (sheen.coating.isPresent() ? sheen.coating.equals(coating) : burning) {
+        sheens.add(sheen);
+      }
     }
-    return coating.map(
-        coat -> {
-          for (final CoatingSheen sheen : values()) {
-            if (sheen.coating == coat) {
-              return sheen;
-            }
-          }
-          throw new IllegalArgumentException("no sheen for " + coat);
-        });
+    return sheens;
   }
 
   public String sheenName() {

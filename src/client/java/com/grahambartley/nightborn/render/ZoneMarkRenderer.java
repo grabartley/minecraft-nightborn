@@ -21,6 +21,7 @@ public class ZoneMarkRenderer extends GeoEntityRenderer<ZoneMarkEntity> {
   static final float THIN = 0.5F;
   static final String PILLAR = "pillar";
   static final float PILLAR_HEIGHT = 3.0F;
+  static final float MIN_REACH_HEIGHT = 1.0F;
 
   public ZoneMarkRenderer(final EntityRendererFactory.Context context) {
     super(context, new ZoneMarkModel());
@@ -43,7 +44,7 @@ public class ZoneMarkRenderer extends GeoEntityRenderer<ZoneMarkEntity> {
       final float length,
       final float rise) {
     final double half = Math.max(radius, length / 2.0F);
-    return new Box(x - half, y, z - half, x + half, y + Math.max(rise, 1.0F), z + half);
+    return new Box(x - half, y, z - half, x + half, y + Math.max(rise, MIN_REACH_HEIGHT), z + half);
   }
 
   @Override
