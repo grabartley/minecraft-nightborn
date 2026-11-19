@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.Optional;
 import software.bernie.geckolib.animation.RawAnimation;
 
-public enum WingedStrike {
+enum WingedStrike {
   ROAR("roar"),
   HURT("hurt"),
   CLAW("claw");
@@ -17,7 +17,7 @@ public enum WingedStrike {
     this.clip = RawAnimation.begin().thenPlay(animation);
   }
 
-  public static Optional<WingedStrike> next(
+  static Optional<WingedStrike> next(
       final Optional<WingedStrike> begun, final Optional<WingedStrike> playing) {
     if (begun.isPresent()
         && playing.map(clip -> begun.get().ordinal() <= clip.ordinal()).orElse(true)) {
@@ -26,15 +26,15 @@ public enum WingedStrike {
     return playing;
   }
 
-  public static Optional<WingedStrike> playing(final RawAnimation animation) {
+  static Optional<WingedStrike> playing(final RawAnimation animation) {
     return Arrays.stream(values()).filter(strike -> strike.clip.equals(animation)).findFirst();
   }
 
-  public String animation() {
+  String animation() {
     return animation;
   }
 
-  public RawAnimation clip() {
+  RawAnimation clip() {
     return clip;
   }
 }

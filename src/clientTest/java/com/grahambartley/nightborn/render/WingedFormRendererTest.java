@@ -1,6 +1,6 @@
 package com.grahambartley.nightborn.render;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.google.gson.JsonObject;
@@ -37,8 +37,20 @@ class WingedFormRendererTest {
 
   @Test
   @DisplayName("Night Terror names its own rig")
-  void someFormNamesARig() throws IOException {
-    assertFalse(rigs().isEmpty());
+  void nightTerrorNamesItsRig() throws IOException {
+    assertTrue(rigs().contains(Identifier.of("nightborn", "night_terror")));
+  }
+
+  @ParameterizedTest(name = "{0}")
+  @MethodSource("rigs")
+  @DisplayName("a winged rig's roar lasts exactly as long as the window a new form roars in")
+  void roarFitsTheWindow(final Identifier rig) throws IOException {
+    final float seconds =
+        GeoAssets.animations(GeoAssets.clips(rig.getPath()))
+            .getAsJsonObject("roar")
+            .get("animation_length")
+            .getAsFloat();
+    assertEquals(WingedCues.ROAR_WINDOW_TICKS, (long) Math.round(seconds * 20));
   }
 
   @ParameterizedTest(name = "{0}")

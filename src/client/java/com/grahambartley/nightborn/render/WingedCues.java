@@ -2,7 +2,7 @@ package com.grahambartley.nightborn.render;
 
 import java.util.Optional;
 
-public final class WingedCues {
+final class WingedCues {
 
   static final long ROAR_WINDOW_TICKS = 26;
 
@@ -10,7 +10,7 @@ public final class WingedCues {
   private int hurtTime;
   private boolean swinging;
 
-  public Optional<WingedStrike> observe(
+  Optional<WingedStrike> observe(
       final long since, final long now, final int hurtTime, final boolean swinging) {
     final boolean changed = since != this.since && now - since < ROAR_WINDOW_TICKS;
     final boolean hurt = hurtTime > this.hurtTime;
