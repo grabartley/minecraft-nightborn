@@ -1,4 +1,4 @@
-package com.grahambartley.nightborn.client.occult;
+package com.grahambartley.nightborn.render;
 
 import com.grahambartley.nightborn.occult.RestlessDeadEntity;
 import net.minecraft.client.render.entity.EntityRendererFactory;

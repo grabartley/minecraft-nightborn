@@ -11,8 +11,10 @@ public enum RestlessPose {
   WALK("walk", true),
   IDLE("idle", true);
 
+  public static final long NEVER = -1L;
   static final int RISE_TICKS = 40;
   static final int SINK_TICKS = 32;
+  static final int ATTACK_TICKS = 12;
 
   private final String animation;
   private final RawAnimation clip;
@@ -33,15 +35,31 @@ public enum RestlessPose {
     return clip;
   }
 
+  public int blendTicks(final int usual) {
+    return this == RISE ? 0 : usual;
+  }
+
+  public static long since(final long at, final long now) {
+    return at < 0 ? NEVER : now - at;
+  }
+
   public static boolean rising(final long sinceRaised) {
     return sinceRaised >= 0 && sinceRaised < RISE_TICKS;
+  }
+
+  public static boolean striking(final long sinceStruck) {
+    return sinceStruck >= 0 && sinceStruck < ATTACK_TICKS;
+  }
+
+  public static boolean held(final boolean sinking, final long sinceRaised) {
+    return sinking || rising(sinceRaised);
   }
 
   public static RestlessPose of(
       final boolean sinking,
       final long sinceRaised,
       final boolean hurt,
-      final boolean swinging,
+      final long sinceStruck,
       final boolean moving) {
     if (sinking) {
       return SINK;
@@ -52,7 +70,7 @@ public enum RestlessPose {
     if (hurt) {
       return HURT;
     }
-    if (swinging) {
+    if (striking(sinceStruck)) {
       return ATTACK;
     }
     return moving ? WALK : IDLE;

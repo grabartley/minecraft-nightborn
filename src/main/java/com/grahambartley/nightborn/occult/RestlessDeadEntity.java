@@ -38,6 +38,8 @@ public class RestlessDeadEntity extends HostileEntity implements Bindable, GeoEn
   static final String LOOK_KEY = "Look";
   static final String RAISED_KEY = "RaisedAt";
   static final int ANIMATION_BLEND_TICKS = 4;
+  static final double KEEP_CLOSE = 12.0;
+  static final double CLOSE_ENOUGH = 4.0;
 
   private static final TrackedData<String> LOOK =
       DataTracker.registerData(RestlessDeadEntity.class, TrackedDataHandlerRegistry.STRING);
@@ -45,10 +47,11 @@ public class RestlessDeadEntity extends HostileEntity implements Bindable, GeoEn
       DataTracker.registerData(RestlessDeadEntity.class, TrackedDataHandlerRegistry.LONG);
   private static final TrackedData<Boolean> SINKING =
       DataTracker.registerData(RestlessDeadEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
+  private static final TrackedData<Long> STRUCK =
+      DataTracker.registerData(RestlessDeadEntity.class, TrackedDataHandlerRegistry.LONG);
 
   private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
-  static final double KEEP_CLOSE = 12.0;
-  static final double CLOSE_ENOUGH = 4.0;
+  private final RestlessLookCache worn = new RestlessLookCache();
 
   private Optional<UUID> master = Optional.empty();
   private int ticksLeft;
@@ -79,8 +82,9 @@ public class RestlessDeadEntity extends HostileEntity implements Bindable, GeoEn
   protected void initDataTracker(final DataTracker.Builder builder) {
     super.initDataTracker(builder);
     builder.add(LOOK, "");
-    builder.add(RAISED, -1L);
+    builder.add(RAISED, RestlessPose.NEVER);
     builder.add(SINKING, false);
+    builder.add(STRUCK, RestlessPose.NEVER);
   }
 
   @Override
@@ -131,13 +135,21 @@ public class RestlessDeadEntity extends HostileEntity implements Bindable, GeoEn
     return dataTracker.get(SINKING);
   }
 
+  public Optional<RestlessLook> wornLook() {
+    return worn.resolve(
+        look(), id -> RestlessLook.worn(RestlessDead.looks(getRegistryManager()), id));
+  }
+
   public long sinceRaised() {
-    final long raised = dataTracker.get(RAISED);
-    return raised < 0 ? -1 : getWorld().getTime() - raised;
+    return RestlessPose.since(dataTracker.get(RAISED), getWorld().getTime());
+  }
+
+  public long sinceStruck() {
+    return RestlessPose.since(dataTracker.get(STRUCK), getWorld().getTime());
   }
 
   public boolean held() {
-    return sinking() || RestlessPose.rising(sinceRaised());
+    return RestlessPose.held(sinking(), sinceRaised());
   }
 
   @Override
@@ -147,7 +159,11 @@ public class RestlessDeadEntity extends HostileEntity implements Bindable, GeoEn
 
   @Override
   public boolean tryAttack(final Entity target) {
-    return !held() && super.tryAttack(target);
+    if (held() || !super.tryAttack(target)) {
+      return false;
+    }
+    dataTracker.set(STRUCK, getWorld().getTime());
+    return true;
   }
 
   @Override
@@ -189,10 +205,11 @@ public class RestlessDeadEntity extends HostileEntity implements Bindable, GeoEn
     super.readCustomDataFromNbt(nbt);
     master = nbt.containsUuid(MASTER) ? Optional.of(nbt.getUuid(MASTER)) : Optional.empty();
     ticksLeft = nbt.getInt(TICKS_LEFT);
-    dataTracker.set(LOOK, nbt.getString(LOOK_KEY));
-    if (nbt.contains(RAISED_KEY)) {
-      dataTracker.set(RAISED, nbt.getLong(RAISED_KEY));
+    if (!nbt.getString(LOOK_KEY).isEmpty()) {
+      dataTracker.set(LOOK, nbt.getString(LOOK_KEY));
     }
+    dataTracker.set(
+        RAISED, nbt.contains(RAISED_KEY) ? nbt.getLong(RAISED_KEY) : RestlessPose.NEVER);
   }
 
   @Override
@@ -202,11 +219,13 @@ public class RestlessDeadEntity extends HostileEntity implements Bindable, GeoEn
             this,
             "pose",
             ANIMATION_BLEND_TICKS,
-            state ->
-                state.setAndContinue(
-                    RestlessPose.of(
-                            sinking(), sinceRaised(), hurtTime > 0, handSwinging, state.isMoving())
-                        .clip())));
+            state -> {
+              final RestlessPose pose =
+                  RestlessPose.of(
+                      sinking(), sinceRaised(), hurtTime > 0, sinceStruck(), state.isMoving());
+              state.getController().transitionLength(pose.blendTicks(ANIMATION_BLEND_TICKS));
+              return state.setAndContinue(pose.clip());
+            }));
   }
 
   @Override

@@ -1,7 +1,7 @@
 package com.grahambartley.nightborn.mob.look;
 
 import com.grahambartley.nightborn.Nightborn;
-import java.util.HashMap;
+import com.grahambartley.nightborn.core.DataEntries;
 import java.util.Map;
 import java.util.Optional;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
@@ -43,15 +43,15 @@ public final class VampireLooks {
   }
 
   public static Map<Identifier, VampireLook> looks(final DynamicRegistryManager registries) {
-    return copy(registries, LOOK);
+    return DataEntries.copy(registries, LOOK);
   }
 
   public static Map<Identifier, VampireOutfit> outfits(final DynamicRegistryManager registries) {
-    return copy(registries, OUTFIT);
+    return DataEntries.copy(registries, OUTFIT);
   }
 
   public static Map<Identifier, VampireBuild> builds(final DynamicRegistryManager registries) {
-    return copy(registries, BUILD);
+    return DataEntries.copy(registries, BUILD);
   }
 
   public static Optional<VampireLook> look(
@@ -65,14 +65,5 @@ public final class VampireLooks {
 
   static Optional<EquipmentSlot> slotOf(final Identifier id) {
     return item(id).flatMap(OutfitDressing::slot);
-  }
-
-  private static <T> Map<Identifier, T> copy(
-      final DynamicRegistryManager registries, final RegistryKey<Registry<T>> key) {
-    final Map<Identifier, T> entries = new HashMap<>();
-    registries
-        .getOptional(key)
-        .ifPresent(registry -> registry.getIds().forEach(id -> entries.put(id, registry.get(id))));
-    return entries;
   }
 }

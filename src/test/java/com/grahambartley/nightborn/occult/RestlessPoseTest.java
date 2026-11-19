@@ -24,25 +24,46 @@ class RestlessPoseTest {
         .getAsJsonObject("animations");
   }
 
-  @ParameterizedTest(name = "sinking {0}, raised {1} ago, hurt {2}, swinging {3}, moving {4}: {5}")
+  @ParameterizedTest(
+      name = "sinking {0}, raised {1} ago, hurt {2}, struck {3} ago, moving {4}: {5}")
   @CsvSource({
-    "true, 5, true, true, true, SINK",
-    "false, 0, true, true, true, RISE",
-    "false, 39, false, false, true, RISE",
-    "false, 40, true, true, true, HURT",
-    "false, 200, false, true, true, ATTACK",
-    "false, 200, false, false, true, WALK",
-    "false, 200, false, false, false, IDLE",
-    "false, -1, false, false, false, IDLE"
+    "true, 5, true, 0, true, SINK",
+    "false, 0, true, 0, true, RISE",
+    "false, 39, false, -1, true, RISE",
+    "false, 40, true, 0, true, HURT",
+    "false, 200, false, 0, true, ATTACK",
+    "false, 200, false, 11, false, ATTACK",
+    "false, 200, false, 12, true, WALK",
+    "false, 200, false, -1, false, IDLE",
+    "false, -1, false, -1, false, IDLE"
   })
   void picksThePose(
       final boolean sinking,
       final long sinceRaised,
       final boolean hurt,
-      final boolean swinging,
+      final long sinceStruck,
       final boolean moving,
       final RestlessPose expected) {
-    assertEquals(expected, RestlessPose.of(sinking, sinceRaised, hurt, swinging, moving));
+    assertEquals(expected, RestlessPose.of(sinking, sinceRaised, hurt, sinceStruck, moving));
+  }
+
+  @ParameterizedTest(name = "at {0}, now {1}: {2}")
+  @CsvSource({"-1, 500, -1", "100, 100, 0", "100, 140, 40"})
+  void countsTicksSinceAMoment(final long at, final long now, final long since) {
+    assertEquals(since, RestlessPose.since(at, now));
+  }
+
+  @ParameterizedTest(name = "sinking {0}, raised {1} ago: held {2}")
+  @CsvSource({"true, 500, true", "false, 10, true", "false, 40, false", "false, -1, false"})
+  void holdsStillWhileRisingOrSinking(
+      final boolean sinking, final long sinceRaised, final boolean held) {
+    assertEquals(held, RestlessPose.held(sinking, sinceRaised));
+  }
+
+  @ParameterizedTest(name = "{0}: blends {1} ticks")
+  @CsvSource({"RISE, 0", "SINK, 4", "WALK, 4"})
+  void risesWithoutBlendingFromAStandingPose(final RestlessPose pose, final int blend) {
+    assertEquals(blend, pose.blendTicks(4));
   }
 
   @ParameterizedTest(name = "{0}")

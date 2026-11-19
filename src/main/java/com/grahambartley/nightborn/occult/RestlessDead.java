@@ -1,7 +1,7 @@
 package com.grahambartley.nightborn.occult;
 
 import com.grahambartley.nightborn.Nightborn;
-import java.util.HashMap;
+import com.grahambartley.nightborn.core.DataEntries;
 import java.util.Map;
 import net.fabricmc.fabric.api.event.registry.DynamicRegistries;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
@@ -36,10 +36,6 @@ public final class RestlessDead {
   }
 
   public static Map<Identifier, RestlessLook> looks(final DynamicRegistryManager registries) {
-    final Map<Identifier, RestlessLook> looks = new HashMap<>();
-    registries
-        .getOptional(LOOK)
-        .ifPresent(registry -> registry.getIds().forEach(id -> looks.put(id, registry.get(id))));
-    return looks;
+    return DataEntries.copy(registries, LOOK);
   }
 }
