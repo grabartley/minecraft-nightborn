@@ -9,6 +9,7 @@ public record SeekGift(
     boolean bloodTrails,
     float senseRange,
     float listenRange,
+    int listenColour,
     double alliedShare) {
 
   public static final Codec<SeekGift> CODEC =
@@ -31,6 +32,9 @@ public record SeekGift(
                       Codec.floatRange(0.0F, 64.0F)
                           .optionalFieldOf("listen_range", 0.0F)
                           .forGetter(SeekGift::listenRange),
+                      Codec.intRange(0, 0xFFFFFF)
+                          .optionalFieldOf("listen_colour", 0)
+                          .forGetter(SeekGift::listenColour),
                       Codec.doubleRange(0.0, 1.0)
                           .optionalFieldOf("allied_share", 0.0)
                           .forGetter(SeekGift::alliedShare))

@@ -26,6 +26,14 @@ public final class SeekGifts {
     return (float) gifts.stream().mapToDouble(SeekGift::listenRange).max().orElse(0.0);
   }
 
+  public static int listenColour(final Collection<SeekGift> gifts) {
+    return gifts.stream()
+        .filter(gift -> gift.listenRange() > 0.0F)
+        .mapToInt(SeekGift::listenColour)
+        .findFirst()
+        .orElse(0);
+  }
+
   public static double alliedShare(final Collection<SeekGift> gifts) {
     return gifts.stream().mapToDouble(SeekGift::alliedShare).sum();
   }

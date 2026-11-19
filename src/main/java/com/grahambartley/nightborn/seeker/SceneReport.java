@@ -24,6 +24,10 @@ public final class SceneReport {
     return found ? WENT : COLD;
   }
 
+  public static String far() {
+    return FAR;
+  }
+
   public static void tell(final ServerPlayerEntity hunter, final Scene scene) {
     final LivingEntity vampire = Scenes.vampire(hunter.getServerWorld(), scene.vampire());
     hunter.sendMessage(text(hunter, scene, vampire).formatted(Formatting.GOLD), false);
@@ -32,7 +36,7 @@ public final class SceneReport {
   private static MutableText text(
       final ServerPlayerEntity hunter, final Scene scene, @Nullable final LivingEntity vampire) {
     if (!scene.known()) {
-      return Text.translatable(key(false, vampire != null));
+      return Text.translatable(far());
     }
     final Text stage =
         scene

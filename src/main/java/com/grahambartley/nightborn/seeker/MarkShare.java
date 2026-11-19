@@ -15,7 +15,14 @@ public final class MarkShare {
   }
 
   public static double total(final Collection<Marker> markers) {
-    return markers.stream().mapToDouble(Marker::share).sum();
+    final double own = markers.stream().filter(Marker::byHunter).mapToDouble(Marker::share).sum();
+    final double allied =
+        markers.stream()
+            .filter(marker -> !marker.byHunter())
+            .mapToDouble(Marker::share)
+            .max()
+            .orElse(0.0);
+    return own + allied;
   }
 
   public static float raise(final float amount, final double share) {

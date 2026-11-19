@@ -13,7 +13,7 @@ class SeekGiftsTest {
   private static List<SeekGift> keen(final int ranks, final boolean trails) {
     final List<SeekGift> gifts = new ArrayList<>();
     for (int rank = 1; rank <= ranks; rank++) {
-      gifts.add(new SeekGift(32, 100, trails && rank == ranks, 0.0F, 0.0F, 0.0));
+      gifts.add(new SeekGift(32, 100, trails && rank == ranks, 0.0F, 0.0F, 0, 0.0));
     }
     return gifts;
   }
@@ -56,10 +56,11 @@ class SeekGiftsTest {
       final double allied) {
     final List<SeekGift> gifts =
         List.of(
-            new SeekGift(0, 0, false, senseA, listen, alliedA),
-            new SeekGift(0, 0, false, senseB, 0.0F, alliedB));
+            new SeekGift(0, 0, false, senseA, listen, 0x5A3A44, alliedA),
+            new SeekGift(0, 0, false, senseB, 0.0F, 0x112233, alliedB));
     assertEquals(sense, SeekGifts.senseRange(gifts));
     assertEquals(hears, SeekGifts.listenRange(gifts));
     assertEquals(allied, SeekGifts.alliedShare(gifts), 1.0e-9);
+    assertEquals(listen > 0.0F ? 0x5A3A44 : 0, SeekGifts.listenColour(gifts));
   }
 }

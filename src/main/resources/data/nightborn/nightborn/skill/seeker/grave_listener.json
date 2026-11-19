@@ -11,7 +11,8 @@
       "cost": 2,
       "seek_gifts": [
         {
-          "listen_range": 12.0
+          "listen_range": 12.0,
+          "listen_colour": 5913156
         }
       ]
     }

@@ -51,6 +51,7 @@ public final class Scenes {
     ServerLivingEntityEvents.AFTER_DAMAGE.register(
         (entity, source, base, taken, blocked) -> {
           if (taken > 0.0F && entity.isAlive() && bite(source)) {
+            BITES.remove(entity.getUuid());
             BITES.put(
                 entity.getUuid(),
                 VampireReading.of((LivingEntity) source.getAttacker(), entity.getPos()));

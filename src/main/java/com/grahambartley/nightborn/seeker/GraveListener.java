@@ -2,6 +2,7 @@ package com.grahambartley.nightborn.seeker;
 
 import com.grahambartley.nightborn.sight.Sights;
 import com.grahambartley.nightborn.vampire.Vampires;
+import java.util.List;
 import java.util.Map;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.network.packet.s2c.play.PlaySoundS2CPacket;
@@ -12,7 +13,6 @@ import net.minecraft.sound.SoundEvents;
 
 public final class GraveListener {
 
-  static final int COLOUR = 0x5A3A44;
   static final int HEAR_EVERY_TICKS = 40;
 
   private GraveListener() {}
@@ -30,7 +30,9 @@ public final class GraveListener {
   }
 
   private static void show(final ServerPlayerEntity hunter, final Map<Integer, Integer> shown) {
-    final float range = SeekGifts.listenRange(HeldSeekGifts.of(hunter));
+    final List<SeekGift> gifts = HeldSeekGifts.of(hunter);
+    final float range = SeekGifts.listenRange(gifts);
+    final int colour = SeekGifts.listenColour(gifts);
     if (!listens(hunter.isSneaking(), Vampires.isVampire(hunter), range)) {
       return;
     }
@@ -46,7 +48,7 @@ public final class GraveListener {
                         && candidate.isAlive()
                         && candidate.squaredDistanceTo(hunter) <= (double) range * range
                         && hears(Vampires.isVampire(candidate), candidate.isSleeping()))) {
-      shown.putIfAbsent(sleeper.getId(), COLOUR);
+      shown.putIfAbsent(sleeper.getId(), colour);
       if (heard) {
         hunter.networkHandler.sendPacket(
             new PlaySoundS2CPacket(

@@ -30,6 +30,7 @@ class SceneReportTest {
           + " is far, in English")
   void key(final boolean known, final boolean found, final String key) throws IOException {
     assertEquals(key, SceneReport.key(known, found));
+    assertEquals("nightborn.seeker.scene_far", SceneReport.far());
     final JsonObject english =
         JsonParser.parseString(Files.readString(ENGLISH, StandardCharsets.UTF_8)).getAsJsonObject();
     assertTrue(english.has(key), key);

@@ -32,8 +32,8 @@ class MarkShareTest {
   }
 
   @ParameterizedTest(name = "own marks {0}, ally marks {1} -> {2}")
-  @CsvSource({"0, 0, 0", "1, 0, 0.15", "0, 1, 0.1", "1, 2, 0.35"})
-  @DisplayName("shares from several marking hunters add up")
+  @CsvSource({"0, 0, 0", "1, 0, 0.15", "0, 1, 0.1", "0, 2, 0.1", "1, 2, 0.25"})
+  @DisplayName("a hunter's own marks add up, and allies take one Hunter's Patience at most")
   void total(final int own, final int allies, final double total) {
     final List<Marker> markers = new ArrayList<>();
     for (int i = 0; i < own; i++) {
