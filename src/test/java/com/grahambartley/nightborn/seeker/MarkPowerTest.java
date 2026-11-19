@@ -33,7 +33,8 @@ class MarkPowerTest {
       value = {
         "{\"range\":24,\"duration_ticks\":1200}",
         "{\"range\":24,\"duration_ticks\":1200,\"damage_share\":2,\"colour\":1}",
-        "{\"range\":24,\"duration_ticks\":1200,\"colour\":16777216}"
+        "{\"range\":24,\"duration_ticks\":1200,\"colour\":16777216}",
+        "{\"range\":24,\"duration_ticks\":1200,\"colour\":1,\"hidden_by\":[\"smoke\"]}"
       })
   @DisplayName("a mark with no colour or a value out of bounds is refused")
   void refuses(final String json) {

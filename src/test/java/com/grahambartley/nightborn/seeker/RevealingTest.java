@@ -19,7 +19,12 @@ class RevealingTest {
           Set.of(REVEALED),
           400L,
           new RevealPower(
-              48.0F, 16.0F, 400, 0, List.of(Identifier.of("nightborn", "occult/shadow_veil"))));
+              48.0F,
+              16.0F,
+              400,
+              0,
+              List.of(Identifier.of("nightborn", "occult/shadow_veil")),
+              List.of(Veil.SHADOW_VEIL)));
 
   @ParameterizedTest(name = "now {0}: lasts {1}")
   @CsvSource({"0, true", "399, true", "400, false"})

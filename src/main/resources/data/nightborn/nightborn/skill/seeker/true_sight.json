@@ -18,7 +18,13 @@
     "true_sight": {
       "range": 24.0,
       "duration_ticks": 120,
-      "colour": 15129792
+      "colour": 15129792,
+      "sees_through": [
+        "shadow_veil",
+        "mist",
+        "glamour",
+        "vanish"
+      ]
     },
     "sound": "minecraft:block.beacon.power_select"
   }

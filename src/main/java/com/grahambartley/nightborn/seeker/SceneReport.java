@@ -13,10 +13,14 @@ public final class SceneReport {
 
   static final String WENT = "nightborn.seeker.scene";
   static final String COLD = "nightborn.seeker.scene_cold";
+  static final String FAR = "nightborn.seeker.scene_far";
 
   private SceneReport() {}
 
-  public static String key(final boolean found) {
+  public static String key(final boolean known, final boolean found) {
+    if (!known) {
+      return FAR;
+    }
     return found ? WENT : COLD;
   }
 
@@ -27,6 +31,9 @@ public final class SceneReport {
 
   private static MutableText text(
       final ServerPlayerEntity hunter, final Scene scene, @Nullable final LivingEntity vampire) {
+    if (!scene.known()) {
+      return Text.translatable(key(false, vampire != null));
+    }
     final Text stage =
         scene
             .stage()
@@ -37,10 +44,10 @@ public final class SceneReport {
             ? Text.translatable("nightborn.seeker.scene_no_bloodline")
             : SkillNames.lines(scene.lines());
     if (vampire == null) {
-      return Text.translatable(key(false), stage, lines);
+      return Text.translatable(key(true, false), stage, lines);
     }
     return Text.translatable(
-        key(true),
+        key(true, true),
         stage,
         lines,
         TrackingDirection.arrow(

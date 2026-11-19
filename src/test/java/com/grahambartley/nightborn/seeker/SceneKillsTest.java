@@ -13,7 +13,7 @@ import org.junit.jupiter.params.provider.CsvSource;
 class SceneKillsTest {
 
   private static Scene kill(final long id, final double x, final long at) {
-    return new Scene(new UUID(0L, id), Optional.empty(), List.of(), new Vec3d(x, 0, 0), at);
+    return new Scene(new UUID(0L, id), Optional.empty(), List.of(), new Vec3d(x, 0, 0), at, true);
   }
 
   @ParameterizedTest(name = "looking at x {0}, now {1} -> vampire {2}")

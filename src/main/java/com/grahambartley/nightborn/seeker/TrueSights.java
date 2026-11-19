@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
@@ -21,6 +22,8 @@ public final class TrueSights {
 
   static void register() {
     Sights.standing(TrueSights::show);
+    ServerPlayConnectionEvents.DISCONNECT.register(
+        (handler, server) -> ACTIVE.remove(handler.getPlayer().getUuid()));
     ServerLifecycleEvents.SERVER_STOPPED.register(server -> ACTIVE.clear());
   }
 
@@ -47,20 +50,21 @@ public final class TrueSights {
       ACTIVE.remove(hunter.getUuid());
       return;
     }
-    for (final LivingEntity vampire : Revelations.vampires(hunter, seeing.power().range())) {
+    for (final LivingEntity vampire : MarkableVampires.near(hunter, seeing.power().range())) {
       shown.put(vampire.getId(), seeing.power().colour());
       if (seeing.firstSight(vampire.getUuid())) {
-        seen(hunter, vampire);
+        seen(hunter, vampire, seeing.power());
       }
     }
   }
 
-  private static void seen(final ServerPlayerEntity hunter, final LivingEntity vampire) {
+  private static void seen(
+      final ServerPlayerEntity hunter, final LivingEntity vampire, final SightPower power) {
     if (vampire instanceof ServerPlayerEntity player) {
       player.sendMessage(
           Text.translatable("nightborn.seeker.seen_you").formatted(Formatting.DARK_RED), true);
     }
-    if (Veils.hidden(vampire)) {
+    if (Veil.any(power.seesThrough(), vampire)) {
       Deeds.record(
           hunter,
           Deed.of(DeedKinds.SEEN_THROUGH).with(DeedKinds.VAMPIRE, vampire.getUuidAsString()));

@@ -6,12 +6,12 @@ import com.grahambartley.nightborn.vampire.Vampires;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.server.MinecraftServer;
@@ -30,6 +30,8 @@ public final class Revelations {
   static void register() {
     Sights.standing(Revelations::show);
     ServerTickEvents.END_SERVER_TICK.register(Revelations::tick);
+    ServerPlayConnectionEvents.DISCONNECT.register(
+        (handler, server) -> ACTIVE.remove(handler.getPlayer().getUuid()));
     ServerLifecycleEvents.SERVER_STOPPED.register(server -> ACTIVE.clear());
   }
 
@@ -37,7 +39,7 @@ public final class Revelations {
     if (!(caster instanceof ServerPlayerEntity hunter)) {
       return;
     }
-    final List<LivingEntity> found = vampires(hunter, power.range());
+    final List<LivingEntity> found = MarkableVampires.near(hunter, power.range());
     ACTIVE.put(
         hunter.getUuid(),
         new Revealing(
@@ -73,27 +75,11 @@ public final class Revelations {
     return false;
   }
 
-  static Optional<Revealing> of(final UUID hunter) {
-    return Optional.ofNullable(ACTIVE.get(hunter));
-  }
-
-  static Set<UUID> hunters() {
-    return ACTIVE.keySet();
-  }
-
-  static List<LivingEntity> vampires(final ServerPlayerEntity hunter, final float range) {
-    return hunter
-        .getServerWorld()
-        .getEntitiesByClass(
-            LivingEntity.class,
-            hunter.getBoundingBox().expand(range),
-            candidate ->
-                candidate != hunter
-                    && candidate.isAlive()
-                    && !candidate.isSpectator()
-                    && Vampires.isVampire(candidate)
-                    && PowerReach.marks(candidate)
-                    && candidate.squaredDistanceTo(hunter) <= (double) range * range);
+  static Set<UUID> markers(final UUID vampire, final long now) {
+    return ACTIVE.entrySet().stream()
+        .filter(entry -> entry.getValue().lasts(now) && entry.getValue().reveals(vampire))
+        .map(Map.Entry::getKey)
+        .collect(Collectors.toSet());
   }
 
   private static void tick(final MinecraftServer server) {
@@ -118,9 +104,8 @@ public final class Revelations {
     for (final UUID id : revealing.vampires()) {
       if (world.getEntity(id) instanceof LivingEntity vampire
           && vampire.isAlive()
-          && PowerReach.touches(hunter, vampire)
-          && Veils.veiled(vampire)) {
-        Veils.lift(vampire);
+          && PowerReach.touches(hunter, vampire)) {
+        Veil.liftAll(revealing.power().lifts(), vampire);
       }
     }
   }

@@ -18,7 +18,12 @@
       "range": 24.0,
       "duration_ticks": 1200,
       "damage_share": 0.15,
-      "colour": 11674146
+      "colour": 11674146,
+      "hidden_by": [
+        "shadow_veil",
+        "mist",
+        "glamour"
+      ]
     },
     "sound": "minecraft:block.amethyst_block.resonate"
   }

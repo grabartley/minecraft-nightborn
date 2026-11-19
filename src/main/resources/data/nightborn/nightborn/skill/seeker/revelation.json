@@ -25,6 +25,11 @@
         "nightborn:occult/shadow_veil",
         "nightborn:occult/mist_form",
         "nightborn:noble/glamour"
+      ],
+      "lifts": [
+        "shadow_veil",
+        "mist",
+        "glamour"
       ]
     },
     "sound": "minecraft:block.bell.resonate"

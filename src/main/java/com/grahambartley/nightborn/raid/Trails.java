@@ -29,6 +29,14 @@ public final class Trails {
   static void register() {
     ServerLivingEntityEvents.AFTER_DAMAGE.register(
         (entity, source, base, taken, blocked) -> wounded(entity, source, taken));
+    ServerLivingEntityEvents.AFTER_DEATH.register(
+        (entity, source) ->
+            TRAILS
+                .values()
+                .removeIf(
+                    trail ->
+                        TrailRules.endsWith(
+                            trail.endsAtDeath(), trail.quarry().equals(entity.getUuid()))));
     ServerPlayConnectionEvents.DISCONNECT.register(
         (handler, server) -> TRAILS.remove(handler.getPlayer().getUuid()));
     ServerLifecycleEvents.SERVER_STOPPED.register(server -> TRAILS.clear());
@@ -68,10 +76,11 @@ public final class Trails {
         || !GuildMembership.isHunter(hunter)) {
       return;
     }
-    follow(hunter, vampire);
+    follow(hunter, vampire, false);
   }
 
-  public static void follow(final ServerPlayerEntity hunter, final LivingEntity quarry) {
+  public static void follow(
+      final ServerPlayerEntity hunter, final LivingEntity quarry, final boolean endsAtDeath) {
     final ServerWorld world = hunter.getServerWorld();
     TRAILS.put(
         hunter.getUuid(),
@@ -81,7 +90,8 @@ public final class Trails {
                 ? vampire.homeLife().coffin()
                 : Optional.empty(),
             world.getRegistryKey(),
-            TrailRules.until(world.getTime(), world.getTimeOfDay())));
+            TrailRules.until(world.getTime(), world.getTimeOfDay()),
+            endsAtDeath));
   }
 
   public static void drip(final ServerPlayerEntity hunter) {

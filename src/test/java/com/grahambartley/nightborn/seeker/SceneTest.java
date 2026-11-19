@@ -18,7 +18,7 @@ class SceneTest {
   void fresh(final long at, final long now, final int freshTicks, final boolean fresh) {
     assertEquals(
         fresh,
-        new Scene(new UUID(0L, 1L), Optional.empty(), List.of(), Vec3d.ZERO, at)
+        new Scene(new UUID(0L, 1L), Optional.empty(), List.of(), Vec3d.ZERO, at, true)
             .fresh(now, freshTicks));
   }
 }

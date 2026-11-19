@@ -26,7 +26,8 @@ public final class VampireReading {
             SkillAttachment.owned(vampire).ownedInOrder(),
             id -> Skills.lineOf(vampire.getWorld().getRegistryManager(), id)),
         spot,
-        vampire.getWorld().getTime());
+        vampire.getWorld().getTime(),
+        true);
   }
 
   public static List<Identifier> lines(

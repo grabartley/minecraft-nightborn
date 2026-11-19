@@ -19,4 +19,14 @@ class MistStateTest {
     MistState.PACKET_CODEC.encode(buf, state);
     assertEquals(state, MistState.PACKET_CODEC.decode(buf));
   }
+
+  @ParameterizedTest(name = "until {0}, failed at {1} -> until {2}")
+  @CsvSource({"160, 40, 40", "160, 159, 159", "160, 160, 160", "160, 300, 160"})
+  @DisplayName("mist made to fail ends at once and keeps its harm, and spent mist stays spent")
+  void endedAt(final long until, final long now, final long ended) {
+    final MistState state = new MistState(until, 2.0F).endedAt(now);
+    assertEquals(ended, state.until());
+    assertEquals(2.0F, state.harm());
+    assertEquals(true, state.over(Math.max(now, until)));
+  }
 }

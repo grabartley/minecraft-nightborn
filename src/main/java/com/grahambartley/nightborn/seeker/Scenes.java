@@ -8,9 +8,11 @@ import com.grahambartley.nightborn.skill.PowerSight;
 import com.grahambartley.nightborn.vampire.NightbornDamage;
 import com.grahambartley.nightborn.vampire.Vampires;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.function.Supplier;
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.minecraft.entity.Entity;
@@ -32,7 +34,15 @@ public final class Scenes {
   static final int MOST_KILLS = 256;
   static final double COFFIN_REACH = 2.0;
 
-  private static final Map<UUID, Scene> BITES = new HashMap<>();
+  static final int MOST_BITES = 1024;
+
+  private static final Map<UUID, Scene> BITES =
+      new LinkedHashMap<>() {
+        @Override
+        protected boolean removeEldestEntry(final Map.Entry<UUID, Scene> eldest) {
+          return size() > MOST_BITES;
+        }
+      };
   private static final Map<RegistryKey<World>, SceneKills> KILLS = new HashMap<>();
 
   private Scenes() {}
@@ -60,12 +70,6 @@ public final class Scenes {
     }
     final long now = world.getTime();
     final LivingEntity victim = PowerSight.looked(hunter, power.range());
-    if (victim != null) {
-      final Scene bitten = BITES.get(victim.getUuid());
-      if (bitten != null && bitten.fresh(now, power.freshTicks())) {
-        return Optional.of(bitten);
-      }
-    }
     final BlockHitResult block =
         world.raycast(
             new RaycastContext(
@@ -74,24 +78,46 @@ public final class Scenes {
                 RaycastContext.ShapeType.OUTLINE,
                 RaycastContext.FluidHandling.NONE,
                 hunter));
-    final Vec3d spot = block.getType() == HitResult.Type.BLOCK ? block.getPos() : hunter.getPos();
-    if (block.getType() == HitResult.Type.BLOCK) {
-      final Optional<Scene> coffin =
-          CoffinOwnership.owner(world, block.getBlockPos())
-              .flatMap(owner -> keeper(world, owner, block.getPos()))
-              .or(() -> sleeper(world, block.getBlockPos()));
-      if (coffin.isPresent()) {
-        return coffin;
-      }
-    }
-    return Optional.ofNullable(KILLS.get(world.getRegistryKey()))
-        .flatMap(kills -> kills.nearest(spot, power.killRadius(), now, power.freshTicks()));
+    final boolean hit = block.getType() == HitResult.Type.BLOCK;
+    return pick(
+        Optional.ofNullable(victim)
+            .filter(hunter::canSee)
+            .map(seen -> BITES.get(seen.getUuid()))
+            .filter(bitten -> bitten.fresh(now, power.freshTicks())),
+        () -> hit ? coffin(world, block) : Optional.empty(),
+        () ->
+            Optional.ofNullable(KILLS.get(world.getRegistryKey()))
+                .flatMap(
+                    kills ->
+                        kills.nearest(
+                            spot(hit, block.getPos(), hunter.getPos()),
+                            power.killRadius(),
+                            now,
+                            power.freshTicks())));
   }
 
-  private static Optional<Scene> keeper(
-      final ServerWorld world, final UUID owner, final Vec3d coffin) {
-    return Optional.ofNullable(vampire(world, owner))
-        .map(keeper -> VampireReading.of(keeper, coffin));
+  public static Optional<Scene> pick(
+      final Optional<Scene> victim,
+      final Supplier<Optional<Scene>> coffin,
+      final Supplier<Optional<Scene>> kill) {
+    return victim.or(coffin).or(kill);
+  }
+
+  public static Vec3d spot(final boolean hit, final Vec3d block, final Vec3d hunter) {
+    return hit ? block : hunter;
+  }
+
+  private static Optional<Scene> coffin(final ServerWorld world, final BlockHitResult block) {
+    return CoffinOwnership.owner(world, block.getBlockPos())
+        .map(owner -> keeper(world, owner, block.getPos()))
+        .or(() -> sleeper(world, block.getBlockPos()));
+  }
+
+  private static Scene keeper(final ServerWorld world, final UUID owner, final Vec3d coffin) {
+    final LivingEntity keeper = vampire(world, owner);
+    return keeper == null
+        ? Scene.far(owner, coffin, world.getTime())
+        : VampireReading.of(keeper, coffin);
   }
 
   private static Optional<Scene> sleeper(final ServerWorld world, final BlockPos coffin) {
@@ -119,7 +145,10 @@ public final class Scenes {
     final Entity found =
         Optional.<Entity>ofNullable(world.getEntity(id))
             .orElseGet(() -> world.getServer().getPlayerManager().getPlayer(id));
-    return found instanceof LivingEntity living && living.isAlive() && Vampires.isVampire(living)
+    return found instanceof LivingEntity living
+            && living.getWorld() == world
+            && living.isAlive()
+            && Vampires.isVampire(living)
         ? living
         : null;
   }
