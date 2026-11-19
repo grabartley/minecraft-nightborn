@@ -155,7 +155,8 @@ public final class Powers {
             power
                 .flatMap(owned -> owned.faith().kindle())
                 .map(kindle -> !Kindling.affords(caster, kindle))
-                .orElse(false)));
+                .orElse(false),
+            power.map(owned -> aim.smothered(caster, owned)).orElse(false)));
   }
 
   public static PowerUse.Verdict cast(final LivingEntity caster, @Nullable final Identifier id) {

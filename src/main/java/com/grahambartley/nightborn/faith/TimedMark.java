@@ -1,6 +1,7 @@
 package com.grahambartley.nightborn.faith;
 
 import com.grahambartley.nightborn.Nightborn;
+import com.grahambartley.nightborn.skill.AreaRules;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentRegistry;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentType;
 import net.minecraft.entity.Entity;
@@ -25,14 +26,10 @@ public final class TimedMark {
     if (until == null) {
       return false;
     }
-    if (marked(entity.getWorld().getTime(), until)) {
+    if (AreaRules.lasts(entity.getWorld().getTime(), until)) {
       return true;
     }
     entity.removeAttached(type);
     return false;
-  }
-
-  static boolean marked(final long now, final long until) {
-    return now < until;
   }
 }

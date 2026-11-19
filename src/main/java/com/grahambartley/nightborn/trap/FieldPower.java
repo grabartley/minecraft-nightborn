@@ -12,6 +12,7 @@ public record FieldPower(
     boolean rearmsTraps,
     boolean weakens,
     boolean unwings,
+    float height,
     Identifier look) {
 
   public static final Codec<FieldPower> CODEC =
@@ -32,6 +33,9 @@ public record FieldPower(
                           .forGetter(FieldPower::rearmsTraps),
                       Codec.BOOL.optionalFieldOf("weakens", false).forGetter(FieldPower::weakens),
                       Codec.BOOL.optionalFieldOf("unwings", false).forGetter(FieldPower::unwings),
+                      Codec.floatRange(1.0F, 64.0F)
+                          .optionalFieldOf("height", 8.0F)
+                          .forGetter(FieldPower::height),
                       Identifier.CODEC.fieldOf("look").forGetter(FieldPower::look))
                   .apply(instance, FieldPower::new));
 

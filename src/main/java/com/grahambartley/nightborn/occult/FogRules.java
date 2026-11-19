@@ -14,14 +14,6 @@ public final class FogRules {
     return (now - startedAt) % PULSE_TICKS == 0;
   }
 
-  public static boolean lasts(final long now, final long endsAt) {
-    return now < endsAt;
-  }
-
-  public static boolean covers(final double distanceSquared, final float radius) {
-    return distanceSquared <= (double) radius * radius;
-  }
-
   public static boolean touches(
       final boolean alive,
       final boolean caster,

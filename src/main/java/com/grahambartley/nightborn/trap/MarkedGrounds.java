@@ -5,6 +5,7 @@ import com.grahambartley.nightborn.boss.ZoneShape;
 import com.grahambartley.nightborn.config.WardSettings;
 import com.grahambartley.nightborn.hunter.HunterAttributes;
 import com.grahambartley.nightborn.server.ServerConfigService;
+import com.grahambartley.nightborn.skill.AreaRules;
 import com.grahambartley.nightborn.skill.PowerReach;
 import com.grahambartley.nightborn.vampire.Vampires;
 import com.grahambartley.nightborn.ward.WardStrength;
@@ -42,8 +43,8 @@ public final class MarkedGrounds {
 
     boolean covers(final World at, final Vec3d point) {
       return world.equals(at.getRegistryKey())
-          && FieldRules.lasts(at.getTime(), until)
-          && FieldRules.inside(point.squaredDistanceTo(centre), power.radius());
+          && AreaRules.lasts(at.getTime(), until)
+          && AreaRules.column(point, centre, power.radius(), power.height());
     }
   }
 
@@ -113,7 +114,7 @@ public final class MarkedGrounds {
     final long now = world.getTime();
     FIELDS.removeIf(
         field ->
-            field.world().equals(world.getRegistryKey()) && !FieldRules.lasts(now, field.until()));
+            field.world().equals(world.getRegistryKey()) && !AreaRules.lasts(now, field.until()));
     for (final Field field : List.copyOf(FIELDS)) {
       if (field.world().equals(world.getRegistryKey())
           && field.power().pulses()
@@ -129,7 +130,9 @@ public final class MarkedGrounds {
     for (final LivingEntity vampire :
         world.getEntitiesByClass(
             LivingEntity.class,
-            new Box(field.centre(), field.centre()).expand(radius, 3.0, radius),
+            new Box(field.centre(), field.centre())
+                .expand(radius, 1.0, radius)
+                .stretch(0.0, field.power().height(), 0.0),
             candidate ->
                 Vampires.isVampire(candidate)
                     && field.covers(world, candidate.getPos())

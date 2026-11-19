@@ -25,7 +25,8 @@ public final class PowerUse {
     REBUKED,
     NO_CRUCIFIX,
     NO_WEAPON,
-    TOO_HURT;
+    TOO_HURT,
+    SMOTHERED;
 
     public String translationKey() {
       return "nightborn.powers.verdict." + name().toLowerCase(Locale.ROOT);
@@ -52,7 +53,8 @@ public final class PowerUse {
       boolean rebuked,
       boolean crossless,
       boolean unarmed,
-      boolean hurt) {}
+      boolean hurt,
+      boolean smothered) {}
 
   private PowerUse() {}
 
@@ -113,6 +115,9 @@ public final class PowerUse {
     }
     if (situation.hurt()) {
       return Verdict.TOO_HURT;
+    }
+    if (situation.smothered()) {
+      return Verdict.SMOTHERED;
     }
     return Verdict.READY;
   }

@@ -2,7 +2,6 @@ package com.grahambartley.nightborn.faith;
 
 import com.grahambartley.nightborn.coating.Coat;
 import com.grahambartley.nightborn.coating.Coatings;
-import com.grahambartley.nightborn.occult.Circles;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -16,22 +15,6 @@ public final class Blessings {
   public static void bless(
       final LivingEntity caster, final LivingEntity wielder, final BlessingPower power) {
     if (!(caster.getWorld() instanceof ServerWorld world)) {
-      return;
-    }
-    if (Circles.stopsPrayers(world, wielder.getPos())) {
-      world.spawnParticles(
-          ParticleTypes.SMOKE,
-          wielder.getX(),
-          wielder.getBodyY(0.6),
-          wielder.getZ(),
-          12,
-          0.3,
-          0.3,
-          0.3,
-          0.01);
-      if (caster instanceof ServerPlayerEntity player) {
-        player.sendMessage(Text.translatable("nightborn.faith.smothered"), true);
-      }
       return;
     }
     wielder

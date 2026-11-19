@@ -18,6 +18,7 @@ public record PrayerPower(
     float harmPerSecond,
     Optional<RegistryKey<DamageType>> harmType,
     Optional<Float> spotRange,
+    float height,
     Optional<Identifier> look) {
 
   public static final Codec<PrayerPower> CODEC =
@@ -49,6 +50,9 @@ public record PrayerPower(
                           Codec.floatRange(1.0F, 32.0F)
                               .optionalFieldOf("spot_range")
                               .forGetter(PrayerPower::spotRange),
+                          Codec.floatRange(1.0F, 32.0F)
+                              .optionalFieldOf("height", 8.0F)
+                              .forGetter(PrayerPower::height),
                           Identifier.CODEC.optionalFieldOf("look").forGetter(PrayerPower::look))
                       .apply(instance, PrayerPower::new))
           .validate(PrayerPower::whole);

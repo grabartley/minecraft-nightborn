@@ -25,16 +25,18 @@ public final class Wielders {
     return Optional.ofNullable(first).or(() -> Optional.ofNullable(second));
   }
 
+  static boolean blessable(
+      final boolean mobCaster, final boolean alive, final boolean seen, final boolean allied) {
+    return !mobCaster && alive && seen && allied;
+  }
+
   @Nullable
   private static LivingEntity ally(final LivingEntity caster, final double range) {
-    if (caster instanceof MobEntity) {
-      return null;
-    }
-    final LivingEntity looked = PowerSight.looked(caster, range);
+    final LivingEntity looked =
+        caster instanceof MobEntity ? null : PowerSight.looked(caster, range);
     return looked != null
-            && looked.isAlive()
-            && caster.canSee(looked)
-            && TrapAllies.allied(caster, looked)
+            && blessable(
+                false, looked.isAlive(), caster.canSee(looked), TrapAllies.allied(caster, looked))
         ? looked
         : null;
   }

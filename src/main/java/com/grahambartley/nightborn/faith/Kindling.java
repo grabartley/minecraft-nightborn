@@ -81,8 +81,10 @@ public final class Kindling {
   }
 
   public static float strike(final ItemStack weapon, final Entity target) {
-    final long now = target.getWorld().getTime();
-    return burning(weapon, now).map(Flame::damage).orElse(0.0F);
+    if (target.isFireImmune()) {
+      return 0.0F;
+    }
+    return burning(weapon, target.getWorld().getTime()).map(Flame::damage).orElse(0.0F);
   }
 
   public static float heal(final LivingEntity entity, final float amount) {

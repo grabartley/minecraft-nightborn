@@ -2,6 +2,7 @@ package com.grahambartley.nightborn.occult;
 
 import com.grahambartley.nightborn.accessory.GiftAttributes;
 import com.grahambartley.nightborn.servant.Servants;
+import com.grahambartley.nightborn.skill.AreaRules;
 import com.grahambartley.nightborn.vampire.VampireAttributes;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -55,7 +56,7 @@ public final class FogClouds {
       if (!cloud.world().equals(world.getRegistryKey())) {
         continue;
       }
-      if (!FogRules.lasts(now, cloud.startedAt() + cloud.power().durationTicks())) {
+      if (!AreaRules.lasts(now, cloud.startedAt() + cloud.power().durationTicks())) {
         clouds.remove();
         continue;
       }
@@ -90,7 +91,7 @@ public final class FogClouds {
             LivingEntity.class,
             new Box(cloud.centre(), cloud.centre()).expand(radius),
             candidate ->
-                FogRules.covers(candidate.squaredDistanceTo(cloud.centre()), radius)
+                AreaRules.inside(candidate.squaredDistanceTo(cloud.centre()), radius)
                     && FogRules.touches(
                         candidate.isAlive(),
                         candidate.getUuid().equals(cloud.caster()),

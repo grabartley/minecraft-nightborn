@@ -4,6 +4,7 @@ import com.grahambartley.nightborn.faith.Wielders;
 import com.grahambartley.nightborn.mind.CommandAim;
 import com.grahambartley.nightborn.mind.Commands;
 import com.grahambartley.nightborn.mind.Mesmerise;
+import com.grahambartley.nightborn.occult.Circles;
 import com.grahambartley.nightborn.occult.HexPower;
 import com.grahambartley.nightborn.occult.ShadowStep;
 import com.grahambartley.nightborn.trap.TrapSpots;
@@ -81,6 +82,12 @@ public record PowerAim(
 
   public boolean unplaced(final SkillPower power) {
     return places(power) && spot == null;
+  }
+
+  public boolean smothered(final LivingEntity caster, final SkillPower power) {
+    return power.faith().blessing().isPresent()
+        && (Circles.stopsPrayers(caster.getWorld(), caster.getPos())
+            || wielder != null && Circles.stopsPrayers(wielder.getWorld(), wielder.getPos()));
   }
 
   public boolean unarmed(final SkillPower power) {

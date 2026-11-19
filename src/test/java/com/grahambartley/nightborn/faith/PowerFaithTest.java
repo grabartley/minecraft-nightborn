@@ -9,6 +9,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 @ExtendWith(MinecraftBootstrapExtension.class)
 class PowerFaithTest {
@@ -32,5 +33,18 @@ class PowerFaithTest {
     assertEquals(arms, faith.armsAWeapon());
     assertEquals(spot, faith.spotRange().orElse(0.0F));
     assertEquals(!any, faith.equals(PowerFaith.NONE));
+  }
+
+  @ParameterizedTest(name = "{0}")
+  @ValueSource(
+      strings = {
+        "{\"rebuke\":{\"range\":8,\"arc_degrees\":90,\"push\":1.5,\"silence_ticks\":40},\"prayer\":{\"radius\":6,\"health\":6}}",
+        "{\"blessing\":{\"range\":8,\"duration_ticks\":1200},\"blood_fire\":{\"health_cost\":4,\"duration_ticks\":1800,\"damage\":3,\"burn_ticks\":100}}"
+      })
+  @DisplayName("a power does one act of faith only")
+  void oneOnly(final String json) {
+    assertEquals(
+        true,
+        PowerFaith.CODEC.codec().parse(JsonOps.INSTANCE, JsonParser.parseString(json)).isError());
   }
 }

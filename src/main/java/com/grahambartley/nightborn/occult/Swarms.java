@@ -2,6 +2,7 @@ package com.grahambartley.nightborn.occult;
 
 import com.grahambartley.nightborn.downed.DownedTargeting;
 import com.grahambartley.nightborn.fight.RecentBlows;
+import com.grahambartley.nightborn.skill.AreaRules;
 import com.grahambartley.nightborn.skill.PowerReach;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -56,7 +57,7 @@ public final class Swarms {
       final Entity found = world == null ? null : world.getEntity(swarm.caster());
       if (!(found instanceof LivingEntity caster)
           || !caster.isAlive()
-          || !FogRules.lasts(world.getTime(), swarm.startedAt() + swarm.power().durationTicks())) {
+          || !AreaRules.lasts(world.getTime(), swarm.startedAt() + swarm.power().durationTicks())) {
         swarms.remove();
         continue;
       }

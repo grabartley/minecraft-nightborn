@@ -1,5 +1,6 @@
 package com.grahambartley.nightborn.occult;
 
+import com.grahambartley.nightborn.skill.AreaRules;
 import com.grahambartley.nightborn.skill.PowerReach;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -58,7 +59,7 @@ public final class Circles {
                 circle.power().stopsPrayers()
                     && circle.world().equals(world.getRegistryKey())
                     && now < circle.startedAt() + circle.power().durationTicks()
-                    && FogRules.covers(
+                    && AreaRules.inside(
                         at.squaredDistanceTo(circle.centre()), circle.power().radius()));
   }
 
@@ -70,7 +71,7 @@ public final class Circles {
       if (!circle.world().equals(world.getRegistryKey())) {
         continue;
       }
-      if (!FogRules.lasts(now, circle.startedAt() + circle.power().durationTicks())) {
+      if (!AreaRules.lasts(now, circle.startedAt() + circle.power().durationTicks())) {
         circles.remove();
         continue;
       }
@@ -110,7 +111,7 @@ public final class Circles {
             LivingEntity.class,
             new Box(circle.centre(), circle.centre()).expand(radius, 2.0, radius),
             candidate ->
-                FogRules.covers(candidate.squaredDistanceTo(circle.centre()), radius)
+                AreaRules.inside(candidate.squaredDistanceTo(circle.centre()), radius)
                     && Humans.human(candidate)
                     && (caster == null || PowerReach.touches(caster, candidate)))) {
       for (final StatusEffectInstance effect : circle.power().effects()) {

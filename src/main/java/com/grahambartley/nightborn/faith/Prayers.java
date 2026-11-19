@@ -4,6 +4,7 @@ import com.grahambartley.nightborn.boss.ZoneMarkEntity;
 import com.grahambartley.nightborn.boss.ZoneShape;
 import com.grahambartley.nightborn.mind.MindEffect;
 import com.grahambartley.nightborn.occult.Humans;
+import com.grahambartley.nightborn.skill.AreaRules;
 import com.grahambartley.nightborn.skill.PowerReach;
 import com.grahambartley.nightborn.trap.TrapDamage;
 import com.grahambartley.nightborn.vampire.Vampires;
@@ -37,7 +38,6 @@ public final class Prayers {
 
   static final int SHELTER_TICKS = PrayerRules.PULSE_TICKS + 10;
   static final int GLOW_TICKS = 5;
-  static final double PILLAR_HEIGHT = 8.0;
   static final DustParticleEffect GOLD_DUST =
       new DustParticleEffect(new Vector3f(0.95F, 0.82F, 0.45F), 1.0F);
 
@@ -71,7 +71,7 @@ public final class Prayers {
     final List<RegistryEntry<StatusEffect>> clears = PrayerHealing.clears(caster);
     final Vec3d centre = at == null ? caster.getPos() : at;
     if (power.health() > 0.0F) {
-      for (final LivingEntity human : humans(world, centre, power.radius(), at != null)) {
+      for (final LivingEntity human : humans(world, centre, power, at != null)) {
         PrayerHealing.heal(caster, human, power.health(), clears);
         world.spawnParticles(
             ParticleTypes.HEART,
@@ -112,8 +112,9 @@ public final class Prayers {
         continue;
       }
       final LivingEntity caster = caster(world, prayer);
-      if (!PrayerRules.lasts(now, prayer.startedAt() + prayer.power().durationTicks())
-          || prayer.spot() == null && (caster == null || !caster.isAlive())) {
+      if (!AreaRules.lasts(now, prayer.startedAt() + prayer.power().durationTicks())
+          || caster == null
+          || !caster.isAlive()) {
         prayers.remove();
         continue;
       }
@@ -128,13 +129,10 @@ public final class Prayers {
   }
 
   private static void pulse(
-      final ServerWorld world,
-      final Prayer prayer,
-      @Nullable final LivingEntity caster,
-      final Vec3d centre) {
+      final ServerWorld world, final Prayer prayer, final LivingEntity caster, final Vec3d centre) {
     final PrayerPower power = prayer.power();
-    for (final LivingEntity human : humans(world, centre, power.radius(), prayer.spot() != null)) {
-      if (caster != null && power.healthPerSecond() > 0.0F) {
+    for (final LivingEntity human : humans(world, centre, power, prayer.spot() != null)) {
+      if (power.healthPerSecond() > 0.0F) {
         PrayerHealing.heal(caster, human, power.healthPerSecond(), prayer.clears());
       }
       if (power.shelters()) {
@@ -159,54 +157,50 @@ public final class Prayers {
   private static void harm(
       final ServerWorld world,
       final Prayer prayer,
-      @Nullable final LivingEntity caster,
+      final LivingEntity caster,
       final Vec3d centre,
       final RegistryKey<DamageType> type) {
-    final float radius = prayer.power().radius();
     for (final LivingEntity vampire :
         inside(
             world,
             centre,
-            radius,
+            prayer.power(),
             prayer.spot() != null,
-            candidate ->
-                Vampires.isVampire(candidate)
-                    && (caster == null || PowerReach.touches(caster, candidate)))) {
+            candidate -> Vampires.isVampire(candidate) && PowerReach.touches(caster, candidate))) {
       vampire.damage(TrapDamage.of(vampire, type, caster), prayer.power().harmPerSecond());
     }
   }
 
   private static List<LivingEntity> humans(
-      final ServerWorld world, final Vec3d centre, final float radius, final boolean pillar) {
-    return inside(world, centre, radius, pillar, Humans::human);
+      final ServerWorld world, final Vec3d centre, final PrayerPower power, final boolean pillar) {
+    return inside(world, centre, power, pillar, Humans::human);
   }
 
   private static List<LivingEntity> inside(
       final ServerWorld world,
       final Vec3d centre,
-      final float radius,
+      final PrayerPower power,
       final boolean pillar,
       final Predicate<LivingEntity> test) {
+    final float radius = power.radius();
     final Box reach =
         pillar
-            ? new Box(centre, centre).expand(radius, 0.0, radius).stretch(0.0, PILLAR_HEIGHT, 0.0)
+            ? new Box(centre, centre).expand(radius, 1.0, radius).stretch(0.0, power.height(), 0.0)
             : new Box(centre, centre).expand(radius);
     return world.getEntitiesByClass(
         LivingEntity.class,
-        reach.expand(0.0, 1.0, 0.0),
+        reach,
         candidate ->
             !candidate.isSpectator()
-                && PrayerRules.inside(
-                    pillar
-                        ? PrayerRules.flat(candidate.getPos(), centre)
-                        : candidate.squaredDistanceTo(centre),
-                    radius)
+                && (pillar
+                    ? AreaRules.column(candidate.getPos(), centre, radius, power.height())
+                    : AreaRules.inside(candidate.squaredDistanceTo(centre), radius))
                 && test.test(candidate));
   }
 
   private static void glow(final ServerWorld world, final Prayer prayer, final Vec3d centre) {
     if (prayer.spot() != null) {
-      for (double y = 0.2; y < PILLAR_HEIGHT; y += 0.8) {
+      for (double y = 0.2; y < prayer.power().height(); y += 0.8) {
         world.spawnParticles(
             ParticleTypes.END_ROD,
             centre.x,

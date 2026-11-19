@@ -2,6 +2,7 @@ package com.grahambartley.nightborn.trap;
 
 import com.grahambartley.nightborn.boss.ZoneMarkEntity;
 import com.grahambartley.nightborn.boss.ZoneShape;
+import com.grahambartley.nightborn.skill.AreaRules;
 import com.grahambartley.nightborn.vampire.Vampires;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -29,7 +30,7 @@ public final class Baits {
       RegistryKey<World> world, BlockPos spot, BaitPower power, long until, Set<UUID> told) {
 
     boolean lasts(final World at) {
-      return world.equals(at.getRegistryKey()) && FieldRules.lasts(at.getTime(), until);
+      return world.equals(at.getRegistryKey()) && AreaRules.lasts(at.getTime(), until);
     }
 
     double squaredDistanceTo(final Vec3d point) {
@@ -72,7 +73,7 @@ public final class Baits {
   public static Optional<BlockPos> nearest(final World world, final Vec3d from) {
     return BAITS.stream()
         .filter(bait -> bait.lasts(world))
-        .filter(bait -> FieldRules.inside(bait.squaredDistanceTo(from), bait.power().lureRange()))
+        .filter(bait -> AreaRules.inside(bait.squaredDistanceTo(from), bait.power().lureRange()))
         .min(Comparator.comparingDouble(bait -> bait.squaredDistanceTo(from)))
         .map(Bait::spot);
   }
@@ -85,7 +86,7 @@ public final class Baits {
     BAITS.removeIf(
         bait ->
             bait.world().equals(world.getRegistryKey())
-                && !FieldRules.lasts(world.getTime(), bait.until()));
+                && !AreaRules.lasts(world.getTime(), bait.until()));
     if (world.getTime() % SCENT_EVERY_TICKS != 0) {
       return;
     }
@@ -95,7 +96,7 @@ public final class Baits {
       }
       for (final ServerPlayerEntity player : world.getPlayers()) {
         if (Vampires.isVampire(player)
-            && FieldRules.inside(bait.squaredDistanceTo(player.getPos()), bait.power().scentRange())
+            && AreaRules.inside(bait.squaredDistanceTo(player.getPos()), bait.power().scentRange())
             && bait.told().add(player.getUuid())) {
           player.sendMessage(Text.translatable("nightborn.trap.bait_scent"), true);
         }
