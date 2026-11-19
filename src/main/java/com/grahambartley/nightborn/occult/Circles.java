@@ -48,11 +48,7 @@ public final class Circles {
     if (caster.getWorld() instanceof ServerWorld world) {
       final Vec3d at = caster.getPos();
       CIRCLES.add(new Circle(world.getRegistryKey(), at, caster.getUuid(), power, world.getTime()));
-      power
-          .look()
-          .ifPresent(
-              look ->
-                  ZoneMarkEntity.ground(world, at, power.radius(), look, power.durationTicks()));
+      ZoneMarkEntity.ground(world, at, power.radius(), power.look(), power.durationTicks(), 0.0F);
     }
   }
 

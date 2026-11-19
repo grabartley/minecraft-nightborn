@@ -59,16 +59,21 @@ public class ZoneMarkEntity extends Entity implements GeoEntity {
     return mark;
   }
 
-  public static ZoneMarkEntity ground(
+  public static Optional<ZoneMarkEntity> ground(
       final World world,
       final Vec3d at,
       final double radius,
-      final Identifier look,
-      final int ticks) {
-    final ZoneMarkEntity mark =
-        place(world, ZoneShape.circle(at.x, at.z, radius), at.y + GROUND_LIFT, Optional.of(look));
-    mark.linger(ticks);
-    return mark;
+      final Optional<Identifier> look,
+      final int ticks,
+      final float rise) {
+    return look.map(
+        id -> {
+          final ZoneMarkEntity mark =
+              place(world, ZoneShape.circle(at.x, at.z, radius), at.y + GROUND_LIFT, look);
+          mark.linger(ticks);
+          mark.rise(rise);
+          return mark;
+        });
   }
 
   protected void shape(final float radius, final Optional<Identifier> look) {

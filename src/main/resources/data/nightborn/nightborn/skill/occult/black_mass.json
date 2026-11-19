@@ -17,6 +17,8 @@
     "blood": 6,
     "cooldown_ticks": 6000,
     "fog": {
+      "look": "nightborn:grave_fog",
+      "rise": 2.5,
       "radius": 12.0,
       "duration_ticks": 300,
       "effects": []

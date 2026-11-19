@@ -75,14 +75,13 @@ public final class Prayers {
     }
     if (power.lingers()) {
       final Optional<ZoneMarkEntity> mark =
-          power
-              .look()
-              .filter(look -> at != null)
-              .map(
-                  look ->
-                      ZoneMarkEntity.ground(
-                          world, at, power.radius(), look, power.durationTicks()));
-      mark.ifPresent(placed -> placed.rise(power.rise()));
+          ZoneMarkEntity.ground(
+              world,
+              at,
+              power.radius(),
+              power.look().filter(look -> at != null),
+              power.durationTicks(),
+              power.rise());
       final Prayer prayer =
           new Prayer(
               world.getRegistryKey(), caster.getUuid(), at, power, clears, world.getTime(), mark);
