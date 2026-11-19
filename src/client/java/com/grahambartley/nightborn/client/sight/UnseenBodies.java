@@ -1,5 +1,6 @@
 package com.grahambartley.nightborn.client.sight;
 
+import com.grahambartley.nightborn.mob.VampireEntity;
 import com.grahambartley.nightborn.render.CoffinSleeperView;
 import com.grahambartley.nightborn.vanish.VanishAttachment;
 import net.minecraft.entity.Entity;
@@ -16,9 +17,7 @@ public final class UnseenBodies {
   }
 
   public static boolean skipped(final Entity entity) {
-    return UnseenView.hides(
-        VanishAttachment.isGone(entity),
-        entity instanceof LivingEntity sleeper && CoffinSleeperView.hidden(sleeper),
-        RevealView.colour(entity).isPresent());
+    return UnseenView.skips(
+        bodyHidden(entity), RevealView.colour(entity).isPresent(), entity instanceof VampireEntity);
   }
 }

@@ -44,4 +44,13 @@ class VampireReadingTest {
                 Optional.ofNullable(LINES.get(id.getPath()))
                     .map(line -> Identifier.of("nightborn", line))));
   }
+
+  @ParameterizedTest(name = "{0}, registered {1} -> named {1}")
+  @CsvSource({"elder, true", "none, false"})
+  @DisplayName("a vampire's stage is named only when it is a known stage")
+  void known(final String stage, final boolean registered) {
+    assertEquals(
+        registered,
+        VampireReading.known(Identifier.of("nightborn", stage), id -> registered).isPresent());
+  }
 }

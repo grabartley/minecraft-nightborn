@@ -10,6 +10,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Identifier;
@@ -36,10 +37,15 @@ public final class VampireReading {
     return owned.stream().map(lineOf).flatMap(Optional::stream).distinct().toList();
   }
 
+  public static Optional<Identifier> known(
+      final Identifier stage, final Predicate<Identifier> registered) {
+    return Optional.of(stage).filter(registered);
+  }
+
   private static Optional<Identifier> stage(final LivingEntity vampire) {
     if (vampire instanceof VampireEntity mob) {
-      return Optional.of(mob.stageId())
-          .filter(id -> VampireStages.stage(mob.getRegistryManager(), id).isPresent());
+      return known(
+          mob.stageId(), id -> VampireStages.stage(mob.getRegistryManager(), id).isPresent());
     }
     if (vampire instanceof PlayerEntity player) {
       return AgeLadder.of(player.getRegistryManager())

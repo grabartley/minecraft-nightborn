@@ -8,26 +8,29 @@ import org.junit.jupiter.params.provider.CsvSource;
 
 class UnseenViewTest {
 
-  @ParameterizedTest(name = "vanished {0}, in a shut coffin {1}, revealed {2} -> hidden {3}")
+  @ParameterizedTest(name = "body hidden {0}, revealed {1}, outlinable {2} -> skipped {3}")
   @CsvSource({
     "false, false, false, false",
-    "true, false, false, true",
-    "false, true, false, true",
-    "true, false, true, false",
     "false, true, true, false",
-    "false, false, true, false"
+    "true, false, true, true",
+    "true, true, true, false",
+    "true, true, false, true",
+    "true, false, false, true"
   })
   @DisplayName(
-      "a vanished vampire or one asleep under a shut lid is hidden, unless a hunter's sight"
-          + " reveals it")
-  void hides(
-      final boolean gone, final boolean sheltered, final boolean revealed, final boolean hidden) {
-    assertEquals(hidden, UnseenView.hides(gone, sheltered, revealed));
+      "a hidden body is skipped unless a hunter's sight reveals it and it can be drawn as an"
+          + " outline only")
+  void skips(
+      final boolean hidden,
+      final boolean revealed,
+      final boolean outlinable,
+      final boolean skipped) {
+    assertEquals(skipped, UnseenView.skips(hidden, revealed, outlinable));
   }
 
   @ParameterizedTest(name = "vanished {0}, in a shut coffin {1} -> body hidden {2}")
   @CsvSource({"false, false, false", "true, false, true", "false, true, true", "true, true, true"})
-  @DisplayName("a vanished vampire or one under a shut lid shows no body, only an outline")
+  @DisplayName("a vanished vampire or one under a shut lid shows no body")
   void bodyHidden(final boolean gone, final boolean sheltered, final boolean hidden) {
     assertEquals(hidden, UnseenView.bodyHidden(gone, sheltered));
   }

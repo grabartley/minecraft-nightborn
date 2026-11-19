@@ -4,7 +4,6 @@ import com.grahambartley.nightborn.batform.BatForm;
 import com.grahambartley.nightborn.client.sight.UnseenBodies;
 import com.grahambartley.nightborn.mob.VampireEntity;
 import com.grahambartley.nightborn.mob.look.VampireSize;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
@@ -39,11 +38,18 @@ public class VampireRenderer extends GeoEntityRenderer<VampireEntity> {
       final MatrixStack matrices,
       final VertexConsumerProvider vertexConsumers,
       final int light) {
-    if (BatForm.isBat(vampire)) {
+    final boolean hidden = UnseenBodies.bodyHidden(vampire);
+    this.shadowRadius = hidden ? 0.0F : SHADOW_RADIUS;
+    if (BatForm.isBat(vampire) && !hidden) {
       batForm.render(vampire, yaw, tickDelta, matrices, vertexConsumers, light);
       return;
     }
     super.render(vampire, yaw, tickDelta, matrices, vertexConsumers, light);
+  }
+
+  @Override
+  public boolean hasLabel(final VampireEntity vampire) {
+    return !UnseenBodies.bodyHidden(vampire) && super.hasLabel(vampire);
   }
 
   @Override
@@ -53,9 +59,7 @@ public class VampireRenderer extends GeoEntityRenderer<VampireEntity> {
       final VertexConsumerProvider bufferSource,
       final float partialTick) {
     if (UnseenBodies.bodyHidden(vampire)) {
-      return MinecraftClient.getInstance().hasOutline(vampire)
-          ? RenderLayer.getOutline(texture)
-          : null;
+      return RenderLayer.getOutline(texture);
     }
     return super.getRenderType(vampire, texture, bufferSource, partialTick);
   }
