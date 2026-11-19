@@ -14,12 +14,17 @@ import org.junit.jupiter.params.provider.EnumSource;
 
 class HunterActionTest {
 
-  private static final Path CLIPS =
-      Path.of("src/client/resources/assets/nightborn/animations/entity/hunter.animation.json");
+  private static final Path ANIMATIONS =
+      Path.of("src/client/resources/assets/nightborn/animations/entity");
+  private static final Path CLIPS = ANIMATIONS.resolve("hunter.animation.json");
   private static final double TICKS_PER_SECOND = 20.0;
 
   private static JsonObject clips() throws IOException {
-    return JsonParser.parseString(Files.readString(CLIPS))
+    return clips(CLIPS);
+  }
+
+  private static JsonObject clips(final Path file) throws IOException {
+    return JsonParser.parseString(Files.readString(file))
         .getAsJsonObject()
         .getAsJsonObject("animations");
   }
@@ -60,10 +65,18 @@ class HunterActionTest {
     assertEquals(action, HunterAction.byIndex(index));
   }
 
-  @ParameterizedTest(name = "{0}")
-  @EnumSource(value = HunterAction.class, names = "NONE", mode = EnumSource.Mode.EXCLUDE)
-  void theSharedAnimationsHoldEveryAction(final HunterAction action) throws IOException {
-    assertTrue(clips().has(action.animation()));
+  @ParameterizedTest(name = "{0} has {1}")
+  @CsvSource({
+    "hunter, CROSSBOW_SHOT",
+    "hunter, THROW_HOLY_WATER",
+    "hunter, RAISE_CRUCIFIX",
+    "grand_inquisitor, CROSSBOW_SHOT",
+    "grand_inquisitor, THROW_HOLY_WATER",
+    "grand_inquisitor, RAISE_CRUCIFIX"
+  })
+  void everyHunterRigHoldsEveryAction(final String rig, final HunterAction action)
+      throws IOException {
+    assertTrue(clips(ANIMATIONS.resolve(rig + ".animation.json")).has(action.animation()));
   }
 
   @ParameterizedTest(name = "{0}")

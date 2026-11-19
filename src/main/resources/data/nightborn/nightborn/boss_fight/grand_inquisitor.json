@@ -229,7 +229,6 @@
   "change_knock": 2.0,
   "change_range": 8.0,
   "clips": {
-    "summon": "arrive",
     "guard": "guard_cross",
     "break_away": "break_away",
     "downed_form": "downed_kneel"
