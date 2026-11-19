@@ -59,6 +59,7 @@ public enum VampirePose {
       Optional<VampirePose> coffin,
       boolean downed,
       boolean rising,
+      boolean dying,
       boolean levitating,
       boolean landing,
       boolean sprinting,
@@ -99,7 +100,7 @@ public enum VampirePose {
     if (cue.downed()) {
       return DOWNED;
     }
-    if (cue.rising()) {
+    if (cue.rising() && !cue.dying()) {
       return RISE;
     }
     if (cue.levitating()) {

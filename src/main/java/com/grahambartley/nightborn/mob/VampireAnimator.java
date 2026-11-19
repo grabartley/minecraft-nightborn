@@ -53,6 +53,7 @@ public final class VampireAnimator {
                           CoffinRise.pose(vampire),
                           downed,
                           risingEdge.ending(),
+                          !vampire.isAlive(),
                           levitating,
                           landingEdge.ending(),
                           vampire.isSprinting(),

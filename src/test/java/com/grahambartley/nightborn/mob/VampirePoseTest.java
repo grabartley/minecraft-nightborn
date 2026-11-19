@@ -9,54 +9,61 @@ import com.grahambartley.nightborn.mob.look.VampireRig;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Stream;
 import net.minecraft.util.Identifier;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.EnumSource;
+import org.junit.jupiter.params.provider.MethodSource;
 import software.bernie.geckolib.animation.Animation;
 
 class VampirePoseTest {
 
   @ParameterizedTest(
       name =
-          "coffin {0}, downed {1}, rising {2}, levitating {3}, landing {4}, seated {8}, reading {9}:"
-              + " {10}")
+          "coffin {0}, downed {1}, rising {2}, dying {3}, levitating {4}, landing {5}, seated {9},"
+              + " reading {10}: {11}")
   @CsvSource({
-    "COFFIN_SLEEP, true, false, true, true, true, 0.9, 0.3, false, false, COFFIN_SLEEP, coffin_sleep",
-    "COFFIN_RISE, true, false, true, false, false, 0.9, 0.3, false, false, COFFIN_RISE, coffin_rise",
-    "COFFIN_STEP_OUT, true, false, true, false, false, 0.9, 0.3, false, false, COFFIN_STEP_OUT, coffin_step_out",
-    ", true, false, true, false, false, 0.9, 0.3, false, false, DOWNED, downed",
-    ", false, false, true, false, false, 0.0, 0.0, false, false, LEVITATE, levitate",
-    ", false, false, true, false, false, 0.0, 0.1, false, false, LEVITATE_MOVE, levitate_move",
-    ", false, false, true, false, false, 0.0, 0.3, false, false, LEVITATE_SPRINT, levitate_sprint",
-    ", false, false, true, false, true, 0.0, 0.1, false, false, LEVITATE_SPRINT, levitate_sprint",
-    ", false, false, false, true, false, 0.9, 0.3, false, false, LAND, land",
-    ", false, false, false, false, false, 0.9, 0.3, false, false, RUN, run",
-    ", false, false, false, false, false, 0.3, 0.1, false, false, WALK, walk",
-    ", false, false, false, false, false, 0.05, 0.0, false, false, IDLE, idle",
-    ", false, false, false, false, false, 0.05, 0.0, true, false, SIT, sit",
-    ", false, false, false, false, false, 0.05, 0.0, true, true, SIT, sit",
-    ", false, false, true, false, false, 0.0, 0.0, true, false, LEVITATE, levitate",
-    ", true, false, false, false, false, 0.0, 0.0, true, false, DOWNED, downed",
-    ", false, false, false, false, false, 0.05, 0.0, false, true, READ, read",
-    ", false, false, false, false, false, 0.3, 0.1, false, true, WALK, walk",
-    ", false, false, false, false, false, 0.0, 0.0, false, false, IDLE, idle",
-    ", false, true, false, false, false, 0.9, 0.3, false, false, RISE, rise",
-    ", true, true, false, false, false, 0.0, 0.0, false, false, DOWNED, downed",
-    "COFFIN_SLEEP, false, true, false, false, false, 0.0, 0.0, false, false, COFFIN_SLEEP, coffin_sleep"
+    "COFFIN_SLEEP, true, false, false, true, true, true, 0.9, 0.3, false, false, COFFIN_SLEEP, coffin_sleep",
+    "COFFIN_RISE, true, false, false, true, false, false, 0.9, 0.3, false, false, COFFIN_RISE, coffin_rise",
+    "COFFIN_STEP_OUT, true, false, false, true, false, false, 0.9, 0.3, false, false, COFFIN_STEP_OUT, coffin_step_out",
+    ", true, false, false, true, false, false, 0.9, 0.3, false, false, DOWNED, downed",
+    ", false, false, false, true, false, false, 0.0, 0.0, false, false, LEVITATE, levitate",
+    ", false, false, false, true, false, false, 0.0, 0.1, false, false, LEVITATE_MOVE, levitate_move",
+    ", false, false, false, true, false, false, 0.0, 0.3, false, false, LEVITATE_SPRINT, levitate_sprint",
+    ", false, false, false, true, false, true, 0.0, 0.1, false, false, LEVITATE_SPRINT, levitate_sprint",
+    ", false, false, false, false, true, false, 0.9, 0.3, false, false, LAND, land",
+    ", false, false, false, false, false, false, 0.9, 0.3, false, false, RUN, run",
+    ", false, false, false, false, false, false, 0.3, 0.1, false, false, WALK, walk",
+    ", false, false, false, false, false, false, 0.05, 0.0, false, false, IDLE, idle",
+    ", false, false, false, false, false, false, 0.05, 0.0, true, false, SIT, sit",
+    ", false, false, false, false, false, false, 0.05, 0.0, true, true, SIT, sit",
+    ", false, false, false, true, false, false, 0.0, 0.0, true, false, LEVITATE, levitate",
+    ", true, false, false, false, false, false, 0.0, 0.0, true, false, DOWNED, downed",
+    ", false, false, false, false, false, false, 0.05, 0.0, false, true, READ, read",
+    ", false, false, false, false, false, false, 0.3, 0.1, false, true, WALK, walk",
+    ", false, false, false, false, false, false, 0.0, 0.0, false, false, IDLE, idle",
+    ", false, true, false, false, false, false, 0.9, 0.3, false, false, RISE, rise",
+    ", true, true, false, false, false, false, 0.0, 0.0, false, false, DOWNED, downed",
+    "COFFIN_SLEEP, false, true, false, false, false, false, 0.0, 0.0, false, false, COFFIN_SLEEP, coffin_sleep",
+    ", false, true, true, false, false, false, 0.0, 0.0, false, false, IDLE, idle",
+    ", false, true, true, false, false, false, 0.9, 0.3, false, false, RUN, run"
   })
   @DisplayName(
       "resting or rising in a coffin wins over downed, then getting up, levitating, landing, sitting"
-          + " and moving,"
+          + " and moving, a dying vampire never gets up,"
           + " and a vampire reads only while it stands still")
   void pose(
       final VampirePose coffin,
       final boolean downed,
       final boolean rising,
+      final boolean dying,
       final boolean levitating,
       final boolean landing,
       final boolean sprinting,
@@ -73,6 +80,7 @@ class VampirePoseTest {
                 Optional.ofNullable(coffin),
                 downed,
                 rising,
+                dying,
                 levitating,
                 landing,
                 sprinting,
@@ -214,22 +222,21 @@ class VampirePoseTest {
   }
 
   @ParameterizedTest(name = "{0} {1}")
-  @CsvSource({
-    "MALE, DOWNED",
-    "MALE, RISE",
-    "FEMALE, DOWNED",
-    "FEMALE, RISE",
-    "LORD, DOWNED",
-    "LORD, RISE",
-    "ELDEST_MALE, DOWNED",
-    "ELDEST_MALE, RISE"
-  })
+  @MethodSource("rigsAndDownedPoses")
   @DisplayName("every rig can fall, lie breathing and get up")
   void downedShips(final VampireRig rig, final VampirePose pose) throws IOException {
     final JsonObject animations = clips(rig.clips());
     pose.clip()
         .getAnimationStages()
         .forEach(stage -> assertTrue(animations.has(stage.animationName()), stage.animationName()));
+  }
+
+  static Stream<Arguments> rigsAndDownedPoses() {
+    return Arrays.stream(VampireRig.values())
+        .flatMap(
+            rig ->
+                Stream.of(VampirePose.DOWNED, VampirePose.RISE)
+                    .map(pose -> Arguments.of(rig, pose)));
   }
 
   private static JsonObject clips(final Identifier file) throws IOException {
