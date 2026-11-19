@@ -14,6 +14,7 @@ import com.grahambartley.nightborn.gear.GearBlocks;
 import com.grahambartley.nightborn.gear.GearItems;
 import com.grahambartley.nightborn.guild.ContractItems;
 import com.grahambartley.nightborn.guild.GuildMobs;
+import com.grahambartley.nightborn.guild.party.TentBlocks;
 import com.grahambartley.nightborn.holy.HolyWater;
 import com.grahambartley.nightborn.hunter.HunterAttributes;
 import com.grahambartley.nightborn.journal.JournalItems;
@@ -56,6 +57,7 @@ public final class MinecraftBootstrapExtension implements BeforeAllCallback {
     ClothingFeatures.register();
     AccessoryFeatures.register();
     AmmoItems.register();
+    TentBlocks.register();
     Objects.requireNonNull(HolyWater.POTION);
     Objects.requireNonNull(BloodItems.BLOOD_BOTTLE);
     Objects.requireNonNull(ContractItems.HUNTER_CONTRACT);

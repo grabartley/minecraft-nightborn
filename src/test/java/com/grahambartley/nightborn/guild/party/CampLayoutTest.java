@@ -18,6 +18,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 @ExtendWith(MinecraftBootstrapExtension.class)
 class CampLayoutTest {
@@ -62,17 +63,20 @@ class CampLayoutTest {
     assertEquals(new CampSite.Bounds(minX, maxX, minZ, maxZ, 2), tent(rotation).bounds());
   }
 
+  private static CampLayout shipped() throws Exception {
+    return CampLayout.CODEC
+        .parse(
+            JsonOps.INSTANCE,
+            JsonParser.parseString(
+                Files.readString(
+                    Path.of(
+                        "src/main/resources/data/nightborn/nightborn/party_camp/hunter_party.json"))))
+        .getOrThrow();
+  }
+
   @Test
   void theShippedCampParsesWithThreeTentsAndThreeBeds() throws Exception {
-    final CampLayout layout =
-        CampLayout.CODEC
-            .parse(
-                JsonOps.INSTANCE,
-                JsonParser.parseString(
-                    Files.readString(
-                        Path.of(
-                            "src/main/resources/data/nightborn/nightborn/party_camp/hunter_party.json"))))
-            .getOrThrow();
+    final CampLayout layout = shipped();
     assertEquals(3, layout.tents().size());
     assertEquals(
         3,
@@ -80,5 +84,32 @@ class CampLayoutTest {
             .filter(piece -> piece.state().isOf(Blocks.BROWN_BED))
             .filter(piece -> piece.state().get(BedBlock.PART) == BedPart.HEAD)
             .count());
+  }
+
+  @ParameterizedTest(name = "tent {0}")
+  @ValueSource(ints = {0, 1, 2})
+  void everyShippedTentIsWholeAndCoversItsBed(final int index) throws Exception {
+    final CampLayout.Tent tent = shipped().tents().get(index);
+    final List<CampLayout.Piece> cells =
+        tent.placed().stream().filter(piece -> piece.state().isOf(TentBlocks.HUNTER_TENT)).toList();
+    final CampLayout.Piece origin =
+        cells.stream()
+            .filter(piece -> piece.state().get(HunterTentBlock.PART) == TentPart.ORIGIN)
+            .findFirst()
+            .orElseThrow();
+    final Direction facing = origin.state().get(HunterTentBlock.FACING);
+    assertEquals(TentPart.values().length, cells.size());
+    for (final CampLayout.Piece cell : cells) {
+      assertEquals(facing, cell.state().get(HunterTentBlock.FACING));
+      assertEquals(origin.pos(), cell.state().get(HunterTentBlock.PART).origin(cell.pos(), facing));
+    }
+    final List<BlockPos> beds =
+        tent.placed().stream()
+            .filter(piece -> piece.state().isOf(Blocks.BROWN_BED))
+            .map(CampLayout.Piece::pos)
+            .toList();
+    assertEquals(
+        List.of(origin.pos().add(TentPart.ROOF_FRONT.offset(facing)).down(), origin.pos().down()),
+        beds);
   }
 }

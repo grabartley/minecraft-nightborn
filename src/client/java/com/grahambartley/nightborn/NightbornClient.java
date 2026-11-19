@@ -31,6 +31,7 @@ import com.grahambartley.nightborn.familiar.Familiars;
 import com.grahambartley.nightborn.gear.GearBlocks;
 import com.grahambartley.nightborn.gramophone.GramophoneBlockEntity;
 import com.grahambartley.nightborn.guild.GuildMobs;
+import com.grahambartley.nightborn.guild.party.TentBlocks;
 import com.grahambartley.nightborn.house.crest.CrestBanners;
 import com.grahambartley.nightborn.inquisitor.InquisitorMobs;
 import com.grahambartley.nightborn.mob.NightbornMobs;
@@ -49,6 +50,7 @@ import com.grahambartley.nightborn.render.CrestBannerRenderer;
 import com.grahambartley.nightborn.render.FurnitureBlockRenderer;
 import com.grahambartley.nightborn.render.GeoBlockItemRenderer;
 import com.grahambartley.nightborn.render.GramophoneRenderer;
+import com.grahambartley.nightborn.render.HunterTentRenderer;
 import com.grahambartley.nightborn.render.OldBloodFontRenderer;
 import com.grahambartley.nightborn.render.RestlessDeadRenderer;
 import com.grahambartley.nightborn.render.RitualAltarRenderer;
@@ -81,6 +83,7 @@ public class NightbornClient implements ClientModInitializer {
     BlockEntityRendererFactories.register(DecorBlockEntities.WEAPON_RACK, WeaponRackRenderer::new);
     BlockEntityRendererFactories.register(RitualBlocks.ALTAR_ENTITY, RitualAltarRenderer::new);
     BlockEntityRendererFactories.register(OldBloodBlocks.FONT_ENTITY, OldBloodFontRenderer::new);
+    BlockEntityRendererFactories.register(TentBlocks.HUNTER_TENT_ENTITY, HunterTentRenderer::new);
     BuiltinItemRendererRegistry.INSTANCE.register(
         RitualBlocks.ALTAR,
         new GeoBlockItemRenderer<>(
