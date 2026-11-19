@@ -1,5 +1,10 @@
 {
   "rig": "lord",
   "texture": "nightborn:textures/entity/vampire/lord.png",
-  "eras": []
+  "eras": [],
+  "build": {
+    "width": 1.06,
+    "min_height": 2.15,
+    "max_height": 2.3
+  }
 }

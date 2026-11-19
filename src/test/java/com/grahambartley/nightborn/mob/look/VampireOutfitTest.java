@@ -61,7 +61,8 @@ class VampireOutfitTest {
       final String lookEra,
       final boolean fits) {
     final VampireOutfit outfit = new VampireOutfit(outfitRig, id(era), List.of(), 1);
-    final VampireLook look = new VampireLook(lookRig, id("t.png"), List.of(id(lookEra)), 1);
+    final VampireLook look =
+        new VampireLook(lookRig, id("t.png"), List.of(id(lookEra)), 1, Optional.empty());
     assertEquals(fits, outfit.fits(look));
   }
 

@@ -14,6 +14,7 @@ public final class StructureWalk {
 
   public static final Walker HUMAN = new Walker(true, 2);
   public static final Walker MOB = new Walker(false, TallestVampire.headroom());
+  public static final Walker LORD = new Walker(false, TallestLord.headroom());
 
   private static final List<String> OPEN =
       List.of(

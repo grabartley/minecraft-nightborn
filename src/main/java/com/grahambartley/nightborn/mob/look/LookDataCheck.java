@@ -33,6 +33,9 @@ public final class LookDataCheck {
               if (look.eras().isEmpty() && VampireRig.COMMON.contains(look.rig())) {
                 problems.add(id + " has no era");
               }
+              look.build()
+                  .filter(build -> build.minHeight() > build.maxHeight())
+                  .ifPresent(build -> problems.add(id + " has a lowest height above its highest"));
               for (final Identifier era : look.eras()) {
                 if (outfits.values().stream()
                     .noneMatch(o -> o.rig() == look.rig() && o.era().equals(era))) {

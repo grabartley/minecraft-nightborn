@@ -14,6 +14,7 @@ public final class Keep {
   public static final int NORTH = 6;
   public static final int SOUTH = 30;
   public static final int SCREEN = 17;
+  public static final int SCREEN_DOOR_HEIGHT = 3;
   public static final int CEILING = 21;
   public static final int SECOND = 8;
   public static final int THIRD = 14;
@@ -69,8 +70,9 @@ public final class Keep {
     }
     Openings.arch(t, Axis.X, Castle.MID - 1, Castle.MID + 1, SOUTH, Castle.FLOOR, 4, Castle.STEP);
     for (final int x : new int[] {WEST + 2, EAST - 2}) {
-      t.set(x, Castle.FLOOR, SCREEN, BlockState.AIR);
-      t.set(x, Castle.FLOOR + 1, SCREEN, BlockState.AIR);
+      for (int y = Castle.FLOOR; y < Castle.FLOOR + SCREEN_DOOR_HEIGHT; y++) {
+        t.set(x, y, SCREEN, BlockState.AIR);
+      }
     }
   }
 

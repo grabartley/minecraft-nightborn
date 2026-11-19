@@ -62,27 +62,34 @@ class LookDataCheckTest {
   }
 
   @Test
-  @DisplayName("no looks, no builds, a look without eras and an upside-down build are reported")
+  @DisplayName("no looks, no builds, a look without eras and upside-down builds are reported")
   void reportsEmpty() {
     assertEquals(
         List.of("there are no vampire looks", "there are no vampire builds"),
         LookDataCheck.problems(Map.of(), Map.of(), Map.of(), SLOTS));
     assertEquals(
         List.of(
-            "nightborn:eraless has no era", "nightborn:odd has a lowest height above its highest"),
+            "nightborn:eraless has no era",
+            "nightborn:lord has a lowest height above its highest",
+            "nightborn:odd has a lowest height above its highest"),
         LookDataCheck.problems(
             Map.of(
                 id("eraless"),
-                new VampireLook(VampireRig.MALE, id("t"), List.of(), 1),
+                new VampireLook(VampireRig.MALE, id("t"), List.of(), 1, Optional.empty()),
                 id("lord"),
-                new VampireLook(VampireRig.LORD, id("t"), List.of(), 1)),
+                new VampireLook(
+                    VampireRig.LORD,
+                    id("t"),
+                    List.of(),
+                    1,
+                    Optional.of(new VampireBuild(1.0F, 2.3F, 2.1F, 1)))),
             Map.of(),
             Map.of(id("odd"), new VampireBuild(1.0F, 1.9F, 1.6F, 1)),
             SLOTS));
   }
 
   private static VampireLook look(final VampireRig rig, final String era) {
-    return new VampireLook(rig, id("t.png"), List.of(id(era)), 1);
+    return new VampireLook(rig, id("t.png"), List.of(id(era)), 1, Optional.empty());
   }
 
   private static VampireOutfit outfit(

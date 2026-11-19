@@ -4,8 +4,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.grahambartley.nightborn.tools.structures.template.BlockState;
+import com.grahambartley.nightborn.tools.structures.template.Pos;
 import com.grahambartley.nightborn.tools.structures.template.Template;
 import com.grahambartley.nightborn.tools.structures.vampire.Coffins;
+import com.grahambartley.nightborn.tools.structures.vampire.StructureAudit;
+import com.grahambartley.nightborn.tools.structures.vampire.StructureWalk;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
@@ -29,6 +32,16 @@ class CastleTest {
     assertTrue(
         t.get(Castle.MID, Castle.FLOOR + 1, Keep.THRONE_Z)
             .startsWith("nightborn:ornate_chair[facing=south"));
+  }
+
+  @ParameterizedTest(name = "{0}")
+  @MethodSource("layouts")
+  void theLordWalksToEveryPieceHisHouseholdUses(final Template t) {
+    assertTrue(StructureWalk.LORD.headroom() > StructureWalk.MOB.headroom());
+    final Pos gate = new Pos(Castle.MID, Castle.FLOOR, Gatehouse.SOUTH);
+    assertEquals(
+        List.of(),
+        StructureAudit.unreachedHousehold(t, StructureWalk.from(t, StructureWalk.LORD, gate)));
   }
 
   @ParameterizedTest(name = "{0}")
