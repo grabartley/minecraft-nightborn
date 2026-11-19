@@ -3,6 +3,7 @@ package com.grahambartley.nightborn.seeker;
 import com.grahambartley.nightborn.age.AgeAttachment;
 import com.grahambartley.nightborn.age.AgeLadder;
 import com.grahambartley.nightborn.mob.VampireEntity;
+import com.grahambartley.nightborn.mob.stage.VampireStages;
 import com.grahambartley.nightborn.skill.SkillAttachment;
 import com.grahambartley.nightborn.skill.Skills;
 import java.util.Collection;
@@ -37,7 +38,8 @@ public final class VampireReading {
 
   private static Optional<Identifier> stage(final LivingEntity vampire) {
     if (vampire instanceof VampireEntity mob) {
-      return Optional.of(mob.stageId());
+      return Optional.of(mob.stageId())
+          .filter(id -> VampireStages.stage(mob.getRegistryManager(), id).isPresent());
     }
     if (vampire instanceof PlayerEntity player) {
       return AgeLadder.of(player.getRegistryManager())
