@@ -1,0 +1,19 @@
+{
+  "branch": "nightborn:seeker",
+  "requires": [
+    "nightborn:hunter/tracking"
+  ],
+  "icon": "nightborn:skills/icon/sixth_sense",
+  "column": 2,
+  "row": 0,
+  "ranks": [
+    {
+      "cost": 2,
+      "seek_gifts": [
+        {
+          "sense_range": 48.0
+        }
+      ]
+    }
+  ]
+}

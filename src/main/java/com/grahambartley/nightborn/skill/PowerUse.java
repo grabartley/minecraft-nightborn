@@ -10,6 +10,7 @@ public final class PowerUse {
     HELPLESS,
     HELD,
     BARRED,
+    REVEALED,
     GROUNDED,
     IN_WINGED_FORM,
     AS_A_BAT,
@@ -22,6 +23,7 @@ public final class PowerUse {
     NOWHERE,
     NO_GROUND,
     NO_SUBJECT,
+    NO_SCENE,
     REBUKED,
     NO_CRUCIFIX,
     NO_WEAPON,
@@ -58,7 +60,9 @@ public final class PowerUse {
       boolean hurt,
       boolean smothered,
       boolean stakeless,
-      boolean unloaded) {}
+      boolean unloaded,
+      boolean revealed,
+      boolean sceneless) {}
 
   private PowerUse() {}
 
@@ -77,6 +81,9 @@ public final class PowerUse {
     }
     if (situation.barred()) {
       return Verdict.BARRED;
+    }
+    if (situation.revealed()) {
+      return Verdict.REVEALED;
     }
     if (situation.grounded()) {
       return Verdict.GROUNDED;
@@ -116,6 +123,9 @@ public final class PowerUse {
     }
     if (situation.subjectless()) {
       return Verdict.NO_SUBJECT;
+    }
+    if (situation.sceneless()) {
+      return Verdict.NO_SCENE;
     }
     if (situation.crossless()) {
       return Verdict.NO_CRUCIFIX;

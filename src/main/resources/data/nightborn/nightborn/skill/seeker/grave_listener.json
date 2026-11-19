@@ -1,0 +1,19 @@
+{
+  "branch": "nightborn:seeker",
+  "requires": [
+    "nightborn:seeker/sixth_sense"
+  ],
+  "icon": "nightborn:skills/icon/grave_listener",
+  "column": 2,
+  "row": 2,
+  "ranks": [
+    {
+      "cost": 2,
+      "seek_gifts": [
+        {
+          "listen_range": 12.0
+        }
+      ]
+    }
+  ]
+}

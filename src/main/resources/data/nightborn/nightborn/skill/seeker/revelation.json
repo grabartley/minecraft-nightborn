@@ -1,0 +1,32 @@
+{
+  "branch": "nightborn:seeker",
+  "requires": [
+    "nightborn:seeker/true_sight",
+    "nightborn:seeker/mark_quarry"
+  ],
+  "icon": "nightborn:skills/icon/revelation",
+  "column": 1,
+  "row": 4,
+  "rank": "nightborn:master",
+  "ranks": [
+    {
+      "cost": 4
+    }
+  ],
+  "power": {
+    "blood": 0,
+    "cooldown_ticks": 6000,
+    "revelation": {
+      "range": 48.0,
+      "share_range": 16.0,
+      "duration_ticks": 400,
+      "colour": 13938487,
+      "bars": [
+        "nightborn:occult/shadow_veil",
+        "nightborn:occult/mist_form",
+        "nightborn:noble/glamour"
+      ]
+    },
+    "sound": "minecraft:block.bell.resonate"
+  }
+}

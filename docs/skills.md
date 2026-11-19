@@ -172,16 +172,16 @@ Nothing hides from a Seeker.
 
 | Skill | Kind | Ranks and cost | Needs | Gate | Cooldown | What it does |
 |---|---|---|---|---|---|---|
-| Keen Tracking | Passive | 3 ranks: 1, 1, 2 | Tracking | None | | Tracking reaches 32 blocks further and lasts 5 seconds longer each rank. At rank 3 fresh blood trails show |
+| Keen Tracking | Passive | 3 ranks: 1, 1, 2 | Tracking | None | | Tracking reaches 32 blocks further and lasts 5 seconds longer each rank. At rank 3 fresh blood trails show: the vampire Tracking points to drips blood where it stands, seen by the hunter alone |
 | Iron Will | Passive | 3 ranks: 2, 2, 3 | Tracking | None |  | 0.35 more mesmerise resistance at ranks 1 and 2, and 0.1 more at rank 3, 0.8 in all |
-| Sixth Sense | Passive | 2 | Tracking | None |  | The hunter is warned, with the direction, when a vampire mob watches, stalks or targets them. A vampire player never sets it off |
-| Soft Step | Passive | 3 ranks: 1, 2, 2 | Sixth Sense | None | | 25% less noise in a vampire's house each rank (HUNT-8) |
-| Read The Scene | Power | 2 | Keen Tracking | None | 20 | Used on a victim, a coffin or a kill, it tells the vampire's stage, its bloodlines and the way it went |
-| Mark Quarry | Power | 2 | Keen Tracking | None | 60 | Marks one creature or player in sight within 24 blocks, vampire or not. For 60 seconds it shows through walls, and a marked vampire takes 15% more damage from the hunter. Its trail stays for Tracking until dawn or its death. Shadow Veil, Mist Form and Glamour hide the outline while they last. One mark at a time |
-| Grave Listener | Passive | 2 | Sixth Sense | None | | While the hunter sneaks, sleeping vampires within 12 blocks are heard and faintly outlined through walls |
-| True Sight | Power | 3 | Sixth Sense | Hunter | 60 | For 6 seconds the hunter sees every vampire within 24 blocks outlined, through walls and whether it is hidden by Vanish, Shadow Veil, Mist Form or Glamour. A vampire player who is seen is told |
-| Revelation | Power | 4 | True Sight and Mark Quarry | Master | 300 | Capstone. For 20 seconds every vampire within 48 blocks is marked for the hunter and for every human within 16 blocks of them, and Shadow Veil, Mist Form and Glamour fail for those vampires. A vampire player who is marked is told |
-| Hunter's Patience | Passive | 3 | Revelation | Master |  | Seeker cooldowns are 20% shorter, and the hunter's allies also deal 10% more damage to a vampire the hunter has marked |
+| Sixth Sense | Passive | 2 | Tracking | None |  | The hunter is warned, with the direction, when a vampire mob within 48 blocks watches, stalks or targets them. A vampire player never sets it off |
+| Soft Step | Passive | 3 ranks: 1, 2, 2 | Sixth Sense | None | | 25% less noise in a vampire's house each rank (HUNT-8). With a Stalker's Cloak worn as well, no step is quieter than a fifth of its noise |
+| Read The Scene | Power | 2 | Keen Tracking | None | 20 | Used on a victim, a coffin or a kill, it tells the vampire's stage, its bloodlines and the way it went. The hunter looks at it within 8 blocks: a creature a vampire has bitten, a vampire's coffin, or the spot within 4 blocks of where a vampire killed. Signs stay fresh for one day. The way it went points to the vampire now, or says its trail is cold when it is too far away. With nothing to read it is refused |
+| Mark Quarry | Power | 2 | Keen Tracking | None | 60 | Marks one creature or player in sight within 24 blocks, vampire or not. For 60 seconds it shows through walls, and a marked vampire takes 15% more damage from the hunter. Its trail stays for Tracking until dawn or its death. Shadow Veil, Mist Form and Glamour hide the outline while they last. One mark at a time. A marked player is told |
+| Grave Listener | Passive | 2 | Sixth Sense | None | | While the hunter sneaks, sleeping vampires within 12 blocks are heard and faintly outlined through walls. Each sleeper's slow heartbeat comes from where it lies, every two seconds |
+| True Sight | Power | 3 | Sixth Sense | Hunter | 60 | For 6 seconds the hunter sees every vampire within 24 blocks outlined, through walls and whether it is hidden by Vanish, Shadow Veil, Mist Form or Glamour. A vampire player who is seen is told. A hidden vampire seen this way counts for the Seen Through trial |
+| Revelation | Power | 4 | True Sight and Mark Quarry | Master | 300 | Capstone. For 20 seconds every vampire within 48 blocks is marked for the hunter and for every human within 16 blocks of them, and Shadow Veil, Mist Form and Glamour fail for those vampires. A vampire player who is marked is told. The 16 blocks are from the hunter. A veil, mist or glamour already up ends, and a marked vampire that tries one is told it is laid bare. A vampire player loses them only when PvP is on |
+| Hunter's Patience | Passive | 3 | Revelation | Master |  | Seeker cooldowns are 20% shorter, and the hunter's allies also deal 10% more damage to a vampire the hunter has marked, by Mark Quarry or Revelation. Allies are other sworn hunters and guild hunters, and teammates |
 
 ## Skills The Mod Already Has
 

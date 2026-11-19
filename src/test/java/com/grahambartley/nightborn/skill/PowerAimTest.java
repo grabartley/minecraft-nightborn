@@ -51,10 +51,13 @@ class PowerAimTest {
         "{\"blood\":0,\"cooldown_ticks\":6000,\"prayer\":{\"radius\":2,\"duration_ticks\":100,\"health_per_second\":2,\"spot_range\":16}} | true | 0",
         "{\"blood\":0,\"cooldown_ticks\":1800,\"blessing\":{\"range\":6,\"duration_ticks\":1200}} | true | 0",
         "{\"blood\":0,\"cooldown_ticks\":2400,\"blood_fire\":{\"health_cost\":4,\"duration_ticks\":1800,\"damage\":3,\"burn_ticks\":100}} | true | 0",
-        "{\"blood\":0,\"cooldown_ticks\":600,\"rebuke\":{\"range\":8,\"arc_degrees\":90,\"push\":1.5,\"silence_ticks\":40}} | false | 0"
+        "{\"blood\":0,\"cooldown_ticks\":600,\"rebuke\":{\"range\":8,\"arc_degrees\":90,\"push\":1.5,\"silence_ticks\":40}} | false | 0",
+        "{\"blood\":0,\"cooldown_ticks\":1200,\"mark_quarry\":{\"range\":24,\"duration_ticks\":1200,\"damage_share\":0.15,\"colour\":1}} | true | 24",
+        "{\"blood\":0,\"cooldown_ticks\":1200,\"true_sight\":{\"range\":24,\"duration_ticks\":120,\"colour\":1}} | false | 0",
+        "{\"blood\":0,\"cooldown_ticks\":400,\"read_scene\":{\"range\":8,\"kill_radius\":4,\"fresh_ticks\":24000}} | false | 0"
       })
   @DisplayName(
-      "a pounce or a hex aims at one creature, a command at one held, a trap or a pillar of"
+      "a pounce, a hex or a quarry mark aims at one creature, a command at one held, a trap or a pillar of"
           + " light at a spot, and a blessing or blood fire at a weapon in hand")
   void aims(final String json, final boolean aims, final float reach) {
     final SkillPower power =

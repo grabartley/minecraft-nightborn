@@ -1,0 +1,39 @@
+{
+  "branch": "nightborn:seeker",
+  "requires": [
+    "nightborn:hunter/tracking"
+  ],
+  "icon": "nightborn:skills/icon/keen_tracking",
+  "column": 0,
+  "row": 0,
+  "ranks": [
+    {
+      "cost": 1,
+      "seek_gifts": [
+        {
+          "track_range": 32,
+          "track_ticks": 100
+        }
+      ]
+    },
+    {
+      "cost": 1,
+      "seek_gifts": [
+        {
+          "track_range": 32,
+          "track_ticks": 100
+        }
+      ]
+    },
+    {
+      "cost": 2,
+      "seek_gifts": [
+        {
+          "track_range": 32,
+          "track_ticks": 100,
+          "blood_trails": true
+        }
+      ]
+    }
+  ]
+}

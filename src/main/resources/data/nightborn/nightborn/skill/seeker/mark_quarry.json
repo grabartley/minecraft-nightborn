@@ -1,0 +1,25 @@
+{
+  "branch": "nightborn:seeker",
+  "requires": [
+    "nightborn:seeker/keen_tracking"
+  ],
+  "icon": "nightborn:skills/icon/mark_quarry",
+  "column": 1,
+  "row": 1,
+  "ranks": [
+    {
+      "cost": 2
+    }
+  ],
+  "power": {
+    "blood": 0,
+    "cooldown_ticks": 1200,
+    "mark_quarry": {
+      "range": 24.0,
+      "duration_ticks": 1200,
+      "damage_share": 0.15,
+      "colour": 11674146
+    },
+    "sound": "minecraft:block.amethyst_block.resonate"
+  }
+}

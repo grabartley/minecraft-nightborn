@@ -1,6 +1,7 @@
 package com.grahambartley.nightborn.skill;
 
 import com.grahambartley.nightborn.faith.PrayerGift;
+import com.grahambartley.nightborn.seeker.SeekGift;
 import com.grahambartley.nightborn.slayer.StandGift;
 import com.grahambartley.nightborn.trap.TrapGift;
 import com.mojang.serialization.Codec;
@@ -14,7 +15,8 @@ public record SkillRank(
     List<PowerGift> powerGifts,
     List<TrapGift> trapGifts,
     List<PrayerGift> prayerGifts,
-    List<StandGift> standGifts) {
+    List<StandGift> standGifts,
+    List<SeekGift> seekGifts) {
 
   public static final Codec<SkillRank> CODEC =
       RecordCodecBuilder.create(
@@ -44,7 +46,11 @@ public record SkillRank(
                       StandGift.CODEC
                           .listOf()
                           .optionalFieldOf("stand_gifts", List.of())
-                          .forGetter(SkillRank::standGifts))
+                          .forGetter(SkillRank::standGifts),
+                      SeekGift.CODEC
+                          .listOf()
+                          .optionalFieldOf("seek_gifts", List.of())
+                          .forGetter(SkillRank::seekGifts))
                   .apply(instance, SkillRank::new));
 
   public SkillRank {
@@ -53,9 +59,11 @@ public record SkillRank(
     trapGifts = List.copyOf(trapGifts);
     prayerGifts = List.copyOf(prayerGifts);
     standGifts = List.copyOf(standGifts);
+    seekGifts = List.copyOf(seekGifts);
   }
 
   public static SkillRank costing(final int cost) {
-    return new SkillRank(cost, List.of(), 0.0, List.of(), List.of(), List.of(), List.of());
+    return new SkillRank(
+        cost, List.of(), 0.0, List.of(), List.of(), List.of(), List.of(), List.of());
   }
 }

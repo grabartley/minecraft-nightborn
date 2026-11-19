@@ -28,7 +28,8 @@ class SkillRankTest {
     final SkillRank rank =
         SkillRank.CODEC.parse(JsonOps.INSTANCE, JsonParser.parseString(json)).getOrThrow();
     assertEquals(
-        new SkillRank(cost, List.of(), bareHands, List.of(), List.of(), List.of(), List.of()),
+        new SkillRank(
+            cost, List.of(), bareHands, List.of(), List.of(), List.of(), List.of(), List.of()),
         rank);
     assertEquals(SkillRank.costing(cost).cost(), rank.cost());
   }
@@ -64,6 +65,25 @@ class SkillRankTest {
             .parse(JsonOps.INSTANCE, JsonParser.parseString(json))
             .getOrThrow()
             .powerGifts()
+            .size());
+  }
+
+  @ParameterizedTest(name = "{0} -> {1} seek gifts")
+  @CsvSource(
+      delimiter = ';',
+      value = {
+        "{\"cost\": 1, \"seek_gifts\": [{\"track_range\": 32, \"track_ticks\": 100}]}; 1",
+        "{\"cost\": 3, \"seek_gifts\": [{\"allied_share\": 0.1}], \"power_gifts\": [{\"branch\": \"nightborn:seeker\", \"cooldown_cut\": 0.2}]}; 1",
+        "{\"cost\": 2}; 0"
+      })
+  @DisplayName("a rank may carry gifts for a Seeker's senses")
+  void seekGifts(final String json, final int count) {
+    assertEquals(
+        count,
+        SkillRank.CODEC
+            .parse(JsonOps.INSTANCE, JsonParser.parseString(json))
+            .getOrThrow()
+            .seekGifts()
             .size());
   }
 

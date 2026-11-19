@@ -134,6 +134,14 @@ public final class MistForm {
     }
   }
 
+  public static void fail(final LivingEntity vampire) {
+    final MistState state = vampire.getAttached(TYPE);
+    final long now = vampire.getWorld().getTime();
+    if (state != null && !state.over(now)) {
+      vampire.setAttached(TYPE, new MistState(now, state.harm()));
+    }
+  }
+
   public static void leave(final LivingEntity vampire) {
     vampire.removeAttached(TYPE);
     vampire.calculateDimensions();

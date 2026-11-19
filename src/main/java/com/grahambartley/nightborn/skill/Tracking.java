@@ -1,6 +1,9 @@
 package com.grahambartley.nightborn.skill;
 
 import com.grahambartley.nightborn.raid.Trails;
+import com.grahambartley.nightborn.seeker.HeldSeekGifts;
+import com.grahambartley.nightborn.seeker.SeekGift;
+import com.grahambartley.nightborn.seeker.SeekGifts;
 import com.grahambartley.nightborn.vampire.Vampires;
 import java.util.HashMap;
 import java.util.List;
@@ -32,11 +35,14 @@ public final class Tracking {
   }
 
   public static void start(final ServerPlayerEntity hunter, final TrackPower power) {
-    ACTIVE.put(
-        hunter.getUuid(),
+    final List<SeekGift> gifts = HeldSeekGifts.of(hunter);
+    final TrackingState state =
         new TrackingState(
-            hunter.getServerWorld().getTime() + power.durationTicks(), power.range()));
-    show(hunter, power.range());
+            hunter.getServerWorld().getTime() + SeekGifts.trackTicks(power.durationTicks(), gifts),
+            SeekGifts.trackRange(power.range(), gifts),
+            SeekGifts.bloodTrails(gifts));
+    ACTIVE.put(hunter.getUuid(), state);
+    show(hunter, state);
   }
 
   @Nullable
@@ -75,24 +81,27 @@ public final class Tracking {
                 return true;
               }
               if (player.age % UPDATE_TICKS == 0) {
-                show(player, entry.getValue().range());
+                show(player, entry.getValue());
               }
               return false;
             });
   }
 
-  private static void show(final ServerPlayerEntity hunter, final int range) {
+  private static void show(final ServerPlayerEntity hunter, final TrackingState state) {
     final Optional<Vec3d> trail = Trails.lead(hunter);
     trail.ifPresent(lead -> Trails.drip(hunter));
+    final Optional<LivingEntity> nearest =
+        trail.isPresent() ? Optional.empty() : nearest(hunter, state.range());
+    if (state.bloodTrails()) {
+      nearest.ifPresent(vampire -> Trails.drip(hunter, vampire));
+    }
     final Text message =
         trail
             .map(lead -> pointer(hunter, lead, "nightborn.tracking.trail"))
             .or(
                 () ->
-                    nearest(hunter, range)
-                        .map(
-                            vampire ->
-                                pointer(hunter, vampire.getPos(), "nightborn.tracking.found")))
+                    nearest.map(
+                        vampire -> pointer(hunter, vampire.getPos(), "nightborn.tracking.found")))
             .orElseGet(
                 () -> Text.translatable("nightborn.tracking.none").formatted(Formatting.GRAY));
     hunter.sendMessage(message, true);

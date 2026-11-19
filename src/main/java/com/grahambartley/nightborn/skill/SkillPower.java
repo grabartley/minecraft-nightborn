@@ -15,6 +15,7 @@ import com.grahambartley.nightborn.occult.HexPower;
 import com.grahambartley.nightborn.occult.MistPower;
 import com.grahambartley.nightborn.occult.ShadowStepPower;
 import com.grahambartley.nightborn.occult.SwarmPower;
+import com.grahambartley.nightborn.seeker.PowerSeek;
 import com.grahambartley.nightborn.slayer.DashPower;
 import com.grahambartley.nightborn.slayer.LungePower;
 import com.grahambartley.nightborn.slayer.PowerFight;
@@ -43,6 +44,7 @@ public record SkillPower(
     PowerTraps traps,
     PowerFaith faith,
     PowerFight fight,
+    PowerSeek seek,
     Optional<MobPowerUse> mob) {
 
   public static final Codec<SkillPower> CODEC =
@@ -66,6 +68,7 @@ public record SkillPower(
                           PowerTraps.CODEC.forGetter(SkillPower::traps),
                           PowerFaith.CODEC.forGetter(SkillPower::faith),
                           PowerFight.CODEC.forGetter(SkillPower::fight),
+                          PowerSeek.CODEC.forGetter(SkillPower::seek),
                           MobPowerUse.CODEC.optionalFieldOf("mob").forGetter(SkillPower::mob))
                       .apply(instance, SkillPower::new))
           .validate(SkillPower::oneMove);

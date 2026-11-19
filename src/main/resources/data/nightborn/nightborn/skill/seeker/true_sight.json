@@ -1,0 +1,25 @@
+{
+  "branch": "nightborn:seeker",
+  "requires": [
+    "nightborn:seeker/sixth_sense"
+  ],
+  "icon": "nightborn:skills/icon/true_sight",
+  "column": 2,
+  "row": 3,
+  "rank": "nightborn:hunter",
+  "ranks": [
+    {
+      "cost": 3
+    }
+  ],
+  "power": {
+    "blood": 0,
+    "cooldown_ticks": 1200,
+    "true_sight": {
+      "range": 24.0,
+      "duration_ticks": 120,
+      "colour": 15129792
+    },
+    "sound": "minecraft:block.beacon.power_select"
+  }
+}

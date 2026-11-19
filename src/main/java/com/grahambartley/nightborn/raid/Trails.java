@@ -68,23 +68,32 @@ public final class Trails {
         || !GuildMembership.isHunter(hunter)) {
       return;
     }
+    follow(hunter, vampire);
+  }
+
+  public static void follow(final ServerPlayerEntity hunter, final LivingEntity quarry) {
     final ServerWorld world = hunter.getServerWorld();
     TRAILS.put(
         hunter.getUuid(),
         new Trail(
-            vampire.getUuid(),
-            vampire.homeLife().coffin(),
+            quarry.getUuid(),
+            quarry instanceof VampireEntity vampire
+                ? vampire.homeLife().coffin()
+                : Optional.empty(),
             world.getRegistryKey(),
             TrailRules.until(world.getTime(), world.getTimeOfDay())));
   }
 
   public static void drip(final ServerPlayerEntity hunter) {
     final Trail trail = TRAILS.get(hunter.getUuid());
-    if (trail == null
-        || !(hunter.getServerWorld().getEntity(trail.quarry()) instanceof LivingEntity quarry)
-        || !quarry.isAlive()) {
-      return;
+    if (trail != null
+        && hunter.getServerWorld().getEntity(trail.quarry()) instanceof LivingEntity quarry
+        && quarry.isAlive()) {
+      drip(hunter, quarry);
     }
+  }
+
+  public static void drip(final ServerPlayerEntity hunter, final LivingEntity quarry) {
     hunter
         .getServerWorld()
         .spawnParticles(
