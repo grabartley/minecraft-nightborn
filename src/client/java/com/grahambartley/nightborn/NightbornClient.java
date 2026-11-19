@@ -67,6 +67,7 @@ import net.fabricmc.fabric.api.client.rendering.v1.BuiltinItemRendererRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
 import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.block.Block;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.block.entity.BlockEntityRendererFactories;
 import net.minecraft.client.render.entity.EmptyEntityRenderer;
@@ -125,6 +126,9 @@ public class NightbornClient implements ClientModInitializer {
         DecorBlocks.BLOOD_POOL,
         DecorBlocks.BLOOD_SPLATTER,
         DecorBlocks.CHALICE);
+    BlockRenderLayerMap.INSTANCE.putBlocks(
+        RenderLayer.getCutout(),
+        DecorBlocks.FEAT_TROPHIES.stream().map(DecorBlocks::get).toArray(Block[]::new));
     BlockRenderLayerMap.INSTANCE.putBlocks(
         RenderLayer.getCutoutMipped(), GearBlocks.SILVER_ORE, GearBlocks.DEEPSLATE_SILVER_ORE);
     BlockRenderLayerMap.INSTANCE.putBlocks(

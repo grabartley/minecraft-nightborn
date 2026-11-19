@@ -11,6 +11,13 @@
       "text": "nightborn.journal.hunter.stakes_and_silver.1"
     },
     {
+      "type": "patchouli:image",
+      "images": [
+        "nightborn:textures/gui/journal/hunter_stakes_and_silver.png"
+      ],
+      "border": true
+    },
+    {
       "type": "patchouli:text",
       "text": "nightborn.journal.hunter.stakes_and_silver.2"
     }
