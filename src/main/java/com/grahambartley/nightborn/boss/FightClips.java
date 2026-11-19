@@ -10,9 +10,15 @@ public record FightClips(
     String stagger,
     String takeoff,
     String land,
-    String downedForm) {
+    String downedForm,
+    String fedForm,
+    String rise,
+    int riseTicks,
+    String death,
+    int deathTicks) {
 
-  public static final FightClips NONE = new FightClips("", "", "", "", "", "", "");
+  public static final FightClips NONE =
+      new FightClips("", "", "", "", "", "", "", "", "", 0, "", 0);
 
   public static final Codec<FightClips> CODEC =
       RecordCodecBuilder.create(
@@ -29,7 +35,16 @@ public record FightClips(
                       Codec.STRING.optionalFieldOf("land", "").forGetter(FightClips::land),
                       Codec.STRING
                           .optionalFieldOf("downed_form", "")
-                          .forGetter(FightClips::downedForm))
+                          .forGetter(FightClips::downedForm),
+                      Codec.STRING.optionalFieldOf("fed_form", "").forGetter(FightClips::fedForm),
+                      Codec.STRING.optionalFieldOf("rise", "").forGetter(FightClips::rise),
+                      Codec.intRange(0, Integer.MAX_VALUE)
+                          .optionalFieldOf("rise_ticks", 0)
+                          .forGetter(FightClips::riseTicks),
+                      Codec.STRING.optionalFieldOf("death", "").forGetter(FightClips::death),
+                      Codec.intRange(0, Integer.MAX_VALUE)
+                          .optionalFieldOf("death_ticks", 0)
+                          .forGetter(FightClips::deathTicks))
                   .apply(instance, FightClips::new));
 
   public static String flightEdge(
@@ -38,5 +53,21 @@ public record FightClips(
       return "";
     }
     return flying ? clips.takeoff() : clips.land();
+  }
+
+  public String floor(final boolean fed) {
+    return fed && !fedForm.isEmpty() ? fedForm : downedForm;
+  }
+
+  public ShownForm dying() {
+    return new ShownForm("", "", death, false);
+  }
+
+  public long riseEnd(final long now) {
+    return now + riseTicks;
+  }
+
+  public int deathHold() {
+    return death.isEmpty() ? 0 : deathTicks;
   }
 }

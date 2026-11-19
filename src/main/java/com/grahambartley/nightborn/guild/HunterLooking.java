@@ -16,4 +16,8 @@ public interface HunterLooking extends Figure {
   default Identifier animation() {
     return HunterRig.ANIMATION;
   }
+
+  default boolean fallsOnDeath() {
+    return true;
+  }
 }

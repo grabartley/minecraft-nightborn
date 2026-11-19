@@ -155,6 +155,36 @@ class BossFightsTest {
         .keySet();
   }
 
+  private static double secondsOf(final Path fight, final String clip) throws IOException {
+    final String fightName = fight.getFileName().toString().replace(".json", "");
+    return JsonParser.parseString(
+            Files.readString(
+                Path.of(
+                    "src/client/resources/assets/nightborn/animations/entity/"
+                        + RIGS.get(fightName)
+                        + ".animation.json"),
+                StandardCharsets.UTF_8))
+        .getAsJsonObject()
+        .getAsJsonObject("animations")
+        .getAsJsonObject(clip)
+        .get("animation_length")
+        .getAsDouble();
+  }
+
+  @ParameterizedTest(name = "{0}")
+  @MethodSource("fights")
+  @DisplayName(
+      "a fight holds still for its whole rise clip and keeps the body for its whole death clip")
+  void clipTicksMatchTheirClips(final Path file) throws IOException {
+    final FightClips named = parse(BossFightPlan.CODEC, file).getOrThrow().clips();
+    if (!named.rise().isEmpty()) {
+      assertEquals(Math.round(secondsOf(file, named.rise()) * 20.0), named.riseTicks());
+    }
+    if (!named.death().isEmpty()) {
+      assertTrue(named.deathTicks() >= Math.ceil(secondsOf(file, named.death()) * 20.0));
+    }
+  }
+
   private static List<Path> fightsUsing(final Identifier attack) throws IOException {
     final List<Path> using = new ArrayList<>();
     for (final Path fight : fights().toList()) {
@@ -231,7 +261,10 @@ class BossFightsTest {
                 named.stagger(),
                 named.takeoff(),
                 named.land(),
-                named.downedForm()))
+                named.downedForm(),
+                named.fedForm(),
+                named.rise(),
+                named.death()))
         .filter(clip -> !clip.isEmpty())
         .forEach(clip -> assertTrue(clips.contains(clip), clip));
     plan.phases().stream()

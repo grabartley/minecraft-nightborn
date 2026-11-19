@@ -4,6 +4,7 @@ public final class InquisitorDrain {
 
   static final float SIP = 1.0F;
   static final float LEAST = 2.0F;
+  static final long FED_TICKS = 30L;
 
   private InquisitorDrain() {}
 
@@ -21,5 +22,9 @@ public final class InquisitorDrain {
       final boolean byTurnedHuman,
       final boolean fromOutside) {
     return !fromOutside && (bitten && byVampire || byTurnedHuman);
+  }
+
+  public static boolean fed(final long now, final long bittenAt) {
+    return bittenAt <= now && bittenAt > now - FED_TICKS;
   }
 }

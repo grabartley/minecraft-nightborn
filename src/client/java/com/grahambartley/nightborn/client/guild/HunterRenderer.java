@@ -27,6 +27,11 @@ public class HunterRenderer<T extends LivingEntity & GeoEntity & HunterLooking>
   }
 
   @Override
+  protected float getDeathMaxRotation(final T animatable) {
+    return animatable.fallsOnDeath() ? super.getDeathMaxRotation(animatable) : 0.0F;
+  }
+
+  @Override
   public void renderRecursively(
       final MatrixStack poseStack,
       final T animatable,

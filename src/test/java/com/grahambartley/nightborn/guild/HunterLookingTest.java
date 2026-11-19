@@ -1,6 +1,7 @@
 package com.grahambartley.nightborn.guild;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import net.minecraft.util.Identifier;
 import org.junit.jupiter.api.DisplayName;
@@ -12,7 +13,8 @@ class HunterLookingTest {
   @ParameterizedTest(name = "{0}")
   @EnumSource(HunterRig.class)
   @DisplayName(
-      "a hunter is drawn with its rig's model and the shared hunter clips unless it says otherwise")
+      "a hunter is drawn with its rig's model and the shared hunter clips, and falls when it dies,"
+          + " unless it says otherwise")
   void defaults(final HunterRig rig) {
     final HunterLooking looking =
         new HunterLooking() {
@@ -33,5 +35,6 @@ class HunterLookingTest {
         };
     assertEquals(rig.geo(), looking.geo());
     assertEquals(HunterRig.ANIMATION, looking.animation());
+    assertTrue(looking.fallsOnDeath());
   }
 }

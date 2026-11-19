@@ -229,7 +229,12 @@
   "clips": {
     "guard": "guard_cross",
     "break_away": "break_away",
-    "downed_form": "downed_kneel"
+    "downed_form": "downed_kneel",
+    "fed_form": "downed_fed",
+    "rise": "rise",
+    "rise_ticks": 48,
+    "death": "death",
+    "death_ticks": 60
   },
   "summoner_lines": [
     "nightborn.inquisitor.outrage.1",

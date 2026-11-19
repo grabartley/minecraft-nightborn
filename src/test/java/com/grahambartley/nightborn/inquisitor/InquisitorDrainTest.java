@@ -67,4 +67,18 @@ class InquisitorDrainTest {
     }
     assertEquals(seconds, sips);
   }
+
+  @ParameterizedTest(name = "bitten at {1}, now {0}: fed {2}")
+  @CsvSource({
+    "100, 100, true",
+    "100, 90, true",
+    "100, 71, true",
+    "100, 70, false",
+    "100, 101, false",
+    "100, -9223372036854775808, false"
+  })
+  @DisplayName("he shows the bite for a little over a second after each sip, and never unbitten")
+  void fed(final long now, final long bittenAt, final boolean fed) {
+    assertEquals(fed, InquisitorDrain.fed(now, bittenAt));
+  }
 }

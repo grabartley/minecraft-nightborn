@@ -27,6 +27,7 @@ public final class BossFight {
   static final double EDGE = 1.5;
   static final long NEVER = -1L;
   static final String CHANGE_KEY = "BossChangeUntil";
+  static final String RISE_KEY = "BossRiseUntil";
   static final String STAKING_KEY = "BossStaking";
   static final String OCCUPIED_KEY = "BossLastOccupied";
   static final String START_KEY = "BossStart";
@@ -42,6 +43,7 @@ public final class BossFight {
   private final ArenaSeal seal = new ArenaSeal();
   @Nullable private Arena arena;
   private long changeUntil;
+  private long riseUntil;
   private boolean staking;
   private long lastOccupied = NEVER;
   @Nullable private BossArenaPayload told;
@@ -59,7 +61,7 @@ public final class BossFight {
   }
 
   public boolean busy(final long now) {
-    return attacks.busy() || changing(now);
+    return attacks.busy() || changing(now) || rising(now);
   }
 
   public boolean untouchable(final long now) {
@@ -84,6 +86,10 @@ public final class BossFight {
 
   public boolean changing(final long now) {
     return now < changeUntil;
+  }
+
+  public boolean rising(final long now) {
+    return now < riseUntil;
   }
 
   public boolean holds(final Vec3d pos) {
@@ -227,7 +233,7 @@ public final class BossFight {
         attacks.moving(),
         now - attacks.landedAt(),
         now);
-    if (finishing(boss, plan, rules, downed) || changing(now) || plan.isEmpty()) {
+    if (finishing(boss, plan, rules, downed) || changing(now) || rising(now) || plan.isEmpty()) {
       return;
     }
     attacks.tick(
@@ -316,15 +322,19 @@ public final class BossFight {
     final double lastShare =
         plan.map(p -> PhaseTrack.ceiling(p.shares(), p.phases().size() - 1)).orElse(1.0);
     boss.setHealth(rules.risen(boss.getMaxHealth(), lastShare));
+    show(boss, plan.map(p -> p.clips().rise()).orElse(""));
+    riseUntil =
+        plan.map(BossFightPlan::clips).orElse(FightClips.NONE).riseEnd(boss.getWorld().getTime());
     return true;
   }
 
-  public ShownForm shown(final Optional<BossFightPlan> plan, final boolean downed, final long now) {
+  public ShownForm shown(
+      final Optional<BossFightPlan> plan, final boolean downed, final boolean fed, final long now) {
     return plan.map(
             p ->
                 p.phase(phases.index())
                     .look()
-                    .shown(flight.flying(), downed, changing(now), p.clips().downedForm()))
+                    .shown(flight.flying(), downed, changing(now), p.clips().floor(fed)))
         .orElse(ShownForm.NONE)
         .blazing(blazing(plan));
   }
@@ -411,6 +421,7 @@ public final class BossFight {
     attacks.cancel();
     hits.clear();
     changeUntil = 0L;
+    riseUntil = 0L;
     BossReactions.returnTo(boss, start);
     boss.setTarget(null);
     boss.getNavigation().stop();
@@ -420,6 +431,7 @@ public final class BossFight {
   public void write(final NbtCompound nbt) {
     phases.write(nbt);
     nbt.putLong(CHANGE_KEY, changeUntil);
+    nbt.putLong(RISE_KEY, riseUntil);
     nbt.putBoolean(STAKING_KEY, staking);
     nbt.putLong(OCCUPIED_KEY, lastOccupied);
     if (start != null) {
@@ -433,6 +445,7 @@ public final class BossFight {
   public void read(final NbtCompound nbt) {
     phases.read(nbt);
     changeUntil = nbt.getLong(CHANGE_KEY);
+    riseUntil = nbt.getLong(RISE_KEY);
     staking = nbt.getBoolean(STAKING_KEY);
     lastOccupied = nbt.contains(OCCUPIED_KEY) ? nbt.getLong(OCCUPIED_KEY) : NEVER;
     start = SpotNbt.vec(nbt, START_KEY).orElse(start);
