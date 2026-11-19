@@ -35,6 +35,23 @@ class AccessorySlotTest {
     assertEquals(Optional.of(slot), AccessorySlot.byId(id));
   }
 
+  @ParameterizedTest(name = "{0}: art drawn on {1}")
+  @CsvSource({
+    "RING, CHEST",
+    "SECOND_RING, CHEST",
+    "NECKLACE, CHEST",
+    "BACK, CHEST",
+    "GLOVES, CHEST",
+    "BELT, CHEST",
+    "FACE, HEAD",
+    "BROOCH, CHEST"
+  })
+  @DisplayName(
+      "each slot's art is drawn on the body part whose bones carry it, a belt on the torso")
+  void drawnOn(final AccessorySlot slot, final EquipmentSlot body) {
+    assertEquals(body, slot.drawnOn());
+  }
+
   @ParameterizedTest(name = "{0}: drawn {1}")
   @CsvSource({
     "hand/ring, false",
@@ -46,7 +63,7 @@ class AccessorySlotTest {
   })
   @DisplayName("every piece but a ring is drawn, and only in the mod's own slots")
   void drawnIn(final String slot, final boolean drawn) {
-    assertEquals(drawn, AccessorySlot.drawnIn(slot));
+    assertEquals(drawn, AccessorySlot.byId(slot).filter(AccessorySlot::drawn).isPresent());
   }
 
   @Test

@@ -5,7 +5,7 @@
 			"loop": true,
 			"animation_length": 4,
 			"bones": {
-				"cape": {
+				"dyed_cape": {
 					"rotation": {
 						"0.0": [
 							"2",
@@ -30,20 +30,20 @@
 			"loop": true,
 			"animation_length": 1,
 			"bones": {
-				"cape": {
+				"dyed_cape": {
 					"rotation": {
 						"0.0": [
-							"12",
+							"10",
 							"0",
 							"0"
 						],
 						"0.5": [
-							"20",
+							"18",
 							"0",
 							"0"
 						],
 						"1.0": [
-							"12",
+							"10",
 							"0",
 							"0"
 						]

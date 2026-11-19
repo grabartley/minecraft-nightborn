@@ -3,7 +3,7 @@
 	"minecraft:geometry": [
 		{
 			"description": {
-				"identifier": "geometry.lace_gloves_female",
+				"identifier": "geometry.silver_threaded_gloves_female",
 				"texture_width": 64,
 				"texture_height": 64,
 				"visible_bounds_width": 2,
@@ -40,7 +40,7 @@
 							],
 							"size": [
 								3,
-								3,
+								4,
 								4
 							],
 							"inflate": 0.8,
@@ -52,7 +52,7 @@
 						{
 							"origin": [
 								-7,
-								15,
+								16,
 								-2
 							],
 							"size": [
@@ -62,8 +62,25 @@
 							],
 							"inflate": 0.95,
 							"uv": [
-								0,
-								8
+								28,
+								0
+							]
+						},
+						{
+							"origin": [
+								-6,
+								16,
+								-3.2
+							],
+							"size": [
+								1,
+								1,
+								1
+							],
+							"inflate": -0.1,
+							"uv": [
+								56,
+								0
 							]
 						}
 					]
@@ -93,20 +110,19 @@
 							],
 							"size": [
 								3,
-								3,
+								4,
 								4
 							],
 							"inflate": 0.8,
 							"uv": [
-								0,
+								14,
 								0
-							],
-							"mirror": true
+							]
 						},
 						{
 							"origin": [
 								4,
-								15,
+								16,
 								-2
 							],
 							"size": [
@@ -116,10 +132,26 @@
 							],
 							"inflate": 0.95,
 							"uv": [
-								0,
-								8
+								42,
+								0
+							]
+						},
+						{
+							"origin": [
+								5,
+								16,
+								-3.2
 							],
-							"mirror": true
+							"size": [
+								1,
+								1,
+								1
+							],
+							"inflate": -0.1,
+							"uv": [
+								60,
+								0
+							]
 						}
 					]
 				}

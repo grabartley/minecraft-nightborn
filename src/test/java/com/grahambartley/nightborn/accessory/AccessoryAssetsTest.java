@@ -6,24 +6,33 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.grahambartley.nightborn.MinecraftBootstrapExtension;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import net.minecraft.entity.EquipmentSlot;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.MethodSource;
 
+@ExtendWith(MinecraftBootstrapExtension.class)
 class AccessoryAssetsTest {
 
   private static final Path ASSETS = Path.of("src/main/resources/assets/nightborn");
   private static final Path CLIENT = Path.of("src/client/resources/assets/nightborn");
   private static final Path DATA = Path.of("src/main/resources/data");
+  private static final Map<EquipmentSlot, Set<String>> ROOT_BONES =
+      Map.of(
+          EquipmentSlot.HEAD, Set.of("armorHead"),
+          EquipmentSlot.CHEST, Set.of("armorBody", "armorRightArm", "armorLeftArm"));
 
   @Test
   @DisplayName("a player is given exactly the eight accessory slots")
@@ -98,6 +107,32 @@ class AccessoryAssetsTest {
     final JsonObject data = read("nightborn/nightborn/accessory/" + piece + ".json");
     final boolean plain = !data.has("gifts") && !data.has("holds");
     assertEquals(plain, Files.exists(DATA.resolve("nightborn/recipe/" + piece + ".json")), piece);
+  }
+
+  @ParameterizedTest(name = "{0}")
+  @MethodSource("com.grahambartley.nightborn.accessory.AccessoriesTest#ids")
+  @DisplayName("a worn model hangs only from the armour bones of the body part it is drawn on")
+  void rootBonesFitTheBodyPart(final String piece) throws IOException {
+    final AccessorySlot slot = slotOf(piece);
+    if (!slot.drawn()) {
+      return;
+    }
+    final Set<String> allowed = ROOT_BONES.get(slot.drawnOn());
+    for (final String cut : List.of("male", "female")) {
+      final JsonObject geometry =
+          JsonParser.parseString(
+                  Files.readString(CLIENT.resolve("geo/armor/" + piece + "_" + cut + ".geo.json")))
+              .getAsJsonObject()
+              .getAsJsonArray("minecraft:geometry")
+              .get(0)
+              .getAsJsonObject();
+      for (final JsonElement bone : geometry.getAsJsonArray("bones")) {
+        final JsonObject each = bone.getAsJsonObject();
+        if (!each.has("parent")) {
+          assertTrue(allowed.contains(each.get("name").getAsString()), piece + " " + cut);
+        }
+      }
+    }
   }
 
   private static AccessorySlot slotOf(final String piece) throws IOException {

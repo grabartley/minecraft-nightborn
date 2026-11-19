@@ -3,7 +3,7 @@
 	"minecraft:geometry": [
 		{
 			"description": {
-				"identifier": "geometry.mourning_veil_female",
+				"identifier": "geometry.widows_veil_female",
 				"texture_width": 64,
 				"texture_height": 64,
 				"visible_bounds_width": 2,
@@ -24,7 +24,7 @@
 					]
 				},
 				{
-					"name": "dyed_hat",
+					"name": "cap",
 					"parent": "armorHead",
 					"pivot": [
 						0,
@@ -34,170 +34,126 @@
 					"cubes": [
 						{
 							"origin": [
+								-4.4,
+								31.6,
+								-4.4
+							],
+							"size": [
+								8.8,
+								1,
+								8.8
+							],
+							"uv": [
+								0,
+								17
+							]
+						},
+						{
+							"origin": [
 								-3,
-								32,
-								-3
+								32.6,
+								-2
 							],
 							"size": [
 								6,
-								2,
+								1.6000000000000014,
 								6
 							],
-							"inflate": 0.4,
 							"uv": [
 								0,
-								33
+								26
 							]
 						},
 						{
 							"origin": [
-								-5,
-								32,
-								-5
-							],
-							"size": [
-								10,
-								1,
-								10
-							],
-							"inflate": 0.05,
-							"uv": [
-								22,
-								19
-							]
-						},
-						{
-							"origin": [
-								-5,
-								25,
-								-5.6
-							],
-							"size": [
-								10,
-								7,
-								1
-							],
-							"inflate": -0.1,
-							"uv": [
-								24,
-								33
-							]
-						},
-						{
-							"origin": [
-								-5.6,
-								23,
-								-5
-							],
-							"size": [
-								1,
-								9,
-								10
-							],
-							"inflate": -0.1,
-							"uv": [
-								0,
-								0
-							]
-						},
-						{
-							"origin": [
-								4.6,
-								23,
-								-5
-							],
-							"size": [
-								1,
-								9,
-								10
-							],
-							"inflate": -0.1,
-							"uv": [
-								22,
-								0
-							]
-						}
-					]
-				},
-				{
-					"name": "dyed_veil",
-					"parent": "armorHead",
-					"pivot": [
-						0,
-						33,
-						4.6
-					],
-					"cubes": [
-						{
-							"origin": [
-								-5,
-								20,
-								4.6
-							],
-							"size": [
-								10,
-								13,
-								1
-							],
-							"inflate": -0.1,
-							"pivot": [
-								0,
+								-3.5,
 								33,
-								4.6
+								-2.5
 							],
-							"rotation": [
-								6,
-								0,
-								0
+							"size": [
+								1,
+								1,
+								1
 							],
+							"inflate": -0.1,
 							"uv": [
-								0,
-								19
+								24,
+								26
 							]
 						}
 					]
 				},
 				{
-					"name": "trim",
+					"name": "veil",
 					"parent": "armorHead",
 					"pivot": [
 						0,
-						24,
+						32,
 						0
 					],
 					"cubes": [
 						{
 							"origin": [
-								-3,
-								32,
-								-3
+								-4.5,
+								23.5,
+								-4.7
 							],
 							"size": [
-								6,
-								1,
-								6
+								9,
+								8.899999999999999,
+								1
 							],
-							"inflate": 0.55,
 							"uv": [
-								0,
-								41
+								32,
+								17
 							]
 						},
 						{
 							"origin": [
-								-1,
-								32,
-								-4
+								-4.7,
+								23.5,
+								-4.5
 							],
 							"size": [
-								2,
-								2,
+								1,
+								8.899999999999999,
+								9
+							],
+							"uv": [
+								0,
+								0
+							]
+						},
+						{
+							"origin": [
+								3.7,
+								23.5,
+								-4.5
+							],
+							"size": [
+								1,
+								8.899999999999999,
+								9
+							],
+							"uv": [
+								20,
+								0
+							]
+						},
+						{
+							"origin": [
+								-4.5,
+								22.5,
+								3.7
+							],
+							"size": [
+								9,
+								9.899999999999999,
 								1
 							],
-							"inflate": -0.15,
 							"uv": [
-								24,
-								41
+								40,
+								0
 							]
 						}
 					]

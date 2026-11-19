@@ -11,24 +11,26 @@ import net.minecraft.registry.tag.TagKey;
 import net.minecraft.util.Identifier;
 
 public enum AccessorySlot {
-  RING("hand", "ring"),
-  SECOND_RING("offhand", "ring"),
-  NECKLACE("chest", "necklace"),
-  BACK("chest", "back"),
-  GLOVES("hand", "glove"),
-  BELT("legs", "belt"),
-  FACE("head", "face"),
-  BROOCH("chest", "brooch");
+  RING("hand", "ring", EquipmentSlot.CHEST),
+  SECOND_RING("offhand", "ring", EquipmentSlot.CHEST),
+  NECKLACE("chest", "necklace", EquipmentSlot.CHEST),
+  BACK("chest", "back", EquipmentSlot.CHEST),
+  GLOVES("hand", "glove", EquipmentSlot.CHEST),
+  BELT("legs", "belt", EquipmentSlot.CHEST),
+  FACE("head", "face", EquipmentSlot.HEAD),
+  BROOCH("chest", "brooch", EquipmentSlot.CHEST);
 
   static final String TRINKETS = "trinkets";
 
   private final String group;
   private final String name;
   private final TagKey<Item> tag;
+  private final EquipmentSlot drawnOn;
 
-  AccessorySlot(final String group, final String name) {
+  AccessorySlot(final String group, final String name, final EquipmentSlot drawnOn) {
     this.group = group;
     this.name = name;
+    this.drawnOn = drawnOn;
     this.tag = TagKey.of(RegistryKeys.ITEM, Identifier.of(TRINKETS, id()));
   }
 
@@ -60,8 +62,8 @@ public enum AccessorySlot {
     return !this.name.equals("ring");
   }
 
-  public static boolean drawnIn(final String slotId) {
-    return byId(slotId).map(AccessorySlot::drawn).orElse(false);
+  public EquipmentSlot drawnOn() {
+    return this.drawnOn;
   }
 
   public EquipmentSlot body() {

@@ -3,7 +3,7 @@
 	"minecraft:geometry": [
 		{
 			"description": {
-				"identifier": "geometry.lace_gloves_female",
+				"identifier": "geometry.fingerless_gloves_female",
 				"texture_width": 64,
 				"texture_height": 64,
 				"visible_bounds_width": 2,
@@ -35,15 +35,15 @@
 						{
 							"origin": [
 								-7,
-								12,
+								13,
 								-2
 							],
 							"size": [
 								3,
-								3,
+								2,
 								4
 							],
-							"inflate": 0.8,
+							"inflate": 0.75,
 							"uv": [
 								0,
 								0
@@ -57,13 +57,13 @@
 							],
 							"size": [
 								3,
-								1,
+								2,
 								4
 							],
-							"inflate": 0.95,
+							"inflate": 0.85,
 							"uv": [
-								0,
-								8
+								14,
+								0
 							]
 						}
 					]
@@ -88,20 +88,19 @@
 						{
 							"origin": [
 								4,
-								12,
+								13,
 								-2
 							],
 							"size": [
 								3,
-								3,
+								2,
 								4
 							],
-							"inflate": 0.8,
+							"inflate": 0.75,
 							"uv": [
-								0,
+								28,
 								0
-							],
-							"mirror": true
+							]
 						},
 						{
 							"origin": [
@@ -111,15 +110,14 @@
 							],
 							"size": [
 								3,
-								1,
+								2,
 								4
 							],
-							"inflate": 0.95,
+							"inflate": 0.85,
 							"uv": [
-								0,
-								8
-							],
-							"mirror": true
+								42,
+								0
+							]
 						}
 					]
 				}

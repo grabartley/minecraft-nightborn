@@ -3,7 +3,7 @@
 	"minecraft:geometry": [
 		{
 			"description": {
-				"identifier": "geometry.brass_buckled_belt_male",
+				"identifier": "geometry.trappers_pouch_male",
 				"texture_width": 64,
 				"texture_height": 64,
 				"visible_bounds_width": 2,
@@ -45,52 +45,86 @@
 							],
 							"inflate": 0.6,
 							"uv": [
+								12,
+								0
+							]
+						},
+						{
+							"origin": [
+								-1,
+								11.6,
+								-3.2
+							],
+							"size": [
+								2,
+								2.8000000000000007,
+								1
+							],
+							"inflate": -0.05,
+							"uv": [
+								40,
+								0
+							]
+						}
+					]
+				},
+				{
+					"name": "pouch",
+					"parent": "armorBody",
+					"pivot": [
+						-3.5,
+						13,
+						-1
+					],
+					"cubes": [
+						{
+							"origin": [
+								-5.6,
+								9,
+								-3.4
+							],
+							"size": [
+								3.1999999999999997,
+								4,
+								3
+							],
+							"uv": [
 								0,
 								0
 							]
 						},
 						{
 							"origin": [
-								-1.5,
-								11.5,
-								-3.3
+								-5.4,
+								13,
+								-3
 							],
 							"size": [
-								3,
-								3,
-								1
+								2.8000000000000003,
+								1.1999999999999993,
+								2.2
 							],
+							"inflate": -0.05,
 							"uv": [
-								0,
-								8
+								46,
+								0
 							]
-						}
-					]
-				},
-				{
-					"name": "belt_tongue",
-					"parent": "belt",
-					"pivot": [
-						2,
-						12.5,
-						-2.7
-					],
-					"cubes": [
+						},
 						{
 							"origin": [
-								1.5,
-								10.5,
-								-3.2
+								-6,
+								9.5,
+								-2.4
 							],
 							"size": [
 								1,
-								2,
+								3,
 								1
 							],
-							"inflate": -0.1,
+							"inflate": -0.2,
 							"uv": [
-								0,
-								13
+								36,
+								0
 							]
 						}
 					]
