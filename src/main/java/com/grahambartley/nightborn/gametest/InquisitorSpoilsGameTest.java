@@ -201,13 +201,18 @@ public class InquisitorSpoilsGameTest implements FabricGameTest {
                 final float setDealt = before - golem.getHealth();
                 final int setGained = (int) Math.floor(setDealt * settings.setBlood() / 100.0F);
                 context.assertTrue(
-                    setGained > gained,
-                    "the full set gives more than the greatsword alone, " + setGained);
+                    setGained > (int) Math.floor(setDealt * settings.greatswordBlood() / 100.0F),
+                    "the full set gives more than the greatsword alone would for "
+                        + setDealt
+                        + " damage, "
+                        + setGained);
                 context.assertTrue(
                     BloodAttachment.get(vampire) == 5 + setGained,
                     "the full set gives back "
                         + setGained
-                        + ", blood is "
+                        + " for "
+                        + setDealt
+                        + " damage, blood is "
                         + BloodAttachment.get(vampire));
                 BloodAttachment.set(vampire, BloodCapacity.of(vampire));
                 golem.timeUntilRegen = 0;
