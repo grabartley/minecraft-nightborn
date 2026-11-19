@@ -26,13 +26,13 @@ import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
-public class HunterTentBlock extends BlockWithEntity {
+public class HunterTentBlock extends BlockWithEntity implements StrikesWithCamp {
 
   public static final MapCodec<HunterTentBlock> CODEC = createCodec(HunterTentBlock::new);
   public static final DirectionProperty FACING = Properties.HORIZONTAL_FACING;
   public static final EnumProperty<TentPart> PART = EnumProperty.of("part", TentPart.class);
   public static final BooleanProperty STRUCK = BooleanProperty.of("struck");
-  public static final int STRIKE_TICKS = 20;
+  public static final int STRIKE_TICKS = 40;
 
   public HunterTentBlock(final Settings settings) {
     super(settings);
@@ -43,16 +43,14 @@ public class HunterTentBlock extends BlockWithEntity {
             .with(STRUCK, false));
   }
 
-  public static void strike(final ServerWorld world, final BlockPos origin) {
-    final BlockState state = world.getBlockState(origin);
-    if (!(state.getBlock() instanceof HunterTentBlock tent)
-        || state.get(PART) != TentPart.ORIGIN
-        || state.get(STRUCK)) {
+  @Override
+  public void strikeWithCamp(final ServerWorld world, final BlockPos pos, final BlockState state) {
+    if (state.get(PART) != TentPart.ORIGIN || state.get(STRUCK)) {
       return;
     }
-    world.setBlockState(origin, state.with(STRUCK, true), Block.NOTIFY_LISTENERS);
-    world.playSound(null, origin, SoundEvents.BLOCK_WOOL_BREAK, SoundCategory.BLOCKS, 1.0F, 0.8F);
-    world.scheduleBlockTick(origin, tent, STRIKE_TICKS);
+    world.setBlockState(pos, state.with(STRUCK, true), Block.NOTIFY_LISTENERS);
+    world.playSound(null, pos, SoundEvents.BLOCK_WOOL_BREAK, SoundCategory.BLOCKS, 1.0F, 0.8F);
+    world.scheduleBlockTick(pos, this, STRIKE_TICKS);
   }
 
   @Override

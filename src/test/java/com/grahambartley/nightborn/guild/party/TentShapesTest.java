@@ -71,4 +71,20 @@ class TentShapesTest {
       assertFalse(TentShapes.outline(part, facing).isEmpty());
     }
   }
+
+  @ParameterizedTest(name = "{0}")
+  @EnumSource(
+      value = TentPart.class,
+      names = {"ROOF_FRONT", "ROOF_MIDDLE", "ROOF_BACK"})
+  @DisplayName("the roof follows the canvas, so a player aiming under it reaches the bed")
+  void roofLeavesTheMiddleClear(final TentPart part) {
+    for (final Direction facing : Direction.Type.HORIZONTAL) {
+      final VoxelShape shape = TentShapes.outline(part, facing);
+      assertTrue(
+          shape.getBoundingBoxes().stream()
+              .noneMatch(box -> box.minY < 0.3 && box.contains(0.5, 0.1, 0.5)),
+          facing.asString());
+      assertEquals(14.0 / 16.0, heightAt(shape, 0.5, 0.5), 1e-9);
+    }
+  }
 }

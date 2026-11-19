@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.grahambartley.nightborn.guild.party.HunterTentBlock;
 import com.grahambartley.nightborn.guild.party.TentClips;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -17,6 +18,7 @@ import java.util.stream.Stream;
 import javax.imageio.ImageIO;
 import net.minecraft.util.Identifier;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -58,7 +60,7 @@ class HunterTentRendererTest {
     }
   }
 
-  @org.junit.jupiter.api.Test
+  @Test
   @DisplayName("the canvas sheet ships at the size the geometry maps")
   void sheetFitsTheGeometry() throws IOException {
     final JsonObject description = GeoAssets.geometry(GEO).getAsJsonObject("description");
@@ -103,5 +105,17 @@ class HunterTentRendererTest {
         assertRest(channel, frame(channels.getAsJsonObject(channel), false));
       }
     }
+  }
+
+  @Test
+  @DisplayName(
+      "the code waits out each clip: pitch counts as fresh for its length, strike ends before removal")
+  void timingsMatchTheClips() throws IOException {
+    final double pitch = clip(TentClips.PITCH).get("animation_length").getAsDouble();
+    final double strike = clip(TentClips.STRIKE).get("animation_length").getAsDouble();
+    assertEquals(TentClips.PITCH_TICKS, Math.round(pitch * 20));
+    assertTrue(
+        strike * 20 < HunterTentBlock.STRIKE_TICKS,
+        "the strike clip finishes before the tent goes");
   }
 }

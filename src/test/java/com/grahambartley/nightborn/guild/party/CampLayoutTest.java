@@ -14,6 +14,7 @@ import net.minecraft.block.enums.BedPart;
 import net.minecraft.util.BlockRotation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -88,6 +89,7 @@ class CampLayoutTest {
 
   @ParameterizedTest(name = "tent {0}")
   @ValueSource(ints = {0, 1, 2})
+  @DisplayName("every shipped tent is whole around one roof middle and covers its bed")
   void everyShippedTentIsWholeAndCoversItsBed(final int index) throws Exception {
     final CampLayout.Tent tent = shipped().tents().get(index);
     final List<CampLayout.Piece> cells =

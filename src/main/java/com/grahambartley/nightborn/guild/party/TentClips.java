@@ -11,18 +11,25 @@ public final class TentClips {
   public static final String STRIKE = "strike";
   public static final long PITCH_TICKS = 20L;
 
-  private Boolean seen;
+  private enum Seen {
+    UNSEEN,
+    STANDING,
+    STRUCK
+  }
+
+  private Seen seen = Seen.UNSEEN;
 
   public Optional<List<String>> observe(final boolean struck, final long age) {
-    final Boolean previous = this.seen;
-    if (previous != null && previous == struck) {
+    final Seen now = struck ? Seen.STRUCK : Seen.STANDING;
+    final Seen previous = this.seen;
+    if (previous == now) {
       return Optional.empty();
     }
-    this.seen = struck;
+    this.seen = now;
     if (struck) {
       return Optional.of(List.of(STRIKE));
     }
-    if (previous == null && age < PITCH_TICKS) {
+    if (previous == Seen.UNSEEN && age < PITCH_TICKS) {
       return Optional.of(List.of(PITCH, IDLE));
     }
     return Optional.of(List.of(IDLE));
