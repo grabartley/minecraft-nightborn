@@ -14,7 +14,7 @@ public class ParasolModel extends GeoModel<ParasolItem> {
 
   @Override
   public Identifier getTextureResource(final ParasolItem parasol) {
-    return Identifier.of(Nightborn.MOD_ID, "textures/item/parasol.png");
+    return Identifier.of(Nightborn.MOD_ID, "textures/item/parasol/fresh.png");
   }
 
   @Override

@@ -1,11 +1,14 @@
 package com.grahambartley.nightborn.mixin.client;
 
+import com.grahambartley.nightborn.client.sun.ParasolHeldModel;
 import com.grahambartley.nightborn.render.CoatingLayers;
 import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.item.ItemRenderer;
+import net.minecraft.client.render.model.BakedModel;
+import net.minecraft.client.render.model.json.ModelTransformationMode;
 import net.minecraft.item.ItemStack;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -13,6 +16,18 @@ import org.spongepowered.asm.mixin.injection.ModifyVariable;
 
 @Mixin(ItemRenderer.class)
 abstract class ItemRendererMixin {
+
+  @ModifyVariable(
+      method =
+          "renderItem(Lnet/minecraft/item/ItemStack;Lnet/minecraft/client/render/model/json/ModelTransformationMode;ZLnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;IILnet/minecraft/client/render/model/BakedModel;)V",
+      at = @At("HEAD"),
+      argsOnly = true)
+  private BakedModel nightborn$parasolInHand(
+      final BakedModel model,
+      @Local(argsOnly = true) final ItemStack stack,
+      @Local(argsOnly = true) final ModelTransformationMode mode) {
+    return ParasolHeldModel.modelFor(stack, mode, model);
+  }
 
   @ModifyVariable(
       method =

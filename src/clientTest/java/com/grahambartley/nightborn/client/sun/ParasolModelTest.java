@@ -23,7 +23,7 @@ class ParasolModelTest {
         Arguments.of(
             "texture",
             (Function<ParasolModel, Identifier>) model -> model.getTextureResource(null),
-            "nightborn:textures/item/parasol.png"),
+            "nightborn:textures/item/parasol/fresh.png"),
         Arguments.of(
             "animations",
             (Function<ParasolModel, Identifier>) model -> model.getAnimationResource(null),
