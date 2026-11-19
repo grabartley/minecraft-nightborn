@@ -14,9 +14,6 @@ import java.util.UUID;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.data.DataTracker;
-import net.minecraft.entity.data.TrackedData;
-import net.minecraft.entity.data.TrackedDataHandlerRegistry;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -35,9 +32,6 @@ public class TrapEntity extends ZoneMarkEntity {
   static final double STEP_HEIGHT = 0.3;
   static final double STEP_REACH = 1.0;
 
-  private static final TrackedData<Float> SEEN_WITHIN =
-      DataTracker.registerData(TrapEntity.class, TrackedDataHandlerRegistry.FLOAT);
-
   private final Set<UUID> inside = new HashSet<>();
   @Nullable private UUID owner;
   @Nullable private Identifier skill;
@@ -45,6 +39,7 @@ public class TrapEntity extends ZoneMarkEntity {
   private long armedAt;
   private long until;
   private float extraDamage;
+  private float seenWithin;
 
   public TrapEntity(final EntityType<? extends TrapEntity> type, final World world) {
     super(type, world);
@@ -65,22 +60,13 @@ public class TrapEntity extends ZoneMarkEntity {
     trap.armedAt = now + loadout.armTicks();
     trap.until = now + power.durationTicks();
     trap.extraDamage = loadout.extraDamage();
-    trap.dataTracker.set(SEEN_WITHIN, loadout.seenWithin());
+    trap.seenWithin = loadout.seenWithin();
     trap.shape(power.size(), Optional.of(power.look()));
+    trap.linger(power.durationTicks());
     trap.refreshPositionAndAngles(
         spot.getX() + 0.5, spot.getY() + 0.02, spot.getZ() + 0.5, owner.getYaw(), 0.0F);
     world.spawnEntity(trap);
     return trap;
-  }
-
-  @Override
-  protected void initDataTracker(final DataTracker.Builder builder) {
-    super.initDataTracker(builder);
-    builder.add(SEEN_WITHIN, 0.0F);
-  }
-
-  public float seenWithin() {
-    return dataTracker.get(SEEN_WITHIN);
   }
 
   public boolean ownedBy(final UUID id, final Identifier power) {
@@ -94,10 +80,6 @@ public class TrapEntity extends ZoneMarkEntity {
             && world.getEntity(owner) instanceof LivingEntity living
         ? living
         : null;
-  }
-
-  public long armedAt() {
-    return armedAt;
   }
 
   @Override
@@ -174,13 +156,13 @@ public class TrapEntity extends ZoneMarkEntity {
   }
 
   private void catchIn(final LivingEntity hunter, final LivingEntity met, final TrapPower trap) {
-    final int pin = trap.pinTicks(met instanceof PlayerEntity);
-    if (pin > 0) {
-      Holds.hold(hunter, met, HoldKind.PIN, pin);
-    }
     final float damage = trap.damage() + extraDamage;
     if (damage > 0.0F) {
       met.damage(TrapDamage.of(this, trap.damageType(), hunter), damage);
+    }
+    final int pin = trap.pinTicks(met instanceof PlayerEntity);
+    if (pin > 0) {
+      Holds.hold(hunter, met, HoldKind.PIN, pin);
     }
     for (final StatusEffectInstance effect : trap.effects()) {
       met.addStatusEffect(new StatusEffectInstance(effect), hunter);
@@ -217,7 +199,7 @@ public class TrapEntity extends ZoneMarkEntity {
 
   @Override
   public boolean canBeSpectated(final ServerPlayerEntity viewer) {
-    return TrapRules.seen(Vampires.isVampire(viewer), viewer.squaredDistanceTo(this), seenWithin());
+    return TrapRules.seen(Vampires.isVampire(viewer), viewer.squaredDistanceTo(this), seenWithin);
   }
 
   @Override

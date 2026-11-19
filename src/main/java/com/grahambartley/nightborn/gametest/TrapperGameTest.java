@@ -1,6 +1,7 @@
 package com.grahambartley.nightborn.gametest;
 
 import com.grahambartley.nightborn.batform.BatForm;
+import com.grahambartley.nightborn.blood.BloodAttachment;
 import com.grahambartley.nightborn.hold.Holds;
 import com.grahambartley.nightborn.mob.NightbornMobs;
 import com.grahambartley.nightborn.mob.VampireEntity;
@@ -136,10 +137,19 @@ public class TrapperGameTest implements FabricGameTest {
     final ServerPlayerEntity hunter = TestPlayers.hunter(context, new BlockPos(1, 2, 3));
     final VampireEntity bat = vampire(context, new BlockPos(5, 2, 3));
     learn(hunter, "field_craft", "snare", "net_shot");
+    SkillAttachment.set(
+        bat,
+        SkillTree.VAMPIRE,
+        TreeProgress.EMPTY
+            .withEarned(20)
+            .buy(id("beast/beast_blood"), 1, id("beast"))
+            .buy(id("beast/bat_form"), 1, null));
+    BloodAttachment.set(bat, 20);
+    context.runAtTick(TestPlayers.READY - 5, () -> BatForm.enter(bat));
     context.runAtTick(
         TestPlayers.READY,
         () -> {
-          BatForm.enter(bat);
+          context.assertTrue(BatForm.isBat(bat), "the vampire is a bat before the net");
           hunter.lookAt(
               EntityAnchorArgumentType.EntityAnchor.EYES, bat.getBoundingBox().getCenter());
           cast(context, hunter, NET_SHOT);
