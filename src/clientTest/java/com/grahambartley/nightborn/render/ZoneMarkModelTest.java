@@ -79,13 +79,16 @@ class ZoneMarkModelTest {
 
   static Stream<String> pillars() throws IOException {
     return skillLooks()
-        .filter(part -> part.has("pillar") && part.get("pillar").getAsBoolean())
+        .filter(
+            part ->
+                part.has("pillar") && part.get("pillar").getAsBoolean()
+                    || part.has("rise") && part.get("rise").getAsFloat() > 0.0F)
         .map(part -> part.get("look").getAsString());
   }
 
   @ParameterizedTest(name = "{0}")
   @MethodSource("pillars")
-  @DisplayName("every look that raises a pillar has light painted where the pillar draws")
+  @DisplayName("every look that rises off the ground has art painted where its column draws")
   void pillarsHaveArt(final String mark) throws IOException {
     final BufferedImage image =
         ImageIO.read(

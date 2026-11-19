@@ -92,7 +92,7 @@ The sorcerer. Shadow, fog and the dead.
 | Skill | Kind | Ranks and cost | Needs | Gate | Blood | Cooldown | What it does |
 |---|---|---|---|---|---|---|---|
 | Occult Blood | Passive | 3 ranks: 1, 1, 2 | None | None | | | Half a block more reach each rank |
-| Grave Fog | Power | 2 | Occult Blood | None | 3 | 30 | A cloud with a radius of 4 blocks for 8 seconds that blinds and slows those in it |
+| Grave Fog | Power | 2 | Occult Blood | None | 3 | 30 | A cloud with a radius of 4 blocks for 8 seconds that blinds and slows those in it. A bank of grave mist rises over the ground it covers |
 | Summon Familiar | Power | 2 | Occult Blood | None | 4 | 20 | Calls a ghostly familiar (FAM-1 to FAM-9) |
 | Shadow Step | Power | 2 | Grave Fog | None | 2 | 10 | Steps through shadow to stand behind a target within 16 blocks |
 | Spirit Pact | Passive | 3 ranks: 2, 2, 3 | Summon Familiar | None | | | Rank 1 allows 1 more familiar. Ranks 2 and 3 each give familiars 25% more health |
@@ -101,7 +101,7 @@ The sorcerer. Shadow, fog and the dead.
 | Blood Ward | Power | 3 | Grave Fog | Adult | 4 | 90 | Draws a circle of blood and runes with a radius of 4 blocks on the ground for 30 seconds. A human who stands in it has Slowness I and takes 1 damage each second. Inside it a Blessing cannot be cast and healing prayers do not heal. A weapon already blessed or alight still works, and so do garlic, crucifixes, holy water and consecrated ground. Where it overlaps a Consecrate circle, both work |
 | Mist Form | Power | 3 | Shadow Veil | Elder | 4 | 60 | For 8 seconds the vampire is mist, a low swirling cloud with a dull red glow at its heart and two red eyes: it drifts through doors, bars, fences, trapdoors and gaps, and blades and bolts pass through it. It cannot attack, feed or use items. Sun, fire and holy water hurt it twice as much |
 | Raise The Dead | Power | 3 | Summon Familiar | Elder | 5 | 120 | Three restless dead rise from the ground and fight for 30 seconds. Each has 20 health and deals 4 damage. They attack whatever the vampire attacks and whatever attacks the vampire |
-| Black Mass | Power | 4 | Mist Form and Raise The Dead | Ancient | 6 | 300 | Capstone. For 15 seconds, within a radius of 12 blocks: fog fills the air, bats swarm and deal 1 damage each second to hunter mobs and to anything that has attacked the vampire or been attacked by it in the last 10 seconds, and the vampire's Shadow Step costs nothing and has no cooldown |
+| Black Mass | Power | 4 | Mist Form and Raise The Dead | Ancient | 6 | 300 | Capstone. For 15 seconds, within a radius of 12 blocks: fog fills the air under a tall bank of grave mist, a ring of red-eyed bats circles the vampire and deals 1 damage each second to hunter mobs and to anything that has attacked the vampire or been attacked by it in the last 10 seconds, and the vampire's Shadow Step costs nothing and has no cooldown |
 | Beyond The Veil | Passive | 3 | Black Mass | Ancient | | | Familiars last 50% longer, Occult powers cost 1 less blood, never less than 1, and their cooldowns are 20% shorter |
 
 ## Hunter Tree

@@ -5,6 +5,7 @@ public final class OccultFeatures {
   private OccultFeatures() {}
 
   public static void register() {
+    OccultEntities.initialize();
     OccultAttributes.register();
     OccultSounds.register();
     GhostlyFamiliars.register();

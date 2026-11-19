@@ -1,6 +1,7 @@
 package com.grahambartley.nightborn.occult;
 
 import com.grahambartley.nightborn.accessory.GiftAttributes;
+import com.grahambartley.nightborn.boss.ZoneMarkEntity;
 import com.grahambartley.nightborn.servant.Servants;
 import com.grahambartley.nightborn.skill.AreaRules;
 import com.grahambartley.nightborn.vampire.VampireAttributes;
@@ -42,9 +43,14 @@ public final class FogClouds {
 
   public static void spawn(final LivingEntity caster, final FogPower power) {
     if (caster.getWorld() instanceof ServerWorld world) {
-      CLOUDS.add(
-          new Cloud(
-              world.getRegistryKey(), caster.getPos(), caster.getUuid(), power, world.getTime()));
+      final Vec3d at = caster.getPos();
+      CLOUDS.add(new Cloud(world.getRegistryKey(), at, caster.getUuid(), power, world.getTime()));
+      power
+          .look()
+          .ifPresent(
+              look ->
+                  ZoneMarkEntity.ground(world, at, power.radius(), look, power.durationTicks())
+                      .rise(power.rise()));
     }
   }
 

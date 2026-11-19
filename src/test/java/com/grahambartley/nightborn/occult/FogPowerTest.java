@@ -6,11 +6,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import com.google.gson.JsonParser;
 import com.grahambartley.nightborn.MinecraftBootstrapExtension;
 import com.mojang.serialization.JsonOps;
+import java.util.Optional;
 import net.minecraft.entity.effect.StatusEffects;
+import net.minecraft.util.Identifier;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 @ExtendWith(MinecraftBootstrapExtension.class)
@@ -42,5 +45,20 @@ class FogPowerTest {
   @DisplayName("a fog out of bounds or without effects is rejected")
   void rejects(final String json) {
     assertTrue(FogPower.CODEC.parse(JsonOps.INSTANCE, JsonParser.parseString(json)).isError());
+  }
+
+  @ParameterizedTest(name = "{0}: look {1}, rise {2}")
+  @CsvSource(
+      delimiter = ';',
+      value = {
+        "{\"radius\":4,\"duration_ticks\":160,\"effects\":[],\"look\":\"nightborn:grave_fog\",\"rise\":1.5}; nightborn:grave_fog; 1.5",
+        "{\"radius\":4,\"duration_ticks\":160,\"effects\":[]}; ; 0.0"
+      })
+  @DisplayName("a fog draws the mark it names, banked as high as it says, or nothing")
+  void look(final String json, final String look, final float rise) {
+    final FogPower fog =
+        FogPower.CODEC.parse(JsonOps.INSTANCE, JsonParser.parseString(json)).getOrThrow();
+    assertEquals(Optional.ofNullable(look).map(Identifier::of), fog.look());
+    assertEquals(rise, fog.rise());
   }
 }

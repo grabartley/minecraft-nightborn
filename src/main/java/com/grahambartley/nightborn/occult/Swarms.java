@@ -12,7 +12,6 @@ import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.particle.ParticleTypes;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.world.ServerWorld;
@@ -23,7 +22,8 @@ import net.minecraft.world.World;
 
 public final class Swarms {
 
-  private record Swarm(RegistryKey<World> world, UUID caster, SwarmPower power, long startedAt) {}
+  private record Swarm(
+      RegistryKey<World> world, UUID caster, SwarmPower power, long startedAt, UUID bats) {}
 
   private static final List<Swarm> SWARMS = new ArrayList<>();
 
@@ -40,13 +40,31 @@ public final class Swarms {
   }
 
   public static void start(final LivingEntity caster, final SwarmPower power) {
-    SWARMS.removeIf(swarm -> swarm.caster().equals(caster.getUuid()));
+    if (!(caster.getWorld() instanceof ServerWorld world)) {
+      return;
+    }
+    SWARMS.removeIf(
+        swarm -> {
+          if (!swarm.caster().equals(caster.getUuid())) {
+            return false;
+          }
+          disperse(world.getServer(), swarm);
+          return true;
+        });
+    final BatSwarmEntity bats = new BatSwarmEntity(OccultEntities.BAT_SWARM, world);
+    bats.refreshPositionAndAngles(
+        caster.getX(), caster.getY(), caster.getZ(), caster.getYaw(), 0.0F);
+    world.spawnEntity(bats);
     SWARMS.add(
         new Swarm(
-            caster.getWorld().getRegistryKey(),
-            caster.getUuid(),
-            power,
-            caster.getWorld().getTime()));
+            world.getRegistryKey(), caster.getUuid(), power, world.getTime(), bats.getUuid()));
+  }
+
+  private static void disperse(final MinecraftServer server, final Swarm swarm) {
+    final ServerWorld world = server.getWorld(swarm.world());
+    if (world != null && world.getEntity(swarm.bats()) instanceof BatSwarmEntity bats) {
+      bats.discard();
+    }
   }
 
   private static void tick(final MinecraftServer server) {
@@ -58,12 +76,16 @@ public final class Swarms {
       if (!(found instanceof LivingEntity caster)
           || !caster.isAlive()
           || !AreaRules.lasts(world.getTime(), swarm.startedAt() + swarm.power().durationTicks())) {
+        disperse(server, swarm);
         swarms.remove();
         continue;
       }
+      if (world.getEntity(swarm.bats()) instanceof BatSwarmEntity bats) {
+        bats.setPosition(caster.getPos());
+      }
       final long age = world.getTime() - swarm.startedAt();
       if (age % 4 == 0) {
-        flutter(world, caster, swarm.power());
+        flutter(world, caster);
       }
       if (age % swarm.power().everyTicks() == 0) {
         sting(world, caster, swarm.power());
@@ -71,19 +93,7 @@ public final class Swarms {
     }
   }
 
-  private static void flutter(
-      final ServerWorld world, final LivingEntity caster, final SwarmPower power) {
-    final double radius = power.radius();
-    world.spawnParticles(
-        ParticleTypes.SQUID_INK,
-        caster.getX(),
-        caster.getY() + 2.0,
-        caster.getZ(),
-        (int) Math.ceil(radius),
-        radius * 0.5,
-        1.0,
-        radius * 0.5,
-        0.05);
+  private static void flutter(final ServerWorld world, final LivingEntity caster) {
     if (caster.getRandom().nextInt(4) == 0) {
       world.playSound(
           null,
