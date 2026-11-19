@@ -16,8 +16,8 @@ public final class StatusMarkView {
 
   private StatusMarkView() {}
 
-  public static boolean shows(final boolean invisible, final Long until, final long now) {
-    return !invisible && until != null && now < until;
+  public static boolean shows(final boolean hidden, final Long until, final long now) {
+    return !hidden && until != null && now < until;
   }
 
   public static float netWidth(final float width) {

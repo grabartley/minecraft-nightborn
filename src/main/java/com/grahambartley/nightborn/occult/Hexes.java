@@ -26,7 +26,7 @@ public final class Hexes {
           builder ->
               builder
                   .persistent(HexMark.CODEC)
-                  .syncWith(HexMark.PACKET_CODEC.cast(), AttachmentSyncPredicate.all()));
+                  .syncWith(HexMark.PACKET_CODEC, AttachmentSyncPredicate.all()));
 
   private Hexes() {}
 

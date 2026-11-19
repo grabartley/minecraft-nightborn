@@ -1,8 +1,9 @@
 package com.grahambartley.nightborn.render;
 
+import com.grahambartley.nightborn.client.sight.UnseenBodies;
 import com.grahambartley.nightborn.occult.HexMark;
 import com.grahambartley.nightborn.occult.Hexes;
-import com.grahambartley.nightborn.seeker.Quarries;
+import com.grahambartley.nightborn.seeker.QuarryBrand;
 import com.grahambartley.nightborn.trap.Grounding;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.util.math.MatrixStack;
@@ -14,8 +15,13 @@ public final class StatusMarks {
   private static StatusMarkRenderer net;
   private static StatusMarkRenderer hex;
   private static StatusMarkRenderer quarry;
+  private static boolean portrait;
 
   private StatusMarks() {}
+
+  public static void portrait(final boolean drawing) {
+    portrait = drawing;
+  }
 
   public static void draw(
       final Entity entity,
@@ -23,11 +29,11 @@ public final class StatusMarks {
       final VertexConsumerProvider provider,
       final int light,
       final float tickDelta) {
-    if (!(entity instanceof LivingEntity living)) {
+    if (portrait || !(entity instanceof LivingEntity living)) {
       return;
     }
     final long now = living.getWorld().getTime();
-    final boolean invisible = living.isInvisible();
+    final boolean invisible = living.isInvisible() || UnseenBodies.bodyHidden(living);
     final float width = living.getWidth();
     final float height = living.getHeight();
     if (StatusMarkView.shows(invisible, living.getAttached(Grounding.TYPE), now)) {
@@ -50,7 +56,7 @@ public final class StatusMarks {
       hex.draw(matrices, StatusMarkAnimatable.HEX, provider, scale, scale, light, tickDelta);
       matrices.pop();
     }
-    if (StatusMarkView.shows(invisible, living.getAttached(Quarries.QUARRIED), now)) {
+    if (StatusMarkView.shows(invisible, living.getAttached(QuarryBrand.TYPE), now)) {
       renderers();
       final float scale = StatusMarkView.quarryScale(width);
       quarry.draw(matrices, StatusMarkAnimatable.QUARRY, provider, scale, scale, light, tickDelta);

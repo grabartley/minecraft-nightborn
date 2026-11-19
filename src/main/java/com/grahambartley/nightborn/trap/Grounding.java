@@ -18,7 +18,7 @@ public final class Grounding {
   public static final AttachmentType<Long> TYPE =
       AttachmentRegistry.create(
           Identifier.of(Nightborn.MOD_ID, "grounded"),
-          builder -> builder.syncWith(PacketCodecs.VAR_LONG.cast(), AttachmentSyncPredicate.all()));
+          builder -> builder.syncWith(PacketCodecs.VAR_LONG, AttachmentSyncPredicate.all()));
 
   private Grounding() {}
 
