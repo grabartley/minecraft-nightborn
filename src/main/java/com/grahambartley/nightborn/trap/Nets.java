@@ -1,5 +1,10 @@
 package com.grahambartley.nightborn.trap;
 
+import com.grahambartley.nightborn.batform.BatForm;
+import com.grahambartley.nightborn.challenge.Deed;
+import com.grahambartley.nightborn.challenge.DeedKinds;
+import com.grahambartley.nightborn.challenge.Deeds;
+import com.grahambartley.nightborn.levitation.Levitation;
 import com.grahambartley.nightborn.skill.PowerReach;
 import com.grahambartley.nightborn.vampire.Vampires;
 import net.minecraft.entity.Entity;
@@ -42,7 +47,12 @@ public final class Nets {
       return;
     }
     if (PowerReach.marks(target)) {
+      final boolean flying = BatForm.isBat(target) || Levitation.isLevitating(target);
       Grounding.start(target, power.groundTicks());
+      Deeds.record(owner, Deed.of(DeedKinds.TRAPPED));
+      if (flying) {
+        Deeds.record(owner, Deed.of(DeedKinds.GROUNDED));
+      }
       if (target instanceof ServerPlayerEntity player) {
         player.sendMessage(Text.translatable("nightborn.trap.netted"), true);
       }

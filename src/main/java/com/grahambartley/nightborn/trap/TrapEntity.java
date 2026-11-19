@@ -2,6 +2,9 @@ package com.grahambartley.nightborn.trap;
 
 import com.grahambartley.nightborn.batform.BatForm;
 import com.grahambartley.nightborn.boss.ZoneMarkEntity;
+import com.grahambartley.nightborn.challenge.Deed;
+import com.grahambartley.nightborn.challenge.DeedKinds;
+import com.grahambartley.nightborn.challenge.Deeds;
 import com.grahambartley.nightborn.hold.HoldKind;
 import com.grahambartley.nightborn.hold.Holds;
 import com.grahambartley.nightborn.occult.MistForm;
@@ -168,6 +171,7 @@ public class TrapEntity extends ZoneMarkEntity {
     if (met instanceof ServerPlayerEntity player) {
       player.sendMessage(Text.translatable("nightborn.trap.caught"), true);
     }
+    Deeds.record(hunter, Deed.of(DeedKinds.TRAPPED));
   }
 
   private void spring(final ServerWorld world, final TrapPower trap) {
