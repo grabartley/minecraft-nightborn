@@ -8,5 +8,6 @@ public final class FaithFeatures {
     FaithMarks.register();
     Prayers.register();
     Kindling.register();
+    BladeFlames.register();
   }
 }

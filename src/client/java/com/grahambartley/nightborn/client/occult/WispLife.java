@@ -22,7 +22,7 @@ public final class WispLife {
   }
 
   public static float scale(final float age, final int maxAge) {
-    return START_SCALE + (END_SCALE - START_SCALE) * ParticleLife.fraction(age, maxAge);
+    return ParticleLife.lerp(START_SCALE, END_SCALE, age, maxAge);
   }
 
   public static int brightness(final int worldLight) {
