@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.grahambartley.nightborn.mob.VampirePose;
+import java.util.Map;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -12,15 +13,39 @@ import org.junit.jupiter.params.provider.CsvSource;
 
 class PlayerClipStateTest {
 
-  static final PlayerClipState.Lengths LENGTHS =
-      new PlayerClipState.Lengths(0.7, 2.6, 1.4, 1.6, 0.5, 1.5, 0.3);
+  static final Map<VampirePose, Double> SECONDS =
+      Map.of(
+          VampirePose.LAND, 0.7,
+          VampirePose.VOMIT, 2.6,
+          VampirePose.DRAIN, 1.4,
+          VampirePose.RISE, 1.6,
+          VampirePose.FINISHER_BITE, 1.5,
+          VampirePose.SMALL_FLINCH, 0.3,
+          VampirePose.RECOIL_GARLIC, 0.9,
+          VampirePose.RECOIL_CRUCIFIX, 1.2,
+          VampirePose.LIGHT_CANDLE, 1.6,
+          VampirePose.WAKE_STRETCH, 2.6);
+
+  static final PlayerClipState.Lengths LENGTHS = pose -> SECONDS.getOrDefault(pose, 0.0);
+
+  private static PlayerClipState.Situation situation(
+      final boolean levitating,
+      final boolean sprinting,
+      final double speed,
+      final boolean downed,
+      final boolean feeding,
+      final boolean weakened,
+      final Optional<VampirePose> coffin) {
+    return new PlayerClipState.Situation(
+        levitating, sprinting, speed, downed, feeding, weakened, coffin, false, false);
+  }
 
   private static PlayerClipState.Situation still() {
-    return new PlayerClipState.Situation(false, false, 0.0, false, false, false, Optional.empty());
+    return situation(false, false, 0.0, false, false, false, Optional.empty());
   }
 
   private static PlayerClipState.Situation levitating() {
-    return new PlayerClipState.Situation(true, false, 0.0, false, false, false, Optional.empty());
+    return situation(true, false, 0.0, false, false, false, Optional.empty());
   }
 
   private static String clip(
@@ -51,11 +76,7 @@ class PlayerClipStateTest {
     state.tick(0, true, false);
     assertEquals(
         expected,
-        clip(
-            state,
-            1,
-            new PlayerClipState.Situation(
-                true, sprinting, speed, false, false, false, Optional.empty())));
+        clip(state, 1, situation(true, sprinting, speed, false, false, false, Optional.empty())));
   }
 
   @ParameterizedTest(name = "{0} ticks after retching, levitating {1}: {2}")
@@ -76,11 +97,7 @@ class PlayerClipStateTest {
     state.tick(10, false, true);
     assertEquals(
         "DOWNED",
-        clip(
-            state,
-            10,
-            new PlayerClipState.Situation(
-                false, false, 0.0, true, false, false, Optional.empty())));
+        clip(state, 10, situation(false, false, 0.0, true, false, false, Optional.empty())));
     state.tick(11, false, false);
     assertEquals(expected, clip(state, 11 + after, still()));
   }
@@ -104,8 +121,7 @@ class PlayerClipStateTest {
         clip(
             state,
             200 + after,
-            new PlayerClipState.Situation(
-                false, false, 0.0, false, feeding, false, Optional.empty())));
+            situation(false, false, 0.0, false, feeding, false, Optional.empty())));
   }
 
   @ParameterizedTest(name = "lev {0}, downed {1}, feeding {2}, weakened {3}, speed {4}: {5}")
@@ -133,8 +149,7 @@ class PlayerClipStateTest {
         clip(
             state,
             1,
-            new PlayerClipState.Situation(
-                levitating, false, speed, downed, feeding, weakened, Optional.empty())));
+            situation(levitating, false, speed, downed, feeding, weakened, Optional.empty())));
   }
 
   @ParameterizedTest(
@@ -171,8 +186,7 @@ class PlayerClipStateTest {
         clip(
             state,
             1,
-            new PlayerClipState.Situation(
-                levitating, false, 0.0, downed, feeding, weakened, Optional.of(coffin))));
+            situation(levitating, false, 0.0, downed, feeding, weakened, Optional.of(coffin))));
   }
 
   @Test
@@ -184,25 +198,31 @@ class PlayerClipStateTest {
     assertTrue(Double.isNaN(state.vomitingSeconds(6)));
   }
 
-  @ParameterizedTest(name = "{0} ticks after flinching, weakened {1}: {2}")
+  @ParameterizedTest(name = "{0} ticks after a {1}, weakened {2}: {3}")
   @CsvSource({
-    "0, false, FLINCH",
-    "9, false, FLINCH",
-    "10, false, VANILLA",
-    "0, true, FLINCH",
-    "10, true, WEAKENED"
+    "0, RECOIL_GARLIC, false, RECOIL_GARLIC",
+    "17, RECOIL_GARLIC, false, RECOIL_GARLIC",
+    "18, RECOIL_GARLIC, false, VANILLA",
+    "0, RECOIL_GARLIC, true, RECOIL_GARLIC",
+    "18, RECOIL_GARLIC, true, WEAKENED",
+    "23, RECOIL_CRUCIFIX, false, RECOIL_CRUCIFIX",
+    "24, RECOIL_CRUCIFIX, false, VANILLA",
+    "31, LIGHT_CANDLE, false, LIGHT_CANDLE",
+    "32, LIGHT_CANDLE, false, VANILLA",
+    "51, WAKE_STRETCH, true, WAKE_STRETCH",
+    "52, WAKE_STRETCH, true, WEAKENED"
   })
-  @DisplayName("a flinch plays once, before the stoop of a weakened vampire")
-  void flinches(final int after, final boolean weakened, final String expected) {
+  @DisplayName("a gesture plays once for its own length, before the stoop of a weakened vampire")
+  void gestures(
+      final int after, final VampirePose gesture, final boolean weakened, final String expected) {
     final PlayerClipState state = new PlayerClipState();
-    state.flinch(20);
+    state.gesture(gesture, 20);
     assertEquals(
         expected,
         clip(
             state,
             20 + after,
-            new PlayerClipState.Situation(
-                false, false, 0.0, false, false, weakened, Optional.empty())));
+            situation(false, false, 0.0, false, false, weakened, Optional.empty())));
   }
 
   @ParameterizedTest(
@@ -232,8 +252,7 @@ class PlayerClipStateTest {
         clip(
             state,
             300 + after,
-            new PlayerClipState.Situation(
-                false, false, 0.0, false, feeding, false, Optional.empty())));
+            situation(false, false, 0.0, false, feeding, false, Optional.empty())));
   }
 
   @Test
@@ -241,24 +260,13 @@ class PlayerClipStateTest {
   void brokenFinisherStaysBroken() {
     final PlayerClipState state = new PlayerClipState();
     state.finisher(300);
-    clip(
-        state,
-        302,
-        new PlayerClipState.Situation(false, false, 0.0, false, true, false, Optional.empty()));
+    clip(state, 302, situation(false, false, 0.0, false, true, false, Optional.empty()));
     assertEquals(
         "VANILLA",
-        clip(
-            state,
-            305,
-            new PlayerClipState.Situation(
-                false, false, 0.0, false, false, false, Optional.empty())));
+        clip(state, 305, situation(false, false, 0.0, false, false, false, Optional.empty())));
     assertEquals(
         "FEED",
-        clip(
-            state,
-            310,
-            new PlayerClipState.Situation(
-                false, false, 0.0, false, true, false, Optional.empty())));
+        clip(state, 310, situation(false, false, 0.0, false, true, false, Optional.empty())));
   }
 
   @Test
@@ -268,25 +276,17 @@ class PlayerClipStateTest {
     state.finisher(300);
     assertEquals(
         "FINISHER_BITE",
-        clip(
-            state,
-            300,
-            new PlayerClipState.Situation(
-                false, false, 0.0, false, false, false, Optional.empty())));
+        clip(state, 300, situation(false, false, 0.0, false, false, false, Optional.empty())));
     assertEquals(
         "FINISHER_BITE",
-        clip(
-            state,
-            301,
-            new PlayerClipState.Situation(
-                false, false, 0.0, false, true, false, Optional.empty())));
+        clip(state, 301, situation(false, false, 0.0, false, true, false, Optional.empty())));
   }
 
   @Test
-  @DisplayName("a levitating vampire keeps floating through a flinch")
-  void levitationOutranksAFlinch() {
+  @DisplayName("a levitating vampire keeps floating through a recoil")
+  void levitationOutranksARecoil() {
     final PlayerClipState state = new PlayerClipState();
-    state.flinch(20);
+    state.gesture(VampirePose.RECOIL_CRUCIFIX, 20);
     assertEquals("LEVITATE", clip(state, 21, levitating()));
   }
 
@@ -295,13 +295,114 @@ class PlayerClipStateTest {
   @DisplayName("a small flinch plays its own clip for its own length")
   void smallFlinch(final int after, final String expected) {
     final PlayerClipState state = new PlayerClipState();
-    state.flinch(20, true);
+    state.gesture(VampirePose.SMALL_FLINCH, 20);
     assertEquals(
         expected,
         clip(
             state,
             20 + after,
+            situation(false, false, 0.0, false, false, false, Optional.empty())));
+  }
+
+  @ParameterizedTest(name = "downed {0}, feeding {1}, retching {2}, recoiling {3}, coffin {4}: {5}")
+  @CsvSource({
+    "false, false, false, false, , STAKED_DEATH",
+    "true, false, false, false, , STAKED_DEATH",
+    "false, true, false, false, , STAKED_DEATH",
+    "false, false, true, false, , STAKED_DEATH",
+    "false, false, false, true, , STAKED_DEATH",
+    "true, true, true, true, , STAKED_DEATH",
+    "false, false, false, false, COFFIN_SLEEP, COFFIN_SLEEP"
+  })
+  @DisplayName("a vampire killed by a stake falls in its own clip over everything but a coffin")
+  void staked(
+      final boolean downed,
+      final boolean feeding,
+      final boolean retching,
+      final boolean recoiling,
+      final VampirePose coffin,
+      final String expected) {
+    final PlayerClipState state = new PlayerClipState();
+    if (retching) {
+      state.vomit(0);
+    }
+    if (recoiling) {
+      state.gesture(VampirePose.RECOIL_GARLIC, 0);
+    }
+    state.tick(0, false, downed);
+    assertEquals(
+        expected,
+        clip(
+            state,
+            1,
             new PlayerClipState.Situation(
-                false, false, 0.0, false, false, false, Optional.empty())));
+                false,
+                false,
+                0.0,
+                downed,
+                feeding,
+                false,
+                Optional.ofNullable(coffin),
+                true,
+                false)));
+  }
+
+  @ParameterizedTest(
+      name = "sprinting {0}, levitating {1}, feeding {2}, recoiling {3}, weakened {4}: {5}")
+  @CsvSource({
+    "false, false, false, false, false, SUN_BURN",
+    "false, false, false, false, true, SUN_BURN",
+    "true, false, false, false, false, VANILLA",
+    "true, false, false, false, true, WEAKENED",
+    "false, true, false, false, false, LEVITATE",
+    "false, false, true, false, false, FEED",
+    "false, false, false, true, false, RECOIL_CRUCIFIX"
+  })
+  @DisplayName(
+      "a vampire burning in the sun staggers unless it sprints, and a recoil, feeding or"
+          + " levitating still win over the burn")
+  void sunBurns(
+      final boolean sprinting,
+      final boolean levitating,
+      final boolean feeding,
+      final boolean recoiling,
+      final boolean weakened,
+      final String expected) {
+    final PlayerClipState state = new PlayerClipState();
+    if (recoiling) {
+      state.gesture(VampirePose.RECOIL_CRUCIFIX, 0);
+    }
+    state.tick(0, levitating, false);
+    assertEquals(
+        expected,
+        clip(
+            state,
+            1,
+            new PlayerClipState.Situation(
+                levitating,
+                sprinting,
+                0.0,
+                false,
+                feeding,
+                weakened,
+                Optional.empty(),
+                false,
+                true)));
+  }
+
+  @ParameterizedTest(name = "{0} ticks after a recoil while downed {1}, feeding {2}: {3}")
+  @CsvSource({"0, true, false, DOWNED", "0, false, true, FEED", "5, true, true, DOWNED"})
+  @DisplayName("a recoil never cuts into being downed or feeding")
+  void recoilYields(
+      final int after, final boolean downed, final boolean feeding, final String expected) {
+    final PlayerClipState state = new PlayerClipState();
+    state.gesture(VampirePose.RECOIL_GARLIC, 10);
+    state.tick(10, false, downed);
+    assertEquals(
+        expected,
+        clip(
+            state,
+            10 + after,
+            situation(false, false, 0.0, downed, feeding, false, Optional.empty())));
   }
 }

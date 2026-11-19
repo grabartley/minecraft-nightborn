@@ -1,6 +1,7 @@
 package com.grahambartley.nightborn.coffin;
 
 import com.grahambartley.nightborn.Nightborn;
+import com.grahambartley.nightborn.mob.Gestures;
 import com.grahambartley.nightborn.mob.VampirePose;
 import com.grahambartley.nightborn.vampire.Vampires;
 import java.util.Collections;
@@ -110,6 +111,7 @@ public final class CoffinRise {
       sleeper.wakeUp();
     }
     sleeper.removeAttached(TYPE);
+    Gestures.show(sleeper, VampirePose.WAKE_STRETCH);
     if (sleeper instanceof ServerPlayerEntity player) {
       player.networkHandler.requestTeleport(player.getX(), player.getY(), player.getZ(), yaw, 0.0F);
     } else {

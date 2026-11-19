@@ -1,8 +1,9 @@
 package com.grahambartley.nightborn.mob.household;
 
+import com.grahambartley.nightborn.mob.Gestures;
 import com.grahambartley.nightborn.mob.VampireEntity;
+import com.grahambartley.nightborn.mob.VampirePose;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 
@@ -42,7 +43,7 @@ public final class GramophoneTask implements HouseholdTask {
     final Vec3d at = Vec3d.ofCenter(gramophone);
     if (walk.toward(at, REACH)) {
       vampire.getLookControl().lookAt(at);
-      vampire.swingHand(Hand.MAIN_HAND);
+      Gestures.show(vampire, VampirePose.START_GRAMOPHONE);
       started = FurnitureUse.startGramophone(world, gramophone);
       return started;
     }

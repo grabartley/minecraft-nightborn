@@ -1,6 +1,7 @@
 package com.grahambartley.nightborn.mob;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 import java.util.Set;
@@ -35,8 +36,8 @@ class ShownActionTest {
       "the model knows when a head-holding clip is playing, so the look leaves the head alone")
   void showing(final String clip, final boolean ended, final boolean showing) {
     final ShownAction action = new ShownAction();
-    action.begin(1, "");
-    action.begin(2, clip);
+    action.begin(1, "", false);
+    action.begin(2, clip, false);
     if (ended) {
       action.end();
     }
@@ -53,5 +54,44 @@ class ShownActionTest {
   @DisplayName("a blank clip sent after a looping one stops it")
   void stops(final boolean current, final boolean blank, final boolean stops) {
     assertEquals(stops, ShownAction.stops(current, blank));
+  }
+
+  @ParameterizedTest(name = "yields {0}, playing {1}, calm {2}: held {3}")
+  @CsvSource({
+    "false, false, false, false",
+    "false, true, false, false",
+    "true, false, true, false",
+    "true, true, true, true",
+    "true, false, false, true",
+    "true, true, false, true"
+  })
+  @DisplayName("a recoil is held back while another clip plays or the vampire is busy")
+  void holds(final boolean yields, final boolean playing, final boolean calm, final boolean held) {
+    assertEquals(held, ShownAction.holds(yields, playing, calm));
+  }
+
+  @ParameterizedTest(name = "held {0}: begins {1}, still showing tell {2}")
+  @CsvSource({"false, true, false", "true, false, true"})
+  @DisplayName("a held recoil leaves the power tell it arrived during showing")
+  void heldRecoilKeepsTell(final boolean held, final boolean begins, final boolean tell) {
+    final ShownAction action = new ShownAction();
+    action.begin(1, "", false);
+    action.begin(2, "blood_frenzy_tell", false);
+    assertEquals(begins, action.begin(3, "recoil_garlic", held));
+    assertEquals(tell, action.showing(Set.of("blood_frenzy_tell")));
+    assertTrue(action.playing());
+  }
+
+  @ParameterizedTest(name = "recoil sent as sequence {0}")
+  @CsvSource({"3", "7"})
+  @DisplayName("a recoil held back is dropped, not played late once the vampire is free")
+  void heldRecoilIsDropped(final int sequence) {
+    final ShownAction action = new ShownAction();
+    action.begin(1, "", false);
+    action.begin(2, "blood_frenzy_tell", false);
+    action.begin(sequence, "recoil_garlic", true);
+    action.end();
+    assertEquals(false, action.begin(sequence, "recoil_garlic", false));
+    assertEquals(false, action.playing());
   }
 }

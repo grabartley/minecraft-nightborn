@@ -2,14 +2,18 @@ package com.grahambartley.nightborn.sun;
 
 import com.grahambartley.nightborn.Nightborn;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentRegistry;
+import net.fabricmc.fabric.api.attachment.v1.AttachmentSyncPredicate;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentType;
 import net.minecraft.entity.Entity;
+import net.minecraft.network.codec.PacketCodecs;
 import net.minecraft.util.Identifier;
 
 public final class SunFire {
 
   static final AttachmentType<Long> LIT_UNTIL =
-      AttachmentRegistry.create(Identifier.of(Nightborn.MOD_ID, "sun_fire_until"));
+      AttachmentRegistry.create(
+          Identifier.of(Nightborn.MOD_ID, "sun_fire_until"),
+          builder -> builder.syncWith(PacketCodecs.VAR_LONG.cast(), AttachmentSyncPredicate.all()));
 
   private SunFire() {}
 

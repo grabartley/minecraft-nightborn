@@ -23,6 +23,7 @@ public final class GearFeatures {
     GarlicGeneration.register();
     WardPoints.register();
     StakedVampires.register();
+    StakedFall.register();
     HolyWater.register();
     GarlicFumesEffect.register();
     AmmoEntities.initialize();

@@ -2,6 +2,7 @@ package com.grahambartley.nightborn.render;
 
 import com.grahambartley.nightborn.batform.BatForm;
 import com.grahambartley.nightborn.client.sight.UnseenBodies;
+import com.grahambartley.nightborn.gear.StakedFall;
 import com.grahambartley.nightborn.mob.VampireEntity;
 import com.grahambartley.nightborn.mob.look.VampireSize;
 import com.grahambartley.nightborn.occult.MistForm;
@@ -52,6 +53,11 @@ public class VampireRenderer extends GeoEntityRenderer<VampireEntity> {
       return;
     }
     super.render(vampire, yaw, tickDelta, matrices, vertexConsumers, light);
+  }
+
+  @Override
+  protected float getDeathMaxRotation(final VampireEntity vampire) {
+    return StakedFall.deathRoll(StakedFall.staked(vampire), super.getDeathMaxRotation(vampire));
   }
 
   @Override

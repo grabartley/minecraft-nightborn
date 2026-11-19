@@ -1,6 +1,7 @@
 package com.grahambartley.nightborn.render;
 
 import com.grahambartley.nightborn.client.vomit.VomitFx;
+import com.grahambartley.nightborn.gear.StakedFall;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
@@ -31,6 +32,13 @@ public final class VampirePlayerRenderer
     return getCurrentEntity() == null
         ? super.getTextureLocation(animatable)
         : getCurrentEntity().getSkinTextures().texture();
+  }
+
+  @Override
+  protected float getDeathMaxRotation(final VampirePlayerAnimatable animatable) {
+    return StakedFall.deathRoll(
+        getCurrentEntity() != null && StakedFall.staked(getCurrentEntity()),
+        super.getDeathMaxRotation(animatable));
   }
 
   @Override

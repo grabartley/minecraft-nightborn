@@ -2,10 +2,15 @@ package com.grahambartley.nightborn.mob;
 
 import com.grahambartley.nightborn.coffin.CoffinRise;
 import com.grahambartley.nightborn.decor.SeatEntity;
+import com.grahambartley.nightborn.gear.StakedFall;
 import com.grahambartley.nightborn.levitation.Levitation;
+import com.grahambartley.nightborn.sun.SunFire;
+import com.grahambartley.nightborn.vampire.VisibleState;
 import com.grahambartley.nightborn.vampire.VisibleStateAttachment;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import software.bernie.geckolib.animation.AnimatableManager;
 import software.bernie.geckolib.animation.AnimationController;
 import software.bernie.geckolib.animation.PlayState;
@@ -18,7 +23,9 @@ public final class VampireAnimator {
   static final String HISS_CONTROLLER = "hiss";
   static final String HISS_CLIP = "hiss";
   static final RawAnimation HISS = RawAnimation.begin().thenPlay(HISS_CLIP);
-  static final Set<String> HEAD_CLIPS = Set.of(VampireEntity.MOURN_CLIP);
+  static final Set<String> HEAD_CLIPS =
+      Stream.concat(Stream.of(VampireEntity.MOURN_CLIP), VampirePose.gestureClips().stream())
+          .collect(Collectors.toUnmodifiableSet());
 
   private final EndingEdge landingEdge = new EndingEdge();
   private final EndingEdge risingEdge = new EndingEdge();
@@ -43,7 +50,8 @@ public final class VampireAnimator {
             state -> {
               final boolean levitating = Levitation.isLevitating(vampire);
               landingEdge.ended(levitating);
-              final boolean downed = VisibleStateAttachment.get(vampire).downed();
+              final VisibleState visible = VisibleStateAttachment.get(vampire);
+              final boolean downed = visible.downed();
               risingEdge.ended(downed);
               final double speed =
                   Math.hypot(vampire.getX() - vampire.prevX, vampire.getZ() - vampire.prevZ);
@@ -51,6 +59,7 @@ public final class VampireAnimator {
                   VampirePose.of(
                       new VampirePose.Cue(
                           CoffinRise.pose(vampire),
+                          StakedFall.staked(vampire),
                           downed,
                           risingEdge.ending(),
                           !vampire.isAlive(),
@@ -60,9 +69,19 @@ public final class VampireAnimator {
                           state.getLimbSwingAmount(),
                           speed,
                           vampire.getVehicle() instanceof SeatEntity,
-                          vampire.reading()));
+                          vampire.reading(),
+                          SunFire.burning(vampire)));
               shownPose =
-                  pose == VampirePose.IDLE ? IdleFidget.pose(vampire.getId(), vampire.age) : pose;
+                  pose == VampirePose.IDLE
+                      ? IdleFidget.pose(
+                          vampire.getId(),
+                          vampire.age,
+                          IdleFidget.calm(
+                              vampire.handSwinging,
+                              vampire.isAttacking(),
+                              shownAction.playing(),
+                              visible.feeding()))
+                      : pose;
               final PlayState play =
                   state.setAndContinue(
                       vampire
@@ -92,7 +111,15 @@ public final class VampireAnimator {
             vampire,
             ACTION_CONTROLLER,
             2,
-            state -> shownAction.play(state, vampire.actionSequence(), vampire.action())));
+            state ->
+                shownAction.play(
+                    state,
+                    vampire.actionSequence(),
+                    vampire.action(),
+                    VampirePose.yields(vampire.action()),
+                    shownPose.allowsActions()
+                        && !vampire.handSwinging
+                        && !VisibleStateAttachment.get(vampire).feeding())));
     controllers.add(
         new AnimationController<>(vampire, HISS_CONTROLLER, 2, state -> PlayState.STOP)
             .triggerableAnim(HISS_CLIP, HISS));

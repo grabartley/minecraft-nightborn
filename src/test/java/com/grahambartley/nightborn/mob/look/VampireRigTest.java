@@ -44,7 +44,7 @@ class VampireRigTest {
   @CsvSource({"MALE, true", "FEMALE, true", "LORD, false", "ELDEST_MALE, false"})
   @DisplayName("household rigs share one clip file and only they are common")
   void sharesClips(final VampireRig rig, final boolean common) {
-    assertEquals(common, rig.clips().equals(VampireRig.playerClips()));
+    assertEquals(common, rig.clips().equals(VampireRig.sharedClips()));
     assertEquals(common, VampireRig.COMMON.contains(rig));
   }
 

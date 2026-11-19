@@ -2,12 +2,10 @@ package com.grahambartley.nightborn.ward;
 
 import com.grahambartley.nightborn.accessory.GiftAttributes;
 import com.grahambartley.nightborn.mind.Glamour;
+import com.grahambartley.nightborn.mob.Gestures;
 import com.grahambartley.nightborn.mob.VampirePose;
-import com.grahambartley.nightborn.network.PlayerCue;
-import com.grahambartley.nightborn.network.PlayerCues;
-import com.grahambartley.nightborn.skill.PowerShow;
+import java.util.Optional;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.server.network.ServerPlayerEntity;
 
 public final class Flinch {
 
@@ -17,20 +15,33 @@ public final class Flinch {
     return !wasInReach && inReach;
   }
 
-  public static boolean inReach(final int strings, final int crucifix, final int shape) {
-    return strings > 0 || crucifix > 0 || shape > 0;
+  public static boolean inReach(final int... strengths) {
+    for (final int strength : strengths) {
+      if (strength > 0) {
+        return true;
+      }
+    }
+    return false;
   }
 
-  public static void show(final LivingEntity vampire) {
+  public static void show(
+      final LivingEntity vampire, final boolean garlic, final boolean crucifix) {
     if (Glamour.on(vampire)) {
       return;
     }
-    final boolean small = small(GiftAttributes.value(vampire, GiftAttributes.SMALL_FLINCH));
-    if (vampire instanceof ServerPlayerEntity player) {
-      PlayerCues.send(player, small ? PlayerCue.SMALL_FLINCH : PlayerCue.FLINCH);
-    } else if (vampire instanceof PowerShow mob) {
-      mob.showPower((small ? VampirePose.SMALL_FLINCH : VampirePose.FLINCH).animation());
+    recoil(garlic, crucifix, small(GiftAttributes.value(vampire, GiftAttributes.SMALL_FLINCH)))
+        .ifPresent(pose -> Gestures.show(vampire, pose));
+  }
+
+  public static Optional<VampirePose> recoil(
+      final boolean garlic, final boolean crucifix, final boolean small) {
+    if (!garlic && !crucifix) {
+      return Optional.empty();
     }
+    if (small) {
+      return Optional.of(VampirePose.SMALL_FLINCH);
+    }
+    return Optional.of(crucifix ? VampirePose.RECOIL_CRUCIFIX : VampirePose.RECOIL_GARLIC);
   }
 
   public static boolean small(final double smallFlinch) {
