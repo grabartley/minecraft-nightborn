@@ -14,6 +14,7 @@ import com.grahambartley.nightborn.server.ServerConfigService;
 import java.util.List;
 import java.util.Objects;
 import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
+import net.minecraft.block.Blocks;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.DyedColorComponent;
 import net.minecraft.enchantment.Enchantment;
@@ -27,11 +28,11 @@ import net.minecraft.loot.LootTable;
 import net.minecraft.loot.context.LootContextParameterSet;
 import net.minecraft.loot.context.LootContextParameters;
 import net.minecraft.loot.context.LootContextTypes;
-import net.minecraft.recipe.RecipeType;
-import net.minecraft.recipe.input.SmithingRecipeInput;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.entry.RegistryEntry;
+import net.minecraft.screen.ScreenHandlerContext;
+import net.minecraft.screen.SmithingScreenHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.test.GameTest;
 import net.minecraft.test.TestContext;
@@ -45,6 +46,9 @@ public class InquisitorSpoilsGameTest implements FabricGameTest {
   static final String ARENA = "nightborn:vampire_arena";
   static final BlockPos BESIDE = new BlockPos(4, 2, 2);
   static final int ROLLS = 20;
+  static final int BASE_SLOT = 1;
+  static final int ADDITION_SLOT = 2;
+  static final int RESULT_SLOT = 3;
 
   @GameTest(templateName = ARENA, tickLimit = 20)
   public void everyKillGivesTreasureAndTheInquisitorsMail(final TestContext context) {
@@ -107,36 +111,52 @@ public class InquisitorSpoilsGameTest implements FabricGameTest {
     context.complete();
   }
 
-  @GameTest(templateName = FabricGameTest.EMPTY_STRUCTURE, tickLimit = 20)
+  @GameTest(templateName = ARENA, tickLimit = 120)
   public void mailLinesClothingAtASmithingTableAndKeepsItsDyeAndEnchantments(
       final TestContext context) {
-    final RegistryEntry<Enchantment> protection =
-        context
-            .getWorld()
-            .getRegistryManager()
-            .get(RegistryKeys.ENCHANTMENT)
-            .getEntry(Enchantments.PROTECTION)
-            .orElseThrow();
-    final ItemStack coat = new ItemStack(ClothingItems.of(ClothingPiece.values()[0]));
-    coat.set(DataComponentTypes.DYED_COLOR, new DyedColorComponent(0x5A1020, true));
-    coat.addEnchantment(protection, 3);
-    final SmithingRecipeInput input =
-        new SmithingRecipeInput(ItemStack.EMPTY, coat, new ItemStack(InquisitorSpoils.MAIL));
-    final ItemStack lined =
-        context
-            .getWorld()
-            .getRecipeManager()
-            .getFirstMatch(RecipeType.SMITHING, input, context.getWorld())
-            .map(recipe -> recipe.value().craft(input, context.getWorld().getRegistryManager()))
-            .orElse(ItemStack.EMPTY);
-    context.assertTrue(Lining.lined(lined), "the mail lines the piece, made " + lined);
-    context.assertTrue(lined.isOf(coat.getItem()), "it is still the same piece");
-    context.assertTrue(
-        coat.get(DataComponentTypes.DYED_COLOR).equals(lined.get(DataComponentTypes.DYED_COLOR)),
-        "it keeps its dye");
-    context.assertTrue(
-        lined.getEnchantments().getLevel(protection) == 3, "it keeps its enchantments");
-    context.complete();
+    final ServerPlayerEntity smith = TestPlayers.human(context, BESIDE);
+    final BlockPos table = new BlockPos(4, 2, 4);
+    context.setBlockState(table, Blocks.SMITHING_TABLE);
+    context.runAtTick(
+        TestPlayers.READY,
+        () -> {
+          final RegistryEntry<Enchantment> protection =
+              context
+                  .getWorld()
+                  .getRegistryManager()
+                  .get(RegistryKeys.ENCHANTMENT)
+                  .getEntry(Enchantments.PROTECTION)
+                  .orElseThrow();
+          final ItemStack coat = new ItemStack(ClothingItems.of(ClothingPiece.values()[0]));
+          coat.set(DataComponentTypes.DYED_COLOR, new DyedColorComponent(0x5A1020, true));
+          coat.addEnchantment(protection, 3);
+          final SmithingScreenHandler screen =
+              new SmithingScreenHandler(
+                  1,
+                  smith.getInventory(),
+                  ScreenHandlerContext.create(context.getWorld(), context.getAbsolutePos(table)));
+          screen.getSlot(BASE_SLOT).setStack(coat.copy());
+          screen.getSlot(ADDITION_SLOT).setStack(new ItemStack(InquisitorSpoils.MAIL, 2));
+          final ItemStack lined = screen.getSlot(RESULT_SLOT).getStack().copy();
+          context.assertTrue(screen.canUse(smith), "the smithing table is in reach");
+          context.assertTrue(
+              screen.getSlot(RESULT_SLOT).canTakeItems(smith),
+              "the lined piece can be taken with the template slot empty");
+          context.assertTrue(Lining.lined(lined), "the mail lines the piece, made " + lined);
+          context.assertTrue(lined.isOf(coat.getItem()), "it is still the same piece");
+          context.assertTrue(
+              coat.get(DataComponentTypes.DYED_COLOR)
+                  .equals(lined.get(DataComponentTypes.DYED_COLOR)),
+              "it keeps its dye");
+          context.assertTrue(
+              lined.getEnchantments().getLevel(protection) == 3, "it keeps its enchantments");
+          screen.getSlot(RESULT_SLOT).onTakeItem(smith, lined);
+          context.assertTrue(
+              screen.getSlot(BASE_SLOT).getStack().isEmpty(), "the plain piece is used up");
+          context.assertTrue(
+              screen.getSlot(ADDITION_SLOT).getStack().getCount() == 1, "one mail is used up");
+          TestPlayers.finish(context, smith);
+        });
   }
 
   @GameTest(templateName = ARENA, tickLimit = 200)
@@ -175,8 +195,22 @@ public class InquisitorSpoilsGameTest implements FabricGameTest {
                                 - (1.0 - settings.setDrainSlower() / 100.0))
                         < 1.0E-6,
                     "the full set slows the drain");
+                BloodAttachment.set(vampire, 5);
+                final float before = golem.getHealth();
+                golem.damage(context.getWorld().getDamageSources().playerAttack(vampire), 10.0F);
+                final float setDealt = before - golem.getHealth();
+                final int setGained = (int) Math.floor(setDealt * settings.setBlood() / 100.0F);
+                context.assertTrue(
+                    setGained > gained,
+                    "the full set gives more than the greatsword alone, " + setGained);
+                context.assertTrue(
+                    BloodAttachment.get(vampire) == 5 + setGained,
+                    "the full set gives back "
+                        + setGained
+                        + ", blood is "
+                        + BloodAttachment.get(vampire));
                 BloodAttachment.set(vampire, BloodCapacity.of(vampire));
-                golem.setHealth(golem.getMaxHealth());
+                golem.timeUntilRegen = 0;
                 golem.damage(context.getWorld().getDamageSources().playerAttack(vampire), 10.0F);
                 context.assertTrue(
                     BloodAttachment.get(vampire) == BloodCapacity.of(vampire),

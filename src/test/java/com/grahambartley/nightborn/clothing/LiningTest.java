@@ -10,6 +10,7 @@ import net.minecraft.component.type.AttributeModifiersComponent;
 import net.minecraft.component.type.DyedColorComponent;
 import net.minecraft.entity.attribute.EntityAttribute;
 import net.minecraft.entity.attribute.EntityAttributes;
+import net.minecraft.item.ArmorItem;
 import net.minecraft.item.ArmorMaterials;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -19,6 +20,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.EnumSource;
 
 @ExtendWith(MinecraftBootstrapExtension.class)
@@ -74,6 +76,18 @@ class LiningTest {
     assertTrue(Lining.lineable(stack));
     assertFalse(
         Lining.lineable(Lining.line(stack, ArmorMaterials.DIAMOND.value(), DIAMOND_DURABILITY)));
+  }
+
+  @ParameterizedTest(name = "worn to {0} at a multiplier of {1}")
+  @CsvSource({"3, 33", "200, 2", "500, 1"})
+  @DisplayName("a lined piece never has more wear than its new durability allows")
+  void wearFitsTheNewDurability(final int worn, final int multiplier) {
+    final ItemStack stack = new ItemStack(ClothingItems.of(ClothingPiece.TRICORNE));
+    stack.set(DataComponentTypes.MAX_DAMAGE, 1000);
+    stack.setDamage(worn);
+    final ItemStack lined = Lining.line(stack, ArmorMaterials.DIAMOND.value(), multiplier);
+    assertEquals(ArmorItem.Type.HELMET.getMaxDamage(multiplier), lined.getMaxDamage());
+    assertEquals(Math.min(worn, lined.getMaxDamage() - 1), lined.getDamage());
   }
 
   @Test

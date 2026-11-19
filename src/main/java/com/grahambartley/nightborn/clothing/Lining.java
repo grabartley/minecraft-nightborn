@@ -54,7 +54,9 @@ public final class Lining {
     final ItemStack lined = piece.copyWithCount(1);
     lined.set(LINED, Unit.INSTANCE);
     lined.set(DataComponentTypes.ATTRIBUTE_MODIFIERS, strength(armor.getType(), material));
-    lined.set(DataComponentTypes.MAX_DAMAGE, armor.getType().getMaxDamage(durabilityMultiplier));
+    final int most = armor.getType().getMaxDamage(durabilityMultiplier);
+    lined.set(DataComponentTypes.MAX_DAMAGE, most);
+    lined.setDamage(Math.min(lined.getDamage(), most - 1));
     return lined;
   }
 
