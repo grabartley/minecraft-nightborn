@@ -37,7 +37,7 @@ public final class VampirePlayerModel extends GeoModel<VampirePlayerAnimatable> 
 
   @Override
   public Identifier getAnimationResource(final VampirePlayerAnimatable animatable) {
-    return VampireRig.playerClips();
+    return VampireRig.sharedClips();
   }
 
   @Override

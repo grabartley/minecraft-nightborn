@@ -35,6 +35,7 @@
 		"RangedWeaponItemMixin",
 		"ServerPlayNetworkHandlerMixin",
 		"ServerPlayerEntityMixin",
+		"ServerPlayerInteractionManagerMixin",
 		"ServerWorldMixin",
 		"SleepManagerMixin",
 		"SlotMixin",

@@ -27,7 +27,7 @@ public class HiddenVampireGameTest implements FabricGameTest {
   static final int SCANNED = 25;
 
   @GameTest(templateName = ARENA, tickLimit = SCANNED + 5)
-  public void aVampireFlinchesWhenGarlicFirstReachesIt(final TestContext context) {
+  public void aVampireRecoilsWhenGarlicFirstReachesIt(final TestContext context) {
     final VampireEntity vampire = context.spawnEntity(NightbornMobs.VAMPIRE, new BlockPos(4, 2, 4));
     vampire.setAiDisabled(true);
     context.assertTrue(vampire.action().isEmpty(), "no clip before the garlic");
@@ -38,7 +38,9 @@ public class HiddenVampireGameTest implements FabricGameTest {
         SCANNED,
         () -> {
           context.assertEquals(
-              vampire.action(), VampirePose.FLINCH.animation(), "the flinch clip is shown");
+              vampire.action(),
+              VampirePose.RECOIL_GARLIC.animation(),
+              "the garlic recoil is shown");
           context.complete();
         });
   }

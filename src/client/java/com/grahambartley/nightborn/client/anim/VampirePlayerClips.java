@@ -2,10 +2,12 @@ package com.grahambartley.nightborn.client.anim;
 
 import com.grahambartley.nightborn.client.vomit.VomitFx;
 import com.grahambartley.nightborn.coffin.CoffinRise;
+import com.grahambartley.nightborn.gear.StakedFall;
 import com.grahambartley.nightborn.levitation.Levitation;
 import com.grahambartley.nightborn.mob.VampirePose;
 import com.grahambartley.nightborn.network.PlayerCue;
 import com.grahambartley.nightborn.network.PlayerCuePayload;
+import com.grahambartley.nightborn.sun.SunFire;
 import com.grahambartley.nightborn.vampire.VisibleState;
 import com.grahambartley.nightborn.vampire.VisibleStateAttachment;
 import java.util.Map;
@@ -61,15 +63,10 @@ public final class VampirePlayerClips {
                 visible.downed(),
                 visible.feeding(),
                 visible.isWeakened() && staggersOnFoot(player),
-                CoffinRise.pose(player)),
-            new PlayerClipState.Lengths(
-                VampireClips.seconds(VampirePose.LAND),
-                VampireClips.seconds(VampirePose.VOMIT),
-                VampireClips.seconds(VampirePose.DRAIN),
-                VampireClips.seconds(VampirePose.RISE),
-                VampireClips.seconds(VampirePose.FLINCH),
-                VampireClips.seconds(VampirePose.FINISHER_BITE),
-                VampireClips.seconds(VampirePose.SMALL_FLINCH)));
+                CoffinRise.pose(player),
+                StakedFall.staked(player) && !player.isAlive(),
+                SunFire.burning(player)),
+            VampireClips::seconds);
   }
 
   public static Optional<VampirePose> action(final PlayerEntity player) {
@@ -104,9 +101,8 @@ public final class VampirePlayerClips {
         VomitFx.started(player);
       }
       case DRAIN -> state(player).drain(player.age);
-      case FLINCH -> state(player).flinch(player.age);
       case FINISHER -> state(player).finisher(player.age);
-      case SMALL_FLINCH -> state(player).flinch(player.age, true);
+      default -> cue.gesture().ifPresent(pose -> state(player).gesture(pose, player.age));
     }
   }
 

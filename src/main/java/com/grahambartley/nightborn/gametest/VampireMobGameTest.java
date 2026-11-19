@@ -7,6 +7,7 @@ import com.grahambartley.nightborn.downed.Downed;
 import com.grahambartley.nightborn.downed.DownedRules;
 import com.grahambartley.nightborn.downed.DownedState;
 import com.grahambartley.nightborn.feeding.FeedingSessions;
+import com.grahambartley.nightborn.gear.StakedFall;
 import com.grahambartley.nightborn.mob.BatEscort;
 import com.grahambartley.nightborn.mob.NightbornMobs;
 import com.grahambartley.nightborn.mob.Prey;
@@ -136,6 +137,26 @@ public class VampireMobGameTest implements FabricGameTest {
     vampire.damage(NightbornDamage.stake(context.getWorld(), hunter), 1000.0F);
     context.assertTrue(vampire.isDead(), "a stake finishes a downed vampire mob");
     context.complete();
+  }
+
+  @GameTest(templateName = ARENA, tickLimit = StakedFall.FALL_TICKS + 10)
+  public void aStakedVampireMobStaysDownUntilItsFallEnds(final TestContext context) {
+    final VampireEntity vampire = still(context, new BlockPos(4, 2, 4));
+    final PlayerEntity hunter = context.createMockPlayer(GameMode.SURVIVAL);
+    vampire.damage(vampire.getDamageSources().playerAttack(hunter), 1000.0F);
+    vampire.damage(NightbornDamage.stake(context.getWorld(), hunter), 1000.0F);
+    context.runAtTick(
+        30,
+        () -> {
+          context.assertTrue(StakedFall.staked(vampire), "the stake marks the fall");
+          context.assertFalse(vampire.isRemoved(), "the body outlasts vanilla's one second");
+        });
+    context.runAtTick(
+        StakedFall.FALL_TICKS + 5,
+        () -> {
+          context.assertTrue(vampire.isRemoved(), "the body goes once the fall ends");
+          context.complete();
+        });
   }
 
   @GameTest(templateName = YARD, batchId = NOON_BATCH, skyAccess = true, tickLimit = 80)

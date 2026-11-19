@@ -1,6 +1,9 @@
 package com.grahambartley.nightborn.mob;
 
+import java.util.Arrays;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 import software.bernie.geckolib.animatable.GeoAnimatable;
 import software.bernie.geckolib.animation.Animation;
 import software.bernie.geckolib.animation.AnimationState;
@@ -26,15 +29,23 @@ public enum VampirePose {
   DRAIN("drain", Play.ONCE, Hold.ARMS_AND_HEAD),
   FINISHER_BITE("finisher_bite", Play.ONCE, Hold.ARMS_AND_HEAD),
   RISE("rise", Play.ONCE, Hold.ARMS_AND_HEAD),
-  FLINCH("flinch", Play.ONCE, Hold.HEAD),
   SMALL_FLINCH("idle_look", Play.ONCE),
+  RECOIL_GARLIC("recoil_garlic", Play.ONCE, Hold.HEAD),
+  RECOIL_CRUCIFIX("recoil_crucifix", Play.ONCE, Hold.HEAD),
   WEAKENED("weakened", Play.LOOP),
   WEAKENED_WALK("weakened_walk", Play.LOOP),
   COFFIN_SLEEP("coffin_sleep", Play.HOLD, Hold.ARMS_HEAD_AND_HANDS),
   COFFIN_RISE("coffin_rise", Play.HOLD, Hold.ARMS_HEAD_AND_HANDS),
   COFFIN_STEP_OUT("coffin_step_out", Play.HOLD, Hold.ARMS_HEAD_AND_HANDS),
   SIT("sit", Play.LOOP),
-  READ("read", Play.LOOP, Hold.ARMS_AND_HEAD);
+  READ("read", Play.LOOP, Hold.ARMS_AND_HEAD),
+  SUN_BURN("sun_burn", Play.LOOP, Hold.HEAD),
+  STAKED_DEATH("staked_death", Play.HOLD, Hold.ARMS_AND_HEAD),
+  ADJUST_CLOTHES("adjust_clothes", Play.ONCE, Hold.HEAD),
+  WAKE_STRETCH("wake_stretch", Play.ONCE, Hold.HEAD),
+  LIGHT_CANDLE("light_candle", Play.ONCE, Hold.HEAD),
+  DOUSE_CANDLE("douse_candle", Play.ONCE, Hold.HEAD),
+  START_GRAMOPHONE("start_gramophone", Play.ONCE, Hold.HEAD);
 
   public static final double LEVITATE_MOVE_SPEED = 0.03;
   public static final double LEVITATE_SPRINT_SPEED = 0.24;
@@ -57,6 +68,7 @@ public enum VampirePose {
 
   public record Cue(
       Optional<VampirePose> coffin,
+      boolean staked,
       boolean downed,
       boolean rising,
       boolean dying,
@@ -66,7 +78,8 @@ public enum VampirePose {
       float limbSwing,
       double horizontalSpeed,
       boolean seated,
-      boolean reading) {}
+      boolean reading,
+      boolean sunBurning) {}
 
   private final String animation;
   private final RawAnimation clip;
@@ -97,6 +110,9 @@ public enum VampirePose {
     if (cue.coffin().isPresent()) {
       return cue.coffin().get();
     }
+    if (cue.staked() && cue.dying()) {
+      return STAKED_DEATH;
+    }
     if (cue.downed()) {
       return DOWNED;
     }
@@ -112,15 +128,48 @@ public enum VampirePose {
     if (cue.seated()) {
       return SIT;
     }
-    return switch (Gait.of(cue.limbSwing())) {
+    final Gait gait = Gait.of(cue.limbSwing());
+    if (gait != Gait.RUN && cue.sunBurning()) {
+      return SUN_BURN;
+    }
+    return switch (gait) {
       case RUN -> RUN;
       case WALK -> WALK;
       case STILL -> cue.reading() ? READ : IDLE;
     };
   }
 
+  public boolean gesture() {
+    return switch (this) {
+      case SMALL_FLINCH,
+              RECOIL_GARLIC,
+              RECOIL_CRUCIFIX,
+              WAKE_STRETCH,
+              LIGHT_CANDLE,
+              DOUSE_CANDLE,
+              START_GRAMOPHONE ->
+          true;
+      default -> false;
+    };
+  }
+
+  public boolean yields() {
+    return this == SMALL_FLINCH || this == RECOIL_GARLIC || this == RECOIL_CRUCIFIX;
+  }
+
+  public static boolean yields(final String clip) {
+    return Arrays.stream(values()).anyMatch(pose -> pose.yields() && pose.animation.equals(clip));
+  }
+
+  public static Set<String> gestureClips() {
+    return Arrays.stream(values())
+        .filter(VampirePose::gesture)
+        .map(VampirePose::animation)
+        .collect(Collectors.toUnmodifiableSet());
+  }
+
   public boolean still() {
-    return this == IDLE || this == IDLE_LOOK || this == IDLE_LISTEN;
+    return this == IDLE || this == IDLE_LOOK || this == IDLE_LISTEN || this == ADJUST_CLOTHES;
   }
 
   public static VampirePose coffin(final boolean rising, final boolean standingCoffin) {

@@ -13,6 +13,7 @@ import com.grahambartley.nightborn.coffin.DaySleep;
 import com.grahambartley.nightborn.config.NightbornConfig;
 import com.grahambartley.nightborn.downed.DownedTargeting;
 import com.grahambartley.nightborn.faith.Kindling;
+import com.grahambartley.nightborn.gear.StakedFall;
 import com.grahambartley.nightborn.hunt.Hunts;
 import com.grahambartley.nightborn.levitation.Levitation;
 import com.grahambartley.nightborn.levitation.LevitationMotion;
@@ -249,6 +250,13 @@ abstract class LivingEntityMixin {
       final Item item, final EquipmentSlot slot, final CallbackInfo ci) {
     if ((Object) this instanceof PlayerEntity player) {
       WornRefill.broke(player, item, slot);
+    }
+  }
+
+  @Inject(method = "updatePostDeath", at = @At("HEAD"), cancellable = true)
+  private void nightborn$holdStakedFall(final CallbackInfo ci) {
+    if (StakedFall.tick((LivingEntity) (Object) this)) {
+      ci.cancel();
     }
   }
 }

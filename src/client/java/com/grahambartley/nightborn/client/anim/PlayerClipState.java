@@ -13,16 +13,14 @@ public final class PlayerClipState {
       boolean downed,
       boolean feeding,
       boolean weakened,
-      Optional<VampirePose> coffin) {}
+      Optional<VampirePose> coffin,
+      boolean staked,
+      boolean sunBurning) {}
 
-  public record Lengths(
-      double land,
-      double vomit,
-      double drain,
-      double rise,
-      double flinch,
-      double finisher,
-      double smallFlinch) {}
+  @FunctionalInterface
+  public interface Lengths {
+    double seconds(VampirePose pose);
+  }
 
   private final EndingEdge landing = new EndingEdge();
   private final EndingEdge standing = new EndingEdge();
@@ -31,9 +29,9 @@ public final class PlayerClipState {
   private final OneShot rise = new OneShot();
   private final OneShot vomit = new OneShot();
   private final OneShot drain = new OneShot();
-  private final OneShot flinch = new OneShot();
   private final OneShot finisher = new OneShot();
-  private boolean smallFlinch;
+  private final OneShot gesture = new OneShot();
+  private VampirePose gesturePose = VampirePose.SMALL_FLINCH;
 
   public void tick(final double age, final boolean levitating, final boolean downed) {
     follow(landing, land, levitating, age);
@@ -48,13 +46,9 @@ public final class PlayerClipState {
     drain.start(age);
   }
 
-  public void flinch(final double age) {
-    flinch(age, false);
-  }
-
-  public void flinch(final double age, final boolean small) {
-    smallFlinch = small;
-    flinch.start(age);
+  public void gesture(final VampirePose pose, final double age) {
+    gesturePose = pose;
+    gesture.start(age);
   }
 
   public void finisher(final double age) {
@@ -70,22 +64,25 @@ public final class PlayerClipState {
     if (situation.coffin().isPresent()) {
       return situation.coffin();
     }
-    if (vomit.playing(lengths.vomit(), age)) {
+    if (situation.staked()) {
+      return Optional.of(VampirePose.STAKED_DEATH);
+    }
+    if (vomit.playing(lengths.seconds(VampirePose.VOMIT), age)) {
       return Optional.of(VampirePose.VOMIT);
     }
     if (situation.downed()) {
       return Optional.of(VampirePose.DOWNED);
     }
-    if (rise.playing(lengths.rise(), age)) {
+    if (rise.playing(lengths.seconds(VampirePose.RISE), age)) {
       return Optional.of(VampirePose.RISE);
     }
     if (biting.ended(situation.feeding())) {
       finisher.clear();
     }
-    if (finisher.playing(lengths.finisher(), age)) {
+    if (finisher.playing(lengths.seconds(VampirePose.FINISHER_BITE), age)) {
       return Optional.of(VampirePose.FINISHER_BITE);
     }
-    if (drain.playing(lengths.drain(), age)) {
+    if (drain.playing(lengths.seconds(VampirePose.DRAIN), age)) {
       return Optional.of(VampirePose.DRAIN);
     }
     if (situation.feeding()) {
@@ -95,11 +92,14 @@ public final class PlayerClipState {
       return Optional.of(
           VampirePose.levitating(situation.sprinting(), situation.horizontalSpeed()));
     }
-    if (land.playing(lengths.land(), age)) {
+    if (land.playing(lengths.seconds(VampirePose.LAND), age)) {
       return Optional.of(VampirePose.LAND);
     }
-    if (flinch.playing(smallFlinch ? lengths.smallFlinch() : lengths.flinch(), age)) {
-      return Optional.of(smallFlinch ? VampirePose.SMALL_FLINCH : VampirePose.FLINCH);
+    if (gesture.playing(lengths.seconds(gesturePose), age)) {
+      return Optional.of(gesturePose);
+    }
+    if (situation.sunBurning() && !situation.sprinting()) {
+      return Optional.of(VampirePose.SUN_BURN);
     }
     if (situation.weakened()) {
       return Optional.of(VampirePose.weakened(situation.horizontalSpeed()));

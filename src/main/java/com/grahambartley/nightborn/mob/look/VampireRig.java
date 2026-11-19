@@ -75,7 +75,7 @@ public enum VampireRig implements StringIdentifiable {
         : eyes();
   }
 
-  public static Identifier playerClips() {
+  public static Identifier sharedClips() {
     return MALE.clips();
   }
 

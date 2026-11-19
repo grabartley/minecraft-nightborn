@@ -1,6 +1,8 @@
 package com.grahambartley.nightborn.gramophone;
 
 import com.grahambartley.nightborn.decor.DecorBlockEntities;
+import com.grahambartley.nightborn.mob.Gestures;
+import com.grahambartley.nightborn.mob.VampirePose;
 import com.mojang.serialization.MapCodec;
 import java.util.Optional;
 import net.minecraft.block.Block;
@@ -143,6 +145,7 @@ public class GramophoneBlock extends BlockWithEntity {
       gramophone.setStack(stack.splitUnlessCreative(1, player));
       world.emitGameEvent(GameEvent.BLOCK_CHANGE, pos, GameEvent.Emitter.of(player, state));
       player.incrementStat(Stats.PLAY_RECORD);
+      Gestures.show(player, VampirePose.START_GRAMOPHONE);
     }
     return ItemActionResult.success(world.isClient);
   }

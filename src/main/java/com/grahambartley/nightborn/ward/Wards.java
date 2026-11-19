@@ -58,11 +58,12 @@ public final class Wards {
     Weakened.set(vampire, STRINGS, stringStrength, LINGER_TICKS);
     Weakened.set(vampire, CRUCIFIX, crucifix, LINGER_TICKS);
     Weakened.set(vampire, SHAPE, shape, LINGER_TICKS);
-    if (Flinch.starts(
-        Flinch.inReach(before.strength(STRINGS), before.strength(CRUCIFIX), before.strength(SHAPE)),
-        Flinch.inReach(stringStrength, crucifix, shape))) {
-      Flinch.show(vampire);
-    }
+    Flinch.show(
+        vampire,
+        Flinch.starts(Flinch.inReach(before.strength(STRINGS)), Flinch.inReach(stringStrength)),
+        Flinch.starts(
+            Flinch.inReach(before.strength(CRUCIFIX), before.strength(SHAPE)),
+            Flinch.inReach(crucifix, shape)));
   }
 
   public static void touch(final Entity entity, final WardSettings settings) {

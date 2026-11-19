@@ -41,7 +41,7 @@ public final class VampireClips {
 
   private static Optional<Animation> clip(final VampirePose pose) {
     final BakedAnimations animations =
-        GeckoLibCache.getBakedAnimations().get(VampireRig.playerClips());
+        GeckoLibCache.getBakedAnimations().get(VampireRig.sharedClips());
     return animations == null
         ? Optional.empty()
         : Optional.ofNullable(animations.getAnimation(pose.animation()));

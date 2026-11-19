@@ -1,5 +1,7 @@
 package com.grahambartley.nightborn.mob.household;
 
+import com.grahambartley.nightborn.decor.FlameGesture;
+import com.grahambartley.nightborn.mob.VampirePose;
 import java.util.Optional;
 
 public enum Chore {
@@ -24,6 +26,12 @@ public enum Chore {
 
   public boolean lights() {
     return this == LIGHT;
+  }
+
+  public Optional<VampirePose> gesture() {
+    return this == LIGHT || this == DOUSE
+        ? Optional.of(FlameGesture.of(lights()))
+        : Optional.empty();
   }
 
   public boolean opens() {

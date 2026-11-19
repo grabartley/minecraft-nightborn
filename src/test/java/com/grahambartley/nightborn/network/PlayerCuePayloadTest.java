@@ -11,7 +11,7 @@ import org.junit.jupiter.params.provider.CsvSource;
 class PlayerCuePayloadTest {
 
   @ParameterizedTest(name = "entity {0}, {1}")
-  @CsvSource({"0, VOMIT", "42, DRAIN", "2147483647, VOMIT", "7, DRAIN", "9, FLINCH"})
+  @CsvSource({"0, VOMIT", "42, DRAIN", "2147483647, VOMIT", "7, DRAIN", "9, RECOIL_CRUCIFIX"})
   @DisplayName("the player and the cue cross the network unchanged")
   void roundTrips(final int entityId, final PlayerCue cue) {
     final ByteBuf buf = Unpooled.buffer();

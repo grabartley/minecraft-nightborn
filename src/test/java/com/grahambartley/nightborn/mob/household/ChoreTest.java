@@ -2,6 +2,7 @@ package com.grahambartley.nightborn.mob.household;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import com.grahambartley.nightborn.mob.VampirePose;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -48,5 +49,12 @@ class ChoreTest {
   void direction(final Chore chore, final boolean lights, final boolean opens) {
     assertEquals(lights, chore.lights());
     assertEquals(opens, chore.opens());
+  }
+
+  @ParameterizedTest(name = "{0}: {1}")
+  @CsvSource({"LIGHT, LIGHT_CANDLE", "DOUSE, DOUSE_CANDLE", "OPEN_DRAPES, ", "CLOSE_DRAPES, "})
+  @DisplayName("tending a flame has its own gesture, drawing the drapes is a plain reach")
+  void gesture(final Chore chore, final VampirePose pose) {
+    assertEquals(Optional.ofNullable(pose), chore.gesture());
   }
 }

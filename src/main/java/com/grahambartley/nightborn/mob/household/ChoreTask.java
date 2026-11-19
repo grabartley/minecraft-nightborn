@@ -1,5 +1,6 @@
 package com.grahambartley.nightborn.mob.household;
 
+import com.grahambartley.nightborn.mob.Gestures;
 import com.grahambartley.nightborn.mob.VampireEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -57,7 +58,10 @@ public final class ChoreTask implements HouseholdTask {
       if (chore.lights()) {
         vampire.lendHand(new ItemStack(Items.FLINT_AND_STEEL));
       }
-      vampire.swingHand(Hand.MAIN_HAND);
+      chore
+          .gesture()
+          .ifPresentOrElse(
+              pose -> Gestures.show(vampire, pose), () -> vampire.swingHand(Hand.MAIN_HAND));
       tending = new Countdown(TEND_TICKS);
     }
     return true;
