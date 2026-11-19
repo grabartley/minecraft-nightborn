@@ -47,7 +47,7 @@ public final class AccessoryRenderer implements TrinketRenderer {
     if (!(contextModel instanceof BipedEntityModel base) || !AccessorySlot.drawnIn(slotId)) {
       return;
     }
-    final EquipmentSlot body = AccessorySlot.byId(slotId).orElseThrow().body();
+    final EquipmentSlot body = AccessorySlot.byId(slotId).orElseThrow().drawnOn();
     if (GeoRenderProvider.of(stack).getGeoArmorRenderer(entity, stack, body, base)
         instanceof GeoArmorRenderer<?> renderer) {
       base.copyBipedStateTo(renderer);

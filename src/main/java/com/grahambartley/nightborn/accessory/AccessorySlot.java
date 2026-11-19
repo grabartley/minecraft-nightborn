@@ -1,6 +1,7 @@
 package com.grahambartley.nightborn.accessory;
 
 import java.util.Arrays;
+import java.util.Locale;
 import java.util.Optional;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.item.Item;
@@ -24,12 +25,12 @@ public enum AccessorySlot {
   private final String group;
   private final String name;
   private final TagKey<Item> tag;
-  private final EquipmentSlot body;
+  private final EquipmentSlot drawnOn;
 
-  AccessorySlot(final String group, final String name, final EquipmentSlot body) {
+  AccessorySlot(final String group, final String name, final EquipmentSlot drawnOn) {
     this.group = group;
     this.name = name;
-    this.body = body;
+    this.drawnOn = drawnOn;
     this.tag = TagKey.of(RegistryKeys.ITEM, Identifier.of(TRINKETS, id()));
   }
 
@@ -65,7 +66,21 @@ public enum AccessorySlot {
     return byId(slotId).map(AccessorySlot::drawn).orElse(false);
   }
 
+  public EquipmentSlot drawnOn() {
+    return this.drawnOn;
+  }
+
   public EquipmentSlot body() {
-    return this.body;
+    return bodyOf(this.group);
+  }
+
+  public static EquipmentSlot bodyOf(final String group) {
+    return switch (group.toLowerCase(Locale.ROOT)) {
+      case "head" -> EquipmentSlot.HEAD;
+      case "legs" -> EquipmentSlot.LEGS;
+      case "feet" -> EquipmentSlot.FEET;
+      case "chest", "hand", "offhand" -> EquipmentSlot.CHEST;
+      default -> throw new IllegalArgumentException("No body part for slot group " + group);
+    };
   }
 }
