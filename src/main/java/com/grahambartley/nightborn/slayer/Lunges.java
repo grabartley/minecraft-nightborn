@@ -4,6 +4,7 @@ import com.grahambartley.nightborn.gear.VampireBane;
 import com.grahambartley.nightborn.landing.Landing;
 import com.grahambartley.nightborn.skill.PowerReach;
 import java.util.Optional;
+import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.damage.DamageSource;
@@ -71,7 +72,12 @@ public final class Lunges {
             caster.getMainHandStack(),
             target,
             (float) caster.getAttributeValue(EntityAttributes.GENERIC_ATTACK_DAMAGE));
-    target.damage(source(caster), blow(stakeBlow, power.stakeShare()));
+    if (target.damage(source(caster), blow(stakeBlow, power.stakeShare()))) {
+      caster.getMainHandStack().damage(1, caster, EquipmentSlot.MAINHAND);
+    }
+    if (caster instanceof PlayerEntity player) {
+      player.resetLastAttackedTicks();
+    }
   }
 
   private static DamageSource source(final LivingEntity caster) {

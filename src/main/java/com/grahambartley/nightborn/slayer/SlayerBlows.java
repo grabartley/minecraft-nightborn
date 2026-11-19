@@ -13,12 +13,9 @@ public final class SlayerBlows {
   private SlayerBlows() {}
 
   static void register() {
-    ServerLivingEntityEvents.AFTER_DAMAGE.register(
-        (entity, source, base, taken, blocked) -> {
-          if (taken > 0.0F && entity.isAlive() && struck(source)) {
-            downs((LivingEntity) source.getAttacker(), entity);
-          }
-        });
+    ServerLivingEntityEvents.ALLOW_DAMAGE.register(
+        (entity, source, amount) ->
+            !(melee(source) && downs((LivingEntity) source.getAttacker(), entity)));
   }
 
   public static float raise(final float amount, final double flat, final double share) {
@@ -43,11 +40,17 @@ public final class SlayerBlows {
             || source.isIn(DamageTypeTags.IS_PROJECTILE));
   }
 
-  private static void downs(final LivingEntity hunter, final LivingEntity target) {
+  static boolean melee(final DamageSource source) {
+    return source.getAttacker() instanceof LivingEntity
+        && source.getSource() == source.getAttacker();
+  }
+
+  private static boolean downs(final LivingEntity hunter, final LivingEntity target) {
     for (final DownBlow blow : Boosts.downs(hunter)) {
       if (SlayerDowns.down(hunter, target, blow)) {
-        return;
+        return true;
       }
     }
+    return false;
   }
 }

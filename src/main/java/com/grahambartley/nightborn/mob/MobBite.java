@@ -8,6 +8,7 @@ import com.grahambartley.nightborn.challenge.Deed;
 import com.grahambartley.nightborn.challenge.DeedKinds;
 import com.grahambartley.nightborn.challenge.Deeds;
 import com.grahambartley.nightborn.feeding.FeedingSessions;
+import com.grahambartley.nightborn.slayer.SlayerMarks;
 import com.grahambartley.nightborn.vampire.NightbornDamage;
 import com.grahambartley.nightborn.vampire.Vampires;
 import com.grahambartley.nightborn.ward.Wards;
@@ -32,7 +33,8 @@ public final class MobBite {
       final LivingEntity victim,
       final float damage,
       final SoundEvent sound) {
-    if (!(biter.getWorld() instanceof ServerWorld world) || Wards.wards(victim)) {
+    if (!(biter.getWorld() instanceof ServerWorld world)
+        || refused(Wards.wards(victim), SlayerMarks.STEADFAST.on(victim))) {
       return false;
     }
     if (breaks(
@@ -59,6 +61,10 @@ public final class MobBite {
       }
     }
     return true;
+  }
+
+  static boolean refused(final boolean warded, final boolean steadfast) {
+    return warded || steadfast;
   }
 
   static boolean breaks(final float roll, final double chance) {

@@ -364,7 +364,7 @@
   "skill.nightborn.slayer.vampire_slayer": "吸血鬼屠戮者",
   "skill.nightborn.slayer.vampire_slayer.description": "你对吸血鬼的攻击更加致命",
   "skill.nightborn.slayer.riposte": "反击",
-  "skill.nightborn.slayer.riposte.description": "举起架势半秒。在此期间扑向、跃向或闪现到你身边的吸血鬼会被击退并踉跄",
+  "skill.nightborn.slayer.riposte.description": "举起架势半秒。在此期间扑向、跃向、冲向或闪现到你身边的吸血鬼会被击退并踉跄",
   "skill.nightborn.slayer.quick_shot": "速射",
   "skill.nightborn.slayer.quick_shot.description": "无需举起，立刻发射已上弦的弩",
   "skill.nightborn.slayer.tough_as_oak": "坚如橡木",

@@ -4,6 +4,7 @@ import com.grahambartley.nightborn.downed.Downed;
 import com.grahambartley.nightborn.gear.GearItems;
 import com.grahambartley.nightborn.hold.HoldKind;
 import com.grahambartley.nightborn.hold.Holds;
+import com.grahambartley.nightborn.mob.MobBite;
 import com.grahambartley.nightborn.mob.NightbornMobs;
 import com.grahambartley.nightborn.mob.VampireEntity;
 import com.grahambartley.nightborn.skill.PowerCooldownAttachment;
@@ -20,6 +21,7 @@ import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
 import net.minecraft.command.argument.EntityAnchorArgumentType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.test.GameTest;
 import net.minecraft.test.TestContext;
 import net.minecraft.util.Hand;
@@ -144,6 +146,7 @@ public class SlayerGameTest implements FabricGameTest {
   @GameTest(templateName = ARENA, batchId = BATCH, tickLimit = LIMIT)
   public void lastStandWardsADyingHunter(final TestContext context) {
     final ServerPlayerEntity hunter = TestPlayers.hunter(context, new BlockPos(1, 2, 1));
+    final VampireEntity vampire = vampire(context, new BlockPos(1, 2, 2));
     learn(hunter, "tough_as_oak", "last_stand");
     context.runAtTick(
         TestPlayers.READY,
@@ -151,6 +154,9 @@ public class SlayerGameTest implements FabricGameTest {
           hunter.damage(hunter.getDamageSources().generic(), hunter.getMaxHealth() * 0.8F);
           context.assertTrue(
               SlayerMarks.STEADFAST.on(hunter), "the hunter cannot be bitten or mesmerised");
+          context.assertFalse(
+              MobBite.bite(vampire, hunter, 2.0F, SoundEvents.ENTITY_GENERIC_DRINK),
+              "a vampire mob's bite is refused");
           TestPlayers.finish(context, hunter);
         });
   }

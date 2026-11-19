@@ -84,6 +84,7 @@ public final class Dashes {
     }
     if (state.dodges(now)
         && source.getAttacker() instanceof LivingEntity attacker
+        && source.getSource() == attacker
         && Vampires.isVampire(attacker)) {
       dodge(entity, attacker, state.power());
     }

@@ -364,7 +364,7 @@
   "skill.nightborn.slayer.vampire_slayer": "Vampire Slayer",
   "skill.nightborn.slayer.vampire_slayer.description": "Your blows hit vampires harder",
   "skill.nightborn.slayer.riposte": "Riposte",
-  "skill.nightborn.slayer.riposte.description": "Raise your guard for half a second. A vampire that leaps, pounces or steps at you through it is thrown back and staggered",
+  "skill.nightborn.slayer.riposte.description": "Raise your guard for half a second. A vampire that leaps, pounces, dashes or steps at you through it is thrown back and staggered",
   "skill.nightborn.slayer.quick_shot": "Quick Shot",
   "skill.nightborn.slayer.quick_shot.description": "Fire a loaded crossbow at once, with no time to raise it",
   "skill.nightborn.slayer.tough_as_oak": "Tough As Oak",
