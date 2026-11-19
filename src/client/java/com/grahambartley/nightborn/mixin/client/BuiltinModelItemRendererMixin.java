@@ -1,6 +1,6 @@
 package com.grahambartley.nightborn.mixin.client;
 
-import com.grahambartley.nightborn.render.CoatingLayers;
+import com.grahambartley.nightborn.render.SheenLayers;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
@@ -22,13 +22,13 @@ abstract class BuiltinModelItemRendererMixin {
               value = "INVOKE",
               target =
                   "Lnet/minecraft/client/render/item/ItemRenderer;getDirectItemGlintConsumer(Lnet/minecraft/client/render/VertexConsumerProvider;Lnet/minecraft/client/render/RenderLayer;ZZ)Lnet/minecraft/client/render/VertexConsumer;"))
-  private VertexConsumer nightborn$coatingSheen(
+  private VertexConsumer nightborn$sheen(
       final VertexConsumerProvider provider,
       final RenderLayer layer,
       final boolean solid,
       final boolean glint,
       final Operation<VertexConsumer> original,
       @Local(argsOnly = true) final ItemStack stack) {
-    return CoatingLayers.entity(original.call(provider, layer, solid, glint), stack, provider);
+    return SheenLayers.entity(original.call(provider, layer, solid, glint), stack, provider);
   }
 }

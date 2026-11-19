@@ -13,7 +13,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.EnumSource;
 
-class WeaponSheenTest {
+class SheenTest {
 
   @ParameterizedTest(name = "{0} ms at speed {1} over {2}: {3}")
   @CsvSource({
@@ -26,7 +26,7 @@ class WeaponSheenTest {
   })
   @DisplayName("the sheen drifts with time and the glint speed option, and wraps round")
   void drifts(final long millis, final double speed, final float period, final float drift) {
-    assertEquals(drift, WeaponSheen.drift(millis, speed, period), 0.0001F);
+    assertEquals(drift, Sheen.drift(millis, speed, period), 0.0001F);
   }
 
   @ParameterizedTest(name = "{0}")
@@ -35,34 +35,43 @@ class WeaponSheenTest {
   void texture(final Coating coating) {
     assertEquals(
         "nightborn:textures/misc/" + coating.asString() + "_coating.png",
-        WeaponSheen.of(Optional.of(coating), false).get(0).texture().toString());
+        Sheen.of(Optional.of(coating), false, false).get(0).texture().toString());
   }
 
-  @ParameterizedTest(name = "coating {0}, burning {1}: {2}")
+  @ParameterizedTest(name = "coating {0}, burning {1}, lined {2}: {3}")
   @CsvSource(
       delimiter = ';',
       value = {
-        "GARLIC; true; GARLIC BLOOD_FIRE",
-        "HOLY_WATER; true; HOLY_WATER BLOOD_FIRE",
-        "; true; BLOOD_FIRE",
-        "HOLY_WATER; false; HOLY_WATER",
-        "GARLIC; false; GARLIC",
-        "; false; "
+        "GARLIC; true; false; GARLIC BLOOD_FIRE",
+        "HOLY_WATER; true; false; HOLY_WATER BLOOD_FIRE",
+        "; true; false; BLOOD_FIRE",
+        "HOLY_WATER; false; false; HOLY_WATER",
+        "GARLIC; false; false; GARLIC",
+        "; false; false; ",
+        "; false; true; MAIL_LINING",
+        "GARLIC; true; true; GARLIC BLOOD_FIRE MAIL_LINING"
       })
   @DisplayName(
-      "a weapon alight shows its flame on top of any coating, and a bare one shows nothing")
-  void sheen(final Coating coating, final boolean burning, final String sheens) {
+      "a weapon alight shows its flame on top of any coating, lined clothing shows its mail,"
+          + " and a bare piece shows nothing")
+  void sheen(
+      final Coating coating, final boolean burning, final boolean lined, final String sheens) {
     assertEquals(
-        sheens == null
-            ? List.of()
-            : Arrays.stream(sheens.split(" ")).map(WeaponSheen::valueOf).toList(),
-        WeaponSheen.of(Optional.ofNullable(coating), burning));
+        sheens == null ? List.of() : Arrays.stream(sheens.split(" ")).map(Sheen::valueOf).toList(),
+        Sheen.of(Optional.ofNullable(coating), burning, lined));
+  }
+
+  @ParameterizedTest(name = "{0}: {1}")
+  @CsvSource({"HOLY_WATER, false", "GARLIC, false", "BLOOD_FIRE, false", "MAIL_LINING, true"})
+  @DisplayName("only the mail lining is worn, so only it is drawn on worn clothing")
+  void worn(final Sheen sheen, final boolean worn) {
+    assertEquals(worn, sheen.worn());
   }
 
   @ParameterizedTest(name = "{0}")
-  @EnumSource(WeaponSheen.class)
+  @EnumSource(Sheen.class)
   @DisplayName("every sheen ships its texture")
-  void ships(final WeaponSheen sheen) {
+  void ships(final Sheen sheen) {
     assertTrue(Files.exists(GeoAssets.mainFile(sheen.texture())), sheen.texture().toString());
   }
 }

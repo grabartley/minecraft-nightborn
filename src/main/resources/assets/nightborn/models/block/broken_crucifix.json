@@ -3,6 +3,9 @@
   "textures": {
     "0": "minecraft:block/polished_blackstone",
     "1": "minecraft:block/gold_block",
+    "2": "minecraft:block/polished_blackstone_bricks",
+    "3": "minecraft:block/chiseled_polished_blackstone",
+    "4": "minecraft:block/raw_gold_block",
     "particle": "minecraft:block/gold_block"
   }
 }
