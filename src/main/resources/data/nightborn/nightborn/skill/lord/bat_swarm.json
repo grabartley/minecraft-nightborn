@@ -26,7 +26,7 @@
       "max_range": 20.0,
       "tell_ticks": 14,
       "tell_sound": "minecraft:entity.evoker.prepare_summon",
-      "tell_clip": "mesmerise"
+      "tell_clip": "bat_swarm_tell"
     }
   }
 }
