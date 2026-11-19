@@ -20,7 +20,6 @@ import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
 import org.jetbrains.annotations.Nullable;
 
@@ -33,8 +32,8 @@ public final class GhostlyFamiliars {
           Registries.ENTITY_TYPE,
           Identifier.of(Nightborn.MOD_ID, "ghostly_familiar"),
           EntityType.Builder.create(GhostlyFamiliarEntity::new, SpawnGroup.MISC)
-              .dimensions(0.6F, 1.2F)
-              .eyeHeight(0.6F)
+              .dimensions(0.6F, 1.4F)
+              .eyeHeight(1.15F)
               .makeFireImmune()
               .maxTrackingRange(8)
               .build());
@@ -71,15 +70,11 @@ public final class GhostlyFamiliars {
     if (familiar == null) {
       return null;
     }
-    final Vec3d ahead =
-        caster
-            .getPos()
-            .add(caster.getRotationVector().multiply(1.0, 0.0, 1.0))
-            .withAxis(Direction.Axis.Y, caster.getBodyY(0.6));
+    final Vec3d ahead = caster.getPos().add(caster.getRotationVector().multiply(1.0, 0.0, 1.0));
     final Vec3d at =
         world.isSpaceEmpty(familiar, familiar.getType().getDimensions().getBoxAt(ahead))
             ? ahead
-            : caster.getPos().withAxis(Direction.Axis.Y, caster.getBodyY(0.6));
+            : caster.getPos();
     familiar.refreshPositionAndAngles(at.x, at.y, at.z, caster.getHeadYaw(), 0.0F);
     familiar.summon(
         caster.getUuid(),

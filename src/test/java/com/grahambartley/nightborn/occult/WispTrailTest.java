@@ -30,23 +30,27 @@ class WispTrailTest {
     assertEquals(expected, WispTrail.offset(roll), 1.0e-9);
   }
 
-  @ParameterizedTest(name = "feet ({0}, {1}, {2}), rolls {3} {4}: wisp at ({5}, {6}, {7})")
+  @ParameterizedTest(name = "feet ({0}, {1}, {2}), yaw {3}, rolls {4} {5}: wisp at ({6}, {7}, {8})")
   @CsvSource({
-    "0, 64, 0, 0.5, 0.5, 0, 64.2, 0",
-    "10, 70, -5, 0.0, 1.0, 9.75, 70.2, -4.75",
-    "-3, 0, 2, 1.0, 0.0, -2.75, 0.2, 1.75"
+    "0, 64, 0, 0, 0.5, 0.5, 0, 64.25, -0.35",
+    "0, 64, 0, 180, 0.5, 0.5, 0, 64.25, 0.35",
+    "0, 64, 0, 90, 0.5, 0.5, 0.35, 64.25, 0",
+    "10, 70, -5, 0, 0.0, 1.0, 9.75, 70.25, -5.1",
+    "-3, 0, 2, -90, 1.0, 0.0, -3.1, 0.25, 1.75"
   })
-  @DisplayName("a wisp rises from just above the familiar's trailing hem, spread around it")
+  @DisplayName(
+      "a wisp rises just above the hem, behind the way the familiar faces, spread a little")
   void spawnAt(
       final double x,
       final double y,
       final double z,
+      final float yaw,
       final double rollX,
       final double rollZ,
       final double expectedX,
       final double expectedY,
       final double expectedZ) {
-    final Vec3d at = WispTrail.spawnAt(new Vec3d(x, y, z), rollX, rollZ);
+    final Vec3d at = WispTrail.spawnAt(new Vec3d(x, y, z), yaw, rollX, rollZ);
     assertEquals(expectedX, at.x, 1.0e-9);
     assertEquals(expectedY, at.y, 1.0e-9);
     assertEquals(expectedZ, at.z, 1.0e-9);

@@ -74,11 +74,7 @@ public class FamiliarScoutGoal extends Goal {
       case SETTLE -> familiar.order(FamiliarMode.FIGHT, owner);
       case JOIN_OWNER -> {
         familiar.refreshPositionAndAngles(
-            owner.getX(),
-            owner.getBodyY(0.6),
-            owner.getZ(),
-            familiar.getYaw(),
-            familiar.getPitch());
+            owner.getX(), owner.getY(), owner.getZ(), familiar.getYaw(), familiar.getPitch());
         familiar.order(FamiliarMode.FIGHT, owner);
       }
       case RISE ->

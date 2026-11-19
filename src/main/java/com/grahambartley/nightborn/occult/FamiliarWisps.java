@@ -18,7 +18,9 @@ public final class FamiliarWisps {
       return;
     }
     final Random random = familiar.getRandom();
-    final Vec3d at = WispTrail.spawnAt(familiar.getPos(), random.nextDouble(), random.nextDouble());
+    final Vec3d at =
+        WispTrail.spawnAt(
+            familiar.getPos(), familiar.bodyYaw, random.nextDouble(), random.nextDouble());
     familiar.getWorld().addParticle(WISP, at.x, at.y, at.z, 0.0, WispTrail.DRIFT_UP, 0.0);
   }
 }

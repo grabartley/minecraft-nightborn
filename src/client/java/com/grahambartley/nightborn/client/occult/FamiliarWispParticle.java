@@ -11,6 +11,9 @@ public final class FamiliarWispParticle extends SpriteBillboardParticle {
   static final int AGE_SPREAD = 14;
   static final float SIZE = 0.16F;
   static final float DRAG = 0.96F;
+  static final float RED = 0.86F;
+  static final float GREEN = 0.93F;
+  static final float BLUE = 0.98F;
 
   private final SpriteProvider sprites;
 
@@ -32,6 +35,7 @@ public final class FamiliarWispParticle extends SpriteBillboardParticle {
     this.velocityMultiplier = DRAG;
     this.maxAge = MIN_AGE + random.nextInt(AGE_SPREAD);
     this.alpha = WispLife.alpha(0, maxAge);
+    setColor(RED, GREEN, BLUE);
     setSpriteForAge(sprites);
   }
 
@@ -47,6 +51,11 @@ public final class FamiliarWispParticle extends SpriteBillboardParticle {
   @Override
   public float getSize(final float tickDelta) {
     return SIZE * WispLife.scale(age + tickDelta, maxAge);
+  }
+
+  @Override
+  protected int getBrightness(final float tickDelta) {
+    return WispLife.brightness(super.getBrightness(tickDelta));
   }
 
   @Override
