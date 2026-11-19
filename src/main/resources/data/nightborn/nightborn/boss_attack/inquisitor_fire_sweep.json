@@ -3,9 +3,9 @@
   "weight": 2,
   "cooldown_ticks": 160,
   "tell_ticks": 22,
-  "tell_clip": "stake_strike",
+  "tell_clip": "fire_sweep_tell",
   "tell_sound": "minecraft:item.firecharge.use",
-  "clip": "stake_strike",
+  "clip": "fire_sweep",
   "sound": "minecraft:entity.blaze.shoot",
   "zone": {
     "shape": "line",

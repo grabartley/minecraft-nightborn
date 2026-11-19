@@ -4,9 +4,9 @@
   "weight": 3,
   "cooldown_ticks": 120,
   "tell_ticks": 22,
-  "tell_clip": "throw_holy_water",
+  "tell_clip": "holy_water_tell",
   "tell_sound": "minecraft:entity.witch.throw",
-  "clip": "throw_holy_water",
+  "clip": "holy_water",
   "sound": "minecraft:entity.splash_potion.break",
   "zone": {
     "radius": 2.0,

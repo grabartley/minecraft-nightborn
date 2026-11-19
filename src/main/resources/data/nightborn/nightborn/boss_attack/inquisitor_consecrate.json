@@ -3,9 +3,9 @@
   "weight": 2,
   "cooldown_ticks": 300,
   "tell_ticks": 30,
-  "tell_clip": "raise_crucifix",
+  "tell_clip": "consecrate_tell",
   "tell_sound": "minecraft:block.bell.resonate",
-  "clip": "raise_crucifix",
+  "clip": "consecrate",
   "sound": "nightborn:boss.inquisitor.consecrate",
   "zone": {
     "radius": 3.5,

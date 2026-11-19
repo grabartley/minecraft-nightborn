@@ -4,9 +4,9 @@
   "weight": 1,
   "cooldown_ticks": 300,
   "tell_ticks": 30,
-  "tell_clip": "raise_crucifix",
+  "tell_clip": "dawn_line_tell",
   "tell_sound": "minecraft:block.beacon.power_select",
-  "clip": "raise_crucifix",
+  "clip": "dawn_line",
   "sound": "nightborn:boss.inquisitor.false_dawn",
   "zone": {
     "shape": "line",

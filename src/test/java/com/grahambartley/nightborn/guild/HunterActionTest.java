@@ -4,24 +4,21 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
+import java.util.Arrays;
+import java.util.stream.Stream;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.EnumSource;
+import org.junit.jupiter.params.provider.MethodSource;
 
 class HunterActionTest {
 
-  private static final Path CLIPS =
-      Path.of("src/client/resources/assets/nightborn/animations/entity/hunter.animation.json");
   private static final double TICKS_PER_SECOND = 20.0;
 
   private static JsonObject clips() throws IOException {
-    return JsonParser.parseString(Files.readString(CLIPS))
-        .getAsJsonObject()
-        .getAsJsonObject("animations");
+    return HunterRigClips.of("hunter");
   }
 
   @ParameterizedTest(name = "sees {0}, {1} blocks, can throw {2}, crucifix {3}: {4}")
@@ -60,10 +57,20 @@ class HunterActionTest {
     assertEquals(action, HunterAction.byIndex(index));
   }
 
-  @ParameterizedTest(name = "{0}")
-  @EnumSource(value = HunterAction.class, names = "NONE", mode = EnumSource.Mode.EXCLUDE)
-  void theSharedAnimationsHoldEveryAction(final HunterAction action) throws IOException {
-    assertTrue(clips().has(action.animation()));
+  static Stream<Arguments> rigActions() {
+    return HunterRigClips.RIGS.stream()
+        .flatMap(
+            rig ->
+                Arrays.stream(HunterAction.values())
+                    .filter(action -> action != HunterAction.NONE)
+                    .map(action -> Arguments.of(rig, action)));
+  }
+
+  @ParameterizedTest(name = "{0} has {1}")
+  @MethodSource("rigActions")
+  void everyHunterRigHoldsEveryAction(final String rig, final HunterAction action)
+      throws IOException {
+    assertTrue(HunterRigClips.of(rig).has(action.animation()));
   }
 
   @ParameterizedTest(name = "{0}")

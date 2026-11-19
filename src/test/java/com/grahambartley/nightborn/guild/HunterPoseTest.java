@@ -1,9 +1,15 @@
 package com.grahambartley.nightborn.guild;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.stream.Stream;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.MethodSource;
 
 class HunterPoseTest {
 
@@ -48,5 +54,16 @@ class HunterPoseTest {
   })
   void playsTheClipOfTheSameName(final HunterPose pose, final String clip) {
     assertEquals(clip, pose.animation());
+  }
+
+  static Stream<Arguments> rigPoses() {
+    return HunterRigClips.RIGS.stream()
+        .flatMap(rig -> Arrays.stream(HunterPose.values()).map(pose -> Arguments.of(rig, pose)));
+  }
+
+  @ParameterizedTest(name = "{0} has {1}")
+  @MethodSource("rigPoses")
+  void everyHunterRigHoldsEveryPose(final String rig, final HunterPose pose) throws IOException {
+    assertTrue(HunterRigClips.of(rig).has(pose.animation()));
   }
 }

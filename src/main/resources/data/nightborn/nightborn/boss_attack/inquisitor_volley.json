@@ -4,9 +4,9 @@
   "weight": 3,
   "cooldown_ticks": 80,
   "tell_ticks": 24,
-  "tell_clip": "crossbow_shot",
+  "tell_clip": "volley_tell",
   "tell_sound": "minecraft:item.crossbow.loading_middle",
-  "clip": "crossbow_shot",
+  "clip": "volley",
   "sound": "minecraft:item.crossbow.shoot",
   "zone": {
     "shape": "line",

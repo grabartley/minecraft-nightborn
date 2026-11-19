@@ -3,9 +3,9 @@
   "weight": 2,
   "cooldown_ticks": 160,
   "tell_ticks": 28,
-  "tell_clip": "throw_holy_water",
+  "tell_clip": "snare_tell",
   "tell_sound": "minecraft:block.tripwire.attach",
-  "clip": "throw_holy_water",
+  "clip": "snare",
   "sound": "nightborn:boss.inquisitor.snare",
   "zone": {
     "radius": 1.5,

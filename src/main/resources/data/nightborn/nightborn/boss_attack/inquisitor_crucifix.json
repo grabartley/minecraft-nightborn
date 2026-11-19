@@ -3,9 +3,9 @@
   "weight": 2,
   "cooldown_ticks": 300,
   "tell_ticks": 20,
-  "tell_clip": "raise_crucifix",
+  "tell_clip": "crucifix_tell",
   "tell_sound": "minecraft:block.bell.use",
-  "clip": "raise_crucifix",
+  "clip": "crucifix",
   "sound": "minecraft:block.beacon.activate",
   "channel": {
     "ticks": 100,
