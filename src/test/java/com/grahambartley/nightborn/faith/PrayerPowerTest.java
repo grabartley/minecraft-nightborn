@@ -34,4 +34,22 @@ class PrayerPowerTest {
       assertEquals(lingers, read.getOrThrow().lingers());
     }
   }
+
+  @ParameterizedTest(name = "{0}: rises {1}")
+  @CsvSource(
+      delimiter = ';',
+      value = {
+        "{\"radius\":2,\"duration_ticks\":100,\"health_per_second\":2,\"height\":12,\"pillar\":true}; 12.0",
+        "{\"radius\":2,\"duration_ticks\":100,\"health_per_second\":2,\"pillar\":true}; 8.0",
+        "{\"radius\":2,\"duration_ticks\":100,\"health_per_second\":2,\"height\":12}; 0.0"
+      })
+  @DisplayName("a prayer raises a pillar of light only when asked, as tall as its reach")
+  void rise(final String json, final float rise) {
+    assertEquals(
+        rise,
+        PrayerPower.CODEC
+            .parse(JsonOps.INSTANCE, JsonParser.parseString(json))
+            .getOrThrow()
+            .rise());
+  }
 }

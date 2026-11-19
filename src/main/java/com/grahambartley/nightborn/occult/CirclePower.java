@@ -3,14 +3,17 @@ package com.grahambartley.nightborn.occult;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import java.util.List;
+import java.util.Optional;
 import net.minecraft.entity.effect.StatusEffectInstance;
+import net.minecraft.util.Identifier;
 
 public record CirclePower(
     float radius,
     int durationTicks,
     float damage,
     List<StatusEffectInstance> effects,
-    boolean stopsPrayers) {
+    boolean stopsPrayers,
+    Optional<Identifier> look) {
 
   public static final Codec<CirclePower> CODEC =
       RecordCodecBuilder.create(
@@ -32,7 +35,8 @@ public record CirclePower(
                           .forGetter(CirclePower::effects),
                       Codec.BOOL
                           .optionalFieldOf("stops_prayers", false)
-                          .forGetter(CirclePower::stopsPrayers))
+                          .forGetter(CirclePower::stopsPrayers),
+                      Identifier.CODEC.optionalFieldOf("look").forGetter(CirclePower::look))
                   .apply(instance, CirclePower::new));
 
   public CirclePower {

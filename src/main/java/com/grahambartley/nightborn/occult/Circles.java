@@ -1,5 +1,6 @@
 package com.grahambartley.nightborn.occult;
 
+import com.grahambartley.nightborn.boss.ZoneMarkEntity;
 import com.grahambartley.nightborn.skill.AreaRules;
 import com.grahambartley.nightborn.skill.PowerReach;
 import java.util.ArrayList;
@@ -45,9 +46,13 @@ public final class Circles {
 
   public static void draw(final LivingEntity caster, final CirclePower power) {
     if (caster.getWorld() instanceof ServerWorld world) {
-      CIRCLES.add(
-          new Circle(
-              world.getRegistryKey(), caster.getPos(), caster.getUuid(), power, world.getTime()));
+      final Vec3d at = caster.getPos();
+      CIRCLES.add(new Circle(world.getRegistryKey(), at, caster.getUuid(), power, world.getTime()));
+      power
+          .look()
+          .ifPresent(
+              look ->
+                  ZoneMarkEntity.ground(world, at, power.radius(), look, power.durationTicks()));
     }
   }
 

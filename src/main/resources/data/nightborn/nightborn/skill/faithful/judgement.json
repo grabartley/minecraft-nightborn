@@ -23,6 +23,7 @@
       "harm_per_second": 3.0,
       "harm_type": "nightborn:holy_light",
       "spot_range": 16.0,
+      "pillar": true,
       "look": "nightborn:judgement"
     },
     "sound": "nightborn:boss.inquisitor.false_dawn"

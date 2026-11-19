@@ -1,7 +1,6 @@
 package com.grahambartley.nightborn.faith;
 
 import com.grahambartley.nightborn.boss.ZoneMarkEntity;
-import com.grahambartley.nightborn.boss.ZoneShape;
 import com.grahambartley.nightborn.mind.MindEffect;
 import com.grahambartley.nightborn.occult.Humans;
 import com.grahambartley.nightborn.skill.AreaRules;
@@ -81,12 +80,9 @@ public final class Prayers {
               .filter(look -> at != null)
               .map(
                   look ->
-                      ZoneMarkEntity.place(
-                          world,
-                          ZoneShape.circle(at.x, at.z, power.radius()),
-                          at.y + 0.02,
-                          Optional.of(look)));
-      mark.ifPresent(placed -> placed.linger(power.durationTicks()));
+                      ZoneMarkEntity.ground(
+                          world, at, power.radius(), look, power.durationTicks()));
+      mark.ifPresent(placed -> placed.rise(power.rise()));
       final Prayer prayer =
           new Prayer(
               world.getRegistryKey(), caster.getUuid(), at, power, clears, world.getTime(), mark);
