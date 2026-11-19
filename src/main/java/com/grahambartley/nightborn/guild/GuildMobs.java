@@ -54,8 +54,7 @@ public final class GuildMobs {
     FabricDefaultAttributeRegistry.register(HUNTER, HunterEntity.createHunterAttributes());
     FabricDefaultAttributeRegistry.register(
         GUILD_MASTER, GuildMasterEntity.createGuildMasterAttributes());
-    FabricDefaultAttributeRegistry.register(
-        VETERAN_HUNTER, VeteranHunterEntity.createVeteranAttributes());
+    FabricDefaultAttributeRegistry.register(VETERAN_HUNTER, HunterEntity.createHunterAttributes());
     ItemGroupEvents.modifyEntriesEvent(ItemGroups.SPAWN_EGGS)
         .register(
             entries -> {

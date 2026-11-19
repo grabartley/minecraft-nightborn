@@ -3,6 +3,7 @@ package com.grahambartley.nightborn.guild.raiding;
 import com.grahambartley.nightborn.age.AgeAttachment;
 import com.grahambartley.nightborn.age.AgeLadder;
 import com.grahambartley.nightborn.age.AgeNight;
+import com.grahambartley.nightborn.coffin.DaySkip;
 import com.grahambartley.nightborn.config.HuntSettings;
 import com.grahambartley.nightborn.core.SurfaceSpots;
 import com.grahambartley.nightborn.guild.GuildMobs;
@@ -13,6 +14,7 @@ import com.grahambartley.nightborn.house.HousePlace;
 import com.grahambartley.nightborn.house.Houses;
 import com.grahambartley.nightborn.hunt.HuntRecord;
 import com.grahambartley.nightborn.hunt.HuntRules;
+import com.grahambartley.nightborn.server.ServerConfigService;
 import com.grahambartley.nightborn.vampire.Vampires;
 import com.grahambartley.nightborn.village.VillageStep;
 import com.grahambartley.nightborn.village.VillageSuspicion;
@@ -129,9 +131,11 @@ public final class RaidDispatch {
       final long now) {
     final Random random = world.getRandom();
     final RaidOrders orders =
-        new RaidOrders(quarry.getUuid(), RaidRules.nextDusk(now), house.map(GlobalPos::pos));
+        new RaidOrders(quarry.getUuid(), DaySkip.nextDusk(now), house.map(GlobalPos::pos));
     final List<UUID> members = new ArrayList<>();
+    final int percent = ServerConfigService.current().parties().raidPartyPercent();
     arms.veteran()
+        .filter(id -> arms.led(percent))
         .ifPresent(
             id -> {
               final VeteranHunterEntity veteran =
@@ -142,7 +146,7 @@ public final class RaidDispatch {
                 members.add(veteran.getUuid());
               }
             });
-    for (final var kit : arms.hunterKits()) {
+    for (final var kit : arms.hunterKits(percent)) {
       final HunterEntity hunter = place(world, GuildMobs.HUNTER, spot, random);
       if (hunter != null) {
         hunter.enlist(orders, kit.toString());

@@ -40,16 +40,40 @@ class RaidArmsTest {
         .getOrThrow();
   }
 
-  @ParameterizedTest(name = "{0} hunters, veteran {1}: {2} in all")
-  @CsvSource({"3, false, 3", "11, true, 12", "12, false, 12", "20, true, 12", "20, false, 12"})
-  void neverHoldsMoreThanTwelve(final int hunters, final boolean veteran, final int size) {
+  @ParameterizedTest(name = "{0} hunters at {1}%, veteran {2}: {3} in all")
+  @CsvSource({
+    "3, 100, false, 3",
+    "11, 100, true, 12",
+    "8, 200, true, 12",
+    "8, 50, true, 5",
+    "4, 50, false, 2",
+    "4, 0, true, 0",
+    "7, 400, false, 12"
+  })
+  void scalesWithTheSettingButNeverHoldsMoreThanTwelve(
+      final int hunters, final int percent, final boolean veteran, final int size) {
     final RaidArms arms =
         new RaidArms(
             id("stage"),
             veteran ? Optional.of(id("veteran")) : Optional.empty(),
             List.of(new RaidArms.Kits(id("a"), hunters)));
-    assertEquals(size, arms.size());
-    assertEquals(size - (veteran ? 1 : 0), arms.hunterKits().size());
+    assertEquals(size, arms.size(percent));
+    assertEquals(size - (arms.led(percent) ? 1 : 0), arms.hunterKits(percent).size());
+  }
+
+  @ParameterizedTest(name = "{0} hunters, veteran {1}: loads {2}")
+  @CsvSource({"12, false, true", "11, true, true", "12, true, false", "13, false, false"})
+  void rejectsAPartyOfMoreThanTwelve(
+      final int hunters, final boolean veteran, final boolean loads) {
+    final String json =
+        "{\"stage\":\"nightborn:elder\","
+            + (veteran ? "\"veteran\":\"nightborn:veteran\"," : "")
+            + "\"kits\":[{\"kit\":\"nightborn:a\",\"count\":"
+            + hunters
+            + "}]}";
+    assertEquals(
+        loads,
+        RaidArms.CODEC.parse(JsonOps.INSTANCE, JsonParser.parseString(json)).result().isPresent());
   }
 
   @ParameterizedTest(name = "fills kits in order: {0}")
@@ -61,7 +85,7 @@ class RaidArmsTest {
             Optional.empty(),
             List.of(new RaidArms.Kits(id("a"), a), new RaidArms.Kits(id("b"), b)));
     assertEquals(
-        List.of(expected.split(";")).stream().map(RaidArmsTest::id).toList(), arms.hunterKits());
+        List.of(expected.split(";")).stream().map(RaidArmsTest::id).toList(), arms.hunterKits(100));
   }
 
   @ParameterizedTest(name = "{0}: {1} hunters, {2} with silver, {3} with holy water, veteran {4}")
@@ -80,11 +104,11 @@ class RaidArmsTest {
       throws IOException {
     final RaidArms arms = shipped(stage);
     assertEquals(id(stage), arms.stage());
-    assertEquals(size, arms.size());
+    assertEquals(size, arms.size(100));
     assertEquals(veteran, arms.veteran().isPresent());
     int silvered = veteran ? 1 : 0;
     int holy = 0;
-    for (final Identifier kitId : arms.hunterKits()) {
+    for (final Identifier kitId : arms.hunterKits(100)) {
       final HunterKit kit = kit(kitId);
       silvered += kit.weapon().getPath().startsWith("silver") ? 1 : 0;
       holy += kit.holyWater() ? 1 : 0;

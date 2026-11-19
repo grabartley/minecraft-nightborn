@@ -33,12 +33,6 @@ public final class RaidRules {
     return housed != NightTime.isNight(false, timeOfDay);
   }
 
-  public static long nextDusk(final long timeOfDay) {
-    return (Math.floorDiv(timeOfDay - NightTime.DUSK, NightTime.DAY_LENGTH) + 1)
-            * NightTime.DAY_LENGTH
-        + NightTime.DUSK;
-  }
-
   public static boolean beaten(final int left) {
     return left <= 0;
   }

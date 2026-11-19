@@ -1,17 +1,19 @@
 package com.grahambartley.nightborn.guild.party;
 
 import com.grahambartley.nightborn.age.AgeNight;
+import com.grahambartley.nightborn.coffin.DaySkip;
 import com.grahambartley.nightborn.core.NightTime;
 import com.grahambartley.nightborn.guild.GuildMasterEntity;
 import com.grahambartley.nightborn.guild.HunterEntity;
 import com.grahambartley.nightborn.guild.raiding.RaidOrders;
-import com.grahambartley.nightborn.guild.raiding.RaidRules;
 import com.grahambartley.nightborn.guild.raiding.RaidingParties;
 import com.grahambartley.nightborn.guild.raiding.RaidingParty;
 import com.grahambartley.nightborn.house.House;
 import com.grahambartley.nightborn.house.HousePlace;
 import com.grahambartley.nightborn.house.Houses;
 import com.grahambartley.nightborn.hunt.HuntAttachment;
+import com.grahambartley.nightborn.hunt.HuntRecord;
+import com.grahambartley.nightborn.server.ServerConfigService;
 import com.grahambartley.nightborn.vampire.Vampires;
 import java.util.List;
 import java.util.Optional;
@@ -24,7 +26,6 @@ import net.minecraft.util.math.GlobalPos;
 
 public final class PassingRaid {
 
-  public static final double SIGHT = 32.0;
   static final String SEEN = "nightborn.raid.passing";
 
   private PassingRaid() {}
@@ -36,11 +37,12 @@ public final class PassingRaid {
   public static boolean targets(
       final boolean sameWorld,
       final double distance,
+      final int sight,
       final boolean lordOnline,
       final boolean vampire,
-      final boolean quiet,
+      final boolean resting,
       final boolean underway) {
-    return sameWorld && distance <= SIGHT && lordOnline && vampire && !quiet && !underway;
+    return sameWorld && distance <= sight && lordOnline && vampire && !resting && !underway;
   }
 
   static boolean raids(
@@ -70,9 +72,10 @@ public final class PassingRaid {
       if (targets(
           place.get().dimension() == world.getRegistryKey(),
           Math.sqrt(master.getBlockPos().getSquaredDistance(place.get().pos())),
+          ServerConfigService.current().parties().raidSight(),
           lord != null,
           lord != null && Vampires.isVampire(lord),
-          lord != null && HuntAttachment.get(lord).quiet(AgeNight.index(now)),
+          lord != null && resting(HuntAttachment.get(lord), now),
           raids.against(house.lord()).isPresent())) {
         raid(raids, master, members, house.lord(), place.get(), now);
         lord.sendMessage(Text.translatable(SEEN), false);
@@ -82,6 +85,10 @@ public final class PassingRaid {
     return false;
   }
 
+  static boolean resting(final HuntRecord record, final long now) {
+    return record.quiet(AgeNight.index(now)) || record.phase() != HuntRecord.Phase.NONE;
+  }
+
   private static void raid(
       final RaidingParties raids,
       final GuildMasterEntity master,
@@ -89,8 +96,7 @@ public final class PassingRaid {
       final UUID lord,
       final GlobalPos place,
       final long now) {
-    final RaidOrders orders =
-        new RaidOrders(lord, RaidRules.nextDusk(now), Optional.of(place.pos()));
+    final RaidOrders orders = new RaidOrders(lord, DaySkip.nextDusk(now), Optional.of(place.pos()));
     members.forEach(member -> member.enlist(orders, member.kit()));
     raids.start(
         new RaidingParty(

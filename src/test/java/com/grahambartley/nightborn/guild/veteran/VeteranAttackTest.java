@@ -29,7 +29,7 @@ class VeteranAttackTest {
   @ParameterizedTest(name = "{0}")
   @CsvSource({
     "silver_chain, SILVER_CHAIN, 20, 300, 0.0, 12.0, 1, 0.0, 60, 0.0",
-    "bolt_volley, BOLT_VOLLEY, 30, 240, 8.0, 20.0, 3, 0.0, 0, 0.0",
+    "bolt_volley, BOLT_VOLLEY, 30, 240, 8.0, 20.0, 3, 0.5, 0, 0.0",
     "holy_water_arc, HOLY_WATER_ARC, 20, 400, 0.0, 10.0, 3, 1.0, 120, 0.0",
     "rallying_cry, RALLYING_CRY, 20, 900, 0.0, 0.0, 1, 16.0, 160, 6.0"
   })
@@ -62,9 +62,41 @@ class VeteranAttackTest {
   void playsASoundAndMarksWithThingsTheGameHas(final String name) throws IOException {
     final VeteranAttack attack = shipped(name);
     assertTrue(Registries.SOUND_EVENT.containsId(attack.sound()), attack.sound().toString());
-    assertTrue(Registries.PARTICLE_TYPE.containsId(attack.mark()), attack.mark().toString());
     attack.held().ifPresent(item -> assertTrue(Registries.ITEM.containsId(item)));
     assertTrue(!attack.clip().isEmpty());
+  }
+
+  @ParameterizedTest(name = "{0}: mark {1}")
+  @CsvSource({
+    "silver_chain, ''",
+    "bolt_volley, nightborn:bolt_line",
+    "holy_water_arc, nightborn:holy_water",
+    "rallying_cry, ''"
+  })
+  void marksTheFloorOnlyForAttacksThatHitIt(final String name, final String mark)
+      throws IOException {
+    assertEquals(
+        mark.isEmpty() ? Optional.empty() : Optional.of(Identifier.of(mark)), shipped(name).mark());
+  }
+
+  @ParameterizedTest(name = "{0}")
+  @CsvSource({
+    "silver_chain, 3.0, 0, 0.0, 0, 0.0",
+    "bolt_volley, 0.0, 0, 0.0, 0, 0.0",
+    "holy_water_arc, 0.0, 2, 4.0, 20, 0.0",
+    "rallying_cry, 0.0, 0, 0.0, 0, 0.5"
+  })
+  void shipsTheLockedTriggers(
+      final String name,
+      final double meleeReach,
+      final int crowd,
+      final double crowdReach,
+      final int stillTicks,
+      final double partyHealth)
+      throws IOException {
+    assertEquals(
+        new VeteranAttack.Trigger(meleeReach, crowd, crowdReach, stillTicks, partyHealth),
+        shipped(name).trigger());
   }
 
   @ParameterizedTest(name = "{0}")
@@ -83,12 +115,14 @@ class VeteranAttackTest {
                 JsonParser.parseString(
                     "{\"kind\":\""
                         + kind
-                        + "\",\"clip\":\"c\",\"sound\":\"a\",\"mark\":\"b\","
+                        + "\",\"clip\":\"c\",\"sound\":\"a\","
                         + "\"windup_ticks\":5,\"cooldown_ticks\":5}"))
             .getOrThrow();
     assertEquals(1, attack.count());
     assertEquals(0.0, attack.reach());
     assertEquals(Optional.empty(), attack.held());
     assertEquals(Identifier.ofVanilla("a"), attack.sound());
+    assertEquals(Optional.empty(), attack.mark());
+    assertEquals(VeteranAttack.Trigger.NONE, attack.trigger());
   }
 }

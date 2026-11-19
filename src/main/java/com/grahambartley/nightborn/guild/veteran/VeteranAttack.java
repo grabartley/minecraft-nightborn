@@ -10,7 +10,7 @@ public record VeteranAttack(
     Kind kind,
     String clip,
     Identifier sound,
-    Identifier mark,
+    Optional<Identifier> mark,
     int windupTicks,
     int cooldownTicks,
     double reachMin,
@@ -21,7 +21,8 @@ public record VeteranAttack(
     float heal,
     Optional<Identifier> held,
     Optional<Identifier> ammo,
-    boolean shout) {
+    boolean shout,
+    Trigger trigger) {
 
   public enum Kind implements StringIdentifiable {
     SILVER_CHAIN("silver_chain"),
@@ -43,6 +44,34 @@ public record VeteranAttack(
     }
   }
 
+  public record Trigger(
+      double meleeReach, int crowd, double crowdReach, int stillTicks, double partyHealth) {
+
+    public static final Trigger NONE = new Trigger(0.0, 0, 0.0, 0, 0.0);
+
+    public static final Codec<Trigger> CODEC =
+        RecordCodecBuilder.create(
+            instance ->
+                instance
+                    .group(
+                        Codec.doubleRange(0.0, MOST_REACH)
+                            .optionalFieldOf("melee_reach", 0.0)
+                            .forGetter(Trigger::meleeReach),
+                        Codec.intRange(0, MOST_COUNT)
+                            .optionalFieldOf("crowd", 0)
+                            .forGetter(Trigger::crowd),
+                        Codec.doubleRange(0.0, MOST_REACH)
+                            .optionalFieldOf("crowd_reach", 0.0)
+                            .forGetter(Trigger::crowdReach),
+                        Codec.intRange(0, MOST_TICKS)
+                            .optionalFieldOf("still_ticks", 0)
+                            .forGetter(Trigger::stillTicks),
+                        Codec.doubleRange(0.0, 1.0)
+                            .optionalFieldOf("party_health", 0.0)
+                            .forGetter(Trigger::partyHealth))
+                    .apply(instance, Trigger::new));
+  }
+
   public static final int MOST_TICKS = 72000;
   public static final double MOST_REACH = 64.0;
   public static final int MOST_COUNT = 12;
@@ -55,7 +84,7 @@ public record VeteranAttack(
                       Kind.CODEC.fieldOf("kind").forGetter(VeteranAttack::kind),
                       Codec.STRING.fieldOf("clip").forGetter(VeteranAttack::clip),
                       Identifier.CODEC.fieldOf("sound").forGetter(VeteranAttack::sound),
-                      Identifier.CODEC.fieldOf("mark").forGetter(VeteranAttack::mark),
+                      Identifier.CODEC.optionalFieldOf("mark").forGetter(VeteranAttack::mark),
                       Codec.intRange(1, MOST_TICKS)
                           .fieldOf("windup_ticks")
                           .forGetter(VeteranAttack::windupTicks),
@@ -82,6 +111,9 @@ public record VeteranAttack(
                           .forGetter(VeteranAttack::heal),
                       Identifier.CODEC.optionalFieldOf("held").forGetter(VeteranAttack::held),
                       Identifier.CODEC.optionalFieldOf("ammo").forGetter(VeteranAttack::ammo),
-                      Codec.BOOL.optionalFieldOf("shout", false).forGetter(VeteranAttack::shout))
+                      Codec.BOOL.optionalFieldOf("shout", false).forGetter(VeteranAttack::shout),
+                      Trigger.CODEC
+                          .optionalFieldOf("trigger", Trigger.NONE)
+                          .forGetter(VeteranAttack::trigger))
                   .apply(instance, VeteranAttack::new));
 }

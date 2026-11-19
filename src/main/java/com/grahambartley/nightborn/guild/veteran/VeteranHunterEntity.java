@@ -9,7 +9,6 @@ import com.grahambartley.nightborn.inquisitor.StakeDownedGoal;
 import java.util.Map;
 import java.util.Optional;
 import net.minecraft.entity.EntityType;
-import net.minecraft.entity.attribute.DefaultAttributeContainer;
 import net.minecraft.entity.attribute.DefaultAttributeRegistry;
 import net.minecraft.entity.attribute.EntityAttribute;
 import net.minecraft.entity.attribute.EntityAttributeInstance;
@@ -42,10 +41,6 @@ public class VeteranHunterEntity extends HunterEntity {
 
   public VeteranHunterEntity(final EntityType<? extends PathAwareEntity> type, final World world) {
     super(type, world);
-  }
-
-  public static DefaultAttributeContainer.Builder createVeteranAttributes() {
-    return createHunterAttributes();
   }
 
   @Override
@@ -110,6 +105,12 @@ public class VeteranHunterEntity extends HunterEntity {
     final Map<Identifier, VeteranAttack> known =
         veteran().map(kind -> VeteranData.attacks(getRegistryManager(), kind)).orElse(Map.of());
     attacks.tick(known);
+  }
+
+  @Override
+  public void remove(final RemovalReason reason) {
+    attacks.clear();
+    super.remove(reason);
   }
 
   void shout() {

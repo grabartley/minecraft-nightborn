@@ -45,17 +45,20 @@ final class VeteranStrikes {
       final LivingEntity target,
       final VeteranAttack attack,
       final boolean dodged) {
-    final boolean lands =
-        !dodged
-            && target.isAlive()
-            && !VanishAttachment.isGone(target)
-            && veteran.canSee(target)
-            && veteran.distanceTo(target) <= attack.reach();
-    if (!lands) {
+    if (!VeteranChoice.chainLands(
+        dodged,
+        target.isAlive(),
+        VanishAttachment.isGone(target),
+        veteran.canSee(target),
+        veteran.distanceTo(target),
+        attack.reach())) {
       return false;
     }
-    Landing.move(
-        target, VeteranAim.dragSpot(veteran.getPos(), target.getPos(), VeteranAim.DRAG_GAP));
+    Landing.reach(
+            target,
+            VeteranAim.dragSpot(veteran.getPos(), target.getPos(), VeteranAim.DRAG_GAP)
+                .add(0.0, target.getStandingEyeHeight(), 0.0))
+        .ifPresent(spot -> Landing.move(target, spot));
     Grounding.ground(target, attack.effectTicks());
     veteran.playSound(SoundEvents.ITEM_ARMOR_EQUIP_CHAIN.value(), 1.0F, 0.8F);
     return true;

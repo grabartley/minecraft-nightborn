@@ -1,6 +1,7 @@
 package com.grahambartley.nightborn.guild.raiding;
 
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.DataResult;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,31 +24,45 @@ public record RaidArms(Identifier stage, Optional<Identifier> veteran, List<Raid
   }
 
   public static final Codec<RaidArms> CODEC =
-      RecordCodecBuilder.create(
-          instance ->
-              instance
-                  .group(
-                      Identifier.CODEC.fieldOf("stage").forGetter(RaidArms::stage),
-                      Identifier.CODEC.optionalFieldOf("veteran").forGetter(RaidArms::veteran),
-                      Kits.CODEC.listOf().fieldOf("kits").forGetter(RaidArms::kits))
-                  .apply(instance, RaidArms::new));
+      RecordCodecBuilder.<RaidArms>create(
+              instance ->
+                  instance
+                      .group(
+                          Identifier.CODEC.fieldOf("stage").forGetter(RaidArms::stage),
+                          Identifier.CODEC.optionalFieldOf("veteran").forGetter(RaidArms::veteran),
+                          Kits.CODEC.listOf().fieldOf("kits").forGetter(RaidArms::kits))
+                      .apply(instance, RaidArms::new))
+          .validate(RaidArms::fits);
+
+  static DataResult<RaidArms> fits(final RaidArms arms) {
+    final int total =
+        arms.kits().stream().mapToInt(Kits::count).sum() + (arms.veteran().isPresent() ? 1 : 0);
+    return total <= MOST
+        ? DataResult.success(arms)
+        : DataResult.error(() -> "A raiding party holds at most " + MOST + ", got " + total);
+  }
 
   public RaidArms {
     kits = List.copyOf(kits);
   }
 
-  public List<Identifier> hunterKits() {
-    final int room = MOST - (veteran.isPresent() ? 1 : 0);
+  public boolean led(final int percent) {
+    return veteran.isPresent() && percent > 0;
+  }
+
+  public List<Identifier> hunterKits(final int percent) {
+    final int room = MOST - (led(percent) ? 1 : 0);
     final List<Identifier> roster = new ArrayList<>();
     for (final Kits entry : kits) {
-      for (int i = 0; i < entry.count() && roster.size() < room; i++) {
+      final int scaled = (int) Math.round(entry.count() * Math.max(0, percent) / 100.0);
+      for (int i = 0; i < scaled && roster.size() < room; i++) {
         roster.add(entry.kit());
       }
     }
     return roster;
   }
 
-  public int size() {
-    return hunterKits().size() + (veteran.isPresent() ? 1 : 0);
+  public int size(final int percent) {
+    return hunterKits(percent).size() + (led(percent) ? 1 : 0);
   }
 }

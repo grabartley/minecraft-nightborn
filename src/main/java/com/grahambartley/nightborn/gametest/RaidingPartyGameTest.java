@@ -95,15 +95,19 @@ public class RaidingPartyGameTest implements FabricGameTest {
     final BlockPos head = CoffinStage.coffin(context, new BlockPos(4, 2, 6), Direction.NORTH);
     final HunterEntity raider = context.spawnEntity(GuildMobs.HUNTER, new BlockPos(5, 2, 4));
     raider.setAiDisabled(true);
-    raider.enlist(
-        new RaidOrders(
-            UUID.randomUUID(),
-            context.getWorld().getTimeOfDay() + FAR_OFF,
-            Optional.of(context.getAbsolutePos(head))),
-        "");
+    final UUID quarry = UUID.randomUUID();
+    final long until = context.getWorld().getTimeOfDay() + FAR_OFF;
+    final GlobalPos house =
+        GlobalPos.create(context.getWorld().getRegistryKey(), context.getAbsolutePos(head));
+    RaidingParties.get(context.getWorld().getServer())
+        .start(
+            new RaidingParty(
+                quarry, List.of(raider.getUuid()), 1, until, Optional.of(house), Optional.empty()));
+    raider.enlist(new RaidOrders(quarry, until, Optional.of(house.pos())), "");
     context.runAtEveryTick(
         () -> {
           if (context.getBlockState(head).get(CoffinBlock.OPEN)) {
+            RaidingParties.get(context.getWorld().getServer()).remove(quarry);
             context.complete();
           }
         });

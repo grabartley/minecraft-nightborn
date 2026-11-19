@@ -269,6 +269,9 @@ public class HunterEntity extends PathAwareEntity
 
   public void standDown() {
     raid = null;
+    if (getNavigation() instanceof MobNavigation navigation) {
+      navigation.setCanPathThroughDoors(false);
+    }
   }
 
   public Optional<RaidOrders> raid() {

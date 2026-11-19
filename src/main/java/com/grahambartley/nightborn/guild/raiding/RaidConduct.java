@@ -3,6 +3,7 @@ package com.grahambartley.nightborn.guild.raiding;
 import com.grahambartley.nightborn.coffin.CoffinBlock;
 import com.grahambartley.nightborn.coffin.CoffinSleepers;
 import com.grahambartley.nightborn.mind.MindTies;
+import com.grahambartley.nightborn.server.ServerConfigService;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.mob.PathAwareEntity;
 import net.minecraft.server.MinecraftServer;
@@ -16,7 +17,6 @@ public final class RaidConduct {
   static final int LID_REACH = 2;
   public static final int PLACE_REACH = 4;
   static final int QUARRY_REACH = 6;
-  static final double CHASE = 64.0;
 
   private RaidConduct() {}
 
@@ -25,7 +25,11 @@ public final class RaidConduct {
       return true;
     }
     final MinecraftServer server = world.getServer();
-    if (orders.over(server.getOverworld().getTimeOfDay())) {
+    if (orders.over(server.getOverworld().getTimeOfDay())
+        || !RaidingParties.get(server)
+            .against(orders.quarry())
+            .filter(raid -> raid.members().contains(raider.getUuid()))
+            .isPresent()) {
       return false;
     }
     if (raider.age % EVERY_TICKS != 0 || MindTies.mesmerised(raider)) {
@@ -46,8 +50,9 @@ public final class RaidConduct {
       final boolean sameWorld,
       final boolean alive,
       final boolean spectator,
-      final double distance) {
-    return sameWorld && alive && !spectator && distance <= CHASE;
+      final double distance,
+      final int chase) {
+    return sameWorld && alive && !spectator && distance <= chase;
   }
 
   private static void hunt(final PathAwareEntity raider, final ServerPlayerEntity quarry) {
@@ -56,7 +61,8 @@ public final class RaidConduct {
             quarry.getWorld() == raider.getWorld(),
             quarry.isAlive(),
             quarry.isSpectator(),
-            raider.distanceTo(quarry))) {
+            raider.distanceTo(quarry),
+            ServerConfigService.current().parties().raidChase())) {
       return;
     }
     raider.setPositionTarget(quarry.getBlockPos(), QUARRY_REACH);

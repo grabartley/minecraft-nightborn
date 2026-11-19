@@ -2,11 +2,16 @@
   "kind": "holy_water_arc",
   "clip": "throw_holy_water",
   "sound": "minecraft:item.bottle.fill",
-  "mark": "minecraft:crit",
   "windup_ticks": 20,
   "cooldown_ticks": 400,
   "reach": 10.0,
   "count": 3,
   "radius": 1.0,
-  "effect_ticks": 120
+  "effect_ticks": 120,
+  "mark": "nightborn:holy_water",
+  "trigger": {
+    "crowd": 2,
+    "crowd_reach": 4.0,
+    "still_ticks": 20
+  }
 }

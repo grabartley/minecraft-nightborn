@@ -73,19 +73,6 @@ class RaidRulesTest {
     assertEquals(goes, RaidRules.goesNow(housed, time));
   }
 
-  @ParameterizedTest(name = "at {0} the next dusk is {1}")
-  @CsvSource({
-    "0, 13000",
-    "12999, 13000",
-    "13000, 37000",
-    "20000, 37000",
-    "24000, 37000",
-    "37000, 61000"
-  })
-  void leavesAtTheNextDusk(final long time, final long dusk) {
-    assertEquals(dusk, RaidRules.nextDusk(time));
-  }
-
   @ParameterizedTest(name = "{0} left: beaten {1}")
   @CsvSource({"0, true", "1, false", "12, false"})
   void isBeatenWhenNobodyIsLeft(final int left, final boolean beaten) {

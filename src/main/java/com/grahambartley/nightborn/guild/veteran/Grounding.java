@@ -53,7 +53,10 @@ public final class Grounding {
       BatForm.leave(vampire);
       Levitation.land(vampire);
       final Vec3d velocity = vampire.getVelocity();
-      vampire.setVelocity(velocity.x, rise(velocity.y, true), velocity.z);
+      if (velocity.y > 0.0) {
+        vampire.setVelocity(velocity.x, rise(velocity.y, true), velocity.z);
+        vampire.velocityModified = true;
+      }
     }
     Modifiers.set(
         vampire,

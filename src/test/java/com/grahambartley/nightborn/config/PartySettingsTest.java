@@ -26,7 +26,8 @@ class PartySettingsTest {
   @CsvSource({"4, 8, 4, 8", "6, 2, 6, 6", "0, 99, 1, 12", "12, 12, 12, 12"})
   @DisplayName("a party is never smaller than its minimum or larger than twelve")
   void clampsPartySize(final int min, final int max, final int keptMin, final int keptMax) {
-    final PartySettings settings = new PartySettings(10, 20, min, max, 25, 3, 5, 50, 15, 5);
+    final PartySettings settings =
+        new PartySettings(10, 20, min, max, 25, 3, 5, 50, 15, 5, 100, 32, 64);
     assertEquals(keptMin, settings.partyMinSize());
     assertEquals(keptMax, settings.partyMaxSize());
   }
@@ -35,13 +36,34 @@ class PartySettingsTest {
   @CsvSource({"0, 1", "1, 1", "3, 3", "9, 3"})
   @DisplayName("a party camps for one night at least and three at most")
   void clampsNights(final int nights, final int kept) {
-    assertEquals(kept, new PartySettings(10, 20, 4, 8, 25, nights, 5, 50, 15, 5).partyMaxNights());
+    assertEquals(
+        kept,
+        new PartySettings(10, 20, 4, 8, 25, nights, 5, 50, 15, 5, 100, 32, 64).partyMaxNights());
   }
 
   @ParameterizedTest(name = "a bat chance of {0} is kept as {1}")
   @CsvSource({"-1, 0", "0, 0", "100, 100", "150, 100"})
   @DisplayName("bats can be turned off with zero and set to always with one hundred")
   void clampsBatChance(final int chance, final int kept) {
-    assertEquals(kept, new PartySettings(10, 20, 4, 8, 25, 3, 5, 50, chance, 5).campBatChance());
+    assertEquals(
+        kept,
+        new PartySettings(10, 20, 4, 8, 25, 3, 5, 50, chance, 5, 100, 32, 64).campBatChance());
+  }
+
+  @ParameterizedTest(name = "party {0}%, sight {1}, chase {2} are kept as {3}%, {4}, {5}")
+  @CsvSource({"100, 32, 64, 100, 32, 64", "-5, 1, 1, 0, 8, 16", "999, 999, 999, 400, 128, 256"})
+  @DisplayName("a raid's scale, a passing party's sight and the chase stay in range")
+  void clampsRaidSettings(
+      final int percent,
+      final int sight,
+      final int chase,
+      final int keptPercent,
+      final int keptSight,
+      final int keptChase) {
+    final PartySettings settings =
+        new PartySettings(10, 20, 4, 8, 25, 3, 5, 50, 15, 5, percent, sight, chase);
+    assertEquals(keptPercent, settings.raidPartyPercent());
+    assertEquals(keptSight, settings.raidSight());
+    assertEquals(keptChase, settings.raidChase());
   }
 }
