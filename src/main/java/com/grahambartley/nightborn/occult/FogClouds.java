@@ -45,12 +45,8 @@ public final class FogClouds {
     if (caster.getWorld() instanceof ServerWorld world) {
       final Vec3d at = caster.getPos();
       CLOUDS.add(new Cloud(world.getRegistryKey(), at, caster.getUuid(), power, world.getTime()));
-      power
-          .look()
-          .ifPresent(
-              look ->
-                  ZoneMarkEntity.ground(world, at, power.radius(), look, power.durationTicks())
-                      .rise(power.rise()));
+      ZoneMarkEntity.ground(
+          world, at, power.radius(), power.look(), power.durationTicks(), power.rise());
     }
   }
 

@@ -39,6 +39,10 @@ public final class Swarms {
     return reachable && (hunterMob || foughtRecently);
   }
 
+  static boolean ends(final boolean casterAlive, final boolean lasts) {
+    return !casterAlive || !lasts;
+  }
+
   public static void start(final LivingEntity caster, final SwarmPower power) {
     if (!(caster.getWorld() instanceof ServerWorld world)) {
       return;
@@ -74,8 +78,10 @@ public final class Swarms {
       final ServerWorld world = server.getWorld(swarm.world());
       final Entity found = world == null ? null : world.getEntity(swarm.caster());
       if (!(found instanceof LivingEntity caster)
-          || !caster.isAlive()
-          || !AreaRules.lasts(world.getTime(), swarm.startedAt() + swarm.power().durationTicks())) {
+          || ends(
+              caster.isAlive(),
+              AreaRules.lasts(
+                  world.getTime(), swarm.startedAt() + swarm.power().durationTicks()))) {
         disperse(server, swarm);
         swarms.remove();
         continue;
