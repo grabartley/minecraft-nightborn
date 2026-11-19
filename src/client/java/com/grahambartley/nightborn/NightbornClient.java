@@ -9,6 +9,7 @@ import com.grahambartley.nightborn.client.VampireClientFeatures;
 import com.grahambartley.nightborn.client.boss.ArenaWallRenderer;
 import com.grahambartley.nightborn.client.boss.BossArenaView;
 import com.grahambartley.nightborn.client.boss.BossSetTooltip;
+import com.grahambartley.nightborn.client.faith.BloodFlameFx;
 import com.grahambartley.nightborn.client.familiar.HumanFamiliarRenderer;
 import com.grahambartley.nightborn.client.fog.StructureFog;
 import com.grahambartley.nightborn.client.gore.SplatterModels;
@@ -183,5 +184,6 @@ public class NightbornClient implements ClientModInitializer {
     LiningTooltip.register();
     FlameTooltip.register();
     WispFx.register();
+    BloodFlameFx.register();
   }
 }

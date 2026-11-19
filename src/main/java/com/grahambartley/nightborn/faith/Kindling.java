@@ -13,8 +13,6 @@ import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.particle.DustParticleEffect;
-import net.minecraft.particle.ParticleTypes;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.server.MinecraftServer;
@@ -23,7 +21,6 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Identifier;
-import org.joml.Vector3f;
 
 public final class Kindling {
 
@@ -36,10 +33,8 @@ public final class Kindling {
               .packetCodec(Flame.PACKET_CODEC)
               .build());
 
-  static final int GLOW_TICKS = 4;
+  static final int GLOW_TICKS = 2;
   static final int SWEEP_TICKS = 20;
-  static final DustParticleEffect BLOOD_CORE =
-      new DustParticleEffect(new Vector3f(0.6F, 0.02F, 0.04F), 0.8F);
 
   private Kindling() {}
 
@@ -66,7 +61,7 @@ public final class Kindling {
         0.8F);
     caster.getMainHandStack().set(FLAME, power.flame(world.getTime()));
     world.spawnParticles(
-        ParticleTypes.FLAME,
+        BladeFlames.FLAME,
         caster.getX(),
         caster.getBodyY(0.6),
         caster.getZ(),
@@ -106,12 +101,7 @@ public final class Kindling {
       held.remove(FLAME);
       return;
     }
-    final double side = Math.toRadians(holder.getBodyYaw() + 90.0F) * -1.0;
-    final double x = holder.getX() + Math.sin(side) * 0.45;
-    final double z = holder.getZ() + Math.cos(side) * 0.45;
-    world.spawnParticles(
-        ParticleTypes.FLAME, x, holder.getBodyY(0.55), z, 2, 0.06, 0.25, 0.06, 0.0);
-    world.spawnParticles(BLOOD_CORE, x, holder.getBodyY(0.55), z, 1, 0.04, 0.2, 0.04, 0.0);
+    BladeFlames.emit(world, holder);
   }
 
   static void afterDamage(
