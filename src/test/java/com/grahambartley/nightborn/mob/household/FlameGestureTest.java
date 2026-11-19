@@ -1,4 +1,4 @@
-package com.grahambartley.nightborn.decor;
+package com.grahambartley.nightborn.mob.household;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 

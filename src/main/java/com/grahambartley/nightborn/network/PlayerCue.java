@@ -10,9 +10,9 @@ import net.minecraft.network.codec.PacketCodecs;
 import net.minecraft.util.function.ValueLists;
 
 public enum PlayerCue {
-  VOMIT(null),
-  DRAIN(null),
-  FINISHER(null),
+  VOMIT,
+  DRAIN,
+  FINISHER,
   SMALL_FLINCH(VampirePose.SMALL_FLINCH),
   RECOIL_GARLIC(VampirePose.RECOIL_GARLIC),
   RECOIL_CRUCIFIX(VampirePose.RECOIL_CRUCIFIX),
@@ -28,17 +28,23 @@ public enum PlayerCue {
   public static final PacketCodec<ByteBuf, PlayerCue> PACKET_CODEC =
       PacketCodecs.indexed(BY_INDEX, PlayerCue::ordinal);
 
-  private final VampirePose gesture;
+  private final Optional<VampirePose> gesture;
+
+  PlayerCue() {
+    this.gesture = Optional.empty();
+  }
 
   PlayerCue(final VampirePose gesture) {
-    this.gesture = gesture;
+    this.gesture = Optional.of(gesture);
   }
 
   public Optional<VampirePose> gesture() {
-    return Optional.ofNullable(gesture);
+    return gesture;
   }
 
   public static Optional<PlayerCue> of(final VampirePose gesture) {
-    return Arrays.stream(values()).filter(cue -> cue.gesture == gesture).findFirst();
+    return Arrays.stream(values())
+        .filter(cue -> cue.gesture.filter(gesture::equals).isPresent())
+        .findFirst();
   }
 }

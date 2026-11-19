@@ -1,9 +1,7 @@
-package com.grahambartley.nightborn.decor;
+package com.grahambartley.nightborn.mob.household;
 
 import com.grahambartley.nightborn.mob.Gestures;
 import com.grahambartley.nightborn.mob.VampirePose;
-import com.grahambartley.nightborn.mob.household.FurnitureKind;
-import com.grahambartley.nightborn.mob.household.FurnitureUse;
 import java.util.Optional;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.LivingEntity;

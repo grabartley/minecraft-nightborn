@@ -81,4 +81,17 @@ class ShownActionTest {
     assertEquals(tell, action.showing(Set.of("blood_frenzy_tell")));
     assertTrue(action.playing());
   }
+
+  @ParameterizedTest(name = "recoil sent as sequence {0}")
+  @CsvSource({"3", "7"})
+  @DisplayName("a recoil held back is dropped, not played late once the vampire is free")
+  void heldRecoilIsDropped(final int sequence) {
+    final ShownAction action = new ShownAction();
+    action.begin(1, "", false);
+    action.begin(2, "blood_frenzy_tell", false);
+    action.begin(sequence, "recoil_garlic", true);
+    action.end();
+    assertEquals(false, action.begin(sequence, "recoil_garlic", false));
+    assertEquals(false, action.playing());
+  }
 }

@@ -1,6 +1,6 @@
 package com.grahambartley.nightborn.mixin;
 
-import com.grahambartley.nightborn.decor.FlameGesture;
+import com.grahambartley.nightborn.mob.household.FlameGesture;
 import com.grahambartley.nightborn.mob.household.FurnitureUse;
 import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;

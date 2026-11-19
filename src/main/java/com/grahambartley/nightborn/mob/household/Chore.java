@@ -1,6 +1,5 @@
 package com.grahambartley.nightborn.mob.household;
 
-import com.grahambartley.nightborn.decor.FlameGesture;
 import com.grahambartley.nightborn.mob.VampirePose;
 import java.util.Optional;
 

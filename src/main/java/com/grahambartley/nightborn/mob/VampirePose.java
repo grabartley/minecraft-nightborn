@@ -29,9 +29,9 @@ public enum VampirePose {
   DRAIN("drain", Play.ONCE, Hold.ARMS_AND_HEAD),
   FINISHER_BITE("finisher_bite", Play.ONCE, Hold.ARMS_AND_HEAD),
   RISE("rise", Play.ONCE, Hold.ARMS_AND_HEAD),
-  SMALL_FLINCH("idle_look", Play.ONCE),
-  RECOIL_GARLIC("recoil_garlic", Play.ONCE, Hold.HEAD),
-  RECOIL_CRUCIFIX("recoil_crucifix", Play.ONCE, Hold.HEAD),
+  SMALL_FLINCH("idle_look", Play.ONCE, Hold.NOTHING, Gesture.YIELDING),
+  RECOIL_GARLIC("recoil_garlic", Play.ONCE, Hold.HEAD, Gesture.YIELDING),
+  RECOIL_CRUCIFIX("recoil_crucifix", Play.ONCE, Hold.HEAD, Gesture.YIELDING),
   WEAKENED("weakened", Play.LOOP),
   WEAKENED_WALK("weakened_walk", Play.LOOP),
   COFFIN_SLEEP("coffin_sleep", Play.HOLD, Hold.ARMS_HEAD_AND_HANDS),
@@ -42,10 +42,10 @@ public enum VampirePose {
   SUN_BURN("sun_burn", Play.LOOP, Hold.HEAD),
   STAKED_DEATH("staked_death", Play.HOLD, Hold.ARMS_AND_HEAD),
   ADJUST_CLOTHES("adjust_clothes", Play.ONCE, Hold.HEAD),
-  WAKE_STRETCH("wake_stretch", Play.ONCE, Hold.HEAD),
-  LIGHT_CANDLE("light_candle", Play.ONCE, Hold.HEAD),
-  DOUSE_CANDLE("douse_candle", Play.ONCE, Hold.HEAD),
-  START_GRAMOPHONE("start_gramophone", Play.ONCE, Hold.HEAD);
+  WAKE_STRETCH("wake_stretch", Play.ONCE, Hold.HEAD, Gesture.SENT),
+  LIGHT_CANDLE("light_candle", Play.ONCE, Hold.HEAD, Gesture.SENT),
+  DOUSE_CANDLE("douse_candle", Play.ONCE, Hold.HEAD, Gesture.SENT),
+  START_GRAMOPHONE("start_gramophone", Play.ONCE, Hold.HEAD, Gesture.SENT);
 
   public static final double LEVITATE_MOVE_SPEED = 0.03;
   public static final double LEVITATE_SPRINT_SPEED = 0.24;
@@ -56,6 +56,12 @@ public enum VampirePose {
     LOOP,
     HOLD,
     ONCE
+  }
+
+  private enum Gesture {
+    NONE,
+    SENT,
+    YIELDING
   }
 
   private enum Hold {
@@ -84,14 +90,20 @@ public enum VampirePose {
   private final String animation;
   private final RawAnimation clip;
   private final Hold hold;
+  private final Gesture gesture;
 
   VampirePose(final String animation, final Play play) {
     this(animation, play, Hold.NOTHING);
   }
 
   VampirePose(final String animation, final Play play, final Hold hold) {
+    this(animation, play, hold, Gesture.NONE);
+  }
+
+  VampirePose(final String animation, final Play play, final Hold hold, final Gesture gesture) {
     this.animation = animation;
     this.hold = hold;
+    this.gesture = gesture;
     this.clip =
         switch (play) {
           case LOOP -> RawAnimation.begin().thenLoop(animation);
@@ -103,6 +115,7 @@ public enum VampirePose {
   VampirePose(final String animation, final String rest, final Hold hold) {
     this.animation = animation;
     this.hold = hold;
+    this.gesture = Gesture.NONE;
     this.clip = RawAnimation.begin().then(animation, Animation.LoopType.PLAY_ONCE).thenLoop(rest);
   }
 
@@ -140,21 +153,11 @@ public enum VampirePose {
   }
 
   public boolean gesture() {
-    return switch (this) {
-      case SMALL_FLINCH,
-              RECOIL_GARLIC,
-              RECOIL_CRUCIFIX,
-              WAKE_STRETCH,
-              LIGHT_CANDLE,
-              DOUSE_CANDLE,
-              START_GRAMOPHONE ->
-          true;
-      default -> false;
-    };
+    return gesture != Gesture.NONE;
   }
 
   public boolean yields() {
-    return this == SMALL_FLINCH || this == RECOIL_GARLIC || this == RECOIL_CRUCIFIX;
+    return gesture == Gesture.YIELDING;
   }
 
   public static boolean yields(final String clip) {
