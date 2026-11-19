@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.google.gson.JsonParser;
 import com.grahambartley.nightborn.MinecraftBootstrapExtension;
+import com.grahambartley.nightborn.guild.HunterEntity;
 import com.mojang.serialization.JsonOps;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -21,6 +22,8 @@ import org.junit.jupiter.params.provider.CsvSource;
 class VeteranAttackTest {
 
   static final Path ATTACKS = Path.of("src/main/resources/data/nightborn/nightborn/veteran_attack");
+  static final Path CLIPS =
+      Path.of("src/client/resources/assets/nightborn/animations/entity/hunter.animation.json");
 
   static VeteranAttack shipped(final String name) throws IOException {
     return VeteranAttack.CODEC
@@ -76,14 +79,14 @@ class VeteranAttackTest {
   void poseFitsTheWindUp(final String name) throws IOException {
     final VeteranAttack attack = shipped(name);
     final var clip =
-        JsonParser.parseString(
-                Files.readString(
-                    Path.of(
-                        "src/client/resources/assets/nightborn/animations/entity/hunter.animation.json")))
+        JsonParser.parseString(Files.readString(CLIPS))
             .getAsJsonObject()
             .getAsJsonObject("animations")
             .getAsJsonObject(attack.clip());
-    assertEquals(attack.windupTicks() / 20.0, clip.get("animation_length").getAsDouble(), 1.0e-6);
+    assertEquals(
+        (attack.windupTicks() - HunterEntity.ANIMATION_BLEND_TICKS) / 20.0,
+        clip.get("animation_length").getAsDouble(),
+        1.0e-6);
   }
 
   @ParameterizedTest(name = "{0}: mark {1}")

@@ -60,7 +60,7 @@ public class HunterEntity extends PathAwareEntity
 
   static final String FEMALE_KEY = "Female";
   static final String KIT_KEY = "Kit";
-  protected static final int ANIMATION_BLEND_TICKS = 4;
+  public static final int ANIMATION_BLEND_TICKS = 4;
   static final int CAMP_REACH = 12;
   static final String PARTY_LEADER_KEY = "PartyLeader";
   static final String RAID_KEY = "Raid";
