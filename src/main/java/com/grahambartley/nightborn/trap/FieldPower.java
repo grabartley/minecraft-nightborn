@@ -3,6 +3,7 @@ package com.grahambartley.nightborn.trap;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import java.util.List;
+import java.util.Optional;
 import net.minecraft.util.Identifier;
 
 public record FieldPower(
@@ -10,7 +11,7 @@ public record FieldPower(
     int durationTicks,
     List<Identifier> bars,
     boolean rearmsTraps,
-    boolean weakens,
+    Optional<FieldWeakening> weakens,
     boolean unwings,
     float height,
     Identifier look) {
@@ -31,7 +32,9 @@ public record FieldPower(
                       Codec.BOOL
                           .optionalFieldOf("rearms_traps", false)
                           .forGetter(FieldPower::rearmsTraps),
-                      Codec.BOOL.optionalFieldOf("weakens", false).forGetter(FieldPower::weakens),
+                      FieldWeakening.CODEC
+                          .optionalFieldOf("weakens")
+                          .forGetter(FieldPower::weakens),
                       Codec.BOOL.optionalFieldOf("unwings", false).forGetter(FieldPower::unwings),
                       Codec.floatRange(1.0F, 64.0F)
                           .optionalFieldOf("height", 8.0F)
@@ -44,6 +47,6 @@ public record FieldPower(
   }
 
   public boolean pulses() {
-    return weakens || unwings;
+    return weakens.isPresent() || unwings;
   }
 }

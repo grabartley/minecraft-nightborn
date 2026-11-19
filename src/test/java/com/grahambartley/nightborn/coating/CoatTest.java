@@ -93,8 +93,8 @@ class CoatTest {
     "GARLIC, 0, 1.25, 0"
   })
   @DisplayName("a blessing is stamped once with the holder's extra time, and garlic never is")
-  void blessedFor(final Coating coating, final int bonus, final double lasts, final int stamped) {
-    assertEquals(stamped, new Coat(coating, 0, 100L, bonus).blessedFor(TERMS, lasts).bonusTicks());
+  void stretchedBy(final Coating coating, final int bonus, final double lasts, final int stamped) {
+    assertEquals(stamped, new Coat(coating, 0, 100L, bonus).stretchedBy(TERMS, lasts).bonusTicks());
   }
 
   @ParameterizedTest(name = "bonus {0}, now {1}: {2} ticks left")
@@ -128,7 +128,7 @@ class CoatTest {
   @CsvSource({"1200, 1.25, 300", "1200, 1.0, 0", "600, 1.25, 150"})
   @DisplayName("the holder's extra blessing time stretches a blessed weapon by its own length")
   void blessingStretched(final int ticks, final double lasts, final int bonus) {
-    assertEquals(bonus, Coat.blessing(100L, ticks).blessedFor(TERMS, lasts).bonusTicks());
+    assertEquals(bonus, Coat.blessing(100L, ticks).stretchedBy(TERMS, lasts).bonusTicks());
   }
 
   @ParameterizedTest(name = "blessed for {0}")

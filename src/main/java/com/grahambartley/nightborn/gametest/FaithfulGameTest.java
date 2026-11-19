@@ -1,10 +1,12 @@
 package com.grahambartley.nightborn.gametest;
 
 import com.grahambartley.nightborn.coating.Coatings;
+import com.grahambartley.nightborn.faith.FaithMarks;
 import com.grahambartley.nightborn.faith.Kindling;
 import com.grahambartley.nightborn.faith.Prayers;
 import com.grahambartley.nightborn.faith.Rebukes;
 import com.grahambartley.nightborn.gear.GearItems;
+import com.grahambartley.nightborn.mind.MindEffect;
 import com.grahambartley.nightborn.mob.NightbornMobs;
 import com.grahambartley.nightborn.mob.VampireEntity;
 import com.grahambartley.nightborn.skill.PowerCooldownAttachment;
@@ -19,6 +21,7 @@ import com.grahambartley.nightborn.weakened.Weakened;
 import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
 import net.minecraft.command.argument.EntityAnchorArgumentType;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.passive.VillagerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -40,6 +43,7 @@ public class FaithfulGameTest implements FabricGameTest {
 
   static final Identifier FAITHFUL = id("faithful");
   static final Identifier VANISH = id("core/vanish");
+  static final String CONSECRATED = "consecrated";
 
   @BeforeBatch(batchId = BATCH)
   public void clearPrayers(final ServerWorld world) {
@@ -93,6 +97,26 @@ public class FaithfulGameTest implements FabricGameTest {
   }
 
   @GameTest(templateName = ARENA, batchId = BATCH, tickLimit = LIMIT)
+  public void sanctuaryFreesAndHealsAMesmerisedVillager(final TestContext context) {
+    final ServerPlayerEntity hunter = TestPlayers.hunter(context, new BlockPos(1, 2, 1));
+    final VillagerEntity villager = context.spawnEntity(EntityType.VILLAGER, new BlockPos(3, 2, 3));
+    villager.setAiDisabled(true);
+    villager.setHealth(10.0F);
+    villager.addStatusEffect(new StatusEffectInstance(MindEffect.MESMERISED, 400));
+    learn(hunter, "mend", "sanctuary");
+    context.runAtTick(TestPlayers.READY, () -> cast(context, hunter, "sanctuary"));
+    context.runAtTick(
+        TestPlayers.READY + 25,
+        () -> {
+          context.assertFalse(
+              villager.hasStatusEffect(MindEffect.MESMERISED), "the villager is freed");
+          context.assertTrue(FaithMarks.SHELTERED.on(villager), "the villager is sheltered");
+          context.assertTrue(villager.getHealth() >= 12.0F, "the villager heals each second");
+          TestPlayers.finish(context, hunter);
+        });
+  }
+
+  @GameTest(templateName = ARENA, batchId = BATCH, tickLimit = LIMIT)
   public void consecrateWeakensAVampireAndBarsVanish(final TestContext context) {
     final ServerPlayerEntity hunter = TestPlayers.hunter(context, new BlockPos(1, 2, 1));
     final VampireEntity vampire = vampire(context, new BlockPos(3, 2, 3));
@@ -109,7 +133,7 @@ public class FaithfulGameTest implements FabricGameTest {
         TestPlayers.READY + 15,
         () -> {
           context.assertTrue(
-              Weakened.sources(vampire).strength(MarkedGrounds.WEAKENED_SOURCE) > 0,
+              Weakened.sources(vampire).strength(CONSECRATED) > 0,
               "the hallowed ground weakens the vampire");
           context.assertTrue(
               MarkedGrounds.bars(vampire, VANISH), "vanish is barred on hallowed ground");

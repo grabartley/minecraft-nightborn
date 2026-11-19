@@ -22,7 +22,10 @@
         "nightborn:core/vanish",
         "nightborn:beast/bat_form"
       ],
-      "weakens": true,
+      "weakens": {
+        "source": "consecrated",
+        "cue": "nightborn.faith.consecrated"
+      },
       "unwings": true,
       "look": "nightborn:consecrate"
     },

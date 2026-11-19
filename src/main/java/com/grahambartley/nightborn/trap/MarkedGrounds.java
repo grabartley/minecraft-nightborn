@@ -33,8 +33,6 @@ import org.jetbrains.annotations.Nullable;
 
 public final class MarkedGrounds {
 
-  public static final String WEAKENED_SOURCE = "consecrated";
-
   static final int PULSE_TICKS = 10;
   static final int LINGER_TICKS = PULSE_TICKS + 5;
 
@@ -87,6 +85,7 @@ public final class MarkedGrounds {
 
   public static boolean holdsDown(final LivingEntity vampire) {
     return Vampires.isVampire(vampire)
+        && PowerReach.marks(vampire)
         && any(
             field ->
                 field.power().unwings()
@@ -95,7 +94,7 @@ public final class MarkedGrounds {
   }
 
   public static boolean bars(final LivingEntity caster, final Identifier power) {
-    if (!Vampires.isVampire(caster)) {
+    if (!Vampires.isVampire(caster) || !PowerReach.marks(caster)) {
       return false;
     }
     return any(
@@ -137,16 +136,17 @@ public final class MarkedGrounds {
                 Vampires.isVampire(candidate)
                     && field.covers(world, candidate.getPos())
                     && reaches(candidate, field))) {
-      if (field.power().unwings()) {
+      if (field.power().unwings() && PowerReach.marks(vampire)) {
         Grounding.unwing(vampire);
       }
-      if (field.power().weakens()) {
-        weaken(vampire, owner);
-      }
+      field.power().weakens().ifPresent(weakening -> weaken(vampire, owner, weakening));
     }
   }
 
-  private static void weaken(final LivingEntity vampire, @Nullable final LivingEntity owner) {
+  private static void weaken(
+      final LivingEntity vampire,
+      @Nullable final LivingEntity owner,
+      final FieldWeakening weakening) {
     final WardSettings settings = ServerConfigService.current().wards();
     final int strength =
         Wards.dulled(
@@ -155,10 +155,10 @@ public final class MarkedGrounds {
                 settings.crucifixStrength(),
                 owner == null ? 0.0 : HunterAttributes.faith(owner),
                 settings.faithBonus()));
-    final boolean fresh = Weakened.sources(vampire).strength(WEAKENED_SOURCE) == 0;
-    Weakened.add(vampire, WEAKENED_SOURCE, strength, LINGER_TICKS);
+    final boolean fresh = Weakened.sources(vampire).strength(weakening.source()) == 0;
+    Weakened.add(vampire, weakening.source(), strength, LINGER_TICKS);
     if (fresh && vampire instanceof ServerPlayerEntity player) {
-      player.sendMessage(Text.translatable("nightborn.faith.consecrated"), true);
+      player.sendMessage(Text.translatable(weakening.cue()), true);
     }
   }
 

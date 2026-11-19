@@ -1,5 +1,7 @@
 package com.grahambartley.nightborn.faith;
 
+import com.grahambartley.nightborn.ward.WornWard;
+
 public final class RebukeArc {
 
   private RebukeArc() {}
@@ -23,6 +25,6 @@ public final class RebukeArc {
   }
 
   public static boolean armed(final boolean holding, final boolean vampire, final double worn) {
-    return !vampire && (holding || worn > 0.0);
+    return WornWard.reach(holding, vampire, worn, 1.0) > 0.0;
   }
 }

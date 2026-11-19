@@ -10,6 +10,7 @@ import net.minecraft.component.ComponentType;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
+import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.particle.DustParticleEffect;
@@ -81,7 +82,9 @@ public final class Kindling {
   }
 
   public static float strike(final ItemStack weapon, final Entity target) {
-    if (target.isFireImmune()) {
+    if (target.isFireImmune()
+        || target instanceof LivingEntity living
+            && living.hasStatusEffect(StatusEffects.FIRE_RESISTANCE)) {
       return 0.0F;
     }
     return burning(weapon, target.getWorld().getTime()).map(Flame::damage).orElse(0.0F);

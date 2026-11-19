@@ -20,8 +20,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageType;
 import net.minecraft.entity.effect.StatusEffect;
-import net.minecraft.particle.DustParticleEffect;
-import net.minecraft.particle.ParticleTypes;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -32,14 +30,11 @@ import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
-import org.joml.Vector3f;
 
 public final class Prayers {
 
   static final int SHELTER_TICKS = PrayerRules.PULSE_TICKS + 10;
   static final int GLOW_TICKS = 5;
-  static final DustParticleEffect GOLD_DUST =
-      new DustParticleEffect(new Vector3f(0.95F, 0.82F, 0.45F), 1.0F);
 
   private record Prayer(
       RegistryKey<World> world,
@@ -73,18 +68,9 @@ public final class Prayers {
     if (power.health() > 0.0F) {
       for (final LivingEntity human : humans(world, centre, power, at != null)) {
         PrayerHealing.heal(caster, human, power.health(), clears);
-        world.spawnParticles(
-            ParticleTypes.HEART,
-            human.getX(),
-            human.getBodyY(1.0),
-            human.getZ(),
-            2,
-            0.3,
-            0.2,
-            0.3,
-            0.0);
+        PrayerSigns.mended(world, human);
       }
-      ring(world, centre, power.radius());
+      PrayerSigns.ring(world, centre, power.radius());
     }
     if (power.lingers()) {
       PRAYERS.add(
@@ -120,7 +106,7 @@ public final class Prayers {
       }
       final Vec3d centre = prayer.spot() == null ? caster.getPos() : prayer.spot();
       if ((now - prayer.startedAt()) % GLOW_TICKS == 0) {
-        glow(world, prayer, centre);
+        PrayerSigns.glow(world, centre, prayer.power(), prayer.spot() != null);
       }
       if (PrayerRules.pulses(prayer.startedAt(), now)) {
         pulse(world, prayer, caster, centre);
@@ -196,42 +182,6 @@ public final class Prayers {
                     ? AreaRules.column(candidate.getPos(), centre, radius, power.height())
                     : AreaRules.inside(candidate.squaredDistanceTo(centre), radius))
                 && test.test(candidate));
-  }
-
-  private static void glow(final ServerWorld world, final Prayer prayer, final Vec3d centre) {
-    if (prayer.spot() != null) {
-      for (double y = 0.2; y < prayer.power().height(); y += 0.8) {
-        world.spawnParticles(
-            ParticleTypes.END_ROD,
-            centre.x,
-            centre.y + y,
-            centre.z,
-            2,
-            prayer.power().radius() * 0.4,
-            0.2,
-            prayer.power().radius() * 0.4,
-            0.0);
-      }
-      return;
-    }
-    ring(world, centre, prayer.power().radius());
-  }
-
-  private static void ring(final ServerWorld world, final Vec3d centre, final float radius) {
-    final int points = (int) Math.ceil(radius * 6);
-    for (int i = 0; i < points; i++) {
-      final double angle = Math.PI * 2 * i / points;
-      world.spawnParticles(
-          GOLD_DUST,
-          centre.x + Math.cos(angle) * radius,
-          centre.y + 0.15,
-          centre.z + Math.sin(angle) * radius,
-          1,
-          0.0,
-          0.0,
-          0.0,
-          0.0);
-    }
   }
 
   @Nullable

@@ -18,7 +18,7 @@ class FieldPowerTest {
       delimiter = ';',
       value = {
         "{\"radius\":10,\"duration_ticks\":400,\"rearms_traps\":true,\"look\":\"nightborn:killing_ground\"}; true; false; false; false",
-        "{\"radius\":5,\"duration_ticks\":600,\"weakens\":true,\"unwings\":true,\"look\":\"nightborn:consecrate\"}; false; true; true; true",
+        "{\"radius\":5,\"duration_ticks\":600,\"weakens\":{\"source\":\"consecrated\",\"cue\":\"nightborn.faith.consecrated\"},\"unwings\":true,\"look\":\"nightborn:consecrate\"}; false; true; true; true",
         "{\"radius\":5,\"duration_ticks\":600,\"unwings\":true,\"look\":\"nightborn:consecrate\"}; false; false; true; true",
         "{\"radius\":5,\"duration_ticks\":600,\"look\":\"nightborn:consecrate\"}; false; false; false; false"
       })
@@ -32,7 +32,7 @@ class FieldPowerTest {
     final FieldPower power =
         FieldPower.CODEC.parse(JsonOps.INSTANCE, JsonParser.parseString(json)).getOrThrow();
     assertEquals(rearms, power.rearmsTraps());
-    assertEquals(weakens, power.weakens());
+    assertEquals(weakens, power.weakens().isPresent());
     assertEquals(unwings, power.unwings());
     assertEquals(pulses, power.pulses());
   }

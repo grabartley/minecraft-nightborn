@@ -88,7 +88,7 @@ public record Coat(
     return started() ? Math.max(0L, startedAt + lasts - now) : lasts;
   }
 
-  public Coat blessedFor(final CoatingTerms terms, final double lastsFactor) {
+  public Coat stretchedBy(final CoatingTerms terms, final double lastsFactor) {
     if (coating != Coating.HOLY_WATER || bonusTicks > 0) {
       return this;
     }

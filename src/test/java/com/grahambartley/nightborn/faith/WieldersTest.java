@@ -16,21 +16,16 @@ class WieldersTest {
     assertEquals(Optional.ofNullable(expected), Wielders.pick(ally, self));
   }
 
-  @ParameterizedTest(name = "mob caster {0}, alive {1}, seen {2}, allied {3} -> {4}")
+  @ParameterizedTest(name = "alive {0}, seen {1}, allied {2} -> {3}")
   @CsvSource({
-    "false, true, true, true, true",
-    "true, true, true, true, false",
-    "false, false, true, true, false",
-    "false, true, false, true, false",
-    "false, true, true, false, false"
+    "true, true, true, true",
+    "false, true, true, false",
+    "true, false, true, false",
+    "true, true, false, false"
   })
-  @DisplayName("only a living ally a player hunter can see is blessed in their place")
+  @DisplayName("only a living ally the hunter can see is blessed in their place")
   void blessable(
-      final boolean mob,
-      final boolean alive,
-      final boolean seen,
-      final boolean allied,
-      final boolean expected) {
-    assertEquals(expected, Wielders.blessable(mob, alive, seen, allied));
+      final boolean alive, final boolean seen, final boolean allied, final boolean expected) {
+    assertEquals(expected, Wielders.blessable(alive, seen, allied));
   }
 }
