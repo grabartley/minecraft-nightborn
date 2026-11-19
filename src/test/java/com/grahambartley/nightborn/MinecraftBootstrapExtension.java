@@ -6,6 +6,7 @@ import com.grahambartley.nightborn.ammo.GarlicFumesEffect;
 import com.grahambartley.nightborn.blood.BloodItems;
 import com.grahambartley.nightborn.clothing.ClothingFeatures;
 import com.grahambartley.nightborn.coffin.Coffins;
+import com.grahambartley.nightborn.coffin.RestedEffect;
 import com.grahambartley.nightborn.decor.DecorBlockEntities;
 import com.grahambartley.nightborn.decor.DecorBlocks;
 import com.grahambartley.nightborn.decor.DecorEntities;
@@ -24,6 +25,7 @@ import com.grahambartley.nightborn.mind.MindEffect;
 import com.grahambartley.nightborn.mob.NightbornMobs;
 import com.grahambartley.nightborn.occult.OccultAttributes;
 import com.grahambartley.nightborn.occult.RestlessDead;
+import com.grahambartley.nightborn.sun.ParasolItems;
 import com.grahambartley.nightborn.vampire.VampireAttributes;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -68,5 +70,7 @@ public final class MinecraftBootstrapExtension implements BeforeAllCallback {
     Objects.requireNonNull(GuildMobs.HUNTER);
     Objects.requireNonNull(RestlessDead.TYPE);
     Objects.requireNonNull(GarlicFumesEffect.ENTRY);
+    Objects.requireNonNull(ParasolItems.PARASOL);
+    Objects.requireNonNull(RestedEffect.ENTRY);
   }
 }

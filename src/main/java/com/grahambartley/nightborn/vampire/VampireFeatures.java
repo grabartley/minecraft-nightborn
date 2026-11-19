@@ -10,6 +10,7 @@ import com.grahambartley.nightborn.blood.BloodItems;
 import com.grahambartley.nightborn.blood.StarvingAttachment;
 import com.grahambartley.nightborn.coffin.CoffinDayCycle;
 import com.grahambartley.nightborn.coffin.CoffinRise;
+import com.grahambartley.nightborn.coffin.RestedEffect;
 import com.grahambartley.nightborn.command.NightbornCommand;
 import com.grahambartley.nightborn.downed.Downed;
 import com.grahambartley.nightborn.downed.HardcoreVampireDeath;
@@ -64,6 +65,7 @@ public final class VampireFeatures {
     HardcoreVampireDeath.register();
     FactionPlayerList.register();
     CoffinDayCycle.register();
+    RestedEffect.register();
     CoffinRise.register();
   }
 }

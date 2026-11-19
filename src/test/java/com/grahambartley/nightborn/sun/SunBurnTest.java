@@ -14,4 +14,18 @@ class SunBurnTest {
   void damage(final float sun, final double sunmarked, final float expected) {
     assertEquals(expected, SunBurn.damage(sun, sunmarked), 1.0E-6F);
   }
+
+  @ParameterizedTest(name = "age {0} at {1}, last shaded at {2}: burns now {3}")
+  @CsvSource({
+    "20, 500, -9223372036854775808, true",
+    "21, 500, -9223372036854775808, false",
+    "21, 500, 499, true",
+    "21, 500, 500, false",
+    "21, 500, 450, false",
+    "40, 500, 500, true"
+  })
+  @DisplayName("the sun burns once a second, and at once on losing a parasol's shade")
+  void due(final int age, final long now, final long shadedAt, final boolean due) {
+    assertEquals(due, SunBurn.due(age, now, shadedAt));
+  }
 }

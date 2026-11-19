@@ -9,6 +9,10 @@
     {
       "type": "patchouli:text",
       "text": "nightborn.journal.vampire.the_sun.1"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "nightborn.journal.vampire.the_sun.2"
     }
   ]
 }

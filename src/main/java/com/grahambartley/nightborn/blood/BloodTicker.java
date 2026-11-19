@@ -6,6 +6,7 @@ import com.grahambartley.nightborn.age.AgeAttachment;
 import com.grahambartley.nightborn.age.AgeGifts;
 import com.grahambartley.nightborn.batform.BatForm;
 import com.grahambartley.nightborn.clothing.WornAttributes;
+import com.grahambartley.nightborn.coffin.CoffinSleepers;
 import com.grahambartley.nightborn.config.NightbornConfig;
 import com.grahambartley.nightborn.downed.Downed;
 import com.grahambartley.nightborn.downed.DownedState;
@@ -67,7 +68,8 @@ public final class BloodTicker {
                         drainRate,
                         GiftAttributes.value(vampire, GiftAttributes.LEVITATION_DRAIN))),
                 vampire.age,
-                VampireAttributes.value(vampire, VampireAttributes.HEALING_SPEED)),
+                VampireAttributes.value(vampire, VampireAttributes.HEALING_SPEED),
+                CoffinSleepers.inCoffin(vampire)),
             BloodMetabolism.atRate(drainSeconds, drainRate));
     BloodAttachment.set(vampire, outcome.blood());
     if (outcome.heals()) {

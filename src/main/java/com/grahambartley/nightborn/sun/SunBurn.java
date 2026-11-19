@@ -24,6 +24,10 @@ public final class SunBurn {
     return (float) (sunDamage * sunmarked);
   }
 
+  public static boolean due(final int age, final long now, final long shadedAt) {
+    return age % BURN_INTERVAL_TICKS == 0 || shadedAt == now - 1L;
+  }
+
   public static boolean tick(final LivingEntity vampire, final SunSettings settings) {
     if (!vampire.isOnFire()) {
       SunFire.out(vampire);
@@ -31,7 +35,7 @@ public final class SunBurn {
     if (!(vampire.getWorld() instanceof ServerWorld world) || !DirectSun.on(vampire)) {
       return false;
     }
-    if (vampire.age % BURN_INTERVAL_TICKS != 0) {
+    if (!due(vampire.age, world.getTime(), ParasolShade.shadedAt(vampire))) {
       return true;
     }
     vampire.setOnFireFor(FIRE_SECONDS);

@@ -133,7 +133,7 @@ public final class Powers {
             WingedForm.on(caster),
             BatForm.isBat(caster),
             Weakened.sources(caster).level(Downed.state(caster) != null) > 0,
-            shifts && DirectSun.on(caster),
+            shifts && DirectSun.reaches(caster),
             id == null || FreePowers.free(caster, id)
                 ? 0L
                 : PowerCooldownAttachment.get(caster).ticksLeft(id, caster.getWorld().getTime()),

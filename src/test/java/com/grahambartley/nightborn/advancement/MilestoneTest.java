@@ -22,6 +22,7 @@ class MilestoneTest {
     "FED, fed",
     "FED_WATCHED, fed_watched",
     "SUN_SURVIVED, sun_survived",
+    "PARASOL_SHADE, parasol_shade",
     "BAT_FORM, bat_form",
     "GARLIC_STRINGS, garlic_strings",
     "DAY_SKIPPED, day_skipped",

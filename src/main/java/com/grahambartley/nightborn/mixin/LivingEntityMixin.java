@@ -9,6 +9,7 @@ import com.grahambartley.nightborn.coffin.CoffinLayout;
 import com.grahambartley.nightborn.coffin.CoffinRise;
 import com.grahambartley.nightborn.coffin.CoffinSleeperHold;
 import com.grahambartley.nightborn.coffin.CoffinSleepers;
+import com.grahambartley.nightborn.coffin.DaySleep;
 import com.grahambartley.nightborn.config.NightbornConfig;
 import com.grahambartley.nightborn.downed.DownedTargeting;
 import com.grahambartley.nightborn.hunt.Hunts;
@@ -20,6 +21,7 @@ import com.grahambartley.nightborn.server.ServerConfigService;
 import com.grahambartley.nightborn.skill.DamageTaken;
 import com.grahambartley.nightborn.skill.Mending;
 import com.grahambartley.nightborn.skill.PowerTicks;
+import com.grahambartley.nightborn.sun.ParasolShade;
 import com.grahambartley.nightborn.vampire.Gloom;
 import com.grahambartley.nightborn.vampire.VampireTicker;
 import com.grahambartley.nightborn.vampire.Vampires;
@@ -69,6 +71,7 @@ abstract class LivingEntityMixin {
     }
     Vanish.tick(self);
     Mending.tick(self);
+    ParasolShade.tick(self, ServerConfigService.current().sun());
     PowerTicks.tick(self);
     if (Vampires.isVampire(self)) {
       VampireTicker.tick(self);
@@ -195,6 +198,7 @@ abstract class LivingEntityMixin {
   @Inject(method = "sleep", at = @At("TAIL"))
   private void nightborn$standInAStandingCoffin(final BlockPos pos, final CallbackInfo ci) {
     CoffinSleeperHold.hold((LivingEntity) (Object) this);
+    DaySleep.lay((LivingEntity) (Object) this);
   }
 
   @Inject(method = "tick", at = @At("TAIL"))

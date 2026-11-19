@@ -1,0 +1,28 @@
+{
+  "parent": "nightborn:no_reflection_on_you",
+  "display": {
+    "icon": {
+      "id": "nightborn:parasol"
+    },
+    "title": {
+      "translate": "advancements.nightborn.made_in_the_shade.title"
+    },
+    "description": {
+      "translate": "advancements.nightborn.made_in_the_shade.description"
+    },
+    "frame": "task"
+  },
+  "criteria": {
+    "parasol_shade": {
+      "trigger": "nightborn:milestone",
+      "conditions": {
+        "milestone": "parasol_shade"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "parasol_shade"
+    ]
+  ]
+}
