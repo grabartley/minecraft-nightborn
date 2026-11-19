@@ -21,11 +21,18 @@ Music, all recordings in the public domain or under the licence shown:
 - String Quartet No. 6, III. Adagio (Mendelssohn), by Musopen String Quartet, [link](https://commons.wikimedia.org/wiki/File:Mendelssohn_-_String_Quartet_No._6_in_F_minor,_Op._80_-_III._Adagio_(Musopen_String_Quartet).flac), Public domain
 - Toccata and Fugue in D minor, BWV 565 (J. S. Bach), by Ashtar Moïra, [link](https://commons.wikimedia.org/wiki/File:Toccata_et_Fugue_BWV565.ogg), Public domain
 - Requiem, III. Dies irae (Mozart), by the Vienna Hofmusikkapelle under Josef Krips, [link](https://commons.wikimedia.org/wiki/File:Mozart_-_Requiem_(Krips)_-_III._Dies_ir%C3%A6.flac), Public domain
+- Requiem, II. Kyrie (Mozart), by the Vienna Philharmonic and Wiener Singverein under Herbert von Karajan, [link](https://commons.wikimedia.org/wiki/File:W._A._Mozart_-_Requiem_-_2._Kyrie_(Herbert_von_Karajan,_Wiener_Philharmoniker,_Wiener_Singverein,_1960).ogg), Public domain
+- Requiem, V. Rex tremendae (Mozart), by the Vienna Philharmonic and Wiener Singverein under Herbert von Karajan, [link](https://commons.wikimedia.org/wiki/File:W._A._Mozart_-_Requiem_-_5._Rex_tremend%C3%A6_(Herbert_von_Karajan,_Wiener_Philharmoniker,_Wiener_Singverein,_1960).ogg), Public domain
+- Requiem, VII. Confutatis (Mozart), by the Vienna Philharmonic and Wiener Singverein under Herbert von Karajan, [link](https://commons.wikimedia.org/wiki/File:W._A._Mozart_-_Requiem_-_7._Confutatis_(Herbert_von_Karajan,_Wiener_Philharmoniker,_Wiener_Singverein,_1960).ogg), Public domain
+- Requiem, XI. Sanctus (Mozart), by the Vienna Philharmonic and Wiener Singverein under Herbert von Karajan, [link](https://commons.wikimedia.org/wiki/File:W._A._Mozart_-_Requiem_-_11._Sanctus_(Herbert_von_Karajan,_Wiener_Philharmoniker,_Wiener_Singverein,_1960).ogg), Public domain
 - Gregorian choir & organ in Rome, by tullio, [link](https://freesound.org/people/tullio/sounds/780488/), CC0 1.0
 
 Sounds, all from Freesound, cut and shaped for the mod:
 
+- 26 Clavando Estaca.wav, by checholio, [link](https://freesound.org/people/checholio/sounds/443631/), CC0 1.0
 - 26.07.17- Sleep Foley - Mumbling, by Valerie-Vivegnis, [link](https://freesound.org/people/Valerie-Vivegnis/sounds/862931/), CC BY 4.0
+- 27 Clavando Estaca.wav, by checholio, [link](https://freesound.org/people/checholio/sounds/443630/), CC0 1.0
+- 28 Clavando Estaca.wav, by checholio, [link](https://freesound.org/people/checholio/sounds/443629/), CC0 1.0
 - AMB_Wind_Howling_empty Church close to window, by Tonmeister88, [link](https://freesound.org/people/Tonmeister88/sounds/557380/), CC0 1.0
 - ambience cave7, by fonografico, [link](https://freesound.org/people/fonografico/sounds/636125/), CC0 1.0
 - Angry frustrated and disappointed - Male - Various Sounds., by khenshom, [link](https://freesound.org/people/khenshom/sounds/527737/), CC0 1.0
@@ -33,6 +40,9 @@ Sounds, all from Freesound, cut and shaped for the mod:
 - AppleBite.wav, by MadManJimJam, [link](https://freesound.org/people/MadManJimJam/sounds/426715/), CC0 1.0
 - Bats squeak in the small cave, by Selector, [link](https://freesound.org/people/Selector/sounds/404152/), CC0 1.0
 - BellChurch, by www.bonson.ca, [link](https://freesound.org/people/www.bonson.ca/sounds/12651/), CC BY 4.0
+- BELLLrg_Herz-Jesu Church Single Small Bell Close_GILLE_GRAZ_ZoomH3_Binaural3o.wav, by JakobGille, [link](https://freesound.org/people/JakobGille/sounds/693774/), CC0 1.0
+- Bells - Tocsin, by Vrymaa, [link](https://freesound.org/people/Vrymaa/sounds/770122/), CC0 1.0
+- Bells of the Church of St. Wolfgang - Glocken der Kirche St. Wolfgang am Wolfgangsee, by Marschal, [link](https://freesound.org/people/Marschal/sounds/785252/), CC0 1.0
 - chain light solid rattle various rough and soft, by kyles, [link](https://freesound.org/people/kyles/sounds/637356/), CC0 1.0
 - clear throat13.wav, by Reitanna, [link](https://freesound.org/people/Reitanna/sounds/343910/), CC0 1.0
 - clear throat4.wav, by Reitanna, [link](https://freesound.org/people/Reitanna/sounds/323692/), CC0 1.0
@@ -40,7 +50,9 @@ Sounds, all from Freesound, cut and shaped for the mod:
 - Crackling candle, by carlopatrao, [link](https://freesound.org/people/carlopatrao/sounds/628432/), CC BY 4.0
 - Creaking in Room 6, by Greg_Surr, [link](https://freesound.org/people/Greg_Surr/sounds/590169/), CC0 1.0
 - Cry- Pain- woman, by Valerie-Vivegnis, [link](https://freesound.org/people/Valerie-Vivegnis/sounds/767947/), CC BY 4.0
+- Death Knell - Totenglocke, by donStevo, [link](https://freesound.org/people/donStevo/sounds/553299/), CC0 1.0
 - death2, by womb_affliction, [link](https://freesound.org/people/womb_affliction/sounds/429196/), CC BY 4.0
+- Dona nobis pacem.wav, by itinerantmonk108, [link](https://freesound.org/people/itinerantmonk108/sounds/553797/), CC0 1.0
 - drawer cabinet chest open close creak squeak mechanical friction wood foley variations close-up zoom-h5, by dimapain, [link](https://freesound.org/people/dimapain/sounds/864781/), CC0 1.0
 - Drink, gulp, and sigh, by fthgurdy, [link](https://freesound.org/people/fthgurdy/sounds/528182/), CC0 1.0
 - Drinking.wav, by craigglenday, [link](https://freesound.org/people/craigglenday/sounds/517173/), CC0 1.0
@@ -50,11 +62,14 @@ Sounds, all from Freesound, cut and shaped for the mod:
 - FemaleGrunt1.wav, by BranndyBottle, [link](https://freesound.org/people/BranndyBottle/sounds/464675/), CC0 1.0
 - Flapping wings of a bird, by Raclure, [link](https://freesound.org/people/Raclure/sounds/405552/), CC0 1.0
 - Foley_Clothes_Jacket_Whoosh_Sequence_Stereo.wav, by Nox_Sound, [link](https://freesound.org/people/Nox_Sound/sounds/495390/), CC0 1.0
+- formula_baptizandi.wav, by cormi, [link](https://freesound.org/people/cormi/sounds/128513/), CC0 1.0
 - Four_Voices_Whispering_6_wEcho.wav, by geoneo0, [link](https://freesound.org/people/geoneo0/sounds/193818/), CC0 1.0
 - Groans from a Man, by FuzzyTuesday, [link](https://freesound.org/people/FuzzyTuesday/sounds/730386/), CC0 1.0
 - Grunts_Various Male.mp3, by SnowFightStudios, [link](https://freesound.org/people/SnowFightStudios/sounds/643670/), CC0 1.0
+- Hand Bell.wav, by WebbFilmsUK, [link](https://freesound.org/people/WebbFilmsUK/sounds/200318/), CC0 1.0
 - HeroineDiesDramatically, by Soundjougi, [link](https://freesound.org/people/Soundjougi/sounds/826719/), CC0 1.0
 - Human_groan_female 01.mp3, by Vaporpup, [link](https://freesound.org/people/Vaporpup/sounds/570116/), CC0 1.0
+- hunting-horn-bass.wav, by nanoPlink, [link](https://freesound.org/people/nanoPlink/sounds/148645/), CC0 1.0
 - Indistinct deep male mumble, by dynamique, [link](https://freesound.org/people/dynamique/sounds/536967/), CC0 1.0
 - Knife Stab Melon.wav, by jawbutch, [link](https://freesound.org/people/jawbutch/sounds/344404/), CC0 1.0
 - Knife Stab Pull.wav, by neilsher, [link](https://freesound.org/people/neilsher/sounds/411742/), CC0 1.0
@@ -73,6 +88,7 @@ Sounds, all from Freesound, cut and shaped for the mod:
 - short pigeon wing flap, by zouzmusic, [link](https://freesound.org/people/zouzmusic/sounds/414671/), CC0 1.0
 - SHORT-SIZZLE-FRY-PAN.wav, by newagesoup, [link](https://freesound.org/people/newagesoup/sounds/351406/), CC0 1.0
 - snakey woman.wav, by poots, [link](https://freesound.org/people/poots/sounds/71031/), CC BY 4.0
+- Steel Spring Bear Trap, by fractionalist, [link](https://freesound.org/people/fractionalist/sounds/644245/), CC0 1.0
 - Stimme - Zischen, by BockelSound, [link](https://freesound.org/people/BockelSound/sounds/489376/), CC BY 4.0
 - Stone Scrape, by alegemaate, [link](https://freesound.org/people/alegemaate/sounds/667284/), CC0 1.0
 - stone_slab3, by NistuGgner, [link](https://freesound.org/people/NistuGgner/sounds/700537/), CC0 1.0
