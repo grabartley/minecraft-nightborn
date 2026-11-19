@@ -3,7 +3,7 @@
 	"minecraft:geometry": [
 		{
 			"description": {
-				"identifier": "geometry.velvet_choker_female",
+				"identifier": "geometry.choker_of_thorns_female",
 				"texture_width": 64,
 				"texture_height": 64,
 				"visible_bounds_width": 2,
@@ -24,7 +24,7 @@
 					]
 				},
 				{
-					"name": "choker_band",
+					"name": "chain",
 					"parent": "armorBody",
 					"pivot": [
 						0,
@@ -43,7 +43,7 @@
 								1,
 								4
 							],
-							"inflate": 0.6,
+							"inflate": 0.55,
 							"uv": [
 								0,
 								0
@@ -52,28 +52,228 @@
 					]
 				},
 				{
-					"name": "choker_drop",
+					"name": "thorns",
 					"parent": "armorBody",
 					"pivot": [
 						0,
-						23,
-						-2.9
+						23.5,
+						0
 					],
 					"cubes": [
 						{
 							"origin": [
-								-1,
-								20.5,
-								-3.6
+								2.5,
+								23,
+								-3.1
 							],
 							"size": [
-								2,
-								3,
+								1,
+								1,
 								1
 							],
-							"uv": [
+							"inflate": -0.28,
+							"pivot": [
+								3,
+								23.5,
+								-2.6
+							],
+							"rotation": [
 								0,
-								8
+								0,
+								45
+							],
+							"uv": [
+								24,
+								0
+							]
+						},
+						{
+							"origin": [
+								0.5,
+								23,
+								-3.1
+							],
+							"size": [
+								1,
+								1,
+								1
+							],
+							"inflate": -0.28,
+							"pivot": [
+								1,
+								23.5,
+								-2.6
+							],
+							"rotation": [
+								0,
+								0,
+								45
+							],
+							"uv": [
+								28,
+								0
+							]
+						},
+						{
+							"origin": [
+								-1.5,
+								23,
+								-3.1
+							],
+							"size": [
+								1,
+								1,
+								1
+							],
+							"inflate": -0.28,
+							"pivot": [
+								-1,
+								23.5,
+								-2.6
+							],
+							"rotation": [
+								0,
+								0,
+								45
+							],
+							"uv": [
+								32,
+								0
+							]
+						},
+						{
+							"origin": [
+								-3.5,
+								23,
+								-3.1
+							],
+							"size": [
+								1,
+								1,
+								1
+							],
+							"inflate": -0.28,
+							"pivot": [
+								-3,
+								23.5,
+								-2.6
+							],
+							"rotation": [
+								0,
+								0,
+								45
+							],
+							"uv": [
+								36,
+								0
+							]
+						},
+						{
+							"origin": [
+								4.1,
+								23,
+								-0.5
+							],
+							"size": [
+								1,
+								1,
+								1
+							],
+							"inflate": -0.28,
+							"pivot": [
+								4.6,
+								23.5,
+								0
+							],
+							"rotation": [
+								-45,
+								0,
+								0
+							],
+							"uv": [
+								40,
+								0
+							]
+						},
+						{
+							"origin": [
+								-5.1,
+								23,
+								-0.5
+							],
+							"size": [
+								1,
+								1,
+								1
+							],
+							"inflate": -0.28,
+							"pivot": [
+								-4.6,
+								23.5,
+								0
+							],
+							"rotation": [
+								-45,
+								0,
+								0
+							],
+							"uv": [
+								44,
+								0
+							]
+						},
+						{
+							"origin": [
+								1.5,
+								23,
+								2.1
+							],
+							"size": [
+								1,
+								1,
+								1
+							],
+							"inflate": -0.28,
+							"pivot": [
+								2,
+								23.5,
+								2.6
+							],
+							"rotation": [
+								0,
+								0,
+								45
+							],
+							"uv": [
+								48,
+								0
+							]
+						},
+						{
+							"origin": [
+								-2.5,
+								23,
+								2.1
+							],
+							"size": [
+								1,
+								1,
+								1
+							],
+							"inflate": -0.28,
+							"pivot": [
+								-2,
+								23.5,
+								2.6
+							],
+							"rotation": [
+								0,
+								0,
+								45
+							],
+							"uv": [
+								52,
+								0
 							]
 						}
 					]
