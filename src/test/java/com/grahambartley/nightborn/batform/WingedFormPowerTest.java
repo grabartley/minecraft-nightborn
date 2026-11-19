@@ -5,6 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import com.google.gson.JsonParser;
 import com.grahambartley.nightborn.MinecraftBootstrapExtension;
 import com.mojang.serialization.JsonOps;
+import java.util.Optional;
+import net.minecraft.util.Identifier;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -34,14 +36,15 @@ class WingedFormPowerTest {
   @CsvSource(
       delimiter = ';',
       value = {
-        "{\"duration_ticks\":400,\"roar_staggers\":\"nightborn:roar_staggers\",\"damage_taken\":0.5,\"scale\":2.5}; 0.5; 2.5",
-        "{\"duration_ticks\":400,\"roar_staggers\":\"nightborn:roar_staggers\"}; 1.0; 1.0"
+        "{\"duration_ticks\":400,\"roar_staggers\":\"nightborn:roar_staggers\",\"damage_taken\":0.5,\"scale\":2.5,\"rig\":\"nightborn:night_terror\"}; 0.5; 2.5; nightborn:night_terror",
+        "{\"duration_ticks\":400,\"roar_staggers\":\"nightborn:roar_staggers\"}; 1.0; 1.0; "
       })
-  @DisplayName("a winged form without a cut or a size keeps whole damage and size")
-  void defaults(final String json, final float taken, final float scale) {
+  @DisplayName("a winged form without a cut, a size or a rig keeps whole damage, size and the bat")
+  void defaults(final String json, final float taken, final float scale, final String rig) {
     final WingedFormPower power =
         WingedFormPower.CODEC.parse(JsonOps.INSTANCE, JsonParser.parseString(json)).getOrThrow();
     assertEquals(taken, power.damageTaken());
     assertEquals(scale, power.scale());
+    assertEquals(Optional.ofNullable(rig).map(Identifier::of), power.rig());
   }
 }

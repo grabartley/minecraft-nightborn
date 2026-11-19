@@ -64,7 +64,7 @@ The predator. Fast, hard-hitting and always on the move.
 | Hear Heartbeats | Power | 2 | Beast Blood | Adult | 1 | 30 | For 8 seconds the living within 24 blocks show through walls, redder the more blood they hold |
 | Pounce | Power | 2 | Long Leap | Adult | 2 | 20 | Leaps onto a target within 10 blocks and pins it for 2 seconds, 1 second for a player. A pinned target can be bitten without sneaking |
 | Blood Frenzy | Power | 3 | Beast Claws | Elder | 3 | 90 | For 10 seconds: 30% more speed, 3 more damage, and blood drains twice as fast. Each kill adds 2 seconds, up to 20. While it is on the power bar it also starts by itself when health falls below 25%, at the same blood cost and on the same cooldown, and not while the vampire is weakened or short of blood |
-| Night Terror | Power | 4 | Pounce and Blood Frenzy | Ancient | 6 | 300 | Capstone. For 20 seconds the vampire is a great winged beast: it flies as a bat does, its claws deal 6 more damage, it takes half damage, and its roar on changing staggers every villager, hunter mob and human player within a radius of 8 blocks for 1.5 seconds. It costs no blood beyond its price. It cannot feed or use other powers. Whatever forces a bat out of bat form forces it out |
+| Night Terror | Power | 4 | Pounce and Blood Frenzy | Ancient | 6 | 300 | Capstone. For 20 seconds the vampire is a great winged beast, half bat and half man, about three blocks tall with grey-black hide, long claws and wings four blocks across. It roars as it changes, claws as it strikes and flinches when hit. In this form it flies as a bat does, its claws deal 6 more damage, it takes half damage, and its roar on changing staggers every villager, hunter mob and human player within a radius of 8 blocks for 1.5 seconds. It costs no blood beyond its price. It cannot feed or use other powers. Whatever forces a bat out of bat form forces it out |
 | Apex Predator | Passive | 3 | Night Terror | Ancient | | | Beast powers cost 1 less blood, never less than 1, and their cooldowns are 20% shorter |
 
 ### Noble
@@ -199,7 +199,6 @@ The skills only vampire mobs have, Bat Swarm and Call To Arms, stay as they are 
 
 ## New Art These Skills Need
 
-- A model and clips for the Night Terror beast, and for the restless dead of Raise The Dead.
 - A net, a snare and a flash trap.
 - A weapon alight for Blood Fire, drawn on any weapon.
 - The circles of Blood Ward, Consecrate and Killing Ground, and the pillar of Judgement, drawn as models so they show under any shader.

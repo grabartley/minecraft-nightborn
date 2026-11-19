@@ -4,6 +4,7 @@ import com.grahambartley.nightborn.batform.BatHang;
 import com.grahambartley.nightborn.mob.NightbornMobs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
+import software.bernie.geckolib.animatable.GeoAnimatable;
 import software.bernie.geckolib.animatable.GeoReplacedEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.AnimatableManager;
@@ -28,17 +29,20 @@ public final class BatFormAnimatable implements GeoReplacedEntity {
 
   @Override
   public void registerControllers(final AnimatableManager.ControllerRegistrar controllers) {
-    controllers.add(
-        new AnimationController<>(
-            this,
-            "flight",
-            BLEND_TICKS,
-            state ->
-                state.setAndContinue(
-                    BatFormClip.next(
-                            pose(state.getData(DataTickets.ENTITY), state.getLimbSwingAmount()),
-                            BatFormClip.playing(state.getController().getCurrentRawAnimation()))
-                        .clip())));
+    controllers.add(flight(this));
+  }
+
+  static <T extends GeoAnimatable> AnimationController<T> flight(final T animatable) {
+    return new AnimationController<>(
+        animatable,
+        "flight",
+        BLEND_TICKS,
+        state ->
+            state.setAndContinue(
+                BatFormClip.next(
+                        pose(state.getData(DataTickets.ENTITY), state.getLimbSwingAmount()),
+                        BatFormClip.playing(state.getController().getCurrentRawAnimation()))
+                    .clip()));
   }
 
   private static BatFormPose pose(final Entity entity, final float limbSwingAmount) {

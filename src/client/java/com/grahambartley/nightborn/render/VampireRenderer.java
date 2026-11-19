@@ -18,11 +18,11 @@ public class VampireRenderer extends GeoEntityRenderer<VampireEntity> {
 
   static final float SHADOW_RADIUS = 0.5F;
 
-  private final BatFormRenderer batForm;
+  private final BatFormRenderers batForm;
 
   public VampireRenderer(final EntityRendererFactory.Context context) {
     super(context, new VampireModel());
-    this.batForm = new BatFormRenderer(context);
+    this.batForm = new BatFormRenderers(context);
     this.shadowRadius = SHADOW_RADIUS;
     addRenderLayer(new VampireStageMarksLayer(this));
     addRenderLayer(new VampireEyesLayer(this));

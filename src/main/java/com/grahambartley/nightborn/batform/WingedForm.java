@@ -37,21 +37,31 @@ public final class WingedForm {
   public static void register() {}
 
   public static boolean on(final Entity entity) {
-    return entity.getAttached(TYPE) != null;
+    return state(entity).isPresent();
+  }
+
+  public static Optional<WingedState> state(final Entity entity) {
+    return Optional.ofNullable(entity.getAttached(TYPE));
   }
 
   public static float scale(final Entity entity) {
-    final WingedState state = entity.getAttached(TYPE);
-    return state == null ? 1.0F : state.scale();
+    return scale(state(entity));
+  }
+
+  static float scale(final Optional<WingedState> state) {
+    return state.map(WingedState::scale).orElse(1.0F);
   }
 
   public static float damageTaken(final Entity entity) {
-    final WingedState state = entity.getAttached(TYPE);
-    return state == null || state.over(entity.getWorld().getTime()) ? 1.0F : state.damageTaken();
+    return damageTaken(state(entity), entity.getWorld().getTime());
+  }
+
+  static float damageTaken(final Optional<WingedState> state, final long now) {
+    return state.filter(form -> !form.over(now)).map(WingedState::damageTaken).orElse(1.0F);
   }
 
   public static Optional<List<String>> forcedBy(final Entity entity) {
-    return Optional.ofNullable(entity.getAttached(TYPE)).map(WingedState::forcedBy);
+    return state(entity).map(WingedState::forcedBy);
   }
 
   public static void enter(
