@@ -33,7 +33,7 @@ abstract class ItemRendererMixin {
       method =
           "renderItem(Lnet/minecraft/item/ItemStack;Lnet/minecraft/client/render/model/json/ModelTransformationMode;ZLnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;IILnet/minecraft/client/render/model/BakedModel;)V",
       at = @At("STORE"))
-  private VertexConsumer nightborn$coatingSheen(
+  private VertexConsumer nightborn$sheen(
       final VertexConsumer consumer,
       @Local(argsOnly = true) final ItemStack stack,
       @Local(argsOnly = true) final VertexConsumerProvider provider,

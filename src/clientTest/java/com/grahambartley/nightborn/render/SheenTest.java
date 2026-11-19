@@ -62,10 +62,10 @@ class SheenTest {
   }
 
   @ParameterizedTest(name = "{0}: {1}")
-  @CsvSource({"HOLY_WATER, 1.0", "GARLIC, 1.0", "BLOOD_FIRE, 1.0", "MAIL_LINING, 20.0"})
-  @DisplayName("only the mail lining tightens its grain on worn clothing, so its rings read")
-  void grain(final Sheen sheen, final float grain) {
-    assertEquals(grain, sheen.wornGrain());
+  @CsvSource({"HOLY_WATER, false", "GARLIC, false", "BLOOD_FIRE, false", "MAIL_LINING, true"})
+  @DisplayName("only the mail lining is worn, so only it is drawn on worn clothing")
+  void worn(final Sheen sheen, final boolean worn) {
+    assertEquals(worn, sheen.worn());
   }
 
   @ParameterizedTest(name = "{0}")

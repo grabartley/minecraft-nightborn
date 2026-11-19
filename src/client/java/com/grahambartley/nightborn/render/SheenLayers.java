@@ -25,6 +25,7 @@ public final class SheenLayers extends RenderLayer {
 
   static final float ITEM_SCALE = 8.0F;
   static final float ENTITY_SCALE = 0.16F;
+  static final float WORN_SCALE = 3.2F;
 
   private static final Map<Sheen, RenderLayer> ITEM = new EnumMap<>(Sheen.class);
   private static final Map<Sheen, RenderLayer> TRANSLUCENT = new EnumMap<>(Sheen.class);
@@ -40,15 +41,17 @@ public final class SheenLayers extends RenderLayer {
       ENTITY.put(
           sheen,
           layer("entity", sheen, DIRECT_ENTITY_GLINT_PROGRAM, ENTITY_SCALE, false, NO_LAYERING));
-      WORN.put(
-          sheen,
-          layer(
-              "worn",
-              sheen,
-              ARMOR_ENTITY_GLINT_PROGRAM,
-              ENTITY_SCALE * sheen.wornGrain(),
-              false,
-              VIEW_OFFSET_Z_LAYERING));
+      if (sheen.worn()) {
+        WORN.put(
+            sheen,
+            layer(
+                "worn",
+                sheen,
+                ARMOR_ENTITY_GLINT_PROGRAM,
+                WORN_SCALE,
+                false,
+                VIEW_OFFSET_Z_LAYERING));
+      }
     }
   }
 

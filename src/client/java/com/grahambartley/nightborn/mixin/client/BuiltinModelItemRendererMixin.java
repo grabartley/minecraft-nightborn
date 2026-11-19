@@ -22,7 +22,7 @@ abstract class BuiltinModelItemRendererMixin {
               value = "INVOKE",
               target =
                   "Lnet/minecraft/client/render/item/ItemRenderer;getDirectItemGlintConsumer(Lnet/minecraft/client/render/VertexConsumerProvider;Lnet/minecraft/client/render/RenderLayer;ZZ)Lnet/minecraft/client/render/VertexConsumer;"))
-  private VertexConsumer nightborn$coatingSheen(
+  private VertexConsumer nightborn$sheen(
       final VertexConsumerProvider provider,
       final RenderLayer layer,
       final boolean solid,

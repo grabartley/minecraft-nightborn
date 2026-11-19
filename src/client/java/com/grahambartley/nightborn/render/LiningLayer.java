@@ -1,7 +1,6 @@
 package com.grahambartley.nightborn.render;
 
 import com.grahambartley.nightborn.clothing.Lining;
-import java.util.List;
 import java.util.Optional;
 import net.minecraft.client.render.OverlayTexture;
 import net.minecraft.client.render.RenderLayer;
@@ -23,10 +22,6 @@ public class LiningLayer<T extends Item & GeoItem> extends GeoRenderLayer<T> {
     this.armor = armor;
   }
 
-  static List<Sheen> sheens(final boolean lined) {
-    return Sheen.of(Optional.empty(), false, lined);
-  }
-
   @Override
   public void render(
       final MatrixStack poseStack,
@@ -38,7 +33,8 @@ public class LiningLayer<T extends Item & GeoItem> extends GeoRenderLayer<T> {
       final float partialTick,
       final int packedLight,
       final int packedOverlay) {
-    for (final Sheen sheen : sheens(Lining.lined(this.armor.getCurrentStack()))) {
+    for (final Sheen sheen :
+        Sheen.of(Optional.empty(), false, Lining.lined(this.armor.getCurrentStack()))) {
       final RenderLayer worn = SheenLayers.worn(sheen);
       this.armor.reRender(
           bakedModel,
