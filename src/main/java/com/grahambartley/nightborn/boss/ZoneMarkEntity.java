@@ -33,6 +33,8 @@ public class ZoneMarkEntity extends Entity implements GeoEntity {
       DataTracker.registerData(ZoneMarkEntity.class, TrackedDataHandlerRegistry.STRING);
   private static final TrackedData<Boolean> LINGERING =
       DataTracker.registerData(ZoneMarkEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
+  private static final TrackedData<Float> RISE =
+      DataTracker.registerData(ZoneMarkEntity.class, TrackedDataHandlerRegistry.FLOAT);
 
   private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
   private int life = Integer.MAX_VALUE;
@@ -66,6 +68,7 @@ public class ZoneMarkEntity extends Entity implements GeoEntity {
     builder.add(LENGTH, 0.0F);
     builder.add(LOOK, "");
     builder.add(LINGERING, false);
+    builder.add(RISE, 0.0F);
   }
 
   public boolean line() {
@@ -82,6 +85,14 @@ public class ZoneMarkEntity extends Entity implements GeoEntity {
 
   public Optional<Identifier> look() {
     return IdText.parse(dataTracker.get(LOOK));
+  }
+
+  public float rise() {
+    return dataTracker.get(RISE);
+  }
+
+  public void rise(final float height) {
+    dataTracker.set(RISE, height);
   }
 
   public boolean lingering() {

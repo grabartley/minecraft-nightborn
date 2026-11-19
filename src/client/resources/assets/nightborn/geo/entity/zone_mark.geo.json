@@ -6,11 +6,11 @@
 				"identifier": "geometry.zone_mark",
 				"texture_width": 128,
 				"texture_height": 128,
-				"visible_bounds_width": 3,
-				"visible_bounds_height": 1.5,
+				"visible_bounds_width": 4,
+				"visible_bounds_height": 4.5,
 				"visible_bounds_offset": [
 					0,
-					0.25,
+					1.75,
 					0
 				]
 			},
@@ -37,6 +37,58 @@
 							"uv": [
 								0,
 								0
+							]
+						}
+					]
+				},
+				{
+					"name": "pillar",
+					"pivot": [
+						0,
+						0,
+						0
+					],
+					"cubes": [
+						{
+							"origin": [
+								-13,
+								0,
+								-13
+							],
+							"size": [
+								26,
+								48,
+								26
+							],
+							"uv": [
+								0,
+								40
+							]
+						},
+						{
+							"origin": [
+								-13,
+								0,
+								-13
+							],
+							"size": [
+								26,
+								48,
+								26
+							],
+							"pivot": [
+								0,
+								0,
+								0
+							],
+							"rotation": [
+								0,
+								-45,
+								0
+							],
+							"uv": [
+								0,
+								40
 							]
 						}
 					]

@@ -86,7 +86,11 @@ public final class Prayers {
                           ZoneShape.circle(at.x, at.z, power.radius()),
                           at.y + 0.02,
                           Optional.of(look)));
-      mark.ifPresent(placed -> placed.linger(power.durationTicks()));
+      mark.ifPresent(
+          placed -> {
+            placed.linger(power.durationTicks());
+            placed.rise(power.rise());
+          });
       final Prayer prayer =
           new Prayer(
               world.getRegistryKey(), caster.getUuid(), at, power, clears, world.getTime(), mark);

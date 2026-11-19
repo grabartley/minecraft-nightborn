@@ -1,10 +1,13 @@
 package com.grahambartley.nightborn.occult;
 
+import com.grahambartley.nightborn.boss.ZoneMarkEntity;
+import com.grahambartley.nightborn.boss.ZoneShape;
 import com.grahambartley.nightborn.skill.AreaRules;
 import com.grahambartley.nightborn.skill.PowerReach;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
@@ -45,9 +48,18 @@ public final class Circles {
 
   public static void draw(final LivingEntity caster, final CirclePower power) {
     if (caster.getWorld() instanceof ServerWorld world) {
-      CIRCLES.add(
-          new Circle(
-              world.getRegistryKey(), caster.getPos(), caster.getUuid(), power, world.getTime()));
+      final Vec3d at = caster.getPos();
+      CIRCLES.add(new Circle(world.getRegistryKey(), at, caster.getUuid(), power, world.getTime()));
+      power
+          .look()
+          .ifPresent(
+              look ->
+                  ZoneMarkEntity.place(
+                          world,
+                          ZoneShape.circle(at.x, at.z, power.radius()),
+                          at.y + 0.02,
+                          Optional.of(look))
+                      .linger(power.durationTicks()));
     }
   }
 

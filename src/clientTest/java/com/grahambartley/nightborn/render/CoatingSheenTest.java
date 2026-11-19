@@ -1,8 +1,11 @@
 package com.grahambartley.nightborn.render;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.grahambartley.nightborn.coating.Coating;
+import java.nio.file.Files;
+import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -30,6 +33,27 @@ class CoatingSheenTest {
   void texture(final Coating coating) {
     assertEquals(
         "nightborn:textures/misc/" + coating.asString() + "_coating.png",
-        CoatingSheen.of(coating).texture().toString());
+        CoatingSheen.of(Optional.of(coating), false).orElseThrow().texture().toString());
+  }
+
+  @ParameterizedTest(name = "coating {0}, burning {1}: {2}")
+  @CsvSource({
+    "GARLIC, true, BLOOD_FIRE",
+    ", true, BLOOD_FIRE",
+    "HOLY_WATER, false, HOLY_WATER",
+    "GARLIC, false, GARLIC",
+    ", false, "
+  })
+  @DisplayName("a weapon alight shows its flame over any coating, and a bare one shows nothing")
+  void sheen(final Coating coating, final boolean burning, final CoatingSheen sheen) {
+    assertEquals(
+        Optional.ofNullable(sheen), CoatingSheen.of(Optional.ofNullable(coating), burning));
+  }
+
+  @ParameterizedTest(name = "{0}")
+  @EnumSource(CoatingSheen.class)
+  @DisplayName("every sheen ships its texture")
+  void ships(final CoatingSheen sheen) {
+    assertTrue(Files.exists(GeoAssets.mainFile(sheen.texture())), sheen.texture().toString());
   }
 }

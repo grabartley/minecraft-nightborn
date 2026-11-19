@@ -19,6 +19,7 @@ public record PrayerPower(
     Optional<RegistryKey<DamageType>> harmType,
     Optional<Float> spotRange,
     float height,
+    boolean pillar,
     Optional<Identifier> look) {
 
   public static final Codec<PrayerPower> CODEC =
@@ -53,9 +54,16 @@ public record PrayerPower(
                           Codec.floatRange(1.0F, 32.0F)
                               .optionalFieldOf("height", 8.0F)
                               .forGetter(PrayerPower::height),
+                          Codec.BOOL
+                              .optionalFieldOf("pillar", false)
+                              .forGetter(PrayerPower::pillar),
                           Identifier.CODEC.optionalFieldOf("look").forGetter(PrayerPower::look))
                       .apply(instance, PrayerPower::new))
           .validate(PrayerPower::whole);
+
+  public float rise() {
+    return pillar ? height : 0.0F;
+  }
 
   public boolean lingers() {
     return durationTicks > 0;

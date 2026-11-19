@@ -27,7 +27,8 @@
           "show_icon": true
         }
       ],
-      "stops_prayers": true
+      "stops_prayers": true,
+      "look": "nightborn:blood_ward"
     },
     "sound": "minecraft:block.respawn_anchor.charge",
     "mob": {

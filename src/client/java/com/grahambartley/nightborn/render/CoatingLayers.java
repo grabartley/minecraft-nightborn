@@ -2,7 +2,6 @@ package com.grahambartley.nightborn.render;
 
 import com.grahambartley.nightborn.client.LiveCoating;
 import com.grahambartley.nightborn.coating.Coat;
-import com.grahambartley.nightborn.coating.Coating;
 import com.mojang.blaze3d.systems.RenderSystem;
 import java.util.EnumMap;
 import java.util.List;
@@ -26,17 +25,17 @@ public final class CoatingLayers extends RenderLayer {
   static final float ITEM_SCALE = 8.0F;
   static final float ENTITY_SCALE = 0.16F;
 
-  private static final Map<Coating, RenderLayer> ITEM = new EnumMap<>(Coating.class);
-  private static final Map<Coating, RenderLayer> TRANSLUCENT = new EnumMap<>(Coating.class);
-  private static final Map<Coating, RenderLayer> ENTITY = new EnumMap<>(Coating.class);
+  private static final Map<CoatingSheen, RenderLayer> ITEM = new EnumMap<>(CoatingSheen.class);
+  private static final Map<CoatingSheen, RenderLayer> TRANSLUCENT =
+      new EnumMap<>(CoatingSheen.class);
+  private static final Map<CoatingSheen, RenderLayer> ENTITY = new EnumMap<>(CoatingSheen.class);
 
   static {
-    for (final Coating coating : Coating.values()) {
-      final CoatingSheen sheen = CoatingSheen.of(coating);
-      ITEM.put(coating, layer("item", sheen, GLINT_PROGRAM, ITEM_SCALE, false));
+    for (final CoatingSheen sheen : CoatingSheen.values()) {
+      ITEM.put(sheen, layer("item", sheen, GLINT_PROGRAM, ITEM_SCALE, false));
       TRANSLUCENT.put(
-          coating, layer("translucent", sheen, TRANSLUCENT_GLINT_PROGRAM, ITEM_SCALE, true));
-      ENTITY.put(coating, layer("entity", sheen, DIRECT_ENTITY_GLINT_PROGRAM, ENTITY_SCALE, false));
+          sheen, layer("translucent", sheen, TRANSLUCENT_GLINT_PROGRAM, ITEM_SCALE, true));
+      ENTITY.put(sheen, layer("entity", sheen, DIRECT_ENTITY_GLINT_PROGRAM, ENTITY_SCALE, false));
     }
   }
 
@@ -63,27 +62,28 @@ public final class CoatingLayers extends RenderLayer {
       final ItemStack stack,
       final VertexConsumerProvider provider,
       final RenderLayer layer) {
-    final Coating coating = coating(stack);
-    if (coating == null) {
+    final CoatingSheen sheen = sheen(stack);
+    if (sheen == null) {
       return base;
     }
     final boolean translucent =
         MinecraftClient.isFabulousGraphicsOrBetter()
             && layer == TexturedRenderLayers.getItemEntityTranslucentCull();
     return VertexConsumers.union(
-        provider.getBuffer((translucent ? TRANSLUCENT : ITEM).get(coating)), base);
+        provider.getBuffer((translucent ? TRANSLUCENT : ITEM).get(sheen)), base);
   }
 
   public static VertexConsumer entity(
       final VertexConsumer base, final ItemStack stack, final VertexConsumerProvider provider) {
-    final Coating coating = coating(stack);
-    return coating == null
+    final CoatingSheen sheen = sheen(stack);
+    return sheen == null
         ? base
-        : VertexConsumers.union(provider.getBuffer(ENTITY.get(coating)), base);
+        : VertexConsumers.union(provider.getBuffer(ENTITY.get(sheen)), base);
   }
 
-  private static Coating coating(final ItemStack stack) {
-    return LiveCoating.of(stack).map(Coat::coating).orElse(null);
+  private static CoatingSheen sheen(final ItemStack stack) {
+    return CoatingSheen.of(LiveCoating.of(stack).map(Coat::coating), LiveCoating.burning(stack))
+        .orElse(null);
   }
 
   private static RenderLayer layer(
@@ -109,7 +109,7 @@ public final class CoatingLayers extends RenderLayer {
       builder.target(ITEM_ENTITY_TARGET);
     }
     return of(
-        "nightborn_" + sheen.coating().asString() + "_coating_" + kind,
+        "nightborn_" + sheen.sheenName() + "_" + kind,
         VertexFormats.POSITION_TEXTURE,
         VertexFormat.DrawMode.QUADS,
         1536,

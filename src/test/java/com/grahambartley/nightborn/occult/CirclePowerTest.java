@@ -5,6 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import com.google.gson.JsonParser;
 import com.grahambartley.nightborn.MinecraftBootstrapExtension;
 import com.mojang.serialization.JsonOps;
+import java.util.Optional;
+import net.minecraft.util.Identifier;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -27,5 +29,22 @@ class CirclePowerTest {
   void reads(final String json, final boolean refused) {
     assertEquals(
         refused, CirclePower.CODEC.parse(JsonOps.INSTANCE, JsonParser.parseString(json)).isError());
+  }
+
+  @ParameterizedTest(name = "{0}: look {1}")
+  @CsvSource(
+      delimiter = ';',
+      value = {
+        "{\"radius\":4,\"duration_ticks\":600,\"look\":\"nightborn:blood_ward\"}; nightborn:blood_ward",
+        "{\"radius\":4,\"duration_ticks\":600}; "
+      })
+  @DisplayName("a circle draws the mark it names on the ground, or none")
+  void look(final String json, final String look) {
+    assertEquals(
+        Optional.ofNullable(look).map(Identifier::of),
+        CirclePower.CODEC
+            .parse(JsonOps.INSTANCE, JsonParser.parseString(json))
+            .getOrThrow()
+            .look());
   }
 }
