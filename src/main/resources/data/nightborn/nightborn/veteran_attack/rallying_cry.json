@@ -1,0 +1,14 @@
+{
+  "kind": "rallying_cry",
+  "clip": "raise_crucifix",
+  "sound": "minecraft:item.armor.equip_iron",
+  "windup_ticks": 20,
+  "cooldown_ticks": 900,
+  "radius": 16.0,
+  "effect_ticks": 160,
+  "heal": 6.0,
+  "shout": true,
+  "trigger": {
+    "party_health": 0.5
+  }
+}

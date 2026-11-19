@@ -61,6 +61,7 @@
       "com.grahambartley.nightborn.gametest.SkillFoundationGameTest",
       "com.grahambartley.nightborn.gametest.HunterGameTest",
       "com.grahambartley.nightborn.gametest.HunterPartyGameTest",
+      "com.grahambartley.nightborn.gametest.RaidingPartyGameTest",
       "com.grahambartley.nightborn.gametest.HunterTacticsGameTest",
       "com.grahambartley.nightborn.gametest.CoffinGameTest",
       "com.grahambartley.nightborn.gametest.CoffinOwnershipGameTest",

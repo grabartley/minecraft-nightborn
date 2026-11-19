@@ -3,6 +3,8 @@ package com.grahambartley.nightborn.guild;
 import com.grahambartley.nightborn.guild.party.HunterPartySpawner;
 import com.grahambartley.nightborn.guild.party.PartyData;
 import com.grahambartley.nightborn.guild.party.TentBlocks;
+import com.grahambartley.nightborn.guild.raiding.RaidingFeatures;
+import com.grahambartley.nightborn.guild.veteran.VeteranFeatures;
 
 public final class GuildFeatures {
 
@@ -17,5 +19,7 @@ public final class GuildFeatures {
     HunterPartySpawner.register();
     ContractTracker.register();
     GuildWheel.register();
+    VeteranFeatures.register();
+    RaidingFeatures.register();
   }
 }

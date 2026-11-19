@@ -146,6 +146,7 @@ public class NightbornClient implements ClientModInitializer {
         GhostlyFamiliars.GHOSTLY_FAMILIAR, GhostlyFamiliarRenderer::new);
     EntityRendererRegistry.register(RestlessDead.TYPE, RestlessDeadRenderer::new);
     EntityRendererRegistry.register(GuildMobs.HUNTER, HunterRenderer::new);
+    EntityRendererRegistry.register(GuildMobs.VETERAN_HUNTER, HunterRenderer::new);
     EntityRendererRegistry.register(GuildMobs.GUILD_MASTER, HunterRenderer::new);
     EntityRendererRegistry.register(InquisitorMobs.GRAND_INQUISITOR, HunterRenderer::new);
     EntityRendererRegistry.register(AmmoEntities.BOLT, BoltEntityRenderer::new);

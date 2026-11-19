@@ -55,6 +55,7 @@ public final class DeedKinds {
   public static final Identifier PARASOL_WALKED = live("parasol_walked");
   public static final Identifier WOKE_RESTED = live("woke_rested");
   public static final Identifier NEMESIS_ENDED = live("nemesis_ended");
+  public static final Identifier RAIDING_PARTY_BEATEN = live("raiding_party_beaten");
 
   public static final String TOP = "top";
   public static final String ANIMAL = "animal";
@@ -99,6 +100,7 @@ public final class DeedKinds {
   public static final String FOOD = "food";
   public static final String GARLIC_IN_OTHER_HAND = "garlic_in_other_hand";
   public static final String BOSS = "boss";
+  public static final String SIZE = "size";
 
   private DeedKinds() {}
 

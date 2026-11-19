@@ -9,7 +9,9 @@ import net.minecraft.util.StringIdentifiable;
 public enum HunterRig implements StringIdentifiable {
   MALE("male", "hunter_male", VampireRig.MALE),
   FEMALE("female", "hunter_female", VampireRig.FEMALE),
-  GUILD_MASTER("guild_master", "guild_master", VampireRig.MALE);
+  GUILD_MASTER("guild_master", "guild_master", VampireRig.MALE),
+  VETERAN_MALE("veteran_male", "hunter_male", VampireRig.MALE),
+  VETERAN_FEMALE("veteran_female", "hunter_female", VampireRig.FEMALE);
 
   public static final Codec<HunterRig> CODEC = StringIdentifiable.createCodec(HunterRig::values);
 
@@ -36,6 +38,10 @@ public enum HunterRig implements StringIdentifiable {
 
   public static HunterRig hunter(final boolean female) {
     return female ? FEMALE : MALE;
+  }
+
+  public static HunterRig veteran(final boolean female) {
+    return female ? VETERAN_FEMALE : VETERAN_MALE;
   }
 
   @Override

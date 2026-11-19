@@ -12,7 +12,10 @@ public record PartySettings(
     int partyLeaveMinutes,
     int partySleepers,
     int campBatChance,
-    int campBatCount) {
+    int campBatCount,
+    int raidPartyPercent,
+    int raidSight,
+    int raidChase) {
 
   static final String SECTION = "parties";
 
@@ -38,6 +41,13 @@ public record PartySettings(
   public static final IntSetting CAMP_BAT_COUNT =
       new IntSetting(SECTION, "campBatCount", 5, 1, 12, c -> c.parties().campBatCount());
 
+  public static final IntSetting RAID_PARTY_PERCENT =
+      new IntSetting(SECTION, "raidPartyPercent", 100, 0, 400, c -> c.parties().raidPartyPercent());
+  public static final IntSetting RAID_SIGHT =
+      new IntSetting(SECTION, "raidSight", 32, 8, 128, c -> c.parties().raidSight());
+  public static final IntSetting RAID_CHASE =
+      new IntSetting(SECTION, "raidChase", 64, 16, 256, c -> c.parties().raidChase());
+
   public static final List<Setting<?>> SETTINGS =
       List.of(
           PARTY_MINUTES,
@@ -49,7 +59,10 @@ public record PartySettings(
           PARTY_LEAVE_MINUTES,
           PARTY_SLEEPERS,
           CAMP_BAT_CHANCE,
-          CAMP_BAT_COUNT);
+          CAMP_BAT_COUNT,
+          RAID_PARTY_PERCENT,
+          RAID_SIGHT,
+          RAID_CHASE);
 
   public PartySettings {
     partyMinutes = PARTY_MINUTES.clamp(partyMinutes);
@@ -62,6 +75,9 @@ public record PartySettings(
     partySleepers = PARTY_SLEEPERS.clamp(partySleepers);
     campBatChance = CAMP_BAT_CHANCE.clamp(campBatChance);
     campBatCount = CAMP_BAT_COUNT.clamp(campBatCount);
+    raidPartyPercent = RAID_PARTY_PERCENT.clamp(raidPartyPercent);
+    raidSight = RAID_SIGHT.clamp(raidSight);
+    raidChase = RAID_CHASE.clamp(raidChase);
   }
 
   static PartySettings from(final SettingValues values) {
@@ -75,6 +91,9 @@ public record PartySettings(
         values.get(PARTY_LEAVE_MINUTES),
         values.get(PARTY_SLEEPERS),
         values.get(CAMP_BAT_CHANCE),
-        values.get(CAMP_BAT_COUNT));
+        values.get(CAMP_BAT_COUNT),
+        values.get(RAID_PARTY_PERCENT),
+        values.get(RAID_SIGHT),
+        values.get(RAID_CHASE));
   }
 }

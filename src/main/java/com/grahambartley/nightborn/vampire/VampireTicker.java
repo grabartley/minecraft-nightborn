@@ -8,6 +8,7 @@ import com.grahambartley.nightborn.core.VampireCore;
 import com.grahambartley.nightborn.downed.Downed;
 import com.grahambartley.nightborn.downed.DownedState;
 import com.grahambartley.nightborn.feeding.FeedingSessions;
+import com.grahambartley.nightborn.guild.veteran.Grounding;
 import com.grahambartley.nightborn.levitation.Levitation;
 import com.grahambartley.nightborn.mind.Glamour;
 import com.grahambartley.nightborn.server.ServerConfigService;
@@ -38,6 +39,7 @@ public final class VampireTicker {
     final int weakened = Weakened.tick(vampire, downed != null, config.weakened());
     Levitation.tick(vampire, weakened, downed != null);
     BatForm.tick(vampire, downed != null && downed.isDowned());
+    Grounding.tick(vampire);
     final boolean feeding = FeedingSessions.isFeeding(vampire);
     final boolean eyes =
         EyeGlow.glowing(
