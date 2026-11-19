@@ -76,7 +76,7 @@ public record PowerAim(
                     skill
                         .lunge()
                         .filter(lunge -> target != null)
-                        .flatMap(lunge -> Lunges.destination(caster, target)))
+                        .flatMap(lunge -> Lunges.destination(caster, target, lunge)))
             .orElse(null),
         target,
         skill.command().flatMap(command -> Commands.aim(caster, command)).orElse(null),

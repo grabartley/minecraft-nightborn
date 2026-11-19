@@ -74,8 +74,8 @@ class PowerAimTest {
   @CsvSource(
       delimiter = '|',
       value = {
-        "{\"blood\":0,\"cooldown_ticks\":120,\"dash\":{\"distance\":4,\"untouchable_ticks\":6,\"dodge_ticks\":5,\"stagger_ticks\":30}} | 0",
-        "{\"blood\":0,\"cooldown_ticks\":600,\"lunge\":{\"distance\":5,\"stake_share\":0.5,\"downs\":{\"below\":0.4,\"up_to\":\"nightborn:elder\"}}} | 5"
+        "{\"blood\":0,\"cooldown_ticks\":120,\"dash\":{\"distance\":4,\"untouchable_ticks\":6,\"dodge_ticks\":5,\"stagger_ticks\":30,\"threat_range\":8}} | 0",
+        "{\"blood\":0,\"cooldown_ticks\":600,\"lunge\":{\"distance\":5,\"gap\":0.3,\"stake_share\":0.5,\"downs\":{\"below\":0.4,\"up_to\":\"nightborn:elder\"}}} | 5"
       })
   @DisplayName(
       "a dash needs ground to land on, and a lunge a creature in reach and ground beside it")

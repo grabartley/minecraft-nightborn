@@ -29,6 +29,7 @@ public final class QuickShots {
         .ifPresent(
             hand -> {
               final ItemStack stack = caster.getStackInHand(hand);
+              caster.swingHand(hand, true);
               ((CrossbowItem) stack.getItem())
                   .shootAll(
                       caster.getWorld(),

@@ -1,7 +1,6 @@
 package com.grahambartley.nightborn.slayer;
 
 import com.grahambartley.nightborn.Nightborn;
-import com.grahambartley.nightborn.hold.HoldKind;
 import com.grahambartley.nightborn.hold.Holds;
 import com.grahambartley.nightborn.landing.Landing;
 import com.grahambartley.nightborn.skill.PowerHeading;
@@ -22,12 +21,11 @@ import net.minecraft.registry.tag.DamageTypeTags;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
+import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Vec3d;
 
 public final class Dashes {
-
-  static final double THREAT_SEARCH = 8.0;
 
   public static final AttachmentType<DashState> TYPE =
       AttachmentRegistry.create(Identifier.of(Nightborn.MOD_ID, "dash"));
@@ -54,9 +52,10 @@ public final class Dashes {
     final List<LivingEntity> threats =
         world.getEntitiesByClass(
             LivingEntity.class,
-            caster.getBoundingBox().expand(THREAT_SEARCH),
+            caster.getBoundingBox().expand(power.threatRange()),
             vampire -> threatens(vampire, caster, power));
     Landing.move(caster, to);
+    caster.swingHand(Hand.MAIN_HAND, true);
     world.spawnParticles(ParticleTypes.POOF, from.x, from.y + 0.2, from.z, 10, 0.3, 0.1, 0.3, 0.02);
     threats.forEach(vampire -> dodge(caster, vampire, power));
   }
@@ -64,6 +63,13 @@ public final class Dashes {
   public static boolean dashing(final LivingEntity entity) {
     final DashState state = entity.getAttached(TYPE);
     return state != null && state.untouchable(entity.getWorld().getTime());
+  }
+
+  public static void tick(final LivingEntity entity) {
+    final DashState state = entity.getAttached(TYPE);
+    if (state != null && state.over(entity.getWorld().getTime())) {
+      entity.removeAttached(TYPE);
+    }
   }
 
   static boolean slips(final LivingEntity entity, final DamageSource source) {
@@ -90,7 +96,7 @@ public final class Dashes {
       return false;
     }
     if (Charges.charging(vampire, power.dodgeTicks())) {
-      return aims(vampire, hunter, THREAT_SEARCH);
+      return aims(vampire, hunter, power.threatRange());
     }
     return vampire.handSwinging
         && aims(
@@ -100,8 +106,7 @@ public final class Dashes {
         && (!(vampire instanceof MobEntity mob) || mob.isInAttackRange(hunter));
   }
 
-  private static boolean aims(
-      final LivingEntity vampire, final LivingEntity hunter, final double range) {
+  static boolean aims(final LivingEntity vampire, final LivingEntity hunter, final double range) {
     return vampire instanceof MobEntity mob
         ? mob.getTarget() == hunter
         : PowerSight.looked(vampire, range) == hunter;
@@ -109,7 +114,7 @@ public final class Dashes {
 
   private static void dodge(
       final LivingEntity hunter, final LivingEntity vampire, final DashPower power) {
-    if (!Holds.hold(hunter, vampire, HoldKind.STAGGER, power.staggerTicks(), true)) {
+    if (!Holds.open(hunter, vampire, power.staggerTicks())) {
       return;
     }
     if (hunter instanceof ServerPlayerEntity player) {

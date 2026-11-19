@@ -1,7 +1,6 @@
 package com.grahambartley.nightborn.slayer;
 
 import com.grahambartley.nightborn.Nightborn;
-import com.grahambartley.nightborn.hold.HoldKind;
 import com.grahambartley.nightborn.hold.Holds;
 import com.grahambartley.nightborn.landing.Landing;
 import com.grahambartley.nightborn.skill.Pounces;
@@ -25,6 +24,8 @@ public final class Guards {
       AttachmentRegistry.create(Identifier.of(Nightborn.MOD_ID, "guard"));
 
   private Guards() {}
+
+  static void register() {}
 
   public static void raise(final LivingEntity hunter, final GuardPower power) {
     hunter.setAttached(
@@ -53,6 +54,7 @@ public final class Guards {
             hunter.getBoundingBox().expand(state.power().reach()),
             vampire ->
                 Vampires.isVampire(vampire)
+                    && Dashes.aims(vampire, hunter, state.power().reach())
                     && state.meets(
                         hunter.distanceTo(vampire),
                         Charges.charging(vampire, state.power().chargeTicks())))
@@ -80,7 +82,7 @@ public final class Guards {
       Landing.reach(vampire, vampire.getEyePos().add(away.multiply(power.push())))
           .ifPresent(spot -> Landing.move(vampire, spot));
     }
-    Holds.hold(hunter, vampire, HoldKind.STAGGER, power.staggerTicks(), true);
+    Holds.open(hunter, vampire, power.staggerTicks());
     hunter.swingHand(Hand.MAIN_HAND, true);
     hunter
         .getWorld()

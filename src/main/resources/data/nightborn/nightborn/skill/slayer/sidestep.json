@@ -18,7 +18,8 @@
       "distance": 4.0,
       "untouchable_ticks": 6,
       "dodge_ticks": 5,
-      "stagger_ticks": 30
+      "stagger_ticks": 30,
+      "threat_range": 8.0
     },
     "sound": "minecraft:entity.breeze.slide"
   }

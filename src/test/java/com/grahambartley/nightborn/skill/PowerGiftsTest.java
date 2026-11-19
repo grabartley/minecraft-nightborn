@@ -76,4 +76,11 @@ class PowerGiftsTest {
                 new PowerGift(Identifier.of("nightborn:slayer"), 0, 0.2, one),
                 new PowerGift(Identifier.of("nightborn:slayer"), 0, 0.0, two))));
   }
+
+  @ParameterizedTest(name = "cut {0}: factor {1}")
+  @CsvSource({"0.2, 0.8", "0.0, 1.0", "0.9, 0.2"})
+  @DisplayName("a path's cut shortens a cooldown that no general factor touches, down to the floor")
+  void branchCooldown(final double cut, final double factor) {
+    assertEquals(factor, PowerGifts.branchCooldown(cut), 1.0E-9);
+  }
 }

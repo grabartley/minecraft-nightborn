@@ -17,22 +17,21 @@ import net.minecraft.util.math.Vec3d;
 
 public final class Lunges {
 
-  static final double CLEARANCE = 0.3;
-
   private Lunges() {}
 
   public static boolean armed(final LivingEntity caster) {
     return caster.getMainHandStack().isIn(VampireBane.STAKES);
   }
 
-  public static Optional<Vec3d> destination(final LivingEntity caster, final LivingEntity target) {
+  public static Optional<Vec3d> destination(
+      final LivingEntity caster, final LivingEntity target, final LungePower power) {
     return Landing.reach(
         caster,
         LungePath.wanted(
             caster.getPos(),
             target.getPos(),
             caster.getStandingEyeHeight(),
-            (caster.getWidth() + target.getWidth()) / 2.0 + CLEARANCE));
+            (caster.getWidth() + target.getWidth()) / 2.0 + power.gap()));
   }
 
   public static float blow(final float stakeBlow, final float stakeShare) {

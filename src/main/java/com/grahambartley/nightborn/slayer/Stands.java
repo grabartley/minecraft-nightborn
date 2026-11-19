@@ -1,5 +1,6 @@
 package com.grahambartley.nightborn.slayer;
 
+import com.grahambartley.nightborn.feeding.FeedingSessions;
 import com.grahambartley.nightborn.skill.Boost;
 import com.grahambartley.nightborn.skill.Boosts;
 import com.grahambartley.nightborn.skill.PowerCooldownAttachment;
@@ -65,12 +66,13 @@ public final class Stands {
     Boosts.start(entity, id, Boost.of(now, gift.durationTicks(), gift.attributes()));
     if (gift.steadfast()) {
       SlayerMarks.STEADFAST.set(entity, gift.durationTicks());
+      FeedingSessions.release(entity);
     }
     final int cooldown =
         PowerCooldowns.shortened(
             gift.cooldownTicks(),
-            PowerGifts.cooldown(
-                1.0, false, 1.0, PowerGifts.cooldownCut(SkillPowerGifts.forPower(entity, id))));
+            PowerGifts.branchCooldown(
+                PowerGifts.cooldownCut(SkillPowerGifts.forPower(entity, id))));
     PowerCooldownAttachment.set(
         entity, PowerCooldownAttachment.get(entity).start(id, now, cooldown));
     entity

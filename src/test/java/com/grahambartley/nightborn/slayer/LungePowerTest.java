@@ -19,8 +19,8 @@ class LungePowerTest {
   @CsvSource(
       delimiter = '|',
       value = {
-        "{\"distance\":5,\"stake_share\":0.5,\"downs\":{\"below\":0.4,\"up_to\":\"nightborn:elder\"}} | 5 | 0.5 | 0.4",
-        "{\"distance\":3,\"stake_share\":0,\"downs\":{\"below\":0.1,\"up_to\":\"nightborn:adult\"}} | 3 | 0 | 0.1"
+        "{\"distance\":5,\"gap\":0.3,\"stake_share\":0.5,\"downs\":{\"below\":0.4,\"up_to\":\"nightborn:elder\"}} | 5 | 0.5 | 0.4",
+        "{\"distance\":3,\"gap\":0,\"stake_share\":0,\"downs\":{\"below\":0.1,\"up_to\":\"nightborn:adult\"}} | 3 | 0 | 0.1"
       })
   @DisplayName("a lunge reads its reach, the extra share of a stake's blow and when it downs")
   void reads(final String json, final float distance, final float share, final float below) {
@@ -34,8 +34,8 @@ class LungePowerTest {
   @ParameterizedTest(name = "{0}")
   @ValueSource(
       strings = {
-        "{\"distance\":5,\"stake_share\":0.5}",
-        "{\"distance\":0,\"stake_share\":0.5,\"downs\":{\"below\":0.4,\"up_to\":\"nightborn:elder\"}}"
+        "{\"distance\":5,\"gap\":0.3,\"stake_share\":0.5}",
+        "{\"distance\":5,\"gap\":3,\"stake_share\":0.5,\"downs\":{\"below\":0.4,\"up_to\":\"nightborn:elder\"}}"
       })
   @DisplayName("a lunge out of range or without its downing rule is refused")
   void refuses(final String json) {

@@ -8,7 +8,7 @@ import org.junit.jupiter.params.provider.CsvSource;
 
 class DashStateTest {
 
-  private static final DashPower SIDESTEP = new DashPower(4.0F, 6, 5, 30);
+  private static final DashPower SIDESTEP = new DashPower(4.0F, 6, 5, 30, 8.0F);
 
   @ParameterizedTest(name = "started {0}, now {1}: untouchable {2}, dodges {3}, over {4}")
   @CsvSource({

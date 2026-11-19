@@ -89,7 +89,12 @@ public final class Holds {
     return hold(caster, target, kind, ticks, false);
   }
 
-  public static boolean hold(
+  public static boolean open(
+      final LivingEntity caster, final LivingEntity target, final int ticks) {
+    return hold(caster, target, HoldKind.STAGGER, ticks, true);
+  }
+
+  private static boolean hold(
       final LivingEntity caster,
       final LivingEntity target,
       final HoldKind kind,

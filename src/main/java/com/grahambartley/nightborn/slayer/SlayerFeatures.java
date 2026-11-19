@@ -9,6 +9,7 @@ public final class SlayerFeatures {
     SlayerMarks.register();
     Charges.register();
     Dashes.register();
+    Guards.register();
     Stands.register();
     SlayerBlows.register();
   }

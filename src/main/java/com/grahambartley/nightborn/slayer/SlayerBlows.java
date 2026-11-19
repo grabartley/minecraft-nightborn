@@ -6,6 +6,7 @@ import com.grahambartley.nightborn.vampire.Vampires;
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
+import net.minecraft.registry.tag.DamageTypeTags;
 
 public final class SlayerBlows {
 
@@ -14,7 +15,7 @@ public final class SlayerBlows {
   static void register() {
     ServerLivingEntityEvents.AFTER_DAMAGE.register(
         (entity, source, base, taken, blocked) -> {
-          if (taken > 0.0F && entity.isAlive() && direct(source)) {
+          if (taken > 0.0F && entity.isAlive() && struck(source)) {
             downs((LivingEntity) source.getAttacker(), entity);
           }
         });
@@ -26,7 +27,7 @@ public final class SlayerBlows {
 
   public static float scale(
       final LivingEntity target, final DamageSource source, final float amount) {
-    if (!direct(source) || !Vampires.isVampire(target)) {
+    if (!struck(source) || !Vampires.isVampire(target)) {
       return amount;
     }
     final LivingEntity hunter = (LivingEntity) source.getAttacker();
@@ -36,9 +37,10 @@ public final class SlayerBlows {
         HunterAttributes.value(hunter, HunterAttributes.VAMPIRE_DAMAGE_SHARE));
   }
 
-  static boolean direct(final DamageSource source) {
+  static boolean struck(final DamageSource source) {
     return source.getAttacker() instanceof LivingEntity
-        && source.getSource() == source.getAttacker();
+        && (source.getSource() == source.getAttacker()
+            || source.isIn(DamageTypeTags.IS_PROJECTILE));
   }
 
   private static void downs(final LivingEntity hunter, final LivingEntity target) {

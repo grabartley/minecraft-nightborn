@@ -17,6 +17,7 @@
     "cooldown_ticks": 600,
     "lunge": {
       "distance": 5.0,
+      "gap": 0.3,
       "stake_share": 0.5,
       "downs": {
         "below": 0.4,

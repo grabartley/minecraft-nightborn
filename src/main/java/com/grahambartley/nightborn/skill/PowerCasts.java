@@ -73,7 +73,13 @@ final class PowerCasts {
     power.swarm().ifPresent(swarm -> Swarms.start(caster, swarm));
     power.heal().ifPresent(heal -> Mending.start(caster, heal));
     power.frees().ifPresent(frees -> FreePowers.grant(caster, frees));
-    power.boost().ifPresent(boost -> Boosts.start(caster, id, Boost.of(now, boost)));
+    power
+        .boost()
+        .ifPresent(
+            boost -> {
+              Boosts.start(caster, id, Boost.of(now, boost));
+              caster.swingHand(Hand.MAIN_HAND, true);
+            });
     power
         .sense()
         .ifPresent(
