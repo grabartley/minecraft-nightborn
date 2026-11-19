@@ -3,10 +3,10 @@
 	"minecraft:geometry": [
 		{
 			"description": {
-				"identifier": "geometry.lace_gloves_female",
+				"identifier": "geometry.riding_gloves_female",
 				"texture_width": 64,
 				"texture_height": 64,
-				"visible_bounds_width": 2,
+				"visible_bounds_width": 3,
 				"visible_bounds_height": 2.5,
 				"visible_bounds_offset": [
 					0,
@@ -57,13 +57,13 @@
 							],
 							"size": [
 								3,
-								1,
+								2,
 								4
 							],
-							"inflate": 0.95,
+							"inflate": 1.05,
 							"uv": [
-								0,
-								8
+								28,
+								0
 							]
 						}
 					]
@@ -98,10 +98,9 @@
 							],
 							"inflate": 0.8,
 							"uv": [
-								0,
+								14,
 								0
-							],
-							"mirror": true
+							]
 						},
 						{
 							"origin": [
@@ -111,15 +110,14 @@
 							],
 							"size": [
 								3,
-								1,
+								2,
 								4
 							],
-							"inflate": 0.95,
+							"inflate": 1.05,
 							"uv": [
-								0,
-								8
-							],
-							"mirror": true
+								42,
+								0
+							]
 						}
 					]
 				}

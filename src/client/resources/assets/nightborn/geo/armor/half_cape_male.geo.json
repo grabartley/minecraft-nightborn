@@ -3,10 +3,10 @@
 	"minecraft:geometry": [
 		{
 			"description": {
-				"identifier": "geometry.high_collared_cape_male",
+				"identifier": "geometry.half_cape_male",
 				"texture_width": 64,
 				"texture_height": 64,
-				"visible_bounds_width": 3,
+				"visible_bounds_width": 2,
 				"visible_bounds_height": 3.5,
 				"visible_bounds_offset": [
 					0,
@@ -24,32 +24,23 @@
 					]
 				},
 				{
-					"name": "cape",
+					"name": "dyed_cape",
 					"parent": "armorBody",
 					"pivot": [
-						0,
-						24,
-						3
-					]
-				},
-				{
-					"name": "dyed_cape",
-					"parent": "cape",
-					"pivot": [
-						0,
+						2,
 						24,
 						3
 					],
 					"cubes": [
 						{
 							"origin": [
-								-5,
-								3,
+								-1,
+								9,
 								3
 							],
 							"size": [
-								10,
-								21,
+								6.5,
+								15,
 								1
 							],
 							"uv": [
@@ -59,326 +50,74 @@
 						},
 						{
 							"origin": [
-								-5,
+								1,
 								23,
 								-3
 							],
 							"size": [
-								10,
+								4.5,
 								1,
 								7
 							],
-							"inflate": 0.15,
+							"inflate": 0.2,
 							"uv": [
-								0,
-								47
+								30,
+								0
 							]
 						}
 					]
 				},
 				{
-					"name": "lining",
-					"parent": "cape",
+					"name": "cord",
+					"parent": "armorBody",
 					"pivot": [
 						0,
-						24,
-						3
+						23,
+						-2.5
 					],
 					"cubes": [
 						{
 							"origin": [
-								-5,
-								3,
-								2
+								-3,
+								21.5,
+								-2.9
 							],
 							"size": [
-								10,
-								20,
+								5.5,
+								1,
+								1
+							],
+							"inflate": -0.3,
+							"pivot": [
+								2.5,
+								22,
+								-2.4
+							],
+							"rotation": [
+								0,
+								0,
+								24
+							],
+							"uv": [
+								0,
+								16
+							]
+						},
+						{
+							"origin": [
+								1.5,
+								22,
+								-3.4
+							],
+							"size": [
+								2,
+								2,
 								1
 							],
 							"inflate": -0.05,
 							"uv": [
-								22,
+								52,
 								0
-							]
-						}
-					]
-				},
-				{
-					"name": "dyed_collar",
-					"parent": "armorBody",
-					"pivot": [
-						0,
-						24,
-						0
-					],
-					"cubes": [
-						{
-							"origin": [
-								-6,
-								24,
-								4.6
-							],
-							"size": [
-								12,
-								8,
-								1
-							],
-							"pivot": [
-								0,
-								24,
-								5.1
-							],
-							"rotation": [
-								-16,
-								0,
-								0
-							],
-							"uv": [
-								16,
-								36
-							]
-						},
-						{
-							"origin": [
-								-6,
-								24,
-								-2
-							],
-							"size": [
-								1,
-								7,
-								7
-							],
-							"pivot": [
-								-5.5,
-								24,
-								1.5
-							],
-							"rotation": [
-								0,
-								0,
-								-14
-							],
-							"uv": [
-								44,
-								0
-							]
-						},
-						{
-							"origin": [
-								5,
-								24,
-								-2
-							],
-							"size": [
-								1,
-								7,
-								7
-							],
-							"pivot": [
-								5.5,
-								24,
-								1.5
-							],
-							"rotation": [
-								0,
-								0,
-								14
-							],
-							"uv": [
-								0,
-								22
-							]
-						}
-					]
-				},
-				{
-					"name": "collar_lining",
-					"parent": "armorBody",
-					"pivot": [
-						0,
-						24,
-						0
-					],
-					"cubes": [
-						{
-							"origin": [
-								-6,
-								24,
-								4
-							],
-							"size": [
-								12,
-								7,
-								1
-							],
-							"inflate": -0.3,
-							"pivot": [
-								0,
-								24,
-								5.1
-							],
-							"rotation": [
-								-16,
-								0,
-								0
-							],
-							"uv": [
-								34,
-								47
-							]
-						},
-						{
-							"origin": [
-								-5.5,
-								24,
-								-2
-							],
-							"size": [
-								1,
-								6,
-								7
-							],
-							"inflate": -0.3,
-							"pivot": [
-								-5.5,
-								24,
-								1.5
-							],
-							"rotation": [
-								0,
-								0,
-								-14
-							],
-							"uv": [
-								16,
-								22
-							]
-						},
-						{
-							"origin": [
-								4.5,
-								24,
-								-2
-							],
-							"size": [
-								1,
-								6,
-								7
-							],
-							"inflate": -0.3,
-							"pivot": [
-								5.5,
-								24,
-								1.5
-							],
-							"rotation": [
-								0,
-								0,
-								14
-							],
-							"uv": [
-								32,
-								22
-							]
-						}
-					]
-				},
-				{
-					"name": "clasp",
-					"parent": "armorBody",
-					"pivot": [
-						0,
-						24,
-						0
-					],
-					"cubes": [
-						{
-							"origin": [
-								-3.75,
-								21.5,
-								-3
-							],
-							"size": [
-								2,
-								2,
-								1
-							],
-							"inflate": -0.15,
-							"uv": [
-								0,
-								55
-							]
-						},
-						{
-							"origin": [
-								1.75,
-								21.5,
-								-3
-							],
-							"size": [
-								2,
-								2,
-								1
-							],
-							"inflate": -0.15,
-							"uv": [
-								6,
-								55
-							]
-						},
-						{
-							"origin": [
-								-2,
-								22,
-								-3
-							],
-							"size": [
-								4,
-								1,
-								1
-							],
-							"inflate": -0.1,
-							"uv": [
-								12,
-								55
-							]
-						}
-					]
-				},
-				{
-					"name": "armorRightArm",
-					"pivot": [
-						-5,
-						22,
-						0
-					]
-				},
-				{
-					"name": "dyed_right_mantle",
-					"parent": "armorRightArm",
-					"pivot": [
-						-5,
-						22,
-						0
-					],
-					"cubes": [
-						{
-							"origin": [
-								-8,
-								17,
-								-2
-							],
-							"size": [
-								4,
-								7,
-								4
-							],
-							"inflate": 0.6,
-							"uv": [
-								48,
-								22
 							]
 						}
 					]
@@ -392,7 +131,7 @@
 					]
 				},
 				{
-					"name": "dyed_left_mantle",
+					"name": "dyed_drape",
 					"parent": "armorLeftArm",
 					"pivot": [
 						5,
@@ -411,10 +150,10 @@
 								7,
 								4
 							],
-							"inflate": 0.6,
+							"inflate": 0.75,
 							"uv": [
-								0,
-								36
+								14,
+								0
 							]
 						}
 					]

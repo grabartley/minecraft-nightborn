@@ -3,7 +3,7 @@
 	"minecraft:geometry": [
 		{
 			"description": {
-				"identifier": "geometry.lace_gloves_male",
+				"identifier": "geometry.gravediggers_mitts_male",
 				"texture_width": 64,
 				"texture_height": 64,
 				"visible_bounds_width": 3,
@@ -35,15 +35,15 @@
 						{
 							"origin": [
 								-8,
-								12,
+								11.5,
 								-2
 							],
 							"size": [
 								4,
-								3,
+								4.5,
 								4
 							],
-							"inflate": 0.8,
+							"inflate": 1,
 							"uv": [
 								0,
 								0
@@ -51,19 +51,36 @@
 						},
 						{
 							"origin": [
+								-6.5,
+								12.5,
+								-3.6
+							],
+							"size": [
+								1,
+								2.5,
+								1
+							],
+							"inflate": 0.25,
+							"uv": [
+								0,
+								8
+							]
+						},
+						{
+							"origin": [
 								-8,
-								15,
+								16,
 								-2
 							],
 							"size": [
 								4,
-								1,
+								2,
 								4
 							],
-							"inflate": 0.95,
+							"inflate": 1.2,
 							"uv": [
-								0,
-								8
+								32,
+								0
 							]
 						}
 					]
@@ -88,38 +105,53 @@
 						{
 							"origin": [
 								4,
-								12,
+								11.5,
 								-2
 							],
 							"size": [
 								4,
-								3,
+								4.5,
 								4
 							],
-							"inflate": 0.8,
+							"inflate": 1,
 							"uv": [
-								0,
+								16,
 								0
+							]
+						},
+						{
+							"origin": [
+								5.5,
+								12.5,
+								-3.6
 							],
-							"mirror": true
+							"size": [
+								1,
+								2.5,
+								1
+							],
+							"inflate": 0.25,
+							"uv": [
+								4,
+								8
+							]
 						},
 						{
 							"origin": [
 								4,
-								15,
+								16,
 								-2
 							],
 							"size": [
 								4,
-								1,
+								2,
 								4
 							],
-							"inflate": 0.95,
+							"inflate": 1.2,
 							"uv": [
-								0,
-								8
-							],
-							"mirror": true
+								48,
+								0
+							]
 						}
 					]
 				}

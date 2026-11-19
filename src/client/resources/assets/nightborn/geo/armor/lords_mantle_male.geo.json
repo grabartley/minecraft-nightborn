@@ -3,10 +3,10 @@
 	"minecraft:geometry": [
 		{
 			"description": {
-				"identifier": "geometry.high_collared_cape_male",
+				"identifier": "geometry.lords_mantle_male",
 				"texture_width": 64,
 				"texture_height": 64,
-				"visible_bounds_width": 3,
+				"visible_bounds_width": 2,
 				"visible_bounds_height": 3.5,
 				"visible_bounds_offset": [
 					0,
@@ -30,30 +30,21 @@
 						0,
 						24,
 						3
-					]
-				},
-				{
-					"name": "dyed_cape",
-					"parent": "cape",
-					"pivot": [
-						0,
-						24,
-						3
 					],
 					"cubes": [
 						{
 							"origin": [
 								-5,
-								3,
+								13.5,
 								3
 							],
 							"size": [
 								10,
-								21,
+								10.5,
 								1
 							],
 							"uv": [
-								0,
+								26,
 								0
 							]
 						},
@@ -70,351 +61,161 @@
 							],
 							"inflate": 0.15,
 							"uv": [
-								0,
-								47
+								16,
+								12
 							]
 						}
 					]
 				},
 				{
-					"name": "lining",
+					"name": "hem",
 					"parent": "cape",
 					"pivot": [
 						0,
-						24,
-						3
+						13,
+						3.5
+					],
+					"rotation": [
+						4,
+						0,
+						0
 					],
 					"cubes": [
 						{
 							"origin": [
-								-5,
+								-6,
 								3,
-								2
+								3.05
 							],
 							"size": [
-								10,
-								20,
+								12,
+								11,
+								1
+							],
+							"uv": [
+								0,
+								0
+							]
+						}
+					]
+				},
+				{
+					"name": "ermine",
+					"parent": "armorBody",
+					"pivot": [
+						0,
+						24,
+						0
+					],
+					"cubes": [
+						{
+							"origin": [
+								-5.5,
+								19,
+								3
+							],
+							"size": [
+								11,
+								5.5,
+								1.7999999999999998
+							],
+							"uv": [
+								0,
+								23
+							]
+						},
+						{
+							"origin": [
+								-5.5,
+								19,
+								-3.2
+							],
+							"size": [
+								2,
+								5.5,
+								6.2
+							],
+							"uv": [
+								48,
+								0
+							]
+						},
+						{
+							"origin": [
+								3.5,
+								19,
+								-3.2
+							],
+							"size": [
+								2,
+								5.5,
+								6.2
+							],
+							"uv": [
+								0,
+								12
+							]
+						},
+						{
+							"origin": [
+								-3.5,
+								22,
+								-3.2
+							],
+							"size": [
+								7,
+								2.5,
 								1
 							],
 							"inflate": -0.05,
 							"uv": [
-								22,
-								0
+								24,
+								23
 							]
 						}
 					]
 				},
 				{
-					"name": "dyed_collar",
+					"name": "chain",
 					"parent": "armorBody",
 					"pivot": [
 						0,
-						24,
-						0
+						21,
+						-3
 					],
 					"cubes": [
 						{
 							"origin": [
-								-6,
-								24,
-								4.6
+								-3.5,
+								20,
+								-3.6
 							],
 							"size": [
-								12,
-								8,
+								7,
+								1,
 								1
 							],
-							"pivot": [
-								0,
-								24,
-								5.1
-							],
-							"rotation": [
-								-16,
-								0,
-								0
-							],
+							"inflate": -0.25,
 							"uv": [
-								16,
-								36
+								46,
+								23
 							]
 						},
 						{
 							"origin": [
-								-6,
-								24,
-								-2
-							],
-							"size": [
-								1,
-								7,
-								7
-							],
-							"pivot": [
-								-5.5,
-								24,
-								1.5
-							],
-							"rotation": [
-								0,
-								0,
-								-14
-							],
-							"uv": [
-								44,
-								0
-							]
-						},
-						{
-							"origin": [
-								5,
-								24,
-								-2
-							],
-							"size": [
-								1,
-								7,
-								7
-							],
-							"pivot": [
-								5.5,
-								24,
-								1.5
-							],
-							"rotation": [
-								0,
-								0,
-								14
-							],
-							"uv": [
-								0,
-								22
-							]
-						}
-					]
-				},
-				{
-					"name": "collar_lining",
-					"parent": "armorBody",
-					"pivot": [
-						0,
-						24,
-						0
-					],
-					"cubes": [
-						{
-							"origin": [
-								-6,
-								24,
-								4
-							],
-							"size": [
-								12,
-								7,
-								1
-							],
-							"inflate": -0.3,
-							"pivot": [
-								0,
-								24,
-								5.1
-							],
-							"rotation": [
-								-16,
-								0,
-								0
-							],
-							"uv": [
-								34,
-								47
-							]
-						},
-						{
-							"origin": [
-								-5.5,
-								24,
-								-2
-							],
-							"size": [
-								1,
-								6,
-								7
-							],
-							"inflate": -0.3,
-							"pivot": [
-								-5.5,
-								24,
-								1.5
-							],
-							"rotation": [
-								0,
-								0,
-								-14
-							],
-							"uv": [
-								16,
-								22
-							]
-						},
-						{
-							"origin": [
-								4.5,
-								24,
-								-2
-							],
-							"size": [
-								1,
-								6,
-								7
-							],
-							"inflate": -0.3,
-							"pivot": [
-								5.5,
-								24,
-								1.5
-							],
-							"rotation": [
-								0,
-								0,
-								14
-							],
-							"uv": [
-								32,
-								22
-							]
-						}
-					]
-				},
-				{
-					"name": "clasp",
-					"parent": "armorBody",
-					"pivot": [
-						0,
-						24,
-						0
-					],
-					"cubes": [
-						{
-							"origin": [
-								-3.75,
-								21.5,
-								-3
+								-1,
+								18.5,
+								-3.8
 							],
 							"size": [
 								2,
 								2,
 								1
 							],
-							"inflate": -0.15,
+							"inflate": -0.05,
 							"uv": [
-								0,
-								55
-							]
-						},
-						{
-							"origin": [
-								1.75,
-								21.5,
-								-3
-							],
-							"size": [
-								2,
-								2,
-								1
-							],
-							"inflate": -0.15,
-							"uv": [
-								6,
-								55
-							]
-						},
-						{
-							"origin": [
-								-2,
-								22,
-								-3
-							],
-							"size": [
-								4,
-								1,
-								1
-							],
-							"inflate": -0.1,
-							"uv": [
-								12,
-								55
-							]
-						}
-					]
-				},
-				{
-					"name": "armorRightArm",
-					"pivot": [
-						-5,
-						22,
-						0
-					]
-				},
-				{
-					"name": "dyed_right_mantle",
-					"parent": "armorRightArm",
-					"pivot": [
-						-5,
-						22,
-						0
-					],
-					"cubes": [
-						{
-							"origin": [
-								-8,
-								17,
-								-2
-							],
-							"size": [
-								4,
-								7,
-								4
-							],
-							"inflate": 0.6,
-							"uv": [
-								48,
-								22
-							]
-						}
-					]
-				},
-				{
-					"name": "armorLeftArm",
-					"pivot": [
-						5,
-						22,
-						0
-					]
-				},
-				{
-					"name": "dyed_left_mantle",
-					"parent": "armorLeftArm",
-					"pivot": [
-						5,
-						22,
-						0
-					],
-					"cubes": [
-						{
-							"origin": [
-								4,
-								17,
-								-2
-							],
-							"size": [
-								4,
-								7,
-								4
-							],
-							"inflate": 0.6,
-							"uv": [
-								0,
-								36
+								40,
+								23
 							]
 						}
 					]

@@ -3,7 +3,7 @@
 	"minecraft:geometry": [
 		{
 			"description": {
-				"identifier": "geometry.high_collared_cape_female",
+				"identifier": "geometry.half_cape_female",
 				"texture_width": 64,
 				"texture_height": 64,
 				"visible_bounds_width": 2,
@@ -24,32 +24,23 @@
 					]
 				},
 				{
-					"name": "cape",
+					"name": "dyed_cape",
 					"parent": "armorBody",
 					"pivot": [
-						0,
-						24,
-						3
-					]
-				},
-				{
-					"name": "dyed_cape",
-					"parent": "cape",
-					"pivot": [
-						0,
+						2,
 						24,
 						3
 					],
 					"cubes": [
 						{
 							"origin": [
-								-5,
-								1,
+								-1,
+								7,
 								3
 							],
 							"size": [
-								10,
-								23,
+								6.5,
+								17,
 								1
 							],
 							"uv": [
@@ -59,326 +50,74 @@
 						},
 						{
 							"origin": [
-								-5,
+								1,
 								23,
 								-3
 							],
 							"size": [
-								10,
+								4.5,
 								1,
 								7
 							],
-							"inflate": 0.15,
+							"inflate": 0.2,
 							"uv": [
-								0,
-								49
+								28,
+								0
 							]
 						}
 					]
 				},
 				{
-					"name": "lining",
-					"parent": "cape",
+					"name": "cord",
+					"parent": "armorBody",
 					"pivot": [
 						0,
-						24,
-						3
+						23,
+						-2.5
 					],
 					"cubes": [
 						{
 							"origin": [
-								-5,
-								1,
-								2
+								-3,
+								21.5,
+								-2.9
 							],
 							"size": [
-								10,
+								5.5,
+								1,
+								1
+							],
+							"inflate": -0.3,
+							"pivot": [
+								2.5,
 								22,
+								-2.4
+							],
+							"rotation": [
+								0,
+								0,
+								24
+							],
+							"uv": [
+								0,
+								18
+							]
+						},
+						{
+							"origin": [
+								1.5,
+								22,
+								-3.4
+							],
+							"size": [
+								2,
+								2,
 								1
 							],
 							"inflate": -0.05,
 							"uv": [
-								22,
+								50,
 								0
-							]
-						}
-					]
-				},
-				{
-					"name": "dyed_collar",
-					"parent": "armorBody",
-					"pivot": [
-						0,
-						24,
-						0
-					],
-					"cubes": [
-						{
-							"origin": [
-								-6,
-								24,
-								4.6
-							],
-							"size": [
-								12,
-								8,
-								1
-							],
-							"pivot": [
-								0,
-								24,
-								5.1
-							],
-							"rotation": [
-								-16,
-								0,
-								0
-							],
-							"uv": [
-								14,
-								38
-							]
-						},
-						{
-							"origin": [
-								-6,
-								24,
-								-2
-							],
-							"size": [
-								1,
-								7,
-								7
-							],
-							"pivot": [
-								-5.5,
-								24,
-								1.5
-							],
-							"rotation": [
-								0,
-								0,
-								-14
-							],
-							"uv": [
-								44,
-								0
-							]
-						},
-						{
-							"origin": [
-								5,
-								24,
-								-2
-							],
-							"size": [
-								1,
-								7,
-								7
-							],
-							"pivot": [
-								5.5,
-								24,
-								1.5
-							],
-							"rotation": [
-								0,
-								0,
-								14
-							],
-							"uv": [
-								0,
-								24
-							]
-						}
-					]
-				},
-				{
-					"name": "collar_lining",
-					"parent": "armorBody",
-					"pivot": [
-						0,
-						24,
-						0
-					],
-					"cubes": [
-						{
-							"origin": [
-								-6,
-								24,
-								4
-							],
-							"size": [
-								12,
-								7,
-								1
-							],
-							"inflate": -0.3,
-							"pivot": [
-								0,
-								24,
-								5.1
-							],
-							"rotation": [
-								-16,
-								0,
-								0
-							],
-							"uv": [
-								34,
-								49
-							]
-						},
-						{
-							"origin": [
-								-5.5,
-								24,
-								-2
-							],
-							"size": [
-								1,
-								6,
-								7
-							],
-							"inflate": -0.3,
-							"pivot": [
-								-5.5,
-								24,
-								1.5
-							],
-							"rotation": [
-								0,
-								0,
-								-14
-							],
-							"uv": [
-								16,
-								24
-							]
-						},
-						{
-							"origin": [
-								4.5,
-								24,
-								-2
-							],
-							"size": [
-								1,
-								6,
-								7
-							],
-							"inflate": -0.3,
-							"pivot": [
-								5.5,
-								24,
-								1.5
-							],
-							"rotation": [
-								0,
-								0,
-								14
-							],
-							"uv": [
-								32,
-								24
-							]
-						}
-					]
-				},
-				{
-					"name": "clasp",
-					"parent": "armorBody",
-					"pivot": [
-						0,
-						24,
-						0
-					],
-					"cubes": [
-						{
-							"origin": [
-								-3.75,
-								21.5,
-								-3
-							],
-							"size": [
-								2,
-								2,
-								1
-							],
-							"inflate": -0.15,
-							"uv": [
-								0,
-								57
-							]
-						},
-						{
-							"origin": [
-								1.75,
-								21.5,
-								-3
-							],
-							"size": [
-								2,
-								2,
-								1
-							],
-							"inflate": -0.15,
-							"uv": [
-								6,
-								57
-							]
-						},
-						{
-							"origin": [
-								-2,
-								22,
-								-3
-							],
-							"size": [
-								4,
-								1,
-								1
-							],
-							"inflate": -0.1,
-							"uv": [
-								12,
-								57
-							]
-						}
-					]
-				},
-				{
-					"name": "armorRightArm",
-					"pivot": [
-						-5,
-						22,
-						0
-					]
-				},
-				{
-					"name": "dyed_right_mantle",
-					"parent": "armorRightArm",
-					"pivot": [
-						-5,
-						22,
-						0
-					],
-					"cubes": [
-						{
-							"origin": [
-								-7,
-								17,
-								-2
-							],
-							"size": [
-								3,
-								7,
-								4
-							],
-							"inflate": 0.6,
-							"uv": [
-								48,
-								24
 							]
 						}
 					]
@@ -392,7 +131,7 @@
 					]
 				},
 				{
-					"name": "dyed_left_mantle",
+					"name": "dyed_drape",
 					"parent": "armorLeftArm",
 					"pivot": [
 						5,
@@ -411,10 +150,10 @@
 								7,
 								4
 							],
-							"inflate": 0.6,
+							"inflate": 0.75,
 							"uv": [
-								0,
-								38
+								14,
+								0
 							]
 						}
 					]

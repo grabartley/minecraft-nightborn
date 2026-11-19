@@ -1,6 +1,7 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "nightborn:item/silk_sash"
+    "layer0": "nightborn:item/silk_sash",
+    "layer1": "nightborn:item/silk_sash_overlay"
   }
 }

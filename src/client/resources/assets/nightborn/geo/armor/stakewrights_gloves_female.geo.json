@@ -3,7 +3,7 @@
 	"minecraft:geometry": [
 		{
 			"description": {
-				"identifier": "geometry.lace_gloves_female",
+				"identifier": "geometry.stakewrights_gloves_female",
 				"texture_width": 64,
 				"texture_height": 64,
 				"visible_bounds_width": 2,
@@ -40,10 +40,10 @@
 							],
 							"size": [
 								3,
-								3,
+								4,
 								4
 							],
-							"inflate": 0.8,
+							"inflate": 0.9,
 							"uv": [
 								0,
 								0
@@ -52,7 +52,7 @@
 						{
 							"origin": [
 								-7,
-								15,
+								16,
 								-2
 							],
 							"size": [
@@ -60,10 +60,27 @@
 								1,
 								4
 							],
-							"inflate": 0.95,
+							"inflate": 1,
 							"uv": [
-								0,
-								8
+								28,
+								0
+							]
+						},
+						{
+							"origin": [
+								-7,
+								12.5,
+								1.5
+							],
+							"size": [
+								3,
+								3,
+								1
+							],
+							"inflate": 0.55,
+							"uv": [
+								56,
+								0
 							]
 						}
 					]
@@ -93,20 +110,19 @@
 							],
 							"size": [
 								3,
-								3,
+								4,
 								4
 							],
-							"inflate": 0.8,
+							"inflate": 0.9,
 							"uv": [
-								0,
+								14,
 								0
-							],
-							"mirror": true
+							]
 						},
 						{
 							"origin": [
 								4,
-								15,
+								16,
 								-2
 							],
 							"size": [
@@ -114,12 +130,28 @@
 								1,
 								4
 							],
-							"inflate": 0.95,
+							"inflate": 1,
+							"uv": [
+								42,
+								0
+							]
+						},
+						{
+							"origin": [
+								4,
+								12.5,
+								1.5
+							],
+							"size": [
+								3,
+								3,
+								1
+							],
+							"inflate": 0.55,
 							"uv": [
 								0,
 								8
-							],
-							"mirror": true
+							]
 						}
 					]
 				}

@@ -43,11 +43,11 @@ public final class AccessoryRenderer implements TrinketRenderer {
       final float animationProgress,
       final float headYaw,
       final float headPitch) {
-    if (!(contextModel instanceof BipedEntityModel base)
-        || !AccessorySlot.drawnIn(slot.inventory().getSlotType().getId())) {
+    final String slotId = slot.inventory().getSlotType().getId();
+    if (!(contextModel instanceof BipedEntityModel base) || !AccessorySlot.drawnIn(slotId)) {
       return;
     }
-    final EquipmentSlot body = AccessorySlot.bodyOf(slot.inventory().getSlotType().getGroup());
+    final EquipmentSlot body = AccessorySlot.byId(slotId).orElseThrow().body();
     if (GeoRenderProvider.of(stack).getGeoArmorRenderer(entity, stack, body, base)
         instanceof GeoArmorRenderer<?> renderer) {
       base.copyBipedStateTo(renderer);
