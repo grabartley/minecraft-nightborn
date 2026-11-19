@@ -1,0 +1,19 @@
+{
+  "branch": "nightborn:trapper",
+  "requires": [
+    "nightborn:trapper/snare"
+  ],
+  "icon": "nightborn:skills/icon/trap_sense",
+  "column": 2,
+  "row": 2,
+  "ranks": [
+    {
+      "cost": 2,
+      "trap_gifts": [
+        {
+          "senses": true
+        }
+      ]
+    }
+  ]
+}

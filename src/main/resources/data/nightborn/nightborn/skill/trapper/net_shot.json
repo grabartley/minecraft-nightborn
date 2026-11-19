@@ -1,0 +1,25 @@
+{
+  "branch": "nightborn:trapper",
+  "requires": [
+    "nightborn:trapper/snare"
+  ],
+  "icon": "nightborn:skills/icon/net_shot",
+  "column": 0,
+  "row": 2,
+  "ranks": [
+    {
+      "cost": 2
+    }
+  ],
+  "power": {
+    "blood": 0,
+    "cooldown_ticks": 500,
+    "net": {
+      "range": 24.0,
+      "speed": 2.0,
+      "ground_ticks": 100,
+      "damage_type": "nightborn:silver"
+    },
+    "sound": "minecraft:item.crossbow.shoot"
+  }
+}

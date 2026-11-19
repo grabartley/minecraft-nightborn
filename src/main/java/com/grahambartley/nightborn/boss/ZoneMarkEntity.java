@@ -54,6 +54,11 @@ public class ZoneMarkEntity extends Entity implements GeoEntity {
     return mark;
   }
 
+  protected void shape(final float radius, final Optional<Identifier> look) {
+    dataTracker.set(RADIUS, radius);
+    dataTracker.set(LOOK, IdText.write(look));
+  }
+
   @Override
   protected void initDataTracker(final DataTracker.Builder builder) {
     builder.add(LINE, false);

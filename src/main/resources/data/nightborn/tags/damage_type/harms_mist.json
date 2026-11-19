@@ -1,6 +1,7 @@
 {
   "values": [
     "nightborn:sun",
+    "nightborn:holy_light",
     "nightborn:holy_water",
     "#minecraft:is_fire"
   ]

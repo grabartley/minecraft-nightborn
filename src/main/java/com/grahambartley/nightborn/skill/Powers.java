@@ -9,6 +9,8 @@ import com.grahambartley.nightborn.hold.Holds;
 import com.grahambartley.nightborn.moment.Moments;
 import com.grahambartley.nightborn.network.UsePowerPayload;
 import com.grahambartley.nightborn.sun.DirectSun;
+import com.grahambartley.nightborn.trap.Grounding;
+import com.grahambartley.nightborn.trap.KillingGrounds;
 import com.grahambartley.nightborn.vampire.VampireAttributes;
 import com.grahambartley.nightborn.weakened.Weakened;
 import java.util.List;
@@ -130,6 +132,8 @@ public final class Powers {
             power.isPresent(),
             Downed.helpless(caster) || Moments.locked(caster),
             Holds.stopsPower(caster, power.map(owned -> owned.moves().count() > 0).orElse(false)),
+            id != null && power.isPresent() && KillingGrounds.bars(caster, id),
+            power.map(SkillPower::leavesTheGround).orElse(false) && Grounding.on(caster),
             WingedForm.on(caster),
             BatForm.isBat(caster),
             Weakened.sources(caster).level(Downed.state(caster) != null) > 0,
@@ -141,6 +145,7 @@ public final class Powers {
             power.map(owned -> bloodCost(caster, id, owned)).orElse(0),
             power.map(aim::unseen).orElse(false),
             power.map(aim::nowhere).orElse(false),
+            power.map(aim::unplaced).orElse(false),
             power.map(aim::subjectless).orElse(false)));
   }
 

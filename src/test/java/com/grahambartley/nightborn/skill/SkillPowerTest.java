@@ -227,4 +227,23 @@ class SkillPowerTest {
     assertEquals(
         loads, SkillPower.CODEC.parse(JsonOps.INSTANCE, JsonParser.parseString(json)).isSuccess());
   }
+
+  @ParameterizedTest(name = "{0} -> leaves the ground {1}")
+  @CsvSource(
+      delimiter = '|',
+      value = {
+        "{\"blood\":2,\"cooldown_ticks\":400,\"leap\":{\"forward\":1.5,\"up\":0.6}} | true",
+        "{\"blood\":2,\"cooldown_ticks\":400,\"pounce\":{\"range\":10,\"pin_ticks\":40,\"player_pin_ticks\":20}} | true",
+        "{\"blood\":3,\"cooldown_ticks\":600,\"effects\":[{\"id\":\"minecraft:speed\",\"duration\":160}]} | false",
+        "{\"blood\":0,\"cooldown_ticks\":500,\"net\":{\"range\":24,\"speed\":2,\"ground_ticks\":100,\"damage_type\":\"nightborn:silver\"}} | false"
+      })
+  @DisplayName("a leap or pounce leaves the ground, so a netted caster cannot use it")
+  void leavesTheGround(final String json, final boolean leaves) {
+    assertEquals(
+        leaves,
+        SkillPower.CODEC
+            .parse(JsonOps.INSTANCE, JsonParser.parseString(json))
+            .getOrThrow()
+            .leavesTheGround());
+  }
 }

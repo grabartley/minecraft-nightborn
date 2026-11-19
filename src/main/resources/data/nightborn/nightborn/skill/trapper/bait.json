@@ -1,0 +1,27 @@
+{
+  "branch": "nightborn:trapper",
+  "requires": [
+    "nightborn:trapper/field_craft"
+  ],
+  "icon": "nightborn:skills/icon/bait",
+  "column": 2,
+  "row": 1,
+  "ranks": [
+    {
+      "cost": 2
+    }
+  ],
+  "power": {
+    "blood": 0,
+    "cooldown_ticks": 1200,
+    "bait": {
+      "range": 4.0,
+      "duration_ticks": 1200,
+      "lure_range": 24.0,
+      "scent_range": 8.0,
+      "size": 0.6,
+      "look": "nightborn:bait"
+    },
+    "sound": "minecraft:item.bucket.empty"
+  }
+}

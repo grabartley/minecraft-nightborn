@@ -3,6 +3,7 @@ package com.grahambartley.nightborn.skill;
 import com.grahambartley.nightborn.hold.Holds;
 import com.grahambartley.nightborn.mind.BloodTithe;
 import com.grahambartley.nightborn.occult.MistForm;
+import com.grahambartley.nightborn.trap.Grounding;
 import net.minecraft.entity.LivingEntity;
 
 public final class PowerTicks {
@@ -13,6 +14,7 @@ public final class PowerTicks {
     Holds.tick(entity);
     Boosts.tick(entity);
     MistForm.tick(entity);
+    Grounding.tick(entity);
     BloodTithe.tick(entity);
   }
 }

@@ -1,0 +1,26 @@
+{
+  "branch": "nightborn:trapper",
+  "requires": [
+    "nightborn:trapper/killing_ground"
+  ],
+  "icon": "nightborn:skills/icon/master_trapper",
+  "column": 1,
+  "row": 5,
+  "rank": "nightborn:master",
+  "ranks": [
+    {
+      "cost": 3,
+      "power_gifts": [
+        {
+          "branch": "nightborn:trapper",
+          "cooldown_cut": 0.2
+        }
+      ],
+      "trap_gifts": [
+        {
+          "pinned_damage": 0.25
+        }
+      ]
+    }
+  ]
+}

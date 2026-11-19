@@ -1,0 +1,32 @@
+{
+  "branch": "nightborn:trapper",
+  "requires": [
+    "nightborn:trapper/flash_trap",
+    "nightborn:trapper/net_shot"
+  ],
+  "icon": "nightborn:skills/icon/killing_ground",
+  "column": 1,
+  "row": 4,
+  "rank": "nightborn:master",
+  "ranks": [
+    {
+      "cost": 4
+    }
+  ],
+  "power": {
+    "blood": 0,
+    "cooldown_ticks": 6000,
+    "field": {
+      "radius": 10.0,
+      "duration_ticks": 400,
+      "bars": [
+        "nightborn:core/vanish",
+        "nightborn:occult/shadow_step",
+        "nightborn:beast/bat_form",
+        "nightborn:occult/mist_form"
+      ],
+      "look": "nightborn:killing_ground"
+    },
+    "sound": "minecraft:event.raid.horn"
+  }
+}

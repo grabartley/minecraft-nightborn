@@ -21,46 +21,58 @@ class PowerUseTest {
 
   @ParameterizedTest(
       name =
-          "power {0}, downed {1}, held {2}, winged {3}, bat {4}, weakened {5}, sunlit {6},"
-              + " cooling {7}, blood {8}/{9}, unseen {10}, nowhere {11}, no subject {12} -> {13}")
+          "power {0}, downed {1}, held {2}, barred {3}, grounded {4}, winged {5}, bat {6},"
+              + " weakened {7}, sunlit {8}, cooling {9}, blood {10}/{11}, unseen {12}, nowhere {13},"
+              + " no ground {14}, no subject {15} -> {16}")
   @CsvSource({
-    "true, false, false, false, false, false, false, 0, 10, 3, false, false, false, READY",
-    "true, false, false, false, false, false, false, 0, 3, 3, false, false, false, READY",
-    "true, false, false, false, false, false, false, 0, 0, 0, false, false, false, READY",
-    "false, false, false, false, false, false, false, 0, 20, 0, false, false, false, NO_POWER",
-    "true, true, false, false, false, false, false, 0, 20, 3, false, false, false, HELPLESS",
-    "true, true, true, true, false, true, false, 40, 0, 3, true, false, false, HELPLESS",
-    "true, false, true, false, false, false, false, 0, 20, 3, false, false, false, HELD",
-    "true, false, true, true, true, true, false, 5, 0, 3, true, true, true, HELD",
-    "true, false, false, true, false, false, false, 0, 20, 3, false, false, false, IN_WINGED_FORM",
-    "true, false, false, true, true, false, false, 0, 20, 3, false, false, false, IN_WINGED_FORM",
-    "true, false, false, false, false, true, false, 0, 20, 3, false, false, false, WEAKENED",
-    "true, false, false, false, false, false, false, 1, 20, 3, false, false, false, COOLING",
-    "true, false, false, false, false, false, false, 1, 20, 3, true, false, false, COOLING",
-    "true, false, false, false, false, false, false, 0, 2, 3, false, false, false, THIRSTY",
-    "true, false, false, false, false, false, false, 0, 2, 3, true, false, false, THIRSTY",
-    "true, false, false, false, true, false, false, 0, 20, 3, false, false, false, AS_A_BAT",
-    "true, false, false, false, true, true, false, 1, 0, 3, false, false, false, AS_A_BAT",
-    "true, false, false, false, true, false, false, 0, 20, 3, true, true, false, AS_A_BAT",
-    "true, true, false, false, true, false, false, 0, 20, 3, false, false, false, HELPLESS",
-    "true, false, false, false, false, false, true, 0, 20, 3, false, false, false, SUNLIT",
-    "true, false, false, false, false, true, true, 0, 20, 3, false, false, false, WEAKENED",
-    "true, false, false, false, false, false, true, 5, 20, 3, false, false, false, SUNLIT",
-    "true, false, false, false, false, false, true, 0, 20, 3, true, true, false, SUNLIT",
-    "true, false, false, false, false, false, false, 0, 20, 3, true, false, false, UNSEEN",
-    "true, false, false, false, false, false, false, 0, 20, 3, true, true, true, UNSEEN",
-    "true, false, false, false, false, false, false, 0, 20, 3, false, true, false, NOWHERE",
-    "true, false, false, false, false, false, false, 0, 2, 3, false, true, false, THIRSTY",
-    "true, false, false, false, false, false, false, 0, 20, 3, false, false, true, NO_SUBJECT",
-    "true, false, false, false, false, false, false, 0, 20, 3, false, true, true, NOWHERE"
+    "true, false, false, false, false, false, false, false, false, 0, 10, 3, false, false, false, false, READY",
+    "true, false, false, false, false, false, false, false, false, 0, 3, 3, false, false, false, false, READY",
+    "true, false, false, false, false, false, false, false, false, 0, 0, 0, false, false, false, false, READY",
+    "false, false, false, false, false, false, false, false, false, 0, 20, 0, false, false, false, false, NO_POWER",
+    "true, true, false, false, false, false, false, false, false, 0, 20, 3, false, false, false, false, HELPLESS",
+    "true, true, true, false, false, true, false, true, false, 40, 0, 3, true, false, false, false, HELPLESS",
+    "true, false, true, false, false, false, false, false, false, 0, 20, 3, false, false, false, false, HELD",
+    "true, false, true, false, false, true, true, true, false, 5, 0, 3, true, true, false, true, HELD",
+    "true, false, false, false, false, true, false, false, false, 0, 20, 3, false, false, false, false, IN_WINGED_FORM",
+    "true, false, false, false, false, true, true, false, false, 0, 20, 3, false, false, false, false, IN_WINGED_FORM",
+    "true, false, false, false, false, false, false, true, false, 0, 20, 3, false, false, false, false, WEAKENED",
+    "true, false, false, false, false, false, false, false, false, 1, 20, 3, false, false, false, false, COOLING",
+    "true, false, false, false, false, false, false, false, false, 1, 20, 3, true, false, false, false, COOLING",
+    "true, false, false, false, false, false, false, false, false, 0, 2, 3, false, false, false, false, THIRSTY",
+    "true, false, false, false, false, false, false, false, false, 0, 2, 3, true, false, false, false, THIRSTY",
+    "true, false, false, false, false, false, true, false, false, 0, 20, 3, false, false, false, false, AS_A_BAT",
+    "true, false, false, false, false, false, true, true, false, 1, 0, 3, false, false, false, false, AS_A_BAT",
+    "true, false, false, false, false, false, true, false, false, 0, 20, 3, true, true, false, false, AS_A_BAT",
+    "true, true, false, false, false, false, true, false, false, 0, 20, 3, false, false, false, false, HELPLESS",
+    "true, false, false, false, false, false, false, false, true, 0, 20, 3, false, false, false, false, SUNLIT",
+    "true, false, false, false, false, false, false, true, true, 0, 20, 3, false, false, false, false, WEAKENED",
+    "true, false, false, false, false, false, false, false, true, 5, 20, 3, false, false, false, false, SUNLIT",
+    "true, false, false, false, false, false, false, false, true, 0, 20, 3, true, true, false, false, SUNLIT",
+    "true, false, false, false, false, false, false, false, false, 0, 20, 3, true, false, false, false, UNSEEN",
+    "true, false, false, false, false, false, false, false, false, 0, 20, 3, true, true, false, true, UNSEEN",
+    "true, false, false, false, false, false, false, false, false, 0, 20, 3, false, true, false, false, NOWHERE",
+    "true, false, false, false, false, false, false, false, false, 0, 2, 3, false, true, false, false, THIRSTY",
+    "true, false, false, false, false, false, false, false, false, 0, 20, 3, false, false, false, true, NO_SUBJECT",
+    "true, false, false, false, false, false, false, false, false, 0, 20, 3, false, true, false, true, NOWHERE",
+    "true, false, false, true, false, false, false, false, false, 0, 20, 3, false, false, false, false, BARRED",
+    "true, false, true, true, true, false, false, false, false, 0, 20, 3, false, false, false, false, HELD",
+    "true, false, false, true, true, true, false, false, false, 0, 20, 3, false, false, false, false, BARRED",
+    "true, false, false, false, true, true, false, false, false, 0, 20, 3, false, false, false, false, GROUNDED",
+    "true, true, false, false, true, false, false, false, false, 0, 20, 3, false, false, false, false, HELPLESS",
+    "true, false, false, false, false, false, false, false, false, 0, 20, 3, false, false, true, false, NO_GROUND",
+    "true, false, false, false, false, false, false, false, false, 0, 20, 3, false, true, true, false, NOWHERE",
+    "true, false, false, false, false, false, false, false, false, 0, 20, 3, false, false, true, true, NO_GROUND",
+    "true, false, false, false, false, false, false, false, false, 0, 2, 3, false, false, true, false, THIRSTY"
   })
   @DisplayName(
-      "a power is refused while downed, held, in winged form, in bat form, weakened, in the sun,"
-          + " cooling, short of blood, with nothing to aim at, nowhere to step or no one to order")
+      "a power is refused while downed, held, barred, grounded, in winged form, in bat form, weakened, in the sun,"
+          + " cooling, short of blood, with nothing to aim at, nowhere to step, no ground or no one to order")
   void checks(
       final boolean hasPower,
       final boolean helpless,
       final boolean held,
+      final boolean barred,
+      final boolean grounded,
       final boolean winged,
       final boolean bat,
       final boolean weakened,
@@ -70,6 +82,7 @@ class PowerUseTest {
       final int cost,
       final boolean unseen,
       final boolean nowhere,
+      final boolean groundless,
       final boolean subjectless,
       final PowerUse.Verdict expected) {
     assertEquals(
@@ -79,6 +92,8 @@ class PowerUseTest {
                 hasPower,
                 helpless,
                 held,
+                barred,
+                grounded,
                 winged,
                 bat,
                 weakened,
@@ -88,6 +103,7 @@ class PowerUseTest {
                 cost,
                 unseen,
                 nowhere,
+                groundless,
                 subjectless)));
   }
 

@@ -1,0 +1,40 @@
+{
+  "branch": "nightborn:trapper",
+  "requires": [
+    "nightborn:trapper/field_craft"
+  ],
+  "icon": "nightborn:skills/icon/snare",
+  "column": 0,
+  "row": 1,
+  "ranks": [
+    {
+      "cost": 2
+    }
+  ],
+  "power": {
+    "blood": 0,
+    "cooldown_ticks": 400,
+    "trap": {
+      "range": 4.0,
+      "duration_ticks": 6000,
+      "limit": 2,
+      "arm_ticks": 40,
+      "seen_within": 6.0,
+      "stepped": true,
+      "catches_bats_and_mist": false,
+      "pin_ticks": 60,
+      "player_pin_ticks": 40,
+      "damage_type": "nightborn:silver",
+      "size": 0.5,
+      "look": "nightborn:snare",
+      "spring": {
+        "sound": "minecraft:block.iron_trapdoor.close",
+        "particle": {
+          "type": "minecraft:crit"
+        },
+        "count": 10
+      }
+    },
+    "sound": "minecraft:block.chain.place"
+  }
+}

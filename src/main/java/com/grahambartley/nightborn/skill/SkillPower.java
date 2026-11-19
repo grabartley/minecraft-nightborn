@@ -14,6 +14,10 @@ import com.grahambartley.nightborn.occult.HexPower;
 import com.grahambartley.nightborn.occult.MistPower;
 import com.grahambartley.nightborn.occult.ShadowStepPower;
 import com.grahambartley.nightborn.occult.SwarmPower;
+import com.grahambartley.nightborn.trap.BaitPower;
+import com.grahambartley.nightborn.trap.FieldPower;
+import com.grahambartley.nightborn.trap.NetPower;
+import com.grahambartley.nightborn.trap.TrapPower;
 import com.grahambartley.nightborn.vanish.VanishPower;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
@@ -32,6 +36,7 @@ public record SkillPower(
     PowerMinds minds,
     PowerCalls calls,
     PowerSelf self,
+    PowerTraps traps,
     Optional<MobPowerUse> mob) {
 
   public static final Codec<SkillPower> CODEC =
@@ -52,6 +57,7 @@ public record SkillPower(
                           PowerMinds.CODEC.forGetter(SkillPower::minds),
                           PowerCalls.CODEC.forGetter(SkillPower::calls),
                           PowerSelf.CODEC.forGetter(SkillPower::self),
+                          PowerTraps.CODEC.forGetter(SkillPower::traps),
                           MobPowerUse.CODEC.optionalFieldOf("mob").forGetter(SkillPower::mob))
                       .apply(instance, SkillPower::new))
           .validate(SkillPower::oneMove);
@@ -154,6 +160,29 @@ public record SkillPower(
 
   public Optional<FreePower> frees() {
     return self.frees();
+  }
+
+  public Optional<TrapPower> trap() {
+    return traps.trap();
+  }
+
+  public Optional<NetPower> net() {
+    return traps.net();
+  }
+
+  public Optional<BaitPower> bait() {
+    return traps.bait();
+  }
+
+  public Optional<FieldPower> field() {
+    return traps.field();
+  }
+
+  public boolean leavesTheGround() {
+    return batForm().isPresent()
+        || wingedForm().isPresent()
+        || leap().isPresent()
+        || pounce().isPresent();
   }
 
   private static DataResult<SkillPower> oneMove(final SkillPower power) {

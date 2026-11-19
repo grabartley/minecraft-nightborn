@@ -18,6 +18,10 @@ import com.grahambartley.nightborn.occult.ShadowStep;
 import com.grahambartley.nightborn.occult.Swarms;
 import com.grahambartley.nightborn.sight.Sight;
 import com.grahambartley.nightborn.sight.Sights;
+import com.grahambartley.nightborn.trap.Baits;
+import com.grahambartley.nightborn.trap.KillingGrounds;
+import com.grahambartley.nightborn.trap.Nets;
+import com.grahambartley.nightborn.trap.Traps;
 import com.grahambartley.nightborn.vanish.Vanish;
 import com.grahambartley.nightborn.village.SuspicionCause;
 import com.grahambartley.nightborn.village.VampireSigns;
@@ -45,6 +49,7 @@ final class PowerCasts {
     }
     moves(caster, id, power, aim);
     minds(caster, power, aim);
+    traps(caster, id, power, aim);
     power.familiar().ifPresent(familiar -> GhostlyFamiliars.summon(caster, familiar));
     power.fog().ifPresent(fog -> FogClouds.spawn(caster, fog));
     power.rally().ifPresent(rally -> Rally.call(caster, rally));
@@ -95,6 +100,16 @@ final class PowerCasts {
               vanish -> Vanish.go(caster, aim.stepTo(), vanish),
               () -> ShadowStep.step(caster, aim.stepTo()));
     }
+  }
+
+  private static void traps(
+      final LivingEntity caster, final Identifier id, final SkillPower power, final PowerAim aim) {
+    if (aim.spot() != null) {
+      power.trap().ifPresent(trap -> Traps.set(caster, id, trap, aim.spot()));
+      power.bait().ifPresent(bait -> Baits.place(caster, bait, aim.spot()));
+    }
+    power.net().ifPresent(net -> Nets.launch(caster, id, net));
+    power.field().ifPresent(field -> KillingGrounds.mark(caster, field));
   }
 
   private static void minds(final LivingEntity caster, final SkillPower power, final PowerAim aim) {

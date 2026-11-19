@@ -37,6 +37,7 @@ import com.grahambartley.nightborn.servant.ServantFeatures;
 import com.grahambartley.nightborn.sound.NightbornSounds;
 import com.grahambartley.nightborn.structure.NightbornStructures;
 import com.grahambartley.nightborn.sun.SunShafts;
+import com.grahambartley.nightborn.trap.TrapFeatures;
 import com.grahambartley.nightborn.vampire.VampireFeatures;
 import com.grahambartley.nightborn.village.VillageFeatures;
 import com.grahambartley.nightborn.wheel.CommandWheel;
@@ -83,6 +84,7 @@ public class Nightborn implements ModInitializer {
     SunShafts.register();
     MindFeatures.register();
     OccultFeatures.register();
+    TrapFeatures.register();
     EnchantFeatures.register();
     ClothingFeatures.register();
     AccessoryFeatures.register();
