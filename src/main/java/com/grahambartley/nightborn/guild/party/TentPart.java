@@ -38,6 +38,18 @@ public enum TentPart implements StringIdentifiable {
     return up == 0;
   }
 
+  public TentPart mirrored() {
+    return switch (this) {
+      case LEFT_FRONT -> RIGHT_FRONT;
+      case LEFT_MIDDLE -> RIGHT_MIDDLE;
+      case LEFT_BACK -> RIGHT_BACK;
+      case RIGHT_FRONT -> LEFT_FRONT;
+      case RIGHT_MIDDLE -> LEFT_MIDDLE;
+      case RIGHT_BACK -> LEFT_BACK;
+      default -> this;
+    };
+  }
+
   public BlockPos offset(final Direction facing) {
     return BlockPos.ORIGIN
         .offset(facing.rotateYClockwise(), right)

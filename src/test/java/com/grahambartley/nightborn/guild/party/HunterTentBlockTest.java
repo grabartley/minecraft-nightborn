@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import com.grahambartley.nightborn.MinecraftBootstrapExtension;
 import net.minecraft.block.BlockRenderType;
 import net.minecraft.block.BlockState;
+import net.minecraft.util.BlockMirror;
 import net.minecraft.util.BlockRotation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
@@ -51,5 +52,23 @@ class HunterTentBlockTest {
     final BlockState state = state(TentPart.LEFT_BACK).with(HunterTentBlock.FACING, facing);
     assertEquals(turned, state.rotate(rotation).get(HunterTentBlock.FACING));
     assertEquals(TentPart.LEFT_BACK, state.rotate(rotation).get(HunterTentBlock.PART));
+  }
+
+  @ParameterizedTest(name = "facing {0}, mirrored {1}")
+  @CsvSource({"NORTH, FRONT_BACK", "NORTH, LEFT_RIGHT", "EAST, FRONT_BACK", "WEST, LEFT_RIGHT"})
+  @DisplayName("a mirrored tent keeps every cell pointing at its roof's middle")
+  void mirroredCellsStillFindTheOrigin(final Direction facing, final BlockMirror mirror) {
+    for (final TentPart part : TentPart.values()) {
+      final BlockPos offset = part.offset(facing);
+      final BlockPos flipped =
+          mirror == BlockMirror.FRONT_BACK
+              ? new BlockPos(-offset.getX(), offset.getY(), offset.getZ())
+              : new BlockPos(offset.getX(), offset.getY(), -offset.getZ());
+      final BlockState mirrored = state(part).with(HunterTentBlock.FACING, facing).mirror(mirror);
+      assertEquals(
+          BlockPos.ORIGIN,
+          mirrored.get(HunterTentBlock.PART).origin(flipped, mirrored.get(HunterTentBlock.FACING)),
+          part.asString());
+    }
   }
 }

@@ -37,7 +37,7 @@ class TentShapesTest {
   void sidesSlopeAwayFromTheRidge(final Direction facing, final TentPart part) {
     final Direction out =
         part.right() > 0 ? facing.rotateYClockwise() : facing.rotateYCounterclockwise();
-    final VoxelShape shape = TentShapes.collision(part, facing);
+    final VoxelShape shape = TentShapes.collision(part, facing, false);
     final double inner =
         heightAt(shape, 0.5 - 0.4 * out.getOffsetX(), 0.5 - 0.4 * out.getOffsetZ());
     final double outer =
@@ -53,7 +53,7 @@ class TentShapesTest {
   @DisplayName("the back wall closes the back of its cell and leaves the front open")
   void backWallSitsAtTheBack(final Direction facing) {
     final Direction back = facing.getOpposite();
-    final VoxelShape shape = TentShapes.collision(TentPart.BACK, facing);
+    final VoxelShape shape = TentShapes.collision(TentPart.BACK, facing, false);
     assertEquals(
         1.0, heightAt(shape, 0.5 + 0.45 * back.getOffsetX(), 0.5 + 0.45 * back.getOffsetZ()));
     assertEquals(
@@ -67,8 +67,8 @@ class TentShapesTest {
   @DisplayName("the roof can be aimed at but never blocks or smothers anyone inside")
   void roofHasNoCollision(final TentPart part) {
     for (final Direction facing : Direction.Type.HORIZONTAL) {
-      assertTrue(TentShapes.collision(part, facing).isEmpty());
-      assertFalse(TentShapes.outline(part, facing).isEmpty());
+      assertTrue(TentShapes.collision(part, facing, false).isEmpty());
+      assertFalse(TentShapes.outline(part, facing, false).isEmpty());
     }
   }
 
@@ -79,12 +79,22 @@ class TentShapesTest {
   @DisplayName("the roof follows the canvas, so a player aiming under it reaches the bed")
   void roofLeavesTheMiddleClear(final TentPart part) {
     for (final Direction facing : Direction.Type.HORIZONTAL) {
-      final VoxelShape shape = TentShapes.outline(part, facing);
+      final VoxelShape shape = TentShapes.outline(part, facing, false);
       assertTrue(
           shape.getBoundingBoxes().stream()
               .noneMatch(box -> box.minY < 0.3 && box.contains(0.5, 0.1, 0.5)),
           facing.asString());
       assertEquals(14.0 / 16.0, heightAt(shape, 0.5, 0.5), 1e-9);
+    }
+  }
+
+  @ParameterizedTest(name = "{0}")
+  @EnumSource(TentPart.class)
+  @DisplayName("a struck tent lies flat, so nothing collides while it comes down")
+  void struckTentLiesFlat(final TentPart part) {
+    for (final Direction facing : Direction.Type.HORIZONTAL) {
+      assertTrue(TentShapes.collision(part, facing, true).isEmpty());
+      assertTrue(heightAt(TentShapes.outline(part, facing, true), 0.5, 0.5) <= 2.0 / 16.0);
     }
   }
 }

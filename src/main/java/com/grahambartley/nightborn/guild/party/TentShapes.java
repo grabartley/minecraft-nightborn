@@ -29,6 +29,8 @@ public final class TentShapes {
           Block.createCuboidShape(10, 6, 0, 12, 10, 16),
           Block.createCuboidShape(12, 0, 0, 16, 7, 16));
 
+  private static final VoxelShape LYING = Block.createCuboidShape(0, 0, 0, 16, 2, 16);
+
   private static final Map<TentPart, Map<Direction, VoxelShape>> OUTLINES =
       new EnumMap<>(TentPart.class);
 
@@ -40,12 +42,17 @@ public final class TentShapes {
 
   private TentShapes() {}
 
-  public static VoxelShape outline(final TentPart part, final Direction facing) {
+  public static VoxelShape outline(
+      final TentPart part, final Direction facing, final boolean struck) {
+    if (struck) {
+      return part.roof() ? VoxelShapes.empty() : LYING;
+    }
     return OUTLINES.get(part).get(facing);
   }
 
-  public static VoxelShape collision(final TentPart part, final Direction facing) {
-    return part.roof() ? VoxelShapes.empty() : outline(part, facing);
+  public static VoxelShape collision(
+      final TentPart part, final Direction facing, final boolean struck) {
+    return part.roof() || struck ? VoxelShapes.empty() : outline(part, facing, false);
   }
 
   private static VoxelShape north(final TentPart part) {

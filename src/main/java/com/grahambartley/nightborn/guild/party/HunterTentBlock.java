@@ -48,7 +48,14 @@ public class HunterTentBlock extends BlockWithEntity implements StrikesWithCamp 
     if (state.get(PART) != TentPart.ORIGIN || state.get(STRUCK)) {
       return;
     }
-    world.setBlockState(pos, state.with(STRUCK, true), Block.NOTIFY_LISTENERS);
+    final Direction facing = state.get(FACING);
+    for (final TentPart part : TentPart.values()) {
+      final BlockPos at = pos.add(part.offset(facing));
+      final BlockState cell = world.getBlockState(at);
+      if (cell.isOf(this) && cell.get(FACING) == facing && cell.get(PART) == part) {
+        world.setBlockState(at, cell.with(STRUCK, true), Block.NOTIFY_LISTENERS);
+      }
+    }
     world.playSound(null, pos, SoundEvents.BLOCK_WOOL_BREAK, SoundCategory.BLOCKS, 1.0F, 0.8F);
     world.scheduleBlockTick(pos, this, STRIKE_TICKS);
   }
@@ -69,7 +76,7 @@ public class HunterTentBlock extends BlockWithEntity implements StrikesWithCamp 
       final BlockView world,
       final BlockPos pos,
       final ShapeContext context) {
-    return TentShapes.outline(state.get(PART), state.get(FACING));
+    return TentShapes.outline(state.get(PART), state.get(FACING), state.get(STRUCK));
   }
 
   @Override
@@ -78,7 +85,7 @@ public class HunterTentBlock extends BlockWithEntity implements StrikesWithCamp 
       final BlockView world,
       final BlockPos pos,
       final ShapeContext context) {
-    return TentShapes.collision(state.get(PART), state.get(FACING));
+    return TentShapes.collision(state.get(PART), state.get(FACING), state.get(STRUCK));
   }
 
   @Override
@@ -101,7 +108,12 @@ public class HunterTentBlock extends BlockWithEntity implements StrikesWithCamp 
 
   @Override
   protected BlockState mirror(final BlockState state, final BlockMirror mirror) {
-    return state.rotate(mirror.getRotation(state.get(FACING)));
+    if (mirror == BlockMirror.NONE) {
+      return state;
+    }
+    return state
+        .with(FACING, mirror.apply(state.get(FACING)))
+        .with(PART, state.get(PART).mirrored());
   }
 
   @Override
