@@ -1,0 +1,7 @@
+{
+  "asset_id": "nightborn:cross",
+  "description": {
+    "translate": "trim_pattern.nightborn.cross"
+  },
+  "template_item": "nightborn:cross_armor_trim_smithing_template"
+}

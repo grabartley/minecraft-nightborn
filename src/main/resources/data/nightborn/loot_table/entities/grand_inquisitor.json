@@ -7,14 +7,39 @@
       "entries": [
         {
           "type": "minecraft:item",
+          "name": "nightborn:blood_bottle",
+          "functions": [
+            {
+              "function": "minecraft:set_components",
+              "components": {
+                "nightborn:blood_quality": "player"
+              }
+            },
+            {
+              "function": "minecraft:set_count",
+              "count": {
+                "type": "minecraft:uniform",
+                "min": 8,
+                "max": 12
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
           "name": "minecraft:gold_ingot",
           "functions": [
             {
               "function": "minecraft:set_count",
               "count": {
                 "type": "minecraft:uniform",
-                "min": 4,
-                "max": 8
+                "min": 12,
+                "max": 20
               }
             }
           ]
@@ -32,11 +57,191 @@
               "function": "minecraft:set_count",
               "count": {
                 "type": "minecraft:uniform",
-                "min": 6,
-                "max": 12
+                "min": 8,
+                "max": 14
               }
             }
           ]
+        }
+      ]
+    },
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:diamond",
+          "functions": [
+            {
+              "function": "minecraft:set_count",
+              "count": {
+                "type": "minecraft:uniform",
+                "min": 5,
+                "max": 9
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "nightborn:inquisitor_mail",
+          "functions": [
+            {
+              "function": "minecraft:set_count",
+              "count": {
+                "type": "minecraft:uniform",
+                "min": 2,
+                "max": 4
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "rolls": 2,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:netherite_ingot",
+          "weight": 3
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:enchanted_golden_apple",
+          "weight": 3
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:totem_of_undying",
+          "weight": 2
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:book",
+          "weight": 4,
+          "functions": [
+            {
+              "function": "minecraft:enchant_with_levels",
+              "levels": 39,
+              "options": "#minecraft:on_random_loot"
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:diamond_sword",
+          "weight": 2,
+          "functions": [
+            {
+              "function": "minecraft:enchant_with_levels",
+              "levels": 39,
+              "options": "#minecraft:on_random_loot"
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:diamond_axe",
+          "weight": 2,
+          "functions": [
+            {
+              "function": "minecraft:enchant_with_levels",
+              "levels": 39,
+              "options": "#minecraft:on_random_loot"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:empty",
+          "weight": 376
+        },
+        {
+          "type": "minecraft:item",
+          "name": "nightborn:inquisitor_greatsword",
+          "weight": 4
+        },
+        {
+          "type": "minecraft:item",
+          "name": "nightborn:inquisitor_hat",
+          "weight": 5
+        },
+        {
+          "type": "minecraft:item",
+          "name": "nightborn:inquisitor_coat",
+          "weight": 5
+        },
+        {
+          "type": "minecraft:item",
+          "name": "nightborn:inquisitor_greaves",
+          "weight": 5
+        },
+        {
+          "type": "minecraft:item",
+          "name": "nightborn:inquisitor_boots",
+          "weight": 5
+        }
+      ]
+    },
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:empty",
+          "weight": 90
+        },
+        {
+          "type": "minecraft:item",
+          "name": "nightborn:cross_armor_trim_smithing_template",
+          "weight": 5
+        },
+        {
+          "type": "minecraft:item",
+          "name": "nightborn:chain_armor_trim_smithing_template",
+          "weight": 5
+        }
+      ]
+    },
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:empty",
+          "weight": 67
+        },
+        {
+          "type": "minecraft:item",
+          "name": "nightborn:broken_crucifix",
+          "weight": 8
+        },
+        {
+          "type": "minecraft:item",
+          "name": "nightborn:music_disc_inquisitor",
+          "weight": 5
+        }
+      ]
+    },
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:empty",
+          "weight": 499
+        },
+        {
+          "type": "minecraft:item",
+          "name": "nightborn:tame_hawk",
+          "weight": 1
         }
       ]
     },

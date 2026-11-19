@@ -8,6 +8,7 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.passive.BatEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.registry.tag.DamageTypeTags;
@@ -63,7 +64,7 @@ public class PetBatEntity extends VampireBatEntity {
       return super.interactMob(player, hand);
     }
     if (!getWorld().isClient()) {
-      final ItemStack stack = new ItemStack(EldestSpoils.TAME_BAT);
+      final ItemStack stack = new ItemStack(homeItem());
       if (hasCustomName()) {
         stack.set(DataComponentTypes.CUSTOM_NAME, getCustomName());
       }
@@ -71,6 +72,10 @@ public class PetBatEntity extends VampireBatEntity {
       discard();
     }
     return ActionResult.success(getWorld().isClient());
+  }
+
+  protected Item homeItem() {
+    return EldestSpoils.TAME_BAT;
   }
 
   @Override

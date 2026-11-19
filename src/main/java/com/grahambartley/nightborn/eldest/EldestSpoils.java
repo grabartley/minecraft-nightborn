@@ -2,6 +2,7 @@ package com.grahambartley.nightborn.eldest;
 
 import com.grahambartley.nightborn.Nightborn;
 import com.grahambartley.nightborn.gear.StakeItem;
+import com.grahambartley.nightborn.mob.NightbornMobs;
 import com.grahambartley.nightborn.sound.NightbornSounds;
 import java.util.function.Function;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
@@ -86,7 +87,11 @@ public final class EldestSpoils {
           settings -> new Item(settings.maxCount(1).rarity(Rarity.RARE).jukeboxPlayable(SONG)));
 
   public static final Item TAME_BAT =
-      item("tame_bat", settings -> new PetBatItem(settings.maxCount(1).rarity(Rarity.EPIC)));
+      item(
+          "tame_bat",
+          settings ->
+              new PetBatItem(
+                  () -> NightbornMobs.PET_BAT, settings.maxCount(1).rarity(Rarity.EPIC)));
 
   private EldestSpoils() {}
 

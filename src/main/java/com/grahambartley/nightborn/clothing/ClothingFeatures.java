@@ -8,6 +8,7 @@ public final class ClothingFeatures {
     WornAttributes.register();
     WornPowers.register();
     ClothingItems.register();
+    Lining.register();
     NightSightEffect.register();
     ClothingPowerEffect.register();
   }

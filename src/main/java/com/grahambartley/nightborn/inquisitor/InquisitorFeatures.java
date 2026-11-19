@@ -6,6 +6,8 @@ public final class InquisitorFeatures {
 
   public static void register() {
     InquisitorMobs.register();
+    InquisitorSpoils.register();
+    InquisitorSet.register();
     InquisitorOutcomes.register();
     InquisitorDeaths.register();
     InquisitorDues.register();

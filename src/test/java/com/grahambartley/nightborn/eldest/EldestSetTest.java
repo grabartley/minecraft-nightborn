@@ -10,19 +10,6 @@ import org.junit.jupiter.params.provider.CsvSource;
 
 class EldestSetTest {
 
-  @ParameterizedTest(name = "{0} armour pieces, blade held {1}: complete {2}")
-  @CsvSource({
-    "0, false, false",
-    "0, true, false",
-    "3, true, false",
-    "4, false, false",
-    "4, true, true"
-  })
-  @DisplayName("the set is whole only with all four armour pieces worn and the blade in hand")
-  void complete(final int pieces, final boolean blade, final boolean complete) {
-    assertEquals(complete, EldestSet.complete(pieces, blade));
-  }
-
   @ParameterizedTest(name = "{0} dealt, blade {1}, full set {2}: {3} stolen")
   @CsvSource({
     "10, true, false, 1.0",

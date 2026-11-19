@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "#S#",
+    "#C#",
+    "###"
+  ],
+  "key": {
+    "#": {
+      "item": "minecraft:diamond"
+    },
+    "S": {
+      "item": "nightborn:chain_armor_trim_smithing_template"
+    },
+    "C": {
+      "item": "minecraft:iron_block"
+    }
+  },
+  "result": {
+    "id": "nightborn:chain_armor_trim_smithing_template",
+    "count": 2
+  }
+}

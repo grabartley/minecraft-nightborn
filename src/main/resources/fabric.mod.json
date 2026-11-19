@@ -86,6 +86,7 @@
       "com.grahambartley.nightborn.gametest.EldestFightGameTest",
       "com.grahambartley.nightborn.gametest.InquisitorFightGameTest",
       "com.grahambartley.nightborn.gametest.EldestSpoilsGameTest",
+      "com.grahambartley.nightborn.gametest.InquisitorSpoilsGameTest",
       "com.grahambartley.nightborn.gametest.RitualGameTest",
       "com.grahambartley.nightborn.gametest.LancetGameTest",
       "com.grahambartley.nightborn.gametest.OldBloodFontGameTest",
