@@ -8,6 +8,7 @@ import com.grahambartley.nightborn.boss.BossFight;
 import com.grahambartley.nightborn.boss.BossFightPlan;
 import com.grahambartley.nightborn.boss.BossFights;
 import com.grahambartley.nightborn.boss.BossHealth;
+import com.grahambartley.nightborn.boss.DeathHold;
 import com.grahambartley.nightborn.boss.FightRoll;
 import com.grahambartley.nightborn.boss.FightRules;
 import com.grahambartley.nightborn.boss.Fought;
@@ -86,7 +87,6 @@ public class GrandInquisitorEntity extends HunterEntity implements ArenaBoss, Bi
   static final String CHAT_LINE = "chat.type.text";
   static final String EMPTY_SINCE_KEY = "EmptySince";
   static final long NEVER = Long.MIN_VALUE;
-  static final int LAST_DEATH_TICK = 19;
 
   private static final TrackedData<String> FORM =
       DataTracker.registerData(GrandInquisitorEntity.class, TrackedDataHandlerRegistry.STRING);
@@ -107,7 +107,7 @@ public class GrandInquisitorEntity extends HunterEntity implements ArenaBoss, Bi
   @Nullable private InquisitorQuarry quarry;
   private long emptySince = NEVER;
   private long bittenAt = NEVER;
-  private int dyingTicks;
+  private final DeathHold deathHold = new DeathHold();
   private boolean leaving;
 
   public GrandInquisitorEntity(
@@ -512,30 +512,27 @@ public class GrandInquisitorEntity extends HunterEntity implements ArenaBoss, Bi
 
   @Override
   public void onDeath(final DamageSource source) {
-    super.onDeath(source);
-    if (getWorld().isClient()) {
-      return;
+    if (!getWorld().isClient()) {
+      plan()
+          .map(BossFightPlan::clips)
+          .filter(clips -> clips.deathHold() > 0)
+          .ifPresent(
+              clips -> {
+                showPower("");
+                dataTracker.set(FORM, clips.dying().encode());
+                dataTracker.set(DEATH_HOLD, clips.deathHold());
+              });
     }
-    plan()
-        .map(BossFightPlan::clips)
-        .filter(clips -> clips.deathHold() > 0)
-        .ifPresent(
-            clips -> {
-              showPower("");
-              dataTracker.set(FORM, clips.dying().encode());
-              dataTracker.set(DEATH_HOLD, clips.deathHold());
-            });
+    super.onDeath(source);
   }
 
   @Override
   protected void updatePostDeath() {
-    if (InquisitorDrain.lingers(dyingTicks, dataTracker.get(DEATH_HOLD))) {
-      dyingTicks++;
+    final int hold = dataTracker.get(DEATH_HOLD);
+    if (deathHold.lingers(hold)) {
       return;
     }
-    if (dataTracker.get(DEATH_HOLD) > 0) {
-      deathTime = Math.max(deathTime, LAST_DEATH_TICK);
-    }
+    deathTime = DeathHold.deathTime(deathTime, hold);
     super.updatePostDeath();
   }
 

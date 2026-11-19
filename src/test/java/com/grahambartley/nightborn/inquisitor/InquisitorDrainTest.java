@@ -81,11 +81,4 @@ class InquisitorDrainTest {
   void fed(final long now, final long bittenAt, final boolean fed) {
     assertEquals(fed, InquisitorDrain.fed(now, bittenAt));
   }
-
-  @ParameterizedTest(name = "dying for {0} ticks, held {1}: lingers {2}")
-  @CsvSource({"0, 60, true", "59, 60, true", "60, 60, false", "0, 0, false", "5, 0, false"})
-  @DisplayName("his body stays until his death clip has played, and goes at once without one")
-  void lingers(final int dying, final int hold, final boolean lingers) {
-    assertEquals(lingers, InquisitorDrain.lingers(dying, hold));
-  }
 }

@@ -63,6 +63,10 @@ public record FightClips(
     return new ShownForm("", "", death, false);
   }
 
+  public long riseEnd(final long now) {
+    return now + riseTicks;
+  }
+
   public int deathHold() {
     return death.isEmpty() ? 0 : deathTicks;
   }

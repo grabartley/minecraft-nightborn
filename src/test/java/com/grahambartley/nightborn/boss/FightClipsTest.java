@@ -76,4 +76,12 @@ class FightClipsTest {
     assertEquals(hold, clips.deathHold());
     assertEquals(new ShownForm("", "", death, false), clips.dying());
   }
+
+  @ParameterizedTest(name = "rising for {0} ticks from {1}: on his feet at {2}")
+  @CsvSource({"48, 1000, 1048", "0, 1000, 1000", "20, 0, 20"})
+  @DisplayName("he is on his feet once his rise clip has played")
+  void riseEnd(final int riseTicks, final long now, final long end) {
+    assertEquals(
+        end, new FightClips("", "", "", "", "", "", "", "", "rise", riseTicks, "", 0).riseEnd(now));
+  }
 }

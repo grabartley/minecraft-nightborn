@@ -27,8 +27,4 @@ public final class InquisitorDrain {
   public static boolean fed(final long now, final long bittenAt) {
     return bittenAt <= now && bittenAt > now - FED_TICKS;
   }
-
-  public static boolean lingers(final int dyingTicks, final int hold) {
-    return dyingTicks < hold;
-  }
 }

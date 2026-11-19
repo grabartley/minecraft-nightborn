@@ -27,6 +27,7 @@ public final class BossFight {
   static final double EDGE = 1.5;
   static final long NEVER = -1L;
   static final String CHANGE_KEY = "BossChangeUntil";
+  static final String RISE_KEY = "BossRiseUntil";
   static final String STAKING_KEY = "BossStaking";
   static final String OCCUPIED_KEY = "BossLastOccupied";
   static final String START_KEY = "BossStart";
@@ -322,7 +323,8 @@ public final class BossFight {
         plan.map(p -> PhaseTrack.ceiling(p.shares(), p.phases().size() - 1)).orElse(1.0);
     boss.setHealth(rules.risen(boss.getMaxHealth(), lastShare));
     show(boss, plan.map(p -> p.clips().rise()).orElse(""));
-    riseUntil = boss.getWorld().getTime() + plan.map(p -> p.clips().riseTicks()).orElse(0);
+    riseUntil =
+        plan.map(BossFightPlan::clips).orElse(FightClips.NONE).riseEnd(boss.getWorld().getTime());
     return true;
   }
 
@@ -419,6 +421,7 @@ public final class BossFight {
     attacks.cancel();
     hits.clear();
     changeUntil = 0L;
+    riseUntil = 0L;
     BossReactions.returnTo(boss, start);
     boss.setTarget(null);
     boss.getNavigation().stop();
@@ -428,6 +431,7 @@ public final class BossFight {
   public void write(final NbtCompound nbt) {
     phases.write(nbt);
     nbt.putLong(CHANGE_KEY, changeUntil);
+    nbt.putLong(RISE_KEY, riseUntil);
     nbt.putBoolean(STAKING_KEY, staking);
     nbt.putLong(OCCUPIED_KEY, lastOccupied);
     if (start != null) {
@@ -441,6 +445,7 @@ public final class BossFight {
   public void read(final NbtCompound nbt) {
     phases.read(nbt);
     changeUntil = nbt.getLong(CHANGE_KEY);
+    riseUntil = nbt.getLong(RISE_KEY);
     staking = nbt.getBoolean(STAKING_KEY);
     lastOccupied = nbt.contains(OCCUPIED_KEY) ? nbt.getLong(OCCUPIED_KEY) : NEVER;
     start = SpotNbt.vec(nbt, START_KEY).orElse(start);
