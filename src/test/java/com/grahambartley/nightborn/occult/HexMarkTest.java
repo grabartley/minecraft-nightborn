@@ -2,6 +2,8 @@ package com.grahambartley.nightborn.occult;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
 import java.util.UUID;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -15,5 +17,15 @@ class HexMarkTest {
   void heals(
       final float amount, final float share, final long until, final long now, final float healed) {
     assertEquals(healed, new HexMark(UUID.randomUUID(), share, until).heal(amount, now), 1.0E-6);
+  }
+
+  @ParameterizedTest(name = "share {0}, until {1}")
+  @CsvSource({"0.5, 400", "1.0, 0", "0.25, 9000000000"})
+  @DisplayName("a hex reaches every client unchanged so the mark above the cursed shows")
+  void syncs(final float share, final long until) {
+    final HexMark mark = new HexMark(UUID.randomUUID(), share, until);
+    final ByteBuf buf = Unpooled.buffer();
+    HexMark.PACKET_CODEC.encode(buf, mark);
+    assertEquals(mark, HexMark.PACKET_CODEC.decode(buf));
   }
 }

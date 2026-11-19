@@ -4,9 +4,11 @@ import com.grahambartley.nightborn.Nightborn;
 import com.grahambartley.nightborn.batform.BatForm;
 import com.grahambartley.nightborn.levitation.Levitation;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentRegistry;
+import net.fabricmc.fabric.api.attachment.v1.AttachmentSyncPredicate;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentType;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.network.codec.PacketCodecs;
 import net.minecraft.util.Identifier;
 
 public final class Grounding {
@@ -14,7 +16,9 @@ public final class Grounding {
   static final double DRAG = -0.8;
 
   public static final AttachmentType<Long> TYPE =
-      AttachmentRegistry.create(Identifier.of(Nightborn.MOD_ID, "grounded"));
+      AttachmentRegistry.create(
+          Identifier.of(Nightborn.MOD_ID, "grounded"),
+          builder -> builder.syncWith(PacketCodecs.VAR_LONG, AttachmentSyncPredicate.all()));
 
   private Grounding() {}
 

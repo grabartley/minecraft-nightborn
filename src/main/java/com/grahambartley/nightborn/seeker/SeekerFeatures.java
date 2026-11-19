@@ -6,6 +6,7 @@ public final class SeekerFeatures {
 
   public static void register() {
     Quarries.register();
+    QuarryBrand.register();
     Revelations.register();
     TrueSights.register();
     SixthSense.register();

@@ -1,0 +1,239 @@
+{
+	"format_version": "1.12.0",
+	"minecraft:geometry": [
+		{
+			"description": {
+				"identifier": "geometry.net_drape",
+				"texture_width": 64,
+				"texture_height": 64,
+				"visible_bounds_width": 3,
+				"visible_bounds_height": 2.5,
+				"visible_bounds_offset": [
+					0,
+					0.75,
+					0
+				]
+			},
+			"bones": [
+				{
+					"name": "net",
+					"pivot": [
+						0,
+						0,
+						0
+					],
+					"cubes": [
+						{
+							"origin": [
+								-8,
+								17,
+								-8
+							],
+							"size": [
+								16,
+								0,
+								16
+							],
+							"uv": [
+								0,
+								0
+							]
+						}
+					]
+				},
+				{
+					"name": "skirt_n",
+					"parent": "net",
+					"pivot": [
+						0,
+						17,
+						-8
+					],
+					"rotation": [
+						-8,
+						0,
+						0
+					],
+					"cubes": [
+						{
+							"origin": [
+								-8,
+								3,
+								-8
+							],
+							"size": [
+								16,
+								14,
+								0
+							],
+							"uv": [
+								0,
+								16
+							]
+						},
+						{
+							"origin": [
+								7,
+								2,
+								-9
+							],
+							"size": [
+								2,
+								2,
+								2
+							],
+							"uv": [
+								56,
+								0
+							]
+						},
+						{
+							"origin": [
+								-9,
+								2,
+								-9
+							],
+							"size": [
+								2,
+								2,
+								2
+							],
+							"uv": [
+								56,
+								0
+							]
+						}
+					]
+				},
+				{
+					"name": "skirt_s",
+					"parent": "net",
+					"pivot": [
+						0,
+						17,
+						8
+					],
+					"rotation": [
+						8,
+						0,
+						0
+					],
+					"cubes": [
+						{
+							"origin": [
+								-8,
+								3,
+								8
+							],
+							"size": [
+								16,
+								14,
+								0
+							],
+							"uv": [
+								0,
+								16
+							]
+						},
+						{
+							"origin": [
+								7,
+								2,
+								7
+							],
+							"size": [
+								2,
+								2,
+								2
+							],
+							"uv": [
+								56,
+								0
+							]
+						},
+						{
+							"origin": [
+								-9,
+								2,
+								7
+							],
+							"size": [
+								2,
+								2,
+								2
+							],
+							"uv": [
+								56,
+								0
+							]
+						}
+					]
+				},
+				{
+					"name": "skirt_e",
+					"parent": "net",
+					"pivot": [
+						-8,
+						17,
+						0
+					],
+					"rotation": [
+						0,
+						0,
+						8
+					],
+					"cubes": [
+						{
+							"origin": [
+								-8,
+								3,
+								-8
+							],
+							"size": [
+								0,
+								14,
+								16
+							],
+							"uv": [
+								32,
+								16
+							]
+						}
+					]
+				},
+				{
+					"name": "skirt_w",
+					"parent": "net",
+					"pivot": [
+						8,
+						17,
+						0
+					],
+					"rotation": [
+						0,
+						0,
+						-8
+					],
+					"cubes": [
+						{
+							"origin": [
+								8,
+								3,
+								-8
+							],
+							"size": [
+								0,
+								14,
+								16
+							],
+							"uv": [
+								32,
+								16
+							]
+						}
+					]
+				}
+			]
+		}
+	]
+}

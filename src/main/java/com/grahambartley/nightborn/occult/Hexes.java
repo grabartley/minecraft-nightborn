@@ -5,6 +5,7 @@ import com.grahambartley.nightborn.sight.Sight;
 import com.grahambartley.nightborn.sight.Sights;
 import com.grahambartley.nightborn.skill.PowerReach;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentRegistry;
+import net.fabricmc.fabric.api.attachment.v1.AttachmentSyncPredicate;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffectInstance;
@@ -20,7 +21,12 @@ public final class Hexes {
   static final int MARK_COLOUR = 0x7A1E6B;
 
   public static final AttachmentType<HexMark> TYPE =
-      AttachmentRegistry.createPersistent(Identifier.of(Nightborn.MOD_ID, "hex"), HexMark.CODEC);
+      AttachmentRegistry.create(
+          Identifier.of(Nightborn.MOD_ID, "hex"),
+          builder ->
+              builder
+                  .persistent(HexMark.CODEC)
+                  .syncWith(HexMark.PACKET_CODEC, AttachmentSyncPredicate.all()));
 
   private Hexes() {}
 

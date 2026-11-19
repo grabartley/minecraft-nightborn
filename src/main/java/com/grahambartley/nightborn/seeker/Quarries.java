@@ -13,6 +13,7 @@ import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
@@ -30,7 +31,12 @@ public final class Quarries {
     ServerLivingEntityEvents.AFTER_DEATH.register(
         (entity, source) -> MARKS.values().removeIf(marked -> marked.mark().on(entity.getUuid())));
     ServerPlayConnectionEvents.DISCONNECT.register(
-        (handler, server) -> MARKS.remove(handler.getPlayer().getUuid()));
+        (handler, server) -> {
+          final Marked gone = MARKS.remove(handler.getPlayer().getUuid());
+          if (gone != null) {
+            rebrand(server, gone.mark().target(), handler.getPlayer().getServerWorld().getTime());
+          }
+        });
     ServerLifecycleEvents.SERVER_STOPPED.register(server -> MARKS.clear());
   }
 
@@ -39,15 +45,18 @@ public final class Quarries {
     if (!(caster instanceof ServerPlayerEntity hunter)) {
       return;
     }
-    MARKS.put(
-        hunter.getUuid(),
-        new Marked(
-            new QuarryMark(
-                target.getUuid(),
-                hunter.getServerWorld().getTime() + power.durationTicks(),
-                power.damageShare(),
-                power.colour()),
-            power));
+    final long now = hunter.getServerWorld().getTime();
+    final long until = now + power.durationTicks();
+    final Marked before =
+        MARKS.put(
+            hunter.getUuid(),
+            new Marked(
+                new QuarryMark(target.getUuid(), until, power.damageShare(), power.colour()),
+                power));
+    if (before != null) {
+      rebrand(hunter.getServer(), before.mark().target(), now);
+    }
+    rebrand(hunter.getServer(), target.getUuid(), now);
     Trails.follow(hunter, target, true);
     hunter.sendMessage(
         Text.translatable("nightborn.seeker.marked", target.getDisplayName())
@@ -83,6 +92,17 @@ public final class Quarries {
     return marked != null && marked.mark().lasts(now) && marked.mark().on(target)
         ? marked.mark().share()
         : 0.0;
+  }
+
+  private static void rebrand(final MinecraftServer server, final UUID target, final long now) {
+    QuarryBrand.refresh(
+        server,
+        target,
+        MARKS.values().stream()
+            .map(Marked::mark)
+            .filter(mark -> mark.lasts(now) && mark.on(target))
+            .map(QuarryMark::until)
+            .toList());
   }
 
   public static boolean outlined(final boolean veiled, final boolean boss, final boolean inSight) {
