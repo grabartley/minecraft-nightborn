@@ -1,0 +1,24 @@
+{
+  "branch": "nightborn:seeker",
+  "requires": [
+    "nightborn:seeker/keen_tracking"
+  ],
+  "icon": "nightborn:skills/icon/read_the_scene",
+  "column": 0,
+  "row": 1,
+  "ranks": [
+    {
+      "cost": 2
+    }
+  ],
+  "power": {
+    "blood": 0,
+    "cooldown_ticks": 400,
+    "read_scene": {
+      "range": 8.0,
+      "kill_radius": 4.0,
+      "fresh_ticks": 24000
+    },
+    "sound": "minecraft:item.book.page_turn"
+  }
+}

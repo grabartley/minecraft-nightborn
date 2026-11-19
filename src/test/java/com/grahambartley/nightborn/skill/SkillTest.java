@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -137,6 +138,38 @@ class SkillTest {
             .mapToDouble(SkillAttribute::amount)
             .sum(),
         1.0E-9);
+  }
+
+  @ParameterizedTest(name = "{0}")
+  @CsvSource(
+      delimiter = '|',
+      value = {
+        "seeker/keen_tracking | 1 1 2 | hunter/tracking | ''",
+        "hunter/iron_will | 2 2 3 | hunter/tracking | ''",
+        "seeker/sixth_sense | 2 | hunter/tracking | ''",
+        "seeker/soft_step | 1 2 2 | seeker/sixth_sense | ''",
+        "seeker/read_the_scene | 2 | seeker/keen_tracking | ''",
+        "seeker/mark_quarry | 2 | seeker/keen_tracking | ''",
+        "seeker/grave_listener | 2 | seeker/sixth_sense | ''",
+        "seeker/true_sight | 3 | seeker/sixth_sense | hunter",
+        "seeker/revelation | 4 | seeker/true_sight seeker/mark_quarry | master",
+        "seeker/hunters_patience | 3 | seeker/revelation | master"
+      })
+  @DisplayName(
+      "every Seeker skill ships in its path with the costs, needs and rank the table gives")
+  void seekerShips(final String skill, final String costs, final String needs, final String rank)
+      throws IOException {
+    final Skill shipped = shippedSkills().get(Identifier.of("nightborn", skill));
+    assertEquals(Identifier.of("nightborn", "seeker"), shipped.branch());
+    assertEquals(
+        Arrays.stream(costs.split(" ")).map(Integer::parseInt).toList(),
+        shipped.ranks().stream().map(SkillRank::cost).toList());
+    assertEquals(
+        Arrays.stream(needs.split(" ")).map(need -> Identifier.of("nightborn", need)).toList(),
+        shipped.requires());
+    assertEquals(
+        rank.isEmpty() ? Optional.empty() : Optional.of(Identifier.of("nightborn", rank)),
+        shipped.rank());
   }
 
   @ParameterizedTest(name = "{0}")

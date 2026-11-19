@@ -25,6 +25,10 @@ public record MistState(long until, float harm) {
           MistState::harm,
           MistState::new);
 
+  public MistState endedAt(final long now) {
+    return over(now) ? this : new MistState(now, harm);
+  }
+
   public boolean over(final long now) {
     return now >= until;
   }

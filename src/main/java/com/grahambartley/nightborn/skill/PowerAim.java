@@ -7,6 +7,7 @@ import com.grahambartley.nightborn.mind.Mesmerise;
 import com.grahambartley.nightborn.occult.Circles;
 import com.grahambartley.nightborn.occult.HexPower;
 import com.grahambartley.nightborn.occult.ShadowStep;
+import com.grahambartley.nightborn.seeker.MarkPower;
 import com.grahambartley.nightborn.slayer.Dashes;
 import com.grahambartley.nightborn.slayer.LungePower;
 import com.grahambartley.nightborn.slayer.Lunges;
@@ -36,6 +37,7 @@ public record PowerAim(
         || power.lunge().isPresent()
         || power.pounce().isPresent()
         || power.hex().isPresent()
+        || power.seek().markQuarry().isPresent()
         || power.command().isPresent()
         || places(power)
         || power.faith().armsAWeapon();
@@ -50,7 +52,8 @@ public record PowerAim(
         .pounce()
         .map(PouncePower::range)
         .or(() -> power.hex().map(HexPower::range))
-        .or(() -> power.lunge().map(LungePower::distance));
+        .or(() -> power.lunge().map(LungePower::distance))
+        .or(() -> power.seek().markQuarry().map(MarkPower::range));
   }
 
   public static PowerAim of(

@@ -10,6 +10,8 @@ import com.grahambartley.nightborn.faith.Rebukes;
 import com.grahambartley.nightborn.hold.Holds;
 import com.grahambartley.nightborn.moment.Moments;
 import com.grahambartley.nightborn.network.UsePowerPayload;
+import com.grahambartley.nightborn.seeker.Revelations;
+import com.grahambartley.nightborn.seeker.SeekCasts;
 import com.grahambartley.nightborn.slayer.Lunges;
 import com.grahambartley.nightborn.slayer.QuickShots;
 import com.grahambartley.nightborn.slayer.StakeThrows;
@@ -171,7 +173,9 @@ public final class Powers {
                     owned ->
                         owned.fight().quickShot().isPresent()
                             && QuickShots.loaded(caster).isEmpty())
-                .orElse(false)));
+                .orElse(false),
+            id != null && power.isPresent() && Revelations.bars(caster, id),
+            power.map(owned -> SeekCasts.sceneless(caster, owned.seek())).orElse(false)));
   }
 
   public static PowerUse.Verdict cast(final LivingEntity caster, @Nullable final Identifier id) {

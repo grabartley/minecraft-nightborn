@@ -21,6 +21,7 @@ import com.grahambartley.nightborn.occult.Hexes;
 import com.grahambartley.nightborn.occult.MistForm;
 import com.grahambartley.nightborn.occult.ShadowStep;
 import com.grahambartley.nightborn.occult.Swarms;
+import com.grahambartley.nightborn.seeker.SeekCasts;
 import com.grahambartley.nightborn.sight.Sight;
 import com.grahambartley.nightborn.sight.Sights;
 import com.grahambartley.nightborn.slayer.Charges;
@@ -65,6 +66,7 @@ final class PowerCasts {
     traps(caster, id, power, aim);
     faith(caster, power, aim);
     fight(caster, power.fight());
+    SeekCasts.apply(caster, power.seek(), aim.target());
     power.familiar().ifPresent(familiar -> GhostlyFamiliars.summon(caster, familiar));
     power.fog().ifPresent(fog -> FogClouds.spawn(caster, fog));
     power.rally().ifPresent(rally -> Rally.call(caster, rally));

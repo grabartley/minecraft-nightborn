@@ -28,4 +28,16 @@ class TrailRulesTest {
   void over(final long now, final long until, final boolean over) {
     assertEquals(over, TrailRules.over(now, until));
   }
+
+  @ParameterizedTest(name = "ends at death {0}, quarry died {1} -> ends {2}")
+  @CsvSource({
+    "true, true, true",
+    "true, false, false",
+    "false, true, false",
+    "false, false, false"
+  })
+  @DisplayName("a marked quarry's trail ends at its death, and a wounded vampire's leads home")
+  void endsWith(final boolean endsAtDeath, final boolean died, final boolean ends) {
+    assertEquals(ends, TrailRules.endsWith(endsAtDeath, died));
+  }
 }

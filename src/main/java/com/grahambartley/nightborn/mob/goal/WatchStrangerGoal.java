@@ -3,6 +3,7 @@ package com.grahambartley.nightborn.mob.goal;
 import com.grahambartley.nightborn.downed.Downed;
 import com.grahambartley.nightborn.mob.VampireEntity;
 import com.grahambartley.nightborn.mob.home.StrangerWatch;
+import com.grahambartley.nightborn.mob.home.WatchedStranger;
 import com.grahambartley.nightborn.server.ServerConfigService;
 import com.grahambartley.nightborn.vampire.Vampires;
 import java.util.EnumSet;
@@ -64,6 +65,9 @@ public class WatchStrangerGoal extends Goal {
   public void start() {
     watched = 0;
     repath = 0;
+    if (stranger != null) {
+      WatchedStranger.watch(vampire, stranger.getUuid());
+    }
   }
 
   @Override
@@ -91,6 +95,7 @@ public class WatchStrangerGoal extends Goal {
   @Override
   public void stop() {
     stranger = null;
+    WatchedStranger.stop(vampire);
     vampire.getNavigation().stop();
   }
 

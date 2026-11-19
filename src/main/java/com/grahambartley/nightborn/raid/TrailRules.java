@@ -11,6 +11,10 @@ public final class TrailRules {
     return time + (toDawn == 0 ? NightTime.DAY_LENGTH : toDawn);
   }
 
+  public static boolean endsWith(final boolean endsAtDeath, final boolean quarryDied) {
+    return endsAtDeath && quarryDied;
+  }
+
   public static boolean over(final long now, final long until) {
     return now >= until;
   }
