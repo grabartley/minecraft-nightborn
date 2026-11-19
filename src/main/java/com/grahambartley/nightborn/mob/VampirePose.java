@@ -13,7 +13,7 @@ public enum VampirePose {
   WALK("walk", Play.LOOP),
   RUN("run", Play.LOOP),
   ATTACK("attack", Play.HOLD),
-  DOWNED("downed", Play.HOLD, Hold.ARMS_AND_HEAD),
+  DOWNED("downed", "downed_rest", Hold.ARMS_AND_HEAD),
   LEVITATE("levitate", Play.LOOP),
   LEVITATE_MOVE("levitate_move", Play.LOOP),
   LEVITATE_SPRINT("levitate_sprint", Play.LOOP),
@@ -82,6 +82,12 @@ public enum VampirePose {
           case HOLD -> RawAnimation.begin().thenPlayAndHold(animation);
           case ONCE -> RawAnimation.begin().thenPlay(animation);
         };
+  }
+
+  VampirePose(final String animation, final String rest, final Hold hold) {
+    this.animation = animation;
+    this.hold = hold;
+    this.clip = RawAnimation.begin().thenPlay(animation).thenLoop(rest);
   }
 
   public static VampirePose of(final Cue cue) {

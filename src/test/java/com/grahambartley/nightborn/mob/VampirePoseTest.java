@@ -8,6 +8,7 @@ import com.google.gson.JsonParser;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -200,7 +201,18 @@ class VampirePoseTest {
                         "src/client/resources/assets/nightborn/animations/entity/vampire.animation.json")))
             .getAsJsonObject()
             .getAsJsonObject("animations");
-    assertTrue(animations.has(pose.animation()), pose.animation());
+    pose.clip()
+        .getAnimationStages()
+        .forEach(stage -> assertTrue(animations.has(stage.animationName()), stage.animationName()));
+  }
+
+  @ParameterizedTest(name = "{0} plays {1}")
+  @CsvSource({"DOWNED, downed downed_rest", "RISE, rise", "IDLE, idle", "ATTACK, attack"})
+  @DisplayName("the downed pose falls once and then lies breathing, the others play one clip")
+  void stages(final VampirePose pose, final String stages) {
+    assertEquals(
+        List.of(stages.split(" ")),
+        pose.clip().getAnimationStages().stream().map(stage -> stage.animationName()).toList());
   }
 
   @ParameterizedTest(name = "{0} is standing still: {1}")
