@@ -23,7 +23,7 @@ class ParasolScorchTest {
   @DisplayName("the canopy looks more scorched the more of its sun it has used")
   void texture(final int damage, final int maxDamage, final String stage) {
     assertEquals(
-        "nightborn:textures/item/parasol/" + stage + ".png",
+        "nightborn:textures/entity/parasol/" + stage + ".png",
         ParasolScorch.texture(damage, maxDamage).toString());
   }
 }

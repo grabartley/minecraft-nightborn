@@ -11,10 +11,11 @@ public final class ParasolClips {
 
   private ParasolClips() {}
 
-  public static RawAnimation next(final RawAnimation playing, final boolean open) {
+  public static RawAnimation next(
+      final RawAnimation playing, final boolean open, final boolean ownState) {
     final RawAnimation still = open ? OPENED : CLOSED;
     final RawAnimation moving = open ? OPENING : CLOSING;
-    if (playing == null) {
+    if (playing == null || !ownState) {
       return still;
     }
     return still.equals(playing) || moving.equals(playing) ? playing : moving;

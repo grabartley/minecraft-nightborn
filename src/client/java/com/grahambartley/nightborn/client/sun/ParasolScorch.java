@@ -1,14 +1,26 @@
 package com.grahambartley.nightborn.client.sun;
 
 import com.grahambartley.nightborn.Nightborn;
-import java.util.List;
+import java.util.Locale;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Identifier;
 
 public final class ParasolScorch {
 
-  static final List<String> STAGES = List.of("fresh", "singed", "scorched", "charred");
-  static final List<Double> FROM = List.of(0.0, 0.35, 0.65, 0.9);
+  enum Stage {
+    FRESH(0.0),
+    SINGED(0.35),
+    SCORCHED(0.65),
+    CHARRED(0.9);
+
+    private final double from;
+
+    Stage(final double from) {
+      this.from = from;
+    }
+  }
+
+  public static final Identifier FRESH = texture(Stage.FRESH);
 
   private ParasolScorch() {}
 
@@ -17,16 +29,23 @@ public final class ParasolScorch {
   }
 
   static Identifier texture(final int damage, final int maxDamage) {
-    return Identifier.of(
-        Nightborn.MOD_ID, "textures/item/parasol/" + STAGES.get(stage(damage, maxDamage)) + ".png");
+    return texture(stage(damage, maxDamage));
   }
 
-  static int stage(final int damage, final int maxDamage) {
+  static Stage stage(final int damage, final int maxDamage) {
     final double worn = maxDamage <= 0 ? 0.0 : (double) damage / maxDamage;
-    int stage = 0;
-    while (stage + 1 < FROM.size() && worn >= FROM.get(stage + 1)) {
-      stage++;
+    Stage reached = Stage.FRESH;
+    for (final Stage stage : Stage.values()) {
+      if (worn >= stage.from) {
+        reached = stage;
+      }
     }
-    return stage;
+    return reached;
+  }
+
+  private static Identifier texture(final Stage stage) {
+    return Identifier.of(
+        Nightborn.MOD_ID,
+        "textures/entity/parasol/" + stage.name().toLowerCase(Locale.ROOT) + ".png");
   }
 }

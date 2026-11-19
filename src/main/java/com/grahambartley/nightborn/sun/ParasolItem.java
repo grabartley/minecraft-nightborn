@@ -83,7 +83,8 @@ public class ParasolItem extends Item implements GeoItem {
                 state.setAndContinue(
                     ParasolClips.next(
                         state.getController().getCurrentRawAnimation(),
-                        Parasols.isOpen(state.getData(DataTickets.ITEMSTACK))))));
+                        Parasols.isOpen(state.getData(DataTickets.ITEMSTACK)),
+                        GeoItem.getId(state.getData(DataTickets.ITEMSTACK)) != Long.MAX_VALUE))));
   }
 
   @Override
