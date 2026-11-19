@@ -17,12 +17,14 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import net.minecraft.entity.EntityDimensions;
 import net.minecraft.util.Identifier;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 @ExtendWith(MinecraftBootstrapExtension.class)
 class VampireLooksTest {
@@ -78,6 +80,27 @@ class VampireLooksTest {
         1.5F, builds.values().stream().map(b -> b.minHeight()).min(Float::compare).orElseThrow());
     assertEquals(
         2.0F, builds.values().stream().map(b -> b.maxHeight()).max(Float::compare).orElseThrow());
+  }
+
+  @ParameterizedTest(name = "lord height roll {0}")
+  @ValueSource(doubles = {0.0, 0.5, 1.0})
+  @DisplayName("the lord stands taller than any household vampire, and his hitbox matches")
+  void lordStandsTallest(final double roll) throws IOException {
+    final VampireBuild lord =
+        read("vampire_look", VampireLook.CODEC)
+            .get(Identifier.of("nightborn", "lord"))
+            .build()
+            .orElseThrow();
+    final float tallestHousehold =
+        read("vampire_build", VampireBuild.CODEC).values().stream()
+            .map(VampireBuild::maxHeight)
+            .max(Float::compare)
+            .orElseThrow();
+    final float height = lord.height(roll);
+    assertTrue(height > tallestHousehold, height + " vs " + tallestHousehold);
+    final EntityDimensions hitbox =
+        VampireSize.dimensions(EntityDimensions.changing(0.6F, 1.95F), height, lord.width());
+    assertEquals(height, hitbox.height(), 1.0E-4F);
   }
 
   static Stream<VampireLook> looks() throws IOException {

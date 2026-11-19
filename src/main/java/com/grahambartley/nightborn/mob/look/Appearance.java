@@ -27,11 +27,12 @@ public record Appearance(Identifier look, Optional<Identifier> outfit, float hei
               final Optional<Identifier> outfit =
                   Weighted.pick(fitting, e -> e.getValue().weight(), rolls.getAsDouble())
                       .map(Map.Entry::getKey);
-              final Optional<VampireBuild> build =
+              final Optional<VampireBuild> shared =
                   Weighted.pick(
                       new TreeMap<>(builds).values().stream().toList(),
                       VampireBuild::weight,
                       rolls.getAsDouble());
+              final Optional<VampireBuild> build = look.getValue().build().or(() -> shared);
               final double heightRoll = rolls.getAsDouble();
               return new Appearance(
                   look.getKey(),

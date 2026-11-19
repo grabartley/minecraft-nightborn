@@ -58,9 +58,12 @@ class KeepTest {
 
   @ParameterizedTest(name = "the screen door at x {0}")
   @CsvSource({"14", "26"})
-  void theScreenOpensToTheRoomsBehindTheThrone(final int x) {
-    assertEquals(BlockState.AIR, KEEP.get(x, Castle.FLOOR, Keep.SCREEN));
-    assertEquals(BlockState.AIR, KEEP.get(x, Castle.FLOOR + 1, Keep.SCREEN));
+  void theScreenOpensToTheRoomsBehindTheThroneHighEnoughForTheLord(final int x) {
+    for (int y = Castle.FLOOR; y < Castle.FLOOR + Keep.SCREEN_DOOR_HEIGHT; y++) {
+      assertEquals(BlockState.AIR, KEEP.get(x, y, Keep.SCREEN));
+    }
+    assertTrue(
+        KEEP.get(x, Castle.FLOOR + Keep.SCREEN_DOOR_HEIGHT, Keep.SCREEN).contains("gothic_stone"));
   }
 
   @ParameterizedTest(name = "a column at z {0}")

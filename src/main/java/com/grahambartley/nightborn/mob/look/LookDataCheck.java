@@ -33,6 +33,9 @@ public final class LookDataCheck {
               if (look.eras().isEmpty() && VampireRig.COMMON.contains(look.rig())) {
                 problems.add(id + " has no era");
               }
+              look.build()
+                  .filter(VampireBuild::upsideDown)
+                  .ifPresent(build -> problems.add(upsideDown(id)));
               for (final Identifier era : look.eras()) {
                 if (outfits.values().stream()
                     .noneMatch(o -> o.rig() == look.rig() && o.era().equals(era))) {
@@ -56,10 +59,14 @@ public final class LookDataCheck {
     new TreeMap<>(builds)
         .forEach(
             (id, build) -> {
-              if (build.minHeight() > build.maxHeight()) {
-                problems.add(id + " has a lowest height above its highest");
+              if (build.upsideDown()) {
+                problems.add(upsideDown(id));
               }
             });
     return problems;
+  }
+
+  private static String upsideDown(final Identifier id) {
+    return id + " has a lowest height above its highest";
   }
 }

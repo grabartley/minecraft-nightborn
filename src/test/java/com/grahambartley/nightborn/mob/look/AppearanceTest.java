@@ -18,8 +18,12 @@ class AppearanceTest {
 
   private static final Map<Identifier, VampireLook> LOOKS =
       Map.of(
-          id("anna"), new VampireLook(VampireRig.FEMALE, id("anna.png"), List.of(id("v")), 1),
-          id("bram"), new VampireLook(VampireRig.MALE, id("bram.png"), List.of(id("g")), 1));
+          id("anna"),
+              new VampireLook(
+                  VampireRig.FEMALE, id("anna.png"), List.of(id("v")), 1, Optional.empty()),
+          id("bram"),
+              new VampireLook(
+                  VampireRig.MALE, id("bram.png"), List.of(id("g")), 1, Optional.empty()));
   private static final Map<Identifier, VampireOutfit> OUTFITS =
       Map.of(
           id("gown"), new VampireOutfit(VampireRig.FEMALE, id("v"), List.of(), 1),
@@ -72,6 +76,31 @@ class AppearanceTest {
     assertTrue(Appearance.pick(Map.of(), VampireRig.COMMON, OUTFITS, BUILDS, rolls(0.1)).isEmpty());
   }
 
+  @ParameterizedTest(name = "shared build roll {0} is ignored, height roll {1}: {2} tall")
+  @CsvSource({"0.0, 0.0, 2.15", "0.99, 1.0, 2.3", "0.5, 0.5, 2.225"})
+  @DisplayName("a look with a build of its own always takes it, never a shared one")
+  void ownBuild(final double sharedBuildRoll, final double heightRoll, final float height) {
+    final Map<Identifier, VampireLook> looks =
+        Map.of(
+            id("lord"),
+            new VampireLook(
+                VampireRig.LORD,
+                id("lord.png"),
+                List.of(),
+                1,
+                Optional.of(new VampireBuild(1.06F, 2.15F, 2.3F, 1))));
+    final Appearance appearance =
+        Appearance.pick(
+                looks,
+                java.util.Set.of(VampireRig.LORD),
+                OUTFITS,
+                BUILDS,
+                rolls(0.5, 0.5, sharedBuildRoll, heightRoll))
+            .orElseThrow();
+    assertEquals(height, appearance.height(), 1.0E-4F);
+    assertEquals(1.06F, appearance.width(), 1.0E-5F);
+  }
+
   private static java.util.function.DoubleSupplier rolls(final double... values) {
     final PrimitiveIterator.OfDouble it = DoubleStream.of(values).iterator();
     return () -> it.hasNext() ? it.nextDouble() : 0.0;
@@ -82,7 +111,9 @@ class AppearanceTest {
   @DisplayName("a vampire only wears a look made for one of its rigs")
   void keepsToRigs(final VampireRig rig, final String look) {
     final Map<Identifier, VampireLook> looks = new java.util.HashMap<>(LOOKS);
-    looks.put(id("lord"), new VampireLook(VampireRig.LORD, id("lord.png"), List.of(), 1));
+    looks.put(
+        id("lord"),
+        new VampireLook(VampireRig.LORD, id("lord.png"), List.of(), 1, Optional.empty()));
     assertEquals(
         id(look),
         Appearance.pick(looks, java.util.Set.of(rig), OUTFITS, BUILDS, rolls(0.5, 0.5, 0.5, 0.5))
