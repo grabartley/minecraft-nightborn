@@ -62,8 +62,6 @@
         ]
       },
       "look": {
-        "idle": "idle",
-        "walk": "walk",
         "held": "minecraft:crossbow",
         "skin": "nightborn:textures/entity/grand_inquisitor/hunt.png"
       }
