@@ -1,0 +1,44 @@
+{
+  "providers": [
+    {
+      "type": "bitmap",
+      "file": "nightborn:font/rank/initiate.png",
+      "ascent": 7,
+      "height": 8,
+      "chars": [
+        "◇"
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "nightborn:font/rank/hunter.png",
+      "ascent": 7,
+      "height": 8,
+      "chars": [
+        "◆"
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "nightborn:font/rank/veteran.png",
+      "ascent": 7,
+      "height": 8,
+      "chars": [
+        "✦"
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "nightborn:font/rank/master.png",
+      "ascent": 7,
+      "height": 8,
+      "chars": [
+        "✠"
+      ]
+    },
+    {
+      "type": "reference",
+      "id": "minecraft:default"
+    }
+  ]
+}

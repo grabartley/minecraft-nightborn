@@ -16,7 +16,8 @@ class RankMarkTest {
 
   @ParameterizedTest(name = "{0} in {1}")
   @CsvSource({"◇, blue, BLUE", "✠, dark_aqua, DARK_AQUA", "◆, #3355ff,"})
-  @DisplayName("a mark is a shape in a colour, and draws as that shape in that colour")
+  @DisplayName(
+      "a mark is a shape in a colour, and draws as that shape in that colour in the rank font")
   void drawsItsShape(final String glyph, final String color, final Formatting named) {
     final RankMark mark =
         RankMark.CODEC
@@ -29,6 +30,7 @@ class RankMarkTest {
     assertEquals(
         named == null ? TextColor.parse(color).getOrThrow() : TextColor.fromFormatting(named),
         drawn.getStyle().getColor());
+    assertEquals(RankMark.FONT, drawn.getStyle().getFont());
   }
 
   @ParameterizedTest(name = "[{0}]")
