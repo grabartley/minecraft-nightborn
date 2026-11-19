@@ -5,8 +5,8 @@
 			"description": {
 				"identifier": "geometry.tame_hawk",
 				"texture_width": 64,
-				"texture_height": 32,
-				"visible_bounds_width": 3,
+				"texture_height": 64,
+				"visible_bounds_width": 4,
 				"visible_bounds_height": 2.5,
 				"visible_bounds_offset": [
 					0,
@@ -28,7 +28,7 @@
 					"parent": "root",
 					"pivot": [
 						0,
-						7,
+						6,
 						0
 					],
 					"cubes": [
@@ -36,12 +36,12 @@
 							"origin": [
 								-2,
 								4,
-								-1.5
+								-3
 							],
 							"size": [
 								4,
-								5,
-								3
+								4,
+								7
 							],
 							"uv": [
 								0,
@@ -50,18 +50,18 @@
 						},
 						{
 							"origin": [
-								-2.5,
-								8,
-								-2
+								-1.5,
+								3.5,
+								-3.5
 							],
 							"size": [
-								5,
-								2,
-								4
+								3,
+								3,
+								5
 							],
 							"uv": [
-								32,
-								0
+								0,
+								46
 							]
 						}
 					]
@@ -71,160 +71,233 @@
 					"parent": "body",
 					"pivot": [
 						0,
-						10,
-						-0.5
+						8,
+						-3
 					],
 					"cubes": [
 						{
 							"origin": [
-								-2.5,
-								10,
-								-3
+								-1.5,
+								7,
+								-6
 							],
 							"size": [
-								5,
-								4,
-								4
+								3,
+								3,
+								3
 							],
 							"uv": [
-								14,
+								24,
 								0
 							]
 						},
 						{
 							"origin": [
 								-1.5,
-								10.5,
-								-4
+								9,
+								-6.5
 							],
 							"size": [
 								3,
+								1,
+								2
+							],
+							"uv": [
+								36,
+								0
+							]
+						},
+						{
+							"origin": [
+								-0.5,
+								7.5,
+								-8
+							],
+							"size": [
+								1,
 								2,
+								2
+							],
+							"uv": [
+								46,
+								0
+							]
+						},
+						{
+							"origin": [
+								-0.5,
+								6.5,
+								-8
+							],
+							"size": [
+								1,
+								1,
 								1
 							],
 							"uv": [
-								50,
+								52,
 								0
 							]
 						}
 					]
 				},
 				{
-					"name": "right_ear",
-					"parent": "head",
+					"name": "tail",
+					"parent": "body",
 					"pivot": [
-						-1.5,
-						13.5,
-						-0.5
-					],
-					"rotation": [
 						0,
-						0,
-						-12
+						7,
+						4
 					],
 					"cubes": [
 						{
 							"origin": [
-								-2.5,
-								13.5,
-								-1
+								-2,
+								6.5,
+								4
 							],
 							"size": [
-								2,
-								3,
-								1
+								4,
+								1,
+								4
 							],
 							"uv": [
-								58,
-								0
-							],
-							"mirror": true
-						}
-					]
-				},
-				{
-					"name": "left_ear",
-					"parent": "head",
-					"pivot": [
-						1.5,
-						13.5,
-						-0.5
-					],
-					"rotation": [
-						0,
-						0,
-						12
-					],
-					"cubes": [
+								0,
+								11
+							]
+						},
 						{
 							"origin": [
-								0.5,
-								13.5,
-								-1
+								-3,
+								6.5,
+								7
 							],
 							"size": [
-								2,
-								3,
-								1
+								6,
+								1,
+								3
 							],
 							"uv": [
-								58,
-								0
+								20,
+								11
 							]
 						}
 					]
 				},
 				{
-					"name": "right_foot",
+					"name": "left_wing",
 					"parent": "body",
 					"pivot": [
-						-1,
-						4,
-						0.5
+						2,
+						7.5,
+						-0.5
 					],
 					"cubes": [
 						{
 							"origin": [
-								-1.5,
 								2,
-								0
+								7,
+								-2
 							],
 							"size": [
+								6,
 								1,
-								2,
-								1
+								6
 							],
 							"uv": [
-								50,
-								3
-							],
-							"mirror": true
+								0,
+								18
+							]
 						}
 					]
 				},
 				{
-					"name": "left_foot",
-					"parent": "body",
+					"name": "left_wing_tip",
+					"parent": "left_wing",
 					"pivot": [
-						1,
-						4,
-						0.5
+						8,
+						7.5,
+						0
 					],
 					"cubes": [
 						{
 							"origin": [
-								0.5,
-								2,
-								0
+								8,
+								7,
+								-2
 							],
 							"size": [
+								5,
 								1,
-								2,
+								5
+							],
+							"uv": [
+								24,
+								18
+							]
+						},
+						{
+							"origin": [
+								13,
+								7,
+								-2
+							],
+							"size": [
+								6,
+								1,
 								1
 							],
 							"uv": [
-								50,
-								3
+								0,
+								26
+							]
+						},
+						{
+							"origin": [
+								13,
+								7,
+								-0.5
+							],
+							"size": [
+								5,
+								1,
+								1
+							],
+							"uv": [
+								0,
+								28
+							]
+						},
+						{
+							"origin": [
+								13,
+								7,
+								1
+							],
+							"size": [
+								4,
+								1,
+								1
+							],
+							"uv": [
+								0,
+								30
+							]
+						},
+						{
+							"origin": [
+								13,
+								7,
+								2
+							],
+							"size": [
+								3,
+								1,
+								1
+							],
+							"uv": [
+								0,
+								32
 							]
 						}
 					]
@@ -234,24 +307,24 @@
 					"parent": "body",
 					"pivot": [
 						-2,
-						8.5,
-						0.5
+						7.5,
+						-0.5
 					],
 					"cubes": [
 						{
 							"origin": [
-								-7,
-								2,
-								0
+								-8,
+								7,
+								-2
 							],
 							"size": [
-								5,
-								7,
-								1
+								6,
+								1,
+								6
 							],
 							"uv": [
 								0,
-								8
+								18
 							],
 							"mirror": true
 						}
@@ -261,114 +334,193 @@
 					"name": "right_wing_tip",
 					"parent": "right_wing",
 					"pivot": [
-						-7,
-						8.5,
-						0.5
+						-8,
+						7.5,
+						0
 					],
 					"cubes": [
 						{
 							"origin": [
 								-13,
-								1,
-								0
+								7,
+								-2
 							],
 							"size": [
-								6,
-								8,
-								1
+								5,
+								1,
+								5
 							],
 							"uv": [
-								12,
-								8
+								24,
+								18
 							],
 							"mirror": true
 						},
 						{
 							"origin": [
-								-7.5,
-								9,
-								0
-							],
-							"size": [
-								1,
-								1,
-								1
-							],
-							"uv": [
-								56,
-								4
-							],
-							"mirror": true
-						}
-					]
-				},
-				{
-					"name": "left_wing",
-					"parent": "body",
-					"pivot": [
-						2,
-						8.5,
-						0.5
-					],
-					"cubes": [
-						{
-							"origin": [
-								2,
-								2,
-								0
-							],
-							"size": [
-								5,
+								-19,
 								7,
+								-2
+							],
+							"size": [
+								6,
+								1,
 								1
 							],
 							"uv": [
 								0,
-								8
+								26
+							],
+							"mirror": true
+						},
+						{
+							"origin": [
+								-18,
+								7,
+								-0.5
+							],
+							"size": [
+								5,
+								1,
+								1
+							],
+							"uv": [
+								0,
+								28
+							],
+							"mirror": true
+						},
+						{
+							"origin": [
+								-17,
+								7,
+								1
+							],
+							"size": [
+								4,
+								1,
+								1
+							],
+							"uv": [
+								0,
+								30
+							],
+							"mirror": true
+						},
+						{
+							"origin": [
+								-16,
+								7,
+								2
+							],
+							"size": [
+								3,
+								1,
+								1
+							],
+							"uv": [
+								0,
+								32
+							],
+							"mirror": true
+						}
+					]
+				},
+				{
+					"name": "left_leg",
+					"parent": "body",
+					"pivot": [
+						1,
+						4.5,
+						1
+					],
+					"rotation": [
+						50,
+						0,
+						0
+					],
+					"cubes": [
+						{
+							"origin": [
+								0.5,
+								3,
+								0
+							],
+							"size": [
+								1,
+								2,
+								2
+							],
+							"uv": [
+								16,
+								26
+							]
+						},
+						{
+							"origin": [
+								0.5,
+								2,
+								-0.5
+							],
+							"size": [
+								1,
+								1,
+								2
+							],
+							"uv": [
+								24,
+								26
 							]
 						}
 					]
 				},
 				{
-					"name": "left_wing_tip",
-					"parent": "left_wing",
+					"name": "right_leg",
+					"parent": "body",
 					"pivot": [
-						7,
-						8.5,
-						0.5
+						-1,
+						4.5,
+						1
+					],
+					"rotation": [
+						50,
+						0,
+						0
 					],
 					"cubes": [
 						{
 							"origin": [
-								7,
-								1,
+								-1.5,
+								3,
 								0
 							],
 							"size": [
-								6,
-								8,
-								1
+								1,
+								2,
+								2
 							],
 							"uv": [
-								12,
-								8
-							]
+								16,
+								26
+							],
+							"mirror": true
 						},
 						{
 							"origin": [
-								6.5,
-								9,
-								0
+								-1.5,
+								2,
+								-0.5
 							],
 							"size": [
 								1,
 								1,
-								1
+								2
 							],
 							"uv": [
-								56,
-								4
-							]
+								24,
+								26
+							],
+							"mirror": true
 						}
 					]
 				}
