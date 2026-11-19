@@ -80,6 +80,11 @@ class EntityClipAssetsTest {
     "hunter, crossbow_shot, left_arm",
     "hunter, raise_crucifix, left_arm",
     "hunter, throw_holy_water, left_arm",
+    "hunter, silver_chain, right_arm",
+    "hunter, bolt_volley, right_arm",
+    "hunter, bolt_volley, left_arm",
+    "hunter, holy_water_arc, left_arm",
+    "hunter, rallying_cry, right_arm",
     "ghostly_familiar, fight, right_arm",
     "ghostly_familiar, fight, left_arm"
   })

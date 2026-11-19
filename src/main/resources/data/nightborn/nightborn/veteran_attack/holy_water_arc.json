@@ -1,6 +1,6 @@
 {
   "kind": "holy_water_arc",
-  "clip": "throw_holy_water",
+  "clip": "holy_water_arc",
   "sound": "minecraft:item.bottle.fill",
   "windup_ticks": 20,
   "cooldown_ticks": 400,
