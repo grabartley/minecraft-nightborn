@@ -42,7 +42,8 @@ public final class Prayers {
       @Nullable Vec3d spot,
       PrayerPower power,
       List<RegistryEntry<StatusEffect>> clears,
-      long startedAt) {}
+      long startedAt,
+      Optional<ZoneMarkEntity> mark) {}
 
   private static final List<Prayer> PRAYERS = new ArrayList<>();
 
@@ -67,25 +68,30 @@ public final class Prayers {
     final Vec3d centre = at == null ? caster.getPos() : at;
     if (power.health() > 0.0F) {
       for (final LivingEntity human : humans(world, centre, power, at != null)) {
-        PrayerHealing.heal(caster, human, power.health(), clears);
-        PrayerSigns.mended(world, human);
+        if (PrayerHealing.heal(caster, human, power.health(), clears)) {
+          PrayerSigns.mended(world, human);
+        }
       }
       PrayerSigns.ring(world, centre, power.radius());
     }
     if (power.lingers()) {
-      PRAYERS.add(
-          new Prayer(world.getRegistryKey(), caster.getUuid(), at, power, clears, world.getTime()));
-      power
-          .look()
-          .filter(look -> at != null)
-          .ifPresent(
-              look ->
-                  ZoneMarkEntity.place(
+      final Optional<ZoneMarkEntity> mark =
+          power
+              .look()
+              .filter(look -> at != null)
+              .map(
+                  look ->
+                      ZoneMarkEntity.place(
                           world,
                           ZoneShape.circle(at.x, at.z, power.radius()),
                           at.y + 0.02,
-                          Optional.of(look))
-                      .linger(power.durationTicks()));
+                          Optional.of(look)));
+      mark.ifPresent(placed -> placed.linger(power.durationTicks()));
+      final Prayer prayer =
+          new Prayer(
+              world.getRegistryKey(), caster.getUuid(), at, power, clears, world.getTime(), mark);
+      PRAYERS.add(prayer);
+      pulse(world, prayer, caster, centre);
     }
   }
 
@@ -101,6 +107,7 @@ public final class Prayers {
       if (!AreaRules.lasts(now, prayer.startedAt() + prayer.power().durationTicks())
           || caster == null
           || !caster.isAlive()) {
+        prayer.mark().ifPresent(ZoneMarkEntity::discard);
         prayers.remove();
         continue;
       }

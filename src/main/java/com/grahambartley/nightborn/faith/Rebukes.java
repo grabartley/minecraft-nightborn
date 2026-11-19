@@ -1,6 +1,7 @@
 package com.grahambartley.nightborn.faith;
 
 import com.grahambartley.nightborn.accessory.GiftAttributes;
+import com.grahambartley.nightborn.skill.AreaRules;
 import com.grahambartley.nightborn.skill.PowerReach;
 import com.grahambartley.nightborn.vampire.Vampires;
 import com.grahambartley.nightborn.ward.WardTags;
@@ -38,7 +39,7 @@ public final class Rebukes {
             caster.getBoundingBox().expand(range),
             candidate ->
                 Vampires.isVampire(candidate)
-                    && candidate.squaredDistanceTo(caster) <= range * range
+                    && AreaRules.inside(candidate.squaredDistanceTo(caster), power.range())
                     && RebukeArc.inFront(
                         look.x,
                         look.z,

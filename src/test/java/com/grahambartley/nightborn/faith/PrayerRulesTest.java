@@ -16,8 +16,8 @@ class PrayerRulesTest {
   }
 
   @ParameterizedTest(name = "started {0}, now {1} -> {2}")
-  @CsvSource({"100, 99, false", "100, 100, true", "100, 119, false", "100, 120, true"})
-  @DisplayName("a lasting prayer pulses the moment it starts and once a second after")
+  @CsvSource({"100, 99, false", "100, 100, false", "100, 119, false", "100, 120, true"})
+  @DisplayName("after the pulse it gives when cast, a lasting prayer pulses once a second")
   void pulses(final long started, final long now, final boolean pulses) {
     assertEquals(pulses, PrayerRules.pulses(started, now));
   }
@@ -31,10 +31,10 @@ class PrayerRulesTest {
 
   @ParameterizedTest(name = "lasting {0} ticks -> {1} pulses")
   @CsvSource({"100, 5", "200, 10", "20, 1", "21, 2"})
-  @DisplayName("a lasting prayer pulses once for every second it lasts")
+  @DisplayName("counting the pulse it gives when cast, a lasting prayer pulses once a second")
   void pulsesOverItsWholeTime(final int ticks, final int expected) {
     final long started = 1000L;
-    int pulses = 0;
+    int pulses = 1;
     for (long now = started; now < started + ticks; now++) {
       if (PrayerRules.pulses(started, now)) {
         pulses++;

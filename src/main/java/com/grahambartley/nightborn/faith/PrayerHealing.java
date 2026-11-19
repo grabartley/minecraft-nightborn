@@ -22,13 +22,13 @@ final class PrayerHealing {
         HeldRanks.of(caster).stream().flatMap(rank -> rank.prayerGifts().stream()).toList());
   }
 
-  static void heal(
+  static boolean heal(
       final LivingEntity caster,
       final LivingEntity target,
       final float health,
       final List<RegistryEntry<StatusEffect>> clears) {
     if (!target.isAlive() || Circles.stopsPrayers(target.getWorld(), target.getPos())) {
-      return;
+      return false;
     }
     clears.forEach(target::removeStatusEffect);
     final float before = target.getHealth();
@@ -41,5 +41,6 @@ final class PrayerHealing {
     if (healed > 0 && target != caster && target instanceof ServerPlayerEntity player) {
       player.sendMessage(Text.translatable("nightborn.faith.mended"), true);
     }
+    return true;
   }
 }

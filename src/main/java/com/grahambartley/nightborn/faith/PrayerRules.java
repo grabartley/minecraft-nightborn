@@ -11,7 +11,7 @@ public final class PrayerRules {
   }
 
   public static boolean pulses(final long startedAt, final long now) {
-    return now >= startedAt && (now - startedAt) % PULSE_TICKS == 0;
+    return now > startedAt && (now - startedAt) % PULSE_TICKS == 0;
   }
 
   public static int counted(final float healed) {
