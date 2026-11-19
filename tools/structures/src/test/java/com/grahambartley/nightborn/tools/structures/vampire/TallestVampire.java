@@ -10,8 +10,9 @@ import java.util.stream.Stream;
 
 public final class TallestVampire {
 
-  static final Path BUILDS =
-      Path.of("../../src/main/resources/data/nightborn/nightborn/vampire_build");
+  static final Path DATA = Path.of("../../src/main/resources/data/nightborn/nightborn");
+  static final Path BUILDS = DATA.resolve("vampire_build");
+  static final Path LOOKS = DATA.resolve("vampire_look");
   private static final Pattern MAX_HEIGHT = Pattern.compile("\"max_height\"\\s*:\\s*([0-9.]+)");
 
   private TallestVampire() {}
@@ -29,7 +30,19 @@ public final class TallestVampire {
   }
 
   public static int headroom() {
-    return (int) Math.ceil(height());
+    return headroom(height());
+  }
+
+  public static double height(final String look) {
+    final double height = maxHeight(LOOKS.resolve(look + ".json"));
+    if (height == 0.0) {
+      throw new IllegalStateException(look + " names no build of its own");
+    }
+    return height;
+  }
+
+  public static int headroom(final double height) {
+    return (int) Math.ceil(height);
   }
 
   private static double maxHeight(final Path build) {

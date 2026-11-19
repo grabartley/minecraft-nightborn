@@ -56,7 +56,7 @@ class KeepTest {
     assertEquals(BlockState.AIR, KEEP.get(x, Castle.FLOOR + 1, Keep.SOUTH));
   }
 
-  @ParameterizedTest(name = "the screen door at x {0} stands three blocks high")
+  @ParameterizedTest(name = "the screen door at x {0}")
   @CsvSource({"14", "26"})
   void theScreenOpensToTheRoomsBehindTheThroneHighEnoughForTheLord(final int x) {
     for (int y = Castle.FLOOR; y < Castle.FLOOR + Keep.SCREEN_DOOR_HEIGHT; y++) {

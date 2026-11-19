@@ -26,6 +26,13 @@ class VampireBuildTest {
     assertEquals(height, new VampireBuild(1.0F, min, max, 1).height(roll), 1.0E-5F);
   }
 
+  @ParameterizedTest(name = "{0}..{1}: upside down {2}")
+  @CsvSource({"1.5, 2.0, false", "1.8, 1.8, false", "2.0, 1.5, true"})
+  @DisplayName("a build whose lowest height is above its highest is upside down")
+  void upsideDown(final float min, final float max, final boolean upsideDown) {
+    assertEquals(upsideDown, new VampireBuild(1.0F, min, max, 1).upsideDown());
+  }
+
   @ParameterizedTest(name = "{0}")
   @ValueSource(
       strings = {

@@ -76,10 +76,10 @@ class AppearanceTest {
     assertTrue(Appearance.pick(Map.of(), VampireRig.COMMON, OUTFITS, BUILDS, rolls(0.1)).isEmpty());
   }
 
-  @ParameterizedTest(name = "build roll {0}, height roll {1}: {2} tall")
+  @ParameterizedTest(name = "shared build roll {0} is ignored, height roll {1}: {2} tall")
   @CsvSource({"0.0, 0.0, 2.15", "0.99, 1.0, 2.3", "0.5, 0.5, 2.225"})
   @DisplayName("a look with a build of its own always takes it, never a shared one")
-  void ownBuild(final double buildRoll, final double heightRoll, final float height) {
+  void ownBuild(final double sharedBuildRoll, final double heightRoll, final float height) {
     final Map<Identifier, VampireLook> looks =
         Map.of(
             id("lord"),
@@ -95,7 +95,7 @@ class AppearanceTest {
                 java.util.Set.of(VampireRig.LORD),
                 OUTFITS,
                 BUILDS,
-                rolls(0.5, 0.5, buildRoll, heightRoll))
+                rolls(0.5, 0.5, sharedBuildRoll, heightRoll))
             .orElseThrow();
     assertEquals(height, appearance.height(), 1.0E-4F);
     assertEquals(1.06F, appearance.width(), 1.0E-5F);

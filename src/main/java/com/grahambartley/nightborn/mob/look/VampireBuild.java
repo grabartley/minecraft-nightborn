@@ -29,6 +29,10 @@ public record VampireBuild(float width, float minHeight, float maxHeight, int we
                           .forGetter(VampireBuild::weight))
                   .apply(instance, VampireBuild::new));
 
+  public boolean upsideDown() {
+    return minHeight > maxHeight;
+  }
+
   public float height(final double roll) {
     final float low = Math.min(minHeight, maxHeight);
     final float high = Math.max(minHeight, maxHeight);
