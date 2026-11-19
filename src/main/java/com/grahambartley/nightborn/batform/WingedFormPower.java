@@ -5,9 +5,11 @@ import com.grahambartley.nightborn.skill.SkillAttribute;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import java.util.List;
+import java.util.Optional;
 import net.minecraft.entity.EntityType;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.tag.TagKey;
+import net.minecraft.util.Identifier;
 
 public record WingedFormPower(
     int durationTicks,
@@ -17,6 +19,7 @@ public record WingedFormPower(
     int roarStaggerTicks,
     TagKey<EntityType<?>> roarStaggers,
     float scale,
+    Optional<Identifier> rig,
     List<String> forcedBy) {
 
   public static final Codec<WingedFormPower> CODEC =
@@ -46,6 +49,7 @@ public record WingedFormPower(
                       Codec.floatRange(1.0F, 6.0F)
                           .optionalFieldOf("scale", 1.0F)
                           .forGetter(WingedFormPower::scale),
+                      Identifier.CODEC.optionalFieldOf("rig").forGetter(WingedFormPower::rig),
                       Codec.STRING
                           .listOf()
                           .optionalFieldOf("forced_by", List.of())

@@ -3,7 +3,7 @@ package com.grahambartley.nightborn.mixin.client;
 import com.grahambartley.nightborn.batform.BatForm;
 import com.grahambartley.nightborn.client.anim.VampirePlayerClips;
 import com.grahambartley.nightborn.occult.MistForm;
-import com.grahambartley.nightborn.render.BatFormRenderer;
+import com.grahambartley.nightborn.render.BatFormRenderers;
 import com.grahambartley.nightborn.render.VampirePlayerRenderer;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.render.VertexConsumerProvider;
@@ -20,13 +20,13 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 abstract class PlayerEntityRendererMixin {
 
   @Unique private VampirePlayerRenderer nightborn$vampire;
-  @Unique private BatFormRenderer nightborn$batForm;
+  @Unique private BatFormRenderers nightborn$batForm;
 
   @Inject(method = "<init>", at = @At("RETURN"))
   private void nightborn$buildVampireRenderer(
       final EntityRendererFactory.Context context, final boolean slim, final CallbackInfo ci) {
     nightborn$vampire = new VampirePlayerRenderer(context, slim);
-    nightborn$batForm = new BatFormRenderer(context);
+    nightborn$batForm = new BatFormRenderers(context);
   }
 
   @Inject(

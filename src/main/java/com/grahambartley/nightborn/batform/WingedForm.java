@@ -45,6 +45,10 @@ public final class WingedForm {
     return state == null ? 1.0F : state.scale();
   }
 
+  public static Optional<WingedState> state(final Entity entity) {
+    return Optional.ofNullable(entity.getAttached(TYPE));
+  }
+
   public static float damageTaken(final Entity entity) {
     final WingedState state = entity.getAttached(TYPE);
     return state == null || state.over(entity.getWorld().getTime()) ? 1.0F : state.damageTaken();
