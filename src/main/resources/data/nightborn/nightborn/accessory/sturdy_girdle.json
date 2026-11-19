@@ -1,0 +1,9 @@
+{
+  "gifts": [
+    {
+      "attribute": "minecraft:generic.knockback_resistance",
+      "amount": 0.1,
+      "operation": "add_value"
+    }
+  ]
+}

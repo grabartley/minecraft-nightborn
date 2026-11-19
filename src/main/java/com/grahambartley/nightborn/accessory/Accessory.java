@@ -9,10 +9,7 @@ import java.util.List;
 import java.util.Optional;
 
 public record Accessory(
-    Optional<Faction> worksFor,
-    List<GiftModifier> gifts,
-    Optional<AccessoryHold> holds,
-    int color) {
+    Optional<Faction> worksFor, List<GiftModifier> gifts, List<AccessoryHold> holds, int color) {
 
   public static final int UNDYED = 0xFFFFFF;
 
@@ -26,7 +23,10 @@ public record Accessory(
                           .listOf()
                           .optionalFieldOf("gifts", List.of())
                           .forGetter(Accessory::gifts),
-                      AccessoryHold.CODEC.optionalFieldOf("holds").forGetter(Accessory::holds),
+                      AccessoryHold.CODEC
+                          .listOf()
+                          .optionalFieldOf("holds", List.of())
+                          .forGetter(Accessory::holds),
                       HexColor.CODEC.optionalFieldOf("color", UNDYED).forGetter(Accessory::color))
                   .apply(instance, Accessory::new));
 

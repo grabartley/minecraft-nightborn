@@ -1,0 +1,10 @@
+{
+  "works_for": "vampire",
+  "gifts": [
+    {
+      "attribute": "nightborn:dusk_sight",
+      "amount": 1.0,
+      "operation": "add_value"
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "works_for": "vampire",
+  "gifts": [
+    {
+      "attribute": "nightborn:vanish_reach",
+      "amount": 1.0,
+      "operation": "add_value"
+    }
+  ]
+}

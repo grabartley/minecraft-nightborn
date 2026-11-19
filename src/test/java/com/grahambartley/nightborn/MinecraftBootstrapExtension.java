@@ -9,6 +9,7 @@ import com.grahambartley.nightborn.coffin.Coffins;
 import com.grahambartley.nightborn.decor.DecorBlockEntities;
 import com.grahambartley.nightborn.decor.DecorBlocks;
 import com.grahambartley.nightborn.decor.DecorEntities;
+import com.grahambartley.nightborn.eldest.EldestSpoils;
 import com.grahambartley.nightborn.enchant.EnchantFeatures;
 import com.grahambartley.nightborn.gear.GearBlocks;
 import com.grahambartley.nightborn.gear.GearItems;
@@ -60,6 +61,7 @@ public final class MinecraftBootstrapExtension implements BeforeAllCallback {
     TentBlocks.register();
     Objects.requireNonNull(HolyWater.POTION);
     Objects.requireNonNull(BloodItems.BLOOD_BOTTLE);
+    Objects.requireNonNull(EldestSpoils.ASHEN_SILVER_STAKE);
     Objects.requireNonNull(ContractItems.HUNTER_CONTRACT);
     Objects.requireNonNull(JournalItems.HUNTER_JOURNAL);
     Objects.requireNonNull(NightbornMobs.VAMPIRE_BAT);

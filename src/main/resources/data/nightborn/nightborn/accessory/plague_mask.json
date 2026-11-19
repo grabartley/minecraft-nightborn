@@ -1,0 +1,9 @@
+{
+  "gifts": [
+    {
+      "attribute": "nightborn:cloud_time",
+      "amount": -0.5,
+      "operation": "add_value"
+    }
+  ]
+}

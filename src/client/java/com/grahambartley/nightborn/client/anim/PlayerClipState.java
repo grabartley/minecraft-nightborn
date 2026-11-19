@@ -16,7 +16,13 @@ public final class PlayerClipState {
       Optional<VampirePose> coffin) {}
 
   public record Lengths(
-      double land, double vomit, double drain, double rise, double flinch, double finisher) {}
+      double land,
+      double vomit,
+      double drain,
+      double rise,
+      double flinch,
+      double finisher,
+      double smallFlinch) {}
 
   private final EndingEdge landing = new EndingEdge();
   private final EndingEdge standing = new EndingEdge();
@@ -27,6 +33,7 @@ public final class PlayerClipState {
   private final OneShot drain = new OneShot();
   private final OneShot flinch = new OneShot();
   private final OneShot finisher = new OneShot();
+  private boolean smallFlinch;
 
   public void tick(final double age, final boolean levitating, final boolean downed) {
     follow(landing, land, levitating, age);
@@ -42,6 +49,11 @@ public final class PlayerClipState {
   }
 
   public void flinch(final double age) {
+    flinch(age, false);
+  }
+
+  public void flinch(final double age, final boolean small) {
+    smallFlinch = small;
     flinch.start(age);
   }
 
@@ -86,8 +98,8 @@ public final class PlayerClipState {
     if (land.playing(lengths.land(), age)) {
       return Optional.of(VampirePose.LAND);
     }
-    if (flinch.playing(lengths.flinch(), age)) {
-      return Optional.of(VampirePose.FLINCH);
+    if (flinch.playing(smallFlinch ? lengths.smallFlinch() : lengths.flinch(), age)) {
+      return Optional.of(smallFlinch ? VampirePose.SMALL_FLINCH : VampirePose.FLINCH);
     }
     if (situation.weakened()) {
       return Optional.of(VampirePose.weakened(situation.horizontalSpeed()));

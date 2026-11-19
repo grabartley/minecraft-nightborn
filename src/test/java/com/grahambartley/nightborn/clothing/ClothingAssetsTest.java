@@ -78,7 +78,12 @@ class ClothingAssetsTest {
                 Arrays.stream(ClothingPiece.values())
                     .filter(ClothingPiece::dyeable)
                     .map(piece -> "nightborn:" + piece.id()),
-                Stream.of("nightborn:mourning_veil", "nightborn:high_collared_cape"))
+                Stream.of(
+                    "nightborn:mourning_veil",
+                    "nightborn:high_collared_cape",
+                    "nightborn:velvet_cape",
+                    "nightborn:half_cape",
+                    "nightborn:silk_sash"))
             .collect(Collectors.toSet()),
         values("minecraft/tags/item/dyeable.json"));
   }

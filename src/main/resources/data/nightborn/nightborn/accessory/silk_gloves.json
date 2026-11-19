@@ -1,0 +1,10 @@
+{
+  "works_for": "vampire",
+  "gifts": [
+    {
+      "attribute": "nightborn:feeding_notice",
+      "amount": -0.3,
+      "operation": "add_value"
+    }
+  ]
+}

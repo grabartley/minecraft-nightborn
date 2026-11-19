@@ -67,6 +67,14 @@ public final class BloodMetabolism {
     };
   }
 
+  public static double flightRate(
+      final BatEffort bat,
+      final boolean levitating,
+      final double drainRate,
+      final double levitationShare) {
+    return bat == BatEffort.NONE && levitating ? drainRate * levitationShare : drainRate;
+  }
+
   public static int atRate(final int secondsPerBlood, final double drainRate) {
     if (secondsPerBlood <= GROUNDED) {
       return secondsPerBlood;

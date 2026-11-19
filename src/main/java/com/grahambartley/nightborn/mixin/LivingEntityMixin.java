@@ -1,5 +1,7 @@
 package com.grahambartley.nightborn.mixin;
 
+import com.grahambartley.nightborn.accessory.FrostWard;
+import com.grahambartley.nightborn.accessory.WornRefill;
 import com.grahambartley.nightborn.age.Ageing;
 import com.grahambartley.nightborn.batform.BatFlightMotion;
 import com.grahambartley.nightborn.clothing.Noticing;
@@ -30,12 +32,14 @@ import java.util.Optional;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityDimensions;
 import net.minecraft.entity.EntityPose;
+import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.mob.PhantomEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.math.BlockPos;
@@ -224,6 +228,21 @@ abstract class LivingEntityMixin {
       final TrackedData<?> data, final CallbackInfo ci) {
     if (SLEEPING_POSITION.equals(data)) {
       ((LivingEntity) (Object) this).calculateDimensions();
+    }
+  }
+
+  @Inject(method = "canFreeze", at = @At("RETURN"), cancellable = true)
+  private void nightborn$frostWardNeverFreezes(final CallbackInfoReturnable<Boolean> cir) {
+    if (cir.getReturnValueZ() && FrostWard.warded((LivingEntity) (Object) this)) {
+      cir.setReturnValue(false);
+    }
+  }
+
+  @Inject(method = "sendEquipmentBreakStatus", at = @At("TAIL"))
+  private void nightborn$refillBrokenTool(
+      final Item item, final EquipmentSlot slot, final CallbackInfo ci) {
+    if ((Object) this instanceof PlayerEntity player) {
+      WornRefill.broke(player, item, slot);
     }
   }
 }
