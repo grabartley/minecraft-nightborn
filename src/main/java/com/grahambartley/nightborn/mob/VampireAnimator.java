@@ -21,6 +21,7 @@ public final class VampireAnimator {
   static final Set<String> HEAD_CLIPS = Set.of(VampireEntity.MOURN_CLIP);
 
   private final EndingEdge landingEdge = new EndingEdge();
+  private final EndingEdge risingEdge = new EndingEdge();
   private final ShownAction shownAction = new ShownAction();
   private VampirePose shownPose = VampirePose.IDLE;
 
@@ -42,13 +43,17 @@ public final class VampireAnimator {
             state -> {
               final boolean levitating = Levitation.isLevitating(vampire);
               landingEdge.ended(levitating);
+              final boolean downed = VisibleStateAttachment.get(vampire).downed();
+              risingEdge.ended(downed);
               final double speed =
                   Math.hypot(vampire.getX() - vampire.prevX, vampire.getZ() - vampire.prevZ);
               final VampirePose pose =
                   VampirePose.of(
                       new VampirePose.Cue(
                           CoffinRise.pose(vampire),
-                          VisibleStateAttachment.get(vampire).downed(),
+                          downed,
+                          risingEdge.ending(),
+                          !vampire.isAlive(),
                           levitating,
                           landingEdge.ending(),
                           vampire.isSprinting(),
@@ -66,6 +71,9 @@ public final class VampireAnimator {
               landingEdge.shown(
                   pose == VampirePose.LAND,
                   pose == VampirePose.LAND && state.getController().hasAnimationFinished());
+              risingEdge.shown(
+                  pose == VampirePose.RISE,
+                  pose == VampirePose.RISE && state.getController().hasAnimationFinished());
               return play;
             }));
     controllers.add(

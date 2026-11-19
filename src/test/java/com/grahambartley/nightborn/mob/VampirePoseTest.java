@@ -5,45 +5,65 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.grahambartley.nightborn.mob.look.VampireRig;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Stream;
+import net.minecraft.util.Identifier;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.EnumSource;
+import org.junit.jupiter.params.provider.MethodSource;
+import software.bernie.geckolib.animation.Animation;
 
 class VampirePoseTest {
 
   @ParameterizedTest(
-      name = "coffin {0}, downed {1}, levitating {2}, landing {3}, seated {7}, reading {8}: {9}")
+      name =
+          "coffin {0}, downed {1}, rising {2}, dying {3}, levitating {4}, landing {5}, seated {9},"
+              + " reading {10}: {11}")
   @CsvSource({
-    "COFFIN_SLEEP, true, true, true, true, 0.9, 0.3, false, false, COFFIN_SLEEP, coffin_sleep",
-    "COFFIN_RISE, true, true, false, false, 0.9, 0.3, false, false, COFFIN_RISE, coffin_rise",
-    "COFFIN_STEP_OUT, true, true, false, false, 0.9, 0.3, false, false, COFFIN_STEP_OUT, coffin_step_out",
-    ", true, true, false, false, 0.9, 0.3, false, false, DOWNED, downed",
-    ", false, true, false, false, 0.0, 0.0, false, false, LEVITATE, levitate",
-    ", false, true, false, false, 0.0, 0.1, false, false, LEVITATE_MOVE, levitate_move",
-    ", false, true, false, false, 0.0, 0.3, false, false, LEVITATE_SPRINT, levitate_sprint",
-    ", false, true, false, true, 0.0, 0.1, false, false, LEVITATE_SPRINT, levitate_sprint",
-    ", false, false, true, false, 0.9, 0.3, false, false, LAND, land",
-    ", false, false, false, false, 0.9, 0.3, false, false, RUN, run",
-    ", false, false, false, false, 0.3, 0.1, false, false, WALK, walk",
-    ", false, false, false, false, 0.05, 0.0, false, false, IDLE, idle",
-    ", false, false, false, false, 0.05, 0.0, true, false, SIT, sit",
-    ", false, false, false, false, 0.05, 0.0, true, true, SIT, sit",
-    ", false, true, false, false, 0.0, 0.0, true, false, LEVITATE, levitate",
-    ", true, false, false, false, 0.0, 0.0, true, false, DOWNED, downed",
-    ", false, false, false, false, 0.05, 0.0, false, true, READ, read",
-    ", false, false, false, false, 0.3, 0.1, false, true, WALK, walk"
+    "COFFIN_SLEEP, true, false, false, true, true, true, 0.9, 0.3, false, false, COFFIN_SLEEP, coffin_sleep",
+    "COFFIN_RISE, true, false, false, true, false, false, 0.9, 0.3, false, false, COFFIN_RISE, coffin_rise",
+    "COFFIN_STEP_OUT, true, false, false, true, false, false, 0.9, 0.3, false, false, COFFIN_STEP_OUT, coffin_step_out",
+    ", true, false, false, true, false, false, 0.9, 0.3, false, false, DOWNED, downed",
+    ", false, false, false, true, false, false, 0.0, 0.0, false, false, LEVITATE, levitate",
+    ", false, false, false, true, false, false, 0.0, 0.1, false, false, LEVITATE_MOVE, levitate_move",
+    ", false, false, false, true, false, false, 0.0, 0.3, false, false, LEVITATE_SPRINT, levitate_sprint",
+    ", false, false, false, true, false, true, 0.0, 0.1, false, false, LEVITATE_SPRINT, levitate_sprint",
+    ", false, false, false, false, true, false, 0.9, 0.3, false, false, LAND, land",
+    ", false, false, false, false, false, false, 0.9, 0.3, false, false, RUN, run",
+    ", false, false, false, false, false, false, 0.3, 0.1, false, false, WALK, walk",
+    ", false, false, false, false, false, false, 0.05, 0.0, false, false, IDLE, idle",
+    ", false, false, false, false, false, false, 0.05, 0.0, true, false, SIT, sit",
+    ", false, false, false, false, false, false, 0.05, 0.0, true, true, SIT, sit",
+    ", false, false, false, true, false, false, 0.0, 0.0, true, false, LEVITATE, levitate",
+    ", true, false, false, false, false, false, 0.0, 0.0, true, false, DOWNED, downed",
+    ", false, false, false, false, false, false, 0.05, 0.0, false, true, READ, read",
+    ", false, false, false, false, false, false, 0.3, 0.1, false, true, WALK, walk",
+    ", false, false, false, false, false, false, 0.0, 0.0, false, false, IDLE, idle",
+    ", false, true, false, false, false, false, 0.9, 0.3, false, false, RISE, rise",
+    ", true, true, false, false, false, false, 0.0, 0.0, false, false, DOWNED, downed",
+    "COFFIN_SLEEP, false, true, false, false, false, false, 0.0, 0.0, false, false, COFFIN_SLEEP, coffin_sleep",
+    ", false, true, true, false, false, false, 0.0, 0.0, false, false, IDLE, idle",
+    ", false, true, true, false, false, false, 0.9, 0.3, false, false, RUN, run"
   })
   @DisplayName(
-      "resting or rising in a coffin wins over downed, then levitating, landing, sitting and moving,"
+      "resting or rising in a coffin wins over downed, then getting up, levitating, landing, sitting"
+          + " and moving, a dying vampire never gets up,"
           + " and a vampire reads only while it stands still")
   void pose(
       final VampirePose coffin,
       final boolean downed,
+      final boolean rising,
+      final boolean dying,
       final boolean levitating,
       final boolean landing,
       final boolean sprinting,
@@ -59,6 +79,8 @@ class VampirePoseTest {
             new VampirePose.Cue(
                 Optional.ofNullable(coffin),
                 downed,
+                rising,
+                dying,
                 levitating,
                 landing,
                 sprinting,
@@ -193,14 +215,60 @@ class VampirePoseTest {
   @EnumSource(VampirePose.class)
   @DisplayName("every pose the vampire plays is in its animation file")
   void animationShips(final VampirePose pose) throws IOException {
-    final JsonObject animations =
-        JsonParser.parseString(
-                Files.readString(
-                    Path.of(
-                        "src/client/resources/assets/nightborn/animations/entity/vampire.animation.json")))
-            .getAsJsonObject()
-            .getAsJsonObject("animations");
-    assertTrue(animations.has(pose.animation()), pose.animation());
+    final JsonObject animations = clips(VampireRig.playerClips());
+    pose.clip()
+        .getAnimationStages()
+        .forEach(stage -> assertTrue(animations.has(stage.animationName()), stage.animationName()));
+  }
+
+  @ParameterizedTest(name = "{0} {1}")
+  @MethodSource("rigsAndDownedPoses")
+  @DisplayName("every rig can fall, lie breathing and get up")
+  void downedShips(final VampireRig rig, final VampirePose pose) throws IOException {
+    final JsonObject animations = clips(rig.clips());
+    pose.clip()
+        .getAnimationStages()
+        .forEach(stage -> assertTrue(animations.has(stage.animationName()), stage.animationName()));
+  }
+
+  static Stream<Arguments> rigsAndDownedPoses() {
+    return Arrays.stream(VampireRig.values())
+        .flatMap(
+            rig ->
+                Stream.of(VampirePose.DOWNED, VampirePose.RISE)
+                    .map(pose -> Arguments.of(rig, pose)));
+  }
+
+  private static JsonObject clips(final Identifier file) throws IOException {
+    return JsonParser.parseString(
+            Files.readString(
+                Path.of("src/client/resources/assets", file.getNamespace())
+                    .resolve(file.getPath())))
+        .getAsJsonObject()
+        .getAsJsonObject("animations");
+  }
+
+  @ParameterizedTest(name = "{0} plays {1}")
+  @CsvSource({"DOWNED, downed downed_rest", "RISE, rise", "IDLE, idle", "ATTACK, attack"})
+  @DisplayName("the downed pose falls once and then lies breathing, the others play one clip")
+  void stages(final VampirePose pose, final String stages) {
+    assertEquals(
+        List.of(stages.split(" ")),
+        pose.clip().getAnimationStages().stream().map(stage -> stage.animationName()).toList());
+  }
+
+  @ParameterizedTest(name = "{0} stage {1} loops as {2}")
+  @CsvSource({"DOWNED, 0, play_once", "DOWNED, 1, loop", "RISE, 0, default", "ATTACK, 0, hold"})
+  @DisplayName("the fall plays once so the breathing loop can follow it")
+  void loops(final VampirePose pose, final int stage, final String loop) {
+    assertEquals(
+        Map.of(
+                "play_once", Animation.LoopType.PLAY_ONCE,
+                "loop", Animation.LoopType.LOOP,
+                "default", Animation.LoopType.DEFAULT,
+                "hold", Animation.LoopType.HOLD_ON_LAST_FRAME)
+            .get(loop),
+        pose.clip().getAnimationStages().get(stage).loopType());
   }
 
   @ParameterizedTest(name = "{0} is standing still: {1}")

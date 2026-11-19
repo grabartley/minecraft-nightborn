@@ -2,6 +2,7 @@ package com.grahambartley.nightborn.mob;
 
 import java.util.Optional;
 import software.bernie.geckolib.animatable.GeoAnimatable;
+import software.bernie.geckolib.animation.Animation;
 import software.bernie.geckolib.animation.AnimationState;
 import software.bernie.geckolib.animation.PlayState;
 import software.bernie.geckolib.animation.RawAnimation;
@@ -13,7 +14,7 @@ public enum VampirePose {
   WALK("walk", Play.LOOP),
   RUN("run", Play.LOOP),
   ATTACK("attack", Play.HOLD),
-  DOWNED("downed", Play.HOLD, Hold.ARMS_AND_HEAD),
+  DOWNED("downed", "downed_rest", Hold.ARMS_AND_HEAD),
   LEVITATE("levitate", Play.LOOP),
   LEVITATE_MOVE("levitate_move", Play.LOOP),
   LEVITATE_SPRINT("levitate_sprint", Play.LOOP),
@@ -57,6 +58,8 @@ public enum VampirePose {
   public record Cue(
       Optional<VampirePose> coffin,
       boolean downed,
+      boolean rising,
+      boolean dying,
       boolean levitating,
       boolean landing,
       boolean sprinting,
@@ -84,12 +87,21 @@ public enum VampirePose {
         };
   }
 
+  VampirePose(final String animation, final String rest, final Hold hold) {
+    this.animation = animation;
+    this.hold = hold;
+    this.clip = RawAnimation.begin().then(animation, Animation.LoopType.PLAY_ONCE).thenLoop(rest);
+  }
+
   public static VampirePose of(final Cue cue) {
     if (cue.coffin().isPresent()) {
       return cue.coffin().get();
     }
     if (cue.downed()) {
       return DOWNED;
+    }
+    if (cue.rising() && !cue.dying()) {
+      return RISE;
     }
     if (cue.levitating()) {
       return levitating(cue.sprinting(), cue.horizontalSpeed());
