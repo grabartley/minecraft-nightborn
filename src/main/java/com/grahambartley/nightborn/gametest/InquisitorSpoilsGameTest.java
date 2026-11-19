@@ -46,6 +46,7 @@ public class InquisitorSpoilsGameTest implements FabricGameTest {
   static final String ARENA = "nightborn:vampire_arena";
   static final BlockPos BESIDE = new BlockPos(4, 2, 2);
   static final int ROLLS = 20;
+  static final float BLOW = 10.0F;
   static final int BASE_SLOT = 1;
   static final int ADDITION_SLOT = 2;
   static final int RESULT_SLOT = 3;
@@ -172,10 +173,11 @@ public class InquisitorSpoilsGameTest implements FabricGameTest {
           final int plainCapacity = BloodCapacity.of(vampire);
           vampire.setStackInHand(Hand.MAIN_HAND, new ItemStack(InquisitorSpoils.GREATSWORD));
           BloodAttachment.set(vampire, 5);
-          golem.damage(context.getWorld().getDamageSources().playerAttack(vampire), 10.0F);
-          final float dealt = golem.getMaxHealth() - golem.getHealth();
-          final int gained = (int) Math.floor(dealt * settings.greatswordBlood() / 100.0F);
-          context.assertTrue(gained > 0, "the blow is big enough to give blood, dealt " + dealt);
+          context.assertTrue(
+              golem.damage(context.getWorld().getDamageSources().playerAttack(vampire), BLOW),
+              "the blow lands");
+          final int gained = (int) Math.floor(BLOW * settings.greatswordBlood() / 100.0F);
+          context.assertTrue(gained > 0, "the blow is big enough to give blood");
           context.assertTrue(
               BloodAttachment.get(vampire) == 5 + gained,
               "the greatsword gives back " + gained + ", blood is " + BloodAttachment.get(vampire));
@@ -196,27 +198,20 @@ public class InquisitorSpoilsGameTest implements FabricGameTest {
                         < 1.0E-6,
                     "the full set slows the drain");
                 BloodAttachment.set(vampire, 5);
-                final float before = golem.getHealth();
-                golem.damage(context.getWorld().getDamageSources().playerAttack(vampire), 10.0F);
-                final float setDealt = before - golem.getHealth();
-                final int setGained = (int) Math.floor(setDealt * settings.setBlood() / 100.0F);
                 context.assertTrue(
-                    setGained > (int) Math.floor(setDealt * settings.greatswordBlood() / 100.0F),
-                    "the full set gives more than the greatsword alone would for "
-                        + setDealt
-                        + " damage, "
-                        + setGained);
+                    golem.damage(context.getWorld().getDamageSources().playerAttack(vampire), BLOW),
+                    "the second blow lands");
+                final int setGained = (int) Math.floor(BLOW * settings.setBlood() / 100.0F);
+                context.assertTrue(setGained > gained, "the full set gives a larger share");
                 context.assertTrue(
                     BloodAttachment.get(vampire) == 5 + setGained,
                     "the full set gives back "
                         + setGained
-                        + " for "
-                        + setDealt
-                        + " damage, blood is "
+                        + ", blood is "
                         + BloodAttachment.get(vampire));
                 BloodAttachment.set(vampire, BloodCapacity.of(vampire));
                 golem.timeUntilRegen = 0;
-                golem.damage(context.getWorld().getDamageSources().playerAttack(vampire), 10.0F);
+                golem.damage(context.getWorld().getDamageSources().playerAttack(vampire), BLOW);
                 context.assertTrue(
                     BloodAttachment.get(vampire) == BloodCapacity.of(vampire),
                     "a full vampire is never pushed past its cap");
