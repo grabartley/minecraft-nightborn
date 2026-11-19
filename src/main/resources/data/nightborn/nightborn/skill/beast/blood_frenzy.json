@@ -44,7 +44,7 @@
       "max_range": 12.0,
       "tell_ticks": 10,
       "tell_sound": "minecraft:entity.wolf.growl",
-      "tell_clip": "blood_rush_tell",
+      "tell_clip": "blood_frenzy_tell",
       "clip": "blood_rush"
     }
   }

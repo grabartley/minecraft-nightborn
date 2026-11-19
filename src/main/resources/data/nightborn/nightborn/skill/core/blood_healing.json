@@ -23,7 +23,7 @@
       "max_range": 20.0,
       "tell_ticks": 12,
       "tell_sound": "minecraft:entity.warden.heartbeat",
-      "tell_clip": "blood_rush_tell",
+      "tell_clip": "blood_healing_tell",
       "clip": "blood_rush"
     }
   }
