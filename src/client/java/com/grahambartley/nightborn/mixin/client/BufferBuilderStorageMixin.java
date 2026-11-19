@@ -1,6 +1,6 @@
 package com.grahambartley.nightborn.mixin.client;
 
-import com.grahambartley.nightborn.render.CoatingLayers;
+import com.grahambartley.nightborn.render.SheenLayers;
 import java.util.SequencedMap;
 import net.minecraft.client.render.BufferBuilderStorage;
 import net.minecraft.client.render.RenderLayer;
@@ -22,7 +22,7 @@ abstract class BufferBuilderStorageMixin {
       index = 0)
   private SequencedMap<RenderLayer, BufferAllocator> nightborn$coatingBuffers(
       final SequencedMap<RenderLayer, BufferAllocator> buffers) {
-    CoatingLayers.all()
+    SheenLayers.all()
         .forEach(layer -> buffers.put(layer, new BufferAllocator(layer.getExpectedBufferSize())));
     return buffers;
   }

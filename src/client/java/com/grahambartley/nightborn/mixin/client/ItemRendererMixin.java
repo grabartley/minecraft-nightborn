@@ -1,7 +1,7 @@
 package com.grahambartley.nightborn.mixin.client;
 
 import com.grahambartley.nightborn.client.sun.ParasolHeldModel;
-import com.grahambartley.nightborn.render.CoatingLayers;
+import com.grahambartley.nightborn.render.SheenLayers;
 import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumer;
@@ -38,6 +38,6 @@ abstract class ItemRendererMixin {
       @Local(argsOnly = true) final ItemStack stack,
       @Local(argsOnly = true) final VertexConsumerProvider provider,
       @Local final RenderLayer layer) {
-    return CoatingLayers.item(consumer, stack, provider, layer);
+    return SheenLayers.item(consumer, stack, provider, layer);
   }
 }

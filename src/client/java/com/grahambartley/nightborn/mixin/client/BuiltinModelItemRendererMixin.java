@@ -1,6 +1,6 @@
 package com.grahambartley.nightborn.mixin.client;
 
-import com.grahambartley.nightborn.render.CoatingLayers;
+import com.grahambartley.nightborn.render.SheenLayers;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
@@ -29,6 +29,6 @@ abstract class BuiltinModelItemRendererMixin {
       final boolean glint,
       final Operation<VertexConsumer> original,
       @Local(argsOnly = true) final ItemStack stack) {
-    return CoatingLayers.entity(original.call(provider, layer, solid, glint), stack, provider);
+    return SheenLayers.entity(original.call(provider, layer, solid, glint), stack, provider);
   }
 }

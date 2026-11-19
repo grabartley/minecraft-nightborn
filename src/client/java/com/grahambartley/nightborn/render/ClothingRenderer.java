@@ -34,6 +34,7 @@ public class ClothingRenderer<T extends Item & GeoItem & Dressed>
   private ClothingRenderer(final ClothingModel<T> model) {
     super(model);
     this.clothing = model;
+    addRenderLayer(new LiningLayer<>(this));
   }
 
   @Override
