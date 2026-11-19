@@ -54,7 +54,7 @@ public class OldBloodFontGameTest implements FabricGameTest {
     context.useBlock(FONT, player);
   }
 
-  private static boolean filled(final TestContext context) {
+  private static boolean full(final TestContext context) {
     return context.getBlockState(FONT).get(OldBloodFontBlock.LEVEL).full();
   }
 
@@ -65,11 +65,11 @@ public class OldBloodFontGameTest implements FabricGameTest {
     context.runAtTick(
         TestPlayers.READY,
         () -> {
-          context.assertTrue(filled(context), "a new font is full");
+          context.assertTrue(full(context), "a new font is full");
           drink(context, human);
           context.assertTrue(BiteSicknessAttachment.isSick(human), "the old blood starts it");
           context.assertFalse(font.full(), "one drink empties the font");
-          context.assertFalse(filled(context), "the font shows it is dry");
+          context.assertFalse(full(context), "the font shows it is dry");
           SicknessTicker.tick(
               human, ServerConfigService.current().turning(), SicknessStage.TICKS_PER_DAY);
           context.assertTrue(Vampires.isVampire(human), "a day later the human turns");
@@ -108,7 +108,7 @@ public class OldBloodFontGameTest implements FabricGameTest {
     font.drain(now - 2L * SicknessStage.TICKS_PER_DAY);
     font.refill(context.getWorld());
     context.assertTrue(font.full(), "two days refill it with no household");
-    context.assertTrue(filled(context), "the font shows it is full again");
+    context.assertTrue(full(context), "the font shows it is full again");
     context.complete();
   }
 }
