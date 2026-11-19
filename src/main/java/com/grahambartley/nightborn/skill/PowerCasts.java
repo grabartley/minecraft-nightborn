@@ -23,6 +23,13 @@ import com.grahambartley.nightborn.occult.ShadowStep;
 import com.grahambartley.nightborn.occult.Swarms;
 import com.grahambartley.nightborn.sight.Sight;
 import com.grahambartley.nightborn.sight.Sights;
+import com.grahambartley.nightborn.slayer.Charges;
+import com.grahambartley.nightborn.slayer.Dashes;
+import com.grahambartley.nightborn.slayer.Guards;
+import com.grahambartley.nightborn.slayer.Lunges;
+import com.grahambartley.nightborn.slayer.PowerFight;
+import com.grahambartley.nightborn.slayer.QuickShots;
+import com.grahambartley.nightborn.slayer.StakeThrows;
 import com.grahambartley.nightborn.trap.Baits;
 import com.grahambartley.nightborn.trap.MarkedGrounds;
 import com.grahambartley.nightborn.trap.Nets;
@@ -57,6 +64,7 @@ final class PowerCasts {
     minds(caster, power, aim);
     traps(caster, id, power, aim);
     faith(caster, power, aim);
+    fight(caster, power.fight());
     power.familiar().ifPresent(familiar -> GhostlyFamiliars.summon(caster, familiar));
     power.fog().ifPresent(fog -> FogClouds.spawn(caster, fog));
     power.rally().ifPresent(rally -> Rally.call(caster, rally));
@@ -100,13 +108,24 @@ final class PowerCasts {
     if (aim.target() != null) {
       power.pounce().ifPresent(pounce -> Pounces.start(caster, aim.target(), pounce));
     }
-    if (aim.stepTo() != null) {
-      power
-          .vanish()
-          .ifPresentOrElse(
-              vanish -> Vanish.go(caster, aim.stepTo(), vanish),
-              () -> ShadowStep.step(caster, aim.stepTo()));
+    if (power.leap().isPresent() || power.pounce().isPresent() || power.shadowStep().isPresent()) {
+      Charges.start(caster);
     }
+    if (aim.stepTo() == null) {
+      return;
+    }
+    power.vanish().ifPresent(vanish -> Vanish.go(caster, aim.stepTo(), vanish));
+    power.dash().ifPresent(dash -> Dashes.go(caster, aim.stepTo(), dash));
+    power.shadowStep().ifPresent(step -> ShadowStep.step(caster, aim.stepTo()));
+    if (aim.target() != null) {
+      power.lunge().ifPresent(lunge -> Lunges.strike(caster, aim.target(), aim.stepTo(), lunge));
+    }
+  }
+
+  private static void fight(final LivingEntity caster, final PowerFight fight) {
+    fight.riposte().ifPresent(guard -> Guards.raise(caster, guard));
+    fight.stakeThrow().ifPresent(stake -> StakeThrows.launch(caster, stake));
+    fight.quickShot().ifPresent(shot -> QuickShots.fire(caster, shot));
   }
 
   private static void traps(

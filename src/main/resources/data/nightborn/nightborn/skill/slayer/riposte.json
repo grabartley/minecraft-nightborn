@@ -1,0 +1,26 @@
+{
+  "branch": "nightborn:slayer",
+  "requires": [
+    "nightborn:slayer/sidestep"
+  ],
+  "icon": "nightborn:skills/icon/riposte",
+  "column": 0,
+  "row": 1,
+  "ranks": [
+    {
+      "cost": 2
+    }
+  ],
+  "power": {
+    "blood": 0,
+    "cooldown_ticks": 240,
+    "riposte": {
+      "guard_ticks": 10,
+      "reach": 2.5,
+      "charge_ticks": 10,
+      "push": 3.0,
+      "stagger_ticks": 40
+    },
+    "sound": "minecraft:item.armor.equip_chain"
+  }
+}

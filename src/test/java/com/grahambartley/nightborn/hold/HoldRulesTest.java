@@ -27,7 +27,7 @@ class HoldRulesTest {
       final boolean takes) {
     final HoldState state =
         new HoldState(
-            until > now ? Optional.of(HoldKind.PIN) : Optional.empty(), until, immuneUntil);
+            until > now ? Optional.of(HoldKind.PIN) : Optional.empty(), until, immuneUntil, false);
     assertEquals(takes, HoldRules.takes(state, now, boss, true));
   }
 
@@ -47,7 +47,7 @@ class HoldRulesTest {
   @DisplayName("a hold has ended once its time is up")
   void ends(final long until, final long now, final boolean ended) {
     assertEquals(
-        ended, HoldRules.ended(new HoldState(Optional.of(HoldKind.PIN), until, until), now));
+        ended, HoldRules.ended(new HoldState(Optional.of(HoldKind.PIN), until, until, false), now));
   }
 
   @ParameterizedTest(name = "dead {0}: takes {1}")
@@ -55,5 +55,12 @@ class HoldRulesTest {
   @DisplayName("the dead cannot be held")
   void dead(final boolean dead, final boolean takes) {
     assertEquals(takes, HoldRules.takes(HoldState.NONE, 0L, false, !dead));
+  }
+
+  @ParameterizedTest(name = "{0}, opening {1}: opens {2}")
+  @CsvSource({"STAGGER, true, true", "STAGGER, false, false", "PIN, true, false"})
+  @DisplayName("only a stagger can leave its target open")
+  void opening(final HoldKind kind, final boolean opening, final boolean opens) {
+    assertEquals(opens, HoldRules.start(kind, 0L, 20, 60, opening).opening());
   }
 }

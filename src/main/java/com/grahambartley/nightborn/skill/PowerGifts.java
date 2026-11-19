@@ -43,6 +43,10 @@ public final class PowerGifts {
     return gifts.stream().mapToInt(PowerGift::bloodCut).sum();
   }
 
+  public static boolean refundsOnDodge(final Collection<PowerGift> gifts) {
+    return gifts.stream().anyMatch(PowerGift::dodgeRefund);
+  }
+
   public static double cooldownCut(final Collection<PowerGift> gifts) {
     return Math.min(MOST_COOLDOWN_CUT, gifts.stream().mapToDouble(PowerGift::cooldownCut).sum());
   }

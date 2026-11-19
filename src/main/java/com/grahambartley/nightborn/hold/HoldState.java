@@ -7,9 +7,9 @@ import java.util.Optional;
 import net.minecraft.network.codec.PacketCodec;
 import net.minecraft.network.codec.PacketCodecs;
 
-public record HoldState(Optional<HoldKind> kind, long until, long immuneUntil) {
+public record HoldState(Optional<HoldKind> kind, long until, long immuneUntil, boolean opening) {
 
-  public static final HoldState NONE = new HoldState(Optional.empty(), 0L, 0L);
+  public static final HoldState NONE = new HoldState(Optional.empty(), 0L, 0L, false);
 
   public static final Codec<HoldState> CODEC =
       RecordCodecBuilder.create(
@@ -20,7 +20,8 @@ public record HoldState(Optional<HoldKind> kind, long until, long immuneUntil) {
                       Codec.LONG.optionalFieldOf("until", 0L).forGetter(HoldState::until),
                       Codec.LONG
                           .optionalFieldOf("immune_until", 0L)
-                          .forGetter(HoldState::immuneUntil))
+                          .forGetter(HoldState::immuneUntil),
+                      Codec.BOOL.optionalFieldOf("opening", false).forGetter(HoldState::opening))
                   .apply(instance, HoldState::new));
 
   public static final PacketCodec<ByteBuf, HoldState> PACKET_CODEC =
@@ -31,6 +32,8 @@ public record HoldState(Optional<HoldKind> kind, long until, long immuneUntil) {
           HoldState::until,
           PacketCodecs.VAR_LONG,
           HoldState::immuneUntil,
+          PacketCodecs.BOOL,
+          HoldState::opening,
           HoldState::new);
 
   public Optional<HoldKind> active(final long now) {
@@ -39,5 +42,9 @@ public record HoldState(Optional<HoldKind> kind, long until, long immuneUntil) {
 
   public boolean held(final long now) {
     return active(now).isPresent();
+  }
+
+  public boolean opened(final long now) {
+    return opening && active(now).filter(held -> held == HoldKind.STAGGER).isPresent();
   }
 }

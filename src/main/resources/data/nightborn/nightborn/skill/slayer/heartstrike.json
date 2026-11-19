@@ -1,0 +1,28 @@
+{
+  "branch": "nightborn:slayer",
+  "requires": [
+    "nightborn:slayer/riposte"
+  ],
+  "icon": "nightborn:skills/icon/heartstrike",
+  "column": 0,
+  "row": 2,
+  "rank": "nightborn:hunter",
+  "ranks": [
+    {
+      "cost": 3
+    }
+  ],
+  "power": {
+    "blood": 0,
+    "cooldown_ticks": 600,
+    "lunge": {
+      "distance": 5.0,
+      "stake_share": 0.5,
+      "downs": {
+        "below": 0.4,
+        "up_to": "nightborn:elder"
+      }
+    },
+    "sound": "minecraft:entity.player.attack.strong"
+  }
+}

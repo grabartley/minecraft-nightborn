@@ -27,7 +27,9 @@ class SkillRankTest {
   void reads(final String json, final int cost, final double bareHands) {
     final SkillRank rank =
         SkillRank.CODEC.parse(JsonOps.INSTANCE, JsonParser.parseString(json)).getOrThrow();
-    assertEquals(new SkillRank(cost, List.of(), bareHands, List.of(), List.of(), List.of()), rank);
+    assertEquals(
+        new SkillRank(cost, List.of(), bareHands, List.of(), List.of(), List.of(), List.of()),
+        rank);
     assertEquals(SkillRank.costing(cost).cost(), rank.cost());
   }
 
@@ -101,6 +103,24 @@ class SkillRankTest {
                     .parse(JsonOps.INSTANCE, JsonParser.parseString(json))
                     .getOrThrow()
                     .prayerGifts())
+            .size());
+  }
+
+  @ParameterizedTest(name = "{0} -> {1} stands")
+  @CsvSource(
+      delimiter = ';',
+      value = {
+        "{\"cost\": 3, \"stand_gifts\": [{\"below\": 0.25, \"duration_ticks\": 160, \"cooldown_ticks\": 3600, \"steadfast\": true}]}; 1",
+        "{\"cost\": 3}; 0"
+      })
+  @DisplayName("a rank may carry a last stand that rises when its holder is close to death")
+  void standGifts(final String json, final int count) {
+    assertEquals(
+        count,
+        SkillRank.CODEC
+            .parse(JsonOps.INSTANCE, JsonParser.parseString(json))
+            .getOrThrow()
+            .standGifts()
             .size());
   }
 }

@@ -11,7 +11,7 @@ public final class TimedMark {
 
   private final AttachmentType<Long> type;
 
-  TimedMark(final String path) {
+  public TimedMark(final String path) {
     type = AttachmentRegistry.create(Identifier.of(Nightborn.MOD_ID, path));
   }
 

@@ -1,0 +1,40 @@
+{
+  "branch": "nightborn:slayer",
+  "requires": [
+    "nightborn:slayer/heartstrike",
+    "nightborn:slayer/last_stand"
+  ],
+  "icon": "nightborn:skills/icon/onslaught",
+  "column": 1,
+  "row": 4,
+  "rank": "nightborn:master",
+  "ranks": [
+    {
+      "cost": 4
+    }
+  ],
+  "power": {
+    "blood": 0,
+    "cooldown_ticks": 6000,
+    "boost": {
+      "duration_ticks": 120,
+      "attributes": [
+        {
+          "attribute": "minecraft:generic.attack_speed",
+          "amount": 1.0,
+          "operation": "add_multiplied_total"
+        },
+        {
+          "attribute": "nightborn:vampire_damage_share",
+          "amount": 0.5,
+          "operation": "add_value"
+        }
+      ],
+      "downs": {
+        "below": 0.3,
+        "up_to": "nightborn:elder"
+      }
+    },
+    "sound": "minecraft:item.mace.smash_ground_heavy"
+  }
+}

@@ -6,6 +6,7 @@ import com.grahambartley.nightborn.mob.stage.StageCombat;
 import com.grahambartley.nightborn.skill.PowerShow;
 import com.grahambartley.nightborn.skill.PowerUse;
 import com.grahambartley.nightborn.skill.Powers;
+import com.grahambartley.nightborn.slayer.Charges;
 import com.grahambartley.nightborn.vampire.Impulse;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.mob.MobEntity;
@@ -59,6 +60,9 @@ public final class CombatMoves {
                               fighter.getRandom().nextBoolean())));
               fighter.velocityModified = true;
               fighter.showPower(move.clip());
+              if (move != CombatMove.DODGE) {
+                Charges.start(fighter);
+              }
               fighter.playSound(SoundEvent.of(move.sound()), 1.0F, 1.0F);
               nextMove = now + (long) combat.thinkTicks() * settings.moveCooldownThinks();
             });

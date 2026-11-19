@@ -24,7 +24,9 @@ class HunterAttributesTest {
     return Stream.of(
         Arguments.of(HunterAttributes.BITE_RESISTANCE, "bite_resistance", 0.8),
         Arguments.of(HunterAttributes.MESMERISE_RESISTANCE, "mesmerise_resistance", 0.8),
-        Arguments.of(HunterAttributes.FAITH, "faith", 10.0));
+        Arguments.of(HunterAttributes.FAITH, "faith", 10.0),
+        Arguments.of(HunterAttributes.VAMPIRE_DAMAGE, "vampire_damage", 20.0),
+        Arguments.of(HunterAttributes.VAMPIRE_DAMAGE_SHARE, "vampire_damage_share", 4.0));
   }
 
   @ParameterizedTest(name = "{1}")

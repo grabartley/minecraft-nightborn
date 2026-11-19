@@ -7,6 +7,7 @@ import com.grahambartley.nightborn.faith.FaithMarks;
 import com.grahambartley.nightborn.hunter.HunterAttributes;
 import com.grahambartley.nightborn.skill.MesmerisePower;
 import com.grahambartley.nightborn.skill.PowerSight;
+import com.grahambartley.nightborn.slayer.SlayerMarks;
 import java.util.Locale;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
@@ -101,7 +102,7 @@ public final class Mesmerise {
                 target instanceof PlayerEntity player
                     && (player.isCreative() || player.isSpectator()),
                 target.isAlive(),
-                FaithMarks.SHELTERED.on(target)),
+                FaithMarks.SHELTERED.on(target) || SlayerMarks.STEADFAST.on(target)),
             target.getAttributes().hasAttribute(HunterAttributes.MESMERISE_RESISTANCE)
                 ? target.getAttributeValue(HunterAttributes.MESMERISE_RESISTANCE)
                 : 0.0,

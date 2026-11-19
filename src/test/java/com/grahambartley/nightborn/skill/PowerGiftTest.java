@@ -17,6 +17,8 @@ class PowerGiftTest {
       value = {
         "{\"branch\":\"nightborn:beast\",\"blood_cut\":1,\"cooldown_cut\":0.2}; false",
         "{\"branch\":\"nightborn:noble\",\"cooldown_cut\":0.2}; false",
+        "{\"branch\":\"nightborn:slayer\",\"cooldown_cut\":0.2,\"dodge_refund\":true}; false",
+        "{\"branch\":\"nightborn:slayer\",\"dodge_refund\":3}; true",
         "{\"blood_cut\":1}; true",
         "{\"branch\":\"nightborn:beast\",\"cooldown_cut\":0.9}; true",
         "{\"branch\":\"nightborn:beast\",\"blood_cut\":-1}; true"
@@ -35,6 +37,7 @@ class PowerGiftTest {
   })
   @DisplayName("a gift covers only the powers of its own bloodline")
   void covers(final String gift, final String power, final boolean covered) {
-    assertEquals(covered, new PowerGift(Identifier.of(gift), 1, 0.2).covers(Identifier.of(power)));
+    assertEquals(
+        covered, new PowerGift(Identifier.of(gift), 1, 0.2, false).covers(Identifier.of(power)));
   }
 }

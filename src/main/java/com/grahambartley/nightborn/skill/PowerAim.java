@@ -7,6 +7,9 @@ import com.grahambartley.nightborn.mind.Mesmerise;
 import com.grahambartley.nightborn.occult.Circles;
 import com.grahambartley.nightborn.occult.HexPower;
 import com.grahambartley.nightborn.occult.ShadowStep;
+import com.grahambartley.nightborn.slayer.Dashes;
+import com.grahambartley.nightborn.slayer.LungePower;
+import com.grahambartley.nightborn.slayer.Lunges;
 import com.grahambartley.nightborn.trap.TrapSpots;
 import com.grahambartley.nightborn.vanish.Vanish;
 import java.util.Optional;
@@ -29,6 +32,8 @@ public record PowerAim(
     return power.mesmerise().isPresent()
         || power.shadowStep().isPresent()
         || power.vanish().isPresent()
+        || power.dash().isPresent()
+        || power.lunge().isPresent()
         || power.pounce().isPresent()
         || power.hex().isPresent()
         || power.command().isPresent()
@@ -41,7 +46,11 @@ public record PowerAim(
   }
 
   public static Optional<Float> targetRange(final SkillPower power) {
-    return power.pounce().map(PouncePower::range).or(() -> power.hex().map(HexPower::range));
+    return power
+        .pounce()
+        .map(PouncePower::range)
+        .or(() -> power.hex().map(HexPower::range))
+        .or(() -> power.lunge().map(LungePower::distance));
   }
 
   public static PowerAim of(
@@ -50,6 +59,8 @@ public record PowerAim(
       return NONE;
     }
     final SkillPower skill = power.get();
+    final LivingEntity target =
+        targetRange(skill).map(range -> PowerSight.aimed(caster, range)).orElse(null);
     return new PowerAim(
         skill
             .mesmerise()
@@ -59,8 +70,15 @@ public record PowerAim(
             .shadowStep()
             .flatMap(step -> ShadowStep.destination(caster, step))
             .or(() -> skill.vanish().flatMap(vanish -> Vanish.destination(caster, vanish, heading)))
+            .or(() -> skill.dash().flatMap(dash -> Dashes.destination(caster, dash, heading)))
+            .or(
+                () ->
+                    skill
+                        .lunge()
+                        .filter(lunge -> target != null)
+                        .flatMap(lunge -> Lunges.destination(caster, target)))
             .orElse(null),
-        targetRange(skill).map(range -> PowerSight.aimed(caster, range)).orElse(null),
+        target,
         skill.command().flatMap(command -> Commands.aim(caster, command)).orElse(null),
         skill
             .traps()
@@ -77,7 +95,11 @@ public record PowerAim(
   }
 
   public boolean nowhere(final SkillPower power) {
-    return (power.shadowStep().isPresent() || power.vanish().isPresent()) && stepTo == null;
+    return (power.shadowStep().isPresent()
+            || power.vanish().isPresent()
+            || power.dash().isPresent()
+            || power.lunge().isPresent())
+        && stepTo == null;
   }
 
   public boolean unplaced(final SkillPower power) {

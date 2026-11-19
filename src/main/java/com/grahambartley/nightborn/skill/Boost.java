@@ -1,11 +1,18 @@
 package com.grahambartley.nightborn.skill;
 
+import com.grahambartley.nightborn.slayer.DownBlow;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import java.util.List;
+import java.util.Optional;
 
 public record Boost(
-    long startedAt, long endsAt, int killTicks, int mostTicks, List<SkillAttribute> attributes) {
+    long startedAt,
+    long endsAt,
+    int killTicks,
+    int mostTicks,
+    List<SkillAttribute> attributes,
+    Optional<DownBlow> downs) {
 
   public static final Codec<Boost> CODEC =
       RecordCodecBuilder.create(
@@ -19,7 +26,8 @@ public record Boost(
                       SkillAttribute.CODEC
                           .listOf()
                           .optionalFieldOf("attributes", List.of())
-                          .forGetter(Boost::attributes))
+                          .forGetter(Boost::attributes),
+                      DownBlow.CODEC.optionalFieldOf("downs").forGetter(Boost::downs))
                   .apply(instance, Boost::new));
 
   public Boost {
@@ -27,7 +35,7 @@ public record Boost(
   }
 
   public static Boost of(final long now, final int ticks, final List<SkillAttribute> attributes) {
-    return new Boost(now, now + ticks, 0, ticks, attributes);
+    return new Boost(now, now + ticks, 0, ticks, attributes, Optional.empty());
   }
 
   public static Boost of(final long now, final BoostPower power) {
@@ -36,7 +44,8 @@ public record Boost(
         now + power.durationTicks(),
         power.killTicks(),
         Math.max(power.durationTicks(), power.mostTicks()),
-        power.attributes());
+        power.attributes(),
+        power.downs());
   }
 
   public boolean over(final long now) {
@@ -51,6 +60,7 @@ public record Boost(
             Math.min(endsAt + killTicks, startedAt + mostTicks),
             killTicks,
             mostTicks,
-            attributes);
+            attributes,
+            downs);
   }
 }

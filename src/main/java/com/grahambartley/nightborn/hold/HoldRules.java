@@ -13,8 +13,21 @@ public final class HoldRules {
 
   public static HoldState start(
       final HoldKind kind, final long now, final int ticks, final int immuneTicks) {
+    return start(kind, now, ticks, immuneTicks, false);
+  }
+
+  public static HoldState start(
+      final HoldKind kind,
+      final long now,
+      final int ticks,
+      final int immuneTicks,
+      final boolean opening) {
     final long until = now + Math.max(1, ticks);
-    return new HoldState(Optional.of(kind), until, until + Math.max(0, immuneTicks));
+    return new HoldState(
+        Optional.of(kind),
+        until,
+        until + Math.max(0, immuneTicks),
+        opening && kind == HoldKind.STAGGER);
   }
 
   public static boolean ended(final HoldState state, final long now) {

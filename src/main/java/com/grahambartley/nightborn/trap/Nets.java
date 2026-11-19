@@ -71,7 +71,7 @@ public final class Nets {
             0.7F);
   }
 
-  static Vec3d heading(final LivingEntity caster) {
+  public static Vec3d heading(final LivingEntity caster) {
     if (caster instanceof MobEntity mob && mob.getTarget() != null) {
       return mob.getTarget().getEyePos().subtract(caster.getEyePos());
     }

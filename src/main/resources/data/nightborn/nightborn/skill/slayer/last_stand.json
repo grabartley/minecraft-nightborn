@@ -1,0 +1,30 @@
+{
+  "branch": "nightborn:slayer",
+  "requires": [
+    "nightborn:slayer/tough_as_oak"
+  ],
+  "icon": "nightborn:skills/icon/last_stand",
+  "column": 1,
+  "row": 3,
+  "rank": "nightborn:veteran",
+  "ranks": [
+    {
+      "cost": 3,
+      "stand_gifts": [
+        {
+          "below": 0.25,
+          "duration_ticks": 160,
+          "cooldown_ticks": 3600,
+          "steadfast": true,
+          "attributes": [
+            {
+              "attribute": "minecraft:generic.attack_damage",
+              "amount": 3.0,
+              "operation": "add_value"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

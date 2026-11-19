@@ -16,15 +16,21 @@ public final class HunterAttributes {
 
   static final double MAX_RESISTANCE = 0.8;
   static final double MAX_FAITH = 10.0;
+  static final double MAX_VAMPIRE_DAMAGE = 20.0;
+  static final double MAX_VAMPIRE_DAMAGE_SHARE = 4.0;
 
   public static final RegistryEntry<EntityAttribute> BITE_RESISTANCE =
       register("bite_resistance", MAX_RESISTANCE);
   public static final RegistryEntry<EntityAttribute> MESMERISE_RESISTANCE =
       register("mesmerise_resistance", MAX_RESISTANCE);
   public static final RegistryEntry<EntityAttribute> FAITH = register("faith", MAX_FAITH);
+  public static final RegistryEntry<EntityAttribute> VAMPIRE_DAMAGE =
+      register("vampire_damage", MAX_VAMPIRE_DAMAGE);
+  public static final RegistryEntry<EntityAttribute> VAMPIRE_DAMAGE_SHARE =
+      register("vampire_damage_share", MAX_VAMPIRE_DAMAGE_SHARE);
 
   public static final List<RegistryEntry<EntityAttribute>> ALL =
-      List.of(BITE_RESISTANCE, MESMERISE_RESISTANCE, FAITH);
+      List.of(BITE_RESISTANCE, MESMERISE_RESISTANCE, FAITH, VAMPIRE_DAMAGE, VAMPIRE_DAMAGE_SHARE);
 
   private HunterAttributes() {}
 
@@ -37,8 +43,12 @@ public final class HunterAttributes {
   }
 
   public static double faith(final Entity entity) {
-    return entity instanceof LivingEntity living && living.getAttributes().hasAttribute(FAITH)
-        ? living.getAttributeValue(FAITH)
+    return value(entity, FAITH);
+  }
+
+  public static double value(final Entity entity, final RegistryEntry<EntityAttribute> attribute) {
+    return entity instanceof LivingEntity living && living.getAttributes().hasAttribute(attribute)
+        ? living.getAttributeValue(attribute)
         : 0.0;
   }
 

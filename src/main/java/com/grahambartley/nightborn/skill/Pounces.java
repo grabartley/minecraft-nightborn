@@ -2,6 +2,7 @@ package com.grahambartley.nightborn.skill;
 
 import com.grahambartley.nightborn.hold.HoldKind;
 import com.grahambartley.nightborn.hold.Holds;
+import com.grahambartley.nightborn.slayer.Guards;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -48,6 +49,10 @@ public final class Pounces {
             now + PounceArc.flightTicks(caster.distanceTo(target)) + SLACK_TICKS));
   }
 
+  public static void stop(final Entity caster) {
+    POUNCES.remove(caster.getUuid());
+  }
+
   private static void tick(final MinecraftServer server) {
     if (POUNCES.isEmpty()) {
       return;
@@ -68,6 +73,9 @@ public final class Pounces {
       hunter.fallDistance = 0.0F;
       if (PounceArc.caught(hunter.distanceTo(prey))) {
         pounces.remove();
+        if (Guards.turns(prey, hunter)) {
+          continue;
+        }
         Holds.hold(hunter, prey, HoldKind.PIN, pounce.power().pinFor(prey instanceof PlayerEntity));
       }
     }

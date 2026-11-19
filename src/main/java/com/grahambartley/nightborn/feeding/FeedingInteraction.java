@@ -6,6 +6,7 @@ import com.grahambartley.nightborn.enchant.EnchantedValues;
 import com.grahambartley.nightborn.hold.Holds;
 import com.grahambartley.nightborn.moment.Moments;
 import com.grahambartley.nightborn.server.ServerConfigService;
+import com.grahambartley.nightborn.slayer.SlayerMarks;
 import com.grahambartley.nightborn.vampire.Vampires;
 import com.grahambartley.nightborn.ward.Wards;
 import java.util.Optional;
@@ -58,7 +59,8 @@ final class FeedingInteraction {
                                 EnchantedValues.FINISHER_HEALTH,
                                 ServerConfigService.current().feeding().finisherHealthPercent()))),
                 BiteQuarry.guards(victim),
-                Holds.pinned(victim)),
+                Holds.pinned(victim),
+                SlayerMarks.STEADFAST.on(victim)),
             pvp);
     if (!decision.claimsTheInteraction()) {
       return ActionResult.PASS;
@@ -70,6 +72,8 @@ final class FeedingInteraction {
         vampire.sendMessage(Text.translatable("nightborn.feeding.pvp_off"), true);
       } else if (decision == BiteRules.Decision.WARDED) {
         vampire.sendMessage(Text.translatable("nightborn.feeding.warded"), true);
+      } else if (decision == BiteRules.Decision.STEADFAST) {
+        vampire.sendMessage(Text.translatable("nightborn.feeding.steadfast"), true);
       } else if (decision == BiteRules.Decision.GUARDED) {
         vampire.sendMessage(Text.translatable("nightborn.feeding.guarded"), true);
       }
