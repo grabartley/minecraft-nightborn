@@ -75,9 +75,14 @@ class RestlessPoseTest {
   @ParameterizedTest(name = "{0}")
   @EnumSource(
       value = RestlessPose.class,
-      names = {"RISE", "SINK"})
-  void heldClipsLastAsLongAsTheEntityHoldsStill(final RestlessPose pose) throws IOException {
-    final int ticks = pose == RestlessPose.RISE ? RestlessPose.RISE_TICKS : RestlessPose.SINK_TICKS;
+      names = {"RISE", "SINK", "ATTACK"})
+  void timedClipsLastAsLongAsTheirState(final RestlessPose pose) throws IOException {
+    final int ticks =
+        switch (pose) {
+          case RISE -> RestlessPose.RISE_TICKS;
+          case SINK -> RestlessPose.SINK_TICKS;
+          default -> RestlessPose.ATTACK_TICKS;
+        };
     assertEquals(
         ticks / 20.0,
         clips().getAsJsonObject(pose.animation()).get("animation_length").getAsDouble(),
