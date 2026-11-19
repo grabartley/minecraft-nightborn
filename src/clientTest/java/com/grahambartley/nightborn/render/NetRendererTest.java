@@ -1,48 +1,43 @@
 package com.grahambartley.nightborn.render;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import com.google.gson.JsonObject;
+import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
-import net.minecraft.util.Identifier;
+import java.util.Set;
+import javax.imageio.ImageIO;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 class NetRendererTest {
 
-  static List<Path> art() {
-    final Identifier rig = NetRenderer.RIG;
-    final List<Path> files = new ArrayList<>();
-    files.add(
-        GeoAssets.file(
-            Identifier.of(rig.getNamespace(), "geo/entity/" + rig.getPath() + ".geo.json")));
-    files.add(
-        GeoAssets.mainFile(
-            Identifier.of(rig.getNamespace(), "textures/entity/" + rig.getPath() + ".png")));
-    if (false) {
-      files.add(
-          GeoAssets.mainFile(
-              Identifier.of(
-                  rig.getNamespace(), "textures/entity/" + rig.getPath() + "_glowmask.png")));
-    }
-    return files;
+  private static final Path TEXTURES =
+      Path.of("src/main/resources/assets/nightborn/textures/entity");
+  private static final Path GEO =
+      GeoAssets.ENTITY_GEO.resolve(NetRenderer.RIG.getPath() + ".geo.json");
+  private static final Path CLIPS = GeoAssets.clips(NetRenderer.RIG.getPath());
+
+  @ParameterizedTest(name = "{0}")
+  @ValueSource(strings = {"net.png"})
+  @DisplayName("each of the net's sheets ships at the size its geometry maps")
+  void eachSheetShipsAtTheSizeTheGeometryMaps(final String sheet) throws IOException {
+    final JsonObject description = GeoAssets.geometry(GEO).getAsJsonObject("description");
+    final BufferedImage image = ImageIO.read(TEXTURES.resolve(sheet).toFile());
+    assertEquals(description.get("texture_width").getAsInt(), image.getWidth());
+    assertEquals(description.get("texture_height").getAsInt(), image.getHeight());
   }
 
   @ParameterizedTest(name = "{0}")
-  @MethodSource("art")
-  @DisplayName("a thrown net ships its model and skin")
-  void shipsArt(final Path file) {
-    assertTrue(Files.exists(file), file.toString());
-  }
-
-  @Test
-  @DisplayName("a thrown net ships the clip it loops")
-  void shipsClip() throws IOException {
-    assertTrue(GeoAssets.animations(GeoAssets.clips(NetRenderer.RIG.getPath())).has("fly"));
+  @ValueSource(strings = {"fly"})
+  @DisplayName("every bone the net's clip moves is in its rig")
+  void everyBoneAClipMovesIsInTheRig(final String clip) throws IOException {
+    final Set<String> bones = GeoAssets.boneNames(GEO);
+    final JsonObject animated =
+        GeoAssets.animations(CLIPS).getAsJsonObject(clip).getAsJsonObject("bones");
+    assertTrue(bones.containsAll(animated.keySet()), clip);
   }
 }

@@ -13,7 +13,11 @@ public final class MistFormAnimatable implements GeoReplacedEntity {
 
   static final RawAnimation DRIFT = RawAnimation.begin().thenLoop("drift");
 
+  public static final MistFormAnimatable INSTANCE = new MistFormAnimatable();
+
   private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
+
+  private MistFormAnimatable() {}
 
   @Override
   public EntityType<?> getReplacingEntityType() {

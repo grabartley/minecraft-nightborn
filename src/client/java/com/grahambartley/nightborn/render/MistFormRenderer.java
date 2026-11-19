@@ -15,12 +15,10 @@ public final class MistFormRenderer
     extends GeoReplacedEntityRenderer<LivingEntity, MistFormAnimatable> {
 
   static final Identifier RIG = Identifier.of(Nightborn.MOD_ID, "mist_form");
-  static final float SHADOW_RADIUS = 0.45F;
   static final float DRAWN_SCALE = 1.5F;
 
   public MistFormRenderer(final EntityRendererFactory.Context context) {
-    super(context, new DefaultedEntityGeoModel<>(RIG, false), new MistFormAnimatable());
-    this.shadowRadius = SHADOW_RADIUS;
+    super(context, new DefaultedEntityGeoModel<>(RIG, false), MistFormAnimatable.INSTANCE);
     withScale(DRAWN_SCALE);
     addRenderLayer(new AutoGlowingGeoLayer<>(this));
   }
