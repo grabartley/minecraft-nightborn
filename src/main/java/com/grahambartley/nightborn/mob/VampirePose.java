@@ -2,6 +2,7 @@ package com.grahambartley.nightborn.mob;
 
 import java.util.Optional;
 import software.bernie.geckolib.animatable.GeoAnimatable;
+import software.bernie.geckolib.animation.Animation;
 import software.bernie.geckolib.animation.AnimationState;
 import software.bernie.geckolib.animation.PlayState;
 import software.bernie.geckolib.animation.RawAnimation;
@@ -57,6 +58,7 @@ public enum VampirePose {
   public record Cue(
       Optional<VampirePose> coffin,
       boolean downed,
+      boolean rising,
       boolean levitating,
       boolean landing,
       boolean sprinting,
@@ -87,7 +89,7 @@ public enum VampirePose {
   VampirePose(final String animation, final String rest, final Hold hold) {
     this.animation = animation;
     this.hold = hold;
-    this.clip = RawAnimation.begin().thenPlay(animation).thenLoop(rest);
+    this.clip = RawAnimation.begin().then(animation, Animation.LoopType.PLAY_ONCE).thenLoop(rest);
   }
 
   public static VampirePose of(final Cue cue) {
@@ -96,6 +98,9 @@ public enum VampirePose {
     }
     if (cue.downed()) {
       return DOWNED;
+    }
+    if (cue.rising()) {
+      return RISE;
     }
     if (cue.levitating()) {
       return levitating(cue.sprinting(), cue.horizontalSpeed());
