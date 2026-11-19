@@ -62,6 +62,8 @@
         ]
       },
       "look": {
+        "idle": "idle",
+        "walk": "walk",
         "held": "minecraft:crossbow",
         "skin": "nightborn:textures/entity/grand_inquisitor/hunt.png"
       }
@@ -132,6 +134,8 @@
         ]
       },
       "look": {
+        "idle": "idle_faith",
+        "walk": "walk_faith",
         "held": "minecraft:splash_potion",
         "skin": "nightborn:textures/entity/grand_inquisitor/faith.png"
       }
@@ -212,19 +216,23 @@
         ]
       },
       "look": {
+        "idle": "idle_pyre",
+        "walk": "walk_pyre",
         "held": "nightborn:silver_sword",
         "skin": "nightborn:textures/entity/grand_inquisitor/pyre.png"
       }
     }
   ],
   "change_ticks": 80,
-  "change_clip": "raise_crucifix",
+  "change_clip": "change_high",
   "change_sound": "nightborn:boss.inquisitor.change",
   "change_knock": 2.0,
   "change_range": 8.0,
   "clips": {
-    "guard": "raise_crucifix",
-    "break_away": "stake_strike"
+    "summon": "arrive",
+    "guard": "guard_cross",
+    "break_away": "break_away",
+    "downed_form": "downed_kneel"
   },
   "summoner_lines": [
     "nightborn.inquisitor.outrage.1",

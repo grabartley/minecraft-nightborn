@@ -3,9 +3,9 @@
   "weight": 3,
   "cooldown_ticks": 70,
   "tell_ticks": 14,
-  "tell_clip": "stake_strike",
+  "tell_clip": "blows_tell",
   "tell_sound": "minecraft:entity.evoker.prepare_attack",
-  "clip": "stake_strike",
+  "clip": "blows",
   "sound": "minecraft:entity.player.attack.sweep",
   "flurry": {
     "hits": 4,

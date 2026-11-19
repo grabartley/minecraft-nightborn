@@ -3,9 +3,9 @@
   "weight": 1,
   "cooldown_ticks": 400,
   "tell_ticks": 24,
-  "tell_clip": "raise_crucifix",
+  "tell_clip": "call_tell",
   "tell_sound": "minecraft:entity.evoker.prepare_summon",
-  "clip": "raise_crucifix",
+  "clip": "call",
   "sound": "minecraft:event.raid.horn",
   "ward": {
     "entity": "nightborn:hunter",
