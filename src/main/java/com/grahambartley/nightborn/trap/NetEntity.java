@@ -9,11 +9,20 @@ import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
+import software.bernie.geckolib.animatable.GeoEntity;
+import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.animation.AnimatableManager;
+import software.bernie.geckolib.animation.AnimationController;
+import software.bernie.geckolib.animation.RawAnimation;
+import software.bernie.geckolib.util.GeckoLibUtil;
 
-public class NetEntity extends ThrownItemEntity {
+public class NetEntity extends ThrownItemEntity implements GeoEntity {
 
   static final double GRAVITY = 0.01;
 
+  static final RawAnimation FLY = RawAnimation.begin().thenLoop("fly");
+
+  private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
   @Nullable private NetPower power;
   private float extraDamage;
 
@@ -68,5 +77,15 @@ public class NetEntity extends ThrownItemEntity {
   @Override
   public boolean shouldSave() {
     return false;
+  }
+
+  @Override
+  public void registerControllers(final AnimatableManager.ControllerRegistrar controllers) {
+    controllers.add(new AnimationController<>(this, "fly", 0, state -> state.setAndContinue(FLY)));
+  }
+
+  @Override
+  public AnimatableInstanceCache getAnimatableInstanceCache() {
+    return cache;
   }
 }

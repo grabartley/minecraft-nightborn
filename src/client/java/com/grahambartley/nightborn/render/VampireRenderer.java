@@ -4,6 +4,7 @@ import com.grahambartley.nightborn.batform.BatForm;
 import com.grahambartley.nightborn.client.sight.UnseenBodies;
 import com.grahambartley.nightborn.mob.VampireEntity;
 import com.grahambartley.nightborn.mob.look.VampireSize;
+import com.grahambartley.nightborn.occult.MistForm;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
@@ -19,10 +20,12 @@ public class VampireRenderer extends GeoEntityRenderer<VampireEntity> {
   static final float SHADOW_RADIUS = 0.5F;
 
   private final BatFormRenderers batForm;
+  private final MistFormRenderer mist;
 
   public VampireRenderer(final EntityRendererFactory.Context context) {
     super(context, new VampireModel());
     this.batForm = new BatFormRenderers(context);
+    this.mist = new MistFormRenderer(context);
     this.shadowRadius = SHADOW_RADIUS;
     addRenderLayer(new VampireStageMarksLayer(this));
     addRenderLayer(new VampireEyesLayer(this));
@@ -40,6 +43,10 @@ public class VampireRenderer extends GeoEntityRenderer<VampireEntity> {
       final int light) {
     final boolean hidden = UnseenBodies.bodyHidden(vampire);
     this.shadowRadius = hidden ? 0.0F : SHADOW_RADIUS;
+    if (MistForm.on(vampire) && !hidden) {
+      mist.render(vampire, yaw, tickDelta, matrices, vertexConsumers, light);
+      return;
+    }
     if (BatForm.isBat(vampire) && !hidden) {
       batForm.render(vampire, yaw, tickDelta, matrices, vertexConsumers, light);
       return;
