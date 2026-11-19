@@ -203,34 +203,6 @@
 						}
 					}
 				},
-				"head": {
-					"rotation": {
-						"0.0": {
-							"post": [
-								"-3",
-								"0",
-								"0"
-							],
-							"lerp_mode": "catmullrom"
-						},
-						"0.25": {
-							"post": [
-								"3",
-								"0",
-								"0"
-							],
-							"lerp_mode": "catmullrom"
-						},
-						"0.5": {
-							"post": [
-								"-3",
-								"0",
-								"0"
-							],
-							"lerp_mode": "catmullrom"
-						}
-					}
-				},
 				"tail": {
 					"rotation": {
 						"0.0": {
