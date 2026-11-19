@@ -115,6 +115,7 @@ public class SlayerGameTest implements FabricGameTest {
         TestPlayers.READY,
         () -> {
           cast(context, hunter, "riposte");
+          vampire.setTarget(hunter);
           Charges.start(vampire);
           Guards.tick(hunter);
           context.assertTrue(Holds.opened(vampire), "the charging vampire is staggered open");
