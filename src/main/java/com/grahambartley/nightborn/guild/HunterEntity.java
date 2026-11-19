@@ -125,7 +125,7 @@ public class HunterEntity extends PathAwareEntity
     targetSelector.add(1, new HunterTargetGoal(this));
   }
 
-  static boolean hunts(final LivingEntity target) {
+  public static boolean hunts(final LivingEntity target) {
     return HunterTargets.hunts(
         Vampires.isVampire(target),
         target instanceof VampireBatEntity bat && bat.raidsCamp(),
