@@ -8,6 +8,7 @@ public final class OccultFeatures {
     OccultAttributes.register();
     OccultSounds.register();
     GhostlyFamiliars.register();
+    FamiliarWisps.register();
     FamiliarModeOrders.register();
     FogClouds.register();
     RestlessDead.register();

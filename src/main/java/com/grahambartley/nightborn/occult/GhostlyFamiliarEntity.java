@@ -163,7 +163,11 @@ public class GhostlyFamiliarEntity extends PathAwareEntity
   public void tick() {
     noClip = mode().passesThroughBlocks();
     super.tick();
-    if (getWorld().isClient || !isAlive()) {
+    if (getWorld().isClient) {
+      FamiliarWisps.trail(this);
+      return;
+    }
+    if (!isAlive()) {
       return;
     }
     MobNaming.ensure(this);

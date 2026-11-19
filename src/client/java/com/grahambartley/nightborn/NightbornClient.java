@@ -13,6 +13,7 @@ import com.grahambartley.nightborn.client.gore.SplatterModels;
 import com.grahambartley.nightborn.client.guild.HunterRenderer;
 import com.grahambartley.nightborn.client.name.NamingDialogue;
 import com.grahambartley.nightborn.client.occult.GhostlyFamiliarRenderer;
+import com.grahambartley.nightborn.client.occult.WispFx;
 import com.grahambartley.nightborn.client.ritual.RitualGloom;
 import com.grahambartley.nightborn.client.state.ClientStateService;
 import com.grahambartley.nightborn.client.structure.NearbyStructure;
@@ -169,5 +170,6 @@ public class NightbornClient implements ClientModInitializer {
     WheelDialogue.register();
     StructureAmbiencePlayer.register();
     CoatingTooltip.register();
+    WispFx.register();
   }
 }
