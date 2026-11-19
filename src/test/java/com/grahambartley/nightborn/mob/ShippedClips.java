@@ -9,14 +9,18 @@ import java.util.Set;
 
 public final class ShippedClips {
 
-  private static final Path VAMPIRE =
-      Path.of("src/client/resources/assets/nightborn/animations/entity/vampire.animation.json");
+  private static final Path ANIMATIONS =
+      Path.of("src/client/resources/assets/nightborn/animations/entity");
 
   private ShippedClips() {}
 
   public static Set<String> vampire() {
+    return of("vampire");
+  }
+
+  public static Set<String> of(final String rig) {
     try {
-      return JsonParser.parseString(Files.readString(VAMPIRE))
+      return JsonParser.parseString(Files.readString(ANIMATIONS.resolve(rig + ".animation.json")))
           .getAsJsonObject()
           .getAsJsonObject("animations")
           .keySet();

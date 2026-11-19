@@ -20,7 +20,7 @@
       "max_range": 24.0,
       "tell_ticks": 16,
       "tell_sound": "minecraft:entity.evoker.prepare_summon",
-      "tell_clip": "hiss"
+      "tell_clip": "rally_tell"
     }
   }
 }

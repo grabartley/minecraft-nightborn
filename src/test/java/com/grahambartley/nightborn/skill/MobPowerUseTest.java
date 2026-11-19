@@ -12,7 +12,9 @@ import com.mojang.serialization.JsonOps;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Stream;
 import net.minecraft.util.Identifier;
 import org.junit.jupiter.api.DisplayName;
@@ -103,14 +105,23 @@ class MobPowerUseTest {
 
   @ParameterizedTest(name = "{0}")
   @MethodSource("shippedSkills")
-  @DisplayName("every shipped mob power plays clips the vampire rig ships")
+  @DisplayName("every shipped mob power plays clips each rig that can roll it ships")
   void shippedClips(final Path file) throws IOException {
     final JsonObject power =
         JsonParser.parseString(Files.readString(file)).getAsJsonObject().getAsJsonObject("power");
     if (power != null && power.has("mob")) {
       final MobPowerUse use = parse(power.get("mob").toString());
-      assertTrue(ShippedClips.vampire().contains(use.tellClip()), use.tellClip());
-      use.clip().ifPresent(clip -> assertTrue(ShippedClips.vampire().contains(clip), clip));
+      for (final String rig : rigs(file)) {
+        final Set<String> clips = ShippedClips.of(rig);
+        assertTrue(clips.contains(use.tellClip()), rig + " " + use.tellClip());
+        use.clip().ifPresent(clip -> assertTrue(clips.contains(clip), rig + " " + clip));
+      }
     }
+  }
+
+  private static List<String> rigs(final Path file) {
+    return file.getParent().getFileName().toString().equals("lord")
+        ? List.of("vampire_lord")
+        : List.of("vampire", "vampire_lord");
   }
 }
