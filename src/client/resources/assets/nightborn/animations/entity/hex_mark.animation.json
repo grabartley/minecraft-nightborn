@@ -1,0 +1,81 @@
+{
+	"format_version": "1.8.0",
+	"animations": {
+		"turn": {
+			"loop": true,
+			"animation_length": 6,
+			"bones": {
+				"ring_outer": {
+					"rotation": {
+						"0.0": [
+							"0",
+							"0",
+							"0"
+						],
+						"6.0": [
+							"0",
+							"-360",
+							"0"
+						]
+					}
+				},
+				"ring_inner": {
+					"rotation": {
+						"0.0": [
+							"0",
+							"0",
+							"0"
+						],
+						"6.0": [
+							"0",
+							"360",
+							"0"
+						]
+					}
+				},
+				"shards": {
+					"rotation": {
+						"0.0": [
+							"0",
+							"0",
+							"0"
+						],
+						"6.0": [
+							"0",
+							"-720",
+							"0"
+						]
+					}
+				},
+				"hex": {
+					"position": {
+						"0.0": {
+							"post": [
+								"0",
+								"0",
+								"0"
+							],
+							"lerp_mode": "catmullrom"
+						},
+						"3.0": {
+							"post": [
+								"0",
+								"0.8",
+								"0"
+							],
+							"lerp_mode": "catmullrom"
+						},
+						"6.0": {
+							"post": [
+								"0",
+								"0",
+								"0"
+							],
+							"lerp_mode": "catmullrom"
+						}
+					}
+				}
+			}
+		}
+	}
+}

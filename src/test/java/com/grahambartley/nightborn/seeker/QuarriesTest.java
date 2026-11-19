@@ -22,4 +22,11 @@ class QuarriesTest {
       final boolean veiled, final boolean boss, final boolean inSight, final boolean shown) {
     assertEquals(shown, Quarries.outlined(veiled, boss, inSight));
   }
+
+  @ParameterizedTest(name = "branded until {0}, new mark until {1}: shows until {2}")
+  @CsvSource({", 200, 200", "100, 200, 200", "300, 200, 300"})
+  @DisplayName("a quarry wears its brand until the last hunter's mark on it runs out")
+  void branded(final Long before, final long until, final long shown) {
+    assertEquals(shown, Quarries.branded(before, until));
+  }
 }
