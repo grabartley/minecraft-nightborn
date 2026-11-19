@@ -1,11 +1,16 @@
 package com.grahambartley.nightborn.occult;
 
 import com.grahambartley.nightborn.Nightborn;
+import com.grahambartley.nightborn.core.DataEntries;
+import java.util.Map;
+import net.fabricmc.fabric.api.event.registry.DynamicRegistries;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.SpawnGroup;
+import net.minecraft.registry.DynamicRegistryManager;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
+import net.minecraft.registry.RegistryKey;
 import net.minecraft.util.Identifier;
 
 public final class RestlessDead {
@@ -20,9 +25,17 @@ public final class RestlessDead {
               .maxTrackingRange(8)
               .build());
 
+  public static final RegistryKey<Registry<RestlessLook>> LOOK =
+      RegistryKey.ofRegistry(Identifier.of(Nightborn.MOD_ID, "restless_dead_look"));
+
   private RestlessDead() {}
 
   static void register() {
     FabricDefaultAttributeRegistry.register(TYPE, RestlessDeadEntity.createRestlessAttributes());
+    DynamicRegistries.registerSynced(LOOK, RestlessLook.CODEC);
+  }
+
+  public static Map<Identifier, RestlessLook> looks(final DynamicRegistryManager registries) {
+    return DataEntries.copy(registries, LOOK);
   }
 }
