@@ -14,6 +14,7 @@ import com.grahambartley.nightborn.decor.DecorItemGroup;
 import com.grahambartley.nightborn.enchant.EnchantFeatures;
 import com.grahambartley.nightborn.faction.FactionAttachment;
 import com.grahambartley.nightborn.faction.OathAttachment;
+import com.grahambartley.nightborn.faith.FaithFeatures;
 import com.grahambartley.nightborn.familiar.Familiars;
 import com.grahambartley.nightborn.gear.GearFeatures;
 import com.grahambartley.nightborn.gramophone.MusicDiscs;
@@ -85,6 +86,7 @@ public class Nightborn implements ModInitializer {
     MindFeatures.register();
     OccultFeatures.register();
     TrapFeatures.register();
+    FaithFeatures.register();
     EnchantFeatures.register();
     ClothingFeatures.register();
     AccessoryFeatures.register();

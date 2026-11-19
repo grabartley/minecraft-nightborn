@@ -1,0 +1,30 @@
+{
+  "branch": "nightborn:faithful",
+  "requires": [
+    "nightborn:faithful/consecrate",
+    "nightborn:faithful/sanctuary"
+  ],
+  "icon": "nightborn:skills/icon/judgement",
+  "column": 1,
+  "row": 4,
+  "rank": "nightborn:master",
+  "ranks": [
+    {
+      "cost": 4
+    }
+  ],
+  "power": {
+    "blood": 0,
+    "cooldown_ticks": 6000,
+    "prayer": {
+      "radius": 2.0,
+      "duration_ticks": 100,
+      "health_per_second": 2.0,
+      "harm_per_second": 3.0,
+      "harm_type": "nightborn:holy_light",
+      "spot_range": 16.0,
+      "look": "nightborn:judgement"
+    },
+    "sound": "nightborn:boss.inquisitor.false_dawn"
+  }
+}

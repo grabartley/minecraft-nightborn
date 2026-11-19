@@ -33,7 +33,7 @@ public final class CoatingClock {
       }
       final CoatingTerms terms =
           CoatingTerms.of(coat.coating(), ServerConfigService.current(), stack);
-      coat.blessedFor(terms, GiftAttributes.value(player, GiftAttributes.BLESSING_TIME))
+      coat.stretchedBy(terms, GiftAttributes.value(player, GiftAttributes.BLESSING_TIME))
           .afterCheck(terms, now)
           .ifPresentOrElse(
               left -> {

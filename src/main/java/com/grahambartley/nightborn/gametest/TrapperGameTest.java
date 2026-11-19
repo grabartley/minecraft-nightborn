@@ -14,7 +14,7 @@ import com.grahambartley.nightborn.skill.SkillTree;
 import com.grahambartley.nightborn.skill.TreeProgress;
 import com.grahambartley.nightborn.trap.Baits;
 import com.grahambartley.nightborn.trap.Grounding;
-import com.grahambartley.nightborn.trap.KillingGrounds;
+import com.grahambartley.nightborn.trap.MarkedGrounds;
 import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
 import net.minecraft.command.argument.EntityAnchorArgumentType;
 import net.minecraft.entity.LivingEntity;
@@ -44,7 +44,7 @@ public class TrapperGameTest implements FabricGameTest {
 
   @BeforeBatch(batchId = BATCH)
   public void clearGrounds(final ServerWorld world) {
-    KillingGrounds.clearAll();
+    MarkedGrounds.clearAll();
     Baits.clearAll();
   }
 

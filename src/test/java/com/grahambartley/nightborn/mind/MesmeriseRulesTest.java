@@ -27,21 +27,25 @@ class MesmeriseRulesTest {
     assertEquals(expected, MesmeriseRules.land(immune, resistance, roll));
   }
 
-  @ParameterizedTest(name = "boss {0}, self {1}, untouchable {2}, alive {3} -> {4}")
+  @ParameterizedTest(name = "boss {0}, self {1}, untouchable {2}, alive {3}, sheltered {4} -> {5}")
   @CsvSource({
-    "false, false, false, true, false",
-    "true, false, false, true, true",
-    "false, true, false, true, true",
-    "false, false, true, true, true",
-    "false, false, false, false, true"
+    "false, false, false, true, false, false",
+    "true, false, false, true, false, true",
+    "false, true, false, true, false, true",
+    "false, false, true, true, false, true",
+    "false, false, false, false, false, true",
+    "false, false, false, true, true, true"
   })
-  @DisplayName("bosses, the caster, creative players and the dead cannot be mesmerised")
+  @DisplayName(
+      "bosses, the caster, creative players, the dead and those under a sanctuary cannot be"
+          + " mesmerised")
   void immune(
       final boolean boss,
       final boolean self,
       final boolean untouchable,
       final boolean alive,
+      final boolean sheltered,
       final boolean expected) {
-    assertEquals(expected, MesmeriseRules.immune(boss, self, untouchable, alive));
+    assertEquals(expected, MesmeriseRules.immune(boss, self, untouchable, alive, sheltered));
   }
 }

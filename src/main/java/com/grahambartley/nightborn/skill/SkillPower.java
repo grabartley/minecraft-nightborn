@@ -1,6 +1,7 @@
 package com.grahambartley.nightborn.skill;
 
 import com.grahambartley.nightborn.batform.WingedFormPower;
+import com.grahambartley.nightborn.faith.PowerFaith;
 import com.grahambartley.nightborn.lord.RallyPower;
 import com.grahambartley.nightborn.lord.SummonPower;
 import com.grahambartley.nightborn.mind.CommandPower;
@@ -37,6 +38,7 @@ public record SkillPower(
     PowerCalls calls,
     PowerSelf self,
     PowerTraps traps,
+    PowerFaith faith,
     Optional<MobPowerUse> mob) {
 
   public static final Codec<SkillPower> CODEC =
@@ -58,6 +60,7 @@ public record SkillPower(
                           PowerCalls.CODEC.forGetter(SkillPower::calls),
                           PowerSelf.CODEC.forGetter(SkillPower::self),
                           PowerTraps.CODEC.forGetter(SkillPower::traps),
+                          PowerFaith.CODEC.forGetter(SkillPower::faith),
                           MobPowerUse.CODEC.optionalFieldOf("mob").forGetter(SkillPower::mob))
                       .apply(instance, SkillPower::new))
           .validate(SkillPower::oneMove);

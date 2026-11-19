@@ -93,8 +93,8 @@ class CoatTest {
     "GARLIC, 0, 1.25, 0"
   })
   @DisplayName("a blessing is stamped once with the holder's extra time, and garlic never is")
-  void blessedFor(final Coating coating, final int bonus, final double lasts, final int stamped) {
-    assertEquals(stamped, new Coat(coating, 0, 100L, bonus).blessedFor(TERMS, lasts).bonusTicks());
+  void stretchedBy(final Coating coating, final int bonus, final double lasts, final int stamped) {
+    assertEquals(stamped, new Coat(coating, 0, 100L, bonus).stretchedBy(TERMS, lasts).bonusTicks());
   }
 
   @ParameterizedTest(name = "bonus {0}, now {1}: {2} ticks left")
@@ -102,6 +102,45 @@ class CoatTest {
   @DisplayName("a stamped blessing outlasts a plain one by its bonus")
   void bonusLasts(final int bonus, final long now, final long left) {
     assertEquals(left, new Coat(Coating.HOLY_WATER, 0, 100L, bonus).ticksLeft(TERMS, now));
+  }
+
+  @ParameterizedTest(name = "blessed for {0}, {1} hits struck, now {2}: {3} ticks left, worn {4}")
+  @CsvSource({
+    "1200, 0, 100, 1200, false",
+    "1200, 50, 700, 600, false",
+    "1200, 500, 1299, 1, false",
+    "1200, 0, 1300, 0, true"
+  })
+  @DisplayName("a blessed weapon has no limit on its hits and wears off only with time")
+  void blessing(
+      final int ticks, final int struck, final long now, final long left, final boolean worn) {
+    Coat coat = Coat.blessing(100L, ticks);
+    for (int hit = 0; hit < struck; hit++) {
+      coat = coat.struck();
+    }
+    assertEquals(true, coat.blessed());
+    assertEquals(Coating.HOLY_WATER, coat.coating());
+    assertEquals(left, coat.ticksLeft(TERMS, now));
+    assertEquals(worn, coat.worn(TERMS, now));
+  }
+
+  @ParameterizedTest(name = "blessed for {0}, lasts x{1}: bonus {2}")
+  @CsvSource({"1200, 1.25, 300", "1200, 1.0, 0", "600, 1.25, 150"})
+  @DisplayName("the holder's extra blessing time stretches a blessed weapon by its own length")
+  void blessingStretched(final int ticks, final double lasts, final int bonus) {
+    assertEquals(bonus, Coat.blessing(100L, ticks).stretchedBy(TERMS, lasts).bonusTicks());
+  }
+
+  @ParameterizedTest(name = "blessed for {0}")
+  @CsvSource({"1200", "1"})
+  @DisplayName("a blessed weapon saves and loads unchanged")
+  void blessingRoundTrips(final int ticks) {
+    final Coat coat = Coat.blessing(500L, ticks);
+    assertEquals(
+        coat,
+        Coat.CODEC
+            .parse(JsonOps.INSTANCE, Coat.CODEC.encodeStart(JsonOps.INSTANCE, coat).getOrThrow())
+            .getOrThrow());
   }
 
   private static java.util.Optional<Coat> expected(final String left) {

@@ -18,7 +18,11 @@ public final class MesmeriseRules {
   }
 
   public static boolean immune(
-      final boolean boss, final boolean self, final boolean untouchable, final boolean alive) {
-    return boss || self || untouchable || !alive;
+      final boolean boss,
+      final boolean self,
+      final boolean untouchable,
+      final boolean alive,
+      final boolean sheltered) {
+    return boss || self || untouchable || !alive || sheltered;
   }
 }

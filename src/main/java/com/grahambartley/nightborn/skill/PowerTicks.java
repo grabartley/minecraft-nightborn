@@ -1,5 +1,6 @@
 package com.grahambartley.nightborn.skill;
 
+import com.grahambartley.nightborn.faith.Kindling;
 import com.grahambartley.nightborn.hold.Holds;
 import com.grahambartley.nightborn.mind.BloodTithe;
 import com.grahambartley.nightborn.occult.MistForm;
@@ -16,5 +17,6 @@ public final class PowerTicks {
     MistForm.tick(entity);
     Grounding.tick(entity);
     BloodTithe.tick(entity);
+    Kindling.tick(entity);
   }
 }

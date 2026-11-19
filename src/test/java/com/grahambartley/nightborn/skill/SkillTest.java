@@ -252,6 +252,80 @@ class SkillTest {
             .cooldownTicks());
   }
 
+  @ParameterizedTest(name = "{0}: costs {1}, needs {2}, gate {3}, power {4}")
+  @CsvSource(
+      delimiter = '|',
+      value = {
+        "hunter/faith | 2,2,3 | hunter/tracking | | false",
+        "faithful/mend | 2 | hunter/faith | | true",
+        "faithful/rebuke | 2 | hunter/faith | | true",
+        "faithful/blessing | 2 | hunter/faith | | true",
+        "faithful/grace | 1,2,2 | faithful/mend | | false",
+        "faithful/blood_fire | 3 | faithful/blessing | hunter | true",
+        "faithful/sanctuary | 3 | faithful/mend | hunter | true",
+        "faithful/consecrate | 3 | faithful/rebuke | veteran | true",
+        "faithful/judgement | 4 | faithful/consecrate,faithful/sanctuary | master | true",
+        "faithful/unshaken_faith | 3 | faithful/judgement | master | false"
+      })
+  @DisplayName("the Faithful path holds its ten locked skills with their costs, needs and ranks")
+  void faithfulSkills(
+      final String path,
+      final String costs,
+      final String needs,
+      final String gate,
+      final boolean power)
+      throws IOException {
+    final Skill skill = shippedSkills().get(Identifier.of("nightborn", path));
+    assertEquals(Identifier.of("nightborn", "faithful"), skill.branch());
+    assertEquals(
+        costs,
+        skill.ranks().stream()
+            .map(rank -> Integer.toString(rank.cost()))
+            .collect(Collectors.joining(",")));
+    assertEquals(
+        List.of(needs.split(",")).stream().map(need -> Identifier.of("nightborn", need)).toList(),
+        skill.requires());
+    assertEquals(
+        Optional.ofNullable(gate).map(rank -> Identifier.of("nightborn", rank)), skill.rank());
+    assertEquals(power, skill.active());
+    assertEquals(0, skill.power().map(SkillPower::blood).orElse(0));
+  }
+
+  @ParameterizedTest(name = "{0}: cooldown {1} seconds")
+  @CsvSource({
+    "mend, 45",
+    "rebuke, 30",
+    "blessing, 90",
+    "blood_fire, 120",
+    "sanctuary, 120",
+    "consecrate, 120",
+    "judgement, 300"
+  })
+  @DisplayName("each Faithful power cools down for the time the table gives")
+  void faithfulCooldowns(final String path, final int seconds) throws IOException {
+    assertEquals(
+        seconds * 20,
+        shippedSkills()
+            .get(Identifier.of("nightborn", "faithful/" + path))
+            .power()
+            .orElseThrow()
+            .cooldownTicks());
+  }
+
+  @ParameterizedTest(name = "{0}: radius {1}")
+  @CsvSource({"mend, 6", "sanctuary, 8", "judgement, 2"})
+  @DisplayName("each Faithful prayer reaches the radius the table gives")
+  void faithfulPrayerRadius(final String path, final float radius) throws IOException {
+    assertEquals(
+        radius,
+        shippedSkills()
+            .get(Identifier.of("nightborn", "faithful/" + path))
+            .power()
+            .flatMap(owned -> owned.faith().prayer())
+            .orElseThrow()
+            .radius());
+  }
+
   @Test
   @DisplayName("the core holds exactly ten skills")
   void coreSize() throws IOException {

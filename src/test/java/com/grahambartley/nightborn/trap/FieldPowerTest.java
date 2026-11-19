@@ -13,6 +13,30 @@ import org.junit.jupiter.params.provider.CsvSource;
 @ExtendWith(MinecraftBootstrapExtension.class)
 class FieldPowerTest {
 
+  @ParameterizedTest(name = "{0}: re-arms {1}, weakens {2}, unwings {3}, pulses {4}")
+  @CsvSource(
+      delimiter = ';',
+      value = {
+        "{\"radius\":10,\"duration_ticks\":400,\"rearms_traps\":true,\"look\":\"nightborn:killing_ground\"}; true; false; false; false",
+        "{\"radius\":5,\"duration_ticks\":600,\"weakens\":{\"source\":\"consecrated\",\"cue\":\"nightborn.faith.consecrated\"},\"unwings\":true,\"look\":\"nightborn:consecrate\"}; false; true; true; true",
+        "{\"radius\":5,\"duration_ticks\":600,\"unwings\":true,\"look\":\"nightborn:consecrate\"}; false; false; true; true",
+        "{\"radius\":5,\"duration_ticks\":600,\"look\":\"nightborn:consecrate\"}; false; false; false; false"
+      })
+  @DisplayName("a marked ground may re-arm traps, weaken vampires or hold them out of the air")
+  void effects(
+      final String json,
+      final boolean rearms,
+      final boolean weakens,
+      final boolean unwings,
+      final boolean pulses) {
+    final FieldPower power =
+        FieldPower.CODEC.parse(JsonOps.INSTANCE, JsonParser.parseString(json)).getOrThrow();
+    assertEquals(rearms, power.rearmsTraps());
+    assertEquals(weakens, power.weakens().isPresent());
+    assertEquals(unwings, power.unwings());
+    assertEquals(pulses, power.pulses());
+  }
+
   @ParameterizedTest(name = "{0}: refused {1}, bars {2}")
   @CsvSource(
       delimiter = ';',

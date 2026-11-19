@@ -3,12 +3,16 @@ package com.grahambartley.nightborn.skill;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.google.gson.JsonParser;
+import com.grahambartley.nightborn.MinecraftBootstrapExtension;
+import com.grahambartley.nightborn.faith.PrayerGift;
 import com.mojang.serialization.JsonOps;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
+@ExtendWith(MinecraftBootstrapExtension.class)
 class SkillRankTest {
 
   @ParameterizedTest(name = "{0} -> cost {1}, bare hands {2}")
@@ -23,7 +27,7 @@ class SkillRankTest {
   void reads(final String json, final int cost, final double bareHands) {
     final SkillRank rank =
         SkillRank.CODEC.parse(JsonOps.INSTANCE, JsonParser.parseString(json)).getOrThrow();
-    assertEquals(new SkillRank(cost, List.of(), bareHands, List.of(), List.of()), rank);
+    assertEquals(new SkillRank(cost, List.of(), bareHands, List.of(), List.of(), List.of()), rank);
     assertEquals(SkillRank.costing(cost).cost(), rank.cost());
   }
 
@@ -77,6 +81,26 @@ class SkillRankTest {
             .parse(JsonOps.INSTANCE, JsonParser.parseString(json))
             .getOrThrow()
             .trapGifts()
+            .size());
+  }
+
+  @ParameterizedTest(name = "{0} -> clears {1}")
+  @CsvSource(
+      delimiter = ';',
+      value = {
+        "{\"cost\": 3, \"prayer_gifts\": [{\"clears\": [\"minecraft:weakness\"]}]}; 1",
+        "{\"cost\": 3, \"prayer_gifts\": [{\"clears\": [\"minecraft:weakness\", \"minecraft:poison\"]}]}; 2",
+        "{\"cost\": 3}; 0"
+      })
+  @DisplayName("a rank may carry gifts for its path's healing prayers")
+  void prayerGifts(final String json, final int cleared) {
+    assertEquals(
+        cleared,
+        PrayerGift.cleared(
+                SkillRank.CODEC
+                    .parse(JsonOps.INSTANCE, JsonParser.parseString(json))
+                    .getOrThrow()
+                    .prayerGifts())
             .size());
   }
 }

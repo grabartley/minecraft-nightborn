@@ -21,7 +21,12 @@ public final class PowerUse {
     UNSEEN,
     NOWHERE,
     NO_GROUND,
-    NO_SUBJECT;
+    NO_SUBJECT,
+    REBUKED,
+    NO_CRUCIFIX,
+    NO_WEAPON,
+    TOO_HURT,
+    SMOTHERED;
 
     public String translationKey() {
       return "nightborn.powers.verdict." + name().toLowerCase(Locale.ROOT);
@@ -44,7 +49,12 @@ public final class PowerUse {
       boolean unseen,
       boolean nowhere,
       boolean groundless,
-      boolean subjectless) {}
+      boolean subjectless,
+      boolean rebuked,
+      boolean crossless,
+      boolean unarmed,
+      boolean hurt,
+      boolean smothered) {}
 
   private PowerUse() {}
 
@@ -57,6 +67,9 @@ public final class PowerUse {
     }
     if (situation.held()) {
       return Verdict.HELD;
+    }
+    if (situation.rebuked()) {
+      return Verdict.REBUKED;
     }
     if (situation.barred()) {
       return Verdict.BARRED;
@@ -93,6 +106,18 @@ public final class PowerUse {
     }
     if (situation.subjectless()) {
       return Verdict.NO_SUBJECT;
+    }
+    if (situation.crossless()) {
+      return Verdict.NO_CRUCIFIX;
+    }
+    if (situation.unarmed()) {
+      return Verdict.NO_WEAPON;
+    }
+    if (situation.hurt()) {
+      return Verdict.TOO_HURT;
+    }
+    if (situation.smothered()) {
+      return Verdict.SMOTHERED;
     }
     return Verdict.READY;
   }

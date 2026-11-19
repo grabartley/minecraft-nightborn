@@ -1,8 +1,10 @@
 package com.grahambartley.nightborn.skill;
 
+import com.grahambartley.nightborn.faith.Wielders;
 import com.grahambartley.nightborn.mind.CommandAim;
 import com.grahambartley.nightborn.mind.Commands;
 import com.grahambartley.nightborn.mind.Mesmerise;
+import com.grahambartley.nightborn.occult.Circles;
 import com.grahambartley.nightborn.occult.HexPower;
 import com.grahambartley.nightborn.occult.ShadowStep;
 import com.grahambartley.nightborn.trap.TrapSpots;
@@ -18,9 +20,10 @@ public record PowerAim(
     @Nullable Vec3d stepTo,
     @Nullable LivingEntity target,
     @Nullable CommandAim command,
-    @Nullable BlockPos spot) {
+    @Nullable BlockPos spot,
+    @Nullable LivingEntity wielder) {
 
-  public static final PowerAim NONE = new PowerAim(null, null, null, null, null);
+  public static final PowerAim NONE = new PowerAim(null, null, null, null, null, null);
 
   public static boolean aims(final SkillPower power) {
     return power.mesmerise().isPresent()
@@ -29,7 +32,12 @@ public record PowerAim(
         || power.pounce().isPresent()
         || power.hex().isPresent()
         || power.command().isPresent()
-        || power.traps().places();
+        || places(power)
+        || power.faith().armsAWeapon();
+  }
+
+  static boolean places(final SkillPower power) {
+    return power.traps().places() || power.faith().spotRange().isPresent();
   }
 
   public static Optional<Float> targetRange(final SkillPower power) {
@@ -54,7 +62,13 @@ public record PowerAim(
             .orElse(null),
         targetRange(skill).map(range -> PowerSight.aimed(caster, range)).orElse(null),
         skill.command().flatMap(command -> Commands.aim(caster, command)).orElse(null),
-        skill.traps().placeRange().flatMap(range -> TrapSpots.spot(caster, range)).orElse(null));
+        skill
+            .traps()
+            .placeRange()
+            .or(() -> skill.faith().spotRange())
+            .flatMap(range -> TrapSpots.spot(caster, range))
+            .orElse(null),
+        Wielders.of(caster, skill.faith()));
   }
 
   public boolean unseen(final SkillPower power) {
@@ -67,7 +81,17 @@ public record PowerAim(
   }
 
   public boolean unplaced(final SkillPower power) {
-    return power.traps().places() && spot == null;
+    return places(power) && spot == null;
+  }
+
+  public boolean smothered(final LivingEntity caster, final SkillPower power) {
+    return power.faith().blessing().isPresent()
+        && (Circles.stopsPrayers(caster.getWorld(), caster.getPos())
+            || wielder != null && Circles.stopsPrayers(wielder.getWorld(), wielder.getPos()));
+  }
+
+  public boolean unarmed(final SkillPower power) {
+    return power.faith().armsAWeapon() && wielder == null;
   }
 
   public boolean subjectless(final SkillPower power) {

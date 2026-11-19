@@ -23,50 +23,66 @@ class PowerUseTest {
       name =
           "power {0}, downed {1}, held {2}, barred {3}, grounded {4}, winged {5}, bat {6},"
               + " weakened {7}, sunlit {8}, cooling {9}, blood {10}/{11}, unseen {12}, nowhere {13},"
-              + " no ground {14}, no subject {15} -> {16}")
+              + " no ground {14}, no subject {15}, rebuked {16}, no crucifix {17}, unarmed {18},"
+              + " hurt {19}, smothered {20} -> {21}")
   @CsvSource({
-    "true, false, false, false, false, false, false, false, false, 0, 10, 3, false, false, false, false, READY",
-    "true, false, false, false, false, false, false, false, false, 0, 3, 3, false, false, false, false, READY",
-    "true, false, false, false, false, false, false, false, false, 0, 0, 0, false, false, false, false, READY",
-    "false, false, false, false, false, false, false, false, false, 0, 20, 0, false, false, false, false, NO_POWER",
-    "true, true, false, false, false, false, false, false, false, 0, 20, 3, false, false, false, false, HELPLESS",
-    "true, true, true, false, false, true, false, true, false, 40, 0, 3, true, false, false, false, HELPLESS",
-    "true, false, true, false, false, false, false, false, false, 0, 20, 3, false, false, false, false, HELD",
-    "true, false, true, false, false, true, true, true, false, 5, 0, 3, true, true, false, true, HELD",
-    "true, false, false, false, false, true, false, false, false, 0, 20, 3, false, false, false, false, IN_WINGED_FORM",
-    "true, false, false, false, false, true, true, false, false, 0, 20, 3, false, false, false, false, IN_WINGED_FORM",
-    "true, false, false, false, false, false, false, true, false, 0, 20, 3, false, false, false, false, WEAKENED",
-    "true, false, false, false, false, false, false, false, false, 1, 20, 3, false, false, false, false, COOLING",
-    "true, false, false, false, false, false, false, false, false, 1, 20, 3, true, false, false, false, COOLING",
-    "true, false, false, false, false, false, false, false, false, 0, 2, 3, false, false, false, false, THIRSTY",
-    "true, false, false, false, false, false, false, false, false, 0, 2, 3, true, false, false, false, THIRSTY",
-    "true, false, false, false, false, false, true, false, false, 0, 20, 3, false, false, false, false, AS_A_BAT",
-    "true, false, false, false, false, false, true, true, false, 1, 0, 3, false, false, false, false, AS_A_BAT",
-    "true, false, false, false, false, false, true, false, false, 0, 20, 3, true, true, false, false, AS_A_BAT",
-    "true, true, false, false, false, false, true, false, false, 0, 20, 3, false, false, false, false, HELPLESS",
-    "true, false, false, false, false, false, false, false, true, 0, 20, 3, false, false, false, false, SUNLIT",
-    "true, false, false, false, false, false, false, true, true, 0, 20, 3, false, false, false, false, WEAKENED",
-    "true, false, false, false, false, false, false, false, true, 5, 20, 3, false, false, false, false, SUNLIT",
-    "true, false, false, false, false, false, false, false, true, 0, 20, 3, true, true, false, false, SUNLIT",
-    "true, false, false, false, false, false, false, false, false, 0, 20, 3, true, false, false, false, UNSEEN",
-    "true, false, false, false, false, false, false, false, false, 0, 20, 3, true, true, false, true, UNSEEN",
-    "true, false, false, false, false, false, false, false, false, 0, 20, 3, false, true, false, false, NOWHERE",
-    "true, false, false, false, false, false, false, false, false, 0, 2, 3, false, true, false, false, THIRSTY",
-    "true, false, false, false, false, false, false, false, false, 0, 20, 3, false, false, false, true, NO_SUBJECT",
-    "true, false, false, false, false, false, false, false, false, 0, 20, 3, false, true, false, true, NOWHERE",
-    "true, false, false, true, false, false, false, false, false, 0, 20, 3, false, false, false, false, BARRED",
-    "true, false, true, true, true, false, false, false, false, 0, 20, 3, false, false, false, false, HELD",
-    "true, false, false, true, true, true, false, false, false, 0, 20, 3, false, false, false, false, BARRED",
-    "true, false, false, false, true, true, false, false, false, 0, 20, 3, false, false, false, false, GROUNDED",
-    "true, true, false, false, true, false, false, false, false, 0, 20, 3, false, false, false, false, HELPLESS",
-    "true, false, false, false, false, false, false, false, false, 0, 20, 3, false, false, true, false, NO_GROUND",
-    "true, false, false, false, false, false, false, false, false, 0, 20, 3, false, true, true, false, NOWHERE",
-    "true, false, false, false, false, false, false, false, false, 0, 20, 3, false, false, true, true, NO_GROUND",
-    "true, false, false, false, false, false, false, false, false, 0, 2, 3, false, false, true, false, THIRSTY"
+    "true, false, false, false, false, false, false, false, false, 0, 10, 3, false, false, false, false, false, false, false, false, false, READY",
+    "true, false, false, false, false, false, false, false, false, 0, 3, 3, false, false, false, false, false, false, false, false, false, READY",
+    "true, false, false, false, false, false, false, false, false, 0, 0, 0, false, false, false, false, false, false, false, false, false, READY",
+    "false, false, false, false, false, false, false, false, false, 0, 20, 0, false, false, false, false, false, false, false, false, false, NO_POWER",
+    "true, true, false, false, false, false, false, false, false, 0, 20, 3, false, false, false, false, false, false, false, false, false, HELPLESS",
+    "true, true, true, false, false, true, false, true, false, 40, 0, 3, true, false, false, false, false, false, false, false, false, HELPLESS",
+    "true, false, true, false, false, false, false, false, false, 0, 20, 3, false, false, false, false, false, false, false, false, false, HELD",
+    "true, false, true, false, false, true, true, true, false, 5, 0, 3, true, true, false, true, false, false, false, false, false, HELD",
+    "true, false, false, false, false, true, false, false, false, 0, 20, 3, false, false, false, false, false, false, false, false, false, IN_WINGED_FORM",
+    "true, false, false, false, false, true, true, false, false, 0, 20, 3, false, false, false, false, false, false, false, false, false, IN_WINGED_FORM",
+    "true, false, false, false, false, false, false, true, false, 0, 20, 3, false, false, false, false, false, false, false, false, false, WEAKENED",
+    "true, false, false, false, false, false, false, false, false, 1, 20, 3, false, false, false, false, false, false, false, false, false, COOLING",
+    "true, false, false, false, false, false, false, false, false, 1, 20, 3, true, false, false, false, false, false, false, false, false, COOLING",
+    "true, false, false, false, false, false, false, false, false, 0, 2, 3, false, false, false, false, false, false, false, false, false, THIRSTY",
+    "true, false, false, false, false, false, false, false, false, 0, 2, 3, true, false, false, false, false, false, false, false, false, THIRSTY",
+    "true, false, false, false, false, false, true, false, false, 0, 20, 3, false, false, false, false, false, false, false, false, false, AS_A_BAT",
+    "true, false, false, false, false, false, true, true, false, 1, 0, 3, false, false, false, false, false, false, false, false, false, AS_A_BAT",
+    "true, false, false, false, false, false, true, false, false, 0, 20, 3, true, true, false, false, false, false, false, false, false, AS_A_BAT",
+    "true, true, false, false, false, false, true, false, false, 0, 20, 3, false, false, false, false, false, false, false, false, false, HELPLESS",
+    "true, false, false, false, false, false, false, false, true, 0, 20, 3, false, false, false, false, false, false, false, false, false, SUNLIT",
+    "true, false, false, false, false, false, false, true, true, 0, 20, 3, false, false, false, false, false, false, false, false, false, WEAKENED",
+    "true, false, false, false, false, false, false, false, true, 5, 20, 3, false, false, false, false, false, false, false, false, false, SUNLIT",
+    "true, false, false, false, false, false, false, false, true, 0, 20, 3, true, true, false, false, false, false, false, false, false, SUNLIT",
+    "true, false, false, false, false, false, false, false, false, 0, 20, 3, true, false, false, false, false, false, false, false, false, UNSEEN",
+    "true, false, false, false, false, false, false, false, false, 0, 20, 3, true, true, false, true, false, false, false, false, false, UNSEEN",
+    "true, false, false, false, false, false, false, false, false, 0, 20, 3, false, true, false, false, false, false, false, false, false, NOWHERE",
+    "true, false, false, false, false, false, false, false, false, 0, 2, 3, false, true, false, false, false, false, false, false, false, THIRSTY",
+    "true, false, false, false, false, false, false, false, false, 0, 20, 3, false, false, false, true, false, false, false, false, false, NO_SUBJECT",
+    "true, false, false, false, false, false, false, false, false, 0, 20, 3, false, true, false, true, false, false, false, false, false, NOWHERE",
+    "true, false, false, true, false, false, false, false, false, 0, 20, 3, false, false, false, false, false, false, false, false, false, BARRED",
+    "true, false, true, true, true, false, false, false, false, 0, 20, 3, false, false, false, false, false, false, false, false, false, HELD",
+    "true, false, false, true, true, true, false, false, false, 0, 20, 3, false, false, false, false, false, false, false, false, false, BARRED",
+    "true, false, false, false, true, true, false, false, false, 0, 20, 3, false, false, false, false, false, false, false, false, false, GROUNDED",
+    "true, true, false, false, true, false, false, false, false, 0, 20, 3, false, false, false, false, false, false, false, false, false, HELPLESS",
+    "true, false, false, false, false, false, false, false, false, 0, 20, 3, false, false, true, false, false, false, false, false, false, NO_GROUND",
+    "true, false, false, false, false, false, false, false, false, 0, 20, 3, false, true, true, false, false, false, false, false, false, NOWHERE",
+    "true, false, false, false, false, false, false, false, false, 0, 20, 3, false, false, true, true, false, false, false, false, false, NO_GROUND",
+    "true, false, false, false, false, false, false, false, false, 0, 2, 3, false, false, true, false, false, false, false, false, false, THIRSTY",
+    "true, false, false, false, false, false, false, false, false, 0, 20, 0, false, false, false, false, true, false, false, false, false, REBUKED",
+    "true, false, true, false, false, false, false, false, false, 0, 20, 0, false, false, false, false, true, false, false, false, false, HELD",
+    "true, false, false, true, false, false, false, false, false, 0, 20, 0, false, false, false, false, true, false, false, false, false, REBUKED",
+    "true, false, false, false, false, false, false, false, false, 5, 20, 0, false, false, false, false, true, false, false, false, false, REBUKED",
+    "true, false, false, false, false, false, false, false, false, 0, 20, 0, false, false, false, false, false, true, false, false, false, NO_CRUCIFIX",
+    "true, false, false, false, false, false, false, false, false, 5, 20, 0, false, false, false, false, false, true, false, false, false, COOLING",
+    "true, false, false, false, false, false, false, false, false, 0, 20, 0, false, false, false, false, false, false, true, false, false, NO_WEAPON",
+    "true, false, false, false, false, false, false, false, false, 0, 20, 0, false, false, true, false, false, false, true, false, false, NO_GROUND",
+    "true, false, false, false, false, false, false, false, false, 0, 20, 0, false, false, false, false, false, false, false, true, false, TOO_HURT",
+    "true, false, false, false, false, false, false, false, false, 0, 20, 0, false, false, false, false, false, false, true, true, false, NO_WEAPON",
+    "true, false, false, false, false, false, false, false, false, 0, 20, 0, false, false, false, false, false, false, false, false, true, SMOTHERED",
+    "true, false, false, false, false, false, false, false, false, 5, 20, 0, false, false, false, false, false, false, false, false, true, COOLING",
+    "true, false, false, false, false, false, false, false, false, 0, 20, 0, false, false, false, false, false, false, true, false, true, NO_WEAPON"
   })
   @DisplayName(
       "a power is refused while downed, held, barred, grounded, in winged form, in bat form, weakened, in the sun,"
-          + " cooling, short of blood, with nothing to aim at, nowhere to step, no ground or no one to order")
+          + " cooling, short of blood, with nothing to aim at, nowhere to step, no ground, no one to"
+          + " order, rebuked, without a crucifix or a weapon, too hurt to bleed for it, or inside a"
+          + " blood circle")
   void checks(
       final boolean hasPower,
       final boolean helpless,
@@ -84,6 +100,11 @@ class PowerUseTest {
       final boolean nowhere,
       final boolean groundless,
       final boolean subjectless,
+      final boolean rebuked,
+      final boolean crossless,
+      final boolean unarmed,
+      final boolean hurt,
+      final boolean smothered,
       final PowerUse.Verdict expected) {
     assertEquals(
         expected,
@@ -104,7 +125,12 @@ class PowerUseTest {
                 unseen,
                 nowhere,
                 groundless,
-                subjectless)));
+                subjectless,
+                rebuked,
+                crossless,
+                unarmed,
+                hurt,
+                smothered)));
   }
 
   @ParameterizedTest(name = "{0}")

@@ -1,0 +1,28 @@
+{
+  "branch": "nightborn:faithful",
+  "requires": [
+    "nightborn:faithful/judgement"
+  ],
+  "icon": "nightborn:skills/icon/unshaken_faith",
+  "column": 1,
+  "row": 5,
+  "rank": "nightborn:master",
+  "ranks": [
+    {
+      "cost": 3,
+      "power_gifts": [
+        {
+          "branch": "nightborn:faithful",
+          "cooldown_cut": 0.2
+        }
+      ],
+      "prayer_gifts": [
+        {
+          "clears": [
+            "minecraft:weakness"
+          ]
+        }
+      ]
+    }
+  ]
+}

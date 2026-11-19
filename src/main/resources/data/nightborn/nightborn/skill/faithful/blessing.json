@@ -1,0 +1,23 @@
+{
+  "branch": "nightborn:faithful",
+  "requires": [
+    "nightborn:hunter/faith"
+  ],
+  "icon": "nightborn:skills/icon/blessing",
+  "column": 1,
+  "row": 1,
+  "ranks": [
+    {
+      "cost": 2
+    }
+  ],
+  "power": {
+    "blood": 0,
+    "cooldown_ticks": 1800,
+    "blessing": {
+      "range": 8.0,
+      "duration_ticks": 1200
+    },
+    "sound": "minecraft:block.beacon.power_select"
+  }
+}

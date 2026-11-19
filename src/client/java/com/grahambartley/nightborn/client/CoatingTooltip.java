@@ -14,6 +14,7 @@ import net.minecraft.util.StringHelper;
 public final class CoatingTooltip {
 
   static final int COLOUR = 0xB8C4CC;
+  static final String BLESSED = "nightborn.coating.blessed";
 
   private CoatingTooltip() {}
 
@@ -35,7 +36,7 @@ public final class CoatingTooltip {
   static List<Text> lines(
       final Coat coat, final CoatingTerms terms, final long now, final boolean ammo) {
     final Text name =
-        Text.translatable(coat.coating().translationKey())
+        Text.translatable(coat.blessed() ? BLESSED : coat.coating().translationKey())
             .styled(style -> style.withColor(TextColor.fromRgb(COLOUR)));
     if (ammo) {
       return List.of(
@@ -46,9 +47,11 @@ public final class CoatingTooltip {
         StringHelper.formatTicks(
             (int) coat.ticksLeft(terms, now), SharedConstants.TICKS_PER_SECOND);
     final Text left =
-        hits == 1
-            ? Text.translatable("nightborn.coating.left.one", time)
-            : Text.translatable("nightborn.coating.left", hits, time);
+        coat.blessed()
+            ? Text.translatable("nightborn.coating.left.time", time)
+            : hits == 1
+                ? Text.translatable("nightborn.coating.left.one", time)
+                : Text.translatable("nightborn.coating.left", hits, time);
     return List.of(name, left.copy().formatted(Formatting.GRAY));
   }
 }

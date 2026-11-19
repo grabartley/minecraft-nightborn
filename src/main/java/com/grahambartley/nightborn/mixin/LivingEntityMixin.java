@@ -12,6 +12,7 @@ import com.grahambartley.nightborn.coffin.CoffinSleepers;
 import com.grahambartley.nightborn.coffin.DaySleep;
 import com.grahambartley.nightborn.config.NightbornConfig;
 import com.grahambartley.nightborn.downed.DownedTargeting;
+import com.grahambartley.nightborn.faith.Kindling;
 import com.grahambartley.nightborn.hunt.Hunts;
 import com.grahambartley.nightborn.levitation.Levitation;
 import com.grahambartley.nightborn.levitation.LevitationMotion;
@@ -156,7 +157,8 @@ abstract class LivingEntityMixin {
 
   @ModifyVariable(method = "heal", at = @At("HEAD"), argsOnly = true)
   private float nightborn$hexedHealing(final float amount) {
-    return Hexes.heal((LivingEntity) (Object) this, amount);
+    final LivingEntity self = (LivingEntity) (Object) this;
+    return Kindling.heal(self, Hexes.heal(self, amount));
   }
 
   @ModifyVariable(method = "updateLimbs(F)V", at = @At("HEAD"), argsOnly = true)

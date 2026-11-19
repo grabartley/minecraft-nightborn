@@ -3,6 +3,7 @@ package com.grahambartley.nightborn.mind;
 import com.grahambartley.nightborn.Nightborn;
 import com.grahambartley.nightborn.accessory.GiftAttributes;
 import com.grahambartley.nightborn.accessory.GiftScale;
+import com.grahambartley.nightborn.faith.FaithMarks;
 import com.grahambartley.nightborn.hunter.HunterAttributes;
 import com.grahambartley.nightborn.skill.MesmerisePower;
 import com.grahambartley.nightborn.skill.PowerSight;
@@ -99,7 +100,8 @@ public final class Mesmerise {
                 target == caster,
                 target instanceof PlayerEntity player
                     && (player.isCreative() || player.isSpectator()),
-                target.isAlive()),
+                target.isAlive(),
+                FaithMarks.SHELTERED.on(target)),
             target.getAttributes().hasAttribute(HunterAttributes.MESMERISE_RESISTANCE)
                 ? target.getAttributeValue(HunterAttributes.MESMERISE_RESISTANCE)
                 : 0.0,

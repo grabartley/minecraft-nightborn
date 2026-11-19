@@ -4,6 +4,7 @@ import com.grahambartley.nightborn.Nightborn;
 import com.grahambartley.nightborn.batform.BatForm;
 import com.grahambartley.nightborn.downed.Downed;
 import com.grahambartley.nightborn.network.ToggleLevitationPayload;
+import com.grahambartley.nightborn.trap.MarkedGrounds;
 import com.grahambartley.nightborn.vampire.Vampires;
 import com.grahambartley.nightborn.village.SuspicionCause;
 import com.grahambartley.nightborn.village.VampireSigns;
@@ -94,11 +95,12 @@ public final class Levitation {
   }
 
   public static boolean start(final LivingEntity vampire) {
-    if (!LevitationRules.mayLevitate(
-        Vampires.isVampire(vampire),
-        weakness(vampire),
-        Downed.state(vampire) != null,
-        occupied(vampire))) {
+    if (MarkedGrounds.holdsDown(vampire)
+        || !LevitationRules.mayLevitate(
+            Vampires.isVampire(vampire),
+            weakness(vampire),
+            Downed.state(vampire) != null,
+            occupied(vampire))) {
       return false;
     }
     vampire.setAttached(TYPE, true);

@@ -46,13 +46,17 @@ public final class Grounding {
     return Math.min(fallingSpeed, DRAG);
   }
 
-  private static void pull(final LivingEntity entity) {
+  public static void unwing(final LivingEntity entity) {
     if (BatForm.isBat(entity)) {
       BatForm.leave(entity);
     }
     if (Levitation.isLevitating(entity)) {
       Levitation.land(entity);
     }
+  }
+
+  private static void pull(final LivingEntity entity) {
+    unwing(entity);
     if (!entity.isOnGround()) {
       entity.setVelocity(
           entity.getVelocity().x * 0.5, fall(entity.getVelocity().y), entity.getVelocity().z * 0.5);
