@@ -1,0 +1,13 @@
+{
+  "works_for": "human",
+  "holds": [
+    {
+      "items": [
+        "nightborn:wooden_stake",
+        "nightborn:silver_stake",
+        "nightborn:ashen_silver_stake"
+      ],
+      "count": 6
+    }
+  ]
+}

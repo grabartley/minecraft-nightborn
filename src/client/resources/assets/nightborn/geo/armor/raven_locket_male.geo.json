@@ -3,7 +3,7 @@
 	"minecraft:geometry": [
 		{
 			"description": {
-				"identifier": "geometry.velvet_choker_male",
+				"identifier": "geometry.raven_locket_male",
 				"texture_width": 64,
 				"texture_height": 64,
 				"visible_bounds_width": 2,
@@ -24,7 +24,7 @@
 					]
 				},
 				{
-					"name": "choker_band",
+					"name": "chain",
 					"parent": "armorBody",
 					"pivot": [
 						0,
@@ -43,7 +43,7 @@
 								1,
 								4
 							],
-							"inflate": 0.6,
+							"inflate": 0.35,
 							"uv": [
 								0,
 								0
@@ -52,7 +52,7 @@
 					]
 				},
 				{
-					"name": "choker_drop",
+					"name": "drop",
 					"parent": "armorBody",
 					"pivot": [
 						0,
@@ -62,8 +62,25 @@
 					"cubes": [
 						{
 							"origin": [
-								-1,
+								-0.5,
 								20.5,
+								-3
+							],
+							"size": [
+								1,
+								3,
+								1
+							],
+							"inflate": -0.32,
+							"uv": [
+								24,
+								0
+							]
+						},
+						{
+							"origin": [
+								-1,
+								18,
 								-3.4
 							],
 							"size": [
@@ -72,8 +89,25 @@
 								1
 							],
 							"uv": [
-								0,
-								8
+								28,
+								0
+							]
+						},
+						{
+							"origin": [
+								-1.75,
+								18.5,
+								-3.4
+							],
+							"size": [
+								1,
+								1,
+								1
+							],
+							"inflate": -0.2,
+							"uv": [
+								34,
+								0
 							]
 						}
 					]

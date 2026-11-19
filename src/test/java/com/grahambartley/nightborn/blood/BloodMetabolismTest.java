@@ -261,4 +261,23 @@ class BloodMetabolismTest {
   void atRate(final int seconds, final double rate, final int expected) {
     assertEquals(expected, BloodMetabolism.atRate(seconds, rate));
   }
+
+  @ParameterizedTest(name = "{0}, levitating {1}, rate {2}, share {3}: {4}")
+  @CsvSource({
+    "NONE, true, 1.0, 0.85, 0.85",
+    "NONE, true, 1.2, 0.85, 1.02",
+    "NONE, false, 1.0, 0.85, 1.0",
+    "FLYING, true, 1.0, 0.85, 1.0",
+    "SPRINTING, false, 1.0, 0.85, 1.0",
+    "NONE, true, 1.0, 1.0, 1.0"
+  })
+  @DisplayName("a levitation gift slows only the blood that levitating spends")
+  void flightRate(
+      final BatEffort bat,
+      final boolean levitating,
+      final double rate,
+      final double share,
+      final double expected) {
+    assertEquals(expected, BloodMetabolism.flightRate(bat, levitating, rate, share), 1.0E-9);
+  }
 }

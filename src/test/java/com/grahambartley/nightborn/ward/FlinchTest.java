@@ -32,4 +32,11 @@ class FlinchTest {
   void inReach(final int strings, final int crucifix, final int shape, final boolean reached) {
     assertEquals(reached, Flinch.inReach(strings, crucifix, shape));
   }
+
+  @ParameterizedTest(name = "small flinch {0}: small {1}")
+  @CsvSource({"0.0, false", "1.0, true", "0.5, true"})
+  @DisplayName("a vampire whose flinch is made smaller plays the small flinch")
+  void small(final double smallFlinch, final boolean small) {
+    assertEquals(small, Flinch.small(smallFlinch));
+  }
 }

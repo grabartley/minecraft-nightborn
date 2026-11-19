@@ -33,13 +33,12 @@ public final class AccessoryTooltip {
     if (!accessory.plain()) {
       lines.add(Text.translatable(giftKey(item)).formatted(Formatting.DARK_PURPLE));
     }
-    accessory
-        .holds()
-        .ifPresent(
-            hold ->
-                lines.add(
-                    Text.translatable(HOLDS, AccessoryStore.held(stack), hold.count())
-                        .formatted(Formatting.GRAY)));
+    if (!accessory.holds().isEmpty()) {
+      lines.add(
+          Text.translatable(
+                  HOLDS, AccessoryStore.held(stack), AccessoryHold.capacity(accessory.holds()))
+              .formatted(Formatting.GRAY));
+    }
     accessory.worksFor().map(AccessoryTooltip::worksFor).ifPresent(lines::add);
     return lines;
   }

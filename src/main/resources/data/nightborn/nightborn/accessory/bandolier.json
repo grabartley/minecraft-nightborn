@@ -1,0 +1,20 @@
+{
+  "works_for": "human",
+  "holds": [
+    {
+      "items": [
+        "nightborn:stake_bolt",
+        "nightborn:silver_bolt",
+        "nightborn:holy_water_bolt"
+      ],
+      "count": 128
+    },
+    {
+      "items": [
+        "minecraft:splash_potion"
+      ],
+      "count": 4,
+      "potion": "nightborn:holy_water"
+    }
+  ]
+}

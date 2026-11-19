@@ -1,6 +1,7 @@
 package com.grahambartley.nightborn.feeding;
 
 import com.grahambartley.nightborn.accessory.GiftAttributes;
+import com.grahambartley.nightborn.accessory.GiftScale;
 import com.grahambartley.nightborn.advancement.Milestone;
 import com.grahambartley.nightborn.advancement.MilestoneCriterion;
 import com.grahambartley.nightborn.age.AgeDeeds;
@@ -171,7 +172,6 @@ final class Feeder {
       vampire.heal(config.feeding().finisherHeal());
       SkillEarning.fromDrain(vampire, config.skills());
       AgeDeeds.drained(vampire, victim);
-      PlayerCues.send(vampire, PlayerCue.DRAIN);
       Deeds.record(vampire, Deed.of(DeedKinds.FINISHER_KILL));
     }
   }
@@ -190,11 +190,14 @@ final class Feeder {
             BloodValue.FRESH_PERCENT));
     session.heldForBottles(0.0F);
     if (victim != null && victim.isAlive() && session.totalTaken() > 0.0F) {
-      final int seconds =
-          BiteResistance.weaknessSeconds(
-              config.feeding().sipWeaknessSeconds(), biteResistance(victim));
-      if (seconds > 0) {
-        victim.addStatusEffect(new StatusEffectInstance(StatusEffects.WEAKNESS, seconds * 20));
+      final int ticks =
+          GiftScale.ticks(
+              BiteResistance.weaknessSeconds(
+                      config.feeding().sipWeaknessSeconds(), biteResistance(victim))
+                  * 20,
+              GiftAttributes.value(victim, GiftAttributes.BITE_WEAKNESS_TIME));
+      if (ticks > 0) {
+        victim.addStatusEffect(new StatusEffectInstance(StatusEffects.WEAKNESS, ticks));
       }
       VillageVictims.bitten(vampire.getServerWorld(), victim);
       Thralls.mayBind(vampire, victim, session.totalTaken());
@@ -284,14 +287,15 @@ final class Feeder {
       final Random random) {
     return random.nextFloat()
         < BiteResistance.breakFreeChance(
-            ResistChance.held(
-                ResistChance.of(
-                    victim.getHealth(),
-                    victim.getMaxHealth(),
-                    config.feeding().resistChance(),
-                    victim.isSleeping() || MindTies.mesmerised(victim)),
-                VampireAttributes.value(vampire, VampireAttributes.VICTIM_STRUGGLE)),
-            biteResistance(victim));
+                ResistChance.held(
+                    ResistChance.of(
+                        victim.getHealth(),
+                        victim.getMaxHealth(),
+                        config.feeding().resistChance(),
+                        victim.isSleeping() || MindTies.mesmerised(victim)),
+                    VampireAttributes.value(vampire, VampireAttributes.VICTIM_STRUGGLE)),
+                biteResistance(victim))
+            * (float) GiftAttributes.value(victim, GiftAttributes.BITE_ESCAPE);
   }
 
   private static double biteResistance(final LivingEntity victim) {

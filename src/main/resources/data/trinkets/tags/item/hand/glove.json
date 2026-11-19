@@ -1,6 +1,13 @@
 {
   "replace": false,
   "values": [
-    "nightborn:lace_gloves"
+    "nightborn:lace_gloves",
+    "nightborn:riding_gloves",
+    "nightborn:fingerless_gloves",
+    "nightborn:clawed_gauntlets",
+    "nightborn:silk_gloves",
+    "nightborn:stakewrights_gloves",
+    "nightborn:silver_threaded_gloves",
+    "nightborn:gravediggers_mitts"
   ]
 }

@@ -1,0 +1,9 @@
+{
+  "gifts": [
+    {
+      "attribute": "nightborn:soil_dig_speed",
+      "amount": 0.2,
+      "operation": "add_value"
+    }
+  ]
+}

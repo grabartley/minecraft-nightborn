@@ -3,6 +3,8 @@ package com.grahambartley.nightborn.feeding;
 import com.grahambartley.nightborn.blood.BloodGifts;
 import com.grahambartley.nightborn.blood.BloodQuality;
 import com.grahambartley.nightborn.config.NightbornConfig;
+import com.grahambartley.nightborn.network.PlayerCue;
+import com.grahambartley.nightborn.network.PlayerCues;
 import com.grahambartley.nightborn.server.ServerConfigService;
 import com.grahambartley.nightborn.ward.Wards;
 import java.util.HashMap;
@@ -119,6 +121,9 @@ public final class FeedingSessions {
                 now,
                 ServerConfigService.current().feeding().finisherDrainTicks())
             : FeedingSession.bite(victim.getUuid(), quality, gift, now));
+    if (finisher) {
+      PlayerCues.send(vampire, PlayerCue.FINISHER);
+    }
   }
 
   private static void interrupt(final ServerPlayerEntity vampire) {

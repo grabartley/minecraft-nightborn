@@ -27,4 +27,11 @@ class NameSightTest {
       final boolean expected) {
     assertEquals(expected, NameSight.shows(shown, bearer, visible, inSight));
   }
+
+  @ParameterizedTest(name = "{0} blocks, range {1}: shows {2}")
+  @CsvSource({"4.0, 8.0, true", "8.0, 8.0, true", "8.5, 8.0, false", "60.0, 0.0, true"})
+  @DisplayName("a name kept close shows only within its range, and every other name as before")
+  void withinRange(final double distance, final double range, final boolean shows) {
+    assertEquals(shows, NameSight.withinRange(distance * distance, range));
+  }
 }

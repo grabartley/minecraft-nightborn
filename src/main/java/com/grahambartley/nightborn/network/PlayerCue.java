@@ -9,7 +9,9 @@ import net.minecraft.util.function.ValueLists;
 public enum PlayerCue {
   VOMIT,
   DRAIN,
-  FLINCH;
+  FLINCH,
+  FINISHER,
+  SMALL_FLINCH;
 
   private static final IntFunction<PlayerCue> BY_INDEX =
       ValueLists.createIdToValueFunction(

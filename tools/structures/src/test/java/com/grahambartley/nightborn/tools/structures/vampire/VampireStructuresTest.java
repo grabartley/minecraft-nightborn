@@ -121,7 +121,7 @@ class VampireStructuresTest {
         Arguments.of("vampire/mountain_castle/bastion", null));
   }
 
-  @ParameterizedTest(name = "{0} keeps one filled old blood font a visitor can walk up to")
+  @ParameterizedTest(name = "{0} keeps one full old blood font a visitor can walk up to")
   @MethodSource("fontWalks")
   void everyVampireHomeKeepsOneOldBloodFont(final String path, final Pos start) {
     final Template home =
@@ -136,7 +136,7 @@ class VampireStructuresTest {
             .toList();
     assertEquals(1, fonts.size());
     final Pos font = fonts.getFirst();
-    assertEquals("nightborn:old_blood_font[filled=true]", home.get(font.x(), font.y(), font.z()));
+    assertEquals("nightborn:old_blood_font[level=full]", home.get(font.x(), font.y(), font.z()));
     assertTrue(
         !StructureWalk.open(home.get(font.x(), font.y() - 1, font.z())),
         "it stands on " + home.get(font.x(), font.y() - 1, font.z()));

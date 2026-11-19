@@ -1,6 +1,13 @@
 {
   "replace": false,
   "values": [
-    "nightborn:brass_buckled_belt"
+    "nightborn:brass_buckled_belt",
+    "nightborn:silk_sash",
+    "nightborn:cellarers_belt",
+    "nightborn:bandolier",
+    "nightborn:stake_loops",
+    "nightborn:flask_belt",
+    "nightborn:trappers_pouch",
+    "nightborn:sturdy_girdle"
   ]
 }

@@ -30,7 +30,7 @@ class AccessoryTest {
   void worksFor(final Faction only, final Faction wearer, final boolean works) {
     assertEquals(
         works,
-        new Accessory(Optional.ofNullable(only), List.of(), Optional.empty(), Accessory.UNDYED)
+        new Accessory(Optional.ofNullable(only), List.of(), List.of(), Accessory.UNDYED)
             .worksFor(wearer));
   }
 
@@ -38,7 +38,7 @@ class AccessoryTest {
   @DisplayName("an empty data file is a plain piece for anyone with no gift")
   void plainFromEmptyData() {
     assertEquals(
-        new Accessory(Optional.empty(), List.of(), Optional.empty(), Accessory.UNDYED),
+        new Accessory(Optional.empty(), List.of(), List.of(), Accessory.UNDYED),
         Accessory.CODEC.parse(JsonOps.INSTANCE, JsonParser.parseString("{}")).getOrThrow());
   }
 
@@ -75,7 +75,7 @@ class AccessoryTest {
     "'{}', true",
     "'{\"works_for\":\"human\"}', true",
     "'{\"gifts\":[{\"attribute\":\"nightborn:blood_drain\",\"amount\":-0.1,\"operation\":\"add_value\"}]}', false",
-    "'{\"holds\":{\"items\":[\"nightborn:blood_bottle\"],\"count\":1}}', false"
+    "'{\"holds\":[{\"items\":[\"nightborn:blood_bottle\"],\"count\":1}]}', false"
   })
   @DisplayName("a piece with no gift and nothing to hold is plain")
   void plain(final String json, final boolean plain) {

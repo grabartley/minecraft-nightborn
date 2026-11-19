@@ -18,6 +18,7 @@ public final class AccessoryFeatures {
         (handler, sender, server) -> AccessoryMove.fromArmour(handler.getPlayer()));
     ServerLivingEntityEvents.AFTER_DAMAGE.register(StrikeHealing::afterDamage);
     ServerTickEvents.END_SERVER_TICK.register(Vigil::tick);
+    ServerTickEvents.END_SERVER_TICK.register(DaylightHealing::tick);
     ServerPlayConnectionEvents.DISCONNECT.register(
         (handler, server) -> {
           StrikeHealing.forget(handler.getPlayer().getUuid());

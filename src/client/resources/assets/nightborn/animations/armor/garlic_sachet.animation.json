@@ -5,7 +5,7 @@
 			"loop": true,
 			"animation_length": 4,
 			"bones": {
-				"choker_drop": {
+				"drop": {
 					"rotation": {
 						"0.0": [
 							"0",
@@ -25,7 +25,7 @@
 			"loop": true,
 			"animation_length": 1,
 			"bones": {
-				"choker_drop": {
+				"drop": {
 					"rotation": {
 						"0.0": [
 							"0",

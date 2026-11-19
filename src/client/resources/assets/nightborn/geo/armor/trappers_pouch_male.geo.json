@@ -1,0 +1,101 @@
+{
+	"format_version": "1.12.0",
+	"minecraft:geometry": [
+		{
+			"description": {
+				"identifier": "geometry.brass_buckled_belt_male",
+				"texture_width": 64,
+				"texture_height": 64,
+				"visible_bounds_width": 2,
+				"visible_bounds_height": 2.5,
+				"visible_bounds_offset": [
+					0,
+					0.75,
+					0
+				]
+			},
+			"bones": [
+				{
+					"name": "armorBody",
+					"pivot": [
+						0,
+						24,
+						0
+					]
+				},
+				{
+					"name": "belt",
+					"parent": "armorBody",
+					"pivot": [
+						0,
+						13,
+						0
+					],
+					"cubes": [
+						{
+							"origin": [
+								-4,
+								12,
+								-2
+							],
+							"size": [
+								8,
+								2,
+								4
+							],
+							"inflate": 0.6,
+							"uv": [
+								0,
+								0
+							]
+						},
+						{
+							"origin": [
+								-1.5,
+								11.5,
+								-3.3
+							],
+							"size": [
+								3,
+								3,
+								1
+							],
+							"uv": [
+								0,
+								8
+							]
+						}
+					]
+				},
+				{
+					"name": "belt_tongue",
+					"parent": "belt",
+					"pivot": [
+						2,
+						12.5,
+						-2.7
+					],
+					"cubes": [
+						{
+							"origin": [
+								1.5,
+								10.5,
+								-3.2
+							],
+							"size": [
+								1,
+								2,
+								1
+							],
+							"inflate": -0.1,
+							"uv": [
+								0,
+								13
+							]
+						}
+					]
+				}
+			]
+		}
+	]
+}
