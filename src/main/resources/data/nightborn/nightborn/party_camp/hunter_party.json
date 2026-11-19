@@ -19,7 +19,12 @@
             0
           ],
           "state": {
-            "Name": "minecraft:brown_wool"
+            "Name": "nightborn:hunter_tent",
+            "Properties": {
+              "facing": "north",
+              "part": "left_front",
+              "struck": "false"
+            }
           }
         },
         {
@@ -29,7 +34,12 @@
             1
           ],
           "state": {
-            "Name": "minecraft:brown_wool"
+            "Name": "nightborn:hunter_tent",
+            "Properties": {
+              "facing": "north",
+              "part": "left_middle",
+              "struck": "false"
+            }
           }
         },
         {
@@ -39,7 +49,12 @@
             2
           ],
           "state": {
-            "Name": "minecraft:brown_wool"
+            "Name": "nightborn:hunter_tent",
+            "Properties": {
+              "facing": "north",
+              "part": "left_back",
+              "struck": "false"
+            }
           }
         },
         {
@@ -49,7 +64,12 @@
             0
           ],
           "state": {
-            "Name": "minecraft:brown_wool"
+            "Name": "nightborn:hunter_tent",
+            "Properties": {
+              "facing": "north",
+              "part": "right_front",
+              "struck": "false"
+            }
           }
         },
         {
@@ -59,7 +79,12 @@
             1
           ],
           "state": {
-            "Name": "minecraft:brown_wool"
+            "Name": "nightborn:hunter_tent",
+            "Properties": {
+              "facing": "north",
+              "part": "right_middle",
+              "struck": "false"
+            }
           }
         },
         {
@@ -69,7 +94,12 @@
             2
           ],
           "state": {
-            "Name": "minecraft:brown_wool"
+            "Name": "nightborn:hunter_tent",
+            "Properties": {
+              "facing": "north",
+              "part": "right_back",
+              "struck": "false"
+            }
           }
         },
         {
@@ -79,17 +109,12 @@
             2
           ],
           "state": {
-            "Name": "minecraft:brown_wool"
-          }
-        },
-        {
-          "pos": [
-            -1,
-            1,
-            1
-          ],
-          "state": {
-            "Name": "minecraft:brown_wool"
+            "Name": "nightborn:hunter_tent",
+            "Properties": {
+              "facing": "north",
+              "part": "back",
+              "struck": "false"
+            }
           }
         },
         {
@@ -99,7 +124,12 @@
             0
           ],
           "state": {
-            "Name": "minecraft:brown_wool"
+            "Name": "nightborn:hunter_tent",
+            "Properties": {
+              "facing": "north",
+              "part": "roof_front",
+              "struck": "false"
+            }
           }
         },
         {
@@ -109,7 +139,12 @@
             1
           ],
           "state": {
-            "Name": "minecraft:brown_wool"
+            "Name": "nightborn:hunter_tent",
+            "Properties": {
+              "facing": "north",
+              "part": "roof_middle",
+              "struck": "false"
+            }
           }
         },
         {
@@ -119,17 +154,12 @@
             2
           ],
           "state": {
-            "Name": "minecraft:brown_wool"
-          }
-        },
-        {
-          "pos": [
-            1,
-            1,
-            1
-          ],
-          "state": {
-            "Name": "minecraft:brown_wool"
+            "Name": "nightborn:hunter_tent",
+            "Properties": {
+              "facing": "north",
+              "part": "roof_back",
+              "struck": "false"
+            }
           }
         },
         {
@@ -178,7 +208,12 @@
             0
           ],
           "state": {
-            "Name": "minecraft:brown_wool"
+            "Name": "nightborn:hunter_tent",
+            "Properties": {
+              "facing": "north",
+              "part": "left_front",
+              "struck": "false"
+            }
           }
         },
         {
@@ -188,7 +223,12 @@
             1
           ],
           "state": {
-            "Name": "minecraft:brown_wool"
+            "Name": "nightborn:hunter_tent",
+            "Properties": {
+              "facing": "north",
+              "part": "left_middle",
+              "struck": "false"
+            }
           }
         },
         {
@@ -198,7 +238,12 @@
             2
           ],
           "state": {
-            "Name": "minecraft:brown_wool"
+            "Name": "nightborn:hunter_tent",
+            "Properties": {
+              "facing": "north",
+              "part": "left_back",
+              "struck": "false"
+            }
           }
         },
         {
@@ -208,7 +253,12 @@
             0
           ],
           "state": {
-            "Name": "minecraft:brown_wool"
+            "Name": "nightborn:hunter_tent",
+            "Properties": {
+              "facing": "north",
+              "part": "right_front",
+              "struck": "false"
+            }
           }
         },
         {
@@ -218,7 +268,12 @@
             1
           ],
           "state": {
-            "Name": "minecraft:brown_wool"
+            "Name": "nightborn:hunter_tent",
+            "Properties": {
+              "facing": "north",
+              "part": "right_middle",
+              "struck": "false"
+            }
           }
         },
         {
@@ -228,7 +283,12 @@
             2
           ],
           "state": {
-            "Name": "minecraft:brown_wool"
+            "Name": "nightborn:hunter_tent",
+            "Properties": {
+              "facing": "north",
+              "part": "right_back",
+              "struck": "false"
+            }
           }
         },
         {
@@ -238,17 +298,12 @@
             2
           ],
           "state": {
-            "Name": "minecraft:brown_wool"
-          }
-        },
-        {
-          "pos": [
-            -1,
-            1,
-            1
-          ],
-          "state": {
-            "Name": "minecraft:brown_wool"
+            "Name": "nightborn:hunter_tent",
+            "Properties": {
+              "facing": "north",
+              "part": "back",
+              "struck": "false"
+            }
           }
         },
         {
@@ -258,7 +313,12 @@
             0
           ],
           "state": {
-            "Name": "minecraft:brown_wool"
+            "Name": "nightborn:hunter_tent",
+            "Properties": {
+              "facing": "north",
+              "part": "roof_front",
+              "struck": "false"
+            }
           }
         },
         {
@@ -268,7 +328,12 @@
             1
           ],
           "state": {
-            "Name": "minecraft:brown_wool"
+            "Name": "nightborn:hunter_tent",
+            "Properties": {
+              "facing": "north",
+              "part": "roof_middle",
+              "struck": "false"
+            }
           }
         },
         {
@@ -278,17 +343,12 @@
             2
           ],
           "state": {
-            "Name": "minecraft:brown_wool"
-          }
-        },
-        {
-          "pos": [
-            1,
-            1,
-            1
-          ],
-          "state": {
-            "Name": "minecraft:brown_wool"
+            "Name": "nightborn:hunter_tent",
+            "Properties": {
+              "facing": "north",
+              "part": "roof_back",
+              "struck": "false"
+            }
           }
         },
         {
@@ -338,7 +398,12 @@
             0
           ],
           "state": {
-            "Name": "minecraft:brown_wool"
+            "Name": "nightborn:hunter_tent",
+            "Properties": {
+              "facing": "north",
+              "part": "left_front",
+              "struck": "false"
+            }
           }
         },
         {
@@ -348,7 +413,12 @@
             1
           ],
           "state": {
-            "Name": "minecraft:brown_wool"
+            "Name": "nightborn:hunter_tent",
+            "Properties": {
+              "facing": "north",
+              "part": "left_middle",
+              "struck": "false"
+            }
           }
         },
         {
@@ -358,7 +428,12 @@
             2
           ],
           "state": {
-            "Name": "minecraft:brown_wool"
+            "Name": "nightborn:hunter_tent",
+            "Properties": {
+              "facing": "north",
+              "part": "left_back",
+              "struck": "false"
+            }
           }
         },
         {
@@ -368,7 +443,12 @@
             0
           ],
           "state": {
-            "Name": "minecraft:brown_wool"
+            "Name": "nightborn:hunter_tent",
+            "Properties": {
+              "facing": "north",
+              "part": "right_front",
+              "struck": "false"
+            }
           }
         },
         {
@@ -378,7 +458,12 @@
             1
           ],
           "state": {
-            "Name": "minecraft:brown_wool"
+            "Name": "nightborn:hunter_tent",
+            "Properties": {
+              "facing": "north",
+              "part": "right_middle",
+              "struck": "false"
+            }
           }
         },
         {
@@ -388,7 +473,12 @@
             2
           ],
           "state": {
-            "Name": "minecraft:brown_wool"
+            "Name": "nightborn:hunter_tent",
+            "Properties": {
+              "facing": "north",
+              "part": "right_back",
+              "struck": "false"
+            }
           }
         },
         {
@@ -398,17 +488,12 @@
             2
           ],
           "state": {
-            "Name": "minecraft:brown_wool"
-          }
-        },
-        {
-          "pos": [
-            -1,
-            1,
-            1
-          ],
-          "state": {
-            "Name": "minecraft:brown_wool"
+            "Name": "nightborn:hunter_tent",
+            "Properties": {
+              "facing": "north",
+              "part": "back",
+              "struck": "false"
+            }
           }
         },
         {
@@ -418,7 +503,12 @@
             0
           ],
           "state": {
-            "Name": "minecraft:brown_wool"
+            "Name": "nightborn:hunter_tent",
+            "Properties": {
+              "facing": "north",
+              "part": "roof_front",
+              "struck": "false"
+            }
           }
         },
         {
@@ -428,7 +518,12 @@
             1
           ],
           "state": {
-            "Name": "minecraft:brown_wool"
+            "Name": "nightborn:hunter_tent",
+            "Properties": {
+              "facing": "north",
+              "part": "roof_middle",
+              "struck": "false"
+            }
           }
         },
         {
@@ -438,17 +533,12 @@
             2
           ],
           "state": {
-            "Name": "minecraft:brown_wool"
-          }
-        },
-        {
-          "pos": [
-            1,
-            1,
-            1
-          ],
-          "state": {
-            "Name": "minecraft:brown_wool"
+            "Name": "nightborn:hunter_tent",
+            "Properties": {
+              "facing": "north",
+              "part": "roof_back",
+              "struck": "false"
+            }
           }
         },
         {

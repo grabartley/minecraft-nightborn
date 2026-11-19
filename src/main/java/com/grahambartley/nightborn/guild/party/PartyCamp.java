@@ -97,6 +97,10 @@ public final class PartyCamp {
     final CampClaims claims = CampClaims.of(world);
     for (final BlockPos at : camp.blocks()) {
       final BlockState state = world.getBlockState(at);
+      if (state.getBlock() instanceof StrikesWithCamp piece) {
+        piece.strikeWithCamp(world, at, state);
+        continue;
+      }
       if (claims.release(at, state)) {
         world.setBlockState(at, Blocks.AIR.getDefaultState(), Block.NOTIFY_LISTENERS);
       }
