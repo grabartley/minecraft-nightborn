@@ -24,7 +24,7 @@
       "max_range": 11.0,
       "tell_ticks": 8,
       "tell_sound": "minecraft:entity.goat.prepare_ram",
-      "tell_clip": "blood_rush_tell",
+      "tell_clip": "long_leap_tell",
       "clip": "leap"
     }
   }
