@@ -1,6 +1,6 @@
 {
   "kind": "silver_chain",
-  "clip": "raise_crucifix",
+  "clip": "silver_chain",
   "sound": "minecraft:item.armor.equip_chain",
   "windup_ticks": 20,
   "cooldown_ticks": 300,

@@ -4,6 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.google.gson.JsonParser;
+import com.grahambartley.nightborn.MinecraftBootstrapExtension;
+import com.grahambartley.nightborn.guild.HunterEntity;
 import com.mojang.serialization.JsonOps;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -11,12 +13,17 @@ import java.nio.file.Path;
 import java.util.Optional;
 import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
+@ExtendWith(MinecraftBootstrapExtension.class)
 class VeteranAttackTest {
 
   static final Path ATTACKS = Path.of("src/main/resources/data/nightborn/nightborn/veteran_attack");
+  static final Path CLIPS =
+      Path.of("src/client/resources/assets/nightborn/animations/entity/hunter.animation.json");
 
   static VeteranAttack shipped(final String name) throws IOException {
     return VeteranAttack.CODEC
@@ -64,6 +71,22 @@ class VeteranAttackTest {
     assertTrue(Registries.SOUND_EVENT.containsId(attack.sound()), attack.sound().toString());
     attack.held().ifPresent(item -> assertTrue(Registries.ITEM.containsId(item)));
     assertTrue(!attack.clip().isEmpty());
+  }
+
+  @ParameterizedTest(name = "{0}")
+  @CsvSource({"silver_chain", "bolt_volley", "holy_water_arc", "rallying_cry"})
+  @DisplayName("each attack's pose is a hunter clip that ends on its release as the wind-up ends")
+  void poseFitsTheWindUp(final String name) throws IOException {
+    final VeteranAttack attack = shipped(name);
+    final var clip =
+        JsonParser.parseString(Files.readString(CLIPS))
+            .getAsJsonObject()
+            .getAsJsonObject("animations")
+            .getAsJsonObject(attack.clip());
+    assertEquals(
+        (attack.windupTicks() - HunterEntity.ANIMATION_BLEND_TICKS) / 20.0,
+        clip.get("animation_length").getAsDouble(),
+        1.0e-6);
   }
 
   @ParameterizedTest(name = "{0}: mark {1}")

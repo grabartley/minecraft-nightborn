@@ -1,6 +1,6 @@
 {
   "kind": "bolt_volley",
-  "clip": "crossbow_shot",
+  "clip": "bolt_volley",
   "sound": "minecraft:item.crossbow.loading_start",
   "windup_ticks": 30,
   "cooldown_ticks": 240,

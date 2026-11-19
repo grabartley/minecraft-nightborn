@@ -1,6 +1,6 @@
 {
   "kind": "rallying_cry",
-  "clip": "raise_crucifix",
+  "clip": "rallying_cry",
   "sound": "minecraft:item.armor.equip_iron",
   "windup_ticks": 20,
   "cooldown_ticks": 900,
