@@ -36,6 +36,7 @@ import com.grahambartley.nightborn.inquisitor.InquisitorMobs;
 import com.grahambartley.nightborn.mob.NightbornMobs;
 import com.grahambartley.nightborn.occult.GhostlyFamiliars;
 import com.grahambartley.nightborn.occult.RestlessDead;
+import com.grahambartley.nightborn.oldblood.OldBloodBlocks;
 import com.grahambartley.nightborn.render.AccessoryRenderer;
 import com.grahambartley.nightborn.render.AmmoModels;
 import com.grahambartley.nightborn.render.BoltEntityRenderer;
@@ -48,6 +49,7 @@ import com.grahambartley.nightborn.render.CrestBannerRenderer;
 import com.grahambartley.nightborn.render.FurnitureBlockRenderer;
 import com.grahambartley.nightborn.render.GeoBlockItemRenderer;
 import com.grahambartley.nightborn.render.GramophoneRenderer;
+import com.grahambartley.nightborn.render.OldBloodFontRenderer;
 import com.grahambartley.nightborn.render.RestlessDeadRenderer;
 import com.grahambartley.nightborn.render.RitualAltarRenderer;
 import com.grahambartley.nightborn.render.VampireBatRenderer;
@@ -78,6 +80,7 @@ public class NightbornClient implements ClientModInitializer {
     BlockEntityRendererFactories.register(Coffins.BLOCK_ENTITY, CoffinRenderer::new);
     BlockEntityRendererFactories.register(DecorBlockEntities.WEAPON_RACK, WeaponRackRenderer::new);
     BlockEntityRendererFactories.register(RitualBlocks.ALTAR_ENTITY, RitualAltarRenderer::new);
+    BlockEntityRendererFactories.register(OldBloodBlocks.FONT_ENTITY, OldBloodFontRenderer::new);
     BuiltinItemRendererRegistry.INSTANCE.register(
         RitualBlocks.ALTAR,
         new GeoBlockItemRenderer<>(

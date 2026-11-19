@@ -1,5 +1,6 @@
 package com.grahambartley.nightborn.oldblood;
 
+import com.grahambartley.nightborn.decor.ToggleClips;
 import com.grahambartley.nightborn.house.Houses;
 import com.grahambartley.nightborn.mob.VampireEntity;
 import com.grahambartley.nightborn.server.ServerConfigService;
@@ -13,8 +14,14 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.GlobalPos;
 import net.minecraft.world.World;
+import software.bernie.geckolib.animatable.GeoBlockEntity;
+import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.animation.AnimatableManager;
+import software.bernie.geckolib.animation.AnimationController;
+import software.bernie.geckolib.animation.PlayState;
+import software.bernie.geckolib.util.GeckoLibUtil;
 
-public class OldBloodFontBlockEntity extends BlockEntity {
+public class OldBloodFontBlockEntity extends BlockEntity implements GeoBlockEntity {
 
   static final String PROGRESS_KEY = "Refill";
   static final String UPDATED_KEY = "Updated";
@@ -22,6 +29,11 @@ public class OldBloodFontBlockEntity extends BlockEntity {
   static final int HOUSEHOLD_REACH = 64;
   static final long UNKNOWN = -1L;
 
+  static final String CONTROLLER = "level";
+  static final int BLEND_TICKS = 10;
+
+  private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
+  private final FontClips clips = new FontClips();
   private long progress = FontRefill.FULL;
   private long updatedAt = UNKNOWN;
 
@@ -96,8 +108,10 @@ public class OldBloodFontBlockEntity extends BlockEntity {
       return;
     }
     final BlockState state = getCachedState();
-    if (state.get(OldBloodFontBlock.FILLED) != full()) {
-      world.setBlockState(pos, state.with(OldBloodFontBlock.FILLED, full()), Block.NOTIFY_ALL);
+    final FontLevel level =
+        FontLevel.of(progress, ServerConfigService.current().turning().oldBloodRefillDays());
+    if (state.get(OldBloodFontBlock.LEVEL) != level) {
+      world.setBlockState(pos, state.with(OldBloodFontBlock.LEVEL, level), Block.NOTIFY_ALL);
     }
   }
 
@@ -113,5 +127,26 @@ public class OldBloodFontBlockEntity extends BlockEntity {
     super.writeNbt(nbt, registries);
     nbt.putLong(PROGRESS_KEY, progress);
     nbt.putLong(UPDATED_KEY, updatedAt);
+  }
+
+  @Override
+  public void registerControllers(final AnimatableManager.ControllerRegistrar controllers) {
+    controllers.add(
+        new AnimationController<>(
+            this,
+            CONTROLLER,
+            BLEND_TICKS,
+            state -> {
+              clips
+                  .observe(getCachedState().get(OldBloodFontBlock.LEVEL))
+                  .ifPresent(
+                      names -> state.getController().setAnimation(ToggleClips.sequence(names)));
+              return PlayState.CONTINUE;
+            }));
+  }
+
+  @Override
+  public AnimatableInstanceCache getAnimatableInstanceCache() {
+    return cache;
   }
 }

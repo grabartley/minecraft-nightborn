@@ -9,19 +9,20 @@ import net.minecraft.item.Items;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
+import org.junit.jupiter.params.provider.EnumSource;
 
 @ExtendWith(MinecraftBootstrapExtension.class)
 class OldBloodBlocksTest {
 
-  @ParameterizedTest(name = "filled {0}")
-  @ValueSource(booleans = {true, false})
+  @ParameterizedTest(name = "{0}")
+  @EnumSource(FontLevel.class)
   @DisplayName("the font cannot be broken, pushed, crafted or carried away")
-  void cannotBeTaken(final boolean filled) {
-    final var state = OldBloodBlocks.FONT.getDefaultState().with(OldBloodFontBlock.FILLED, filled);
+  void cannotBeTaken(final FontLevel level) {
+    final var state = OldBloodBlocks.FONT.getDefaultState().with(OldBloodFontBlock.LEVEL, level);
     assertTrue(state.getHardness(null, null) < 0.0F);
     assertEquals(PistonBehavior.BLOCK, state.getPistonBehavior());
     assertEquals(Items.AIR, OldBloodBlocks.FONT.asItem());
-    assertEquals(true, OldBloodBlocks.FONT.getDefaultState().get(OldBloodFontBlock.FILLED));
+    assertEquals(
+        FontLevel.FULL, OldBloodBlocks.FONT.getDefaultState().get(OldBloodFontBlock.LEVEL));
   }
 }

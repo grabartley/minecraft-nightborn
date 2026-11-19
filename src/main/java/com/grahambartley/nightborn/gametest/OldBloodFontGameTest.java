@@ -55,7 +55,7 @@ public class OldBloodFontGameTest implements FabricGameTest {
   }
 
   private static boolean filled(final TestContext context) {
-    return context.getBlockState(FONT).get(OldBloodFontBlock.FILLED);
+    return context.getBlockState(FONT).get(OldBloodFontBlock.LEVEL).full();
   }
 
   @GameTest(templateName = ARENA, tickLimit = TestPlayers.READY + 10)
