@@ -5,12 +5,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.grahambartley.nightborn.mob.look.VampireRig;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import net.minecraft.util.Identifier;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -205,16 +207,38 @@ class VampirePoseTest {
   @EnumSource(VampirePose.class)
   @DisplayName("every pose the vampire plays is in its animation file")
   void animationShips(final VampirePose pose) throws IOException {
-    final JsonObject animations =
-        JsonParser.parseString(
-                Files.readString(
-                    Path.of(
-                        "src/client/resources/assets/nightborn/animations/entity/vampire.animation.json")))
-            .getAsJsonObject()
-            .getAsJsonObject("animations");
+    final JsonObject animations = clips(VampireRig.playerClips());
     pose.clip()
         .getAnimationStages()
         .forEach(stage -> assertTrue(animations.has(stage.animationName()), stage.animationName()));
+  }
+
+  @ParameterizedTest(name = "{0} {1}")
+  @CsvSource({
+    "MALE, DOWNED",
+    "MALE, RISE",
+    "FEMALE, DOWNED",
+    "FEMALE, RISE",
+    "LORD, DOWNED",
+    "LORD, RISE",
+    "ELDEST_MALE, DOWNED",
+    "ELDEST_MALE, RISE"
+  })
+  @DisplayName("every rig can fall, lie breathing and get up")
+  void downedShips(final VampireRig rig, final VampirePose pose) throws IOException {
+    final JsonObject animations = clips(rig.clips());
+    pose.clip()
+        .getAnimationStages()
+        .forEach(stage -> assertTrue(animations.has(stage.animationName()), stage.animationName()));
+  }
+
+  private static JsonObject clips(final Identifier file) throws IOException {
+    return JsonParser.parseString(
+            Files.readString(
+                Path.of("src/client/resources/assets", file.getNamespace())
+                    .resolve(file.getPath())))
+        .getAsJsonObject()
+        .getAsJsonObject("animations");
   }
 
   @ParameterizedTest(name = "{0} plays {1}")
