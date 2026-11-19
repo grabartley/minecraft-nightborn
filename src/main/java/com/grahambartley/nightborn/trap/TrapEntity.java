@@ -192,7 +192,7 @@ public class TrapEntity extends ZoneMarkEntity {
         0.3,
         trap.size(),
         0.05);
-    if (KillingGrounds.covers(world, getPos())) {
+    if (MarkedGrounds.rearms(world, getPos())) {
       armedAt = world.getTime();
     } else {
       discard();

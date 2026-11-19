@@ -1,0 +1,25 @@
+{
+  "branch": "nightborn:faithful",
+  "requires": [
+    "nightborn:hunter/faith"
+  ],
+  "icon": "nightborn:skills/icon/rebuke",
+  "column": 2,
+  "row": 1,
+  "ranks": [
+    {
+      "cost": 2
+    }
+  ],
+  "power": {
+    "blood": 0,
+    "cooldown_ticks": 600,
+    "rebuke": {
+      "range": 8.0,
+      "arc_degrees": 90.0,
+      "push": 1.5,
+      "silence_ticks": 40
+    },
+    "sound": "minecraft:block.bell.use"
+  }
+}

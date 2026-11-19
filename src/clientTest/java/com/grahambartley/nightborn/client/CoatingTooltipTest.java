@@ -43,4 +43,16 @@ class CoatingTooltipTest {
   private static String key(final Text text) {
     return ((TranslatableTextContent) text.getContent()).getKey();
   }
+
+  @ParameterizedTest(name = "blessed for {0} ticks, started {1}: {2} left")
+  @CsvSource({"1200, 1500, '00:35'", "1200, 2000, '01:00'", "600, 1000, '00:00'"})
+  @DisplayName("a blessed weapon is named blessed and shows only the time left")
+  void blessed(final int ticks, final long started, final String left) {
+    final List<Text> lines =
+        CoatingTooltip.lines(Coat.blessing(started, ticks), TERMS, 2000L, false);
+    assertEquals(CoatingTooltip.BLESSED, key(lines.get(0)));
+    assertEquals("nightborn.coating.left.time", key(lines.get(1)));
+    assertEquals(
+        left, String.valueOf(((TranslatableTextContent) lines.get(1).getContent()).getArgs()[0]));
+  }
 }

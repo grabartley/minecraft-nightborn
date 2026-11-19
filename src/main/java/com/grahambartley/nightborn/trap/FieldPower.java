@@ -5,7 +5,14 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import java.util.List;
 import net.minecraft.util.Identifier;
 
-public record FieldPower(float radius, int durationTicks, List<Identifier> bars, Identifier look) {
+public record FieldPower(
+    float radius,
+    int durationTicks,
+    List<Identifier> bars,
+    boolean rearmsTraps,
+    boolean weakens,
+    boolean unwings,
+    Identifier look) {
 
   public static final Codec<FieldPower> CODEC =
       RecordCodecBuilder.create(
@@ -20,10 +27,19 @@ public record FieldPower(float radius, int durationTicks, List<Identifier> bars,
                           .listOf()
                           .optionalFieldOf("bars", List.of())
                           .forGetter(FieldPower::bars),
+                      Codec.BOOL
+                          .optionalFieldOf("rearms_traps", false)
+                          .forGetter(FieldPower::rearmsTraps),
+                      Codec.BOOL.optionalFieldOf("weakens", false).forGetter(FieldPower::weakens),
+                      Codec.BOOL.optionalFieldOf("unwings", false).forGetter(FieldPower::unwings),
                       Identifier.CODEC.fieldOf("look").forGetter(FieldPower::look))
                   .apply(instance, FieldPower::new));
 
   public FieldPower {
     bars = List.copyOf(bars);
+  }
+
+  public boolean pulses() {
+    return weakens || unwings;
   }
 }

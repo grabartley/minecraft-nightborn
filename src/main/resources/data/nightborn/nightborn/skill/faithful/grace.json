@@ -1,0 +1,41 @@
+{
+  "branch": "nightborn:faithful",
+  "requires": [
+    "nightborn:faithful/mend"
+  ],
+  "icon": "nightborn:skills/icon/grace",
+  "column": 0,
+  "row": 2,
+  "ranks": [
+    {
+      "cost": 1,
+      "attributes": [
+        {
+          "attribute": "nightborn:prayer_healing",
+          "amount": 0.25,
+          "operation": "add_value"
+        }
+      ]
+    },
+    {
+      "cost": 2,
+      "attributes": [
+        {
+          "attribute": "nightborn:prayer_healing",
+          "amount": 0.25,
+          "operation": "add_value"
+        }
+      ]
+    },
+    {
+      "cost": 2,
+      "attributes": [
+        {
+          "attribute": "nightborn:prayer_healing",
+          "amount": 0.25,
+          "operation": "add_value"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "branch": "nightborn:faithful",
+  "requires": [
+    "nightborn:hunter/faith"
+  ],
+  "icon": "nightborn:skills/icon/mend",
+  "column": 0,
+  "row": 1,
+  "ranks": [
+    {
+      "cost": 2
+    }
+  ],
+  "power": {
+    "blood": 0,
+    "cooldown_ticks": 900,
+    "prayer": {
+      "radius": 6.0,
+      "health": 6.0
+    },
+    "sound": "minecraft:block.amethyst_block.resonate"
+  }
+}

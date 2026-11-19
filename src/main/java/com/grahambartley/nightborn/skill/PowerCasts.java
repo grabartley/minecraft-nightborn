@@ -2,6 +2,11 @@ package com.grahambartley.nightborn.skill;
 
 import com.grahambartley.nightborn.batform.BatForm;
 import com.grahambartley.nightborn.batform.WingedForm;
+import com.grahambartley.nightborn.faith.Blessings;
+import com.grahambartley.nightborn.faith.Kindling;
+import com.grahambartley.nightborn.faith.PowerFaith;
+import com.grahambartley.nightborn.faith.Prayers;
+import com.grahambartley.nightborn.faith.Rebukes;
 import com.grahambartley.nightborn.lord.Rally;
 import com.grahambartley.nightborn.lord.Summons;
 import com.grahambartley.nightborn.mind.Commands;
@@ -19,7 +24,7 @@ import com.grahambartley.nightborn.occult.Swarms;
 import com.grahambartley.nightborn.sight.Sight;
 import com.grahambartley.nightborn.sight.Sights;
 import com.grahambartley.nightborn.trap.Baits;
-import com.grahambartley.nightborn.trap.KillingGrounds;
+import com.grahambartley.nightborn.trap.MarkedGrounds;
 import com.grahambartley.nightborn.trap.Nets;
 import com.grahambartley.nightborn.trap.Traps;
 import com.grahambartley.nightborn.vanish.Vanish;
@@ -51,6 +56,7 @@ final class PowerCasts {
     moves(caster, id, power, aim);
     minds(caster, power, aim);
     traps(caster, id, power, aim);
+    faith(caster, power, aim);
     power.familiar().ifPresent(familiar -> GhostlyFamiliars.summon(caster, familiar));
     power.fog().ifPresent(fog -> FogClouds.spawn(caster, fog));
     power.rally().ifPresent(rally -> Rally.call(caster, rally));
@@ -110,8 +116,21 @@ final class PowerCasts {
       power.bait().ifPresent(bait -> Baits.place(caster, bait, aim.spot()));
     }
     power.net().ifPresent(net -> Nets.launch(caster, id, net));
-    power.field().ifPresent(field -> KillingGrounds.mark(caster, field));
+    power.field().ifPresent(field -> MarkedGrounds.mark(caster, field));
     if (power.traps().thrown()) {
+      caster.swingHand(Hand.MAIN_HAND, true);
+    }
+  }
+
+  private static void faith(final LivingEntity caster, final SkillPower power, final PowerAim aim) {
+    final PowerFaith faith = power.faith();
+    faith.prayer().ifPresent(prayer -> Prayers.pray(caster, prayer, aim.spot()));
+    faith.rebuke().ifPresent(rebuke -> Rebukes.rebuke(caster, rebuke));
+    if (aim.wielder() != null) {
+      faith.blessing().ifPresent(blessing -> Blessings.bless(caster, aim.wielder(), blessing));
+      faith.kindle().ifPresent(kindle -> Kindling.light(caster, kindle));
+    }
+    if (faith.any()) {
       caster.swingHand(Hand.MAIN_HAND, true);
     }
   }

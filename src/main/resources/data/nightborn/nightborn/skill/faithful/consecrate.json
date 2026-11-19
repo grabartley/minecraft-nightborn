@@ -1,0 +1,31 @@
+{
+  "branch": "nightborn:faithful",
+  "requires": [
+    "nightborn:faithful/rebuke"
+  ],
+  "icon": "nightborn:skills/icon/consecrate",
+  "column": 2,
+  "row": 3,
+  "rank": "nightborn:veteran",
+  "ranks": [
+    {
+      "cost": 3
+    }
+  ],
+  "power": {
+    "blood": 0,
+    "cooldown_ticks": 2400,
+    "field": {
+      "radius": 5.0,
+      "duration_ticks": 600,
+      "bars": [
+        "nightborn:core/vanish",
+        "nightborn:beast/bat_form"
+      ],
+      "weakens": true,
+      "unwings": true,
+      "look": "nightborn:consecrate"
+    },
+    "sound": "minecraft:block.bell.resonate"
+  }
+}

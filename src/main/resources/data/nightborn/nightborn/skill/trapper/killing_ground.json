@@ -25,6 +25,7 @@
         "nightborn:beast/bat_form",
         "nightborn:occult/mist_form"
       ],
+      "rearms_traps": true,
       "look": "nightborn:killing_ground"
     },
     "sound": "minecraft:event.raid.horn"

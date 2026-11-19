@@ -3,6 +3,7 @@ package com.grahambartley.nightborn;
 import com.grahambartley.nightborn.ammo.AmmoEntities;
 import com.grahambartley.nightborn.boss.BossEntities;
 import com.grahambartley.nightborn.client.CoatingTooltip;
+import com.grahambartley.nightborn.client.FlameTooltip;
 import com.grahambartley.nightborn.client.VampireClientFeatures;
 import com.grahambartley.nightborn.client.boss.ArenaWallRenderer;
 import com.grahambartley.nightborn.client.boss.BossArenaView;
@@ -170,6 +171,7 @@ public class NightbornClient implements ClientModInitializer {
     WheelDialogue.register();
     StructureAmbiencePlayer.register();
     CoatingTooltip.register();
+    FlameTooltip.register();
     WispFx.register();
   }
 }

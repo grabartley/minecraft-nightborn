@@ -5,12 +5,14 @@ import com.grahambartley.nightborn.batform.BatForm;
 import com.grahambartley.nightborn.batform.WingedForm;
 import com.grahambartley.nightborn.blood.BloodAttachment;
 import com.grahambartley.nightborn.downed.Downed;
+import com.grahambartley.nightborn.faith.Kindling;
+import com.grahambartley.nightborn.faith.Rebukes;
 import com.grahambartley.nightborn.hold.Holds;
 import com.grahambartley.nightborn.moment.Moments;
 import com.grahambartley.nightborn.network.UsePowerPayload;
 import com.grahambartley.nightborn.sun.DirectSun;
 import com.grahambartley.nightborn.trap.Grounding;
-import com.grahambartley.nightborn.trap.KillingGrounds;
+import com.grahambartley.nightborn.trap.MarkedGrounds;
 import com.grahambartley.nightborn.vampire.VampireAttributes;
 import com.grahambartley.nightborn.weakened.Weakened;
 import java.util.List;
@@ -132,7 +134,7 @@ public final class Powers {
             power.isPresent(),
             Downed.helpless(caster) || Moments.locked(caster),
             Holds.stopsPower(caster, power.map(owned -> owned.moves().count() > 0).orElse(false)),
-            id != null && power.isPresent() && KillingGrounds.bars(caster, id),
+            id != null && power.isPresent() && MarkedGrounds.bars(caster, id),
             power.map(SkillPower::leavesTheGround).orElse(false) && Grounding.on(caster),
             WingedForm.on(caster),
             BatForm.isBat(caster),
@@ -146,7 +148,14 @@ public final class Powers {
             power.map(aim::unseen).orElse(false),
             power.map(aim::nowhere).orElse(false),
             power.map(aim::unplaced).orElse(false),
-            power.map(aim::subjectless).orElse(false)));
+            power.map(aim::subjectless).orElse(false),
+            Rebukes.silenced(caster),
+            power.flatMap(owned -> owned.faith().rebuke()).isPresent() && !Rebukes.armed(caster),
+            power.map(aim::unarmed).orElse(false),
+            power
+                .flatMap(owned -> owned.faith().kindle())
+                .map(kindle -> !Kindling.affords(caster, kindle))
+                .orElse(false)));
   }
 
   public static PowerUse.Verdict cast(final LivingEntity caster, @Nullable final Identifier id) {

@@ -1,6 +1,7 @@
 package com.grahambartley.nightborn.mind;
 
 import com.grahambartley.nightborn.Nightborn;
+import com.grahambartley.nightborn.faith.FaithMarks;
 import com.grahambartley.nightborn.hunter.HunterAttributes;
 import com.grahambartley.nightborn.skill.Boost;
 import com.grahambartley.nightborn.skill.Boosts;
@@ -108,6 +109,9 @@ public final class Dreads {
 
   private static void touch(
       final LivingEntity caster, final LivingEntity living, final Dread dread) {
+    if (FaithMarks.SHELTERED.on(living)) {
+      return;
+    }
     final DreadPower power = dread.power();
     if (living instanceof PlayerEntity player) {
       if (dread.resisted().contains(player.getUuid())) {

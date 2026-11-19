@@ -7,7 +7,7 @@ public final class TrapFeatures {
   public static void register() {
     TrapEntities.initialize();
     Grounding.register();
-    KillingGrounds.register();
+    MarkedGrounds.register();
     Baits.register();
     TrapSense.register();
   }

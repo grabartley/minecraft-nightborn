@@ -23,6 +23,7 @@ class DeedKindsTest {
     "nightborn:nemesis_ended, true",
     "nightborn:trapped, true",
     "nightborn:grounded, true",
+    "nightborn:prayer_healed, true",
     "nightborn:not_yet_reported, false"
   })
   void onlyDeedsTheGameReportsAreLive(final String kind, final boolean live) {

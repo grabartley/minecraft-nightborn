@@ -1,0 +1,26 @@
+{
+  "branch": "nightborn:faithful",
+  "requires": [
+    "nightborn:faithful/blessing"
+  ],
+  "icon": "nightborn:skills/icon/blood_fire",
+  "column": 1,
+  "row": 2,
+  "rank": "nightborn:hunter",
+  "ranks": [
+    {
+      "cost": 3
+    }
+  ],
+  "power": {
+    "blood": 0,
+    "cooldown_ticks": 2400,
+    "blood_fire": {
+      "health_cost": 4.0,
+      "duration_ticks": 1800,
+      "damage": 3.0,
+      "burn_ticks": 100
+    },
+    "sound": "minecraft:item.firecharge.use"
+  }
+}
