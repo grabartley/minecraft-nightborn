@@ -22,7 +22,7 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.state.StateManager;
-import net.minecraft.state.property.BooleanProperty;
+import net.minecraft.state.property.EnumProperty;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.hit.BlockHitResult;
@@ -36,12 +36,12 @@ import org.jetbrains.annotations.Nullable;
 public class OldBloodFontBlock extends BlockWithEntity {
 
   public static final MapCodec<OldBloodFontBlock> CODEC = createCodec(OldBloodFontBlock::new);
-  public static final BooleanProperty FILLED = BooleanProperty.of("filled");
+  public static final EnumProperty<FontLevel> LEVEL = EnumProperty.of("level", FontLevel.class);
   private static final VoxelShape SHAPE = Block.createCuboidShape(1, 0, 1, 15, 16, 15);
 
   public OldBloodFontBlock(final Settings settings) {
     super(settings);
-    setDefaultState(getDefaultState().with(FILLED, true));
+    setDefaultState(getDefaultState().with(LEVEL, FontLevel.FULL));
   }
 
   @Override
@@ -51,7 +51,7 @@ public class OldBloodFontBlock extends BlockWithEntity {
 
   @Override
   protected void appendProperties(final StateManager.Builder<Block, BlockState> builder) {
-    builder.add(FILLED);
+    builder.add(LEVEL);
   }
 
   @Override
@@ -65,7 +65,7 @@ public class OldBloodFontBlock extends BlockWithEntity {
 
   @Override
   protected BlockRenderType getRenderType(final BlockState state) {
-    return BlockRenderType.MODEL;
+    return BlockRenderType.ENTITYBLOCK_ANIMATED;
   }
 
   @Override
@@ -99,7 +99,7 @@ public class OldBloodFontBlock extends BlockWithEntity {
         FontDrink.decide(
             player.getMainHandStack().isEmpty(),
             Vampires.isVampire(player),
-            world.getBlockState(pos).get(FILLED),
+            world.getBlockState(pos).get(LEVEL).full(),
             BiteSicknessAttachment.isSick(player),
             Journals.carries(player, Journal.VAMPIRE));
     if (drink == FontDrink.PASS) {
