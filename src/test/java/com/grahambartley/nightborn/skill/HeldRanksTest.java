@@ -2,6 +2,7 @@ package com.grahambartley.nightborn.skill;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -26,8 +27,30 @@ class HeldRanksTest {
         0,
         Optional.empty(),
         Optional.empty(),
-        java.util.Arrays.stream(costs).mapToObj(SkillRank::costing).toList(),
+        Arrays.stream(costs).mapToObj(SkillRank::costing).toList(),
         Optional.empty());
+  }
+
+  @ParameterizedTest(name = "snare first {0}, then two ranks of a three-rank skill -> {1}")
+  @CsvSource({"true, '4,1,2'", "false, '1,2,4'"})
+  @DisplayName("ranks come back in the order their skills were first bought")
+  void keepsOrder(final boolean snareFirst, final String costs) {
+    TreeProgress owned = TreeProgress.EMPTY.withEarned(60);
+    if (snareFirst) {
+      owned = owned.buy(ONE, 1, null);
+    }
+    owned = owned.buy(THREE, 1, null).buy(THREE, 1, null);
+    if (!snareFirst) {
+      owned = owned.buy(ONE, 1, null);
+    }
+    final Map<Identifier, Skill> skills = Map.of(THREE, skill(1, 2, 3), ONE, skill(4));
+    assertEquals(
+        costs,
+        String.join(
+            ",",
+            HeldRanks.held(owned, skills::get).stream()
+                .map(rank -> Integer.toString(rank.cost()))
+                .toList()));
   }
 
   @ParameterizedTest(name = "{0} ranks of a three-rank skill, snare {1}, removed skill {2} -> {3}")

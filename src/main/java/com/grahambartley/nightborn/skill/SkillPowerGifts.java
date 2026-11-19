@@ -14,14 +14,17 @@ public final class SkillPowerGifts {
       return List.of();
     }
     return Skills.skills(caster.getWorld().getRegistryManager())
-        .map(registry -> registry.get(id))
         .map(
-            power ->
-                covering(
-                    power.branch(),
-                    HeldRanks.of(caster).stream()
-                        .flatMap(rank -> rank.powerGifts().stream())
-                        .toList()))
+            registry -> {
+              final Skill power = registry.get(id);
+              return power == null
+                  ? List.<PowerGift>of()
+                  : covering(
+                      power.branch(),
+                      HeldRanks.held(SkillAttachment.owned(caster), registry::get).stream()
+                          .flatMap(rank -> rank.powerGifts().stream())
+                          .toList());
+            })
         .orElse(List.of());
   }
 

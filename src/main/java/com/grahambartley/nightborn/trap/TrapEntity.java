@@ -37,7 +37,6 @@ public class TrapEntity extends ZoneMarkEntity {
   @Nullable private Identifier skill;
   @Nullable private TrapPower power;
   private long armedAt;
-  private long until;
   private float extraDamage;
   private float seenWithin;
 
@@ -58,7 +57,6 @@ public class TrapEntity extends ZoneMarkEntity {
     trap.skill = skill;
     trap.power = power;
     trap.armedAt = now + loadout.armTicks();
-    trap.until = now + power.durationTicks();
     trap.extraDamage = loadout.extraDamage();
     trap.seenWithin = loadout.seenWithin();
     trap.shape(power.size(), Optional.of(power.look()));
@@ -89,7 +87,7 @@ public class TrapEntity extends ZoneMarkEntity {
       return;
     }
     final LivingEntity hunter = owner();
-    if (power == null || hunter == null || world.getTime() >= until) {
+    if (power == null || hunter == null) {
       discard();
       return;
     }
