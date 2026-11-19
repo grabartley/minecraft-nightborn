@@ -53,6 +53,7 @@ import com.grahambartley.nightborn.render.FurnitureBlockRenderer;
 import com.grahambartley.nightborn.render.GeoBlockItemRenderer;
 import com.grahambartley.nightborn.render.GramophoneRenderer;
 import com.grahambartley.nightborn.render.HunterTentRenderer;
+import com.grahambartley.nightborn.render.NetRenderer;
 import com.grahambartley.nightborn.render.OldBloodFontRenderer;
 import com.grahambartley.nightborn.render.RestlessDeadRenderer;
 import com.grahambartley.nightborn.render.RitualAltarRenderer;
@@ -144,7 +145,7 @@ public class NightbornClient implements ClientModInitializer {
     EntityRendererRegistry.register(NightbornMobs.VAMPIRE_BAT, VampireBatRenderer::new);
     EntityRendererRegistry.register(BossEntities.ZONE_MARK, ZoneMarkRenderer::new);
     EntityRendererRegistry.register(TrapEntities.TRAP, ZoneMarkRenderer::new);
-    EntityRendererRegistry.register(TrapEntities.NET, FlyingItemEntityRenderer::new);
+    EntityRendererRegistry.register(TrapEntities.NET, NetRenderer::new);
     EntityRendererRegistry.register(SlayerEntities.THROWN_STAKE, FlyingItemEntityRenderer::new);
     EntityRendererRegistry.register(NightbornMobs.PET_BAT, VampireBatRenderer::new);
     EntityRendererRegistry.register(Familiars.HUMAN_FAMILIAR, HumanFamiliarRenderer::new);
