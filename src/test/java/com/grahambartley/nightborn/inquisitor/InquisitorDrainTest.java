@@ -67,4 +67,25 @@ class InquisitorDrainTest {
     }
     assertEquals(seconds, sips);
   }
+
+  @ParameterizedTest(name = "bitten at {1}, now {0}: fed {2}")
+  @CsvSource({
+    "100, 100, true",
+    "100, 90, true",
+    "100, 71, true",
+    "100, 70, false",
+    "100, 101, false",
+    "100, -9223372036854775808, false"
+  })
+  @DisplayName("he shows the bite for a little over a second after each sip, and never unbitten")
+  void fed(final long now, final long bittenAt, final boolean fed) {
+    assertEquals(fed, InquisitorDrain.fed(now, bittenAt));
+  }
+
+  @ParameterizedTest(name = "dying for {0} ticks, held {1}: lingers {2}")
+  @CsvSource({"0, 60, true", "59, 60, true", "60, 60, false", "0, 0, false", "5, 0, false"})
+  @DisplayName("his body stays until his death clip has played, and goes at once without one")
+  void lingers(final int dying, final int hold, final boolean lingers) {
+    assertEquals(lingers, InquisitorDrain.lingers(dying, hold));
+  }
 }

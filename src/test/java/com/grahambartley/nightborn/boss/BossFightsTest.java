@@ -231,7 +231,10 @@ class BossFightsTest {
                 named.stagger(),
                 named.takeoff(),
                 named.land(),
-                named.downedForm()))
+                named.downedForm(),
+                named.fedForm(),
+                named.rise(),
+                named.death()))
         .filter(clip -> !clip.isEmpty())
         .forEach(clip -> assertTrue(clips.contains(clip), clip));
     plan.phases().stream()

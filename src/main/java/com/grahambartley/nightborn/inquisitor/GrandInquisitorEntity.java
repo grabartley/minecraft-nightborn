@@ -86,6 +86,7 @@ public class GrandInquisitorEntity extends HunterEntity implements ArenaBoss, Bi
   static final String CHAT_LINE = "chat.type.text";
   static final String EMPTY_SINCE_KEY = "EmptySince";
   static final long NEVER = Long.MIN_VALUE;
+  static final int LAST_DEATH_TICK = 19;
 
   private static final TrackedData<String> FORM =
       DataTracker.registerData(GrandInquisitorEntity.class, TrackedDataHandlerRegistry.STRING);
@@ -95,6 +96,8 @@ public class GrandInquisitorEntity extends HunterEntity implements ArenaBoss, Bi
       DataTracker.registerData(GrandInquisitorEntity.class, TrackedDataHandlerRegistry.STRING);
   private static final TrackedData<Integer> CLIP_SEQUENCE =
       DataTracker.registerData(GrandInquisitorEntity.class, TrackedDataHandlerRegistry.INTEGER);
+  private static final TrackedData<Integer> DEATH_HOLD =
+      DataTracker.registerData(GrandInquisitorEntity.class, TrackedDataHandlerRegistry.INTEGER);
 
   private final BossPresence presence;
   private final BossFight fight = new BossFight();
@@ -103,6 +106,8 @@ public class GrandInquisitorEntity extends HunterEntity implements ArenaBoss, Bi
   private final ShownAction shownAction = new ShownAction();
   @Nullable private InquisitorQuarry quarry;
   private long emptySince = NEVER;
+  private long bittenAt = NEVER;
+  private int dyingTicks;
   private boolean leaving;
 
   public GrandInquisitorEntity(
@@ -129,6 +134,7 @@ public class GrandInquisitorEntity extends HunterEntity implements ArenaBoss, Bi
     builder.add(SKIN_SHOWN, "");
     builder.add(CLIP, "");
     builder.add(CLIP_SEQUENCE, 0);
+    builder.add(DEATH_HOLD, 0);
   }
 
   @Override
@@ -310,7 +316,11 @@ public class GrandInquisitorEntity extends HunterEntity implements ArenaBoss, Bi
     Downed.tick(this, ServerConfigService.current().downed());
     final Optional<BossFightPlan> plan = plan();
     final long now = world.getTime();
-    dataTracker.set(FORM, fight.shown(plan, Downed.state(this) != null, now).encode());
+    dataTracker.set(
+        FORM,
+        fight
+            .shown(plan, Downed.state(this) != null, InquisitorDrain.fed(now, bittenAt), now)
+            .encode());
     dataTracker.set(
         SKIN_SHOWN, IdText.write(plan.flatMap(p -> p.phase(fight.phase()).look().skin())));
     fight.tick(
@@ -461,6 +471,9 @@ public class GrandInquisitorEntity extends HunterEntity implements ArenaBoss, Bi
         source.getAttacker() != null && !fight.holds(source.getAttacker().getPos()))) {
       return false;
     }
+    if (bitten) {
+      bittenAt = getWorld().getTime();
+    }
     if (bitten && source.getAttacker() instanceof PlayerEntity biter) {
       roll.join(biter.getUuid());
     }
@@ -495,6 +508,40 @@ public class GrandInquisitorEntity extends HunterEntity implements ArenaBoss, Bi
             DownedState.Phase.DOWNED, settings.drainWindowSeconds() * TICKS_PER_SECOND));
     getNavigation().stop();
     playSound(SoundEvents.ENTITY_PLAYER_BIG_FALL, 2.0F, 0.6F);
+  }
+
+  @Override
+  public void onDeath(final DamageSource source) {
+    super.onDeath(source);
+    if (getWorld().isClient()) {
+      return;
+    }
+    plan()
+        .map(BossFightPlan::clips)
+        .filter(clips -> clips.deathHold() > 0)
+        .ifPresent(
+            clips -> {
+              showPower("");
+              dataTracker.set(FORM, clips.dying().encode());
+              dataTracker.set(DEATH_HOLD, clips.deathHold());
+            });
+  }
+
+  @Override
+  protected void updatePostDeath() {
+    if (InquisitorDrain.lingers(dyingTicks, dataTracker.get(DEATH_HOLD))) {
+      dyingTicks++;
+      return;
+    }
+    if (dataTracker.get(DEATH_HOLD) > 0) {
+      deathTime = Math.max(deathTime, LAST_DEATH_TICK);
+    }
+    super.updatePostDeath();
+  }
+
+  @Override
+  public boolean fallsOnDeath() {
+    return dataTracker.get(DEATH_HOLD) == 0;
   }
 
   @Override

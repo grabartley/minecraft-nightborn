@@ -42,6 +42,7 @@ public final class BossFight {
   private final ArenaSeal seal = new ArenaSeal();
   @Nullable private Arena arena;
   private long changeUntil;
+  private long riseUntil;
   private boolean staking;
   private long lastOccupied = NEVER;
   @Nullable private BossArenaPayload told;
@@ -59,7 +60,7 @@ public final class BossFight {
   }
 
   public boolean busy(final long now) {
-    return attacks.busy() || changing(now);
+    return attacks.busy() || changing(now) || rising(now);
   }
 
   public boolean untouchable(final long now) {
@@ -84,6 +85,10 @@ public final class BossFight {
 
   public boolean changing(final long now) {
     return now < changeUntil;
+  }
+
+  public boolean rising(final long now) {
+    return now < riseUntil;
   }
 
   public boolean holds(final Vec3d pos) {
@@ -227,7 +232,7 @@ public final class BossFight {
         attacks.moving(),
         now - attacks.landedAt(),
         now);
-    if (finishing(boss, plan, rules, downed) || changing(now) || plan.isEmpty()) {
+    if (finishing(boss, plan, rules, downed) || changing(now) || rising(now) || plan.isEmpty()) {
       return;
     }
     attacks.tick(
@@ -316,15 +321,18 @@ public final class BossFight {
     final double lastShare =
         plan.map(p -> PhaseTrack.ceiling(p.shares(), p.phases().size() - 1)).orElse(1.0);
     boss.setHealth(rules.risen(boss.getMaxHealth(), lastShare));
+    show(boss, plan.map(p -> p.clips().rise()).orElse(""));
+    riseUntil = boss.getWorld().getTime() + plan.map(p -> p.clips().riseTicks()).orElse(0);
     return true;
   }
 
-  public ShownForm shown(final Optional<BossFightPlan> plan, final boolean downed, final long now) {
+  public ShownForm shown(
+      final Optional<BossFightPlan> plan, final boolean downed, final boolean fed, final long now) {
     return plan.map(
             p ->
                 p.phase(phases.index())
                     .look()
-                    .shown(flight.flying(), downed, changing(now), p.clips().downedForm()))
+                    .shown(flight.flying(), downed, changing(now), p.clips().floor(fed)))
         .orElse(ShownForm.NONE)
         .blazing(blazing(plan));
   }
