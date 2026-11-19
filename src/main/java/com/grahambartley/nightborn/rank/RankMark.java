@@ -1,14 +1,17 @@
 package com.grahambartley.nightborn.rank;
 
+import com.grahambartley.nightborn.Nightborn;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.text.TextColor;
+import net.minecraft.util.Identifier;
 
 public record RankMark(String glyph, TextColor color) {
 
   public static final int LONGEST_GLYPH = 4;
+  public static final Identifier FONT = Identifier.of(Nightborn.MOD_ID, "rank");
 
   public static final Codec<RankMark> CODEC =
       RecordCodecBuilder.create(
@@ -20,6 +23,6 @@ public record RankMark(String glyph, TextColor color) {
                   .apply(instance, RankMark::new));
 
   public MutableText text() {
-    return Text.literal(glyph).styled(style -> style.withColor(color));
+    return Text.literal(glyph).styled(style -> style.withColor(color).withFont(FONT));
   }
 }
