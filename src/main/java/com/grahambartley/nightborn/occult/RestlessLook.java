@@ -12,8 +12,6 @@ import net.minecraft.util.Identifier;
 
 public record RestlessLook(VampireRig rig, Identifier texture, int weight) {
 
-  public static final Identifier MISSING = Identifier.ofVanilla("missingno");
-
   private static final Codec<VampireRig> CUT =
       VampireRig.CODEC.validate(
           rig ->

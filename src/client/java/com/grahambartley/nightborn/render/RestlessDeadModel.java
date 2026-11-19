@@ -4,6 +4,7 @@ import com.grahambartley.nightborn.Nightborn;
 import com.grahambartley.nightborn.mob.look.VampireRig;
 import com.grahambartley.nightborn.occult.RestlessDeadEntity;
 import com.grahambartley.nightborn.occult.RestlessLook;
+import net.minecraft.client.texture.MissingSprite;
 import net.minecraft.util.Identifier;
 import software.bernie.geckolib.animation.AnimationState;
 import software.bernie.geckolib.cache.object.GeoBone;
@@ -22,7 +23,7 @@ public class RestlessDeadModel extends GeoModel<RestlessDeadEntity> {
 
   @Override
   public Identifier getTextureResource(final RestlessDeadEntity dead) {
-    return dead.wornLook().map(RestlessLook::texture).orElse(RestlessLook.MISSING);
+    return dead.wornLook().map(RestlessLook::texture).orElseGet(MissingSprite::getMissingSpriteId);
   }
 
   @Override
