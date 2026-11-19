@@ -3,6 +3,9 @@ package com.grahambartley.nightborn.guild;
 import com.grahambartley.nightborn.boss.BossWard;
 import com.grahambartley.nightborn.boss.SwornAlly;
 import com.grahambartley.nightborn.guild.party.PartyMember;
+import com.grahambartley.nightborn.guild.raiding.RaidConduct;
+import com.grahambartley.nightborn.guild.raiding.RaidDoorGoal;
+import com.grahambartley.nightborn.guild.raiding.RaidOrders;
 import com.grahambartley.nightborn.mob.MobSounds;
 import com.grahambartley.nightborn.mob.VampireBatEntity;
 import com.grahambartley.nightborn.mob.look.BustNbt;
@@ -26,6 +29,7 @@ import net.minecraft.entity.ai.goal.LookAtEntityGoal;
 import net.minecraft.entity.ai.goal.MeleeAttackGoal;
 import net.minecraft.entity.ai.goal.SwimGoal;
 import net.minecraft.entity.ai.goal.WanderAroundFarGoal;
+import net.minecraft.entity.ai.pathing.MobNavigation;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.damage.DamageSource;
@@ -37,6 +41,7 @@ import net.minecraft.entity.mob.PathAwareEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtOps;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;
@@ -55,10 +60,12 @@ public class HunterEntity extends PathAwareEntity
 
   static final String FEMALE_KEY = "Female";
   static final String KIT_KEY = "Kit";
-  static final int ANIMATION_BLEND_TICKS = 4;
+  protected static final int ANIMATION_BLEND_TICKS = 4;
   static final int CAMP_REACH = 12;
   static final String PARTY_LEADER_KEY = "PartyLeader";
+  static final String RAID_KEY = "Raid";
   @Nullable private UUID partyLeader;
+  @Nullable private RaidOrders raid;
   private final Set<UUID> sworn = new HashSet<>();
 
   private static final TrackedData<Boolean> FEMALE =
@@ -109,6 +116,7 @@ public class HunterEntity extends PathAwareEntity
     goalSelector.add(0, new SwimGoal(this));
     goalSelector.add(1, new CrossbowGoal(this, this::standsOff));
     goalSelector.add(2, new MeleeAttackGoal(this, 1.15, true));
+    goalSelector.add(3, new RaidDoorGoal(this, () -> raid != null));
     goalSelector.add(4, new GoToWalkTargetGoal(this, 0.8));
     goalSelector.add(5, new WanderAroundFarGoal(this, 0.6));
     goalSelector.add(6, new LookAtEntityGoal(this, PlayerEntity.class, 8.0F));
@@ -189,7 +197,7 @@ public class HunterEntity extends PathAwareEntity
     dataTracker.set(ARMED, armed);
   }
 
-  void speak(final HunterVoice voice) {
+  protected void speak(final HunterVoice voice) {
     playSound(MobSounds.hunter(figure(), voice), getSoundVolume(), getSoundPitch());
   }
 
@@ -241,6 +249,37 @@ public class HunterEntity extends PathAwareEntity
     if (PartyMember.wakes(isSleeping(), getWorld().getTimeOfDay())) {
       wakeUp();
     }
+    if (raid != null && !RaidConduct.stays(this, raid)) {
+      if (partyLeader != null) {
+        standDown();
+      } else {
+        discard();
+      }
+    }
+  }
+
+  public void enlist(final RaidOrders orders, final String wantedKit) {
+    if (!hasPositionTarget()) {
+      settle();
+    }
+    arm(wantedKit);
+    serve(orders);
+    orders.place().ifPresent(place -> setPositionTarget(place, RaidConduct.PLACE_REACH));
+  }
+
+  public void standDown() {
+    raid = null;
+  }
+
+  public Optional<RaidOrders> raid() {
+    return Optional.ofNullable(raid);
+  }
+
+  private void serve(final RaidOrders orders) {
+    raid = orders;
+    if (getNavigation() instanceof MobNavigation navigation) {
+      navigation.setCanPathThroughDoors(true);
+    }
   }
 
   public void join(final UUID leader) {
@@ -281,13 +320,18 @@ public class HunterEntity extends PathAwareEntity
 
   public void arm(final String wanted) {
     final var kits = GuildData.kits(getRegistryManager());
-    kitId =
+    final String picked =
         Optional.ofNullable(Identifier.tryParse(wanted))
             .filter(kits::containsKey)
             .or(() -> HunterKit.pick(kits, getRandom().nextDouble()))
             .map(Identifier::toString)
             .orElse("");
-    kit = kits.get(Identifier.tryParse(kitId));
+    carry(picked, kits.get(Identifier.tryParse(picked)));
+  }
+
+  protected void carry(final String id, @Nullable final HunterKit carried) {
+    kitId = id;
+    kit = carried;
   }
 
   @Override
@@ -316,7 +360,7 @@ public class HunterEntity extends PathAwareEntity
 
   @Override
   public boolean cannotDespawn() {
-    return PartyMember.staysInWorld(partyLeader != null, leaderNear());
+    return raid != null || PartyMember.staysInWorld(partyLeader != null, leaderNear());
   }
 
   private boolean leaderNear() {
@@ -340,6 +384,11 @@ public class HunterEntity extends PathAwareEntity
     if (partyLeader != null) {
       nbt.putUuid(PARTY_LEADER_KEY, partyLeader);
     }
+    if (raid != null) {
+      RaidOrders.CODEC
+          .encodeStart(NbtOps.INSTANCE, raid)
+          .ifSuccess(orders -> nbt.put(RAID_KEY, orders));
+    }
   }
 
   @Override
@@ -355,6 +404,9 @@ public class HunterEntity extends PathAwareEntity
     }
     CampHome.read(this, nbt, CAMP_REACH);
     partyLeader = nbt.containsUuid(PARTY_LEADER_KEY) ? nbt.getUuid(PARTY_LEADER_KEY) : null;
+    if (nbt.contains(RAID_KEY)) {
+      RaidOrders.CODEC.parse(NbtOps.INSTANCE, nbt.get(RAID_KEY)).result().ifPresent(this::serve);
+    }
   }
 
   @Override

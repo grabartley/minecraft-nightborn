@@ -26,7 +26,7 @@ public record HunterKit(
                       Codec.BOOL
                           .optionalFieldOf("holy_water", false)
                           .forGetter(HunterKit::holyWater),
-                      Codec.intRange(1, Weighted.MAX_WEIGHT)
+                      Codec.intRange(0, Weighted.MAX_WEIGHT)
                           .optionalFieldOf("weight", 1)
                           .forGetter(HunterKit::weight))
                   .apply(instance, HunterKit::new));

@@ -1,0 +1,10 @@
+{
+  "kind": "silver_chain",
+  "clip": "raise_crucifix",
+  "sound": "minecraft:item.armor.equip_chain",
+  "mark": "minecraft:crit",
+  "windup_ticks": 20,
+  "cooldown_ticks": 300,
+  "reach": 12.0,
+  "effect_ticks": 60
+}

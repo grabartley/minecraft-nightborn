@@ -3,6 +3,7 @@ package com.grahambartley.nightborn.hunt;
 import com.grahambartley.nightborn.age.AgeNight;
 import com.grahambartley.nightborn.config.HuntSettings;
 import com.grahambartley.nightborn.core.NightTime;
+import com.grahambartley.nightborn.guild.raiding.RaidDispatch;
 import com.grahambartley.nightborn.inquisitor.GrandInquisitorEntity;
 import com.grahambartley.nightborn.inquisitor.InquisitorArrival;
 import com.grahambartley.nightborn.server.ServerConfigService;
@@ -19,9 +20,12 @@ public final class Hunts {
 
   public static void tick(final ServerPlayerEntity player) {
     BellRing.tick(player);
-    final HuntRecord record = player.getAttached(HuntAttachment.RECORD);
+    HuntRecord record = player.getAttached(HuntAttachment.RECORD);
     if (record == null) {
-      return;
+      if (player.age % CHECK_TICKS != 0 || !RaidDispatch.concerns(player)) {
+        return;
+      }
+      record = HuntRecord.EMPTY;
     }
     final long now = time(player);
     final Long previous = player.getAttached(HuntAttachment.CLOCK);
@@ -42,6 +46,7 @@ public final class Hunts {
     }
     if (player.age % CHECK_TICKS == 0) {
       next = HuntVisits.check(player, next, now, settings);
+      next = RaidDispatch.check(player, next, now, settings);
     }
     store(player, next, night);
   }
@@ -95,6 +100,7 @@ public final class Hunts {
         .visitor()
         .ifPresent(man -> InquisitorArrival.dismiss(player.server.getOverworld(), man));
     HuntAttachment.clear(player);
+    RaidDispatch.callOff(player);
   }
 
   public static long time(final ServerPlayerEntity player) {

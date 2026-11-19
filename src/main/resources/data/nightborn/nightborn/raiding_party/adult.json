@@ -1,0 +1,8 @@
+{
+  "stage": "nightborn:adult",
+  "kits": [
+    { "kit": "nightborn:raid_silver_holy_water", "count": 1 },
+    { "kit": "nightborn:raid_silver", "count": 2 },
+    { "kit": "nightborn:raid_wooden", "count": 2 }
+  ]
+}

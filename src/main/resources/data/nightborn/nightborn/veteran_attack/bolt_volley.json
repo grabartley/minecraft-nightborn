@@ -1,0 +1,13 @@
+{
+  "kind": "bolt_volley",
+  "clip": "crossbow_shot",
+  "sound": "minecraft:item.crossbow.loading_start",
+  "mark": "minecraft:crit",
+  "windup_ticks": 30,
+  "cooldown_ticks": 240,
+  "reach_min": 8.0,
+  "reach": 20.0,
+  "count": 3,
+  "held": "minecraft:crossbow",
+  "ammo": "nightborn:stake_bolt"
+}

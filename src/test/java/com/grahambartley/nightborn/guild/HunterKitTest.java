@@ -59,6 +59,14 @@ class HunterKitTest {
   }
 
   @ParameterizedTest(name = "roll {0}")
+  @CsvSource({"0.0", "0.5", "0.99"})
+  void neverPicksAKitWeightedNothingForAnOrdinaryHunter(final double roll) {
+    assertEquals(
+        Optional.of(id("b_crossbow")),
+        HunterKit.pick(Map.of(id("a_raid"), kit(false, 0), id("b_crossbow"), kit(true, 1)), roll));
+  }
+
+  @ParameterizedTest(name = "roll {0}")
   @CsvSource({"0.0", "0.99"})
   void picksNothingWhenThereAreNoKits(final double roll) {
     assertEquals(Optional.empty(), HunterKit.pick(Map.of(), roll));

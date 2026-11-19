@@ -51,6 +51,9 @@ public final class PartyLeader {
       master.discard();
       return null;
     }
+    if (PassingRaid.raids(world, master, party, members)) {
+      return party;
+    }
     final long time = world.getTimeOfDay();
     final long day = PartySchedule.day(time);
     final Random random = master.getRandom();

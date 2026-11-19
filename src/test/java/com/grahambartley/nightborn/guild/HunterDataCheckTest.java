@@ -27,7 +27,11 @@ class HunterDataCheckTest {
           Identifier.of("nightborn", "woman"),
           new HunterLook(HunterRig.FEMALE, STAKE, 1),
           Identifier.of("nightborn", "master"),
-          new HunterLook(HunterRig.GUILD_MASTER, STAKE, 1));
+          new HunterLook(HunterRig.GUILD_MASTER, STAKE, 1),
+          Identifier.of("nightborn", "veteran_man"),
+          new HunterLook(HunterRig.VETERAN_MALE, STAKE, 1),
+          Identifier.of("nightborn", "veteran_woman"),
+          new HunterLook(HunterRig.VETERAN_FEMALE, STAKE, 1));
 
   private static final Identifier CRUCIFIX = Identifier.of("nightborn", "crucifix");
 
@@ -53,6 +57,8 @@ class HunterDataCheckTest {
                 "there is no male hunter look",
                 "there is no female hunter look",
                 "there is no guild_master hunter look",
+                "there is no veteran_male hunter look",
+                "there is no veteran_female hunter look",
                 "there are no hunter kits")),
         Arguments.of(
             "a weapon that is not an item",

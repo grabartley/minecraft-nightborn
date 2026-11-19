@@ -1,6 +1,7 @@
 package com.grahambartley.nightborn.guild;
 
 import com.grahambartley.nightborn.Nightborn;
+import com.grahambartley.nightborn.guild.veteran.VeteranHunterEntity;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
 import net.minecraft.entity.Entity;
@@ -31,6 +32,14 @@ public final class GuildMobs {
               .eyeHeight(1.62F)
               .maxTrackingRange(10));
 
+  public static final EntityType<VeteranHunterEntity> VETERAN_HUNTER =
+      register(
+          "veteran_hunter",
+          EntityType.Builder.create(VeteranHunterEntity::new, SpawnGroup.MISC)
+              .dimensions(0.6F, 1.95F)
+              .eyeHeight(1.62F)
+              .maxTrackingRange(10));
+
   public static final Item HUNTER_SPAWN_EGG =
       egg("hunter_spawn_egg", new SpawnEggItem(HUNTER, 0x3B2A1E, 0xB8B4A8, new Item.Settings()));
 
@@ -45,6 +54,8 @@ public final class GuildMobs {
     FabricDefaultAttributeRegistry.register(HUNTER, HunterEntity.createHunterAttributes());
     FabricDefaultAttributeRegistry.register(
         GUILD_MASTER, GuildMasterEntity.createGuildMasterAttributes());
+    FabricDefaultAttributeRegistry.register(
+        VETERAN_HUNTER, VeteranHunterEntity.createVeteranAttributes());
     ItemGroupEvents.modifyEntriesEvent(ItemGroups.SPAWN_EGGS)
         .register(
             entries -> {

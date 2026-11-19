@@ -1,0 +1,7 @@
+{
+  "stage": "nightborn:fledgling",
+  "kits": [
+    { "kit": "nightborn:raid_silver", "count": 1 },
+    { "kit": "nightborn:raid_wooden", "count": 2 }
+  ]
+}

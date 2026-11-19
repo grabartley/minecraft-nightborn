@@ -41,8 +41,20 @@ class HunterRigTest {
     assertEquals(rig, HunterRig.hunter(female));
   }
 
+  @ParameterizedTest(name = "female {0}: {1}")
+  @CsvSource({"true, VETERAN_FEMALE", "false, VETERAN_MALE"})
+  void aVeteranIsMaleOrFemale(final boolean female, final HunterRig rig) {
+    assertEquals(rig, HunterRig.veteran(female));
+  }
+
   @ParameterizedTest(name = "{0} is voiced and built as {1}")
-  @CsvSource({"MALE, MALE", "FEMALE, FEMALE", "GUILD_MASTER, MALE"})
+  @CsvSource({
+    "MALE, MALE",
+    "FEMALE, FEMALE",
+    "GUILD_MASTER, MALE",
+    "VETERAN_MALE, MALE",
+    "VETERAN_FEMALE, FEMALE"
+  })
   void takesItsVoiceAndBustFromAFigure(final HunterRig rig, final VampireRig figure) {
     assertEquals(figure, rig.figure());
   }

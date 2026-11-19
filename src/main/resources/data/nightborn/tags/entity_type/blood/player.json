@@ -2,6 +2,7 @@
   "values": [
     "minecraft:player",
     "nightborn:hunter",
+    "nightborn:veteran_hunter",
     "nightborn:guild_master",
     "nightborn:grand_inquisitor"
   ]
