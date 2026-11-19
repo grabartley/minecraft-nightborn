@@ -8,7 +8,6 @@ public final class FlameLife {
   static final float FADE_SHARE = 0.35F;
   static final float START_SCALE = 1.0F;
   static final float END_SCALE = 0.45F;
-  static final int FULL_BRIGHT = 0xF000F0;
 
   private FlameLife() {}
 
@@ -22,6 +21,6 @@ public final class FlameLife {
   }
 
   public static float scale(final float age, final int maxAge) {
-    return START_SCALE + (END_SCALE - START_SCALE) * ParticleLife.fraction(age, maxAge);
+    return ParticleLife.lerp(START_SCALE, END_SCALE, age, maxAge);
   }
 }

@@ -1,5 +1,6 @@
 package com.grahambartley.nightborn.client.faith;
 
+import com.grahambartley.nightborn.client.LiveCoating;
 import com.grahambartley.nightborn.faith.BladeFlames;
 import net.fabricmc.fabric.api.client.particle.v1.ParticleFactoryRegistry;
 import net.minecraft.client.MinecraftClient;
@@ -22,6 +23,8 @@ public final class BloodFlameFx {
                       final Camera camera = client.gameRenderer.getCamera();
                       if (FlameView.hides(
                           client.options.getPerspective().isFirstPerson(),
+                          client.player != null
+                              && LiveCoating.burning(client.player.getMainHandStack()),
                           camera.getPos().squaredDistanceTo(x, y, z))) {
                         return null;
                       }

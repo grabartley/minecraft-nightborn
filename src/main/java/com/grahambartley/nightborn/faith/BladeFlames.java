@@ -13,7 +13,7 @@ public final class BladeFlames {
 
   static final double START = 0.2;
   static final double SPREAD = 0.04;
-  static final int PER_PULSE = 3;
+  static final int PER_PULSE = 2;
 
   private BladeFlames() {}
 

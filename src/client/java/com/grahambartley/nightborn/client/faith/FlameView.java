@@ -6,7 +6,8 @@ public final class FlameView {
 
   private FlameView() {}
 
-  public static boolean hides(final boolean firstPerson, final double distanceSquared) {
-    return firstPerson && distanceSquared < NEAR * NEAR;
+  public static boolean hides(
+      final boolean firstPerson, final boolean holdsFlame, final double distanceSquared) {
+    return firstPerson && holdsFlame && distanceSquared < NEAR * NEAR;
   }
 }
