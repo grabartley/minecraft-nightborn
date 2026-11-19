@@ -19,7 +19,9 @@ class PowerMovesTest {
       value = {
         "{} | 0",
         "{\"leap\":{\"forward\":1.4,\"up\":0.55}} | 1",
-        "{\"mist\":{\"duration_ticks\":160,\"harm\":2},\"pounce\":{\"range\":10,\"pin_ticks\":40,\"player_pin_ticks\":20}} | 2"
+        "{\"mist\":{\"duration_ticks\":160,\"harm\":2},\"pounce\":{\"range\":10,\"pin_ticks\":40,\"player_pin_ticks\":20}} | 2",
+        "{\"dash\":{\"distance\":4,\"untouchable_ticks\":6,\"dodge_ticks\":5,\"stagger_ticks\":30,\"threat_range\":8}} | 1",
+        "{\"lunge\":{\"distance\":5,\"gap\":0.3,\"stake_share\":0.5,\"downs\":{\"below\":0.4,\"up_to\":\"nightborn:elder\"}}} | 1"
       })
   @DisplayName("the moves count every way a power shifts or moves its caster")
   void counts(final String json, final int count) {

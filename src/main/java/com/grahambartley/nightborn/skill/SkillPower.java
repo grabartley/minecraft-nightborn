@@ -15,6 +15,9 @@ import com.grahambartley.nightborn.occult.HexPower;
 import com.grahambartley.nightborn.occult.MistPower;
 import com.grahambartley.nightborn.occult.ShadowStepPower;
 import com.grahambartley.nightborn.occult.SwarmPower;
+import com.grahambartley.nightborn.slayer.DashPower;
+import com.grahambartley.nightborn.slayer.LungePower;
+import com.grahambartley.nightborn.slayer.PowerFight;
 import com.grahambartley.nightborn.trap.BaitPower;
 import com.grahambartley.nightborn.trap.FieldPower;
 import com.grahambartley.nightborn.trap.NetPower;
@@ -39,6 +42,7 @@ public record SkillPower(
     PowerSelf self,
     PowerTraps traps,
     PowerFaith faith,
+    PowerFight fight,
     Optional<MobPowerUse> mob) {
 
   public static final Codec<SkillPower> CODEC =
@@ -61,6 +65,7 @@ public record SkillPower(
                           PowerSelf.CODEC.forGetter(SkillPower::self),
                           PowerTraps.CODEC.forGetter(SkillPower::traps),
                           PowerFaith.CODEC.forGetter(SkillPower::faith),
+                          PowerFight.CODEC.forGetter(SkillPower::fight),
                           MobPowerUse.CODEC.optionalFieldOf("mob").forGetter(SkillPower::mob))
                       .apply(instance, SkillPower::new))
           .validate(SkillPower::oneMove);
@@ -95,6 +100,14 @@ public record SkillPower(
 
   public Optional<MistPower> mist() {
     return moves.mist();
+  }
+
+  public Optional<DashPower> dash() {
+    return moves.dash();
+  }
+
+  public Optional<LungePower> lunge() {
+    return moves.lunge();
   }
 
   public Optional<MesmerisePower> mesmerise() {

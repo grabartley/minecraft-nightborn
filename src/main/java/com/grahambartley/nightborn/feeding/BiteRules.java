@@ -16,6 +16,7 @@ public final class BiteRules {
     GUARDED,
     NO_WARM_BLOOD,
     WARDED,
+    STEADFAST,
     PVP_OFF;
 
     public boolean bites() {
@@ -32,7 +33,8 @@ public final class BiteRules {
           || this == PVP_OFF
           || this == HELPLESS
           || this == GUARDED
-          || this == WARDED;
+          || this == WARDED
+          || this == STEADFAST;
     }
   }
 
@@ -46,7 +48,8 @@ public final class BiteRules {
       boolean warded,
       boolean finishable,
       boolean guarded,
-      boolean pinned) {}
+      boolean pinned,
+      boolean steadfast) {}
 
   public static boolean drinkable(final boolean warmBlood, final boolean vampire) {
     return warmBlood && !vampire;
@@ -106,6 +109,9 @@ public final class BiteRules {
     }
     if (target.warded()) {
       return Decision.WARDED;
+    }
+    if (target.steadfast()) {
+      return Decision.STEADFAST;
     }
     if (target.player() && !pvp) {
       return Decision.PVP_OFF;

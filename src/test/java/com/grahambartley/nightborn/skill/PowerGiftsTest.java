@@ -59,9 +59,28 @@ class PowerGiftsTest {
   void sums(final double one, final double two, final double total) {
     final List<PowerGift> gifts =
         List.of(
-            new PowerGift(Identifier.of("nightborn:beast"), 1, one),
-            new PowerGift(Identifier.of("nightborn:beast"), 1, two));
+            new PowerGift(Identifier.of("nightborn:beast"), 1, one, false),
+            new PowerGift(Identifier.of("nightborn:beast"), 1, two, false));
     assertEquals(total, PowerGifts.cooldownCut(gifts), 1.0E-9);
     assertEquals(2, PowerGifts.bloodCut(gifts));
+  }
+
+  @ParameterizedTest(name = "refunds {0} and {1}: {2}")
+  @CsvSource({"false, false, false", "true, false, true", "false, true, true"})
+  @DisplayName("a dodge gives a dash back when any gift for its path says so")
+  void refundsOnDodge(final boolean one, final boolean two, final boolean refunds) {
+    assertEquals(
+        refunds,
+        PowerGifts.refundsOnDodge(
+            List.of(
+                new PowerGift(Identifier.of("nightborn:slayer"), 0, 0.2, one),
+                new PowerGift(Identifier.of("nightborn:slayer"), 0, 0.0, two))));
+  }
+
+  @ParameterizedTest(name = "cut {0}: factor {1}")
+  @CsvSource({"0.2, 0.8", "0.0, 1.0", "0.9, 0.2"})
+  @DisplayName("a path's cut shortens a cooldown that no general factor touches, down to the floor")
+  void branchCooldown(final double cut, final double factor) {
+    assertEquals(factor, PowerGifts.branchCooldown(cut), 1.0E-9);
   }
 }

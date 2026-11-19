@@ -3,6 +3,8 @@ package com.grahambartley.nightborn.skill;
 import com.grahambartley.nightborn.batform.WingedFormPower;
 import com.grahambartley.nightborn.occult.MistPower;
 import com.grahambartley.nightborn.occult.ShadowStepPower;
+import com.grahambartley.nightborn.slayer.DashPower;
+import com.grahambartley.nightborn.slayer.LungePower;
 import com.grahambartley.nightborn.vanish.VanishPower;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -16,10 +18,14 @@ public record PowerMoves(
     Optional<VanishPower> vanish,
     Optional<PouncePower> pounce,
     Optional<WingedFormPower> wingedForm,
-    Optional<MistPower> mist) {
+    Optional<MistPower> mist,
+    Optional<DashPower> dash,
+    Optional<LungePower> lunge) {
 
   public static final PowerMoves NONE =
       new PowerMoves(
+          Optional.empty(),
+          Optional.empty(),
           Optional.empty(),
           Optional.empty(),
           Optional.empty(),
@@ -43,12 +49,14 @@ public record PowerMoves(
                       WingedFormPower.CODEC
                           .optionalFieldOf("winged_form")
                           .forGetter(PowerMoves::wingedForm),
-                      MistPower.CODEC.optionalFieldOf("mist").forGetter(PowerMoves::mist))
+                      MistPower.CODEC.optionalFieldOf("mist").forGetter(PowerMoves::mist),
+                      DashPower.CODEC.optionalFieldOf("dash").forGetter(PowerMoves::dash),
+                      LungePower.CODEC.optionalFieldOf("lunge").forGetter(PowerMoves::lunge))
                   .apply(instance, PowerMoves::new));
 
   public int count() {
     return (int)
-        Stream.of(batForm, leap, shadowStep, vanish, pounce, wingedForm, mist)
+        Stream.of(batForm, leap, shadowStep, vanish, pounce, wingedForm, mist, dash, lunge)
             .filter(Optional::isPresent)
             .count();
   }

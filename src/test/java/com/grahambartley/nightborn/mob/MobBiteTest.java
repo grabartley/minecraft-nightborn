@@ -14,4 +14,11 @@ class MobBiteTest {
   void breaks(final float roll, final double chance, final boolean breaks) {
     assertEquals(breaks, MobBite.breaks(roll, chance));
   }
+
+  @ParameterizedTest(name = "warded {0}, steadfast {1}: refused {2}")
+  @CsvSource({"false, false, false", "true, false, true", "false, true, true", "true, true, true"})
+  @DisplayName("a vampire mob cannot bite a warded human or a hunter making a last stand")
+  void refused(final boolean warded, final boolean steadfast, final boolean refused) {
+    assertEquals(refused, MobBite.refused(warded, steadfast));
+  }
 }

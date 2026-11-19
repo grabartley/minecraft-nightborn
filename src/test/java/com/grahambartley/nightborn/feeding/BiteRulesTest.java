@@ -16,9 +16,9 @@ class BiteRulesTest {
 
   private static final Biter READY = new Biter(true, true, true, false);
   private static final Target COW =
-      new Target(true, false, false, true, false, false, false, false);
+      new Target(true, false, false, true, false, false, false, false, false);
   private static final Target HUMAN =
-      new Target(true, false, true, true, false, false, false, false);
+      new Target(true, false, true, true, false, false, false, false, false);
 
   static Stream<Arguments> cases() {
     return Stream.of(
@@ -26,7 +26,7 @@ class BiteRulesTest {
         Arguments.of(
             "a pinned cow is bitten without sneaking",
             new Biter(true, false, true, false),
-            new Target(true, false, false, true, false, false, false, true),
+            new Target(true, false, false, true, false, false, false, true, false),
             false,
             Decision.BITE),
         Arguments.of(
@@ -56,13 +56,13 @@ class BiteRulesTest {
         Arguments.of(
             "a boss still standing cannot be bitten",
             READY,
-            new Target(true, false, false, true, false, false, true, false),
+            new Target(true, false, false, true, false, false, true, false, false),
             true,
             Decision.GUARDED),
         Arguments.of(
             "a downed vampire cannot feed even on a guarded boss",
             new Biter(true, true, true, true),
-            new Target(true, false, false, true, false, false, true, false),
+            new Target(true, false, false, true, false, false, true, false, false),
             true,
             Decision.HELPLESS),
         Arguments.of(
@@ -74,19 +74,19 @@ class BiteRulesTest {
         Arguments.of(
             "no blood in a zombie",
             READY,
-            new Target(false, false, false, true, false, false, false, false),
+            new Target(false, false, false, true, false, false, false, false, false),
             true,
             Decision.NO_WARM_BLOOD),
         Arguments.of(
             "a vampire's blood is already dead",
             READY,
-            new Target(true, true, true, true, false, false, false, false),
+            new Target(true, true, true, true, false, false, false, false, false),
             true,
             Decision.NO_WARM_BLOOD),
         Arguments.of(
             "a dead victim gives nothing",
             READY,
-            new Target(true, false, false, false, false, false, false, false),
+            new Target(true, false, false, false, false, false, false, false, false),
             true,
             Decision.NO_WARM_BLOOD),
         Arguments.of("a human player with PvP on", READY, HUMAN, true, Decision.BITE),
@@ -94,61 +94,67 @@ class BiteRulesTest {
         Arguments.of(
             "a human holding a crucifix",
             READY,
-            new Target(true, false, true, true, true, false, false, false),
+            new Target(true, false, true, true, true, false, false, false, false),
             true,
             Decision.WARDED),
         Arguments.of(
+            "a hunter making a last stand",
+            READY,
+            new Target(true, false, true, true, false, false, false, false, true),
+            true,
+            Decision.STEADFAST),
+        Arguments.of(
             "a crucifix wards even with PvP off",
             READY,
-            new Target(true, false, true, true, true, false, false, false),
+            new Target(true, false, true, true, true, false, false, false, false),
             false,
             Decision.WARDED),
         Arguments.of(
             "a downed vampire is helpless before the crucifix matters",
             new Biter(true, true, true, true),
-            new Target(true, false, true, true, true, false, false, false),
+            new Target(true, false, true, true, true, false, false, false, false),
             true,
             Decision.HELPLESS),
         Arguments.of(
             "standing over a badly hurt cow is a finisher bite",
             new Biter(true, false, true, false),
-            new Target(true, false, false, true, false, true, false, false),
+            new Target(true, false, false, true, false, true, false, false, false),
             false,
             Decision.FINISH),
         Arguments.of(
             "sneaking over a badly hurt cow is still a plain bite",
             READY,
-            new Target(true, false, false, true, false, true, false, false),
+            new Target(true, false, false, true, false, true, false, false, false),
             false,
             Decision.BITE),
         Arguments.of(
             "a held item is never a finisher",
             new Biter(true, false, false, false),
-            new Target(true, false, false, true, false, true, false, false),
+            new Target(true, false, false, true, false, true, false, false, false),
             true,
             Decision.NOT_A_BITE),
         Arguments.of(
             "a finisher on a player needs PvP",
             new Biter(true, false, true, false),
-            new Target(true, false, true, true, false, true, false, false),
+            new Target(true, false, true, true, false, true, false, false, false),
             false,
             Decision.PVP_OFF),
         Arguments.of(
             "a finisher on a player with PvP on",
             new Biter(true, false, true, false),
-            new Target(true, false, true, true, false, true, false, false),
+            new Target(true, false, true, true, false, true, false, false, false),
             true,
             Decision.FINISH),
         Arguments.of(
             "no finisher on a creature with no blood",
             new Biter(true, false, true, false),
-            new Target(false, false, false, true, false, true, false, false),
+            new Target(false, false, false, true, false, true, false, false, false),
             true,
             Decision.NO_WARM_BLOOD),
         Arguments.of(
             "a downed vampire cannot finish",
             new Biter(true, false, true, true),
-            new Target(true, false, false, true, false, true, false, false),
+            new Target(true, false, false, true, false, true, false, false, false),
             true,
             Decision.HELPLESS));
   }

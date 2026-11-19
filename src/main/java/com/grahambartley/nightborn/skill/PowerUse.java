@@ -26,7 +26,9 @@ public final class PowerUse {
     NO_CRUCIFIX,
     NO_WEAPON,
     TOO_HURT,
-    SMOTHERED;
+    SMOTHERED,
+    NO_STAKE,
+    UNLOADED;
 
     public String translationKey() {
       return "nightborn.powers.verdict." + name().toLowerCase(Locale.ROOT);
@@ -54,7 +56,9 @@ public final class PowerUse {
       boolean crossless,
       boolean unarmed,
       boolean hurt,
-      boolean smothered) {}
+      boolean smothered,
+      boolean stakeless,
+      boolean unloaded) {}
 
   private PowerUse() {}
 
@@ -94,6 +98,12 @@ public final class PowerUse {
     }
     if (situation.blood() < situation.bloodCost()) {
       return Verdict.THIRSTY;
+    }
+    if (situation.stakeless()) {
+      return Verdict.NO_STAKE;
+    }
+    if (situation.unloaded()) {
+      return Verdict.UNLOADED;
     }
     if (situation.unseen()) {
       return Verdict.UNSEEN;

@@ -246,4 +246,24 @@ class SkillPowerTest {
             .getOrThrow()
             .leavesTheGround());
   }
+
+  @ParameterizedTest(name = "{0}: fights {1}")
+  @CsvSource(
+      delimiter = '|',
+      value = {
+        "{\"blood\":0,\"cooldown_ticks\":120} | 0",
+        "{\"blood\":0,\"cooldown_ticks\":240,\"riposte\":{\"guard_ticks\":10,\"reach\":2.5,\"charge_ticks\":10,\"push\":3,\"stagger_ticks\":40}} | 1",
+        "{\"blood\":0,\"cooldown_ticks\":200,\"stake_throw\":{\"range\":20,\"speed\":2,\"damage\":4,\"stagger_ticks\":20,\"damage_type\":\"nightborn:thrown_stake\"}} | 1",
+        "{\"blood\":0,\"cooldown_ticks\":300,\"quick_shot\":{\"speed\":3.15,\"divergence\":1}} | 1"
+      })
+  @DisplayName("a power may guard, throw a stake or fire a crossbow, or none of these")
+  void fights(final String json, final int count) {
+    assertEquals(
+        count,
+        SkillPower.CODEC
+            .parse(JsonOps.INSTANCE, JsonParser.parseString(json))
+            .getOrThrow()
+            .fight()
+            .count());
+  }
 }

@@ -1,0 +1,22 @@
+{
+  "branch": "nightborn:slayer",
+  "requires": [
+    "nightborn:slayer/onslaught"
+  ],
+  "icon": "nightborn:skills/icon/slayers_calm",
+  "column": 1,
+  "row": 5,
+  "rank": "nightborn:master",
+  "ranks": [
+    {
+      "cost": 3,
+      "power_gifts": [
+        {
+          "branch": "nightborn:slayer",
+          "cooldown_cut": 0.2,
+          "dodge_refund": true
+        }
+      ]
+    }
+  ]
+}

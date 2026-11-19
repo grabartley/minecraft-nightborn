@@ -94,6 +94,7 @@
       "com.grahambartley.nightborn.gametest.BloodlineGameTest",
       "com.grahambartley.nightborn.gametest.TrapperGameTest",
       "com.grahambartley.nightborn.gametest.FaithfulGameTest",
+      "com.grahambartley.nightborn.gametest.SlayerGameTest",
       "com.grahambartley.nightborn.gametest.VampireStageGameTest",
       "com.grahambartley.nightborn.gametest.LevitationGameTest",
       "com.grahambartley.nightborn.gametest.BatFormGameTest",

@@ -69,4 +69,21 @@ class PowerAimTest {
     assertEquals(power.faith().armsAWeapon(), PowerAim.NONE.unarmed(power));
     assertEquals(false, PowerAim.NONE.nowhere(power));
   }
+
+  @ParameterizedTest(name = "{0}: reach {1}")
+  @CsvSource(
+      delimiter = '|',
+      value = {
+        "{\"blood\":0,\"cooldown_ticks\":120,\"dash\":{\"distance\":4,\"untouchable_ticks\":6,\"dodge_ticks\":5,\"stagger_ticks\":30,\"threat_range\":8}} | 0",
+        "{\"blood\":0,\"cooldown_ticks\":600,\"lunge\":{\"distance\":5,\"gap\":0.3,\"stake_share\":0.5,\"downs\":{\"below\":0.4,\"up_to\":\"nightborn:elder\"}}} | 5"
+      })
+  @DisplayName(
+      "a dash needs ground to land on, and a lunge a creature in reach and ground beside it")
+  void steps(final String json, final float reach) {
+    final SkillPower power =
+        SkillPower.CODEC.parse(JsonOps.INSTANCE, JsonParser.parseString(json)).getOrThrow();
+    assertEquals(true, PowerAim.aims(power));
+    assertEquals(reach, PowerAim.targetRange(power).orElse(0.0F));
+    assertEquals(true, PowerAim.NONE.nowhere(power));
+  }
 }

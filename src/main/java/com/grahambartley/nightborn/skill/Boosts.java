@@ -1,10 +1,13 @@
 package com.grahambartley.nightborn.skill;
 
 import com.grahambartley.nightborn.Nightborn;
+import com.grahambartley.nightborn.slayer.DownBlow;
 import com.grahambartley.nightborn.vampire.Modifiers;
 import com.mojang.serialization.Codec;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentRegistry;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentType;
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
@@ -41,6 +44,15 @@ public final class Boosts {
   public static boolean active(final LivingEntity entity, final Identifier source) {
     final Boost boost = all(entity).get(source);
     return boost != null && !boost.over(entity.getWorld().getTime());
+  }
+
+  public static List<DownBlow> downs(final LivingEntity entity) {
+    final long now = entity.getWorld().getTime();
+    return all(entity).values().stream()
+        .filter(boost -> !boost.over(now))
+        .map(Boost::downs)
+        .flatMap(Optional::stream)
+        .toList();
   }
 
   public static void end(final LivingEntity entity, final Identifier source) {

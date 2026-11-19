@@ -80,15 +80,33 @@ public final class Holds {
     return held(entity).map(kind -> kind.stopsPower(moves)).orElse(false);
   }
 
+  public static boolean opened(final Entity entity) {
+    return state(entity).opened(entity.getWorld().getTime());
+  }
+
   public static boolean hold(
       final LivingEntity caster, final LivingEntity target, final HoldKind kind, final int ticks) {
+    return hold(caster, target, kind, ticks, false);
+  }
+
+  public static boolean open(
+      final LivingEntity caster, final LivingEntity target, final int ticks) {
+    return hold(caster, target, HoldKind.STAGGER, ticks, true);
+  }
+
+  private static boolean hold(
+      final LivingEntity caster,
+      final LivingEntity target,
+      final HoldKind kind,
+      final int ticks,
+      final boolean opening) {
     final long now = target.getWorld().getTime();
     if (!PowerReach.touches(caster, target)
         || !HoldRules.takes(
             state(target), now, target.getType().isIn(UNHOLDABLE), target.isAlive())) {
       return false;
     }
-    target.setAttached(TYPE, HoldRules.start(kind, now, ticks, graceTicks()));
+    target.setAttached(TYPE, HoldRules.start(kind, now, ticks, graceTicks(), opening));
     stillen(target);
     if (target instanceof ServerPlayerEntity player) {
       player.sendMessage(Text.translatable("nightborn.hold." + kind.asString()), true);
@@ -114,7 +132,8 @@ public final class Holds {
     }
     final long now = entity.getWorld().getTime();
     if (HoldRules.ended(state, now)) {
-      entity.setAttached(TYPE, new HoldState(Optional.empty(), state.until(), state.immuneUntil()));
+      entity.setAttached(
+          TYPE, new HoldState(Optional.empty(), state.until(), state.immuneUntil(), false));
       free(entity);
       return;
     }

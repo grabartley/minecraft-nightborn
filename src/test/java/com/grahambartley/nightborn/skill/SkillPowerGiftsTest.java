@@ -16,9 +16,9 @@ class SkillPowerGiftsTest {
   void covering(final String branch, final int count) {
     final List<PowerGift> gifts =
         List.of(
-            new PowerGift(Identifier.of("nightborn:beast"), 1, 0.2),
-            new PowerGift(Identifier.of("nightborn:beast"), 0, 0.1),
-            new PowerGift(Identifier.of("nightborn:noble"), 0, 0.2));
+            new PowerGift(Identifier.of("nightborn:beast"), 1, 0.2, false),
+            new PowerGift(Identifier.of("nightborn:beast"), 0, 0.1, false),
+            new PowerGift(Identifier.of("nightborn:noble"), 0, 0.2, false));
     assertEquals(count, SkillPowerGifts.covering(Identifier.of(branch), gifts).size());
   }
 }

@@ -91,6 +91,26 @@ public final class FeedingSessions {
     }
   }
 
+  public static void release(final LivingEntity victim) {
+    if (victim.getServer() == null) {
+      return;
+    }
+    SESSIONS.entrySet().stream()
+        .filter(entry -> entry.getValue().victim().equals(victim.getUuid()))
+        .map(Map.Entry::getKey)
+        .toList()
+        .forEach(
+            vampire -> {
+              final ServerPlayerEntity feeder =
+                  victim.getServer().getPlayerManager().getPlayer(vampire);
+              if (feeder != null) {
+                end(feeder);
+              } else {
+                SESSIONS.remove(vampire);
+              }
+            });
+  }
+
   static void hold(
       final ServerPlayerEntity vampire,
       final LivingEntity victim,

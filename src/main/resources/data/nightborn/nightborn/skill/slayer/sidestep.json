@@ -1,0 +1,26 @@
+{
+  "branch": "nightborn:slayer",
+  "requires": [
+    "nightborn:hunter/tracking"
+  ],
+  "icon": "nightborn:skills/icon/sidestep",
+  "column": 0,
+  "row": 0,
+  "ranks": [
+    {
+      "cost": 2
+    }
+  ],
+  "power": {
+    "blood": 0,
+    "cooldown_ticks": 120,
+    "dash": {
+      "distance": 4.0,
+      "untouchable_ticks": 6,
+      "dodge_ticks": 5,
+      "stagger_ticks": 30,
+      "threat_range": 8.0
+    },
+    "sound": "minecraft:entity.breeze.slide"
+  }
+}

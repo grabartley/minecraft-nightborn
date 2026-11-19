@@ -11,7 +11,7 @@ import org.junit.jupiter.params.provider.CsvSource;
 class SkillBareHandsTest {
 
   private static SkillRank rank(final double bareHands) {
-    return new SkillRank(1, List.of(), bareHands, List.of(), List.of(), List.of());
+    return new SkillRank(1, List.of(), bareHands, List.of(), List.of(), List.of(), List.of());
   }
 
   @ParameterizedTest(name = "{0} -> {1}")

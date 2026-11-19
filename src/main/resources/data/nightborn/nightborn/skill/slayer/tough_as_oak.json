@@ -1,0 +1,41 @@
+{
+  "branch": "nightborn:slayer",
+  "requires": [
+    "nightborn:hunter/bite_ward"
+  ],
+  "icon": "nightborn:skills/icon/tough_as_oak",
+  "column": 1,
+  "row": 2,
+  "ranks": [
+    {
+      "cost": 1,
+      "attributes": [
+        {
+          "attribute": "minecraft:generic.max_health",
+          "amount": 2.0,
+          "operation": "add_value"
+        }
+      ]
+    },
+    {
+      "cost": 2,
+      "attributes": [
+        {
+          "attribute": "minecraft:generic.max_health",
+          "amount": 2.0,
+          "operation": "add_value"
+        }
+      ]
+    },
+    {
+      "cost": 2,
+      "attributes": [
+        {
+          "attribute": "minecraft:generic.max_health",
+          "amount": 2.0,
+          "operation": "add_value"
+        }
+      ]
+    }
+  ]
+}

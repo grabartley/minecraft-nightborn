@@ -45,4 +45,22 @@ class BoostPowerTest {
             .rescueBelow()
             .isPresent());
   }
+
+  @ParameterizedTest(name = "{0}: downs {1}")
+  @CsvSource(
+      delimiter = ';',
+      value = {
+        "{\"duration_ticks\":120,\"attributes\":[],\"downs\":{\"below\":0.3,\"up_to\":\"nightborn:elder\"}}; true",
+        "{\"duration_ticks\":120,\"attributes\":[]}; false"
+      })
+  @DisplayName("a boost may down a badly hurt vampire its owner strikes")
+  void downs(final String json, final boolean downs) {
+    assertEquals(
+        downs,
+        BoostPower.CODEC
+            .parse(JsonOps.INSTANCE, JsonParser.parseString(json))
+            .getOrThrow()
+            .downs()
+            .isPresent());
+  }
 }

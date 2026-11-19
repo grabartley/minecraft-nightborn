@@ -62,6 +62,7 @@ import com.grahambartley.nightborn.render.WeaponRackRenderer;
 import com.grahambartley.nightborn.render.ZoneMarkRenderer;
 import com.grahambartley.nightborn.ritual.RitualAltarBlockEntity;
 import com.grahambartley.nightborn.ritual.RitualBlocks;
+import com.grahambartley.nightborn.slayer.SlayerEntities;
 import com.grahambartley.nightborn.thrall.Thralls;
 import com.grahambartley.nightborn.trap.TrapEntities;
 import net.fabricmc.api.ClientModInitializer;
@@ -144,6 +145,7 @@ public class NightbornClient implements ClientModInitializer {
     EntityRendererRegistry.register(BossEntities.ZONE_MARK, ZoneMarkRenderer::new);
     EntityRendererRegistry.register(TrapEntities.TRAP, ZoneMarkRenderer::new);
     EntityRendererRegistry.register(TrapEntities.NET, FlyingItemEntityRenderer::new);
+    EntityRendererRegistry.register(SlayerEntities.THROWN_STAKE, FlyingItemEntityRenderer::new);
     EntityRendererRegistry.register(NightbornMobs.PET_BAT, VampireBatRenderer::new);
     EntityRendererRegistry.register(Familiars.HUMAN_FAMILIAR, HumanFamiliarRenderer::new);
     EntityRendererRegistry.register(Thralls.THRALL, ThrallRenderer::new);

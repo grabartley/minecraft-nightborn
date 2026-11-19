@@ -35,6 +35,7 @@ import com.grahambartley.nightborn.raid.RaidFeatures;
 import com.grahambartley.nightborn.rank.RankFeatures;
 import com.grahambartley.nightborn.ritual.RitualFeatures;
 import com.grahambartley.nightborn.servant.ServantFeatures;
+import com.grahambartley.nightborn.slayer.SlayerFeatures;
 import com.grahambartley.nightborn.sound.NightbornSounds;
 import com.grahambartley.nightborn.structure.NightbornStructures;
 import com.grahambartley.nightborn.sun.SunShafts;
@@ -87,6 +88,7 @@ public class Nightborn implements ModInitializer {
     OccultFeatures.register();
     TrapFeatures.register();
     FaithFeatures.register();
+    SlayerFeatures.register();
     EnchantFeatures.register();
     ClothingFeatures.register();
     AccessoryFeatures.register();

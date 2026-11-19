@@ -1,0 +1,22 @@
+{
+  "branch": "nightborn:slayer",
+  "requires": [
+    "nightborn:slayer/stake_throw"
+  ],
+  "icon": "nightborn:skills/icon/quick_shot",
+  "column": 2,
+  "row": 1,
+  "ranks": [
+    {
+      "cost": 2
+    }
+  ],
+  "power": {
+    "blood": 0,
+    "cooldown_ticks": 300,
+    "quick_shot": {
+      "speed": 3.15,
+      "divergence": 1.0
+    }
+  }
+}
