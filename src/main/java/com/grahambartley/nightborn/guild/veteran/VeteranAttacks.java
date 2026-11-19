@@ -70,6 +70,14 @@ final class VeteranAttacks {
   void clear() {
     marks.forEach(ZoneMarkEntity::discard);
     marks.clear();
+    sheathe();
+  }
+
+  private void sheathe() {
+    if (!sheathed.isEmpty()) {
+      veteran.equipStack(EquipmentSlot.MAINHAND, sheathed);
+      sheathed = ItemStack.EMPTY;
+    }
   }
 
   private double track(@Nullable final LivingEntity target) {
@@ -233,14 +241,9 @@ final class VeteranAttacks {
     if (winding.kind() == VeteranAttack.Kind.HOLY_WATER_ARC) {
       marks.forEach(mark -> mark.linger(winding.effectTicks()));
       marks.clear();
-    } else {
-      clear();
     }
+    clear();
     readyAt.put(current, veteran.getWorld().getTime() + winding.cooldownTicks());
-    if (winding.held().isPresent()) {
-      veteran.equipStack(EquipmentSlot.MAINHAND, sheathed);
-      sheathed = ItemStack.EMPTY;
-    }
     current = null;
     attack = null;
     veteran.showAttack("");

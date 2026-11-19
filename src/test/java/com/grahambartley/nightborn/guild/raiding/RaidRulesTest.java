@@ -78,4 +78,11 @@ class RaidRulesTest {
   void isBeatenWhenNobodyIsLeft(final int left, final boolean beaten) {
     assertEquals(beaten, RaidRules.beaten(left));
   }
+
+  @ParameterizedTest(name = "{0}: rests {1}")
+  @CsvSource({"NONE, true", "WARNING, false", "DUE, false", "VISIT, false"})
+  void givesQuietNightsOnlyWhenTheGrandInquisitorIsNotAlreadyComing(
+      final HuntRecord.Phase phase, final boolean rests) {
+    assertEquals(rests, RaidRules.restsAfter(phase));
+  }
 }

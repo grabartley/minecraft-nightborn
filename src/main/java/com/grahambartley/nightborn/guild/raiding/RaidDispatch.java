@@ -52,6 +52,7 @@ public final class RaidDispatch {
     final HuntRecord settled =
         raids
             .takeEnded(player.getUuid())
+            .filter(night -> RaidRules.restsAfter(record.phase()))
             .map(night -> record.ended(night, settings.quietNights()))
             .orElse(record);
     if (!Vampires.isVampire(player)) {
@@ -86,7 +87,7 @@ public final class RaidDispatch {
       final ServerWorld world = server.getWorld(house.get().dimension());
       final BlockPos place = house.get().pos();
       if (world == null || !SurfaceSpots.loaded(world, place.getX(), place.getZ())) {
-        return settled.ended(AgeNight.index(now), settings.quietNights());
+        return settled;
       }
       HunterPartySpawner.spot(world, place, world.getRandom())
           .ifPresent(spot -> send(world, spot, player, house, arms.get(), now));

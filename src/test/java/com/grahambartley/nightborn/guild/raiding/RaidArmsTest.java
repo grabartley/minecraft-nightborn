@@ -117,4 +117,27 @@ class RaidArmsTest {
     assertEquals(silver, silvered);
     assertEquals(holyWater, holy);
   }
+
+  @ParameterizedTest(name = "{0} at {1}%: {2} hunters, {3} with silver, {4} with holy water")
+  @CsvSource({
+    "elder, 50, 5, 4, 1",
+    "elder, 200, 12, 11, 4",
+    "adult, 50, 3, 2, 1",
+    "ancient, 50, 7, 7, 2"
+  })
+  void keepsTheSharesCloseWhenTheSettingScalesAParty(
+      final String stage, final int percent, final int size, final int silver, final int holyWater)
+      throws IOException {
+    final RaidArms arms = shipped(stage);
+    int silvered = arms.led(percent) ? 1 : 0;
+    int holy = 0;
+    for (final Identifier kitId : arms.hunterKits(percent)) {
+      final HunterKit kit = kit(kitId);
+      silvered += kit.weapon().getPath().startsWith("silver") ? 1 : 0;
+      holy += kit.holyWater() ? 1 : 0;
+    }
+    assertEquals(size, arms.size(percent));
+    assertEquals(silver, silvered);
+    assertEquals(holyWater, holy);
+  }
 }

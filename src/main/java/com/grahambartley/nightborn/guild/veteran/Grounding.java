@@ -4,6 +4,7 @@ import com.grahambartley.nightborn.Nightborn;
 import com.grahambartley.nightborn.batform.BatForm;
 import com.grahambartley.nightborn.levitation.Levitation;
 import com.grahambartley.nightborn.vampire.Modifiers;
+import com.mojang.serialization.Codec;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentRegistry;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentType;
 import net.minecraft.entity.LivingEntity;
@@ -17,7 +18,8 @@ public final class Grounding {
   static final Identifier HELD_DOWN = Identifier.of(Nightborn.MOD_ID, "grounded");
 
   public static final AttachmentType<Long> UNTIL =
-      AttachmentRegistry.create(Identifier.of(Nightborn.MOD_ID, "grounded_until"));
+      AttachmentRegistry.createPersistent(
+          Identifier.of(Nightborn.MOD_ID, "grounded_until"), Codec.LONG);
 
   private Grounding() {}
 

@@ -33,6 +33,10 @@ public final class RaidRules {
     return housed != NightTime.isNight(false, timeOfDay);
   }
 
+  public static boolean restsAfter(final HuntRecord.Phase phase) {
+    return phase == HuntRecord.Phase.NONE;
+  }
+
   public static boolean beaten(final int left) {
     return left <= 0;
   }

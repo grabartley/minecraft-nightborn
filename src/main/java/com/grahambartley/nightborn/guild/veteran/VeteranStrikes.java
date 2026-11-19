@@ -9,7 +9,6 @@ import com.grahambartley.nightborn.guild.GuildData;
 import com.grahambartley.nightborn.guild.HunterEntity;
 import com.grahambartley.nightborn.holy.HolyWater;
 import com.grahambartley.nightborn.landing.Landing;
-import com.grahambartley.nightborn.mind.MindEffect;
 import com.grahambartley.nightborn.mind.MindTies;
 import com.grahambartley.nightborn.vanish.VanishAttachment;
 import java.util.List;
@@ -112,8 +111,7 @@ final class VeteranStrikes {
       hunter.heal(attack.heal());
       hunter.addStatusEffect(
           new StatusEffectInstance(StatusEffects.SPEED, attack.effectTicks()), veteran);
-      hunter.removeStatusEffect(MindEffect.MESMERISED);
-      hunter.removeAttached(MindTies.MESMERISED_BY);
+      MindTies.release(hunter);
     }
   }
 

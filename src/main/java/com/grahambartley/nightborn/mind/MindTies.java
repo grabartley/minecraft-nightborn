@@ -28,6 +28,11 @@ public final class MindTies {
     return entity.hasStatusEffect(MindEffect.MESMERISED);
   }
 
+  public static void release(final LivingEntity entity) {
+    entity.removeStatusEffect(MindEffect.MESMERISED);
+    entity.removeAttached(MESMERISED_BY);
+  }
+
   public static boolean charmed(final LivingEntity entity) {
     return entity.hasStatusEffect(MindEffect.CHARMED);
   }
