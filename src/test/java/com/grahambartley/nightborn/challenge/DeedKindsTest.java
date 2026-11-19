@@ -21,7 +21,9 @@ class DeedKindsTest {
     "nightborn:parasol_walked, true",
     "nightborn:woke_rested, true",
     "nightborn:nemesis_ended, true",
-    "nightborn:trapped, false"
+    "nightborn:trapped, true",
+    "nightborn:grounded, true",
+    "nightborn:not_yet_reported, false"
   })
   void onlyDeedsTheGameReportsAreLive(final String kind, final boolean live) {
     assertEquals(live, DeedKinds.live().contains(Identifier.of(kind)));

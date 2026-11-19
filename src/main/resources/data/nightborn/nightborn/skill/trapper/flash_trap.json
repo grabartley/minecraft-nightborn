@@ -1,0 +1,48 @@
+{
+  "branch": "nightborn:trapper",
+  "requires": [
+    "nightborn:trapper/snare"
+  ],
+  "icon": "nightborn:skills/icon/flash_trap",
+  "column": 2,
+  "row": 3,
+  "rank": "nightborn:hunter",
+  "ranks": [
+    {
+      "cost": 3
+    }
+  ],
+  "power": {
+    "blood": 0,
+    "cooldown_ticks": 1200,
+    "trap": {
+      "range": 4.0,
+      "duration_ticks": 6000,
+      "limit": 1,
+      "arm_ticks": 40,
+      "seen_within": 6.0,
+      "stepped": false,
+      "trigger_radius": 3.0,
+      "damage": 6.0,
+      "damage_type": "nightborn:holy_light",
+      "effects": [
+        {
+          "id": "minecraft:blindness",
+          "amplifier": 0,
+          "duration": 60,
+          "show_icon": true
+        }
+      ],
+      "size": 0.5,
+      "look": "nightborn:flash_trap",
+      "spring": {
+        "sound": "minecraft:entity.firework_rocket.blast",
+        "particle": {
+          "type": "minecraft:flash"
+        },
+        "count": 2
+      }
+    },
+    "sound": "minecraft:block.chain.place"
+  }
+}

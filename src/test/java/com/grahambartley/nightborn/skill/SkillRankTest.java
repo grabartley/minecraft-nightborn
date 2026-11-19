@@ -23,7 +23,7 @@ class SkillRankTest {
   void reads(final String json, final int cost, final double bareHands) {
     final SkillRank rank =
         SkillRank.CODEC.parse(JsonOps.INSTANCE, JsonParser.parseString(json)).getOrThrow();
-    assertEquals(new SkillRank(cost, List.of(), bareHands, List.of()), rank);
+    assertEquals(new SkillRank(cost, List.of(), bareHands, List.of(), List.of()), rank);
     assertEquals(SkillRank.costing(cost).cost(), rank.cost());
   }
 
@@ -58,6 +58,25 @@ class SkillRankTest {
             .parse(JsonOps.INSTANCE, JsonParser.parseString(json))
             .getOrThrow()
             .powerGifts()
+            .size());
+  }
+
+  @ParameterizedTest(name = "{0} -> {1} trap gifts")
+  @CsvSource(
+      delimiter = ';',
+      value = {
+        "{\"cost\": 1, \"trap_gifts\": [{\"arm_cut\": 0.25, \"seen_within\": 6}]}; 1",
+        "{\"cost\": 2, \"trap_gifts\": [{\"power\": \"nightborn:trapper/snare\", \"extra_damage\": 2}, {\"power\": \"nightborn:trapper/net_shot\", \"extra_damage\": 2}]}; 2",
+        "{\"cost\": 3}; 0"
+      })
+  @DisplayName("a rank may carry gifts for its path's traps")
+  void trapGifts(final String json, final int count) {
+    assertEquals(
+        count,
+        SkillRank.CODEC
+            .parse(JsonOps.INSTANCE, JsonParser.parseString(json))
+            .getOrThrow()
+            .trapGifts()
             .size());
   }
 }

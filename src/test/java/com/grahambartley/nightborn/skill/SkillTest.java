@@ -200,6 +200,58 @@ class SkillTest {
         Optional.ofNullable(gate).map(stage -> Identifier.of("nightborn", stage)), skill.stage());
   }
 
+  @ParameterizedTest(name = "{0}: costs {1}, needs {2}, gate {3}, power {4}")
+  @CsvSource(
+      delimiter = '|',
+      value = {
+        "field_craft | 1,1,2 | hunter/tracking | | false",
+        "snare | 2 | trapper/field_craft | | true",
+        "bait | 2 | trapper/field_craft | | true",
+        "net_shot | 2 | trapper/snare | | true",
+        "quick_hands | 1,2,2 | trapper/snare | | false",
+        "trap_sense | 2 | trapper/snare | | false",
+        "silver_edge | 2,2,3 | trapper/net_shot | hunter | false",
+        "flash_trap | 3 | trapper/snare | hunter | true",
+        "killing_ground | 4 | trapper/flash_trap,trapper/net_shot | master | true",
+        "master_trapper | 3 | trapper/killing_ground | master | false"
+      })
+  @DisplayName("the Trapper path holds its ten locked skills with their costs, needs and ranks")
+  void trapperSkills(
+      final String path,
+      final String costs,
+      final String needs,
+      final String gate,
+      final boolean power)
+      throws IOException {
+    final Skill skill = shippedSkills().get(Identifier.of("nightborn", "trapper/" + path));
+    assertEquals(Identifier.of("nightborn", "trapper"), skill.branch());
+    assertEquals(
+        costs,
+        skill.ranks().stream()
+            .map(rank -> Integer.toString(rank.cost()))
+            .collect(Collectors.joining(",")));
+    assertEquals(
+        List.of(needs.split(",")).stream().map(need -> Identifier.of("nightborn", need)).toList(),
+        skill.requires());
+    assertEquals(
+        Optional.ofNullable(gate).map(rank -> Identifier.of("nightborn", rank)), skill.rank());
+    assertEquals(power, skill.active());
+    assertEquals(0, skill.power().map(SkillPower::blood).orElse(0));
+  }
+
+  @ParameterizedTest(name = "{0}: cooldown {1} seconds")
+  @CsvSource({"snare, 20", "bait, 60", "net_shot, 25", "flash_trap, 60", "killing_ground, 300"})
+  @DisplayName("each Trapper power cools down for the time the table gives")
+  void trapperCooldowns(final String path, final int seconds) throws IOException {
+    assertEquals(
+        seconds * 20,
+        shippedSkills()
+            .get(Identifier.of("nightborn", "trapper/" + path))
+            .power()
+            .orElseThrow()
+            .cooldownTicks());
+  }
+
   @Test
   @DisplayName("the core holds exactly ten skills")
   void coreSize() throws IOException {

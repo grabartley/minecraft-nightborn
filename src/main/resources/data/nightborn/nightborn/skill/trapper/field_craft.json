@@ -1,0 +1,38 @@
+{
+  "branch": "nightborn:trapper",
+  "requires": [
+    "nightborn:hunter/tracking"
+  ],
+  "icon": "nightborn:skills/icon/field_craft",
+  "column": 1,
+  "row": 0,
+  "ranks": [
+    {
+      "cost": 1,
+      "trap_gifts": [
+        {
+          "arm_cut": 0.25,
+          "seen_within": 6.0
+        }
+      ]
+    },
+    {
+      "cost": 1,
+      "trap_gifts": [
+        {
+          "arm_cut": 0.25,
+          "seen_within": 4.0
+        }
+      ]
+    },
+    {
+      "cost": 2,
+      "trap_gifts": [
+        {
+          "arm_cut": 0.25,
+          "seen_within": 2.0
+        }
+      ]
+    }
+  ]
+}

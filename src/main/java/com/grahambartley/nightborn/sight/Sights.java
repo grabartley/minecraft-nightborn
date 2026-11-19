@@ -11,6 +11,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.function.BiConsumer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
@@ -26,12 +27,18 @@ public final class Sights {
   static final int SHOW_TICKS = 15;
 
   private static final Map<UUID, List<Sight>> SIGHTS = new HashMap<>();
+  private static final List<BiConsumer<ServerPlayerEntity, Map<Integer, Integer>>> STANDING =
+      new ArrayList<>();
 
   private Sights() {}
 
   public static void register() {
     ServerTickEvents.END_SERVER_TICK.register(Sights::tick);
     ServerLifecycleEvents.SERVER_STOPPED.register(server -> SIGHTS.clear());
+  }
+
+  public static void standing(final BiConsumer<ServerPlayerEntity, Map<Integer, Integer>> sight) {
+    STANDING.add(sight);
   }
 
   public static void give(final LivingEntity viewer, final Sight sight) {
@@ -43,7 +50,7 @@ public final class Sights {
   }
 
   private static void tick(final MinecraftServer server) {
-    if (SIGHTS.isEmpty() || server.getTicks() % SEND_EVERY_TICKS != 0) {
+    if (server.getTicks() % SEND_EVERY_TICKS != 0) {
       return;
     }
     SIGHTS
@@ -56,12 +63,13 @@ public final class Sights {
               }
               final long now = player.getServerWorld().getTime();
               entry.getValue().removeIf(sight -> sight.over(now));
-              if (entry.getValue().isEmpty()) {
-                return true;
-              }
-              send(player, entry.getValue());
-              return false;
+              return entry.getValue().isEmpty();
             });
+    for (final ServerPlayerEntity player : server.getPlayerManager().getPlayerList()) {
+      if (player.isAlive()) {
+        send(player, SIGHTS.getOrDefault(player.getUuid(), List.of()));
+      }
+    }
   }
 
   private static void send(final ServerPlayerEntity player, final List<Sight> sights) {
@@ -75,6 +83,12 @@ public final class Sights {
       if (sight.senseRange() > 0.0F) {
         heartbeats(player, sight.senseRange(), shown);
       }
+    }
+    for (final BiConsumer<ServerPlayerEntity, Map<Integer, Integer>> standing : STANDING) {
+      standing.accept(player, shown);
+    }
+    if (sights.isEmpty() && shown.isEmpty()) {
+      return;
     }
     ServerPlayNetworking.send(
         player,

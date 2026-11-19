@@ -1,0 +1,38 @@
+{
+  "branch": "nightborn:trapper",
+  "requires": [
+    "nightborn:trapper/snare"
+  ],
+  "icon": "nightborn:skills/icon/quick_hands",
+  "column": 1,
+  "row": 2,
+  "ranks": [
+    {
+      "cost": 1,
+      "trap_gifts": [
+        {
+          "power": "nightborn:trapper/snare",
+          "extra_limit": 1
+        }
+      ]
+    },
+    {
+      "cost": 2,
+      "trap_gifts": [
+        {
+          "power": "nightborn:trapper/snare",
+          "extra_limit": 1
+        }
+      ]
+    },
+    {
+      "cost": 2,
+      "trap_gifts": [
+        {
+          "power": "nightborn:trapper/snare",
+          "extra_limit": 1
+        }
+      ]
+    }
+  ]
+}

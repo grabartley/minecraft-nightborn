@@ -5,6 +5,7 @@ import com.grahambartley.nightborn.accessory.WornStrikes;
 import com.grahambartley.nightborn.batform.WingedForm;
 import com.grahambartley.nightborn.mind.BloodTithe;
 import com.grahambartley.nightborn.occult.MistForm;
+import com.grahambartley.nightborn.trap.PinnedBlows;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
 
@@ -22,7 +23,9 @@ public final class DamageTaken {
     if (amount <= 0.0F) {
       return BloodTithe.share(entity, amount);
     }
-    final float worn = WornDamage.scale(entity, source, WornStrikes.scale(entity, source, amount));
+    final float raised =
+        PinnedBlows.scale(entity, source, WornStrikes.scale(entity, source, amount));
+    final float worn = WornDamage.scale(entity, source, raised);
     final float formed = MistForm.harm(entity, source, worn * WingedForm.damageTaken(entity));
     final float kept = BloodTithe.share(entity, formed);
     final float taken = floored(amount, kept);

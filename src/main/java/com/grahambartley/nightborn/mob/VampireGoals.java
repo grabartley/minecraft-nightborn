@@ -4,6 +4,7 @@ import com.grahambartley.nightborn.house.BringBloodHomeGoal;
 import com.grahambartley.nightborn.house.MemberStance;
 import com.grahambartley.nightborn.mob.goal.BatFlightGoal;
 import com.grahambartley.nightborn.mob.goal.FleeWhileEscapingGoal;
+import com.grahambartley.nightborn.mob.goal.FollowBaitGoal;
 import com.grahambartley.nightborn.mob.goal.HouseholdLifeGoal;
 import com.grahambartley.nightborn.mob.goal.LieDownedGoal;
 import com.grahambartley.nightborn.mob.goal.RetreatGoal;
@@ -52,6 +53,7 @@ final class VampireGoals {
     final MemberStance memberStance = new MemberStance(vampire);
     goals.add(4, new StancePostGoal(vampire, memberStance));
     goals.add(4, new StanceFollowGoal(vampire, memberStance));
+    goals.add(5, new FollowBaitGoal(vampire));
     goals.add(5, new GoToWalkTargetGoal(vampire, 1.0));
     goals.add(6, new BringBloodHomeGoal(vampire));
     goals.add(6, new WatchStrangerGoal(vampire));

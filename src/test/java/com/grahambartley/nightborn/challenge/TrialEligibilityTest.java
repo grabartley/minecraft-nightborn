@@ -17,7 +17,7 @@ import org.junit.jupiter.params.provider.CsvSource;
 class TrialEligibilityTest {
 
   static final Identifier LIVE = Identifier.of("nightborn", "fed");
-  static final Identifier UNBUILT = Identifier.of("nightborn", "trapped");
+  static final Identifier UNBUILT = Identifier.of("nightborn", "not_yet_reported");
   static final Identifier ADULT = Identifier.of("nightborn", "adult");
   static final Identifier BAT = Identifier.of("nightborn", "beast/bat_form");
 

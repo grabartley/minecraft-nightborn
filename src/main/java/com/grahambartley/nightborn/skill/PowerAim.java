@@ -5,9 +5,11 @@ import com.grahambartley.nightborn.mind.Commands;
 import com.grahambartley.nightborn.mind.Mesmerise;
 import com.grahambartley.nightborn.occult.HexPower;
 import com.grahambartley.nightborn.occult.ShadowStep;
+import com.grahambartley.nightborn.trap.TrapSpots;
 import com.grahambartley.nightborn.vanish.Vanish;
 import java.util.Optional;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import org.jetbrains.annotations.Nullable;
 
@@ -15,9 +17,10 @@ public record PowerAim(
     @Nullable LivingEntity gazeTarget,
     @Nullable Vec3d stepTo,
     @Nullable LivingEntity target,
-    @Nullable CommandAim command) {
+    @Nullable CommandAim command,
+    @Nullable BlockPos spot) {
 
-  public static final PowerAim NONE = new PowerAim(null, null, null, null);
+  public static final PowerAim NONE = new PowerAim(null, null, null, null, null);
 
   public static boolean aims(final SkillPower power) {
     return power.mesmerise().isPresent()
@@ -25,7 +28,8 @@ public record PowerAim(
         || power.vanish().isPresent()
         || power.pounce().isPresent()
         || power.hex().isPresent()
-        || power.command().isPresent();
+        || power.command().isPresent()
+        || power.traps().places();
   }
 
   public static Optional<Float> targetRange(final SkillPower power) {
@@ -49,7 +53,8 @@ public record PowerAim(
             .or(() -> skill.vanish().flatMap(vanish -> Vanish.destination(caster, vanish, heading)))
             .orElse(null),
         targetRange(skill).map(range -> PowerSight.aimed(caster, range)).orElse(null),
-        skill.command().flatMap(command -> Commands.aim(caster, command)).orElse(null));
+        skill.command().flatMap(command -> Commands.aim(caster, command)).orElse(null),
+        skill.traps().placeRange().flatMap(range -> TrapSpots.spot(caster, range)).orElse(null));
   }
 
   public boolean unseen(final SkillPower power) {
@@ -59,6 +64,10 @@ public record PowerAim(
 
   public boolean nowhere(final SkillPower power) {
     return (power.shadowStep().isPresent() || power.vanish().isPresent()) && stepTo == null;
+  }
+
+  public boolean unplaced(final SkillPower power) {
+    return power.traps().places() && spot == null;
   }
 
   public boolean subjectless(final SkillPower power) {

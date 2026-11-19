@@ -9,6 +9,8 @@ public final class PowerUse {
     NO_POWER,
     HELPLESS,
     HELD,
+    BARRED,
+    GROUNDED,
     IN_WINGED_FORM,
     AS_A_BAT,
     WEAKENED,
@@ -18,6 +20,7 @@ public final class PowerUse {
     CRAMPED,
     UNSEEN,
     NOWHERE,
+    NO_GROUND,
     NO_SUBJECT;
 
     public String translationKey() {
@@ -29,6 +32,8 @@ public final class PowerUse {
       boolean hasPower,
       boolean helpless,
       boolean held,
+      boolean barred,
+      boolean grounded,
       boolean winged,
       boolean bat,
       boolean weakened,
@@ -38,6 +43,7 @@ public final class PowerUse {
       int bloodCost,
       boolean unseen,
       boolean nowhere,
+      boolean groundless,
       boolean subjectless) {}
 
   private PowerUse() {}
@@ -51,6 +57,12 @@ public final class PowerUse {
     }
     if (situation.held()) {
       return Verdict.HELD;
+    }
+    if (situation.barred()) {
+      return Verdict.BARRED;
+    }
+    if (situation.grounded()) {
+      return Verdict.GROUNDED;
     }
     if (situation.winged()) {
       return Verdict.IN_WINGED_FORM;
@@ -75,6 +87,9 @@ public final class PowerUse {
     }
     if (situation.nowhere()) {
       return Verdict.NOWHERE;
+    }
+    if (situation.groundless()) {
+      return Verdict.NO_GROUND;
     }
     if (situation.subjectless()) {
       return Verdict.NO_SUBJECT;
