@@ -9,8 +9,8 @@ public final class PinnedBlows {
 
   private PinnedBlows() {}
 
-  public static float raise(final float amount, final boolean pinnedVampire, final double bonus) {
-    return pinnedVampire && bonus > 0.0 ? (float) (amount * (1.0 + bonus)) : amount;
+  public static float raise(final float amount, final double bonus) {
+    return bonus > 0.0 ? (float) (amount * (1.0 + bonus)) : amount;
   }
 
   public static float scale(
@@ -20,6 +20,6 @@ public final class PinnedBlows {
         || !Holds.pinned(target)) {
       return amount;
     }
-    return raise(amount, true, TrapGifts.pinnedDamage(HeldTrapGifts.of(attacker)));
+    return raise(amount, TrapGifts.pinnedDamage(HeldTrapGifts.of(attacker)));
   }
 }

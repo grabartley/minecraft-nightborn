@@ -33,6 +33,7 @@ import org.jetbrains.annotations.Nullable;
 public class TrapEntity extends ZoneMarkEntity {
 
   static final double STEP_HEIGHT = 0.3;
+  static final double STEP_REACH = 1.0;
 
   private static final TrackedData<Float> SEEN_WITHIN =
       DataTracker.registerData(TrapEntity.class, TrackedDataHandlerRegistry.FLOAT);
@@ -117,7 +118,7 @@ public class TrapEntity extends ZoneMarkEntity {
 
   private void watch(final ServerWorld world, final LivingEntity hunter, final TrapPower trap) {
     final Set<UUID> seen = new HashSet<>();
-    final double reach = trap.stepped() ? 1.0 : trap.triggerRadius();
+    final double reach = trap.stepped() ? STEP_REACH : trap.triggerRadius();
     final Box floor = new Box(getBlockPos()).withMaxY(getBlockPos().getY() + STEP_HEIGHT);
     boolean sprung = false;
     for (final LivingEntity met :
@@ -212,6 +213,11 @@ public class TrapEntity extends ZoneMarkEntity {
     } else {
       discard();
     }
+  }
+
+  @Override
+  public boolean canBeSpectated(final ServerPlayerEntity viewer) {
+    return TrapRules.seen(Vampires.isVampire(viewer), viewer.squaredDistanceTo(this), seenWithin());
   }
 
   @Override

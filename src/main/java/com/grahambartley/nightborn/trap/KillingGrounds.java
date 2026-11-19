@@ -82,7 +82,6 @@ public final class KillingGrounds {
             field ->
                 FieldRules.bars(
                     field.power().bars().contains(power),
-                    true,
                     field.covers(caster.getWorld(), caster.getPos()),
                     reaches(caster, field)));
   }

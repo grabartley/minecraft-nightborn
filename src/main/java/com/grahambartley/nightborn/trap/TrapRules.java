@@ -48,4 +48,9 @@ public final class TrapRules {
       final boolean sameTeam) {
     return same || sameTeam || ownerHunter && otherHunter;
   }
+
+  public static boolean seen(
+      final boolean viewerVampire, final double squaredDistance, final float seenWithin) {
+    return !viewerVampire || squaredDistance <= (double) seenWithin * seenWithin;
+  }
 }

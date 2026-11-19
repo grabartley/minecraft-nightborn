@@ -29,6 +29,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.sound.SoundEvent;
+import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
 
 final class PowerCasts {
@@ -110,6 +111,9 @@ final class PowerCasts {
     }
     power.net().ifPresent(net -> Nets.launch(caster, id, net));
     power.field().ifPresent(field -> KillingGrounds.mark(caster, field));
+    if (power.traps().thrown()) {
+      caster.swingHand(Hand.MAIN_HAND, true);
+    }
   }
 
   private static void minds(final LivingEntity caster, final SkillPower power, final PowerAim aim) {

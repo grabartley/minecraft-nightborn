@@ -32,6 +32,10 @@ public record PowerTraps(
     return trap.isPresent() || bait.isPresent();
   }
 
+  public boolean thrown() {
+    return places() || net.isPresent();
+  }
+
   public Optional<Float> placeRange() {
     return trap.map(TrapPower::range).or(() -> bait.map(BaitPower::range));
   }

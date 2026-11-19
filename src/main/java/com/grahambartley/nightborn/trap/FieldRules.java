@@ -4,9 +4,8 @@ public final class FieldRules {
 
   private FieldRules() {}
 
-  public static boolean bars(
-      final boolean listed, final boolean vampire, final boolean inside, final boolean reaches) {
-    return listed && vampire && inside && reaches;
+  public static boolean bars(final boolean listed, final boolean inside, final boolean reaches) {
+    return listed && inside && reaches;
   }
 
   public static boolean inside(final double squaredDistance, final float radius) {

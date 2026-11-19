@@ -13,6 +13,8 @@ import net.minecraft.world.World;
 
 public final class TrapSpots {
 
+  static final float AIM_SLACK = 1.0F;
+
   private TrapSpots() {}
 
   public static boolean fits(
@@ -27,7 +29,7 @@ public final class TrapSpots {
   public static Optional<BlockPos> spot(final LivingEntity caster, final float range) {
     final BlockPos at = aimed(caster, range);
     if (at == null
-        || !inRange(caster.squaredDistanceTo(at.toBottomCenterPos()), range + 1.0F)
+        || !inRange(caster.squaredDistanceTo(at.toBottomCenterPos()), range + AIM_SLACK)
         || !fits(caster.getWorld(), at)) {
       return Optional.empty();
     }

@@ -95,4 +95,18 @@ class TrapRulesTest {
       final boolean allied) {
     assertEquals(allied, TrapRules.allied(same, ownerHunter, otherHunter, team));
   }
+
+  @ParameterizedTest(name = "vampire {0}, distance² {1}, seen within {2} -> seen {3}")
+  @CsvSource({
+    "false, 400, 2, true",
+    "true, 4, 2, true",
+    "true, 4.1, 2, false",
+    "true, 36, 6, true",
+    "true, 37, 6, false"
+  })
+  @DisplayName("a vampire is sent a hunter's trap only from close by, and anyone else always is")
+  void seen(
+      final boolean vampire, final double distance, final float seenWithin, final boolean seen) {
+    assertEquals(seen, TrapRules.seen(vampire, distance, seenWithin));
+  }
 }

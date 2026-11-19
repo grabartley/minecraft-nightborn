@@ -8,22 +8,17 @@ import org.junit.jupiter.params.provider.CsvSource;
 
 class FieldRulesTest {
 
-  @ParameterizedTest(name = "listed {0}, vampire {1}, inside {2}, reaches {3} -> {4}")
+  @ParameterizedTest(name = "listed {0}, inside {1}, reaches {2} -> {3}")
   @CsvSource({
-    "true, true, true, true, true",
-    "false, true, true, true, false",
-    "true, false, true, true, false",
-    "true, true, false, true, false",
-    "true, true, true, false, false"
+    "true, true, true, true",
+    "false, true, true, false",
+    "true, false, true, false",
+    "true, true, false, false"
   })
-  @DisplayName("a killing ground bars only its listed powers, for a vampire inside it may reach")
+  @DisplayName("a killing ground bars only its listed powers, for one inside it may reach")
   void bars(
-      final boolean listed,
-      final boolean vampire,
-      final boolean inside,
-      final boolean reaches,
-      final boolean barred) {
-    assertEquals(barred, FieldRules.bars(listed, vampire, inside, reaches));
+      final boolean listed, final boolean inside, final boolean reaches, final boolean barred) {
+    assertEquals(barred, FieldRules.bars(listed, inside, reaches));
   }
 
   @ParameterizedTest(name = "distance² {0}, radius {1} -> {2}")
