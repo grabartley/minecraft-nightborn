@@ -1,12 +1,14 @@
 package com.grahambartley.nightborn.occult;
 
+import net.minecraft.util.math.Vec3d;
+
 public final class WispTrail {
 
   static final int EVERY_TICKS = 3;
   static final int FADING_EVERY_TICKS = 1;
   static final double SPREAD = 0.25;
-  static final double HEIGHT = 0.1;
-  static final double DRIFT_UP = 0.012;
+  static final double HEIGHT = 0.2;
+  public static final double DRIFT_UP = 0.012;
 
   private WispTrail() {}
 
@@ -14,15 +16,11 @@ public final class WispTrail {
     return age % (fading ? FADING_EVERY_TICKS : EVERY_TICKS) == 0;
   }
 
-  public static double offset(final double roll) {
+  public static Vec3d spawnAt(final Vec3d feet, final double rollX, final double rollZ) {
+    return feet.add(offset(rollX), HEIGHT, offset(rollZ));
+  }
+
+  static double offset(final double roll) {
     return (roll * 2.0 - 1.0) * SPREAD;
-  }
-
-  public static double height() {
-    return HEIGHT;
-  }
-
-  public static double driftUp() {
-    return DRIFT_UP;
   }
 }

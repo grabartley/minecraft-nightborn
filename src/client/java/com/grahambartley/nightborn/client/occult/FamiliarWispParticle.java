@@ -9,7 +9,7 @@ public final class FamiliarWispParticle extends SpriteBillboardParticle {
 
   static final int MIN_AGE = 20;
   static final int AGE_SPREAD = 14;
-  static final float SIZE = 0.09F;
+  static final float SIZE = 0.16F;
   static final float DRAG = 0.96F;
 
   private final SpriteProvider sprites;

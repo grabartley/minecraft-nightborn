@@ -33,7 +33,7 @@ public final class GhostlyFamiliars {
           Registries.ENTITY_TYPE,
           Identifier.of(Nightborn.MOD_ID, "ghostly_familiar"),
           EntityType.Builder.create(GhostlyFamiliarEntity::new, SpawnGroup.MISC)
-              .dimensions(0.6F, 0.9F)
+              .dimensions(0.6F, 1.2F)
               .eyeHeight(0.6F)
               .makeFireImmune()
               .maxTrackingRange(8)
