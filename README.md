@@ -48,7 +48,7 @@ deed to prove each stage.
 your coffin by day. Then hold it against any member who challenges you for it.
 
 <p align="center">
-<img src="https://raw.githubusercontent.com/grabartley/minecraft-nightborn/main/docs/images/creatures.png" alt="The night terror, a vampire bat, a ghostly familiar and a tame hawk" width="800">
+<img src="https://raw.githubusercontent.com/grabartley/minecraft-nightborn/main/docs/images/creatures.png" alt="The Night Terror, a vampire bat, a ghostly familiar and a tame hawk" width="800">
 </p>
 
 ## Or hunt them down
@@ -60,15 +60,15 @@ your coffin by day. Then hold it against any member who challenges you for it.
 - **Folklore works.** Stakes, silver, garlic, crucifixes and holy water all do what the old stories say. Coat a blade,
 string up garlic, and load a crossbow with stake, silver or holy water bolts.
 - **Find the one among you.** A hand mirror shows no vampire, and garlic or a raised crucifix makes one flinch.
-- **Join the guild.** Stake a vampire to prove yourself and a Guild Master swears you in. Rise from Initiate to Hunter,
-Veteran and Master.
+- **Join the guild.** Stake a vampire to prove yourself and a Guild Master swears you in and hands you a hunter's
+journal. Rise from Initiate to Hunter, Veteran and Master.
 - **Walk two of four paths.** The Faithful pray, bless blades and call down holy light. Slayers dodge, lunge and throw
 stakes. Trappers lay snares and bait and net bats out of the air. Seekers read a kill for the vampire behind it and
 see through every veil.
 - **Take contracts.** Find a hunter camp and its Guild Master sells gear and writes contracts, each with a rough map
 of where the house lies.
 
-## A world that notices
+## Households and villages
 
 Vampires are rare, and each one is someone, with a name, a title and a temper. They live together in households that
 wake at dusk, light the candles, talk, quarrel, read and play the gramophone, then sleep out the day in their coffins
@@ -78,7 +78,7 @@ with a thrall or two on guard.
 overgrown manors, and a rare pale castle on a mountain top.
 - **Villages remember.** Feed where you can be seen and a village learns your face, shuts its doors after dark, hangs
 garlic and sends for hunters.
-- **So do your enemies.** A named vampire or hunter who gets away from you may come back as your nemesis, stronger each
+- **Enemies remember too.** A named vampire or hunter who gets away from you may come back as your nemesis, stronger each
 time.
 - **Make it yours.** Coffins, candlelit furniture, a gramophone with gothic music discs, gothic building blocks,
 clothing you can dye and enchant, and accessories in eight slots.
@@ -95,8 +95,9 @@ At night the game's music gives way to organ, harpsichord, strings and choir.
 <img src="https://raw.githubusercontent.com/grabartley/minecraft-nightborn/main/docs/images/bosses.png" alt="The Eldest and the Grand Inquisitor" width="800">
 </p>
 
-- **The Eldest.** The oldest vampire of all, with every power of every bloodline. Hunters who gather the relics hidden in
-four kinds of house can build an altar and call it with a chalice of blood at night. It fights on foot, then in the air, then
+- **The Eldest.** The oldest vampire of all, with every power of every bloodline. Anyone who gathers the relics hidden in
+four kinds of house can build an altar and call it with a chalice of blood at night, and it turns on a vampire who
+dares to. It fights on foot, then in the air, then
 enraged with its eyes blazing. One also waits at the top of every mountain castle.
 - **The Grand Inquisitor.** Kill too many hunters and the head of the guild comes for you. A bell tolls nearer each
 dusk, then he seals you in a ring of holy light and fights through the Hunt, the Faith and the Pyre until one of you
@@ -120,7 +121,7 @@ powers, `H` levitates and `J` switches to the turning bite.
 
 Almost every number in the mod is a setting, from how much the sun hurts to how often vampire houses appear. Change
 them on the settings screen in Mod Menu, or with `/nightborn config`. On a server, only operators can. How much blood
-and gore you see is your own choice, and every player can set it.
+and gore you see is your own choice, and every player can set it on that same screen.
 
 <details>
 <summary><b>Commands</b></summary>
@@ -137,6 +138,7 @@ Every `/nightborn` command needs operator permission.
 /nightborn player <targets> info
 /nightborn player <targets> stage [<stage>]
 /nightborn player <targets> rank [<rank>]
+/nightborn player <targets> notoriety [<value>]
 /nightborn player <targets> skills <vampire|hunter> [points <n>|reset]
 /nightborn familiar <targets> release
 /nightborn thrall release <thralls>
@@ -152,9 +154,8 @@ manage it.
 <details>
 <summary><b>Works well with</b></summary>
 
-Not needed.
-
-- **[Mod Menu](https://modrinth.com/mod/modmenu)** adds the settings screen to your mods list.
+- **[Mod Menu](https://modrinth.com/mod/modmenu)** adds the settings screen to your mods list. Without it, operators
+can still change every server setting with commands.
 
 </details>
 
@@ -189,8 +190,8 @@ How every part of the mod is meant to work is written down in the [product requi
 
 Nightborn is released under the [MIT License](LICENSE).
 
-The music and many of the sounds are real recordings, each in the public domain or under the licence shown. Every other
-asset is original work.
+The music and many of the sounds are real recordings, each in the public domain or under the licence shown. Everything
+else is original work or comes from the base game.
 
 <details>
 <summary><b>Music</b></summary>
