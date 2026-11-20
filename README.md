@@ -1,19 +1,199 @@
+<p align="center">
+<img src="https://github.com/grabartley/minecraft-nightborn/raw/main/docs/banner.png" alt="Nightborn banner" width="800">
+</p>
+
+<a href="https://modrinth.com/mod/nightborn"><img src="https://img.shields.io/modrinth/dt/nightborn?logo=modrinth&label=Modrinth%20downloads&color=00AF5C" alt="Modrinth downloads"></a>
+<a href="https://github.com/grabartley/minecraft-nightborn/stargazers"><img src="https://img.shields.io/github/stars/grabartley/minecraft-nightborn?logo=github&label=Stars&color=4078c0" alt="GitHub stars"></a>
+<a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-yellow.svg" alt="License: MIT"></a>
+[![Ko-fi](https://img.shields.io/badge/Ko--fi-Support_Nightborn-009078?logo=ko-fi&logoColor=white)](https://ko-fi.com/grahambartley)
+
+<p align="center">
+<a title="Fabric API" href="https://modrinth.com/mod/fabric-api" target="_blank">
+<img src="https://i.imgur.com/Ol1Tcf8.png" width="180" height="60" alt="Fabric API requirement button">
+</a>
+<a title="GeckoLib" href="https://modrinth.com/mod/geckolib" target="_blank">
+<img src="https://cdn.modrinth.com/data/cached_images/8e403ea8e76541bc7afe882f8e04ac08e2ae3bbf.png" width="180" height="60" alt="GeckoLib requirement button">
+</a>
+</p>
+<p align="center">
+Also needs <a href="https://modrinth.com/mod/trinkets">Trinkets</a> and <a href="https://modrinth.com/mod/patchouli">Patchouli</a>.
+</p>
+
 # Nightborn
 
-Rise as a vampire or hunt them down. Feed, take bat form and grow your bloodline, or take up stake and silver against the households hidden in the dark.
+Nightborn adds vampires to Minecraft, and the people who hunt them. Turn and live on blood through the long nights, or
+take up stake and silver and go looking for the houses hidden in the dark.
 
-> **Alpha:** Nightborn is in early development. You can drink the old blood kept at the heart of a vampire house, fall sick and turn, read a vampire's journal that fills in as you learn, live on blood, take a gift from the prey you drink, finish a badly hurt enemy with one bite, starve slowly without it and bring up any food you try to keep down, choose whether your own bite turns a person or only feeds, glide a block above the ground, vanish in a puff of smoke and step out of it a few paces away, earn skill experience by feeding, buy skills in ranks, drag your powers onto a bar of five and choose two of three bloodlines, grow from fledgling to ancient over many nights, with blood drunk and a deed for each stage, found a house at your coffin or claim a vampire structure whose household is gone, invite younger vampires into it with a full chalice or from the command wheel and send its members to follow, stay, guard, feed or bring blood home, name it and hang its crest on a banner, and hold it against a member who challenges you to a sealed duel, while the oldest member inherits it if you are ended, stare a creature or a person still as a Noble, then command it, cow a crowd with dread, pass as human under a glamour or hold everyone in sight with one gaze, charm a villager into a hero's prices and bind one as a thrall you name and order from a command wheel to follow, stay, guard, gather, scout or keep watch over your coffin, summon a ghostly familiar to fight, carry and scout through walls as an Occult, breathe a blinding fog, step through the shadows, hex a foe, draw a circle in blood, drift as mist through doors and bars and raise the dead, take bat form to fly where you look, land and hang from a ceiling, strike harder bare-handed, run faster, leap far and pounce to pin your prey as a Beast, hear heartbeats through walls, fall into a blood frenzy and become a great winged terror, hire a villager as a human familiar you name, who runs errands, trades, gathers, scouts and guards your coffin by day but may turn on you if you treat it badly, rest out the day in a coffin that becomes yours, your respawn point and no one else's to break, laid flat or stood against a wall, where anyone who lifts the lid lets the sun in, wake from a whole day's sleep healed and stronger for the night, walk out by day under a parasol until it wears through, and learn that only the sun or a stake will finish you, and that a vampire who kills too many hunters is raided in their own house by day by a guild party sized to their age, led by a veteran hunter for the oldest, then hears a bell toll nearer each dusk before the Grand Inquisitor comes, seals them in a ring of holy light and fights through the Hunt, the Faith and the Pyre until they fall or drain him on his knees, and leaves mail that lines gothic clothing and now and then a greatsword that draws blood, his armour, armour trims, his broken crucifix, a music disc or a tame hawk, while a village that sees you feed or finds your victims learns your face, shuts its doors after dark, hangs garlic and sends for hunters to guard it, and a named vampire or hunter who gets away from you may come back as your nemesis, stronger each time, until you end it and keep a token with its name. A human can bleed a creature into bottles with a lancet, mine silver for a sword and an axe, carve a stake, grow garlic and hang it in strings, raise a gold or silver crucifix, hang one on a wall or build one from planks, logs or gold, brew holy water or have a cleric bless it, coat a blade or arrows in holy water or garlic, load a crossbow with stake, silver and holy water bolts or garlic bombs, test a stranger with a hand mirror that shows no vampire, or watch for the flinch garlic and a crucifix draw from one, prove yourself by staking a vampire and be sworn into the guild by a Guild Master, who hands you a hunter's journal, rise from Initiate to Hunter, Veteran and Master by points and a deed for each, with a mark of rank beside your name, then earn hunter skills by staking vampires or bringing one down for the sun to finish, starting with tracking vampires and following a wounded one's blood trail home before dawn, then choosing two of four hunter paths to resist their bites or steel their minds, pray over the wounded, throw vampires back with a crucifix, bless a blade or set it alight with their own blood, hallow the ground and call down a pillar of holy light, dash aside from a vampire's blow, throw a stake, turn a vampire's leap back on it and lunge with a stake to bring it down, or set hidden snares and flash traps, lay out bait, net a bat out of the air and mark a killing ground no vampire can escape, or read a victim, a coffin or a kill for the vampire behind it, mark a quarry, feel eyes on them, hear vampires asleep through walls and see through every veil, and find rare hunter camps or meet hunter parties on the road, who pitch tents for a night or three, fight off the vampire bats that fall on them and raid any vampire's house they pass by day, where named villager hunters stake vampires on sight, shoot stake bolts, raise crucifixes and throw holy water, and a Guild Master sells gear, writes contracts that pay in emeralds, silver and hunter experience and come with a rough map of where the house lies, tells you where the nearest vampire house is rumoured to lie, and drops his seal when killed, four of which and a bell make a hunter's bell that calls the guild to you. Vampires keep to their homes, sleep out the day in their own coffins, guarded by a thrall or two and sometimes a member kept awake, wake to running feet, broken blocks, lifted lids and fighting but never to soft steps, and go out to hunt only when hungry, sometimes with vampire bats, and their bite feeds but never turns you. A house emptied and left unclaimed fills again in time, a rare wild vampire roams alone until it finds one, and a new player soon meets the signs: drained animals, a bat watching from the trees, villagers who mutter, maps sold on rumour, hunters on the road and a stranger who watches from afar and is gone when you come near. Each has a name, a title and a temper of its own: at dusk a household gathers, lights its candles and opens its drapes, then spends the night talking, quarrelling, reading, playing the gramophone and sitting by candlelight, and mourns its dead. They come as fledglings, adults, elders and ancients, and the older ones are tougher, leap, dash, dodge and vanish from a blow, cast powers with a clear warning first, fall back to recover and drop better loot. Bites, stakes and silver draw blood that stains the floor and walls, then dries and fades. Its coffins, candlelit furniture, gramophone and gothic music discs, gothic and castle building blocks, blood fountains and chalices that hold seven bottles, and hunter weapon racks, wanted posters and trophies are in, and so is gothic clothing you can dye and enchant with small powers, with a cape on your back, a veil on your face and rings, a necklace, a brooch, gloves and a belt in eight accessory slots, where pieces found in vampire houses, taken from the Eldest and the Grand Inquisitor or won in trials and feats each carry one small gift for a vampire or a hunter, and a belt can carry bolts, stakes or holy water, weapons a vampire can enchant to draw blood or a hunter to strike vampires harder, and curses found only in loot. Its own advancement tab branches into vampire, hunter and world paths, three trials for each side change every seven days, twelve mastery feats each leave a trophy and a title to wear after your name, the first player on a server to reach ancient or Master, end the Eldest or drain the Grand Inquisitor is announced to everyone, and at night the game's music gives way to organ, harpsichord, strings and choir. Rare village churches hide a crypt and deep caves hide sealed lairs round pools of blood, each with a household asleep inside, walled castles in dark woods and taiga hold a vampire lord who rallies their court and calls bats to their side, overgrown manors in dark forests house a vampire family among portraits, candlelit rooms, old bloodstains and a ruined glasshouse, and a rare pale castle on a mountain top holds twenty old vampires, with an Eldest of its own waiting in the highest room of its keep. Each of the four hides a relic, all four make a ritual altar, and whoever fills a chalice on it with blood at night calls up the Eldest, who turns on a vampire who dares to call it, inside a ring of fog, a boss with every vampire power and music of its own, fought through three phases of attacks that warn before they land, on foot, then in the air, then enraged and larger with blazing eyes, one that guards against a flurry of blows, breaks away and strikes back, who pays every hunter who helps stake it and leaves ash that hardens silver, and now and then a blade, armour, armour trims, its skull, a music disc or a tame bat found nowhere else.
-> The [product requirements](docs/prd.md) say what the mod will be.
+> **Feedback welcome:** Nightborn is new, and we would love to hear how it plays.
+> [Open an issue](https://github.com/grabartley/minecraft-nightborn/issues/new) and tell us what you think.
 
-## Documentation
+## Rise as a vampire
 
-- [Product requirements](docs/prd.md)
-- [Engineering standards](docs/standards.md)
-- [Decision records](docs/adr/README.md)
+<p align="center">
+<img src="https://raw.githubusercontent.com/grabartley/minecraft-nightborn/main/docs/images/vampires.png" alt="Vampires in gothic clothing" width="800">
+</p>
+
+- **Turn.** Drink the old blood kept at the heart of a vampire house, or take a vampire player's turning bite. The
+sickness can be cured while it lasts. After that, there is no way back.
+- **Feed.** Blood is all you live on now. Sip or drain animals, villagers and other players, bottle it for later, and
+finish a badly hurt enemy with a single bite.
+- **Fear the sun.** Sleep out the day in a coffin that is yours alone, or walk out under a parasol until it wears
+through. Only the sun or a stake can end you. Anything else just brings you down for a while.
+- **Choose your blood.** Pick two of three bloodlines. A Noble stares a crowd still, charms villagers and binds thralls.
+A Beast takes bat form, pounces on its prey and becomes a great winged terror. An Occult summons a ghostly familiar,
+drifts through doors as mist and raises the dead.
+- **Grow old.** A fledgling becomes an adult, an elder and at last an ancient, over many nights, with blood drunk and a
+deed to prove each stage.
+- **Found a house.** Name it, hang its crest on a banner, take in younger vampires, and keep a human familiar to guard
+your coffin by day. Then hold it against any member who challenges you for it.
+
+<p align="center">
+<img src="https://raw.githubusercontent.com/grabartley/minecraft-nightborn/main/docs/images/creatures.png" alt="The night terror, a vampire bat, a ghostly familiar and a tame hawk" width="800">
+</p>
+
+## Or hunt them down
+
+<p align="center">
+<img src="https://raw.githubusercontent.com/grabartley/minecraft-nightborn/main/docs/images/hunters.png" alt="Hunters of the guild and a Guild Master" width="800">
+</p>
+
+- **Folklore works.** Stakes, silver, garlic, crucifixes and holy water all do what the old stories say. Coat a blade,
+string up garlic, and load a crossbow with stake, silver or holy water bolts.
+- **Find the one among you.** A hand mirror shows no vampire, and garlic or a raised crucifix makes one flinch.
+- **Join the guild.** Stake a vampire to prove yourself and a Guild Master swears you in. Rise from Initiate to Hunter,
+Veteran and Master.
+- **Walk two of four paths.** The Faithful pray, bless blades and call down holy light. Slayers dodge, lunge and throw
+stakes. Trappers lay snares and bait and net bats out of the air. Seekers read a kill for the vampire behind it and
+see through every veil.
+- **Take contracts.** Find a hunter camp and its Guild Master sells gear and writes contracts, each with a rough map
+of where the house lies.
+
+## A world that notices
+
+Vampires are rare, and each one is someone, with a name, a title and a temper. They live together in households that
+wake at dusk, light the candles, talk, quarrel, read and play the gramophone, then sleep out the day in their coffins
+with a thrall or two on guard.
+
+- **Five kinds of house.** Crypts under village churches, sealed lairs in deep caves, walled castles in dark woods,
+overgrown manors, and a rare pale castle on a mountain top.
+- **Villages remember.** Feed where you can be seen and a village learns your face, shuts its doors after dark, hangs
+garlic and sends for hunters.
+- **So do your enemies.** A named vampire or hunter who gets away from you may come back as your nemesis, stronger each
+time.
+- **Make it yours.** Coffins, candlelit furniture, a gramophone with gothic music discs, gothic building blocks,
+clothing you can dye and enchant, and accessories in eight slots.
+
+<p align="center">
+<img src="https://raw.githubusercontent.com/grabartley/minecraft-nightborn/main/docs/images/decor.png" alt="Coffins, a chandelier, a parasol, a candelabra, an ornate chair, a gramophone, a blood fountain and the ritual altar" width="800">
+</p>
+
+At night the game's music gives way to organ, harpsichord, strings and choir.
+
+## A boss for each side
+
+<p align="center">
+<img src="https://raw.githubusercontent.com/grabartley/minecraft-nightborn/main/docs/images/bosses.png" alt="The Eldest and the Grand Inquisitor" width="800">
+</p>
+
+- **The Eldest.** The oldest vampire of all, with every power of every bloodline. Hunters who gather the relics hidden in
+four kinds of house can build an altar and call it with a chalice of blood at night. It fights on foot, then in the air, then
+enraged with its eyes blazing. One also waits at the top of every mountain castle.
+- **The Grand Inquisitor.** Kill too many hunters and the head of the guild comes for you. A bell tolls nearer each
+dusk, then he seals you in a ring of holy light and fights through the Hunt, the Faith and the Pyre until one of you
+falls.
+
+Both leave weapons, armour and keepsakes found nowhere else.
+
+## Install
+
+1. Install Fabric Loader, then put Nightborn, [Fabric API](https://modrinth.com/mod/fabric-api),
+[GeckoLib](https://modrinth.com/mod/geckolib), [Trinkets](https://modrinth.com/mod/trinkets) and
+[Patchouli](https://modrinth.com/mod/patchouli) in your `mods` folder.
+2. Load a world. Everyone starts human.
+3. Watch for the signs: drained animals, a bat in the trees, villagers who mutter. Then decide which side you are on.
+
+Nightborn works in singleplayer and on servers, on Minecraft `1.21.1`. Its keys are under
+`Options > Controls > Key Binds`, in the Nightborn section: `K` opens your skills, `R` `G` `V` `B` `N` use your five
+powers, `H` levitates and `J` switches to the turning bite.
+
+## Settings
+
+Almost every number in the mod is a setting, from how much the sun hurts to how often vampire houses appear. Change
+them on the settings screen in Mod Menu, or with `/nightborn config`. On a server, only operators can. How much blood
+and gore you see is your own choice, and every player can set it.
+
+<details>
+<summary><b>Commands</b></summary>
+
+Every `/nightborn` command needs operator permission.
+
+```
+/nightborn status
+/nightborn config <section> <setting> [value]
+/nightborn config reset
+/nightborn player <targets> turn
+/nightborn player <targets> cure
+/nightborn player <targets> swear
+/nightborn player <targets> info
+/nightborn player <targets> stage [<stage>]
+/nightborn player <targets> rank [<rank>]
+/nightborn player <targets> skills <vampire|hunter> [points <n>|reset]
+/nightborn familiar <targets> release
+/nightborn thrall release <thralls>
+/nightborn thrall free <players>
+/nightborn house disband <players>
+```
+
+Any vampire can use `/house` to see their house, and `/house accept`, `decline`, `leave`, `name` and `disband` to
+manage it.
+
+</details>
+
+<details>
+<summary><b>Works well with</b></summary>
+
+Not needed.
+
+- **[Mod Menu](https://modrinth.com/mod/modmenu)** adds the settings screen to your mods list.
+
+</details>
+
+<details>
+<summary><b>Requirements</b></summary>
+
+Minecraft `1.21.1` on Java `21`.
+
+| Mod           | Version            |
+|---------------|--------------------|
+| Fabric Loader | `>=0.16.5`         |
+| Fabric API    | `>=0.116.12+1.21.1` |
+| GeckoLib      | `>=4.7`            |
+| Trinkets      | `>=3.10.0`         |
+| Patchouli     | `>=1.21.1-92`      |
+
+</details>
+
+## Languages
+
+Nightborn is in English, Simplified Chinese (简体中文), German (Deutsch), French (Français), Portuguese (Português do
+Brasil), Russian (Русский) and Spanish (Español).
+
+Want to add your language? Copy [`en_us.json`](src/main/resources/assets/nightborn/lang/en_us.json), translate the
+text, and open a pull request. Keep the keys, the `%s` placeholders and the `§` codes as they are, and leave command
+names and arguments untranslated. Found a mistake in a translation?
+[Open an issue](https://github.com/grabartley/minecraft-nightborn/issues/new).
 
 ## Credits
 
-Music, all recordings in the public domain or under the licence shown:
+How every part of the mod is meant to work is written down in the [product requirements](docs/prd.md).
+
+Nightborn is released under the [MIT License](LICENSE).
+
+The music and many of the sounds are real recordings, each in the public domain or under the licence shown. Every other
+asset is original work.
+
+<details>
+<summary><b>Music</b></summary>
 
 - Prelude in A minor, BWV 543 (J. S. Bach), by Robert Köbler, [link](https://commons.wikimedia.org/wiki/File:Johann_Sebastian_Bach_Prelude_in_A_minor_BWV_543_Robert_K%C3%B6bler_Silbermann-Organ.mp3), CC BY 1.0
 - Goldberg Variations, Variation 25 (J. S. Bach), by Bradley Lehman, [link](https://commons.wikimedia.org/wiki/File:988-v25.lehman1.ogg), CC0 1.0
@@ -27,7 +207,12 @@ Music, all recordings in the public domain or under the licence shown:
 - Requiem, XI. Sanctus (Mozart), by the Vienna Philharmonic and Wiener Singverein under Herbert von Karajan, [link](https://commons.wikimedia.org/wiki/File:W._A._Mozart_-_Requiem_-_11._Sanctus_(Herbert_von_Karajan,_Wiener_Philharmoniker,_Wiener_Singverein,_1960).ogg), Public domain in the EU
 - Gregorian choir & organ in Rome, by tullio, [link](https://freesound.org/people/tullio/sounds/780488/), CC0 1.0
 
-Sounds, all from Freesound, cut and shaped for the mod:
+</details>
+
+<details>
+<summary><b>Sounds</b></summary>
+
+All from Freesound, cut and shaped for the mod.
 
 - 26 Clavando Estaca.wav, by checholio, [link](https://freesound.org/people/checholio/sounds/443631/), CC0 1.0
 - 26.07.17- Sleep Foley - Mumbling, by Valerie-Vivegnis, [link](https://freesound.org/people/Valerie-Vivegnis/sounds/862931/), CC BY 4.0
@@ -103,3 +288,11 @@ Sounds, all from Freesound, cut and shaped for the mod:
 - Woman, female, inhale, exhale, sigh, breathing.wav, by SpliceSound, [link](https://freesound.org/people/SpliceSound/sounds/218311/), CC0 1.0
 - wooden-door-creak-slow, by alienistcog, [link](https://freesound.org/people/alienistcog/sounds/125310/), CC0 1.0
 - Wooden_Door_Squeak_04, by BlondPanda, [link](https://freesound.org/people/BlondPanda/sounds/778462/), CC0 1.0
+
+</details>
+
+If you enjoy Nightborn, a star on GitHub or a coffee on Ko-fi helps a lot.
+
+<a href="https://ko-fi.com/grahambartley" rel="noopener nofollow ugc" target="_blank">
+<img src="https://i.imgur.com/FSNi7zk.png" alt="Support me Ko-fi">
+</a>
