@@ -353,6 +353,6 @@ tasks.register('curseforge', TaskPublishCurseForge) {
 		mainFile.addRequirement('fabric-api')
 		mainFile.addRequirement('geckolib')
 		mainFile.addRequirement('trinkets')
-		mainFile.addRequirement('patchouli')
+		mainFile.addRequirement('patchouli-fabric')
 	}
 }
