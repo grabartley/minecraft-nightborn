@@ -24,7 +24,7 @@ Also needs <a href="https://modrinth.com/mod/trinkets">Trinkets</a> and <a href=
 Nightborn adds vampires to Minecraft, and the people who hunt them. Turn and live on blood through the long nights, or
 take up stake and silver and go looking for the houses hidden in the dark.
 
-> **Feedback welcome:** Nightborn is new, and we would love to hear how it plays.
+> **Alpha:** Nightborn is in alpha and we would love your feedback.
 > [Open an issue](https://github.com/grabartley/minecraft-nightborn/issues/new) and tell us what you think.
 
 ## Rise as a vampire
