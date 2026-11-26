@@ -1,22 +1,30 @@
 package com.grahambartley.nightborn.client.anim;
 
 import java.util.List;
+import software.bernie.geckolib.animation.EasingType;
+import software.bernie.geckolib.animation.keyframe.AnimationPoint;
+import software.bernie.geckolib.animation.keyframe.Keyframe;
+import software.bernie.geckolib.loading.math.MathValue;
 
 public final class ClipTrack {
 
-  public record Segment(double ticks, double start, double end) {}
-
   private ClipTrack() {}
 
-  public static double at(final List<Segment> segments, final double ticks) {
+  public static double at(final List<Keyframe<MathValue>> keys, final double ticks) {
     double elapsed = 0.0;
-    for (final Segment segment : segments) {
-      if (ticks < elapsed + segment.ticks()) {
-        final double share = segment.ticks() <= 0.0 ? 1.0 : (ticks - elapsed) / segment.ticks();
-        return segment.start() + (segment.end() - segment.start()) * Math.max(0.0, share);
+    for (final Keyframe<MathValue> key : keys) {
+      if (ticks < elapsed + key.length()) {
+        return EasingType.lerpWithOverride(
+            new AnimationPoint(
+                key,
+                Math.max(0.0, ticks - elapsed),
+                key.length(),
+                key.startValue().get(),
+                key.endValue().get()),
+            null);
       }
-      elapsed += segment.ticks();
+      elapsed += key.length();
     }
-    return segments.isEmpty() ? 0.0 : segments.getLast().end();
+    return keys.isEmpty() ? 0.0 : keys.getLast().endValue().get();
   }
 }

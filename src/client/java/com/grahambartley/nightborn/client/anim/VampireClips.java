@@ -49,17 +49,9 @@ public final class VampireClips {
         .map(
             bone ->
                 FirstPersonSway.of(
-                    ClipTrack.at(segments(bone.rotationKeyFrames().xKeyframes()), ticks),
-                    ClipTrack.at(segments(bone.rotationKeyFrames().zKeyframes()), ticks)))
+                    ClipTrack.at(bone.rotationKeyFrames().xKeyframes(), ticks),
+                    ClipTrack.at(bone.rotationKeyFrames().zKeyframes(), ticks)))
         .orElse(FirstPersonSway.NONE);
-  }
-
-  private static List<ClipTrack.Segment> segments(final List<Keyframe<MathValue>> keys) {
-    return keys.stream()
-        .map(
-            key ->
-                new ClipTrack.Segment(key.length(), key.startValue().get(), key.endValue().get()))
-        .toList();
   }
 
   private static Optional<Animation> clip(final String animation) {

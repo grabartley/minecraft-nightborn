@@ -95,8 +95,7 @@ public final class PlayerClips {
       final PlayerEntity player, final Arm arm, final float partialTick) {
     final PlayerClipState state = state(player);
     final double elapsed = state.powerSeconds(player.age + partialTick);
-    return state
-        .powerClip(player.age, PlayerClips::powerSeconds)
+    return power(player)
         .map(
             clip ->
                 VampireClips.sway(clip, arm, Math.max(0.0, elapsed - POWER_BLEND_SECONDS))
