@@ -23,7 +23,9 @@ import net.minecraft.block.BedBlock;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.CampfireBlock;
 import net.minecraft.block.enums.BedPart;
+import net.minecraft.entity.EntityType;
 import net.minecraft.entity.ItemEntity;
+import net.minecraft.entity.mob.ZombieEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.test.GameTest;
 import net.minecraft.test.TestContext;
@@ -199,6 +201,20 @@ public class HunterPartyGameTest implements FabricGameTest {
     context.assertTrue(
         HunterReferral.master(context.getWorld(), hunter).orElse(null) == leader,
         "a party hunter should point to its own Guild Master, not the nearest one");
+    context.complete();
+  }
+
+  @GameTest(templateName = ARENA, batchId = BATCH)
+  public void aHunterFightsBackAgainstAMonsterThatHitsIt(final TestContext context) {
+    final HunterEntity struck = context.spawnEntity(GuildMobs.HUNTER, new BlockPos(2, 2, 4));
+    final HunterEntity bystander = context.spawnEntity(GuildMobs.HUNTER, new BlockPos(6, 2, 4));
+    final ZombieEntity zombie = context.spawnEntity(EntityType.ZOMBIE, new BlockPos(4, 2, 4));
+    struck.setAiDisabled(true);
+    bystander.setAiDisabled(true);
+    zombie.setAiDisabled(true);
+    struck.damage(context.getWorld().getDamageSources().mobAttack(zombie), 1.0F);
+    context.assertTrue(struck.canTarget(zombie), "a hunter fights back against a zombie");
+    context.assertFalse(bystander.canTarget(zombie), "but leaves an unprovoked one alone");
     context.complete();
   }
 }

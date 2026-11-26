@@ -19,6 +19,8 @@ class SkillLayoutTest {
   static final int HUNTER_COLUMNS = 5;
   static final int AGE_FOOTER = 43;
   static final double ROUNDING = 1.0E-6;
+  static final int FULL_HD_SCALE_FOUR = 270;
+  static final int HD_AUTO_SCALE = 240;
 
   static Stream<Arguments> screens() {
     return Stream.of(
@@ -74,7 +76,7 @@ class SkillLayoutTest {
 
   @ParameterizedTest(name = "{0}x{1} with bands {2}")
   @MethodSource("screens")
-  @DisplayName("the panel keeps a clear gap above and below it unless the screen is too short")
+  @DisplayName("the panel keeps a clear gap above and below it at every real GUI scale")
   void edges(
       final int width,
       final int height,
@@ -85,15 +87,11 @@ class SkillLayoutTest {
     final int room = (int) Math.floor(height / layout.zoom() + ROUNDING);
     final int above = layout.top();
     final int below = room - layout.bottom() - footer;
-    final boolean squeezed =
-        room * 0.84
-            < SkillLayout.HEADER
-                + Math.min(layout.contentHeight(), SkillLayout.MIN_VIEW)
-                + SkillLayout.FOOTER
-                + footer;
     assertTrue(Math.abs(above - below) <= 1, "centred: " + above + " above, " + below + " below");
-    if (!squeezed) {
+    if (height >= FULL_HD_SCALE_FOUR) {
       assertTrue(above >= room * 0.075, above + " above on a room " + room + " high");
+    } else if (height >= HD_AUTO_SCALE) {
+      assertTrue(above >= 8, above + " above on a room " + room + " high");
     }
   }
 

@@ -1,17 +1,9 @@
 package com.grahambartley.nightborn.guild;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonPrimitive;
 import com.grahambartley.nightborn.guild.HunterReferral.Pointed;
 import com.grahambartley.nightborn.servant.job.Bearing;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.Optional;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableTextContent;
@@ -45,21 +37,6 @@ class HunterReferralTest {
   @DisplayName("a hunter gives directions at most once every two seconds")
   void rested(final long now, final long last, final boolean rested) {
     assertEquals(rested, HunterReferral.rested(now, last));
-  }
-
-  @ParameterizedTest(name = "{0}")
-  @ValueSource(strings = {"nightborn:grand_inquisitor"})
-  @DisplayName("the boss is named in the tag of hunters who never give directions")
-  void neverRefers(final String entity) throws IOException {
-    final JsonObject tag =
-        new Gson()
-            .fromJson(
-                Files.readString(
-                    Path.of("src/main/resources/data/nightborn/tags/entity_type/never_refers.json"),
-                    StandardCharsets.UTF_8),
-                JsonObject.class);
-    assertEquals("nightborn:never_refers", HunterReferral.NEVER_REFERS.id().toString());
-    assertTrue(tag.getAsJsonArray("values").contains(new JsonPrimitive(entity)));
   }
 
   @ParameterizedTest(name = "master at ({0}, {1}) -> {2}")

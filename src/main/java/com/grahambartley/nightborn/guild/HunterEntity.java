@@ -27,6 +27,7 @@ import net.minecraft.entity.ai.goal.GoToWalkTargetGoal;
 import net.minecraft.entity.ai.goal.LookAroundGoal;
 import net.minecraft.entity.ai.goal.LookAtEntityGoal;
 import net.minecraft.entity.ai.goal.MeleeAttackGoal;
+import net.minecraft.entity.ai.goal.RevengeGoal;
 import net.minecraft.entity.ai.goal.SwimGoal;
 import net.minecraft.entity.ai.goal.WanderAroundFarGoal;
 import net.minecraft.entity.ai.pathing.MobNavigation;
@@ -125,8 +126,12 @@ public class HunterEntity extends PathAwareEntity
     goalSelector.add(5, new WanderAroundFarGoal(this, 0.6));
     goalSelector.add(6, new LookAtEntityGoal(this, PlayerEntity.class, 8.0F));
     goalSelector.add(7, new LookAroundGoal(this));
-    targetSelector.add(0, new KnownFaceTargetGoal(this));
-    targetSelector.add(1, new HunterTargetGoal(this));
+    targetSelector.add(
+        0,
+        new RevengeGoal(this, HunterEntity.class, GuildMasterEntity.class, PlayerEntity.class)
+            .setGroupRevenge());
+    targetSelector.add(1, new KnownFaceTargetGoal(this));
+    targetSelector.add(2, new HunterTargetGoal(this));
   }
 
   public static boolean hunts(final LivingEntity target) {
@@ -143,7 +148,14 @@ public class HunterEntity extends PathAwareEntity
 
   @Override
   public boolean canTarget(final LivingEntity target) {
-    return foeOf(target) && super.canTarget(target);
+    return (foeOf(target) || defendsAgainst(target)) && super.canTarget(target);
+  }
+
+  private boolean defendsAgainst(final LivingEntity target) {
+    return HunterTargets.defends(
+        target == getAttacker(),
+        target instanceof PlayerEntity,
+        target instanceof HunterEntity || target instanceof GuildMasterEntity);
   }
 
   protected boolean foeOf(final LivingEntity target) {

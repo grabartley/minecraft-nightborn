@@ -27,17 +27,18 @@ public final class SkillShop {
   }
 
   public static SkillPurchase.Verdict buy(final ServerPlayerEntity player, final Identifier id) {
-    final SkillTree tree = SkillTree.of(player);
-    if (!GuildMembership.sided(player)) {
-      player.sendMessage(
-          Text.translatable(SkillPurchase.Verdict.NO_SIDE.translationKey(tree)), true);
-      return SkillPurchase.Verdict.NO_SIDE;
-    }
     final DynamicRegistryManager registries = player.getServerWorld().getRegistryManager();
+    final SkillTree tree = SkillTree.of(player);
     final TreeProgress progress = SkillAttachment.get(player, tree);
     final SkillLookup lookup =
         SkillLookup.of(
-            registries, progress, tree, id, StageRanks.of(player), GuildRanks.of(player));
+            registries,
+            GuildMembership.sided(player),
+            progress,
+            tree,
+            id,
+            StageRanks.of(player),
+            GuildRanks.of(player));
     if (lookup.verdict() != SkillPurchase.Verdict.ALLOWED) {
       player.sendMessage(Text.translatable(lookup.verdict().translationKey(tree)), true);
       return lookup.verdict();

@@ -8,6 +8,7 @@ import com.grahambartley.nightborn.client.PowerSlotView;
 import com.grahambartley.nightborn.client.SkillKeys;
 import com.grahambartley.nightborn.client.SyncedServerConfig;
 import com.grahambartley.nightborn.config.SkillSettings;
+import com.grahambartley.nightborn.faction.GuildMembership;
 import com.grahambartley.nightborn.network.BuySkillPayload;
 import com.grahambartley.nightborn.rank.GuildRanks;
 import com.grahambartley.nightborn.skill.PowerBar;
@@ -504,6 +505,7 @@ public final class SkillScreen extends Screen {
   private SkillPurchase.Verdict verdict(final Identifier id, final TreeProgress progress) {
     return SkillLookup.of(
             client.world.getRegistryManager(),
+            GuildMembership.sided(client.player),
             progress,
             shownTree,
             id,

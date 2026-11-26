@@ -18,6 +18,7 @@ public record SkillLookup(
 
   public static SkillLookup of(
       final DynamicRegistryManager registries,
+      final boolean sided,
       final TreeProgress progress,
       final SkillTree playerTree,
       final Identifier id,
@@ -29,6 +30,7 @@ public record SkillLookup(
         skill,
         branch,
         SkillPurchase.check(
+            sided,
             progress,
             playerTree,
             id,

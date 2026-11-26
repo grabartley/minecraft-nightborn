@@ -11,6 +11,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.MethodSource;
 
 class SkillPurchaseTest {
@@ -267,6 +268,7 @@ class SkillPurchaseTest {
     assertEquals(
         expected,
         SkillPurchase.check(
+            true,
             progress,
             SkillTree.VAMPIRE,
             ROOT,
@@ -288,6 +290,23 @@ class SkillPurchaseTest {
     assertEquals(6, progress.spent());
   }
 
+  @ParameterizedTest(name = "sided {0}, known skill {1} -> {2}")
+  @CsvSource({"true, true, ALLOWED", "false, true, NO_SIDE", "false, false, NO_SIDE"})
+  @DisplayName("a player who is neither turned nor sworn in can buy nothing, whatever they send")
+  void needsASide(final boolean sided, final boolean known, final Verdict expected) {
+    assertEquals(
+        expected,
+        SkillPurchase.check(
+            sided,
+            TreeProgress.EMPTY.withEarned(6),
+            SkillTree.VAMPIRE,
+            ROOT,
+            known ? ranked(CORE, List.of(1, 2, 3)) : null,
+            known ? CORE_BRANCH : null,
+            true,
+            true));
+  }
+
   @ParameterizedTest(name = "{0} -> {6}")
   @MethodSource("cases")
   @DisplayName("the server checks tree, ownership, bloodline limit, order and points")
@@ -299,7 +318,8 @@ class SkillPurchaseTest {
       final Skill skill,
       final SkillBranch branch,
       final SkillPurchase.Verdict expected) {
-    assertEquals(expected, SkillPurchase.check(progress, tree, id, skill, branch, true, true));
+    assertEquals(
+        expected, SkillPurchase.check(true, progress, tree, id, skill, branch, true, true));
   }
 
   @Test

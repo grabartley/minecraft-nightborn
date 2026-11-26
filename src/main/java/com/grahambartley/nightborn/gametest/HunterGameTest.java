@@ -4,6 +4,7 @@ import com.grahambartley.nightborn.downed.Downed;
 import com.grahambartley.nightborn.downed.DownedState;
 import com.grahambartley.nightborn.hunter.HunterAttributes;
 import com.grahambartley.nightborn.server.ServerConfigService;
+import com.grahambartley.nightborn.skill.PowerBarEdits;
 import com.grahambartley.nightborn.skill.PowerUse;
 import com.grahambartley.nightborn.skill.Powers;
 import com.grahambartley.nightborn.skill.SkillAttachment;
@@ -230,5 +231,16 @@ public class HunterGameTest implements FabricGameTest {
           context.assertTrue(Tracking.state(hunter) == null, "tracking stops after its time");
           TestPlayers.finish(context, hunter);
         });
+  }
+
+  @GameTest(templateName = ARENA, tickLimit = 20)
+  public void aHumanWhoIsNotSwornInCanChangeNoSkills(final TestContext context) {
+    final ServerPlayerEntity human = TestPlayers.human(context, new BlockPos(3, 2, 4));
+    SkillAttachment.set(human, SkillTree.HUNTER, TreeProgress.EMPTY.withEarned(5));
+    context.assertEquals(
+        SkillShop.buy(human, TRACKING), SkillPurchase.Verdict.NO_SIDE, "no hunter skills yet");
+    context.assertFalse(
+        PowerBarEdits.set(human, 0, Optional.of(TRACKING)), "and no power bar changes");
+    TestPlayers.finish(context, human);
   }
 }

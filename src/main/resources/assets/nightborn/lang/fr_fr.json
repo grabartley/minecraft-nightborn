@@ -441,7 +441,7 @@
   "nightborn.skills.verdict.needs_stage": "Tu n'es pas encore assez âgé pour cette compétence",
   "nightborn.skills.verdict.needs_rank": "Tu n'es pas encore monté assez haut dans la guilde pour cette compétence",
   "nightborn.skills.verdict.too_few_points": "Pas assez de points de compétence",
-  "nightborn.skills.verdict.no_side": "Vous n'avez aucune compétence à apprendre tant que vous n'êtes pas transformé ou assermenté dans la guilde",
+  "nightborn.skills.verdict.no_side": "Tu n'as aucune compétence à apprendre tant que tu n'es pas transformé ou assermenté dans la guilde",
   "nightborn.powers.verdict.helpless": "Tu ne peux pas utiliser de pouvoirs à terre",
   "nightborn.powers.verdict.as_a_bat": "Tu ne peux pas utiliser cela en chauve-souris",
   "nightborn.powers.verdict.weakened": "Tu es trop affaibli pour utiliser des pouvoirs",

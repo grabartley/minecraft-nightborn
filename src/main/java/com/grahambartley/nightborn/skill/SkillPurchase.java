@@ -29,6 +29,7 @@ public final class SkillPurchase {
   private SkillPurchase() {}
 
   public static Verdict check(
+      final boolean sided,
       final TreeProgress progress,
       final SkillTree playerTree,
       final Identifier id,
@@ -36,6 +37,9 @@ public final class SkillPurchase {
       @Nullable final SkillBranch branch,
       final boolean stageReached,
       final boolean rankReached) {
+    if (!sided) {
+      return Verdict.NO_SIDE;
+    }
     if (skill == null || branch == null || !branch.learnable()) {
       return Verdict.UNKNOWN;
     }
