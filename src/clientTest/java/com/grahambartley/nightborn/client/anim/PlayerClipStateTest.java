@@ -435,16 +435,27 @@ class PlayerClipStateTest {
     assertEquals(Optional.of(POWER), state.powerClip(2, LENGTHS));
   }
 
-  @ParameterizedTest(name = "second power {0} ticks after the first: restarted {1}")
-  @CsvSource({"5, true", "15, true", "16, false", "100, false"})
-  @DisplayName("a power used while the last clip still plays starts its clip over")
-  void powerRestarts(final int after, final boolean restarted) {
+  @ParameterizedTest(name = "second power {0} ticks after the first")
+  @CsvSource({"5", "15", "16", "100"})
+  @DisplayName(
+      "every power used starts its clip from the first frame once, even the same clip again")
+  void powerStartsFresh(final int after) {
     final PlayerClipState state = new PlayerClipState();
     state.power(POWER, 0, LENGTHS);
-    assertFalse(state.takePowerRestart());
+    assertTrue(state.takeFreshPower());
+    assertFalse(state.takeFreshPower());
     state.power(POWER, after, LENGTHS);
-    assertEquals(restarted, state.takePowerRestart());
-    assertFalse(state.takePowerRestart());
+    assertTrue(state.takeFreshPower());
+    assertFalse(state.takeFreshPower());
+  }
+
+  @Test
+  @DisplayName("a clip that ended unseen is not started again when the player is next drawn")
+  void endedPowerIsNotFresh() {
+    final PlayerClipState state = new PlayerClipState();
+    state.power(POWER, 0, LENGTHS);
+    assertTrue(state.powerClip(40, LENGTHS).isEmpty());
+    assertFalse(state.takeFreshPower());
   }
 
   @ParameterizedTest(name = "{0}, riding {1}: {2}")

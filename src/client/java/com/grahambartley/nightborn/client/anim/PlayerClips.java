@@ -88,19 +88,21 @@ public final class PlayerClips {
         : Optional.empty();
   }
 
-  public static boolean powerRestarted(final PlayerEntity player) {
-    return state(player).takePowerRestart();
+  public static boolean freshPower(final PlayerEntity player) {
+    return state(player).takeFreshPower();
   }
 
   public static FirstPersonSway sway(
       final PlayerEntity player, final Arm arm, final float partialTick) {
-    final PlayerClipState state = state(player);
-    final double elapsed = state.powerSeconds(player.age + partialTick);
+    final double clipSeconds =
+        state(player).powerSeconds(player.age + partialTick) - POWER_BLEND_SECONDS;
     return power(player)
         .map(
             clip ->
-                VampireClips.sway(clip, arm, Math.max(0.0, elapsed - POWER_BLEND_SECONDS))
-                    .scaled(Math.min(1.0, Math.max(0.0, elapsed / POWER_BLEND_SECONDS))))
+                VampireClips.sway(clip, arm, Math.max(0.0, clipSeconds))
+                    .scaled(
+                        FirstPersonSway.weight(
+                            clipSeconds, VampireClips.seconds(clip), POWER_BLEND_SECONDS)))
         .orElse(FirstPersonSway.NONE);
   }
 

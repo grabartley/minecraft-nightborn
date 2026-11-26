@@ -46,4 +46,22 @@ class FirstPersonSwayTest {
     assertTrue(FirstPersonSway.NONE.still());
     assertFalse(new FirstPersonSway(1.0F, 0.0F).still());
   }
+
+  @ParameterizedTest(name = "{0}s into a 0.6s clip: {1}")
+  @CsvSource({
+    "-0.1, 0.0",
+    "-0.05, 0.5",
+    "0.0, 1.0",
+    "0.3, 1.0",
+    "0.35, 1.0",
+    "0.475, 0.5",
+    "0.6, 0.0",
+    "0.7, 0.0"
+  })
+  @DisplayName(
+      "the hand eases in while the clip blends in and back to where vanilla holds it as the clip"
+          + " settles")
+  void weight(final double clipSeconds, final double expected) {
+    assertEquals(expected, FirstPersonSway.weight(clipSeconds, 0.6, 0.1), 1e-9);
+  }
 }

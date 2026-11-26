@@ -6,12 +6,20 @@ public record FirstPersonSway(float pitchDegrees, float yawDegrees) {
 
   static final double SHARE = 0.5;
   static final double FORWARD_RAISE_DEGREES = 80.0;
+  static final double FADE_SECONDS = 0.25;
   static final double LIMIT_DEGREES = 45.0;
 
   public static FirstPersonSway of(final double raiseRadians, final double flareRadians) {
     return new FirstPersonSway(
         limited((Math.toDegrees(raiseRadians) - FORWARD_RAISE_DEGREES) * SHARE),
         limited(-Math.toDegrees(flareRadians) * SHARE));
+  }
+
+  public static double weight(
+      final double clipSeconds, final double lengthSeconds, final double blendSeconds) {
+    final double in = (clipSeconds + blendSeconds) / blendSeconds;
+    final double out = (lengthSeconds - clipSeconds) / FADE_SECONDS;
+    return Math.max(0.0, Math.min(1.0, Math.min(in, out)));
   }
 
   public FirstPersonSway scaled(final double share) {

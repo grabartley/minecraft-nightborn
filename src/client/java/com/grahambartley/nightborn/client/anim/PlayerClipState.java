@@ -35,7 +35,7 @@ public final class PlayerClipState {
   private final OneShot power = new OneShot();
   private VampirePose gesturePose = VampirePose.SMALL_FLINCH;
   private String powerClip = "";
-  private boolean powerRestarted;
+  private boolean powerFresh;
 
   public void tick(final double age, final boolean levitating, final boolean downed) {
     follow(landing, land, levitating, age);
@@ -60,15 +60,17 @@ public final class PlayerClipState {
   }
 
   public void power(final String clip, final double age, final Lengths lengths) {
-    powerRestarted = powerClip(age, lengths).isPresent();
+    powerFresh = true;
     powerClip = clip;
     power.start(age);
   }
 
   public Optional<String> powerClip(final double age, final Lengths lengths) {
-    return power.playing(lengths.seconds(powerClip), age)
-        ? Optional.of(powerClip)
-        : Optional.empty();
+    if (!power.playing(lengths.seconds(powerClip), age)) {
+      powerFresh = false;
+      return Optional.empty();
+    }
+    return Optional.of(powerClip);
   }
 
   public double powerSeconds(final double age) {
@@ -90,10 +92,10 @@ public final class PlayerClipState {
     return pose == EntityPose.STANDING && !riding;
   }
 
-  public boolean takePowerRestart() {
-    final boolean restarted = powerRestarted;
-    powerRestarted = false;
-    return restarted;
+  public boolean takeFreshPower() {
+    final boolean fresh = powerFresh;
+    powerFresh = false;
+    return fresh;
   }
 
   public double vomitingSeconds(final double age) {

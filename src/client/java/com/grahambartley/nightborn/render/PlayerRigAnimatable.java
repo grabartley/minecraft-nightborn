@@ -82,7 +82,7 @@ public final class PlayerRigAnimatable implements GeoReplacedEntity {
       return PlayState.STOP;
     }
     final Optional<String> clip = PlayerClips.power(player);
-    if (clip.isEmpty() || PlayerClips.powerRestarted(player)) {
+    if (clip.isEmpty() || PlayerClips.freshPower(player)) {
       state.getController().forceAnimationReset();
     }
     return clip.map(name -> state.setAndContinue(RawAnimation.begin().thenPlay(name)))
