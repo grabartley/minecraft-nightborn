@@ -126,12 +126,12 @@ public class HunterEntity extends PathAwareEntity
     goalSelector.add(5, new WanderAroundFarGoal(this, 0.6));
     goalSelector.add(6, new LookAtEntityGoal(this, PlayerEntity.class, 8.0F));
     goalSelector.add(7, new LookAroundGoal(this));
+    targetSelector.add(0, new KnownFaceTargetGoal(this));
+    targetSelector.add(1, new HunterTargetGoal(this));
     targetSelector.add(
-        0,
+        2,
         new RevengeGoal(this, HunterEntity.class, GuildMasterEntity.class, PlayerEntity.class)
             .setGroupRevenge());
-    targetSelector.add(1, new KnownFaceTargetGoal(this));
-    targetSelector.add(2, new HunterTargetGoal(this));
   }
 
   public static boolean hunts(final LivingEntity target) {
@@ -153,7 +153,7 @@ public class HunterEntity extends PathAwareEntity
 
   private boolean defendsAgainst(final LivingEntity target) {
     return HunterTargets.defends(
-        target == getAttacker(),
+        target == getAttacker() || target == getTarget(),
         target instanceof PlayerEntity,
         target instanceof HunterEntity || target instanceof GuildMasterEntity);
   }

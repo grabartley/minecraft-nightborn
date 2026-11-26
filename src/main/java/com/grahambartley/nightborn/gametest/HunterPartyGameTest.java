@@ -214,7 +214,8 @@ public class HunterPartyGameTest implements FabricGameTest {
     zombie.setAiDisabled(true);
     struck.damage(context.getWorld().getDamageSources().mobAttack(zombie), 1.0F);
     context.assertTrue(struck.canTarget(zombie), "a hunter fights back against a zombie");
-    context.assertFalse(bystander.canTarget(zombie), "but leaves an unprovoked one alone");
+    context.assertFalse(
+        bystander.canTarget(zombie), "a hunter nobody struck does not start the fight itself");
     context.complete();
   }
 }

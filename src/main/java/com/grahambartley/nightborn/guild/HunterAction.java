@@ -51,12 +51,13 @@ public enum HunterAction {
   }
 
   public static HunterAction support(
+      final boolean foe,
       final boolean sees,
       final double distance,
       final boolean canThrow,
       final boolean hasCrucifix,
       final double wardRange) {
-    if (!sees) {
+    if (!foe || !sees) {
       return NONE;
     }
     if (canThrow && distance >= THROW_NEAREST && distance <= THROW_FARTHEST) {
