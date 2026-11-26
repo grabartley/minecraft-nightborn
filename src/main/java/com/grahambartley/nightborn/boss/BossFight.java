@@ -18,6 +18,7 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundEvent;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Vec3d;
 import org.jetbrains.annotations.Nullable;
 
@@ -129,7 +130,7 @@ public final class BossFight {
     hits.clear();
     BossReactions.guard(boss, attacker, defence);
     show(boss, plan.map(p -> p.clips().guard()).orElse(""));
-    attacks.counter(boss, defence.counters(), foes(boss), now);
+    counter(boss, defence.counters());
     return true;
   }
 
@@ -154,7 +155,7 @@ public final class BossFight {
       hits.clear();
       BossReactions.breakAway(boss, attacker, defence, arena);
       show(boss, plan.map(p -> p.clips().breakAway()).orElse(""));
-      attacks.counter(boss, defence.counters(), foes(boss), now);
+      counter(boss, defence.counters());
     }
     attacks.hurt(amount);
     plan.filter(
@@ -162,6 +163,11 @@ public final class BossFight {
                 PhaseTrack.spent(
                     boss.getHealth(), floorHealth(boss, p), phases.last(p.phases().size())))
         .ifPresent(p -> change(boss, p));
+  }
+
+  public <T extends MobEntity & ArenaBoss> void counter(
+      final T boss, final List<Identifier> counters) {
+    attacks.counter(boss, counters, foes(boss), boss.getWorld().getTime());
   }
 
   public float floorHealth(final LivingEntity boss, final BossFightPlan plan) {

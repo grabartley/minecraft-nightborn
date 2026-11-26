@@ -383,7 +383,7 @@ The core starts with Thick Blood (more health), Grave Strength (harder blows), B
 | LINE-4 | Every bloodline has skills a vampire without it cannot get |
 | LINE-5 | Each skill shows what it does, what it costs and what it needs first, before it is bought |
 | LINE-6 | The skill screen opens with a key, and shows free points with a skill point graphic, readable at a glance, points earned and spent, and a bar of experience toward the next point (SKILL-1) |
-| LINE-7 | The vampire and hunter skill screens are styled, each with its own look: background, frames, lines, headers, tooltips and point graphic. Neither is a plain menu. They are titled Vampire Skills and Hunter Skills, and each shows its shared branch as Core |
+| LINE-7 | The vampire and hunter skill screens are styled, each with its own look: background, frames, lines, headers, tooltips and point graphic. Neither is a plain menu. They are titled Vampire Skills and Hunter Skills, and each shows its shared branch as Core. Each fits the screen whole at every GUI scale, its stage lines (AGE-7) under the panel and never over it, and shrinks as one piece on a screen too short for it |
 | LINE-8 | The core and each bloodline hold about ten skills. Skills, their ranks, costs and the stage each needs are data, and `docs/skills.md` lists them all |
 
 | ID | Requirement |
@@ -407,7 +407,7 @@ The core starts with Thick Blood (more health), Grave Strength (harder blows), B
 | BAT-2 | Turning into a bat, and back, gives a poof of the dark, ashy vampire smoke (SUN-3) and a sound, seen and heard by everyone near |
 | BAT-3 | A bat cannot attack, break blocks, use items or other powers, open containers or feed, and turning into one ends a feed. It drains blood while flying, faster than levitating and faster still at a sprint, and an empty blood bar forces it back. A landed or hanging bat drains blood only as a resting vampire does |
 | BAT-4 | Direct sun forces a vampire out of bat form, and no vampire can take bat form in it |
-| BAT-5 | Turning back needs room to stand. Without it, the bat stays a bat |
+| BAT-5 | Turning back needs room to stand. A bat close under a ceiling with open air below turns back lower, by no more than the height it gains, and falls as BAT-1 says. Without room, the bat stays a bat |
 | BAT-6 | A single heavy blow, as heavy as the server sets, being downed, holy water or garlic in range forces a vampire out of bat form |
 | BAT-7 | A bat player flies with weight, not as in creative. They steer with the camera and fly where they look while holding forward, climbing as they look up and diving as they look down. Speed eases in and out, turning slows the bat at speed, and letting go of forward lets it coast to a slow hover. Sprint flies faster. A bat never takes fall damage. Third person shows the bat in every pose |
 | BAT-8 | A bat player that flies into the ground lands on it, crawls slowly on its wings and takes off with jump. Using the underside of a block from beneath it hangs the bat upside down from that block, and the player's first-person view turns upside down with it. Jump or forward lets go. A hanging bat turning back drops as in BAT-1 |
@@ -640,7 +640,7 @@ Some of those who survive a player do not forget them.
 
 | ID | Requirement |
 |---|---|
-| NEM-1 | A named mob can become one player's nemesis: a vampire mob that a human downed and that escaped (CORE-8), a hunter mob that lived through a fight with a vampire player, and a member of an NPC household that a vampire player struck or drew a housemate away from (HOUSE-2). No boss and no vampire of an underground lair becomes one, since neither leaves home (HOME-7, HOME-13, HOME-23) |
+| NEM-1 | A named mob can become one player's nemesis: a vampire mob that a human downed and that escaped (CORE-8), a hunter mob that lived through a fight with a vampire player, and a member of an NPC household that a vampire player struck or drew a housemate away from (HOUSE-2). No boss and no vampire of an underground lair becomes one, since neither leaves home (HOME-7, HOME-13, HOME-23), and no mob a boss called to its fight (RITE-10, INQ-10) |
 | NEM-2 | A player has at most three nemeses at once by default, and no more are made while they have that many. A nemesis belongs to one player and is an ordinary mob to everyone else |
 | NEM-3 | A nemesis grows. Each time it survives a fight with its quarry it heals, and gains a stage or a skill if it is a vampire or a better kit if it is a hunter. It may take a new epithet that tells the story, such as the Unbowed (NAME-2) |
 | NEM-4 | A nemesis comes for its quarry on a night it chooses, wherever they are on the surface, alone or with one or two of its own. It goes home after, or keeps to the country round its quarry if it has no home. A nemesis never leaves the world and a party hunter who becomes one leaves its party, whatever GUILD-2, GUILD-7 and HOME-25 say. Nights between its visits are a server setting |

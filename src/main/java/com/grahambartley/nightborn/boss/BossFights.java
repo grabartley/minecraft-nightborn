@@ -24,6 +24,7 @@ public final class BossFights {
     DynamicRegistries.register(FIGHT, BossFightPlan.CODEC);
     DynamicRegistries.register(ATTACK, BossAttack.CODEC);
     BossWard.register();
+    FightEnd.register();
     ServerLifecycleEvents.SERVER_STARTED.register(server -> check(server.getRegistryManager()));
     ServerLifecycleEvents.END_DATA_PACK_RELOAD.register(
         (server, resources, success) -> check(server.getRegistryManager()));

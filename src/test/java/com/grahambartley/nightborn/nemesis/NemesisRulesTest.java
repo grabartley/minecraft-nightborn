@@ -42,28 +42,32 @@ class NemesisRulesTest {
     };
   }
 
-  @ParameterizedTest(name = "named {0}, boss {1}, sealed {2}, already {3}, holds {4} of {5}: {6}")
+  @ParameterizedTest(
+      name = "named {0}, boss {1}, called {2}, sealed {3}, already {4}, holds {5} of {6}: {7}")
   @CsvSource({
-    "true, false, false, false, 0, 3, true",
-    "true, false, false, false, 2, 3, true",
-    "true, false, false, false, 3, 3, false",
-    "true, false, false, false, 4, 3, false",
-    "true, false, false, false, 0, 0, false",
-    "false, false, false, false, 0, 3, false",
-    "true, true, false, false, 0, 3, false",
-    "true, false, true, false, 0, 3, false",
-    "true, false, false, true, 0, 3, false"
+    "true, false, false, false, false, 0, 3, true",
+    "true, false, false, false, false, 2, 3, true",
+    "true, false, false, false, false, 3, 3, false",
+    "true, false, false, false, false, 4, 3, false",
+    "true, false, false, false, false, 0, 0, false",
+    "false, false, false, false, false, 0, 3, false",
+    "true, true, false, false, false, 0, 3, false",
+    "true, false, false, true, false, 0, 3, false",
+    "true, false, false, false, true, 0, 3, false",
+    "true, false, true, false, false, 0, 3, false"
   })
   @DisplayName("only a named mob that leaves home becomes a nemesis, and never a fourth")
   void mayBecome(
       final boolean named,
       final boolean boss,
+      final boolean called,
       final boolean sealed,
       final boolean already,
       final int held,
       final int limit,
       final boolean becomes) {
-    assertEquals(becomes, NemesisRules.mayBecome(named, boss, sealed, already, held, limit));
+    assertEquals(
+        becomes, NemesisRules.mayBecome(named, boss, called, sealed, already, held, limit));
   }
 
   @ParameterizedTest(name = "vampire mob {0}, household {1}, vampire player {2}, struck {3}: {4}")

@@ -36,7 +36,7 @@ class ExperienceBarTest {
   }
 
   @ParameterizedTest(name = "mouse at {0},{1}: over {2}")
-  @CsvSource({"40, 50, true", "159, 58, true", "160, 55, false", "39, 55, false", "80, 59, false"})
+  @CsvSource({"40, 50, true", "159, 58, true", "160, 55, false", "39, 55, false", "80, 63, false"})
   @DisplayName("the bar knows when the mouse is over it")
   void contains(final int mouseX, final int mouseY, final boolean over) {
     assertEquals(over, new ExperienceBar(40, 50, 120).contains(mouseX, mouseY));
@@ -53,5 +53,16 @@ class ExperienceBarTest {
     assertTrue(bar.top() >= 20 + 9, "below the line of text");
     assertTrue(bar.bottom() <= 20 + SkillPointsRow.HEIGHT, "inside the row");
     assertEquals(bar.left() + width / 2, bar.centre());
+  }
+
+  @ParameterizedTest(name = "bar at top {0}")
+  @CsvSource({"0", "31", "-4"})
+  @DisplayName("the numbers sit in the bar with a clear pixel above and their shadow inside")
+  void textTop(final int top) {
+    final ExperienceBar bar = new ExperienceBar(0, top, 120);
+    assertTrue(bar.textTop() > bar.innerTop(), "a clear row above the digits");
+    assertTrue(
+        bar.textTop() + ExperienceBar.DIGIT_HEIGHT + 1 <= bar.innerBottom(),
+        "digits and shadow end inside the rim");
   }
 }
