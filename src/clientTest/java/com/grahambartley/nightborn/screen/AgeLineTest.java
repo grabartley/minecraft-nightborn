@@ -80,10 +80,17 @@ class AgeLineTest {
     assertEquals(lines, AgeLine.lines(stage, ahead));
   }
 
-  @ParameterizedTest(name = "panel ends at {0} on a {1} tall screen with {2} lines -> {3}")
-  @CsvSource({"200, 480, 3, 206", "470, 480, 3, 443", "480, 480, 2, 454", "10, 20, 3, 0"})
-  @DisplayName("the lines sit under the panel and stay on screen")
-  void top(final int panelBottom, final int screenHeight, final int lines, final int top) {
-    assertEquals(top, AgeLine.top(panelBottom, screenHeight, lines, 9));
+  @ParameterizedTest(name = "panel ends at {0} -> lines start at {1}")
+  @CsvSource({"200, 206", "0, 6", "443, 449"})
+  @DisplayName("the lines start just under the panel")
+  void top(final int panelBottom, final int top) {
+    assertEquals(top, AgeLine.top(panelBottom));
+  }
+
+  @ParameterizedTest(name = "font {0} tall -> footer {1}")
+  @CsvSource({"9, 43", "8, 40", "12, 52"})
+  @DisplayName("the footer holds the gap, three lines and the screen edge")
+  void footer(final int fontHeight, final int footer) {
+    assertEquals(footer, AgeLine.footer(fontHeight));
   }
 }

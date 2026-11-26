@@ -1,6 +1,8 @@
 package com.grahambartley.nightborn.mixin.client;
 
+import com.grahambartley.nightborn.client.boss.BossArenaView;
 import com.grahambartley.nightborn.client.gramophone.GramophoneMusic;
+import com.grahambartley.nightborn.sound.BossMusicEnd;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.sound.MusicTracker;
 import net.minecraft.client.sound.SoundInstance;
@@ -29,5 +31,13 @@ abstract class MusicTrackerMixin {
       stop();
     }
     info.cancel();
+  }
+
+  @Inject(method = "tick", at = @At("HEAD"))
+  private void nightborn$endBossMusicOutsideTheArena(final CallbackInfo info) {
+    if (current != null
+        && BossMusicEnd.stops(current.getId(), BossArenaView.bossTracks(), BossArenaView.track())) {
+      stop();
+    }
   }
 }

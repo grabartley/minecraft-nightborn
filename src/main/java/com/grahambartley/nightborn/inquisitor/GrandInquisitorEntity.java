@@ -2,7 +2,7 @@ package com.grahambartley.nightborn.inquisitor;
 
 import com.grahambartley.nightborn.Nightborn;
 import com.grahambartley.nightborn.boss.Arena;
-import com.grahambartley.nightborn.boss.ArenaBoss;
+import com.grahambartley.nightborn.boss.ArenaFighter;
 import com.grahambartley.nightborn.boss.BossBars;
 import com.grahambartley.nightborn.boss.BossFight;
 import com.grahambartley.nightborn.boss.BossFightPlan;
@@ -67,7 +67,8 @@ import software.bernie.geckolib.animation.AnimatableManager;
 import software.bernie.geckolib.animation.AnimationController;
 import software.bernie.geckolib.animation.PlayState;
 
-public class GrandInquisitorEntity extends HunterEntity implements ArenaBoss, BiteQuarry, Fought {
+public class GrandInquisitorEntity extends HunterEntity
+    implements ArenaFighter, BiteQuarry, Fought {
 
   public static final Identifier FIGHT = Identifier.of(Nightborn.MOD_ID, "grand_inquisitor");
   public static final TagKey<DamageType> SHRUGS_OFF =
@@ -181,6 +182,7 @@ public class GrandInquisitorEntity extends HunterEntity implements ArenaBoss, Bi
     return Optional.ofNullable(quarry);
   }
 
+  @Override
   public BossFight bossFight() {
     return fight;
   }
@@ -544,13 +546,6 @@ public class GrandInquisitorEntity extends HunterEntity implements ArenaBoss, Bi
   @Override
   public boolean cannotDespawn() {
     return true;
-  }
-
-  @Override
-  public void onRemoved() {
-    fight.end(this);
-    presence.hideAll();
-    super.onRemoved();
   }
 
   @Override

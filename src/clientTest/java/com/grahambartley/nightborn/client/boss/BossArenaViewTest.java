@@ -58,4 +58,20 @@ class BossArenaViewTest {
   void applies(final int shown, final int sender, final boolean entering, final boolean applies) {
     assertEquals(applies, BossArenaView.applies(shown, sender, entering));
   }
+
+  @ParameterizedTest(name = "in the arena {0}, fighting {1}: holds the track {2}")
+  @CsvSource({"true, true, true", "true, false, false", "false, true, false"})
+  @DisplayName("the track the view holds is the boss music's own sound, or nothing")
+  void track(final boolean inside, final boolean fighting, final boolean held) {
+    final Optional<Identifier> track =
+        BossArenaView.track(
+            BossArenaView.music(
+                new BossArenaPayload(
+                    3,
+                    inside ? Optional.of(new Arena(BlockPos.ORIGIN, 16)) : Optional.empty(),
+                    fighting,
+                    Optional.of(TRACK),
+                    Optional.empty())));
+    assertEquals(held ? Optional.of(TRACK) : Optional.empty(), track);
+  }
 }

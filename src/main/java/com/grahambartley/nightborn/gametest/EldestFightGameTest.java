@@ -1,5 +1,6 @@
 package com.grahambartley.nightborn.gametest;
 
+import com.grahambartley.nightborn.Nightborn;
 import com.grahambartley.nightborn.boss.Arena;
 import com.grahambartley.nightborn.boss.BossFightPlan;
 import com.grahambartley.nightborn.boss.BossFights;
@@ -18,11 +19,15 @@ import com.grahambartley.nightborn.mob.EldestEntity;
 import com.grahambartley.nightborn.mob.NightbornMobs;
 import com.grahambartley.nightborn.mob.VampireBatEntity;
 import com.grahambartley.nightborn.server.ServerConfigService;
+import com.grahambartley.nightborn.vampire.NightbornDamage;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
 import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.attribute.EntityAttributes;
+import net.minecraft.entity.damage.DamageSource;
+import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.passive.PigEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
@@ -31,6 +36,7 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.test.GameTest;
 import net.minecraft.test.TestContext;
 import net.minecraft.util.Hand;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.GameMode;
@@ -45,6 +51,8 @@ public class EldestFightGameTest implements FabricGameTest {
   static final float FIRST_MAX_HIT = 14.0F;
   static final int FIRST_GUARD_HITS = 4;
   static final int CHANGE_TICKS = 80;
+  static final int CALL_TICKS = 30;
+  static final int END_TICKS = 120;
 
   private static EldestEntity inArena(final TestContext context) {
     final EldestEntity eldest = EldestGameTest.eldest(context);
@@ -60,7 +68,61 @@ public class EldestFightGameTest implements FabricGameTest {
   private static void atPhase(final EldestEntity eldest, final int phase) {
     final NbtCompound nbt = new NbtCompound();
     nbt.putInt("BossPhase", phase);
-    eldest.fight().read(nbt);
+    eldest.bossFight().read(nbt);
+  }
+
+  private static void endsItsFight(
+      final TestContext context, final Function<ServerPlayerEntity, DamageSource> blow) {
+    final EldestEntity eldest = inArena(context);
+    final ServerPlayerEntity hunter = TestPlayers.hunter(context, new BlockPos(4, 2, 2));
+    context.runAtTick(
+        TestPlayers.READY,
+        () -> {
+          eldest.setTarget(hunter);
+          eldest
+              .bossFight()
+              .counter(eldest, List.of(Identifier.of(Nightborn.MOD_ID, "court_rally")));
+        });
+    for (int tick = 1; tick <= CALL_TICKS; tick++) {
+      context.runAtTick(TestPlayers.READY + tick, eldest::tickFight);
+    }
+    context.runAtTick(
+        TestPlayers.READY + CALL_TICKS + 1,
+        () -> {
+          final List<MobEntity> called = keepers(context);
+          called.forEach(keeper -> keeper.setAiDisabled(true));
+          context.assertTrue(!called.isEmpty(), "the Eldest calls its court");
+          context.assertTrue(
+              eldest.presence().bar().getPlayers().contains(hunter), "the hunter sees its bar");
+          eldest.timeUntilRegen = 0;
+          eldest.damage(blow.apply(hunter), HUGE);
+          context.assertTrue(eldest.isDead(), "the blow ends the Eldest");
+        });
+    context.runAtEveryTick(
+        () -> {
+          if (eldest.isRemoved()) {
+            context.assertTrue(keepers(context).isEmpty(), "the court it called goes with it");
+            context.assertTrue(
+                eldest.presence().bar().getPlayers().isEmpty(), "and so does its bar");
+            TestPlayers.finish(context, hunter);
+          }
+        });
+  }
+
+  static List<MobEntity> keepers(final TestContext context) {
+    return context
+        .getWorld()
+        .getEntitiesByClass(MobEntity.class, context.getTestBox().expand(8.0), BossWard::keeper);
+  }
+
+  @GameTest(templateName = ARENA, tickLimit = TestPlayers.READY + CALL_TICKS + END_TICKS)
+  public void aStakedEldestTakesTheCourtItCalledAndItsBarWithIt(final TestContext context) {
+    endsItsFight(context, hunter -> NightbornDamage.stake(context.getWorld(), hunter));
+  }
+
+  @GameTest(templateName = ARENA, tickLimit = TestPlayers.READY + CALL_TICKS + END_TICKS)
+  public void anEldestTheSunEndsTakesTheCourtItCalledAndItsBarWithIt(final TestContext context) {
+    endsItsFight(context, hunter -> NightbornDamage.sun(context.getWorld()));
   }
 
   @GameTest(templateName = ARENA, tickLimit = 20)
@@ -122,7 +184,8 @@ public class EldestFightGameTest implements FabricGameTest {
     context.assertTrue(
         Math.abs(eldest.getHealth() - floor) <= 0.51F,
         "it stops at the first phase's floor of " + floor + ", not " + eldest.getHealth());
-    context.assertTrue(eldest.fight().phase() == 1, "it is in phase " + eldest.fight().phase());
+    context.assertTrue(
+        eldest.bossFight().phase() == 1, "it is in phase " + eldest.bossFight().phase());
     eldest.timeUntilRegen = 0;
     context.assertTrue(
         !eldest.damage(context.getWorld().getDamageSources().generic(), 5.0F),
@@ -151,7 +214,7 @@ public class EldestFightGameTest implements FabricGameTest {
     context.assertTrue(
         Math.abs(eldest.getHealth() - risen) < 0.01F,
         "it rises with " + risen + ", not " + eldest.getHealth());
-    context.assertTrue(eldest.fight().phase() == 2, "it rises into its last phase");
+    context.assertTrue(eldest.bossFight().phase() == 2, "it rises into its last phase");
     context.complete();
   }
 
@@ -161,18 +224,20 @@ public class EldestFightGameTest implements FabricGameTest {
     final int emptyTicks = ServerConfigService.current().ritual().arenaEmptyTicks();
     endFirstPhase(context, eldest);
     eldest.tickFight();
-    context.assertTrue(eldest.fight().phase() == 1, "the fight is under way");
+    context.assertTrue(eldest.bossFight().phase() == 1, "the fight is under way");
     context.runAtTick(
         emptyTicks / 2,
         () -> {
           eldest.tickFight();
-          context.assertTrue(eldest.fight().phase() == 1, "it holds its phase until time is up");
+          context.assertTrue(
+              eldest.bossFight().phase() == 1, "it holds its phase until time is up");
         });
     context.runAtTick(
         emptyTicks + 5L,
         () -> {
           eldest.tickFight();
-          context.assertTrue(eldest.fight().phase() == 0, "it starts again from its first phase");
+          context.assertTrue(
+              eldest.bossFight().phase() == 0, "it starts again from its first phase");
           context.assertTrue(eldest.getHealth() == eldest.getMaxHealth(), "at full health");
           context.complete();
         });
@@ -184,12 +249,12 @@ public class EldestFightGameTest implements FabricGameTest {
     endFirstPhase(context, eldest);
     eldest.tickFight();
     final NbtCompound saved = new NbtCompound();
-    eldest.fight().write(saved);
+    eldest.bossFight().write(saved);
     saved.putLong("BossLastOccupied", context.getWorld().getTime() - 100_000L);
-    eldest.fight().read(saved);
-    context.assertTrue(eldest.fight().phase() == 1, "the saved fight is half done");
+    eldest.bossFight().read(saved);
+    context.assertTrue(eldest.bossFight().phase() == 1, "the saved fight is half done");
     eldest.tickFight();
-    context.assertTrue(eldest.fight().phase() == 0, "coming back long after finds it reset");
+    context.assertTrue(eldest.bossFight().phase() == 0, "coming back long after finds it reset");
     context.assertTrue(eldest.getHealth() == eldest.getMaxHealth(), "at full health");
     context.complete();
   }
@@ -203,8 +268,8 @@ public class EldestFightGameTest implements FabricGameTest {
     eldest.tickFight();
     eldest.setAttached(Downed.TYPE, Downed.state(eldest).next(DownedState.Phase.DOWNED, 40));
     final NbtCompound saved = new NbtCompound();
-    eldest.fight().write(saved);
-    eldest.fight().read(saved);
+    eldest.bossFight().write(saved);
+    eldest.bossFight().read(saved);
     eldest.tickFight();
     context.assertTrue(
         Downed.state(eldest).ticksLeft() == 40,
@@ -267,7 +332,7 @@ public class EldestFightGameTest implements FabricGameTest {
     eldest.damage(context.getWorld().getDamageSources().generic(), HUGE);
     final float lost = before - eldest.getHealth();
     context.assertTrue(lost > 0.0F && lost <= FIRST_MAX_HIT, "a huge blow takes only " + lost);
-    context.assertTrue(eldest.fight().phase() == 0, "and the phase goes on");
+    context.assertTrue(eldest.bossFight().phase() == 0, "and the phase goes on");
     context.complete();
   }
 
@@ -420,7 +485,7 @@ public class EldestFightGameTest implements FabricGameTest {
     eldest.tickFight();
     context.assertFalse(
         eldest.hasNoGravity(), "an Eldest that is not flying has its weight back after a load");
-    context.assertFalse(eldest.fight().flying(), "and it does not count as flying");
+    context.assertFalse(eldest.bossFight().flying(), "and it does not count as flying");
     context.complete();
   }
 
@@ -428,7 +493,7 @@ public class EldestFightGameTest implements FabricGameTest {
   public void theWallPutsBackAPlayerWhoLeavesTheArena(final TestContext context) {
     final EldestEntity eldest = inArena(context);
     final ServerPlayerEntity player = TestPlayers.human(context, new BlockPos(4, 2, 3));
-    final Arena arena = eldest.fight().arena().orElseThrow();
+    final Arena arena = eldest.bossFight().arena().orElseThrow();
     context.runAtTick(
         TestPlayers.READY,
         () -> {

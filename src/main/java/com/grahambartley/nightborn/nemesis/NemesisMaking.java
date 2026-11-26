@@ -3,6 +3,7 @@ package com.grahambartley.nightborn.nemesis;
 import com.grahambartley.nightborn.Nightborn;
 import com.grahambartley.nightborn.age.AgeNight;
 import com.grahambartley.nightborn.boss.ArenaBoss;
+import com.grahambartley.nightborn.boss.BossWard;
 import com.grahambartley.nightborn.config.VillageSettings;
 import com.grahambartley.nightborn.guild.HunterEntity;
 import com.grahambartley.nightborn.mob.VampireEntity;
@@ -39,6 +40,7 @@ public final class NemesisMaking {
               if (!NemesisRules.mayBecome(
                   mob.hasCustomName(),
                   mob instanceof ArenaBoss,
+                  BossWard.keeper(mob),
                   sealedHome(world, mob),
                   NemesisAttachment.get(mob).isPresent(),
                   ledger.of(quarry).size(),

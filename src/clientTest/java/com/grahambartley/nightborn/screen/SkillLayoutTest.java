@@ -1,5 +1,6 @@
 package com.grahambartley.nightborn.screen;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.grahambartley.nightborn.skill.Skill;
@@ -21,7 +22,7 @@ class SkillLayoutTest {
   })
   @DisplayName("every node of every branch fits inside the panel and the panel fits the screen")
   void fits(final int width, final int height, final int branches, final int rows) {
-    final SkillLayout layout = SkillLayout.of(width, height, branches, rows, 0);
+    final SkillLayout layout = SkillLayout.of(width, height, branches, rows, 0, 0);
     assertTrue(
         layout.left() >= 0 && layout.left() + layout.width() <= Math.max(width, layout.width()));
     assertTrue(layout.top() + layout.height() <= height, "panel height " + layout.height());
@@ -39,11 +40,64 @@ class SkillLayoutTest {
         "power bar inside the panel");
   }
 
+  @ParameterizedTest(name = "{0}x{1} with {2} branches, {3} rows and a {4} tall footer")
+  @CsvSource({
+    "1920, 1080, 4, 7, 43",
+    "960, 540, 4, 7, 43",
+    "640, 360, 4, 7, 43",
+    "480, 270, 4, 7, 43",
+    "854, 480, 4, 7, 43",
+    "569, 320, 4, 7, 43",
+    "427, 240, 4, 7, 43",
+    "427, 240, 4, 7, 0",
+    "320, 240, 4, 7, 43",
+    "480, 270, 1, 3, 43"
+  })
+  @DisplayName("the panel, its power bar and the lines under it all fit the screen together")
+  void fitsWithFooter(
+      final int width, final int height, final int branches, final int rows, final int footer) {
+    final SkillLayout layout = SkillLayout.of(width, height, branches, rows, 0, footer);
+    final int ageTop = AgeLine.top(layout.bottom());
+    assertTrue(ageTop >= layout.bottom(), "the lines start under the panel");
+    assertTrue(
+        (layout.bottom() + footer) * layout.zoom() <= height + 1.0E-6,
+        "panel and lines end at " + (layout.bottom() + footer) * layout.zoom());
+    assertTrue(layout.top() >= 0, "the panel starts on screen");
+    assertTrue(
+        (layout.left() + layout.width()) * layout.zoom() <= width + 1.0E-6,
+        "the panel ends at " + (layout.left() + layout.width()) * layout.zoom());
+    assertTrue(layout.rowStep() > SkillLayout.NODE, "rows never overlap");
+    assertTrue(
+        layout.nodeY(rows - 1) + SkillLayout.NODE <= layout.powerBarY(),
+        "the last row sits above the power bar");
+  }
+
+  @ParameterizedTest(name = "{0}x{1}: shrinks {2}")
+  @CsvSource({
+    "1920, 1080, false",
+    "960, 540, false",
+    "640, 360, false",
+    "569, 320, false",
+    "480, 270, true",
+    "427, 240, true"
+  })
+  @DisplayName("the screen shrinks only when the smallest rows and the lines cannot fit")
+  void zoom(final int width, final int height, final boolean shrinks) {
+    assertEquals(shrinks, SkillLayout.of(width, height, 4, 7, 0, 43).zoom() < 1.0);
+  }
+
+  @ParameterizedTest(name = "screen {0} at zoom {1} -> {2}")
+  @CsvSource({"100, 1.0, 100", "100, 0.5, 200", "0, 0.8, 0"})
+  @DisplayName("the mouse is read in the shrunken screen's own units")
+  void unzoom(final double screen, final double zoom, final double layout) {
+    assertEquals(layout, new SkillLayout(0, 0, 0, 0, 0, 0, zoom).unzoom(screen), 1.0E-9);
+  }
+
   @ParameterizedTest(name = "columns {0} and {1}")
   @CsvSource({"0, 1", "1, 2"})
   @DisplayName("neighbouring nodes never overlap at the smallest screen")
   void noOverlap(final int left, final int right) {
-    final SkillLayout layout = SkillLayout.of(320, 240, 4, 6, 0);
+    final SkillLayout layout = SkillLayout.of(320, 240, 4, 6, 0, 0);
     assertTrue(
         layout.nodeX(0, 4, left) + SkillLayout.NODE + SkillLayout.NODE_GAP
             <= layout.nodeX(0, 4, right));
@@ -54,8 +108,8 @@ class SkillLayoutTest {
   @CsvSource({"1", "2", "6"})
   @DisplayName("the panel grows with the rows in use, so a short tree is not mostly empty")
   void heightFollowsRows(final int rows) {
-    final SkillLayout shorter = SkillLayout.of(854, 480, 4, rows, 0);
-    final SkillLayout taller = SkillLayout.of(854, 480, 4, rows + 1, 0);
+    final SkillLayout shorter = SkillLayout.of(854, 480, 4, rows, 0, 0);
+    final SkillLayout taller = SkillLayout.of(854, 480, 4, rows + 1, 0, 0);
     assertTrue(taller.height() > shorter.height() || rows + 1 > Skill.MAX_ROW + 1);
     assertTrue(
         shorter.nodeY(rows - 1) + SkillLayout.NODE + SkillLayout.PAD
@@ -73,7 +127,7 @@ class SkillLayoutTest {
   @CsvSource({"320, 240, 40", "320, 240, 400", "480, 270, 60", "1920, 1080, 70"})
   @DisplayName("a branch banner wraps its title and never spills into the next branch")
   void banner(final int width, final int height, final int text) {
-    final SkillLayout layout = SkillLayout.of(width, height, 4, 6, 0);
+    final SkillLayout layout = SkillLayout.of(width, height, 4, 6, 0, 0);
     final int banner = layout.bannerWidth(text);
     assertTrue(banner < layout.branchWidth(), "inside its branch");
     assertTrue(banner >= Math.min(text, layout.branchWidth() - 2), "wraps the title");
@@ -83,7 +137,7 @@ class SkillLayoutTest {
   @CsvSource({"320, 240", "480, 270", "854, 480"})
   @DisplayName("the title, the points row and the branch banners stack above the first skill")
   void headerStacks(final int width, final int height) {
-    final SkillLayout layout = SkillLayout.of(width, height, 4, 6, 0);
+    final SkillLayout layout = SkillLayout.of(width, height, 4, 6, 0, 0);
     assertTrue(layout.top() + SkillLayout.PAD + 9 <= layout.pointsY());
     assertTrue(layout.pointsY() + SkillPointsRow.HEIGHT <= layout.bannerY());
     assertTrue(layout.bannerY() + SkillLayout.BANNER <= layout.nodeY(0));
@@ -93,7 +147,7 @@ class SkillLayoutTest {
   @CsvSource({"480, 270", "854, 480", "1920, 1080"})
   @DisplayName("with room to spare, the outer columns keep clear of the panel frame")
   void clearOfFrame(final int width, final int height) {
-    final SkillLayout layout = SkillLayout.of(width, height, 4, 6, 0);
+    final SkillLayout layout = SkillLayout.of(width, height, 4, 6, 0, 0);
     assertTrue(layout.nodeX(0, 4, 0) >= layout.left() + SkillLayout.PAD + SkillLayout.MAX_INSET);
     assertTrue(
         layout.nodeX(3, 4, Skill.MAX_COLUMN) + SkillLayout.NODE
@@ -111,7 +165,7 @@ class SkillLayoutTest {
   })
   @DisplayName("the panel is always wide enough for the points row above the branches")
   void fitsHeader(final int width, final int height, final int branches, final int header) {
-    final SkillLayout layout = SkillLayout.of(width, height, branches, 3, header);
+    final SkillLayout layout = SkillLayout.of(width, height, branches, 3, header, 0);
     assertTrue(header <= layout.width() - SkillLayout.PAD * 2, "width " + layout.width());
     assertTrue(layout.left() + layout.width() <= width);
   }
