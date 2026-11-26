@@ -4,7 +4,7 @@
     "nightborn:hunter/tracking"
   ],
   "icon": "nightborn:skills/icon/iron_will",
-  "column": 1,
+  "column": 0,
   "row": 0,
   "ranks": [
     {

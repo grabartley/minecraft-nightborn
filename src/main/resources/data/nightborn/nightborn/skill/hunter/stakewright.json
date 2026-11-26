@@ -4,7 +4,7 @@
     "nightborn:hunter/weathered"
   ],
   "icon": "nightborn:skills/icon/stakewright",
-  "column": 0,
+  "column": 2,
   "row": 2,
   "ranks": [
     {

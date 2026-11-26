@@ -11,13 +11,28 @@ import net.minecraft.util.Identifier;
 
 public final class SkillDataCheck {
 
+  private record Link(
+      Identifier branch, Identifier from, Identifier to, int gap, int low, int high) {
+
+    boolean touches(final Link other) {
+      return branch.equals(other.branch)
+          && gap == other.gap
+          && !from.equals(other.from)
+          && !to.equals(other.to)
+          && low <= other.high
+          && other.low <= high;
+    }
+  }
+
   private SkillDataCheck() {}
 
   public static List<String> problems(
       final Map<Identifier, Skill> skills, final Map<Identifier, SkillBranch> branches) {
     final List<String> problems = new ArrayList<>();
     final Map<String, Identifier> places = new HashMap<>();
-    for (final Map.Entry<Identifier, Skill> entry : new TreeMap<>(skills).entrySet()) {
+    final List<Link> links = new ArrayList<>();
+    final Map<Identifier, Skill> sorted = new TreeMap<>(skills);
+    for (final Map.Entry<Identifier, Skill> entry : sorted.entrySet()) {
       final Identifier id = entry.getKey();
       final Skill skill = entry.getValue();
       final SkillBranch branch = branches.get(skill.branch());
@@ -25,18 +40,33 @@ public final class SkillDataCheck {
         problems.add(id + " is in unknown branch " + skill.branch());
         continue;
       }
+      int deepest = -1;
+      boolean resolved = true;
       for (final Identifier need : skill.requires()) {
         final Skill required = skills.get(need);
         if (need.equals(id)) {
           problems.add(id + " needs itself");
+          resolved = false;
         } else if (required == null) {
           problems.add(id + " needs unknown skill " + need);
+          resolved = false;
         } else if (branches.containsKey(required.branch())
             && branches.get(required.branch()).tree() != branch.tree()) {
           problems.add(id + " needs " + need + " from another tree");
-        } else if (required.branch().equals(skill.branch()) && required.row() >= skill.row()) {
-          problems.add(id + " needs " + need + ", which is not on a row above it");
+          resolved = false;
+        } else if (required.branch().equals(skill.branch())) {
+          deepest = Math.max(deepest, required.row());
+          links.addAll(linksBetween(need, required, id, skill));
+          problems.addAll(blockedLane(need, required, id, skill, sorted));
         }
+      }
+      if (resolved && skill.row() != deepest + 1) {
+        problems.add(
+            id
+                + " is at row "
+                + skill.row()
+                + ", but the deepest skill it needs puts it at row "
+                + (deepest + 1));
       }
       final String place = skill.branch() + " " + skill.column() + "," + skill.row();
       final Identifier taken = places.putIfAbsent(place, id);
@@ -44,12 +74,61 @@ public final class SkillDataCheck {
         problems.add(id + " shares its place in " + place + " with " + taken);
       }
     }
-    for (final Identifier id : new TreeMap<>(skills).keySet()) {
+    for (int a = 0; a < links.size(); a++) {
+      for (int b = a + 1; b < links.size(); b++) {
+        if (links.get(a).touches(links.get(b))) {
+          problems.add(
+              "the line from "
+                  + links.get(a).from()
+                  + " to "
+                  + links.get(a).to()
+                  + " touches the line from "
+                  + links.get(b).from()
+                  + " to "
+                  + links.get(b).to());
+        }
+      }
+    }
+    for (final Identifier id : sorted.keySet()) {
       if (reaches(id, id, skills, new HashSet<>())) {
         problems.add(id + " needs itself through a loop of requirements");
       }
     }
     return problems;
+  }
+
+  private static List<Link> linksBetween(
+      final Identifier fromId, final Skill from, final Identifier toId, final Skill to) {
+    final List<Link> links = new ArrayList<>();
+    for (int gap = from.row(); gap < to.row() - 1; gap++) {
+      links.add(new Link(to.branch(), fromId, toId, gap, from.column(), from.column()));
+    }
+    links.add(
+        new Link(
+            to.branch(),
+            fromId,
+            toId,
+            to.row() - 1,
+            Math.min(from.column(), to.column()),
+            Math.max(from.column(), to.column())));
+    return links;
+  }
+
+  private static List<String> blockedLane(
+      final Identifier fromId,
+      final Skill from,
+      final Identifier toId,
+      final Skill to,
+      final Map<Identifier, Skill> sorted) {
+    return sorted.entrySet().stream()
+        .filter(
+            entry ->
+                entry.getValue().branch().equals(to.branch())
+                    && entry.getValue().column() == from.column()
+                    && entry.getValue().row() > from.row()
+                    && entry.getValue().row() < to.row())
+        .map(entry -> entry.getKey() + " sits on the line from " + fromId + " to " + toId)
+        .toList();
   }
 
   private static boolean reaches(

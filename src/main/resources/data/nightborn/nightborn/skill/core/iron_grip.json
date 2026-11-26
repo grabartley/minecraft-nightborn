@@ -4,7 +4,7 @@
     "nightborn:core/grave_strength"
   ],
   "icon": "nightborn:skills/icon/iron_grip",
-  "column": 0,
+  "column": 2,
   "row": 2,
   "ranks": [
     {

@@ -4,8 +4,8 @@
     "nightborn:core/thick_blood"
   ],
   "icon": "nightborn:skills/icon/night_eyes",
-  "column": 1,
-  "row": 2,
+  "column": 3,
+  "row": 1,
   "ranks": [
     {
       "cost": 1,

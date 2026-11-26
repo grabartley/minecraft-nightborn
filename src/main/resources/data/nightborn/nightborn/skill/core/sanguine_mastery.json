@@ -4,8 +4,8 @@
     "nightborn:core/deep_veins"
   ],
   "icon": "nightborn:skills/icon/sanguine_mastery",
-  "column": 2,
-  "row": 4,
+  "column": 0,
+  "row": 3,
   "stage": "nightborn:elder",
   "ranks": [
     {

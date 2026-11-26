@@ -4,8 +4,8 @@
     "nightborn:trapper/snare"
   ],
   "icon": "nightborn:skills/icon/flash_trap",
-  "column": 2,
-  "row": 3,
+  "column": 0,
+  "row": 2,
   "rank": "nightborn:hunter",
   "ranks": [
     {

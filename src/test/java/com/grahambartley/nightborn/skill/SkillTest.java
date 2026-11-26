@@ -176,7 +176,7 @@ class SkillTest {
   @CsvSource(
       delimiter = '|',
       value = {
-        "{\"branch\":\"nightborn:core\",\"ranks\":[{\"cost\":1}],\"icon\":\"nightborn:x\",\"column\":3}",
+        "{\"branch\":\"nightborn:core\",\"ranks\":[{\"cost\":1}],\"icon\":\"nightborn:x\",\"column\":5}",
         "{\"branch\":\"nightborn:core\",\"ranks\":[{\"cost\":1}],\"icon\":\"nightborn:x\",\"row\":7}",
         "{\"branch\":\"nightborn:core\",\"ranks\":[{\"cost\":-1}],\"icon\":\"nightborn:x\"}",
         "{\"ranks\":[{\"cost\":1}],\"icon\":\"nightborn:x\"}",

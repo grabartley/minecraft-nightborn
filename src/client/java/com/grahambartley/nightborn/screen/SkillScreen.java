@@ -22,6 +22,7 @@ import com.grahambartley.nightborn.skill.SkillPurchase;
 import com.grahambartley.nightborn.skill.SkillTree;
 import com.grahambartley.nightborn.skill.Skills;
 import com.grahambartley.nightborn.skill.TreeProgress;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,7 +38,10 @@ import org.jetbrains.annotations.Nullable;
 
 public final class SkillScreen extends Screen {
 
-  static final int LINE_WIDTH = 2;
+  static final int LINE_EDGE = 3;
+  static final int LINE_CORE = 1;
+  static final int SHADE = 8;
+  static final int FRAME = 6;
   static final float DIM = 0.45F;
   static final float DRAG_Z = 300.0F;
 
@@ -48,7 +52,10 @@ public final class SkillScreen extends Screen {
   private SkillTree shownTree;
   private SkillTheme theme;
   private SkillLayout layout;
+  private final SkillScroll scroll = new SkillScroll();
   @Nullable private PowerDrag drag;
+  private boolean draggingBar;
+  private double barGrab;
 
   public SkillScreen() {
     super(Text.translatable("nightborn.skills.title"));
@@ -81,10 +88,11 @@ public final class SkillScreen extends Screen {
         SkillLayout.of(
             width,
             height,
-            branches.size(),
-            SkillTreeView.rows(nodes, branches),
+            branches.stream().map(branch -> SkillTreeView.lanes(nodes, branch)).toList(),
+            SkillTreeView.columns(nodes, branches),
             widest.width(),
             shownTree == SkillTree.VAMPIRE ? AgeLine.footer(textRenderer.fontHeight) : 0);
+    scroll.fit(layout.maxScroll());
   }
 
   private SkillTree tree() {
@@ -99,9 +107,11 @@ public final class SkillScreen extends Screen {
   public void render(
       final DrawContext context, final int mouseX, final int mouseY, final float delta) {
     if (tree() != shownTree) {
+      scroll.jump(0.0, 0);
       clearAndInit();
     }
     super.render(context, mouseX, mouseY, delta);
+    scroll.step(client.getRenderTickCounter().getLastFrameDuration());
     final int x = (int) layout.unzoom(mouseX);
     final int y = (int) layout.unzoom(mouseY);
     context.getMatrices().push();
@@ -129,28 +139,58 @@ public final class SkillScreen extends Screen {
         layout.top() + SkillLayout.PAD,
         theme.title());
     List<Text> tooltip = drawPoints(context, progress, centre, mouseX, mouseY);
+    final List<Text> treeTip = drawView(context, progress, centre, mouseX, mouseY);
+    if (treeTip != null) {
+      tooltip = treeTip;
+    }
+    if (shownTree == SkillTree.VAMPIRE) {
+      drawAge(context, centre);
+    }
+    final List<Text> barTip = drawPowerBar(context, progress, centre, mouseX, mouseY);
+    if (barTip != null) {
+      tooltip = barTip;
+    }
+    return tooltip;
+  }
+
+  @Nullable
+  private List<Text> drawView(
+      final DrawContext context,
+      final TreeProgress progress,
+      final int centre,
+      final int mouseX,
+      final int mouseY) {
+    final int offset = scroll.shown();
+    context.enableScissor(
+        layout.screen(layout.left() + FRAME),
+        layout.screen(layout.viewTop()),
+        layout.screen(layout.left() + layout.width() - FRAME),
+        layout.screen(layout.viewBottom()));
     if (branches.isEmpty()) {
       context.drawCenteredTextWithShadow(
           textRenderer,
           Text.translatable("nightborn.skills.empty"),
           centre,
-          layout.top() + SkillLayout.HEADER,
+          layout.viewTop() + SkillLayout.VIEW_INSET,
           theme.muted());
     }
     for (int b = 0; b < branches.size(); b++) {
-      drawBranchTitle(context, b, progress);
-      for (final Identifier id : SkillTreeView.skillsIn(branches.get(b), nodes)) {
-        drawLines(context, b, id, progress);
-      }
+      drawBranchTitle(context, b, progress, offset);
     }
+    drawLines(context, progress, offset);
+    List<Text> tooltip = null;
+    final boolean pointing = layout.inView(mouseY);
     for (int b = 0; b < branches.size(); b++) {
       for (final Identifier id : SkillTreeView.skillsIn(branches.get(b), nodes)) {
         final Skill skill = skills.get(id);
-        final int x = layout.nodeX(b, branches.size(), skill.column());
-        final int y = layout.nodeY(skill.row());
+        final int x = layout.nodeX(skill.row());
+        final int y = layout.nodeY(b, skill.column(), offset);
+        if (y + SkillLayout.NODE <= layout.viewTop() || y >= layout.viewBottom()) {
+          continue;
+        }
         final SkillPurchase.Verdict verdict = verdict(id, progress);
         drawNode(context, x, y, skill, progress.rank(id), verdict);
-        if (SkillLayout.contains(x, y, mouseX, mouseY)) {
+        if (pointing && SkillLayout.contains(x, y, mouseX, mouseY)) {
           tooltip =
               SkillTooltip.lines(
                   id,
@@ -161,14 +201,48 @@ public final class SkillScreen extends Screen {
         }
       }
     }
-    if (shownTree == SkillTree.VAMPIRE) {
-      drawAge(context, centre);
-    }
-    final List<Text> barTip = drawPowerBar(context, progress, centre, mouseX, mouseY);
-    if (barTip != null) {
-      tooltip = barTip;
-    }
+    drawShades(context, offset);
+    context.disableScissor();
+    drawRule(context, layout.viewTop() - 2);
+    drawRule(context, layout.viewBottom());
+    drawScrollbar(context, offset, mouseX, mouseY);
     return tooltip;
+  }
+
+  private void drawShades(final DrawContext context, final int offset) {
+    final int dark = theme.shade();
+    final int shade = dark & 0xFFFFFF;
+    final int x1 = layout.left() + FRAME;
+    final int x2 = layout.left() + layout.width() - FRAME;
+    if (offset > 0) {
+      context.fillGradient(x1, layout.viewTop(), x2, layout.viewTop() + SHADE, dark, shade);
+    }
+    if (offset < layout.maxScroll()) {
+      context.fillGradient(x1, layout.viewBottom() - SHADE, x2, layout.viewBottom(), shade, dark);
+    }
+  }
+
+  private void drawRule(final DrawContext context, final int y) {
+    final int x1 = layout.left() + FRAME;
+    final int x2 = layout.left() + layout.width() - FRAME;
+    context.fill(x1, y, x2, y + 1, theme.lineEdge());
+    context.fill(x1, y + 1, x2, y + 2, theme.rule());
+  }
+
+  private void drawScrollbar(
+      final DrawContext context, final int offset, final int mouseX, final int mouseY) {
+    if (!layout.scrolls()) {
+      return;
+    }
+    final int x = layout.scrollbarX();
+    context.drawGuiTexture(
+        theme.scrollerTrack(), x, layout.viewTop(), SkillLayout.SCROLLBAR, layout.viewHeight());
+    context.drawGuiTexture(
+        theme.scroller(draggingBar || layout.overThumb(mouseX, mouseY, offset)),
+        x,
+        layout.thumbY(offset),
+        SkillLayout.SCROLLBAR,
+        layout.thumbHeight());
   }
 
   private void drawAge(final DrawContext context, final int centre) {
@@ -340,9 +414,8 @@ public final class SkillScreen extends Screen {
   }
 
   private void drawBranchTitle(
-      final DrawContext context, final int index, final TreeProgress progress) {
+      final DrawContext context, final int index, final TreeProgress progress, final int offset) {
     final Identifier id = branches.get(index);
-    final int centre = layout.branchLeft(index, branches.size()) + layout.branchWidth() / 2;
     final boolean locked = SkillPurchase.locked(progress, id, branchData.get(id));
     final boolean chosen = progress.lines().contains(id);
     final Text title =
@@ -350,41 +423,55 @@ public final class SkillScreen extends Screen {
     final int bannerWidth = layout.bannerWidth(textRenderer.getWidth(title));
     context.drawGuiTexture(
         theme.header(),
-        centre - bannerWidth / 2,
-        layout.bannerY(),
+        layout.contentLeft(),
+        layout.bannerY(index, offset),
         bannerWidth,
         SkillLayout.BANNER);
     context.drawCenteredTextWithShadow(
         textRenderer,
         title,
-        centre,
-        layout.bannerTextY(),
+        layout.contentLeft() + bannerWidth / 2,
+        layout.bannerTextY(index, offset),
         locked ? theme.muted() : chosen ? theme.title() : theme.text());
   }
 
-  private void drawLines(
-      final DrawContext context,
-      final int branchIndex,
-      final Identifier id,
-      final TreeProgress progress) {
-    final Skill skill = skills.get(id);
-    final int toX =
-        layout.nodeX(branchIndex, branches.size(), skill.column()) + SkillLayout.NODE / 2;
-    final int toY = layout.nodeY(skill.row());
-    final Identifier sprite = theme.line(progress.owns(id));
-    for (final Identifier parentId : skill.requires()) {
-      final Skill parent = skills.get(parentId);
-      if (parent == null || !parent.branch().equals(skill.branch())) {
-        continue;
-      }
-      final int fromX =
-          layout.nodeX(branchIndex, branches.size(), parent.column()) + SkillLayout.NODE / 2;
-      final int fromY = layout.nodeY(parent.row()) + SkillLayout.NODE;
-      for (final SkillTreeView.Segment segment :
-          SkillTreeView.elbow(fromX, fromY, toX, toY, LINE_WIDTH)) {
-        context.drawGuiTexture(sprite, segment.x(), segment.y(), segment.width(), segment.height());
+  private void drawLines(final DrawContext context, final TreeProgress progress, final int offset) {
+    final List<SkillTreeView.Segment> unowned = new ArrayList<>();
+    final List<SkillTreeView.Segment> owned = new ArrayList<>();
+    for (int b = 0; b < branches.size(); b++) {
+      for (final Identifier id : SkillTreeView.skillsIn(branches.get(b), nodes)) {
+        final Skill skill = skills.get(id);
+        for (final Identifier parentId : skill.requires()) {
+          final Skill parent = skills.get(parentId);
+          if (parent == null || !parent.branch().equals(skill.branch())) {
+            continue;
+          }
+          final int fromX = layout.nodeX(parent.row()) + SkillLayout.NODE;
+          final int fromY = layout.nodeY(b, parent.column(), offset) + SkillLayout.NODE / 2;
+          final int toX = layout.nodeX(skill.row());
+          final int toY = layout.nodeY(b, skill.column(), offset) + SkillLayout.NODE / 2;
+          final int jointX = layout.jointX(skill.row());
+          for (final SkillTreeView.Segment edge :
+              SkillTreeView.route(fromX, fromY, jointX, toX, toY, LINE_EDGE)) {
+            fill(context, edge, theme.lineEdge());
+          }
+          (progress.owns(id) ? owned : unowned)
+              .addAll(SkillTreeView.route(fromX, fromY, jointX, toX, toY, LINE_CORE));
+        }
       }
     }
+    unowned.forEach(segment -> fill(context, segment, theme.lineCore(false)));
+    owned.forEach(segment -> fill(context, segment, theme.lineCore(true)));
+  }
+
+  private static void fill(
+      final DrawContext context, final SkillTreeView.Segment segment, final int colour) {
+    context.fill(
+        segment.x(),
+        segment.y(),
+        segment.x() + segment.width(),
+        segment.y() + segment.height(),
+        colour);
   }
 
   private void drawNode(
@@ -433,6 +520,15 @@ public final class SkillScreen extends Screen {
       final TreeProgress held = progress();
       final PowerBarRow row =
           PowerBarRow.centred(layout.left() + layout.width() / 2, layout.powerBarY());
+      if (layout.overScrollbar(x, y)) {
+        if (layout.overThumb(x, y, scroll.shown())) {
+          draggingBar = true;
+          barGrab = y - layout.thumbY(scroll.shown());
+        } else {
+          scroll.to(layout.scrollForThumb(y - layout.thumbHeight() / 2.0), layout.maxScroll());
+        }
+        return true;
+      }
       final int slot = row.slotAt(x, y);
       if (slot != PowerBarRow.NONE) {
         PowerBar.layout(held, id -> skills.containsKey(id) && skills.get(id).active())
@@ -440,11 +536,11 @@ public final class SkillScreen extends Screen {
             .ifPresent(id -> drag = new PowerDrag(id, slot));
         return true;
       }
-      for (int b = 0; b < branches.size(); b++) {
+      for (int b = 0; layout.inView(y) && b < branches.size(); b++) {
         for (final Identifier id : SkillTreeView.skillsIn(branches.get(b), nodes)) {
           final Skill skill = skills.get(id);
           if (SkillLayout.contains(
-              layout.nodeX(b, branches.size(), skill.column()), layout.nodeY(skill.row()), x, y)) {
+              layout.nodeX(skill.row()), layout.nodeY(b, skill.column(), scroll.shown()), x, y)) {
             if (verdict(id, progress()) == SkillPurchase.Verdict.ALLOWED) {
               ClientPlayNetworking.send(new BuySkillPayload(id));
               client
@@ -462,7 +558,38 @@ public final class SkillScreen extends Screen {
   }
 
   @Override
+  public boolean mouseDragged(
+      final double mouseX,
+      final double mouseY,
+      final int button,
+      final double deltaX,
+      final double deltaY) {
+    if (draggingBar) {
+      scroll.jump(layout.scrollForThumb(layout.unzoom(mouseY) - barGrab), layout.maxScroll());
+      return true;
+    }
+    return super.mouseDragged(mouseX, mouseY, button, deltaX, deltaY);
+  }
+
+  @Override
+  public boolean mouseScrolled(
+      final double mouseX,
+      final double mouseY,
+      final double horizontalAmount,
+      final double verticalAmount) {
+    if (layout.scrolls()) {
+      scroll.by(-verticalAmount * SkillLayout.LANE_STEP, layout.maxScroll());
+      return true;
+    }
+    return super.mouseScrolled(mouseX, mouseY, horizontalAmount, verticalAmount);
+  }
+
+  @Override
   public boolean mouseReleased(final double mouseX, final double mouseY, final int button) {
+    if (button == 0 && draggingBar) {
+      draggingBar = false;
+      return true;
+    }
     if (button == 0 && drag != null) {
       final PowerBarRow row =
           PowerBarRow.centred(layout.left() + layout.width() / 2, layout.powerBarY());
@@ -484,6 +611,12 @@ public final class SkillScreen extends Screen {
   public boolean keyPressed(final int keyCode, final int scanCode, final int modifiers) {
     if (SkillKeys.openSkills().matchesKey(keyCode, scanCode)) {
       close();
+      return true;
+    }
+    final double step =
+        SkillScroll.forKey(keyCode, SkillLayout.LANE_STEP, layout.viewHeight(), layout.maxScroll());
+    if (step != 0.0) {
+      scroll.by(step, layout.maxScroll());
       return true;
     }
     return super.keyPressed(keyCode, scanCode, modifiers);

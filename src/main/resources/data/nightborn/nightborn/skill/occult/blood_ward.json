@@ -4,7 +4,7 @@
     "nightborn:occult/grave_fog"
   ],
   "icon": "nightborn:skills/icon/grave_fog",
-  "column": 1,
+  "column": 0,
   "row": 2,
   "stage": "nightborn:adult",
   "ranks": [

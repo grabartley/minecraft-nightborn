@@ -37,7 +37,16 @@ public final class SkillTreeView {
         .toList();
   }
 
-  public static int rows(final Map<Identifier, Node> nodes, final List<Identifier> branches) {
+  public static int lanes(final Map<Identifier, Node> nodes, final Identifier branch) {
+    return nodes.values().stream()
+            .filter(node -> node.branch().equals(branch))
+            .mapToInt(Node::column)
+            .max()
+            .orElse(0)
+        + 1;
+  }
+
+  public static int columns(final Map<Identifier, Node> nodes, final List<Identifier> branches) {
     return nodes.values().stream()
             .filter(node -> branches.contains(node.branch()))
             .mapToInt(Node::row)
@@ -57,13 +66,25 @@ public final class SkillTreeView {
     return verdict != SkillPurchase.Verdict.OWNED && verdict != SkillPurchase.Verdict.ALLOWED;
   }
 
-  public static List<Segment> elbow(
-      final int fromX, final int fromY, final int toX, final int toY, final int width) {
-    final int half = width / 2;
-    final int midY = (fromY + toY) / 2;
+  public static List<Segment> route(
+      final int fromX,
+      final int fromY,
+      final int jointX,
+      final int toX,
+      final int toY,
+      final int width) {
     return List.of(
-        new Segment(fromX - half, fromY, width, midY - fromY + half),
-        new Segment(Math.min(fromX, toX) - half, midY - half, Math.abs(toX - fromX) + width, width),
-        new Segment(toX - half, midY - half, width, toY - midY + half));
+        across(fromX, jointX, fromY, width),
+        new Segment(
+            jointX - width / 2,
+            Math.min(fromY, toY) - width / 2,
+            width,
+            Math.abs(toY - fromY) + width),
+        across(jointX, toX, toY, width));
+  }
+
+  private static Segment across(final int fromX, final int toX, final int y, final int width) {
+    return new Segment(
+        Math.min(fromX, toX) - width / 2, y - width / 2, Math.abs(toX - fromX) + width, width);
   }
 }

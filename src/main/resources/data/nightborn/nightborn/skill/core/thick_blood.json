@@ -1,7 +1,7 @@
 {
   "branch": "nightborn:core",
   "icon": "nightborn:skills/icon/thick_blood",
-  "column": 1,
+  "column": 2,
   "row": 0,
   "ranks": [
     {

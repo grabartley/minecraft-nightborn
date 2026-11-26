@@ -4,8 +4,8 @@
     "nightborn:core/blood_healing"
   ],
   "icon": "nightborn:skills/icon/deep_veins",
-  "column": 2,
-  "row": 3,
+  "column": 0,
+  "row": 2,
   "stage": "nightborn:adult",
   "ranks": [
     {

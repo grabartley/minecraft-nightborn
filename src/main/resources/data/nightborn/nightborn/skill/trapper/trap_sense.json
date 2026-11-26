@@ -4,7 +4,7 @@
     "nightborn:trapper/snare"
   ],
   "icon": "nightborn:skills/icon/trap_sense",
-  "column": 2,
+  "column": 3,
   "row": 2,
   "ranks": [
     {

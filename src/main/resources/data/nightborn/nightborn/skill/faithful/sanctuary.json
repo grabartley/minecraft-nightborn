@@ -4,8 +4,8 @@
     "nightborn:faithful/mend"
   ],
   "icon": "nightborn:skills/icon/sanctuary",
-  "column": 0,
-  "row": 3,
+  "column": 2,
+  "row": 2,
   "rank": "nightborn:hunter",
   "ranks": [
     {

@@ -4,7 +4,7 @@
     "nightborn:core/thick_blood"
   ],
   "icon": "nightborn:skills/icon/vanish",
-  "column": 1,
+  "column": 4,
   "row": 1,
   "ranks": [
     {

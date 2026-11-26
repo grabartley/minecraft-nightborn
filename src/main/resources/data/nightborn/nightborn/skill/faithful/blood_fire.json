@@ -4,7 +4,7 @@
     "nightborn:faithful/blessing"
   ],
   "icon": "nightborn:skills/icon/blood_fire",
-  "column": 1,
+  "column": 0,
   "row": 2,
   "rank": "nightborn:hunter",
   "ranks": [

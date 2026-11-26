@@ -4,7 +4,7 @@
     "nightborn:noble/noble_blood"
   ],
   "icon": "nightborn:skills/icon/noble_blood",
-  "column": 2,
+  "column": 0,
   "row": 1,
   "stage": "nightborn:adult",
   "ranks": [

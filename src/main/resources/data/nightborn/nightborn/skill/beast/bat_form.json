@@ -4,7 +4,7 @@
     "nightborn:beast/beast_blood"
   ],
   "icon": "nightborn:skills/icon/bat_form",
-  "column": 1,
+  "column": 0,
   "row": 1,
   "ranks": [
     {

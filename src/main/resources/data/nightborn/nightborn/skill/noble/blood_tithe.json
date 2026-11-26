@@ -4,8 +4,8 @@
     "nightborn:noble/blood_bond"
   ],
   "icon": "nightborn:skills/icon/blood_bond",
-  "column": 0,
-  "row": 4,
+  "column": 3,
+  "row": 3,
   "stage": "nightborn:adult",
   "ranks": [
     {

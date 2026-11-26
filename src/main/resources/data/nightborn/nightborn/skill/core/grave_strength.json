@@ -4,7 +4,7 @@
     "nightborn:core/thick_blood"
   ],
   "icon": "nightborn:skills/icon/grave_strength",
-  "column": 0,
+  "column": 2,
   "row": 1,
   "ranks": [
     {

@@ -4,8 +4,8 @@
     "nightborn:occult/summon_familiar"
   ],
   "icon": "nightborn:skills/icon/summon_familiar",
-  "column": 0,
-  "row": 3,
+  "column": 2,
+  "row": 2,
   "stage": "nightborn:elder",
   "ranks": [
     {

@@ -4,7 +4,7 @@
     "nightborn:hunter/tracking"
   ],
   "icon": "nightborn:skills/icon/stake_throw",
-  "column": 2,
+  "column": 3,
   "row": 0,
   "ranks": [
     {

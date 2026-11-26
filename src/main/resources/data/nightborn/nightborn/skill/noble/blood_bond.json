@@ -4,7 +4,7 @@
     "nightborn:noble/mesmerise"
   ],
   "icon": "nightborn:skills/icon/blood_bond",
-  "column": 0,
+  "column": 3,
   "row": 2,
   "ranks": [
     {

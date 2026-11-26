@@ -4,7 +4,7 @@
     "nightborn:hunter/bite_ward"
   ],
   "icon": "nightborn:skills/icon/vampire_slayer",
-  "column": 1,
+  "column": 0,
   "row": 1,
   "ranks": [
     {

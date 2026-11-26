@@ -56,13 +56,24 @@ class SkillTreeViewTest {
     assertEquals(List.of(id("core/a"), id("core/b")), SkillTreeView.skillsIn(id("core"), skills));
   }
 
-  @ParameterizedTest(name = "deepest row {0} -> {1} rows")
-  @CsvSource({"0, 1", "1, 2", "5, 6"})
-  @DisplayName("the screen is as tall as the deepest skill in the shown branches")
-  void rows(final int deepest, final int rows) {
+  @ParameterizedTest(name = "deepest lane {0} -> {1} lanes")
+  @CsvSource({"0, 1", "2, 3", "4, 5"})
+  @DisplayName("a band is as tall as its lowest lane, whatever the other branches hold")
+  void lanes(final int deepest, final int lanes) {
     final Map<Identifier, SkillTreeView.Node> skills =
-        Map.of(id("core/a"), node("core", deepest), id("tracking/a"), node("tracking", 5));
-    assertEquals(rows, SkillTreeView.rows(skills, List.of(id("core"))));
+        Map.of(
+            id("core/a"), new SkillTreeView.Node(id("core"), deepest, 0),
+            id("noble/a"), new SkillTreeView.Node(id("noble"), 4, 0));
+    assertEquals(lanes, SkillTreeView.lanes(skills, id("core")));
+  }
+
+  @ParameterizedTest(name = "furthest column {0} -> {1} columns")
+  @CsvSource({"0, 1", "3, 4", "6, 7"})
+  @DisplayName("the trees are as wide as the furthest skill in the shown branches")
+  void columns(final int furthest, final int columns) {
+    final Map<Identifier, SkillTreeView.Node> skills =
+        Map.of(id("core/a"), node("core", furthest), id("tracking/a"), node("tracking", 6));
+    assertEquals(columns, SkillTreeView.columns(skills, List.of(id("core"))));
   }
 
   @ParameterizedTest(name = "{0}")
@@ -86,22 +97,55 @@ class SkillTreeViewTest {
         SkillTreeView.look(verdict, true));
   }
 
-  @ParameterizedTest(name = "from {0},{1} to {2},{3}")
-  @CsvSource({"50, 40, 20, 70", "50, 40, 80, 70", "50, 40, 50, 70"})
-  @DisplayName("a requirement line runs down, across and down, joined with no gaps")
-  void elbow(final int fromX, final int fromY, final int toX, final int toY) {
-    final List<SkillTreeView.Segment> parts = SkillTreeView.elbow(fromX, fromY, toX, toY, 2);
-    final SkillTreeView.Segment down = parts.get(0);
-    final SkillTreeView.Segment across = parts.get(1);
-    final SkillTreeView.Segment last = parts.get(2);
-    assertEquals(fromY, down.y(), "starts under the parent");
-    assertEquals(toY, last.y() + last.height(), "ends on top of the child");
-    assertTrue(down.y() + down.height() >= across.y(), "down meets across");
-    assertTrue(across.y() + across.height() >= last.y(), "across meets the last leg");
-    assertTrue(
-        across.x() <= Math.min(fromX, toX) - 1
-            && across.x() + across.width() >= Math.max(fromX, toX) + 1);
-    assertEquals(fromX - 1, down.x());
-    assertEquals(toX - 1, last.x());
+  @ParameterizedTest(name = "from {0},{1} to {3},{4} turning at {2}, {5} px")
+  @CsvSource({
+    "22, 11, 30, 38, 39, 3",
+    "22, 39, 30, 38, 11, 3",
+    "22, 11, 30, 38, 11, 3",
+    "22, 11, 106, 114, 11, 1",
+    "60, 95, 68, 76, 39, 1"
+  })
+  @DisplayName("a line runs across, turns in the gap before the skill, then runs across into it")
+  void route(
+      final int fromX,
+      final int fromY,
+      final int jointX,
+      final int toX,
+      final int toY,
+      final int width) {
+    final List<SkillTreeView.Segment> parts =
+        SkillTreeView.route(fromX, fromY, jointX, toX, toY, width);
+    final SkillTreeView.Segment out = parts.get(0);
+    final SkillTreeView.Segment turn = parts.get(1);
+    final SkillTreeView.Segment in = parts.get(2);
+    final int half = width / 2;
+    assertEquals(width, out.height(), "leaves as one even line");
+    assertEquals(width, turn.width());
+    assertEquals(width, in.height());
+    assertEquals(fromX - half, out.x(), "starts at the parent's edge");
+    assertEquals(fromY - half, out.y(), "on the parent's lane");
+    assertEquals(toX + width - 1 - half, in.x() + in.width() - 1, "ends at the child");
+    assertEquals(toY - half, in.y(), "on the child's lane");
+    assertEquals(jointX - half, turn.x(), "turns in the gap");
+    assertEquals(out.x() + out.width(), turn.x() + turn.width(), "the corner is square");
+    assertEquals(Math.min(fromY, toY) - half, turn.y(), "the turn reaches the higher lane");
+    assertEquals(Math.max(fromY, toY) + width - half, turn.y() + turn.height(), "and the lower");
+  }
+
+  @Test
+  @DisplayName("a line's core sits exactly inside its edge, with one pixel of edge on each side")
+  void coreInsideEdge() {
+    final List<SkillTreeView.Segment> edge = SkillTreeView.route(22, 11, 30, 38, 67, 3);
+    final List<SkillTreeView.Segment> core = SkillTreeView.route(22, 11, 30, 38, 67, 1);
+    for (int part = 0; part < edge.size(); part++) {
+      final SkillTreeView.Segment e = edge.get(part);
+      final SkillTreeView.Segment c = core.get(part);
+      assertTrue(c.x() >= e.x() && c.y() >= e.y());
+      assertTrue(
+          c.x() + c.width() <= e.x() + e.width() && c.y() + c.height() <= e.y() + e.height());
+      assertEquals(e.width() * e.height() > 0, c.width() * c.height() > 0);
+    }
+    assertEquals(edge.get(1).x() + 1, core.get(1).x(), "one pixel of edge left of the turn");
+    assertEquals(edge.get(0).y() + 1, core.get(0).y(), "one pixel of edge above the line");
   }
 }
