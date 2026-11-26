@@ -247,7 +247,7 @@ class SkillTest {
         "unyielding | 2,2 | stakewright | hunter | false",
         "old_hand | 3 | bind_wounds | master | false"
       })
-  @DisplayName("the hunter core holds its nine locked skills with their costs, needs and ranks")
+  @DisplayName("the hunter core holds its nine skills with their costs, needs and gates")
   void hunterCoreSkills(
       final String path,
       final String costs,

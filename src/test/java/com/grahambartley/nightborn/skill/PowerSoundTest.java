@@ -41,18 +41,26 @@ class PowerSoundTest {
         "{\"id\":\"minecraft:block.bell.use\",\"pitch_spread\":0.9}"
       })
   @DisplayName(
-      "a power's sound is never louder than full volume or pitched past what the game plays")
+      "a power's sound is never louder than full volume, and its pitch and spread stay in range")
   void refusesOutOfRange(final String json) {
     assertTrue(
         PowerSound.CODEC.parse(JsonOps.INSTANCE, JsonParser.parseString(json)).isError(), json);
   }
 
-  @ParameterizedTest(name = "roll {0} gives pitch {1}")
-  @CsvSource({"0.0, 1.1", "0.5, 1.2", "1.0, 1.3", "-1.0, 1.1", "2.0, 1.3"})
-  @DisplayName("each use shifts the pitch within its spread, never beyond it")
-  void shiftsPitch(final float roll, final float expected) {
+  @ParameterizedTest(name = "pitch {0} spread {1} roll {2} gives {3}")
+  @CsvSource({
+    "1.2, 0.1, 0.0, 1.1",
+    "1.2, 0.1, 0.5, 1.2",
+    "1.2, 0.1, 1.0, 1.3",
+    "1.2, 0.1, -1.0, 1.1",
+    "1.2, 0.1, 2.0, 1.3",
+    "2.0, 0.5, 1.0, 2.0",
+    "0.5, 0.5, 0.0, 0.5"
+  })
+  @DisplayName("each use shifts the pitch within its spread, and never past what the game plays")
+  void shiftsPitch(final float pitch, final float spread, final float roll, final float expected) {
     final PowerSound sound =
-        new PowerSound(Identifier.ofVanilla("block.bell.use"), 1.0F, 1.2F, 0.1F);
+        new PowerSound(Identifier.ofVanilla("block.bell.use"), 1.0F, pitch, spread);
     assertEquals(expected, sound.pitchFor(roll), 1.0E-6F);
   }
 }
