@@ -2,6 +2,7 @@ package com.grahambartley.nightborn.mob;
 
 import com.grahambartley.nightborn.Nightborn;
 import com.grahambartley.nightborn.boss.Arena;
+import com.grahambartley.nightborn.boss.ArenaFighter;
 import com.grahambartley.nightborn.boss.BossBars;
 import com.grahambartley.nightborn.boss.BossFight;
 import com.grahambartley.nightborn.boss.BossFightPlan;
@@ -68,7 +69,7 @@ import software.bernie.geckolib.animation.AnimationController;
 import software.bernie.geckolib.animation.PlayState;
 import software.bernie.geckolib.animation.RawAnimation;
 
-public class EldestEntity extends BossVampireEntity implements BlazingEyes, Fought {
+public class EldestEntity extends BossVampireEntity implements ArenaFighter, BlazingEyes, Fought {
 
   public static final Identifier STAGE = Identifier.of(Nightborn.MOD_ID, "eldest");
   public static final Identifier FIGHT = Identifier.of(Nightborn.MOD_ID, "eldest");
@@ -163,7 +164,8 @@ public class EldestEntity extends BossVampireEntity implements BlazingEyes, Foug
     fight.claim(arena);
   }
 
-  public BossFight fight() {
+  @Override
+  public BossFight bossFight() {
     return fight;
   }
 
@@ -243,12 +245,6 @@ public class EldestEntity extends BossVampireEntity implements BlazingEyes, Foug
     final boolean finishing = NightbornDamage.killsVampires(source);
     super.applyDamage(source, fight.cap(plan(), finishing, amount));
     fight.hold(this, plan(), finishing);
-  }
-
-  @Override
-  public void onRemoved() {
-    fight.end(this);
-    super.onRemoved();
   }
 
   private void leaveRoutine() {

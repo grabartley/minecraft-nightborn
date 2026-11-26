@@ -3,12 +3,16 @@ package com.grahambartley.nightborn.client.boss;
 import com.grahambartley.nightborn.boss.Arena;
 import com.grahambartley.nightborn.boss.ArenaWall;
 import com.grahambartley.nightborn.network.BossArenaPayload;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.sound.MusicSound;
 import net.minecraft.sound.SoundEvent;
+import net.minecraft.util.Identifier;
 
 public final class BossArenaView {
 
@@ -19,6 +23,7 @@ public final class BossArenaView {
   private static Optional<MusicSound> music = Optional.empty();
   private static boolean fighting;
   private static Optional<ArenaWall> wall = Optional.empty();
+  private static final Set<Identifier> BOSS_TRACKS = new HashSet<>();
 
   private BossArenaView() {}
 
@@ -28,10 +33,11 @@ public final class BossArenaView {
     ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> forget());
   }
 
-  private static void show(final BossArenaPayload payload) {
+  static void show(final BossArenaPayload payload) {
     if (!applies(boss, payload.boss(), payload.arena().isPresent())) {
       return;
     }
+    payload.music().ifPresent(BOSS_TRACKS::add);
     boss = payload.arena().isPresent() ? payload.boss() : NONE;
     arena = payload.arena();
     music = music(payload);
@@ -39,12 +45,13 @@ public final class BossArenaView {
     wall = payload.arena().isPresent() ? payload.wall() : Optional.empty();
   }
 
-  private static void forget() {
+  static void forget() {
     boss = NONE;
     arena = Optional.empty();
     music = Optional.empty();
     fighting = false;
     wall = Optional.empty();
+    BOSS_TRACKS.clear();
   }
 
   static boolean applies(final int shown, final int sender, final boolean entering) {
@@ -72,5 +79,17 @@ public final class BossArenaView {
 
   public static Optional<MusicSound> music() {
     return music;
+  }
+
+  public static Optional<Identifier> track() {
+    return track(music);
+  }
+
+  static Optional<Identifier> track(final Optional<MusicSound> held) {
+    return held.map(sound -> sound.getSound().value().getId());
+  }
+
+  public static Set<Identifier> bossTracks() {
+    return Collections.unmodifiableSet(BOSS_TRACKS);
   }
 }

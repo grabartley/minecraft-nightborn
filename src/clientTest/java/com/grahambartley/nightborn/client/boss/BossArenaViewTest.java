@@ -1,6 +1,7 @@
 package com.grahambartley.nightborn.client.boss;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.grahambartley.nightborn.boss.Arena;
 import com.grahambartley.nightborn.network.BossArenaPayload;
@@ -57,5 +58,38 @@ class BossArenaViewTest {
   @DisplayName("one boss leaving never clears the arena another boss is showing")
   void applies(final int shown, final int sender, final boolean entering, final boolean applies) {
     assertEquals(applies, BossArenaView.applies(shown, sender, entering));
+  }
+
+  @ParameterizedTest(name = "in the arena {0}, fighting {1}: holds the track {2}")
+  @CsvSource({"true, true, true", "true, false, false", "false, true, false"})
+  @DisplayName("the track the view holds is the boss music's own sound, or nothing")
+  void track(final boolean inside, final boolean fighting, final boolean held) {
+    final Optional<Identifier> track =
+        BossArenaView.track(
+            BossArenaView.music(
+                new BossArenaPayload(
+                    3,
+                    inside ? Optional.of(new Arena(BlockPos.ORIGIN, 16)) : Optional.empty(),
+                    fighting,
+                    Optional.of(TRACK),
+                    Optional.empty())));
+    assertEquals(held ? Optional.of(TRACK) : Optional.empty(), track);
+  }
+
+  @ParameterizedTest(name = "in the arena {0}, fighting {1}, names a track {2}")
+  @CsvSource({"true, true, true", "true, false, true", "false, false, true", "true, true, false"})
+  @DisplayName("a track named by any arena message stays known as boss music until disconnect")
+  void bossTracks(final boolean inside, final boolean fighting, final boolean named) {
+    BossArenaView.forget();
+    BossArenaView.show(
+        new BossArenaPayload(
+            3,
+            inside ? Optional.of(new Arena(BlockPos.ORIGIN, 16)) : Optional.empty(),
+            fighting,
+            named ? Optional.of(TRACK) : Optional.empty(),
+            Optional.empty()));
+    assertEquals(named, BossArenaView.bossTracks().contains(TRACK));
+    BossArenaView.forget();
+    assertTrue(BossArenaView.bossTracks().isEmpty(), "a disconnect forgets every track");
   }
 }

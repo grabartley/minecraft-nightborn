@@ -22,6 +22,7 @@ import com.grahambartley.nightborn.vampire.NightbornDamage;
 import java.util.List;
 import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
 import net.minecraft.entity.SpawnReason;
+import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.test.GameTest;
@@ -299,6 +300,54 @@ public class InquisitorFightGameTest implements FabricGameTest {
           context.assertTrue(
               record.man().filter("Ezra"::equals).isPresent(), "the same man will come");
           TestPlayers.finish(context, vampire);
+        });
+  }
+
+  @GameTest(
+      templateName = ARENA,
+      tickLimit =
+          TestPlayers.READY + EldestFightGameTest.CALL_TICKS + EldestFightGameTest.END_TICKS)
+  public void aDrainedInquisitorTakesTheHuntersHeCalledAndHisBarWithHim(final TestContext context) {
+    final GrandInquisitorEntity man = inArena(context);
+    final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(4, 2, 3));
+    context.runAtTick(
+        TestPlayers.READY,
+        () -> {
+          man.hunt(vampire, false, List.of());
+          hunted(vampire, man);
+          man.setTarget(vampire);
+          man.bossFight().counter(man, List.of(Identifier.of("nightborn", "inquisitor_call")));
+        });
+    for (int tick = 1; tick <= EldestFightGameTest.CALL_TICKS; tick++) {
+      context.runAtTick(TestPlayers.READY + tick, man::tickFight);
+    }
+    context.runAtTick(
+        TestPlayers.READY + EldestFightGameTest.CALL_TICKS + 1,
+        () -> {
+          final List<MobEntity> called = EldestFightGameTest.keepers(context);
+          called.forEach(keeper -> keeper.setAiDisabled(true));
+          context.assertTrue(!called.isEmpty(), "he calls his hunters");
+          context.assertTrue(
+              man.presence().bar().getPlayers().contains(vampire), "the vampire sees his bar");
+          man.timeUntilRegen = 0;
+          downed(context, man);
+          for (int sip = 0;
+              sip < ServerConfigService.current().inquisitor().drainSeconds() && man.isAlive();
+              sip++) {
+            man.timeUntilRegen = 0;
+            man.damage(NightbornDamage.bite(context.getWorld(), vampire), 2.0F);
+          }
+          context.assertTrue(man.isDead(), "a held bite drains him");
+        });
+    context.runAtEveryTick(
+        () -> {
+          if (man.isRemoved()) {
+            context.assertTrue(
+                EldestFightGameTest.keepers(context).isEmpty(),
+                "the hunters he called go with him");
+            context.assertTrue(man.presence().bar().getPlayers().isEmpty(), "and so does his bar");
+            TestPlayers.finish(context, vampire);
+          }
         });
   }
 

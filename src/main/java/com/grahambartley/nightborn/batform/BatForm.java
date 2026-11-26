@@ -37,7 +37,10 @@ import net.minecraft.registry.Registry;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.Box;
+import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.shape.VoxelShape;
 
 public final class BatForm {
 
@@ -108,12 +111,18 @@ public final class BatForm {
     if (!isBat(vampire)) {
       return true;
     }
-    final Vec3d feet = standingFeet(vampire);
-    if (!vampire.getWorld().isSpaceEmpty(vampire, standingDimensions(vampire).getBoxAt(feet))) {
+    final EntityDimensions standing = standingDimensions(vampire);
+    final Optional<Vec3d> room =
+        standingFeet(vampire, standing)
+            .filter(at -> vampire.getWorld().isSpaceEmpty(vampire, standing.getBoxAt(at)));
+    if (room.isEmpty()) {
       return false;
     }
+    final Vec3d feet = room.get();
     if (BatHang.isHanging(vampire)) {
       BatHang.release(vampire);
+    }
+    if (!feet.equals(vampire.getPos())) {
       vampire.requestTeleport(feet.x, feet.y, feet.z);
     }
     vampire.removeAttached(TYPE);
@@ -184,10 +193,22 @@ public final class BatForm {
         : PlayerEntity.STANDING_DIMENSIONS.scaled(vampire.getScale());
   }
 
-  private static Vec3d standingFeet(final LivingEntity vampire) {
-    return BatHang.anchor(vampire)
-        .map(anchor -> BatHangRules.standingFeet(anchor, standingDimensions(vampire).height()))
-        .orElse(vampire.getPos());
+  private static Optional<Vec3d> standingFeet(
+      final LivingEntity vampire, final EntityDimensions standing) {
+    final Vec3d bat = vampire.getPos();
+    final double batHeight = vampire.getHeight();
+    final Box reach = standing.getBoxAt(bat).stretch(0.0, -(standing.height() - batHeight), 0.0);
+    double ceiling = Double.POSITIVE_INFINITY;
+    double floor = Double.NEGATIVE_INFINITY;
+    for (final VoxelShape shape : vampire.getWorld().getBlockCollisions(vampire, reach)) {
+      if (shape.getMin(Direction.Axis.Y) >= bat.y + batHeight - BatTurnBack.EPSILON) {
+        ceiling = Math.min(ceiling, shape.getMin(Direction.Axis.Y));
+      } else if (shape.getMax(Direction.Axis.Y) <= bat.y + BatTurnBack.EPSILON) {
+        floor = Math.max(floor, shape.getMax(Direction.Axis.Y));
+      }
+    }
+    return BatTurnBack.feet(
+        bat, BatHang.anchor(vampire), batHeight, standing.height(), ceiling, floor);
   }
 
   private static void afterDamage(

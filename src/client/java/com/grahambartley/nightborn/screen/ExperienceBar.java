@@ -3,9 +3,10 @@ package com.grahambartley.nightborn.screen;
 public record ExperienceBar(int left, int top, int width) {
 
   public static final int MIN_WIDTH = 90;
-  public static final int HEIGHT = 9;
-  public static final int ROW_OFFSET = 10;
+  public static final int HEIGHT = 13;
+  public static final int ROW_OFFSET = 11;
   static final int BORDER = 2;
+  static final int DIGIT_HEIGHT = 7;
 
   public static ExperienceBar under(final SkillPointsRow row, final int rowTop, final int width) {
     return new ExperienceBar(row.detailX(), rowTop + ROW_OFFSET, width);
@@ -25,6 +26,10 @@ public record ExperienceBar(int left, int top, int width) {
 
   public int bottom() {
     return top + HEIGHT;
+  }
+
+  public int textTop() {
+    return top + (HEIGHT - DIGIT_HEIGHT) / 2;
   }
 
   public int innerLeft() {

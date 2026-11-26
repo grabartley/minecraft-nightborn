@@ -369,6 +369,23 @@ public class BatFormGameTest implements FabricGameTest {
   }
 
   @GameTest(templateName = YARD, batchId = NIGHT, skyAccess = true, tickLimit = 20)
+  public void aBatJustUnderACeilingTurnsBackLowerInATallRoom(final TestContext context) {
+    final ServerPlayerEntity vampire = beast(context, BAT_FORM);
+    Powers.cast(vampire, BAT_FORM);
+    final BlockPos ceiling = STAND.up(5);
+    context.setBlockState(ceiling, Blocks.STONE);
+    final Vec3d aloft = context.getAbsolute(new Vec3d(4.5, 6.0, 4.5));
+    vampire.refreshPositionAndAngles(aloft.x, aloft.y, aloft.z, 0.0F, 0.0F);
+    context.assertEquals(Powers.cast(vampire, BAT_FORM), PowerUse.Verdict.READY, "turns back");
+    context.assertFalse(BatForm.isBat(vampire), "the vampire stands again");
+    final double headroom = context.getAbsolutePos(ceiling).getY() - vampire.getBoundingBox().maxY;
+    context.assertTrue(
+        headroom >= 0.0 && headroom < 0.01, "it stands just under the ceiling: " + headroom);
+    context.setBlockState(ceiling, Blocks.AIR);
+    TestPlayers.finish(context, vampire);
+  }
+
+  @GameTest(templateName = YARD, batchId = NIGHT, skyAccess = true, tickLimit = 20)
   public void aBatMobTurningBackInTheAirFallsAndTakesFallDamage(final TestContext context) {
     final VampireEntity vampire = aloftBat(context);
     context.assertEquals(Powers.cast(vampire, BAT_FORM), PowerUse.Verdict.READY, "turns back");

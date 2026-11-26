@@ -14,6 +14,7 @@ public final class AgeLine {
   public static final int LINE_GAP = 2;
   static final int PANEL_GAP = 6;
   static final int EDGE = 4;
+  static final int MAX_LINES = 3;
 
   private AgeLine() {}
 
@@ -62,9 +63,11 @@ public final class AgeLine {
     return lines;
   }
 
-  public static int top(
-      final int panelBottom, final int screenHeight, final int lines, final int fontHeight) {
-    final int block = lines * (fontHeight + LINE_GAP);
-    return Math.max(0, Math.min(panelBottom + PANEL_GAP, screenHeight - block - EDGE));
+  public static int top(final int panelBottom) {
+    return panelBottom + PANEL_GAP;
+  }
+
+  public static int footer(final int fontHeight) {
+    return PANEL_GAP + MAX_LINES * (fontHeight + LINE_GAP) + EDGE;
   }
 }

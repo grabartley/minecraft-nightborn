@@ -39,7 +39,6 @@ public final class SkillScreen extends Screen {
 
   static final int LINE_WIDTH = 2;
   static final float DIM = 0.45F;
-  static final float RANK_SCALE = 0.5F;
   static final float DRAG_Z = 300.0F;
 
   private final Map<Identifier, Skill> skills = new HashMap<>();
@@ -80,7 +79,12 @@ public final class SkillScreen extends Screen {
                 ExperienceBar.MIN_WIDTH));
     layout =
         SkillLayout.of(
-            width, height, branches.size(), SkillTreeView.rows(nodes, branches), widest.width());
+            width,
+            height,
+            branches.size(),
+            SkillTreeView.rows(nodes, branches),
+            widest.width(),
+            shownTree == SkillTree.VAMPIRE ? AgeLine.footer(textRenderer.fontHeight) : 0);
   }
 
   private SkillTree tree() {
@@ -98,6 +102,22 @@ public final class SkillScreen extends Screen {
       clearAndInit();
     }
     super.render(context, mouseX, mouseY, delta);
+    final int x = (int) layout.unzoom(mouseX);
+    final int y = (int) layout.unzoom(mouseY);
+    context.getMatrices().push();
+    context.getMatrices().scale((float) layout.zoom(), (float) layout.zoom(), 1.0F);
+    final List<Text> tooltip = drawTree(context, x, y);
+    if (drag != null) {
+      drawDragged(context, x, y);
+    }
+    context.getMatrices().pop();
+    if (drag == null && tooltip != null) {
+      ThemedTooltip.draw(context, textRenderer, theme, tooltip, mouseX, mouseY);
+    }
+  }
+
+  @Nullable
+  private List<Text> drawTree(final DrawContext context, final int mouseX, final int mouseY) {
     context.drawGuiTexture(
         theme.panel(), layout.left(), layout.top(), layout.width(), layout.height());
     final TreeProgress progress = progress();
@@ -148,11 +168,7 @@ public final class SkillScreen extends Screen {
     if (barTip != null) {
       tooltip = barTip;
     }
-    if (drag != null) {
-      drawDragged(context, mouseX, mouseY);
-    } else if (tooltip != null) {
-      ThemedTooltip.draw(context, textRenderer, theme, tooltip, mouseX, mouseY);
-    }
+    return tooltip;
   }
 
   private void drawAge(final DrawContext context, final int centre) {
@@ -162,8 +178,7 @@ public final class SkillScreen extends Screen {
         AgeLine.lines(
             ladder.rung(progress.rank()).map(rung -> rung.age().name()),
             AgeLine.ahead(progress, ladder, SyncedServerConfig.get().age().needs()));
-    final int top =
-        AgeLine.top(layout.top() + layout.height(), height, lines.size(), textRenderer.fontHeight);
+    final int top = AgeLine.top(layout.bottom());
     for (int line = 0; line < lines.size(); line++) {
       context.drawCenteredTextWithShadow(
           textRenderer,
@@ -242,7 +257,7 @@ public final class SkillScreen extends Screen {
         Text.translatable(
             "nightborn.skills.experience", ExperienceBar.shown(progress.experience()), cost),
         bar.centre(),
-        bar.top() + 1,
+        bar.textTop(),
         theme.text());
     return bar.contains(mouseX, mouseY)
         ? List.of(Text.translatable("nightborn.skills.experience.tooltip"))
@@ -284,8 +299,8 @@ public final class SkillScreen extends Screen {
           PowerSlotView.keyLabel(
               SkillKeys.power(slot).getBoundKeyLocalizedText().getString(),
               SkillKeys.power(slot).isUnbound()),
-          x + inset - 1,
-          row.top() + inset - 1,
+          CornerText.leftX(x, inset),
+          CornerText.topY(row.top(), inset),
           theme.text());
       if (slot == over) {
         tooltip =
@@ -319,7 +334,7 @@ public final class SkillScreen extends Screen {
       final DrawContext context, final String text, final int x, final int y, final int colour) {
     context.getMatrices().push();
     context.getMatrices().translate(x, y, 0.0F);
-    context.getMatrices().scale(RANK_SCALE, RANK_SCALE, 1.0F);
+    context.getMatrices().scale(CornerText.SCALE, CornerText.SCALE, 1.0F);
     context.drawTextWithShadow(textRenderer, text, 0, 0, colour);
     context.getMatrices().pop();
   }
@@ -389,11 +404,12 @@ public final class SkillScreen extends Screen {
         skill.icon(), x + inset, y + inset, PowerSlotView.ICON, PowerSlotView.ICON);
     context.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
     if (skill.maxRank() > 1) {
+      final String label = rank + "/" + skill.maxRank();
       drawSmall(
           context,
-          rank + "/" + skill.maxRank(),
-          x + inset,
-          y + SkillLayout.NODE - inset - 4,
+          label,
+          CornerText.rightX(x, SkillLayout.NODE, inset, textRenderer.getWidth(label)),
+          CornerText.bottomY(y, SkillLayout.NODE, inset),
           rank > 0 ? theme.title() : theme.text());
     }
   }
@@ -411,11 +427,13 @@ public final class SkillScreen extends Screen {
 
   @Override
   public boolean mouseClicked(final double mouseX, final double mouseY, final int button) {
+    final double x = layout.unzoom(mouseX);
+    final double y = layout.unzoom(mouseY);
     if (button == 0) {
       final TreeProgress held = progress();
       final PowerBarRow row =
           PowerBarRow.centred(layout.left() + layout.width() / 2, layout.powerBarY());
-      final int slot = row.slotAt(mouseX, mouseY);
+      final int slot = row.slotAt(x, y);
       if (slot != PowerBarRow.NONE) {
         PowerBar.layout(held, id -> skills.containsKey(id) && skills.get(id).active())
             .at(slot)
@@ -426,10 +444,7 @@ public final class SkillScreen extends Screen {
         for (final Identifier id : SkillTreeView.skillsIn(branches.get(b), nodes)) {
           final Skill skill = skills.get(id);
           if (SkillLayout.contains(
-              layout.nodeX(b, branches.size(), skill.column()),
-              layout.nodeY(skill.row()),
-              mouseX,
-              mouseY)) {
+              layout.nodeX(b, branches.size(), skill.column()), layout.nodeY(skill.row()), x, y)) {
             if (verdict(id, progress()) == SkillPurchase.Verdict.ALLOWED) {
               ClientPlayNetworking.send(new BuySkillPayload(id));
               client
@@ -451,7 +466,7 @@ public final class SkillScreen extends Screen {
     if (button == 0 && drag != null) {
       final PowerBarRow row =
           PowerBarRow.centred(layout.left() + layout.width() / 2, layout.powerBarY());
-      drag.drop(row.slotAt(mouseX, mouseY))
+      drag.drop(row.slotAt(layout.unzoom(mouseX), layout.unzoom(mouseY)))
           .ifPresent(
               payload -> {
                 ClientPlayNetworking.send(payload);
