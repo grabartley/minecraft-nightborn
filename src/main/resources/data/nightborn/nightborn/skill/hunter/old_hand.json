@@ -1,0 +1,22 @@
+{
+  "branch": "nightborn:hunter",
+  "requires": [
+    "nightborn:hunter/bind_wounds"
+  ],
+  "icon": "nightborn:skills/icon/old_hand",
+  "column": 1,
+  "row": 3,
+  "rank": "nightborn:master",
+  "ranks": [
+    {
+      "cost": 3,
+      "attributes": [
+        {
+          "attribute": "nightborn:power_cooldown",
+          "amount": -0.1,
+          "operation": "add_multiplied_total"
+        }
+      ]
+    }
+  ]
+}

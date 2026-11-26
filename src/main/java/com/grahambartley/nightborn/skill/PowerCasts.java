@@ -101,10 +101,10 @@ final class PowerCasts {
                     .playSound(
                         null,
                         caster.getBlockPos(),
-                        SoundEvent.of(sound),
+                        SoundEvent.of(sound.id()),
                         caster.getSoundCategory(),
-                        1.0F,
-                        1.0F));
+                        sound.volume(),
+                        sound.pitchFor(caster.getRandom().nextFloat())));
   }
 
   private static void moves(

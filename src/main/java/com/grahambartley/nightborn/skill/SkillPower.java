@@ -30,13 +30,12 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import java.util.List;
 import java.util.Optional;
 import net.minecraft.entity.effect.StatusEffectInstance;
-import net.minecraft.util.Identifier;
 
 public record SkillPower(
     int blood,
     int cooldownTicks,
     List<StatusEffectInstance> effects,
-    Optional<Identifier> sound,
+    Optional<PowerSound> sound,
     PowerMoves moves,
     PowerMinds minds,
     PowerCalls calls,
@@ -60,7 +59,7 @@ public record SkillPower(
                               .listOf()
                               .optionalFieldOf("effects", List.of())
                               .forGetter(SkillPower::effects),
-                          Identifier.CODEC.optionalFieldOf("sound").forGetter(SkillPower::sound),
+                          PowerSound.CODEC.optionalFieldOf("sound").forGetter(SkillPower::sound),
                           PowerMoves.CODEC.forGetter(SkillPower::moves),
                           PowerMinds.CODEC.forGetter(SkillPower::minds),
                           PowerCalls.CODEC.forGetter(SkillPower::calls),

@@ -1,0 +1,41 @@
+{
+  "branch": "nightborn:hunter",
+  "requires": [
+    "nightborn:hunter/weathered"
+  ],
+  "icon": "nightborn:skills/icon/stakewright",
+  "column": 0,
+  "row": 2,
+  "ranks": [
+    {
+      "cost": 1,
+      "attributes": [
+        {
+          "attribute": "nightborn:stake_damage",
+          "amount": 0.1,
+          "operation": "add_value"
+        }
+      ]
+    },
+    {
+      "cost": 2,
+      "attributes": [
+        {
+          "attribute": "nightborn:stake_damage",
+          "amount": 0.1,
+          "operation": "add_value"
+        }
+      ]
+    },
+    {
+      "cost": 2,
+      "attributes": [
+        {
+          "attribute": "nightborn:stake_damage",
+          "amount": 0.1,
+          "operation": "add_value"
+        }
+      ]
+    }
+  ]
+}

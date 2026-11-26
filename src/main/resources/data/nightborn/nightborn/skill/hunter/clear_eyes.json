@@ -1,0 +1,31 @@
+{
+  "branch": "nightborn:hunter",
+  "requires": [
+    "nightborn:hunter/tracking"
+  ],
+  "icon": "nightborn:skills/icon/clear_eyes",
+  "column": 2,
+  "row": 1,
+  "ranks": [
+    {
+      "cost": 1,
+      "attributes": [
+        {
+          "attribute": "nightborn:gloom_resistance",
+          "amount": 0.25,
+          "operation": "add_value"
+        }
+      ]
+    },
+    {
+      "cost": 2,
+      "attributes": [
+        {
+          "attribute": "nightborn:gloom_resistance",
+          "amount": 0.25,
+          "operation": "add_value"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,37 @@
+{
+  "branch": "nightborn:hunter",
+  "requires": [
+    "nightborn:hunter/tracking"
+  ],
+  "icon": "nightborn:skills/icon/second_wind",
+  "column": 1,
+  "row": 1,
+  "ranks": [
+    {
+      "cost": 2
+    }
+  ],
+  "power": {
+    "blood": 0,
+    "cooldown_ticks": 900,
+    "effects": [
+      {
+        "id": "minecraft:speed",
+        "amplifier": 0,
+        "duration": 160,
+        "show_icon": true
+      },
+      {
+        "id": "minecraft:resistance",
+        "amplifier": 0,
+        "duration": 160,
+        "show_icon": true
+      }
+    ],
+    "sound": {
+      "id": "minecraft:entity.horse.breathe",
+      "volume": 0.6,
+      "pitch": 1.3
+    }
+  }
+}
