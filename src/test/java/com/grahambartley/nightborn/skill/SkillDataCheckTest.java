@@ -52,6 +52,12 @@ class SkillDataCheckTest {
             Map.of(id("core/a"), skill("core", 0, 0, "core/ghost")),
             List.of("nightborn:core/a needs unknown skill nightborn:core/ghost")),
         Arguments.of(
+            "an unknown requirement on a skill further right",
+            Map.of(
+                id("core/a"), skill("core", 0, 0),
+                id("core/b"), skill("core", 0, 1, "core/a", "core/ghost")),
+            List.of("nightborn:core/b needs unknown skill nightborn:core/ghost")),
+        Arguments.of(
             "a skill needing itself",
             Map.of(id("core/a"), skill("core", 0, 0, "core/a")),
             List.of("nightborn:core/a needs itself")),

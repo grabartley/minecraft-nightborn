@@ -31,7 +31,8 @@ public final class SkillDataCheck {
     final List<String> problems = new ArrayList<>();
     final Map<String, Identifier> places = new HashMap<>();
     final List<Link> links = new ArrayList<>();
-    for (final Map.Entry<Identifier, Skill> entry : new TreeMap<>(skills).entrySet()) {
+    final Map<Identifier, Skill> sorted = new TreeMap<>(skills);
+    for (final Map.Entry<Identifier, Skill> entry : sorted.entrySet()) {
       final Identifier id = entry.getKey();
       final Skill skill = entry.getValue();
       final SkillBranch branch = branches.get(skill.branch());
@@ -40,22 +41,26 @@ public final class SkillDataCheck {
         continue;
       }
       int deepest = -1;
+      boolean resolved = true;
       for (final Identifier need : skill.requires()) {
         final Skill required = skills.get(need);
         if (need.equals(id)) {
           problems.add(id + " needs itself");
+          resolved = false;
         } else if (required == null) {
           problems.add(id + " needs unknown skill " + need);
+          resolved = false;
         } else if (branches.containsKey(required.branch())
             && branches.get(required.branch()).tree() != branch.tree()) {
           problems.add(id + " needs " + need + " from another tree");
+          resolved = false;
         } else if (required.branch().equals(skill.branch())) {
           deepest = Math.max(deepest, required.row());
           links.addAll(linksBetween(need, required, id, skill));
-          problems.addAll(blockedLane(need, required, id, skill, skills));
+          problems.addAll(blockedLane(need, required, id, skill, sorted));
         }
       }
-      if (skill.row() != deepest + 1) {
+      if (resolved && skill.row() != deepest + 1) {
         problems.add(
             id
                 + " is at row "
@@ -84,7 +89,7 @@ public final class SkillDataCheck {
         }
       }
     }
-    for (final Identifier id : new TreeMap<>(skills).keySet()) {
+    for (final Identifier id : sorted.keySet()) {
       if (reaches(id, id, skills, new HashSet<>())) {
         problems.add(id + " needs itself through a loop of requirements");
       }
@@ -114,17 +119,16 @@ public final class SkillDataCheck {
       final Skill from,
       final Identifier toId,
       final Skill to,
-      final Map<Identifier, Skill> skills) {
-    return new TreeMap<>(skills)
-        .entrySet().stream()
-            .filter(
-                entry ->
-                    entry.getValue().branch().equals(to.branch())
-                        && entry.getValue().column() == from.column()
-                        && entry.getValue().row() > from.row()
-                        && entry.getValue().row() < to.row())
-            .map(entry -> entry.getKey() + " sits on the line from " + fromId + " to " + toId)
-            .toList();
+      final Map<Identifier, Skill> sorted) {
+    return sorted.entrySet().stream()
+        .filter(
+            entry ->
+                entry.getValue().branch().equals(to.branch())
+                    && entry.getValue().column() == from.column()
+                    && entry.getValue().row() > from.row()
+                    && entry.getValue().row() < to.row())
+        .map(entry -> entry.getKey() + " sits on the line from " + fromId + " to " + toId)
+        .toList();
   }
 
   private static boolean reaches(

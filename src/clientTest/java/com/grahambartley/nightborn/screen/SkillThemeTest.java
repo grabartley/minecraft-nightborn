@@ -205,7 +205,9 @@ class SkillThemeTest {
     assertTrue(brightness(theme.lineEdge()) < brightness(theme.lineCore(false)));
     assertTrue(brightness(theme.lineCore(false)) < brightness(theme.lineCore(true)));
     assertTrue(brightness(theme.lineEdge()) < brightness(theme.rule()));
-    assertEquals(0, theme.shade() >>> 24, "the shade fades from its own colour to nothing");
+    assertTrue(
+        (theme.shade() >>> 24) > 0x40 && (theme.shade() >>> 24) < 0xFF,
+        "the shade darkens the edge of the trees and lets them show through");
   }
 
   @ParameterizedTest(name = "{0}")

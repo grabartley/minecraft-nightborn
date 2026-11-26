@@ -41,7 +41,6 @@ public final class SkillScreen extends Screen {
   static final int LINE_EDGE = 3;
   static final int LINE_CORE = 1;
   static final int SHADE = 8;
-  static final int SHADE_ALPHA = 0xB0;
   static final int FRAME = 6;
   static final float DIM = 0.45F;
   static final float DRAG_Z = 300.0F;
@@ -108,6 +107,7 @@ public final class SkillScreen extends Screen {
   public void render(
       final DrawContext context, final int mouseX, final int mouseY, final float delta) {
     if (tree() != shownTree) {
+      scroll.jump(0.0, 0);
       clearAndInit();
     }
     super.render(context, mouseX, mouseY, delta);
@@ -210,8 +210,8 @@ public final class SkillScreen extends Screen {
   }
 
   private void drawShades(final DrawContext context, final int offset) {
-    final int shade = theme.shade();
-    final int dark = SHADE_ALPHA << 24 | shade;
+    final int dark = theme.shade();
+    final int shade = dark & 0xFFFFFF;
     final int x1 = layout.left() + FRAME;
     final int x2 = layout.left() + layout.width() - FRAME;
     if (offset > 0) {

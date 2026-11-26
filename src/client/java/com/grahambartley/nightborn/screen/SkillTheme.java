@@ -34,7 +34,7 @@ public record SkillTheme(
               0xFF4A4246,
               0xFFD04A4E,
               0xFF5E4314,
-              0x0E0809);
+              0xB00E0809);
       case HUNTER ->
           new SkillTheme(
               tree,
@@ -48,7 +48,7 @@ public record SkillTheme(
               0xFF4A4F55,
               0xFFD6DEE2,
               0xFF3B4148,
-              0x0B0D0E);
+              0xB00B0D0E);
     };
   }
 
