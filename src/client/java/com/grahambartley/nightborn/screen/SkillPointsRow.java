@@ -8,7 +8,9 @@ public record SkillPointsRow(int iconX, int countX, int detailX, int width) {
   public static final int COUNT_TOP = 1;
   public static final int DETAIL_TOP = 0;
   static final int FONT_HEIGHT = 9;
-  public static final int HEIGHT = Math.max(ICON, COUNT_TOP + FONT_HEIGHT * COUNT_SCALE);
+  static final int COUNT_HEIGHT = Math.max(ICON, COUNT_TOP + FONT_HEIGHT * COUNT_SCALE);
+  public static final int HEIGHT =
+      Math.max(COUNT_HEIGHT, ExperienceBar.ROW_OFFSET + ExperienceBar.HEIGHT);
   static final int GAP = 4;
   static final int DETAIL_GAP = 10;
 
@@ -24,6 +26,6 @@ public record SkillPointsRow(int iconX, int countX, int detailX, int width) {
   public boolean overPoints(
       final int top, final double mouseX, final double mouseY, final int countTextWidth) {
     final int right = countX + countTextWidth * COUNT_SCALE;
-    return mouseX >= iconX && mouseX < right && mouseY >= top && mouseY < top + HEIGHT;
+    return mouseX >= iconX && mouseX < right && mouseY >= top && mouseY < top + COUNT_HEIGHT;
   }
 }

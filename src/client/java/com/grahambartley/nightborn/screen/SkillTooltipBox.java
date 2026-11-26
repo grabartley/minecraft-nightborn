@@ -9,12 +9,17 @@ public record SkillTooltipBox(int x, int y, int width, int height) {
   static final int TITLE_GAP = 2;
   static final int CURSOR_GAP = 12;
   static final int EDGE = 2;
+  static final int MAX_WIDTH = 200;
 
   public static int contentHeight(final int lines) {
     if (lines <= 0) {
       return 0;
     }
     return LINE * lines - 1 + (lines > 1 ? TITLE_GAP : 0);
+  }
+
+  public static int wrapWidth(final int screenWidth) {
+    return Math.max(LINE, Math.min(MAX_WIDTH, screenWidth - (EDGE + PAD) * 2));
   }
 
   public static SkillTooltipBox around(

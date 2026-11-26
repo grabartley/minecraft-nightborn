@@ -62,4 +62,19 @@ class SkillTooltipBoxTest {
         SkillTooltipBox.around(10, 10, List.of(first, second, third), 320, 240);
     assertEquals(120 + SkillTooltipBox.PAD * 2, box.width());
   }
+
+  @ParameterizedTest(name = "screen {0} wide")
+  @CsvSource({"1920", "427", "320", "180", "20"})
+  @DisplayName("tooltip lines wrap so the widest box still fits the screen")
+  void wraps(final int screenWidth) {
+    final int wrap = SkillTooltipBox.wrapWidth(screenWidth);
+    assertTrue(wrap <= SkillTooltipBox.MAX_WIDTH, "never wider than a readable line");
+    final SkillTooltipBox box =
+        SkillTooltipBox.around(screenWidth / 2, 50, List.of(wrap, wrap / 2), screenWidth, 240);
+    assertTrue(
+        screenWidth < SkillTooltipBox.LINE + (SkillTooltipBox.EDGE + SkillTooltipBox.PAD) * 2
+            || box.x() >= SkillTooltipBox.EDGE
+                && box.x() + box.width() <= screenWidth - SkillTooltipBox.EDGE,
+        "box from " + box.x() + " to " + (box.x() + box.width()));
+  }
 }

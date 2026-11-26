@@ -8,12 +8,12 @@ public record SkillLayout(
   public static final int NODE = 22;
   static final int ROW_STEP = 28;
   static final int MIN_ROW_STEP = NODE + 1;
-  static final int HEADER = 56;
   static final int BAR_GAP = 6;
   static final int POINTS_TOP = 20;
   static final int BANNER = 13;
   static final int BANNER_PAD = 8;
   static final int BANNER_GAP = 3;
+  static final int HEADER_GAP = 4;
   static final int BANNER_TEXT_INSET = 3;
   static final int MIN_WIDTH = 200;
   static final int PAD = 8;
@@ -21,6 +21,7 @@ public record SkillLayout(
   static final int MAX_INSET = 6;
   static final int NODE_GAP = 2;
   static final int MIN_BRANCH_WIDTH = NODE * (Skill.MAX_COLUMN + 1);
+  static final int HEADER = POINTS_TOP + SkillPointsRow.HEIGHT + HEADER_GAP + BANNER + BANNER_GAP;
   static final double ROUNDING = 1.0E-6;
 
   public static SkillLayout of(

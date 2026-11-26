@@ -25,7 +25,9 @@ class SkillLayoutTest {
     final SkillLayout layout = SkillLayout.of(width, height, branches, rows, 0, 0);
     assertTrue(
         layout.left() >= 0 && layout.left() + layout.width() <= Math.max(width, layout.width()));
-    assertTrue(layout.top() + layout.height() <= height, "panel height " + layout.height());
+    assertTrue(
+        (layout.top() + layout.height()) * layout.zoom() <= height + 1.0E-6,
+        "panel height " + layout.height() + " at zoom " + layout.zoom());
     for (int b = 0; b < branches; b++) {
       for (int column = 0; column <= Skill.MAX_COLUMN; column++) {
         final int x = layout.nodeX(b, branches, column);

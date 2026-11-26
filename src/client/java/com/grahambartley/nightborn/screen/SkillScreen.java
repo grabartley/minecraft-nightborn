@@ -39,7 +39,6 @@ public final class SkillScreen extends Screen {
 
   static final int LINE_WIDTH = 2;
   static final float DIM = 0.45F;
-  static final float RANK_SCALE = 0.5F;
   static final float DRAG_Z = 300.0F;
 
   private final Map<Identifier, Skill> skills = new HashMap<>();
@@ -258,7 +257,7 @@ public final class SkillScreen extends Screen {
         Text.translatable(
             "nightborn.skills.experience", ExperienceBar.shown(progress.experience()), cost),
         bar.centre(),
-        bar.top() + 1,
+        bar.textTop(),
         theme.text());
     return bar.contains(mouseX, mouseY)
         ? List.of(Text.translatable("nightborn.skills.experience.tooltip"))
@@ -300,8 +299,8 @@ public final class SkillScreen extends Screen {
           PowerSlotView.keyLabel(
               SkillKeys.power(slot).getBoundKeyLocalizedText().getString(),
               SkillKeys.power(slot).isUnbound()),
-          x + inset - 1,
-          row.top() + inset - 1,
+          CornerText.leftX(x, inset),
+          CornerText.topY(row.top(), inset),
           theme.text());
       if (slot == over) {
         tooltip =
@@ -335,7 +334,7 @@ public final class SkillScreen extends Screen {
       final DrawContext context, final String text, final int x, final int y, final int colour) {
     context.getMatrices().push();
     context.getMatrices().translate(x, y, 0.0F);
-    context.getMatrices().scale(RANK_SCALE, RANK_SCALE, 1.0F);
+    context.getMatrices().scale(CornerText.SCALE, CornerText.SCALE, 1.0F);
     context.drawTextWithShadow(textRenderer, text, 0, 0, colour);
     context.getMatrices().pop();
   }
@@ -405,11 +404,12 @@ public final class SkillScreen extends Screen {
         skill.icon(), x + inset, y + inset, PowerSlotView.ICON, PowerSlotView.ICON);
     context.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
     if (skill.maxRank() > 1) {
+      final String label = rank + "/" + skill.maxRank();
       drawSmall(
           context,
-          rank + "/" + skill.maxRank(),
-          x + inset,
-          y + SkillLayout.NODE - inset - 4,
+          label,
+          CornerText.rightX(x, SkillLayout.NODE, inset, textRenderer.getWidth(label)),
+          CornerText.bottomY(y, SkillLayout.NODE, inset),
           rank > 0 ? theme.title() : theme.text());
     }
   }
