@@ -14,11 +14,16 @@
   "power": {
     "blood": 2,
     "cooldown_ticks": 400,
+    "player_clip": "power_mend",
     "heal": {
       "health": 6.0,
       "ticks": 60
     },
-    "sound": "minecraft:block.respawn_anchor.charge",
+    "sound": {
+      "id": "minecraft:block.respawn_anchor.charge",
+      "volume": 0.4,
+      "pitch": 1.2
+    },
     "mob": {
       "max_range": 20.0,
       "tell_ticks": 12,

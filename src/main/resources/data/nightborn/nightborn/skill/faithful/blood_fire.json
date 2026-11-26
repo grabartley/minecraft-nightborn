@@ -15,12 +15,17 @@
   "power": {
     "blood": 0,
     "cooldown_ticks": 2400,
+    "player_clip": "power_hex",
     "blood_fire": {
       "health_cost": 4.0,
       "duration_ticks": 1800,
       "damage": 3.0,
       "burn_ticks": 100
     },
-    "sound": "minecraft:item.firecharge.use"
+    "sound": {
+      "id": "minecraft:item.firecharge.use",
+      "volume": 0.45,
+      "pitch": 1.1
+    }
   }
 }

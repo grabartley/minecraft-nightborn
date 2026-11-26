@@ -2,7 +2,7 @@ package com.grahambartley.nightborn.client;
 
 import com.grahambartley.nightborn.blood.BloodItems;
 import com.grahambartley.nightborn.client.accessory.InsightReadout;
-import com.grahambartley.nightborn.client.anim.VampirePlayerClips;
+import com.grahambartley.nightborn.client.anim.PlayerClips;
 import com.grahambartley.nightborn.client.gore.BloodFx;
 import com.grahambartley.nightborn.client.mirror.MirrorScreen;
 import com.grahambartley.nightborn.client.moment.CeremonyView;
@@ -50,7 +50,7 @@ public final class VampireClientFeatures {
     BatHangInput.register();
     BatHangView.register();
     CeremonyView.register();
-    VampirePlayerClips.register();
+    PlayerClips.register();
     StageNameView.register();
     MirrorScreen.register();
     BuiltinItemRendererRegistry.INSTANCE.register(ParasolItems.PARASOL, new ParasolRenderer());

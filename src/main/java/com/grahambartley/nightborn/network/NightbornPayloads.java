@@ -10,6 +10,7 @@ public final class NightbornPayloads {
     PayloadTypeRegistry.playS2C().register(SyncConfigPayload.ID, SyncConfigPayload.CODEC);
     PayloadTypeRegistry.playS2C().register(StructureZonePayload.ID, StructureZonePayload.CODEC);
     PayloadTypeRegistry.playS2C().register(PlayerCuePayload.ID, PlayerCuePayload.CODEC);
+    PayloadTypeRegistry.playS2C().register(PowerClipPayload.ID, PowerClipPayload.CODEC);
     PayloadTypeRegistry.playS2C().register(GorePayload.ID, GorePayload.CODEC);
     PayloadTypeRegistry.playS2C().register(RitualGloomPayload.ID, RitualGloomPayload.CODEC);
     PayloadTypeRegistry.playS2C().register(BossArenaPayload.ID, BossArenaPayload.CODEC);

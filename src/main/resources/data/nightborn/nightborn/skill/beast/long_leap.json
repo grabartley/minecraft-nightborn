@@ -14,11 +14,16 @@
   "power": {
     "blood": 1,
     "cooldown_ticks": 100,
+    "player_clip": "leap",
     "leap": {
       "forward": 1.4,
       "up": 0.55
     },
-    "sound": "minecraft:entity.goat.long_jump",
+    "sound": {
+      "id": "minecraft:entity.goat.long_jump",
+      "volume": 0.5,
+      "pitch": 1.0
+    },
     "mob": {
       "min_range": 5.0,
       "max_range": 11.0,

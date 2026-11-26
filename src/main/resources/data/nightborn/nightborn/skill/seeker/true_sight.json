@@ -15,6 +15,7 @@
   "power": {
     "blood": 0,
     "cooldown_ticks": 1200,
+    "player_clip": "power_sense",
     "true_sight": {
       "range": 24.0,
       "duration_ticks": 120,
@@ -26,6 +27,10 @@
         "vanish"
       ]
     },
-    "sound": "minecraft:block.beacon.power_select"
+    "sound": {
+      "id": "minecraft:block.beacon.power_select",
+      "volume": 0.45,
+      "pitch": 1.0
+    }
   }
 }

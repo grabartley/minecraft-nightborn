@@ -11,8 +11,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 class RigArmorLayerTest {
 
   @ParameterizedTest(name = "{0}")
-  @ValueSource(
-      strings = {"vampire_male", "vampire_female", "vampire_player_wide", "vampire_player_slim"})
+  @ValueSource(strings = {"vampire_male", "vampire_female", "player_wide", "player_slim"})
   @DisplayName("every rig that wears clothing has an anchor bone for each armour piece")
   void everyRigHasEveryAnchor(final String rig) throws IOException {
     final Set<String> bones = GeoAssets.boneNames(GeoAssets.ENTITY_GEO.resolve(rig + ".geo.json"));

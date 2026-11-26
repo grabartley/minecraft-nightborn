@@ -15,12 +15,17 @@
   "power": {
     "blood": 0,
     "cooldown_ticks": 2400,
+    "player_clip": "power_pray",
     "prayer": {
       "radius": 8.0,
       "duration_ticks": 200,
       "health_per_second": 1.0,
       "shelters": true
     },
-    "sound": "minecraft:block.beacon.activate"
+    "sound": {
+      "id": "minecraft:block.beacon.activate",
+      "volume": 0.4,
+      "pitch": 1.0
+    }
   }
 }

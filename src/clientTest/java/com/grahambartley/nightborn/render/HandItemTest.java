@@ -36,7 +36,7 @@ class HandItemTest {
   }
 
   @ParameterizedTest(name = "{0}")
-  @ValueSource(strings = {"hunter_male", "hunter_female", "guild_master", "vampire_player_wide"})
+  @ValueSource(strings = {"hunter_male", "hunter_female", "guild_master", "player_wide"})
   @DisplayName("every rig that holds items has the right hand bone")
   void rigsHaveTheHandBone(final String rig) throws IOException {
     assertTrue(

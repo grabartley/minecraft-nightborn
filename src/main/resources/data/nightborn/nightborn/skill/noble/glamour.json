@@ -15,9 +15,14 @@
   "power": {
     "blood": 5,
     "cooldown_ticks": 3600,
+    "player_clip": "power_gaze",
     "glamour": {
       "duration_ticks": 600
     },
-    "sound": "minecraft:entity.illusioner.mirror_move"
+    "sound": {
+      "id": "minecraft:entity.illusioner.mirror_move",
+      "volume": 0.45,
+      "pitch": 1.1
+    }
   }
 }

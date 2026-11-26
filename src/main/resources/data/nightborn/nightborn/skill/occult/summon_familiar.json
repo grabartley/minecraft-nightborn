@@ -21,6 +21,7 @@
   "power": {
     "blood": 4,
     "cooldown_ticks": 400,
+    "player_clip": "power_summon",
     "familiar": {
       "lifetime_ticks": 1200,
       "health": 10.0,
@@ -31,7 +32,11 @@
       "mark_ticks": 200,
       "carry_slots": 9
     },
-    "sound": "minecraft:particle.soul_escape",
+    "sound": {
+      "id": "minecraft:particle.soul_escape",
+      "volume": 0.7,
+      "pitch": 1.0
+    },
     "mob": {
       "min_range": 0.0,
       "max_range": 16.0,

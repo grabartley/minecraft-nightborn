@@ -14,6 +14,7 @@ import com.grahambartley.nightborn.mind.Dreads;
 import com.grahambartley.nightborn.mind.Gazes;
 import com.grahambartley.nightborn.mind.Glamour;
 import com.grahambartley.nightborn.mind.MassGaze;
+import com.grahambartley.nightborn.network.PlayerCues;
 import com.grahambartley.nightborn.occult.Circles;
 import com.grahambartley.nightborn.occult.FogClouds;
 import com.grahambartley.nightborn.occult.GhostlyFamiliars;
@@ -88,6 +89,7 @@ final class PowerCasts {
             sense -> Sights.give(caster, Sight.sense(sense.range(), now + sense.durationTicks())));
     if (caster instanceof ServerPlayerEntity player) {
       power.track().ifPresent(track -> Tracking.start(player, track));
+      power.playerClip().ifPresent(clip -> PlayerCues.power(player, clip));
     }
     if (caster instanceof PowerShow show) {
       power.mob().flatMap(MobPowerUse::clip).ifPresent(show::showPower);

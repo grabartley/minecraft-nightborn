@@ -15,6 +15,7 @@
   "power": {
     "blood": 3,
     "cooldown_ticks": 1200,
+    "player_clip": "power_dread",
     "dread": {
       "radius": 8.0,
       "duration_ticks": 240,
@@ -31,7 +32,11 @@
         }
       ]
     },
-    "sound": "minecraft:entity.warden.angry",
+    "sound": {
+      "id": "minecraft:entity.warden.angry",
+      "volume": 0.35,
+      "pitch": 1.1
+    },
     "mob": {
       "min_range": 0.0,
       "max_range": 8.0,

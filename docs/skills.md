@@ -23,6 +23,7 @@ Every number here is the default, and lives in data or a server setting. Nobody 
 
 - A vampire or a hunter should feel stronger with every point. A rank that cannot be felt in play is wrong.
 - Every power has a pose and a sound when it is used, and a cue on screen. A power used on a player gives that player a cue too.
+- On a player, the pose is a short clip named in the power's data. It plays on their model alongside the effect and never delays it. The user sees their arms follow it in first person and everyone else sees the whole clip. Powers that change the player's whole shape, such as Bat Form, Night Terror and Mist Form, show that change instead.
 - Powers are used again and again, so each sound is satisfying to hear many times and never loud or grating. A power's sound, its volume and its pitch are data, and its pitch shifts a little each time.
 - Every power has a counter on the other side. No skill removes a vampire weakness or lets a vampire walk in the sun.
 - A boss cannot be pinned, pulled, mesmerised, commanded, downed by a skill or marked through its arena wall. Skills that would do so deal their damage and nothing more.

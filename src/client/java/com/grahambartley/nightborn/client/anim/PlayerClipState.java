@@ -3,6 +3,7 @@ package com.grahambartley.nightborn.client.anim;
 import com.grahambartley.nightborn.mob.EndingEdge;
 import com.grahambartley.nightborn.mob.VampirePose;
 import java.util.Optional;
+import net.minecraft.entity.EntityPose;
 
 public final class PlayerClipState {
 
@@ -19,7 +20,7 @@ public final class PlayerClipState {
 
   @FunctionalInterface
   public interface Lengths {
-    double seconds(VampirePose pose);
+    double seconds(String animation);
   }
 
   private final EndingEdge landing = new EndingEdge();
@@ -31,7 +32,10 @@ public final class PlayerClipState {
   private final OneShot drain = new OneShot();
   private final OneShot finisher = new OneShot();
   private final OneShot gesture = new OneShot();
+  private final OneShot power = new OneShot();
   private VampirePose gesturePose = VampirePose.SMALL_FLINCH;
+  private String powerClip = "";
+  private boolean powerRestarted;
 
   public void tick(final double age, final boolean levitating, final boolean downed) {
     follow(landing, land, levitating, age);
@@ -55,6 +59,32 @@ public final class PlayerClipState {
     finisher.start(age);
   }
 
+  public void power(final String clip, final double age, final Lengths lengths) {
+    powerRestarted = powerClip(age, lengths).isPresent();
+    powerClip = clip;
+    power.start(age);
+  }
+
+  public Optional<String> powerClip(final double age, final Lengths lengths) {
+    return power.playing(lengths.seconds(powerClip), age)
+        ? Optional.of(powerClip)
+        : Optional.empty();
+  }
+
+  public double powerSeconds(final double age) {
+    return power.seconds(age);
+  }
+
+  public static boolean upright(final EntityPose pose, final boolean riding) {
+    return pose == EntityPose.STANDING && !riding;
+  }
+
+  public boolean takePowerRestart() {
+    final boolean restarted = powerRestarted;
+    powerRestarted = false;
+    return restarted;
+  }
+
   public double vomitingSeconds(final double age) {
     return vomit.seconds(age);
   }
@@ -67,22 +97,22 @@ public final class PlayerClipState {
     if (situation.staked()) {
       return Optional.of(VampirePose.STAKED_DEATH);
     }
-    if (vomit.playing(lengths.seconds(VampirePose.VOMIT), age)) {
+    if (vomit.playing(lengths.seconds(VampirePose.VOMIT.animation()), age)) {
       return Optional.of(VampirePose.VOMIT);
     }
     if (situation.downed()) {
       return Optional.of(VampirePose.DOWNED);
     }
-    if (rise.playing(lengths.seconds(VampirePose.RISE), age)) {
+    if (rise.playing(lengths.seconds(VampirePose.RISE.animation()), age)) {
       return Optional.of(VampirePose.RISE);
     }
     if (biting.ended(situation.feeding())) {
       finisher.clear();
     }
-    if (finisher.playing(lengths.seconds(VampirePose.FINISHER_BITE), age)) {
+    if (finisher.playing(lengths.seconds(VampirePose.FINISHER_BITE.animation()), age)) {
       return Optional.of(VampirePose.FINISHER_BITE);
     }
-    if (drain.playing(lengths.seconds(VampirePose.DRAIN), age)) {
+    if (drain.playing(lengths.seconds(VampirePose.DRAIN.animation()), age)) {
       return Optional.of(VampirePose.DRAIN);
     }
     if (situation.feeding()) {
@@ -92,10 +122,10 @@ public final class PlayerClipState {
       return Optional.of(
           VampirePose.levitating(situation.sprinting(), situation.horizontalSpeed()));
     }
-    if (land.playing(lengths.seconds(VampirePose.LAND), age)) {
+    if (land.playing(lengths.seconds(VampirePose.LAND.animation()), age)) {
       return Optional.of(VampirePose.LAND);
     }
-    if (gesture.playing(lengths.seconds(gesturePose), age)) {
+    if (gesture.playing(lengths.seconds(gesturePose.animation()), age)) {
       return Optional.of(gesturePose);
     }
     if (situation.sunBurning() && !situation.sprinting()) {

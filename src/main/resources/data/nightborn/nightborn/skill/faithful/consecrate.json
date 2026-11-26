@@ -15,6 +15,7 @@
   "power": {
     "blood": 0,
     "cooldown_ticks": 2400,
+    "player_clip": "power_pray",
     "field": {
       "radius": 5.0,
       "duration_ticks": 600,
@@ -29,6 +30,10 @@
       "unwings": true,
       "look": "nightborn:consecrate"
     },
-    "sound": "minecraft:block.bell.resonate"
+    "sound": {
+      "id": "minecraft:block.bell.resonate",
+      "volume": 0.4,
+      "pitch": 1.0
+    }
   }
 }

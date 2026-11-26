@@ -14,6 +14,7 @@
   "power": {
     "blood": 0,
     "cooldown_ticks": 900,
+    "player_clip": "power_brace",
     "effects": [
       {
         "id": "minecraft:speed",

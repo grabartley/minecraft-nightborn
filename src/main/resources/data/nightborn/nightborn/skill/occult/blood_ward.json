@@ -15,6 +15,7 @@
   "power": {
     "blood": 4,
     "cooldown_ticks": 1800,
+    "player_clip": "power_conjure",
     "circle": {
       "radius": 4.0,
       "duration_ticks": 600,
@@ -30,7 +31,11 @@
       "stops_prayers": true,
       "look": "nightborn:blood_ward"
     },
-    "sound": "minecraft:block.respawn_anchor.charge",
+    "sound": {
+      "id": "minecraft:block.respawn_anchor.charge",
+      "volume": 0.45,
+      "pitch": 0.9
+    },
     "mob": {
       "min_range": 0.0,
       "max_range": 4.0,

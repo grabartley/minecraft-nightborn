@@ -14,10 +14,15 @@
   "power": {
     "blood": 0,
     "cooldown_ticks": 1800,
+    "player_clip": "power_rebuke",
     "blessing": {
       "range": 8.0,
       "duration_ticks": 1200
     },
-    "sound": "minecraft:block.beacon.power_select"
+    "sound": {
+      "id": "minecraft:block.beacon.power_select",
+      "volume": 0.45,
+      "pitch": 1.2
+    }
   }
 }

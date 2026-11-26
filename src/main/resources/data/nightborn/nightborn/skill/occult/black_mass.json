@@ -16,6 +16,7 @@
   "power": {
     "blood": 6,
     "cooldown_ticks": 6000,
+    "player_clip": "power_summon",
     "fog": {
       "look": "nightborn:grave_fog",
       "rise": 2.5,
@@ -36,7 +37,11 @@
       ],
       "duration_ticks": 300
     },
-    "sound": "minecraft:entity.evoker.prepare_summon",
+    "sound": {
+      "id": "minecraft:entity.evoker.prepare_summon",
+      "volume": 0.4,
+      "pitch": 0.9
+    },
     "mob": {
       "min_range": 0.0,
       "max_range": 12.0,

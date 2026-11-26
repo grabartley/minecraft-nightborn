@@ -14,6 +14,7 @@
   "power": {
     "blood": 1,
     "cooldown_ticks": 100,
+    "player_clip": "dodge",
     "vanish": {
       "distance": 4.0,
       "gone_ticks": 5

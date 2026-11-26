@@ -16,6 +16,7 @@
   "power": {
     "blood": 0,
     "cooldown_ticks": 6000,
+    "player_clip": "power_pray",
     "prayer": {
       "radius": 2.0,
       "duration_ticks": 100,
@@ -26,6 +27,10 @@
       "pillar": true,
       "look": "nightborn:judgement"
     },
-    "sound": "nightborn:boss.inquisitor.false_dawn"
+    "sound": {
+      "id": "nightborn:boss.inquisitor.false_dawn",
+      "volume": 0.4,
+      "pitch": 1.0
+    }
   }
 }

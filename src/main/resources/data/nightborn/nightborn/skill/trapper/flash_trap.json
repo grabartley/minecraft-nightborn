@@ -15,6 +15,7 @@
   "power": {
     "blood": 0,
     "cooldown_ticks": 1200,
+    "player_clip": "power_set",
     "trap": {
       "range": 4.0,
       "duration_ticks": 6000,
@@ -43,6 +44,10 @@
         "count": 2
       }
     },
-    "sound": "minecraft:block.chain.place"
+    "sound": {
+      "id": "minecraft:block.chain.place",
+      "volume": 0.6,
+      "pitch": 1.0
+    }
   }
 }

@@ -14,11 +14,16 @@
   "power": {
     "blood": 0,
     "cooldown_ticks": 400,
+    "player_clip": "power_sense",
     "read_scene": {
       "range": 8.0,
       "kill_radius": 4.0,
       "fresh_ticks": 24000
     },
-    "sound": "minecraft:item.book.page_turn"
+    "sound": {
+      "id": "minecraft:item.book.page_turn",
+      "volume": 0.7,
+      "pitch": 1.0
+    }
   }
 }
