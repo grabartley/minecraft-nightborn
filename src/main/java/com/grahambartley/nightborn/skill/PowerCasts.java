@@ -14,6 +14,7 @@ import com.grahambartley.nightborn.mind.Dreads;
 import com.grahambartley.nightborn.mind.Gazes;
 import com.grahambartley.nightborn.mind.Glamour;
 import com.grahambartley.nightborn.mind.MassGaze;
+import com.grahambartley.nightborn.network.PlayerCues;
 import com.grahambartley.nightborn.occult.Circles;
 import com.grahambartley.nightborn.occult.FogClouds;
 import com.grahambartley.nightborn.occult.GhostlyFamiliars;
@@ -41,7 +42,6 @@ import com.grahambartley.nightborn.village.VampireSigns;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
 
@@ -50,7 +50,11 @@ final class PowerCasts {
   private PowerCasts() {}
 
   static void apply(
-      final LivingEntity caster, final Identifier id, final SkillPower power, final PowerAim aim) {
+      final LivingEntity caster,
+      final Identifier id,
+      final SkillPower power,
+      final PowerAim aim,
+      final boolean showsClip) {
     final long now = caster.getWorld().getTime();
     if (power.glamour().isEmpty()) {
       Glamour.end(caster);
@@ -89,22 +93,18 @@ final class PowerCasts {
     if (caster instanceof ServerPlayerEntity player) {
       power.track().ifPresent(track -> Tracking.start(player, track));
     }
-    if (caster instanceof PowerShow show) {
-      power.mob().flatMap(MobPowerUse::clip).ifPresent(show::showPower);
+    if (showsClip) {
+      power.clip().ifPresent(clip -> show(caster, clip));
     }
-    power
-        .sound()
-        .ifPresent(
-            sound ->
-                caster
-                    .getWorld()
-                    .playSound(
-                        null,
-                        caster.getBlockPos(),
-                        SoundEvent.of(sound.id()),
-                        caster.getSoundCategory(),
-                        sound.volume(),
-                        sound.pitchFor(caster.getRandom().nextFloat())));
+    power.sound().ifPresent(sound -> sound.play(caster));
+  }
+
+  private static void show(final LivingEntity caster, final String clip) {
+    if (caster instanceof ServerPlayerEntity player) {
+      PlayerCues.power(player, clip);
+    } else if (caster instanceof PowerShow show) {
+      show.showPower(clip);
+    }
   }
 
   private static void moves(

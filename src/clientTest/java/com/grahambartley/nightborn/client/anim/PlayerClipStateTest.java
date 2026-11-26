@@ -1,11 +1,13 @@
 package com.grahambartley.nightborn.client.anim;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.grahambartley.nightborn.mob.VampirePose;
 import java.util.Map;
 import java.util.Optional;
+import net.minecraft.entity.EntityPose;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -13,20 +15,23 @@ import org.junit.jupiter.params.provider.CsvSource;
 
 class PlayerClipStateTest {
 
-  static final Map<VampirePose, Double> SECONDS =
-      Map.of(
-          VampirePose.LAND, 0.7,
-          VampirePose.VOMIT, 2.6,
-          VampirePose.DRAIN, 1.4,
-          VampirePose.RISE, 1.6,
-          VampirePose.FINISHER_BITE, 1.5,
-          VampirePose.SMALL_FLINCH, 0.3,
-          VampirePose.RECOIL_GARLIC, 0.9,
-          VampirePose.RECOIL_CRUCIFIX, 1.2,
-          VampirePose.LIGHT_CANDLE, 1.6,
-          VampirePose.WAKE_STRETCH, 2.6);
+  static final String POWER = "power_gaze";
 
-  static final PlayerClipState.Lengths LENGTHS = pose -> SECONDS.getOrDefault(pose, 0.0);
+  static final Map<String, Double> SECONDS =
+      Map.ofEntries(
+          Map.entry(VampirePose.LAND.animation(), 0.7),
+          Map.entry(VampirePose.VOMIT.animation(), 2.6),
+          Map.entry(VampirePose.DRAIN.animation(), 1.4),
+          Map.entry(VampirePose.RISE.animation(), 1.6),
+          Map.entry(VampirePose.FINISHER_BITE.animation(), 1.5),
+          Map.entry(VampirePose.SMALL_FLINCH.animation(), 0.3),
+          Map.entry(VampirePose.RECOIL_GARLIC.animation(), 0.9),
+          Map.entry(VampirePose.RECOIL_CRUCIFIX.animation(), 1.2),
+          Map.entry(VampirePose.LIGHT_CANDLE.animation(), 1.6),
+          Map.entry(VampirePose.WAKE_STRETCH.animation(), 2.6),
+          Map.entry(POWER, 0.8));
+
+  static final PlayerClipState.Lengths LENGTHS = animation -> SECONDS.getOrDefault(animation, 0.0);
 
   private static PlayerClipState.Situation situation(
       final boolean levitating,
@@ -404,5 +409,93 @@ class PlayerClipStateTest {
             state,
             10 + after,
             situation(false, false, 0.0, downed, feeding, false, Optional.empty())));
+  }
+
+  @ParameterizedTest(name = "{0} ticks after a power: {1}")
+  @CsvSource({"0, power_gaze", "15, power_gaze", "16, NONE", "40, NONE"})
+  @DisplayName("a power clip plays once for its own length")
+  void powerPlaysOnce(final int after, final String expected) {
+    final PlayerClipState state = new PlayerClipState();
+    state.power(POWER, 50, LENGTHS);
+    assertEquals(expected, state.powerClip(50 + after, LENGTHS).orElse("NONE"));
+    assertEquals(after / OneShot.TICKS_PER_SECOND, state.powerSeconds(50 + after), 1e-9);
+  }
+
+  @ParameterizedTest(name = "levitating {0}, weakened {1}: {2}")
+  @CsvSource({"false, false, VANILLA", "true, false, LEVITATE", "false, true, WEAKENED"})
+  @DisplayName("a power clip plays over whatever pose the player is in, never replacing it")
+  void powerLeavesThePose(final boolean levitating, final boolean weakened, final String pose) {
+    final PlayerClipState state = new PlayerClipState();
+    state.tick(0, levitating, false);
+    state.power(POWER, 1, LENGTHS);
+    assertEquals(
+        pose,
+        clip(
+            state, 2, situation(levitating, false, 0.0, false, false, weakened, Optional.empty())));
+    assertEquals(Optional.of(POWER), state.powerClip(2, LENGTHS));
+  }
+
+  @ParameterizedTest(name = "second power {0} ticks after the first")
+  @CsvSource({"5", "15", "16", "100"})
+  @DisplayName(
+      "every power used starts its clip from the first frame once, even the same clip again")
+  void powerStartsFresh(final int after) {
+    final PlayerClipState state = new PlayerClipState();
+    state.power(POWER, 0, LENGTHS);
+    assertTrue(state.takeFreshPower());
+    assertFalse(state.takeFreshPower());
+    state.power(POWER, after, LENGTHS);
+    assertTrue(state.takeFreshPower());
+    assertFalse(state.takeFreshPower());
+  }
+
+  @Test
+  @DisplayName("a clip that ended unseen is not started again when the player is next drawn")
+  void endedPowerIsNotFresh() {
+    final PlayerClipState state = new PlayerClipState();
+    state.power(POWER, 0, LENGTHS);
+    assertTrue(state.powerClip(40, LENGTHS).isEmpty());
+    assertFalse(state.takeFreshPower());
+  }
+
+  @ParameterizedTest(name = "{0}, riding {1}: {2}")
+  @CsvSource({
+    "STANDING, false, true",
+    "STANDING, true, false",
+    "CROUCHING, false, false",
+    "SWIMMING, false, false",
+    "FALL_FLYING, false, false",
+    "SLEEPING, false, false"
+  })
+  @DisplayName("a power clip is drawn only on a player standing upright on their own feet")
+  void upright(final EntityPose pose, final boolean riding, final boolean upright) {
+    assertEquals(upright, PlayerClipState.upright(pose, riding));
+  }
+
+  @ParameterizedTest(name = "pose {0}, power {1}, swinging {2}, using {3}: {4}")
+  @CsvSource({
+    ", false, true, false, NONE",
+    ", true, true, false, NONE",
+    ", true, true, true, USE_ITEM_RIGHT",
+    ", true, false, true, USE_ITEM_RIGHT",
+    "LEVITATE, false, true, false, ATTACK",
+    "LEVITATE, true, true, false, NONE",
+    "LEVITATE, true, false, true, USE_ITEM_RIGHT",
+    "FEED, true, true, true, NONE"
+  })
+  @DisplayName(
+      "a swing plays over a pose that allows it but never over a power clip, which still lets an"
+          + " item be held up")
+  void actions(
+      final VampirePose pose,
+      final boolean power,
+      final boolean swinging,
+      final boolean using,
+      final String expected) {
+    assertEquals(
+        expected,
+        PlayerClipState.action(Optional.ofNullable(pose), power, swinging, using, true)
+            .map(Enum::name)
+            .orElse("NONE"));
   }
 }

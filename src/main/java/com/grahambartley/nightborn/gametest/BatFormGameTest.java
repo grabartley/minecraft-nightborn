@@ -309,6 +309,34 @@ public class BatFormGameTest implements FabricGameTest {
     context.complete();
   }
 
+  @GameTest(templateName = ARENA, batchId = NIGHT, tickLimit = 20)
+  public void aVampireMobPlaysThePowersOwnClipWhenItLeaps(final TestContext context) {
+    final VampireEntity vampire = context.spawnEntity(NightbornMobs.VAMPIRE, new BlockPos(1, 2, 1));
+    vampire.setAiDisabled(true);
+    final CowEntity cow = context.spawnEntity(EntityType.COW, new BlockPos(7, 2, 7));
+    cow.setAiDisabled(true);
+    learn(context, vampire, SWIFT_PROWL, LONG_LEAP);
+    vampire.setTarget(cow);
+    context.assertEquals(Powers.cast(vampire, LONG_LEAP), PowerUse.Verdict.READY, "leaps");
+    context.assertEquals(vampire.action(), "leap", "it plays the clip the power names");
+    context.complete();
+  }
+
+  @GameTest(templateName = ARENA, batchId = NIGHT, tickLimit = 20)
+  public void aBossAttacksOwnClipStaysWhenItCastsAPower(final TestContext context) {
+    final VampireEntity vampire = context.spawnEntity(NightbornMobs.VAMPIRE, new BlockPos(1, 2, 1));
+    vampire.setAiDisabled(true);
+    final CowEntity cow = context.spawnEntity(EntityType.COW, new BlockPos(7, 2, 7));
+    cow.setAiDisabled(true);
+    learn(context, vampire, SWIFT_PROWL, LONG_LEAP);
+    vampire.setTarget(cow);
+    vampire.showPower("rush");
+    context.assertEquals(
+        Powers.castUnderOwnClip(vampire, LONG_LEAP), PowerUse.Verdict.READY, "leaps");
+    context.assertEquals(vampire.action(), "rush", "the attack's own clip is kept");
+    context.complete();
+  }
+
   @GameTest(templateName = ARENA, batchId = NIGHT, tickLimit = 40)
   public void aVampireMobWithNothingToChaseLandsFromBatForm(final TestContext context) {
     final VampireEntity vampire = context.spawnEntity(NightbornMobs.VAMPIRE, STAND);

@@ -1,6 +1,6 @@
 package com.grahambartley.nightborn.render;
 
-import com.grahambartley.nightborn.client.anim.VampirePlayerClips;
+import com.grahambartley.nightborn.client.anim.PlayerClips;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.model.json.ModelTransformationMode;
@@ -11,22 +11,20 @@ import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.renderer.layer.BlockAndItemGeoLayer;
 
-public final class VampirePlayerHeldItemsLayer
-    extends BlockAndItemGeoLayer<VampirePlayerAnimatable> {
+public final class PlayerRigHeldItemsLayer extends BlockAndItemGeoLayer<PlayerRigAnimatable> {
 
-  private final VampirePlayerRenderer players;
+  private final PlayerRigRenderer players;
 
-  public VampirePlayerHeldItemsLayer(final VampirePlayerRenderer renderer) {
+  public PlayerRigHeldItemsLayer(final PlayerRigRenderer renderer) {
     super(renderer);
     this.players = renderer;
   }
 
   @Nullable
   @Override
-  protected ItemStack getStackForBone(
-      final GeoBone bone, final VampirePlayerAnimatable animatable) {
+  protected ItemStack getStackForBone(final GeoBone bone, final PlayerRigAnimatable animatable) {
     final var player = players.getCurrentEntity();
-    if (player == null || !VampirePlayerClips.showsHeldItems(player)) {
+    if (player == null || !PlayerClips.showsHeldItems(player)) {
       return null;
     }
     return HandItem.arm(bone.getName())
@@ -40,7 +38,7 @@ public final class VampirePlayerHeldItemsLayer
 
   @Override
   protected ModelTransformationMode getTransformTypeForStack(
-      final GeoBone bone, final ItemStack stack, final VampirePlayerAnimatable animatable) {
+      final GeoBone bone, final ItemStack stack, final PlayerRigAnimatable animatable) {
     return HandItem.arm(bone.getName()).map(HandItem::mode).orElse(ModelTransformationMode.NONE);
   }
 
@@ -49,7 +47,7 @@ public final class VampirePlayerHeldItemsLayer
       final MatrixStack poseStack,
       final GeoBone bone,
       final ItemStack stack,
-      final VampirePlayerAnimatable animatable,
+      final PlayerRigAnimatable animatable,
       final VertexConsumerProvider bufferSource,
       final float partialTick,
       final int packedLight,

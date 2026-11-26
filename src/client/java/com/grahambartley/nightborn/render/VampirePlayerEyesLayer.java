@@ -12,14 +12,14 @@ import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
 
-public final class VampirePlayerEyesLayer extends GeoRenderLayer<VampirePlayerAnimatable> {
+public final class VampirePlayerEyesLayer extends GeoRenderLayer<PlayerRigAnimatable> {
 
   static final RenderLayer EYES =
       RenderLayer.getEyes(Identifier.of(Nightborn.MOD_ID, "textures/entity/vampire_eyes.png"));
 
-  private final VampirePlayerRenderer players;
+  private final PlayerRigRenderer players;
 
-  public VampirePlayerEyesLayer(final VampirePlayerRenderer renderer) {
+  public VampirePlayerEyesLayer(final PlayerRigRenderer renderer) {
     super(renderer);
     this.players = renderer;
   }
@@ -27,7 +27,7 @@ public final class VampirePlayerEyesLayer extends GeoRenderLayer<VampirePlayerAn
   @Override
   public void render(
       final MatrixStack poseStack,
-      final VampirePlayerAnimatable animatable,
+      final PlayerRigAnimatable animatable,
       final BakedGeoModel bakedModel,
       @Nullable final RenderLayer renderType,
       final VertexConsumerProvider bufferSource,

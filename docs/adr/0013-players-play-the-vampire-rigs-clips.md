@@ -1,0 +1,25 @@
+# ADR 0013: Players play the vampire rig's clips
+
+## Context
+
+Levitation (CORE-11) and vomiting (FEED-3) need the same poses on a vampire player as on a vampire mob: a float with the feet together, a lean that grows with speed, a landing, and doubling over to retch. Vampire mobs are GeckoLib entities that play clips from `animations/entity/vampire.animation.json`. Every player power, vampire or hunter, also needs a short clip on the player who uses it, so hunters and humans need the same rig. Players are drawn by vanilla's player model, which has no clip player. Copying the clips onto the vanilla model in code would mean a second, hand-written version of every pose that could drift from the mob's, and it did not hold together in game.
+
+## Decision
+
+Every model and animation is a GeckoLib model and clip made in Blockbench through the `bbmodel` MCP. Players are drawn by GeckoLib while a clip plays:
+
+- Two player rigs, wide-armed and slim-armed, are built in Blockbench on the vanilla 64x64 skin layout and textured with the player's own skin. They use the vampire rig's bone names and pivots, so the vampire animation file drives them unchanged.
+- `PlayerEntityRenderer` hands a vampire player to a GeckoLib `GeoReplacedEntityRenderer` while it levitates, lands, vomits, feeds, drains a victim, lies downed, gets up, or stoops while weakened and standing upright on the ground with nothing in use, and draws it as vanilla does otherwise. Feeding, being downed and being weakened reach every client through the visible state, and the one-off clips, vomiting and draining, through a cue sent to the player and everyone tracking them. The clip is chosen only from this state and from levitation, which every client receives, and never from the player's faction, which reaches only that player.
+- A power names one clip in data as `clip`, and every caster plays it: a vampire mob through its shown action, a player through a cue the server sends to that player and everyone tracking them. The effect lands on the same tick, never waiting for the clip. A mob still winds up with its own `mob.tell_clip` first, since players have no tell. A boss attack that casts a power keeps its own strike clip, so the power's clip is not shown over it. Each rig that can cast a power ships that clip under the same name, made in its own Blockbench project. Any player, vampire, hunter or human, is handed to the rig while a power clip plays, but only while standing on their own feet. A sneaking, swimming, gliding, sleeping or riding player stays vanilla. The power clips live in the same animation file as the vampire's, so they are made and retimed in the same Blockbench project.
+- The rigs carry GeckoLib's armour anchor bones and two hand bones, so armour, trims, held items and the glowing eyes follow the clip.
+- Clip names come from `VampirePose`, which both the mob and the player read. Clip lengths and the heaves of the vomit clip are read from GeckoLib's loaded animation, because the Bedrock export does not carry particle keyframes. Vomit leaves from the rig's `mouth` bone, where GeckoLib drew it.
+- Controllers stack on the player rig, each later one winning on the bones it moves: a stride that plays the walk or run clip while the player moves, so legs keep stepping under a clip that only moves the upper body, then the base pose, then the power clip, then the upper-body action of the attack swing or an item held up in the right or left hand. Mobs use the same action controller, so a vampire fighting in the air keeps its float. The stride also plays under the gestures that leave the legs alone, such as lighting a candle.
+- How far the arms spread while moving is written in the clip as a Molang expression on `variable.levitate_spread`. Code only sets that value from the vampire's speed.
+
+## Consequences
+
+- A clip retimed or repainted in the Blockbench project changes players and mobs together, with no code change.
+- In first person, vanilla still draws the hand and the held item, so they stay where players expect them. While a power clip plays, the hand is turned about the shoulder by half of how far the clip's arm is raised past reaching forward, where vanilla already holds the hand, and by half of its outward swing, read from GeckoLib's loaded clip with its easing, so the user sees the cast follow the same curve others see.
+- Vanilla's own poses, such as sneaking, swimming, sleeping or drawing a bow, stay vanilla, also while weakened. A vampire version of one is a new clip in Blockbench, not code. A downed vampire keeps vanilla's crawling hitbox, but is drawn lying by the `downed` clip.
+- Capes, elytra, shoulder parrots and stuck arrows are not drawn while a clip plays.
+- The stride plays the walk and run clips on their own clock, not in step with vanilla's leg swing, so the legs may change phase when a clip starts or ends.

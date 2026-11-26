@@ -1,8 +1,8 @@
 package com.grahambartley.nightborn.client.vomit;
 
 import com.grahambartley.nightborn.client.anim.Heaves;
+import com.grahambartley.nightborn.client.anim.PlayerClips;
 import com.grahambartley.nightborn.client.anim.VampireClips;
-import com.grahambartley.nightborn.client.anim.VampirePlayerClips;
 import com.grahambartley.nightborn.client.state.ClientStateService;
 import com.grahambartley.nightborn.mob.VampirePose;
 import com.grahambartley.nightborn.vomit.VomitEffects;
@@ -50,12 +50,12 @@ public final class VomitFx {
     if (!LAST_SECONDS.containsKey(player)) {
       return;
     }
-    final double now = VampirePlayerClips.vomitingSeconds(player, 0.0F);
+    final double now = PlayerClips.vomitingSeconds(player, 0.0F);
     final double before = LAST_SECONDS.get(player);
     for (final double ignored : Heaves.crossed(VampireClips.heaves(HEAVE_DEGREES), before, now)) {
       heave(player);
     }
-    if (Double.isNaN(now) || now >= VampireClips.seconds(VampirePose.VOMIT)) {
+    if (Double.isNaN(now) || now >= VampireClips.seconds(VampirePose.VOMIT.animation())) {
       LAST_SECONDS.remove(player);
       MOUTHS.remove(player);
     } else {

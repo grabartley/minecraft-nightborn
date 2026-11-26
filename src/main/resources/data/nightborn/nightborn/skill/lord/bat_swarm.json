@@ -11,6 +11,7 @@
   "power": {
     "blood": 4,
     "cooldown_ticks": 600,
+    "clip": "power_summon",
     "summon": {
       "entity": "nightborn:vampire_bat",
       "count": {
@@ -20,7 +21,11 @@
       },
       "spread": 2.0
     },
-    "sound": "minecraft:entity.bat.takeoff",
+    "sound": {
+      "id": "minecraft:entity.bat.takeoff",
+      "volume": 0.5,
+      "pitch": 0.9
+    },
     "mob": {
       "min_range": 4.0,
       "max_range": 20.0,

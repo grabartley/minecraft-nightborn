@@ -15,6 +15,7 @@
   "power": {
     "blood": 0,
     "cooldown_ticks": 600,
+    "clip": "power_thrust",
     "lunge": {
       "distance": 5.0,
       "gap": 0.3,
@@ -24,6 +25,10 @@
         "up_to": "nightborn:elder"
       }
     },
-    "sound": "minecraft:entity.player.attack.strong"
+    "sound": {
+      "id": "minecraft:entity.player.attack.strong",
+      "volume": 0.6,
+      "pitch": 0.9
+    }
   }
 }

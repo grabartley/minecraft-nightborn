@@ -16,13 +16,18 @@
   "power": {
     "blood": 6,
     "cooldown_ticks": 6000,
+    "clip": "power_gaze",
     "mass_gaze": {
       "radius": 12.0,
       "duration_ticks": 200,
       "player_duration_ticks": 60,
       "player_slowness": 2
     },
-    "sound": "minecraft:entity.illusioner.cast_spell",
+    "sound": {
+      "id": "minecraft:entity.illusioner.cast_spell",
+      "volume": 0.5,
+      "pitch": 0.8
+    },
     "mob": {
       "min_range": 0.0,
       "max_range": 12.0,

@@ -2,6 +2,8 @@ package com.grahambartley.nightborn.skill;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;
 
 public record PowerSound(Identifier id, float volume, float pitch, float pitchSpread) {
@@ -36,6 +38,17 @@ public record PowerSound(Identifier id, float volume, float pitch, float pitchSp
 
   public static PowerSound of(final Identifier id) {
     return new PowerSound(id, FULL_VOLUME, PLAIN_PITCH, PITCH_SPREAD);
+  }
+
+  public void play(final LivingEntity at) {
+    at.getWorld()
+        .playSound(
+            null,
+            at.getBlockPos(),
+            SoundEvent.of(id),
+            at.getSoundCategory(),
+            volume,
+            pitchFor(at.getRandom().nextFloat()));
   }
 
   public float pitchFor(final float roll) {

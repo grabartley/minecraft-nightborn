@@ -14,6 +14,7 @@
   "power": {
     "blood": 2,
     "cooldown_ticks": 300,
+    "clip": "power_gaze",
     "mesmerise": {
       "range": 12.0,
       "stare_ticks": 20,
@@ -21,7 +22,11 @@
       "player_duration_ticks": 60,
       "player_slowness": 2
     },
-    "sound": "minecraft:entity.illusioner.cast_spell",
+    "sound": {
+      "id": "minecraft:entity.illusioner.cast_spell",
+      "volume": 0.45,
+      "pitch": 1.0
+    },
     "mob": {
       "min_range": 3.0,
       "max_range": 12.0,

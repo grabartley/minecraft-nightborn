@@ -29,6 +29,16 @@
       "tell_ticks": 10,
       "tell_sound": "minecraft:entity.bat.ambient",
       "tell_clip": "hiss"
+    },
+    "sound": {
+      "id": "nightborn:power.bat_form.enter",
+      "volume": 0.6,
+      "pitch": 1.0
+    },
+    "end_sound": {
+      "id": "nightborn:power.bat_form.leave",
+      "volume": 0.6,
+      "pitch": 1.0
     }
   }
 }

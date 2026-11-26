@@ -178,10 +178,10 @@ public class TrapEntity extends ZoneMarkEntity {
     world.playSound(
         null,
         getBlockPos(),
-        SoundEvent.of(trap.spring().sound()),
+        SoundEvent.of(trap.spring().sound().id()),
         SoundCategory.PLAYERS,
-        1.0F,
-        1.0F);
+        trap.spring().sound().volume(),
+        trap.spring().sound().pitchFor(world.getRandom().nextFloat()));
     world.spawnParticles(
         trap.spring().particle(),
         getX(),

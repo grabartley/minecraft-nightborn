@@ -3,7 +3,7 @@
 	"minecraft:geometry": [
 		{
 			"description": {
-				"identifier": "geometry.vampire_player_slim",
+				"identifier": "geometry.player_slim",
 				"texture_width": 64,
 				"texture_height": 64,
 				"visible_bounds_width": 2,

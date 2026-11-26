@@ -13,7 +13,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Stream;
 import net.minecraft.util.Identifier;
@@ -29,14 +28,14 @@ import org.junit.jupiter.params.provider.ValueSource;
 class MobPowerUseTest {
 
   private static final String VALID =
-      "{\"min_range\":4,\"max_range\":20,\"tell_ticks\":12,\"tell_sound\":\"minecraft:entity.warden.sonic_charge\",\"tell_clip\":\"blood_rush_tell\",\"clip\":\"blood_rush\"}";
+      "{\"min_range\":4,\"max_range\":20,\"tell_ticks\":12,\"tell_sound\":\"minecraft:entity.warden.sonic_charge\",\"tell_clip\":\"blood_rush_tell\"}";
 
   private static MobPowerUse parse(final String json) {
     return MobPowerUse.CODEC.parse(JsonOps.INSTANCE, JsonParser.parseString(json)).getOrThrow();
   }
 
   @Test
-  @DisplayName("a mob use reads its range, tell and clip")
+  @DisplayName("a mob use reads its range and tell")
   void parses() {
     assertEquals(
         new MobPowerUse(
@@ -45,19 +44,17 @@ class MobPowerUseTest {
             12,
             Identifier.of("minecraft", "entity.warden.sonic_charge"),
             "blood_rush_tell",
-            Optional.of("blood_rush"),
             false),
         parse(VALID));
   }
 
   @Test
-  @DisplayName("the lowest range and the cast clip are optional")
+  @DisplayName("the lowest range is optional")
   void optionalParts() {
     final MobPowerUse use =
         parse(
             "{\"max_range\":8,\"tell_ticks\":5,\"tell_sound\":\"minecraft:block.bell.use\",\"tell_clip\":\"stare\"}");
     assertEquals(0.0F, use.minRange());
-    assertTrue(use.clip().isEmpty());
     assertFalse(use.dodge());
   }
 
@@ -105,7 +102,8 @@ class MobPowerUseTest {
 
   @ParameterizedTest(name = "{0}")
   @MethodSource("shippedSkills")
-  @DisplayName("every shipped mob power plays clips each rig that can roll it ships")
+  @DisplayName(
+      "every shipped mob power plays its tell and its one clip on each rig that can roll it")
   void shippedClips(final Path file) throws IOException {
     final JsonObject power =
         JsonParser.parseString(Files.readString(file)).getAsJsonObject().getAsJsonObject("power");
@@ -114,7 +112,10 @@ class MobPowerUseTest {
       for (final String rig : rigs(file)) {
         final Set<String> clips = ShippedClips.of(rig);
         assertTrue(clips.contains(use.tellClip()), rig + " " + use.tellClip());
-        use.clip().ifPresent(clip -> assertTrue(clips.contains(clip), rig + " " + clip));
+        if (power.has("clip")) {
+          final String clip = power.get("clip").getAsString();
+          assertTrue(clips.contains(clip), rig + " " + clip);
+        }
       }
     }
   }

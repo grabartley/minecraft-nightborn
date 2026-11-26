@@ -14,12 +14,17 @@
   "power": {
     "blood": 0,
     "cooldown_ticks": 600,
+    "clip": "power_rebuke",
     "rebuke": {
       "range": 8.0,
       "arc_degrees": 90.0,
       "push": 1.5,
       "silence_ticks": 40
     },
-    "sound": "minecraft:block.bell.use"
+    "sound": {
+      "id": "minecraft:block.bell.use",
+      "volume": 0.45,
+      "pitch": 1.2
+    }
   }
 }

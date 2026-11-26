@@ -15,10 +15,15 @@
   "power": {
     "blood": 1,
     "cooldown_ticks": 600,
+    "clip": "power_sense",
     "sense": {
       "range": 24.0,
       "duration_ticks": 160
     },
-    "sound": "minecraft:entity.warden.heartbeat"
+    "sound": {
+      "id": "minecraft:entity.warden.heartbeat",
+      "volume": 0.6,
+      "pitch": 1.0
+    }
   }
 }

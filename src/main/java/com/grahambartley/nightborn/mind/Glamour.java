@@ -3,6 +3,7 @@ package com.grahambartley.nightborn.mind;
 import com.grahambartley.nightborn.Nightborn;
 import com.grahambartley.nightborn.feeding.FeedingSessions;
 import com.grahambartley.nightborn.name.StageNames;
+import com.grahambartley.nightborn.skill.Powers;
 import com.grahambartley.nightborn.smoke.SmokePoof;
 import com.mojang.serialization.Codec;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentRegistry;
@@ -13,7 +14,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.network.codec.PacketCodecs;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
@@ -71,7 +71,8 @@ public final class Glamour {
     }
     vampire.removeAttached(TYPE);
     changed(vampire);
-    SmokePoof.burst(vampire, SoundEvents.ENTITY_ILLUSIONER_MIRROR_MOVE);
+    SmokePoof.puff(vampire);
+    Powers.playEndSound(vampire, power -> power.glamour().isPresent());
     if (vampire instanceof ServerPlayerEntity player) {
       player.sendMessage(Text.translatable("nightborn.glamour.end"), true);
     }

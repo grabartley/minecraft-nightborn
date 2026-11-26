@@ -20,9 +20,10 @@ class TrapSpringTest {
         "{\"sound\":\"minecraft:block.iron_trapdoor.close\",\"particle\":{\"type\":\"minecraft:crit\"}}; false; 8",
         "{\"sound\":\"minecraft:entity.firework_rocket.blast\",\"particle\":{\"type\":\"minecraft:flash\"},\"count\":2}; false; 2",
         "{\"particle\":{\"type\":\"minecraft:crit\"}}; true; 0",
-        "{\"sound\":\"minecraft:block.iron_trapdoor.close\",\"particle\":{\"type\":\"minecraft:crit\"},\"count\":65}; true; 0"
+        "{\"sound\":\"minecraft:block.iron_trapdoor.close\",\"particle\":{\"type\":\"minecraft:crit\"},\"count\":65}; true; 0",
+        "{\"sound\":{\"id\":\"minecraft:block.iron_trapdoor.close\",\"volume\":0.6},\"particle\":{\"type\":\"minecraft:crit\"}}; false; 8"
       })
-  @DisplayName("a trap springs with a sound and a burst of particles")
+  @DisplayName("a trap springs with a sound, bare or tuned, and a burst of particles")
   void reads(final String json, final boolean refused, final int count) {
     final var read = TrapSpring.CODEC.parse(JsonOps.INSTANCE, JsonParser.parseString(json));
     assertEquals(refused, read.isError());

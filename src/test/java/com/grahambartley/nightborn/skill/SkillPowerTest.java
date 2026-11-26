@@ -4,20 +4,31 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.grahambartley.nightborn.MinecraftBootstrapExtension;
+import com.grahambartley.nightborn.mob.ShippedClips;
 import com.mojang.serialization.JsonOps;
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Stream;
 import net.minecraft.entity.effect.StatusEffects;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 @ExtendWith(MinecraftBootstrapExtension.class)
 class SkillPowerTest {
+
+  private static final Path SKILLS = Path.of("src/main/resources/data/nightborn/nightborn/skill");
 
   @Test
   @DisplayName("a power reads its blood cost, cooldown, effects and sound")
@@ -265,5 +276,83 @@ class SkillPowerTest {
             .getOrThrow()
             .fight()
             .count());
+  }
+
+  @ParameterizedTest(name = "{0}")
+  @CsvSource(
+      delimiter = '|',
+      value = {
+        "{\"blood\":0,\"cooldown_ticks\":20,\"clip\":\"power_gaze\"} | power_gaze",
+        "{\"blood\":0,\"cooldown_ticks\":20} | ''"
+      })
+  @DisplayName("a power may name the one clip any caster plays when it is used")
+  void clip(final String json, final String clip) {
+    assertEquals(
+        clip,
+        SkillPower.CODEC
+            .parse(JsonOps.INSTANCE, JsonParser.parseString(json))
+            .getOrThrow()
+            .clip()
+            .orElse(""));
+  }
+
+  static Stream<Path> shippedPowers() throws IOException {
+    try (Stream<Path> files = Files.walk(SKILLS)) {
+      return files
+          .filter(file -> file.toString().endsWith(".json"))
+          .filter(file -> power(file).isPresent())
+          .toList()
+          .stream();
+    }
+  }
+
+  @ParameterizedTest(name = "{0}")
+  @MethodSource("shippedPowers")
+  @DisplayName(
+      "every shipped power plays a clip the player rig ships, unless it changes the player's"
+          + " whole shape")
+  void shippedPlayerClips(final Path file) {
+    final SkillPower power = power(file).orElseThrow();
+    final boolean changesShape =
+        power.batForm().isPresent() || power.wingedForm().isPresent() || power.mist().isPresent();
+    assertEquals(!changesShape, power.clip().isPresent(), "names a clip");
+    power.clip().ifPresent(clip -> assertTrue(ShippedClips.vampire().contains(clip), clip));
+  }
+
+  @ParameterizedTest(name = "{0}")
+  @MethodSource("shippedPowers")
+  @DisplayName(
+      "every shipped power has a sound, and its sounds are softer than full volume so repeating"
+          + " them never grates")
+  void shippedSoundsAreSoft(final Path file) {
+    final SkillPower power = power(file).orElseThrow();
+    assertTrue(power.sound().isPresent(), "has a sound");
+    Stream.of(power.sound(), power.endSound(), power.trap().map(trap -> trap.spring().sound()))
+        .flatMap(Optional::stream)
+        .forEach(sound -> assertTrue(sound.volume() < 1.0F, sound.id() + " " + sound.volume()));
+  }
+
+  @Test
+  @DisplayName("a power may name a sound it makes when it ends")
+  void endSound() {
+    final SkillPower power =
+        SkillPower.CODEC
+            .parse(
+                JsonOps.INSTANCE,
+                JsonParser.parseString(
+                    "{\"blood\":0,\"cooldown_ticks\":20,\"end_sound\":{\"id\":\"minecraft:block.bell.use\",\"volume\":0.5}}"))
+            .getOrThrow();
+    assertEquals(0.5F, power.endSound().orElseThrow().volume());
+  }
+
+  private static Optional<SkillPower> power(final Path file) {
+    try {
+      final JsonObject skill = JsonParser.parseString(Files.readString(file)).getAsJsonObject();
+      return skill.has("power")
+          ? Optional.of(SkillPower.CODEC.parse(JsonOps.INSTANCE, skill.get("power")).getOrThrow())
+          : Optional.empty();
+    } catch (final IOException e) {
+      throw new UncheckedIOException(e);
+    }
   }
 }

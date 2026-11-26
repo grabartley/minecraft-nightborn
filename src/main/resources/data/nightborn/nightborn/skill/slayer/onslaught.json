@@ -16,6 +16,7 @@
   "power": {
     "blood": 0,
     "cooldown_ticks": 6000,
+    "clip": "power_brace",
     "boost": {
       "duration_ticks": 120,
       "attributes": [
@@ -35,6 +36,10 @@
         "up_to": "nightborn:elder"
       }
     },
-    "sound": "minecraft:item.mace.smash_ground_heavy"
+    "sound": {
+      "id": "minecraft:item.mace.smash_ground_heavy",
+      "volume": 0.4,
+      "pitch": 1.1
+    }
   }
 }

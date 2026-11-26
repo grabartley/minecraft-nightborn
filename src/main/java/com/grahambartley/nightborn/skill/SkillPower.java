@@ -36,6 +36,7 @@ public record SkillPower(
     int cooldownTicks,
     List<StatusEffectInstance> effects,
     Optional<PowerSound> sound,
+    Optional<PowerSound> endSound,
     PowerMoves moves,
     PowerMinds minds,
     PowerCalls calls,
@@ -44,7 +45,8 @@ public record SkillPower(
     PowerFaith faith,
     PowerFight fight,
     PowerSeek seek,
-    Optional<MobPowerUse> mob) {
+    Optional<MobPowerUse> mob,
+    Optional<String> clip) {
 
   public static final Codec<SkillPower> CODEC =
       RecordCodecBuilder.<SkillPower>create(
@@ -60,6 +62,9 @@ public record SkillPower(
                               .optionalFieldOf("effects", List.of())
                               .forGetter(SkillPower::effects),
                           PowerSound.CODEC.optionalFieldOf("sound").forGetter(SkillPower::sound),
+                          PowerSound.CODEC
+                              .optionalFieldOf("end_sound")
+                              .forGetter(SkillPower::endSound),
                           PowerMoves.CODEC.forGetter(SkillPower::moves),
                           PowerMinds.CODEC.forGetter(SkillPower::minds),
                           PowerCalls.CODEC.forGetter(SkillPower::calls),
@@ -68,7 +73,8 @@ public record SkillPower(
                           PowerFaith.CODEC.forGetter(SkillPower::faith),
                           PowerFight.CODEC.forGetter(SkillPower::fight),
                           PowerSeek.CODEC.forGetter(SkillPower::seek),
-                          MobPowerUse.CODEC.optionalFieldOf("mob").forGetter(SkillPower::mob))
+                          MobPowerUse.CODEC.optionalFieldOf("mob").forGetter(SkillPower::mob),
+                          Codec.STRING.optionalFieldOf("clip").forGetter(SkillPower::clip))
                       .apply(instance, SkillPower::new))
           .validate(SkillPower::oneMove);
 

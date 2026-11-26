@@ -11,10 +11,15 @@
   "power": {
     "blood": 3,
     "cooldown_ticks": 400,
+    "clip": "power_summon",
     "rally": {
       "range": 32
     },
-    "sound": "minecraft:event.raid.horn",
+    "sound": {
+      "id": "minecraft:event.raid.horn",
+      "volume": 0.3,
+      "pitch": 1.0
+    },
     "mob": {
       "min_range": 0.0,
       "max_range": 24.0,

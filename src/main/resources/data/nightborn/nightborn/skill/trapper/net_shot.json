@@ -14,12 +14,17 @@
   "power": {
     "blood": 0,
     "cooldown_ticks": 500,
+    "clip": "power_shot",
     "net": {
       "range": 24.0,
       "speed": 2.0,
       "ground_ticks": 100,
       "damage_type": "nightborn:silver"
     },
-    "sound": "minecraft:item.crossbow.shoot"
+    "sound": {
+      "id": "minecraft:item.crossbow.shoot",
+      "volume": 0.55,
+      "pitch": 1.0
+    }
   }
 }
