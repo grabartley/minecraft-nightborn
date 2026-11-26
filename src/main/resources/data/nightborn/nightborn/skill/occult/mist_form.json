@@ -25,6 +25,16 @@
       "tell_sound": "minecraft:entity.illusioner.prepare_blindness",
       "tell_clip": "dodge",
       "dodge": true
+    },
+    "sound": {
+      "id": "minecraft:entity.illusioner.prepare_blindness",
+      "volume": 0.45,
+      "pitch": 0.9
+    },
+    "end_sound": {
+      "id": "minecraft:entity.illusioner.mirror_move",
+      "volume": 0.45,
+      "pitch": 1.0
     }
   }
 }

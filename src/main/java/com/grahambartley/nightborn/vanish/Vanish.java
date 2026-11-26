@@ -1,10 +1,10 @@
 package com.grahambartley.nightborn.vanish;
 
-import com.grahambartley.nightborn.batform.BatForm;
 import com.grahambartley.nightborn.clothing.WornAttributes;
 import com.grahambartley.nightborn.feeding.FeedingSessions;
 import com.grahambartley.nightborn.landing.Landing;
 import com.grahambartley.nightborn.skill.PowerHeading;
+import com.grahambartley.nightborn.skill.Powers;
 import com.grahambartley.nightborn.smoke.SmokePoof;
 import java.util.Optional;
 import net.minecraft.entity.LivingEntity;
@@ -43,7 +43,7 @@ public final class Vanish {
       return;
     }
     FeedingSessions.end(caster);
-    SmokePoof.burst(caster, BatForm.ENTER_SOUND);
+    SmokePoof.puff(caster);
     caster.setAttached(VanishAttachment.TYPE, caster.getWorld().getTime() + power.goneTicks());
     Landing.move(caster, to);
   }
@@ -52,7 +52,8 @@ public final class Vanish {
     if (VanishAttachment.due(
         entity.getWorld().getTime(), entity.getAttached(VanishAttachment.TYPE))) {
       entity.removeAttached(VanishAttachment.TYPE);
-      SmokePoof.burst(entity, BatForm.ENTER_SOUND);
+      SmokePoof.puff(entity);
+      Powers.playEndSound(entity, power -> power.vanish().isPresent());
     }
   }
 }

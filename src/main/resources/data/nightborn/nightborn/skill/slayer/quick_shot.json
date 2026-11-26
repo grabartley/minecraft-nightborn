@@ -18,6 +18,11 @@
     "quick_shot": {
       "speed": 3.15,
       "divergence": 1.0
+    },
+    "sound": {
+      "id": "minecraft:item.crossbow.shoot",
+      "volume": 0.55,
+      "pitch": 1.1
     }
   }
 }

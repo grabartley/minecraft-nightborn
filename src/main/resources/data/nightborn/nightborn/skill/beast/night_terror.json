@@ -49,6 +49,11 @@
       "id": "minecraft:entity.ravager.roar",
       "volume": 0.6,
       "pitch": 0.7
+    },
+    "end_sound": {
+      "id": "nightborn:power.bat_form.leave",
+      "volume": 0.6,
+      "pitch": 0.9
     }
   }
 }

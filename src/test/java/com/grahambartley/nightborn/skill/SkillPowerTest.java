@@ -321,12 +321,28 @@ class SkillPowerTest {
 
   @ParameterizedTest(name = "{0}")
   @MethodSource("shippedPowers")
-  @DisplayName("every shipped power sound is softer than full volume so repeating it never grates")
+  @DisplayName(
+      "every shipped power has a sound, and its sounds are softer than full volume so repeating"
+          + " them never grates")
   void shippedSoundsAreSoft(final Path file) {
-    power(file)
-        .orElseThrow()
-        .sound()
-        .ifPresent(sound -> assertTrue(sound.volume() < 1.0F, sound.id() + " " + sound.volume()));
+    final SkillPower power = power(file).orElseThrow();
+    assertTrue(power.sound().isPresent(), "has a sound");
+    Stream.of(power.sound(), power.endSound(), power.trap().map(trap -> trap.spring().sound()))
+        .flatMap(Optional::stream)
+        .forEach(sound -> assertTrue(sound.volume() < 1.0F, sound.id() + " " + sound.volume()));
+  }
+
+  @Test
+  @DisplayName("a power may name a sound it makes when it ends")
+  void endSound() {
+    final SkillPower power =
+        SkillPower.CODEC
+            .parse(
+                JsonOps.INSTANCE,
+                JsonParser.parseString(
+                    "{\"blood\":0,\"cooldown_ticks\":20,\"end_sound\":{\"id\":\"minecraft:block.bell.use\",\"volume\":0.5}}"))
+            .getOrThrow();
+    assertEquals(0.5F, power.endSound().orElseThrow().volume());
   }
 
   private static Optional<SkillPower> power(final Path file) {

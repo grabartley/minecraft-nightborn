@@ -25,6 +25,16 @@
       "tell_sound": "nightborn:power.bat_form.enter",
       "tell_clip": "dodge",
       "dodge": true
+    },
+    "sound": {
+      "id": "nightborn:power.bat_form.enter",
+      "volume": 0.5,
+      "pitch": 1.15
+    },
+    "end_sound": {
+      "id": "nightborn:power.bat_form.enter",
+      "volume": 0.5,
+      "pitch": 1.0
     }
   }
 }

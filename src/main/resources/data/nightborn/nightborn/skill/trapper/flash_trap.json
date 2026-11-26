@@ -37,7 +37,11 @@
       "size": 0.5,
       "look": "nightborn:flash_trap",
       "spring": {
-        "sound": "minecraft:entity.firework_rocket.blast",
+        "sound": {
+          "id": "minecraft:entity.firework_rocket.blast",
+          "volume": 0.5,
+          "pitch": 1.1
+        },
         "particle": {
           "type": "minecraft:flash"
         },

@@ -42,7 +42,6 @@ import com.grahambartley.nightborn.village.VampireSigns;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
 
@@ -97,19 +96,7 @@ final class PowerCasts {
     if (showsClip) {
       power.clip().ifPresent(clip -> show(caster, clip));
     }
-    power
-        .sound()
-        .ifPresent(
-            sound ->
-                caster
-                    .getWorld()
-                    .playSound(
-                        null,
-                        caster.getBlockPos(),
-                        SoundEvent.of(sound.id()),
-                        caster.getSoundCategory(),
-                        sound.volume(),
-                        sound.pitchFor(caster.getRandom().nextFloat())));
+    power.sound().ifPresent(sound -> sound.play(caster));
   }
 
   private static void show(final LivingEntity caster, final String clip) {

@@ -22,6 +22,7 @@ import com.grahambartley.nightborn.vampire.VampireAttributes;
 import com.grahambartley.nightborn.weakened.Weakened;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Predicate;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.mob.MobEntity;
@@ -110,10 +111,20 @@ public final class Powers {
   }
 
   public static Optional<BatFormPower> ownedBatForm(final LivingEntity caster) {
+    return owned(caster, power -> power.batForm().isPresent()).flatMap(SkillPower::batForm);
+  }
+
+  public static Optional<SkillPower> owned(
+      final LivingEntity caster, final Predicate<SkillPower> kind) {
     return SkillAttachment.owned(caster).ownedInOrder().stream()
-        .map(id -> power(caster, id).flatMap(SkillPower::batForm))
+        .map(id -> power(caster, id))
         .flatMap(Optional::stream)
+        .filter(kind)
         .findFirst();
+  }
+
+  public static void playEndSound(final LivingEntity caster, final Predicate<SkillPower> kind) {
+    owned(caster, kind).flatMap(SkillPower::endSound).ifPresent(sound -> sound.play(caster));
   }
 
   public static PowerUse.Verdict check(final LivingEntity caster, @Nullable final Identifier id) {

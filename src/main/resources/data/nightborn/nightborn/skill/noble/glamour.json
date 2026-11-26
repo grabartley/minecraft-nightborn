@@ -23,6 +23,11 @@
       "id": "minecraft:entity.illusioner.mirror_move",
       "volume": 0.45,
       "pitch": 1.1
+    },
+    "end_sound": {
+      "id": "minecraft:entity.illusioner.mirror_move",
+      "volume": 0.45,
+      "pitch": 0.95
     }
   }
 }

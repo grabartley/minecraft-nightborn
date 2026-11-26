@@ -103,7 +103,7 @@ public final class BatForm {
     } else {
       vampire.setNoGravity(true);
     }
-    SmokePoof.burst(vampire, ENTER_SOUND);
+    SmokePoof.puff(vampire);
     VampireSigns.shown(vampire, SuspicionCause.SEEN_IN_BAT_FORM);
   }
 
@@ -125,6 +125,7 @@ public final class BatForm {
     if (!feet.equals(vampire.getPos())) {
       vampire.requestTeleport(feet.x, feet.y, feet.z);
     }
+    final boolean winged = WingedForm.on(vampire);
     vampire.removeAttached(TYPE);
     WingedForm.left(vampire);
     vampire.calculateDimensions();
@@ -134,7 +135,9 @@ public final class BatForm {
     } else {
       vampire.setNoGravity(false);
     }
-    SmokePoof.burst(vampire, LEAVE_SOUND);
+    SmokePoof.puff(vampire);
+    Powers.playEndSound(
+        vampire, power -> winged ? power.wingedForm().isPresent() : power.batForm().isPresent());
     return true;
   }
 

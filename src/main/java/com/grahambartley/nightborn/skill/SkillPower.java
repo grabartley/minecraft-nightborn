@@ -36,6 +36,7 @@ public record SkillPower(
     int cooldownTicks,
     List<StatusEffectInstance> effects,
     Optional<PowerSound> sound,
+    Optional<PowerSound> endSound,
     PowerMoves moves,
     PowerMinds minds,
     PowerCalls calls,
@@ -61,6 +62,9 @@ public record SkillPower(
                               .optionalFieldOf("effects", List.of())
                               .forGetter(SkillPower::effects),
                           PowerSound.CODEC.optionalFieldOf("sound").forGetter(SkillPower::sound),
+                          PowerSound.CODEC
+                              .optionalFieldOf("end_sound")
+                              .forGetter(SkillPower::endSound),
                           PowerMoves.CODEC.forGetter(SkillPower::moves),
                           PowerMinds.CODEC.forGetter(SkillPower::minds),
                           PowerCalls.CODEC.forGetter(SkillPower::calls),

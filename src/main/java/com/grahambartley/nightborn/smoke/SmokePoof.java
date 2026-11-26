@@ -16,6 +16,25 @@ public final class SmokePoof {
     if (!(vampire.getWorld() instanceof ServerWorld world)) {
       return;
     }
+    puff(world, vampire);
+    world.playSound(
+        null,
+        vampire.getX(),
+        vampire.getY(),
+        vampire.getZ(),
+        sound,
+        vampire.getSoundCategory(),
+        1.0F,
+        1.0F);
+  }
+
+  public static void puff(final LivingEntity vampire) {
+    if (vampire.getWorld() instanceof ServerWorld world) {
+      puff(world, vampire);
+    }
+  }
+
+  private static void puff(final ServerWorld world, final LivingEntity vampire) {
     final EntityDimensions shape = vampire.getDimensions(vampire.getPose());
     world.spawnParticles(
         SmokeParticles.VAMPIRE_SMOKE,
@@ -27,14 +46,5 @@ public final class SmokePoof {
         shape.height() / 2.0,
         shape.width() / 2.0,
         SMOKE_SPEED);
-    world.playSound(
-        null,
-        vampire.getX(),
-        vampire.getY(),
-        vampire.getZ(),
-        sound,
-        vampire.getSoundCategory(),
-        1.0F,
-        1.0F);
   }
 }

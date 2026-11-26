@@ -29,7 +29,11 @@
       "size": 0.5,
       "look": "nightborn:snare",
       "spring": {
-        "sound": "minecraft:block.iron_trapdoor.close",
+        "sound": {
+          "id": "minecraft:block.iron_trapdoor.close",
+          "volume": 0.6,
+          "pitch": 1.0
+        },
         "particle": {
           "type": "minecraft:crit"
         },

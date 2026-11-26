@@ -2,6 +2,7 @@ package com.grahambartley.nightborn.occult;
 
 import com.grahambartley.nightborn.Nightborn;
 import com.grahambartley.nightborn.batform.BatFormLimits;
+import com.grahambartley.nightborn.skill.Powers;
 import com.grahambartley.nightborn.smoke.SmokePoof;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentRegistry;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentSyncPredicate;
@@ -22,7 +23,6 @@ import net.minecraft.particle.ParticleTypes;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.tag.TagKey;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.TypedActionResult;
@@ -103,7 +103,7 @@ public final class MistForm {
     vampire.setAttached(
         TYPE, new MistState(vampire.getWorld().getTime() + power.durationTicks(), power.harm()));
     vampire.calculateDimensions();
-    SmokePoof.burst(vampire, SoundEvents.ENTITY_ILLUSIONER_PREPARE_BLINDNESS);
+    SmokePoof.puff(vampire);
   }
 
   public static void tick(final LivingEntity vampire) {
@@ -144,6 +144,7 @@ public final class MistForm {
   public static void leave(final LivingEntity vampire) {
     vampire.removeAttached(TYPE);
     vampire.calculateDimensions();
-    SmokePoof.burst(vampire, SoundEvents.ENTITY_ILLUSIONER_MIRROR_MOVE);
+    SmokePoof.puff(vampire);
+    Powers.playEndSound(vampire, power -> power.mist().isPresent());
   }
 }
