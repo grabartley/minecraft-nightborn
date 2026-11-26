@@ -4,7 +4,7 @@
     "nightborn:occult/grave_fog"
   ],
   "icon": "nightborn:skills/icon/shadow_step",
-  "column": 2,
+  "column": 1,
   "row": 2,
   "ranks": [
     {

@@ -4,7 +4,7 @@
     "nightborn:hunter/faith"
   ],
   "icon": "nightborn:skills/icon/mend",
-  "column": 0,
+  "column": 2,
   "row": 1,
   "ranks": [
     {

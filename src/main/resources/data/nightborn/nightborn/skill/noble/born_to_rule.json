@@ -4,8 +4,8 @@
     "nightborn:noble/sovereigns_gaze"
   ],
   "icon": "nightborn:skills/icon/dark_court",
-  "column": 1,
-  "row": 5,
+  "column": 0,
+  "row": 4,
   "stage": "nightborn:ancient",
   "ranks": [
     {

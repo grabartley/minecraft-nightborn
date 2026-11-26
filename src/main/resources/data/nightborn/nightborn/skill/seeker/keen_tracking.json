@@ -4,7 +4,7 @@
     "nightborn:hunter/tracking"
   ],
   "icon": "nightborn:skills/icon/keen_tracking",
-  "column": 0,
+  "column": 1,
   "row": 0,
   "ranks": [
     {

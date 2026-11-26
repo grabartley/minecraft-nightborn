@@ -18,7 +18,7 @@ public record Skill(
     List<SkillRank> ranks,
     Optional<SkillPower> power) {
 
-  public static final int MAX_COLUMN = 2;
+  public static final int MAX_COLUMN = 4;
   public static final int MAX_ROW = 6;
   public static final int MAX_RANKS = 3;
 

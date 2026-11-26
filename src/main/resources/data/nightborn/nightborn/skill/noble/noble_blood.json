@@ -1,7 +1,7 @@
 {
   "branch": "nightborn:noble",
   "icon": "nightborn:skills/icon/noble_blood",
-  "column": 1,
+  "column": 0,
   "row": 0,
   "ranks": [
     {

@@ -4,7 +4,7 @@
     "nightborn:trapper/field_craft"
   ],
   "icon": "nightborn:skills/icon/bait",
-  "column": 2,
+  "column": 0,
   "row": 1,
   "ranks": [
     {

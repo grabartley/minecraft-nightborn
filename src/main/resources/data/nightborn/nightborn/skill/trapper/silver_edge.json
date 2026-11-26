@@ -4,7 +4,7 @@
     "nightborn:trapper/net_shot"
   ],
   "icon": "nightborn:skills/icon/silver_edge",
-  "column": 0,
+  "column": 1,
   "row": 3,
   "rank": "nightborn:hunter",
   "ranks": [

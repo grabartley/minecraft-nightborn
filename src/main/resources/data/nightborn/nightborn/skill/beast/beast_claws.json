@@ -4,7 +4,7 @@
     "nightborn:beast/beast_blood"
   ],
   "icon": "nightborn:skills/icon/beast_claws",
-  "column": 0,
+  "column": 1,
   "row": 1,
   "ranks": [
     {

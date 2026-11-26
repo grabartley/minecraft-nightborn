@@ -4,7 +4,7 @@
     "nightborn:slayer/riposte"
   ],
   "icon": "nightborn:skills/icon/heartstrike",
-  "column": 0,
+  "column": 2,
   "row": 2,
   "rank": "nightborn:hunter",
   "ranks": [

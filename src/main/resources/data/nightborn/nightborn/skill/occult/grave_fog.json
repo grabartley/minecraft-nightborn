@@ -4,7 +4,7 @@
     "nightborn:occult/occult_blood"
   ],
   "icon": "nightborn:skills/icon/grave_fog",
-  "column": 2,
+  "column": 0,
   "row": 1,
   "ranks": [
     {

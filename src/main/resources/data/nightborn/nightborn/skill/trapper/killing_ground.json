@@ -5,8 +5,8 @@
     "nightborn:trapper/net_shot"
   ],
   "icon": "nightborn:skills/icon/killing_ground",
-  "column": 1,
-  "row": 4,
+  "column": 0,
+  "row": 3,
   "rank": "nightborn:master",
   "ranks": [
     {

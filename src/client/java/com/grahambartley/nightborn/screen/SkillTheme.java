@@ -6,14 +6,49 @@ import com.grahambartley.nightborn.skill.SkillTree;
 import net.minecraft.util.Identifier;
 
 public record SkillTheme(
-    SkillTree tree, int title, int text, int muted, int problem, int ringHover, int ringEdge) {
+    SkillTree tree,
+    int title,
+    int text,
+    int muted,
+    int problem,
+    int ringHover,
+    int ringEdge,
+    int lineEdge,
+    int line,
+    int lineOwned,
+    int rule,
+    int shade) {
 
   public static SkillTheme of(final SkillTree tree) {
     return switch (tree) {
       case VAMPIRE ->
-          new SkillTheme(tree, 0xE6C77A, 0xD8C8B0, 0x7A6A5A, 0xC0504A, 0x48F08A50, 0xFFB8963E);
+          new SkillTheme(
+              tree,
+              0xE6C77A,
+              0xD8C8B0,
+              0x7A6A5A,
+              0xC0504A,
+              0x48F08A50,
+              0xFFB8963E,
+              0xFF0E0809,
+              0xFF4A4246,
+              0xFFD04A4E,
+              0xFF5E4314,
+              0x0E0809);
       case HUNTER ->
-          new SkillTheme(tree, 0xD6DEE2, 0xC8C0B4, 0x6E6A64, 0xB85A4E, 0x38E8EEF2, 0xFF8A9298);
+          new SkillTheme(
+              tree,
+              0xD6DEE2,
+              0xC8C0B4,
+              0x6E6A64,
+              0xB85A4E,
+              0x38E8EEF2,
+              0xFF8A9298,
+              0xFF0B0D0E,
+              0xFF4A4F55,
+              0xFFD6DEE2,
+              0xFF3B4148,
+              0x0B0D0E);
     };
   }
 
@@ -63,8 +98,16 @@ public record SkillTheme(
     return sprite("experience_fill");
   }
 
-  public Identifier line(final boolean owned) {
-    return sprite(owned ? "line_owned" : "line");
+  public int lineCore(final boolean owned) {
+    return owned ? lineOwned : line;
+  }
+
+  public Identifier scrollerTrack() {
+    return sprite("scroller_track");
+  }
+
+  public Identifier scroller(final boolean lit) {
+    return sprite(lit ? "scroller_hover" : "scroller");
   }
 
   public Identifier frame(final SkillPurchase.Verdict verdict) {

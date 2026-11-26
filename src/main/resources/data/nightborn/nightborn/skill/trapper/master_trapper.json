@@ -4,8 +4,8 @@
     "nightborn:trapper/killing_ground"
   ],
   "icon": "nightborn:skills/icon/master_trapper",
-  "column": 1,
-  "row": 5,
+  "column": 0,
+  "row": 4,
   "rank": "nightborn:master",
   "ranks": [
     {

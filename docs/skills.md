@@ -31,6 +31,7 @@ Every number here is the default, and lives in data or a server setting. Nobody 
 - A power hurts, moves, holds or curses another player only when PvP is on (FACT-2). Healing and help given to allies always work. Where a row says human or vampire, it means mobs always and players as PvP allows.
 - Damage that a row says burns as the sun does is not the sun. It stops at a vampire's last health, as any other blow does, and never finishes a downed vampire.
 - Skills are data. No skill has code written for one bloodline or one path.
+- On the skill screen each branch is a band read left to right. A skill sits one column right of the deepest skill it needs, and its line never crosses or touches a line it is not joined to. Where each skill sits is data, and the server checks these rules when it starts (LINE-7).
 
 ## Vampire Tree
 

@@ -4,7 +4,7 @@
     "nightborn:hunter/tracking"
   ],
   "icon": "nightborn:skills/icon/sixth_sense",
-  "column": 2,
+  "column": 3,
   "row": 0,
   "ranks": [
     {

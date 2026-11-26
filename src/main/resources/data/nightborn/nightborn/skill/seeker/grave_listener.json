@@ -4,8 +4,8 @@
     "nightborn:seeker/sixth_sense"
   ],
   "icon": "nightborn:skills/icon/grave_listener",
-  "column": 2,
-  "row": 2,
+  "column": 3,
+  "row": 1,
   "ranks": [
     {
       "cost": 2,

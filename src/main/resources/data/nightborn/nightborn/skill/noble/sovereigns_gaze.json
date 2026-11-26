@@ -5,8 +5,8 @@
     "nightborn:noble/dread_presence"
   ],
   "icon": "nightborn:skills/icon/mesmerise",
-  "column": 1,
-  "row": 4,
+  "column": 0,
+  "row": 3,
   "stage": "nightborn:ancient",
   "ranks": [
     {

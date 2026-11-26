@@ -4,8 +4,8 @@
     "nightborn:beast/beast_claws"
   ],
   "icon": "nightborn:skills/icon/blood_rush",
-  "column": 0,
-  "row": 3,
+  "column": 1,
+  "row": 2,
   "stage": "nightborn:elder",
   "ranks": [
     {

@@ -36,8 +36,9 @@ class SkillThemeTest {
                 theme.header(),
                 theme.tooltip(),
                 theme.point(),
-                theme.line(false),
-                theme.line(true),
+                theme.scrollerTrack(),
+                theme.scroller(false),
+                theme.scroller(true),
                 theme.wheelRing(),
                 theme.wheelSlot(false, false),
                 theme.wheelSlot(false, true),
@@ -79,8 +80,9 @@ class SkillThemeTest {
                     Arguments.of(theme.header(), "nine_slice"),
                     Arguments.of(theme.tooltip(), "nine_slice"),
                     Arguments.of(theme.experienceBar(), "nine_slice"),
-                    Arguments.of(theme.line(false), "tile"),
-                    Arguments.of(theme.line(true), "tile")));
+                    Arguments.of(theme.scrollerTrack(), "nine_slice"),
+                    Arguments.of(theme.scroller(false), "nine_slice"),
+                    Arguments.of(theme.scroller(true), "nine_slice")));
   }
 
   @ParameterizedTest(name = "{0} is {1}")
@@ -184,6 +186,26 @@ class SkillThemeTest {
     } catch (final IOException e) {
       throw new IllegalStateException(e);
     }
+  }
+
+  static double brightness(final int colour) {
+    return 0.299 * (colour >> 16 & 0xFF) + 0.587 * (colour >> 8 & 0xFF) + 0.114 * (colour & 0xFF);
+  }
+
+  @ParameterizedTest(name = "{0}")
+  @EnumSource(SkillTree.class)
+  @DisplayName(
+      "lines are solid, edged darker than their core, and brighter once the skill is owned")
+  void lineColours(final SkillTree tree) {
+    final SkillTheme theme = SkillTheme.of(tree);
+    for (final int colour :
+        new int[] {theme.lineEdge(), theme.lineCore(false), theme.lineCore(true), theme.rule()}) {
+      assertEquals(0xFF, colour >>> 24, "solid");
+    }
+    assertTrue(brightness(theme.lineEdge()) < brightness(theme.lineCore(false)));
+    assertTrue(brightness(theme.lineCore(false)) < brightness(theme.lineCore(true)));
+    assertTrue(brightness(theme.lineEdge()) < brightness(theme.rule()));
+    assertEquals(0, theme.shade() >>> 24, "the shade fades from its own colour to nothing");
   }
 
   @ParameterizedTest(name = "{0}")

@@ -5,7 +5,7 @@
   ],
   "icon": "nightborn:skills/icon/tough_as_oak",
   "column": 1,
-  "row": 2,
+  "row": 1,
   "ranks": [
     {
       "cost": 1,

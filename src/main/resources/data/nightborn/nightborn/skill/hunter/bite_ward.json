@@ -4,7 +4,7 @@
     "nightborn:hunter/tracking"
   ],
   "icon": "nightborn:skills/icon/bite_ward",
-  "column": 1,
+  "column": 0,
   "row": 0,
   "ranks": [
     {

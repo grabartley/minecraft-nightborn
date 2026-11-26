@@ -64,23 +64,91 @@ class SkillDataCheckTest {
                 skill("tracking", 0, 0)),
             List.of("nightborn:core/a needs nightborn:tracking/a from another tree")),
         Arguments.of(
-            "a requirement on the same row",
-            Map.of(id("core/a"), skill("core", 0, 1), id("core/b"), skill("core", 1, 1, "core/a")),
-            List.of("nightborn:core/b needs nightborn:core/a, which is not on a row above it")),
+            "a skill further right than what it needs",
+            Map.of(id("core/a"), skill("core", 0, 0), id("core/b"), skill("core", 0, 2, "core/a")),
+            List.of(
+                "nightborn:core/b is at row 2, but the deepest skill it needs puts it at row 1")),
+        Arguments.of(
+            "a skill level with what it needs",
+            Map.of(id("core/a"), skill("core", 0, 0), id("core/b"), skill("core", 1, 0, "core/a")),
+            List.of(
+                "nightborn:core/b is at row 0, but the deepest skill it needs puts it at row 1")),
+        Arguments.of(
+            "a first skill away from the left edge",
+            Map.of(id("core/a"), skill("core", 0, 1)),
+            List.of(
+                "nightborn:core/a is at row 1, but the deepest skill it needs puts it at row 0")),
         Arguments.of(
             "a loop of requirements",
             Map.of(
                 id("core/a"), skill("core", 0, 0, "core/b"),
                 id("core/b"), skill("core", 1, 1, "core/a")),
             List.of(
-                "nightborn:core/a needs nightborn:core/b, which is not on a row above it",
+                "nightborn:core/a is at row 0, but the deepest skill it needs puts it at row 2",
                 "nightborn:core/a needs itself through a loop of requirements",
                 "nightborn:core/b needs itself through a loop of requirements")),
         Arguments.of(
             "two skills in one place",
-            Map.of(id("core/a"), skill("core", 1, 2), id("core/b"), skill("core", 1, 2)),
+            Map.of(id("core/a"), skill("core", 1, 0), id("core/b"), skill("core", 1, 0)),
             List.of(
-                "nightborn:core/b shares its place in nightborn:core 1,2 with nightborn:core/a")));
+                "nightborn:core/b shares its place in nightborn:core 1,0 with nightborn:core/a")),
+        Arguments.of(
+            "one skill fanning out to several",
+            Map.of(
+                id("core/a"), skill("core", 1, 0),
+                id("core/b"), skill("core", 0, 1, "core/a"),
+                id("core/c"), skill("core", 2, 1, "core/a"),
+                id("core/d"), skill("core", 1, 2, "core/b", "core/c")),
+            List.of()),
+        Arguments.of(
+            "a long line along an empty lane",
+            Map.of(
+                id("core/a"), skill("core", 0, 0),
+                id("core/c"), skill("core", 1, 1, "core/a"),
+                id("core/d"), skill("core", 1, 2, "core/c"),
+                id("core/e"), skill("core", 0, 3, "core/a", "core/d")),
+            List.of()),
+        Arguments.of(
+            "a skill sitting on a long line",
+            Map.of(
+                id("core/a"), skill("core", 0, 0),
+                id("core/c"), skill("core", 1, 1, "core/a"),
+                id("core/d"), skill("core", 1, 2, "core/c"),
+                id("core/e"), skill("core", 0, 3, "core/a", "core/d"),
+                id("core/x"), skill("core", 0, 1, "core/a")),
+            List.of("nightborn:core/x sits on the line from nightborn:core/a to nightborn:core/e")),
+        Arguments.of(
+            "two unrelated lines crossing",
+            Map.of(
+                id("core/a"), skill("core", 0, 0),
+                id("core/b"), skill("core", 1, 0),
+                id("core/c"), skill("core", 1, 1, "core/a"),
+                id("core/d"), skill("core", 0, 1, "core/b")),
+            List.of(
+                "the line from nightborn:core/a to nightborn:core/c touches the line from"
+                    + " nightborn:core/b to nightborn:core/d")),
+        Arguments.of(
+            "a long line crossing another skill's line",
+            Map.of(
+                id("core/a"), skill("core", 2, 0),
+                id("core/b"), skill("core", 4, 1, "core/a"),
+                id("core/c"), skill("core", 4, 2, "core/b"),
+                id("core/m"), skill("core", 1, 0),
+                id("core/p"), skill("core", 1, 1, "core/m"),
+                id("core/q"), skill("core", 3, 2, "core/p"),
+                id("core/z"), skill("core", 2, 3, "core/a", "core/c")),
+            List.of(
+                "the line from nightborn:core/p to nightborn:core/q touches the line from"
+                    + " nightborn:core/a to nightborn:core/z")),
+        Arguments.of(
+            "skills and lines in other branches never block or touch a line",
+            Map.of(
+                id("core/a"), skill("core", 0, 0),
+                id("core/c"), skill("core", 1, 1, "core/a"),
+                id("core/e"), skill("core", 0, 2, "core/a", "core/c"),
+                id("tracking/m"), skill("tracking", 1, 0),
+                id("tracking/x"), skill("tracking", 0, 1, "tracking/m")),
+            List.of()));
   }
 
   @ParameterizedTest(name = "{0}")

@@ -4,7 +4,7 @@
     "nightborn:occult/summon_familiar"
   ],
   "icon": "nightborn:skills/icon/spirit_pact",
-  "column": 0,
+  "column": 3,
   "row": 2,
   "ranks": [
     {

@@ -4,7 +4,7 @@
     "nightborn:occult/occult_blood"
   ],
   "icon": "nightborn:skills/icon/summon_familiar",
-  "column": 0,
+  "column": 2,
   "row": 1,
   "ranks": [
     {

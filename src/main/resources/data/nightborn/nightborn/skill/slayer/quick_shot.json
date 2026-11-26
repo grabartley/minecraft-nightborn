@@ -4,7 +4,7 @@
     "nightborn:slayer/stake_throw"
   ],
   "icon": "nightborn:skills/icon/quick_shot",
-  "column": 2,
+  "column": 3,
   "row": 1,
   "ranks": [
     {

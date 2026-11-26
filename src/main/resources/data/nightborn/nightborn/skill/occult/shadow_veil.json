@@ -4,7 +4,7 @@
     "nightborn:occult/shadow_step"
   ],
   "icon": "nightborn:skills/icon/shadow_veil",
-  "column": 2,
+  "column": 1,
   "row": 3,
   "ranks": [
     {

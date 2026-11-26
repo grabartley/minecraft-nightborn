@@ -4,8 +4,8 @@
     "nightborn:faithful/rebuke"
   ],
   "icon": "nightborn:skills/icon/consecrate",
-  "column": 2,
-  "row": 3,
+  "column": 1,
+  "row": 2,
   "rank": "nightborn:veteran",
   "ranks": [
     {
