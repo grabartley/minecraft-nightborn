@@ -90,7 +90,7 @@ This document specifies the Nightborn alpha line for Minecraft 1.21.1 on Fabric.
 | How bad is the sun? | Lethal. Direct sun sets a vampire on fire | SUN-1 |
 | What replaces hunger? | Blood | FEED-1 |
 | How do powers grow? | A skill tree with three bloodlines, of which you invest in two, bought with experience that takes about a hundred nights to fill, and four stages of age | LINE-1 to LINE-3, SKILL-1, AGE-1 |
-| Who is a hunter? | A human who has proved themselves and been sworn into the guild. They pick two of four paths and rise through four ranks | HUNT-10, HUNT-3, RANK-1 |
+| Who is a hunter? | A human who has proved themselves and been sworn into the guild. They share a core of skills, pick two of four paths and rise through four ranks | HUNT-10, HUNT-3, RANK-1 |
 | How does a vampire die? | Only to direct sun or a stake. Anything else brings it down, greatly weakened, until it recovers and escapes | CORE-7, CORE-8 |
 | What happens on death? | Respawn at your assigned coffin, which death by the sun or a stake unassigns, sending you to world spawn. A stake costs skill progress. A server can make a vampire's death a full reset instead | COFFIN-4, COFFIN-5, COFFIN-13, SKILL-6, CORE-10 |
 | PvP? | Vampires and humans are factions, and PvP follows the server's own setting, all but a duel for a house | FACT-1 to FACT-6, HOUSE-8 |
@@ -383,7 +383,7 @@ The core starts with Thick Blood (more health), Grave Strength (harder blows), B
 | LINE-4 | Every bloodline has skills a vampire without it cannot get |
 | LINE-5 | Each skill shows what it does, what it costs and what it needs first, before it is bought |
 | LINE-6 | The skill screen opens with a key, and shows free points with a skill point graphic, readable at a glance, points earned and spent, and a bar of experience toward the next point (SKILL-1) |
-| LINE-7 | The vampire and hunter skill screens are styled, each with its own look: background, frames, lines, headers, tooltips and point graphic. Neither is a plain menu |
+| LINE-7 | The vampire and hunter skill screens are styled, each with its own look: background, frames, lines, headers, tooltips and point graphic. Neither is a plain menu. They are titled Vampire Skills and Hunter Skills, and each shows its shared branch as Core |
 | LINE-8 | The core and each bloodline hold about ten skills. Skills, their ranks, costs and the stage each needs are data, and `docs/skills.md` lists them all |
 
 | ID | Requirement |
@@ -487,7 +487,7 @@ A vampire who has come of age can found a house: a household of their own, of va
 
 Every human can fight vampires with stake, silver, garlic and holy water. One who proves themselves and joins the guild is a hunter, and only a hunter grows: hunter experience, the tree, ranks, contracts and trials all begin with the oath.
 
-The hunter tree starts with Tracking, an active power that points toward the nearest vampire for a short time. Beyond it lie four paths, of which a hunter picks two. The gifts that last are player attributes (`nightborn:bite_resistance`, `nightborn:mesmerise_resistance` and `nightborn:faith`) that skills raise, so the features that use them read one number and never the skills themselves. A hunter must be online when the sun finishes the vampire to be paid.
+The hunter tree has a core that every hunter shares, and four paths, of which a hunter picks two. The core starts with Tracking, an active power that points toward the nearest vampire for a short time, which every path needs first. The rest of the core is what any hunter learns on the road: tougher hide, a harder stake, surer feet, eyes that clear faster, Second Wind, a short burst of speed and grit, and Bind Wounds, which dresses the hunter's own wounds. The gifts that last are player attributes (`nightborn:bite_resistance`, `nightborn:mesmerise_resistance` and `nightborn:faith`) that skills raise, so the features that use them read one number and never the skills themselves. A hunter must be online when the sun finishes the vampire to be paid.
 
 | Path | What it gives |
 |---|---|
@@ -500,7 +500,7 @@ The hunter tree starts with Tracking, an active power that points toward the nea
 |---|---|
 | HUNT-1 | A hunter earns hunter points by staking vampire mobs and vampire players, or by downing one that the sun finishes before its escape ends. Downing alone earns nothing. A vampire, mob or player, pays more for each stage it has above fledgling (HOME-15, AGE-1). The Eldest also pays hunters, as RITE-6 says |
 | HUNT-2 | Contracts from the Guild Master earn hunter points as well as their reward |
-| HUNT-3 | The hunter tree has four paths: Trapper, Faithful, Slayer and Seeker, each of about ten skills. Spending a first point in a path chooses it, and once two are chosen the others are locked, as bloodlines are (LINE-2, LINE-3). Hunter skills bought in an older world are reset and their points given back |
+| HUNT-3 | The hunter tree has the core and four paths: Trapper, Faithful, Slayer and Seeker. The core and each path hold about ten skills, and every hunter has the core whichever paths they pick. Spending a first point in a path chooses it, and once two are chosen the others are locked, as bloodlines are (LINE-2, LINE-3). Hunter skills bought in an older world are reset and their points given back |
 | HUNT-4 | The paths give what the table says. Bite resistance lets a human break free of a feeding bite sooner (FEED-7), shortens the Weakness after it (FEED-5) and lowers the chance of the sickness (TURN-1). Bite resistance and mesmerise resistance never pass 0.8, whatever is learned and worn. Skills, their ranks, costs and the rank each needs are data, and `docs/skills.md` lists them all |
 | HUNT-5 | Tracking shows the direction of the nearest vampire within range for a short time |
 | HUNT-6 | A hunter's active skills sit on the power bar (SKILL-4). They cost no blood and each has a cooldown |

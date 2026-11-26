@@ -237,6 +237,56 @@ class SkillTest {
   @CsvSource(
       delimiter = '|',
       value = {
+        "tracking | 1 | | | true",
+        "weathered | 1,2,3 | tracking | | false",
+        "second_wind | 2 | tracking | | true",
+        "clear_eyes | 1,2 | tracking | | false",
+        "stakewright | 1,2,2 | weathered | | false",
+        "bind_wounds | 2 | second_wind | | true",
+        "sure_footing | 1,1 | clear_eyes | | false",
+        "unyielding | 2,2 | stakewright | hunter | false",
+        "old_hand | 3 | bind_wounds | master | false"
+      })
+  @DisplayName("the hunter core holds its nine locked skills with their costs, needs and ranks")
+  void hunterCoreSkills(
+      final String path,
+      final String costs,
+      final String needs,
+      final String gate,
+      final boolean power)
+      throws IOException {
+    final Skill skill = shippedSkills().get(Identifier.of("nightborn", "hunter/" + path));
+    assertEquals(Identifier.of("nightborn", "hunter"), skill.branch());
+    assertFalse(shippedBranches().get(skill.branch()).line());
+    assertEquals(
+        costs,
+        skill.ranks().stream()
+            .map(rank -> Integer.toString(rank.cost()))
+            .collect(Collectors.joining(",")));
+    assertEquals(
+        needs == null ? List.of() : List.of(Identifier.of("nightborn", "hunter/" + needs)),
+        skill.requires());
+    assertEquals(
+        Optional.ofNullable(gate).map(rank -> Identifier.of("nightborn", rank)), skill.rank());
+    assertEquals(power, skill.active());
+    assertEquals(0, skill.power().map(SkillPower::blood).orElse(0));
+  }
+
+  @ParameterizedTest(name = "{0}: cooldown {1} seconds, volume {2}")
+  @CsvSource({"tracking, 60, 0.6", "second_wind, 45, 0.6", "bind_wounds, 30, 0.7"})
+  @DisplayName("each hunter core power cools down for the time the table gives, below full volume")
+  void hunterCorePowers(final String path, final int seconds, final float volume)
+      throws IOException {
+    final SkillPower power =
+        shippedSkills().get(Identifier.of("nightborn", "hunter/" + path)).power().orElseThrow();
+    assertEquals(seconds * 20, power.cooldownTicks());
+    assertEquals(volume, power.sound().orElseThrow().volume(), 1.0E-6F);
+  }
+
+  @ParameterizedTest(name = "{0}: costs {1}, needs {2}, gate {3}, power {4}")
+  @CsvSource(
+      delimiter = '|',
+      value = {
         "field_craft | 1,1,2 | hunter/tracking | | false",
         "snare | 2 | trapper/field_craft | | true",
         "bait | 2 | trapper/field_craft | | true",

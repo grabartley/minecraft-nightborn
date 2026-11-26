@@ -1,0 +1,41 @@
+{
+  "branch": "nightborn:hunter",
+  "requires": [
+    "nightborn:hunter/tracking"
+  ],
+  "icon": "nightborn:skills/icon/weathered",
+  "column": 0,
+  "row": 1,
+  "ranks": [
+    {
+      "cost": 1,
+      "attributes": [
+        {
+          "attribute": "minecraft:generic.armor",
+          "amount": 1.0,
+          "operation": "add_value"
+        }
+      ]
+    },
+    {
+      "cost": 2,
+      "attributes": [
+        {
+          "attribute": "minecraft:generic.armor",
+          "amount": 1.0,
+          "operation": "add_value"
+        }
+      ]
+    },
+    {
+      "cost": 3,
+      "attributes": [
+        {
+          "attribute": "minecraft:generic.armor",
+          "amount": 1.0,
+          "operation": "add_value"
+        }
+      ]
+    }
+  ]
+}

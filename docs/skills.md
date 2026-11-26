@@ -23,6 +23,7 @@ Every number here is the default, and lives in data or a server setting. Nobody 
 
 - A vampire or a hunter should feel stronger with every point. A rank that cannot be felt in play is wrong.
 - Every power has a pose and a sound when it is used, and a cue on screen. A power used on a player gives that player a cue too.
+- Powers are used again and again, so each sound is satisfying to hear many times and never loud or grating. A power's sound, its volume and its pitch are data, and its pitch shifts a little each time.
 - Every power has a counter on the other side. No skill removes a vampire weakness or lets a vampire walk in the sun.
 - A boss cannot be pinned, pulled, mesmerised, commanded, downed by a skill or marked through its arena wall. Skills that would do so deal their damage and nothing more.
 - A power that moves the user lands only on solid floor with room to stand, never in fluid or fire and never through a wall, as Vanish does today.
@@ -106,13 +107,23 @@ The sorcerer. Shadow, fog and the dead.
 
 ## Hunter Tree
 
-A hunter starts with Tracking and picks two of the four paths. Each path ends in a capstone: an ultimate power that needs Master, then one last passive. Hunter powers cost no blood.
+A hunter has the core and picks two of the four paths. Each path ends in a capstone: an ultimate power that needs Master, then one last passive. Hunter powers cost no blood.
 
-### Root
+### Core
+
+What any hunter learns on the road, whichever paths they walk.
 
 | Skill | Kind | Ranks and cost | Needs | Gate | Cooldown | What it does |
 |---|---|---|---|---|---|---|
-| Tracking | Power | 1 | None | None | 60 | Points toward the nearest vampire within 64 blocks for 10 seconds (HUNT-5) |
+| Tracking | Power | 1 | None | None | 60 | Points toward the nearest vampire within 64 blocks for 10 seconds (HUNT-5). Every path needs it first |
+| Weathered | Passive | 3 ranks: 1, 2, 3 | Tracking | None | | 1 more armour each rank |
+| Second Wind | Power | 2 | Tracking | None | 45 | Speed I and Resistance I for 8 seconds |
+| Clear Eyes | Passive | 2 ranks: 1, 2 | Tracking | None | | Blindness and Darkness on the hunter last 25% less each rank |
+| Stakewright | Passive | 3 ranks: 1, 2, 2 | Weathered | None | | A stake's blow deals 10% more damage each rank |
+| Bind Wounds | Power | 2 | Second Wind | None | 30 | Heals 6 health over 4 seconds |
+| Sure Footing | Passive | 2 ranks: 1, 1 | Clear Eyes | None | | Falls 2 blocks further before taking damage each rank |
+| Unyielding | Passive | 2 ranks: 2, 2 | Stakewright | Hunter | | 20% knockback resistance each rank |
+| Old Hand | Passive | 3 | Bind Wounds | Master | | Every hunter power's cooldown is 10% shorter |
 
 ### Trapper
 

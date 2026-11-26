@@ -1,0 +1,32 @@
+{
+  "branch": "nightborn:hunter",
+  "requires": [
+    "nightborn:hunter/stakewright"
+  ],
+  "icon": "nightborn:skills/icon/unyielding",
+  "column": 0,
+  "row": 3,
+  "rank": "nightborn:hunter",
+  "ranks": [
+    {
+      "cost": 2,
+      "attributes": [
+        {
+          "attribute": "minecraft:generic.knockback_resistance",
+          "amount": 0.2,
+          "operation": "add_value"
+        }
+      ]
+    },
+    {
+      "cost": 2,
+      "attributes": [
+        {
+          "attribute": "minecraft:generic.knockback_resistance",
+          "amount": 0.2,
+          "operation": "add_value"
+        }
+      ]
+    }
+  ]
+}

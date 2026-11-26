@@ -1,0 +1,26 @@
+{
+  "branch": "nightborn:hunter",
+  "requires": [
+    "nightborn:hunter/second_wind"
+  ],
+  "icon": "nightborn:skills/icon/bind_wounds",
+  "column": 1,
+  "row": 2,
+  "ranks": [
+    {
+      "cost": 2
+    }
+  ],
+  "power": {
+    "blood": 0,
+    "cooldown_ticks": 600,
+    "heal": {
+      "health": 6.0,
+      "ticks": 80
+    },
+    "sound": {
+      "id": "minecraft:item.armor.equip_leather",
+      "volume": 0.7
+    }
+  }
+}
