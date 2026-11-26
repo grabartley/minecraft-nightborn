@@ -21,6 +21,6 @@ public final class BossPowers {
     BloodAttachment.set(boss, fed(BloodAttachment.get(boss), cost));
     PowerCooldownAttachment.set(
         boss, PowerCooldownAttachment.get(boss).start(power, boss.getWorld().getTime(), 0));
-    return Powers.cast(boss, power);
+    return Powers.castUnderOwnClip(boss, power);
   }
 }

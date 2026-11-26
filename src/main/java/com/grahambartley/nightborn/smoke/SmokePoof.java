@@ -1,5 +1,6 @@
 package com.grahambartley.nightborn.smoke;
 
+import com.grahambartley.nightborn.skill.PowerSound;
 import net.minecraft.entity.EntityDimensions;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.server.world.ServerWorld;
@@ -9,6 +10,7 @@ public final class SmokePoof {
 
   static final int SMOKE_COUNT = 30;
   static final double SMOKE_SPEED = 0.02;
+  static final float VOLUME = 0.6F;
 
   private SmokePoof() {}
 
@@ -27,6 +29,7 @@ public final class SmokePoof {
         shape.height() / 2.0,
         shape.width() / 2.0,
         SMOKE_SPEED);
+    final PowerSound puff = PowerSound.of(sound.getId()).atVolume(VOLUME);
     world.playSound(
         null,
         vampire.getX(),
@@ -34,7 +37,7 @@ public final class SmokePoof {
         vampire.getZ(),
         sound,
         vampire.getSoundCategory(),
-        1.0F,
-        1.0F);
+        puff.volume(),
+        puff.pitchFor(vampire.getRandom().nextFloat()));
   }
 }

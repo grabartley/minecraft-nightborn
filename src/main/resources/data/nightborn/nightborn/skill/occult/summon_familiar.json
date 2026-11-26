@@ -21,7 +21,7 @@
   "power": {
     "blood": 4,
     "cooldown_ticks": 400,
-    "player_clip": "power_summon",
+    "clip": "power_summon",
     "familiar": {
       "lifetime_ticks": 1200,
       "health": 10.0,

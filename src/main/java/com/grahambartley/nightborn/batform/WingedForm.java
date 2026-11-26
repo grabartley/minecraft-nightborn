@@ -14,7 +14,6 @@ import net.fabricmc.fabric.api.attachment.v1.AttachmentType;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Box;
 
@@ -72,7 +71,6 @@ public final class WingedForm {
     BatForm.enter(vampire);
     vampire.calculateDimensions();
     Boosts.start(vampire, source, Boost.of(now, power.durationTicks(), power.attributes()));
-    vampire.playSound(SoundEvents.ENTITY_RAVAGER_ROAR, 1.5F, 0.7F);
     roar(vampire, power);
   }
 

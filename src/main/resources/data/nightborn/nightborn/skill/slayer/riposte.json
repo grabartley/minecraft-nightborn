@@ -14,7 +14,7 @@
   "power": {
     "blood": 0,
     "cooldown_ticks": 240,
-    "player_clip": "power_guard",
+    "clip": "power_guard",
     "riposte": {
       "guard_ticks": 10,
       "reach": 2.5,

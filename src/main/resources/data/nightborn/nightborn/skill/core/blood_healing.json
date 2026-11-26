@@ -14,7 +14,7 @@
   "power": {
     "blood": 2,
     "cooldown_ticks": 400,
-    "player_clip": "power_mend",
+    "clip": "power_mend",
     "heal": {
       "health": 6.0,
       "ticks": 60
@@ -28,8 +28,7 @@
       "max_range": 20.0,
       "tell_ticks": 12,
       "tell_sound": "minecraft:entity.warden.heartbeat",
-      "tell_clip": "blood_healing_tell",
-      "clip": "blood_rush"
+      "tell_clip": "blood_healing_tell"
     }
   }
 }

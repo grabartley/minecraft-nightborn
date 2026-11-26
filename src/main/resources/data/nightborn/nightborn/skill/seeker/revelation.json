@@ -16,7 +16,7 @@
   "power": {
     "blood": 0,
     "cooldown_ticks": 6000,
-    "player_clip": "power_rebuke",
+    "clip": "power_rebuke",
     "revelation": {
       "range": 48.0,
       "share_range": 16.0,

@@ -14,7 +14,7 @@
   "power": {
     "blood": 2,
     "cooldown_ticks": 600,
-    "player_clip": "power_hex",
+    "clip": "power_hex",
     "hex": {
       "range": 16.0,
       "duration_ticks": 400,

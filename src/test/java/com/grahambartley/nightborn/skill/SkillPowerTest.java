@@ -282,17 +282,17 @@ class SkillPowerTest {
   @CsvSource(
       delimiter = '|',
       value = {
-        "{\"blood\":0,\"cooldown_ticks\":20,\"player_clip\":\"power_gaze\"} | power_gaze",
+        "{\"blood\":0,\"cooldown_ticks\":20,\"clip\":\"power_gaze\"} | power_gaze",
         "{\"blood\":0,\"cooldown_ticks\":20} | ''"
       })
-  @DisplayName("a power may name the clip a player plays when they use it")
-  void playerClip(final String json, final String clip) {
+  @DisplayName("a power may name the one clip any caster plays when it is used")
+  void clip(final String json, final String clip) {
     assertEquals(
         clip,
         SkillPower.CODEC
             .parse(JsonOps.INSTANCE, JsonParser.parseString(json))
             .getOrThrow()
-            .playerClip()
+            .clip()
             .orElse(""));
   }
 
@@ -315,8 +315,8 @@ class SkillPowerTest {
     final SkillPower power = power(file).orElseThrow();
     final boolean changesShape =
         power.batForm().isPresent() || power.wingedForm().isPresent() || power.mist().isPresent();
-    assertEquals(!changesShape, power.playerClip().isPresent(), "names a clip");
-    power.playerClip().ifPresent(clip -> assertTrue(ShippedClips.vampire().contains(clip), clip));
+    assertEquals(!changesShape, power.clip().isPresent(), "names a clip");
+    power.clip().ifPresent(clip -> assertTrue(ShippedClips.vampire().contains(clip), clip));
   }
 
   @ParameterizedTest(name = "{0}")

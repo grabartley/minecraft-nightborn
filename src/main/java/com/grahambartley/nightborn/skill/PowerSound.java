@@ -38,6 +38,10 @@ public record PowerSound(Identifier id, float volume, float pitch, float pitchSp
     return new PowerSound(id, FULL_VOLUME, PLAIN_PITCH, PITCH_SPREAD);
   }
 
+  public PowerSound atVolume(final float softer) {
+    return new PowerSound(id, softer, pitch, pitchSpread);
+  }
+
   public float pitchFor(final float roll) {
     final float shifted =
         pitch + (Math.max(0.0F, Math.min(1.0F, roll)) * 2.0F - 1.0F) * pitchSpread;

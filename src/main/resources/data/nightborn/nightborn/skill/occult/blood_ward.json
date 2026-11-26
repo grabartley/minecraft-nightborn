@@ -15,7 +15,7 @@
   "power": {
     "blood": 4,
     "cooldown_ticks": 1800,
-    "player_clip": "power_conjure",
+    "clip": "power_conjure",
     "circle": {
       "radius": 4.0,
       "duration_ticks": 600,

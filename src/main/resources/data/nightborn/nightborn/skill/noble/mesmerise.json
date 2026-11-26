@@ -14,7 +14,7 @@
   "power": {
     "blood": 2,
     "cooldown_ticks": 300,
-    "player_clip": "power_gaze",
+    "clip": "power_gaze",
     "mesmerise": {
       "range": 12.0,
       "stare_ticks": 20,

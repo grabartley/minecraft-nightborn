@@ -14,7 +14,7 @@
   "power": {
     "blood": 3,
     "cooldown_ticks": 600,
-    "player_clip": "power_conjure",
+    "clip": "power_conjure",
     "fog": {
       "look": "nightborn:grave_fog",
       "rise": 1.5,

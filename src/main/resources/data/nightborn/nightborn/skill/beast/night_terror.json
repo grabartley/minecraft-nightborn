@@ -44,6 +44,11 @@
       "tell_ticks": 14,
       "tell_sound": "minecraft:entity.ravager.roar",
       "tell_clip": "hiss"
+    },
+    "sound": {
+      "id": "minecraft:entity.ravager.roar",
+      "volume": 0.6,
+      "pitch": 0.7
     }
   }
 }

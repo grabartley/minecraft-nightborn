@@ -14,7 +14,7 @@
   "power": {
     "blood": 0,
     "cooldown_ticks": 200,
-    "player_clip": "power_throw",
+    "clip": "power_throw",
     "stake_throw": {
       "range": 20.0,
       "speed": 2.0,

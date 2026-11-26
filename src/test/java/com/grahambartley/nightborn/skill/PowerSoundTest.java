@@ -63,4 +63,16 @@ class PowerSoundTest {
         new PowerSound(Identifier.ofVanilla("block.bell.use"), 1.0F, pitch, spread);
     assertEquals(expected, sound.pitchFor(roll), 1.0E-6F);
   }
+
+  @ParameterizedTest(name = "volume {0}")
+  @CsvSource({"0.6", "0.3"})
+  @DisplayName("a sound can be softened while keeping its pitch and spread")
+  void softens(final float volume) {
+    final PowerSound sound =
+        new PowerSound(Identifier.of("minecraft", "block.bell.use"), 1.0F, 1.2F, 0.2F)
+            .atVolume(volume);
+    assertEquals(volume, sound.volume());
+    assertEquals(1.2F, sound.pitch());
+    assertEquals(0.2F, sound.pitchSpread());
+  }
 }

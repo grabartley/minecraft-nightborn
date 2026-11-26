@@ -75,6 +75,17 @@ public final class PlayerClipState {
     return power.seconds(age);
   }
 
+  public static Optional<VampirePose> action(
+      final Optional<VampirePose> pose,
+      final boolean powerPlaying,
+      final boolean swinging,
+      final boolean using,
+      final boolean rightArm) {
+    return pose.map(VampirePose::allowsActions).orElse(powerPlaying)
+        ? VampirePose.action(swinging && !powerPlaying, using, rightArm)
+        : Optional.empty();
+  }
+
   public static boolean upright(final EntityPose pose, final boolean riding) {
     return pose == EntityPose.STANDING && !riding;
   }

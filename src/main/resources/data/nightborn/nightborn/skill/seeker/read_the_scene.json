@@ -14,7 +14,7 @@
   "power": {
     "blood": 0,
     "cooldown_ticks": 400,
-    "player_clip": "power_sense",
+    "clip": "power_sense",
     "read_scene": {
       "range": 8.0,
       "kill_radius": 4.0,

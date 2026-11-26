@@ -36,8 +36,7 @@ class PowerChoiceTest {
         id,
         verdict,
         3,
-        new MobPowerUse(
-            min, max, 10, Identifier.of("minecraft", "x"), "tell", Optional.empty(), dodge));
+        new MobPowerUse(min, max, 10, Identifier.of("minecraft", "x"), "tell", dodge));
   }
 
   @ParameterizedTest(name = "{0}, {1} blocks, blood {2}, floor {3}: {4}")

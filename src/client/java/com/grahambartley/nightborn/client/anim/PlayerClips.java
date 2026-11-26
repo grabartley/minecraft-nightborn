@@ -53,6 +53,7 @@ public final class PlayerClips {
         PowerClipPayload.ID,
         (payload, context) ->
             player(context.client(), payload.entityId())
+                .filter(player -> VampireClips.seconds(payload.clip()) > 0.0)
                 .ifPresent(
                     player ->
                         state(player)
@@ -104,14 +105,12 @@ public final class PlayerClips {
   }
 
   public static Optional<VampirePose> action(final PlayerEntity player) {
-    final boolean allowed =
-        clip(player).map(VampirePose::allowsActions).orElseGet(() -> power(player).isPresent());
-    return allowed
-        ? VampirePose.action(
-            player.handSwinging,
-            player.isUsingItem(),
-            (player.getActiveHand() == Hand.MAIN_HAND) == (player.getMainArm() == Arm.RIGHT))
-        : Optional.empty();
+    return PlayerClipState.action(
+        clip(player),
+        power(player).isPresent(),
+        player.handSwinging,
+        player.isUsingItem(),
+        (player.getActiveHand() == Hand.MAIN_HAND) == (player.getMainArm() == Arm.RIGHT));
   }
 
   public static boolean showsHeldItems(final PlayerEntity player) {

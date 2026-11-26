@@ -15,24 +15,23 @@
   "power": {
     "blood": 2,
     "cooldown_ticks": 400,
-    "player_clip": "leap",
+    "clip": "leap",
     "pounce": {
       "range": 10.0,
       "pin_ticks": 40,
       "player_pin_ticks": 20
     },
     "sound": {
-      "id": "minecraft:entity.goat.long_jump",
+      "id": "minecraft:entity.ravager.attack",
       "volume": 0.5,
-      "pitch": 1.1
+      "pitch": 1.2
     },
     "mob": {
       "min_range": 4.0,
       "max_range": 10.0,
       "tell_ticks": 8,
       "tell_sound": "minecraft:entity.goat.prepare_ram",
-      "tell_clip": "pounce_tell",
-      "clip": "leap"
+      "tell_clip": "pounce_tell"
     }
   }
 }

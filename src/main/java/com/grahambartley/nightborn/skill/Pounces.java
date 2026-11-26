@@ -15,7 +15,6 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.sound.SoundEvents;
 import net.minecraft.world.World;
 
 public final class Pounces {
@@ -38,7 +37,6 @@ public final class Pounces {
     caster.setVelocity(PounceArc.launch(caster.getPos(), target.getPos()));
     caster.velocityModified = true;
     caster.fallDistance = 0.0F;
-    caster.playSound(SoundEvents.ENTITY_RAVAGER_ATTACK, 1.0F, 1.2F);
     final long now = caster.getWorld().getTime();
     POUNCES.put(
         caster.getUuid(),

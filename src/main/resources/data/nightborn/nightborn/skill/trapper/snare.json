@@ -14,7 +14,7 @@
   "power": {
     "blood": 0,
     "cooldown_ticks": 400,
-    "player_clip": "power_set",
+    "clip": "power_set",
     "trap": {
       "range": 4.0,
       "duration_ticks": 6000,

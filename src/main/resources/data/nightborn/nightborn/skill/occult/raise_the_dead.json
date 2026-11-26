@@ -15,7 +15,7 @@
   "power": {
     "blood": 5,
     "cooldown_ticks": 2400,
-    "player_clip": "power_summon",
+    "clip": "power_summon",
     "summon": {
       "entity": "nightborn:restless_dead",
       "count": 3,

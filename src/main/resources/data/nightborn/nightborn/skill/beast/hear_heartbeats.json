@@ -15,7 +15,7 @@
   "power": {
     "blood": 1,
     "cooldown_ticks": 600,
-    "player_clip": "power_sense",
+    "clip": "power_sense",
     "sense": {
       "range": 24.0,
       "duration_ticks": 160

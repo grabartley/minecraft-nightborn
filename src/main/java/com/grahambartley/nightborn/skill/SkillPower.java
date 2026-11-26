@@ -45,7 +45,7 @@ public record SkillPower(
     PowerFight fight,
     PowerSeek seek,
     Optional<MobPowerUse> mob,
-    Optional<String> playerClip) {
+    Optional<String> clip) {
 
   public static final Codec<SkillPower> CODEC =
       RecordCodecBuilder.<SkillPower>create(
@@ -70,9 +70,7 @@ public record SkillPower(
                           PowerFight.CODEC.forGetter(SkillPower::fight),
                           PowerSeek.CODEC.forGetter(SkillPower::seek),
                           MobPowerUse.CODEC.optionalFieldOf("mob").forGetter(SkillPower::mob),
-                          Codec.STRING
-                              .optionalFieldOf("player_clip")
-                              .forGetter(SkillPower::playerClip))
+                          Codec.STRING.optionalFieldOf("clip").forGetter(SkillPower::clip))
                       .apply(instance, SkillPower::new))
           .validate(SkillPower::oneMove);
 

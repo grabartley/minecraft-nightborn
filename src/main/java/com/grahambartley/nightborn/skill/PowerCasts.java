@@ -51,7 +51,11 @@ final class PowerCasts {
   private PowerCasts() {}
 
   static void apply(
-      final LivingEntity caster, final Identifier id, final SkillPower power, final PowerAim aim) {
+      final LivingEntity caster,
+      final Identifier id,
+      final SkillPower power,
+      final PowerAim aim,
+      final boolean showsClip) {
     final long now = caster.getWorld().getTime();
     if (power.glamour().isEmpty()) {
       Glamour.end(caster);
@@ -89,10 +93,9 @@ final class PowerCasts {
             sense -> Sights.give(caster, Sight.sense(sense.range(), now + sense.durationTicks())));
     if (caster instanceof ServerPlayerEntity player) {
       power.track().ifPresent(track -> Tracking.start(player, track));
-      power.playerClip().ifPresent(clip -> PlayerCues.power(player, clip));
     }
-    if (caster instanceof PowerShow show) {
-      power.mob().flatMap(MobPowerUse::clip).ifPresent(show::showPower);
+    if (showsClip) {
+      power.clip().ifPresent(clip -> show(caster, clip));
     }
     power
         .sound()
@@ -107,6 +110,14 @@ final class PowerCasts {
                         caster.getSoundCategory(),
                         sound.volume(),
                         sound.pitchFor(caster.getRandom().nextFloat())));
+  }
+
+  private static void show(final LivingEntity caster, final String clip) {
+    if (caster instanceof ServerPlayerEntity player) {
+      PlayerCues.power(player, clip);
+    } else if (caster instanceof PowerShow show) {
+      show.showPower(clip);
+    }
   }
 
   private static void moves(

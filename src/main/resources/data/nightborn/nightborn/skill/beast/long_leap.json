@@ -14,7 +14,7 @@
   "power": {
     "blood": 1,
     "cooldown_ticks": 100,
-    "player_clip": "leap",
+    "clip": "leap",
     "leap": {
       "forward": 1.4,
       "up": 0.55
@@ -29,8 +29,7 @@
       "max_range": 11.0,
       "tell_ticks": 8,
       "tell_sound": "minecraft:entity.goat.prepare_ram",
-      "tell_clip": "long_leap_tell",
-      "clip": "leap"
+      "tell_clip": "long_leap_tell"
     }
   }
 }

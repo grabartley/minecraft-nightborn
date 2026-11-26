@@ -16,7 +16,7 @@
   "power": {
     "blood": 0,
     "cooldown_ticks": 6000,
-    "player_clip": "power_set",
+    "clip": "power_set",
     "field": {
       "radius": 10.0,
       "duration_ticks": 400,

@@ -15,7 +15,7 @@
   "power": {
     "blood": 0,
     "cooldown_ticks": 2400,
-    "player_clip": "power_hex",
+    "clip": "power_hex",
     "blood_fire": {
       "health_cost": 4.0,
       "duration_ticks": 1800,

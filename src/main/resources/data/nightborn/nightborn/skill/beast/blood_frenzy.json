@@ -15,7 +15,7 @@
   "power": {
     "blood": 3,
     "cooldown_ticks": 1800,
-    "player_clip": "blood_rush",
+    "clip": "blood_rush",
     "boost": {
       "duration_ticks": 200,
       "attributes": [
@@ -49,8 +49,7 @@
       "max_range": 12.0,
       "tell_ticks": 10,
       "tell_sound": "minecraft:entity.wolf.growl",
-      "tell_clip": "blood_frenzy_tell",
-      "clip": "blood_rush"
+      "tell_clip": "blood_frenzy_tell"
     }
   }
 }

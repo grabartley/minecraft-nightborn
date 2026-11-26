@@ -184,6 +184,19 @@ public final class Powers {
 
   public static PowerUse.Verdict cast(
       final LivingEntity caster, @Nullable final Identifier id, final PowerHeading heading) {
+    return cast(caster, id, heading, true);
+  }
+
+  public static PowerUse.Verdict castUnderOwnClip(
+      final LivingEntity caster, @Nullable final Identifier id) {
+    return cast(caster, id, PowerHeading.NONE, false);
+  }
+
+  private static PowerUse.Verdict cast(
+      final LivingEntity caster,
+      @Nullable final Identifier id,
+      final PowerHeading heading,
+      final boolean showsClip) {
     final Optional<SkillPower> owned = power(caster, id);
     if (BatForm.isBat(caster)
         && !WingedForm.on(caster)
@@ -204,7 +217,7 @@ public final class Powers {
     PowerCooldownAttachment.set(
         caster,
         PowerCooldownAttachment.get(caster).start(id, now, cooldownTicks(caster, id, power)));
-    PowerCasts.apply(caster, id, power, aim);
+    PowerCasts.apply(caster, id, power, aim, showsClip);
     return verdict;
   }
 }

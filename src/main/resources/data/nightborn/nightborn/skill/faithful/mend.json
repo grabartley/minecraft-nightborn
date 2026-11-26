@@ -14,7 +14,7 @@
   "power": {
     "blood": 0,
     "cooldown_ticks": 900,
-    "player_clip": "power_pray",
+    "clip": "power_pray",
     "prayer": {
       "radius": 6.0,
       "health": 6.0

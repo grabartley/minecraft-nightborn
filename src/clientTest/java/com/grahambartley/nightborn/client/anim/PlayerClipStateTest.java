@@ -460,4 +460,31 @@ class PlayerClipStateTest {
   void upright(final EntityPose pose, final boolean riding, final boolean upright) {
     assertEquals(upright, PlayerClipState.upright(pose, riding));
   }
+
+  @ParameterizedTest(name = "pose {0}, power {1}, swinging {2}, using {3}: {4}")
+  @CsvSource({
+    ", false, true, false, NONE",
+    ", true, true, false, NONE",
+    ", true, true, true, USE_ITEM_RIGHT",
+    ", true, false, true, USE_ITEM_RIGHT",
+    "LEVITATE, false, true, false, ATTACK",
+    "LEVITATE, true, true, false, NONE",
+    "LEVITATE, true, false, true, USE_ITEM_RIGHT",
+    "FEED, true, true, true, NONE"
+  })
+  @DisplayName(
+      "a swing plays over a pose that allows it but never over a power clip, which still lets an"
+          + " item be held up")
+  void actions(
+      final VampirePose pose,
+      final boolean power,
+      final boolean swinging,
+      final boolean using,
+      final String expected) {
+    assertEquals(
+        expected,
+        PlayerClipState.action(Optional.ofNullable(pose), power, swinging, using, true)
+            .map(Enum::name)
+            .orElse("NONE"));
+  }
 }

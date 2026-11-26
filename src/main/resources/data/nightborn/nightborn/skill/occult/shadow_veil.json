@@ -14,7 +14,7 @@
   "power": {
     "blood": 4,
     "cooldown_ticks": 900,
-    "player_clip": "power_conjure",
+    "clip": "power_conjure",
     "effects": [
       {
         "id": "minecraft:invisibility",

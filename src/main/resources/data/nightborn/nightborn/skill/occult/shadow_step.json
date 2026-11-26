@@ -14,7 +14,7 @@
   "power": {
     "blood": 2,
     "cooldown_ticks": 200,
-    "player_clip": "dash",
+    "clip": "dash",
     "shadow_step": {
       "range": 16.0,
       "behind": 1.5

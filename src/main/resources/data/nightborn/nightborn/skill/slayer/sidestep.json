@@ -14,7 +14,7 @@
   "power": {
     "blood": 0,
     "cooldown_ticks": 120,
-    "player_clip": "dash",
+    "clip": "dash",
     "dash": {
       "distance": 4.0,
       "untouchable_ticks": 6,

@@ -14,7 +14,7 @@
   "power": {
     "blood": 0,
     "cooldown_ticks": 600,
-    "player_clip": "power_mend",
+    "clip": "power_mend",
     "heal": {
       "health": 6.0,
       "ticks": 80
