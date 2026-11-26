@@ -31,6 +31,7 @@ public record SkillLayout(
   static final int BAR_GAP = 6;
   static final int PAD = 8;
   static final int MARGIN = 4;
+  static final double EDGE_SHARE = 0.08;
   static final int MIN_WIDTH = 200;
   static final int SCROLLBAR = 6;
   static final int SCROLLBAR_GAP = 6;
@@ -71,10 +72,11 @@ public record SkillLayout(
             1.0, Math.min((double) screenWidth / leastWidth, (double) screenHeight / leastHeight));
     final int roomWidth = (int) Math.floor(screenWidth / zoom + ROUNDING);
     final int roomHeight = (int) Math.floor(screenHeight / zoom + ROUNDING);
+    final int edge = edge(roomHeight);
     final int viewHeight =
         Math.max(
             shortestView,
-            Math.min(contentHeight, roomHeight - MARGIN * 2 - footer - HEADER - FOOTER));
+            Math.min(contentHeight, roomHeight - edge * 2 - footer - HEADER - FOOTER));
     final boolean scrolls = contentHeight > viewHeight;
     final int width = panelWidth(contentWidth, scrolls, headerWidth);
     final int height = HEADER + viewHeight + FOOTER;
@@ -90,6 +92,10 @@ public record SkillLayout(
         viewHeight,
         bandTops,
         zoom);
+  }
+
+  static int edge(final int roomHeight) {
+    return Math.max(MARGIN, (int) Math.round(roomHeight * EDGE_SHARE));
   }
 
   static int bandHeight(final int lanes) {

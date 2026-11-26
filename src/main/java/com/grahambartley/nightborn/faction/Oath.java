@@ -52,6 +52,10 @@ public record Oath(boolean proven, boolean sworn, int rank, int deeds) {
     return !vampire && sworn;
   }
 
+  public boolean sided(final boolean vampire) {
+    return vampire || sworn;
+  }
+
   public boolean maySwear(final boolean vampire) {
     return !vampire && proven && !sworn;
   }

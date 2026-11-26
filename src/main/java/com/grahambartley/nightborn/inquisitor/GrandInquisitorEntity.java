@@ -286,6 +286,11 @@ public class GrandInquisitorEntity extends HunterEntity
   public void fight() {}
 
   @Override
+  protected boolean refersToGuild() {
+    return false;
+  }
+
+  @Override
   public boolean bitable() {
     final DownedState downed = Downed.state(this);
     return downed != null && downed.isDowned();

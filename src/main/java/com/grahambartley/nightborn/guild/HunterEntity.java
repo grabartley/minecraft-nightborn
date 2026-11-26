@@ -42,8 +42,11 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtOps;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundEvent;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
@@ -283,6 +286,21 @@ public class HunterEntity extends PathAwareEntity
     if (getNavigation() instanceof MobNavigation navigation) {
       navigation.setCanPathThroughDoors(true);
     }
+  }
+
+  @Override
+  public ActionResult interactMob(final PlayerEntity player, final Hand hand) {
+    if (!HunterReferral.answers(isAlive(), refersToGuild(), Vampires.isVampire(player))) {
+      return super.interactMob(player, hand);
+    }
+    if (player instanceof ServerPlayerEntity visitor) {
+      HunterReferral.refer(this, visitor);
+    }
+    return ActionResult.success(getWorld().isClient);
+  }
+
+  protected boolean refersToGuild() {
+    return true;
   }
 
   public void join(final UUID leader) {

@@ -73,6 +73,27 @@ class SkillLayoutTest {
 
   @ParameterizedTest(name = "{0}x{1} with bands {2}")
   @MethodSource("screens")
+  @DisplayName("the panel keeps a clear gap above and below it unless the screen is too short")
+  void edges(
+      final int width,
+      final int height,
+      final List<Integer> bands,
+      final int columns,
+      final int footer) {
+    final SkillLayout layout = SkillLayout.of(width, height, bands, columns, 0, footer);
+    final int room = (int) Math.floor(height / layout.zoom() + ROUNDING);
+    final int above = layout.top();
+    final int below = room - layout.bottom() - footer;
+    final boolean squeezed =
+        layout.viewHeight() == Math.min(layout.contentHeight(), SkillLayout.MIN_VIEW);
+    assertTrue(Math.abs(above - below) <= 1, "centred: " + above + " above, " + below + " below");
+    if (!squeezed) {
+      assertTrue(above >= room * 0.075, above + " above on a room " + room + " high");
+    }
+  }
+
+  @ParameterizedTest(name = "{0}x{1} with bands {2}")
+  @MethodSource("screens")
   @DisplayName("gaps between skills are the same on every screen and never shrink")
   void fixedGaps(
       final int width,

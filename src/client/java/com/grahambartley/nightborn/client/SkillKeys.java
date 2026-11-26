@@ -1,5 +1,6 @@
 package com.grahambartley.nightborn.client;
 
+import com.grahambartley.nightborn.faction.GuildMembership;
 import com.grahambartley.nightborn.network.UsePowerPayload;
 import com.grahambartley.nightborn.screen.SkillScreen;
 import com.grahambartley.nightborn.skill.PowerBar;
@@ -13,6 +14,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.input.Input;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
+import net.minecraft.text.Text;
 import org.lwjgl.glfw.GLFW;
 
 public final class SkillKeys {
@@ -22,6 +24,7 @@ public final class SkillKeys {
     GLFW.GLFW_KEY_R, GLFW.GLFW_KEY_G, GLFW.GLFW_KEY_V, GLFW.GLFW_KEY_B, GLFW.GLFW_KEY_N
   };
 
+  static final String NO_SIDE = "nightborn.skills.no_side";
   private static KeyBinding openSkills;
   private static final List<KeyBinding> POWERS = new ArrayList<>();
 
@@ -54,8 +57,13 @@ public final class SkillKeys {
 
   private static void tick(final MinecraftClient client) {
     while (openSkills.wasPressed()) {
-      if (client.currentScreen == null && client.player != null) {
+      if (client.currentScreen != null || client.player == null) {
+        continue;
+      }
+      if (GuildMembership.sided(client.player)) {
         client.setScreen(new SkillScreen());
+      } else {
+        client.player.sendMessage(Text.translatable(NO_SIDE), true);
       }
     }
     for (int i = 0; i < POWERS.size(); i++) {
