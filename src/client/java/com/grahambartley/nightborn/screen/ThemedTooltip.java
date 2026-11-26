@@ -1,6 +1,7 @@
 package com.grahambartley.nightborn.screen;
 
 import java.util.List;
+import java.util.stream.Stream;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.text.OrderedText;
@@ -23,13 +24,18 @@ public final class ThemedTooltip {
       return;
     }
     final int wrap = SkillTooltipBox.wrapWidth(context.getScaledWindowWidth());
+    final List<OrderedText> title = textRenderer.wrapLines(lines.get(0), wrap);
     final List<OrderedText> wrapped =
-        lines.stream().flatMap(line -> textRenderer.wrapLines(line, wrap).stream()).toList();
+        Stream.concat(
+                title.stream(),
+                lines.stream().skip(1).flatMap(line -> textRenderer.wrapLines(line, wrap).stream()))
+            .toList();
     final SkillTooltipBox box =
         SkillTooltipBox.around(
             mouseX,
             mouseY,
             wrapped.stream().map(textRenderer::getWidth).toList(),
+            lines.size() > 1 ? title.size() : 0,
             context.getScaledWindowWidth(),
             context.getScaledWindowHeight());
     context.getMatrices().push();
