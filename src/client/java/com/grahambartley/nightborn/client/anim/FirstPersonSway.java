@@ -5,11 +5,12 @@ public record FirstPersonSway(float pitchDegrees, float yawDegrees) {
   public static final FirstPersonSway NONE = new FirstPersonSway(0.0F, 0.0F);
 
   static final double SHARE = 0.5;
+  static final double FORWARD_RAISE_DEGREES = 80.0;
   static final double LIMIT_DEGREES = 45.0;
 
   public static FirstPersonSway of(final double raiseRadians, final double flareRadians) {
     return new FirstPersonSway(
-        limited(Math.toDegrees(raiseRadians) * SHARE),
+        limited((Math.toDegrees(raiseRadians) - FORWARD_RAISE_DEGREES) * SHARE),
         limited(-Math.toDegrees(flareRadians) * SHARE));
   }
 

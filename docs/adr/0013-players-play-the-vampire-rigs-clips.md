@@ -19,7 +19,7 @@ Every model and animation is a GeckoLib model and clip made in Blockbench throug
 ## Consequences
 
 - A clip retimed or repainted in the Blockbench project changes players and mobs together, with no code change.
-- In first person, vanilla still draws the hand and the held item, so they stay where players expect them. While a power clip plays, the hand is turned about the shoulder by half of the clip's own arm raise and outward swing, read from GeckoLib's loaded clip with its easing, so the user sees the cast follow the same curve others see.
+- In first person, vanilla still draws the hand and the held item, so they stay where players expect them. While a power clip plays, the hand is turned about the shoulder by half of how far the clip's arm is raised past reaching forward, where vanilla already holds the hand, and by half of its outward swing, read from GeckoLib's loaded clip with its easing, so the user sees the cast follow the same curve others see.
 - Vanilla's own poses, such as sneaking, swimming, sleeping or drawing a bow, stay vanilla, also while weakened. A vampire version of one is a new clip in Blockbench, not code. A downed vampire keeps vanilla's crawling hitbox, but is drawn lying by the `downed` clip.
 - Capes, elytra, shoulder parrots and stuck arrows are not drawn while a clip plays.
 - The stride plays the walk and run clips on their own clock, not in step with vanilla's leg swing, so the legs may change phase when a clip starts or ends.

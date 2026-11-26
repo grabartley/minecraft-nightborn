@@ -13,15 +13,18 @@ class FirstPersonSwayTest {
 
   @ParameterizedTest(name = "raise {0}, flare {1}: pitch {2}, yaw {3}")
   @CsvSource({
-    "0, 0, 0, 0",
-    "60, 0, 30, 0",
-    "-40, 0, -20, 0",
-    "0, 30, 0, -15",
-    "0, -30, 0, 15",
-    "160, 0, 45, 0",
-    "0, -120, 0, 45"
+    "80, 0, 0, 0",
+    "140, 0, 30, 0",
+    "40, 0, -20, 0",
+    "80, 30, 0, -15",
+    "80, -30, 0, 15",
+    "180, 0, 45, 0",
+    "0, 0, -40, 0",
+    "-30, -120, -45, 45"
   })
-  @DisplayName("half of an arm's raise and flare reaches the first person hand, up to a limit")
+  @DisplayName(
+      "half of how far an arm is raised past reaching forward, and of its flare, reaches the"
+          + " first person hand, up to a limit")
   void follows(final double raise, final double flare, final float pitch, final float yaw) {
     final FirstPersonSway sway = FirstPersonSway.of(Math.toRadians(raise), Math.toRadians(flare));
     assertEquals(pitch, sway.pitchDegrees(), 1e-4);

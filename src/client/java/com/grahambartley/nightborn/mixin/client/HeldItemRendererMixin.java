@@ -22,8 +22,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 abstract class HeldItemRendererMixin {
 
   @Unique private static final float SHOULDER_X = 0.35F;
-  @Unique private static final float SHOULDER_Y = -0.3F;
-  @Unique private static final float SHOULDER_Z = 0.2F;
+  @Unique private static final float SHOULDER_Y = -0.25F;
 
   @Inject(
       method =
@@ -69,9 +68,9 @@ abstract class HeldItemRendererMixin {
       return;
     }
     final float side = arm == Arm.RIGHT ? 1.0F : -1.0F;
-    matrices.translate(side * SHOULDER_X, SHOULDER_Y, SHOULDER_Z);
+    matrices.translate(side * SHOULDER_X, SHOULDER_Y, 0.0F);
     matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees(sway.pitchDegrees()));
     matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(sway.yawDegrees()));
-    matrices.translate(-side * SHOULDER_X, -SHOULDER_Y, -SHOULDER_Z);
+    matrices.translate(-side * SHOULDER_X, -SHOULDER_Y, 0.0F);
   }
 }
