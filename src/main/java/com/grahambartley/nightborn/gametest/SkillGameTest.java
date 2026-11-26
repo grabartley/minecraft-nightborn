@@ -112,8 +112,8 @@ public class SkillGameTest implements FabricGameTest {
   }
 
   @GameTest(templateName = ARENA, batchId = BATCH, tickLimit = 20)
-  public void aHumanCannotBuyAVampireSkillWhateverItSends(final TestContext context) {
-    final ServerPlayerEntity human = TestPlayers.human(context, new BlockPos(3, 2, 4));
+  public void aHunterCannotBuyAVampireSkillWhateverItSends(final TestContext context) {
+    final ServerPlayerEntity human = TestPlayers.hunter(context, new BlockPos(3, 2, 4));
     SkillAttachment.set(human, SkillTree.VAMPIRE, TreeProgress.EMPTY.withEarned(10));
     context.assertEquals(
         SkillShop.buy(human, THICK_BLOOD), SkillPurchase.Verdict.WRONG_TREE, "wrong tree");

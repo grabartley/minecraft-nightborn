@@ -88,6 +88,7 @@ public class HunterEntity extends PathAwareEntity
   private String kitId = "";
   private HunterKit kit;
   private HunterAction shown = HunterAction.NONE;
+  private long referredAt = -HunterReferral.REST;
 
   public HunterEntity(final EntityType<? extends PathAwareEntity> type, final World world) {
     super(type, world);
@@ -290,17 +291,19 @@ public class HunterEntity extends PathAwareEntity
 
   @Override
   public ActionResult interactMob(final PlayerEntity player, final Hand hand) {
-    if (!HunterReferral.answers(isAlive(), refersToGuild(), Vampires.isVampire(player))) {
+    if (!HunterReferral.answers(
+        isAlive(),
+        !getType().isIn(HunterReferral.NEVER_REFERS),
+        Vampires.isVampire(player),
+        getTarget() == player)) {
       return super.interactMob(player, hand);
     }
-    if (player instanceof ServerPlayerEntity visitor) {
+    if (player instanceof ServerPlayerEntity visitor
+        && HunterReferral.rested(getWorld().getTime(), referredAt)) {
+      referredAt = getWorld().getTime();
       HunterReferral.refer(this, visitor);
     }
     return ActionResult.success(getWorld().isClient);
-  }
-
-  protected boolean refersToGuild() {
-    return true;
   }
 
   public void join(final UUID leader) {

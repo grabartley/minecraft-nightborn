@@ -17,7 +17,8 @@ public final class SkillPurchase {
     NEEDS_SKILL,
     NEEDS_STAGE,
     NEEDS_RANK,
-    TOO_FEW_POINTS;
+    TOO_FEW_POINTS,
+    NO_SIDE;
 
     public String translationKey(final SkillTree tree) {
       final String key = "nightborn.skills.verdict." + name().toLowerCase(Locale.ROOT);

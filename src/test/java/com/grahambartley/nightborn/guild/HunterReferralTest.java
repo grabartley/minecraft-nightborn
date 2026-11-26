@@ -1,9 +1,17 @@
 package com.grahambartley.nightborn.guild;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
 import com.grahambartley.nightborn.guild.HunterReferral.Pointed;
 import com.grahambartley.nightborn.servant.job.Bearing;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Optional;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableTextContent;
@@ -14,17 +22,44 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 class HunterReferralTest {
 
-  @ParameterizedTest(name = "alive {0}, refers {1}, vampire {2} -> {3}")
+  @ParameterizedTest(name = "alive {0}, refers {1}, vampire {2}, hunted {3} -> {4}")
   @CsvSource({
-    "true, true, false, true",
-    "true, true, true, false",
-    "true, false, false, false",
-    "false, true, false, false"
+    "true, true, false, false, true",
+    "true, true, true, false, false",
+    "true, false, false, false, false",
+    "false, true, false, false, false",
+    "true, true, false, true, false"
   })
-  @DisplayName("a living hunter answers a human, never a vampire, and the boss never refers")
+  @DisplayName("a living hunter answers a human it is not hunting, never a vampire or the boss")
   void answers(
-      final boolean alive, final boolean refers, final boolean vampire, final boolean expected) {
-    assertEquals(expected, HunterReferral.answers(alive, refers, vampire));
+      final boolean alive,
+      final boolean refers,
+      final boolean vampire,
+      final boolean hunted,
+      final boolean expected) {
+    assertEquals(expected, HunterReferral.answers(alive, refers, vampire, hunted));
+  }
+
+  @ParameterizedTest(name = "spoke at {1}, now {0} -> {2}")
+  @CsvSource({"100, 60, true", "100, 61, false", "100, 99, false", "40, -40, true"})
+  @DisplayName("a hunter gives directions at most once every two seconds")
+  void rested(final long now, final long last, final boolean rested) {
+    assertEquals(rested, HunterReferral.rested(now, last));
+  }
+
+  @ParameterizedTest(name = "{0}")
+  @ValueSource(strings = {"nightborn:grand_inquisitor"})
+  @DisplayName("the boss is named in the tag of hunters who never give directions")
+  void neverRefers(final String entity) throws IOException {
+    final JsonObject tag =
+        new Gson()
+            .fromJson(
+                Files.readString(
+                    Path.of("src/main/resources/data/nightborn/tags/entity_type/never_refers.json"),
+                    StandardCharsets.UTF_8),
+                JsonObject.class);
+    assertEquals("nightborn:never_refers", HunterReferral.NEVER_REFERS.id().toString());
+    assertTrue(tag.getAsJsonArray("values").contains(new JsonPrimitive(entity)));
   }
 
   @ParameterizedTest(name = "master at ({0}, {1}) -> {2}")

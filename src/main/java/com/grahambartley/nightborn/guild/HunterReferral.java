@@ -1,22 +1,35 @@
 package com.grahambartley.nightborn.guild;
 
+import com.grahambartley.nightborn.Nightborn;
 import com.grahambartley.nightborn.servant.job.Bearing;
 import java.util.Comparator;
 import java.util.Optional;
+import net.minecraft.entity.EntityType;
+import net.minecraft.registry.RegistryKeys;
+import net.minecraft.registry.tag.TagKey;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
 
 public final class HunterReferral {
 
   static final double REACH = 32.0;
+  static final long REST = 40;
+  public static final TagKey<EntityType<?>> NEVER_REFERS =
+      TagKey.of(RegistryKeys.ENTITY_TYPE, Identifier.of(Nightborn.MOD_ID, "never_refers"));
 
   private HunterReferral() {}
 
-  static boolean answers(final boolean alive, final boolean refers, final boolean vampire) {
-    return alive && refers && !vampire;
+  static boolean answers(
+      final boolean alive, final boolean refers, final boolean vampire, final boolean hunted) {
+    return alive && refers && !vampire && !hunted;
+  }
+
+  static boolean rested(final long now, final long last) {
+    return now - last >= REST;
   }
 
   static void refer(final HunterEntity hunter, final ServerPlayerEntity player) {
@@ -46,7 +59,8 @@ public final class HunterReferral {
                     .getEntitiesByClass(
                         GuildMasterEntity.class,
                         new Box(hunter.getBlockPos()).expand(REACH),
-                        GuildMasterEntity::isAlive)
+                        found ->
+                            found.isAlive() && found.squaredDistanceTo(hunter) <= REACH * REACH)
                     .stream()
                     .min(Comparator.comparingDouble(found -> found.squaredDistanceTo(hunter))));
   }

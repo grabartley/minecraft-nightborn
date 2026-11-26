@@ -341,7 +341,8 @@ class SkillPurchaseTest {
         Arguments.of(Verdict.OWNED, SkillTree.VAMPIRE, "nightborn.skills.verdict.owned"),
         Arguments.of(Verdict.OWNED, SkillTree.HUNTER, "nightborn.skills.verdict.owned"),
         Arguments.of(
-            Verdict.TOO_FEW_POINTS, SkillTree.HUNTER, "nightborn.skills.verdict.too_few_points"));
+            Verdict.TOO_FEW_POINTS, SkillTree.HUNTER, "nightborn.skills.verdict.too_few_points"),
+        Arguments.of(Verdict.NO_SIDE, SkillTree.HUNTER, "nightborn.skills.verdict.no_side"));
   }
 
   @ParameterizedTest(name = "{0} in the {1} tree")

@@ -6,6 +6,7 @@ import com.grahambartley.nightborn.age.StageRanks;
 import com.grahambartley.nightborn.challenge.Deed;
 import com.grahambartley.nightborn.challenge.DeedKinds;
 import com.grahambartley.nightborn.challenge.Deeds;
+import com.grahambartley.nightborn.faction.GuildMembership;
 import com.grahambartley.nightborn.network.BuySkillPayload;
 import com.grahambartley.nightborn.rank.GuildRanks;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
@@ -26,8 +27,13 @@ public final class SkillShop {
   }
 
   public static SkillPurchase.Verdict buy(final ServerPlayerEntity player, final Identifier id) {
-    final DynamicRegistryManager registries = player.getServerWorld().getRegistryManager();
     final SkillTree tree = SkillTree.of(player);
+    if (!GuildMembership.sided(player)) {
+      player.sendMessage(
+          Text.translatable(SkillPurchase.Verdict.NO_SIDE.translationKey(tree)), true);
+      return SkillPurchase.Verdict.NO_SIDE;
+    }
+    final DynamicRegistryManager registries = player.getServerWorld().getRegistryManager();
     final TreeProgress progress = SkillAttachment.get(player, tree);
     final SkillLookup lookup =
         SkillLookup.of(

@@ -36,7 +36,8 @@ class SkillLayoutTest {
             size ->
                 Stream.of(
                     Arguments.of(size[0], size[1], VAMPIRE, VAMPIRE_COLUMNS, AGE_FOOTER),
-                    Arguments.of(size[0], size[1], HUNTER, HUNTER_COLUMNS, 0)));
+                    Arguments.of(size[0], size[1], HUNTER, HUNTER_COLUMNS, 0),
+                    Arguments.of(size[0], size[1], List.of(2), 3, 0)));
   }
 
   @ParameterizedTest(name = "{0}x{1} with bands {2}")
@@ -85,7 +86,11 @@ class SkillLayoutTest {
     final int above = layout.top();
     final int below = room - layout.bottom() - footer;
     final boolean squeezed =
-        layout.viewHeight() == Math.min(layout.contentHeight(), SkillLayout.MIN_VIEW);
+        room * 0.84
+            < SkillLayout.HEADER
+                + Math.min(layout.contentHeight(), SkillLayout.MIN_VIEW)
+                + SkillLayout.FOOTER
+                + footer;
     assertTrue(Math.abs(above - below) <= 1, "centred: " + above + " above, " + below + " below");
     if (!squeezed) {
       assertTrue(above >= room * 0.075, above + " above on a room " + room + " high");
