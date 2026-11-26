@@ -8,6 +8,7 @@ import java.util.Optional;
 import java.util.stream.Stream;
 import net.minecraft.text.Text;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -92,5 +93,12 @@ class AgeLineTest {
   @DisplayName("the footer holds the gap, three lines and the screen edge")
   void footer(final int fontHeight, final int footer) {
     assertEquals(footer, AgeLine.footer(fontHeight));
+  }
+
+  @Test
+  @DisplayName("the footer is sized for the longest list of lines the screen can show")
+  void footerHoldsTheMostLines() {
+    final int most = lines().mapToInt(args -> ((List<?>) args.get()[3]).size()).max().orElseThrow();
+    assertEquals(most, AgeLine.MAX_LINES);
   }
 }

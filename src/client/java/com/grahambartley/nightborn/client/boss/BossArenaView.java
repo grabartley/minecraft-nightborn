@@ -33,7 +33,7 @@ public final class BossArenaView {
     ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> forget());
   }
 
-  private static void show(final BossArenaPayload payload) {
+  static void show(final BossArenaPayload payload) {
     if (!applies(boss, payload.boss(), payload.arena().isPresent())) {
       return;
     }
@@ -45,7 +45,7 @@ public final class BossArenaView {
     wall = payload.arena().isPresent() ? payload.wall() : Optional.empty();
   }
 
-  private static void forget() {
+  static void forget() {
     boss = NONE;
     arena = Optional.empty();
     music = Optional.empty();
