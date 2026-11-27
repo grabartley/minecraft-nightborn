@@ -54,7 +54,7 @@ public final class PartyCamp {
   public static Optional<BlockPos> around(
       final ServerWorld world, final BlockPos near, final BlockPos fire, final CampLayout layout) {
     final BlockPos centre = fire.subtract(layout.campfire());
-    if (!CampSite.inReach(near, centre, SEARCH + APART)
+    if (!CampSite.inReach(near, fire, SEARCH + APART)
         || !loaded(world, centre.getX(), centre.getZ(), layout.bounds())) {
       return Optional.empty();
     }
@@ -69,7 +69,9 @@ public final class PartyCamp {
   }
 
   public static boolean reusable(final BlockState fire) {
-    return fire.isOf(Blocks.CAMPFIRE) && !fire.get(CampfireBlock.WATERLOGGED);
+    return fire.isOf(Blocks.CAMPFIRE)
+        && !fire.get(CampfireBlock.LIT)
+        && !fire.get(CampfireBlock.WATERLOGGED);
   }
 
   private static boolean loaded(

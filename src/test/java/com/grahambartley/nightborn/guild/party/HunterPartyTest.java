@@ -135,13 +135,15 @@ class HunterPartyTest {
     assertEquals(pitched && !guarding ? 2 : party.stay().nights(), loaded.stay().nights());
   }
 
-  @Test
-  void headingOnChangesOnlyTheArea() {
-    final BlockPos next = new BlockPos(150, 64, 1);
+  @ParameterizedTest(name = "heading on to {0},{1} changes only the area")
+  @CsvSource({"150, 1", "-40, 300", "70, 64"})
+  void headingOnChangesOnlyTheArea(final int x, final int z) {
+    final BlockPos next = new BlockPos(x, 64, z);
     final HunterParty struck = party().pitch(CAMP, 1, 2L, 48_000L).struck(new BlockPos(70, 64, 1));
     final HunterParty heading = struck.heading(next);
     assertEquals(next, heading.area());
     assertEquals(struck.lastCamp(), heading.lastCamp());
     assertEquals(struck.lastTriedDay(), heading.lastTriedDay());
+    assertEquals(struck.members(), heading.members());
   }
 }

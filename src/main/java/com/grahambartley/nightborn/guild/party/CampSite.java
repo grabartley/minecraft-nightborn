@@ -40,14 +40,7 @@ public final class CampSite {
 
   public static boolean apart(
       final Optional<BlockPos> lastCamp, final int x, final int z, final int apart) {
-    return lastCamp
-        .map(
-            last -> {
-              final int dx = x - last.getX();
-              final int dz = z - last.getZ();
-              return dx * dx + dz * dz >= apart * apart;
-            })
-        .orElse(true);
+    return lastCamp.map(last -> flatSquared(last, x, z) >= apart * apart).orElse(true);
   }
 
   public static <T> Optional<T> choose(
@@ -58,9 +51,13 @@ public final class CampSite {
   }
 
   public static boolean inReach(final BlockPos from, final BlockPos to, final int reach) {
-    final int dx = to.getX() - from.getX();
-    final int dz = to.getZ() - from.getZ();
-    return dx * dx + dz * dz <= reach * reach;
+    return flatSquared(from, to.getX(), to.getZ()) <= reach * reach;
+  }
+
+  private static int flatSquared(final BlockPos from, final int x, final int z) {
+    final int dx = x - from.getX();
+    final int dz = z - from.getZ();
+    return dx * dx + dz * dz;
   }
 
   public static List<BlockPos> nearestFirst(final int search, final int stride) {

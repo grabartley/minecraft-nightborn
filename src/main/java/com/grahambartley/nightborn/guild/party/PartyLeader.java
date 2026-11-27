@@ -27,7 +27,7 @@ public final class PartyLeader {
   public static final int DAY_REACH = 24;
   public static final int MOVE_MIN = 48;
   public static final int MOVE_MAX = 80;
-  public static final float TRAVEL_SWAY = MathHelper.HALF_PI / 2;
+  private static final float TRAVEL_SWAY = MathHelper.HALF_PI / 2;
 
   private PartyLeader() {}
 
@@ -225,9 +225,7 @@ public final class PartyLeader {
       final boolean dusk,
       final BlockPos at,
       final BlockPos area) {
-    final int dx = at.getX() - area.getX();
-    final int dz = at.getZ() - area.getZ();
-    return !guarding && leftACamp && !dusk && dx * dx + dz * dz <= AREA_REACH * AREA_REACH;
+    return !guarding && leftACamp && !dusk && CampSite.inReach(at, area, AREA_REACH);
   }
 
   static BlockPos onward(final BlockPos from, final Random random) {

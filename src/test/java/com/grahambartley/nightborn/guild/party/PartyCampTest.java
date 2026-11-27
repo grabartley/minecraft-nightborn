@@ -18,7 +18,7 @@ class PartyCampTest {
             "an unlit campfire",
             Blocks.CAMPFIRE.getDefaultState().with(CampfireBlock.LIT, false),
             true),
-        Arguments.of("a lit campfire", Blocks.CAMPFIRE.getDefaultState(), true),
+        Arguments.of("a lit campfire", Blocks.CAMPFIRE.getDefaultState(), false),
         Arguments.of(
             "a drowned campfire",
             Blocks.CAMPFIRE
