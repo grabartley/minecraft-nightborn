@@ -17,6 +17,7 @@ import com.grahambartley.nightborn.gear.GearItems;
 import com.grahambartley.nightborn.guild.ContractItems;
 import com.grahambartley.nightborn.guild.GuildMobs;
 import com.grahambartley.nightborn.guild.party.TentBlocks;
+import com.grahambartley.nightborn.guild.rite.SanctuaryEffect;
 import com.grahambartley.nightborn.holy.HolyWater;
 import com.grahambartley.nightborn.hunter.HunterAttributes;
 import com.grahambartley.nightborn.journal.JournalItems;
@@ -72,5 +73,6 @@ public final class MinecraftBootstrapExtension implements BeforeAllCallback {
     Objects.requireNonNull(GarlicFumesEffect.ENTRY);
     Objects.requireNonNull(ParasolItems.PARASOL);
     Objects.requireNonNull(RestedEffect.ENTRY);
+    Objects.requireNonNull(SanctuaryEffect.ENTRY);
   }
 }

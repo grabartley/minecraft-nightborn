@@ -1,0 +1,173 @@
+package com.grahambartley.nightborn.gametest;
+
+import com.grahambartley.nightborn.guild.GuildMasterEntity;
+import com.grahambartley.nightborn.guild.GuildMobs;
+import com.grahambartley.nightborn.guild.rite.GuildRite;
+import com.grahambartley.nightborn.guild.rite.GuildRiteOrder;
+import com.grahambartley.nightborn.guild.rite.GuildRites;
+import com.grahambartley.nightborn.guild.rite.RiteCooldownAttachment;
+import com.grahambartley.nightborn.guild.rite.Sanctuary;
+import com.grahambartley.nightborn.mob.NightbornMobs;
+import com.grahambartley.nightborn.mob.VampireEntity;
+import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
+import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
+import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.world.ServerWorld;
+import net.minecraft.test.BeforeBatch;
+import net.minecraft.test.GameTest;
+import net.minecraft.test.TestContext;
+import net.minecraft.util.math.BlockPos;
+
+public class GuildRiteGameTest implements FabricGameTest {
+
+  static final String ARENA = "nightborn:vampire_arena";
+  static final String BATCH = "guild-rite";
+  static final BlockPos MASTER = new BlockPos(4, 2, 4);
+  static final BlockPos HUNTER = new BlockPos(2, 2, 4);
+  static final BlockPos ENTRANCE = new BlockPos(6, 2, 6);
+  static final BlockPos MID_AIR = new BlockPos(6, 3, 6);
+  static final int SPARE = 10;
+
+  @BeforeBatch(batchId = BATCH)
+  public void forgetRites(final ServerWorld world) {
+    GuildRites.clearAll();
+  }
+
+  private static GuildMasterEntity guildMaster(final TestContext context) {
+    final GuildMasterEntity master = context.spawnEntity(GuildMobs.GUILD_MASTER, MASTER);
+    master.setAiDisabled(true);
+    return master;
+  }
+
+  private static GuildRite rite(final TestContext context) {
+    return GuildRite.sending(context.getWorld().getRegistryManager()).orElseThrow();
+  }
+
+  private static GuildRite exact(final GuildRite rite) {
+    final GuildRite.Reach reach = rite.reach();
+    return new GuildRite(
+        rite.timing(),
+        rite.clips(),
+        rite.sounds(),
+        rite.light(),
+        new GuildRite.Reach(reach.breakDistance(), 0, 0, reach.householdReach()));
+  }
+
+  private static int over(final GuildRite rite) {
+    return TestPlayers.READY + rite.timing().castTicks() + rite.timing().leaveTicks() + SPARE;
+  }
+
+  private static CompletableFuture<Optional<BlockPos>> heardOf(
+      final TestContext context, final BlockPos relative) {
+    return CompletableFuture.completedFuture(Optional.of(context.getAbsolutePos(relative)));
+  }
+
+  @GameTest(templateName = ARENA, batchId = BATCH, tickLimit = TestPlayers.READY + 120)
+  public void aSwornHunterIsSentToTheEntranceAndShelteredThere(final TestContext context) {
+    final GuildMasterEntity master = guildMaster(context);
+    final ServerPlayerEntity hunter = TestPlayers.hunter(context, HUNTER);
+    final GuildRite rite = rite(context);
+    context.runAtTick(
+        TestPlayers.READY,
+        () -> GuildRites.begin(hunter, master, rite, heardOf(context, ENTRANCE)));
+    context.runAtTick(
+        TestPlayers.READY + 5,
+        () -> context.assertTrue(GuildRites.underway(hunter), "the rite is being cast"));
+    context.runAtTick(
+        over(rite),
+        () -> {
+          context.assertEquals(
+              hunter.getBlockPos(),
+              context.getAbsolutePos(ENTRANCE),
+              "the hunter stands at the entrance");
+          context.assertTrue(Sanctuary.sheltered(hunter), "the hunter is sheltered on arrival");
+          final float health = hunter.getHealth();
+          context.assertFalse(
+              hunter.damage(hunter.getDamageSources().generic(), 5.0F),
+              "nothing harms a sheltered hunter");
+          context.assertEquals(hunter.getHealth(), health, "no health is lost");
+          context.assertTrue(
+              RiteCooldownAttachment.readyAt(hunter) > 0L, "the hunter must wait to ask again");
+          TestPlayers.finish(context, hunter);
+        });
+  }
+
+  @GameTest(templateName = ARENA, batchId = BATCH, tickLimit = TestPlayers.READY + 120)
+  public void aWoundBreaksTheRiteAndNobodyIsMoved(final TestContext context) {
+    final GuildMasterEntity master = guildMaster(context);
+    final ServerPlayerEntity hunter = TestPlayers.hunter(context, HUNTER);
+    final GuildRite rite = rite(context);
+    context.runAtTick(
+        TestPlayers.READY,
+        () -> GuildRites.begin(hunter, master, rite, heardOf(context, ENTRANCE)));
+    context.runAtTick(
+        TestPlayers.READY + 10, () -> hunter.damage(hunter.getDamageSources().generic(), 1.0F));
+    context.runAtTick(
+        TestPlayers.READY + 15,
+        () -> context.assertFalse(GuildRites.underway(hunter), "the wound broke the rite"));
+    context.runAtTick(
+        over(rite),
+        () -> {
+          context.assertEquals(
+              hunter.getBlockPos(), context.getAbsolutePos(HUNTER), "the hunter was not moved");
+          context.assertFalse(Sanctuary.sheltered(hunter), "no shelter without a sending");
+          context.assertEquals(
+              RiteCooldownAttachment.readyAt(hunter),
+              RiteCooldownAttachment.READY,
+              "a broken rite costs no wait");
+          TestPlayers.finish(context, hunter);
+        });
+  }
+
+  @GameTest(templateName = ARENA, batchId = BATCH, tickLimit = TestPlayers.READY + 120)
+  public void withNoSafeGroundAtTheEntranceNobodyIsMoved(final TestContext context) {
+    final GuildMasterEntity master = guildMaster(context);
+    final ServerPlayerEntity hunter = TestPlayers.hunter(context, HUNTER);
+    final GuildRite rite = exact(rite(context));
+    context.runAtTick(
+        TestPlayers.READY, () -> GuildRites.begin(hunter, master, rite, heardOf(context, MID_AIR)));
+    context.runAtTick(
+        over(rite),
+        () -> {
+          context.assertFalse(GuildRites.underway(hunter), "the rite ended");
+          context.assertEquals(
+              hunter.getBlockPos(), context.getAbsolutePos(HUNTER), "the hunter was not moved");
+          context.assertFalse(Sanctuary.sheltered(hunter), "no shelter without a sending");
+          TestPlayers.finish(context, hunter);
+        });
+  }
+
+  @GameTest(templateName = ARENA, batchId = BATCH, tickLimit = TestPlayers.READY + 20)
+  public void theRiteIsOfferedToSwornHuntersAndNeverToVampires(final TestContext context) {
+    final GuildMasterEntity master = guildMaster(context);
+    final ServerPlayerEntity hunter = TestPlayers.hunter(context, HUNTER);
+    final ServerPlayerEntity human = TestPlayers.human(context, new BlockPos(2, 2, 2));
+    final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(2, 2, 6));
+    context.runAtTick(
+        TestPlayers.READY,
+        () -> {
+          final GuildRiteOrder order = new GuildRiteOrder();
+          context.assertTrue(order.allows(hunter, master), "a sworn hunter may ask");
+          context.assertFalse(order.allows(human, master), "an unsworn human may not");
+          context.assertFalse(order.allows(vampire, master), "a vampire never may");
+          TestPlayers.finish(context, hunter, human, vampire);
+        });
+  }
+
+  @GameTest(templateName = ARENA, batchId = BATCH, tickLimit = TestPlayers.READY + 20)
+  public void strikingAnythingEndsTheShelterEarly(final TestContext context) {
+    final ServerPlayerEntity hunter = TestPlayers.hunter(context, HUNTER);
+    final VampireEntity vampire = context.spawnEntity(NightbornMobs.VAMPIRE, MASTER);
+    vampire.setAiDisabled(true);
+    context.runAtTick(
+        TestPlayers.READY,
+        () -> {
+          Sanctuary.shelter(hunter, 3);
+          context.assertTrue(Sanctuary.sheltered(hunter), "the hunter is sheltered");
+          vampire.damage(hunter.getDamageSources().playerAttack(hunter), 1.0F);
+          context.assertFalse(Sanctuary.sheltered(hunter), "a blow gives the shelter up");
+          TestPlayers.finish(context, hunter);
+        });
+  }
+}
