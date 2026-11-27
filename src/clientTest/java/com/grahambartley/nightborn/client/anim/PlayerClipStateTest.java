@@ -8,6 +8,8 @@ import com.grahambartley.nightborn.mob.VampirePose;
 import java.util.Map;
 import java.util.Optional;
 import net.minecraft.entity.EntityPose;
+import net.minecraft.util.Arm;
+import net.minecraft.util.Hand;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -537,8 +539,8 @@ class PlayerClipStateTest {
   private static PlayerClipState swungAt(
       final int age, final boolean reverseGrip, final boolean rightArm) {
     final PlayerClipState state = new PlayerClipState();
-    state.swing(false, 0, reverseGrip, rightArm, age - 1);
-    state.swing(true, 0, reverseGrip, rightArm, age);
+    state.swing(false, 0, reverseGrip, rightArm, age - 1, LENGTHS);
+    state.swing(true, 0, reverseGrip, rightArm, age, LENGTHS);
     return state;
   }
 
@@ -577,8 +579,8 @@ class PlayerClipStateTest {
   @DisplayName("a swing with another item ends a thrust that is still playing")
   void otherSwingEndsTheThrust() {
     final PlayerClipState state = swungAt(10, true, true);
-    state.swing(false, 0, false, true, 13);
-    state.swing(true, 0, false, true, 14);
+    state.swing(false, 0, false, true, 13, LENGTHS);
+    state.swing(true, 0, false, true, 14, LENGTHS);
     assertEquals("NONE", thrust(state, 15));
   }
 
@@ -587,22 +589,66 @@ class PlayerClipStateTest {
   void swingInProgress() {
     final PlayerClipState state = swungAt(10, true, true);
     assertTrue(state.takeFreshThrust());
-    state.swing(true, 1, true, true, 11);
-    state.swing(true, 2, true, true, 12);
+    state.swing(true, 1, true, true, 11, LENGTHS);
+    state.swing(true, 2, true, true, 12, LENGTHS);
     assertFalse(state.takeFreshThrust());
     assertEquals(2 / OneShot.TICKS_PER_SECOND, state.thrustSeconds(12), 1e-9);
   }
 
   @Test
-  @DisplayName("a swing that restarts before the last one ends starts the thrust again")
+  @DisplayName(
+      "a swing that restarts while the thrust plays, as when mining, lets the thrust finish first")
   void restartedSwing() {
     final PlayerClipState state = swungAt(10, true, true);
     state.takeFreshThrust();
-    state.swing(true, 3, true, true, 13);
-    state.swing(true, 0, true, true, 14);
+    state.swing(true, 3, true, true, 13, LENGTHS);
+    state.swing(true, 0, true, true, 14, LENGTHS);
+    assertFalse(state.takeFreshThrust());
+    assertEquals(4 / OneShot.TICKS_PER_SECOND, state.thrustSeconds(14), 1e-9);
+    assertEquals("NONE", thrust(state, 19));
+    state.swing(true, 3, true, true, 19, LENGTHS);
+    state.swing(true, 0, true, true, 20, LENGTHS);
     assertTrue(state.takeFreshThrust());
-    assertEquals(0.0, state.thrustSeconds(14), 1e-9);
-    assertEquals("STAKE_THRUST_RIGHT", thrust(state, 22));
+    assertEquals("STAKE_THRUST_RIGHT", thrust(state, 28));
+  }
+
+  @ParameterizedTest(name = "pose {0}, power {1}: {2}")
+  @CsvSource({
+    ", false, STAKE_THRUST_RIGHT",
+    "LEVITATE, false, STAKE_THRUST_RIGHT",
+    "SUN_BURN, false, STAKE_THRUST_RIGHT",
+    "FEED, false, NONE",
+    "DOWNED, false, NONE",
+    "VOMIT, false, NONE",
+    ", true, NONE",
+    "LEVITATE, true, NONE"
+  })
+  @DisplayName(
+      "a thrust shows only over a pose that allows actions, and a power clip outranks it in"
+          + " every view")
+  void shownThrust(final VampirePose pose, final boolean power, final String expected) {
+    assertEquals(
+        expected,
+        PlayerClipState.shownThrust(
+                Optional.ofNullable(pose), power, Optional.of(VampirePose.STAKE_THRUST_RIGHT))
+            .map(Enum::name)
+            .orElse("NONE"));
+    assertTrue(
+        PlayerClipState.shownThrust(Optional.ofNullable(pose), power, Optional.empty()).isEmpty());
+  }
+
+  @ParameterizedTest(name = "{0} hand, main arm {1}: right arm {2}")
+  @CsvSource({
+    "MAIN_HAND, RIGHT, true",
+    "OFF_HAND, RIGHT, false",
+    "MAIN_HAND, LEFT, false",
+    "OFF_HAND, LEFT, true",
+    ", RIGHT, true",
+    ", LEFT, false"
+  })
+  @DisplayName("the thrust plays on the arm of the hand that swung, the main hand when unknown")
+  void swingsRightArm(final Hand hand, final Arm mainArm, final boolean right) {
+    assertEquals(right, PlayerClipState.swingsRightArm(hand, mainArm));
   }
 
   @Test

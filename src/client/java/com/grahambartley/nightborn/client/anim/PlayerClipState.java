@@ -5,6 +5,8 @@ import com.grahambartley.nightborn.mob.LevitationGait;
 import com.grahambartley.nightborn.mob.VampirePose;
 import java.util.Optional;
 import net.minecraft.entity.EntityPose;
+import net.minecraft.util.Arm;
+import net.minecraft.util.Hand;
 
 public final class PlayerClipState {
 
@@ -99,7 +101,8 @@ public final class PlayerClipState {
       final int swingTicks,
       final boolean reverseGrip,
       final boolean rightArm,
-      final double age) {
+      final double age,
+      final Lengths lengths) {
     final boolean started = swinging && (!this.swinging || swingTicks < this.swingTicks);
     this.swinging = swinging;
     this.swingTicks = swingTicks;
@@ -108,6 +111,9 @@ public final class PlayerClipState {
     }
     if (!reverseGrip) {
       thrust.clear();
+      return;
+    }
+    if (thrust(age, lengths).isPresent()) {
       return;
     }
     thrustPose = VampirePose.thrust(rightArm);
@@ -121,6 +127,19 @@ public final class PlayerClipState {
       return Optional.empty();
     }
     return Optional.of(thrustPose);
+  }
+
+  public static boolean swingsRightArm(final Hand swinging, final Arm mainArm) {
+    return (swinging != Hand.OFF_HAND) == (mainArm == Arm.RIGHT);
+  }
+
+  public static Optional<VampirePose> shownThrust(
+      final Optional<VampirePose> pose,
+      final boolean powerPlaying,
+      final Optional<VampirePose> thrust) {
+    return pose.map(VampirePose::allowsActions).orElse(true) && !powerPlaying
+        ? thrust
+        : Optional.empty();
   }
 
   public double thrustSeconds(final double age) {

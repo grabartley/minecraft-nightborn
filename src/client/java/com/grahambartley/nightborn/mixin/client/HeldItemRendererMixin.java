@@ -79,7 +79,11 @@ abstract class HeldItemRendererMixin {
 
   @ModifyVariable(method = "renderFirstPersonItem", at = @At("HEAD"), argsOnly = true, ordinal = 2)
   private float nightborn$thrustInsteadOfSwing(
-      final float swingProgress, @Local(argsOnly = true) final ItemStack item) {
-    return item.isIn(GearTags.REVERSE_GRIP) ? 0.0F : swingProgress;
+      final float swingProgress,
+      @Local(argsOnly = true) final AbstractClientPlayerEntity player,
+      @Local(argsOnly = true) final ItemStack item) {
+    return item.isIn(GearTags.REVERSE_GRIP) && PlayerClips.firstPersonThrust(player).isPresent()
+        ? 0.0F
+        : swingProgress;
   }
 }

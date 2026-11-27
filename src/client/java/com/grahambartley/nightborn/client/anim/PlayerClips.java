@@ -76,6 +76,13 @@ public final class PlayerClips {
         : Optional.empty();
   }
 
+  public static Optional<VampirePose> firstPersonThrust(final PlayerEntity player) {
+    return PlayerClipState.shownThrust(
+        clip(player),
+        state(player).powerClip(player.age, PlayerClips::powerSeconds).isPresent(),
+        state(player).thrust(player.age, VampireClips::seconds));
+  }
+
   public static boolean freshThrust(final PlayerEntity player) {
     return state(player).takeFreshThrust();
   }
@@ -158,10 +165,6 @@ public final class PlayerClips {
     return VampireClips.seconds(clip) + POWER_BLEND_SECONDS;
   }
 
-  private static Optional<VampirePose> firstPersonThrust(final PlayerEntity player) {
-    return state(player).thrust(player.age, VampireClips::seconds);
-  }
-
   private static void followSwing(final PlayerEntity player) {
     final Hand hand = player.preferredHand == null ? Hand.MAIN_HAND : player.preferredHand;
     state(player)
@@ -169,8 +172,9 @@ public final class PlayerClips {
             player.handSwinging,
             player.handSwingTicks,
             player.getStackInHand(hand).isIn(GearTags.REVERSE_GRIP),
-            (hand == Hand.MAIN_HAND) == (player.getMainArm() == Arm.RIGHT),
-            player.age);
+            PlayerClipState.swingsRightArm(hand, player.getMainArm()),
+            player.age,
+            VampireClips::seconds);
   }
 
   private static Optional<PlayerEntity> player(final MinecraftClient client, final int entityId) {

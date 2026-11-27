@@ -33,9 +33,10 @@ class FirstPersonSwayTest {
   }
 
   @ParameterizedTest(name = "{0} pixels forward: reach {1}")
-  @CsvSource({"0, 0", "2, 0.1", "-1.5, -0.075"})
+  @CsvSource({"0, 0", "2, 0.1", "-1.5, -0.075", "5, 0.25", "12, 0.25", "-12, -0.25"})
   @DisplayName(
-      "an arm pushed forward or drawn back in the clip moves the first person hand with it")
+      "an arm pushed forward or drawn back in the clip moves the first person hand with it, up"
+          + " to a limit")
   void reaches(final double forwardPixels, final float reach) {
     final FirstPersonSway sway = FirstPersonSway.of(Math.toRadians(80.0), 0.0, forwardPixels);
     assertEquals(reach, sway.reach(), 1e-6);

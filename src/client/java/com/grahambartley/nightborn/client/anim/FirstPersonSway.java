@@ -9,13 +9,14 @@ public record FirstPersonSway(float pitchDegrees, float yawDegrees, float reach)
   static final double FADE_SECONDS = 0.25;
   static final double LIMIT_DEGREES = 45.0;
   static final double REACH_PER_PIXEL = 0.05;
+  static final double REACH_LIMIT = 0.25;
 
   public static FirstPersonSway of(
       final double raiseRadians, final double flareRadians, final double forwardPixels) {
     return new FirstPersonSway(
         limited((Math.toDegrees(raiseRadians) - FORWARD_RAISE_DEGREES) * SHARE),
         limited(-Math.toDegrees(flareRadians) * SHARE),
-        (float) (forwardPixels * REACH_PER_PIXEL));
+        (float) Math.max(-REACH_LIMIT, Math.min(REACH_LIMIT, forwardPixels * REACH_PER_PIXEL)));
   }
 
   public static double weight(
