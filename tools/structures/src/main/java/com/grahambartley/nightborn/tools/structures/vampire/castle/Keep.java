@@ -6,6 +6,7 @@ import com.grahambartley.nightborn.tools.structures.vampire.Axis;
 import com.grahambartley.nightborn.tools.structures.vampire.Furnishing;
 import com.grahambartley.nightborn.tools.structures.vampire.Openings;
 import com.grahambartley.nightborn.tools.structures.vampire.Roof;
+import com.grahambartley.nightborn.tools.structures.vampire.RouteRoom;
 
 public final class Keep {
 
@@ -14,7 +15,7 @@ public final class Keep {
   public static final int NORTH = 6;
   public static final int SOUTH = 30;
   public static final int SCREEN = 17;
-  public static final int SCREEN_DOOR_HEIGHT = 3;
+  public static final int SCREEN_DOOR_HEIGHT = RouteRoom.LORD;
   public static final int CEILING = 21;
   public static final int SECOND = 8;
   public static final int THIRD = 14;
@@ -68,7 +69,15 @@ public final class Keep {
       buttress(t, WEST - 1, z, "east");
       buttress(t, EAST + 1, z, "west");
     }
-    Openings.arch(t, Axis.X, Castle.MID - 1, Castle.MID + 1, SOUTH, Castle.FLOOR, 4, Castle.STEP);
+    Openings.arch(
+        t,
+        Axis.X,
+        Castle.MID - 1,
+        Castle.MID + 1,
+        SOUTH,
+        Castle.FLOOR,
+        RouteRoom.LORD + 1,
+        Castle.STEP);
     for (final int x : new int[] {WEST + 2, EAST - 2}) {
       for (int y = Castle.FLOOR; y < Castle.FLOOR + SCREEN_DOOR_HEIGHT; y++) {
         t.set(x, y, SCREEN, BlockState.AIR);

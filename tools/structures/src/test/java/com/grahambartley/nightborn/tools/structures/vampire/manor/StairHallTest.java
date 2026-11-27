@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.grahambartley.nightborn.tools.structures.template.BlockState;
 import com.grahambartley.nightborn.tools.structures.template.Template;
+import com.grahambartley.nightborn.tools.structures.vampire.RouteRoom;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -23,10 +24,10 @@ class StairHallTest {
 
   @ParameterizedTest(name = "a step at {0},{1},{2} rises {3}")
   @CsvSource({
-    "27, 4, 18, north",
-    "27, 5, 17, north",
-    "27, 6, 16, north",
-    "24, 7, 13, south",
+    "27, 4, 19, north",
+    "27, 5, 18, north",
+    "27, 6, 17, north",
+    "27, 7, 16, north",
     "24, 8, 14, south",
     "24, 9, 15, south",
     "30, 9, 15, south"
@@ -36,11 +37,12 @@ class StairHallTest {
     assertTrue(hall.get(x, y, z).contains("facing=" + facing));
   }
 
-  @ParameterizedTest(name = "under the flights there is headroom at {0},{1}")
-  @CsvSource({"24, 13", "24, 14", "24, 15", "27, 12", "27, 14"})
+  @ParameterizedTest(name = "under the landing and flights a vampire has headroom at {0},{1}")
+  @CsvSource({"24, 13", "24, 14", "24, 15", "27, 12", "27, 14", "23, 11"})
   void passagesRunUnderTheStairs(final int x, final int z) {
-    assertEquals(BlockState.AIR, hall.get(x, Manor.F0 + 1, z));
-    assertEquals(BlockState.AIR, hall.get(x, Manor.F0 + 2, z));
+    for (int y = Manor.F0 + 1; y <= Manor.F0 + RouteRoom.HOUSEHOLD; y++) {
+      assertEquals(BlockState.AIR, hall.get(x, y, z), "at y " + y);
+    }
   }
 
   @ParameterizedTest(name = "the gallery edge is railed at z {0}")
@@ -63,7 +65,7 @@ class StairHallTest {
   }
 
   @ParameterizedTest(name = "the {0} flight is railed at z {1}, y {2}")
-  @CsvSource({"west, 13, 8", "west, 14, 9", "west, 15, 10", "east, 13, 8", "east, 15, 10"})
+  @CsvSource({"west, 14, 9", "west, 15, 10", "east, 14, 9", "east, 15, 10"})
   void returnFlightsAreRailed(final String side, final int z, final int y) {
     final int x = "west".equals(side) ? Manor.MID_X - 2 : Manor.MID_X + 2;
     assertTrue(hall.get(x, y, z).contains("dark_oak_fence"), hall.get(x, y, z));

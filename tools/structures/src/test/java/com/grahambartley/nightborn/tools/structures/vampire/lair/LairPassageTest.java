@@ -8,6 +8,7 @@ import com.grahambartley.nightborn.tools.structures.template.BlockState;
 import com.grahambartley.nightborn.tools.structures.template.Facing;
 import com.grahambartley.nightborn.tools.structures.template.Pos;
 import com.grahambartley.nightborn.tools.structures.template.Template;
+import com.grahambartley.nightborn.tools.structures.vampire.RouteRoom;
 import com.grahambartley.nightborn.tools.structures.vampire.StructureWalk;
 import java.util.List;
 import java.util.Map;
@@ -48,23 +49,29 @@ class LairPassageTest {
     assertTrue(LairCave.roof(t, past.x(), past.z()) > LairPassage.HEADROOM, "ends in the cave");
   }
 
-  @ParameterizedTest(name = "a {2} passage in a {0} by {1} cave is walkable and marked")
+  @ParameterizedTest(name = "a {2} passage in a {0} by {1} cave is two lanes wide and marked")
   @CsvSource({"25, 25, south, 12", "31, 15, north, 17", "25, 25, east, 12", "15, 15, west, 7"})
-  void aPersonWalksTheWholePassageUnderRock(
+  void aVampireWalksTheWholePassageUnderRock(
       final int sizeX, final int sizeZ, final String outward, final int along) {
     final Template t = cave(sizeX, sizeZ);
     LairPassage.cut(t, along, outward);
-    final List<Pos> run = LairPassage.run(t, along, outward);
-    for (final Pos cell : run) {
-      assertTrue(StructureWalk.open(t.get(cell.x(), 1, cell.z())), "feet at " + cell);
-      assertTrue(StructureWalk.open(t.get(cell.x(), 2, cell.z())), "head at " + cell);
-      assertFalse(StructureWalk.open(t.get(cell.x(), 0, cell.z())), "floor at " + cell);
-      assertFalse(StructureWalk.open(t.get(cell.x(), 3, cell.z())), "roof at " + cell);
+    final Pos side = LairPassage.lane(outward);
+    final int step = side.x() + side.z();
+    for (int lane = 0; lane < RouteRoom.LANES; lane++) {
+      final List<Pos> cells = LairPassage.run(t, along + lane * step, outward);
+      for (final Pos cell : cells) {
+        assertFalse(StructureWalk.open(t.get(cell.x(), 0, cell.z())), "floor at " + cell);
+        assertTrue(
+            StructureWalk.clear(t, cell.x(), 1, cell.z(), RouteRoom.HOUSEHOLD), "at " + cell);
+      }
     }
+    final List<Pos> run = LairPassage.run(t, along, outward);
     final Pos mouth = run.getFirst();
     assertEquals(
         "minecraft:jigsaw[orientation=" + outward + "_up]", t.get(mouth.x(), 0, mouth.z()));
-    assertEquals("minecraft:cobweb", t.get(mouth.x(), LairPassage.HEADROOM, mouth.z()));
+    final Pos corner = mouth.offset(side);
+    assertEquals(
+        "minecraft:cobweb", t.get(corner.x(), RouteRoom.HOUSEHOLD + 1, corner.z()), "above heads");
     final Pos inner = run.getLast();
     assertTrue(t.get(inner.x(), 1, inner.z()).startsWith("nightborn:blood_splatter"));
   }

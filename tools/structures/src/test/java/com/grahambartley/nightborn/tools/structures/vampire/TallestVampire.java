@@ -29,20 +29,12 @@ public final class TallestVampire {
     }
   }
 
-  public static int headroom() {
-    return headroom(height());
-  }
-
   public static double height(final String look) {
     final double height = maxHeight(LOOKS.resolve(look + ".json"));
     if (height == 0.0) {
       throw new IllegalStateException(look + " names no build of its own");
     }
     return height;
-  }
-
-  public static int headroom(final double height) {
-    return (int) Math.ceil(height);
   }
 
   private static double maxHeight(final Path build) {

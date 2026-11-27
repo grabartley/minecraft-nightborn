@@ -5,6 +5,7 @@ import com.grahambartley.nightborn.tools.structures.template.Template;
 import com.grahambartley.nightborn.tools.structures.vampire.Axis;
 import com.grahambartley.nightborn.tools.structures.vampire.Furnishing;
 import com.grahambartley.nightborn.tools.structures.vampire.Openings;
+import com.grahambartley.nightborn.tools.structures.vampire.RouteRoom;
 
 public final class Ossuary {
 
@@ -19,7 +20,6 @@ public final class Ossuary {
   public static Template build() {
     final Template t = CryptStair.shell(PATH);
     gallery(t);
-    t.fill(5, 1, 2, 7, 3, 3, "air");
     Openings.arch(t, Axis.X, 6, 8, 4, 1, 3, CryptStair.STEP);
     Openings.arch(t, Axis.X, 6, 8, 5, 1, 3, CryptStair.STEP);
     northChapel(t);
@@ -50,7 +50,7 @@ public final class Ossuary {
 
   private static void northChapel(final Template t) {
     t.fill(1, 1, 2, 3, 3, 4, "air");
-    Openings.arch(t, Axis.X, 1, 3, 5, 1, 3, CryptStair.STEP);
+    Openings.arch(t, Axis.X, 1, 3, 5, 1, RouteRoom.HOUSEHOLD + 1, CryptStair.STEP);
     Furnishing.coffin(t, Undercroft.STONE_COFFIN, 2, 1, 2, "south");
     Furnishing.candles(t, 3, 1, 4, 2, false);
     t.set(1, 3, 2, "cobweb");
@@ -61,7 +61,7 @@ public final class Ossuary {
     Openings.arch(t, Axis.X, 6, 8, 9, 1, 3, CryptStair.STEP);
     Furnishing.coffin(t, Undercroft.GOTHIC_COFFIN, 5, 1, 11, "east");
     Furnishing.coffin(t, Undercroft.STONE_COFFIN, 8, 1, 11, "east");
-    Furnishing.chandelier(t, 7, 3, 11);
+    Furnishing.chandelier(t, 6, 3, 11);
     t.set(9, 3, 12, "cobweb");
   }
 

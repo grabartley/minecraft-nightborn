@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.grahambartley.nightborn.tools.structures.template.BlockState;
 import com.grahambartley.nightborn.tools.structures.template.Template;
+import com.grahambartley.nightborn.tools.structures.vampire.RouteRoom;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
@@ -59,7 +60,8 @@ class HallWingTest {
     "8, 35, 20, limewashed_bricks",
     "20, 33, 25, air",
     "20, 34, 26, air",
-    "20, 35, 25, limewashed_bricks",
+    "20, 35, 25, air",
+    "20, 36, 25, limewashed_bricks",
     "20, 34, 18, glass_pane",
     "20, 40, 18, glass_pane",
     "14, 38, 25, dark_oak_planks",
@@ -84,12 +86,15 @@ class HallWingTest {
     final Template t = built();
     final int x = HallWing.WEST + 2 + step;
     final int y = HallWing.GROUND + 1 + step;
-    assertTrue(t.get(x, y, HallWing.NORTH + 1).contains("dark_oak_stairs[facing=east"));
-    assertEquals(BlockState.AIR, t.get(x, y + 1, HallWing.NORTH + 1));
-    assertEquals(BlockState.AIR, t.get(x, y + 2, HallWing.NORTH + 1));
-    assertTrue(
-        t.get(HallWing.WEST + 3, HallWing.LOFT + 1, HallWing.NORTH + 1).contains("dark_oak_fence"),
-        "a rail closes the open end of the stairwell");
+    for (int z = HallWing.NORTH + 1; z <= HallWing.NORTH + RouteRoom.LANES; z++) {
+      assertTrue(t.get(x, y, z).contains("dark_oak_stairs[facing=east"));
+      for (int above = y + 1; above <= y + 1 + RouteRoom.HOUSEHOLD; above++) {
+        assertEquals(BlockState.AIR, t.get(x, above, z));
+      }
+      assertTrue(
+          t.get(HallWing.WEST + 2, HallWing.LOFT + 1, z).contains("dark_oak_fence"),
+          "a rail closes the open end of the stairwell");
+    }
   }
 
   @ParameterizedTest(name = "the {0} floor holds {1}")

@@ -3,6 +3,7 @@ package com.grahambartley.nightborn.tools.structures.vampire.mountain;
 import com.grahambartley.nightborn.tools.structures.template.BlockState;
 import com.grahambartley.nightborn.tools.structures.template.Pos;
 import com.grahambartley.nightborn.tools.structures.template.Template;
+import com.grahambartley.nightborn.tools.structures.vampire.RouteRoom;
 import com.grahambartley.nightborn.tools.structures.vampire.manor.Parts;
 import java.util.ArrayList;
 import java.util.List;
@@ -11,7 +12,6 @@ public record Turret(int cx, int cz, int radius, int base, int top, boolean roun
 
   public static final int STOREY = 6;
   public static final int ROOF_LAYERS = 2;
-  public static final int STAIR_HEADROOM = 3;
 
   public boolean inside(final int x, final int z, final int r) {
     return Spire.within(x - cx, z - cz, r, round);
@@ -96,7 +96,7 @@ public record Turret(int cx, int cz, int radius, int base, int top, boolean roun
       final Pos next = loop.get((i + 1) % loop.size());
       final int y = base + 1 + i;
       t.set(at.x(), y, at.z(), Parts.stair(MountainCastle.KEEP_STEP, toward(at, next)));
-      for (int above = y + 1; above <= y + STAIR_HEADROOM && above < top; above++) {
+      for (int above = y + 1; above <= y + 1 + RouteRoom.HOUSEHOLD && above < top; above++) {
         t.set(at.x(), above, at.z(), BlockState.AIR);
       }
     }
@@ -149,7 +149,8 @@ public record Turret(int cx, int cz, int radius, int base, int top, boolean roun
   }
 
   private void opening(final Template t, final int x, final int z, final int floor) {
-    t.set(x, floor + 1, z, BlockState.AIR);
-    t.set(x, floor + 2, z, BlockState.AIR);
+    for (int y = floor + 1; y <= floor + RouteRoom.HOUSEHOLD; y++) {
+      t.set(x, y, z, BlockState.AIR);
+    }
   }
 }

@@ -12,16 +12,17 @@ import static com.grahambartley.nightborn.tools.structures.vampire.manor.Manor.W
 import com.grahambartley.nightborn.tools.structures.template.BlockState;
 import com.grahambartley.nightborn.tools.structures.template.Template;
 import com.grahambartley.nightborn.tools.structures.vampire.Furnishing;
+import com.grahambartley.nightborn.tools.structures.vampire.RouteRoom;
 
 public final class StairHall {
 
   public static final int WEST = WING_E + 1;
   public static final int EAST = HALL_E - 1;
-  public static final int LANDING = F0 + 3;
-  public static final int LANDING_BACK = MAIN_N + 4;
-  public static final int LANDING_FRONT = LANDING_BACK + 3;
+  public static final int LANDING = F0 + 1 + RouteRoom.HOUSEHOLD;
+  public static final int LANDING_FRONT = MAIN_N + 7;
+  public static final int LANDING_BACK = LANDING_FRONT - (F1 - LANDING);
   public static final int GALLERY_FRONT = MAIN_S - 2;
-  public static final int FLIGHT_FOOT = LANDING_FRONT + 3;
+  public static final int FLIGHT_FOOT = LANDING_FRONT + LANDING - F0;
   public static final String STEP = "dark_oak_stairs";
 
   private StairHall() {}
@@ -129,10 +130,12 @@ public final class StairHall {
     Furnishing.chair(t, EAST, F0 + 1, LANDING_FRONT + 2, "west");
     Furnishing.chair(t, WEST, F0 + 1, LANDING_FRONT + 2, "east");
     for (final int z : new int[] {LANDING_FRONT + 1, MAIN_S - 2}) {
-      Furnishing.portrait(t, WEST, F0 + 3, z, "east");
       Furnishing.portrait(t, EAST, F0 + 3, z, "west");
       Furnishing.portrait(t, WEST, F1 + 2, z, "east");
       Furnishing.portrait(t, EAST, F1 + 2, z, "west");
+    }
+    for (final int z : new int[] {LANDING_FRONT + 1, MAIN_S - 3}) {
+      Furnishing.portrait(t, WEST, F0 + 3, z, "east");
     }
     Furnishing.candelabra(t, WEST, LANDING + 1, MAIN_N + 1);
     Furnishing.candelabra(t, EAST, LANDING + 1, MAIN_N + 1);

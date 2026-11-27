@@ -49,9 +49,11 @@ final class LairChecks {
                   || x >= t.sizeX() - LairCave.SHELL
                   || z >= t.sizeZ() - LairCave.SHELL
                   || y >= t.sizeY() - LairCave.SHELL;
-          final boolean dug = y <= LairPassage.HEADROOM && passage.contains(new Pos(x, 0, z));
+          final String state = t.get(x, y, z);
+          final boolean dug =
+              passage.contains(new Pos(x, 0, z))
+                  && (y <= LairPassage.HEADROOM || "minecraft:cobweb".equals(state));
           if (shell && !dug) {
-            final String state = t.get(x, y, z);
             assertTrue(
                 state != null && (state.contains("deepslate") || state.contains("tuff")),
                 x + "," + y + "," + z + " is " + state);

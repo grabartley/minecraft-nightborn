@@ -26,7 +26,8 @@ class CaveMouthTest {
 
   private static final Identifier DOOR = Identifier.of("nightborn", "lair_entrance");
   private static final BlockState SILL = Blocks.COBBLED_DEEPSLATE.getDefaultState();
-  private static final CaveMouth MOUTH = new CaveMouth(DOOR, 8, 1, 4, -60, 4, 2, SILL);
+  private static final CaveMouth MOUTH =
+      new CaveMouth(DOOR, 8, 1, 4, -60, 4, 2, SILL, CaveRoom.PERSON);
   private static final BlockPos FLOOR = new BlockPos(0, -30, 0);
 
   private static Threshold facing(final Direction out) {
@@ -126,7 +127,7 @@ class CaveMouthTest {
   @ParameterizedTest(name = "a cave floor at y {0} with the lowest floor at {1} opens: {2}")
   @CsvSource({"-58, -60, true", "-59, -60, true", "-60, -60, false", "-50, -40, false"})
   void neverOpensBelowTheLowestFloor(final int floorY, final int lowest, final boolean opens) {
-    final CaveMouth mouth = new CaveMouth(DOOR, 8, 1, 4, lowest, 4, 2, SILL);
+    final CaveMouth mouth = new CaveMouth(DOOR, 8, 1, 4, lowest, 4, 2, SILL, CaveRoom.PERSON);
     final CaveMouth.Ground ground = new FakeRock(CaveCell.SOLID).cave(-3, floorY, -3, 3, 6);
     assertEquals(
         opens,
@@ -137,7 +138,8 @@ class CaveMouthTest {
   @CsvSource({"0, 1, 0, 1", "2, 1, 1, 75", "4, 2, 2, 125", "24, 2, 12, 15625"})
   void triesEveryMoveNearestFirst(
       final int reach, final int spacing, final int rise, final int count) {
-    final List<BlockPos> moves = new CaveMouth(DOOR, reach, spacing, rise, -64, 4, 2, SILL).moves();
+    final List<BlockPos> moves =
+        new CaveMouth(DOOR, reach, spacing, rise, -64, 4, 2, SILL, CaveRoom.PERSON).moves();
     assertEquals(count, moves.size());
     assertEquals(BlockPos.ORIGIN, moves.getFirst());
     for (int i = 1; i < moves.size(); i++) {
@@ -157,7 +159,8 @@ class CaveMouthTest {
       final int approach,
       final int path,
       final boolean opens) {
-    final CaveMouth mouth = new CaveMouth(DOOR, 0, 1, 0, -64, approach, path, SILL);
+    final CaveMouth mouth =
+        new CaveMouth(DOOR, 0, 1, 0, -64, approach, path, SILL, CaveRoom.PERSON);
     assertEquals(
         opens, mouth.opening(FLOOR.south(), Direction.SOUTH, LAIR_AWAY, ground).isPresent());
   }
@@ -200,7 +203,7 @@ class CaveMouthTest {
   @CsvSource({"-30, 4, -47, -10", "-10, 12, -35, 18"})
   void samplesOnlyTheDepthTheSearchCanReach(
       final int floorY, final int rise, final int bottom, final int top) {
-    final CaveMouth mouth = new CaveMouth(DOOR, 8, 1, rise, -64, 4, 2, SILL);
+    final CaveMouth mouth = new CaveMouth(DOOR, 8, 1, rise, -64, 4, 2, SILL, CaveRoom.PERSON);
     assertEquals(
         new DepthBand(bottom, top),
         mouth.band(new Threshold(new BlockPos(0, floorY, 0), Direction.NORTH)));

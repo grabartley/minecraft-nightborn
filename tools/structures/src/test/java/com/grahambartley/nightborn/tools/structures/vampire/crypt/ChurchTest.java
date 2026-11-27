@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import com.grahambartley.nightborn.tools.structures.template.BlockState;
 import com.grahambartley.nightborn.tools.structures.template.Pos;
 import com.grahambartley.nightborn.tools.structures.template.Template;
+import com.grahambartley.nightborn.tools.structures.vampire.RouteRoom;
 import java.util.Map;
 import java.util.stream.Stream;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -50,18 +51,24 @@ class ChurchTest {
   void itIsAWorkingChurch(final String path, final Template church) {
     assertTrue(church.get(29, 2, 8).contains("lit=true"));
     assertTrue(church.get(29, 2, 10).contains("lit=true"));
-    assertEquals("minecraft:brewing_stand", church.get(25, 1, 3));
+    assertEquals("minecraft:brewing_stand", church.get(23, 1, 5));
     assertTrue(
         church.cells().values().stream().anyMatch(state -> state.startsWith("minecraft:bell")));
     assertTrue(church.get(10, 1, 11).startsWith("minecraft:water_cauldron"));
   }
 
-  @ParameterizedTest(name = "{0} keeps every door open for its residents")
+  @ParameterizedTest(name = "{0} keeps every way out open for its residents")
   @MethodSource("churches")
   void residentsCanWalkOut(final String path, final Template church) {
-    assertTrue(church.get(26, 1, 6).contains("open=true"));
-    assertEquals(BlockState.AIR, church.get(13, 1, 13));
-    assertEquals(BlockState.AIR, church.get(13, 1, 16));
+    for (int y = 1; y <= RouteRoom.HOUSEHOLD; y++) {
+      for (int x = 25; x <= 27; x++) {
+        assertEquals(BlockState.AIR, church.get(x, y, 6), "vestry arch at " + x + ", " + y);
+      }
+      for (int x = 12; x <= 14; x++) {
+        assertEquals(BlockState.AIR, church.get(x, y, 13), "nave arch at " + x + ", " + y);
+      }
+    }
+    assertEquals(BlockState.AIR, church.get(13, RouteRoom.HOUSEHOLD, 16));
     assertEquals(BlockState.AIR, church.get(9, 1, 9));
   }
 

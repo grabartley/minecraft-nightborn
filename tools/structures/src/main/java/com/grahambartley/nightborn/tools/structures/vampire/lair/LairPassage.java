@@ -5,13 +5,15 @@ import com.grahambartley.nightborn.tools.structures.template.Facing;
 import com.grahambartley.nightborn.tools.structures.template.Pos;
 import com.grahambartley.nightborn.tools.structures.template.Template;
 import com.grahambartley.nightborn.tools.structures.vampire.Furnishing;
+import com.grahambartley.nightborn.tools.structures.vampire.RouteRoom;
 import java.util.ArrayList;
 import java.util.List;
 
 public final class LairPassage {
 
   public static final String ENTRANCE = "nightborn:lair_entrance";
-  static final int HEADROOM = 2;
+  static final int HEADROOM = RouteRoom.HOUSEHOLD;
+  static final int LANES = RouteRoom.LANES;
 
   private LairPassage() {}
 
@@ -26,16 +28,31 @@ public final class LairPassage {
     return cells;
   }
 
+  public static List<Pos> cells(final Template t, final int along, final String outward) {
+    final Pos side = lane(outward);
+    final List<Pos> cells = new ArrayList<>();
+    for (int lane = 0; lane < LANES; lane++) {
+      cells.addAll(run(t, along + lane * (side.x() + side.z()), outward));
+    }
+    return cells;
+  }
+
+  public static Pos lane(final String outward) {
+    return Facing.STEP.get(Facing.CLOCKWISE.get(outward));
+  }
+
   public static void cut(final Template t, final int along, final String outward) {
-    final List<Pos> cells = run(t, along, outward);
-    for (final Pos cell : cells) {
+    for (final Pos cell : cells(t, along, outward)) {
       t.set(cell.x(), 0, cell.z(), LairCave.ROCK.at(cell.x(), 0, cell.z()));
       for (int y = 1; y <= HEADROOM; y++) {
         t.set(cell.x(), y, cell.z(), BlockState.AIR);
       }
     }
+    final Pos side = lane(outward);
+    final Pos corner = run(t, along + (LANES - 1) * (side.x() + side.z()), outward).getFirst();
+    t.set(corner.x(), HEADROOM + 1, corner.z(), "cobweb");
+    final List<Pos> cells = run(t, along, outward);
     final Pos mouth = cells.getFirst();
-    t.set(mouth.x(), HEADROOM, mouth.z(), "cobweb");
     final Pos inner = cells.getLast();
     t.set(inner.x(), 1, inner.z(), Furnishing.splatter(Facing.OPPOSITE.get(outward), 2));
     t.entrance(mouth.x(), 0, mouth.z(), ENTRANCE, outward);

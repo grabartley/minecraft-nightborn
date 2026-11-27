@@ -23,7 +23,8 @@ public record CaveMouth(
     int lowest,
     int approach,
     int path,
-    BlockState sill) {
+    BlockState sill,
+    CaveRoom room) {
 
   public static final int FARTHEST_REACH = 48;
   public static final int WIDEST_SPACING = 8;
@@ -56,7 +57,10 @@ public record CaveMouth(
                           .forGetter(CaveMouth::path),
                       BlockState.CODEC
                           .optionalFieldOf("sill", Blocks.COBBLED_DEEPSLATE.getDefaultState())
-                          .forGetter(CaveMouth::sill))
+                          .forGetter(CaveMouth::sill),
+                      CaveRoom.CODEC
+                          .optionalFieldOf("room", CaveRoom.PERSON)
+                          .forGetter(CaveMouth::room))
                   .apply(instance, CaveMouth::new));
 
   @FunctionalInterface

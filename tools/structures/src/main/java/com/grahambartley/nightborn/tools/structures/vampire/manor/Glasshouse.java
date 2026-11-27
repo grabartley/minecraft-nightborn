@@ -5,6 +5,7 @@ import static com.grahambartley.nightborn.tools.structures.vampire.manor.Manor.W
 
 import com.grahambartley.nightborn.tools.structures.template.BlockState;
 import com.grahambartley.nightborn.tools.structures.template.Template;
+import com.grahambartley.nightborn.tools.structures.vampire.RouteRoom;
 import com.grahambartley.nightborn.tools.structures.vampire.Stone;
 
 public final class Glasshouse {
@@ -63,11 +64,11 @@ public final class Glasshouse {
 
   private static void entrance(final Template t) {
     Window.door(t, WEST, F0 + 1, DOOR_Z, "west");
-    for (int y = F0 + 3; y < roofY(WEST); y++) {
+    for (int y = F0 + 1 + RouteRoom.HOUSEHOLD; y < roofY(WEST); y++) {
       t.set(WEST, y, DOOR_Z, "iron_bars");
     }
     Parts.flight(t, Manor.TRIM, ManorFront.STONE_FILL, WEST - 1, DOOR_Z, "east", F0, F0, 0);
-    for (int y = F0 + 1; y <= F0 + 2; y++) {
+    for (int y = F0 + 1; y <= F0 + RouteRoom.HOUSEHOLD; y++) {
       t.set(EAST, y, DOOR_Z, BlockState.AIR);
       t.set(WEST + 1, y, DOOR_Z, BlockState.AIR);
     }
@@ -103,6 +104,14 @@ public final class Glasshouse {
       }
     }
     t.set(TREE_X, F0 + 1, TREE_Z, "rooted_dirt");
+    for (int dx = -1; dx <= 1; dx++) {
+      for (int dz = -1; dz <= 1; dz++) {
+        if (dx != 0 || dz != 0) {
+          t.set(
+              TREE_X + dx, F0 + 2, TREE_Z + dz, (dx + dz) % 2 == 0 ? "flowering_azalea" : "azalea");
+        }
+      }
+    }
     final int crown = fallen ? roofY(TREE_X) + 2 : roofY(TREE_X) - 3;
     for (int y = F0 + 2; y <= crown; y++) {
       t.set(TREE_X, y, TREE_Z, Parts.log("dark_oak_log", "y"));

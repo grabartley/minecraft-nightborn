@@ -55,6 +55,8 @@ class TurretTest {
   @ParameterizedTest(name = "round {0}: the wall inside the house at {1},{2} is {3} at y {4}")
   @CsvSource({
     "true, 38, 20, air, 4",
+    "true, 38, 20, air, 6",
+    "true, 38, 20, air, 12",
     "true, 38, 20, bricks, 7",
     "true, 38, 20, stone_bricks, 9",
     "true, 38, 20, air, 11",

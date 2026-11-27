@@ -68,7 +68,7 @@ class BloodPoolDenTest {
   @Test
   void twoBlocksOfRockWallRoundTheDenButItsPassage() {
     LairChecks.assertSealed(
-        DEN, LairPassage.run(DEN, BloodPoolDen.CENTRE, BloodPoolDen.ENTRANCE_SIDE));
+        DEN, LairPassage.cells(DEN, BloodPoolDen.CENTRE, BloodPoolDen.ENTRANCE_SIDE));
   }
 
   @Test

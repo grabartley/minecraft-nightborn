@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.grahambartley.nightborn.tools.structures.template.BlockState;
 import com.grahambartley.nightborn.tools.structures.template.Template;
+import com.grahambartley.nightborn.tools.structures.vampire.RouteRoom;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
@@ -29,11 +30,10 @@ class GatehouseTest {
 
   @ParameterizedTest(name = "the portcullis bar at x {0}")
   @CsvSource({"19", "20", "21"})
-  void thePortcullisHangsRaised(final int x) {
+  void thePortcullisHangsRaisedAboveTheLord(final int x) {
+    final int bar = Castle.FLOOR + Gatehouse.GATE_HEIGHT - 1;
     assertEquals(
-        "minecraft:iron_bars",
-        BlockState.parse(
-                CASTLE.get(x, Castle.FLOOR + Gatehouse.GATE_HEIGHT - 2, Gatehouse.SOUTH - 2))
-            .block());
+        "minecraft:iron_bars", BlockState.parse(CASTLE.get(x, bar, Gatehouse.SOUTH - 2)).block());
+    assertTrue(bar - Castle.FLOOR >= RouteRoom.LORD, "the lord floats under it");
   }
 }

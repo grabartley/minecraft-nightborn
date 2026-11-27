@@ -11,6 +11,7 @@ import net.minecraft.block.Blocks;
 import net.minecraft.block.PointedDripstoneBlock;
 import net.minecraft.util.math.BlockBox;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Direction;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -59,13 +60,25 @@ class CavePathTest {
   @ParameterizedTest(name = "a route over {0} takes the box {1}")
   @MethodSource("routes")
   void coversEveryFloorAndTheHeadroomAboveIt(final List<BlockPos> floors, final BlockBox box) {
-    assertEquals(box, CavePath.around(floors));
     assertEquals(
-        box, new CavePath(floors, Blocks.COBBLED_DEEPSLATE.getDefaultState()).getBoundingBox());
+        box,
+        new CavePath(
+                floors,
+                Blocks.COBBLED_DEEPSLATE.getDefaultState(),
+                CaveRoom.PERSON,
+                Direction.NORTH)
+            .getBoundingBox());
   }
 
   @Test
   void refusesAnEmptyRoute() {
-    assertThrows(IllegalArgumentException.class, () -> CavePath.around(List.of()));
+    assertThrows(
+        IllegalArgumentException.class,
+        () ->
+            new CavePath(
+                List.of(),
+                Blocks.COBBLED_DEEPSLATE.getDefaultState(),
+                CaveRoom.PERSON,
+                Direction.EAST));
   }
 }

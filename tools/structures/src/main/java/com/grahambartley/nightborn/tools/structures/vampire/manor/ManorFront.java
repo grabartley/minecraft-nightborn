@@ -67,7 +67,6 @@ public final class ManorFront {
         t.set(x, y, MAIN_S, Manor.STAINED);
       }
     }
-    t.set(MID_X, F0 + 3, MAIN_S, Manor.STAINED);
   }
 
   private static void steps(final Template t) {

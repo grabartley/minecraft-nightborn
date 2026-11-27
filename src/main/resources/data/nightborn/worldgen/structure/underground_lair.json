@@ -14,7 +14,7 @@
     "max_inclusive": { "absolute": -16 }
   },
   "max_distance_from_center": 32,
-  "cave": { "entrance": "nightborn:lair_entrance", "reach": 24, "spacing": 2, "rise": 12, "lowest": -48 },
+  "cave": { "entrance": "nightborn:lair_entrance", "reach": 24, "spacing": 2, "rise": 12, "lowest": -48, "room": { "headroom": 3, "lanes": 2 } },
   "household": {
     "resident": "nightborn:vampire",
     "residents": { "type": "minecraft:uniform", "min_inclusive": 2, "max_inclusive": 5 },

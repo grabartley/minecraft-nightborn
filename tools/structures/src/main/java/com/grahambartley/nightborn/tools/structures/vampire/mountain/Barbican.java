@@ -6,6 +6,7 @@ import com.grahambartley.nightborn.tools.structures.vampire.Axis;
 import com.grahambartley.nightborn.tools.structures.vampire.Furnishing;
 import com.grahambartley.nightborn.tools.structures.vampire.Openings;
 import com.grahambartley.nightborn.tools.structures.vampire.Roof;
+import com.grahambartley.nightborn.tools.structures.vampire.RouteRoom;
 import com.grahambartley.nightborn.tools.structures.vampire.manor.Parts;
 
 public final class Barbican {
@@ -89,10 +90,10 @@ public final class Barbican {
       t.set(x, y + 1, SOUTH, MountainCastle.PANE);
       t.set(x, y + 2, SOUTH, MountainCastle.PANE);
     }
-    t.set(WEST, y, NORTH + 3, BlockState.AIR);
-    t.set(WEST, y + 1, NORTH + 3, BlockState.AIR);
-    t.set(EAST, y, NORTH + 3, BlockState.AIR);
-    t.set(EAST, y + 1, NORTH + 3, BlockState.AIR);
+    for (int up = 0; up < RouteRoom.HOUSEHOLD; up++) {
+      t.set(WEST, y + up, NORTH + 3, BlockState.AIR);
+      t.set(EAST, y + up, NORTH + 3, BlockState.AIR);
+    }
     t.set(WEST + 1, y, SOUTH - 1, BlockState.of("nightborn:weapon_rack", "facing", "north"));
     Furnishing.table(t, EAST - 2, y, NORTH + 2);
     Furnishing.chair(t, EAST - 3, y, NORTH + 2, "east");

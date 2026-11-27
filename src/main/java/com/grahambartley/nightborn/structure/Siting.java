@@ -85,7 +85,14 @@ public record Siting(Optional<Footing> footing, Optional<Summit> summit, Optiona
     }
     final BlockPos by = move.get();
     pieces.toList().pieces().forEach(piece -> piece.translate(by.getX(), by.getY(), by.getZ()));
-    opening.ifPresent(found -> pieces.addPiece(new CavePath(found.route(), cave.get().sill())));
+    opening.ifPresent(
+        found ->
+            pieces.addPiece(
+                new CavePath(
+                    found.route(),
+                    cave.get().sill(),
+                    cave.get().room(),
+                    threshold.get().out().rotateYClockwise())));
     final BlockPos placed = position.position().add(by);
     if (!inBiome(context, placed)) {
       return Optional.empty();

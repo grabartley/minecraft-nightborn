@@ -3,7 +3,9 @@ package com.grahambartley.nightborn.tools.structures.vampire.manor;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import com.grahambartley.nightborn.tools.structures.template.BlockState;
 import com.grahambartley.nightborn.tools.structures.template.Template;
+import com.grahambartley.nightborn.tools.structures.vampire.RouteRoom;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
@@ -31,12 +33,17 @@ class WindowTest {
     assertEquals(sill + Window.TALL, window.head());
   }
 
-  @ParameterizedTest(name = "a door facing {0} has two halves")
+  @ParameterizedTest(name = "a door facing {0} has two halves under an open fanlight")
   @CsvSource({"north", "east"})
-  void doorsAreTwoHigh(final String facing) {
-    final Template t = new Template("vampire/test", 3, 4, 3);
+  void doorsAreTwoHighUnderAFanlight(final String facing) {
+    final Template t = new Template("vampire/test", 3, 6, 3);
+    t.fill(0, 0, 0, 2, 5, 2, "bricks");
     Window.door(t, 1, 1, 1, facing);
     assertTrue(t.get(1, 1, 1).contains("half=lower"));
     assertTrue(t.get(1, 2, 1).contains("half=upper"));
+    for (int y = 3; y <= RouteRoom.HOUSEHOLD; y++) {
+      assertEquals(BlockState.AIR, t.get(1, y, 1), "fanlight at " + y);
+    }
+    assertEquals("minecraft:bricks", t.get(1, RouteRoom.HOUSEHOLD + 1, 1));
   }
 }
