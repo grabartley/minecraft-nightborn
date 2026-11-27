@@ -3,14 +3,18 @@ package com.grahambartley.nightborn.guild;
 import com.grahambartley.nightborn.accessory.GiftAttributes;
 import com.grahambartley.nightborn.accessory.GiftPrices;
 import com.grahambartley.nightborn.gear.GearItems;
+import com.grahambartley.nightborn.guild.build.HunterSkills;
 import com.grahambartley.nightborn.guild.party.HunterParty;
 import com.grahambartley.nightborn.guild.party.PartyLeader;
 import com.grahambartley.nightborn.mob.MobSounds;
 import com.grahambartley.nightborn.name.MobNaming;
 import com.grahambartley.nightborn.name.NameBearer;
 import com.grahambartley.nightborn.rank.GuildRanks;
+import com.grahambartley.nightborn.rank.RankBearer;
 import com.grahambartley.nightborn.rank.RankLadder;
 import com.grahambartley.nightborn.server.ServerConfigService;
+import com.grahambartley.nightborn.skill.SkillHolder;
+import com.grahambartley.nightborn.skill.SkillTree;
 import com.grahambartley.nightborn.vampire.Vampires;
 import com.grahambartley.nightborn.wheel.CommandWheel;
 import java.util.ArrayList;
@@ -59,7 +63,7 @@ import software.bernie.geckolib.animation.PlayState;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 public class GuildMasterEntity extends MerchantEntity
-    implements GeoEntity, HunterLooking, NameBearer {
+    implements GeoEntity, HunterLooking, NameBearer, SkillHolder, RankBearer {
 
   static final String LAST_RESTOCK = "LastRestock";
   static final String OFFER_RANKS = "OfferRanks";
@@ -76,6 +80,8 @@ public class GuildMasterEntity extends MerchantEntity
       DataTracker.registerData(GuildMasterEntity.class, TrackedDataHandlerRegistry.STRING);
   private static final TrackedData<Boolean> SWEARING =
       DataTracker.registerData(GuildMasterEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
+  private static final TrackedData<String> RANK =
+      DataTracker.registerData(GuildMasterEntity.class, TrackedDataHandlerRegistry.STRING);
 
   private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
   private final WornLook worn = new WornLook();
@@ -100,6 +106,7 @@ public class GuildMasterEntity extends MerchantEntity
     builder.add(TRADING, false);
     builder.add(LOOK, "");
     builder.add(SWEARING, false);
+    builder.add(RANK, "");
   }
 
   @Override
@@ -195,6 +202,12 @@ public class GuildMasterEntity extends MerchantEntity
       wear(dataTracker.get(LOOK));
     }
     CampHome.keep(this, TENT_REACH);
+    if (!HunterSkills.built(this)) {
+      HunterSkills.master(this);
+    }
+    if (dataTracker.get(RANK).isEmpty()) {
+      dataTracker.set(RANK, HunterSkills.rank(this).map(Identifier::toString).orElse(""));
+    }
     MobNaming.ensure(this);
     if (party != null && age % PartyLeader.TICKS == 0 && getWorld() instanceof ServerWorld world) {
       party = PartyLeader.tick(world, this, party);
@@ -208,6 +221,17 @@ public class GuildMasterEntity extends MerchantEntity
     }
     dataTracker.set(TRADING, hasCustomer());
     keepSwearing();
+  }
+
+  @Override
+  public SkillTree skillTree() {
+    return SkillTree.HUNTER;
+  }
+
+  @Override
+  public Optional<Identifier> shownRank() {
+    final String rank = dataTracker.get(RANK);
+    return rank.isEmpty() ? Optional.empty() : Optional.ofNullable(Identifier.tryParse(rank));
   }
 
   void swearIn(final ServerPlayerEntity player, final int ticks) {

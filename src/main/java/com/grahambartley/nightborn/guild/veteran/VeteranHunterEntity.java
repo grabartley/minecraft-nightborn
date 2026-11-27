@@ -73,6 +73,11 @@ public class VeteranHunterEntity extends HunterEntity {
   }
 
   @Override
+  protected Optional<Identifier> fixedRank() {
+    return veteran().flatMap(Veteran::rank);
+  }
+
+  @Override
   public void arm(final String wanted) {
     veteran().ifPresentOrElse(kind -> carry(veteranId.toString(), kind.kit()), () -> super.arm(""));
   }

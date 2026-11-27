@@ -25,6 +25,13 @@
       "id": "minecraft:item.crossbow.shoot",
       "volume": 0.55,
       "pitch": 1.0
+    },
+    "mob": {
+      "min_range": 4.0,
+      "max_range": 20.0,
+      "tell_ticks": 10,
+      "tell_sound": "minecraft:item.crossbow.loading_middle",
+      "tell_clip": "crossbow_shot"
     }
   }
 }

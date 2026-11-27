@@ -6,6 +6,7 @@ import com.grahambartley.nightborn.mob.stage.VampireStages;
 import com.grahambartley.nightborn.network.HouseNamePayload;
 import com.grahambartley.nightborn.network.StageNamePayload;
 import com.grahambartley.nightborn.rank.GuildRank;
+import com.grahambartley.nightborn.rank.RankBearer;
 import com.grahambartley.nightborn.rank.RankData;
 import com.grahambartley.nightborn.rank.RankMark;
 import java.util.HashMap;
@@ -67,16 +68,17 @@ public final class StageNameView {
   public static Text shown(final Entity entity, final Text name) {
     final Optional<String> house = Optional.ofNullable(HOUSES.get(entity.getId()));
     if (!(entity instanceof PlayerEntity)) {
-      return coloured(housed(name, house), Optional.ofNullable(name.getStyle().getColor()));
+      return marked(
+          coloured(housed(name, house), Optional.ofNullable(name.getStyle().getColor())),
+          entity instanceof RankBearer bearer
+              ? mark(entity, bearer.shownRank())
+              : Optional.empty());
     }
     final Optional<TextColor> color =
         Optional.ofNullable(STAGES.get(entity.getId()))
             .flatMap(id -> VampireStages.stage(entity.getRegistryManager(), id))
             .flatMap(stage -> stage.look().nameColor());
-    final Optional<RankMark> mark =
-        Optional.ofNullable(RANKS.get(entity.getId()))
-            .flatMap(id -> RankData.rank(entity.getRegistryManager(), id))
-            .map(GuildRank::mark);
+    final Optional<RankMark> mark = mark(entity, Optional.ofNullable(RANKS.get(entity.getId())));
     final Optional<Text> title =
         Optional.ofNullable(TITLES.get(entity.getId()))
             .flatMap(
@@ -84,6 +86,10 @@ public final class StageNameView {
                     entity.getRegistryManager().getOptional(ChallengeData.FEAT).map(r -> r.get(id)))
             .map(Feat::title);
     return marked(coloured(housed(titled(name, title), house), color), mark);
+  }
+
+  private static Optional<RankMark> mark(final Entity entity, final Optional<Identifier> rank) {
+    return rank.flatMap(id -> RankData.rank(entity.getRegistryManager(), id)).map(GuildRank::mark);
   }
 
   static Text titled(final Text name, final Optional<Text> title) {

@@ -23,6 +23,12 @@
       "id": "minecraft:block.amethyst_block.resonate",
       "volume": 0.6,
       "pitch": 1.0
+    },
+    "mob": {
+      "max_range": 16.0,
+      "tell_ticks": 12,
+      "tell_sound": "minecraft:block.amethyst_block.chime",
+      "tell_clip": "raise_crucifix"
     }
   }
 }

@@ -103,16 +103,18 @@ class MobPowerUseTest {
   @ParameterizedTest(name = "{0}")
   @MethodSource("shippedSkills")
   @DisplayName(
-      "every shipped mob power plays its tell and its one clip on each rig that can roll it")
+      "every shipped mob power plays its tell on each rig that can roll it, and a vampire power its"
+          + " one clip as well, while a hunter casts under its tell")
   void shippedClips(final Path file) throws IOException {
-    final JsonObject power =
-        JsonParser.parseString(Files.readString(file)).getAsJsonObject().getAsJsonObject("power");
+    final JsonObject skill = JsonParser.parseString(Files.readString(file)).getAsJsonObject();
+    final JsonObject power = skill.getAsJsonObject("power");
     if (power != null && power.has("mob")) {
       final MobPowerUse use = parse(power.get("mob").toString());
-      for (final String rig : rigs(file)) {
+      final boolean hunter = tree(skill) == SkillTree.HUNTER;
+      for (final String rig : rigs(file, hunter)) {
         final Set<String> clips = ShippedClips.of(rig);
         assertTrue(clips.contains(use.tellClip()), rig + " " + use.tellClip());
-        if (power.has("clip")) {
+        if (!hunter && power.has("clip")) {
           final String clip = power.get("clip").getAsString();
           assertTrue(clips.contains(clip), rig + " " + clip);
         }
@@ -120,7 +122,23 @@ class MobPowerUseTest {
     }
   }
 
-  private static List<String> rigs(final Path file) {
+  private static SkillTree tree(final JsonObject skill) throws IOException {
+    final Identifier branch = Identifier.of(skill.get("branch").getAsString());
+    return SkillBranch.CODEC
+        .parse(
+            JsonOps.INSTANCE,
+            JsonParser.parseString(
+                Files.readString(
+                    Path.of("src/main/resources/data/nightborn/nightborn/skill_branch")
+                        .resolve(branch.getPath() + ".json"))))
+        .getOrThrow()
+        .tree();
+  }
+
+  private static List<String> rigs(final Path file, final boolean hunter) {
+    if (hunter) {
+      return List.of("hunter");
+    }
     return file.getParent().getFileName().toString().equals("lord")
         ? List.of("vampire_lord")
         : List.of("vampire", "vampire_lord");

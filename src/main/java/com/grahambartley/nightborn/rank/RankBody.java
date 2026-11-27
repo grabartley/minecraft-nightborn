@@ -6,9 +6,9 @@ import com.grahambartley.nightborn.server.ServerConfigService;
 import com.grahambartley.nightborn.vampire.Modifiers;
 import com.grahambartley.nightborn.vampire.Vampires;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.attribute.EntityAttributeModifier.Operation;
 import net.minecraft.entity.attribute.EntityAttributes;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Nullable;
 
@@ -18,19 +18,19 @@ public final class RankBody {
 
   private RankBody() {}
 
-  public static void apply(final PlayerEntity player, final SkillSettings settings) {
+  public static void apply(final LivingEntity hunter, final SkillSettings settings) {
     Modifiers.set(
-        player,
+        hunter,
         EntityAttributes.GENERIC_MAX_HEALTH,
         HEALTH,
-        RankGifts.of(GuildRanks.of(player), settings).health(),
+        RankGifts.of(GuildRanks.of(hunter), settings).health(),
         Operation.ADD_VALUE);
-    Modifiers.clampHealth(player);
+    Modifiers.clampHealth(hunter);
   }
 
   public static float strike(
       @Nullable final Entity attacker, final Entity target, final float damage) {
-    return attacker instanceof PlayerEntity hunter
+    return attacker instanceof LivingEntity hunter
         ? damage
             + RankGifts.of(GuildRanks.of(hunter), ServerConfigService.current().skills())
                 .against(Vampires.isVampire(target))

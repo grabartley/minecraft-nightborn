@@ -1,0 +1,79 @@
+package com.grahambartley.nightborn.guild.build;
+
+import static com.grahambartley.nightborn.guild.build.HunterBuildFixtures.FAITHFUL;
+import static com.grahambartley.nightborn.guild.build.HunterBuildFixtures.SEEKER;
+import static com.grahambartley.nightborn.guild.build.HunterBuildFixtures.SLAYER;
+import static com.grahambartley.nightborn.guild.build.HunterBuildFixtures.TRAPPER;
+import static com.grahambartley.nightborn.guild.build.HunterBuildFixtures.id;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import com.grahambartley.nightborn.MinecraftBootstrapExtension;
+import com.grahambartley.nightborn.skill.SkillBranch;
+import com.grahambartley.nightborn.skill.SkillTree;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import net.minecraft.util.Identifier;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.EnumSource;
+import org.junit.jupiter.params.provider.ValueSource;
+
+@ExtendWith(MinecraftBootstrapExtension.class)
+class PathPickTest {
+
+  private static final Map<Identifier, SkillBranch> BRANCHES = HunterBuildFixtures.branches();
+
+  @ParameterizedTest(name = "{0} tree")
+  @EnumSource(SkillTree.class)
+  @DisplayName("the paths on offer are the learnable lines of the tree, in id order")
+  void pathsAreTheLearnableLines(final SkillTree tree) {
+    final List<Identifier> expected =
+        tree == SkillTree.HUNTER
+            ? List.of(FAITHFUL, SEEKER, SLAYER, TRAPPER)
+            : List.of(id("beast"), id("noble"), id("occult"));
+    assertEquals(expected, PathPick.paths(BRANCHES, tree));
+  }
+
+  @ParameterizedTest(name = "rolls {0} and {1} -> {2} and {3}")
+  @CsvSource({
+    "0.0, 0.0, faithful, seeker",
+    "0.99, 0.99, trapper, slayer",
+    "0.3, 0.0, seeker, faithful",
+    "0.6, 0.5, slayer, seeker"
+  })
+  @DisplayName("two different paths are picked at random from the four")
+  void picksTwoDifferentPaths(
+      final double first, final double second, final String one, final String two) {
+    final Iterator<Double> rolls = List.of(first, second).iterator();
+    assertEquals(List.of(id(one), id(two)), PathPick.pick(BRANCHES, SkillTree.HUNTER, rolls::next));
+  }
+
+  @ParameterizedTest(name = "seed {0}")
+  @ValueSource(longs = {1L, 2L, 3L, 42L, 1234L})
+  @DisplayName("never more than two paths, never the same path twice, never the core")
+  void neverMoreThanTwo(final long seed) {
+    final List<Identifier> picked =
+        PathPick.pick(BRANCHES, SkillTree.HUNTER, HunterBuildFixtures.rolls(seed));
+    assertEquals(2, picked.size());
+    assertEquals(2, new HashSet<>(picked).size());
+    assertTrue(Set.of(FAITHFUL, SEEKER, SLAYER, TRAPPER).containsAll(picked));
+  }
+
+  @ParameterizedTest(name = "seed {0}")
+  @ValueSource(longs = {7L, 99L})
+  @DisplayName("a tree with one line gives only that line")
+  void fewerLinesThanTheLimit(final long seed) {
+    assertEquals(
+        List.of(SLAYER),
+        PathPick.pick(
+            Map.of(SLAYER, new SkillBranch(SkillTree.HUNTER, true, 1)),
+            SkillTree.HUNTER,
+            HunterBuildFixtures.rolls(seed)));
+  }
+}

@@ -26,6 +26,12 @@
       "id": "minecraft:item.firecharge.use",
       "volume": 0.45,
       "pitch": 1.1
+    },
+    "mob": {
+      "max_range": 8.0,
+      "tell_ticks": 10,
+      "tell_sound": "minecraft:item.flintandsteel.use",
+      "tell_clip": "raise_crucifix"
     }
   }
 }

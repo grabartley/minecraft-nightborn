@@ -29,7 +29,7 @@ public final class Fighting {
       moves.rest();
       return;
     }
-    casting.tick(fighter, combat);
+    casting.tick(fighter, combat.thinkTicks(), combat.bloodFloor());
     if (!casting.telling()) {
       moves.tick(fighter, combat, settings);
     }

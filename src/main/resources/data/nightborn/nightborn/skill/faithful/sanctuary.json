@@ -26,6 +26,12 @@
       "id": "minecraft:block.beacon.activate",
       "volume": 0.4,
       "pitch": 1.0
+    },
+    "mob": {
+      "max_range": 16.0,
+      "tell_ticks": 14,
+      "tell_sound": "minecraft:block.beacon.ambient",
+      "tell_clip": "raise_crucifix"
     }
   }
 }

@@ -2,19 +2,28 @@ package com.grahambartley.nightborn.guild;
 
 import com.grahambartley.nightborn.boss.BossWard;
 import com.grahambartley.nightborn.boss.SwornAlly;
+import com.grahambartley.nightborn.guild.build.GrowingHunter;
+import com.grahambartley.nightborn.guild.build.HunterSkills;
 import com.grahambartley.nightborn.guild.party.PartyMember;
 import com.grahambartley.nightborn.guild.raiding.RaidConduct;
 import com.grahambartley.nightborn.guild.raiding.RaidDoorGoal;
 import com.grahambartley.nightborn.guild.raiding.RaidOrders;
 import com.grahambartley.nightborn.mob.MobSounds;
+import com.grahambartley.nightborn.mob.ShownAction;
 import com.grahambartley.nightborn.mob.VampireBatEntity;
+import com.grahambartley.nightborn.mob.combat.PowerCasting;
 import com.grahambartley.nightborn.mob.look.BustNbt;
 import com.grahambartley.nightborn.mob.look.Figure;
 import com.grahambartley.nightborn.mob.look.VampireRig;
 import com.grahambartley.nightborn.name.MobNaming;
 import com.grahambartley.nightborn.name.NameBearer;
+import com.grahambartley.nightborn.rank.RankBearer;
+import com.grahambartley.nightborn.skill.PowerShow;
+import com.grahambartley.nightborn.skill.SkillHolder;
+import com.grahambartley.nightborn.skill.SkillTree;
 import com.grahambartley.nightborn.vampire.Vampires;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -60,7 +69,15 @@ import software.bernie.geckolib.animation.PlayState;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 public class HunterEntity extends PathAwareEntity
-    implements GeoEntity, HunterLooking, NameBearer, RangedAttackMob, SwornAlly {
+    implements GeoEntity,
+        HunterLooking,
+        NameBearer,
+        RangedAttackMob,
+        SwornAlly,
+        SkillHolder,
+        PowerShow,
+        RankBearer,
+        GrowingHunter {
 
   static final String FEMALE_KEY = "Female";
   static final String KIT_KEY = "Kit";
@@ -82,10 +99,19 @@ public class HunterEntity extends PathAwareEntity
       DataTracker.registerData(HunterEntity.class, TrackedDataHandlerRegistry.INTEGER);
   private static final TrackedData<Boolean> ARMED =
       DataTracker.registerData(HunterEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
+  private static final TrackedData<String> RANK =
+      DataTracker.registerData(HunterEntity.class, TrackedDataHandlerRegistry.STRING);
+  private static final TrackedData<String> POWER =
+      DataTracker.registerData(HunterEntity.class, TrackedDataHandlerRegistry.STRING);
+  private static final TrackedData<Integer> POWER_SEQUENCE =
+      DataTracker.registerData(HunterEntity.class, TrackedDataHandlerRegistry.INTEGER);
 
   private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
   private final HunterTactics tactics = new HunterTactics(this);
   private final WornLook worn = new WornLook();
+  private final PowerCasting casting = PowerCasting.underTell();
+  private final ShownAction shownPower = new ShownAction();
+  private Map<Identifier, Integer> rankOdds = Map.of();
   private String kitId = "";
   private HunterKit kit;
   private HunterAction shown = HunterAction.NONE;
@@ -114,6 +140,9 @@ public class HunterEntity extends PathAwareEntity
     builder.add(LOOK, "");
     builder.add(ACTION, HunterAction.NONE.ordinal());
     builder.add(ARMED, false);
+    builder.add(RANK, "");
+    builder.add(POWER, "");
+    builder.add(POWER_SEQUENCE, 0);
   }
 
   @Override
@@ -261,6 +290,14 @@ public class HunterEntity extends PathAwareEntity
     if (!hasPositionTarget()) {
       settle();
     }
+    if (grows()) {
+      if (!HunterSkills.built(this)) {
+        HunterSkills.begin(this, rankOdds, fixedRank(), heldKit());
+      }
+      if (HunterSkills.trickle(this, heldKit()) || dataTracker.get(RANK).isEmpty()) {
+        showRank();
+      }
+    }
     MobNaming.ensure(this);
     if (PartyMember.wakes(isSleeping(), getWorld().getTimeOfDay())) {
       wakeUp();
@@ -281,6 +318,53 @@ public class HunterEntity extends PathAwareEntity
     arm(wantedKit);
     serve(orders);
     orders.place().ifPresent(place -> setPositionTarget(place, RaidConduct.PLACE_REACH));
+  }
+
+  public void rollFrom(final Map<Identifier, Integer> odds) {
+    rankOdds = Map.copyOf(odds);
+  }
+
+  @Override
+  public boolean grows() {
+    return true;
+  }
+
+  protected Optional<Identifier> fixedRank() {
+    return Optional.empty();
+  }
+
+  @Override
+  public void earn(final float experience) {
+    HunterSkills.earn(this, experience, heldKit());
+    showRank();
+  }
+
+  private Optional<Identifier> heldKit() {
+    return Optional.ofNullable(Identifier.tryParse(kitId));
+  }
+
+  private void showRank() {
+    final String rank = HunterSkills.rank(this).map(Identifier::toString).orElse("");
+    if (!rank.equals(dataTracker.get(RANK))) {
+      dataTracker.set(RANK, rank);
+    }
+  }
+
+  @Override
+  public Optional<Identifier> shownRank() {
+    final String rank = dataTracker.get(RANK);
+    return rank.isEmpty() ? Optional.empty() : Optional.ofNullable(Identifier.tryParse(rank));
+  }
+
+  @Override
+  public SkillTree skillTree() {
+    return SkillTree.HUNTER;
+  }
+
+  @Override
+  public void showPower(final String clip) {
+    dataTracker.set(POWER, clip);
+    dataTracker.set(POWER_SEQUENCE, dataTracker.get(POWER_SEQUENCE) + 1);
   }
 
   public void standDown() {
@@ -340,6 +424,7 @@ public class HunterEntity extends PathAwareEntity
     if (kit != null) {
       tactics.tick(kit);
     }
+    casting.tick(this, HunterSkills.thinkTicks(this, shownRank()), 0);
   }
 
   protected void settle() {
@@ -462,6 +547,13 @@ public class HunterEntity extends PathAwareEntity
                             armed())
                         .clip())));
     controllers.add(new AnimationController<>(this, "action", ANIMATION_BLEND_TICKS, this::act));
+    controllers.add(
+        new AnimationController<>(
+            this,
+            "power",
+            ANIMATION_BLEND_TICKS,
+            state ->
+                shownPower.play(state, dataTracker.get(POWER_SEQUENCE), dataTracker.get(POWER))));
   }
 
   private PlayState act(final AnimationState<HunterEntity> state) {

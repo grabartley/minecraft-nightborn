@@ -35,7 +35,13 @@ class VeteranTest {
   @CsvSource({"2.0, 24.0, 48.0", "1.0, 24.0, 24.0", "1.5, 20.0, 30.0"})
   void hasItsScaleOfAHuntersHealth(final double scale, final double hunter, final double health) {
     final Veteran veteran =
-        new Veteran(Identifier.of("nightborn", "sword"), Optional.empty(), scale, 0.0, List.of());
+        new Veteran(
+            Identifier.of("nightborn", "sword"),
+            Optional.empty(),
+            scale,
+            0.0,
+            List.of(),
+            Optional.empty());
     assertEquals(health, veteran.health(hunter), 1.0E-9);
   }
 
@@ -48,7 +54,8 @@ class VeteranTest {
             crucifix ? Optional.of(Identifier.of("nightborn", "cross")) : Optional.empty(),
             2.0,
             0.0,
-            List.of());
+            List.of(),
+            Optional.empty());
     assertEquals(Identifier.of("nightborn", "sword"), veteran.kit().weapon());
     assertEquals(crucifix, veteran.kit().crucifix().isPresent());
     assertFalse(veteran.kit().ranged());
@@ -67,5 +74,11 @@ class VeteranTest {
       kinds.add(VeteranAttackTest.shipped(attack.getPath()).kind());
     }
     assertEquals(EnumSet.allOf(VeteranAttack.Kind.class), kinds);
+  }
+
+  @ParameterizedTest(name = "{0} is a hunter of rank {1}")
+  @CsvSource({"veteran, veteran"})
+  void shipsAsAHunterOfItsRank(final String name, final String rank) throws IOException {
+    assertEquals(Optional.of(Identifier.of("nightborn", rank)), shipped(name).rank());
   }
 }

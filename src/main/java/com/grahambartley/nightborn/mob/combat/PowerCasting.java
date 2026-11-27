@@ -1,7 +1,6 @@
 package com.grahambartley.nightborn.mob.combat;
 
 import com.grahambartley.nightborn.blood.BloodAttachment;
-import com.grahambartley.nightborn.mob.stage.StageCombat;
 import com.grahambartley.nightborn.skill.MobPowerUse;
 import com.grahambartley.nightborn.skill.PowerShow;
 import com.grahambartley.nightborn.skill.Powers;
@@ -17,32 +16,58 @@ import org.jetbrains.annotations.Nullable;
 
 public final class PowerCasting {
 
+  private final boolean castShowsClip;
   @Nullable private Tell telling;
   private long nextThink;
 
-  public <T extends MobEntity & PowerShow> void tick(final T caster, final StageCombat combat) {
+  public PowerCasting() {
+    this(true);
+  }
+
+  private PowerCasting(final boolean castShowsClip) {
+    this.castShowsClip = castShowsClip;
+  }
+
+  public static PowerCasting underTell() {
+    return new PowerCasting(false);
+  }
+
+  public static boolean thinks(final boolean hasTarget, final long now, final long nextThink) {
+    return hasTarget && now >= nextThink;
+  }
+
+  public <T extends MobEntity & PowerShow> void tick(
+      final T caster, final int thinkTicks, final int bloodFloor) {
     final long now = caster.getWorld().getTime();
     final LivingEntity target = caster.getTarget();
     if (telling != null) {
       final Tell.Step step = telling.step(target != null, now);
       if (step == Tell.Step.CAST) {
-        Powers.cast(caster, telling.power());
+        cast(caster, telling.power());
       }
       if (step != Tell.Step.WAIT) {
         telling = null;
       }
       return;
     }
-    if (target == null || now < nextThink) {
+    if (!thinks(target != null, now, nextThink)) {
       return;
     }
-    nextThink = now + combat.thinkTicks();
+    nextThink = now + thinkTicks;
     PowerChoice.choose(
             options(caster, false),
             caster.distanceTo(target),
             BloodAttachment.get(caster),
-            combat.bloodFloor())
+            bloodFloor)
         .ifPresent(option -> tell(caster, option, now));
+  }
+
+  private void cast(final LivingEntity caster, final Identifier power) {
+    if (castShowsClip) {
+      Powers.cast(caster, power);
+    } else {
+      Powers.castUnderOwnClip(caster, power);
+    }
   }
 
   public void cancel() {
