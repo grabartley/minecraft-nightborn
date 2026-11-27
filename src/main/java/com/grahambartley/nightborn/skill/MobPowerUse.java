@@ -17,6 +17,7 @@ public record MobPowerUse(
     List<MobUse> uses) {
 
   public static final float MAX_RANGE = 64.0F;
+  public static final int MAX_TELL_TICKS = 100;
 
   public static final Codec<MobPowerUse> CODEC =
       RecordCodecBuilder.create(
@@ -29,7 +30,7 @@ public record MobPowerUse(
                       Codec.floatRange(0.0F, MAX_RANGE)
                           .fieldOf("max_range")
                           .forGetter(MobPowerUse::maxRange),
-                      Codec.intRange(1, 100)
+                      Codec.intRange(1, MAX_TELL_TICKS)
                           .fieldOf("tell_ticks")
                           .forGetter(MobPowerUse::tellTicks),
                       Identifier.CODEC.fieldOf("tell_sound").forGetter(MobPowerUse::tellSound),

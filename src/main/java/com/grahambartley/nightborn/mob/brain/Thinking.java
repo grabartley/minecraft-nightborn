@@ -13,26 +13,28 @@ import java.util.Set;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Vec3d;
-import org.jetbrains.annotations.Nullable;
 
 public final class Thinking {
 
   private Thinking() {}
 
-  public static Optional<Think> think(
-      final MobEntity mob, final boolean dodge, final int mobFloor) {
-    return think(mob, dodge, mobFloor, null);
+  public static Optional<Think> dodge(final MobEntity mob, final int mobFloor) {
+    return think(mob, true, mobFloor, Vec3d.ZERO);
   }
 
   public static Optional<Think> think(
-      final MobEntity mob,
-      final boolean dodge,
-      final int mobFloor,
-      @Nullable final TargetMotion motion) {
-    final Vec3d moved =
-        motion == null || mob.getTarget() == null
+      final MobEntity mob, final int mobFloor, final TargetMotion motion, final int thinkTicks) {
+    return think(
+        mob,
+        false,
+        mobFloor,
+        mob.getTarget() == null
             ? Vec3d.ZERO
-            : motion.sample(mob.getTarget(), mob.getWorld().getTime());
+            : motion.sample(mob.getTarget(), mob.getWorld().getTime(), thinkTicks));
+  }
+
+  private static Optional<Think> think(
+      final MobEntity mob, final boolean dodge, final int mobFloor, final Vec3d moved) {
     final Intent intent = Intents.read(mob);
     final List<PowerChoice.Option> options = options(mob, dodge, intent);
     if (options.stream().noneMatch(option -> option.verdict() == PowerUse.Verdict.READY)) {

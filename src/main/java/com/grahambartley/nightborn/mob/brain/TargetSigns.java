@@ -42,7 +42,7 @@ public final class TargetSigns {
     if (away.lengthSquared() < 1.0E-6) {
       return false;
     }
-    return moved.x * away.normalize().x + moved.z * away.normalize().z >= RUN_SPEED;
+    return moved.dotProduct(away.normalize()) >= RUN_SPEED;
   }
 
   public static boolean airborne(

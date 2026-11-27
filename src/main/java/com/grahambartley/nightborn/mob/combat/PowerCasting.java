@@ -69,7 +69,7 @@ public final class PowerCasting {
       return;
     }
     nextThink = now + thinkTicks;
-    final Optional<Think> think = Thinking.think(caster, false, bloodFloor, motion);
+    final Optional<Think> think = Thinking.think(caster, bloodFloor, motion, thinkTicks);
     think.ifPresent(
         thought -> {
           lastThink = thought;

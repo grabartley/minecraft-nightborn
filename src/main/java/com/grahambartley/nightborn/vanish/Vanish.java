@@ -36,16 +36,15 @@ public final class Vanish {
     final boolean mob = caster instanceof MobEntity;
     final Vec3d aimedSpot = mob ? aim.spot() : null;
     final LivingEntity foe = mob ? aim.subject(caster) : null;
-    final Vec3d looking = VanishSpots.facing(caster.getYaw());
     final Vec3d facing =
-        aimedSpot != null
-            ? VanishSpots.toward(caster.getPos(), aimedSpot, looking)
-            : foe == null ? looking : VanishSpots.toward(caster.getPos(), foe.getPos(), looking);
+        VanishSpots.facing(
+            caster.getPos(),
+            aimedSpot,
+            foe == null ? null : foe.getPos(),
+            VanishSpots.facing(caster.getYaw()));
     for (final PowerHeading heading :
         VanishSpots.headings(
-            foe != null,
-            aimedSpot != null ? PowerHeading.FORWARD : held,
-            caster.getRandom().nextBoolean())) {
+            foe != null, VanishSpots.held(aimedSpot, held), caster.getRandom().nextBoolean())) {
       final Optional<Vec3d> spot =
           Landing.reach(caster, VanishSpots.wanted(caster.getEyePos(), facing, heading, distance));
       if (spot.isPresent()) {

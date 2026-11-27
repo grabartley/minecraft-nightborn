@@ -87,4 +87,30 @@ class VanishSpotsTest {
   void wanted(final PowerHeading heading, final double distance, final double x, final double z) {
     assertClose(new Vec3d(x, EYE.y, z), VanishSpots.wanted(EYE, SOUTH, heading, distance));
   }
+
+  @ParameterizedTest(name = "spot {0}, foe {1}: faces {2},{3}")
+  @CsvSource({"true, true, 0, 1", "true, false, 0, 1", "false, true, 1, 0", "false, false, -1, 0"})
+  @DisplayName("a vanish faces the spot it aims at, else its foe, else where it looks")
+  void facesTheAim(final boolean spot, final boolean foe, final double x, final double z) {
+    final Vec3d facing =
+        VanishSpots.facing(
+            Vec3d.ZERO,
+            spot ? new Vec3d(0, 0, 6) : null,
+            foe ? new Vec3d(4, 0, 0) : null,
+            new Vec3d(-1, 0, 0));
+    assertEquals(x, facing.x, 1.0E-9);
+    assertEquals(z, facing.z, 1.0E-9);
+  }
+
+  @ParameterizedTest(name = "spot {0}, held {1}: {2}")
+  @CsvSource({
+    "true, BACK, FORWARD",
+    "true, NONE, FORWARD",
+    "false, LEFT, LEFT",
+    "false, NONE, NONE"
+  })
+  @DisplayName("a vanish aimed at a spot goes forward toward it, and otherwise the held way")
+  void heldTowardASpot(final boolean spot, final PowerHeading held, final PowerHeading heading) {
+    assertEquals(heading, VanishSpots.held(spot ? Vec3d.ZERO : null, held));
+  }
 }

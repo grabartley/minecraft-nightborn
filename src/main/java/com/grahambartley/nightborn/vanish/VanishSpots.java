@@ -3,6 +3,7 @@ package com.grahambartley.nightborn.vanish;
 import com.grahambartley.nightborn.skill.PowerHeading;
 import java.util.List;
 import net.minecraft.util.math.Vec3d;
+import org.jetbrains.annotations.Nullable;
 
 public final class VanishSpots {
 
@@ -21,6 +22,21 @@ public final class VanishSpots {
   public static Vec3d facing(final float yaw) {
     final double radians = Math.toRadians(yaw);
     return new Vec3d(-Math.sin(radians), 0.0, Math.cos(radians));
+  }
+
+  public static Vec3d facing(
+      final Vec3d from,
+      @Nullable final Vec3d spot,
+      @Nullable final Vec3d foe,
+      final Vec3d looking) {
+    if (spot != null) {
+      return toward(from, spot, looking);
+    }
+    return foe == null ? looking : toward(from, foe, looking);
+  }
+
+  public static PowerHeading held(@Nullable final Vec3d spot, final PowerHeading held) {
+    return spot != null ? PowerHeading.FORWARD : held;
   }
 
   public static Vec3d toward(final Vec3d from, final Vec3d to, final Vec3d fallback) {

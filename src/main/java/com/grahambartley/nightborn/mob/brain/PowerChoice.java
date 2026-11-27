@@ -3,7 +3,6 @@ package com.grahambartley.nightborn.mob.brain;
 import com.grahambartley.nightborn.skill.MobPowerUse;
 import com.grahambartley.nightborn.skill.PowerUse;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.List;
@@ -23,8 +22,7 @@ public final class PowerChoice {
       Set<Aim> readyAims) {
 
     public Option {
-      readyAims =
-          readyAims.isEmpty() ? Set.of() : Collections.unmodifiableSet(EnumSet.copyOf(readyAims));
+      readyAims = Set.copyOf(readyAims);
     }
 
     public Option(

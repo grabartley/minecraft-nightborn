@@ -79,7 +79,7 @@ public final class CombatMoves<T extends MobEntity & PowerShow> implements MobFi
   }
 
   private static boolean dodgeWithPower(final MobEntity fighter, final StageCombat combat) {
-    return Thinking.think(fighter, true, combat.bloodFloor())
+    return Thinking.dodge(fighter, combat.bloodFloor())
         .flatMap(think -> think.chosen())
         .flatMap(
             scored ->
