@@ -5,6 +5,7 @@ import com.grahambartley.nightborn.guild.GuildMasterEntity;
 import com.grahambartley.nightborn.guild.GuildMobs;
 import com.grahambartley.nightborn.guild.GuildRevengeGoal;
 import com.grahambartley.nightborn.guild.HunterEntity;
+import com.grahambartley.nightborn.guild.HunterTargetGoal;
 import com.grahambartley.nightborn.mob.NightbornMobs;
 import com.grahambartley.nightborn.mob.VampireEntity;
 import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
@@ -99,7 +100,9 @@ public class GuildMasterFightGameTest implements FabricGameTest {
         START,
         () -> {
           master.setCustomer(customer);
-          context.assertFalse(master.onWatch(), "he keeps no watch while he trades");
+          context.assertFalse(
+              new HunterTargetGoal(master).canStart(),
+              "he starts no fight on sight while he trades");
           master.setTarget(vampire);
         });
     context.runAtTick(

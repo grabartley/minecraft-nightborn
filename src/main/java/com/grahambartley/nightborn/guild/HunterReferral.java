@@ -48,11 +48,7 @@ public final class HunterReferral {
   public static Optional<GuildMasterEntity> master(
       final ServerWorld world, final HunterEntity hunter) {
     return hunter
-        .partyLeader()
-        .map(world::getEntity)
-        .filter(GuildMasterEntity.class::isInstance)
-        .map(GuildMasterEntity.class::cast)
-        .filter(GuildMasterEntity::isAlive)
+        .master()
         .or(
             () ->
                 world

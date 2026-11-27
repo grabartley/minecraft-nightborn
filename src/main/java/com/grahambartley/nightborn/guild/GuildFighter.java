@@ -17,5 +17,7 @@ public interface GuildFighter {
 
   boolean onWatch();
 
+  boolean canFight();
+
   Optional<GuildMasterEntity> master();
 }

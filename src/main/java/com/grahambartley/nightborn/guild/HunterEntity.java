@@ -177,11 +177,17 @@ public class HunterEntity extends PathAwareEntity
   }
 
   @Override
+  public boolean canFight() {
+    return true;
+  }
+
+  @Override
   public Optional<GuildMasterEntity> master() {
     return partyLeader != null && getWorld() instanceof ServerWorld world
         ? Optional.ofNullable(world.getEntity(partyLeader))
             .filter(GuildMasterEntity.class::isInstance)
             .map(GuildMasterEntity.class::cast)
+            .filter(GuildMasterEntity::isAlive)
         : Optional.empty();
   }
 
@@ -245,18 +251,12 @@ public class HunterEntity extends PathAwareEntity
 
   @Override
   public boolean tryAttack(final Entity target) {
-    final boolean struck = super.tryAttack(target);
-    if (struck) {
-      speak(HunterVoice.STRIKE);
-    }
-    return struck;
+    return fighting.strike(super.tryAttack(target));
   }
 
   @Override
   public boolean onKilledOther(final ServerWorld world, final LivingEntity other) {
-    if (Vampires.isVampire(other)) {
-      speak(HunterVoice.CHEER);
-    }
+    fighting.killed(other);
     return super.onKilledOther(world, other);
   }
 

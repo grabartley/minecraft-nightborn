@@ -174,7 +174,16 @@ public class GuildMasterEntity extends MerchantEntity
 
   @Override
   public boolean onWatch() {
-    return !hasCustomer();
+    return MasterDuty.watches(hasCustomer(), swearing());
+  }
+
+  @Override
+  public boolean canFight() {
+    return !swearing();
+  }
+
+  private boolean swearing() {
+    return swearTicks > 0;
   }
 
   @Override
@@ -227,18 +236,12 @@ public class GuildMasterEntity extends MerchantEntity
 
   @Override
   public boolean tryAttack(final Entity target) {
-    final boolean struck = super.tryAttack(target);
-    if (struck) {
-      speak(HunterVoice.STRIKE);
-    }
-    return struck;
+    return fighting.strike(super.tryAttack(target));
   }
 
   @Override
   public boolean onKilledOther(final ServerWorld world, final LivingEntity other) {
-    if (Vampires.isVampire(other)) {
-      speak(HunterVoice.CHEER);
-    }
+    fighting.killed(other);
     return super.onKilledOther(world, other);
   }
 
@@ -249,7 +252,7 @@ public class GuildMasterEntity extends MerchantEntity
   }
 
   public void fight() {
-    if (swearTicks == 0) {
+    if (!swearing()) {
       fighting.tick(kit, HunterSkills.thinkTicks(this, shownRank()));
     }
   }
@@ -352,7 +355,9 @@ public class GuildMasterEntity extends MerchantEntity
     }
     CampHome.keep(this, TENT_REACH);
     CampHome.stretch(
-        this, CampHome.reach(TENT_REACH, HunterEntity.CAMP_REACH, getTarget() != null));
+        this,
+        CampHome.reach(
+            TENT_REACH, HunterEntity.CAMP_REACH, getTarget() != null || getAttacker() != null));
     if (!HunterSkills.built(this)) {
       HunterSkills.master(this);
     }
@@ -365,7 +370,7 @@ public class GuildMasterEntity extends MerchantEntity
     }
     final PlayerEntity customer = getCustomer();
     if (customer != null
-        && CounterClosing.closes(Vampires.isVampire(customer), getTarget() != null)) {
+        && MasterDuty.closesCounter(Vampires.isVampire(customer), getTarget() != null)) {
       resetCustomer();
       if (customer instanceof ServerPlayerEntity player) {
         player.closeHandledScreen();
