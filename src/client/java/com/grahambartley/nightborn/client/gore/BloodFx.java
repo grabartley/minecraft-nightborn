@@ -2,13 +2,12 @@ package com.grahambartley.nightborn.client.gore;
 
 import com.grahambartley.nightborn.client.state.ClientStateService;
 import com.grahambartley.nightborn.network.GorePayload;
+import com.grahambartley.nightborn.particle.DecalSurface;
 import com.grahambartley.nightborn.smoke.SmokeParticles;
-import java.util.Optional;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.Entity;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.random.Random;
@@ -63,15 +62,11 @@ public final class BloodFx {
       BloodParticleFactories.spawnDrop(client, origin, velocity, burst.look());
     }
     if (burst.pools() > 0) {
-      floorUnder(world, entity.getBlockPos())
+      DecalSurface.floorBelow(world, entity.getPos(), POOL_REACH)
           .ifPresent(
               floor ->
                   BloodParticleFactories.spawnSplat(
-                      client,
-                      new Vec3d(entity.getX(), floor, entity.getZ()),
-                      Direction.UP,
-                      burst.look(),
-                      true));
+                      client, floor, Direction.UP, burst.look(), true));
     }
     for (int i = 0; i < burst.smoke(); i++) {
       world.addParticle(
@@ -83,15 +78,5 @@ public final class BloodFx {
           0.03,
           0.0);
     }
-  }
-
-  private static Optional<Double> floorUnder(final ClientWorld world, final BlockPos feet) {
-    for (int down = 0; down <= POOL_REACH; down++) {
-      final BlockPos below = feet.down(down + 1);
-      if (world.getBlockState(below).isSideSolidFullSquare(world, below, Direction.UP)) {
-        return Optional.of(below.getY() + 1.0);
-      }
-    }
-    return Optional.empty();
   }
 }

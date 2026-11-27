@@ -1,5 +1,6 @@
 package com.grahambartley.nightborn.client.gore;
 
+import com.grahambartley.nightborn.client.particle.FlatDecalParticle;
 import com.grahambartley.nightborn.client.particle.ParticleSprites;
 import com.grahambartley.nightborn.gore.GoreParticles;
 import net.minecraft.client.MinecraftClient;
@@ -41,7 +42,8 @@ public final class BloodParticleFactories {
           .get()
           .ifPresent(
               sprites ->
-                  client.particleManager.addParticle(
+                  FlatDecalParticle.place(
+                      client.particleManager,
                       new BloodSplatParticle(client.world, contact, face, sprites, look, pool)));
     }
   }

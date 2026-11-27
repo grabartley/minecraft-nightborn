@@ -1,5 +1,6 @@
 package com.grahambartley.nightborn.client.vomit;
 
+import com.grahambartley.nightborn.client.particle.FlatDecalParticle;
 import com.grahambartley.nightborn.client.particle.ParticleSprites;
 import com.grahambartley.nightborn.vomit.VomitEffects;
 import net.minecraft.client.MinecraftClient;
@@ -45,9 +46,9 @@ public final class VomitParticleFactories {
           .get()
           .ifPresent(
               sprites ->
-                  MinecraftClient.getInstance()
-                      .particleManager
-                      .addParticle(new VomitSplashParticle(world, x, y, z, sprites)));
+                  FlatDecalParticle.place(
+                      MinecraftClient.getInstance().particleManager,
+                      new VomitSplashParticle(world, x, y, z, sprites)));
     }
   }
 }

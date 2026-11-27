@@ -738,7 +738,7 @@ Some of those who survive a player do not forget them.
 
 | ID | Requirement |
 |---|---|
-| GORE-1 | Bites, stakes and silver hits spray blood. Blood leaves splatter on nearby blocks, drawn by the client, that fades with time |
+| GORE-1 | Bites, stakes and silver hits spray blood. Blood leaves splatter on nearby blocks, drawn by the client, that fades with time. It lands only on the full, flat top or side of a block it touches, never in or under liquid and never past the edge of its face, and it goes as soon as its block is broken, moved or flooded |
 | GORE-2 | A drained victim and a staked vampire have their own death effects. A staked vampire also gives off the dark, ashy smoke of a burning one (SUN-3) |
 | GORE-3 | A client option sets gore, including vomit particles (FEED-3), blood spray and its splatter (GORE-1), and placed blood splatter (DECOR-3), to Full, Reduced or Off. Full is the default. Reduced draws fewer drops, and blood spray and splatter dried and dark. Vomit particles and blood spray also follow the vanilla Particles setting: fewer on Decreased, and none on Minimal |
 | GORE-4 | Gore is drawn by the client only. The setting never changes what happens in the world, including which parts a body has lost (GORE-5) |

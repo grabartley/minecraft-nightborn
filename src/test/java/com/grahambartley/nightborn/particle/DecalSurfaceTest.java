@@ -1,0 +1,123 @@
+package com.grahambartley.nightborn.particle;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import com.grahambartley.nightborn.MinecraftBootstrapExtension;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
+import net.minecraft.block.StairsBlock;
+import net.minecraft.block.enums.SlabType;
+import net.minecraft.state.property.Properties;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Direction;
+import net.minecraft.util.math.Vec3d;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+
+@ExtendWith(MinecraftBootstrapExtension.class)
+class DecalSurfaceTest {
+
+  @ParameterizedTest(name = "{0} with {1} beside, {2} face at ({3}, {4}, {5}): {6}")
+  @CsvSource({
+    "STONE, AIR, UP, 4.5, 64.0, 9.5, true",
+    "STONE, AIR, WEST, 4.0, 63.5, 9.5, true",
+    "STONE, AIR, EAST, 5.0, 63.5, 9.5, true",
+    "STONE, AIR, NORTH, 4.5, 63.5, 9.0, true",
+    "STONE, AIR, SOUTH, 4.5, 63.5, 10.0, true",
+    "STONE, AIR, DOWN, 4.5, 63.0, 9.5, false",
+    "STONE, AIR, UP, 4.5, 64.05, 9.5, false",
+    "STONE, AIR, WEST, 3.95, 63.5, 9.5, false",
+    "STONE, WATER, UP, 4.5, 64.0, 9.5, false",
+    "STONE, LAVA, UP, 4.5, 64.0, 9.5, false",
+    "STONE, STONE, UP, 4.5, 64.0, 9.5, false",
+    "STONE, CARPET, UP, 4.5, 64.0, 9.5, false",
+    "STONE, FLOWER_POT, UP, 4.5, 64.0, 9.5, false",
+    "STONE, TORCH, UP, 4.5, 64.0, 9.5, true",
+    "CARPET, AIR, UP, 4.5, 63.0625, 9.5, true",
+    "BOTTOM_SLAB, AIR, UP, 4.5, 63.5, 9.5, true",
+    "BOTTOM_SLAB, AIR, WEST, 4.0, 63.25, 9.5, false",
+    "WET_SLAB, AIR, UP, 4.5, 63.5, 9.5, false",
+    "WET_STAIRS, AIR, NORTH, 4.5, 63.5, 9.0, false",
+    "STAIRS, AIR, NORTH, 4.5, 63.5, 9.0, true",
+    "STAIRS, AIR, SOUTH, 4.5, 63.25, 10.0, false",
+    "STAIRS, AIR, EAST, 5.0, 63.25, 9.5, false",
+    "TOP_SLAB, AIR, UP, 4.5, 64.0, 9.5, true",
+    "STAIRS, AIR, UP, 4.5, 63.5, 9.75, false",
+    "STAIRS, AIR, UP, 4.5, 64.0, 9.25, false",
+    "OAK_FENCE, AIR, UP, 4.5, 64.5, 9.5, false",
+    "OAK_FENCE, AIR, WEST, 4.375, 63.5, 9.5, false",
+    "GLASS_PANE, AIR, UP, 4.5, 64.0, 9.5, false",
+    "OAK_LEAVES, AIR, UP, 4.5, 64.0, 9.5, true",
+    "TORCH, AIR, UP, 4.5, 63.0, 9.5, false",
+    "FLOWER_POT, AIR, UP, 4.5, 63.375, 9.5, false",
+    "GLASS_PANE, AIR, WEST, 4.4375, 63.5, 9.5, false",
+    "AIR, AIR, UP, 4.5, 64.0, 9.5, false",
+    "WATER, AIR, UP, 4.5, 64.0, 9.5, false"
+  })
+  @DisplayName("blood holds only on a full, dry, uncovered face it rests exactly on")
+  void holdsAt(
+      final String block,
+      final String beside,
+      final Direction face,
+      final double x,
+      final double y,
+      final double z,
+      final boolean holds) {
+    final Map<BlockPos, BlockState> blocks = new HashMap<>();
+    blocks.put(DecalTestWorlds.BLOCK, state(block));
+    blocks.put(DecalTestWorlds.BLOCK.offset(face), state(beside));
+
+    assertEquals(
+        holds, DecalSurface.holdsAt(DecalTestWorlds.worldOf(blocks), new Vec3d(x, y, z), face));
+  }
+
+  @ParameterizedTest(name = "{0} under feet at y {1}: {2}")
+  @CsvSource({
+    "STONE, AIR, 64.0, 64.0",
+    "STONE, AIR, 66.5, 64.0",
+    "STONE, AIR, 67.5, ",
+    "BOTTOM_SLAB, AIR, 63.5, 63.5",
+    "OAK_FENCE, AIR, 64.5, ",
+    "STONE, WATER, 64.0, ",
+    "AIR, AIR, 64.0, "
+  })
+  @DisplayName("a pool forms on the first floor under the feet, and only if it holds blood")
+  void floorBelow(final String block, final String above, final double feetY, final Double floorY) {
+    final Map<BlockPos, BlockState> blocks = new HashMap<>();
+    blocks.put(DecalTestWorlds.BLOCK, state(block));
+    blocks.put(DecalTestWorlds.BLOCK.up(), state(above));
+
+    assertEquals(
+        Optional.ofNullable(floorY).map(y -> new Vec3d(4.5, y, 9.5)),
+        DecalSurface.floorBelow(DecalTestWorlds.worldOf(blocks), new Vec3d(4.5, feetY, 9.5), 2));
+  }
+
+  private static BlockState state(final String name) {
+    final BlockState stairs =
+        Blocks.STONE_STAIRS.getDefaultState().with(StairsBlock.FACING, Direction.NORTH);
+    final BlockState slab =
+        Blocks.STONE_SLAB.getDefaultState().with(Properties.SLAB_TYPE, SlabType.BOTTOM);
+    return switch (name) {
+      case "STONE" -> Blocks.STONE.getDefaultState();
+      case "WATER" -> Blocks.WATER.getDefaultState();
+      case "LAVA" -> Blocks.LAVA.getDefaultState();
+      case "CARPET" -> Blocks.RED_CARPET.getDefaultState();
+      case "FLOWER_POT" -> Blocks.FLOWER_POT.getDefaultState();
+      case "TORCH" -> Blocks.TORCH.getDefaultState();
+      case "BOTTOM_SLAB" -> slab;
+      case "TOP_SLAB" -> slab.with(Properties.SLAB_TYPE, SlabType.TOP);
+      case "WET_SLAB" -> slab.with(Properties.WATERLOGGED, true);
+      case "STAIRS" -> stairs;
+      case "WET_STAIRS" -> stairs.with(Properties.WATERLOGGED, true);
+      case "OAK_FENCE" -> Blocks.OAK_FENCE.getDefaultState();
+      case "GLASS_PANE" -> Blocks.GLASS_PANE.getDefaultState();
+      case "OAK_LEAVES" -> Blocks.OAK_LEAVES.getDefaultState();
+      default -> Blocks.AIR.getDefaultState();
+    };
+  }
+}
