@@ -6,6 +6,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Collections;
 import java.util.List;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.ItemEntity;
+import net.minecraft.entity.decoration.ArmorStandEntity;
+import net.minecraft.entity.mob.ZombieEntity;
+import net.minecraft.entity.passive.VillagerEntity;
 import net.minecraft.util.math.Box;
 import org.joml.Matrix4f;
 import org.junit.jupiter.api.DisplayName;
@@ -77,6 +82,27 @@ class CreatureRectsTest {
     for (int i = 0; i < CreatureRects.CAPACITY; i++) {
       assertEquals(i < used, packed.depths()[i * 2 + 1] > 0.0F, "slot " + i);
     }
+  }
+
+  @ParameterizedTest(name = "{0}, invisible {1}: {2}")
+  @CsvSource({
+    "zombie, false, true",
+    "villager, false, true",
+    "zombie, true, false",
+    "armour stand, false, false",
+    "item, false, false"
+  })
+  @DisplayName("only visible living creatures show brighter, never armour stands or items")
+  void heard(final String kind, final boolean invisible, final boolean heard) {
+    final Class<? extends Entity> type =
+        switch (kind) {
+          case "zombie" -> ZombieEntity.class;
+          case "villager" -> VillagerEntity.class;
+          case "armour stand" -> ArmorStandEntity.class;
+          case "item" -> ItemEntity.class;
+          default -> throw new IllegalArgumentException(kind);
+        };
+    assertEquals(heard, CreatureRects.heard(type, invisible));
   }
 
   @Test

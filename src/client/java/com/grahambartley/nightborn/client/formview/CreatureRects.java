@@ -1,6 +1,9 @@
 package com.grahambartley.nightborn.client.formview;
 
 import java.util.List;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.decoration.ArmorStandEntity;
 import net.minecraft.util.math.Box;
 import org.joml.Matrix4f;
 import org.joml.Vector4f;
@@ -27,6 +30,16 @@ public final class CreatureRects {
       depths[i * 2 + 1] = (float) farthest(box);
     }
     return new Packed(rects, depths);
+  }
+
+  public static boolean heard(final Entity entity) {
+    return heard(entity.getClass(), entity.isInvisible());
+  }
+
+  static boolean heard(final Class<? extends Entity> kind, final boolean invisible) {
+    return LivingEntity.class.isAssignableFrom(kind)
+        && !ArmorStandEntity.class.isAssignableFrom(kind)
+        && !invisible;
   }
 
   static float[] screenRect(final Box box, final Matrix4f viewProjection) {
