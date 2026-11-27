@@ -67,9 +67,9 @@ class CampGapsTest {
   @CsvSource({
     "a crate at the open end, 0, false, tent 0 has its open end blocked",
     "a crate beside the open end, 1, false, ",
-    "a tent with no roof, 0, true, tent 0 has no roof middle"
+    "a tent with no roof, 0, true, tent 0 has no origin piece"
   })
-  @DisplayName("a tent's own pieces never block its open end, and a tent needs a roof middle")
+  @DisplayName("a tent's own pieces never block its open end, and a tent needs an origin piece")
   void ownPiecesKeepTheMouthClear(
       final String name, final int crateX, final boolean roofless, final String problem) {
     final CampLayout.Tent whole = tent(5, 5, BlockRotation.NONE);

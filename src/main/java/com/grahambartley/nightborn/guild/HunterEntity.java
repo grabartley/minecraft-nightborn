@@ -417,7 +417,7 @@ public class HunterEntity extends PathAwareEntity
 
   @Override
   public float getPathfindingFavor(final BlockPos pos, final WorldView world) {
-    return Footing.favor(this, pos);
+    return Footing.favor(this, pos, world);
   }
 
   public void fight() {

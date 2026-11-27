@@ -24,7 +24,7 @@ public final class CampGaps {
       }
       final Optional<BlockPos> mouth = mouth(tents.get(i));
       if (mouth.isEmpty()) {
-        return Optional.of("tent " + i + " has no roof middle");
+        return Optional.of("tent " + i + " has no origin piece");
       }
       if (pieces.stream().anyMatch(pos -> apart(pos, mouth.get()) == 0)) {
         return Optional.of("tent " + i + " has its open end blocked");

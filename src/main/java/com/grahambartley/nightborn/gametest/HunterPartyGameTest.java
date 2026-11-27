@@ -18,7 +18,6 @@ import com.grahambartley.nightborn.guild.party.PartySchedule;
 import com.grahambartley.nightborn.guild.party.PitchedCamps;
 import com.grahambartley.nightborn.guild.party.TentBlocks;
 import com.grahambartley.nightborn.guild.party.TentPart;
-import com.grahambartley.nightborn.guild.party.TentPaths;
 import com.grahambartley.nightborn.mob.NightbornMobs;
 import com.grahambartley.nightborn.mob.VampireBatEntity;
 import com.grahambartley.nightborn.mob.VampireEntity;
@@ -280,11 +279,7 @@ public class HunterPartyGameTest implements FabricGameTest {
             final BlockState state = context.getWorld().getBlockState(node);
             context.assertFalse(
                 state.isOf(TentBlocks.HUNTER_TENT)
-                    && TentPaths.type(
-                            state.get(HunterTentBlock.PART),
-                            state.get(HunterTentBlock.STRUCK),
-                            false)
-                        != null,
+                    && !state.getCollisionShape(context.getWorld(), node).isEmpty(),
                 "the path goes through tent canvas at " + context.getRelativePos(node));
           }
           context.assertTrue(
