@@ -6,6 +6,8 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 public record FormViewWash(int color, float amount, float saturation, float blur, float drift) {
 
+  public static final FormViewWash NONE = new FormViewWash(0, 0.0F, 1.0F, 0.0F, 0.0F);
+
   private static final Codec<Float> AMOUNT = Codec.floatRange(0.0F, 1.0F);
 
   public static final Codec<FormViewWash> CODEC =

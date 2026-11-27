@@ -74,12 +74,7 @@ public final class FormViewTracker {
     RIPPLES.expire(now, echo.get().rippleSeconds());
     if (echo.get().pulsesOn(pulseTicks++)) {
       SoundRipple.of(
-              echo.get(),
-              true,
-              player.getEyePos(),
-              echo.get().selfPulseVolume(),
-              player.getEyePos(),
-              now)
+              echo.get(), player.getEyePos(), echo.get().selfPulseVolume(), player.getEyePos(), now)
           .ifPresent(ripple -> RIPPLES.add(ripple, now, echo.get().rippleSeconds()));
     }
   }
@@ -88,13 +83,12 @@ public final class FormViewTracker {
       final MinecraftClient client, final SoundInstance sound, final boolean placed) {
     final ClientPlayerEntity player = client.player;
     final Optional<FormViewEcho> echo = fade.shown().flatMap(FormView::echo);
-    if (player == null || echo.isEmpty() || world == null) {
+    if (!placed || player == null || echo.isEmpty() || world == null) {
       return;
     }
     final double now = now(client.getRenderTickCounter().getTickDelta(false));
     SoundRipple.of(
             echo.get(),
-            placed,
             new Vec3d(sound.getX(), sound.getY(), sound.getZ()),
             sound.getVolume(),
             player.getEyePos(),

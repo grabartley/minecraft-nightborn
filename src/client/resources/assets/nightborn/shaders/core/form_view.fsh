@@ -4,7 +4,7 @@ uniform sampler2D SceneSampler;
 uniform sampler2D DepthSampler;
 
 uniform mat4 InverseViewProj;
-uniform vec2 ScreenSize;
+uniform vec2 TexelSize;
 uniform float Strength;
 uniform float Time;
 uniform float Darkness;
@@ -56,7 +56,7 @@ float luma(vec3 color) {
 }
 
 float shapeEdge(vec2 uv, float here) {
-    vec2 step = ScreenSize * 1.5;
+    vec2 step = TexelSize * 1.5;
     float left = min(distanceAt(uv - vec2(step.x, 0.0)), SKY);
     float right = min(distanceAt(uv + vec2(step.x, 0.0)), SKY);
     float down = min(distanceAt(uv - vec2(0.0, step.y)), SKY);
@@ -67,7 +67,7 @@ float shapeEdge(vec2 uv, float here) {
 }
 
 float grainEdge(vec2 uv) {
-    vec2 step = ScreenSize;
+    vec2 step = TexelSize;
     float gx = luma(texture(SceneSampler, uv + vec2(step.x, 0.0)).rgb) - luma(texture(SceneSampler, uv - vec2(step.x, 0.0)).rgb);
     float gy = luma(texture(SceneSampler, uv + vec2(0.0, step.y)).rgb) - luma(texture(SceneSampler, uv - vec2(0.0, step.y)).rgb);
     return smoothstep(0.08, 0.35, length(vec2(gx, gy)));
@@ -125,7 +125,7 @@ void main() {
     float shake = smoothstep(Tremble.y, 1.0, rim) * Tremble.x;
     uv += (vec2(noise(texCoord * 9.0 + Time * Tremble.z), noise(texCoord * 9.0 - Time * Tremble.z + 17.0)) - 0.5) * 2.0 * shake;
     uv += vec2(sin(Time * 0.7 + texCoord.y * 6.0), cos(Time * 0.5 + texCoord.x * 5.0)) * Wash.w;
-    uv = clamp(uv, ScreenSize, 1.0 - ScreenSize);
+    uv = clamp(uv, TexelSize, 1.0 - TexelSize);
 
     vec3 scene = texture(SceneSampler, texCoord).rgb;
     vec3 color = texture(SceneSampler, uv).rgb;
@@ -135,7 +135,7 @@ void main() {
         vec3 soft = color;
         for (int i = 0; i < 8; i++) {
             float angle = float(i) * 0.785398;
-            soft += texture(SceneSampler, clamp(uv + vec2(cos(angle), sin(angle)) * ScreenSize * reach * 2.0, ScreenSize, 1.0 - ScreenSize)).rgb;
+            soft += texture(SceneSampler, clamp(uv + vec2(cos(angle), sin(angle)) * TexelSize * reach * 2.0, TexelSize, 1.0 - TexelSize)).rgb;
         }
         color = soft / 9.0;
     }

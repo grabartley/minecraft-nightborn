@@ -12,14 +12,10 @@ public final class SoundRipple {
 
   public static Optional<Ripple> of(
       final FormViewEcho echo,
-      final boolean placed,
       final Vec3d source,
       final float volume,
       final Vec3d listener,
       final double nowSeconds) {
-    if (!placed) {
-      return Optional.empty();
-    }
     final float range = echo.rippleRange(volume);
     if (range <= 0.0F || source.distanceTo(listener) > range + echo.maxRange()) {
       return Optional.empty();

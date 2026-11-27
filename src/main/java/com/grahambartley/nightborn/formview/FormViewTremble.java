@@ -5,6 +5,8 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 public record FormViewTremble(float amount, float inner, float speed) {
 
+  public static final FormViewTremble NONE = new FormViewTremble(0.0F, 1.0F, 0.0F);
+
   public static final Codec<FormViewTremble> CODEC =
       RecordCodecBuilder.create(
           instance ->

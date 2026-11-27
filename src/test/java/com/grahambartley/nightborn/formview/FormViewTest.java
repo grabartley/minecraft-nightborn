@@ -11,7 +11,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Optional;
+import java.util.stream.Stream;
 import net.minecraft.util.Identifier;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -22,6 +24,14 @@ class FormViewTest {
 
   private static final Path VIEWS =
       Path.of("src/main/resources/data/nightborn/nightborn/form_view");
+
+  @BeforeAll
+  static void registerForms() {
+    Stream.of("nightborn:bat_form", "nightborn:winged_form", "nightborn:mist_form", "nightborn:x")
+        .map(Identifier::of)
+        .filter(id -> !Forms.known(id))
+        .forEach(id -> Forms.register(id, entity -> false));
+  }
 
   private static DataResult<FormView> parse(final String json) {
     return FormView.CODEC.parse(JsonOps.INSTANCE, JsonParser.parseString(json));
@@ -104,6 +114,21 @@ class FormViewTest {
   @DisplayName("a view with a missing or out-of-range number is refused")
   void refusesBadNumbers(final String json) {
     assertFalse(parse(json).isSuccess());
+  }
+
+  @ParameterizedTest(name = "{0}")
+  @ValueSource(strings = {"nightborn:bat_from", "minecraft:bat_form", "nightborn:nothing"})
+  @DisplayName("a view for a form nobody registered is refused and names the form")
+  void refusesUnknownForm(final String form) {
+    final String message =
+        parse(
+                "{\"form\":\""
+                    + form
+                    + "\",\"fade_in_ticks\":5,\"fade_out_ticks\":5,\"darkness\":1.0}")
+            .error()
+            .orElseThrow()
+            .message();
+    assertTrue(message.contains(form + " is not a known form"), message);
   }
 
   @Test

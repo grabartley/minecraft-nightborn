@@ -28,12 +28,12 @@ public final class FormViewUniforms {
     values.put("Time", new float[] {(float) (nowSeconds % 3600.0)});
     values.put("Darkness", new float[] {view.darkness()});
     echo(values, view, nowSeconds, ripples, camera, creatures);
-    final FormViewTint tint = view.tint().orElse(new FormViewTint(0, 0.0F, 0.0F));
+    final FormViewTint tint = view.tint().orElse(FormViewTint.NONE);
     values.put("TintColor", rgb(tint.color()));
     values.put("Tint", new float[] {tint.centre(), tint.edge()});
-    final FormViewTremble tremble = view.tremble().orElse(new FormViewTremble(0.0F, 1.0F, 0.0F));
+    final FormViewTremble tremble = view.tremble().orElse(FormViewTremble.NONE);
     values.put("Tremble", new float[] {tremble.amount(), tremble.inner(), tremble.speed()});
-    final FormViewWash wash = view.wash().orElse(new FormViewWash(0, 0.0F, 1.0F, 0.0F, 0.0F));
+    final FormViewWash wash = view.wash().orElse(FormViewWash.NONE);
     values.put("WashColor", rgb(wash.color()));
     values.put("Wash", new float[] {wash.amount(), wash.saturation(), wash.blur(), wash.drift()});
     return values;

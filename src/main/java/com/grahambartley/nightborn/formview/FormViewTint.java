@@ -6,6 +6,8 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 public record FormViewTint(int color, float centre, float edge) {
 
+  public static final FormViewTint NONE = new FormViewTint(0, 0.0F, 0.0F);
+
   private static final Codec<Float> AMOUNT = Codec.floatRange(0.0F, 1.0F);
 
   public static final Codec<FormViewTint> CODEC =

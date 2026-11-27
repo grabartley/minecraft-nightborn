@@ -41,6 +41,10 @@ public record FormView(
           .validate(FormView::check);
 
   static DataResult<FormView> check(final FormView view) {
+    if (!Forms.known(view.form)) {
+      return DataResult.error(
+          () -> "form " + view.form + " is not a known form, so its view would never show");
+    }
     if (view.echo.isEmpty()
         && view.tint.isEmpty()
         && view.tremble.isEmpty()

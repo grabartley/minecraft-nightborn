@@ -24,6 +24,7 @@ import net.minecraft.client.render.VertexFormat;
 import net.minecraft.client.render.VertexFormats;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.decoration.ArmorStandEntity;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
@@ -89,7 +90,7 @@ public final class FormViewPass {
     final Entity viewer = context.camera().getFocusedEntity();
     final float tickDelta = context.tickCounter().getTickDelta(false);
     final Box reach = new Box(camera, camera).expand(echo.maxRange());
-    return context.world().getOtherEntities(viewer, reach, LivingEntity.class::isInstance).stream()
+    return context.world().getOtherEntities(viewer, reach, FormViewPass::heard).stream()
         .sorted(Comparator.comparingDouble(entity -> entity.squaredDistanceTo(camera)))
         .limit(CreatureRects.CAPACITY)
         .map(
@@ -99,6 +100,12 @@ public final class FormViewPass {
                     .offset(entity.getLerpedPos(tickDelta).subtract(entity.getPos()))
                     .offset(camera.negate()))
         .toList();
+  }
+
+  private static boolean heard(final Entity entity) {
+    return entity instanceof LivingEntity
+        && !(entity instanceof ArmorStandEntity)
+        && !entity.isInvisible();
   }
 
   public static void draw(final float tickDelta) {
@@ -130,7 +137,7 @@ public final class FormViewPass {
             camera,
             creatures);
     values.forEach((name, value) -> uniform(name).ifPresent(uniform -> uniform.set(value)));
-    uniform("ScreenSize")
+    uniform("TexelSize")
         .ifPresent(uniform -> uniform.set(1.0F / main.textureWidth, 1.0F / main.textureHeight));
     uniform("InverseViewProj").ifPresent(uniform -> uniform.set(INVERSE_VIEW_PROJECTION));
     program.addSampler("SceneSampler", main.getColorAttachment());
