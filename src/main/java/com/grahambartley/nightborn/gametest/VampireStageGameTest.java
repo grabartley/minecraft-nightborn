@@ -6,6 +6,7 @@ import com.grahambartley.nightborn.mob.NightbornMobs;
 import com.grahambartley.nightborn.mob.VampireEntity;
 import com.grahambartley.nightborn.mob.brain.Intent;
 import com.grahambartley.nightborn.mob.brain.Think;
+import com.grahambartley.nightborn.mob.combat.MobFighting;
 import com.grahambartley.nightborn.mob.stage.VampireStages;
 import com.grahambartley.nightborn.mob.stage.VampireStaging;
 import com.grahambartley.nightborn.skill.PowerCooldownAttachment;
@@ -14,6 +15,7 @@ import com.grahambartley.nightborn.skill.Powers;
 import com.grahambartley.nightborn.skill.SkillAttachment;
 import com.grahambartley.nightborn.skill.SkillTree;
 import com.grahambartley.nightborn.skill.Skills;
+import com.grahambartley.nightborn.skill.TreeProgress;
 import com.grahambartley.nightborn.structure.HouseholdArrival;
 import com.grahambartley.nightborn.weakened.Weakened;
 import java.util.List;
@@ -28,6 +30,7 @@ import net.minecraft.test.GameTest;
 import net.minecraft.test.TestContext;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 
 public class VampireStageGameTest implements FabricGameTest {
 
@@ -47,6 +50,9 @@ public class VampireStageGameTest implements FabricGameTest {
   static final String ARENA = "nightborn:vampire_arena";
   static final Identifier FLEDGLING = Identifier.of(Nightborn.MOD_ID, "fledgling");
   static final Identifier ANCIENT = Identifier.of(Nightborn.MOD_ID, "ancient");
+  static final Identifier BEAST = Identifier.of(Nightborn.MOD_ID, "beast");
+  static final Identifier BEAST_BLOOD = Identifier.of(Nightborn.MOD_ID, "beast/beast_blood");
+  static final Identifier POUNCE = Identifier.of(Nightborn.MOD_ID, "beast/pounce");
   static final Identifier BLOOD_RUSH = Identifier.of(Nightborn.MOD_ID, "core/blood_rush");
   static final Identifier THICK_BLOOD = Identifier.of(Nightborn.MOD_ID, "core/thick_blood");
 
@@ -115,7 +121,7 @@ public class VampireStageGameTest implements FabricGameTest {
         .mobFighting()
         .tick(
             vampire,
-            true,
+            MobFighting.Engagement.FIGHTING,
             vampire.stage().combat().thinkTicks(),
             vampire.stage().combat().bloodFloor());
     final Think think = vampire.mobFighting().lastThink().orElseThrow();
@@ -136,6 +142,52 @@ public class VampireStageGameTest implements FabricGameTest {
         Powers.cast(vampire, BLOOD_RUSH) == PowerUse.Verdict.READY, "a weakened vampire is held");
     context.assertEquals(BloodAttachment.get(vampire), BloodAttachment.FULL, "no blood is spent");
     context.complete();
+  }
+
+  @GameTest(templateName = ARENA, tickLimit = 40)
+  public void aVampireMobPouncesOnATargetThatMovesAway(final TestContext context) {
+    final VampireEntity vampire = staged(context, new BlockPos(1, 2, 4), ANCIENT);
+    SkillAttachment.set(
+        vampire,
+        SkillTree.VAMPIRE,
+        TreeProgress.EMPTY.withEarned(20).buy(BEAST_BLOOD, 1, BEAST).buy(POUNCE, 1, null));
+    BloodAttachment.set(vampire, BloodAttachment.FULL);
+    final VillagerEntity villager = context.spawnEntity(EntityType.VILLAGER, new BlockPos(4, 2, 4));
+    villager.setAiDisabled(true);
+    vampire.setTarget(villager);
+    final int thinkTicks = vampire.stage().combat().thinkTicks();
+    context.runAtTick(
+        2,
+        () ->
+            vampire
+                .mobFighting()
+                .tick(
+                    vampire,
+                    MobFighting.Engagement.FIGHTING,
+                    thinkTicks,
+                    vampire.stage().combat().bloodFloor()));
+    context.runAtTick(
+        3 + thinkTicks,
+        () -> {
+          final Vec3d away = context.getAbsolute(Vec3d.ofBottomCenter(new BlockPos(8, 2, 4)));
+          villager.refreshPositionAndAngles(away.x, away.y, away.z, 0.0F, 0.0F);
+          vampire
+              .mobFighting()
+              .tick(
+                  vampire,
+                  MobFighting.Engagement.FIGHTING,
+                  thinkTicks,
+                  vampire.stage().combat().bloodFloor());
+          final Think think = vampire.mobFighting().lastThink().orElseThrow();
+          context.assertEquals(
+              think.chosen().map(scored -> scored.option().power()).orElse(null),
+              POUNCE,
+              "it pounces on the target moving away");
+          context.assertTrue(
+              think.chosen().orElseThrow().score() > 1.5,
+              "it weighs the pounce as a runner's, not " + think.chosen().orElseThrow().score());
+          context.complete();
+        });
   }
 
   private static VampireEntity staged(

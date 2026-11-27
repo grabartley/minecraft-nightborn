@@ -54,6 +54,7 @@ final class PowerCasts {
       final Identifier id,
       final SkillPower power,
       final PowerAim aim,
+      final CastAim cast,
       final boolean showsClip) {
     final long now = caster.getWorld().getTime();
     if (power.glamour().isEmpty()) {
@@ -65,7 +66,7 @@ final class PowerCasts {
     if (power.batForm().isEmpty() && power.wingedForm().isEmpty() && power.glamour().isEmpty()) {
       VampireSigns.shown(caster, SuspicionCause.SEEN_USING_A_POWER);
     }
-    moves(caster, id, power, aim);
+    moves(caster, id, power, aim, cast);
     minds(caster, power, aim);
     traps(caster, id, power, aim);
     faith(caster, power, aim);
@@ -108,11 +109,15 @@ final class PowerCasts {
   }
 
   private static void moves(
-      final LivingEntity caster, final Identifier id, final SkillPower power, final PowerAim aim) {
+      final LivingEntity caster,
+      final Identifier id,
+      final SkillPower power,
+      final PowerAim aim,
+      final CastAim cast) {
     power.batForm().ifPresent(form -> BatForm.enter(caster));
     power.wingedForm().ifPresent(form -> WingedForm.enter(caster, id, form));
     power.mist().ifPresent(mist -> MistForm.enter(caster, mist));
-    power.leap().ifPresent(leap -> leap.launch(caster, Powers.heading(caster)));
+    power.leap().ifPresent(leap -> leap.launch(caster, cast.heading(caster)));
     if (aim.target() != null) {
       power.pounce().ifPresent(pounce -> Pounces.start(caster, aim.target(), pounce));
     }

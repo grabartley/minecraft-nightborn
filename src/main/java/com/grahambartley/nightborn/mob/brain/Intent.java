@@ -19,6 +19,10 @@ public enum Intent {
   private static final Map<String, Intent> BY_KEY =
       Arrays.stream(values()).collect(Collectors.toMap(Intent::key, Function.identity()));
 
+  public boolean fights() {
+    return this == FIGHT || this == CLOSE_IN;
+  }
+
   public String key() {
     return name().toLowerCase(Locale.ROOT);
   }

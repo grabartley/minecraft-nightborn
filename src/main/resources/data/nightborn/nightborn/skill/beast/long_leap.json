@@ -29,7 +29,70 @@
       "max_range": 11.0,
       "tell_ticks": 8,
       "tell_sound": "minecraft:entity.goat.prepare_ram",
-      "tell_clip": "long_leap_tell"
+      "tell_clip": "long_leap_tell",
+      "uses": [
+        {
+          "intent": "fight",
+          "considerations": [
+            {
+              "fact": "target_distance",
+              "low": 5,
+              "high": 11
+            },
+            {
+              "fact": "target_in_sight",
+              "low": 1,
+              "high": 1
+            }
+          ],
+          "weight": 1.2
+        },
+        {
+          "intent": "close_in",
+          "considerations": [
+            {
+              "fact": "target_distance",
+              "low": 5,
+              "high": 11
+            },
+            {
+              "fact": "target_in_sight",
+              "low": 1,
+              "high": 1
+            }
+          ],
+          "weight": 1.2
+        },
+        {
+          "intent": "retreat",
+          "aim": "spot",
+          "considerations": [
+            {
+              "fact": "spot_distance",
+              "low": 4,
+              "high": 11
+            }
+          ],
+          "weight": 1.5
+        },
+        {
+          "intent": "retreat",
+          "aim": "spot",
+          "considerations": [
+            {
+              "fact": "sun_on_me",
+              "low": 1,
+              "high": 1
+            },
+            {
+              "fact": "spot_distance",
+              "low": 1,
+              "high": 11
+            }
+          ],
+          "weight": 2.25
+        }
+      ]
     }
   }
 }

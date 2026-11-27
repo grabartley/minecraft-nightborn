@@ -24,6 +24,10 @@
     {
       "type": "patchouli:text",
       "text": "nightborn.journal.hunter.vampires.3"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "nightborn.journal.hunter.vampires.4"
     }
   ]
 }

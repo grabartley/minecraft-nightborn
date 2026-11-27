@@ -39,6 +39,46 @@ class IntentBudgetTest {
     assertEquals(passes, new IntentBudget(0, 0, threshold).passes(score));
   }
 
+  @ParameterizedTest(name = "thrift {0}, blood {1}, cooldown {2}, own health {3}: keeps {4}")
+  @CsvSource({
+    "0, 6, 6000, 1, 1",
+    "0.5, 0, 0, 1, 1",
+    "0.5, 6, 6000, 1, 0.5",
+    "0.5, 6, 6000, 0.2, 0.9",
+    "0.5, 6, 6000, 0, 1",
+    "0.5, 2, 300, 1, 0.875",
+    "1, 10, 0, 1, 0",
+    "1, 20, 12000, 0.5, 0.5"
+  })
+  @DisplayName(
+      "a healthy mob keeps a costly power back by its thrift, and spends freely as it loses")
+  void kept(
+      final float thrift,
+      final int blood,
+      final int cooldown,
+      final float health,
+      final double kept) {
+    assertEquals(
+        kept, new IntentBudget(0, 0, 0.0F, thrift, 0.0F).kept(blood, cooldown, health), 1.0E-6);
+  }
+
+  @ParameterizedTest(name = "spread {0}, score {1}, best {2}: close {3}")
+  @CsvSource({"0, 2, 2, true", "0, 1.9, 2, false", "0.1, 1.8, 2, true", "0.1, 1.79, 2, false"})
+  @DisplayName("a score close enough to the best one is a fair choice")
+  void close(final float spread, final double score, final double best, final boolean close) {
+    assertEquals(close, new IntentBudget(0, 0, 0.0F, 0.0F, spread).close(score, best));
+  }
+
+  @Test
+  @DisplayName("thrift and spread are read from data")
+  void parsesThriftAndSpread() {
+    assertEquals(
+        new IntentBudget(0, 0, 0.0F, 0.5F, 0.1F),
+        IntentBudget.CODEC
+            .parse(JsonOps.INSTANCE, JsonParser.parseString("{\"thrift\":0.5,\"spread\":0.1}"))
+            .getOrThrow());
+  }
+
   @Test
   @DisplayName("an empty budget is free")
   void parsesDefaults() {

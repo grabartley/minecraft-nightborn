@@ -5,6 +5,7 @@ import com.grahambartley.nightborn.accessory.GiftAttributes;
 import com.grahambartley.nightborn.accessory.GiftScale;
 import com.grahambartley.nightborn.faith.FaithMarks;
 import com.grahambartley.nightborn.hunter.HunterAttributes;
+import com.grahambartley.nightborn.skill.CastAim;
 import com.grahambartley.nightborn.skill.MesmerisePower;
 import com.grahambartley.nightborn.skill.PowerSight;
 import com.grahambartley.nightborn.slayer.SlayerMarks;
@@ -42,9 +43,10 @@ public final class Mesmerise {
   private Mesmerise() {}
 
   @Nullable
-  public static LivingEntity target(final LivingEntity caster, final double range) {
+  public static LivingEntity target(
+      final LivingEntity caster, final double range, final CastAim aim) {
     final LivingEntity candidate =
-        caster instanceof MobEntity mob ? mob.getTarget() : PowerSight.looked(caster, range);
+        caster instanceof MobEntity ? aim.subject(caster) : PowerSight.looked(caster, range);
     return candidate != null && holds(caster, candidate, range) ? candidate : null;
   }
 

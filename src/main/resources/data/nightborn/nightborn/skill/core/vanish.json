@@ -24,7 +24,56 @@
       "tell_ticks": 1,
       "tell_sound": "nightborn:power.bat_form.enter",
       "tell_clip": "dodge",
-      "dodge": true
+      "dodge": true,
+      "uses": [
+        {
+          "intent": "fight",
+          "considerations": [
+            {
+              "fact": "target_distance",
+              "high": 32
+            }
+          ]
+        },
+        {
+          "intent": "close_in",
+          "considerations": [
+            {
+              "fact": "target_distance",
+              "high": 32
+            }
+          ]
+        },
+        {
+          "intent": "retreat",
+          "aim": "spot",
+          "considerations": [
+            {
+              "fact": "spot_distance",
+              "low": 2,
+              "high": 32
+            }
+          ],
+          "weight": 2.0
+        },
+        {
+          "intent": "retreat",
+          "aim": "spot",
+          "considerations": [
+            {
+              "fact": "sun_on_me",
+              "low": 1,
+              "high": 1
+            },
+            {
+              "fact": "spot_distance",
+              "low": 1,
+              "high": 32
+            }
+          ],
+          "weight": 3.0
+        }
+      ]
     },
     "sound": {
       "id": "nightborn:power.bat_form.enter",

@@ -12,26 +12,29 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 class MobFightingTest {
 
-  @ParameterizedTest(name = "target {0}, downed {1}, asleep {2}, retreating {3}, weak {4}: {5}")
+  @ParameterizedTest(name = "target {0}, downed {1}, asleep {2}, escaping {3}, weak {4}: {5}")
   @CsvSource({
-    "true, false, false, false, false, true",
-    "false, false, false, false, false, false",
-    "true, true, false, false, false, false",
-    "true, false, true, false, false, false",
-    "true, false, false, true, false, false",
-    "true, false, false, false, true, false"
+    "true, false, false, false, false, FIGHTING",
+    "false, false, false, false, false, NONE",
+    "true, true, false, false, false, NONE",
+    "true, false, true, false, false, NONE",
+    "true, false, false, true, false, ESCAPING",
+    "false, false, false, true, false, ESCAPING",
+    "true, false, false, false, true, NONE",
+    "false, false, false, true, true, NONE",
+    "true, true, false, true, false, NONE"
   })
   @DisplayName(
-      "a vampire casts and moves only with a target, and never while downed, asleep,"
-          + " falling back or weakened")
-  void fights(
+      "a vampire fights only with a target, escapes while falling back or seeking shade with or"
+          + " without one, and does neither while downed, asleep or weakened")
+  void engagement(
       final boolean target,
       final boolean downed,
       final boolean asleep,
-      final boolean retreating,
+      final boolean escaping,
       final boolean weakened,
-      final boolean fights) {
-    assertEquals(fights, MobFighting.fights(target, downed, asleep, retreating, weakened));
+      final MobFighting.Engagement engagement) {
+    assertEquals(engagement, MobFighting.engagement(target, downed, asleep, escaping, weakened));
   }
 
   @ParameterizedTest(name = "moves first {0}")
@@ -56,7 +59,7 @@ class MobFightingTest {
         movesFirst
             ? MobFighting.movingFirst(new PowerCasting(), moves)
             : MobFighting.castingFirst(new PowerCasting(), moves);
-    fighting.tick(null, false, 40, 0);
+    fighting.tick(null, MobFighting.Engagement.NONE, 40, 0);
     assertEquals(0, moved.get());
     assertEquals(1, rested.get());
     assertFalse(fighting.telling());

@@ -27,9 +27,10 @@ public final class PowerSight {
   }
 
   @Nullable
-  public static LivingEntity aimed(final LivingEntity caster, final double range) {
+  public static LivingEntity aimed(
+      final LivingEntity caster, final double range, final CastAim aim) {
     final LivingEntity candidate =
-        caster instanceof MobEntity mob ? mob.getTarget() : looked(caster, range);
+        caster instanceof MobEntity ? aim.subject(caster) : looked(caster, range);
     return candidate != null
             && candidate.isAlive()
             && caster.squaredDistanceTo(candidate) <= range * range

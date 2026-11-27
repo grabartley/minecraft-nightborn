@@ -32,7 +32,97 @@
       "max_range": 12.0,
       "tell_ticks": 12,
       "tell_sound": "minecraft:entity.illusioner.prepare_mirror",
-      "tell_clip": "mesmerise"
+      "tell_clip": "mesmerise",
+      "uses": [
+        {
+          "intent": "fight",
+          "considerations": [
+            {
+              "fact": "target_distance",
+              "low": 3,
+              "high": 12
+            },
+            {
+              "fact": "target_in_sight",
+              "low": 1,
+              "high": 1
+            },
+            {
+              "fact": "target_slowed",
+              "high": 0
+            }
+          ]
+        },
+        {
+          "intent": "close_in",
+          "considerations": [
+            {
+              "fact": "target_distance",
+              "low": 3,
+              "high": 12
+            },
+            {
+              "fact": "target_in_sight",
+              "low": 1,
+              "high": 1
+            },
+            {
+              "fact": "target_slowed",
+              "high": 0
+            }
+          ]
+        },
+        {
+          "intent": "fight",
+          "considerations": [
+            {
+              "fact": "target_distance",
+              "low": 3,
+              "high": 12
+            },
+            {
+              "fact": "target_in_sight",
+              "low": 1,
+              "high": 1
+            },
+            {
+              "fact": "target_slowed",
+              "high": 0
+            },
+            {
+              "fact": "target_winding_up",
+              "low": 1,
+              "high": 1
+            }
+          ],
+          "weight": 2.0
+        },
+        {
+          "intent": "close_in",
+          "considerations": [
+            {
+              "fact": "target_distance",
+              "low": 3,
+              "high": 12
+            },
+            {
+              "fact": "target_in_sight",
+              "low": 1,
+              "high": 1
+            },
+            {
+              "fact": "target_slowed",
+              "high": 0
+            },
+            {
+              "fact": "target_winding_up",
+              "low": 1,
+              "high": 1
+            }
+          ],
+          "weight": 2.0
+        }
+      ]
     }
   }
 }

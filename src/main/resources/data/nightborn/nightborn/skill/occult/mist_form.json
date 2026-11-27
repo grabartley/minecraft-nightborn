@@ -24,7 +24,43 @@
       "tell_ticks": 1,
       "tell_sound": "minecraft:entity.illusioner.prepare_blindness",
       "tell_clip": "dodge",
-      "dodge": true
+      "dodge": true,
+      "uses": [
+        {
+          "intent": "fight",
+          "considerations": [
+            {
+              "fact": "target_distance",
+              "high": 16
+            }
+          ]
+        },
+        {
+          "intent": "close_in",
+          "considerations": [
+            {
+              "fact": "target_distance",
+              "high": 16
+            }
+          ]
+        },
+        {
+          "intent": "retreat",
+          "aim": "self",
+          "considerations": [
+            {
+              "fact": "own_health",
+              "curve": "falling",
+              "high": 0.5
+            },
+            {
+              "fact": "target_distance",
+              "high": 8
+            }
+          ],
+          "weight": 1.5
+        }
+      ]
     },
     "sound": {
       "id": "minecraft:entity.illusioner.prepare_blindness",

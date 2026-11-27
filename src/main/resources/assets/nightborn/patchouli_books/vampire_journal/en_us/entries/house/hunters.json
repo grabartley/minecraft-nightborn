@@ -16,6 +16,10 @@
         "nightborn:textures/gui/journal/vampire_hunters.png"
       ],
       "border": true
+    },
+    {
+      "type": "patchouli:text",
+      "text": "nightborn.journal.vampire.hunters.2"
     }
   ]
 }

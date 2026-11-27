@@ -1,15 +1,22 @@
 package com.grahambartley.nightborn.mob.combat;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import com.grahambartley.nightborn.MinecraftBootstrapExtension;
 import com.grahambartley.nightborn.config.NightbornConfig;
 import java.util.stream.Stream;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.item.ItemStack;
+import net.minecraft.registry.Registries;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Vec3d;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.MethodSource;
 
 @ExtendWith(MinecraftBootstrapExtension.class)
@@ -36,5 +43,23 @@ class CombatMovesTest {
     assertEquals(expected.x, impulse.x, CLOSE);
     assertEquals(expected.y, impulse.y, CLOSE);
     assertEquals(expected.z, impulse.z, CLOSE);
+  }
+
+  @ParameterizedTest(name = "using {0}, holding {1}: draws {2}")
+  @CsvSource({
+    "true, bow, true",
+    "true, crossbow, true",
+    "true, trident, true",
+    "true, shield, false",
+    "true, bread, false",
+    "false, bow, false"
+  })
+  @DisplayName("a foe draws on the mob only while it is using a bow, crossbow or trident")
+  void draws(final boolean using, final String item, final boolean draws) {
+    final LivingEntity foe = mock(LivingEntity.class);
+    when(foe.isUsingItem()).thenReturn(using);
+    when(foe.getActiveItem())
+        .thenReturn(new ItemStack(Registries.ITEM.get(Identifier.ofVanilla(item))));
+    assertEquals(draws, CombatMoves.draws(foe));
   }
 }

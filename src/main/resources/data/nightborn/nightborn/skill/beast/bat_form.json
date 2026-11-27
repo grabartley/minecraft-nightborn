@@ -28,7 +28,37 @@
       "max_range": 32.0,
       "tell_ticks": 10,
       "tell_sound": "minecraft:entity.bat.ambient",
-      "tell_clip": "hiss"
+      "tell_clip": "hiss",
+      "uses": [
+        {
+          "intent": "fight",
+          "considerations": [
+            {
+              "fact": "target_distance",
+              "low": 12,
+              "high": 32
+            },
+            {
+              "fact": "in_form",
+              "high": 0
+            }
+          ]
+        },
+        {
+          "intent": "close_in",
+          "considerations": [
+            {
+              "fact": "target_distance",
+              "low": 12,
+              "high": 32
+            },
+            {
+              "fact": "in_form",
+              "high": 0
+            }
+          ]
+        }
+      ]
     },
     "sound": {
       "id": "nightborn:power.bat_form.enter",

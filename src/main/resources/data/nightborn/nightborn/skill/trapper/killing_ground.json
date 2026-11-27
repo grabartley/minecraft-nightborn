@@ -35,6 +35,53 @@
       "volume": 0.3,
       "pitch": 1.1
     },
-    "mobs_never_use": true
+    "mob": {
+      "max_range": 8.0,
+      "tell_ticks": 14,
+      "tell_sound": "minecraft:block.bell.use",
+      "tell_clip": "rallying_cry",
+      "uses": [
+        {
+          "intent": "fight",
+          "considerations": [
+            {
+              "fact": "target_distance",
+              "high": 8
+            },
+            {
+              "fact": "target_vampire",
+              "low": 1,
+              "high": 1
+            },
+            {
+              "fact": "target_health",
+              "curve": "rising",
+              "low": 0.2,
+              "high": 0.5
+            }
+          ]
+        },
+        {
+          "intent": "close_in",
+          "considerations": [
+            {
+              "fact": "target_distance",
+              "high": 8
+            },
+            {
+              "fact": "target_vampire",
+              "low": 1,
+              "high": 1
+            },
+            {
+              "fact": "target_health",
+              "curve": "rising",
+              "low": 0.2,
+              "high": 0.5
+            }
+          ]
+        }
+      ]
+    }
   }
 }

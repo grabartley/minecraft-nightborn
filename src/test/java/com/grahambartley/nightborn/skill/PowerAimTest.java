@@ -7,6 +7,7 @@ import com.google.gson.JsonParser;
 import com.grahambartley.nightborn.MinecraftBootstrapExtension;
 import com.mojang.serialization.JsonOps;
 import java.util.Optional;
+import net.minecraft.util.math.Vec3d;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -34,6 +35,8 @@ class PowerAimTest {
                     .parse(JsonOps.INSTANCE, JsonParser.parseString(json))
                     .getOrThrow());
     assertSame(PowerAim.NONE, PowerAim.of(null, power, PowerHeading.NONE));
+    assertSame(
+        PowerAim.NONE, PowerAim.of(null, power, PowerHeading.NONE, CastAim.toward(Vec3d.ZERO)));
   }
 
   @ParameterizedTest(name = "{0}: aims {1}, reach {2}")

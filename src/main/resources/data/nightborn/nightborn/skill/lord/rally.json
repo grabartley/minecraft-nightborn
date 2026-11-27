@@ -25,7 +25,29 @@
       "max_range": 24.0,
       "tell_ticks": 16,
       "tell_sound": "minecraft:entity.evoker.prepare_summon",
-      "tell_clip": "rally_tell"
+      "tell_clip": "rally_tell",
+      "uses": [
+        {
+          "intent": "fight",
+          "aim": "self",
+          "considerations": [
+            {
+              "fact": "target_distance",
+              "high": 24
+            }
+          ]
+        },
+        {
+          "intent": "close_in",
+          "aim": "self",
+          "considerations": [
+            {
+              "fact": "target_distance",
+              "high": 24
+            }
+          ]
+        }
+      ]
     }
   }
 }

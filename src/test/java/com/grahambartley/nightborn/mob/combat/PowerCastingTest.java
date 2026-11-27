@@ -8,7 +8,7 @@ import org.junit.jupiter.params.provider.CsvSource;
 
 class PowerCastingTest {
 
-  @ParameterizedTest(name = "target {0}, now {1}, next think {2} -> thinks {3}")
+  @ParameterizedTest(name = "engaged {0}, now {1}, next think {2} -> thinks {3}")
   @CsvSource({
     "true, 100, 100, true",
     "true, 101, 100, true",
@@ -16,9 +16,11 @@ class PowerCastingTest {
     "false, 100, 100, false",
     "false, 500, 100, false"
   })
-  @DisplayName("a caster thinks about a power only with a target and once its pause is over")
-  void thinksOnlyWithATargetAfterItsPause(
-      final boolean target, final long now, final long next, final boolean thinks) {
-    assertEquals(thinks, PowerCasting.thinks(target, now, next));
+  @DisplayName(
+      "a caster thinks about a power only while fighting a target or escaping, once its pause"
+          + " is over")
+  void thinksOnlyWhileEngagedAfterItsPause(
+      final boolean engaged, final long now, final long next, final boolean thinks) {
+    assertEquals(thinks, PowerCasting.thinks(engaged, now, next));
   }
 }

@@ -1,6 +1,7 @@
 package com.grahambartley.nightborn.occult;
 
 import com.grahambartley.nightborn.landing.Landing;
+import com.grahambartley.nightborn.skill.CastAim;
 import java.util.Optional;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.mob.MobEntity;
@@ -13,16 +14,22 @@ public final class ShadowStep {
   private ShadowStep() {}
 
   public static Optional<Vec3d> destination(
-      final LivingEntity caster, final ShadowStepPower power) {
-    return Landing.reach(caster, wanted(caster, power));
+      final LivingEntity caster, final ShadowStepPower power, final CastAim aim) {
+    return Landing.reach(caster, wanted(caster, power, aim));
   }
 
-  private static Vec3d wanted(final LivingEntity caster, final ShadowStepPower power) {
-    if (caster instanceof MobEntity mob && mob.getTarget() != null) {
+  private static Vec3d wanted(
+      final LivingEntity caster, final ShadowStepPower power, final CastAim aim) {
+    if (caster instanceof MobEntity && aim.spot() != null) {
+      return ShadowStepPath.toward(
+          caster.getPos(), caster.getStandingEyeHeight(), aim.spot(), power.range());
+    }
+    final LivingEntity subject = aim.subject(caster);
+    if (caster instanceof MobEntity && subject != null) {
       return ShadowStepPath.aimBehind(
           caster.getPos(),
           caster.getStandingEyeHeight(),
-          mob.getTarget().getPos(),
+          subject.getPos(),
           power.behind(),
           power.range());
     }

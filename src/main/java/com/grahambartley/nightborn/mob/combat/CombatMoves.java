@@ -1,6 +1,7 @@
 package com.grahambartley.nightborn.mob.combat;
 
 import com.grahambartley.nightborn.config.CombatSettings;
+import com.grahambartley.nightborn.mob.brain.CastAims;
 import com.grahambartley.nightborn.mob.brain.Thinking;
 import com.grahambartley.nightborn.mob.stage.StageCombat;
 import com.grahambartley.nightborn.server.ServerConfigService;
@@ -41,9 +42,7 @@ public final class CombatMoves<T extends MobEntity & PowerShow> implements MobFi
       return;
     }
     final double distance = fighter.distanceTo(target);
-    final CombatMove.Threat threat =
-        new CombatMove.Threat(
-            target.handSwinging, target.isUsingItem() && ranged(target.getActiveItem()));
+    final CombatMove.Threat threat = new CombatMove.Threat(target.handSwinging, draws(target));
     final boolean wasThreatened = threatened;
     threatened = threat.at(distance, settings);
     if (CombatMove.dodgesWithPower(
@@ -80,9 +79,15 @@ public final class CombatMoves<T extends MobEntity & PowerShow> implements MobFi
   }
 
   private static boolean dodgeWithPower(final MobEntity fighter, final StageCombat combat) {
-    return Thinking.think(fighter, true, combat.bloodFloor())
+    return Thinking.dodge(fighter, combat.bloodFloor())
         .flatMap(think -> think.chosen())
-        .map(scored -> Powers.cast(fighter, scored.option().power()) == PowerUse.Verdict.READY)
+        .flatMap(
+            scored ->
+                CastAims.resolve(fighter, scored.use().aimed())
+                    .map(
+                        aim ->
+                            Powers.cast(fighter, scored.option().power(), aim)
+                                == PowerUse.Verdict.READY))
         .orElse(false);
   }
 
@@ -102,6 +107,10 @@ public final class CombatMoves<T extends MobEntity & PowerShow> implements MobFi
             ? (left ? new Vec3d(-ahead.z, 0.0, ahead.x) : new Vec3d(ahead.z, 0.0, -ahead.x))
             : ahead;
     return Impulse.push(heading, tuning.pushBlocks(), tuning.liftBlocks());
+  }
+
+  public static boolean draws(final LivingEntity target) {
+    return target.isUsingItem() && ranged(target.getActiveItem());
   }
 
   static boolean ranged(final ItemStack stack) {

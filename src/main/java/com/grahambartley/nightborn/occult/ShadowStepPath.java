@@ -20,9 +20,14 @@ public final class ShadowStepPath {
       final Vec3d target,
       final double behind,
       final double range) {
+    return toward(caster, eyeHeight, behind(caster, target, behind), range);
+  }
+
+  public static Vec3d toward(
+      final Vec3d caster, final double eyeHeight, final Vec3d spot, final double range) {
     final Vec3d lift = new Vec3d(0.0, eyeHeight, 0.0);
     final Vec3d eye = caster.add(lift);
-    final Vec3d wanted = behind(caster, target, behind).add(lift);
+    final Vec3d wanted = spot.add(lift);
     final Vec3d way = wanted.subtract(eye);
     return way.length() > range ? eye.add(way.normalize().multiply(range)) : wanted;
   }

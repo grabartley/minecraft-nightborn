@@ -35,7 +35,41 @@
       "max_range": 16.0,
       "tell_ticks": 14,
       "tell_sound": "minecraft:entity.evoker.prepare_summon",
-      "tell_clip": "mesmerise"
+      "tell_clip": "mesmerise",
+      "uses": [
+        {
+          "intent": "fight",
+          "aim": "self",
+          "considerations": [
+            {
+              "fact": "target_distance",
+              "high": 16
+            },
+            {
+              "fact": "target_health",
+              "curve": "rising",
+              "low": 0.2,
+              "high": 0.5
+            }
+          ]
+        },
+        {
+          "intent": "close_in",
+          "aim": "self",
+          "considerations": [
+            {
+              "fact": "target_distance",
+              "high": 16
+            },
+            {
+              "fact": "target_health",
+              "curve": "rising",
+              "low": 0.2,
+              "high": 0.5
+            }
+          ]
+        }
+      ]
     }
   }
 }

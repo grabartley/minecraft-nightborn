@@ -29,7 +29,81 @@
       "max_range": 24.0,
       "tell_ticks": 8,
       "tell_sound": "minecraft:item.crossbow.loading_end",
-      "tell_clip": "crossbow_shot"
+      "tell_clip": "crossbow_shot",
+      "uses": [
+        {
+          "intent": "fight",
+          "considerations": [
+            {
+              "fact": "target_distance",
+              "low": 4,
+              "high": 24
+            },
+            {
+              "fact": "target_in_sight",
+              "low": 1,
+              "high": 1
+            }
+          ]
+        },
+        {
+          "intent": "close_in",
+          "considerations": [
+            {
+              "fact": "target_distance",
+              "low": 4,
+              "high": 24
+            },
+            {
+              "fact": "target_in_sight",
+              "low": 1,
+              "high": 1
+            }
+          ]
+        },
+        {
+          "intent": "fight",
+          "considerations": [
+            {
+              "fact": "target_distance",
+              "low": 4,
+              "high": 24
+            },
+            {
+              "fact": "target_in_sight",
+              "low": 1,
+              "high": 1
+            },
+            {
+              "fact": "target_airborne",
+              "low": 1,
+              "high": 1
+            }
+          ],
+          "weight": 1.5
+        },
+        {
+          "intent": "close_in",
+          "considerations": [
+            {
+              "fact": "target_distance",
+              "low": 4,
+              "high": 24
+            },
+            {
+              "fact": "target_in_sight",
+              "low": 1,
+              "high": 1
+            },
+            {
+              "fact": "target_airborne",
+              "low": 1,
+              "high": 1
+            }
+          ],
+          "weight": 1.5
+        }
+      ]
     }
   }
 }

@@ -28,6 +28,7 @@
       "id": "minecraft:entity.illusioner.mirror_move",
       "volume": 0.45,
       "pitch": 0.95
-    }
+    },
+    "mobs_never_use": true
   }
 }

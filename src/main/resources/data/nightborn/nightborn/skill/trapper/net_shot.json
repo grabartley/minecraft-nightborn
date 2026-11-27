@@ -31,7 +31,149 @@
       "max_range": 20.0,
       "tell_ticks": 10,
       "tell_sound": "minecraft:item.crossbow.loading_middle",
-      "tell_clip": "crossbow_shot"
+      "tell_clip": "crossbow_shot",
+      "uses": [
+        {
+          "intent": "fight",
+          "considerations": [
+            {
+              "fact": "target_distance",
+              "low": 4,
+              "high": 20
+            },
+            {
+              "fact": "target_in_sight",
+              "low": 1,
+              "high": 1
+            },
+            {
+              "fact": "target_slowed",
+              "high": 0
+            }
+          ],
+          "weight": 0.8
+        },
+        {
+          "intent": "close_in",
+          "considerations": [
+            {
+              "fact": "target_distance",
+              "low": 4,
+              "high": 20
+            },
+            {
+              "fact": "target_in_sight",
+              "low": 1,
+              "high": 1
+            },
+            {
+              "fact": "target_slowed",
+              "high": 0
+            }
+          ],
+          "weight": 0.8
+        },
+        {
+          "intent": "fight",
+          "considerations": [
+            {
+              "fact": "target_distance",
+              "low": 4,
+              "high": 20
+            },
+            {
+              "fact": "target_in_sight",
+              "low": 1,
+              "high": 1
+            },
+            {
+              "fact": "target_slowed",
+              "high": 0
+            },
+            {
+              "fact": "target_running",
+              "low": 1,
+              "high": 1
+            }
+          ],
+          "weight": 2.0
+        },
+        {
+          "intent": "close_in",
+          "considerations": [
+            {
+              "fact": "target_distance",
+              "low": 4,
+              "high": 20
+            },
+            {
+              "fact": "target_in_sight",
+              "low": 1,
+              "high": 1
+            },
+            {
+              "fact": "target_slowed",
+              "high": 0
+            },
+            {
+              "fact": "target_running",
+              "low": 1,
+              "high": 1
+            }
+          ],
+          "weight": 2.0
+        },
+        {
+          "intent": "fight",
+          "considerations": [
+            {
+              "fact": "target_distance",
+              "low": 4,
+              "high": 20
+            },
+            {
+              "fact": "target_in_sight",
+              "low": 1,
+              "high": 1
+            },
+            {
+              "fact": "target_slowed",
+              "high": 0
+            },
+            {
+              "fact": "target_airborne",
+              "low": 1,
+              "high": 1
+            }
+          ],
+          "weight": 2.5
+        },
+        {
+          "intent": "close_in",
+          "considerations": [
+            {
+              "fact": "target_distance",
+              "low": 4,
+              "high": 20
+            },
+            {
+              "fact": "target_in_sight",
+              "low": 1,
+              "high": 1
+            },
+            {
+              "fact": "target_slowed",
+              "high": 0
+            },
+            {
+              "fact": "target_airborne",
+              "low": 1,
+              "high": 1
+            }
+          ],
+          "weight": 2.5
+        }
+      ]
     }
   }
 }

@@ -2,6 +2,7 @@ package com.grahambartley.nightborn.mob.combat;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import com.grahambartley.nightborn.mob.brain.Aim;
 import net.minecraft.util.Identifier;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -9,9 +10,10 @@ import org.junit.jupiter.params.provider.CsvSource;
 
 class TellTest {
 
-  private static final Tell RUSH = new Tell(Identifier.of("nightborn", "core/blood_rush"), 112);
+  private static final Tell RUSH =
+      new Tell(Identifier.of("nightborn", "core/blood_rush"), 112, Aim.TARGET);
 
-  @ParameterizedTest(name = "target {0} at tick {1}: {2}")
+  @ParameterizedTest(name = "engaged {0} at tick {1}: {2}")
   @CsvSource({
     "true, 100, WAIT",
     "true, 111, WAIT",
@@ -20,8 +22,10 @@ class TellTest {
     "false, 100, DROP",
     "false, 112, DROP"
   })
-  @DisplayName("a tell lands as a cast once its time is up, and is dropped if the target goes")
-  void step(final boolean hasTarget, final long now, final Tell.Step step) {
-    assertEquals(step, RUSH.step(hasTarget, now));
+  @DisplayName(
+      "a tell lands as a cast once its time is up, and is dropped once the mob is no longer"
+          + " fighting or escaping")
+  void step(final boolean engaged, final long now, final Tell.Step step) {
+    assertEquals(step, RUSH.step(engaged, now));
   }
 }

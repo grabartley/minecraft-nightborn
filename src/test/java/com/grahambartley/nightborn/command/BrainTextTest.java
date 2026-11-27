@@ -56,6 +56,7 @@ class BrainTextTest {
     }
     assertEquals(
         expected,
-        BrainText.lines(NAME, new Think(Intent.CLOSE_IN, 100L, ranked, IntentBudget.FREE), 115L));
+        BrainText.lines(
+            NAME, new Think(Intent.CLOSE_IN, 100L, ranked, IntentBudget.FREE, 0.0), 115L));
   }
 }

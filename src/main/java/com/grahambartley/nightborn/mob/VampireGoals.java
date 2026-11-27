@@ -35,7 +35,14 @@ final class VampireGoals {
 
   private VampireGoals() {}
 
-  static RetreatGoal addTo(
+  record Escapes(RetreatGoal retreat, SeekShadeGoal shade) {
+
+    boolean active() {
+      return retreat.active() || shade.seeking();
+    }
+  }
+
+  static Escapes addTo(
       final VampireEntity vampire, final GoalSelector goals, final GoalSelector targets) {
     goals.add(0, new LieDownedGoal(vampire));
     goals.add(0, new BatFlightGoal(vampire));
@@ -43,7 +50,8 @@ final class VampireGoals {
     goals.add(1, new WatchFromAfarGoal(vampire));
     DoorPassage.allow(vampire);
     goals.add(1, new FleeWhileEscapingGoal(vampire, 1.4));
-    goals.add(2, new SeekShadeGoal(vampire, 1.3));
+    final SeekShadeGoal shade = new SeekShadeGoal(vampire, 1.3);
+    goals.add(2, shade);
     goals.add(3, new AvoidSunlightGoal(vampire));
     goals.add(3, new SleepInCoffinGoal(vampire));
     final RetreatGoal retreat =
@@ -73,6 +81,6 @@ final class VampireGoals {
             vampire::hiss));
     targets.add(
         2, new ActiveTargetGoal<>(vampire, LivingEntity.class, 10, true, false, vampire::hunts));
-    return retreat;
+    return new Escapes(retreat, shade);
   }
 }

@@ -26,6 +26,56 @@
       "id": "minecraft:item.armor.equip_chain",
       "volume": 0.7,
       "pitch": 1.0
+    },
+    "mob": {
+      "max_range": 8.0,
+      "tell_ticks": 2,
+      "tell_sound": "minecraft:item.shield.block",
+      "tell_clip": "stake_strike",
+      "uses": [
+        {
+          "intent": "fight",
+          "aim": "self",
+          "considerations": [
+            {
+              "fact": "target_distance",
+              "high": 8
+            },
+            {
+              "fact": "target_vampire",
+              "low": 1,
+              "high": 1
+            },
+            {
+              "fact": "target_winding_up",
+              "low": 1,
+              "high": 1
+            }
+          ],
+          "weight": 2.5
+        },
+        {
+          "intent": "close_in",
+          "aim": "self",
+          "considerations": [
+            {
+              "fact": "target_distance",
+              "high": 8
+            },
+            {
+              "fact": "target_vampire",
+              "low": 1,
+              "high": 1
+            },
+            {
+              "fact": "target_winding_up",
+              "low": 1,
+              "high": 1
+            }
+          ],
+          "weight": 2.5
+        }
+      ]
     }
   }
 }

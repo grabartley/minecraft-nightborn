@@ -36,6 +36,10 @@ public record MobUse(String intent, String aim, List<Consideration> consideratio
         1.0F);
   }
 
+  public Aim aimed() {
+    return Aim.byKey(aim).orElse(Aim.TARGET);
+  }
+
   public double score(final Situation situation) {
     if (!intent.equals(situation.intent().key()) || Aim.byKey(aim).isEmpty()) {
       return 0.0;

@@ -39,7 +39,42 @@
       "max_range": 20.0,
       "tell_ticks": 12,
       "tell_sound": "minecraft:entity.warden.sonic_charge",
-      "tell_clip": "blood_rush_tell"
+      "tell_clip": "blood_rush_tell",
+      "uses": [
+        {
+          "intent": "fight",
+          "aim": "self",
+          "considerations": [
+            {
+              "fact": "target_distance",
+              "low": 4,
+              "high": 20
+            }
+          ]
+        },
+        {
+          "intent": "close_in",
+          "aim": "self",
+          "considerations": [
+            {
+              "fact": "target_distance",
+              "low": 4,
+              "high": 20
+            }
+          ]
+        },
+        {
+          "intent": "retreat",
+          "aim": "self",
+          "considerations": [
+            {
+              "fact": "target_distance",
+              "high": 12
+            }
+          ],
+          "weight": 1.2
+        }
+      ]
     }
   }
 }
