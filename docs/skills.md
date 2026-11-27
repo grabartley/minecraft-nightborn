@@ -196,6 +196,59 @@ Nothing hides from a Seeker.
 | Revelation | Power | 4 | True Sight and Mark Quarry | Master | 300 | Capstone. For 20 seconds every vampire within 48 blocks is marked for the hunter and for every human within 16 blocks of them, and Shadow Veil, Mist Form and Glamour fail for those vampires. A vampire player who is marked is told. The 16 blocks are from the hunter. A veil, mist or glamour already up ends, and a marked vampire that tries one is told it is laid bare. A vampire player loses them only when PvP is on |
 | Hunter's Patience | Passive | 3 | Revelation | Master |  | Seeker cooldowns are 20% shorter, and the hunter's allies also deal 10% more damage to a vampire the hunter has marked, by Mark Quarry or Revelation. Allies are other sworn hunters and guild hunters, and teammates |
 
+## How Mobs Use A Power
+
+Vampire and hunter mobs use powers through one shared brain (ADR 0018). A power that mobs should use has a `mob` block with its tell and, optionally, a list of `uses`. A power with no uses is used in a fight, or while closing in, whenever its target is inside `min_range` to `max_range`. A power that mobs should never use has no `mob` block and sets `"mobs_never_use": true` in its `power` block. The server reports at start any power that has neither.
+
+Each use says:
+
+- `intent`: the moment it serves. One of `fight`, `retreat`, `close_in`, `hunt`, `travel`, `guard`, `rest`.
+- `aim`: what it is cast at. One of `self`, `target`, `ally`, `allies`, `foes`, `spot`. Today a mob casts at its target or itself whatever the aim says, and the other aims take effect once mobs can aim at an ally or a spot.
+- `weight`: how much the mob wants it, from 0 to 100. The default is 1.
+- `considerations`: facts the use cares about. Each has a `fact`, a `curve` (`between`, `rising` or `falling`, default `between`), and a `low` and `high`. `between` gives 1 inside the range and 0 outside. `rising` climbs from 0 at `low` to 1 at `high`, and `falling` the other way.
+
+The facts are `target_distance` (blocks), `target_in_sight` (1 or 0), `target_health` (0 to 1), `own_health` (0 to 1), `own_blood` (points), `in_form` (1 in bat or winged form), `sun_on_me` (1 or 0) and `downed` (1 or 0). A target fact is missing when the mob has no target, and a missing fact scores 0.
+
+A use scores its weight times each consideration's value, and any 0 rules it out. The mob casts the best scoring power it can afford that beats its intent's threshold. Each intent's blood reserve, cooldown price and threshold live in `data/nightborn/nightborn/mob_intent/`. `/nightborn brain <targets>` shows what a mob last weighed up, which is how uses are tuned. A use with an unknown intent, aim or fact is reported at start with the skill's name.
+
+A power used at the target between 4 and 20 blocks, wanted more the closer the target is:
+
+```json
+"mob": {
+"min_range": 4.0,
+"max_range": 20.0,
+"tell_ticks": 12,
+"tell_sound": "minecraft:entity.warden.sonic_charge",
+"tell_clip": "blood_rush_tell",
+"uses": [
+	{
+	"intent": "fight",
+	"aim": "target",
+	"considerations": [
+		{ "fact": "target_distance", "low": 4.0, "high": 20.0 },
+		{ "fact": "target_distance", "curve": "falling", "low": 4.0, "high": 20.0 }
+	]
+	}
+]
+}
+```
+
+A healing power a mob uses on itself once it is badly hurt, twice as keen as on an ordinary power, with at least 4 blood to spare:
+
+```json
+"uses": [
+{
+	"intent": "fight",
+	"aim": "self",
+	"weight": 2.0,
+	"considerations": [
+	{ "fact": "own_health", "curve": "falling", "low": 0.2, "high": 0.6 },
+	{ "fact": "own_blood", "low": 4.0, "high": 20.0 }
+	]
+}
+]
+```
+
 ## Skills The Mod Already Has
 
 Nothing built is lost. Every skill a player can learn today keeps its name and effect as rank 1 or as the power above, except these, which become ranks of another skill with the same effect. Their costs change to the ones in the tables above:

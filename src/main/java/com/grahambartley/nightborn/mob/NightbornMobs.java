@@ -2,6 +2,7 @@ package com.grahambartley.nightborn.mob;
 
 import com.grahambartley.nightborn.Nightborn;
 import com.grahambartley.nightborn.eldest.PetBatEntity;
+import com.grahambartley.nightborn.mob.brain.MobBrains;
 import com.grahambartley.nightborn.mob.household.Temperaments;
 import com.grahambartley.nightborn.mob.look.VampireLooks;
 import com.grahambartley.nightborn.mob.stage.VampireStages;
@@ -88,6 +89,7 @@ public final class NightbornMobs {
     VampireLooks.register();
     VampireStages.register();
     Temperaments.register();
+    MobBrains.register();
     FabricDefaultAttributeRegistry.register(VAMPIRE, VampireMobAttributes.create());
     FabricDefaultAttributeRegistry.register(VAMPIRE_LORD, VampireMobAttributes.create());
     FabricDefaultAttributeRegistry.register(ELDEST, VampireMobAttributes.create());

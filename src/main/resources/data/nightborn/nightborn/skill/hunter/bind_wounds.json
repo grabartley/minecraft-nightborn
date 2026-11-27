@@ -22,6 +22,7 @@
     "sound": {
       "id": "minecraft:item.armor.equip_leather",
       "volume": 0.7
-    }
+    },
+    "mobs_never_use": true
   }
 }

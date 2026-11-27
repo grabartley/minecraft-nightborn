@@ -21,4 +21,18 @@ class PowerCastingTest {
       final boolean target, final long now, final long next, final boolean thinks) {
     assertEquals(thinks, PowerCasting.thinks(target, now, next));
   }
+
+  @ParameterizedTest(name = "now {0}, mob {1}, every {2} ticks -> first think {3}")
+  @CsvSource({
+    "100, 0, 40, 100",
+    "100, 7, 40, 107",
+    "100, 47, 40, 107",
+    "100, 39, 40, 139",
+    "100, -3, 40, 137",
+    "0, 12, 1, 0"
+  })
+  @DisplayName("mobs spread their first think across the pause, so a group does not think at once")
+  void spreadsTheFirstThink(final long now, final int mob, final int ticks, final long first) {
+    assertEquals(first, PowerCasting.firstThink(now, mob, ticks));
+  }
 }

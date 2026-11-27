@@ -28,6 +28,7 @@ public final class NightbornCommand {
             .then(ConfigCommand.node())
             .then(PlayerCommand.node())
             .then(FamiliarCommand.node())
+            .then(BrainCommand.node())
             .then(ThrallCommand.node())
             .then(HouseAdminCommand.node()));
   }
@@ -46,6 +47,7 @@ public final class NightbornCommand {
         Text.translatable("nightborn.command.help.rank"),
         Text.translatable("nightborn.command.help.skills"),
         Text.translatable("nightborn.command.help.familiar"),
+        Text.translatable("nightborn.command.help.brain"),
         Text.translatable("nightborn.command.help.thrall"),
         Text.translatable("nightborn.command.help.thrall_free"),
         Text.translatable("nightborn.command.help.house_disband"));

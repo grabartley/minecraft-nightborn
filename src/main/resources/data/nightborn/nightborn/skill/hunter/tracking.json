@@ -19,6 +19,7 @@
     "sound": {
       "id": "minecraft:item.lodestone_compass.lock",
       "volume": 0.6
-    }
+    },
+    "mobs_never_use": true
   }
 }

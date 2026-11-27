@@ -27,6 +27,7 @@
       "id": "minecraft:item.bucket.empty",
       "volume": 0.6,
       "pitch": 1.0
-    }
+    },
+    "mobs_never_use": true
   }
 }

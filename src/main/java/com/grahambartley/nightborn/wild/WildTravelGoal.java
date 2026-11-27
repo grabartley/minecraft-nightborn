@@ -3,6 +3,8 @@ package com.grahambartley.nightborn.wild;
 import com.grahambartley.nightborn.core.NightTime;
 import com.grahambartley.nightborn.mob.ShadeRules;
 import com.grahambartley.nightborn.mob.VampireEntity;
+import com.grahambartley.nightborn.mob.brain.Intent;
+import com.grahambartley.nightborn.mob.brain.IntentGoal;
 import java.util.EnumSet;
 import net.minecraft.entity.ai.FuzzyTargeting;
 import net.minecraft.entity.ai.goal.Goal;
@@ -11,7 +13,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 
-public final class WildTravelGoal extends Goal {
+public final class WildTravelGoal extends Goal implements IntentGoal {
 
   static final int HEIGHT = 7;
   static final int DAY_TRIES = 4;
@@ -104,5 +106,10 @@ public final class WildTravelGoal extends Goal {
       }
     }
     return true;
+  }
+
+  @Override
+  public Intent intent() {
+    return Intent.TRAVEL;
   }
 }

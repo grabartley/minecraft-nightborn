@@ -4,6 +4,8 @@ import com.grahambartley.nightborn.Nightborn;
 import com.grahambartley.nightborn.blood.BloodAttachment;
 import com.grahambartley.nightborn.mob.NightbornMobs;
 import com.grahambartley.nightborn.mob.VampireEntity;
+import com.grahambartley.nightborn.mob.brain.Intent;
+import com.grahambartley.nightborn.mob.brain.Think;
 import com.grahambartley.nightborn.mob.stage.VampireStages;
 import com.grahambartley.nightborn.mob.stage.VampireStaging;
 import com.grahambartley.nightborn.skill.PowerCooldownAttachment;
@@ -17,8 +19,10 @@ import com.grahambartley.nightborn.weakened.Weakened;
 import java.util.List;
 import java.util.Map;
 import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
+import net.minecraft.entity.EntityType;
 import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.effect.StatusEffects;
+import net.minecraft.entity.passive.VillagerEntity;
 import net.minecraft.registry.DynamicRegistryManager;
 import net.minecraft.test.GameTest;
 import net.minecraft.test.TestContext;
@@ -97,6 +101,23 @@ public class VampireStageGameTest implements FabricGameTest {
         "the power cools down");
     context.assertEquals(
         Powers.cast(vampire, BLOOD_RUSH), PowerUse.Verdict.COOLING, "it cannot cast again yet");
+    context.complete();
+  }
+
+  @GameTest(templateName = ARENA, tickLimit = 20)
+  public void aVampireMobWeighsUpBloodRushAndWindsUpToCastIt(final TestContext context) {
+    final VampireEntity vampire = withBloodRush(context, new BlockPos(1, 2, 1));
+    final VillagerEntity villager = context.spawnEntity(EntityType.VILLAGER, new BlockPos(1, 2, 7));
+    villager.setAiDisabled(true);
+    vampire.setTarget(villager);
+    vampire.mobFighting().tick(vampire, true, 1, 0);
+    final Think think = vampire.mobFighting().lastThink().orElseThrow();
+    context.assertEquals(think.intent(), Intent.FIGHT, "a vampire with a target is fighting");
+    context.assertEquals(
+        think.chosen().map(scored -> scored.option().power()).orElse(null),
+        BLOOD_RUSH,
+        "it chooses blood rush with its target in range");
+    context.assertTrue(vampire.mobFighting().telling(), "it winds up before the cast");
     context.complete();
   }
 

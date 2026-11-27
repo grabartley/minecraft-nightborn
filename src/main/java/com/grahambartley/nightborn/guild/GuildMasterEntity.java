@@ -9,6 +9,9 @@ import com.grahambartley.nightborn.guild.party.HunterParty;
 import com.grahambartley.nightborn.guild.party.PartyLeader;
 import com.grahambartley.nightborn.mob.MobSounds;
 import com.grahambartley.nightborn.mob.ShownAction;
+import com.grahambartley.nightborn.mob.combat.MobFighter;
+import com.grahambartley.nightborn.mob.combat.MobFighting;
+import com.grahambartley.nightborn.mob.combat.PowerCasting;
 import com.grahambartley.nightborn.name.MobNaming;
 import com.grahambartley.nightborn.name.NameBearer;
 import com.grahambartley.nightborn.rank.GuildRanks;
@@ -71,6 +74,7 @@ import software.bernie.geckolib.util.GeckoLibUtil;
 
 public class GuildMasterEntity extends MerchantEntity
     implements GeoEntity,
+        MobFighter,
         HunterLooking,
         NameBearer,
         SkillHolder,
@@ -109,7 +113,8 @@ public class GuildMasterEntity extends MerchantEntity
 
   private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
   private final WornLook worn = new WornLook();
-  private final GuildFighting<GuildMasterEntity> fighting = new GuildFighting<>(this);
+  private final HunterTactics<GuildMasterEntity> tactics = new HunterTactics<>(this);
+  private final MobFighting fighting = new MobFighting(PowerCasting.underTell(), this::tickTactics);
   private final ShownHunterAction shown = new ShownHunterAction();
   private final ShownAction shownPower = new ShownAction();
   private String kitId = "";
@@ -232,7 +237,7 @@ public class GuildMasterEntity extends MerchantEntity
 
   @Override
   public void shootAt(final LivingEntity target, final float pullProgress) {
-    fighting.shoot();
+    tactics.shoot();
   }
 
   public boolean standsOff() {
@@ -241,12 +246,12 @@ public class GuildMasterEntity extends MerchantEntity
 
   @Override
   public boolean tryAttack(final Entity target) {
-    return fighting.strike(super.tryAttack(target));
+    return HunterCries.strike(this, super.tryAttack(target));
   }
 
   @Override
   public boolean onKilledOther(final ServerWorld world, final LivingEntity other) {
-    fighting.killed(other);
+    HunterCries.killed(this, other);
     return super.onKilledOther(world, other);
   }
 
@@ -258,8 +263,20 @@ public class GuildMasterEntity extends MerchantEntity
 
   public void fight() {
     if (!swearing()) {
-      fighting.tick(kit, HunterSkills.thinkTicks(this, shownRank()));
+      fighting.tick(
+          this, true, HunterSkills.thinkTicks(this, shownRank()), MobFighting.NO_BLOOD_FLOOR);
     }
+  }
+
+  private void tickTactics() {
+    if (kit != null) {
+      tactics.tick(kit);
+    }
+  }
+
+  @Override
+  public MobFighting mobFighting() {
+    return fighting;
   }
 
   private void arm(final String wanted) {
@@ -395,7 +412,7 @@ public class GuildMasterEntity extends MerchantEntity
     swearTicks = ticks;
     sworn = player;
     setTarget(null);
-    fighting.sheathe();
+    tactics.sheathe();
     equipStack(EquipmentSlot.OFFHAND, new ItemStack(GearItems.GOLD_CRUCIFIX));
     playSound(SoundEvents.ITEM_ARMOR_EQUIP_GOLD.value(), getSoundVolume(), 1.0F);
     keepSwearing();

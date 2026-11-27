@@ -2,6 +2,8 @@ package com.grahambartley.nightborn.mob.goal;
 
 import com.grahambartley.nightborn.batform.BatForm;
 import com.grahambartley.nightborn.mob.BatSteering;
+import com.grahambartley.nightborn.mob.brain.Intent;
+import com.grahambartley.nightborn.mob.brain.IntentGoal;
 import com.grahambartley.nightborn.skill.BatFormPower;
 import com.grahambartley.nightborn.skill.Powers;
 import java.util.EnumSet;
@@ -10,7 +12,7 @@ import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.util.math.Vec3d;
 
-public class BatFlightGoal extends Goal {
+public class BatFlightGoal extends Goal implements IntentGoal {
 
   static final Vec3d SINK = new Vec3d(0.0, -0.08, 0.0);
   static final double HOVER_DRAG = 0.5;
@@ -62,5 +64,10 @@ public class BatFlightGoal extends Goal {
     mob.setYaw(yaw);
     mob.setBodyYaw(yaw);
     mob.setHeadYaw(yaw);
+  }
+
+  @Override
+  public Intent intent() {
+    return Intent.CLOSE_IN;
   }
 }
