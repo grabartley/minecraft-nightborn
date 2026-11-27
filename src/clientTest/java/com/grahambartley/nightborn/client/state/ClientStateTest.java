@@ -27,7 +27,29 @@ class ClientStateTest {
   @Test
   @DisplayName("a missing gore level is refused")
   void nullRefused() {
-    assertThrows(NullPointerException.class, () -> new ClientState(null, false));
+    assertThrows(
+        NullPointerException.class, () -> new ClientState(null, FormViewLevel.FULL, false));
+  }
+
+  @Test
+  @DisplayName("a missing form view level is refused")
+  void nullFormViewsRefused() {
+    assertThrows(NullPointerException.class, () -> new ClientState(GoreLevel.FULL, null, false));
+  }
+
+  @Test
+  @DisplayName("form views are shown in full by default")
+  void formViewsDefaultFull() {
+    assertEquals(FormViewLevel.FULL, ClientState.DEFAULTS.formViews());
+  }
+
+  @ParameterizedTest(name = "{0}")
+  @EnumSource(FormViewLevel.class)
+  @DisplayName("changing the form view level keeps it and leaves gore alone")
+  void withFormViews(final FormViewLevel level) {
+    final ClientState state = ClientState.DEFAULTS.withGore(GoreLevel.REDUCED).withFormViews(level);
+    assertEquals(level, state.formViews());
+    assertEquals(GoreLevel.REDUCED, state.gore());
   }
 
   @ParameterizedTest(name = "skip {0}")

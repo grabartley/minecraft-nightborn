@@ -2,6 +2,7 @@ package com.grahambartley.nightborn.occult;
 
 import com.grahambartley.nightborn.Nightborn;
 import com.grahambartley.nightborn.batform.BatFormLimits;
+import com.grahambartley.nightborn.formview.Forms;
 import com.grahambartley.nightborn.skill.Powers;
 import com.grahambartley.nightborn.smoke.SmokePoof;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentRegistry;
@@ -41,9 +42,11 @@ public final class MistForm {
 
   static final int LINGER_TICKS = 5;
 
+  public static final Identifier ID = Identifier.of(Nightborn.MOD_ID, "mist_form");
+
   public static final AttachmentType<MistState> TYPE =
       AttachmentRegistry.create(
-          Identifier.of(Nightborn.MOD_ID, "mist_form"),
+          ID,
           builder ->
               builder
                   .persistent(MistState.CODEC)
@@ -52,6 +55,7 @@ public final class MistForm {
   private MistForm() {}
 
   public static void register() {
+    Forms.register(ID, MistForm::on);
     ServerLivingEntityEvents.ALLOW_DAMAGE.register(
         (entity, source, amount) ->
             !passesThrough(entity, source) && !strikesFromMist(source.getAttacker(), source));

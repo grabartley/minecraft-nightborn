@@ -1,0 +1,16 @@
+{
+  "form": "nightborn:winged_form",
+  "priority": 1,
+  "fade_in_ticks": 10,
+  "fade_out_ticks": 10,
+  "tint": {
+    "color": "#9E1418",
+    "centre": 0.3,
+    "edge": 0.85
+  },
+  "tremble": {
+    "amount": 0.006,
+    "inner": 0.45,
+    "speed": 9.0
+  }
+}

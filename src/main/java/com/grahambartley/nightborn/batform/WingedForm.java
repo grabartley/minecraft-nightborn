@@ -1,6 +1,7 @@
 package com.grahambartley.nightborn.batform;
 
 import com.grahambartley.nightborn.Nightborn;
+import com.grahambartley.nightborn.formview.Forms;
 import com.grahambartley.nightborn.hold.HoldKind;
 import com.grahambartley.nightborn.hold.Holds;
 import com.grahambartley.nightborn.skill.Boost;
@@ -19,9 +20,11 @@ import net.minecraft.util.math.Box;
 
 public final class WingedForm {
 
+  public static final Identifier ID = Identifier.of(Nightborn.MOD_ID, "winged_form");
+
   public static final AttachmentType<WingedState> TYPE =
       AttachmentRegistry.create(
-          Identifier.of(Nightborn.MOD_ID, "winged_form"),
+          ID,
           builder ->
               builder
                   .persistent(WingedState.CODEC)
@@ -33,7 +36,9 @@ public final class WingedForm {
 
   private WingedForm() {}
 
-  public static void register() {}
+  public static void register() {
+    Forms.register(ID, WingedForm::on);
+  }
 
   public static boolean on(final Entity entity) {
     return state(entity).isPresent();

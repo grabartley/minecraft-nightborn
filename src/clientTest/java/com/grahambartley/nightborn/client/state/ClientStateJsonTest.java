@@ -40,6 +40,26 @@ class ClientStateJsonTest {
     assertEquals(1, read.problems().size());
   }
 
+  @ParameterizedTest(name = "{0}")
+  @EnumSource(FormViewLevel.class)
+  @DisplayName("a written form view level reads back unchanged")
+  void formViewsRoundTrip(final FormViewLevel level) {
+    final ClientState state = ClientState.DEFAULTS.withFormViews(level);
+    final ConfigFormat.Read<ClientState> read = ClientStateJson.read(ClientStateJson.write(state));
+    assertEquals(state, read.value());
+    assertTrue(read.problems().isEmpty());
+  }
+
+  @ParameterizedTest(name = "{0}")
+  @ValueSource(strings = {"\"dim\"", "\"OFF\"", "0", "false", "null", "[\"full\"]", "{}"})
+  @DisplayName("a form view value that is not a known level falls back to full and is reported")
+  void badFormViewsFallsBack(final String value) {
+    final ConfigFormat.Read<ClientState> read = read("{\"formViews\":" + value + "}");
+    assertEquals(FormViewLevel.FULL, read.value().formViews());
+    assertEquals(1, read.problems().size());
+    assertTrue(read.problems().get(0).startsWith("formViews is not one of full, reduced, off"));
+  }
+
   @ParameterizedTest(name = "skip {0}")
   @ValueSource(booleans = {true, false})
   @DisplayName("a written ceremony camera choice reads back unchanged")

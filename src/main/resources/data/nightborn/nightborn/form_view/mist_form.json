@@ -1,0 +1,13 @@
+{
+  "form": "nightborn:mist_form",
+  "priority": 1,
+  "fade_in_ticks": 3,
+  "fade_out_ticks": 4,
+  "wash": {
+    "color": "#C9CED3",
+    "amount": 0.3,
+    "saturation": 0.5,
+    "blur": 1.5,
+    "drift": 0.004
+  }
+}

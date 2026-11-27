@@ -1,0 +1,20 @@
+{
+  "form": "nightborn:bat_form",
+  "fade_in_ticks": 10,
+  "fade_out_ticks": 10,
+  "darkness": 1.0,
+  "echo": {
+    "near_range": 6.0,
+    "near_brightness": 1.0,
+    "ripple_speed": 24.0,
+    "ripple_seconds": 2.5,
+    "range_per_volume": 16.0,
+    "max_range": 40.0,
+    "ripple_width": 2.0,
+    "outline": 2.0,
+    "fill": 0.22,
+    "creature_boost": 0.8,
+    "self_pulse_ticks": 30,
+    "self_pulse_volume": 0.6
+  }
+}

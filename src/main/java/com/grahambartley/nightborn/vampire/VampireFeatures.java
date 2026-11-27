@@ -18,6 +18,7 @@ import com.grahambartley.nightborn.downed.HardcoreVampireDeath;
 import com.grahambartley.nightborn.faction.FactionPlayerList;
 import com.grahambartley.nightborn.feeding.FeedingSessions;
 import com.grahambartley.nightborn.feeding.TurningBiteToggle;
+import com.grahambartley.nightborn.formview.FormViews;
 import com.grahambartley.nightborn.gore.GoreEvents;
 import com.grahambartley.nightborn.gore.GoreParticles;
 import com.grahambartley.nightborn.levitation.Levitation;
@@ -43,6 +44,7 @@ public final class VampireFeatures {
     AgeDeeds.register();
     StarvingAttachment.register();
     Levitation.register();
+    FormViews.register();
     BatForm.register();
     TurningBiteToggle.register();
     VomitEffects.register();
