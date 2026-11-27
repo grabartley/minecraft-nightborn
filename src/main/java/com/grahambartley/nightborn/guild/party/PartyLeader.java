@@ -118,8 +118,8 @@ public final class PartyLeader {
       final Optional<BlockPos> lastCamp) {
     return CampSite.choose(
         () -> PartyCamp.site(world, near, layout.bounds(), lastCamp),
-        () -> PartyCamp.site(world, near, layout.bounds(), Optional.empty()),
-        () -> lastCamp.flatMap(fire -> PartyCamp.around(world, fire, layout)));
+        () -> lastCamp.flatMap(fire -> PartyCamp.around(world, near, fire, layout)),
+        () -> PartyCamp.site(world, near, layout.bounds(), Optional.empty()));
   }
 
   private static void settle(

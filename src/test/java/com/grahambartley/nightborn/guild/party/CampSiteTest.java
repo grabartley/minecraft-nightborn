@@ -118,22 +118,35 @@ class CampSiteTest {
     }
   }
 
-  @ParameterizedTest(name = "far spot {0}, any spot {1}, old fire reusable {2}: pitches at {3}")
+  @ParameterizedTest(name = "far spot {0}, old fire close and reusable {1}, any spot {2}: {3}")
   @CsvSource({
     "true, true, true, FAR",
-    "true, true, false, FAR",
+    "true, false, false, FAR",
     "false, true, true, OLD_FIRE",
-    "false, true, false, NEAR",
-    "false, false, true, NONE",
+    "false, true, false, OLD_FIRE",
+    "false, false, true, NEAR",
     "false, false, false, NONE"
   })
-  void fallsBackToTheOldFireOnlyWhenAllGroundInReachIsNearTheLastCamp(
-      final boolean far, final boolean any, final boolean oldFire, final String expected) {
+  void fallsBackToTheOldFireOnlyWhenNoSpotIsFarEnoughAway(
+      final boolean far, final boolean oldFire, final boolean any, final String expected) {
     final Optional<String> chosen =
         CampSite.choose(
             () -> far ? Optional.of("FAR") : Optional.empty(),
-            () -> any ? Optional.of("NEAR") : Optional.empty(),
-            () -> oldFire ? Optional.of("OLD_FIRE") : Optional.empty());
+            () -> oldFire ? Optional.of("OLD_FIRE") : Optional.empty(),
+            () -> any ? Optional.of("NEAR") : Optional.empty());
     assertEquals(expected, chosen.orElse("NONE"));
+  }
+
+  @ParameterizedTest(name = "{0},{1} from the party is within {2}: {3}")
+  @CsvSource({
+    "0, 0, 28, true",
+    "28, 0, 28, true",
+    "19, 20, 28, true",
+    "20, 21, 28, false",
+    "0, -29, 28, false"
+  })
+  void reachesOnlyAnOldFireCloseBy(final int dx, final int dz, final int reach, final boolean in) {
+    final BlockPos from = new BlockPos(100, 64, -40);
+    assertEquals(in, CampSite.inReach(from, from.add(dx, 30, dz), reach));
   }
 }

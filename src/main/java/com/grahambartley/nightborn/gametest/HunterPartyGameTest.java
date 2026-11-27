@@ -186,7 +186,8 @@ public class HunterPartyGameTest implements FabricGameTest {
         HunterTentBlock.STRIKE_TICKS + 2,
         () -> {
           final BlockPos centre =
-              PartyCamp.around(context.getWorld(), struck.fire(), LAYOUT).orElseThrow();
+              PartyCamp.around(context.getWorld(), struck.fire(), struck.fire(), LAYOUT)
+                  .orElseThrow();
           final HunterParty.Camp camp = PartyCamp.pitch(context.getWorld(), centre, LAYOUT);
           context.assertEquals(camp.fire(), struck.fire(), "the same fire");
           context.checkBlockState(

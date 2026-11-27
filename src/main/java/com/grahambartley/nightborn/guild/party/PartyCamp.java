@@ -52,9 +52,10 @@ public final class PartyCamp {
   }
 
   public static Optional<BlockPos> around(
-      final ServerWorld world, final BlockPos fire, final CampLayout layout) {
+      final ServerWorld world, final BlockPos near, final BlockPos fire, final CampLayout layout) {
     final BlockPos centre = fire.subtract(layout.campfire());
-    if (!loaded(world, centre.getX(), centre.getZ(), layout.bounds())) {
+    if (!CampSite.inReach(near, centre, SEARCH + APART)
+        || !loaded(world, centre.getX(), centre.getZ(), layout.bounds())) {
       return Optional.empty();
     }
     return reusable(world.getBlockState(fire))

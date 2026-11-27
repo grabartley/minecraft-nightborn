@@ -52,14 +52,15 @@ public final class CampSite {
 
   public static <T> Optional<T> choose(
       final Supplier<Optional<T>> farFromLastCamp,
-      final Supplier<Optional<T>> anywhere,
-      final Supplier<Optional<T>> aroundOldFire) {
-    final Optional<T> far = farFromLastCamp.get();
-    if (far.isPresent()) {
-      return far;
-    }
-    final Optional<T> near = anywhere.get();
-    return near.isEmpty() ? near : aroundOldFire.get().or(() -> near);
+      final Supplier<Optional<T>> aroundOldFire,
+      final Supplier<Optional<T>> anywhere) {
+    return farFromLastCamp.get().or(aroundOldFire).or(anywhere);
+  }
+
+  public static boolean inReach(final BlockPos from, final BlockPos to, final int reach) {
+    final int dx = to.getX() - from.getX();
+    final int dz = to.getZ() - from.getZ();
+    return dx * dx + dz * dz <= reach * reach;
   }
 
   public static List<BlockPos> nearestFirst(final int search, final int stride) {
