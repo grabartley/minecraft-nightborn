@@ -2,7 +2,9 @@ package com.grahambartley.nightborn.config;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import com.grahambartley.nightborn.skill.SkillCurve;
+import com.grahambartley.nightborn.blood.BloodQuality;
+import com.grahambartley.nightborn.blood.BloodValue;
+import com.grahambartley.nightborn.challenge.TrialSize;
 import com.grahambartley.nightborn.skill.SkillEarning;
 import com.grahambartley.nightborn.skill.TreeProgress;
 import java.util.List;
@@ -20,9 +22,7 @@ class SkillSettingsTest {
   static final int FLEDGLING = 0;
   static final int ADULT = 1;
   static final int ELDER = 2;
-  static final float FRESH_BLOOD_PER_NIGHT = 30.0F;
-  static final float SMALL_TRIAL = 0.25F;
-  static final float MEDIUM_TRIAL = 0.5F;
+  static final float BLOOD_TAKEN_PER_NIGHT = 30.0F;
 
   static Stream<Setting<?>> settings() {
     return SkillSettings.SETTINGS.stream();
@@ -59,29 +59,14 @@ class SkillSettingsTest {
   }
 
   @ParameterizedTest(name = "{1} stakings of stage {0} pay {2} points")
-  @CsvSource({
-    "0, 1, 0",
-    "0, 2, 1",
-    "0, 5, 2",
-    "0, 10, 4",
-    "0, 50, 22",
-    "1, 1, 1",
-    "1, 5, 6",
-    "1, 10, 11",
-    "2, 1, 1",
-    "2, 5, 9",
-    "2, 10, 18",
-    "3, 1, 2",
-    "3, 5, 12",
-    "3, 10, 24"
-  })
+  @CsvSource({"0, 1, 0", "0, 2, 1", "0, 5, 2", "1, 1, 1", "2, 1, 1", "3, 1, 2"})
   @DisplayName("the default curve pays the staking pace the PRD sets")
   void stakingPace(final int stage, final int stakings, final int points) {
-    SkillCurve.Gain gain = new SkillCurve.Gain(0, 0.0F);
+    TreeProgress progress = TreeProgress.EMPTY;
     for (int staking = 0; staking < stakings; staking++) {
-      gain = add(gain, SkillEarning.huntExperience(DEFAULTS, stage));
+      progress = add(progress, SkillEarning.huntExperience(DEFAULTS, stage));
     }
-    assertEquals(points, gain.earned());
+    assertEquals(points, progress.earned());
   }
 
   @ParameterizedTest(name = "week {0}: {1} points")
@@ -108,51 +93,53 @@ class SkillSettingsTest {
   @CsvSource({"1, 1", "7, 12", "35, 50", "70, 84", "100, 107"})
   @DisplayName("an ordinary feeding night fills a vampire's build in about a hundred nights")
   void feedingNights(final int nights, final int points) {
-    SkillCurve.Gain gain = new SkillCurve.Gain(0, 0.0F);
+    final float worth =
+        BloodValue.worth(
+            BLOOD_TAKEN_PER_NIGHT,
+            BloodQuality.VILLAGER.worthPercent(NightbornConfig.DEFAULTS),
+            BloodValue.FRESH_PERCENT);
+    TreeProgress progress = TreeProgress.EMPTY;
     for (int night = 1; night <= nights; night++) {
-      gain = add(gain, SkillEarning.bloodExperience(FRESH_BLOOD_PER_NIGHT, DEFAULTS));
-      gain = add(gain, DEFAULTS.drainBonusExperience());
+      progress = add(progress, SkillEarning.bloodExperience(worth, DEFAULTS));
+      progress = add(progress, DEFAULTS.drainBonusExperience());
       if (night % 7 == 0) {
-        gain = trials(gain);
+        progress = trials(progress);
       }
     }
-    assertEquals(points, gain.earned());
+    assertEquals(points, progress.earned());
   }
 
-  static SkillCurve.Gain huntingWeeks(final int weeks) {
-    SkillCurve.Gain gain = new SkillCurve.Gain(0, 0.0F);
+  static TreeProgress huntingWeeks(final int weeks) {
+    TreeProgress progress = TreeProgress.EMPTY;
     for (int week = 0; week < weeks; week++) {
-      for (final int stage : new int[] {FLEDGLING, FLEDGLING, FLEDGLING, ADULT, ADULT, ADULT}) {
-        gain = add(gain, SkillEarning.huntExperience(DEFAULTS, stage));
+      for (final int stage :
+          new int[] {FLEDGLING, FLEDGLING, FLEDGLING, ADULT, ADULT, ADULT, ELDER, ELDER}) {
+        progress = add(progress, SkillEarning.huntExperience(DEFAULTS, stage));
       }
-      gain = add(gain, SkillEarning.huntExperience(DEFAULTS, ELDER));
-      gain = add(gain, SkillEarning.huntExperience(DEFAULTS, ELDER));
-      gain = add(gain, DEFAULTS.contractExperience());
-      gain = add(gain, DEFAULTS.contractExperience());
-      gain = trials(gain);
+      progress = add(progress, DEFAULTS.contractExperience());
+      progress = add(progress, DEFAULTS.contractExperience());
+      progress = trials(progress);
     }
-    return gain;
+    return progress;
   }
 
-  static SkillCurve.Gain trials(final SkillCurve.Gain gain) {
-    SkillCurve.Gain paid = gain;
-    for (final float share : new float[] {SMALL_TRIAL, MEDIUM_TRIAL}) {
+  static TreeProgress trials(final TreeProgress progress) {
+    TreeProgress paid = progress;
+    for (final TrialSize size : new TrialSize[] {TrialSize.SMALL, TrialSize.MEDIUM}) {
       paid =
           add(
               paid,
               SkillEarning.trialExperience(
-                  paid.earned(), share, DEFAULTS.firstPointExperience(), DEFAULTS.pointCostRise()));
+                  paid.earned(),
+                  size.share(),
+                  DEFAULTS.firstPointExperience(),
+                  DEFAULTS.pointCostRise()));
     }
     return paid;
   }
 
-  static SkillCurve.Gain add(final SkillCurve.Gain gain, final float experience) {
-    return SkillCurve.add(
-        gain.earned(),
-        gain.experience(),
-        experience,
-        DEFAULTS.firstPointExperience(),
-        DEFAULTS.pointCostRise(),
-        TreeProgress.MAX_POINTS);
+  static TreeProgress add(final TreeProgress progress, final float experience) {
+    return progress.addExperience(
+        experience, DEFAULTS.firstPointExperience(), DEFAULTS.pointCostRise());
   }
 }

@@ -100,13 +100,6 @@ final class TestPlayers {
         .forEach(server.getPlayerManager()::remove);
   }
 
-  static int pointsFor(final int experience) {
-    final SkillSettings settings = ServerConfigService.current().skills();
-    return TreeProgress.EMPTY
-        .addExperience(experience, settings.firstPointExperience(), settings.pointCostRise())
-        .earned();
-  }
-
   static void assertPaid(
       final TestContext context,
       final ServerPlayerEntity player,

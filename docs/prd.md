@@ -404,6 +404,7 @@ An ordinary hunting week is three fledglings, three adults and two elders staked
 |---|---|---|
 | First point | Two fledglings, or one adult | The first night |
 | Five fledglings staked | Two points | Not applicable |
+| One staking | Half a point for a fledgling, one point for an adult or an elder, two for an ancient | Not applicable |
 | The core, about 45 to 50 points | About five weeks: around 40 stakings, 10 contracts and 10 trials | About five weeks |
 | The core and one path or bloodline, about 80 points | About ten weeks | About ten weeks |
 | The full build, about 110 points | About fifteen weeks | About a hundred nights, as long as reaching ancient |
