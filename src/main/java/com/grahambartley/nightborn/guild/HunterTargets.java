@@ -8,10 +8,6 @@ public final class HunterTargets {
     return (vampire || raider) && !exempt;
   }
 
-  public static boolean defends(final boolean attackedUs, final boolean guild) {
-    return attackedUs && !guild;
-  }
-
   public static boolean noticesNow(
       final double distanceSquared, final double near, final boolean chanceComesUp) {
     return chanceComesUp || distanceSquared <= near * near;

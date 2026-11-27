@@ -27,10 +27,14 @@ public final class WildTravelGoal extends Goal {
 
   @Override
   public boolean canStart() {
-    return travels()
-        && vampire.age >= restUntil
-        && vampire.getNavigation().isIdle()
-        && (night() ? headOut() : hop());
+    if (!travels() || vampire.age < restUntil || !vampire.getNavigation().isIdle()) {
+      return false;
+    }
+    if (night() ? headOut() : hop()) {
+      return true;
+    }
+    rest();
+    return false;
   }
 
   @Override
@@ -41,6 +45,10 @@ public final class WildTravelGoal extends Goal {
   @Override
   public void stop() {
     vampire.getNavigation().stop();
+    rest();
+  }
+
+  private void rest() {
     restUntil = vampire.age + WildPace.pause(night(), vampire.getRandom().nextInt());
   }
 
@@ -60,7 +68,7 @@ public final class WildTravelGoal extends Goal {
     if (Float.isNaN(heading)) {
       heading = vampire.getRandom().nextFloat() * MathHelper.TAU;
     }
-    final int leg = WildPace.leg(true);
+    final int leg = WildPace.NIGHT_LEG;
     final Vec3d ahead =
         vampire.getPos().add(MathHelper.cos(heading) * leg, 0.0, MathHelper.sin(heading) * leg);
     final Vec3d step = FuzzyTargeting.findTo(vampire, leg / 2, HEIGHT, ahead);
@@ -73,7 +81,7 @@ public final class WildTravelGoal extends Goal {
 
   private boolean hop() {
     for (int i = 0; i < DAY_TRIES; i++) {
-      final Vec3d spot = FuzzyTargeting.find(vampire, WildPace.leg(false), HEIGHT);
+      final Vec3d spot = FuzzyTargeting.find(vampire, WildPace.DAY_LEG, HEIGHT);
       final Path path =
           spot == null ? null : vampire.getNavigation().findPathTo(BlockPos.ofFloored(spot), 0);
       if (path != null
@@ -88,7 +96,7 @@ public final class WildTravelGoal extends Goal {
 
   private boolean shaded(final Path path) {
     for (int i = 0; i < path.getLength(); i++) {
-      if (!WildPace.mayStop(false, vampire.getWorld().isSkyVisible(path.getNodePos(i).up()))) {
+      if (vampire.getWorld().isSkyVisible(path.getNodePos(i).up())) {
         return false;
       }
     }

@@ -21,13 +21,6 @@ class WildPaceTest {
     assertEquals(travels, WildPace.travels(roamer, target, sleeping));
   }
 
-  @ParameterizedTest(name = "night {0}: legs of {1}")
-  @CsvSource({"true, 48", "false, 10"})
-  @DisplayName("it travels far by night and makes short hops by day")
-  void leg(final boolean night, final int leg) {
-    assertEquals(leg, WildPace.leg(night));
-  }
-
   @ParameterizedTest(name = "night {0}, roll {1}: pauses {2} ticks")
   @CsvSource({
     "true, 0, 40",
@@ -41,12 +34,5 @@ class WildPaceTest {
   @DisplayName("it pauses between legs, longer by day than by night")
   void pause(final boolean night, final int roll, final int ticks) {
     assertEquals(ticks, WildPace.pause(night, roll));
-  }
-
-  @ParameterizedTest(name = "night {0}, open sky {1}: may stop {2}")
-  @CsvSource({"true, true, true", "true, false, true", "false, false, true", "false, true, false"})
-  @DisplayName("by day it only walks and stops where the sky cannot see it")
-  void mayStop(final boolean night, final boolean sky, final boolean stops) {
-    assertEquals(stops, WildPace.mayStop(night, sky));
   }
 }

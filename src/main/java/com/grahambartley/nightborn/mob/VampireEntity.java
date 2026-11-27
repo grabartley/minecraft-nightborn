@@ -8,7 +8,10 @@ import com.grahambartley.nightborn.config.NightbornConfig;
 import com.grahambartley.nightborn.core.VampireCore;
 import com.grahambartley.nightborn.decor.SeatEntity;
 import com.grahambartley.nightborn.downed.Downed;
+import com.grahambartley.nightborn.downed.DownedRules;
+import com.grahambartley.nightborn.downed.DownedState;
 import com.grahambartley.nightborn.house.MemberLife;
+import com.grahambartley.nightborn.mob.combat.FightBack;
 import com.grahambartley.nightborn.mob.combat.Fighting;
 import com.grahambartley.nightborn.mob.goal.RetreatGoal;
 import com.grahambartley.nightborn.mob.home.HomeLife;
@@ -392,8 +395,16 @@ public class VampireEntity extends HostileEntity
   }
 
   protected boolean fights(final LivingEntity target) {
+    final DownedState downed = Downed.state(this);
     return VampireFeud.fights(
-        Nemeses.isQuarry(this, target), Vampires.isVampire(target), target == getAttacker());
+        Nemeses.isQuarry(this, target),
+        Vampires.isVampire(target),
+        FightBack.answers(
+            target == getAttacker(),
+            DownedRules.helpless(downed),
+            DownedRules.flees(downed) || ShadeRules.endangered(this),
+            false,
+            false));
   }
 
   @Override
