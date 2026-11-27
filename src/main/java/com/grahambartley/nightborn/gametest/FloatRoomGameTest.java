@@ -41,7 +41,7 @@ public class FloatRoomGameTest implements FabricGameTest {
   }
 
   private static void doorway(final TestContext context) {
-    for (int z = 1; z <= 8; z++) {
+    for (int z = 0; z <= 8; z++) {
       for (int y = 2; y <= LINTEL_Y; y++) {
         if (z != DOOR_Z || y == LINTEL_Y) {
           context.setBlockState(new BlockPos(WALL_X, y, z), Blocks.STONE_BRICKS);
