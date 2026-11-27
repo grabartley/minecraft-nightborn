@@ -21,11 +21,8 @@ public final class GuildFoes {
   public static <T extends MobEntity & GuildFighter> boolean fights(
       final T fighter, final LivingEntity target) {
     return fighter.foeOf(target)
-        || FightBack.answers(
+        || FightBack.guildAnswers(
             target == fighter.getAttacker() || target == fighter.getTarget(),
-            false,
-            false,
-            true,
             target instanceof GuildFighter);
   }
 }

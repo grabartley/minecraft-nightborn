@@ -1,6 +1,7 @@
 package com.grahambartley.nightborn.wild;
 
 import com.grahambartley.nightborn.core.NightTime;
+import com.grahambartley.nightborn.mob.ShadeRules;
 import com.grahambartley.nightborn.mob.VampireEntity;
 import java.util.EnumSet;
 import net.minecraft.entity.ai.FuzzyTargeting;
@@ -45,7 +46,9 @@ public final class WildTravelGoal extends Goal {
   @Override
   public void stop() {
     vampire.getNavigation().stop();
-    rest();
+    if (vampire.getTarget() == null) {
+      rest();
+    }
   }
 
   private void rest() {
@@ -96,7 +99,7 @@ public final class WildTravelGoal extends Goal {
 
   private boolean shaded(final Path path) {
     for (int i = 0; i < path.getLength(); i++) {
-      if (vampire.getWorld().isSkyVisible(path.getNodePos(i).up())) {
+      if (!ShadeRules.shadedAt(vampire.getWorld(), path.getNodePos(i))) {
         return false;
       }
     }

@@ -4,12 +4,12 @@ public final class FightBack {
 
   private FightBack() {}
 
-  public static boolean answers(
-      final boolean struckBy,
-      final boolean helpless,
-      final boolean fleeing,
-      final boolean guild,
-      final boolean byGuild) {
-    return struckBy && !helpless && !fleeing && !(guild && byGuild);
+  public static boolean vampireAnswers(
+      final boolean struckBy, final boolean helpless, final boolean fleeing) {
+    return struckBy && !helpless && !fleeing;
+  }
+
+  public static boolean guildAnswers(final boolean struckBy, final boolean byGuild) {
+    return struckBy && !byGuild;
   }
 }

@@ -399,12 +399,10 @@ public class VampireEntity extends HostileEntity
     return VampireFeud.fights(
         Nemeses.isQuarry(this, target),
         Vampires.isVampire(target),
-        FightBack.answers(
+        FightBack.vampireAnswers(
             target == getAttacker(),
             DownedRules.helpless(downed),
-            DownedRules.flees(downed) || ShadeRules.endangered(this),
-            false,
-            false));
+            DownedRules.flees(downed) || ShadeRules.endangered(this)));
   }
 
   @Override

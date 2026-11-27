@@ -178,9 +178,7 @@ public class GuildMasterEntity extends MerchantEntity
     super.setTarget(target);
     if (MasterDuty.breaksOath(swearing(), target != null)) {
       swearTicks = 0;
-      sworn = null;
-      lowerCrucifix();
-      dataTracker.set(SWEARING, false);
+      endOath();
     }
   }
 
@@ -410,11 +408,16 @@ public class GuildMasterEntity extends MerchantEntity
         getLookControl().lookAt(sworn, LOOK_TURN, LOOK_TURN);
       }
       if (swearTicks == 0) {
-        sworn = null;
-        lowerCrucifix();
+        endOath();
       }
     }
     dataTracker.set(SWEARING, swearTicks > 0);
+  }
+
+  private void endOath() {
+    sworn = null;
+    lowerCrucifix();
+    dataTracker.set(SWEARING, false);
   }
 
   private void lowerCrucifix() {
