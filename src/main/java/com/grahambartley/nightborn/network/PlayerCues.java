@@ -13,4 +13,8 @@ public final class PlayerCues {
   public static void power(final ServerPlayerEntity player, final String clip) {
     TrackingSends.toSelfAndWatchers(player, new PowerClipPayload(player.getId(), clip));
   }
+
+  public static void stopPower(final ServerPlayerEntity player) {
+    power(player, "");
+  }
 }

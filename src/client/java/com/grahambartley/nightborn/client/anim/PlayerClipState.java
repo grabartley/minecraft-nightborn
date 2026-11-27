@@ -78,7 +78,7 @@ public final class PlayerClipState {
   }
 
   public Optional<String> powerClip(final double age, final Lengths lengths) {
-    if (!power.playing(lengths.seconds(powerClip), age)) {
+    if (powerClip.isEmpty() || !power.playing(lengths.seconds(powerClip), age)) {
       powerFresh = false;
       return Optional.empty();
     }

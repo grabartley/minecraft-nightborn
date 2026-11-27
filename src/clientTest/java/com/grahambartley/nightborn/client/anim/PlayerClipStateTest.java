@@ -12,6 +12,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 class PlayerClipStateTest {
 
@@ -413,6 +414,16 @@ class PlayerClipStateTest {
             state,
             10 + after,
             situation(false, false, 0.0, downed, feeding, false, Optional.empty())));
+  }
+
+  @ParameterizedTest(name = "{0} ticks into the clip")
+  @ValueSource(ints = {0, 1, 5})
+  @DisplayName("an empty clip stops the power clip that was playing")
+  void emptyClipStopsThePower(final int after) {
+    final PlayerClipState state = new PlayerClipState();
+    state.power(POWER, 50, LENGTHS);
+    state.power("", 50 + after, LENGTHS);
+    assertEquals(Optional.empty(), state.powerClip(50 + after, LENGTHS));
   }
 
   @ParameterizedTest(name = "{0} ticks after a power: {1}")

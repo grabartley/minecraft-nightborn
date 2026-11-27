@@ -1,6 +1,7 @@
 package com.grahambartley.nightborn.guild;
 
 import com.grahambartley.nightborn.challenge.GuildTrialOrder;
+import com.grahambartley.nightborn.guild.rite.GuildRiteOrder;
 import com.grahambartley.nightborn.skill.SkillTree;
 import com.grahambartley.nightborn.wheel.CommandWheel;
 
@@ -16,6 +17,7 @@ public final class GuildWheel {
         .add(new GuildRankOrder())
         .add(new GuildJournalOrder())
         .add(new GuildTrialOrder())
-        .add(new GuildRumour());
+        .add(new GuildRumour())
+        .add(new GuildRiteOrder());
   }
 }
