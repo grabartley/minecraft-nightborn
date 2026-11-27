@@ -23,6 +23,7 @@ public class FloatRoomGameTest implements FabricGameTest {
   static final int WALL_X = 6;
   static final int DOOR_Z = 4;
   static final int LINTEL_Y = 4;
+  static final float HEIGHT = 1.8F;
 
   @BeforeBatch(batchId = BATCH)
   public void pinMidnight(final ServerWorld world) {
@@ -37,6 +38,7 @@ public class FloatRoomGameTest implements FabricGameTest {
   private static VampireEntity still(final TestContext context, final BlockPos at) {
     final VampireEntity vampire = context.spawnEntity(NightbornMobs.VAMPIRE, at);
     vampire.setAiDisabled(true);
+    vampire.setAppearance(vampire.lookId(), HEIGHT, vampire.width());
     return vampire;
   }
 
