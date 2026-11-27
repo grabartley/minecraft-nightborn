@@ -58,6 +58,7 @@ The mod's clothing stays, and two pieces move to the slot that now fits them. No
 | Source | What it gives |
 |---|---|
 | Crypt, ruined manor, underground lair | The common pieces, in their chests |
+| Hunter camp | The hunter pieces, the ones that carry or sharpen stakes, silver, garlic, holy water and crucifixes, in its chests |
 | Castle | The rarer pieces |
 | Mountain castle | The rarest pieces that are not boss rings |
 | The Eldest | The three Eldest rings. It drops one rarely (RITE-12), and never one a player who struck it already owns while they lack another |
@@ -65,7 +66,7 @@ The mod's clothing stays, and two pieces move to the slot that now fits them. No
 | Vampire trial, hunter trial | Named in `docs/challenges.md` |
 | Mastery feat | Named in `docs/challenges.md` |
 
-Vampire structures hold hunter pieces too: they are what is left of hunters who did not come back.
+A vampire house keeps no hunter piece and no hunter gear. Which items count is the `nightborn:anti_vampire` item tag.
 
 ## Rings
 
@@ -102,8 +103,8 @@ Vampire structures hold hunter pieces too: they are what is left of hunters who 
 | Blood Vial Pendant | A stoppered glass vial on a chain | Vampire | Holds one Blood Bottle, drunk by itself when the blood bar runs dry | Castle |
 | Raven Locket | A locket shaped as a raven's head | Vampire | Familiars last 25% longer | Underground lair |
 | Choker Of Thorns | Black iron thorns on a ribbon | Vampire | A feeding bite gives 10% more blood | Vampire trial |
-| Crucifix On A Chain | A small silver crucifix | Human | Weakens and slows a vampire as a held crucifix does, at half the range, with no hand. It does not stop a bite | Castle |
-| Garlic Sachet | A linen pouch on a cord | Human | A vampire mob's bite is 15% more likely to be broken. A mob's bite cannot otherwise be broken, so it breaks 15% of the time | Crypt |
+| Crucifix On A Chain | A small silver crucifix | Human | Weakens and slows a vampire as a held crucifix does, at half the range, with no hand. It does not stop a bite | Hunter camp |
+| Garlic Sachet | A linen pouch on a cord | Human | A vampire mob's bite is 15% more likely to be broken. A mob's bite cannot otherwise be broken, so it breaks 15% of the time | Hunter camp |
 | Saint's Medal | A worn bronze medal | Human | Healing prayers heal 20% more | Hunter trial |
 | Keepsake Locket | A gold locket with a painted face inside | Anyone | Villagers' prices are 5% lower | Ruined manor |
 
@@ -117,7 +118,7 @@ Vampire structures hold hunter pieces too: they are what is left of hunters who 
 | Bat Brooch | A gold bat with garnet eyes | Vampire | Bat Form costs 1 less blood, never less than 1 | Ruined manor |
 | Rose Brooch | An enamel rose, half wilted | Vampire | Being seen feeding raises a village's suspicion 20% less | Castle |
 | Guild Badge | A brass badge of the guild | Human | A Guild Master's prices are 10% lower | Hunter trial |
-| Sunburst Brooch | A gold sun with long rays | Human | Holy water splashes over a radius 1 block greater. Its strength fades over the wider radius, so it lands a little stronger at each distance | Crypt |
+| Sunburst Brooch | A gold sun with long rays | Human | Holy water splashes over a radius 1 block greater. Its strength fades over the wider radius, so it lands a little stronger at each distance | Hunter camp |
 | Spider Brooch | A black spider with a red stone | Anyone | Cobwebs do not slow the wearer | Underground lair |
 
 ## Back
@@ -148,8 +149,8 @@ Capes and cloaks sway as the wearer moves and are drawn over armour and coats.
 | Fingerless Gloves | Grey wool with the fingers cut off | Anyone | None | Crafted: 2 wool, one above the other, so it does not clash with carpet |
 | Clawed Gauntlets | Black leather with iron talons | Vampire | Bare hands deal 1 more damage | Underground lair |
 | Silk Gloves | White silk, spotless | Vampire | Feeding is noticed from 30% less far | Ruined manor |
-| Stakewright's Gloves | Thick hide, scarred | Human | A stake's blow deals 10% more damage | Crypt |
-| Silver-Threaded Gloves | Grey leather stitched with silver | Human | Breaks free of a bite 15% sooner, applied after bite resistance | Castle |
+| Stakewright's Gloves | Thick hide, scarred | Human | A stake's blow deals 10% more damage | Hunter camp |
+| Silver-Threaded Gloves | Grey leather stitched with silver | Human | Breaks free of a bite 15% sooner, applied after bite resistance | Hunter camp |
 | Gravedigger's Mitts | Heavy, earth-stained | Anyone | Digs dirt, gravel and sand 20% faster | Crypt |
 
 ## Belts
@@ -159,9 +160,9 @@ Capes and cloaks sway as the wearer moves and are drawn over armour and coats.
 | Brass-Buckled Belt | Dark leather and a square buckle | Anyone | None | Crafted: 2 leather and 1 gold nugget |
 | Silk Sash | A wide sash that can be dyed | Anyone | None | Crafted: 2 wool and 1 gold nugget |
 | Cellarer's Belt | Leather with loops for bottles | Vampire | A Blood Bottle gives 10% more blood when drunk | Ruined manor |
-| Bandolier | A strap across the chest with loops and pouches | Human | Holds 2 stacks of bolts and 4 splash holy water potions. A crossbow loads bolts from the belt before the inventory, and when the last holy water in hand is thrown, the next comes to hand from the belt | Castle |
-| Stake Loops | A belt hung with wooden stakes | Human | Holds 6 stakes. A new one comes to hand when the held one breaks | Crypt |
-| Flask Belt | A belt of small padded pockets for bottles | Human | Holds 6 splash or lingering holy water potions. When the last one in hand is thrown, the next comes to hand from the belt | Underground lair |
+| Bandolier | A strap across the chest with loops and pouches | Human | Holds 2 stacks of bolts and 4 splash holy water potions. A crossbow loads bolts from the belt before the inventory, and when the last holy water in hand is thrown, the next comes to hand from the belt | Hunter camp |
+| Stake Loops | A belt hung with wooden stakes | Human | Holds 6 stakes. A new one comes to hand when the held one breaks | Hunter camp |
+| Flask Belt | A belt of small padded pockets for bottles | Human | Holds 6 splash or lingering holy water potions. When the last one in hand is thrown, the next comes to hand from the belt | Hunter camp |
 | Trapper's Pouch | A hide pouch of wire and springs | Human | Snares and flash traps can be set again 15% sooner | Hunter trial |
 | Sturdy Girdle | Thick leather and iron plates | Anyone | A tenth more resistance to being knocked back | Ruined manor |
 
@@ -177,9 +178,9 @@ Capes and cloaks sway as the wearer moves and are drawn over armour and coats.
 | Smoked Spectacles | Dark round lenses | Vampire | Daylight looks like dusk through the lenses. Only the wearer's view changes, and the sun burns as before | Ruined manor |
 | Porcelain Mask | A white face with no expression | Vampire | A village that sees the wearer feed is half as likely to learn their face | Mountain castle |
 | Death Mask | A grey cast of a sleeping face | Vampire | Rises from being downed 10% sooner | Vampire trial |
-| Hunter's Monocle | Brass, with a cross-hair lens | Human | Shows the health and stage of a vampire mob the wearer looks at | Castle |
+| Hunter's Monocle | Brass, with a cross-hair lens | Human | Shows the health and stage of a vampire mob the wearer looks at | Hunter camp |
 | Confessor's Veil | White linen across the mouth | Human | A tenth more mesmerise resistance | Crypt |
-| Garlic-Soaked Scarf | A stained scarf across the nose | Human | The Weakness after a bite lasts 25% less time | Underground lair |
+| Garlic-Soaked Scarf | A stained scarf across the nose | Human | The Weakness after a bite lasts 25% less time | Hunter camp |
 | Lantern-Lens Goggles | Thick amber lenses in leather | Human | Sees through Grave Fog. Its slowness still applies | Hunter trial |
 | Plague Mask | A long leather beak | Anyone | Lingering potion clouds affect the wearer for half as long | Crypt |
 | Opera Mask | A gilded half mask on a ribbon | Anyone | The wearer's name does not show from more than 8 blocks | Mastery feat |

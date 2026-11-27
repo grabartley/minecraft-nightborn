@@ -5,6 +5,7 @@ import com.google.gson.JsonParser;
 import com.grahambartley.nightborn.Nightborn;
 import com.grahambartley.nightborn.blood.BloodItems;
 import com.grahambartley.nightborn.config.StructureSettings;
+import com.grahambartley.nightborn.gear.GearTags;
 import com.grahambartley.nightborn.mob.NightbornMobs;
 import com.grahambartley.nightborn.mob.VampireLordEntity;
 import com.grahambartley.nightborn.server.ServerConfigService;
@@ -501,7 +502,7 @@ public class VampireStructureGameTest implements FabricGameTest {
   }
 
   @GameTest(templateName = ARENA, tickLimit = 20)
-  public void everyStructureChestHoldsBloodAndGear(final TestContext context) {
+  public void everyStructureChestHoldsBloodAndNoHunterGear(final TestContext context) {
     final ServerWorld world = context.getWorld();
     final LootTable table = world.getServer().getReloadableRegistries().getLootTable(LOOT);
     context.assertTrue(table != LootTable.EMPTY, "the structure chest loot table loads");
@@ -517,6 +518,9 @@ public class VampireStructureGameTest implements FabricGameTest {
           loot.stream().anyMatch(stack -> stack.isOf(BloodItems.BLOOD_BOTTLE)),
           "seed " + seed + " gives at least one Blood Bottle");
       context.assertTrue(loot.size() >= 3, "seed " + seed + " fills at least three slots");
+      context.assertTrue(
+          loot.stream().noneMatch(stack -> stack.isIn(GearTags.ANTI_VAMPIRE)),
+          "seed " + seed + " gives no anti-vampire gear");
     }
     context.complete();
   }

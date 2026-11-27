@@ -35,7 +35,7 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "nightborn:wooden_stake",
+          "name": "nightborn:blood_bottle",
           "weight": 8,
           "functions": [
             {
@@ -50,23 +50,8 @@
         },
         {
           "type": "minecraft:item",
-          "name": "nightborn:silver_nugget",
+          "name": "minecraft:emerald",
           "weight": 10,
-          "functions": [
-            {
-              "function": "minecraft:set_count",
-              "count": {
-                "type": "minecraft:uniform",
-                "min": 2,
-                "max": 7
-              }
-            }
-          ]
-        },
-        {
-          "type": "minecraft:item",
-          "name": "nightborn:silver_ingot",
-          "weight": 4,
           "functions": [
             {
               "function": "minecraft:set_count",
@@ -77,6 +62,11 @@
               }
             }
           ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "nightborn:chalice",
+          "weight": 4
         },
         {
           "type": "minecraft:item",
@@ -184,24 +174,13 @@
         },
         {
           "type": "minecraft:item",
-          "name": "nightborn:silver_stake",
+          "name": "nightborn:chandelier",
           "weight": 3
         },
         {
           "type": "minecraft:item",
-          "name": "nightborn:silver_sword",
-          "weight": 2,
-          "functions": [
-            {
-              "function": "minecraft:enchant_randomly",
-              "options": "#minecraft:on_random_loot"
-            }
-          ]
-        },
-        {
-          "type": "minecraft:item",
           "name": "minecraft:book",
-          "weight": 2,
+          "weight": 4,
           "functions": [
             {
               "function": "minecraft:enchant_with_levels",
