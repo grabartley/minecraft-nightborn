@@ -1,6 +1,7 @@
 package com.grahambartley.nightborn.accessory;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.google.gson.JsonElement;
@@ -205,6 +206,15 @@ class AccessoryAssetsTest {
       }
     }
     assertEquals(List.of("nightborn:" + structure), places);
+    try (var tables = Files.list(DATA.resolve("nightborn/loot_table/chests"))) {
+      for (final Path other : tables.toList()) {
+        if (!other.getFileName().toString().equals(table + ".json")) {
+          assertFalse(
+              Files.readString(other).contains("\"nightborn:" + piece + "\""),
+              piece + " is also in " + other.getFileName());
+        }
+      }
+    }
   }
 
   @ParameterizedTest(name = "{0} pays {1}")

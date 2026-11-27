@@ -66,7 +66,7 @@ The mod's clothing stays, and two pieces move to the slot that now fits them. No
 | Vampire trial, hunter trial | Named in `docs/challenges.md` |
 | Mastery feat | Named in `docs/challenges.md` |
 
-A vampire house keeps no hunter piece and no hunter gear. Which items count is the `nightborn:anti_vampire` item tag.
+A vampire house keeps no hunter piece (HOME-8).
 
 ## Rings
 

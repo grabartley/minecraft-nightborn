@@ -83,8 +83,24 @@ class GearTagsTest {
                     : Stream.of(entry.get("name").getAsString()));
   }
 
-  static Stream<String> vampireTables() {
-    return Stream.of("vampire_structure", "castle", "mountain_castle");
+  static Stream<String> vampireTables() throws IOException {
+    try (Stream<Path> files = Files.list(CHESTS)) {
+      return files
+          .map(file -> file.getFileName().toString().replace(".json", ""))
+          .filter(table -> !table.equals("hunter_camp"))
+          .sorted()
+          .toList()
+          .stream();
+    }
+  }
+
+  private static Stream<String> potions(final String table) {
+    return entries(table).stream()
+        .filter(entry -> entry.has("functions"))
+        .flatMap(entry -> entry.getAsJsonArray("functions").asList().stream())
+        .map(JsonElement::getAsJsonObject)
+        .filter(function -> function.get("function").getAsString().equals("minecraft:set_potion"))
+        .map(function -> function.get("id").getAsString());
   }
 
   @Test
@@ -177,8 +193,20 @@ class GearTagsTest {
   @MethodSource("vampireTables")
   @DisplayName("no vampire structure chest holds holy water")
   void vampireChestsHoldNoHolyWater(final String table) {
-    assertFalse(
-        json(CHESTS.resolve(table + ".json")).toString().contains("nightborn:holy_water"), table);
+    assertEquals(List.of(), potions(table).filter("nightborn:holy_water"::equals).toList(), table);
+  }
+
+  @Test
+  @DisplayName("the potion check reads the hunter camp's holy water, so it can see one")
+  void potionCheckSeesHolyWater() {
+    assertTrue(potions("hunter_camp").anyMatch("nightborn:holy_water"::equals));
+  }
+
+  @Test
+  @DisplayName("the chest checks cover every vampire structure table")
+  void everyVampireTable() throws IOException {
+    assertEquals(
+        List.of("castle", "mountain_castle", "vampire_structure"), vampireTables().toList());
   }
 
   @ParameterizedTest(name = "{0}")
