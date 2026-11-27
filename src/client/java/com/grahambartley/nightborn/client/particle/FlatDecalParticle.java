@@ -1,5 +1,8 @@
 package com.grahambartley.nightborn.client.particle;
 
+import com.grahambartley.nightborn.particle.DecalSurface;
+import java.util.OptionalDouble;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.particle.ParticleTextureSheet;
 import net.minecraft.client.particle.SpriteBillboardParticle;
 import net.minecraft.client.render.Camera;
@@ -11,6 +14,12 @@ import org.joml.Quaternionf;
 
 public abstract class FlatDecalParticle extends SpriteBillboardParticle {
 
+  static final int RECHECK_TICKS = 5;
+
+  private final Vec3d contact;
+  private final Direction face;
+  private final float spin;
+  private final int recheckPhase;
   private final Quaternionf facing;
 
   protected FlatDecalParticle(
@@ -20,28 +29,50 @@ public abstract class FlatDecalParticle extends SpriteBillboardParticle {
         contact.x + face.getOffsetX() * lift,
         contact.y + face.getOffsetY() * lift,
         contact.z + face.getOffsetZ() * lift);
+    this.contact = contact;
+    this.face = face;
     this.gravityStrength = 0.0F;
     this.velocityX = 0.0;
     this.velocityY = 0.0;
     this.velocityZ = 0.0;
+    this.spin = random.nextFloat() * (float) Math.PI * 2.0F;
+    this.recheckPhase = random.nextInt(RECHECK_TICKS);
     this.facing =
         new Quaternionf()
             .rotationTo(0.0F, 0.0F, 1.0F, face.getOffsetX(), face.getOffsetY(), face.getOffsetZ())
-            .rotateZ(random.nextFloat() * (float) Math.PI * 2.0F);
+            .rotateZ(spin);
   }
 
   protected abstract void aged();
+
+  public static void place(final FlatDecalParticle decal) {
+    if (decal.settle()) {
+      MinecraftClient.getInstance().particleManager.addParticle(decal);
+    }
+  }
+
+  private boolean settle() {
+    final double extent = DecalSurface.halfExtent(scale, spin);
+    final OptionalDouble fit = DecalSurface.fit(world, contact, face, extent);
+    fit.ifPresent(room -> scale *= (float) (room / extent));
+    return fit.isPresent();
+  }
 
   @Override
   public void tick() {
     prevPosX = x;
     prevPosY = y;
     prevPosZ = z;
-    if (age++ >= maxAge) {
+    if (age++ >= maxAge || !stillHeld()) {
       markDead();
       return;
     }
     aged();
+  }
+
+  private boolean stillHeld() {
+    return (age + recheckPhase) % RECHECK_TICKS != 0
+        || DecalSurface.holds(world, contact, face, DecalSurface.halfExtent(scale, spin));
   }
 
   @Override
