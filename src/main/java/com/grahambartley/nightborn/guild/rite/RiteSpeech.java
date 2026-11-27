@@ -11,6 +11,7 @@ public final class RiteSpeech {
     BEGUN,
     NONE,
     UNSAFE,
+    FADED,
     BROKEN,
     BUSY;
 

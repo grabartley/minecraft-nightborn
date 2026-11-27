@@ -16,6 +16,7 @@ public final class RiteSteps {
     CAST,
     FAIL_NONE,
     FAIL_UNSAFE,
+    FAIL_FADED,
     BEGIN_LEAVE,
     LEAVE,
     DEPART
@@ -36,8 +37,7 @@ public final class RiteSteps {
       case NONE -> Step.FAIL_NONE;
       case UNSAFE -> Step.FAIL_UNSAFE;
       case READY -> age % timing.castTicks() == 0 ? Step.BEGIN_LEAVE : Step.CAST;
-      case SEARCHING -> late ? Step.FAIL_NONE : Step.CAST;
-      case LOADING -> late ? Step.FAIL_UNSAFE : Step.CAST;
+      case SEARCHING, LOADING -> late ? Step.FAIL_FADED : Step.CAST;
     };
   }
 

@@ -11,8 +11,9 @@ import net.minecraft.util.math.Vec3d;
 
 final class RiteLight {
 
-  static final double MOTE_SPREAD = 0.35;
-  static final double MOTE_HEIGHT = 1.0;
+  static final double MOTE_RING = 0.8;
+  static final double MOTE_LIFT = 0.2;
+  static final double MOTE_HEIGHT = 0.5;
   static final double MOTE_DRIFT = 0.02;
 
   private RiteLight() {}
@@ -24,16 +25,19 @@ final class RiteLight {
   }
 
   static void motes(final ServerWorld world, final Vec3d at, final GuildRite.Light light) {
-    world.spawnParticles(
-        ParticleTypes.END_ROD,
-        at.x,
-        at.y + MOTE_HEIGHT,
-        at.z,
-        light.motes(),
-        MOTE_SPREAD,
-        MOTE_HEIGHT / 2,
-        MOTE_SPREAD,
-        MOTE_DRIFT);
+    for (int mote = 0; mote < light.motes(); mote++) {
+      final double angle = world.getRandom().nextDouble() * Math.PI * 2;
+      world.spawnParticles(
+          ParticleTypes.END_ROD,
+          at.x + Math.cos(angle) * light.radius() * MOTE_RING,
+          at.y + MOTE_LIFT,
+          at.z + Math.sin(angle) * light.radius() * MOTE_RING,
+          1,
+          0.0,
+          MOTE_HEIGHT,
+          0.0,
+          MOTE_DRIFT);
+    }
   }
 
   static void sounds(

@@ -9,6 +9,7 @@ import com.grahambartley.nightborn.guild.GuildRumour;
 import com.grahambartley.nightborn.guild.rite.RiteSteps.Way;
 import com.grahambartley.nightborn.network.PlayerCues;
 import com.grahambartley.nightborn.server.ServerConfigService;
+import com.grahambartley.nightborn.structure.Threshold;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -44,6 +45,7 @@ public final class GuildRites {
     private Way way = Way.SEARCHING;
     private Optional<RiteWay> route = Optional.empty();
     private BlockPos landing = BlockPos.ORIGIN;
+    private float facing;
     private Optional<ZoneMarkEntity> light = Optional.empty();
     private boolean hunterStruck;
     private boolean masterStruck;
@@ -204,6 +206,7 @@ public final class GuildRites {
         switch (RiteSteps.at(sending.age, sending.leftAt, rite.timing(), sending.way)) {
           case FAIL_NONE -> fail(sending, RiteSpeech.Line.NONE.by(sending.teller()));
           case FAIL_UNSAFE -> fail(sending, RiteSpeech.Line.UNSAFE.by(sending.teller()));
+          case FAIL_FADED -> fail(sending, RiteSpeech.Line.FADED.by(sending.teller()));
           case BEGIN_LEAVE -> leave(sending);
           case DEPART -> depart(sending);
           case CAST, LEAVE -> glow(sending);
@@ -228,11 +231,10 @@ public final class GuildRites {
     RiteTicket.keep(sending.world, route.entrance());
     if (sending.way == Way.LOADING
         && RiteTicket.loaded(sending.world, route.entrance(), reach.searchRadius())) {
+      final Optional<Threshold> door = route.door().apply(sending.world);
       final Optional<BlockPos> landing =
-          route
-              .door()
-              .apply(sending.world)
-              .flatMap(door -> RiteGround.landing(sending.world, door, reach));
+          door.flatMap(way -> RiteGround.landing(sending.world, way, reach));
+      sending.facing = door.map(way -> way.out().getOpposite().asRotation()).orElse(0.0F);
       sending.landing = landing.orElse(BlockPos.ORIGIN);
       sending.way = landing.isPresent() ? Way.READY : Way.UNSAFE;
     }
@@ -261,6 +263,8 @@ public final class GuildRites {
 
   private static boolean leave(final Sending sending) {
     sending.leftAt = sending.age;
+    sending.light.ifPresent(
+        light -> light.linger(sending.rite.timing().leaveTicks() + LIGHT_SPARE_TICKS));
     PlayerCues.power(sending.hunter, sending.rite.clips().leave());
     return glow(sending);
   }
@@ -281,7 +285,7 @@ public final class GuildRites {
     final Vec3d to = Vec3d.ofBottomCenter(sending.landing);
     RiteLight.motes(sending.world, sending.from, rite.light());
     dim(sending);
-    hunter.teleport(sending.world, to.x, to.y, to.z, hunter.getYaw(), hunter.getPitch());
+    hunter.teleport(sending.world, to.x, to.y, to.z, sending.facing, 0.0F);
     hunter.fallDistance = 0.0F;
     Sanctuary.shelter(hunter, settings.riteShieldSeconds());
     RiteCooldownAttachment.wait(
@@ -303,6 +307,9 @@ public final class GuildRites {
     final ServerPlayerEntity hunter = sending.hunter;
     final int sinceArrival = sending.age - sending.arrivedAt;
     RiteLight.sounds(sending.world, hunter.getPos(), sending.rite.sounds().arrive(), sinceArrival);
+    if (sinceArrival % MOTE_TICKS == 0 && Sanctuary.sheltered(hunter)) {
+      RiteLight.motes(sending.world, hunter.getPos(), sending.rite.light());
+    }
     if (RiteSteps.settles(sinceArrival, sending.rite.timing())) {
       PlayerCues.power(hunter, sending.rite.clips().arrive());
     }
