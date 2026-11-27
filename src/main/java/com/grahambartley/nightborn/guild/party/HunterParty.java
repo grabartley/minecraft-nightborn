@@ -103,7 +103,7 @@ public record HunterParty(
   }
 
   public HunterParty upgraded() {
-    if (!pitched() || stay.guard() || guards.isEmpty()) {
+    if (!pitched() || stay.forGuard() || guards.isEmpty()) {
       return this;
     }
     return new HunterParty(

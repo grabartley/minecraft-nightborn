@@ -131,7 +131,7 @@ class HunterPartyTest {
       saved.putInt("nights", 2);
     }
     final HunterParty loaded = HunterParty.CODEC.parse(NbtOps.INSTANCE, saved).getOrThrow();
-    assertEquals(guardStay, loaded.stay().guard());
+    assertEquals(guardStay, loaded.stay().forGuard());
     assertEquals(pitched && !guarding ? 2 : party.stay().nights(), loaded.stay().nights());
   }
 

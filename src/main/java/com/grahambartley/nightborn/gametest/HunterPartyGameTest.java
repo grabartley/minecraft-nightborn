@@ -1,5 +1,6 @@
 package com.grahambartley.nightborn.gametest;
 
+import com.grahambartley.nightborn.core.NightTime;
 import com.grahambartley.nightborn.guild.GuildMasterEntity;
 import com.grahambartley.nightborn.guild.GuildMobs;
 import com.grahambartley.nightborn.guild.HunterEntity;
@@ -21,8 +22,12 @@ import com.grahambartley.nightborn.guild.party.TentPart;
 import com.grahambartley.nightborn.mob.NightbornMobs;
 import com.grahambartley.nightborn.mob.VampireBatEntity;
 import com.grahambartley.nightborn.mob.VampireEntity;
+import com.grahambartley.nightborn.server.ServerConfigService;
+import com.grahambartley.nightborn.village.VillageRecord;
+import com.grahambartley.nightborn.village.Villages;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
 import net.minecraft.block.BedBlock;
@@ -53,6 +58,7 @@ public class HunterPartyGameTest implements FabricGameTest {
   static final BlockPos BED_FOOT = new BlockPos(6, 2, 4);
   static final BlockPos TENT_SIDE = new BlockPos(5, 2, 4);
   static final BlockPos TENT_ORIGIN = new BlockPos(6, 3, 5);
+  static final BlockPos BELL = new BlockPos(0, 2, 0);
   static final CampLayout LAYOUT =
       new CampLayout(
           BlockPos.ORIGIN,
@@ -137,6 +143,36 @@ public class HunterPartyGameTest implements FabricGameTest {
         () -> {
           context.expectBlock(Blocks.AIR, TENT_ORIGIN);
           context.expectBlock(Blocks.AIR, TENT_SIDE);
+          context.complete();
+        });
+  }
+
+  @GameTest(
+      templateName = ARENA,
+      batchId = BATCH,
+      tickLimit = LeaderlessCamps.CHECK_TICKS + SWEEP_SLACK)
+  public void aGuardCampOutlastsItsOldNightLimitWhileItsVillageIsHunted(final TestContext context) {
+    meadow(context);
+    final ServerWorld world = context.getWorld();
+    context.setBlockState(BELL, Blocks.BELL);
+    final BlockPos bell = context.getAbsolutePos(BELL);
+    final long night = NightTime.night(world.getTimeOfDay());
+    Villages.of(world)
+        .put(bell, VillageRecord.fresh(night).raised(VillageRecord.MOST, night, Optional.empty()));
+    final int pastLimit = ServerConfigService.current().parties().partyMaxNights() + 1;
+    final CampStay guarding =
+        CampStay.guarding(
+            bell,
+            PartySchedule.day(world.getTimeOfDay()) - pastLimit,
+            world.getTime() - pastLimit * PartySchedule.DAY);
+    PitchedCamps.of(world).pitched(UUID.randomUUID(), pitch(context), guarding);
+    context.runAtTick(
+        LeaderlessCamps.CHECK_TICKS + 1,
+        () -> {
+          Villages.of(world).forget(bell);
+          context.checkBlockState(
+              CENTRE, state -> state.get(CampfireBlock.LIT), () -> "the fire still burns");
+          context.expectBlock(Blocks.BROWN_BED, BED_FOOT);
           context.complete();
         });
   }

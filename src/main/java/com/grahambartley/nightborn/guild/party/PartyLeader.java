@@ -38,7 +38,7 @@ public final class PartyLeader {
     final long now = world.getTime();
     HunterParty party =
         world.getClosestPlayer(master, PLAYER_NEAR) != null ? start.seen(now) : start;
-    if (party.guards().filter(bell -> !VillageGuard.stillGuarded(world, bell)).isPresent()) {
+    if (VillageGuard.relieves(world, party.guards())) {
       party = party.relieved(now);
     }
     if (party.pitched()) {
@@ -190,7 +190,8 @@ public final class PartyLeader {
                 start.guarding(),
                 start.lastCamp().isPresent(),
                 PartySchedule.dusk(time),
-                master.getBlockPos().getSquaredDistance(start.area()))
+                master.getBlockPos(),
+                start.area())
             ? start.heading(beyond(start.lastCamp().orElseThrow(), start.area(), random))
             : start;
     master.setPositionTarget(party.area(), AREA_REACH);
@@ -225,8 +226,11 @@ public final class PartyLeader {
       final boolean guarding,
       final boolean leftACamp,
       final boolean dusk,
-      final double squaredToArea) {
-    return !guarding && leftACamp && !dusk && squaredToArea <= AREA_REACH * AREA_REACH;
+      final BlockPos at,
+      final BlockPos area) {
+    final int dx = at.getX() - area.getX();
+    final int dz = at.getZ() - area.getZ();
+    return !guarding && leftACamp && !dusk && dx * dx + dz * dz <= AREA_REACH * AREA_REACH;
   }
 
   static BlockPos onward(final BlockPos from, final Random random) {

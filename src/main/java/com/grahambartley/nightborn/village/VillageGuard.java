@@ -29,6 +29,10 @@ public final class VillageGuard {
     return !bellLoaded || bellStands && step == VillageStep.HUNTED;
   }
 
+  public static boolean relieves(final ServerWorld world, final Optional<BlockPos> bell) {
+    return bell.filter(at -> !stillGuarded(world, at)).isPresent();
+  }
+
   public static boolean stillGuarded(final ServerWorld world, final BlockPos bell) {
     final boolean loaded =
         world.isChunkLoaded(

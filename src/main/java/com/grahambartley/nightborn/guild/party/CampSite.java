@@ -49,14 +49,16 @@ public final class CampSite {
         .orElse(true);
   }
 
-  public static List<int[]> offsets(final int search, final int stride) {
-    final List<int[]> offsets = new ArrayList<>();
+  public static List<BlockPos> nearestFirst(final int search, final int stride) {
+    final List<BlockPos> offsets = new ArrayList<>();
     for (int dx = -search; dx <= search; dx += stride) {
       for (int dz = -search; dz <= search; dz += stride) {
-        offsets.add(new int[] {dx, dz});
+        offsets.add(new BlockPos(dx, 0, dz));
       }
     }
-    offsets.sort(Comparator.comparingInt(offset -> offset[0] * offset[0] + offset[1] * offset[1]));
+    offsets.sort(
+        Comparator.comparingInt(
+            offset -> offset.getX() * offset.getX() + offset.getZ() * offset.getZ()));
     return List.copyOf(offsets);
   }
 
@@ -74,9 +76,8 @@ public final class CampSite {
     return fits(survey, bounds, Optional.empty());
   }
 
-  public static boolean fitsAround(
-      final boolean fireStands, final Survey survey, final Bounds bounds, final BlockPos fire) {
-    return fireStands && fits(survey, bounds, Optional.of(fire));
+  public static boolean fitsAround(final Survey survey, final Bounds bounds, final BlockPos fire) {
+    return fits(survey, bounds, Optional.of(fire));
   }
 
   private static boolean fits(

@@ -46,4 +46,36 @@ class LeaderlessCampsTest {
     assertEquals(
         holds, LeaderlessCamps.holds(alive, hasParty ? Optional.of(party) : Optional.empty()));
   }
+
+  @ParameterizedTest(
+      name = "led {0}, village calm {1}, released {2} at time of day {3}: over {4}, released {5}")
+  @CsvSource({
+    "false, true, false, 6000, true, true",
+    "false, true, false, 18000, false, true",
+    "false, false, false, 6000, false, false",
+    "true, true, false, 6000, false, false",
+    "false, true, true, 18000, true, true",
+    "false, false, true, 6000, true, true"
+  })
+  void aLeaderlessGuardCampComesDownOnceItsVillageIsCalm(
+      final boolean led,
+      final boolean calm,
+      final boolean alreadyReleased,
+      final long timeOfDay,
+      final boolean over,
+      final boolean released) {
+    final long now = 500_000L;
+    final CampStay pitched = CampStay.guarding(new BlockPos(40, 64, -12), 1L, 30_000L);
+    final CampStay stay = alreadyReleased ? pitched.released(now - CampStay.NIGHT_LENGTH) : pitched;
+    final CampStay kept = LeaderlessCamps.kept(stay, led, calm, now);
+    assertEquals(released, kept.released());
+    assertEquals(over, kept.over(timeOfDay, now));
+  }
+
+  @ParameterizedTest(name = "led {0}, relieved {1}: a passing camp keeps its stay")
+  @CsvSource({"false, true", "true, true", "false, false"})
+  void aPassingCampIsNeverReleased(final boolean led, final boolean relieved) {
+    final CampStay stay = new CampStay(2, 3L, 84_000L);
+    assertEquals(stay, LeaderlessCamps.kept(stay, led, relieved, 90_000L));
+  }
 }

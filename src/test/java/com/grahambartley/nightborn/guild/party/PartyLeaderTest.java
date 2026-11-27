@@ -38,21 +38,28 @@ class PartyLeaderTest {
   }
 
   @ParameterizedTest(
-      name = "guarding {0}, left a camp {1}, dusk {2}, {3} blocks squared from the area: on {4}")
+      name = "guarding {0}, left a camp {1}, dusk {2}, {3},{4},{5} from the area: on {6}")
   @CsvSource({
-    "false, true, false, 0, true",
-    "false, true, false, 256, true",
-    "false, true, false, 257, false",
-    "false, true, true, 0, false",
-    "false, false, false, 0, false",
-    "true, true, false, 0, false"
+    "false, true, false, 0, 0, 0, true",
+    "false, true, false, 16, 0, 0, true",
+    "false, true, false, 17, 0, 0, false",
+    "false, true, false, 0, 40, 0, true",
+    "false, true, false, 0, -30, 16, true",
+    "false, true, false, 12, 0, -12, false",
+    "false, true, true, 0, 0, 0, false",
+    "false, false, false, 0, 0, 0, false",
+    "true, true, false, 0, 0, 0, false"
   })
   void onlyAPassingPartyThatLeftACampTravelsOnByDay(
       final boolean guarding,
       final boolean leftACamp,
       final boolean dusk,
-      final double squaredToArea,
+      final int dx,
+      final int dy,
+      final int dz,
       final boolean travels) {
-    assertEquals(travels, PartyLeader.travels(guarding, leftACamp, dusk, squaredToArea));
+    final BlockPos area = new BlockPos(200, 70, -90);
+    assertEquals(
+        travels, PartyLeader.travels(guarding, leftACamp, dusk, area.add(dx, dy, dz), area));
   }
 }

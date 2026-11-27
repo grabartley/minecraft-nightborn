@@ -19,6 +19,7 @@ public final class PartyCamp {
   public static final int SEARCH = 12;
   public static final int STRIDE = 3;
   public static final int APART = 16;
+  private static final List<BlockPos> NEAREST_FIRST = CampSite.nearestFirst(SEARCH, STRIDE);
 
   private PartyCamp() {}
 
@@ -35,9 +36,9 @@ public final class PartyCamp {
       final BlockPos near,
       final CampSite.Bounds bounds,
       final Optional<BlockPos> lastCamp) {
-    for (final int[] offset : CampSite.offsets(SEARCH, STRIDE)) {
-      final int x = near.getX() + offset[0];
-      final int z = near.getZ() + offset[1];
+    for (final BlockPos offset : NEAREST_FIRST) {
+      final int x = near.getX() + offset.getX();
+      final int z = near.getZ() + offset.getZ();
       if (!loaded(world, x, z, bounds) || !CampSite.apart(lastCamp, x, z, APART)) {
         continue;
       }
@@ -57,13 +58,17 @@ public final class PartyCamp {
     if (!loaded(world, centre.getX(), centre.getZ(), layout.bounds())) {
       return Optional.empty();
     }
-    return CampSite.fitsAround(
-            world.getBlockState(fire).getBlock() instanceof CampfireBlock,
-            (ox, oy, oz) -> ground(world.getBlockState(centre.add(ox, oy, oz))),
-            layout.bounds(),
-            layout.campfire())
+    return reusable(world.getBlockState(fire))
+            && CampSite.fitsAround(
+                (ox, oy, oz) -> ground(world.getBlockState(centre.add(ox, oy, oz))),
+                layout.bounds(),
+                layout.campfire())
         ? Optional.of(centre)
         : Optional.empty();
+  }
+
+  public static boolean reusable(final BlockState fire) {
+    return fire.isOf(Blocks.CAMPFIRE) && !fire.get(CampfireBlock.WATERLOGGED);
   }
 
   private static boolean loaded(
@@ -109,7 +114,7 @@ public final class PartyCamp {
     final BlockState standing = world.getBlockState(fire);
     world.setBlockState(
         fire,
-        standing.getBlock() instanceof CampfireBlock
+        reusable(standing)
             ? standing.with(CampfireBlock.LIT, true)
             : Blocks.CAMPFIRE.getDefaultState(),
         Block.NOTIFY_ALL);

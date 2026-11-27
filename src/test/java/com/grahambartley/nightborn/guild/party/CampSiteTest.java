@@ -87,42 +87,34 @@ class CampSiteTest {
     assertEquals(true, CampSite.apart(Optional.empty(), x, z, PartyCamp.APART));
   }
 
-  @ParameterizedTest(
-      name = "fire stands {0}, {1} at {2},{3},{4}: the camp fits around the fire {5}")
+  @ParameterizedTest(name = "{0} at {1},{2},{3}: the camp fits around the old fire {4}")
   @CsvSource({
-    "true, AIR, 0, 0, 0, true",
-    "true, BUILT, 0, 0, 0, true",
-    "true, BUILT, 0, 1, 0, false",
-    "true, BUILT, 1, 0, 0, false",
-    "true, AIR, 0, -1, 0, false",
-    "false, AIR, 0, 0, 0, false",
-    "false, BUILT, 0, 0, 0, false"
+    "AIR, 0, 0, 0, true",
+    "BUILT, 0, 0, 0, true",
+    "BUILT, 0, 1, 0, false",
+    "BUILT, 1, 0, 0, false",
+    "AIR, 0, -1, 0, false",
+    "BUILT, 3, 0, 0, false"
   })
-  void setsUpAgainAroundAnOldFireOnlyWhileItStandsAndNothingIsBuiltOver(
-      final boolean fireStands,
-      final Ground ground,
-      final int x,
-      final int y,
-      final int z,
-      final boolean fits) {
+  void setsUpAgainAroundAnOldFireOnlyWhileNothingIsBuiltOver(
+      final Ground ground, final int x, final int y, final int z, final boolean fits) {
     final CampSite.Survey survey =
         (dx, dy, dz) -> dx == x && dy == y && dz == z ? ground : meadow(dy);
-    assertEquals(fits, CampSite.fitsAround(fireStands, survey, SITE, BlockPos.ORIGIN));
+    assertEquals(fits, CampSite.fitsAround(survey, SITE, BlockPos.ORIGIN));
   }
 
   @ParameterizedTest(name = "searching {0} out in steps of {1} tries the nearest spot first")
   @CsvSource({"12, 3", "6, 2", "4, 4"})
   void triesTheNearestSpotsFirst(final int search, final int stride) {
-    final List<int[]> offsets = CampSite.offsets(search, stride);
+    final List<BlockPos> offsets = CampSite.nearestFirst(search, stride);
     final int across = search * 2 / stride + 1;
     assertEquals(across * across, offsets.size());
-    assertEquals(List.of(0, 0), List.of(offsets.get(0)[0], offsets.get(0)[1]));
+    assertEquals(BlockPos.ORIGIN, offsets.get(0));
     for (int i = 1; i < offsets.size(); i++) {
-      final int[] before = offsets.get(i - 1);
-      final int[] after = offsets.get(i);
       assertTrue(
-          before[0] * before[0] + before[1] * before[1]
-              <= after[0] * after[0] + after[1] * after[1]);
+          offsets.get(i - 1).getSquaredDistance(BlockPos.ORIGIN)
+              <= offsets.get(i).getSquaredDistance(BlockPos.ORIGIN));
+      assertEquals(0, offsets.get(i).getY());
     }
   }
 }

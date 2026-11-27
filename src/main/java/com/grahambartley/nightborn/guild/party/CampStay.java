@@ -7,7 +7,7 @@ import java.util.Optional;
 import net.minecraft.util.math.BlockPos;
 
 public record CampStay(
-    int nights, long campDay, long pitchedAt, Optional<BlockPos> guards, long releasedAt) {
+    int nights, long campDay, long pitchedAt, Optional<BlockPos> bell, long releasedAt) {
 
   public static final long UNKNOWN = -1L;
   public static final long NIGHT_LENGTH = PartySchedule.DAWN - PartySchedule.NIGHT;
@@ -23,7 +23,7 @@ public record CampStay(
                       Codec.LONG
                           .optionalFieldOf("pitched_at", UNKNOWN)
                           .forGetter(CampStay::pitchedAt),
-                      BlockPos.CODEC.optionalFieldOf("guard_bell").forGetter(CampStay::guards),
+                      BlockPos.CODEC.optionalFieldOf("guard_bell").forGetter(CampStay::bell),
                       Codec.LONG
                           .optionalFieldOf("released_at", UNKNOWN)
                           .forGetter(CampStay::releasedAt))
@@ -39,8 +39,8 @@ public record CampStay(
     return new CampStay(0, campDay, pitchedAt, Optional.of(bell), UNKNOWN);
   }
 
-  public boolean guard() {
-    return guards.isPresent();
+  public boolean forGuard() {
+    return bell.isPresent();
   }
 
   public boolean released() {
@@ -48,11 +48,11 @@ public record CampStay(
   }
 
   public CampStay released(final long now) {
-    return guard() && !released() ? new CampStay(nights, campDay, pitchedAt, guards, now) : this;
+    return forGuard() && !released() ? new CampStay(nights, campDay, pitchedAt, bell, now) : this;
   }
 
   public boolean over(final long timeOfDay, final long now) {
-    if (guard()) {
+    if (forGuard()) {
       return released()
           && (!PartySchedule.night(timeOfDay)
               || releasedAt > now

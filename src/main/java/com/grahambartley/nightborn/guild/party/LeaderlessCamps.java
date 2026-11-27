@@ -38,7 +38,11 @@ public final class LeaderlessCamps {
           world.getEntity(entry.getKey()) instanceof GuildMasterEntity master
               && holds(master.isAlive(), Optional.ofNullable(master.party()));
       final CampStay stay =
-          led ? entry.getValue().stay() : relieved(world, entry.getValue().stay());
+          kept(
+              entry.getValue().stay(),
+              led,
+              !led && VillageGuard.relieves(world, entry.getValue().stay().bell()),
+              world.getTime());
       pitched.kept(entry.getKey(), stay);
       if (clears(stay.over(world.getTimeOfDay(), world.getTime()), loaded(world, camp), led)) {
         PartyCamp.strike(world, camp);
@@ -47,11 +51,9 @@ public final class LeaderlessCamps {
     }
   }
 
-  private static CampStay relieved(final ServerWorld world, final CampStay stay) {
-    return !stay.released()
-            && stay.guards().filter(bell -> !VillageGuard.stillGuarded(world, bell)).isPresent()
-        ? stay.released(world.getTime())
-        : stay;
+  public static CampStay kept(
+      final CampStay stay, final boolean led, final boolean relieved, final long now) {
+    return !led && relieved ? stay.released(now) : stay;
   }
 
   private static boolean loaded(final ServerWorld world, final HunterParty.Camp camp) {
