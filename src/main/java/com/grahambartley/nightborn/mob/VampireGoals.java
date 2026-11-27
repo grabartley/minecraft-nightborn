@@ -83,7 +83,7 @@ final class VampireGoals {
     targets.add(
         2, new ActiveTargetGoal<>(vampire, LivingEntity.class, 10, true, false, vampire::hunts));
     final Escapes escapes = new Escapes(retreat, shade);
-    goals.add(3, new StepBackGoal(vampire, 1.15, escapes::active));
+    goals.add(3, new StepBackGoal(vampire, 1.15, () -> escapes.active() || retreat.wants()));
     return escapes;
   }
 }

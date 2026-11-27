@@ -35,16 +35,15 @@ public class RetreatGoal extends Goal implements IntentGoal {
     return threat != null;
   }
 
+  public boolean wants() {
+    return mob.getTarget() != null
+        && Downed.state(mob) == null
+        && Retreat.starts(health(), retreatHealth.getAsInt(), mob.getWorld().getTime() < restUntil);
+  }
+
   @Override
   public boolean canStart() {
-    final LivingEntity target = mob.getTarget();
-    if (target == null
-        || Downed.state(mob) != null
-        || !Retreat.starts(
-            health(), retreatHealth.getAsInt(), mob.getWorld().getTime() < restUntil)) {
-      return false;
-    }
-    return awayFrom(target) != null;
+    return wants() && awayFrom(mob.getTarget()) != null;
   }
 
   @Override
