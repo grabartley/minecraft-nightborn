@@ -141,6 +141,33 @@ public class HunterPartyGameTest implements FabricGameTest {
         });
   }
 
+  @GameTest(templateName = ARENA, batchId = BATCH)
+  public void aPartySetsUpAgainAroundItsOldFireAndRelightsIt(final TestContext context) {
+    meadow(context);
+    final HunterParty.Camp struck = pitch(context);
+    PartyCamp.strike(context.getWorld(), struck);
+    context.runAtTick(
+        HunterTentBlock.STRIKE_TICKS + 2,
+        () -> {
+          final BlockPos centre =
+              PartyCamp.around(context.getWorld(), struck.fire(), LAYOUT).orElseThrow();
+          final HunterParty.Camp camp = PartyCamp.pitch(context.getWorld(), centre, LAYOUT);
+          context.assertEquals(camp.fire(), struck.fire(), "the same fire");
+          context.checkBlockState(
+              CENTRE, state -> state.get(CampfireBlock.LIT), () -> "the old fire is relit");
+          context.expectBlock(Blocks.BROWN_BED, BED_FOOT);
+          final List<BlockPos> fires = new ArrayList<>();
+          context.forEachRelativePos(
+              pos -> {
+                if (context.getBlockState(pos).getBlock() instanceof CampfireBlock) {
+                  fires.add(pos);
+                }
+              });
+          context.assertEquals(fires, List.of(CENTRE), "no second fire");
+          context.complete();
+        });
+  }
+
   @GameTest(
       templateName = ARENA,
       batchId = BATCH,

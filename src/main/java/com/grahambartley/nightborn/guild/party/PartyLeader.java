@@ -27,8 +27,7 @@ public final class PartyLeader {
   public static final int DAY_REACH = 24;
   public static final int MOVE_MIN = 48;
   public static final int MOVE_MAX = 80;
-  public static final int NEAR_MIN = 24;
-  public static final int NEAR_MAX = 32;
+  public static final float TRAVEL_SWAY = MathHelper.HALF_PI / 2;
 
   private PartyLeader() {}
 
@@ -40,7 +39,10 @@ public final class PartyLeader {
     HunterParty party =
         world.getClosestPlayer(master, PLAYER_NEAR) != null ? start.seen(now) : start;
     if (party.guards().filter(bell -> !VillageGuard.stillGuarded(world, bell)).isPresent()) {
-      party = party.guarding(Optional.empty());
+      party = party.relieved(now);
+    }
+    if (party.pitched()) {
+      PitchedCamps.of(world).kept(master.getUuid(), party.stay());
     }
     final List<HunterEntity> members = members(world, master.getUuid(), party);
     if (PartySchedule.leaves(
@@ -66,7 +68,7 @@ public final class PartyLeader {
       case SLEEP -> settle(world, party, members, settings);
       case WAKE -> roam(party, members);
       case STRIKE -> party = strike(world, master, party, members, random);
-      case NONE -> follow(master, party, members);
+      case NONE -> party = follow(master, party, members, time, random);
     }
     return party;
   }
@@ -91,9 +93,7 @@ public final class PartyLeader {
       final Random random) {
     final Optional<CampLayout> layout = PartyData.layout(world, random);
     final Optional<BlockPos> site =
-        layout.flatMap(
-            chosen ->
-                PartyCamp.site(world, master.getBlockPos(), chosen.bounds(), party.lastCamp()));
+        layout.flatMap(chosen -> site(world, master.getBlockPos(), chosen, party.lastCamp()));
     if (site.isEmpty()) {
       return party.triedOn(
           day, party.guards().orElseGet(() -> onward(master.getBlockPos(), random)));
@@ -109,6 +109,20 @@ public final class PartyLeader {
             world.getTime());
     PitchedCamps.of(world).pitched(master.getUuid(), camp, pitched.stay());
     return pitched;
+  }
+
+  private static Optional<BlockPos> site(
+      final ServerWorld world,
+      final BlockPos near,
+      final CampLayout layout,
+      final Optional<BlockPos> lastCamp) {
+    return PartyCamp.site(world, near, layout.bounds(), lastCamp)
+        .or(() -> lastCamp.flatMap(fire -> PartyCamp.around(world, fire, layout)))
+        .or(
+            () ->
+                lastCamp.isEmpty()
+                    ? Optional.empty()
+                    : PartyCamp.site(world, near, layout.bounds(), Optional.empty()));
   }
 
   private static void settle(
@@ -160,15 +174,28 @@ public final class PartyLeader {
     members.forEach(member -> wake(member, camp.fire(), KEEP_CLOSE));
     PartyCamp.strike(world, camp);
     PitchedCamps.of(world).struck(master.getUuid());
-    final BlockPos next = next(party.guards(), camp.fire(), random);
+    final BlockPos next = onward(camp.fire(), random);
     master.setPositionTarget(next, AREA_REACH);
     return party.struck(next);
   }
 
-  private static void follow(
-      final GuildMasterEntity master, final HunterParty party, final List<HunterEntity> members) {
+  private static HunterParty follow(
+      final GuildMasterEntity master,
+      final HunterParty start,
+      final List<HunterEntity> members,
+      final long time,
+      final Random random) {
+    final HunterParty party =
+        travels(
+                start.guarding(),
+                start.lastCamp().isPresent(),
+                PartySchedule.dusk(time),
+                master.getBlockPos().getSquaredDistance(start.area()))
+            ? start.heading(beyond(start.lastCamp().orElseThrow(), start.area(), random))
+            : start;
     master.setPositionTarget(party.area(), AREA_REACH);
     members.forEach(member -> wake(member, master.getBlockPos(), KEEP_CLOSE));
+    return party;
   }
 
   private static HunterParty raid(
@@ -194,19 +221,26 @@ public final class PartyLeader {
     member.setPositionTarget(home, reach);
   }
 
-  static BlockPos next(final Optional<BlockPos> guards, final BlockPos fire, final Random random) {
-    return guards
-        .map(bell -> onward(bell, random, NEAR_MIN, NEAR_MAX))
-        .orElseGet(() -> onward(fire, random));
+  static boolean travels(
+      final boolean guarding,
+      final boolean leftACamp,
+      final boolean dusk,
+      final double squaredToArea) {
+    return !guarding && leftACamp && !dusk && squaredToArea <= AREA_REACH * AREA_REACH;
   }
 
   static BlockPos onward(final BlockPos from, final Random random) {
-    return onward(from, random, MOVE_MIN, MOVE_MAX);
+    return step(from, random.nextFloat() * MathHelper.TAU, random);
   }
 
-  static BlockPos onward(final BlockPos from, final Random random, final int min, final int max) {
-    final float angle = random.nextFloat() * MathHelper.TAU;
-    final int distance = random.nextBetween(min, max);
+  static BlockPos beyond(final BlockPos lastCamp, final BlockPos from, final Random random) {
+    final float away =
+        (float) MathHelper.atan2(from.getZ() - lastCamp.getZ(), from.getX() - lastCamp.getX());
+    return step(from, away + (random.nextFloat() * 2 - 1) * TRAVEL_SWAY, random);
+  }
+
+  private static BlockPos step(final BlockPos from, final float angle, final Random random) {
+    final int distance = random.nextBetween(MOVE_MIN, MOVE_MAX);
     return Objects.requireNonNull(from)
         .add(
             Math.round(MathHelper.cos(angle) * distance),

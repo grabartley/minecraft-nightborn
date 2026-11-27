@@ -756,7 +756,7 @@
   "nightborn.setting.parties.partyExtraNightChance": "Probabilidad de otra noche (%)",
   "nightborn.setting.parties.partyExtraNightChance.tooltip": "Probabilidad de que una partida se quede una noche más en su campamento, tirada por cada noche después de la primera",
   "nightborn.setting.parties.partyMaxNights": "Máximo de noches acampados",
-  "nightborn.setting.parties.partyMaxNights.tooltip": "El mayor número de noches que una partida se queda en un campamento, de 1 a 3",
+  "nightborn.setting.parties.partyMaxNights.tooltip": "El mayor número de noches que una partida de paso se queda en un campamento, de 1 a 3. Una partida que guarda una aldea conserva su campamento hasta que la aldea ya no lo necesita",
   "nightborn.setting.parties.partyLeaveMinutes": "La partida se va tras (min)",
   "nightborn.setting.parties.partyLeaveMinutes.tooltip": "Cuántos minutos pasa una partida en marcha o un vampiro salvaje sin ningún jugador cerca antes de abandonar el mundo",
   "nightborn.setting.parties.partySleepers": "Durmientes de la partida (%)",

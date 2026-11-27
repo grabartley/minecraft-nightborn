@@ -756,7 +756,7 @@
   "nightborn.setting.parties.partyExtraNightChance": "Chance de mais uma noite (%)",
   "nightborn.setting.parties.partyExtraNightChance.tooltip": "Chance de um grupo ficar mais uma noite no acampamento, sorteada a cada noite depois da primeira",
   "nightborn.setting.parties.partyMaxNights": "Máximo de noites acampado",
-  "nightborn.setting.parties.partyMaxNights.tooltip": "O maior número de noites que um grupo fica em um acampamento, de 1 a 3",
+  "nightborn.setting.parties.partyMaxNights.tooltip": "O maior número de noites que um grupo de passagem fica em um acampamento, de 1 a 3. Um grupo que guarda uma vila mantém o acampamento até a vila não precisar mais dele",
   "nightborn.setting.parties.partyLeaveMinutes": "O grupo parte após (min)",
   "nightborn.setting.parties.partyLeaveMinutes.tooltip": "Por quantos minutos um grupo em marcha ou um vampiro selvagem fica sem jogador por perto antes de deixar o mundo",
   "nightborn.setting.parties.partySleepers": "Dorminhocos do grupo (%)",

@@ -1,6 +1,7 @@
 package com.grahambartley.nightborn.guild.party;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.grahambartley.nightborn.guild.party.CampSite.Ground;
 import java.util.List;
@@ -84,5 +85,44 @@ class CampSiteTest {
   @CsvSource({"0, 0", "5, -5", "400, 12"})
   void anyPlaceIsFreeWithNoLastCamp(final int x, final int z) {
     assertEquals(true, CampSite.apart(Optional.empty(), x, z, PartyCamp.APART));
+  }
+
+  @ParameterizedTest(
+      name = "fire stands {0}, {1} at {2},{3},{4}: the camp fits around the fire {5}")
+  @CsvSource({
+    "true, AIR, 0, 0, 0, true",
+    "true, BUILT, 0, 0, 0, true",
+    "true, BUILT, 0, 1, 0, false",
+    "true, BUILT, 1, 0, 0, false",
+    "true, AIR, 0, -1, 0, false",
+    "false, AIR, 0, 0, 0, false",
+    "false, BUILT, 0, 0, 0, false"
+  })
+  void setsUpAgainAroundAnOldFireOnlyWhileItStandsAndNothingIsBuiltOver(
+      final boolean fireStands,
+      final Ground ground,
+      final int x,
+      final int y,
+      final int z,
+      final boolean fits) {
+    final CampSite.Survey survey =
+        (dx, dy, dz) -> dx == x && dy == y && dz == z ? ground : meadow(dy);
+    assertEquals(fits, CampSite.fitsAround(fireStands, survey, SITE, BlockPos.ORIGIN));
+  }
+
+  @ParameterizedTest(name = "searching {0} out in steps of {1} tries the nearest spot first")
+  @CsvSource({"12, 3", "6, 2", "4, 4"})
+  void triesTheNearestSpotsFirst(final int search, final int stride) {
+    final List<int[]> offsets = CampSite.offsets(search, stride);
+    final int across = search * 2 / stride + 1;
+    assertEquals(across * across, offsets.size());
+    assertEquals(List.of(0, 0), List.of(offsets.get(0)[0], offsets.get(0)[1]));
+    for (int i = 1; i < offsets.size(); i++) {
+      final int[] before = offsets.get(i - 1);
+      final int[] after = offsets.get(i);
+      assertTrue(
+          before[0] * before[0] + before[1] * before[1]
+              <= after[0] * after[0] + after[1] * after[1]);
+    }
   }
 }

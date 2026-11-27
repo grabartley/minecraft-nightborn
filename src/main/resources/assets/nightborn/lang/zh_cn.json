@@ -756,7 +756,7 @@
   "nightborn.setting.parties.partyExtraNightChance": "多留一晚几率（%）",
   "nightborn.setting.parties.partyExtraNightChance.tooltip": "小队在营地多留一晚的几率，第一晚之后每晚掷一次",
   "nightborn.setting.parties.partyMaxNights": "营地最多停留夜数",
-  "nightborn.setting.parties.partyMaxNights.tooltip": "小队在一处营地最多停留的夜数，1 到 3",
+  "nightborn.setting.parties.partyMaxNights.tooltip": "路过的小队在一处营地最多停留的夜数，1 到 3。守卫村庄的小队会一直扎营，直到村庄不再需要它",
   "nightborn.setting.parties.partyLeaveMinutes": "小队离开时间（分钟）",
   "nightborn.setting.parties.partyLeaveMinutes.tooltip": "行进中的小队或野生吸血鬼附近无玩家多少分钟后离开世界",
   "nightborn.setting.parties.partySleepers": "小队睡眠比例（%）",

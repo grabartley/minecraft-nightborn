@@ -1,6 +1,7 @@
 package com.grahambartley.nightborn.guild.party;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import net.minecraft.util.math.BlockPos;
@@ -48,6 +49,17 @@ public final class CampSite {
         .orElse(true);
   }
 
+  public static List<int[]> offsets(final int search, final int stride) {
+    final List<int[]> offsets = new ArrayList<>();
+    for (int dx = -search; dx <= search; dx += stride) {
+      for (int dz = -search; dz <= search; dz += stride) {
+        offsets.add(new int[] {dx, dz});
+      }
+    }
+    offsets.sort(Comparator.comparingInt(offset -> offset[0] * offset[0] + offset[1] * offset[1]));
+    return List.copyOf(offsets);
+  }
+
   public static List<int[]> corners(final Bounds bounds) {
     final List<int[]> corners = new ArrayList<>();
     for (final int dx : new int[] {bounds.minX() - 1, bounds.maxX() + 1}) {
@@ -59,6 +71,16 @@ public final class CampSite {
   }
 
   public static boolean fits(final Survey survey, final Bounds bounds) {
+    return fits(survey, bounds, Optional.empty());
+  }
+
+  public static boolean fitsAround(
+      final boolean fireStands, final Survey survey, final Bounds bounds, final BlockPos fire) {
+    return fireStands && fits(survey, bounds, Optional.of(fire));
+  }
+
+  private static boolean fits(
+      final Survey survey, final Bounds bounds, final Optional<BlockPos> fire) {
     for (int dx = bounds.minX() - 1; dx <= bounds.maxX() + 1; dx++) {
       for (int dz = bounds.minZ() - 1; dz <= bounds.maxZ() + 1; dz++) {
         final boolean beside =
@@ -67,13 +89,18 @@ public final class CampSite {
           return false;
         }
         for (int dy = 0; dy <= bounds.height(); dy++) {
-          if (!open(survey.at(dx, dy, dz))) {
+          if (!isFire(fire, dx, dy, dz) && !open(survey.at(dx, dy, dz))) {
             return false;
           }
         }
       }
     }
     return true;
+  }
+
+  private static boolean isFire(
+      final Optional<BlockPos> fire, final int dx, final int dy, final int dz) {
+    return fire.filter(at -> at.getX() == dx && at.getY() == dy && at.getZ() == dz).isPresent();
   }
 
   private static boolean groundHolds(final Ground ground, final boolean beside) {

@@ -756,7 +756,7 @@
   "nightborn.setting.parties.partyExtraNightChance": "Шанс ещё одной ночи (%)",
   "nightborn.setting.parties.partyExtraNightChance.tooltip": "Шанс, что отряд останется в лагере ещё на одну ночь; бросается за каждую ночь после первой",
   "nightborn.setting.parties.partyMaxNights": "Больше всего ночей в лагере",
-  "nightborn.setting.parties.partyMaxNights.tooltip": "Наибольшее число ночей, которые отряд проводит в одном лагере, от 1 до 3",
+  "nightborn.setting.parties.partyMaxNights.tooltip": "Наибольшее число ночей, которые проходящий отряд проводит в одном лагере, от 1 до 3. Отряд, охраняющий деревню, держит лагерь, пока он нужен деревне",
   "nightborn.setting.parties.partyLeaveMinutes": "Отряд уходит через (мин)",
   "nightborn.setting.parties.partyLeaveMinutes.tooltip": "Сколько минут отряд в пути или дикий вампир проводит без игроков рядом, прежде чем покинуть мир",
   "nightborn.setting.parties.partySleepers": "Спящие в отряде (%)",

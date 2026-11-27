@@ -756,7 +756,7 @@
   "nightborn.setting.parties.partyExtraNightChance": "Chance auf weitere Nacht (%)",
   "nightborn.setting.parties.partyExtraNightChance.tooltip": "Chance, dass ein Trupp eine weitere Nacht im Lager bleibt, gewürfelt für jede Nacht nach der ersten",
   "nightborn.setting.parties.partyMaxNights": "Meiste Nächte im Lager",
-  "nightborn.setting.parties.partyMaxNights.tooltip": "Die meisten Nächte, die ein Trupp in einem Lager bleibt, von 1 bis 3",
+  "nightborn.setting.parties.partyMaxNights.tooltip": "Die meisten Nächte, die ein durchziehender Trupp in einem Lager bleibt, von 1 bis 3. Ein Trupp, der ein Dorf bewacht, behält sein Lager, bis das Dorf es nicht mehr braucht",
   "nightborn.setting.parties.partyLeaveMinutes": "Trupp geht nach (Min.)",
   "nightborn.setting.parties.partyLeaveMinutes.tooltip": "Wie lange, in Minuten, ein wandernder Trupp oder ein wilder Vampir ohne Spieler in der Nähe bleibt, bevor er die Welt verlässt",
   "nightborn.setting.parties.partySleepers": "Schläfer im Trupp (%)",
