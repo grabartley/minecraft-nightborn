@@ -197,7 +197,7 @@ public class HunterPartyGameTest implements FabricGameTest {
           context.forEachRelativePos(
               pos -> {
                 if (context.getBlockState(pos).getBlock() instanceof CampfireBlock) {
-                  fires.add(pos);
+                  fires.add(pos.toImmutable());
                 }
               });
           context.assertEquals(fires, List.of(CENTRE), "no second fire");
