@@ -2,6 +2,8 @@ package com.grahambartley.nightborn.guild.party;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import net.minecraft.util.math.BlockPos;
 
 public final class CampSite {
 
@@ -34,8 +36,16 @@ public final class CampSite {
     return natural && dry ? Ground.NATURAL : Ground.BUILT;
   }
 
-  public static boolean apart(final int dx, final int dz, final int apart) {
-    return dx * dx + dz * dz >= apart * apart;
+  public static boolean apart(
+      final Optional<BlockPos> lastCamp, final int x, final int z, final int apart) {
+    return lastCamp
+        .map(
+            last -> {
+              final int dx = x - last.getX();
+              final int dz = z - last.getZ();
+              return dx * dx + dz * dz >= apart * apart;
+            })
+        .orElse(true);
   }
 
   public static List<int[]> corners(final Bounds bounds) {

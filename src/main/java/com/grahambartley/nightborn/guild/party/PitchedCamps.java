@@ -58,7 +58,9 @@ public final class PitchedCamps extends PersistentState {
         (leader, pitched) ->
             Pitched.CODEC
                 .encodeStart(NbtOps.INSTANCE, pitched)
-                .ifSuccess(encoded -> nbt.put(leader.toString(), encoded)));
+                .ifSuccess(encoded -> nbt.put(leader.toString(), encoded))
+                .ifError(
+                    error -> Nightborn.LOGGER.warn("Could not save a camp: {}", error.message())));
     return nbt;
   }
 

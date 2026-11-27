@@ -39,7 +39,7 @@ public final class PartyCamp {
       for (int dz = -SEARCH; dz <= SEARCH; dz += STRIDE) {
         final int x = near.getX() + dx;
         final int z = near.getZ() + dz;
-        if (!loaded(world, x, z, bounds) || !clearOf(lastCamp, x, z)) {
+        if (!loaded(world, x, z, bounds) || !CampSite.apart(lastCamp, x, z, APART)) {
           continue;
         }
         final BlockPos centre =
@@ -51,12 +51,6 @@ public final class PartyCamp {
       }
     }
     return Optional.empty();
-  }
-
-  private static boolean clearOf(final Optional<BlockPos> lastCamp, final int x, final int z) {
-    return lastCamp
-        .map(last -> CampSite.apart(x - last.getX(), z - last.getZ(), APART))
-        .orElse(true);
   }
 
   private static boolean loaded(

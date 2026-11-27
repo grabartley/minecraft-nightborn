@@ -4,6 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.grahambartley.nightborn.guild.party.CampSite.Ground;
 import java.util.List;
+import java.util.Optional;
+import net.minecraft.util.math.BlockPos;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -74,6 +76,13 @@ class CampSiteTest {
   })
   void keepsANewCampOffTheLastOnesSpot(
       final int dx, final int dz, final int apart, final boolean far) {
-    assertEquals(far, CampSite.apart(dx, dz, apart));
+    final BlockPos last = new BlockPos(100, 64, -40);
+    assertEquals(far, CampSite.apart(Optional.of(last), last.getX() + dx, last.getZ() + dz, apart));
+  }
+
+  @ParameterizedTest(name = "with no last camp, {0},{1} is free")
+  @CsvSource({"0, 0", "5, -5", "400, 12"})
+  void anyPlaceIsFreeWithNoLastCamp(final int x, final int z) {
+    assertEquals(true, CampSite.apart(Optional.empty(), x, z, PartyCamp.APART));
   }
 }

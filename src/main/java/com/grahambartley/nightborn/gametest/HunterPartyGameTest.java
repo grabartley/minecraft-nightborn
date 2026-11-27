@@ -46,7 +46,7 @@ public class HunterPartyGameTest implements FabricGameTest {
 
   static final String ARENA = "nightborn:vampire_arena";
   static final String BATCH = "hunter_party";
-  static final int BEFORE_SWEEP = 20;
+  static final int SWEEP_SLACK = 20;
   static final BlockPos CENTRE = new BlockPos(4, 2, 4);
   static final BlockPos BED_FOOT = new BlockPos(6, 2, 4);
   static final BlockPos TENT_SIDE = new BlockPos(5, 2, 4);
@@ -142,7 +142,7 @@ public class HunterPartyGameTest implements FabricGameTest {
   @GameTest(
       templateName = ARENA,
       batchId = BATCH,
-      tickLimit = LeaderlessCamps.CHECK_TICKS + BEFORE_SWEEP)
+      tickLimit = LeaderlessCamps.CHECK_TICKS + SWEEP_SLACK)
   public void aCampWithNoLivingLeaderComesDownWhenItsNightsRunOut(final TestContext context) {
     meadow(context);
     final ServerWorld world = context.getWorld();
