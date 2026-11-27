@@ -40,8 +40,10 @@ public final class LeaderlessCamps {
       final CampStay stay =
           kept(
               entry.getValue().stay(),
-              led,
-              !led && VillageGuard.relieves(world, entry.getValue().stay().bell()),
+              !led
+                  && VillageGuard.relieves(
+                      entry.getValue().stay().bell(),
+                      bell -> VillageGuard.stillGuarded(world, bell)),
               world.getTime());
       pitched.kept(entry.getKey(), stay);
       if (clears(stay.over(world.getTimeOfDay(), world.getTime()), loaded(world, camp), led)) {
@@ -51,9 +53,8 @@ public final class LeaderlessCamps {
     }
   }
 
-  public static CampStay kept(
-      final CampStay stay, final boolean led, final boolean relieved, final long now) {
-    return !led && relieved ? stay.released(now) : stay;
+  public static CampStay kept(final CampStay stay, final boolean relieved, final long now) {
+    return relieved ? stay.relieve(now) : stay;
   }
 
   private static boolean loaded(final ServerWorld world, final HunterParty.Camp camp) {

@@ -54,7 +54,10 @@ class CampStayTest {
     "100000, 37000, 100020, false",
     "100000, 46999, 109999, false",
     "100000, 47000, 110000, true",
-    "100000, 37000, 110000, true",
+    "100000, 37000, 111199, false",
+    "100000, 37000, 111200, true",
+    "100000, 36000, 100020, false",
+    "100000, 36000, 111200, true",
     "100000, 37000, 99000, true"
   })
   void aGuardCampStandsUntilItsVillageLetsItGoAndThenLeavesByDawn(
@@ -72,8 +75,8 @@ class CampStayTest {
         guard
             ? CampStay.guarding(new BlockPos(40, 64, -12), 1L, 30_000L)
             : new CampStay(2, 1L, 30_000L);
-    final CampStay stay = already ? pitched.released(200L) : pitched;
-    assertEquals(releasedAt, stay.released(500L).releasedAt());
+    final CampStay stay = already ? pitched.relieve(200L) : pitched;
+    assertEquals(releasedAt, stay.relieve(500L).releasedAt());
   }
 
   @ParameterizedTest(name = "{0} nights from day {1} at tick {2} survives a save and load")

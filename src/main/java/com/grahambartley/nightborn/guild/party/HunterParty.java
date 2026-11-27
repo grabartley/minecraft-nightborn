@@ -123,7 +123,7 @@ public record HunterParty(
         members,
         area,
         camp,
-        stay.released(now),
+        stay.relieve(now),
         lastTriedDay,
         lastPlayerNear,
         lastRaidDay,

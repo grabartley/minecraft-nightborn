@@ -47,7 +47,7 @@ class PitchedCampsTest {
   void keepsALeadersLatestStayForACampItHolds(final boolean held, final boolean released) {
     final UUID leader = UUID.randomUUID();
     final CampStay guard = CampStay.guarding(new BlockPos(40, 64, -12), 3L, 84_000L);
-    final CampStay latest = released ? guard.released(90_000L) : guard;
+    final CampStay latest = released ? guard.relieve(90_000L) : guard;
     final PitchedCamps camps = new PitchedCamps();
     if (held) {
       camps.pitched(leader, CAMP, guard);

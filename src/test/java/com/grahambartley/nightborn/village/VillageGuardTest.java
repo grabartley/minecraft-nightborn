@@ -2,6 +2,8 @@ package com.grahambartley.nightborn.village;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.util.Optional;
+import net.minecraft.util.math.BlockPos;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -33,5 +35,20 @@ class VillageGuardTest {
   void keepsGuarding(
       final boolean loaded, final boolean stands, final VillageStep step, final boolean keeps) {
     assertEquals(keeps, VillageGuard.keepsGuarding(loaded, stands, step));
+  }
+
+  @ParameterizedTest(name = "guarding a bell {0}, village still needs guards {1}: relieved {2}")
+  @CsvSource({
+    "true, true, false",
+    "true, false, true",
+    "false, false, false",
+    "false, true, false"
+  })
+  @DisplayName("guards are relieved only when the village they guard no longer needs them")
+  void relievesGuardsOnlyWhenTheirVillageIsCalm(
+      final boolean guarding, final boolean needed, final boolean relieved) {
+    final Optional<BlockPos> bell =
+        guarding ? Optional.of(new BlockPos(40, 64, -12)) : Optional.empty();
+    assertEquals(relieved, VillageGuard.relieves(bell, at -> needed));
   }
 }

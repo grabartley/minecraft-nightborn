@@ -10,7 +10,6 @@ public record CampStay(
     int nights, long campDay, long pitchedAt, Optional<BlockPos> bell, long releasedAt) {
 
   public static final long UNKNOWN = -1L;
-  public static final long NIGHT_LENGTH = PartySchedule.DAWN - PartySchedule.NIGHT;
   public static final CampStay NONE = new CampStay(0, 0L, UNKNOWN);
 
   public static final MapCodec<CampStay> MAP_CODEC =
@@ -47,16 +46,16 @@ public record CampStay(
     return releasedAt != UNKNOWN;
   }
 
-  public CampStay released(final long now) {
+  public CampStay relieve(final long now) {
     return forGuard() && !released() ? new CampStay(nights, campDay, pitchedAt, bell, now) : this;
   }
 
   public boolean over(final long timeOfDay, final long now) {
     if (forGuard()) {
       return released()
-          && (!PartySchedule.night(timeOfDay)
+          && (!PartySchedule.dusk(timeOfDay)
               || releasedAt > now
-              || now - releasedAt >= NIGHT_LENGTH);
+              || now - releasedAt >= PartySchedule.EVENING);
     }
     final long day = PartySchedule.day(timeOfDay);
     if (pitchedAt == UNKNOWN || pitchedAt > now || day < campDay) {

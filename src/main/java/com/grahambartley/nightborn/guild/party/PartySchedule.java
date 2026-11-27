@@ -14,6 +14,7 @@ public final class PartySchedule {
   public static final long DUSK = 11800L;
   public static final long NIGHT = 13000L;
   public static final long DAWN = 23000L;
+  public static final long EVENING = DAWN - DUSK;
 
   private PartySchedule() {}
 

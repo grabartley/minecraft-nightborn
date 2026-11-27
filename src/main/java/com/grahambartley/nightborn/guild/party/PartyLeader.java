@@ -38,7 +38,7 @@ public final class PartyLeader {
     final long now = world.getTime();
     HunterParty party =
         world.getClosestPlayer(master, PLAYER_NEAR) != null ? start.seen(now) : start;
-    if (VillageGuard.relieves(world, party.guards())) {
+    if (VillageGuard.relieves(party.guards(), bell -> VillageGuard.stillGuarded(world, bell))) {
       party = party.relieved(now);
     }
     if (party.pitched()) {
