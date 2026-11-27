@@ -11,6 +11,13 @@
       "text": "nightborn.journal.hunter.the_eldest.1"
     },
     {
+      "type": "patchouli:image",
+      "images": [
+        "nightborn:textures/gui/journal/hunter_the_eldest.png"
+      ],
+      "border": true
+    },
+    {
       "type": "patchouli:text",
       "text": "nightborn.journal.hunter.the_eldest.2"
     }
