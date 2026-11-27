@@ -1,12 +1,12 @@
 package com.grahambartley.nightborn.guild.rite;
 
 import com.grahambartley.nightborn.boss.ZoneMarkEntity;
+import java.util.List;
 import java.util.Optional;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.registry.Registries;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
-import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Vec3d;
 
 final class RiteLight {
@@ -36,11 +36,23 @@ final class RiteLight {
         MOTE_DRIFT);
   }
 
-  static void sound(final ServerWorld world, final Vec3d at, final Identifier sound) {
-    Registries.SOUND_EVENT
-        .getOrEmpty(sound)
-        .ifPresent(
-            event ->
-                world.playSound(null, at.x, at.y, at.z, event, SoundCategory.NEUTRAL, 1.0F, 1.0F));
+  static void sounds(
+      final ServerWorld world, final Vec3d at, final List<GuildRite.Cue> cues, final int ticks) {
+    GuildRite.Cue.due(cues, ticks)
+        .forEach(
+            cue ->
+                Registries.SOUND_EVENT
+                    .getOrEmpty(cue.sound())
+                    .ifPresent(
+                        event ->
+                            world.playSound(
+                                null,
+                                at.x,
+                                at.y,
+                                at.z,
+                                event,
+                                SoundCategory.NEUTRAL,
+                                cue.volume(),
+                                cue.pitch())));
   }
 }

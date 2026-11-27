@@ -59,4 +59,19 @@ class RiteStepsTest {
     assertEquals(cue, RiteSteps.settles(sinceArrival, TIMING));
     assertEquals(over, RiteSteps.over(sinceArrival, TIMING, sheltered));
   }
+
+  @ParameterizedTest(name = "settling in {0} ticks, {1} ticks after arriving -> cue {2}")
+  @CsvSource({
+    "0, 0, true",
+    "0, 1, false",
+    "1, 0, false",
+    "1, 1, true",
+    "5, 5, true",
+    "5, 4, false"
+  })
+  @DisplayName("the arrival is shown exactly once, even with no settling time")
+  void settles(final int settleTicks, final int sinceArrival, final boolean cue) {
+    assertEquals(
+        cue, RiteSteps.settles(sinceArrival, new GuildRite.Timing(50, 28, settleTicks, 200)));
+  }
 }

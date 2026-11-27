@@ -67,7 +67,7 @@ sharper the longer they live.
 stakes. Trappers lay snares and bait and net bats out of the air. Seekers read a kill for the vampire behind it and
 see through every veil.
 - **Take contracts.** Find a hunter camp and its Guild Master sells gear and writes contracts, each with a rough map
-of where the house lies. Once sworn, he can send you to the nearest house by a holy rite.
+of where the house lies. Earn the rank of Hunter and, for a tithe of emeralds, he can send you to the nearest house by a holy rite.
 
 ## Households and villages
 

@@ -10,6 +10,7 @@ import com.mojang.serialization.JsonOps;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
 import org.junit.jupiter.api.DisplayName;
@@ -63,22 +64,47 @@ class GuildRiteTest {
     assertTrue(ticks <= clipSeconds(rig, clip) * TICKS_PER_SECOND, step + " outlasts its clip");
   }
 
-  @ParameterizedTest(name = "the {0} sound")
+  @ParameterizedTest(name = "the {0} sounds")
   @CsvSource({"cast", "leave", "arrive"})
-  @DisplayName("each sound the rite names is a sound the game has")
+  @DisplayName(
+      "each step has layered sounds the game has, the first on its first tick, all in time")
   void sounds(final String step) throws IOException {
-    final GuildRite.Sounds sounds = shipped().sounds();
-    final Identifier sound =
+    final GuildRite rite = shipped();
+    final List<GuildRite.Cue> cues =
         switch (step) {
-          case "cast" -> sounds.cast();
-          case "leave" -> sounds.leave();
-          default -> sounds.arrive();
+          case "cast" -> rite.sounds().cast();
+          case "leave" -> rite.sounds().leave();
+          default -> rite.sounds().arrive();
         };
-    assertTrue(Registries.SOUND_EVENT.containsId(sound), sound + " is not a sound");
+    final int ticks =
+        switch (step) {
+          case "cast" -> rite.timing().castTicks();
+          case "leave" -> rite.timing().leaveTicks();
+          default -> (int) (clipSeconds("vampire", rite.clips().arrive()) * TICKS_PER_SECOND);
+        };
+    assertTrue(cues.size() >= 3, step + " is one bare sound");
+    assertEquals(1, GuildRite.Cue.due(cues, 0).size());
+    for (final GuildRite.Cue cue : cues) {
+      assertTrue(Registries.SOUND_EVENT.containsId(cue.sound()), cue.sound() + " is not a sound");
+      assertTrue(cue.delay() < ticks, cue.sound() + " plays after the " + step + " is over");
+    }
+  }
+
+  @ParameterizedTest(name = "at tick {0}, {1} due")
+  @CsvSource({"0, 2", "1, 0", "7, 1", "8, 0"})
+  @DisplayName("a sound plays on the tick its delay names and no other")
+  void due(final int tick, final int count) {
+    final Identifier bell = Identifier.ofVanilla("block.bell.use");
+    final List<GuildRite.Cue> cues =
+        List.of(
+            new GuildRite.Cue(bell, 1.0F, 1.0F, 0),
+            new GuildRite.Cue(bell, 0.5F, 1.5F, 0),
+            new GuildRite.Cue(bell, 1.0F, 2.0F, 7));
+    assertEquals(count, GuildRite.Cue.due(cues, tick).size());
   }
 
   @ParameterizedTest(name = "{0}")
-  @CsvSource({"light, 1.25", "break, 2.0", "search, 3.0", "rise, 2.0", "household, 5.0"})
+  @CsvSource({"light, 1.25", "break, 2.0", "search, 3.0", "rise, 2.0", "household, 3.0"})
   @DisplayName("the shipped rite keeps its light, its reach and a look that has a texture")
   void reach(final String what, final double expected) throws IOException {
     final GuildRite rite = shipped();

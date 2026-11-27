@@ -60,7 +60,9 @@ public final class PlayerClips {
         PowerClipPayload.ID,
         (payload, context) ->
             player(context.client(), payload.entityId())
-                .filter(player -> VampireClips.seconds(payload.clip()) > 0.0)
+                .filter(
+                    player ->
+                        payload.clip().isEmpty() || VampireClips.seconds(payload.clip()) > 0.0)
                 .ifPresent(
                     player ->
                         state(player)

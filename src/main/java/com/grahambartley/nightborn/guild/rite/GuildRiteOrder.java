@@ -32,7 +32,14 @@ public final class GuildRiteOrder implements WheelAction<GuildMasterEntity> {
 
   @Override
   public List<WheelEntry> entries(final ServerPlayerEntity player, final GuildMasterEntity master) {
-    return List.of(WheelEntry.of(ID, ICON, Text.translatable("nightborn.guild.rite"), false));
+    return List.of(
+        WheelEntry.of(ID, ICON, label(ServerConfigService.current().guild().ritePrice()), false));
+  }
+
+  static Text label(final int price) {
+    return price > 0
+        ? Text.translatable("nightborn.guild.rite.priced", price)
+        : Text.translatable("nightborn.guild.rite");
   }
 
   @Override

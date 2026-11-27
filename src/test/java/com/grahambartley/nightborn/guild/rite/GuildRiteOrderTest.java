@@ -31,7 +31,13 @@ class GuildRiteOrderTest {
     assertEquals(GuildRiteOrder.ID, rite.action());
     assertEquals(Identifier.of("nightborn", "wheel/rite"), rite.icon());
     assertEquals(
-        "nightborn.guild.rite", ((TranslatableTextContent) rite.label().getContent()).getKey());
+        "nightborn.guild.rite.priced",
+        ((TranslatableTextContent) rite.label().getContent()).getKey());
+    assertEquals(
+        "nightborn.guild.rite",
+        ((TranslatableTextContent) GuildRiteOrder.label(0).getContent()).getKey());
+    assertEquals(
+        16, ((TranslatableTextContent) GuildRiteOrder.label(16).getContent()).getArgs()[0]);
     assertNotEquals(Identifier.of(other), rite.action());
     assertTrue(List.of(GuildRumour.ID, GuildOathOrder.ID).contains(Identifier.of(other)));
     assertTrue(

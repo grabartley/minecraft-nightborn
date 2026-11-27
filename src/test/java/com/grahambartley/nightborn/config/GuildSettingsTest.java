@@ -20,18 +20,27 @@ class GuildSettingsTest {
     assertEquals(setting.defaultValue(), setting.get(NightbornConfig.DEFAULTS));
   }
 
-  @ParameterizedTest(name = "oath {0}, wait {1}s, shelter {2}s is kept as {3}s and {4}s")
+  @ParameterizedTest(name = "rank {0}, price {1}, wait {2}s, shelter {3}s -> {4}, {5}, {6}s, {7}s")
   @CsvSource({
-    "true, 600, 3, 600, 3",
-    "false, -5, -1, 0, 0",
-    "true, 99999, 99, 7200, 30",
-    "false, 0, 30, 0, 30"
+    "1, 16, 1200, 3, 1, 16, 1200, 3",
+    "-1, -5, -5, -1, 0, 0, 0, 0",
+    "9, 999, 99999, 99, 3, 64, 7200, 30",
+    "0, 0, 0, 30, 0, 0, 0, 30"
   })
   void clampsToItsBounds(
-      final boolean oath, final int wait, final int shelter, final int keptWait, final int kept) {
-    final GuildSettings settings = new GuildSettings(oath, wait, shelter);
-    assertEquals(oath, settings.riteNeedsOath());
+      final int rank,
+      final int price,
+      final int wait,
+      final int shelter,
+      final int keptRank,
+      final int keptPrice,
+      final int keptWait,
+      final int keptShelter) {
+    final GuildSettings settings = new GuildSettings(rank > 0, rank, price, wait, shelter);
+    assertEquals(rank > 0, settings.riteNeedsOath());
+    assertEquals(keptRank, settings.riteMinRank());
+    assertEquals(keptPrice, settings.ritePrice());
     assertEquals(keptWait, settings.riteCooldownSeconds());
-    assertEquals(kept, settings.riteShieldSeconds());
+    assertEquals(keptShelter, settings.riteShieldSeconds());
   }
 }

@@ -3,6 +3,7 @@ package com.grahambartley.nightborn.guild.rite;
 import com.grahambartley.nightborn.Nightborn;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import java.util.List;
 import java.util.Optional;
 import net.minecraft.registry.DynamicRegistryManager;
 import net.minecraft.registry.Registry;
@@ -53,16 +54,40 @@ public record GuildRite(Timing timing, Clips clips, Sounds sounds, Light light, 
                     .apply(instance, Clips::new));
   }
 
-  public record Sounds(Identifier cast, Identifier leave, Identifier arrive) {
+  public record Cue(Identifier sound, float volume, float pitch, int delay) {
+
+    static final Codec<Cue> CODEC =
+        RecordCodecBuilder.create(
+            instance ->
+                instance
+                    .group(
+                        Identifier.CODEC.fieldOf("sound").forGetter(Cue::sound),
+                        Codec.floatRange(0.0F, 4.0F)
+                            .optionalFieldOf("volume", 1.0F)
+                            .forGetter(Cue::volume),
+                        Codec.floatRange(0.5F, 2.0F)
+                            .optionalFieldOf("pitch", 1.0F)
+                            .forGetter(Cue::pitch),
+                        Codec.intRange(0, LONGEST_TICKS)
+                            .optionalFieldOf("delay", 0)
+                            .forGetter(Cue::delay))
+                    .apply(instance, Cue::new));
+
+    public static List<Cue> due(final List<Cue> cues, final int ticks) {
+      return cues.stream().filter(cue -> cue.delay() == ticks).toList();
+    }
+  }
+
+  public record Sounds(List<Cue> cast, List<Cue> leave, List<Cue> arrive) {
 
     static final Codec<Sounds> CODEC =
         RecordCodecBuilder.create(
             instance ->
                 instance
                     .group(
-                        Identifier.CODEC.fieldOf("cast").forGetter(Sounds::cast),
-                        Identifier.CODEC.fieldOf("leave").forGetter(Sounds::leave),
-                        Identifier.CODEC.fieldOf("arrive").forGetter(Sounds::arrive))
+                        Cue.CODEC.listOf().fieldOf("cast").forGetter(Sounds::cast),
+                        Cue.CODEC.listOf().fieldOf("leave").forGetter(Sounds::leave),
+                        Cue.CODEC.listOf().fieldOf("arrive").forGetter(Sounds::arrive))
                     .apply(instance, Sounds::new));
   }
 
