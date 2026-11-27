@@ -17,12 +17,10 @@ import org.jetbrains.annotations.Nullable;
 
 public final class PowerCasting {
 
-  static final long UNSET = Long.MIN_VALUE;
-
   private final BiFunction<LivingEntity, Identifier, PowerUse.Verdict> cast;
   @Nullable private Tell telling;
   @Nullable private Think lastThink;
-  private long nextThink = UNSET;
+  private long nextThink;
 
   public PowerCasting() {
     this(Powers::cast);
@@ -40,10 +38,6 @@ public final class PowerCasting {
     return hasTarget && now >= nextThink;
   }
 
-  public static long firstThink(final long now, final int mobId, final int thinkTicks) {
-    return now + Math.floorMod(mobId, thinkTicks);
-  }
-
   public <T extends MobEntity & PowerShow> void tick(
       final T caster, final int thinkTicks, final int bloodFloor) {
     final long now = caster.getWorld().getTime();
@@ -57,9 +51,6 @@ public final class PowerCasting {
         telling = null;
       }
       return;
-    }
-    if (nextThink == UNSET) {
-      nextThink = firstThink(now, caster.getId(), thinkTicks);
     }
     if (!thinks(target != null, now, nextThink)) {
       return;

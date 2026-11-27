@@ -3,7 +3,6 @@ package com.grahambartley.nightborn.mob.brain;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -15,7 +14,7 @@ class FactTest {
   private static final Situation SEEN =
       new Situation(
           Intent.FIGHT,
-          new Situation.Self(0.25F, 14, true, true, false, List.of()),
+          new Situation.Self(0.25F, 14, true, true, false),
           new Situation.Target(7.5, true, 0.6F));
 
   @ParameterizedTest(name = "{0} = {1}")

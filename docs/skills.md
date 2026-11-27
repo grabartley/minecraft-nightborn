@@ -211,7 +211,9 @@ The facts are `target_distance` (blocks), `target_in_sight` (1 or 0), `target_he
 
 A use scores its weight times each consideration's value, and any 0 rules it out. The mob casts the best scoring power it can afford that beats its intent's threshold. Each intent's blood reserve, cooldown price and threshold live in `data/nightborn/nightborn/mob_intent/`. `/nightborn brain <targets>` shows what a mob last weighed up, which is how uses are tuned. A use with an unknown intent, aim or fact is reported at start with the skill's name.
 
-A power used at the target between 4 and 20 blocks, wanted more the closer the target is:
+A power that lists its own uses is scored only by them, so its `min_range` and `max_range` no longer limit it. Put the range in a `target_distance` consideration when it still matters.
+
+A power used at a target from 4 blocks up to just under 20, wanted more the closer the target is:
 
 ```json
 "mob": {
@@ -233,7 +235,7 @@ A power used at the target between 4 and 20 blocks, wanted more the closer the t
 }
 ```
 
-A healing power a mob uses on itself once it is badly hurt, twice as keen as on an ordinary power, with at least 4 blood to spare:
+A healing power a mob uses on itself once it is badly hurt, twice as keen as on an ordinary power, and only while it holds at least 4 blood before paying the cost:
 
 ```json
 "uses": [

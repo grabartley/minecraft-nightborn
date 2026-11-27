@@ -18,10 +18,20 @@ public final class MobFighting {
 
   private final PowerCasting casting;
   private final Moves moves;
+  private final boolean movesFirst;
 
-  public MobFighting(final PowerCasting casting, final Moves moves) {
+  private MobFighting(final PowerCasting casting, final Moves moves, final boolean movesFirst) {
     this.casting = casting;
     this.moves = moves;
+    this.movesFirst = movesFirst;
+  }
+
+  public static MobFighting castingFirst(final PowerCasting casting, final Moves moves) {
+    return new MobFighting(casting, moves, false);
+  }
+
+  public static MobFighting movingFirst(final PowerCasting casting, final Moves moves) {
+    return new MobFighting(casting, moves, true);
   }
 
   public static boolean fights(
@@ -40,8 +50,11 @@ public final class MobFighting {
       moves.rest();
       return;
     }
+    if (movesFirst && !casting.telling()) {
+      moves.tick();
+    }
     casting.tick(fighter, thinkTicks, bloodFloor);
-    if (!casting.telling()) {
+    if (!movesFirst && !casting.telling()) {
       moves.tick();
     }
   }

@@ -106,11 +106,18 @@ public class VampireStageGameTest implements FabricGameTest {
 
   @GameTest(templateName = ARENA, tickLimit = 20)
   public void aVampireMobWeighsUpBloodRushAndWindsUpToCastIt(final TestContext context) {
-    final VampireEntity vampire = withBloodRush(context, new BlockPos(1, 2, 1));
+    final VampireEntity vampire = staged(context, new BlockPos(1, 2, 1), ANCIENT);
+    learnBloodRush(context, vampire);
     final VillagerEntity villager = context.spawnEntity(EntityType.VILLAGER, new BlockPos(1, 2, 7));
     villager.setAiDisabled(true);
     vampire.setTarget(villager);
-    vampire.mobFighting().tick(vampire, true, 1, 0);
+    vampire
+        .mobFighting()
+        .tick(
+            vampire,
+            true,
+            vampire.stage().combat().thinkTicks(),
+            vampire.stage().combat().bloodFloor());
     final Think think = vampire.mobFighting().lastThink().orElseThrow();
     context.assertEquals(think.intent(), Intent.FIGHT, "a vampire with a target is fighting");
     context.assertEquals(

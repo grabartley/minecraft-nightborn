@@ -114,7 +114,8 @@ public class GuildMasterEntity extends MerchantEntity
   private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
   private final WornLook worn = new WornLook();
   private final HunterTactics<GuildMasterEntity> tactics = new HunterTactics<>(this);
-  private final MobFighting fighting = new MobFighting(PowerCasting.underTell(), this::tickTactics);
+  private final MobFighting fighting =
+      MobFighting.movingFirst(PowerCasting.underTell(), this::tickTactics);
   private final ShownHunterAction shown = new ShownHunterAction();
   private final ShownAction shownPower = new ShownAction();
   private String kitId = "";

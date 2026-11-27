@@ -109,7 +109,8 @@ public class HunterEntity extends PathAwareEntity
 
   private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
   private final HunterTactics<HunterEntity> tactics = new HunterTactics<>(this);
-  private final MobFighting fighting = new MobFighting(PowerCasting.underTell(), this::tickTactics);
+  private final MobFighting fighting =
+      MobFighting.movingFirst(PowerCasting.underTell(), this::tickTactics);
   private final WornLook worn = new WornLook();
   private final ShownAction shownPower = new ShownAction();
   private final HunterBuildTicker building = new HunterBuildTicker();

@@ -6,9 +6,9 @@ Vampire mobs and hunter mobs use the same powers as players (HOME-16, GUILD-17).
 
 ## Decision
 
-**One owner.** `MobFighting` owns power use for vampire mobs, hunter mobs and the Guild Master. It runs the power think through `PowerCasting` and then the mob's own moves, which are vampire leaps, dashes and dodges or the hunter's kit. The Eldest and the Grand Inquisitor keep their own fights and do not use it.
+**One owner.** `MobFighting` owns power use for vampire mobs, hunter mobs and the Guild Master. It runs the power think through `PowerCasting` alongside the mob's own moves, which are vampire leaps, dashes and dodges or the hunter's kit. The Eldest and the Grand Inquisitor keep their own fights and do not use it.
 
-**A think is a picture and a score.** Each think builds one `Situation`: the mob's own health, blood, form, effects, sun and downed state, its target's distance, sight and health, and its intent. Goals that already move the mob report the intent through `IntentGoal`: retreat, close in, travel and rest today. A mob with a target and no other report is fighting.
+**A think is a picture and a score.** Each think builds one `Situation`: the mob's own health, blood, form, sun and downed state, its target's distance, sight and health, and its intent. Goals that already move the mob report the intent through `IntentGoal`: retreat, close in, travel and rest today. A mob with a target and no other report is fighting.
 
 **Uses are data.** A power's `mob` block lists its uses. A use names the intent it serves, what it aims at, a weight, and considerations. A consideration is one named fact read through a simple curve, `between`, `rising` or `falling`, to a value from 0 to 1. The facts are a short fixed list in `Fact`, and adding one is one line there and one test case. A power with no uses gets two from its range, one for a fight and one for closing in, so every shipped power is chosen exactly as before.
 
@@ -18,11 +18,12 @@ Vampire mobs and hunter mobs use the same powers as players (HOME-16, GUILD-17).
 
 **Mistakes are reported at load.** When the server starts it reports any use with an unknown intent, aim or fact, any intent with no budget, and any power that mobs will never use. A power that mobs should never use says so with `mobs_never_use`.
 
-**Thinking stays cheap.** One situation per think, built only when the mob owns a power it could cast, and nothing is allocated otherwise. Each mob's first think is offset by its entity id, so a group spawned together does not think on the same tick.
+**Thinking stays cheap.** A mob builds a situation only when it owns a power that is ready to cast, and nothing is built otherwise. The situation reads the costly facts, line of sight and the sun, only when a ready power's uses ask for them. Thinks are not offset per mob: each mob starts thinking when it takes its target, which already spreads a group out, and an offset would hold back a fresh mob's first power.
 
 ## Consequences
 
 - A new skill that mobs should use needs only its own JSON file. A data pack can add or retune uses and budgets the same way.
 - `/nightborn brain <targets>` shows a mob's last think: its intent and its top three powers with their scores. This is how uses are tuned.
-- On the tick a hunter starts a tell, its kit no longer steps that tick. Vampires already worked this way, and one owner means one order.
+- Hunters step their kit before they think about a power, and vampires move after it, as each did before. The owner keeps both orders.
+- A vampire in bat form does not think about powers, so the `close_in` that bat flight reports is not seen yet. The default `close_in` use waits for the work that lets a flying vampire choose a power.
 - Hunting and guarding are intents with budgets, but no goal reports them yet. They arrive with the work that gives mobs powers outside a fight.
