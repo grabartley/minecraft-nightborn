@@ -16,8 +16,12 @@ import net.minecraft.util.math.random.Random;
 
 public record Threshold(BlockPos floor, Direction out) {
 
+  public BlockPos step() {
+    return floor.offset(out);
+  }
+
   public ColumnPos outside() {
-    final BlockPos step = floor.offset(out);
+    final BlockPos step = step();
     return new ColumnPos(step.getX(), step.getZ());
   }
 

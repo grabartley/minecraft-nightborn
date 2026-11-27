@@ -2,6 +2,7 @@ package com.grahambartley.nightborn.gametest;
 
 import com.grahambartley.nightborn.coffin.CoffinRise;
 import com.grahambartley.nightborn.guild.ContractMaps;
+import com.grahambartley.nightborn.guild.ExplorationMaps;
 import com.grahambartley.nightborn.mob.VampireEntity;
 import com.grahambartley.nightborn.raid.HouseGuardGoal;
 import com.grahambartley.nightborn.raid.HouseNoise;
@@ -9,9 +10,13 @@ import com.grahambartley.nightborn.raid.NoiseAct;
 import com.grahambartley.nightborn.raid.Trails;
 import com.grahambartley.nightborn.thrall.ThrallEntity;
 import com.grahambartley.nightborn.thrall.Thralls;
+import com.grahambartley.nightborn.wild.RumourMaps;
 import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
+import net.minecraft.component.DataComponentTypes;
+import net.minecraft.component.type.MapDecorationsComponent;
 import net.minecraft.item.FilledMapItem;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.map.MapDecorationTypes;
 import net.minecraft.item.map.MapState;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
@@ -155,6 +160,24 @@ public final class RaidGameTest implements FabricGameTest {
             && Math.abs(state.centerZ - house.getZ()) <= 64,
         "the house lies within 64 blocks of the map's centre");
     context.assertTrue(!state.getDecorations().iterator().hasNext(), "the house is not marked");
+    context.complete();
+  }
+
+  @GameTest(templateName = ARENA, tickLimit = 20)
+  public void aRumourMapMarksTheHouseEntrance(final TestContext context) {
+    final BlockPos entrance = context.getAbsolutePos(new BlockPos(0, 1, 0)).add(-260, 0, 410);
+    final ItemStack map =
+        ExplorationMaps.marking(context.getWorld(), entrance, (byte) 2, RumourMaps.NAME_KEY);
+    final MapDecorationsComponent marks = map.get(DataComponentTypes.MAP_DECORATIONS);
+    context.assertTrue(
+        marks != null
+            && marks.decorations().values().stream()
+                .anyMatch(
+                    mark ->
+                        mark.type().matches(MapDecorationTypes.RED_X)
+                            && (int) mark.x() == entrance.getX()
+                            && (int) mark.z() == entrance.getZ()),
+        "the rumour map puts its cross on the entrance");
     context.complete();
   }
 

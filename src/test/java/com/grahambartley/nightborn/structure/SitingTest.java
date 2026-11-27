@@ -7,6 +7,8 @@ import com.mojang.serialization.JsonOps;
 import java.util.Optional;
 import java.util.stream.Stream;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Direction;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
@@ -57,5 +59,35 @@ class SitingTest {
               entrance.isEmpty() ? Optional.empty() : Optional.of(Identifier.of(entrance)),
               found.entrance());
         });
+  }
+
+  @ParameterizedTest(name = "{0} threshold at {1},{2},{3} facing {4} is stood on at {5},{6},{7}")
+  @CsvSource({
+    "footing, 3, 64, 9, SOUTH, 3, 65, 9",
+    "footing, -120, 71, 450, WEST, -120, 72, 450",
+    "summit, 77, 180, -5, NORTH, 77, 181, -5",
+    "cave, 3, -23, 9, SOUTH, 3, -22, 10",
+    "cave, 3, -23, 9, NORTH, 3, -22, 8",
+    "cave, -40, -50, 12, EAST, -39, -49, 12",
+    "cave, -40, -50, 12, WEST, -41, -49, 12"
+  })
+  void standsOnTheDoorstepOrOnTheCaveSillOutside(
+      final String ground,
+      final int x,
+      final int y,
+      final int z,
+      final Direction out,
+      final int feetX,
+      final int feetY,
+      final int feetZ) {
+    final String fields =
+        switch (ground) {
+          case "cave" -> CAVE;
+          case "summit" -> FOOTING + ", " + SUMMIT;
+          default -> FOOTING;
+        };
+    assertEquals(
+        new BlockPos(feetX, feetY, feetZ),
+        decode(fields).orElseThrow().standingSpot(new Threshold(new BlockPos(x, y, z), out)));
   }
 }

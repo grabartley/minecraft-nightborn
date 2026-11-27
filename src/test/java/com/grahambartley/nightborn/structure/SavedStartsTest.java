@@ -38,6 +38,16 @@ class SavedStartsTest {
     assertEquals(Optional.of(present), SavedStarts.has(chunk(VERSION, startId), LAIR, VERSION));
   }
 
+  @ParameterizedTest(name = "saved start id ''{0}'' -> its pieces are read: {1}")
+  @CsvSource({"nightborn:underground_lair, true", "INVALID, false", "'', false"})
+  @DisplayName("a saved chunk hands over the start it holds, never an invalid or missing one")
+  void start(final String startId, final boolean read) {
+    assertEquals(
+        read ? Optional.of(startId) : Optional.empty(),
+        SavedStarts.start(chunk(VERSION, startId), LAIR).map(start -> start.getString("id")));
+    assertEquals(Optional.empty(), SavedStarts.start(NbtString.of("x"), LAIR));
+  }
+
   @ParameterizedTest(name = "saved at version {0} -> {1}")
   @CsvSource({
     "3955, true",

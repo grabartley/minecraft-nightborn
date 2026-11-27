@@ -1,20 +1,15 @@
 package com.grahambartley.nightborn.wild;
 
+import com.grahambartley.nightborn.guild.ExplorationMaps;
 import com.grahambartley.nightborn.guild.GuildRumour;
 import com.grahambartley.nightborn.structure.EntrancePlan;
 import com.mojang.datafixers.util.Pair;
 import java.util.Optional;
-import net.minecraft.component.DataComponentTypes;
 import net.minecraft.entity.Entity;
-import net.minecraft.item.FilledMapItem;
-import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.item.map.MapDecorationTypes;
-import net.minecraft.item.map.MapState;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.random.Random;
 import net.minecraft.village.TradeOffer;
@@ -68,15 +63,10 @@ public final class RumourMapOffer implements TradeOffers.Factory {
   }
 
   private TradeOffer offer(final ServerWorld world, final BlockPos entrance) {
-    final ItemStack map =
-        FilledMapItem.createMap(world, entrance.getX(), entrance.getZ(), SCALE, true, true);
-    FilledMapItem.fillExplorationMap(world, map);
-    MapState.addDecorationsNbt(map, entrance, "+", MapDecorationTypes.RED_X);
-    map.set(DataComponentTypes.ITEM_NAME, Text.translatable(RumourMaps.NAME_KEY));
     return new TradeOffer(
         new TradedItem(Items.EMERALD, price),
         Optional.of(new TradedItem(Items.COMPASS)),
-        map,
+        ExplorationMaps.marking(world, entrance, SCALE, RumourMaps.NAME_KEY),
         uses,
         experience,
         PRICE_MULTIPLIER);

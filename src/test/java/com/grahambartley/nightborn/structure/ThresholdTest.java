@@ -38,6 +38,12 @@ class ThresholdTest {
     assertEquals(lift, new Threshold(new BlockPos(3, floorY, 9), Direction.SOUTH).lift(surface));
   }
 
+  @ParameterizedTest(name = "an entrance facing {0} steps out onto {1},{2},{3}")
+  @CsvSource({"SOUTH, 3, 64, 10", "NORTH, 3, 64, 8", "EAST, 4, 64, 9", "WEST, 2, 64, 9"})
+  void stepsOutAtFloorLevel(final Direction out, final int x, final int y, final int z) {
+    assertEquals(new BlockPos(x, y, z), new Threshold(new BlockPos(3, 64, 9), out).step());
+  }
+
   @ParameterizedTest(name = "an entrance facing {0} looks at the ground at {1},{2}")
   @CsvSource({"SOUTH, 3, 10", "NORTH, 3, 8", "EAST, 4, 9", "WEST, 2, 9"})
   void readsTheGroundOneStepOutside(final Direction out, final int x, final int z) {

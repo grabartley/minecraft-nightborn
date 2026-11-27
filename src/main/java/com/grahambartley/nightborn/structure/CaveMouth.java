@@ -98,7 +98,7 @@ public record CaveMouth(
   }
 
   public Optional<Opening> meet(final Threshold way, final BlockBox lair, final Ground ground) {
-    final BlockPos outside = way.floor().offset(way.out());
+    final BlockPos outside = way.step();
     for (final BlockPos move : moves()) {
       final Optional<List<BlockPos>> route =
           opening(

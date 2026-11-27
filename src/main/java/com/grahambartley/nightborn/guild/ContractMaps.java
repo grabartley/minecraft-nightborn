@@ -2,9 +2,7 @@ package com.grahambartley.nightborn.guild;
 
 import com.grahambartley.nightborn.raid.MapSpread;
 import com.grahambartley.nightborn.server.ServerConfigService;
-import net.minecraft.component.DataComponentTypes;
 import net.minecraft.entity.Entity;
-import net.minecraft.item.FilledMapItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
@@ -31,16 +29,10 @@ public final class ContractMaps {
   }
 
   public static ItemStack map(final ServerWorld world, final BlockPos house) {
-    final ItemStack map =
-        FilledMapItem.createMap(
-            world,
-            house.getX(),
-            house.getZ(),
-            MapSpread.scale(ServerConfigService.current().raids().contractMapSpread()),
-            true,
-            true);
-    FilledMapItem.fillExplorationMap(world, map);
-    map.set(DataComponentTypes.ITEM_NAME, Text.translatable("nightborn.contract.map"));
-    return map;
+    return ExplorationMaps.around(
+        world,
+        house,
+        MapSpread.scale(ServerConfigService.current().raids().contractMapSpread()),
+        "nightborn.contract.map");
   }
 }

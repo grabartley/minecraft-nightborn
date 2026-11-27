@@ -14,6 +14,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.minecraft.SharedConstants;
+import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.scanner.SelectiveNbtCollector;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.entry.RegistryEntry;
@@ -25,6 +26,7 @@ import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.gen.chunk.placement.RandomSpreadStructurePlacement;
 import net.minecraft.world.gen.chunk.placement.StructurePlacement;
 import net.minecraft.world.gen.chunk.placement.StructurePlacementCalculator;
+import net.minecraft.world.gen.structure.JigsawStructure;
 import net.minecraft.world.gen.structure.Structure;
 
 public final class NearestStructures {
@@ -104,6 +106,7 @@ public final class NearestStructures {
     final StructurePlacementCalculator placements =
         world.getChunkManager().getStructurePlacementCalculator();
     final List<Found> found = new ArrayList<>();
+    final int reach = range + JigsawStructure.MAX_SIZE;
     for (final RegistryEntry<Structure> entry : entries) {
       final Identifier id = entry.getKey().orElseThrow().getValue();
       for (final StructurePlacement placement : placements.getPlacements(entry)) {
@@ -113,16 +116,17 @@ public final class NearestStructures {
         }
         for (final ChunkPos probe :
             SpreadCells.probes(
-                new ChunkPos(from), SpreadCells.chunks(range), spread.getSpacing())) {
+                new ChunkPos(from), SpreadCells.chunks(reach), spread.getSpacing())) {
           if (Thread.currentThread().isInterrupted()) {
             throw new CancellationException("Server stopped");
           }
           final ChunkPos start =
               spread.getStartChunk(placements.getStructureSeed(), probe.x, probe.z);
           final BlockPos at = spread.getLocatePos(start);
-          if (SpreadCells.within(from, at, range)
+          if (SpreadCells.within(from, at, reach)
               && spread.shouldGenerate(placements, start.x, start.z)) {
             entrance(world, entry.value(), id, start, at)
+                .filter(entrance -> SpreadCells.within(from, entrance, range))
                 .ifPresent(entrance -> found.add(new Found(id, entrance)));
           }
         }
@@ -145,9 +149,11 @@ public final class NearestStructures {
         .scanChunk(start, saved)
         .completeOnTimeout(null, SCAN_SECONDS, TimeUnit.SECONDS)
         .join();
+    final NbtElement root = saved.getRoot();
     return StructureEntrance.found(
-        SavedStarts.has(
-            saved.getRoot(), id, SharedConstants.getGameVersion().getSaveVersion().getId()),
+        SavedStarts.has(root, id, SharedConstants.getGameVersion().getSaveVersion().getId()),
+        () ->
+            SavedStarts.start(root, id).flatMap(nbt -> EntrancePlan.ofSaved(world, structure, nbt)),
         () -> EntrancePlan.of(world, structure, start),
         locate);
   }
