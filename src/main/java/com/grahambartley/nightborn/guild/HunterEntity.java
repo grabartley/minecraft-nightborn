@@ -59,7 +59,9 @@ import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldView;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
@@ -117,6 +119,8 @@ public class HunterEntity extends PathAwareEntity
   private String kitId = "";
   private HunterKit kit;
   private final ShownHunterAction shown = new ShownHunterAction();
+  private final StallWatch stall = new StallWatch();
+  private WanderAroundFarGoal wander;
   private long referredAt = -HunterReferral.REST;
 
   public HunterEntity(final EntityType<? extends PathAwareEntity> type, final World world) {
@@ -154,7 +158,8 @@ public class HunterEntity extends PathAwareEntity
     goalSelector.add(2, new MeleeAttackGoal(this, 1.15, true));
     goalSelector.add(3, new RaidDoorGoal(this, () -> raid != null));
     goalSelector.add(4, new GoToWalkTargetGoal(this, 0.8));
-    goalSelector.add(5, new WanderAroundFarGoal(this, 0.6));
+    wander = new WanderAroundFarGoal(this, 0.6);
+    goalSelector.add(5, wander);
     goalSelector.add(6, new LookAtEntityGoal(this, PlayerEntity.class, 8.0F));
     goalSelector.add(7, new LookAroundGoal(this));
     targetSelector.add(0, new KnownFaceTargetGoal(this));
@@ -407,6 +412,12 @@ public class HunterEntity extends PathAwareEntity
   protected void mobTick() {
     super.mobTick();
     fight();
+    stall.watch(this, wander);
+  }
+
+  @Override
+  public float getPathfindingFavor(final BlockPos pos, final WorldView world) {
+    return Footing.favor(this, pos, world);
   }
 
   public void fight() {

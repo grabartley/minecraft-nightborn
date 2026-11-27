@@ -1,6 +1,7 @@
 package com.grahambartley.nightborn.guild.party;
 
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.DataResult;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import java.util.List;
 import java.util.stream.Stream;
@@ -44,13 +45,18 @@ public record CampLayout(BlockPos campfire, List<CampLayout.Tent> tents) {
   }
 
   public static final Codec<CampLayout> CODEC =
-      RecordCodecBuilder.create(
-          instance ->
-              instance
-                  .group(
-                      BlockPos.CODEC.fieldOf("campfire").forGetter(CampLayout::campfire),
-                      Tent.CODEC.listOf().fieldOf("tents").forGetter(CampLayout::tents))
-                  .apply(instance, CampLayout::new));
+      RecordCodecBuilder.<CampLayout>create(
+              instance ->
+                  instance
+                      .group(
+                          BlockPos.CODEC.fieldOf("campfire").forGetter(CampLayout::campfire),
+                          Tent.CODEC.listOf().fieldOf("tents").forGetter(CampLayout::tents))
+                      .apply(instance, CampLayout::new))
+          .validate(
+              layout ->
+                  CampGaps.problem(layout)
+                      .<DataResult<CampLayout>>map(problem -> DataResult.error(() -> problem))
+                      .orElseGet(() -> DataResult.success(layout)));
 
   public List<Piece> pieces() {
     return tents.stream().flatMap(tent -> tent.placed().stream()).toList();

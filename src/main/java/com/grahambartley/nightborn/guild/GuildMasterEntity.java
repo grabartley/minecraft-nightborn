@@ -65,6 +65,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.village.TradeOffer;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldView;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
@@ -118,6 +119,8 @@ public class GuildMasterEntity extends MerchantEntity
       MobFighting.movingFirst(PowerCasting.underTell(), this::tickTactics);
   private final ShownHunterAction shown = new ShownHunterAction();
   private final ShownAction shownPower = new ShownAction();
+  private final StallWatch stall = new StallWatch();
+  private WanderAroundFarGoal wander;
   private String kitId = "";
   @Nullable private HunterKit kit;
   private long lastRestock;
@@ -161,7 +164,8 @@ public class GuildMasterEntity extends MerchantEntity
     goalSelector.add(2, new CrossbowGoal(this, this::standsOff));
     goalSelector.add(3, new MeleeAttackGoal(this, CHARGE_SPEED, true));
     goalSelector.add(7, new GoToWalkTargetGoal(this, 0.4));
-    goalSelector.add(8, new WanderAroundFarGoal(this, 0.35));
+    wander = new WanderAroundFarGoal(this, 0.35);
+    goalSelector.add(8, wander);
     goalSelector.add(9, new LookAtEntityGoal(this, PlayerEntity.class, 6.0F));
     goalSelector.add(10, new LookAroundGoal(this));
     targetSelector.add(0, new KnownFaceTargetGoal(this));
@@ -260,6 +264,12 @@ public class GuildMasterEntity extends MerchantEntity
   protected void mobTick() {
     super.mobTick();
     fight();
+    stall.watch(this, wander);
+  }
+
+  @Override
+  public float getPathfindingFavor(final BlockPos pos, final WorldView world) {
+    return Footing.favor(this, pos, world);
   }
 
   public void fight() {
