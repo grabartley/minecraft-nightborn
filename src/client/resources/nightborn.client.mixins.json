@@ -3,6 +3,7 @@
 	"package": "com.grahambartley.nightborn.mixin.client",
 	"compatibilityLevel": "JAVA_21",
 	"client": [
+		"ArmorFeatureRendererMixin",
 		"BackgroundRendererMixin",
 		"BufferBuilderStorageMixin",
 		"BuiltinModelItemRendererMixin",
@@ -12,6 +13,7 @@
 		"EntityRenderDispatcherMixin",
 		"EntityRendererMixin",
 		"GeoEntityRendererMixin",
+		"HeldItemFeatureRendererMixin",
 		"HeldItemRendererMixin",
 		"InGameHudMixin",
 		"InventoryScreenMixin",

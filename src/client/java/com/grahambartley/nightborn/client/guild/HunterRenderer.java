@@ -3,6 +3,7 @@ package com.grahambartley.nightborn.client.guild;
 import com.grahambartley.nightborn.guild.HunterLooking;
 import com.grahambartley.nightborn.render.BustShape;
 import com.grahambartley.nightborn.render.HandItemGeoLayer;
+import com.grahambartley.nightborn.render.LostLimbs;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
@@ -44,6 +45,9 @@ public class HunterRenderer<T extends LivingEntity & GeoEntity & HunterLooking>
       final int packedLight,
       final int packedOverlay,
       final int colour) {
+    if (LostLimbs.hidden(animatable, bone)) {
+      return;
+    }
     poseStack.push();
     BustShape.size(poseStack, bone, animatable.bust());
     super.renderRecursively(

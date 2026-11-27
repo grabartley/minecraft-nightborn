@@ -18,7 +18,9 @@ class NightbornCommandTest {
         "nightborn.command.help.rank",
         "nightborn.command.help.swear",
         "nightborn.command.help.thrall",
-        "nightborn.command.help.thrall_free"
+        "nightborn.command.help.thrall_free",
+        "nightborn.command.help.body_sever",
+        "nightborn.command.help.body_restore"
       })
   @DisplayName("the help lists every command, the thrall ones included")
   void helpLists(final String key) {

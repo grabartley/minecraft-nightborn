@@ -1,0 +1,12 @@
+{
+  "head": 0.25,
+  "hip": 0.375,
+  "trunk": 0.5,
+  "mob_weights": {
+    "head": 1,
+    "right_arm": 5,
+    "left_arm": 5,
+    "right_leg": 4,
+    "left_leg": 4
+  }
+}

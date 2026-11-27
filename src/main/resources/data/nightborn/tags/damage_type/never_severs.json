@@ -1,0 +1,14 @@
+{
+  "values": [
+    "#nightborn:stakes",
+    "nightborn:thrown_stake",
+    "nightborn:holy_water",
+    "nightborn:holy_light",
+    "nightborn:bite",
+    "nightborn:sun",
+    "nightborn:lancet",
+    "nightborn:vomit",
+    "#minecraft:is_fire",
+    "#minecraft:is_fall"
+  ]
+}
