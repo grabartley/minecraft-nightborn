@@ -9,6 +9,7 @@ import net.minecraft.component.type.ChargedProjectilesComponent;
 import net.minecraft.component.type.PotionContentsComponent;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.projectile.ProjectileEntity;
 import net.minecraft.entity.projectile.thrown.PotionEntity;
 import net.minecraft.item.ItemStack;
@@ -16,18 +17,18 @@ import net.minecraft.item.Items;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Identifier;
 
-final class HunterTactics {
+final class HunterTactics<T extends MobEntity & GuildFighter> {
 
   static final float BOLT_SPEED = 1.6F;
   static final float BOLT_SPREAD = 6.0F;
   static final float THROW_SPEED = 0.75F;
   static final float THROW_SPREAD = 8.0F;
 
-  private final HunterEntity hunter;
+  private final T hunter;
   private final HunterActionTimer timer = new HunterActionTimer();
   private final DrawnWeapon drawn = new DrawnWeapon();
 
-  HunterTactics(final HunterEntity hunter) {
+  HunterTactics(final T hunter) {
     this.hunter = hunter;
   }
 
@@ -42,6 +43,13 @@ final class HunterTactics {
     hunter.equipStack(EquipmentSlot.MAINHAND, weapon);
     hunter.playSound(SoundEvents.ITEM_ARMOR_EQUIP_LEATHER.value(), 1.0F, 1.0F);
     hunter.speak(HunterVoice.ALERT);
+  }
+
+  void sheathe() {
+    drawn.sheathe();
+    hunter.setArmed(false);
+    hunter.equipStack(EquipmentSlot.MAINHAND, ItemStack.EMPTY);
+    hunter.show(HunterAction.NONE);
   }
 
   void shoot() {

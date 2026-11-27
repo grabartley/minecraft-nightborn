@@ -11,8 +11,6 @@ import com.grahambartley.nightborn.guild.raiding.RaidDoorGoal;
 import com.grahambartley.nightborn.guild.raiding.RaidOrders;
 import com.grahambartley.nightborn.mob.MobSounds;
 import com.grahambartley.nightborn.mob.ShownAction;
-import com.grahambartley.nightborn.mob.VampireBatEntity;
-import com.grahambartley.nightborn.mob.combat.PowerCasting;
 import com.grahambartley.nightborn.mob.look.BustNbt;
 import com.grahambartley.nightborn.mob.look.Figure;
 import com.grahambartley.nightborn.mob.look.VampireRig;
@@ -37,7 +35,6 @@ import net.minecraft.entity.ai.goal.GoToWalkTargetGoal;
 import net.minecraft.entity.ai.goal.LookAroundGoal;
 import net.minecraft.entity.ai.goal.LookAtEntityGoal;
 import net.minecraft.entity.ai.goal.MeleeAttackGoal;
-import net.minecraft.entity.ai.goal.RevengeGoal;
 import net.minecraft.entity.ai.goal.SwimGoal;
 import net.minecraft.entity.ai.goal.WanderAroundFarGoal;
 import net.minecraft.entity.ai.pathing.MobNavigation;
@@ -65,8 +62,6 @@ import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.AnimatableManager;
 import software.bernie.geckolib.animation.AnimationController;
-import software.bernie.geckolib.animation.AnimationState;
-import software.bernie.geckolib.animation.PlayState;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 public class HunterEntity extends PathAwareEntity
@@ -78,7 +73,8 @@ public class HunterEntity extends PathAwareEntity
         SkillHolder,
         PowerShow,
         RankBearer,
-        GrowingHunter {
+        GrowingHunter,
+        GuildFighter {
 
   static final String FEMALE_KEY = "Female";
   static final String KIT_KEY = "Kit";
@@ -86,7 +82,6 @@ public class HunterEntity extends PathAwareEntity
   static final int CAMP_REACH = 12;
   static final String PARTY_LEADER_KEY = "PartyLeader";
   static final String RAID_KEY = "Raid";
-  static final int BLOOD_FLOOR = 0;
   @Nullable private UUID partyLeader;
   @Nullable private RaidOrders raid;
   private final Set<UUID> sworn = new HashSet<>();
@@ -109,14 +104,13 @@ public class HunterEntity extends PathAwareEntity
       DataTracker.registerData(HunterEntity.class, TrackedDataHandlerRegistry.INTEGER);
 
   private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
-  private final HunterTactics tactics = new HunterTactics(this);
+  private final GuildFighting<HunterEntity> fighting = new GuildFighting<>(this);
   private final WornLook worn = new WornLook();
-  private final PowerCasting casting = PowerCasting.underTell();
   private final ShownAction shownPower = new ShownAction();
   private final HunterBuildTicker building = new HunterBuildTicker();
   private String kitId = "";
   private HunterKit kit;
-  private HunterAction shown = HunterAction.NONE;
+  private final ShownHunterAction shown = new ShownHunterAction();
   private long referredAt = -HunterReferral.REST;
 
   public HunterEntity(final EntityType<? extends PathAwareEntity> type, final World world) {
@@ -159,17 +153,7 @@ public class HunterEntity extends PathAwareEntity
     goalSelector.add(7, new LookAroundGoal(this));
     targetSelector.add(0, new KnownFaceTargetGoal(this));
     targetSelector.add(1, new HunterTargetGoal(this));
-    targetSelector.add(
-        2,
-        new RevengeGoal(this, HunterEntity.class, GuildMasterEntity.class, PlayerEntity.class)
-            .setGroupRevenge());
-  }
-
-  public static boolean hunts(final LivingEntity target) {
-    return HunterTargets.hunts(
-        Vampires.isVampire(target),
-        target instanceof VampireBatEntity bat && bat.raidsCamp(),
-        target instanceof PlayerEntity player && player.isCreative());
+    targetSelector.add(2, new GuildRevengeGoal(this));
   }
 
   @Override
@@ -179,18 +163,32 @@ public class HunterEntity extends PathAwareEntity
 
   @Override
   public boolean canTarget(final LivingEntity target) {
-    return (foeOf(target) || defendsAgainst(target)) && super.canTarget(target);
+    return GuildFoes.fights(this, target) && super.canTarget(target);
   }
 
-  private boolean defendsAgainst(final LivingEntity target) {
-    return HunterTargets.defends(
-        target == getAttacker() || target == getTarget(),
-        target instanceof PlayerEntity,
-        target instanceof HunterEntity || target instanceof GuildMasterEntity);
+  @Override
+  public boolean foeOf(final LivingEntity target) {
+    return GuildFoes.hunts(target) || sworn.contains(target.getUuid());
   }
 
-  protected boolean foeOf(final LivingEntity target) {
-    return hunts(target) || sworn.contains(target.getUuid());
+  @Override
+  public boolean onWatch() {
+    return true;
+  }
+
+  @Override
+  public boolean canFight() {
+    return true;
+  }
+
+  @Override
+  public Optional<GuildMasterEntity> master() {
+    return partyLeader != null && getWorld() instanceof ServerWorld world
+        ? Optional.ofNullable(world.getEntity(partyLeader))
+            .filter(GuildMasterEntity.class::isInstance)
+            .map(GuildMasterEntity.class::cast)
+            .filter(GuildMasterEntity::isAlive)
+        : Optional.empty();
   }
 
   @Override
@@ -221,7 +219,7 @@ public class HunterEntity extends PathAwareEntity
 
   @Override
   public void shootAt(final LivingEntity target, final float pullProgress) {
-    tactics.shoot();
+    fighting.shoot();
   }
 
   public String look() {
@@ -236,36 +234,34 @@ public class HunterEntity extends PathAwareEntity
     return kit != null && kit.ranged();
   }
 
+  @Override
   public boolean armed() {
     return dataTracker.get(ARMED);
   }
 
-  void setArmed(final boolean armed) {
+  @Override
+  public void setArmed(final boolean armed) {
     dataTracker.set(ARMED, armed);
   }
 
-  protected void speak(final HunterVoice voice) {
+  @Override
+  public void speak(final HunterVoice voice) {
     playSound(MobSounds.hunter(figure(), voice), getSoundVolume(), getSoundPitch());
   }
 
   @Override
   public boolean tryAttack(final Entity target) {
-    final boolean struck = super.tryAttack(target);
-    if (struck) {
-      speak(HunterVoice.STRIKE);
-    }
-    return struck;
+    return fighting.strike(super.tryAttack(target));
   }
 
   @Override
   public boolean onKilledOther(final ServerWorld world, final LivingEntity other) {
-    if (Vampires.isVampire(other)) {
-      speak(HunterVoice.CHEER);
-    }
+    fighting.killed(other);
     return super.onKilledOther(world, other);
   }
 
-  void show(final HunterAction action) {
+  @Override
+  public void show(final HunterAction action) {
     dataTracker.set(ACTION, action.ordinal());
   }
 
@@ -350,7 +346,7 @@ public class HunterEntity extends PathAwareEntity
   }
 
   protected boolean telling() {
-    return casting.telling();
+    return fighting.telling();
   }
 
   @Override
@@ -418,10 +414,7 @@ public class HunterEntity extends PathAwareEntity
   }
 
   public void fight() {
-    if (kit != null && !casting.telling()) {
-      tactics.tick(kit);
-    }
-    casting.tick(this, HunterSkills.thinkTicks(this, shownRank()), BLOOD_FLOOR);
+    fighting.tick(kit, HunterSkills.thinkTicks(this, shownRank()));
   }
 
   protected void settle() {
@@ -543,7 +536,9 @@ public class HunterEntity extends PathAwareEntity
                             state.getLimbSwingAmount(),
                             armed())
                         .clip())));
-    controllers.add(new AnimationController<>(this, "action", ANIMATION_BLEND_TICKS, this::act));
+    controllers.add(
+        new AnimationController<>(
+            this, "action", ANIMATION_BLEND_TICKS, state -> shown.play(state, action())));
     controllers.add(
         new AnimationController<>(
             this,
@@ -551,15 +546,6 @@ public class HunterEntity extends PathAwareEntity
             ANIMATION_BLEND_TICKS,
             state ->
                 shownPower.play(state, dataTracker.get(POWER_SEQUENCE), dataTracker.get(POWER))));
-  }
-
-  private PlayState act(final AnimationState<HunterEntity> state) {
-    final HunterAction action = action();
-    if (action != shown) {
-      shown = action;
-      state.getController().forceAnimationReset();
-    }
-    return action == HunterAction.NONE ? PlayState.STOP : state.setAndContinue(action.clip());
   }
 
   @Override

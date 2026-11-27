@@ -7,6 +7,7 @@ import net.minecraft.util.math.BlockPos;
 public final class CampHome {
 
   static final String KEY = "Camp";
+  static final float UNBOUNDED = -1.0F;
 
   private CampHome() {}
 
@@ -14,6 +15,15 @@ public final class CampHome {
     if (!resident.hasPositionTarget()) {
       resident.setPositionTarget(resident.getBlockPos(), reach);
     }
+  }
+
+  public static boolean reaches(
+      final float range, final double squaredDistance, final int fighting, final boolean inFight) {
+    if (range == UNBOUNDED) {
+      return true;
+    }
+    final double reach = inFight ? Math.max(range, fighting) : range;
+    return squaredDistance < reach * reach;
   }
 
   public static void write(final PathAwareEntity resident, final NbtCompound nbt) {

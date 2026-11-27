@@ -50,5 +50,8 @@
   },
   "trickle_experience": 25,
   "trickle_ticks": 1200,
-  "stake_experience": 300
+  "stake_experience": 300,
+  "master_kits": {
+    "nightborn:master_silver": 1
+  }
 }

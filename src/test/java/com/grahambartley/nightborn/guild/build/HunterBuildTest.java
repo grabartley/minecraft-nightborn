@@ -11,7 +11,11 @@ import com.google.gson.JsonParser;
 import com.grahambartley.nightborn.MinecraftBootstrapExtension;
 import com.grahambartley.nightborn.rank.RankLadder;
 import com.mojang.serialization.JsonOps;
+import java.util.Arrays;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 import net.minecraft.util.Identifier;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -55,6 +59,44 @@ class HunterBuildTest {
       final String kit, final String skill, final boolean path, final int weight) {
     final Optional<Identifier> held = kit.equals("none") ? Optional.empty() : Optional.of(id(kit));
     assertEquals(weight, SHIPPED.weight(held, id(skill), path));
+  }
+
+  @ParameterizedTest(name = "carried {0}, roll {1} -> {2}")
+  @CsvSource({
+    "plain;silver, 0.0, plain",
+    "plain;silver, 0.24, plain",
+    "plain;silver, 0.25, silver",
+    "plain;silver, 0.99, silver",
+    "silver, 0.0, silver",
+    "plain, 0.99, plain",
+    "crossbow, 0.5, none"
+  })
+  @DisplayName("a Guild Master's kit is rolled by weight from the master kits that exist")
+  void rollsAMasterKitThatExists(final String carried, final double roll, final String kit) {
+    final HunterBuild build =
+        new HunterBuild(
+            Map.of(),
+            Map.of(),
+            0,
+            1,
+            1,
+            Map.of(),
+            0,
+            1200,
+            0,
+            Map.of(id("plain"), 1, id("silver"), 3));
+    final Set<Identifier> known =
+        Arrays.stream(carried.split(";")).map(HunterBuildFixtures::id).collect(Collectors.toSet());
+    assertEquals(
+        kit.equals("none") ? Optional.empty() : Optional.of(id(kit)), build.masterKit(known, roll));
+  }
+
+  @ParameterizedTest(name = "{0}")
+  @ValueSource(strings = {"nightborn:master_silver"})
+  @DisplayName("the shipped build arms every Guild Master from a master kit")
+  void shippedArmsGuildMasters(final String kit) {
+    assertEquals(
+        Optional.of(Identifier.of(kit)), SHIPPED.masterKit(Set.of(Identifier.of(kit)), 0.5));
   }
 
   @ParameterizedTest(name = "age {0} trickles: {1}")

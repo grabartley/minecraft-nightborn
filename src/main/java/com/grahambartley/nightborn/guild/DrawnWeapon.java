@@ -14,4 +14,8 @@ public final class DrawnWeapon {
     }
     return left > 0;
   }
+
+  public void sheathe() {
+    left = 0;
+  }
 }

@@ -30,4 +30,15 @@ class DrawnWeaponTest {
     }
     assertEquals(drawn, last);
   }
+
+  @ParameterizedTest(name = "hunting {0} ticks, sheathed, then idle 1 tick: drawn false")
+  @CsvSource({"1", "40", "500"})
+  void sheathingPutsTheWeaponAwayAtOnce(final int hunting) {
+    final DrawnWeapon weapon = new DrawnWeapon();
+    for (int tick = 0; tick < hunting; tick++) {
+      weapon.tick(true);
+    }
+    weapon.sheathe();
+    assertEquals(false, weapon.tick(false));
+  }
 }

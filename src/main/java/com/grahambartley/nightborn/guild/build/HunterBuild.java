@@ -5,6 +5,8 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
+import java.util.TreeMap;
 import net.minecraft.util.Identifier;
 
 public record HunterBuild(
@@ -16,7 +18,8 @@ public record HunterBuild(
     Map<Identifier, Map<Identifier, Integer>> kitLeanings,
     int trickleExperience,
     int trickleTicks,
-    int stakeExperience) {
+    int stakeExperience,
+    Map<Identifier, Integer> masterKits) {
 
   public static final int MOST_THINK_TICKS = 400;
   public static final int MOST_SPREAD = 100;
@@ -26,7 +29,7 @@ public record HunterBuild(
   public static final int PLAIN_TRICKLE_TICKS = 1200;
 
   public static final HunterBuild NONE =
-      new HunterBuild(Map.of(), Map.of(), 0, 1, 1, Map.of(), 0, PLAIN_TRICKLE_TICKS, 0);
+      new HunterBuild(Map.of(), Map.of(), 0, 1, 1, Map.of(), 0, PLAIN_TRICKLE_TICKS, 0, Map.of());
 
   private static final Codec<Integer> WEIGHT = Codec.intRange(0, Weighted.MAX_WEIGHT);
 
@@ -58,13 +61,17 @@ public record HunterBuild(
                           .forGetter(HunterBuild::trickleTicks),
                       Codec.intRange(0, MOST_EXPERIENCE)
                           .optionalFieldOf("stake_experience", 0)
-                          .forGetter(HunterBuild::stakeExperience))
+                          .forGetter(HunterBuild::stakeExperience),
+                      Codec.unboundedMap(Identifier.CODEC, WEIGHT)
+                          .optionalFieldOf("master_kits", Map.of())
+                          .forGetter(HunterBuild::masterKits))
                   .apply(instance, HunterBuild::new));
 
   public HunterBuild {
     rankWeights = Map.copyOf(rankWeights);
     thinkTicks = Map.copyOf(thinkTicks);
     kitLeanings = Map.copyOf(kitLeanings);
+    masterKits = Map.copyOf(masterKits);
   }
 
   public int thinkTicks(final Optional<Identifier> rank) {
@@ -75,6 +82,15 @@ public record HunterBuild(
     final int leaning =
         kit.map(id -> kitLeanings.getOrDefault(id, Map.of()).getOrDefault(skill, 0)).orElse(0);
     return (path ? pathWeight : coreWeight) + leaning;
+  }
+
+  public Optional<Identifier> masterKit(final Set<Identifier> carried, final double roll) {
+    return Weighted.pick(
+            new TreeMap<>(masterKits)
+                .entrySet().stream().filter(entry -> carried.contains(entry.getKey())).toList(),
+            Map.Entry::getValue,
+            roll)
+        .map(Map.Entry::getKey);
   }
 
   public boolean trickles(final long age) {
