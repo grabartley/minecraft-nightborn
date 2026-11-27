@@ -34,13 +34,11 @@ public final class PartySchedule {
   public static Step step(
       final long timeOfDay,
       final boolean pitched,
-      final long campDay,
-      final int nights,
-      final long lastTriedDay,
-      final boolean guarding) {
+      final boolean stayOver,
+      final long lastTriedDay) {
     final long day = day(timeOfDay);
     if (pitched) {
-      if (!guarding && day - campDay >= nights) {
+      if (stayOver) {
         return Step.STRIKE;
       }
       return night(timeOfDay) ? Step.SLEEP : Step.WAKE;

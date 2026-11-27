@@ -18,6 +18,7 @@ public final class PartyCamp {
 
   public static final int SEARCH = 12;
   public static final int STRIDE = 3;
+  public static final int APART = 16;
 
   private PartyCamp() {}
 
@@ -30,12 +31,15 @@ public final class PartyCamp {
   }
 
   public static Optional<BlockPos> site(
-      final ServerWorld world, final BlockPos near, final CampSite.Bounds bounds) {
+      final ServerWorld world,
+      final BlockPos near,
+      final CampSite.Bounds bounds,
+      final Optional<BlockPos> lastCamp) {
     for (int dx = -SEARCH; dx <= SEARCH; dx += STRIDE) {
       for (int dz = -SEARCH; dz <= SEARCH; dz += STRIDE) {
         final int x = near.getX() + dx;
         final int z = near.getZ() + dz;
-        if (!loaded(world, x, z, bounds)) {
+        if (!loaded(world, x, z, bounds) || !CampSite.apart(lastCamp, x, z, APART)) {
           continue;
         }
         final BlockPos centre =

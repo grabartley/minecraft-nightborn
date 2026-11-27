@@ -27,6 +27,8 @@ public final class PartyLeader {
   public static final int DAY_REACH = 24;
   public static final int MOVE_MIN = 48;
   public static final int MOVE_MAX = 80;
+  public static final int NEAR_MIN = 24;
+  public static final int NEAR_MAX = 32;
 
   private PartyLeader() {}
 
@@ -59,12 +61,7 @@ public final class PartyLeader {
     final Random random = master.getRandom();
     party = raid(world, party, settings, time, day, random);
     switch (PartySchedule.step(
-        time,
-        party.pitched(),
-        party.campDay(),
-        party.nights(),
-        party.lastTriedDay(),
-        party.guarding())) {
+        time, party.pitched(), party.stay().over(time, now), party.lastTriedDay())) {
       case PITCH -> party = pitch(world, master, party, settings, day, random);
       case SLEEP -> settle(world, party, members, settings);
       case WAKE -> roam(party, members);
@@ -94,18 +91,24 @@ public final class PartyLeader {
       final Random random) {
     final Optional<CampLayout> layout = PartyData.layout(world, random);
     final Optional<BlockPos> site =
-        layout.flatMap(chosen -> PartyCamp.site(world, master.getBlockPos(), chosen.bounds()));
+        layout.flatMap(
+            chosen ->
+                PartyCamp.site(world, master.getBlockPos(), chosen.bounds(), party.lastCamp()));
     if (site.isEmpty()) {
       return party.triedOn(
           day, party.guards().orElseGet(() -> onward(master.getBlockPos(), random)));
     }
     final HunterParty.Camp camp = PartyCamp.pitch(world, site.get(), layout.get());
     master.setPositionTarget(camp.fire(), KEEP_CLOSE);
-    return party.pitch(
-        camp,
-        PartyRoll.nights(
-            random::nextInt, settings.partyExtraNightChance(), settings.partyMaxNights()),
-        day);
+    final HunterParty pitched =
+        party.pitch(
+            camp,
+            PartyRoll.nights(
+                random::nextInt, settings.partyExtraNightChance(), settings.partyMaxNights()),
+            day,
+            world.getTime());
+    PitchedCamps.of(world).pitched(master.getUuid(), camp, pitched.stay());
+    return pitched;
   }
 
   private static void settle(
@@ -156,7 +159,8 @@ public final class PartyLeader {
     final HunterParty.Camp camp = party.camp().orElseThrow();
     members.forEach(member -> wake(member, camp.fire(), KEEP_CLOSE));
     PartyCamp.strike(world, camp);
-    final BlockPos next = onward(camp.fire(), random);
+    PitchedCamps.of(world).struck(master.getUuid());
+    final BlockPos next = next(party.guards(), camp.fire(), random);
     master.setPositionTarget(next, AREA_REACH);
     return party.struck(next);
   }
@@ -190,9 +194,19 @@ public final class PartyLeader {
     member.setPositionTarget(home, reach);
   }
 
+  static BlockPos next(final Optional<BlockPos> guards, final BlockPos fire, final Random random) {
+    return guards
+        .map(bell -> onward(bell, random, NEAR_MIN, NEAR_MAX))
+        .orElseGet(() -> onward(fire, random));
+  }
+
   static BlockPos onward(final BlockPos from, final Random random) {
+    return onward(from, random, MOVE_MIN, MOVE_MAX);
+  }
+
+  static BlockPos onward(final BlockPos from, final Random random, final int min, final int max) {
     final float angle = random.nextFloat() * MathHelper.TAU;
-    final int distance = random.nextBetween(MOVE_MIN, MOVE_MAX);
+    final int distance = random.nextBetween(min, max);
     return Objects.requireNonNull(from)
         .add(
             Math.round(MathHelper.cos(angle) * distance),

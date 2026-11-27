@@ -12,12 +12,12 @@ public record HunterParty(
     List<UUID> members,
     BlockPos area,
     Optional<HunterParty.Camp> camp,
-    int nights,
-    long campDay,
+    CampStay stay,
     long lastTriedDay,
     long lastPlayerNear,
     long lastRaidDay,
-    Optional<BlockPos> guards) {
+    Optional<BlockPos> guards,
+    Optional<BlockPos> lastCamp) {
 
   public record Camp(BlockPos fire, List<BlockPos> blocks, List<BlockPos> beds) {
     public static final Codec<Camp> CODEC =
@@ -42,34 +42,43 @@ public record HunterParty(
                           .forGetter(HunterParty::members),
                       BlockPos.CODEC.fieldOf("area").forGetter(HunterParty::area),
                       Camp.CODEC.optionalFieldOf("camp").forGetter(HunterParty::camp),
-                      Codec.INT.fieldOf("nights").forGetter(HunterParty::nights),
-                      Codec.LONG.fieldOf("camp_day").forGetter(HunterParty::campDay),
+                      CampStay.MAP_CODEC.forGetter(HunterParty::stay),
                       Codec.LONG.fieldOf("last_tried_day").forGetter(HunterParty::lastTriedDay),
                       Codec.LONG.fieldOf("last_player_near").forGetter(HunterParty::lastPlayerNear),
                       Codec.LONG.fieldOf("last_raid_day").forGetter(HunterParty::lastRaidDay),
-                      BlockPos.CODEC.optionalFieldOf("guards").forGetter(HunterParty::guards))
+                      BlockPos.CODEC.optionalFieldOf("guards").forGetter(HunterParty::guards),
+                      BlockPos.CODEC.optionalFieldOf("last_camp").forGetter(HunterParty::lastCamp))
                   .apply(instance, HunterParty::new));
 
   public static HunterParty gathered(
       final List<UUID> members, final BlockPos area, final long now) {
-    return new HunterParty(members, area, Optional.empty(), 0, 0L, -1L, now, -1L, Optional.empty());
+    return new HunterParty(
+        members,
+        area,
+        Optional.empty(),
+        CampStay.NONE,
+        -1L,
+        now,
+        -1L,
+        Optional.empty(),
+        Optional.empty());
   }
 
   public boolean pitched() {
     return camp.isPresent();
   }
 
-  public HunterParty pitch(final Camp pitched, final int stay, final long day) {
+  public HunterParty pitch(final Camp pitched, final int nights, final long day, final long now) {
     return new HunterParty(
         members,
         pitched.fire(),
         Optional.of(pitched),
-        stay,
-        day,
+        new CampStay(nights, day, now),
         day,
         lastPlayerNear,
         lastRaidDay,
-        guards);
+        guards,
+        lastCamp);
   }
 
   public HunterParty struck(final BlockPos nextArea) {
@@ -77,27 +86,27 @@ public record HunterParty(
         members,
         nextArea,
         Optional.empty(),
-        0,
-        0L,
+        CampStay.NONE,
         lastTriedDay,
         lastPlayerNear,
         lastRaidDay,
-        guards);
+        guards,
+        camp.map(Camp::fire).or(() -> lastCamp));
   }
 
   public HunterParty triedOn(final long day, final BlockPos nextArea) {
     return new HunterParty(
-        members, nextArea, camp, nights, campDay, day, lastPlayerNear, lastRaidDay, guards);
+        members, nextArea, camp, stay, day, lastPlayerNear, lastRaidDay, guards, lastCamp);
   }
 
   public HunterParty seen(final long now) {
     return new HunterParty(
-        members, area, camp, nights, campDay, lastTriedDay, now, lastRaidDay, guards);
+        members, area, camp, stay, lastTriedDay, now, lastRaidDay, guards, lastCamp);
   }
 
   public HunterParty raidRolled(final long day) {
     return new HunterParty(
-        members, area, camp, nights, campDay, lastTriedDay, lastPlayerNear, day, guards);
+        members, area, camp, stay, lastTriedDay, lastPlayerNear, day, guards, lastCamp);
   }
 
   public HunterParty guarding(final Optional<BlockPos> village) {
@@ -105,12 +114,12 @@ public record HunterParty(
         members,
         village.orElse(area),
         camp,
-        nights,
-        campDay,
+        stay,
         lastTriedDay,
         lastPlayerNear,
         lastRaidDay,
-        village);
+        village,
+        lastCamp);
   }
 
   public boolean guarding() {
