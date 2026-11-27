@@ -109,9 +109,12 @@ public class HunterGameTest implements FabricGameTest {
         () -> {
           vampire.damage(NightbornDamage.sun(context.getWorld()), 1000.0F);
           context.assertTrue(vampire.isDead(), "the sun finishes the downed vampire");
-          context.assertEquals(
-              SkillAttachment.get(hunter, SkillTree.HUNTER).earned(),
-              TestPlayers.pointsFor(ServerConfigService.current().skills().huntExperience()),
+          TestPlayers.assertPaid(
+              context,
+              hunter,
+              SkillTree.HUNTER,
+              TreeProgress.EMPTY,
+              ServerConfigService.current().skills().huntExperience(),
               "the hunter is paid");
           context.assertEquals(
               SkillAttachment.get(hunter, SkillTree.VAMPIRE).earned(),

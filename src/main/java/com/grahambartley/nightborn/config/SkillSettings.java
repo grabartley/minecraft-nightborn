@@ -23,31 +23,31 @@ public record SkillSettings(
 
   public static final IntSetting FIRST_POINT_EXPERIENCE =
       new IntSetting(
-          SECTION, "firstPointExperience", 100, 1, 100000, c -> c.skills().firstPointExperience());
+          SECTION, "firstPointExperience", 200, 1, 100000, c -> c.skills().firstPointExperience());
   public static final IntSetting POINT_COST_RISE =
-      new IntSetting(SECTION, "pointCostRise", 3, 0, 100, c -> c.skills().pointCostRise());
+      new IntSetting(SECTION, "pointCostRise", 1, 0, 100, c -> c.skills().pointCostRise());
   public static final IntSetting BLOOD_EXPERIENCE =
-      new IntSetting(SECTION, "bloodExperience", 5, 0, 1000, c -> c.skills().bloodExperience());
+      new IntSetting(SECTION, "bloodExperience", 8, 0, 1000, c -> c.skills().bloodExperience());
   public static final IntSetting DRAIN_BONUS_EXPERIENCE =
       new IntSetting(
           SECTION, "drainBonusExperience", 100, 0, 10000, c -> c.skills().drainBonusExperience());
   public static final IntSetting HUNT_EXPERIENCE =
-      new IntSetting(SECTION, "huntExperience", 300, 0, 10000, c -> c.skills().huntExperience());
+      new IntSetting(SECTION, "huntExperience", 100, 0, 10000, c -> c.skills().huntExperience());
   public static final IntSetting STAGE_EXPERIENCE =
-      new IntSetting(SECTION, "stageExperience", 200, 0, 10000, c -> c.skills().stageExperience());
+      new IntSetting(SECTION, "stageExperience", 150, 0, 10000, c -> c.skills().stageExperience());
   public static final IntSetting STAKE_PENALTY =
       new IntSetting(SECTION, "stakePenalty", 10, 0, 100, c -> c.skills().stakePenalty());
   public static final IntSetting CONTRACT_EXPERIENCE =
       new IntSetting(
-          SECTION, "contractExperience", 500, 0, 10000, c -> c.skills().contractExperience());
+          SECTION, "contractExperience", 250, 0, 10000, c -> c.skills().contractExperience());
 
   public static final IntSetting HUNTER_RANK_POINTS =
-      new IntSetting(SECTION, "hunterRankPoints", 5, 0, 1000, c -> c.skills().hunterRankPoints());
+      new IntSetting(SECTION, "hunterRankPoints", 10, 0, 1000, c -> c.skills().hunterRankPoints());
   public static final IntSetting VETERAN_RANK_POINTS =
       new IntSetting(
-          SECTION, "veteranRankPoints", 20, 0, 1000, c -> c.skills().veteranRankPoints());
+          SECTION, "veteranRankPoints", 45, 0, 1000, c -> c.skills().veteranRankPoints());
   public static final IntSetting MASTER_RANK_POINTS =
-      new IntSetting(SECTION, "masterRankPoints", 45, 0, 1000, c -> c.skills().masterRankPoints());
+      new IntSetting(SECTION, "masterRankPoints", 100, 0, 1000, c -> c.skills().masterRankPoints());
   public static final IntSetting RANK_HEALTH =
       new IntSetting(SECTION, "rankHealth", 2, 0, 40, c -> c.skills().rankHealth());
   public static final IntSetting RANK_DAMAGE_TENTHS =

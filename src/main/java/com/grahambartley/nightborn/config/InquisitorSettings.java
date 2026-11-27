@@ -20,7 +20,7 @@ public record InquisitorSettings(
 
   public static final IntSetting EXPERIENCE =
       new IntSetting(
-          SECTION, "inquisitorExperience", 4000, 0, 50000, c -> c.inquisitor().experience());
+          SECTION, "inquisitorExperience", 2500, 0, 50000, c -> c.inquisitor().experience());
   public static final IntSetting HEALTH_PER_VAMPIRE =
       new IntSetting(
           SECTION, "healthPerVampire", 50, 0, 500, c -> c.inquisitor().healthPerVampire());

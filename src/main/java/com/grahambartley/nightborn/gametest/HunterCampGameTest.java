@@ -14,6 +14,7 @@ import com.grahambartley.nightborn.mob.VampireEntity;
 import com.grahambartley.nightborn.server.ServerConfigService;
 import com.grahambartley.nightborn.skill.SkillAttachment;
 import com.grahambartley.nightborn.skill.SkillTree;
+import com.grahambartley.nightborn.skill.TreeProgress;
 import com.grahambartley.nightborn.structure.RareSpreadPlacement;
 import com.grahambartley.nightborn.structure.StructureRarity;
 import com.grahambartley.nightborn.vampire.VampireTransitions;
@@ -184,15 +185,18 @@ public class HunterCampGameTest implements FabricGameTest {
     context.runAtTick(
         START,
         () -> {
-          final int before = SkillAttachment.get(human, SkillTree.HUNTER).earned();
+          final TreeProgress before = SkillAttachment.get(human, SkillTree.HUNTER);
           master.interactMob(human, Hand.MAIN_HAND);
           context.assertEquals(
               count(human, ContractItems.HUNTER_CONTRACT), 0, "the contract is handed in");
           context.assertTrue(count(human, Items.EMERALD) > 0, "the contract pays emeralds");
           context.assertTrue(count(human, GearItems.SILVER_INGOT) > 0, "and silver");
-          context.assertEquals(
-              SkillAttachment.get(human, SkillTree.HUNTER).earned() - before,
-              TestPlayers.pointsFor(ServerConfigService.current().skills().contractExperience()),
+          TestPlayers.assertPaid(
+              context,
+              human,
+              SkillTree.HUNTER,
+              before,
+              ServerConfigService.current().skills().contractExperience(),
               "and hunter points");
           final int emeralds = count(human, Items.EMERALD);
           context.assertTrue(

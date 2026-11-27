@@ -389,12 +389,25 @@ The core starts with Thick Blood (more health), Grave Strength (harder blows), B
 
 | ID | Requirement |
 |---|---|
-| SKILL-1 | Acts pay skill experience, not points. Experience fills a bar, a full bar gives one point, and each point needs more experience than the last. Wherever this document says an act earns or pays points, it pays experience toward them. Vampire and hunter experience and points are separate, and each is spent only in its own tree. By default, filling two bloodlines or two hunter paths takes about as long as reaching ancient or Master |
+| SKILL-1 | Acts pay skill experience, not points. Experience fills a bar, a full bar gives one point, and each point needs more experience than the last. Wherever this document says an act earns or pays points, it pays experience toward them. Vampire and hunter experience and points are separate, and each is spent only in its own tree. By default, filling two bloodlines or two hunter paths takes about as long as reaching ancient or Master, at the pace set under Skill pacing below |
 | SKILL-2 | A skill costs points and may need another skill first. A passive skill comes in up to three ranks, each bought in turn. The deepest skills need a stage (AGE-5) or a rank (RANK-3) |
 | SKILL-3 | Bought skills are kept across death, reconnect and world reload |
 | SKILL-4 | Active skills are used from a power bar of five slots, with keys the player can rebind. The skill screen shows the bar: the player drags any active skill they own onto a slot, swaps two by dragging one onto the other and clears a slot by dragging its skill off. A power that is on no slot cannot be used. Hunters have the same bar (HUNT-6) |
 | SKILL-5 | Each active skill has a blood cost and a cooldown, shown on the bar with its icon and key. A downed or weakened vampire cannot use powers |
 | SKILL-6 | A staked vampire player loses 10% of their earned points, rounded up, taken from unspent points first and then from their most recent skills. A bloodline left with none of its skills is freed for a new choice. With CORE-10 on, the full reset applies instead |
+
+**Skill pacing.** By default the first skill point costs 200 experience and each point after it costs 1% more than the one before. Staking a vampire pays 100 experience and 150 more for each stage above fledgling, so a fledgling pays 100, an adult 250, an elder 400 and an ancient 550. A contract pays 250. The Eldest and the Grand Inquisitor pay 2,500 each, and a nemesis five times what staking it would. Fresh blood pays 8 experience for each point of its worth and a drain 100 more. Trials pay a share of the next point, as CHAL-1 says.
+
+An ordinary hunting week is three fledglings, three adults and two elders staked, two contracts handed in, and one small and one medium trial. An ordinary feeding night is 30 points of fresh blood at villager quality with one drain, and the same two trials each week. At those rates:
+
+| Milestone | Hunter | Vampire |
+|---|---|---|
+| First point | Two fledglings, or one adult | The first night |
+| Five fledglings staked | Two points | Not applicable |
+| The core, about 45 to 50 points | About five weeks: around 40 stakings, 10 contracts and 10 trials | About five weeks |
+| The core and one path or bloodline, about 80 points | About ten weeks | About ten weeks |
+| The full build, about 110 points | About fifteen weeks | About a hundred nights, as long as reaching ancient |
+| Guild rank | Hunter at 10 points, in the first week. Veteran at 45, with the core. Master at 100, near the full build | Not applicable |
 
 **Enforcement:** server. The client asks to buy a skill; the server checks points and order.
 
@@ -519,7 +532,7 @@ The hunter tree has a core that every hunter shares, and four paths, of which a 
 
 | ID | Requirement |
 |---|---|
-| RANK-1 | Every hunter has a rank in the guild. A rank is reached by earning a total of hunter experience, none for Initiate, and doing its deed, and a deed done early counts |
+| RANK-1 | Every hunter has a rank in the guild. A rank is reached by earning a total of hunter points, none for Initiate, and doing its deed, and a deed done early counts |
 | RANK-2 | Each rank gives more health and more damage against vampires, and nothing against anyone else |
 | RANK-3 | A rank also opens the deepest hunter skills (SKILL-2), better stock and harder contracts from Guild Masters (GUILD-3) |
 | RANK-4 | A rank is never lost, and is set aside with the hunter tree if its holder turns (TURN-6). A mark of rank, a shape as well as a colour, is drawn beside a hunter's name for everyone, hunter mobs and Guild Masters included (GUILD-15). A human who has not joined has none. A vampire player shows the rank that was set aside when they turned, or none, so the mark never gives them away (FACT-4) |

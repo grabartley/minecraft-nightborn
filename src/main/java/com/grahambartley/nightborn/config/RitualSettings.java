@@ -22,7 +22,7 @@ public record RitualSettings(
       new IntSetting(SECTION, "buildUpTicks", 200, 20, 1200, c -> c.ritual().buildUpTicks());
   public static final IntSetting ELDEST_EXPERIENCE =
       new IntSetting(
-          SECTION, "eldestExperience", 4000, 0, 50000, c -> c.ritual().eldestExperience());
+          SECTION, "eldestExperience", 2500, 0, 50000, c -> c.ritual().eldestExperience());
   public static final IntSetting ELDEST_HEALTH_PER_PLAYER =
       new IntSetting(
           SECTION, "eldestHealthPerPlayer", 50, 0, 500, c -> c.ritual().eldestHealthPerPlayer());
