@@ -14,6 +14,7 @@ import com.grahambartley.nightborn.guild.party.HunterTentBlock;
 import com.grahambartley.nightborn.guild.party.HunterTentBlockEntity;
 import com.grahambartley.nightborn.guild.party.LeaderlessCamps;
 import com.grahambartley.nightborn.guild.party.PartyCamp;
+import com.grahambartley.nightborn.guild.party.PartySchedule;
 import com.grahambartley.nightborn.guild.party.PitchedCamps;
 import com.grahambartley.nightborn.guild.party.TentBlocks;
 import com.grahambartley.nightborn.guild.party.TentPart;
@@ -32,6 +33,7 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.mob.ZombieEntity;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.test.GameTest;
 import net.minecraft.test.TestContext;
 import net.minecraft.util.BlockRotation;
@@ -143,7 +145,10 @@ public class HunterPartyGameTest implements FabricGameTest {
       tickLimit = LeaderlessCamps.CHECK_TICKS + BEFORE_SWEEP)
   public void aCampWithNoLivingLeaderComesDownWhenItsNightsRunOut(final TestContext context) {
     meadow(context);
-    PitchedCamps.of(context.getWorld()).pitched(UUID.randomUUID(), pitch(context), CampStay.NONE);
+    final ServerWorld world = context.getWorld();
+    final CampStay ranOut =
+        new CampStay(1, PartySchedule.day(world.getTimeOfDay()) - 1, world.getTime());
+    PitchedCamps.of(world).pitched(UUID.randomUUID(), pitch(context), ranOut);
     context.runAtTick(
         LeaderlessCamps.CHECK_TICKS + 1,
         () -> {

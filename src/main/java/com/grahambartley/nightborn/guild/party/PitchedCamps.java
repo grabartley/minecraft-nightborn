@@ -5,6 +5,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtOps;
@@ -61,14 +62,27 @@ public final class PitchedCamps extends PersistentState {
     return nbt;
   }
 
+  static Optional<UUID> leader(final String key) {
+    try {
+      return Optional.of(UUID.fromString(key));
+    } catch (final IllegalArgumentException damaged) {
+      return Optional.empty();
+    }
+  }
+
   static PitchedCamps fromNbt(
       final NbtCompound nbt, final RegistryWrapper.WrapperLookup registries) {
     final PitchedCamps camps = new PitchedCamps();
     for (final String key : nbt.getKeys()) {
+      final Optional<UUID> leader = leader(key);
+      if (leader.isEmpty()) {
+        Nightborn.LOGGER.warn("Skipping a camp with a damaged leader: {}", key);
+        continue;
+      }
       Pitched.CODEC
           .parse(NbtOps.INSTANCE, nbt.get(key))
           .resultOrPartial(error -> Nightborn.LOGGER.warn("Skipping a damaged camp: {}", error))
-          .ifPresent(pitched -> camps.camps.put(UUID.fromString(key), pitched));
+          .ifPresent(pitched -> camps.camps.put(leader.get(), pitched));
     }
     return camps;
   }

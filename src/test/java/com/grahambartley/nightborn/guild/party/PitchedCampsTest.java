@@ -34,4 +34,10 @@ class PitchedCampsTest {
         .skip(strikeFirst ? 1 : 0)
         .forEach(leader -> assertEquals(new PitchedCamps.Pitched(CAMP, STAY), loaded.get(leader)));
   }
+
+  @ParameterizedTest(name = "a leader saved as \"{0}\" reads back: {1}")
+  @CsvSource({"9b3c2f1e-0d4a-4c8e-9f21-6a7b8c9d0e1f, true", "not-a-leader, false", "'', false"})
+  void skipsACampWhoseLeaderIsDamaged(final String key, final boolean read) {
+    assertEquals(read, PitchedCamps.leader(key).isPresent());
+  }
 }

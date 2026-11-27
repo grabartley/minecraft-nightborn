@@ -160,10 +160,7 @@ public final class PartyLeader {
     members.forEach(member -> wake(member, camp.fire(), KEEP_CLOSE));
     PartyCamp.strike(world, camp);
     PitchedCamps.of(world).struck(master.getUuid());
-    final BlockPos next =
-        party.guarding()
-            ? onward(camp.fire(), random, NEAR_MIN, NEAR_MAX)
-            : onward(camp.fire(), random);
+    final BlockPos next = next(party.guards(), camp.fire(), random);
     master.setPositionTarget(next, AREA_REACH);
     return party.struck(next);
   }
@@ -195,6 +192,12 @@ public final class PartyLeader {
       member.wakeUp();
     }
     member.setPositionTarget(home, reach);
+  }
+
+  static BlockPos next(final Optional<BlockPos> guards, final BlockPos fire, final Random random) {
+    return guards
+        .map(bell -> onward(bell, random, NEAR_MIN, NEAR_MAX))
+        .orElseGet(() -> onward(fire, random));
   }
 
   static BlockPos onward(final BlockPos from, final Random random) {

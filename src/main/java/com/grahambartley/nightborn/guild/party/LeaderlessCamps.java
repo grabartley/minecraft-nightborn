@@ -2,6 +2,7 @@ package com.grahambartley.nightborn.guild.party;
 
 import com.grahambartley.nightborn.guild.GuildMasterEntity;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Stream;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
@@ -23,6 +24,10 @@ public final class LeaderlessCamps {
     return over && loaded && !led;
   }
 
+  public static boolean holds(final boolean alive, final Optional<HunterParty> party) {
+    return alive && party.filter(HunterParty::pitched).isPresent();
+  }
+
   private static void tick(final ServerWorld world) {
     if (world.getTime() % CHECK_TICKS != 0) {
       return;
@@ -34,7 +39,7 @@ public final class LeaderlessCamps {
           entry.getValue().stay().over(world.getTimeOfDay(), world.getTime()),
           loaded(world, camp),
           world.getEntity(entry.getKey()) instanceof GuildMasterEntity master
-              && master.isAlive())) {
+              && holds(master.isAlive(), Optional.ofNullable(master.party())))) {
         PartyCamp.strike(world, camp);
         pitched.struck(entry.getKey());
       }
