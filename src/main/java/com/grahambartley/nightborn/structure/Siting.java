@@ -7,7 +7,6 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import java.util.Optional;
 import net.minecraft.structure.StructurePiecesCollector;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.math.BlockBox;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ColumnPos;
 import net.minecraft.world.biome.source.BiomeCoords;
@@ -65,27 +64,23 @@ public record Siting(Optional<Footing> footing, Optional<Summit> summit, Optiona
     if (threshold.isEmpty() && entrance().isPresent()) {
       return Optional.empty();
     }
-    final Optional<CaveMouth.Ground> underground =
-        cave.map(mouth -> ground(context, mouth.band(threshold.get())));
+    final Optional<CaveMouth.Opening> opening =
+        cave.flatMap(
+            mouth ->
+                mouth.meet(
+                    threshold.get(),
+                    pieces.getBoundingBox(),
+                    ground(context, mouth.band(threshold.get()))));
     final Optional<BlockPos> move =
         cave.isPresent()
-            ? cave.get().meet(threshold.get(), pieces.getBoundingBox(), underground.get())
+            ? opening.map(CaveMouth.Opening::move)
             : Optional.of(onFooting(context, threshold, ground));
     if (move.isEmpty() || footing.isPresent() && !footing.get().allowsLift(move.get().getY())) {
       return Optional.empty();
     }
     final BlockPos by = move.get();
     pieces.toList().pieces().forEach(piece -> piece.translate(by.getX(), by.getY(), by.getZ()));
-    final BlockBox lair = pieces.getBoundingBox();
-    cave.flatMap(
-            mouth ->
-                mouth
-                    .route(
-                        threshold.get().floor().offset(threshold.get().out()).add(by),
-                        lair,
-                        underground.get())
-                    .map(route -> new CavePath(route, mouth.sill())))
-        .ifPresent(pieces::addPiece);
+    opening.ifPresent(found -> pieces.addPiece(new CavePath(found.route(), cave.get().sill())));
     final BlockPos placed = position.position().add(by);
     if (!inBiome(context, placed)) {
       return Optional.empty();

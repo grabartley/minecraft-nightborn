@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import com.google.gson.JsonParser;
 import com.mojang.serialization.JsonOps;
 import java.util.Optional;
+import java.util.stream.Stream;
 import net.minecraft.util.Identifier;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -41,7 +42,7 @@ class SitingTest {
     final String fields =
         String.join(
             ", ",
-            java.util.stream.Stream.of(
+            Stream.of(
                     grounds.contains("footing") ? FOOTING : "",
                     grounds.contains("summit") ? SUMMIT : "",
                     grounds.contains("cave") ? CAVE : "")
