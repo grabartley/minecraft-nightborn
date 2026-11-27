@@ -36,6 +36,7 @@
       "com.grahambartley.nightborn.gametest.OathGameTest",
       "com.grahambartley.nightborn.gametest.GuildRiteGameTest",
       "com.grahambartley.nightborn.gametest.JournalGameTest",
+      "com.grahambartley.nightborn.gametest.LoreBookGameTest",
       "com.grahambartley.nightborn.gametest.AgeGameTest",
       "com.grahambartley.nightborn.gametest.HuntGameTest",
       "com.grahambartley.nightborn.gametest.HiddenVampireGameTest",

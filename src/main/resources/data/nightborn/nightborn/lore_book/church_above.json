@@ -1,0 +1,17 @@
+{
+  "title": {
+    "translate": "nightborn.lore.church_above.title"
+  },
+  "author": "Sexton Barnabas",
+  "pages": [
+    {
+      "translate": "nightborn.lore.church_above.page.1"
+    },
+    {
+      "translate": "nightborn.lore.church_above.page.2"
+    },
+    {
+      "translate": "nightborn.lore.church_above.page.3"
+    }
+  ]
+}

@@ -6,7 +6,7 @@
       "element": {
         "element_type": "minecraft:single_pool_element",
         "location": "nightborn:vampire/castle/bastions",
-        "processors": "minecraft:empty",
+        "processors": "nightborn:vampire/castle",
         "projection": "rigid"
       }
     },
@@ -15,7 +15,7 @@
       "element": {
         "element_type": "minecraft:single_pool_element",
         "location": "nightborn:vampire/castle/ruined",
-        "processors": "minecraft:empty",
+        "processors": "nightborn:vampire/castle",
         "projection": "rigid"
       }
     }

@@ -26,3 +26,4 @@ Shared engineering standards across all the mods in this family live in [`../sta
 | [0016](0016-coffin-owners-live-in-one-server-wide-record.md) | Coffin owners live in one server-wide record |
 | [0017](0017-hunter-camps-are-generated-templates-and-contracts-are-items.md) | Hunter camps are generated templates and contracts are items |
 | [0018](0018-mobs-choose-powers-through-one-brain-that-scores-uses-from-data.md) | Mobs choose powers through one brain that scores uses from data |
+| [0019](0019-lectern-books-are-a-structure-processor-over-tagged-books.md) | Lectern books are a structure processor over tagged books |

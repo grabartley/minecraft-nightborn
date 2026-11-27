@@ -1,0 +1,20 @@
+{
+  "title": {
+    "translate": "nightborn.lore.hunter_notes.title"
+  },
+  "author": "Brother Malachai",
+  "pages": [
+    {
+      "translate": "nightborn.lore.hunter_notes.page.1"
+    },
+    {
+      "translate": "nightborn.lore.hunter_notes.page.2"
+    },
+    {
+      "translate": "nightborn.lore.hunter_notes.page.3"
+    },
+    {
+      "translate": "nightborn.lore.hunter_notes.page.4"
+    }
+  ]
+}

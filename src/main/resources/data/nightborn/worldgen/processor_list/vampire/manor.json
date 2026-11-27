@@ -1,0 +1,8 @@
+{
+  "processors": [
+    {
+      "processor_type": "nightborn:lectern_book",
+      "books": "nightborn:manor"
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "title": {
+    "translate": "nightborn.lore.table_manners.title"
+  },
+  "author": "Dame Perpetua",
+  "pages": [
+    {
+      "translate": "nightborn.lore.table_manners.page.1"
+    },
+    {
+      "translate": "nightborn.lore.table_manners.page.2"
+    },
+    {
+      "translate": "nightborn.lore.table_manners.page.3"
+    },
+    {
+      "translate": "nightborn.lore.table_manners.page.4"
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "title": {
+    "translate": "nightborn.lore.silver_warning.title"
+  },
+  "author": "Grandmother Sidonie",
+  "pages": [
+    {
+      "translate": "nightborn.lore.silver_warning.page.1"
+    },
+    {
+      "translate": "nightborn.lore.silver_warning.page.2"
+    },
+    {
+      "translate": "nightborn.lore.silver_warning.page.3"
+    }
+  ]
+}

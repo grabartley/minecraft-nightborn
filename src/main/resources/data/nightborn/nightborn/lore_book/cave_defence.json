@@ -1,0 +1,17 @@
+{
+  "title": {
+    "translate": "nightborn.lore.cave_defence.title"
+  },
+  "author": "Radomir of the Deep",
+  "pages": [
+    {
+      "translate": "nightborn.lore.cave_defence.page.1"
+    },
+    {
+      "translate": "nightborn.lore.cave_defence.page.2"
+    },
+    {
+      "translate": "nightborn.lore.cave_defence.page.3"
+    }
+  ]
+}

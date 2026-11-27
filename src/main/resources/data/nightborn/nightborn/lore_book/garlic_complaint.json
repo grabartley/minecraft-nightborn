@@ -1,0 +1,17 @@
+{
+  "title": {
+    "translate": "nightborn.lore.garlic_complaint.title"
+  },
+  "author": "Lucan the Fastidious",
+  "pages": [
+    {
+      "translate": "nightborn.lore.garlic_complaint.page.1"
+    },
+    {
+      "translate": "nightborn.lore.garlic_complaint.page.2"
+    },
+    {
+      "translate": "nightborn.lore.garlic_complaint.page.3"
+    }
+  ]
+}

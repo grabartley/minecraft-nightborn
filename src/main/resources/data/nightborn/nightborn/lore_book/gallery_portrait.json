@@ -1,0 +1,17 @@
+{
+  "title": {
+    "translate": "nightborn.lore.gallery_portrait.title"
+  },
+  "author": "Countess Ottilie",
+  "pages": [
+    {
+      "translate": "nightborn.lore.gallery_portrait.page.1"
+    },
+    {
+      "translate": "nightborn.lore.gallery_portrait.page.2"
+    },
+    {
+      "translate": "nightborn.lore.gallery_portrait.page.3"
+    }
+  ]
+}

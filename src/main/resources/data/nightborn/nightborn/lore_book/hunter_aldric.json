@@ -1,0 +1,20 @@
+{
+  "title": {
+    "translate": "nightborn.lore.hunter_aldric.title"
+  },
+  "author": "Lady Mirelle",
+  "pages": [
+    {
+      "translate": "nightborn.lore.hunter_aldric.page.1"
+    },
+    {
+      "translate": "nightborn.lore.hunter_aldric.page.2"
+    },
+    {
+      "translate": "nightborn.lore.hunter_aldric.page.3"
+    },
+    {
+      "translate": "nightborn.lore.hunter_aldric.page.4"
+    }
+  ]
+}
