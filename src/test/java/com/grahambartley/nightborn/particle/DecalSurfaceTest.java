@@ -58,6 +58,9 @@ class DecalSurfaceTest {
     "OAK_FENCE, AIR, WEST, 4.375, 63.5, 9.5, false",
     "GLASS_PANE, AIR, UP, 4.5, 64.0, 9.5, false",
     "OAK_LEAVES, AIR, UP, 4.5, 64.0, 9.5, true",
+    "TORCH, AIR, UP, 4.5, 63.0, 9.5, false",
+    "FLOWER_POT, AIR, UP, 4.5, 63.375, 9.5, false",
+    "GLASS_PANE, AIR, WEST, 4.4375, 63.5, 9.5, false",
     "AIR, AIR, UP, 4.5, 64.0, 9.5, false",
     "WATER, AIR, UP, 4.5, 64.0, 9.5, false"
   })
@@ -102,6 +105,27 @@ class DecalSurfaceTest {
     assertEquals(fitted == null, fit.isEmpty());
     if (fitted != null) {
       assertEquals(fitted, fit.getAsDouble(), 1.0e-9);
+    }
+  }
+
+  @ParameterizedTest(name = "half size {0} spun {1} rad at x {2}: {3}")
+  @CsvSource({
+    "0.2, 0.0, 4.5, 0.2",
+    "0.4, 0.7853982, 4.5, 0.35355339",
+    "0.2, 0.0, 4.9, 0.1",
+    "0.3, 0.0, 4.9, ",
+    "0.3, 0.0, 3.5, "
+  })
+  @DisplayName("a spun splat keeps its size when it fits, and shrinks to its own face when not")
+  void fittedHalfSize(
+      final double halfSize, final float spin, final double x, final Double fitted) {
+    final OptionalDouble fit =
+        DecalSurface.fittedHalfSize(
+            ledge(1), new Vec3d(x, 64.0, 9.5), Direction.UP, halfSize, spin);
+
+    assertEquals(fitted == null, fit.isEmpty());
+    if (fitted != null) {
+      assertEquals(fitted, fit.getAsDouble(), 1.0e-6);
     }
   }
 

@@ -1,5 +1,6 @@
 package com.grahambartley.nightborn.client.particle;
 
+import com.grahambartley.nightborn.particle.DecalRecheck;
 import com.grahambartley.nightborn.particle.DecalSurface;
 import java.util.OptionalDouble;
 import net.minecraft.client.MinecraftClient;
@@ -13,8 +14,6 @@ import net.minecraft.util.math.Vec3d;
 import org.joml.Quaternionf;
 
 public abstract class FlatDecalParticle extends SpriteBillboardParticle {
-
-  static final int RECHECK_TICKS = 5;
 
   private final Vec3d contact;
   private final Direction face;
@@ -36,7 +35,7 @@ public abstract class FlatDecalParticle extends SpriteBillboardParticle {
     this.velocityY = 0.0;
     this.velocityZ = 0.0;
     this.spin = random.nextFloat() * (float) Math.PI * 2.0F;
-    this.recheckPhase = random.nextInt(RECHECK_TICKS);
+    this.recheckPhase = DecalRecheck.phase(random.nextInt());
     this.facing =
         new Quaternionf()
             .rotationTo(0.0F, 0.0F, 1.0F, face.getOffsetX(), face.getOffsetY(), face.getOffsetZ())
@@ -52,10 +51,9 @@ public abstract class FlatDecalParticle extends SpriteBillboardParticle {
   }
 
   private boolean settle() {
-    final double extent = DecalSurface.halfExtent(scale, spin);
-    final OptionalDouble fit = DecalSurface.fit(world, contact, face, extent);
-    fit.ifPresent(room -> scale *= (float) (room / extent));
-    return fit.isPresent();
+    final OptionalDouble fitted = DecalSurface.fittedHalfSize(world, contact, face, scale, spin);
+    fitted.ifPresent(halfSize -> scale = (float) halfSize);
+    return fitted.isPresent();
   }
 
   @Override
@@ -71,7 +69,7 @@ public abstract class FlatDecalParticle extends SpriteBillboardParticle {
   }
 
   private boolean stillHeld() {
-    return (age + recheckPhase) % RECHECK_TICKS != 0
+    return !DecalRecheck.due(age, recheckPhase)
         || DecalSurface.holds(world, contact, face, DecalSurface.halfExtent(scale, spin));
   }
 

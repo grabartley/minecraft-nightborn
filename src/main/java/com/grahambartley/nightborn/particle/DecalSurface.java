@@ -2,6 +2,7 @@ package com.grahambartley.nightborn.particle;
 
 import java.util.Optional;
 import java.util.OptionalDouble;
+import net.minecraft.block.Block;
 import net.minecraft.util.function.BooleanBiFunction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
@@ -29,11 +30,19 @@ public final class DecalSurface {
         : OptionalDouble.empty();
   }
 
+  public static OptionalDouble fittedHalfSize(
+      final BlockView world,
+      final Vec3d centre,
+      final Direction face,
+      final double halfSize,
+      final float spin) {
+    final double extent = halfExtent(halfSize, spin);
+    final OptionalDouble fit = fit(world, centre, face, extent);
+    return fit.isPresent() ? OptionalDouble.of(halfSize * fit.getAsDouble() / extent) : fit;
+  }
+
   public static boolean holds(
       final BlockView world, final Vec3d centre, final Direction face, final double halfExtent) {
-    if (!holdsAt(world, centre, face)) {
-      return false;
-    }
     final Direction.Axis[] plane = planeAxes(face.getAxis());
     final double a = centre.getComponentAlongAxis(plane[0]);
     final double b = centre.getComponentAlongAxis(plane[1]);
@@ -60,13 +69,20 @@ public final class DecalSurface {
     if (!world.getFluidState(support).isEmpty() || !world.getFluidState(space).isEmpty()) {
       return false;
     }
-    final VoxelShape supportShape = shapeAt(world, support);
-    if (supportShape.isEmpty()) {
+    final VoxelShape localShape = world.getBlockState(support).getCollisionShape(world, support);
+    if (localShape.isEmpty()) {
       return false;
     }
     final Direction.Axis axis = face.getAxis();
     final boolean positive = face.getDirection() == Direction.AxisDirection.POSITIVE;
     final double plane = point.getComponentAlongAxis(axis);
+    if (Block.isShapeFullCube(localShape)) {
+      final double boundary = support.getComponentAlongAxis(axis) + (positive ? 1.0 : 0.0);
+      return Math.abs(plane - boundary) <= TOLERANCE
+          && coverFrom(world, space, axis, positive, plane, support).isEmpty();
+    }
+    final VoxelShape supportShape =
+        localShape.offset(support.getX(), support.getY(), support.getZ());
     VoxelShape faceArea = VoxelShapes.empty();
     VoxelShape cover = VoxelShapes.empty();
     for (final Box box : supportShape.getBoundingBoxes()) {
@@ -78,15 +94,29 @@ public final class DecalSurface {
       }
     }
     if (!space.equals(support)) {
-      for (final Box box : shapeAt(world, space).getBoundingBoxes()) {
-        if (crosses(box, axis, positive, plane)) {
-          cover = VoxelShapes.union(cover, flatten(box, axis, support));
-        }
+      cover = VoxelShapes.union(cover, coverFrom(world, space, axis, positive, plane, support));
+    }
+    return coversCell(VoxelShapes.combine(faceArea, cover, BooleanBiFunction.ONLY_FIRST));
+  }
+
+  private static VoxelShape coverFrom(
+      final BlockView world,
+      final BlockPos space,
+      final Direction.Axis axis,
+      final boolean positive,
+      final double plane,
+      final BlockPos support) {
+    VoxelShape cover = VoxelShapes.empty();
+    for (final Box box : shapeAt(world, space).getBoundingBoxes()) {
+      if (crosses(box, axis, positive, plane)) {
+        cover = VoxelShapes.union(cover, flatten(box, axis, support));
       }
     }
-    final VoxelShape exposed = VoxelShapes.combine(faceArea, cover, BooleanBiFunction.ONLY_FIRST);
-    return !VoxelShapes.matchesAnywhere(
-        VoxelShapes.fullCube(), exposed, BooleanBiFunction.ONLY_FIRST);
+    return cover;
+  }
+
+  private static boolean coversCell(final VoxelShape area) {
+    return !VoxelShapes.matchesAnywhere(VoxelShapes.fullCube(), area, BooleanBiFunction.ONLY_FIRST);
   }
 
   public static Optional<Vec3d> floorBelow(
