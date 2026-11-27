@@ -41,8 +41,8 @@ class LoreAssetsTest {
   private static final int FEWEST_PAGES = 2;
   private static final int MOST_PAGES = 6;
   private static final int FEWEST_ON_A_SHELF = 5;
-  private static final int LONGEST_PAGE = 256;
-  private static final int LONGEST_WIDE_PAGE = 120;
+  private static final int LONGEST_PAGE = 220;
+  private static final int LONGEST_WIDE_PAGE = 80;
   private static final Set<String> WIDE_SCRIPTS = Set.of("zh_cn");
 
   static Stream<String> kinds() {

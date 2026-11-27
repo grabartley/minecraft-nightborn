@@ -2,6 +2,8 @@ package com.grahambartley.nightborn.lore;
 
 import com.grahambartley.nightborn.Nightborn;
 import com.mojang.serialization.MapCodec;
+import java.util.List;
+import java.util.Optional;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.LecternBlock;
 import net.minecraft.nbt.NbtCompound;
@@ -14,6 +16,7 @@ import net.minecraft.structure.StructureTemplate.StructureBlockInfo;
 import net.minecraft.structure.processor.StructureProcessor;
 import net.minecraft.structure.processor.StructureProcessorType;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.Util;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.WorldView;
 
@@ -49,6 +52,11 @@ public final class LecternBookProcessor extends StructureProcessor {
     return block.state().isOf(Blocks.LECTERN);
   }
 
+  static <T> Optional<T> pick(
+      final List<T> shelf, final StructurePlacementData placement, final BlockPos lectern) {
+    return Util.getRandomOrEmpty(shelf, placement.getRandom(lectern));
+  }
+
   static StructureBlockInfo shelve(final StructureBlockInfo lectern, final NbtElement book) {
     final NbtCompound nbt = lectern.nbt() == null ? new NbtCompound() : lectern.nbt().copy();
     nbt.put(BOOK, book);
@@ -68,8 +76,7 @@ public final class LecternBookProcessor extends StructureProcessor {
     if (!reads(current)) {
       return current;
     }
-    return LoreShelf.pick(
-            LoreBooks.shelf(world.getRegistryManager(), books), data.getRandom(current.pos()))
+    return pick(LoreBooks.shelf(world.getRegistryManager(), books), data, current.pos())
         .map(book -> shelve(current, book.stack().encode(world.getRegistryManager())))
         .orElse(current);
   }

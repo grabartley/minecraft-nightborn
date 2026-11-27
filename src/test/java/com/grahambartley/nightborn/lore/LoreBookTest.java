@@ -6,7 +6,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import com.google.gson.JsonParser;
 import com.grahambartley.nightborn.MinecraftBootstrapExtension;
 import com.mojang.serialization.JsonOps;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.IntStream;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.WrittenBookContentComponent;
 import net.minecraft.item.ItemStack;
@@ -25,9 +27,7 @@ class LoreBookTest {
     return new LoreBook(
         Text.literal(title),
         "Dame Perpetua",
-        java.util.stream.IntStream.range(0, pages)
-            .<Text>mapToObj(page -> Text.literal("page " + page))
-            .toList());
+        IntStream.range(0, pages).<Text>mapToObj(page -> Text.literal("page " + page)).toList());
   }
 
   @ParameterizedTest(name = "{0}")
@@ -107,7 +107,7 @@ class LoreBookTest {
   @ValueSource(ints = {1, 3, 6})
   @DisplayName("a book keeps its own copy of its pages")
   void pagesAreCopied(final int pages) {
-    final List<Text> written = new java.util.ArrayList<>(book("A", pages).pages());
+    final List<Text> written = new ArrayList<>(book("A", pages).pages());
     final LoreBook book = new LoreBook(Text.literal("A"), "B", written);
     written.clear();
     assertEquals(pages, book.pages().size());
