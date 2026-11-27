@@ -10,6 +10,7 @@ import com.grahambartley.nightborn.mob.goal.LieDownedGoal;
 import com.grahambartley.nightborn.mob.goal.RetreatGoal;
 import com.grahambartley.nightborn.mob.goal.SeekShadeGoal;
 import com.grahambartley.nightborn.mob.goal.SleepInCoffinGoal;
+import com.grahambartley.nightborn.mob.goal.StepBackGoal;
 import com.grahambartley.nightborn.mob.goal.WatchStrangerGoal;
 import com.grahambartley.nightborn.raid.HouseGuardGoal;
 import com.grahambartley.nightborn.raid.HouseWatch;
@@ -81,6 +82,8 @@ final class VampireGoals {
             vampire::hiss));
     targets.add(
         2, new ActiveTargetGoal<>(vampire, LivingEntity.class, 10, true, false, vampire::hunts));
-    return new Escapes(retreat, shade);
+    final Escapes escapes = new Escapes(retreat, shade);
+    goals.add(3, new StepBackGoal(vampire, 1.15, () -> escapes.active() || retreat.wants()));
+    return escapes;
   }
 }

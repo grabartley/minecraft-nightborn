@@ -8,10 +8,11 @@ public record Situation(Intent intent, Self self, @Nullable Target target, Place
     this(intent, self, target, Place.UNKNOWN);
   }
 
-  public record Self(float health, int blood, boolean inForm, boolean sunlit, boolean downed) {
+  public record Self(
+      float health, int blood, boolean inForm, boolean sunlit, boolean downed, boolean stuck) {
 
     public static Self of(final float health, final int blood) {
-      return new Self(health, blood, false, false, false);
+      return new Self(health, blood, false, false, false, false);
     }
   }
 

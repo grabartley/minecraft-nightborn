@@ -284,6 +284,7 @@ public class VampireEntity extends HostileEntity
     if (!BatForm.isBat(this)) {
       fightAsVampire();
       if (levitatesAtWill()) {
+        Unsticking.tick(this, stage().combat().stuck());
         MobLevitation.drift(this);
       }
     }
@@ -400,7 +401,9 @@ public class VampireEntity extends HostileEntity
 
   @Override
   public boolean canTarget(final LivingEntity target) {
-    return fights(target) && super.canTarget(target);
+    return fights(target)
+        && (target == getAttacker() || !Unsticking.forgoes(this, target))
+        && super.canTarget(target);
   }
 
   protected boolean fights(final LivingEntity target) {

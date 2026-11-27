@@ -103,6 +103,8 @@
       "com.grahambartley.nightborn.gametest.SlayerGameTest",
       "com.grahambartley.nightborn.gametest.SeekerGameTest",
       "com.grahambartley.nightborn.gametest.VampireStageGameTest",
+      "com.grahambartley.nightborn.gametest.FloatRoomGameTest",
+      "com.grahambartley.nightborn.gametest.UnstickingGameTest",
       "com.grahambartley.nightborn.gametest.LevitationGameTest",
       "com.grahambartley.nightborn.gametest.BatFormGameTest",
       "com.grahambartley.nightborn.gametest.VampireHomeGameTest",

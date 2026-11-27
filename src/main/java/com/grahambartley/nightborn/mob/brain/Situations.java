@@ -4,6 +4,7 @@ import com.grahambartley.nightborn.batform.BatForm;
 import com.grahambartley.nightborn.batform.WingedForm;
 import com.grahambartley.nightborn.blood.BloodAttachment;
 import com.grahambartley.nightborn.downed.Downed;
+import com.grahambartley.nightborn.mob.Unsticking;
 import com.grahambartley.nightborn.sun.DirectSun;
 import java.util.Collections;
 import java.util.EnumSet;
@@ -36,7 +37,8 @@ public final class Situations {
             BloodAttachment.get(mob),
             BatForm.isBat(mob) || WingedForm.on(mob),
             needed.contains(Fact.SUN_ON_ME) && DirectSun.reaches(mob),
-            Downed.state(mob) != null),
+            Downed.state(mob) != null,
+            Unsticking.stuck(mob)),
         target == null
             ? null
             : TargetSigns.read(

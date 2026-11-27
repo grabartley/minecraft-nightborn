@@ -332,7 +332,7 @@ class PowerChoiceTest {
     final Situation escaping =
         new Situation(
             Intent.RETREAT,
-            new Situation.Self(0.3F, 20, false, sunlit, false),
+            new Situation.Self(0.3F, 20, false, sunlit, false, false),
             null,
             new Situation.Place(route));
     final Optional<PowerChoice.Scored> scored =

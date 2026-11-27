@@ -133,6 +133,18 @@ public final class Levitation {
     }
   }
 
+  public static void sink(final LivingEntity entity) {
+    if (LevitationRules.cushions(
+        isLevitating(entity),
+        entity.isOnGround(),
+        entity.getY(),
+        LevitationGround.surfaceBelow(entity))) {
+      setDown(entity);
+    } else {
+      land(entity);
+    }
+  }
+
   public static void tick(final LivingEntity vampire, final int weakened, final boolean downed) {
     if (!isLevitating(vampire)) {
       return;

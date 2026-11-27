@@ -5,6 +5,7 @@ import com.grahambartley.nightborn.mob.NightbornMobs;
 import com.grahambartley.nightborn.mob.VampireEntity;
 import com.grahambartley.nightborn.mob.combat.CombatMoves;
 import com.grahambartley.nightborn.mob.stage.StageCombat;
+import com.grahambartley.nightborn.mob.stage.StageStuck;
 import com.grahambartley.nightborn.skill.PowerHeading;
 import com.grahambartley.nightborn.skill.PowerUse;
 import com.grahambartley.nightborn.skill.Powers;
@@ -33,7 +34,8 @@ public final class VanishGameTest implements FabricGameTest {
   static final double DISTANCE = 4.0;
   static final int GONE_TICKS = 5;
   static final int FULL_BLOOD = 20;
-  static final StageCombat ALWAYS_DODGES = new StageCombat(0, 20, 0, 0, 0, 100, 0);
+  static final StageCombat ALWAYS_DODGES =
+      new StageCombat(0, 20, 0, 0, 0, 100, 0, StageStuck.PLAIN);
 
   private static void learn(final LivingEntity vampire) {
     SkillAttachment.set(

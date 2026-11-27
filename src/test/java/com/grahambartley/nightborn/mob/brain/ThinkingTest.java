@@ -57,32 +57,38 @@ class ThinkingTest {
             List.of(option(verdict, facts.isBlank() ? new String[0] : facts.split(" ")))));
   }
 
-  @ParameterizedTest(name = "dodge power {0}, dodge think {1}, {2}: offered {3}")
+  @ParameterizedTest(name = "dodge power {0}, dodge think {1}, {2}, stuck {3}: offered {4}")
   @CsvSource({
-    "false, false, FIGHT, true",
-    "false, true, FIGHT, false",
-    "true, true, FIGHT, true",
-    "true, false, FIGHT, false",
-    "true, false, CLOSE_IN, false",
-    "true, false, RETREAT, true",
-    "false, false, RETREAT, true",
-    "true, true, RETREAT, true",
-    "false, true, RETREAT, false"
+    "false, false, FIGHT, false, true",
+    "false, true, FIGHT, false, false",
+    "true, true, FIGHT, false, true",
+    "true, false, FIGHT, false, false",
+    "true, false, CLOSE_IN, false, false",
+    "true, false, RETREAT, false, true",
+    "false, false, RETREAT, false, true",
+    "true, true, RETREAT, false, true",
+    "false, true, RETREAT, false, false",
+    "true, false, FIGHT, true, true",
+    "true, false, CLOSE_IN, true, true",
+    "false, false, FIGHT, true, true",
+    "false, true, FIGHT, true, false"
   })
   @DisplayName(
-      "a power kept for dodging is weighed as a dodge in a fight, and like any other power out"
-          + " of one")
+      "a power kept for dodging is weighed as a dodge in a fight, unless the mob is stuck, and"
+          + " like any other power out of one")
   void offered(
       final boolean dodgePower,
       final boolean dodgeThink,
       final Intent intent,
+      final boolean stuck,
       final boolean offered) {
     assertEquals(
         offered,
         Thinking.offered(
             new MobPowerUse(0.0F, 8.0F, 1, Identifier.of("minecraft", "x"), "dodge", dodgePower),
             dodgeThink,
-            intent));
+            intent,
+            stuck));
   }
 
   @ParameterizedTest(name = "{0}: aims [{1}]")

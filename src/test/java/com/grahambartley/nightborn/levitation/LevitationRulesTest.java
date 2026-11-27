@@ -2,6 +2,7 @@ package com.grahambartley.nightborn.levitation;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.util.OptionalDouble;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -98,5 +99,31 @@ class LevitationRulesTest {
   @DisplayName("sneak never crouches a vampire that holds the float pose")
   void crouches(final boolean crouching, final boolean holdsFloatPose, final boolean crouches) {
     assertEquals(crouches, LevitationRules.crouches(crouching, holdsFloatPose));
+  }
+
+  @ParameterizedTest(name = "levitating {0}, on ground {1}, feet {2}, surface {3}: cushioned {4}")
+  @CsvSource({
+    "true, false, 65.0, 64.0, false",
+    "true, false, 65.75, 64.0, false",
+    "true, false, 65.8, 64.0, true",
+    "true, false, 70.0, 60.0, true",
+    "true, false, 65.0, , true",
+    "true, true, 70.0, 60.0, false",
+    "false, false, 70.0, 60.0, false"
+  })
+  @DisplayName("a vampire sinking to pass a low gap only floats down when the drop is long")
+  void cushions(
+      final boolean levitating,
+      final boolean onGround,
+      final double feet,
+      final Double surface,
+      final boolean cushions) {
+    assertEquals(
+        cushions,
+        LevitationRules.cushions(
+            levitating,
+            onGround,
+            feet,
+            surface == null ? OptionalDouble.empty() : OptionalDouble.of(surface)));
   }
 }

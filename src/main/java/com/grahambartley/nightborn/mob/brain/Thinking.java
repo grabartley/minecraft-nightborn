@@ -1,5 +1,6 @@
 package com.grahambartley.nightborn.mob.brain;
 
+import com.grahambartley.nightborn.mob.Unsticking;
 import com.grahambartley.nightborn.skill.MobPowerUse;
 import com.grahambartley.nightborn.skill.PowerUse;
 import com.grahambartley.nightborn.skill.Powers;
@@ -66,8 +67,9 @@ public final class Thinking {
     return needed;
   }
 
-  static boolean offered(final MobPowerUse use, final boolean dodge, final Intent intent) {
-    return use.dodge() == dodge || !dodge && !intent.fights();
+  static boolean offered(
+      final MobPowerUse use, final boolean dodge, final Intent intent, final boolean stuck) {
+    return use.dodge() == dodge || !dodge && (!intent.fights() || stuck);
   }
 
   static Set<Aim> aims(final MobPowerUse use, final Intent intent) {
@@ -89,10 +91,14 @@ public final class Thinking {
   static List<PowerChoice.Option> options(
       final MobEntity mob, final boolean dodge, final Intent intent) {
     List<PowerChoice.Option> options = List.of();
+    final boolean stuck = Unsticking.stuck(mob);
     for (final Identifier id : SkillAttachment.owned(mob).ownedInOrder()) {
       final Optional<SkillPower> power = Powers.power(mob, id);
       final MobPowerUse use =
-          power.flatMap(SkillPower::mob).filter(each -> offered(each, dodge, intent)).orElse(null);
+          power
+              .flatMap(SkillPower::mob)
+              .filter(each -> offered(each, dodge, intent, stuck))
+              .orElse(null);
       if (use == null) {
         continue;
       }

@@ -72,6 +72,36 @@
             }
           ],
           "weight": 3.0
+        },
+        {
+          "intent": "fight",
+          "considerations": [
+            {
+              "fact": "stuck",
+              "low": 1,
+              "high": 1
+            },
+            {
+              "fact": "target_distance",
+              "high": 32
+            }
+          ],
+          "weight": 3.0
+        },
+        {
+          "intent": "close_in",
+          "considerations": [
+            {
+              "fact": "stuck",
+              "low": 1,
+              "high": 1
+            },
+            {
+              "fact": "target_distance",
+              "high": 32
+            }
+          ],
+          "weight": 3.0
         }
       ]
     },

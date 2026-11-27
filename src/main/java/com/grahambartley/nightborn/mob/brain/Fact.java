@@ -23,6 +23,7 @@ public enum Fact {
   IN_FORM(situation -> flag(situation.self().inForm())),
   SUN_ON_ME(situation -> flag(situation.self().sunlit())),
   DOWNED(situation -> flag(situation.self().downed())),
+  STUCK(situation -> flag(situation.self().stuck())),
   SPOT_DISTANCE(situation -> situation.place().spotDistance());
 
   private static final Map<String, Fact> BY_KEY =

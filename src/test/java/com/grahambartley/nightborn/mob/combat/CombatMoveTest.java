@@ -7,6 +7,7 @@ import com.grahambartley.nightborn.config.CombatSettings;
 import com.grahambartley.nightborn.config.NightbornConfig;
 import com.grahambartley.nightborn.mob.ShippedClips;
 import com.grahambartley.nightborn.mob.stage.StageCombat;
+import com.grahambartley.nightborn.mob.stage.StageStuck;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -16,7 +17,8 @@ import org.junit.jupiter.params.provider.EnumSource;
 class CombatMoveTest {
 
   private static final CombatSettings SETTINGS = NightbornConfig.DEFAULTS.combat();
-  private static final StageCombat ELDER = new StageCombat(3, 20, 45, 35, 30, 50, 35);
+  private static final StageCombat ELDER =
+      new StageCombat(3, 20, 45, 35, 30, 50, 35, StageStuck.PLAIN);
 
   @ParameterizedTest(name = "{0} blocks, ground {1}, swing {2}, aim {3}, roll {4}: {5}")
   @CsvSource({
@@ -114,5 +116,6 @@ class CombatMoveTest {
             distance, true, new CombatMove.Threat(false, false), 0, LEAP_ONLY, settings));
   }
 
-  private static final StageCombat LEAP_ONLY = new StageCombat(0, 20, 100, 0, 0, 0, 0);
+  private static final StageCombat LEAP_ONLY =
+      new StageCombat(0, 20, 100, 0, 0, 0, 0, StageStuck.PLAIN);
 }
