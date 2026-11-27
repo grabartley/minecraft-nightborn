@@ -33,6 +33,7 @@ public final class NearestStructures {
 
   public static final long DAY_TICKS = 24000L;
   public static final long SCAN_SECONDS = 5L;
+  static final int CHUNK_WIDTH = 16;
 
   private static final NearestStructureCache CACHE = new NearestStructureCache();
   private static volatile ExecutorService searcher;
@@ -136,7 +137,7 @@ public final class NearestStructures {
   }
 
   static int reach(final int range, final boolean house) {
-    return house ? range + JigsawStructure.MAX_SIZE : range;
+    return house ? range + JigsawStructure.MAX_SIZE + CHUNK_WIDTH : range;
   }
 
   public static BlockPos entranceOfLocated(

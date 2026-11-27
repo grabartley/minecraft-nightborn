@@ -37,10 +37,10 @@ class NearestStructuresTest {
   }
 
   @ParameterizedTest(name = "range {0}, vampire house {1} -> searched out to {2}")
-  @CsvSource({"500, true, 628", "500, false, 500", "3000, true, 3128", "3000, false, 3000"})
+  @CsvSource({"500, true, 644", "500, false, 500", "3000, true, 3144", "3000, false, 3000"})
   @DisplayName(
-      "a vampire house is looked for a structure's width past the range, since only its entrance"
-          + " must lie within it; anything else is looked for within the range")
+      "a vampire house is looked for as far past the range as its entrance can lie from its locate"
+          + " point; anything else is looked for within the range")
   void reach(final int range, final boolean house, final int reach) {
     assertEquals(reach, NearestStructures.reach(range, house));
   }
