@@ -4,6 +4,7 @@ import com.grahambartley.nightborn.tools.structures.template.BlockState;
 import com.grahambartley.nightborn.tools.structures.template.Template;
 import com.grahambartley.nightborn.tools.structures.vampire.Axis;
 import com.grahambartley.nightborn.tools.structures.vampire.Openings;
+import com.grahambartley.nightborn.tools.structures.vampire.RouteRoom;
 import com.grahambartley.nightborn.tools.structures.vampire.manor.Parts;
 
 public final class Ramparts {
@@ -15,7 +16,7 @@ public final class Ramparts {
   public static final int GATE_WEST = MountainCastle.MID - 2;
   public static final int GATE_EAST = MountainCastle.MID + 2;
   public static final int GATE_HEIGHT = 5;
-  public static final int WALK_HEADROOM = 3;
+  public static final int WALK_HEADROOM = RouteRoom.HOUSEHOLD;
   public static final int STAIR_FOOT = Crag.UPPER_SOUTH + 6;
   public static final int LOWER_HEART = 51;
 

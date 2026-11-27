@@ -4,6 +4,7 @@ import com.grahambartley.nightborn.tools.structures.template.BlockState;
 import com.grahambartley.nightborn.tools.structures.template.Template;
 import com.grahambartley.nightborn.tools.structures.vampire.Axis;
 import com.grahambartley.nightborn.tools.structures.vampire.Openings;
+import com.grahambartley.nightborn.tools.structures.vampire.RouteRoom;
 import com.grahambartley.nightborn.tools.structures.vampire.manor.Parts;
 import java.util.List;
 import java.util.stream.IntStream;
@@ -22,7 +23,6 @@ public final class Donjon {
   public static final int TERRACE = GROUND + STOREY * STOREYS;
   public static final int ROOF = TERRACE + 4;
   public static final int FLIGHT_FOOT = SOUTH - 3;
-  public static final int HEADROOM = 3;
 
   private Donjon() {}
 
@@ -79,22 +79,29 @@ public final class Donjon {
     }
   }
 
+  public static int inward(final int storey) {
+    return flightX(storey) == WEST + 1 ? 1 : -1;
+  }
+
   private static void flight(final Template t, final int storey) {
-    final int x = flightX(storey);
     final int from = floor(storey);
-    for (int i = 0; i < STOREY; i++) {
-      final int z = FLIGHT_FOOT - i;
-      final int y = from + 1 + i;
-      t.set(x, y, z, Parts.stair(MountainCastle.KEEP_STEP, "north"));
-      for (int above = y + 1; above <= y + HEADROOM; above++) {
-        t.set(x, above, z, BlockState.AIR);
+    final int inward = inward(storey);
+    for (int lane = 0; lane < RouteRoom.LANES; lane++) {
+      final int x = flightX(storey) + lane * inward;
+      for (int i = 0; i < STOREY; i++) {
+        final int z = FLIGHT_FOOT - i;
+        final int y = from + 1 + i;
+        t.set(x, y, z, Parts.stair(MountainCastle.KEEP_STEP, "north"));
+        for (int above = y + 1; above <= y + 1 + RouteRoom.HOUSEHOLD; above++) {
+          t.set(x, above, z, BlockState.AIR);
+        }
       }
+      t.set(x, from + STOREY + 1, FLIGHT_FOOT, Parts.fence());
     }
-    final int rail = x == WEST + 1 ? x + 1 : x - 1;
-    for (int z = FLIGHT_FOOT - STOREY + 2; z <= FLIGHT_FOOT - 2; z++) {
+    final int rail = flightX(storey) + RouteRoom.LANES * inward;
+    for (int z = FLIGHT_FOOT - STOREY + 2; z <= FLIGHT_FOOT; z++) {
       t.set(rail, from + STOREY + 1, z, Parts.fence());
     }
-    t.set(x, from + STOREY + 1, FLIGHT_FOOT - 1, Parts.fence());
   }
 
   private static void windows(final Template t) {

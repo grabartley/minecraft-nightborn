@@ -141,7 +141,10 @@ class HunterCampTest {
     final Set<Pos> reached = StructureWalk.from(CAMP, fire);
     assertEquals(List.of(), StructureAudit.sealedFloors(CAMP, reached));
     assertEquals(List.of(), StructureAudit.doorsLeadingNowhere(CAMP, reached));
-    assertEquals(List.of(), StructureAudit.humanOnly(reached, StructureWalk.mob(CAMP, fire), CAMP));
+    final StructureWalk.Walker raider =
+        new StructureWalk.Walker(false, StructureWalk.HUMAN.headroom());
+    assertEquals(
+        List.of(), StructureAudit.humanOnly(reached, StructureWalk.from(CAMP, raider, fire), CAMP));
   }
 
   @Test

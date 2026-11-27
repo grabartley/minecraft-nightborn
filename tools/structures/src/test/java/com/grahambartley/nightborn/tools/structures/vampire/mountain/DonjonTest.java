@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.grahambartley.nightborn.tools.structures.template.BlockState;
 import com.grahambartley.nightborn.tools.structures.template.Template;
+import com.grahambartley.nightborn.tools.structures.vampire.RouteRoom;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
@@ -46,20 +47,22 @@ class DonjonTest {
   @CsvSource({"0", "1", "2", "3", "4", "5"})
   void eachFlightClimbsToTheNextFloorWithHeadroom(final int storey) {
     final Template t = built();
-    final int x = Donjon.flightX(storey);
-    for (int i = 0; i < Donjon.STOREY; i++) {
-      final int y = Donjon.floor(storey) + 1 + i;
-      final int z = Donjon.FLIGHT_FOOT - i;
-      assertTrue(t.get(x, y, z).contains("stone_brick_stairs[facing=north"), t.get(x, y, z));
-      for (int above = y + 1; above <= y + Donjon.HEADROOM; above++) {
-        assertEquals(BlockState.AIR, t.get(x, above, z));
+    for (int lane = 0; lane < RouteRoom.LANES; lane++) {
+      final int x = Donjon.flightX(storey) + lane * Donjon.inward(storey);
+      for (int i = 0; i < Donjon.STOREY; i++) {
+        final int y = Donjon.floor(storey) + 1 + i;
+        final int z = Donjon.FLIGHT_FOOT - i;
+        assertTrue(t.get(x, y, z).contains("stone_brick_stairs[facing=north"), t.get(x, y, z));
+        for (int above = y + 1; above <= y + 1 + RouteRoom.HOUSEHOLD; above++) {
+          assertEquals(BlockState.AIR, t.get(x, above, z));
+        }
       }
+      assertEquals(
+          "minecraft:dark_oak_planks", t.get(x, Donjon.floor(storey + 1), Donjon.FLIGHT_FOOT));
+      assertTrue(
+          t.get(x, Donjon.floor(storey + 1) + 1, Donjon.FLIGHT_FOOT).contains("dark_oak_fence"),
+          "a rail closes the open end of the stairwell");
     }
-    assertEquals(
-        "minecraft:dark_oak_planks", t.get(x, Donjon.floor(storey + 1), Donjon.FLIGHT_FOOT));
-    assertTrue(
-        t.get(x, Donjon.floor(storey + 1) + 1, Donjon.FLIGHT_FOOT - 1).contains("dark_oak_fence"),
-        "a rail closes the open end of the stairwell");
   }
 
   @ParameterizedTest(name = "{0},{1},{2} is {3}")

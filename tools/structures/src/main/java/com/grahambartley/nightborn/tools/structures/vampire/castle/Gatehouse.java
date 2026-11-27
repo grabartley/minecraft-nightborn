@@ -4,6 +4,7 @@ import com.grahambartley.nightborn.tools.structures.template.BlockState;
 import com.grahambartley.nightborn.tools.structures.template.Template;
 import com.grahambartley.nightborn.tools.structures.vampire.Axis;
 import com.grahambartley.nightborn.tools.structures.vampire.Openings;
+import com.grahambartley.nightborn.tools.structures.vampire.RouteRoom;
 
 public final class Gatehouse {
 
@@ -45,7 +46,7 @@ public final class Gatehouse {
       t.set(Castle.MID + 1, Castle.GROUND, z, "polished_blackstone_bricks");
     }
     for (int x = Castle.MID - 1; x <= Castle.MID + 1; x++) {
-      t.set(x, Castle.FLOOR + GATE_HEIGHT - 2, SOUTH - 2, "iron_bars");
+      t.set(x, Castle.FLOOR + GATE_HEIGHT - 1, SOUTH - 2, "iron_bars");
     }
     for (final int x : new int[] {WEST + 2, EAST - 2}) {
       t.set(x, UPPER_FLOOR + 1, SOUTH, "iron_bars");
@@ -66,7 +67,7 @@ public final class Gatehouse {
   private static void walkPassages(final Template t) {
     final int z = Castle.SIZE - 1 - CurtainWall.THICK + 1;
     for (int d = 0; d <= 4; d++) {
-      for (int y = UPPER_FLOOR + 1; y <= UPPER_FLOOR + 2; y++) {
+      for (int y = UPPER_FLOOR + 1; y <= UPPER_FLOOR + RouteRoom.HOUSEHOLD; y++) {
         t.set(WEST - 2 + d, y, z, BlockState.AIR);
         t.set(EAST + 2 - d, y, z, BlockState.AIR);
       }
@@ -98,5 +99,6 @@ public final class Gatehouse {
         t.set(x, TOP, ROOF_STAIR_Z, BlockState.AIR);
       }
     }
+    t.set(ROOF_STAIR_X - 1, TOP, ROOF_STAIR_Z, BlockState.AIR);
   }
 }

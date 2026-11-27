@@ -262,4 +262,20 @@ public final class StructureAudit {
         .filter(at -> StructureWalk.stands(t, StructureWalk.MOB, at.x(), at.y(), at.z()))
         .toList();
   }
+
+  public static List<Pos> standingBeside(
+      final Template t, final StructureWalk.Walker walker, final Coffins.Coffin coffin) {
+    final List<Pos> found = new ArrayList<>();
+    for (final Pos part : List.of(coffin.foot(), Coffins.head(coffin))) {
+      for (final int[] step : new int[][] {{1, 0}, {-1, 0}, {0, 1}, {0, -1}}) {
+        for (int dy = -1; dy <= 1; dy++) {
+          final Pos at = part.offset(step[0], dy, step[1]);
+          if (StructureWalk.stands(t, walker, at.x(), at.y(), at.z())) {
+            found.add(at);
+          }
+        }
+      }
+    }
+    return found;
+  }
 }

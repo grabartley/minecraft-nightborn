@@ -20,7 +20,6 @@ public final class Undercroft {
   public static Template build() {
     final Template t = CryptStair.shell(PATH);
     t.fill(1, 1, 5, 11, 4, 11, "air");
-    t.fill(5, 1, 2, 7, 3, 3, "air");
     Openings.arch(t, Axis.X, 5, 7, 4, 1, 3, CryptStair.STEP);
     vault(t);
     columns(t);

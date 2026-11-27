@@ -20,17 +20,19 @@ import net.minecraft.world.gen.chunk.ChunkGenerator;
 
 public final class CavePath extends StructurePiece {
 
-  static final int HEADROOM = 2;
   private static final String FLOORS = "floors";
   private static final String SILL = "sill";
+  private static final String HEADROOM = "headroom";
 
   private final List<BlockPos> floors;
   private final BlockState sill;
+  private final int headroom;
 
-  public CavePath(final List<BlockPos> floors, final BlockState sill) {
-    super(NightbornStructures.CAVE_PATH, 0, around(floors));
+  public CavePath(final List<BlockPos> floors, final BlockState sill, final CaveRoom room) {
+    super(NightbornStructures.CAVE_PATH, 0, room.around(floors));
     this.floors = List.copyOf(floors);
     this.sill = sill;
+    this.headroom = room.headroom();
   }
 
   public CavePath(final StructureContext context, final NbtCompound nbt) {
@@ -39,20 +41,7 @@ public final class CavePath extends StructurePiece {
     this.sill =
         NbtHelper.toBlockState(
             context.registryManager().getWrapperOrThrow(RegistryKeys.BLOCK), nbt.getCompound(SILL));
-  }
-
-  public static BlockBox around(final List<BlockPos> floors) {
-    return BlockBox.encompassPositions(floors)
-        .map(
-            box ->
-                new BlockBox(
-                    box.getMinX(),
-                    box.getMinY(),
-                    box.getMinZ(),
-                    box.getMaxX(),
-                    box.getMaxY() + HEADROOM,
-                    box.getMaxZ()))
-        .orElseThrow(() -> new IllegalArgumentException("A cave path needs at least one floor"));
+    this.headroom = nbt.contains(HEADROOM) ? nbt.getInt(HEADROOM) : CaveRoom.LOWEST;
   }
 
   public List<BlockPos> floors() {
@@ -71,6 +60,7 @@ public final class CavePath extends StructurePiece {
   protected void writeNbt(final StructureContext context, final NbtCompound nbt) {
     nbt.putLongArray(FLOORS, floors.stream().mapToLong(BlockPos::asLong).toArray());
     nbt.put(SILL, NbtHelper.fromBlockState(sill));
+    nbt.putInt(HEADROOM, headroom);
   }
 
   @Override
@@ -89,7 +79,7 @@ public final class CavePath extends StructurePiece {
       if (needsFloor(world.getBlockState(floor))) {
         world.setBlockState(floor, sill, Block.NOTIFY_LISTENERS);
       }
-      for (int up = 1; up <= HEADROOM; up++) {
+      for (int up = 1; up <= headroom; up++) {
         final BlockPos space = floor.up(up);
         if (needsClearing(world.getBlockState(space))) {
           world.setBlockState(space, Blocks.CAVE_AIR.getDefaultState(), Block.NOTIFY_LISTENERS);

@@ -6,6 +6,7 @@ import com.grahambartley.nightborn.tools.structures.vampire.Axis;
 import com.grahambartley.nightborn.tools.structures.vampire.Furnishing;
 import com.grahambartley.nightborn.tools.structures.vampire.Openings;
 import com.grahambartley.nightborn.tools.structures.vampire.Roof;
+import com.grahambartley.nightborn.tools.structures.vampire.RouteRoom;
 import com.grahambartley.nightborn.tools.structures.vampire.Stone;
 
 public final class Church {
@@ -23,6 +24,7 @@ public final class Church {
   public static final int YARD_Z = SIZE_Z - 1;
   public static final int STAIR_X = 27;
   public static final int STAIR_Z = 4;
+  static final int VESTRY_WEST = 22;
   public static final int CLEARANCE = 4;
   public static final int BELFRY = 13;
 
@@ -82,7 +84,7 @@ public final class Church {
     for (final int x : new int[] {9, 13, 17, 21}) {
       Openings.lancet(t, Axis.X, x, 5, 2, 3, GLASS);
     }
-    Openings.arch(t, Axis.X, 13, 13, 13, 1, 2, TRIM);
+    Openings.arch(t, Axis.X, 12, 14, 13, 1, RouteRoom.HOUSEHOLD + 1, TRIM);
   }
 
   private static void chancel(final Template t) {
@@ -103,38 +105,41 @@ public final class Church {
   }
 
   private static void vestry(final Template t) {
-    t.fill(24, 0, 2, 28, 0, 5, "stone_bricks");
-    WALL.fill(t, 24, 1, 2, 28, 3, 2);
-    WALL.fill(t, 24, 1, 2, 24, 4, 5);
+    t.fill(VESTRY_WEST, 0, 2, 28, 0, 5, "stone_bricks");
+    WALL.fill(t, VESTRY_WEST, 1, 2, 28, 3, 2);
+    WALL.fill(t, VESTRY_WEST, 1, 2, VESTRY_WEST, 4, 5);
     WALL.fill(t, 28, 1, 2, 28, 4, 5);
-    t.fill(25, 1, 3, 27, 3, 5, "air");
-    t.fill(25, 4, 4, 27, 4, 5, "air");
-    for (int x = 24; x <= 28; x++) {
+    t.fill(VESTRY_WEST + 1, 1, 3, 27, 3, 5, "air");
+    t.fill(VESTRY_WEST + 1, 4, 4, 27, 4, 5, "air");
+    for (int x = VESTRY_WEST; x <= 28; x++) {
       t.set(x, 4, 1, stair("deepslate_tile_stairs", "south"));
       t.set(x, 4, 2, "deepslate_tiles");
       t.set(x, 4, 3, "deepslate_tiles");
       t.set(x, 5, 4, stair("deepslate_tile_stairs", "south"));
     }
-    t.set(26, 1, 6, door("north", "lower"));
-    t.set(26, 2, 6, door("north", "upper"));
-    t.fill(STAIR_X - 3, 0, STAIR_Z, STAIR_X - 1, 0, STAIR_Z, "air");
-    t.set(25, 1, 3, "brewing_stand");
-    t.set(25, 1, 5, BlockState.of("barrel", "facing", "up", "open", false));
-    t.set(27, 3, 3, BlockState.of("lantern", "hanging", true, "waterlogged", false));
+    Openings.arch(t, Axis.X, 25, 27, 6, 1, RouteRoom.HOUSEHOLD + 1, TRIM);
+    t.fill(VESTRY_WEST + 1, 0, STAIR_Z - 1, STAIR_X - 1, 0, STAIR_Z, "air");
+    t.set(STAIR_X, 0, STAIR_Z - 1, CryptStair.step());
+    t.set(VESTRY_WEST + 1, 1, 5, "brewing_stand");
+    t.set(VESTRY_WEST + 2, 1, 5, BlockState.of("barrel", "facing", "up", "open", false));
+    t.set(VESTRY_WEST + 2, 3, 3, BlockState.of("lantern", "hanging", true, "waterlogged", false));
   }
 
   private static void porch(final Template t) {
-    t.fill(12, 0, 14, 14, 0, 16, "stone_bricks");
-    WALL.fill(t, 12, 1, 14, 12, 3, 16);
-    WALL.fill(t, 14, 1, 14, 14, 3, 16);
-    t.fill(13, 1, 14, 13, 3, 16, "air");
+    t.fill(11, 0, 14, 15, 0, 16, "stone_bricks");
+    WALL.fill(t, 11, 1, 14, 11, 3, 16);
+    WALL.fill(t, 15, 1, 14, 15, 3, 16);
+    t.fill(12, 1, 14, 14, 3, 16, "air");
     for (int z = 14; z <= 17; z++) {
-      t.set(12, 4, z, stair("deepslate_tile_stairs", "east"));
-      t.set(14, 4, z, stair("deepslate_tile_stairs", "west"));
-      t.set(13, 4, z, "deepslate_tiles");
-      t.set(13, 5, z, BlockState.of("deepslate_tile_slab", "type", "bottom"));
+      t.set(11, 4, z, stair("deepslate_tile_stairs", "east"));
+      t.set(15, 4, z, stair("deepslate_tile_stairs", "west"));
+      t.fill(12, 4, z, 14, 4, z, "deepslate_tiles");
+      t.set(12, 5, z, stair("deepslate_tile_stairs", "east"));
+      t.set(14, 5, z, stair("deepslate_tile_stairs", "west"));
+      t.set(13, 5, z, "deepslate_tiles");
+      t.set(13, 6, z, BlockState.of("deepslate_tile_slab", "type", "bottom"));
     }
-    t.set(13, 3, 16, WALL.at(13, 3, 16));
+    Openings.arch(t, Axis.X, 12, 14, 16, 1, RouteRoom.HOUSEHOLD, TRIM);
   }
 
   private static void belfryStair(final Template t) {
@@ -149,7 +154,7 @@ public final class Church {
       final String facing =
           next[0] > at[0] ? "east" : next[0] < at[0] ? "west" : next[1] > at[1] ? "south" : "north";
       t.set(at[0], y, at[1], stair(TRIM, facing));
-      for (int above = y + 1; above <= Math.min(y + 3, BELFRY); above++) {
+      for (int above = y + 1; above <= Math.min(y + 1 + RouteRoom.HOUSEHOLD, BELFRY); above++) {
         t.set(at[0], above, at[1], BlockState.AIR);
       }
     }

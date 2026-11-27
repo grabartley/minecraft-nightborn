@@ -7,6 +7,8 @@ import com.grahambartley.nightborn.tools.structures.template.BlockState;
 import com.grahambartley.nightborn.tools.structures.template.Facing;
 import com.grahambartley.nightborn.tools.structures.template.Template;
 import com.grahambartley.nightborn.tools.structures.vampire.Coffins;
+import com.grahambartley.nightborn.tools.structures.vampire.RouteRoom;
+import com.grahambartley.nightborn.tools.structures.vampire.StructureWalk;
 import java.util.List;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -33,6 +35,12 @@ class LairShrineTest {
     final var step = Facing.STEP.get(front);
     final var foot = coffins.get(0).foot();
     assertEquals(BlockState.AIR, t.get(foot.x() + step.x(), 1, foot.z() + step.z()));
+    final var side = Facing.STEP.get(Facing.CLOCKWISE.get(front));
+    for (final int lane : new int[] {-1, 1}) {
+      final int x = foot.x() + step.x() + lane * side.x();
+      final int z = foot.z() + step.z() + lane * side.z();
+      assertTrue(StructureWalk.clear(t, x, 1, z, RouteRoom.HOUSEHOLD), "beside at " + x + "," + z);
+    }
   }
 
   @ParameterizedTest(name = "a shrine facing {0} leaves no dripstone buried in its rock")

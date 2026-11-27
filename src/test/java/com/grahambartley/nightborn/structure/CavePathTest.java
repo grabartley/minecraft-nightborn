@@ -59,13 +59,16 @@ class CavePathTest {
   @ParameterizedTest(name = "a route over {0} takes the box {1}")
   @MethodSource("routes")
   void coversEveryFloorAndTheHeadroomAboveIt(final List<BlockPos> floors, final BlockBox box) {
-    assertEquals(box, CavePath.around(floors));
     assertEquals(
-        box, new CavePath(floors, Blocks.COBBLED_DEEPSLATE.getDefaultState()).getBoundingBox());
+        box,
+        new CavePath(floors, Blocks.COBBLED_DEEPSLATE.getDefaultState(), CaveRoom.PERSON)
+            .getBoundingBox());
   }
 
   @Test
   void refusesAnEmptyRoute() {
-    assertThrows(IllegalArgumentException.class, () -> CavePath.around(List.of()));
+    assertThrows(
+        IllegalArgumentException.class,
+        () -> new CavePath(List.of(), Blocks.COBBLED_DEEPSLATE.getDefaultState(), CaveRoom.PERSON));
   }
 }

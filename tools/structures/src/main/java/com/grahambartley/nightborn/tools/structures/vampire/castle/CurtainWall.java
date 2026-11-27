@@ -2,6 +2,7 @@ package com.grahambartley.nightborn.tools.structures.vampire.castle;
 
 import com.grahambartley.nightborn.tools.structures.template.BlockState;
 import com.grahambartley.nightborn.tools.structures.template.Template;
+import com.grahambartley.nightborn.tools.structures.vampire.RouteRoom;
 import com.grahambartley.nightborn.tools.structures.vampire.Stone;
 
 public final class CurtainWall {
@@ -51,7 +52,9 @@ public final class CurtainWall {
         } else {
           t.set(x, top + 1, z, BlockState.AIR);
         }
-        t.set(x, top + 2, z, BlockState.AIR);
+        for (int y = top + 2; y <= top + RouteRoom.HOUSEHOLD; y++) {
+          t.set(x, y, z, BlockState.AIR);
+        }
       }
     }
     if (layout.ruinedWall()) {
@@ -109,8 +112,9 @@ public final class CurtainWall {
     for (int x = tower.cx() - tower.radius(); x <= tower.cx() + tower.radius(); x++) {
       for (int z = tower.cz() - tower.radius(); z <= tower.cz() + tower.radius(); z++) {
         if (tower.wall(x, z) && onWalk(x, z) && t.inside(x, 0, z)) {
-          t.set(x, Castle.WALL_TOP + 1, z, BlockState.AIR);
-          t.set(x, Castle.WALL_TOP + 2, z, BlockState.AIR);
+          for (int y = Castle.WALL_TOP + 1; y <= Castle.WALL_TOP + RouteRoom.HOUSEHOLD; y++) {
+            t.set(x, y, z, BlockState.AIR);
+          }
         }
       }
     }

@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import com.grahambartley.nightborn.tools.structures.template.BlockState;
 import com.grahambartley.nightborn.tools.structures.template.Pos;
 import com.grahambartley.nightborn.tools.structures.template.Template;
+import com.grahambartley.nightborn.tools.structures.vampire.RouteRoom;
 import java.util.Map;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -26,14 +27,17 @@ class CryptStairTest {
                     .mapToObj(step -> Arguments.of(crypt.path(), crypt, step)));
   }
 
-  @ParameterizedTest(name = "in {0} step {2} climbs one block east with headroom")
+  @ParameterizedTest(name = "in {0} step {2} climbs one block east, two lanes wide, with headroom")
   @MethodSource("steps")
   void eachStepClimbsOneBlockWithRoomToWalk(
       final String path, final Template crypt, final int step) {
     final int x = CryptStair.FOOT_X + step;
-    assertTrue(crypt.get(x, step, CryptStair.STAIR_Z).startsWith(CryptStair.STEP + "[facing=east"));
-    for (int y = step + 1; y <= Math.min(step + 3, CryptStair.TOP); y++) {
-      assertEquals(BlockState.AIR, crypt.get(x, y, CryptStair.STAIR_Z), "headroom at " + y);
+    for (int z = CryptStair.INNER_Z; z <= CryptStair.STAIR_Z; z++) {
+      assertTrue(crypt.get(x, step, z).startsWith(CryptStair.STEP + "[facing=east"), "lane " + z);
+      final int top = Math.min(step + 1 + RouteRoom.HOUSEHOLD, CryptStair.TOP);
+      for (int y = step + 1; y <= top; y++) {
+        assertEquals(BlockState.AIR, crypt.get(x, y, z), "headroom at " + y + " in lane " + z);
+      }
     }
   }
 

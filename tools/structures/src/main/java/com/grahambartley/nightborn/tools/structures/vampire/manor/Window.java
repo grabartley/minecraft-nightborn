@@ -1,8 +1,10 @@
 package com.grahambartley.nightborn.tools.structures.vampire.manor;
 
+import com.grahambartley.nightborn.tools.structures.template.BlockState;
 import com.grahambartley.nightborn.tools.structures.template.Facing;
 import com.grahambartley.nightborn.tools.structures.template.Pos;
 import com.grahambartley.nightborn.tools.structures.template.Template;
+import com.grahambartley.nightborn.tools.structures.vampire.RouteRoom;
 
 public record Window(int x, int z, String outward, int sill, int height, String glass) {
 
@@ -39,5 +41,8 @@ public record Window(int x, int z, String outward, int sill, int height, String 
       final Template t, final int x, final int y, final int z, final String facing) {
     t.set(x, y, z, Parts.door(Manor.DOOR, facing, "lower", "left"));
     t.set(x, y + 1, z, Parts.door(Manor.DOOR, facing, "upper", "left"));
+    for (int up = 2; up < RouteRoom.HOUSEHOLD; up++) {
+      t.set(x, y + up, z, BlockState.AIR);
+    }
   }
 }

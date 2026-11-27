@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.grahambartley.nightborn.tools.structures.template.Pos;
 import com.grahambartley.nightborn.tools.structures.template.Template;
+import com.grahambartley.nightborn.tools.structures.vampire.crypt.Church;
 import com.grahambartley.nightborn.tools.structures.vampire.crypt.CryptStair;
 import com.grahambartley.nightborn.tools.structures.vampire.lair.Grotto;
 import java.util.List;
@@ -148,40 +149,66 @@ class VampireStructuresTest {
   }
 
   static Stream<Arguments> walks() {
-    final Pos stairFoot =
-        new Pos(
-            CryptStair.OFFSET_X + CryptStair.FOOT_X, 1, CryptStair.OFFSET_Z + CryptStair.STAIR_Z);
     return VampireStructures.build().stream()
         .map(
             home ->
                 Arguments.of(
                     home.path(),
                     switch (home.path()) {
-                      case "vampire/crypt/undercroft", "vampire/crypt/ossuary" -> stairFoot;
                       case "vampire/lair/den" -> new Pos(5, 1, 16);
                       case "vampire/lair/grotto" -> new Pos(Grotto.LEDGE - 2, 1, Grotto.SPRING_Z);
-                      default -> entrance(home).offset(0, 1, 0);
+                      default -> Assembly.wayOut(walked(home.path()));
                     }));
   }
 
-  private static Template home(final String path) {
-    return VampireStructures.build().stream()
-        .filter(t -> t.path().equals(path))
-        .findFirst()
-        .orElseThrow();
+  private static Template walked(final String path) {
+    return path.equals("vampire/crypt/undercroft") || path.equals("vampire/crypt/ossuary")
+        ? Assembly.stacked(home(path), home("vampire/crypt/church_tower"), Church.VESTRY)
+        : home(path);
   }
 
-  @Test
-  void theMobWalkFitsTheTallestShippedVampire() {
-    assertEquals(2, StructureWalk.MOB.headroom());
-    assertTrue(TallestVampire.height() <= StructureWalk.MOB.headroom());
-    assertTrue(TallestVampire.height() > StructureWalk.MOB.headroom() - 1);
+  private static final List<Template> BUILT = VampireStructures.build();
+
+  private static Template home(final String path) {
+    return BUILT.stream().filter(t -> t.path().equals(path)).findFirst().orElseThrow();
+  }
+
+  static Stream<Arguments> households() {
+    final List<Template> undergrounds =
+        List.of(home("vampire/crypt/undercroft"), home("vampire/crypt/ossuary"));
+    final List<Template> churches =
+        List.of(home("vampire/crypt/church_tower"), home("vampire/crypt/church_bellcote"));
+    final Stream<Template> crypts =
+        undergrounds.stream()
+            .flatMap(
+                below ->
+                    churches.stream().map(above -> Assembly.stacked(below, above, Church.VESTRY)));
+    final Stream<Template> rest =
+        VampireStructures.build().stream()
+            .filter(home -> !home.path().startsWith("vampire/crypt/"));
+    return Stream.concat(crypts, rest).map(home -> Arguments.of(home.path(), home));
+  }
+
+  @ParameterizedTest(name = "{0}: every coffin has a roomy way out and back")
+  @MethodSource("households")
+  void everyCoffinHasARoomyWayOutAndBack(final String path, final Template home) {
+    final Pos out = Assembly.wayOut(home);
+    final Set<Pos> in = StructureWalk.roomy(home, StructureWalk.MOB, out);
+    for (final Coffins.Coffin coffin : Coffins.in(home)) {
+      final List<Pos> beside = StructureAudit.standingBeside(home, StructureWalk.MOB, coffin);
+      assertTrue(
+          beside.stream().anyMatch(in::contains), coffin + " is out of roomy reach of " + out);
+      assertTrue(
+          beside.stream()
+              .anyMatch(at -> StructureWalk.roomy(home, StructureWalk.MOB, at).contains(out)),
+          coffin + " has no roomy way out to " + out);
+    }
   }
 
   @ParameterizedTest(name = "{0}: a vampire walks to every coffin, chair, table and lectern")
   @MethodSource("walks")
   void aVampireWalksToEveryPieceItsHouseholdUses(final String path, final Pos start) {
-    final Template home = home(path);
+    final Template home = walked(path);
     assertEquals(
         List.of(), StructureAudit.unreachedHousehold(home, StructureWalk.mob(home, start)));
   }
@@ -189,7 +216,7 @@ class VampireStructuresTest {
   @ParameterizedTest(name = "{0}: a vampire walks everywhere a person can, with no ladder")
   @MethodSource("walks")
   void aVampireWalksEverywhereAPersonCan(final String path, final Pos start) {
-    final Template home = home(path);
+    final Template home = walked(path);
     assertEquals(
         List.of(),
         StructureAudit.humanOnly(
@@ -199,14 +226,14 @@ class VampireStructuresTest {
   @ParameterizedTest(name = "{0}: no floor under a roof is left out of reach")
   @MethodSource("walks")
   void noFloorIsSealedOff(final String path, final Pos start) {
-    final Template home = home(path);
+    final Template home = walked(path);
     assertEquals(List.of(), StructureAudit.sealedFloors(home, StructureWalk.from(home, start)));
   }
 
   @ParameterizedTest(name = "{0}: every door is walked through from both sides")
   @MethodSource("walks")
   void everyDoorLeadsSomewhere(final String path, final Pos start) {
-    final Template home = home(path);
+    final Template home = walked(path);
     final Set<Pos> reached = StructureWalk.from(home, start);
     assertEquals(List.of(), StructureAudit.doorsLeadingNowhere(home, reached));
   }
@@ -228,7 +255,13 @@ class VampireStructuresTest {
         home.cells().values().stream().filter(state -> state.contains("face=wall")).count();
     assertTrue(floor >= BloodStainRules.forPath(path).clusters(), "floor stains " + floor);
     assertTrue(wall >= 1, "wall stains " + wall);
-    assertEquals(home.cells(), home(path).cells());
+    assertEquals(
+        home.cells(),
+        VampireStructures.build().stream()
+            .filter(t -> t.path().equals(path))
+            .findFirst()
+            .orElseThrow()
+            .cells());
   }
 
   private static Pos entrance(final Template home) {

@@ -8,6 +8,7 @@ import static com.grahambartley.nightborn.tools.structures.vampire.manor.Manor.T
 
 import com.grahambartley.nightborn.tools.structures.template.BlockState;
 import com.grahambartley.nightborn.tools.structures.template.Template;
+import com.grahambartley.nightborn.tools.structures.vampire.RouteRoom;
 
 public record Turret(boolean round) {
 
@@ -33,7 +34,7 @@ public record Turret(boolean round) {
   }
 
   public static boolean arch(final int y) {
-    return y == F0 + 1 || y == F0 + 2 || y == F1 + 1 || y == F1 + 2;
+    return y > F0 && y <= F0 + RouteRoom.HOUSEHOLD || y > F1 && y <= F1 + RouteRoom.HOUSEHOLD;
   }
 
   public static boolean doorway(final int x, final int z) {
@@ -81,7 +82,7 @@ public record Turret(boolean round) {
         t.set(STAIR_X, below, z, Manor.PLANKS);
       }
       t.set(STAIR_X, y, z, Parts.stair("dark_oak_stairs", "north"));
-      for (int above = y + 1; above <= Math.min(y + 3, STUDY); above++) {
+      for (int above = y + 1; above <= y + 1 + RouteRoom.HOUSEHOLD; above++) {
         t.set(STAIR_X, above, z, BlockState.AIR);
       }
     }

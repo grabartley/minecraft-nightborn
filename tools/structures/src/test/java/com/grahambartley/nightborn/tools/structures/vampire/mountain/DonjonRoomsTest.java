@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.grahambartley.nightborn.tools.structures.template.BlockState;
 import com.grahambartley.nightborn.tools.structures.template.Template;
+import com.grahambartley.nightborn.tools.structures.vampire.RouteRoom;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
@@ -91,10 +92,12 @@ class DonjonRoomsTest {
   @CsvSource({"1", "2", "3", "4", "5", "6"})
   void nothingStandsInAStairwell(final int storey) {
     final Template t = built();
-    final int arriving = Donjon.flightX(storey - 1);
     final int y = Donjon.floor(storey) + 1;
-    for (int z = Donjon.FLIGHT_FOOT - Donjon.STOREY; z <= Donjon.FLIGHT_FOOT - 2; z++) {
-      assertEquals(BlockState.AIR, t.get(arriving, y, z), "landing at z " + z);
+    for (int lane = 0; lane < RouteRoom.LANES; lane++) {
+      final int arriving = Donjon.flightX(storey - 1) + lane * Donjon.inward(storey - 1);
+      for (int z = Donjon.FLIGHT_FOOT - Donjon.STOREY; z <= Donjon.FLIGHT_FOOT - 1; z++) {
+        assertEquals(BlockState.AIR, t.get(arriving, y, z), "landing at " + arriving + ", z " + z);
+      }
     }
     if (storey < Donjon.STOREYS - 1) {
       final int leaving = Donjon.flightX(storey);

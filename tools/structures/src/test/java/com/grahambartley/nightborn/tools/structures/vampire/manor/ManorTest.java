@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.grahambartley.nightborn.tools.structures.template.Pos;
 import com.grahambartley.nightborn.tools.structures.template.Template;
+import com.grahambartley.nightborn.tools.structures.vampire.RouteRoom;
 import com.grahambartley.nightborn.tools.structures.vampire.StructureWalk;
 import java.util.ArrayList;
 import java.util.List;
@@ -79,7 +80,7 @@ class ManorTest {
         .flatMap(
             layout ->
                 Stream.of(
-                    Arguments.of(layout, "the stair landing", 27, Manor.F0 + 4, 10),
+                    Arguments.of(layout, "the stair landing", 27, StairHall.LANDING + 1, 10),
                     Arguments.of(layout, "the west gallery", 24, Manor.F1 + 1, 18),
                     Arguments.of(layout, "the east gallery", 30, Manor.F1 + 1, 18),
                     Arguments.of(
@@ -94,7 +95,11 @@ class ManorTest {
     return state == null || state.equals("minecraft:air");
   }
 
-  static boolean meant(final Manor.Layout layout, final int x, final int y, final int z) {
+  static boolean meant(
+      final Template t, final Manor.Layout layout, final int x, final int y, final int z) {
+    if (overDoor(t, x, y, z)) {
+      return true;
+    }
     if (new Turret(layout.roundTurret()).inside(x, z, Turret.RADIUS)) {
       return true;
     }
@@ -120,7 +125,7 @@ class ManorTest {
           }
           for (int y = Manor.F0; y <= Manor.TOP; y++) {
             assertTrue(
-                !open(t.get(x, y, z)) || meant(layout, x, y, z),
+                !open(t.get(x, y, z)) || meant(t, layout, x, y, z),
                 "hole at " + x + "," + y + "," + z);
           }
         }
@@ -128,13 +133,27 @@ class ManorTest {
     }
   }
 
-  @ParameterizedTest(name = "{0}: every door has solid wall over it")
+  static boolean overDoor(final Template t, final int x, final int y, final int z) {
+    for (int down = 1; down <= RouteRoom.HOUSEHOLD - 2; down++) {
+      final String below = t.get(x, y - down, z);
+      if (below != null && below.contains("dark_oak_door") && below.contains("half=upper")) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  @ParameterizedTest(name = "{0}: every door has a fanlight a vampire fits under, then solid wall")
   @MethodSource("layouts")
   void doorsHaveAHeadAboveThem(final Manor.Layout layout) {
     final Template t = Manor.build(layout);
     for (final Pos door : find(t, "dark_oak_door")) {
-      if (t.get(door.x(), door.y(), door.z()).contains("half=upper")) {
-        assertTrue(!open(t.get(door.x(), door.y() + 1, door.z())), "over door " + door);
+      if (t.get(door.x(), door.y(), door.z()).contains("half=lower")) {
+        for (int up = 2; up < RouteRoom.HOUSEHOLD; up++) {
+          assertTrue(open(t.get(door.x(), door.y() + up, door.z())), "fanlight over " + door);
+        }
+        assertTrue(
+            !open(t.get(door.x(), door.y() + RouteRoom.HOUSEHOLD, door.z())), "head over " + door);
       }
     }
   }

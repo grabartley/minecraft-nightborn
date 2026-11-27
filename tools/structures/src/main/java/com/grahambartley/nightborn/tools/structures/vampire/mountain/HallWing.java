@@ -5,6 +5,7 @@ import com.grahambartley.nightborn.tools.structures.template.Template;
 import com.grahambartley.nightborn.tools.structures.vampire.Axis;
 import com.grahambartley.nightborn.tools.structures.vampire.Furnishing;
 import com.grahambartley.nightborn.tools.structures.vampire.Roof;
+import com.grahambartley.nightborn.tools.structures.vampire.RouteRoom;
 import com.grahambartley.nightborn.tools.structures.vampire.manor.Parts;
 
 public final class HallWing {
@@ -71,9 +72,10 @@ public final class HallWing {
   }
 
   private static void openings(final Template t) {
-    for (int dz = 0; dz < 2; dz++) {
-      t.set(EAST, GROUND + 1, DOOR_Z + dz, BlockState.AIR);
-      t.set(EAST, GROUND + 2, DOOR_Z + dz, BlockState.AIR);
+    for (int dz = 0; dz < RouteRoom.LANES; dz++) {
+      for (int y = GROUND + 1; y <= GROUND + RouteRoom.HOUSEHOLD; y++) {
+        t.set(EAST, y, DOOR_Z + dz, BlockState.AIR);
+      }
     }
     for (int z = NORTH + 1; z < SOUTH; z++) {
       if ((z - NORTH) % BAY != 1) {
@@ -98,18 +100,20 @@ public final class HallWing {
 
   private static void flight(final Template t) {
     final int steps = LOFT - GROUND;
-    for (int i = 0; i < steps; i++) {
-      final int x = WEST + 2 + i;
-      final int y = GROUND + 1 + i;
-      t.set(x, y, NORTH + 1, Parts.stair("dark_oak_stairs", "east"));
-      for (int above = y + 1; above <= y + 3; above++) {
-        t.set(x, above, NORTH + 1, BlockState.AIR);
+    for (int z = NORTH + 1; z <= NORTH + RouteRoom.LANES; z++) {
+      for (int i = 0; i < steps; i++) {
+        final int x = WEST + 2 + i;
+        final int y = GROUND + 1 + i;
+        t.set(x, y, z, Parts.stair("dark_oak_stairs", "east"));
+        for (int above = y + 1; above <= y + 1 + RouteRoom.HOUSEHOLD; above++) {
+          t.set(x, above, z, BlockState.AIR);
+        }
       }
+      t.set(WEST + 2, LOFT + 1, z, Parts.fence());
     }
-    for (int x = WEST + 4; x <= WEST + 6; x++) {
-      t.set(x, LOFT + 1, NORTH + 2, Parts.fence());
+    for (int x = WEST + 3; x <= WEST + steps; x++) {
+      t.set(x, LOFT + 1, NORTH + RouteRoom.LANES + 1, Parts.fence());
     }
-    t.set(WEST + 3, LOFT + 1, NORTH + 1, Parts.fence());
   }
 
   private static void feast(final Template t) {

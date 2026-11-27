@@ -2,6 +2,7 @@ package com.grahambartley.nightborn.tools.structures.vampire.crypt;
 
 import com.grahambartley.nightborn.tools.structures.template.BlockState;
 import com.grahambartley.nightborn.tools.structures.template.Template;
+import com.grahambartley.nightborn.tools.structures.vampire.RouteRoom;
 import com.grahambartley.nightborn.tools.structures.vampire.Stone;
 
 public final class CryptStair {
@@ -16,6 +17,8 @@ public final class CryptStair {
   public static final int OFFSET_Z = Church.STAIR_Z - 2;
   public static final int STAIR_Z = Church.STAIR_Z - OFFSET_Z;
   public static final int FOOT_X = 7;
+  public static final int LANDING_X = 5;
+  public static final int INNER_Z = STAIR_Z - 1;
   public static final int ANCHOR_X = 7;
   public static final int ANCHOR_Z = 8;
   static final String STEP = "nightborn:gothic_stone_brick_stairs";
@@ -37,13 +40,16 @@ public final class CryptStair {
     final Template t = new Template(path, SIZE_X, SIZE_Y, SIZE_Z);
     MASONRY.fill(t, 0, 0, 0, SIZE_X - 1, TOP, SIZE_Z - 1);
     FLAGS.fill(t, 1, 0, 1, SIZE_X - 2, 0, SIZE_Z - 2);
+    t.fill(LANDING_X, 1, INNER_Z, FOOT_X, RouteRoom.HOUSEHOLD + 1, STAIR_Z + 1, BlockState.AIR);
     for (int x = FOOT_X; x < SIZE_X; x++) {
       final int step = x - FOOT_X;
-      for (int y = Math.max(1, step); y <= Math.min(TOP, step + 3); y++) {
-        t.set(x, y, STAIR_Z, BlockState.AIR);
-      }
-      if (step > 0 && step <= TOP) {
-        t.set(x, step, STAIR_Z, step());
+      for (int z = INNER_Z; z <= STAIR_Z; z++) {
+        for (int y = Math.max(1, step); y <= Math.min(TOP, step + 1 + RouteRoom.HOUSEHOLD); y++) {
+          t.set(x, y, z, BlockState.AIR);
+        }
+        if (step > 0 && step <= TOP) {
+          t.set(x, step, z, step());
+        }
       }
     }
     t.jigsaw(

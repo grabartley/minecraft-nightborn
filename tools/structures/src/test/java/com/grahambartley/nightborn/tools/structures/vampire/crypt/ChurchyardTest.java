@@ -71,9 +71,13 @@ class ChurchyardTest {
     assertTrue(top.startsWith(CryptStair.STEP + "[facing=east,half=bottom"), top);
     assertTrue(
         BANK.get(Church.STAIR_X - 1, CryptStair.TOP, Church.STAIR_Z).startsWith(CryptStair.STEP));
-    assertEquals("minecraft:stone_bricks", CHURCH.get(Church.STAIR_X, 0, Church.STAIR_Z - 1));
+    assertTrue(
+        CHURCH.get(Church.STAIR_X, 0, Church.STAIR_Z - 1).startsWith(CryptStair.STEP),
+        "the second lane tops out beside it");
     assertEquals("minecraft:stone_bricks", CHURCH.get(Church.STAIR_X, 0, Church.STAIR_Z + 1));
+    assertEquals("minecraft:stone_bricks", CHURCH.get(Church.STAIR_X, 0, Church.STAIR_Z - 2));
     assertEquals("minecraft:air", CHURCH.get(Church.STAIR_X, 1, Church.STAIR_Z));
+    assertEquals("minecraft:air", CHURCH.get(Church.STAIR_X, 1, Church.STAIR_Z - 1));
   }
 
   @Test

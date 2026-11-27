@@ -97,6 +97,6 @@ class GrottoTest {
   @Test
   void twoBlocksOfRockWallRoundTheGrottoButItsPassage() {
     LairChecks.assertSealed(
-        GROTTO, LairPassage.run(GROTTO, Grotto.ENTRANCE_X, Grotto.ENTRANCE_SIDE));
+        GROTTO, LairPassage.cells(GROTTO, Grotto.ENTRANCE_X, Grotto.ENTRANCE_SIDE));
   }
 }

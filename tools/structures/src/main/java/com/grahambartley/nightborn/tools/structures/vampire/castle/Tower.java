@@ -2,6 +2,7 @@ package com.grahambartley.nightborn.tools.structures.vampire.castle;
 
 import com.grahambartley.nightborn.tools.structures.template.BlockState;
 import com.grahambartley.nightborn.tools.structures.template.Template;
+import com.grahambartley.nightborn.tools.structures.vampire.RouteRoom;
 import com.grahambartley.nightborn.tools.structures.vampire.Stone;
 
 public record Tower(int cx, int cz, int radius, int height, boolean round) {
@@ -107,7 +108,8 @@ public record Tower(int cx, int cz, int radius, int height, boolean round) {
   }
 
   public void door(final Template t, final int x, final int z) {
-    t.set(x, Castle.FLOOR, z, BlockState.AIR);
-    t.set(x, Castle.FLOOR + 1, z, BlockState.AIR);
+    for (int y = Castle.FLOOR; y < Castle.FLOOR + RouteRoom.HOUSEHOLD; y++) {
+      t.set(x, y, z, BlockState.AIR);
+    }
   }
 }

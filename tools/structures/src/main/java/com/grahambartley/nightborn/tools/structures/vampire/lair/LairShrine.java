@@ -6,6 +6,7 @@ import com.grahambartley.nightborn.tools.structures.template.Template;
 import com.grahambartley.nightborn.tools.structures.vampire.Axis;
 import com.grahambartley.nightborn.tools.structures.vampire.Furnishing;
 import com.grahambartley.nightborn.tools.structures.vampire.Openings;
+import com.grahambartley.nightborn.tools.structures.vampire.RouteRoom;
 import com.grahambartley.nightborn.tools.structures.vampire.Stone;
 
 public final class LairShrine {
@@ -38,7 +39,8 @@ public final class LairShrine {
       }
     }
     for (int d = -1; d <= 0; d++) {
-      Openings.arch(t, wall, along - 1, along + 1, depth0 + sign * (d + 1), 1, 3, ARCH);
+      Openings.arch(
+          t, wall, along - 1, along + 1, depth0 + sign * (d + 1), 1, RouteRoom.HOUSEHOLD + 1, ARCH);
     }
     Furnishing.standingCoffin(
         t, coffin, wall.x(along, depth0), 1, wall.z(along, depth0), Facing.OPPOSITE.get(front));

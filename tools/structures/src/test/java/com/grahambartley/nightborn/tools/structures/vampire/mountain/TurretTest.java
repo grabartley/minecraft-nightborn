@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import com.grahambartley.nightborn.tools.structures.template.BlockState;
 import com.grahambartley.nightborn.tools.structures.template.Pos;
 import com.grahambartley.nightborn.tools.structures.template.Template;
+import com.grahambartley.nightborn.tools.structures.vampire.RouteRoom;
 import java.util.List;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -63,9 +64,10 @@ class TurretTest {
   void opensOntoItsWardAndOntoTheWallWalk(final boolean round) {
     final Template t = box();
     northWest(round).build(t);
-    assertEquals(BlockState.AIR, t.get(14, MountainCastle.UP + 1, 7));
-    assertEquals(BlockState.AIR, t.get(14, MountainCastle.UP + 2, 7));
-    assertTrue(!BlockState.AIR.equals(t.get(14, MountainCastle.UP + 3, 7)));
+    for (int y = MountainCastle.UP + 1; y <= MountainCastle.UP + RouteRoom.HOUSEHOLD; y++) {
+      assertEquals(BlockState.AIR, t.get(14, y, 7));
+    }
+    assertTrue(!BlockState.AIR.equals(t.get(14, MountainCastle.UP + RouteRoom.HOUSEHOLD + 1, 7)));
     assertEquals(BlockState.AIR, t.get(14, Ramparts.TOP + 1, 5));
     assertEquals(BlockState.AIR, t.get(7, Ramparts.TOP + 2, 12));
   }

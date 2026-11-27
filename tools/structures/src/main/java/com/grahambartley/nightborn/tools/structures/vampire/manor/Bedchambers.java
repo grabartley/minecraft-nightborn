@@ -131,7 +131,7 @@ public final class Bedchambers {
     Furnishing.table(t, x - 1, STUDY, z + 2);
     Furnishing.candelabra(t, x - 1, STUDY + 1, z + 2);
     Furnishing.chair(t, x, STUDY, z + 2, "west");
-    Furnishing.candelabra(t, x + 1, STUDY, z + 2);
+    Furnishing.candelabra(t, x - 2, STUDY, z + 1);
     Furnishing.chest(t, x - 2, STUDY, z - 1, "east");
     t.set(x + 1, STUDY + 4, z - 1, "cobweb");
   }
