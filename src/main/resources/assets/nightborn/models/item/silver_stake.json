@@ -1,5 +1,5 @@
 {
-  "parent": "minecraft:item/handheld",
+  "parent": "nightborn:item/reverse_grip_handheld",
   "textures": {
     "layer0": "nightborn:item/silver_stake"
   }
