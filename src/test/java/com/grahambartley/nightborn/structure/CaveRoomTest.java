@@ -32,33 +32,71 @@ class CaveRoomTest {
   static Stream<Arguments> boxes() {
     return Stream.of(
         Arguments.of(
-            CaveRoom.PERSON,
-            List.of(new BlockPos(3, -30, 7)),
-            Direction.EAST,
-            new BlockBox(3, -30, 7, 3, -28, 7)),
+            CaveRoom.PERSON, List.of(new BlockPos(3, -30, 7)), new BlockBox(3, -30, 7, 3, -28, 7)),
         Arguments.of(
             new CaveRoom(3, 2),
-            List.of(new BlockPos(3, -30, 7)),
-            Direction.EAST,
+            List.of(new BlockPos(3, -30, 7), new BlockPos(4, -30, 7)),
             new BlockBox(3, -30, 7, 4, -27, 7)),
         Arguments.of(
             new CaveRoom(3, 2),
-            List.of(new BlockPos(0, -30, 0), new BlockPos(0, -29, -1)),
-            Direction.WEST,
+            List.of(new BlockPos(0, -30, 0), new BlockPos(-1, -29, -1)),
             new BlockBox(-1, -30, -1, 0, -26, 0)));
   }
 
-  @ParameterizedTest(name = "{0} over {1} to the {2} takes {3}")
+  @ParameterizedTest(name = "{0} over {1} takes {2}")
   @MethodSource("boxes")
-  void boxesEveryLaneAndTheHeadroomAboveIt(
-      final CaveRoom room, final List<BlockPos> route, final Direction side, final BlockBox box) {
-    assertEquals(box, room.around(route, side));
+  void boxesEveryFloorAndTheHeadroomAboveIt(
+      final CaveRoom room, final List<BlockPos> floors, final BlockBox box) {
+    assertEquals(box, room.around(floors));
   }
 
   @Test
   void refusesAnEmptyRoute() {
-    assertThrows(
-        IllegalArgumentException.class, () -> CaveRoom.PERSON.around(List.of(), Direction.EAST));
+    assertThrows(IllegalArgumentException.class, () -> CaveRoom.PERSON.around(List.of()));
+  }
+
+  static Stream<Arguments> carvings() {
+    final BlockBox lair = new BlockBox(10, -40, 0, 30, -20, 20);
+    return Stream.of(
+        Arguments.of(
+            "a second lane beside a route clear of the lair",
+            List.of(new BlockPos(5, -30, 5), new BlockPos(5, -30, 6)),
+            Direction.EAST,
+            lair,
+            List.of(
+                new BlockPos(5, -30, 5),
+                new BlockPos(5, -30, 6),
+                new BlockPos(6, -30, 5),
+                new BlockPos(6, -30, 6))),
+        Arguments.of(
+            "no lane cut into the lair's wall",
+            List.of(new BlockPos(9, -30, 5)),
+            Direction.EAST,
+            lair,
+            List.of(new BlockPos(9, -30, 5))),
+        Arguments.of(
+            "no lane under the lair's floor",
+            List.of(new BlockPos(10, -44, 5)),
+            Direction.NORTH,
+            lair,
+            List.of(new BlockPos(10, -44, 5), new BlockPos(10, -44, 4))),
+        Arguments.of(
+            "no lane whose headroom reaches into the lair",
+            List.of(new BlockPos(11, -43, 5)),
+            Direction.NORTH,
+            lair,
+            List.of(new BlockPos(11, -43, 5))));
+  }
+
+  @ParameterizedTest(name = "{0}")
+  @MethodSource("carvings")
+  void carvesTheRouteAndEachLaneThatKeepsOutOfTheLair(
+      final String name,
+      final List<BlockPos> route,
+      final Direction side,
+      final BlockBox lair,
+      final List<BlockPos> carved) {
+    assertEquals(carved, new CaveRoom(3, 2).carved(route, side, lair));
   }
 
   static Stream<Arguments> rooms() {

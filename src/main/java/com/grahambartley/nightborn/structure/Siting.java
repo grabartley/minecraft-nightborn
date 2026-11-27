@@ -89,10 +89,14 @@ public record Siting(Optional<Footing> footing, Optional<Summit> summit, Optiona
         found ->
             pieces.addPiece(
                 new CavePath(
-                    found.route(),
+                    cave.get()
+                        .room()
+                        .carved(
+                            found.route(),
+                            threshold.get().out().rotateYClockwise(),
+                            pieces.getBoundingBox()),
                     cave.get().sill(),
-                    cave.get().room(),
-                    threshold.get().out().rotateYClockwise())));
+                    cave.get().room())));
     final BlockPos placed = position.position().add(by);
     if (!inBiome(context, placed)) {
       return Optional.empty();

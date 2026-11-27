@@ -3,7 +3,9 @@ package com.grahambartley.nightborn.structure;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 import net.minecraft.util.math.BlockBox;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
@@ -34,9 +36,21 @@ public record CaveRoom(int headroom, int lanes) {
     return floors;
   }
 
-  public BlockBox around(final List<BlockPos> route, final Direction side) {
-    return BlockBox.encompassPositions(
-            route.stream().flatMap(floor -> floors(floor, side).stream()).toList())
+  public List<BlockPos> carved(
+      final List<BlockPos> route, final Direction side, final BlockBox lair) {
+    final Set<BlockPos> carved = new LinkedHashSet<>(route);
+    for (final BlockPos floor : route) {
+      for (final BlockPos lane : floors(floor, side)) {
+        if (clearOf(lane, lair)) {
+          carved.add(lane);
+        }
+      }
+    }
+    return List.copyOf(carved);
+  }
+
+  public BlockBox around(final List<BlockPos> floors) {
+    return BlockBox.encompassPositions(floors)
         .map(
             box ->
                 new BlockBox(
@@ -47,5 +61,14 @@ public record CaveRoom(int headroom, int lanes) {
                     box.getMaxY() + headroom,
                     box.getMaxZ()))
         .orElseThrow(() -> new IllegalArgumentException("A cave path needs at least one floor"));
+  }
+
+  private boolean clearOf(final BlockPos floor, final BlockBox lair) {
+    for (int up = 0; up <= headroom; up++) {
+      if (lair.contains(floor.up(up))) {
+        return false;
+      }
+    }
+    return true;
   }
 }

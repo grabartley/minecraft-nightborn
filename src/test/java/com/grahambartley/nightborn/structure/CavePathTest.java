@@ -11,7 +11,6 @@ import net.minecraft.block.Blocks;
 import net.minecraft.block.PointedDripstoneBlock;
 import net.minecraft.util.math.BlockBox;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -62,11 +61,7 @@ class CavePathTest {
   void coversEveryFloorAndTheHeadroomAboveIt(final List<BlockPos> floors, final BlockBox box) {
     assertEquals(
         box,
-        new CavePath(
-                floors,
-                Blocks.COBBLED_DEEPSLATE.getDefaultState(),
-                CaveRoom.PERSON,
-                Direction.NORTH)
+        new CavePath(floors, Blocks.COBBLED_DEEPSLATE.getDefaultState(), CaveRoom.PERSON)
             .getBoundingBox());
   }
 
@@ -74,11 +69,6 @@ class CavePathTest {
   void refusesAnEmptyRoute() {
     assertThrows(
         IllegalArgumentException.class,
-        () ->
-            new CavePath(
-                List.of(),
-                Blocks.COBBLED_DEEPSLATE.getDefaultState(),
-                CaveRoom.PERSON,
-                Direction.EAST));
+        () -> new CavePath(List.of(), Blocks.COBBLED_DEEPSLATE.getDefaultState(), CaveRoom.PERSON));
   }
 }
