@@ -741,7 +741,12 @@ Some of those who survive a player do not forget them.
 | GORE-1 | Bites, stakes and silver hits spray blood. Blood leaves splatter on nearby blocks, drawn by the client, that fades with time |
 | GORE-2 | A drained victim and a staked vampire have their own death effects. A staked vampire also gives off the dark, ashy smoke of a burning one (SUN-3) |
 | GORE-3 | A client option sets gore, including vomit particles (FEED-3), blood spray and its splatter (GORE-1), and placed blood splatter (DECOR-3), to Full, Reduced or Off. Full is the default. Reduced draws fewer drops, and blood spray and splatter dried and dark. Vomit particles and blood spray also follow the vanilla Particles setting: fewer on Decreased, and none on Minimal |
-| GORE-4 | Gore is drawn by the client only. The setting never changes what happens in the world |
+| GORE-4 | Gore is drawn by the client only. The setting never changes what happens in the world, including which parts a body has lost (GORE-5) |
+| GORE-5 | A blow can cut a part off a vampire mob, a hunter mob or a player, when dismemberment is on. A player can be maimed only while "players can be maimed" is on, and a player's blow on another player also needs PvP. Which mobs can be maimed is data. The great bosses keep their bodies |
+| GORE-6 | A blow can sever when it is a direct melee blow with a severing weapon (swords, axes, the silver sword and axe and their ashen forms, the Blade of the Eldest and the Inquisitor's Greatsword, as data), a power or boss attack marked as severing in data, or any blow that takes at least the massive blow share of the victim's max health (default 50%). It must also take at least the strong blow share (default 20%) after armour, and leave the victim alive and open: staggered, or below the badly hurt share of health (default 35%). Then a roll under the chance to sever (default 15%) cuts. Stakes, bites, fire, falls and the sun never sever, a fist or a bolt only with a massive blow, and a blocked blow never does |
+| GORE-7 | A player's melee blow takes the part their line of sight meets, by height and side of the victim's body: the top quarter is the head, below the hip a leg, and outside the trunk between them an arm. A shot takes the part at its point of impact. A mob's melee blow picks a part by weights in data, limbs far more often than the head. A blow with no direction, such as a blast, picks a limb at random. A blow on the trunk, on the head or on a part already gone severs nothing. Zones are data |
+| GORE-8 | A body that lost a part in the last 10 seconds loses nothing more, so two blows in one tick take one part at most |
+| GORE-9 | Everyone near hears a heavy wet blow when a part comes off, and every client stops drawing that part on the body, with its armour and anything held in that hand. An operator can cut a named part off any target and give every part back with `/nightborn body` |
 
 **Enforcement:** server decides what happens. The client decides how much blood to draw.
 
@@ -774,7 +779,7 @@ Some of those who survive a player do not forget them.
 | CFG-5 | Options cover every area of the mod, as the table below lists |
 | CFG-6 | A settings screen through Mod Menu shows the same server options and shares their validation with the commands |
 | CFG-7 | An option that only changes what one player sees, such as gore, is a client setting saved on that player's device. Every player can change it on the settings screen, whatever their operator level |
-| CFG-8 | Operators can turn, cure, swear in, set the points, stage and rank and reset the bloodlines and paths of any player, read and set any vampire's notoriety (INQ-1), disband any house, and release any human familiar |
+| CFG-8 | Operators can turn, cure, swear in, set the points, stage and rank and reset the bloodlines and paths of any player, read and set any vampire's notoriety (INQ-1), disband any house, release any human familiar, and cut parts off or restore any body (GORE-9) |
 
 Every number this document calls a default, a setting or tunable is an option here.
 
@@ -784,6 +789,7 @@ Every number this document calls a default, a setting or tunable is an option he
 | Sun and weaknesses | Sun damage, how long a parasol lasts, garlic and crucifix ranges, the damage, weakened time and blood lost from eating garlic, stake and silver damage, the damage, hits, time and weakening of each weapon coating, and the strength, time, radius and cloud time of a garlic bomb |
 | Blood and feeding | Blood drain and blood values, the drain while levitating and in bat form, flying and at a sprint, how fast starving weakens and hurts and how much it takes from night gifts and bare hands, the damage from bringing up food or potions, how much a lancet hurts, feeding range, and the health below which a finisher bite opens |
 | Being a vampire | The downed and escape times, hardcore vampire deaths, and the nights, blood and gifts of each stage |
+| Dismemberment | Whether blows can cut parts off, whether players can be maimed, the chance to sever, and the strong blow, massive blow and badly hurt shares of health |
 | Skills | How much experience each act pays, how fast a point's cost rises, the staking penalty, hunter experience per contract, the hunter points each guild rank needs, and the health and damage against vampires each rank gives |
 | Coffins and the day | The coffin sleep share, how soon after dawn a whole day's sleep must start, and what being rested gives |
 | Minds and servants | The chance a sip binds a thrall, how long a charm lasts, a human familiar's starting loyalty, wages, loyalty gains and losses, betrayal threshold and chance, and guard and errand ranges, and how far servants gather, scout, look about them on arrival and keep watch, which is also how far a household's guards see |
@@ -1069,7 +1075,7 @@ There is no singleplayer mode in this mod. A single-player world is an integrate
 | Names, epithets, their colours and who may set one | Draws the name tags and the naming dialogue, and sends the name the owner chose |
 | Household behaviour and structures | Draws fog and plays ambience |
 | Who is on which map | Draws the map it is sent |
-| Gore events | Decides how much gore to draw (GORE-3) |
+| Gore events, and which parts a body has lost | Decides how much gore to draw (GORE-3), and hides lost parts |
 | Coffin lids, ownership, burning and who sleeps inside, levitation, vomiting, vampire mob powers, the ritual and the Eldest, notoriety, the hunt and the Grand Inquisitor | Draws the lids, burning coffins, sleepers, poses, tells, vomit, the ritual and bell build-ups, the hunt's warnings and both arenas, with vomit scaled by GORE-3 |
 
 ### Concurrency
@@ -1138,6 +1144,7 @@ There is no singleplayer mode in this mod. A single-player world is an integrate
 | Bite sickness and the time left | not applicable | kept | kept | kept, paused while offline | kept to the last save |
 | Turning bite choice | not applicable | kept | kept, except CORE-10 | kept | kept to the last save |
 | Downed or escaping, and the time left | kept, for a mob | kept | cleared | kept, so leaving does not escape it | kept to the last save |
+| Lost and replaced parts of a body | kept, for a mob | kept | cleared, except replaced limbs | kept | kept to the last save |
 | Blood | not applicable | kept | refilled, as hunger is on respawn | kept | kept to the last save |
 | Skills and bloodlines | not applicable | kept | kept, except SKILL-6 and CORE-10 | kept | kept to the last save |
 | Hunter tree set aside on turning | not applicable | kept | kept, except CORE-10 | kept | kept to the last save |

@@ -2,8 +2,10 @@ package com.grahambartley.nightborn.mixin.client;
 
 import com.grahambartley.nightborn.batform.BatForm;
 import com.grahambartley.nightborn.client.anim.PlayerClips;
+import com.grahambartley.nightborn.dismember.Dismemberment;
 import com.grahambartley.nightborn.occult.MistForm;
 import com.grahambartley.nightborn.render.BatFormRenderers;
+import com.grahambartley.nightborn.render.LostLimbs;
 import com.grahambartley.nightborn.render.MistFormRenderer;
 import com.grahambartley.nightborn.render.PlayerRigRenderer;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
@@ -55,5 +57,11 @@ abstract class PlayerEntityRendererMixin {
       nightborn$rig.render(player, yaw, tickDelta, matrices, vertexConsumers, light);
       ci.cancel();
     }
+  }
+
+  @Inject(method = "setModelPose", at = @At("TAIL"))
+  private void nightborn$hideLostLimbs(
+      final AbstractClientPlayerEntity player, final CallbackInfo ci) {
+    LostLimbs.hide(((PlayerEntityRenderer) (Object) this).getModel(), Dismemberment.state(player));
   }
 }

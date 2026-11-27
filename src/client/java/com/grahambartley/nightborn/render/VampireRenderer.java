@@ -140,6 +140,9 @@ public class VampireRenderer extends GeoEntityRenderer<VampireEntity> {
       final int packedLight,
       final int packedOverlay,
       final int colour) {
+    if (LostLimbs.hidden(animatable, bone)) {
+      return;
+    }
     poseStack.push();
     BustShape.size(poseStack, bone, animatable.bust());
     super.renderRecursively(

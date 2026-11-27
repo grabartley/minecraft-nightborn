@@ -12,6 +12,7 @@ import com.grahambartley.nightborn.coffin.CoffinDayCycle;
 import com.grahambartley.nightborn.coffin.CoffinRise;
 import com.grahambartley.nightborn.coffin.RestedEffect;
 import com.grahambartley.nightborn.command.NightbornCommand;
+import com.grahambartley.nightborn.dismember.Dismemberment;
 import com.grahambartley.nightborn.downed.Downed;
 import com.grahambartley.nightborn.downed.HardcoreVampireDeath;
 import com.grahambartley.nightborn.faction.FactionPlayerList;
@@ -48,6 +49,7 @@ public final class VampireFeatures {
     GoreParticles.register();
     SmokeParticles.register();
     GoreEvents.register();
+    Dismemberment.register();
     VisibleStateAttachment.register();
     BiteSicknessAttachment.register();
     SkillFeatures.register();

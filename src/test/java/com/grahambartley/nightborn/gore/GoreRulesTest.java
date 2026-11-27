@@ -32,7 +32,7 @@ class GoreRulesTest {
       final Gore expected) {
     assertEquals(
         Optional.ofNullable(expected),
-        GoreRules.onHit(bleeds, vampire, new GoreRules.Blow(bite, stake, silver)));
+        GoreRules.onHit(bleeds, vampire, new Blow(bite, stake, silver, false, false)));
   }
 
   @ParameterizedTest(name = "bleeds {0}, vampire {1}, staked {2}, bite {3}, silver {4} -> {5}")
@@ -55,7 +55,7 @@ class GoreRulesTest {
       final Gore expected) {
     assertEquals(
         Optional.ofNullable(expected),
-        GoreRules.onDeath(bleeds, vampire, new GoreRules.Blow(bite, staked, silver)));
+        GoreRules.onDeath(bleeds, vampire, new Blow(bite, staked, silver, false, false)));
   }
 
   @ParameterizedTest(name = "dx {0}, dz {1} -> {2}")

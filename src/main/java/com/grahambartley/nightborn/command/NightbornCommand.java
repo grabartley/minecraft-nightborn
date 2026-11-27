@@ -30,7 +30,8 @@ public final class NightbornCommand {
             .then(FamiliarCommand.node())
             .then(BrainCommand.node())
             .then(ThrallCommand.node())
-            .then(HouseAdminCommand.node()));
+            .then(HouseAdminCommand.node())
+            .then(BodyCommand.node()));
   }
 
   static List<Text> helpLines() {
@@ -50,7 +51,9 @@ public final class NightbornCommand {
         Text.translatable("nightborn.command.help.brain"),
         Text.translatable("nightborn.command.help.thrall"),
         Text.translatable("nightborn.command.help.thrall_free"),
-        Text.translatable("nightborn.command.help.house_disband"));
+        Text.translatable("nightborn.command.help.house_disband"),
+        Text.translatable("nightborn.command.help.body_sever"),
+        Text.translatable("nightborn.command.help.body_restore"));
   }
 
   private static int help(final CommandContext<ServerCommandSource> context) {

@@ -3,6 +3,7 @@ package com.grahambartley.nightborn.render;
 import com.grahambartley.nightborn.client.vomit.VomitFx;
 import com.grahambartley.nightborn.gear.StakedFall;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
+import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.EntityRendererFactory;
@@ -11,6 +12,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Vec3d;
 import org.joml.Vector3f;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
+import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.renderer.GeoReplacedEntityRenderer;
 
 public final class PlayerRigRenderer
@@ -41,6 +43,36 @@ public final class PlayerRigRenderer
     return StakedFall.deathRoll(
         getCurrentEntity() != null && StakedFall.staked(getCurrentEntity()),
         super.getDeathMaxRotation(animatable));
+  }
+
+  @Override
+  public void renderRecursively(
+      final MatrixStack poseStack,
+      final PlayerRigAnimatable animatable,
+      final GeoBone bone,
+      final RenderLayer renderType,
+      final VertexConsumerProvider bufferSource,
+      final VertexConsumer buffer,
+      final boolean isReRender,
+      final float partialTick,
+      final int packedLight,
+      final int packedOverlay,
+      final int colour) {
+    if (LostLimbs.hidden(getCurrentEntity(), bone)) {
+      return;
+    }
+    super.renderRecursively(
+        poseStack,
+        animatable,
+        bone,
+        renderType,
+        bufferSource,
+        buffer,
+        isReRender,
+        partialTick,
+        packedLight,
+        packedOverlay,
+        colour);
   }
 
   @Override

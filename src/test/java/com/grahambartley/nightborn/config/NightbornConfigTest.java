@@ -80,6 +80,7 @@ class NightbornConfigTest {
             "sun",
             "coffins",
             "downed",
+            "dismemberment",
             "core",
             "weakened",
             "wards",

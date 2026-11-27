@@ -6,8 +6,6 @@ public final class GoreRules {
 
   private GoreRules() {}
 
-  public record Blow(boolean bite, boolean stake, boolean silver) {}
-
   public static Optional<Gore> onHit(final boolean bleeds, final boolean vampire, final Blow blow) {
     if (!bleeds) {
       return Optional.empty();
