@@ -58,8 +58,8 @@ public final class LecternBookProcessor extends StructureProcessor {
     return block.state().isOf(Blocks.LECTERN);
   }
 
-  static Random building(final BlockPos piece) {
-    return Random.create(MathHelper.hashCode(piece));
+  static Random building(final BlockPos piece, final long worldSeed) {
+    return Random.create(MathHelper.hashCode(piece) ^ worldSeed);
   }
 
   static <T> Map<BlockPos, T> deal(
@@ -100,7 +100,10 @@ public final class LecternBookProcessor extends StructureProcessor {
     }
     final DynamicRegistryManager registries = world.getRegistryManager();
     final Map<BlockPos, LoreBook> dealt =
-        deal(LoreBooks.shelf(registries, books), lecterns, building(pos));
+        deal(
+            LoreBooks.shelf(registries, books),
+            lecterns,
+            building(pos, world.toServerWorld().getSeed()));
     return currents.stream()
         .map(
             block ->

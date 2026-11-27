@@ -195,21 +195,28 @@ class LecternBookProcessorTest {
       for (int z = 0; z < 16; z++) {
         final BlockPos piece = new BlockPos(x * 48 - 400, 64, z * 48 - 400);
         first.add(
-            LecternBookProcessor.deal(shelf, lecterns(1), LecternBookProcessor.building(piece))
+            LecternBookProcessor.deal(shelf, lecterns(1), LecternBookProcessor.building(piece, 0L))
                 .get(AT_FIRST));
       }
     }
     assertEquals(new HashSet<>(shelf), first);
   }
 
-  @ParameterizedTest(name = "a piece at {0}, {1}, {2}")
-  @CsvSource({"0, 0, 0", "238, 58, -14", "-1438, 71, 4", "30000, 250, -30000"})
-  @DisplayName("a piece placed again, chunk by chunk, is dealt the same books")
-  void aPieceIsDealtTheSameBooksEveryTime(final int x, final int y, final int z) {
+  @ParameterizedTest(name = "world seeds {0} and {1}")
+  @CsvSource({"0, 1", "42, -42", "123456789, 987654321"})
+  @DisplayName("the same spot in two worlds is not always dealt the same book")
+  void worldsDiffer(final long one, final long other) {
     final List<Integer> shelf = shelf(9);
-    final BlockPos piece = new BlockPos(x, y, z);
-    assertEquals(
-        LecternBookProcessor.deal(shelf, lecterns(6), LecternBookProcessor.building(piece)),
-        LecternBookProcessor.deal(shelf, lecterns(6), LecternBookProcessor.building(piece)));
+    int differing = 0;
+    for (int x = 0; x < 16; x++) {
+      final BlockPos piece = new BlockPos(x * 48, 64, -x * 31);
+      if (!LecternBookProcessor.deal(shelf, lecterns(6), LecternBookProcessor.building(piece, one))
+          .equals(
+              LecternBookProcessor.deal(
+                  shelf, lecterns(6), LecternBookProcessor.building(piece, other)))) {
+        differing++;
+      }
+    }
+    assertTrue(differing > 8);
   }
 }
