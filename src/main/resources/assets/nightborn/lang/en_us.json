@@ -1166,7 +1166,7 @@
   "nightborn.guild.rumour": "Ask for news",
   "nightborn.guild.rank": "Ask my rank",
   "nightborn.guild.oath": "Swear the oath",
-  "nightborn.guild.rumour.told": "%1$s says a vampire house is rumoured to lie some %3$s blocks %4$s, near %5$s, %6$s (%2$s)",
+  "nightborn.guild.rumour.told": "%1$s says a vampire house is rumoured to lie some %3$s blocks %4$s, near %5$s, %6$s, %7$s (%2$s)",
   "nightborn.guild.rumour.none": "%s has heard of no vampire house near here",
   "nightborn.guild.nothing": "The Guild Master has nothing of that kind to offer today",
   "nightborn.bearing.north": "to the north",

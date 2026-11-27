@@ -1,8 +1,6 @@
 package com.grahambartley.nightborn.wild;
 
-import com.grahambartley.nightborn.guild.GuildRumour;
 import net.fabricmc.fabric.api.object.builder.v1.trade.TradeOfferHelper;
-import net.minecraft.item.map.MapDecorationTypes;
 import net.minecraft.village.TradeOffers;
 import net.minecraft.village.VillagerProfession;
 
@@ -24,7 +22,6 @@ public final class RumourMaps {
   }
 
   static TradeOffers.Factory map() {
-    return new TradeOffers.SellMapFactory(
-        PRICE, GuildRumour.VAMPIRE_HOUSES, NAME_KEY, MapDecorationTypes.RED_X, USES, XP);
+    return new RumourMapOffer(PRICE, USES, XP);
   }
 }

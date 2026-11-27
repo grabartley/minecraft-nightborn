@@ -1166,7 +1166,7 @@
   "nightborn.guild.rumour": "Спросить новости",
   "nightborn.guild.rank": "Спросить мой ранг",
   "nightborn.guild.oath": "Принести клятву",
-  "nightborn.guild.rumour.told": "%1$s говорит, что, по слухам, в %3$s блоках %4$s, около %5$s, %6$s, стоит дом вампиров (%2$s)",
+  "nightborn.guild.rumour.told": "%1$s говорит, что, по слухам, в %3$s блоках %4$s, около %5$s, %6$s, %7$s, стоит дом вампиров (%2$s)",
   "nightborn.guild.rumour.none": "%s не слышал ни о каком доме вампиров поблизости",
   "nightborn.guild.nothing": "Сегодня Мастеру гильдии нечего такого предложить",
   "nightborn.bearing.north": "к северу",

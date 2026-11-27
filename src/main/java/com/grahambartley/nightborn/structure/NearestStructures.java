@@ -4,6 +4,7 @@ import com.grahambartley.nightborn.Nightborn;
 import com.grahambartley.nightborn.server.ServerConfigService;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
@@ -21,7 +22,6 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
-import net.minecraft.world.gen.chunk.ChunkGenerator;
 import net.minecraft.world.gen.chunk.placement.RandomSpreadStructurePlacement;
 import net.minecraft.world.gen.chunk.placement.StructurePlacement;
 import net.minecraft.world.gen.chunk.placement.StructurePlacementCalculator;
@@ -101,7 +101,6 @@ public final class NearestStructures {
       final List<RegistryEntry<Structure>> entries,
       final BlockPos from,
       final int range) {
-    final ChunkGenerator generator = world.getChunkManager().getChunkGenerator();
     final StructurePlacementCalculator placements =
         world.getChunkManager().getStructurePlacementCalculator();
     final List<Found> found = new ArrayList<>();
@@ -122,9 +121,9 @@ public final class NearestStructures {
               spread.getStartChunk(placements.getStructureSeed(), probe.x, probe.z);
           final BlockPos at = spread.getLocatePos(start);
           if (SpreadCells.within(from, at, range)
-              && spread.shouldGenerate(placements, start.x, start.z)
-              && present(world, generator, entry.value(), id, start)) {
-            found.add(new Found(id, at));
+              && spread.shouldGenerate(placements, start.x, start.z)) {
+            entrance(world, entry.value(), id, start, at)
+                .ifPresent(entrance -> found.add(new Found(id, entrance)));
           }
         }
       }
@@ -132,12 +131,12 @@ public final class NearestStructures {
     return found;
   }
 
-  private static boolean present(
+  private static Optional<BlockPos> entrance(
       final ServerWorld world,
-      final ChunkGenerator generator,
       final Structure structure,
       final Identifier id,
-      final ChunkPos start) {
+      final ChunkPos start,
+      final BlockPos locate) {
     final SelectiveNbtCollector saved = SavedStarts.collector();
     world
         .getChunkManager()
@@ -146,28 +145,10 @@ public final class NearestStructures {
         .scanChunk(start, saved)
         .completeOnTimeout(null, SCAN_SECONDS, TimeUnit.SECONDS)
         .join();
-    return SavedStarts.has(
-            saved.getRoot(), id, SharedConstants.getGameVersion().getSaveVersion().getId())
-        .orElseGet(() -> possible(world, generator, structure, start));
-  }
-
-  private static boolean possible(
-      final ServerWorld world,
-      final ChunkGenerator generator,
-      final Structure structure,
-      final ChunkPos start) {
-    return structure
-        .getValidStructurePosition(
-            new Structure.Context(
-                world.getRegistryManager(),
-                generator,
-                generator.getBiomeSource(),
-                world.getChunkManager().getNoiseConfig(),
-                world.getStructureTemplateManager(),
-                world.getSeed(),
-                start,
-                world,
-                structure.getValidBiomes()::contains))
-        .isPresent();
+    return StructureEntrance.found(
+        SavedStarts.has(
+            saved.getRoot(), id, SharedConstants.getGameVersion().getSaveVersion().getId()),
+        () -> EntrancePlan.of(world, structure, start),
+        locate);
   }
 }

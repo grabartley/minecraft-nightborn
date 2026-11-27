@@ -91,6 +91,7 @@ public final class GuildRumour implements WheelAction<GuildMasterEntity> {
                   (int) Math.round(Math.sqrt(dx * dx + dz * dz)),
                   Text.translatable(Bearing.of(dx, dz).translationKey()),
                   house.pos().getX(),
+                  house.pos().getY(),
                   house.pos().getZ());
             })
         .orElseGet(() -> Text.translatable("nightborn.guild.rumour.none", teller));

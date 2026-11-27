@@ -17,16 +17,22 @@ import org.junit.jupiter.params.provider.CsvSource;
 
 class GuildRumourTest {
 
-  @ParameterizedTest(name = "{0} at ({1}, {2}) -> {3} blocks {4}")
+  @ParameterizedTest(name = "{0} at ({1}, {2}, {3}) -> {4} blocks {5}")
   @CsvSource({
-    "crypt, 600, 800, 1000, SOUTH_EAST",
-    "castle, 0, -300, 300, NORTH",
-    "underground_lair, -50, 0, 50, WEST"
+    "crypt, 600, 71, 800, 1000, SOUTH_EAST",
+    "castle, 0, 90, -300, 300, NORTH",
+    "underground_lair, -50, -22, 0, 50, WEST"
   })
   @DisplayName("the Guild Master names the nearest house and tells how far, which way and where")
-  void told(final String kind, final int x, final int z, final int blocks, final Bearing bearing) {
+  void told(
+      final String kind,
+      final int x,
+      final int y,
+      final int z,
+      final int blocks,
+      final Bearing bearing) {
     final Identifier structure = Identifier.of("nightborn", kind);
-    final Found house = new Found(structure, new BlockPos(x, 64, z));
+    final Found house = new Found(structure, new BlockPos(x, y, z));
     final TranslatableTextContent tale =
         (TranslatableTextContent)
             GuildRumour.tale(Text.literal("Aldous"), BlockPos.ORIGIN, Optional.of(house))
@@ -36,7 +42,8 @@ class GuildRumourTest {
     assertEquals(blocks, tale.getArgs()[2]);
     assertEquals(Text.translatable(bearing.translationKey()), tale.getArgs()[3]);
     assertEquals(x, tale.getArgs()[4]);
-    assertEquals(z, tale.getArgs()[5]);
+    assertEquals(y, tale.getArgs()[5]);
+    assertEquals(z, tale.getArgs()[6]);
   }
 
   @Test
