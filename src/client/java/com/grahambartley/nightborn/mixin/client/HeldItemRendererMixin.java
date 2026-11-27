@@ -3,6 +3,8 @@ package com.grahambartley.nightborn.mixin.client;
 import com.grahambartley.nightborn.batform.BatForm;
 import com.grahambartley.nightborn.client.anim.FirstPersonSway;
 import com.grahambartley.nightborn.client.anim.PlayerClips;
+import com.grahambartley.nightborn.gear.GearTags;
+import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.render.VertexConsumerProvider;
@@ -16,6 +18,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(HeldItemRenderer.class)
@@ -71,6 +74,12 @@ abstract class HeldItemRendererMixin {
     matrices.translate(side * SHOULDER_X, SHOULDER_Y, 0.0F);
     matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees(sway.pitchDegrees()));
     matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(sway.yawDegrees()));
-    matrices.translate(-side * SHOULDER_X, -SHOULDER_Y, 0.0F);
+    matrices.translate(-side * SHOULDER_X, -SHOULDER_Y, -sway.reach());
+  }
+
+  @ModifyVariable(method = "renderFirstPersonItem", at = @At("HEAD"), argsOnly = true, ordinal = 2)
+  private float nightborn$thrustInsteadOfSwing(
+      final float swingProgress, @Local(argsOnly = true) final ItemStack item) {
+    return item.isIn(GearTags.REVERSE_GRIP) ? 0.0F : swingProgress;
   }
 }

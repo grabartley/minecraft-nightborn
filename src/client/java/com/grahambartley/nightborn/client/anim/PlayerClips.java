@@ -2,6 +2,7 @@ package com.grahambartley.nightborn.client.anim;
 
 import com.grahambartley.nightborn.client.vomit.VomitFx;
 import com.grahambartley.nightborn.coffin.CoffinRise;
+import com.grahambartley.nightborn.gear.GearTags;
 import com.grahambartley.nightborn.gear.StakedFall;
 import com.grahambartley.nightborn.levitation.Levitation;
 import com.grahambartley.nightborn.mob.LevitationGait;
@@ -47,6 +48,8 @@ public final class PlayerClips {
                                 VisibleStateAttachment.get(player).downed(),
                                 player.isSprinting(),
                                 LevitationGait.horizontalSpeed(player))));
+    ClientTickEvents.END_WORLD_TICK.register(
+        world -> world.getPlayers().forEach(PlayerClips::followSwing));
     ClientPlayNetworking.registerGlobalReceiver(
         PlayerCuePayload.ID,
         (payload, context) ->
@@ -64,7 +67,17 @@ public final class PlayerClips {
   }
 
   public static boolean shown(final PlayerEntity player) {
-    return clip(player).isPresent() || power(player).isPresent();
+    return clip(player).isPresent() || power(player).isPresent() || thrust(player).isPresent();
+  }
+
+  public static Optional<VampirePose> thrust(final PlayerEntity player) {
+    return PlayerClipState.upright(player.getPose(), player.hasVehicle())
+        ? firstPersonThrust(player)
+        : Optional.empty();
+  }
+
+  public static boolean freshThrust(final PlayerEntity player) {
+    return state(player).takeFreshThrust();
   }
 
   public static Optional<VampirePose> clip(final PlayerEntity player) {
@@ -101,6 +114,16 @@ public final class PlayerClips {
 
   public static FirstPersonSway sway(
       final PlayerEntity player, final Arm arm, final float partialTick) {
+    if (power(player).isEmpty()) {
+      return firstPersonThrust(player)
+          .map(
+              pose ->
+                  VampireClips.sway(
+                      pose.animation(),
+                      arm,
+                      Math.max(0.0, state(player).thrustSeconds(player.age + partialTick))))
+          .orElse(FirstPersonSway.NONE);
+    }
     final double clipSeconds =
         state(player).powerSeconds(player.age + partialTick) - POWER_BLEND_SECONDS;
     return power(player)
@@ -117,6 +140,7 @@ public final class PlayerClips {
     return PlayerClipState.action(
         clip(player),
         power(player).isPresent(),
+        thrust(player),
         player.handSwinging,
         player.isUsingItem(),
         (player.getActiveHand() == Hand.MAIN_HAND) == (player.getMainArm() == Arm.RIGHT));
@@ -132,6 +156,21 @@ public final class PlayerClips {
 
   private static double powerSeconds(final String clip) {
     return VampireClips.seconds(clip) + POWER_BLEND_SECONDS;
+  }
+
+  private static Optional<VampirePose> firstPersonThrust(final PlayerEntity player) {
+    return state(player).thrust(player.age, VampireClips::seconds);
+  }
+
+  private static void followSwing(final PlayerEntity player) {
+    final Hand hand = player.preferredHand == null ? Hand.MAIN_HAND : player.preferredHand;
+    state(player)
+        .swing(
+            player.handSwinging,
+            player.handSwingTicks,
+            player.getStackInHand(hand).isIn(GearTags.REVERSE_GRIP),
+            (hand == Hand.MAIN_HAND) == (player.getMainArm() == Arm.RIGHT),
+            player.age);
   }
 
   private static Optional<PlayerEntity> player(final MinecraftClient client, final int entityId) {

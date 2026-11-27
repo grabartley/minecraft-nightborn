@@ -34,10 +34,15 @@ public final class PlayerClipState {
   private final OneShot finisher = new OneShot();
   private final OneShot gesture = new OneShot();
   private final OneShot power = new OneShot();
+  private final OneShot thrust = new OneShot();
   private final LevitationGait levitationGait = new LevitationGait();
   private VampirePose gesturePose = VampirePose.SMALL_FLINCH;
   private String powerClip = "";
   private boolean powerFresh;
+  private VampirePose thrustPose = VampirePose.STAKE_THRUST_RIGHT;
+  private boolean thrustFresh;
+  private boolean swinging;
+  private int swingTicks;
 
   public void tick(
       final long age,
@@ -89,15 +94,56 @@ public final class PlayerClipState {
     return power.seconds(age);
   }
 
+  public void swing(
+      final boolean swinging,
+      final int swingTicks,
+      final boolean reverseGrip,
+      final boolean rightArm,
+      final double age) {
+    final boolean started = swinging && (!this.swinging || swingTicks < this.swingTicks);
+    this.swinging = swinging;
+    this.swingTicks = swingTicks;
+    if (!started) {
+      return;
+    }
+    if (!reverseGrip) {
+      thrust.clear();
+      return;
+    }
+    thrustPose = VampirePose.thrust(rightArm);
+    thrustFresh = true;
+    thrust.start(age);
+  }
+
+  public Optional<VampirePose> thrust(final double age, final Lengths lengths) {
+    if (!thrust.playing(lengths.seconds(thrustPose.animation()), age)) {
+      thrustFresh = false;
+      return Optional.empty();
+    }
+    return Optional.of(thrustPose);
+  }
+
+  public double thrustSeconds(final double age) {
+    return thrust.seconds(age);
+  }
+
+  public boolean takeFreshThrust() {
+    final boolean fresh = thrustFresh;
+    thrustFresh = false;
+    return fresh;
+  }
+
   public static Optional<VampirePose> action(
       final Optional<VampirePose> pose,
       final boolean powerPlaying,
+      final Optional<VampirePose> thrust,
       final boolean swinging,
       final boolean using,
       final boolean rightArm) {
-    return pose.map(VampirePose::allowsActions).orElse(powerPlaying)
-        ? VampirePose.action(swinging && !powerPlaying, using, rightArm)
-        : Optional.empty();
+    if (!pose.map(VampirePose::allowsActions).orElse(powerPlaying || thrust.isPresent())) {
+      return Optional.empty();
+    }
+    return VampirePose.action(swinging && !powerPlaying && thrust.isEmpty(), using, rightArm);
   }
 
   public static boolean upright(final EntityPose pose, final boolean riding) {

@@ -29,6 +29,8 @@ class PlayerClipStateTest {
           Map.entry(VampirePose.RECOIL_CRUCIFIX.animation(), 1.2),
           Map.entry(VampirePose.LIGHT_CANDLE.animation(), 1.6),
           Map.entry(VampirePose.WAKE_STRETCH.animation(), 2.6),
+          Map.entry(VampirePose.STAKE_THRUST_RIGHT.animation(), 0.45),
+          Map.entry(VampirePose.STAKE_THRUST_LEFT.animation(), 0.45),
           Map.entry(POWER, 0.8));
 
   static final PlayerClipState.Lengths LENGTHS = animation -> SECONDS.getOrDefault(animation, 0.0);
@@ -496,8 +498,126 @@ class PlayerClipStateTest {
       final String expected) {
     assertEquals(
         expected,
-        PlayerClipState.action(Optional.ofNullable(pose), power, swinging, using, true)
+        PlayerClipState.action(
+                Optional.ofNullable(pose), power, Optional.empty(), swinging, using, true)
             .map(Enum::name)
             .orElse("NONE"));
+  }
+
+  @ParameterizedTest(name = "pose {0}, power {1}, swinging {2}, using {3}: {4}")
+  @CsvSource({
+    ", false, true, false, NONE",
+    ", false, true, true, USE_ITEM_RIGHT",
+    "LEVITATE, false, true, false, NONE",
+    "FEED, false, true, false, NONE",
+    ", true, false, true, USE_ITEM_RIGHT"
+  })
+  @DisplayName(
+      "a thrust replaces the swing, still lets an item be held up, and lets the rig take the"
+          + " player with no other clip playing")
+  void actionsDuringAThrust(
+      final VampirePose pose,
+      final boolean power,
+      final boolean swinging,
+      final boolean using,
+      final String expected) {
+    assertEquals(
+        expected,
+        PlayerClipState.action(
+                Optional.ofNullable(pose),
+                power,
+                Optional.of(VampirePose.STAKE_THRUST_RIGHT),
+                swinging,
+                using,
+                true)
+            .map(Enum::name)
+            .orElse("NONE"));
+  }
+
+  private static PlayerClipState swungAt(
+      final int age, final boolean reverseGrip, final boolean rightArm) {
+    final PlayerClipState state = new PlayerClipState();
+    state.swing(false, 0, reverseGrip, rightArm, age - 1);
+    state.swing(true, 0, reverseGrip, rightArm, age);
+    return state;
+  }
+
+  private static String thrust(final PlayerClipState state, final double age) {
+    return state.thrust(age, LENGTHS).map(Enum::name).orElse("NONE");
+  }
+
+  @ParameterizedTest(name = "{0} ticks after the swing: {1}")
+  @CsvSource({
+    "0, STAKE_THRUST_RIGHT",
+    "8, STAKE_THRUST_RIGHT",
+    "8.9, STAKE_THRUST_RIGHT",
+    "9, NONE",
+    "20, NONE"
+  })
+  @DisplayName("a swing with a reverse grip item plays the thrust once for its own length")
+  void thrustPlaysOnce(final double after, final String expected) {
+    final PlayerClipState state = swungAt(10, true, true);
+    assertEquals(expected, thrust(state, 10 + after));
+  }
+
+  @ParameterizedTest(name = "right arm {0}: {1}")
+  @CsvSource({"true, STAKE_THRUST_RIGHT", "false, STAKE_THRUST_LEFT"})
+  @DisplayName("the thrust plays on the arm that swung")
+  void thrustArm(final boolean rightArm, final String expected) {
+    assertEquals(expected, thrust(swungAt(10, true, rightArm), 11));
+  }
+
+  @Test
+  @DisplayName("a swing with any other item plays no thrust")
+  void otherItemsSwing() {
+    assertEquals("NONE", thrust(swungAt(10, false, true), 11));
+  }
+
+  @Test
+  @DisplayName("a swing with another item ends a thrust that is still playing")
+  void otherSwingEndsTheThrust() {
+    final PlayerClipState state = swungAt(10, true, true);
+    state.swing(false, 0, false, true, 13);
+    state.swing(true, 0, false, true, 14);
+    assertEquals("NONE", thrust(state, 15));
+  }
+
+  @Test
+  @DisplayName("an arm still mid swing does not start the thrust again")
+  void swingInProgress() {
+    final PlayerClipState state = swungAt(10, true, true);
+    assertTrue(state.takeFreshThrust());
+    state.swing(true, 1, true, true, 11);
+    state.swing(true, 2, true, true, 12);
+    assertFalse(state.takeFreshThrust());
+    assertEquals(2 / OneShot.TICKS_PER_SECOND, state.thrustSeconds(12), 1e-9);
+  }
+
+  @Test
+  @DisplayName("a swing that restarts before the last one ends starts the thrust again")
+  void restartedSwing() {
+    final PlayerClipState state = swungAt(10, true, true);
+    state.takeFreshThrust();
+    state.swing(true, 3, true, true, 13);
+    state.swing(true, 0, true, true, 14);
+    assertTrue(state.takeFreshThrust());
+    assertEquals(0.0, state.thrustSeconds(14), 1e-9);
+    assertEquals("STAKE_THRUST_RIGHT", thrust(state, 22));
+  }
+
+  @Test
+  @DisplayName("a thrust that ended unseen is not started again when the player is next drawn")
+  void endedThrustIsNotFresh() {
+    final PlayerClipState state = swungAt(10, true, true);
+    assertEquals("NONE", thrust(state, 30));
+    assertFalse(state.takeFreshThrust());
+  }
+
+  @Test
+  @DisplayName("no thrust plays before the first swing")
+  void noSwingNoThrust() {
+    final PlayerClipState state = new PlayerClipState();
+    assertEquals("NONE", thrust(state, 0));
+    assertFalse(state.takeFreshThrust());
   }
 }
