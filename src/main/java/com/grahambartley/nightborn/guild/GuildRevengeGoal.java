@@ -11,13 +11,13 @@ public final class GuildRevengeGoal extends RevengeGoal {
 
   static final double CALL_HEIGHT = 10.0;
 
+  private final GuildFighter fighter;
+
   public <T extends PathAwareEntity & GuildFighter> GuildRevengeGoal(final T fighter) {
     super(fighter, GuildFighter.class, PlayerEntity.class);
     setGroupRevenge();
     this.fighter = fighter;
   }
-
-  private final GuildFighter fighter;
 
   public static boolean answers(
       final boolean self, final boolean free, final boolean busy, final boolean teammate) {

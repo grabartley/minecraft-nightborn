@@ -40,6 +40,10 @@ final class GuildFighting<T extends MobEntity & GuildFighter & PowerShow> {
     }
   }
 
+  void sheathe() {
+    tactics.sheathe();
+  }
+
   void shoot() {
     tactics.shoot();
   }

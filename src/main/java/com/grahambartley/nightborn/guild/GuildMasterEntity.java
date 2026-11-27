@@ -59,6 +59,7 @@ import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.village.TradeOffer;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
@@ -180,6 +181,15 @@ public class GuildMasterEntity extends MerchantEntity
   @Override
   public boolean canFight() {
     return !swearing();
+  }
+
+  @Override
+  public boolean isInWalkTargetRange(final BlockPos pos) {
+    return CampHome.reaches(
+        getPositionTargetRange(),
+        getPositionTarget().getSquaredDistance(pos),
+        HunterEntity.CAMP_REACH,
+        getTarget() != null || getAttacker() != null);
   }
 
   private boolean swearing() {
@@ -354,10 +364,6 @@ public class GuildMasterEntity extends MerchantEntity
       arm(kitId);
     }
     CampHome.keep(this, TENT_REACH);
-    CampHome.stretch(
-        this,
-        CampHome.reach(
-            TENT_REACH, HunterEntity.CAMP_REACH, getTarget() != null || getAttacker() != null));
     if (!HunterSkills.built(this)) {
       HunterSkills.master(this);
     }
@@ -393,6 +399,8 @@ public class GuildMasterEntity extends MerchantEntity
   void swearIn(final ServerPlayerEntity player, final int ticks) {
     swearTicks = ticks;
     sworn = player;
+    setTarget(null);
+    fighting.sheathe();
     setEquipmentDropChance(EquipmentSlot.OFFHAND, 0.0F);
     equipStack(EquipmentSlot.OFFHAND, new ItemStack(GearItems.GOLD_CRUCIFIX));
     playSound(SoundEvents.ITEM_ARMOR_EQUIP_GOLD.value(), getSoundVolume(), 1.0F);

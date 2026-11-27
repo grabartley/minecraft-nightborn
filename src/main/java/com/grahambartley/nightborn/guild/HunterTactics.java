@@ -45,6 +45,13 @@ final class HunterTactics<T extends MobEntity & GuildFighter> {
     hunter.speak(HunterVoice.ALERT);
   }
 
+  void sheathe() {
+    drawn.sheathe();
+    hunter.setArmed(false);
+    hunter.equipStack(EquipmentSlot.MAINHAND, ItemStack.EMPTY);
+    hunter.show(HunterAction.NONE);
+  }
+
   void shoot() {
     if (timer.begin(HunterAction.CROSSBOW_SHOT)) {
       hunter.playSound(SoundEvents.ITEM_CROSSBOW_LOADING_END.value(), 1.0F, 1.0F);

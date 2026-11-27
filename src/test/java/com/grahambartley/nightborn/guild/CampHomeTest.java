@@ -8,17 +8,28 @@ import org.junit.jupiter.params.provider.CsvSource;
 
 class CampHomeTest {
 
-  @ParameterizedTest(name = "home {0}, fighting {1}, in a fight {2}: reach {3}")
+  @ParameterizedTest(name = "range {0}, distance {1}, fighting reach {2}, in a fight {3}: {4}")
   @CsvSource({
-    "3, 12, false, 3",
-    "3, 12, true, 12",
-    "12, 12, true, 12",
-    "12, 3, true, 12",
-    "12, 3, false, 12"
+    "3, 2, 12, false, true",
+    "3, 4, 12, false, false",
+    "3, 4, 12, true, true",
+    "3, 11.9, 12, true, true",
+    "3, 12, 12, true, false",
+    "8, 7, 12, false, true",
+    "8, 11, 12, true, true",
+    "16, 15, 12, true, true",
+    "16, 15, 12, false, true",
+    "16, 17, 12, true, false",
+    "-1, 500, 12, false, true",
+    "-1, 500, 12, true, true"
   })
-  @DisplayName("a resident ranges as far as its fighting reach only while it fights")
+  @DisplayName("a resident ranges out to its fighting reach only in a fight, never below its own")
   void rangesFurtherOnlyInAFight(
-      final int home, final int fighting, final boolean inFight, final int reach) {
-    assertEquals(reach, CampHome.reach(home, fighting, inFight));
+      final float range,
+      final double distance,
+      final int fighting,
+      final boolean inFight,
+      final boolean reaches) {
+    assertEquals(reaches, CampHome.reaches(range, distance * distance, fighting, inFight));
   }
 }
