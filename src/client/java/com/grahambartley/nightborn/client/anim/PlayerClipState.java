@@ -92,12 +92,14 @@ public final class PlayerClipState {
   public static Optional<VampirePose> action(
       final Optional<VampirePose> pose,
       final boolean powerPlaying,
+      final boolean thrustPlaying,
       final boolean swinging,
       final boolean using,
       final boolean rightArm) {
-    return pose.map(VampirePose::allowsActions).orElse(powerPlaying)
-        ? VampirePose.action(swinging && !powerPlaying, using, rightArm)
-        : Optional.empty();
+    if (!pose.map(VampirePose::allowsActions).orElse(powerPlaying || thrustPlaying)) {
+      return Optional.empty();
+    }
+    return VampirePose.action(swinging && !powerPlaying && !thrustPlaying, using, rightArm);
   }
 
   public static boolean upright(final EntityPose pose, final boolean riding) {

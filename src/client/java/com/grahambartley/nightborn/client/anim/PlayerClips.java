@@ -2,6 +2,7 @@ package com.grahambartley.nightborn.client.anim;
 
 import com.grahambartley.nightborn.client.vomit.VomitFx;
 import com.grahambartley.nightborn.coffin.CoffinRise;
+import com.grahambartley.nightborn.gear.GearTags;
 import com.grahambartley.nightborn.gear.StakedFall;
 import com.grahambartley.nightborn.levitation.Levitation;
 import com.grahambartley.nightborn.mob.LevitationGait;
@@ -30,6 +31,7 @@ public final class PlayerClips {
   private static final double POWER_BLEND_SECONDS = POWER_BLEND_TICKS / OneShot.TICKS_PER_SECOND;
 
   private static final Map<PlayerEntity, PlayerClipState> STATES = new WeakHashMap<>();
+  private static final Map<PlayerEntity, ThrustState> THRUSTS = new WeakHashMap<>();
 
   private PlayerClips() {}
 
@@ -47,6 +49,8 @@ public final class PlayerClips {
                                 VisibleStateAttachment.get(player).downed(),
                                 player.isSprinting(),
                                 LevitationGait.horizontalSpeed(player))));
+    ClientTickEvents.END_WORLD_TICK.register(
+        world -> world.getPlayers().forEach(PlayerClips::followSwing));
     ClientPlayNetworking.registerGlobalReceiver(
         PlayerCuePayload.ID,
         (payload, context) ->
@@ -64,7 +68,17 @@ public final class PlayerClips {
   }
 
   public static boolean shown(final PlayerEntity player) {
-    return clip(player).isPresent() || power(player).isPresent();
+    return clip(player).isPresent() || power(player).isPresent() || thrust(player).isPresent();
+  }
+
+  public static Optional<VampirePose> thrust(final PlayerEntity player) {
+    return showable(player)
+        ? thrustState(player).playing(player.age, VampireClips::seconds)
+        : Optional.empty();
+  }
+
+  public static boolean freshThrust(final PlayerEntity player) {
+    return thrustState(player).takeFresh();
   }
 
   public static Optional<VampirePose> clip(final PlayerEntity player) {
@@ -101,6 +115,17 @@ public final class PlayerClips {
 
   public static FirstPersonSway sway(
       final PlayerEntity player, final Arm arm, final float partialTick) {
+    if (power(player).isEmpty()) {
+      final double seconds = thrustState(player).seconds(player.age + partialTick);
+      return thrust(player)
+          .filter(pose -> ThrustState.sways(pose, arm))
+          .map(
+              pose ->
+                  VampireClips.sway(pose.animation(), arm, Math.max(0.0, seconds))
+                      .scaled(
+                          ThrustState.swayWeight(seconds, VampireClips.seconds(pose.animation()))))
+          .orElse(FirstPersonSway.NONE);
+    }
     final double clipSeconds =
         state(player).powerSeconds(player.age + partialTick) - POWER_BLEND_SECONDS;
     return power(player)
@@ -117,6 +142,7 @@ public final class PlayerClips {
     return PlayerClipState.action(
         clip(player),
         power(player).isPresent(),
+        thrust(player).isPresent(),
         player.handSwinging,
         player.isUsingItem(),
         (player.getActiveHand() == Hand.MAIN_HAND) == (player.getMainArm() == Arm.RIGHT));
@@ -132,6 +158,26 @@ public final class PlayerClips {
 
   private static double powerSeconds(final String clip) {
     return VampireClips.seconds(clip) + POWER_BLEND_SECONDS;
+  }
+
+  private static void followSwing(final PlayerEntity player) {
+    final Hand hand = ThrustState.swingingHand(player.preferredHand);
+    thrustState(player)
+        .swing(
+            player.handSwinging,
+            player.handSwingTicks,
+            player.getStackInHand(hand).isIn(GearTags.REVERSE_GRIP),
+            ThrustState.swingsRightArm(hand, player.getMainArm()),
+            showable(player),
+            player.age,
+            VampireClips::seconds);
+  }
+
+  private static boolean showable(final PlayerEntity player) {
+    return ThrustState.showable(
+        clip(player),
+        power(player).isPresent(),
+        PlayerClipState.upright(player.getPose(), player.hasVehicle()));
   }
 
   private static Optional<PlayerEntity> player(final MinecraftClient client, final int entityId) {
@@ -154,6 +200,10 @@ public final class PlayerClips {
       case FINISHER -> state(player).finisher(player.age);
       default -> cue.gesture().ifPresent(pose -> state(player).gesture(pose, player.age));
     }
+  }
+
+  private static ThrustState thrustState(final PlayerEntity player) {
+    return THRUSTS.computeIfAbsent(player, ignored -> new ThrustState());
   }
 
   private static PlayerClipState state(final PlayerEntity player) {

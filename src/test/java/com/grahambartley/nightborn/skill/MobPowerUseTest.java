@@ -8,6 +8,11 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.grahambartley.nightborn.MinecraftBootstrapExtension;
 import com.grahambartley.nightborn.mob.ShippedClips;
+import com.grahambartley.nightborn.mob.brain.Consideration;
+import com.grahambartley.nightborn.mob.brain.Curve;
+import com.grahambartley.nightborn.mob.brain.Intent;
+import com.grahambartley.nightborn.mob.brain.MobUse;
+import com.grahambartley.nightborn.mob.brain.Situation;
 import com.mojang.serialization.JsonOps;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -86,11 +91,43 @@ class MobPowerUseTest {
         MobPowerUse.CODEC.parse(JsonOps.INSTANCE, JsonParser.parseString(json)).isSuccess());
   }
 
-  @ParameterizedTest(name = "{0} blocks: {1}")
-  @CsvSource({"3.9, false", "4, true", "12, true", "20, true", "20.1, false"})
-  @DisplayName("a power is used only inside its range")
-  void inRange(final double distance, final boolean inRange) {
-    assertEquals(inRange, parse(VALID).inRange(distance));
+  @ParameterizedTest(name = "{0} blocks, intent {1}: in range {2}")
+  @CsvSource({
+    "3.9, FIGHT, false",
+    "4, FIGHT, true",
+    "20, FIGHT, true",
+    "20.1, FIGHT, false",
+    "12, CLOSE_IN, true",
+    "12, RETREAT, false",
+    "12, TRAVEL, false"
+  })
+  @DisplayName(
+      "a power with no uses of its own is used in a fight or while closing in, inside its range")
+  void defaultUses(final double distance, final Intent intent, final boolean used) {
+    final Situation situation =
+        new Situation(
+            intent, Situation.Self.of(1.0F, 20), new Situation.Target(distance, true, 1.0F));
+    assertEquals(
+        used, parse(VALID).effectiveUses().stream().anyMatch(use -> use.score(situation) > 0.0));
+  }
+
+  @Test
+  @DisplayName("a power that lists its own uses keeps them in place of the range default")
+  void declaredUses() {
+    final MobPowerUse use =
+        parse(
+            "{\"max_range\":8,\"tell_ticks\":5,\"tell_sound\":\"a:b\",\"tell_clip\":\"x\","
+                + "\"uses\":[{\"intent\":\"retreat\",\"aim\":\"self\",\"weight\":2,"
+                + "\"considerations\":[{\"fact\":\"own_health\",\"curve\":\"falling\","
+                + "\"low\":0.2,\"high\":0.6}]}]}");
+    assertEquals(
+        List.of(
+            new MobUse(
+                "retreat",
+                "self",
+                List.of(new Consideration("own_health", Curve.FALLING, 0.2F, 0.6F)),
+                2.0F)),
+        use.uses());
   }
 
   static Stream<Path> shippedSkills() throws IOException {

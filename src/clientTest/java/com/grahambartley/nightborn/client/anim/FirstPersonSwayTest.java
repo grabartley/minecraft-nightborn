@@ -26,25 +26,39 @@ class FirstPersonSwayTest {
       "half of how far an arm is raised past reaching forward, and of its flare, reaches the"
           + " first person hand, up to a limit")
   void follows(final double raise, final double flare, final float pitch, final float yaw) {
-    final FirstPersonSway sway = FirstPersonSway.of(Math.toRadians(raise), Math.toRadians(flare));
+    final FirstPersonSway sway =
+        FirstPersonSway.of(Math.toRadians(raise), Math.toRadians(flare), 0.0);
     assertEquals(pitch, sway.pitchDegrees(), 1e-4);
     assertEquals(yaw, sway.yawDegrees(), 1e-4);
   }
 
+  @ParameterizedTest(name = "{0} pixels forward: reach {1}")
+  @CsvSource({"0, 0", "2, 0.1", "-1.5, -0.075", "5, 0.25", "12, 0.25", "-12, -0.25"})
+  @DisplayName(
+      "an arm pushed forward or drawn back in the clip moves the first person hand with it, up"
+          + " to a limit")
+  void reaches(final double forwardPixels, final float reach) {
+    final FirstPersonSway sway = FirstPersonSway.of(Math.toRadians(80.0), 0.0, forwardPixels);
+    assertEquals(reach, sway.reach(), 1e-6);
+    assertEquals(0.0F, sway.pitchDegrees(), 1e-4);
+  }
+
   @ParameterizedTest(name = "share {0}")
-  @CsvSource({"0, 0, 0", "0.5, 10, -5", "1, 20, -10"})
+  @CsvSource({"0, 0, 0, 0", "0.5, 10, -5, 0.05", "1, 20, -10, 0.1"})
   @DisplayName("a sway scales down while the clip blends in")
-  void scales(final double share, final float pitch, final float yaw) {
-    final FirstPersonSway sway = new FirstPersonSway(20.0F, -10.0F).scaled(share);
+  void scales(final double share, final float pitch, final float yaw, final float reach) {
+    final FirstPersonSway sway = new FirstPersonSway(20.0F, -10.0F, 0.1F).scaled(share);
     assertEquals(pitch, sway.pitchDegrees(), 1e-4);
     assertEquals(yaw, sway.yawDegrees(), 1e-4);
+    assertEquals(reach, sway.reach(), 1e-6);
   }
 
   @Test
   @DisplayName("no sway leaves the hand where vanilla holds it")
   void still() {
     assertTrue(FirstPersonSway.NONE.still());
-    assertFalse(new FirstPersonSway(1.0F, 0.0F).still());
+    assertFalse(new FirstPersonSway(1.0F, 0.0F, 0.0F).still());
+    assertFalse(new FirstPersonSway(0.0F, 0.0F, 0.1F).still());
   }
 
   @ParameterizedTest(name = "{0}s into a 0.6s clip: {1}")

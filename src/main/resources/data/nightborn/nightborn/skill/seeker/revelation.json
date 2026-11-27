@@ -37,6 +37,7 @@
       "id": "minecraft:block.bell.resonate",
       "volume": 0.4,
       "pitch": 1.1
-    }
+    },
+    "mobs_never_use": true
   }
 }

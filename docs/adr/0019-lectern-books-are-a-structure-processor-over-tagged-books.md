@@ -1,4 +1,4 @@
-# ADR 0018: Lectern books are a structure processor over tagged books
+# ADR 0019: Lectern books are a structure processor over tagged books
 
 ## Context
 

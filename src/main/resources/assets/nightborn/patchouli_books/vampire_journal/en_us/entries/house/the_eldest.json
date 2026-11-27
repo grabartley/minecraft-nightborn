@@ -9,6 +9,13 @@
     {
       "type": "patchouli:text",
       "text": "nightborn.journal.vampire.the_eldest.1"
+    },
+    {
+      "type": "patchouli:image",
+      "images": [
+        "nightborn:textures/gui/journal/vampire_the_eldest.png"
+      ],
+      "border": true
     }
   ]
 }

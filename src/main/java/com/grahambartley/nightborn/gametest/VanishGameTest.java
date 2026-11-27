@@ -5,7 +5,6 @@ import com.grahambartley.nightborn.mob.NightbornMobs;
 import com.grahambartley.nightborn.mob.VampireEntity;
 import com.grahambartley.nightborn.mob.combat.CombatMoves;
 import com.grahambartley.nightborn.mob.stage.StageCombat;
-import com.grahambartley.nightborn.server.ServerConfigService;
 import com.grahambartley.nightborn.skill.PowerHeading;
 import com.grahambartley.nightborn.skill.PowerUse;
 import com.grahambartley.nightborn.skill.Powers;
@@ -183,7 +182,7 @@ public final class VanishGameTest implements FabricGameTest {
           final Vec3d start = vampire.getPos();
           vampire.setTarget(attacker);
           attacker.handSwinging = true;
-          new CombatMoves().tick(vampire, ALWAYS_DODGES, ServerConfigService.current().combat());
+          new CombatMoves<>(vampire, () -> ALWAYS_DODGES).tick();
           context.assertTrue(
               VanishAttachment.isGone(vampire), "the vampire vanished from the swing");
           context.assertTrue(
@@ -209,7 +208,7 @@ public final class VanishGameTest implements FabricGameTest {
         () -> {
           vampire.setTarget(attacker);
           attacker.handSwinging = true;
-          new CombatMoves().tick(vampire, ALWAYS_DODGES, ServerConfigService.current().combat());
+          new CombatMoves<>(vampire, () -> ALWAYS_DODGES).tick();
           context.assertFalse(
               VanishAttachment.isGone(vampire), "a vampire without the skill stays in sight");
           vampire.discard();

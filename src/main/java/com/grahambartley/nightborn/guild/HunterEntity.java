@@ -11,6 +11,9 @@ import com.grahambartley.nightborn.guild.raiding.RaidDoorGoal;
 import com.grahambartley.nightborn.guild.raiding.RaidOrders;
 import com.grahambartley.nightborn.mob.MobSounds;
 import com.grahambartley.nightborn.mob.ShownAction;
+import com.grahambartley.nightborn.mob.combat.MobFighter;
+import com.grahambartley.nightborn.mob.combat.MobFighting;
+import com.grahambartley.nightborn.mob.combat.PowerCasting;
 import com.grahambartley.nightborn.mob.look.BustNbt;
 import com.grahambartley.nightborn.mob.look.Figure;
 import com.grahambartley.nightborn.mob.look.VampireRig;
@@ -66,6 +69,7 @@ import software.bernie.geckolib.util.GeckoLibUtil;
 
 public class HunterEntity extends PathAwareEntity
     implements GeoEntity,
+        MobFighter,
         HunterLooking,
         NameBearer,
         RangedAttackMob,
@@ -104,7 +108,9 @@ public class HunterEntity extends PathAwareEntity
       DataTracker.registerData(HunterEntity.class, TrackedDataHandlerRegistry.INTEGER);
 
   private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
-  private final GuildFighting<HunterEntity> fighting = new GuildFighting<>(this);
+  private final HunterTactics<HunterEntity> tactics = new HunterTactics<>(this);
+  private final MobFighting fighting =
+      MobFighting.movingFirst(PowerCasting.underTell(), this::tickTactics);
   private final WornLook worn = new WornLook();
   private final ShownAction shownPower = new ShownAction();
   private final HunterBuildTicker building = new HunterBuildTicker();
@@ -209,7 +215,7 @@ public class HunterEntity extends PathAwareEntity
 
   @Override
   public void shootAt(final LivingEntity target, final float pullProgress) {
-    fighting.shoot();
+    tactics.shoot();
   }
 
   public String look() {
@@ -241,12 +247,12 @@ public class HunterEntity extends PathAwareEntity
 
   @Override
   public boolean tryAttack(final Entity target) {
-    return fighting.strike(super.tryAttack(target));
+    return HunterCries.strike(this, super.tryAttack(target));
   }
 
   @Override
   public boolean onKilledOther(final ServerWorld world, final LivingEntity other) {
-    fighting.killed(other);
+    HunterCries.killed(this, other);
     return super.onKilledOther(world, other);
   }
 
@@ -404,7 +410,19 @@ public class HunterEntity extends PathAwareEntity
   }
 
   public void fight() {
-    fighting.tick(kit, HunterSkills.thinkTicks(this, shownRank()));
+    fighting.tick(
+        this, true, HunterSkills.thinkTicks(this, shownRank()), MobFighting.NO_BLOOD_FLOOR);
+  }
+
+  private void tickTactics() {
+    if (kit != null) {
+      tactics.tick(kit);
+    }
+  }
+
+  @Override
+  public MobFighting mobFighting() {
+    return fighting;
   }
 
   protected void settle() {

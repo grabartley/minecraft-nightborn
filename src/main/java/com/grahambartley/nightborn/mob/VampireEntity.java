@@ -11,8 +11,11 @@ import com.grahambartley.nightborn.downed.Downed;
 import com.grahambartley.nightborn.downed.DownedRules;
 import com.grahambartley.nightborn.downed.DownedState;
 import com.grahambartley.nightborn.house.MemberLife;
+import com.grahambartley.nightborn.mob.combat.CombatMoves;
 import com.grahambartley.nightborn.mob.combat.FightBack;
-import com.grahambartley.nightborn.mob.combat.Fighting;
+import com.grahambartley.nightborn.mob.combat.MobFighter;
+import com.grahambartley.nightborn.mob.combat.MobFighting;
+import com.grahambartley.nightborn.mob.combat.PowerCasting;
 import com.grahambartley.nightborn.mob.goal.RetreatGoal;
 import com.grahambartley.nightborn.mob.home.HomeLife;
 import com.grahambartley.nightborn.mob.home.HouseholdTie;
@@ -87,6 +90,7 @@ public class VampireEntity extends HostileEntity
         Figure,
         GeoEntity,
         HouseholdMember,
+        MobFighter,
         NameBearer,
         PowerShow,
         RigWearer,
@@ -126,7 +130,8 @@ public class VampireEntity extends HostileEntity
   private final HouseholdTie householdTie = new HouseholdTie();
   private final HouseholdLife householdLife = new HouseholdLife();
   private final MobBlood blood = new MobBlood();
-  private final Fighting fighting = new Fighting();
+  private final MobFighting fighting =
+      MobFighting.castingFirst(new PowerCasting(), new CombatMoves<>(this, () -> stage().combat()));
   private final VampireHunt hunt = new VampireHunt(blood, homeLife);
   private final VampireHiss hissing = new VampireHiss();
   private RetreatGoal retreat;
@@ -293,14 +298,19 @@ public class VampireEntity extends HostileEntity
   protected void fightAsVampire() {
     fighting.tick(
         this,
-        Fighting.fights(
+        MobFighting.fights(
             getTarget() != null,
             Downed.state(this) != null,
             isSleeping(),
             retreat != null && retreat.active(),
             Weakened.sources(this).level(false) > 0),
-        stage().combat(),
-        ServerConfigService.current().combat());
+        stage().combat().thinkTicks(),
+        stage().combat().bloodFloor());
+  }
+
+  @Override
+  public MobFighting mobFighting() {
+    return fighting;
   }
 
   protected boolean levitatesAtWill() {

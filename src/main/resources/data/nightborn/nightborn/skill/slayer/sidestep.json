@@ -26,6 +26,7 @@
       "id": "minecraft:entity.breeze.slide",
       "volume": 0.5,
       "pitch": 1.1
-    }
+    },
+    "mobs_never_use": true
   }
 }

@@ -295,6 +295,13 @@ class VampirePoseTest {
     assertEquals(Optional.ofNullable(pose), VampirePose.action(swinging, using, rightArm));
   }
 
+  @ParameterizedTest(name = "right arm {0}: {1}")
+  @CsvSource({"true, STAKE_THRUST_RIGHT", "false, STAKE_THRUST_LEFT"})
+  @DisplayName("a thrust plays on the arm holding the stake")
+  void thrust(final boolean rightArm, final VampirePose pose) {
+    assertEquals(pose, VampirePose.thrust(rightArm));
+  }
+
   @ParameterizedTest(name = "{0}")
   @EnumSource(VampirePose.class)
   @DisplayName("every pose the vampire plays is in its animation file")

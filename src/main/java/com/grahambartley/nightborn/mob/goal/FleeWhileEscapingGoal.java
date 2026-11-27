@@ -5,6 +5,8 @@ import com.grahambartley.nightborn.downed.DownedRules;
 import com.grahambartley.nightborn.downed.DownedState;
 import com.grahambartley.nightborn.mob.Prey;
 import com.grahambartley.nightborn.mob.ShadeRules;
+import com.grahambartley.nightborn.mob.brain.Intent;
+import com.grahambartley.nightborn.mob.brain.IntentGoal;
 import java.util.EnumSet;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.NoPenaltyTargeting;
@@ -14,7 +16,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.Vec3d;
 import org.jetbrains.annotations.Nullable;
 
-public class FleeWhileEscapingGoal extends Goal {
+public class FleeWhileEscapingGoal extends Goal implements IntentGoal {
 
   static final double THREAT_RANGE = 16.0;
   static final int FLEE_DISTANCE = 16;
@@ -88,5 +90,10 @@ public class FleeWhileEscapingGoal extends Goal {
     return threat != null
         && threat.isAlive()
         && mob.squaredDistanceTo(threat) < THREAT_RANGE * THREAT_RANGE;
+  }
+
+  @Override
+  public Intent intent() {
+    return Intent.RETREAT;
   }
 }

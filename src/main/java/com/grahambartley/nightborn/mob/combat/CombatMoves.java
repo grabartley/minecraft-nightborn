@@ -1,13 +1,15 @@
 package com.grahambartley.nightborn.mob.combat;
 
-import com.grahambartley.nightborn.blood.BloodAttachment;
 import com.grahambartley.nightborn.config.CombatSettings;
+import com.grahambartley.nightborn.mob.brain.Thinking;
 import com.grahambartley.nightborn.mob.stage.StageCombat;
+import com.grahambartley.nightborn.server.ServerConfigService;
 import com.grahambartley.nightborn.skill.PowerShow;
 import com.grahambartley.nightborn.skill.PowerUse;
 import com.grahambartley.nightborn.skill.Powers;
 import com.grahambartley.nightborn.slayer.Charges;
 import com.grahambartley.nightborn.vampire.Impulse;
+import java.util.function.Supplier;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.item.ItemStack;
@@ -16,13 +18,22 @@ import net.minecraft.item.TridentItem;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.math.Vec3d;
 
-public final class CombatMoves {
+public final class CombatMoves<T extends MobEntity & PowerShow> implements MobFighting.Moves {
 
+  private final T fighter;
+  private final Supplier<StageCombat> stage;
   private long nextMove;
   private boolean threatened;
 
-  public <T extends MobEntity & PowerShow> void tick(
-      final T fighter, final StageCombat combat, final CombatSettings settings) {
+  public CombatMoves(final T fighter, final Supplier<StageCombat> stage) {
+    this.fighter = fighter;
+    this.stage = stage;
+  }
+
+  @Override
+  public void tick() {
+    final StageCombat combat = stage.get();
+    final CombatSettings settings = ServerConfigService.current().combat();
     final LivingEntity target = fighter.getTarget();
     final long now = fighter.getWorld().getTime();
     if (target == null) {
@@ -37,7 +48,7 @@ public final class CombatMoves {
     threatened = threat.at(distance, settings);
     if (CombatMove.dodgesWithPower(
             threatened, wasThreatened, () -> fighter.getRandom().nextInt(100), combat)
-        && dodgeWithPower(fighter, distance, combat)) {
+        && dodgeWithPower(fighter, combat)) {
       nextMove = now + (long) combat.thinkTicks() * settings.moveCooldownThinks();
       return;
     }
@@ -68,17 +79,14 @@ public final class CombatMoves {
             });
   }
 
-  private static boolean dodgeWithPower(
-      final MobEntity fighter, final double distance, final StageCombat combat) {
-    return PowerChoice.dodge(
-            PowerCasting.options(fighter, true),
-            distance,
-            BloodAttachment.get(fighter),
-            combat.bloodFloor())
-        .map(option -> Powers.cast(fighter, option.power()) == PowerUse.Verdict.READY)
+  private static boolean dodgeWithPower(final MobEntity fighter, final StageCombat combat) {
+    return Thinking.think(fighter, true, combat.bloodFloor())
+        .flatMap(think -> think.chosen())
+        .map(scored -> Powers.cast(fighter, scored.option().power()) == PowerUse.Verdict.READY)
         .orElse(false);
   }
 
+  @Override
   public void rest() {
     threatened = false;
   }
