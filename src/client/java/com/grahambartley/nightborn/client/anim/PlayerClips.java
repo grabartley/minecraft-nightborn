@@ -4,6 +4,7 @@ import com.grahambartley.nightborn.client.vomit.VomitFx;
 import com.grahambartley.nightborn.coffin.CoffinRise;
 import com.grahambartley.nightborn.gear.StakedFall;
 import com.grahambartley.nightborn.levitation.Levitation;
+import com.grahambartley.nightborn.mob.LevitationGait;
 import com.grahambartley.nightborn.mob.VampirePose;
 import com.grahambartley.nightborn.network.PlayerCue;
 import com.grahambartley.nightborn.network.PlayerCuePayload;
@@ -43,7 +44,9 @@ public final class PlayerClips {
                             .tick(
                                 player.age,
                                 Levitation.isLevitating(player),
-                                VisibleStateAttachment.get(player).downed())));
+                                VisibleStateAttachment.get(player).downed(),
+                                player.isSprinting(),
+                                LevitationGait.horizontalSpeed(player))));
     ClientPlayNetworking.registerGlobalReceiver(
         PlayerCuePayload.ID,
         (payload, context) ->
@@ -72,7 +75,7 @@ public final class PlayerClips {
             new PlayerClipState.Situation(
                 Levitation.isLevitating(player),
                 player.isSprinting(),
-                Math.hypot(player.getX() - player.prevX, player.getZ() - player.prevZ),
+                LevitationGait.horizontalSpeed(player),
                 visible.downed(),
                 visible.feeding(),
                 visible.isWeakened() && staggersOnFoot(player),
@@ -80,6 +83,10 @@ public final class PlayerClips {
                 StakedFall.staked(player) && !player.isAlive(),
                 SunFire.burning(player)),
             VampireClips::seconds);
+  }
+
+  public static double levitationSpread(final PlayerEntity player) {
+    return state(player).levitationSpread();
   }
 
   public static Optional<String> power(final PlayerEntity player) {

@@ -63,8 +63,8 @@ class PlayerClipStateTest {
   @DisplayName("landing plays its clip once, then the player is drawn as vanilla draws it")
   void lands(final int after, final String expected) {
     final PlayerClipState state = new PlayerClipState();
-    state.tick(10, true, false);
-    state.tick(11, false, false);
+    state.tick(10, true, false, false, 0.0);
+    state.tick(11, false, false, false, 0.0);
     assertEquals(expected, clip(state, 11 + after, still()));
   }
 
@@ -75,13 +75,15 @@ class PlayerClipStateTest {
     "0.1, true, LEVITATE_SPRINT",
     "0.3, false, LEVITATE_SPRINT"
   })
-  @DisplayName("levitating picks the hover, move or sprint clip by speed")
+  @DisplayName("levitating settles on the hover, move or sprint clip by speed")
   void levitates(final double speed, final boolean sprinting, final String expected) {
     final PlayerClipState state = new PlayerClipState();
-    state.tick(0, true, false);
+    for (int tick = 0; tick < 40; tick++) {
+      state.tick(tick, true, false, sprinting, speed);
+    }
     assertEquals(
         expected,
-        clip(state, 1, situation(true, sprinting, speed, false, false, false, Optional.empty())));
+        clip(state, 40, situation(true, sprinting, speed, false, false, false, Optional.empty())));
   }
 
   @ParameterizedTest(name = "{0} ticks after retching, levitating {1}: {2}")
@@ -99,11 +101,11 @@ class PlayerClipStateTest {
   @DisplayName("getting up plays once on the tick the player stops being downed")
   void rises(final int after, final String expected) {
     final PlayerClipState state = new PlayerClipState();
-    state.tick(10, false, true);
+    state.tick(10, false, true, false, 0.0);
     assertEquals(
         "DOWNED",
         clip(state, 10, situation(false, false, 0.0, true, false, false, Optional.empty())));
-    state.tick(11, false, false);
+    state.tick(11, false, false, false, 0.0);
     assertEquals(expected, clip(state, 11 + after, still()));
   }
 
@@ -111,7 +113,7 @@ class PlayerClipStateTest {
   @DisplayName("a player seen for the first time already standing does not play getting up")
   void noRiseWithoutDowned() {
     final PlayerClipState state = new PlayerClipState();
-    state.tick(10, false, false);
+    state.tick(10, false, false, false, 0.0);
     assertEquals("VANILLA", clip(state, 11, still()));
   }
 
@@ -148,7 +150,7 @@ class PlayerClipStateTest {
       final double speed,
       final String expected) {
     final PlayerClipState state = new PlayerClipState();
-    state.tick(0, levitating, downed);
+    state.tick(0, levitating, downed, false, 0.0);
     assertEquals(
         expected,
         clip(
@@ -185,7 +187,7 @@ class PlayerClipStateTest {
     if (draining) {
       state.drain(0);
     }
-    state.tick(0, levitating, downed);
+    state.tick(0, levitating, downed, false, 0.0);
     assertEquals(
         coffin.name(),
         clip(
@@ -198,7 +200,7 @@ class PlayerClipStateTest {
   @DisplayName("a player who never levitated or retched is drawn as vanilla draws it")
   void vanilla() {
     final PlayerClipState state = new PlayerClipState();
-    state.tick(5, false, false);
+    state.tick(5, false, false, false, 0.0);
     assertEquals("VANILLA", clip(state, 6, still()));
     assertTrue(Double.isNaN(state.vomitingSeconds(6)));
   }
@@ -334,7 +336,7 @@ class PlayerClipStateTest {
     if (recoiling) {
       state.gesture(VampirePose.RECOIL_GARLIC, 0);
     }
-    state.tick(0, false, downed);
+    state.tick(0, false, downed, false, 0.0);
     assertEquals(
         expected,
         clip(
@@ -377,7 +379,7 @@ class PlayerClipStateTest {
     if (recoiling) {
       state.gesture(VampirePose.RECOIL_CRUCIFIX, 0);
     }
-    state.tick(0, levitating, false);
+    state.tick(0, levitating, false, false, 0.0);
     assertEquals(
         expected,
         clip(
@@ -402,7 +404,7 @@ class PlayerClipStateTest {
       final int after, final boolean downed, final boolean feeding, final String expected) {
     final PlayerClipState state = new PlayerClipState();
     state.gesture(VampirePose.RECOIL_GARLIC, 10);
-    state.tick(10, false, downed);
+    state.tick(10, false, downed, false, 0.0);
     assertEquals(
         expected,
         clip(
@@ -426,7 +428,7 @@ class PlayerClipStateTest {
   @DisplayName("a power clip plays over whatever pose the player is in, never replacing it")
   void powerLeavesThePose(final boolean levitating, final boolean weakened, final String pose) {
     final PlayerClipState state = new PlayerClipState();
-    state.tick(0, levitating, false);
+    state.tick(0, levitating, false, false, 0.0);
     state.power(POWER, 1, LENGTHS);
     assertEquals(
         pose,

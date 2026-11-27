@@ -47,8 +47,6 @@ public enum VampirePose {
   DOUSE_CANDLE("douse_candle", Play.ONCE, Hold.HEAD, Gesture.SENT),
   START_GRAMOPHONE("start_gramophone", Play.ONCE, Hold.HEAD, Gesture.SENT);
 
-  public static final double LEVITATE_MOVE_SPEED = 0.03;
-  public static final double LEVITATE_SPRINT_SPEED = 0.24;
   public static final double WEAKENED_WALK_SPEED = 0.02;
   public static final String SPREAD_VARIABLE = "variable.levitate_spread";
 
@@ -78,11 +76,9 @@ public enum VampirePose {
       boolean downed,
       boolean rising,
       boolean dying,
-      boolean levitating,
+      Optional<VampirePose> levitation,
       boolean landing,
-      boolean sprinting,
       float limbSwing,
-      double horizontalSpeed,
       boolean seated,
       boolean reading,
       boolean sunBurning) {}
@@ -132,8 +128,8 @@ public enum VampirePose {
     if (cue.rising() && !cue.dying()) {
       return RISE;
     }
-    if (cue.levitating()) {
-      return levitating(cue.sprinting(), cue.horizontalSpeed());
+    if (cue.levitation().isPresent()) {
+      return cue.levitation().get();
     }
     if (cue.landing()) {
       return LAND;
@@ -182,19 +178,8 @@ public enum VampirePose {
     return standingCoffin ? COFFIN_STEP_OUT : COFFIN_RISE;
   }
 
-  public static VampirePose levitating(final boolean sprinting, final double horizontalSpeed) {
-    if (sprinting || horizontalSpeed > LEVITATE_SPRINT_SPEED) {
-      return LEVITATE_SPRINT;
-    }
-    return horizontalSpeed > LEVITATE_MOVE_SPEED ? LEVITATE_MOVE : LEVITATE;
-  }
-
   public static VampirePose weakened(final double horizontalSpeed) {
     return horizontalSpeed > WEAKENED_WALK_SPEED ? WEAKENED_WALK : WEAKENED;
-  }
-
-  public static double spread(final boolean sprinting, final double horizontalSpeed) {
-    return sprinting ? 1.0 : Math.max(0.0, Math.min(1.0, horizontalSpeed / LEVITATE_SPRINT_SPEED));
   }
 
   public static Optional<VampirePose> action(
