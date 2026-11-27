@@ -84,4 +84,11 @@ class MobUseTest {
   void rejects(final String json) {
     assertFalse(MobUse.CODEC.parse(JsonOps.INSTANCE, JsonParser.parseString(json)).isSuccess());
   }
+
+  @ParameterizedTest(name = "aim [{0}] -> {1}")
+  @CsvSource({"self, SELF", "target, TARGET", "spot, SPOT", "ally, ALLY", "enemy, TARGET"})
+  @DisplayName("a use's aim is read from its data name, and an unknown one aims at the target")
+  void aimed(final String aim, final Aim aimed) {
+    assertEquals(aimed, new MobUse("fight", aim, List.of(), 1.0F).aimed());
+  }
 }

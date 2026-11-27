@@ -1,5 +1,6 @@
 package com.grahambartley.nightborn.mob.combat;
 
+import com.grahambartley.nightborn.mob.brain.CastAims;
 import com.grahambartley.nightborn.mob.brain.PowerChoice;
 import com.grahambartley.nightborn.mob.brain.Think;
 import com.grahambartley.nightborn.mob.brain.Thinking;
@@ -50,7 +51,12 @@ public final class PowerCasting {
       final Tell.Step step = telling.step(engaged, now);
       if (step == Tell.Step.CAST) {
         final Identifier power = telling.power();
-        CastAims.resolve(caster, telling.aim()).ifPresent(aim -> cast.apply(caster, power, aim));
+        final Optional<CastAim> aim = CastAims.resolve(caster, telling.aim());
+        if (aim.isPresent()) {
+          cast.apply(caster, power, aim.get());
+        } else {
+          nextThink = now;
+        }
       }
       if (step != Tell.Step.WAIT) {
         telling = null;

@@ -33,6 +33,8 @@ public record CastAim(@Nullable LivingEntity entity, @Nullable Vec3d spot) {
       return spot.subtract(caster.getPos());
     }
     final LivingEntity aimed = subject(caster);
-    return aimed != null ? aimed.getPos().subtract(caster.getPos()) : caster.getRotationVector();
+    return aimed != null && aimed != caster
+        ? aimed.getPos().subtract(caster.getPos())
+        : caster.getRotationVector();
   }
 }

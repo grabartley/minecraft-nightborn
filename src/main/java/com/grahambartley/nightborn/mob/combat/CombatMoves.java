@@ -1,6 +1,7 @@
 package com.grahambartley.nightborn.mob.combat;
 
 import com.grahambartley.nightborn.config.CombatSettings;
+import com.grahambartley.nightborn.mob.brain.CastAims;
 import com.grahambartley.nightborn.mob.brain.Thinking;
 import com.grahambartley.nightborn.mob.stage.StageCombat;
 import com.grahambartley.nightborn.server.ServerConfigService;
@@ -82,7 +83,13 @@ public final class CombatMoves<T extends MobEntity & PowerShow> implements MobFi
   private static boolean dodgeWithPower(final MobEntity fighter, final StageCombat combat) {
     return Thinking.think(fighter, true, combat.bloodFloor())
         .flatMap(think -> think.chosen())
-        .map(scored -> Powers.cast(fighter, scored.option().power()) == PowerUse.Verdict.READY)
+        .flatMap(
+            scored ->
+                CastAims.resolve(fighter, scored.use().aimed())
+                    .map(
+                        aim ->
+                            Powers.cast(fighter, scored.option().power(), aim)
+                                == PowerUse.Verdict.READY))
         .orElse(false);
   }
 
@@ -104,7 +111,7 @@ public final class CombatMoves<T extends MobEntity & PowerShow> implements MobFi
     return Impulse.push(heading, tuning.pushBlocks(), tuning.liftBlocks());
   }
 
-  static boolean ranged(final ItemStack stack) {
+  public static boolean ranged(final ItemStack stack) {
     return stack.getItem() instanceof RangedWeaponItem || stack.getItem() instanceof TridentItem;
   }
 }

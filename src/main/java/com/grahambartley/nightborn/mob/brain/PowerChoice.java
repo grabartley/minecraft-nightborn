@@ -3,9 +3,12 @@ package com.grahambartley.nightborn.mob.brain;
 import com.grahambartley.nightborn.skill.MobPowerUse;
 import com.grahambartley.nightborn.skill.PowerUse;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import net.minecraft.util.Identifier;
 
 public final class PowerChoice {
@@ -16,7 +19,30 @@ public final class PowerChoice {
       int cost,
       int cooldownTicks,
       boolean running,
-      MobPowerUse use) {
+      MobPowerUse use,
+      Set<Aim> readyAims) {
+
+    public Option {
+      readyAims =
+          readyAims.isEmpty() ? Set.of() : Collections.unmodifiableSet(EnumSet.copyOf(readyAims));
+    }
+
+    public Option(
+        final Identifier power,
+        final PowerUse.Verdict verdict,
+        final int cost,
+        final int cooldownTicks,
+        final boolean running,
+        final MobPowerUse use) {
+      this(
+          power,
+          verdict,
+          cost,
+          cooldownTicks,
+          running,
+          use,
+          verdict == PowerUse.Verdict.READY ? EnumSet.allOf(Aim.class) : EnumSet.noneOf(Aim.class));
+    }
 
     public Option(
         final Identifier power,
@@ -44,6 +70,9 @@ public final class PowerChoice {
       MobUse best = null;
       double bestScore = 0.0;
       for (final MobUse use : option.use().effectiveUses()) {
+        if (!option.readyAims().contains(use.aimed())) {
+          continue;
+        }
         final double score = use.score(situation);
         if (best == null || score > bestScore) {
           best = use;

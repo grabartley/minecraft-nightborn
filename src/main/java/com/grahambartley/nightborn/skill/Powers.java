@@ -130,6 +130,14 @@ public final class Powers {
     return check(caster, id, power, PowerAim.of(caster, power, PowerHeading.NONE));
   }
 
+  public static PowerUse.Verdict check(
+      final LivingEntity caster,
+      @Nullable final Identifier id,
+      final Optional<SkillPower> power,
+      final CastAim cast) {
+    return check(caster, id, power, PowerAim.of(caster, power, PowerHeading.NONE, cast));
+  }
+
   static PowerUse.Verdict check(
       final LivingEntity caster,
       @Nullable final Identifier id,

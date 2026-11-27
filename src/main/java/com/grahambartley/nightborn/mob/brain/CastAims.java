@@ -1,7 +1,5 @@
-package com.grahambartley.nightborn.mob.combat;
+package com.grahambartley.nightborn.mob.brain;
 
-import com.grahambartley.nightborn.mob.brain.Aim;
-import com.grahambartley.nightborn.mob.brain.RouteEnd;
 import com.grahambartley.nightborn.skill.CastAim;
 import java.util.Optional;
 import net.minecraft.entity.LivingEntity;

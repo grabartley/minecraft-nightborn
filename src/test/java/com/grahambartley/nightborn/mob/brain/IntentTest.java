@@ -23,4 +23,19 @@ class IntentTest {
   void names(final String key, final Intent intent) {
     assertEquals(Optional.ofNullable(intent), Intent.byKey(key));
   }
+
+  @ParameterizedTest(name = "{0}: fights {1}")
+  @CsvSource({
+    "FIGHT, true",
+    "CLOSE_IN, true",
+    "RETREAT, false",
+    "HUNT, false",
+    "TRAVEL, false",
+    "GUARD, false",
+    "REST, false"
+  })
+  @DisplayName("only fighting and closing in are fighting intents")
+  void fights(final Intent intent, final boolean fights) {
+    assertEquals(fights, intent.fights());
+  }
 }

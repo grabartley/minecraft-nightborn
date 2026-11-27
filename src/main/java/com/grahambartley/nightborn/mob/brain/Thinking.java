@@ -54,19 +54,53 @@ public final class Thinking {
     return use.dodge() == dodge || !dodge && !intent.fights();
   }
 
+  static Set<Aim> aims(final MobPowerUse use, final Intent intent) {
+    final Set<Aim> aims = EnumSet.noneOf(Aim.class);
+    for (final MobUse each : use.effectiveUses()) {
+      if (each.intent().equals(intent.key())) {
+        aims.add(each.aimed());
+      }
+    }
+    return aims;
+  }
+
+  static PowerUse.Verdict overall(final List<PowerUse.Verdict> verdicts) {
+    return verdicts.contains(PowerUse.Verdict.READY)
+        ? PowerUse.Verdict.READY
+        : verdicts.stream().findFirst().orElse(PowerUse.Verdict.NOWHERE);
+  }
+
   static List<PowerChoice.Option> options(
       final MobEntity mob, final boolean dodge, final Intent intent) {
     List<PowerChoice.Option> options = List.of();
     for (final Identifier id : SkillAttachment.owned(mob).ownedInOrder()) {
       final Optional<SkillPower> power = Powers.power(mob, id);
-      if (power.flatMap(SkillPower::mob).filter(use -> offered(use, dodge, intent)).isEmpty()) {
+      final MobPowerUse use =
+          power.flatMap(SkillPower::mob).filter(each -> offered(each, dodge, intent)).orElse(null);
+      if (use == null) {
         continue;
+      }
+      final Set<Aim> aims = aims(use, intent);
+      if (aims.isEmpty()) {
+        continue;
+      }
+      final Set<Aim> ready = EnumSet.noneOf(Aim.class);
+      final List<PowerUse.Verdict> verdicts = new ArrayList<>(aims.size());
+      for (final Aim aim : aims) {
+        final PowerUse.Verdict verdict =
+            CastAims.resolve(mob, aim)
+                .map(cast -> Powers.check(mob, id, power, cast))
+                .orElse(PowerUse.Verdict.NOWHERE);
+        verdicts.add(verdict);
+        if (verdict == PowerUse.Verdict.READY) {
+          ready.add(aim);
+        }
       }
       if (options.isEmpty()) {
         options = new ArrayList<>();
       }
       final SkillPower owned = power.get();
-      final PowerUse.Verdict verdict = Powers.check(mob, id, power);
+      final PowerUse.Verdict verdict = overall(verdicts);
       options.add(
           new PowerChoice.Option(
               id,
@@ -74,7 +108,8 @@ public final class Thinking {
               owned.blood(),
               owned.cooldownTicks(),
               verdict == PowerUse.Verdict.READY && RunningPowers.on(mob, id, owned),
-              owned.mob().get()));
+              use,
+              ready));
     }
     return options;
   }

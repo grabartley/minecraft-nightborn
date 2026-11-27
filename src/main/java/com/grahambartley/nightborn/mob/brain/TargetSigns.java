@@ -2,6 +2,7 @@ package com.grahambartley.nightborn.mob.brain;
 
 import com.grahambartley.nightborn.faction.Hunters;
 import com.grahambartley.nightborn.hold.Holds;
+import com.grahambartley.nightborn.mob.combat.CombatMoves;
 import com.grahambartley.nightborn.mob.combat.MobFighter;
 import com.grahambartley.nightborn.vampire.Vampires;
 import net.minecraft.entity.LivingEntity;
@@ -52,7 +53,7 @@ public final class TargetSigns {
   }
 
   private static boolean windingUp(final LivingEntity target) {
-    return target.isUsingItem()
+    return target.isUsingItem() && CombatMoves.ranged(target.getActiveItem())
         || target instanceof MobFighter fighter && fighter.mobFighting().telling();
   }
 }

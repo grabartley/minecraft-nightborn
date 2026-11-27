@@ -16,9 +16,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
+import java.util.Set;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 import net.minecraft.util.Identifier;
@@ -271,8 +273,11 @@ class PowerChoiceTest {
         "occult/shadow_step beast/pounce | 8 | 1 | running | beast/pounce",
         "trapper/net_shot slayer/quick_shot | 10 | 1 | running vampire | trapper/net_shot",
         "trapper/net_shot | 10 | 1 | running slowed vampire | ''",
-        "trapper/snare | 3 | 1 | running slowed vampire | ''",
-        "trapper/snare | 3 | 1 | running vampire | trapper/snare",
+        "trapper/snare | 8 | 1 | slowed vampire | ''",
+        "trapper/snare | 8 | 1 | vampire | trapper/snare",
+        "trapper/snare | 3 | 1 | vampire | ''",
+        "occult/shadow_step beast/pounce | 8 | 1 | '' | occult/shadow_step",
+        "occult/shadow_step beast/pounce | 8 | 0.25 | '' | beast/pounce",
         "noble/mesmerise | 6 | 1 | slowed | ''",
         "noble/dread_presence | 4 | 1 | slowed | ''",
         "beast/long_leap | 2 | 1 | '' | ''",
@@ -416,5 +421,33 @@ class PowerChoiceTest {
                 budget,
                 roll)
             .map(scored -> scored.option().power()));
+  }
+
+  @ParameterizedTest(name = "ready aims [{0}]: {1}")
+  @CsvSource({"TARGET SPOT, spot", "TARGET, target", "'', ''"})
+  @DisplayName("a use is weighed only when its power is ready for that use's aim")
+  void weighsOnlyUsesWhoseAimIsReady(final String ready, final String chosen) {
+    final Set<Aim> aims = EnumSet.noneOf(Aim.class);
+    if (!ready.isEmpty()) {
+      Arrays.stream(ready.split(" ")).map(Aim::valueOf).forEach(aims::add);
+    }
+    final MobUse atSpot = new MobUse("fight", "spot", List.of(), 2.0F);
+    final MobUse atTarget = new MobUse("fight", "target", List.of(), 1.0F);
+    final PowerChoice.Option option =
+        new PowerChoice.Option(
+            RUSH,
+            aims.isEmpty() ? PowerUse.Verdict.NOWHERE : PowerUse.Verdict.READY,
+            0,
+            0,
+            false,
+            new MobPowerUse(0.0F, 8.0F, 1, SOUND, "tell", false, List.of(atSpot, atTarget)),
+            aims);
+    assertEquals(
+        chosen.isEmpty() ? Optional.empty() : Optional.of(chosen),
+        PowerChoice.choose(
+                PowerChoice.rank(List.of(option), fight(5, 20), IntentBudget.FREE, 0),
+                IntentBudget.FREE,
+                0.0)
+            .map(scored -> scored.use().aim()));
   }
 }

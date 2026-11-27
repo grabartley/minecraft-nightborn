@@ -1,10 +1,9 @@
-package com.grahambartley.nightborn.mob.combat;
+package com.grahambartley.nightborn.mob.brain;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 
 import com.grahambartley.nightborn.MinecraftBootstrapExtension;
-import com.grahambartley.nightborn.mob.brain.Aim;
 import com.grahambartley.nightborn.skill.CastAim;
 import java.util.Optional;
 import net.minecraft.entity.LivingEntity;

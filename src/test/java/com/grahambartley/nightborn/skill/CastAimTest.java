@@ -32,6 +32,7 @@ class CastAimTest {
       case "own" -> CastAim.OWN_TARGET;
       case "entity" -> CastAim.at(other);
       case "spot" -> CastAim.toward(new Vec3d(10, 64, 4));
+      case "self" -> null;
       default -> throw new IllegalArgumentException(kind);
     };
   }
@@ -71,7 +72,8 @@ class CastAimTest {
     "true, own, false, 0, 0, 1",
     "true, entity, true, 10, 0, 0",
     "true, spot, true, 0, 0, -6",
-    "false, spot, true, 0, 0, 1"
+    "false, spot, true, 0, 0, 1",
+    "true, self, true, 0, 0, 1"
   })
   @DisplayName("a mob leaps toward what it aims at, and a player toward where it looks")
   void heading(
@@ -87,6 +89,7 @@ class CastAimTest {
     if (mob) {
       when(((MobEntity) caster).getTarget()).thenReturn(hasTarget ? target : null);
     }
-    assertEquals(new Vec3d(x, y, z), aim(kind, other).heading(caster));
+    final CastAim aim = "self".equals(kind) ? CastAim.at(caster) : aim(kind, other);
+    assertEquals(new Vec3d(x, y, z), aim.heading(caster));
   }
 }
