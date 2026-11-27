@@ -133,7 +133,7 @@ public record CaveMouth(
   private static boolean dry(final BlockPos floor, final Ground ground) {
     for (final BlockPos cell :
         BlockPos.iterate(
-            floor.add(-DRY_REACH, -1, -DRY_REACH),
+            floor.add(-DRY_REACH, -CaveWalk.SAFE_DROP - 1, -DRY_REACH),
             floor.add(DRY_REACH, CaveWalk.AIRSPACE, DRY_REACH))) {
       if (ground.at(cell) == CaveCell.FLUID) {
         return false;

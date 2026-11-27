@@ -86,6 +86,13 @@ class CaveMouthTest {
             Direction.SOUTH,
             Optional.of(new BlockPos(-3, 0, 0))),
         Arguments.of(
+            "a lava lake a fall below the mouth is refused",
+            new FakeRock(CaveCell.SOLID)
+                .cave(-3, -30, 1, 3, 6)
+                .fill(new BlockBox(-3, -33, 1, 3, -33, 6), CaveCell.FLUID),
+            Direction.SOUTH,
+            Optional.empty()),
+        Arguments.of(
             "a one block nook is not a cave",
             new FakeRock(CaveCell.SOLID).cave(0, -30, 1, 0, 1),
             Direction.SOUTH,
