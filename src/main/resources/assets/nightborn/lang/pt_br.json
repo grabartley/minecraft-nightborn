@@ -1166,7 +1166,7 @@
   "nightborn.guild.rumour": "Pedir notícias",
   "nightborn.guild.rank": "Perguntar meu posto",
   "nightborn.guild.oath": "Prestar juramento",
-  "nightborn.guild.rumour.told": "%1$s diz que há rumores de uma casa de vampiros a uns %3$s blocos %4$s, perto de %5$s, %6$s (%2$s)",
+  "nightborn.guild.rumour.told": "%1$s diz que há rumores de uma casa de vampiros a uns %3$s blocos %4$s, perto de %5$s, %6$s, %7$s (%2$s)",
   "nightborn.guild.rumour.none": "%s não ouviu falar de nenhuma casa de vampiros por perto",
   "nightborn.guild.nothing": "O Mestre da Guilda não tem nada disso para oferecer hoje",
   "nightborn.bearing.north": "ao norte",

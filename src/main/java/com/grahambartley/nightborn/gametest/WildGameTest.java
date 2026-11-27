@@ -7,6 +7,7 @@ import com.grahambartley.nightborn.mob.NightbornMobs;
 import com.grahambartley.nightborn.mob.VampireEntity;
 import com.grahambartley.nightborn.structure.HouseholdRefill;
 import com.grahambartley.nightborn.structure.HouseholdRoll;
+import com.grahambartley.nightborn.wild.RumourMapOffer;
 import com.grahambartley.nightborn.wild.Wanderer;
 import com.grahambartley.nightborn.wild.WandererAttachment;
 import java.util.Optional;
@@ -82,6 +83,17 @@ public final class WildGameTest implements FabricGameTest {
         "a structure a player has claimed never takes a new household");
     context.assertFalse(
         HouseholdRefill.arrive(context.getWorld(), home), "no household moves into it");
+    context.complete();
+  }
+
+  @GameTest(templateName = ARENA, tickLimit = 20)
+  public void noRumourMapIsOfferedInAWorldWithoutStructures(final TestContext context) {
+    final VillagerEntity cartographer =
+        context.spawnEntity(EntityType.VILLAGER, new BlockPos(1, 2, 1));
+    cartographer.setAiDisabled(true);
+    context.assertTrue(
+        new RumourMapOffer(1, 1, 1).create(cartographer, context.getWorld().getRandom()) == null,
+        "a cartographer offers no rumour map where no vampire house can stand");
     context.complete();
   }
 }

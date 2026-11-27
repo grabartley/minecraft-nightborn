@@ -1166,7 +1166,7 @@
   "nightborn.guild.rumour": "Nach Neuigkeiten fragen",
   "nightborn.guild.rank": "Nach meinem Rang fragen",
   "nightborn.guild.oath": "Den Eid ablegen",
-  "nightborn.guild.rumour.told": "%1$s sagt, ein Vampirhaus liege angeblich etwa %3$s Blöcke %4$s, nahe %5$s, %6$s (%2$s)",
+  "nightborn.guild.rumour.told": "%1$s sagt, ein Vampirhaus liege angeblich etwa %3$s Blöcke %4$s, nahe %5$s, %6$s, %7$s (%2$s)",
   "nightborn.guild.rumour.none": "%s hat von keinem Vampirhaus in der Nähe gehört",
   "nightborn.guild.nothing": "Der Gildenmeister hat heute nichts dergleichen anzubieten",
   "nightborn.bearing.north": "nördlich",

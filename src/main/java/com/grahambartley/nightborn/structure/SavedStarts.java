@@ -37,4 +37,13 @@ public final class SavedStarts {
         starts.contains(key, NbtElement.COMPOUND_TYPE)
             && !INVALID.equals(starts.getCompound(key).getString("id")));
   }
+
+  public static Optional<NbtCompound> start(final NbtElement saved, final Identifier structure) {
+    return saved instanceof NbtCompound chunk
+        ? Optional.of(chunk.getCompound(STRUCTURES).getCompound(STARTS))
+            .filter(starts -> starts.contains(structure.toString(), NbtElement.COMPOUND_TYPE))
+            .map(starts -> starts.getCompound(structure.toString()))
+            .filter(start -> !INVALID.equals(start.getString("id")))
+        : Optional.empty();
+  }
 }

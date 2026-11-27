@@ -28,6 +28,6 @@ class RumourMapsTest {
     assertTrue(
         java.util.Arrays.stream(
                 TradeOffers.PROFESSION_TO_LEVELED_TRADE.get(seller).get(RumourMaps.LEVEL))
-            .anyMatch(factory -> factory instanceof TradeOffers.SellMapFactory));
+            .anyMatch(factory -> factory instanceof RumourMapOffer));
   }
 }

@@ -41,6 +41,10 @@ public record Siting(Optional<Footing> footing, Optional<Summit> summit, Optiona
     return cave.map(CaveMouth::entrance).or(() -> footing.flatMap(Footing::entrance));
   }
 
+  public BlockPos standingSpot(final Threshold way) {
+    return (cave.isPresent() ? way.step() : way.floor()).up();
+  }
+
   public Optional<ColumnPos> ground(final Structure.Context context, final ColumnPos corner) {
     return summit.isPresent() ? summit.get().peak(context, corner) : Optional.of(corner);
   }

@@ -8,6 +8,7 @@ import com.grahambartley.nightborn.config.StructureSettings;
 import com.grahambartley.nightborn.mob.NightbornMobs;
 import com.grahambartley.nightborn.mob.VampireLordEntity;
 import com.grahambartley.nightborn.server.ServerConfigService;
+import com.grahambartley.nightborn.structure.EntrancePlan;
 import com.grahambartley.nightborn.structure.FogZone;
 import com.grahambartley.nightborn.structure.Footing;
 import com.grahambartley.nightborn.structure.HeadSeat;
@@ -264,17 +265,8 @@ public class VampireStructureGameTest implements FabricGameTest {
   }
 
   private static Structure.Context generationAt(final TestContext context) {
-    final ServerWorld world = context.getWorld();
-    return new Structure.Context(
-        world.getRegistryManager(),
-        world.getChunkManager().getChunkGenerator(),
-        world.getChunkManager().getChunkGenerator().getBiomeSource(),
-        world.getChunkManager().getNoiseConfig(),
-        world.getStructureTemplateManager(),
-        world.getSeed(),
-        new ChunkPos(context.getAbsolutePos(BlockPos.ORIGIN)),
-        world,
-        biome -> true);
+    return EntrancePlan.context(
+        context.getWorld(), new ChunkPos(context.getAbsolutePos(BlockPos.ORIGIN)), biome -> true);
   }
 
   private static void entranceMeetsTheGround(final TestContext context, final String id) {
@@ -289,16 +281,11 @@ public class VampireStructureGameTest implements FabricGameTest {
         structure.getValidStructurePosition(generation);
     context.assertTrue(position.isPresent(), id + " accepts the flat dry test ground");
     final Optional<Threshold> threshold =
-        ((VampireStructure) structure)
-            .footing()
-            .flatMap(Footing::entrance)
-            .flatMap(
-                name ->
-                    Threshold.in(
-                        position.get().generate().toList().pieces(),
-                        name,
-                        world.getStructureTemplateManager(),
-                        world.getRandom()));
+        EntrancePlan.threshold(
+            (VampireStructure) structure,
+            position.get().generate().toList().pieces(),
+            world.getStructureTemplateManager(),
+            world.getRandom());
     context.assertTrue(threshold.isPresent(), id + " finds its entrance among its placed pieces");
     final ColumnPos outside = threshold.get().outside();
     final int surface = Footing.surface(generation, outside);
@@ -308,6 +295,10 @@ public class VampireStructureGameTest implements FabricGameTest {
         id + " entrance floor is level with the ground outside it");
     context.assertTrue(
         threshold.get().out().getAxis().isHorizontal(), id + " entrance faces out sideways");
+    context.assertEquals(
+        ((VampireStructure) structure).siting().standingSpot(threshold.get()).getY(),
+        surface,
+        id + " is found standing on its doorstep at ground level");
     context.complete();
   }
 
