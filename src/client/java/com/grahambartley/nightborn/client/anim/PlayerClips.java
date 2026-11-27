@@ -31,6 +31,7 @@ public final class PlayerClips {
   private static final double POWER_BLEND_SECONDS = POWER_BLEND_TICKS / OneShot.TICKS_PER_SECOND;
 
   private static final Map<PlayerEntity, PlayerClipState> STATES = new WeakHashMap<>();
+  private static final Map<PlayerEntity, ThrustState> THRUSTS = new WeakHashMap<>();
 
   private PlayerClips() {}
 
@@ -72,19 +73,15 @@ public final class PlayerClips {
 
   public static Optional<VampirePose> thrust(final PlayerEntity player) {
     return PlayerClipState.upright(player.getPose(), player.hasVehicle())
-        ? firstPersonThrust(player)
+        ? ThrustState.shown(
+            clip(player),
+            power(player).isPresent(),
+            thrustState(player).playing(player.age, VampireClips::seconds))
         : Optional.empty();
   }
 
-  public static Optional<VampirePose> firstPersonThrust(final PlayerEntity player) {
-    return PlayerClipState.shownThrust(
-        clip(player),
-        state(player).powerClip(player.age, PlayerClips::powerSeconds).isPresent(),
-        state(player).thrust(player.age, VampireClips::seconds));
-  }
-
   public static boolean freshThrust(final PlayerEntity player) {
-    return state(player).takeFreshThrust();
+    return thrustState(player).takeFresh();
   }
 
   public static Optional<VampirePose> clip(final PlayerEntity player) {
@@ -122,13 +119,14 @@ public final class PlayerClips {
   public static FirstPersonSway sway(
       final PlayerEntity player, final Arm arm, final float partialTick) {
     if (power(player).isEmpty()) {
-      return firstPersonThrust(player)
+      final double seconds = thrustState(player).seconds(player.age + partialTick);
+      return thrust(player)
+          .filter(pose -> ThrustState.sways(pose, arm))
           .map(
               pose ->
-                  VampireClips.sway(
-                      pose.animation(),
-                      arm,
-                      Math.max(0.0, state(player).thrustSeconds(player.age + partialTick))))
+                  VampireClips.sway(pose.animation(), arm, Math.max(0.0, seconds))
+                      .scaled(
+                          ThrustState.swayWeight(seconds, VampireClips.seconds(pose.animation()))))
           .orElse(FirstPersonSway.NONE);
     }
     final double clipSeconds =
@@ -167,12 +165,12 @@ public final class PlayerClips {
 
   private static void followSwing(final PlayerEntity player) {
     final Hand hand = player.preferredHand == null ? Hand.MAIN_HAND : player.preferredHand;
-    state(player)
+    thrustState(player)
         .swing(
             player.handSwinging,
             player.handSwingTicks,
             player.getStackInHand(hand).isIn(GearTags.REVERSE_GRIP),
-            PlayerClipState.swingsRightArm(hand, player.getMainArm()),
+            ThrustState.swingsRightArm(hand, player.getMainArm()),
             player.age,
             VampireClips::seconds);
   }
@@ -197,6 +195,10 @@ public final class PlayerClips {
       case FINISHER -> state(player).finisher(player.age);
       default -> cue.gesture().ifPresent(pose -> state(player).gesture(pose, player.age));
     }
+  }
+
+  private static ThrustState thrustState(final PlayerEntity player) {
+    return THRUSTS.computeIfAbsent(player, ignored -> new ThrustState());
   }
 
   private static PlayerClipState state(final PlayerEntity player) {

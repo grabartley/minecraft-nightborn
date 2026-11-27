@@ -82,7 +82,7 @@ abstract class HeldItemRendererMixin {
       final float swingProgress,
       @Local(argsOnly = true) final AbstractClientPlayerEntity player,
       @Local(argsOnly = true) final ItemStack item) {
-    return item.isIn(GearTags.REVERSE_GRIP) && PlayerClips.firstPersonThrust(player).isPresent()
+    return item.isIn(GearTags.REVERSE_GRIP) && PlayerClips.thrust(player).isPresent()
         ? 0.0F
         : swingProgress;
   }
