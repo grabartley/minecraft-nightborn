@@ -14,7 +14,7 @@ class BodyCommandTest {
   @ParameterizedTest(name = "{0}: complete {1}")
   @CsvSource({
     "body sever Steve left_arm, true",
-    "body sever Alex head, true",
+    "body sever Alex right_leg, true",
     "body restore Steve, true",
     "body sever Steve, false",
     "body restore, false",

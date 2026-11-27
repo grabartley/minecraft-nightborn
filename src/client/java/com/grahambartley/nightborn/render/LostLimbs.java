@@ -17,7 +17,7 @@ public final class LostLimbs {
   }
 
   static boolean hidden(final BodyState body, final String bone) {
-    return BodyPart.named(bone).filter(body::missing).isPresent();
+    return !body.whole() && BodyPart.named(bone).filter(body::missing).isPresent();
   }
 
   public static void hide(final BipedEntityModel<?> model, final BodyState body) {

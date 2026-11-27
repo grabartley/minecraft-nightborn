@@ -68,6 +68,10 @@ public final class Holds {
     return held(entity).filter(kind -> kind == HoldKind.PIN).isPresent();
   }
 
+  public static boolean staggered(final Entity entity) {
+    return held(entity).filter(kind -> kind == HoldKind.STAGGER).isPresent();
+  }
+
   public static boolean still(final Entity entity) {
     return held(entity).isPresent();
   }

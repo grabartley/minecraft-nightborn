@@ -1,5 +1,6 @@
 package com.grahambartley.nightborn.dismember;
 
+import com.grahambartley.nightborn.fight.BlowReading;
 import java.util.List;
 import java.util.Optional;
 import net.minecraft.entity.Entity;
@@ -24,7 +25,10 @@ public final class BlowAim {
     final Entity direct = source.getSource();
     final Entity attacker = source.getAttacker();
     return switch (SeverAim.of(
-        source.isDirect(), direct instanceof ProjectileEntity, attacker instanceof PlayerEntity)) {
+        BlowReading.blast(source),
+        source.isDirect(),
+        direct instanceof ProjectileEntity,
+        attacker instanceof PlayerEntity)) {
       case LINE_OF_SIGHT -> {
         final Vec3d eye = attacker.getEyePos();
         yield HitLocation.part(

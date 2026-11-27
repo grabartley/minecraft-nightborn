@@ -7,7 +7,13 @@ public enum SeverAim {
   RANDOM_LIMB;
 
   public static SeverAim of(
-      final boolean direct, final boolean projectile, final boolean playerAttacker) {
+      final boolean blast,
+      final boolean direct,
+      final boolean projectile,
+      final boolean playerAttacker) {
+    if (blast) {
+      return RANDOM_LIMB;
+    }
     if (projectile) {
       return IMPACT;
     }

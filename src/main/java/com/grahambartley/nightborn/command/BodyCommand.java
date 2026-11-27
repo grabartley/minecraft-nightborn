@@ -7,7 +7,6 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import java.util.Arrays;
 import java.util.Optional;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.argument.EntityArgumentType;
@@ -35,8 +34,7 @@ final class BodyCommand {
                                 .suggests(
                                     (context, builder) ->
                                         CommandSource.suggestMatching(
-                                            Arrays.stream(BodyPart.values())
-                                                .map(BodyPart::asString),
+                                            BodyPart.limbs().stream().map(BodyPart::asString),
                                             builder))
                                 .executes(BodyCommand::sever))))
         .then(
@@ -50,7 +48,7 @@ final class BodyCommand {
       throws CommandSyntaxException {
     final ServerCommandSource source = context.getSource();
     final String name = StringArgumentType.getString(context, PART);
-    final Optional<BodyPart> part = BodyPart.named(name);
+    final Optional<BodyPart> part = BodyPart.named(name).filter(BodyPart::limb);
     if (part.isEmpty()) {
       source.sendError(Text.translatable("nightborn.command.body.unknown_part", name));
       return 0;

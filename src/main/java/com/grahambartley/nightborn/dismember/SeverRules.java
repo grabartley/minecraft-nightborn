@@ -1,7 +1,7 @@
 package com.grahambartley.nightborn.dismember;
 
 import com.grahambartley.nightborn.config.DismembermentSettings;
-import com.grahambartley.nightborn.gore.Blow;
+import com.grahambartley.nightborn.fight.Blow;
 import java.util.Optional;
 
 public final class SeverRules {

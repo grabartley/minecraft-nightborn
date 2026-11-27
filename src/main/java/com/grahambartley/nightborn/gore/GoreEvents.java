@@ -1,7 +1,8 @@
 package com.grahambartley.nightborn.gore;
 
 import com.grahambartley.nightborn.blood.BloodQuality;
-import com.grahambartley.nightborn.dismember.Dismemberment;
+import com.grahambartley.nightborn.fight.Blow;
+import com.grahambartley.nightborn.fight.BlowReading;
 import com.grahambartley.nightborn.network.GorePayload;
 import com.grahambartley.nightborn.network.TrackingSends;
 import com.grahambartley.nightborn.vampire.Vampires;
@@ -19,21 +20,19 @@ public final class GoreEvents {
     ServerLivingEntityEvents.AFTER_DAMAGE.register(
         (entity, source, base, taken, blocked) -> {
           if (!blocked && taken > 0.0F) {
-            final Blow blow = Blows.read(source);
-            send(entity, source, onHit(entity, blow));
-            Dismemberment.onHit(entity, source, blow, taken);
+            send(entity, source, onHit(entity, source));
           }
         });
     ServerLivingEntityEvents.AFTER_DEATH.register(
-        (entity, source) -> send(entity, source, onDeath(entity, Blows.read(source))));
+        (entity, source) -> send(entity, source, onDeath(entity, source)));
   }
 
   public static Optional<Gore> onHit(final LivingEntity entity, final DamageSource source) {
-    return onHit(entity, Blows.read(source));
+    return onHit(entity, BlowReading.read(source));
   }
 
   public static Optional<Gore> onDeath(final LivingEntity entity, final DamageSource source) {
-    return onDeath(entity, Blows.read(source));
+    return onDeath(entity, BlowReading.read(source));
   }
 
   private static Optional<Gore> onHit(final LivingEntity entity, final Blow blow) {

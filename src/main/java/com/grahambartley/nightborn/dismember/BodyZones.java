@@ -75,6 +75,6 @@ public record BodyZones(double head, double hip, double trunk, Map<BodyPart, Int
         return part;
       }
     }
-    return BodyPart.RIGHT_ARM;
+    throw new IllegalStateException("body zone weights add up to nothing");
   }
 }

@@ -4,6 +4,8 @@ import com.grahambartley.nightborn.batform.BatForm;
 import com.grahambartley.nightborn.client.anim.FirstPersonSway;
 import com.grahambartley.nightborn.client.anim.PlayerClips;
 import com.grahambartley.nightborn.client.anim.ThrustState;
+import com.grahambartley.nightborn.dismember.BodyPart;
+import com.grahambartley.nightborn.dismember.Dismemberment;
 import com.grahambartley.nightborn.gear.GearTags;
 import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
@@ -41,6 +43,26 @@ abstract class HeldItemRendererMixin {
       final int light,
       final CallbackInfo ci) {
     if (BatForm.isBat(player)) {
+      ci.cancel();
+    }
+  }
+
+  @Inject(method = "renderFirstPersonItem", at = @At("HEAD"), cancellable = true)
+  private void nightborn$noItemInALostHand(
+      final AbstractClientPlayerEntity player,
+      final float tickDelta,
+      final float pitch,
+      final Hand hand,
+      final float swingProgress,
+      final ItemStack item,
+      final float equipProgress,
+      final MatrixStack matrices,
+      final VertexConsumerProvider vertexConsumers,
+      final int light,
+      final CallbackInfo ci) {
+    final Arm arm =
+        hand == Hand.MAIN_HAND ? player.getMainArm() : player.getMainArm().getOpposite();
+    if (Dismemberment.missing(player, BodyPart.arm(arm))) {
       ci.cancel();
     }
   }

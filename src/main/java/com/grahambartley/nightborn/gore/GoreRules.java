@@ -1,5 +1,6 @@
 package com.grahambartley.nightborn.gore;
 
+import com.grahambartley.nightborn.fight.Blow;
 import java.util.Optional;
 
 public final class GoreRules {
