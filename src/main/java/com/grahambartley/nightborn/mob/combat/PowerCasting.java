@@ -1,14 +1,15 @@
 package com.grahambartley.nightborn.mob.combat;
 
 import com.grahambartley.nightborn.blood.BloodAttachment;
-import com.grahambartley.nightborn.mob.stage.StageCombat;
 import com.grahambartley.nightborn.skill.MobPowerUse;
 import com.grahambartley.nightborn.skill.PowerShow;
+import com.grahambartley.nightborn.skill.PowerUse;
 import com.grahambartley.nightborn.skill.Powers;
 import com.grahambartley.nightborn.skill.SkillAttachment;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.BiFunction;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.sound.SoundEvent;
@@ -17,31 +18,49 @@ import org.jetbrains.annotations.Nullable;
 
 public final class PowerCasting {
 
+  private final BiFunction<LivingEntity, Identifier, PowerUse.Verdict> cast;
   @Nullable private Tell telling;
   private long nextThink;
 
-  public <T extends MobEntity & PowerShow> void tick(final T caster, final StageCombat combat) {
+  public PowerCasting() {
+    this(Powers::cast);
+  }
+
+  private PowerCasting(final BiFunction<LivingEntity, Identifier, PowerUse.Verdict> cast) {
+    this.cast = cast;
+  }
+
+  public static PowerCasting underTell() {
+    return new PowerCasting(Powers::castUnderOwnClip);
+  }
+
+  public static boolean thinks(final boolean hasTarget, final long now, final long nextThink) {
+    return hasTarget && now >= nextThink;
+  }
+
+  public <T extends MobEntity & PowerShow> void tick(
+      final T caster, final int thinkTicks, final int bloodFloor) {
     final long now = caster.getWorld().getTime();
     final LivingEntity target = caster.getTarget();
     if (telling != null) {
       final Tell.Step step = telling.step(target != null, now);
       if (step == Tell.Step.CAST) {
-        Powers.cast(caster, telling.power());
+        cast.apply(caster, telling.power());
       }
       if (step != Tell.Step.WAIT) {
         telling = null;
       }
       return;
     }
-    if (target == null || now < nextThink) {
+    if (!thinks(target != null, now, nextThink)) {
       return;
     }
-    nextThink = now + combat.thinkTicks();
+    nextThink = now + thinkTicks;
     PowerChoice.choose(
             options(caster, false),
             caster.distanceTo(target),
             BloodAttachment.get(caster),
-            combat.bloodFloor())
+            bloodFloor)
         .ifPresent(option -> tell(caster, option, now));
   }
 

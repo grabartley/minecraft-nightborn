@@ -73,6 +73,11 @@ public class VeteranHunterEntity extends HunterEntity {
   }
 
   @Override
+  protected Optional<Identifier> fixedRank() {
+    return veteran().flatMap(Veteran::rank);
+  }
+
+  @Override
   public void arm(final String wanted) {
     veteran().ifPresentOrElse(kind -> carry(veteranId.toString(), kind.kit()), () -> super.arm(""));
   }
@@ -104,7 +109,9 @@ public class VeteranHunterEntity extends HunterEntity {
     super.fight();
     final Map<Identifier, VeteranAttack> known =
         veteran().map(kind -> VeteranData.attacks(getRegistryManager(), kind)).orElse(Map.of());
-    attacks.tick(known);
+    if (!telling()) {
+      attacks.tick(known);
+    }
   }
 
   @Override

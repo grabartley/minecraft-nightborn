@@ -33,6 +33,12 @@
       "id": "minecraft:entity.horse.breathe",
       "volume": 0.6,
       "pitch": 1.3
+    },
+    "mob": {
+      "max_range": 16.0,
+      "tell_ticks": 12,
+      "tell_sound": "minecraft:item.armor.equip_iron",
+      "tell_clip": "rallying_cry"
     }
   }
 }

@@ -12,7 +12,8 @@ public record Veteran(
     Optional<Identifier> crucifix,
     double healthScale,
     double armor,
-    List<Identifier> attacks) {
+    List<Identifier> attacks,
+    Optional<Identifier> rank) {
 
   public static final double MOST_SCALE = 16.0;
   public static final double MOST_ARMOR = 30.0;
@@ -33,7 +34,8 @@ public record Veteran(
                       Identifier.CODEC
                           .listOf()
                           .optionalFieldOf("attacks", List.of())
-                          .forGetter(Veteran::attacks))
+                          .forGetter(Veteran::attacks),
+                      Identifier.CODEC.optionalFieldOf("rank").forGetter(Veteran::rank))
                   .apply(instance, Veteran::new));
 
   public Veteran {

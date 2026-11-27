@@ -32,6 +32,7 @@ public class HunterTacticsGameTest implements FabricGameTest {
   private static HunterEntity hunter(final TestContext context, final BlockPos pos) {
     final HunterEntity hunter = context.spawnEntity(GuildMobs.HUNTER, pos);
     hunter.setAiDisabled(true);
+    TestHunters.unskilled(context, hunter);
     return hunter;
   }
 

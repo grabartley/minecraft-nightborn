@@ -23,6 +23,12 @@
       "id": "minecraft:block.beacon.power_select",
       "volume": 0.45,
       "pitch": 1.2
+    },
+    "mob": {
+      "max_range": 8.0,
+      "tell_ticks": 12,
+      "tell_sound": "minecraft:block.amethyst_block.chime",
+      "tell_clip": "raise_crucifix"
     }
   }
 }

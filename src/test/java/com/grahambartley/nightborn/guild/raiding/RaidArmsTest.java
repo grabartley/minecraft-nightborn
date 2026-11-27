@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import net.minecraft.util.Identifier;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -56,7 +57,8 @@ class RaidArmsTest {
         new RaidArms(
             id("stage"),
             veteran ? Optional.of(id("veteran")) : Optional.empty(),
-            List.of(new RaidArms.Kits(id("a"), hunters)));
+            List.of(new RaidArms.Kits(id("a"), hunters)),
+            Map.of());
     assertEquals(size, arms.size(percent));
     assertEquals(size - (arms.led(percent) ? 1 : 0), arms.hunterKits(percent).size());
   }
@@ -83,7 +85,8 @@ class RaidArmsTest {
         new RaidArms(
             id("stage"),
             Optional.empty(),
-            List.of(new RaidArms.Kits(id("a"), a), new RaidArms.Kits(id("b"), b)));
+            List.of(new RaidArms.Kits(id("a"), a), new RaidArms.Kits(id("b"), b)),
+            Map.of());
     assertEquals(
         List.of(expected.split(";")).stream().map(RaidArmsTest::id).toList(), arms.hunterKits(100));
   }
@@ -139,5 +142,14 @@ class RaidArmsTest {
     assertEquals(size, arms.size(percent));
     assertEquals(silver, silvered);
     assertEquals(holyWater, holy);
+  }
+
+  @ParameterizedTest(name = "{0}: veteran weight {1}, master weight {2}")
+  @CsvSource({"fledgling, 0, 0", "adult, 20, 5", "elder, 38, 12", "ancient, 45, 25"})
+  void sendsOlderRanksAfterOlderVampires(final String stage, final int veteran, final int master)
+      throws IOException {
+    final RaidArms arms = shipped(stage);
+    assertEquals(veteran, arms.rankWeights().getOrDefault(id("veteran"), 0));
+    assertEquals(master, arms.rankWeights().getOrDefault(id("master"), 0));
   }
 }

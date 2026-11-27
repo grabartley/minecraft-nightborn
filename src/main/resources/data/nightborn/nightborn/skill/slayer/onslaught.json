@@ -40,6 +40,12 @@
       "id": "minecraft:item.mace.smash_ground_heavy",
       "volume": 0.4,
       "pitch": 1.1
+    },
+    "mob": {
+      "max_range": 6.0,
+      "tell_ticks": 12,
+      "tell_sound": "minecraft:item.armor.equip_iron",
+      "tell_clip": "rallying_cry"
     }
   }
 }

@@ -26,6 +26,13 @@
       "id": "minecraft:item.trident.throw",
       "volume": 0.6,
       "pitch": 1.1
+    },
+    "mob": {
+      "min_range": 5.0,
+      "max_range": 18.0,
+      "tell_ticks": 10,
+      "tell_sound": "minecraft:item.trident.riptide_1",
+      "tell_clip": "throw_holy_water"
     }
   }
 }

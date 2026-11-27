@@ -151,6 +151,7 @@ public final class RaidDispatch {
       final HunterEntity hunter = place(world, GuildMobs.HUNTER, spot, random);
       if (hunter != null) {
         hunter.enlist(orders, kit.toString());
+        hunter.rollFrom(arms.rankWeights());
         members.add(hunter.getUuid());
       }
     }

@@ -39,6 +39,7 @@ public class NemesisGameTest implements FabricGameTest {
   private static HunterEntity hunter(final TestContext context, final int x) {
     final HunterEntity hunter = context.spawnEntity(GuildMobs.HUNTER, new BlockPos(x, 2, 1));
     hunter.setAiDisabled(true);
+    TestHunters.unskilled(context, hunter);
     MobNaming.ensure(hunter);
     return hunter;
   }

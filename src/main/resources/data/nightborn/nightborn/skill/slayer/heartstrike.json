@@ -29,6 +29,13 @@
       "id": "minecraft:entity.player.attack.strong",
       "volume": 0.6,
       "pitch": 0.9
+    },
+    "mob": {
+      "min_range": 1.5,
+      "max_range": 5.0,
+      "tell_ticks": 10,
+      "tell_sound": "minecraft:item.trident.return",
+      "tell_clip": "stake_strike"
     }
   }
 }

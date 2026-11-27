@@ -4,5 +4,10 @@
   "kits": [
     { "kit": "nightborn:raid_silver_holy_water", "count": 3 },
     { "kit": "nightborn:raid_silver", "count": 8 }
-  ]
+  ],
+  "rank_weights": {
+    "nightborn:hunter": 30,
+    "nightborn:veteran": 45,
+    "nightborn:master": 25
+  }
 }

@@ -1,0 +1,54 @@
+{
+  "rank_weights": {
+    "nightborn:initiate": 50,
+    "nightborn:hunter": 35,
+    "nightborn:veteran": 12,
+    "nightborn:master": 3
+  },
+  "think_ticks": {
+    "nightborn:initiate": 100,
+    "nightborn:hunter": 70,
+    "nightborn:veteran": 45,
+    "nightborn:master": 30
+  },
+  "top_rank_spread": 10,
+  "core_weight": 2,
+  "path_weight": 3,
+  "kit_leanings": {
+    "nightborn:crossbow": {
+      "nightborn:slayer/stake_throw": 4,
+      "nightborn:slayer/quick_shot": 8,
+      "nightborn:trapper/snare": 4,
+      "nightborn:trapper/net_shot": 8
+    },
+    "nightborn:stake": {
+      "nightborn:slayer/sidestep": 4,
+      "nightborn:slayer/riposte": 4,
+      "nightborn:slayer/heartstrike": 8,
+      "nightborn:hunter/faith": 4,
+      "nightborn:faithful/rebuke": 6
+    },
+    "nightborn:silver_stake": {
+      "nightborn:slayer/heartstrike": 8,
+      "nightborn:hunter/faith": 6,
+      "nightborn:faithful/rebuke": 8,
+      "nightborn:faithful/blessing": 4
+    },
+    "nightborn:raid_wooden": {
+      "nightborn:slayer/heartstrike": 8,
+      "nightborn:faithful/rebuke": 6
+    },
+    "nightborn:raid_silver": {
+      "nightborn:slayer/heartstrike": 8,
+      "nightborn:faithful/rebuke": 8
+    },
+    "nightborn:raid_silver_holy_water": {
+      "nightborn:hunter/faith": 6,
+      "nightborn:faithful/rebuke": 8,
+      "nightborn:faithful/consecrate": 6
+    }
+  },
+  "trickle_experience": 25,
+  "trickle_ticks": 1200,
+  "stake_experience": 300
+}

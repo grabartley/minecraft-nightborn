@@ -1,14 +1,20 @@
 package com.grahambartley.nightborn.guild.raiding;
 
+import com.grahambartley.nightborn.mob.look.Weighted;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import net.minecraft.util.Identifier;
 
-public record RaidArms(Identifier stage, Optional<Identifier> veteran, List<RaidArms.Kits> kits) {
+public record RaidArms(
+    Identifier stage,
+    Optional<Identifier> veteran,
+    List<RaidArms.Kits> kits,
+    Map<Identifier, Integer> rankWeights) {
 
   public static final int MOST = 12;
 
@@ -30,7 +36,11 @@ public record RaidArms(Identifier stage, Optional<Identifier> veteran, List<Raid
                       .group(
                           Identifier.CODEC.fieldOf("stage").forGetter(RaidArms::stage),
                           Identifier.CODEC.optionalFieldOf("veteran").forGetter(RaidArms::veteran),
-                          Kits.CODEC.listOf().fieldOf("kits").forGetter(RaidArms::kits))
+                          Kits.CODEC.listOf().fieldOf("kits").forGetter(RaidArms::kits),
+                          Codec.unboundedMap(
+                                  Identifier.CODEC, Codec.intRange(0, Weighted.MAX_WEIGHT))
+                              .optionalFieldOf("rank_weights", Map.of())
+                              .forGetter(RaidArms::rankWeights))
                       .apply(instance, RaidArms::new))
           .validate(RaidArms::fits);
 
@@ -44,6 +54,7 @@ public record RaidArms(Identifier stage, Optional<Identifier> veteran, List<Raid
 
   public RaidArms {
     kits = List.copyOf(kits);
+    rankWeights = Map.copyOf(rankWeights);
   }
 
   public boolean led(final int percent) {

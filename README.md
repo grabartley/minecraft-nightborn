@@ -61,7 +61,8 @@ your coffin by day. Then hold it against any member who challenges you for it.
 string up garlic, and load a crossbow with stake, silver or holy water bolts.
 - **Find the one among you.** A hand mirror shows no vampire, and garlic or a raised crucifix makes one flinch.
 - **Join the guild.** Stake a vampire to prove yourself and a Guild Master swears you in and hands you a hunter's
-journal. Rise from Initiate to Hunter, Veteran and Master.
+journal. Rise from Initiate to Hunter, Veteran and Master. The guild's own hunters hold ranks too, and grow
+sharper the longer they live.
 - **Walk two of four paths.** The Faithful pray, bless blades and call down holy light. Slayers dodge, lunge and throw
 stakes. Trappers lay snares and bait and net bats out of the air. Seekers read a kill for the vampire behind it and
 see through every veil.
