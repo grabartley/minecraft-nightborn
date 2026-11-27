@@ -19,7 +19,7 @@ public record DismembermentSettings(
   public static final IntSetting SEVER_CHANCE =
       new IntSetting(SECTION, "severChance", 15, 0, 100, c -> c.dismemberment().severChance());
   public static final IntSetting STRONG_BLOW =
-      new IntSetting(SECTION, "strongBlow", 20, 1, 100, c -> c.dismemberment().strongBlow());
+      new IntSetting(SECTION, "strongBlow", 15, 1, 100, c -> c.dismemberment().strongBlow());
   public static final IntSetting MASSIVE_BLOW =
       new IntSetting(SECTION, "massiveBlow", 50, 1, 100, c -> c.dismemberment().massiveBlow());
   public static final IntSetting BADLY_HURT =

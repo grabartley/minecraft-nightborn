@@ -24,11 +24,12 @@ class SeverRulesTest {
   @ParameterizedTest(name = "health {0}, staggered {1}, dealt {2}, roll {3}: {4}")
   @CsvSource({
     "10, false, 10, 0.1, true",
+    "10, false, 6, 0.1, true",
     "13.9, false, 8, 0.1, true",
     "14, false, 8, 0.1, false",
     "30, true, 8, 0.1, true",
     "30, false, 8, 0.1, false",
-    "10, false, 7.9, 0.1, false",
+    "10, false, 5.9, 0.1, false",
     "10, false, 10, 0.15, false",
     "10, false, 10, 0.149, true",
     "0, false, 10, 0.0, false"
@@ -48,7 +49,7 @@ class SeverRulesTest {
   @ParameterizedTest(name = "dealt {0}: {1}")
   @CsvSource({"19.9, false", "20, true", "39, true"})
   @DisplayName("a blow with no blade cuts only when it is massive")
-  void massiveFist(final float taken, final boolean severs) {
+  void massiveClub(final float taken, final boolean severs) {
     assertEquals(
         severs, SeverRules.severs(DEFAULTS, hunter(1.0F, true), FIST, true, true, taken, 0.0));
   }
