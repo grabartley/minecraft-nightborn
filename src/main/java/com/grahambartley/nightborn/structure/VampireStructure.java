@@ -1,6 +1,5 @@
 package com.grahambartley.nightborn.structure;
 
-import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.MapCodec;
@@ -9,7 +8,6 @@ import java.util.List;
 import java.util.Optional;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.structure.StructureLiquidSettings;
-import net.minecraft.structure.StructurePiecesCollector;
 import net.minecraft.structure.StructurePiecesList;
 import net.minecraft.structure.pool.StructurePool;
 import net.minecraft.structure.pool.StructurePoolBasedGenerator;
@@ -23,7 +21,6 @@ import net.minecraft.util.math.ColumnPos;
 import net.minecraft.util.math.random.Random;
 import net.minecraft.world.Heightmap;
 import net.minecraft.world.StructureWorldAccess;
-import net.minecraft.world.biome.source.BiomeCoords;
 import net.minecraft.world.gen.HeightContext;
 import net.minecraft.world.gen.StructureAccessor;
 import net.minecraft.world.gen.chunk.ChunkGenerator;
@@ -82,12 +79,7 @@ public final class VampireStructure extends Structure {
                           StructureAmbience.CODEC
                               .optionalFieldOf("ambience", StructureAmbience.SILENT)
                               .forGetter(VampireStructure::ambience),
-                          Footing.CODEC
-                              .optionalFieldOf("footing")
-                              .forGetter(structure -> structure.footing),
-                          Summit.CODEC
-                              .optionalFieldOf("summit")
-                              .forGetter(structure -> structure.summit))
+                          Siting.MAP_CODEC.forGetter(VampireStructure::siting))
                       .apply(instance, VampireStructure::new))
           .validate(VampireStructure::staysInReach);
 
@@ -104,8 +96,7 @@ public final class VampireStructure extends Structure {
   private final Household household;
   private final boolean spawnsVampireBats;
   private final StructureAmbience ambience;
-  private final Optional<Footing> footing;
-  private final Optional<Summit> summit;
+  private final Siting siting;
 
   public VampireStructure(
       final Config config,
@@ -122,8 +113,7 @@ public final class VampireStructure extends Structure {
       final Household household,
       final boolean spawnsVampireBats,
       final StructureAmbience ambience,
-      final Optional<Footing> footing,
-      final Optional<Summit> summit) {
+      final Siting siting) {
     super(config);
     this.startPool = startPool;
     this.startJigsawName = startJigsawName;
@@ -138,8 +128,7 @@ public final class VampireStructure extends Structure {
     this.household = household;
     this.spawnsVampireBats = spawnsVampireBats;
     this.ambience = ambience;
-    this.footing = footing;
-    this.summit = summit;
+    this.siting = siting;
   }
 
   public boolean spawnsVampireBats() {
@@ -150,12 +139,16 @@ public final class VampireStructure extends Structure {
     return ambience;
   }
 
+  public Siting siting() {
+    return siting;
+  }
+
   public Optional<Footing> footing() {
-    return footing;
+    return siting.footing();
   }
 
   public Optional<Summit> summit() {
-    return summit;
+    return siting.summit();
   }
 
   public Household household() {
@@ -166,11 +159,11 @@ public final class VampireStructure extends Structure {
     return StructureReach.fits(
             structure.maxDistanceFromCenter,
             structure.getTerrainAdaptation(),
-            structure.summit.map(Summit::reach).orElse(0))
+            structure.siting.reach())
         ? DataResult.success(structure)
         : DataResult.error(
             () ->
-                "A vampire structure's reach including terrain adaptation and its summit search"
+                "A vampire structure's reach including terrain adaptation and its ground search"
                     + " must not exceed "
                     + JigsawStructure.MAX_SIZE);
   }
@@ -182,14 +175,12 @@ public final class VampireStructure extends Structure {
         startHeight.get(
             context.random(), new HeightContext(context.chunkGenerator(), context.world()));
     final ColumnPos corner = new ColumnPos(chunk.getStartX(), chunk.getStartZ());
-    final Optional<ColumnPos> ground =
-        summit.isPresent() ? summit.get().peak(context, corner) : Optional.of(corner);
+    final Optional<ColumnPos> ground = siting.ground(context, corner);
     if (ground.isEmpty()) {
       return Optional.empty();
     }
     final BlockPos start = new BlockPos(ground.get().x(), y, ground.get().z());
-    final Optional<StructurePosition> position =
-        StructurePoolBasedGenerator.generate(
+    return StructurePoolBasedGenerator.generate(
             context,
             startPool,
             startJigsawName,
@@ -200,64 +191,8 @@ public final class VampireStructure extends Structure {
             maxDistanceFromCenter,
             StructurePoolAliasLookup.create(poolAliases, start, context.seed()),
             dimensionPadding,
-            liquidSettings);
-    if (footing.isEmpty() || position.isEmpty()) {
-      return position;
-    }
-    final StructurePiecesCollector pieces = position.get().generate();
-    final Optional<Threshold> threshold =
-        footing
-            .get()
-            .entrance()
-            .flatMap(
-                name ->
-                    Threshold.in(
-                        pieces.toList().pieces(),
-                        name,
-                        context.structureTemplateManager(),
-                        context.random()));
-    final BlockPos move =
-        threshold
-            .map(
-                way -> {
-                  final ColumnPos meets = summit.isPresent() ? ground.get() : way.outside();
-                  return way.moveOnto(meets, Footing.surface(context, meets));
-                })
-            .orElse(BlockPos.ORIGIN);
-    if (threshold.isEmpty() && footing.get().entrance().isPresent()
-        || !footing.get().allowsLift(move.getY())) {
-      return Optional.empty();
-    }
-    pieces
-        .toList()
-        .pieces()
-        .forEach(piece -> piece.translate(move.getX(), move.getY(), move.getZ()));
-    final BlockPos placed = position.get().position().add(move);
-    if (!inBiome(context, placed)) {
-      return Optional.empty();
-    }
-    final ColumnPos approach =
-        threshold
-            .map(way -> way.outside())
-            .map(out -> new ColumnPos(out.x() + move.getX(), out.z() + move.getZ()))
-            .orElse(new ColumnPos(placed.getX(), placed.getZ()));
-    return footing.get().fits(context, pieces.getBoundingBox(), approach)
-        ? Optional.of(new StructurePosition(placed, Either.right(pieces)))
-        : Optional.empty();
-  }
-
-  private static boolean inBiome(final Context context, final BlockPos at) {
-    return context
-        .biomePredicate()
-        .test(
-            context
-                .chunkGenerator()
-                .getBiomeSource()
-                .getBiome(
-                    BiomeCoords.fromBlock(at.getX()),
-                    BiomeCoords.fromBlock(at.getY()),
-                    BiomeCoords.fromBlock(at.getZ()),
-                    context.noiseConfig().getMultiNoiseSampler()));
+            liquidSettings)
+        .flatMap(position -> siting.settle(context, position, ground.get()));
   }
 
   @Override

@@ -18,7 +18,7 @@ class StructureReachTest {
         adaptation == StructureTerrainAdaptation.NONE ? 0 : 12, StructureReach.padding(adaptation));
   }
 
-  @ParameterizedTest(name = "reach {0} with {1} and a summit search of {2} fits: {3}")
+  @ParameterizedTest(name = "reach {0} with {1} and a ground search of {2} fits: {3}")
   @CsvSource({
     "128, NONE, 0, true",
     "129, NONE, 0, false",
@@ -33,13 +33,13 @@ class StructureReachTest {
     "64, BEARD_THIN, 53, false"
   })
   @DisplayName(
-      "a structure fits only when its reach, padding and summit search stay inside the referenced"
+      "a structure fits only when its reach, padding and ground search stay inside the referenced"
           + " chunks")
   void fits(
       final int reach,
       final StructureTerrainAdaptation adaptation,
-      final int summitReach,
+      final int groundReach,
       final boolean fits) {
-    assertEquals(fits, StructureReach.fits(reach, adaptation, summitReach));
+    assertEquals(fits, StructureReach.fits(reach, adaptation, groundReach));
   }
 }
