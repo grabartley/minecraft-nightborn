@@ -2,8 +2,8 @@ package com.grahambartley.nightborn.gametest;
 
 import com.grahambartley.nightborn.coffin.CoffinRise;
 import com.grahambartley.nightborn.guild.ContractMaps;
-import com.grahambartley.nightborn.guild.ExplorationMaps;
 import com.grahambartley.nightborn.mob.VampireEntity;
+import com.grahambartley.nightborn.raid.ExplorationMaps;
 import com.grahambartley.nightborn.raid.HouseGuardGoal;
 import com.grahambartley.nightborn.raid.HouseNoise;
 import com.grahambartley.nightborn.raid.NoiseAct;
@@ -164,7 +164,7 @@ public final class RaidGameTest implements FabricGameTest {
   }
 
   @GameTest(templateName = ARENA, tickLimit = 20)
-  public void aRumourMapMarksTheHouseEntrance(final TestContext context) {
+  public void aMarkedExplorationMapPutsItsCrossOnTheTarget(final TestContext context) {
     final BlockPos entrance = context.getAbsolutePos(new BlockPos(0, 1, 0)).add(-260, 0, 410);
     final ItemStack map =
         ExplorationMaps.marking(context.getWorld(), entrance, (byte) 2, RumourMaps.NAME_KEY);
@@ -177,7 +177,7 @@ public final class RaidGameTest implements FabricGameTest {
                         mark.type().matches(MapDecorationTypes.RED_X)
                             && (int) mark.x() == entrance.getX()
                             && (int) mark.z() == entrance.getZ()),
-        "the rumour map puts its cross on the entrance");
+        "the marked map puts its cross on the target");
     context.complete();
   }
 

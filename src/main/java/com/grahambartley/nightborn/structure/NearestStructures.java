@@ -106,9 +106,9 @@ public final class NearestStructures {
     final StructurePlacementCalculator placements =
         world.getChunkManager().getStructurePlacementCalculator();
     final List<Found> found = new ArrayList<>();
-    final int reach = range + JigsawStructure.MAX_SIZE;
     for (final RegistryEntry<Structure> entry : entries) {
       final Identifier id = entry.getKey().orElseThrow().getValue();
+      final int reach = reach(range, entry.value() instanceof VampireStructure);
       for (final StructurePlacement placement : placements.getPlacements(entry)) {
         if (!(placement instanceof RandomSpreadStructurePlacement spread)) {
           Nightborn.LOGGER.warn("Structure search cannot walk the placement of {}", id);
@@ -125,7 +125,7 @@ public final class NearestStructures {
           final BlockPos at = spread.getLocatePos(start);
           if (SpreadCells.within(from, at, reach)
               && spread.shouldGenerate(placements, start.x, start.z)) {
-            entrance(world, entry.value(), id, start, at)
+            entranceAt(world, entry.value(), id, start, at)
                 .filter(entrance -> SpreadCells.within(from, entrance, range))
                 .ifPresent(entrance -> found.add(new Found(id, entrance)));
           }
@@ -135,26 +135,61 @@ public final class NearestStructures {
     return found;
   }
 
-  private static Optional<BlockPos> entrance(
+  static int reach(final int range, final boolean house) {
+    return house ? range + JigsawStructure.MAX_SIZE : range;
+  }
+
+  public static BlockPos entranceOfLocated(
+      final ServerWorld world, final RegistryEntry<Structure> entry, final BlockPos locate) {
+    final StructurePlacementCalculator placements =
+        world.getChunkManager().getStructurePlacementCalculator();
+    for (final StructurePlacement placement : placements.getPlacements(entry)) {
+      if (placement instanceof RandomSpreadStructurePlacement spread) {
+        final Optional<ChunkPos> start =
+            SpreadStart.behind(spread, placements.getStructureSeed(), locate);
+        if (start.isPresent()) {
+          return entranceAt(
+                  world,
+                  entry.value(),
+                  entry.getKey().orElseThrow().getValue(),
+                  start.get(),
+                  locate)
+              .orElse(locate);
+        }
+      }
+    }
+    return locate;
+  }
+
+  private static Optional<BlockPos> entranceAt(
       final ServerWorld world,
       final Structure structure,
       final Identifier id,
       final ChunkPos start,
       final BlockPos locate) {
-    final SelectiveNbtCollector saved = SavedStarts.collector();
+    final SelectiveNbtCollector scanned = SavedStarts.collector();
     world
         .getChunkManager()
         .chunkLoadingManager
         .getWorker()
-        .scanChunk(start, saved)
+        .scanChunk(start, scanned)
         .completeOnTimeout(null, SCAN_SECONDS, TimeUnit.SECONDS)
         .join();
-    final NbtElement root = saved.getRoot();
+    final NbtElement root = scanned.getRoot();
+    final Optional<Boolean> saved =
+        SavedStarts.has(root, id, SharedConstants.getGameVersion().getSaveVersion().getId());
+    if (!(structure instanceof VampireStructure house)) {
+      return StructureEntrance.found(
+          saved,
+          () -> Optional.of(locate),
+          () ->
+              EntrancePlan.plans(world, structure, start) ? Optional.of(locate) : Optional.empty(),
+          locate);
+    }
     return StructureEntrance.found(
-        SavedStarts.has(root, id, SharedConstants.getGameVersion().getSaveVersion().getId()),
-        () ->
-            SavedStarts.start(root, id).flatMap(nbt -> EntrancePlan.ofSaved(world, structure, nbt)),
-        () -> EntrancePlan.of(world, structure, start),
+        saved,
+        () -> SavedStarts.start(root, id).flatMap(nbt -> EntrancePlan.ofSaved(world, house, nbt)),
+        () -> EntrancePlan.of(world, house, start),
         locate);
   }
 }

@@ -15,9 +15,6 @@ import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.random.Random;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.gen.chunk.ChunkGenerator;
-import net.minecraft.world.gen.chunk.placement.RandomSpreadStructurePlacement;
-import net.minecraft.world.gen.chunk.placement.StructurePlacement;
-import net.minecraft.world.gen.chunk.placement.StructurePlacementCalculator;
 import net.minecraft.world.gen.structure.Structure;
 
 public final class EntrancePlan {
@@ -40,65 +37,43 @@ public final class EntrancePlan {
   }
 
   public static Optional<Threshold> threshold(
-      final Structure structure,
+      final VampireStructure house,
       final List<StructurePiece> pieces,
       final StructureTemplateManager templates,
       final Random random) {
-    return structure instanceof VampireStructure vampire
-        ? vampire.siting().entrance().flatMap(name -> Threshold.in(pieces, name, templates, random))
-        : Optional.empty();
+    return house.siting().entrance().flatMap(name -> Threshold.in(pieces, name, templates, random));
+  }
+
+  public static boolean plans(
+      final ServerWorld world, final Structure structure, final ChunkPos start) {
+    return structure
+        .getValidStructurePosition(context(world, start, structure.getValidBiomes()::contains))
+        .isPresent();
   }
 
   public static Optional<BlockPos> of(
-      final ServerWorld world, final Structure structure, final ChunkPos start) {
-    final Structure.Context context = context(world, start, structure.getValidBiomes()::contains);
-    return structure
-        .getValidStructurePosition(context)
+      final ServerWorld world, final VampireStructure house, final ChunkPos start) {
+    return house
+        .getValidStructurePosition(context(world, start, house.getValidBiomes()::contains))
         .map(
             position ->
-                standingSpot(
-                        structure,
-                        position.generate().toList().pieces(),
-                        context.structureTemplateManager(),
-                        context.random())
+                standingSpot(world, house, position.generate().toList().pieces())
                     .orElse(position.position()));
   }
 
   public static Optional<BlockPos> ofSaved(
-      final ServerWorld world, final Structure structure, final NbtCompound saved) {
+      final ServerWorld world, final VampireStructure house, final NbtCompound saved) {
     final StructureStart start =
         StructureStart.fromNbt(StructureContext.from(world), saved, world.getSeed());
     return start == null || !start.hasChildren()
         ? Optional.empty()
-        : standingSpot(
-            structure,
-            start.getChildren(),
-            world.getStructureTemplateManager(),
-            Random.create(world.getSeed()));
-  }
-
-  public static BlockPos ofLocated(
-      final ServerWorld world, final RegistryEntry<Structure> structure, final BlockPos locate) {
-    final StructurePlacementCalculator placements =
-        world.getChunkManager().getStructurePlacementCalculator();
-    for (final StructurePlacement placement : placements.getPlacements(structure)) {
-      if (placement instanceof RandomSpreadStructurePlacement spread) {
-        final Optional<ChunkPos> start =
-            SpreadStart.behind(spread, placements.getStructureSeed(), locate);
-        if (start.isPresent()) {
-          return of(world, structure.value(), start.get()).orElse(locate);
-        }
-      }
-    }
-    return locate;
+        : standingSpot(world, house, start.getChildren());
   }
 
   private static Optional<BlockPos> standingSpot(
-      final Structure structure,
-      final List<StructurePiece> pieces,
-      final StructureTemplateManager templates,
-      final Random random) {
-    return threshold(structure, pieces, templates, random)
-        .map(way -> ((VampireStructure) structure).siting().standingSpot(way));
+      final ServerWorld world, final VampireStructure house, final List<StructurePiece> pieces) {
+    return threshold(
+            house, pieces, world.getStructureTemplateManager(), Random.create(world.getSeed()))
+        .map(house.siting()::standingSpot);
   }
 }

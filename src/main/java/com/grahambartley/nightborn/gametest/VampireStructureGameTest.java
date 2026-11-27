@@ -282,7 +282,7 @@ public class VampireStructureGameTest implements FabricGameTest {
     context.assertTrue(position.isPresent(), id + " accepts the flat dry test ground");
     final Optional<Threshold> threshold =
         EntrancePlan.threshold(
-            structure,
+            (VampireStructure) structure,
             position.get().generate().toList().pieces(),
             world.getStructureTemplateManager(),
             world.getRandom());

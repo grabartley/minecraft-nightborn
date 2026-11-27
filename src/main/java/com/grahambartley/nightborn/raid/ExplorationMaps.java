@@ -1,4 +1,4 @@
-package com.grahambartley.nightborn.guild;
+package com.grahambartley.nightborn.raid;
 
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.item.FilledMapItem;

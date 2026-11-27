@@ -11,6 +11,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 class NearestStructuresTest {
@@ -33,5 +34,14 @@ class NearestStructuresTest {
       assertEquals(CRYPT, answer.join());
     }
     searcher.shutdownNow();
+  }
+
+  @ParameterizedTest(name = "range {0}, vampire house {1} -> searched out to {2}")
+  @CsvSource({"500, true, 628", "500, false, 500", "3000, true, 3128", "3000, false, 3000"})
+  @DisplayName(
+      "a vampire house is looked for a structure's width past the range, since only its entrance"
+          + " must lie within it; anything else is looked for within the range")
+  void reach(final int range, final boolean house, final int reach) {
+    assertEquals(reach, NearestStructures.reach(range, house));
   }
 }

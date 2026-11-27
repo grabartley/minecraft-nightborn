@@ -1,8 +1,8 @@
 package com.grahambartley.nightborn.wild;
 
-import com.grahambartley.nightborn.guild.ExplorationMaps;
 import com.grahambartley.nightborn.guild.GuildRumour;
-import com.grahambartley.nightborn.structure.EntrancePlan;
+import com.grahambartley.nightborn.raid.ExplorationMaps;
+import com.grahambartley.nightborn.structure.NearestStructures;
 import com.mojang.datafixers.util.Pair;
 import java.util.Optional;
 import net.minecraft.entity.Entity;
@@ -58,7 +58,10 @@ public final class RumourMapOffer implements TradeOffers.Factory {
     return nearest
         .map(
             found ->
-                offer(world, EntrancePlan.ofLocated(world, found.getSecond(), found.getFirst())))
+                offer(
+                    world,
+                    NearestStructures.entranceOfLocated(
+                        world, found.getSecond(), found.getFirst())))
         .orElse(null);
   }
 

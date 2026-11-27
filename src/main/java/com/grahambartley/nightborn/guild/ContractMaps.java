@@ -1,5 +1,6 @@
 package com.grahambartley.nightborn.guild;
 
+import com.grahambartley.nightborn.raid.ExplorationMaps;
 import com.grahambartley.nightborn.raid.MapSpread;
 import com.grahambartley.nightborn.server.ServerConfigService;
 import net.minecraft.entity.Entity;
