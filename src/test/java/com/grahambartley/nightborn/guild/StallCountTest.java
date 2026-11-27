@@ -37,6 +37,18 @@ class StallCountTest {
     assertEquals(StallCount.GIVE_UP_TICKS, ticksUntilGiveUp(step, sway));
   }
 
+  @ParameterizedTest(name = "jumping every {0} ticks")
+  @ValueSource(ints = {10, 12, 20})
+  @DisplayName("a mob jumping on one spot is still stuck")
+  void jumpingOnOneSpotIsStuck(final int every) {
+    final StallCount count = new StallCount();
+    for (int tick = 0; tick < StallCount.GIVE_UP_TICKS; tick++) {
+      final double rise = tick % every < every / 2 ? 1.25 * (tick % every) / (every / 2.0) : 0.0;
+      assertFalse(count.gaveUp(TARGET, new Vec3d(0.5, 64 + rise, 0.5)));
+    }
+    assertTrue(count.gaveUp(TARGET, new Vec3d(0.5, 64, 0.5)));
+  }
+
   @ParameterizedTest(name = "moving {0} a tick")
   @ValueSource(doubles = {0.03, 0.1, 0.2})
   @DisplayName("a mob that keeps moving never gives up, however it winds")

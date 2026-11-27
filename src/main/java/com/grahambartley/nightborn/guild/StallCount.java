@@ -20,7 +20,7 @@ public final class StallCount {
       stalled = 0;
       return false;
     }
-    if (pos.distanceTo(anchor) > PROGRESS) {
+    if (pos.subtract(anchor).horizontalLength() > PROGRESS) {
       anchor = pos;
       stalled = 0;
       return false;

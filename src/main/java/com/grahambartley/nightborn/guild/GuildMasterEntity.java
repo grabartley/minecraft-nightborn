@@ -118,9 +118,9 @@ public class GuildMasterEntity extends MerchantEntity
   private final MobFighting fighting =
       MobFighting.movingFirst(PowerCasting.underTell(), this::tickTactics);
   private final ShownHunterAction shown = new ShownHunterAction();
+  private final ShownAction shownPower = new ShownAction();
   private final StallWatch stall = new StallWatch();
   private WanderAroundFarGoal wander;
-  private final ShownAction shownPower = new ShownAction();
   private String kitId = "";
   @Nullable private HunterKit kit;
   private long lastRestock;

@@ -1,7 +1,6 @@
 package com.grahambartley.nightborn.guild;
 
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -45,8 +44,5 @@ class StallWatchTest {
     }
     verify(navigation, times(givesUp ? 1 : 0)).stop();
     verify(wander, times(givesUp && wanders ? 1 : 0)).ignoreChanceOnce();
-    if (!wanders) {
-      verify(wander, never()).ignoreChanceOnce();
-    }
   }
 }
