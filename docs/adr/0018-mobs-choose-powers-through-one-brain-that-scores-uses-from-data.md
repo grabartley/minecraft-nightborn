@@ -27,3 +27,11 @@ Vampire mobs and hunter mobs use the same powers as players (HOME-16, GUILD-17).
 - Hunters step their kit before they think about a power, and vampires move after it, as each did before. The owner keeps both orders.
 - A vampire in bat form does not think about powers, so the `close_in` that bat flight reports is not seen yet. The default `close_in` use waits for the work that lets a flying vampire choose a power.
 - Hunting and guarding are intents with budgets, but no goal reports them yet. They arrive with the work that gives mobs powers outside a fight.
+- Baseline server tick time, for later brain work to compare with. Measured in a single player dev client at night on a flat stone arena, with `/tick query` averaging 100 ticks, three samples each, before and after this change:
+
+| Scene | Before (ms per tick) | After (ms per tick) |
+|---|---|---|
+| Ten vampires against ten hunters, from the moment they meet | 5.7, 4.9, 4.7 | 5.6, 5.1, 6.8 |
+| Forty idle vampires | 4.3, 5.8, 4.8 | 4.6, 4.2, 4.1 |
+
+The samples swing by more than the gap between the two columns, so both scenes cost the same within what this measures.
