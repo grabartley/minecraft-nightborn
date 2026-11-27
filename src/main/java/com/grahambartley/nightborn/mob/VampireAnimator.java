@@ -30,10 +30,15 @@ public final class VampireAnimator {
   private final EndingEdge landingEdge = new EndingEdge();
   private final EndingEdge risingEdge = new EndingEdge();
   private final ShownAction shownAction = new ShownAction();
+  private final LevitationGait levitationGait = new LevitationGait();
   private VampirePose shownPose = VampirePose.IDLE;
 
   public VampirePose shownPose() {
     return shownPose;
+  }
+
+  public double levitationSpread() {
+    return levitationGait.spread();
   }
 
   public boolean holdsHead() {
@@ -53,8 +58,11 @@ public final class VampireAnimator {
               final VisibleState visible = VisibleStateAttachment.get(vampire);
               final boolean downed = visible.downed();
               risingEdge.ended(downed);
-              final double speed =
-                  Math.hypot(vampire.getX() - vampire.prevX, vampire.getZ() - vampire.prevZ);
+              levitationGait.observe(
+                  vampire.age,
+                  levitating,
+                  vampire.isSprinting(),
+                  Math.hypot(vampire.getX() - vampire.prevX, vampire.getZ() - vampire.prevZ));
               final VampirePose pose =
                   VampirePose.of(
                       new VampirePose.Cue(
@@ -65,9 +73,8 @@ public final class VampireAnimator {
                           !vampire.isAlive(),
                           levitating,
                           landingEdge.ending(),
-                          vampire.isSprinting(),
+                          levitationGait.pose(),
                           state.getLimbSwingAmount(),
-                          speed,
                           vampire.getVehicle() instanceof SeatEntity,
                           vampire.reading(),
                           SunFire.burning(vampire)));

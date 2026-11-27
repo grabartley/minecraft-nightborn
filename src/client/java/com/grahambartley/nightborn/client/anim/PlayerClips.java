@@ -43,7 +43,9 @@ public final class PlayerClips {
                             .tick(
                                 player.age,
                                 Levitation.isLevitating(player),
-                                VisibleStateAttachment.get(player).downed())));
+                                VisibleStateAttachment.get(player).downed(),
+                                player.isSprinting(),
+                                horizontalSpeed(player))));
     ClientPlayNetworking.registerGlobalReceiver(
         PlayerCuePayload.ID,
         (payload, context) ->
@@ -72,7 +74,7 @@ public final class PlayerClips {
             new PlayerClipState.Situation(
                 Levitation.isLevitating(player),
                 player.isSprinting(),
-                Math.hypot(player.getX() - player.prevX, player.getZ() - player.prevZ),
+                horizontalSpeed(player),
                 visible.downed(),
                 visible.feeding(),
                 visible.isWeakened() && staggersOnFoot(player),
@@ -80,6 +82,10 @@ public final class PlayerClips {
                 StakedFall.staked(player) && !player.isAlive(),
                 SunFire.burning(player)),
             VampireClips::seconds);
+  }
+
+  public static double levitationSpread(final PlayerEntity player) {
+    return state(player).levitationSpread();
   }
 
   public static Optional<String> power(final PlayerEntity player) {
@@ -130,6 +136,10 @@ public final class PlayerClips {
   private static Optional<PlayerEntity> player(final MinecraftClient client, final int entityId) {
     final Entity entity = client.world == null ? null : client.world.getEntityById(entityId);
     return entity instanceof PlayerEntity player ? Optional.of(player) : Optional.empty();
+  }
+
+  private static double horizontalSpeed(final PlayerEntity player) {
+    return Math.hypot(player.getX() - player.prevX, player.getZ() - player.prevZ);
   }
 
   private static boolean staggersOnFoot(final PlayerEntity player) {

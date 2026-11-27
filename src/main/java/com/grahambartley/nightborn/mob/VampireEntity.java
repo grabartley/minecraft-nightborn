@@ -637,6 +637,10 @@ public class VampireEntity extends HostileEntity
     return animator.holdsHead();
   }
 
+  public double levitationSpread() {
+    return animator.levitationSpread();
+  }
+
   @Override
   public AnimatableInstanceCache getAnimatableInstanceCache() {
     return cache;

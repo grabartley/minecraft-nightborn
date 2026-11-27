@@ -27,33 +27,32 @@ class VampirePoseTest {
 
   @ParameterizedTest(
       name =
-          "coffin {0}, downed {1}, rising {2}, dying {3}, levitating {4}, landing {5}, seated {9},"
-              + " reading {10}: {11}")
+          "coffin {0}, downed {1}, rising {2}, dying {3}, levitating {4} as {6}, landing {5},"
+              + " seated {8}, reading {9}: {10}")
   @CsvSource({
-    "COFFIN_SLEEP, true, false, false, true, true, true, 0.9, 0.3, false, false, COFFIN_SLEEP, coffin_sleep",
-    "COFFIN_RISE, true, false, false, true, false, false, 0.9, 0.3, false, false, COFFIN_RISE, coffin_rise",
-    "COFFIN_STEP_OUT, true, false, false, true, false, false, 0.9, 0.3, false, false, COFFIN_STEP_OUT, coffin_step_out",
-    ", true, false, false, true, false, false, 0.9, 0.3, false, false, DOWNED, downed",
-    ", false, false, false, true, false, false, 0.0, 0.0, false, false, LEVITATE, levitate",
-    ", false, false, false, true, false, false, 0.0, 0.1, false, false, LEVITATE_MOVE, levitate_move",
-    ", false, false, false, true, false, false, 0.0, 0.3, false, false, LEVITATE_SPRINT, levitate_sprint",
-    ", false, false, false, true, false, true, 0.0, 0.1, false, false, LEVITATE_SPRINT, levitate_sprint",
-    ", false, false, false, false, true, false, 0.9, 0.3, false, false, LAND, land",
-    ", false, false, false, false, false, false, 0.9, 0.3, false, false, RUN, run",
-    ", false, false, false, false, false, false, 0.3, 0.1, false, false, WALK, walk",
-    ", false, false, false, false, false, false, 0.05, 0.0, false, false, IDLE, idle",
-    ", false, false, false, false, false, false, 0.05, 0.0, true, false, SIT, sit",
-    ", false, false, false, false, false, false, 0.05, 0.0, true, true, SIT, sit",
-    ", false, false, false, true, false, false, 0.0, 0.0, true, false, LEVITATE, levitate",
-    ", true, false, false, false, false, false, 0.0, 0.0, true, false, DOWNED, downed",
-    ", false, false, false, false, false, false, 0.05, 0.0, false, true, READ, read",
-    ", false, false, false, false, false, false, 0.3, 0.1, false, true, WALK, walk",
-    ", false, false, false, false, false, false, 0.0, 0.0, false, false, IDLE, idle",
-    ", false, true, false, false, false, false, 0.9, 0.3, false, false, RISE, rise",
-    ", true, true, false, false, false, false, 0.0, 0.0, false, false, DOWNED, downed",
-    "COFFIN_SLEEP, false, true, false, false, false, false, 0.0, 0.0, false, false, COFFIN_SLEEP, coffin_sleep",
-    ", false, true, true, false, false, false, 0.0, 0.0, false, false, IDLE, idle",
-    ", false, true, true, false, false, false, 0.9, 0.3, false, false, RUN, run"
+    "COFFIN_SLEEP, true, false, false, true, true, LEVITATE_SPRINT, 0.9, false, false, COFFIN_SLEEP, coffin_sleep",
+    "COFFIN_RISE, true, false, false, true, false, LEVITATE_SPRINT, 0.9, false, false, COFFIN_RISE, coffin_rise",
+    "COFFIN_STEP_OUT, true, false, false, true, false, LEVITATE_SPRINT, 0.9, false, false, COFFIN_STEP_OUT, coffin_step_out",
+    ", true, false, false, true, false, LEVITATE_SPRINT, 0.9, false, false, DOWNED, downed",
+    ", false, false, false, true, false, LEVITATE, 0.0, false, false, LEVITATE, levitate",
+    ", false, false, false, true, false, LEVITATE_MOVE, 0.0, false, false, LEVITATE_MOVE, levitate_move",
+    ", false, false, false, true, false, LEVITATE_SPRINT, 0.0, false, false, LEVITATE_SPRINT, levitate_sprint",
+    ", false, false, false, false, true, LEVITATE_SPRINT, 0.9, false, false, LAND, land",
+    ", false, false, false, false, false, LEVITATE_SPRINT, 0.9, false, false, RUN, run",
+    ", false, false, false, false, false, LEVITATE_MOVE, 0.3, false, false, WALK, walk",
+    ", false, false, false, false, false, LEVITATE, 0.05, false, false, IDLE, idle",
+    ", false, false, false, false, false, LEVITATE, 0.05, true, false, SIT, sit",
+    ", false, false, false, false, false, LEVITATE, 0.05, true, true, SIT, sit",
+    ", false, false, false, true, false, LEVITATE, 0.0, true, false, LEVITATE, levitate",
+    ", true, false, false, false, false, LEVITATE, 0.0, true, false, DOWNED, downed",
+    ", false, false, false, false, false, LEVITATE, 0.05, false, true, READ, read",
+    ", false, false, false, false, false, LEVITATE_MOVE, 0.3, false, true, WALK, walk",
+    ", false, false, false, false, false, LEVITATE, 0.0, false, false, IDLE, idle",
+    ", false, true, false, false, false, LEVITATE_SPRINT, 0.9, false, false, RISE, rise",
+    ", true, true, false, false, false, LEVITATE, 0.0, false, false, DOWNED, downed",
+    "COFFIN_SLEEP, false, true, false, false, false, LEVITATE, 0.0, false, false, COFFIN_SLEEP, coffin_sleep",
+    ", false, true, true, false, false, LEVITATE, 0.0, false, false, IDLE, idle",
+    ", false, true, true, false, false, LEVITATE_SPRINT, 0.9, false, false, RUN, run"
   })
   @DisplayName(
       "resting or rising in a coffin wins over downed, then getting up, levitating, landing, sitting"
@@ -66,9 +65,8 @@ class VampirePoseTest {
       final boolean dying,
       final boolean levitating,
       final boolean landing,
-      final boolean sprinting,
+      final VampirePose levitation,
       final float swing,
-      final double speed,
       final boolean seated,
       final boolean reading,
       final VampirePose pose,
@@ -84,9 +82,8 @@ class VampirePoseTest {
                 dying,
                 levitating,
                 landing,
-                sprinting,
+                levitation,
                 swing,
-                speed,
                 seated,
                 reading,
                 false)));
@@ -135,9 +132,8 @@ class VampirePoseTest {
                 dying,
                 levitating,
                 false,
-                false,
+                VampirePose.LEVITATE,
                 swing,
-                0.0,
                 seated,
                 false,
                 burning)));
@@ -195,21 +191,6 @@ class VampirePoseTest {
       "a vampire rests until it wakes, then rises from a flat coffin or steps out of a standing one")
   void coffin(final boolean rising, final boolean standingCoffin, final VampirePose pose) {
     assertEquals(pose, VampirePose.coffin(rising, standingCoffin));
-  }
-
-  @ParameterizedTest(name = "sprinting {0}, speed {1}: spread {2}")
-  @CsvSource({
-    "false, 0.0, 0.0",
-    "false, 0.06, 0.25",
-    "false, 0.12, 0.5",
-    "false, 0.24, 1.0",
-    "false, 0.5, 1.0",
-    "false, -0.1, 0.0",
-    "true, 0.0, 1.0"
-  })
-  @DisplayName("arms spread with speed until a sprint, where they are fully out")
-  void spread(final boolean sprinting, final double speed, final double spread) {
-    assertEquals(spread, VampirePose.spread(sprinting, speed), 1.0e-9);
   }
 
   @ParameterizedTest(name = "speed {0}: {1}")

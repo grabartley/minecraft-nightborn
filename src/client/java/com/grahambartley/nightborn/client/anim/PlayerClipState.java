@@ -1,6 +1,7 @@
 package com.grahambartley.nightborn.client.anim;
 
 import com.grahambartley.nightborn.mob.EndingEdge;
+import com.grahambartley.nightborn.mob.LevitationGait;
 import com.grahambartley.nightborn.mob.VampirePose;
 import java.util.Optional;
 import net.minecraft.entity.EntityPose;
@@ -33,13 +34,24 @@ public final class PlayerClipState {
   private final OneShot finisher = new OneShot();
   private final OneShot gesture = new OneShot();
   private final OneShot power = new OneShot();
+  private final LevitationGait levitationGait = new LevitationGait();
   private VampirePose gesturePose = VampirePose.SMALL_FLINCH;
   private String powerClip = "";
   private boolean powerFresh;
 
-  public void tick(final double age, final boolean levitating, final boolean downed) {
+  public void tick(
+      final long age,
+      final boolean levitating,
+      final boolean downed,
+      final boolean sprinting,
+      final double horizontalSpeed) {
+    levitationGait.observe(age, levitating, sprinting, horizontalSpeed);
     follow(landing, land, levitating, age);
     follow(standing, rise, downed, age);
+  }
+
+  public double levitationSpread() {
+    return levitationGait.spread();
   }
 
   public void vomit(final double age) {
@@ -132,8 +144,7 @@ public final class PlayerClipState {
       return Optional.of(VampirePose.FEED);
     }
     if (situation.levitating()) {
-      return Optional.of(
-          VampirePose.levitating(situation.sprinting(), situation.horizontalSpeed()));
+      return Optional.of(levitationGait.pose());
     }
     if (land.playing(lengths.seconds(VampirePose.LAND.animation()), age)) {
       return Optional.of(VampirePose.LAND);

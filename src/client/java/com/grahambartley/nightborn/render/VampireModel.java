@@ -60,10 +60,7 @@ public class VampireModel extends GeoModel<VampireEntity> {
   public void applyMolangQueries(
       final AnimationState<VampireEntity> animationState, final double animTime) {
     final VampireEntity vampire = animationState.getAnimatable();
-    final double spread =
-        VampirePose.spread(
-            vampire.isSprinting(),
-            Math.hypot(vampire.getX() - vampire.prevX, vampire.getZ() - vampire.prevZ));
+    final double spread = vampire.levitationSpread();
     MathParser.setVariable(VampirePose.SPREAD_VARIABLE, () -> spread);
   }
 }

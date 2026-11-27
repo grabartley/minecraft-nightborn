@@ -63,9 +63,7 @@ public final class PlayerRigModel extends GeoModel<PlayerRigAnimatable> {
       final AnimationState<PlayerRigAnimatable> animationState, final double animTime) {
     final double spread =
         animationState.getData(DataTickets.ENTITY) instanceof PlayerEntity player
-            ? VampirePose.spread(
-                player.isSprinting(),
-                Math.hypot(player.getX() - player.prevX, player.getZ() - player.prevZ))
+            ? PlayerClips.levitationSpread(player)
             : 0.0;
     MathParser.setVariable(VampirePose.SPREAD_VARIABLE, () -> spread);
   }
