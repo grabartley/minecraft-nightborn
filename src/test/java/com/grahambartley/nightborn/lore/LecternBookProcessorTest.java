@@ -8,9 +8,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import com.google.gson.JsonParser;
 import com.grahambartley.nightborn.MinecraftBootstrapExtension;
 import com.mojang.serialization.JsonOps;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.IntStream;
 import net.minecraft.block.Block;
@@ -19,7 +21,6 @@ import net.minecraft.block.LecternBlock;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtString;
 import net.minecraft.registry.Registries;
-import net.minecraft.structure.StructurePlacementData;
 import net.minecraft.structure.StructureTemplate.StructureBlockInfo;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
@@ -36,6 +37,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 class LecternBookProcessorTest {
 
   private static final BlockPos AT = new BlockPos(3, 64, -5);
+  private static final BlockPos AT_FIRST = new BlockPos(-20, 60, 11);
 
   private static StructureBlockInfo block(final String id) {
     final Block block = Registries.BLOCK.get(Identifier.ofVanilla(id));
@@ -133,64 +135,81 @@ class LecternBookProcessorTest {
     return IntStream.range(0, size).boxed().toList();
   }
 
-  @ParameterizedTest(name = "at {0}, {1}, {2}")
-  @CsvSource({"0, 0, 0", "3, 64, -5", "-200, -47, 913", "30000, 250, -30000"})
-  @DisplayName("an empty shelf gives no book")
-  void anEmptyShelfGivesNothing(final int x, final int y, final int z) {
-    assertEquals(
-        Optional.empty(),
-        LecternBookProcessor.pick(List.of(), new StructurePlacementData(), new BlockPos(x, y, z)));
+  private static List<BlockPos> lecterns(final int count) {
+    return IntStream.range(0, count)
+        .mapToObj(index -> new BlockPos(index * 7 - 20, 60 + index % 3, 11 - index * 5))
+        .toList();
   }
 
-  @ParameterizedTest(name = "a shelf of {0} at {1}, {2}, {3}")
-  @CsvSource({"1, 0, 0, 0", "7, 3, 64, -5", "9, -200, -47, 913", "20, 30000, 250, -30000"})
-  @DisplayName("the same lectern is given the same book every time its piece is placed")
-  void theSameLecternKeepsItsBook(final int size, final int x, final int y, final int z) {
+  @ParameterizedTest(name = "{0} lecterns")
+  @ValueSource(ints = {0, 1, 6})
+  @DisplayName("an empty shelf deals no books")
+  void anEmptyShelfDealsNothing(final int count) {
+    assertEquals(
+        Map.of(), LecternBookProcessor.deal(List.of(), lecterns(count), Random.create(1L)));
+  }
+
+  @ParameterizedTest(name = "{1} lecterns from a shelf of {0}, seed {2}")
+  @CsvSource({"7, 6, 0", "7, 7, 5", "9, 1, 3", "9, 2, -8", "8, 8, 41", "20, 12, 7", "1, 1, 0"})
+  @DisplayName("a building with no more lecterns than books never shows a book twice")
+  void aBuildingNeverRepeatsABook(final int size, final int count, final long seed) {
     final List<Integer> shelf = shelf(size);
-    final BlockPos lectern = new BlockPos(x, y, z);
-    final Optional<Integer> first =
-        LecternBookProcessor.pick(shelf, new StructurePlacementData(), lectern);
-    assertTrue(shelf.contains(first.orElseThrow()));
-    for (int placing = 0; placing < 10; placing++) {
-      assertEquals(first, LecternBookProcessor.pick(shelf, new StructurePlacementData(), lectern));
-    }
+    final Map<BlockPos, Integer> dealt =
+        LecternBookProcessor.deal(shelf, lecterns(count), Random.create(seed));
+    assertEquals(new HashSet<>(lecterns(count)), dealt.keySet());
+    assertEquals(count, new HashSet<>(dealt.values()).size());
+    assertTrue(shelf.containsAll(dealt.values()));
+  }
+
+  @ParameterizedTest(name = "{1} lecterns from a shelf of {0}")
+  @CsvSource({"1, 3", "2, 5", "7, 8", "7, 20"})
+  @DisplayName("more lecterns than books still fills every lectern and uses the whole shelf")
+  void aSmallShelfGoesRound(final int size, final int count) {
+    final List<Integer> shelf = shelf(size);
+    final Map<BlockPos, Integer> dealt =
+        LecternBookProcessor.deal(shelf, lecterns(count), Random.create(9L));
+    assertEquals(count, dealt.size());
+    assertEquals(new HashSet<>(shelf), new HashSet<>(dealt.values()));
+  }
+
+  @ParameterizedTest(name = "seed {0}")
+  @ValueSource(longs = {0L, 7L, -99L, Long.MAX_VALUE})
+  @DisplayName("the same building is dealt the same books whatever order its lecterns are read in")
+  void theDealIsStable(final long seed) {
+    final List<Integer> shelf = shelf(9);
+    final List<BlockPos> forwards = lecterns(6);
+    final List<BlockPos> backwards = new ArrayList<>(forwards);
+    Collections.reverse(backwards);
+    assertEquals(
+        LecternBookProcessor.deal(shelf, forwards, Random.create(seed)),
+        LecternBookProcessor.deal(shelf, backwards, Random.create(seed)));
   }
 
   @ParameterizedTest(name = "a shelf of {0}")
   @ValueSource(ints = {7, 8, 9})
-  @DisplayName("lecterns in different places reach every book on the shelf")
-  void lecternsElsewhereGetOtherBooks(final int size) {
+  @DisplayName("buildings in different places open on different books")
+  void buildingsDiffer(final int size) {
     final List<Integer> shelf = shelf(size);
-    final Set<Integer> seen = new HashSet<>();
-    for (int x = 0; x < 32; x++) {
-      for (int z = 0; z < 32; z++) {
-        seen.add(
-            LecternBookProcessor.pick(
-                    shelf, new StructurePlacementData(), new BlockPos(x * 7, 64, z * 11))
-                .orElseThrow());
+    final Set<Integer> first = new HashSet<>();
+    for (int x = 0; x < 16; x++) {
+      for (int z = 0; z < 16; z++) {
+        final BlockPos piece = new BlockPos(x * 48 - 400, 64, z * 48 - 400);
+        first.add(
+            LecternBookProcessor.deal(shelf, lecterns(1), LecternBookProcessor.building(piece))
+                .get(AT_FIRST));
       }
     }
-    assertEquals(new HashSet<>(shelf), seen);
+    assertEquals(new HashSet<>(shelf), first);
   }
 
-  @ParameterizedTest(name = "seed {0}")
-  @ValueSource(longs = {0L, 7L, -99L})
-  @DisplayName("a placement that brings its own random is picked with it")
-  void aPlacementRandomWins(final long seed) {
+  @ParameterizedTest(name = "a piece at {0}, {1}, {2}")
+  @CsvSource({"0, 0, 0", "238, 58, -14", "-1438, 71, 4", "30000, 250, -30000"})
+  @DisplayName("a piece placed again, chunk by chunk, is dealt the same books")
+  void aPieceIsDealtTheSameBooksEveryTime(final int x, final int y, final int z) {
     final List<Integer> shelf = shelf(9);
-    final List<Integer> expected = draws(shelf, Random.create(seed));
-    final StructurePlacementData placement =
-        new StructurePlacementData().setRandom(Random.create(seed));
-    final List<Integer> picked =
-        IntStream.range(0, expected.size())
-            .mapToObj(draw -> LecternBookProcessor.pick(shelf, placement, AT).orElseThrow())
-            .toList();
-    assertEquals(expected, picked);
-  }
-
-  private static List<Integer> draws(final List<Integer> shelf, final Random random) {
-    return IntStream.range(0, 12)
-        .mapToObj(draw -> shelf.get(random.nextInt(shelf.size())))
-        .toList();
+    final BlockPos piece = new BlockPos(x, y, z);
+    assertEquals(
+        LecternBookProcessor.deal(shelf, lecterns(6), LecternBookProcessor.building(piece)),
+        LecternBookProcessor.deal(shelf, lecterns(6), LecternBookProcessor.building(piece)));
   }
 }

@@ -2,12 +2,16 @@ package com.grahambartley.nightborn.lore;
 
 import com.grahambartley.nightborn.Nightborn;
 import com.mojang.serialization.MapCodec;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Optional;
+import java.util.Map;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.LecternBlock;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
+import net.minecraft.registry.DynamicRegistryManager;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.tag.TagKey;
@@ -18,7 +22,9 @@ import net.minecraft.structure.processor.StructureProcessorType;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Util;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.WorldView;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.random.Random;
+import net.minecraft.world.ServerWorldAccess;
 
 public final class LecternBookProcessor extends StructureProcessor {
 
@@ -52,9 +58,23 @@ public final class LecternBookProcessor extends StructureProcessor {
     return block.state().isOf(Blocks.LECTERN);
   }
 
-  static <T> Optional<T> pick(
-      final List<T> shelf, final StructurePlacementData placement, final BlockPos lectern) {
-    return Util.getRandomOrEmpty(shelf, placement.getRandom(lectern));
+  static Random building(final BlockPos piece) {
+    return Random.create(MathHelper.hashCode(piece));
+  }
+
+  static <T> Map<BlockPos, T> deal(
+      final List<T> shelf, final Collection<BlockPos> lecterns, final Random random) {
+    if (shelf.isEmpty()) {
+      return Map.of();
+    }
+    final List<T> order = new ArrayList<>(shelf);
+    Util.shuffle(order, random);
+    final List<BlockPos> sorted = lecterns.stream().sorted().toList();
+    final Map<BlockPos, T> dealt = new HashMap<>();
+    for (int index = 0; index < sorted.size(); index++) {
+      dealt.put(sorted.get(index), order.get(index % order.size()));
+    }
+    return dealt;
   }
 
   static StructureBlockInfo shelve(final StructureBlockInfo lectern, final NbtElement book) {
@@ -66,19 +86,28 @@ public final class LecternBookProcessor extends StructureProcessor {
   }
 
   @Override
-  public StructureBlockInfo process(
-      final WorldView world,
+  public List<StructureBlockInfo> reprocess(
+      final ServerWorldAccess world,
       final BlockPos pos,
       final BlockPos pivot,
-      final StructureBlockInfo original,
-      final StructureBlockInfo current,
+      final List<StructureBlockInfo> originals,
+      final List<StructureBlockInfo> currents,
       final StructurePlacementData data) {
-    if (!reads(current)) {
-      return current;
+    final List<BlockPos> lecterns =
+        currents.stream().filter(LecternBookProcessor::reads).map(StructureBlockInfo::pos).toList();
+    if (lecterns.isEmpty()) {
+      return currents;
     }
-    return pick(LoreBooks.shelf(world.getRegistryManager(), books), data, current.pos())
-        .map(book -> shelve(current, book.stack().encode(world.getRegistryManager())))
-        .orElse(current);
+    final DynamicRegistryManager registries = world.getRegistryManager();
+    final Map<BlockPos, LoreBook> dealt =
+        deal(LoreBooks.shelf(registries, books), lecterns, building(pos));
+    return currents.stream()
+        .map(
+            block ->
+                dealt.containsKey(block.pos())
+                    ? shelve(block, dealt.get(block.pos()).stack().encode(registries))
+                    : block)
+        .toList();
   }
 
   @Override

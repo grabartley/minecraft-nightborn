@@ -3,7 +3,10 @@ package com.grahambartley.nightborn.gametest;
 import com.grahambartley.nightborn.Nightborn;
 import com.grahambartley.nightborn.lore.LoreBook;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.IntStream;
 import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.LecternBlock;
@@ -31,6 +34,7 @@ public final class LoreBookGameTest implements FabricGameTest {
   private static final BlockPos ON_FLOOR = FLOOR.up();
   private static final List<String> KINDS =
       List.of("castle", "crypt", "lair", "manor", "mountain_castle");
+  private static final int LECTERNS = 5;
   private static final int FEWEST_PAGES = 2;
   private static final int MOST_PAGES = 6;
 
@@ -59,19 +63,32 @@ public final class LoreBookGameTest implements FabricGameTest {
             .get(Identifier.of(Nightborn.MOD_ID, "vampire/" + kind));
     context.assertTrue(processors != null, kind + " has a processor list");
     final BlockPos at = context.getAbsolutePos(ON_FLOOR);
-    StructureBlockInfo lectern = new StructureBlockInfo(at, Blocks.LECTERN.getDefaultState(), null);
+    final List<StructureBlockInfo> template =
+        IntStream.range(0, LECTERNS)
+            .mapToObj(
+                step ->
+                    new StructureBlockInfo(at.east(step), Blocks.LECTERN.getDefaultState(), null))
+            .toList();
+    List<StructureBlockInfo> placed = template;
     for (final StructureProcessor processor : processors.getList()) {
-      lectern = processor.process(world, at, at, lectern, lectern, new StructurePlacementData());
+      placed = processor.reprocess(world, at, at, template, placed, new StructurePlacementData());
     }
-    context.assertTrue(lectern.state().get(LecternBlock.HAS_BOOK), kind + " lectern shows a book");
-    context.assertTrue(lectern.nbt() != null, kind + " lectern carries its book");
+    final Set<String> titles = new HashSet<>();
+    for (final StructureBlockInfo each : placed) {
+      context.assertTrue(each.state().get(LecternBlock.HAS_BOOK), kind + " lectern shows a book");
+      context.assertTrue(each.nbt() != null, kind + " lectern carries its book");
+      titles.add(each.nbt().getCompound("Book").toString());
+    }
+    context.assertTrue(
+        titles.size() == LECTERNS, kind + " gives each of its lecterns a different book");
+    final StructureBlockInfo lectern = placed.get(0);
 
     context.setBlockState(FLOOR, Blocks.STONE);
     context.setBlockState(ON_FLOOR, lectern.state());
-    final LecternBlockEntity placed = context.getBlockEntity(ON_FLOOR);
-    placed.read(lectern.nbt(), world.getRegistryManager());
+    final LecternBlockEntity standing = context.getBlockEntity(ON_FLOOR);
+    standing.read(lectern.nbt(), world.getRegistryManager());
 
-    final ItemStack book = placed.getBook();
+    final ItemStack book = standing.getBook();
     context.assertTrue(book.isOf(Items.WRITTEN_BOOK), kind + " lectern holds a written book");
     context.assertTrue(book.contains(DataComponentTypes.ITEM_NAME), kind + " book has a title");
     final WrittenBookContentComponent content = book.get(DataComponentTypes.WRITTEN_BOOK_CONTENT);
