@@ -271,6 +271,7 @@ public class HunterPartyGameTest implements FabricGameTest {
     context.runAtTick(
         5,
         () -> {
+          hunter.setOnGround(true);
           final Path path =
               hunter.getNavigation().findPathTo(context.getAbsolutePos(new BlockPos(6, 2, 3)), 0);
           context.assertTrue(path != null, "a hunter finds a way round the tent");

@@ -36,7 +36,7 @@ class CampGapsTest {
   @CsvSource(
       delimiter = '|',
       value = {
-        "the shipped layout                | -3,2,NONE ; 3,2,NONE ; 0,-2,CLOCKWISE_180 |",
+        "three tents round the fire        | -3,2,NONE ; 3,2,NONE ; 0,-2,CLOCKWISE_180 |",
         "a tent beside the fire            | 0,1,NONE |a piece stands next to the campfire",
         "two tents touching                | -2,2,NONE ; 1,2,NONE |tents 0 and 1 leave no gap between them",
         "one gap between tents             | -2,2,NONE ; 2,2,NONE |"

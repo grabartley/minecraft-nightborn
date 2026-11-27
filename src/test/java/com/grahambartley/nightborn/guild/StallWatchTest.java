@@ -10,7 +10,6 @@ import com.grahambartley.nightborn.MinecraftBootstrapExtension;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.goal.WanderAroundGoal;
 import net.minecraft.entity.ai.pathing.EntityNavigation;
-import net.minecraft.entity.ai.pathing.Path;
 import net.minecraft.entity.mob.PathAwareEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
@@ -32,12 +31,7 @@ class StallWatchTest {
   @DisplayName("a stalled walk is dropped and the mob wanders on, never mid fight or when idle")
   void stalledWalkIsDropped(
       final boolean fighting, final boolean idle, final boolean wanders, final boolean givesUp) {
-    final Path path = mock(Path.class);
-    when(path.isFinished()).thenReturn(false);
-    when(path.getCurrentNodeIndex()).thenReturn(2);
-    when(path.getCurrentNodePos()).thenReturn(new BlockPos(3, 64, 0));
     final EntityNavigation navigation = mock(EntityNavigation.class);
-    when(navigation.getCurrentPath()).thenReturn(path);
     when(navigation.isIdle()).thenReturn(idle);
     when(navigation.getTargetPos()).thenReturn(new BlockPos(10, 64, 0));
     final PathAwareEntity mob = mock(PathAwareEntity.class);
