@@ -10,6 +10,10 @@ public final class GuildMembership {
     return OathAttachment.get(player).hunter(vampire(player));
   }
 
+  public static boolean sided(final AttachmentTarget player) {
+    return OathAttachment.get(player).sided(vampire(player));
+  }
+
   public static boolean maySwear(final AttachmentTarget player) {
     return OathAttachment.get(player).maySwear(vampire(player));
   }

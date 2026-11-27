@@ -77,6 +77,7 @@ final class HunterTactics {
     final HunterAction support =
         hunting
             ? HunterAction.support(
+                hunter.foeOf(target),
                 hunter.getVisibilityCache().canSee(target),
                 hunter.distanceTo(target),
                 kit.holyWater() && timer.canThrow(),

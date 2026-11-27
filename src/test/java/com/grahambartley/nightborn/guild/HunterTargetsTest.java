@@ -20,4 +20,16 @@ class HunterTargetsTest {
       final boolean vampire, final boolean raider, final boolean exempt, final boolean hunted) {
     assertEquals(hunted, HunterTargets.hunts(vampire, raider, exempt));
   }
+
+  @ParameterizedTest(name = "attacked us {0}, player {1}, guild {2}: fights back {3}")
+  @CsvSource({
+    "true, false, false, true",
+    "true, true, false, false",
+    "true, false, true, false",
+    "false, false, false, false"
+  })
+  void fightsBackAgainstAnyMobThatAttacksButNotPlayersOrTheGuild(
+      final boolean attackedUs, final boolean player, final boolean guild, final boolean fights) {
+    assertEquals(fights, HunterTargets.defends(attackedUs, player, guild));
+  }
 }

@@ -4,6 +4,7 @@ import com.grahambartley.nightborn.downed.Downed;
 import com.grahambartley.nightborn.downed.DownedState;
 import com.grahambartley.nightborn.hunter.HunterAttributes;
 import com.grahambartley.nightborn.server.ServerConfigService;
+import com.grahambartley.nightborn.skill.PowerBarEdits;
 import com.grahambartley.nightborn.skill.PowerUse;
 import com.grahambartley.nightborn.skill.Powers;
 import com.grahambartley.nightborn.skill.SkillAttachment;
@@ -75,7 +76,7 @@ public class HunterGameTest implements FabricGameTest {
 
   @GameTest(templateName = ARENA, tickLimit = 20)
   public void aHunterKeepsToTwoPaths(final TestContext context) {
-    final ServerPlayerEntity hunter = TestPlayers.human(context, new BlockPos(3, 2, 4));
+    final ServerPlayerEntity hunter = TestPlayers.hunter(context, new BlockPos(3, 2, 4));
     SkillAttachment.set(hunter, SkillTree.HUNTER, TreeProgress.EMPTY.withEarned(10));
     context.assertEquals(SkillShop.buy(hunter, TRACKING), SkillPurchase.Verdict.ALLOWED, "root");
     context.assertEquals(SkillShop.buy(hunter, BITE_WARD), SkillPurchase.Verdict.ALLOWED, "slayer");
@@ -148,7 +149,7 @@ public class HunterGameTest implements FabricGameTest {
 
   @GameTest(templateName = ARENA, tickLimit = 20)
   public void aTurnedPlayersHunterTreeIsSetAsideAndComesBack(final TestContext context) {
-    final ServerPlayerEntity player = TestPlayers.human(context, new BlockPos(3, 2, 4));
+    final ServerPlayerEntity player = TestPlayers.hunter(context, new BlockPos(3, 2, 4));
     SkillAttachment.set(player, SkillTree.HUNTER, TreeProgress.EMPTY.withEarned(5));
     context.assertEquals(SkillShop.buy(player, TRACKING), SkillPurchase.Verdict.ALLOWED, "track");
     context.assertEquals(SkillShop.buy(player, BITE_WARD), SkillPurchase.Verdict.ALLOWED, "ward");
@@ -177,7 +178,7 @@ public class HunterGameTest implements FabricGameTest {
 
   @GameTest(templateName = ARENA, tickLimit = 40)
   public void trackingFindsTheNearestVampireForAShortTime(final TestContext context) {
-    final ServerPlayerEntity hunter = TestPlayers.human(context, new BlockPos(1, 2, 1));
+    final ServerPlayerEntity hunter = TestPlayers.hunter(context, new BlockPos(1, 2, 1));
     final ServerPlayerEntity near = TestPlayers.vampire(context, new BlockPos(3, 2, 3));
     final ServerPlayerEntity far = TestPlayers.vampire(context, new BlockPos(5, 2, 5));
     SkillAttachment.set(hunter, SkillTree.HUNTER, TreeProgress.EMPTY.withEarned(1));
@@ -197,7 +198,7 @@ public class HunterGameTest implements FabricGameTest {
 
   @GameTest(templateName = ARENA, tickLimit = 20)
   public void aHunterWhoTurnsStopsTracking(final TestContext context) {
-    final ServerPlayerEntity hunter = TestPlayers.human(context, new BlockPos(3, 2, 3));
+    final ServerPlayerEntity hunter = TestPlayers.hunter(context, new BlockPos(3, 2, 3));
     SkillAttachment.set(hunter, SkillTree.HUNTER, TreeProgress.EMPTY.withEarned(1));
     SkillShop.buy(hunter, TRACKING);
     Powers.use(hunter, 0);
@@ -213,7 +214,7 @@ public class HunterGameTest implements FabricGameTest {
 
   @GameTest(templateName = ARENA, tickLimit = 260)
   public void trackingEnds(final TestContext context) {
-    final ServerPlayerEntity hunter = TestPlayers.human(context, new BlockPos(3, 2, 3));
+    final ServerPlayerEntity hunter = TestPlayers.hunter(context, new BlockPos(3, 2, 3));
     SkillAttachment.set(hunter, SkillTree.HUNTER, TreeProgress.EMPTY.withEarned(1));
     SkillShop.buy(hunter, TRACKING);
     Powers.use(hunter, 0);
@@ -230,5 +231,16 @@ public class HunterGameTest implements FabricGameTest {
           context.assertTrue(Tracking.state(hunter) == null, "tracking stops after its time");
           TestPlayers.finish(context, hunter);
         });
+  }
+
+  @GameTest(templateName = ARENA, tickLimit = 20)
+  public void aHumanWhoIsNotSwornInCanChangeNoSkills(final TestContext context) {
+    final ServerPlayerEntity human = TestPlayers.human(context, new BlockPos(3, 2, 4));
+    SkillAttachment.set(human, SkillTree.HUNTER, TreeProgress.EMPTY.withEarned(5));
+    context.assertEquals(
+        SkillShop.buy(human, TRACKING), SkillPurchase.Verdict.NO_SIDE, "no hunter skills yet");
+    context.assertFalse(
+        PowerBarEdits.set(human, 0, Optional.of(TRACKING)), "and no power bar changes");
+    TestPlayers.finish(context, human);
   }
 }

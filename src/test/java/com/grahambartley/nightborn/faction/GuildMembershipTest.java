@@ -76,6 +76,20 @@ class GuildMembershipTest {
     assertEquals(hunter, GuildMembership.isHunter(player));
   }
 
+  @ParameterizedTest(name = "vampire {0}, proven {1}, sworn {2} -> sided {3}")
+  @CsvSource({
+    "false, false, false, false",
+    "false, true, false, false",
+    "false, true, true, true",
+    "true, false, false, true"
+  })
+  @DisplayName("only a vampire or a sworn hunter has a side and a skill tree to open")
+  void sided(
+      final boolean vampire, final boolean proven, final boolean sworn, final boolean sided) {
+    assertEquals(
+        sided, GuildMembership.sided(player(vampire, false, new Oath(proven, sworn, 0, 0))));
+  }
+
   @ParameterizedTest(name = "proven {0} -> hunter {1}")
   @CsvSource({"false, false", "true, false"})
   @DisplayName("hunter points alone never make an unsworn human a hunter")

@@ -19,6 +19,8 @@ class SkillLayoutTest {
   static final int HUNTER_COLUMNS = 5;
   static final int AGE_FOOTER = 43;
   static final double ROUNDING = 1.0E-6;
+  static final int FULL_HD_SCALE_FOUR = 270;
+  static final int HD_AUTO_SCALE = 240;
 
   static Stream<Arguments> screens() {
     return Stream.of(
@@ -36,7 +38,8 @@ class SkillLayoutTest {
             size ->
                 Stream.of(
                     Arguments.of(size[0], size[1], VAMPIRE, VAMPIRE_COLUMNS, AGE_FOOTER),
-                    Arguments.of(size[0], size[1], HUNTER, HUNTER_COLUMNS, 0)));
+                    Arguments.of(size[0], size[1], HUNTER, HUNTER_COLUMNS, 0),
+                    Arguments.of(size[0], size[1], List.of(2), 3, 0)));
   }
 
   @ParameterizedTest(name = "{0}x{1} with bands {2}")
@@ -69,6 +72,27 @@ class SkillLayoutTest {
     assertTrue(
         layout.viewHeight() >= Math.min(layout.contentHeight(), SkillLayout.MIN_VIEW),
         "at least one band shows");
+  }
+
+  @ParameterizedTest(name = "{0}x{1} with bands {2}")
+  @MethodSource("screens")
+  @DisplayName("the panel keeps a clear gap above and below it at every real GUI scale")
+  void edges(
+      final int width,
+      final int height,
+      final List<Integer> bands,
+      final int columns,
+      final int footer) {
+    final SkillLayout layout = SkillLayout.of(width, height, bands, columns, 0, footer);
+    final int room = (int) Math.floor(height / layout.zoom() + ROUNDING);
+    final int above = layout.top();
+    final int below = room - layout.bottom() - footer;
+    assertTrue(Math.abs(above - below) <= 1, "centred: " + above + " above, " + below + " below");
+    if (height >= FULL_HD_SCALE_FOUR) {
+      assertTrue(above >= room * 0.075, above + " above on a room " + room + " high");
+    } else if (height >= HD_AUTO_SCALE) {
+      assertTrue(above >= 8, above + " above on a room " + room + " high");
+    }
   }
 
   @ParameterizedTest(name = "{0}x{1} with bands {2}")

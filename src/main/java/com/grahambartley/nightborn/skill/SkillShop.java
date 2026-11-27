@@ -6,6 +6,7 @@ import com.grahambartley.nightborn.age.StageRanks;
 import com.grahambartley.nightborn.challenge.Deed;
 import com.grahambartley.nightborn.challenge.DeedKinds;
 import com.grahambartley.nightborn.challenge.Deeds;
+import com.grahambartley.nightborn.faction.GuildMembership;
 import com.grahambartley.nightborn.network.BuySkillPayload;
 import com.grahambartley.nightborn.rank.GuildRanks;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
@@ -31,7 +32,13 @@ public final class SkillShop {
     final TreeProgress progress = SkillAttachment.get(player, tree);
     final SkillLookup lookup =
         SkillLookup.of(
-            registries, progress, tree, id, StageRanks.of(player), GuildRanks.of(player));
+            registries,
+            GuildMembership.sided(player),
+            progress,
+            tree,
+            id,
+            StageRanks.of(player),
+            GuildRanks.of(player));
     if (lookup.verdict() != SkillPurchase.Verdict.ALLOWED) {
       player.sendMessage(Text.translatable(lookup.verdict().translationKey(tree)), true);
       return lookup.verdict();

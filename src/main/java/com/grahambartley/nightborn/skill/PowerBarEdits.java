@@ -1,5 +1,6 @@
 package com.grahambartley.nightborn.skill;
 
+import com.grahambartley.nightborn.faction.GuildMembership;
 import com.grahambartley.nightborn.network.SetPowerSlotPayload;
 import java.util.Optional;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
@@ -21,7 +22,7 @@ public final class PowerBarEdits {
       final ServerPlayerEntity player, final int slot, final Optional<Identifier> skill) {
     final Registry<Skill> skills =
         Skills.skills(player.getServerWorld().getRegistryManager()).orElse(null);
-    if (skills == null) {
+    if (skills == null || !GuildMembership.sided(player)) {
       return false;
     }
     final SkillTree tree = SkillTree.of(player);

@@ -3,6 +3,7 @@ package com.grahambartley.nightborn.gametest;
 import com.grahambartley.nightborn.guild.GuildMasterEntity;
 import com.grahambartley.nightborn.guild.GuildMobs;
 import com.grahambartley.nightborn.guild.HunterEntity;
+import com.grahambartley.nightborn.guild.HunterReferral;
 import com.grahambartley.nightborn.guild.party.CampBats;
 import com.grahambartley.nightborn.guild.party.CampLayout;
 import com.grahambartley.nightborn.guild.party.CampSite;
@@ -22,7 +23,9 @@ import net.minecraft.block.BedBlock;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.CampfireBlock;
 import net.minecraft.block.enums.BedPart;
+import net.minecraft.entity.EntityType;
 import net.minecraft.entity.ItemEntity;
+import net.minecraft.entity.mob.ZombieEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.test.GameTest;
 import net.minecraft.test.TestContext;
@@ -181,6 +184,38 @@ public class HunterPartyGameTest implements FabricGameTest {
     context.assertTrue(hunter.canTarget(raiders.get(0)), "a hunter fights a raiding bat");
     context.assertFalse(hunter.canTarget(wild), "a hunter leaves other bats alone");
     raiders.forEach(VampireBatEntity::discard);
+    context.complete();
+  }
+
+  @GameTest(templateName = ARENA, batchId = BATCH)
+  public void aPartyHunterPointsToItsOwnGuildMaster(final TestContext context) {
+    final GuildMasterEntity stranger =
+        context.spawnEntity(GuildMobs.GUILD_MASTER, new BlockPos(2, 2, 4));
+    final GuildMasterEntity leader =
+        context.spawnEntity(GuildMobs.GUILD_MASTER, new BlockPos(7, 2, 4));
+    final HunterEntity hunter = context.spawnEntity(GuildMobs.HUNTER, new BlockPos(1, 2, 4));
+    stranger.setAiDisabled(true);
+    leader.setAiDisabled(true);
+    hunter.setAiDisabled(true);
+    hunter.join(leader.getUuid());
+    context.assertTrue(
+        HunterReferral.master(context.getWorld(), hunter).orElse(null) == leader,
+        "a party hunter should point to its own Guild Master, not the nearest one");
+    context.complete();
+  }
+
+  @GameTest(templateName = ARENA, batchId = BATCH)
+  public void aHunterFightsBackAgainstAMonsterThatHitsIt(final TestContext context) {
+    final HunterEntity struck = context.spawnEntity(GuildMobs.HUNTER, new BlockPos(2, 2, 4));
+    final HunterEntity bystander = context.spawnEntity(GuildMobs.HUNTER, new BlockPos(6, 2, 4));
+    final ZombieEntity zombie = context.spawnEntity(EntityType.ZOMBIE, new BlockPos(4, 2, 4));
+    struck.setAiDisabled(true);
+    bystander.setAiDisabled(true);
+    zombie.setAiDisabled(true);
+    struck.damage(context.getWorld().getDamageSources().mobAttack(zombie), 1.0F);
+    context.assertTrue(struck.canTarget(zombie), "a hunter fights back against a zombie");
+    context.assertFalse(
+        bystander.canTarget(zombie), "a hunter nobody struck does not start the fight itself");
     context.complete();
   }
 }

@@ -29,6 +29,20 @@ class OathTest {
     assertEquals(hunter, new Oath(proven, sworn, 0, 0).hunter(vampire));
   }
 
+  @ParameterizedTest(name = "proven {0}, sworn {1}, vampire {2} -> sided {3}")
+  @CsvSource({
+    "false, false, false, false",
+    "true, false, false, false",
+    "true, true, false, true",
+    "false, false, true, true",
+    "true, false, true, true"
+  })
+  @DisplayName("a player has chosen a side once turned or sworn in, never by proving alone")
+  void sided(
+      final boolean proven, final boolean sworn, final boolean vampire, final boolean sided) {
+    assertEquals(sided, new Oath(proven, sworn, 0, 0).sided(vampire));
+  }
+
   @ParameterizedTest(name = "proven {0}, sworn {1}, vampire {2} -> may swear {3}")
   @CsvSource({
     "false, false, false, false",

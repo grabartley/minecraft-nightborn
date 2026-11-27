@@ -5,6 +5,7 @@ import com.grahambartley.nightborn.batform.BatForm;
 import com.grahambartley.nightborn.batform.WingedForm;
 import com.grahambartley.nightborn.blood.BloodAttachment;
 import com.grahambartley.nightborn.downed.Downed;
+import com.grahambartley.nightborn.faction.GuildMembership;
 import com.grahambartley.nightborn.faith.Kindling;
 import com.grahambartley.nightborn.faith.Rebukes;
 import com.grahambartley.nightborn.hold.Holds;
@@ -49,7 +50,7 @@ public final class Powers {
 
   public static PowerUse.Verdict use(
       final ServerPlayerEntity player, final int slot, final PowerHeading heading) {
-    if (player.isSpectator() || !player.isAlive()) {
+    if (player.isSpectator() || !player.isAlive() || !GuildMembership.sided(player)) {
       return PowerUse.Verdict.NO_POWER;
     }
     final Registry<Skill> skills =

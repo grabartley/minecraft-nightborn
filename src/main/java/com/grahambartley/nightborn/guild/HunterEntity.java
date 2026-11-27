@@ -27,6 +27,7 @@ import net.minecraft.entity.ai.goal.GoToWalkTargetGoal;
 import net.minecraft.entity.ai.goal.LookAroundGoal;
 import net.minecraft.entity.ai.goal.LookAtEntityGoal;
 import net.minecraft.entity.ai.goal.MeleeAttackGoal;
+import net.minecraft.entity.ai.goal.RevengeGoal;
 import net.minecraft.entity.ai.goal.SwimGoal;
 import net.minecraft.entity.ai.goal.WanderAroundFarGoal;
 import net.minecraft.entity.ai.pathing.MobNavigation;
@@ -42,8 +43,11 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtOps;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundEvent;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
@@ -85,6 +89,7 @@ public class HunterEntity extends PathAwareEntity
   private String kitId = "";
   private HunterKit kit;
   private HunterAction shown = HunterAction.NONE;
+  private long referredAt = -HunterReferral.REST;
 
   public HunterEntity(final EntityType<? extends PathAwareEntity> type, final World world) {
     super(type, world);
@@ -123,6 +128,10 @@ public class HunterEntity extends PathAwareEntity
     goalSelector.add(7, new LookAroundGoal(this));
     targetSelector.add(0, new KnownFaceTargetGoal(this));
     targetSelector.add(1, new HunterTargetGoal(this));
+    targetSelector.add(
+        2,
+        new RevengeGoal(this, HunterEntity.class, GuildMasterEntity.class, PlayerEntity.class)
+            .setGroupRevenge());
   }
 
   public static boolean hunts(final LivingEntity target) {
@@ -139,7 +148,14 @@ public class HunterEntity extends PathAwareEntity
 
   @Override
   public boolean canTarget(final LivingEntity target) {
-    return foeOf(target) && super.canTarget(target);
+    return (foeOf(target) || defendsAgainst(target)) && super.canTarget(target);
+  }
+
+  private boolean defendsAgainst(final LivingEntity target) {
+    return HunterTargets.defends(
+        target == getAttacker() || target == getTarget(),
+        target instanceof PlayerEntity,
+        target instanceof HunterEntity || target instanceof GuildMasterEntity);
   }
 
   protected boolean foeOf(final LivingEntity target) {
@@ -283,6 +299,23 @@ public class HunterEntity extends PathAwareEntity
     if (getNavigation() instanceof MobNavigation navigation) {
       navigation.setCanPathThroughDoors(true);
     }
+  }
+
+  @Override
+  public ActionResult interactMob(final PlayerEntity player, final Hand hand) {
+    if (!HunterReferral.answers(
+        isAlive(),
+        !getType().isIn(HunterReferral.NEVER_REFERS),
+        Vampires.isVampire(player),
+        getTarget() == player)) {
+      return super.interactMob(player, hand);
+    }
+    if (player instanceof ServerPlayerEntity visitor
+        && HunterReferral.rested(getWorld().getTime(), referredAt)) {
+      referredAt = getWorld().getTime();
+      HunterReferral.refer(this, visitor);
+    }
+    return ActionResult.success(getWorld().isClient);
   }
 
   public void join(final UUID leader) {
