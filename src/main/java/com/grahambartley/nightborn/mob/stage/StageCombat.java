@@ -10,12 +10,15 @@ public record StageCombat(
     int dashChance,
     int dodgeChance,
     int powerDodgeChance,
-    int retreatHealth) {
+    int retreatHealth,
+    int stuckTicks) {
 
   static final int PLAIN_FLOOR = 20;
   static final int PLAIN_THINK = 40;
+  static final int PLAIN_STUCK = 40;
 
-  public static final StageCombat PLAIN = new StageCombat(PLAIN_FLOOR, PLAIN_THINK, 0, 0, 0, 0, 0);
+  public static final StageCombat PLAIN =
+      new StageCombat(PLAIN_FLOOR, PLAIN_THINK, 0, 0, 0, 0, 0, PLAIN_STUCK);
 
   public static final Codec<StageCombat> CODEC =
       RecordCodecBuilder.create(
@@ -42,6 +45,9 @@ public record StageCombat(
                           .forGetter(StageCombat::powerDodgeChance),
                       Codec.intRange(0, 100)
                           .optionalFieldOf("retreat_health", 0)
-                          .forGetter(StageCombat::retreatHealth))
+                          .forGetter(StageCombat::retreatHealth),
+                      Codec.intRange(1, 200)
+                          .optionalFieldOf("stuck_ticks", PLAIN_STUCK)
+                          .forGetter(StageCombat::stuckTicks))
                   .apply(instance, StageCombat::new));
 }

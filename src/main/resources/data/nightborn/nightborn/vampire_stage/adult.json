@@ -9,7 +9,8 @@
     "dash_chance": 15,
     "dodge_chance": 15,
     "power_dodge_chance": 35,
-    "retreat_health": 25
+    "retreat_health": 25,
+    "stuck_ticks": 25
   },
   "look": { "name_color": "white" },
   "loot": "nightborn:entities/vampire/adult",

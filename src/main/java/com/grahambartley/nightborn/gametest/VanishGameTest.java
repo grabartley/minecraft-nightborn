@@ -33,7 +33,7 @@ public final class VanishGameTest implements FabricGameTest {
   static final double DISTANCE = 4.0;
   static final int GONE_TICKS = 5;
   static final int FULL_BLOOD = 20;
-  static final StageCombat ALWAYS_DODGES = new StageCombat(0, 20, 0, 0, 0, 100, 0);
+  static final StageCombat ALWAYS_DODGES = new StageCombat(0, 20, 0, 0, 0, 100, 0, 20);
 
   private static void learn(final LivingEntity vampire) {
     SkillAttachment.set(

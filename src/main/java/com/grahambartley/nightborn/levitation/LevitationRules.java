@@ -1,8 +1,11 @@
 package com.grahambartley.nightborn.levitation;
 
+import java.util.OptionalDouble;
+
 public final class LevitationRules {
 
   public static final int TOGGLE_COOLDOWN_TICKS = 10;
+  static final double SAFE_DROP = LevitationLift.HOVER_HEIGHT + LevitationGuard.TOLERANCE;
 
   private LevitationRules() {}
 
@@ -30,6 +33,17 @@ public final class LevitationRules {
 
   public static boolean crouches(final boolean crouching, final boolean holdsFloatPose) {
     return crouching && !holdsFloatPose;
+  }
+
+  public static boolean cushions(
+      final boolean levitating,
+      final boolean onGround,
+      final double feetY,
+      final OptionalDouble surface) {
+    if (!levitating || onGround) {
+      return false;
+    }
+    return surface.isEmpty() || feetY - surface.getAsDouble() > SAFE_DROP;
   }
 
   public static boolean toggleReady(final Long lastToggle, final long now) {

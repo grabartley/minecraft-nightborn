@@ -10,6 +10,7 @@ import com.grahambartley.nightborn.mob.goal.LieDownedGoal;
 import com.grahambartley.nightborn.mob.goal.RetreatGoal;
 import com.grahambartley.nightborn.mob.goal.SeekShadeGoal;
 import com.grahambartley.nightborn.mob.goal.SleepInCoffinGoal;
+import com.grahambartley.nightborn.mob.goal.StepBackGoal;
 import com.grahambartley.nightborn.mob.goal.WatchStrangerGoal;
 import com.grahambartley.nightborn.raid.HouseGuardGoal;
 import com.grahambartley.nightborn.raid.HouseWatch;
@@ -57,6 +58,7 @@ final class VampireGoals {
     final RetreatGoal retreat =
         new RetreatGoal(vampire, () -> vampire.stage().combat().retreatHealth());
     goals.add(3, retreat);
+    goals.add(3, new StepBackGoal(vampire, 1.15));
     goals.add(4, new MeleeAttackGoal(vampire, 1.15, false));
     final MemberStance memberStance = new MemberStance(vampire);
     goals.add(4, new StancePostGoal(vampire, memberStance));

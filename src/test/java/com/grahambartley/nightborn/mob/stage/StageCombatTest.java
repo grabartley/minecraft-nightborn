@@ -33,9 +33,15 @@ class StageCombatTest {
         "{\"power_dodge_chance\": 100} | true",
         "{\"power_dodge_chance\": 101} | false",
         "{\"power_dodge_chance\": -1} | false",
-        "{\"retreat_health\": 101} | false"
+        "{\"retreat_health\": 101} | false",
+        "{\"stuck_ticks\": 0} | false",
+        "{\"stuck_ticks\": 1} | true",
+        "{\"stuck_ticks\": 200} | true",
+        "{\"stuck_ticks\": 201} | false"
       })
-  @DisplayName("blood floors stay within a blood bar and chances within 0 to 100")
+  @DisplayName(
+      "blood floors stay within a blood bar, chances within 0 to 100 and waits within ten"
+          + " seconds")
   void bounds(final String json, final boolean loads) {
     assertEquals(
         loads, StageCombat.CODEC.parse(JsonOps.INSTANCE, JsonParser.parseString(json)).isSuccess());
@@ -53,5 +59,17 @@ class StageCombatTest {
                 JsonParser.parseString("{\"power_dodge_chance\": " + chance + "}"))
             .getOrThrow()
             .powerDodgeChance());
+  }
+
+  @ParameterizedTest(name = "{0}")
+  @CsvSource({"1", "25", "200"})
+  @DisplayName("a stage reads how long it stays stuck before it tries something else")
+  void stuckTicks(final int ticks) {
+    assertEquals(
+        ticks,
+        StageCombat.CODEC
+            .parse(JsonOps.INSTANCE, JsonParser.parseString("{\"stuck_ticks\": " + ticks + "}"))
+            .getOrThrow()
+            .stuckTicks());
   }
 }

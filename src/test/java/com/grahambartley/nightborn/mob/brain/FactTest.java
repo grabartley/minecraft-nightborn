@@ -15,7 +15,7 @@ class FactTest {
   private static final Situation SEEN =
       new Situation(
           Intent.FIGHT,
-          new Situation.Self(0.25F, 14, true, true, false),
+          new Situation.Self(0.25F, 14, true, true, false, true),
           new Situation.Target(7.5, true, 0.6F, true, false, true, false, true, false),
           new Situation.Place(11.5));
 
@@ -35,6 +35,7 @@ class FactTest {
     "IN_FORM, 1",
     "SUN_ON_ME, 1",
     "DOWNED, 0",
+    "STUCK, 1",
     "TARGET_WINDING_UP, 1",
     "TARGET_RUNNING, 0",
     "TARGET_SLOWED, 1",

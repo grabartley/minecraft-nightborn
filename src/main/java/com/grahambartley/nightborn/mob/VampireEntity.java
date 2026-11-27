@@ -183,7 +183,9 @@ public class VampireEntity extends HostileEntity
   }
 
   public boolean hunts(final LivingEntity target) {
-    return !Wanderers.holdsBack(this) && hunt.hunts(this, target);
+    return !Wanderers.holdsBack(this)
+        && !Unsticking.forgoes(this, target)
+        && hunt.hunts(this, target);
   }
 
   public boolean attacksOnSight(final LivingEntity target) {
@@ -284,6 +286,7 @@ public class VampireEntity extends HostileEntity
     if (!BatForm.isBat(this)) {
       fightAsVampire();
       if (levitatesAtWill()) {
+        Unsticking.tick(this, stage().combat().stuckTicks());
         MobLevitation.drift(this);
       }
     }
