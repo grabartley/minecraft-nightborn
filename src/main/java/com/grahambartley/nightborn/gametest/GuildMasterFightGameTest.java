@@ -1,12 +1,15 @@
 package com.grahambartley.nightborn.gametest;
 
+import com.grahambartley.nightborn.faction.GuildMembership;
 import com.grahambartley.nightborn.gear.GearItems;
 import com.grahambartley.nightborn.guild.GuildMasterEntity;
 import com.grahambartley.nightborn.guild.GuildMobs;
+import com.grahambartley.nightborn.guild.GuildOathOrder;
 import com.grahambartley.nightborn.guild.GuildRevengeGoal;
 import com.grahambartley.nightborn.guild.HunterEntity;
 import com.grahambartley.nightborn.mob.NightbornMobs;
 import com.grahambartley.nightborn.mob.VampireEntity;
+import com.grahambartley.nightborn.wheel.WheelEntry;
 import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.mob.ZombieEntity;
@@ -21,6 +24,7 @@ public class GuildMasterFightGameTest implements FabricGameTest {
 
   static final String ARENA = "nightborn:vampire_arena";
   static final int START = 5;
+  static final int OATH_OVER = TestPlayers.READY + 8 * 20 + 5;
 
   private static GuildMasterEntity master(final TestContext context) {
     final GuildMasterEntity master =
@@ -108,5 +112,32 @@ public class GuildMasterFightGameTest implements FabricGameTest {
           context.assertFalse(master.hasCustomer(), "the fight closes his counter");
           context.complete();
         });
+  }
+
+  @GameTest(templateName = ARENA, tickLimit = OATH_OVER + 5)
+  public void anOathEndsTheGuildMastersFightUntilItIsDone(final TestContext context) {
+    final GuildMasterEntity master = master(context);
+    final VampireEntity vampire = vampire(context);
+    final ServerPlayerEntity human = TestPlayers.human(context, new BlockPos(1, 2, 3));
+    GuildMembership.prove(human);
+    context.runAtTick(
+        TestPlayers.READY,
+        () -> {
+          master.setTarget(vampire);
+          master.fight();
+          context.assertTrue(
+              master.getMainHandStack().isOf(GearItems.SILVER_STAKE), "he fights with his stake");
+          context.assertTrue(
+              WheelUse.pick(human, master, GuildOathOrder.ID, WheelEntry.NO_ARGUMENT),
+              "the human swears the oath");
+          context.assertTrue(master.getTarget() == null, "he drops the fight");
+          context.assertTrue(master.getMainHandStack().isEmpty(), "and puts his stake away");
+          context.assertTrue(
+              master.getOffHandStack().isOf(GearItems.GOLD_CRUCIFIX), "to raise the crucifix");
+          context.assertFalse(master.onWatch(), "he looks for no foe during the oath");
+          context.assertFalse(
+              new GuildRevengeGoal(master).canStart(), "and answers no blow until it is done");
+        });
+    context.runAtTick(OATH_OVER, () -> TestPlayers.finish(context, human));
   }
 }

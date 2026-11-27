@@ -4,9 +4,12 @@ import static com.grahambartley.nightborn.guild.build.HunterBuildFixtures.id;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.grahambartley.nightborn.MinecraftBootstrapExtension;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
+import net.minecraft.util.Identifier;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -16,11 +19,11 @@ import org.junit.jupiter.params.provider.ValueSource;
 @ExtendWith(MinecraftBootstrapExtension.class)
 class HunterBuildCheckTest {
 
-  private static final Set<net.minecraft.util.Identifier> RANKS =
+  private static final Set<Identifier> RANKS =
       Set.of(id("initiate"), id("hunter"), id("veteran"), id("master"));
-  private static final Set<net.minecraft.util.Identifier> HUNTER_SKILLS =
+  private static final Set<Identifier> HUNTER_SKILLS =
       HunterBuildFixtures.treeOf(HunterBuildFixtures.hunterBranches());
-  private static final Set<net.minecraft.util.Identifier> KITS =
+  private static final Set<Identifier> KITS =
       Set.of(
           id("crossbow"),
           id("stake"),
@@ -29,8 +32,7 @@ class HunterBuildCheckTest {
           id("raid_silver"),
           id("raid_silver_holy_water"),
           id("master_silver"));
-  private static final Map<net.minecraft.util.Identifier, Integer> MASTER_KITS =
-      Map.of(id("master_silver"), 1);
+  private static final Map<Identifier, Integer> MASTER_KITS = Map.of(id("master_silver"), 1);
 
   @ParameterizedTest(name = "{0}")
   @ValueSource(strings = {"hunter"})
@@ -121,14 +123,13 @@ class HunterBuildCheckTest {
       })
   @DisplayName("a build whose Guild Master kits are missing or unknown is reported")
   void reportsMasterKits(final String kits, final String problem) {
-    final Map<net.minecraft.util.Identifier, Integer> masterKits =
+    final Map<Identifier, Integer> masterKits =
         kits.isEmpty()
             ? Map.of()
-            : java.util.Arrays.stream(kits.split(","))
+            : Arrays.stream(kits.split(","))
                 .map(entry -> entry.split("="))
                 .collect(
-                    java.util.stream.Collectors.toMap(
-                        entry -> id(entry[0]), entry -> Integer.parseInt(entry[1])));
+                    Collectors.toMap(entry -> id(entry[0]), entry -> Integer.parseInt(entry[1])));
     final HunterBuild build =
         new HunterBuild(
             Map.of(id("master"), 1), Map.of(), 0, 1, 1, Map.of(), 0, 1200, 0, masterKits);

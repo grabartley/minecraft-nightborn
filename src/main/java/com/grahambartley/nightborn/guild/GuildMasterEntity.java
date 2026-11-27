@@ -189,7 +189,7 @@ public class GuildMasterEntity extends MerchantEntity
         getPositionTargetRange(),
         getPositionTarget().getSquaredDistance(pos),
         HunterEntity.CAMP_REACH,
-        getTarget() != null || getAttacker() != null);
+        getTarget() != null || (getAttacker() != null && canFight()));
   }
 
   private boolean swearing() {
@@ -238,10 +238,6 @@ public class GuildMasterEntity extends MerchantEntity
 
   public boolean standsOff() {
     return kit != null && kit.ranged();
-  }
-
-  public String kit() {
-    return kitId;
   }
 
   @Override
@@ -401,7 +397,6 @@ public class GuildMasterEntity extends MerchantEntity
     sworn = player;
     setTarget(null);
     fighting.sheathe();
-    setEquipmentDropChance(EquipmentSlot.OFFHAND, 0.0F);
     equipStack(EquipmentSlot.OFFHAND, new ItemStack(GearItems.GOLD_CRUCIFIX));
     playSound(SoundEvents.ITEM_ARMOR_EQUIP_GOLD.value(), getSoundVolume(), 1.0F);
     keepSwearing();

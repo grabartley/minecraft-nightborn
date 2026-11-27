@@ -11,7 +11,11 @@ import com.google.gson.JsonParser;
 import com.grahambartley.nightborn.MinecraftBootstrapExtension;
 import com.grahambartley.nightborn.rank.RankLadder;
 import com.mojang.serialization.JsonOps;
+import java.util.Arrays;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 import net.minecraft.util.Identifier;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -71,20 +75,18 @@ class HunterBuildTest {
   void rollsAMasterKitThatExists(final String carried, final double roll, final String kit) {
     final HunterBuild build =
         new HunterBuild(
-            java.util.Map.of(),
-            java.util.Map.of(),
+            Map.of(),
+            Map.of(),
             0,
             1,
             1,
-            java.util.Map.of(),
+            Map.of(),
             0,
             1200,
             0,
-            java.util.Map.of(id("plain"), 1, id("silver"), 3));
-    final java.util.Set<Identifier> known =
-        java.util.Arrays.stream(carried.split(";"))
-            .map(HunterBuildFixtures::id)
-            .collect(java.util.stream.Collectors.toSet());
+            Map.of(id("plain"), 1, id("silver"), 3));
+    final Set<Identifier> known =
+        Arrays.stream(carried.split(";")).map(HunterBuildFixtures::id).collect(Collectors.toSet());
     assertEquals(
         kit.equals("none") ? Optional.empty() : Optional.of(id(kit)), build.masterKit(known, roll));
   }
@@ -94,8 +96,7 @@ class HunterBuildTest {
   @DisplayName("the shipped build arms every Guild Master from a master kit")
   void shippedArmsGuildMasters(final String kit) {
     assertEquals(
-        Optional.of(Identifier.of(kit)),
-        SHIPPED.masterKit(java.util.Set.of(Identifier.of(kit)), 0.5));
+        Optional.of(Identifier.of(kit)), SHIPPED.masterKit(Set.of(Identifier.of(kit)), 0.5));
   }
 
   @ParameterizedTest(name = "age {0} trickles: {1}")
