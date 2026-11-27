@@ -3,16 +3,19 @@ package com.grahambartley.nightborn.guild;
 import com.grahambartley.nightborn.accessory.GiftAttributes;
 import com.grahambartley.nightborn.accessory.GiftPrices;
 import com.grahambartley.nightborn.gear.GearItems;
+import com.grahambartley.nightborn.guild.build.HunterBuilds;
 import com.grahambartley.nightborn.guild.build.HunterSkills;
 import com.grahambartley.nightborn.guild.party.HunterParty;
 import com.grahambartley.nightborn.guild.party.PartyLeader;
 import com.grahambartley.nightborn.mob.MobSounds;
+import com.grahambartley.nightborn.mob.ShownAction;
 import com.grahambartley.nightborn.name.MobNaming;
 import com.grahambartley.nightborn.name.NameBearer;
 import com.grahambartley.nightborn.rank.GuildRanks;
 import com.grahambartley.nightborn.rank.RankBearer;
 import com.grahambartley.nightborn.rank.RankLadder;
 import com.grahambartley.nightborn.server.ServerConfigService;
+import com.grahambartley.nightborn.skill.PowerShow;
 import com.grahambartley.nightborn.skill.SkillHolder;
 import com.grahambartley.nightborn.skill.SkillTree;
 import com.grahambartley.nightborn.vampire.Vampires;
@@ -22,12 +25,16 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.EquipmentSlot;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.ai.RangedAttackMob;
 import net.minecraft.entity.ai.goal.GoToWalkTargetGoal;
 import net.minecraft.entity.ai.goal.LookAroundGoal;
 import net.minecraft.entity.ai.goal.LookAtCustomerGoal;
 import net.minecraft.entity.ai.goal.LookAtEntityGoal;
+import net.minecraft.entity.ai.goal.MeleeAttackGoal;
 import net.minecraft.entity.ai.goal.StopFollowingCustomerGoal;
 import net.minecraft.entity.ai.goal.SwimGoal;
 import net.minecraft.entity.ai.goal.WanderAroundFarGoal;
@@ -59,11 +66,17 @@ import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.AnimatableManager;
 import software.bernie.geckolib.animation.AnimationController;
-import software.bernie.geckolib.animation.PlayState;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 public class GuildMasterEntity extends MerchantEntity
-    implements GeoEntity, HunterLooking, NameBearer, SkillHolder, RankBearer {
+    implements GeoEntity,
+        HunterLooking,
+        NameBearer,
+        SkillHolder,
+        RankBearer,
+        GuildFighter,
+        PowerShow,
+        RangedAttackMob {
 
   static final String LAST_RESTOCK = "LastRestock";
   static final String OFFER_RANKS = "OfferRanks";
@@ -72,6 +85,8 @@ public class GuildMasterEntity extends MerchantEntity
   static final int TENT_REACH = 3;
   static final float LOOK_TURN = 30.0F;
   static final String PARTY_KEY = "Party";
+  static final String KIT_KEY = "Kit";
+  static final double CHARGE_SPEED = 0.7;
   @Nullable private HunterParty party;
 
   private static final TrackedData<Boolean> TRADING =
@@ -82,9 +97,22 @@ public class GuildMasterEntity extends MerchantEntity
       DataTracker.registerData(GuildMasterEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
   private static final TrackedData<String> RANK =
       DataTracker.registerData(GuildMasterEntity.class, TrackedDataHandlerRegistry.STRING);
+  private static final TrackedData<Integer> ACTION =
+      DataTracker.registerData(GuildMasterEntity.class, TrackedDataHandlerRegistry.INTEGER);
+  private static final TrackedData<Boolean> ARMED =
+      DataTracker.registerData(GuildMasterEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
+  private static final TrackedData<String> POWER =
+      DataTracker.registerData(GuildMasterEntity.class, TrackedDataHandlerRegistry.STRING);
+  private static final TrackedData<Integer> POWER_SEQUENCE =
+      DataTracker.registerData(GuildMasterEntity.class, TrackedDataHandlerRegistry.INTEGER);
 
   private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
   private final WornLook worn = new WornLook();
+  private final GuildFighting<GuildMasterEntity> fighting = new GuildFighting<>(this);
+  private final ShownHunterAction shown = new ShownHunterAction();
+  private final ShownAction shownPower = new ShownAction();
+  private String kitId = "";
+  @Nullable private HunterKit kit;
   private long lastRestock;
   private List<Integer> offerRanks = new ArrayList<>();
   private int swearTicks;
@@ -92,12 +120,17 @@ public class GuildMasterEntity extends MerchantEntity
 
   public GuildMasterEntity(final EntityType<? extends MerchantEntity> type, final World world) {
     super(type, world);
+    setEquipmentDropChance(EquipmentSlot.MAINHAND, 0.0F);
+    setEquipmentDropChance(EquipmentSlot.OFFHAND, 0.0F);
   }
 
   public static DefaultAttributeContainer.Builder createGuildMasterAttributes() {
     return MobEntity.createMobAttributes()
         .add(EntityAttributes.GENERIC_MAX_HEALTH, 30.0)
-        .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.5);
+        .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.5)
+        .add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 4.0)
+        .add(EntityAttributes.GENERIC_ARMOR, 4.0)
+        .add(EntityAttributes.GENERIC_FOLLOW_RANGE, 32.0);
   }
 
   @Override
@@ -107,6 +140,10 @@ public class GuildMasterEntity extends MerchantEntity
     builder.add(LOOK, "");
     builder.add(SWEARING, false);
     builder.add(RANK, "");
+    builder.add(ACTION, HunterAction.NONE.ordinal());
+    builder.add(ARMED, false);
+    builder.add(POWER, "");
+    builder.add(POWER_SEQUENCE, 0);
   }
 
   @Override
@@ -114,10 +151,121 @@ public class GuildMasterEntity extends MerchantEntity
     goalSelector.add(0, new SwimGoal(this));
     goalSelector.add(1, new StopFollowingCustomerGoal(this));
     goalSelector.add(1, new LookAtCustomerGoal(this));
+    goalSelector.add(2, new CrossbowGoal(this, this::standsOff));
+    goalSelector.add(3, new MeleeAttackGoal(this, CHARGE_SPEED, true));
     goalSelector.add(7, new GoToWalkTargetGoal(this, 0.4));
     goalSelector.add(8, new WanderAroundFarGoal(this, 0.35));
     goalSelector.add(9, new LookAtEntityGoal(this, PlayerEntity.class, 6.0F));
     goalSelector.add(10, new LookAroundGoal(this));
+    targetSelector.add(0, new KnownFaceTargetGoal(this));
+    targetSelector.add(1, new HunterTargetGoal(this));
+    targetSelector.add(2, new GuildRevengeGoal(this));
+  }
+
+  @Override
+  public boolean canTarget(final LivingEntity target) {
+    return GuildFoes.fights(this, target) && super.canTarget(target);
+  }
+
+  @Override
+  public boolean foeOf(final LivingEntity target) {
+    return GuildFoes.hunts(target);
+  }
+
+  @Override
+  public boolean onWatch() {
+    return !hasCustomer();
+  }
+
+  @Override
+  public Optional<GuildMasterEntity> master() {
+    return Optional.of(this);
+  }
+
+  @Override
+  public boolean armed() {
+    return dataTracker.get(ARMED);
+  }
+
+  @Override
+  public void setArmed(final boolean armed) {
+    dataTracker.set(ARMED, armed);
+  }
+
+  @Override
+  public void show(final HunterAction action) {
+    dataTracker.set(ACTION, action.ordinal());
+  }
+
+  public HunterAction action() {
+    return HunterAction.byIndex(dataTracker.get(ACTION));
+  }
+
+  @Override
+  public void speak(final HunterVoice voice) {
+    playSound(MobSounds.hunter(rig().figure(), voice), getSoundVolume(), getSoundPitch());
+  }
+
+  @Override
+  public void showPower(final String clip) {
+    dataTracker.set(POWER, clip);
+    dataTracker.set(POWER_SEQUENCE, dataTracker.get(POWER_SEQUENCE) + 1);
+  }
+
+  @Override
+  public void shootAt(final LivingEntity target, final float pullProgress) {
+    fighting.shoot();
+  }
+
+  public boolean standsOff() {
+    return kit != null && kit.ranged();
+  }
+
+  public String kit() {
+    return kitId;
+  }
+
+  @Override
+  public boolean tryAttack(final Entity target) {
+    final boolean struck = super.tryAttack(target);
+    if (struck) {
+      speak(HunterVoice.STRIKE);
+    }
+    return struck;
+  }
+
+  @Override
+  public boolean onKilledOther(final ServerWorld world, final LivingEntity other) {
+    if (Vampires.isVampire(other)) {
+      speak(HunterVoice.CHEER);
+    }
+    return super.onKilledOther(world, other);
+  }
+
+  @Override
+  protected void mobTick() {
+    super.mobTick();
+    fight();
+  }
+
+  public void fight() {
+    if (swearTicks == 0) {
+      fighting.tick(kit, HunterSkills.thinkTicks(this, shownRank()));
+    }
+  }
+
+  private void arm(final String wanted) {
+    final var kits = GuildData.kits(getRegistryManager());
+    kitId =
+        Optional.ofNullable(Identifier.tryParse(wanted))
+            .filter(kits::containsKey)
+            .or(
+                () ->
+                    HunterBuilds.build(getRegistryManager())
+                        .masterKit(kits.keySet(), getRandom().nextDouble()))
+            .map(Identifier::toString)
+            .orElse("");
+    kit = kits.get(Identifier.tryParse(kitId));
   }
 
   @Override
@@ -200,8 +348,11 @@ public class GuildMasterEntity extends MerchantEntity
     }
     if (!hasPositionTarget()) {
       wear(dataTracker.get(LOOK));
+      arm(kitId);
     }
     CampHome.keep(this, TENT_REACH);
+    CampHome.stretch(
+        this, CampHome.reach(TENT_REACH, HunterEntity.CAMP_REACH, getTarget() != null));
     if (!HunterSkills.built(this)) {
       HunterSkills.master(this);
     }
@@ -213,7 +364,8 @@ public class GuildMasterEntity extends MerchantEntity
       party = PartyLeader.tick(world, this, party);
     }
     final PlayerEntity customer = getCustomer();
-    if (customer != null && Vampires.isVampire(customer)) {
+    if (customer != null
+        && CounterClosing.closes(Vampires.isVampire(customer), getTarget() != null)) {
       resetCustomer();
       if (customer instanceof ServerPlayerEntity player) {
         player.closeHandledScreen();
@@ -349,6 +501,7 @@ public class GuildMasterEntity extends MerchantEntity
     nbt.putLong(LAST_RESTOCK, lastRestock);
     nbt.putIntArray(OFFER_RANKS, offerRanks);
     nbt.putString(GuildData.LOOK_KEY, dataTracker.get(LOOK));
+    nbt.putString(KIT_KEY, kitId);
     CampHome.write(this, nbt);
     if (party != null) {
       HunterParty.CODEC
@@ -373,7 +526,9 @@ public class GuildMasterEntity extends MerchantEntity
     lastRestock = nbt.getLong(LAST_RESTOCK);
     offerRanks = new ArrayList<>(Arrays.stream(nbt.getIntArray(OFFER_RANKS)).boxed().toList());
     if (!getWorld().isClient()) {
+      equipStack(EquipmentSlot.MAINHAND, ItemStack.EMPTY);
       wear(nbt.getString(GuildData.LOOK_KEY));
+      arm(nbt.getString(KIT_KEY));
     }
     CampHome.read(this, nbt, TENT_REACH);
     party =
@@ -395,9 +550,9 @@ public class GuildMasterEntity extends MerchantEntity
                     HunterPose.of(
                             handSwinging,
                             dataTracker.get(TRADING),
-                            false,
+                            isSprinting() || isAttacking(),
                             state.getLimbSwingAmount(),
-                            false)
+                            armed())
                         .clip())));
     controllers.add(
         new AnimationController<>(
@@ -405,9 +560,15 @@ public class GuildMasterEntity extends MerchantEntity
             "action",
             ANIMATION_BLEND_TICKS,
             state ->
-                dataTracker.get(SWEARING)
-                    ? state.setAndContinue(HunterAction.RAISE_CRUCIFIX.clip())
-                    : PlayState.STOP));
+                shown.play(
+                    state, dataTracker.get(SWEARING) ? HunterAction.RAISE_CRUCIFIX : action())));
+    controllers.add(
+        new AnimationController<>(
+            this,
+            "power",
+            ANIMATION_BLEND_TICKS,
+            state ->
+                shownPower.play(state, dataTracker.get(POWER_SEQUENCE), dataTracker.get(POWER))));
   }
 
   @Override

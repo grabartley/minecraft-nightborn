@@ -246,7 +246,7 @@ public class GrandInquisitorEntity extends HunterEntity
   }
 
   @Override
-  protected boolean foeOf(final LivingEntity target) {
+  public boolean foeOf(final LivingEntity target) {
     return InquisitorFoes.fights(
         target instanceof PlayerEntity,
         Vampires.isVampire(target),

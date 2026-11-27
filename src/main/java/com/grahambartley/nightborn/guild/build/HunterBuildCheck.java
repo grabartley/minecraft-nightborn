@@ -27,6 +27,10 @@ public final class HunterBuildCheck {
     unknown(build.rankWeights().keySet(), ranks, "rank weight names", "rank", problems);
     unknown(build.thinkTicks().keySet(), ranks, "think ticks name", "rank", problems);
     unknown(build.kitLeanings().keySet(), kits, "kit leanings name", "kit", problems);
+    if (build.masterKits().values().stream().allMatch(weight -> weight <= 0)) {
+      problems.add("no Guild Master kit has a weight above zero, so Guild Masters fight unarmed");
+    }
+    unknown(build.masterKits().keySet(), kits, "master kits name", "kit", problems);
     new TreeMap<>(build.kitLeanings())
         .forEach(
             (kit, leanings) ->

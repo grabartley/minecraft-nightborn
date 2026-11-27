@@ -9,8 +9,16 @@ import net.minecraft.util.math.Box;
 
 public class HunterTargetGoal extends ActiveTargetGoal<LivingEntity> {
 
-  public HunterTargetGoal(final MobEntity hunter) {
-    super(hunter, LivingEntity.class, true, HunterEntity::hunts);
+  private final GuildFighter fighter;
+
+  public <T extends MobEntity & GuildFighter> HunterTargetGoal(final T hunter) {
+    super(hunter, LivingEntity.class, true, GuildFoes::hunts);
+    this.fighter = hunter;
+  }
+
+  @Override
+  public boolean canStart() {
+    return fighter.onWatch() && super.canStart();
   }
 
   public static double reach(final double followRange, final double seen) {

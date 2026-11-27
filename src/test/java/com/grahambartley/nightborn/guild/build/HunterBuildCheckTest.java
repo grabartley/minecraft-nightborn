@@ -27,7 +27,10 @@ class HunterBuildCheckTest {
           id("silver_stake"),
           id("raid_wooden"),
           id("raid_silver"),
-          id("raid_silver_holy_water"));
+          id("raid_silver_holy_water"),
+          id("master_silver"));
+  private static final Map<net.minecraft.util.Identifier, Integer> MASTER_KITS =
+      Map.of(id("master_silver"), 1);
 
   @ParameterizedTest(name = "{0}")
   @ValueSource(strings = {"hunter"})
@@ -65,7 +68,8 @@ class HunterBuildCheckTest {
             Map.of(id(kit), Map.of(id(skill), 4)),
             0,
             1200,
-            0);
+            0,
+            MASTER_KITS);
     final List<String> problems = HunterBuildCheck.problems(build, RANKS, HUNTER_SKILLS, KITS);
     assertEquals(1, problems.size(), problems.toString());
     assertEquals(true, problems.getFirst().startsWith(problem), problems.toString());
@@ -76,7 +80,8 @@ class HunterBuildCheckTest {
   @DisplayName("a build where no rank can be rolled is reported")
   void reportsNoRollableRank(final int weight) {
     final HunterBuild build =
-        new HunterBuild(Map.of(id("master"), weight), Map.of(), 0, 1, 1, Map.of(), 0, 1200, 0);
+        new HunterBuild(
+            Map.of(id("master"), weight), Map.of(), 0, 1, 1, Map.of(), 0, 1200, 0, MASTER_KITS);
     assertEquals(
         List.of("no rank has a weight above zero"),
         HunterBuildCheck.problems(build, RANKS, Set.of(), KITS));
@@ -98,8 +103,38 @@ class HunterBuildCheckTest {
   @DisplayName("a build that weighs neither core nor path skills is reported")
   void reportsNoBaseWeight(final int core, final int path, final boolean reported) {
     final HunterBuild build =
-        new HunterBuild(Map.of(id("master"), 1), Map.of(), 0, core, path, Map.of(), 0, 1200, 0);
+        new HunterBuild(
+            Map.of(id("master"), 1), Map.of(), 0, core, path, Map.of(), 0, 1200, 0, MASTER_KITS);
     assertEquals(
         reported ? 1 : 0, HunterBuildCheck.problems(build, RANKS, HUNTER_SKILLS, KITS).size());
+  }
+
+  @ParameterizedTest(name = "master kits {0}: {1}")
+  @CsvSource(
+      delimiter = '|',
+      value = {
+        "master_silver=1 | ''",
+        "master_silver=0 | no Guild Master kit has a weight above zero",
+        "'' | no Guild Master kit has a weight above zero",
+        "master_silver=1,sling=2 | master kits name nightborn:sling",
+        "stake=1,silver_stake=3 | ''"
+      })
+  @DisplayName("a build whose Guild Master kits are missing or unknown is reported")
+  void reportsMasterKits(final String kits, final String problem) {
+    final Map<net.minecraft.util.Identifier, Integer> masterKits =
+        kits.isEmpty()
+            ? Map.of()
+            : java.util.Arrays.stream(kits.split(","))
+                .map(entry -> entry.split("="))
+                .collect(
+                    java.util.stream.Collectors.toMap(
+                        entry -> id(entry[0]), entry -> Integer.parseInt(entry[1])));
+    final HunterBuild build =
+        new HunterBuild(
+            Map.of(id("master"), 1), Map.of(), 0, 1, 1, Map.of(), 0, 1200, 0, masterKits);
+    final List<String> problems = HunterBuildCheck.problems(build, RANKS, HUNTER_SKILLS, KITS);
+    assertEquals(problem.isEmpty() ? 0 : 1, problems.size(), problems.toString());
+    assertEquals(
+        true, problem.isEmpty() || problems.getFirst().startsWith(problem), problems.toString());
   }
 }

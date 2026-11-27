@@ -57,6 +57,47 @@ class HunterBuildTest {
     assertEquals(weight, SHIPPED.weight(held, id(skill), path));
   }
 
+  @ParameterizedTest(name = "carried {0}, roll {1} -> {2}")
+  @CsvSource({
+    "plain;silver, 0.0, plain",
+    "plain;silver, 0.24, plain",
+    "plain;silver, 0.25, silver",
+    "plain;silver, 0.99, silver",
+    "silver, 0.0, silver",
+    "plain, 0.99, plain",
+    "crossbow, 0.5, none"
+  })
+  @DisplayName("a Guild Master's kit is rolled by weight from the master kits that exist")
+  void rollsAMasterKitThatExists(final String carried, final double roll, final String kit) {
+    final HunterBuild build =
+        new HunterBuild(
+            java.util.Map.of(),
+            java.util.Map.of(),
+            0,
+            1,
+            1,
+            java.util.Map.of(),
+            0,
+            1200,
+            0,
+            java.util.Map.of(id("plain"), 1, id("silver"), 3));
+    final java.util.Set<Identifier> known =
+        java.util.Arrays.stream(carried.split(";"))
+            .map(HunterBuildFixtures::id)
+            .collect(java.util.stream.Collectors.toSet());
+    assertEquals(
+        kit.equals("none") ? Optional.empty() : Optional.of(id(kit)), build.masterKit(known, roll));
+  }
+
+  @ParameterizedTest(name = "{0}")
+  @ValueSource(strings = {"nightborn:master_silver"})
+  @DisplayName("the shipped build arms every Guild Master from a master kit")
+  void shippedArmsGuildMasters(final String kit) {
+    assertEquals(
+        Optional.of(Identifier.of(kit)),
+        SHIPPED.masterKit(java.util.Set.of(Identifier.of(kit)), 0.5));
+  }
+
   @ParameterizedTest(name = "age {0} trickles: {1}")
   @CsvSource({"0, false", "1, false", "1199, false", "1200, true", "2400, true", "2401, false"})
   @DisplayName("a living hunter earns a trickle of experience at a steady interval")

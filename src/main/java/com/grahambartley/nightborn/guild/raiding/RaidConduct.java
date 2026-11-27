@@ -2,7 +2,7 @@ package com.grahambartley.nightborn.guild.raiding;
 
 import com.grahambartley.nightborn.coffin.CoffinBlock;
 import com.grahambartley.nightborn.coffin.CoffinSleepers;
-import com.grahambartley.nightborn.guild.HunterEntity;
+import com.grahambartley.nightborn.guild.GuildFoes;
 import com.grahambartley.nightborn.mind.MindTies;
 import com.grahambartley.nightborn.server.ServerConfigService;
 import java.util.Comparator;
@@ -72,7 +72,7 @@ public final class RaidConduct {
   private static Optional<LivingEntity> foe(final PathAwareEntity raider, final int chase) {
     final LivingEntity current = raider.getTarget();
     if (current != null
-        && HunterEntity.hunts(current)
+        && GuildFoes.hunts(current)
         && chases(true, current.isAlive(), false, raider.distanceTo(current), chase)) {
       return Optional.of(current);
     }
@@ -81,7 +81,7 @@ public final class RaidConduct {
         .getEntitiesByClass(
             LivingEntity.class,
             raider.getBoundingBox().expand(chase),
-            seen -> HunterEntity.hunts(seen) && seen.isAlive() && raider.canSee(seen))
+            seen -> GuildFoes.hunts(seen) && seen.isAlive() && raider.canSee(seen))
         .stream()
         .min(Comparator.comparingDouble(raider::squaredDistanceTo));
   }

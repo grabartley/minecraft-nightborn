@@ -16,6 +16,16 @@ public final class CampHome {
     }
   }
 
+  public static int reach(final int home, final int fighting, final boolean inFight) {
+    return inFight ? Math.max(home, fighting) : home;
+  }
+
+  public static void stretch(final PathAwareEntity resident, final int reach) {
+    if (resident.hasPositionTarget() && resident.getPositionTargetRange() != reach) {
+      resident.setPositionTarget(resident.getPositionTarget(), reach);
+    }
+  }
+
   public static void write(final PathAwareEntity resident, final NbtCompound nbt) {
     if (resident.hasPositionTarget()) {
       nbt.putLong(KEY, resident.getPositionTarget().asLong());
