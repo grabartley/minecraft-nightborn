@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Supplier;
 import net.minecraft.util.math.BlockPos;
 
 public final class CampSite {
@@ -47,6 +48,18 @@ public final class CampSite {
               return dx * dx + dz * dz >= apart * apart;
             })
         .orElse(true);
+  }
+
+  public static <T> Optional<T> choose(
+      final Supplier<Optional<T>> farFromLastCamp,
+      final Supplier<Optional<T>> anywhere,
+      final Supplier<Optional<T>> aroundOldFire) {
+    final Optional<T> far = farFromLastCamp.get();
+    if (far.isPresent()) {
+      return far;
+    }
+    final Optional<T> near = anywhere.get();
+    return near.isEmpty() ? near : aroundOldFire.get().or(() -> near);
   }
 
   public static List<BlockPos> nearestFirst(final int search, final int stride) {

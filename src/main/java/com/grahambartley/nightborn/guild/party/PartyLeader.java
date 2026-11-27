@@ -116,13 +116,10 @@ public final class PartyLeader {
       final BlockPos near,
       final CampLayout layout,
       final Optional<BlockPos> lastCamp) {
-    return PartyCamp.site(world, near, layout.bounds(), lastCamp)
-        .or(() -> lastCamp.flatMap(fire -> PartyCamp.around(world, fire, layout)))
-        .or(
-            () ->
-                lastCamp.isEmpty()
-                    ? Optional.empty()
-                    : PartyCamp.site(world, near, layout.bounds(), Optional.empty()));
+    return CampSite.choose(
+        () -> PartyCamp.site(world, near, layout.bounds(), lastCamp),
+        () -> PartyCamp.site(world, near, layout.bounds(), Optional.empty()),
+        () -> lastCamp.flatMap(fire -> PartyCamp.around(world, fire, layout)));
   }
 
   private static void settle(

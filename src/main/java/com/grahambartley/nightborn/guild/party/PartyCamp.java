@@ -44,8 +44,7 @@ public final class PartyCamp {
       }
       final BlockPos centre =
           new BlockPos(x, world.getTopY(Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, x, z), z);
-      if (CampSite.fits(
-          (ox, oy, oz) -> ground(world.getBlockState(centre.add(ox, oy, oz))), bounds)) {
+      if (CampSite.fits(survey(world, centre), bounds)) {
         return Optional.of(centre);
       }
     }
@@ -59,12 +58,13 @@ public final class PartyCamp {
       return Optional.empty();
     }
     return reusable(world.getBlockState(fire))
-            && CampSite.fitsAround(
-                (ox, oy, oz) -> ground(world.getBlockState(centre.add(ox, oy, oz))),
-                layout.bounds(),
-                layout.campfire())
+            && CampSite.fitsAround(survey(world, centre), layout.bounds(), layout.campfire())
         ? Optional.of(centre)
         : Optional.empty();
+  }
+
+  private static CampSite.Survey survey(final ServerWorld world, final BlockPos centre) {
+    return (ox, oy, oz) -> ground(world.getBlockState(centre.add(ox, oy, oz)));
   }
 
   public static boolean reusable(final BlockState fire) {

@@ -117,4 +117,23 @@ class CampSiteTest {
       assertEquals(0, offsets.get(i).getY());
     }
   }
+
+  @ParameterizedTest(name = "far spot {0}, any spot {1}, old fire reusable {2}: pitches at {3}")
+  @CsvSource({
+    "true, true, true, FAR",
+    "true, true, false, FAR",
+    "false, true, true, OLD_FIRE",
+    "false, true, false, NEAR",
+    "false, false, true, NONE",
+    "false, false, false, NONE"
+  })
+  void fallsBackToTheOldFireOnlyWhenAllGroundInReachIsNearTheLastCamp(
+      final boolean far, final boolean any, final boolean oldFire, final String expected) {
+    final Optional<String> chosen =
+        CampSite.choose(
+            () -> far ? Optional.of("FAR") : Optional.empty(),
+            () -> any ? Optional.of("NEAR") : Optional.empty(),
+            () -> oldFire ? Optional.of("OLD_FIRE") : Optional.empty());
+    assertEquals(expected, chosen.orElse("NONE"));
+  }
 }
