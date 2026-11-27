@@ -1,5 +1,7 @@
 {
   "blood_reserve": 0,
   "cooldown_price": 0,
-  "threshold": 0.0
+  "threshold": 0.0,
+  "thrift": 0.5,
+  "spread": 0.1
 }

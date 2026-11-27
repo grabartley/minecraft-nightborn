@@ -33,7 +33,42 @@
       "max_range": 24.0,
       "tell_ticks": 10,
       "tell_sound": "minecraft:entity.evoker.prepare_attack",
-      "tell_clip": "hiss"
+      "tell_clip": "hiss",
+      "uses": [
+        {
+          "intent": "fight",
+          "aim": "self",
+          "considerations": [
+            {
+              "fact": "target_distance",
+              "low": 8,
+              "high": 24
+            }
+          ]
+        },
+        {
+          "intent": "close_in",
+          "aim": "self",
+          "considerations": [
+            {
+              "fact": "target_distance",
+              "low": 8,
+              "high": 24
+            }
+          ]
+        },
+        {
+          "intent": "retreat",
+          "aim": "self",
+          "considerations": [
+            {
+              "fact": "target_distance",
+              "high": 16
+            }
+          ],
+          "weight": 1.5
+        }
+      ]
     }
   },
   "stage": "nightborn:adult"

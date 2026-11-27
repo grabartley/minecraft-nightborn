@@ -10,6 +10,7 @@ import com.grahambartley.nightborn.occult.FogClouds;
 import com.grahambartley.nightborn.occult.GhostlyFamiliarEntity;
 import com.grahambartley.nightborn.occult.GhostlyFamiliars;
 import com.grahambartley.nightborn.occult.goal.FamiliarScoutGoal;
+import com.grahambartley.nightborn.skill.CastAim;
 import com.grahambartley.nightborn.skill.PowerCooldownAttachment;
 import com.grahambartley.nightborn.skill.PowerCooldowns;
 import com.grahambartley.nightborn.skill.PowerUse;
@@ -270,6 +271,30 @@ public class OccultGameTest implements FabricGameTest {
               GhostlyFamiliars.owned(context.getWorld(), vampire.getUuid()).size(),
               1,
               "a familiar answered the mob");
+          end(context, vampire);
+        });
+  }
+
+  @GameTest(templateName = ARENA, batchId = BATCH, tickLimit = 20)
+  public void aVampireMobStepsTowardTheSpotItAimsAtRatherThanItsTarget(final TestContext context) {
+    final VampireEntity vampire = context.spawnEntity(NightbornMobs.VAMPIRE, new BlockPos(1, 2, 1));
+    vampire.setAiDisabled(true);
+    final ZombieEntity foe = context.spawnEntity(EntityType.ZOMBIE, new BlockPos(6, 2, 1));
+    foe.setAiDisabled(true);
+    vampire.setTarget(foe);
+    OccultSkills.learn(vampire, OccultSkills.SHADOW_STEP);
+    final Vec3d spot = context.getAbsolute(Vec3d.ofBottomCenter(new BlockPos(1, 2, 6)));
+    context.runAtTick(
+        5,
+        () -> {
+          context.assertEquals(
+              Powers.cast(vampire, OccultSkills.SHADOW_STEP, CastAim.toward(spot)),
+              PowerUse.Verdict.READY,
+              "the mob stepped");
+          context.assertTrue(
+              vampire.getPos().distanceTo(spot) < 1.5,
+              "the mob landed on the spot, not behind its target: "
+                  + vampire.getPos().distanceTo(spot));
           end(context, vampire);
         });
   }

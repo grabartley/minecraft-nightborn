@@ -58,22 +58,34 @@ public record PowerAim(
 
   public static PowerAim of(
       final LivingEntity caster, final Optional<SkillPower> power, final PowerHeading heading) {
+    return of(caster, power, heading, CastAim.OWN_TARGET);
+  }
+
+  public static PowerAim of(
+      final LivingEntity caster,
+      final Optional<SkillPower> power,
+      final PowerHeading heading,
+      final CastAim cast) {
     if (power.isEmpty() || !aims(power.get())) {
       return NONE;
     }
     final SkillPower skill = power.get();
     final LivingEntity target =
-        targetRange(skill).map(range -> PowerSight.aimed(caster, range)).orElse(null);
+        targetRange(skill).map(range -> PowerSight.aimed(caster, range, cast)).orElse(null);
     return new PowerAim(
         skill
             .mesmerise()
-            .map(mesmerise -> Mesmerise.target(caster, mesmerise.range()))
+            .map(mesmerise -> Mesmerise.target(caster, mesmerise.range(), cast))
             .orElse(null),
         skill
             .shadowStep()
-            .flatMap(step -> ShadowStep.destination(caster, step))
-            .or(() -> skill.vanish().flatMap(vanish -> Vanish.destination(caster, vanish, heading)))
-            .or(() -> skill.dash().flatMap(dash -> Dashes.destination(caster, dash, heading)))
+            .flatMap(step -> ShadowStep.destination(caster, step, cast))
+            .or(
+                () ->
+                    skill
+                        .vanish()
+                        .flatMap(vanish -> Vanish.destination(caster, vanish, heading, cast)))
+            .or(() -> skill.dash().flatMap(dash -> Dashes.destination(caster, dash, heading, cast)))
             .or(
                 () ->
                     skill
@@ -87,7 +99,7 @@ public record PowerAim(
             .traps()
             .placeRange()
             .or(() -> skill.faith().spotRange())
-            .flatMap(range -> TrapSpots.spot(caster, range))
+            .flatMap(range -> TrapSpots.spot(caster, range, cast))
             .orElse(null),
         Wielders.of(caster, skill.faith()));
   }

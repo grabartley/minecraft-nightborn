@@ -3,12 +3,12 @@ package com.grahambartley.nightborn.mob.combat;
 import com.grahambartley.nightborn.mob.brain.PowerChoice;
 import com.grahambartley.nightborn.mob.brain.Think;
 import com.grahambartley.nightborn.mob.brain.Thinking;
+import com.grahambartley.nightborn.skill.CastAim;
 import com.grahambartley.nightborn.skill.MobPowerUse;
 import com.grahambartley.nightborn.skill.PowerShow;
 import com.grahambartley.nightborn.skill.PowerUse;
 import com.grahambartley.nightborn.skill.Powers;
 import java.util.Optional;
-import java.util.function.BiFunction;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.sound.SoundEvent;
@@ -17,7 +17,12 @@ import org.jetbrains.annotations.Nullable;
 
 public final class PowerCasting {
 
-  private final BiFunction<LivingEntity, Identifier, PowerUse.Verdict> cast;
+  @FunctionalInterface
+  interface Cast {
+    PowerUse.Verdict apply(LivingEntity caster, Identifier power, CastAim aim);
+  }
+
+  private final Cast cast;
   @Nullable private Tell telling;
   @Nullable private Think lastThink;
   private long nextThink;
@@ -26,7 +31,7 @@ public final class PowerCasting {
     this(Powers::cast);
   }
 
-  private PowerCasting(final BiFunction<LivingEntity, Identifier, PowerUse.Verdict> cast) {
+  private PowerCasting(final Cast cast) {
     this.cast = cast;
   }
 
@@ -34,25 +39,25 @@ public final class PowerCasting {
     return new PowerCasting(Powers::castUnderOwnClip);
   }
 
-  public static boolean thinks(final boolean hasTarget, final long now, final long nextThink) {
-    return hasTarget && now >= nextThink;
+  public static boolean thinks(final boolean engaged, final long now, final long nextThink) {
+    return engaged && now >= nextThink;
   }
 
   public <T extends MobEntity & PowerShow> void tick(
-      final T caster, final int thinkTicks, final int bloodFloor) {
+      final T caster, final boolean engaged, final int thinkTicks, final int bloodFloor) {
     final long now = caster.getWorld().getTime();
-    final LivingEntity target = caster.getTarget();
     if (telling != null) {
-      final Tell.Step step = telling.step(target != null, now);
+      final Tell.Step step = telling.step(engaged, now);
       if (step == Tell.Step.CAST) {
-        cast.apply(caster, telling.power());
+        final Identifier power = telling.power();
+        CastAims.resolve(caster, telling.aim()).ifPresent(aim -> cast.apply(caster, power, aim));
       }
       if (step != Tell.Step.WAIT) {
         telling = null;
       }
       return;
     }
-    if (!thinks(target != null, now, nextThink)) {
+    if (!thinks(engaged, now, nextThink)) {
       return;
     }
     nextThink = now + thinkTicks;
@@ -65,7 +70,7 @@ public final class PowerCasting {
               .ifPresent(
                   scored -> {
                     nextThink += thought.budget().cooldownPrice();
-                    tell(caster, scored.option(), now);
+                    tell(caster, scored, now);
                   });
         });
   }
@@ -83,9 +88,9 @@ public final class PowerCasting {
   }
 
   private <T extends MobEntity & PowerShow> void tell(
-      final T caster, final PowerChoice.Option option, final long now) {
-    final MobPowerUse use = option.use();
-    telling = new Tell(option.power(), now + use.tellTicks());
+      final T caster, final PowerChoice.Scored scored, final long now) {
+    final MobPowerUse use = scored.option().use();
+    telling = new Tell(scored.option().power(), now + use.tellTicks(), scored.use().aimed());
     caster.showPower(use.tellClip());
     caster.playSound(SoundEvent.of(use.tellSound()), 1.0F, 1.0F);
   }

@@ -6,6 +6,7 @@ import com.grahambartley.nightborn.mob.NightbornMobs;
 import com.grahambartley.nightborn.mob.VampireEntity;
 import com.grahambartley.nightborn.mob.brain.Intent;
 import com.grahambartley.nightborn.mob.brain.Think;
+import com.grahambartley.nightborn.mob.combat.MobFighting;
 import com.grahambartley.nightborn.mob.stage.VampireStages;
 import com.grahambartley.nightborn.mob.stage.VampireStaging;
 import com.grahambartley.nightborn.skill.PowerCooldownAttachment;
@@ -115,7 +116,7 @@ public class VampireStageGameTest implements FabricGameTest {
         .mobFighting()
         .tick(
             vampire,
-            true,
+            MobFighting.Engagement.FIGHTING,
             vampire.stage().combat().thinkTicks(),
             vampire.stage().combat().bloodFloor());
     final Think think = vampire.mobFighting().lastThink().orElseThrow();

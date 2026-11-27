@@ -45,6 +45,61 @@
       "volume": 0.6,
       "pitch": 0.9
     },
-    "mobs_never_use": true
+    "mob": {
+      "max_range": 4.0,
+      "tell_ticks": 10,
+      "tell_sound": "minecraft:block.tripwire.attach",
+      "tell_clip": "throw_holy_water",
+      "uses": [
+        {
+          "intent": "fight",
+          "considerations": [
+            {
+              "fact": "target_distance",
+              "high": 4
+            },
+            {
+              "fact": "target_vampire",
+              "low": 1,
+              "high": 1
+            },
+            {
+              "fact": "target_slowed",
+              "high": 0
+            },
+            {
+              "fact": "target_running",
+              "low": 1,
+              "high": 1
+            }
+          ],
+          "weight": 2.0
+        },
+        {
+          "intent": "close_in",
+          "considerations": [
+            {
+              "fact": "target_distance",
+              "high": 4
+            },
+            {
+              "fact": "target_vampire",
+              "low": 1,
+              "high": 1
+            },
+            {
+              "fact": "target_slowed",
+              "high": 0
+            },
+            {
+              "fact": "target_running",
+              "low": 1,
+              "high": 1
+            }
+          ],
+          "weight": 2.0
+        }
+      ]
+    }
   }
 }

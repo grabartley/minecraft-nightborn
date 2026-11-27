@@ -31,7 +31,6 @@ import net.minecraft.registry.Registry;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.math.Vec3d;
 import org.jetbrains.annotations.Nullable;
 
 public final class Powers {
@@ -76,12 +75,6 @@ public final class Powers {
   @Nullable
   public static LivingEntity foe(final LivingEntity caster) {
     return caster instanceof MobEntity mob ? mob.getTarget() : caster.getAttacking();
-  }
-
-  static Vec3d heading(final LivingEntity caster) {
-    return caster instanceof MobEntity mob && mob.getTarget() != null
-        ? mob.getTarget().getPos().subtract(caster.getPos())
-        : caster.getRotationVector();
   }
 
   public static int cooldownTicks(
@@ -196,18 +189,29 @@ public final class Powers {
 
   public static PowerUse.Verdict cast(
       final LivingEntity caster, @Nullable final Identifier id, final PowerHeading heading) {
-    return cast(caster, id, heading, true);
+    return cast(caster, id, heading, CastAim.OWN_TARGET, true);
+  }
+
+  public static PowerUse.Verdict cast(
+      final LivingEntity caster, @Nullable final Identifier id, final CastAim cast) {
+    return cast(caster, id, PowerHeading.NONE, cast, true);
   }
 
   public static PowerUse.Verdict castUnderOwnClip(
       final LivingEntity caster, @Nullable final Identifier id) {
-    return cast(caster, id, PowerHeading.NONE, false);
+    return castUnderOwnClip(caster, id, CastAim.OWN_TARGET);
+  }
+
+  public static PowerUse.Verdict castUnderOwnClip(
+      final LivingEntity caster, @Nullable final Identifier id, final CastAim cast) {
+    return cast(caster, id, PowerHeading.NONE, cast, false);
   }
 
   private static PowerUse.Verdict cast(
       final LivingEntity caster,
       @Nullable final Identifier id,
       final PowerHeading heading,
+      final CastAim cast,
       final boolean showsClip) {
     final Optional<SkillPower> owned = power(caster, id);
     if (BatForm.isBat(caster)
@@ -215,7 +219,7 @@ public final class Powers {
         && owned.flatMap(SkillPower::batForm).isPresent()) {
       return BatForm.leave(caster) ? PowerUse.Verdict.READY : PowerUse.Verdict.CRAMPED;
     }
-    final PowerAim aim = PowerAim.of(caster, owned, heading);
+    final PowerAim aim = PowerAim.of(caster, owned, heading, cast);
     final PowerUse.Verdict verdict = check(caster, id, owned, aim);
     if (verdict != PowerUse.Verdict.READY) {
       return verdict;
@@ -229,7 +233,7 @@ public final class Powers {
     PowerCooldownAttachment.set(
         caster,
         PowerCooldownAttachment.get(caster).start(id, now, cooldownTicks(caster, id, power)));
-    PowerCasts.apply(caster, id, power, aim, showsClip);
+    PowerCasts.apply(caster, id, power, aim, cast, showsClip);
     return verdict;
   }
 }

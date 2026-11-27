@@ -36,7 +36,8 @@ class ThinkTest {
             Intent.FIGHT,
             40L,
             List.of(scored("first", 2.0, firstAffordable), scored("second", 1.0, true)),
-            new IntentBudget(0, 0, threshold));
+            new IntentBudget(0, 0, threshold),
+            0.0);
     assertEquals(
         chosen.isEmpty() ? Optional.empty() : Optional.of(Identifier.of("nightborn", chosen)),
         think.chosen().map(s -> s.option().power()));

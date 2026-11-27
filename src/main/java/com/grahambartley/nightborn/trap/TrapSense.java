@@ -1,5 +1,6 @@
 package com.grahambartley.nightborn.trap;
 
+import com.grahambartley.nightborn.faction.Hunters;
 import com.grahambartley.nightborn.sight.Sights;
 import java.util.Map;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -16,7 +17,7 @@ public final class TrapSense {
   }
 
   static void show(final ServerPlayerEntity player, final Map<Integer, Integer> shown) {
-    if (!TrapAllies.hunter(player) || !TrapGifts.senses(HeldTrapGifts.of(player))) {
+    if (!Hunters.isHunter(player) || !TrapGifts.senses(HeldTrapGifts.of(player))) {
       return;
     }
     for (final TrapEntity trap :

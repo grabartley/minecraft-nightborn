@@ -1,5 +1,6 @@
 package com.grahambartley.nightborn.trap;
 
+import com.grahambartley.nightborn.skill.CastAim;
 import java.util.Optional;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.LivingEntity;
@@ -26,8 +27,9 @@ public final class TrapSpots {
     return squaredDistance <= (double) range * range;
   }
 
-  public static Optional<BlockPos> spot(final LivingEntity caster, final float range) {
-    final BlockPos at = aimed(caster, range);
+  public static Optional<BlockPos> spot(
+      final LivingEntity caster, final float range, final CastAim aim) {
+    final BlockPos at = aimed(caster, range, aim);
     if (at == null
         || !inRange(caster.squaredDistanceTo(at.toBottomCenterPos()), range + AIM_SLACK)
         || !fits(caster.getWorld(), at)) {
@@ -45,9 +47,13 @@ public final class TrapSpots {
         space.isIn(BlockTags.FIRE));
   }
 
-  private static BlockPos aimed(final LivingEntity caster, final float range) {
-    if (caster instanceof MobEntity mob) {
-      return mob.getTarget() == null ? null : mob.getTarget().getBlockPos();
+  private static BlockPos aimed(final LivingEntity caster, final float range, final CastAim aim) {
+    if (caster instanceof MobEntity) {
+      if (aim.spot() != null) {
+        return BlockPos.ofFloored(aim.spot());
+      }
+      final LivingEntity subject = aim.subject(caster);
+      return subject == null ? null : subject.getBlockPos();
     }
     final HitResult hit = caster.raycast(range, 1.0F, false);
     if (!(hit instanceof BlockHitResult block) || hit.getType() != HitResult.Type.BLOCK) {

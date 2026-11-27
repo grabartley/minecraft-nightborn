@@ -3,6 +3,8 @@ package com.grahambartley.nightborn.mob.goal;
 import com.grahambartley.nightborn.downed.Downed;
 import com.grahambartley.nightborn.downed.DownedRules;
 import com.grahambartley.nightborn.mob.ShadeRules;
+import com.grahambartley.nightborn.mob.brain.Intent;
+import com.grahambartley.nightborn.mob.brain.IntentGoal;
 import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.List;
@@ -17,7 +19,7 @@ import net.minecraft.util.math.Vec3i;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
-public class SeekShadeGoal extends Goal {
+public class SeekShadeGoal extends Goal implements IntentGoal {
 
   static final int SEARCH_RADIUS = 12;
   static final int SEARCH_HEIGHT = 4;
@@ -34,6 +36,7 @@ public class SeekShadeGoal extends Goal {
   @Nullable private Path route;
   @Nullable private BlockPos searchedFrom;
   private int nextSearchAge;
+  private boolean seeking;
 
   public SeekShadeGoal(final PathAwareEntity mob, final double speed) {
     this.mob = mob;
@@ -63,12 +66,23 @@ public class SeekShadeGoal extends Goal {
   public void start() {
     mob.setTarget(null);
     mob.getNavigation().startMovingAlong(route, speed);
+    seeking = true;
   }
 
   @Override
   public void stop() {
     route = null;
+    seeking = false;
     mob.getNavigation().stop();
+  }
+
+  public boolean seeking() {
+    return seeking;
+  }
+
+  @Override
+  public Intent intent() {
+    return Intent.RETREAT;
   }
 
   private boolean standing() {

@@ -3,6 +3,7 @@ package com.grahambartley.nightborn.slayer;
 import com.grahambartley.nightborn.Nightborn;
 import com.grahambartley.nightborn.hold.Holds;
 import com.grahambartley.nightborn.landing.Landing;
+import com.grahambartley.nightborn.skill.CastAim;
 import com.grahambartley.nightborn.skill.PowerHeading;
 import com.grahambartley.nightborn.skill.PowerSight;
 import com.grahambartley.nightborn.vampire.Vampires;
@@ -38,8 +39,11 @@ public final class Dashes {
   }
 
   public static Optional<Vec3d> destination(
-      final LivingEntity caster, final DashPower power, final PowerHeading held) {
-    return Vanish.destination(caster, power.distance(), held);
+      final LivingEntity caster,
+      final DashPower power,
+      final PowerHeading held,
+      final CastAim aim) {
+    return Vanish.destination(caster, power.distance(), held, aim);
   }
 
   public static void go(final LivingEntity caster, final Vec3d to, final DashPower power) {

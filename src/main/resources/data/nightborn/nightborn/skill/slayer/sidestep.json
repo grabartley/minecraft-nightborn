@@ -27,6 +27,43 @@
       "volume": 0.5,
       "pitch": 1.1
     },
-    "mobs_never_use": true
+    "mob": {
+      "max_range": 4.0,
+      "tell_ticks": 1,
+      "tell_sound": "minecraft:entity.player.attack.sweep",
+      "tell_clip": "run",
+      "uses": [
+        {
+          "intent": "fight",
+          "considerations": [
+            {
+              "fact": "target_distance",
+              "high": 4
+            },
+            {
+              "fact": "target_winding_up",
+              "low": 1,
+              "high": 1
+            }
+          ],
+          "weight": 2.0
+        },
+        {
+          "intent": "close_in",
+          "considerations": [
+            {
+              "fact": "target_distance",
+              "high": 4
+            },
+            {
+              "fact": "target_winding_up",
+              "low": 1,
+              "high": 1
+            }
+          ],
+          "weight": 2.0
+        }
+      ]
+    }
   }
 }

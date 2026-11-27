@@ -36,7 +36,49 @@
       "max_range": 16.0,
       "tell_ticks": 16,
       "tell_sound": "minecraft:block.beacon.power_select",
-      "tell_clip": "raise_crucifix"
+      "tell_clip": "raise_crucifix",
+      "uses": [
+        {
+          "intent": "fight",
+          "considerations": [
+            {
+              "fact": "target_distance",
+              "high": 16
+            },
+            {
+              "fact": "target_vampire",
+              "low": 1,
+              "high": 1
+            },
+            {
+              "fact": "target_health",
+              "curve": "rising",
+              "low": 0.2,
+              "high": 0.5
+            }
+          ]
+        },
+        {
+          "intent": "close_in",
+          "considerations": [
+            {
+              "fact": "target_distance",
+              "high": 16
+            },
+            {
+              "fact": "target_vampire",
+              "low": 1,
+              "high": 1
+            },
+            {
+              "fact": "target_health",
+              "curve": "rising",
+              "low": 0.2,
+              "high": 0.5
+            }
+          ]
+        }
+      ]
     }
   }
 }

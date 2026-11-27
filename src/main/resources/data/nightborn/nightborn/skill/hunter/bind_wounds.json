@@ -23,6 +23,39 @@
       "id": "minecraft:item.armor.equip_leather",
       "volume": 0.7
     },
-    "mobs_never_use": true
+    "mob": {
+      "max_range": 16.0,
+      "tell_ticks": 12,
+      "tell_sound": "minecraft:item.armor.equip_leather",
+      "tell_clip": "rallying_cry",
+      "uses": [
+        {
+          "intent": "fight",
+          "aim": "self",
+          "considerations": [
+            {
+              "fact": "own_health",
+              "curve": "falling",
+              "low": 0.3,
+              "high": 0.7
+            }
+          ],
+          "weight": 2.0
+        },
+        {
+          "intent": "close_in",
+          "aim": "self",
+          "considerations": [
+            {
+              "fact": "own_health",
+              "curve": "falling",
+              "low": 0.3,
+              "high": 0.7
+            }
+          ],
+          "weight": 2.0
+        }
+      ]
+    }
   }
 }

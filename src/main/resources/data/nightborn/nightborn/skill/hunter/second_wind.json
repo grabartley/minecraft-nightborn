@@ -38,7 +38,43 @@
       "max_range": 16.0,
       "tell_ticks": 12,
       "tell_sound": "minecraft:item.armor.equip_iron",
-      "tell_clip": "rallying_cry"
+      "tell_clip": "rallying_cry",
+      "uses": [
+        {
+          "intent": "fight",
+          "aim": "self",
+          "considerations": [
+            {
+              "fact": "target_distance",
+              "high": 16
+            },
+            {
+              "fact": "own_health",
+              "curve": "falling",
+              "low": 0.4,
+              "high": 0.9
+            }
+          ],
+          "weight": 1.2
+        },
+        {
+          "intent": "close_in",
+          "aim": "self",
+          "considerations": [
+            {
+              "fact": "target_distance",
+              "high": 16
+            },
+            {
+              "fact": "own_health",
+              "curve": "falling",
+              "low": 0.4,
+              "high": 0.9
+            }
+          ],
+          "weight": 1.2
+        }
+      ]
     }
   }
 }

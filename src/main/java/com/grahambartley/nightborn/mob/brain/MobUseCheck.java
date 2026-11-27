@@ -52,6 +52,11 @@ public final class MobUseCheck {
       if (Aim.byKey(use.aim()).isEmpty()) {
         problems.add(id + " has a use with unknown aim " + use.aim());
       }
+      if (Aim.SPOT.key().equals(use.aim())
+          && use.considerations().stream()
+              .noneMatch(consideration -> Fact.SPOT_DISTANCE.key().equals(consideration.fact()))) {
+        problems.add(id + " has a use aimed at a spot that does not weigh spot_distance");
+      }
       use.considerations().stream()
           .filter(consideration -> Fact.byKey(consideration.fact()).isEmpty())
           .forEach(

@@ -28,7 +28,35 @@
       "max_range": 16.0,
       "tell_ticks": 12,
       "tell_sound": "minecraft:block.amethyst_block.chime",
-      "tell_clip": "raise_crucifix"
+      "tell_clip": "raise_crucifix",
+      "uses": [
+        {
+          "intent": "fight",
+          "aim": "self",
+          "considerations": [
+            {
+              "fact": "own_health",
+              "curve": "falling",
+              "low": 0.3,
+              "high": 0.8
+            }
+          ],
+          "weight": 1.5
+        },
+        {
+          "intent": "close_in",
+          "aim": "self",
+          "considerations": [
+            {
+              "fact": "own_health",
+              "curve": "falling",
+              "low": 0.3,
+              "high": 0.8
+            }
+          ],
+          "weight": 1.5
+        }
+      ]
     }
   }
 }

@@ -16,7 +16,6 @@ import com.grahambartley.nightborn.mob.combat.FightBack;
 import com.grahambartley.nightborn.mob.combat.MobFighter;
 import com.grahambartley.nightborn.mob.combat.MobFighting;
 import com.grahambartley.nightborn.mob.combat.PowerCasting;
-import com.grahambartley.nightborn.mob.goal.RetreatGoal;
 import com.grahambartley.nightborn.mob.home.HomeLife;
 import com.grahambartley.nightborn.mob.home.HouseholdTie;
 import com.grahambartley.nightborn.mob.home.MobBlood;
@@ -134,7 +133,7 @@ public class VampireEntity extends HostileEntity
       MobFighting.castingFirst(new PowerCasting(), new CombatMoves<>(this, () -> stage().combat()));
   private final VampireHunt hunt = new VampireHunt(blood, homeLife);
   private final VampireHiss hissing = new VampireHiss();
-  private RetreatGoal retreat;
+  private VampireGoals.Escapes escapes;
   private boolean undressed;
 
   public VampireEntity(final EntityType<? extends VampireEntity> type, final World world) {
@@ -180,7 +179,7 @@ public class VampireEntity extends HostileEntity
 
   @Override
   protected void initGoals() {
-    retreat = VampireGoals.addTo(this, goalSelector, targetSelector);
+    escapes = VampireGoals.addTo(this, goalSelector, targetSelector);
   }
 
   public boolean hunts(final LivingEntity target) {
@@ -298,11 +297,11 @@ public class VampireEntity extends HostileEntity
   protected void fightAsVampire() {
     fighting.tick(
         this,
-        MobFighting.fights(
+        MobFighting.engagement(
             getTarget() != null,
             Downed.state(this) != null,
             isSleeping(),
-            retreat != null && retreat.active(),
+            escapes != null && escapes.active(),
             Weakened.sources(this).level(false) > 0),
         stage().combat().thinkTicks(),
         stage().combat().bloodFloor());

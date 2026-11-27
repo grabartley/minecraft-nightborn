@@ -29,7 +29,27 @@
       "max_range": 12.0,
       "tell_ticks": 10,
       "tell_sound": "minecraft:entity.illusioner.prepare_mirror",
-      "tell_clip": "mesmerise"
+      "tell_clip": "mesmerise",
+      "uses": [
+        {
+          "intent": "fight",
+          "considerations": [
+            {
+              "fact": "target_distance",
+              "high": 12
+            }
+          ]
+        },
+        {
+          "intent": "close_in",
+          "considerations": [
+            {
+              "fact": "target_distance",
+              "high": 12
+            }
+          ]
+        }
+      ]
     }
   }
 }

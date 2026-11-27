@@ -52,4 +52,15 @@ class ShadowStepPathTest {
     assertEquals(ey, aim.y, 1.0E-9);
     assertEquals(ez, aim.z, 1.0E-9);
   }
+
+  @ParameterizedTest(name = "spot {0},{1} range {2}: lands at {3},{4}")
+  @CsvSource({"0, 6, 16, 0, 6", "0, 20, 16, 0, 16", "-3, 4, 4, -2.4, 3.2"})
+  @DisplayName("a step toward a spot lands on it, or as far toward it as the range allows")
+  void toward(
+      final double x, final double z, final double range, final double toX, final double toZ) {
+    final Vec3d landed = ShadowStepPath.toward(Vec3d.ZERO, 1.5, new Vec3d(x, 0, z), range);
+    assertEquals(toX, landed.x, 1.0E-6);
+    assertEquals(1.5, landed.y, 1.0E-6);
+    assertEquals(toZ, landed.z, 1.0E-6);
+  }
 }

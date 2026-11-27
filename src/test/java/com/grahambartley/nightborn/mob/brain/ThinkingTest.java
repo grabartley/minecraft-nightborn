@@ -56,4 +56,32 @@ class ThinkingTest {
         Thinking.needed(
             List.of(option(verdict, facts.isBlank() ? new String[0] : facts.split(" ")))));
   }
+
+  @ParameterizedTest(name = "dodge power {0}, dodge think {1}, {2}: offered {3}")
+  @CsvSource({
+    "false, false, FIGHT, true",
+    "false, true, FIGHT, false",
+    "true, true, FIGHT, true",
+    "true, false, FIGHT, false",
+    "true, false, CLOSE_IN, false",
+    "true, false, RETREAT, true",
+    "false, false, RETREAT, true",
+    "true, true, RETREAT, true",
+    "false, true, RETREAT, false"
+  })
+  @DisplayName(
+      "a power kept for dodging is weighed as a dodge in a fight, and like any other power out"
+          + " of one")
+  void offered(
+      final boolean dodgePower,
+      final boolean dodgeThink,
+      final Intent intent,
+      final boolean offered) {
+    assertEquals(
+        offered,
+        Thinking.offered(
+            new MobPowerUse(0.0F, 8.0F, 1, Identifier.of("minecraft", "x"), "dodge", dodgePower),
+            dodgeThink,
+            intent));
+  }
 }

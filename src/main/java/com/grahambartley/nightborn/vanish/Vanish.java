@@ -3,6 +3,7 @@ package com.grahambartley.nightborn.vanish;
 import com.grahambartley.nightborn.clothing.WornAttributes;
 import com.grahambartley.nightborn.feeding.FeedingSessions;
 import com.grahambartley.nightborn.landing.Landing;
+import com.grahambartley.nightborn.skill.CastAim;
 import com.grahambartley.nightborn.skill.PowerHeading;
 import com.grahambartley.nightborn.skill.Powers;
 import com.grahambartley.nightborn.smoke.SmokePoof;
@@ -16,19 +17,35 @@ public final class Vanish {
   private Vanish() {}
 
   public static Optional<Vec3d> destination(
-      final LivingEntity caster, final VanishPower power, final PowerHeading held) {
+      final LivingEntity caster,
+      final VanishPower power,
+      final PowerHeading held,
+      final CastAim aim) {
     return destination(
-        caster, power.distance() + WornAttributes.value(caster, WornAttributes.VANISH_REACH), held);
+        caster,
+        power.distance() + WornAttributes.value(caster, WornAttributes.VANISH_REACH),
+        held,
+        aim);
   }
 
   public static Optional<Vec3d> destination(
-      final LivingEntity caster, final double distance, final PowerHeading held) {
-    final LivingEntity foe = caster instanceof MobEntity mob ? mob.getTarget() : null;
+      final LivingEntity caster,
+      final double distance,
+      final PowerHeading held,
+      final CastAim aim) {
+    final boolean mob = caster instanceof MobEntity;
+    final Vec3d aimedSpot = mob ? aim.spot() : null;
+    final LivingEntity foe = mob ? aim.subject(caster) : null;
     final Vec3d looking = VanishSpots.facing(caster.getYaw());
     final Vec3d facing =
-        foe == null ? looking : VanishSpots.toward(caster.getPos(), foe.getPos(), looking);
+        aimedSpot != null
+            ? VanishSpots.toward(caster.getPos(), aimedSpot, looking)
+            : foe == null ? looking : VanishSpots.toward(caster.getPos(), foe.getPos(), looking);
     for (final PowerHeading heading :
-        VanishSpots.headings(foe != null, held, caster.getRandom().nextBoolean())) {
+        VanishSpots.headings(
+            foe != null,
+            aimedSpot != null ? PowerHeading.FORWARD : held,
+            caster.getRandom().nextBoolean())) {
       final Optional<Vec3d> spot =
           Landing.reach(caster, VanishSpots.wanted(caster.getEyePos(), facing, heading, distance));
       if (spot.isPresent()) {

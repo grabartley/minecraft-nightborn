@@ -30,7 +30,77 @@
       "max_range": 7.0,
       "tell_ticks": 10,
       "tell_sound": "minecraft:item.armor.equip_gold",
-      "tell_clip": "raise_crucifix"
+      "tell_clip": "raise_crucifix",
+      "uses": [
+        {
+          "intent": "fight",
+          "considerations": [
+            {
+              "fact": "target_distance",
+              "high": 4
+            },
+            {
+              "fact": "target_vampire",
+              "low": 1,
+              "high": 1
+            }
+          ]
+        },
+        {
+          "intent": "close_in",
+          "considerations": [
+            {
+              "fact": "target_distance",
+              "high": 4
+            },
+            {
+              "fact": "target_vampire",
+              "low": 1,
+              "high": 1
+            }
+          ]
+        },
+        {
+          "intent": "fight",
+          "considerations": [
+            {
+              "fact": "target_distance",
+              "high": 7
+            },
+            {
+              "fact": "target_vampire",
+              "low": 1,
+              "high": 1
+            },
+            {
+              "fact": "target_winding_up",
+              "low": 1,
+              "high": 1
+            }
+          ],
+          "weight": 2.0
+        },
+        {
+          "intent": "close_in",
+          "considerations": [
+            {
+              "fact": "target_distance",
+              "high": 7
+            },
+            {
+              "fact": "target_vampire",
+              "low": 1,
+              "high": 1
+            },
+            {
+              "fact": "target_winding_up",
+              "low": 1,
+              "high": 1
+            }
+          ],
+          "weight": 2.0
+        }
+      ]
     }
   }
 }

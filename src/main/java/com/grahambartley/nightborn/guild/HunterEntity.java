@@ -411,7 +411,10 @@ public class HunterEntity extends PathAwareEntity
 
   public void fight() {
     fighting.tick(
-        this, true, HunterSkills.thinkTicks(this, shownRank()), MobFighting.NO_BLOOD_FLOOR);
+        this,
+        MobFighting.Engagement.FIGHTING,
+        HunterSkills.thinkTicks(this, shownRank()),
+        MobFighting.NO_BLOOD_FLOOR);
   }
 
   private void tickTactics() {

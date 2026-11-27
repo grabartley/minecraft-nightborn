@@ -9,6 +9,12 @@ public final class MobFighting {
 
   public static final int NO_BLOOD_FLOOR = 0;
 
+  public enum Engagement {
+    FIGHTING,
+    ESCAPING,
+    NONE
+  }
+
   public interface Moves {
 
     void tick();
@@ -34,26 +40,38 @@ public final class MobFighting {
     return new MobFighting(casting, moves, true);
   }
 
-  public static boolean fights(
+  public static Engagement engagement(
       final boolean hasTarget,
       final boolean downed,
       final boolean asleep,
-      final boolean retreating,
+      final boolean escaping,
       final boolean weakened) {
-    return hasTarget && !downed && !asleep && !retreating && !weakened;
+    if (downed || asleep || weakened) {
+      return Engagement.NONE;
+    }
+    if (escaping) {
+      return Engagement.ESCAPING;
+    }
+    return hasTarget ? Engagement.FIGHTING : Engagement.NONE;
   }
 
   public <T extends MobEntity & PowerShow> void tick(
-      final T fighter, final boolean fighting, final int thinkTicks, final int bloodFloor) {
-    if (!fighting) {
+      final T fighter, final Engagement engagement, final int thinkTicks, final int bloodFloor) {
+    if (engagement == Engagement.NONE) {
       casting.cancel();
       moves.rest();
       return;
     }
+    if (engagement == Engagement.ESCAPING) {
+      moves.rest();
+      casting.tick(fighter, true, thinkTicks, bloodFloor);
+      return;
+    }
+    final boolean hasTarget = fighter.getTarget() != null;
     if (movesFirst && !casting.telling()) {
       moves.tick();
     }
-    casting.tick(fighter, thinkTicks, bloodFloor);
+    casting.tick(fighter, hasTarget, thinkTicks, bloodFloor);
     if (!movesFirst && !casting.telling()) {
       moves.tick();
     }
