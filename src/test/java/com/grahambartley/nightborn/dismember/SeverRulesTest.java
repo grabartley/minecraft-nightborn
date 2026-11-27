@@ -14,7 +14,7 @@ class SeverRulesTest {
 
   private static final DismembermentSettings DEFAULTS = NightbornConfig.DEFAULTS.dismemberment();
   private static final Blow SWORD = new Blow(false, false, false, true, false);
-  private static final Blow FIST = new Blow(false, false, false, false, false);
+  private static final Blow CLUB = new Blow(false, false, false, false, false);
   private static final Blow STAKE = new Blow(false, true, false, false, true);
 
   private static SeverRules.Victim hunter(final float health, final boolean staggered) {
@@ -51,7 +51,7 @@ class SeverRulesTest {
   @DisplayName("a blow with no blade cuts only when it is massive")
   void massiveClub(final float taken, final boolean severs) {
     assertEquals(
-        severs, SeverRules.severs(DEFAULTS, hunter(1.0F, true), FIST, true, true, taken, 0.0));
+        severs, SeverRules.severs(DEFAULTS, hunter(1.0F, true), CLUB, true, true, taken, 0.0));
   }
 
   @ParameterizedTest(name = "dealt {0}")
