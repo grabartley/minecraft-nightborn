@@ -66,6 +66,9 @@ public class SkillGameTest implements FabricGameTest {
             .with(FeedingSettings.RESIST_CHANCE, 0)
             .with(
                 SkillSettings.BLOOD_EXPERIENCE, SkillSettings.FIRST_POINT_EXPERIENCE.defaultValue())
+            .with(
+                SkillSettings.DRAIN_BONUS_EXPERIENCE,
+                SkillSettings.FIRST_POINT_EXPERIENCE.defaultValue())
             .with(SkillSettings.POINT_COST_RISE, 0));
   }
 
@@ -77,6 +80,9 @@ public class SkillGameTest implements FabricGameTest {
         ServerConfigService.current()
             .with(FeedingSettings.RESIST_CHANCE, FeedingSettings.RESIST_CHANCE.defaultValue())
             .with(SkillSettings.BLOOD_EXPERIENCE, SkillSettings.BLOOD_EXPERIENCE.defaultValue())
+            .with(
+                SkillSettings.DRAIN_BONUS_EXPERIENCE,
+                SkillSettings.DRAIN_BONUS_EXPERIENCE.defaultValue())
             .with(SkillSettings.POINT_COST_RISE, SkillSettings.POINT_COST_RISE.defaultValue()));
   }
 
