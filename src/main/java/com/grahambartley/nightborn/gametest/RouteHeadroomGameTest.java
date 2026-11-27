@@ -65,6 +65,7 @@ public class RouteHeadroomGameTest implements FabricGameTest {
     }
     final VampireEntity vampire = context.spawnEntity(NightbornMobs.VAMPIRE, NEAR);
     vampire.setAiDisabled(true);
+    vampire.setOnGround(true);
     vampire.setAppearance(vampire.lookId(), gap.height(), 1.0F);
     context.runAtTick(
         START,
@@ -72,6 +73,7 @@ public class RouteHeadroomGameTest implements FabricGameTest {
           context.assertTrue(
               Math.abs(vampire.getHeight() - gap.height()) < 1.0E-3,
               "the vampire stands " + gap.height() + " tall, got " + vampire.getHeight());
+          vampire.setOnGround(true);
           final Path path = vampire.getNavigation().findPathTo(context.getAbsolutePos(FAR), 0);
           final boolean through = path != null && path.reachesTarget();
           context.assertTrue(
