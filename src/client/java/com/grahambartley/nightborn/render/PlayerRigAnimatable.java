@@ -70,11 +70,22 @@ public final class PlayerRigAnimatable implements GeoReplacedEntity {
                     state.getData(DataTickets.ENTITY) instanceof PlayerEntity player
                         ? PlayerClips.action(player)
                         : Optional.empty())));
+    controllers.add(new AnimationController<>(this, "thrust", 0, this::thrust));
   }
 
   @Override
   public AnimatableInstanceCache getAnimatableInstanceCache() {
     return cache;
+  }
+
+  private PlayState thrust(final AnimationState<PlayerRigAnimatable> state) {
+    if (!(state.getData(DataTickets.ENTITY) instanceof PlayerEntity player)) {
+      return VampirePose.playOrStop(state, Optional.empty());
+    }
+    if (PlayerClips.freshThrust(player)) {
+      state.getController().forceAnimationReset();
+    }
+    return VampirePose.playOrStop(state, PlayerClips.thrust(player));
   }
 
   private PlayState power(final AnimationState<PlayerRigAnimatable> state) {

@@ -50,7 +50,8 @@ public final class VampireClips {
             bone ->
                 FirstPersonSway.of(
                     ClipTrack.at(bone.rotationKeyFrames().xKeyframes(), ticks),
-                    ClipTrack.at(bone.rotationKeyFrames().zKeyframes(), ticks)))
+                    ClipTrack.at(bone.rotationKeyFrames().zKeyframes(), ticks),
+                    -ClipTrack.at(bone.positionKeyFrames().zKeyframes(), ticks)))
         .orElse(FirstPersonSway.NONE);
   }
 

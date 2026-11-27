@@ -29,6 +29,8 @@ class PlayerClipStateTest {
           Map.entry(VampirePose.RECOIL_CRUCIFIX.animation(), 1.2),
           Map.entry(VampirePose.LIGHT_CANDLE.animation(), 1.6),
           Map.entry(VampirePose.WAKE_STRETCH.animation(), 2.6),
+          Map.entry(VampirePose.STAKE_THRUST_RIGHT.animation(), 0.45),
+          Map.entry(VampirePose.STAKE_THRUST_LEFT.animation(), 0.45),
           Map.entry(POWER, 0.8));
 
   static final PlayerClipState.Lengths LENGTHS = animation -> SECONDS.getOrDefault(animation, 0.0);
@@ -496,7 +498,31 @@ class PlayerClipStateTest {
       final String expected) {
     assertEquals(
         expected,
-        PlayerClipState.action(Optional.ofNullable(pose), power, swinging, using, true)
+        PlayerClipState.action(Optional.ofNullable(pose), power, false, swinging, using, true)
+            .map(Enum::name)
+            .orElse("NONE"));
+  }
+
+  @ParameterizedTest(name = "pose {0}, power {1}, swinging {2}, using {3}: {4}")
+  @CsvSource({
+    ", false, true, false, NONE",
+    ", false, true, true, USE_ITEM_RIGHT",
+    "LEVITATE, false, true, false, NONE",
+    "FEED, false, true, false, NONE",
+    ", true, false, true, USE_ITEM_RIGHT"
+  })
+  @DisplayName(
+      "a thrust replaces the swing, still lets an item be held up, and lets the rig take the"
+          + " player with no other clip playing")
+  void actionsDuringAThrust(
+      final VampirePose pose,
+      final boolean power,
+      final boolean swinging,
+      final boolean using,
+      final String expected) {
+    assertEquals(
+        expected,
+        PlayerClipState.action(Optional.ofNullable(pose), power, true, swinging, using, true)
             .map(Enum::name)
             .orElse("NONE"));
   }

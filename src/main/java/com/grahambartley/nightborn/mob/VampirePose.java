@@ -25,6 +25,8 @@ public enum VampirePose {
   VOMIT("vomit", Play.ONCE, Hold.ARMS),
   USE_ITEM_RIGHT("use_item_right", Play.LOOP),
   USE_ITEM_LEFT("use_item_left", Play.LOOP),
+  STAKE_THRUST_RIGHT("stake_thrust_right", Play.ONCE),
+  STAKE_THRUST_LEFT("stake_thrust_left", Play.ONCE),
   FEED("feed", Play.LOOP, Hold.ARMS_AND_HEAD),
   DRAIN("drain", Play.ONCE, Hold.ARMS_AND_HEAD),
   FINISHER_BITE("finisher_bite", Play.ONCE, Hold.ARMS_AND_HEAD),
@@ -188,6 +190,10 @@ public enum VampirePose {
       return Optional.of(rightArm ? USE_ITEM_RIGHT : USE_ITEM_LEFT);
     }
     return swinging ? Optional.of(ATTACK) : Optional.empty();
+  }
+
+  public static VampirePose thrust(final boolean rightArm) {
+    return rightArm ? STAKE_THRUST_RIGHT : STAKE_THRUST_LEFT;
   }
 
   public static <T extends GeoAnimatable> PlayState playOrStop(
