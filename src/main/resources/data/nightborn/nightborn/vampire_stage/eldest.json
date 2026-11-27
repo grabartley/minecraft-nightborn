@@ -22,7 +22,7 @@
     "dodge_chance": 60,
     "power_dodge_chance": 85,
     "retreat_health": 0,
-    "stuck_ticks": 10
+    "stuck": { "ticks": 10 }
   },
   "look": {
     "name_color": "dark_red",

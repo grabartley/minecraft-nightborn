@@ -1,12 +1,13 @@
 package com.grahambartley.nightborn.mob;
 
+import com.grahambartley.nightborn.mob.stage.StageStuck;
 import java.util.UUID;
 import net.minecraft.util.math.Vec3d;
 import org.jetbrains.annotations.Nullable;
 
 public record StuckState(
     StuckWatch watch,
-    int patience,
+    StageStuck habits,
     long holdUntil,
     long backUntil,
     @Nullable Vec3d backTo,
@@ -14,62 +15,52 @@ public record StuckState(
     long forgoneUntil) {
 
   public static final StuckState FRESH =
-      new StuckState(StuckWatch.FRESH, Integer.MAX_VALUE, 0L, 0L, null, null, 0L);
+      new StuckState(StuckWatch.FRESH, StageStuck.PLAIN, 0L, 0L, null, null, 0L);
 
-  static final int HOLD_PATIENCES = 3;
-  static final int BACK_PATIENCES = 1;
-  static final int FORGO_PATIENCES = 10;
-
-  public StuckState observe(final double distance, final boolean pursuing, final int patience) {
+  public StuckState observe(
+      final double gap, final Vec3d at, final boolean pursuing, final StageStuck stage) {
+    final StageStuck kept = watch.stalled() == 0 ? stage : habits;
     return new StuckState(
-        watch.next(distance, pursuing),
-        Math.max(1, patience),
+        watch.next(gap, at, pursuing, kept),
+        kept,
         holdUntil,
-        backUntil,
-        backTo,
+        pursuing ? backUntil : 0L,
+        pursuing ? backTo : null,
         forgone,
         forgoneUntil);
   }
 
   public StuckWatch.Step step() {
-    return watch.step(patience);
+    return watch.step(habits);
   }
 
   public boolean stuck() {
-    return watch.stuck(patience);
+    return watch.stuck(habits);
   }
 
   public StuckState landed(final long now) {
     return new StuckState(
-        watch,
-        patience,
-        now + (long) patience * HOLD_PATIENCES,
-        backUntil,
-        backTo,
-        forgone,
-        forgoneUntil);
+        watch, habits, until(now, habits.holdWaits()), backUntil, backTo, forgone, forgoneUntil);
   }
 
   public StuckState steppingBack(@Nullable final Vec3d spot, final long now) {
     return new StuckState(
         watch.rerouted(),
-        patience,
-        now + (long) patience * HOLD_PATIENCES,
-        spot == null ? backUntil : now + (long) patience * BACK_PATIENCES,
-        spot == null ? backTo : spot,
+        habits,
+        until(now, habits.holdWaits()),
+        spot == null ? 0L : until(now, habits.stepBackWaits()),
+        spot,
         forgone,
         forgoneUntil);
   }
 
+  public StuckState backedOff() {
+    return new StuckState(watch, habits, holdUntil, 0L, null, forgone, forgoneUntil);
+  }
+
   public StuckState gaveUp(final UUID target, final long now) {
     return new StuckState(
-        StuckWatch.FRESH,
-        patience,
-        holdUntil,
-        0L,
-        null,
-        target,
-        now + (long) patience * FORGO_PATIENCES);
+        StuckWatch.FRESH, habits, holdUntil, 0L, null, target, until(now, habits.forgoWaits()));
   }
 
   public boolean holdsDown(final long now) {
@@ -83,5 +74,9 @@ public record StuckState(
 
   public boolean forgoes(final UUID target, final long now) {
     return now < forgoneUntil && target.equals(forgone);
+  }
+
+  private long until(final long now, final int waits) {
+    return now + (long) habits.ticks() * waits;
   }
 }

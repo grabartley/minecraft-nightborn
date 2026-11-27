@@ -58,7 +58,6 @@ final class VampireGoals {
     final RetreatGoal retreat =
         new RetreatGoal(vampire, () -> vampire.stage().combat().retreatHealth());
     goals.add(3, retreat);
-    goals.add(3, new StepBackGoal(vampire, 1.15));
     goals.add(4, new MeleeAttackGoal(vampire, 1.15, false));
     final MemberStance memberStance = new MemberStance(vampire);
     goals.add(4, new StancePostGoal(vampire, memberStance));
@@ -83,6 +82,8 @@ final class VampireGoals {
             vampire::hiss));
     targets.add(
         2, new ActiveTargetGoal<>(vampire, LivingEntity.class, 10, true, false, vampire::hunts));
-    return new Escapes(retreat, shade);
+    final Escapes escapes = new Escapes(retreat, shade);
+    goals.add(3, new StepBackGoal(vampire, 1.15, escapes::active));
+    return escapes;
   }
 }

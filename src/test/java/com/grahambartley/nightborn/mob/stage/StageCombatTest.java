@@ -34,10 +34,9 @@ class StageCombatTest {
         "{\"power_dodge_chance\": 101} | false",
         "{\"power_dodge_chance\": -1} | false",
         "{\"retreat_health\": 101} | false",
-        "{\"stuck_ticks\": 0} | false",
-        "{\"stuck_ticks\": 1} | true",
-        "{\"stuck_ticks\": 200} | true",
-        "{\"stuck_ticks\": 201} | false"
+        "{\"stuck\": {\"ticks\": 0}} | false",
+        "{\"stuck\": {\"ticks\": 25}} | true",
+        "{\"stuck\": {\"ticks\": 201}} | false"
       })
   @DisplayName(
       "blood floors stay within a blood bar, chances within 0 to 100 and waits within ten"
@@ -68,8 +67,10 @@ class StageCombatTest {
     assertEquals(
         ticks,
         StageCombat.CODEC
-            .parse(JsonOps.INSTANCE, JsonParser.parseString("{\"stuck_ticks\": " + ticks + "}"))
+            .parse(
+                JsonOps.INSTANCE, JsonParser.parseString("{\"stuck\": {\"ticks\": " + ticks + "}}"))
             .getOrThrow()
-            .stuckTicks());
+            .stuck()
+            .ticks());
   }
 }

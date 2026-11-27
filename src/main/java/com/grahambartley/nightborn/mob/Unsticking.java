@@ -1,8 +1,8 @@
 package com.grahambartley.nightborn.mob;
 
 import com.grahambartley.nightborn.Nightborn;
-import com.grahambartley.nightborn.levitation.Levitation;
 import com.grahambartley.nightborn.mob.brain.Intents;
+import com.grahambartley.nightborn.mob.stage.StageStuck;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentRegistry;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentType;
 import net.minecraft.entity.LivingEntity;
@@ -18,26 +18,28 @@ public final class Unsticking {
   static final AttachmentType<StuckState> STATE =
       AttachmentRegistry.create(Identifier.of(Nightborn.MOD_ID, "stuck_state"));
 
-  static final int BACK_RANGE = 6;
-  static final int BACK_HEIGHT = 3;
+  static final int STEP_BACK_HEIGHT = 3;
 
   private Unsticking() {}
 
-  public static void tick(final PathAwareEntity mob, final int patience) {
+  public static void tick(final PathAwareEntity mob, final StageStuck habits) {
     final LivingEntity target = mob.getTarget();
     final long now = mob.getWorld().getTime();
     StuckState state =
-        mob.getAttachedOrElse(STATE, StuckState.FRESH)
+        state(mob)
             .observe(
-                target == null ? Double.NaN : mob.distanceTo(target),
+                target == null ? Double.NaN : gap(mob, target),
+                mob.getPos(),
                 target != null && Intents.read(mob).fights(),
-                patience);
+                habits);
     switch (state.step()) {
-      case LAND -> {
-        state = state.landed(now);
-        Levitation.sink(mob);
-      }
-      case STEP_BACK -> state = state.steppingBack(spotAwayFrom(mob, target), now);
+      case LAND -> state = state.landed(now);
+      case STEP_BACK ->
+          state =
+              state.steppingBack(
+                  NoPenaltyTargeting.findFrom(
+                      mob, state.habits().stepBackRange(), STEP_BACK_HEIGHT, target.getPos()),
+                  now);
       case GIVE_UP -> {
         state = state.gaveUp(target.getUuid(), now);
         mob.setTarget(null);
@@ -49,25 +51,31 @@ public final class Unsticking {
   }
 
   public static boolean stuck(final MobEntity mob) {
-    return mob.getAttachedOrElse(STATE, StuckState.FRESH).stuck();
+    return state(mob).stuck();
   }
 
   public static boolean holdsDown(final MobEntity mob) {
-    return mob.getAttachedOrElse(STATE, StuckState.FRESH).holdsDown(mob.getWorld().getTime());
+    return state(mob).holdsDown(mob.getWorld().getTime());
   }
 
   @Nullable
   public static Vec3d backingTo(final MobEntity mob) {
-    return mob.getAttachedOrElse(STATE, StuckState.FRESH).backingTo(mob.getWorld().getTime());
+    return state(mob).backingTo(mob.getWorld().getTime());
+  }
+
+  public static void backedOff(final MobEntity mob) {
+    mob.setAttached(STATE, state(mob).backedOff());
   }
 
   public static boolean forgoes(final MobEntity mob, final LivingEntity target) {
-    return mob.getAttachedOrElse(STATE, StuckState.FRESH)
-        .forgoes(target.getUuid(), mob.getWorld().getTime());
+    return state(mob).forgoes(target.getUuid(), mob.getWorld().getTime());
   }
 
-  @Nullable
-  private static Vec3d spotAwayFrom(final PathAwareEntity mob, final LivingEntity target) {
-    return NoPenaltyTargeting.findFrom(mob, BACK_RANGE, BACK_HEIGHT, target.getPos());
+  private static StuckState state(final MobEntity mob) {
+    return mob.getAttachedOrElse(STATE, StuckState.FRESH);
+  }
+
+  private static double gap(final MobEntity mob, final LivingEntity target) {
+    return mob.distanceTo(target) - (mob.getWidth() + target.getWidth()) / 2.0;
   }
 }

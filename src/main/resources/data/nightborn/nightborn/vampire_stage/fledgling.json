@@ -9,7 +9,7 @@
     "leap_chance": 15,
     "dodge_chance": 5,
     "power_dodge_chance": 10,
-    "stuck_ticks": 30
+    "stuck": { "ticks": 30 }
   },
   "look": { "idle": "idle_fledgling", "name_color": "gray" },
   "loot": "nightborn:entities/vampire/fledgling",

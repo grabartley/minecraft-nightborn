@@ -14,7 +14,7 @@
     "dodge_chance": 30,
     "power_dodge_chance": 50,
     "retreat_health": 35,
-    "stuck_ticks": 20
+    "stuck": { "ticks": 20 }
   },
   "look": {
     "idle": "idle_elder",

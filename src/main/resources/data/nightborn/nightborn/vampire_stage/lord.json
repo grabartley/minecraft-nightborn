@@ -22,7 +22,7 @@
     "dodge_chance": 55,
     "power_dodge_chance": 70,
     "retreat_health": 20,
-    "stuck_ticks": 15
+    "stuck": { "ticks": 15 }
   },
   "look": { "idle": "idle_ancient", "name_color": "dark_purple" },
   "loot": "nightborn:entities/vampire/lord"
