@@ -7,46 +7,70 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public final class ClientStateJson {
 
   private static final String GORE = "gore";
+  private static final String FORM_VIEWS = "formViews";
   private static final String SKIP_CEREMONY_CAMERA = "skipCeremonyCamera";
 
   public static final ConfigFormat<ClientState> FORMAT =
       ConfigFormat.of(ClientState.DEFAULTS, ClientStateJson::read, ClientStateJson::write);
 
-  private static final String KNOWN =
-      Arrays.stream(GoreLevel.values()).map(GoreLevel::id).collect(Collectors.joining(", "));
-
   private ClientStateJson() {}
 
   public static ConfigFormat.Read<ClientState> read(final JsonObject root) {
     final List<String> problems = new ArrayList<>();
-    final GoreLevel gore = readGore(root.get(GORE), problems);
+    final GoreLevel gore =
+        readLevel(
+            root.get(GORE),
+            GORE,
+            GoreLevel.values(),
+            GoreLevel::id,
+            GoreLevel::byId,
+            ClientState.DEFAULTS.gore(),
+            problems);
+    final FormViewLevel formViews =
+        readLevel(
+            root.get(FORM_VIEWS),
+            FORM_VIEWS,
+            FormViewLevel.values(),
+            FormViewLevel::id,
+            FormViewLevel::byId,
+            ClientState.DEFAULTS.formViews(),
+            problems);
     final boolean skip = readSkip(root.get(SKIP_CEREMONY_CAMERA), problems);
-    return new ConfigFormat.Read<>(new ClientState(gore, skip), problems);
+    return new ConfigFormat.Read<>(new ClientState(gore, formViews, skip), problems);
   }
 
   public static JsonObject write(final ClientState state) {
     final JsonObject root = new JsonObject();
     root.addProperty(GORE, state.gore().id());
+    root.addProperty(FORM_VIEWS, state.formViews().id());
     root.addProperty(SKIP_CEREMONY_CAMERA, state.skipCeremonyCamera());
     return root;
   }
 
-  private static GoreLevel readGore(final JsonElement element, final List<String> problems) {
-    final GoreLevel fallback = ClientState.DEFAULTS.gore();
+  private static <L> L readLevel(
+      final JsonElement element,
+      final String name,
+      final L[] levels,
+      final Function<L, String> id,
+      final Function<String, Optional<L>> byId,
+      final L fallback,
+      final List<String> problems) {
     if (element == null) {
       return fallback;
     }
-    final Optional<GoreLevel> level =
+    final Optional<L> level =
         element.isJsonPrimitive() && element.getAsJsonPrimitive().isString()
-            ? GoreLevel.byId(element.getAsString())
+            ? byId.apply(element.getAsString())
             : Optional.empty();
     if (level.isEmpty()) {
-      problems.add(GORE + " is not one of " + KNOWN + ", using " + fallback.id());
+      final String known = Arrays.stream(levels).map(id).collect(Collectors.joining(", "));
+      problems.add(name + " is not one of " + known + ", using " + id.apply(fallback));
     }
     return level.orElse(fallback);
   }

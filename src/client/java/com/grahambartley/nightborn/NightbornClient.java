@@ -12,6 +12,8 @@ import com.grahambartley.nightborn.client.boss.BossSetTooltip;
 import com.grahambartley.nightborn.client.faith.BloodFlameFx;
 import com.grahambartley.nightborn.client.familiar.HumanFamiliarRenderer;
 import com.grahambartley.nightborn.client.fog.StructureFog;
+import com.grahambartley.nightborn.client.formview.FormViewPass;
+import com.grahambartley.nightborn.client.formview.FormViewTracker;
 import com.grahambartley.nightborn.client.gore.SplatterModels;
 import com.grahambartley.nightborn.client.guild.HunterRenderer;
 import com.grahambartley.nightborn.client.name.NamingDialogue;
@@ -173,6 +175,8 @@ public class NightbornClient implements ClientModInitializer {
     VampireClientFeatures.register();
     NearbyStructure.register();
     StructureFog.register();
+    FormViewTracker.register();
+    FormViewPass.register();
     RitualGloom.register();
     BossArenaView.register();
     BossSetTooltip.register();

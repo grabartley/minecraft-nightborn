@@ -4,6 +4,7 @@ import com.grahambartley.nightborn.client.SyncedServerConfig;
 import com.grahambartley.nightborn.client.gore.SplatterLook;
 import com.grahambartley.nightborn.client.state.ClientState;
 import com.grahambartley.nightborn.client.state.ClientStateService;
+import com.grahambartley.nightborn.client.state.FormViewLevel;
 import com.grahambartley.nightborn.client.state.GoreLevel;
 import com.grahambartley.nightborn.config.BoolSetting;
 import com.grahambartley.nightborn.config.IntSetting;
@@ -108,6 +109,20 @@ public final class NightbornSettingsScreen extends Screen {
                 (button, level) -> device = device.withGore(level));
     gore.setTooltip(Tooltip.of(Text.translatable("nightborn.client.gore.tooltip")));
     list.addRow(gore);
+    final CyclingButtonWidget<FormViewLevel> formViews =
+        CyclingButtonWidget.<FormViewLevel>builder(
+                level -> Text.translatable(level.translationKey()))
+            .values(FormViewLevel.values())
+            .initially(device.formViews())
+            .build(
+                0,
+                0,
+                WIDGET_WIDTH,
+                WIDGET_HEIGHT,
+                Text.translatable("nightborn.client.form_views"),
+                (button, level) -> device = device.withFormViews(level));
+    formViews.setTooltip(Tooltip.of(Text.translatable("nightborn.client.form_views.tooltip")));
+    list.addRow(formViews);
     final CyclingButtonWidget<Boolean> ceremony =
         CyclingButtonWidget.onOffBuilder(device.skipCeremonyCamera())
             .build(

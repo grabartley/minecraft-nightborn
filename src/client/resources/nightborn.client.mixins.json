@@ -12,6 +12,7 @@
 		"EntityMixin",
 		"EntityRenderDispatcherMixin",
 		"EntityRendererMixin",
+		"GameRendererMixin",
 		"GeoEntityRendererMixin",
 		"HeldItemFeatureRendererMixin",
 		"HeldItemRendererMixin",

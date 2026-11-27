@@ -8,6 +8,7 @@ import com.grahambartley.nightborn.challenge.DeedKinds;
 import com.grahambartley.nightborn.challenge.TravelLog;
 import com.grahambartley.nightborn.config.CoreSettings;
 import com.grahambartley.nightborn.feeding.FeedingSessions;
+import com.grahambartley.nightborn.formview.Forms;
 import com.grahambartley.nightborn.levitation.Levitation;
 import com.grahambartley.nightborn.mob.NightbornMobs;
 import com.grahambartley.nightborn.server.ServerConfigService;
@@ -64,6 +65,7 @@ public final class BatForm {
   private BatForm() {}
 
   public static void register() {
+    Forms.register(ID, BatForm::isBat);
     BatFormLimits.register();
     BatHang.register();
     ServerLivingEntityEvents.AFTER_DAMAGE.register(BatForm::afterDamage);
