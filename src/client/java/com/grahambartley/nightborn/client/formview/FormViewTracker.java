@@ -62,7 +62,8 @@ public final class FormViewTracker {
     }
     final Optional<FormView> target =
         FormViews.pick(
-            FormViews.all(client.world.getRegistryManager()), id -> Forms.on(id, player));
+            FormViews.all(client.world.getRegistryManager()),
+            id -> player.isAlive() && Forms.on(id, player));
     fade = fade.step(target);
     final Optional<FormViewEcho> echo = fade.shown().flatMap(FormView::echo);
     if (echo.isEmpty()) {
