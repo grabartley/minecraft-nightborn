@@ -37,7 +37,10 @@ public class RankGameTest implements FabricGameTest {
       final TestContext context) {
     final ServerPlayerEntity hunter = sworn(context);
     final float base = hunter.getMaxHealth();
-    SkillAttachment.set(hunter, SkillTree.HUNTER, TreeProgress.EMPTY.withEarned(5));
+    SkillAttachment.set(
+        hunter,
+        SkillTree.HUNTER,
+        TreeProgress.EMPTY.withEarned(ServerConfigService.current().skills().hunterRankPoints()));
     Ranking.settle(hunter);
     context.assertEquals(GuildRanks.of(hunter), 0, "points alone never raise a rank");
     Ranking.did(hunter, List.of(RankDeed.Act.STAKE), ADULT);

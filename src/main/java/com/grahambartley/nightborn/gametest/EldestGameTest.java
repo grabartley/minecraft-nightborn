@@ -161,19 +161,22 @@ public class EldestGameTest implements FabricGameTest {
     context.runAtTick(
         TestPlayers.READY + 5,
         () -> {
-          final int eldestPoints = TestPlayers.pointsFor(config.ritual().eldestExperience());
-          final int stakePoints =
-              TestPlayers.pointsFor(
-                      config.ritual().eldestExperience()
-                          + SkillEarning.huntExperience(config.skills(), eldest.stageRank()))
-                  - eldestPoints;
           context.assertTrue(!eldest.isAlive(), "the stake ends the Eldest");
-          context.assertTrue(
-              points(helper) == eldestPoints,
-              "the helper earns " + eldestPoints + ", not " + points(helper));
-          context.assertTrue(
-              points(staker) == eldestPoints + stakePoints,
-              "the staker earns " + (eldestPoints + stakePoints) + ", not " + points(staker));
+          TestPlayers.assertPaid(
+              context,
+              helper,
+              SkillTree.HUNTER,
+              TreeProgress.EMPTY,
+              config.ritual().eldestExperience(),
+              "the helper is paid for the Eldest");
+          TestPlayers.assertPaid(
+              context,
+              staker,
+              SkillTree.HUNTER,
+              TreeProgress.EMPTY,
+              config.ritual().eldestExperience()
+                  + SkillEarning.huntExperience(config.skills(), eldest.stageRank()),
+              "the staker is paid for the Eldest and the staking");
           context.assertTrue(points(watcher) == 0, "a bystander earns nothing");
           TestPlayers.finish(context, staker, helper, watcher);
         });
@@ -183,8 +186,6 @@ public class EldestGameTest implements FabricGameTest {
   public void theSunEndingTheEldestPaysTheHumanWhoFought(final TestContext context) {
     final EldestEntity eldest = eldest(context);
     final ServerPlayerEntity hunter = TestPlayers.hunter(context, new BlockPos(2, 2, 2));
-    final int eldestPoints =
-        TestPlayers.pointsFor(ServerConfigService.current().ritual().eldestExperience());
     context.runAtTick(
         TestPlayers.READY,
         () -> {
@@ -196,9 +197,13 @@ public class EldestGameTest implements FabricGameTest {
         TestPlayers.READY + 5,
         () -> {
           context.assertTrue(!eldest.isAlive(), "the sun ends the Eldest");
-          context.assertTrue(
-              points(hunter) == eldestPoints,
-              "the hunter earns " + eldestPoints + ", not " + points(hunter));
+          TestPlayers.assertPaid(
+              context,
+              hunter,
+              SkillTree.HUNTER,
+              TreeProgress.EMPTY,
+              ServerConfigService.current().ritual().eldestExperience(),
+              "the hunter is paid for the Eldest");
           TestPlayers.finish(context, hunter);
         });
   }

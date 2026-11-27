@@ -130,7 +130,7 @@ class HunterBuildTest {
   }
 
   @ParameterizedTest(name = "{0} points of stake experience")
-  @ValueSource(ints = {300})
+  @ValueSource(ints = {250})
   @DisplayName("staking a vampire pays more than a trickle")
   void stakingPaysMore(final int stake) {
     assertEquals(stake, SHIPPED.stakeExperience());

@@ -3,6 +3,8 @@ package com.grahambartley.nightborn.gametest;
 import com.grahambartley.nightborn.config.SkillSettings;
 import com.grahambartley.nightborn.faction.GuildMembership;
 import com.grahambartley.nightborn.server.ServerConfigService;
+import com.grahambartley.nightborn.skill.SkillAttachment;
+import com.grahambartley.nightborn.skill.SkillTree;
 import com.grahambartley.nightborn.skill.TreeProgress;
 import com.grahambartley.nightborn.vampire.VampireTransitions;
 import com.mojang.authlib.GameProfile;
@@ -98,11 +100,28 @@ final class TestPlayers {
         .forEach(server.getPlayerManager()::remove);
   }
 
-  static int pointsFor(final int experience) {
+  static void assertPaid(
+      final TestContext context,
+      final ServerPlayerEntity player,
+      final SkillTree tree,
+      final TreeProgress before,
+      final int experience,
+      final String message) {
     final SkillSettings settings = ServerConfigService.current().skills();
-    return TreeProgress.EMPTY
-        .addExperience(experience, settings.firstPointExperience(), settings.pointCostRise())
-        .earned();
+    final TreeProgress expected =
+        before.addExperience(experience, settings.firstPointExperience(), settings.pointCostRise());
+    final TreeProgress actual = SkillAttachment.get(player, tree);
+    context.assertTrue(
+        actual.earned() == expected.earned() && actual.experience() == expected.experience(),
+        message
+            + ": expected "
+            + expected.earned()
+            + " points and "
+            + expected.experience()
+            + " experience, got "
+            + actual.earned()
+            + " and "
+            + actual.experience());
   }
 
   static void finish(final TestContext context, final ServerPlayerEntity... players) {

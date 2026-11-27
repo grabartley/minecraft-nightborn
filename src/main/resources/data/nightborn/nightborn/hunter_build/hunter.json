@@ -48,9 +48,9 @@
       "nightborn:faithful/consecrate": 6
     }
   },
-  "trickle_experience": 25,
+  "trickle_experience": 10,
   "trickle_ticks": 1200,
-  "stake_experience": 300,
+  "stake_experience": 250,
   "master_kits": {
     "nightborn:master_silver": 1
   }
