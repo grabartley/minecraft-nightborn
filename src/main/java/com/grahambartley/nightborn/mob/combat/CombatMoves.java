@@ -42,9 +42,7 @@ public final class CombatMoves<T extends MobEntity & PowerShow> implements MobFi
       return;
     }
     final double distance = fighter.distanceTo(target);
-    final CombatMove.Threat threat =
-        new CombatMove.Threat(
-            target.handSwinging, target.isUsingItem() && ranged(target.getActiveItem()));
+    final CombatMove.Threat threat = new CombatMove.Threat(target.handSwinging, draws(target));
     final boolean wasThreatened = threatened;
     threatened = threat.at(distance, settings);
     if (CombatMove.dodgesWithPower(
@@ -111,7 +109,11 @@ public final class CombatMoves<T extends MobEntity & PowerShow> implements MobFi
     return Impulse.push(heading, tuning.pushBlocks(), tuning.liftBlocks());
   }
 
-  public static boolean ranged(final ItemStack stack) {
+  public static boolean draws(final LivingEntity target) {
+    return target.isUsingItem() && ranged(target.getActiveItem());
+  }
+
+  static boolean ranged(final ItemStack stack) {
     return stack.getItem() instanceof RangedWeaponItem || stack.getItem() instanceof TridentItem;
   }
 }

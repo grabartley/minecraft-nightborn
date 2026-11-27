@@ -20,7 +20,8 @@ public final class TargetSigns {
       final LivingEntity target,
       final boolean inSight,
       final float health,
-      final boolean signs) {
+      final boolean signs,
+      final Vec3d moved) {
     if (!signs) {
       return new Situation.Target(mob.distanceTo(target), inSight, health);
     }
@@ -29,10 +30,7 @@ public final class TargetSigns {
         inSight,
         health,
         windingUp(target),
-        running(
-            mob.getPos(),
-            target.getPos(),
-            new Vec3d(target.getX() - target.prevX, 0.0, target.getZ() - target.prevZ)),
+        running(mob.getPos(), target.getPos(), moved),
         target.hasStatusEffect(StatusEffects.SLOWNESS) || Holds.held(target).isPresent(),
         airborne(target.isOnGround(), target.isInFluid(), target.isClimbing(), target.hasVehicle()),
         Vampires.isVampire(target),
@@ -53,7 +51,7 @@ public final class TargetSigns {
   }
 
   private static boolean windingUp(final LivingEntity target) {
-    return target.isUsingItem() && CombatMoves.ranged(target.getActiveItem())
+    return CombatMoves.draws(target)
         || target instanceof MobFighter fighter && fighter.mobFighting().telling();
   }
 }

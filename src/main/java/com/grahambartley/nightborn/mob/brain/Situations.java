@@ -10,6 +10,7 @@ import java.util.EnumSet;
 import java.util.Set;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.mob.MobEntity;
+import net.minecraft.util.math.Vec3d;
 
 public final class Situations {
 
@@ -25,7 +26,8 @@ public final class Situations {
 
   private Situations() {}
 
-  public static Situation read(final MobEntity mob, final Intent intent, final Set<Fact> needed) {
+  public static Situation read(
+      final MobEntity mob, final Intent intent, final Set<Fact> needed, final Vec3d moved) {
     final LivingEntity target = mob.getTarget();
     return new Situation(
         intent,
@@ -42,7 +44,8 @@ public final class Situations {
                 target,
                 needed.contains(Fact.TARGET_IN_SIGHT) && mob.canSee(target),
                 health(target),
-                readsSigns(needed)),
+                readsSigns(needed),
+                moved),
         needed.contains(Fact.SPOT_DISTANCE)
             ? new Situation.Place(RouteEnd.distance(mob.getPos(), RouteEnd.of(mob)))
             : Situation.Place.UNKNOWN);

@@ -12,6 +12,8 @@ import java.util.Optional;
 import java.util.Set;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.Vec3d;
+import org.jetbrains.annotations.Nullable;
 
 public final class Thinking {
 
@@ -19,12 +21,24 @@ public final class Thinking {
 
   public static Optional<Think> think(
       final MobEntity mob, final boolean dodge, final int mobFloor) {
+    return think(mob, dodge, mobFloor, null);
+  }
+
+  public static Optional<Think> think(
+      final MobEntity mob,
+      final boolean dodge,
+      final int mobFloor,
+      @Nullable final TargetMotion motion) {
+    final Vec3d moved =
+        motion == null || mob.getTarget() == null
+            ? Vec3d.ZERO
+            : motion.sample(mob.getTarget(), mob.getWorld().getTime());
     final Intent intent = Intents.read(mob);
     final List<PowerChoice.Option> options = options(mob, dodge, intent);
     if (options.stream().noneMatch(option -> option.verdict() == PowerUse.Verdict.READY)) {
       return Optional.empty();
     }
-    final Situation situation = Situations.read(mob, intent, needed(options));
+    final Situation situation = Situations.read(mob, intent, needed(options), moved);
     final IntentBudget budget = MobIntents.budget(mob.getRegistryManager(), intent);
     return Optional.of(
         new Think(
@@ -106,7 +120,7 @@ public final class Thinking {
               id,
               verdict,
               owned.blood(),
-              owned.cooldownTicks(),
+              Powers.cooldownTicks(mob, id, owned),
               verdict == PowerUse.Verdict.READY && RunningPowers.on(mob, id, owned),
               use,
               ready));

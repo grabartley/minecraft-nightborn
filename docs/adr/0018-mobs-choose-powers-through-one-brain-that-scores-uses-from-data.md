@@ -8,7 +8,7 @@ Vampire mobs and hunter mobs use the same powers as players (HOME-16, GUILD-17).
 
 **One owner.** `MobFighting` owns power use for vampire mobs, hunter mobs and the Guild Master. It runs the power think through `PowerCasting` alongside the mob's own moves, which are vampire leaps, dashes and dodges or the hunter's kit. The Eldest and the Grand Inquisitor keep their own fights and do not use it.
 
-**A think is a picture and a score.** Each think builds one `Situation`: the mob's own health, blood, form, sun and downed state, its target's distance, sight and health and its signs (winding up, running, slowed or held, in the air, vampire or hunter), how far it is to the end of the route the mob is walking, and its intent. Goals that already move the mob report the intent through `IntentGoal`: retreat and seeking shade, close in, travel and rest today. A mob with a target and no other report is fighting. A vampire thinks while it fights a target, and also while it falls back or seeks shade, with or without a target.
+**A think is a picture and a score.** Each think builds one `Situation`: the mob's own health, blood, form, sun and downed state, its target's distance, sight and health and its signs (winding up, running, slowed or held, in the air, vampire or hunter, where running is measured from where the target stood at the mob's last think, so it reads the same for players and mobs whatever order they tick in), how far it is to the end of the route the mob is walking, and its intent. Goals that already move the mob report the intent through `IntentGoal`: retreat and seeking shade, close in, travel and rest today. A mob with a target and no other report is fighting. A vampire thinks while it fights a target, and also while it falls back or seeks shade, with or without a target.
 
 **Uses are data.** A power's `mob` block lists its uses. A use names the intent it serves, what it aims at, a weight, and considerations. A consideration is one named fact read through a simple curve, `between`, `rising` or `falling`, to a value from 0 to 1. The facts are a short fixed list in `Fact`, and adding one is one line there and one test case. A power with no uses gets two from its range, one for a fight and one for closing in, so every shipped power is chosen exactly as before.
 
@@ -37,3 +37,5 @@ Vampire mobs and hunter mobs use the same powers as players (HOME-16, GUILD-17).
 | Forty idle vampires | 4.3, 5.8, 4.8 | 4.6, 4.2, 4.1 |
 
 The samples swing by more than the gap between the two columns, so both scenes cost the same within what this measures.
+
+With fight uses for every power, per-aim readiness, thrift, spread and escape casting in place, the same scenes measured 3.4, 2.9 and 3.4 ms per tick for the fight and 2.9, 2.6 and 2.5 for the idle vampires, in a later session on the same machine. That is no worse than the baseline.

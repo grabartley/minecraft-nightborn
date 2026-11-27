@@ -2,6 +2,7 @@ package com.grahambartley.nightborn.mob.combat;
 
 import com.grahambartley.nightborn.mob.brain.CastAims;
 import com.grahambartley.nightborn.mob.brain.PowerChoice;
+import com.grahambartley.nightborn.mob.brain.TargetMotion;
 import com.grahambartley.nightborn.mob.brain.Think;
 import com.grahambartley.nightborn.mob.brain.Thinking;
 import com.grahambartley.nightborn.skill.CastAim;
@@ -24,6 +25,7 @@ public final class PowerCasting {
   }
 
   private final Cast cast;
+  private final TargetMotion motion = new TargetMotion();
   @Nullable private Tell telling;
   @Nullable private Think lastThink;
   private long nextThink;
@@ -67,7 +69,7 @@ public final class PowerCasting {
       return;
     }
     nextThink = now + thinkTicks;
-    final Optional<Think> think = Thinking.think(caster, false, bloodFloor);
+    final Optional<Think> think = Thinking.think(caster, false, bloodFloor, motion);
     think.ifPresent(
         thought -> {
           lastThink = thought;
