@@ -45,6 +45,10 @@ public record BodyZones(double head, double hip, double trunk, Map<BodyPart, Int
                   + zones.hip
                   + " leave no room for the trunk: they must add up to less than 1");
     }
+    if (zones.trunk >= 1.0) {
+      return DataResult.error(
+          () -> "trunk " + zones.trunk + " leaves no room for the arms: it must be below 1");
+    }
     if (BodyPart.limbs().stream().mapToInt(zones::weight).sum() <= 0) {
       return DataResult.error(() -> "mob_weights must give at least one limb a weight above 0");
     }

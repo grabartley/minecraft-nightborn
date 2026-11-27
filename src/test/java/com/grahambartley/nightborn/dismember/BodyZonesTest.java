@@ -53,6 +53,7 @@ class BodyZonesTest {
       value = {
         "{\"head\":0.5,\"hip\":0.5,\"trunk\":0.5,\"mob_weights\":{\"right_arm\":1}}|leave no room",
         "{\"head\":0.2,\"hip\":0.3,\"trunk\":0.5,\"mob_weights\":{\"head\":3}}|at least one limb",
+        "{\"head\":0.2,\"hip\":0.3,\"trunk\":1.0,\"mob_weights\":{\"right_arm\":3}}|no room for the arms",
         "{\"head\":1.5,\"hip\":0.3,\"trunk\":0.5,\"mob_weights\":{\"head\":3}}|1.5",
         "{\"head\":0.2,\"hip\":0.3,\"trunk\":0.5,\"mob_weights\":{\"tail\":3}}|tail"
       })
