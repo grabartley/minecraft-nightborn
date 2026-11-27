@@ -31,6 +31,7 @@
       "id": "minecraft:block.beacon.power_select",
       "volume": 0.45,
       "pitch": 1.0
-    }
+    },
+    "mobs_never_use": true
   }
 }

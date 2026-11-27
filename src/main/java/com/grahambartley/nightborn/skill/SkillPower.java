@@ -46,6 +46,7 @@ public record SkillPower(
     PowerFight fight,
     PowerSeek seek,
     Optional<MobPowerUse> mob,
+    boolean mobsNeverUse,
     Optional<String> clip) {
 
   public static final Codec<SkillPower> CODEC =
@@ -74,6 +75,9 @@ public record SkillPower(
                           PowerFight.CODEC.forGetter(SkillPower::fight),
                           PowerSeek.CODEC.forGetter(SkillPower::seek),
                           MobPowerUse.CODEC.optionalFieldOf("mob").forGetter(SkillPower::mob),
+                          Codec.BOOL
+                              .optionalFieldOf("mobs_never_use", false)
+                              .forGetter(SkillPower::mobsNeverUse),
                           Codec.STRING.optionalFieldOf("clip").forGetter(SkillPower::clip))
                       .apply(instance, SkillPower::new))
           .validate(SkillPower::oneMove);

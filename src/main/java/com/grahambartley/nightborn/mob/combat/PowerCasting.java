@@ -1,13 +1,12 @@
 package com.grahambartley.nightborn.mob.combat;
 
-import com.grahambartley.nightborn.blood.BloodAttachment;
+import com.grahambartley.nightborn.mob.brain.PowerChoice;
+import com.grahambartley.nightborn.mob.brain.Think;
+import com.grahambartley.nightborn.mob.brain.Thinking;
 import com.grahambartley.nightborn.skill.MobPowerUse;
 import com.grahambartley.nightborn.skill.PowerShow;
 import com.grahambartley.nightborn.skill.PowerUse;
 import com.grahambartley.nightborn.skill.Powers;
-import com.grahambartley.nightborn.skill.SkillAttachment;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 import java.util.function.BiFunction;
 import net.minecraft.entity.LivingEntity;
@@ -20,6 +19,7 @@ public final class PowerCasting {
 
   private final BiFunction<LivingEntity, Identifier, PowerUse.Verdict> cast;
   @Nullable private Tell telling;
+  @Nullable private Think lastThink;
   private long nextThink;
 
   public PowerCasting() {
@@ -56,12 +56,18 @@ public final class PowerCasting {
       return;
     }
     nextThink = now + thinkTicks;
-    PowerChoice.choose(
-            options(caster, false),
-            caster.distanceTo(target),
-            BloodAttachment.get(caster),
-            bloodFloor)
-        .ifPresent(option -> tell(caster, option, now));
+    final Optional<Think> think = Thinking.think(caster, false, bloodFloor);
+    think.ifPresent(
+        thought -> {
+          lastThink = thought;
+          thought
+              .chosen()
+              .ifPresent(
+                  scored -> {
+                    nextThink += thought.budget().cooldownPrice();
+                    tell(caster, scored.option(), now);
+                  });
+        });
   }
 
   public void cancel() {
@@ -72,28 +78,15 @@ public final class PowerCasting {
     return telling != null;
   }
 
+  public Optional<Think> lastThink() {
+    return Optional.ofNullable(lastThink);
+  }
+
   private <T extends MobEntity & PowerShow> void tell(
       final T caster, final PowerChoice.Option option, final long now) {
     final MobPowerUse use = option.use();
     telling = new Tell(option.power(), now + use.tellTicks());
     caster.showPower(use.tellClip());
     caster.playSound(SoundEvent.of(use.tellSound()), 1.0F, 1.0F);
-  }
-
-  static List<PowerChoice.Option> options(final LivingEntity caster, final boolean dodge) {
-    final List<PowerChoice.Option> options = new ArrayList<>();
-    for (final Identifier id : SkillAttachment.owned(caster).ownedInOrder()) {
-      Powers.power(caster, id)
-          .filter(power -> power.mob().map(use -> use.dodge() == dodge).orElse(false))
-          .ifPresent(
-              power ->
-                  options.add(
-                      new PowerChoice.Option(
-                          id,
-                          Powers.check(caster, id, Optional.of(power)),
-                          power.blood(),
-                          power.mob().get())));
-    }
-    return options;
   }
 }

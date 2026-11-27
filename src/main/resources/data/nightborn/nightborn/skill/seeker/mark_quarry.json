@@ -30,6 +30,7 @@
       "id": "minecraft:block.amethyst_block.resonate",
       "volume": 0.6,
       "pitch": 1.1
-    }
+    },
+    "mobs_never_use": true
   }
 }

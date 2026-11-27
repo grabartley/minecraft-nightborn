@@ -44,6 +44,7 @@
       "id": "minecraft:block.chain.place",
       "volume": 0.6,
       "pitch": 0.9
-    }
+    },
+    "mobs_never_use": true
   }
 }

@@ -2,6 +2,8 @@ package com.grahambartley.nightborn.mob.goal;
 
 import com.grahambartley.nightborn.downed.Downed;
 import com.grahambartley.nightborn.mob.VampireEntity;
+import com.grahambartley.nightborn.mob.brain.Intent;
+import com.grahambartley.nightborn.mob.brain.IntentGoal;
 import com.grahambartley.nightborn.mob.home.HomeCoffins;
 import com.grahambartley.nightborn.mob.home.NightRoutine;
 import com.grahambartley.nightborn.raid.HouseWatch;
@@ -12,7 +14,7 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.Nullable;
 
-public class SleepInCoffinGoal extends Goal {
+public class SleepInCoffinGoal extends Goal implements IntentGoal {
 
   static final double LIE_DOWN_REACH = 2.0;
   static final int REPATH_TICKS = 10;
@@ -96,5 +98,10 @@ public class SleepInCoffinGoal extends Goal {
         vampire.homeLife().bedtime(vampire) && !HouseWatch.keepsWatch(vampire),
         vampire.getTarget() != null,
         Downed.state(vampire) != null);
+  }
+
+  @Override
+  public Intent intent() {
+    return Intent.REST;
   }
 }

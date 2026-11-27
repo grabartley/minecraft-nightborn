@@ -73,6 +73,24 @@ class SkillPowerTest {
     assertEquals(summon, power.summon().isPresent());
   }
 
+  @ParameterizedTest(name = "{0} -> mobs never use {1}")
+  @CsvSource(
+      delimiter = '|',
+      value = {
+        "{\"blood\":0,\"cooldown_ticks\":20} | false",
+        "{\"blood\":0,\"cooldown_ticks\":20,\"mobs_never_use\":true} | true",
+        "{\"blood\":0,\"cooldown_ticks\":20,\"mobs_never_use\":false} | false"
+      })
+  @DisplayName("a power can say on purpose that mobs never use it")
+  void mobsNeverUse(final String json, final boolean never) {
+    assertEquals(
+        never,
+        SkillPower.CODEC
+            .parse(JsonOps.INSTANCE, JsonParser.parseString(json))
+            .getOrThrow()
+            .mobsNeverUse());
+  }
+
   @Test
   @DisplayName("a power can say how a vampire mob uses it")
   void mobUse() {

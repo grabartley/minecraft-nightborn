@@ -24,6 +24,7 @@
       "id": "minecraft:item.book.page_turn",
       "volume": 0.7,
       "pitch": 1.0
-    }
+    },
+    "mobs_never_use": true
   }
 }

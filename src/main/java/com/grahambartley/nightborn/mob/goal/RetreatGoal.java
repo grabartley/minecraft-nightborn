@@ -2,6 +2,8 @@ package com.grahambartley.nightborn.mob.goal;
 
 import com.grahambartley.nightborn.config.CombatSettings;
 import com.grahambartley.nightborn.downed.Downed;
+import com.grahambartley.nightborn.mob.brain.Intent;
+import com.grahambartley.nightborn.mob.brain.IntentGoal;
 import com.grahambartley.nightborn.mob.combat.Retreat;
 import com.grahambartley.nightborn.server.ServerConfigService;
 import java.util.EnumSet;
@@ -13,7 +15,7 @@ import net.minecraft.entity.mob.PathAwareEntity;
 import net.minecraft.util.math.Vec3d;
 import org.jetbrains.annotations.Nullable;
 
-public class RetreatGoal extends Goal {
+public class RetreatGoal extends Goal implements IntentGoal {
 
   static final int SEARCH_HEIGHT = 6;
 
@@ -95,5 +97,10 @@ public class RetreatGoal extends Goal {
 
   private static CombatSettings settings() {
     return ServerConfigService.current().combat();
+  }
+
+  @Override
+  public Intent intent() {
+    return Intent.RETREAT;
   }
 }

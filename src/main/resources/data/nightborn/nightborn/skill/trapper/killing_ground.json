@@ -34,6 +34,7 @@
       "id": "minecraft:event.raid.horn",
       "volume": 0.3,
       "pitch": 1.1
-    }
+    },
+    "mobs_never_use": true
   }
 }
