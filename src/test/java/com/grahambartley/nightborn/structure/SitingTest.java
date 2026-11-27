@@ -33,7 +33,7 @@ class SitingTest {
         "footing | true | 0 | nightborn:crypt_entrance",
         "summit | true | 32 | ''",
         "footing and summit | true | 32 | nightborn:crypt_entrance",
-        "cave | true | 24 | nightborn:lair_entrance",
+        "cave | true | 32 | nightborn:lair_entrance",
         "cave and footing | false | 0 | ''",
         "cave and summit | false | 0 | ''"
       })

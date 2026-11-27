@@ -1,30 +1,20 @@
 package com.grahambartley.nightborn.nemesis;
 
-import com.grahambartley.nightborn.Nightborn;
 import com.grahambartley.nightborn.age.AgeNight;
 import com.grahambartley.nightborn.boss.ArenaBoss;
 import com.grahambartley.nightborn.boss.BossWard;
 import com.grahambartley.nightborn.config.VillageSettings;
 import com.grahambartley.nightborn.guild.HunterEntity;
-import com.grahambartley.nightborn.mob.VampireEntity;
 import com.grahambartley.nightborn.name.Epithets;
 import com.grahambartley.nightborn.name.NameBearer;
 import com.grahambartley.nightborn.server.ServerConfigService;
-import com.grahambartley.nightborn.structure.VampireStructureStarts;
 import com.grahambartley.nightborn.wild.WandererAttachment;
 import java.util.UUID;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.registry.RegistryKeys;
-import net.minecraft.registry.tag.TagKey;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.Identifier;
-import net.minecraft.world.gen.structure.Structure;
 
 public final class NemesisMaking {
-
-  public static final TagKey<Structure> SEALED_HOMES =
-      TagKey.of(RegistryKeys.STRUCTURE, Identifier.of(Nightborn.MOD_ID, "sealed_homes"));
 
   private NemesisMaking() {}
 
@@ -41,7 +31,6 @@ public final class NemesisMaking {
                   mob.hasCustomName(),
                   mob instanceof ArenaBoss,
                   BossWard.keeper(mob),
-                  sealedHome(world, mob),
                   NemesisAttachment.get(mob).isPresent(),
                   ledger.of(quarry).size(),
                   settings.nemesisLimit())) {
@@ -88,20 +77,5 @@ public final class NemesisMaking {
     return mob instanceof NameBearer bearer
         ? Epithets.given(name, bearer.epithet()).orElse(name)
         : name;
-  }
-
-  private static boolean sealedHome(final ServerWorld world, final MobEntity mob) {
-    return mob instanceof VampireEntity vampire
-        && vampire
-            .home()
-            .flatMap(home -> VampireStructureStarts.startAt(world, home))
-            .map(
-                start ->
-                    world
-                        .getRegistryManager()
-                        .get(RegistryKeys.STRUCTURE)
-                        .getEntry(start.getStructure())
-                        .isIn(SEALED_HOMES))
-            .orElse(false);
   }
 }

@@ -5,7 +5,9 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.util.Identifier;
@@ -62,9 +64,15 @@ public record CaveMouth(
     CaveCell at(BlockPos pos);
   }
 
+  private static final Map<List<Integer>, List<BlockPos>> MOVES = new ConcurrentHashMap<>();
+
   public record Opening(BlockPos move, List<BlockPos> route) {}
 
   public List<BlockPos> moves() {
+    return MOVES.computeIfAbsent(List.of(reach, spacing, rise), key -> sortedMoves());
+  }
+
+  private List<BlockPos> sortedMoves() {
     final List<BlockPos> moves = new ArrayList<>();
     for (int dx = -reach; dx <= reach; dx += spacing) {
       for (int dz = -reach; dz <= reach; dz += spacing) {
@@ -80,7 +88,7 @@ public record CaveMouth(
             .thenComparingInt(BlockPos::getY)
             .thenComparingInt(BlockPos::getX)
             .thenComparingInt(BlockPos::getZ));
-    return moves;
+    return List.copyOf(moves);
   }
 
   public DepthBand band(final Threshold way) {

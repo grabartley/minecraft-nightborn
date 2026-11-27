@@ -33,7 +33,8 @@ public record Siting(Optional<Footing> footing, Optional<Summit> summit, Optiona
   }
 
   public int reach() {
-    return summit.map(Summit::reach).orElse(0) + cave.map(CaveMouth::reach).orElse(0);
+    return summit.map(Summit::reach).orElse(0)
+        + cave.map(mouth -> mouth.reach() + mouth.path()).orElse(0);
   }
 
   public Optional<Identifier> entrance() {
@@ -70,7 +71,7 @@ public record Siting(Optional<Footing> footing, Optional<Summit> summit, Optiona
                 mouth.meet(
                     threshold.get(),
                     pieces.getBoundingBox(),
-                    ground(context, mouth.band(threshold.get()))));
+                    caveGround(context, mouth.band(threshold.get()))));
     final Optional<BlockPos> move =
         cave.isPresent()
             ? opening.map(CaveMouth.Opening::move)
@@ -95,7 +96,8 @@ public record Siting(Optional<Footing> footing, Optional<Summit> summit, Optiona
         : Optional.empty();
   }
 
-  private static CaveMouth.Ground ground(final Structure.Context context, final DepthBand band) {
+  private static CaveMouth.Ground caveGround(
+      final Structure.Context context, final DepthBand band) {
     return context.chunkGenerator() instanceof NoiseChunkGenerator noise
         ? new NoiseGround(context, noise, band)
         : new ColumnGround(context);
