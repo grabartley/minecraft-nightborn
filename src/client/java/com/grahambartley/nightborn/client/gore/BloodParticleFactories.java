@@ -43,6 +43,7 @@ public final class BloodParticleFactories {
           .ifPresent(
               sprites ->
                   FlatDecalParticle.place(
+                      client.particleManager,
                       new BloodSplatParticle(client.world, contact, face, sprites, look, pool)));
     }
   }

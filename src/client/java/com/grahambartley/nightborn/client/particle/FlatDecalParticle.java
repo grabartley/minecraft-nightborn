@@ -1,9 +1,9 @@
 package com.grahambartley.nightborn.client.particle;
 
+import com.grahambartley.nightborn.particle.DecalFootprint;
 import com.grahambartley.nightborn.particle.DecalRecheck;
-import com.grahambartley.nightborn.particle.DecalSurface;
 import java.util.OptionalDouble;
-import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.particle.ParticleManager;
 import net.minecraft.client.particle.ParticleTextureSheet;
 import net.minecraft.client.particle.SpriteBillboardParticle;
 import net.minecraft.client.render.Camera;
@@ -44,14 +44,14 @@ public abstract class FlatDecalParticle extends SpriteBillboardParticle {
 
   protected abstract void aged();
 
-  public static void place(final FlatDecalParticle decal) {
+  public static void place(final ParticleManager particles, final FlatDecalParticle decal) {
     if (decal.settle()) {
-      MinecraftClient.getInstance().particleManager.addParticle(decal);
+      particles.addParticle(decal);
     }
   }
 
   private boolean settle() {
-    final OptionalDouble fitted = DecalSurface.fittedHalfSize(world, contact, face, scale, spin);
+    final OptionalDouble fitted = DecalFootprint.fittedHalfSize(world, contact, face, scale, spin);
     fitted.ifPresent(halfSize -> scale = (float) halfSize);
     return fitted.isPresent();
   }
@@ -70,7 +70,7 @@ public abstract class FlatDecalParticle extends SpriteBillboardParticle {
 
   private boolean stillHeld() {
     return !DecalRecheck.due(age, recheckPhase)
-        || DecalSurface.holds(world, contact, face, DecalSurface.halfExtent(scale, spin));
+        || DecalFootprint.holds(world, contact, face, DecalFootprint.halfExtent(scale, spin));
   }
 
   @Override

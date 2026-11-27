@@ -45,7 +45,10 @@ public final class VomitParticleFactories {
       splashes
           .get()
           .ifPresent(
-              sprites -> FlatDecalParticle.place(new VomitSplashParticle(world, x, y, z, sprites)));
+              sprites ->
+                  FlatDecalParticle.place(
+                      MinecraftClient.getInstance().particleManager,
+                      new VomitSplashParticle(world, x, y, z, sprites)));
     }
   }
 }
