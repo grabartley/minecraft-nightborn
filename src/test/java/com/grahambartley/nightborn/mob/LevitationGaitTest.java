@@ -12,9 +12,11 @@ import org.junit.jupiter.params.provider.CsvSource;
 
 class LevitationGaitTest {
 
+  private static final int SETTLED_TICKS = 60;
+
   private static LevitationGait settled(final boolean sprinting, final double speed) {
     final LevitationGait gait = new LevitationGait();
-    for (int tick = 0; tick < 60; tick++) {
+    for (int tick = 0; tick < SETTLED_TICKS; tick++) {
       gait.observe(tick, true, sprinting, speed);
     }
     return gait;
@@ -23,7 +25,7 @@ class LevitationGaitTest {
   private static List<VampirePose> run(final LevitationGait gait, final double... speeds) {
     final List<VampirePose> shown = new ArrayList<>();
     for (int tick = 0; tick < speeds.length; tick++) {
-      gait.observe(1000 + tick, true, false, speeds[tick]);
+      gait.observe(SETTLED_TICKS + tick, true, false, speeds[tick]);
       shown.add(gait.pose());
     }
     return shown;
@@ -101,22 +103,50 @@ class LevitationGaitTest {
     for (int tick = 0; tick < speeds.length; tick++) {
       speeds[tick] = (tick / every) % 2 == 0 ? low : high;
     }
-    assertTrue(changes(run(gait, speeds)) <= 1, () -> "changes: " + changes(run(gait, speeds)));
+    final long changes = changes(run(gait, speeds));
+    assertTrue(changes <= 1, () -> "changes: " + changes);
+  }
+
+  @ParameterizedTest(name = "sprint flag flips every {0} ticks")
+  @CsvSource({"1", "2"})
+  @DisplayName("a sprint flag that flickers for a tick or two never flips the clip")
+  void flickeringSprintHoldsOneClip(final int every) {
+    final LevitationGait gait = settled(false, 0.1);
+    final List<VampirePose> shown = new ArrayList<>();
+    for (int tick = 0; tick < 200; tick++) {
+      gait.observe(SETTLED_TICKS + tick, true, (tick / every) % 2 == 1, 0.1);
+      shown.add(gait.pose());
+    }
+    assertEquals(0, changes(shown));
+    assertEquals(VampirePose.LEVITATE_MOVE, gait.pose());
+  }
+
+  @ParameterizedTest(name = "{0} ticks after a change, every tick seen {1}: {2}")
+  @CsvSource({
+    "3, true, LEVITATE_MOVE",
+    "9, true, LEVITATE_MOVE",
+    "10, true, LEVITATE_SPRINT",
+    "3, false, LEVITATE_MOVE",
+    "9, false, LEVITATE_MOVE",
+    "10, false, LEVITATE_SPRINT"
+  })
+  @DisplayName("the hold is counted in game ticks, whether or not every tick was seen")
+  void holdCountsGameTicks(final int after, final boolean everyTick, final VampirePose pose) {
+    final LevitationGait gait = settled(false, 0.0);
+    gait.observe(SETTLED_TICKS, true, false, 1.0);
+    assertEquals(VampirePose.LEVITATE_MOVE, gait.pose());
+    for (int tick = everyTick ? 1 : after; tick <= after; tick++) {
+      gait.observe(SETTLED_TICKS + tick, true, false, 1.0);
+    }
+    assertEquals(pose, gait.pose());
   }
 
   @Test
-  @DisplayName("a clip just chosen holds for its minimum time before the next change")
-  void holdsAfterAChange() {
-    final LevitationGait gait = settled(false, 0.0);
-    final List<VampirePose> shown = new ArrayList<>();
-    for (int tick = 0; tick < 40; tick++) {
-      gait.observe(1000 + tick, true, tick < 3, tick < 3 ? 0.5 : 0.0);
-      shown.add(gait.pose());
-    }
-    assertEquals(VampirePose.LEVITATE_SPRINT, shown.get(0));
-    assertEquals(VampirePose.LEVITATE_SPRINT, shown.get(LevitationGait.HOLD_TICKS - 1));
-    assertEquals(VampirePose.LEVITATE, shown.get(39));
-    assertEquals(2, changes(shown));
+  @DisplayName("after a long gap the speed starts again from the fresh sample, not the old one")
+  void staleSpeedRestarts() {
+    final LevitationGait gait = settled(false, 0.5);
+    gait.observe(SETTLED_TICKS + LevitationGait.STALE_TICKS + 1, true, false, 0.0);
+    assertEquals(0.0, gait.spread(), 1.0e-9);
   }
 
   @ParameterizedTest(name = "observed {0} times in one tick")
@@ -124,6 +154,7 @@ class LevitationGaitTest {
   @DisplayName("several frames in one tick count as one sample")
   void oneSamplePerTick(final int frames) {
     final LevitationGait gait = new LevitationGait();
+    gait.observe(6, true, false, 0.0);
     for (int frame = 0; frame < frames; frame++) {
       gait.observe(7, true, false, 0.24);
     }

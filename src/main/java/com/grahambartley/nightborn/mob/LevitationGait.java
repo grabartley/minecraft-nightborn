@@ -1,5 +1,7 @@
 package com.grahambartley.nightborn.mob;
 
+import net.minecraft.entity.Entity;
+
 public final class LevitationGait {
 
   static final double SMOOTHING = 0.25;
@@ -9,12 +11,19 @@ public final class LevitationGait {
   static final double SPRINT_EXIT_SPEED = 0.2;
   static final double FULL_SPREAD_SPEED = 0.24;
   static final int HOLD_TICKS = 10;
+  static final int SPRINT_SETTLE_TICKS = 3;
+  static final int STALE_TICKS = 20;
 
   private double speed;
   private boolean sprinting;
+  private int sprintFlips;
   private VampirePose pose = VampirePose.LEVITATE;
-  private int held = HOLD_TICKS;
-  private long lastTick = Long.MIN_VALUE;
+  private long changedAt = Long.MIN_VALUE / 2;
+  private long lastTick = Long.MIN_VALUE / 2;
+
+  public static double horizontalSpeed(final Entity entity) {
+    return Math.hypot(entity.getX() - entity.prevX, entity.getZ() - entity.prevZ);
+  }
 
   public void observe(
       final long tick,
@@ -24,19 +33,19 @@ public final class LevitationGait {
     if (tick == lastTick) {
       return;
     }
+    final double sample = Math.max(0.0, horizontalSpeed);
+    speed = tick - lastTick > STALE_TICKS ? sample : speed + (sample - speed) * SMOOTHING;
     lastTick = tick;
-    speed += (Math.max(0.0, horizontalSpeed) - speed) * SMOOTHING;
-    sprinting = nowSprinting;
+    settleSprint(nowSprinting);
     final VampirePose wanted = wanted(pose, sprinting, speed);
     if (!levitating) {
       pose = wanted;
-      held = HOLD_TICKS;
+      changedAt = tick - HOLD_TICKS;
       return;
     }
-    held++;
-    if (wanted != pose && held >= HOLD_TICKS) {
+    if (wanted != pose && tick - changedAt >= HOLD_TICKS) {
       pose = wanted;
-      held = 0;
+      changedAt = tick;
     }
   }
 
@@ -45,7 +54,7 @@ public final class LevitationGait {
   }
 
   public double spread() {
-    return sprinting ? 1.0 : Math.min(1.0, speed / FULL_SPREAD_SPEED);
+    return pose == VampirePose.LEVITATE_SPRINT ? 1.0 : Math.min(1.0, speed / FULL_SPREAD_SPEED);
   }
 
   static VampirePose wanted(final VampirePose shown, final boolean sprinting, final double speed) {
@@ -60,5 +69,13 @@ public final class LevitationGait {
     final boolean moving =
         speed > (shown == VampirePose.LEVITATE ? MOVE_ENTER_SPEED : MOVE_EXIT_SPEED);
     return moving ? VampirePose.LEVITATE_MOVE : VampirePose.LEVITATE;
+  }
+
+  private void settleSprint(final boolean nowSprinting) {
+    sprintFlips = nowSprinting == sprinting ? 0 : sprintFlips + 1;
+    if (sprintFlips >= SPRINT_SETTLE_TICKS) {
+      sprinting = nowSprinting;
+      sprintFlips = 0;
+    }
   }
 }

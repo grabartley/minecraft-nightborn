@@ -4,6 +4,7 @@ import com.grahambartley.nightborn.client.vomit.VomitFx;
 import com.grahambartley.nightborn.coffin.CoffinRise;
 import com.grahambartley.nightborn.gear.StakedFall;
 import com.grahambartley.nightborn.levitation.Levitation;
+import com.grahambartley.nightborn.mob.LevitationGait;
 import com.grahambartley.nightborn.mob.VampirePose;
 import com.grahambartley.nightborn.network.PlayerCue;
 import com.grahambartley.nightborn.network.PlayerCuePayload;
@@ -45,7 +46,7 @@ public final class PlayerClips {
                                 Levitation.isLevitating(player),
                                 VisibleStateAttachment.get(player).downed(),
                                 player.isSprinting(),
-                                horizontalSpeed(player))));
+                                LevitationGait.horizontalSpeed(player))));
     ClientPlayNetworking.registerGlobalReceiver(
         PlayerCuePayload.ID,
         (payload, context) ->
@@ -74,7 +75,7 @@ public final class PlayerClips {
             new PlayerClipState.Situation(
                 Levitation.isLevitating(player),
                 player.isSprinting(),
-                horizontalSpeed(player),
+                LevitationGait.horizontalSpeed(player),
                 visible.downed(),
                 visible.feeding(),
                 visible.isWeakened() && staggersOnFoot(player),
@@ -136,10 +137,6 @@ public final class PlayerClips {
   private static Optional<PlayerEntity> player(final MinecraftClient client, final int entityId) {
     final Entity entity = client.world == null ? null : client.world.getEntityById(entityId);
     return entity instanceof PlayerEntity player ? Optional.of(player) : Optional.empty();
-  }
-
-  private static double horizontalSpeed(final PlayerEntity player) {
-    return Math.hypot(player.getX() - player.prevX, player.getZ() - player.prevZ);
   }
 
   private static boolean staggersOnFoot(final PlayerEntity player) {

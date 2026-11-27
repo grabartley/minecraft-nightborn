@@ -76,9 +76,8 @@ public enum VampirePose {
       boolean downed,
       boolean rising,
       boolean dying,
-      boolean levitating,
+      Optional<VampirePose> levitation,
       boolean landing,
-      VampirePose levitation,
       float limbSwing,
       boolean seated,
       boolean reading,
@@ -129,8 +128,8 @@ public enum VampirePose {
     if (cue.rising() && !cue.dying()) {
       return RISE;
     }
-    if (cue.levitating()) {
-      return cue.levitation();
+    if (cue.levitation().isPresent()) {
+      return cue.levitation().get();
     }
     if (cue.landing()) {
       return LAND;

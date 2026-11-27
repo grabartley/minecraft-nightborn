@@ -62,7 +62,7 @@ public final class VampireAnimator {
                   vampire.age,
                   levitating,
                   vampire.isSprinting(),
-                  Math.hypot(vampire.getX() - vampire.prevX, vampire.getZ() - vampire.prevZ));
+                  LevitationGait.horizontalSpeed(vampire));
               final VampirePose pose =
                   VampirePose.of(
                       new VampirePose.Cue(
@@ -71,9 +71,8 @@ public final class VampireAnimator {
                           downed,
                           risingEdge.ending(),
                           !vampire.isAlive(),
-                          levitating,
+                          levitating ? Optional.of(levitationGait.pose()) : Optional.empty(),
                           landingEdge.ending(),
-                          levitationGait.pose(),
                           state.getLimbSwingAmount(),
                           vampire.getVehicle() instanceof SeatEntity,
                           vampire.reading(),
