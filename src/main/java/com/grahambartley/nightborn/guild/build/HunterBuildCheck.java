@@ -20,6 +20,10 @@ public final class HunterBuildCheck {
     if (build.rankWeights().values().stream().allMatch(weight -> weight <= 0)) {
       problems.add("no rank has a weight above zero");
     }
+    if (build.coreWeight() <= 0 && build.pathWeight() <= 0) {
+      problems.add(
+          "the core and path weights are both zero, so only leaned-toward skills are bought");
+    }
     unknown(build.rankWeights().keySet(), ranks, "rank weight names", "rank", problems);
     unknown(build.thinkTicks().keySet(), ranks, "think ticks name", "rank", problems);
     unknown(build.kitLeanings().keySet(), kits, "kit leanings name", "kit", problems);

@@ -1,17 +1,14 @@
 package com.grahambartley.nightborn.gametest;
 
 import com.grahambartley.nightborn.ammo.BoltEntity;
-import com.grahambartley.nightborn.faction.OathAttachment;
 import com.grahambartley.nightborn.gear.GearItems;
 import com.grahambartley.nightborn.guild.CrossbowGoal;
 import com.grahambartley.nightborn.guild.GuildMobs;
 import com.grahambartley.nightborn.guild.HunterAction;
 import com.grahambartley.nightborn.guild.HunterEntity;
-import com.grahambartley.nightborn.guild.build.HunterGrowth;
 import com.grahambartley.nightborn.holy.HolyWater;
 import com.grahambartley.nightborn.mob.NightbornMobs;
 import com.grahambartley.nightborn.mob.VampireEntity;
-import com.grahambartley.nightborn.rank.RankLadder;
 import com.grahambartley.nightborn.ward.Wards;
 import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
 import net.minecraft.entity.EquipmentSlot;
@@ -35,8 +32,7 @@ public class HunterTacticsGameTest implements FabricGameTest {
   private static HunterEntity hunter(final TestContext context, final BlockPos pos) {
     final HunterEntity hunter = context.spawnEntity(GuildMobs.HUNTER, pos);
     hunter.setAiDisabled(true);
-    OathAttachment.set(
-        hunter, HunterGrowth.sworn(RankLadder.of(context.getWorld().getRegistryManager()), 0));
+    TestHunters.unskilled(context, hunter);
     return hunter;
   }
 

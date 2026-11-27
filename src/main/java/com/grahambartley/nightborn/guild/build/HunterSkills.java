@@ -13,7 +13,6 @@ import com.grahambartley.nightborn.skill.SkillAttributes;
 import com.grahambartley.nightborn.skill.SkillBranch;
 import com.grahambartley.nightborn.skill.SkillTree;
 import com.grahambartley.nightborn.skill.Skills;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import net.minecraft.entity.LivingEntity;
@@ -104,10 +103,6 @@ public final class HunterSkills {
 
   public static Optional<Identifier> rank(final LivingEntity mob) {
     return RankLadder.of(mob.getRegistryManager()).markOf(OathAttachment.get(mob));
-  }
-
-  public static List<Identifier> paths(final LivingEntity mob) {
-    return SkillAttachment.get(mob, SkillTree.HUNTER).lines();
   }
 
   public static int thinkTicks(final LivingEntity mob, final Optional<Identifier> rank) {

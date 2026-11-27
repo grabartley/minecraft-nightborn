@@ -18,6 +18,8 @@ class HunterBuildCheckTest {
 
   private static final Set<net.minecraft.util.Identifier> RANKS =
       Set.of(id("initiate"), id("hunter"), id("veteran"), id("master"));
+  private static final Set<net.minecraft.util.Identifier> HUNTER_SKILLS =
+      HunterBuildFixtures.treeOf(HunterBuildFixtures.hunterBranches());
   private static final Set<net.minecraft.util.Identifier> KITS =
       Set.of(
           id("crossbow"),
@@ -33,8 +35,7 @@ class HunterBuildCheckTest {
   void shippedIsClean(final String build) {
     assertEquals(
         List.of(),
-        HunterBuildCheck.problems(
-            HunterBuildFixtures.build(), RANKS, HunterBuildFixtures.skills().keySet(), KITS));
+        HunterBuildCheck.problems(HunterBuildFixtures.build(), RANKS, HUNTER_SKILLS, KITS));
   }
 
   @ParameterizedTest(name = "{0}")
@@ -43,7 +44,9 @@ class HunterBuildCheckTest {
     "master, baron, crossbow, slayer/quick_shot, think ticks name nightborn:baron",
     "master, master, sling, slayer/quick_shot, kit leanings name nightborn:sling",
     "master, master, crossbow, slayer/fireball, nightborn:crossbow leans toward nightborn:slayer"
-        + "/fireball"
+        + "/fireball",
+    "master, master, crossbow, core/blood_rush, nightborn:crossbow leans toward nightborn:core"
+        + "/blood_rush"
   })
   @DisplayName("a build that names something unknown is reported")
   void reportsUnknownNames(
@@ -63,8 +66,7 @@ class HunterBuildCheckTest {
             0,
             1200,
             0);
-    final List<String> problems =
-        HunterBuildCheck.problems(build, RANKS, HunterBuildFixtures.skills().keySet(), KITS);
+    final List<String> problems = HunterBuildCheck.problems(build, RANKS, HUNTER_SKILLS, KITS);
     assertEquals(1, problems.size(), problems.toString());
     assertEquals(true, problems.getFirst().startsWith(problem), problems.toString());
   }
@@ -89,5 +91,15 @@ class HunterBuildCheckTest {
   @DisplayName("a raiding party or veteran that names an unknown rank is reported")
   void reportsUnknownRankNames(final String owner, final String rank, final int problems) {
     assertEquals(problems, HunterBuildCheck.unknownRanks(owner, Set.of(id(rank)), RANKS).size());
+  }
+
+  @ParameterizedTest(name = "core weight {0}, path weight {1}: reported {2}")
+  @CsvSource({"0, 0, true", "1, 0, false", "0, 1, false", "2, 3, false"})
+  @DisplayName("a build that weighs neither core nor path skills is reported")
+  void reportsNoBaseWeight(final int core, final int path, final boolean reported) {
+    final HunterBuild build =
+        new HunterBuild(Map.of(id("master"), 1), Map.of(), 0, core, path, Map.of(), 0, 1200, 0);
+    assertEquals(
+        reported ? 1 : 0, HunterBuildCheck.problems(build, RANKS, HUNTER_SKILLS, KITS).size());
   }
 }

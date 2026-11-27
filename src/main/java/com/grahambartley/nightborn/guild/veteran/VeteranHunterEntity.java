@@ -109,7 +109,9 @@ public class VeteranHunterEntity extends HunterEntity {
     super.fight();
     final Map<Identifier, VeteranAttack> known =
         veteran().map(kind -> VeteranData.attacks(getRegistryManager(), kind)).orElse(Map.of());
-    attacks.tick(known);
+    if (!telling()) {
+      attacks.tick(known);
+    }
   }
 
   @Override

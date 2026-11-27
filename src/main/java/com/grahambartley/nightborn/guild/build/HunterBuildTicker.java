@@ -5,7 +5,7 @@ import java.util.Optional;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.Identifier;
 
-public final class HunterBuilding {
+public final class HunterBuildTicker {
 
   private Map<Identifier, Integer> odds = Map.of();
 

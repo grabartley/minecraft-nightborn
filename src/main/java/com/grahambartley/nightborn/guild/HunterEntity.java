@@ -3,7 +3,7 @@ package com.grahambartley.nightborn.guild;
 import com.grahambartley.nightborn.boss.BossWard;
 import com.grahambartley.nightborn.boss.SwornAlly;
 import com.grahambartley.nightborn.guild.build.GrowingHunter;
-import com.grahambartley.nightborn.guild.build.HunterBuilding;
+import com.grahambartley.nightborn.guild.build.HunterBuildTicker;
 import com.grahambartley.nightborn.guild.build.HunterSkills;
 import com.grahambartley.nightborn.guild.party.PartyMember;
 import com.grahambartley.nightborn.guild.raiding.RaidConduct;
@@ -86,6 +86,7 @@ public class HunterEntity extends PathAwareEntity
   static final int CAMP_REACH = 12;
   static final String PARTY_LEADER_KEY = "PartyLeader";
   static final String RAID_KEY = "Raid";
+  static final int BLOOD_FLOOR = 0;
   @Nullable private UUID partyLeader;
   @Nullable private RaidOrders raid;
   private final Set<UUID> sworn = new HashSet<>();
@@ -112,7 +113,7 @@ public class HunterEntity extends PathAwareEntity
   private final WornLook worn = new WornLook();
   private final PowerCasting casting = PowerCasting.underTell();
   private final ShownAction shownPower = new ShownAction();
-  private final HunterBuilding building = new HunterBuilding();
+  private final HunterBuildTicker building = new HunterBuildTicker();
   private String kitId = "";
   private HunterKit kit;
   private HunterAction shown = HunterAction.NONE;
@@ -348,6 +349,10 @@ public class HunterEntity extends PathAwareEntity
     return RankBearer.read(dataTracker.get(RANK));
   }
 
+  protected boolean telling() {
+    return casting.telling();
+  }
+
   @Override
   public SkillTree skillTree() {
     return SkillTree.HUNTER;
@@ -416,7 +421,7 @@ public class HunterEntity extends PathAwareEntity
     if (kit != null && !casting.telling()) {
       tactics.tick(kit);
     }
-    casting.tick(this, HunterSkills.thinkTicks(this, shownRank()), 0);
+    casting.tick(this, HunterSkills.thinkTicks(this, shownRank()), BLOOD_FLOOR);
   }
 
   protected void settle() {

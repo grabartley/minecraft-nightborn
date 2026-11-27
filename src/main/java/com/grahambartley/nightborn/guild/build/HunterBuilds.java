@@ -4,7 +4,9 @@ import com.grahambartley.nightborn.Nightborn;
 import com.grahambartley.nightborn.guild.GuildData;
 import com.grahambartley.nightborn.guild.raiding.RaidingData;
 import com.grahambartley.nightborn.guild.veteran.VeteranData;
+import com.grahambartley.nightborn.mob.stage.SkillPicks;
 import com.grahambartley.nightborn.rank.RankData;
+import com.grahambartley.nightborn.skill.SkillTree;
 import com.grahambartley.nightborn.skill.Skills;
 import java.util.ArrayList;
 import java.util.List;
@@ -40,7 +42,11 @@ public final class HunterBuilds {
             HunterBuildCheck.problems(
                 build(registries),
                 ranks,
-                Skills.allSkills(registries).keySet(),
+                SkillPicks.ofTree(
+                        Skills.allSkills(registries),
+                        Skills.allBranches(registries),
+                        SkillTree.HUNTER)
+                    .keySet(),
                 GuildData.kits(registries).keySet()));
     registries
         .getOptional(RaidingData.ARMS)
