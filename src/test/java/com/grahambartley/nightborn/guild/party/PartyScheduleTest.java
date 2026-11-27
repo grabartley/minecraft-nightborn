@@ -8,33 +8,26 @@ import org.junit.jupiter.params.provider.CsvSource;
 
 class PartyScheduleTest {
 
-  @ParameterizedTest(
-      name = "time {0}, pitched {1}, camp day {2}, {3} nights, tried {4}, guarding {5}: {6}")
+  @ParameterizedTest(name = "time {0}, pitched {1}, stay over {2}, tried {3}: {4}")
   @CsvSource({
-    "6000, false, 0, 0, -1, false, NONE",
-    "12000, false, 0, 0, -1, false, PITCH",
-    "12000, false, 0, 0, 0, false, NONE",
-    "18000, true, 0, 1, 0, false, SLEEP",
-    "24500, true, 0, 1, 0, false, STRIKE",
-    "24500, true, 0, 2, 0, false, WAKE",
-    "42000, true, 0, 2, 0, false, SLEEP",
-    "48500, true, 0, 2, 0, false, STRIKE",
-    "500000, true, 0, 3, 0, false, STRIKE",
-    "36500, false, 0, 0, 0, false, PITCH",
-    "24500, true, 0, 1, 0, true, WAKE",
-    "504500, true, 0, 3, 0, true, WAKE",
-    "498000, true, 0, 3, 0, true, SLEEP",
-    "12000, false, 0, 0, -1, true, PITCH"
+    "6000, false, false, -1, NONE",
+    "12000, false, false, -1, PITCH",
+    "12000, false, true, -1, PITCH",
+    "12000, false, false, 0, NONE",
+    "36500, false, false, 0, PITCH",
+    "18000, true, false, 0, SLEEP",
+    "24500, true, false, 0, WAKE",
+    "24500, true, true, 0, STRIKE",
+    "18000, true, true, 0, STRIKE",
+    "500000, true, true, 0, STRIKE"
   })
   void stepsThroughTheStay(
       final long time,
       final boolean pitched,
-      final long campDay,
-      final int nights,
+      final boolean stayOver,
       final long tried,
-      final boolean guarding,
       final Step step) {
-    assertEquals(step, PartySchedule.step(time, pitched, campDay, nights, tried, guarding));
+    assertEquals(step, PartySchedule.step(time, pitched, stayOver, tried));
   }
 
   @ParameterizedTest(

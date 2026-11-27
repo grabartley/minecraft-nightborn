@@ -60,4 +60,20 @@ class CampSiteTest {
   private static Ground meadow(final int dy) {
     return dy < 0 ? Ground.NATURAL : Ground.AIR;
   }
+
+  @ParameterizedTest(name = "{0},{1} from the last camp is apart from it at {2}: {3}")
+  @CsvSource({
+    "0, 0, 16, false",
+    "0, 0, 0, true",
+    "15, 0, 16, false",
+    "16, 0, 16, true",
+    "-11, 11, 16, false",
+    "-12, 12, 16, true",
+    "3, -4, 5, true",
+    "3, -3, 5, false"
+  })
+  void keepsANewCampOffTheLastOnesSpot(
+      final int dx, final int dz, final int apart, final boolean far) {
+    assertEquals(far, CampSite.apart(dx, dz, apart));
+  }
 }

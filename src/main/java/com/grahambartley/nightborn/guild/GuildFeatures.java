@@ -2,6 +2,7 @@ package com.grahambartley.nightborn.guild;
 
 import com.grahambartley.nightborn.guild.build.HunterBuilds;
 import com.grahambartley.nightborn.guild.party.HunterPartySpawner;
+import com.grahambartley.nightborn.guild.party.LeaderlessCamps;
 import com.grahambartley.nightborn.guild.party.PartyData;
 import com.grahambartley.nightborn.guild.party.TentBlocks;
 import com.grahambartley.nightborn.guild.raiding.RaidingFeatures;
@@ -18,6 +19,7 @@ public final class GuildFeatures {
     TentBlocks.register();
     PartyData.register();
     HunterPartySpawner.register();
+    LeaderlessCamps.register();
     ContractTracker.register();
     GuildWheel.register();
     VeteranFeatures.register();

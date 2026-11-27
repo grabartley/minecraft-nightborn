@@ -8,10 +8,13 @@ import com.grahambartley.nightborn.guild.HunterTargetGoal;
 import com.grahambartley.nightborn.guild.party.CampBats;
 import com.grahambartley.nightborn.guild.party.CampLayout;
 import com.grahambartley.nightborn.guild.party.CampSite;
+import com.grahambartley.nightborn.guild.party.CampStay;
 import com.grahambartley.nightborn.guild.party.HunterParty;
 import com.grahambartley.nightborn.guild.party.HunterTentBlock;
 import com.grahambartley.nightborn.guild.party.HunterTentBlockEntity;
+import com.grahambartley.nightborn.guild.party.LeaderlessCamps;
 import com.grahambartley.nightborn.guild.party.PartyCamp;
+import com.grahambartley.nightborn.guild.party.PitchedCamps;
 import com.grahambartley.nightborn.guild.party.TentBlocks;
 import com.grahambartley.nightborn.guild.party.TentPart;
 import com.grahambartley.nightborn.mob.NightbornMobs;
@@ -41,6 +44,7 @@ public class HunterPartyGameTest implements FabricGameTest {
 
   static final String ARENA = "nightborn:vampire_arena";
   static final String BATCH = "hunter_party";
+  static final int BEFORE_SWEEP = 20;
   static final BlockPos CENTRE = new BlockPos(4, 2, 4);
   static final BlockPos BED_FOOT = new BlockPos(6, 2, 4);
   static final BlockPos TENT_SIDE = new BlockPos(5, 2, 4);
@@ -133,6 +137,23 @@ public class HunterPartyGameTest implements FabricGameTest {
         });
   }
 
+  @GameTest(
+      templateName = ARENA,
+      batchId = BATCH,
+      tickLimit = LeaderlessCamps.CHECK_TICKS + BEFORE_SWEEP)
+  public void aCampWithNoLivingLeaderComesDownWhenItsNightsRunOut(final TestContext context) {
+    meadow(context);
+    PitchedCamps.of(context.getWorld()).pitched(UUID.randomUUID(), pitch(context), CampStay.NONE);
+    context.runAtTick(
+        LeaderlessCamps.CHECK_TICKS + 1,
+        () -> {
+          context.checkBlockState(
+              CENTRE, state -> !state.get(CampfireBlock.LIT), () -> "an unlit fire");
+          context.expectBlock(Blocks.AIR, BED_FOOT);
+          context.complete();
+        });
+  }
+
   @GameTest(templateName = ARENA, batchId = BATCH)
   public void tentsAndBedsDropNothing(final TestContext context) {
     meadow(context);
@@ -156,7 +177,7 @@ public class HunterPartyGameTest implements FabricGameTest {
     master.setAiDisabled(true);
     final HunterParty party =
         HunterParty.gathered(List.of(UUID.randomUUID()), context.getAbsolutePos(CENTRE), 0L)
-            .pitch(pitch(context), 2, 0L);
+            .pitch(pitch(context), 2, 0L, context.getWorld().getTime());
     master.lead(party);
     final NbtCompound saved = new NbtCompound();
     master.writeNbt(saved);

@@ -34,6 +34,10 @@ public final class CampSite {
     return natural && dry ? Ground.NATURAL : Ground.BUILT;
   }
 
+  public static boolean apart(final int dx, final int dz, final int apart) {
+    return dx * dx + dz * dz >= apart * apart;
+  }
+
   public static List<int[]> corners(final Bounds bounds) {
     final List<int[]> corners = new ArrayList<>();
     for (final int dx : new int[] {bounds.minX() - 1, bounds.maxX() + 1}) {
