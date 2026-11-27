@@ -24,12 +24,8 @@ public final class WildRules {
       final boolean watchedPresent,
       final double distanceSquared,
       final int leaveDistance,
-      final boolean night,
-      final boolean struck) {
-    return !watchedPresent
-        || distanceSquared <= (double) leaveDistance * leaveDistance
-        || !night
-        || struck;
+      final boolean night) {
+    return !watchedPresent || distanceSquared <= (double) leaveDistance * leaveDistance || !night;
   }
 
   public static boolean backsOff(final double distanceSquared, final int keep) {

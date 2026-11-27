@@ -9,16 +9,22 @@ import net.minecraft.util.math.Box;
 
 public class HunterTargetGoal extends ActiveTargetGoal<LivingEntity> {
 
-  private final GuildFighter fighter;
+  static final double NEAR = 8.0;
+
+  private boolean nearOnly;
 
   public <T extends MobEntity & GuildFighter> HunterTargetGoal(final T hunter) {
     super(hunter, LivingEntity.class, true, GuildFoes::hunts);
-    this.fighter = hunter;
   }
 
   @Override
   public boolean canStart() {
-    return fighter.onWatch() && super.canStart();
+    final boolean chanceComesUp = mob.getRandom().nextInt(reciprocalChance) == 0;
+    nearOnly = !chanceComesUp;
+    findClosestTarget();
+    nearOnly = false;
+    return targetEntity != null
+        && HunterTargets.noticesNow(mob.squaredDistanceTo(targetEntity), NEAR, chanceComesUp);
   }
 
   public static double reach(final double followRange, final double seen) {
@@ -27,7 +33,9 @@ public class HunterTargetGoal extends ActiveTargetGoal<LivingEntity> {
 
   @Override
   protected Box getSearchBox(final double distance) {
-    return super.getSearchBox(distance * WornAttributes.MOST_SIGHT);
+    return nearOnly
+        ? super.getSearchBox(NEAR)
+        : super.getSearchBox(distance * WornAttributes.MOST_SIGHT);
   }
 
   @Override

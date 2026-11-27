@@ -4,6 +4,7 @@ import com.grahambartley.nightborn.guild.GuildMasterEntity;
 import com.grahambartley.nightborn.guild.GuildMobs;
 import com.grahambartley.nightborn.guild.HunterEntity;
 import com.grahambartley.nightborn.guild.HunterReferral;
+import com.grahambartley.nightborn.guild.HunterTargetGoal;
 import com.grahambartley.nightborn.guild.party.CampBats;
 import com.grahambartley.nightborn.guild.party.CampLayout;
 import com.grahambartley.nightborn.guild.party.CampSite;
@@ -15,6 +16,7 @@ import com.grahambartley.nightborn.guild.party.TentBlocks;
 import com.grahambartley.nightborn.guild.party.TentPart;
 import com.grahambartley.nightborn.mob.NightbornMobs;
 import com.grahambartley.nightborn.mob.VampireBatEntity;
+import com.grahambartley.nightborn.mob.VampireEntity;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -216,6 +218,19 @@ public class HunterPartyGameTest implements FabricGameTest {
     context.assertTrue(struck.canTarget(zombie), "a hunter fights back against a zombie");
     context.assertFalse(
         bystander.canTarget(zombie), "a hunter nobody struck does not start the fight itself");
+    context.complete();
+  }
+
+  @GameTest(templateName = ARENA, batchId = BATCH)
+  public void aHunterTakesAVampireBesideItOnItsFirstLook(final TestContext context) {
+    final HunterEntity hunter = context.spawnEntity(GuildMobs.HUNTER, new BlockPos(2, 2, 4));
+    final VampireEntity vampire = context.spawnEntity(NightbornMobs.VAMPIRE, new BlockPos(5, 2, 4));
+    hunter.setAiDisabled(true);
+    vampire.setAiDisabled(true);
+    final HunterTargetGoal sight = new HunterTargetGoal(hunter);
+    context.assertTrue(sight.canStart(), "a hunter sees a vampire three blocks away at once");
+    sight.start();
+    context.assertTrue(hunter.getTarget() == vampire, "and goes for it");
     context.complete();
   }
 }

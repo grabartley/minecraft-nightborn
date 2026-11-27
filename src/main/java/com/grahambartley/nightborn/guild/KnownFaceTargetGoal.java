@@ -12,16 +12,8 @@ import net.minecraft.util.math.BlockPos;
 
 public class KnownFaceTargetGoal extends ActiveTargetGoal<PlayerEntity> {
 
-  private final GuildFighter fighter;
-
   public <T extends MobEntity & GuildFighter> KnownFaceTargetGoal(final T hunter) {
     super(hunter, PlayerEntity.class, true, target -> knownTo(hunter, target));
-    this.fighter = hunter;
-  }
-
-  @Override
-  public boolean canStart() {
-    return fighter.onWatch() && super.canStart();
   }
 
   public static boolean hunts(final boolean knownThere, final boolean vampire) {

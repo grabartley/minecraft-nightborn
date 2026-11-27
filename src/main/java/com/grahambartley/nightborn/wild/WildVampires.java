@@ -1,10 +1,12 @@
 package com.grahambartley.nightborn.wild;
 
+import com.grahambartley.nightborn.blood.BloodAttachment;
 import com.grahambartley.nightborn.config.NightbornConfig;
 import com.grahambartley.nightborn.core.NightTime;
 import com.grahambartley.nightborn.core.SurfaceSpots;
 import com.grahambartley.nightborn.mob.NightbornMobs;
 import com.grahambartley.nightborn.mob.VampireEntity;
+import com.grahambartley.nightborn.mob.home.MobHunger;
 import com.grahambartley.nightborn.mob.home.NightRoutine;
 import java.util.List;
 import java.util.Optional;
@@ -39,7 +41,18 @@ public final class WildVampires {
     NightLog rolled = log.rolledOn(tonight);
     if (WildRules.rolls(
         random.nextInt(WildRules.PERCENT), config.structures().wildVampireChance())) {
-      wild(world, player, config.structures().wildVampireDistance(), random);
+      wild(world, player, config.structures().wildVampireDistance(), random)
+          .filter(
+              vampire ->
+                  WildRules.rolls(
+                      random.nextInt(WildRules.PERCENT),
+                      config.structures().wildVampireHungryChance()))
+          .ifPresent(
+              vampire ->
+                  BloodAttachment.set(
+                      vampire,
+                      MobHunger.hungryBlood(
+                          config.mobs().vampireHungerThreshold(), random.nextInt())));
     }
     if (!rolled.watched()
         && rolled.isNew(tonight, config.firstNights().firstNights())

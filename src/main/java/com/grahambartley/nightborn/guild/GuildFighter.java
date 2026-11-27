@@ -15,9 +15,5 @@ public interface GuildFighter {
 
   boolean foeOf(LivingEntity target);
 
-  boolean onWatch();
-
-  boolean canFight();
-
   Optional<GuildMasterEntity> master();
 }

@@ -4,29 +4,20 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.goal.RevengeGoal;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.mob.PathAwareEntity;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.Box;
 
 public final class GuildRevengeGoal extends RevengeGoal {
 
   static final double CALL_HEIGHT = 10.0;
 
-  private final GuildFighter fighter;
-
   public <T extends PathAwareEntity & GuildFighter> GuildRevengeGoal(final T fighter) {
-    super(fighter, GuildFighter.class, PlayerEntity.class);
+    super(fighter, GuildFighter.class);
     setGroupRevenge();
-    this.fighter = fighter;
   }
 
   public static boolean answers(
-      final boolean self, final boolean free, final boolean busy, final boolean teammate) {
-    return !self && free && !busy && !teammate;
-  }
-
-  @Override
-  public boolean canStart() {
-    return fighter.canFight() && super.canStart();
+      final boolean self, final boolean guild, final boolean busy, final boolean teammate) {
+    return !self && guild && !busy && !teammate;
   }
 
   @Override
@@ -41,7 +32,7 @@ public final class GuildRevengeGoal extends RevengeGoal {
         mob.getWorld().getEntitiesByClass(MobEntity.class, box, e -> true)) {
       if (answers(
           ally == mob,
-          ally instanceof GuildFighter guild && guild.canFight(),
+          ally instanceof GuildFighter,
           ally.getTarget() != null,
           ally.isTeammate(attacker))) {
         setMobEntityTarget(ally, attacker);

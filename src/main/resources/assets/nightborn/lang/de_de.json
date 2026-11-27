@@ -772,6 +772,8 @@
   "nightborn.setting.structures.wildVampireChance.tooltip": "Chance jede Nacht, für jeden Spieler, dass ein wilder Vampir fern von allen Spielern auftaucht. 0 schaltet wilde Vampire ab",
   "nightborn.setting.structures.wildVampireDistance": "Abstand wilder Vampire",
   "nightborn.setting.structures.wildVampireDistance.tooltip": "Wie weit, in Blöcken, von jedem Spieler entfernt ein wilder Vampir auftaucht",
+  "nightborn.setting.structures.wildVampireHungryChance": "Chance auf hungrige wilde Vampire (%)",
+  "nightborn.setting.structures.wildVampireHungryChance.tooltip": "Chance, dass ein wilder Vampir hungrig auftaucht und schon in seiner ersten Nacht jagt",
   "entity.nightborn.vampire": "Vampir",
   "entity.nightborn.vampire_bat": "Vampirfledermaus",
   "item.nightborn.vampire_spawn_egg": "Vampir-Spawn-Ei",

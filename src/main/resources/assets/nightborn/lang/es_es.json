@@ -772,6 +772,8 @@
   "nightborn.setting.structures.wildVampireChance.tooltip": "Probabilidad cada noche, por cada jugador, de que aparezca un vampiro salvaje lejos de todos los jugadores. 0 desactiva los vampiros salvajes",
   "nightborn.setting.structures.wildVampireDistance": "Distancia de vampiros salvajes",
   "nightborn.setting.structures.wildVampireDistance.tooltip": "A cuántos bloques de cada jugador aparece un vampiro salvaje",
+  "nightborn.setting.structures.wildVampireHungryChance": "Probabilidad de vampiro salvaje hambriento (%)",
+  "nightborn.setting.structures.wildVampireHungryChance.tooltip": "Probabilidad de que un vampiro salvaje aparezca hambriento y cace ya en su primera noche",
   "entity.nightborn.vampire": "Vampiro",
   "entity.nightborn.vampire_bat": "Murciélago vampiro",
   "item.nightborn.vampire_spawn_egg": "Huevo generador de vampiro",

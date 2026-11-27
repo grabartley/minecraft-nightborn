@@ -31,6 +31,14 @@ class WandererTest {
     assertEquals(PLAYER, seen.watches().orElseThrow());
   }
 
+  @ParameterizedTest(name = "last near {0}")
+  @CsvSource({"0", "6000"})
+  @DisplayName("a struck watcher stops watching and roams, keeping when a player was last near")
+  void roaming(final long lastNear) {
+    final Wanderer roaming = Wanderer.watching(PLAYER, lastNear).roaming();
+    assertEquals(Wanderer.wild(lastNear), roaming);
+  }
+
   static Stream<Arguments> wanderers() {
     return Stream.of(
         Arguments.of(Wanderer.wild(0L), false),

@@ -87,10 +87,8 @@ public final class VampireHunt {
     homeLife.tick(vampire, vampire.hungry(), grudge.held(), config, setOutToFeed);
   }
 
-  public void provokedBy(final LivingEntity attacker, final boolean answers) {
-    if (!Vampires.isVampire(attacker) || answers) {
-      grudge.provoke(attacker);
-    }
+  public void provokedBy(final LivingEntity attacker) {
+    grudge.provoke(attacker);
   }
 
   public boolean bite(final VampireEntity vampire, final Entity target) {

@@ -22,6 +22,12 @@ public final class Wanderers {
     return WandererAttachment.get(vampire).filter(Wanderer::watcher).isPresent();
   }
 
+  public static void struck(final VampireEntity vampire) {
+    WandererAttachment.get(vampire)
+        .filter(Wanderer::watcher)
+        .ifPresent(watcher -> WandererAttachment.set(vampire, watcher.roaming()));
+  }
+
   static void tick(final ServerWorld world, final NightbornConfig config) {
     for (final VampireEntity vampire :
         world.getEntitiesByType(
@@ -77,8 +83,7 @@ public final class Wanderers {
         present,
         present ? vampire.squaredDistanceTo(watched) : 0.0,
         config.firstNights().watcherLeaveDistance(),
-        NightTime.isNight(world.getDimension().hasFixedTime(), world.getTimeOfDay()),
-        vampire.getAttacker() != null)) {
+        NightTime.isNight(world.getDimension().hasFixedTime(), world.getTimeOfDay()))) {
       SmokePoof.burst(vampire, BatForm.ENTER_SOUND);
       vampire.discard();
     }

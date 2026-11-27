@@ -8,7 +8,7 @@ import org.junit.jupiter.params.provider.CsvSource;
 
 class GuildRevengeGoalTest {
 
-  @ParameterizedTest(name = "self {0}, free {1}, busy {2}, teammate {3}: answers {4}")
+  @ParameterizedTest(name = "self {0}, guild {1}, busy {2}, teammate {3}: answers {4}")
   @CsvSource({
     "false, true, false, false, true",
     "true, true, false, false, false",
@@ -16,13 +16,13 @@ class GuildRevengeGoalTest {
     "false, true, true, false, false",
     "false, true, false, true, false"
   })
-  @DisplayName("any idle guild fighter free to fight answers a call for help, whatever its kind")
+  @DisplayName("any idle guild fighter answers a call for help, whatever its kind")
   void idleGuildFightersAnswer(
       final boolean self,
-      final boolean free,
+      final boolean guild,
       final boolean busy,
       final boolean teammate,
       final boolean answers) {
-    assertEquals(answers, GuildRevengeGoal.answers(self, free, busy, teammate));
+    assertEquals(answers, GuildRevengeGoal.answers(self, guild, busy, teammate));
   }
 }

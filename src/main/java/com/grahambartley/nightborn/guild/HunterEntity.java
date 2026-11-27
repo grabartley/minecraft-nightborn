@@ -172,16 +172,6 @@ public class HunterEntity extends PathAwareEntity
   }
 
   @Override
-  public boolean onWatch() {
-    return true;
-  }
-
-  @Override
-  public boolean canFight() {
-    return true;
-  }
-
-  @Override
   public Optional<GuildMasterEntity> master() {
     return partyLeader != null && getWorld() instanceof ServerWorld world
         ? Optional.ofNullable(world.getEntity(partyLeader))

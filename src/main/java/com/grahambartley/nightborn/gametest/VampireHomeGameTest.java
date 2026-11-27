@@ -52,7 +52,6 @@ public class VampireHomeGameTest implements FabricGameTest {
   static final int FAR_AWAY = 200;
   static final int PAST_HOME = 24;
   static final int ATTACKER_FORGOTTEN = 120;
-  static final int HURT_COOLDOWN = 20;
 
   private static int outingChanceBefore;
   private static int watchDaysBefore;
@@ -346,35 +345,18 @@ public class VampireHomeGameTest implements FabricGameTest {
         });
   }
 
-  @GameTest(
-      templateName = ARENA,
-      batchId = NIGHT_BATCH,
-      tickLimit = TestPlayers.READY + HURT_COOLDOWN + 10)
-  public void aVampireFightsBackOnlyAgainstAVampireOfItsStageOrOlder(final TestContext context) {
+  @GameTest(templateName = ARENA, batchId = NIGHT_BATCH, tickLimit = TestPlayers.READY + 10)
+  public void aVampireFightsBackAgainstAYoungerVampireThatStrikesIt(final TestContext context) {
     final VampireEntity vampire = VampireMobGameTest.still(context, new BlockPos(2, 2, 2));
-    final VampireEntity kin = VampireMobGameTest.still(context, new BlockPos(6, 2, 6));
     vampire.becomeStage(Identifier.of("nightborn", "elder"));
-    kin.becomeStage(Identifier.of("nightborn", "ancient"));
-    vampire.settleAt(context.getAbsolutePos(new BlockPos(2, 2, 2)).add(PAST_HOME, 0, 0));
     final ServerPlayerEntity player = TestPlayers.vampire(context, new BlockPos(3, 2, 2));
     context.runAtTick(
         TestPlayers.READY,
         () -> {
+          context.assertFalse(vampire.canTarget(player), "it leaves a vampire player alone");
           vampire.damage(vampire.getDamageSources().playerAttack(player), 1.0F);
-          vampire.tickHome();
-          context.assertFalse(
-              vampire.canTarget(player), "a younger vampire player is never its target");
-          context.assertFalse(
-              vampire.isInWalkTargetRange(player.getBlockPos()),
-              "a younger vampire's blow does not take it off its home leash");
-        });
-    context.runAtTick(
-        TestPlayers.READY + HURT_COOLDOWN,
-        () -> {
           context.assertTrue(
-              vampire.damage(vampire.getDamageSources().mobAttack(kin), 1.0F),
-              "an older vampire mob hits it");
-          context.assertTrue(vampire.canTarget(kin), "it fights back against an older vampire");
+              vampire.canTarget(player), "until a younger vampire player strikes it");
           TestPlayers.finish(context, player);
         });
   }

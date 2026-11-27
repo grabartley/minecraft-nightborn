@@ -8,16 +8,17 @@ import org.junit.jupiter.params.provider.CsvSource;
 
 class MasterDutyTest {
 
-  @ParameterizedTest(name = "trading {0}, swearing {1}: watches {2}")
+  @ParameterizedTest(name = "swearing {0}, fighting {1}: breaks off {2}")
   @CsvSource({
-    "false, false, true",
+    "false, false, false",
     "true, false, false",
     "false, true, false",
-    "true, true, false"
+    "true, true, true"
   })
-  @DisplayName("a Guild Master looks for foes only while he neither trades nor swears anyone in")
-  void watchesOnlyWhenFree(final boolean trading, final boolean swearing, final boolean watches) {
-    assertEquals(watches, MasterDuty.watches(trading, swearing));
+  @DisplayName("a Guild Master breaks off an oath when a fight finds him")
+  void breaksOffAnOathToFight(
+      final boolean swearing, final boolean fighting, final boolean breaks) {
+    assertEquals(breaks, MasterDuty.breaksOath(swearing, fighting));
   }
 
   @ParameterizedTest(name = "vampire customer {0}, fighting {1}: closes {2}")

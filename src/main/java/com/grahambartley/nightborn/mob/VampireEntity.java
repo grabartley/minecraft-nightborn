@@ -1,6 +1,5 @@
 package com.grahambartley.nightborn.mob;
 
-import com.grahambartley.nightborn.age.StageRanks;
 import com.grahambartley.nightborn.batform.BatForm;
 import com.grahambartley.nightborn.batform.BatShape;
 import com.grahambartley.nightborn.batform.BatShifter;
@@ -9,7 +8,10 @@ import com.grahambartley.nightborn.config.NightbornConfig;
 import com.grahambartley.nightborn.core.VampireCore;
 import com.grahambartley.nightborn.decor.SeatEntity;
 import com.grahambartley.nightborn.downed.Downed;
+import com.grahambartley.nightborn.downed.DownedRules;
+import com.grahambartley.nightborn.downed.DownedState;
 import com.grahambartley.nightborn.house.MemberLife;
+import com.grahambartley.nightborn.mob.combat.FightBack;
 import com.grahambartley.nightborn.mob.combat.Fighting;
 import com.grahambartley.nightborn.mob.goal.RetreatGoal;
 import com.grahambartley.nightborn.mob.home.HomeLife;
@@ -177,7 +179,7 @@ public class VampireEntity extends HostileEntity
   }
 
   public boolean hunts(final LivingEntity target) {
-    return hunt.hunts(this, target);
+    return !Wanderers.holdsBack(this) && hunt.hunts(this, target);
   }
 
   public boolean attacksOnSight(final LivingEntity target) {
@@ -389,19 +391,18 @@ public class VampireEntity extends HostileEntity
 
   @Override
   public boolean canTarget(final LivingEntity target) {
-    return fights(target) && !Wanderers.holdsBack(this) && super.canTarget(target);
+    return fights(target) && super.canTarget(target);
   }
 
   protected boolean fights(final LivingEntity target) {
+    final DownedState downed = Downed.state(this);
     return VampireFeud.fights(
         Nemeses.isQuarry(this, target),
         Vampires.isVampire(target),
-        VampireFeud.answers(
-            target == getAttacker(), StageRanks.of(target), stageRank(), answersEveryVampire()));
-  }
-
-  protected boolean answersEveryVampire() {
-    return false;
+        FightBack.vampireAnswers(
+            target == getAttacker(),
+            DownedRules.helpless(downed),
+            DownedRules.flees(downed) || ShadeRules.endangered(this)));
   }
 
   @Override
@@ -413,7 +414,8 @@ public class VampireEntity extends HostileEntity
   public void setAttacker(@Nullable final LivingEntity attacker) {
     super.setAttacker(attacker);
     if (attacker != null) {
-      hunt.provokedBy(attacker, fights(attacker));
+      hunt.provokedBy(attacker);
+      Wanderers.struck(this);
     }
   }
 

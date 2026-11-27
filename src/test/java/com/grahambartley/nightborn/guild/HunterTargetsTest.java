@@ -21,15 +21,19 @@ class HunterTargetsTest {
     assertEquals(hunted, HunterTargets.hunts(vampire, raider, exempt));
   }
 
-  @ParameterizedTest(name = "attacked us {0}, player {1}, guild {2}: fights back {3}")
+  @ParameterizedTest(name = "{0} blocks squared, near {1}, chance up {2}: notices {3}")
   @CsvSource({
-    "true, false, false, true",
-    "true, true, false, false",
-    "true, false, true, false",
-    "false, false, false, false"
+    "4, 8, false, true",
+    "64, 8, false, true",
+    "65, 8, false, false",
+    "900, 8, true, true",
+    "900, 8, false, false"
   })
-  void fightsBackAgainstAnyMobThatAttacksButNotPlayersOrTheGuild(
-      final boolean attackedUs, final boolean player, final boolean guild, final boolean fights) {
-    assertEquals(fights, HunterTargets.defends(attackedUs, player, guild));
+  void noticesANearVampireAtOnceAndAFarOneByChance(
+      final double distanceSquared,
+      final double near,
+      final boolean chance,
+      final boolean notices) {
+    assertEquals(notices, HunterTargets.noticesNow(distanceSquared, near, chance));
   }
 }

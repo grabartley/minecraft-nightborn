@@ -772,6 +772,8 @@
   "nightborn.setting.structures.wildVampireChance.tooltip": "Шанс каждую ночь, для каждого игрока, что далеко от всех игроков появится один дикий вампир. 0 отключает диких вампиров",
   "nightborn.setting.structures.wildVampireDistance": "Расстояние дикого вампира",
   "nightborn.setting.structures.wildVampireDistance.tooltip": "В скольких блоках от каждого игрока появляется дикий вампир",
+  "nightborn.setting.structures.wildVampireHungryChance": "Шанс голодного дикого вампира (%)",
+  "nightborn.setting.structures.wildVampireHungryChance.tooltip": "Шанс, что дикий вампир появится голодным и начнёт охотиться в первую же ночь",
   "entity.nightborn.vampire": "Вампир",
   "entity.nightborn.vampire_bat": "Летучая мышь-вампир",
   "item.nightborn.vampire_spawn_egg": "Яйцо призыва вампира",

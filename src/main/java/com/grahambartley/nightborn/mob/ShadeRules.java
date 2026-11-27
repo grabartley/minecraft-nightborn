@@ -3,6 +3,7 @@ package com.grahambartley.nightborn.mob;
 import com.grahambartley.nightborn.core.NightTime;
 import com.grahambartley.nightborn.sun.DirectSun;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 public final class ShadeRules {
@@ -19,6 +20,10 @@ public final class ShadeRules {
 
   public static long ticksUntilSunIsNear(final long timeOfDay) {
     return Math.floorMod(NightTime.DAWN - DAWN_WARNING - timeOfDay, NightTime.DAY_LENGTH);
+  }
+
+  public static boolean shadedAt(final World world, final BlockPos feet) {
+    return !world.isSkyVisible(feet.up());
   }
 
   public static boolean endangered(final LivingEntity vampire) {

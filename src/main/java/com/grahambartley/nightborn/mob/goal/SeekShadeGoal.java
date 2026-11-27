@@ -103,6 +103,6 @@ public class SeekShadeGoal extends Goal {
     return world.isAir(feet)
         && world.isAir(feet.up())
         && world.getBlockState(feet.down()).isSolidBlock(world, feet.down())
-        && !world.isSkyVisible(feet.up());
+        && ShadeRules.shadedAt(world, feet);
   }
 }
