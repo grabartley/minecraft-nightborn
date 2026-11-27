@@ -23,9 +23,10 @@ public record HunterBuild(
   public static final int MOST_EXPERIENCE = 100_000;
   public static final int MOST_TRICKLE_TICKS = 72_000;
   public static final int PLAIN_THINK_TICKS = 60;
+  public static final int PLAIN_TRICKLE_TICKS = 1200;
 
   public static final HunterBuild NONE =
-      new HunterBuild(Map.of(), Map.of(), 0, 1, 1, Map.of(), 0, 1200, 0);
+      new HunterBuild(Map.of(), Map.of(), 0, 1, 1, Map.of(), 0, PLAIN_TRICKLE_TICKS, 0);
 
   private static final Codec<Integer> WEIGHT = Codec.intRange(0, Weighted.MAX_WEIGHT);
 
@@ -53,7 +54,7 @@ public record HunterBuild(
                           .optionalFieldOf("trickle_experience", 0)
                           .forGetter(HunterBuild::trickleExperience),
                       Codec.intRange(1, MOST_TRICKLE_TICKS)
-                          .optionalFieldOf("trickle_ticks", 1200)
+                          .optionalFieldOf("trickle_ticks", PLAIN_TRICKLE_TICKS)
                           .forGetter(HunterBuild::trickleTicks),
                       Codec.intRange(0, MOST_EXPERIENCE)
                           .optionalFieldOf("stake_experience", 0)

@@ -3,11 +3,13 @@ package com.grahambartley.nightborn.mob.combat;
 import com.grahambartley.nightborn.blood.BloodAttachment;
 import com.grahambartley.nightborn.skill.MobPowerUse;
 import com.grahambartley.nightborn.skill.PowerShow;
+import com.grahambartley.nightborn.skill.PowerUse;
 import com.grahambartley.nightborn.skill.Powers;
 import com.grahambartley.nightborn.skill.SkillAttachment;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.BiFunction;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.sound.SoundEvent;
@@ -16,20 +18,20 @@ import org.jetbrains.annotations.Nullable;
 
 public final class PowerCasting {
 
-  private final boolean castShowsClip;
+  private final BiFunction<LivingEntity, Identifier, PowerUse.Verdict> cast;
   @Nullable private Tell telling;
   private long nextThink;
 
   public PowerCasting() {
-    this(true);
+    this(Powers::cast);
   }
 
-  private PowerCasting(final boolean castShowsClip) {
-    this.castShowsClip = castShowsClip;
+  private PowerCasting(final BiFunction<LivingEntity, Identifier, PowerUse.Verdict> cast) {
+    this.cast = cast;
   }
 
   public static PowerCasting underTell() {
-    return new PowerCasting(false);
+    return new PowerCasting(Powers::castUnderOwnClip);
   }
 
   public static boolean thinks(final boolean hasTarget, final long now, final long nextThink) {
@@ -43,7 +45,7 @@ public final class PowerCasting {
     if (telling != null) {
       final Tell.Step step = telling.step(target != null, now);
       if (step == Tell.Step.CAST) {
-        cast(caster, telling.power());
+        cast.apply(caster, telling.power());
       }
       if (step != Tell.Step.WAIT) {
         telling = null;
@@ -60,14 +62,6 @@ public final class PowerCasting {
             BloodAttachment.get(caster),
             bloodFloor)
         .ifPresent(option -> tell(caster, option, now));
-  }
-
-  private void cast(final LivingEntity caster, final Identifier power) {
-    if (castShowsClip) {
-      Powers.cast(caster, power);
-    } else {
-      Powers.castUnderOwnClip(caster, power);
-    }
   }
 
   public void cancel() {

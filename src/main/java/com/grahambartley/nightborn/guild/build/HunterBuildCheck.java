@@ -30,6 +30,13 @@ public final class HunterBuildCheck {
     return problems;
   }
 
+  public static List<String> unknownRanks(
+      final String owner, final Set<Identifier> named, final Set<Identifier> ranks) {
+    final List<String> problems = new ArrayList<>();
+    unknown(named, ranks, owner + " names rank", "rank", problems);
+    return problems;
+  }
+
   private static void unknown(
       final Set<Identifier> named,
       final Set<Identifier> known,

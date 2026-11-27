@@ -18,6 +18,7 @@ import java.util.function.DoubleSupplier;
 import java.util.function.Predicate;
 import java.util.function.ToIntFunction;
 import net.minecraft.util.Identifier;
+import org.jetbrains.annotations.Nullable;
 
 public final class HunterPurchases {
 
@@ -54,6 +55,11 @@ public final class HunterPurchases {
   }
 
   private HunterPurchases() {}
+
+  public static boolean onPath(
+      @Nullable final Skill skill, final Map<Identifier, SkillBranch> branches) {
+    return skill != null && SkillPurchase.line(skill, branches.get(skill.branch())) != null;
+  }
 
   public static List<Identifier> open(
       final Shop shop, final TreeProgress progress, final int rank) {

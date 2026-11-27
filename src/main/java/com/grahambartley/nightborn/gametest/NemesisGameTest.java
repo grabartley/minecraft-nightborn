@@ -206,8 +206,11 @@ public class NemesisGameTest implements FabricGameTest {
         TestPlayers.READY,
         () -> {
           NemesisMaking.make(hunter, vampire.getUuid());
+          final float before = hunter.getMaxHealth();
           NemesisGrowth.grow(
               context.getWorld(), hunter, NemesisAttachment.get(hunter).orElseThrow());
+          final float grown = hunter.getMaxHealth();
+          context.assertTrue(grown > before, "it grew");
           hunter.remove(Entity.RemovalReason.UNLOADED_TO_CHUNK);
           final NemesisLedger ledger = NemesisLedger.of(context.getWorld().getServer());
           final NemesisEntry entry =
@@ -217,7 +220,7 @@ public class NemesisGameTest implements FabricGameTest {
           context.assertTrue(copy != hunter, "a copy comes from its saved state");
           context.assertEquals(copy.getUuid(), hunter.getUuid(), "the same nemesis");
           context.assertEquals(copy.getBlockPos(), at, "at the arrival spot");
-          context.assertEquals(copy.getMaxHealth(), 30.0F, "its growth came with it");
+          context.assertEquals(copy.getMaxHealth(), grown, "its growth came with it");
           context.assertEquals(
               NemesisAttachment.get(copy).map(NemesisMark::token), Optional.of(1), "a new token");
           final NemesisEntry visited =

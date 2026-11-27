@@ -3,6 +3,7 @@ package com.grahambartley.nightborn.guild;
 import com.grahambartley.nightborn.boss.BossWard;
 import com.grahambartley.nightborn.boss.SwornAlly;
 import com.grahambartley.nightborn.guild.build.GrowingHunter;
+import com.grahambartley.nightborn.guild.build.HunterBuilding;
 import com.grahambartley.nightborn.guild.build.HunterSkills;
 import com.grahambartley.nightborn.guild.party.PartyMember;
 import com.grahambartley.nightborn.guild.raiding.RaidConduct;
@@ -111,7 +112,7 @@ public class HunterEntity extends PathAwareEntity
   private final WornLook worn = new WornLook();
   private final PowerCasting casting = PowerCasting.underTell();
   private final ShownAction shownPower = new ShownAction();
-  private Map<Identifier, Integer> rankOdds = Map.of();
+  private final HunterBuilding building = new HunterBuilding();
   private String kitId = "";
   private HunterKit kit;
   private HunterAction shown = HunterAction.NONE;
@@ -290,13 +291,8 @@ public class HunterEntity extends PathAwareEntity
     if (!hasPositionTarget()) {
       settle();
     }
-    if (grows()) {
-      if (!HunterSkills.built(this)) {
-        HunterSkills.begin(this, rankOdds, fixedRank(), heldKit());
-      }
-      if (HunterSkills.trickle(this, heldKit()) || dataTracker.get(RANK).isEmpty()) {
-        showRank();
-      }
+    if (grows() && (building.tick(this, fixedRank(), heldKit()) || shownRank().isEmpty())) {
+      showRank();
     }
     MobNaming.ensure(this);
     if (PartyMember.wakes(isSleeping(), getWorld().getTimeOfDay())) {
@@ -321,7 +317,7 @@ public class HunterEntity extends PathAwareEntity
   }
 
   public void rollFrom(final Map<Identifier, Integer> odds) {
-    rankOdds = Map.copyOf(odds);
+    building.rollFrom(odds);
   }
 
   @Override
@@ -344,16 +340,12 @@ public class HunterEntity extends PathAwareEntity
   }
 
   private void showRank() {
-    final String rank = HunterSkills.rank(this).map(Identifier::toString).orElse("");
-    if (!rank.equals(dataTracker.get(RANK))) {
-      dataTracker.set(RANK, rank);
-    }
+    dataTracker.set(RANK, RankBearer.write(HunterSkills.rank(this)));
   }
 
   @Override
   public Optional<Identifier> shownRank() {
-    final String rank = dataTracker.get(RANK);
-    return rank.isEmpty() ? Optional.empty() : Optional.ofNullable(Identifier.tryParse(rank));
+    return RankBearer.read(dataTracker.get(RANK));
   }
 
   @Override
@@ -421,7 +413,7 @@ public class HunterEntity extends PathAwareEntity
   }
 
   public void fight() {
-    if (kit != null) {
+    if (kit != null && !casting.telling()) {
       tactics.tick(kit);
     }
     casting.tick(this, HunterSkills.thinkTicks(this, shownRank()), 0);

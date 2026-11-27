@@ -2,8 +2,14 @@ package com.grahambartley.nightborn.guild.build;
 
 import com.grahambartley.nightborn.Nightborn;
 import com.grahambartley.nightborn.guild.GuildData;
+import com.grahambartley.nightborn.guild.raiding.RaidingData;
+import com.grahambartley.nightborn.guild.veteran.VeteranData;
 import com.grahambartley.nightborn.rank.RankData;
 import com.grahambartley.nightborn.skill.Skills;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.registry.DynamicRegistries;
 import net.minecraft.registry.DynamicRegistryManager;
@@ -28,12 +34,38 @@ public final class HunterBuilds {
   }
 
   private static void check(final DynamicRegistryManager registries) {
-    HunterBuildCheck.problems(
-            build(registries),
-            RankData.ranks(registries).keySet(),
-            Skills.allSkills(registries).keySet(),
-            GuildData.kits(registries).keySet())
-        .forEach(problem -> Nightborn.LOGGER.error("Bad hunter build data: {}", problem));
+    final Set<Identifier> ranks = RankData.ranks(registries).keySet();
+    final List<String> problems =
+        new ArrayList<>(
+            HunterBuildCheck.problems(
+                build(registries),
+                ranks,
+                Skills.allSkills(registries).keySet(),
+                GuildData.kits(registries).keySet()));
+    registries
+        .getOptional(RaidingData.ARMS)
+        .ifPresent(
+            arms ->
+                arms.getIds()
+                    .forEach(
+                        id ->
+                            problems.addAll(
+                                HunterBuildCheck.unknownRanks(
+                                    id.toString(), arms.get(id).rankWeights().keySet(), ranks))));
+    registries
+        .getOptional(VeteranData.VETERAN)
+        .ifPresent(
+            veterans ->
+                veterans
+                    .getIds()
+                    .forEach(
+                        id ->
+                            problems.addAll(
+                                HunterBuildCheck.unknownRanks(
+                                    id.toString(),
+                                    veterans.get(id).rank().stream().collect(Collectors.toSet()),
+                                    ranks))));
+    problems.forEach(problem -> Nightborn.LOGGER.error("Bad hunter build data: {}", problem));
   }
 
   public static HunterBuild build(final DynamicRegistryManager registries) {

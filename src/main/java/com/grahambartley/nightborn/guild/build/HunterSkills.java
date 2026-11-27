@@ -7,6 +7,7 @@ import com.grahambartley.nightborn.mob.stage.StageGate;
 import com.grahambartley.nightborn.rank.RankBody;
 import com.grahambartley.nightborn.rank.RankLadder;
 import com.grahambartley.nightborn.server.ServerConfigService;
+import com.grahambartley.nightborn.skill.Skill;
 import com.grahambartley.nightborn.skill.SkillAttachment;
 import com.grahambartley.nightborn.skill.SkillAttributes;
 import com.grahambartley.nightborn.skill.SkillBranch;
@@ -15,7 +16,6 @@ import com.grahambartley.nightborn.skill.Skills;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.OptionalInt;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.registry.DynamicRegistryManager;
 import net.minecraft.util.Identifier;
@@ -39,14 +39,7 @@ public final class HunterSkills {
     final RankLadder ladder = RankLadder.of(registries);
     final Random random = mob.getRandom();
     final int rank =
-        fixedRank
-            .map(ladder::rankOf)
-            .filter(OptionalInt::isPresent)
-            .map(OptionalInt::getAsInt)
-            .orElseGet(
-                () ->
-                    RankRoll.rank(
-                        ladder, odds.isEmpty() ? build.rankWeights() : odds, random.nextDouble()));
+        RankRoll.choose(ladder, fixedRank, odds, build.rankWeights(), random.nextDouble());
     final int points =
         RankRoll.points(settings().rankNeeds(), rank, build.topRankSpread(), random.nextDouble());
     final HunterPurchases.Shop shop = shop(mob, registries, build, ladder, kit);
@@ -128,17 +121,14 @@ public final class HunterSkills {
       final RankLadder ladder,
       final Optional<Identifier> kit) {
     final Map<Identifier, SkillBranch> branches = Skills.allBranches(registries);
+    final Map<Identifier, Skill> skills = Skills.allSkills(registries);
     final int stage = StageRanks.of(mob);
     return new HunterPurchases.Shop(
-        Skills.allSkills(registries),
+        skills,
         branches,
         ladder,
         skill -> StageGate.open(StageGate.needed(registries, skill), stage),
-        id -> {
-          final var skill = Skills.skill(registries, id);
-          final SkillBranch branch = skill == null ? null : branches.get(skill.branch());
-          return build.weight(kit, id, branch != null && branch.line());
-        });
+        id -> build.weight(kit, id, HunterPurchases.onPath(skills.get(id), branches)));
   }
 
   private static void store(final LivingEntity mob, final HunterGrowth.Standing standing) {

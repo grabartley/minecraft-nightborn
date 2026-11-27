@@ -205,8 +205,8 @@ public class GuildMasterEntity extends MerchantEntity
     if (!HunterSkills.built(this)) {
       HunterSkills.master(this);
     }
-    if (dataTracker.get(RANK).isEmpty()) {
-      dataTracker.set(RANK, HunterSkills.rank(this).map(Identifier::toString).orElse(""));
+    if (shownRank().isEmpty()) {
+      dataTracker.set(RANK, RankBearer.write(HunterSkills.rank(this)));
     }
     MobNaming.ensure(this);
     if (party != null && age % PartyLeader.TICKS == 0 && getWorld() instanceof ServerWorld world) {
@@ -230,8 +230,7 @@ public class GuildMasterEntity extends MerchantEntity
 
   @Override
   public Optional<Identifier> shownRank() {
-    final String rank = dataTracker.get(RANK);
-    return rank.isEmpty() ? Optional.empty() : Optional.ofNullable(Identifier.tryParse(rank));
+    return RankBearer.read(dataTracker.get(RANK));
   }
 
   void swearIn(final ServerPlayerEntity player, final int ticks) {

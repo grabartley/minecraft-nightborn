@@ -144,4 +144,18 @@ class HunterPurchasesTest {
     assertEquals(
         Optional.of(id("slayer/stake_throw")), HunterPurchases.next(leaning, tracked, 0, roll));
   }
+
+  @ParameterizedTest(name = "{0} on a path: {1}")
+  @CsvSource({
+    "slayer/heartstrike, true",
+    "trapper/snare, true",
+    "hunter/tracking, false",
+    "core/blood_rush, false",
+    "missing/skill, false"
+  })
+  @DisplayName("only a skill of a line counts as a path skill")
+  void onPath(final String skill, final boolean path) {
+    assertEquals(
+        path, HunterPurchases.onPath(SKILLS.get(id(skill)), HunterBuildFixtures.branches()));
+  }
 }

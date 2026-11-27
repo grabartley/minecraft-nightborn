@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import com.grahambartley.nightborn.MinecraftBootstrapExtension;
 import com.grahambartley.nightborn.rank.RankLadder;
 import java.util.Map;
+import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -71,5 +72,29 @@ class RankRollTest {
           + " top")
   void pointsFitTheRank(final int rank, final double roll, final int points) {
     assertEquals(points, RankRoll.points(NEEDS, rank, 10, roll));
+  }
+
+  @ParameterizedTest(name = "fixed {0}, raid odds {1}, roll {2} -> rank {3}")
+  @CsvSource({
+    "veteran, false, 0.0, 2",
+    "master, true, 0.0, 3",
+    "baron, false, 0.0, 0",
+    "none, true, 0.0, 2",
+    "none, false, 0.0, 0",
+    "none, false, 0.9999, 1"
+  })
+  @DisplayName(
+      "a fixed rank wins, then a raiding party's odds, then the build's own weights, and an"
+          + " unknown fixed rank falls back to a roll")
+  void choosesFixedThenOddsThenDefaults(
+      final String fixed, final boolean raid, final double roll, final int rank) {
+    assertEquals(
+        rank,
+        RankRoll.choose(
+            LADDER,
+            fixed.equals("none") ? Optional.empty() : Optional.of(id(fixed)),
+            raid ? Map.of(id("veteran"), 1) : Map.of(),
+            Map.of(id("initiate"), 1, id("hunter"), 1),
+            roll));
   }
 }

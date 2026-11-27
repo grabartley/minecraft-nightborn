@@ -79,4 +79,15 @@ class HunterBuildCheckTest {
         List.of("no rank has a weight above zero"),
         HunterBuildCheck.problems(build, RANKS, Set.of(), KITS));
   }
+
+  @ParameterizedTest(name = "{0}: {1}")
+  @CsvSource({
+    "nightborn:elder, veteran, 0",
+    "nightborn:elder, baron, 1",
+    "nightborn:veteran, master, 0"
+  })
+  @DisplayName("a raiding party or veteran that names an unknown rank is reported")
+  void reportsUnknownRankNames(final String owner, final String rank, final int problems) {
+    assertEquals(problems, HunterBuildCheck.unknownRanks(owner, Set.of(id(rank)), RANKS).size());
+  }
 }
