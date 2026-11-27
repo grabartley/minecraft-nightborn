@@ -1198,7 +1198,6 @@
   "nightborn.command.brain.none": "%s does not choose powers",
   "nightborn.command.brain.unthought": "%s has not weighed up its powers yet",
   "nightborn.command.brain.think": "%s weighed up its powers %s ticks ago, intent %s",
-  "nightborn.command.brain.nothing": "  No power was ready",
   "nightborn.command.brain.use": "  %s scored %s",
   "nightborn.command.brain.chosen": "  %s scored %s and was chosen",
   "nightborn.command.brain.costly": "  %s scored %s but costs too much blood",

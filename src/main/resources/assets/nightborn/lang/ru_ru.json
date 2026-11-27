@@ -1198,7 +1198,6 @@
   "nightborn.command.brain.none": "%s не выбирает силы",
   "nightborn.command.brain.unthought": "%s ещё не взвешивал свои силы",
   "nightborn.command.brain.think": "%s взвешивал свои силы %s тиков назад, намерение %s",
-  "nightborn.command.brain.nothing": "  Ни одна сила не была готова",
   "nightborn.command.brain.use": "  %s: оценка %s",
   "nightborn.command.brain.chosen": "  %s: оценка %s, выбрана",
   "nightborn.command.brain.costly": "  %s: оценка %s, но стоит слишком много крови",

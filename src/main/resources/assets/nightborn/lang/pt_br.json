@@ -1198,7 +1198,6 @@
   "nightborn.command.brain.none": "%s não escolhe poderes",
   "nightborn.command.brain.unthought": "%s ainda não pesou seus poderes",
   "nightborn.command.brain.think": "%s pesou seus poderes há %s ticks, intenção %s",
-  "nightborn.command.brain.nothing": "  Nenhum poder estava pronto",
   "nightborn.command.brain.use": "  %s obteve %s",
   "nightborn.command.brain.chosen": "  %s obteve %s e foi escolhido",
   "nightborn.command.brain.costly": "  %s obteve %s, mas custa sangue demais",

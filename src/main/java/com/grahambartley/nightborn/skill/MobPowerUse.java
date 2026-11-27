@@ -38,7 +38,7 @@ public record MobPowerUse(
                       MobUse.CODEC
                           .listOf()
                           .optionalFieldOf("uses", List.of())
-                          .forGetter(MobPowerUse::declaredUses))
+                          .forGetter(MobPowerUse::uses))
                   .apply(instance, MobPowerUse::new));
 
   public MobPowerUse {
@@ -55,12 +55,7 @@ public record MobPowerUse(
     this(minRange, maxRange, tellTicks, tellSound, tellClip, dodge, List.of());
   }
 
-  private List<MobUse> declaredUses() {
-    return uses;
-  }
-
-  @Override
-  public List<MobUse> uses() {
+  public List<MobUse> effectiveUses() {
     return uses.isEmpty()
         ? List.of(
             MobUse.inRange(Intent.FIGHT, minRange, maxRange),

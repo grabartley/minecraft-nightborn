@@ -107,7 +107,8 @@ class MobPowerUseTest {
     final Situation situation =
         new Situation(
             intent, Situation.Self.of(1.0F, 20), new Situation.Target(distance, true, 1.0F));
-    assertEquals(used, parse(VALID).uses().stream().anyMatch(use -> use.score(situation) > 0.0));
+    assertEquals(
+        used, parse(VALID).effectiveUses().stream().anyMatch(use -> use.score(situation) > 0.0));
   }
 
   @Test

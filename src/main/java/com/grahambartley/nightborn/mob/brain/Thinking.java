@@ -38,7 +38,7 @@ public final class Thinking {
       if (option.verdict() != PowerUse.Verdict.READY) {
         continue;
       }
-      for (final MobUse use : option.use().uses()) {
+      for (final MobUse use : option.use().effectiveUses()) {
         for (final Consideration consideration : use.considerations()) {
           Fact.byKey(consideration.fact()).ifPresent(needed::add);
         }

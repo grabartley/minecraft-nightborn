@@ -45,7 +45,7 @@ public final class MobUseCheck {
 
   private static List<String> uses(final Identifier id, final MobPowerUse mob) {
     final List<String> problems = new ArrayList<>();
-    for (final MobUse use : mob.uses()) {
+    for (final MobUse use : mob.effectiveUses()) {
       if (Intent.byKey(use.intent()).isEmpty()) {
         problems.add(id + " has a use with unknown intent " + use.intent());
       }

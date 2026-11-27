@@ -28,7 +28,7 @@ public final class PowerChoice {
       }
       MobUse best = null;
       double bestScore = 0.0;
-      for (final MobUse use : option.use().uses()) {
+      for (final MobUse use : option.use().effectiveUses()) {
         final double score = use.score(situation);
         if (best == null || score > bestScore) {
           best = use;

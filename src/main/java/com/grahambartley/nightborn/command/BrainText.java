@@ -19,10 +19,6 @@ final class BrainText {
     lines.add(
         Text.translatable(
             "nightborn.command.brain.think", name, now - think.tick(), think.intent().key()));
-    if (think.ranked().isEmpty()) {
-      lines.add(Text.translatable("nightborn.command.brain.nothing"));
-      return lines;
-    }
     final Optional<PowerChoice.Scored> chosen = think.chosen();
     think.ranked().stream()
         .limit(SHOWN)

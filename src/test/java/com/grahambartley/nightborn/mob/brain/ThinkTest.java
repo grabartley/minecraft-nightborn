@@ -22,7 +22,7 @@ class ThinkTest {
         new MobPowerUse(0.0F, 8.0F, 5, Identifier.of("minecraft", "x"), "tell", false);
     return new PowerChoice.Scored(
         new PowerChoice.Option(Identifier.of("nightborn", path), PowerUse.Verdict.READY, 0, use),
-        use.uses().getFirst(),
+        use.effectiveUses().getFirst(),
         score,
         affordable);
   }

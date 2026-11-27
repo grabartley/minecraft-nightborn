@@ -1198,7 +1198,6 @@
   "nightborn.command.brain.none": "%s 不会选择能力",
   "nightborn.command.brain.unthought": "%s 尚未权衡过其能力",
   "nightborn.command.brain.think": "%s 在 %s 刻前权衡了其能力，意图 %s",
-  "nightborn.command.brain.nothing": "  没有能力就绪",
   "nightborn.command.brain.use": "  %s 得分 %s",
   "nightborn.command.brain.chosen": "  %s 得分 %s，已选用",
   "nightborn.command.brain.costly": "  %s 得分 %s，但消耗血液过多",

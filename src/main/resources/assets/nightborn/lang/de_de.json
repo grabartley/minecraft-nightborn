@@ -1198,7 +1198,6 @@
   "nightborn.command.brain.none": "%s wählt keine Kräfte",
   "nightborn.command.brain.unthought": "%s hat seine Kräfte noch nicht abgewogen",
   "nightborn.command.brain.think": "%s hat vor %s Ticks seine Kräfte abgewogen, Absicht %s",
-  "nightborn.command.brain.nothing": "  Keine Kraft war bereit",
   "nightborn.command.brain.use": "  %s erhielt %s",
   "nightborn.command.brain.chosen": "  %s erhielt %s und wurde gewählt",
   "nightborn.command.brain.costly": "  %s erhielt %s, kostet aber zu viel Blut",

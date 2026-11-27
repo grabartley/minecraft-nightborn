@@ -30,18 +30,13 @@ class BrainTextTest {
     return new PowerChoice.Scored(
         new PowerChoice.Option(
             Identifier.of("nightborn", "test/p" + n), PowerUse.Verdict.READY, 0, use),
-        use.uses().getFirst(),
+        use.effectiveUses().getFirst(),
         score,
         paid);
   }
 
   @ParameterizedTest(name = "{0} ranked, first affordable {1}")
-  @CsvSource({
-    "0, true, nothing",
-    "1, true, chosen",
-    "2, false, costly chosen",
-    "5, true, chosen use use"
-  })
+  @CsvSource({"1, true, chosen", "2, false, costly chosen", "5, true, chosen use use"})
   @DisplayName(
       "the brain command shows the intent, then the top three uses with the chosen one marked")
   void lines(final int count, final boolean firstPaid, final String kinds) {
@@ -54,12 +49,10 @@ class BrainTextTest {
     final String[] each = kinds.split(" ");
     for (int i = 0; i < each.length; i++) {
       expected.add(
-          each[i].equals("nothing")
-              ? Text.translatable("nightborn.command.brain.nothing")
-              : Text.translatable(
-                  "nightborn.command.brain." + each[i],
-                  "nightborn:test/p" + i,
-                  String.format(Locale.ROOT, "%.2f", 5.0 - i)));
+          Text.translatable(
+              "nightborn.command.brain." + each[i],
+              "nightborn:test/p" + i,
+              String.format(Locale.ROOT, "%.2f", 5.0 - i)));
     }
     assertEquals(
         expected,
