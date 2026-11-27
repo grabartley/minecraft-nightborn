@@ -1,0 +1,17 @@
+{
+  "title": {
+    "translate": "nightborn.lore.heart_of_the_house.title"
+  },
+  "author": "Archivist Theodric",
+  "pages": [
+    {
+      "translate": "nightborn.lore.heart_of_the_house.page.1"
+    },
+    {
+      "translate": "nightborn.lore.heart_of_the_house.page.2"
+    },
+    {
+      "translate": "nightborn.lore.heart_of_the_house.page.3"
+    }
+  ]
+}

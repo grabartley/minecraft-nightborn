@@ -1,0 +1,17 @@
+{
+  "title": {
+    "translate": "nightborn.lore.old_blood_fonts.title"
+  },
+  "author": "Mother Hesper",
+  "pages": [
+    {
+      "translate": "nightborn.lore.old_blood_fonts.page.1"
+    },
+    {
+      "translate": "nightborn.lore.old_blood_fonts.page.2"
+    },
+    {
+      "translate": "nightborn.lore.old_blood_fonts.page.3"
+    }
+  ]
+}

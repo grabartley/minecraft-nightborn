@@ -1,0 +1,20 @@
+{
+  "title": {
+    "translate": "nightborn.lore.coffin_letters.title"
+  },
+  "author": "Cosimo of the East Wing",
+  "pages": [
+    {
+      "translate": "nightborn.lore.coffin_letters.page.1"
+    },
+    {
+      "translate": "nightborn.lore.coffin_letters.page.2"
+    },
+    {
+      "translate": "nightborn.lore.coffin_letters.page.3"
+    },
+    {
+      "translate": "nightborn.lore.coffin_letters.page.4"
+    }
+  ]
+}

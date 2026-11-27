@@ -1,0 +1,14 @@
+{
+  "title": {
+    "translate": "nightborn.lore.bone_reckoning.title"
+  },
+  "author": "Vault-Keeper Anselm",
+  "pages": [
+    {
+      "translate": "nightborn.lore.bone_reckoning.page.1"
+    },
+    {
+      "translate": "nightborn.lore.bone_reckoning.page.2"
+    }
+  ]
+}

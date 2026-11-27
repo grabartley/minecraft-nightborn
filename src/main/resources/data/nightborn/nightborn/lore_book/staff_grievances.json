@@ -1,0 +1,17 @@
+{
+  "title": {
+    "translate": "nightborn.lore.staff_grievances.title"
+  },
+  "author": "Lord Evander",
+  "pages": [
+    {
+      "translate": "nightborn.lore.staff_grievances.page.1"
+    },
+    {
+      "translate": "nightborn.lore.staff_grievances.page.2"
+    },
+    {
+      "translate": "nightborn.lore.staff_grievances.page.3"
+    }
+  ]
+}

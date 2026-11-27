@@ -1,0 +1,17 @@
+{
+  "title": {
+    "translate": "nightborn.lore.of_the_eldest.title"
+  },
+  "author": "Ignace, Keeper of the Line",
+  "pages": [
+    {
+      "translate": "nightborn.lore.of_the_eldest.page.1"
+    },
+    {
+      "translate": "nightborn.lore.of_the_eldest.page.2"
+    },
+    {
+      "translate": "nightborn.lore.of_the_eldest.page.3"
+    }
+  ]
+}

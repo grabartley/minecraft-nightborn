@@ -6,7 +6,7 @@
       "element": {
         "element_type": "minecraft:single_pool_element",
         "location": "nightborn:vampire/mountain_castle/eyrie",
-        "processors": "minecraft:empty",
+        "processors": "nightborn:vampire/mountain_castle",
         "projection": "rigid"
       }
     },
@@ -15,7 +15,7 @@
       "element": {
         "element_type": "minecraft:single_pool_element",
         "location": "nightborn:vampire/mountain_castle/bastion",
-        "processors": "minecraft:empty",
+        "processors": "nightborn:vampire/mountain_castle",
         "projection": "rigid"
       }
     }

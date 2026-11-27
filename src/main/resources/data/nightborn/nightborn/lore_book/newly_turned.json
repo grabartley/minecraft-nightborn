@@ -1,0 +1,20 @@
+{
+  "title": {
+    "translate": "nightborn.lore.newly_turned.title"
+  },
+  "author": "Sire Leontius",
+  "pages": [
+    {
+      "translate": "nightborn.lore.newly_turned.page.1"
+    },
+    {
+      "translate": "nightborn.lore.newly_turned.page.2"
+    },
+    {
+      "translate": "nightborn.lore.newly_turned.page.3"
+    },
+    {
+      "translate": "nightborn.lore.newly_turned.page.4"
+    }
+  ]
+}

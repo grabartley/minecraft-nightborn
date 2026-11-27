@@ -1,0 +1,17 @@
+{
+  "title": {
+    "translate": "nightborn.lore.bat_shape.title"
+  },
+  "author": "Master Ottokar",
+  "pages": [
+    {
+      "translate": "nightborn.lore.bat_shape.page.1"
+    },
+    {
+      "translate": "nightborn.lore.bat_shape.page.2"
+    },
+    {
+      "translate": "nightborn.lore.bat_shape.page.3"
+    }
+  ]
+}

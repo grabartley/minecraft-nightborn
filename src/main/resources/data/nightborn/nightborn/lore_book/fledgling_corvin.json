@@ -1,0 +1,17 @@
+{
+  "title": {
+    "translate": "nightborn.lore.fledgling_corvin.title"
+  },
+  "author": "Seneschal Bertrand",
+  "pages": [
+    {
+      "translate": "nightborn.lore.fledgling_corvin.page.1"
+    },
+    {
+      "translate": "nightborn.lore.fledgling_corvin.page.2"
+    },
+    {
+      "translate": "nightborn.lore.fledgling_corvin.page.3"
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "title": {
+    "translate": "nightborn.lore.cellar_ledger.title"
+  },
+  "author": "Odalric, Steward of the Cellar",
+  "pages": [
+    {
+      "translate": "nightborn.lore.cellar_ledger.page.1"
+    },
+    {
+      "translate": "nightborn.lore.cellar_ledger.page.2"
+    },
+    {
+      "translate": "nightborn.lore.cellar_ledger.page.3"
+    }
+  ]
+}

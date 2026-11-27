@@ -6,7 +6,7 @@
       "element": {
         "element_type": "minecraft:single_pool_element",
         "location": "nightborn:vampire/crypt/church_tower",
-        "processors": "minecraft:empty",
+        "processors": "nightborn:vampire/crypt",
         "projection": "rigid"
       }
     },
@@ -15,7 +15,7 @@
       "element": {
         "element_type": "minecraft:single_pool_element",
         "location": "nightborn:vampire/crypt/church_bellcote",
-        "processors": "minecraft:empty",
+        "processors": "nightborn:vampire/crypt",
         "projection": "rigid"
       }
     }

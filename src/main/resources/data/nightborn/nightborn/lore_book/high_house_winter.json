@@ -1,0 +1,17 @@
+{
+  "title": {
+    "translate": "nightborn.lore.high_house_winter.title"
+  },
+  "author": "Castellan Wolfram",
+  "pages": [
+    {
+      "translate": "nightborn.lore.high_house_winter.page.1"
+    },
+    {
+      "translate": "nightborn.lore.high_house_winter.page.2"
+    },
+    {
+      "translate": "nightborn.lore.high_house_winter.page.3"
+    }
+  ]
+}
