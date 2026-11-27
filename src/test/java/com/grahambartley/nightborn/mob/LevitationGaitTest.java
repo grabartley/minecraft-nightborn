@@ -6,7 +6,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
@@ -86,18 +85,20 @@ class LevitationGaitTest {
     assertEquals(pose, LevitationGait.wanted(shown, sprinting, speed));
   }
 
-  @ParameterizedTest(name = "speeds {0} and {1} every {2} ticks")
+  @ParameterizedTest(name = "speeds {0} and {1} every {2} ticks: {3}")
   @CsvSource({
-    "0.0248, 0.1044, 3",
-    "0.02, 0.06, 3",
-    "0.0, 0.12, 2",
-    "0.2, 0.33, 3",
-    "0.0178, 0.0627, 3"
+    "0.0248, 0.1044, 3, LEVITATE_MOVE",
+    "0.02, 0.06, 3, LEVITATE_MOVE",
+    "0.0, 0.12, 2, LEVITATE_MOVE",
+    "0.2, 0.33, 3, LEVITATE_SPRINT",
+    "0.0178, 0.0627, 3, LEVITATE_MOVE",
+    "0.0, 0.03, 3, LEVITATE"
   })
   @DisplayName(
       "speed that pulses in steps, as a mob's position reaches the client, never flips the clip"
           + " back and forth")
-  void pulsesHoldOneClip(final double low, final double high, final int every) {
+  void pulsesHoldOneClip(
+      final double low, final double high, final int every, final VampirePose pose) {
     final LevitationGait gait = settled(false, (low + high) / 2.0);
     final double[] speeds = new double[200];
     for (int tick = 0; tick < speeds.length; tick++) {
@@ -105,6 +106,7 @@ class LevitationGaitTest {
     }
     final long changes = changes(run(gait, speeds));
     assertTrue(changes <= 1, () -> "changes: " + changes);
+    assertEquals(pose, gait.pose());
   }
 
   @ParameterizedTest(name = "sprint flag flips every {0} ticks")
@@ -141,12 +143,32 @@ class LevitationGaitTest {
     assertEquals(pose, gait.pose());
   }
 
-  @Test
-  @DisplayName("after a long gap the speed starts again from the fresh sample, not the old one")
-  void staleSpeedRestarts() {
-    final LevitationGait gait = settled(false, 0.5);
-    gait.observe(SETTLED_TICKS + LevitationGait.STALE_TICKS + 1, true, false, 0.0);
-    assertEquals(0.0, gait.spread(), 1.0e-9);
+  @ParameterizedTest(name = "sprint seen at ticks {0}: sprints {1}")
+  @CsvSource({"'0', false", "'0 1', false", "'0 1 2', true", "'0 2', true", "'0 3', true"})
+  @DisplayName("the sprint flag counts once it has held for two game ticks, seen or not")
+  void sprintSettlesInGameTicks(final String seen, final boolean sprints) {
+    final LevitationGait gait = settled(false, 0.1);
+    for (final String tick : seen.split(" ")) {
+      gait.observe(SETTLED_TICKS + Long.parseLong(tick), false, true, 0.1);
+    }
+    assertEquals(sprints ? VampirePose.LEVITATE_SPRINT : VampirePose.LEVITATE_MOVE, gait.pose());
+  }
+
+  @ParameterizedTest(name = "sprinting before {0}, after {1}, speed after {2}: spread {3}")
+  @CsvSource({"false, false, 0.0, 0.0", "true, false, 0.0, 0.0", "false, true, 0.0, 1.0"})
+  @DisplayName(
+      "after a long gap the speed and sprint start again from the fresh sample, not the old one")
+  void staleSampleRestarts(
+      final boolean sprintingBefore,
+      final boolean sprintingAfter,
+      final double speed,
+      final double spread) {
+    final LevitationGait gait = settled(sprintingBefore, 0.5);
+    final long back = SETTLED_TICKS + LevitationGait.STALE_TICKS + 1;
+    for (long tick = back; tick < back + LevitationGait.HOLD_TICKS; tick++) {
+      gait.observe(tick, true, sprintingAfter, speed);
+    }
+    assertEquals(spread, gait.spread(), 1.0e-9);
   }
 
   @ParameterizedTest(name = "observed {0} times in one tick")

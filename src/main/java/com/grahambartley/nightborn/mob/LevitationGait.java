@@ -11,12 +11,12 @@ public final class LevitationGait {
   static final double SPRINT_EXIT_SPEED = 0.2;
   static final double FULL_SPREAD_SPEED = 0.24;
   static final int HOLD_TICKS = 10;
-  static final int SPRINT_SETTLE_TICKS = 3;
+  static final int SPRINT_SETTLE_TICKS = 2;
   static final int STALE_TICKS = 20;
 
   private double speed;
   private boolean sprinting;
-  private int sprintFlips;
+  private long sprintFlipSince = Long.MIN_VALUE;
   private VampirePose pose = VampirePose.LEVITATE;
   private long changedAt = Long.MIN_VALUE / 2;
   private long lastTick = Long.MIN_VALUE / 2;
@@ -34,9 +34,15 @@ public final class LevitationGait {
       return;
     }
     final double sample = Math.max(0.0, horizontalSpeed);
-    speed = tick - lastTick > STALE_TICKS ? sample : speed + (sample - speed) * SMOOTHING;
+    if (tick - lastTick > STALE_TICKS) {
+      speed = sample;
+      sprinting = nowSprinting;
+      sprintFlipSince = Long.MIN_VALUE;
+    } else {
+      speed += (sample - speed) * SMOOTHING;
+      settleSprint(tick, nowSprinting);
+    }
     lastTick = tick;
-    settleSprint(nowSprinting);
     final VampirePose wanted = wanted(pose, sprinting, speed);
     if (!levitating) {
       pose = wanted;
@@ -71,11 +77,17 @@ public final class LevitationGait {
     return moving ? VampirePose.LEVITATE_MOVE : VampirePose.LEVITATE;
   }
 
-  private void settleSprint(final boolean nowSprinting) {
-    sprintFlips = nowSprinting == sprinting ? 0 : sprintFlips + 1;
-    if (sprintFlips >= SPRINT_SETTLE_TICKS) {
+  private void settleSprint(final long tick, final boolean nowSprinting) {
+    if (nowSprinting == sprinting) {
+      sprintFlipSince = Long.MIN_VALUE;
+      return;
+    }
+    if (sprintFlipSince == Long.MIN_VALUE) {
+      sprintFlipSince = tick;
+    }
+    if (tick - sprintFlipSince >= SPRINT_SETTLE_TICKS) {
       sprinting = nowSprinting;
-      sprintFlips = 0;
+      sprintFlipSince = Long.MIN_VALUE;
     }
   }
 }
