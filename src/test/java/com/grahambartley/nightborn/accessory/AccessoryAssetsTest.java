@@ -1,6 +1,7 @@
 package com.grahambartley.nightborn.accessory;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.google.gson.JsonElement;
@@ -164,21 +165,24 @@ class AccessoryAssetsTest {
     "travellers_cloak, vampire_structure, underground_lair",
     "clawed_gauntlets, vampire_structure, underground_lair",
     "silk_gloves, vampire_structure, ruined_manor",
-    "stakewrights_gloves, vampire_structure, crypt",
-    "silver_threaded_gloves, castle, castle",
+    "stakewrights_gloves, hunter_camp, hunter_camp",
+    "silver_threaded_gloves, hunter_camp, hunter_camp",
     "gravediggers_mitts, vampire_structure, crypt",
     "cellarers_belt, vampire_structure, ruined_manor",
-    "bandolier, castle, castle",
-    "stake_loops, vampire_structure, crypt",
-    "flask_belt, vampire_structure, underground_lair",
+    "bandolier, hunter_camp, hunter_camp",
+    "stake_loops, hunter_camp, hunter_camp",
+    "flask_belt, hunter_camp, hunter_camp",
     "sturdy_girdle, vampire_structure, ruined_manor",
     "widows_veil, castle, castle",
     "smoked_spectacles, vampire_structure, ruined_manor",
     "porcelain_mask, mountain_castle, mountain_castle",
-    "hunters_monocle, castle, castle",
+    "hunters_monocle, hunter_camp, hunter_camp",
     "confessors_veil, vampire_structure, crypt",
-    "garlic_soaked_scarf, vampire_structure, underground_lair",
-    "plague_mask, vampire_structure, crypt"
+    "garlic_soaked_scarf, hunter_camp, hunter_camp",
+    "plague_mask, vampire_structure, crypt",
+    "crucifix_on_a_chain, hunter_camp, hunter_camp",
+    "garlic_sachet, hunter_camp, hunter_camp",
+    "sunburst_brooch, hunter_camp, hunter_camp"
   })
   @DisplayName("each found piece is in the chests of the structure that holds it, and only there")
   void foundWhereItBelongs(final String piece, final String table, final String structure)
@@ -190,16 +194,27 @@ class AccessoryAssetsTest {
         final JsonObject item = entry.getAsJsonObject();
         if (item.has("name") && item.get("name").getAsString().equals("nightborn:" + piece)) {
           places.add(
-              item.getAsJsonArray("conditions")
-                  .get(0)
-                  .getAsJsonObject()
-                  .getAsJsonObject("predicate")
-                  .get("structures")
-                  .getAsString());
+              item.has("conditions")
+                  ? item.getAsJsonArray("conditions")
+                      .get(0)
+                      .getAsJsonObject()
+                      .getAsJsonObject("predicate")
+                      .get("structures")
+                      .getAsString()
+                  : "nightborn:" + table);
         }
       }
     }
     assertEquals(List.of("nightborn:" + structure), places);
+    try (var tables = Files.list(DATA.resolve("nightborn/loot_table/chests"))) {
+      for (final Path other : tables.toList()) {
+        if (!other.getFileName().toString().equals(table + ".json")) {
+          assertFalse(
+              Files.readString(other).contains("\"nightborn:" + piece + "\""),
+              piece + " is also in " + other.getFileName());
+        }
+      }
+    }
   }
 
   @ParameterizedTest(name = "{0} pays {1}")

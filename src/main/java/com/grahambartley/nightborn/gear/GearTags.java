@@ -8,8 +8,12 @@ import net.minecraft.util.Identifier;
 
 public final class GearTags {
 
-  public static final TagKey<Item> REVERSE_GRIP =
-      TagKey.of(RegistryKeys.ITEM, Identifier.of(Nightborn.MOD_ID, "reverse_grip"));
+  public static final TagKey<Item> REVERSE_GRIP = tag("reverse_grip");
+  public static final TagKey<Item> ANTI_VAMPIRE = tag("anti_vampire");
 
   private GearTags() {}
+
+  private static TagKey<Item> tag(final String path) {
+    return TagKey.of(RegistryKeys.ITEM, Identifier.of(Nightborn.MOD_ID, path));
+  }
 }

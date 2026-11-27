@@ -20,7 +20,7 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "nightborn:wooden_stake",
+          "name": "nightborn:blood_bottle",
           "weight": 8,
           "functions": [
             { "function": "minecraft:set_count", "count": { "type": "minecraft:uniform", "min": 1, "max": 2 } }
@@ -28,19 +28,16 @@
         },
         {
           "type": "minecraft:item",
-          "name": "nightborn:silver_nugget",
+          "name": "minecraft:emerald",
           "weight": 10,
           "functions": [
-            { "function": "minecraft:set_count", "count": { "type": "minecraft:uniform", "min": 2, "max": 7 } }
+            { "function": "minecraft:set_count", "count": { "type": "minecraft:uniform", "min": 1, "max": 2 } }
           ]
         },
         {
           "type": "minecraft:item",
-          "name": "nightborn:silver_ingot",
-          "weight": 4,
-          "functions": [
-            { "function": "minecraft:set_count", "count": { "type": "minecraft:uniform", "min": 1, "max": 2 } }
-          ]
+          "name": "nightborn:chalice",
+          "weight": 4
         },
         { "type": "minecraft:item", "name": "minecraft:gold_ingot", "weight": 8,
           "functions": [ { "function": "minecraft:set_count", "count": { "type": "minecraft:uniform", "min": 1, "max": 4 } } ] },
@@ -61,19 +58,11 @@
       "rolls": 1,
       "entries": [
         { "type": "minecraft:empty", "weight": 12 },
-        { "type": "minecraft:item", "name": "nightborn:silver_stake", "weight": 3 },
-        {
-          "type": "minecraft:item",
-          "name": "nightborn:silver_sword",
-          "weight": 2,
-          "functions": [
-            { "function": "minecraft:enchant_randomly", "options": "#minecraft:on_random_loot" }
-          ]
-        },
+        { "type": "minecraft:item", "name": "nightborn:chandelier", "weight": 3 },
         {
           "type": "minecraft:item",
           "name": "minecraft:book",
-          "weight": 2,
+          "weight": 4,
           "functions": [
             { "function": "minecraft:enchant_with_levels", "levels": 30, "options": "#minecraft:on_random_loot" }
           ]
@@ -121,30 +110,6 @@
         {
           "type": "minecraft:item",
           "name": "nightborn:widows_ring",
-          "conditions": [
-            {
-              "condition": "minecraft:location_check",
-              "predicate": {
-                "structures": "nightborn:crypt"
-              }
-            }
-          ]
-        },
-        {
-          "type": "minecraft:item",
-          "name": "nightborn:garlic_sachet",
-          "conditions": [
-            {
-              "condition": "minecraft:location_check",
-              "predicate": {
-                "structures": "nightborn:crypt"
-              }
-            }
-          ]
-        },
-        {
-          "type": "minecraft:item",
-          "name": "nightborn:sunburst_brooch",
           "conditions": [
             {
               "condition": "minecraft:location_check",
@@ -264,31 +229,7 @@
         },
         {
           "type": "minecraft:item",
-          "name": "nightborn:stakewrights_gloves",
-          "conditions": [
-            {
-              "condition": "minecraft:location_check",
-              "predicate": {
-                "structures": "nightborn:crypt"
-              }
-            }
-          ]
-        },
-        {
-          "type": "minecraft:item",
           "name": "nightborn:gravediggers_mitts",
-          "conditions": [
-            {
-              "condition": "minecraft:location_check",
-              "predicate": {
-                "structures": "nightborn:crypt"
-              }
-            }
-          ]
-        },
-        {
-          "type": "minecraft:item",
-          "name": "nightborn:stake_loops",
           "conditions": [
             {
               "condition": "minecraft:location_check",
@@ -397,30 +338,6 @@
         {
           "type": "minecraft:item",
           "name": "nightborn:clawed_gauntlets",
-          "conditions": [
-            {
-              "condition": "minecraft:location_check",
-              "predicate": {
-                "structures": "nightborn:underground_lair"
-              }
-            }
-          ]
-        },
-        {
-          "type": "minecraft:item",
-          "name": "nightborn:flask_belt",
-          "conditions": [
-            {
-              "condition": "minecraft:location_check",
-              "predicate": {
-                "structures": "nightborn:underground_lair"
-              }
-            }
-          ]
-        },
-        {
-          "type": "minecraft:item",
-          "name": "nightborn:garlic_soaked_scarf",
           "conditions": [
             {
               "condition": "minecraft:location_check",

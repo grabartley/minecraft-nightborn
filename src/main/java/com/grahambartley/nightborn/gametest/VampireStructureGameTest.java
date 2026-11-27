@@ -5,6 +5,7 @@ import com.google.gson.JsonParser;
 import com.grahambartley.nightborn.Nightborn;
 import com.grahambartley.nightborn.blood.BloodItems;
 import com.grahambartley.nightborn.config.StructureSettings;
+import com.grahambartley.nightborn.gear.GearTags;
 import com.grahambartley.nightborn.mob.NightbornMobs;
 import com.grahambartley.nightborn.mob.VampireLordEntity;
 import com.grahambartley.nightborn.server.ServerConfigService;
@@ -68,9 +69,6 @@ public class VampireStructureGameTest implements FabricGameTest {
   static final String ARENA = "nightborn:vampire_arena";
   static final String RARITY_BATCH = "structure-rarity";
   static final int DOUBLED = 200;
-  static final RegistryKey<LootTable> LOOT =
-      RegistryKey.of(
-          RegistryKeys.LOOT_TABLE, Identifier.of(Nightborn.MOD_ID, "chests/vampire_structure"));
 
   @BeforeBatch(batchId = RARITY_BATCH)
   public void doubleRarity(final ServerWorld world) {
@@ -501,22 +499,34 @@ public class VampireStructureGameTest implements FabricGameTest {
   }
 
   @GameTest(templateName = ARENA, tickLimit = 20)
-  public void everyStructureChestHoldsBloodAndGear(final TestContext context) {
+  public void everyStructureChestHoldsBloodAndNoHunterGear(final TestContext context) {
     final ServerWorld world = context.getWorld();
-    final LootTable table = world.getServer().getReloadableRegistries().getLootTable(LOOT);
-    context.assertTrue(table != LootTable.EMPTY, "the structure chest loot table loads");
     final LootContextParameterSet parameters =
         new LootContextParameterSet.Builder(world)
             .add(
                 LootContextParameters.ORIGIN,
                 Vec3d.ofCenter(context.getAbsolutePos(BlockPos.ORIGIN)))
             .build(LootContextTypes.CHEST);
-    for (long seed = 0; seed < 20; seed++) {
-      final List<ItemStack> loot = table.generateLoot(parameters, seed);
-      context.assertTrue(
-          loot.stream().anyMatch(stack -> stack.isOf(BloodItems.BLOOD_BOTTLE)),
-          "seed " + seed + " gives at least one Blood Bottle");
-      context.assertTrue(loot.size() >= 3, "seed " + seed + " fills at least three slots");
+    for (final String path :
+        List.of("chests/vampire_structure", "chests/castle", "chests/mountain_castle")) {
+      final LootTable table =
+          world
+              .getServer()
+              .getReloadableRegistries()
+              .getLootTable(
+                  RegistryKey.of(RegistryKeys.LOOT_TABLE, Identifier.of(Nightborn.MOD_ID, path)));
+      context.assertTrue(table != LootTable.EMPTY, path + " loads");
+      for (long seed = 0; seed < 20; seed++) {
+        final List<ItemStack> loot = table.generateLoot(parameters, seed);
+        context.assertTrue(
+            loot.stream().anyMatch(stack -> stack.isOf(BloodItems.BLOOD_BOTTLE)),
+            path + " seed " + seed + " gives at least one Blood Bottle");
+        context.assertTrue(
+            loot.size() >= 3, path + " seed " + seed + " fills at least three slots");
+        context.assertTrue(
+            loot.stream().noneMatch(stack -> stack.isIn(GearTags.ANTI_VAMPIRE)),
+            path + " seed " + seed + " gives no anti-vampire gear");
+      }
     }
     context.complete();
   }

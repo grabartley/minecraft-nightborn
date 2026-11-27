@@ -75,6 +75,22 @@
           "weight": 1
         }
       ]
+    },
+    {
+      "rolls": 1,
+      "conditions": [{ "condition": "minecraft:random_chance", "chance": 0.2 }],
+      "entries": [
+        { "type": "minecraft:item", "name": "nightborn:stake_loops" },
+        { "type": "minecraft:item", "name": "nightborn:stakewrights_gloves" },
+        { "type": "minecraft:item", "name": "nightborn:silver_threaded_gloves" },
+        { "type": "minecraft:item", "name": "nightborn:bandolier" },
+        { "type": "minecraft:item", "name": "nightborn:flask_belt" },
+        { "type": "minecraft:item", "name": "nightborn:crucifix_on_a_chain" },
+        { "type": "minecraft:item", "name": "nightborn:garlic_sachet" },
+        { "type": "minecraft:item", "name": "nightborn:sunburst_brooch" },
+        { "type": "minecraft:item", "name": "nightborn:hunters_monocle" },
+        { "type": "minecraft:item", "name": "nightborn:garlic_soaked_scarf" }
+      ]
     }
   ]
 }
