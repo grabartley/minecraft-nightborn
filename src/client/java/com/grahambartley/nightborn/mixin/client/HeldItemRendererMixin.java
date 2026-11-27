@@ -3,6 +3,7 @@ package com.grahambartley.nightborn.mixin.client;
 import com.grahambartley.nightborn.batform.BatForm;
 import com.grahambartley.nightborn.client.anim.FirstPersonSway;
 import com.grahambartley.nightborn.client.anim.PlayerClips;
+import com.grahambartley.nightborn.client.anim.ThrustState;
 import com.grahambartley.nightborn.gear.GearTags;
 import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
@@ -82,8 +83,7 @@ abstract class HeldItemRendererMixin {
       final float swingProgress,
       @Local(argsOnly = true) final AbstractClientPlayerEntity player,
       @Local(argsOnly = true) final ItemStack item) {
-    return item.isIn(GearTags.REVERSE_GRIP) && PlayerClips.thrust(player).isPresent()
-        ? 0.0F
-        : swingProgress;
+    return ThrustState.swingProgress(
+        item.isIn(GearTags.REVERSE_GRIP), PlayerClips.thrust(player).isPresent(), swingProgress);
   }
 }

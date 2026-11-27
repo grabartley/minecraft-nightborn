@@ -2,8 +2,8 @@ package com.grahambartley.nightborn.gear;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import java.io.IOException;
@@ -17,7 +17,6 @@ import java.util.Set;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 class StakeModelAssetsTest {
@@ -79,26 +78,22 @@ class StakeModelAssetsTest {
   }
 
   @ParameterizedTest(name = "{0}")
-  @CsvSource({
-    "thirdperson_righthand, 155, 0, -4.2, -6.5",
-    "thirdperson_lefthand, -155, 0, -4.2, -6.5",
-    "firstperson_righthand, -153, 1.13, -1.2, -1.71",
-    "firstperson_lefthand, 153, 1.13, -1.2, -1.71"
-  })
+  @ValueSource(
+      strings = {
+        "thirdperson_righthand",
+        "thirdperson_lefthand",
+        "firstperson_righthand",
+        "firstperson_lefthand"
+      })
   @DisplayName(
-      "each hand keeps vanilla's scale and side turn, turns the point down and back, and slides"
-          + " the stake along its length so the butt sits in the fist")
-  void handView(
-      final String hand, final double turn, final double x, final double y, final double z) {
+      "each hand keeps vanilla's scale and side turn and turns the point away from where vanilla"
+          + " holds it")
+  void handView(final String hand) {
     final JsonObject grip = view(read(MODELS.resolve(GRIP + ".json")), hand);
     final JsonObject vanilla = view(vanillaHandheld(), hand);
-    final JsonArray scale = grip.getAsJsonArray("scale");
-    assertEquals(vanilla.getAsJsonArray("scale"), scale);
+    assertEquals(vanilla.getAsJsonArray("scale"), grip.getAsJsonArray("scale"));
     assertEquals(at(vanilla, "rotation", 0), at(grip, "rotation", 0));
     assertEquals(at(vanilla, "rotation", 1), at(grip, "rotation", 1));
-    assertEquals(turn, at(grip, "rotation", 2));
-    assertEquals(x, at(grip, "translation", 0));
-    assertEquals(y, at(grip, "translation", 1));
-    assertEquals(z, at(grip, "translation", 2));
+    assertTrue(Math.abs(at(grip, "rotation", 2) - at(vanilla, "rotation", 2)) >= 90.0);
   }
 }

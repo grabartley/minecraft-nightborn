@@ -21,6 +21,7 @@ public final class ThrustState {
       final int swingTicks,
       final boolean reverseGrip,
       final boolean rightArm,
+      final boolean showable,
       final double age,
       final PlayerClipState.Lengths lengths) {
     final boolean started = swinging && (!this.swinging || swingTicks < this.swingTicks);
@@ -30,7 +31,7 @@ public final class ThrustState {
       thrust.clear();
       return;
     }
-    if (!started || playing(age, lengths).isPresent()) {
+    if (!started || !showable || playing(age, lengths).isPresent()) {
       return;
     }
     pose = VampirePose.thrust(rightArm);
@@ -60,13 +61,18 @@ public final class ThrustState {
     return (swinging != Hand.OFF_HAND) == (mainArm == Arm.RIGHT);
   }
 
-  public static Optional<VampirePose> shown(
-      final Optional<VampirePose> pose,
-      final boolean powerPlaying,
-      final Optional<VampirePose> thrust) {
-    return pose.map(VampirePose::allowsActions).orElse(true) && !powerPlaying
-        ? thrust
-        : Optional.empty();
+  public static boolean showable(
+      final Optional<VampirePose> pose, final boolean powerPlaying, final boolean upright) {
+    return upright && !powerPlaying && pose.map(VampirePose::allowsActions).orElse(true);
+  }
+
+  public static Hand swingingHand(final Hand preferred) {
+    return preferred == null ? Hand.MAIN_HAND : preferred;
+  }
+
+  public static float swingProgress(
+      final boolean reverseGrip, final boolean thrustShown, final float vanilla) {
+    return reverseGrip && thrustShown ? 0.0F : vanilla;
   }
 
   public static boolean sways(final VampirePose thrust, final Arm arm) {

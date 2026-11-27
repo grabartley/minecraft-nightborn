@@ -21,8 +21,8 @@ class ThrustStateTest {
   private static ThrustState swungAt(
       final int age, final boolean reverseGrip, final boolean rightArm) {
     final ThrustState state = new ThrustState();
-    state.swing(false, 0, reverseGrip, rightArm, age - 1, LENGTHS);
-    state.swing(true, 0, reverseGrip, rightArm, age, LENGTHS);
+    state.swing(false, 0, reverseGrip, rightArm, true, age - 1, LENGTHS);
+    state.swing(true, 0, reverseGrip, rightArm, true, age, LENGTHS);
     return state;
   }
 
@@ -61,8 +61,8 @@ class ThrustStateTest {
   @DisplayName("a swing with another item ends a thrust that is still playing")
   void otherSwingEndsTheThrust() {
     final ThrustState state = swungAt(10, true, true);
-    state.swing(false, 0, false, true, 13, LENGTHS);
-    state.swing(true, 0, false, true, 14, LENGTHS);
+    state.swing(false, 0, false, true, true, 13, LENGTHS);
+    state.swing(true, 0, false, true, true, 14, LENGTHS);
     assertEquals("NONE", thrust(state, 15));
   }
 
@@ -71,8 +71,8 @@ class ThrustStateTest {
   void swingInProgress() {
     final ThrustState state = swungAt(10, true, true);
     assertTrue(state.takeFresh());
-    state.swing(true, 1, true, true, 11, LENGTHS);
-    state.swing(true, 2, true, true, 12, LENGTHS);
+    state.swing(true, 1, true, true, true, 11, LENGTHS);
+    state.swing(true, 2, true, true, true, 12, LENGTHS);
     assertFalse(state.takeFresh());
     assertEquals(2 / OneShot.TICKS_PER_SECOND, state.seconds(12), 1e-9);
   }
@@ -83,39 +83,60 @@ class ThrustStateTest {
   void restartedSwing() {
     final ThrustState state = swungAt(10, true, true);
     state.takeFresh();
-    state.swing(true, 3, true, true, 13, LENGTHS);
-    state.swing(true, 0, true, true, 14, LENGTHS);
+    state.swing(true, 3, true, true, true, 13, LENGTHS);
+    state.swing(true, 0, true, true, true, 14, LENGTHS);
     assertFalse(state.takeFresh());
     assertEquals(4 / OneShot.TICKS_PER_SECOND, state.seconds(14), 1e-9);
     assertEquals("NONE", thrust(state, 19));
-    state.swing(true, 3, true, true, 19, LENGTHS);
-    state.swing(true, 0, true, true, 20, LENGTHS);
+    state.swing(true, 3, true, true, true, 19, LENGTHS);
+    state.swing(true, 0, true, true, true, 20, LENGTHS);
     assertTrue(state.takeFresh());
     assertEquals("STAKE_THRUST_RIGHT", thrust(state, 28));
   }
 
-  @ParameterizedTest(name = "pose {0}, power {1}: {2}")
+  @ParameterizedTest(name = "pose {0}, power {1}, upright {2}: {3}")
   @CsvSource({
-    ", false, STAKE_THRUST_RIGHT",
-    "LEVITATE, false, STAKE_THRUST_RIGHT",
-    "SUN_BURN, false, STAKE_THRUST_RIGHT",
-    "FEED, false, NONE",
-    "DOWNED, false, NONE",
-    "VOMIT, false, NONE",
-    ", true, NONE",
-    "LEVITATE, true, NONE"
+    ", false, true, true",
+    "LEVITATE, false, true, true",
+    "SUN_BURN, false, true, true",
+    "FEED, false, true, false",
+    "DOWNED, false, true, false",
+    "VOMIT, false, true, false",
+    ", true, true, false",
+    "LEVITATE, true, true, false",
+    ", false, false, false"
   })
   @DisplayName(
-      "a thrust shows only over a pose that allows actions, and a power clip outranks it in"
-          + " every view")
-  void shown(final VampirePose pose, final boolean power, final String expected) {
-    assertEquals(
-        expected,
-        ThrustState.shown(
-                Optional.ofNullable(pose), power, Optional.of(VampirePose.STAKE_THRUST_RIGHT))
-            .map(Enum::name)
-            .orElse("NONE"));
-    assertTrue(ThrustState.shown(Optional.ofNullable(pose), power, Optional.empty()).isEmpty());
+      "a thrust shows only on a player on their own feet, over a pose that allows actions, and"
+          + " never over a power clip")
+  void showable(
+      final VampirePose pose, final boolean power, final boolean upright, final boolean shows) {
+    assertEquals(shows, ThrustState.showable(Optional.ofNullable(pose), power, upright));
+  }
+
+  @Test
+  @DisplayName("a swing that cannot be shown, as when sneaking, starts no thrust to show later")
+  void hiddenSwing() {
+    final ThrustState state = new ThrustState();
+    state.swing(true, 0, true, true, false, 10, LENGTHS);
+    assertEquals("NONE", thrust(state, 11));
+    assertFalse(state.takeFresh());
+  }
+
+  @ParameterizedTest(name = "reverse grip {0}, thrust shown {1}: {2}")
+  @CsvSource({"true, true, 0", "true, false, 0.4", "false, true, 0.4", "false, false, 0.4"})
+  @DisplayName(
+      "vanilla's first person swing is left out only for a reverse grip item while its thrust"
+          + " shows, so every other item swings as before")
+  void swingProgress(final boolean reverseGrip, final boolean shown, final float progress) {
+    assertEquals(progress, ThrustState.swingProgress(reverseGrip, shown, 0.4F));
+  }
+
+  @ParameterizedTest(name = "{0}: {1}")
+  @CsvSource({"MAIN_HAND, MAIN_HAND", "OFF_HAND, OFF_HAND", ", MAIN_HAND"})
+  @DisplayName("the hand that swung is the main hand until a swing says otherwise")
+  void swingingHand(final Hand preferred, final Hand hand) {
+    assertEquals(hand, ThrustState.swingingHand(preferred));
   }
 
   @ParameterizedTest(name = "{0} hand, main arm {1}: right arm {2}")
@@ -123,11 +144,9 @@ class ThrustStateTest {
     "MAIN_HAND, RIGHT, true",
     "OFF_HAND, RIGHT, false",
     "MAIN_HAND, LEFT, false",
-    "OFF_HAND, LEFT, true",
-    ", RIGHT, true",
-    ", LEFT, false"
+    "OFF_HAND, LEFT, true"
   })
-  @DisplayName("the thrust plays on the arm of the hand that swung, the main hand when unknown")
+  @DisplayName("the thrust plays on the arm of the hand that swung")
   void swingsRightArm(final Hand hand, final Arm mainArm, final boolean right) {
     assertEquals(right, ThrustState.swingsRightArm(hand, mainArm));
   }
@@ -152,7 +171,7 @@ class ThrustStateTest {
   @DisplayName("putting the stake away ends its thrust")
   void switchedAway() {
     final ThrustState state = swungAt(10, true, true);
-    state.swing(true, 1, false, true, 11, LENGTHS);
+    state.swing(true, 1, false, true, true, 11, LENGTHS);
     assertEquals("NONE", thrust(state, 12));
   }
 

@@ -72,11 +72,8 @@ public final class PlayerClips {
   }
 
   public static Optional<VampirePose> thrust(final PlayerEntity player) {
-    return PlayerClipState.upright(player.getPose(), player.hasVehicle())
-        ? ThrustState.shown(
-            clip(player),
-            power(player).isPresent(),
-            thrustState(player).playing(player.age, VampireClips::seconds))
+    return showable(player)
+        ? thrustState(player).playing(player.age, VampireClips::seconds)
         : Optional.empty();
   }
 
@@ -145,7 +142,7 @@ public final class PlayerClips {
     return PlayerClipState.action(
         clip(player),
         power(player).isPresent(),
-        thrust(player),
+        thrust(player).isPresent(),
         player.handSwinging,
         player.isUsingItem(),
         (player.getActiveHand() == Hand.MAIN_HAND) == (player.getMainArm() == Arm.RIGHT));
@@ -164,15 +161,23 @@ public final class PlayerClips {
   }
 
   private static void followSwing(final PlayerEntity player) {
-    final Hand hand = player.preferredHand == null ? Hand.MAIN_HAND : player.preferredHand;
+    final Hand hand = ThrustState.swingingHand(player.preferredHand);
     thrustState(player)
         .swing(
             player.handSwinging,
             player.handSwingTicks,
             player.getStackInHand(hand).isIn(GearTags.REVERSE_GRIP),
             ThrustState.swingsRightArm(hand, player.getMainArm()),
+            showable(player),
             player.age,
             VampireClips::seconds);
+  }
+
+  private static boolean showable(final PlayerEntity player) {
+    return ThrustState.showable(
+        clip(player),
+        power(player).isPresent(),
+        PlayerClipState.upright(player.getPose(), player.hasVehicle()));
   }
 
   private static Optional<PlayerEntity> player(final MinecraftClient client, final int entityId) {

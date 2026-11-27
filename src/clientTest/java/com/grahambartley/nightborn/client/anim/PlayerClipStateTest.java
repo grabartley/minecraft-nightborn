@@ -498,8 +498,7 @@ class PlayerClipStateTest {
       final String expected) {
     assertEquals(
         expected,
-        PlayerClipState.action(
-                Optional.ofNullable(pose), power, Optional.empty(), swinging, using, true)
+        PlayerClipState.action(Optional.ofNullable(pose), power, false, swinging, using, true)
             .map(Enum::name)
             .orElse("NONE"));
   }
@@ -523,13 +522,7 @@ class PlayerClipStateTest {
       final String expected) {
     assertEquals(
         expected,
-        PlayerClipState.action(
-                Optional.ofNullable(pose),
-                power,
-                Optional.of(VampirePose.STAKE_THRUST_RIGHT),
-                swinging,
-                using,
-                true)
+        PlayerClipState.action(Optional.ofNullable(pose), power, true, swinging, using, true)
             .map(Enum::name)
             .orElse("NONE"));
   }

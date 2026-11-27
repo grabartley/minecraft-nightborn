@@ -39,10 +39,19 @@ class GearTagsTest {
   }
 
   @Test
-  @DisplayName("the reverse grip tag holds every stake, so a new stake thrusts with no code")
-  void everyStake() {
+  @DisplayName("the reverse grip tag is the stakes tag, so a new stake thrusts with no code")
+  void everyStake() throws IOException {
     assertEquals("nightborn:reverse_grip", GearTags.REVERSE_GRIP.id().toString());
-    assertEquals(items("nightborn:stakes").toList(), items("nightborn:reverse_grip").toList());
+    assertEquals(
+        List.of("#nightborn:stakes"),
+        JsonParser.parseString(
+                Files.readString(DATA.resolve("nightborn/tags/item/reverse_grip.json")))
+            .getAsJsonObject()
+            .getAsJsonArray("values")
+            .asList()
+            .stream()
+            .map(JsonElement::getAsString)
+            .toList());
   }
 
   @ParameterizedTest(name = "{0}")
