@@ -38,6 +38,7 @@ public class FloatRoomGameTest implements FabricGameTest {
   private static VampireEntity still(final TestContext context, final BlockPos at) {
     final VampireEntity vampire = context.spawnEntity(NightbornMobs.VAMPIRE, at);
     vampire.setAiDisabled(true);
+    vampire.setOnGround(true);
     vampire.setAppearance(vampire.lookId(), HEIGHT, vampire.width());
     return vampire;
   }
