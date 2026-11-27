@@ -24,7 +24,6 @@ public class GuildMasterFightGameTest implements FabricGameTest {
 
   static final String ARENA = "nightborn:vampire_arena";
   static final int START = 5;
-  static final int OATH_OVER = TestPlayers.READY + 8 * 20 + 5;
 
   private static GuildMasterEntity master(final TestContext context) {
     final GuildMasterEntity master =
@@ -103,7 +102,6 @@ public class GuildMasterFightGameTest implements FabricGameTest {
         START,
         () -> {
           master.setCustomer(customer);
-          context.assertFalse(master.onWatch(), "he starts no fight on sight while he trades");
           master.setTarget(vampire);
         });
     context.runAtTick(
@@ -114,30 +112,46 @@ public class GuildMasterFightGameTest implements FabricGameTest {
         });
   }
 
-  @GameTest(templateName = ARENA, tickLimit = OATH_OVER + 5)
-  public void anOathEndsTheGuildMastersFightUntilItIsDone(final TestContext context) {
+  @GameTest(templateName = ARENA, tickLimit = TestPlayers.READY + 5)
+  public void aGuildMasterBreaksOffAnOathToAnswerABlow(final TestContext context) {
     final GuildMasterEntity master = master(context);
-    final VampireEntity vampire = vampire(context);
+    final ZombieEntity zombie = context.spawnEntity(EntityType.ZOMBIE, new BlockPos(4, 2, 4));
+    zombie.setAiDisabled(true);
     final ServerPlayerEntity human = TestPlayers.human(context, new BlockPos(1, 2, 3));
     GuildMembership.prove(human);
     context.runAtTick(
         TestPlayers.READY,
         () -> {
-          master.setTarget(vampire);
-          master.fight();
-          context.assertTrue(
-              master.getMainHandStack().isOf(GearItems.SILVER_STAKE), "he fights with his stake");
           context.assertTrue(
               WheelUse.pick(human, master, GuildOathOrder.ID, WheelEntry.NO_ARGUMENT),
               "the human swears the oath");
-          context.assertTrue(master.getTarget() == null, "he drops the fight");
-          context.assertTrue(master.getMainHandStack().isEmpty(), "and puts his stake away");
           context.assertTrue(
-              master.getOffHandStack().isOf(GearItems.GOLD_CRUCIFIX), "to raise the crucifix");
-          context.assertFalse(master.onWatch(), "he looks for no foe during the oath");
+              master.getOffHandStack().isOf(GearItems.GOLD_CRUCIFIX), "he raises the crucifix");
+          master.damage(context.getWorld().getDamageSources().mobAttack(zombie), 1.0F);
+          final GuildRevengeGoal revenge = new GuildRevengeGoal(master);
+          context.assertTrue(revenge.canStart(), "a blow during the oath is answered");
+          revenge.start();
+          context.assertTrue(master.getTarget() == zombie, "he turns on the zombie");
           context.assertFalse(
-              new GuildRevengeGoal(master).canStart(), "and answers no blow until it is done");
+              master.getOffHandStack().isOf(GearItems.GOLD_CRUCIFIX), "and lowers the crucifix");
+          TestPlayers.finish(context, human);
         });
-    context.runAtTick(OATH_OVER, () -> TestPlayers.finish(context, human));
+  }
+
+  @GameTest(templateName = ARENA, tickLimit = TestPlayers.READY + 5)
+  public void aGuildMasterTurnsOnAHumanWhoStrikesHim(final TestContext context) {
+    final GuildMasterEntity master = master(context);
+    final ServerPlayerEntity human = TestPlayers.human(context, new BlockPos(1, 2, 3));
+    context.runAtTick(
+        TestPlayers.READY,
+        () -> {
+          context.assertFalse(master.canTarget(human), "he leaves a human alone");
+          master.damage(context.getWorld().getDamageSources().playerAttack(human), 1.0F);
+          final GuildRevengeGoal revenge = new GuildRevengeGoal(master);
+          context.assertTrue(revenge.canStart(), "a human's blow is answered");
+          revenge.start();
+          context.assertTrue(master.getTarget() == human, "he turns on the human");
+          TestPlayers.finish(context, human);
+        });
   }
 }

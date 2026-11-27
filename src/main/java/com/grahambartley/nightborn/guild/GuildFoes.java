@@ -22,7 +22,6 @@ public final class GuildFoes {
     return fighter.foeOf(target)
         || HunterTargets.defends(
             target == fighter.getAttacker() || target == fighter.getTarget(),
-            target instanceof PlayerEntity,
             target instanceof GuildFighter);
   }
 }

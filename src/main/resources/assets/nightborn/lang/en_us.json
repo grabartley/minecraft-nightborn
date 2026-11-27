@@ -772,6 +772,8 @@
   "nightborn.setting.structures.wildVampireChance.tooltip": "Chance each night, for each player, that one wild vampire appears far from every player. 0 turns wild vampires off",
   "nightborn.setting.structures.wildVampireDistance": "Wild Vampire Distance",
   "nightborn.setting.structures.wildVampireDistance.tooltip": "How far, in blocks, from every player a wild vampire appears",
+  "nightborn.setting.structures.wildVampireHungryChance": "Wild Vampire Hungry Chance (%)",
+  "nightborn.setting.structures.wildVampireHungryChance.tooltip": "Chance that a wild vampire appears hungry, so it hunts on its first night",
   "entity.nightborn.vampire": "Vampire",
   "entity.nightborn.vampire_bat": "Vampire Bat",
   "item.nightborn.vampire_spawn_egg": "Vampire Spawn Egg",

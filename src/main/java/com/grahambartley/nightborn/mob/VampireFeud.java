@@ -4,17 +4,9 @@ public final class VampireFeud {
 
   private VampireFeud() {}
 
-  public static boolean answers(
-      final boolean struckBy,
-      final int strikerStage,
-      final int ownStage,
-      final boolean answersEveryStriker) {
-    return struckBy && (answersEveryStriker || strikerStage >= ownStage);
-  }
-
   public static boolean fights(
-      final boolean quarry, final boolean targetVampire, final boolean answersStrike) {
-    return quarry || !targetVampire || answersStrike;
+      final boolean quarry, final boolean targetVampire, final boolean struckBy) {
+    return quarry || !targetVampire || struckBy;
   }
 
   public static boolean angryAt(final boolean vampire, final boolean fighting) {

@@ -174,13 +174,14 @@ public class GuildMasterEntity extends MerchantEntity
   }
 
   @Override
-  public boolean onWatch() {
-    return MasterDuty.watches(hasCustomer(), swearing());
-  }
-
-  @Override
-  public boolean canFight() {
-    return !swearing();
+  public void setTarget(@Nullable final LivingEntity target) {
+    super.setTarget(target);
+    if (MasterDuty.breaksOath(swearing(), target != null)) {
+      swearTicks = 0;
+      sworn = null;
+      lowerCrucifix();
+      dataTracker.set(SWEARING, false);
+    }
   }
 
   @Override
@@ -189,7 +190,7 @@ public class GuildMasterEntity extends MerchantEntity
         getPositionTargetRange(),
         getPositionTarget().getSquaredDistance(pos),
         HunterEntity.CAMP_REACH,
-        getTarget() != null || (getAttacker() != null && canFight()));
+        getTarget() != null || getAttacker() != null);
   }
 
   private boolean swearing() {

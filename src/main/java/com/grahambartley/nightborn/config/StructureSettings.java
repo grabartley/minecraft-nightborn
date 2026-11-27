@@ -11,7 +11,8 @@ public record StructureSettings(
     int refillMinDays,
     int refillMaxDays,
     int wildVampireChance,
-    int wildVampireDistance) {
+    int wildVampireDistance,
+    int wildVampireHungryChance) {
 
   static final String SECTION = "structures";
 
@@ -38,6 +39,14 @@ public record StructureSettings(
   public static final IntSetting WILD_VAMPIRE_DISTANCE =
       new IntSetting(
           SECTION, "wildVampireDistance", 128, 64, 512, c -> c.structures().wildVampireDistance());
+  public static final IntSetting WILD_VAMPIRE_HUNGRY_CHANCE =
+      new IntSetting(
+          SECTION,
+          "wildVampireHungryChance",
+          50,
+          0,
+          100,
+          c -> c.structures().wildVampireHungryChance());
 
   public static final List<Setting<?>> SETTINGS =
       List.of(
@@ -49,7 +58,8 @@ public record StructureSettings(
           REFILL_MIN_DAYS,
           REFILL_MAX_DAYS,
           WILD_VAMPIRE_CHANCE,
-          WILD_VAMPIRE_DISTANCE);
+          WILD_VAMPIRE_DISTANCE,
+          WILD_VAMPIRE_HUNGRY_CHANCE);
 
   public StructureSettings {
     structureRarity = STRUCTURE_RARITY.clamp(structureRarity);
@@ -61,6 +71,7 @@ public record StructureSettings(
     refillMaxDays = Math.max(refillMinDays, REFILL_MAX_DAYS.clamp(refillMaxDays));
     wildVampireChance = WILD_VAMPIRE_CHANCE.clamp(wildVampireChance);
     wildVampireDistance = WILD_VAMPIRE_DISTANCE.clamp(wildVampireDistance);
+    wildVampireHungryChance = WILD_VAMPIRE_HUNGRY_CHANCE.clamp(wildVampireHungryChance);
   }
 
   static StructureSettings from(final SettingValues values) {
@@ -73,6 +84,7 @@ public record StructureSettings(
         values.get(REFILL_MIN_DAYS),
         values.get(REFILL_MAX_DAYS),
         values.get(WILD_VAMPIRE_CHANCE),
-        values.get(WILD_VAMPIRE_DISTANCE));
+        values.get(WILD_VAMPIRE_DISTANCE),
+        values.get(WILD_VAMPIRE_HUNGRY_CHANCE));
   }
 }

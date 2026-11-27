@@ -28,7 +28,7 @@ class StructureSettingsTest {
       "the constructor clamps both rarities to between a quarter and four times the spacing")
   void clamps(final int given, final int kept) {
     final StructureSettings settings =
-        new StructureSettings(given, given, 300, 24, 1024, 15, 40, 2, 128);
+        new StructureSettings(given, given, 300, 24, 1024, 15, 40, 2, 128, 50);
     assertEquals(kept, settings.structureRarity());
     assertEquals(kept, settings.campRarity());
   }
@@ -39,7 +39,7 @@ class StructureSettingsTest {
   void clampsGramophones(
       final int seconds, final int range, final int keptSeconds, final int keptRange) {
     final StructureSettings settings =
-        new StructureSettings(100, 100, seconds, range, 1024, 15, 40, 2, 128);
+        new StructureSettings(100, 100, seconds, range, 1024, 15, 40, 2, 128, 50);
     assertEquals(keptSeconds, settings.gramophoneSeconds());
     assertEquals(keptRange, settings.gramophoneRange());
   }
@@ -49,7 +49,7 @@ class StructureSettingsTest {
   @DisplayName("the constructor clamps how far a Guild Master's rumours reach")
   void clampsRumours(final int range, final int kept) {
     assertEquals(
-        kept, new StructureSettings(100, 100, 300, 24, range, 15, 40, 2, 128).rumourRange());
+        kept, new StructureSettings(100, 100, 300, 24, range, 15, 40, 2, 128, 50).rumourRange());
   }
 
   @ParameterizedTest(name = "{0} to {1} days are kept as {2} to {3}")
@@ -58,19 +58,25 @@ class StructureSettingsTest {
       "the constructor clamps how long a cleared structure stays empty, and never inverts it")
   void clampsRefill(final int min, final int max, final int keptMin, final int keptMax) {
     final StructureSettings settings =
-        new StructureSettings(100, 100, 300, 24, 1024, min, max, 2, 128);
+        new StructureSettings(100, 100, 300, 24, 1024, min, max, 2, 128, 50);
     assertEquals(keptMin, settings.refillMinDays());
     assertEquals(keptMax, settings.refillMaxDays());
   }
 
-  @ParameterizedTest(name = "a chance of {0} and a distance of {1} are kept as {2} and {3}")
-  @CsvSource({"-1, 0, 0, 64", "2, 128, 2, 128", "150, 900, 100, 512"})
-  @DisplayName("the constructor clamps how often and how far away wild vampires appear")
+  @ParameterizedTest(name = "chance {0}, distance {1}, hungry {2} are kept as {3}, {4} and {5}")
+  @CsvSource({"-1, 0, -5, 0, 64, 0", "2, 128, 50, 2, 128, 50", "150, 900, 140, 100, 512, 100"})
+  @DisplayName("the constructor clamps how often, how far away and how hungry wild vampires appear")
   void clampsWildVampires(
-      final int chance, final int distance, final int keptChance, final int keptDistance) {
+      final int chance,
+      final int distance,
+      final int hungry,
+      final int keptChance,
+      final int keptDistance,
+      final int keptHungry) {
     final StructureSettings settings =
-        new StructureSettings(100, 100, 300, 24, 1024, 15, 40, chance, distance);
+        new StructureSettings(100, 100, 300, 24, 1024, 15, 40, chance, distance, hungry);
     assertEquals(keptChance, settings.wildVampireChance());
     assertEquals(keptDistance, settings.wildVampireDistance());
+    assertEquals(keptHungry, settings.wildVampireHungryChance());
   }
 }

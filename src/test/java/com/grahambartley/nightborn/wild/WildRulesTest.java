@@ -31,22 +31,20 @@ class WildRulesTest {
 
   @ParameterizedTest(name = "{0}")
   @CsvSource({
-    "far at night, true, 400, 12, true, false, false",
-    "player came within reach, true, 144, 12, true, false, true",
-    "player gone, false, 0, 12, true, false, true",
-    "dawn came, true, 400, 12, false, false, true",
-    "struck, true, 400, 12, true, true, true"
+    "far at night, true, 400, 12, true, false",
+    "player came within reach, true, 144, 12, true, true",
+    "player gone, false, 0, 12, true, true",
+    "dawn came, true, 400, 12, false, true"
   })
-  @DisplayName("the watcher leaves when approached, struck, at dawn or when its player is gone")
+  @DisplayName("the watcher leaves when approached, at dawn or when its player is gone")
   void watcherLeaves(
       final String name,
       final boolean present,
       final double distanceSquared,
       final int leave,
       final boolean night,
-      final boolean struck,
       final boolean leaves) {
-    assertEquals(leaves, WildRules.watcherLeaves(present, distanceSquared, leave, night, struck));
+    assertEquals(leaves, WildRules.watcherLeaves(present, distanceSquared, leave, night));
   }
 
   @ParameterizedTest(name = "{0} blocks squared, keeping {1}: {2}")

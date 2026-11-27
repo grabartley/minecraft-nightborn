@@ -24,11 +24,6 @@ public abstract class BossVampireEntity extends VampireEntity implements ArenaBo
   }
 
   @Override
-  protected boolean answersEveryVampire() {
-    return true;
-  }
-
-  @Override
   protected void mobTick() {
     super.mobTick();
     showBar();

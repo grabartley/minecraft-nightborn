@@ -9,16 +9,20 @@ import net.minecraft.util.math.Box;
 
 public class HunterTargetGoal extends ActiveTargetGoal<LivingEntity> {
 
-  private final GuildFighter fighter;
+  static final double NEAR = 8.0;
 
   public <T extends MobEntity & GuildFighter> HunterTargetGoal(final T hunter) {
     super(hunter, LivingEntity.class, true, GuildFoes::hunts);
-    this.fighter = hunter;
   }
 
   @Override
   public boolean canStart() {
-    return fighter.onWatch() && super.canStart();
+    findClosestTarget();
+    return targetEntity != null
+        && HunterTargets.noticesNow(
+            mob.squaredDistanceTo(targetEntity),
+            NEAR,
+            mob.getRandom().nextInt(reciprocalChance) == 0);
   }
 
   public static double reach(final double followRange, final double seen) {

@@ -772,6 +772,8 @@
   "nightborn.setting.structures.wildVampireChance.tooltip": "每晚对每名玩家而言，在远离所有玩家处出现一只野生吸血鬼的几率。0 为关闭野生吸血鬼",
   "nightborn.setting.structures.wildVampireDistance": "野生吸血鬼距离",
   "nightborn.setting.structures.wildVampireDistance.tooltip": "野生吸血鬼出现在距每名玩家多少格之外",
+  "nightborn.setting.structures.wildVampireHungryChance": "野生吸血鬼饥饿几率（%）",
+  "nightborn.setting.structures.wildVampireHungryChance.tooltip": "野生吸血鬼出现时已饥饿的几率，饥饿者在第一夜便会狩猎",
   "entity.nightborn.vampire": "吸血鬼",
   "entity.nightborn.vampire_bat": "吸血蝙蝠",
   "item.nightborn.vampire_spawn_egg": "吸血鬼刷怪蛋",

@@ -31,4 +31,21 @@ class MobHungerTest {
   void startingBlood(final int threshold, final int roll, final int blood) {
     assertEquals(blood, MobHunger.startingBlood(threshold, roll));
   }
+
+  @ParameterizedTest(name = "threshold {0}, roll {1}: starts with {2}")
+  @CsvSource({
+    "14, 0, 6",
+    "14, 7, 13",
+    "14, 8, 6",
+    "14, -1, 13",
+    "1, 5, 0",
+    "30, 0, 10",
+    "30, 10, 20",
+    "0, 3, 3",
+    "-4, 3, 3"
+  })
+  @DisplayName("a vampire that starts hungry has between half its threshold and just under it")
+  void hungryBlood(final int threshold, final int roll, final int blood) {
+    assertEquals(blood, MobHunger.hungryBlood(threshold, roll));
+  }
 }

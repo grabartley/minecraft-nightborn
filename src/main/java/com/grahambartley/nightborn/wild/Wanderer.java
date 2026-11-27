@@ -29,6 +29,10 @@ public record Wanderer(Optional<UUID> watches, long lastNear) {
     return watches.isPresent();
   }
 
+  public Wanderer roaming() {
+    return new Wanderer(Optional.empty(), lastNear);
+  }
+
   public Wanderer seen(final long now) {
     return new Wanderer(watches, now);
   }

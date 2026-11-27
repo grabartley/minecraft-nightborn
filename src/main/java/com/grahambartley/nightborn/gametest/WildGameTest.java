@@ -14,6 +14,7 @@ import java.util.Optional;
 import java.util.UUID;
 import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.mob.ZombieEntity;
 import net.minecraft.entity.passive.VillagerEntity;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.test.GameTest;
@@ -28,18 +29,20 @@ public final class WildGameTest implements FabricGameTest {
   static final long MOST = 40L * NightTime.DAY_LENGTH;
 
   @GameTest(templateName = ARENA, tickLimit = 20)
-  public void aWatcherNeverTakesAVictimButAWildVampireMay(final TestContext context) {
+  public void aWatcherTakesNoVictimButFightsWhateverStrikesIt(final TestContext context) {
     final VillagerEntity villager = context.spawnEntity(EntityType.VILLAGER, new BlockPos(2, 2, 2));
     villager.setAiDisabled(true);
-    final VampireEntity wild = context.spawnEntity(NightbornMobs.VAMPIRE, new BlockPos(4, 2, 4));
-    wild.setAiDisabled(true);
+    final ZombieEntity zombie = context.spawnEntity(EntityType.ZOMBIE, new BlockPos(4, 2, 4));
+    zombie.setAiDisabled(true);
     final VampireEntity watcher = context.spawnEntity(NightbornMobs.VAMPIRE, new BlockPos(5, 2, 5));
     watcher.setAiDisabled(true);
-    final long now = context.getWorld().getTime();
-    WandererAttachment.set(wild, Wanderer.wild(now));
-    WandererAttachment.set(watcher, Wanderer.watching(new UUID(0, 1), now));
-    context.assertTrue(wild.canTarget(villager), "a wild vampire may take a villager");
-    context.assertFalse(watcher.canTarget(villager), "a watcher never takes anyone");
+    WandererAttachment.set(
+        watcher, Wanderer.watching(new UUID(0, 1), context.getWorld().getTime()));
+    context.assertFalse(watcher.hunts(villager), "a watcher never takes a victim");
+    watcher.damage(context.getWorld().getDamageSources().mobAttack(zombie), 1.0F);
+    context.assertTrue(watcher.canTarget(zombie), "a struck watcher turns on its attacker");
+    context.assertFalse(
+        WandererAttachment.get(watcher).orElseThrow().watcher(), "and stops watching to fight");
     context.complete();
   }
 
