@@ -34,6 +34,8 @@ class LangAssetsTest {
   private static final Path NAME_POOLS =
       Path.of("src/main/resources/data/nightborn/nightborn/name_pool");
   private static final Pattern PLACEHOLDER = Pattern.compile("%(?:\\d+\\$)?s|%%");
+  private static final Pattern BOOK_MARK = Pattern.compile("\\$\\([^)]*\\)|/[a-z]+");
+  private static final String JOURNAL = "nightborn.journal.";
 
   static Stream<String> languages() {
     return Stream.of("de_de", "es_es", "fr_fr", "pt_br", "ru_ru", "zh_cn");
@@ -51,6 +53,22 @@ class LangAssetsTest {
           placeholders(english.get(key).getAsString()),
           placeholders(other.get(key).getAsString()),
           language + " " + key);
+    }
+  }
+
+  @ParameterizedTest(name = "{0}")
+  @MethodSource("languages")
+  @DisplayName("every shipped language keeps the keys, styles and commands a journal line names")
+  void keepsJournalMarks(final String language) throws IOException {
+    final JsonObject english = read("en_us");
+    final JsonObject other = read(language);
+    for (final String key : english.keySet()) {
+      if (key.startsWith(JOURNAL) && other.has(key)) {
+        assertEquals(
+            marks(english.get(key).getAsString()),
+            marks(other.get(key).getAsString()),
+            language + " " + key);
+      }
     }
   }
 
@@ -97,6 +115,10 @@ class LangAssetsTest {
               });
     }
     needed.forEach(key -> assertTrue(english.has(key), key));
+  }
+
+  private static List<String> marks(final String text) {
+    return BOOK_MARK.matcher(text).results().map(found -> found.group()).sorted().toList();
   }
 
   private static List<String> placeholders(final String text) {

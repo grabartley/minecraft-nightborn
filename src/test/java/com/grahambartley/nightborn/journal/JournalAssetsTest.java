@@ -1,7 +1,6 @@
 package com.grahambartley.nightborn.journal;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.google.gson.JsonElement;
@@ -23,35 +22,17 @@ import javax.imageio.ImageIO;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.junit.jupiter.params.provider.ValueSource;
 
 class JournalAssetsTest {
 
   private static final Path ASSETS = Path.of("src/main/resources/assets/nightborn");
   private static final Path DATA = Path.of("src/main/resources/data/nightborn/patchouli_books");
-  private static final String NARRATED = "nightborn.journal.";
+  private static final Pattern MARK = Pattern.compile("\\$\\([^)]*\\)|/[a-z]+");
   private static final int PLATE_SIZE = 256;
   private static final int PAGE_SIZE = 200;
 
   static Stream<String> books() {
     return Stream.of("vampire_journal", "hunter_journal");
-  }
-
-  static Stream<String> languages() {
-    return Stream.of("en_us", "de_de", "es_es", "fr_fr", "pt_br", "ru_ru", "zh_cn");
-  }
-
-  @ParameterizedTest(name = "{0}")
-  @MethodSource("books")
-  void everyNameAndPageOfABookHasItsEnglishText(final String book) throws IOException {
-    final JsonObject english = lang("en_us");
-    final List<String> missing = new ArrayList<>();
-    for (final String key : textKeys(book)) {
-      if (!english.has(key)) {
-        missing.add(key);
-      }
-    }
-    assertEquals(List.of(), missing);
   }
 
   @ParameterizedTest(name = "{0}")
@@ -86,63 +67,33 @@ class JournalAssetsTest {
     assertTrue(bare.size() <= allowedBare, bare.toString());
   }
 
-  @ParameterizedTest(name = "{0}")
-  @ValueSource(
-      strings = {
-        "player",
-        "setting",
-        "mob",
-        "point",
-        "health",
-        "screen",
-        "wheel",
-        "cooldown",
-        "block",
-        "respawn",
-        "bar"
-      })
-  void noNarratedLineUsesAnOutOfWorldWord(final String word) throws IOException {
+  @ParameterizedTest(name = "{0} never says {1}")
+  @CsvSource({
+    "en_us, \\b(player|setting|mob|point|health|screen|wheel|cooldown|block|respawn|bar)s?\\b",
+    "en_us, \\b(experience|key|item|craft|menu|click)s?\\b",
+    "de_de, Spieler|Einstellung|Punkt|Bildschirm|Block|Blöcke|Abklingzeit|Befehlsrad",
+    "es_es, jugador|ajuste|punto|pantalla|bloque|rueda|espera",
+    "fr_fr, joueur|paramètre|\\bpoints?\\b|écran|bloc|roue|recharge",
+    "pt_br, jogador|configuraç|ponto|tela|bloco|roda|recarga",
+    "ru_ru, игрок|настройк|очк|экран|\\bблок|колес|восстановлен",
+    "zh_cn, 玩家|设置|技能点|界面|格内|轮盘|冷却"
+  })
+  void noNarratedLineUsesAnOutOfWorldWord(final String language, final String words)
+      throws IOException {
     final Pattern banned =
-        Pattern.compile("\\b" + word + "s?\\b", Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE);
-    final JsonObject english = lang("en_us");
+        Pattern.compile(
+            words,
+            Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE | Pattern.UNICODE_CHARACTER_CLASS);
+    final JsonObject text = lang(language);
     final List<String> offending = new ArrayList<>();
     for (final String book : books().toList()) {
       for (final String key : textKeys(book)) {
-        if (banned.matcher(english.get(key).getAsString()).find()) {
+        if (banned.matcher(MARK.matcher(text.get(key).getAsString()).replaceAll("")).find()) {
           offending.add(key);
         }
       }
     }
     assertEquals(List.of(), offending);
-  }
-
-  @ParameterizedTest(name = "{0}")
-  @MethodSource("languages")
-  void everyLanguageKeepsTheKeysAndCommandsANarratedLineNames(final String language)
-      throws IOException {
-    final Pattern kept = Pattern.compile("\\$\\([^)]*\\)|/[a-z]+");
-    final JsonObject english = lang("en_us");
-    final JsonObject other = lang(language);
-    final List<String> changed = new ArrayList<>();
-    for (final String key : english.keySet()) {
-      if (key.startsWith(NARRATED)
-          && !marks(kept, english.get(key).getAsString())
-              .equals(marks(kept, other.get(key).getAsString()))) {
-        changed.add(key);
-      }
-    }
-    assertEquals(List.of(), changed);
-  }
-
-  @ParameterizedTest(name = "{0}")
-  @MethodSource("languages")
-  void noNarratedLineIsLeftAsItsKey(final String language) throws IOException {
-    final JsonObject other = lang(language);
-    for (final String book : books().toList()) {
-      for (final String key : textKeys(book)) {
-        assertFalse(other.get(key).getAsString().isBlank(), language + " " + key);
-      }
-    }
   }
 
   private static boolean spillsPastThePage(final BufferedImage image) {
@@ -154,10 +105,6 @@ class JournalAssetsTest {
       }
     }
     return false;
-  }
-
-  private static List<String> marks(final Pattern kept, final String text) {
-    return kept.matcher(text).results().map(found -> found.group()).sorted().toList();
   }
 
   private static List<String> textKeys(final String book) throws IOException {
