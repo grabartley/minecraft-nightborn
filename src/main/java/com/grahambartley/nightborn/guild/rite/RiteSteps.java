@@ -35,10 +35,18 @@ public final class RiteSteps {
     return switch (way) {
       case NONE -> Step.FAIL_NONE;
       case UNSAFE -> Step.FAIL_UNSAFE;
-      case READY -> Step.BEGIN_LEAVE;
+      case READY -> age % timing.castTicks() == 0 ? Step.BEGIN_LEAVE : Step.CAST;
       case SEARCHING -> late ? Step.FAIL_NONE : Step.CAST;
       case LOADING -> late ? Step.FAIL_UNSAFE : Step.CAST;
     };
+  }
+
+  public static boolean repeats(final int age, final int leftAt, final GuildRite.Timing timing) {
+    return leftAt == NOT_YET && age > 0 && age % timing.castTicks() == 0;
+  }
+
+  public static int castTick(final int age, final GuildRite.Timing timing) {
+    return age % timing.castTicks();
   }
 
   public static boolean settles(final int sinceArrival, final GuildRite.Timing timing) {

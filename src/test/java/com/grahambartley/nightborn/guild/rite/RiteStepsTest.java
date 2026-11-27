@@ -28,7 +28,9 @@ class RiteStepsTest {
     "249, -1, LOADING, CAST",
     "250, -1, SEARCHING, FAIL_NONE",
     "250, -1, LOADING, FAIL_UNSAFE",
-    "120, -1, READY, BEGIN_LEAVE",
+    "100, -1, READY, BEGIN_LEAVE",
+    "120, -1, READY, CAST",
+    "150, -1, READY, BEGIN_LEAVE",
     "51, 50, READY, LEAVE",
     "77, 50, READY, LEAVE",
     "78, 50, READY, DEPART",
@@ -73,5 +75,20 @@ class RiteStepsTest {
   void settles(final int settleTicks, final int sinceArrival, final boolean cue) {
     assertEquals(
         cue, RiteSteps.settles(sinceArrival, new GuildRite.Timing(50, 28, settleTicks, 200)));
+  }
+
+  @ParameterizedTest(name = "age {0}, left at {1} -> casts again {2}, cast tick {3}")
+  @CsvSource({
+    "0, -1, false, 0",
+    "49, -1, false, 49",
+    "50, -1, true, 0",
+    "75, -1, false, 25",
+    "100, -1, true, 0",
+    "100, 50, false, 0"
+  })
+  @DisplayName("while the way is sought the Guild Master casts the rite again, round after round")
+  void rounds(final int age, final int leftAt, final boolean repeats, final int castTick) {
+    assertEquals(repeats, RiteSteps.repeats(age, leftAt, TIMING));
+    assertEquals(castTick, RiteSteps.castTick(age, TIMING));
   }
 }

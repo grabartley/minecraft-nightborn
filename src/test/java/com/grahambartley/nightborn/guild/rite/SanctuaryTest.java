@@ -31,4 +31,11 @@ class SanctuaryTest {
   void forfeits(final boolean sheltered, final boolean strikesAnother, final boolean ends) {
     assertEquals(ends, Sanctuary.forfeits(sheltered, strikesAnother));
   }
+
+  @ParameterizedTest(name = "{0} seconds of shelter last {1} ticks")
+  @CsvSource({"0, 0", "1, 20", "3, 60", "30, 600", "-2, 0"})
+  @DisplayName("the shelter lasts its setting in seconds, and none at all at zero")
+  void ticks(final int seconds, final int ticks) {
+    assertEquals(ticks, Sanctuary.ticks(seconds));
+  }
 }

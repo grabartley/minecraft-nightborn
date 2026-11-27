@@ -51,7 +51,7 @@ final class RiteLight {
                                 at.y,
                                 at.z,
                                 event,
-                                SoundCategory.NEUTRAL,
+                                SoundCategory.PLAYERS,
                                 cue.volume(),
                                 cue.pitch())));
   }

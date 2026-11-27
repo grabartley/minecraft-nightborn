@@ -18,9 +18,12 @@ public final class Sanctuary {
   public static void shelter(final LivingEntity arrived, final int seconds) {
     if (seconds > 0) {
       arrived.addStatusEffect(
-          new StatusEffectInstance(
-              SanctuaryEffect.ENTRY, seconds * RiteAccess.TICKS_PER_SECOND, 0, true, false, true));
+          new StatusEffectInstance(SanctuaryEffect.ENTRY, ticks(seconds), 0, true, false, true));
     }
+  }
+
+  public static int ticks(final int seconds) {
+    return Math.max(0, seconds) * RiteAccess.TICKS_PER_SECOND;
   }
 
   public static boolean sheltered(final LivingEntity entity) {

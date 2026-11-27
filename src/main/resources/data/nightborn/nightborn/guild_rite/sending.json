@@ -1,8 +1,8 @@
 {
   "timing": {
-    "cast_ticks": 52,
-    "leave_ticks": 38,
-    "settle_ticks": 2,
+    "cast_ticks": 60,
+    "leave_ticks": 40,
+    "settle_ticks": 6,
     "wait_ticks": 200
   },
   "clips": {
@@ -18,7 +18,8 @@
       { "sound": "minecraft:block.bell.resonate", "volume": 0.5, "pitch": 1.2, "delay": 22 },
       { "sound": "minecraft:block.amethyst_block.chime", "volume": 0.7, "pitch": 1.0, "delay": 26 },
       { "sound": "minecraft:block.amethyst_block.chime", "volume": 0.8, "pitch": 1.25, "delay": 36 },
-      { "sound": "minecraft:block.amethyst_block.chime", "volume": 0.9, "pitch": 1.5, "delay": 46 }
+      { "sound": "minecraft:block.amethyst_block.chime", "volume": 0.9, "pitch": 1.5, "delay": 46 },
+      { "sound": "minecraft:block.bell.resonate", "volume": 0.6, "pitch": 1.5, "delay": 52 }
     ],
     "leave": [
       { "sound": "minecraft:block.beacon.power_select", "volume": 0.9, "pitch": 1.2 },

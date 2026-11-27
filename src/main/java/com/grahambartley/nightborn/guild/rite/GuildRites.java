@@ -9,14 +9,13 @@ import com.grahambartley.nightborn.guild.GuildRumour;
 import com.grahambartley.nightborn.guild.rite.RiteSteps.Way;
 import com.grahambartley.nightborn.network.PlayerCues;
 import com.grahambartley.nightborn.server.ServerConfigService;
-import com.grahambartley.nightborn.structure.NearestStructures.Found;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
+import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
-import net.minecraft.item.Items;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
@@ -38,21 +37,23 @@ public final class GuildRites {
     private final ServerWorld world;
     private final Vec3d from;
     private final GuildRite rite;
-    private final CompletableFuture<Optional<BlockPos>> search;
+    private final CompletableFuture<Optional<RiteWay>> search;
     private int age;
     private int leftAt = RiteSteps.NOT_YET;
     private int arrivedAt = RiteSteps.NOT_YET;
     private Way way = Way.SEARCHING;
-    private BlockPos entrance = BlockPos.ORIGIN;
+    private Optional<RiteWay> route = Optional.empty();
     private BlockPos landing = BlockPos.ORIGIN;
     private Optional<ZoneMarkEntity> light = Optional.empty();
+    private boolean hunterStruck;
+    private boolean masterStruck;
 
     private Sending(
         final ServerPlayerEntity hunter,
         final GuildMasterEntity master,
         final ServerWorld world,
         final GuildRite rite,
-        final CompletableFuture<Optional<BlockPos>> search) {
+        final CompletableFuture<Optional<RiteWay>> search) {
       this.hunter = hunter;
       this.master = master;
       this.world = world;
@@ -64,6 +65,10 @@ public final class GuildRites {
     private boolean casting() {
       return arrivedAt == RiteSteps.NOT_YET;
     }
+
+    private Text teller() {
+      return master.getDisplayName();
+    }
   }
 
   private GuildRites() {}
@@ -71,6 +76,13 @@ public final class GuildRites {
   static void register() {
     ServerTickEvents.END_SERVER_TICK.register(server -> tick());
     ServerLifecycleEvents.SERVER_STOPPED.register(server -> clearAll());
+    ServerLivingEntityEvents.AFTER_DAMAGE.register(
+        (struck, source, dealt, taken, blocked) ->
+            SENDINGS.forEach(
+                sending -> {
+                  sending.hunterStruck |= sending.hunter == struck;
+                  sending.masterStruck |= sending.master == struck;
+                }));
   }
 
   public static void clearAll() {
@@ -86,48 +98,49 @@ public final class GuildRites {
     if (rite.isEmpty()) {
       return;
     }
+    final Text teller = master.getDisplayName();
     if (busy(hunter, master)) {
-      tell(hunter, master, "busy");
+      hunter.sendMessage(RiteSpeech.Line.BUSY.by(teller), false);
       return;
     }
     final GuildSettings settings = ServerConfigService.current().guild();
     final long wait = RiteAccess.waitSeconds(now(world), RiteCooldownAttachment.readyAt(hunter));
-    final RiteAccess.Refusal refusal =
-        RiteAccess.refusal(
-            new RiteAccess.Standing(
-                GuildMembership.isHunter(hunter),
-                OathAttachment.get(hunter).rank(),
-                emeralds(hunter),
-                wait),
-            new RiteAccess.Terms(settings.riteMinRank(), settings.ritePrice()));
-    if (refusal != RiteAccess.Refusal.NONE) {
-      hunter.sendMessage(refused(refusal, master, settings.ritePrice(), wait), false);
+    final Optional<Text> refused =
+        RiteSpeech.refused(
+            RiteAccess.refusal(
+                new RiteAccess.Standing(
+                    GuildMembership.isHunter(hunter),
+                    OathAttachment.get(hunter).rank(),
+                    RiteTithe.held(hunter),
+                    wait),
+                new RiteAccess.Terms(settings.riteMinRank(), settings.ritePrice())),
+            teller,
+            settings.ritePrice(),
+            wait);
+    if (refused.isPresent()) {
+      hunter.sendMessage(refused.get(), false);
       return;
     }
-    final CompletableFuture<Optional<BlockPos>> search = new CompletableFuture<>();
+    final GuildRite.Reach reach = rite.get().reach();
+    final CompletableFuture<Optional<RiteWay>> search = new CompletableFuture<>();
     GuildRumour.nearestHouse(
-        world, master.getBlockPos(), hunter, nearest -> search.complete(nearest.map(Found::pos)));
+        world,
+        master.getBlockPos(),
+        hunter,
+        nearest ->
+            search.complete(
+                nearest.map(
+                    house ->
+                        new RiteWay(
+                            house.pos(), loaded -> RiteGround.door(loaded, house, reach)))));
     begin(hunter, master, rite.get(), search);
-  }
-
-  static Text refused(
-      final RiteAccess.Refusal refusal,
-      final GuildMasterEntity master,
-      final int price,
-      final long wait) {
-    final Text teller = master.getDisplayName();
-    return switch (refusal) {
-      case WAIT -> Text.translatable("nightborn.guild.rite.wait", teller, RiteAccess.clock(wait));
-      case PRICE -> Text.translatable("nightborn.guild.rite.price", teller, price);
-      case RANK, NONE -> Text.translatable("nightborn.guild.rite.rank", teller);
-    };
   }
 
   public static void begin(
       final ServerPlayerEntity hunter,
       final GuildMasterEntity master,
       final GuildRite rite,
-      final CompletableFuture<Optional<BlockPos>> search) {
+      final CompletableFuture<Optional<RiteWay>> search) {
     if (!(master.getWorld() instanceof ServerWorld world) || busy(hunter, master)) {
       return;
     }
@@ -140,17 +153,12 @@ public final class GuildRites {
             rite.light(),
             timing.castTicks() + timing.waitTicks() + timing.leaveTicks() + LIGHT_SPARE_TICKS);
     master.showPower(rite.clips().cast());
-    hunter.sendMessage(
-        Text.translatable("nightborn.guild.rite.begun", master.getDisplayName()), true);
+    hunter.sendMessage(RiteSpeech.Line.BEGUN.by(sending.teller()), true);
     SENDINGS.add(sending);
   }
 
   public static boolean underway(final ServerPlayerEntity hunter) {
     return SENDINGS.stream().anyMatch(sending -> sending.hunter == hunter && sending.casting());
-  }
-
-  public static int emeralds(final ServerPlayerEntity hunter) {
-    return hunter.getInventory().count(Items.EMERALD);
   }
 
   private static boolean busy(final ServerPlayerEntity hunter, final GuildMasterEntity master) {
@@ -180,23 +188,22 @@ public final class GuildRites {
     if (RiteBreaks.broken(
         new RiteBreaks.Hunter(
             hunter.isAlive() && hunter.getWorld() == sending.world,
-            hunter.hurtTime > 0,
+            sending.hunterStruck,
             hunter.getPos().squaredDistanceTo(sending.from)),
         new RiteBreaks.Master(
             master.isAlive() && !master.isRemoved(),
-            master.hurtTime > 0,
+            sending.masterStruck,
             master.getTarget() != null),
         rite.reach().breakDistance())) {
-      return fail(sending, Text.translatable("nightborn.guild.rite.broken", teller(sending)));
+      return fail(sending, RiteSpeech.Line.BROKEN.by(sending.teller()));
     }
     master.getNavigation().stop();
     master.getLookControl().lookAt(hunter, LOOK_TURN, LOOK_TURN);
     find(sending);
     final boolean goesOn =
         switch (RiteSteps.at(sending.age, sending.leftAt, rite.timing(), sending.way)) {
-          case FAIL_NONE ->
-              fail(sending, Text.translatable("nightborn.guild.rite.none", teller(sending)));
-          case FAIL_UNSAFE -> unsafe(sending);
+          case FAIL_NONE -> fail(sending, RiteSpeech.Line.NONE.by(sending.teller()));
+          case FAIL_UNSAFE -> fail(sending, RiteSpeech.Line.UNSAFE.by(sending.teller()));
           case BEGIN_LEAVE -> leave(sending);
           case DEPART -> depart(sending);
           case CAST, LEAVE -> glow(sending);
@@ -208,33 +215,46 @@ public final class GuildRites {
   private static void find(final Sending sending) {
     final GuildRite.Reach reach = sending.rite.reach();
     if (sending.way == Way.SEARCHING && sending.search.isDone()) {
-      final Optional<BlockPos> entrance =
+      sending.route =
           sending.search.isCompletedExceptionally()
               ? Optional.empty()
               : sending.search.getNow(Optional.empty());
-      sending.entrance = entrance.orElse(BlockPos.ORIGIN);
-      sending.way = entrance.isPresent() ? Way.LOADING : Way.NONE;
+      sending.way = sending.route.isPresent() ? Way.LOADING : Way.NONE;
     }
-    if (sending.way == Way.LOADING || sending.way == Way.READY) {
-      RiteTicket.keep(sending.world, sending.entrance);
+    if (sending.route.isEmpty() || (sending.way != Way.LOADING && sending.way != Way.READY)) {
+      return;
     }
+    final RiteWay route = sending.route.get();
+    RiteTicket.keep(sending.world, route.entrance());
     if (sending.way == Way.LOADING
-        && RiteTicket.loaded(sending.world, sending.entrance, reach.searchRadius())) {
-      final Optional<BlockPos> landing = RiteGround.landing(sending.world, sending.entrance, reach);
+        && RiteTicket.loaded(sending.world, route.entrance(), reach.searchRadius())) {
+      final Optional<BlockPos> landing =
+          route
+              .door()
+              .apply(sending.world)
+              .flatMap(door -> RiteGround.landing(sending.world, door, reach));
       sending.landing = landing.orElse(BlockPos.ORIGIN);
       sending.way = landing.isPresent() ? Way.READY : Way.UNSAFE;
     }
   }
 
   private static boolean glow(final Sending sending) {
-    final GuildRite.Sounds sounds = sending.rite.sounds();
+    final GuildRite rite = sending.rite;
+    if (RiteSteps.repeats(sending.age, sending.leftAt, rite.timing())) {
+      sending.master.showPower(rite.clips().cast());
+    }
     if (sending.leftAt == RiteSteps.NOT_YET) {
-      RiteLight.sounds(sending.world, sending.from, sounds.cast(), sending.age);
+      RiteLight.sounds(
+          sending.world,
+          sending.from,
+          rite.sounds().cast(),
+          RiteSteps.castTick(sending.age, rite.timing()));
     } else {
-      RiteLight.sounds(sending.world, sending.from, sounds.leave(), sending.age - sending.leftAt);
+      RiteLight.sounds(
+          sending.world, sending.from, rite.sounds().leave(), sending.age - sending.leftAt);
     }
     if (sending.age % MOTE_TICKS == 0) {
-      RiteLight.motes(sending.world, sending.from, sending.rite.light());
+      RiteLight.motes(sending.world, sending.from, rite.light());
     }
     return true;
   }
@@ -250,11 +270,13 @@ public final class GuildRites {
     final GuildRite rite = sending.rite;
     final GuildSettings settings = ServerConfigService.current().guild();
     if (!RiteGround.safe(sending.world, sending.landing, rite.reach())) {
-      return unsafe(sending);
+      return fail(sending, RiteSpeech.Line.UNSAFE.by(sending.teller()));
     }
-    if (!pay(hunter, settings.ritePrice())) {
+    if (!RiteTithe.pay(hunter, settings.ritePrice())) {
       return fail(
-          sending, refused(RiteAccess.Refusal.PRICE, sending.master, settings.ritePrice(), 0L));
+          sending,
+          RiteSpeech.refused(RiteAccess.Refusal.PRICE, sending.teller(), settings.ritePrice(), 0L)
+              .orElseThrow());
     }
     final Vec3d to = Vec3d.ofBottomCenter(sending.landing);
     RiteLight.motes(sending.world, sending.from, rite.light());
@@ -270,7 +292,7 @@ public final class GuildRites {
             to,
             rite.light(),
             rite.timing().settleTicks()
-                + settings.riteShieldSeconds() * RiteAccess.TICKS_PER_SECOND
+                + Sanctuary.ticks(settings.riteShieldSeconds())
                 + LIGHT_SPARE_TICKS);
     RiteLight.motes(sending.world, to, rite.light());
     sending.arrivedAt = sending.age + 1;
@@ -290,23 +312,6 @@ public final class GuildRites {
     return !RiteSteps.over(sinceArrival, sending.rite.timing(), Sanctuary.sheltered(hunter));
   }
 
-  private static boolean pay(final ServerPlayerEntity hunter, final int price) {
-    if (emeralds(hunter) < price) {
-      return false;
-    }
-    hunter
-        .getInventory()
-        .remove(
-            stack -> stack.isOf(Items.EMERALD),
-            price,
-            hunter.playerScreenHandler.getCraftingInput());
-    return true;
-  }
-
-  private static boolean unsafe(final Sending sending) {
-    return fail(sending, Text.translatable("nightborn.guild.rite.unsafe", teller(sending)));
-  }
-
   private static boolean fail(final Sending sending, final Text why) {
     sending.hunter.sendMessage(why, false);
     sending.master.showPower("");
@@ -314,16 +319,6 @@ public final class GuildRites {
       PlayerCues.stopPower(sending.hunter);
     }
     return false;
-  }
-
-  private static Text teller(final Sending sending) {
-    return sending.master.getDisplayName();
-  }
-
-  private static void tell(
-      final ServerPlayerEntity hunter, final GuildMasterEntity master, final String key) {
-    hunter.sendMessage(
-        Text.translatable("nightborn.guild.rite." + key, master.getDisplayName()), false);
   }
 
   private static void dim(final Sending sending) {

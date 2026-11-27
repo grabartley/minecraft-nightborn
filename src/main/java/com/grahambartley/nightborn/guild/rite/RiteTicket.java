@@ -27,6 +27,9 @@ public final class RiteTicket {
 
   public static boolean loaded(final ServerWorld world, final BlockPos at, final int radius) {
     return world.shouldTickEntity(at)
-        && span(at, radius).stream().allMatch(chunk -> world.isChunkLoaded(chunk.x, chunk.z));
+        && span(at, radius).stream()
+            .allMatch(
+                chunk ->
+                    world.isChunkLoaded(chunk.x, chunk.z) && world.isChunkLoaded(chunk.toLong()));
   }
 }

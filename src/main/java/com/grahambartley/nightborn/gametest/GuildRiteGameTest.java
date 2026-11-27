@@ -6,11 +6,14 @@ import com.grahambartley.nightborn.guild.rite.GuildRite;
 import com.grahambartley.nightborn.guild.rite.GuildRiteOrder;
 import com.grahambartley.nightborn.guild.rite.GuildRites;
 import com.grahambartley.nightborn.guild.rite.RiteCooldownAttachment;
+import com.grahambartley.nightborn.guild.rite.RiteTithe;
+import com.grahambartley.nightborn.guild.rite.RiteWay;
 import com.grahambartley.nightborn.guild.rite.Sanctuary;
 import com.grahambartley.nightborn.mob.NightbornMobs;
 import com.grahambartley.nightborn.mob.VampireEntity;
 import com.grahambartley.nightborn.rank.Ranking;
 import com.grahambartley.nightborn.server.ServerConfigService;
+import com.grahambartley.nightborn.structure.Threshold;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
@@ -22,6 +25,7 @@ import net.minecraft.test.BeforeBatch;
 import net.minecraft.test.GameTest;
 import net.minecraft.test.TestContext;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Direction;
 
 public class GuildRiteGameTest implements FabricGameTest {
 
@@ -29,8 +33,10 @@ public class GuildRiteGameTest implements FabricGameTest {
   static final String BATCH = "guild-rite";
   static final BlockPos MASTER = new BlockPos(4, 2, 4);
   static final BlockPos HUNTER = new BlockPos(2, 2, 4);
+  static final BlockPos DOORSTEP = new BlockPos(5, 1, 6);
   static final BlockPos ENTRANCE = new BlockPos(6, 2, 6);
-  static final BlockPos MID_AIR = new BlockPos(6, 3, 6);
+  static final BlockPos NO_FLOOR = new BlockPos(5, 2, 6);
+  static final int SHELTER_TICKS = 3 * 20;
   static final int SPARE = 10;
   static final int PURSE = 20;
 
@@ -70,19 +76,22 @@ public class GuildRiteGameTest implements FabricGameTest {
     return TestPlayers.READY + rite.timing().castTicks() + rite.timing().leaveTicks() + SPARE;
   }
 
-  private static CompletableFuture<Optional<BlockPos>> heardOf(
-      final TestContext context, final BlockPos relative) {
-    return CompletableFuture.completedFuture(Optional.of(context.getAbsolutePos(relative)));
+  private static CompletableFuture<Optional<RiteWay>> heardOf(
+      final TestContext context, final BlockPos doorstep) {
+    final BlockPos floor = context.getAbsolutePos(doorstep);
+    return CompletableFuture.completedFuture(
+        Optional.of(
+            new RiteWay(floor.up(), world -> Optional.of(new Threshold(floor, Direction.EAST)))));
   }
 
-  @GameTest(templateName = ARENA, batchId = BATCH, tickLimit = TestPlayers.READY + 140)
+  @GameTest(templateName = ARENA, batchId = BATCH, tickLimit = TestPlayers.READY + 220)
   public void aSwornHunterIsSentToTheEntranceAndShelteredThere(final TestContext context) {
     final GuildMasterEntity master = guildMaster(context);
     final ServerPlayerEntity hunter = payingHunter(context);
     final GuildRite rite = rite(context);
     context.runAtTick(
         TestPlayers.READY,
-        () -> GuildRites.begin(hunter, master, rite, heardOf(context, ENTRANCE)));
+        () -> GuildRites.begin(hunter, master, rite, heardOf(context, DOORSTEP)));
     context.runAtTick(
         TestPlayers.READY + 5,
         () -> context.assertTrue(GuildRites.underway(hunter), "the rite is being cast"));
@@ -102,21 +111,29 @@ public class GuildRiteGameTest implements FabricGameTest {
           context.assertTrue(
               RiteCooldownAttachment.readyAt(hunter) > 0L, "the hunter must wait to ask again");
           context.assertEquals(
-              GuildRites.emeralds(hunter),
+              RiteTithe.held(hunter),
               PURSE - ServerConfigService.current().guild().ritePrice(),
               "the tithe is paid once");
+        });
+    context.runAtTick(
+        over(rite) + SHELTER_TICKS + SPARE,
+        () -> {
+          context.assertFalse(Sanctuary.sheltered(hunter), "the shelter has run out");
+          context.assertTrue(
+              hunter.damage(hunter.getDamageSources().generic(), 1.0F),
+              "harm lands again once the shelter is over");
           TestPlayers.finish(context, hunter);
         });
   }
 
-  @GameTest(templateName = ARENA, batchId = BATCH, tickLimit = TestPlayers.READY + 140)
+  @GameTest(templateName = ARENA, batchId = BATCH, tickLimit = TestPlayers.READY + 160)
   public void aWoundBreaksTheRiteAndNobodyIsMoved(final TestContext context) {
     final GuildMasterEntity master = guildMaster(context);
     final ServerPlayerEntity hunter = payingHunter(context);
     final GuildRite rite = rite(context);
     context.runAtTick(
         TestPlayers.READY,
-        () -> GuildRites.begin(hunter, master, rite, heardOf(context, ENTRANCE)));
+        () -> GuildRites.begin(hunter, master, rite, heardOf(context, DOORSTEP)));
     context.runAtTick(
         TestPlayers.READY + 10, () -> hunter.damage(hunter.getDamageSources().generic(), 1.0F));
     context.runAtTick(
@@ -132,18 +149,19 @@ public class GuildRiteGameTest implements FabricGameTest {
               RiteCooldownAttachment.readyAt(hunter),
               RiteCooldownAttachment.READY,
               "a broken rite costs no wait");
-          context.assertEquals(GuildRites.emeralds(hunter), PURSE, "a broken rite costs nothing");
+          context.assertEquals(RiteTithe.held(hunter), PURSE, "a broken rite costs nothing");
           TestPlayers.finish(context, hunter);
         });
   }
 
-  @GameTest(templateName = ARENA, batchId = BATCH, tickLimit = TestPlayers.READY + 140)
+  @GameTest(templateName = ARENA, batchId = BATCH, tickLimit = TestPlayers.READY + 160)
   public void withNoSafeGroundAtTheEntranceNobodyIsMoved(final TestContext context) {
     final GuildMasterEntity master = guildMaster(context);
     final ServerPlayerEntity hunter = payingHunter(context);
     final GuildRite rite = exact(rite(context));
     context.runAtTick(
-        TestPlayers.READY, () -> GuildRites.begin(hunter, master, rite, heardOf(context, MID_AIR)));
+        TestPlayers.READY,
+        () -> GuildRites.begin(hunter, master, rite, heardOf(context, NO_FLOOR)));
     context.runAtTick(
         over(rite),
         () -> {
@@ -151,7 +169,7 @@ public class GuildRiteGameTest implements FabricGameTest {
           context.assertEquals(
               hunter.getBlockPos(), context.getAbsolutePos(HUNTER), "the hunter was not moved");
           context.assertFalse(Sanctuary.sheltered(hunter), "no shelter without a sending");
-          context.assertEquals(GuildRites.emeralds(hunter), PURSE, "a failed rite costs nothing");
+          context.assertEquals(RiteTithe.held(hunter), PURSE, "a failed rite costs nothing");
           TestPlayers.finish(context, hunter);
         });
   }
@@ -168,7 +186,7 @@ public class GuildRiteGameTest implements FabricGameTest {
         () -> {
           GuildRites.ask(initiate, master);
           context.assertFalse(GuildRites.underway(initiate), "an initiate is turned away");
-          context.assertEquals(GuildRites.emeralds(initiate), PURSE, "and keeps his emeralds");
+          context.assertEquals(RiteTithe.held(initiate), PURSE, "and keeps his emeralds");
           GuildRites.ask(poor, master);
           context.assertFalse(GuildRites.underway(poor), "a hunter with no tithe is turned away");
           TestPlayers.finish(context, initiate, poor);
