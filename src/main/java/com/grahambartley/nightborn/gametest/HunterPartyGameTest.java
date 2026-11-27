@@ -18,6 +18,7 @@ import com.grahambartley.nightborn.guild.party.PartySchedule;
 import com.grahambartley.nightborn.guild.party.PitchedCamps;
 import com.grahambartley.nightborn.guild.party.TentBlocks;
 import com.grahambartley.nightborn.guild.party.TentPart;
+import com.grahambartley.nightborn.guild.party.TentPaths;
 import com.grahambartley.nightborn.mob.NightbornMobs;
 import com.grahambartley.nightborn.mob.VampireBatEntity;
 import com.grahambartley.nightborn.mob.VampireEntity;
@@ -26,11 +27,13 @@ import java.util.List;
 import java.util.UUID;
 import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
 import net.minecraft.block.BedBlock;
+import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.CampfireBlock;
 import net.minecraft.block.enums.BedPart;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.ItemEntity;
+import net.minecraft.entity.ai.pathing.Path;
 import net.minecraft.entity.mob.ZombieEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.world.ServerWorld;
@@ -258,5 +261,36 @@ public class HunterPartyGameTest implements FabricGameTest {
     sight.start();
     context.assertTrue(hunter.getTarget() == vampire, "and goes for it");
     context.complete();
+  }
+
+  @GameTest(templateName = ARENA, batchId = BATCH)
+  public void aHunterBehindATentPathsRoundItToItsOpenEnd(final TestContext context) {
+    meadow(context);
+    pitch(context);
+    final HunterEntity hunter = context.spawnEntity(GuildMobs.HUNTER, new BlockPos(6, 2, 8));
+    hunter.setAiDisabled(true);
+    context.runAtTick(
+        5,
+        () -> {
+          final Path path =
+              hunter.getNavigation().findPathTo(context.getAbsolutePos(new BlockPos(6, 2, 3)), 0);
+          context.assertTrue(path != null, "a hunter finds a way round the tent");
+          for (int i = 0; i < path.getLength(); i++) {
+            final BlockPos node = path.getNodePos(i);
+            final BlockState state = context.getWorld().getBlockState(node);
+            context.assertFalse(
+                state.isOf(TentBlocks.HUNTER_TENT)
+                    && TentPaths.type(
+                            state.get(HunterTentBlock.PART),
+                            state.get(HunterTentBlock.STRUCK),
+                            false)
+                        != null,
+                "the path goes through tent canvas at " + context.getRelativePos(node));
+          }
+          context.assertTrue(
+              path.getEnd().getBlockPos().equals(context.getAbsolutePos(new BlockPos(6, 2, 3))),
+              "the path ends at the tent's open end, not short of it");
+          context.complete();
+        });
   }
 }

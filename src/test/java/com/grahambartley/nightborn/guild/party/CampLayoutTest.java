@@ -2,6 +2,8 @@ package com.grahambartley.nightborn.guild.party;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.grahambartley.nightborn.MinecraftBootstrapExtension;
 import com.mojang.serialization.JsonOps;
@@ -113,5 +115,27 @@ class CampLayoutTest {
     assertEquals(
         List.of(origin.pos().add(TentPart.ROOF_FRONT.offset(facing)).down(), origin.pos().down()),
         beds);
+  }
+
+  @ParameterizedTest(name = "tent at z {0} parses {1}")
+  @CsvSource({"1, false", "3, true"})
+  @DisplayName("a camp that leaves no room by the fire is refused when it loads")
+  void crampedCampIsRefused(final int z, final boolean parses) throws Exception {
+    final JsonObject camp =
+        JsonParser.parseString(
+                Files.readString(
+                    Path.of(
+                        "src/main/resources/data/nightborn/nightborn/party_camp/hunter_party.json")))
+            .getAsJsonObject();
+    final JsonObject tent = camp.getAsJsonArray("tents").get(0).getAsJsonObject();
+    final JsonArray at = new JsonArray();
+    at.add(0);
+    at.add(0);
+    at.add(z);
+    tent.add("at", at);
+    final JsonArray only = new JsonArray();
+    only.add(tent);
+    camp.add("tents", only);
+    assertEquals(parses, CampLayout.CODEC.parse(JsonOps.INSTANCE, camp).result().isPresent());
   }
 }
