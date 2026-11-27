@@ -8,6 +8,7 @@ import java.util.UUID;
 import net.minecraft.util.math.BlockPos;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 class LeaderlessCampsTest {
 
@@ -45,5 +46,36 @@ class LeaderlessCampsTest {
     final HunterParty party = camped ? gathered.pitch(CAMP, 1, 0L, 0L) : gathered;
     assertEquals(
         holds, LeaderlessCamps.holds(alive, hasParty ? Optional.of(party) : Optional.empty()));
+  }
+
+  @ParameterizedTest(
+      name = "village calm {0}, released before {1}, at time of day {2}: over {3}, released {4}")
+  @CsvSource({
+    "true, false, 6000, true, true",
+    "true, false, 12000, false, true",
+    "true, false, 18000, false, true",
+    "false, false, 6000, false, false",
+    "true, true, 18000, true, true",
+    "false, true, 6000, true, true"
+  })
+  void aLeaderlessGuardCampComesDownOnceItsVillageIsCalm(
+      final boolean calm,
+      final boolean releasedBefore,
+      final long timeOfDay,
+      final boolean over,
+      final boolean released) {
+    final long now = 500_000L;
+    final CampStay pitched = CampStay.guarding(new BlockPos(40, 64, -12), 1L, 30_000L);
+    final CampStay stay = releasedBefore ? pitched.relieve(now - PartySchedule.EVENING) : pitched;
+    final CampStay kept = LeaderlessCamps.kept(stay, calm, now);
+    assertEquals(released, kept.released());
+    assertEquals(over, kept.over(timeOfDay, now));
+  }
+
+  @ParameterizedTest(name = "relieved {0}: a passing camp keeps its stay")
+  @ValueSource(booleans = {true, false})
+  void aPassingCampIsNeverReleased(final boolean relieved) {
+    final CampStay stay = new CampStay(2, 3L, 84_000L);
+    assertEquals(stay, LeaderlessCamps.kept(stay, relieved, 90_000L));
   }
 }

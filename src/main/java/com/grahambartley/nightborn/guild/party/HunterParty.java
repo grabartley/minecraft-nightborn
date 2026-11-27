@@ -5,6 +5,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.function.Function;
 import net.minecraft.util.Uuids;
 import net.minecraft.util.math.BlockPos;
 
@@ -32,23 +33,28 @@ public record HunterParty(
   }
 
   public static final Codec<HunterParty> CODEC =
-      RecordCodecBuilder.create(
-          instance ->
-              instance
-                  .group(
-                      Uuids.INT_STREAM_CODEC
-                          .listOf()
-                          .fieldOf("members")
-                          .forGetter(HunterParty::members),
-                      BlockPos.CODEC.fieldOf("area").forGetter(HunterParty::area),
-                      Camp.CODEC.optionalFieldOf("camp").forGetter(HunterParty::camp),
-                      CampStay.MAP_CODEC.forGetter(HunterParty::stay),
-                      Codec.LONG.fieldOf("last_tried_day").forGetter(HunterParty::lastTriedDay),
-                      Codec.LONG.fieldOf("last_player_near").forGetter(HunterParty::lastPlayerNear),
-                      Codec.LONG.fieldOf("last_raid_day").forGetter(HunterParty::lastRaidDay),
-                      BlockPos.CODEC.optionalFieldOf("guards").forGetter(HunterParty::guards),
-                      BlockPos.CODEC.optionalFieldOf("last_camp").forGetter(HunterParty::lastCamp))
-                  .apply(instance, HunterParty::new));
+      RecordCodecBuilder.<HunterParty>create(
+              instance ->
+                  instance
+                      .group(
+                          Uuids.INT_STREAM_CODEC
+                              .listOf()
+                              .fieldOf("members")
+                              .forGetter(HunterParty::members),
+                          BlockPos.CODEC.fieldOf("area").forGetter(HunterParty::area),
+                          Camp.CODEC.optionalFieldOf("camp").forGetter(HunterParty::camp),
+                          CampStay.MAP_CODEC.forGetter(HunterParty::stay),
+                          Codec.LONG.fieldOf("last_tried_day").forGetter(HunterParty::lastTriedDay),
+                          Codec.LONG
+                              .fieldOf("last_player_near")
+                              .forGetter(HunterParty::lastPlayerNear),
+                          Codec.LONG.fieldOf("last_raid_day").forGetter(HunterParty::lastRaidDay),
+                          BlockPos.CODEC.optionalFieldOf("guards").forGetter(HunterParty::guards),
+                          BlockPos.CODEC
+                              .optionalFieldOf("last_camp")
+                              .forGetter(HunterParty::lastCamp))
+                      .apply(instance, HunterParty::new))
+          .xmap(HunterParty::upgraded, Function.<HunterParty>identity());
 
   public static HunterParty gathered(
       final List<UUID> members, final BlockPos area, final long now) {
@@ -73,7 +79,9 @@ public record HunterParty(
         members,
         pitched.fire(),
         Optional.of(pitched),
-        new CampStay(nights, day, now),
+        guards
+            .map(bell -> CampStay.guarding(bell, day, now))
+            .orElseGet(() -> new CampStay(nights, day, now)),
         day,
         lastPlayerNear,
         lastRaidDay,
@@ -92,6 +100,40 @@ public record HunterParty(
         lastRaidDay,
         guards,
         camp.map(Camp::fire).or(() -> lastCamp));
+  }
+
+  public HunterParty upgraded() {
+    if (!pitched() || stay.forGuard() || guards.isEmpty()) {
+      return this;
+    }
+    return new HunterParty(
+        members,
+        area,
+        camp,
+        CampStay.guarding(guards.get(), stay.campDay(), stay.pitchedAt()),
+        lastTriedDay,
+        lastPlayerNear,
+        lastRaidDay,
+        guards,
+        lastCamp);
+  }
+
+  public HunterParty relieved(final long now) {
+    return new HunterParty(
+        members,
+        area,
+        camp,
+        stay.relieve(now),
+        lastTriedDay,
+        lastPlayerNear,
+        lastRaidDay,
+        Optional.empty(),
+        lastCamp);
+  }
+
+  public HunterParty heading(final BlockPos nextArea) {
+    return new HunterParty(
+        members, nextArea, camp, stay, lastTriedDay, lastPlayerNear, lastRaidDay, guards, lastCamp);
   }
 
   public HunterParty triedOn(final long day, final BlockPos nextArea) {

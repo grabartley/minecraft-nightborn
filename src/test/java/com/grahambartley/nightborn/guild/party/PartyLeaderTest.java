@@ -1,11 +1,12 @@
 package com.grahambartley.nightborn.guild.party;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.util.Optional;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.random.Random;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 class PartyLeaderTest {
@@ -22,26 +23,43 @@ class PartyLeaderTest {
     assertTrue(next.getY() == from.getY());
   }
 
-  @ParameterizedTest(name = "seed {0}: a guard party pitches its next camp near its village")
-  @ValueSource(longs = {1L, 42L, 9001L})
-  void aGuardPartyMovesOnAroundItsVillage(final long seed) {
-    final BlockPos bell = new BlockPos(-12, 70, 300);
-    final BlockPos fire = bell.add(30, 0, 20);
-    final BlockPos next = PartyLeader.next(Optional.of(bell), fire, Random.create(seed));
-    final double distance = Math.sqrt(bell.getSquaredDistance(next));
+  @ParameterizedTest(name = "seed {0}: a day's travel carries on away from the last camp")
+  @ValueSource(longs = {1L, 2L, 42L, 9001L})
+  void travelCarriesOnAwayFromTheLastCamp(final long seed) {
+    final BlockPos lastCamp = new BlockPos(0, 64, 0);
+    final BlockPos from = new BlockPos(60, 64, 0);
+    final BlockPos next = PartyLeader.beyond(lastCamp, from, Random.create(seed));
+    final double step = Math.sqrt(from.getSquaredDistance(next));
     assertTrue(
-        distance >= PartyLeader.NEAR_MIN - 1 && distance <= PartyLeader.NEAR_MAX + 1,
-        "distance " + distance);
+        step >= PartyLeader.MOVE_MIN - 1 && step <= PartyLeader.MOVE_MAX + 1, "step " + step);
+    assertTrue(
+        lastCamp.getSquaredDistance(next) > lastCamp.getSquaredDistance(from),
+        "further from the last camp: " + next);
   }
 
-  @ParameterizedTest(name = "seed {0}: a wandering party moves on from its fire")
-  @ValueSource(longs = {1L, 42L, 9001L})
-  void aWanderingPartyMovesOnFromItsFire(final long seed) {
-    final BlockPos fire = new BlockPos(-12, 70, 300);
-    final BlockPos next = PartyLeader.next(Optional.empty(), fire, Random.create(seed));
-    final double distance = Math.sqrt(fire.getSquaredDistance(next));
-    assertTrue(
-        distance >= PartyLeader.MOVE_MIN - 1 && distance <= PartyLeader.MOVE_MAX + 1,
-        "distance " + distance);
+  @ParameterizedTest(
+      name = "guarding {0}, left a camp {1}, dusk {2}, {3},{4},{5} from the area: on {6}")
+  @CsvSource({
+    "false, true, false, 0, 0, 0, true",
+    "false, true, false, 16, 0, 0, true",
+    "false, true, false, 17, 0, 0, false",
+    "false, true, false, 0, 40, 0, true",
+    "false, true, false, 0, -30, 16, true",
+    "false, true, false, 12, 0, -12, false",
+    "false, true, true, 0, 0, 0, false",
+    "false, false, false, 0, 0, 0, false",
+    "true, true, false, 0, 0, 0, false"
+  })
+  void onlyAPassingPartyThatLeftACampTravelsOnByDay(
+      final boolean guarding,
+      final boolean leftACamp,
+      final boolean dusk,
+      final int dx,
+      final int dy,
+      final int dz,
+      final boolean travels) {
+    final BlockPos area = new BlockPos(200, 70, -90);
+    assertEquals(
+        travels, PartyLeader.travels(guarding, leftACamp, dusk, area.add(dx, dy, dz), area));
   }
 }

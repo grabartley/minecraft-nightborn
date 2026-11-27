@@ -94,4 +94,56 @@ class HunterPartyTest {
     assertEquals(guarding, party.guarding());
     assertEquals(bell, party.area());
   }
+
+  private static final BlockPos BELL = new BlockPos(40, 64, -12);
+
+  @ParameterizedTest(name = "guarding {0}: pitching for 2 nights gives a guard stay {0}")
+  @CsvSource({"true", "false"})
+  void aGuardPartysCampHasNoNightLimit(final boolean guarding) {
+    final HunterParty gathered = guarding ? party().guarding(Optional.of(BELL)) : party();
+    final HunterParty pitched = gathered.pitch(CAMP, 2, 9L, 216_500L);
+    assertEquals(
+        guarding ? CampStay.guarding(BELL, 9L, 216_500L) : new CampStay(2, 9L, 216_500L),
+        pitched.stay());
+  }
+
+  @ParameterizedTest(name = "pitched {0}: relieved guards keep their camp {0} and its stay ends")
+  @CsvSource({"true", "false"})
+  void relievedGuardsBecomeAPassingParty(final boolean pitched) {
+    final HunterParty guarded = party().guarding(Optional.of(BELL));
+    final HunterParty party = pitched ? guarded.pitch(CAMP, 1, 9L, 216_500L) : guarded;
+    final HunterParty relieved = party.relieved(220_000L);
+    assertEquals(false, relieved.guarding());
+    assertEquals(pitched, relieved.pitched());
+    assertEquals(pitched ? 220_000L : CampStay.UNKNOWN, relieved.stay().releasedAt());
+  }
+
+  @ParameterizedTest(name = "pitched {0}, guarding {1}: an older save loads with a guard stay {2}")
+  @CsvSource({"true, true, true", "true, false, false", "false, true, false"})
+  void aGuardCampFromAnOlderSaveBecomesOpenEnded(
+      final boolean pitched, final boolean guarding, final boolean guardStay) {
+    final HunterParty gathered = guarding ? party().guarding(Optional.of(BELL)) : party();
+    final HunterParty party = pitched ? gathered.pitch(CAMP, 2, 4L, 96_000L) : gathered;
+    final NbtCompound saved =
+        (NbtCompound) HunterParty.CODEC.encodeStart(NbtOps.INSTANCE, party).getOrThrow();
+    saved.remove("guard_bell");
+    if (pitched) {
+      saved.putInt("nights", 2);
+    }
+    final HunterParty loaded = HunterParty.CODEC.parse(NbtOps.INSTANCE, saved).getOrThrow();
+    assertEquals(guardStay, loaded.stay().forGuard());
+    assertEquals(pitched && !guarding ? 2 : party.stay().nights(), loaded.stay().nights());
+  }
+
+  @ParameterizedTest(name = "heading on to {0},{1} changes only the area")
+  @CsvSource({"150, 1", "-40, 300", "70, 64"})
+  void headingOnChangesOnlyTheArea(final int x, final int z) {
+    final BlockPos next = new BlockPos(x, 64, z);
+    final HunterParty struck = party().pitch(CAMP, 1, 2L, 48_000L).struck(new BlockPos(70, 64, 1));
+    final HunterParty heading = struck.heading(next);
+    assertEquals(next, heading.area());
+    assertEquals(struck.lastCamp(), heading.lastCamp());
+    assertEquals(struck.lastTriedDay(), heading.lastTriedDay());
+    assertEquals(struck.members(), heading.members());
+  }
 }

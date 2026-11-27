@@ -41,6 +41,14 @@ public final class PitchedCamps extends PersistentState {
     markDirty();
   }
 
+  public void kept(final UUID leader, final CampStay stay) {
+    final Pitched pitched = camps.get(leader);
+    if (pitched != null && !pitched.stay().equals(stay)) {
+      camps.put(leader, new Pitched(pitched.camp(), stay));
+      markDirty();
+    }
+  }
+
   public void struck(final UUID leader) {
     if (camps.remove(leader) != null) {
       markDirty();

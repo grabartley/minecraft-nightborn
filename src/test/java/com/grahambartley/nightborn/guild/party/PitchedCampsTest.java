@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Stream;
 import net.minecraft.nbt.NbtCompound;
@@ -39,5 +40,23 @@ class PitchedCampsTest {
   @CsvSource({"9b3c2f1e-0d4a-4c8e-9f21-6a7b8c9d0e1f, true", "not-a-leader, false", "'', false"})
   void skipsACampWhoseLeaderIsDamaged(final String key, final boolean read) {
     assertEquals(read, PitchedCamps.leader(key).isPresent());
+  }
+
+  @ParameterizedTest(name = "a guard camp held {0}, its stay released {1}, is saved with that stay")
+  @CsvSource({"true, true", "true, false", "false, true"})
+  void keepsALeadersLatestStayForACampItHolds(final boolean held, final boolean released) {
+    final UUID leader = UUID.randomUUID();
+    final CampStay guard = CampStay.guarding(new BlockPos(40, 64, -12), 3L, 84_000L);
+    final CampStay latest = released ? guard.relieve(90_000L) : guard;
+    final PitchedCamps camps = new PitchedCamps();
+    if (held) {
+      camps.pitched(leader, CAMP, guard);
+    }
+    camps.kept(leader, latest);
+    final Map<UUID, PitchedCamps.Pitched> loaded =
+        PitchedCamps.fromNbt(camps.writeNbt(new NbtCompound(), null), null).all();
+    assertEquals(
+        held ? Optional.of(new PitchedCamps.Pitched(CAMP, latest)) : Optional.empty(),
+        Optional.ofNullable(loaded.get(leader)));
   }
 }

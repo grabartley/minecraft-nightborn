@@ -1,8 +1,10 @@
 package com.grahambartley.nightborn.guild.party;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Supplier;
 import net.minecraft.util.math.BlockPos;
 
 public final class CampSite {
@@ -38,14 +40,37 @@ public final class CampSite {
 
   public static boolean apart(
       final Optional<BlockPos> lastCamp, final int x, final int z, final int apart) {
-    return lastCamp
-        .map(
-            last -> {
-              final int dx = x - last.getX();
-              final int dz = z - last.getZ();
-              return dx * dx + dz * dz >= apart * apart;
-            })
-        .orElse(true);
+    return lastCamp.map(last -> flatSquared(last, x, z) >= apart * apart).orElse(true);
+  }
+
+  public static <T> Optional<T> choose(
+      final Supplier<Optional<T>> farFromLastCamp,
+      final Supplier<Optional<T>> aroundOldFire,
+      final Supplier<Optional<T>> anywhere) {
+    return farFromLastCamp.get().or(aroundOldFire).or(anywhere);
+  }
+
+  public static boolean inReach(final BlockPos from, final BlockPos to, final int reach) {
+    return flatSquared(from, to.getX(), to.getZ()) <= reach * reach;
+  }
+
+  private static int flatSquared(final BlockPos from, final int x, final int z) {
+    final int dx = x - from.getX();
+    final int dz = z - from.getZ();
+    return dx * dx + dz * dz;
+  }
+
+  public static List<BlockPos> nearestFirst(final int search, final int stride) {
+    final List<BlockPos> offsets = new ArrayList<>();
+    for (int dx = -search; dx <= search; dx += stride) {
+      for (int dz = -search; dz <= search; dz += stride) {
+        offsets.add(new BlockPos(dx, 0, dz));
+      }
+    }
+    offsets.sort(
+        Comparator.comparingInt(
+            offset -> offset.getX() * offset.getX() + offset.getZ() * offset.getZ()));
+    return List.copyOf(offsets);
   }
 
   public static List<int[]> corners(final Bounds bounds) {
@@ -59,6 +84,15 @@ public final class CampSite {
   }
 
   public static boolean fits(final Survey survey, final Bounds bounds) {
+    return fits(survey, bounds, Optional.empty());
+  }
+
+  public static boolean fitsAround(final Survey survey, final Bounds bounds, final BlockPos fire) {
+    return fits(survey, bounds, Optional.of(fire));
+  }
+
+  private static boolean fits(
+      final Survey survey, final Bounds bounds, final Optional<BlockPos> fire) {
     for (int dx = bounds.minX() - 1; dx <= bounds.maxX() + 1; dx++) {
       for (int dz = bounds.minZ() - 1; dz <= bounds.maxZ() + 1; dz++) {
         final boolean beside =
@@ -67,13 +101,18 @@ public final class CampSite {
           return false;
         }
         for (int dy = 0; dy <= bounds.height(); dy++) {
-          if (!open(survey.at(dx, dy, dz))) {
+          if (!isFire(fire, dx, dy, dz) && !open(survey.at(dx, dy, dz))) {
             return false;
           }
         }
       }
     }
     return true;
+  }
+
+  private static boolean isFire(
+      final Optional<BlockPos> fire, final int dx, final int dy, final int dz) {
+    return fire.filter(at -> at.getX() == dx && at.getY() == dy && at.getZ() == dz).isPresent();
   }
 
   private static boolean groundHolds(final Ground ground, final boolean beside) {

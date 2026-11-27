@@ -1,6 +1,7 @@
 package com.grahambartley.nightborn.guild.party;
 
 import com.grahambartley.nightborn.guild.GuildMasterEntity;
+import com.grahambartley.nightborn.village.VillageGuard;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
@@ -33,15 +34,27 @@ public final class LeaderlessCamps {
     final PitchedCamps pitched = PitchedCamps.of(world);
     for (final Map.Entry<UUID, PitchedCamps.Pitched> entry : pitched.all().entrySet()) {
       final HunterParty.Camp camp = entry.getValue().camp();
-      if (clears(
-          entry.getValue().stay().over(world.getTimeOfDay(), world.getTime()),
-          loaded(world, camp),
+      final boolean led =
           world.getEntity(entry.getKey()) instanceof GuildMasterEntity master
-              && holds(master.isAlive(), Optional.ofNullable(master.party())))) {
+              && holds(master.isAlive(), Optional.ofNullable(master.party()));
+      final CampStay stay =
+          kept(
+              entry.getValue().stay(),
+              !led
+                  && VillageGuard.relieves(
+                      entry.getValue().stay().bell(),
+                      bell -> VillageGuard.stillGuarded(world, bell)),
+              world.getTime());
+      pitched.kept(entry.getKey(), stay);
+      if (clears(stay.over(world.getTimeOfDay(), world.getTime()), loaded(world, camp), led)) {
         PartyCamp.strike(world, camp);
         pitched.struck(entry.getKey());
       }
     }
+  }
+
+  public static CampStay kept(final CampStay stay, final boolean relieved, final long now) {
+    return relieved ? stay.relieve(now) : stay;
   }
 
   private static boolean loaded(final ServerWorld world, final HunterParty.Camp camp) {

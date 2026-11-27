@@ -19,6 +19,7 @@ public final class PartyCamp {
   public static final int SEARCH = 12;
   public static final int STRIDE = 3;
   public static final int APART = 16;
+  private static final List<BlockPos> NEAREST_FIRST = CampSite.nearestFirst(SEARCH, STRIDE);
 
   private PartyCamp() {}
 
@@ -35,22 +36,42 @@ public final class PartyCamp {
       final BlockPos near,
       final CampSite.Bounds bounds,
       final Optional<BlockPos> lastCamp) {
-    for (int dx = -SEARCH; dx <= SEARCH; dx += STRIDE) {
-      for (int dz = -SEARCH; dz <= SEARCH; dz += STRIDE) {
-        final int x = near.getX() + dx;
-        final int z = near.getZ() + dz;
-        if (!loaded(world, x, z, bounds) || !CampSite.apart(lastCamp, x, z, APART)) {
-          continue;
-        }
-        final BlockPos centre =
-            new BlockPos(x, world.getTopY(Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, x, z), z);
-        if (CampSite.fits(
-            (ox, oy, oz) -> ground(world.getBlockState(centre.add(ox, oy, oz))), bounds)) {
-          return Optional.of(centre);
-        }
+    for (final BlockPos offset : NEAREST_FIRST) {
+      final int x = near.getX() + offset.getX();
+      final int z = near.getZ() + offset.getZ();
+      if (!loaded(world, x, z, bounds) || !CampSite.apart(lastCamp, x, z, APART)) {
+        continue;
+      }
+      final BlockPos centre =
+          new BlockPos(x, world.getTopY(Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, x, z), z);
+      if (CampSite.fits(survey(world, centre), bounds)) {
+        return Optional.of(centre);
       }
     }
     return Optional.empty();
+  }
+
+  public static Optional<BlockPos> around(
+      final ServerWorld world, final BlockPos near, final BlockPos fire, final CampLayout layout) {
+    final BlockPos centre = fire.subtract(layout.campfire());
+    if (!CampSite.inReach(near, fire, SEARCH + APART)
+        || !loaded(world, centre.getX(), centre.getZ(), layout.bounds())) {
+      return Optional.empty();
+    }
+    return reusable(world.getBlockState(fire))
+            && CampSite.fitsAround(survey(world, centre), layout.bounds(), layout.campfire())
+        ? Optional.of(centre)
+        : Optional.empty();
+  }
+
+  private static CampSite.Survey survey(final ServerWorld world, final BlockPos centre) {
+    return (ox, oy, oz) -> ground(world.getBlockState(centre.add(ox, oy, oz)));
+  }
+
+  public static boolean reusable(final BlockState fire) {
+    return fire.isOf(Blocks.CAMPFIRE)
+        && !fire.get(CampfireBlock.LIT)
+        && !fire.get(CampfireBlock.WATERLOGGED);
   }
 
   private static boolean loaded(
@@ -93,7 +114,13 @@ public final class PartyCamp {
       }
     }
     final BlockPos fire = centre.add(layout.campfire());
-    world.setBlockState(fire, Blocks.CAMPFIRE.getDefaultState(), Block.NOTIFY_ALL);
+    final BlockState standing = world.getBlockState(fire);
+    world.setBlockState(
+        fire,
+        reusable(standing)
+            ? standing.with(CampfireBlock.LIT, true)
+            : Blocks.CAMPFIRE.getDefaultState(),
+        Block.NOTIFY_ALL);
     return new HunterParty.Camp(fire, placed, beds);
   }
 

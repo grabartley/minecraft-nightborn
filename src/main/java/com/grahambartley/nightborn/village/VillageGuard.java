@@ -7,6 +7,7 @@ import com.grahambartley.nightborn.guild.party.PartyRoll;
 import com.grahambartley.nightborn.server.ServerConfigService;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Predicate;
 import net.minecraft.block.BellBlock;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
@@ -27,6 +28,11 @@ public final class VillageGuard {
   public static boolean keepsGuarding(
       final boolean bellLoaded, final boolean bellStands, final VillageStep step) {
     return !bellLoaded || bellStands && step == VillageStep.HUNTED;
+  }
+
+  public static boolean relieves(
+      final Optional<BlockPos> bell, final Predicate<BlockPos> stillGuarded) {
+    return bell.filter(stillGuarded.negate()).isPresent();
   }
 
   public static boolean stillGuarded(final ServerWorld world, final BlockPos bell) {
