@@ -13,6 +13,7 @@ public final class BloodPoolDen {
   public static final int SIZE = 25;
   public static final int SIZE_Y = 12;
   public static final int CENTRE = 12;
+  public static final String ENTRANCE_SIDE = "south";
 
   private BloodPoolDen() {}
 
@@ -38,6 +39,7 @@ public final class BloodPoolDen {
     altar(t);
     remains(t);
     LairFeatures.readingCorner(t, 20, 18, 5, "west");
+    LairPassage.cut(t, CENTRE, ENTRANCE_SIDE);
     return t;
   }
 

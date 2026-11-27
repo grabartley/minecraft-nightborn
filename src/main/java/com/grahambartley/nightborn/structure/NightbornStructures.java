@@ -3,6 +3,7 @@ package com.grahambartley.nightborn.structure;
 import com.grahambartley.nightborn.Nightborn;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
+import net.minecraft.structure.StructurePieceType;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.gen.chunk.placement.StructurePlacementType;
 import net.minecraft.world.gen.structure.StructureType;
@@ -19,6 +20,11 @@ public final class NightbornStructures {
           Registries.STRUCTURE_PLACEMENT,
           Identifier.of(Nightborn.MOD_ID, "rare_spread"),
           () -> RareSpreadPlacement.CODEC);
+  public static final StructurePieceType CAVE_PATH =
+      Registry.register(
+          Registries.STRUCTURE_PIECE,
+          Identifier.of(Nightborn.MOD_ID, "cave_path"),
+          (StructurePieceType) CavePath::new);
 
   private NightbornStructures() {}
 

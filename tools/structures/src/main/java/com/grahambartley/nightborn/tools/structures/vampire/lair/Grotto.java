@@ -19,6 +19,8 @@ public final class Grotto {
   public static final List<Integer> BENCHES = List.of(4, 7, 10);
   public static final int SPRING_X = 14;
   public static final int SPRING_Z = 7;
+  public static final int ENTRANCE_X = 17;
+  public static final String ENTRANCE_SIDE = "north";
   static final double SPRING_REACH_X = 5.5;
   static final double SPRING_REACH_Z = 2;
 
@@ -40,6 +42,7 @@ public final class Grotto {
     LairFeatures.stalagmite(t, 3, 12, 2);
     LairFeatures.stalagmite(t, 12, 2, 1);
     LairFeatures.stalagmite(t, 19, 12, 2);
+    LairPassage.cut(t, ENTRANCE_X, ENTRANCE_SIDE);
     return t;
   }
 

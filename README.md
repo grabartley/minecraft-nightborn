@@ -75,7 +75,7 @@ Vampires are rare, and each one is someone, with a name, a title and a temper. T
 wake at dusk, light the candles, talk, quarrel, read and play the gramophone, then sleep out the day in their coffins
 with a thrall or two on guard.
 
-- **Five kinds of house.** Crypts under village churches, sealed lairs in deep caves, walled castles in dark woods,
+- **Five kinds of house.** Crypts under village churches, hidden lairs off deep caves, walled castles in dark woods,
 overgrown manors, and a rare pale castle on a mountain top.
 - **Villages remember.** Feed where you can be seen and a village learns your face, shuts its doors after dark, hangs
 garlic and sends for hunters.

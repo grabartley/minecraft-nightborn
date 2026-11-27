@@ -4,7 +4,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.grahambartley.nightborn.tools.structures.template.BlockState;
+import com.grahambartley.nightborn.tools.structures.template.Pos;
 import com.grahambartley.nightborn.tools.structures.template.Template;
+import java.util.List;
 
 final class LairChecks {
 
@@ -34,6 +36,10 @@ final class LairChecks {
   }
 
   static void assertSealed(final Template t) {
+    assertSealed(t, List.of());
+  }
+
+  static void assertSealed(final Template t, final List<Pos> passage) {
     for (int x = 0; x < t.sizeX(); x++) {
       for (int y = 0; y < t.sizeY(); y++) {
         for (int z = 0; z < t.sizeZ(); z++) {
@@ -43,7 +49,8 @@ final class LairChecks {
                   || x >= t.sizeX() - LairCave.SHELL
                   || z >= t.sizeZ() - LairCave.SHELL
                   || y >= t.sizeY() - LairCave.SHELL;
-          if (shell) {
+          final boolean dug = y <= LairPassage.HEADROOM && passage.contains(new Pos(x, 0, z));
+          if (shell && !dug) {
             final String state = t.get(x, y, z);
             assertTrue(
                 state != null && (state.contains("deepslate") || state.contains("tuff")),

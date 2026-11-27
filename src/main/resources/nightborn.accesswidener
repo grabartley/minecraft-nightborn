@@ -4,3 +4,6 @@ accessible class net/minecraft/client/render/RenderLayer$MultiPhase
 accessible field net/minecraft/block/entity/LockableContainerBlockEntity lock Lnet/minecraft/inventory/ContainerLock;
 accessible field net/minecraft/entity/mob/MobEntity goalSelector Lnet/minecraft/entity/ai/goal/GoalSelector;
 accessible field net/minecraft/entity/mob/MobEntity targetSelector Lnet/minecraft/entity/ai/goal/GoalSelector;
+accessible method net/minecraft/world/gen/chunk/ChunkNoiseSampler sampleBlockState ()Lnet/minecraft/block/BlockState;
+accessible field net/minecraft/world/gen/chunk/NoiseChunkGenerator fluidLevelSampler Ljava/util/function/Supplier;
+accessible class net/minecraft/world/gen/densityfunction/DensityFunctionTypes$Beardifier

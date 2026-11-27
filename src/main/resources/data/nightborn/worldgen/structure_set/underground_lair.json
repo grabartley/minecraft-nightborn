@@ -6,8 +6,8 @@
     "type": "nightborn:rare_spread",
     "rarity": "vampire_structures",
     "salt": 418275093,
-    "spacing": 48,
-    "separation": 24,
+    "spacing": 40,
+    "separation": 20,
     "exclusion_zone": { "other_set": "minecraft:trial_chambers", "chunk_count": 8 }
   }
 }

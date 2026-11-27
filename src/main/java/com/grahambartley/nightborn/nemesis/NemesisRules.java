@@ -29,11 +29,10 @@ public final class NemesisRules {
       final boolean named,
       final boolean boss,
       final boolean called,
-      final boolean sealedHome,
       final boolean alreadyNemesis,
       final int held,
       final int limit) {
-    return named && !boss && !called && !sealedHome && !alreadyNemesis && held < limit;
+    return named && !boss && !called && !alreadyNemesis && held < limit;
   }
 
   public static boolean outlasted(
