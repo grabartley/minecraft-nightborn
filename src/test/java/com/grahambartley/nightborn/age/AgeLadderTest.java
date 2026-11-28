@@ -33,7 +33,7 @@ class AgeLadderTest {
     return new VampireStage(
         rank,
         1,
-        StageBody.SAME,
+        new StageBody(rank * 6.0, 0.0, rank),
         StageSkills.NONE,
         StageCombat.PLAIN,
         StageLook.PLAIN,
@@ -114,5 +114,12 @@ class AgeLadderTest {
   @DisplayName("only the oldest stage open to players is the top")
   void top(final int rank, final boolean top) {
     assertEquals(top, LADDER.top(rank));
+  }
+
+  @ParameterizedTest(name = "rank {0} -> {1} health, {2} damage")
+  @CsvSource({"0, 0, 0", "1, 6, 1", "3, 18, 3", "9, 18, 3", "-1, 0, 0"})
+  @DisplayName("a player's body is its stage's, the oldest stage's past the top, and plain below")
+  void body(final int rank, final double health, final double damage) {
+    assertEquals(new StageBody(health, 0.0, damage), LADDER.body(rank));
   }
 }

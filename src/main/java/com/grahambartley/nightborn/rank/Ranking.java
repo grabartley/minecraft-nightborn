@@ -33,7 +33,7 @@ public final class Ranking {
   public static void tick(final ServerPlayerEntity player) {
     if (player.age % SETTLE_TICKS == 0) {
       settle(player);
-      RankBody.apply(player, ServerConfigService.current().skills());
+      RankBody.apply(player);
     }
   }
 
@@ -98,7 +98,7 @@ public final class Ranking {
   }
 
   private static void changed(final ServerPlayerEntity player) {
-    RankBody.apply(player, ServerConfigService.current().skills());
+    RankBody.apply(player);
     StageNames.changed(player);
   }
 

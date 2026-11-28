@@ -17,16 +17,25 @@ class RetreatTest {
     assertEquals(percent, Retreat.healthPercent(health, max));
   }
 
-  @ParameterizedTest(name = "{0}% at threshold {1}, resting {2}: {3}")
+  @ParameterizedTest(name = "{0}% at threshold {1}, resting {2}, under fire {3}: {4}")
   @CsvSource({
-    "20, 25, false, true",
-    "25, 25, false, false",
-    "20, 25, true, false",
-    "5, 0, false, false"
+    "20, 25, false, false, true",
+    "25, 25, false, false, false",
+    "20, 25, true, false, false",
+    "5, 0, false, false, false",
+    "20, 25, false, true, false",
+    "5, 25, false, true, false"
   })
-  @DisplayName("a hurt vampire pulls back below its stage's threshold, then rests from it")
-  void starts(final int health, final int threshold, final boolean resting, final boolean starts) {
-    assertEquals(starts, Retreat.starts(health, threshold, resting));
+  @DisplayName(
+      "a hurt vampire pulls back below its stage's threshold, then rests from it, and never turns"
+          + " its back on a foe that can shoot it")
+  void starts(
+      final int health,
+      final int threshold,
+      final boolean resting,
+      final boolean underFire,
+      final boolean starts) {
+    assertEquals(starts, Retreat.starts(health, threshold, resting, underFire));
   }
 
   @ParameterizedTest(name = "{0}% at threshold {1} after {2} ticks: {3}")

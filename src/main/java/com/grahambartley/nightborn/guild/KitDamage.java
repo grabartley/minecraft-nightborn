@@ -12,17 +12,17 @@ public final class KitDamage {
 
   private KitDamage() {}
 
-  static float blow(@Nullable final HunterKit kit, final ItemStack weapon) {
+  static float blow(@Nullable final HunterKit kit, final ItemStack weapon, final int rank) {
     return kit != null
             && !kit.ranged()
             && !weapon.isEmpty()
             && Registries.ITEM.getId(weapon.getItem()).equals(kit.weapon())
-        ? kit.damage()
+        ? kit.damageAt(rank)
         : 0.0F;
   }
 
-  static float bolt(@Nullable final HunterKit kit) {
-    return kit != null && kit.ranged() ? kit.damage() : 0.0F;
+  static float bolt(@Nullable final HunterKit kit, final int rank) {
+    return kit != null && kit.ranged() ? kit.damageAt(rank) : 0.0F;
   }
 
   public static float strike(final DamageSource source, final Entity target) {

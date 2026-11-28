@@ -10,8 +10,6 @@ public record AgeSettings(
     int adultBlood,
     int elderBlood,
     int ancientBlood,
-    int stageHealth,
-    int stageDamage,
     int stageBlood,
     int stageDrainSlower) {
 
@@ -29,10 +27,6 @@ public record AgeSettings(
       new IntSetting(SECTION, "elderBlood", 500, 0, 100000, c -> c.age().elderBlood());
   public static final IntSetting ANCIENT_BLOOD =
       new IntSetting(SECTION, "ancientBlood", 1500, 0, 100000, c -> c.age().ancientBlood());
-  public static final IntSetting STAGE_HEALTH =
-      new IntSetting(SECTION, "stageHealth", 4, 0, 40, c -> c.age().stageHealth());
-  public static final IntSetting STAGE_DAMAGE =
-      new IntSetting(SECTION, "stageDamage", 1, 0, 20, c -> c.age().stageDamage());
   public static final IntSetting STAGE_BLOOD =
       new IntSetting(SECTION, "stageBlood", 2, 0, 10, c -> c.age().stageBlood());
   public static final IntSetting STAGE_DRAIN_SLOWER =
@@ -46,8 +40,6 @@ public record AgeSettings(
           ADULT_BLOOD,
           ELDER_BLOOD,
           ANCIENT_BLOOD,
-          STAGE_HEALTH,
-          STAGE_DAMAGE,
           STAGE_BLOOD,
           STAGE_DRAIN_SLOWER);
 
@@ -58,8 +50,6 @@ public record AgeSettings(
     adultBlood = ADULT_BLOOD.clamp(adultBlood);
     elderBlood = ELDER_BLOOD.clamp(elderBlood);
     ancientBlood = ANCIENT_BLOOD.clamp(ancientBlood);
-    stageHealth = STAGE_HEALTH.clamp(stageHealth);
-    stageDamage = STAGE_DAMAGE.clamp(stageDamage);
     stageBlood = STAGE_BLOOD.clamp(stageBlood);
     stageDrainSlower = STAGE_DRAIN_SLOWER.clamp(stageDrainSlower);
   }
@@ -79,8 +69,6 @@ public record AgeSettings(
         values.get(ADULT_BLOOD),
         values.get(ELDER_BLOOD),
         values.get(ANCIENT_BLOOD),
-        values.get(STAGE_HEALTH),
-        values.get(STAGE_DAMAGE),
         values.get(STAGE_BLOOD),
         values.get(STAGE_DRAIN_SLOWER));
   }

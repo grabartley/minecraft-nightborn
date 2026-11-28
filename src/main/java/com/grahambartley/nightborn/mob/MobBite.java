@@ -33,8 +33,7 @@ public final class MobBite {
       final LivingEntity victim,
       final float damage,
       final SoundEvent sound) {
-    if (!(biter.getWorld() instanceof ServerWorld world)
-        || refused(Wards.wards(victim), SlayerMarks.STEADFAST.on(victim))) {
+    if (!(biter.getWorld() instanceof ServerWorld world) || refuses(victim)) {
       return false;
     }
     if (breaks(
@@ -61,6 +60,10 @@ public final class MobBite {
       }
     }
     return true;
+  }
+
+  public static boolean refuses(final LivingEntity victim) {
+    return refused(Wards.wards(victim), SlayerMarks.STEADFAST.on(victim));
   }
 
   static boolean refused(final boolean warded, final boolean steadfast) {

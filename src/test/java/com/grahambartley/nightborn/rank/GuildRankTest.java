@@ -74,4 +74,21 @@ class GuildRankTest {
                 .count()
             == 1);
   }
+
+  @ParameterizedTest(name = "{0} gives no less than {1}")
+  @CsvSource({"hunter, initiate", "veteran, hunter", "master, veteran"})
+  @DisplayName("each shipped rank gives no less health or damage than the one below")
+  void shippedGiftsGrow(final String higher, final String lower) throws IOException {
+    final Map<Identifier, GuildRank> ranks = shipped();
+    final RankGifts above = ranks.get(Identifier.of("nightborn", higher)).gifts();
+    final RankGifts below = ranks.get(Identifier.of("nightborn", lower)).gifts();
+    assertTrue(above.health() >= below.health());
+    assertTrue(above.against(true) >= below.against(true));
+  }
+
+  @Test
+  @DisplayName("the lowest shipped rank is the plain body")
+  void initiateIsPlain() throws IOException {
+    assertEquals(RankGifts.NONE, shipped().get(Identifier.of("nightborn", "initiate")).gifts());
+  }
 }

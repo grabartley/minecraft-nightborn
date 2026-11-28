@@ -34,6 +34,10 @@ public final class HunterActionTimer {
     return action.timed();
   }
 
+  public boolean throwing() {
+    return action == HunterAction.THROW_HOLY_WATER;
+  }
+
   public HunterAction action() {
     return action;
   }

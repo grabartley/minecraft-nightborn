@@ -48,6 +48,18 @@ class VampireStagesTest {
   }
 
   @Test
+  @DisplayName("the youngest stage is the plain body, so a new vampire is no weaker for it")
+  void theYoungestIsPlain() {
+    assertEquals(
+        StageBody.SAME,
+        stages().values().stream()
+            .filter(stage -> stage.rank() == 0)
+            .findFirst()
+            .orElseThrow()
+            .body());
+  }
+
+  @Test
   @DisplayName("each older stage is rarer, tougher, keeps less blood back and is worth more")
   void olderIsHarder() {
     final List<VampireStage> byRank =

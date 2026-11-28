@@ -2,42 +2,51 @@ package com.grahambartley.nightborn.rank;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import com.grahambartley.nightborn.config.SkillSettings;
+import com.google.gson.JsonParser;
+import com.mojang.serialization.JsonOps;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
 class RankGiftsTest {
 
-  static SkillSettings settings(final int health, final int damageTenths) {
-    return new SkillSettings(100, 3, 5, 100, 300, 200, 10, 500, 5, 20, 45, health, damageTenths, 3);
-  }
-
-  @ParameterizedTest(name = "rank {0}, {1} health, {2} tenths -> {3} health, {4} damage")
+  @ParameterizedTest(name = "hunter {0}, rank {1} -> {2} health, {3} damage")
   @CsvSource({
-    "0, 2, 5, 0.0, 0.0",
-    "1, 2, 5, 2.0, 0.5",
-    "2, 2, 5, 4.0, 1.0",
-    "3, 2, 5, 6.0, 1.5",
-    "3, 0, 0, 0.0, 0.0",
-    "-1, 2, 5, 0.0, 0.0"
+    "true, 0, 0.0, 0.0",
+    "true, 1, 4.0, 0.5",
+    "true, 2, 8.0, 1.0",
+    "true, 3, 12.0, 1.5",
+    "true, 9, 12.0, 1.5",
+    "true, -1, 0.0, 0.0",
+    "false, 3, 0.0, 0.0"
   })
-  @DisplayName("each rank above Initiate gives more health and more damage against vampires")
-  void perRank(
-      final int rank,
-      final int health,
-      final int tenths,
-      final double expectedHealth,
-      final float expectedDamage) {
-    final RankGifts gifts = RankGifts.of(rank, settings(health, tenths));
-    assertEquals(expectedHealth, gifts.health());
-    assertEquals(expectedDamage, gifts.against(true));
+  @DisplayName("a hunter has the gifts its rank's data gives, and no one else has any")
+  void ofTheRank(final boolean hunter, final int rank, final double health, final float damage) {
+    final RankGifts gifts = RankGifts.of(RankFixtures.LADDER, hunter, rank);
+    assertEquals(health, gifts.health());
+    assertEquals(damage, gifts.against(true));
   }
 
   @ParameterizedTest(name = "rank {0}")
   @CsvSource({"0", "1", "3"})
   @DisplayName("a rank adds nothing against anyone but a vampire")
   void nothingAgainstOthers(final int rank) {
-    assertEquals(0.0F, RankGifts.of(rank, settings(2, 5)).against(false));
+    assertEquals(0.0F, RankGifts.of(RankFixtures.LADDER, true, rank).against(false));
+  }
+
+  @ParameterizedTest(name = "{0}: {1}")
+  @CsvSource(
+      delimiter = '|',
+      value = {
+        "{} | true",
+        "{\"health\": 12, \"vampire_damage\": 1.5} | true",
+        "{\"health\": -1} | false",
+        "{\"vampire_damage\": -0.5} | false",
+        "{\"health\": 1000.5} | false"
+      })
+  @DisplayName("a rank's gifts only add, within bounds")
+  void bounds(final String json, final boolean loads) {
+    assertEquals(
+        loads, RankGifts.CODEC.parse(JsonOps.INSTANCE, JsonParser.parseString(json)).isSuccess());
   }
 }

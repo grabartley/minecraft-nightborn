@@ -76,6 +76,13 @@
             {
               "fact": "target_slowed",
               "high": 0
+            },
+            {
+              "fact": "allies_in_radius",
+              "curve": "falling",
+              "low": 0,
+              "high": 3,
+              "radius": 16
             }
           ],
           "weight": 1.2
@@ -97,6 +104,13 @@
             {
               "fact": "target_slowed",
               "high": 0
+            },
+            {
+              "fact": "allies_in_radius",
+              "curve": "falling",
+              "low": 0,
+              "high": 3,
+              "radius": 16
             }
           ],
           "weight": 1.2

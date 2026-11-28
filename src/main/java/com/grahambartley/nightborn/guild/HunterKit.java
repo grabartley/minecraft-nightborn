@@ -14,7 +14,8 @@ public record HunterKit(
     Optional<Identifier> crucifix,
     boolean holyWater,
     int weight,
-    float damage) {
+    float damage,
+    float rankDamage) {
 
   public static final float MOST_DAMAGE = 64.0F;
 
@@ -34,8 +35,15 @@ public record HunterKit(
                           .forGetter(HunterKit::weight),
                       Codec.floatRange(0.0F, MOST_DAMAGE)
                           .optionalFieldOf("damage", 0.0F)
-                          .forGetter(HunterKit::damage))
+                          .forGetter(HunterKit::damage),
+                      Codec.floatRange(-MOST_DAMAGE, MOST_DAMAGE)
+                          .optionalFieldOf("rank_damage", 0.0F)
+                          .forGetter(HunterKit::rankDamage))
                   .apply(instance, HunterKit::new));
+
+  public float damageAt(final int rank) {
+    return Math.max(0.0F, damage + rankDamage * rank);
+  }
 
   public boolean ranged() {
     return bolt.isPresent();

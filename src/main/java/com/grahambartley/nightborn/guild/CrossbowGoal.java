@@ -7,7 +7,7 @@ import net.minecraft.entity.ai.goal.ProjectileAttackGoal;
 public final class CrossbowGoal extends ProjectileAttackGoal {
 
   static final double SPEED = 1.0;
-  static final int INTERVAL_TICKS = 50;
+  static final int INTERVAL_TICKS = 30;
   static final float RANGE = 14.0F;
 
   private final BooleanSupplier armed;

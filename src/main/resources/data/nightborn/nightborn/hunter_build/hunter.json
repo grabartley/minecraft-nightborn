@@ -1,9 +1,9 @@
 {
   "rank_weights": {
-    "nightborn:initiate": 50,
+    "nightborn:initiate": 40,
     "nightborn:hunter": 35,
-    "nightborn:veteran": 12,
-    "nightborn:master": 3
+    "nightborn:veteran": 18,
+    "nightborn:master": 7
   },
   "think_ticks": {
     "nightborn:initiate": 100,

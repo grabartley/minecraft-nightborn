@@ -15,8 +15,6 @@ public record SkillSettings(
     int hunterRankPoints,
     int veteranRankPoints,
     int masterRankPoints,
-    int rankHealth,
-    int rankDamageTenths,
     int holdGraceSeconds) {
 
   static final String SECTION = "skills";
@@ -48,10 +46,6 @@ public record SkillSettings(
           SECTION, "veteranRankPoints", 45, 0, 1000, c -> c.skills().veteranRankPoints());
   public static final IntSetting MASTER_RANK_POINTS =
       new IntSetting(SECTION, "masterRankPoints", 100, 0, 1000, c -> c.skills().masterRankPoints());
-  public static final IntSetting RANK_HEALTH =
-      new IntSetting(SECTION, "rankHealth", 2, 0, 40, c -> c.skills().rankHealth());
-  public static final IntSetting RANK_DAMAGE_TENTHS =
-      new IntSetting(SECTION, "rankDamageTenths", 5, 0, 100, c -> c.skills().rankDamageTenths());
 
   public static final IntSetting HOLD_GRACE_SECONDS =
       new IntSetting(SECTION, "holdGraceSeconds", 3, 0, 60, c -> c.skills().holdGraceSeconds());
@@ -69,8 +63,6 @@ public record SkillSettings(
           HUNTER_RANK_POINTS,
           VETERAN_RANK_POINTS,
           MASTER_RANK_POINTS,
-          RANK_HEALTH,
-          RANK_DAMAGE_TENTHS,
           HOLD_GRACE_SECONDS);
 
   public SkillSettings {
@@ -85,8 +77,6 @@ public record SkillSettings(
     hunterRankPoints = HUNTER_RANK_POINTS.clamp(hunterRankPoints);
     veteranRankPoints = VETERAN_RANK_POINTS.clamp(veteranRankPoints);
     masterRankPoints = MASTER_RANK_POINTS.clamp(masterRankPoints);
-    rankHealth = RANK_HEALTH.clamp(rankHealth);
-    rankDamageTenths = RANK_DAMAGE_TENTHS.clamp(rankDamageTenths);
     holdGraceSeconds = HOLD_GRACE_SECONDS.clamp(holdGraceSeconds);
   }
 
@@ -107,8 +97,6 @@ public record SkillSettings(
         values.get(HUNTER_RANK_POINTS),
         values.get(VETERAN_RANK_POINTS),
         values.get(MASTER_RANK_POINTS),
-        values.get(RANK_HEALTH),
-        values.get(RANK_DAMAGE_TENTHS),
         values.get(HOLD_GRACE_SECONDS));
   }
 }

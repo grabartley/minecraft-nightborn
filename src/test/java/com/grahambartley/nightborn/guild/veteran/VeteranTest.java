@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.google.gson.JsonParser;
+import com.grahambartley.nightborn.MinecraftBootstrapExtension;
 import com.mojang.serialization.JsonOps;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -16,9 +17,11 @@ import java.util.Set;
 import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
+@ExtendWith(MinecraftBootstrapExtension.class)
 class VeteranTest {
 
   private static final Path VETERANS =

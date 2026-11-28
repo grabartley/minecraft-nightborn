@@ -12,7 +12,7 @@ public final class VampireMobAttributes {
 
   static final double MAX_HEALTH = 30.0;
   static final double MOVEMENT_SPEED = 0.3;
-  static final double ATTACK_DAMAGE = 4.0;
+  static final double ATTACK_DAMAGE = 3.0;
   static final double FOLLOW_RANGE = 32.0;
 
   private VampireMobAttributes() {}

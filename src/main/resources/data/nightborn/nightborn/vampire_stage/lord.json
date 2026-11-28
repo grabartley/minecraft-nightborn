@@ -1,7 +1,7 @@
 {
   "rank": 4,
   "weight": 0,
-  "body": { "health": 4.0, "speed": 0.25, "damage": 1.5 },
+  "body": { "health": 100, "speed": 0.25, "damage": 4.5 },
   "skills": {
     "count": { "type": "minecraft:uniform", "min_inclusive": 9, "max_inclusive": 11 },
     "weights": {

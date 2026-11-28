@@ -88,4 +88,11 @@ class VampireHuntTest {
       return answer;
     };
   }
+
+  @ParameterizedTest(name = "may bite {0}, bite refused {1}: {2}")
+  @CsvSource({"true, false, BITE", "true, true, CLAW", "false, false, NONE", "false, true, NONE"})
+  @DisplayName("a vampire mob claws a victim that refuses its bite, and strikes nothing it may not")
+  void blow(final boolean mayBite, final boolean refused, final VampireHunt.Blow blow) {
+    assertEquals(blow, VampireHunt.blow(mayBite, refused));
+  }
 }

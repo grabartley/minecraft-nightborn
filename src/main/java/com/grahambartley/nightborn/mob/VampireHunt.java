@@ -13,6 +13,7 @@ import com.grahambartley.nightborn.server.ServerConfigService;
 import com.grahambartley.nightborn.thrall.ThrallEntity;
 import com.grahambartley.nightborn.vampire.Vampires;
 import java.util.function.BooleanSupplier;
+import java.util.function.Predicate;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.attribute.EntityAttributes;
@@ -91,17 +92,40 @@ public final class VampireHunt {
     grudge.provoke(attacker);
   }
 
-  public boolean bite(final VampireEntity vampire, final Entity target) {
-    if (BatForm.isBat(vampire)
-        || !(target instanceof LivingEntity victim)
-        || !Prey.mayBite(
-            Downed.state(vampire) != null,
-            Vampires.isVampire(victim),
-            Prey.isPrey(victim),
-            victim == vampire.getTarget() || victim == vampire.getAttacker())) {
+  public enum Blow {
+    NONE,
+    BITE,
+    CLAW
+  }
+
+  public static Blow blow(final boolean mayBite, final boolean refused) {
+    if (!mayBite) {
+      return Blow.NONE;
+    }
+    return refused ? Blow.CLAW : Blow.BITE;
+  }
+
+  public boolean strike(
+      final VampireEntity vampire, final Entity target, final Predicate<Entity> claw) {
+    if (BatForm.isBat(vampire) || !(target instanceof LivingEntity victim)) {
+      return false;
+    }
+    final Blow blow =
+        blow(
+            Prey.mayBite(
+                Downed.state(vampire) != null,
+                Vampires.isVampire(victim),
+                Prey.isPrey(victim),
+                victim == vampire.getTarget() || victim == vampire.getAttacker()),
+            MobBite.refuses(victim));
+    if (blow == Blow.NONE) {
       return false;
     }
     vampire.hiss();
+    return blow == Blow.CLAW ? claw.test(victim) : bite(vampire, victim);
+  }
+
+  private boolean bite(final VampireEntity vampire, final LivingEntity victim) {
     final NightbornConfig config = ServerConfigService.current();
     final float before = victim.getHealth();
     final boolean out = homeLife.out(vampire, vampire.hungry());

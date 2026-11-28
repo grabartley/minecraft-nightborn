@@ -12,6 +12,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.NoPenaltyTargeting;
 import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.entity.mob.PathAwareEntity;
+import net.minecraft.item.RangedWeaponItem;
 import net.minecraft.util.math.Vec3d;
 import org.jetbrains.annotations.Nullable;
 
@@ -36,9 +37,14 @@ public class RetreatGoal extends Goal implements IntentGoal {
   }
 
   public boolean wants() {
-    return mob.getTarget() != null
+    final LivingEntity target = mob.getTarget();
+    return target != null
         && Downed.state(mob) == null
-        && Retreat.starts(health(), retreatHealth.getAsInt(), mob.getWorld().getTime() < restUntil);
+        && Retreat.starts(
+            health(),
+            retreatHealth.getAsInt(),
+            mob.getWorld().getTime() < restUntil,
+            target.isHolding(stack -> stack.getItem() instanceof RangedWeaponItem));
   }
 
   @Override

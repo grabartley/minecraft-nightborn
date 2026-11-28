@@ -31,8 +31,6 @@ class AgeSettingsTest {
     assertEquals(
         List.of(new AgeNeeds(10, 100), new AgeNeeds(40, 500), new AgeNeeds(100, 1500)),
         age.needs());
-    assertEquals(4, age.stageHealth());
-    assertEquals(1, age.stageDamage());
     assertEquals(2, age.stageBlood());
     assertEquals(10, age.stageDrainSlower());
   }
@@ -40,11 +38,9 @@ class AgeSettingsTest {
   @Test
   @DisplayName("values outside their range are clamped on load")
   void clamps() {
-    final AgeSettings low = new AgeSettings(-1, -1, -1, -1, -1, -1, -1, -1, -1, -1);
-    final AgeSettings high =
-        new AgeSettings(99999, 99999, 99999, 999999, 999999, 999999, 99, 99, 99, 99);
-    assertEquals(new AgeSettings(0, 0, 0, 0, 0, 0, 0, 0, 0, 0), low);
-    assertEquals(
-        new AgeSettings(10000, 10000, 10000, 100000, 100000, 100000, 40, 20, 10, 30), high);
+    final AgeSettings low = new AgeSettings(-1, -1, -1, -1, -1, -1, -1, -1);
+    final AgeSettings high = new AgeSettings(99999, 99999, 99999, 999999, 999999, 999999, 99, 99);
+    assertEquals(new AgeSettings(0, 0, 0, 0, 0, 0, 0, 0), low);
+    assertEquals(new AgeSettings(10000, 10000, 10000, 100000, 100000, 100000, 10, 30), high);
   }
 }

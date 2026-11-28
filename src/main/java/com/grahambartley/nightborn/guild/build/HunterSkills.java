@@ -130,7 +130,7 @@ public final class HunterSkills {
   private static void store(final LivingEntity mob, final HunterGrowth.Standing standing) {
     OathAttachment.set(mob, standing.oath());
     SkillAttachment.set(mob, SkillTree.HUNTER, standing.progress());
-    RankBody.apply(mob, settings());
+    RankBody.apply(mob);
     SkillAttributes.apply(mob);
   }
 

@@ -121,6 +121,7 @@ final class HunterTactics<T extends MobEntity & GuildFighter> implements MobFigh
             hunter.foeOf(target),
             hunter.distanceTo(target),
             timer.busy(),
+            timer.throwing(),
             timer.canThrow(),
             raised),
         ServerConfigService.current().wards().crucifixRange());

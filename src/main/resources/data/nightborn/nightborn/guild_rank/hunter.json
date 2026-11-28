@@ -6,5 +6,6 @@
     "act": "stake",
     "minimum_stage": 1,
     "description": { "translate": "nightborn.rank.deed.hunter" }
-  }
+  },
+  "gifts": { "health": 6, "vampire_damage": 0.5 }
 }
