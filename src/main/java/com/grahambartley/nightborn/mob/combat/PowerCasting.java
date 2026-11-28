@@ -1,6 +1,7 @@
 package com.grahambartley.nightborn.mob.combat;
 
 import com.grahambartley.nightborn.mob.brain.CastAims;
+import com.grahambartley.nightborn.mob.brain.HelpClaims;
 import com.grahambartley.nightborn.mob.brain.PowerChoice;
 import com.grahambartley.nightborn.mob.brain.TargetMotion;
 import com.grahambartley.nightborn.mob.brain.Think;
@@ -11,8 +12,10 @@ import com.grahambartley.nightborn.skill.PowerShow;
 import com.grahambartley.nightborn.skill.PowerUse;
 import com.grahambartley.nightborn.skill.Powers;
 import java.util.Optional;
+import java.util.UUID;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.mob.MobEntity;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Nullable;
@@ -29,6 +32,7 @@ public final class PowerCasting {
   @Nullable private Tell telling;
   @Nullable private Think lastThink;
   private long nextThink;
+  private long nextAid;
 
   public PowerCasting() {
     this(Powers::cast);
@@ -42,8 +46,9 @@ public final class PowerCasting {
     return new PowerCasting(Powers::castUnderOwnClip);
   }
 
-  public static boolean thinks(final boolean engaged, final long now, final long nextThink) {
-    return engaged && now >= nextThink;
+  public static boolean thinks(
+      final boolean engaged, final long now, final long nextThink, final long nextAid) {
+    return now >= (engaged ? nextThink : nextAid);
   }
 
   public <T extends MobEntity & PowerShow> void tick(
@@ -53,7 +58,8 @@ public final class PowerCasting {
       final Tell.Step step = telling.step(engaged, now);
       if (step == Tell.Step.CAST) {
         final Identifier power = telling.power();
-        final Optional<CastAim> aim = CastAims.resolve(caster, telling.aim());
+        final Optional<CastAim> aim =
+            CastAims.resolve(caster, telling.aim(), aided(caster, telling.ally()));
         if (aim.isPresent()) {
           cast.apply(caster, power, aim.get());
         } else {
@@ -65,10 +71,14 @@ public final class PowerCasting {
       }
       return;
     }
-    if (!thinks(engaged, now, nextThink)) {
+    if (!thinks(engaged, now, nextThink, nextAid)) {
       return;
     }
-    nextThink = now + thinkTicks;
+    if (engaged) {
+      nextThink = now + thinkTicks;
+    } else {
+      nextAid = now + thinkTicks;
+    }
     final Optional<Think> think = Thinking.think(caster, bloodFloor, motion, thinkTicks);
     think.ifPresent(
         thought -> {
@@ -77,10 +87,22 @@ public final class PowerCasting {
               .chosen()
               .ifPresent(
                   scored -> {
-                    nextThink += thought.budget().cooldownPrice();
+                    nextThink =
+                        Math.max(nextThink, now + thinkTicks) + thought.budget().cooldownPrice();
+                    nextAid = nextThink;
                     tell(caster, scored, now);
                   });
         });
+  }
+
+  @Nullable
+  private static LivingEntity aided(final MobEntity caster, @Nullable final UUID ally) {
+    return ally != null
+            && caster.getWorld() instanceof ServerWorld world
+            && world.getEntity(ally) instanceof LivingEntity living
+            && living.isAlive()
+        ? living
+        : null;
   }
 
   public void cancel() {
@@ -98,7 +120,12 @@ public final class PowerCasting {
   private <T extends MobEntity & PowerShow> void tell(
       final T caster, final PowerChoice.Scored scored, final long now) {
     final MobPowerUse use = scored.option().use();
-    telling = new Tell(scored.option().power(), now + use.tellTicks(), scored.use().aimed());
+    final long castAt = now + use.tellTicks();
+    final UUID ally = scored.ally() == null ? null : scored.ally().id();
+    telling = new Tell(scored.option().power(), castAt, scored.use().aimed(), ally);
+    if (ally != null) {
+      HelpClaims.claim(caster.getWorld(), ally, caster.getUuid(), castAt);
+    }
     caster.showPower(use.tellClip());
     caster.playSound(SoundEvent.of(use.tellSound()), 1.0F, 1.0F);
   }

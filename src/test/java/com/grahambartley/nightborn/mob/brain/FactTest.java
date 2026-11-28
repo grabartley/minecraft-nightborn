@@ -3,7 +3,9 @@ package com.grahambartley.nightborn.mob.brain;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -104,5 +106,50 @@ class FactTest {
   @DisplayName("a name that is not a fact finds nothing")
   void unknown(final String key) {
     assertEquals(Optional.empty(), Fact.byKey(key));
+  }
+
+  private static final Situation.Member WARD =
+      new Situation.Member(new UUID(0, 9), 4.5, 0.35F, true, true, false);
+
+  private static final Situation HELPING =
+      new Situation(
+          Intent.FIGHT,
+          Situation.Self.of(1.0F, 0),
+          null,
+          Situation.Place.UNKNOWN,
+          Situation.Group.of(
+              List.of(WARD, new Situation.Member(new UUID(0, 8), 10.0, 1.0F, false, false, false)),
+              List.of(2.0, 6.0, 7.0)),
+          WARD);
+
+  @ParameterizedTest(name = "{0} within {1} = {2}")
+  @CsvSource({
+    "ALLY_DISTANCE, 0, 4.5",
+    "ALLY_HEALTH, 0, 0.35",
+    "ALLY_UNDER_ATTACK, 0, 1",
+    "ALLIES_IN_RADIUS, 5, 1",
+    "ALLIES_IN_RADIUS, 12, 2",
+    "FOES_IN_RADIUS, 6, 2",
+    "FOES_IN_RADIUS, 1, 0"
+  })
+  @DisplayName("each group fact reads the ally being helped or counts within its radius")
+  void readsTheGroup(final Fact fact, final double radius, final double value) {
+    assertEquals(value, fact.read(HELPING, radius), 1.0E-6);
+  }
+
+  @ParameterizedTest(name = "{0}")
+  @EnumSource(
+      value = Fact.class,
+      names = {
+        "ALLY_DISTANCE",
+        "ALLY_HEALTH",
+        "ALLY_UNDER_ATTACK",
+        "ALLIES_IN_RADIUS",
+        "FOES_IN_RADIUS"
+      })
+  @DisplayName("a group fact is missing when no group was read and no ally is being helped")
+  void groupFactsNeedAGroup(final Fact fact) {
+    assertTrue(
+        Double.isNaN(fact.read(new Situation(Intent.FIGHT, Situation.Self.of(1.0F, 0), null), 8)));
   }
 }

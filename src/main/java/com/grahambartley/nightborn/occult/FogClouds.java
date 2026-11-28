@@ -2,6 +2,7 @@ package com.grahambartley.nightborn.occult;
 
 import com.grahambartley.nightborn.accessory.GiftAttributes;
 import com.grahambartley.nightborn.boss.ZoneMarkEntity;
+import com.grahambartley.nightborn.faction.Allies;
 import com.grahambartley.nightborn.servant.Servants;
 import com.grahambartley.nightborn.skill.AreaRules;
 import com.grahambartley.nightborn.vampire.VampireAttributes;
@@ -99,7 +100,8 @@ public final class FogClouds {
                         candidate.getUuid().equals(cloud.caster()),
                         Servants.serves(Servants.masterOf(candidate), cloud.caster()),
                         candidate.isSpectator(),
-                        VampireAttributes.has(candidate, VampireAttributes.FOG_SIGHT)))) {
+                        VampireAttributes.has(candidate, VampireAttributes.FOG_SIGHT),
+                        caster instanceof LivingEntity owner && Allies.allied(owner, candidate)))) {
       final boolean clearSight = GiftAttributes.value(living, GiftAttributes.FOG_CLEAR_SIGHT) > 0.0;
       for (final StatusEffectInstance effect : cloud.power().effects()) {
         if (FogRules.reaches(FogRules.blinds(effect.getEffectType()), clearSight)) {

@@ -1,9 +1,12 @@
 package com.grahambartley.nightborn.mob.brain;
 
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.EnumSet;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.function.ToDoubleFunction;
 import java.util.stream.Collectors;
@@ -24,19 +27,48 @@ public enum Fact {
   SUN_ON_ME(situation -> flag(situation.self().sunlit())),
   DOWNED(situation -> flag(situation.self().downed())),
   STUCK(situation -> flag(situation.self().stuck())),
-  SPOT_DISTANCE(situation -> situation.place().spotDistance());
+  SPOT_DISTANCE(situation -> situation.place().spotDistance()),
+  ALLY_DISTANCE(situation -> ally(situation, Situation.Member::distance)),
+  ALLY_HEALTH(situation -> ally(situation, Situation.Member::health)),
+  ALLY_UNDER_ATTACK(situation -> ally(situation, ally -> flag(ally.underAttack()))),
+  ALLIES_IN_RADIUS((situation, radius) -> situation.group().alliesWithin(radius)),
+  FOES_IN_RADIUS((situation, radius) -> situation.group().foesWithin(radius));
+
+  @FunctionalInterface
+  private interface Reading {
+    double read(Situation situation, double radius);
+  }
+
+  public static final Set<Fact> ALLY =
+      Collections.unmodifiableSet(EnumSet.of(ALLY_DISTANCE, ALLY_HEALTH, ALLY_UNDER_ATTACK));
+
+  public static final Set<Fact> RADIUS =
+      Collections.unmodifiableSet(EnumSet.of(ALLIES_IN_RADIUS, FOES_IN_RADIUS));
+
+  public static final Set<Fact> GROUP =
+      Collections.unmodifiableSet(
+          EnumSet.of(
+              ALLY_DISTANCE, ALLY_HEALTH, ALLY_UNDER_ATTACK, ALLIES_IN_RADIUS, FOES_IN_RADIUS));
 
   private static final Map<String, Fact> BY_KEY =
       Arrays.stream(values()).collect(Collectors.toMap(Fact::key, Function.identity()));
 
-  private final ToDoubleFunction<Situation> reading;
+  private final Reading reading;
 
   Fact(final ToDoubleFunction<Situation> reading) {
+    this((situation, radius) -> reading.applyAsDouble(situation));
+  }
+
+  Fact(final Reading reading) {
     this.reading = reading;
   }
 
   public double read(final Situation situation) {
-    return reading.applyAsDouble(situation);
+    return read(situation, 0.0);
+  }
+
+  public double read(final Situation situation, final double radius) {
+    return reading.read(situation, radius);
   }
 
   public String key() {
@@ -50,6 +82,11 @@ public enum Fact {
   private static double target(
       final Situation situation, final ToDoubleFunction<Situation.Target> fact) {
     return situation.target() == null ? Double.NaN : fact.applyAsDouble(situation.target());
+  }
+
+  private static double ally(
+      final Situation situation, final ToDoubleFunction<Situation.Member> fact) {
+    return situation.ally() == null ? Double.NaN : fact.applyAsDouble(situation.ally());
   }
 
   private static double flag(final boolean on) {

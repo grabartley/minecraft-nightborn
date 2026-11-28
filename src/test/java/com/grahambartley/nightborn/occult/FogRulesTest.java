@@ -18,25 +18,30 @@ class FogRulesTest {
   }
 
   @ParameterizedTest(
-      name = "alive {0}, caster {1}, serves {2}, spectating {3}, sees through {4} -> {5}")
+      name =
+          "alive {0}, caster {1}, serves {2}, spectating {3}, sees through {4}, allied {5} -> {6}")
   @CsvSource({
-    "true, false, false, false, false, true",
-    "false, false, false, false, false, false",
-    "true, true, false, false, false, false",
-    "true, false, true, false, false, false",
-    "true, false, false, true, false, false",
-    "true, false, false, false, true, false"
+    "true, false, false, false, false, false, true",
+    "false, false, false, false, false, false, false",
+    "true, true, false, false, false, false, false",
+    "true, false, true, false, false, false, false",
+    "true, false, false, true, false, false, false",
+    "true, false, false, false, true, false, false",
+    "true, false, false, false, false, true, false"
   })
   @DisplayName(
-      "a fog spares its caster, those who serve them, spectators and those who see through fog")
+      "a fog spares its caster, those who serve them, their allies, spectators and those who see"
+          + " through fog")
   void touches(
       final boolean alive,
       final boolean caster,
       final boolean serves,
       final boolean spectating,
       final boolean seesThrough,
+      final boolean allied,
       final boolean expected) {
-    assertEquals(expected, FogRules.touches(alive, caster, serves, spectating, seesThrough));
+    assertEquals(
+        expected, FogRules.touches(alive, caster, serves, spectating, seesThrough, allied));
   }
 
   @ParameterizedTest(name = "{0}: blinds {1}")

@@ -74,6 +74,48 @@
               "high": 1.0
             }
           ]
+        },
+        {
+          "intent": "fight",
+          "aim": "allies",
+          "considerations": [
+            {
+              "fact": "ally_distance",
+              "high": 8
+            },
+            {
+              "fact": "ally_under_attack",
+              "low": 1,
+              "high": 1
+            },
+            {
+              "fact": "ally_health",
+              "curve": "falling",
+              "low": 0.4,
+              "high": 0.9
+            }
+          ]
+        },
+        {
+          "intent": "close_in",
+          "aim": "allies",
+          "considerations": [
+            {
+              "fact": "ally_distance",
+              "high": 8
+            },
+            {
+              "fact": "ally_under_attack",
+              "low": 1,
+              "high": 1
+            },
+            {
+              "fact": "ally_health",
+              "curve": "falling",
+              "low": 0.4,
+              "high": 0.9
+            }
+          ]
         }
       ]
     }

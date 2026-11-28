@@ -101,7 +101,7 @@ public record PowerAim(
             .or(() -> skill.faith().spotRange())
             .flatMap(range -> TrapSpots.spot(caster, range, cast))
             .orElse(null),
-        Wielders.of(caster, skill.faith()));
+        Wielders.of(caster, skill.faith(), cast));
   }
 
   public boolean unseen(final SkillPower power) {

@@ -52,6 +52,13 @@
               "fact": "target_vampire",
               "low": 1,
               "high": 1
+            },
+            {
+              "fact": "allies_in_radius",
+              "curve": "falling",
+              "low": 0,
+              "high": 1,
+              "radius": 16
             }
           ],
           "weight": 1.3
@@ -67,6 +74,41 @@
               "fact": "target_vampire",
               "low": 1,
               "high": 1
+            },
+            {
+              "fact": "allies_in_radius",
+              "curve": "falling",
+              "low": 0,
+              "high": 1,
+              "radius": 16
+            }
+          ],
+          "weight": 1.3
+        },
+        {
+          "intent": "fight",
+          "aim": "foes",
+          "considerations": [
+            {
+              "fact": "foes_in_radius",
+              "curve": "rising",
+              "low": 1,
+              "high": 3,
+              "radius": 5
+            }
+          ],
+          "weight": 1.3
+        },
+        {
+          "intent": "close_in",
+          "aim": "foes",
+          "considerations": [
+            {
+              "fact": "foes_in_radius",
+              "curve": "rising",
+              "low": 1,
+              "high": 3,
+              "radius": 5
             }
           ],
           "weight": 1.3

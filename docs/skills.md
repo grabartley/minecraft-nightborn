@@ -85,7 +85,7 @@ The ruler. Wins with other people's hands.
 | Dread Presence | Power | 3 | Noble Blood | Adult | 3 | 60 | For 12 seconds, within a radius of 8 blocks: weak mobs flee, villagers cower and cannot ring the bell, and hunter mobs deal 20% less damage. A human player in reach has Slowness I unless their mesmerise resistance stops it, checked as Mesmerise checks it |
 | Blood Tithe | Passive | 3 ranks: 2, 2, 3 | Blood Bond | Adult | | | While a thrall or a member of the vampire's house is within 12 blocks, the nearest takes 10%, 20%, then 30% of the damage dealt to the vampire, and gives 1 blood point every 30, 20, then 10 seconds |
 | Glamour | Power | 3 | Silver Tongue | Elder | 5 | 180 | For 30 seconds the vampire passes as human to everyone, vampires included: no flinch, a full face in a hand mirror, a human's name colour, no glow in the eyes and no stoop when weakened, and villagers see no vampire signs. It ends on feeding, using another power or being hit. The sun still burns |
-| Sovereign's Gaze | Power | 4 | Command and Dread Presence | Ancient | 6 | 300 | Capstone. Mesmerises every mob and villager the vampire has a clear line of sight to within a radius of 12 blocks for 10 seconds, and every human player there for 3, whether they look back or not. Mesmerise resistance works against it as it does against Mesmerise |
+| Sovereign's Gaze | Power | 4 | Command and Dread Presence | Ancient | 6 | 300 | Capstone. Mesmerises every mob and villager the vampire has a clear line of sight to within a radius of 12 blocks for 10 seconds, and every human player there for 3, whether they look back or not. Mesmerise resistance works against it as it does against Mesmerise. It never takes the vampire's allies |
 | Born To Rule | Passive | 3 | Sovereign's Gaze | Ancient | | | Thralls and NPC members of the vampire's house have 25% more health and damage, and Noble cooldowns are 20% shorter |
 
 ### Occult
@@ -95,16 +95,16 @@ The sorcerer. Shadow, fog and the dead.
 | Skill | Kind | Ranks and cost | Needs | Gate | Blood | Cooldown | What it does |
 |---|---|---|---|---|---|---|---|
 | Occult Blood | Passive | 3 ranks: 1, 1, 2 | None | None | | | Half a block more reach each rank |
-| Grave Fog | Power | 2 | Occult Blood | None | 3 | 30 | A cloud with a radius of 4 blocks for 8 seconds that blinds and slows those in it. A bank of grave mist rises over the ground it covers |
+| Grave Fog | Power | 2 | Occult Blood | None | 3 | 30 | A cloud with a radius of 4 blocks for 8 seconds that blinds and slows those in it. A bank of grave mist rises over the ground it covers. It never touches the vampire's allies |
 | Summon Familiar | Power | 2 | Occult Blood | None | 4 | 20 | Calls a ghostly familiar (FAM-1 to FAM-9) |
 | Shadow Step | Power | 2 | Grave Fog | None | 2 | 10 | Steps through shadow to stand behind a target within 16 blocks |
 | Spirit Pact | Passive | 3 ranks: 2, 2, 3 | Summon Familiar | None | | | Rank 1 allows 1 more familiar. Ranks 2 and 3 each give familiars 25% more health |
 | Hex | Power | 2 | Occult Blood | None | 2 | 30 | Curses a target within 16 blocks for 20 seconds, 10 for a player: a turning violet sigil hangs over its head, the vampire sees it through walls, it has Weakness I, and its healing is halved |
 | Shadow Veil | Power | 3 | Shadow Step | Adult | 4 | 45 | Unseen for 10 seconds |
-| Blood Ward | Power | 3 | Grave Fog | Adult | 4 | 90 | Draws a circle of blood and runes with a radius of 4 blocks on the ground for 30 seconds. A human who stands in it has Slowness I and takes 1 damage each second. Inside it a Blessing cannot be cast and healing prayers do not heal. A weapon already blessed or alight still works, and so do garlic, crucifixes, holy water and consecrated ground. Where it overlaps a Consecrate circle, both work |
+| Blood Ward | Power | 3 | Grave Fog | Adult | 4 | 90 | Draws a circle of blood and runes with a radius of 4 blocks on the ground for 30 seconds. A human who stands in it has Slowness I and takes 1 damage each second. Inside it a Blessing cannot be cast and healing prayers do not heal. A weapon already blessed or alight still works, and so do garlic, crucifixes, holy water and consecrated ground. Where it overlaps a Consecrate circle, both work. A vampire mob may draw it around an ally under attack instead of at its own feet |
 | Mist Form | Power | 3 | Shadow Veil | Elder | 4 | 60 | For 8 seconds the vampire is mist, a low swirling cloud with a dull red glow at its heart and two red eyes: it drifts through doors, bars, fences, trapdoors and gaps, and blades and bolts pass through it. It cannot attack, feed or use items. Sun, fire and holy water hurt it twice as much. A player in this form sees the world pale and washed out, softened and slowly drifting, and the view comes and goes quickly with the form (CFG-7) |
 | Raise The Dead | Power | 3 | Summon Familiar | Elder | 5 | 120 | Three restless dead rise from the ground and fight for 30 seconds. Each has 20 health and deals 4 damage. They attack whatever the vampire attacks and whatever attacks the vampire |
-| Black Mass | Power | 4 | Mist Form and Raise The Dead | Ancient | 6 | 300 | Capstone. For 15 seconds, within a radius of 12 blocks: fog fills the air under a tall bank of grave mist, a ring of red-eyed bats circles the vampire and deals 1 damage each second to hunter mobs and to anything that has attacked the vampire or been attacked by it in the last 10 seconds, and the vampire's Shadow Step costs nothing and has no cooldown |
+| Black Mass | Power | 4 | Mist Form and Raise The Dead | Ancient | 6 | 300 | Capstone. For 15 seconds, within a radius of 12 blocks: fog fills the air under a tall bank of grave mist, a ring of red-eyed bats circles the vampire and deals 1 damage each second to hunter mobs and to anything that has attacked the vampire or been attacked by it in the last 10 seconds, and the vampire's Shadow Step costs nothing and has no cooldown. The fog never touches the vampire's allies |
 | Beyond The Veil | Passive | 3 | Black Mass | Ancient | | | Familiars last 50% longer, Occult powers cost 1 less blood, never less than 1, and their cooldowns are 20% shorter |
 
 ## Hunter Tree
@@ -122,7 +122,7 @@ What any hunter learns on the road, whichever paths they walk.
 | Second Wind | Power | 2 | Tracking | None | 45 | Speed I and Resistance I for 8 seconds |
 | Clear Eyes | Passive | 2 ranks: 1, 2 | Tracking | None | | Blindness and Darkness on the hunter last 25% less each rank |
 | Stakewright | Passive | 3 ranks: 1, 2, 2 | Weathered | None | | A stake's blow deals 10% more damage each rank |
-| Bind Wounds | Power | 2 | Second Wind | None | 30 | Heals 6 health over 4 seconds |
+| Bind Wounds | Power | 2 | Second Wind | None | 30 | Heals 6 health over 4 seconds. A hunter mob may bind the wounds of a badly hurt ally within 6 blocks instead |
 | Sure Footing | Passive | 2 ranks: 1, 1 | Clear Eyes | None | | Falls 2 blocks further before taking damage each rank |
 | Unyielding | Passive | 2 ranks: 2, 2 | Stakewright | Hunter | | 20% knockback resistance each rank |
 | Old Hand | Passive | 3 | Bind Wounds | Master | | Every hunter power's cooldown is 10% shorter |
@@ -151,12 +151,12 @@ Faith as a weapon, and the one who keeps the others alive.
 | Skill | Kind | Ranks and cost | Needs | Gate | Cooldown | What it does |
 |---|---|---|---|---|---|---|
 | Faith | Passive | 3 ranks: 2, 2, 3 | Tracking | None | | 1 more faith each rank, which makes crucifixes and holy water stronger |
-| Mend | Power | 2 | Faith | None | 45 | Heals the hunter and every human within a radius of 6 blocks for 6 health |
+| Mend | Power | 2 | Faith | None | 45 | Heals the hunter and every human within a radius of 6 blocks for 6 health. A hunter mob prays it over hurt allies as well as for itself |
 | Rebuke | Power | 2 | Faith | None | 30 | With a crucifix in hand, or a Crucifix On A Chain worn, throws back every vampire within 8 blocks in a quarter circle in front of the hunter, and stops their powers for 2 seconds |
-| Blessing | Power | 2 | Faith | None | 90 | Blesses the hunter's weapon, or the weapon of an ally they look at, for 60 seconds. A blessed weapon works as one coated with holy water (GEAR-9), with no limit on its hits until the time ends. The ally must be in sight within 8 blocks, and with no armed ally in sight the hunter's own weapon is blessed. A blessing replaces any coating already on the weapon. It is refused when the hunter, or the one holding the weapon, stands inside a Blood Ward |
+| Blessing | Power | 2 | Faith | None | 90 | Blesses the hunter's weapon, or the weapon of an ally they look at, for 60 seconds. A blessed weapon works as one coated with holy water (GEAR-9), with no limit on its hits until the time ends. The ally must be in sight within 8 blocks, and with no armed ally in sight the hunter's own weapon is blessed. A hunter mob blesses the weapon of an ally under attack. A blessing replaces any coating already on the weapon. It is refused when the hunter, or the one holding the weapon, stands inside a Blood Ward |
 | Grace | Passive | 3 ranks: 1, 2, 2 | Mend | None | | The hunter's healing prayers heal 25% more each rank |
 | Blood Fire | Power | 3 | Blessing | Hunter | 120 | The hunter cuts themself for 4 health and lights their weapon. For 90 seconds crimson flames lick along the blade and rise off it, it burns bright and glows in the dark, deals 3 more damage as fire and sets alight whatever it strikes. A vampire does not heal while it burns, and anything else heals as normal. A weapon can be blessed and alight at once. Each weapon blow sets its target alight for 5 seconds, and a target that cannot burn neither catches nor takes the extra damage. A hunter with 4 health or less cannot use it |
-| Sanctuary | Power | 3 | Mend | Hunter | 120 | A prayer of 10 seconds. Humans within a radius of 8 blocks heal 1 health each second, are freed from mesmerise and cannot be mesmerised or cowed by Dread Presence. The prayer follows the hunter and ends if they die |
+| Sanctuary | Power | 3 | Mend | Hunter | 120 | A prayer of 10 seconds. Humans within a radius of 8 blocks heal 1 health each second, are freed from mesmerise and cannot be mesmerised or cowed by Dread Presence. The prayer follows the hunter and ends if they die. A hunter mob prays it when an ally near it is under attack |
 | Consecrate | Power | 3 | Rebuke | Veteran | 120 | Blesses the ground in a circle with a radius of 5 blocks for 30 seconds. A vampire inside is weakened as by a crucifix, is forced out of Bat Form and Night Terror, and cannot levitate or use Vanish or Bat Form. The weakening is a crucifix's, raised by the hunter's faith. Night Terror is not barred, but a vampire in it over the ground is cast out within half a second. The ground reaches 8 blocks up. A boss on it is weakened but never cast out of the air or barred from a power |
 | Judgement | Power | 4 | Consecrate and Sanctuary | Master | 300 | Capstone. Calls a pillar of holy light with a radius of 2 blocks on a spot within 16 blocks for 5 seconds. It deals 3 damage each second to a vampire inside, burning as the sun does, and heals a human inside 2 health each second, from the moment it lands. The pillar reaches 8 blocks up as a slowly turning shaft of pale gold light over a bright disc, and ends if the hunter dies |
 | Unshaken Faith | Passive | 3 | Judgement | Master | | Faithful cooldowns are 20% shorter, and the hunter's healing also clears Weakness |
@@ -203,13 +203,15 @@ Vampire and hunter mobs use powers through one shared brain (ADR 0018). A power 
 Each use says:
 
 - `intent`: the moment it serves. One of `fight`, `retreat`, `close_in`, `hunt`, `travel`, `guard`, `rest`.
-- `aim`: what it is cast at. One of `self`, `target`, `ally`, `allies`, `foes`, `spot`. `target` casts at the mob's target and `self` at the mob itself. `spot` casts toward the end of the route the mob is already walking, such as the way it falls back or the shade it heads for, so a Vanish, Shadow Step or Long Leap carries it along that route. A `spot` use must weigh `spot_distance`, and a mob with no route does not cast it. `ally`, `allies` and `foes` cast as `target` does until mobs can aim at an ally.
+- `aim`: what it is cast at. One of `self`, `target`, `ally`, `allies`, `foes`, `spot`. `target` casts at the mob's target and `self` at the mob itself. `spot` casts toward the end of the route the mob is already walking, such as the way it falls back or the shade it heads for, so a Vanish, Shadow Step or Long Leap carries it along that route. A `spot` use must weigh `spot_distance`, and a mob with no route does not cast it. `ally` casts at the one ally the use picked, so a heal, a ward or a blessing lands on that ally. `allies` and `foes` cast as `target` does and suit a power that spreads around the mob, such as a prayer or a fog. An `ally` use must weigh a fact about one ally.
 - `weight`: how much the mob wants it, from 0 to 100. The default is 1.
-- `considerations`: facts the use cares about. Each has a `fact`, a `curve` (`between`, `rising` or `falling`, default `between`), and a `low` and `high`. `between` gives 1 inside the range and 0 outside. `rising` climbs from 0 at `low` to 1 at `high`, and `falling` the other way.
+- `considerations`: facts the use cares about. Each has a `fact`, a `curve` (`between`, `rising` or `falling`, default `between`), and a `low` and `high`. `between` gives 1 inside the range and 0 outside. `rising` climbs from 0 at `low` to 1 at `high`, and `falling` the other way. A fact that counts heads also has a `radius` in blocks, up to 24.
 
-The facts are `target_distance` (blocks), `target_in_sight` (1 or 0), `target_health` (0 to 1), `target_winding_up` (1 while it draws a bow, crossbow or trident, or winds up a power), `target_running` (1 when it has moved away from the mob at 0.15 blocks a tick or more since the mob last weighed its powers), `target_slowed` (1 while it is slowed or held), `target_airborne` (1 while it stands, swims, climbs and rides on nothing), `target_vampire` (1 for a vampire), `target_hunter` (1 for a hunter), `own_health` (0 to 1), `own_blood` (points), `in_form` (1 in bat or winged form), `sun_on_me` (1 or 0), `downed` (1 or 0), `stuck` (1 while the mob has neither gained on its foe nor travelled for its stage's stuck wait) and `spot_distance` (blocks to the end of the mob's route). A target fact is missing when the mob has no target, `spot_distance` is missing when it has no route, and a missing fact scores 0.
+The facts are `target_distance` (blocks), `target_in_sight` (1 or 0), `target_health` (0 to 1), `target_winding_up` (1 while it draws a bow, crossbow or trident, or winds up a power), `target_running` (1 when it has moved away from the mob at 0.15 blocks a tick or more since the mob last weighed its powers), `target_slowed` (1 while it is slowed or held), `target_airborne` (1 while it stands, swims, climbs and rides on nothing), `target_vampire` (1 for a vampire), `target_hunter` (1 for a hunter), `own_health` (0 to 1), `own_blood` (points), `in_form` (1 in bat or winged form), `sun_on_me` (1 or 0), `downed` (1 or 0), `stuck` (1 while the mob has neither gained on its foe nor travelled for its stage's stuck wait) `spot_distance` (blocks to the end of the mob's route), `ally_distance` (blocks), `ally_health` (0 to 1), `ally_under_attack` (1 while a foe has the ally as its target, or for 3 seconds after it is struck), `allies_in_radius` and `foes_in_radius` (heads within the consideration's `radius`). A target fact is missing when the mob has no target, `spot_distance` is missing when it has no route, and a missing fact scores 0.
 
-A use scores its weight times each consideration's value, and any 0 rules it out. A power whose buff or effects are already on the mob is not weighed at all. The mob casts the best scoring power it can afford that beats its intent's threshold. Each intent's blood reserve, cooldown price, threshold, thrift and spread live in `data/nightborn/nightborn/mob_intent/`. Thrift, from 0 to 1, holds back a costly power while the mob is healthy: a score is cut by the thrift times the power's price times the mob's own health, where the price is its blood over 10 plus its cooldown over 6000 ticks, at most 1. A losing mob is barely held back. Spread, from 0 to 1, settles close scores by chance: any power within that share of the best score may be cast instead. A power marked `dodge` is weighed only as a dodge in a fight, and like any other power out of one. `/nightborn brain <targets>` shows what a mob last weighed up, which is how uses are tuned. A use with an unknown intent, aim or fact is reported at start with the skill's name.
+A use that weighs an `ally_` fact is scored once for each ally within 24 blocks, and keeps the ally it scores best, so a healer picks the one who needs it most. While a mob winds up to help an ally it claims that ally, and no other mob picks it for help until the tell lands. An ally is anyone on the mob's side or team who is not fighting it: hunters stand with hunters and vampires with vampires, whether mob or player. A foe is anyone not allied who is on the other side, fights the mob or its allies, or is fought by them. Mobs near each other share one look around per tick, so a raid of ten looks once. A mob with no target of its own still weighs its helping uses, as a `fight`, while an ally near it is fighting.
+
+A use scores its weight times each consideration's value, and any 0 rules it out. A power whose buff or effects are already on the mob is not weighed at all. The mob casts the best scoring power it can afford that beats its intent's threshold. Each intent's blood reserve, cooldown price, threshold, thrift and spread live in `data/nightborn/nightborn/mob_intent/`. Thrift, from 0 to 1, holds back a costly power while the mob is healthy: a score is cut by the thrift times the power's price times the mob's own health, where the price is its blood over 10 plus its cooldown over 6000 ticks, at most 1. A losing mob is barely held back. Spread, from 0 to 1, settles close scores by chance: any power within that share of the best score may be cast instead. A power marked `dodge` is weighed only as a dodge in a fight, and like any other power out of one. `/nightborn brain <targets>` shows what a mob last weighed up, which is how uses are tuned. A use with an unknown intent, aim or fact, an `ally` use that weighs no ally fact, or a head count with no radius is reported at start with the skill's name.
 
 A power that lists its own uses is scored only by them, so its `min_range` and `max_range` no longer limit it. Put the range in a `target_distance` consideration when it still matters. A power kept for dodging (`"dodge": true`, such as Vanish) is weighed in a fight only when the mob dodges a blow, unless the mob is stuck, when it is weighed like any other power so its `stuck` uses can carry the mob past what holds it.
 
@@ -249,6 +251,43 @@ A healing power a mob uses on itself once it is badly hurt, twice as keen as on 
 	]
 }
 ]
+```
+
+An area power that waits for a crowd in a group fight, and still works on a lone foe for a mob with no allies near:
+
+```json
+"uses": [
+{
+	"intent": "fight",
+	"aim": "foes",
+	"considerations": [
+	{ "fact": "foes_in_radius", "curve": "rising", "low": 1, "high": 3, "radius": 4 }
+	]
+},
+{
+	"intent": "fight",
+	"aim": "self",
+	"considerations": [
+	{ "fact": "target_distance", "high": 4 },
+	{ "fact": "allies_in_radius", "curve": "falling", "low": 0, "high": 1, "radius": 16 }
+	]
+}
+]
+```
+
+A heal a healthy hunter gives the worst hurt ally beside it:
+
+```json
+{
+"intent": "fight",
+"aim": "ally",
+"weight": 1.8,
+"considerations": [
+	{ "fact": "ally_distance", "high": 6 },
+	{ "fact": "ally_health", "curve": "falling", "low": 0.3, "high": 0.7 },
+	{ "fact": "own_health", "curve": "rising", "low": 0.4, "high": 0.8 }
+]
+}
 ```
 
 ## Skills The Mod Already Has

@@ -12,6 +12,7 @@ public final class MobFighting {
   public enum Engagement {
     FIGHTING,
     ESCAPING,
+    STANDING_BY,
     NONE
   }
 
@@ -52,7 +53,7 @@ public final class MobFighting {
     if (escaping) {
       return Engagement.ESCAPING;
     }
-    return hasTarget ? Engagement.FIGHTING : Engagement.NONE;
+    return hasTarget ? Engagement.FIGHTING : Engagement.STANDING_BY;
   }
 
   public <T extends MobEntity & PowerShow> void tick(
@@ -62,9 +63,9 @@ public final class MobFighting {
       moves.rest();
       return;
     }
-    if (engagement == Engagement.ESCAPING) {
+    if (engagement != Engagement.FIGHTING) {
       moves.rest();
-      casting.tick(fighter, true, thinkTicks, bloodFloor);
+      casting.tick(fighter, engagement == Engagement.ESCAPING, thinkTicks, bloodFloor);
       return;
     }
     final boolean hasTarget = fighter.getTarget() != null;

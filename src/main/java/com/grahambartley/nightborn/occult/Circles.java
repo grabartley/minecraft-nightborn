@@ -44,9 +44,8 @@ public final class Circles {
     CIRCLES.clear();
   }
 
-  public static void draw(final LivingEntity caster, final CirclePower power) {
+  public static void draw(final LivingEntity caster, final CirclePower power, final Vec3d at) {
     if (caster.getWorld() instanceof ServerWorld world) {
-      final Vec3d at = caster.getPos();
       CIRCLES.add(new Circle(world.getRegistryKey(), at, caster.getUuid(), power, world.getTime()));
       ZoneMarkEntity.ground(world, at, power.radius(), power.look(), power.durationTicks(), 0.0F);
     }

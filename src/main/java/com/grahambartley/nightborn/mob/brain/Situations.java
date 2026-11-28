@@ -12,6 +12,7 @@ import java.util.Set;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.util.math.Vec3d;
+import org.jetbrains.annotations.Nullable;
 
 public final class Situations {
 
@@ -29,6 +30,15 @@ public final class Situations {
 
   public static Situation read(
       final MobEntity mob, final Intent intent, final Set<Fact> needed, final Vec3d moved) {
+    return read(mob, intent, needed, moved, readsGroup(needed) ? GroupViews.read(mob) : null);
+  }
+
+  public static Situation read(
+      final MobEntity mob,
+      final Intent intent,
+      final Set<Fact> needed,
+      final Vec3d moved,
+      @Nullable final Situation.Group group) {
     final LivingEntity target = mob.getTarget();
     return new Situation(
         intent,
@@ -50,7 +60,13 @@ public final class Situations {
                 moved),
         needed.contains(Fact.SPOT_DISTANCE)
             ? new Situation.Place(RouteEnd.distance(mob.getPos(), RouteEnd.of(mob)))
-            : Situation.Place.UNKNOWN);
+            : Situation.Place.UNKNOWN,
+        group == null ? Situation.Group.UNKNOWN : group,
+        null);
+  }
+
+  static boolean readsGroup(final Set<Fact> needed) {
+    return !Collections.disjoint(needed, Fact.GROUP);
   }
 
   static boolean readsSigns(final Set<Fact> needed) {

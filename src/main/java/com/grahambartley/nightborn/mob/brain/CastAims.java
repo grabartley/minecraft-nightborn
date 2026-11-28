@@ -15,6 +15,11 @@ public final class CastAims {
     return resolve(aim, caster, aim == Aim.SPOT ? RouteEnd.of(caster) : null);
   }
 
+  public static Optional<CastAim> resolve(
+      final MobEntity caster, final Aim aim, @Nullable final LivingEntity ally) {
+    return aim == Aim.ALLY ? Optional.ofNullable(ally).map(CastAim::at) : resolve(caster, aim);
+  }
+
   static Optional<CastAim> resolve(
       final Aim aim, final LivingEntity self, @Nullable final Vec3d routeEnd) {
     return switch (aim) {

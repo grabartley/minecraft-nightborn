@@ -71,6 +71,14 @@ class MobUseCheckTest {
             + " | '' | nightborn:test/power has a use aimed at a spot that does not weigh"
             + " spot_distance",
         "',\"power\":{\"blood\":0,\"cooldown_ticks\":20,\"mob\":{\"max_range\":8,\"tell_ticks\":5,\"tell_sound\":\"a:b\",\"tell_clip\":\"x\",\"uses\":[{\"intent\":\"retreat\",\"aim\":\"spot\",\"considerations\":[{\"fact\":\"spot_distance\",\"high\":16}]}]}}'"
+            + " | '' | ''",
+        "',\"power\":{\"blood\":0,\"cooldown_ticks\":20,\"mob\":{\"max_range\":8,\"tell_ticks\":5,\"tell_sound\":\"a:b\",\"tell_clip\":\"x\",\"uses\":[{\"intent\":\"fight\",\"aim\":\"ally\",\"considerations\":[{\"fact\":\"own_health\",\"high\":1}]}]}}'"
+            + " | '' | nightborn:test/power has a use aimed at an ally that weighs no ally fact",
+        "',\"power\":{\"blood\":0,\"cooldown_ticks\":20,\"mob\":{\"max_range\":8,\"tell_ticks\":5,\"tell_sound\":\"a:b\",\"tell_clip\":\"x\",\"uses\":[{\"intent\":\"fight\",\"aim\":\"ally\",\"considerations\":[{\"fact\":\"ally_health\",\"high\":0.5}]}]}}'"
+            + " | '' | ''",
+        "',\"power\":{\"blood\":0,\"cooldown_ticks\":20,\"mob\":{\"max_range\":8,\"tell_ticks\":5,\"tell_sound\":\"a:b\",\"tell_clip\":\"x\",\"uses\":[{\"intent\":\"fight\",\"aim\":\"foes\",\"considerations\":[{\"fact\":\"foes_in_radius\",\"high\":3}]}]}}'"
+            + " | '' | nightborn:test/power has a use that counts foes_in_radius with no radius",
+        "',\"power\":{\"blood\":0,\"cooldown_ticks\":20,\"mob\":{\"max_range\":8,\"tell_ticks\":5,\"tell_sound\":\"a:b\",\"tell_clip\":\"x\",\"uses\":[{\"intent\":\"fight\",\"aim\":\"foes\",\"considerations\":[{\"fact\":\"foes_in_radius\",\"high\":3,\"radius\":4}]}]}}'"
             + " | '' | ''"
       })
   @DisplayName(

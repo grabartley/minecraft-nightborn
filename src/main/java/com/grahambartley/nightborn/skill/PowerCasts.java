@@ -76,9 +76,9 @@ final class PowerCasts {
     power.fog().ifPresent(fog -> FogClouds.spawn(caster, fog));
     power.rally().ifPresent(rally -> Rally.call(caster, rally));
     power.summon().ifPresent(summon -> Summons.call(caster, summon));
-    power.circle().ifPresent(circle -> Circles.draw(caster, circle));
+    power.circle().ifPresent(circle -> Circles.draw(caster, circle, cast.helped(caster).getPos()));
     power.swarm().ifPresent(swarm -> Swarms.start(caster, swarm));
-    power.heal().ifPresent(heal -> Mending.start(caster, heal));
+    power.heal().ifPresent(heal -> Mending.start(cast.helped(caster), heal));
     power.frees().ifPresent(frees -> FreePowers.grant(caster, frees));
     power
         .boost()

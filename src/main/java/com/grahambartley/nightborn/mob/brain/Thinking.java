@@ -36,12 +36,24 @@ public final class Thinking {
 
   private static Optional<Think> think(
       final MobEntity mob, final boolean dodge, final int mobFloor, final Vec3d moved) {
-    final Intent intent = Intents.read(mob);
-    final List<PowerChoice.Option> options = options(mob, dodge, intent);
+    final Intent reported = Intents.read(mob);
+    final boolean aids = aids(dodge, mob.getTarget() != null, reported);
+    if (aids && !ownsHelp(mob)) {
+      return Optional.empty();
+    }
+    final Intent intent = aids ? Intent.FIGHT : reported;
+    final List<PowerChoice.Option> options =
+        aids ? helping(options(mob, false, intent), intent) : options(mob, dodge, intent);
     if (options.stream().noneMatch(option -> option.verdict() == PowerUse.Verdict.READY)) {
       return Optional.empty();
     }
-    final Situation situation = Situations.read(mob, intent, needed(options), moved);
+    final Set<Fact> needed = needed(options);
+    final Situation.Group group =
+        aids || Situations.readsGroup(needed) ? GroupViews.read(mob) : null;
+    if (aids && !group.allyFighting()) {
+      return Optional.empty();
+    }
+    final Situation situation = Situations.read(mob, intent, needed, moved, group);
     final IntentBudget budget = MobIntents.budget(mob.getRegistryManager(), intent);
     return Optional.of(
         new Think(
@@ -65,6 +77,37 @@ public final class Thinking {
       }
     }
     return needed;
+  }
+
+  static boolean aids(final boolean dodge, final boolean hasTarget, final Intent reported) {
+    return !dodge && !hasTarget && reported != Intent.RETREAT;
+  }
+
+  static List<PowerChoice.Option> helping(
+      final List<PowerChoice.Option> options, final Intent intent) {
+    return options.stream()
+        .filter(
+            option ->
+                option.use().effectiveUses().stream()
+                    .anyMatch(
+                        use ->
+                            use.intent().equals(intent.key())
+                                && use.helpsAnAlly()
+                                && option.readyAims().contains(use.aimed())))
+        .toList();
+  }
+
+  static boolean helps(final MobPowerUse use) {
+    return use.effectiveUses().stream().anyMatch(MobUse::helpsAnAlly);
+  }
+
+  private static boolean ownsHelp(final MobEntity mob) {
+    for (final Identifier id : SkillAttachment.owned(mob).ownedInOrder()) {
+      if (Powers.power(mob, id).flatMap(SkillPower::mob).filter(Thinking::helps).isPresent()) {
+        return true;
+      }
+    }
+    return false;
   }
 
   static boolean offered(

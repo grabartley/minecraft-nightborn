@@ -61,6 +61,38 @@
             }
           ],
           "weight": 1.2
+        },
+        {
+          "intent": "fight",
+          "aim": "ally",
+          "considerations": [
+            {
+              "fact": "ally_distance",
+              "high": 8
+            },
+            {
+              "fact": "ally_under_attack",
+              "low": 1,
+              "high": 1
+            }
+          ],
+          "weight": 1.1
+        },
+        {
+          "intent": "close_in",
+          "aim": "ally",
+          "considerations": [
+            {
+              "fact": "ally_distance",
+              "high": 8
+            },
+            {
+              "fact": "ally_under_attack",
+              "low": 1,
+              "high": 1
+            }
+          ],
+          "weight": 1.1
         }
       ]
     }

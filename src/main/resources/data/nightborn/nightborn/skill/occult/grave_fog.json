@@ -58,6 +58,13 @@
             {
               "fact": "target_slowed",
               "high": 0
+            },
+            {
+              "fact": "allies_in_radius",
+              "curve": "falling",
+              "low": 0,
+              "high": 1,
+              "radius": 16
             }
           ]
         },
@@ -72,6 +79,13 @@
             {
               "fact": "target_slowed",
               "high": 0
+            },
+            {
+              "fact": "allies_in_radius",
+              "curve": "falling",
+              "low": 0,
+              "high": 1,
+              "radius": 16
             }
           ]
         },
@@ -82,6 +96,32 @@
             {
               "fact": "target_distance",
               "high": 6
+            }
+          ]
+        },
+        {
+          "intent": "fight",
+          "aim": "foes",
+          "considerations": [
+            {
+              "fact": "foes_in_radius",
+              "curve": "rising",
+              "low": 1,
+              "high": 3,
+              "radius": 4
+            }
+          ]
+        },
+        {
+          "intent": "close_in",
+          "aim": "foes",
+          "considerations": [
+            {
+              "fact": "foes_in_radius",
+              "curve": "rising",
+              "low": 1,
+              "high": 3,
+              "radius": 4
             }
           ]
         }

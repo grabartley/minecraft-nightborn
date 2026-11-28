@@ -1,6 +1,7 @@
 package com.grahambartley.nightborn.faith;
 
 import com.grahambartley.nightborn.coating.Coatings;
+import com.grahambartley.nightborn.skill.CastAim;
 import com.grahambartley.nightborn.skill.PowerSight;
 import com.grahambartley.nightborn.trap.TrapAllies;
 import java.util.Optional;
@@ -13,9 +14,10 @@ public final class Wielders {
   private Wielders() {}
 
   @Nullable
-  public static LivingEntity of(final LivingEntity caster, final PowerFaith faith) {
+  public static LivingEntity of(
+      final LivingEntity caster, final PowerFaith faith, final CastAim cast) {
     if (faith.blessing().isPresent()) {
-      final LivingEntity ally = ally(caster, faith.blessing().get().range());
+      final LivingEntity ally = ally(caster, faith.blessing().get().range(), cast);
       return pick(armed(ally), armed(caster)).orElse(null);
     }
     return faith.kindle().isPresent() && armed(caster) != null ? caster : null;
@@ -30,13 +32,21 @@ public final class Wielders {
   }
 
   @Nullable
-  private static LivingEntity ally(final LivingEntity caster, final double range) {
+  private static LivingEntity ally(
+      final LivingEntity caster, final double range, final CastAim cast) {
     final LivingEntity looked =
-        caster instanceof MobEntity ? null : PowerSight.looked(caster, range);
+        caster instanceof MobEntity ? aimed(caster, cast, range) : PowerSight.looked(caster, range);
     return looked != null
             && blessable(looked.isAlive(), caster.canSee(looked), TrapAllies.allied(caster, looked))
         ? looked
         : null;
+  }
+
+  @Nullable
+  private static LivingEntity aimed(
+      final LivingEntity caster, final CastAim cast, final double range) {
+    final LivingEntity aimed = cast.helped(caster);
+    return aimed != caster && caster.squaredDistanceTo(aimed) <= range * range ? aimed : null;
   }
 
   @Nullable

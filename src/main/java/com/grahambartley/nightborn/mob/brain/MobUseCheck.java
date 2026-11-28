@@ -57,6 +57,18 @@ public final class MobUseCheck {
               .noneMatch(consideration -> Fact.SPOT_DISTANCE.key().equals(consideration.fact()))) {
         problems.add(id + " has a use aimed at a spot that does not weigh spot_distance");
       }
+      if (Aim.ALLY.key().equals(use.aim()) && !use.helpsAnAlly()) {
+        problems.add(id + " has a use aimed at an ally that weighs no ally fact");
+      }
+      use.considerations().stream()
+          .filter(
+              consideration ->
+                  consideration.radius() <= 0.0F
+                      && Fact.byKey(consideration.fact()).filter(Fact.RADIUS::contains).isPresent())
+          .forEach(
+              consideration ->
+                  problems.add(
+                      id + " has a use that counts " + consideration.fact() + " with no radius"));
       use.considerations().stream()
           .filter(consideration -> Fact.byKey(consideration.fact()).isEmpty())
           .forEach(
