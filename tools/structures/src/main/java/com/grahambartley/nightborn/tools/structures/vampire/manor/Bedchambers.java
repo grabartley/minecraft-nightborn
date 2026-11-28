@@ -13,15 +13,15 @@ public final class Bedchambers {
 
   public static final int SEAT = F1 + 1;
   public static final int TESTER = TOP - 1;
-  public static final int STUDY = TOP + 1;
+  public static final int STUDY = Turret.STUDY + 1;
 
   private Bedchambers() {}
 
   public static void build(final Template t) {
-    master(t);
     westChamber(t);
-    eastChamber(t);
+    master(t);
     sittingRoom(t);
+    eastChamber(t);
     study(t);
   }
 
@@ -49,79 +49,55 @@ public final class Bedchambers {
     Furnishing.drape(t, Manor.BURGUNDY, hx, SEAT, hz, TESTER - SEAT, Facing.OPPOSITE.get(head));
   }
 
-  private static void master(final Template t) {
-    halfTester(t, Manor.DARK_OAK_COFFIN, 19, 21, "east");
-    halfTester(t, Manor.DARK_OAK_COFFIN, 19, 24, "east");
-    Furnishing.chair(t, 15, SEAT, 20, "west");
-    Furnishing.chair(t, 15, SEAT, 22, "west");
-    Furnishing.candelabra(t, 16, SEAT, 21);
-    Furnishing.table(t, 14, SEAT, 25);
-    Furnishing.candles(t, 14, SEAT + 1, 25, 2, false);
-    Furnishing.chair(t, 15, SEAT, 25, "west");
-    Furnishing.chest(t, 21, SEAT, 26, "west");
-    for (final int z : new int[] {19, 25}) {
-      Furnishing.drape(t, Manor.BURGUNDY, 13, SEAT, z, 4, "east");
-    }
-    for (final int x : new int[] {16, 18}) {
-      Furnishing.drape(t, Manor.BURGUNDY, x, SEAT, 26, 4, "north");
-    }
-    Furnishing.portrait(t, 14, SEAT + 1, 18, "south");
-  }
-
   private static void westChamber(final Template t) {
-    halfTester(t, Manor.SPRUCE_COFFIN, 15, 13, "west");
-    Furnishing.table(t, 19, SEAT, 13);
-    Furnishing.candelabra(t, 19, SEAT + 1, 13);
-    Furnishing.chair(t, 18, SEAT, 13, "east");
+    halfTester(t, Manor.SPRUCE_COFFIN, 22, 24, "west");
+    Furnishing.table(t, 28, SEAT, 27);
+    Furnishing.candelabra(t, 28, SEAT + 1, 27);
+    Furnishing.chair(t, 27, SEAT, 27, "east");
     for (int y = SEAT; y <= SEAT + 2; y++) {
-      t.set(21, y, 10, "bookshelf");
-      t.set(21, y, 11, "bookshelf");
+      t.set(30, y, 19, "bookshelf");
+      t.set(30, y, 20, "bookshelf");
     }
-    t.set(21, SEAT, 14, BlockState.of("water_cauldron", "level", 1));
-    Furnishing.chest(t, 20, SEAT, 16, "north");
-    for (final int z : new int[] {10, 15}) {
-      Furnishing.drape(t, Manor.EMERALD, 13, SEAT, z, 4, "east");
-    }
-    for (final int x : new int[] {15, 19}) {
-      Furnishing.drape(t, Manor.EMERALD, x, SEAT, 9, 4, "south");
-    }
+    t.set(21, SEAT, 28, BlockState.of("water_cauldron", "level", 1));
+    Furnishing.chest(t, 21, SEAT, 19, "east");
+    Furnishing.portrait(t, 28, SEAT + 2, 28, "north");
   }
 
-  private static void eastChamber(final Template t) {
-    Furnishing.coffin(t, Manor.SPRUCE_COFFIN, 34, SEAT, 20, "north");
-    Furnishing.coffin(t, Manor.SPRUCE_COFFIN, 36, SEAT, 19, "north");
-    Furnishing.candles(t, 35, SEAT, 19, 3, false);
-    Furnishing.chair(t, 38, SEAT, 17, "east");
-    Furnishing.candelabra(t, 35, SEAT, 17);
-    for (final int x : new int[] {33, 36}) {
-      Furnishing.drape(t, Manor.BURGUNDY, x, SEAT, 21, 4, "north");
-    }
-    Furnishing.chair(t, Turret.CX - 1, SEAT, Turret.CZ + 1, "south");
-    Furnishing.portrait(t, 33, SEAT + 1, 20, "east");
-    t.set(
-        Turret.CX,
-        SEAT,
-        Turret.STAIR_FOOT_Z,
-        BlockState.of("candle", "candles", 2, "lit", false, "waterlogged", false));
+  private static void master(final Template t) {
+    halfTester(t, Manor.DARK_OAK_COFFIN, 22, 32, "north");
+    halfTester(t, Manor.DARK_OAK_COFFIN, 28, 32, "north");
+    Furnishing.chair(t, 22, SEAT, 34, "west");
+    Furnishing.chair(t, 22, SEAT, 36, "west");
+    Furnishing.candelabra(t, 22, SEAT, 38);
+    Furnishing.table(t, 26, SEAT, 38);
+    Furnishing.candles(t, 26, SEAT + 1, 38, 2, false);
+    Furnishing.chair(t, 26, SEAT, 37, "south");
+    Furnishing.chest(t, 29, SEAT, 40, "north");
+    Furnishing.portrait(t, 25, SEAT + 2, 40, "north");
   }
 
   private static void sittingRoom(final Template t) {
-    Furnishing.chair(t, 37, SEAT, 11, "east");
-    Furnishing.chair(t, 37, SEAT, 13, "east");
-    Furnishing.table(t, 35, SEAT, 11);
-    Furnishing.table(t, 35, SEAT, 12);
-    Furnishing.candelabra(t, 35, SEAT + 1, 12);
-    Furnishing.chalice(t, 35, SEAT + 1, 11, "full");
-    for (int z = 9; z <= 14; z++) {
+    Furnishing.chair(t, 54, SEAT, 21, "east");
+    Furnishing.chair(t, 54, SEAT, 23, "east");
+    Furnishing.table(t, 53, SEAT, 22);
+    Furnishing.chalice(t, 53, SEAT + 1, 22, "full");
+    for (int x = 46; x <= 48; x++) {
       for (int y = SEAT; y <= SEAT + 2; y++) {
-        t.set(33, y, z, "bookshelf");
+        t.set(x, y, 28, "bookshelf");
       }
     }
-    Furnishing.chest(t, 38, SEAT, 14, "west");
-    Furnishing.portrait(t, 36, SEAT + 2, 9, "south");
-    for (final int x : new int[] {34, 38}) {
-      Furnishing.drape(t, Manor.EMERALD, x, SEAT, 9, 4, "south");
-    }
+    Furnishing.chest(t, 56, SEAT, 28, "west");
+    Furnishing.portrait(t, 51, SEAT + 2, 18, "south");
+    Furnishing.candelabra(t, 56, SEAT, 18);
+  }
+
+  private static void eastChamber(final Template t) {
+    halfTester(t, Manor.SPRUCE_COFFIN, 48, 32, "north");
+    halfTester(t, Manor.SPRUCE_COFFIN, 54, 32, "north");
+    Furnishing.chair(t, 54, SEAT, 36, "east");
+    Furnishing.candles(t, 54, SEAT, 37, 3, false);
+    Furnishing.chest(t, 47, SEAT, 40, "north");
+    Furnishing.portrait(t, 50, SEAT + 2, 40, "north");
   }
 
   private static void study(final Template t) {
@@ -130,9 +106,9 @@ public final class Bedchambers {
     Furnishing.lectern(t, x - 2, STUDY, z, "east");
     Furnishing.table(t, x - 1, STUDY, z + 2);
     Furnishing.candelabra(t, x - 1, STUDY + 1, z + 2);
-    Furnishing.chair(t, x, STUDY, z + 2, "west");
-    Furnishing.candelabra(t, x - 2, STUDY, z + 1);
-    Furnishing.chest(t, x - 2, STUDY, z - 1, "east");
-    t.set(x + 1, STUDY + 4, z - 1, "cobweb");
+    Furnishing.chair(t, x - 2, STUDY, z + 2, "east");
+    Furnishing.candelabra(t, x - 3, STUDY, z);
+    Furnishing.chest(t, x - 2, STUDY, z - 2, "east");
+    t.set(x + 2, STUDY + 6, z - 1, "cobweb");
   }
 }

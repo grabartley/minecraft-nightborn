@@ -1,10 +1,14 @@
 package com.grahambartley.nightborn.tools.structures.vampire.manor;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.grahambartley.nightborn.tools.structures.template.Template;
+import com.grahambartley.nightborn.tools.structures.vampire.Coffins;
+import java.util.List;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
@@ -52,21 +56,48 @@ class BedchambersTest {
     assertNull(t.get(footX, Bedchambers.TESTER, footZ));
   }
 
+  @ParameterizedTest(name = "a {3} lies at {0},{1},{2} with its canopy drape on the wall")
+  @CsvSource({
+    "22, 13, 24, spruce_coffin, 20, 24, 19, 24",
+    "22, 13, 32, dark_oak_coffin, 22, 30, 22, 29",
+    "28, 13, 32, dark_oak_coffin, 28, 30, 28, 29",
+    "48, 13, 32, spruce_coffin, 48, 30, 48, 29",
+    "54, 13, 32, spruce_coffin, 54, 30, 54, 29"
+  })
+  void everyCoffinIsCanopiedAgainstAWall(
+      final int x,
+      final int y,
+      final int z,
+      final String coffin,
+      final int drapeX,
+      final int drapeZ,
+      final int wallX,
+      final int wallZ) {
+    assertTrue(rooms.get(x, y, z).contains(coffin + "[") && rooms.get(x, y, z).contains("foot"));
+    assertTrue(rooms.get(drapeX, y, drapeZ).contains("velvet_drape"));
+    final String behind = rooms.get(wallX, y, wallZ);
+    assertTrue(!behind.contains("air") && !behind.contains("door"), behind);
+  }
+
+  @Test
+  void everyCoffinLidOpensFreely() {
+    Coffins.assertSound(rooms, List.of(Manor.DARK_OAK_COFFIN, Manor.SPRUCE_COFFIN));
+    assertEquals(5, Coffins.in(rooms).size());
+  }
+
   @ParameterizedTest(name = "{3} at {0},{1},{2}")
   @CsvSource({
-    "19, 10, 21, dark_oak_coffin",
-    "19, 10, 24, dark_oak_coffin",
-    "15, 10, 13, spruce_coffin",
-    "34, 10, 20, spruce_coffin",
-    "36, 10, 19, spruce_coffin",
-    "35, 11, 11, chalice",
-    "40, 15, 24, ornate_chair",
-    "38, 15, 22, lectern",
-    "38, 15, 21, chest",
-    "42, 15, 22, bookshelf",
-    "14, 11, 18, portrait"
+    "53, 14, 22, chalice",
+    "54, 13, 21, ornate_chair[facing=east",
+    "56, 13, 28, chest",
+    "56, 19, 42, lectern",
+    "57, 19, 44, ornate_table",
+    "56, 19, 40, chest",
+    "21, 13, 19, chest",
+    "29, 13, 40, chest",
+    "47, 13, 40, chest"
   })
-  void furnishesEachChamber(final int x, final int y, final int z, final String block) {
+  void furnishesEachChamberAndTheStudy(final int x, final int y, final int z, final String block) {
     assertTrue(rooms.get(x, y, z).contains(block), rooms.get(x, y, z));
   }
 }

@@ -29,7 +29,7 @@ class ChimneyTest {
   @MethodSource("fires")
   void everyFireDrawsToTheSky(final Chimney chimney, final Chimney.Fire fire) {
     final Template t = built(chimney);
-    final Pos box = fire.box();
+    final Pos box = fire.flue();
     assertTrue(t.get(box.x(), box.y(), box.z()).startsWith("minecraft:campfire"));
     for (int y = box.y() + 1; y < t.sizeY(); y++) {
       final String above = t.get(box.x(), y, box.z());
@@ -52,12 +52,31 @@ class ChimneyTest {
   @MethodSource("fires")
   void stacksNarrowAboveTheEaves(final Chimney chimney, final Chimney.Fire fire) {
     final Template t = built(chimney);
-    assertTrue(chimney.shaft(fire.box().x(), fire.box().z()));
+    assertTrue(chimney.shaft(fire.flue().x(), fire.flue().z()));
     for (int x = chimney.x0(); x <= chimney.x1(); x++) {
       for (int z = chimney.z0(); z <= chimney.z1(); z++) {
         final boolean shaft = chimney.shaft(x, z);
         assertEquals(shaft, t.get(x, Manor.TOP + 2, z) != null, x + "," + z);
       }
+    }
+  }
+
+  @ParameterizedTest(name = "{1} burns deep inside the two thick wall")
+  @MethodSource("fires")
+  void everyFireboxSitsInsideTheWall(final Chimney chimney, final Chimney.Fire fire) {
+    final Template t = built(chimney);
+    final Pos firebox = fire.firebox();
+    assertTrue(ManorShell.HOUSE.onWall(firebox.x(), firebox.z()));
+    assertTrue(ManorShell.LINING.onWall(fire.x(), fire.z()));
+    assertEquals(BlockState.AIR, t.get(firebox.x(), firebox.y(), firebox.z()));
+    assertTrue(chimney.shaft(fire.flue().x(), fire.flue().z()));
+  }
+
+  @ParameterizedTest(name = "{0} stands clear of the roof slope beside it")
+  @MethodSource("fires")
+  void stacksRiseAboveTheRoof(final Chimney chimney, final Chimney.Fire fire) {
+    for (int z = chimney.z0(); z <= chimney.z1(); z++) {
+      assertTrue(chimney.top() >= Manor.TOP + ManorRoofs.rise(z) + Chimney.ABOVE_ROOF);
     }
   }
 }

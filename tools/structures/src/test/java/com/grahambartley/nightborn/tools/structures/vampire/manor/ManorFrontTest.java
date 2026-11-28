@@ -8,71 +8,54 @@ import com.grahambartley.nightborn.tools.structures.template.Template;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
-import org.junit.jupiter.params.provider.ValueSource;
 
 class ManorFrontTest {
 
-  static Template front;
+  static Template t;
 
   @BeforeAll
   static void build() {
-    front = new Template("vampire/test", Manor.SIZE_X, Manor.SIZE_Y, Manor.SIZE_Z);
-    ManorShell.build(front);
-    ManorFront.build(front);
+    t = new Template("vampire/test", Manor.SIZE_X, Manor.SIZE_Y, Manor.SIZE_Z);
+    ManorShell.build(t);
+    ManorFront.build(t);
   }
 
-  @ParameterizedTest(name = "{0},{1} in the bay: {2}")
+  static boolean open(final String state) {
+    return state == null || BlockState.AIR.equals(state);
+  }
+
+  @ParameterizedTest(name = "x {0} on the steps {1}")
+  @CsvSource({"34, false", "35, true", "38, true", "41, true", "42, false"})
+  void theStepsAreSevenWide(final int x, final boolean on) {
+    assertEquals(on, ManorFront.onSteps(x));
+  }
+
+  @ParameterizedTest(name = "step at z {0} is at y {1}")
+  @CsvSource({"47, 5", "48, 4", "49, 3", "50, 2", "51, 1"})
+  void theStepsFallToTheGround(final int z, final int y) {
+    for (int x = 35; x <= 41; x++) {
+      assertTrue(t.get(x, y, z).contains("gothic_stone_brick_stairs[facing=north"), x + "," + z);
+      assertTrue(open(t.get(x, y + 1, z)));
+    }
+  }
+
+  @ParameterizedTest(name = "cheek wall at {0},{1} tops out at y {2}")
+  @CsvSource({"34, 47, 6", "42, 49, 4", "34, 51, 2"})
+  void cheekWallsFollowTheFlight(final int x, final int z, final int slab) {
+    assertTrue(t.get(x, slab, z).contains("slab"), t.get(x, slab, z));
+    assertTrue(open(t.get(x, slab + 1, z)));
+  }
+
+  @ParameterizedTest(name = "the porch at {0},{1} has {2} at y {3}")
   @CsvSource({
-    "15, 28, true",
-    "15, 29, false",
-    "16, 29, true",
-    "19, 29, false",
-    "17, 27, true",
-    "20, 28, false"
+    "33, 46, gothic_stone, 11",
+    "38, 45, deepslate_tiles, 11",
+    "38, 46, half=top, 10",
+    "38, 44, lantern, 10",
+    "34, 46, gothic_stone_brick_wall, 6",
+    "38, 46, air, 6"
   })
-  void theBayIsCanted(final int x, final int z, final boolean in) {
-    assertEquals(in, ManorFront.inBay(x, z));
-  }
-
-  @ParameterizedTest(name = "the bay is glazed in stained glass at y {0}")
-  @ValueSource(ints = {5, 6, 7})
-  void theBayIsGlazed(final int y) {
-    assertEquals(Manor.STAINED, front.get(17, y, ManorFront.BAY_S).replace("minecraft:", ""));
-  }
-
-  @ParameterizedTest(name = "step {0} rises to y {1}")
-  @CsvSource({"29, 1", "28, 2", "27, 3"})
-  void stepsClimbToThePorch(final int z, final int y) {
-    assertTrue(front.get(Manor.MID_X, y, z).contains("facing=north"), front.get(Manor.MID_X, y, z));
-    final String above = front.get(Manor.MID_X, y + 1, z);
-    assertTrue(above == null || BlockState.AIR.equals(above), above);
-  }
-
-  @ParameterizedTest(name = "the bedroom wall above the bay at x {0} is {1}")
-  @CsvSource({"16, glass_pane", "17, bricks", "18, glass_pane"})
-  void theBayRoofLeavesTheWallAboveWhole(final int x, final String block) {
-    assertTrue(
-        front.get(x, Manor.F1 + 1, Manor.WING_S).contains(block),
-        front.get(x, Manor.F1 + 1, Manor.WING_S));
-  }
-
-  @ParameterizedTest(name = "the porch arch is open at y {0}")
-  @ValueSource(ints = {4, 5, 6})
-  void thePorchArchIsOpen(final int y) {
-    assertEquals(BlockState.AIR, front.get(Manor.MID_X, y, ManorFront.PORCH_S));
-  }
-
-  @ParameterizedTest(name = "a gargoyle guards x {0}")
-  @ValueSource(ints = {25, 29})
-  void gargoylesGuardTheSteps(final int x) {
-    assertTrue(front.get(x, 3, ManorFront.STEPS_END).startsWith(Manor.GARGOYLE + "[facing=south"));
-  }
-
-  @ParameterizedTest(name = "the great window rises to y {1} at x {0}")
-  @CsvSource({"26, 12", "27, 14", "28, 12"})
-  void theGreatWindowIsATripleLancet(final int x, final int top) {
-    assertTrue(front.get(x, top, Manor.MAIN_S).contains("stained_glass_pane"));
-    final String above = front.get(x, top + 1, Manor.MAIN_S);
-    assertTrue(above == null || !above.contains("glass"), above);
+  void aPorchShelterTheDoor(final int x, final int z, final String block, final int y) {
+    assertTrue(t.get(x, y, z).contains(block), t.get(x, y, z));
   }
 }

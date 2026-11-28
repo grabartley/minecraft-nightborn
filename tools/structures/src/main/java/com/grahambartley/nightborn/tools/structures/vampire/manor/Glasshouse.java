@@ -1,23 +1,26 @@
 package com.grahambartley.nightborn.tools.structures.vampire.manor;
 
 import static com.grahambartley.nightborn.tools.structures.vampire.manor.Manor.F0;
-import static com.grahambartley.nightborn.tools.structures.vampire.manor.Manor.WING_W;
+import static com.grahambartley.nightborn.tools.structures.vampire.manor.Manor.HOUSE_W;
 
 import com.grahambartley.nightborn.tools.structures.template.BlockState;
 import com.grahambartley.nightborn.tools.structures.template.Template;
+import com.grahambartley.nightborn.tools.structures.vampire.Axis;
 import com.grahambartley.nightborn.tools.structures.vampire.RouteRoom;
 import com.grahambartley.nightborn.tools.structures.vampire.Stone;
 
 public final class Glasshouse {
 
-  public static final int WEST = 5;
-  public static final int EAST = WING_W - 1;
-  public static final int NORTH = 9;
-  public static final int SOUTH = 17;
-  public static final int DOOR_Z = 13;
+  public static final int WEST = 6;
+  public static final int EAST = HOUSE_W - 1;
+  public static final int NORTH = 17;
+  public static final int SOUTH = 29;
+  public static final int DOOR_X = 11;
+  public static final int STEP_TOP_Z = NORTH - 1;
+  public static final int STEP_FOOT_Z = STEP_TOP_Z - F0 + 1;
   public static final int EAVE = F0 + 5;
   public static final int TREE_X = WEST + 4;
-  public static final int TREE_Z = 13;
+  public static final int TREE_Z = 24;
   static final Stone TILES =
       new Stone("stone_bricks", "mossy_stone_bricks", "cracked_stone_bricks", 60);
 
@@ -27,12 +30,16 @@ public final class Glasshouse {
     return EAVE + Math.min(x - WEST, EAST - x);
   }
 
+  public static boolean covers(final int x, final int z) {
+    return WEST <= x && x <= EAST && NORTH <= z && z <= SOUTH;
+  }
+
   public static void build(final Template t, final boolean fallen) {
     final int broken = fallen ? 65 : 15;
     for (int x = WEST; x <= EAST; x++) {
       for (int z = NORTH; z <= SOUTH; z++) {
         for (int y = 0; y < F0; y++) {
-          t.set(x, y, z, Manor.DRESSING.at(x, y, z));
+          t.set(x, y, z, Manor.PLINTH.at(x, y, z));
         }
         t.set(x, F0, z, TILES.at(x, F0, z));
         final boolean wall = x == WEST || z == NORTH || z == SOUTH;
@@ -40,7 +47,7 @@ public final class Glasshouse {
           if (!wall) {
             t.set(x, y, z, BlockState.AIR);
           } else if (y == F0 + 1) {
-            t.set(x, y, z, Manor.BRICK.at(x, y, z));
+            t.set(x, y, z, Manor.WALL.at(x, y, z));
           } else {
             t.set(x, y, z, glazing(x, y, z, broken));
           }
@@ -63,22 +70,17 @@ public final class Glasshouse {
   }
 
   private static void entrance(final Template t) {
-    Window.door(t, WEST, F0 + 1, DOOR_Z, "west");
-    for (int y = F0 + 1 + RouteRoom.HOUSEHOLD; y < roofY(WEST); y++) {
-      t.set(WEST, y, DOOR_Z, "iron_bars");
-    }
-    Parts.flight(t, Manor.TRIM, ManorFront.STONE_FILL, WEST - 1, DOOR_Z, "east", F0, F0, 0);
-    for (int y = F0 + 1; y <= F0 + RouteRoom.HOUSEHOLD; y++) {
-      t.set(EAST, y, DOOR_Z, BlockState.AIR);
-      t.set(WEST + 1, y, DOOR_Z, BlockState.AIR);
+    Doorway.doors(Axis.X, DOOR_X, DOOR_X + 1, NORTH, NORTH, F0 + 1, "north").cut(t);
+    for (int x = DOOR_X; x <= DOOR_X + 1; x++) {
+      for (int y = F0 + 1 + RouteRoom.HOUSEHOLD; y < roofY(x); y++) {
+        t.set(x, y, NORTH, "iron_bars");
+      }
+      Parts.flight(t, Manor.TRIM, ManorFront.STEP_FILL, x, STEP_TOP_Z, "south", F0, F0, 0);
     }
   }
 
   private static void beds(final Template t) {
     for (int z = NORTH + 1; z < SOUTH; z++) {
-      if (z == DOOR_Z) {
-        continue;
-      }
       t.set(WEST + 1, F0, z, "podzol");
       final int roll = Stone.roll(WEST + 1, F0 + 1, z);
       if (roll < 35) {
@@ -91,8 +93,10 @@ public final class Glasshouse {
       }
     }
     for (int x = WEST + 2; x <= EAST; x++) {
-      if (Stone.roll(x, F0 + 1, NORTH + 1) < 50) {
-        t.set(x, F0 + 1, NORTH + 1, "moss_carpet");
+      if (x < DOOR_X - 1 || x > DOOR_X + 2) {
+        if (Stone.roll(x, F0 + 1, NORTH + 1) < 50) {
+          t.set(x, F0 + 1, NORTH + 1, "moss_carpet");
+        }
       }
     }
   }
@@ -100,7 +104,7 @@ public final class Glasshouse {
   private static void tree(final Template t, final boolean fallen) {
     for (int dx = -1; dx <= 1; dx++) {
       for (int dz = -1; dz <= 1; dz++) {
-        t.set(TREE_X + dx, F0 + 1, TREE_Z + dz, Manor.BRICK.at(TREE_X + dx, F0 + 1, TREE_Z + dz));
+        t.set(TREE_X + dx, F0 + 1, TREE_Z + dz, "moss_block");
       }
     }
     t.set(TREE_X, F0 + 1, TREE_Z, "rooted_dirt");
@@ -141,8 +145,8 @@ public final class Glasshouse {
     t.set(WEST + 3, F0 + 2, SOUTH - 1, "potted_wither_rose");
     t.set(WEST + 4, F0 + 2, SOUTH - 1, "potted_dead_bush");
     t.set(WEST + 5, F0 + 2, SOUTH - 1, "flower_pot");
-    t.set(EAST - 1, F0 + 1, NORTH + 1, Parts.stair(Manor.TRIM, "west"));
-    t.set(EAST - 1, F0 + 1, NORTH + 2, Parts.stair(Manor.TRIM, "west"));
+    t.set(EAST - 1, F0 + 1, SOUTH - 1, Parts.stair(Manor.TRIM, "north"));
+    t.set(EAST - 2, F0 + 1, SOUTH - 1, Parts.stair(Manor.TRIM, "north"));
     t.set(WEST + 1, roofY(WEST + 1) - 1, SOUTH - 1, "cobweb");
     t.set(EAST - 1, roofY(EAST - 1) - 1, NORTH + 1, Parts.vine("up"));
     t.set(WEST + 2, roofY(WEST + 2) - 1, TREE_Z + 2, Parts.vine("up"));

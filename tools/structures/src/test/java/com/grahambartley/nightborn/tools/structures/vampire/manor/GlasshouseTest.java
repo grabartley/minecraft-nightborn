@@ -5,67 +5,81 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.grahambartley.nightborn.tools.structures.template.BlockState;
 import com.grahambartley.nightborn.tools.structures.template.Template;
+import java.util.Map;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 class GlasshouseTest {
 
+  private static final Map<Boolean, Template> BUILT =
+      Map.of(true, built(true), false, built(false));
+
   static Template built(final boolean fallen) {
     final Template t = new Template("vampire/test", Manor.SIZE_X, Manor.SIZE_Y, Manor.SIZE_Z);
+    ManorShell.build(t);
     Glasshouse.build(t, fallen);
     return t;
   }
 
-  static int panesLeft(final Template t) {
-    int glass = 0;
-    for (int x = Glasshouse.WEST; x <= Glasshouse.EAST; x++) {
-      for (int z = Glasshouse.NORTH; z <= Glasshouse.SOUTH; z++) {
-        if ("minecraft:glass".equals(t.get(x, Glasshouse.roofY(x), z))) {
-          glass++;
-        }
-      }
-    }
-    return glass;
-  }
-
-  @ParameterizedTest(name = "the roof at x {0} sits at y {1}")
-  @CsvSource({"5, 8", "7, 10", "8, 11", "9, 10", "11, 8"})
-  void theRoofIsAGable(final int x, final int y) {
+  @ParameterizedTest(name = "the glass roof is at y {1} over x {0}")
+  @CsvSource({"6, 10", "8, 12", "11, 15", "12, 15", "17, 10"})
+  void theRoofPeaksOverTheMiddle(final int x, final int y) {
     assertEquals(y, Glasshouse.roofY(x));
   }
 
-  @ParameterizedTest(name = "fallen {0}: keeps between {1} and {2} roof panes")
-  @CsvSource({"false, 48, 63", "true, 12, 32"})
-  void fallenGlasshousesLoseMostOfTheirRoof(final boolean fallen, final int least, final int most) {
-    final int left = panesLeft(built(fallen));
-    assertTrue(least <= left && left <= most, "panes " + left);
+  @ParameterizedTest(name = "{0},{1} under the glasshouse {2}")
+  @CsvSource({"6, 17, true", "17, 29, true", "18, 22, false", "5, 20, false", "10, 30, false"})
+  void coversItsFootprint(final int x, final int z, final boolean covered) {
+    assertEquals(covered, Glasshouse.covers(x, z));
   }
 
-  @ParameterizedTest(name = "fallen {0}: the tree reaches past the roof {0}")
+  @ParameterizedTest(name = "fallen {0}: a door leads down steps to the garden")
   @ValueSource(booleans = {true, false})
-  void theTreeBreaksTheRoofOnlyWhenFallen(final boolean fallen) {
-    final Template t = built(fallen);
-    final String atRoof =
-        t.get(Glasshouse.TREE_X, Glasshouse.roofY(Glasshouse.TREE_X), Glasshouse.TREE_Z);
-    assertEquals(fallen, atRoof.contains("dark_oak_log"), atRoof);
-  }
-
-  @ParameterizedTest(name = "fallen {0}: a door and steps lead out to the garden")
-  @ValueSource(booleans = {true, false})
-  void aDoorLeadsToTheGarden(final boolean fallen) {
-    final Template t = built(fallen);
-    assertTrue(t.get(Glasshouse.WEST, Manor.F0 + 1, Glasshouse.DOOR_Z).contains("dark_oak_door"));
-    for (int i = 1; i <= Manor.F0; i++) {
-      assertTrue(
-          t.get(Glasshouse.WEST - i, Manor.F0 + 1 - i, Glasshouse.DOOR_Z).contains("facing=east"));
+  void aDoorLeadsDownToTheGarden(final boolean fallen) {
+    final Template t = BUILT.get(fallen);
+    for (int x = Glasshouse.DOOR_X; x <= Glasshouse.DOOR_X + 1; x++) {
+      assertTrue(t.get(x, Manor.F0 + 1, Glasshouse.NORTH).contains("dark_oak_door"));
+      for (int z = Glasshouse.STEP_FOOT_Z; z <= Glasshouse.STEP_TOP_Z; z++) {
+        assertTrue(t.get(x, Manor.F0 - (Glasshouse.STEP_TOP_Z - z), z).contains("stairs"));
+      }
     }
-    assertEquals(BlockState.AIR, t.get(Glasshouse.EAST, Manor.F0 + 1, Glasshouse.DOOR_Z));
   }
 
-  @ParameterizedTest(name = "glazing at {0},{1},{2} is {3}")
-  @CsvSource({"4, 5, 11, iron_bars", "6, 5, 9, iron_bars", "4, 6, 10, glass_pane"})
-  void glazingHasIronPosts(final int x, final int y, final int z, final String block) {
-    assertEquals("minecraft:" + block, BlockState.full(Glasshouse.glazing(x, y, z, 0)));
+  @ParameterizedTest(name = "fallen {0}: the tree crown stays under the glass {1}")
+  @CsvSource({"true, false", "false, true"})
+  void theTreeBreaksThroughOnlyWhenFallen(final boolean fallen, final boolean under) {
+    final Template t = BUILT.get(fallen);
+    int top = Manor.F0;
+    for (int y = Manor.F0; y < t.sizeY(); y++) {
+      final String state = t.get(Glasshouse.TREE_X, y, Glasshouse.TREE_Z);
+      if (state != null && state.contains("dark_oak_log")) {
+        top = y;
+      }
+    }
+    assertEquals(under, top < Glasshouse.roofY(Glasshouse.TREE_X));
+  }
+
+  @ParameterizedTest(name = "fallen {0}: the lower course is stone at {1},{2}")
+  @CsvSource({"true, 6, 20", "false, 9, 17", "false, 14, 29"})
+  void theLowerCourseIsStone(final boolean fallen, final int x, final int z) {
+    assertTrue(BUILT.get(fallen).get(x, Manor.F0 + 1, z).contains("gothic_stone"));
+    assertTrue(!BlockState.AIR.equals(BUILT.get(fallen).get(x, Manor.F0, z)));
+  }
+
+  @ParameterizedTest(
+      name = "fallen {0}: the planter round the tree is a moss bed its azaleas hold to")
+  @ValueSource(booleans = {true, false})
+  void azaleasStandOnMoss(final boolean fallen) {
+    final Template t = BUILT.get(fallen);
+    for (int dx = -1; dx <= 1; dx++) {
+      for (int dz = -1; dz <= 1; dz++) {
+        final int x = Glasshouse.TREE_X + dx;
+        final int z = Glasshouse.TREE_Z + dz;
+        if (t.get(x, Manor.F0 + 2, z).contains("azalea")) {
+          assertEquals("minecraft:moss_block", t.get(x, Manor.F0 + 1, z));
+        }
+      }
+    }
   }
 }

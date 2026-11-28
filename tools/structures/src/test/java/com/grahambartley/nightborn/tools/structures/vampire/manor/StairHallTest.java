@@ -5,70 +5,74 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.grahambartley.nightborn.tools.structures.template.BlockState;
 import com.grahambartley.nightborn.tools.structures.template.Template;
-import com.grahambartley.nightborn.tools.structures.vampire.RouteRoom;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
-import org.junit.jupiter.params.provider.ValueSource;
 
 class StairHallTest {
 
-  static Template hall;
+  static Template t;
 
   @BeforeAll
   static void build() {
-    hall = new Template("vampire/test", Manor.SIZE_X, Manor.SIZE_Y, Manor.SIZE_Z);
-    ManorShell.build(hall);
-    StairHall.build(hall);
+    t = new Template("vampire/test", Manor.SIZE_X, Manor.SIZE_Y, Manor.SIZE_Z);
+    ManorShell.build(t);
+    StairHall.build(t);
   }
 
-  @ParameterizedTest(name = "a step at {0},{1},{2} rises {3}")
+  @ParameterizedTest(name = "{0},{1} over the open hall {2}")
   @CsvSource({
-    "27, 4, 19, north",
-    "27, 5, 18, north",
-    "27, 6, 17, north",
-    "27, 7, 16, north",
-    "24, 8, 14, south",
-    "24, 9, 15, south",
-    "30, 9, 15, south"
+    "38, 30, true",
+    "36, 23, true",
+    "40, 37, true",
+    "35, 30, false",
+    "38, 38, false",
+    "38, 22, false"
   })
-  void flightsRiseOneBlockAStep(final int x, final int y, final int z, final String facing) {
-    assertTrue(hall.get(x, y, z).contains("dark_oak_stairs"), hall.get(x, y, z));
-    assertTrue(hall.get(x, y, z).contains("facing=" + facing));
-  }
-
-  @ParameterizedTest(name = "under the landing and flights a vampire has headroom at {0},{1}")
-  @CsvSource({"24, 13", "24, 14", "24, 15", "27, 12", "27, 14", "23, 11"})
-  void passagesRunUnderTheStairs(final int x, final int z) {
-    for (int y = Manor.F0 + 1; y <= Manor.F0 + RouteRoom.HOUSEHOLD; y++) {
-      assertEquals(BlockState.AIR, hall.get(x, y, z), "at y " + y);
+  void theHallIsOpenToTheRoofBetweenItsGalleries(final int x, final int z, final boolean open) {
+    assertEquals(open, StairHall.overVoid(x, z));
+    if (open) {
+      for (int y = Manor.F0 + 1; y < Manor.TOP; y++) {
+        assertTrue(!t.get(x, y, z).contains("planks"), x + "," + y + "," + z);
+      }
     }
   }
 
-  @ParameterizedTest(name = "the gallery edge is railed at z {0}")
-  @ValueSource(ints = {16, 17, 19})
-  void galleriesAreRailed(final int z) {
-    assertTrue(hall.get(Manor.MID_X - 2, Manor.F1 + 1, z).contains("dark_oak_fence"));
-    assertTrue(hall.get(Manor.MID_X + 2, Manor.F1 + 1, z).contains("dark_oak_fence"));
+  @ParameterizedTest(name = "the main flight at z {0} is three wide at y {1}")
+  @CsvSource({"23, 9", "24, 8", "25, 7", "26, 6"})
+  void theMainFlightIsThreeWide(final int z, final int y) {
+    for (int x = Manor.MID_X - 1; x <= Manor.MID_X + 1; x++) {
+      assertTrue(t.get(x, y, z).contains("dark_oak_stairs[facing=north"), t.get(x, y, z));
+    }
+    assertTrue(t.get(Manor.MID_X - 2, y, z).contains("fence"));
   }
 
-  @ParameterizedTest(name = "the hall is open to the ceiling at {0},{1}")
-  @CsvSource({"27, 17", "27, 10", "24, 10"})
-  void theHallRisesTwoStoreys(final int x, final int z) {
-    assertEquals(BlockState.AIR, hall.get(x, Manor.F1, z));
+  @ParameterizedTest(
+      name = "the return flight at x {0} climbs south to the gallery, y {1} at z {2}")
+  @CsvSource({"32, 10, 20", "34, 11, 21", "42, 12, 22", "44, 10, 20"})
+  void returnFlightsReachTheGalleries(final int x, final int y, final int z) {
+    assertTrue(t.get(x, y, z).contains("dark_oak_stairs[facing=south"), t.get(x, y, z));
+    assertEquals(BlockState.AIR, t.get(x, y + 1, z));
   }
 
-  @ParameterizedTest(name = "a gallery floor at {0},{1}")
-  @CsvSource({"23, 16", "31, 21", "27, 21"})
-  void galleriesCarryTheFloor(final int x, final int z) {
-    assertEquals("minecraft:" + Manor.PLANKS, hall.get(x, Manor.F1, z));
+  @ParameterizedTest(name = "the gallery floor at {0},{1} is railed at x {2}")
+  @CsvSource({"33, 30, 35", "43, 30, 41"})
+  void galleriesAreThreeWideAndRailed(final int x, final int z, final int rail) {
+    assertEquals(Manor.PLANKS, t.get(x, Manor.F1, z));
+    assertTrue(t.get(rail, Manor.F1 + 1, z).contains("fence"));
+    assertEquals(3, Math.abs(rail - (rail < Manor.MID_X ? StairHall.WEST : StairHall.EAST)));
   }
 
-  @ParameterizedTest(name = "the {0} flight is railed at z {1}, y {2}")
-  @CsvSource({"west, 14, 9", "west, 15, 10", "east, 14, 9", "east, 15, 10"})
-  void returnFlightsAreRailed(final String side, final int z, final int y) {
-    final int x = "west".equals(side) ? Manor.MID_X - 2 : Manor.MID_X + 2;
-    assertTrue(hall.get(x, y, z).contains("dark_oak_fence"), hall.get(x, y, z));
-    assertTrue(hall.get(x, y - 1, z).contains("dark_oak_stairs"));
+  @ParameterizedTest(name = "under the landing at {0},{1},{2} is solid")
+  @CsvSource({"32, 6, 18", "44, 8, 22", "38, 7, 20"})
+  void nothingIsLeftLowUnderTheLanding(final int x, final int y, final int z) {
+    assertTrue(!BlockState.AIR.equals(t.get(x, y, z)));
+  }
+
+  @ParameterizedTest(name = "a chandelier the household lights hangs at z {0}")
+  @CsvSource({"29", "35"})
+  void chandeliersHangOverTheHallUnlit(final int z) {
+    final String chandelier = t.get(Manor.MID_X, Manor.TOP - 1, z);
+    assertTrue(chandelier.startsWith("nightborn:chandelier") && chandelier.contains("lit=false"));
   }
 }

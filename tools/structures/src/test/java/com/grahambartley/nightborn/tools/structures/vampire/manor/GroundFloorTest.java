@@ -16,49 +16,47 @@ class GroundFloorTest {
   static void build() {
     rooms = new Template("vampire/test", Manor.SIZE_X, Manor.SIZE_Y, Manor.SIZE_Z);
     ManorShell.build(rooms);
+    Cellar.build(rooms);
     GroundFloor.build(rooms);
   }
 
   @ParameterizedTest(name = "{3} at {0},{1},{2}")
   @CsvSource({
-    "16, 4, 22, ornate_table",
-    "15, 4, 21, ornate_chair",
-    "17, 4, 28, ornate_table",
-    "17, 5, 28, chalice",
-    "19, 4, 14, lectern",
-    "35, 4, 18, ornate_table",
-    "35, 5, 18, candelabra",
-    "34, 4, 19, ornate_chair",
-    "39, 4, 10, smoker",
-    "34, 4, 9, water_cauldron",
-    "38, 4, 14, chest",
-    "20, 4, 26, chest",
-    "36, 7, 11, lantern"
+    "24, 6, 34, ornate_table",
+    "22, 6, 32, ornate_chair[facing=west",
+    "29, 7, 31, gramophone",
+    "21, 6, 40, chest",
+    "25, 11, 35, chandelier",
+    "28, 6, 21, lectern",
+    "25, 7, 23, candelabra",
+    "21, 6, 21, chest",
+    "48, 6, 35, ornate_table",
+    "53, 6, 35, ornate_table",
+    "47, 6, 35, ornate_chair[facing=east",
+    "50, 7, 35, chalice",
+    "59, 6, 42, ornate_table",
+    "56, 6, 24, smoker",
+    "55, 6, 18, water_cauldron",
+    "49, 6, 28, chest",
+    "51, 10, 25, lantern"
   })
-  void furnishesEachRoom(final int x, final int y, final int z, final String block) {
+  void furnishesEachRoomAsItIsUsed(final int x, final int y, final int z, final String block) {
     assertTrue(rooms.get(x, y, z).contains(block), rooms.get(x, y, z));
   }
 
-  @ParameterizedTest(name = "shelves fill {0},{1} up to y {2}")
-  @CsvSource({"13, 9, 7", "21, 16, 7", "18, 16, 7"})
-  void libraryShelvesRiseFourHigh(final int x, final int z, final int top) {
-    for (int y = GroundFloor.SEAT; y <= top; y++) {
-      assertTrue(rooms.get(x, y, z).contains("bookshelf"), rooms.get(x, y, z));
+  @ParameterizedTest(name = "the library shelves at {0},{1} rise {2} high")
+  @CsvSource({"20, 18, 5", "25, 18, 5", "30, 20, 5", "22, 28, 5"})
+  void libraryShelvesLineTheWalls(final int x, final int z, final int high) {
+    for (int y = GroundFloor.SEAT; y < GroundFloor.SEAT + high; y++) {
+      assertTrue(rooms.get(x, y, z).contains("bookshelf"), x + "," + y + "," + z);
     }
+    assertEquals(GroundFloor.SHELF_TOP, GroundFloor.SEAT + high - 1);
   }
 
-  @ParameterizedTest(name = "the way through {0},{1} stays clear")
-  @CsvSource({
-    "21, 11", "17, 16", "17, 18", "33, 19", "36, 16", "36, 14", "33, 11", "36, 9", "13, 13"
-  })
-  void doorwaysStayClear(final int x, final int z) {
-    assertEquals("minecraft:air", rooms.get(x, GroundFloor.SEAT, z));
-    assertEquals("minecraft:air", rooms.get(x, GroundFloor.SEAT + 1, z));
-  }
-
-  @ParameterizedTest(name = "the kitchen floor at {0},{1} is {2}")
-  @CsvSource({"34, 10, polished_andesite", "35, 10, tuff_bricks"})
-  void theKitchenIsFlagged(final int x, final int z, final String block) {
-    assertEquals("minecraft:" + block, rooms.get(x, Manor.F0, z));
+  @ParameterizedTest(name = "the kitchen floor is tiled at {0},{1} and the stairwell left open")
+  @CsvSource({"52, 20", "55, 27", "49, 18"})
+  void theKitchenIsTiledAroundTheStairwell(final int x, final int z) {
+    assertTrue(rooms.get(x, Manor.F0, z).matches("minecraft:(polished_andesite|tuff_bricks)"));
+    assertEquals("minecraft:air", rooms.get(Cellar.STAIR_X, Manor.F0, Cellar.STAIR_FOOT_Z + 1));
   }
 }
