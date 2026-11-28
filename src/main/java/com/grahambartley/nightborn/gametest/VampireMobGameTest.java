@@ -173,7 +173,7 @@ public class VampireMobGameTest implements FabricGameTest {
 
   @GameTest(templateName = ARENA, tickLimit = 20)
   public void aDownedVampireMobLiesStillAndCannotBite(final TestContext context) {
-    final VampireEntity vampire = context.spawnEntity(NightbornMobs.VAMPIRE, new BlockPos(4, 2, 4));
+    final VampireEntity vampire = still(context, new BlockPos(4, 2, 4));
     final PlayerEntity human = context.createMockPlayer(GameMode.SURVIVAL);
     Downed.down(vampire, ServerConfigService.current().downed(), Optional.empty());
     vampire.setTarget(human);
@@ -191,7 +191,7 @@ public class VampireMobGameTest implements FabricGameTest {
       batchId = NIGHT_BATCH,
       tickLimit = TestPlayers.READY + ESCAPED_AT + 10)
   public void anEscapingVampireMobFleesWhoeverDownedIt(final TestContext context) {
-    final VampireEntity vampire = context.spawnEntity(NightbornMobs.VAMPIRE, new BlockPos(4, 2, 4));
+    final VampireEntity vampire = still(context, new BlockPos(4, 2, 4));
     final VampireEntity control = still(context, new BlockPos(6, 2, 6));
     BloodAttachment.set(control, VampireHomeGameTest.HUNGRY);
     final ServerPlayerEntity hunter = TestPlayers.human(context, new BlockPos(2, 2, 4));

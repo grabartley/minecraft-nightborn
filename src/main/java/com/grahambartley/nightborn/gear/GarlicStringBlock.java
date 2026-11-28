@@ -1,6 +1,7 @@
 package com.grahambartley.nightborn.gear;
 
 import com.grahambartley.nightborn.decor.FacingShapes;
+import com.grahambartley.nightborn.decor.WallMount;
 import com.grahambartley.nightborn.server.ServerConfigService;
 import com.grahambartley.nightborn.ward.Wards;
 import com.mojang.serialization.MapCodec;
@@ -68,10 +69,9 @@ public class GarlicStringBlock extends Block {
   @Override
   protected boolean canPlaceAt(final BlockState state, final WorldView world, final BlockPos pos) {
     final Direction support = support(state);
-    final BlockPos behind = pos.offset(support);
     return support == Direction.UP
-        ? Block.sideCoversSmallSquare(world, behind, Direction.DOWN)
-        : world.getBlockState(behind).isSideSolidFullSquare(world, behind, support.getOpposite());
+        ? Block.sideCoversSmallSquare(world, pos.up(), Direction.DOWN)
+        : WallMount.backed(world, pos, support);
   }
 
   @Override
@@ -102,7 +102,7 @@ public class GarlicStringBlock extends Block {
       final WorldAccess world,
       final BlockPos pos,
       final BlockPos neighborPos) {
-    return direction == support(state) && !state.canPlaceAt(world, pos)
+    return WallMount.fell(state, support(state), direction, world, pos)
         ? Blocks.AIR.getDefaultState()
         : super.getStateForNeighborUpdate(state, direction, neighborState, world, pos, neighborPos);
   }
