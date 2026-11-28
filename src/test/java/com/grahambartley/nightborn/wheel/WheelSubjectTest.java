@@ -51,6 +51,15 @@ class WheelSubjectTest {
     assertEquals(shown, subject.entries(null, null).size());
   }
 
+  @ParameterizedTest(name = "titled {0}")
+  @CsvSource({"Brother Aldric (Slayer, Faithful)", "Sister Maud"})
+  @DisplayName("a subject may head its wheel with more than the target's name")
+  void title(final String heading) {
+    final WheelSubject<Entity> subject =
+        new WheelSubject<>(Entity.class, SkillTree.HUNTER).titled(target -> Text.literal(heading));
+    assertEquals(heading, subject.title(null).getString());
+  }
+
   @ParameterizedTest(name = "allowed {0} -> performed {0}")
   @CsvSource({"true", "false"})
   @DisplayName("a chosen action runs only while the player may still take it")

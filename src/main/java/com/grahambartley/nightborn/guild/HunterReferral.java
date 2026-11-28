@@ -2,9 +2,11 @@ package com.grahambartley.nightborn.guild;
 
 import com.grahambartley.nightborn.Nightborn;
 import com.grahambartley.nightborn.servant.job.Bearing;
+import com.grahambartley.nightborn.vampire.Vampires;
 import java.util.Comparator;
 import java.util.Optional;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.tag.TagKey;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -17,19 +19,22 @@ import net.minecraft.util.math.Vec3d;
 public final class HunterReferral {
 
   static final double REACH = 32.0;
-  static final long REST = 40;
   public static final TagKey<EntityType<?>> NEVER_REFERS =
       TagKey.of(RegistryKeys.ENTITY_TYPE, Identifier.of(Nightborn.MOD_ID, "never_refers"));
 
   private HunterReferral() {}
 
-  static boolean answers(
-      final boolean alive, final boolean refers, final boolean vampire, final boolean hunted) {
-    return alive && refers && !vampire && !hunted;
+  static boolean answers(final HunterEntity hunter, final PlayerEntity player) {
+    return answers(
+        hunter.isAlive(),
+        !hunter.getType().isIn(NEVER_REFERS),
+        Vampires.isVampire(player),
+        hunter.getTarget() != null);
   }
 
-  static boolean rested(final long now, final long last) {
-    return now - last >= REST;
+  static boolean answers(
+      final boolean alive, final boolean refers, final boolean vampire, final boolean fighting) {
+    return alive && refers && !vampire && !fighting;
   }
 
   static void refer(final HunterEntity hunter, final ServerPlayerEntity player) {

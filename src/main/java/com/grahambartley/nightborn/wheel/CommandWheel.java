@@ -81,7 +81,7 @@ public final class CommandWheel {
     if (entries.isEmpty()) {
       return false;
     }
-    show(player, target, subject.theme(), target.getDisplayName(), entries);
+    show(player, target, subject.theme(), subject.title(cast.get()), entries);
     return true;
   }
 

@@ -1,0 +1,13 @@
+{
+  "path": "nightborn:trapper",
+  "order": 20,
+  "wants": {
+    "id": "minecraft:emerald",
+    "count": 2
+  },
+  "gives": {
+    "id": "nightborn:garlic_bomb",
+    "count": 1
+  },
+  "max_uses": 6
+}

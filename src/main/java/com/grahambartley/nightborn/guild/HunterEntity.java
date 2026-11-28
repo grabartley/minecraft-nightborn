@@ -23,7 +23,7 @@ import com.grahambartley.nightborn.rank.RankBearer;
 import com.grahambartley.nightborn.skill.PowerShow;
 import com.grahambartley.nightborn.skill.SkillHolder;
 import com.grahambartley.nightborn.skill.SkillTree;
-import com.grahambartley.nightborn.vampire.Vampires;
+import com.grahambartley.nightborn.wheel.CommandWheel;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Optional;
@@ -53,7 +53,6 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtOps;
-import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.ActionResult;
@@ -121,7 +120,7 @@ public class HunterEntity extends PathAwareEntity
   private final ShownHunterAction shown = new ShownHunterAction();
   private final StallWatch stall = new StallWatch();
   private WanderAroundFarGoal wander;
-  private long referredAt = -HunterReferral.REST;
+  private final HunterWares wares = new HunterWares(this);
 
   public HunterEntity(final EntityType<? extends PathAwareEntity> type, final World world) {
     super(type, world);
@@ -387,19 +386,19 @@ public class HunterEntity extends PathAwareEntity
 
   @Override
   public ActionResult interactMob(final PlayerEntity player, final Hand hand) {
-    if (!HunterReferral.answers(
-        isAlive(),
-        !getType().isIn(HunterReferral.NEVER_REFERS),
-        Vampires.isVampire(player),
-        getTarget() == player)) {
-      return super.interactMob(player, hand);
-    }
-    if (player instanceof ServerPlayerEntity visitor
-        && HunterReferral.rested(getWorld().getTime(), referredAt)) {
-      referredAt = getWorld().getTime();
-      HunterReferral.refer(this, visitor);
-    }
-    return ActionResult.success(getWorld().isClient);
+    return HunterReferral.answers(this, player)
+        ? CommandWheel.use(player, hand, this)
+        : super.interactMob(player, hand);
+  }
+
+  public HunterWares wares() {
+    return wares;
+  }
+
+  @Override
+  public void onDeath(final DamageSource source) {
+    wares.close();
+    super.onDeath(source);
   }
 
   public void join(final UUID leader) {
@@ -419,6 +418,7 @@ public class HunterEntity extends PathAwareEntity
     super.mobTick();
     fight();
     stall.watch(this, wander);
+    wares.tick();
   }
 
   @Override
@@ -528,6 +528,7 @@ public class HunterEntity extends PathAwareEntity
           .encodeStart(NbtOps.INSTANCE, raid)
           .ifSuccess(orders -> nbt.put(RAID_KEY, orders));
     }
+    wares.write(nbt, getRegistryManager().getOps(NbtOps.INSTANCE));
   }
 
   @Override
@@ -546,6 +547,7 @@ public class HunterEntity extends PathAwareEntity
     if (nbt.contains(RAID_KEY)) {
       RaidOrders.CODEC.parse(NbtOps.INSTANCE, nbt.get(RAID_KEY)).result().ifPresent(this::serve);
     }
+    wares.read(nbt, getRegistryManager().getOps(NbtOps.INSTANCE));
   }
 
   @Override

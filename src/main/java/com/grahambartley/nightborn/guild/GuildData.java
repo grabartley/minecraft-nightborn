@@ -1,11 +1,16 @@
 package com.grahambartley.nightborn.guild;
 
 import com.grahambartley.nightborn.Nightborn;
+import com.grahambartley.nightborn.guild.build.PathPick;
+import com.grahambartley.nightborn.rank.RankData;
+import com.grahambartley.nightborn.skill.SkillTree;
+import com.grahambartley.nightborn.skill.Skills;
 import com.grahambartley.nightborn.ward.WardTags;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.registry.DynamicRegistries;
 import net.minecraft.item.CrossbowItem;
@@ -22,6 +27,8 @@ public final class GuildData {
 
   public static final RegistryKey<Registry<GuildOffer>> OFFER =
       RegistryKey.ofRegistry(Identifier.of(Nightborn.MOD_ID, "guild_offer"));
+  public static final RegistryKey<Registry<HunterOffer>> HUNTER_OFFER =
+      RegistryKey.ofRegistry(Identifier.of(Nightborn.MOD_ID, "hunter_offer"));
   public static final RegistryKey<Registry<HunterContract>> CONTRACT =
       RegistryKey.ofRegistry(Identifier.of(Nightborn.MOD_ID, "hunter_contract"));
   public static final RegistryKey<Registry<HunterLook>> LOOK =
@@ -35,6 +42,7 @@ public final class GuildData {
 
   static void register() {
     DynamicRegistries.register(OFFER, GuildOffer.CODEC);
+    DynamicRegistries.register(HUNTER_OFFER, HunterOffer.CODEC);
     DynamicRegistries.registerSynced(CONTRACT, HunterContract.CODEC);
     DynamicRegistries.registerSynced(LOOK, HunterLook.CODEC);
     DynamicRegistries.register(KIT, HunterKit.CODEC);
@@ -51,10 +59,21 @@ public final class GuildData {
             id -> item(id).filter(CrossbowItem.class::isInstance).isPresent(),
             id -> item(id).filter(i -> i.getDefaultStack().isIn(WardTags.CRUCIFIXES)).isPresent())
         .forEach(problem -> Nightborn.LOGGER.error("Bad hunter data: {}", problem));
+    HunterOfferCheck.problems(
+            hunterOffers(registries),
+            Set.copyOf(PathPick.paths(Skills.allBranches(registries), SkillTree.HUNTER)),
+            RankData.ranks(registries).keySet(),
+            offers(registries),
+            stack -> stack.contains(ContractItems.PROGRESS))
+        .forEach(problem -> Nightborn.LOGGER.error("Bad hunter offer: {}", problem));
   }
 
   public static List<GuildOffer> offers(final DynamicRegistryManager registries) {
     return GuildOffer.inOrder(copy(registries, OFFER));
+  }
+
+  public static Map<Identifier, HunterOffer> hunterOffers(final DynamicRegistryManager registries) {
+    return copy(registries, HUNTER_OFFER);
   }
 
   public static Map<Identifier, HunterLook> looks(final DynamicRegistryManager registries) {
