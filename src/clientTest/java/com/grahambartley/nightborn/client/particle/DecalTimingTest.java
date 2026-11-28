@@ -1,6 +1,7 @@
 package com.grahambartley.nightborn.client.particle;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -40,10 +41,33 @@ class DecalTimingTest {
     assertEquals(expected, DecalTiming.joinedLife(maxAge, age, incoming));
   }
 
-  @ParameterizedTest(name = "life {0} at age {1} with fade {2}: {3}")
-  @CsvSource({"6000, 100, 600, 700", "6000, 5800, 600, 6000", "90, 10, 25, 35"})
-  @DisplayName("a retired decal fades out from where it is, never living longer")
-  void retiredLife(final int maxAge, final int age, final int fade, final int expected) {
-    assertEquals(expected, DecalTiming.retiredLife(maxAge, age, fade));
+  @ParameterizedTest(name = "life {0} at age {1} with fade {2}: life {3}, fade {4}")
+  @CsvSource({
+    "6000, 100, 600, 160, 60",
+    "6000, 5700, 600, 5760, 120",
+    "6000, 5550, 600, 5610, 80",
+    "6000, 5950, 600, 6000, 600",
+    "90, 10, 25, 70, 60",
+    "90, 70, 25, 90, 25"
+  })
+  @DisplayName("a retired decal fades out quickly, carrying on from where its fade was")
+  void retired(final int maxAge, final int age, final int fade, final int life, final int newFade) {
+    assertEquals(new DecalTiming.Retirement(life, newFade), DecalTiming.retired(maxAge, age, fade));
+  }
+
+  @ParameterizedTest(name = "life {0} at age {1} with fade {2}")
+  @CsvSource({
+    "6000, 100, 600",
+    "6000, 5500, 600",
+    "6000, 5700, 600",
+    "6000, 5880, 600",
+    "90, 10, 25"
+  })
+  @DisplayName("retiring never brings faded pixels back")
+  void retiringNeverBringsPixelsBack(final int maxAge, final int age, final int fade) {
+    final DecalTiming.Retirement retired = DecalTiming.retired(maxAge, age, fade);
+    assertTrue(
+        DecalFade.alpha(age, retired.maxAge(), retired.fadeTicks())
+            <= DecalFade.alpha(age, maxAge, fade) + 2.0e-3F);
   }
 }

@@ -99,8 +99,9 @@ public abstract class FlatDecalParticle extends SpriteBillboardParticle
   @Override
   public void retire() {
     retiring = true;
-    fadeTicks = Math.min(fadeTicks, DecalTiming.RETIRE_FADE_TICKS);
-    maxAge = DecalTiming.retiredLife(maxAge, age, fadeTicks);
+    final DecalTiming.Retirement retirement = DecalTiming.retired(maxAge, age, fadeTicks);
+    maxAge = retirement.maxAge();
+    fadeTicks = retirement.fadeTicks();
   }
 
   @Override

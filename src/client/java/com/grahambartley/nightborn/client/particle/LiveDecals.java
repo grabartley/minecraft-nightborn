@@ -22,6 +22,8 @@ public final class LiveDecals<D extends PlacedDecal<D>> {
       final D decal = newestFirst.next();
       if (!decal.retiring() && decal.absorbs(incoming)) {
         decal.absorb(incoming);
+        newestFirst.remove();
+        oldestFirst.addLast(decal);
         return false;
       }
     }

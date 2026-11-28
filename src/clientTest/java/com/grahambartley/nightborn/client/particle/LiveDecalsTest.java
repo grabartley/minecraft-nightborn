@@ -80,6 +80,21 @@ class LiveDecalsTest {
     assertEquals(kept, live.size());
   }
 
+  @ParameterizedTest(name = "limit {0}: the fed patch outlives the {1} placed after it")
+  @CsvSource({"2, 1", "3, 2", "5, 4"})
+  @DisplayName("a patch that takes new blood counts as new for the limit")
+  void aFedPatchCountsAsNew(final int limit, final int after) {
+    final LiveDecals<Fake> live = new LiveDecals<>(limit, 100);
+    final Fake fed = new Fake(0);
+    live.place(fed);
+    for (int index = 1; index <= after; index++) {
+      live.place(new Fake(index * 10));
+    }
+    live.place(new Fake(1));
+    live.place(new Fake(1000));
+    assertEquals(false, fed.retiring);
+  }
+
   private static String retired(final List<Fake> decals) {
     final List<String> indexes = new ArrayList<>();
     for (int index = 0; index < decals.size(); index++) {

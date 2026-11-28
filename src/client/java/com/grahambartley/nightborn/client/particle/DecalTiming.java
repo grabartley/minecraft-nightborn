@@ -31,9 +31,18 @@ public final class DecalTiming {
     return Math.max(maxAge - age, incomingMaxAge);
   }
 
-  public static int retiredLife(final int maxAge, final int age, final int fadeTicks) {
-    return Math.min(maxAge, age + fadeTicks);
+  public static Retirement retired(final int maxAge, final int age, final int fadeTicks) {
+    final int left = maxAge - age;
+    if (left <= RETIRE_FADE_TICKS) {
+      return new Retirement(maxAge, fadeTicks);
+    }
+    final int fade = Math.max(1, fadeTicks);
+    final float progress = Math.min(1.0F, Math.max(0.0F, (age - (maxAge - fade)) / (float) fade));
+    return new Retirement(
+        age + RETIRE_FADE_TICKS, Math.round(RETIRE_FADE_TICKS / (1.0F - progress)));
   }
+
+  public record Retirement(int maxAge, int fadeTicks) {}
 
   static int life(final int least, final int spread, final float share, final float roll) {
     final float clamped = Math.min(1.0F, Math.max(0.0F, roll));
