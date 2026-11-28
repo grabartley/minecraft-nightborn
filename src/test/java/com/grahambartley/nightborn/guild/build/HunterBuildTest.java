@@ -130,6 +130,7 @@ class HunterBuildTest {
             1,
             Map.of(),
             Map.of(),
+            Map.of(),
             0,
             1200,
             0,
@@ -221,5 +222,20 @@ class HunterBuildTest {
   void kitsLean(final String kit, final Aim aim, final double lean) {
     assertEquals(
         lean, SHIPPED.mind(Optional.empty(), Optional.of(id(kit))).disposition().lean(aim), 1.0E-6);
+  }
+
+  @ParameterizedTest(name = "kit {0} -> {1} slots")
+  @CsvSource({"crossbow, 2", "raid_wooden, 1", "jester, 0", "none, 0"})
+  @DisplayName("a kit gives the path slots it names, and a missing kit gives none")
+  void pathsByKit(final String kit, final int slots) {
+    final Optional<Identifier> held = kit.equals("none") ? Optional.empty() : Optional.of(id(kit));
+    assertEquals(slots, SHIPPED.paths(held).size());
+  }
+
+  @ParameterizedTest(name = "slot {0} -> {1}")
+  @CsvSource({"0, faithful", "1, slayer"})
+  @DisplayName("the Guild Master's kit makes Faithful and Slayer certain")
+  void masterKitPathsAreCertain(final int slot, final String path) {
+    assertEquals(Map.of(id(path), 1), SHIPPED.paths(Optional.of(id("master_silver"))).get(slot));
   }
 }

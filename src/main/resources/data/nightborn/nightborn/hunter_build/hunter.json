@@ -54,6 +54,21 @@
       "nightborn:faithful/consecrate": 6
     }
   },
+  "kit_paths": {
+    "nightborn:crossbow": [
+      { "nightborn:slayer": 1, "nightborn:trapper": 1 },
+      { "nightborn:seeker": 1 }
+    ],
+    "nightborn:stake": [
+      { "nightborn:slayer": 1 },
+      { "nightborn:faithful": 1, "nightborn:trapper": 1 }
+    ],
+    "nightborn:silver_stake": [{ "nightborn:faithful": 1 }, { "nightborn:slayer": 1 }],
+    "nightborn:raid_wooden": [{ "nightborn:slayer": 1 }],
+    "nightborn:raid_silver": [{ "nightborn:faithful": 1 }, { "nightborn:slayer": 1 }],
+    "nightborn:raid_silver_holy_water": [{ "nightborn:faithful": 1 }, { "nightborn:slayer": 1 }],
+    "nightborn:master_silver": [{ "nightborn:faithful": 1 }, { "nightborn:slayer": 1 }]
+  },
   "kit_dispositions": {
     "nightborn:crossbow": { "aims": { "target": 1.25, "foes": 1.1 } },
     "nightborn:stake": { "aims": { "target": 1.2 }, "thrift": 0.8 },

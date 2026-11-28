@@ -109,7 +109,7 @@ The sorcerer. Shadow, fog and the dead.
 
 ## Hunter Tree
 
-A hunter has the core and picks two of the four paths. Each path ends in a capstone: an ultimate power that needs Master, then one last passive. Hunter powers cost no blood.
+A hunter has the core and picks two of the four paths. A hunter mob's two paths follow its kit: `kit_paths` in the hunter build gives each kit a list of up to two slots, each weighing the paths that may fill it, where a path left out of a slot is never picked for it and a slot the kit does not list is picked evenly. Each path ends in a capstone: an ultimate power that needs Master, then one last passive. Hunter powers cost no blood.
 
 ### Core
 

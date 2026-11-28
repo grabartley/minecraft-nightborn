@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.function.DoubleSupplier;
+import java.util.function.ToIntFunction;
 import net.minecraft.util.Identifier;
 
 public final class PathPick {
@@ -28,11 +29,13 @@ public final class PathPick {
   public static List<Identifier> pick(
       final Map<Identifier, SkillBranch> branches,
       final SkillTree tree,
+      final List<Map<Identifier, Integer>> leanings,
       final DoubleSupplier rolls) {
     final List<Identifier> open = new ArrayList<>(paths(branches, tree));
     final List<Identifier> picked = new ArrayList<>();
-    while (picked.size() < SkillPurchase.LINE_LIMIT && !open.isEmpty()) {
-      Weighted.pick(open, path -> 1, rolls.getAsDouble())
+    for (int slot = 0; slot < SkillPurchase.LINE_LIMIT && !open.isEmpty(); slot++) {
+      final ToIntFunction<Identifier> weight = weights(leanings, slot);
+      Weighted.pick(open, weight, rolls.getAsDouble())
           .ifPresent(
               path -> {
                 picked.add(path);
@@ -40,5 +43,14 @@ public final class PathPick {
               });
     }
     return List.copyOf(picked);
+  }
+
+  private static ToIntFunction<Identifier> weights(
+      final List<Map<Identifier, Integer>> leanings, final int slot) {
+    if (slot >= leanings.size()) {
+      return path -> 1;
+    }
+    final Map<Identifier, Integer> slotLeanings = leanings.get(slot);
+    return path -> slotLeanings.getOrDefault(path, 0);
   }
 }

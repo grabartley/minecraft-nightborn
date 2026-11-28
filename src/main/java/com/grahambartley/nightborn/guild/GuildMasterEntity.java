@@ -285,6 +285,13 @@ public class GuildMasterEntity extends MerchantEntity
     }
   }
 
+  private Optional<Identifier> armedKit() {
+    if (kit == null) {
+      arm(kitId);
+    }
+    return heldKit();
+  }
+
   private Optional<Identifier> heldKit() {
     return Optional.ofNullable(Identifier.tryParse(kitId));
   }
@@ -387,7 +394,7 @@ public class GuildMasterEntity extends MerchantEntity
     }
     CampHome.keep(this, TENT_REACH);
     if (!HunterSkills.built(this)) {
-      HunterSkills.master(this);
+      HunterSkills.master(this, armedKit());
     }
     if (shownRank().isEmpty()) {
       dataTracker.set(RANK, RankBearer.write(HunterSkills.rank(this)));

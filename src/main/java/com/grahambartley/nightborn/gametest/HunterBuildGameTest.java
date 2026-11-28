@@ -90,6 +90,12 @@ public class HunterBuildGameTest implements FabricGameTest {
           final TreeProgress progress = SkillAttachment.get(master, SkillTree.HUNTER);
           final Map<Identifier, Skill> skills =
               Skills.allSkills(context.getWorld().getRegistryManager());
+          context.assertEquals(
+              Set.copyOf(progress.lines()),
+              Set.of(
+                  Identifier.of(Nightborn.MOD_ID, "faithful"),
+                  Identifier.of(Nightborn.MOD_ID, "slayer")),
+              "his kit makes him one of the Faithful and a Slayer");
           final Set<Identifier> branches = new HashSet<>(progress.lines());
           branches.add(Identifier.of(Nightborn.MOD_ID, "hunter"));
           final Set<Identifier> expected =

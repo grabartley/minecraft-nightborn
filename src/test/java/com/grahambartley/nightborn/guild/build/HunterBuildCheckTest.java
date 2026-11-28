@@ -25,6 +25,8 @@ class HunterBuildCheckTest {
       Set.of(id("initiate"), id("hunter"), id("veteran"), id("master"));
   private static final Set<Identifier> HUNTER_SKILLS =
       HunterBuildFixtures.treeOf(HunterBuildFixtures.hunterBranches());
+  private static final Set<Identifier> PATHS =
+      Set.of(id("faithful"), id("seeker"), id("slayer"), id("trapper"));
   private static final Set<Identifier> KITS =
       Set.of(
           id("crossbow"),
@@ -42,7 +44,7 @@ class HunterBuildCheckTest {
   void shippedIsClean(final String build) {
     assertEquals(
         List.of(),
-        HunterBuildCheck.problems(HunterBuildFixtures.build(), RANKS, HUNTER_SKILLS, KITS));
+        HunterBuildCheck.problems(HunterBuildFixtures.build(), RANKS, HUNTER_SKILLS, PATHS, KITS));
   }
 
   @ParameterizedTest(name = "{0}")
@@ -72,11 +74,13 @@ class HunterBuildCheckTest {
             1,
             Map.of(id(kit), Map.of(id(skill), 4)),
             Map.of(),
+            Map.of(),
             0,
             1200,
             0,
             MASTER_KITS);
-    final List<String> problems = HunterBuildCheck.problems(build, RANKS, HUNTER_SKILLS, KITS);
+    final List<String> problems =
+        HunterBuildCheck.problems(build, RANKS, HUNTER_SKILLS, PATHS, KITS);
     assertEquals(1, problems.size(), problems.toString());
     assertEquals(true, problems.getFirst().startsWith(problem), problems.toString());
   }
@@ -95,13 +99,14 @@ class HunterBuildCheckTest {
             1,
             Map.of(),
             Map.of(),
+            Map.of(),
             0,
             1200,
             0,
             MASTER_KITS);
     assertEquals(
         List.of("no rank has a weight above zero"),
-        HunterBuildCheck.problems(build, RANKS, Set.of(), KITS));
+        HunterBuildCheck.problems(build, RANKS, Set.of(), PATHS, KITS));
   }
 
   @ParameterizedTest(name = "{0}: {1}")
@@ -129,12 +134,14 @@ class HunterBuildCheckTest {
             path,
             Map.of(),
             Map.of(),
+            Map.of(),
             0,
             1200,
             0,
             MASTER_KITS);
     assertEquals(
-        reported ? 1 : 0, HunterBuildCheck.problems(build, RANKS, HUNTER_SKILLS, KITS).size());
+        reported ? 1 : 0,
+        HunterBuildCheck.problems(build, RANKS, HUNTER_SKILLS, PATHS, KITS).size());
   }
 
   @ParameterizedTest(name = "master kits {0}: {1}")
@@ -166,11 +173,13 @@ class HunterBuildCheckTest {
             1,
             Map.of(),
             Map.of(),
+            Map.of(),
             0,
             1200,
             0,
             masterKits);
-    final List<String> problems = HunterBuildCheck.problems(build, RANKS, HUNTER_SKILLS, KITS);
+    final List<String> problems =
+        HunterBuildCheck.problems(build, RANKS, HUNTER_SKILLS, PATHS, KITS);
     assertEquals(problem.isEmpty() ? 0 : 1, problems.size(), problems.toString());
     assertEquals(
         true, problem.isEmpty() || problems.getFirst().startsWith(problem), problems.toString());
@@ -193,13 +202,61 @@ class HunterBuildCheckTest {
             1,
             1,
             Map.of(),
+            Map.of(),
             Map.of(id(kit), Disposition.EVEN),
             0,
             1200,
             0,
             MASTER_KITS);
-    final List<String> problems = HunterBuildCheck.problems(build, RANKS, Set.of(), KITS);
+    final List<String> problems = HunterBuildCheck.problems(build, RANKS, Set.of(), PATHS, KITS);
     assertEquals(problem.isEmpty() ? 0 : 1, problems.size(), problems.toString());
     problems.forEach(line -> assertEquals(true, line.startsWith(problem), line));
+  }
+
+  @ParameterizedTest(name = "{0} paths {1}")
+  @CsvSource(
+      delimiter = '|',
+      value = {
+        "crossbow | slayer=1;seeker=1 | ''",
+        "crossbow | slayer=1,trapper=1;seeker=1 | ''",
+        "crossbow | slayer=1 | ''",
+        "sling | slayer=1 | kit paths name nightborn:sling",
+        "crossbow | slayer=1;core=1 | nightborn:crossbow path 2 names nightborn:core",
+        "crossbow | beast=1 | nightborn:crossbow path 1 names nightborn:beast",
+        "crossbow | slayer=0;seeker=1 | nightborn:crossbow path 1 has no path with a weight",
+        "crossbow | slayer=1;slayer=1 | nightborn:crossbow path 2 weighs only paths an earlier",
+        "crossbow | slayer=1,trapper=1;slayer=1 | ''"
+      })
+  @DisplayName("kit paths that name an unknown kit or path, or can never be filled, are reported")
+  void reportsKitPaths(final String kit, final String slots, final String problem) {
+    final List<Map<Identifier, Integer>> paths =
+        Arrays.stream(slots.split(";"))
+            .map(
+                slot ->
+                    Arrays.stream(slot.split(","))
+                        .map(entry -> entry.split("="))
+                        .collect(
+                            Collectors.toMap(
+                                entry -> id(entry[0]), entry -> Integer.parseInt(entry[1]))))
+            .toList();
+    final HunterBuild build =
+        new HunterBuild(
+            Map.of(id("master"), 1),
+            Map.of(),
+            Map.of(),
+            0,
+            1,
+            1,
+            Map.of(),
+            Map.of(id(kit), paths),
+            Map.of(),
+            0,
+            1200,
+            0,
+            MASTER_KITS);
+    final List<String> problems = HunterBuildCheck.problems(build, RANKS, Set.of(), PATHS, KITS);
+    assertEquals(problem.isEmpty() ? 0 : 1, problems.size(), problems.toString());
+    assertEquals(
+        true, problem.isEmpty() || problems.getFirst().startsWith(problem), problems.toString());
   }
 }
