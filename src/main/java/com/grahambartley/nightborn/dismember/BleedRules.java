@@ -8,6 +8,8 @@ public final class BleedRules {
   static final float HEALTH_PER_PULSE = 1.0F;
   static final float HEALTH_FLOOR = 2.0F;
   static final int BLOOD_PER_PULSE = 1;
+  static final float SEAR_DAMAGE = 2.0F;
+  static final float SEAR_FLOOR = 1.0F;
 
   private BleedRules() {}
 
@@ -23,6 +25,10 @@ public final class BleedRules {
 
   public static float healthLoss(final float health) {
     return Math.max(0.0F, Math.min(HEALTH_PER_PULSE, health - HEALTH_FLOOR));
+  }
+
+  public static float searLoss(final float health) {
+    return Math.max(0.0F, Math.min(SEAR_DAMAGE, health - SEAR_FLOOR));
   }
 
   public static int bloodLeft(final int blood) {

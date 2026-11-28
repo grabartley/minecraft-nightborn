@@ -3,10 +3,13 @@ package com.grahambartley.nightborn.gametest;
 import com.grahambartley.nightborn.config.DismembermentSettings;
 import com.grahambartley.nightborn.dismember.BodyPart;
 import com.grahambartley.nightborn.dismember.Dismemberment;
+import com.grahambartley.nightborn.dismember.WoundSearing;
 import com.grahambartley.nightborn.dismember.Wounds;
 import com.grahambartley.nightborn.guild.GuildMobs;
 import com.grahambartley.nightborn.guild.HunterEntity;
 import com.grahambartley.nightborn.server.ServerConfigService;
+import com.grahambartley.nightborn.skill.HealPower;
+import com.grahambartley.nightborn.skill.Mending;
 import java.util.Arrays;
 import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
 import net.minecraft.command.argument.EntityAnchorArgumentType;
@@ -90,10 +93,28 @@ public class DismembermentGameTest implements FabricGameTest {
         () -> {
           context.assertEquals(hunter.getHealth(), 2.0F, "health after bleeding a while");
           context.assertTrue(Wounds.bleeding(hunter), "the wound is still open");
-          Wounds.close(hunter);
+          Mending.start(hunter, new HealPower(6.0F, 80, true));
           context.assertFalse(Wounds.bleeding(hunter), "a bound wound stops bleeding");
           context.assertTrue(
               Dismemberment.missing(hunter, BodyPart.LEFT_ARM), "the arm is still gone");
+          context.complete();
+        });
+  }
+
+  @GameTest(templateName = GoreGameTest.ARENA, tickLimit = TestPlayers.READY + 20)
+  public void aTorchToAWoundSearsItShutForAHeart(final TestContext context) {
+    final ServerPlayerEntity player = TestPlayers.human(context, new BlockPos(3, 2, 3));
+    final ItemStack flint = new ItemStack(Items.FLINT_AND_STEEL);
+    player.setStackInHand(Hand.MAIN_HAND, flint);
+    context.waitAndRun(
+        TestPlayers.READY,
+        () -> {
+          player.setHealth(20.0F);
+          Dismemberment.sever(player, BodyPart.LEFT_ARM);
+          WoundSearing.sear(player, context.getWorld(), Hand.MAIN_HAND);
+          context.assertFalse(Wounds.bleeding(player), "a seared wound stops bleeding");
+          context.assertEquals(player.getHealth(), 18.0F, "health after searing");
+          context.assertEquals(flint.getDamage(), 1, "flint and steel wear");
           context.complete();
         });
   }

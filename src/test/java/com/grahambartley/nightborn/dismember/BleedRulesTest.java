@@ -47,6 +47,13 @@ class BleedRulesTest {
     assertEquals(loss, BleedRules.healthLoss(health), 1.0e-6F);
   }
 
+  @ParameterizedTest(name = "health {0} loses {1} to a sear")
+  @CsvSource({"20, 2", "3, 2", "2, 1", "1.5, 0.5", "1, 0"})
+  @DisplayName("a sear costs a heart but never kills, so a body bled down to one heart survives it")
+  void searLoss(final float health, final float loss) {
+    assertEquals(loss, BleedRules.searLoss(health), 1.0e-6F);
+  }
+
   @ParameterizedTest(name = "blood {0} leaves {1}")
   @CsvSource({"20, 19", "1, 0", "0, 0"})
   @DisplayName("a vampire loses one blood a pulse and never goes below empty")

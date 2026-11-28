@@ -7,8 +7,7 @@ import com.grahambartley.nightborn.dismember.BodyState;
 import com.grahambartley.nightborn.dismember.BodyZoneData;
 import com.grahambartley.nightborn.dismember.Dismemberment;
 import com.grahambartley.nightborn.dismember.WoundSite;
-import com.grahambartley.nightborn.particle.DecalSurface;
-import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import com.grahambartley.nightborn.sound.NightbornSounds;
 import java.util.List;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.minecraft.client.MinecraftClient;
@@ -17,8 +16,6 @@ import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityPose;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.sound.SoundEvents;
-import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.random.Random;
 
@@ -26,7 +23,6 @@ public final class WoundBleeds {
 
   static final double DRAW_RANGE = 48.0;
   static final double DRIP_RANGE = 16.0;
-  static final int TRAIL_REACH = 1;
   static final float DRIP_VOLUME = 0.5F;
   static final float DRIP_PITCH = 0.7F;
   static final float DRIP_PITCH_SPREAD = 0.1F;
@@ -34,7 +30,7 @@ public final class WoundBleeds {
   static final double PULSE_JITTER = 0.03;
   static final double PULSE_LIFT = 0.05;
 
-  private static final Int2ObjectOpenHashMap<Vec3d> LAST_SPLAT = new Int2ObjectOpenHashMap<>();
+  private static final WoundTrail TRAIL = new WoundTrail();
 
   private WoundBleeds() {}
 
@@ -59,7 +55,7 @@ public final class WoundBleeds {
   private static void tick(final ClientWorld world) {
     final MinecraftClient client = MinecraftClient.getInstance();
     if (client.isPaused() || client.player == null) {
-      LAST_SPLAT.clear();
+      TRAIL.clear();
       return;
     }
     final GoreLevel gore = ClientStateService.current().gore();
@@ -67,8 +63,7 @@ public final class WoundBleeds {
     final Vec3d eye = client.gameRenderer.getCamera().getPos();
     final long now = world.getTime();
     int spent = 0;
-    int laid = 0;
-    final Int2ObjectOpenHashMap<Vec3d> seen = new Int2ObjectOpenHashMap<>();
+    TRAIL.begin(world);
     for (final Entity entity : world.getEntities()) {
       if (!(entity instanceof LivingEntity living)
           || !living.isAlive()
@@ -85,7 +80,7 @@ public final class WoundBleeds {
             living.getX(),
             living.getY(),
             living.getZ(),
-            SoundEvents.BLOCK_POINTED_DRIPSTONE_DRIP_WATER,
+            NightbornSounds.BLEEDING_DRIP,
             living.getSoundCategory(),
             DRIP_VOLUME,
             DRIP_PITCH + world.random.nextFloat() * DRIP_PITCH_SPREAD,
@@ -97,22 +92,11 @@ public final class WoundBleeds {
         spent +=
             pulse(client, world, living, body.openWounds(now), gore, particles, sinceCut, spent);
       }
-      if (living.isInvisible()) {
-        continue;
-      }
-      final Vec3d last = LAST_SPLAT.get(living.getId());
-      final boolean due =
-          last == null || BleedTrail.due(gore, particles, last.squaredDistanceTo(living.getPos()));
-      if (due && BleedTrail.affordable(laid)) {
-        splat(client, world, living, gore, particles);
-        laid++;
-        seen.put(living.getId(), living.getPos());
-      } else if (last != null) {
-        seen.put(living.getId(), last);
+      if (!living.isInvisible()) {
+        TRAIL.follow(client, living, gore, particles);
       }
     }
-    LAST_SPLAT.clear();
-    LAST_SPLAT.putAll(seen);
+    TRAIL.end();
   }
 
   private static int pulse(
@@ -125,6 +109,9 @@ public final class WoundBleeds {
       final long sinceCut,
       final int spent) {
     final WoundPulse beat = WoundPulse.of(gore, particles, sinceCut);
+    if (beat.drops() == 0) {
+      return 0;
+    }
     final Random random = world.random;
     int used = 0;
     for (final BodyPart part : wounds) {
@@ -145,29 +132,5 @@ public final class WoundBleeds {
       used += drops;
     }
     return used;
-  }
-
-  private static void splat(
-      final MinecraftClient client,
-      final ClientWorld world,
-      final LivingEntity living,
-      final GoreLevel gore,
-      final ParticlesMode particles) {
-    if (!BleedTrail.drawn(gore, particles)) {
-      return;
-    }
-    final double spread = living.getWidth() / 2.0;
-    final Vec3d spot =
-        living
-            .getPos()
-            .add(
-                (world.random.nextDouble() - 0.5) * spread,
-                0.0,
-                (world.random.nextDouble() - 0.5) * spread);
-    DecalSurface.floorBelow(world, spot, TRAIL_REACH)
-        .ifPresent(
-            floor ->
-                BloodParticleFactories.spawnSplat(
-                    client, floor, Direction.UP, SplatterLook.of(gore), false));
   }
 }
