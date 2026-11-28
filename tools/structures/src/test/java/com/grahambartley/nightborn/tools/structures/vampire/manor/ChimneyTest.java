@@ -60,4 +60,23 @@ class ChimneyTest {
       }
     }
   }
+
+  @ParameterizedTest(name = "{1} burns deep inside the two thick wall")
+  @MethodSource("fires")
+  void everyFireboxSitsInsideTheWall(final Chimney chimney, final Chimney.Fire fire) {
+    final Template t = built(chimney);
+    final Pos firebox = fire.firebox();
+    assertTrue(ManorShell.HOUSE.onWall(firebox.x(), firebox.z()));
+    assertTrue(ManorShell.LINING.onWall(fire.x(), fire.z()));
+    assertEquals(BlockState.AIR, t.get(firebox.x(), firebox.y(), firebox.z()));
+    assertTrue(chimney.shaft(fire.box().x(), fire.box().z()));
+  }
+
+  @ParameterizedTest(name = "{0} stands clear of the roof slope beside it")
+  @MethodSource("fires")
+  void stacksRiseAboveTheRoof(final Chimney chimney, final Chimney.Fire fire) {
+    for (int z = chimney.z0(); z <= chimney.z1(); z++) {
+      assertTrue(chimney.top() >= Manor.TOP + ManorRoofs.rise(z) + Chimney.ABOVE_ROOF);
+    }
+  }
 }

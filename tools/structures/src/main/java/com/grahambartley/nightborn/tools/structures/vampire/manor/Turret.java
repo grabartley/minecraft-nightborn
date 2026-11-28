@@ -1,24 +1,30 @@
 package com.grahambartley.nightborn.tools.structures.vampire.manor;
 
+import static com.grahambartley.nightborn.tools.structures.vampire.manor.Manor.BURGUNDY;
 import static com.grahambartley.nightborn.tools.structures.vampire.manor.Manor.F0;
 import static com.grahambartley.nightborn.tools.structures.vampire.manor.Manor.F1;
-import static com.grahambartley.nightborn.tools.structures.vampire.manor.Manor.MAIN_E;
-import static com.grahambartley.nightborn.tools.structures.vampire.manor.Manor.MAIN_S;
+import static com.grahambartley.nightborn.tools.structures.vampire.manor.Manor.HOUSE_E;
+import static com.grahambartley.nightborn.tools.structures.vampire.manor.Manor.HOUSE_S;
+import static com.grahambartley.nightborn.tools.structures.vampire.manor.Manor.ROOM_E;
+import static com.grahambartley.nightborn.tools.structures.vampire.manor.Manor.ROOM_S;
 import static com.grahambartley.nightborn.tools.structures.vampire.manor.Manor.TOP;
 
 import com.grahambartley.nightborn.tools.structures.template.BlockState;
 import com.grahambartley.nightborn.tools.structures.template.Template;
 import com.grahambartley.nightborn.tools.structures.vampire.RouteRoom;
+import java.util.ArrayList;
+import java.util.List;
 
 public record Turret(boolean round) {
 
-  public static final int CX = MAIN_E;
-  public static final int CZ = MAIN_S;
-  public static final int RADIUS = 3;
+  public static final int CX = HOUSE_E;
+  public static final int CZ = HOUSE_S;
+  public static final int RADIUS = 4;
   public static final int STUDY = TOP;
-  public static final int WALL_TOP = STUDY + 6;
+  public static final int WALL_TOP = STUDY + 9;
   public static final int STAIR_X = CX + 1;
-  public static final int STAIR_FOOT_Z = CZ + 2;
+  public static final int STAIR_FOOT_Z = CZ + RADIUS - 1;
+  public static final int STAIR_TOP_Z = STAIR_FOOT_Z - (STUDY - F1 - 1);
 
   public boolean inside(final int x, final int z, final int r) {
     if (r < 0) {
@@ -33,16 +39,28 @@ public record Turret(boolean round) {
     return inside(x, z, RADIUS) && !inside(x, z, RADIUS - 1);
   }
 
-  public static boolean arch(final int y) {
-    return y > F0 && y <= F0 + RouteRoom.HOUSEHOLD || y > F1 && y <= F1 + RouteRoom.HOUSEHOLD;
+  public static boolean inRoom(final int x, final int z) {
+    return x <= ROOM_E && z <= ROOM_S;
   }
 
-  public static boolean doorway(final int x, final int z) {
-    return x == CX - 2 && (z == CZ - 2 || z == CZ - 3);
+  public static boolean floorRow(final int y) {
+    return y == F0 || y == F1 || y == STUDY || y == WALL_TOP;
   }
 
   public int roofTop() {
     return WALL_TOP + 2 + 2 * RADIUS;
+  }
+
+  public List<Window> windows() {
+    final List<Window> all = new ArrayList<>();
+    final int diagonalX = round ? CX + RADIUS - 1 : CX + RADIUS;
+    final int diagonalZ = round ? CZ + RADIUS - 2 : CZ + RADIUS - 1;
+    for (final int[] sill : new int[][] {{F0 + 2, 4}, {F1 + 2, 3}, {STUDY + 2, 4}}) {
+      all.add(new Window(CX + RADIUS, CZ, "east", sill[0], sill[1], Manor.PANE, BURGUNDY));
+      all.add(new Window(CX - 1, CZ + RADIUS, "south", sill[0], sill[1], Manor.PANE, BURGUNDY));
+      all.add(new Window(diagonalX, diagonalZ, "east", sill[0], sill[1], Manor.STAINED, BURGUNDY));
+    }
+    return all;
   }
 
   public void build(final Template t) {
@@ -53,28 +71,28 @@ public record Turret(boolean round) {
         }
       }
     }
-    windows(t);
+    windows().forEach(window -> window.cut(t));
     roof(t);
     stair(t);
-    bookcase(t);
   }
 
-  private void bookcase(final Template t) {
-    final int x = STAIR_X + 1;
-    for (int z = CZ - RADIUS; z <= CZ + RADIUS; z++) {
-      if (!inside(x, z, RADIUS - 1)) {
-        continue;
-      }
-      for (int y = F1 + 1; y < STUDY - 1; y++) {
-        t.set(x, y, z, "bookshelf");
-      }
-      for (int y = STUDY + 1; y < STUDY + 4; y++) {
-        t.set(x, y, z, "bookshelf");
+  private void column(final Template t, final int x, final int z) {
+    final boolean open = inRoom(x, z);
+    for (int y = 0; y <= WALL_TOP; y++) {
+      final boolean shell = ring(x, z) && !(open && y < TOP && !floorRow(y));
+      if (y < F0 || (shell && floorRow(y))) {
+        t.set(x, y, z, Manor.DRESSING.at(x, y, z));
+      } else if (shell) {
+        t.set(x, y, z, Manor.WALL.at(x, y, z));
+      } else if (floorRow(y)) {
+        t.set(x, y, z, Manor.PLANKS);
+      } else {
+        t.set(x, y, z, BlockState.AIR);
       }
     }
   }
 
-  private static void stair(final Template t) {
+  private void stair(final Template t) {
     for (int i = 0; i <= STUDY - F1 - 1; i++) {
       final int y = F1 + 1 + i;
       final int z = STAIR_FOOT_Z - i;
@@ -82,41 +100,17 @@ public record Turret(boolean round) {
         t.set(STAIR_X, below, z, Manor.PLANKS);
       }
       t.set(STAIR_X, y, z, Parts.stair("dark_oak_stairs", "north"));
-      for (int above = y + 1; above <= y + 1 + RouteRoom.HOUSEHOLD; above++) {
+      for (int above = y + 1; above <= y + RouteRoom.HOUSEHOLD + 1; above++) {
         t.set(STAIR_X, above, z, BlockState.AIR);
       }
     }
-  }
-
-  private void column(final Template t, final int x, final int z) {
-    for (int y = 0; y <= WALL_TOP; y++) {
-      final boolean shell = ring(x, z) && !(doorway(x, z) && arch(y));
-      final boolean floor = y == F0 || y == F1 || y == STUDY || y == WALL_TOP;
-      if (y < F0 || (shell && floor)) {
-        t.set(x, y, z, Manor.DRESSING.at(x, y, z));
-      } else if (shell) {
-        t.set(x, y, z, Manor.BRICK.at(x, y, z));
-      } else {
-        t.set(x, y, z, floor ? Manor.PLANKS : BlockState.AIR);
-      }
-    }
-  }
-
-  private void windows(final Template t) {
-    final int[][] faces = {{RADIUS, 0, 0}, {0, RADIUS, 0}, {RADIUS, RADIUS, 1}};
-    for (final int[] face : faces) {
-      final int x = face[2] == 1 ? CX + diagonal() : CX + face[0];
-      final int z = face[2] == 1 ? CZ + diagonal() : CZ + face[1];
-      for (final int sill : new int[] {F0 + 2, F1 + 1, STUDY + 2}) {
-        for (int y = sill; y < sill + 3; y++) {
-          t.set(x, y, z, face[2] == 1 && sill == F0 + 2 ? Manor.STAINED : Manor.PANE);
+    for (int z = STAIR_TOP_Z + 1; z < STAIR_FOOT_Z; z++) {
+      for (final int x : new int[] {STAIR_X - 1, STAIR_X + 1}) {
+        if (inside(x, z, RADIUS - 1)) {
+          t.set(x, STUDY + 1, z, Parts.fence());
         }
       }
     }
-  }
-
-  private int diagonal() {
-    return round ? 2 : RADIUS;
   }
 
   public static String inward(final int x, final int z) {

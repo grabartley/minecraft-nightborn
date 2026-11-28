@@ -1,6 +1,7 @@
 package com.grahambartley.nightborn.tools.structures.vampire.manor;
 
-import static com.grahambartley.nightborn.tools.structures.vampire.manor.Manor.MAIN_N;
+import static com.grahambartley.nightborn.tools.structures.vampire.manor.Manor.F0;
+import static com.grahambartley.nightborn.tools.structures.vampire.manor.Manor.HOUSE_N;
 import static com.grahambartley.nightborn.tools.structures.vampire.manor.Manor.MID_X;
 import static com.grahambartley.nightborn.tools.structures.vampire.manor.Manor.SIZE_X;
 import static com.grahambartley.nightborn.tools.structures.vampire.manor.Manor.SIZE_Z;
@@ -12,10 +13,11 @@ import com.grahambartley.nightborn.tools.structures.vampire.Stone;
 public final class Grounds {
 
   public static final int RAILING_Z = SIZE_Z - 2;
-  public static final int SWEEP_Z = 35;
+  public static final int SWEEP_Z = (ManorFront.STEPS_END + 1 + RAILING_Z) / 2;
   public static final double SWEEP_INNER = 3.5;
   public static final double SWEEP_OUTER = 5.3;
-  public static final int BACK_PATH_Z = MAIN_N - Manor.F0 - 1;
+  public static final int BACK_STEP_Z = HOUSE_N - 1;
+  public static final int BACK_PATH_Z = BACK_STEP_Z - F0;
   public static final int WEST_PATH_X = 1;
   public static final int EAST_PATH_X = SIZE_X - 3;
   public static final int HEDGE_HEIGHT = 2;
@@ -23,17 +25,18 @@ public final class Grounds {
   private Grounds() {}
 
   public static void build(final Template t) {
+    backSteps(t);
     drive(t);
     paths(t);
     railing(t);
     hedges(t);
     Topiary.figure(t, MID_X, SWEEP_Z);
-    Topiary.cone(t, MID_X - 4, RAILING_Z - 2);
-    Topiary.cone(t, MID_X + 4, RAILING_Z - 2);
-    lamp(t, MID_X - 4, ManorFront.STEPS_END + 1);
-    lamp(t, MID_X + 4, ManorFront.STEPS_END + 1);
-    deadTree(t, 7, 33);
-    deadTree(t, 41, 36);
+    Topiary.cone(t, MID_X - 6, RAILING_Z - 2);
+    Topiary.cone(t, MID_X + 6, RAILING_Z - 2);
+    lamp(t, MID_X - 5, ManorFront.STEPS_END + 1);
+    lamp(t, MID_X + 5, ManorFront.STEPS_END + 1);
+    deadTree(t, 8, 50);
+    deadTree(t, 59, 53);
     kitchenYard(t);
     lawn(t);
   }
@@ -49,11 +52,18 @@ public final class Grounds {
     }
   }
 
+  private static void backSteps(final Template t) {
+    for (int x = ManorShell.EAST_THROUGH; x <= ManorShell.EAST_THROUGH + 1; x++) {
+      Parts.flight(t, Manor.TRIM, ManorFront.STEP_FILL, x, BACK_STEP_Z, "south", F0, F0, 0);
+    }
+  }
+
   private static void drive(final Template t) {
     for (int x = 0; x < SIZE_X; x++) {
       for (int z = ManorFront.STEPS_END + 1; z <= RAILING_Z; z++) {
         final boolean lane = Math.abs(x - MID_X) <= 1 && !inCircle(x, z);
-        if (lane || onSweep(x, z)) {
+        final boolean apron = z == ManorFront.STEPS_END + 1 && ManorFront.onSteps(x);
+        if (lane || apron || onSweep(x, z)) {
           ground(t, x, z, Stone.roll(x, 0, z) < 25 ? "coarse_dirt" : "gravel");
         }
       }
@@ -77,6 +87,11 @@ public final class Grounds {
         path(t, x, SWEEP_Z);
       }
     }
+    for (int z = BACK_PATH_Z + 1; z < Glasshouse.STEP_FOOT_Z; z++) {
+      for (int x = Glasshouse.DOOR_X; x <= Glasshouse.DOOR_X + 1; x++) {
+        path(t, x, z);
+      }
+    }
   }
 
   private static void path(final Template t, final int x, final int z) {
@@ -88,21 +103,21 @@ public final class Grounds {
       if (Math.abs(x - MID_X) <= 1) {
         continue;
       }
-      final boolean pier = Math.abs(x - MID_X) == 2 || Math.floorMod(x - MID_X, 6) == 2;
-      t.set(x, 0, RAILING_Z, Manor.DRESSING.at(x, 0, RAILING_Z));
-      t.set(x, 1, RAILING_Z, Manor.BRICK.at(x, 1, RAILING_Z));
+      final boolean gatePier = Math.abs(x - MID_X) == 2;
+      final boolean pier = gatePier || Math.floorMod(x - MID_X, 6) == 2;
+      t.set(x, 0, RAILING_Z, Manor.PLINTH.at(x, 0, RAILING_Z));
+      t.set(x, 1, RAILING_Z, Manor.WALL.at(x, 1, RAILING_Z));
       if (pier) {
-        final int top = Math.abs(x - MID_X) == 2 ? 4 : 2;
+        final int top = gatePier ? 4 : 2;
         for (int y = 2; y <= top; y++) {
-          t.set(x, y, RAILING_Z, Manor.BRICK.at(x, y, RAILING_Z));
+          t.set(x, y, RAILING_Z, Manor.WALL.at(x, y, RAILING_Z));
         }
-        final boolean gate = top == 4;
         t.set(
             x,
             top + 1,
             RAILING_Z,
-            gate ? "chiseled_stone_bricks" : Parts.slab(Manor.TRIM_SLAB, "bottom"));
-        if (gate) {
+            gatePier ? "nightborn:carved_gothic_stone" : Parts.slab(Manor.TRIM_SLAB, "bottom"));
+        if (gatePier) {
           t.set(x, top + 2, RAILING_Z, Parts.lantern(false));
         }
       } else {
@@ -156,20 +171,16 @@ public final class Grounds {
   }
 
   private static void kitchenYard(final Template t) {
-    for (final int x : new int[] {MID_X, 36}) {
-      Parts.flight(
-          t, Manor.TRIM, ManorFront.STONE_FILL, x, MAIN_N - 1, "south", Manor.F0, Manor.F0, 0);
-    }
-    for (int x = 38; x <= 40; x++) {
+    for (int x = 56; x <= 58; x++) {
       for (int y = 1; y <= 2; y++) {
-        t.set(x, y, 1, Parts.log("oak_log", "x"));
+        t.set(x, y, 2, Parts.log("oak_log", "x"));
       }
     }
-    t.set(37, 1, 2, Parts.log("stripped_oak_log", "y"));
-    t.set(33, 1, 1, BlockState.of("barrel", "facing", "up", "open", false));
-    t.set(33, 1, 2, BlockState.of("barrel", "facing", "up", "open", false));
-    t.set(34, 1, 2, BlockState.of("water_cauldron", "level", 2));
-    t.set(32, 1, 2, "composter");
+    t.set(55, 1, 3, Parts.log("stripped_oak_log", "y"));
+    t.set(46, 1, 2, BlockState.of("barrel", "facing", "up", "open", false));
+    t.set(46, 1, 3, BlockState.of("barrel", "facing", "up", "open", false));
+    t.set(47, 1, 3, BlockState.of("water_cauldron", "level", 2));
+    t.set(45, 1, 3, "composter");
   }
 
   private static void lawn(final Template t) {

@@ -3,54 +3,50 @@ package com.grahambartley.nightborn.tools.structures.vampire.manor;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import com.grahambartley.nightborn.tools.structures.template.BlockState;
 import com.grahambartley.nightborn.tools.structures.template.Template;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
-import org.junit.jupiter.params.provider.ValueSource;
 
 class ManorRoofsTest {
 
-  static Template roofed;
+  static Template t;
 
   @BeforeAll
   static void build() {
-    roofed = new Template("vampire/test", Manor.SIZE_X, Manor.SIZE_Y, Manor.SIZE_Z);
-    ManorShell.build(roofed);
-    ManorFront.build(roofed);
-    ManorRoofs.build(roofed);
+    t = new Template("vampire/test", Manor.SIZE_X, Manor.SIZE_Y, Manor.SIZE_Z);
+    ManorShell.build(t);
+    ManorRoofs.build(t);
   }
 
-  @ParameterizedTest(name = "a finial tops the ridge at {0},{1},{2}")
-  @CsvSource({"17, 21, 27", "17, 21, 8", "27, 19, 22", "40, 23, 15"})
-  void finialsTopEachGable(final int x, final int y, final int z) {
-    assertTrue(
-        roofed.get(x, y, z).startsWith("minecraft:" + ManorRoofs.FINIAL), roofed.get(x, y, z));
+  @ParameterizedTest(name = "the roof rises {1} over z {0}")
+  @CsvSource({"15, 0", "16, 1", "22, 7", "29, 14", "36, 7", "42, 1", "43, 0", "50, 0"})
+  void risesToARidgeOverTheMiddle(final int z, final int rise) {
+    assertEquals(rise, ManorRoofs.rise(z));
   }
 
-  @ParameterizedTest(name = "the hall ceiling stays plank at z {0}")
-  @ValueSource(ints = {9, 15, 21})
-  void theWingEaveStaysOutOfTheHall(final int z) {
-    assertEquals("minecraft:" + Manor.PLANKS, roofed.get(Manor.WING_E + 1, Manor.TOP, z));
+  @ParameterizedTest(name = "at x {0} the slope at z {1} is slate")
+  @CsvSource({"25, 20", "50, 35", "30, 15", "46, 43"})
+  void theSlopesAreSlate(final int x, final int z) {
+    assertTrue(t.get(x, Manor.TOP + ManorRoofs.rise(z), z).contains("deepslate_tile"));
   }
 
-  @ParameterizedTest(name = "the main eave breaks for the dormer at x {0}")
-  @ValueSource(ints = {24, 27, 30})
-  void theDormerBreaksTheEave(final int x) {
-    assertEquals(BlockState.AIR, roofed.get(x, Manor.TOP, Manor.MAIN_S + 1));
+  @ParameterizedTest(name = "the attic is filled solid at {0},{1},{2}")
+  @CsvSource({"30, 20, 29", "50, 25, 25", "25, 19, 20"})
+  void theAtticIsSolid(final int x, final int y, final int z) {
+    assertEquals(Manor.PLANKS, t.get(x, y, z));
   }
 
-  @ParameterizedTest(name = "the eave runs on at x {0}")
-  @ValueSource(ints = {33, 38})
-  void theMainEaveOverhangs(final int x) {
-    assertTrue(roofed.get(x, Manor.TOP, Manor.MAIN_S + 1).contains("deepslate_tile_stairs"));
-    assertTrue(roofed.get(x, Manor.TOP, Manor.MAIN_N - 1).contains("deepslate_tile_stairs"));
+  @ParameterizedTest(name = "the gables stand in gothic stone at x {0}")
+  @CsvSource({"18", "58"})
+  void gableEndsAreStone(final int x) {
+    assertTrue(t.get(x, Manor.TOP + 6, ManorRoofs.RIDGE_Z).contains("gothic_stone"));
   }
 
-  @ParameterizedTest(name = "attic light at {0},{1}")
-  @CsvSource({"17, 8", "17, 27"})
-  void gablesLightTheAttic(final int x, final int z) {
-    assertEquals("minecraft:" + Manor.PANE, roofed.get(x, Manor.TOP + 2, z));
+  @Test
+  void aFrontGableRisesOverTheHall() {
+    assertTrue(t.get(Manor.MID_X, Manor.TOP + 3, Manor.HOUSE_S).contains("gothic_stone"));
+    assertTrue(t.get(ManorRoofs.GABLE_W, Manor.TOP + 1, Manor.HOUSE_S).contains("stairs"));
   }
 }

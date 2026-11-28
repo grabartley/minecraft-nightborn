@@ -118,11 +118,21 @@ public final class Furnishing {
   }
 
   public static void candelabra(final Template t, final int x, final int y, final int z) {
-    t.set(x, y, z, BlockState.of("nightborn:candelabra", "facing", "north", "lit", false));
+    candelabra(t, x, y, z, false);
+  }
+
+  public static void candelabra(
+      final Template t, final int x, final int y, final int z, final boolean lit) {
+    t.set(x, y, z, BlockState.of("nightborn:candelabra", "facing", "north", "lit", lit));
   }
 
   public static void chandelier(final Template t, final int x, final int y, final int z) {
-    t.set(x, y, z, BlockState.of("nightborn:chandelier", "facing", "north", "lit", false));
+    chandelier(t, x, y, z, false);
+  }
+
+  public static void chandelier(
+      final Template t, final int x, final int y, final int z, final boolean lit) {
+    t.set(x, y, z, BlockState.of("nightborn:chandelier", "facing", "north", "lit", lit));
   }
 
   public static void chalice(
