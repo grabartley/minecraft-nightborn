@@ -208,6 +208,7 @@ public class VampireMobGameTest implements FabricGameTest {
           context.assertTrue(control.hunts(hunter), "a standing vampire mob hunts at night");
           context.assertFalse(vampire.tryAttack(hunter), "an escaping vampire mob does not bite");
           final FleeWhileEscapingGoal goal = new FleeWhileEscapingGoal(vampire, 1.4);
+          vampire.setOnGround(true);
           boolean fled = false;
           for (int i = 0; i < TRIES && !fled; i++) {
             if (goal.canStart()) {
