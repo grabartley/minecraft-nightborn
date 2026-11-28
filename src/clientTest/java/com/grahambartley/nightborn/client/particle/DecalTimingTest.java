@@ -32,4 +32,25 @@ class DecalTimingTest {
   void vomitLife(final float roll, final int expected) {
     assertEquals(expected, DecalTiming.vomitLife(roll));
   }
+
+  @ParameterizedTest(name = "life {0} at age {1} joined by life {2}: {3}")
+  @CsvSource({"6000, 1000, 5500, 5500", "6000, 100, 5500, 5900", "6000, 0, 0, 6000"})
+  @DisplayName("a joined patch lives as long as the longer of what it had left and the new splat")
+  void joinedLife(final int maxAge, final int age, final int incoming, final int expected) {
+    assertEquals(expected, DecalTiming.joinedLife(maxAge, age, incoming));
+  }
+
+  @ParameterizedTest(name = "life {0} at age {1} with fade {2}: {3}")
+  @CsvSource({"6000, 100, 600, 700", "6000, 5800, 600, 6000", "90, 10, 25, 35"})
+  @DisplayName("a retired decal fades out from where it is, never living longer")
+  void retiredLife(final int maxAge, final int age, final int fade, final int expected) {
+    assertEquals(expected, DecalTiming.retiredLife(maxAge, age, fade));
+  }
+
+  @ParameterizedTest(name = "now {0}, last ticked {1}: stale {2}")
+  @CsvSource({"100, 100, false", "140, 100, false", "141, 100, true", "100, 141, true"})
+  @DisplayName("a decal that stopped ticking is treated as gone")
+  void stale(final long now, final long lastTicked, final boolean expected) {
+    assertEquals(expected, DecalTiming.stale(now, lastTicked));
+  }
 }

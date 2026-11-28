@@ -26,6 +26,18 @@ public final class DecalTiming {
     return life(VOMIT_LIFE, VOMIT_LIFE_SPREAD, 1.0F, roll);
   }
 
+  public static int joinedLife(final int maxAge, final int age, final int incomingMaxAge) {
+    return Math.max(maxAge - age, incomingMaxAge);
+  }
+
+  public static int retiredLife(final int maxAge, final int age, final int fadeTicks) {
+    return Math.min(maxAge, age + fadeTicks);
+  }
+
+  public static boolean stale(final long now, final long lastTicked) {
+    return Math.abs(now - lastTicked) > STALE_TICKS;
+  }
+
   static int life(final int least, final int spread, final float share, final float roll) {
     final float clamped = Math.min(1.0F, Math.max(0.0F, roll));
     return Math.max(0, Math.round((least + spread * clamped) * Math.max(0.0F, share)));

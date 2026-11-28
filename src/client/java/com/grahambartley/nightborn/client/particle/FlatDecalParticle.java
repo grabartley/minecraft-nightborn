@@ -3,6 +3,8 @@ package com.grahambartley.nightborn.client.particle;
 import com.grahambartley.nightborn.particle.DecalFootprint;
 import com.grahambartley.nightborn.particle.DecalRecheck;
 import java.util.OptionalDouble;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientWorldEvents;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.particle.ParticleManager;
 import net.minecraft.client.particle.ParticleTextureSheet;
@@ -66,6 +68,11 @@ public abstract class FlatDecalParticle extends SpriteBillboardParticle
     setSprite(rimSprite);
   }
 
+  public static void register() {
+    ClientWorldEvents.AFTER_CLIENT_WORLD_CHANGE.register((client, world) -> LIVE.clear());
+    ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> LIVE.clear());
+  }
+
   protected void aged() {}
 
   public static void place(final ParticleManager particles, final FlatDecalParticle decal) {
@@ -84,7 +91,7 @@ public abstract class FlatDecalParticle extends SpriteBillboardParticle
   public boolean gone(final long now) {
     return !isAlive()
         || world != MinecraftClient.getInstance().world
-        || Math.abs(now - lastTicked) > DecalTiming.STALE_TICKS;
+        || DecalTiming.stale(now, lastTicked);
   }
 
   @Override
@@ -95,13 +102,14 @@ public abstract class FlatDecalParticle extends SpriteBillboardParticle
   @Override
   public void retire() {
     retiring = true;
-    maxAge = Math.min(maxAge, age + fadeTicks);
+    maxAge = DecalTiming.retiredLife(maxAge, age, fadeTicks);
   }
 
   @Override
   public boolean absorbs(final FlatDecalParticle incoming) {
     return incoming.getClass() == getClass()
-        && DecalJoin.joins(face, contact, scale, incoming.face, incoming.contact);
+        && DecalJoin.joins(
+            face, contact, scale, DecalFade.wetness(age), incoming.face, incoming.contact);
   }
 
   @Override
@@ -109,7 +117,7 @@ public abstract class FlatDecalParticle extends SpriteBillboardParticle
     DecalFootprint.fittedHalfSize(
             world, contact, face, DecalJoin.grown(scale, incoming.scale), spin)
         .ifPresent(halfSize -> scale = (float) Math.max(scale, halfSize));
-    maxAge = Math.max(maxAge - age, incoming.maxAge);
+    maxAge = DecalTiming.joinedLife(maxAge, age, incoming.maxAge);
     age = 0;
     refresh();
   }

@@ -16,9 +16,10 @@ public final class DecalJoin {
       final Direction face,
       final Vec3d centre,
       final double halfSize,
+      final float wetness,
       final Direction incomingFace,
       final Vec3d incoming) {
-    if (face != incomingFace) {
+    if (wetness < 1.0F || face != incomingFace) {
       return false;
     }
     final Direction.Axis normal = face.getAxis();

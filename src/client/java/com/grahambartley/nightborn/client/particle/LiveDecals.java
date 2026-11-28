@@ -28,6 +28,10 @@ public final class LiveDecals<D extends PlacedDecal<D>> {
     return true;
   }
 
+  public void clear() {
+    oldestFirst.clear();
+  }
+
   public int size() {
     return oldestFirst.size();
   }

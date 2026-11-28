@@ -11,11 +11,11 @@ class DecalLiftTest {
 
   @ParameterizedTest(name = "wetness {0}: rim {1}, body {2}")
   @CsvSource({
-    "0.0, 0.002, 0.010",
-    "0.5, 0.004, 0.015",
-    "1.0, 0.006, 0.020",
-    "-1.0, 0.002, 0.010",
-    "2.0, 0.006, 0.020"
+    "0.0, 0.008, 0.018",
+    "0.5, 0.010, 0.023",
+    "1.0, 0.012, 0.028",
+    "-1.0, 0.008, 0.018",
+    "2.0, 0.012, 0.028"
   })
   @DisplayName("wetter decals sit higher, so fresh blood lies on top of old")
   void lift(final float wetness, final double rim, final double body) {
