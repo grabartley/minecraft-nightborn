@@ -17,6 +17,10 @@ public record CastAim(@Nullable LivingEntity entity, @Nullable Vec3d spot) {
     return new CastAim(null, spot);
   }
 
+  public LivingEntity helped(final LivingEntity caster) {
+    return entity == null ? caster : entity;
+  }
+
   @Nullable
   public LivingEntity subject(final LivingEntity caster) {
     if (entity != null || spot != null) {

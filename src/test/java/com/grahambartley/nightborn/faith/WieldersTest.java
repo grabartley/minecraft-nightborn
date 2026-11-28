@@ -28,4 +28,14 @@ class WieldersTest {
       final boolean alive, final boolean seen, final boolean allied, final boolean expected) {
     assertEquals(expected, Wielders.blessable(alive, seen, allied));
   }
+
+  @ParameterizedTest(name = "aimed at an ally {0}, ally {1}, self {2} -> {3}")
+  @CsvSource({"true, ally, self, ally", "true, , self, ", "false, , self, self"})
+  @DisplayName(
+      "a mob blessing the ally it chose blesses only that ally, and never falls back to its own"
+          + " weapon")
+  void pickForAimedAlly(
+      final boolean aimed, final String ally, final String self, final String expected) {
+    assertEquals(Optional.ofNullable(expected), Wielders.pick(aimed, ally, self));
+  }
 }

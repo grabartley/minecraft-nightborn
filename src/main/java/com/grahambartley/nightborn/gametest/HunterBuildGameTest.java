@@ -14,6 +14,7 @@ import com.grahambartley.nightborn.mob.NightbornMobs;
 import com.grahambartley.nightborn.mob.VampireEntity;
 import com.grahambartley.nightborn.rank.RankLadder;
 import com.grahambartley.nightborn.skill.BoughtSkill;
+import com.grahambartley.nightborn.skill.Mending;
 import com.grahambartley.nightborn.skill.PowerCooldownAttachment;
 import com.grahambartley.nightborn.skill.Skill;
 import com.grahambartley.nightborn.skill.SkillAttachment;
@@ -39,6 +40,8 @@ public class HunterBuildGameTest implements FabricGameTest {
   static final int START = 5;
   static final Identifier REBUKE = Identifier.of(Nightborn.MOD_ID, "faithful/rebuke");
   static final int REBUKE_TELL = 10;
+  static final Identifier BIND_WOUNDS = Identifier.of(Nightborn.MOD_ID, "hunter/bind_wounds");
+  static final int BIND_TELL = 12;
   static final Identifier INITIATE = Identifier.of(Nightborn.MOD_ID, "initiate");
 
   private static HunterPurchases.Shop shop(final TestContext context, final HunterEntity hunter) {
@@ -181,6 +184,47 @@ public class HunterBuildGameTest implements FabricGameTest {
               PowerCooldownAttachment.get(hunter).ticksLeft(REBUKE, context.getWorld().getTime())
                   > 0,
               "and the power cools down as a player's does");
+          context.complete();
+        });
+  }
+
+  @GameTest(templateName = ARENA, tickLimit = START + BIND_TELL + 10)
+  public void aHunterBindsTheWoundsOfAHurtAllyInAFight(final TestContext context) {
+    final HunterEntity healer = context.spawnEntity(GuildMobs.HUNTER, new BlockPos(1, 2, 3));
+    healer.setAiDisabled(true);
+    final RankLadder ladder = RankLadder.of(context.getWorld().getRegistryManager());
+    OathAttachment.set(healer, HunterGrowth.sworn(ladder, 0));
+    SkillAttachment.set(
+        healer,
+        SkillTree.HUNTER,
+        new TreeProgress(
+            5,
+            0.0F,
+            List.of(
+                new BoughtSkill(Identifier.of(Nightborn.MOD_ID, "hunter/tracking"), 1),
+                new BoughtSkill(Identifier.of(Nightborn.MOD_ID, "hunter/second_wind"), 1),
+                new BoughtSkill(BIND_WOUNDS, 1)),
+            List.of()));
+    final HunterEntity hurt = context.spawnEntity(GuildMobs.HUNTER, new BlockPos(4, 2, 3));
+    hurt.setAiDisabled(true);
+    final VampireEntity vampire = context.spawnEntity(NightbornMobs.VAMPIRE, new BlockPos(7, 2, 3));
+    vampire.setAiDisabled(true);
+    context.runAtTick(
+        START,
+        () -> {
+          hurt.setHealth(hurt.getMaxHealth() * 0.2F);
+          hurt.setTarget(vampire);
+          healer.fight();
+          context.assertTrue(healer.mobFighting().telling(), "the healer winds up to help");
+        });
+    context.runAtTick(
+        START + BIND_TELL,
+        () -> {
+          healer.fight();
+          context.assertTrue(
+              hurt.getAttached(Mending.TYPE) != null, "the hurt ally's wounds are bound");
+          context.assertTrue(
+              healer.getAttached(Mending.TYPE) == null, "the healthy healer does not heal itself");
           context.complete();
         });
   }

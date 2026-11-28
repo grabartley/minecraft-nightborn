@@ -1,8 +1,12 @@
 package com.grahambartley.nightborn.gametest;
 
 import com.grahambartley.nightborn.blood.BloodAttachment;
+import com.grahambartley.nightborn.guild.GuildMobs;
+import com.grahambartley.nightborn.guild.HunterEntity;
 import com.grahambartley.nightborn.mob.NightbornMobs;
 import com.grahambartley.nightborn.mob.VampireEntity;
+import com.grahambartley.nightborn.mob.combat.MobFighting;
+import com.grahambartley.nightborn.occult.Circles;
 import com.grahambartley.nightborn.occult.FamiliarMode;
 import com.grahambartley.nightborn.occult.FamiliarModeOrders;
 import com.grahambartley.nightborn.occult.FamiliarPower;
@@ -36,6 +40,7 @@ import net.minecraft.test.BeforeBatch;
 import net.minecraft.test.GameTest;
 import net.minecraft.test.TestContext;
 import net.minecraft.util.Hand;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
@@ -47,10 +52,13 @@ public class OccultGameTest implements FabricGameTest {
   static final int SHORT_LIFE = 40;
   static final int SCOUT_TICKS = 20;
   static final BlockPos BEYOND_PICKUP_REACH = new BlockPos(0, 2, 4);
+  static final Identifier BLOOD_WARD = Identifier.of("nightborn", "occult/blood_ward");
+  static final int WARD_TELL = 12;
 
   @BeforeBatch(batchId = BATCH)
   public void clearFog(final ServerWorld world) {
     FogClouds.clearAll();
+    Circles.clearAll();
   }
 
   private static void end(final TestContext context, final Entity... owners) {
@@ -487,5 +495,37 @@ public class OccultGameTest implements FabricGameTest {
             + " of "
             + lifetime);
     context.complete();
+  }
+
+  @GameTest(templateName = ARENA, batchId = BATCH, tickLimit = WARD_TELL + 20)
+  public void aVampireWardsTheAllyUnderAttack(final TestContext context) {
+    final VampireEntity warden = context.spawnEntity(NightbornMobs.VAMPIRE, new BlockPos(1, 2, 1));
+    warden.setAiDisabled(true);
+    warden.becomeStage(Identifier.of("nightborn", "adult"));
+    OccultSkills.learn(warden, OccultSkills.GRAVE_FOG, BLOOD_WARD);
+    final VampireEntity ally = context.spawnEntity(NightbornMobs.VAMPIRE, new BlockPos(6, 2, 6));
+    ally.setAiDisabled(true);
+    final HunterEntity hunter = context.spawnEntity(GuildMobs.HUNTER, new BlockPos(7, 2, 7));
+    hunter.setAiDisabled(true);
+    final int thinkTicks = warden.stage().combat().thinkTicks();
+    final int floor = warden.stage().combat().bloodFloor();
+    context.runAtTick(
+        5,
+        () -> {
+          ally.setAttacker(hunter);
+          warden.mobFighting().tick(warden, MobFighting.Engagement.STANDING_BY, thinkTicks, floor);
+          context.assertTrue(warden.mobFighting().telling(), "the warden winds up to help");
+        });
+    context.runAtTick(
+        5 + WARD_TELL,
+        () -> {
+          warden.mobFighting().tick(warden, MobFighting.Engagement.STANDING_BY, thinkTicks, floor);
+          final ServerWorld world = context.getWorld();
+          context.assertTrue(
+              Circles.stopsPrayers(world, ally.getPos()), "the ward is drawn around the ally");
+          context.assertFalse(
+              Circles.stopsPrayers(world, warden.getPos()), "and not around the warden");
+          context.complete();
+        });
   }
 }

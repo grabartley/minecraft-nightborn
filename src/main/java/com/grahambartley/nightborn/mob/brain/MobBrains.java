@@ -14,6 +14,8 @@ public final class MobBrains {
 
   public static void register() {
     MobIntents.register();
+    GroupViews.register();
+    HelpClaims.register();
     ServerLifecycleEvents.SERVER_STARTED.register(
         server -> {
           final DynamicRegistryManager registries = server.getRegistryManager();

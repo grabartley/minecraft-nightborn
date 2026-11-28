@@ -1,9 +1,11 @@
 package com.grahambartley.nightborn.mob.combat;
 
 import com.grahambartley.nightborn.mob.brain.Aim;
+import java.util.UUID;
 import net.minecraft.util.Identifier;
+import org.jetbrains.annotations.Nullable;
 
-public record Tell(Identifier power, long castAt, Aim aim) {
+public record Tell(Identifier power, long castAt, Aim aim, @Nullable UUID ally) {
 
   public enum Step {
     WAIT,
@@ -11,8 +13,12 @@ public record Tell(Identifier power, long castAt, Aim aim) {
     DROP
   }
 
+  public Tell(final Identifier power, final long castAt, final Aim aim) {
+    this(power, castAt, aim, null);
+  }
+
   public Step step(final boolean engaged, final long now) {
-    if (!engaged) {
+    if (!engaged && ally == null) {
       return Step.DROP;
     }
     return now >= castAt ? Step.CAST : Step.WAIT;

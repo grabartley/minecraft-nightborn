@@ -12,6 +12,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import net.minecraft.util.Identifier;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -125,5 +126,59 @@ class ThinkingTest {
             verdicts.isEmpty()
                 ? List.of()
                 : Arrays.stream(verdicts.split(" ")).map(PowerUse.Verdict::valueOf).toList()));
+  }
+
+  @ParameterizedTest(name = "dodge {0}, target {1}, reported {2}: aids {3}")
+  @CsvSource({
+    "false, false, REST, true",
+    "false, false, TRAVEL, true",
+    "false, false, RETREAT, false",
+    "false, true, FIGHT, false",
+    "true, false, REST, false"
+  })
+  @DisplayName(
+      "a mob with no target of its own thinks about helping its allies, unless it is getting away"
+          + " or dodging")
+  void aids(final boolean dodge, final boolean target, final Intent reported, final boolean aids) {
+    assertEquals(aids, Thinking.aids(dodge, target, reported));
+  }
+
+  private static PowerChoice.Option helpOption(
+      final String name, final String aim, final String fact, final Set<Aim> ready) {
+    return new PowerChoice.Option(
+        Identifier.of("nightborn", "test/" + name),
+        PowerUse.Verdict.READY,
+        0,
+        0,
+        false,
+        new MobPowerUse(
+            0.0F,
+            8.0F,
+            5,
+            Identifier.of("minecraft", "x"),
+            "tell",
+            false,
+            List.of(
+                new MobUse(
+                    "fight",
+                    aim,
+                    List.of(new Consideration(fact, Curve.BETWEEN, 0.0F, 1.0F)),
+                    1.0F))),
+        ready);
+  }
+
+  @Test
+  @DisplayName(
+      "a mob standing by weighs only the powers that help an ally and are ready for that aim")
+  void helpingKeepsOnlyReadyHelp() {
+    final PowerChoice.Option mend = helpOption("mend", "ally", "ally_health", EnumSet.of(Aim.ALLY));
+    final PowerChoice.Option strike =
+        helpOption("strike", "target", "target_distance", EnumSet.of(Aim.TARGET));
+    final PowerChoice.Option unready =
+        helpOption("ward", "ally", "ally_under_attack", EnumSet.noneOf(Aim.class));
+    assertEquals(List.of(mend), Thinking.helping(List.of(mend, strike, unready), Intent.FIGHT));
+    assertEquals(List.of(), Thinking.helping(List.of(mend), Intent.RETREAT));
+    assertEquals(true, Thinking.helps(mend.use()));
+    assertEquals(false, Thinking.helps(strike.use()));
   }
 }

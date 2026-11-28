@@ -7,6 +7,7 @@ import com.grahambartley.nightborn.MinecraftBootstrapExtension;
 import com.grahambartley.nightborn.skill.CastAim;
 import java.util.Optional;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.util.math.Vec3d;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -42,5 +43,21 @@ class CastAimsTest {
           default -> Optional.empty();
         };
     assertEquals(expected, CastAims.resolve(aim, self, route ? END : null));
+  }
+
+  @ParameterizedTest(name = "{0}, ally found {1}: {2}")
+  @CsvSource({"ALLY, true, ally", "ALLY, false, none", "SELF, true, self", "TARGET, false, own"})
+  @DisplayName("a mob helping an ally casts at that ally, and drops the cast when the ally is gone")
+  void resolvesTheAidedAlly(final Aim aim, final boolean found, final String cast) {
+    final MobEntity self = mock(MobEntity.class);
+    final LivingEntity ally = mock(LivingEntity.class);
+    final Optional<CastAim> expected =
+        switch (cast) {
+          case "ally" -> Optional.of(CastAim.at(ally));
+          case "self" -> Optional.of(CastAim.at(self));
+          case "own" -> Optional.of(CastAim.OWN_TARGET);
+          default -> Optional.empty();
+        };
+    assertEquals(expected, CastAims.resolve(self, aim, found ? ally : null));
   }
 }

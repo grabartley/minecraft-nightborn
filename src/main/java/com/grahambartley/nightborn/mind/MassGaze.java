@@ -1,5 +1,6 @@
 package com.grahambartley.nightborn.mind;
 
+import com.grahambartley.nightborn.faction.Allies;
 import com.grahambartley.nightborn.skill.MesmerisePower;
 import com.grahambartley.nightborn.skill.PowerReach;
 import com.grahambartley.nightborn.vampire.Vampires;
@@ -14,8 +15,12 @@ public final class MassGaze {
   private MassGaze() {}
 
   public static boolean gazes(
-      final boolean mob, final boolean player, final boolean vampire, final boolean seen) {
-    return seen && (mob || player && !vampire);
+      final boolean mob,
+      final boolean player,
+      final boolean vampire,
+      final boolean seen,
+      final boolean allied) {
+    return seen && !allied && (mob || player && !vampire);
   }
 
   public static int cast(final LivingEntity caster, final MassGazePower power) {
@@ -41,7 +46,8 @@ public final class MassGaze {
                             candidate instanceof MobEntity,
                             candidate instanceof PlayerEntity,
                             Vampires.isVampire(candidate),
-                            caster.canSee(candidate)))) {
+                            caster.canSee(candidate),
+                            Allies.spared(caster, candidate)))) {
       if (Mesmerise.quietly(caster, living, mesmerise) == MesmeriseRules.Outcome.MESMERISED) {
         held++;
       }

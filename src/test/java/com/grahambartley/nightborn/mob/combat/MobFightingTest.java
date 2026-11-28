@@ -15,7 +15,7 @@ class MobFightingTest {
   @ParameterizedTest(name = "target {0}, downed {1}, asleep {2}, escaping {3}, weak {4}: {5}")
   @CsvSource({
     "true, false, false, false, false, FIGHTING",
-    "false, false, false, false, false, NONE",
+    "false, false, false, false, false, STANDING_BY",
     "true, true, false, false, false, NONE",
     "true, false, true, false, false, NONE",
     "true, false, false, true, false, ESCAPING",
@@ -26,7 +26,8 @@ class MobFightingTest {
   })
   @DisplayName(
       "a vampire fights only with a target, escapes while falling back or seeking shade with or"
-          + " without one, and does neither while downed, asleep or weakened")
+          + " without one, stands by without one, and does none of these while downed, asleep or"
+          + " weakened")
   void engagement(
       final boolean target,
       final boolean downed,

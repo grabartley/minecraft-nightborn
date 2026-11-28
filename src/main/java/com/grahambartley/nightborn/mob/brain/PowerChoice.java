@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import net.minecraft.util.Identifier;
+import org.jetbrains.annotations.Nullable;
 
 public final class PowerChoice {
 
@@ -51,7 +52,18 @@ public final class PowerChoice {
     }
   }
 
-  public record Scored(Option option, MobUse use, double score, boolean affordable) {}
+  public record Scored(
+      Option option,
+      MobUse use,
+      double score,
+      boolean affordable,
+      @Nullable Situation.Member ally) {
+
+    public Scored(
+        final Option option, final MobUse use, final double score, final boolean affordable) {
+      this(option, use, score, affordable, null);
+    }
+  }
 
   private PowerChoice() {}
 
@@ -66,15 +78,15 @@ public final class PowerChoice {
         continue;
       }
       MobUse best = null;
-      double bestScore = 0.0;
+      MobUse.Scoring bestScoring = null;
       for (final MobUse use : option.use().effectiveUses()) {
         if (!option.readyAims().contains(use.aimed())) {
           continue;
         }
-        final double score = use.score(situation);
-        if (best == null || score > bestScore) {
+        final MobUse.Scoring scoring = use.scoring(situation);
+        if (best == null || scoring.score() > bestScoring.score()) {
           best = use;
-          bestScore = score;
+          bestScoring = scoring;
         }
       }
       if (best != null) {
@@ -82,9 +94,10 @@ public final class PowerChoice {
             new Scored(
                 option,
                 best,
-                bestScore
+                bestScoring.score()
                     * budget.kept(option.cost(), option.cooldownTicks(), situation.self().health()),
-                budget.affords(situation.self().blood(), option.cost(), mobFloor)));
+                budget.affords(situation.self().blood(), option.cost(), mobFloor),
+                bestScoring.ally()));
       }
     }
     ranked.sort(Comparator.comparingDouble(Scored::score).reversed());

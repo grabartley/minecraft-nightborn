@@ -19,8 +19,9 @@ public final class FogRules {
       final boolean caster,
       final boolean servesCaster,
       final boolean spectating,
-      final boolean seesThrough) {
-    return alive && !caster && !servesCaster && !spectating && !seesThrough;
+      final boolean seesThrough,
+      final boolean allied) {
+    return alive && !caster && !servesCaster && !spectating && !seesThrough && !allied;
   }
 
   public static boolean blinds(final RegistryEntry<StatusEffect> effect) {

@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 import net.minecraft.util.Identifier;
@@ -224,6 +225,7 @@ class PowerChoiceTest {
   }
 
   private static final Path DATA = Path.of("src/main/resources/data/nightborn/nightborn");
+  private static final Situation.Group ALONE = Situation.Group.of(List.of(), List.of());
 
   private static PowerChoice.Option shipped(final String skill, final boolean running) {
     final SkillPower power =
@@ -310,7 +312,12 @@ class PowerChoiceTest {
         choose(
             options,
             new Situation(
-                Intent.FIGHT, Situation.Self.of(1.0F, 20), target(distance, health, signs)),
+                Intent.FIGHT,
+                Situation.Self.of(1.0F, 20),
+                target(distance, health, signs),
+                Situation.Place.UNKNOWN,
+                ALONE,
+                null),
             shippedBudget(Intent.FIGHT),
             0));
   }
@@ -449,5 +456,189 @@ class PowerChoiceTest {
                 IntentBudget.FREE,
                 0.0)
             .map(scored -> scored.use().aim()));
+  }
+
+  private static Situation.Member ally(
+      final int id, final double distance, final float health, final boolean underAttack) {
+    return new Situation.Member(new UUID(0, id), distance, health, underAttack, false, true, false);
+  }
+
+  private static Situation group(
+      final float ownHealth,
+      final Situation.Target target,
+      final List<Situation.Member> allies,
+      final List<Double> foes) {
+    return new Situation(
+        Intent.FIGHT,
+        Situation.Self.of(ownHealth, 20),
+        target,
+        Situation.Place.UNKNOWN,
+        Situation.Group.of(allies, foes),
+        null);
+  }
+
+  @ParameterizedTest(name = "own health {0}, ally health {1} at {2} blocks: {3} for {4}")
+  @CsvSource({
+    "1, 0.25, 3, ally, 1",
+    "1, 0.9, 3, '', 0",
+    "1, 0.25, 10, '', 0",
+    "0.25, 0.25, 3, self, 0",
+    "0.6, 0.25, 3, ally, 1"
+  })
+  @DisplayName(
+      "a healthy hunter binds the wounds of a badly hurt ally beside it, and one close to going"
+          + " down saves itself first")
+  void healsAHurtAllyWhileHealthy(
+      final float own,
+      final float allyHealth,
+      final double distance,
+      final String aimed,
+      final int helped) {
+    final Optional<PowerChoice.Scored> chosen =
+        PowerChoice.choose(
+            PowerChoice.rank(
+                List.of(shipped("hunter/bind_wounds", false)),
+                group(own, null, List.of(ally(1, distance, allyHealth, false)), List.of()),
+                shippedBudget(Intent.FIGHT),
+                0),
+            shippedBudget(Intent.FIGHT),
+            0.0);
+    assertEquals(
+        aimed.isEmpty() ? Optional.empty() : Optional.of(aimed),
+        chosen.map(scored -> scored.use().aim()));
+    assertEquals(
+        helped == 0 ? Optional.empty() : Optional.of(new UUID(0, helped)),
+        chosen.map(PowerChoice.Scored::ally).map(Situation.Member::id));
+  }
+
+  @Test
+  @DisplayName(
+      "a healer picks the ally who needs it most, and skips one another mob has claimed or one a"
+          + " heal is already working on")
+  void healsTheNeediestUnclaimedAlly() {
+    final List<PowerChoice.Option> options = List.of(shipped("hunter/bind_wounds", false));
+    final Situation.Member grazed = ally(1, 3, 0.6F, false);
+    final Situation.Member dying = ally(2, 3, 0.2F, false);
+    final Situation.Member claimed =
+        new Situation.Member(new UUID(0, 3), 2, 0.1F, false, false, true, true);
+    final Situation.Member mending =
+        new Situation.Member(new UUID(0, 4), 2, 0.05F, false, true, true, false);
+    final PowerChoice.Scored best =
+        PowerChoice.rank(
+                options,
+                group(1.0F, null, List.of(grazed, dying, claimed, mending), List.of()),
+                shippedBudget(Intent.FIGHT),
+                0)
+            .getFirst();
+    assertEquals(dying, best.ally());
+  }
+
+  @ParameterizedTest(name = "ally under attack {0} at {1} blocks: {2}")
+  @CsvSource({"true, 5, ally", "false, 5, ''", "true, 12, ''"})
+  @DisplayName("a vampire wards an ally who is under attack, and not one who is safe or far off")
+  void wardsTheAllyUnderAttack(final boolean underAttack, final double distance, final String aim) {
+    final Optional<PowerChoice.Scored> chosen =
+        PowerChoice.choose(
+            PowerChoice.rank(
+                List.of(shipped("occult/blood_ward", false)),
+                group(1.0F, null, List.of(ally(4, distance, 0.8F, underAttack)), List.of()),
+                shippedBudget(Intent.FIGHT),
+                0),
+            shippedBudget(Intent.FIGHT),
+            0.0);
+    assertEquals(
+        aim.isEmpty() ? Optional.empty() : Optional.of(aim),
+        chosen.map(scored -> scored.use().aim()));
+  }
+
+  @ParameterizedTest(name = "{0} with an ally beside it, foes at [{1}]: casts {2}")
+  @CsvSource(
+      delimiter = '|',
+      value = {
+        "occult/grave_fog | 2 3 3.5 | true",
+        "occult/grave_fog | 2 | false",
+        "occult/grave_fog | 2 9 12 | false",
+        "noble/dread_presence | 3 5 7 | true",
+        "noble/dread_presence | 3 | false",
+        "faithful/consecrate | 1 2 4 | true",
+        "faithful/consecrate | 2 | false",
+        "noble/sovereigns_gaze | 4 8 11 | true",
+        "occult/black_mass | 4 6 10 | true",
+        "trapper/killing_ground | 3 6 7 | true"
+      })
+  @DisplayName(
+      "in a group fight an area power is used when it would catch three foes and held against one")
+  void areaPowerWaitsForAClusterInAGroupFight(
+      final String skill, final String foes, final boolean casts) {
+    final List<Double> distances = Arrays.stream(foes.split(" ")).map(Double::valueOf).toList();
+    final double nearest = distances.getFirst();
+    final Optional<PowerChoice.Scored> chosen =
+        PowerChoice.choose(
+            PowerChoice.rank(
+                List.of(shipped(skill, false)),
+                group(
+                    0.4F,
+                    target(
+                        nearest,
+                        0.4F,
+                        skill.startsWith("faithful") || skill.startsWith("trapper")
+                            ? "vampire"
+                            : "hunter"),
+                    List.of(ally(5, 2, 1.0F, false)),
+                    distances),
+                shippedBudget(Intent.FIGHT),
+                0),
+            shippedBudget(Intent.FIGHT),
+            0.0);
+    assertEquals(casts, chosen.isPresent());
+    chosen.ifPresent(scored -> assertEquals("foes", scored.use().aim()));
+  }
+
+  @ParameterizedTest(name = "{0} alone against one foe at {1} blocks: casts {2}")
+  @CsvSource({
+    "occult/grave_fog, 3, true",
+    "noble/dread_presence, 5, true",
+    "faithful/consecrate, 3, true"
+  })
+  @DisplayName("a mob alone still uses an area power on its one foe, as it did before")
+  void aMobAloneFightsAsBefore(final String skill, final double distance, final boolean casts) {
+    final Optional<PowerChoice.Scored> chosen =
+        PowerChoice.choose(
+            PowerChoice.rank(
+                List.of(shipped(skill, false)),
+                group(
+                    0.4F,
+                    target(distance, 0.4F, skill.startsWith("faithful") ? "vampire" : "hunter"),
+                    List.of(),
+                    List.of(distance)),
+                shippedBudget(Intent.FIGHT),
+                0),
+            shippedBudget(Intent.FIGHT),
+            0.0);
+    assertEquals(casts, chosen.isPresent());
+  }
+
+  @ParameterizedTest(name = "{0} beside an idle ally: casts {1}")
+  @CsvSource({"occult/grave_fog, true", "faithful/consecrate, true"})
+  @DisplayName(
+      "an ally standing idle nearby, such as a housemate asleep in its coffin, does not stop a"
+          + " mob using an area power on its one foe")
+  void anIdleAllyLeavesTheMobAlone(final String skill, final boolean casts) {
+    final Situation.Member idle =
+        new Situation.Member(new UUID(0, 9), 3, 1.0F, false, false, false, false);
+    final Optional<PowerChoice.Scored> chosen =
+        PowerChoice.choose(
+            PowerChoice.rank(
+                List.of(shipped(skill, false)),
+                group(
+                    0.4F,
+                    target(3, 0.4F, skill.startsWith("faithful") ? "vampire" : "hunter"),
+                    List.of(idle),
+                    List.of(3.0)),
+                shippedBudget(Intent.FIGHT),
+                0),
+            shippedBudget(Intent.FIGHT),
+            0.0);
+    assertEquals(casts, chosen.isPresent());
   }
 }

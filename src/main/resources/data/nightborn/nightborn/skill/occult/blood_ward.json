@@ -55,6 +55,13 @@
               "fact": "target_hunter",
               "low": 1,
               "high": 1
+            },
+            {
+              "fact": "allies_in_radius",
+              "curve": "falling",
+              "low": 0,
+              "high": 1,
+              "radius": 16
             }
           ],
           "weight": 1.5
@@ -71,6 +78,73 @@
               "fact": "target_hunter",
               "low": 1,
               "high": 1
+            },
+            {
+              "fact": "allies_in_radius",
+              "curve": "falling",
+              "low": 0,
+              "high": 1,
+              "radius": 16
+            }
+          ],
+          "weight": 1.5
+        },
+        {
+          "intent": "fight",
+          "aim": "ally",
+          "considerations": [
+            {
+              "fact": "ally_distance",
+              "high": 8
+            },
+            {
+              "fact": "ally_under_attack",
+              "low": 1,
+              "high": 1
+            }
+          ],
+          "weight": 1.6
+        },
+        {
+          "intent": "close_in",
+          "aim": "ally",
+          "considerations": [
+            {
+              "fact": "ally_distance",
+              "high": 8
+            },
+            {
+              "fact": "ally_under_attack",
+              "low": 1,
+              "high": 1
+            }
+          ],
+          "weight": 1.6
+        },
+        {
+          "intent": "fight",
+          "aim": "foes",
+          "considerations": [
+            {
+              "fact": "foes_in_radius",
+              "curve": "rising",
+              "low": 1,
+              "high": 3,
+              "radius": 4
+            }
+          ],
+          "weight": 1.5
+        },
+        {
+          "intent": "close_in",
+          "aim": "foes",
+          "considerations": [
+            {
+              "fact": "foes_in_radius",
+              "curve": "rising",
+              "low": 1,
+              "high": 3,
+              "radius": 4
             }
           ],
           "weight": 1.5

@@ -92,4 +92,15 @@ class CastAimTest {
     final CastAim aim = "self".equals(kind) ? CastAim.at(caster) : aim(kind, other);
     assertEquals(new Vec3d(x, y, z), aim.heading(caster));
   }
+
+  @ParameterizedTest(name = "aim {0}: helps {1}")
+  @CsvSource({"own, caster", "entity, other", "spot, caster", "self, caster"})
+  @DisplayName(
+      "a heal or ward aimed at an ally lands on that ally, and any other aim lands on the caster")
+  void helped(final String kind, final String helped) {
+    final LivingEntity other = at(LivingEntity.class, new Vec3d(20, 64, 10));
+    final LivingEntity caster = at(MobEntity.class, HERE);
+    final CastAim aim = "self".equals(kind) ? CastAim.at(caster) : aim(kind, other);
+    assertSame("other".equals(helped) ? other : caster, aim.helped(caster));
+  }
 }
