@@ -231,6 +231,12 @@ public class HunterEntity extends PathAwareEntity
     return kitId;
   }
 
+  @Override
+  @Nullable
+  public HunterKit carriedKit() {
+    return kit;
+  }
+
   public boolean standsOff() {
     return kit != null && kit.ranged();
   }

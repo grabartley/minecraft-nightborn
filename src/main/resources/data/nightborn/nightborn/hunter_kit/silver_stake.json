@@ -2,5 +2,6 @@
   "weapon": "nightborn:silver_stake",
   "crucifix": "nightborn:silver_crucifix",
   "holy_water": true,
-  "weight": 1
+  "weight": 1,
+  "damage": 11.0
 }

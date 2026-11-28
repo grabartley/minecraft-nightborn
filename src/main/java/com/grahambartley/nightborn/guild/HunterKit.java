@@ -13,7 +13,10 @@ public record HunterKit(
     Optional<Identifier> bolt,
     Optional<Identifier> crucifix,
     boolean holyWater,
-    int weight) {
+    int weight,
+    float damage) {
+
+  public static final float MOST_DAMAGE = 64.0F;
 
   public static final Codec<HunterKit> CODEC =
       RecordCodecBuilder.create(
@@ -28,7 +31,10 @@ public record HunterKit(
                           .forGetter(HunterKit::holyWater),
                       Codec.intRange(0, Weighted.MAX_WEIGHT)
                           .optionalFieldOf("weight", 1)
-                          .forGetter(HunterKit::weight))
+                          .forGetter(HunterKit::weight),
+                      Codec.floatRange(0.0F, MOST_DAMAGE)
+                          .optionalFieldOf("damage", 0.0F)
+                          .forGetter(HunterKit::damage))
                   .apply(instance, HunterKit::new));
 
   public boolean ranged() {

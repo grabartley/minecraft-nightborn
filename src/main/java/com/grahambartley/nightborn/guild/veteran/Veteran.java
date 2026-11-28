@@ -13,10 +13,12 @@ public record Veteran(
     double healthScale,
     double armor,
     List<Identifier> attacks,
-    Optional<Identifier> rank) {
+    Optional<Identifier> rank,
+    float boltDamage) {
 
   public static final double MOST_SCALE = 16.0;
   public static final double MOST_ARMOR = 30.0;
+  public static final float MOST_BOLT_DAMAGE = 64.0F;
 
   public static final Codec<Veteran> CODEC =
       RecordCodecBuilder.create(
@@ -35,7 +37,10 @@ public record Veteran(
                           .listOf()
                           .optionalFieldOf("attacks", List.of())
                           .forGetter(Veteran::attacks),
-                      Identifier.CODEC.optionalFieldOf("rank").forGetter(Veteran::rank))
+                      Identifier.CODEC.optionalFieldOf("rank").forGetter(Veteran::rank),
+                      Codec.floatRange(0.0F, MOST_BOLT_DAMAGE)
+                          .optionalFieldOf("bolt_damage", 0.0F)
+                          .forGetter(Veteran::boltDamage))
                   .apply(instance, Veteran::new));
 
   public Veteran {
@@ -43,7 +48,7 @@ public record Veteran(
   }
 
   public HunterKit kit() {
-    return new HunterKit(weapon, Optional.empty(), crucifix, false, 1);
+    return new HunterKit(weapon, Optional.empty(), crucifix, false, 1, 0.0F);
   }
 
   public double health(final double hunterHealth) {

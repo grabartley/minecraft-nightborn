@@ -2,5 +2,6 @@
   "weapon": "nightborn:wooden_stake",
   "crucifix": "nightborn:gold_crucifix",
   "holy_water": true,
-  "weight": 5
+  "weight": 5,
+  "damage": 6.0
 }

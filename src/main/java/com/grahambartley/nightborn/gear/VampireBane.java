@@ -55,10 +55,7 @@ public final class VampireBane {
       final boolean stake,
       final boolean silver,
       final GearSettings settings) {
-    if (!vampire) {
-      return 0.0F;
-    }
-    return (stake ? settings.stakeDamage() : 0) + (silver ? settings.silverDamage() : 0);
+    return vampire && silver && !stake ? settings.silverDamage() : 0.0F;
   }
 
   public static boolean isSilverBlow(final DamageSource source) {

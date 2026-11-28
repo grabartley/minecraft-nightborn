@@ -3,6 +3,7 @@ package com.grahambartley.nightborn.mixin;
 import com.grahambartley.nightborn.coating.Coatings;
 import com.grahambartley.nightborn.faith.Kindling;
 import com.grahambartley.nightborn.gear.VampireBane;
+import com.grahambartley.nightborn.guild.KitDamage;
 import com.grahambartley.nightborn.rank.RankBody;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
@@ -29,7 +30,8 @@ abstract class EnchantmentHelperMixin {
         RankBody.strike(
             source.getAttacker(),
             target,
-            VampireBane.strike(stack, target, cir.getReturnValueF())
+            VampireBane.strike(
+                    stack, target, cir.getReturnValueF() + KitDamage.strike(source, target))
                 + Kindling.strike(stack, target)));
   }
 

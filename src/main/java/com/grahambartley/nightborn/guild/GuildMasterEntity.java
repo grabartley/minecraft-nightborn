@@ -211,6 +211,12 @@ public class GuildMasterEntity extends MerchantEntity
   }
 
   @Override
+  @Nullable
+  public HunterKit carriedKit() {
+    return kit;
+  }
+
+  @Override
   public boolean armed() {
     return dataTracker.get(ARMED);
   }

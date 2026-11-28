@@ -15,6 +15,7 @@ import java.util.Optional;
 import java.util.Set;
 import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
@@ -41,7 +42,8 @@ class VeteranTest {
             scale,
             0.0,
             List.of(),
-            Optional.empty());
+            Optional.empty(),
+            0.0F);
     assertEquals(health, veteran.health(hunter), 1.0E-9);
   }
 
@@ -55,7 +57,8 @@ class VeteranTest {
             2.0,
             0.0,
             List.of(),
-            Optional.empty());
+            Optional.empty(),
+            0.0F);
     assertEquals(Identifier.of("nightborn", "sword"), veteran.kit().weapon());
     assertEquals(crucifix, veteran.kit().crucifix().isPresent());
     assertFalse(veteran.kit().ranged());
@@ -80,5 +83,12 @@ class VeteranTest {
   @CsvSource({"veteran, veteran"})
   void shipsAsAHunterOfItsRank(final String name, final String rank) throws IOException {
     assertEquals(Optional.of(Identifier.of("nightborn", rank)), shipped(name).rank());
+  }
+
+  @ParameterizedTest(name = "{0} adds {1} to each bolt it looses")
+  @CsvSource({"veteran, 4.0"})
+  @DisplayName("a veteran ships the damage it adds to each bolt it looses at a vampire")
+  void shipsItsOwnBoltDamage(final String name, final float damage) throws IOException {
+    assertEquals(damage, shipped(name).boltDamage());
   }
 }

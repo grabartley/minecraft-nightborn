@@ -3,6 +3,7 @@ package com.grahambartley.nightborn.gametest;
 import com.grahambartley.nightborn.ammo.BoltEntity;
 import com.grahambartley.nightborn.gear.GearItems;
 import com.grahambartley.nightborn.guild.CrossbowGoal;
+import com.grahambartley.nightborn.guild.GuildData;
 import com.grahambartley.nightborn.guild.GuildMobs;
 import com.grahambartley.nightborn.guild.HunterAction;
 import com.grahambartley.nightborn.guild.HunterEntity;
@@ -11,13 +12,18 @@ import com.grahambartley.nightborn.mob.NightbornMobs;
 import com.grahambartley.nightborn.mob.VampireEntity;
 import com.grahambartley.nightborn.ward.Wards;
 import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
+import net.minecraft.entity.EntityType;
 import net.minecraft.entity.EquipmentSlot;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.attribute.EntityAttributes;
+import net.minecraft.entity.passive.PigEntity;
 import net.minecraft.entity.projectile.thrown.PotionEntity;
 import net.minecraft.item.CrossbowItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.test.GameTest;
 import net.minecraft.test.TestContext;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 
 public class HunterTacticsGameTest implements FabricGameTest {
@@ -153,6 +159,38 @@ public class HunterTacticsGameTest implements FabricGameTest {
           context.assertEquals(hunter.action(), HunterAction.NONE, "and lowers its arm");
           context.complete();
         });
+  }
+
+  @GameTest(templateName = ARENA, tickLimit = START + 20)
+  public void aStakeHunterAddsItsKitsDamageToAVampireButNotToAnyoneElse(final TestContext context) {
+    final HunterEntity staker = hunter(context, new BlockPos(3, 2, 4));
+    final VampireEntity vampire = vampire(context, new BlockPos(4, 2, 4));
+    final PigEntity pig = context.spawnEntity(EntityType.PIG, new BlockPos(2, 2, 4));
+    pig.setAiDisabled(true);
+    context.runAtTick(
+        START,
+        () -> {
+          staker.arm(STAKE_KIT);
+          staker.equipStack(EquipmentSlot.MAINHAND, new ItemStack(GearItems.WOODEN_STAKE));
+          final float blow =
+              (float) staker.getAttributeValue(EntityAttributes.GENERIC_ATTACK_DAMAGE);
+          final float kit =
+              GuildData.kits(staker.getRegistryManager())
+                  .get(Identifier.of("nightborn", "stake"))
+                  .damage();
+          context.assertTrue(kit > 0.0F, "the stake kit carries damage of its own");
+          context.assertEquals(
+              lost(vampire, () -> staker.tryAttack(vampire)), blow + kit, "a vampire takes it");
+          context.assertEquals(lost(pig, () -> staker.tryAttack(pig)), blow, "a pig does not");
+          context.complete();
+        });
+  }
+
+  private static float lost(final LivingEntity target, final Runnable blow) {
+    target.timeUntilRegen = 0;
+    final float before = target.getHealth();
+    blow.run();
+    return before - target.getHealth();
   }
 
   @GameTest(templateName = ARENA, tickLimit = START + 20)
