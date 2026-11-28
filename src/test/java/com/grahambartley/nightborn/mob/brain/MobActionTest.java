@@ -36,7 +36,7 @@ class MobActionTest {
                 JsonParser.parseString(Files.readString(ACTIONS.resolve(action + ".json"))))
             .getOrThrow();
     assertFalse(loaded.uses().isEmpty());
-    assertTrue(loaded.uses().stream().anyMatch(use -> use.intent().equals("fight")));
+    assertTrue(loaded.uses().stream().allMatch(use -> use.intent().equals("fight")));
   }
 
   @ParameterizedTest(name = "{0}")

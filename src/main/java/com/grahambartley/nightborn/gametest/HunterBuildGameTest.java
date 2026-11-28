@@ -172,6 +172,8 @@ public class HunterBuildGameTest implements FabricGameTest {
           hunter.fight();
           context.assertTrue(Wards.wards(hunter), "it raises its crucifix at the vampire first");
           final int think = HunterSkills.thinkTicks(hunter, hunter.shownRank());
+          context.assertTrue(
+              think <= LONGEST_THINK, "a sworn initiate thinks within " + LONGEST_THINK + " ticks");
           context.waitAndRun(
               think,
               () -> {

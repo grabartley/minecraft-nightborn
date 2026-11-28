@@ -805,11 +805,10 @@ class PowerChoiceTest {
             0));
   }
 
-  @ParameterizedTest(name = "{0}, threatened {1}: chosen {2}")
-  @CsvSource({"dodge, true, true", "dodge, false, false", "leap, false, false"})
-  @DisplayName("a vampire falling back still dodges a threat, but never leaps or dashes at its foe")
-  void retreatKeepsOnlyTheDodge(
-      final String action, final boolean threatening, final boolean chosen) {
+  @ParameterizedTest(name = "{0}, threatened {1}")
+  @CsvSource({"dodge, true", "dodge, false", "leap, false", "dash, false", "holy_water, false"})
+  @DisplayName("no built-in action is chosen for a mob that is falling back")
+  void noActionWhileFallingBack(final String action, final boolean threatening) {
     final Situation retreating =
         new Situation(
             Intent.RETREAT,
@@ -817,7 +816,7 @@ class PowerChoiceTest {
             new Situation.Target(
                 5.0, true, 1.0F, false, false, false, false, false, false, true, threatening));
     assertEquals(
-        chosen ? Optional.of(Identifier.of("nightborn", action)) : Optional.empty(),
+        Optional.empty(),
         choose(
             List.of(shippedAction(action, PowerUse.Verdict.READY, false)),
             retreating,
