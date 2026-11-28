@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import com.grahambartley.nightborn.MinecraftBootstrapExtension;
 import com.grahambartley.nightborn.rank.GuildRank;
 import com.grahambartley.nightborn.rank.RankLadder;
+import com.mojang.serialization.JsonOps;
 import java.io.IOException;
 import java.util.Map;
 import java.util.Optional;
@@ -39,6 +40,23 @@ class GuildOfferTest {
     final int given = offer.gives().getCount();
     trade.getSellItem().setCount(given + 1);
     assertEquals(given, offer.gives().getCount());
+  }
+
+  @ParameterizedTest(name = "{0}")
+  @MethodSource("offerNames")
+  void everyShippedOfferReadsTheSameThroughItsMapCodec(final String name) throws IOException {
+    final GuildOffer offer = GuildDataFiles.load("guild_offer", GuildOffer.CODEC).get(name);
+    final GuildOffer again =
+        GuildOffer.MAP_CODEC
+            .codec()
+            .parse(
+                JsonOps.INSTANCE,
+                GuildOffer.CODEC.encodeStart(JsonOps.INSTANCE, offer).getOrThrow())
+            .getOrThrow();
+    assertEquals(offer.order(), again.order());
+    assertEquals(offer.maxUses(), again.maxUses());
+    assertEquals(offer.rank(), again.rank());
+    assertTrue(ItemStack.areEqual(offer.gives(), again.gives()));
   }
 
   @Test

@@ -11,7 +11,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
-class GuildWheelTest {
+class HunterWheelTitleTest {
 
   @ParameterizedTest(name = "{0} with {1} -> {2}")
   @CsvSource({
@@ -20,9 +20,9 @@ class GuildWheelTest {
     "Ivo, trapper, skill_branch.nightborn.trapper"
   })
   @DisplayName("a hunter's wheel is headed with its name and its paths, in the order it took them")
-  void hunterTitleNamesThePaths(final String name, final String paths, final String keys) {
+  void namesThePaths(final String name, final String paths, final String keys) {
     final Text title =
-        GuildWheel.hunterTitle(
+        HunterWheelTitle.of(
             Text.literal(name),
             Arrays.stream(paths.split(", "))
                 .map(path -> Identifier.of("nightborn", path))
@@ -43,7 +43,7 @@ class GuildWheelTest {
   @ParameterizedTest(name = "{0}")
   @CsvSource({"Aldric", "Maud"})
   @DisplayName("a hunter with no paths yet is headed with its name alone")
-  void hunterTitleWithoutPaths(final String name) {
-    assertEquals(name, GuildWheel.hunterTitle(Text.literal(name), List.of()).getString());
+  void withoutPaths(final String name) {
+    assertEquals(name, HunterWheelTitle.of(Text.literal(name), List.of()).getString());
   }
 }

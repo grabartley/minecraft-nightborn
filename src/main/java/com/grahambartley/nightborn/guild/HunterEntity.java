@@ -401,6 +401,12 @@ public class HunterEntity extends PathAwareEntity
     super.onDeath(source);
   }
 
+  @Override
+  public void remove(final RemovalReason reason) {
+    wares.close();
+    super.remove(reason);
+  }
+
   public void join(final UUID leader) {
     partyLeader = leader;
   }

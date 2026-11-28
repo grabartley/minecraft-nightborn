@@ -1,7 +1,5 @@
 package com.grahambartley.nightborn.guild;
 
-import com.grahambartley.nightborn.accessory.GiftAttributes;
-import com.grahambartley.nightborn.accessory.GiftPrices;
 import com.grahambartley.nightborn.gear.GearItems;
 import com.grahambartley.nightborn.guild.build.HunterBuilds;
 import com.grahambartley.nightborn.guild.build.HunterSkills;
@@ -361,16 +359,11 @@ public class GuildMasterEntity extends MerchantEntity
       return;
     }
     restockIfNewDay();
-    final GuildCounter counter =
-        new GuildCounter(this, kind.from(getOffers(), offerRanks, GuildRanks.of(visitor)));
-    if (counter.getOffers().isEmpty()) {
-      visitor.sendMessage(Text.translatable("nightborn.guild.nothing"), true);
-      return;
-    }
-    counter.getOffers().forEach(TradeOffer::clearSpecialPrice);
-    GiftPrices.discount(counter.getOffers(), visitor, GiftAttributes.GUILD_PRICE);
-    counter.setCustomer(visitor);
-    counter.sendOffers(visitor, getDisplayName(), 1);
+    GuildTill.open(
+        new GuildCounter(this, kind.from(getOffers(), offerRanks, GuildRanks.of(visitor))),
+        visitor,
+        getDisplayName(),
+        Text.translatable("nightborn.guild.nothing"));
   }
 
   private void restockIfNewDay() {

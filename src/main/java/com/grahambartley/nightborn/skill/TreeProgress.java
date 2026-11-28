@@ -6,6 +6,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Nullable;
 
@@ -73,6 +74,14 @@ public record TreeProgress(
 
   public boolean owns(final Identifier skill) {
     return rank(skill) > 0;
+  }
+
+  public int ownedIn(
+      final Identifier line, final Function<Identifier, Optional<Identifier>> lineOf) {
+    return (int)
+        ownedInOrder().stream()
+            .filter(skill -> lineOf.apply(skill).filter(line::equals).isPresent())
+            .count();
   }
 
   public List<Identifier> ownedInOrder() {

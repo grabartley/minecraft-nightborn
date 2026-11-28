@@ -1,7 +1,5 @@
 package com.grahambartley.nightborn.guild;
 
-import com.grahambartley.nightborn.accessory.GiftAttributes;
-import com.grahambartley.nightborn.accessory.GiftPrices;
 import com.grahambartley.nightborn.faction.OathAttachment;
 import com.grahambartley.nightborn.rank.RankLadder;
 import com.grahambartley.nightborn.skill.SkillAttachment;
@@ -39,29 +37,32 @@ public final class HunterWares implements Merchant, GuildSeller {
   }
 
   public void open(final ServerPlayerEntity visitor) {
-    if (customer != null || !(hunter.getWorld() instanceof ServerWorld world)) {
+    if (!(hunter.getWorld() instanceof ServerWorld world)) {
+      return;
+    }
+    if (customer != null) {
+      visitor.sendMessage(
+          Text.translatable("nightborn.hunter.busy", hunter.getDisplayName()), true);
       return;
     }
     stock.restock(GuildRestock.day(world.getTimeOfDay()), () -> fresh(world));
-    if (stock.offers().isEmpty()) {
-      visitor.sendMessage(
-          Text.translatable("nightborn.hunter.nothing", hunter.getDisplayName()), true);
-      return;
-    }
-    stock.offers().forEach(TradeOffer::clearSpecialPrice);
-    GiftPrices.discount(stock.offers(), visitor, GiftAttributes.GUILD_PRICE);
-    setCustomer(visitor);
-    sendOffers(visitor, hunter.getDisplayName(), 1);
+    GuildTill.open(
+        this,
+        visitor,
+        hunter.getDisplayName(),
+        Text.translatable("nightborn.hunter.nothing", hunter.getDisplayName()));
   }
 
   void tick() {
     if (customer == null) {
       return;
     }
-    if (!hunter.isAlive()
-        || !customer.isAlive()
-        || customer.isRemoved()
-        || MasterDuty.closesCounter(Vampires.isVampire(customer), hunter.getTarget() != null)) {
+    if (WaresWatch.closes(
+        hunter.isAlive(),
+        customer.isAlive() && !customer.isRemoved(),
+        Vampires.isVampire(customer),
+        hunter.getTarget() != null,
+        hunter.squaredDistanceTo(customer))) {
       close();
       return;
     }
@@ -93,13 +94,7 @@ public final class HunterWares implements Merchant, GuildSeller {
             GuildData.hunterOffers(registries),
             progress.lines(),
             OathAttachment.get(hunter).rank(),
-            path ->
-                (int)
-                    progress.ownedInOrder().stream()
-                        .filter(
-                            skill ->
-                                Skills.lineOf(registries, skill).filter(path::equals).isPresent())
-                        .count(),
+            path -> progress.ownedIn(path, skill -> Skills.lineOf(registries, skill)),
             RankLadder.of(registries))
         .stream()
         .map(offer -> offer.offer().toTradeOffer())
