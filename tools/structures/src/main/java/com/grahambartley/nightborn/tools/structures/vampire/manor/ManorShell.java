@@ -56,7 +56,7 @@ public final class ManorShell {
 
   public static final List<Doorway> DOORWAYS =
       List.of(
-          Doorway.doors(Axis.X, MID_X - 1, MID_X + 1, HOUSE_S, HOUSE_S - 1, GROUND, "north"),
+          Doorway.doors(Axis.X, MID_X - 1, MID_X, HOUSE_S, HOUSE_S - 1, GROUND, "north"),
           Doorway.arch(Axis.Z, BACK_DOORS, BACK_DOORS + 2, HALL_W, GROUND),
           Doorway.arch(Axis.Z, FRONT_DOORS - 1, FRONT_DOORS + 1, HALL_W, GROUND),
           Doorway.arch(Axis.Z, FRONT_DOORS - 1, FRONT_DOORS + 1, HALL_E, GROUND),

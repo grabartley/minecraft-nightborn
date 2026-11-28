@@ -149,7 +149,8 @@ class ManorTest {
   void theApproachLinesUp(final Manor.Layout layout) {
     final Template t = built(layout);
     final int y = ManorShell.GROUND;
-    assertEquals(3, run(t, Manor.HOUSE_S, y, StructureWalk::open));
+    assertEquals(2, run(t, Manor.HOUSE_S, y, StructureWalk::open));
+    assertEquals(2, run(t, Manor.HOUSE_S, y, state -> state.contains("dark_oak_door")));
     assertEquals(7, run(t, ManorFront.STEP_Z, Manor.F0, s -> s.contains("stairs")));
     assertTrue(open(t.get(Manor.MID_X, 1, Grounds.RAILING_Z)), "the gate stands open");
     assertTrue(
