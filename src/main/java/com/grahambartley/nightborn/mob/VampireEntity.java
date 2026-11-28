@@ -631,6 +631,16 @@ public class VampireEntity extends HostileEntity
   }
 
   @Override
+  public int getMinAmbientSoundDelay() {
+    if (getWorld().isClient()) {
+      return super.getMinAmbientSoundDelay();
+    }
+    return householdLife
+        .temperament(getRegistryManager(), random::nextDouble)
+        .idleVoiceTicks(random);
+  }
+
+  @Override
   protected SoundEvent getHurtSound(final DamageSource source) {
     return MobSounds.vampire(rig(), VampireVoice.HURT);
   }

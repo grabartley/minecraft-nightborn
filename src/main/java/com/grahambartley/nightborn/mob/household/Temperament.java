@@ -7,6 +7,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import java.util.Map;
 import net.minecraft.util.math.intprovider.IntProvider;
 import net.minecraft.util.math.intprovider.UniformIntProvider;
+import net.minecraft.util.math.random.Random;
 
 public record Temperament(
     int weight,
@@ -14,11 +15,14 @@ public record Temperament(
     int temper,
     IntProvider pastimeSeconds,
     int mourning,
-    Disposition disposition) {
+    Disposition disposition,
+    IntProvider idleVoiceSeconds) {
 
   public static final int HEAVIEST = 1000;
   public static final int LONGEST_PASTIME = 600;
   public static final int LONGEST_MOURNING = 1200;
+  public static final int LONGEST_IDLE_VOICE = 600;
+  public static final IntProvider EVEN_IDLE_VOICE = UniformIntProvider.create(20, 45);
 
   public static final Temperament EVEN =
       new Temperament(
@@ -27,7 +31,8 @@ public record Temperament(
           20,
           UniformIntProvider.create(30, 90),
           60,
-          Disposition.EVEN);
+          Disposition.EVEN,
+          EVEN_IDLE_VOICE);
 
   public static final Codec<Temperament> CODEC =
       RecordCodecBuilder.<Temperament>create(
@@ -49,12 +54,19 @@ public record Temperament(
                               .forGetter(Temperament::mourning),
                           Disposition.CODEC
                               .optionalFieldOf("disposition", Disposition.EVEN)
-                              .forGetter(Temperament::disposition))
+                              .forGetter(Temperament::disposition),
+                          IntProvider.createValidatingCodec(1, LONGEST_IDLE_VOICE)
+                              .optionalFieldOf("idle_voice_seconds", EVEN_IDLE_VOICE)
+                              .forGetter(Temperament::idleVoiceSeconds))
                       .apply(instance, Temperament::new))
           .validate(Temperament::check);
 
   public Temperament {
     hobbies = Map.copyOf(hobbies);
+  }
+
+  public int idleVoiceTicks(final Random random) {
+    return idleVoiceSeconds.get(random) * 20;
   }
 
   private static DataResult<Temperament> check(final Temperament temperament) {

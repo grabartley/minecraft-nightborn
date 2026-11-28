@@ -41,6 +41,7 @@ class TemperamentsTest {
         0,
         Temperament.EVEN.pastimeSeconds(),
         0,
-        Temperament.EVEN.disposition());
+        Temperament.EVEN.disposition(),
+        Temperament.EVEN.idleVoiceSeconds());
   }
 }
