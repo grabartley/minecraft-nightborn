@@ -280,9 +280,13 @@ public class GuildMasterEntity extends MerchantEntity
       fighting.tick(
           this,
           MobFighting.Engagement.FIGHTING,
-          HunterSkills.thinkTicks(this, shownRank()),
+          () -> HunterSkills.mind(this, shownRank(), heldKit()),
           MobFighting.NO_BLOOD_FLOOR);
     }
+  }
+
+  private Optional<Identifier> heldKit() {
+    return Optional.ofNullable(Identifier.tryParse(kitId));
   }
 
   @Override
@@ -301,7 +305,7 @@ public class GuildMasterEntity extends MerchantEntity
                         .masterKit(kits.keySet(), getRandom().nextDouble()))
             .map(Identifier::toString)
             .orElse("");
-    kit = kits.get(Identifier.tryParse(kitId));
+    kit = heldKit().map(kits::get).orElse(null);
   }
 
   @Override

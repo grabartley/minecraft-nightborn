@@ -9,6 +9,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.google.gson.JsonParser;
 import com.grahambartley.nightborn.MinecraftBootstrapExtension;
+import com.grahambartley.nightborn.mob.brain.Aim;
+import com.grahambartley.nightborn.mob.brain.ChoiceFixtures;
+import com.grahambartley.nightborn.mob.brain.Disposition;
+import com.grahambartley.nightborn.mob.brain.IntentBudget;
+import com.grahambartley.nightborn.mob.brain.Mind;
+import com.grahambartley.nightborn.mob.brain.Sharpness;
 import com.grahambartley.nightborn.rank.RankLadder;
 import com.mojang.serialization.JsonOps;
 import java.util.Arrays;
@@ -35,7 +41,48 @@ class HunterBuildTest {
     final RankLadder ladder = HunterBuildFixtures.ladder();
     final Optional<Identifier> olderId = ladder.rung(older).map(RankLadder.Rung::id);
     final Optional<Identifier> youngerId = ladder.rung(younger).map(RankLadder.Rung::id);
-    assertTrue(SHIPPED.thinkTicks(olderId) < SHIPPED.thinkTicks(youngerId));
+    assertTrue(
+        SHIPPED.mind(olderId, Optional.empty()).thinkTicks()
+            < SHIPPED.mind(youngerId, Optional.empty()).thinkTicks());
+  }
+
+  @ParameterizedTest(name = "rank {0} is sharper than rank {1}")
+  @CsvSource({"1, 0", "2, 1", "3, 2"})
+  @DisplayName("an older rank blurs its choice less, sees more and plans further ahead")
+  void olderRanksAreSharper(final int older, final int younger) {
+    final RankLadder ladder = HunterBuildFixtures.ladder();
+    final Sharpness olderSharpness =
+        SHIPPED.mind(ladder.rung(older).map(RankLadder.Rung::id), Optional.empty()).sharpness();
+    final Sharpness youngerSharpness =
+        SHIPPED.mind(ladder.rung(younger).map(RankLadder.Rung::id), Optional.empty()).sharpness();
+    assertTrue(olderSharpness.blur() < youngerSharpness.blur());
+    assertTrue(olderSharpness.foresight() > youngerSharpness.foresight());
+    assertTrue(olderSharpness.reads().containsAll(youngerSharpness.reads()));
+  }
+
+  @ParameterizedTest(name = "{0} reads group {1} and place {2}")
+  @CsvSource({"initiate, false, false", "master, true, true"})
+  @DisplayName("an Initiate reads only itself and its foe, and a Master reads the whole fight")
+  void readsByRank(final String rank, final boolean group, final boolean place) {
+    final Sharpness sharpness = SHIPPED.mind(Optional.of(id(rank)), Optional.empty()).sharpness();
+    assertEquals(group, sharpness.reads(Sharpness.Reads.GROUP));
+    assertEquals(place, sharpness.reads(Sharpness.Reads.PLACE));
+  }
+
+  @ParameterizedTest(name = "rank {0}, kit {1}")
+  @CsvSource({
+    "none, none, true, true",
+    "baron, crossbow, true, false",
+    "master, jester, false, true"
+  })
+  @DisplayName("a missing rank thinks keenly and a missing kit leans no way")
+  void mindFallsBack(final String rank, final String kit, final boolean keen, final boolean even) {
+    final Mind mind =
+        SHIPPED.mind(
+            rank.equals("none") ? Optional.empty() : Optional.of(id(rank)),
+            kit.equals("none") ? Optional.empty() : Optional.of(id(kit)));
+    assertEquals(keen, mind.sharpness().equals(Sharpness.KEEN));
+    assertEquals(even, mind.disposition().equals(Disposition.EVEN));
   }
 
   @ParameterizedTest(name = "rank {0} weighs less than rank {1}")
@@ -77,9 +124,11 @@ class HunterBuildTest {
         new HunterBuild(
             Map.of(),
             Map.of(),
+            Map.of(),
             0,
             1,
             1,
+            Map.of(),
             Map.of(),
             0,
             1200,
@@ -137,5 +186,40 @@ class HunterBuildTest {
     assertTrue(SHIPPED.stakeExperience() > SHIPPED.trickleExperience());
     assertEquals(CROSSBOW, id("crossbow"));
     assertEquals(STAKE, id("stake"));
+  }
+
+  @ParameterizedTest(name = "{0}, rolls {1} and {2}: {3}")
+  @CsvSource({
+    "initiate, 0.25, 0.75, guard",
+    "hunter, 0.25, 0.75, guard",
+    "veteran, 0.25, 0.75, strike",
+    "master, 0, 1, strike"
+  })
+  @DisplayName(
+      "with the same powers in the same fight, an Initiate can be fooled by chance and a Master"
+          + " cannot")
+  void shippedRanksChooseByRank(
+      final String rank, final double first, final double second, final String picked) {
+    assertEquals(
+        ChoiceFixtures.id(picked),
+        ChoiceFixtures.pick(
+            ChoiceFixtures.strikeOrGuard(0),
+            SHIPPED.mind(Optional.of(id(rank)), Optional.empty()),
+            IntentBudget.FREE,
+            ChoiceFixtures.rolls(first, second)));
+  }
+
+  @ParameterizedTest(name = "{0} leans {2} toward {1}")
+  @CsvSource({
+    "crossbow, TARGET, 1.25",
+    "stake, TARGET, 1.2",
+    "silver_stake, ALLY, 1.25",
+    "raid_silver, ALLY, 1.15",
+    "master_silver, TARGET, 1"
+  })
+  @DisplayName("a hunter's kit colours what it reaches for: its quarry, or its fellows")
+  void kitsLean(final String kit, final Aim aim, final double lean) {
+    assertEquals(
+        lean, SHIPPED.mind(Optional.empty(), Optional.of(id(kit))).disposition().lean(aim), 1.0E-6);
   }
 }

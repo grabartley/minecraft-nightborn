@@ -1,5 +1,6 @@
 package com.grahambartley.nightborn.mob.household;
 
+import com.grahambartley.nightborn.mob.brain.Disposition;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -8,7 +9,12 @@ import net.minecraft.util.math.intprovider.IntProvider;
 import net.minecraft.util.math.intprovider.UniformIntProvider;
 
 public record Temperament(
-    int weight, Map<Hobby, Integer> hobbies, int temper, IntProvider pastimeSeconds, int mourning) {
+    int weight,
+    Map<Hobby, Integer> hobbies,
+    int temper,
+    IntProvider pastimeSeconds,
+    int mourning,
+    Disposition disposition) {
 
   public static final int HEAVIEST = 1000;
   public static final int LONGEST_PASTIME = 600;
@@ -20,7 +26,8 @@ public record Temperament(
           Map.of(Hobby.SIT, 1, Hobby.READ, 1, Hobby.CONVERSE, 1, Hobby.STROLL, 1),
           20,
           UniformIntProvider.create(30, 90),
-          60);
+          60,
+          Disposition.EVEN);
 
   public static final Codec<Temperament> CODEC =
       RecordCodecBuilder.<Temperament>create(
@@ -39,7 +46,10 @@ public record Temperament(
                               .forGetter(Temperament::pastimeSeconds),
                           Codec.intRange(0, LONGEST_MOURNING)
                               .fieldOf("mourning_seconds")
-                              .forGetter(Temperament::mourning))
+                              .forGetter(Temperament::mourning),
+                          Disposition.CODEC
+                              .optionalFieldOf("disposition", Disposition.EVEN)
+                              .forGetter(Temperament::disposition))
                       .apply(instance, Temperament::new))
           .validate(Temperament::check);
 

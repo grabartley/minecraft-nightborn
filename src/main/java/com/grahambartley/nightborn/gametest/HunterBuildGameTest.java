@@ -149,7 +149,7 @@ public class HunterBuildGameTest implements FabricGameTest {
     final HunterEntity hunter = context.spawnEntity(GuildMobs.HUNTER, new BlockPos(3, 2, 2));
     hunter.setAiDisabled(true);
     final RankLadder ladder = RankLadder.of(context.getWorld().getRegistryManager());
-    OathAttachment.set(hunter, HunterGrowth.sworn(ladder, 0));
+    OathAttachment.set(hunter, HunterGrowth.sworn(ladder, ladder.size() - 1));
     SkillAttachment.set(
         hunter,
         SkillTree.HUNTER,
@@ -171,9 +171,10 @@ public class HunterBuildGameTest implements FabricGameTest {
           hunter.setTarget(vampire);
           hunter.fight();
           context.assertTrue(Wards.wards(hunter), "it raises its crucifix at the vampire first");
-          final int think = HunterSkills.thinkTicks(hunter, hunter.shownRank());
+          final int think =
+              HunterSkills.mind(hunter, hunter.shownRank(), Optional.empty()).thinkTicks();
           context.assertTrue(
-              think <= LONGEST_THINK, "a sworn initiate thinks within " + LONGEST_THINK + " ticks");
+              think <= LONGEST_THINK, "a sworn hunter thinks within " + LONGEST_THINK + " ticks");
           context.waitAndRun(
               think,
               () -> {
@@ -211,7 +212,7 @@ public class HunterBuildGameTest implements FabricGameTest {
     final HunterEntity healer = context.spawnEntity(GuildMobs.HUNTER, new BlockPos(1, 2, 3));
     healer.setAiDisabled(true);
     final RankLadder ladder = RankLadder.of(context.getWorld().getRegistryManager());
-    OathAttachment.set(healer, HunterGrowth.sworn(ladder, 0));
+    OathAttachment.set(healer, HunterGrowth.sworn(ladder, ladder.size() - 1));
     SkillAttachment.set(
         healer,
         SkillTree.HUNTER,

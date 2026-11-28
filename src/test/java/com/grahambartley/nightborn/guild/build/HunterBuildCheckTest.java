@@ -4,6 +4,8 @@ import static com.grahambartley.nightborn.guild.build.HunterBuildFixtures.id;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.grahambartley.nightborn.MinecraftBootstrapExtension;
+import com.grahambartley.nightborn.mob.brain.Disposition;
+import com.grahambartley.nightborn.mob.brain.Sharpness;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -64,10 +66,12 @@ class HunterBuildCheckTest {
         new HunterBuild(
             Map.of(id(weighted), 1),
             Map.of(id(thinking), 30),
+            Map.of(),
             0,
             1,
             1,
             Map.of(id(kit), Map.of(id(skill), 4)),
+            Map.of(),
             0,
             1200,
             0,
@@ -83,7 +87,18 @@ class HunterBuildCheckTest {
   void reportsNoRollableRank(final int weight) {
     final HunterBuild build =
         new HunterBuild(
-            Map.of(id("master"), weight), Map.of(), 0, 1, 1, Map.of(), 0, 1200, 0, MASTER_KITS);
+            Map.of(id("master"), weight),
+            Map.of(),
+            Map.of(),
+            0,
+            1,
+            1,
+            Map.of(),
+            Map.of(),
+            0,
+            1200,
+            0,
+            MASTER_KITS);
     assertEquals(
         List.of("no rank has a weight above zero"),
         HunterBuildCheck.problems(build, RANKS, Set.of(), KITS));
@@ -106,7 +121,18 @@ class HunterBuildCheckTest {
   void reportsNoBaseWeight(final int core, final int path, final boolean reported) {
     final HunterBuild build =
         new HunterBuild(
-            Map.of(id("master"), 1), Map.of(), 0, core, path, Map.of(), 0, 1200, 0, MASTER_KITS);
+            Map.of(id("master"), 1),
+            Map.of(),
+            Map.of(),
+            0,
+            core,
+            path,
+            Map.of(),
+            Map.of(),
+            0,
+            1200,
+            0,
+            MASTER_KITS);
     assertEquals(
         reported ? 1 : 0, HunterBuildCheck.problems(build, RANKS, HUNTER_SKILLS, KITS).size());
   }
@@ -132,10 +158,48 @@ class HunterBuildCheckTest {
                     Collectors.toMap(entry -> id(entry[0]), entry -> Integer.parseInt(entry[1])));
     final HunterBuild build =
         new HunterBuild(
-            Map.of(id("master"), 1), Map.of(), 0, 1, 1, Map.of(), 0, 1200, 0, masterKits);
+            Map.of(id("master"), 1),
+            Map.of(),
+            Map.of(),
+            0,
+            1,
+            1,
+            Map.of(),
+            Map.of(),
+            0,
+            1200,
+            0,
+            masterKits);
     final List<String> problems = HunterBuildCheck.problems(build, RANKS, HUNTER_SKILLS, KITS);
     assertEquals(problem.isEmpty() ? 0 : 1, problems.size(), problems.toString());
     assertEquals(
         true, problem.isEmpty() || problems.getFirst().startsWith(problem), problems.toString());
+  }
+
+  @ParameterizedTest(name = "sharpness for {0}, disposition for {1}")
+  @CsvSource({
+    "master, crossbow, ''",
+    "baron, crossbow, sharpness name nightborn:baron",
+    "master, sling, kit dispositions name nightborn:sling"
+  })
+  @DisplayName("a sharpness for an unknown rank or a disposition for an unknown kit is reported")
+  void reportsUnknownMindNames(final String rank, final String kit, final String problem) {
+    final HunterBuild build =
+        new HunterBuild(
+            Map.of(id("master"), 1),
+            Map.of(),
+            Map.of(id(rank), Sharpness.KEEN),
+            0,
+            1,
+            1,
+            Map.of(),
+            Map.of(id(kit), Disposition.EVEN),
+            0,
+            1200,
+            0,
+            MASTER_KITS);
+    final List<String> problems = HunterBuildCheck.problems(build, RANKS, Set.of(), KITS);
+    assertEquals(problem.isEmpty() ? 0 : 1, problems.size(), problems.toString());
+    problems.forEach(line -> assertEquals(true, line.startsWith(problem), line));
   }
 }

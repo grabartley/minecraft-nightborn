@@ -1,11 +1,17 @@
 package com.grahambartley.nightborn.mob.stage;
 
+import com.grahambartley.nightborn.mob.brain.Disposition;
+import com.grahambartley.nightborn.mob.brain.Mind;
+import com.grahambartley.nightborn.mob.brain.Sharpness;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import java.util.function.Supplier;
 
 public record StageCombat(
     int bloodFloor,
     int thinkTicks,
+    Sharpness sharpness,
+    boolean tempered,
     int leapChance,
     int dashChance,
     int dodgeChance,
@@ -17,7 +23,8 @@ public record StageCombat(
   static final int PLAIN_THINK = 40;
 
   public static final StageCombat PLAIN =
-      new StageCombat(PLAIN_FLOOR, PLAIN_THINK, 0, 0, 0, 0, 0, StageStuck.PLAIN);
+      new StageCombat(
+          PLAIN_FLOOR, PLAIN_THINK, Sharpness.KEEN, true, 0, 0, 0, 0, 0, StageStuck.PLAIN);
 
   public static final Codec<StageCombat> CODEC =
       RecordCodecBuilder.create(
@@ -30,6 +37,10 @@ public record StageCombat(
                       Codec.intRange(1, 200)
                           .optionalFieldOf("think_ticks", PLAIN_THINK)
                           .forGetter(StageCombat::thinkTicks),
+                      Sharpness.CODEC
+                          .optionalFieldOf("sharpness", Sharpness.KEEN)
+                          .forGetter(StageCombat::sharpness),
+                      Codec.BOOL.optionalFieldOf("tempered", true).forGetter(StageCombat::tempered),
                       Codec.intRange(0, 100)
                           .optionalFieldOf("leap_chance", 0)
                           .forGetter(StageCombat::leapChance),
@@ -49,4 +60,8 @@ public record StageCombat(
                           .optionalFieldOf("stuck", StageStuck.PLAIN)
                           .forGetter(StageCombat::stuck))
                   .apply(instance, StageCombat::new));
+
+  public Mind mind(final Supplier<Disposition> disposition) {
+    return new Mind(thinkTicks, sharpness, tempered ? disposition.get() : Disposition.EVEN);
+  }
 }

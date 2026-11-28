@@ -109,4 +109,12 @@ class IntentBudgetTest {
             .getOrThrow()
             .thinkScale());
   }
+
+  @ParameterizedTest(name = "thrift {0}")
+  @CsvSource({"0", "0.25", "1"})
+  @DisplayName("a budget with a new thrift keeps everything else it had")
+  void withThrift(final float thrift) {
+    final IntentBudget budget = new IntentBudget(6, 60, 0.3F, 0.5F, 0.1F, 4);
+    assertEquals(new IntentBudget(6, 60, 0.3F, thrift, 0.1F, 4), budget.withThrift(thrift));
+  }
 }

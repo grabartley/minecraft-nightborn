@@ -11,6 +11,12 @@
     "nightborn:veteran": 45,
     "nightborn:master": 30
   },
+  "sharpness": {
+    "nightborn:initiate": { "blur": 0.45, "reads": [], "foresight": 0.25 },
+    "nightborn:hunter": { "blur": 0.25, "reads": ["group"], "foresight": 0.6 },
+    "nightborn:veteran": { "blur": 0.1, "reads": ["group", "place"], "foresight": 1.0 },
+    "nightborn:master": { "blur": 0.0, "reads": ["group", "place"], "foresight": 1.6 }
+  },
   "top_rank_spread": 10,
   "core_weight": 2,
   "path_weight": 3,
@@ -47,6 +53,15 @@
       "nightborn:faithful/rebuke": 8,
       "nightborn:faithful/consecrate": 6
     }
+  },
+  "kit_dispositions": {
+    "nightborn:crossbow": { "aims": { "target": 1.25, "foes": 1.1 } },
+    "nightborn:stake": { "aims": { "target": 1.2 }, "thrift": 0.8 },
+    "nightborn:silver_stake": { "aims": { "ally": 1.25, "allies": 1.2, "foes": 1.15 } },
+    "nightborn:raid_wooden": { "aims": { "target": 1.2 }, "thrift": 0.7 },
+    "nightborn:raid_silver": { "aims": { "foes": 1.2, "ally": 1.15, "allies": 1.15 } },
+    "nightborn:raid_silver_holy_water": { "aims": { "foes": 1.25, "allies": 1.15 }, "thrift": 1.2 },
+    "nightborn:master_silver": { "aims": { "allies": 1.2, "ally": 1.2 } }
   },
   "trickle_experience": 10,
   "trickle_ticks": 1200,

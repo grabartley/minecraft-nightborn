@@ -1,14 +1,28 @@
 package com.grahambartley.nightborn.mob.stage;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.google.gson.JsonParser;
+import com.grahambartley.nightborn.MinecraftBootstrapExtension;
+import com.grahambartley.nightborn.mob.brain.Aim;
+import com.grahambartley.nightborn.mob.brain.ChoiceFixtures;
+import com.grahambartley.nightborn.mob.brain.Disposition;
+import com.grahambartley.nightborn.mob.brain.IntentBudget;
+import com.grahambartley.nightborn.mob.brain.Mind;
+import com.grahambartley.nightborn.mob.brain.Sharpness;
 import com.mojang.serialization.JsonOps;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Map;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
+@ExtendWith(MinecraftBootstrapExtension.class)
 class StageCombatTest {
 
   @Test
@@ -72,5 +86,113 @@ class StageCombatTest {
             .getOrThrow()
             .stuck()
             .ticks());
+  }
+
+  private static final Path STAGES =
+      Path.of("src/main/resources/data/nightborn/nightborn/vampire_stage");
+
+  private static Sharpness shipped(final String stage) throws IOException {
+    return StageCombat.CODEC
+        .parse(
+            JsonOps.INSTANCE,
+            JsonParser.parseString(Files.readString(STAGES.resolve(stage + ".json")))
+                .getAsJsonObject()
+                .get("combat"))
+        .getOrThrow()
+        .sharpness();
+  }
+
+  @ParameterizedTest(name = "{0} is sharper than {1}")
+  @CsvSource({"adult, fledgling", "elder, adult", "ancient, elder"})
+  @DisplayName("an older stage blurs its choice less, sees more and plans further ahead")
+  void olderStagesAreSharper(final String older, final String younger) throws IOException {
+    final Sharpness olderSharpness = shipped(older);
+    final Sharpness youngerSharpness = shipped(younger);
+    assertTrue(olderSharpness.blur() < youngerSharpness.blur());
+    assertTrue(olderSharpness.foresight() > youngerSharpness.foresight());
+    assertTrue(olderSharpness.reads().containsAll(youngerSharpness.reads()));
+  }
+
+  @ParameterizedTest(name = "{0} reads group {1} and place {2}")
+  @CsvSource({"fledgling, false, false", "ancient, true, true"})
+  @DisplayName("a fledgling reads only itself and its foe, and an ancient reads the whole fight")
+  void readsByStage(final String stage, final boolean group, final boolean place)
+      throws IOException {
+    assertEquals(group, shipped(stage).reads(Sharpness.Reads.GROUP));
+    assertEquals(place, shipped(stage).reads(Sharpness.Reads.PLACE));
+  }
+
+  @ParameterizedTest(name = "{0}")
+  @CsvSource(
+      delimiter = '|',
+      value = {"{\"sharpness\": {\"blur\": 0.3}} | true", "{\"sharpness\": {\"blur\": 2}} | false"})
+  @DisplayName("a stage refuses a sharpness out of range")
+  void sharpnessBounds(final String json, final boolean loads) {
+    assertEquals(
+        loads, StageCombat.CODEC.parse(JsonOps.INSTANCE, JsonParser.parseString(json)).isSuccess());
+  }
+
+  @ParameterizedTest(name = "{0}")
+  @CsvSource({"fledgling", "ancient"})
+  @DisplayName(
+      "a stage's mind thinks at its pace and sharpness, leaning as its vampire is disposed")
+  void mind(final String stage) throws IOException {
+    final StageCombat combat =
+        StageCombat.CODEC
+            .parse(
+                JsonOps.INSTANCE,
+                JsonParser.parseString(Files.readString(STAGES.resolve(stage + ".json")))
+                    .getAsJsonObject()
+                    .get("combat"))
+            .getOrThrow();
+    final Disposition hot = new Disposition(Map.of(Aim.TARGET, 1.5F), 0.5F);
+    assertEquals(new Mind(combat.thinkTicks(), combat.sharpness(), hot), combat.mind(() -> hot));
+  }
+
+  private static StageCombat shippedCombat(final String stage) throws IOException {
+    return StageCombat.CODEC
+        .parse(
+            JsonOps.INSTANCE,
+            JsonParser.parseString(Files.readString(STAGES.resolve(stage + ".json")))
+                .getAsJsonObject()
+                .get("combat"))
+        .getOrThrow();
+  }
+
+  @ParameterizedTest(name = "{0}")
+  @CsvSource({"lord", "eldest"})
+  @DisplayName("the lord and the Eldest fight as before, whatever their temperament")
+  void leadersAreUntempered(final String stage) throws IOException {
+    final StageCombat combat = shippedCombat(stage);
+    assertEquals(
+        new Mind(combat.thinkTicks(), Sharpness.KEEN, Disposition.EVEN),
+        combat.mind(
+            () -> {
+              throw new AssertionError("an untempered stage reads no temperament");
+            }));
+  }
+
+  @ParameterizedTest(name = "{0}, rolls {1} and {2}: {3}")
+  @CsvSource({
+    "fledgling, 1, 0, strike",
+    "fledgling, 0.25, 0.75, guard",
+    "adult, 0.25, 0.75, guard",
+    "elder, 0.25, 0.75, strike",
+    "elder, 0, 1, guard",
+    "ancient, 0, 1, strike"
+  })
+  @DisplayName(
+      "with the same powers in the same fight, the younger the vampire the smaller the turn of"
+          + " chance that fools it, and an ancient is never fooled")
+  void shippedStagesChooseByAge(
+      final String stage, final double first, final double second, final String picked)
+      throws IOException {
+    assertEquals(
+        ChoiceFixtures.id(picked),
+        ChoiceFixtures.pick(
+            ChoiceFixtures.strikeOrGuard(0),
+            shippedCombat(stage).mind(() -> Disposition.EVEN),
+            IntentBudget.FREE,
+            ChoiceFixtures.rolls(first, second)));
   }
 }

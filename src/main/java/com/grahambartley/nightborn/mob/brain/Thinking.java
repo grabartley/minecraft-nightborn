@@ -22,23 +22,24 @@ public final class Thinking {
 
   private Thinking() {}
 
-  public static Optional<Think> react(final MobEntity mob, final int mobFloor) {
-    return think(mob, true, mobFloor, Vec3d.ZERO, List.of());
+  public static Optional<Think> react(final MobEntity mob, final int mobFloor, final Mind mind) {
+    return think(mob, true, mobFloor, mind, Vec3d.ZERO, List.of());
   }
 
   public static Optional<Think> think(
       final MobEntity mob,
       final int mobFloor,
       final TargetMotion motion,
-      final int thinkTicks,
+      final Mind mind,
       final List<ActionReadiness> actions) {
     return think(
         mob,
         false,
         mobFloor,
+        mind,
         mob.getTarget() == null
             ? Vec3d.ZERO
-            : motion.sample(mob.getTarget(), mob.getWorld().getTime(), thinkTicks),
+            : motion.sample(mob.getTarget(), mob.getWorld().getTime(), mind.thinkTicks()),
         actions);
   }
 
@@ -46,16 +47,18 @@ public final class Thinking {
       final MobEntity mob,
       final boolean dodge,
       final int mobFloor,
+      final Mind mind,
       final Vec3d moved,
       final List<ActionReadiness> actions) {
     final Intent reported = Intents.read(mob);
-    if (aids(dodge, mob.getTarget() != null, reported) && ownsHelp(mob)) {
+    if (aids(dodge, mob.getTarget() != null, reported, mind.readsGroup()) && ownsHelp(mob)) {
       final Optional<Think> aid =
           weigh(
               mob,
               Intent.FIGHT,
               helping(options(mob, false, Intent.FIGHT, actions), Intent.FIGHT),
               mobFloor,
+              mind,
               moved,
               true);
       if (aid.isPresent()) {
@@ -65,7 +68,8 @@ public final class Thinking {
     if (!thinksAlone(dodge, mob.getTarget() != null, watched(mob))) {
       return Optional.empty();
     }
-    return weigh(mob, reported, options(mob, dodge, reported, actions), mobFloor, moved, false);
+    return weigh(
+        mob, reported, options(mob, dodge, reported, actions), mobFloor, mind, moved, false);
   }
 
   private static Optional<Think> weigh(
@@ -73,24 +77,26 @@ public final class Thinking {
       final Intent intent,
       final List<PowerChoice.Option> options,
       final int mobFloor,
+      final Mind mind,
       final Vec3d moved,
       final boolean forAllies) {
     if (options.stream().noneMatch(option -> option.verdict() == PowerUse.Verdict.READY)) {
       return Optional.empty();
     }
-    final Set<Fact> needed = needed(options);
+    final Set<Fact> needed = mind.reads(needed(options));
     final Situation.Group group =
         forAllies || Situations.readsGroup(needed) ? GroupViews.read(mob) : null;
     if (forAllies && !group.allyFighting()) {
       return Optional.empty();
     }
     final Situation situation = Situations.read(mob, intent, needed, moved, group);
-    final IntentBudget budget = MobIntents.budget(mob.getRegistryManager(), intent);
+    final IntentBudget budget = mind.budget(MobIntents.budget(mob.getRegistryManager(), intent));
     return Optional.of(
         new Think(
             intent,
             mob.getWorld().getTime(),
-            PowerChoice.rank(options, situation, budget, mobFloor),
+            PowerChoice.rank(
+                options, situation, budget, mobFloor, mind, mob.getRandom()::nextDouble),
             budget,
             mob.getRandom().nextDouble()));
   }
@@ -135,8 +141,12 @@ public final class Thinking {
     return needed;
   }
 
-  static boolean aids(final boolean dodge, final boolean hasTarget, final Intent reported) {
-    return !dodge && !hasTarget && reported != Intent.RETREAT;
+  static boolean aids(
+      final boolean dodge,
+      final boolean hasTarget,
+      final Intent reported,
+      final boolean readsGroup) {
+    return readsGroup && !dodge && !hasTarget && reported != Intent.RETREAT;
   }
 
   static List<PowerChoice.Option> helping(

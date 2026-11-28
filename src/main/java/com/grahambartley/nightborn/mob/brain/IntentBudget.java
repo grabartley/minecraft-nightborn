@@ -56,6 +56,10 @@ public record IntentBudget(
     this(bloodReserve, cooldownPrice, threshold, thrift, spread, 1);
   }
 
+  public IntentBudget withThrift(final float thrift) {
+    return new IntentBudget(bloodReserve, cooldownPrice, threshold, thrift, spread, thinkScale);
+  }
+
   public int floor(final int mobFloor) {
     return Math.max(mobFloor, bloodReserve);
   }

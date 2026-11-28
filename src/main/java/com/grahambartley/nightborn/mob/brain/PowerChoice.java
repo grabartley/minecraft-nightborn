@@ -8,6 +8,7 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.DoubleSupplier;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Nullable;
 
@@ -112,7 +113,9 @@ public final class PowerChoice {
       final List<Option> options,
       final Situation situation,
       final IntentBudget budget,
-      final int mobFloor) {
+      final int mobFloor,
+      final Mind mind,
+      final DoubleSupplier chance) {
     final List<Scored> ranked = new ArrayList<>(options.size());
     for (final Option option : options) {
       if (option.verdict() != PowerUse.Verdict.READY || option.running()) {
@@ -135,8 +138,12 @@ public final class PowerChoice {
             new Scored(
                 option,
                 best,
-                bestScoring.score()
-                    * budget.kept(option.cost(), option.cooldownTicks(), situation.self().health()),
+                mind.judged(
+                    bestScoring.score()
+                        * budget.kept(
+                            option.cost(), option.cooldownTicks(), situation.self().health()),
+                    best.aimed(),
+                    chance),
                 option.action()
                     || budget.affords(situation.self().blood(), option.cost(), mobFloor),
                 bestScoring.ally()));

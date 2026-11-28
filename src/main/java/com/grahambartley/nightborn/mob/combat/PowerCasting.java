@@ -4,6 +4,7 @@ import com.grahambartley.nightborn.mob.brain.Aim;
 import com.grahambartley.nightborn.mob.brain.CastAims;
 import com.grahambartley.nightborn.mob.brain.FormHold;
 import com.grahambartley.nightborn.mob.brain.HelpClaims;
+import com.grahambartley.nightborn.mob.brain.Mind;
 import com.grahambartley.nightborn.mob.brain.PowerChoice;
 import com.grahambartley.nightborn.mob.brain.RouteEnd;
 import com.grahambartley.nightborn.mob.brain.TargetMotion;
@@ -17,6 +18,7 @@ import com.grahambartley.nightborn.skill.Powers;
 import com.grahambartley.nightborn.skill.SkillPower;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.function.Supplier;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.server.world.ServerWorld;
@@ -60,7 +62,7 @@ public final class PowerCasting {
   public <T extends MobEntity & PowerShow> void tick(
       final T caster,
       final boolean engaged,
-      final int thinkTicks,
+      final Supplier<Mind> mind,
       final int bloodFloor,
       final MobFighting.Moves moves) {
     final long now = caster.getWorld().getTime();
@@ -88,11 +90,13 @@ public final class PowerCasting {
     if (!thinks(engaged, now, nextThink, nextAid)) {
       return;
     }
+    final Mind minded = mind.get();
+    final int thinkTicks = minded.thinkTicks();
     if (engaged) {
       nextThink = now + thinkTicks;
     }
     final Optional<Think> think =
-        Thinking.think(caster, bloodFloor, motion, thinkTicks, moves.actions());
+        Thinking.think(caster, bloodFloor, motion, minded, moves.actions());
     if (!engaged) {
       nextAid = now + Thinking.idleTicks(caster, think, thinkTicks);
     }
@@ -116,8 +120,9 @@ public final class PowerCasting {
         });
   }
 
-  public <T extends MobEntity & PowerShow> boolean react(final T caster, final int bloodFloor) {
-    final Optional<Think> think = Thinking.react(caster, bloodFloor);
+  public <T extends MobEntity & PowerShow> boolean react(
+      final T caster, final int bloodFloor, final Supplier<Mind> mind) {
+    final Optional<Think> think = Thinking.react(caster, bloodFloor, mind.get());
     final Optional<PowerChoice.Scored> chosen = think.flatMap(Think::chosen);
     if (chosen.isEmpty()) {
       return false;
