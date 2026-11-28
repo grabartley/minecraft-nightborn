@@ -104,7 +104,7 @@ public final class PowerCasting {
                     nextThink =
                         Math.max(nextThink, now + thinkTicks) + thought.budget().cooldownPrice();
                     nextAid = nextThink;
-                    tell(caster, scored, now);
+                    tell(caster, scored, now, engaged);
                   });
         });
   }
@@ -159,11 +159,11 @@ public final class PowerCasting {
   }
 
   private <T extends MobEntity & PowerShow> void tell(
-      final T caster, final PowerChoice.Scored scored, final long now) {
+      final T caster, final PowerChoice.Scored scored, final long now, final boolean inFight) {
     final MobPowerUse use = scored.option().use();
     final long castAt = now + use.tellTicks();
     final UUID ally = scored.ally() == null ? null : scored.ally().id();
-    telling = new Tell(scored.option().power(), castAt, scored.use().aimed(), ally);
+    telling = new Tell(scored.option().power(), castAt, scored.use().aimed(), ally, inFight);
     if (ally != null) {
       HelpClaims.claim(caster.getWorld(), ally, caster.getUuid(), castAt);
     }
