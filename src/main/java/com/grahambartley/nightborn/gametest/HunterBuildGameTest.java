@@ -106,7 +106,8 @@ public class HunterBuildGameTest implements FabricGameTest {
     context.runAtTick(
         START,
         () -> {
-          context.assertEquals(OathAttachment.get(hunter).rank(), 0, "it starts as an initiate");
+          context.assertEquals(
+              HunterSkills.rank(hunter), Optional.of(INITIATE), "it starts as an initiate");
           final TreeProgress before = SkillAttachment.get(hunter, SkillTree.HUNTER);
           hunter.earn(5000.0F);
           final TreeProgress after = SkillAttachment.get(hunter, SkillTree.HUNTER);

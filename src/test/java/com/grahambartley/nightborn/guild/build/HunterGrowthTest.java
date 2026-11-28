@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.grahambartley.nightborn.MinecraftBootstrapExtension;
+import com.grahambartley.nightborn.config.NightbornConfig;
 import com.grahambartley.nightborn.config.SkillSettings;
 import com.grahambartley.nightborn.faction.Oath;
 import com.grahambartley.nightborn.rank.RankLadder;
@@ -27,14 +28,7 @@ class HunterGrowthTest {
   private static final RankLadder LADDER = HunterBuildFixtures.ladder();
   private static final HunterGrowth.Curve CURVE = new HunterGrowth.Curve(100, 3, NEEDS);
   private static final HunterGrowth.Curve DEFAULT_CURVE =
-      new HunterGrowth.Curve(
-          SkillSettings.FIRST_POINT_EXPERIENCE.defaultValue(),
-          SkillSettings.POINT_COST_RISE.defaultValue(),
-          new RankNeeds(
-              List.of(
-                  SkillSettings.HUNTER_RANK_POINTS.defaultValue(),
-                  SkillSettings.VETERAN_RANK_POINTS.defaultValue(),
-                  SkillSettings.MASTER_RANK_POINTS.defaultValue())));
+      HunterGrowth.Curve.of(NightbornConfig.DEFAULTS.skills());
 
   @ParameterizedTest(name = "rank {0} -> {1}")
   @CsvSource({"0, 0", "2, 2", "3, 3", "9, 3", "-1, 0"})
@@ -133,7 +127,14 @@ class HunterGrowthTest {
   }
 
   @ParameterizedTest(name = "paths {0} and {1}")
-  @CsvSource({"slayer, faithful", "trapper, seeker", "seeker, slayer"})
+  @CsvSource({
+    "slayer, faithful",
+    "trapper, seeker",
+    "seeker, slayer",
+    "slayer, trapper",
+    "faithful, trapper",
+    "faithful, seeker"
+  })
   @DisplayName(
       "a hunter that owns every skill open to it banks new experience as points and buys nothing")
   void ownsEverythingAndBanksPoints(final String one, final String two) {
@@ -155,8 +156,8 @@ class HunterGrowthTest {
     "9, faithful, seeker, 36"
   })
   @DisplayName(
-      "an initiate buys at least one skill with 5000 experience on the default curve, whatever"
-          + " its start")
+      "an initiate buys at least one skill with 5000 experience on the default curve, at any"
+          + " starting points and path pair")
   void initiateBuysWithExperience(
       final int points, final String one, final String two, final long seed) {
     final HunterGrowth.Standing start =
@@ -166,5 +167,23 @@ class HunterGrowthTest {
         HunterGrowth.grow(
             start, 5000.0F, SHOP, DEFAULT_CURVE, HunterBuildFixtures.rolls(seed + 100));
     assertTrue(grown.progress().bought().size() > start.progress().bought().size());
+  }
+
+  @ParameterizedTest(name = "first point {0}, rise {1}%, ranks at {2}, {3} and {4}")
+  @CsvSource({"200, 1, 10, 45, 100", "50, 0, 0, 0, 0", "1000, 25, 5, 20, 400"})
+  @DisplayName("a hunter's point curve and rank needs are the server's skill settings")
+  void curveFollowsTheSkillSettings(
+      final int first, final int rise, final int hunter, final int veteran, final int master) {
+    final SkillSettings settings =
+        NightbornConfig.DEFAULTS
+            .with(SkillSettings.FIRST_POINT_EXPERIENCE, first)
+            .with(SkillSettings.POINT_COST_RISE, rise)
+            .with(SkillSettings.HUNTER_RANK_POINTS, hunter)
+            .with(SkillSettings.VETERAN_RANK_POINTS, veteran)
+            .with(SkillSettings.MASTER_RANK_POINTS, master)
+            .skills();
+    assertEquals(
+        new HunterGrowth.Curve(first, rise, new RankNeeds(List.of(hunter, veteran, master))),
+        HunterGrowth.Curve.of(settings));
   }
 }

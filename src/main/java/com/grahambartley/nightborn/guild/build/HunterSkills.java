@@ -73,7 +73,6 @@ public final class HunterSkills {
       return;
     }
     final DynamicRegistryManager registries = mob.getRegistryManager();
-    final SkillSettings settings = settings();
     final HunterPurchases.Shop shop =
         shop(mob, registries, HunterBuilds.build(registries), RankLadder.of(registries), kit);
     store(
@@ -82,8 +81,7 @@ public final class HunterSkills {
             standing(mob),
             experience,
             shop,
-            new HunterGrowth.Curve(
-                settings.firstPointExperience(), settings.pointCostRise(), settings.rankNeeds()),
+            HunterGrowth.Curve.of(settings()),
             mob.getRandom()::nextDouble));
   }
 
