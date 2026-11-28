@@ -44,7 +44,9 @@ class DecalJoinTest {
     "0.3, 0.0, 0.3",
     "0.9, 0.9, 1.0",
     "1.0, 0.2, 1.0",
-    "0.2, 0.2, 0.2449"
+    "0.2, 0.2, 0.2449",
+    "0.2, 0.8, 0.8",
+    "0.1, 1.4, 1.0"
   })
   @DisplayName("a joined patch grows by part of the new splat's area, up to a cap")
   void grown(final double half, final double incoming, final double expected) {

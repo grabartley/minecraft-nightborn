@@ -32,7 +32,9 @@ public final class DecalJoin {
   public static double grown(final double halfSize, final double incomingHalfSize) {
     return Math.min(
         LARGEST_HALF_SIZE,
-        Math.max(halfSize, Math.sqrt(square(halfSize) + GROWTH_SHARE * square(incomingHalfSize))));
+        Math.max(
+            Math.max(halfSize, incomingHalfSize),
+            Math.sqrt(square(halfSize) + GROWTH_SHARE * square(incomingHalfSize))));
   }
 
   private static double square(final double value) {

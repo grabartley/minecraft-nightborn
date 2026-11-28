@@ -28,6 +28,6 @@ class DecalLiftTest {
   @DisplayName("every rim lies under every body, so no outline shows inside a patch")
   void rimsStayUnderBodies(final float rimWetness, final float bodyWetness) {
     assertTrue(DecalLift.rim(rimWetness) < DecalLift.body(bodyWetness));
-    assertTrue(DecalLift.anchor() <= DecalLift.rim(rimWetness));
+    assertTrue(DecalLift.ANCHOR <= DecalLift.rim(rimWetness));
   }
 }

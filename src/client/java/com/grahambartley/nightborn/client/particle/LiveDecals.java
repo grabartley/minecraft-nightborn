@@ -8,13 +8,15 @@ public final class LiveDecals<D extends PlacedDecal<D>> {
 
   private final Deque<D> oldestFirst = new ArrayDeque<>();
   private final int limit;
+  private final int ceiling;
 
-  public LiveDecals(final int limit) {
+  public LiveDecals(final int limit, final int ceiling) {
     this.limit = limit;
+    this.ceiling = Math.max(limit, ceiling);
   }
 
-  public boolean place(final D incoming, final long now) {
-    oldestFirst.removeIf(decal -> decal.gone(now));
+  public boolean place(final D incoming) {
+    oldestFirst.removeIf(PlacedDecal::gone);
     final Iterator<D> newestFirst = oldestFirst.descendingIterator();
     while (newestFirst.hasNext()) {
       final D decal = newestFirst.next();
@@ -25,6 +27,9 @@ public final class LiveDecals<D extends PlacedDecal<D>> {
     }
     oldestFirst.addLast(incoming);
     retireOverLimit();
+    while (oldestFirst.size() > ceiling) {
+      oldestFirst.removeFirst().dropNow();
+    }
     return true;
   }
 

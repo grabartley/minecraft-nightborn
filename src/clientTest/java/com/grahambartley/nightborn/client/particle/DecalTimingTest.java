@@ -46,11 +46,4 @@ class DecalTimingTest {
   void retiredLife(final int maxAge, final int age, final int fade, final int expected) {
     assertEquals(expected, DecalTiming.retiredLife(maxAge, age, fade));
   }
-
-  @ParameterizedTest(name = "now {0}, last ticked {1}: stale {2}")
-  @CsvSource({"100, 100, false", "140, 100, false", "141, 100, true", "100, 141, true"})
-  @DisplayName("a decal that stopped ticking is treated as gone")
-  void stale(final long now, final long lastTicked, final boolean expected) {
-    assertEquals(expected, DecalTiming.stale(now, lastTicked));
-  }
 }

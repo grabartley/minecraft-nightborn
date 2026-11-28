@@ -5,7 +5,8 @@ public final class DecalTiming {
   public static final int LIMIT = 600;
   public static final int FRESH_TICKS = 600;
   public static final int DRYING_TICKS = 1200;
-  public static final int STALE_TICKS = 40;
+  public static final int CEILING = LIMIT + LIMIT / 4;
+  public static final int RETIRE_FADE_TICKS = 60;
 
   public static final int BLOOD_LIFE = 5400;
   public static final int BLOOD_LIFE_SPREAD = 1800;
@@ -32,10 +33,6 @@ public final class DecalTiming {
 
   public static int retiredLife(final int maxAge, final int age, final int fadeTicks) {
     return Math.min(maxAge, age + fadeTicks);
-  }
-
-  public static boolean stale(final long now, final long lastTicked) {
-    return Math.abs(now - lastTicked) > STALE_TICKS;
   }
 
   static int life(final int least, final int spread, final float share, final float roll) {

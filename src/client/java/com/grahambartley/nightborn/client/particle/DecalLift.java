@@ -2,17 +2,13 @@ package com.grahambartley.nightborn.client.particle;
 
 public final class DecalLift {
 
-  static final double ANCHOR = 0.004;
+  public static final double ANCHOR = 0.004;
   static final double RIM_DRY = 0.008;
   static final double RIM_WET = 0.012;
   static final double BODY_DRY = 0.018;
   static final double BODY_WET = 0.028;
 
   private DecalLift() {}
-
-  public static double anchor() {
-    return ANCHOR;
-  }
 
   public static double rim(final float wetness) {
     return between(RIM_DRY, RIM_WET, wetness);

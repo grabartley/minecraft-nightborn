@@ -15,12 +15,12 @@ class LiveDecalsTest {
   @CsvSource({"3, 2, '', 2", "3, 3, '', 3", "3, 4, 0, 4", "3, 6, 0 1 2, 6", "1, 3, 0 1, 3"})
   @DisplayName("past the limit the oldest decals start to fade, newest first kept")
   void retiresTheOldest(final int limit, final int placed, final String retiring, final int kept) {
-    final LiveDecals<Fake> live = new LiveDecals<>(limit);
+    final LiveDecals<Fake> live = new LiveDecals<>(limit, 100);
     final List<Fake> decals = new ArrayList<>();
     for (int index = 0; index < placed; index++) {
       final Fake decal = new Fake(index * 10);
       decals.add(decal);
-      live.place(decal, 0L);
+      live.place(decal);
     }
     assertEquals(retiring, retired(decals));
     assertEquals(kept, live.size());
@@ -30,10 +30,10 @@ class LiveDecalsTest {
   @CsvSource({"0, 0", "1, 3", "3, 3", "4, 3", "9, ''"})
   @DisplayName("a decal landing on a newer one joins that one before an older one")
   void joinsTheNewestItFits(final int at, final String joined) {
-    final LiveDecals<Fake> live = new LiveDecals<>(10);
+    final LiveDecals<Fake> live = new LiveDecals<>(10, 100);
     final List<Fake> decals = List.of(new Fake(0), new Fake(3));
-    decals.forEach(decal -> live.place(decal, 0L));
-    final boolean added = live.place(new Fake(at), 0L);
+    decals.forEach(decal -> live.place(decal));
+    final boolean added = live.place(new Fake(at));
     assertEquals(joined.isEmpty(), added);
     assertEquals(
         joined,
@@ -48,14 +48,36 @@ class LiveDecalsTest {
   @DisplayName("gone decals are dropped and fading ones take no new blood")
   void skipsGoneAndFadingDecals(
       final boolean gone, final boolean retiring, final boolean joined, final int size) {
-    final LiveDecals<Fake> live = new LiveDecals<>(10);
+    final LiveDecals<Fake> live = new LiveDecals<>(10, 100);
     final Fake old = new Fake(0);
-    live.place(old, 0L);
+    live.place(old);
     old.gone = gone;
     old.retiring = retiring;
-    live.place(new Fake(1), 0L);
+    live.place(new Fake(1));
     assertEquals(joined, old.absorbed > 0);
     assertEquals(size, live.size());
+  }
+
+  @ParameterizedTest(name = "limit {0}, ceiling {1}, {2} placed: dropped {3}, kept {4}")
+  @CsvSource({"2, 3, 3, '', 3", "2, 3, 4, 0, 3", "2, 3, 6, 0 1 2, 3", "2, 1, 4, 0 1, 2"})
+  @DisplayName("fading decals still count, and past the ceiling the oldest go at once")
+  void dropsTheOldestPastTheCeiling(
+      final int limit, final int ceiling, final int placed, final String dropped, final int kept) {
+    final LiveDecals<Fake> live = new LiveDecals<>(limit, ceiling);
+    final List<Fake> decals = new ArrayList<>();
+    for (int index = 0; index < placed; index++) {
+      final Fake decal = new Fake(index * 10);
+      decals.add(decal);
+      live.place(decal);
+    }
+    final List<String> indexes = new ArrayList<>();
+    for (int index = 0; index < decals.size(); index++) {
+      if (decals.get(index).dropped) {
+        indexes.add(String.valueOf(index));
+      }
+    }
+    assertEquals(dropped, String.join(" ", indexes));
+    assertEquals(kept, live.size());
   }
 
   private static String retired(final List<Fake> decals) {
@@ -72,6 +94,7 @@ class LiveDecalsTest {
     private final int at;
     private boolean gone;
     private boolean retiring;
+    private boolean dropped;
     private int absorbed;
 
     private Fake(final int at) {
@@ -79,8 +102,14 @@ class LiveDecalsTest {
     }
 
     @Override
-    public boolean gone(final long now) {
+    public boolean gone() {
       return gone;
+    }
+
+    @Override
+    public void dropNow() {
+      dropped = true;
+      gone = true;
     }
 
     @Override

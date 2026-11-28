@@ -21,7 +21,8 @@ import org.joml.Quaternionf;
 public abstract class FlatDecalParticle extends SpriteBillboardParticle
     implements PlacedDecal<FlatDecalParticle> {
 
-  private static final LiveDecals<FlatDecalParticle> LIVE = new LiveDecals<>(DecalTiming.LIMIT);
+  private static final LiveDecals<FlatDecalParticle> LIVE =
+      new LiveDecals<>(DecalTiming.LIMIT, DecalTiming.CEILING);
 
   private final Vec3d contact;
   private final Direction face;
@@ -31,8 +32,7 @@ public abstract class FlatDecalParticle extends SpriteBillboardParticle
   private final Quaternionf backFacing;
   private final Sprite rimSprite;
   private final Sprite bodySprite;
-  private final int fadeTicks;
-  private long lastTicked;
+  private int fadeTicks;
   private boolean retiring;
 
   protected FlatDecalParticle(
@@ -44,9 +44,9 @@ public abstract class FlatDecalParticle extends SpriteBillboardParticle
       final int fadeTicks) {
     super(
         world,
-        contact.x + face.getOffsetX() * DecalLift.anchor(),
-        contact.y + face.getOffsetY() * DecalLift.anchor(),
-        contact.z + face.getOffsetZ() * DecalLift.anchor());
+        contact.x + face.getOffsetX() * DecalLift.ANCHOR,
+        contact.y + face.getOffsetY() * DecalLift.ANCHOR,
+        contact.z + face.getOffsetZ() * DecalLift.ANCHOR);
     this.contact = contact;
     this.face = face;
     this.fadeTicks = fadeTicks;
@@ -64,7 +64,6 @@ public abstract class FlatDecalParticle extends SpriteBillboardParticle
     final int roll = random.nextInt();
     this.rimSprite = sprites.getSprite(shapes.rim(roll), shapes.lastSprite());
     this.bodySprite = sprites.getSprite(shapes.body(roll), shapes.lastSprite());
-    this.lastTicked = world.getTime();
     setSprite(rimSprite);
   }
 
@@ -76,7 +75,7 @@ public abstract class FlatDecalParticle extends SpriteBillboardParticle
   protected void aged() {}
 
   public static void place(final ParticleManager particles, final FlatDecalParticle decal) {
-    if (decal.settle() && LIVE.place(decal, decal.world.getTime())) {
+    if (decal.settle() && LIVE.place(decal)) {
       particles.addParticle(decal);
     }
   }
@@ -88,10 +87,8 @@ public abstract class FlatDecalParticle extends SpriteBillboardParticle
   }
 
   @Override
-  public boolean gone(final long now) {
-    return !isAlive()
-        || world != MinecraftClient.getInstance().world
-        || DecalTiming.stale(now, lastTicked);
+  public boolean gone() {
+    return !isAlive() || world != MinecraftClient.getInstance().world;
   }
 
   @Override
@@ -102,7 +99,13 @@ public abstract class FlatDecalParticle extends SpriteBillboardParticle
   @Override
   public void retire() {
     retiring = true;
+    fadeTicks = Math.min(fadeTicks, DecalTiming.RETIRE_FADE_TICKS);
     maxAge = DecalTiming.retiredLife(maxAge, age, fadeTicks);
+  }
+
+  @Override
+  public void dropNow() {
+    markDead();
   }
 
   @Override
@@ -127,7 +130,6 @@ public abstract class FlatDecalParticle extends SpriteBillboardParticle
     prevPosX = x;
     prevPosY = y;
     prevPosZ = z;
-    lastTicked = world.getTime();
     if (age++ >= maxAge || !stillHeld()) {
       markDead();
       return;
