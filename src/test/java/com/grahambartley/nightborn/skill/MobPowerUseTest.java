@@ -61,6 +61,20 @@ class MobPowerUseTest {
             "{\"max_range\":8,\"tell_ticks\":5,\"tell_sound\":\"minecraft:block.bell.use\",\"tell_clip\":\"stare\"}");
     assertEquals(0.0F, use.minRange());
     assertFalse(use.dodge());
+    assertEquals(0, use.holdTicks());
+  }
+
+  @ParameterizedTest(name = "hold {0}")
+  @ValueSource(ints = {0, 60, 1200})
+  @DisplayName("a mob use reads the shortest time it holds a form it took")
+  void hold(final int ticks) {
+    assertEquals(
+        ticks,
+        parse(
+                "{\"max_range\":32,\"tell_ticks\":1,\"tell_sound\":\"a:b\",\"tell_clip\":\"x\",\"hold_ticks\":"
+                    + ticks
+                    + "}")
+            .holdTicks());
   }
 
   @ParameterizedTest(name = "dodge {0}")
@@ -83,9 +97,11 @@ class MobPowerUseTest {
         "{\"max_range\":8,\"tell_ticks\":0,\"tell_sound\":\"a:b\",\"tell_clip\":\"x\"}",
         "{\"max_range\":8,\"tell_ticks\":101,\"tell_sound\":\"a:b\",\"tell_clip\":\"x\"}",
         "{\"max_range\":8,\"tell_ticks\":5,\"tell_clip\":\"x\"}",
-        "{\"max_range\":8,\"tell_ticks\":5,\"tell_sound\":\"a:b\"}"
+        "{\"max_range\":8,\"tell_ticks\":5,\"tell_sound\":\"a:b\"}",
+        "{\"max_range\":8,\"tell_ticks\":5,\"tell_sound\":\"a:b\",\"tell_clip\":\"x\",\"hold_ticks\":-1}",
+        "{\"max_range\":8,\"tell_ticks\":5,\"tell_sound\":\"a:b\",\"tell_clip\":\"x\",\"hold_ticks\":1201}"
       })
-  @DisplayName("a mob use with no tell, or a range or tell out of bounds, is rejected")
+  @DisplayName("a mob use with no tell, or a range, tell or hold out of bounds, is rejected")
   void rejects(final String json) {
     assertFalse(
         MobPowerUse.CODEC.parse(JsonOps.INSTANCE, JsonParser.parseString(json)).isSuccess());

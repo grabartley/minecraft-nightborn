@@ -95,8 +95,114 @@
             }
           ],
           "weight": 3.0
+        },
+        {
+          "intent": "fight",
+          "considerations": [
+            {
+              "fact": "gap_ahead",
+              "low": 1,
+              "high": 1
+            },
+            {
+              "fact": "in_form",
+              "high": 0
+            },
+            {
+              "fact": "target_distance",
+              "high": 32
+            }
+          ],
+          "weight": 2.0
+        },
+        {
+          "intent": "travel",
+          "aim": "self",
+          "considerations": [
+            {
+              "fact": "gap_ahead",
+              "low": 1,
+              "high": 1
+            },
+            {
+              "fact": "in_form",
+              "high": 0
+            },
+            {
+              "fact": "room_to_fly",
+              "low": 2,
+              "high": 4
+            }
+          ],
+          "weight": 2.0
+        },
+        {
+          "intent": "travel",
+          "aim": "self",
+          "considerations": [
+            {
+              "fact": "in_form",
+              "high": 0
+            },
+            {
+              "fact": "detour",
+              "curve": "rising",
+              "low": 1.5,
+              "high": 3
+            },
+            {
+              "fact": "trip_length",
+              "low": 12,
+              "high": 64
+            }
+          ],
+          "weight": 1.5
+        },
+        {
+          "intent": "travel",
+          "aim": "self",
+          "considerations": [
+            {
+              "fact": "in_form",
+              "high": 0
+            },
+            {
+              "fact": "home_distance",
+              "curve": "rising",
+              "low": 24,
+              "high": 64
+            },
+            {
+              "fact": "until_dawn",
+              "curve": "falling",
+              "low": 600,
+              "high": 2400
+            },
+            {
+              "fact": "sun_on_me",
+              "high": 0
+            }
+          ],
+          "weight": 2.0
+        },
+        {
+          "intent": "travel",
+          "aim": "self",
+          "considerations": [
+            {
+              "fact": "stuck",
+              "low": 1,
+              "high": 1
+            },
+            {
+              "fact": "in_form",
+              "high": 0
+            }
+          ],
+          "weight": 3.0
         }
-      ]
+      ],
+      "hold_ticks": 40
     },
     "sound": {
       "id": "nightborn:power.bat_form.enter",

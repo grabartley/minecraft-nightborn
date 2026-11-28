@@ -181,4 +181,41 @@ class ThinkingTest {
     assertEquals(true, Thinking.helps(mend.use()));
     assertEquals(false, Thinking.helps(strike.use()));
   }
+
+  @ParameterizedTest(name = "helps {0}, {1}, scale {2}, fight think {3}: every {4}")
+  @CsvSource({
+    "false, FIGHT, 4, 10, 10",
+    "false, CLOSE_IN, 4, 10, 10",
+    "false, TRAVEL, 4, 10, 40",
+    "false, REST, 4, 10, 40",
+    "false, RETREAT, 1, 10, 10",
+    "true, REST, 4, 10, 10",
+    "true, TRAVEL, 4, 25, 25"
+  })
+  @DisplayName(
+      "outside a fight a mob thinks its intent's scale slower, unless it could help an ally in"
+          + " one")
+  void paced(
+      final boolean helps,
+      final Intent intent,
+      final int scale,
+      final int fightTicks,
+      final int ticks) {
+    assertEquals(
+        ticks,
+        Thinking.paced(helps, intent, new IntentBudget(0, 0, 0.0F, 0.0F, 0.0F, scale), fightTicks));
+  }
+
+  @ParameterizedTest(name = "dodge {0}, target {1}, player near {2}: thinks {3}")
+  @CsvSource({
+    "false, false, true, true",
+    "false, false, false, false",
+    "false, true, false, true",
+    "true, false, false, true"
+  })
+  @DisplayName("a mob with nothing to fight thinks only while a player is near enough to see it")
+  void thinksAlone(
+      final boolean dodge, final boolean target, final boolean watched, final boolean thinks) {
+    assertEquals(thinks, Thinking.thinksAlone(dodge, target, watched));
+  }
 }

@@ -2,8 +2,10 @@ package com.grahambartley.nightborn.mob.combat;
 
 import com.grahambartley.nightborn.mob.brain.Aim;
 import com.grahambartley.nightborn.mob.brain.CastAims;
+import com.grahambartley.nightborn.mob.brain.FormHold;
 import com.grahambartley.nightborn.mob.brain.HelpClaims;
 import com.grahambartley.nightborn.mob.brain.PowerChoice;
+import com.grahambartley.nightborn.mob.brain.RouteEnd;
 import com.grahambartley.nightborn.mob.brain.TargetMotion;
 import com.grahambartley.nightborn.mob.brain.Think;
 import com.grahambartley.nightborn.mob.brain.Thinking;
@@ -12,6 +14,7 @@ import com.grahambartley.nightborn.skill.MobPowerUse;
 import com.grahambartley.nightborn.skill.PowerShow;
 import com.grahambartley.nightborn.skill.PowerUse;
 import com.grahambartley.nightborn.skill.Powers;
+import com.grahambartley.nightborn.skill.SkillPower;
 import java.util.Optional;
 import java.util.UUID;
 import net.minecraft.entity.LivingEntity;
@@ -19,6 +22,7 @@ import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.Vec3d;
 import org.jetbrains.annotations.Nullable;
 
 public final class PowerCasting {
@@ -30,6 +34,7 @@ public final class PowerCasting {
 
   private final Cast cast;
   private final TargetMotion motion = new TargetMotion();
+  private final FormHold hold = new FormHold();
   @Nullable private Tell telling;
   @Nullable private Think lastThink;
   private long nextThink;
@@ -62,7 +67,11 @@ public final class PowerCasting {
         final Optional<CastAim> aim =
             CastAims.resolve(caster, telling.aim(), aided(caster, telling.ally()));
         if (aim.isPresent()) {
-          cast.apply(caster, power, aim.get());
+          final int holdTicks = holdTicks(caster, power);
+          final Vec3d course = holdTicks > 0 ? RouteEnd.course(caster) : null;
+          if (cast.apply(caster, power, aim.get()) == PowerUse.Verdict.READY && holdTicks > 0) {
+            hold.take(now, holdTicks, course);
+          }
         } else {
           nextThink = now;
         }
@@ -77,10 +86,11 @@ public final class PowerCasting {
     }
     if (engaged) {
       nextThink = now + thinkTicks;
-    } else {
-      nextAid = now + thinkTicks;
     }
     final Optional<Think> think = Thinking.think(caster, bloodFloor, motion, thinkTicks);
+    if (!engaged) {
+      nextAid = now + Thinking.idleTicks(caster, think, thinkTicks);
+    }
     think.ifPresent(
         thought -> {
           lastThink = thought;
@@ -94,9 +104,16 @@ public final class PowerCasting {
                     nextThink =
                         Math.max(nextThink, now + thinkTicks) + thought.budget().cooldownPrice();
                     nextAid = nextThink;
-                    tell(caster, scored, now);
+                    tell(caster, scored, now, engaged);
                   });
         });
+  }
+
+  private static int holdTicks(final MobEntity caster, final Identifier power) {
+    return Powers.power(caster, power)
+        .flatMap(SkillPower::mob)
+        .map(MobPowerUse::holdTicks)
+        .orElse(0);
   }
 
   public static boolean tellable(
@@ -137,12 +154,16 @@ public final class PowerCasting {
     return Optional.ofNullable(lastThink);
   }
 
+  public FormHold hold() {
+    return hold;
+  }
+
   private <T extends MobEntity & PowerShow> void tell(
-      final T caster, final PowerChoice.Scored scored, final long now) {
+      final T caster, final PowerChoice.Scored scored, final long now, final boolean inFight) {
     final MobPowerUse use = scored.option().use();
     final long castAt = now + use.tellTicks();
     final UUID ally = scored.ally() == null ? null : scored.ally().id();
-    telling = new Tell(scored.option().power(), castAt, scored.use().aimed(), ally);
+    telling = new Tell(scored.option().power(), castAt, scored.use().aimed(), ally, inFight);
     if (ally != null) {
       HelpClaims.claim(caster.getWorld(), ally, caster.getUuid(), castAt);
     }

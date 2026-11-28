@@ -78,6 +78,31 @@
             }
           ],
           "weight": 0.6
+        },
+        {
+          "intent": "fight",
+          "considerations": [
+            {
+              "fact": "target_distance",
+              "low": 4,
+              "high": 24
+            },
+            {
+              "fact": "target_in_sight",
+              "low": 1,
+              "high": 1
+            },
+            {
+              "fact": "target_vampire",
+              "low": 1,
+              "high": 1
+            },
+            {
+              "fact": "target_aware",
+              "high": 0
+            }
+          ],
+          "weight": 1.2
         }
       ]
     }

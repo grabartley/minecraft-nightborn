@@ -226,6 +226,8 @@ class PowerChoiceTest {
 
   private static final Path DATA = Path.of("src/main/resources/data/nightborn/nightborn");
   private static final Situation.Group ALONE = Situation.Group.of(List.of(), List.of());
+  private static final Situation.Place DARK =
+      new Situation.Place(Double.NaN, Route.UNKNOWN, Double.NaN, Double.NaN, 2.0, Double.NaN);
 
   private static PowerChoice.Option shipped(final String skill, final boolean running) {
     final SkillPower power =
@@ -264,7 +266,8 @@ class PowerChoiceTest {
         signs.contains("slowed"),
         signs.contains("airborne"),
         signs.contains("vampire"),
-        signs.contains("hunter"));
+        signs.contains("hunter"),
+        !signs.contains("unaware"));
   }
 
   @ParameterizedTest(name = "[{0}] at {1} blocks, health {2}, signs [{3}]: {4}")
@@ -294,7 +297,11 @@ class PowerChoiceTest {
         "occult/blood_ward | 3 | 1 | hunter | occult/blood_ward",
         "occult/blood_ward | 3 | 1 | '' | ''",
         "faithful/blessing | 3 | 1 | '' | ''",
-        "faithful/blessing | 3 | 1 | vampire | faithful/blessing"
+        "faithful/blessing | 3 | 1 | vampire | faithful/blessing",
+        "occult/shadow_veil | 7 | 1 | unaware | occult/shadow_veil",
+        "occult/shadow_veil | 7 | 1 | '' | ''",
+        "occult/summon_familiar | 20 | 1 | '' | occult/summon_familiar",
+        "occult/summon_familiar | 26 | 1 | '' | ''"
       })
   @DisplayName(
       "in a fight a mob closes on a far foe, snares a runner, stuns one winding up, finishes one"
@@ -315,10 +322,51 @@ class PowerChoiceTest {
                 Intent.FIGHT,
                 Situation.Self.of(1.0F, 20),
                 target(distance, health, signs),
-                Situation.Place.UNKNOWN,
+                DARK,
                 ALONE,
                 null),
             shippedBudget(Intent.FIGHT),
+            0));
+  }
+
+  @ParameterizedTest(name = "[{0}] {1}, health {2}, gap {3}, detour {4}, home {5}, dawn {6}: {7}")
+  @CsvSource(
+      delimiter = '|',
+      value = {
+        "beast/bat_form | TRAVEL | 1 | 1 | NaN | NaN | NaN | beast/bat_form",
+        "beast/bat_form | TRAVEL | 1 | 0 | 1.1 | NaN | NaN | ''",
+        "beast/bat_form | TRAVEL | 1 | 0 | 2.5 | NaN | NaN | beast/bat_form",
+        "beast/bat_form | TRAVEL | 1 | 0 | 1 | 60 | 500 | beast/bat_form",
+        "beast/bat_form | TRAVEL | 1 | 0 | 1 | 60 | 6000 | ''",
+        "occult/shadow_step | TRAVEL | 1 | 0 | 1 | 60 | 500 | occult/shadow_step",
+        "core/blood_healing | REST | 0.4 | NaN | NaN | NaN | NaN | core/blood_healing",
+        "core/blood_healing beast/bat_form occult/shadow_step core/blood_rush occult/summon_familiar"
+            + " | REST | 1 | NaN | NaN | NaN | NaN | ''"
+      })
+  @DisplayName(
+      "outside a fight a vampire flies a gap, a long way round or home before dawn, heals once it"
+          + " is hurt, and spends nothing while it rests unhurt")
+  void usesPowersOutsideAFight(
+      final String owned,
+      final Intent intent,
+      final float health,
+      final double gap,
+      final double detour,
+      final double home,
+      final double untilDawn,
+      final String chosen) {
+    final Situation situation =
+        new Situation(
+            intent,
+            Situation.Self.of(health, 20),
+            null,
+            new Situation.Place(8.0, new Route(gap, detour, 30.0), home, untilDawn, 2.0, 4.0));
+    assertEquals(
+        chosen.isEmpty() ? Optional.empty() : Optional.of(Identifier.of("nightborn", chosen)),
+        choose(
+            Arrays.stream(owned.split(" ")).map(skill -> shipped(skill, false)).toList(),
+            situation,
+            shippedBudget(intent),
             0));
   }
 

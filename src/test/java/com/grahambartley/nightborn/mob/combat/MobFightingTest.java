@@ -65,5 +65,7 @@ class MobFightingTest {
     assertEquals(1, rested.get());
     assertFalse(fighting.telling());
     assertEquals(Optional.empty(), fighting.lastThink());
+    assertFalse(fighting.hold().holds(0));
+    assertEquals(Optional.empty(), fighting.hold().course());
   }
 }

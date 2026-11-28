@@ -1,5 +1,6 @@
 package com.grahambartley.nightborn.mob.combat;
 
+import com.grahambartley.nightborn.mob.brain.FormHold;
 import com.grahambartley.nightborn.mob.brain.Think;
 import com.grahambartley.nightborn.skill.PowerShow;
 import java.util.Optional;
@@ -84,5 +85,9 @@ public final class MobFighting {
 
   public Optional<Think> lastThink() {
     return casting.lastThink();
+  }
+
+  public FormHold hold() {
+    return casting.hold();
   }
 }

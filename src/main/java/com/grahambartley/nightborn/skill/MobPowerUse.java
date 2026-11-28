@@ -14,10 +14,12 @@ public record MobPowerUse(
     Identifier tellSound,
     String tellClip,
     boolean dodge,
-    List<MobUse> uses) {
+    List<MobUse> uses,
+    int holdTicks) {
 
   public static final float MAX_RANGE = 64.0F;
   public static final int MAX_TELL_TICKS = 100;
+  public static final int MAX_HOLD_TICKS = 1200;
 
   public static final Codec<MobPowerUse> CODEC =
       RecordCodecBuilder.create(
@@ -39,7 +41,10 @@ public record MobPowerUse(
                       MobUse.CODEC
                           .listOf()
                           .optionalFieldOf("uses", List.of())
-                          .forGetter(MobPowerUse::uses))
+                          .forGetter(MobPowerUse::uses),
+                      Codec.intRange(0, MAX_HOLD_TICKS)
+                          .optionalFieldOf("hold_ticks", 0)
+                          .forGetter(MobPowerUse::holdTicks))
                   .apply(instance, MobPowerUse::new));
 
   public MobPowerUse {
@@ -54,6 +59,17 @@ public record MobPowerUse(
       final String tellClip,
       final boolean dodge) {
     this(minRange, maxRange, tellTicks, tellSound, tellClip, dodge, List.of());
+  }
+
+  public MobPowerUse(
+      final float minRange,
+      final float maxRange,
+      final int tellTicks,
+      final Identifier tellSound,
+      final String tellClip,
+      final boolean dodge,
+      final List<MobUse> uses) {
+    this(minRange, maxRange, tellTicks, tellSound, tellClip, dodge, uses, 0);
   }
 
   public List<MobUse> effectiveUses() {

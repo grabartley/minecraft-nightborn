@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.EnumSource;
@@ -18,8 +17,8 @@ class FactTest {
       new Situation(
           Intent.FIGHT,
           new Situation.Self(0.25F, 14, true, true, false, true),
-          new Situation.Target(7.5, true, 0.6F, true, false, true, false, true, false),
-          new Situation.Place(11.5));
+          new Situation.Target(7.5, true, 0.6F, true, false, true, false, true, false, false),
+          new Situation.Place(11.5, new Route(1.0, 1.8, 40.0), 72.0, 900.0, 4.0, 3.0));
 
   private static final Situation OTHER_SIGNS =
       new Situation(
@@ -44,7 +43,15 @@ class FactTest {
     "TARGET_AIRBORNE, 0",
     "TARGET_VAMPIRE, 1",
     "TARGET_HUNTER, 0",
-    "SPOT_DISTANCE, 11.5"
+    "TARGET_AWARE, 0",
+    "SPOT_DISTANCE, 11.5",
+    "GAP_AHEAD, 1",
+    "DETOUR, 1.8",
+    "TRIP_LENGTH, 40",
+    "HOME_DISTANCE, 72",
+    "UNTIL_DAWN, 900",
+    "LIGHT, 4",
+    "ROOM_TO_FLY, 3"
   })
   @DisplayName("each fact reads its part of the situation")
   void reads(final Fact fact, final double value) {
@@ -58,7 +65,8 @@ class FactTest {
     "TARGET_SLOWED, 0",
     "TARGET_AIRBORNE, 1",
     "TARGET_VAMPIRE, 0",
-    "TARGET_HUNTER, 1"
+    "TARGET_HUNTER, 1",
+    "TARGET_AWARE, 1"
   })
   @DisplayName("each sign of the target reads the other way on a target that shows the others")
   void readsOtherSigns(final Fact fact, final double value) {
@@ -77,7 +85,8 @@ class FactTest {
         "TARGET_SLOWED",
         "TARGET_AIRBORNE",
         "TARGET_VAMPIRE",
-        "TARGET_HUNTER"
+        "TARGET_HUNTER",
+        "TARGET_AWARE"
       })
   @DisplayName("a target fact is missing when the mob has no target")
   void targetFactsNeedATarget(final Fact fact) {
@@ -85,13 +94,23 @@ class FactTest {
         Double.isNaN(fact.read(new Situation(Intent.REST, Situation.Self.of(1.0F, 0), null))));
   }
 
-  @Test
-  @DisplayName("the distance to where the mob is headed is missing when it has no route")
-  void spotDistanceNeedsARoute() {
+  @ParameterizedTest(name = "{0}")
+  @EnumSource(
+      value = Fact.class,
+      names = {
+        "SPOT_DISTANCE",
+        "GAP_AHEAD",
+        "DETOUR",
+        "TRIP_LENGTH",
+        "HOME_DISTANCE",
+        "UNTIL_DAWN",
+        "LIGHT",
+        "ROOM_TO_FLY"
+      })
+  @DisplayName("a place fact is missing when the mob has not looked at its place")
+  void placeFactsNeedALook(final Fact fact) {
     assertTrue(
-        Double.isNaN(
-            Fact.SPOT_DISTANCE.read(
-                new Situation(Intent.RETREAT, Situation.Self.of(1.0F, 0), null))));
+        Double.isNaN(fact.read(new Situation(Intent.RETREAT, Situation.Self.of(1.0F, 0), null))));
   }
 
   @ParameterizedTest(name = "{0}")

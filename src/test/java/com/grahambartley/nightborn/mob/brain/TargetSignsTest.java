@@ -44,4 +44,18 @@ class TargetSignsTest {
       final boolean airborne) {
     assertEquals(airborne, TargetSigns.airborne(ground, fluid, climbing, riding));
   }
+
+  @ParameterizedTest(name = "hunts the mob {0}, struck by it {1}, struck it {2}: aware {3}")
+  @CsvSource({
+    "false, false, false, false",
+    "true, false, false, true",
+    "false, true, false, true",
+    "false, false, true, true",
+    "true, true, true, true"
+  })
+  @DisplayName("prey is unaware of the mob until it turns on it, is struck by it or strikes it")
+  void aware(
+      final boolean hunts, final boolean struckBy, final boolean struck, final boolean aware) {
+    assertEquals(aware, TargetSigns.aware(hunts, struckBy, struck));
+  }
 }

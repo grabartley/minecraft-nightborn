@@ -63,6 +63,23 @@
               "high": 16
             }
           ]
+        },
+        {
+          "intent": "fight",
+          "aim": "self",
+          "considerations": [
+            {
+              "fact": "target_distance",
+              "low": 16,
+              "high": 24
+            },
+            {
+              "fact": "target_in_sight",
+              "low": 1,
+              "high": 1
+            }
+          ],
+          "weight": 1.2
         }
       ]
     }

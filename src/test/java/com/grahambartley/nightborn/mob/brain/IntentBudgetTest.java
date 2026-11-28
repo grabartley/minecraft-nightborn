@@ -20,9 +20,14 @@ class IntentBudgetTest {
     "8, 0, 11, 3, true",
     "8, 0, 10, 3, false",
     "8, 10, 13, 3, true",
-    "8, 12, 14, 3, false"
+    "8, 12, 14, 3, false",
+    "10, 0, 0, 0, true",
+    "10, 2, 3, 0, true",
+    "10, 4, 3, 0, false"
   })
-  @DisplayName("a cast must leave the higher of the mob's floor and the intent's reserve")
+  @DisplayName(
+      "a cast must leave the higher of the mob's floor and the intent's reserve, and a free one"
+          + " answers to the mob's floor alone")
   void affords(
       final int reserve,
       final int mobFloor,
@@ -85,5 +90,23 @@ class IntentBudgetTest {
     assertEquals(
         IntentBudget.FREE,
         IntentBudget.CODEC.parse(JsonOps.INSTANCE, JsonParser.parseString("{}")).getOrThrow());
+  }
+
+  @ParameterizedTest(name = "scale {0}, fight think {1}: {2}")
+  @CsvSource({"1, 10, 10", "4, 10, 40", "4, 25, 100", "20, 5, 100"})
+  @DisplayName("an intent outside a fight thinks its scale times slower than a fight")
+  void thinkTicks(final int scale, final int fight, final int ticks) {
+    assertEquals(ticks, new IntentBudget(0, 0, 0.0F, 0.0F, 0.0F, scale).thinkTicks(fight));
+  }
+
+  @Test
+  @DisplayName("the think scale is read from data")
+  void parsesThinkScale() {
+    assertEquals(
+        4,
+        IntentBudget.CODEC
+            .parse(JsonOps.INSTANCE, JsonParser.parseString("{\"think_scale\":4}"))
+            .getOrThrow()
+            .thinkScale());
   }
 }

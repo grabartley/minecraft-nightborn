@@ -20,6 +20,28 @@ class SituationTest {
     assertTrue(Double.isNaN(situation.place().spotDistance()));
   }
 
+  @ParameterizedTest(name = "spot {0}")
+  @CsvSource({"NaN", "0", "11.5"})
+  @DisplayName("a place given only the spot ahead knows nothing else of where the mob is")
+  void spotOnly(final double spot) {
+    final Situation.Place place = new Situation.Place(spot);
+    assertEquals(spot, place.spotDistance(), 1.0E-9);
+    assertEquals(Route.UNKNOWN, place.route());
+    assertTrue(Double.isNaN(place.homeDistance()));
+    assertTrue(Double.isNaN(place.untilDawn()));
+    assertTrue(Double.isNaN(place.light()));
+    assertTrue(Double.isNaN(place.roomToFly()));
+  }
+
+  @ParameterizedTest(name = "distance {0}, vampire {1}, hunter {2}")
+  @CsvSource({"3, true, false", "20, false, true"})
+  @DisplayName("a target read with its signs but no word on awareness counts as aware of the mob")
+  void awareUnlessSaid(final double distance, final boolean vampire, final boolean hunter) {
+    assertTrue(
+        new Situation.Target(distance, true, 1.0F, false, false, false, false, vampire, hunter)
+            .aware());
+  }
+
   @ParameterizedTest(name = "distance {0}, sight {1}, health {2}")
   @CsvSource({"3, true, 1", "12.5, false, 0.2"})
   @DisplayName("a target read without its signs shows none of them")

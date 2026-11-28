@@ -42,16 +42,40 @@ public record Situation(
       boolean slowed,
       boolean airborne,
       boolean vampire,
-      boolean hunter) {
+      boolean hunter,
+      boolean aware) {
 
     public Target(final double distance, final boolean inSight, final float health) {
       this(distance, inSight, health, false, false, false, false, false, false);
     }
+
+    public Target(
+        final double distance,
+        final boolean inSight,
+        final float health,
+        final boolean windingUp,
+        final boolean running,
+        final boolean slowed,
+        final boolean airborne,
+        final boolean vampire,
+        final boolean hunter) {
+      this(distance, inSight, health, windingUp, running, slowed, airborne, vampire, hunter, true);
+    }
   }
 
-  public record Place(double spotDistance) {
+  public record Place(
+      double spotDistance,
+      Route route,
+      double homeDistance,
+      double untilDawn,
+      double light,
+      double roomToFly) {
 
     public static final Place UNKNOWN = new Place(Double.NaN);
+
+    public Place(final double spotDistance) {
+      this(spotDistance, Route.UNKNOWN, Double.NaN, Double.NaN, Double.NaN, Double.NaN);
+    }
   }
 
   public record Member(

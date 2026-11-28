@@ -24,7 +24,8 @@ public final class Situations {
               Fact.TARGET_SLOWED,
               Fact.TARGET_AIRBORNE,
               Fact.TARGET_VAMPIRE,
-              Fact.TARGET_HUNTER));
+              Fact.TARGET_HUNTER,
+              Fact.TARGET_AWARE));
 
   private Situations() {}
 
@@ -58,9 +59,7 @@ public final class Situations {
                 health(target),
                 readsSigns(needed),
                 moved),
-        needed.contains(Fact.SPOT_DISTANCE)
-            ? new Situation.Place(RouteEnd.distance(mob.getPos(), RouteEnd.of(mob)))
-            : Situation.Place.UNKNOWN,
+        PlaceViews.read(mob, needed),
         group == null ? Situation.Group.UNKNOWN : group,
         null);
   }

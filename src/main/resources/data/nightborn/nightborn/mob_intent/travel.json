@@ -1,5 +1,6 @@
 {
   "blood_reserve": 8,
   "cooldown_price": 100,
-  "threshold": 0.0
+  "threshold": 0.0,
+  "think_scale": 4
 }
