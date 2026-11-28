@@ -13,6 +13,10 @@ public record Mind(int thinkTicks, Sharpness sharpness, Disposition disposition)
     return sharpness.reads(Sharpness.Reads.GROUP);
   }
 
+  public boolean chains() {
+    return sharpness.chains();
+  }
+
   public IntentBudget budget(final IntentBudget base) {
     return base.withThrift(
         Math.clamp(base.thrift() * sharpness.foresight() * disposition.thrift(), 0.0F, 1.0F));

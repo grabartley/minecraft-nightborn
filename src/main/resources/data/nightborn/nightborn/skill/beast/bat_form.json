@@ -200,6 +200,21 @@
             }
           ],
           "weight": 3.0
+        },
+        {
+          "intent": "fight",
+          "considerations": [
+            {
+              "fact": "in_form",
+              "high": 0
+            },
+            {
+              "fact": "own_held",
+              "low": 1,
+              "high": 1
+            }
+          ],
+          "weight": 2.8
         }
       ],
       "hold_ticks": 40

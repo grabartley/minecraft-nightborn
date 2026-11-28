@@ -176,6 +176,48 @@
             }
           ],
           "weight": 1.5
+        },
+        {
+          "intent": "fight",
+          "considerations": [
+            {
+              "fact": "target_distance",
+              "low": 5,
+              "high": 11
+            },
+            {
+              "fact": "target_in_sight",
+              "low": 1,
+              "high": 1
+            },
+            {
+              "fact": "target_ranged",
+              "low": 1,
+              "high": 1
+            }
+          ],
+          "weight": 2.2
+        },
+        {
+          "intent": "close_in",
+          "considerations": [
+            {
+              "fact": "target_distance",
+              "low": 5,
+              "high": 11
+            },
+            {
+              "fact": "target_in_sight",
+              "low": 1,
+              "high": 1
+            },
+            {
+              "fact": "target_ranged",
+              "low": 1,
+              "high": 1
+            }
+          ],
+          "weight": 2.2
         }
       ]
     }

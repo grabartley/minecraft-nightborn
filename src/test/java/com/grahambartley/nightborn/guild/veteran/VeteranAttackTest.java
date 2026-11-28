@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import com.google.gson.JsonParser;
 import com.grahambartley.nightborn.MinecraftBootstrapExtension;
 import com.grahambartley.nightborn.guild.HunterEntity;
+import com.grahambartley.nightborn.mob.brain.MobAction;
 import com.mojang.serialization.JsonOps;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -22,6 +23,7 @@ import org.junit.jupiter.params.provider.CsvSource;
 class VeteranAttackTest {
 
   static final Path ATTACKS = Path.of("src/main/resources/data/nightborn/nightborn/veteran_attack");
+  static final Path ACTIONS = Path.of("src/main/resources/data/nightborn/nightborn/mob_action");
   static final Path CLIPS =
       Path.of("src/client/resources/assets/nightborn/animations/entity/hunter.animation.json");
 
@@ -104,22 +106,24 @@ class VeteranAttackTest {
 
   @ParameterizedTest(name = "{0}")
   @CsvSource({
-    "silver_chain, 3.0, 0, 0.0, 0, 0.0",
-    "bolt_volley, 0.0, 0, 0.0, 0, 0.0",
-    "holy_water_arc, 0.0, 2, 4.0, 20, 0.0",
-    "rallying_cry, 0.0, 0, 0.0, 0, 0.5"
+    "silver_chain, target_airborne",
+    "bolt_volley, target_running",
+    "holy_water_arc, target_held",
+    "rallying_cry, ally_held"
   })
-  void shipsTheLockedTriggers(
-      final String name,
-      final double meleeReach,
-      final int crowd,
-      final double crowdReach,
-      final int stillTicks,
-      final double partyHealth)
+  void isScoredByTheBrainFromAMobActionOfTheSameName(final String name, final String fact)
       throws IOException {
-    assertEquals(
-        new VeteranAttack.Trigger(meleeReach, crowd, crowdReach, stillTicks, partyHealth),
-        shipped(name).trigger());
+    shipped(name);
+    final MobAction action =
+        MobAction.CODEC
+            .parse(
+                JsonOps.INSTANCE,
+                JsonParser.parseString(Files.readString(ACTIONS.resolve(name + ".json"))))
+            .getOrThrow();
+    assertTrue(
+        action.uses().stream()
+            .flatMap(use -> use.considerations().stream())
+            .anyMatch(consideration -> consideration.fact().equals(fact)));
   }
 
   @ParameterizedTest(name = "{0}")
@@ -146,6 +150,5 @@ class VeteranAttackTest {
     assertEquals(Optional.empty(), attack.held());
     assertEquals(Identifier.ofVanilla("a"), attack.sound());
     assertEquals(Optional.empty(), attack.mark());
-    assertEquals(VeteranAttack.Trigger.NONE, attack.trigger());
   }
 }

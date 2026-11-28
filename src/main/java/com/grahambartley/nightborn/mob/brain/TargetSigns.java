@@ -2,12 +2,19 @@ package com.grahambartley.nightborn.mob.brain;
 
 import com.grahambartley.nightborn.faction.Hunters;
 import com.grahambartley.nightborn.hold.Holds;
+import com.grahambartley.nightborn.mind.MindTies;
 import com.grahambartley.nightborn.mob.combat.MobFighter;
 import com.grahambartley.nightborn.server.ServerConfigService;
+import com.grahambartley.nightborn.skill.Mending;
 import com.grahambartley.nightborn.vampire.Vampires;
+import net.minecraft.component.DataComponentTypes;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.mob.MobEntity;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.RangedWeaponItem;
+import net.minecraft.item.TridentItem;
+import net.minecraft.util.UseAction;
 import net.minecraft.util.math.Vec3d;
 
 public final class TargetSigns {
@@ -22,17 +29,20 @@ public final class TargetSigns {
       final boolean inSight,
       final float health,
       final boolean signs,
+      final boolean tactics,
       final Vec3d moved) {
-    if (!signs) {
+    if (!signs && !tactics) {
       return new Situation.Target(mob.distanceTo(target), inSight, health);
     }
+    final boolean slowed =
+        target.hasStatusEffect(StatusEffects.SLOWNESS) || Holds.held(target).isPresent();
     return new Situation.Target(
         mob.distanceTo(target),
         inSight,
         health,
         windingUp(target),
         running(mob.getPos(), target.getPos(), moved),
-        target.hasStatusEffect(StatusEffects.SLOWNESS) || Holds.held(target).isPresent(),
+        slowed,
         airborne(target.isOnGround(), target.isInFluid(), target.isClimbing(), target.hasVehicle()),
         Vampires.isVampire(target),
         Hunters.isHunter(target),
@@ -40,7 +50,33 @@ public final class TargetSigns {
             target instanceof MobEntity foe && foe.getTarget() == mob,
             target.getAttacker() == mob,
             mob.getAttacker() == target),
-        Threat.of(target).at(mob.distanceTo(target), ServerConfigService.current().combat()));
+        Threat.of(target).at(mob.distanceTo(target), ServerConfigService.current().combat()),
+        tactics
+            && healing(
+                target.getAttached(Mending.TYPE) != null,
+                target.hasStatusEffect(StatusEffects.REGENERATION),
+                target.isUsingItem() && mends(target.getActiveItem())),
+        tactics && (ranged(target.getMainHandStack()) || ranged(target.getOffHandStack())),
+        tactics && held(slowed, MindTies.mesmerised(target)));
+  }
+
+  public static boolean healing(
+      final boolean mending, final boolean regenerating, final boolean takingCure) {
+    return mending || regenerating || takingCure;
+  }
+
+  public static boolean held(final boolean slowed, final boolean mesmerised) {
+    return slowed || mesmerised;
+  }
+
+  public static boolean mends(final ItemStack used) {
+    final UseAction action = used.getUseAction();
+    return action == UseAction.DRINK
+        || action == UseAction.EAT && used.contains(DataComponentTypes.FOOD);
+  }
+
+  public static boolean ranged(final ItemStack held) {
+    return held.getItem() instanceof RangedWeaponItem || held.getItem() instanceof TridentItem;
   }
 
   public static boolean aware(

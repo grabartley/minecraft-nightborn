@@ -62,6 +62,21 @@
             }
           ],
           "weight": 2.0
+        },
+        {
+          "intent": "fight",
+          "considerations": [
+            {
+              "fact": "target_distance",
+              "high": 4
+            },
+            {
+              "fact": "own_held",
+              "low": 1,
+              "high": 1
+            }
+          ],
+          "weight": 2.6
         }
       ]
     }

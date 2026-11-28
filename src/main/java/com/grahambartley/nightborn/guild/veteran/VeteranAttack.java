@@ -21,8 +21,7 @@ public record VeteranAttack(
     float heal,
     Optional<Identifier> held,
     Optional<Identifier> ammo,
-    boolean shout,
-    Trigger trigger) {
+    boolean shout) {
 
   public enum Kind implements StringIdentifiable {
     SILVER_CHAIN("silver_chain"),
@@ -42,34 +41,6 @@ public record VeteranAttack(
     public String asString() {
       return name;
     }
-  }
-
-  public record Trigger(
-      double meleeReach, int crowd, double crowdReach, int stillTicks, double partyHealth) {
-
-    public static final Trigger NONE = new Trigger(0.0, 0, 0.0, 0, 0.0);
-
-    public static final Codec<Trigger> CODEC =
-        RecordCodecBuilder.create(
-            instance ->
-                instance
-                    .group(
-                        Codec.doubleRange(0.0, MOST_REACH)
-                            .optionalFieldOf("melee_reach", 0.0)
-                            .forGetter(Trigger::meleeReach),
-                        Codec.intRange(0, MOST_COUNT)
-                            .optionalFieldOf("crowd", 0)
-                            .forGetter(Trigger::crowd),
-                        Codec.doubleRange(0.0, MOST_REACH)
-                            .optionalFieldOf("crowd_reach", 0.0)
-                            .forGetter(Trigger::crowdReach),
-                        Codec.intRange(0, MOST_TICKS)
-                            .optionalFieldOf("still_ticks", 0)
-                            .forGetter(Trigger::stillTicks),
-                        Codec.doubleRange(0.0, 1.0)
-                            .optionalFieldOf("party_health", 0.0)
-                            .forGetter(Trigger::partyHealth))
-                    .apply(instance, Trigger::new));
   }
 
   public static final int MOST_TICKS = 72000;
@@ -111,9 +82,6 @@ public record VeteranAttack(
                           .forGetter(VeteranAttack::heal),
                       Identifier.CODEC.optionalFieldOf("held").forGetter(VeteranAttack::held),
                       Identifier.CODEC.optionalFieldOf("ammo").forGetter(VeteranAttack::ammo),
-                      Codec.BOOL.optionalFieldOf("shout", false).forGetter(VeteranAttack::shout),
-                      Trigger.CODEC
-                          .optionalFieldOf("trigger", Trigger.NONE)
-                          .forGetter(VeteranAttack::trigger))
+                      Codec.BOOL.optionalFieldOf("shout", false).forGetter(VeteranAttack::shout))
                   .apply(instance, VeteranAttack::new));
 }

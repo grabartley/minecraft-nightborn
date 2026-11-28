@@ -52,4 +52,26 @@ class PowerCastingTest {
     assertFalse(casting.hold().holds(now));
     assertEquals(Optional.empty(), casting.hold().course());
   }
+
+  @ParameterizedTest(name = "now {0}, next {1}, think {2}, price {3}, chains {4}: next {5}")
+  @CsvSource({
+    "100, 100, 20, 0, false, 120",
+    "100, 150, 20, 0, false, 150",
+    "100, 100, 20, 40, false, 160",
+    "100, 150, 20, 40, false, 190",
+    "100, 100, 20, 40, true, 100",
+    "100, 150, 20, 0, true, 100"
+  })
+  @DisplayName(
+      "after a cast a mind pauses for its think and the intent's price, and one that chains"
+          + " thinks again the moment the power lands")
+  void afterCast(
+      final long now,
+      final long nextThink,
+      final int thinkTicks,
+      final int price,
+      final boolean chains,
+      final long next) {
+    assertEquals(next, PowerCasting.afterCast(now, nextThink, thinkTicks, price, chains));
+  }
 }

@@ -109,14 +109,14 @@ Bat, chalice, rose, tower, key, crescent moon, raven, serpent, crown, dagger, th
 
 ## The Veteran Hunter
 
-A veteran leads every raiding party sent against an elder or an ancient (GUILD-12). It has twice a hunter's health, wears silver-trimmed armour and carries a silver sword and a crossbow. It uses a hunter's attacks and these four of its own. Each has a pose and a sound before it lands, and one that hits the ground has a mark on the floor.
+A veteran leads every raiding party sent against an elder or an ancient (GUILD-12). It has twice a hunter's health, wears silver-trimmed armour and carries a silver sword and a crossbow. It uses a hunter's attacks and these four of its own, and weighs all of them in the mob brain (`docs/skills.md`), each of the four from its file in `data/nightborn/nightborn/mob_action/`. Each has a pose and a sound before it lands, and one that hits the ground has a mark on the floor.
 
 | Attack | Pose before it lands | What it does | Used when | Cooldown |
 |---|---|---|---|---|
-| Silver Chain | Swings a chain overhead for 1 second | Throws it up to 12 blocks. A vampire it hits is dragged to the veteran, is forced out of Bat Form and cannot leave the ground for 3 seconds. Vanish, Shadow Step or a wall between them stops it | A vampire is out of reach, in the air or in bat form | 15 seconds |
-| Bolt Volley | Kneels and levels the crossbow for 1.5 seconds, with a line marked on the floor | Fires 3 bolts coated with holy water along the line | A vampire is 8 to 20 blocks away | 12 seconds |
-| Holy Water Arc | Draws its arm back for 1 second, with the landing spots marked | Throws 3 splash holy water potions in an arc. Each leaves a pool with a radius of 1 block for 6 seconds that weakens and hurts a vampire standing in it | Two or more vampires are near, or one stands still | 20 seconds |
-| Rallying Cry | Raises its sword and shouts for 1 second | Hunters within a radius of 16 blocks heal 6 health, move faster for 8 seconds and are freed from mesmerise | An ally is mesmerised or the party has lost half its health | 45 seconds |
+| Silver Chain | Swings a chain overhead for 1 second | Throws it up to 12 blocks. A vampire it hits is dragged to the veteran, is forced out of Bat Form and cannot leave the ground for 3 seconds. Vanish, Shadow Step or a wall between them stops it | A foe is out of reach, in the air or in bat form, shoots from range or stops to drink or eat | 15 seconds |
+| Bolt Volley | Kneels and levels the crossbow for 1.5 seconds, with a line marked on the floor | Fires 3 bolts coated with holy water along the line | A foe is 8 to 20 blocks away, above all one running | 12 seconds |
+| Holy Water Arc | Draws its arm back for 1 second, with the landing spots marked | Throws 3 splash holy water potions in an arc. Each leaves a pool with a radius of 1 block for 6 seconds that weakens and hurts a vampire standing in it | Two or more foes are near, or one is held or stops to drink or eat | 20 seconds |
+| Rallying Cry | Raises its sword and shouts for 1 second | Hunters within a radius of 16 blocks heal 6 health, move faster for 8 seconds and are freed from mesmerise | A hunter within 16 blocks is mesmerised or badly hurt | 45 seconds |
 
 ## Art And Feel
 

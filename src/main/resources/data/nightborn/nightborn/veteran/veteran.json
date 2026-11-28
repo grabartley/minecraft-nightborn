@@ -10,5 +10,8 @@
     "nightborn:bolt_volley"
   ],
   "rank": "nightborn:veteran",
-  "bolt_damage": 4.0
+  "bolt_damage": 4.0,
+  "think_ticks": 20,
+  "sharpness": { "blur": 0.0, "reads": ["group", "place", "tactics"], "foresight": 2.0, "chains": true },
+  "presence": { "radius": 16, "effect": "minecraft:resistance" }
 }

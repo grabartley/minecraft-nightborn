@@ -17,6 +17,7 @@ import com.grahambartley.nightborn.mob.combat.FightBack;
 import com.grahambartley.nightborn.mob.combat.MobFighter;
 import com.grahambartley.nightborn.mob.combat.MobFighting;
 import com.grahambartley.nightborn.mob.combat.PowerCasting;
+import com.grahambartley.nightborn.mob.combat.PresenceAura;
 import com.grahambartley.nightborn.mob.home.HomeLife;
 import com.grahambartley.nightborn.mob.home.HouseholdTie;
 import com.grahambartley.nightborn.mob.home.MobBlood;
@@ -297,6 +298,7 @@ public class VampireEntity extends HostileEntity
   }
 
   protected void fightAsVampire() {
+    stage().combat().presence().ifPresent(presence -> PresenceAura.spread(this, presence));
     fighting.tick(
         this,
         MobFighting.engagement(

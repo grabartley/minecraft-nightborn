@@ -6,6 +6,9 @@ import com.grahambartley.nightborn.guild.HunterEntity;
 import com.grahambartley.nightborn.guild.HunterRig;
 import com.grahambartley.nightborn.guild.HunterVoice;
 import com.grahambartley.nightborn.inquisitor.StakeDownedGoal;
+import com.grahambartley.nightborn.mob.brain.Mind;
+import com.grahambartley.nightborn.mob.combat.MobFighting;
+import com.grahambartley.nightborn.mob.combat.PresenceAura;
 import java.util.Map;
 import java.util.Optional;
 import net.minecraft.entity.EntityType;
@@ -109,14 +112,25 @@ public class VeteranHunterEntity extends HunterEntity {
     }
   }
 
+  Map<Identifier, VeteranAttack> attacks() {
+    return veteran().map(kind -> VeteranData.attacks(getRegistryManager(), kind)).orElse(Map.of());
+  }
+
   @Override
-  public void fight() {
-    super.fight();
-    final Map<Identifier, VeteranAttack> known =
-        veteran().map(kind -> VeteranData.attacks(getRegistryManager(), kind)).orElse(Map.of());
-    if (!telling()) {
-      attacks.tick(known);
-    }
+  protected MobFighting.Moves extraMoves() {
+    return attacks;
+  }
+
+  @Override
+  protected Mind mind() {
+    final Mind ranked = super.mind();
+    return veteran().map(kind -> kind.mind(ranked)).orElse(ranked);
+  }
+
+  @Override
+  protected void mobTick() {
+    super.mobTick();
+    veteran().flatMap(Veteran::presence).ifPresent(presence -> PresenceAura.spread(this, presence));
   }
 
   @Override

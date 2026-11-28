@@ -8,11 +8,12 @@ import java.util.Locale;
 import java.util.Set;
 import net.minecraft.util.StringIdentifiable;
 
-public record Sharpness(float blur, Set<Sharpness.Reads> reads, float foresight) {
+public record Sharpness(float blur, Set<Sharpness.Reads> reads, float foresight, boolean chains) {
 
   public enum Reads implements StringIdentifiable {
     GROUP(Fact.GROUP),
-    PLACE(Fact.PLACE);
+    PLACE(Fact.PLACE),
+    TACTICS(Fact.TACTICS);
 
     public static final Codec<Reads> CODEC = StringIdentifiable.createCodec(Reads::values);
 
@@ -31,7 +32,9 @@ public record Sharpness(float blur, Set<Sharpness.Reads> reads, float foresight)
   public static final float MOST_BLUR = 0.9F;
   public static final float MOST_FORESIGHT = 2.0F;
 
-  public static final Sharpness KEEN = new Sharpness(0.0F, EnumSet.allOf(Reads.class), 1.0F);
+  public static final Set<Reads> USUAL_READS = Set.copyOf(EnumSet.of(Reads.GROUP, Reads.PLACE));
+
+  public static final Sharpness KEEN = new Sharpness(0.0F, USUAL_READS, 1.0F);
 
   public static final Codec<Sharpness> CODEC =
       RecordCodecBuilder.create(
@@ -44,15 +47,20 @@ public record Sharpness(float blur, Set<Sharpness.Reads> reads, float foresight)
                       Reads.CODEC
                           .listOf()
                           .<Set<Reads>>xmap(Sharpness::readsOf, List::copyOf)
-                          .optionalFieldOf("reads", EnumSet.allOf(Reads.class))
+                          .optionalFieldOf("reads", USUAL_READS)
                           .forGetter(Sharpness::reads),
                       Codec.floatRange(0.0F, MOST_FORESIGHT)
                           .optionalFieldOf("foresight", 1.0F)
-                          .forGetter(Sharpness::foresight))
+                          .forGetter(Sharpness::foresight),
+                      Codec.BOOL.optionalFieldOf("chains", false).forGetter(Sharpness::chains))
                   .apply(instance, Sharpness::new));
 
   public Sharpness {
     reads = readsOf(List.copyOf(reads));
+  }
+
+  public Sharpness(final float blur, final Set<Reads> reads, final float foresight) {
+    this(blur, reads, foresight, false);
   }
 
   public boolean reads(final Reads group) {

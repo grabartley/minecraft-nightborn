@@ -34,6 +34,12 @@
             {
               "fact": "target_distance",
               "high": 24
+            },
+            {
+              "fact": "idle_allies_in_radius",
+              "low": 1,
+              "high": 64,
+              "radius": 24
             }
           ]
         },
@@ -44,8 +50,31 @@
             {
               "fact": "target_distance",
               "high": 24
+            },
+            {
+              "fact": "idle_allies_in_radius",
+              "low": 1,
+              "high": 64,
+              "radius": 24
             }
           ]
+        },
+        {
+          "intent": "fight",
+          "aim": "self",
+          "considerations": [
+            {
+              "fact": "target_distance",
+              "high": 24
+            },
+            {
+              "fact": "idle_allies_in_radius",
+              "low": 3,
+              "high": 64,
+              "radius": 24
+            }
+          ],
+          "weight": 1.8
         }
       ]
     }

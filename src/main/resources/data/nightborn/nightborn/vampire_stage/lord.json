@@ -9,7 +9,9 @@
       "nightborn:lord/bat_swarm": 1000,
       "nightborn:core/blood_rush": 8,
       "nightborn:beast/bat_form": 6,
-      "nightborn:noble/mesmerise": 6,
+      "nightborn:noble/mesmerise": 8,
+      "nightborn:beast/pounce": 6,
+      "nightborn:occult/blood_ward": 6,
       "nightborn:occult/shadow_step": 6
     },
     "other_weight": 2
@@ -17,13 +19,15 @@
   "combat": {
     "blood_floor": 0,
     "think_ticks": 10,
+    "sharpness": { "blur": 0.0, "reads": ["group", "place", "tactics"], "foresight": 2.0, "chains": true },
     "tempered": false,
     "leap_chance": 65,
     "dash_chance": 60,
     "dodge_chance": 55,
     "power_dodge_chance": 70,
     "retreat_health": 20,
-    "stuck": { "ticks": 15 }
+    "stuck": { "ticks": 15 },
+    "presence": { "radius": 16, "effect": "minecraft:strength" }
   },
   "look": { "idle": "idle_ancient", "name_color": "dark_purple" },
   "loot": "nightborn:entities/vampire/lord"

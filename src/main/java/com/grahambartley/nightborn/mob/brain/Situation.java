@@ -26,7 +26,23 @@ public record Situation(
   }
 
   public record Self(
-      float health, int blood, boolean inForm, boolean sunlit, boolean downed, boolean stuck) {
+      float health,
+      int blood,
+      boolean inForm,
+      boolean sunlit,
+      boolean downed,
+      boolean stuck,
+      boolean held) {
+
+    public Self(
+        final float health,
+        final int blood,
+        final boolean inForm,
+        final boolean sunlit,
+        final boolean downed,
+        final boolean stuck) {
+      this(health, blood, inForm, sunlit, downed, stuck, false);
+    }
 
     public static Self of(final float health, final int blood) {
       return new Self(health, blood, false, false, false, false);
@@ -44,7 +60,39 @@ public record Situation(
       boolean vampire,
       boolean hunter,
       boolean aware,
-      boolean threatening) {
+      boolean threatening,
+      boolean healing,
+      boolean ranged,
+      boolean held) {
+
+    public Target(
+        final double distance,
+        final boolean inSight,
+        final float health,
+        final boolean windingUp,
+        final boolean running,
+        final boolean slowed,
+        final boolean airborne,
+        final boolean vampire,
+        final boolean hunter,
+        final boolean aware,
+        final boolean threatening) {
+      this(
+          distance,
+          inSight,
+          health,
+          windingUp,
+          running,
+          slowed,
+          airborne,
+          vampire,
+          hunter,
+          aware,
+          threatening,
+          false,
+          false,
+          false);
+    }
 
     public Target(final double distance, final boolean inSight, final float health) {
       this(distance, inSight, health, false, false, false, false, false, false);
@@ -102,7 +150,20 @@ public record Situation(
       boolean underAttack,
       boolean healing,
       boolean fighting,
-      boolean claimed) {}
+      boolean claimed,
+      boolean held) {
+
+    public Member(
+        final UUID id,
+        final double distance,
+        final float health,
+        final boolean underAttack,
+        final boolean healing,
+        final boolean fighting,
+        final boolean claimed) {
+      this(id, distance, health, underAttack, healing, fighting, claimed, false);
+    }
+  }
 
   public record Group(boolean known, List<Member> allies, List<Double> foeDistances) {
 
@@ -120,6 +181,12 @@ public record Situation(
     public double alliesWithin(final double radius) {
       return known
           ? allies.stream().filter(ally -> ally.fighting() && ally.distance() <= radius).count()
+          : Double.NaN;
+    }
+
+    public double idleAlliesWithin(final double radius) {
+      return known
+          ? allies.stream().filter(ally -> !ally.fighting() && ally.distance() <= radius).count()
           : Double.NaN;
     }
 

@@ -16,6 +16,8 @@ import com.grahambartley.nightborn.guild.veteran.Grounding;
 import com.grahambartley.nightborn.guild.veteran.VeteranHunterEntity;
 import com.grahambartley.nightborn.hunt.HuntAttachment;
 import com.grahambartley.nightborn.hunt.Hunts;
+import com.grahambartley.nightborn.mob.NightbornMobs;
+import com.grahambartley.nightborn.mob.VampireEntity;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -160,6 +162,31 @@ public class RaidingPartyGameTest implements FabricGameTest {
               vampire.getAttributeValue(EntityAttributes.GENERIC_JUMP_STRENGTH) == 0.0,
               "a grounded vampire cannot jump");
           TestPlayers.finish(context, vampire);
+        });
+  }
+
+  @GameTest(templateName = ARENA, tickLimit = 80)
+  public void aVeteransBrainWeighsItsOwnAttacks(final TestContext context) {
+    final VeteranHunterEntity veteran =
+        context.spawnEntity(GuildMobs.VETERAN_HUNTER, new BlockPos(1, 2, 4));
+    veteran.setAiDisabled(true);
+    final VampireEntity vampire = context.spawnEntity(NightbornMobs.VAMPIRE, new BlockPos(7, 2, 4));
+    vampire.setAiDisabled(true);
+    veteran.setTarget(vampire);
+    final Identifier chain = Identifier.of("nightborn", "silver_chain");
+    context.runAtEveryTick(
+        () -> {
+          veteran.fight();
+          if (veteran
+              .mobFighting()
+              .lastThink()
+              .filter(
+                  think ->
+                      think.ranked().stream()
+                          .anyMatch(scored -> scored.option().id().equals(chain)))
+              .isPresent()) {
+            context.complete();
+          }
         });
   }
 }
