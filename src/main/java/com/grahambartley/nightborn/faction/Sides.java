@@ -32,8 +32,7 @@ public final class Sides {
     return !boss && allied;
   }
 
-  public static boolean foe(
-      final boolean allied, final boolean opposed, final boolean fightsUs, final boolean fought) {
-    return !allied && (opposed || fightsUs || fought);
+  public static boolean foe(final boolean opposed, final boolean fightsUs, final boolean fought) {
+    return opposed || fightsUs || fought;
   }
 }

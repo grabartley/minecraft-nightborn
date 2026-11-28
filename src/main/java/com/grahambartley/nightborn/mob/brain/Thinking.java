@@ -36,11 +36,12 @@ public final class Thinking {
 
   private static Optional<Think> think(
       final MobEntity mob, final boolean dodge, final int mobFloor, final Vec3d moved) {
-    final Intent reported = Intents.read(mob);
-    final boolean aids = aids(dodge, mob.getTarget() != null, reported);
-    if (aids && !ownsHelp(mob)) {
+    final boolean standingBy = !dodge && mob.getTarget() == null;
+    if (standingBy && !ownsHelp(mob)) {
       return Optional.empty();
     }
+    final Intent reported = Intents.read(mob);
+    final boolean aids = aids(dodge, mob.getTarget() != null, reported);
     final Intent intent = aids ? Intent.FIGHT : reported;
     final List<PowerChoice.Option> options =
         aids ? helping(options(mob, false, intent), intent) : options(mob, dodge, intent);

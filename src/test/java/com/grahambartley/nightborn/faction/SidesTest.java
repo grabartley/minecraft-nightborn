@@ -54,23 +54,18 @@ class SidesTest {
     assertEquals(allied, Sides.allied(self, sameSide, teammate, fighting));
   }
 
-  @ParameterizedTest(name = "allied {0}, opposed {1}, fights us {2}, fought {3}: foe {4}")
+  @ParameterizedTest(name = "opposed {0}, fights us {1}, fought {2}: foe {3}")
   @CsvSource({
-    "false, true, false, false, true",
-    "false, false, true, false, true",
-    "false, false, false, true, true",
-    "false, false, false, false, false",
-    "true, true, true, true, false"
+    "true, false, false, true",
+    "false, true, false, true",
+    "false, false, true, true",
+    "false, false, false, false"
   })
   @DisplayName(
-      "a foe is anyone not allied who is on the other side, fights the group, or is fought by it")
-  void foe(
-      final boolean allied,
-      final boolean opposed,
-      final boolean fightsUs,
-      final boolean fought,
-      final boolean foe) {
-    assertEquals(foe, Sides.foe(allied, opposed, fightsUs, fought));
+      "of those not allied, a foe is one on the other side, one that fights the group, or one it"
+          + " fights")
+  void foe(final boolean opposed, final boolean fightsUs, final boolean fought, final boolean foe) {
+    assertEquals(foe, Sides.foe(opposed, fightsUs, fought));
   }
 
   @ParameterizedTest(name = "boss {0}, allied {1}: spared {2}")

@@ -48,7 +48,10 @@ public final class GroupViews {
     final List<LivingEntity> allies = new ArrayList<>();
     final List<LivingEntity> others = new ArrayList<>();
     for (final LivingEntity other : near) {
-      if (other == mob || mob.distanceTo(other) > VIEW_RADIUS) {
+      if (other == mob
+          || !other.isAlive()
+          || other.isRemoved()
+          || mob.distanceTo(other) > VIEW_RADIUS) {
         continue;
       }
       (Allies.allied(mob, other) ? allies : others).add(other);
@@ -57,7 +60,6 @@ public final class GroupViews {
     for (final LivingEntity other : others) {
       if (PowerReach.touches(mob, other)
           && Sides.foe(
-              false,
               Allies.opposed(mob, other),
               fightsUs(other, mob, allies),
               fought(other, mob, allies))) {
