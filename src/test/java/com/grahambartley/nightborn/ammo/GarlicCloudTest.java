@@ -21,7 +21,7 @@ class GarlicCloudTest {
       final int weakenTicks) {
     final GarlicCloud cloud =
         GarlicCloud.of(
-            new GearSettings(4, 4, 6, 40, 10, strength, weakenSeconds, radius, cloudSeconds));
+            new GearSettings(4, 6, 40, 10, strength, weakenSeconds, radius, cloudSeconds));
     assertEquals(radius, cloud.radius());
     assertEquals(durationTicks, cloud.durationTicks());
     assertEquals(strength, cloud.strength());
@@ -33,7 +33,7 @@ class GarlicCloudTest {
   @DisplayName("the cloud thins to half its radius by the time it fades")
   void thinsToHalf(final int radius, final int cloudSeconds) {
     final GarlicCloud cloud =
-        GarlicCloud.of(new GearSettings(4, 4, 6, 40, 10, 60, 5, radius, cloudSeconds));
+        GarlicCloud.of(new GearSettings(4, 6, 40, 10, 60, 5, radius, cloudSeconds));
     assertEquals(
         radius * GarlicCloud.SHRINK_TO,
         cloud.radius() + cloud.radiusGrowth() * cloud.durationTicks(),

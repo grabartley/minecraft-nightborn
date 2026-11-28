@@ -68,6 +68,10 @@ public class VeteranHunterEntity extends HunterEntity {
     return veteranId;
   }
 
+  public float boltDamage() {
+    return veteran().map(Veteran::boltDamage).orElse(0.0F);
+  }
+
   private Optional<Veteran> veteran() {
     return VeteranData.veteran(getRegistryManager(), veteranId);
   }

@@ -26,10 +26,9 @@ class GearSettingsTest {
   @DisplayName("the constructor clamps values into bounds")
   void clamps() {
     assertEquals(
-        new GearSettings(0, 0, 0, 0, 1, 0, 1, 1, 1),
-        new GearSettings(-1, -1, -1, -1, 0, -1, 0, 0, 0));
+        new GearSettings(0, 0, 0, 1, 0, 1, 1, 1), new GearSettings(-1, -1, -1, 0, -1, 0, 0, 0));
     assertEquals(
-        new GearSettings(20, 20, 40, 100, 120, 100, 60, 8, 60),
-        new GearSettings(21, 21, 41, 101, 121, 101, 61, 9, 61));
+        new GearSettings(20, 40, 100, 120, 100, 60, 8, 60),
+        new GearSettings(21, 41, 101, 121, 101, 61, 9, 61));
   }
 }

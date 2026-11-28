@@ -305,6 +305,7 @@ public class GuildMasterEntity extends MerchantEntity
             .map(Identifier::toString)
             .orElse("");
     kit = kits.get(Identifier.tryParse(kitId));
+    KitDamage.arm(this, kit);
   }
 
   @Override

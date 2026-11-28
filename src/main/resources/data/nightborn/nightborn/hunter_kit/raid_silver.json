@@ -1,5 +1,6 @@
 {
   "weapon": "nightborn:silver_stake",
   "crucifix": "nightborn:silver_crucifix",
-  "weight": 0
+  "weight": 0,
+  "damage": 11.0
 }

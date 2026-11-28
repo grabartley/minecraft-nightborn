@@ -3,6 +3,7 @@ package com.grahambartley.nightborn.gametest;
 import com.grahambartley.nightborn.ammo.BoltEntity;
 import com.grahambartley.nightborn.gear.GearItems;
 import com.grahambartley.nightborn.guild.CrossbowGoal;
+import com.grahambartley.nightborn.guild.GuildData;
 import com.grahambartley.nightborn.guild.GuildMobs;
 import com.grahambartley.nightborn.guild.HunterAction;
 import com.grahambartley.nightborn.guild.HunterEntity;
@@ -12,12 +13,14 @@ import com.grahambartley.nightborn.mob.VampireEntity;
 import com.grahambartley.nightborn.ward.Wards;
 import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
 import net.minecraft.entity.EquipmentSlot;
+import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.projectile.thrown.PotionEntity;
 import net.minecraft.item.CrossbowItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.test.GameTest;
 import net.minecraft.test.TestContext;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 
 public class HunterTacticsGameTest implements FabricGameTest {
@@ -151,6 +154,35 @@ public class HunterTacticsGameTest implements FabricGameTest {
           fight(hunter, 1);
           context.assertFalse(Wards.wards(hunter), "it puts the crucifix away after");
           context.assertEquals(hunter.action(), HunterAction.NONE, "and lowers its arm");
+          context.complete();
+        });
+  }
+
+  @GameTest(templateName = ARENA, tickLimit = START + 20)
+  public void aStakeHunterStrikesWithItsKitsOwnDamageAndACrossbowHunterDoesNot(
+      final TestContext context) {
+    final HunterEntity staker = hunter(context, new BlockPos(1, 2, 4));
+    final HunterEntity shooter = hunter(context, new BlockPos(5, 2, 4));
+    context.runAtTick(
+        START,
+        () -> {
+          final double base = staker.getAttributeBaseValue(EntityAttributes.GENERIC_ATTACK_DAMAGE);
+          final float kit =
+              GuildData.kits(staker.getRegistryManager())
+                  .get(Identifier.of("nightborn", "stake"))
+                  .damage();
+          staker.arm(STAKE_KIT);
+          shooter.arm(CROSSBOW_KIT);
+          staker.equipStack(EquipmentSlot.MAINHAND, new ItemStack(GearItems.WOODEN_STAKE));
+          context.assertTrue(kit > 0.0F, "the stake kit carries damage of its own");
+          context.assertEquals(
+              staker.getAttributeValue(EntityAttributes.GENERIC_ATTACK_DAMAGE),
+              base + kit,
+              "a stake hunter hits with its kit's damage, not its stake's");
+          context.assertEquals(
+              shooter.getAttributeValue(EntityAttributes.GENERIC_ATTACK_DAMAGE),
+              base,
+              "a crossbow hunter's damage goes to its bolts, not its blows");
           context.complete();
         });
   }

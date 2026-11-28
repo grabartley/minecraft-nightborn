@@ -42,7 +42,7 @@ class HunterDataCheckTest {
   private static HunterKit kit(
       final Identifier weapon, final Identifier bolt, final Identifier crucifix) {
     return new HunterKit(
-        weapon, Optional.ofNullable(bolt), Optional.ofNullable(crucifix), false, 1);
+        weapon, Optional.ofNullable(bolt), Optional.ofNullable(crucifix), false, 1, 0.0F);
   }
 
   static Stream<Arguments> data() {

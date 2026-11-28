@@ -9,7 +9,7 @@ import org.junit.jupiter.params.provider.CsvSource;
 
 class HolyWaterDoseTest {
 
-  private static final GearSettings SETTINGS = new GearSettings(4, 4, 6, 40, 10, 60, 5, 3, 10);
+  private static final GearSettings SETTINGS = new GearSettings(4, 6, 40, 10, 60, 5, 3, 10);
 
   @ParameterizedTest(name = "proximity {0}, faith x{1}: {2} damage, {3}% for {4} ticks")
   @CsvSource({

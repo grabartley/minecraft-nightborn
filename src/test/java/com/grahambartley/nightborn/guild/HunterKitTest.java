@@ -32,7 +32,8 @@ class HunterKitTest {
         bolt ? Optional.of(id("bolt")) : Optional.empty(),
         Optional.empty(),
         false,
-        weight);
+        weight,
+        0.0F);
   }
 
   private static final Map<Identifier, HunterKit> SAMPLE =
@@ -70,6 +71,20 @@ class HunterKitTest {
   @CsvSource({"0.0", "0.99"})
   void picksNothingWhenThereAreNoKits(final double roll) {
     assertEquals(Optional.empty(), HunterKit.pick(Map.of(), roll));
+  }
+
+  @ParameterizedTest(name = "{0}: damage {1}")
+  @CsvSource({
+    "'{\"weapon\": \"nightborn:wooden_stake\"}', 0.0",
+    "'{\"weapon\": \"nightborn:wooden_stake\", \"damage\": 6.0}', 6.0"
+  })
+  void readsItsOwnDamageOrNone(final String json, final float damage) {
+    assertEquals(
+        damage,
+        HunterKit.CODEC
+            .parse(JsonOps.INSTANCE, JsonParser.parseString(json))
+            .getOrThrow()
+            .damage());
   }
 
   @ParameterizedTest(name = "bolt {0}: ranged {0}")

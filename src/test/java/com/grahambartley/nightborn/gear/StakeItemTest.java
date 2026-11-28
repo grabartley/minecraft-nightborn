@@ -3,6 +3,8 @@ package com.grahambartley.nightborn.gear;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.grahambartley.nightborn.MinecraftBootstrapExtension;
+import com.grahambartley.nightborn.eldest.AshenSilver;
+import com.grahambartley.nightborn.eldest.EldestSpoils;
 import java.util.stream.Stream;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.AttributeModifiersComponent;
@@ -23,13 +25,14 @@ class StakeItemTest {
 
   static Stream<Arguments> stakes() {
     return Stream.of(
-        Arguments.of(GearItems.WOODEN_STAKE, ToolMaterials.WOOD, 2.0),
-        Arguments.of(GearItems.SILVER_STAKE, SilverMaterial.SILVER, 4.0));
+        Arguments.of(GearItems.WOODEN_STAKE, ToolMaterials.WOOD, 0.0),
+        Arguments.of(GearItems.SILVER_STAKE, SilverMaterial.SILVER, 1.0),
+        Arguments.of(EldestSpoils.ASHEN_SILVER_STAKE, AshenSilver.ASHEN_SILVER, 1.5));
   }
 
   @ParameterizedTest(name = "{1}")
   @MethodSource("stakes")
-  @DisplayName("a stake hits a little harder than its material's base, quicker than a sword")
+  @DisplayName("a stake adds half its material's damage to a bare fist, quicker than a sword")
   void attributes(final Item stake, final ToolMaterial material, final double damage) {
     final AttributeModifiersComponent modifiers =
         stake.getComponents().get(DataComponentTypes.ATTRIBUTE_MODIFIERS);

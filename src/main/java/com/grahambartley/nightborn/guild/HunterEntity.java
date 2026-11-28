@@ -465,6 +465,7 @@ public class HunterEntity extends PathAwareEntity
   protected void carry(final String id, @Nullable final HunterKit carried) {
     kitId = id;
     kit = carried;
+    KitDamage.arm(this, carried);
   }
 
   @Override

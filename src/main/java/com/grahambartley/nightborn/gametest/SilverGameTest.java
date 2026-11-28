@@ -29,7 +29,7 @@ public class SilverGameTest implements FabricGameTest {
   static final String ARENA = "nightborn:vampire_arena";
 
   @GameTest(templateName = ARENA, tickLimit = TestPlayers.READY + 20)
-  public void aMobSwingingSilverOrAStakeHitsVampiresHarder(final TestContext context) {
+  public void aMobSwingingSilverHitsVampiresHarderButAStakeDoesNot(final TestContext context) {
     final List<Item> weapons =
         List.of(
             GearItems.WOODEN_STAKE,
@@ -37,7 +37,7 @@ public class SilverGameTest implements FabricGameTest {
             GearItems.SILVER_AXE,
             GearItems.SILVER_STAKE,
             Items.IRON_SWORD);
-    final List<Float> bonus = List.of(4.0F, 4.0F, 4.0F, 8.0F, 0.0F);
+    final List<Float> bonus = List.of(0.0F, 4.0F, 4.0F, 0.0F, 0.0F);
     final ServerPlayerEntity human = TestPlayers.human(context, new BlockPos(2, 2, 4));
     final ServerPlayerEntity vampire = TestPlayers.vampire(context, new BlockPos(6, 2, 4));
     final ZombieEntity attacker = context.spawnEntity(EntityType.ZOMBIE, new BlockPos(4, 2, 4));

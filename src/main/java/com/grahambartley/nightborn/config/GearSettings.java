@@ -3,7 +3,6 @@ package com.grahambartley.nightborn.config;
 import java.util.List;
 
 public record GearSettings(
-    int stakeDamage,
     int silverDamage,
     int holyWaterDamage,
     int holyWaterStrength,
@@ -15,8 +14,6 @@ public record GearSettings(
 
   static final String SECTION = "gear";
 
-  public static final IntSetting STAKE_DAMAGE =
-      new IntSetting(SECTION, "stakeDamage", 4, 0, 20, c -> c.gear().stakeDamage());
   public static final IntSetting SILVER_DAMAGE =
       new IntSetting(SECTION, "silverDamage", 4, 0, 20, c -> c.gear().silverDamage());
   public static final IntSetting HOLY_WATER_DAMAGE =
@@ -37,7 +34,6 @@ public record GearSettings(
 
   public static final List<Setting<?>> SETTINGS =
       List.of(
-          STAKE_DAMAGE,
           SILVER_DAMAGE,
           HOLY_WATER_DAMAGE,
           HOLY_WATER_STRENGTH,
@@ -48,7 +44,6 @@ public record GearSettings(
           GARLIC_BOMB_CLOUD_SECONDS);
 
   public GearSettings {
-    stakeDamage = STAKE_DAMAGE.clamp(stakeDamage);
     silverDamage = SILVER_DAMAGE.clamp(silverDamage);
     holyWaterDamage = HOLY_WATER_DAMAGE.clamp(holyWaterDamage);
     holyWaterStrength = HOLY_WATER_STRENGTH.clamp(holyWaterStrength);
@@ -61,7 +56,6 @@ public record GearSettings(
 
   static GearSettings from(final SettingValues values) {
     return new GearSettings(
-        values.get(STAKE_DAMAGE),
         values.get(SILVER_DAMAGE),
         values.get(HOLY_WATER_DAMAGE),
         values.get(HOLY_WATER_STRENGTH),

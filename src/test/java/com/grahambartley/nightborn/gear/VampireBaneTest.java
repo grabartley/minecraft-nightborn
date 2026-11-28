@@ -17,18 +17,19 @@ import org.junit.jupiter.params.provider.CsvSource;
 @ExtendWith(MinecraftBootstrapExtension.class)
 class VampireBaneTest {
 
-  private static final GearSettings SETTINGS = new GearSettings(4, 3, 6, 40, 10, 60, 5, 3, 10);
+  private static final GearSettings SETTINGS = new GearSettings(3, 6, 40, 10, 60, 5, 3, 10);
 
   @ParameterizedTest(name = "vampire {0}, stake {1}, silver {2}: +{3}")
   @CsvSource({
-    "true, true, false, 4",
+    "true, true, false, 0",
     "true, false, true, 3",
-    "true, true, true, 7",
+    "true, true, true, 0",
     "true, false, false, 0",
+    "false, true, false, 0",
     "false, true, true, 0",
     "false, false, true, 0"
   })
-  @DisplayName("stakes and silver add their damage against vampires only")
+  @DisplayName("silver blades add their damage against vampires only, and a stake adds none")
   void bonus(final boolean vampire, final boolean stake, final boolean silver, final float bonus) {
     assertEquals(bonus, VampireBane.bonus(vampire, stake, silver, SETTINGS));
   }

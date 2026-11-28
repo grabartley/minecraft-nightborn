@@ -108,13 +108,11 @@ final class HunterTactics<T extends MobEntity & GuildFighter> {
     if (timer.action() == HunterAction.CROSSBOW_SHOT) {
       final ItemStack bolt = stack(kit.bolt());
       if (bolt.getItem() instanceof CrossbowAmmo ammo) {
-        launch(
+        final ProjectileEntity shot =
             ammo.createProjectile(
-                hunter.getWorld(), hunter, bolt, hunter.getMainHandStack(), false),
-            target,
-            target.getBodyY(1.0 / 3.0),
-            BOLT_SPEED,
-            BOLT_SPREAD);
+                hunter.getWorld(), hunter, bolt, hunter.getMainHandStack(), false);
+        KitDamage.sharpen(shot, KitDamage.bolt(kit), BOLT_SPEED);
+        launch(shot, target, target.getBodyY(1.0 / 3.0), BOLT_SPEED, BOLT_SPREAD);
         hunter.playSound(SoundEvents.ITEM_CROSSBOW_SHOOT, 1.0F, 1.0F);
       }
       return;
