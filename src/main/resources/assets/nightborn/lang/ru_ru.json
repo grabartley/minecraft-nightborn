@@ -400,7 +400,7 @@
   "skill.nightborn.faithful.grace": "Благодать",
   "skill.nightborn.faithful.grace.description": "Ваши целебные молитвы лечат на четверть больше с каждым рангом",
   "skill.nightborn.faithful.blood_fire": "Кровавый огонь",
-  "skill.nightborn.faithful.blood_fire.description": "Порежьте себя и подожгите оружие. Оно ярко горит, наносит урон огнём, поджигает вампира и не даёт ему исцеляться, пока он горит",
+  "skill.nightborn.faithful.blood_fire.description": "Порежьте себя и подожгите оружие. Оно ярко горит, наносит урон огнём и поджигает всё, по чему бьёт. Вампир не может исцеляться, пока горит",
   "skill.nightborn.faithful.sanctuary": "Святилище",
   "skill.nightborn.faithful.sanctuary.description": "Молитесь какое-то время. Люди вокруг вас понемногу исцеляются, освобождаются от взгляда вампира, и их нельзя заворожить или запугать",
   "skill.nightborn.faithful.consecrate": "Освящение",

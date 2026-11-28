@@ -15,11 +15,23 @@ class KindleRulesTest {
     assertEquals(affords, KindleRules.affords(health, cost));
   }
 
-  @ParameterizedTest(name = "vampire {0}, weapon blow {1} -> {2}")
-  @CsvSource({"true, true, true", "false, true, false", "true, false, false"})
-  @DisplayName("a burning blade sets only a vampire it strikes alight")
-  void sets(final boolean vampire, final boolean blow, final boolean sets) {
-    assertEquals(sets, KindleRules.sets(vampire, blow));
+  @ParameterizedTest(name = "fire immune {0}, weapon blow {1} -> {2}")
+  @CsvSource({
+    "false, true, true",
+    "true, true, false",
+    "false, false, false",
+    "true, false, false"
+  })
+  @DisplayName("a burning blade sets alight anything it strikes that can burn")
+  void sets(final boolean fireImmune, final boolean blow, final boolean sets) {
+    assertEquals(sets, KindleRules.sets(fireImmune, blow));
+  }
+
+  @ParameterizedTest(name = "vampire {0} -> seared {1}")
+  @CsvSource({"true, true", "false, false"})
+  @DisplayName("only a vampire is seared so it cannot heal while it burns")
+  void sears(final boolean vampire, final boolean seared) {
+    assertEquals(seared, KindleRules.sears(vampire));
   }
 
   @ParameterizedTest(name = "{0} healing, seared {1}, on fire {2} -> {3}")

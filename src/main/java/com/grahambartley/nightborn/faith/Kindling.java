@@ -116,12 +116,13 @@ public final class Kindling {
     }
     burning(weapon, target.getWorld().getTime())
         .filter(
-            flame ->
-                KindleRules.sets(Vampires.isVampire(target), source.isIn(Coatings.WEAPON_STRIKES)))
+            flame -> KindleRules.sets(target.isFireImmune(), source.isIn(Coatings.WEAPON_STRIKES)))
         .ifPresent(
             flame -> {
               target.setFireTicks(Math.max(target.getFireTicks(), flame.burnTicks()));
-              FaithMarks.SEARED.set(target, flame.burnTicks());
+              if (KindleRules.sears(Vampires.isVampire(target))) {
+                FaithMarks.SEARED.set(target, flame.burnTicks());
+              }
             });
   }
 
