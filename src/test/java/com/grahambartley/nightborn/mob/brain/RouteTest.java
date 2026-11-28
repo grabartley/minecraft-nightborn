@@ -19,11 +19,12 @@ class RouteTest {
     "0, 10, 10, 0, true, 0, 2.414214, 10",
     "5, 0, 10, 0, false, 1, NaN, 10",
     "0, 0, 0.5, 0, true, 0, 1, 0.5",
-    "0, 30, 0, 40, true, 0, 1, 40"
+    "0, 30, 0, 40, true, 0, 1, 40",
+    "0, 30, 0, 40, false, NaN, NaN, 40"
   })
   @DisplayName(
-      "a route that falls short has a gap ahead, and one that reaches compares its walk with the"
-          + " straight line")
+      "a route that falls short inside the search range has a gap ahead, one cut off by the range"
+          + " says nothing, and one that reaches compares its walk with the straight line")
   void shape(
       final double viaX,
       final double viaZ,
@@ -34,7 +35,8 @@ class RouteTest {
       final double detour,
       final double trip) {
     final Vec3d goal = new Vec3d(goalX, 64, goalZ);
-    final Route route = Route.of(FROM, List.of(new Vec3d(viaX, 64, viaZ), goal), goal, reaches);
+    final Route route =
+        Route.of(FROM, List.of(new Vec3d(viaX, 64, viaZ), goal), goal, reaches, 32.0);
     assertEquals(gap, route.gapAhead(), 1.0E-6);
     assertEquals(detour, route.detour(), 1.0E-6);
     assertEquals(trip, route.tripLength(), 1.0E-6);

@@ -213,7 +213,7 @@ public class VampireStageGameTest implements FabricGameTest {
         vampire,
         SkillTree.VAMPIRE,
         VampireStaging.learned(
-            List.of(BEAST, BAT_FORM),
+            List.of(BEAST_BLOOD, BAT_FORM),
             Skills.allSkills(registries),
             Skills.allBranches(registries)));
     BloodAttachment.set(vampire, BloodAttachment.FULL);

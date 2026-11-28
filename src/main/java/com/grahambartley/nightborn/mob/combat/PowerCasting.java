@@ -67,9 +67,10 @@ public final class PowerCasting {
         final Optional<CastAim> aim =
             CastAims.resolve(caster, telling.aim(), aided(caster, telling.ally()));
         if (aim.isPresent()) {
-          final Vec3d course = RouteEnd.goal(caster);
-          if (cast.apply(caster, power, aim.get()) == PowerUse.Verdict.READY) {
-            hold.take(now, holdTicks(caster, power), course);
+          final Vec3d course = RouteEnd.course(caster);
+          final int holdTicks = holdTicks(caster, power);
+          if (cast.apply(caster, power, aim.get()) == PowerUse.Verdict.READY && holdTicks > 0) {
+            hold.take(now, holdTicks, course);
           }
         } else {
           nextThink = now;

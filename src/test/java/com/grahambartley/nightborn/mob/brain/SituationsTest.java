@@ -18,7 +18,9 @@ class SituationsTest {
     "TARGET_DISTANCE OWN_HEALTH SUN_ON_ME SPOT_DISTANCE, false",
     "TARGET_RUNNING, true",
     "TARGET_DISTANCE TARGET_HUNTER, true",
-    "TARGET_WINDING_UP TARGET_SLOWED TARGET_AIRBORNE TARGET_VAMPIRE, true"
+    "TARGET_WINDING_UP TARGET_SLOWED TARGET_AIRBORNE TARGET_VAMPIRE, true",
+    "TARGET_AWARE, true",
+    "GAP_AHEAD LIGHT UNTIL_DAWN, false"
   })
   @DisplayName("a mob reads its target's signs only when a ready power asks for one")
   void readsSigns(final String facts, final boolean reads) {

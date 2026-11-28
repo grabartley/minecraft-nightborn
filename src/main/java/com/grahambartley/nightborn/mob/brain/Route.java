@@ -10,8 +10,15 @@ public record Route(double gapAhead, double detour, double tripLength) {
   static final double SHORTEST_TRIP = 1.0;
 
   public static Route of(
-      final Vec3d from, final List<Vec3d> nodes, final Vec3d goal, final boolean reaches) {
+      final Vec3d from,
+      final List<Vec3d> nodes,
+      final Vec3d goal,
+      final boolean reaches,
+      final double searchRange) {
     final double trip = from.distanceTo(goal);
+    if (!reaches && trip > searchRange) {
+      return new Route(Double.NaN, Double.NaN, trip);
+    }
     if (!reaches) {
       return new Route(1.0, Double.NaN, trip);
     }

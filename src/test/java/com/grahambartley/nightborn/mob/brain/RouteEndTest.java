@@ -87,7 +87,7 @@ class RouteEndTest {
             new BlockPos(3, 64, 4),
             reaches);
     path.next();
-    final Route route = RouteEnd.route(new Vec3d(0.5, 64, 0.5), path);
+    final Route route = RouteEnd.route(new Vec3d(0.5, 64, 0.5), path, 32.0);
     assertEquals(gap, route.gapAhead(), 1.0E-9);
     assertEquals(5.0, route.tripLength(), 1.0E-9);
     assertEquals(reaches ? 7.0 / 5.0 : Double.NaN, route.detour(), 1.0E-9);
@@ -96,7 +96,19 @@ class RouteEndTest {
   @Test
   @DisplayName("a mob with no route knows nothing of the way ahead")
   void noRouteAhead() {
-    assertEquals(Route.UNKNOWN, RouteEnd.route(Vec3d.ZERO, null));
+    assertEquals(Route.UNKNOWN, RouteEnd.route(Vec3d.ZERO, null, 32.0));
     assertNull(RouteEnd.goal((Path) null));
+  }
+
+  @ParameterizedTest(name = "away from home {0}, route goal {1}: heads for home {2}")
+  @CsvSource({"true, true, true", "true, false, true", "false, true, false", "false, false, false"})
+  @DisplayName(
+      "a mob away from its home heads for home itself, not the next hop of its walk, and"
+          + " otherwise for where its route goes")
+  void course(final boolean awayFromHome, final boolean hasGoal, final boolean home) {
+    final Vec3d homeSpot = new Vec3d(40.5, 64, 0.5);
+    final Vec3d hop = new Vec3d(10.5, 64, 0.5);
+    final Vec3d course = RouteEnd.course(awayFromHome ? homeSpot : null, hasGoal ? hop : null);
+    assertEquals(home ? homeSpot : hasGoal ? hop : null, course);
   }
 }
