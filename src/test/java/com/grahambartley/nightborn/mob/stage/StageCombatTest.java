@@ -146,7 +146,7 @@ class StageCombatTest {
                     .get("combat"))
             .getOrThrow();
     final Disposition hot = new Disposition(Map.of(Aim.TARGET, 1.5F), 0.5F);
-    assertEquals(new Mind(combat.thinkTicks(), combat.sharpness(), hot), combat.mind(hot));
+    assertEquals(new Mind(combat.thinkTicks(), combat.sharpness(), hot), combat.mind(() -> hot));
   }
 
   private static StageCombat shippedCombat(final String stage) throws IOException {
@@ -166,7 +166,10 @@ class StageCombatTest {
     final StageCombat combat = shippedCombat(stage);
     assertEquals(
         new Mind(combat.thinkTicks(), Sharpness.KEEN, Disposition.EVEN),
-        combat.mind(new Disposition(Map.of(Aim.TARGET, 1.5F), 0.5F)));
+        combat.mind(
+            () -> {
+              throw new AssertionError("an untempered stage reads no temperament");
+            }));
   }
 
   @ParameterizedTest(name = "{0}, rolls {1} and {2}: {3}")
@@ -188,7 +191,7 @@ class StageCombatTest {
         ChoiceFixtures.id(picked),
         ChoiceFixtures.pick(
             ChoiceFixtures.strikeOrGuard(0),
-            shippedCombat(stage).mind(Disposition.EVEN),
+            shippedCombat(stage).mind(() -> Disposition.EVEN),
             IntentBudget.FREE,
             ChoiceFixtures.rolls(first, second)));
   }

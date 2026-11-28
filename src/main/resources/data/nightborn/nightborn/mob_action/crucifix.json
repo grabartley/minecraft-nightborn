@@ -2,6 +2,7 @@
   "uses": [
     {
       "intent": "fight",
+      "aim": "self",
       "considerations": [
         {
           "fact": "target_in_sight",

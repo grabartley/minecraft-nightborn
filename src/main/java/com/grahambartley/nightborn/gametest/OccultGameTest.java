@@ -509,7 +509,7 @@ public class OccultGameTest implements FabricGameTest {
     ally.setAiDisabled(true);
     final HunterEntity hunter = context.spawnEntity(GuildMobs.HUNTER, new BlockPos(7, 2, 7));
     hunter.setAiDisabled(true);
-    final Mind mind = warden.stage().combat().mind(Disposition.EVEN);
+    final Mind mind = warden.stage().combat().mind(() -> Disposition.EVEN);
     final int floor = warden.stage().combat().bloodFloor();
     context.runAtTick(
         5,

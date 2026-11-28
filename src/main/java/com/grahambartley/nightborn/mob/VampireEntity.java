@@ -309,13 +309,14 @@ public class VampireEntity extends HostileEntity
         stage().combat().bloodFloor());
   }
 
-  public Mind mind() {
+  private Mind mind() {
     return stage()
         .combat()
         .mind(
-            householdLife()
-                .temperament(getWorld().getRegistryManager(), getRandom()::nextDouble)
-                .disposition());
+            () ->
+                householdLife()
+                    .temperament(getWorld().getRegistryManager(), getRandom()::nextDouble)
+                    .disposition());
   }
 
   @Override

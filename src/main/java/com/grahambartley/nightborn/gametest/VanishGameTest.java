@@ -46,7 +46,7 @@ public final class VanishGameTest implements FabricGameTest {
         .tick(
             vampire,
             MobFighting.Engagement.FIGHTING,
-            () -> ALWAYS_DODGES.mind(Disposition.EVEN),
+            () -> ALWAYS_DODGES.mind(() -> Disposition.EVEN),
             ALWAYS_DODGES.bloodFloor());
   }
 

@@ -134,7 +134,7 @@ public class VampireStageGameTest implements FabricGameTest {
         .tick(
             vampire,
             MobFighting.Engagement.FIGHTING,
-            () -> vampire.stage().combat().mind(Disposition.EVEN),
+            () -> vampire.stage().combat().mind(() -> Disposition.EVEN),
             vampire.stage().combat().bloodFloor());
     final Think think = vampire.mobFighting().lastThink().orElseThrow();
     context.assertEquals(think.intent(), Intent.FIGHT, "a vampire with a target is fighting");
@@ -167,7 +167,7 @@ public class VampireStageGameTest implements FabricGameTest {
     final VillagerEntity villager = context.spawnEntity(EntityType.VILLAGER, new BlockPos(4, 2, 4));
     villager.setAiDisabled(true);
     vampire.setTarget(villager);
-    final Mind mind = vampire.stage().combat().mind(Disposition.EVEN);
+    final Mind mind = vampire.stage().combat().mind(() -> Disposition.EVEN);
     final int thinkTicks = mind.thinkTicks();
     context.runAtTick(
         2,
@@ -224,7 +224,7 @@ public class VampireStageGameTest implements FabricGameTest {
     BloodAttachment.set(vampire, BloodAttachment.FULL);
     final VillagerEntity prey = context.spawnEntity(EntityType.VILLAGER, new BlockPos(7, 2, 4));
     prey.setAiDisabled(true);
-    final Mind mind = vampire.stage().combat().mind(Disposition.EVEN);
+    final Mind mind = vampire.stage().combat().mind(() -> Disposition.EVEN);
     final int floor = vampire.stage().combat().bloodFloor();
     final BatFlightGoal flight = new BatFlightGoal(vampire);
     final AtomicBoolean flown = new AtomicBoolean();

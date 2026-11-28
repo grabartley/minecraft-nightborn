@@ -5,6 +5,7 @@ import com.grahambartley.nightborn.mob.brain.Mind;
 import com.grahambartley.nightborn.mob.brain.Sharpness;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import java.util.function.Supplier;
 
 public record StageCombat(
     int bloodFloor,
@@ -60,7 +61,7 @@ public record StageCombat(
                           .forGetter(StageCombat::stuck))
                   .apply(instance, StageCombat::new));
 
-  public Mind mind(final Disposition disposition) {
-    return new Mind(thinkTicks, sharpness, tempered ? disposition : Disposition.EVEN);
+  public Mind mind(final Supplier<Disposition> disposition) {
+    return new Mind(thinkTicks, sharpness, tempered ? disposition.get() : Disposition.EVEN);
   }
 }

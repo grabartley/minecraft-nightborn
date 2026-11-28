@@ -1,5 +1,12 @@
 package com.grahambartley.nightborn.mob.brain;
 
+import static com.grahambartley.nightborn.mob.brain.ChoiceFixtures.ally;
+import static com.grahambartley.nightborn.mob.brain.ChoiceFixtures.facing;
+import static com.grahambartley.nightborn.mob.brain.ChoiceFixtures.group;
+import static com.grahambartley.nightborn.mob.brain.ChoiceFixtures.shipped;
+import static com.grahambartley.nightborn.mob.brain.ChoiceFixtures.shippedAction;
+import static com.grahambartley.nightborn.mob.brain.ChoiceFixtures.shippedBudget;
+import static com.grahambartley.nightborn.mob.brain.ChoiceFixtures.target;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -9,12 +16,7 @@ import com.grahambartley.nightborn.skill.MobPowerUse;
 import com.grahambartley.nightborn.skill.PowerUse;
 import com.grahambartley.nightborn.skill.Skill;
 import com.grahambartley.nightborn.skill.SkillPower;
-import com.mojang.serialization.Codec;
 import com.mojang.serialization.JsonOps;
-import java.io.IOException;
-import java.io.UncheckedIOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumSet;
@@ -23,7 +25,6 @@ import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
-import java.util.function.DoubleSupplier;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 import net.minecraft.util.Identifier;
@@ -36,9 +37,6 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 @ExtendWith(MinecraftBootstrapExtension.class)
 class PowerChoiceTest {
-
-  private static final Mind PLAIN = new Mind(40, Sharpness.KEEN, Disposition.EVEN);
-  private static final DoubleSupplier NO_CHANCE = () -> 0.5;
 
   private static final Identifier RUSH = Identifier.of("nightborn", "core/blood_rush");
   private static final Identifier STARE = Identifier.of("nightborn", "noble/mesmerise");
@@ -69,6 +67,20 @@ class PowerChoiceTest {
         new MobPowerUse(0.0F, 0.0F, 10, SOUND, "tell", false, List.of(uses)));
   }
 
+  private static List<PowerChoice.Scored> rank(
+      final List<PowerChoice.Option> options,
+      final Situation situation,
+      final IntentBudget budget,
+      final int floor) {
+    return PowerChoice.rank(
+        options,
+        situation,
+        budget,
+        floor,
+        new Mind(40, Sharpness.KEEN, Disposition.EVEN),
+        () -> 0.5);
+  }
+
   private static Situation fight(final double distance, final int blood) {
     return new Situation(
         Intent.FIGHT, Situation.Self.of(1.0F, blood), new Situation.Target(distance, true, 1.0F));
@@ -79,8 +91,7 @@ class PowerChoiceTest {
       final Situation situation,
       final IntentBudget budget,
       final int floor) {
-    return PowerChoice.choose(
-            PowerChoice.rank(options, situation, budget, floor, PLAIN, NO_CHANCE), budget, 0.0)
+    return PowerChoice.choose(rank(options, situation, budget, floor), budget, 0.0)
         .map(scored -> scored.option().id());
   }
 
@@ -195,13 +206,11 @@ class PowerChoiceTest {
     final MobUse strong =
         new MobUse("fight", "target", MobUse.inRange(Intent.FIGHT, 0, 20).considerations(), 3.0F);
     final List<PowerChoice.Scored> ranked =
-        PowerChoice.rank(
+        rank(
             List.of(option(STARE, weak), option(RUSH, weak, strong)),
             fight(5, 20),
             IntentBudget.FREE,
-            0,
-            PLAIN,
-            NO_CHANCE);
+            0);
     assertEquals(List.of(RUSH, STARE), ranked.stream().map(s -> s.option().id()).toList());
     assertEquals(List.of(3.0, 1.0), ranked.stream().map(PowerChoice.Scored::score).toList());
   }
@@ -236,51 +245,9 @@ class PowerChoiceTest {
     assertEquals(Optional.of(RUSH), choose(options, fight(5, 20), IntentBudget.FREE, 0));
   }
 
-  private static final Path DATA = Path.of("src/main/resources/data/nightborn/nightborn");
   private static final Situation.Group ALONE = Situation.Group.of(List.of(), List.of());
   private static final Situation.Place DARK =
       new Situation.Place(Double.NaN, Route.UNKNOWN, Double.NaN, Double.NaN, 2.0, Double.NaN);
-
-  private static PowerChoice.Option shipped(final String skill, final boolean running) {
-    final SkillPower power =
-        parse(Skill.CODEC, DATA.resolve("skill/" + skill + ".json")).power().orElseThrow();
-    return new PowerChoice.Option(
-        Identifier.of("nightborn", skill),
-        PowerUse.Verdict.READY,
-        power.blood(),
-        power.cooldownTicks(),
-        running,
-        power.mob().orElseThrow());
-  }
-
-  private static IntentBudget shippedBudget(final Intent intent) {
-    return parse(IntentBudget.CODEC, DATA.resolve("mob_intent/" + intent.key() + ".json"));
-  }
-
-  private static <T> T parse(final Codec<T> codec, final Path file) {
-    try {
-      return codec
-          .parse(JsonOps.INSTANCE, JsonParser.parseString(Files.readString(file)))
-          .getOrThrow();
-    } catch (final IOException e) {
-      throw new UncheckedIOException(e);
-    }
-  }
-
-  private static Situation.Target target(
-      final double distance, final float health, final String signs) {
-    return new Situation.Target(
-        distance,
-        true,
-        health,
-        signs.contains("winding"),
-        signs.contains("running"),
-        signs.contains("slowed"),
-        signs.contains("airborne"),
-        signs.contains("vampire"),
-        signs.contains("hunter"),
-        !signs.contains("unaware"));
-  }
 
   @ParameterizedTest(name = "[{0}] at {1} blocks, health {2}, signs [{3}]: {4}")
   @CsvSource(
@@ -404,13 +371,7 @@ class PowerChoiceTest {
             new Situation.Place(route));
     final Optional<PowerChoice.Scored> scored =
         PowerChoice.choose(
-            PowerChoice.rank(
-                List.of(shipped(owned, false)),
-                escaping,
-                shippedBudget(Intent.RETREAT),
-                0,
-                PLAIN,
-                NO_CHANCE),
+            rank(List.of(shipped(owned, false)), escaping, shippedBudget(Intent.RETREAT), 0),
             shippedBudget(Intent.RETREAT),
             0.0);
     assertEquals(
@@ -482,16 +443,14 @@ class PowerChoiceTest {
     assertEquals(
         Optional.of(Identifier.of("nightborn", chosen)),
         PowerChoice.choose(
-                PowerChoice.rank(
+                rank(
                     List.of(
                         option(Identifier.of("nightborn", "first"), first),
                         option(Identifier.of("nightborn", "second"), second),
                         option(Identifier.of("nightborn", "third"), third)),
                     fight(5, 20),
                     budget,
-                    0,
-                    PLAIN,
-                    NO_CHANCE),
+                    0),
                 budget,
                 roll)
             .map(scored -> scored.option().id()));
@@ -519,30 +478,8 @@ class PowerChoiceTest {
     assertEquals(
         chosen.isEmpty() ? Optional.empty() : Optional.of(chosen),
         PowerChoice.choose(
-                PowerChoice.rank(
-                    List.of(option), fight(5, 20), IntentBudget.FREE, 0, PLAIN, NO_CHANCE),
-                IntentBudget.FREE,
-                0.0)
+                rank(List.of(option), fight(5, 20), IntentBudget.FREE, 0), IntentBudget.FREE, 0.0)
             .map(scored -> scored.use().aim()));
-  }
-
-  private static Situation.Member ally(
-      final int id, final double distance, final float health, final boolean underAttack) {
-    return new Situation.Member(new UUID(0, id), distance, health, underAttack, false, true, false);
-  }
-
-  private static Situation group(
-      final float ownHealth,
-      final Situation.Target target,
-      final List<Situation.Member> allies,
-      final List<Double> foes) {
-    return new Situation(
-        Intent.FIGHT,
-        Situation.Self.of(ownHealth, 20),
-        target,
-        Situation.Place.UNKNOWN,
-        Situation.Group.of(allies, foes),
-        null);
   }
 
   @ParameterizedTest(name = "own health {0}, ally health {1} at {2} blocks: {3} for {4}")
@@ -564,13 +501,11 @@ class PowerChoiceTest {
       final int helped) {
     final Optional<PowerChoice.Scored> chosen =
         PowerChoice.choose(
-            PowerChoice.rank(
+            rank(
                 List.of(shipped("hunter/bind_wounds", false)),
                 group(own, null, List.of(ally(1, distance, allyHealth, false)), List.of()),
                 shippedBudget(Intent.FIGHT),
-                0,
-                PLAIN,
-                NO_CHANCE),
+                0),
             shippedBudget(Intent.FIGHT),
             0.0);
     assertEquals(
@@ -594,13 +529,11 @@ class PowerChoiceTest {
     final Situation.Member mending =
         new Situation.Member(new UUID(0, 4), 2, 0.05F, false, true, true, false);
     final PowerChoice.Scored best =
-        PowerChoice.rank(
+        rank(
                 options,
                 group(1.0F, null, List.of(grazed, dying, claimed, mending), List.of()),
                 shippedBudget(Intent.FIGHT),
-                0,
-                PLAIN,
-                NO_CHANCE)
+                0)
             .getFirst();
     assertEquals(dying, best.ally());
   }
@@ -611,13 +544,11 @@ class PowerChoiceTest {
   void wardsTheAllyUnderAttack(final boolean underAttack, final double distance, final String aim) {
     final Optional<PowerChoice.Scored> chosen =
         PowerChoice.choose(
-            PowerChoice.rank(
+            rank(
                 List.of(shipped("occult/blood_ward", false)),
                 group(1.0F, null, List.of(ally(4, distance, 0.8F, underAttack)), List.of()),
                 shippedBudget(Intent.FIGHT),
-                0,
-                PLAIN,
-                NO_CHANCE),
+                0),
             shippedBudget(Intent.FIGHT),
             0.0);
     assertEquals(
@@ -648,7 +579,7 @@ class PowerChoiceTest {
     final double nearest = distances.getFirst();
     final Optional<PowerChoice.Scored> chosen =
         PowerChoice.choose(
-            PowerChoice.rank(
+            rank(
                 List.of(shipped(skill, false)),
                 group(
                     0.4F,
@@ -661,9 +592,7 @@ class PowerChoiceTest {
                     List.of(ally(5, 2, 1.0F, false)),
                     distances),
                 shippedBudget(Intent.FIGHT),
-                0,
-                PLAIN,
-                NO_CHANCE),
+                0),
             shippedBudget(Intent.FIGHT),
             0.0);
     assertEquals(casts, chosen.isPresent());
@@ -680,7 +609,7 @@ class PowerChoiceTest {
   void aMobAloneFightsAsBefore(final String skill, final double distance, final boolean casts) {
     final Optional<PowerChoice.Scored> chosen =
         PowerChoice.choose(
-            PowerChoice.rank(
+            rank(
                 List.of(shipped(skill, false)),
                 group(
                     0.4F,
@@ -688,9 +617,7 @@ class PowerChoiceTest {
                     List.of(),
                     List.of(distance)),
                 shippedBudget(Intent.FIGHT),
-                0,
-                PLAIN,
-                NO_CHANCE),
+                0),
             shippedBudget(Intent.FIGHT),
             0.0);
     assertEquals(casts, chosen.isPresent());
@@ -706,7 +633,7 @@ class PowerChoiceTest {
         new Situation.Member(new UUID(0, 9), 3, 1.0F, false, false, false, false);
     final Optional<PowerChoice.Scored> chosen =
         PowerChoice.choose(
-            PowerChoice.rank(
+            rank(
                 List.of(shipped(skill, false)),
                 group(
                     0.4F,
@@ -714,28 +641,10 @@ class PowerChoiceTest {
                     List.of(idle),
                     List.of(3.0)),
                 shippedBudget(Intent.FIGHT),
-                0,
-                PLAIN,
-                NO_CHANCE),
+                0),
             shippedBudget(Intent.FIGHT),
             0.0);
     assertEquals(casts, chosen.isPresent());
-  }
-
-  private static PowerChoice.Option shippedAction(
-      final String action, final PowerUse.Verdict verdict, final boolean running) {
-    return PowerChoice.Option.action(
-        new ActionReadiness(Identifier.of("nightborn", action), verdict, 60, running),
-        parse(MobAction.CODEC, DATA.resolve("mob_action/" + action + ".json")));
-  }
-
-  private static Situation facing(
-      final double distance, final boolean inSight, final boolean threatening) {
-    return new Situation(
-        Intent.FIGHT,
-        Situation.Self.of(1.0F, 20),
-        new Situation.Target(
-            distance, inSight, 1.0F, false, false, false, false, false, false, true, threatening));
   }
 
   private static Optional<Identifier> chooseShipped(
@@ -859,13 +768,11 @@ class PowerChoiceTest {
         new Situation(
             Intent.FIGHT, Situation.Self.of(1.0F, blood), new Situation.Target(5.0, true, 1.0F));
     final List<PowerChoice.Scored> ranked =
-        PowerChoice.rank(
+        rank(
             List.of(shippedAction("leap", PowerUse.Verdict.READY, false)),
             situation,
             shippedBudget(Intent.FIGHT),
-            floor,
-            PLAIN,
-            NO_CHANCE);
+            floor);
     assertTrue(ranked.getFirst().affordable());
     assertTrue(ranked.getFirst().option().action());
   }
@@ -876,13 +783,11 @@ class PowerChoiceTest {
   void unreadyOrRunningActionsAreNotWeighed(final PowerUse.Verdict verdict, final boolean running) {
     assertEquals(
         List.of(),
-        PowerChoice.rank(
+        rank(
             List.of(shippedAction("crucifix", verdict, running)),
             facing(3.0, true, false),
             shippedBudget(Intent.FIGHT),
-            0,
-            PLAIN,
-            NO_CHANCE));
+            0));
   }
 
   @ParameterizedTest(name = "blur {0}, rolls {1} and {2}: {3}")

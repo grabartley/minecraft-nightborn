@@ -174,10 +174,7 @@ public class HunterBuildGameTest implements FabricGameTest {
           final int think =
               HunterSkills.mind(hunter, hunter.shownRank(), Optional.empty()).thinkTicks();
           context.assertTrue(
-              HunterSkills.mind(hunter, ladder.rung(0).map(RankLadder.Rung::id), Optional.empty())
-                      .thinkTicks()
-                  <= LONGEST_THINK,
-              "a sworn initiate thinks within " + LONGEST_THINK + " ticks");
+              think <= LONGEST_THINK, "a sworn hunter thinks within " + LONGEST_THINK + " ticks");
           context.waitAndRun(
               think,
               () -> {
