@@ -32,10 +32,6 @@ public final class ManorShell {
     public boolean onWall(final int x, final int z) {
       return x0 <= x && x <= x1 && z0 <= z && z <= z1 && !inside(x, z);
     }
-
-    public boolean covers(final int x, final int z) {
-      return x0 <= x && x <= x1 && z0 <= z && z <= z1;
-    }
   }
 
   public static final Box HOUSE = new Box(HOUSE_W, HOUSE_N, HOUSE_E, HOUSE_S);

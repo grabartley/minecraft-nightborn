@@ -63,7 +63,6 @@ public final class Manor {
   public static final String STAINED = "nightborn:gothic_stained_glass_pane";
   public static final String PANE = "glass_pane";
   public static final String PLANKS = "nightborn:ebony_planks";
-  public static final String PARQUET = "dark_oak_planks";
   public static final String BEAM = "stripped_dark_oak_log";
   public static final String RUBBLE = "cobbled_deepslate";
   public static final String DOOR = "dark_oak_door";
