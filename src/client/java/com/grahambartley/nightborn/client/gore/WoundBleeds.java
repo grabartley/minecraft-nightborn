@@ -55,7 +55,6 @@ public final class WoundBleeds {
   private static void tick(final ClientWorld world) {
     final MinecraftClient client = MinecraftClient.getInstance();
     if (client.isPaused() || client.player == null) {
-      TRAIL.clear();
       return;
     }
     final GoreLevel gore = ClientStateService.current().gore();

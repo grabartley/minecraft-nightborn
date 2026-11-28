@@ -29,41 +29,41 @@ public final class NightbornDamage {
   private NightbornDamage() {}
 
   public static DamageSource bite(final World world, final Entity vampire) {
-    return new DamageSource(
-        world.getRegistryManager().get(RegistryKeys.DAMAGE_TYPE).entryOf(BITE), vampire);
+    return source(world, BITE, vampire);
   }
 
   public static DamageSource sun(final World world) {
-    return new DamageSource(world.getRegistryManager().get(RegistryKeys.DAMAGE_TYPE).entryOf(SUN));
+    return source(world, SUN, null);
   }
 
   public static DamageSource stake(final World world, final Entity hunter) {
-    return new DamageSource(
-        world.getRegistryManager().get(RegistryKeys.DAMAGE_TYPE).entryOf(STAKE), hunter);
+    return source(world, STAKE, hunter);
   }
 
   public static DamageSource lancet(final World world, @Nullable final Entity bleeder) {
-    return new DamageSource(
-        world.getRegistryManager().get(RegistryKeys.DAMAGE_TYPE).entryOf(LANCET), bleeder);
+    return source(world, LANCET, bleeder);
   }
 
   public static DamageSource vomit(final World world) {
-    return new DamageSource(
-        world.getRegistryManager().get(RegistryKeys.DAMAGE_TYPE).entryOf(VOMIT));
+    return source(world, VOMIT, null);
   }
 
   public static DamageSource bleeding(final World world) {
-    return new DamageSource(
-        world.getRegistryManager().get(RegistryKeys.DAMAGE_TYPE).entryOf(BLEEDING));
+    return source(world, BLEEDING, null);
   }
 
   public static DamageSource searing(final World world) {
-    return new DamageSource(
-        world.getRegistryManager().get(RegistryKeys.DAMAGE_TYPE).entryOf(SEARING));
+    return source(world, SEARING, null);
   }
 
   public static boolean killsVampires(final DamageSource source) {
     return source.isIn(KILLS_VAMPIRES);
+  }
+
+  private static DamageSource source(
+      final World world, final RegistryKey<DamageType> type, @Nullable final Entity attacker) {
+    return new DamageSource(
+        world.getRegistryManager().get(RegistryKeys.DAMAGE_TYPE).entryOf(type), attacker);
   }
 
   private static RegistryKey<DamageType> key(final String path) {

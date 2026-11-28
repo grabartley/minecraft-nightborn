@@ -35,9 +35,12 @@ final class WoundTrail {
       final ParticlesMode particles) {
     final Vec3d last = lastSplat.get(living.getId());
     final boolean due =
-        last == null || BleedTrail.due(gore, particles, last.squaredDistanceTo(living.getPos()));
+        BleedTrail.due(
+            gore,
+            particles,
+            last == null ? Double.MAX_VALUE : last.squaredDistanceTo(living.getPos()));
     if (due && BleedTrail.affordable(laid)) {
-      splat(client, living, gore, particles);
+      splat(client, living, gore);
       laid++;
       seen.put(living.getId(), living.getPos());
     } else if (last != null) {
@@ -50,18 +53,8 @@ final class WoundTrail {
     lastSplat.putAll(seen);
   }
 
-  void clear() {
-    lastSplat.clear();
-  }
-
   private void splat(
-      final MinecraftClient client,
-      final LivingEntity living,
-      final GoreLevel gore,
-      final ParticlesMode particles) {
-    if (!BleedTrail.drawn(gore, particles)) {
-      return;
-    }
+      final MinecraftClient client, final LivingEntity living, final GoreLevel gore) {
     final double spread = living.getWidth() / 2.0;
     final Vec3d spot =
         living

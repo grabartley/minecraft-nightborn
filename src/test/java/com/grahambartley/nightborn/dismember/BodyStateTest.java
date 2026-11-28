@@ -155,6 +155,17 @@ class BodyStateTest {
     assertEquals(Optional.empty(), new BodyState(Map.of(BodyPart.HEAD, SILVER), 5L).newestCut());
   }
 
+  @ParameterizedTest(name = "second cut at {0}")
+  @CsvSource({"130", "260"})
+  @DisplayName("a second cut moves the pulse clock for every open wound to that cut")
+  void secondCutRestartsThePulse(final long second) {
+    final BodyState body =
+        BodyState.WHOLE.cut(BodyPart.LEFT_ARM, 100L, 1200).cut(BodyPart.RIGHT_LEG, second, 1200);
+    assertEquals(second, body.lastCutAt());
+    assertTrue(BleedRules.pulses(body.lastCutAt(), second + 60L, 3));
+    assertFalse(BleedRules.pulses(body.lastCutAt(), 160L, 3), "the first cut's pulse is gone");
+  }
+
   private static BodyState twoWounds() {
     return new BodyState(
         Map.of(

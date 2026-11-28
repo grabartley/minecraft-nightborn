@@ -102,7 +102,7 @@ public class DismembermentGameTest implements FabricGameTest {
   }
 
   @GameTest(templateName = GoreGameTest.ARENA, tickLimit = TestPlayers.READY + 20)
-  public void aTorchToAWoundSearsItShutForAHeart(final TestContext context) {
+  public void fireToAWoundSearsItShutForAHeart(final TestContext context) {
     final ServerPlayerEntity player = TestPlayers.human(context, new BlockPos(3, 2, 3));
     final ItemStack flint = new ItemStack(Items.FLINT_AND_STEEL);
     player.setStackInHand(Hand.MAIN_HAND, flint);
