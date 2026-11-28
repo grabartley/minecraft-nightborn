@@ -63,6 +63,30 @@ class TreeProgressTest {
     assertEquals(4, kept.earned());
   }
 
+  @ParameterizedTest(name = "owns {0}, counting {1} -> {2}")
+  @CsvSource({
+    "'slayer_a, slayer_b, faithful_a', slayer, 2",
+    "'slayer_a, slayer_b, faithful_a', faithful, 1",
+    "'slayer_a, slayer_a, core_a', slayer, 1",
+    "'core_a, core_b', seeker, 0",
+    "'trapper_a, seeker_a, seeker_b, seeker_c', seeker, 3"
+  })
+  @DisplayName("skills held in one line are counted once each, and other lines are left out")
+  void ownedIn(final String owned, final String line, final int count) {
+    TreeProgress progress = TreeProgress.EMPTY;
+    for (final String skill : owned.split(", ")) {
+      progress = progress.buy(Identifier.of("nightborn", skill), 1, null);
+    }
+    assertEquals(
+        count,
+        progress.ownedIn(
+            Identifier.of("nightborn", line),
+            skill ->
+                java.util.Optional.of(
+                    Identifier.of(
+                        "nightborn", skill.getPath().substring(0, skill.getPath().indexOf('_'))))));
+  }
+
   @ParameterizedTest(name = "earned {0}, paid {1} -> free {2}")
   @CsvSource({"5, 0, 5", "5, 3, 2", "5, 5, 0", "2, 5, 0"})
   @DisplayName("free points are earned minus spent, never below zero")

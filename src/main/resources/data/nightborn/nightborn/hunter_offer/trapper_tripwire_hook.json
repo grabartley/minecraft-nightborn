@@ -1,0 +1,14 @@
+{
+  "path": "nightborn:trapper",
+  "order": 30,
+  "wants": {
+    "id": "minecraft:emerald",
+    "count": 1
+  },
+  "gives": {
+    "id": "minecraft:tripwire_hook",
+    "count": 2
+  },
+  "max_uses": 8,
+  "hunter_rank": "nightborn:hunter"
+}

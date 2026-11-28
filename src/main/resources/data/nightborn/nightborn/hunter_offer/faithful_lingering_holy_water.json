@@ -1,0 +1,23 @@
+{
+  "path": "nightborn:faithful",
+  "order": 40,
+  "wants": {
+    "id": "minecraft:emerald",
+    "count": 8
+  },
+  "also_wants": {
+    "id": "minecraft:glass_bottle",
+    "count": 1
+  },
+  "gives": {
+    "id": "minecraft:lingering_potion",
+    "count": 1,
+    "components": {
+      "minecraft:potion_contents": {
+        "potion": "nightborn:holy_water"
+      }
+    }
+  },
+  "max_uses": 2,
+  "path_skills": 3
+}

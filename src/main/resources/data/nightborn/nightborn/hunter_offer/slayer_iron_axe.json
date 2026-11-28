@@ -1,0 +1,14 @@
+{
+  "path": "nightborn:slayer",
+  "order": 30,
+  "wants": {
+    "id": "minecraft:emerald",
+    "count": 6
+  },
+  "gives": {
+    "id": "minecraft:iron_axe",
+    "count": 1
+  },
+  "max_uses": 1,
+  "hunter_rank": "nightborn:hunter"
+}

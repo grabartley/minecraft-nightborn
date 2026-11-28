@@ -3,6 +3,7 @@ package com.grahambartley.nightborn.guild;
 import com.grahambartley.nightborn.wheel.WheelEntry;
 import java.util.List;
 import java.util.Locale;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.sound.SoundEvent;
@@ -12,7 +13,7 @@ import net.minecraft.village.TradeOffer;
 import net.minecraft.village.TradeOfferList;
 import org.jetbrains.annotations.Nullable;
 
-public final class GuildCounter implements Merchant {
+public final class GuildCounter implements Merchant, GuildSeller {
 
   public enum Kind {
     GEAR("trade"),
@@ -61,6 +62,11 @@ public final class GuildCounter implements Merchant {
   GuildCounter(final GuildMasterEntity master, final TradeOfferList offers) {
     this.master = master;
     this.offers = offers;
+  }
+
+  @Override
+  public Entity seller() {
+    return master;
   }
 
   @Override

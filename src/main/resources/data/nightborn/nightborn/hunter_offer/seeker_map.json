@@ -1,0 +1,14 @@
+{
+  "path": "nightborn:seeker",
+  "order": 40,
+  "wants": {
+    "id": "minecraft:emerald",
+    "count": 3
+  },
+  "gives": {
+    "id": "minecraft:map",
+    "count": 1
+  },
+  "max_uses": 2,
+  "path_skills": 3
+}

@@ -3,6 +3,7 @@ package com.grahambartley.nightborn.guild;
 import com.grahambartley.nightborn.faction.Oath;
 import com.grahambartley.nightborn.rank.RankLadder;
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import java.util.Comparator;
 import java.util.List;
@@ -25,8 +26,8 @@ public record GuildOffer(
 
   public static final int MOST_USES = 64;
 
-  public static final Codec<GuildOffer> CODEC =
-      RecordCodecBuilder.create(
+  public static final MapCodec<GuildOffer> MAP_CODEC =
+      RecordCodecBuilder.mapCodec(
           instance ->
               instance
                   .group(
@@ -41,6 +42,8 @@ public record GuildOffer(
                           .forGetter(GuildOffer::maxUses),
                       Identifier.CODEC.optionalFieldOf("rank").forGetter(GuildOffer::rank))
                   .apply(instance, GuildOffer::new));
+
+  public static final Codec<GuildOffer> CODEC = MAP_CODEC.codec();
 
   public static List<GuildOffer> inOrder(final Map<Identifier, GuildOffer> offers) {
     return offers.entrySet().stream()

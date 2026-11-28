@@ -5,8 +5,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.function.Function;
 import net.minecraft.entity.Entity;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
 public final class WheelSubject<T extends Entity> {
@@ -14,6 +16,7 @@ public final class WheelSubject<T extends Entity> {
   private final Class<T> type;
   private final SkillTree theme;
   private final List<WheelAction<? super T>> actions = new CopyOnWriteArrayList<>();
+  private Function<? super T, Text> title = Entity::getDisplayName;
 
   public WheelSubject(final Class<T> type, final SkillTree theme) {
     this.type = type;
@@ -26,6 +29,15 @@ public final class WheelSubject<T extends Entity> {
     }
     actions.add(action);
     return this;
+  }
+
+  public WheelSubject<T> titled(final Function<? super T, Text> naming) {
+    title = naming;
+    return this;
+  }
+
+  public Text title(final T target) {
+    return title.apply(target);
   }
 
   public SkillTree theme() {
