@@ -43,10 +43,27 @@ public record Situation(
       boolean airborne,
       boolean vampire,
       boolean hunter,
-      boolean aware) {
+      boolean aware,
+      boolean threatening) {
 
     public Target(final double distance, final boolean inSight, final float health) {
       this(distance, inSight, health, false, false, false, false, false, false);
+    }
+
+    public Target(
+        final double distance,
+        final boolean inSight,
+        final float health,
+        final boolean windingUp,
+        final boolean running,
+        final boolean slowed,
+        final boolean airborne,
+        final boolean vampire,
+        final boolean hunter,
+        final boolean aware) {
+      this(
+          distance, inSight, health, windingUp, running, slowed, airborne, vampire, hunter, aware,
+          false);
     }
 
     public Target(

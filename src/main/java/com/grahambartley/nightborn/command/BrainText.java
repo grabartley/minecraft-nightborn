@@ -30,7 +30,7 @@ final class BrainText {
     final String key = chosen ? "chosen" : scored.affordable() ? "use" : "costly";
     return Text.translatable(
         "nightborn.command.brain." + key,
-        scored.option().power().toString(),
+        scored.option().id().toString(),
         String.format(Locale.ROOT, "%.2f", scored.score()));
   }
 }

@@ -130,7 +130,7 @@ public class VampireEntity extends HostileEntity
   private final HouseholdLife householdLife = new HouseholdLife();
   private final MobBlood blood = new MobBlood();
   private final MobFighting fighting =
-      MobFighting.castingFirst(new PowerCasting(), new CombatMoves<>(this, () -> stage().combat()));
+      new MobFighting(new PowerCasting(), new CombatMoves<>(this, () -> stage().combat()));
   private final VampireHunt hunt = new VampireHunt(blood, homeLife);
   private final VampireHiss hissing = new VampireHiss();
   private VampireGoals.Escapes escapes;

@@ -6,6 +6,7 @@ import com.google.gson.JsonParser;
 import com.grahambartley.nightborn.MinecraftBootstrapExtension;
 import com.grahambartley.nightborn.skill.Skill;
 import com.grahambartley.nightborn.skill.SkillPower;
+import com.mojang.serialization.Codec;
 import com.mojang.serialization.JsonOps;
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -90,6 +91,31 @@ class MobUseCheckTest {
     assertEquals(problem.isEmpty() ? List.of() : List.of(problem), report.problems());
   }
 
+  @ParameterizedTest(name = "case {index}: [{1}]")
+  @CsvSource(
+      delimiter = '|',
+      value = {
+        "{\"uses\":[{\"intent\":\"fight\"}]} | ''",
+        "{\"uses\":[]} | action nightborn:test/action has no uses",
+        "{\"uses\":[{\"intent\":\"flee\"}]} | action nightborn:test/action has a use with"
+            + " unknown intent flee",
+        "{\"uses\":[{\"intent\":\"fight\",\"considerations\":[{\"fact\":\"moon_phase\","
+            + "\"high\":1}]}]} | action nightborn:test/action has a use with unknown fact"
+            + " moon_phase",
+        "{\"uses\":[{\"intent\":\"fight\",\"aim\":\"spot\"}]} | action"
+            + " nightborn:test/action has a use aimed at a spot that does not weigh spot_distance"
+      })
+  @DisplayName("a bad built-in action is reported with its name")
+  void reportsEachAction(final String json, final String problem) {
+    final MobAction action =
+        MobAction.CODEC.parse(JsonOps.INSTANCE, JsonParser.parseString(json)).getOrThrow();
+    assertEquals(
+        problem.isEmpty() ? List.of() : List.of(problem),
+        MobUseCheck.check(
+                Map.of(), ALL_BUDGETS, Map.of(Identifier.of("nightborn", "test/action"), action))
+            .problems());
+  }
+
   @Test
   @DisplayName("an intent with no budget is reported")
   void missingBudget() {
@@ -118,7 +144,13 @@ class MobUseCheckTest {
     try (Stream<Path> files = Files.list(DATA.resolve("mob_intent"))) {
       budgets = files.map(file -> id(DATA.resolve("mob_intent"), file)).collect(Collectors.toSet());
     }
-    final MobUseCheck.Report report = MobUseCheck.check(skills, budgets);
+    final Map<Identifier, MobAction> actions = new HashMap<>();
+    try (Stream<Path> files = Files.list(DATA.resolve("mob_action"))) {
+      files.forEach(
+          file -> actions.put(id(DATA.resolve("mob_action"), file), parse(MobAction.CODEC, file)));
+    }
+    final MobUseCheck.Report report = MobUseCheck.check(skills, budgets, actions);
+    assertEquals(5, actions.size());
     assertEquals(List.of(), report.problems());
     assertEquals(List.of(), report.unused());
     assertEquals(95, skills.size());
@@ -135,6 +167,16 @@ class MobUseCheckTest {
                         .isPresent())
             .map(Map.Entry::getKey)
             .toList());
+  }
+
+  private static <T> T parse(final Codec<T> codec, final Path file) {
+    try {
+      return codec
+          .parse(JsonOps.INSTANCE, JsonParser.parseString(Files.readString(file)))
+          .getOrThrow();
+    } catch (final IOException e) {
+      throw new UncheckedIOException(e);
+    }
   }
 
   private static Identifier id(final Path root, final Path file) {

@@ -2,7 +2,10 @@ package com.grahambartley.nightborn.guild;
 
 import com.grahambartley.nightborn.ammo.CrossbowAmmo;
 import com.grahambartley.nightborn.holy.HolyWater;
+import com.grahambartley.nightborn.mob.brain.ActionReadiness;
+import com.grahambartley.nightborn.mob.combat.MobFighting;
 import com.grahambartley.nightborn.server.ServerConfigService;
+import java.util.List;
 import java.util.Optional;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.ChargedProjectilesComponent;
@@ -17,7 +20,7 @@ import net.minecraft.item.Items;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Identifier;
 
-final class HunterTactics<T extends MobEntity & GuildFighter> {
+final class HunterTactics<T extends MobEntity & GuildFighter> implements MobFighting.Moves {
 
   static final float BOLT_SPEED = 1.6F;
   static final float BOLT_SPREAD = 6.0F;
@@ -27,6 +30,7 @@ final class HunterTactics<T extends MobEntity & GuildFighter> {
   private final T hunter;
   private final HunterActionTimer timer = new HunterActionTimer();
   private final DrawnWeapon drawn = new DrawnWeapon();
+  private boolean raised;
 
   HunterTactics(final T hunter) {
     this.hunter = hunter;
@@ -47,6 +51,7 @@ final class HunterTactics<T extends MobEntity & GuildFighter> {
 
   void sheathe() {
     drawn.sheathe();
+    raised = false;
     hunter.setArmed(false);
     hunter.equipStack(EquipmentSlot.MAINHAND, ItemStack.EMPTY);
     hunter.show(HunterAction.NONE);
@@ -71,7 +76,12 @@ final class HunterTactics<T extends MobEntity & GuildFighter> {
     }
   }
 
-  void tick(final HunterKit kit) {
+  @Override
+  public void tick() {
+    final HunterKit kit = hunter.carriedKit();
+    if (kit == null) {
+      return;
+    }
     final LivingEntity target = hunter.getTarget();
     final boolean hunting = target != null && target.isAlive();
     ready(kit, hunting);
@@ -82,26 +92,73 @@ final class HunterTactics<T extends MobEntity & GuildFighter> {
       hunter.show(timer.action());
       return;
     }
-    final HunterAction support =
-        hunting
-            ? HunterAction.support(
-                hunter.foeOf(target),
-                hunter.getVisibilityCache().canSee(target),
-                hunter.distanceTo(target),
-                kit.holyWater() && timer.canThrow(),
-                kit.crucifix().isPresent(),
-                ServerConfigService.current().wards().crucifixRange())
-            : HunterAction.NONE;
-    if (support == HunterAction.THROW_HOLY_WATER && timer.begin(support)) {
+    if (raised
+        && !HunterSupport.holds(
+            hunting,
+            hunting && hunter.foeOf(target),
+            hunting && hunter.getVisibilityCache().canSee(target),
+            hunting ? hunter.distanceTo(target) : Double.MAX_VALUE,
+            ServerConfigService.current().wards().crucifixRange())) {
+      raised = false;
+    }
+    if (!raised) {
+      hold(ItemStack.EMPTY);
+    }
+    hunter.show(raised ? HunterAction.RAISE_CRUCIFIX : HunterAction.NONE);
+  }
+
+  @Override
+  public List<ActionReadiness> actions() {
+    final HunterKit kit = hunter.carriedKit();
+    final LivingEntity target = hunter.getTarget();
+    if (kit == null || target == null || !target.isAlive()) {
+      return List.of();
+    }
+    return HunterSupport.actions(
+        kit.holyWater(),
+        kit.crucifix().isPresent(),
+        new HunterSupport.Moment(
+            hunter.foeOf(target),
+            hunter.distanceTo(target),
+            timer.busy(),
+            timer.canThrow(),
+            raised),
+        ServerConfigService.current().wards().crucifixRange());
+  }
+
+  @Override
+  public boolean act(final Identifier action) {
+    final HunterKit kit = hunter.carriedKit();
+    if (kit == null) {
+      return false;
+    }
+    if (HunterSupport.HOLY_WATER.equals(action)) {
+      if (!timer.begin(HunterAction.THROW_HOLY_WATER)) {
+        return false;
+      }
+      raised = false;
       hold(splash());
-    } else if (support == HunterAction.RAISE_CRUCIFIX) {
+      hunter.show(timer.action());
+      return true;
+    }
+    if (HunterSupport.CRUCIFIX.equals(action) && kit.crucifix().isPresent()) {
+      raised = true;
       if (hold(stack(kit.crucifix()))) {
         hunter.playSound(SoundEvents.ITEM_ARMOR_EQUIP_GOLD.value(), 1.0F, 1.0F);
       }
-    } else {
-      hold(ItemStack.EMPTY);
+      hunter.show(HunterAction.RAISE_CRUCIFIX);
+      return true;
     }
-    hunter.show(timer.busy() ? timer.action() : support);
+    return false;
+  }
+
+  @Override
+  public void standDown() {
+    if (raised) {
+      raised = false;
+      hold(ItemStack.EMPTY);
+      hunter.show(HunterAction.NONE);
+    }
   }
 
   private void release(final HunterKit kit, final LivingEntity target) {

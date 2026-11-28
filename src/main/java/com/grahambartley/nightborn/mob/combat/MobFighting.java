@@ -1,10 +1,13 @@
 package com.grahambartley.nightborn.mob.combat;
 
+import com.grahambartley.nightborn.mob.brain.ActionReadiness;
 import com.grahambartley.nightborn.mob.brain.FormHold;
 import com.grahambartley.nightborn.mob.brain.Think;
 import com.grahambartley.nightborn.skill.PowerShow;
+import java.util.List;
 import java.util.Optional;
 import net.minecraft.entity.mob.MobEntity;
+import net.minecraft.util.Identifier;
 
 public final class MobFighting {
 
@@ -19,27 +22,35 @@ public final class MobFighting {
 
   public interface Moves {
 
+    Moves NONE = () -> {};
+
     void tick();
 
     default void rest() {}
+
+    default List<ActionReadiness> actions() {
+      return List.of();
+    }
+
+    default boolean act(final Identifier action) {
+      return false;
+    }
+
+    default boolean reacting() {
+      return false;
+    }
+
+    default void reacted() {}
+
+    default void standDown() {}
   }
 
   private final PowerCasting casting;
   private final Moves moves;
-  private final boolean movesFirst;
 
-  private MobFighting(final PowerCasting casting, final Moves moves, final boolean movesFirst) {
+  public MobFighting(final PowerCasting casting, final Moves moves) {
     this.casting = casting;
     this.moves = moves;
-    this.movesFirst = movesFirst;
-  }
-
-  public static MobFighting castingFirst(final PowerCasting casting, final Moves moves) {
-    return new MobFighting(casting, moves, false);
-  }
-
-  public static MobFighting movingFirst(final PowerCasting casting, final Moves moves) {
-    return new MobFighting(casting, moves, true);
   }
 
   public static Engagement engagement(
@@ -66,17 +77,17 @@ public final class MobFighting {
     }
     if (engagement != Engagement.FIGHTING) {
       moves.rest();
-      casting.tick(fighter, engagement == Engagement.ESCAPING, thinkTicks, bloodFloor);
+      casting.tick(fighter, engagement == Engagement.ESCAPING, thinkTicks, bloodFloor, Moves.NONE);
       return;
     }
-    final boolean hasTarget = fighter.getTarget() != null;
-    if (movesFirst && !casting.telling()) {
+    if (!casting.telling()) {
       moves.tick();
+      if (moves.reacting() && casting.react(fighter, bloodFloor, moves)) {
+        moves.reacted();
+        return;
+      }
     }
-    casting.tick(fighter, hasTarget, thinkTicks, bloodFloor);
-    if (!movesFirst && !casting.telling()) {
-      moves.tick();
-    }
+    casting.tick(fighter, fighter.getTarget() != null, thinkTicks, bloodFloor, moves);
   }
 
   public boolean telling() {

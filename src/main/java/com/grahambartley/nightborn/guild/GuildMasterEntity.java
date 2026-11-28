@@ -113,8 +113,7 @@ public class GuildMasterEntity extends MerchantEntity
   private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
   private final WornLook worn = new WornLook();
   private final HunterTactics<GuildMasterEntity> tactics = new HunterTactics<>(this);
-  private final MobFighting fighting =
-      MobFighting.movingFirst(PowerCasting.underTell(), this::tickTactics);
+  private final MobFighting fighting = new MobFighting(PowerCasting.underTell(), tactics);
   private final ShownHunterAction shown = new ShownHunterAction();
   private final ShownAction shownPower = new ShownAction();
   private final StallWatch stall = new StallWatch();
@@ -283,12 +282,6 @@ public class GuildMasterEntity extends MerchantEntity
           MobFighting.Engagement.FIGHTING,
           HunterSkills.thinkTicks(this, shownRank()),
           MobFighting.NO_BLOOD_FLOOR);
-    }
-  }
-
-  private void tickTactics() {
-    if (kit != null) {
-      tactics.tick(kit);
     }
   }
 

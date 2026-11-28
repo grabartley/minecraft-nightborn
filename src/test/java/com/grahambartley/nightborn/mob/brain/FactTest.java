@@ -24,7 +24,8 @@ class FactTest {
       new Situation(
           Intent.FIGHT,
           Situation.Self.of(1.0F, 0),
-          new Situation.Target(3.0, false, 1.0F, false, true, false, true, false, true));
+          new Situation.Target(
+              3.0, false, 1.0F, false, true, false, true, false, true, true, true));
 
   @ParameterizedTest(name = "{0} = {1}")
   @CsvSource({
@@ -44,6 +45,7 @@ class FactTest {
     "TARGET_VAMPIRE, 1",
     "TARGET_HUNTER, 0",
     "TARGET_AWARE, 0",
+    "TARGET_THREATENING, 0",
     "SPOT_DISTANCE, 11.5",
     "GAP_AHEAD, 1",
     "DETOUR, 1.8",
@@ -66,7 +68,8 @@ class FactTest {
     "TARGET_AIRBORNE, 1",
     "TARGET_VAMPIRE, 0",
     "TARGET_HUNTER, 1",
-    "TARGET_AWARE, 1"
+    "TARGET_AWARE, 1",
+    "TARGET_THREATENING, 1"
   })
   @DisplayName("each sign of the target reads the other way on a target that shows the others")
   void readsOtherSigns(final Fact fact, final double value) {
@@ -86,7 +89,8 @@ class FactTest {
         "TARGET_AIRBORNE",
         "TARGET_VAMPIRE",
         "TARGET_HUNTER",
-        "TARGET_AWARE"
+        "TARGET_AWARE",
+        "TARGET_THREATENING"
       })
   @DisplayName("a target fact is missing when the mob has no target")
   void targetFactsNeedATarget(final Fact fact) {

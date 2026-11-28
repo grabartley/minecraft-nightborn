@@ -4,6 +4,8 @@ import com.grahambartley.nightborn.blood.BloodAttachment;
 import com.grahambartley.nightborn.mob.NightbornMobs;
 import com.grahambartley.nightborn.mob.VampireEntity;
 import com.grahambartley.nightborn.mob.combat.CombatMoves;
+import com.grahambartley.nightborn.mob.combat.MobFighting;
+import com.grahambartley.nightborn.mob.combat.PowerCasting;
 import com.grahambartley.nightborn.mob.stage.StageCombat;
 import com.grahambartley.nightborn.mob.stage.StageStuck;
 import com.grahambartley.nightborn.skill.PowerHeading;
@@ -36,6 +38,15 @@ public final class VanishGameTest implements FabricGameTest {
   static final int FULL_BLOOD = 20;
   static final StageCombat ALWAYS_DODGES =
       new StageCombat(0, 20, 0, 0, 0, 100, 0, StageStuck.PLAIN);
+
+  private static void react(final VampireEntity vampire) {
+    new MobFighting(new PowerCasting(), new CombatMoves<>(vampire, () -> ALWAYS_DODGES))
+        .tick(
+            vampire,
+            MobFighting.Engagement.FIGHTING,
+            ALWAYS_DODGES.thinkTicks(),
+            ALWAYS_DODGES.bloodFloor());
+  }
 
   private static void learn(final LivingEntity vampire) {
     SkillAttachment.set(
@@ -184,7 +195,7 @@ public final class VanishGameTest implements FabricGameTest {
           final Vec3d start = vampire.getPos();
           vampire.setTarget(attacker);
           attacker.handSwinging = true;
-          new CombatMoves<>(vampire, () -> ALWAYS_DODGES).tick();
+          react(vampire);
           context.assertTrue(
               VanishAttachment.isGone(vampire), "the vampire vanished from the swing");
           context.assertTrue(
@@ -210,7 +221,7 @@ public final class VanishGameTest implements FabricGameTest {
         () -> {
           vampire.setTarget(attacker);
           attacker.handSwinging = true;
-          new CombatMoves<>(vampire, () -> ALWAYS_DODGES).tick();
+          react(vampire);
           context.assertFalse(
               VanishAttachment.isGone(vampire), "a vampire without the skill stays in sight");
           vampire.discard();

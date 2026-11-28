@@ -1,0 +1,15 @@
+{
+  "uses": [
+    {
+      "intent": "fight",
+      "considerations": [
+        {
+          "fact": "target_distance",
+          "low": 3,
+          "high": 7
+        }
+      ],
+      "weight": 0.5
+    }
+  ]
+}

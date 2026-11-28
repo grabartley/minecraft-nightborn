@@ -22,6 +22,7 @@ public enum Fact {
   TARGET_VAMPIRE(situation -> target(situation, target -> flag(target.vampire()))),
   TARGET_HUNTER(situation -> target(situation, target -> flag(target.hunter()))),
   TARGET_AWARE(situation -> target(situation, target -> flag(target.aware()))),
+  TARGET_THREATENING(situation -> target(situation, target -> flag(target.threatening()))),
   OWN_HEALTH(situation -> situation.self().health()),
   OWN_BLOOD(situation -> situation.self().blood()),
   IN_FORM(situation -> flag(situation.self().inForm())),

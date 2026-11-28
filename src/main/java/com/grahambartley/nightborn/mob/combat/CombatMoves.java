@@ -1,22 +1,20 @@
 package com.grahambartley.nightborn.mob.combat;
 
 import com.grahambartley.nightborn.config.CombatSettings;
-import com.grahambartley.nightborn.mob.brain.CastAims;
-import com.grahambartley.nightborn.mob.brain.Thinking;
+import com.grahambartley.nightborn.mob.brain.ActionReadiness;
+import com.grahambartley.nightborn.mob.brain.Threat;
 import com.grahambartley.nightborn.mob.stage.StageCombat;
 import com.grahambartley.nightborn.server.ServerConfigService;
 import com.grahambartley.nightborn.skill.PowerShow;
-import com.grahambartley.nightborn.skill.PowerUse;
-import com.grahambartley.nightborn.skill.Powers;
 import com.grahambartley.nightborn.slayer.Charges;
 import com.grahambartley.nightborn.vampire.Impulse;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Supplier;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.mob.MobEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.RangedWeaponItem;
-import net.minecraft.item.TridentItem;
 import net.minecraft.sound.SoundEvent;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Vec3d;
 
 public final class CombatMoves<T extends MobEntity & PowerShow> implements MobFighting.Moves {
@@ -25,6 +23,7 @@ public final class CombatMoves<T extends MobEntity & PowerShow> implements MobFi
   private final Supplier<StageCombat> stage;
   private long nextMove;
   private boolean threatened;
+  private boolean reacting;
 
   public CombatMoves(final T fighter, final Supplier<StageCombat> stage) {
     this.fighter = fighter;
@@ -33,67 +32,88 @@ public final class CombatMoves<T extends MobEntity & PowerShow> implements MobFi
 
   @Override
   public void tick() {
-    final StageCombat combat = stage.get();
-    final CombatSettings settings = ServerConfigService.current().combat();
     final LivingEntity target = fighter.getTarget();
-    final long now = fighter.getWorld().getTime();
     if (target == null) {
       threatened = false;
+      reacting = false;
       return;
     }
-    final double distance = fighter.distanceTo(target);
-    final CombatMove.Threat threat = new CombatMove.Threat(target.handSwinging, draws(target));
     final boolean wasThreatened = threatened;
-    threatened = threat.at(distance, settings);
-    if (CombatMove.dodgesWithPower(
-            threatened, wasThreatened, () -> fighter.getRandom().nextInt(100), combat)
-        && dodgeWithPower(fighter, combat)) {
-      nextMove = now + (long) combat.thinkTicks() * settings.moveCooldownThinks();
-      return;
-    }
-    if (now < nextMove || !fighter.isOnGround()) {
-      return;
-    }
-    nextMove = now + combat.thinkTicks();
-    CombatMove.decide(distance, true, threat, fighter.getRandom().nextInt(100), combat, settings)
-        .ifPresent(
-            move -> {
-              final Vec3d toward = target.getPos().subtract(fighter.getPos());
-              fighter.setVelocity(
-                  fighter
-                      .getVelocity()
-                      .add(
-                          impulse(
-                              move.tuning(settings),
-                              move,
-                              toward,
-                              fighter.getRandom().nextBoolean())));
-              fighter.velocityModified = true;
-              fighter.showPower(move.clip());
-              if (move != CombatMove.DODGE) {
-                Charges.start(fighter);
-              }
-              fighter.playSound(SoundEvent.of(move.sound()), 1.0F, 1.0F);
-              nextMove = now + (long) combat.thinkTicks() * settings.moveCooldownThinks();
-            });
+    threatened =
+        Threat.of(target).at(fighter.distanceTo(target), ServerConfigService.current().combat());
+    reacting =
+        CombatMove.reacts(
+            threatened, wasThreatened, () -> fighter.getRandom().nextInt(100), stage.get());
   }
 
-  private static boolean dodgeWithPower(final MobEntity fighter, final StageCombat combat) {
-    return Thinking.dodge(fighter, combat.bloodFloor())
-        .flatMap(think -> think.chosen())
-        .flatMap(
-            scored ->
-                CastAims.resolve(fighter, scored.use().aimed())
-                    .map(
-                        aim ->
-                            Powers.cast(fighter, scored.option().power(), aim)
-                                == PowerUse.Verdict.READY))
+  @Override
+  public boolean reacting() {
+    return reacting;
+  }
+
+  @Override
+  public void reacted() {
+    rested();
+  }
+
+  @Override
+  public List<ActionReadiness> actions() {
+    if (fighter.getTarget() == null) {
+      return List.of();
+    }
+    final StageCombat combat = stage.get();
+    final boolean free = fighter.isOnGround() && fighter.getWorld().getTime() >= nextMove;
+    final int restTicks = restTicks(combat);
+    final List<ActionReadiness> actions = new ArrayList<>(CombatMove.values().length);
+    for (final CombatMove move : CombatMove.values()) {
+      actions.add(move.readiness(free, () -> fighter.getRandom().nextInt(100), combat, restTicks));
+    }
+    return actions;
+  }
+
+  @Override
+  public boolean act(final Identifier action) {
+    final LivingEntity target = fighter.getTarget();
+    if (target == null || !fighter.isOnGround()) {
+      return false;
+    }
+    return CombatMove.byId(action)
+        .map(
+            move -> {
+              move(move, target);
+              return true;
+            })
         .orElse(false);
+  }
+
+  private void move(final CombatMove move, final LivingEntity target) {
+    final CombatSettings settings = ServerConfigService.current().combat();
+    final Vec3d toward = target.getPos().subtract(fighter.getPos());
+    fighter.setVelocity(
+        fighter
+            .getVelocity()
+            .add(impulse(move.tuning(settings), move, toward, fighter.getRandom().nextBoolean())));
+    fighter.velocityModified = true;
+    fighter.showPower(move.clip());
+    if (move != CombatMove.DODGE) {
+      Charges.start(fighter);
+    }
+    fighter.playSound(SoundEvent.of(move.sound()), 1.0F, 1.0F);
+    rested();
+  }
+
+  private void rested() {
+    nextMove = fighter.getWorld().getTime() + restTicks(stage.get());
+  }
+
+  private static int restTicks(final StageCombat combat) {
+    return combat.thinkTicks() * ServerConfigService.current().combat().moveCooldownThinks();
   }
 
   @Override
   public void rest() {
     threatened = false;
+    reacting = false;
   }
 
   public static Vec3d impulse(
@@ -107,13 +127,5 @@ public final class CombatMoves<T extends MobEntity & PowerShow> implements MobFi
             ? (left ? new Vec3d(-ahead.z, 0.0, ahead.x) : new Vec3d(ahead.z, 0.0, -ahead.x))
             : ahead;
     return Impulse.push(heading, tuning.pushBlocks(), tuning.liftBlocks());
-  }
-
-  public static boolean draws(final LivingEntity target) {
-    return target.isUsingItem() && ranged(target.getActiveItem());
-  }
-
-  static boolean ranged(final ItemStack stack) {
-    return stack.getItem() instanceof RangedWeaponItem || stack.getItem() instanceof TridentItem;
   }
 }

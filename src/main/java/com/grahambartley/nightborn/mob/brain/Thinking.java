@@ -11,6 +11,7 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Function;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Vec3d;
@@ -21,30 +22,40 @@ public final class Thinking {
 
   private Thinking() {}
 
-  public static Optional<Think> dodge(final MobEntity mob, final int mobFloor) {
-    return think(mob, true, mobFloor, Vec3d.ZERO);
+  public static Optional<Think> react(
+      final MobEntity mob, final int mobFloor, final List<ActionReadiness> actions) {
+    return think(mob, true, mobFloor, Vec3d.ZERO, actions);
   }
 
   public static Optional<Think> think(
-      final MobEntity mob, final int mobFloor, final TargetMotion motion, final int thinkTicks) {
+      final MobEntity mob,
+      final int mobFloor,
+      final TargetMotion motion,
+      final int thinkTicks,
+      final List<ActionReadiness> actions) {
     return think(
         mob,
         false,
         mobFloor,
         mob.getTarget() == null
             ? Vec3d.ZERO
-            : motion.sample(mob.getTarget(), mob.getWorld().getTime(), thinkTicks));
+            : motion.sample(mob.getTarget(), mob.getWorld().getTime(), thinkTicks),
+        actions);
   }
 
   private static Optional<Think> think(
-      final MobEntity mob, final boolean dodge, final int mobFloor, final Vec3d moved) {
+      final MobEntity mob,
+      final boolean dodge,
+      final int mobFloor,
+      final Vec3d moved,
+      final List<ActionReadiness> actions) {
     final Intent reported = Intents.read(mob);
     if (aids(dodge, mob.getTarget() != null, reported) && ownsHelp(mob)) {
       final Optional<Think> aid =
           weigh(
               mob,
               Intent.FIGHT,
-              helping(options(mob, false, Intent.FIGHT), Intent.FIGHT),
+              helping(options(mob, false, Intent.FIGHT, actions), Intent.FIGHT),
               mobFloor,
               moved,
               true);
@@ -55,7 +66,7 @@ public final class Thinking {
     if (!thinksAlone(dodge, mob.getTarget() != null, watched(mob))) {
       return Optional.empty();
     }
-    return weigh(mob, reported, options(mob, dodge, reported), mobFloor, moved, false);
+    return weigh(mob, reported, options(mob, dodge, reported, actions), mobFloor, moved, false);
   }
 
   private static Optional<Think> weigh(
@@ -116,7 +127,7 @@ public final class Thinking {
       if (option.verdict() != PowerUse.Verdict.READY) {
         continue;
       }
-      for (final MobUse use : option.use().effectiveUses()) {
+      for (final MobUse use : option.uses()) {
         for (final Consideration consideration : use.considerations()) {
           Fact.byKey(consideration.fact()).ifPresent(needed::add);
         }
@@ -134,7 +145,7 @@ public final class Thinking {
     return options.stream()
         .filter(
             option ->
-                option.use().effectiveUses().stream()
+                option.uses().stream()
                     .anyMatch(
                         use ->
                             use.intent().equals(intent.key())
@@ -143,13 +154,16 @@ public final class Thinking {
         .toList();
   }
 
-  static boolean helps(final MobPowerUse use) {
-    return use.effectiveUses().stream().anyMatch(MobUse::helpsAnAlly);
+  static boolean helps(final List<MobUse> uses) {
+    return uses.stream().anyMatch(MobUse::helpsAnAlly);
   }
 
   private static boolean ownsHelp(final MobEntity mob) {
     for (final Identifier id : SkillAttachment.owned(mob).ownedInOrder()) {
-      if (Powers.power(mob, id).flatMap(SkillPower::mob).filter(Thinking::helps).isPresent()) {
+      if (Powers.power(mob, id)
+          .flatMap(SkillPower::mob)
+          .filter(use -> helps(use.effectiveUses()))
+          .isPresent()) {
         return true;
       }
     }
@@ -157,13 +171,13 @@ public final class Thinking {
   }
 
   static boolean offered(
-      final MobPowerUse use, final boolean dodge, final Intent intent, final boolean stuck) {
-    return use.dodge() == dodge || !dodge && (!intent.fights() || stuck);
+      final boolean dodgeKind, final boolean dodge, final Intent intent, final boolean stuck) {
+    return dodgeKind == dodge || !dodge && (!intent.fights() || stuck);
   }
 
-  static Set<Aim> aims(final MobPowerUse use, final Intent intent) {
+  static Set<Aim> aims(final List<MobUse> uses, final Intent intent) {
     final Set<Aim> aims = EnumSet.noneOf(Aim.class);
-    for (final MobUse each : use.effectiveUses()) {
+    for (final MobUse each : uses) {
       if (each.intent().equals(intent.key())) {
         aims.add(each.aimed());
       }
@@ -177,21 +191,48 @@ public final class Thinking {
         : verdicts.stream().findFirst().orElse(PowerUse.Verdict.NOWHERE);
   }
 
+  static List<PowerChoice.Option> actions(
+      final List<ActionReadiness> readiness,
+      final Function<Identifier, Optional<MobAction>> data,
+      final boolean dodge,
+      final Intent intent,
+      final boolean stuck) {
+    final List<PowerChoice.Option> options = new ArrayList<>(readiness.size());
+    for (final ActionReadiness each : readiness) {
+      data.apply(each.id())
+          .filter(action -> offered(action.dodge(), dodge, intent, stuck))
+          .filter(action -> !aims(action.uses(), intent).isEmpty())
+          .ifPresent(action -> options.add(PowerChoice.Option.action(each, action)));
+    }
+    return options;
+  }
+
   static List<PowerChoice.Option> options(
-      final MobEntity mob, final boolean dodge, final Intent intent) {
-    List<PowerChoice.Option> options = List.of();
+      final MobEntity mob,
+      final boolean dodge,
+      final Intent intent,
+      final List<ActionReadiness> actions) {
     final boolean stuck = Unsticking.stuck(mob);
+    final List<PowerChoice.Option> options = new ArrayList<>(powers(mob, dodge, intent, stuck));
+    options.addAll(
+        actions(actions, id -> MobActions.get(mob.getRegistryManager(), id), dodge, intent, stuck));
+    return options;
+  }
+
+  private static List<PowerChoice.Option> powers(
+      final MobEntity mob, final boolean dodge, final Intent intent, final boolean stuck) {
+    List<PowerChoice.Option> options = List.of();
     for (final Identifier id : SkillAttachment.owned(mob).ownedInOrder()) {
       final Optional<SkillPower> power = Powers.power(mob, id);
       final MobPowerUse use =
           power
               .flatMap(SkillPower::mob)
-              .filter(each -> offered(each, dodge, intent, stuck))
+              .filter(each -> offered(each.dodge(), dodge, intent, stuck))
               .orElse(null);
       if (use == null) {
         continue;
       }
-      final Set<Aim> aims = aims(use, intent);
+      final Set<Aim> aims = aims(use.effectiveUses(), intent);
       if (aims.isEmpty()) {
         continue;
       }

@@ -58,7 +58,11 @@ public final class PowerCasting {
   }
 
   public <T extends MobEntity & PowerShow> void tick(
-      final T caster, final boolean engaged, final int thinkTicks, final int bloodFloor) {
+      final T caster,
+      final boolean engaged,
+      final int thinkTicks,
+      final int bloodFloor,
+      final MobFighting.Moves moves) {
     final long now = caster.getWorld().getTime();
     if (telling != null) {
       final Tell.Step step = telling.step(engaged, now);
@@ -87,7 +91,8 @@ public final class PowerCasting {
     if (engaged) {
       nextThink = now + thinkTicks;
     }
-    final Optional<Think> think = Thinking.think(caster, bloodFloor, motion, thinkTicks);
+    final Optional<Think> think =
+        Thinking.think(caster, bloodFloor, motion, thinkTicks, moves.actions());
     if (!engaged) {
       nextAid = now + Thinking.idleTicks(caster, think, thinkTicks);
     }
@@ -98,15 +103,36 @@ public final class PowerCasting {
               .chosen()
               .ifPresent(
                   scored -> {
-                    if (!tellable(scored.use().aimed() == Aim.ALLY, allyVerdict(caster, scored))) {
+                    if (scored.option().action()
+                        ? !moves.act(scored.option().id())
+                        : !tellable(scored.use().aimed() == Aim.ALLY, allyVerdict(caster, scored))
+                            || !tell(caster, scored, now, engaged, moves)) {
                       return;
                     }
                     nextThink =
                         Math.max(nextThink, now + thinkTicks) + thought.budget().cooldownPrice();
                     nextAid = nextThink;
-                    tell(caster, scored, now, engaged);
                   });
         });
+  }
+
+  public <T extends MobEntity & PowerShow> boolean react(
+      final T caster, final int bloodFloor, final MobFighting.Moves moves) {
+    final Optional<Think> think = Thinking.react(caster, bloodFloor, moves.actions());
+    think.ifPresent(thought -> lastThink = thought);
+    return think
+        .flatMap(Think::chosen)
+        .map(
+            scored ->
+                scored.option().action()
+                    ? moves.act(scored.option().id())
+                    : CastAims.resolve(caster, scored.use().aimed())
+                        .map(
+                            aim ->
+                                cast.apply(caster, scored.option().id(), aim)
+                                    == PowerUse.Verdict.READY)
+                        .orElse(false))
+        .orElse(false);
   }
 
   private static int holdTicks(final MobEntity caster, final Identifier power) {
@@ -128,7 +154,7 @@ public final class PowerCasting {
     if (ally == null) {
       return null;
     }
-    final Identifier power = scored.option().power();
+    final Identifier power = scored.option().id();
     return Powers.check(caster, power, Powers.power(caster, power), CastAim.at(ally));
   }
 
@@ -158,16 +184,26 @@ public final class PowerCasting {
     return hold;
   }
 
-  private <T extends MobEntity & PowerShow> void tell(
-      final T caster, final PowerChoice.Scored scored, final long now, final boolean inFight) {
-    final MobPowerUse use = scored.option().use();
+  private <T extends MobEntity & PowerShow> boolean tell(
+      final T caster,
+      final PowerChoice.Scored scored,
+      final long now,
+      final boolean inFight,
+      final MobFighting.Moves moves) {
+    final Identifier power = scored.option().id();
+    final MobPowerUse use = Powers.power(caster, power).flatMap(SkillPower::mob).orElse(null);
+    if (use == null) {
+      return false;
+    }
     final long castAt = now + use.tellTicks();
     final UUID ally = scored.ally() == null ? null : scored.ally().id();
-    telling = new Tell(scored.option().power(), castAt, scored.use().aimed(), ally, inFight);
+    telling = new Tell(power, castAt, scored.use().aimed(), ally, inFight);
     if (ally != null) {
       HelpClaims.claim(caster.getWorld(), ally, caster.getUuid(), castAt);
     }
+    moves.standDown();
     caster.showPower(use.tellClip());
     caster.playSound(SoundEvent.of(use.tellSound()), 1.0F, 1.0F);
+    return true;
   }
 }

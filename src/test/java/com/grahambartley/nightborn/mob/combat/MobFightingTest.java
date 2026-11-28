@@ -3,8 +3,10 @@ package com.grahambartley.nightborn.mob.combat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
+import net.minecraft.util.Identifier;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -38,10 +40,10 @@ class MobFightingTest {
     assertEquals(engagement, MobFighting.engagement(target, downed, asleep, escaping, weakened));
   }
 
-  @ParameterizedTest(name = "moves first {0}")
-  @ValueSource(booleans = {true, false})
+  @ParameterizedTest(name = "{0} ticks")
+  @ValueSource(ints = {1, 3})
   @DisplayName("out of a fight a mob rests its moves, does not move, and keeps no tell")
-  void restsOutOfAFight(final boolean movesFirst) {
+  void restsOutOfAFight(final int ticks) {
     final AtomicInteger moved = new AtomicInteger();
     final AtomicInteger rested = new AtomicInteger();
     final MobFighting.Moves moves =
@@ -56,16 +58,24 @@ class MobFightingTest {
             rested.incrementAndGet();
           }
         };
-    final MobFighting fighting =
-        movesFirst
-            ? MobFighting.movingFirst(new PowerCasting(), moves)
-            : MobFighting.castingFirst(new PowerCasting(), moves);
-    fighting.tick(null, MobFighting.Engagement.NONE, 40, 0);
+    final MobFighting fighting = new MobFighting(new PowerCasting(), moves);
+    for (int tick = 0; tick < ticks; tick++) {
+      fighting.tick(null, MobFighting.Engagement.NONE, 40, 0);
+    }
     assertEquals(0, moved.get());
-    assertEquals(1, rested.get());
+    assertEquals(ticks, rested.get());
     assertFalse(fighting.telling());
     assertEquals(Optional.empty(), fighting.lastThink());
     assertFalse(fighting.hold().holds(0));
     assertEquals(Optional.empty(), fighting.hold().course());
+  }
+
+  @ParameterizedTest(name = "{0}")
+  @ValueSource(strings = {"nightborn:leap", "nightborn:holy_water", "nightborn:vanish"})
+  @DisplayName("a mob with no moves of its own offers the brain nothing and does nothing asked")
+  void noMoves(final String action) {
+    assertEquals(List.of(), MobFighting.Moves.NONE.actions());
+    assertFalse(MobFighting.Moves.NONE.act(Identifier.of(action)));
+    assertFalse(MobFighting.Moves.NONE.reacting());
   }
 }
