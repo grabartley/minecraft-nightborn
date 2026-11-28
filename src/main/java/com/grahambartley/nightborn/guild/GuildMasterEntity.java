@@ -387,7 +387,10 @@ public class GuildMasterEntity extends MerchantEntity
     }
     CampHome.keep(this, TENT_REACH);
     if (!HunterSkills.built(this)) {
-      HunterSkills.master(this);
+      if (kit == null) {
+        arm(kitId);
+      }
+      HunterSkills.master(this, heldKit());
     }
     if (shownRank().isEmpty()) {
       dataTracker.set(RANK, RankBearer.write(HunterSkills.rank(this)));

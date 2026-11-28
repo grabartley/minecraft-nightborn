@@ -49,22 +49,23 @@ public final class HunterSkills {
             shop,
             rank,
             points,
-            PathPick.pick(shop.branches(), SkillTree.HUNTER, random::nextDouble),
+            PathPick.pick(shop.branches(), SkillTree.HUNTER, build.paths(kit), random::nextDouble),
             random::nextDouble));
     mob.setHealth(mob.getMaxHealth());
   }
 
-  public static void master(final LivingEntity mob) {
+  public static void master(final LivingEntity mob, final Optional<Identifier> kit) {
     final DynamicRegistryManager registries = mob.getRegistryManager();
     final RankLadder ladder = RankLadder.of(registries);
-    final HunterPurchases.Shop shop =
-        shop(mob, registries, HunterBuilds.build(registries), ladder, Optional.empty());
+    final HunterBuild build = HunterBuilds.build(registries);
+    final HunterPurchases.Shop shop = shop(mob, registries, build, ladder, kit);
     store(
         mob,
         HunterGrowth.master(
             shop,
             ladder.size() - 1,
-            PathPick.pick(shop.branches(), SkillTree.HUNTER, mob.getRandom()::nextDouble)));
+            PathPick.pick(
+                shop.branches(), SkillTree.HUNTER, build.paths(kit), mob.getRandom()::nextDouble)));
     mob.setHealth(mob.getMaxHealth());
   }
 

@@ -4,12 +4,15 @@ import com.grahambartley.nightborn.mob.brain.Disposition;
 import com.grahambartley.nightborn.mob.brain.Mind;
 import com.grahambartley.nightborn.mob.brain.Sharpness;
 import com.grahambartley.nightborn.mob.look.Weighted;
+import com.grahambartley.nightborn.skill.SkillPurchase;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.stream.Collectors;
 import net.minecraft.util.Identifier;
 
 public record HunterBuild(
@@ -20,6 +23,7 @@ public record HunterBuild(
     int coreWeight,
     int pathWeight,
     Map<Identifier, Map<Identifier, Integer>> kitLeanings,
+    Map<Identifier, List<Map<Identifier, Integer>>> kitPaths,
     Map<Identifier, Disposition> kitDispositions,
     int trickleExperience,
     int trickleTicks,
@@ -41,6 +45,7 @@ public record HunterBuild(
           0,
           1,
           1,
+          Map.of(),
           Map.of(),
           Map.of(),
           0,
@@ -73,6 +78,12 @@ public record HunterBuild(
                               Identifier.CODEC, Codec.unboundedMap(Identifier.CODEC, WEIGHT))
                           .optionalFieldOf("kit_leanings", Map.of())
                           .forGetter(HunterBuild::kitLeanings),
+                      Codec.unboundedMap(
+                              Identifier.CODEC,
+                              Codec.unboundedMap(Identifier.CODEC, WEIGHT)
+                                  .listOf(0, SkillPurchase.LINE_LIMIT))
+                          .optionalFieldOf("kit_paths", Map.of())
+                          .forGetter(HunterBuild::kitPaths),
                       Codec.unboundedMap(Identifier.CODEC, Disposition.CODEC)
                           .optionalFieldOf("kit_dispositions", Map.of())
                           .forGetter(HunterBuild::kitDispositions),
@@ -95,6 +106,12 @@ public record HunterBuild(
     thinkTicks = Map.copyOf(thinkTicks);
     sharpness = Map.copyOf(sharpness);
     kitLeanings = Map.copyOf(kitLeanings);
+    kitPaths =
+        kitPaths.entrySet().stream()
+            .collect(
+                Collectors.toUnmodifiableMap(
+                    Map.Entry::getKey,
+                    entry -> entry.getValue().stream().map(Map::copyOf).toList()));
     kitDispositions = Map.copyOf(kitDispositions);
     masterKits = Map.copyOf(masterKits);
   }
@@ -110,6 +127,10 @@ public record HunterBuild(
     final int leaning =
         kit.map(id -> kitLeanings.getOrDefault(id, Map.of()).getOrDefault(skill, 0)).orElse(0);
     return (path ? pathWeight : coreWeight) + leaning;
+  }
+
+  public List<Map<Identifier, Integer>> paths(final Optional<Identifier> kit) {
+    return kit.map(id -> kitPaths.getOrDefault(id, List.of())).orElse(List.of());
   }
 
   public Optional<Identifier> masterKit(final Set<Identifier> carried, final double roll) {

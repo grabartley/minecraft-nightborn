@@ -47,6 +47,7 @@ public final class HunterBuilds {
                         Skills.allBranches(registries),
                         SkillTree.HUNTER)
                     .keySet(),
+                Set.copyOf(PathPick.paths(Skills.allBranches(registries), SkillTree.HUNTER)),
                 GuildData.kits(registries).keySet()));
     registries
         .getOptional(RaidingData.ARMS)
