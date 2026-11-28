@@ -1,6 +1,7 @@
 package com.grahambartley.nightborn.mob.brain;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.google.gson.JsonParser;
 import com.grahambartley.nightborn.MinecraftBootstrapExtension;
@@ -75,7 +76,7 @@ class PowerChoiceTest {
       final IntentBudget budget,
       final int floor) {
     return PowerChoice.choose(PowerChoice.rank(options, situation, budget, floor), budget, 0.0)
-        .map(scored -> scored.option().power());
+        .map(scored -> scored.option().id());
   }
 
   private static Optional<Identifier> firstWorthCasting(
@@ -87,11 +88,15 @@ class PowerChoiceTest {
         .filter(
             option ->
                 option.verdict() == PowerUse.Verdict.READY
-                    && distance >= option.use().minRange()
-                    && distance <= option.use().maxRange()
+                    && distance >= range(option).low()
+                    && distance <= range(option).high()
                     && blood - option.cost() >= floor)
         .findFirst()
-        .map(PowerChoice.Option::power);
+        .map(PowerChoice.Option::id);
+  }
+
+  private static Consideration range(final PowerChoice.Option option) {
+    return option.uses().getFirst().considerations().getFirst();
   }
 
   static Stream<Integer> seeds() {
@@ -190,7 +195,7 @@ class PowerChoiceTest {
             fight(5, 20),
             IntentBudget.FREE,
             0);
-    assertEquals(List.of(RUSH, STARE), ranked.stream().map(s -> s.option().power()).toList());
+    assertEquals(List.of(RUSH, STARE), ranked.stream().map(s -> s.option().id()).toList());
     assertEquals(List.of(3.0, 1.0), ranked.stream().map(PowerChoice.Scored::score).toList());
   }
 
@@ -398,7 +403,7 @@ class PowerChoiceTest {
             0.0);
     assertEquals(
         chosen.isEmpty() ? Optional.empty() : Optional.of(Identifier.of("nightborn", chosen)),
-        scored.map(s -> s.option().power()));
+        scored.map(s -> s.option().id()));
     scored.ifPresent(s -> assertEquals(Aim.SPOT, s.use().aimed()));
   }
 
@@ -475,7 +480,7 @@ class PowerChoiceTest {
                     0),
                 budget,
                 roll)
-            .map(scored -> scored.option().power()));
+            .map(scored -> scored.option().id()));
   }
 
   @ParameterizedTest(name = "ready aims [{0}]: {1}")
@@ -688,5 +693,164 @@ class PowerChoiceTest {
             shippedBudget(Intent.FIGHT),
             0.0);
     assertEquals(casts, chosen.isPresent());
+  }
+
+  private static PowerChoice.Option shippedAction(
+      final String action, final PowerUse.Verdict verdict, final boolean running) {
+    return PowerChoice.Option.action(
+        new ActionReadiness(Identifier.of("nightborn", action), verdict, 60, running),
+        parse(MobAction.CODEC, DATA.resolve("mob_action/" + action + ".json")));
+  }
+
+  private static Situation facing(
+      final double distance, final boolean inSight, final boolean threatening) {
+    return new Situation(
+        Intent.FIGHT,
+        Situation.Self.of(1.0F, 20),
+        new Situation.Target(
+            distance, inSight, 1.0F, false, false, false, false, false, false, true, threatening));
+  }
+
+  private static Optional<Identifier> chooseShipped(
+      final List<PowerChoice.Option> options, final Situation situation, final int floor) {
+    return choose(options, situation, shippedBudget(Intent.FIGHT), floor);
+  }
+
+  @ParameterizedTest(name = "{0} at {1} blocks, seen {2}, threatened {3}: chosen {4}")
+  @CsvSource({
+    "leap, 3, true, false, true",
+    "leap, 5, true, false, true",
+    "leap, 7, true, false, true",
+    "leap, 2.5, true, false, false",
+    "leap, 8, true, false, false",
+    "dash, 7, true, false, true",
+    "dash, 12, true, false, true",
+    "dash, 16, true, false, true",
+    "dash, 5, true, false, false",
+    "dash, 17, true, false, false",
+    "dodge, 2, true, true, true",
+    "dodge, 12, false, true, true",
+    "dodge, 2, true, false, false",
+    "holy_water, 4, true, false, true",
+    "holy_water, 10, true, false, true",
+    "holy_water, 6, false, false, false",
+    "holy_water, 3.9, true, false, false",
+    "holy_water, 10.5, true, false, false",
+    "crucifix, 3, true, false, true",
+    "crucifix, 3, false, false, false"
+  })
+  @DisplayName(
+      "the shipped built-in actions keep their old moments: leap in close, dash from afar, dodge a"
+          + " threat, throw holy water at a foe in sight four to ten blocks off, raise the"
+          + " crucifix at one in sight")
+  void shippedActionsKeepTheirMoments(
+      final String action,
+      final double distance,
+      final boolean inSight,
+      final boolean threatening,
+      final boolean chosen) {
+    assertEquals(
+        chosen ? Optional.of(Identifier.of("nightborn", action)) : Optional.empty(),
+        chooseShipped(
+            List.of(shippedAction(action, PowerUse.Verdict.READY, false)),
+            facing(distance, inSight, threatening),
+            0));
+  }
+
+  @ParameterizedTest(name = "[{0}] at {1} blocks, threatened {2}: {3}")
+  @CsvSource({
+    "holy_water crucifix, 5, false, holy_water",
+    "crucifix holy_water, 5, false, holy_water",
+    "crucifix holy_water, 3, false, crucifix",
+    "leap dodge, 3.5, true, dodge",
+    "dash dodge, 9, true, dodge",
+    "leap dash, 7, false, leap",
+    "dodge leap, 5, false, leap",
+    "dash leap, 7, false, leap"
+  })
+  @DisplayName(
+      "between built-in actions the old order holds: holy water before the crucifix, a dodge"
+          + " before a leap or a dash, and a leap before a dash where their ranges meet")
+  void shippedActionsKeepTheirOrder(
+      final String actions, final double distance, final boolean threatening, final String chosen) {
+    assertEquals(
+        Optional.of(Identifier.of("nightborn", chosen)),
+        chooseShipped(
+            Arrays.stream(actions.split(" "))
+                .map(action -> shippedAction(action, PowerUse.Verdict.READY, false))
+                .toList(),
+            facing(distance, true, threatening),
+            0));
+  }
+
+  @ParameterizedTest(name = "{0} beside blood rush at {1} blocks: {2}")
+  @CsvSource({
+    "leap, 5, core/blood_rush",
+    "dash, 10, core/blood_rush",
+    "crucifix, 5, crucifix",
+    "leap, 3.5, leap",
+    "holy_water, 5, holy_water"
+  })
+  @DisplayName(
+      "a ready power in range comes before a leap or a dash, which fill the moments a mob has no"
+          + " power for, while holy water and the crucifix go up first when they can")
+  void powersBeforeFillerActions(final String action, final double distance, final String chosen) {
+    assertEquals(
+        Optional.of(Identifier.of("nightborn", chosen)),
+        chooseShipped(
+            List.of(
+                shipped("core/blood_rush", false),
+                shippedAction(action, PowerUse.Verdict.READY, false)),
+            facing(distance, true, false),
+            0));
+  }
+
+  @ParameterizedTest(name = "{0}, threatened {1}")
+  @CsvSource({"dodge, true", "dodge, false", "leap, false", "dash, false", "holy_water, false"})
+  @DisplayName("no built-in action is chosen for a mob that is falling back")
+  void noActionWhileFallingBack(final String action, final boolean threatening) {
+    final Situation retreating =
+        new Situation(
+            Intent.RETREAT,
+            Situation.Self.of(0.2F, 20),
+            new Situation.Target(
+                5.0, true, 1.0F, false, false, false, false, false, false, true, threatening));
+    assertEquals(
+        Optional.empty(),
+        choose(
+            List.of(shippedAction(action, PowerUse.Verdict.READY, false)),
+            retreating,
+            shippedBudget(Intent.RETREAT),
+            0));
+  }
+
+  @ParameterizedTest(name = "blood {0}, floor {1}")
+  @CsvSource({"0, 10", "5, 20", "20, 0"})
+  @DisplayName("a built-in action spends no blood, so the blood floor never holds it back")
+  void actionsIgnoreTheBloodFloor(final int blood, final int floor) {
+    final Situation situation =
+        new Situation(
+            Intent.FIGHT, Situation.Self.of(1.0F, blood), new Situation.Target(5.0, true, 1.0F));
+    final List<PowerChoice.Scored> ranked =
+        PowerChoice.rank(
+            List.of(shippedAction("leap", PowerUse.Verdict.READY, false)),
+            situation,
+            shippedBudget(Intent.FIGHT),
+            floor);
+    assertTrue(ranked.getFirst().affordable());
+    assertTrue(ranked.getFirst().option().action());
+  }
+
+  @ParameterizedTest(name = "{0}, running {1}")
+  @CsvSource({"COOLING, false", "READY, true", "COOLING, true"})
+  @DisplayName("a built-in action that is not ready, or a crucifix already raised, is not weighed")
+  void unreadyOrRunningActionsAreNotWeighed(final PowerUse.Verdict verdict, final boolean running) {
+    assertEquals(
+        List.of(),
+        PowerChoice.rank(
+            List.of(shippedAction("crucifix", verdict, running)),
+            facing(3.0, true, false),
+            shippedBudget(Intent.FIGHT),
+            0));
   }
 }

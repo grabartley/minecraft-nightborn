@@ -21,32 +21,6 @@ class HunterActionTest {
     return HunterRigClips.of("hunter");
   }
 
-  @ParameterizedTest(name = "foe {0}, sees {1}, {2} blocks, can throw {3}, crucifix {4}: {5}")
-  @CsvSource({
-    "true, false, 5.0, true, true, NONE",
-    "true, true, 5.0, true, true, THROW_HOLY_WATER",
-    "true, true, 4.0, true, false, THROW_HOLY_WATER",
-    "true, true, 10.0, true, false, THROW_HOLY_WATER",
-    "true, true, 10.5, true, true, NONE",
-    "true, true, 3.9, true, true, RAISE_CRUCIFIX",
-    "true, true, 3.9, true, false, NONE",
-    "true, true, 5.0, false, true, RAISE_CRUCIFIX",
-    "true, true, 6.0, false, true, RAISE_CRUCIFIX",
-    "true, true, 6.1, false, true, NONE",
-    "true, true, 5.0, false, false, NONE",
-    "false, true, 5.0, true, true, NONE",
-    "false, true, 3.9, false, true, NONE"
-  })
-  void supportsTheFightWithWhatTheKitHolds(
-      final boolean foe,
-      final boolean sees,
-      final double distance,
-      final boolean canThrow,
-      final boolean crucifix,
-      final HunterAction action) {
-    assertEquals(action, HunterAction.support(foe, sees, distance, canThrow, crucifix, 6.0));
-  }
-
   @ParameterizedTest(name = "{0}: {1}")
   @CsvSource({
     "-1, NONE",

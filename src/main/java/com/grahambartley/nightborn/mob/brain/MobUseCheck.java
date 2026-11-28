@@ -1,6 +1,5 @@
 package com.grahambartley.nightborn.mob.brain;
 
-import com.grahambartley.nightborn.skill.MobPowerUse;
 import com.grahambartley.nightborn.skill.Skill;
 import com.grahambartley.nightborn.skill.SkillPower;
 import java.util.ArrayList;
@@ -17,7 +16,10 @@ public final class MobUseCheck {
 
   private MobUseCheck() {}
 
-  public static Report check(final Map<Identifier, Skill> skills, final Set<Identifier> budgets) {
+  public static Report check(
+      final Map<Identifier, Skill> skills,
+      final Set<Identifier> budgets,
+      final Map<Identifier, MobAction> actions) {
     final List<String> unused = new ArrayList<>();
     final List<String> problems = new ArrayList<>();
     for (final Map.Entry<Identifier, Skill> entry : new TreeMap<>(skills).entrySet()) {
@@ -35,7 +37,13 @@ public final class MobUseCheck {
       if (power.mobsNeverUse()) {
         problems.add(id + " has a mob block but says mobs never use it");
       }
-      problems.addAll(uses(id, power.mob().get()));
+      problems.addAll(uses(id.toString(), power.mob().get().effectiveUses()));
+    }
+    for (final Map.Entry<Identifier, MobAction> entry : new TreeMap<>(actions).entrySet()) {
+      if (entry.getValue().uses().isEmpty()) {
+        problems.add("action " + entry.getKey() + " has no uses");
+      }
+      problems.addAll(uses("action " + entry.getKey(), entry.getValue().uses()));
     }
     Arrays.stream(Intent.values())
         .filter(intent -> !budgets.contains(MobIntents.id(intent)))
@@ -43,9 +51,9 @@ public final class MobUseCheck {
     return new Report(unused, problems);
   }
 
-  private static List<String> uses(final Identifier id, final MobPowerUse mob) {
+  private static List<String> uses(final String id, final List<MobUse> uses) {
     final List<String> problems = new ArrayList<>();
-    for (final MobUse use : mob.effectiveUses()) {
+    for (final MobUse use : uses) {
       if (Intent.byKey(use.intent()).isEmpty()) {
         problems.add(id + " has a use with unknown intent " + use.intent());
       }

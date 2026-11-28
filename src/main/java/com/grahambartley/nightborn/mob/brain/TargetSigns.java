@@ -2,8 +2,8 @@ package com.grahambartley.nightborn.mob.brain;
 
 import com.grahambartley.nightborn.faction.Hunters;
 import com.grahambartley.nightborn.hold.Holds;
-import com.grahambartley.nightborn.mob.combat.CombatMoves;
 import com.grahambartley.nightborn.mob.combat.MobFighter;
+import com.grahambartley.nightborn.server.ServerConfigService;
 import com.grahambartley.nightborn.vampire.Vampires;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffects;
@@ -39,7 +39,8 @@ public final class TargetSigns {
         aware(
             target instanceof MobEntity foe && foe.getTarget() == mob,
             target.getAttacker() == mob,
-            mob.getAttacker() == target));
+            mob.getAttacker() == target),
+        Threat.of(target).at(mob.distanceTo(target), ServerConfigService.current().combat()));
   }
 
   public static boolean aware(
@@ -61,7 +62,7 @@ public final class TargetSigns {
   }
 
   private static boolean windingUp(final LivingEntity target) {
-    return CombatMoves.draws(target)
+    return Threat.draws(target)
         || target instanceof MobFighter fighter && fighter.mobFighting().telling();
   }
 }

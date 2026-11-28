@@ -137,7 +137,7 @@ public class VampireStageGameTest implements FabricGameTest {
     final Think think = vampire.mobFighting().lastThink().orElseThrow();
     context.assertEquals(think.intent(), Intent.FIGHT, "a vampire with a target is fighting");
     context.assertEquals(
-        think.chosen().map(scored -> scored.option().power()).orElse(null),
+        think.chosen().map(scored -> scored.option().id()).orElse(null),
         BLOOD_RUSH,
         "it chooses blood rush with its target in range");
     context.assertTrue(vampire.mobFighting().telling(), "it winds up before the cast");
@@ -190,7 +190,7 @@ public class VampireStageGameTest implements FabricGameTest {
                   vampire.stage().combat().bloodFloor());
           final Think think = vampire.mobFighting().lastThink().orElseThrow();
           context.assertEquals(
-              think.chosen().map(scored -> scored.option().power()).orElse(null),
+              think.chosen().map(scored -> scored.option().id()).orElse(null),
               POUNCE,
               "it pounces on the target moving away");
           context.assertTrue(
@@ -244,7 +244,7 @@ public class VampireStageGameTest implements FabricGameTest {
                   .mobFighting()
                   .lastThink()
                   .flatMap(Think::chosen)
-                  .map(scored -> scored.option().power())
+                  .map(scored -> scored.option().id())
                   .orElse(null),
               BAT_FORM,
               "it chooses bat form to cross the gap");

@@ -20,6 +20,7 @@ class SituationsTest {
     "TARGET_DISTANCE TARGET_HUNTER, true",
     "TARGET_WINDING_UP TARGET_SLOWED TARGET_AIRBORNE TARGET_VAMPIRE, true",
     "TARGET_AWARE, true",
+    "TARGET_THREATENING, true",
     "GAP_AHEAD LIGHT UNTIL_DAWN, false"
   })
   @DisplayName("a mob reads its target's signs only when a ready power asks for one")

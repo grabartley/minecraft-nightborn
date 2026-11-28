@@ -25,7 +25,8 @@ public final class Situations {
               Fact.TARGET_AIRBORNE,
               Fact.TARGET_VAMPIRE,
               Fact.TARGET_HUNTER,
-              Fact.TARGET_AWARE));
+              Fact.TARGET_AWARE,
+              Fact.TARGET_THREATENING));
 
   private Situations() {}
 

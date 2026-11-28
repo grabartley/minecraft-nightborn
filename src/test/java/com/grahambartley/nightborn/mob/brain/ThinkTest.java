@@ -40,6 +40,6 @@ class ThinkTest {
             0.0);
     assertEquals(
         chosen.isEmpty() ? Optional.empty() : Optional.of(Identifier.of("nightborn", chosen)),
-        think.chosen().map(s -> s.option().power()));
+        think.chosen().map(s -> s.option().id()));
   }
 }

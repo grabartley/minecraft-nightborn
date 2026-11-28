@@ -8,6 +8,7 @@ import com.grahambartley.nightborn.skill.PowerUse;
 import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import net.minecraft.util.Identifier;
@@ -83,13 +84,7 @@ class ThinkingTest {
       final Intent intent,
       final boolean stuck,
       final boolean offered) {
-    assertEquals(
-        offered,
-        Thinking.offered(
-            new MobPowerUse(0.0F, 8.0F, 1, Identifier.of("minecraft", "x"), "dodge", dodgePower),
-            dodgeThink,
-            intent,
-            stuck));
+    assertEquals(offered, Thinking.offered(dodgePower, dodgeThink, intent, stuck));
   }
 
   @ParameterizedTest(name = "{0}: aims [{1}]")
@@ -113,7 +108,7 @@ class ThinkingTest {
     if (!aims.isEmpty()) {
       Arrays.stream(aims.split(" ")).map(Aim::valueOf).forEach(expected::add);
     }
-    assertEquals(expected, Thinking.aims(use, intent));
+    assertEquals(expected, Thinking.aims(use.effectiveUses(), intent));
   }
 
   @ParameterizedTest(name = "[{0}] -> {1}")
@@ -178,8 +173,8 @@ class ThinkingTest {
         helpOption("ward", "ally", "ally_under_attack", EnumSet.noneOf(Aim.class));
     assertEquals(List.of(mend), Thinking.helping(List.of(mend, strike, unready), Intent.FIGHT));
     assertEquals(List.of(), Thinking.helping(List.of(mend), Intent.RETREAT));
-    assertEquals(true, Thinking.helps(mend.use()));
-    assertEquals(false, Thinking.helps(strike.use()));
+    assertEquals(true, Thinking.helps(mend.uses()));
+    assertEquals(false, Thinking.helps(strike.uses()));
   }
 
   @ParameterizedTest(name = "helps {0}, {1}, scale {2}, fight think {3}: every {4}")
@@ -217,5 +212,66 @@ class ThinkingTest {
   void thinksAlone(
       final boolean dodge, final boolean target, final boolean watched, final boolean thinks) {
     assertEquals(thinks, Thinking.thinksAlone(dodge, target, watched));
+  }
+
+  private static final Identifier LEAP = Identifier.of("nightborn", "leap");
+  private static final Identifier SIDESTEP = Identifier.of("nightborn", "sidestep");
+  private static final Identifier UNKNOWN = Identifier.of("nightborn", "unknown");
+
+  private static Optional<MobAction> data(final Identifier id) {
+    if (id.equals(LEAP)) {
+      return Optional.of(new MobAction(List.of(new MobUse("fight", "target", List.of(), 1.0F))));
+    }
+    return id.equals(SIDESTEP)
+        ? Optional.of(
+            new MobAction(
+                List.of(
+                    new MobUse("fight", "target", List.of(), 1.0F),
+                    new MobUse("retreat", "target", List.of(), 1.0F))))
+        : Optional.empty();
+  }
+
+  @ParameterizedTest(name = "{0}: [{1}]")
+  @CsvSource({
+    "FIGHT, 'nightborn:leap nightborn:sidestep'",
+    "RETREAT, 'nightborn:sidestep'",
+    "TRAVEL, ''"
+  })
+  @DisplayName(
+      "a built-in action joins the options like a power, only for an intent it has a use for, and"
+          + " an action with no data is left out")
+  void actions(final Intent intent, final String expected) {
+    final List<PowerChoice.Option> options =
+        Thinking.actions(
+            List.of(
+                ActionReadiness.of(LEAP, true, 60),
+                ActionReadiness.of(SIDESTEP, true, 60),
+                ActionReadiness.of(UNKNOWN, true, 60)),
+            ThinkingTest::data,
+            intent);
+    assertEquals(
+        expected.isEmpty()
+            ? List.of()
+            : Arrays.stream(expected.split(" ")).map(Identifier::of).toList(),
+        options.stream().map(PowerChoice.Option::id).toList());
+    options.forEach(option -> assertEquals(PowerChoice.Source.ACTION, option.source()));
+  }
+
+  @ParameterizedTest(name = "ready {0}")
+  @CsvSource({"true, READY, 'TARGET SELF ALLY ALLIES FOES SPOT'", "false, COOLING, ''"})
+  @DisplayName("a built-in action is ready for every aim while it can be used and none while not")
+  void actionAims(final boolean ready, final PowerUse.Verdict verdict, final String aims) {
+    final PowerChoice.Option option =
+        Thinking.actions(
+                List.of(ActionReadiness.of(LEAP, ready, 60)), ThinkingTest::data, Intent.FIGHT)
+            .getFirst();
+    assertEquals(verdict, option.verdict());
+    assertEquals(0, option.cost());
+    assertEquals(60, option.cooldownTicks());
+    assertEquals(
+        aims.isEmpty()
+            ? Set.of()
+            : Arrays.stream(aims.split(" ")).map(Aim::valueOf).collect(Collectors.toSet()),
+        option.readyAims());
   }
 }

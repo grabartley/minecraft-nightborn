@@ -9,7 +9,7 @@ public final class HunterActionTimer {
     DONE
   }
 
-  static final int THROW_COOLDOWN_TICKS = 160;
+  public static final int THROW_COOLDOWN_TICKS = 160;
 
   private HunterAction action = HunterAction.NONE;
   private int age;

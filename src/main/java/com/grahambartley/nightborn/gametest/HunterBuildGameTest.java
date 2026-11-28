@@ -21,6 +21,7 @@ import com.grahambartley.nightborn.skill.SkillAttachment;
 import com.grahambartley.nightborn.skill.SkillTree;
 import com.grahambartley.nightborn.skill.Skills;
 import com.grahambartley.nightborn.skill.TreeProgress;
+import com.grahambartley.nightborn.ward.Wards;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -40,6 +41,7 @@ public class HunterBuildGameTest implements FabricGameTest {
   static final int START = 5;
   static final Identifier REBUKE = Identifier.of(Nightborn.MOD_ID, "faithful/rebuke");
   static final int REBUKE_TELL = 10;
+  static final int LONGEST_THINK = 100;
   static final Identifier BIND_WOUNDS = Identifier.of(Nightborn.MOD_ID, "hunter/bind_wounds");
   static final int BIND_TELL = 12;
   static final Identifier INITIATE = Identifier.of(Nightborn.MOD_ID, "initiate");
@@ -142,7 +144,7 @@ public class HunterBuildGameTest implements FabricGameTest {
         });
   }
 
-  @GameTest(templateName = ARENA, tickLimit = START + REBUKE_TELL + 10)
+  @GameTest(templateName = ARENA, tickLimit = START + LONGEST_THINK + REBUKE_TELL + 10)
   public void aFaithfulHunterRebukesAVampireAfterItsTell(final TestContext context) {
     final HunterEntity hunter = context.spawnEntity(GuildMobs.HUNTER, new BlockPos(3, 2, 2));
     hunter.setAiDisabled(true);
@@ -165,27 +167,43 @@ public class HunterBuildGameTest implements FabricGameTest {
         START,
         () -> {
           hunter.arm("nightborn:stake");
-          hunter.setYaw(0.0F);
-          hunter.setHeadYaw(0.0F);
-          hunter.setBodyYaw(0.0F);
-          hunter.setPitch(0.0F);
+          face(hunter);
           hunter.setTarget(vampire);
           hunter.fight();
-          context.assertFalse(Rebukes.silenced(vampire), "nothing lands during the tell");
-        });
-    context.runAtTick(
-        START + REBUKE_TELL,
-        () -> {
-          hunter.setYaw(0.0F);
-          hunter.setPitch(0.0F);
-          hunter.fight();
-          context.assertTrue(Rebukes.silenced(vampire), "the rebuke lands on the vampire");
+          context.assertTrue(Wards.wards(hunter), "it raises its crucifix at the vampire first");
+          final int think = HunterSkills.thinkTicks(hunter, hunter.shownRank());
           context.assertTrue(
-              PowerCooldownAttachment.get(hunter).ticksLeft(REBUKE, context.getWorld().getTime())
-                  > 0,
-              "and the power cools down as a player's does");
-          context.complete();
+              think <= LONGEST_THINK, "a sworn initiate thinks within " + LONGEST_THINK + " ticks");
+          context.waitAndRun(
+              think,
+              () -> {
+                face(hunter);
+                hunter.fight();
+                context.assertTrue(
+                    hunter.mobFighting().telling(), "it winds up a rebuke with the crucifix up");
+                context.assertFalse(Rebukes.silenced(vampire), "nothing lands during the tell");
+              });
+          context.waitAndRun(
+              think + REBUKE_TELL,
+              () -> {
+                face(hunter);
+                hunter.fight();
+                context.assertTrue(Rebukes.silenced(vampire), "the rebuke lands on the vampire");
+                context.assertTrue(
+                    PowerCooldownAttachment.get(hunter)
+                            .ticksLeft(REBUKE, context.getWorld().getTime())
+                        > 0,
+                    "and the power cools down as a player's does");
+                context.complete();
+              });
         });
+  }
+
+  private static void face(final HunterEntity hunter) {
+    hunter.setYaw(0.0F);
+    hunter.setHeadYaw(0.0F);
+    hunter.setBodyYaw(0.0F);
+    hunter.setPitch(0.0F);
   }
 
   @GameTest(templateName = ARENA, tickLimit = START + BIND_TELL + 10)

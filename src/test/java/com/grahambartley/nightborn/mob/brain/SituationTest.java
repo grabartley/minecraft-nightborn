@@ -1,6 +1,7 @@
 package com.grahambartley.nightborn.mob.brain;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
@@ -49,6 +50,15 @@ class SituationTest {
     assertEquals(
         new Situation.Target(distance, sight, health, false, false, false, false, false, false),
         new Situation.Target(distance, sight, health));
+  }
+
+  @ParameterizedTest(name = "aware {0}")
+  @CsvSource({"true", "false"})
+  @DisplayName("a target read without the threat test is not counted as threatening")
+  void targetNotThreateningByDefault(final boolean aware) {
+    assertFalse(
+        new Situation.Target(3.0, true, 1.0F, true, false, false, false, false, false, aware)
+            .threatening());
   }
 
   private static Situation.Member member(

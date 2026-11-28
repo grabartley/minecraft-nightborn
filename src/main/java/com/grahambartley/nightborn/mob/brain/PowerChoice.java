@@ -13,16 +13,23 @@ import org.jetbrains.annotations.Nullable;
 
 public final class PowerChoice {
 
+  public enum Source {
+    POWER,
+    ACTION
+  }
+
   public record Option(
-      Identifier power,
+      Identifier id,
+      Source source,
       PowerUse.Verdict verdict,
       int cost,
       int cooldownTicks,
       boolean running,
-      MobPowerUse use,
+      List<MobUse> uses,
       Set<Aim> readyAims) {
 
     public Option {
+      uses = List.copyOf(uses);
       readyAims = Set.copyOf(readyAims);
     }
 
@@ -32,15 +39,27 @@ public final class PowerChoice {
         final int cost,
         final int cooldownTicks,
         final boolean running,
-        final MobPowerUse use) {
+        final MobPowerUse use,
+        final Set<Aim> readyAims) {
       this(
           power,
+          Source.POWER,
           verdict,
           cost,
           cooldownTicks,
           running,
-          use,
-          verdict == PowerUse.Verdict.READY ? EnumSet.allOf(Aim.class) : EnumSet.noneOf(Aim.class));
+          use.effectiveUses(),
+          readyAims);
+    }
+
+    public Option(
+        final Identifier power,
+        final PowerUse.Verdict verdict,
+        final int cost,
+        final int cooldownTicks,
+        final boolean running,
+        final MobPowerUse use) {
+      this(power, verdict, cost, cooldownTicks, running, use, allIfReady(verdict));
     }
 
     public Option(
@@ -49,6 +68,28 @@ public final class PowerChoice {
         final int cost,
         final MobPowerUse use) {
       this(power, verdict, cost, 0, false, use);
+    }
+
+    public static Option action(final ActionReadiness readiness, final MobAction action) {
+      return new Option(
+          readiness.id(),
+          Source.ACTION,
+          readiness.verdict(),
+          0,
+          readiness.cooldownTicks(),
+          readiness.running(),
+          action.uses(),
+          allIfReady(readiness.verdict()));
+    }
+
+    public boolean action() {
+      return source == Source.ACTION;
+    }
+
+    private static Set<Aim> allIfReady(final PowerUse.Verdict verdict) {
+      return verdict == PowerUse.Verdict.READY
+          ? EnumSet.allOf(Aim.class)
+          : EnumSet.noneOf(Aim.class);
     }
   }
 
@@ -79,7 +120,7 @@ public final class PowerChoice {
       }
       MobUse best = null;
       MobUse.Scoring bestScoring = null;
-      for (final MobUse use : option.use().effectiveUses()) {
+      for (final MobUse use : option.uses()) {
         if (!option.readyAims().contains(use.aimed())) {
           continue;
         }
@@ -96,7 +137,8 @@ public final class PowerChoice {
                 best,
                 bestScoring.score()
                     * budget.kept(option.cost(), option.cooldownTicks(), situation.self().health()),
-                budget.affords(situation.self().blood(), option.cost(), mobFloor),
+                option.action()
+                    || budget.affords(situation.self().blood(), option.cost(), mobFloor),
                 bestScoring.ally()));
       }
     }

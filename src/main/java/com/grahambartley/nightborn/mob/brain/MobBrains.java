@@ -14,13 +14,15 @@ public final class MobBrains {
 
   public static void register() {
     MobIntents.register();
+    MobActions.register();
     GroupViews.register();
     HelpClaims.register();
     ServerLifecycleEvents.SERVER_STARTED.register(
         server -> {
           final DynamicRegistryManager registries = server.getRegistryManager();
           final MobUseCheck.Report report =
-              MobUseCheck.check(Skills.allSkills(registries), budgets(registries));
+              MobUseCheck.check(
+                  Skills.allSkills(registries), budgets(registries), MobActions.all(registries));
           report.unused().forEach(line -> Nightborn.LOGGER.warn("Mob powers: {}", line));
           report.problems().forEach(line -> Nightborn.LOGGER.error("Bad mob power data: {}", line));
         });

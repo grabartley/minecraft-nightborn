@@ -3,12 +3,8 @@ package com.grahambartley.nightborn.config;
 import java.util.List;
 
 public record CombatSettings(
-    int leapMinRange,
-    int leapMaxRange,
     int leapPush,
     int leapLift,
-    int dashMinRange,
-    int dashMaxRange,
     int dashPush,
     int dashLift,
     int dodgePush,
@@ -24,18 +20,10 @@ public record CombatSettings(
 
   static final String SECTION = "combat";
 
-  public static final IntSetting LEAP_MIN_RANGE =
-      new IntSetting(SECTION, "leapMinRange", 3, 0, 16, c -> c.combat().leapMinRange());
-  public static final IntSetting LEAP_MAX_RANGE =
-      new IntSetting(SECTION, "leapMaxRange", 7, 1, 32, c -> c.combat().leapMaxRange());
   public static final IntSetting LEAP_PUSH =
       new IntSetting(SECTION, "leapPush", 90, 0, 300, c -> c.combat().leapPush());
   public static final IntSetting LEAP_LIFT =
       new IntSetting(SECTION, "leapLift", 45, 0, 200, c -> c.combat().leapLift());
-  public static final IntSetting DASH_MIN_RANGE =
-      new IntSetting(SECTION, "dashMinRange", 7, 0, 32, c -> c.combat().dashMinRange());
-  public static final IntSetting DASH_MAX_RANGE =
-      new IntSetting(SECTION, "dashMaxRange", 16, 1, 48, c -> c.combat().dashMaxRange());
   public static final IntSetting DASH_PUSH =
       new IntSetting(SECTION, "dashPush", 130, 0, 300, c -> c.combat().dashPush());
   public static final IntSetting DASH_LIFT =
@@ -66,12 +54,8 @@ public record CombatSettings(
 
   public static final List<Setting<?>> SETTINGS =
       List.of(
-          LEAP_MIN_RANGE,
-          LEAP_MAX_RANGE,
           LEAP_PUSH,
           LEAP_LIFT,
-          DASH_MIN_RANGE,
-          DASH_MAX_RANGE,
           DASH_PUSH,
           DASH_LIFT,
           DODGE_PUSH,
@@ -86,12 +70,8 @@ public record CombatSettings(
           RETREAT_SPEED);
 
   public CombatSettings {
-    leapMinRange = LEAP_MIN_RANGE.clamp(leapMinRange);
-    leapMaxRange = Math.max(leapMinRange, LEAP_MAX_RANGE.clamp(leapMaxRange));
     leapPush = LEAP_PUSH.clamp(leapPush);
     leapLift = LEAP_LIFT.clamp(leapLift);
-    dashMinRange = DASH_MIN_RANGE.clamp(dashMinRange);
-    dashMaxRange = Math.max(dashMinRange, DASH_MAX_RANGE.clamp(dashMaxRange));
     dashPush = DASH_PUSH.clamp(dashPush);
     dashLift = DASH_LIFT.clamp(dashLift);
     dodgePush = DODGE_PUSH.clamp(dodgePush);
@@ -108,12 +88,8 @@ public record CombatSettings(
 
   static CombatSettings from(final SettingValues values) {
     return new CombatSettings(
-        values.get(LEAP_MIN_RANGE),
-        values.get(LEAP_MAX_RANGE),
         values.get(LEAP_PUSH),
         values.get(LEAP_LIFT),
-        values.get(DASH_MIN_RANGE),
-        values.get(DASH_MAX_RANGE),
         values.get(DASH_PUSH),
         values.get(DASH_LIFT),
         values.get(DODGE_PUSH),
