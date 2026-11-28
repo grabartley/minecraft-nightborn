@@ -7,8 +7,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.grahambartley.nightborn.MinecraftBootstrapExtension;
+import com.grahambartley.nightborn.config.SkillSettings;
 import com.grahambartley.nightborn.faction.Oath;
 import com.grahambartley.nightborn.rank.RankLadder;
+import com.grahambartley.nightborn.rank.RankNeeds;
 import com.grahambartley.nightborn.skill.SkillCurve;
 import com.grahambartley.nightborn.skill.TreeProgress;
 import java.util.List;
@@ -24,6 +26,15 @@ class HunterGrowthTest {
   private static final HunterPurchases.Shop SHOP = HunterBuildFixtures.shop();
   private static final RankLadder LADDER = HunterBuildFixtures.ladder();
   private static final HunterGrowth.Curve CURVE = new HunterGrowth.Curve(100, 3, NEEDS);
+  private static final HunterGrowth.Curve DEFAULT_CURVE =
+      new HunterGrowth.Curve(
+          SkillSettings.FIRST_POINT_EXPERIENCE.defaultValue(),
+          SkillSettings.POINT_COST_RISE.defaultValue(),
+          new RankNeeds(
+              List.of(
+                  SkillSettings.HUNTER_RANK_POINTS.defaultValue(),
+                  SkillSettings.VETERAN_RANK_POINTS.defaultValue(),
+                  SkillSettings.MASTER_RANK_POINTS.defaultValue())));
 
   @ParameterizedTest(name = "rank {0} -> {1}")
   @CsvSource({"0, 0", "2, 2", "3, 3", "9, 3", "-1, 0"})
@@ -119,5 +130,41 @@ class HunterGrowthTest {
     assertEquals(
         rank,
         HunterGrowth.grow(low, 1.0F, SHOP, CURVE, HunterBuildFixtures.rolls(rank)).oath().rank());
+  }
+
+  @ParameterizedTest(name = "paths {0} and {1}")
+  @CsvSource({"slayer, faithful", "trapper, seeker", "seeker, slayer"})
+  @DisplayName(
+      "a hunter that owns every skill open to it banks new experience as points and buys nothing")
+  void ownsEverythingAndBanksPoints(final String one, final String two) {
+    final HunterGrowth.Standing full =
+        HunterGrowth.master(SHOP, LADDER.size() - 1, List.of(id(one), id(two)));
+    final HunterGrowth.Standing grown =
+        HunterGrowth.grow(full, 5000.0F, SHOP, DEFAULT_CURVE, HunterBuildFixtures.rolls(1));
+    assertTrue(grown.progress().earned() > full.progress().earned());
+    assertEquals(full.progress().bought(), grown.progress().bought());
+  }
+
+  @ParameterizedTest(name = "{0} points, paths {1} and {2}, seed {3}")
+  @CsvSource({
+    "0, slayer, faithful, 31",
+    "4, trapper, seeker, 32",
+    "9, faithful, trapper, 33",
+    "9, seeker, slayer, 34",
+    "9, slayer, trapper, 35",
+    "9, faithful, seeker, 36"
+  })
+  @DisplayName(
+      "an initiate buys at least one skill with 5000 experience on the default curve, whatever"
+          + " its start")
+  void initiateBuysWithExperience(
+      final int points, final String one, final String two, final long seed) {
+    final HunterGrowth.Standing start =
+        HunterGrowth.begin(
+            SHOP, 0, points, List.of(id(one), id(two)), HunterBuildFixtures.rolls(seed));
+    final HunterGrowth.Standing grown =
+        HunterGrowth.grow(
+            start, 5000.0F, SHOP, DEFAULT_CURVE, HunterBuildFixtures.rolls(seed + 100));
+    assertTrue(grown.progress().bought().size() > start.progress().bought().size());
   }
 }

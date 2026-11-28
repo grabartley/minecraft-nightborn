@@ -39,6 +39,7 @@ public class HunterBuildGameTest implements FabricGameTest {
   static final int START = 5;
   static final Identifier REBUKE = Identifier.of(Nightborn.MOD_ID, "faithful/rebuke");
   static final int REBUKE_TELL = 10;
+  static final Identifier INITIATE = Identifier.of(Nightborn.MOD_ID, "initiate");
 
   private static HunterPurchases.Shop shop(final TestContext context, final HunterEntity hunter) {
     return HunterSkills.shop(
@@ -101,9 +102,11 @@ public class HunterBuildGameTest implements FabricGameTest {
   public void aHunterThatEarnsExperienceGainsPointsAndASkill(final TestContext context) {
     final HunterEntity hunter = context.spawnEntity(GuildMobs.HUNTER, new BlockPos(3, 2, 3));
     hunter.setAiDisabled(true);
+    hunter.rollFrom(Map.of(INITIATE, 1));
     context.runAtTick(
         START,
         () -> {
+          context.assertEquals(OathAttachment.get(hunter).rank(), 0, "it starts as an initiate");
           final TreeProgress before = SkillAttachment.get(hunter, SkillTree.HUNTER);
           hunter.earn(5000.0F);
           final TreeProgress after = SkillAttachment.get(hunter, SkillTree.HUNTER);
