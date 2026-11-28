@@ -19,7 +19,11 @@ public final class HunterTradeOrder implements WheelAction<HunterEntity> {
 
   @Override
   public boolean allows(final ServerPlayerEntity player, final HunterEntity hunter) {
-    return HunterReferral.answers(hunter, player);
+    return trades(HunterReferral.answers(hunter, player), hunter.raid().isPresent());
+  }
+
+  static boolean trades(final boolean answers, final boolean raiding) {
+    return answers && !raiding;
   }
 
   @Override

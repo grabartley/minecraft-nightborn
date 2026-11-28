@@ -128,11 +128,14 @@ public final class HunterWares implements Merchant, GuildSeller {
   @Override
   public void trade(final TradeOffer offer) {
     offer.use();
-    hunter.playSound(getYesSound(), 1.0F, hunter.getSoundPitch());
   }
 
   @Override
-  public void onSellingItem(final ItemStack stack) {}
+  public void onSellingItem(final ItemStack stack) {
+    if (!stack.isEmpty()) {
+      hunter.playSound(getYesSound(), 1.0F, hunter.getSoundPitch());
+    }
+  }
 
   @Override
   public int getExperience() {

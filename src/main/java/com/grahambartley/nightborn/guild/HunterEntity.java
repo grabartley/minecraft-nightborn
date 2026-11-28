@@ -297,6 +297,7 @@ public class HunterEntity extends PathAwareEntity
     if (grows() && (building.tick(this, fixedRank(), heldKit()) || shownRank().isEmpty())) {
       showRank();
     }
+    wares.tick();
     MobNaming.ensure(this);
     if (PartyMember.wakes(isSleeping(), getWorld().getTimeOfDay())) {
       wakeUp();
@@ -424,7 +425,6 @@ public class HunterEntity extends PathAwareEntity
     super.mobTick();
     fight();
     stall.watch(this, wander);
-    wares.tick();
   }
 
   @Override
