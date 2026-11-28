@@ -8,6 +8,7 @@
     "nightborn:sun",
     "nightborn:lancet",
     "nightborn:vomit",
+    "nightborn:bleeding",
     "#minecraft:is_fire",
     "#minecraft:is_fall"
   ]

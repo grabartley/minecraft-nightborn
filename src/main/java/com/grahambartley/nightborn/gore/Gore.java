@@ -11,7 +11,8 @@ public enum Gore {
   STAKE,
   SILVER,
   DRAINED,
-  STAKED;
+  STAKED,
+  SEVER;
 
   private static final IntFunction<Gore> BY_INDEX =
       ValueLists.createIdToValueFunction(

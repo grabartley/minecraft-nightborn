@@ -37,7 +37,17 @@ public record LostPart(
           LostPart::regrowTicks,
           LostPart::new);
 
-  public static LostPart missing(final long now) {
-    return new LostPart(LimbCondition.MISSING, now, 0, Optional.empty());
+  public static LostPart missing(final long now, final int bleedTicks) {
+    return new LostPart(LimbCondition.MISSING, now, bleedTicks, Optional.empty());
+  }
+
+  public boolean bleeding(final long now) {
+    return condition == LimbCondition.MISSING && now >= lostAt && now < lostAt + bleedTicks;
+  }
+
+  public LostPart closed(final long now) {
+    return bleeding(now)
+        ? new LostPart(condition, lostAt, (int) (now - lostAt), regrowTicks)
+        : this;
   }
 }

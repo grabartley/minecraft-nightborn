@@ -1,6 +1,7 @@
 package com.grahambartley.nightborn.client;
 
 import com.grahambartley.nightborn.Nightborn;
+import com.grahambartley.nightborn.dismember.Wounds;
 import com.grahambartley.nightborn.feeding.TurningBite;
 import com.grahambartley.nightborn.sickness.BiteSicknessEffect;
 import com.grahambartley.nightborn.vampire.Vampires;
@@ -20,6 +21,7 @@ public final class VampireHud {
 
   static final Identifier VIGNETTE = Identifier.ofVanilla("textures/misc/vignette.png");
   static final Identifier TURNING_BITE = Identifier.of(Nightborn.MOD_ID, "hud/turning_bite");
+  static final Identifier BLEEDING = Identifier.of(Nightborn.MOD_ID, "hud/bleeding");
   static final int TEXT_COLOUR = 0xD8C8B0;
 
   private VampireHud() {}
@@ -43,6 +45,9 @@ public final class VampireHud {
           WeakenedSignRenderer.SPRITE,
           Text.translatable("nightborn.weakened.sign", visible.weakened()),
           signs++);
+    }
+    if (Wounds.bleeding(player)) {
+      drawSign(context, client, BLEEDING, Text.translatable("nightborn.bleeding.sign"), signs++);
     }
     if (Vampires.isVampire(player) && TurningBite.isOn(player)) {
       drawSign(

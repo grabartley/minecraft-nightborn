@@ -22,7 +22,7 @@ class GoreTest {
   }
 
   @ParameterizedTest(name = "index {0} -> {1}")
-  @CsvSource({"-1, BITE", "5, BITE", "99, BITE"})
+  @CsvSource({"-1, BITE", "6, BITE", "99, BITE"})
   @DisplayName("an index no kind owns falls back to the first kind instead of failing")
   void unknownIndex(final int index, final Gore expected) {
     final ByteBuf buf = Unpooled.buffer();

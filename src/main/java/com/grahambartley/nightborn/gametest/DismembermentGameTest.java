@@ -3,6 +3,7 @@ package com.grahambartley.nightborn.gametest;
 import com.grahambartley.nightborn.config.DismembermentSettings;
 import com.grahambartley.nightborn.dismember.BodyPart;
 import com.grahambartley.nightborn.dismember.Dismemberment;
+import com.grahambartley.nightborn.dismember.Wounds;
 import com.grahambartley.nightborn.guild.GuildMobs;
 import com.grahambartley.nightborn.guild.HunterEntity;
 import com.grahambartley.nightborn.server.ServerConfigService;
@@ -71,6 +72,26 @@ public class DismembermentGameTest implements FabricGameTest {
         Dismemberment.missing(hunter, BodyPart.RIGHT_ARM),
         "the first blow takes the arm it was aimed at");
     context.complete();
+  }
+
+  @GameTest(templateName = GoreGameTest.ARENA, tickLimit = 160)
+  public void aHumanBleedsToOneHeartAndAWoundCanBeBound(final TestContext context) {
+    final HunterEntity hunter = context.spawnEntity(GuildMobs.HUNTER, new BlockPos(3, 2, 3));
+    hunter.setAiDisabled(true);
+    hunter.setHealth(3.0F);
+    Dismemberment.sever(hunter, BodyPart.LEFT_ARM);
+    context.assertTrue(Wounds.bleeding(hunter), "a fresh cut bleeds");
+    context.waitAndRun(
+        140L,
+        () -> {
+          context.assertEquals(2.0F, hunter.getHealth(), "health after bleeding a while");
+          context.assertTrue(Wounds.bleeding(hunter), "the wound is still open");
+          Wounds.close(hunter);
+          context.assertFalse(Wounds.bleeding(hunter), "a bound wound stops bleeding");
+          context.assertTrue(
+              Dismemberment.missing(hunter, BodyPart.LEFT_ARM), "the arm is still gone");
+          context.complete();
+        });
   }
 
   private static ServerPlayerEntity swordAt(

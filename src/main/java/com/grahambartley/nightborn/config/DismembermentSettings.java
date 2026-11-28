@@ -8,7 +8,10 @@ public record DismembermentSettings(
     int severChance,
     int strongBlow,
     int massiveBlow,
-    int badlyHurt) {
+    int badlyHurt,
+    int humanBleedSeconds,
+    int vampireBleedSeconds,
+    int bleedPulseSeconds) {
 
   static final String SECTION = "dismemberment";
 
@@ -25,14 +28,36 @@ public record DismembermentSettings(
   public static final IntSetting BADLY_HURT =
       new IntSetting(SECTION, "badlyHurt", 35, 0, 100, c -> c.dismemberment().badlyHurt());
 
+  public static final IntSetting HUMAN_BLEED_SECONDS =
+      new IntSetting(
+          SECTION, "humanBleedSeconds", 60, 0, 600, c -> c.dismemberment().humanBleedSeconds());
+  public static final IntSetting VAMPIRE_BLEED_SECONDS =
+      new IntSetting(
+          SECTION, "vampireBleedSeconds", 20, 0, 600, c -> c.dismemberment().vampireBleedSeconds());
+  public static final IntSetting BLEED_PULSE_SECONDS =
+      new IntSetting(
+          SECTION, "bleedPulseSeconds", 3, 1, 60, c -> c.dismemberment().bleedPulseSeconds());
+
   public static final List<Setting<?>> SETTINGS =
-      List.of(ENABLED, PLAYERS_MAIMED, SEVER_CHANCE, STRONG_BLOW, MASSIVE_BLOW, BADLY_HURT);
+      List.of(
+          ENABLED,
+          PLAYERS_MAIMED,
+          SEVER_CHANCE,
+          STRONG_BLOW,
+          MASSIVE_BLOW,
+          BADLY_HURT,
+          HUMAN_BLEED_SECONDS,
+          VAMPIRE_BLEED_SECONDS,
+          BLEED_PULSE_SECONDS);
 
   public DismembermentSettings {
     severChance = SEVER_CHANCE.clamp(severChance);
     strongBlow = STRONG_BLOW.clamp(strongBlow);
     massiveBlow = MASSIVE_BLOW.clamp(massiveBlow);
     badlyHurt = BADLY_HURT.clamp(badlyHurt);
+    humanBleedSeconds = HUMAN_BLEED_SECONDS.clamp(humanBleedSeconds);
+    vampireBleedSeconds = VAMPIRE_BLEED_SECONDS.clamp(vampireBleedSeconds);
+    bleedPulseSeconds = BLEED_PULSE_SECONDS.clamp(bleedPulseSeconds);
   }
 
   static DismembermentSettings from(final SettingValues values) {
@@ -42,6 +67,9 @@ public record DismembermentSettings(
         values.get(SEVER_CHANCE),
         values.get(STRONG_BLOW),
         values.get(MASSIVE_BLOW),
-        values.get(BADLY_HURT));
+        values.get(BADLY_HURT),
+        values.get(HUMAN_BLEED_SECONDS),
+        values.get(VAMPIRE_BLEED_SECONDS),
+        values.get(BLEED_PULSE_SECONDS));
   }
 }
