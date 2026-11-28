@@ -47,16 +47,16 @@ public final class HouseNamingScreen extends NameEntryScreen<HouseNamingLayout> 
     addDrawableChild(
         ButtonWidget.builder(Text.literal("<"), button -> crest = stepped.apply(-1))
             .dimensions(
-                layout.stepBackLeft(),
-                layout.rowTop(row),
+                box().stepBackLeft(),
+                box().rowTop(row),
                 HouseNamingLayout.STEP_WIDTH,
                 HouseNamingLayout.ROW_HEIGHT)
             .build());
     addDrawableChild(
         ButtonWidget.builder(Text.literal(">"), button -> crest = stepped.apply(1))
             .dimensions(
-                layout.stepOnLeft(),
-                layout.rowTop(row),
+                box().stepOnLeft(),
+                box().rowTop(row),
                 HouseNamingLayout.STEP_WIDTH,
                 HouseNamingLayout.ROW_HEIGHT)
             .build());
@@ -78,9 +78,9 @@ public final class HouseNamingScreen extends NameEntryScreen<HouseNamingLayout> 
     context.drawCenteredTextWithShadow(
         textRenderer,
         text,
-        layout.labelCentre(),
-        layout.rowTop(row) + (HouseNamingLayout.ROW_HEIGHT - textRenderer.fontHeight) / 2 + 1,
-        theme.title());
+        box().labelCentre(),
+        box().rowTop(row) + (HouseNamingLayout.ROW_HEIGHT - textRenderer.fontHeight) / 2 + 1,
+        theme().title());
   }
 
   private void preview(final DrawContext context) {
@@ -88,7 +88,7 @@ public final class HouseNamingScreen extends NameEntryScreen<HouseNamingLayout> 
     banner.set(CrestBanners.CREST, crest);
     final float scale = HouseNamingLayout.PREVIEW_SIZE / 16.0F;
     context.getMatrices().push();
-    context.getMatrices().translate(layout.previewLeft(), layout.previewTop(), 0.0F);
+    context.getMatrices().translate(box().previewLeft(), box().previewTop(), 0.0F);
     context.getMatrices().scale(scale, scale, 1.0F);
     context.drawItem(banner, 0, 0);
     context.getMatrices().pop();

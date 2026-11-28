@@ -13,8 +13,8 @@ abstract class NameEntryScreen<L extends NameEntryBox> extends Screen {
 
   private final String suggestion;
   private final Text fieldLabel;
-  protected SkillTheme theme;
-  protected L layout;
+  private SkillTheme theme;
+  private L layout;
   private TextFieldWidget field;
   private ButtonWidget confirm;
 
@@ -25,6 +25,14 @@ abstract class NameEntryScreen<L extends NameEntryBox> extends Screen {
   }
 
   protected abstract L layout(int screenWidth, int screenHeight);
+
+  protected final L box() {
+    return layout;
+  }
+
+  protected final SkillTheme theme() {
+    return theme;
+  }
 
   protected abstract void submit(String name);
 
