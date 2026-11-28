@@ -4,15 +4,12 @@ import com.grahambartley.nightborn.batform.BatForm;
 import com.grahambartley.nightborn.batform.WingedForm;
 import com.grahambartley.nightborn.blood.BloodAttachment;
 import com.grahambartley.nightborn.downed.Downed;
-import com.grahambartley.nightborn.hold.Holds;
-import com.grahambartley.nightborn.mind.MindTies;
 import com.grahambartley.nightborn.mob.Unsticking;
 import com.grahambartley.nightborn.sun.DirectSun;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.Set;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.util.math.Vec3d;
 import org.jetbrains.annotations.Nullable;
@@ -54,10 +51,7 @@ public final class Situations {
             needed.contains(Fact.SUN_ON_ME) && DirectSun.reaches(mob),
             Downed.state(mob) != null,
             Unsticking.stuck(mob),
-            needed.contains(Fact.OWN_HELD)
-                && TargetSigns.held(
-                    Holds.held(mob).isPresent() || mob.hasStatusEffect(StatusEffects.SLOWNESS),
-                    MindTies.mesmerised(mob))),
+            needed.contains(Fact.OWN_HELD) && TargetSigns.held(mob)),
         target == null
             ? null
             : TargetSigns.read(

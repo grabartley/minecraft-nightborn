@@ -34,8 +34,7 @@ public final class TargetSigns {
     if (!signs && !tactics) {
       return new Situation.Target(mob.distanceTo(target), inSight, health);
     }
-    final boolean slowed =
-        target.hasStatusEffect(StatusEffects.SLOWNESS) || Holds.held(target).isPresent();
+    final boolean slowed = slowed(target);
     return new Situation.Target(
         mob.distanceTo(target),
         inSight,
@@ -58,6 +57,14 @@ public final class TargetSigns {
                 target.isUsingItem() && mends(target.getActiveItem())),
         tactics && (ranged(target.getMainHandStack()) || ranged(target.getOffHandStack())),
         tactics && held(slowed, MindTies.mesmerised(target)));
+  }
+
+  public static boolean slowed(final LivingEntity body) {
+    return body.hasStatusEffect(StatusEffects.SLOWNESS) || Holds.held(body).isPresent();
+  }
+
+  public static boolean held(final LivingEntity body) {
+    return held(slowed(body), MindTies.mesmerised(body));
   }
 
   public static boolean healing(

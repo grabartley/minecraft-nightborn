@@ -48,7 +48,10 @@ class VeteranTest {
             0.0,
             List.of(),
             Optional.empty(),
-            0.0F);
+            0.0F,
+            Optional.empty(),
+            Optional.empty(),
+            Optional.empty());
     assertEquals(health, veteran.health(hunter), 1.0E-9);
   }
 
@@ -63,7 +66,10 @@ class VeteranTest {
             0.0,
             List.of(),
             Optional.empty(),
-            0.0F);
+            0.0F,
+            Optional.empty(),
+            Optional.empty(),
+            Optional.empty());
     assertEquals(Identifier.of("nightborn", "sword"), veteran.kit().weapon());
     assertEquals(crucifix, veteran.kit().crucifix().isPresent());
     assertFalse(veteran.kit().ranged());
@@ -135,7 +141,10 @@ class VeteranTest {
                 0.0,
                 List.of(),
                 Optional.empty(),
-                0.0F)
+                0.0F,
+                Optional.empty(),
+                Optional.empty(),
+                Optional.empty())
             .mind(ranked));
   }
 

@@ -5,6 +5,8 @@ import com.grahambartley.nightborn.guild.GuildMobs;
 import com.grahambartley.nightborn.guild.HunterEntity;
 import com.grahambartley.nightborn.guild.HunterRig;
 import com.grahambartley.nightborn.guild.HunterVoice;
+import com.grahambartley.nightborn.guild.party.PartyMember;
+import com.grahambartley.nightborn.guild.raiding.RaidOrders;
 import com.grahambartley.nightborn.inquisitor.StakeDownedGoal;
 import com.grahambartley.nightborn.mob.brain.Mind;
 import com.grahambartley.nightborn.mob.combat.MobFighting;
@@ -19,6 +21,7 @@ import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
+import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.mob.PathAwareEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.registry.entry.RegistryEntry;
@@ -130,7 +133,20 @@ public class VeteranHunterEntity extends HunterEntity {
   @Override
   protected void mobTick() {
     super.mobTick();
-    veteran().flatMap(Veteran::presence).ifPresent(presence -> PresenceAura.spread(this, presence));
+    veteran()
+        .flatMap(Veteran::presence)
+        .ifPresent(presence -> PresenceAura.spread(this, presence, this::fellow));
+  }
+
+  private boolean fellow(final MobEntity other) {
+    return other instanceof HunterEntity hunter
+        && PartyMember.fellows(
+            getUuid(),
+            raid().map(RaidOrders::quarry),
+            partyLeader(),
+            hunter.getUuid(),
+            hunter.raid().map(RaidOrders::quarry),
+            hunter.partyLeader());
   }
 
   @Override

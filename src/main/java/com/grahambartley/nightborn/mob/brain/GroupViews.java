@@ -2,8 +2,6 @@ package com.grahambartley.nightborn.mob.brain;
 
 import com.grahambartley.nightborn.faction.Allies;
 import com.grahambartley.nightborn.faction.Sides;
-import com.grahambartley.nightborn.hold.Holds;
-import com.grahambartley.nightborn.mind.MindTies;
 import com.grahambartley.nightborn.skill.Mending;
 import com.grahambartley.nightborn.skill.PowerReach;
 import com.grahambartley.nightborn.skill.Powers;
@@ -87,7 +85,7 @@ public final class GroupViews {
               fighting(
                   ally instanceof MobEntity fighter && fighter.getTarget() != null, underAttack),
               claims.claimedByOther(ally.getUuid(), mob.getUuid(), now),
-              TargetSigns.held(Holds.held(ally).isPresent(), MindTies.mesmerised(ally))));
+              TargetSigns.held(ally)));
     }
     return Situation.Group.of(
         members, foes.stream().map(foe -> (double) mob.distanceTo(foe)).toList());

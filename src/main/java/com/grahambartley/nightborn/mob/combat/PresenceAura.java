@@ -1,6 +1,6 @@
 package com.grahambartley.nightborn.mob.combat;
 
-import com.grahambartley.nightborn.faction.Allies;
+import java.util.function.Predicate;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.registry.Registries;
@@ -10,10 +10,12 @@ public final class PresenceAura {
 
   private PresenceAura() {}
 
-  public static void spread(final MobEntity leader, final Presence presence) {
-    if (!Presence.pulses(leader.age) || leader.getTarget() == null) {
+  public static void spread(
+      final MobEntity leader, final Presence presence, final Predicate<MobEntity> follows) {
+    if (!Presence.pulses(leader.age)) {
       return;
     }
+    final boolean leading = leader.getTarget() != null;
     Registries.STATUS_EFFECT
         .getEntry(presence.effect())
         .ifPresent(
@@ -26,9 +28,9 @@ public final class PresenceAura {
                         ally ->
                             ally != leader
                                 && ally.isAlive()
-                                && Allies.allied(leader, ally)
+                                && follows.test(ally)
                                 && presence.reaches(
-                                    true, ally.getTarget() != null, leader.distanceTo(ally)))
+                                    leading, ally.getTarget() != null, leader.distanceTo(ally)))
                     .forEach(
                         ally ->
                             ally.addStatusEffect(

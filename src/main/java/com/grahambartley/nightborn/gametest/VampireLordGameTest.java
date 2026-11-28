@@ -9,8 +9,7 @@ import com.grahambartley.nightborn.mob.NightbornMobs;
 import com.grahambartley.nightborn.mob.VampireBatEntity;
 import com.grahambartley.nightborn.mob.VampireEntity;
 import com.grahambartley.nightborn.mob.VampireLordEntity;
-import com.grahambartley.nightborn.mob.combat.Presence;
-import com.grahambartley.nightborn.mob.combat.PresenceAura;
+import com.grahambartley.nightborn.mob.household.HouseholdPresence;
 import com.grahambartley.nightborn.mob.look.VampireRig;
 import com.grahambartley.nightborn.server.ServerConfigService;
 import com.grahambartley.nightborn.vampire.Vampires;
@@ -131,10 +130,17 @@ public class VampireLordGameTest implements FabricGameTest {
     housemate.settleAt(home);
     lord.setTarget(foe);
     housemate.setTarget(foe);
-    final Presence presence = lord.stage().combat().presence().orElseThrow();
+    final VampireEntity stranger =
+        context.spawnEntity(NightbornMobs.VAMPIRE, new BlockPos(6, 2, 4));
+    stranger.setAiDisabled(true);
+    stranger.settleAt(home.add(200, 0, 0));
+    stranger.setTarget(foe);
     context.runAtEveryTick(
         () -> {
-          PresenceAura.spread(lord, presence);
+          HouseholdPresence.lead(lord);
+          context.assertFalse(
+              stranger.hasStatusEffect(StatusEffects.STRENGTH),
+              "a vampire of another household gains nothing from the lord");
           if (housemate.hasStatusEffect(StatusEffects.STRENGTH)) {
             context.complete();
           }

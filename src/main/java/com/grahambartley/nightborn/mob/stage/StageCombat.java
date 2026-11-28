@@ -27,7 +27,17 @@ public record StageCombat(
 
   public static final StageCombat PLAIN =
       new StageCombat(
-          PLAIN_FLOOR, PLAIN_THINK, Sharpness.KEEN, true, 0, 0, 0, 0, 0, StageStuck.PLAIN);
+          PLAIN_FLOOR,
+          PLAIN_THINK,
+          Sharpness.KEEN,
+          true,
+          0,
+          0,
+          0,
+          0,
+          0,
+          StageStuck.PLAIN,
+          Optional.empty());
 
   public static final Codec<StageCombat> CODEC =
       RecordCodecBuilder.create(
@@ -64,31 +74,6 @@ public record StageCombat(
                           .forGetter(StageCombat::stuck),
                       Presence.CODEC.optionalFieldOf("presence").forGetter(StageCombat::presence))
                   .apply(instance, StageCombat::new));
-
-  public StageCombat(
-      final int bloodFloor,
-      final int thinkTicks,
-      final Sharpness sharpness,
-      final boolean tempered,
-      final int leapChance,
-      final int dashChance,
-      final int dodgeChance,
-      final int powerDodgeChance,
-      final int retreatHealth,
-      final StageStuck stuck) {
-    this(
-        bloodFloor,
-        thinkTicks,
-        sharpness,
-        tempered,
-        leapChance,
-        dashChance,
-        dodgeChance,
-        powerDodgeChance,
-        retreatHealth,
-        stuck,
-        Optional.empty());
-  }
 
   public Mind mind(final Supplier<Disposition> disposition) {
     return new Mind(thinkTicks, sharpness, tempered ? disposition.get() : Disposition.EVEN);

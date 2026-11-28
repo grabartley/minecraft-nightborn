@@ -59,27 +59,6 @@ public record Veteran(
     attacks = List.copyOf(attacks);
   }
 
-  public Veteran(
-      final Identifier weapon,
-      final Optional<Identifier> crucifix,
-      final double healthScale,
-      final double armor,
-      final List<Identifier> attacks,
-      final Optional<Identifier> rank,
-      final float boltDamage) {
-    this(
-        weapon,
-        crucifix,
-        healthScale,
-        armor,
-        attacks,
-        rank,
-        boltDamage,
-        Optional.empty(),
-        Optional.empty(),
-        Optional.empty());
-  }
-
   public Mind mind(final Mind ranked) {
     return new Mind(
         thinkTicks.orElse(ranked.thinkTicks()),
