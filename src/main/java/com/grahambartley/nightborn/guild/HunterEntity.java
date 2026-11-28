@@ -354,10 +354,6 @@ public class HunterEntity extends PathAwareEntity
     return RankBearer.read(dataTracker.get(RANK));
   }
 
-  protected boolean telling() {
-    return fighting.telling();
-  }
-
   @Override
   public SkillTree skillTree() {
     return SkillTree.HUNTER;

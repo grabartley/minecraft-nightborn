@@ -133,6 +133,12 @@ public class VeteranHunterEntity extends HunterEntity {
   @Override
   protected void mobTick() {
     super.mobTick();
+    if (!isSleeping()) {
+      lead();
+    }
+  }
+
+  public void lead() {
     veteran()
         .flatMap(Veteran::presence)
         .ifPresent(presence -> PresenceAura.spread(this, presence, this::fellow));

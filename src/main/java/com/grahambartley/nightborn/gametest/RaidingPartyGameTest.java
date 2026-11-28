@@ -24,6 +24,7 @@ import java.util.UUID;
 import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
 import net.minecraft.entity.attribute.DefaultAttributeRegistry;
 import net.minecraft.entity.attribute.EntityAttributes;
+import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.test.GameTest;
 import net.minecraft.test.TestContext;
@@ -185,6 +186,33 @@ public class RaidingPartyGameTest implements FabricGameTest {
                       think.ranked().stream()
                           .anyMatch(scored -> scored.option().id().equals(chain)))
               .isPresent()) {
+            context.complete();
+          }
+        });
+  }
+
+  @GameTest(templateName = ARENA, tickLimit = 40)
+  public void aHunterOfTheVeteransPartyStandsFirmerBesideHim(final TestContext context) {
+    final VeteranHunterEntity veteran =
+        context.spawnEntity(GuildMobs.VETERAN_HUNTER, new BlockPos(4, 2, 4));
+    veteran.setAiDisabled(true);
+    final HunterEntity fellow = context.spawnEntity(GuildMobs.HUNTER, new BlockPos(2, 2, 4));
+    fellow.setAiDisabled(true);
+    fellow.join(veteran.getUuid());
+    final HunterEntity outsider = context.spawnEntity(GuildMobs.HUNTER, new BlockPos(6, 2, 4));
+    outsider.setAiDisabled(true);
+    final VampireEntity vampire = context.spawnEntity(NightbornMobs.VAMPIRE, new BlockPos(4, 2, 7));
+    vampire.setAiDisabled(true);
+    veteran.setTarget(vampire);
+    fellow.setTarget(vampire);
+    outsider.setTarget(vampire);
+    context.runAtEveryTick(
+        () -> {
+          veteran.lead();
+          context.assertFalse(
+              outsider.hasStatusEffect(StatusEffects.RESISTANCE),
+              "a hunter outside the veteran's party gains nothing from him");
+          if (fellow.hasStatusEffect(StatusEffects.RESISTANCE)) {
             context.complete();
           }
         });
