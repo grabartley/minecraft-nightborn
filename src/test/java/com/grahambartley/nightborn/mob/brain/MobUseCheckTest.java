@@ -152,7 +152,7 @@ class MobUseCheckTest {
           file -> actions.put(id(DATA.resolve("mob_action"), file), parse(MobAction.CODEC, file)));
     }
     final MobUseCheck.Report report = MobUseCheck.check(skills, budgets, actions);
-    assertEquals(5, actions.size());
+    assertEquals(9, actions.size());
     assertEquals(List.of(), report.problems());
     assertEquals(List.of(), report.unused());
     assertEquals(95, skills.size());

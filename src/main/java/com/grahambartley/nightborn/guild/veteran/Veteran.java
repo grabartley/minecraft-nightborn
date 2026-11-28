@@ -1,6 +1,10 @@
 package com.grahambartley.nightborn.guild.veteran;
 
 import com.grahambartley.nightborn.guild.HunterKit;
+import com.grahambartley.nightborn.guild.build.HunterBuild;
+import com.grahambartley.nightborn.mob.brain.Mind;
+import com.grahambartley.nightborn.mob.brain.Sharpness;
+import com.grahambartley.nightborn.mob.combat.Presence;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import java.util.List;
@@ -14,7 +18,10 @@ public record Veteran(
     double armor,
     List<Identifier> attacks,
     Optional<Identifier> rank,
-    float boltDamage) {
+    float boltDamage,
+    Optional<Integer> thinkTicks,
+    Optional<Sharpness> sharpness,
+    Optional<Presence> presence) {
 
   public static final double MOST_SCALE = 16.0;
   public static final double MOST_ARMOR = 30.0;
@@ -40,11 +47,23 @@ public record Veteran(
                       Identifier.CODEC.optionalFieldOf("rank").forGetter(Veteran::rank),
                       Codec.floatRange(0.0F, MOST_BOLT_DAMAGE)
                           .optionalFieldOf("bolt_damage", 0.0F)
-                          .forGetter(Veteran::boltDamage))
+                          .forGetter(Veteran::boltDamage),
+                      Codec.intRange(1, HunterBuild.MOST_THINK_TICKS)
+                          .optionalFieldOf("think_ticks")
+                          .forGetter(Veteran::thinkTicks),
+                      Sharpness.CODEC.optionalFieldOf("sharpness").forGetter(Veteran::sharpness),
+                      Presence.CODEC.optionalFieldOf("presence").forGetter(Veteran::presence))
                   .apply(instance, Veteran::new));
 
   public Veteran {
     attacks = List.copyOf(attacks);
+  }
+
+  public Mind mind(final Mind ranked) {
+    return new Mind(
+        thinkTicks.orElse(ranked.thinkTicks()),
+        sharpness.orElse(ranked.sharpness()),
+        ranked.disposition());
   }
 
   public HunterKit kit() {

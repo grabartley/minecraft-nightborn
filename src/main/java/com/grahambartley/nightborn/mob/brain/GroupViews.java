@@ -84,7 +84,8 @@ public final class GroupViews {
               ally.getAttached(Mending.TYPE) != null,
               fighting(
                   ally instanceof MobEntity fighter && fighter.getTarget() != null, underAttack),
-              claims.claimedByOther(ally.getUuid(), mob.getUuid(), now)));
+              claims.claimedByOther(ally.getUuid(), mob.getUuid(), now),
+              TargetSigns.held(ally)));
     }
     return Situation.Group.of(
         members, foes.stream().map(foe -> (double) mob.distanceTo(foe)).toList());

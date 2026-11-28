@@ -17,6 +17,7 @@ import com.grahambartley.nightborn.skill.SkillAttachment;
 import com.grahambartley.nightborn.skill.SkillTree;
 import com.grahambartley.nightborn.skill.TreeProgress;
 import com.grahambartley.nightborn.vanish.VanishAttachment;
+import java.util.Optional;
 import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
@@ -39,7 +40,8 @@ public final class VanishGameTest implements FabricGameTest {
   static final int GONE_TICKS = 5;
   static final int FULL_BLOOD = 20;
   static final StageCombat ALWAYS_DODGES =
-      new StageCombat(0, 20, Sharpness.KEEN, true, 0, 0, 0, 100, 0, StageStuck.PLAIN);
+      new StageCombat(
+          0, 20, Sharpness.KEEN, true, 0, 0, 0, 100, 0, StageStuck.PLAIN, Optional.empty());
 
   private static void react(final VampireEntity vampire) {
     new MobFighting(new PowerCasting(), new CombatMoves<>(vampire, () -> ALWAYS_DODGES))

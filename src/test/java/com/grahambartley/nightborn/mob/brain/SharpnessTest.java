@@ -94,6 +94,8 @@ class SharpnessTest {
         "{\"foresight\": 2.5} | false",
         "{\"reads\": []} | true",
         "{\"reads\": [\"group\", \"place\"]} | true",
+        "{\"reads\": [\"tactics\"]} | true",
+        "{\"chains\": true} | true",
         "{\"reads\": [\"moon\"]} | false"
       })
   @DisplayName(
@@ -112,5 +114,29 @@ class SharpnessTest {
     assertEquals(
         reading(reads).reads(),
         Sharpness.CODEC.parse(JsonOps.INSTANCE, JsonParser.parseString(json)).getOrThrow().reads());
+  }
+
+  @ParameterizedTest(name = "{0}: tactics {1}, chains {2}")
+  @CsvSource(
+      delimiter = '|',
+      value = {
+        "{} | false | false",
+        "{\"reads\": [\"group\", \"place\"]} | false | false",
+        "{\"reads\": [\"group\", \"place\", \"tactics\"], \"chains\": true} | true | true",
+        "{\"chains\": true} | false | true"
+      })
+  @DisplayName(
+      "only a mind whose data says so reads the tactics of a fight or chains one power into the"
+          + " next")
+  void tacticsAndChainsAreChosen(final String json, final boolean tactics, final boolean chains) {
+    final Sharpness sharpness =
+        Sharpness.CODEC.parse(JsonOps.INSTANCE, JsonParser.parseString(json)).getOrThrow();
+    assertEquals(tactics, sharpness.reads(Sharpness.Reads.TACTICS));
+    assertEquals(chains, sharpness.chains());
+    assertEquals(
+        tactics,
+        sharpness
+            .visible(EnumSet.of(Fact.TARGET_HEALING, Fact.OWN_HEALTH))
+            .contains(Fact.TARGET_HEALING));
   }
 }

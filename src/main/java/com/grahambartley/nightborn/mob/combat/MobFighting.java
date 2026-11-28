@@ -38,6 +38,10 @@ public final class MobFighting {
       return false;
     }
 
+    default boolean busy() {
+      return false;
+    }
+
     default boolean reacting() {
       return false;
     }
@@ -85,6 +89,9 @@ public final class MobFighting {
     }
     if (!casting.telling()) {
       moves.tick();
+      if (moves.busy()) {
+        return;
+      }
       if (moves.reacting() && casting.react(fighter, bloodFloor, mind)) {
         moves.reacted();
         return;

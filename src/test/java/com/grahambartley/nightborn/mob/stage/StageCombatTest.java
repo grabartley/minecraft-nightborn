@@ -1,6 +1,7 @@
 package com.grahambartley.nightborn.mob.stage;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.google.gson.JsonParser;
@@ -11,11 +12,14 @@ import com.grahambartley.nightborn.mob.brain.Disposition;
 import com.grahambartley.nightborn.mob.brain.IntentBudget;
 import com.grahambartley.nightborn.mob.brain.Mind;
 import com.grahambartley.nightborn.mob.brain.Sharpness;
+import com.grahambartley.nightborn.mob.combat.Presence;
 import com.mojang.serialization.JsonOps;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Map;
+import java.util.Optional;
+import net.minecraft.util.Identifier;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -165,11 +169,38 @@ class StageCombatTest {
   void leadersAreUntempered(final String stage) throws IOException {
     final StageCombat combat = shippedCombat(stage);
     assertEquals(
-        new Mind(combat.thinkTicks(), Sharpness.KEEN, Disposition.EVEN),
+        new Mind(combat.thinkTicks(), combat.sharpness(), Disposition.EVEN),
         combat.mind(
             () -> {
               throw new AssertionError("an untempered stage reads no temperament");
             }));
+  }
+
+  @ParameterizedTest(name = "the lord over the {0}")
+  @CsvSource({"ancient", "elder", "adult", "fledgling"})
+  @DisplayName(
+      "the lord thinks faster, sees further, wastes less and reads more of the fight than any"
+          + " vampire of his household, and chains one power into the next")
+  void lordOutthinksHisHousehold(final String stage) throws IOException {
+    final StageCombat lord = shippedCombat("lord");
+    final StageCombat other = shippedCombat(stage);
+    assertTrue(lord.thinkTicks() < other.thinkTicks());
+    assertTrue(lord.sharpness().blur() <= other.sharpness().blur());
+    assertTrue(lord.sharpness().foresight() > other.sharpness().foresight());
+    assertTrue(lord.sharpness().reads().containsAll(other.sharpness().reads()));
+    assertTrue(lord.sharpness().reads(Sharpness.Reads.TACTICS));
+    assertFalse(other.sharpness().reads(Sharpness.Reads.TACTICS));
+    assertTrue(lord.sharpness().chains());
+    assertFalse(other.sharpness().chains());
+  }
+
+  @ParameterizedTest(name = "{0}: {1}")
+  @CsvSource({"lord, minecraft:strength", "ancient, ''", "eldest, ''"})
+  @DisplayName("only the lord lends his household strength while they fight near him")
+  void onlyTheLordLeadsByPresence(final String stage, final String effect) throws IOException {
+    assertEquals(
+        effect.isEmpty() ? Optional.empty() : Optional.of(Identifier.of(effect)),
+        shippedCombat(stage).presence().map(Presence::effect));
   }
 
   @ParameterizedTest(name = "{0}, rolls {1} and {2}: {3}")

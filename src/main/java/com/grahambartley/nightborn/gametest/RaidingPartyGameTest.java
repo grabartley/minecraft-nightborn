@@ -16,12 +16,15 @@ import com.grahambartley.nightborn.guild.veteran.Grounding;
 import com.grahambartley.nightborn.guild.veteran.VeteranHunterEntity;
 import com.grahambartley.nightborn.hunt.HuntAttachment;
 import com.grahambartley.nightborn.hunt.Hunts;
+import com.grahambartley.nightborn.mob.NightbornMobs;
+import com.grahambartley.nightborn.mob.VampireEntity;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
 import net.minecraft.entity.attribute.DefaultAttributeRegistry;
 import net.minecraft.entity.attribute.EntityAttributes;
+import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.test.GameTest;
 import net.minecraft.test.TestContext;
@@ -160,6 +163,58 @@ public class RaidingPartyGameTest implements FabricGameTest {
               vampire.getAttributeValue(EntityAttributes.GENERIC_JUMP_STRENGTH) == 0.0,
               "a grounded vampire cannot jump");
           TestPlayers.finish(context, vampire);
+        });
+  }
+
+  @GameTest(templateName = ARENA, tickLimit = 80)
+  public void aVeteransBrainWeighsItsOwnAttacks(final TestContext context) {
+    final VeteranHunterEntity veteran =
+        context.spawnEntity(GuildMobs.VETERAN_HUNTER, new BlockPos(1, 2, 4));
+    veteran.setAiDisabled(true);
+    final VampireEntity vampire = context.spawnEntity(NightbornMobs.VAMPIRE, new BlockPos(7, 2, 4));
+    vampire.setAiDisabled(true);
+    veteran.setTarget(vampire);
+    final Identifier chain = Identifier.of("nightborn", "silver_chain");
+    context.runAtEveryTick(
+        () -> {
+          veteran.fight();
+          if (veteran
+              .mobFighting()
+              .lastThink()
+              .filter(
+                  think ->
+                      think.ranked().stream()
+                          .anyMatch(scored -> scored.option().id().equals(chain)))
+              .isPresent()) {
+            context.complete();
+          }
+        });
+  }
+
+  @GameTest(templateName = ARENA, tickLimit = 40)
+  public void aHunterOfTheVeteransPartyStandsFirmerBesideHim(final TestContext context) {
+    final VeteranHunterEntity veteran =
+        context.spawnEntity(GuildMobs.VETERAN_HUNTER, new BlockPos(4, 2, 4));
+    veteran.setAiDisabled(true);
+    final HunterEntity fellow = context.spawnEntity(GuildMobs.HUNTER, new BlockPos(2, 2, 4));
+    fellow.setAiDisabled(true);
+    fellow.join(veteran.getUuid());
+    final HunterEntity outsider = context.spawnEntity(GuildMobs.HUNTER, new BlockPos(6, 2, 4));
+    outsider.setAiDisabled(true);
+    final VampireEntity vampire = context.spawnEntity(NightbornMobs.VAMPIRE, new BlockPos(4, 2, 7));
+    vampire.setAiDisabled(true);
+    veteran.setTarget(vampire);
+    fellow.setTarget(vampire);
+    outsider.setTarget(vampire);
+    context.runAtEveryTick(
+        () -> {
+          veteran.lead();
+          context.assertFalse(
+              outsider.hasStatusEffect(StatusEffects.RESISTANCE),
+              "a hunter outside the veteran's party gains nothing from him");
+          if (fellow.hasStatusEffect(StatusEffects.RESISTANCE)) {
+            context.complete();
+          }
         });
   }
 }

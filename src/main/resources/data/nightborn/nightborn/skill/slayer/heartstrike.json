@@ -124,6 +124,70 @@
             }
           ],
           "weight": 2.5
+        },
+        {
+          "intent": "fight",
+          "considerations": [
+            {
+              "fact": "target_distance",
+              "low": 1.5,
+              "high": 5
+            },
+            {
+              "fact": "target_held",
+              "low": 1,
+              "high": 1
+            }
+          ],
+          "weight": 3.0
+        },
+        {
+          "intent": "close_in",
+          "considerations": [
+            {
+              "fact": "target_distance",
+              "low": 1.5,
+              "high": 5
+            },
+            {
+              "fact": "target_held",
+              "low": 1,
+              "high": 1
+            }
+          ],
+          "weight": 3.0
+        },
+        {
+          "intent": "fight",
+          "considerations": [
+            {
+              "fact": "target_distance",
+              "low": 1.5,
+              "high": 5
+            },
+            {
+              "fact": "target_healing",
+              "low": 1,
+              "high": 1
+            }
+          ],
+          "weight": 2.6
+        },
+        {
+          "intent": "close_in",
+          "considerations": [
+            {
+              "fact": "target_distance",
+              "low": 1.5,
+              "high": 5
+            },
+            {
+              "fact": "target_healing",
+              "low": 1,
+              "high": 1
+            }
+          ],
+          "weight": 2.6
         }
       ]
     }

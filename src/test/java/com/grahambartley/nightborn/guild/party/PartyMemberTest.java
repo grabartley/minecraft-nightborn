@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Optional;
 import java.util.UUID;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
@@ -33,5 +34,44 @@ class PartyMemberTest {
           default -> Optional.empty();
         };
     assertEquals(follows, PartyMember.follows(held, master));
+  }
+
+  @ParameterizedTest(name = "quarries {0}/{1}, leaders {2}/{3}: fellows {4}")
+  @CsvSource({
+    "q, q, '', '', true",
+    "q, r, '', '', false",
+    "'', '', '', '', false",
+    "'', '', m, m, true",
+    "'', '', m, n, false",
+    "'', '', '', one, true",
+    "'', '', other, '', true",
+    "'', q, '', '', false"
+  })
+  @DisplayName(
+      "two hunters are fellows when they raid the same quarry, follow the same leader, or one"
+          + " leads the other")
+  void fellows(
+      final String oneQuarry,
+      final String otherQuarry,
+      final String oneLeader,
+      final String otherLeader,
+      final boolean fellows) {
+    assertEquals(
+        fellows,
+        PartyMember.fellows(
+            id("one"),
+            maybe(oneQuarry),
+            maybe(oneLeader),
+            id("other"),
+            maybe(otherQuarry),
+            maybe(otherLeader)));
+  }
+
+  private static UUID id(final String name) {
+    return UUID.nameUUIDFromBytes(name.getBytes(java.nio.charset.StandardCharsets.UTF_8));
+  }
+
+  private static Optional<UUID> maybe(final String name) {
+    return name.isEmpty() ? Optional.empty() : Optional.of(id(name));
   }
 }

@@ -2,11 +2,17 @@ package com.grahambartley.nightborn.mob.brain;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import com.grahambartley.nightborn.MinecraftBootstrapExtension;
+import net.minecraft.item.ItemStack;
+import net.minecraft.registry.Registries;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Vec3d;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
+@ExtendWith(MinecraftBootstrapExtension.class)
 class TargetSignsTest {
 
   @ParameterizedTest(name = "target at {0},{1} moved {2},{3}: running {4}")
@@ -57,5 +63,58 @@ class TargetSignsTest {
   void aware(
       final boolean hunts, final boolean struckBy, final boolean struck, final boolean aware) {
     assertEquals(aware, TargetSigns.aware(hunts, struckBy, struck));
+  }
+
+  @ParameterizedTest(name = "mending {0}, regenerating {1}, taking a cure {2}: healing {3}")
+  @CsvSource({
+    "false, false, false, false",
+    "true, false, false, true",
+    "false, true, false, true",
+    "false, false, true, true",
+    "true, true, true, true"
+  })
+  @DisplayName("a foe heals while its blood mends it, it regenerates, or it eats or drinks")
+  void healing(
+      final boolean mending,
+      final boolean regenerating,
+      final boolean cure,
+      final boolean healing) {
+    assertEquals(healing, TargetSigns.healing(mending, regenerating, cure));
+  }
+
+  @ParameterizedTest(name = "slowed {0}, mesmerised {1}: held {2}")
+  @CsvSource({"false, false, false", "true, false, true", "false, true, true", "true, true, true"})
+  @DisplayName("a body is held while it is slowed, pinned, staggered or mesmerised")
+  void held(final boolean slowed, final boolean mesmerised, final boolean held) {
+    assertEquals(held, TargetSigns.held(slowed, mesmerised));
+  }
+
+  @ParameterizedTest(name = "{0}: mends {1}")
+  @CsvSource({
+    "minecraft:cooked_beef, true",
+    "minecraft:golden_apple, true",
+    "minecraft:potion, true",
+    "minecraft:milk_bucket, true",
+    "minecraft:bow, false",
+    "minecraft:shield, false",
+    "minecraft:stone, false"
+  })
+  @DisplayName("eating food or drinking counts as taking a cure, and drawing or blocking does not")
+  void mends(final String item, final boolean mends) {
+    assertEquals(mends, TargetSigns.mends(new ItemStack(Registries.ITEM.get(Identifier.of(item)))));
+  }
+
+  @ParameterizedTest(name = "{0}: ranged {1}")
+  @CsvSource({
+    "minecraft:bow, true",
+    "minecraft:crossbow, true",
+    "minecraft:trident, true",
+    "minecraft:iron_sword, false",
+    "minecraft:air, false"
+  })
+  @DisplayName("a foe holding a bow, crossbow or trident fights at range")
+  void ranged(final String item, final boolean ranged) {
+    assertEquals(
+        ranged, TargetSigns.ranged(new ItemStack(Registries.ITEM.get(Identifier.of(item)))));
   }
 }

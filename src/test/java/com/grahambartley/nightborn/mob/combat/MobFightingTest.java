@@ -84,5 +84,40 @@ class MobFightingTest {
     assertEquals(List.of(), MobFighting.Moves.NONE.actions());
     assertFalse(MobFighting.Moves.NONE.act(Identifier.of(action)));
     assertFalse(MobFighting.Moves.NONE.reacting());
+    assertFalse(MobFighting.Moves.NONE.busy());
+  }
+
+  @ParameterizedTest(name = "{0} ticks")
+  @ValueSource(ints = {1, 4})
+  @DisplayName(
+      "while a move of its own is under way a mob keeps that move going and never thinks of a"
+          + " power at the same moment")
+  void busyMovesKeepTheBrainQuiet(final int ticks) {
+    final AtomicInteger moved = new AtomicInteger();
+    final MobFighting.Moves moves =
+        new MobFighting.Moves() {
+          @Override
+          public void tick() {
+            moved.incrementAndGet();
+          }
+
+          @Override
+          public boolean busy() {
+            return true;
+          }
+        };
+    final MobFighting fighting = new MobFighting(new PowerCasting(), moves);
+    for (int tick = 0; tick < ticks; tick++) {
+      fighting.tick(
+          null,
+          MobFighting.Engagement.FIGHTING,
+          () -> {
+            throw new AssertionError("a busy mob does not think");
+          },
+          0);
+    }
+    assertEquals(ticks, moved.get());
+    assertFalse(fighting.telling());
+    assertEquals(Optional.empty(), fighting.lastThink());
   }
 }

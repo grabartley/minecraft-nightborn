@@ -11,6 +11,8 @@ import com.grahambartley.nightborn.guild.raiding.RaidDoorGoal;
 import com.grahambartley.nightborn.guild.raiding.RaidOrders;
 import com.grahambartley.nightborn.mob.MobSounds;
 import com.grahambartley.nightborn.mob.ShownAction;
+import com.grahambartley.nightborn.mob.brain.Mind;
+import com.grahambartley.nightborn.mob.combat.JoinedMoves;
 import com.grahambartley.nightborn.mob.combat.MobFighter;
 import com.grahambartley.nightborn.mob.combat.MobFighting;
 import com.grahambartley.nightborn.mob.combat.PowerCasting;
@@ -110,7 +112,8 @@ public class HunterEntity extends PathAwareEntity
 
   private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
   private final HunterTactics<HunterEntity> tactics = new HunterTactics<>(this);
-  private final MobFighting fighting = new MobFighting(PowerCasting.underTell(), tactics);
+  private final MobFighting fighting =
+      new MobFighting(PowerCasting.underTell(), new JoinedMoves(tactics, this::extraMoves));
   private final WornLook worn = new WornLook();
   private final ShownAction shownPower = new ShownAction();
   private final HunterBuildTicker building = new HunterBuildTicker();
@@ -351,10 +354,6 @@ public class HunterEntity extends PathAwareEntity
     return RankBearer.read(dataTracker.get(RANK));
   }
 
-  protected boolean telling() {
-    return fighting.telling();
-  }
-
   @Override
   public SkillTree skillTree() {
     return SkillTree.HUNTER;
@@ -432,11 +431,15 @@ public class HunterEntity extends PathAwareEntity
   }
 
   public void fight() {
-    fighting.tick(
-        this,
-        MobFighting.Engagement.FIGHTING,
-        () -> HunterSkills.mind(this, shownRank(), heldKit()),
-        MobFighting.NO_BLOOD_FLOOR);
+    fighting.tick(this, MobFighting.Engagement.FIGHTING, this::mind, MobFighting.NO_BLOOD_FLOOR);
+  }
+
+  protected Mind mind() {
+    return HunterSkills.mind(this, shownRank(), heldKit());
+  }
+
+  protected MobFighting.Moves extraMoves() {
+    return MobFighting.Moves.NONE;
   }
 
   @Override

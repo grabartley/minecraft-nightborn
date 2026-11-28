@@ -76,4 +76,14 @@ class MindTest {
         group ? Set.of(Fact.OWN_HEALTH, Fact.ALLY_HEALTH) : Set.of(Fact.OWN_HEALTH),
         mind.reads(EnumSet.of(Fact.OWN_HEALTH, Fact.ALLY_HEALTH)));
   }
+
+  @ParameterizedTest(name = "chains {0}")
+  @CsvSource({"true", "false"})
+  @DisplayName("a mind chains its powers only when its sharpness says so")
+  void chains(final boolean chains) {
+    assertEquals(
+        chains,
+        new Mind(10, new Sharpness(0.0F, Sharpness.USUAL_READS, 1.0F, chains), Disposition.EVEN)
+            .chains());
+  }
 }

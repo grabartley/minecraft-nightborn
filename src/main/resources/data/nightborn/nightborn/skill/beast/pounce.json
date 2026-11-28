@@ -150,6 +150,69 @@
             }
           ],
           "weight": 2.0
+        },
+        {
+          "intent": "fight",
+          "considerations": [
+            {
+              "fact": "target_distance",
+              "low": 4,
+              "high": 10
+            },
+            {
+              "fact": "target_in_sight",
+              "low": 1,
+              "high": 1
+            },
+            {
+              "fact": "target_held",
+              "low": 1,
+              "high": 1
+            }
+          ],
+          "weight": 2.6
+        },
+        {
+          "intent": "fight",
+          "considerations": [
+            {
+              "fact": "target_distance",
+              "low": 4,
+              "high": 10
+            },
+            {
+              "fact": "target_in_sight",
+              "low": 1,
+              "high": 1
+            },
+            {
+              "fact": "target_healing",
+              "low": 1,
+              "high": 1
+            }
+          ],
+          "weight": 2.6
+        },
+        {
+          "intent": "close_in",
+          "considerations": [
+            {
+              "fact": "target_distance",
+              "low": 4,
+              "high": 10
+            },
+            {
+              "fact": "target_in_sight",
+              "low": 1,
+              "high": 1
+            },
+            {
+              "fact": "target_healing",
+              "low": 1,
+              "high": 1
+            }
+          ],
+          "weight": 2.6
         }
       ]
     }

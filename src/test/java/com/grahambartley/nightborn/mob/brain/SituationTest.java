@@ -66,18 +66,20 @@ class SituationTest {
     return new Situation.Member(UUID.randomUUID(), distance, 0.5F, false, false, fighting, claimed);
   }
 
-  @ParameterizedTest(name = "radius {0}: allies {1}, foes {2}")
-  @CsvSource({"2, 1, 0", "5, 1, 1", "12, 2, 2", "0.5, 0, 0"})
+  @ParameterizedTest(name = "radius {0}: allies {1}, foes {2}, idle allies {3}")
+  @CsvSource({"2, 1, 0, 0", "5, 1, 1, 1", "12, 2, 2, 1", "0.5, 0, 0, 0"})
   @DisplayName(
-      "a group counts the allies in the fight and the foes within a radius of the mob, and not an"
-          + " ally standing idle")
-  void countsWithinRadius(final double radius, final double allies, final double foes) {
+      "a group counts the allies in the fight, the foes, and apart from them the allies standing"
+          + " idle that a call would bring, within a radius of the mob")
+  void countsWithinRadius(
+      final double radius, final double allies, final double foes, final double idle) {
     final Situation.Group group =
         Situation.Group.of(
             List.of(member(1.5, true, false), member(5.0, false, false), member(9.0, true, false)),
             List.of(4.0, 12.0));
     assertEquals(allies, group.alliesWithin(radius));
     assertEquals(foes, group.foesWithin(radius));
+    assertEquals(idle, group.idleAlliesWithin(radius));
   }
 
   @Test
@@ -85,6 +87,7 @@ class SituationTest {
   void unknownGroupCountsNothing() {
     assertTrue(Double.isNaN(Situation.Group.UNKNOWN.alliesWithin(10)));
     assertTrue(Double.isNaN(Situation.Group.UNKNOWN.foesWithin(10)));
+    assertTrue(Double.isNaN(Situation.Group.UNKNOWN.idleAlliesWithin(10)));
   }
 
   @ParameterizedTest(name = "first fighting {0}, second fighting {1}: an ally fights {2}")
