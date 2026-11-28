@@ -18,6 +18,7 @@ public record Veteran(
 
   public static final double MOST_SCALE = 16.0;
   public static final double MOST_ARMOR = 30.0;
+  public static final float MOST_BOLT_DAMAGE = 64.0F;
 
   public static final Codec<Veteran> CODEC =
       RecordCodecBuilder.create(
@@ -37,7 +38,7 @@ public record Veteran(
                           .optionalFieldOf("attacks", List.of())
                           .forGetter(Veteran::attacks),
                       Identifier.CODEC.optionalFieldOf("rank").forGetter(Veteran::rank),
-                      Codec.floatRange(0.0F, HunterKit.MOST_DAMAGE)
+                      Codec.floatRange(0.0F, MOST_BOLT_DAMAGE)
                           .optionalFieldOf("bolt_damage", 0.0F)
                           .forGetter(Veteran::boltDamage))
                   .apply(instance, Veteran::new));
