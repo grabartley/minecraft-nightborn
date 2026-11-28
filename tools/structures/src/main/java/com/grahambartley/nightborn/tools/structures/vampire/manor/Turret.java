@@ -53,12 +53,11 @@ public record Turret(boolean round) {
 
   public List<Window> windows() {
     final List<Window> all = new ArrayList<>();
-    final int diagonalX = round ? CX + RADIUS - 1 : CX + RADIUS;
-    final int diagonalZ = round ? CZ + RADIUS - 2 : CZ + RADIUS - 1;
+    final int stainedZ = round ? CZ - 1 : CZ + RADIUS - 1;
     for (final int[] sill : new int[][] {{F0 + 2, 4}, {F1 + 2, 3}, {STUDY + 2, 4}}) {
       all.add(new Window(CX + RADIUS, CZ, "east", sill[0], sill[1], Manor.PANE, BURGUNDY));
       all.add(new Window(CX - 1, CZ + RADIUS, "south", sill[0], sill[1], Manor.PANE, BURGUNDY));
-      all.add(new Window(diagonalX, diagonalZ, "east", sill[0], sill[1], Manor.STAINED, BURGUNDY));
+      all.add(new Window(CX + RADIUS, stainedZ, "east", sill[0], sill[1], Manor.STAINED, BURGUNDY));
     }
     return all;
   }

@@ -20,7 +20,7 @@ class DoorwayTest {
   @ParameterizedTest(name = "a {0} wide doorway is {1} tall")
   @CsvSource({"1, 3", "2, 3", "3, 4"})
   void widerDoorwaysStandTaller(final int width, final int height) {
-    final Doorway doorway = Doorway.arch(Axis.X, 2, 1 + width, 4, 1, Manor.TRIM);
+    final Doorway doorway = Doorway.arch(Axis.X, 2, 1 + width, 4, 1);
     assertEquals(width, doorway.width());
     assertEquals(height, doorway.height());
   }
@@ -61,7 +61,7 @@ class DoorwayTest {
   @CsvSource({"west, 2", "east, 4"})
   void wideArchesHaveShoulders(final String facing, final int x) {
     final Template t = wall();
-    Doorway.arch(Axis.X, 2, 4, 4, 1, Manor.TRIM).cut(t);
+    Doorway.arch(Axis.X, 2, 4, 4, 1).cut(t);
     final String shoulder = t.get(x, 4, 4);
     assertTrue(shoulder.contains("facing=" + facing) && shoulder.contains("half=top"), shoulder);
     assertEquals(BlockState.AIR, t.get(3, 4, 4));

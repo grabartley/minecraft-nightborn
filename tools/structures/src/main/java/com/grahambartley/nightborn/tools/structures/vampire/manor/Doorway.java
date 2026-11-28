@@ -24,13 +24,8 @@ public record Doorway(
   }
 
   public static Doorway arch(
-      final Axis along,
-      final int from,
-      final int to,
-      final int line,
-      final int floor,
-      final String head) {
-    return new Doorway(along, from, to, line, line, floor, null, head);
+      final Axis along, final int from, final int to, final int line, final int floor) {
+    return new Doorway(along, from, to, line, line, floor, null, EBONY_HEAD);
   }
 
   public int width() {
@@ -59,11 +54,11 @@ public record Doorway(
         for (int y = floor; y <= top; y++) {
           t.set(along.x(a, c), y, along.z(a, c), BlockState.AIR);
         }
-        if (width() >= 3) {
-          shoulder(t, from, c, top, along.low());
-          shoulder(t, to, c, top, along.high());
-        }
       }
+    }
+    for (int c = Math.min(line, lining); c <= Math.max(line, lining) && width() >= 3; c++) {
+      shoulder(t, from, c, top, along.low());
+      shoulder(t, to, c, top, along.high());
     }
     if (hasLeaves()) {
       leaf(t, from);

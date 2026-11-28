@@ -27,7 +27,7 @@ class TurretTest {
   @ParameterizedTest(name = "round {0}: {1},{2} ring {3}")
   @CsvSource({
     "true, 62, 42, true",
-    "true, 61, 44, true",
+    "true, 62, 41, true",
     "true, 60, 44, false",
     "true, 54, 40, true",
     "true, 63, 42, false",

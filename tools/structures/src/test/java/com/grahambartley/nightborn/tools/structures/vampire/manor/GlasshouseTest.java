@@ -66,4 +66,20 @@ class GlasshouseTest {
     assertTrue(BUILT.get(fallen).get(x, Manor.F0 + 1, z).contains("gothic_stone"));
     assertTrue(!BlockState.AIR.equals(BUILT.get(fallen).get(x, Manor.F0, z)));
   }
+
+  @ParameterizedTest(
+      name = "fallen {0}: the planter round the tree is a moss bed its azaleas hold to")
+  @ValueSource(booleans = {true, false})
+  void azaleasStandOnMoss(final boolean fallen) {
+    final Template t = BUILT.get(fallen);
+    for (int dx = -1; dx <= 1; dx++) {
+      for (int dz = -1; dz <= 1; dz++) {
+        final int x = Glasshouse.TREE_X + dx;
+        final int z = Glasshouse.TREE_Z + dz;
+        if (t.get(x, Manor.F0 + 2, z).contains("azalea")) {
+          assertEquals("minecraft:moss_block", t.get(x, Manor.F0 + 1, z));
+        }
+      }
+    }
+  }
 }

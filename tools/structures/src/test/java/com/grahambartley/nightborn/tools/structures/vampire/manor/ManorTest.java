@@ -230,6 +230,12 @@ class ManorTest {
               && drape.contains("open=false")
               && drape.contains("facing=" + inward),
           "window " + at + " is behind " + drape);
+      final boolean head = !t.get(at.x(), at.y() + 1, at.z()).contains("glass_pane");
+      assertEquals(head, drape.contains("top=true"), "the drape tops out at the head of " + at);
+      final String outside = t.get(at.x() - step.x(), at.y(), at.z() - step.z());
+      assertTrue(
+          outside.equals("minecraft:air") || outside.startsWith("minecraft:vine"),
+          "window " + at + " looks out onto " + outside);
       windows++;
     }
     assertTrue(windows > 100, "windows " + windows);

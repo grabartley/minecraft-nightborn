@@ -104,7 +104,7 @@ public final class Glasshouse {
   private static void tree(final Template t, final boolean fallen) {
     for (int dx = -1; dx <= 1; dx++) {
       for (int dz = -1; dz <= 1; dz++) {
-        t.set(TREE_X + dx, F0 + 1, TREE_Z + dz, Manor.WALL.at(TREE_X + dx, F0 + 1, TREE_Z + dz));
+        t.set(TREE_X + dx, F0 + 1, TREE_Z + dz, "moss_block");
       }
     }
     t.set(TREE_X, F0 + 1, TREE_Z, "rooted_dirt");
