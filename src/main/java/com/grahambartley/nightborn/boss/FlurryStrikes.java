@@ -1,6 +1,7 @@
 package com.grahambartley.nightborn.boss;
 
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundEvents;
@@ -37,7 +38,15 @@ public final class FlurryStrikes {
                         facing.z,
                         entity.getX() - boss.getX(),
                         entity.getZ() - boss.getZ()))) {
-      victim.damage(boss.getDamageSources().mobAttack(boss), flurry.damage());
+      victim.damage(source(world, boss, flurry), flurry.damage());
     }
+  }
+
+  private static DamageSource source(
+      final ServerWorld world, final MobEntity boss, final FlurryAttack flurry) {
+    return flurry
+        .damageType()
+        .map(type -> world.getDamageSources().create(type, boss))
+        .orElseGet(() -> boss.getDamageSources().mobAttack(boss));
   }
 }

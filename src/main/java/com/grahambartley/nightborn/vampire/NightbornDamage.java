@@ -20,9 +20,12 @@ public final class NightbornDamage {
   public static final RegistryKey<DamageType> LANCET = key("lancet");
   public static final RegistryKey<DamageType> BLEEDING = key("bleeding");
   public static final RegistryKey<DamageType> SEARING = key("searing");
+  public static final RegistryKey<DamageType> CLEAVE = key("cleave");
 
   public static final TagKey<DamageType> KILLS_VAMPIRES =
       TagKey.of(RegistryKeys.DAMAGE_TYPE, Identifier.of(Nightborn.MOD_ID, "kills_vampires"));
+  public static final TagKey<DamageType> WEAPON_BLOWS =
+      TagKey.of(RegistryKeys.DAMAGE_TYPE, Identifier.of(Nightborn.MOD_ID, "weapon_blows"));
   public static final TagKey<DamageType> STAKES =
       TagKey.of(RegistryKeys.DAMAGE_TYPE, Identifier.of(Nightborn.MOD_ID, "stakes"));
 

@@ -29,21 +29,30 @@ public final class BlowReading {
   private BlowReading() {}
 
   public static Blow read(final DamageSource source) {
+    return read(source, Cutting.WEAPON);
+  }
+
+  public static Blow read(final DamageSource source, final Cutting cutting) {
     final boolean stake = Staking.staked(source);
     final Entity direct = source.getSource();
+    final boolean marked = source.isIn(SEVERING);
     return new Blow(
         source.isOf(NightbornDamage.BITE),
         stake,
         VampireBane.isSilverBlow(source),
-        VampireBane.meleeWith(source, SEVERING_WEAPONS) || source.isIn(SEVERING),
-        barred(
-            stake || source.isIn(NEVER_SEVERS),
-            direct != null && direct.getType().isIn(NEVER_SEVERING_SHOTS),
-            source.isDirect()
-                && direct instanceof PlayerEntity player
-                && player.getMainHandStack().isEmpty(),
-            source.getAttacker() != null,
-            blast(source)));
+        cutting.severing(
+            marked,
+            VampireBane.meleeWith(source, SEVERING_WEAPONS),
+            source.isDirect() && source.isIn(NightbornDamage.WEAPON_BLOWS)),
+        cutting.bars(marked)
+            || barred(
+                stake || source.isIn(NEVER_SEVERS),
+                direct != null && direct.getType().isIn(NEVER_SEVERING_SHOTS),
+                source.isDirect()
+                    && direct instanceof PlayerEntity player
+                    && player.getMainHandStack().isEmpty(),
+                source.getAttacker() != null,
+                blast(source)));
   }
 
   public static boolean blast(final DamageSource source) {

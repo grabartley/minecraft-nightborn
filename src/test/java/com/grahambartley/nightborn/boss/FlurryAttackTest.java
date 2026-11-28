@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.google.gson.JsonParser;
 import com.mojang.serialization.JsonOps;
+import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -20,7 +21,9 @@ class FlurryAttackTest {
         "{\"hits\":13,\"every_ticks\":8,\"damage\":7} | false",
         "{\"hits\":3,\"every_ticks\":0,\"damage\":7} | false",
         "{\"hits\":3,\"damage\":7} | false",
-        "{\"hits\":3,\"every_ticks\":8,\"damage\":7,\"reach\":0.5} | false"
+        "{\"hits\":3,\"every_ticks\":8,\"damage\":7,\"reach\":0.5} | false",
+        "{\"hits\":3,\"every_ticks\":8,\"damage\":7,\"damage_type\":\"nightborn:cleave\"} | true",
+        "{\"hits\":3,\"every_ticks\":8,\"damage\":7,\"damage_type\":\"Not A Type\"} | false"
       })
   @DisplayName("a flurry needs between one and twelve hits, a beat and a damage")
   void parses(final String json, final boolean loads) {
@@ -41,7 +44,7 @@ class FlurryAttackTest {
   })
   @DisplayName("a flurry lands on its beat, the first blow at once, and stops after its last hit")
   void hitsAt(final int hits, final int every, final int tick, final boolean lands) {
-    final FlurryAttack flurry = new FlurryAttack(hits, every, 7.0F, 3.0F, 0.4F);
+    final FlurryAttack flurry = new FlurryAttack(hits, every, 7.0F, 3.0F, 0.4F, Optional.empty());
     assertEquals(lands, flurry.hitsAt(tick));
     assertEquals(hits * every, flurry.ticks());
   }
@@ -65,7 +68,7 @@ class FlurryAttackTest {
       final double toX,
       final double toZ,
       final boolean reached) {
-    final FlurryAttack flurry = new FlurryAttack(3, 8, 7.0F, 3.0F, 0.4F);
+    final FlurryAttack flurry = new FlurryAttack(3, 8, 7.0F, 3.0F, 0.4F, Optional.empty());
     assertEquals(reached, flurry.reaches(facingX, facingZ, toX, toZ));
   }
 }
