@@ -1,5 +1,6 @@
 package com.grahambartley.nightborn.guild.build;
 
+import com.grahambartley.nightborn.config.SkillSettings;
 import com.grahambartley.nightborn.faction.Oath;
 import com.grahambartley.nightborn.rank.RankLadder;
 import com.grahambartley.nightborn.rank.RankNeeds;
@@ -13,7 +14,13 @@ public final class HunterGrowth {
 
   public record Standing(Oath oath, TreeProgress progress) {}
 
-  public record Curve(int firstCost, int risePercent, RankNeeds needs) {}
+  public record Curve(int firstCost, int risePercent, RankNeeds needs) {
+
+    public static Curve of(final SkillSettings settings) {
+      return new Curve(
+          settings.firstPointExperience(), settings.pointCostRise(), settings.rankNeeds());
+    }
+  }
 
   private HunterGrowth() {}
 
