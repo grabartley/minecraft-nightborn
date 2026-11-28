@@ -67,7 +67,7 @@ public record Veteran(
   }
 
   public HunterKit kit() {
-    return new HunterKit(weapon, Optional.empty(), crucifix, false, 1, 0.0F);
+    return new HunterKit(weapon, Optional.empty(), crucifix, false, 1, 0.0F, 0.0F);
   }
 
   public double health(final double hunterHealth) {

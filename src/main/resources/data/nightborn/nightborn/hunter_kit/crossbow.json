@@ -1,6 +1,8 @@
 {
   "weapon": "minecraft:crossbow",
   "bolt": "nightborn:stake_bolt",
+  "crucifix": "nightborn:gold_crucifix",
   "weight": 3,
-  "damage": 4.0
+  "damage": 1.0,
+  "rank_damage": 2.4
 }

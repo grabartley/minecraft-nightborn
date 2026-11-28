@@ -429,7 +429,7 @@ public class WardGameTest implements FabricGameTest {
   }
 
   @GameTest(templateName = ARENA, tickLimit = 20)
-  public void aVampireMobCannotBiteACrucifixHolder(final TestContext context) {
+  public void aVampireMobClawsACrucifixHolderItCannotBite(final TestContext context) {
     final VampireEntity vampire = still(context, new BlockPos(4, 2, 4));
     final VillagerEntity warded = context.spawnEntity(EntityType.VILLAGER, new BlockPos(3, 2, 4));
     final VillagerEntity bare = context.spawnEntity(EntityType.VILLAGER, new BlockPos(5, 2, 4));
@@ -437,8 +437,10 @@ public class WardGameTest implements FabricGameTest {
     bare.setAiDisabled(true);
     warded.setStackInHand(Hand.OFF_HAND, new ItemStack(GearItems.SILVER_CRUCIFIX));
     vampire.setTarget(warded);
-    context.assertFalse(vampire.tryAttack(warded), "the bite is held back");
-    context.assertEquals(warded.getHealth(), warded.getMaxHealth(), "the holder is unhurt");
+    final float before = vampire.getHealth();
+    context.assertTrue(vampire.tryAttack(warded), "the vampire claws instead of biting");
+    context.assertTrue(warded.getHealth() < warded.getMaxHealth(), "the claw hurts the holder");
+    context.assertEquals(vampire.getHealth(), before, "a claw draws no blood to heal on");
     vampire.setTarget(bare);
     context.assertTrue(vampire.tryAttack(bare), "without a crucifix the bite lands");
     context.complete();

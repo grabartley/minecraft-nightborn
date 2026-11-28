@@ -1,8 +1,8 @@
 package com.grahambartley.nightborn.rank;
 
 import com.grahambartley.nightborn.Nightborn;
-import com.grahambartley.nightborn.config.SkillSettings;
-import com.grahambartley.nightborn.server.ServerConfigService;
+import com.grahambartley.nightborn.faction.GuildMembership;
+import com.grahambartley.nightborn.faction.OathAttachment;
 import com.grahambartley.nightborn.vampire.Modifiers;
 import com.grahambartley.nightborn.vampire.Vampires;
 import net.minecraft.entity.Entity;
@@ -18,12 +18,12 @@ public final class RankBody {
 
   private RankBody() {}
 
-  public static void apply(final LivingEntity hunter, final SkillSettings settings) {
+  public static void apply(final LivingEntity hunter) {
     Modifiers.set(
         hunter,
         EntityAttributes.GENERIC_MAX_HEALTH,
         HEALTH,
-        RankGifts.of(GuildRanks.of(hunter), settings).health(),
+        gifts(hunter).health(),
         Operation.ADD_VALUE);
     Modifiers.clampHealth(hunter);
   }
@@ -31,9 +31,14 @@ public final class RankBody {
   public static float strike(
       @Nullable final Entity attacker, final Entity target, final float damage) {
     return attacker instanceof LivingEntity hunter
-        ? damage
-            + RankGifts.of(GuildRanks.of(hunter), ServerConfigService.current().skills())
-                .against(Vampires.isVampire(target))
+        ? damage + gifts(hunter).against(Vampires.isVampire(target))
         : damage;
+  }
+
+  private static RankGifts gifts(final LivingEntity hunter) {
+    return RankGifts.of(
+        RankLadder.of(hunter.getRegistryManager()),
+        GuildMembership.isHunter(hunter),
+        OathAttachment.get(hunter).rank());
   }
 }

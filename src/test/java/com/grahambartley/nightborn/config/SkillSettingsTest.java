@@ -40,13 +40,12 @@ class SkillSettingsTest {
   @DisplayName("the constructor clamps values into bounds")
   void clamps() {
     assertEquals(
-        new SkillSettings(1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
-        new SkillSettings(0, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1));
+        new SkillSettings(1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+        new SkillSettings(0, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1));
     assertEquals(
+        new SkillSettings(100000, 100, 1000, 10000, 10000, 10000, 100, 10000, 1000, 1000, 1000, 60),
         new SkillSettings(
-            100000, 100, 1000, 10000, 10000, 10000, 100, 10000, 1000, 1000, 1000, 40, 100, 60),
-        new SkillSettings(
-            100001, 101, 1001, 10001, 10001, 10001, 101, 10001, 1001, 1001, 1001, 41, 101, 61));
+            100001, 101, 1001, 10001, 10001, 10001, 101, 10001, 1001, 1001, 1001, 61));
   }
 
   @ParameterizedTest(name = "Hunter {0}, Veteran {1}, Master {2}")
@@ -54,7 +53,7 @@ class SkillSettingsTest {
   @DisplayName("the rank thresholds read Hunter, Veteran then Master")
   void rankNeedsInOrder(final int hunter, final int veteran, final int master) {
     final SkillSettings settings =
-        new SkillSettings(100, 3, 5, 100, 300, 200, 10, 500, hunter, veteran, master, 2, 5, 3);
+        new SkillSettings(100, 3, 5, 100, 300, 200, 10, 500, hunter, veteran, master, 3);
     assertEquals(List.of(hunter, veteran, master), settings.rankNeeds().points());
   }
 

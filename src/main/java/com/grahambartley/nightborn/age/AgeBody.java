@@ -4,41 +4,38 @@ import com.grahambartley.nightborn.Nightborn;
 import com.grahambartley.nightborn.blood.BloodCapacity;
 import com.grahambartley.nightborn.config.AgeSettings;
 import com.grahambartley.nightborn.core.CoreBoosts;
+import com.grahambartley.nightborn.mob.stage.StageBody;
+import com.grahambartley.nightborn.mob.stage.StageStats;
 import com.grahambartley.nightborn.vampire.Modifiers;
-import net.minecraft.entity.attribute.EntityAttributeModifier.Operation;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Identifier;
 
 public final class AgeBody {
 
-  static final Identifier HEALTH = Identifier.of(Nightborn.MOD_ID, "age_health");
-  static final Identifier DAMAGE = Identifier.of(Nightborn.MOD_ID, "age_damage");
+  static final Identifier OLD_HEALTH = Identifier.of(Nightborn.MOD_ID, "age_health");
+  static final Identifier OLD_DAMAGE = Identifier.of(Nightborn.MOD_ID, "age_damage");
 
   private AgeBody() {}
 
   public static void apply(final PlayerEntity vampire, final AgeSettings settings) {
-    final AgeGifts gifts = AgeGifts.of(AgeAttachment.get(vampire).rank(), settings);
-    Modifiers.set(
+    final int rank = AgeAttachment.get(vampire).rank();
+    embody(
         vampire,
-        EntityAttributes.GENERIC_MAX_HEALTH,
-        HEALTH,
-        gifts.healthBeforeMultiplier(CoreBoosts.DOUBLE_HEALTH),
-        Operation.ADD_VALUE);
-    Modifiers.set(
-        vampire,
-        EntityAttributes.GENERIC_ATTACK_DAMAGE,
-        DAMAGE,
-        gifts.damage(),
-        Operation.ADD_VALUE);
-    Modifiers.clampHealth(vampire);
-    BloodCapacity.setExtra(vampire, gifts.bloodBar());
+        AgeLadder.of(vampire.getRegistryManager())
+            .body(rank)
+            .underHealthMultiplier(CoreBoosts.DOUBLE_HEALTH));
+    BloodCapacity.setExtra(vampire, AgeGifts.bloodBar(rank, settings));
   }
 
   public static void remove(final PlayerEntity player) {
-    Modifiers.remove(player, EntityAttributes.GENERIC_MAX_HEALTH, HEALTH);
-    Modifiers.remove(player, EntityAttributes.GENERIC_ATTACK_DAMAGE, DAMAGE);
-    Modifiers.clampHealth(player);
+    embody(player, StageBody.SAME);
     BloodCapacity.setExtra(player, 0);
+  }
+
+  private static void embody(final PlayerEntity player, final StageBody body) {
+    Modifiers.remove(player, EntityAttributes.GENERIC_MAX_HEALTH, OLD_HEALTH);
+    Modifiers.remove(player, EntityAttributes.GENERIC_ATTACK_DAMAGE, OLD_DAMAGE);
+    StageStats.apply(player, body);
   }
 }

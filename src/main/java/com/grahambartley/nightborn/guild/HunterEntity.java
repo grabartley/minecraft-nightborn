@@ -83,6 +83,7 @@ public class HunterEntity extends PathAwareEntity
         GrowingHunter,
         GuildFighter {
 
+  static final double MAX_HEALTH = 58.0;
   static final String FEMALE_KEY = "Female";
   static final String KIT_KEY = "Kit";
   public static final int ANIMATION_BLEND_TICKS = 4;
@@ -132,7 +133,7 @@ public class HunterEntity extends PathAwareEntity
 
   public static DefaultAttributeContainer.Builder createHunterAttributes() {
     return MobEntity.createMobAttributes()
-        .add(EntityAttributes.GENERIC_MAX_HEALTH, 24.0)
+        .add(EntityAttributes.GENERIC_MAX_HEALTH, MAX_HEALTH)
         .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.3)
         .add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 3.0)
         .add(EntityAttributes.GENERIC_ARMOR, 2.0)

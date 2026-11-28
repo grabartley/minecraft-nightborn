@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.grahambartley.nightborn.rank.GuildRank;
 import com.grahambartley.nightborn.rank.RankDeed;
+import com.grahambartley.nightborn.rank.RankGifts;
 import com.grahambartley.nightborn.rank.RankLadder;
 import com.grahambartley.nightborn.rank.RankMark;
 import com.grahambartley.nightborn.rank.RankOutlook;
@@ -46,7 +47,8 @@ class GuildRankOrderTest {
                 1,
                 Text.literal("Hunter"),
                 new RankMark("+", TextColor.fromFormatting(Formatting.BLUE)),
-                deed));
+                deed,
+                RankGifts.NONE));
     final List<Text> lines =
         GuildRankOrder.told(
             Text.literal("Abel"),

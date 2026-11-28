@@ -24,7 +24,7 @@ class VampireMobAttributesTest {
     return Stream.of(
         Arguments.of(EntityAttributes.GENERIC_MAX_HEALTH, 30.0),
         Arguments.of(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.3),
-        Arguments.of(EntityAttributes.GENERIC_ATTACK_DAMAGE, 4.0),
+        Arguments.of(EntityAttributes.GENERIC_ATTACK_DAMAGE, 3.0),
         Arguments.of(EntityAttributes.GENERIC_FOLLOW_RANGE, 32.0),
         Arguments.of(MindAttributes.CHARM, 0.0),
         Arguments.of(MindAttributes.THRALL_LIMIT, 0.0),

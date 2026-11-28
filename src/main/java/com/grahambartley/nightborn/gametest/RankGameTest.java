@@ -47,7 +47,14 @@ public class RankGameTest implements FabricGameTest {
     context.assertEquals(GuildRanks.of(hunter), 1, "rank after the deed and the points");
     context.assertEquals(
         hunter.getMaxHealth(),
-        base + ServerConfigService.current().skills().rankHealth(),
+        base
+            + (float)
+                RankLadder.of(hunter.getRegistryManager())
+                    .rung(1)
+                    .orElseThrow()
+                    .rank()
+                    .gifts()
+                    .health(),
         "health after rising");
     context.assertEquals(
         RankLadder.of(hunter.getRegistryManager()).markOf(OathAttachment.get(hunter)),
@@ -68,7 +75,7 @@ public class RankGameTest implements FabricGameTest {
     final float base = hunter.getMaxHealth();
     Ranking.setRank(hunter, 2);
     VampireTransitions.turn(hunter);
-    RankBody.apply(hunter, ServerConfigService.current().skills());
+    RankBody.apply(hunter);
     context.assertEquals(GuildRanks.of(hunter), 0, "a vampire holds no rank");
     context.assertEquals(OathAttachment.get(hunter).rank(), 2, "the rank is set aside, not lost");
     context.assertTrue(hunter.getMaxHealth() <= base + 0.001F, "no rank health as a vampire");

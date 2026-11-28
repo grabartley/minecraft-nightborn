@@ -26,7 +26,10 @@ class HunterSupportTest {
       final boolean foe, final boolean busy, final boolean canThrow, final boolean ready) {
     final List<ActionReadiness> actions =
         HunterSupport.actions(
-            true, false, new HunterSupport.Moment(foe, 5.0, busy, canThrow, false), WARD_RANGE);
+            true,
+            false,
+            new HunterSupport.Moment(foe, 5.0, busy, busy, canThrow, false),
+            WARD_RANGE);
     assertEquals(
         List.of(
             new ActionReadiness(
@@ -37,28 +40,36 @@ class HunterSupportTest {
         actions);
   }
 
-  @ParameterizedTest(name = "foe {0}, {1} blocks, busy {2}, raised {3}: ready {4}, held {5}")
+  @ParameterizedTest(
+      name = "foe {0}, {1} blocks, busy {2}, throwing {3}, raised {4}: ready {5}, held {6}")
   @CsvSource({
-    "true, 3.9, false, false, true, false",
-    "true, 6.0, false, false, true, false",
-    "true, 6.1, false, false, false, false",
-    "true, 4.0, true, false, false, false",
-    "false, 4.0, false, false, false, false",
-    "true, 4.0, false, true, true, true",
-    "true, 8.0, false, true, false, false"
+    "true, 3.9, false, false, false, true, false",
+    "true, 6.0, false, false, false, true, false",
+    "true, 6.1, false, false, false, false, false",
+    "true, 4.0, true, true, false, false, false",
+    "true, 4.0, true, false, false, true, false",
+    "false, 4.0, false, false, false, false, false",
+    "true, 4.0, false, false, true, true, true",
+    "true, 8.0, false, false, true, false, false"
   })
-  @DisplayName("the crucifix is on offer at a foe in its reach, and counts as running once raised")
+  @DisplayName(
+      "the crucifix is on offer at a foe in its reach, even while loosing a bolt but not while"
+          + " throwing, and counts as running once raised")
   void crucifix(
       final boolean foe,
       final double distance,
       final boolean busy,
+      final boolean throwing,
       final boolean raised,
       final boolean ready,
       final boolean running) {
     assertEquals(
         List.of(new ActionReadiness(HunterSupport.CRUCIFIX, verdict(ready), 0, running)),
         HunterSupport.actions(
-            false, true, new HunterSupport.Moment(foe, distance, busy, true, raised), WARD_RANGE));
+            false,
+            true,
+            new HunterSupport.Moment(foe, distance, busy, throwing, true, raised),
+            WARD_RANGE));
   }
 
   @ParameterizedTest(name = "holy water {0}, crucifix {1}: {2}")
@@ -75,7 +86,7 @@ class HunterSupportTest {
         HunterSupport.actions(
                 holyWater,
                 crucifix,
-                new HunterSupport.Moment(true, 5.0, false, true, false),
+                new HunterSupport.Moment(true, 5.0, false, false, true, false),
                 WARD_RANGE)
             .stream()
             .map(ActionReadiness::id)

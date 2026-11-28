@@ -13,8 +13,11 @@ public final class Retreat {
   }
 
   public static boolean starts(
-      final int healthPercent, final int retreatHealth, final boolean resting) {
-    return !resting && retreatHealth > 0 && healthPercent < retreatHealth;
+      final int healthPercent,
+      final int retreatHealth,
+      final boolean resting,
+      final boolean underFire) {
+    return !resting && !underFire && retreatHealth > 0 && healthPercent < retreatHealth;
   }
 
   public static boolean ends(

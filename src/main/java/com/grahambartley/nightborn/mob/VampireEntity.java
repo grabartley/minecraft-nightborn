@@ -32,6 +32,7 @@ import com.grahambartley.nightborn.mob.look.VampireLooks;
 import com.grahambartley.nightborn.mob.look.VampireRig;
 import com.grahambartley.nightborn.mob.look.VampireSize;
 import com.grahambartley.nightborn.mob.look.VampireVoice;
+import com.grahambartley.nightborn.mob.stage.StageStats;
 import com.grahambartley.nightborn.mob.stage.Staged;
 import com.grahambartley.nightborn.mob.stage.VampireStage;
 import com.grahambartley.nightborn.mob.stage.VampireStages;
@@ -251,7 +252,7 @@ public class VampireEntity extends HostileEntity
 
   @Override
   public boolean tryAttack(final Entity target) {
-    return hunt.bite(this, target);
+    return hunt.strike(this, target, super::tryAttack);
   }
 
   @Override
@@ -613,6 +614,7 @@ public class VampireEntity extends HostileEntity
     returnHand();
     blood.read(nbt);
     dataTracker.set(STAGE, nbt.getString(STAGE_KEY));
+    StageStats.apply(this, stage().body());
     bearEpithet(nbt.getString(EPITHET_KEY));
     undressed = nbt.contains(LOOK_KEY) && !nbt.contains(LOOK_KEY, NbtElement.STRING_TYPE);
     if (nbt.contains(LOOK_KEY, NbtElement.STRING_TYPE)) {

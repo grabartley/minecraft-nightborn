@@ -1,11 +1,7 @@
 {
   "rank": 5,
   "weight": 0,
-  "body": {
-    "health": 11.0,
-    "speed": 0.3,
-    "damage": 2.0
-  },
+  "body": { "health": 330, "speed": 0.3, "damage": 9 },
   "skills": {
     "count": 0,
     "every": true,

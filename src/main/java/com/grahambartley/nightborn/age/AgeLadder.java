@@ -1,6 +1,7 @@
 package com.grahambartley.nightborn.age;
 
 import com.grahambartley.nightborn.mob.stage.StageAge;
+import com.grahambartley.nightborn.mob.stage.StageBody;
 import com.grahambartley.nightborn.mob.stage.VampireStage;
 import com.grahambartley.nightborn.mob.stage.VampireStages;
 import java.util.Comparator;
@@ -58,6 +59,12 @@ public record AgeLadder(List<Rung> rungs) {
     return rung(Math.min(rank, rungs.size() - 1))
         .map(rung -> rung.age().notoriety())
         .orElse(StageAge.PLAIN_NOTORIETY);
+  }
+
+  public StageBody body(final int rank) {
+    return rung(Math.min(rank, rungs.size() - 1))
+        .map(rung -> rung.stage().body())
+        .orElse(StageBody.SAME);
   }
 
   public int stageRank(final int rank) {

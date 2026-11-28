@@ -12,7 +12,12 @@ public final class HunterSupport {
   public static final Identifier CRUCIFIX = Identifier.of(Nightborn.MOD_ID, "crucifix");
 
   public record Moment(
-      boolean foe, double distance, boolean busy, boolean canThrow, boolean raised) {}
+      boolean foe,
+      double distance,
+      boolean busy,
+      boolean throwing,
+      boolean canThrow,
+      boolean raised) {}
 
   private HunterSupport() {}
 
@@ -33,7 +38,7 @@ public final class HunterSupport {
       actions.add(
           ActionReadiness.of(
               CRUCIFIX,
-              moment.foe() && !moment.busy() && moment.distance() <= wardRange,
+              moment.foe() && !moment.throwing() && moment.distance() <= wardRange,
               0,
               moment.raised()));
     }

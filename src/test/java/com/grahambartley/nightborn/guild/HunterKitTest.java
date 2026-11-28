@@ -34,6 +34,7 @@ class HunterKitTest {
         Optional.empty(),
         false,
         weight,
+        0.0F,
         0.0F);
   }
 
@@ -101,5 +102,22 @@ class HunterKitTest {
     final HunterKit shipped = kit.getValue();
     final Identifier finisher = shipped.bolt().orElse(shipped.weapon());
     assertTrue(finisher.getPath().contains("stake"), kit.getKey() + " ends with " + finisher);
+  }
+
+  @ParameterizedTest(name = "damage {0} and {1} a rank at rank {2}: {3}")
+  @CsvSource({
+    "4.0, 0.0, 3, 4.0",
+    "0.8, 1.4, 0, 0.8",
+    "0.8, 1.4, 2, 3.6",
+    "1.0, -0.5, 1, 0.5",
+    "1.0, -0.5, 3, 0.0"
+  })
+  @DisplayName("a kit's damage at a rank is its damage plus its step for each rank, never below 0")
+  void damageAtARank(
+      final float damage, final float rankDamage, final int rank, final float dealt) {
+    final HunterKit kit =
+        new HunterKit(
+            id("weapon"), Optional.empty(), Optional.empty(), false, 1, damage, rankDamage);
+    assertEquals(dealt, kit.damageAt(rank), 0.0001F);
   }
 }

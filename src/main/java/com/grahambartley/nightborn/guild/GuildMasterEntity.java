@@ -82,6 +82,7 @@ public class GuildMasterEntity extends MerchantEntity
         PowerShow,
         RangedAttackMob {
 
+  static final double MAX_HEALTH = 70.0;
   static final String LAST_RESTOCK = "LastRestock";
   static final String OFFER_RANKS = "OfferRanks";
   static final int HEAD_SHAKE_TICKS = 40;
@@ -133,7 +134,7 @@ public class GuildMasterEntity extends MerchantEntity
 
   public static DefaultAttributeContainer.Builder createGuildMasterAttributes() {
     return MobEntity.createMobAttributes()
-        .add(EntityAttributes.GENERIC_MAX_HEALTH, 30.0)
+        .add(EntityAttributes.GENERIC_MAX_HEALTH, MAX_HEALTH)
         .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.5)
         .add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 4.0)
         .add(EntityAttributes.GENERIC_ARMOR, 4.0)

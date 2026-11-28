@@ -68,4 +68,17 @@ class HunterActionTimerTest {
     assertEquals(ready, timer.canThrow());
     assertEquals(ready, timer.begin(HunterAction.THROW_HOLY_WATER));
   }
+
+  @ParameterizedTest(name = "{0}: throwing {1}")
+  @CsvSource({
+    "NONE, false",
+    "CROSSBOW_SHOT, false",
+    "THROW_HOLY_WATER, true",
+    "RAISE_CRUCIFIX, false"
+  })
+  void onlyAHolyWaterThrowCountsAsThrowing(final HunterAction action, final boolean throwing) {
+    final HunterActionTimer timer = new HunterActionTimer();
+    timer.begin(action);
+    assertEquals(throwing, timer.throwing());
+  }
 }

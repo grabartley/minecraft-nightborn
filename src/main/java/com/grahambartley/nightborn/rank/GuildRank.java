@@ -6,7 +6,8 @@ import java.util.Optional;
 import net.minecraft.text.Text;
 import net.minecraft.text.TextCodecs;
 
-public record GuildRank(int order, Text name, RankMark mark, Optional<RankDeed> deed) {
+public record GuildRank(
+    int order, Text name, RankMark mark, Optional<RankDeed> deed, RankGifts gifts) {
 
   public static final Codec<GuildRank> CODEC =
       RecordCodecBuilder.create(
@@ -18,6 +19,9 @@ public record GuildRank(int order, Text name, RankMark mark, Optional<RankDeed> 
                           .forGetter(GuildRank::order),
                       TextCodecs.CODEC.fieldOf("name").forGetter(GuildRank::name),
                       RankMark.CODEC.fieldOf("mark").forGetter(GuildRank::mark),
-                      RankDeed.CODEC.optionalFieldOf("deed").forGetter(GuildRank::deed))
+                      RankDeed.CODEC.optionalFieldOf("deed").forGetter(GuildRank::deed),
+                      RankGifts.CODEC
+                          .optionalFieldOf("gifts", RankGifts.NONE)
+                          .forGetter(GuildRank::gifts))
                   .apply(instance, GuildRank::new));
 }

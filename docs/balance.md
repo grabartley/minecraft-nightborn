@@ -50,3 +50,20 @@ A matchup passes when all of these hold:
 A kit, path, bloodline, temperament or power passes when it wins no more than 60% of the decided rounds it appears in. It needs at least 10 rounds to be judged.
 
 At 20 rounds a perfectly even matchup lands inside 45% to 55% only about half the time, so judge a balance pass on a few hundred rounds a matchup.
+
+## Where The Balance Lives
+
+A stage gives a vampire player and a vampire mob the same body, and a rank gives a hunter player and a hunter mob the same gifts. Each lives in one place, so a change there changes both. Tune in data, then rerun the scenario.
+
+| Lever | File | What it moves |
+|---|---|---|
+| A stage's health, damage and speed | `vampire_stage/<stage>.json`, `body` | That stage for players and mobs alike, against every rank, at every team size |
+| A rank's health and damage against vampires | `guild_rank/<rank>.json`, `gifts` | That rank for players and mobs alike, against every stage, at every team size |
+| A mob's own base health and arm | `VampireMobAttributes`, `HunterEntity` and `GuildMasterEntity` attributes, and `health_scale` in `veteran/veteran.json` | Every stage or rank of that mob at once, and how long fights last. Players are not touched |
+| A kit's damage, and its step for each rank | `hunter_kit/<kit>.json`, `damage` and `rank_damage` | One kit against the others. A crossbow needs the step, since a bolt does not grow with its hunter's skills as a stake does |
+| A stage's retreat point | `vampire_stage/<stage>.json`, `combat.retreat_health` | Team fights against duels. A vampire that falls back heals while its housemates fight on, so a higher point helps teams and hurts a lone vampire. It also makes fights longer |
+| How often a rank thinks | `hunter_build/hunter.json`, `think_ticks` | How many powers a rank uses. It matters most in 3 v 3 |
+| When a mob uses a power | The `mob.uses` of a skill in `skill/` | Powers that hit a crowd, such as a flash trap inside a Killing Ground, matter far more in 5 v 5 than in a duel |
+| How ranks and stages are mixed | `rank_weights` in `hunter_build/hunter.json`, `weight` in each stage | The mixed matchup |
+
+A small edge in a duel grows in a team fight, because the side that drops one fighter first then outnumbers the other. Level each kit in the duels before tuning the team sizes.

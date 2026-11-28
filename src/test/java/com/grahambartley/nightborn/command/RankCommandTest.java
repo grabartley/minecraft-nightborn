@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import com.grahambartley.nightborn.faction.Oath;
 import com.grahambartley.nightborn.rank.GuildRank;
 import com.grahambartley.nightborn.rank.RankDeed;
+import com.grahambartley.nightborn.rank.RankGifts;
 import com.grahambartley.nightborn.rank.RankLadder;
 import com.grahambartley.nightborn.rank.RankMark;
 import java.util.List;
@@ -28,7 +29,8 @@ class RankCommandTest {
             new RankMark("+", TextColor.fromFormatting(Formatting.BLUE)),
             deed
                 ? Optional.of(new RankDeed(RankDeed.Act.STAKE, 0, Text.literal(path)))
-                : Optional.empty()));
+                : Optional.empty(),
+            RankGifts.NONE));
   }
 
   @ParameterizedTest(name = "deeds {0} -> {1} of 3")
