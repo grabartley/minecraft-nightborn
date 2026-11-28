@@ -45,7 +45,7 @@ public final class RouteEnd {
   @Nullable
   public static Vec3d course(final MobEntity mob) {
     return course(
-        mob.hasPositionTarget() && !mob.isInWalkTargetRange()
+        mob.getTarget() == null && mob.hasPositionTarget() && !mob.isInWalkTargetRange()
             ? Vec3d.ofBottomCenter(mob.getPositionTarget())
             : null,
         goal(mob));

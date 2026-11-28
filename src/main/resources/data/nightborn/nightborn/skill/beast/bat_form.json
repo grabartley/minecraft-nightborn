@@ -111,6 +111,11 @@
             {
               "fact": "target_distance",
               "high": 32
+            },
+            {
+              "fact": "room_to_fly",
+              "low": 1,
+              "high": 4
             }
           ],
           "weight": 2.0
