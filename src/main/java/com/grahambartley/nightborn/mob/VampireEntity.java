@@ -305,7 +305,7 @@ public class VampireEntity extends HostileEntity
             isSleeping(),
             escapes != null && escapes.active(),
             Weakened.sources(this).level(false) > 0),
-        mind(),
+        this::mind,
         stage().combat().bloodFloor());
   }
 

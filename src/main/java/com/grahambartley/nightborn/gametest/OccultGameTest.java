@@ -515,13 +515,13 @@ public class OccultGameTest implements FabricGameTest {
         5,
         () -> {
           ally.setAttacker(hunter);
-          warden.mobFighting().tick(warden, MobFighting.Engagement.STANDING_BY, mind, floor);
+          warden.mobFighting().tick(warden, MobFighting.Engagement.STANDING_BY, () -> mind, floor);
           context.assertTrue(warden.mobFighting().telling(), "the warden winds up to help");
         });
     context.runAtTick(
         5 + WARD_TELL,
         () -> {
-          warden.mobFighting().tick(warden, MobFighting.Engagement.STANDING_BY, mind, floor);
+          warden.mobFighting().tick(warden, MobFighting.Engagement.STANDING_BY, () -> mind, floor);
           final ServerWorld world = context.getWorld();
           context.assertTrue(
               Circles.stopsPrayers(world, ally.getPos()), "the ward is drawn around the ally");

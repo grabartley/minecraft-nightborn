@@ -4,8 +4,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.google.gson.JsonParser;
+import com.grahambartley.nightborn.MinecraftBootstrapExtension;
+import com.grahambartley.nightborn.mob.brain.Aim;
+import com.grahambartley.nightborn.mob.brain.ChoiceFixtures;
 import com.grahambartley.nightborn.mob.brain.Disposition;
-import com.grahambartley.nightborn.mob.brain.Intent;
+import com.grahambartley.nightborn.mob.brain.IntentBudget;
 import com.grahambartley.nightborn.mob.brain.Mind;
 import com.grahambartley.nightborn.mob.brain.Sharpness;
 import com.mojang.serialization.JsonOps;
@@ -15,9 +18,11 @@ import java.nio.file.Path;
 import java.util.Map;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
+@ExtendWith(MinecraftBootstrapExtension.class)
 class StageCombatTest {
 
   @Test
@@ -118,13 +123,6 @@ class StageCombatTest {
   }
 
   @ParameterizedTest(name = "{0}")
-  @CsvSource({"lord", "eldest"})
-  @DisplayName("the lord and the Eldest keep the keen mind they had")
-  void leadersStayKeen(final String stage) throws IOException {
-    assertEquals(Sharpness.KEEN, shipped(stage));
-  }
-
-  @ParameterizedTest(name = "{0}")
   @CsvSource(
       delimiter = '|',
       value = {"{\"sharpness\": {\"blur\": 0.3}} | true", "{\"sharpness\": {\"blur\": 2}} | false"})
@@ -147,7 +145,51 @@ class StageCombatTest {
                     .getAsJsonObject()
                     .get("combat"))
             .getOrThrow();
-    final Disposition hot = new Disposition(Map.of(Intent.FIGHT, 1.5F), Map.of(), 0.5F);
+    final Disposition hot = new Disposition(Map.of(Aim.TARGET, 1.5F), 0.5F);
     assertEquals(new Mind(combat.thinkTicks(), combat.sharpness(), hot), combat.mind(hot));
+  }
+
+  private static StageCombat shippedCombat(final String stage) throws IOException {
+    return StageCombat.CODEC
+        .parse(
+            JsonOps.INSTANCE,
+            JsonParser.parseString(Files.readString(STAGES.resolve(stage + ".json")))
+                .getAsJsonObject()
+                .get("combat"))
+        .getOrThrow();
+  }
+
+  @ParameterizedTest(name = "{0}")
+  @CsvSource({"lord", "eldest"})
+  @DisplayName("the lord and the Eldest fight as before, whatever their temperament")
+  void leadersAreUntempered(final String stage) throws IOException {
+    final StageCombat combat = shippedCombat(stage);
+    assertEquals(
+        new Mind(combat.thinkTicks(), Sharpness.KEEN, Disposition.EVEN),
+        combat.mind(new Disposition(Map.of(Aim.TARGET, 1.5F), 0.5F)));
+  }
+
+  @ParameterizedTest(name = "{0}, rolls {1} and {2}: {3}")
+  @CsvSource({
+    "fledgling, 1, 0, strike",
+    "fledgling, 0.25, 0.75, guard",
+    "adult, 0.25, 0.75, guard",
+    "elder, 0.25, 0.75, strike",
+    "elder, 0, 1, guard",
+    "ancient, 0, 1, strike"
+  })
+  @DisplayName(
+      "with the same powers in the same fight, the younger the vampire the smaller the turn of"
+          + " chance that fools it, and an ancient is never fooled")
+  void shippedStagesChooseByAge(
+      final String stage, final double first, final double second, final String picked)
+      throws IOException {
+    assertEquals(
+        ChoiceFixtures.id(picked),
+        ChoiceFixtures.pick(
+            ChoiceFixtures.strikeOrGuard(0),
+            shippedCombat(stage).mind(Disposition.EVEN),
+            IntentBudget.FREE,
+            ChoiceFixtures.rolls(first, second)));
   }
 }

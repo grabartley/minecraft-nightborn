@@ -1,12 +1,9 @@
 package com.grahambartley.nightborn.mob.brain;
 
 import java.util.Set;
+import java.util.function.DoubleSupplier;
 
 public record Mind(int thinkTicks, Sharpness sharpness, Disposition disposition) {
-
-  public static Mind plain(final int thinkTicks) {
-    return new Mind(thinkTicks, Sharpness.KEEN, Disposition.EVEN);
-  }
 
   public Set<Fact> reads(final Set<Fact> needed) {
     return sharpness.visible(needed);
@@ -21,7 +18,8 @@ public record Mind(int thinkTicks, Sharpness sharpness, Disposition disposition)
         Math.clamp(base.thrift() * sharpness.foresight() * disposition.thrift(), 0.0F, 1.0F));
   }
 
-  public double judged(final double score, final Intent intent, final Aim aim, final double roll) {
-    return sharpness.blurred(score * disposition.lean(intent, aim), roll);
+  public double judged(final double score, final Aim aim, final DoubleSupplier chance) {
+    final double leaned = score * disposition.lean(aim);
+    return sharpness.blurs() ? sharpness.blurred(leaned, chance.getAsDouble()) : leaned;
   }
 }

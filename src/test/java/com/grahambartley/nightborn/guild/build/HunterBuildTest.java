@@ -9,7 +9,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.google.gson.JsonParser;
 import com.grahambartley.nightborn.MinecraftBootstrapExtension;
+import com.grahambartley.nightborn.mob.brain.Aim;
+import com.grahambartley.nightborn.mob.brain.ChoiceFixtures;
 import com.grahambartley.nightborn.mob.brain.Disposition;
+import com.grahambartley.nightborn.mob.brain.IntentBudget;
 import com.grahambartley.nightborn.mob.brain.Mind;
 import com.grahambartley.nightborn.mob.brain.Sharpness;
 import com.grahambartley.nightborn.rank.RankLadder;
@@ -183,5 +186,40 @@ class HunterBuildTest {
     assertTrue(SHIPPED.stakeExperience() > SHIPPED.trickleExperience());
     assertEquals(CROSSBOW, id("crossbow"));
     assertEquals(STAKE, id("stake"));
+  }
+
+  @ParameterizedTest(name = "{0}, rolls {1} and {2}: {3}")
+  @CsvSource({
+    "initiate, 0.25, 0.75, guard",
+    "hunter, 0.25, 0.75, guard",
+    "veteran, 0.25, 0.75, strike",
+    "master, 0, 1, strike"
+  })
+  @DisplayName(
+      "with the same powers in the same fight, an Initiate can be fooled by chance and a Master"
+          + " cannot")
+  void shippedRanksChooseByRank(
+      final String rank, final double first, final double second, final String picked) {
+    assertEquals(
+        ChoiceFixtures.id(picked),
+        ChoiceFixtures.pick(
+            ChoiceFixtures.strikeOrGuard(0),
+            SHIPPED.mind(Optional.of(id(rank)), Optional.empty()),
+            IntentBudget.FREE,
+            ChoiceFixtures.rolls(first, second)));
+  }
+
+  @ParameterizedTest(name = "{0} leans {2} toward {1}")
+  @CsvSource({
+    "crossbow, TARGET, 1.25",
+    "stake, TARGET, 1.2",
+    "silver_stake, ALLY, 1.25",
+    "raid_silver, ALLY, 1.15",
+    "master_silver, TARGET, 1"
+  })
+  @DisplayName("a hunter's kit colours what it reaches for: its quarry, or its fellows")
+  void kitsLean(final String kit, final Aim aim, final double lean) {
+    assertEquals(
+        lean, SHIPPED.mind(Optional.empty(), Optional.of(id(kit))).disposition().lean(aim), 1.0E-6);
   }
 }

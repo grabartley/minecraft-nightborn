@@ -134,7 +134,7 @@ public class VampireStageGameTest implements FabricGameTest {
         .tick(
             vampire,
             MobFighting.Engagement.FIGHTING,
-            vampire.stage().combat().mind(Disposition.EVEN),
+            () -> vampire.stage().combat().mind(Disposition.EVEN),
             vampire.stage().combat().bloodFloor());
     final Think think = vampire.mobFighting().lastThink().orElseThrow();
     context.assertEquals(think.intent(), Intent.FIGHT, "a vampire with a target is fighting");
@@ -177,7 +177,7 @@ public class VampireStageGameTest implements FabricGameTest {
                 .tick(
                     vampire,
                     MobFighting.Engagement.FIGHTING,
-                    mind,
+                    () -> mind,
                     vampire.stage().combat().bloodFloor()));
     context.runAtTick(
         3 + thinkTicks,
@@ -189,7 +189,7 @@ public class VampireStageGameTest implements FabricGameTest {
               .tick(
                   vampire,
                   MobFighting.Engagement.FIGHTING,
-                  mind,
+                  () -> mind,
                   vampire.stage().combat().bloodFloor());
           final Think think = vampire.mobFighting().lastThink().orElseThrow();
           context.assertEquals(
@@ -241,7 +241,7 @@ public class VampireStageGameTest implements FabricGameTest {
                   prey.getBlockPos(),
                   false);
           vampire.getNavigation().startMovingAlong(path, 1.0);
-          vampire.mobFighting().tick(vampire, MobFighting.Engagement.FIGHTING, mind, floor);
+          vampire.mobFighting().tick(vampire, MobFighting.Engagement.FIGHTING, () -> mind, floor);
           context.assertEquals(
               vampire
                   .mobFighting()
@@ -255,7 +255,7 @@ public class VampireStageGameTest implements FabricGameTest {
     context.runAtTick(
         30,
         () -> {
-          vampire.mobFighting().tick(vampire, MobFighting.Engagement.FIGHTING, mind, floor);
+          vampire.mobFighting().tick(vampire, MobFighting.Engagement.FIGHTING, () -> mind, floor);
           context.assertTrue(BatForm.isBat(vampire), "it turns into a bat");
           flight.start();
           flown.set(true);

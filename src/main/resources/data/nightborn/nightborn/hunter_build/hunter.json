@@ -55,12 +55,12 @@
     }
   },
   "kit_dispositions": {
-    "nightborn:crossbow": { "intents": { "retreat": 1.3 }, "aims": { "target": 1.15, "spot": 1.2 } },
-    "nightborn:stake": { "intents": { "fight": 1.15, "close_in": 1.25 }, "aims": { "target": 1.2 }, "thrift": 0.8 },
+    "nightborn:crossbow": { "aims": { "target": 1.25, "foes": 1.1 } },
+    "nightborn:stake": { "aims": { "target": 1.2 }, "thrift": 0.8 },
     "nightborn:silver_stake": { "aims": { "ally": 1.25, "allies": 1.2, "foes": 1.15 } },
-    "nightborn:raid_wooden": { "intents": { "fight": 1.2, "close_in": 1.2 }, "thrift": 0.7 },
-    "nightborn:raid_silver": { "intents": { "fight": 1.1 }, "aims": { "foes": 1.2 } },
-    "nightborn:raid_silver_holy_water": { "aims": { "spot": 1.3, "foes": 1.25 }, "thrift": 1.2 },
+    "nightborn:raid_wooden": { "aims": { "target": 1.2 }, "thrift": 0.7 },
+    "nightborn:raid_silver": { "aims": { "foes": 1.2, "ally": 1.15, "allies": 1.15 } },
+    "nightborn:raid_silver_holy_water": { "aims": { "foes": 1.25, "allies": 1.15 }, "thrift": 1.2 },
     "nightborn:master_silver": { "aims": { "allies": 1.2, "ally": 1.2 } }
   },
   "trickle_experience": 10,

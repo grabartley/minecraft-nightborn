@@ -37,7 +37,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 @ExtendWith(MinecraftBootstrapExtension.class)
 class PowerChoiceTest {
 
-  private static final Mind PLAIN = Mind.plain(40);
+  private static final Mind PLAIN = new Mind(40, Sharpness.KEEN, Disposition.EVEN);
   private static final DoubleSupplier NO_CHANCE = () -> 0.5;
 
   private static final Identifier RUSH = Identifier.of("nightborn", "core/blood_rush");
@@ -885,43 +885,6 @@ class PowerChoiceTest {
             NO_CHANCE));
   }
 
-  private static final Identifier STRIKE = Identifier.of("nightborn", "strike");
-  private static final Identifier GUARD = Identifier.of("nightborn", "guard");
-
-  private static List<PowerChoice.Option> strikeOrGuard() {
-    return List.of(
-        option(
-            STRIKE,
-            new MobUse(
-                Intent.FIGHT.key(),
-                Aim.TARGET.key(),
-                List.of(new Consideration(Fact.TARGET_DISTANCE.key(), Curve.BETWEEN, 0, 8)),
-                1.0F)),
-        option(
-            GUARD,
-            new MobUse(
-                Intent.FIGHT.key(),
-                Aim.SELF.key(),
-                List.of(new Consideration(Fact.OWN_HEALTH.key(), Curve.BETWEEN, 0, 1)),
-                0.8F)));
-  }
-
-  private static DoubleSupplier rolls(final double... rolls) {
-    final int[] next = {0};
-    return () -> rolls[next[0]++];
-  }
-
-  private static Identifier pick(
-      final List<PowerChoice.Option> options, final Mind mind, final DoubleSupplier chance) {
-    return PowerChoice.choose(
-            PowerChoice.rank(options, fight(5, 20), IntentBudget.FREE, 0, mind, chance),
-            IntentBudget.FREE,
-            0.0)
-        .orElseThrow()
-        .option()
-        .id();
-  }
-
   @ParameterizedTest(name = "blur {0}, rolls {1} and {2}: {3}")
   @CsvSource({
     "0, 0, 1, strike",
@@ -939,68 +902,11 @@ class PowerChoiceTest {
         new Mind(
             20, new Sharpness(blur, EnumSet.allOf(Sharpness.Reads.class), 1.0F), Disposition.EVEN);
     assertEquals(
-        Identifier.of("nightborn", picked),
-        pick(strikeOrGuard(), mind, blur > 0.0F ? rolls(first, second) : () -> 0.5));
-  }
-
-  private static Sharpness shippedSharpness(final String stage) {
-    try {
-      return Sharpness.CODEC
-          .parse(
-              JsonOps.INSTANCE,
-              JsonParser.parseString(
-                      Files.readString(DATA.resolve("vampire_stage/" + stage + ".json")))
-                  .getAsJsonObject()
-                  .getAsJsonObject("combat")
-                  .get("sharpness"))
-          .getOrThrow();
-    } catch (final IOException e) {
-      throw new UncheckedIOException(e);
-    }
-  }
-
-  @ParameterizedTest(name = "{0}, rolls {1} and {2}: {3}")
-  @CsvSource({
-    "fledgling, 1, 0, strike",
-    "fledgling, 0.25, 0.75, guard",
-    "adult, 0.25, 0.75, guard",
-    "elder, 0.25, 0.75, strike",
-    "elder, 0, 1, guard",
-    "ancient, 0, 1, strike"
-  })
-  @DisplayName(
-      "with the same powers in the same fight, the younger the vampire the smaller the turn of"
-          + " chance that fools it, and an ancient is never fooled")
-  void shippedStagesChooseByAge(
-      final String stage, final double first, final double second, final String picked) {
-    final Mind mind = new Mind(20, shippedSharpness(stage), Disposition.EVEN);
-    assertEquals(
-        Identifier.of("nightborn", picked), pick(strikeOrGuard(), mind, rolls(first, second)));
-  }
-
-  private static Disposition shippedTemper(final String temperament) {
-    try {
-      return Disposition.CODEC
-          .parse(
-              JsonOps.INSTANCE,
-              JsonParser.parseString(
-                      Files.readString(
-                          DATA.resolve("vampire_temperament/" + temperament + ".json")))
-                  .getAsJsonObject()
-                  .get("disposition"))
-          .getOrThrow();
-    } catch (final IOException e) {
-      throw new UncheckedIOException(e);
-    }
-  }
-
-  @ParameterizedTest(name = "{0}: {1}")
-  @CsvSource({"quarrelsome, strike", "brooding, guard"})
-  @DisplayName(
-      "two vampires of one stage open a fight differently: a quarrelsome one strikes, a"
-          + " brooding one guards itself")
-  void shippedTemperamentsOpenDifferently(final String temperament, final String picked) {
-    final Mind mind = new Mind(20, Sharpness.KEEN, shippedTemper(temperament));
-    assertEquals(Identifier.of("nightborn", picked), pick(strikeOrGuard(), mind, () -> 0.5));
+        ChoiceFixtures.id(picked),
+        ChoiceFixtures.pick(
+            ChoiceFixtures.strikeOrGuard(0),
+            mind,
+            IntentBudget.FREE,
+            ChoiceFixtures.rolls(first, second)));
   }
 }

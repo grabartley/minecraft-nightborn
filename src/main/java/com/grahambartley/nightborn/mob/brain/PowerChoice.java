@@ -142,9 +142,8 @@ public final class PowerChoice {
                     bestScoring.score()
                         * budget.kept(
                             option.cost(), option.cooldownTicks(), situation.self().health()),
-                    situation.intent(),
                     best.aimed(),
-                    mind.sharpness().blurs() ? chance.getAsDouble() : 0.5),
+                    chance),
                 option.action()
                     || budget.affords(situation.self().blood(), option.cost(), mobFloor),
                 bestScoring.ally()));

@@ -18,6 +18,7 @@ import com.grahambartley.nightborn.skill.Powers;
 import com.grahambartley.nightborn.skill.SkillPower;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.function.Supplier;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.server.world.ServerWorld;
@@ -61,10 +62,9 @@ public final class PowerCasting {
   public <T extends MobEntity & PowerShow> void tick(
       final T caster,
       final boolean engaged,
-      final Mind mind,
+      final Supplier<Mind> mind,
       final int bloodFloor,
       final MobFighting.Moves moves) {
-    final int thinkTicks = mind.thinkTicks();
     final long now = caster.getWorld().getTime();
     if (telling != null) {
       final Tell.Step step = telling.step(engaged, now);
@@ -90,10 +90,13 @@ public final class PowerCasting {
     if (!thinks(engaged, now, nextThink, nextAid)) {
       return;
     }
+    final Mind minded = mind.get();
+    final int thinkTicks = minded.thinkTicks();
     if (engaged) {
       nextThink = now + thinkTicks;
     }
-    final Optional<Think> think = Thinking.think(caster, bloodFloor, motion, mind, moves.actions());
+    final Optional<Think> think =
+        Thinking.think(caster, bloodFloor, motion, minded, moves.actions());
     if (!engaged) {
       nextAid = now + Thinking.idleTicks(caster, think, thinkTicks);
     }
@@ -118,8 +121,8 @@ public final class PowerCasting {
   }
 
   public <T extends MobEntity & PowerShow> boolean react(
-      final T caster, final int bloodFloor, final Mind mind) {
-    final Optional<Think> think = Thinking.react(caster, bloodFloor, mind);
+      final T caster, final int bloodFloor, final Supplier<Mind> mind) {
+    final Optional<Think> think = Thinking.react(caster, bloodFloor, mind.get());
     final Optional<PowerChoice.Scored> chosen = think.flatMap(Think::chosen);
     if (chosen.isEmpty()) {
       return false;

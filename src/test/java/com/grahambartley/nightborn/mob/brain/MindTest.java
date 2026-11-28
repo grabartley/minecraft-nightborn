@@ -15,7 +15,7 @@ class MindTest {
     return new Mind(
         30,
         new Sharpness(blur, EnumSet.allOf(Sharpness.Reads.class), foresight),
-        new Disposition(Map.of(Intent.FIGHT, 1.5F), Map.of(), thrift));
+        new Disposition(Map.of(Aim.TARGET, 1.5F), thrift));
   }
 
   @ParameterizedTest(name = "base thrift {0}, foresight {1}, disposition thrift {2}: {3}")
@@ -36,21 +36,27 @@ class MindTest {
     assertEquals(budget.withThrift(minded.thrift()), minded);
   }
 
-  @ParameterizedTest(name = "blur {0}, {1} at {2}, roll {3}: {4}")
-  @CsvSource({
-    "0, FIGHT, TARGET, 0, 1.5",
-    "0, RETREAT, TARGET, 0.9, 1",
-    "0.5, FIGHT, SELF, 0, 0.75",
-    "0.5, RETREAT, SELF, 1, 1.5"
-  })
+  @ParameterizedTest(name = "blur {0}, aim {1}, roll {2}: {3}")
+  @CsvSource({"0, TARGET, 0, 1.5", "0, SELF, 0.9, 1", "0.5, TARGET, 0, 0.75", "0.5, SELF, 1, 1.5"})
   @DisplayName("a score is leaned by the mob's disposition, then blurred by its sharpness")
-  void judged(
-      final float blur,
-      final Intent intent,
-      final Aim aim,
-      final double roll,
-      final double judged) {
-    assertEquals(judged, mind(blur, 1.0F, 1.0F).judged(1.0, intent, aim, roll), 1.0E-6);
+  void judged(final float blur, final Aim aim, final double roll, final double judged) {
+    assertEquals(judged, mind(blur, 1.0F, 1.0F).judged(1.0, aim, () -> roll), 1.0E-6);
+  }
+
+  @ParameterizedTest(name = "blur {0}")
+  @CsvSource({"0"})
+  @DisplayName("a mind that does not blur never rolls for it")
+  void sharpNeverRolls(final float blur) {
+    assertEquals(
+        1.5,
+        mind(blur, 1.0F, 1.0F)
+            .judged(
+                1.0,
+                Aim.TARGET,
+                () -> {
+                  throw new AssertionError("rolled");
+                }),
+        1.0E-6);
   }
 
   @ParameterizedTest(name = "reads group {0}")
@@ -69,12 +75,5 @@ class MindTest {
     assertEquals(
         group ? Set.of(Fact.OWN_HEALTH, Fact.ALLY_HEALTH) : Set.of(Fact.OWN_HEALTH),
         mind.reads(EnumSet.of(Fact.OWN_HEALTH, Fact.ALLY_HEALTH)));
-  }
-
-  @ParameterizedTest(name = "think ticks {0}")
-  @CsvSource({"12", "40"})
-  @DisplayName("a plain mind thinks at its pace, keenly and evenly, as mobs did before")
-  void plain(final int thinkTicks) {
-    assertEquals(new Mind(thinkTicks, Sharpness.KEEN, Disposition.EVEN), Mind.plain(thinkTicks));
   }
 }

@@ -10,6 +10,7 @@ public record StageCombat(
     int bloodFloor,
     int thinkTicks,
     Sharpness sharpness,
+    boolean tempered,
     int leapChance,
     int dashChance,
     int dodgeChance,
@@ -21,7 +22,8 @@ public record StageCombat(
   static final int PLAIN_THINK = 40;
 
   public static final StageCombat PLAIN =
-      new StageCombat(PLAIN_FLOOR, PLAIN_THINK, Sharpness.KEEN, 0, 0, 0, 0, 0, StageStuck.PLAIN);
+      new StageCombat(
+          PLAIN_FLOOR, PLAIN_THINK, Sharpness.KEEN, true, 0, 0, 0, 0, 0, StageStuck.PLAIN);
 
   public static final Codec<StageCombat> CODEC =
       RecordCodecBuilder.create(
@@ -37,6 +39,7 @@ public record StageCombat(
                       Sharpness.CODEC
                           .optionalFieldOf("sharpness", Sharpness.KEEN)
                           .forGetter(StageCombat::sharpness),
+                      Codec.BOOL.optionalFieldOf("tempered", true).forGetter(StageCombat::tempered),
                       Codec.intRange(0, 100)
                           .optionalFieldOf("leap_chance", 0)
                           .forGetter(StageCombat::leapChance),
@@ -58,6 +61,6 @@ public record StageCombat(
                   .apply(instance, StageCombat::new));
 
   public Mind mind(final Disposition disposition) {
-    return new Mind(thinkTicks, sharpness, disposition);
+    return new Mind(thinkTicks, sharpness, tempered ? disposition : Disposition.EVEN);
   }
 }

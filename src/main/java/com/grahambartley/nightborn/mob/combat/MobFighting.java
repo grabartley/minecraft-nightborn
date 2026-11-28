@@ -7,6 +7,7 @@ import com.grahambartley.nightborn.mob.brain.Think;
 import com.grahambartley.nightborn.skill.PowerShow;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Supplier;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.util.Identifier;
 
@@ -68,7 +69,10 @@ public final class MobFighting {
   }
 
   public <T extends MobEntity & PowerShow> void tick(
-      final T fighter, final Engagement engagement, final Mind mind, final int bloodFloor) {
+      final T fighter,
+      final Engagement engagement,
+      final Supplier<Mind> mind,
+      final int bloodFloor) {
     if (engagement == Engagement.NONE) {
       casting.cancel();
       moves.rest();

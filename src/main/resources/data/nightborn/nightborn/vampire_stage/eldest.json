@@ -17,6 +17,7 @@
   "combat": {
     "blood_floor": 0,
     "think_ticks": 8,
+    "tempered": false,
     "leap_chance": 70,
     "dash_chance": 65,
     "dodge_chance": 60,

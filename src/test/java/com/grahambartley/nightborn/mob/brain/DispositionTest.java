@@ -9,30 +9,25 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.EnumSource;
 
 class DispositionTest {
 
   private static final Disposition HOT =
-      new Disposition(Map.of(Intent.FIGHT, 1.5F), Map.of(Aim.TARGET, 2.0F, Aim.SELF, 0.5F), 0.5F);
+      new Disposition(Map.of(Aim.TARGET, 2.0F, Aim.SELF, 0.5F), 0.5F);
 
-  @ParameterizedTest(name = "{0} at {1}: {2}")
-  @CsvSource({
-    "FIGHT, TARGET, 3",
-    "FIGHT, SELF, 0.75",
-    "FIGHT, ALLY, 1.5",
-    "RETREAT, TARGET, 2",
-    "TRAVEL, SPOT, 1"
-  })
-  @DisplayName("a disposition leans each use by its intent and its aim, and leaves the rest be")
-  void lean(final Intent intent, final Aim aim, final double lean) {
-    assertEquals(lean, HOT.lean(intent, aim), 1.0E-6);
+  @ParameterizedTest(name = "{0}: {1}")
+  @CsvSource({"TARGET, 2", "SELF, 0.5", "ALLY, 1", "SPOT, 1"})
+  @DisplayName("a disposition leans each use by its aim, and leaves the rest be")
+  void lean(final Aim aim, final double lean) {
+    assertEquals(lean, HOT.lean(aim), 1.0E-6);
   }
 
-  @ParameterizedTest(name = "{0} at {1}")
-  @CsvSource({"FIGHT, TARGET", "REST, ALLIES"})
+  @ParameterizedTest(name = "{0}")
+  @EnumSource(Aim.class)
   @DisplayName("an even disposition leans no way")
-  void even(final Intent intent, final Aim aim) {
-    assertEquals(1.0, Disposition.EVEN.lean(intent, aim));
+  void even(final Aim aim) {
+    assertEquals(1.0, Disposition.EVEN.lean(aim));
   }
 
   @Test
@@ -44,7 +39,7 @@ class DispositionTest {
   }
 
   @Test
-  @DisplayName("a disposition reads its leans by intent and aim name")
+  @DisplayName("a disposition reads its leans by aim name")
   void reads() {
     assertEquals(
         HOT,
@@ -52,8 +47,7 @@ class DispositionTest {
             .parse(
                 JsonOps.INSTANCE,
                 JsonParser.parseString(
-                    "{\"intents\": {\"fight\": 1.5}, \"aims\": {\"target\": 2, \"self\": 0.5},"
-                        + " \"thrift\": 0.5}"))
+                    "{\"aims\": {\"target\": 2, \"self\": 0.5}, \"thrift\": 0.5}"))
             .getOrThrow());
   }
 
@@ -61,16 +55,15 @@ class DispositionTest {
   @CsvSource(
       delimiter = '|',
       value = {
-        "{\"intents\": {\"fight\": 4}} | true",
-        "{\"intents\": {\"fight\": 4.5}} | false",
-        "{\"intents\": {\"brawl\": 1}} | false",
+        "{\"aims\": {\"target\": 4}} | true",
+        "{\"aims\": {\"target\": 4.5}} | false",
         "{\"aims\": {\"self\": 0}} | true",
         "{\"aims\": {\"self\": -1}} | false",
         "{\"aims\": {\"sky\": 1}} | false",
         "{\"thrift\": 4} | true",
         "{\"thrift\": 5} | false"
       })
-  @DisplayName("a lean out of range, or on an intent or aim that does not exist, is refused")
+  @DisplayName("a lean out of range, or on an aim that does not exist, is refused")
   void bounds(final String json, final boolean loads) {
     assertEquals(
         loads, Disposition.CODEC.parse(JsonOps.INSTANCE, JsonParser.parseString(json)).isSuccess());
