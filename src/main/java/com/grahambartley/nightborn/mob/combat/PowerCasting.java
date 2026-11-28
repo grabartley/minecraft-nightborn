@@ -4,6 +4,7 @@ import com.grahambartley.nightborn.mob.brain.Aim;
 import com.grahambartley.nightborn.mob.brain.CastAims;
 import com.grahambartley.nightborn.mob.brain.FormHold;
 import com.grahambartley.nightborn.mob.brain.HelpClaims;
+import com.grahambartley.nightborn.mob.brain.Mind;
 import com.grahambartley.nightborn.mob.brain.PowerChoice;
 import com.grahambartley.nightborn.mob.brain.RouteEnd;
 import com.grahambartley.nightborn.mob.brain.TargetMotion;
@@ -60,9 +61,10 @@ public final class PowerCasting {
   public <T extends MobEntity & PowerShow> void tick(
       final T caster,
       final boolean engaged,
-      final int thinkTicks,
+      final Mind mind,
       final int bloodFloor,
       final MobFighting.Moves moves) {
+    final int thinkTicks = mind.thinkTicks();
     final long now = caster.getWorld().getTime();
     if (telling != null) {
       final Tell.Step step = telling.step(engaged, now);
@@ -91,8 +93,7 @@ public final class PowerCasting {
     if (engaged) {
       nextThink = now + thinkTicks;
     }
-    final Optional<Think> think =
-        Thinking.think(caster, bloodFloor, motion, thinkTicks, moves.actions());
+    final Optional<Think> think = Thinking.think(caster, bloodFloor, motion, mind, moves.actions());
     if (!engaged) {
       nextAid = now + Thinking.idleTicks(caster, think, thinkTicks);
     }
@@ -116,8 +117,9 @@ public final class PowerCasting {
         });
   }
 
-  public <T extends MobEntity & PowerShow> boolean react(final T caster, final int bloodFloor) {
-    final Optional<Think> think = Thinking.react(caster, bloodFloor);
+  public <T extends MobEntity & PowerShow> boolean react(
+      final T caster, final int bloodFloor, final Mind mind) {
+    final Optional<Think> think = Thinking.react(caster, bloodFloor, mind);
     final Optional<PowerChoice.Scored> chosen = think.flatMap(Think::chosen);
     if (chosen.isEmpty()) {
       return false;

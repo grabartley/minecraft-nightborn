@@ -11,6 +11,7 @@ import com.grahambartley.nightborn.downed.Downed;
 import com.grahambartley.nightborn.downed.DownedRules;
 import com.grahambartley.nightborn.downed.DownedState;
 import com.grahambartley.nightborn.house.MemberLife;
+import com.grahambartley.nightborn.mob.brain.Mind;
 import com.grahambartley.nightborn.mob.combat.CombatMoves;
 import com.grahambartley.nightborn.mob.combat.FightBack;
 import com.grahambartley.nightborn.mob.combat.MobFighter;
@@ -304,8 +305,17 @@ public class VampireEntity extends HostileEntity
             isSleeping(),
             escapes != null && escapes.active(),
             Weakened.sources(this).level(false) > 0),
-        stage().combat().thinkTicks(),
+        mind(),
         stage().combat().bloodFloor());
+  }
+
+  public Mind mind() {
+    return stage()
+        .combat()
+        .mind(
+            householdLife()
+                .temperament(getWorld().getRegistryManager(), getRandom()::nextDouble)
+                .disposition());
   }
 
   @Override

@@ -5,6 +5,8 @@ import com.grahambartley.nightborn.guild.GuildMobs;
 import com.grahambartley.nightborn.guild.HunterEntity;
 import com.grahambartley.nightborn.mob.NightbornMobs;
 import com.grahambartley.nightborn.mob.VampireEntity;
+import com.grahambartley.nightborn.mob.brain.Disposition;
+import com.grahambartley.nightborn.mob.brain.Mind;
 import com.grahambartley.nightborn.mob.combat.MobFighting;
 import com.grahambartley.nightborn.occult.Circles;
 import com.grahambartley.nightborn.occult.FamiliarMode;
@@ -507,19 +509,19 @@ public class OccultGameTest implements FabricGameTest {
     ally.setAiDisabled(true);
     final HunterEntity hunter = context.spawnEntity(GuildMobs.HUNTER, new BlockPos(7, 2, 7));
     hunter.setAiDisabled(true);
-    final int thinkTicks = warden.stage().combat().thinkTicks();
+    final Mind mind = warden.stage().combat().mind(Disposition.EVEN);
     final int floor = warden.stage().combat().bloodFloor();
     context.runAtTick(
         5,
         () -> {
           ally.setAttacker(hunter);
-          warden.mobFighting().tick(warden, MobFighting.Engagement.STANDING_BY, thinkTicks, floor);
+          warden.mobFighting().tick(warden, MobFighting.Engagement.STANDING_BY, mind, floor);
           context.assertTrue(warden.mobFighting().telling(), "the warden winds up to help");
         });
     context.runAtTick(
         5 + WARD_TELL,
         () -> {
-          warden.mobFighting().tick(warden, MobFighting.Engagement.STANDING_BY, thinkTicks, floor);
+          warden.mobFighting().tick(warden, MobFighting.Engagement.STANDING_BY, mind, floor);
           final ServerWorld world = context.getWorld();
           context.assertTrue(
               Circles.stopsPrayers(world, ally.getPos()), "the ward is drawn around the ally");

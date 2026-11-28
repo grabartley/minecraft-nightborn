@@ -23,6 +23,7 @@ import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
+import java.util.function.DoubleSupplier;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 import net.minecraft.util.Identifier;
@@ -35,6 +36,9 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 @ExtendWith(MinecraftBootstrapExtension.class)
 class PowerChoiceTest {
+
+  private static final Mind PLAIN = Mind.plain(40);
+  private static final DoubleSupplier NO_CHANCE = () -> 0.5;
 
   private static final Identifier RUSH = Identifier.of("nightborn", "core/blood_rush");
   private static final Identifier STARE = Identifier.of("nightborn", "noble/mesmerise");
@@ -75,7 +79,8 @@ class PowerChoiceTest {
       final Situation situation,
       final IntentBudget budget,
       final int floor) {
-    return PowerChoice.choose(PowerChoice.rank(options, situation, budget, floor), budget, 0.0)
+    return PowerChoice.choose(
+            PowerChoice.rank(options, situation, budget, floor, PLAIN, NO_CHANCE), budget, 0.0)
         .map(scored -> scored.option().id());
   }
 
@@ -194,7 +199,9 @@ class PowerChoiceTest {
             List.of(option(STARE, weak), option(RUSH, weak, strong)),
             fight(5, 20),
             IntentBudget.FREE,
-            0);
+            0,
+            PLAIN,
+            NO_CHANCE);
     assertEquals(List.of(RUSH, STARE), ranked.stream().map(s -> s.option().id()).toList());
     assertEquals(List.of(3.0, 1.0), ranked.stream().map(PowerChoice.Scored::score).toList());
   }
@@ -398,7 +405,12 @@ class PowerChoiceTest {
     final Optional<PowerChoice.Scored> scored =
         PowerChoice.choose(
             PowerChoice.rank(
-                List.of(shipped(owned, false)), escaping, shippedBudget(Intent.RETREAT), 0),
+                List.of(shipped(owned, false)),
+                escaping,
+                shippedBudget(Intent.RETREAT),
+                0,
+                PLAIN,
+                NO_CHANCE),
             shippedBudget(Intent.RETREAT),
             0.0);
     assertEquals(
@@ -477,7 +489,9 @@ class PowerChoiceTest {
                         option(Identifier.of("nightborn", "third"), third)),
                     fight(5, 20),
                     budget,
-                    0),
+                    0,
+                    PLAIN,
+                    NO_CHANCE),
                 budget,
                 roll)
             .map(scored -> scored.option().id()));
@@ -505,7 +519,8 @@ class PowerChoiceTest {
     assertEquals(
         chosen.isEmpty() ? Optional.empty() : Optional.of(chosen),
         PowerChoice.choose(
-                PowerChoice.rank(List.of(option), fight(5, 20), IntentBudget.FREE, 0),
+                PowerChoice.rank(
+                    List.of(option), fight(5, 20), IntentBudget.FREE, 0, PLAIN, NO_CHANCE),
                 IntentBudget.FREE,
                 0.0)
             .map(scored -> scored.use().aim()));
@@ -553,7 +568,9 @@ class PowerChoiceTest {
                 List.of(shipped("hunter/bind_wounds", false)),
                 group(own, null, List.of(ally(1, distance, allyHealth, false)), List.of()),
                 shippedBudget(Intent.FIGHT),
-                0),
+                0,
+                PLAIN,
+                NO_CHANCE),
             shippedBudget(Intent.FIGHT),
             0.0);
     assertEquals(
@@ -581,7 +598,9 @@ class PowerChoiceTest {
                 options,
                 group(1.0F, null, List.of(grazed, dying, claimed, mending), List.of()),
                 shippedBudget(Intent.FIGHT),
-                0)
+                0,
+                PLAIN,
+                NO_CHANCE)
             .getFirst();
     assertEquals(dying, best.ally());
   }
@@ -596,7 +615,9 @@ class PowerChoiceTest {
                 List.of(shipped("occult/blood_ward", false)),
                 group(1.0F, null, List.of(ally(4, distance, 0.8F, underAttack)), List.of()),
                 shippedBudget(Intent.FIGHT),
-                0),
+                0,
+                PLAIN,
+                NO_CHANCE),
             shippedBudget(Intent.FIGHT),
             0.0);
     assertEquals(
@@ -640,7 +661,9 @@ class PowerChoiceTest {
                     List.of(ally(5, 2, 1.0F, false)),
                     distances),
                 shippedBudget(Intent.FIGHT),
-                0),
+                0,
+                PLAIN,
+                NO_CHANCE),
             shippedBudget(Intent.FIGHT),
             0.0);
     assertEquals(casts, chosen.isPresent());
@@ -665,7 +688,9 @@ class PowerChoiceTest {
                     List.of(),
                     List.of(distance)),
                 shippedBudget(Intent.FIGHT),
-                0),
+                0,
+                PLAIN,
+                NO_CHANCE),
             shippedBudget(Intent.FIGHT),
             0.0);
     assertEquals(casts, chosen.isPresent());
@@ -689,7 +714,9 @@ class PowerChoiceTest {
                     List.of(idle),
                     List.of(3.0)),
                 shippedBudget(Intent.FIGHT),
-                0),
+                0,
+                PLAIN,
+                NO_CHANCE),
             shippedBudget(Intent.FIGHT),
             0.0);
     assertEquals(casts, chosen.isPresent());
@@ -836,7 +863,9 @@ class PowerChoiceTest {
             List.of(shippedAction("leap", PowerUse.Verdict.READY, false)),
             situation,
             shippedBudget(Intent.FIGHT),
-            floor);
+            floor,
+            PLAIN,
+            NO_CHANCE);
     assertTrue(ranked.getFirst().affordable());
     assertTrue(ranked.getFirst().option().action());
   }
@@ -851,6 +880,127 @@ class PowerChoiceTest {
             List.of(shippedAction("crucifix", verdict, running)),
             facing(3.0, true, false),
             shippedBudget(Intent.FIGHT),
-            0));
+            0,
+            PLAIN,
+            NO_CHANCE));
+  }
+
+  private static final Identifier STRIKE = Identifier.of("nightborn", "strike");
+  private static final Identifier GUARD = Identifier.of("nightborn", "guard");
+
+  private static List<PowerChoice.Option> strikeOrGuard() {
+    return List.of(
+        option(
+            STRIKE,
+            new MobUse(
+                Intent.FIGHT.key(),
+                Aim.TARGET.key(),
+                List.of(new Consideration(Fact.TARGET_DISTANCE.key(), Curve.BETWEEN, 0, 8)),
+                1.0F)),
+        option(
+            GUARD,
+            new MobUse(
+                Intent.FIGHT.key(),
+                Aim.SELF.key(),
+                List.of(new Consideration(Fact.OWN_HEALTH.key(), Curve.BETWEEN, 0, 1)),
+                0.8F)));
+  }
+
+  private static DoubleSupplier rolls(final double... rolls) {
+    final int[] next = {0};
+    return () -> rolls[next[0]++];
+  }
+
+  private static Identifier pick(
+      final List<PowerChoice.Option> options, final Mind mind, final DoubleSupplier chance) {
+    return PowerChoice.choose(
+            PowerChoice.rank(options, fight(5, 20), IntentBudget.FREE, 0, mind, chance),
+            IntentBudget.FREE,
+            0.0)
+        .orElseThrow()
+        .option()
+        .id();
+  }
+
+  @ParameterizedTest(name = "blur {0}, rolls {1} and {2}: {3}")
+  @CsvSource({
+    "0, 0, 1, strike",
+    "0.5, 0.5, 0.5, strike",
+    "0.5, 1, 0, strike",
+    "0.5, 0, 1, guard",
+    "0.1, 0, 1, strike"
+  })
+  @DisplayName(
+      "a blurred mind now and then takes the poorer power when chance runs against it, and a"
+          + " sharp one never does")
+  void blurPicksPoorly(
+      final float blur, final double first, final double second, final String picked) {
+    final Mind mind =
+        new Mind(
+            20, new Sharpness(blur, EnumSet.allOf(Sharpness.Reads.class), 1.0F), Disposition.EVEN);
+    assertEquals(
+        Identifier.of("nightborn", picked),
+        pick(strikeOrGuard(), mind, blur > 0.0F ? rolls(first, second) : () -> 0.5));
+  }
+
+  private static Sharpness shippedSharpness(final String stage) {
+    try {
+      return Sharpness.CODEC
+          .parse(
+              JsonOps.INSTANCE,
+              JsonParser.parseString(
+                      Files.readString(DATA.resolve("vampire_stage/" + stage + ".json")))
+                  .getAsJsonObject()
+                  .getAsJsonObject("combat")
+                  .get("sharpness"))
+          .getOrThrow();
+    } catch (final IOException e) {
+      throw new UncheckedIOException(e);
+    }
+  }
+
+  @ParameterizedTest(name = "{0}, rolls {1} and {2}: {3}")
+  @CsvSource({
+    "fledgling, 1, 0, strike",
+    "fledgling, 0.25, 0.75, guard",
+    "adult, 0.25, 0.75, guard",
+    "elder, 0.25, 0.75, strike",
+    "elder, 0, 1, guard",
+    "ancient, 0, 1, strike"
+  })
+  @DisplayName(
+      "with the same powers in the same fight, the younger the vampire the smaller the turn of"
+          + " chance that fools it, and an ancient is never fooled")
+  void shippedStagesChooseByAge(
+      final String stage, final double first, final double second, final String picked) {
+    final Mind mind = new Mind(20, shippedSharpness(stage), Disposition.EVEN);
+    assertEquals(
+        Identifier.of("nightborn", picked), pick(strikeOrGuard(), mind, rolls(first, second)));
+  }
+
+  private static Disposition shippedTemper(final String temperament) {
+    try {
+      return Disposition.CODEC
+          .parse(
+              JsonOps.INSTANCE,
+              JsonParser.parseString(
+                      Files.readString(
+                          DATA.resolve("vampire_temperament/" + temperament + ".json")))
+                  .getAsJsonObject()
+                  .get("disposition"))
+          .getOrThrow();
+    } catch (final IOException e) {
+      throw new UncheckedIOException(e);
+    }
+  }
+
+  @ParameterizedTest(name = "{0}: {1}")
+  @CsvSource({"quarrelsome, strike", "brooding, guard"})
+  @DisplayName(
+      "two vampires of one stage open a fight differently: a quarrelsome one strikes, a"
+          + " brooding one guards itself")
+  void shippedTemperamentsOpenDifferently(final String temperament, final String picked) {
+    final Mind mind = new Mind(20, Sharpness.KEEN, shippedTemper(temperament));
+    assertEquals(Identifier.of("nightborn", picked), pick(strikeOrGuard(), mind, () -> 0.5));
   }
 }

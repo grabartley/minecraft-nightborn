@@ -5,6 +5,7 @@
   "combat": {
     "blood_floor": 6,
     "think_ticks": 30,
+    "sharpness": { "blur": 0.3, "reads": ["group"], "foresight": 0.6 },
     "leap_chance": 30,
     "dash_chance": 15,
     "dodge_chance": 15,

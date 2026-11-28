@@ -280,7 +280,7 @@ public class GuildMasterEntity extends MerchantEntity
       fighting.tick(
           this,
           MobFighting.Engagement.FIGHTING,
-          HunterSkills.thinkTicks(this, shownRank()),
+          HunterSkills.mind(this, shownRank(), Optional.ofNullable(Identifier.tryParse(kitId))),
           MobFighting.NO_BLOOD_FLOOR);
     }
   }

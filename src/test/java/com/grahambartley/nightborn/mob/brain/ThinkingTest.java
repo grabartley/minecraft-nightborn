@@ -123,19 +123,25 @@ class ThinkingTest {
                 : Arrays.stream(verdicts.split(" ")).map(PowerUse.Verdict::valueOf).toList()));
   }
 
-  @ParameterizedTest(name = "dodge {0}, target {1}, reported {2}: aids {3}")
+  @ParameterizedTest(name = "dodge {0}, target {1}, reported {2}, reads group {3}: aids {4}")
   @CsvSource({
-    "false, false, REST, true",
-    "false, false, TRAVEL, true",
-    "false, false, RETREAT, false",
-    "false, true, FIGHT, false",
-    "true, false, REST, false"
+    "false, false, REST, true, true",
+    "false, false, TRAVEL, true, true",
+    "false, false, RETREAT, true, false",
+    "false, true, FIGHT, true, false",
+    "true, false, REST, true, false",
+    "false, false, REST, false, false"
   })
   @DisplayName(
-      "a mob with no target of its own thinks about helping its allies, unless it is getting away"
-          + " or dodging")
-  void aids(final boolean dodge, final boolean target, final Intent reported, final boolean aids) {
-    assertEquals(aids, Thinking.aids(dodge, target, reported));
+      "a mob with no target of its own thinks about helping its allies, unless it is getting away,"
+          + " dodging or too green to read the group")
+  void aids(
+      final boolean dodge,
+      final boolean target,
+      final Intent reported,
+      final boolean readsGroup,
+      final boolean aids) {
+    assertEquals(aids, Thinking.aids(dodge, target, reported, readsGroup));
   }
 
   private static PowerChoice.Option helpOption(

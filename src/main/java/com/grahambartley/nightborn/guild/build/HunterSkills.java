@@ -3,6 +3,7 @@ package com.grahambartley.nightborn.guild.build;
 import com.grahambartley.nightborn.age.StageRanks;
 import com.grahambartley.nightborn.config.SkillSettings;
 import com.grahambartley.nightborn.faction.OathAttachment;
+import com.grahambartley.nightborn.mob.brain.Mind;
 import com.grahambartley.nightborn.mob.stage.StageGate;
 import com.grahambartley.nightborn.rank.RankBody;
 import com.grahambartley.nightborn.rank.RankLadder;
@@ -103,8 +104,9 @@ public final class HunterSkills {
     return RankLadder.of(mob.getRegistryManager()).markOf(OathAttachment.get(mob));
   }
 
-  public static int thinkTicks(final LivingEntity mob, final Optional<Identifier> rank) {
-    return HunterBuilds.build(mob.getRegistryManager()).thinkTicks(rank);
+  public static Mind mind(
+      final LivingEntity mob, final Optional<Identifier> rank, final Optional<Identifier> kit) {
+    return HunterBuilds.build(mob.getRegistryManager()).mind(rank, kit);
   }
 
   public static HunterPurchases.Shop shop(

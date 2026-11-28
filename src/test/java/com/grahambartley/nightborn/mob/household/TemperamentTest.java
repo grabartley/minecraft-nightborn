@@ -55,9 +55,11 @@ class TemperamentTest {
         "{\"weight\":1,\"hobbies\":{\"sit\":0},\"temper\":0,\"pastime_seconds\":30,\"mourning_seconds\":0}",
         "{\"weight\":0,\"hobbies\":{\"sit\":1},\"temper\":0,\"pastime_seconds\":30,\"mourning_seconds\":0}",
         "{\"weight\":1,\"hobbies\":{\"sit\":1},\"temper\":101,\"pastime_seconds\":30,\"mourning_seconds\":0}",
-        "{\"weight\":1,\"hobbies\":{\"sit\":1},\"temper\":0,\"pastime_seconds\":0,\"mourning_seconds\":0}"
+        "{\"weight\":1,\"hobbies\":{\"sit\":1},\"temper\":0,\"pastime_seconds\":0,\"mourning_seconds\":0}",
+        "{\"weight\":1,\"hobbies\":{\"sit\":1},\"temper\":0,\"pastime_seconds\":30,\"mourning_seconds\":0,\"disposition\":{\"intents\":{\"brawl\":2}}}"
       })
-  @DisplayName("a temperament with no weighted hobby or values out of range is refused")
+  @DisplayName(
+      "a temperament with no weighted hobby, values out of range or a bad disposition is refused")
   void refusesBadData(final String json) {
     assertTrue(Temperament.CODEC.parse(JsonOps.INSTANCE, JsonParser.parseString(json)).isError());
   }

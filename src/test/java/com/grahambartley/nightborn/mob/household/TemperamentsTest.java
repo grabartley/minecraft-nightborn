@@ -36,6 +36,11 @@ class TemperamentsTest {
 
   private static Temperament weighing(final int weight) {
     return new Temperament(
-        weight, Temperament.EVEN.hobbies(), 0, Temperament.EVEN.pastimeSeconds(), 0);
+        weight,
+        Temperament.EVEN.hobbies(),
+        0,
+        Temperament.EVEN.pastimeSeconds(),
+        0,
+        Temperament.EVEN.disposition());
   }
 }

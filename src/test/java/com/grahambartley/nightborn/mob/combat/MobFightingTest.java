@@ -3,6 +3,7 @@ package com.grahambartley.nightborn.mob.combat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
+import com.grahambartley.nightborn.mob.brain.Mind;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -60,7 +61,7 @@ class MobFightingTest {
         };
     final MobFighting fighting = new MobFighting(new PowerCasting(), moves);
     for (int tick = 0; tick < ticks; tick++) {
-      fighting.tick(null, MobFighting.Engagement.NONE, 40, 0);
+      fighting.tick(null, MobFighting.Engagement.NONE, Mind.plain(40), 0);
     }
     assertEquals(0, moved.get());
     assertEquals(ticks, rested.get());

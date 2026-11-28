@@ -3,5 +3,6 @@
   "hobbies": { "read": 5, "sit": 3, "converse": 1, "stroll": 1, "gramophone": 3 },
   "temper": 15,
   "pastime_seconds": { "type": "minecraft:uniform", "min_inclusive": 40, "max_inclusive": 120 },
-  "mourning_seconds": 120
+  "mourning_seconds": 120,
+  "disposition": { "intents": { "fight": 0.75, "close_in": 0.8 }, "aims": { "self": 1.3, "target": 0.85 }, "thrift": 1.6 }
 }

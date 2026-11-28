@@ -2,6 +2,7 @@ package com.grahambartley.nightborn.mob.household;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import com.grahambartley.nightborn.mob.brain.Disposition;
 import java.util.EnumSet;
 import java.util.Map;
 import java.util.Optional;
@@ -21,7 +22,8 @@ class HobbyChoiceTest {
           Map.of(Hobby.READ, 3, Hobby.SIT, 1, Hobby.CONVERSE, 0),
           0,
           ConstantIntProvider.create(30),
-          0);
+          0,
+          Disposition.EVEN);
 
   static Stream<Arguments> choices() {
     final Set<Hobby> all = EnumSet.allOf(Hobby.class);

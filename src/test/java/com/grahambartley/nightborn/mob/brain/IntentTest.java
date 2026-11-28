@@ -2,6 +2,8 @@ package com.grahambartley.nightborn.mob.brain;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import com.google.gson.JsonPrimitive;
+import com.mojang.serialization.JsonOps;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -37,5 +39,14 @@ class IntentTest {
   @DisplayName("only fighting and closing in are fighting intents")
   void fights(final Intent intent, final boolean fights) {
     assertEquals(fights, intent.fights());
+  }
+
+  @ParameterizedTest(name = "{0} -> {1}")
+  @CsvSource({"close_in, CLOSE_IN", "flee, "})
+  @DisplayName("data reads an intent by its data name and refuses any other")
+  void codec(final String key, final Intent expected) {
+    assertEquals(
+        Optional.ofNullable(expected),
+        Intent.CODEC.parse(JsonOps.INSTANCE, new JsonPrimitive(key)).result());
   }
 }

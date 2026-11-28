@@ -3,6 +3,8 @@ package com.grahambartley.nightborn.gametest;
 import com.grahambartley.nightborn.blood.BloodAttachment;
 import com.grahambartley.nightborn.mob.NightbornMobs;
 import com.grahambartley.nightborn.mob.VampireEntity;
+import com.grahambartley.nightborn.mob.brain.Disposition;
+import com.grahambartley.nightborn.mob.brain.Sharpness;
 import com.grahambartley.nightborn.mob.combat.CombatMoves;
 import com.grahambartley.nightborn.mob.combat.MobFighting;
 import com.grahambartley.nightborn.mob.combat.PowerCasting;
@@ -37,14 +39,14 @@ public final class VanishGameTest implements FabricGameTest {
   static final int GONE_TICKS = 5;
   static final int FULL_BLOOD = 20;
   static final StageCombat ALWAYS_DODGES =
-      new StageCombat(0, 20, 0, 0, 0, 100, 0, StageStuck.PLAIN);
+      new StageCombat(0, 20, Sharpness.KEEN, 0, 0, 0, 100, 0, StageStuck.PLAIN);
 
   private static void react(final VampireEntity vampire) {
     new MobFighting(new PowerCasting(), new CombatMoves<>(vampire, () -> ALWAYS_DODGES))
         .tick(
             vampire,
             MobFighting.Engagement.FIGHTING,
-            ALWAYS_DODGES.thinkTicks(),
+            ALWAYS_DODGES.mind(Disposition.EVEN),
             ALWAYS_DODGES.bloodFloor());
   }
 

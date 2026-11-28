@@ -5,7 +5,9 @@ import com.grahambartley.nightborn.batform.BatForm;
 import com.grahambartley.nightborn.blood.BloodAttachment;
 import com.grahambartley.nightborn.mob.NightbornMobs;
 import com.grahambartley.nightborn.mob.VampireEntity;
+import com.grahambartley.nightborn.mob.brain.Disposition;
 import com.grahambartley.nightborn.mob.brain.Intent;
+import com.grahambartley.nightborn.mob.brain.Mind;
 import com.grahambartley.nightborn.mob.brain.Think;
 import com.grahambartley.nightborn.mob.combat.MobFighting;
 import com.grahambartley.nightborn.mob.goal.BatFlightGoal;
@@ -132,7 +134,7 @@ public class VampireStageGameTest implements FabricGameTest {
         .tick(
             vampire,
             MobFighting.Engagement.FIGHTING,
-            vampire.stage().combat().thinkTicks(),
+            vampire.stage().combat().mind(Disposition.EVEN),
             vampire.stage().combat().bloodFloor());
     final Think think = vampire.mobFighting().lastThink().orElseThrow();
     context.assertEquals(think.intent(), Intent.FIGHT, "a vampire with a target is fighting");
@@ -165,7 +167,8 @@ public class VampireStageGameTest implements FabricGameTest {
     final VillagerEntity villager = context.spawnEntity(EntityType.VILLAGER, new BlockPos(4, 2, 4));
     villager.setAiDisabled(true);
     vampire.setTarget(villager);
-    final int thinkTicks = vampire.stage().combat().thinkTicks();
+    final Mind mind = vampire.stage().combat().mind(Disposition.EVEN);
+    final int thinkTicks = mind.thinkTicks();
     context.runAtTick(
         2,
         () ->
@@ -174,7 +177,7 @@ public class VampireStageGameTest implements FabricGameTest {
                 .tick(
                     vampire,
                     MobFighting.Engagement.FIGHTING,
-                    thinkTicks,
+                    mind,
                     vampire.stage().combat().bloodFloor()));
     context.runAtTick(
         3 + thinkTicks,
@@ -186,7 +189,7 @@ public class VampireStageGameTest implements FabricGameTest {
               .tick(
                   vampire,
                   MobFighting.Engagement.FIGHTING,
-                  thinkTicks,
+                  mind,
                   vampire.stage().combat().bloodFloor());
           final Think think = vampire.mobFighting().lastThink().orElseThrow();
           context.assertEquals(
@@ -221,7 +224,7 @@ public class VampireStageGameTest implements FabricGameTest {
     BloodAttachment.set(vampire, BloodAttachment.FULL);
     final VillagerEntity prey = context.spawnEntity(EntityType.VILLAGER, new BlockPos(7, 2, 4));
     prey.setAiDisabled(true);
-    final int thinkTicks = vampire.stage().combat().thinkTicks();
+    final Mind mind = vampire.stage().combat().mind(Disposition.EVEN);
     final int floor = vampire.stage().combat().bloodFloor();
     final BatFlightGoal flight = new BatFlightGoal(vampire);
     final AtomicBoolean flown = new AtomicBoolean();
@@ -238,7 +241,7 @@ public class VampireStageGameTest implements FabricGameTest {
                   prey.getBlockPos(),
                   false);
           vampire.getNavigation().startMovingAlong(path, 1.0);
-          vampire.mobFighting().tick(vampire, MobFighting.Engagement.FIGHTING, thinkTicks, floor);
+          vampire.mobFighting().tick(vampire, MobFighting.Engagement.FIGHTING, mind, floor);
           context.assertEquals(
               vampire
                   .mobFighting()
@@ -252,7 +255,7 @@ public class VampireStageGameTest implements FabricGameTest {
     context.runAtTick(
         30,
         () -> {
-          vampire.mobFighting().tick(vampire, MobFighting.Engagement.FIGHTING, thinkTicks, floor);
+          vampire.mobFighting().tick(vampire, MobFighting.Engagement.FIGHTING, mind, floor);
           context.assertTrue(BatForm.isBat(vampire), "it turns into a bat");
           flight.start();
           flown.set(true);

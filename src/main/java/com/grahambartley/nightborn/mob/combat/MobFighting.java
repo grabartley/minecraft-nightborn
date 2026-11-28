@@ -2,6 +2,7 @@ package com.grahambartley.nightborn.mob.combat;
 
 import com.grahambartley.nightborn.mob.brain.ActionReadiness;
 import com.grahambartley.nightborn.mob.brain.FormHold;
+import com.grahambartley.nightborn.mob.brain.Mind;
 import com.grahambartley.nightborn.mob.brain.Think;
 import com.grahambartley.nightborn.skill.PowerShow;
 import java.util.List;
@@ -67,7 +68,7 @@ public final class MobFighting {
   }
 
   public <T extends MobEntity & PowerShow> void tick(
-      final T fighter, final Engagement engagement, final int thinkTicks, final int bloodFloor) {
+      final T fighter, final Engagement engagement, final Mind mind, final int bloodFloor) {
     if (engagement == Engagement.NONE) {
       casting.cancel();
       moves.rest();
@@ -75,17 +76,17 @@ public final class MobFighting {
     }
     if (engagement != Engagement.FIGHTING) {
       moves.rest();
-      casting.tick(fighter, engagement == Engagement.ESCAPING, thinkTicks, bloodFloor, Moves.NONE);
+      casting.tick(fighter, engagement == Engagement.ESCAPING, mind, bloodFloor, Moves.NONE);
       return;
     }
     if (!casting.telling()) {
       moves.tick();
-      if (moves.reacting() && casting.react(fighter, bloodFloor)) {
+      if (moves.reacting() && casting.react(fighter, bloodFloor, mind)) {
         moves.reacted();
         return;
       }
     }
-    casting.tick(fighter, fighter.getTarget() != null, thinkTicks, bloodFloor, moves);
+    casting.tick(fighter, fighter.getTarget() != null, mind, bloodFloor, moves);
   }
 
   public boolean telling() {
