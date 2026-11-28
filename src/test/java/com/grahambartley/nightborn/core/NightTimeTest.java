@@ -31,4 +31,19 @@ class NightTimeTest {
   void countsNights(final long time, final long night) {
     assertEquals(night, NightTime.night(time));
   }
+
+  @ParameterizedTest(name = "fixed {0}, time {1}: {2} ticks to dawn")
+  @CsvSource({
+    "false, 6000, 0",
+    "false, 13000, 10000",
+    "false, 22000, 1000",
+    "false, 22999, 1",
+    "false, 23000, 0",
+    "false, 46000, 1000",
+    "true, 18000, NaN"
+  })
+  @DisplayName("dawn is counted down through the night, is here by day, and never comes below")
+  void untilDawn(final boolean fixed, final long time, final double ticks) {
+    assertEquals(ticks, NightTime.untilDawn(fixed, time), 1.0E-9);
+  }
 }

@@ -16,6 +16,13 @@ public final class NightTime {
     return time >= DUSK && time < DAWN;
   }
 
+  public static double untilDawn(final boolean fixedTime, final long timeOfDay) {
+    if (fixedTime) {
+      return Double.NaN;
+    }
+    return isNight(false, timeOfDay) ? DAWN - Math.floorMod(timeOfDay, DAY_LENGTH) : 0.0;
+  }
+
   public static long night(final long timeOfDay) {
     return Math.floorDiv(timeOfDay - DUSK, DAY_LENGTH);
   }

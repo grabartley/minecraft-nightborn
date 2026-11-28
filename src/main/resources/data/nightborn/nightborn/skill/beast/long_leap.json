@@ -121,6 +121,61 @@
             }
           ],
           "weight": 3.0
+        },
+        {
+          "intent": "travel",
+          "aim": "spot",
+          "considerations": [
+            {
+              "fact": "spot_distance",
+              "low": 4,
+              "high": 11
+            },
+            {
+              "fact": "gap_ahead",
+              "high": 0
+            },
+            {
+              "fact": "detour",
+              "curve": "rising",
+              "low": 1.5,
+              "high": 3
+            },
+            {
+              "fact": "trip_length",
+              "low": 12,
+              "high": 64
+            }
+          ],
+          "weight": 1.2
+        },
+        {
+          "intent": "travel",
+          "aim": "spot",
+          "considerations": [
+            {
+              "fact": "spot_distance",
+              "low": 4,
+              "high": 11
+            },
+            {
+              "fact": "home_distance",
+              "curve": "rising",
+              "low": 24,
+              "high": 64
+            },
+            {
+              "fact": "until_dawn",
+              "curve": "falling",
+              "low": 600,
+              "high": 2400
+            },
+            {
+              "fact": "sun_on_me",
+              "high": 0
+            }
+          ],
+          "weight": 1.5
         }
       ]
     }

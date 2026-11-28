@@ -29,3 +29,4 @@ Shared engineering standards across all the mods in this family live in [`../sta
 | [0019](0019-lectern-books-are-a-structure-processor-over-tagged-books.md) | Lectern books are a structure processor over tagged books |
 | [0020](0020-lost-limbs-are-decided-once-on-the-server-and-kept-in-one-attachment.md) | Lost limbs are decided once on the server and kept in one attachment |
 | [0021](0021-mobs-help-allies-from-one-shared-look-around.md) | Mobs help allies from one shared look around |
+| [0022](0022-mobs-think-outside-a-fight-from-the-route-they-already-walk.md) | Mobs think outside a fight from the route they already walk |

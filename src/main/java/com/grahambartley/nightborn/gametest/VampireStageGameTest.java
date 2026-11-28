@@ -1,12 +1,14 @@
 package com.grahambartley.nightborn.gametest;
 
 import com.grahambartley.nightborn.Nightborn;
+import com.grahambartley.nightborn.batform.BatForm;
 import com.grahambartley.nightborn.blood.BloodAttachment;
 import com.grahambartley.nightborn.mob.NightbornMobs;
 import com.grahambartley.nightborn.mob.VampireEntity;
 import com.grahambartley.nightborn.mob.brain.Intent;
 import com.grahambartley.nightborn.mob.brain.Think;
 import com.grahambartley.nightborn.mob.combat.MobFighting;
+import com.grahambartley.nightborn.mob.goal.BatFlightGoal;
 import com.grahambartley.nightborn.mob.stage.VampireStages;
 import com.grahambartley.nightborn.mob.stage.VampireStaging;
 import com.grahambartley.nightborn.skill.PowerCooldownAttachment;
@@ -20,9 +22,12 @@ import com.grahambartley.nightborn.structure.HouseholdArrival;
 import com.grahambartley.nightborn.weakened.Weakened;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
+import net.minecraft.block.Blocks;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.SpawnReason;
+import net.minecraft.entity.ai.pathing.Path;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.passive.VillagerEntity;
 import net.minecraft.registry.DynamicRegistryManager;
@@ -53,6 +58,9 @@ public class VampireStageGameTest implements FabricGameTest {
   static final Identifier BEAST = Identifier.of(Nightborn.MOD_ID, "beast");
   static final Identifier BEAST_BLOOD = Identifier.of(Nightborn.MOD_ID, "beast/beast_blood");
   static final Identifier POUNCE = Identifier.of(Nightborn.MOD_ID, "beast/pounce");
+  static final Identifier BAT_FORM = Identifier.of(Nightborn.MOD_ID, "beast/bat_form");
+  static final int GAP_FROM = 3;
+  static final int GAP_TO = 5;
   static final Identifier BLOOD_RUSH = Identifier.of(Nightborn.MOD_ID, "core/blood_rush");
   static final Identifier THICK_BLOOD = Identifier.of(Nightborn.MOD_ID, "core/thick_blood");
 
@@ -186,6 +194,74 @@ public class VampireStageGameTest implements FabricGameTest {
           context.assertTrue(
               think.chosen().orElseThrow().score() > 1.5,
               "it weighs the pounce as a runner's, not " + think.chosen().orElseThrow().score());
+          context.complete();
+        });
+  }
+
+  @GameTest(templateName = ARENA, tickLimit = 200)
+  public void aVampireMobFliesAGapToItsPreyAsABatAndLandsOnTheFarSide(final TestContext context) {
+    for (int x = GAP_FROM; x <= GAP_TO; x++) {
+      for (int z = 0; z <= 8; z++) {
+        for (int y = -1; y <= 1; y++) {
+          context.setBlockState(new BlockPos(x, y, z), Blocks.AIR);
+        }
+      }
+    }
+    final VampireEntity vampire = staged(context, new BlockPos(1, 2, 4), ANCIENT);
+    final DynamicRegistryManager registries = context.getWorld().getRegistryManager();
+    SkillAttachment.set(
+        vampire,
+        SkillTree.VAMPIRE,
+        VampireStaging.learned(
+            List.of(BEAST, BAT_FORM),
+            Skills.allSkills(registries),
+            Skills.allBranches(registries)));
+    BloodAttachment.set(vampire, BloodAttachment.FULL);
+    final VillagerEntity prey = context.spawnEntity(EntityType.VILLAGER, new BlockPos(7, 2, 4));
+    prey.setAiDisabled(true);
+    final int thinkTicks = vampire.stage().combat().thinkTicks();
+    final int floor = vampire.stage().combat().bloodFloor();
+    final BatFlightGoal flight = new BatFlightGoal(vampire);
+    final AtomicBoolean flown = new AtomicBoolean();
+    context.runAtTick(
+        3,
+        () -> {
+          vampire.setTarget(prey);
+          final Path path = vampire.getNavigation().findPathTo(prey, 0);
+          context.assertTrue(
+              path != null && !path.reachesTarget(), "the gap cuts the walk to the prey short");
+          vampire.getNavigation().startMovingAlong(path, 1.0);
+          vampire.mobFighting().tick(vampire, MobFighting.Engagement.FIGHTING, thinkTicks, floor);
+          context.assertEquals(
+              vampire
+                  .mobFighting()
+                  .lastThink()
+                  .flatMap(Think::chosen)
+                  .map(scored -> scored.option().power())
+                  .orElse(null),
+              BAT_FORM,
+              "it chooses bat form to cross the gap");
+        });
+    context.runAtTick(
+        30,
+        () -> {
+          vampire.mobFighting().tick(vampire, MobFighting.Engagement.FIGHTING, thinkTicks, floor);
+          context.assertTrue(BatForm.isBat(vampire), "it turns into a bat");
+          flight.start();
+          flown.set(true);
+        });
+    context.runAtEveryTick(
+        () -> {
+          if (!flown.get()) {
+            return;
+          }
+          if (BatForm.isBat(vampire)) {
+            flight.tick();
+            return;
+          }
+          final Vec3d landed = context.getRelative(vampire.getPos());
+          context.assertTrue(
+              landed.x >= GAP_TO + 1, "it lands on the far side, not at x " + landed.x);
           context.complete();
         });
   }

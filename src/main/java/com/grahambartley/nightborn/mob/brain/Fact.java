@@ -21,6 +21,7 @@ public enum Fact {
   TARGET_AIRBORNE(situation -> target(situation, target -> flag(target.airborne()))),
   TARGET_VAMPIRE(situation -> target(situation, target -> flag(target.vampire()))),
   TARGET_HUNTER(situation -> target(situation, target -> flag(target.hunter()))),
+  TARGET_AWARE(situation -> target(situation, target -> flag(target.aware()))),
   OWN_HEALTH(situation -> situation.self().health()),
   OWN_BLOOD(situation -> situation.self().blood()),
   IN_FORM(situation -> flag(situation.self().inForm())),
@@ -28,6 +29,13 @@ public enum Fact {
   DOWNED(situation -> flag(situation.self().downed())),
   STUCK(situation -> flag(situation.self().stuck())),
   SPOT_DISTANCE(situation -> situation.place().spotDistance()),
+  GAP_AHEAD(situation -> situation.place().route().gapAhead()),
+  DETOUR(situation -> situation.place().route().detour()),
+  TRIP_LENGTH(situation -> situation.place().route().tripLength()),
+  HOME_DISTANCE(situation -> situation.place().homeDistance()),
+  UNTIL_DAWN(situation -> situation.place().untilDawn()),
+  LIGHT(situation -> situation.place().light()),
+  ROOM_TO_FLY(situation -> situation.place().roomToFly()),
   ALLY_DISTANCE(situation -> ally(situation, Situation.Member::distance)),
   ALLY_HEALTH(situation -> ally(situation, Situation.Member::health)),
   ALLY_UNDER_ATTACK(situation -> ally(situation, ally -> flag(ally.underAttack()))),
@@ -48,6 +56,12 @@ public enum Fact {
       Collections.unmodifiableSet(EnumSet.of(ALLIES_IN_RADIUS, FOES_IN_RADIUS));
 
   public static final Set<Fact> GROUP = union(ALLY, RADIUS);
+
+  public static final Set<Fact> ROUTE =
+      Collections.unmodifiableSet(EnumSet.of(GAP_AHEAD, DETOUR, TRIP_LENGTH));
+
+  public static final Set<Fact> PLACE =
+      union(ROUTE, EnumSet.of(SPOT_DISTANCE, HOME_DISTANCE, UNTIL_DAWN, LIGHT, ROOM_TO_FLY));
 
   private static final Map<String, Fact> BY_KEY =
       Arrays.stream(values()).collect(Collectors.toMap(Fact::key, Function.identity()));

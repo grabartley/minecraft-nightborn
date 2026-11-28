@@ -1,11 +1,14 @@
 package com.grahambartley.nightborn.mob.combat;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import com.grahambartley.nightborn.skill.PowerUse;
+import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 class PowerCastingTest {
 
@@ -39,5 +42,14 @@ class PowerCastingTest {
     assertEquals(
         tells,
         PowerCasting.tellable(ally, verdict.isEmpty() ? null : PowerUse.Verdict.valueOf(verdict)));
+  }
+
+  @ParameterizedTest(name = "tick {0}")
+  @ValueSource(longs = {0, 100, 24000})
+  @DisplayName("a caster that has taken no form holds none and is headed nowhere")
+  void holdsNothingAtFirst(final long now) {
+    final PowerCasting casting = new PowerCasting();
+    assertFalse(casting.hold().holds(now));
+    assertEquals(Optional.empty(), casting.hold().course());
   }
 }

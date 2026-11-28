@@ -17,6 +17,8 @@ import net.minecraft.util.math.Vec3d;
 
 public final class Thinking {
 
+  static final double WATCHED_RANGE = 64.0;
+
   private Thinking() {}
 
   public static Optional<Think> dodge(final MobEntity mob, final int mobFloor) {
@@ -36,22 +38,40 @@ public final class Thinking {
 
   private static Optional<Think> think(
       final MobEntity mob, final boolean dodge, final int mobFloor, final Vec3d moved) {
-    final boolean standingBy = !dodge && mob.getTarget() == null;
-    if (standingBy && !ownsHelp(mob)) {
+    final Intent reported = Intents.read(mob);
+    if (aids(dodge, mob.getTarget() != null, reported) && ownsHelp(mob)) {
+      final Optional<Think> aid =
+          weigh(
+              mob,
+              Intent.FIGHT,
+              helping(options(mob, false, Intent.FIGHT), Intent.FIGHT),
+              mobFloor,
+              moved,
+              true);
+      if (aid.isPresent()) {
+        return aid;
+      }
+    }
+    if (!thinksAlone(dodge, mob.getTarget() != null, watched(mob))) {
       return Optional.empty();
     }
-    final Intent reported = Intents.read(mob);
-    final boolean aids = aids(dodge, mob.getTarget() != null, reported);
-    final Intent intent = aids ? Intent.FIGHT : reported;
-    final List<PowerChoice.Option> options =
-        aids ? helping(options(mob, false, intent), intent) : options(mob, dodge, intent);
+    return weigh(mob, reported, options(mob, dodge, reported), mobFloor, moved, false);
+  }
+
+  private static Optional<Think> weigh(
+      final MobEntity mob,
+      final Intent intent,
+      final List<PowerChoice.Option> options,
+      final int mobFloor,
+      final Vec3d moved,
+      final boolean forAllies) {
     if (options.stream().noneMatch(option -> option.verdict() == PowerUse.Verdict.READY)) {
       return Optional.empty();
     }
     final Set<Fact> needed = needed(options);
     final Situation.Group group =
-        aids || Situations.readsGroup(needed) ? GroupViews.read(mob) : null;
-    if (aids && !group.allyFighting()) {
+        forAllies || Situations.readsGroup(needed) ? GroupViews.read(mob) : null;
+    if (forAllies && !group.allyFighting()) {
       return Optional.empty();
     }
     final Situation situation = Situations.read(mob, intent, needed, moved, group);
@@ -63,6 +83,31 @@ public final class Thinking {
             PowerChoice.rank(options, situation, budget, mobFloor),
             budget,
             mob.getRandom().nextDouble()));
+  }
+
+  public static int idleTicks(
+      final MobEntity mob, final Optional<Think> think, final int thinkTicks) {
+    final Intent intent = think.map(Think::intent).orElseGet(() -> Intents.read(mob));
+    return paced(
+        ownsHelp(mob),
+        intent,
+        think
+            .map(Think::budget)
+            .orElseGet(() -> MobIntents.budget(mob.getRegistryManager(), intent)),
+        thinkTicks);
+  }
+
+  static int paced(
+      final boolean helps, final Intent intent, final IntentBudget budget, final int thinkTicks) {
+    return helps || intent.fights() ? thinkTicks : budget.thinkTicks(thinkTicks);
+  }
+
+  static boolean thinksAlone(final boolean dodge, final boolean hasTarget, final boolean watched) {
+    return dodge || hasTarget || watched;
+  }
+
+  private static boolean watched(final MobEntity mob) {
+    return mob.getWorld().isPlayerInRange(mob.getX(), mob.getY(), mob.getZ(), WATCHED_RANGE);
   }
 
   static Set<Fact> needed(final List<PowerChoice.Option> options) {

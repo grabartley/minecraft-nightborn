@@ -121,6 +121,30 @@
             }
           ],
           "weight": 2.0
+        },
+        {
+          "intent": "fight",
+          "considerations": [
+            {
+              "fact": "target_distance",
+              "low": 3,
+              "high": 12
+            },
+            {
+              "fact": "target_in_sight",
+              "low": 1,
+              "high": 1
+            },
+            {
+              "fact": "target_slowed",
+              "high": 0
+            },
+            {
+              "fact": "target_aware",
+              "high": 0
+            }
+          ],
+          "weight": 1.5
         }
       ]
     }

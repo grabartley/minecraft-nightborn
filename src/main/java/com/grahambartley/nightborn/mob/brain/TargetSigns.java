@@ -7,6 +7,7 @@ import com.grahambartley.nightborn.mob.combat.MobFighter;
 import com.grahambartley.nightborn.vampire.Vampires;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffects;
+import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.util.math.Vec3d;
 
 public final class TargetSigns {
@@ -34,7 +35,16 @@ public final class TargetSigns {
         target.hasStatusEffect(StatusEffects.SLOWNESS) || Holds.held(target).isPresent(),
         airborne(target.isOnGround(), target.isInFluid(), target.isClimbing(), target.hasVehicle()),
         Vampires.isVampire(target),
-        Hunters.isHunter(target));
+        Hunters.isHunter(target),
+        aware(
+            target instanceof MobEntity hunter && hunter.getTarget() == mob,
+            target.getAttacker() == mob,
+            mob.getAttacker() == target));
+  }
+
+  public static boolean aware(
+      final boolean huntsTheMob, final boolean struckByTheMob, final boolean struckTheMob) {
+    return huntsTheMob || struckByTheMob || struckTheMob;
   }
 
   public static boolean running(final Vec3d mob, final Vec3d target, final Vec3d moved) {
