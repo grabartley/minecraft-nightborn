@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
+import java.util.stream.Collectors;
 import net.minecraft.util.Identifier;
 
 public final class HunterBuildCheck {
@@ -56,12 +57,24 @@ public final class HunterBuildCheck {
       final List<Map<Identifier, Integer>> slots,
       final Set<Identifier> paths,
       final List<String> problems) {
+    final Set<Identifier> certain = new TreeSet<>();
     for (int slot = 0; slot < slots.size(); slot++) {
       final Map<Identifier, Integer> leanings = slots.get(slot);
       final String where = kit + " path " + (slot + 1);
       unknown(leanings.keySet(), paths, where + " names", "path", problems);
-      if (leanings.values().stream().allMatch(weight -> weight <= 0)) {
+      final Set<Identifier> open =
+          leanings.entrySet().stream()
+              .filter(entry -> entry.getValue() > 0)
+              .map(Map.Entry::getKey)
+              .collect(Collectors.toCollection(TreeSet::new));
+      if (open.isEmpty()) {
         problems.add(where + " has no path with a weight above zero, so it is never filled");
+      } else if (certain.containsAll(open)) {
+        problems.add(
+            where + " weighs only paths an earlier slot always takes, so it is never filled");
+      }
+      if (open.size() == 1) {
+        certain.addAll(open);
       }
     }
   }

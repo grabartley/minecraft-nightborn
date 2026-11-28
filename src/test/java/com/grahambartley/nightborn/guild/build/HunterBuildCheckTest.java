@@ -223,7 +223,9 @@ class HunterBuildCheckTest {
         "sling | slayer=1 | kit paths name nightborn:sling",
         "crossbow | slayer=1;core=1 | nightborn:crossbow path 2 names nightborn:core",
         "crossbow | beast=1 | nightborn:crossbow path 1 names nightborn:beast",
-        "crossbow | slayer=0;seeker=1 | nightborn:crossbow path 1 has no path with a weight"
+        "crossbow | slayer=0;seeker=1 | nightborn:crossbow path 1 has no path with a weight",
+        "crossbow | slayer=1;slayer=1 | nightborn:crossbow path 2 weighs only paths an earlier",
+        "crossbow | slayer=1,trapper=1;slayer=1 | ''"
       })
   @DisplayName("kit paths that name an unknown kit or path, or can never be filled, are reported")
   void reportsKitPaths(final String kit, final String slots, final String problem) {

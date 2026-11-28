@@ -143,7 +143,8 @@ class PathPickTest {
         "silver_stake | faithful,slayer",
         "raid_silver | faithful,slayer",
         "raid_silver_holy_water | faithful,slayer",
-        "master_silver | faithful,slayer"
+        "master_silver | faithful,slayer",
+        "raid_wooden | slayer,faithful,trapper,seeker"
       })
   @DisplayName("out of 100 hunters of a shipped kit, none holds a path its kit rules out")
   void shippedKitsHoldOnlyTheirPaths(final String kit, final String allowed) {
@@ -156,6 +157,26 @@ class PathPickTest {
           PathPick.pick(BRANCHES, SkillTree.HUNTER, leanings, HunterBuildFixtures.rolls(seed));
       assertEquals(2, picked.size(), picked.toString());
       assertTrue(may.containsAll(picked), kit + " held " + picked);
+    }
+  }
+
+  @ParameterizedTest(name = "{0} always holds {1}")
+  @CsvSource({
+    "raid_wooden, slayer",
+    "stake, slayer",
+    "silver_stake, faithful",
+    "master_silver, slayer"
+  })
+  @DisplayName(
+      "out of 100 hunters of a shipped kit, every one holds the path its kit makes certain")
+  void shippedKitsAlwaysHoldTheirCertainPath(final String kit, final String path) {
+    final List<Map<Identifier, Integer>> leanings =
+        HunterBuildFixtures.build().paths(Optional.of(id(kit)));
+    for (long seed = 0; seed < 100; seed++) {
+      assertTrue(
+          PathPick.pick(BRANCHES, SkillTree.HUNTER, leanings, HunterBuildFixtures.rolls(seed))
+              .contains(id(path)),
+          kit + " seed " + seed);
     }
   }
 }
