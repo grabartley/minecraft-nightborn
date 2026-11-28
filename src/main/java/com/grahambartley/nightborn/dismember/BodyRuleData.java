@@ -1,17 +1,20 @@
 package com.grahambartley.nightborn.dismember;
 
 import com.grahambartley.nightborn.Nightborn;
+import com.grahambartley.nightborn.fight.Cutting;
 import java.util.Collection;
 import java.util.List;
 import java.util.function.Predicate;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.registry.DynamicRegistries;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.registry.DynamicRegistryManager;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.util.Identifier;
+import org.jetbrains.annotations.Nullable;
 
 public final class BodyRuleData {
 
@@ -43,6 +46,12 @@ public final class BodyRuleData {
         .filter(registry -> registry.containsId(id))
         .map(registry -> registry.get(id))
         .orElse(BodyRule.DEFAULT);
+  }
+
+  public static Cutting cutting(@Nullable final Entity attacker) {
+    return attacker == null
+        ? Cutting.WEAPON
+        : rule(attacker.getWorld().getRegistryManager(), attacker.getType()).cutting();
   }
 
   static List<Identifier> unknown(

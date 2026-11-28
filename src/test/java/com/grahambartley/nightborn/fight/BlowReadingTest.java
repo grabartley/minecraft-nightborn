@@ -27,6 +27,22 @@ class BlowReadingTest {
       final boolean struck,
       final boolean blast,
       final boolean barred) {
-    assertEquals(barred, BlowReading.barred(neverSevers, bolt, fist, struck, blast));
+    assertEquals(
+        barred, BlowReading.barred(Cutting.WEAPON, false, neverSevers, bolt, fist, struck, blast));
+  }
+
+  @ParameterizedTest(name = "{0}, marked {1}, blast {2}: barred {3}")
+  @CsvSource({
+    "MARKED, false, false, true",
+    "MARKED, true, false, false",
+    "MARKED, false, true, true",
+    "ALL, false, false, false",
+    "WEAPON, false, false, false",
+    "WEAPON, true, false, false"
+  })
+  @DisplayName("a mob that cuts only with marked attacks never severs with any other blow")
+  void barredByCutting(
+      final Cutting cutting, final boolean marked, final boolean blast, final boolean barred) {
+    assertEquals(barred, BlowReading.barred(cutting, marked, false, false, false, !blast, blast));
   }
 }

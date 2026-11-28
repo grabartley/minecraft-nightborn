@@ -2,11 +2,13 @@ package com.grahambartley.nightborn.boss;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonParser;
+import com.google.gson.JsonPrimitive;
 import com.grahambartley.nightborn.MinecraftBootstrapExtension;
-import com.grahambartley.nightborn.vampire.NightbornDamage;
 import com.mojang.serialization.JsonOps;
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Set;
@@ -124,6 +126,19 @@ class BossAttackTest {
   private static final Path ATTACKS =
       Path.of("src/main/resources/data/nightborn/nightborn/boss_attack");
   private static final Set<String> MARKED = Set.of("blood_step", "inquisitor_blows");
+  private static final JsonArray SEVERING = severing();
+
+  private static JsonArray severing() {
+    try {
+      return JsonParser.parseString(
+              Files.readString(
+                  Path.of("src/main/resources/data/nightborn/tags/damage_type/severing.json")))
+          .getAsJsonObject()
+          .getAsJsonArray("values");
+    } catch (final IOException e) {
+      throw new UncheckedIOException(e);
+    }
+  }
 
   static Stream<String> shippedAttacks() throws IOException {
     try (Stream<Path> files = Files.list(ATTACKS)) {
@@ -151,7 +166,7 @@ class BossAttackTest {
             .zone()
             .flatMap(zone -> zone.hit().damageType())
             .or(() -> attack.flurry().flatMap(FlurryAttack::damageType))
-            .filter(NightbornDamage.CLEAVE::equals)
+            .filter(type -> SEVERING.contains(new JsonPrimitive(type.getValue().toString())))
             .isPresent());
   }
 }

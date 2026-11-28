@@ -4,7 +4,6 @@ import com.grahambartley.nightborn.Nightborn;
 import com.grahambartley.nightborn.config.DismembermentSettings;
 import com.grahambartley.nightborn.fight.Blow;
 import com.grahambartley.nightborn.fight.BlowReading;
-import com.grahambartley.nightborn.fight.Cutting;
 import com.grahambartley.nightborn.gore.Gore;
 import com.grahambartley.nightborn.gore.GoreEvents;
 import com.grahambartley.nightborn.hold.Holds;
@@ -16,7 +15,6 @@ import net.fabricmc.fabric.api.attachment.v1.AttachmentSyncPredicate;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentType;
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerEntity;
@@ -47,7 +45,7 @@ public final class Dismemberment {
     ServerLivingEntityEvents.AFTER_DAMAGE.register(
         (entity, source, base, taken, blocked) -> {
           if (!blocked && taken > 0.0F) {
-            onHit(entity, source, taken);
+            onHit(entity, source, BlowReading.read(source), taken);
           }
         });
     ServerPlayerEvents.COPY_FROM.register(
@@ -66,20 +64,13 @@ public final class Dismemberment {
     return state(entity).missing(part);
   }
 
-  private static void onHit(
-      final LivingEntity victim, final DamageSource source, final float taken) {
+  public static void onHit(
+      final LivingEntity victim, final DamageSource source, final Blow blow, final float taken) {
     if (victim.getWorld().isClient()) {
       return;
     }
     final DismembermentSettings settings = ServerConfigService.current().dismemberment();
     final DynamicRegistryManager registries = victim.getWorld().getRegistryManager();
-    final Entity attacker = source.getAttacker();
-    final Blow blow =
-        BlowReading.read(
-            source,
-            attacker == null
-                ? Cutting.WEAPON
-                : BodyRuleData.rule(registries, attacker.getType()).cutting());
     final BodyState body = state(victim);
     final long now = victim.getWorld().getTime();
     final SeverRules.Victim facts =
@@ -94,7 +85,7 @@ public final class Dismemberment {
         settings,
         facts,
         blow,
-        attacker instanceof PlayerEntity,
+        source.getAttacker() instanceof PlayerEntity,
         PowerReach.pvp(victim),
         taken,
         victim.getRandom().nextDouble())) {

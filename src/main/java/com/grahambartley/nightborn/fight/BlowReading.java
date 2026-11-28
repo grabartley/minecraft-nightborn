@@ -1,6 +1,7 @@
 package com.grahambartley.nightborn.fight;
 
 import com.grahambartley.nightborn.Nightborn;
+import com.grahambartley.nightborn.dismember.BodyRuleData;
 import com.grahambartley.nightborn.gear.Staking;
 import com.grahambartley.nightborn.gear.VampireBane;
 import com.grahambartley.nightborn.vampire.NightbornDamage;
@@ -29,10 +30,7 @@ public final class BlowReading {
   private BlowReading() {}
 
   public static Blow read(final DamageSource source) {
-    return read(source, Cutting.WEAPON);
-  }
-
-  public static Blow read(final DamageSource source, final Cutting cutting) {
+    final Cutting cutting = BodyRuleData.cutting(source.getAttacker());
     final boolean stake = Staking.staked(source);
     final Entity direct = source.getSource();
     final boolean marked = source.isIn(SEVERING);
@@ -44,15 +42,16 @@ public final class BlowReading {
             marked,
             VampireBane.meleeWith(source, SEVERING_WEAPONS),
             source.isDirect() && source.isIn(NightbornDamage.WEAPON_BLOWS)),
-        cutting.bars(marked)
-            || barred(
-                stake || source.isIn(NEVER_SEVERS),
-                direct != null && direct.getType().isIn(NEVER_SEVERING_SHOTS),
-                source.isDirect()
-                    && direct instanceof PlayerEntity player
-                    && player.getMainHandStack().isEmpty(),
-                source.getAttacker() != null,
-                blast(source)));
+        barred(
+            cutting,
+            marked,
+            stake || source.isIn(NEVER_SEVERS),
+            direct != null && direct.getType().isIn(NEVER_SEVERING_SHOTS),
+            source.isDirect()
+                && direct instanceof PlayerEntity player
+                && player.getMainHandStack().isEmpty(),
+            source.getAttacker() != null,
+            blast(source)));
   }
 
   public static boolean blast(final DamageSource source) {
@@ -60,11 +59,13 @@ public final class BlowReading {
   }
 
   static boolean barred(
+      final Cutting cutting,
+      final boolean marked,
       final boolean neverSevers,
       final boolean neverSeveringShot,
       final boolean fist,
       final boolean struck,
       final boolean blast) {
-    return neverSevers || neverSeveringShot || fist || !(struck || blast);
+    return cutting.bars(marked) || neverSevers || neverSeveringShot || fist || !(struck || blast);
   }
 }
