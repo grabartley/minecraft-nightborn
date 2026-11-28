@@ -23,7 +23,7 @@ public record Chimney(int x0, int z0, int x1, int z1, List<Fire> fires) {
       return new Pos(x + back.x(), floor + 1, z + back.z());
     }
 
-    public Pos box() {
+    public Pos flue() {
       final Pos back = Facing.STEP.get(Facing.OPPOSITE.get(into));
       return new Pos(x + 2 * back.x(), floor + 1, z + 2 * back.z());
     }
@@ -66,8 +66,8 @@ public record Chimney(int x0, int z0, int x1, int z1, List<Fire> fires) {
   }
 
   public boolean shaft(final int x, final int z) {
-    final int low = fires.stream().mapToInt(fire -> fire.box().z()).min().orElse(z0);
-    final int high = fires.stream().mapToInt(fire -> fire.box().z()).max().orElse(z1);
+    final int low = fires.stream().mapToInt(fire -> fire.flue().z()).min().orElse(z0);
+    final int high = fires.stream().mapToInt(fire -> fire.flue().z()).max().orElse(z1);
     return x0 <= x && x <= x1 && low <= z && z <= high;
   }
 
@@ -93,10 +93,10 @@ public record Chimney(int x0, int z0, int x1, int z1, List<Fire> fires) {
   }
 
   private static void light(final Template t, final Fire fire, final int top) {
-    final Pos box = fire.box();
-    t.set(box.x(), box.y(), box.z(), Parts.campfire(fire.into()));
-    for (int y = box.y() + 1; y <= top + 1; y++) {
-      t.set(box.x(), y, box.z(), BlockState.AIR);
+    final Pos flue = fire.flue();
+    t.set(flue.x(), flue.y(), flue.z(), Parts.campfire(fire.into()));
+    for (int y = flue.y() + 1; y <= top + 1; y++) {
+      t.set(flue.x(), y, flue.z(), BlockState.AIR);
     }
     final Pos firebox = fire.firebox();
     for (int y = firebox.y(); y <= firebox.y() + 1; y++) {

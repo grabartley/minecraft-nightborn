@@ -32,7 +32,7 @@ public final class GroundFloor {
     Furnishing.chair(t, 22, SEAT, 32, "west");
     Furnishing.chair(t, 22, SEAT, 36, "west");
     Furnishing.table(t, 24, SEAT, 34);
-    Furnishing.candelabra(t, 24, SEAT + 1, 34, true);
+    Furnishing.candelabra(t, 24, SEAT + 1, 34);
     Furnishing.chair(t, 24, SEAT, 33, "south");
     Furnishing.chair(t, 24, SEAT, 35, "north");
     Furnishing.chair(t, 25, SEAT, 34, "west");
@@ -43,7 +43,7 @@ public final class GroundFloor {
     Furnishing.portrait(t, 25, F0 + 3, 40, "north");
     Furnishing.portrait(t, 28, F0 + 3, 30, "south");
     Furnishing.portrait(t, 21, F0 + 3, 30, "south");
-    Furnishing.chandelier(t, 25, CEILING, 35, true);
+    Furnishing.chandelier(t, 25, CEILING, 35);
     t.set(30, SEAT, 40, "potted_fern");
     t.set(30, SEAT, 31, "potted_fern");
   }
@@ -59,14 +59,14 @@ public final class GroundFloor {
     shelves(t, 26, 30, 28, 28);
     Furnishing.table(t, 25, SEAT, 23);
     Furnishing.table(t, 25, SEAT, 24);
-    Furnishing.candelabra(t, 25, SEAT + 1, 23, true);
-    Furnishing.candles(t, 25, SEAT + 1, 24, 2, true);
+    Furnishing.candelabra(t, 25, SEAT + 1, 23);
+    Furnishing.candles(t, 25, SEAT + 1, 24, 2, false);
     Furnishing.chair(t, 24, SEAT, 23, "east");
     Furnishing.chair(t, 26, SEAT, 24, "west");
     Furnishing.lectern(t, 28, SEAT, 21, "south");
     Furnishing.chair(t, 28, SEAT, 23, "north");
     Furnishing.chest(t, 21, SEAT, 21, "east");
-    Furnishing.chandelier(t, 25, CEILING, 23, false);
+    Furnishing.chandelier(t, 25, CEILING, 23);
     t.set(20, CEILING, 18, "cobweb");
     t.set(30, CEILING, 28, "cobweb");
   }
@@ -89,11 +89,11 @@ public final class GroundFloor {
     }
     Furnishing.chair(t, 47, SEAT, 35, "east");
     Furnishing.chair(t, 54, SEAT, 35, "west");
-    Furnishing.candelabra(t, 49, SEAT + 1, 35, true);
-    Furnishing.candelabra(t, 52, SEAT + 1, 35, true);
+    Furnishing.candelabra(t, 49, SEAT + 1, 35);
+    Furnishing.candelabra(t, 52, SEAT + 1, 35);
     Furnishing.chalice(t, 50, SEAT + 1, 35, "full");
     Furnishing.chalice(t, 51, SEAT + 1, 35, "full");
-    Furnishing.chandelier(t, 50, CEILING, 35, true);
+    Furnishing.chandelier(t, 50, CEILING, 35);
     for (final int x : new int[] {47, 48, 53, 54}) {
       t.set(x, SEAT, 30, Parts.hood("dark_oak_stairs", "north"));
     }
@@ -102,7 +102,7 @@ public final class GroundFloor {
     Furnishing.portrait(t, 47, F0 + 3, 30, "south");
     Furnishing.portrait(t, 54, F0 + 3, 30, "south");
     Furnishing.table(t, Turret.CX + 1, SEAT, Turret.CZ);
-    Furnishing.candles(t, Turret.CX + 1, SEAT + 1, Turret.CZ, 3, true);
+    Furnishing.candles(t, Turret.CX + 1, SEAT + 1, Turret.CZ, 3, false);
     Furnishing.chair(t, Turret.CX + 1, SEAT, Turret.CZ + 1, "north");
     Furnishing.chair(t, Turret.CX, SEAT, Turret.CZ, "east");
   }

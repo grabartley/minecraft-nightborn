@@ -169,14 +169,39 @@ class ManorTest {
     return width;
   }
 
-  @Test
-  void everyDoorwayIsAtLeastTwoWideAndTheMainOnesThree() {
-    for (final Doorway doorway : ManorShell.DOORWAYS) {
-      assertTrue(doorway.width() >= 2, doorway.toString());
+  static Stream<Arguments> doorways() {
+    return layouts()
+        .flatMap(layout -> ManorShell.DOORWAYS.stream().map(door -> Arguments.of(layout, door)));
+  }
+
+  @ParameterizedTest(name = "{0}: {1} opens at least two wide")
+  @MethodSource("doorways")
+  void everyDoorwayOpensAtLeastTwoWide(final Manor.Layout layout, final Doorway doorway) {
+    final Template t = built(layout);
+    int open = 0;
+    for (int a = doorway.from() - 1; a <= doorway.to() + 1; a++) {
+      final int x = doorway.along() == Axis.X ? a : doorway.line();
+      final int z = doorway.along() == Axis.X ? doorway.line() : a;
+      if (StructureWalk.clear(t, x, doorway.floor(), z, RouteRoom.HOUSEHOLD)) {
+        open++;
+      }
     }
-    assertEquals(3, ManorShell.DOORWAYS.getFirst().width());
-    assertTrue(StairHall.FLIGHT >= 3);
-    assertTrue(2 * ManorFront.STEPS_HALF + 1 >= 3);
+    assertTrue(open >= 2, "open across " + open);
+  }
+
+  @ParameterizedTest(name = "{0}: the main stair is three wide")
+  @MethodSource("layouts")
+  void theMainStairIsThreeWide(final Manor.Layout layout) {
+    final Template t = built(layout);
+    final int z = StairHall.LANDING_FRONT + 2;
+    final int y = StairHall.LANDING - 1;
+    int treads = 0;
+    for (int x = StairHall.WEST; x <= StairHall.EAST; x++) {
+      if (t.get(x, y, z).startsWith("minecraft:" + StairHall.STEP)) {
+        treads++;
+      }
+    }
+    assertEquals(3, treads);
   }
 
   @ParameterizedTest(name = "{0}: every window has a closed curtain that covers it")

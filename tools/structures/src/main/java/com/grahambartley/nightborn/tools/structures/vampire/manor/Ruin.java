@@ -12,7 +12,7 @@ public final class Ruin {
   public static final double HOLE_X = 50.5;
   public static final double HOLE_Z = 19.5;
   public static final double HOLE_RADIUS = 2.8;
-  public static final ManorShell.Box FOOTPRINT = ManorShell.KITCHEN;
+  public static final ManorShell.Box FOOTPRINT = ManorShell.SITTING_ROOM;
   public static final int RAFTER_X = 51;
   public static final int FALLEN_BEAM_X = 48;
   public static final int FALLEN_BEAM_Z = 20;

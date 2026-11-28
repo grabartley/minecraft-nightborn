@@ -52,7 +52,7 @@ public final class Bedchambers {
   private static void westChamber(final Template t) {
     halfTester(t, Manor.SPRUCE_COFFIN, 22, 24, "west");
     Furnishing.table(t, 28, SEAT, 27);
-    Furnishing.candelabra(t, 28, SEAT + 1, 27, false);
+    Furnishing.candelabra(t, 28, SEAT + 1, 27);
     Furnishing.chair(t, 27, SEAT, 27, "east");
     for (int y = SEAT; y <= SEAT + 2; y++) {
       t.set(30, y, 19, "bookshelf");
@@ -68,7 +68,7 @@ public final class Bedchambers {
     halfTester(t, Manor.DARK_OAK_COFFIN, 28, 32, "north");
     Furnishing.chair(t, 22, SEAT, 34, "west");
     Furnishing.chair(t, 22, SEAT, 36, "west");
-    Furnishing.candelabra(t, 22, SEAT, 38, false);
+    Furnishing.candelabra(t, 22, SEAT, 38);
     Furnishing.table(t, 26, SEAT, 38);
     Furnishing.candles(t, 26, SEAT + 1, 38, 2, false);
     Furnishing.chair(t, 26, SEAT, 37, "south");
@@ -88,7 +88,7 @@ public final class Bedchambers {
     }
     Furnishing.chest(t, 56, SEAT, 28, "west");
     Furnishing.portrait(t, 51, SEAT + 2, 18, "south");
-    Furnishing.candelabra(t, 56, SEAT, 18, false);
+    Furnishing.candelabra(t, 56, SEAT, 18);
   }
 
   private static void eastChamber(final Template t) {
@@ -105,9 +105,9 @@ public final class Bedchambers {
     final int z = Turret.CZ;
     Furnishing.lectern(t, x - 2, STUDY, z, "east");
     Furnishing.table(t, x - 1, STUDY, z + 2);
-    Furnishing.candelabra(t, x - 1, STUDY + 1, z + 2, true);
+    Furnishing.candelabra(t, x - 1, STUDY + 1, z + 2);
     Furnishing.chair(t, x - 2, STUDY, z + 2, "east");
-    Furnishing.candelabra(t, x - 3, STUDY, z, false);
+    Furnishing.candelabra(t, x - 3, STUDY, z);
     Furnishing.chest(t, x - 2, STUDY, z - 2, "east");
     t.set(x + 2, STUDY + 6, z - 1, "cobweb");
   }

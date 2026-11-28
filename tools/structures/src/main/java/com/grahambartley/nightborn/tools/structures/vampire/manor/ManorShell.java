@@ -45,6 +45,7 @@ public final class ManorShell {
   public static final Box DRAWING_ROOM = new Box(ROOM_W, CROSS + 1, HALL_W - 1, ROOM_S);
   public static final Box KITCHEN = new Box(HALL_E + 1, ROOM_N, ROOM_E, CROSS - 1);
   public static final Box DINING_ROOM = new Box(HALL_E + 1, CROSS + 1, ROOM_E, ROOM_S);
+  public static final Box SITTING_ROOM = KITCHEN;
   public static final Box HALL = new Box(HALL_W + 1, ROOM_N, HALL_E - 1, ROOM_S);
   public static final List<Box> SIDE_ROOMS = List.of(LIBRARY, DRAWING_ROOM, KITCHEN, DINING_ROOM);
 

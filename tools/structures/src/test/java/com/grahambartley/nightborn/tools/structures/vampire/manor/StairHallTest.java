@@ -69,9 +69,10 @@ class StairHallTest {
     assertTrue(!BlockState.AIR.equals(t.get(x, y, z)));
   }
 
-  @ParameterizedTest(name = "a lit chandelier hangs at z {0}")
+  @ParameterizedTest(name = "a chandelier the household lights hangs at z {0}")
   @CsvSource({"29", "35"})
-  void litChandeliersHangOverTheHall(final int z) {
-    assertTrue(t.get(Manor.MID_X, Manor.TOP - 1, z).contains("lit=true"));
+  void chandeliersHangOverTheHallUnlit(final int z) {
+    final String chandelier = t.get(Manor.MID_X, Manor.TOP - 1, z);
+    assertTrue(chandelier.startsWith("nightborn:chandelier") && chandelier.contains("lit=false"));
   }
 }

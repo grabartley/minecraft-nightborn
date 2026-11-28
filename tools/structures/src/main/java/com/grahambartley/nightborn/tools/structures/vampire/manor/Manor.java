@@ -7,11 +7,10 @@ import java.util.List;
 
 public final class Manor {
 
-  public record Layout(
-      String path, boolean roundTurret, boolean fallenGlasshouse, boolean fallenRoof) {}
+  public record Layout(String path, boolean roundTurret, boolean ruined) {}
 
-  public static final Layout TURRET = new Layout("vampire/manor/turret", true, false, false);
-  public static final Layout TOWER = new Layout("vampire/manor/tower", false, true, true);
+  public static final Layout TURRET = new Layout("vampire/manor/turret", true, false);
+  public static final Layout TOWER = new Layout("vampire/manor/tower", false, true);
   public static final List<Layout> LAYOUTS = List.of(TURRET, TOWER);
 
   public static final String ENTRANCE = "nightborn:manor_entrance";
@@ -89,8 +88,8 @@ public final class Manor {
     ManorWindows.build(t);
     GroundFloor.build(t);
     Bedchambers.build(t);
-    Glasshouse.build(t, layout.fallenGlasshouse());
-    if (layout.fallenRoof()) {
+    Glasshouse.build(t, layout.ruined());
+    if (layout.ruined()) {
       Ruin.fallenRoof(t);
     }
     Ivy.grow(t);

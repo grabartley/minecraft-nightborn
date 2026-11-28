@@ -129,8 +129,8 @@ public final class StairHall {
   }
 
   private static void furnish(final Template t) {
-    Furnishing.chandelier(t, MID_X, TOP - 1, FLIGHT_FOOT + 2, true);
-    Furnishing.chandelier(t, MID_X, TOP - 1, GALLERY_FRONT - 3, true);
+    Furnishing.chandelier(t, MID_X, TOP - 1, FLIGHT_FOOT + 2);
+    Furnishing.chandelier(t, MID_X, TOP - 1, GALLERY_FRONT - 3);
     for (int x = MID_X - 2; x <= MID_X + 2; x++) {
       for (int z = FLIGHT_FOOT + 1; z <= ROOM_S; z++) {
         final boolean border = x == MID_X - 2 || x == MID_X + 2;
@@ -139,10 +139,10 @@ public final class StairHall {
     }
     Furnishing.chair(t, WEST, F0 + 1, ROOM_S, "east");
     Furnishing.table(t, WEST, F0 + 1, ROOM_S - 1);
-    Furnishing.candelabra(t, WEST, F0 + 2, ROOM_S - 1, true);
+    Furnishing.candelabra(t, WEST, F0 + 2, ROOM_S - 1);
     Furnishing.chair(t, EAST, F0 + 1, ROOM_S, "west");
     Furnishing.table(t, EAST, F0 + 1, ROOM_S - 1);
-    Furnishing.candelabra(t, EAST, F0 + 2, ROOM_S - 1, true);
+    Furnishing.candelabra(t, EAST, F0 + 2, ROOM_S - 1);
     for (final int z : new int[] {30, 37}) {
       Furnishing.portrait(t, WEST, F0 + 3, z, "east");
       Furnishing.portrait(t, EAST, F0 + 3, z, "west");
@@ -154,7 +154,7 @@ public final class StairHall {
     for (final int x : new int[] {WEST + 1, EAST - 1, MID_X - 3, MID_X + 3}) {
       Furnishing.portrait(t, x, F0 + 2, LANDING_FRONT + 1, "south");
     }
-    Furnishing.candelabra(t, WEST, LANDING + 1, ROOM_N, true);
-    Furnishing.candelabra(t, EAST, LANDING + 1, ROOM_N, true);
+    Furnishing.candelabra(t, WEST, LANDING + 1, ROOM_N);
+    Furnishing.candelabra(t, EAST, LANDING + 1, ROOM_N);
   }
 }

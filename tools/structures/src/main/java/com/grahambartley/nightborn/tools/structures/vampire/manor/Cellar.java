@@ -74,9 +74,9 @@ public final class Cellar {
       }
     }
     Furnishing.oldBloodFont(t, FONT_X, STAND, FONT_Z);
-    Furnishing.candles(t, FONT_X - 1, STAND, FONT_Z, 3, true);
-    Furnishing.candles(t, FONT_X + 1, STAND, FONT_Z, 2, true);
-    Furnishing.chandelier(t, FONT_X, F0 - 1, FONT_Z + 3, true);
+    Furnishing.candles(t, FONT_X - 1, STAND, FONT_Z, 3, false);
+    Furnishing.candles(t, FONT_X + 1, STAND, FONT_Z, 2, false);
+    Furnishing.chandelier(t, FONT_X, F0 - 1, FONT_Z + 3);
     Furnishing.lectern(t, FONT_X - 3, STAND, FONT_Z + 1, "east");
   }
 
