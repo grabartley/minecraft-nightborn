@@ -27,7 +27,7 @@ class MobActionTest {
 
   @ParameterizedTest(name = "{0}")
   @ValueSource(strings = {"leap", "dash", "dodge", "holy_water", "crucifix"})
-  @DisplayName("each shipped built-in action loads with fight uses and is not kept for dodging")
+  @DisplayName("each shipped built-in action loads with uses for a fight")
   void shipped(final String action) throws IOException {
     final MobAction loaded =
         MobAction.CODEC
@@ -35,29 +35,27 @@ class MobActionTest {
                 JsonOps.INSTANCE,
                 JsonParser.parseString(Files.readString(ACTIONS.resolve(action + ".json"))))
             .getOrThrow();
-    assertFalse(loaded.dodge());
     assertFalse(loaded.uses().isEmpty());
-    assertTrue(loaded.uses().stream().allMatch(use -> use.intent().equals("fight")));
+    assertTrue(loaded.uses().stream().anyMatch(use -> use.intent().equals("fight")));
   }
 
   @ParameterizedTest(name = "{0}")
   @CsvSource(
       delimiter = '|',
       value = {
-        "{\"uses\":[{\"intent\":\"fight\"}]}|false|1",
-        "{\"dodge\":true,\"uses\":[{\"intent\":\"fight\"},{\"intent\":\"retreat\"}]}|true|2",
-        "{\"dodge\":false,\"uses\":[]}|false|0"
+        "{\"uses\":[{\"intent\":\"fight\"}]}|1",
+        "{\"uses\":[{\"intent\":\"fight\"},{\"intent\":\"retreat\"}]}|2",
+        "{\"uses\":[]}|0"
       })
-  @DisplayName("an action reads whether it is kept for dodging and its uses")
-  void reads(final String json, final boolean dodge, final int uses) {
+  @DisplayName("an action reads its uses")
+  void reads(final String json, final int uses) {
     final MobAction action =
         MobAction.CODEC.parse(JsonOps.INSTANCE, JsonParser.parseString(json)).getOrThrow();
-    assertEquals(dodge, action.dodge());
     assertEquals(uses, action.uses().size());
   }
 
   @ParameterizedTest(name = "{0}")
-  @ValueSource(strings = {"{}", "{\"dodge\":true}"})
+  @ValueSource(strings = {"{}", "{\"weight\":1}"})
   @DisplayName("an action with no uses listed is refused")
   void needsUses(final String json) {
     assertTrue(MobAction.CODEC.parse(JsonOps.INSTANCE, JsonParser.parseString(json)).isError());
@@ -69,7 +67,7 @@ class MobActionTest {
   void copiesUses(final int count) {
     final List<MobUse> uses =
         new ArrayList<>(Collections.nCopies(count, new MobUse("fight", "target", List.of(), 1.0F)));
-    final MobAction action = new MobAction(false, uses);
+    final MobAction action = new MobAction(uses);
     uses.add(new MobUse("retreat", "self", List.of(), 1.0F));
     assertEquals(count, action.uses().size());
   }

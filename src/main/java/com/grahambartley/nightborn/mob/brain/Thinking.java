@@ -22,9 +22,8 @@ public final class Thinking {
 
   private Thinking() {}
 
-  public static Optional<Think> react(
-      final MobEntity mob, final int mobFloor, final List<ActionReadiness> actions) {
-    return think(mob, true, mobFloor, Vec3d.ZERO, actions);
+  public static Optional<Think> react(final MobEntity mob, final int mobFloor) {
+    return think(mob, true, mobFloor, Vec3d.ZERO, List.of());
   }
 
   public static Optional<Think> think(
@@ -194,13 +193,10 @@ public final class Thinking {
   static List<PowerChoice.Option> actions(
       final List<ActionReadiness> readiness,
       final Function<Identifier, Optional<MobAction>> data,
-      final boolean dodge,
-      final Intent intent,
-      final boolean stuck) {
+      final Intent intent) {
     final List<PowerChoice.Option> options = new ArrayList<>(readiness.size());
     for (final ActionReadiness each : readiness) {
       data.apply(each.id())
-          .filter(action -> offered(action.dodge(), dodge, intent, stuck))
           .filter(action -> !aims(action.uses(), intent).isEmpty())
           .ifPresent(action -> options.add(PowerChoice.Option.action(each, action)));
     }
@@ -214,8 +210,7 @@ public final class Thinking {
       final List<ActionReadiness> actions) {
     final boolean stuck = Unsticking.stuck(mob);
     final List<PowerChoice.Option> options = new ArrayList<>(powers(mob, dodge, intent, stuck));
-    options.addAll(
-        actions(actions, id -> MobActions.get(mob.getRegistryManager(), id), dodge, intent, stuck));
+    options.addAll(actions(actions, id -> MobActions.get(mob.getRegistryManager(), id), intent));
     return options;
   }
 

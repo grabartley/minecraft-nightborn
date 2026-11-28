@@ -219,26 +219,28 @@ class ThinkingTest {
   private static final Identifier UNKNOWN = Identifier.of("nightborn", "unknown");
 
   private static Optional<MobAction> data(final Identifier id) {
-    final List<MobUse> fight = List.of(new MobUse("fight", "target", List.of(), 1.0F));
     if (id.equals(LEAP)) {
-      return Optional.of(new MobAction(false, fight));
+      return Optional.of(new MobAction(List.of(new MobUse("fight", "target", List.of(), 1.0F))));
     }
-    return id.equals(SIDESTEP) ? Optional.of(new MobAction(true, fight)) : Optional.empty();
+    return id.equals(SIDESTEP)
+        ? Optional.of(
+            new MobAction(
+                List.of(
+                    new MobUse("fight", "target", List.of(), 1.0F),
+                    new MobUse("retreat", "target", List.of(), 1.0F))))
+        : Optional.empty();
   }
 
-  @ParameterizedTest(name = "dodge think {0}, {1}, stuck {2}: [{3}]")
+  @ParameterizedTest(name = "{0}: [{1}]")
   @CsvSource({
-    "false, FIGHT, false, 'nightborn:leap'",
-    "true, FIGHT, false, 'nightborn:sidestep'",
-    "false, FIGHT, true, 'nightborn:leap nightborn:sidestep'",
-    "false, RETREAT, false, ''",
-    "true, RETREAT, false, ''"
+    "FIGHT, 'nightborn:leap nightborn:sidestep'",
+    "RETREAT, 'nightborn:sidestep'",
+    "TRAVEL, ''"
   })
   @DisplayName(
-      "a built-in action joins the options like a power: only for an intent it has a use for, and"
-          + " one kept for dodging only as a dodge, and an action with no data is left out")
-  void actions(
-      final boolean dodge, final Intent intent, final boolean stuck, final String expected) {
+      "a built-in action joins the options like a power, only for an intent it has a use for, and"
+          + " an action with no data is left out")
+  void actions(final Intent intent, final String expected) {
     final List<PowerChoice.Option> options =
         Thinking.actions(
             List.of(
@@ -246,9 +248,7 @@ class ThinkingTest {
                 ActionReadiness.of(SIDESTEP, true, 60),
                 ActionReadiness.of(UNKNOWN, true, 60)),
             ThinkingTest::data,
-            dodge,
-            intent,
-            stuck);
+            intent);
     assertEquals(
         expected.isEmpty()
             ? List.of()
@@ -263,11 +263,7 @@ class ThinkingTest {
   void actionAims(final boolean ready, final PowerUse.Verdict verdict, final String aims) {
     final PowerChoice.Option option =
         Thinking.actions(
-                List.of(ActionReadiness.of(LEAP, ready, 60)),
-                ThinkingTest::data,
-                false,
-                Intent.FIGHT,
-                false)
+                List.of(ActionReadiness.of(LEAP, ready, 60)), ThinkingTest::data, Intent.FIGHT)
             .getFirst();
     assertEquals(verdict, option.verdict());
     assertEquals(0, option.cost());

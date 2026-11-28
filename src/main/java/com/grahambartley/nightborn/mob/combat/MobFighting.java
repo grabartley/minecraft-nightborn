@@ -41,8 +41,6 @@ public final class MobFighting {
     }
 
     default void reacted() {}
-
-    default void standDown() {}
   }
 
   private final PowerCasting casting;
@@ -82,7 +80,7 @@ public final class MobFighting {
     }
     if (!casting.telling()) {
       moves.tick();
-      if (moves.reacting() && casting.react(fighter, bloodFloor, moves)) {
+      if (moves.reacting() && casting.react(fighter, bloodFloor)) {
         moves.reacted();
         return;
       }

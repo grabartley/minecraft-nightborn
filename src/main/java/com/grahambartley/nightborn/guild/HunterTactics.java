@@ -152,15 +152,6 @@ final class HunterTactics<T extends MobEntity & GuildFighter> implements MobFigh
     return false;
   }
 
-  @Override
-  public void standDown() {
-    if (raised) {
-      raised = false;
-      hold(ItemStack.EMPTY);
-      hunter.show(HunterAction.NONE);
-    }
-  }
-
   private void release(final HunterKit kit, final LivingEntity target) {
     if (timer.action() == HunterAction.CROSSBOW_SHOT) {
       final ItemStack bolt = stack(kit.bolt());

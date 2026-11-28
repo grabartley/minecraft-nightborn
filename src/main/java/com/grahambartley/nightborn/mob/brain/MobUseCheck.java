@@ -16,10 +16,6 @@ public final class MobUseCheck {
 
   private MobUseCheck() {}
 
-  public static Report check(final Map<Identifier, Skill> skills, final Set<Identifier> budgets) {
-    return check(skills, budgets, Map.of());
-  }
-
   public static Report check(
       final Map<Identifier, Skill> skills,
       final Set<Identifier> budgets,

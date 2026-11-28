@@ -36,9 +36,11 @@ class CombatMoveTest {
     "LEAP, false, 0, false",
     "DODGE, false, 0, false"
   })
-  @DisplayName("a move is on offer to the brain only while free and by its stage's chance")
+  @DisplayName(
+      "a move is on offer to the brain only while free and when the think's one roll is under its"
+          + " stage's chance")
   void readiness(final CombatMove move, final boolean free, final int roll, final boolean ready) {
-    final ActionReadiness readiness = move.readiness(free, () -> roll, ELDER, REST);
+    final ActionReadiness readiness = move.readiness(free, roll, ELDER, REST);
     assertEquals(move.id(), readiness.id());
     assertEquals(ready ? PowerUse.Verdict.READY : PowerUse.Verdict.COOLING, readiness.verdict());
     assertEquals(REST, readiness.cooldownTicks());
@@ -50,7 +52,7 @@ class CombatMoveTest {
   @DisplayName("a stage with no move chances never offers a move")
   void plainNeverOffers(final CombatMove move) {
     assertEquals(
-        PowerUse.Verdict.COOLING, move.readiness(true, () -> 0, StageCombat.PLAIN, REST).verdict());
+        PowerUse.Verdict.COOLING, move.readiness(true, 0, StageCombat.PLAIN, REST).verdict());
   }
 
   @ParameterizedTest(name = "{0}")

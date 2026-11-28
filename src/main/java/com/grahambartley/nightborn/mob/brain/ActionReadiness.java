@@ -8,7 +8,15 @@ public record ActionReadiness(
 
   public static ActionReadiness of(
       final Identifier id, final boolean ready, final int cooldownTicks) {
+    return of(id, ready, cooldownTicks, false);
+  }
+
+  public static ActionReadiness of(
+      final Identifier id, final boolean ready, final int cooldownTicks, final boolean running) {
     return new ActionReadiness(
-        id, ready ? PowerUse.Verdict.READY : PowerUse.Verdict.COOLING, cooldownTicks, false);
+        id,
+        ready ? PowerUse.Verdict.READY : PowerUse.Verdict.COOLING,
+        cooldownTicks,
+        ready && running);
   }
 }

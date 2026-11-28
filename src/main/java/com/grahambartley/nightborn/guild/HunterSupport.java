@@ -2,7 +2,6 @@ package com.grahambartley.nightborn.guild;
 
 import com.grahambartley.nightborn.Nightborn;
 import com.grahambartley.nightborn.mob.brain.ActionReadiness;
-import com.grahambartley.nightborn.skill.PowerUse;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.util.Identifier;
@@ -31,13 +30,12 @@ public final class HunterSupport {
               HunterActionTimer.THROW_COOLDOWN_TICKS));
     }
     if (crucifix) {
-      final boolean ready = moment.foe() && !moment.busy() && moment.distance() <= wardRange;
       actions.add(
-          new ActionReadiness(
+          ActionReadiness.of(
               CRUCIFIX,
-              ready ? PowerUse.Verdict.READY : PowerUse.Verdict.COOLING,
+              moment.foe() && !moment.busy() && moment.distance() <= wardRange,
               0,
-              ready && moment.raised()));
+              moment.raised()));
     }
     return actions;
   }

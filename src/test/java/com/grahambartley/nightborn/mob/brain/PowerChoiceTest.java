@@ -765,11 +765,12 @@ class PowerChoiceTest {
     "leap dodge, 3.5, true, dodge",
     "dash dodge, 9, true, dodge",
     "leap dash, 7, false, leap",
-    "dodge leap, 5, false, leap"
+    "dodge leap, 5, false, leap",
+    "dash leap, 7, false, leap"
   })
   @DisplayName(
       "between built-in actions the old order holds: holy water before the crucifix, a dodge"
-          + " before a leap or a dash")
+          + " before a leap or a dash, and a leap before a dash where their ranges meet")
   void shippedActionsKeepTheirOrder(
       final String actions, final double distance, final boolean threatening, final String chosen) {
     assertEquals(
@@ -786,13 +787,13 @@ class PowerChoiceTest {
   @CsvSource({
     "leap, 5, core/blood_rush",
     "dash, 10, core/blood_rush",
-    "crucifix, 5, core/blood_rush",
+    "crucifix, 5, crucifix",
     "leap, 3.5, leap",
     "holy_water, 5, holy_water"
   })
   @DisplayName(
-      "a ready power in range comes before a leap, a dash or a raised crucifix, which fill the"
-          + " moments a mob has no power for, and holy water still flies when it can")
+      "a ready power in range comes before a leap or a dash, which fill the moments a mob has no"
+          + " power for, while holy water and the crucifix go up first when they can")
   void powersBeforeFillerActions(final String action, final double distance, final String chosen) {
     assertEquals(
         Optional.of(Identifier.of("nightborn", chosen)),
@@ -801,6 +802,26 @@ class PowerChoiceTest {
                 shipped("core/blood_rush", false),
                 shippedAction(action, PowerUse.Verdict.READY, false)),
             facing(distance, true, false),
+            0));
+  }
+
+  @ParameterizedTest(name = "{0}, threatened {1}: chosen {2}")
+  @CsvSource({"dodge, true, true", "dodge, false, false", "leap, false, false"})
+  @DisplayName("a vampire falling back still dodges a threat, but never leaps or dashes at its foe")
+  void retreatKeepsOnlyTheDodge(
+      final String action, final boolean threatening, final boolean chosen) {
+    final Situation retreating =
+        new Situation(
+            Intent.RETREAT,
+            Situation.Self.of(0.2F, 20),
+            new Situation.Target(
+                5.0, true, 1.0F, false, false, false, false, false, false, true, threatening));
+    assertEquals(
+        chosen ? Optional.of(Identifier.of("nightborn", action)) : Optional.empty(),
+        choose(
+            List.of(shippedAction(action, PowerUse.Verdict.READY, false)),
+            retreating,
+            shippedBudget(Intent.RETREAT),
             0));
   }
 

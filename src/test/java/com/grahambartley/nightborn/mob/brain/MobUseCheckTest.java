@@ -86,7 +86,8 @@ class MobUseCheckTest {
       "a power mobs never use is reported unless it opts out, and a bad use is reported with the"
           + " skill's name")
   void reportsEachSkill(final String power, final String unused, final String problem) {
-    final MobUseCheck.Report report = MobUseCheck.check(Map.of(ID, skill(power)), ALL_BUDGETS);
+    final MobUseCheck.Report report =
+        MobUseCheck.check(Map.of(ID, skill(power)), ALL_BUDGETS, Map.of());
     assertEquals(unused.isEmpty() ? List.of() : List.of(unused), report.unused());
     assertEquals(problem.isEmpty() ? List.of() : List.of(problem), report.problems());
   }
@@ -125,7 +126,8 @@ class MobUseCheckTest {
                 Map.of(ID, skill(mob(""))),
                 ALL_BUDGETS.stream()
                     .filter(id -> !id.equals(MobIntents.id(Intent.REST)))
-                    .collect(Collectors.toSet()))
+                    .collect(Collectors.toSet()),
+                Map.of())
             .problems());
   }
 

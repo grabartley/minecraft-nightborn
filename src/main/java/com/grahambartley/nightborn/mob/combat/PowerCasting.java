@@ -106,7 +106,7 @@ public final class PowerCasting {
                     if (scored.option().action()
                         ? !moves.act(scored.option().id())
                         : !tellable(scored.use().aimed() == Aim.ALLY, allyVerdict(caster, scored))
-                            || !tell(caster, scored, now, engaged, moves)) {
+                            || !tell(caster, scored, now, engaged)) {
                       return;
                     }
                     nextThink =
@@ -116,22 +116,16 @@ public final class PowerCasting {
         });
   }
 
-  public <T extends MobEntity & PowerShow> boolean react(
-      final T caster, final int bloodFloor, final MobFighting.Moves moves) {
-    final Optional<Think> think = Thinking.react(caster, bloodFloor, moves.actions());
-    think.ifPresent(thought -> lastThink = thought);
-    return think
-        .flatMap(Think::chosen)
-        .map(
-            scored ->
-                scored.option().action()
-                    ? moves.act(scored.option().id())
-                    : CastAims.resolve(caster, scored.use().aimed())
-                        .map(
-                            aim ->
-                                cast.apply(caster, scored.option().id(), aim)
-                                    == PowerUse.Verdict.READY)
-                        .orElse(false))
+  public <T extends MobEntity & PowerShow> boolean react(final T caster, final int bloodFloor) {
+    final Optional<Think> think = Thinking.react(caster, bloodFloor);
+    final Optional<PowerChoice.Scored> chosen = think.flatMap(Think::chosen);
+    if (chosen.isEmpty()) {
+      return false;
+    }
+    lastThink = think.get();
+    final PowerChoice.Scored scored = chosen.get();
+    return CastAims.resolve(caster, scored.use().aimed())
+        .map(aim -> cast.apply(caster, scored.option().id(), aim) == PowerUse.Verdict.READY)
         .orElse(false);
   }
 
@@ -185,11 +179,7 @@ public final class PowerCasting {
   }
 
   private <T extends MobEntity & PowerShow> boolean tell(
-      final T caster,
-      final PowerChoice.Scored scored,
-      final long now,
-      final boolean inFight,
-      final MobFighting.Moves moves) {
+      final T caster, final PowerChoice.Scored scored, final long now, final boolean inFight) {
     final Identifier power = scored.option().id();
     final MobPowerUse use = Powers.power(caster, power).flatMap(SkillPower::mob).orElse(null);
     if (use == null) {
@@ -201,7 +191,6 @@ public final class PowerCasting {
     if (ally != null) {
       HelpClaims.claim(caster.getWorld(), ally, caster.getUuid(), castAt);
     }
-    moves.standDown();
     caster.showPower(use.tellClip());
     caster.playSound(SoundEvent.of(use.tellSound()), 1.0F, 1.0F);
     return true;

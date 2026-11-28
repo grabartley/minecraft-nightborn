@@ -2,7 +2,24 @@
   "uses": [
     {
       "intent": "fight",
-      "considerations": [{ "fact": "target_threatening", "low": 1, "high": 1 }],
+      "considerations": [
+        {
+          "fact": "target_threatening",
+          "low": 1,
+          "high": 1
+        }
+      ],
+      "weight": 1.5
+    },
+    {
+      "intent": "retreat",
+      "considerations": [
+        {
+          "fact": "target_threatening",
+          "low": 1,
+          "high": 1
+        }
+      ],
       "weight": 1.5
     }
   ]

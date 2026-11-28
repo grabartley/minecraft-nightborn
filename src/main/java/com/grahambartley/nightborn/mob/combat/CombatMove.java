@@ -67,8 +67,8 @@ public enum CombatMove {
   }
 
   public ActionReadiness readiness(
-      final boolean free, final IntSupplier roll, final StageCombat combat, final int restTicks) {
-    return ActionReadiness.of(id, free && roll.getAsInt() < chance.applyAsInt(combat), restTicks);
+      final boolean free, final int roll, final StageCombat combat, final int restTicks) {
+    return ActionReadiness.of(id, free && roll < chance.applyAsInt(combat), restTicks);
   }
 
   public Identifier id() {

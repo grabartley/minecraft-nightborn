@@ -18,4 +18,18 @@ class ActionReadinessTest {
     assertEquals(
         new ActionReadiness(id, verdict, cooldown, false), ActionReadiness.of(id, ready, cooldown));
   }
+
+  @ParameterizedTest(name = "ready {0}, running {1}: running {2}")
+  @CsvSource({
+    "true, true, true",
+    "true, false, false",
+    "false, true, false",
+    "false, false, false"
+  })
+  @DisplayName("an action counts as running only while it is also ready")
+  void running(final boolean ready, final boolean running, final boolean counted) {
+    assertEquals(
+        counted,
+        ActionReadiness.of(Identifier.of("nightborn", "crucifix"), ready, 0, running).running());
+  }
 }

@@ -64,9 +64,10 @@ public final class CombatMoves<T extends MobEntity & PowerShow> implements MobFi
     final StageCombat combat = stage.get();
     final boolean free = fighter.isOnGround() && fighter.getWorld().getTime() >= nextMove;
     final int restTicks = restTicks(combat);
+    final int roll = free ? fighter.getRandom().nextInt(100) : 100;
     final List<ActionReadiness> actions = new ArrayList<>(CombatMove.values().length);
     for (final CombatMove move : CombatMove.values()) {
-      actions.add(move.readiness(free, () -> fighter.getRandom().nextInt(100), combat, restTicks));
+      actions.add(move.readiness(free, roll, combat, restTicks));
     }
     return actions;
   }
