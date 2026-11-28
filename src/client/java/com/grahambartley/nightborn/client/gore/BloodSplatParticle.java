@@ -1,5 +1,7 @@
 package com.grahambartley.nightborn.client.gore;
 
+import com.grahambartley.nightborn.client.particle.DecalShapes;
+import com.grahambartley.nightborn.client.particle.DecalTiming;
 import com.grahambartley.nightborn.client.particle.FlatDecalParticle;
 import net.minecraft.client.particle.SpriteProvider;
 import net.minecraft.client.world.ClientWorld;
@@ -8,10 +10,7 @@ import net.minecraft.util.math.Vec3d;
 
 public class BloodSplatParticle extends FlatDecalParticle {
 
-  static final int MIN_AGE = 600;
-  static final int AGE_SPREAD = 300;
-  static final double LIFT = 0.012;
-  static final double LIFT_SPREAD = 0.006;
+  static final DecalShapes SHAPES = new DecalShapes(4);
 
   private final SplatterLook look;
 
@@ -22,18 +21,16 @@ public class BloodSplatParticle extends FlatDecalParticle {
       final SpriteProvider sprites,
       final SplatterLook look,
       final boolean pool) {
-    super(world, contact, face, LIFT + world.random.nextDouble() * LIFT_SPREAD);
+    super(world, contact, face, sprites, SHAPES, DecalTiming.BLOOD_FADE_TICKS);
     this.look = look;
-    this.maxAge = MIN_AGE + random.nextInt(AGE_SPREAD);
+    this.maxAge = DecalTiming.bloodLife(look.lifeShare(), pool, random.nextFloat());
     this.scale *= (pool ? 4.0F : 1.7F) * (0.8F + random.nextFloat() * 0.6F);
-    aged();
-    setSprite(sprites.getSprite(random));
+    refresh();
   }
 
   @Override
   protected void aged() {
-    final float[] rgb = look.rgb(SplatFade.shade(age, maxAge));
+    final float[] rgb = look.rgb(SplatFade.shade(age));
     setColor(rgb[0], rgb[1], rgb[2]);
-    alpha = SplatFade.alpha(age, maxAge);
   }
 }
