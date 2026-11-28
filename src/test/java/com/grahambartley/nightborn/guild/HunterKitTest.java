@@ -13,6 +13,7 @@ import java.util.Optional;
 import java.util.TreeMap;
 import java.util.stream.Stream;
 import net.minecraft.util.Identifier;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -78,6 +79,7 @@ class HunterKitTest {
     "'{\"weapon\": \"nightborn:wooden_stake\"}', 0.0",
     "'{\"weapon\": \"nightborn:wooden_stake\", \"damage\": 6.0}', 6.0"
   })
+  @DisplayName("a kit reads its own damage, or none when it names none")
   void readsItsOwnDamageOrNone(final String json, final float damage) {
     assertEquals(
         damage,

@@ -211,8 +211,13 @@ public class GuildMasterEntity extends MerchantEntity
   }
 
   @Override
-  public float kitDamage(final boolean bolt) {
-    return KitDamage.of(kit, bolt);
+  public float blowDamage(final ItemStack weapon) {
+    return KitDamage.blow(kit, weapon);
+  }
+
+  @Override
+  public float boltDamage() {
+    return KitDamage.bolt(kit);
   }
 
   @Override

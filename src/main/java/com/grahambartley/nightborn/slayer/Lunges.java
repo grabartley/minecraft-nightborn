@@ -1,6 +1,7 @@
 package com.grahambartley.nightborn.slayer;
 
 import com.grahambartley.nightborn.gear.VampireBane;
+import com.grahambartley.nightborn.guild.KitDamage;
 import com.grahambartley.nightborn.landing.Landing;
 import com.grahambartley.nightborn.skill.PowerReach;
 import java.util.Optional;
@@ -71,7 +72,8 @@ public final class Lunges {
         VampireBane.strike(
             caster.getMainHandStack(),
             target,
-            (float) caster.getAttributeValue(EntityAttributes.GENERIC_ATTACK_DAMAGE));
+            (float) caster.getAttributeValue(EntityAttributes.GENERIC_ATTACK_DAMAGE)
+                + KitDamage.strike(source(caster), target));
     if (target.damage(source(caster), blow(stakeBlow, power.stakeShare()))) {
       caster.getMainHandStack().damage(1, caster, EquipmentSlot.MAINHAND);
     }

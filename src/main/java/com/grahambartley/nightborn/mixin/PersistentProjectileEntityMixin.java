@@ -28,7 +28,7 @@ abstract class PersistentProjectileEntityMixin {
         VampireBane.projectileBase(
             nightborn$baseDamage,
             VampireBane.ammoBonus(self.getItemStack(), hit.getEntity())
-                + KitDamage.bolt(self.getOwner(), hit.getEntity()),
+                + KitDamage.shot(self.getOwner(), hit.getEntity()),
             self.getVelocity().length());
   }
 

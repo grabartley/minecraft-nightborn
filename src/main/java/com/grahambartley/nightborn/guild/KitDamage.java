@@ -4,25 +4,39 @@ import com.grahambartley.nightborn.vampire.Vampires;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
+import net.minecraft.item.ItemStack;
+import net.minecraft.registry.Registries;
 import org.jetbrains.annotations.Nullable;
 
 public final class KitDamage {
 
   private KitDamage() {}
 
-  static float of(@Nullable final HunterKit kit, final boolean bolt) {
-    return kit != null && kit.ranged() == bolt ? kit.damage() : 0.0F;
-  }
-
-  public static float strike(final DamageSource source, final Entity target) {
-    return source.isDirect() && source.getAttacker() instanceof GuildFighter fighter
-        ? against(vampire(target), fighter.kitDamage(false))
+  static float blow(@Nullable final HunterKit kit, final ItemStack weapon) {
+    return kit != null
+            && !kit.ranged()
+            && !weapon.isEmpty()
+            && Registries.ITEM.getId(weapon.getItem()).equals(kit.weapon())
+        ? kit.damage()
         : 0.0F;
   }
 
-  public static float bolt(@Nullable final Entity owner, final Entity target) {
+  static float bolt(@Nullable final HunterKit kit) {
+    return kit != null && kit.ranged() ? kit.damage() : 0.0F;
+  }
+
+  public static float strike(final DamageSource source, final Entity target) {
+    final ItemStack weapon = source.getWeaponStack();
+    return source.isDirect()
+            && weapon != null
+            && source.getAttacker() instanceof GuildFighter fighter
+        ? against(vampire(target), fighter.blowDamage(weapon))
+        : 0.0F;
+  }
+
+  public static float shot(@Nullable final Entity owner, final Entity target) {
     return owner instanceof GuildFighter fighter
-        ? against(vampire(target), fighter.kitDamage(true))
+        ? against(vampire(target), fighter.boltDamage())
         : 0.0F;
   }
 

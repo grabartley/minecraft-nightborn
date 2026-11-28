@@ -69,8 +69,8 @@ public class VeteranHunterEntity extends HunterEntity {
   }
 
   @Override
-  public float kitDamage(final boolean bolt) {
-    return bolt ? veteran().map(Veteran::boltDamage).orElse(0.0F) : super.kitDamage(false);
+  public float boltDamage() {
+    return veteran().map(Veteran::boltDamage).orElse(0.0F);
   }
 
   private Optional<Veteran> veteran() {

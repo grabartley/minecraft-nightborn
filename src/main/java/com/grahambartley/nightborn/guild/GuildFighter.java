@@ -2,6 +2,7 @@ package com.grahambartley.nightborn.guild;
 
 import java.util.Optional;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.item.ItemStack;
 
 public interface GuildFighter {
 
@@ -17,5 +18,7 @@ public interface GuildFighter {
 
   Optional<GuildMasterEntity> master();
 
-  float kitDamage(boolean bolt);
+  float blowDamage(ItemStack weapon);
+
+  float boltDamage();
 }

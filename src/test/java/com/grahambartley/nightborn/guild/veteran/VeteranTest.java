@@ -15,6 +15,7 @@ import java.util.Optional;
 import java.util.Set;
 import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
@@ -86,6 +87,7 @@ class VeteranTest {
 
   @ParameterizedTest(name = "{0} adds {1} to each bolt it looses")
   @CsvSource({"veteran, 4.0"})
+  @DisplayName("a veteran ships the damage it adds to each bolt it looses at a vampire")
   void shipsItsOwnBoltDamage(final String name, final float damage) throws IOException {
     assertEquals(damage, shipped(name).boltDamage());
   }
