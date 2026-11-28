@@ -7,6 +7,7 @@ import com.grahambartley.nightborn.client.gore.BloodFx;
 import com.grahambartley.nightborn.client.mirror.MirrorScreen;
 import com.grahambartley.nightborn.client.moment.CeremonyView;
 import com.grahambartley.nightborn.client.name.StageNameView;
+import com.grahambartley.nightborn.client.particle.FlatDecalParticle;
 import com.grahambartley.nightborn.client.sight.RevealView;
 import com.grahambartley.nightborn.client.smoke.SmokeFx;
 import com.grahambartley.nightborn.client.sun.ParasolHeldModel;
@@ -56,6 +57,7 @@ public final class VampireClientFeatures {
     BuiltinItemRendererRegistry.INSTANCE.register(ParasolItems.PARASOL, new ParasolRenderer());
     ParasolHeldModel.register();
     RevealView.register();
+    FlatDecalParticle.register();
     VomitFx.register();
     BloodFx.register();
     SmokeFx.register();

@@ -2,6 +2,9 @@
   "textures": [
     "nightborn:vomit_splash_0",
     "nightborn:vomit_splash_1",
-    "nightborn:vomit_splash_2"
+    "nightborn:vomit_splash_2",
+    "nightborn:vomit_splash_body_0",
+    "nightborn:vomit_splash_body_1",
+    "nightborn:vomit_splash_body_2"
   ]
 }
