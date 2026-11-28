@@ -39,4 +39,11 @@ class BleedTrailTest {
   void drawn(final GoreLevel gore, final ParticlesMode particles, final boolean drawn) {
     assertEquals(drawn, BleedTrail.drawn(gore, particles));
   }
+
+  @ParameterizedTest(name = "{0} laid this tick: another {1}")
+  @CsvSource({"0, true", "7, true", "8, false", "40, false"})
+  @DisplayName("a crowd of bleeding bodies shares a small budget of trail splats a tick")
+  void affordable(final int laid, final boolean more) {
+    assertEquals(more, BleedTrail.affordable(laid));
+  }
 }

@@ -854,6 +854,7 @@
   "subtitles.nightborn.power.bat_form.leave": "Murciélago vuelve a ser vampiro",
   "death.attack.nightborn.vomit": "%1$s enfermó por comida mortal",
   "death.attack.nightborn.bleeding": "%1$s se desangró",
+  "death.attack.nightborn.searing": "%1$s cauterizó una herida y no lo soportó",
   "item.nightborn.tricorne": "Tricornio",
   "item.nightborn.top_hat": "Sombrero de copa",
   "item.nightborn.wide_brimmed_hat": "Sombrero de ala ancha",

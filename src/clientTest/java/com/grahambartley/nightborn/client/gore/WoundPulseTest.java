@@ -45,4 +45,16 @@ class WoundPulseTest {
   void allowed(final int spent, final int drops, final int allowed) {
     assertEquals(allowed, WoundPulse.allowed(spent, drops));
   }
+
+  @ParameterizedTest(name = "invisible {0}, own first person view {1}: shown {2}")
+  @CsvSource({
+    "false, false, true",
+    "true, false, false",
+    "false, true, false",
+    "true, true, false"
+  })
+  @DisplayName("wound blood is not drawn on a hidden body or at the bleeding player's own camera")
+  void shown(final boolean invisible, final boolean ownFirstPerson, final boolean shown) {
+    assertEquals(shown, WoundPulse.shown(invisible, ownFirstPerson));
+  }
 }

@@ -21,7 +21,8 @@ class NightbornDamageTest {
         NightbornDamage.STAKE,
         NightbornDamage.VOMIT,
         NightbornDamage.LANCET,
-        NightbornDamage.BLEEDING);
+        NightbornDamage.BLEEDING,
+        NightbornDamage.SEARING);
   }
 
   @ParameterizedTest(name = "{0}")

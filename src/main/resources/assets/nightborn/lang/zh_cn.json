@@ -854,6 +854,7 @@
   "subtitles.nightborn.power.bat_form.leave": "蝙蝠：变回吸血鬼",
   "death.attack.nightborn.vomit": "%1$s 被凡人的食物害得病倒",
   "death.attack.nightborn.bleeding": "%1$s 流血而死",
+  "death.attack.nightborn.searing": "%1$s 烙合伤口时没能撑住",
   "item.nightborn.tricorne": "三角帽",
   "item.nightborn.top_hat": "高礼帽",
   "item.nightborn.wide_brimmed_hat": "宽檐帽",

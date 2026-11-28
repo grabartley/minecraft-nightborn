@@ -1,6 +1,7 @@
 package com.grahambartley.nightborn.dismember;
 
 import com.grahambartley.nightborn.Nightborn;
+import com.grahambartley.nightborn.vampire.NightbornDamage;
 import net.fabricmc.fabric.api.event.player.UseItemCallback;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.Item;
@@ -35,7 +36,7 @@ public final class WoundSearing {
                 player.getSoundCategory(),
                 1.0F,
                 1.0F);
-            player.damage(world.getDamageSources().inFire(), SEAR_DAMAGE);
+            player.damage(NightbornDamage.searing(world), SEAR_DAMAGE);
             if (stack.isDamageable()) {
               stack.damage(1, player, LivingEntity.getSlotForHand(hand));
             }

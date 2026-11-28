@@ -854,6 +854,7 @@
   "subtitles.nightborn.power.bat_form.leave": "Morcego volta a ser vampiro",
   "death.attack.nightborn.vomit": "%1$s adoeceu com comida mortal",
   "death.attack.nightborn.bleeding": "%1$s sangrou até a morte",
+  "death.attack.nightborn.searing": "%1$s cauterizou uma ferida e não aguentou",
   "item.nightborn.tricorne": "Tricórnio",
   "item.nightborn.top_hat": "Cartola",
   "item.nightborn.wide_brimmed_hat": "Chapéu de aba larga",

@@ -854,6 +854,7 @@
   "subtitles.nightborn.power.bat_form.leave": "Une chauve-souris redevient vampire",
   "death.attack.nightborn.vomit": "%1$s a été rendu malade par une nourriture mortelle",
   "death.attack.nightborn.bleeding": "%1$s s'est vidé de son sang",
+  "death.attack.nightborn.searing": "%1$s a cautérisé une plaie et n'a pas tenu le coup",
   "item.nightborn.tricorne": "Tricorne",
   "item.nightborn.top_hat": "Haut-de-forme",
   "item.nightborn.wide_brimmed_hat": "Chapeau à larges bords",

@@ -19,6 +19,7 @@ public final class NightbornDamage {
   public static final RegistryKey<DamageType> VOMIT = key("vomit");
   public static final RegistryKey<DamageType> LANCET = key("lancet");
   public static final RegistryKey<DamageType> BLEEDING = key("bleeding");
+  public static final RegistryKey<DamageType> SEARING = key("searing");
 
   public static final TagKey<DamageType> KILLS_VAMPIRES =
       TagKey.of(RegistryKeys.DAMAGE_TYPE, Identifier.of(Nightborn.MOD_ID, "kills_vampires"));
@@ -54,6 +55,11 @@ public final class NightbornDamage {
   public static DamageSource bleeding(final World world) {
     return new DamageSource(
         world.getRegistryManager().get(RegistryKeys.DAMAGE_TYPE).entryOf(BLEEDING));
+  }
+
+  public static DamageSource searing(final World world) {
+    return new DamageSource(
+        world.getRegistryManager().get(RegistryKeys.DAMAGE_TYPE).entryOf(SEARING));
   }
 
   public static boolean killsVampires(final DamageSource source) {

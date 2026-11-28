@@ -854,6 +854,7 @@
   "subtitles.nightborn.power.bat_form.leave": "Bat turns back into a vampire",
   "death.attack.nightborn.vomit": "%1$s was sickened by mortal food",
   "death.attack.nightborn.bleeding": "%1$s bled to death",
+  "death.attack.nightborn.searing": "%1$s seared a wound shut and could not bear it",
   "item.nightborn.tricorne": "Tricorne",
   "item.nightborn.top_hat": "Top Hat",
   "item.nightborn.wide_brimmed_hat": "Wide-Brimmed Hat",

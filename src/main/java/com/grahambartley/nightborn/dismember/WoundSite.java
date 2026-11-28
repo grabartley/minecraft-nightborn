@@ -14,7 +14,11 @@ public final class WoundSite {
       final BodyPart part,
       final double width,
       final double height,
-      final float bodyYaw) {
+      final float bodyYaw,
+      final boolean upright) {
+    if (!upright) {
+      return new Vec3d(0.0, height / 2.0, 0.0);
+    }
     final double halfWidth = width / 2.0;
     return switch (part) {
       case HEAD -> new Vec3d(0.0, height * (1.0 - zones.head()), 0.0);

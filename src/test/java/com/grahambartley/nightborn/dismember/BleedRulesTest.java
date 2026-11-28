@@ -33,6 +33,13 @@ class BleedRulesTest {
     assertEquals(pulse, BleedRules.pulses(100L, now, seconds));
   }
 
+  @ParameterizedTest(name = "first cut at 100, second at {0}, now {1}: pulse {2}")
+  @CsvSource({"130, 160, false", "130, 190, true", "200, 260, true", "200, 250, false"})
+  @DisplayName("a second cut restarts the pulse for every open wound from that cut")
+  void secondCutRestartsThePulse(final long secondCut, final long now, final boolean pulse) {
+    assertEquals(pulse, BleedRules.pulses(secondCut, now, 3));
+  }
+
   @ParameterizedTest(name = "health {0} loses {1}")
   @CsvSource({"20, 1", "3, 1", "2.5, 0.5", "2, 0", "1, 0", "0.5, 0"})
   @DisplayName("a human loses half a heart a pulse and never drops below one heart from bleeding")

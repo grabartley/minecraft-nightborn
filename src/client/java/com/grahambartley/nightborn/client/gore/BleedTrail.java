@@ -7,11 +7,16 @@ public final class BleedTrail {
 
   static final double FULL_SPACING = 1.0;
   static final double REDUCED_SPACING = 2.0;
+  static final int SPLAT_BUDGET = 8;
 
   private BleedTrail() {}
 
   public static boolean drawn(final GoreLevel gore, final ParticlesMode particles) {
     return SplatterLook.of(gore).drawn() && particles != ParticlesMode.MINIMAL;
+  }
+
+  public static boolean affordable(final int laid) {
+    return laid < SPLAT_BUDGET;
   }
 
   public static boolean due(

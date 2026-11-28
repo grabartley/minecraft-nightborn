@@ -854,6 +854,7 @@
   "subtitles.nightborn.power.bat_form.leave": "Fledermaus wird wieder zum Vampir",
   "death.attack.nightborn.vomit": "%1$s wurde von sterblicher Nahrung krank",
   "death.attack.nightborn.bleeding": "%1$s ist verblutet",
+  "death.attack.nightborn.searing": "%1$s brannte eine Wunde zu und hielt es nicht aus",
   "item.nightborn.tricorne": "Dreispitz",
   "item.nightborn.top_hat": "Zylinder",
   "item.nightborn.wide_brimmed_hat": "Breitkrempiger Hut",

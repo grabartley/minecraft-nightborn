@@ -15,6 +15,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.ParticlesMode;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityPose;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.math.Direction;
@@ -28,6 +29,10 @@ public final class WoundBleeds {
   static final int TRAIL_REACH = 1;
   static final float DRIP_VOLUME = 0.5F;
   static final float DRIP_PITCH = 0.7F;
+  static final float DRIP_PITCH_SPREAD = 0.1F;
+  static final double PULSE_SPEED = 0.12;
+  static final double PULSE_JITTER = 0.03;
+  static final double PULSE_LIFT = 0.05;
 
   private static final Int2ObjectOpenHashMap<Vec3d> LAST_SPLAT = new Int2ObjectOpenHashMap<>();
 
@@ -46,7 +51,9 @@ public final class WoundBleeds {
                 part,
                 entity.getWidth(),
                 entity.getHeight(),
-                entity.bodyYaw));
+                entity.bodyYaw,
+                entity.getPose() == EntityPose.STANDING
+                    || entity.getPose() == EntityPose.CROUCHING));
   }
 
   private static void tick(final ClientWorld world) {
@@ -60,6 +67,7 @@ public final class WoundBleeds {
     final Vec3d eye = client.gameRenderer.getCamera().getPos();
     final long now = world.getTime();
     int spent = 0;
+    int laid = 0;
     final Int2ObjectOpenHashMap<Vec3d> seen = new Int2ObjectOpenHashMap<>();
     for (final Entity entity : world.getEntities()) {
       if (!(entity instanceof LivingEntity living)
@@ -80,11 +88,28 @@ public final class WoundBleeds {
             SoundEvents.BLOCK_POINTED_DRIPSTONE_DRIP_WATER,
             living.getSoundCategory(),
             DRIP_VOLUME,
-            DRIP_PITCH + world.random.nextFloat() * 0.1F,
+            DRIP_PITCH + world.random.nextFloat() * DRIP_PITCH_SPREAD,
             false);
       }
-      spent += pulse(client, world, living, body.openWounds(now), gore, particles, sinceCut, spent);
-      seen.put(living.getId(), trail(client, world, living, gore, particles));
+      if (WoundPulse.shown(
+          living.isInvisible(),
+          living == client.player && client.options.getPerspective().isFirstPerson())) {
+        spent +=
+            pulse(client, world, living, body.openWounds(now), gore, particles, sinceCut, spent);
+      }
+      if (living.isInvisible()) {
+        continue;
+      }
+      final Vec3d last = LAST_SPLAT.get(living.getId());
+      final boolean due =
+          last == null || BleedTrail.due(gore, particles, last.squaredDistanceTo(living.getPos()));
+      if (due && BleedTrail.affordable(laid)) {
+        splat(client, world, living, gore, particles);
+        laid++;
+        seen.put(living.getId(), living.getPos());
+      } else if (last != null) {
+        seen.put(living.getId(), last);
+      }
     }
     LAST_SPLAT.clear();
     LAST_SPLAT.putAll(seen);
@@ -105,16 +130,16 @@ public final class WoundBleeds {
     for (final BodyPart part : wounds) {
       final int drops = WoundPulse.allowed(spent + used, beat.drops());
       final Vec3d at = site(world, living, part);
-      final Vec3d out = WoundSite.outward(part, living.bodyYaw).multiply(0.12);
+      final Vec3d out = WoundSite.outward(part, living.bodyYaw).multiply(PULSE_SPEED);
       for (int i = 0; i < drops; i++) {
         BloodParticleFactories.spawnDrop(
             client,
             at,
             out.add(living.getVelocity())
                 .add(
-                    random.nextGaussian() * 0.03,
-                    random.nextDouble() * 0.05,
-                    random.nextGaussian() * 0.03),
+                    random.nextGaussian() * PULSE_JITTER,
+                    random.nextDouble() * PULSE_LIFT,
+                    random.nextGaussian() * PULSE_JITTER),
             beat.look());
       }
       used += drops;
@@ -122,30 +147,27 @@ public final class WoundBleeds {
     return used;
   }
 
-  private static Vec3d trail(
+  private static void splat(
       final MinecraftClient client,
       final ClientWorld world,
       final LivingEntity living,
       final GoreLevel gore,
       final ParticlesMode particles) {
-    final Vec3d feet = living.getPos();
-    final Vec3d last = LAST_SPLAT.get(living.getId());
-    if (last != null && !BleedTrail.due(gore, particles, last.squaredDistanceTo(feet))) {
-      return last;
+    if (!BleedTrail.drawn(gore, particles)) {
+      return;
     }
-    if (BleedTrail.drawn(gore, particles)) {
-      final double spread = living.getWidth() / 2.0;
-      final Vec3d spot =
-          feet.add(
-              (world.random.nextDouble() - 0.5) * spread,
-              0.0,
-              (world.random.nextDouble() - 0.5) * spread);
-      DecalSurface.floorBelow(world, spot, TRAIL_REACH)
-          .ifPresent(
-              floor ->
-                  BloodParticleFactories.spawnSplat(
-                      client, floor, Direction.UP, SplatterLook.of(gore), false));
-    }
-    return feet;
+    final double spread = living.getWidth() / 2.0;
+    final Vec3d spot =
+        living
+            .getPos()
+            .add(
+                (world.random.nextDouble() - 0.5) * spread,
+                0.0,
+                (world.random.nextDouble() - 0.5) * spread);
+    DecalSurface.floorBelow(world, spot, TRAIL_REACH)
+        .ifPresent(
+            floor ->
+                BloodParticleFactories.spawnSplat(
+                    client, floor, Direction.UP, SplatterLook.of(gore), false));
   }
 }

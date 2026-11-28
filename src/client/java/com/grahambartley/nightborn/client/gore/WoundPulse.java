@@ -23,6 +23,10 @@ public record WoundPulse(int drops, SplatterLook look) {
     return new WoundPulse(Math.max(1, FULL_DROPS * share / 4), look);
   }
 
+  public static boolean shown(final boolean invisible, final boolean ownFirstPerson) {
+    return !invisible && !ownFirstPerson;
+  }
+
   public static boolean drips(final long sinceCut) {
     return sinceCut > 0 && sinceCut % DRIP_TICKS == 0;
   }

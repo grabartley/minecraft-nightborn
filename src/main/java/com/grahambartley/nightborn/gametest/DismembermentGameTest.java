@@ -74,17 +74,21 @@ public class DismembermentGameTest implements FabricGameTest {
     context.complete();
   }
 
-  @GameTest(templateName = GoreGameTest.ARENA, tickLimit = 160)
+  @GameTest(templateName = GoreGameTest.ARENA, tickLimit = 180)
   public void aHumanBleedsToOneHeartAndAWoundCanBeBound(final TestContext context) {
     final HunterEntity hunter = context.spawnEntity(GuildMobs.HUNTER, new BlockPos(3, 2, 3));
     hunter.setAiDisabled(true);
-    hunter.setHealth(3.0F);
-    Dismemberment.sever(hunter, BodyPart.LEFT_ARM);
-    context.assertTrue(Wounds.bleeding(hunter), "a fresh cut bleeds");
     context.waitAndRun(
-        140L,
+        5L,
         () -> {
-          context.assertEquals(2.0F, hunter.getHealth(), "health after bleeding a while");
+          hunter.setHealth(3.0F);
+          Dismemberment.sever(hunter, BodyPart.LEFT_ARM);
+          context.assertTrue(Wounds.bleeding(hunter), "a fresh cut bleeds");
+        });
+    context.waitAndRun(
+        145L,
+        () -> {
+          context.assertEquals(hunter.getHealth(), 2.0F, "health after bleeding a while");
           context.assertTrue(Wounds.bleeding(hunter), "the wound is still open");
           Wounds.close(hunter);
           context.assertFalse(Wounds.bleeding(hunter), "a bound wound stops bleeding");
