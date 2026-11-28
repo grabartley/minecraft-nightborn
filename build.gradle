@@ -38,6 +38,10 @@ repositories {
 	}
 }
 
+sourceSets {
+	balance
+}
+
 loom {
 	splitEnvironmentSourceSets()
 
@@ -47,6 +51,9 @@ loom {
 		"nightborn" {
 			sourceSet sourceSets.main
 			sourceSet sourceSets.client
+		}
+		"nightborn_balance" {
+			sourceSet sourceSets.balance
 		}
 	}
 
@@ -68,6 +75,15 @@ loom {
 			inherit gametest
 			name "Game Test Server"
 		}
+		balance {
+			server()
+			name "NPC Fight Balance"
+			source sourceSets.balance
+			runDir "build/balance"
+			programArgs "--nogui"
+			vmArg "-Dnightborn.balance.rounds=${project.findProperty('balanceRounds') ?: '20'}"
+			vmArg "-Dnightborn.balance.matchups=${project.findProperty('balanceMatchups') ?: ''}"
+		}
 		serverSmoke {
 			server()
 			name "Server Smoke Boot"
@@ -78,6 +94,14 @@ loom {
 }
 
 sourceSets {
+	balance {
+		compileClasspath += sourceSets.main.compileClasspath + sourceSets.main.output
+		runtimeClasspath += sourceSets.main.runtimeClasspath + sourceSets.main.output
+	}
+	test {
+		compileClasspath += sourceSets.balance.output
+		runtimeClasspath += sourceSets.balance.output
+	}
 	clientTest {
 		compileClasspath += sourceSets.client.compileClasspath + sourceSets.client.output + sourceSets.main.output + sourceSets.test.output
 		runtimeClasspath += sourceSets.client.runtimeClasspath + sourceSets.client.compileClasspath + sourceSets.client.output + sourceSets.main.output + sourceSets.test.output
@@ -148,6 +172,27 @@ test {
 		exceptionFormat "full"
 	}
 	finalizedBy jacocoTestReport
+}
+
+tasks.named("runBalance") {
+	doFirst {
+		def dir = file("build/balance")
+		delete file("build/balance/world")
+		dir.mkdirs()
+		file("build/balance/eula.txt").text = "eula=true\n"
+		file("build/balance/server.properties").text = [
+			"online-mode=false",
+			"level-type=minecraft\\:flat",
+			"generate-structures=false",
+			"difficulty=normal",
+			"spawn-monsters=false",
+			"spawn-animals=false",
+			"spawn-protection=0",
+			"view-distance=4",
+			"simulation-distance=4",
+			"max-tick-time=-1"
+		].join("\n") + "\n"
+	}
 }
 
 tasks.register("clientTest", Test) {

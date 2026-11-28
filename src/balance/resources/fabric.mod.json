@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "id": "nightborn_balance",
+  "version": "1.0.0",
+  "name": "Nightborn Balance Scenario",
+  "description": "Runs the NPC fight balance scenario on a dedicated server and writes a report. Never shipped.",
+  "license": "MIT",
+  "environment": "server",
+  "entrypoints": {
+    "main": [
+      "com.grahambartley.nightborn.balance.NightbornBalance"
+    ]
+  },
+  "depends": {
+    "nightborn": "*"
+  }
+}
