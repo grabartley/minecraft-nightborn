@@ -49,7 +49,8 @@ public final class PlaceViews {
 
   private static int roomAbove(final MobEntity mob) {
     final World world = mob.getWorld();
-    final BlockPos head = BlockPos.ofFloored(mob.getX(), mob.getY() + mob.getHeight(), mob.getZ());
+    final BlockPos head =
+        BlockPos.ofFloored(mob.getX(), Math.ceil(mob.getBoundingBox().maxY), mob.getZ());
     return room(
         step -> {
           final BlockPos at = head.up(step);

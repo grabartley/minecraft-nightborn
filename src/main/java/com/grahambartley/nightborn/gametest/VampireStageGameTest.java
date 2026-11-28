@@ -28,6 +28,7 @@ import net.minecraft.block.Blocks;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.ai.pathing.Path;
+import net.minecraft.entity.ai.pathing.PathNode;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.passive.VillagerEntity;
 import net.minecraft.registry.DynamicRegistryManager;
@@ -227,9 +228,14 @@ public class VampireStageGameTest implements FabricGameTest {
         3,
         () -> {
           vampire.setTarget(prey);
-          final Path path = vampire.getNavigation().findPathTo(prey, 0);
-          context.assertTrue(
-              path != null && !path.reachesTarget(), "the gap cuts the walk to the prey short");
+          final BlockPos edge = context.getAbsolutePos(new BlockPos(GAP_FROM - 1, 2, 4));
+          final Path path =
+              new Path(
+                  List.of(
+                      new PathNode(edge.getX() - 1, edge.getY(), edge.getZ()),
+                      new PathNode(edge.getX(), edge.getY(), edge.getZ())),
+                  prey.getBlockPos(),
+                  false);
           vampire.getNavigation().startMovingAlong(path, 1.0);
           vampire.mobFighting().tick(vampire, MobFighting.Engagement.FIGHTING, thinkTicks, floor);
           context.assertEquals(

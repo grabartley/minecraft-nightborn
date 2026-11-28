@@ -37,7 +37,7 @@ public final class TargetSigns {
         Vampires.isVampire(target),
         Hunters.isHunter(target),
         aware(
-            target instanceof MobEntity hunter && hunter.getTarget() == mob,
+            target instanceof MobEntity foe && foe.getTarget() == mob,
             target.getAttacker() == mob,
             mob.getAttacker() == target));
   }
