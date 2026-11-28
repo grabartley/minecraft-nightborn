@@ -400,7 +400,7 @@
   "skill.nightborn.faithful.grace": "恩典",
   "skill.nightborn.faithful.grace.description": "每级使你的治疗祷告多治疗四分之一",
   "skill.nightborn.faithful.blood_fire": "血火",
-  "skill.nightborn.faithful.blood_fire.description": "割伤自己并点燃你的武器。它明亮燃烧，造成火焰伤害，点燃吸血鬼并使其在燃烧时无法治疗",
+  "skill.nightborn.faithful.blood_fire.description": "割伤自己并点燃你的武器。它明亮燃烧，造成火焰伤害，并点燃它击中的一切。吸血鬼在燃烧时无法治疗",
   "skill.nightborn.faithful.sanctuary": "圣所",
   "skill.nightborn.faithful.sanctuary.description": "祈祷一段时间。你周围的人类缓慢恢复，摆脱吸血鬼的凝视，且无法被定身或震慑",
   "skill.nightborn.faithful.consecrate": "祝圣",

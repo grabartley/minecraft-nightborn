@@ -400,7 +400,7 @@
   "skill.nightborn.faithful.grace": "Grace",
   "skill.nightborn.faithful.grace.description": "Your healing prayers heal a quarter more with each rank",
   "skill.nightborn.faithful.blood_fire": "Blood Fire",
-  "skill.nightborn.faithful.blood_fire.description": "Cut yourself and set your weapon alight. It burns bright, deals fire damage, sets a vampire alight and stops it healing while it burns",
+  "skill.nightborn.faithful.blood_fire.description": "Cut yourself and set your weapon alight. It burns bright, deals fire damage and sets what it strikes alight. A vampire cannot heal while it burns",
   "skill.nightborn.faithful.sanctuary": "Sanctuary",
   "skill.nightborn.faithful.sanctuary.description": "Pray for a while. Humans around you slowly heal, are freed from a vampire's stare and cannot be stared still or cowed",
   "skill.nightborn.faithful.consecrate": "Consecrate",

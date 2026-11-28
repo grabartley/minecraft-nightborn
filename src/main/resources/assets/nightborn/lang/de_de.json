@@ -400,7 +400,7 @@
   "skill.nightborn.faithful.grace": "Gnade",
   "skill.nightborn.faithful.grace.description": "Deine Heilgebete heilen mit jeder Stufe ein Viertel mehr",
   "skill.nightborn.faithful.blood_fire": "Blutfeuer",
-  "skill.nightborn.faithful.blood_fire.description": "Schneide dich und setze deine Waffe in Brand. Sie brennt hell, verursacht Feuerschaden, setzt einen Vampir in Brand und hindert ihn am Heilen, solange er brennt",
+  "skill.nightborn.faithful.blood_fire.description": "Schneide dich und setze deine Waffe in Brand. Sie brennt hell, verursacht Feuerschaden und setzt in Brand, was sie trifft. Ein Vampir kann nicht heilen, solange er brennt",
   "skill.nightborn.faithful.sanctuary": "Zuflucht",
   "skill.nightborn.faithful.sanctuary.description": "Bete eine Weile. Menschen um dich heilen langsam, werden vom Blick eines Vampirs befreit und können weder gebannt noch eingeschüchtert werden",
   "skill.nightborn.faithful.consecrate": "Weihe",

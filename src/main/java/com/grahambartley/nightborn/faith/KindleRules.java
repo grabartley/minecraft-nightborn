@@ -8,8 +8,12 @@ public final class KindleRules {
     return health > cost;
   }
 
-  public static boolean sets(final boolean vampire, final boolean weaponBlow) {
-    return vampire && weaponBlow;
+  public static boolean sets(final boolean fireImmune, final boolean weaponBlow) {
+    return weaponBlow && !fireImmune;
+  }
+
+  public static boolean sears(final boolean vampire) {
+    return vampire;
   }
 
   public static float heal(final float amount, final boolean seared, final boolean onFire) {

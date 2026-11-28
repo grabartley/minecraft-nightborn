@@ -400,7 +400,7 @@
   "skill.nightborn.faithful.grace": "Gracia",
   "skill.nightborn.faithful.grace.description": "Tus oraciones de curación curan una cuarta parte más con cada rango",
   "skill.nightborn.faithful.blood_fire": "Fuego de sangre",
-  "skill.nightborn.faithful.blood_fire.description": "Córtate y prende fuego a tu arma. Arde con fuerza, causa daño de fuego, prende fuego a un vampiro y le impide curarse mientras arde",
+  "skill.nightborn.faithful.blood_fire.description": "Córtate y prende fuego a tu arma. Arde con fuerza, causa daño de fuego y prende fuego a lo que golpea. Un vampiro no puede curarse mientras arde",
   "skill.nightborn.faithful.sanctuary": "Santuario",
   "skill.nightborn.faithful.sanctuary.description": "Reza durante un tiempo. Los humanos a tu alrededor se curan poco a poco, quedan libres de la mirada de un vampiro y no pueden ser hechizados ni acobardados",
   "skill.nightborn.faithful.consecrate": "Consagrar",

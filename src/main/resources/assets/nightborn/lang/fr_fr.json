@@ -400,7 +400,7 @@
   "skill.nightborn.faithful.grace": "Grâce",
   "skill.nightborn.faithful.grace.description": "Tes prières de soin soignent un quart de plus à chaque rang",
   "skill.nightborn.faithful.blood_fire": "Feu de sang",
-  "skill.nightborn.faithful.blood_fire.description": "Entaille-toi et embrase ton arme. Elle brûle vivement, inflige des dégâts de feu, met le feu à un vampire et l'empêche de guérir tant qu'il brûle",
+  "skill.nightborn.faithful.blood_fire.description": "Entaille-toi et embrase ton arme. Elle brûle vivement, inflige des dégâts de feu et met le feu à ce qu'elle frappe. Un vampire ne peut pas guérir tant qu'il brûle",
   "skill.nightborn.faithful.sanctuary": "Sanctuaire",
   "skill.nightborn.faithful.sanctuary.description": "Prie un moment. Les humains autour de toi guérissent lentement, sont libérés du regard d'un vampire et ne peuvent être ni figés ni intimidés",
   "skill.nightborn.faithful.consecrate": "Consécration",

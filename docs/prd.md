@@ -507,7 +507,7 @@ The hunter tree has a core that every hunter shares, and four paths, of which a 
 | Path | What it gives |
 |---|---|
 | **Trapper** | Traps, nets and bait. The fight is won before it starts |
-| **Faithful** | Faith as a weapon: stronger holy things, prayers that heal, and a blade blessed or set alight |
+| **Faithful** | Faith as a weapon: stronger holy things, prayers that heal, and a blade blessed or set alight. A burning blade sets alight anything it strikes that can burn, and a vampire it burns cannot heal until the fire is out |
 | **Slayer** | The duellist: dodges, counters, stakes thrown and driven home, and bite resistance |
 | **Seeker** | Senses: longer tracking, warnings, a mark on a quarry, and sight that sees through a disguise, which a vampire player is told of |
 
