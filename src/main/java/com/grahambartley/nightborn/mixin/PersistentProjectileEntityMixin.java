@@ -2,6 +2,7 @@ package com.grahambartley.nightborn.mixin;
 
 import com.grahambartley.nightborn.coating.Coatings;
 import com.grahambartley.nightborn.gear.VampireBane;
+import com.grahambartley.nightborn.guild.KitDamage;
 import net.minecraft.entity.projectile.PersistentProjectileEntity;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.EntityHitResult;
@@ -26,7 +27,8 @@ abstract class PersistentProjectileEntityMixin {
     damage =
         VampireBane.projectileBase(
             nightborn$baseDamage,
-            VampireBane.ammoBonus(self.getItemStack(), hit.getEntity()),
+            VampireBane.ammoBonus(self.getItemStack(), hit.getEntity())
+                + KitDamage.bolt(self.getOwner(), hit.getEntity()),
             self.getVelocity().length());
   }
 

@@ -6,7 +6,6 @@ import com.grahambartley.nightborn.MinecraftBootstrapExtension;
 import java.util.Optional;
 import net.minecraft.util.Identifier;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -24,7 +23,7 @@ class KitDamageTest {
         damage);
   }
 
-  @ParameterizedTest(name = "ranged {0}, damage {1}: melee {2}, bolt {3}")
+  @ParameterizedTest(name = "ranged {0}, damage {1}: blow {2}, bolt {3}")
   @CsvSource({
     "false, 6.0, 6.0, 0.0",
     "false, 11.0, 11.0, 0.0",
@@ -35,16 +34,23 @@ class KitDamageTest {
   @DisplayName(
       "a kit's damage lands on its own weapon: the blow for a hand weapon, the bolt for a crossbow")
   void landsOnItsWeapon(
-      final boolean ranged, final float damage, final float melee, final float bolt) {
+      final boolean ranged, final float damage, final float blow, final float bolt) {
     final HunterKit kit = kit(ranged, damage);
-    assertEquals(melee, KitDamage.melee(kit));
-    assertEquals(bolt, KitDamage.bolt(kit));
+    assertEquals(blow, KitDamage.of(kit, false));
+    assertEquals(bolt, KitDamage.of(kit, true));
   }
 
-  @Test
-  @DisplayName("a hunter with no kit gains nothing")
-  void noKit() {
-    assertEquals(0.0F, KitDamage.melee(null));
-    assertEquals(0.0F, KitDamage.bolt(null));
+  @ParameterizedTest(name = "bolt {0}")
+  @CsvSource({"true", "false"})
+  @DisplayName("a hunter with no kit adds nothing")
+  void noKit(final boolean bolt) {
+    assertEquals(0.0F, KitDamage.of(null, bolt));
+  }
+
+  @ParameterizedTest(name = "vampire {0}, damage {1}: {2}")
+  @CsvSource({"true, 6.0, 6.0", "true, 11.0, 11.0", "false, 6.0, 0.0", "false, 11.0, 0.0"})
+  @DisplayName("a kit's damage lands on vampires only")
+  void vampiresOnly(final boolean vampire, final float damage, final float dealt) {
+    assertEquals(dealt, KitDamage.against(vampire, damage));
   }
 }

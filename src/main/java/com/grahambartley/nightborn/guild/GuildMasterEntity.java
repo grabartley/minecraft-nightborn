@@ -211,6 +211,11 @@ public class GuildMasterEntity extends MerchantEntity
   }
 
   @Override
+  public float kitDamage(final boolean bolt) {
+    return KitDamage.of(kit, bolt);
+  }
+
+  @Override
   public boolean armed() {
     return dataTracker.get(ARMED);
   }
@@ -305,7 +310,6 @@ public class GuildMasterEntity extends MerchantEntity
             .map(Identifier::toString)
             .orElse("");
     kit = kits.get(Identifier.tryParse(kitId));
-    KitDamage.arm(this, kit);
   }
 
   @Override

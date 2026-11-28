@@ -16,4 +16,6 @@ public interface GuildFighter {
   boolean foeOf(LivingEntity target);
 
   Optional<GuildMasterEntity> master();
+
+  float kitDamage(boolean bolt);
 }

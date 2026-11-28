@@ -231,6 +231,11 @@ public class HunterEntity extends PathAwareEntity
     return kitId;
   }
 
+  @Override
+  public float kitDamage(final boolean bolt) {
+    return KitDamage.of(kit, bolt);
+  }
+
   public boolean standsOff() {
     return kit != null && kit.ranged();
   }
@@ -465,7 +470,6 @@ public class HunterEntity extends PathAwareEntity
   protected void carry(final String id, @Nullable final HunterKit carried) {
     kitId = id;
     kit = carried;
-    KitDamage.arm(this, carried);
   }
 
   @Override

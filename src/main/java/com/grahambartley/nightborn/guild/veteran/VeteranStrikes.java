@@ -7,7 +7,6 @@ import com.grahambartley.nightborn.coating.Coatings;
 import com.grahambartley.nightborn.guild.Aim;
 import com.grahambartley.nightborn.guild.GuildData;
 import com.grahambartley.nightborn.guild.HunterEntity;
-import com.grahambartley.nightborn.guild.KitDamage;
 import com.grahambartley.nightborn.holy.HolyWater;
 import com.grahambartley.nightborn.landing.Landing;
 import com.grahambartley.nightborn.mind.MindTies;
@@ -75,10 +74,12 @@ final class VeteranStrikes {
       if (bolt.isIn(Coatings.AMMO)) {
         bolt.set(Coatings.COAT, Coat.fresh(Coating.HOLY_WATER));
       }
-      final ProjectileEntity shot =
-          ammo.createProjectile(veteran.getWorld(), veteran, bolt, bow, false);
-      KitDamage.sharpen(shot, veteran.boltDamage(), BOLT_SPEED);
-      launch(veteran, shot, aim.add(0.0, AIM_HEIGHT, 0.0), BOLT_SPEED, BOLT_SPREAD);
+      launch(
+          veteran,
+          ammo.createProjectile(veteran.getWorld(), veteran, bolt, bow, false),
+          aim.add(0.0, AIM_HEIGHT, 0.0),
+          BOLT_SPEED,
+          BOLT_SPREAD);
     }
     veteran.playSound(SoundEvents.ITEM_CROSSBOW_SHOOT, 1.0F, 0.9F);
   }
