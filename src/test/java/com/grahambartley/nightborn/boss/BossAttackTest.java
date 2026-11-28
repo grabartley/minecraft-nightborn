@@ -2,13 +2,22 @@ package com.grahambartley.nightborn.boss;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonParser;
+import com.google.gson.JsonPrimitive;
 import com.grahambartley.nightborn.MinecraftBootstrapExtension;
 import com.mojang.serialization.JsonOps;
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Set;
+import java.util.stream.Stream;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.MethodSource;
 
 @ExtendWith(MinecraftBootstrapExtension.class)
 class BossAttackTest {
@@ -112,5 +121,52 @@ class BossAttackTest {
                 JsonParser.parseString(json("zone", ",\"min_range\":4,\"max_range\":16")))
             .getOrThrow();
     assertEquals(reaches, attack.reaches(distance));
+  }
+
+  private static final Path ATTACKS =
+      Path.of("src/main/resources/data/nightborn/nightborn/boss_attack");
+  private static final Set<String> MARKED = Set.of("blood_step", "inquisitor_blows");
+  private static final JsonArray SEVERING = severing();
+
+  private static JsonArray severing() {
+    try {
+      return JsonParser.parseString(
+              Files.readString(
+                  Path.of("src/main/resources/data/nightborn/tags/damage_type/severing.json")))
+          .getAsJsonObject()
+          .getAsJsonArray("values");
+    } catch (final IOException e) {
+      throw new UncheckedIOException(e);
+    }
+  }
+
+  static Stream<String> shippedAttacks() throws IOException {
+    try (Stream<Path> files = Files.list(ATTACKS)) {
+      return files
+          .map(file -> file.getFileName().toString().replace(".json", ""))
+          .sorted()
+          .toList()
+          .stream();
+    }
+  }
+
+  @ParameterizedTest(name = "{0}")
+  @MethodSource("shippedAttacks")
+  @DisplayName("only the signature blow of each great boss's last phase is marked to cut")
+  void marked(final String id) throws IOException {
+    final BossAttack attack =
+        BossAttack.CODEC
+            .parse(
+                JsonOps.INSTANCE,
+                JsonParser.parseString(Files.readString(ATTACKS.resolve(id + ".json"))))
+            .getOrThrow();
+    assertEquals(
+        MARKED.contains(id),
+        attack
+            .zone()
+            .flatMap(zone -> zone.hit().damageType())
+            .or(() -> attack.flurry().flatMap(FlurryAttack::damageType))
+            .filter(type -> SEVERING.contains(new JsonPrimitive(type.getValue().toString())))
+            .isPresent());
   }
 }

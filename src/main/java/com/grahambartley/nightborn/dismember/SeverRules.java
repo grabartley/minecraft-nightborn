@@ -11,7 +11,7 @@ public final class SeverRules {
   private SeverRules() {}
 
   public record Victim(
-      boolean maimable,
+      BodyRule rule,
       boolean player,
       float maxHealth,
       float health,
@@ -33,7 +33,7 @@ public final class SeverRules {
         && taken >= share(settings.strongBlow(), victim.maxHealth())
         && open(victim, share(settings.badlyHurt(), victim.maxHealth()))
         && !victim.cutRecently()
-        && roll < settings.severChance() / 100.0;
+        && roll < settings.severChance() / 100.0 * victim.rule().chanceScale();
   }
 
   public static Optional<BodyPart> part(final Optional<BodyPart> aimed, final BodyState body) {
@@ -48,7 +48,7 @@ public final class SeverRules {
     if (victim.player()) {
       return settings.playersMaimed() && (!byPlayer || pvp);
     }
-    return victim.maimable();
+    return victim.rule().maimable();
   }
 
   static boolean cuts(final Blow blow, final float taken, final float massive) {
@@ -56,7 +56,8 @@ public final class SeverRules {
   }
 
   static boolean open(final Victim victim, final float badlyHurt) {
-    return victim.staggered() || victim.health() < badlyHurt;
+    return victim.staggered()
+        || (!victim.rule().onlyWhenStaggered() && victim.health() < badlyHurt);
   }
 
   static float share(final int percent, final float maxHealth) {

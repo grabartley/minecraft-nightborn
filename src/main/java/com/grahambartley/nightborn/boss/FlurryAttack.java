@@ -2,8 +2,18 @@ package com.grahambartley.nightborn.boss;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import java.util.Optional;
+import net.minecraft.entity.damage.DamageType;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.RegistryKeys;
 
-public record FlurryAttack(int hits, int everyTicks, float damage, float reach, float lunge) {
+public record FlurryAttack(
+    int hits,
+    int everyTicks,
+    float damage,
+    float reach,
+    float lunge,
+    Optional<RegistryKey<DamageType>> damageType) {
 
   static final double ARC = 0.2;
 
@@ -24,7 +34,10 @@ public record FlurryAttack(int hits, int everyTicks, float damage, float reach, 
                           .forGetter(FlurryAttack::reach),
                       Codec.floatRange(0.0F, 3.0F)
                           .optionalFieldOf("lunge", 0.4F)
-                          .forGetter(FlurryAttack::lunge))
+                          .forGetter(FlurryAttack::lunge),
+                      RegistryKey.createCodec(RegistryKeys.DAMAGE_TYPE)
+                          .optionalFieldOf("damage_type")
+                          .forGetter(FlurryAttack::damageType))
                   .apply(instance, FlurryAttack::new));
 
   public int ticks() {

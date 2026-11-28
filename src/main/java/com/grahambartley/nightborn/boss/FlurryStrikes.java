@@ -37,7 +37,7 @@ public final class FlurryStrikes {
                         facing.z,
                         entity.getX() - boss.getX(),
                         entity.getZ() - boss.getZ()))) {
-      victim.damage(boss.getDamageSources().mobAttack(boss), flurry.damage());
+      victim.damage(StrikeSource.of(world, boss, flurry.damageType()), flurry.damage());
     }
   }
 }

@@ -1,6 +1,7 @@
 package com.grahambartley.nightborn.fight;
 
 import com.grahambartley.nightborn.Nightborn;
+import com.grahambartley.nightborn.dismember.BodyRuleData;
 import com.grahambartley.nightborn.gear.Staking;
 import com.grahambartley.nightborn.gear.VampireBane;
 import com.grahambartley.nightborn.vampire.NightbornDamage;
@@ -29,14 +30,21 @@ public final class BlowReading {
   private BlowReading() {}
 
   public static Blow read(final DamageSource source) {
+    final Cutting cutting = BodyRuleData.cutting(source.getAttacker());
     final boolean stake = Staking.staked(source);
     final Entity direct = source.getSource();
+    final boolean marked = source.isIn(SEVERING);
     return new Blow(
         source.isOf(NightbornDamage.BITE),
         stake,
         VampireBane.isSilverBlow(source),
-        VampireBane.meleeWith(source, SEVERING_WEAPONS) || source.isIn(SEVERING),
+        cutting.severing(
+            marked,
+            VampireBane.meleeWith(source, SEVERING_WEAPONS),
+            source.isDirect() && source.isIn(NightbornDamage.WEAPON_BLOWS)),
         barred(
+            cutting,
+            marked,
             stake || source.isIn(NEVER_SEVERS),
             direct != null && direct.getType().isIn(NEVER_SEVERING_SHOTS),
             source.isDirect()
@@ -51,11 +59,13 @@ public final class BlowReading {
   }
 
   static boolean barred(
+      final Cutting cutting,
+      final boolean marked,
       final boolean neverSevers,
       final boolean neverSeveringShot,
       final boolean fist,
       final boolean struck,
       final boolean blast) {
-    return neverSevers || neverSeveringShot || fist || !(struck || blast);
+    return cutting.bars(marked) || neverSevers || neverSeveringShot || fist || !(struck || blast);
   }
 }
