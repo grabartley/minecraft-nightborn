@@ -23,7 +23,8 @@ class HobbyChoiceTest {
           0,
           ConstantIntProvider.create(30),
           0,
-          Disposition.EVEN);
+          Disposition.EVEN,
+          Temperament.EVEN.idleVoiceSeconds());
 
   static Stream<Arguments> choices() {
     final Set<Hobby> all = EnumSet.allOf(Hobby.class);

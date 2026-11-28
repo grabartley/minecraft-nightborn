@@ -14,6 +14,9 @@ import com.mojang.serialization.JsonOps;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import net.minecraft.util.math.intprovider.ConstantIntProvider;
+import net.minecraft.util.math.intprovider.IntProvider;
+import net.minecraft.util.math.random.Random;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -42,12 +45,7 @@ class TemperamentTest {
       final int mourning,
       final Hobby favourite)
       throws IOException {
-    final Temperament temperament =
-        Temperament.CODEC
-            .parse(
-                JsonOps.INSTANCE,
-                JsonParser.parseString(Files.readString(DATA.resolve(id + ".json"))))
-            .getOrThrow();
+    final Temperament temperament = shipped(id);
     assertEquals(weight, temperament.weight());
     assertEquals(temper, temperament.temper());
     assertEquals(mourning, temperament.mourning());
@@ -64,6 +62,8 @@ class TemperamentTest {
         "{\"weight\":0,\"hobbies\":{\"sit\":1},\"temper\":0,\"pastime_seconds\":30,\"mourning_seconds\":0}",
         "{\"weight\":1,\"hobbies\":{\"sit\":1},\"temper\":101,\"pastime_seconds\":30,\"mourning_seconds\":0}",
         "{\"weight\":1,\"hobbies\":{\"sit\":1},\"temper\":0,\"pastime_seconds\":0,\"mourning_seconds\":0}",
+        "{\"weight\":1,\"hobbies\":{\"sit\":1},\"temper\":0,\"pastime_seconds\":30,\"mourning_seconds\":0,\"idle_voice_seconds\":0}",
+        "{\"weight\":1,\"hobbies\":{\"sit\":1},\"temper\":0,\"pastime_seconds\":30,\"mourning_seconds\":0,\"idle_voice_seconds\":601}",
         "{\"weight\":1,\"hobbies\":{\"sit\":1},\"temper\":0,\"pastime_seconds\":30,\"mourning_seconds\":0,\"disposition\":{\"aims\":{\"sky\":2}}}"
       })
   @DisplayName(
@@ -72,12 +72,62 @@ class TemperamentTest {
     assertTrue(Temperament.CODEC.parse(JsonOps.INSTANCE, JsonParser.parseString(json)).isError());
   }
 
-  private static Disposition shippedDisposition(final String id) throws IOException {
+  @ParameterizedTest(name = "{0}: speaks to itself every {1} to {2} seconds")
+  @CsvSource({
+    "convivial, 15, 35",
+    "quarrelsome, 15, 35",
+    "restless, 20, 40",
+    "melancholic, 30, 75",
+    "brooding, 40, 90"
+  })
+  @DisplayName(
+      "a vampire's idle voice waits as long as its temperament says, never the few seconds a"
+          + " plain mob waits")
+  void shippedIdleVoiceWaits(final String id, final int fewest, final int most) throws IOException {
+    final IntProvider wait = shipped(id).idleVoiceSeconds();
+    assertEquals(fewest, wait.getMin());
+    assertEquals(most, wait.getMax());
+  }
+
+  @ParameterizedTest(name = "{0}")
+  @ValueSource(
+      strings = {
+        "{\"weight\":1,\"hobbies\":{\"sit\":1},\"temper\":0,\"pastime_seconds\":30,\"mourning_seconds\":0}",
+        "{\"weight\":2,\"hobbies\":{\"read\":1},\"temper\":50,\"pastime_seconds\":60,\"mourning_seconds\":10}"
+      })
+  @DisplayName(
+      "a temperament that leaves out its idle voice waits as an even-tempered vampire does")
+  void idleVoiceDefaultsToEven(final String json) {
+    final Temperament temperament =
+        Temperament.CODEC.parse(JsonOps.INSTANCE, JsonParser.parseString(json)).getOrThrow();
+    assertEquals(Temperament.EVEN.idleVoiceSeconds(), temperament.idleVoiceSeconds());
+  }
+
+  @ParameterizedTest(name = "{0} seconds is {1} ticks")
+  @CsvSource({"1, 20", "30, 600", "600, 12000"})
+  @DisplayName("the idle voice wait is counted in ticks, twenty to a second")
+  void idleVoiceTicksAreSeconds(final int seconds, final int ticks) {
+    final Temperament temperament =
+        new Temperament(
+            1,
+            Temperament.EVEN.hobbies(),
+            0,
+            Temperament.EVEN.pastimeSeconds(),
+            0,
+            Disposition.EVEN,
+            ConstantIntProvider.create(seconds));
+    assertEquals(ticks, temperament.idleVoiceTicks(Random.create()));
+  }
+
+  private static Temperament shipped(final String id) throws IOException {
     return Temperament.CODEC
         .parse(
             JsonOps.INSTANCE, JsonParser.parseString(Files.readString(DATA.resolve(id + ".json"))))
-        .getOrThrow()
-        .disposition();
+        .getOrThrow();
+  }
+
+  private static Disposition shippedDisposition(final String id) throws IOException {
+    return shipped(id).disposition();
   }
 
   @ParameterizedTest(name = "{0}: {1}")
