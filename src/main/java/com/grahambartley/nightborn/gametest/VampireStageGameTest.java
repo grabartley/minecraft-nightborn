@@ -26,6 +26,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.MovementType;
 import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.ai.pathing.Path;
 import net.minecraft.entity.ai.pathing.PathNode;
@@ -263,6 +264,7 @@ public class VampireStageGameTest implements FabricGameTest {
           }
           if (BatForm.isBat(vampire)) {
             flight.tick();
+            vampire.move(MovementType.SELF, vampire.getVelocity());
             return;
           }
           final Vec3d landed = context.getRelative(vampire.getPos());
