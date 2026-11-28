@@ -2,6 +2,7 @@ package com.grahambartley.nightborn.mob.brain;
 
 import com.grahambartley.nightborn.faction.Allies;
 import com.grahambartley.nightborn.faction.Sides;
+import com.grahambartley.nightborn.skill.Mending;
 import com.grahambartley.nightborn.skill.PowerReach;
 import com.grahambartley.nightborn.skill.Powers;
 import java.util.ArrayList;
@@ -20,6 +21,7 @@ public final class GroupViews {
   public static final float VIEW_RADIUS = 24.0F;
   static final double REUSE = 8.0;
   static final int UNDER_ATTACK_TICKS = 60;
+  static final int SCAN_TICKS = 10;
 
   private static final Map<RegistryKey<World>, SharedScans<LivingEntity>> SCANS = new HashMap<>();
 
@@ -34,7 +36,7 @@ public final class GroupViews {
     final long now = world.getTime();
     final List<LivingEntity> near =
         SCANS
-            .computeIfAbsent(world.getRegistryKey(), key -> new SharedScans<>(REUSE))
+            .computeIfAbsent(world.getRegistryKey(), key -> new SharedScans<>(REUSE, SCAN_TICKS))
             .near(
                 now,
                 mob.getPos(),
@@ -77,6 +79,7 @@ public final class GroupViews {
               mob.distanceTo(ally),
               health(ally),
               underAttack,
+              ally.getAttached(Mending.TYPE) != null,
               fighting(
                   ally instanceof MobEntity fighter && fighter.getTarget() != null, underAttack),
               claims.claimedByOther(ally.getUuid(), mob.getUuid(), now)));

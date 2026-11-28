@@ -59,6 +59,7 @@ public record Situation(
       double distance,
       float health,
       boolean underAttack,
+      boolean healing,
       boolean fighting,
       boolean claimed) {}
 
@@ -76,7 +77,9 @@ public record Situation(
     }
 
     public double alliesWithin(final double radius) {
-      return known ? allies.stream().filter(ally -> ally.distance() <= radius).count() : Double.NaN;
+      return known
+          ? allies.stream().filter(ally -> ally.fighting() && ally.distance() <= radius).count()
+          : Double.NaN;
     }
 
     public double foesWithin(final double radius) {

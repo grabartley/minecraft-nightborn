@@ -10,7 +10,8 @@ public final class Claims {
 
   private final Map<UUID, Claim> claims = new HashMap<>();
 
-  public void claim(final UUID ally, final UUID claimer, final long until) {
+  public void claim(final UUID ally, final UUID claimer, final long until, final long now) {
+    claims.values().removeIf(claim -> now >= claim.until());
     claims.put(ally, new Claim(claimer, until));
   }
 
@@ -24,6 +25,10 @@ public final class Claims {
       return false;
     }
     return !claim.claimer().equals(asker);
+  }
+
+  public int size() {
+    return claims.size();
   }
 
   public void clear() {

@@ -23,6 +23,6 @@ public final class HelpClaims {
 
   public static void claim(
       final World world, final UUID ally, final UUID claimer, final long until) {
-    in(world).claim(ally, claimer, until);
+    in(world).claim(ally, claimer, until, world.getTime());
   }
 }

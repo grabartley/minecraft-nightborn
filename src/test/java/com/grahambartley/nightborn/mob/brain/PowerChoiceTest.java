@@ -460,7 +460,7 @@ class PowerChoiceTest {
 
   private static Situation.Member ally(
       final int id, final double distance, final float health, final boolean underAttack) {
-    return new Situation.Member(new UUID(0, id), distance, health, underAttack, true, false);
+    return new Situation.Member(new UUID(0, id), distance, health, underAttack, false, true, false);
   }
 
   private static Situation group(
@@ -512,17 +512,21 @@ class PowerChoiceTest {
   }
 
   @Test
-  @DisplayName("a healer picks the ally who needs it most, and skips one another mob has claimed")
+  @DisplayName(
+      "a healer picks the ally who needs it most, and skips one another mob has claimed or one a"
+          + " heal is already working on")
   void healsTheNeediestUnclaimedAlly() {
     final List<PowerChoice.Option> options = List.of(shipped("hunter/bind_wounds", false));
     final Situation.Member grazed = ally(1, 3, 0.6F, false);
     final Situation.Member dying = ally(2, 3, 0.2F, false);
     final Situation.Member claimed =
-        new Situation.Member(new UUID(0, 3), 2, 0.1F, false, true, true);
+        new Situation.Member(new UUID(0, 3), 2, 0.1F, false, false, true, true);
+    final Situation.Member mending =
+        new Situation.Member(new UUID(0, 4), 2, 0.05F, false, true, true, false);
     final PowerChoice.Scored best =
         PowerChoice.rank(
                 options,
-                group(1.0F, null, List.of(grazed, dying, claimed), List.of()),
+                group(1.0F, null, List.of(grazed, dying, claimed, mending), List.of()),
                 shippedBudget(Intent.FIGHT),
                 0)
             .getFirst();
@@ -607,6 +611,30 @@ class PowerChoiceTest {
                     target(distance, 0.4F, skill.startsWith("faithful") ? "vampire" : "hunter"),
                     List.of(),
                     List.of(distance)),
+                shippedBudget(Intent.FIGHT),
+                0),
+            shippedBudget(Intent.FIGHT),
+            0.0);
+    assertEquals(casts, chosen.isPresent());
+  }
+
+  @ParameterizedTest(name = "{0} beside an idle ally: casts {1}")
+  @CsvSource({"occult/grave_fog, true", "faithful/consecrate, true"})
+  @DisplayName(
+      "an ally standing idle nearby, such as a housemate asleep in its coffin, does not stop a"
+          + " mob using an area power on its one foe")
+  void anIdleAllyLeavesTheMobAlone(final String skill, final boolean casts) {
+    final Situation.Member idle =
+        new Situation.Member(new UUID(0, 9), 3, 1.0F, false, false, false, false);
+    final Optional<PowerChoice.Scored> chosen =
+        PowerChoice.choose(
+            PowerChoice.rank(
+                List.of(shipped(skill, false)),
+                group(
+                    0.4F,
+                    target(3, 0.4F, skill.startsWith("faithful") ? "vampire" : "hunter"),
+                    List.of(idle),
+                    List.of(3.0)),
                 shippedBudget(Intent.FIGHT),
                 0),
             shippedBudget(Intent.FIGHT),

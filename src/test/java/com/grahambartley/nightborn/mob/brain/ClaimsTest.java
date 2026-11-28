@@ -28,7 +28,7 @@ class ClaimsTest {
           + " never to the one that claimed it")
   void claimLastsTheTell(final boolean claimer, final long now, final boolean claimed) {
     final Claims claims = new Claims();
-    claims.claim(ALLY, HEALER, 112);
+    claims.claim(ALLY, HEALER, 112, 100);
     assertEquals(claimed, claims.claimedByOther(ALLY, claimer ? HEALER : OTHER_HEALER, now));
   }
 
@@ -37,8 +37,18 @@ class ClaimsTest {
   void unclaimed() {
     final Claims claims = new Claims();
     assertFalse(claims.claimedByOther(ALLY, OTHER_HEALER, 100));
-    claims.claim(ALLY, HEALER, 200);
+    claims.claim(ALLY, HEALER, 200, 100);
     claims.clear();
     assertFalse(claims.claimedByOther(ALLY, OTHER_HEALER, 100));
+  }
+
+  @ParameterizedTest(name = "a second claim at tick {0} keeps {1}")
+  @CsvSource({"105, 2", "112, 1", "300, 1"})
+  @DisplayName("a claim that has run out is dropped when the next one is made")
+  void prunesOldClaims(final long now, final int kept) {
+    final Claims claims = new Claims();
+    claims.claim(ALLY, HEALER, 112, 100);
+    claims.claim(new UUID(0, 9), OTHER_HEALER, now + 12, now);
+    assertEquals(kept, claims.size());
   }
 }

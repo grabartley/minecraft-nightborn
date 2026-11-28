@@ -29,35 +29,21 @@
       "uses": [
         {
           "intent": "fight",
-          "aim": "allies",
+          "aim": "self",
           "considerations": [
             {
               "fact": "target_distance",
               "high": 24
-            },
-            {
-              "fact": "allies_in_radius",
-              "curve": "rising",
-              "low": 0,
-              "high": 1,
-              "radius": 24
             }
           ]
         },
         {
           "intent": "close_in",
-          "aim": "allies",
+          "aim": "self",
           "considerations": [
             {
               "fact": "target_distance",
               "high": 24
-            },
-            {
-              "fact": "allies_in_radius",
-              "curve": "rising",
-              "low": 0,
-              "high": 1,
-              "radius": 24
             }
           ]
         }

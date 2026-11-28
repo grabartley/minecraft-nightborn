@@ -72,4 +72,17 @@ class SidesTest {
       final boolean foe) {
     assertEquals(foe, Sides.foe(allied, opposed, fightsUs, fought));
   }
+
+  @ParameterizedTest(name = "boss {0}, allied {1}: spared {2}")
+  @CsvSource({
+    "false, true, true",
+    "false, false, false",
+    "true, true, false",
+    "true, false, false"
+  })
+  @DisplayName(
+      "an area power spares the caster's allies, except a boss's, which reaches as it always has")
+  void spared(final boolean boss, final boolean allied, final boolean spared) {
+    assertEquals(spared, Sides.spared(boss, allied));
+  }
 }

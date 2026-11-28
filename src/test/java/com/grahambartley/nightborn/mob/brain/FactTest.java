@@ -109,7 +109,7 @@ class FactTest {
   }
 
   private static final Situation.Member WARD =
-      new Situation.Member(new UUID(0, 9), 4.5, 0.35F, true, true, false);
+      new Situation.Member(new UUID(0, 9), 4.5, 0.35F, true, true, true, false);
 
   private static final Situation HELPING =
       new Situation(
@@ -118,7 +118,9 @@ class FactTest {
           null,
           Situation.Place.UNKNOWN,
           Situation.Group.of(
-              List.of(WARD, new Situation.Member(new UUID(0, 8), 10.0, 1.0F, false, false, false)),
+              List.of(
+                  WARD,
+                  new Situation.Member(new UUID(0, 8), 10.0, 1.0F, false, false, true, false)),
               List.of(2.0, 6.0, 7.0)),
           WARD);
 
@@ -127,6 +129,7 @@ class FactTest {
     "ALLY_DISTANCE, 0, 4.5",
     "ALLY_HEALTH, 0, 0.35",
     "ALLY_UNDER_ATTACK, 0, 1",
+    "ALLY_HEALING, 0, 1",
     "ALLIES_IN_RADIUS, 5, 1",
     "ALLIES_IN_RADIUS, 12, 2",
     "FOES_IN_RADIUS, 6, 2",
@@ -144,6 +147,7 @@ class FactTest {
         "ALLY_DISTANCE",
         "ALLY_HEALTH",
         "ALLY_UNDER_ATTACK",
+        "ALLY_HEALING",
         "ALLIES_IN_RADIUS",
         "FOES_IN_RADIUS"
       })

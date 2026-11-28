@@ -122,7 +122,7 @@ What any hunter learns on the road, whichever paths they walk.
 | Second Wind | Power | 2 | Tracking | None | 45 | Speed I and Resistance I for 8 seconds |
 | Clear Eyes | Passive | 2 ranks: 1, 2 | Tracking | None | | Blindness and Darkness on the hunter last 25% less each rank |
 | Stakewright | Passive | 3 ranks: 1, 2, 2 | Weathered | None | | A stake's blow deals 10% more damage each rank |
-| Bind Wounds | Power | 2 | Second Wind | None | 30 | Heals 6 health over 4 seconds. A hunter mob may bind the wounds of a badly hurt ally within 6 blocks instead |
+| Bind Wounds | Power | 2 | Second Wind | None | 30 | Heals 6 health over 4 seconds. A hunter mob may bind the wounds of a badly hurt ally within 6 blocks instead, unless a heal is already working on that ally |
 | Sure Footing | Passive | 2 ranks: 1, 1 | Clear Eyes | None | | Falls 2 blocks further before taking damage each rank |
 | Unyielding | Passive | 2 ranks: 2, 2 | Stakewright | Hunter | | 20% knockback resistance each rank |
 | Old Hand | Passive | 3 | Bind Wounds | Master | | Every hunter power's cooldown is 10% shorter |
@@ -207,9 +207,9 @@ Each use says:
 - `weight`: how much the mob wants it, from 0 to 100. The default is 1.
 - `considerations`: facts the use cares about. Each has a `fact`, a `curve` (`between`, `rising` or `falling`, default `between`), and a `low` and `high`. `between` gives 1 inside the range and 0 outside. `rising` climbs from 0 at `low` to 1 at `high`, and `falling` the other way. A fact that counts heads also has a `radius` in blocks, up to 24.
 
-The facts are `target_distance` (blocks), `target_in_sight` (1 or 0), `target_health` (0 to 1), `target_winding_up` (1 while it draws a bow, crossbow or trident, or winds up a power), `target_running` (1 when it has moved away from the mob at 0.15 blocks a tick or more since the mob last weighed its powers), `target_slowed` (1 while it is slowed or held), `target_airborne` (1 while it stands, swims, climbs and rides on nothing), `target_vampire` (1 for a vampire), `target_hunter` (1 for a hunter), `own_health` (0 to 1), `own_blood` (points), `in_form` (1 in bat or winged form), `sun_on_me` (1 or 0), `downed` (1 or 0), `stuck` (1 while the mob has neither gained on its foe nor travelled for its stage's stuck wait) `spot_distance` (blocks to the end of the mob's route), `ally_distance` (blocks), `ally_health` (0 to 1), `ally_under_attack` (1 while a foe has the ally as its target, or for 3 seconds after it is struck), `allies_in_radius` and `foes_in_radius` (heads within the consideration's `radius`). A target fact is missing when the mob has no target, `spot_distance` is missing when it has no route, and a missing fact scores 0.
+The facts are `target_distance` (blocks), `target_in_sight` (1 or 0), `target_health` (0 to 1), `target_winding_up` (1 while it draws a bow, crossbow or trident, or winds up a power), `target_running` (1 when it has moved away from the mob at 0.15 blocks a tick or more since the mob last weighed its powers), `target_slowed` (1 while it is slowed or held), `target_airborne` (1 while it stands, swims, climbs and rides on nothing), `target_vampire` (1 for a vampire), `target_hunter` (1 for a hunter), `own_health` (0 to 1), `own_blood` (points), `in_form` (1 in bat or winged form), `sun_on_me` (1 or 0), `downed` (1 or 0), `stuck` (1 while the mob has neither gained on its foe nor travelled for its stage's stuck wait) `spot_distance` (blocks to the end of the mob's route), `ally_distance` (blocks), `ally_health` (0 to 1), `ally_under_attack` (1 while a foe has the ally as its target, or for 3 seconds after it is struck), `ally_healing` (1 while a heal over time is working on the ally), `allies_in_radius` (allies in the fight, which have a target or are under attack) and `foes_in_radius`, each counting heads within the consideration's `radius`. A target fact is missing when the mob has no target, `spot_distance` is missing when it has no route, and a missing fact scores 0.
 
-A use that weighs an `ally_` fact is scored once for each ally within 24 blocks, and keeps the ally it scores best, so a healer picks the one who needs it most. While a mob winds up to help an ally it claims that ally, and no other mob picks it for help until the tell lands. An ally is anyone on the mob's side or team who is not fighting it: hunters stand with hunters and vampires with vampires, whether mob or player. A foe is anyone not allied who is on the other side, fights the mob or its allies, or is fought by them. Mobs near each other share one look around per tick, so a raid of ten looks once. A mob with no target of its own still weighs its helping uses, as a `fight`, while an ally near it is fighting.
+A use that weighs an `ally_` fact is scored once for each ally within 24 blocks, and keeps the ally it scores best, so a healer picks the one who needs it most. Before it winds up, the mob checks the power is ready for that very ally, so it blesses only an armed one. While it winds up it claims that ally, and no other mob picks it for help until the tell lands. An ally is anyone on the mob's side or team who is not fighting it: hunters stand with hunters and vampires with vampires, whether mob or player. A foe is anyone not allied who is on the other side, fights the mob or its allies, or is fought by them. Mobs near each other share one look around for half a second, so a raid of ten looks once. A mob with no target of its own still weighs its helping uses, as a `fight`, while an ally near it is fighting.
 
 A use scores its weight times each consideration's value, and any 0 rules it out. A power whose buff or effects are already on the mob is not weighed at all. The mob casts the best scoring power it can afford that beats its intent's threshold. Each intent's blood reserve, cooldown price, threshold, thrift and spread live in `data/nightborn/nightborn/mob_intent/`. Thrift, from 0 to 1, holds back a costly power while the mob is healthy: a score is cut by the thrift times the power's price times the mob's own health, where the price is its blood over 10 plus its cooldown over 6000 ticks, at most 1. A losing mob is barely held back. Spread, from 0 to 1, settles close scores by chance: any power within that share of the best score may be cast instead. A power marked `dodge` is weighed only as a dodge in a fight, and like any other power out of one. `/nightborn brain <targets>` shows what a mob last weighed up, which is how uses are tuned. A use with an unknown intent, aim or fact, an `ally` use that weighs no ally fact, or a head count with no radius is reported at start with the skill's name.
 
@@ -253,7 +253,7 @@ A healing power a mob uses on itself once it is badly hurt, twice as keen as on 
 ]
 ```
 
-An area power that waits for a crowd in a group fight, and still works on a lone foe for a mob with no allies near:
+An area power that waits for a crowd in a group fight, and still works on a lone foe for a mob with no ally in the fight near it:
 
 ```json
 "uses": [
@@ -284,6 +284,7 @@ A heal a healthy hunter gives the worst hurt ally beside it:
 "weight": 1.8,
 "considerations": [
 	{ "fact": "ally_distance", "high": 6 },
+	{ "fact": "ally_healing", "high": 0 },
 	{ "fact": "ally_health", "curve": "falling", "low": 0.3, "high": 0.7 },
 	{ "fact": "own_health", "curve": "rising", "low": 0.4, "high": 0.8 }
 ]

@@ -1,5 +1,6 @@
 package com.grahambartley.nightborn.mob.combat;
 
+import com.grahambartley.nightborn.mob.brain.Aim;
 import com.grahambartley.nightborn.mob.brain.CastAims;
 import com.grahambartley.nightborn.mob.brain.HelpClaims;
 import com.grahambartley.nightborn.mob.brain.PowerChoice;
@@ -87,12 +88,31 @@ public final class PowerCasting {
               .chosen()
               .ifPresent(
                   scored -> {
+                    if (!tellable(scored.use().aimed() == Aim.ALLY, allyVerdict(caster, scored))) {
+                      return;
+                    }
                     nextThink =
                         Math.max(nextThink, now + thinkTicks) + thought.budget().cooldownPrice();
                     nextAid = nextThink;
                     tell(caster, scored, now);
                   });
         });
+  }
+
+  public static boolean tellable(
+      final boolean aimsAtAlly, @Nullable final PowerUse.Verdict allyVerdict) {
+    return !aimsAtAlly || allyVerdict == PowerUse.Verdict.READY;
+  }
+
+  @Nullable
+  private static PowerUse.Verdict allyVerdict(
+      final MobEntity caster, final PowerChoice.Scored scored) {
+    final LivingEntity ally = aided(caster, scored.ally() == null ? null : scored.ally().id());
+    if (ally == null) {
+      return null;
+    }
+    final Identifier power = scored.option().power();
+    return Powers.check(caster, power, Powers.power(caster, power), CastAim.at(ally));
   }
 
   @Nullable

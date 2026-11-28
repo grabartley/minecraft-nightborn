@@ -47,7 +47,7 @@ public final class MassGaze {
                             candidate instanceof PlayerEntity,
                             Vampires.isVampire(candidate),
                             caster.canSee(candidate),
-                            Allies.allied(caster, candidate)))) {
+                            Allies.spared(caster, candidate)))) {
       if (Mesmerise.quietly(caster, living, mesmerise) == MesmeriseRules.Outcome.MESMERISED) {
         held++;
       }

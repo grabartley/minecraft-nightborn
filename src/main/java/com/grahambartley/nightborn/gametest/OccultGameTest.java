@@ -501,6 +501,7 @@ public class OccultGameTest implements FabricGameTest {
   public void aVampireWardsTheAllyUnderAttack(final TestContext context) {
     final VampireEntity warden = context.spawnEntity(NightbornMobs.VAMPIRE, new BlockPos(1, 2, 1));
     warden.setAiDisabled(true);
+    warden.becomeStage(Identifier.of("nightborn", "adult"));
     OccultSkills.learn(warden, OccultSkills.GRAVE_FOG, BLOOD_WARD);
     final VampireEntity ally = context.spawnEntity(NightbornMobs.VAMPIRE, new BlockPos(6, 2, 6));
     ally.setAiDisabled(true);

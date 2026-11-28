@@ -45,7 +45,7 @@ class ConsiderationTest {
   }
 
   private static final Situation.Member HURT =
-      new Situation.Member(new UUID(0, 1), 3.0, 0.25F, true, true, false);
+      new Situation.Member(new UUID(0, 1), 3.0, 0.25F, true, false, true, false);
 
   private static final Situation IN_A_GROUP =
       new Situation(

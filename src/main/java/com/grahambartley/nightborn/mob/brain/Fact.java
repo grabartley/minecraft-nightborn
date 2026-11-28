@@ -31,6 +31,7 @@ public enum Fact {
   ALLY_DISTANCE(situation -> ally(situation, Situation.Member::distance)),
   ALLY_HEALTH(situation -> ally(situation, Situation.Member::health)),
   ALLY_UNDER_ATTACK(situation -> ally(situation, ally -> flag(ally.underAttack()))),
+  ALLY_HEALING(situation -> ally(situation, ally -> flag(ally.healing()))),
   ALLIES_IN_RADIUS((situation, radius) -> situation.group().alliesWithin(radius)),
   FOES_IN_RADIUS((situation, radius) -> situation.group().foesWithin(radius));
 
@@ -40,15 +41,13 @@ public enum Fact {
   }
 
   public static final Set<Fact> ALLY =
-      Collections.unmodifiableSet(EnumSet.of(ALLY_DISTANCE, ALLY_HEALTH, ALLY_UNDER_ATTACK));
+      Collections.unmodifiableSet(
+          EnumSet.of(ALLY_DISTANCE, ALLY_HEALTH, ALLY_UNDER_ATTACK, ALLY_HEALING));
 
   public static final Set<Fact> RADIUS =
       Collections.unmodifiableSet(EnumSet.of(ALLIES_IN_RADIUS, FOES_IN_RADIUS));
 
-  public static final Set<Fact> GROUP =
-      Collections.unmodifiableSet(
-          EnumSet.of(
-              ALLY_DISTANCE, ALLY_HEALTH, ALLY_UNDER_ATTACK, ALLIES_IN_RADIUS, FOES_IN_RADIUS));
+  public static final Set<Fact> GROUP = union(ALLY, RADIUS);
 
   private static final Map<String, Fact> BY_KEY =
       Arrays.stream(values()).collect(Collectors.toMap(Fact::key, Function.identity()));
@@ -77,6 +76,12 @@ public enum Fact {
 
   public static Optional<Fact> byKey(final String key) {
     return Optional.ofNullable(BY_KEY.get(key));
+  }
+
+  private static Set<Fact> union(final Set<Fact> first, final Set<Fact> second) {
+    final Set<Fact> union = EnumSet.copyOf(first);
+    union.addAll(second);
+    return Collections.unmodifiableSet(union);
   }
 
   private static double target(

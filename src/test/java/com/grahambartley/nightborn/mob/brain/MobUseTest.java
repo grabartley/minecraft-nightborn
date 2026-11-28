@@ -96,7 +96,7 @@ class MobUseTest {
   }
 
   private static Situation.Member ally(final int id, final float health, final boolean claimed) {
-    return new Situation.Member(new UUID(0, id), 3.0, health, false, true, claimed);
+    return new Situation.Member(new UUID(0, id), 3.0, health, false, false, true, claimed);
   }
 
   private static final MobUse MEND =

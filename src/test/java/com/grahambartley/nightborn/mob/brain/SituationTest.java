@@ -31,17 +31,18 @@ class SituationTest {
 
   private static Situation.Member member(
       final double distance, final boolean fighting, final boolean claimed) {
-    return new Situation.Member(UUID.randomUUID(), distance, 0.5F, false, fighting, claimed);
+    return new Situation.Member(UUID.randomUUID(), distance, 0.5F, false, false, fighting, claimed);
   }
 
   @ParameterizedTest(name = "radius {0}: allies {1}, foes {2}")
-  @CsvSource({"2, 1, 0", "5, 2, 1", "12, 3, 2", "0.5, 0, 0"})
-  @DisplayName("a group counts the allies and foes within a radius of the mob")
+  @CsvSource({"2, 1, 0", "5, 1, 1", "12, 2, 2", "0.5, 0, 0"})
+  @DisplayName(
+      "a group counts the allies in the fight and the foes within a radius of the mob, and not an"
+          + " ally standing idle")
   void countsWithinRadius(final double radius, final double allies, final double foes) {
     final Situation.Group group =
         Situation.Group.of(
-            List.of(
-                member(1.5, false, false), member(5.0, false, false), member(9.0, false, false)),
+            List.of(member(1.5, true, false), member(5.0, false, false), member(9.0, true, false)),
             List.of(4.0, 12.0));
     assertEquals(allies, group.alliesWithin(radius));
     assertEquals(foes, group.foesWithin(radius));

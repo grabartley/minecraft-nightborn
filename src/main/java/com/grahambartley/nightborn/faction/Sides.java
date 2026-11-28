@@ -28,6 +28,10 @@ public final class Sides {
     return !self && (sameSide || teammate) && !fightingEachOther;
   }
 
+  public static boolean spared(final boolean boss, final boolean allied) {
+    return !boss && allied;
+  }
+
   public static boolean foe(
       final boolean allied, final boolean opposed, final boolean fightsUs, final boolean fought) {
     return !allied && (opposed || fightsUs || fought);

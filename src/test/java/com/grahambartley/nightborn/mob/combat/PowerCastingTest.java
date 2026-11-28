@@ -2,6 +2,7 @@ package com.grahambartley.nightborn.mob.combat;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import com.grahambartley.nightborn.skill.PowerUse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -27,5 +28,16 @@ class PowerCastingTest {
       final long nextAid,
       final boolean thinks) {
     assertEquals(thinks, PowerCasting.thinks(engaged, now, next, nextAid));
+  }
+
+  @ParameterizedTest(name = "aims at an ally {0}, verdict on the ally {1}: tells {2}")
+  @CsvSource({"false, '', true", "true, READY, true", "true, NO_WEAPON, false", "true, '', false"})
+  @DisplayName(
+      "a mob winds up to help an ally only when the power is ready for that very ally, such as a"
+          + " blessing for an armed one")
+  void tellable(final boolean ally, final String verdict, final boolean tells) {
+    assertEquals(
+        tells,
+        PowerCasting.tellable(ally, verdict.isEmpty() ? null : PowerUse.Verdict.valueOf(verdict)));
   }
 }

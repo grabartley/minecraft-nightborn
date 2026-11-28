@@ -64,6 +64,10 @@
               "high": 6
             },
             {
+              "fact": "ally_healing",
+              "high": 0
+            },
+            {
               "fact": "ally_health",
               "curve": "falling",
               "low": 0.3,
@@ -85,6 +89,10 @@
             {
               "fact": "ally_distance",
               "high": 6
+            },
+            {
+              "fact": "ally_healing",
+              "high": 0
             },
             {
               "fact": "ally_health",

@@ -18,13 +18,22 @@ public final class Wielders {
       final LivingEntity caster, final PowerFaith faith, final CastAim cast) {
     if (faith.blessing().isPresent()) {
       final LivingEntity ally = ally(caster, faith.blessing().get().range(), cast);
-      return pick(armed(ally), armed(caster)).orElse(null);
+      return pick(aimsAtAlly(caster, cast), armed(ally), armed(caster)).orElse(null);
     }
     return faith.kindle().isPresent() && armed(caster) != null ? caster : null;
   }
 
   static <T> Optional<T> pick(@Nullable final T first, @Nullable final T second) {
     return Optional.ofNullable(first).or(() -> Optional.ofNullable(second));
+  }
+
+  static <T> Optional<T> pick(
+      final boolean aimedAtAlly, @Nullable final T ally, @Nullable final T caster) {
+    return aimedAtAlly ? Optional.ofNullable(ally) : pick(ally, caster);
+  }
+
+  private static boolean aimsAtAlly(final LivingEntity caster, final CastAim cast) {
+    return caster instanceof MobEntity && cast.helped(caster) != caster;
   }
 
   static boolean blessable(final boolean alive, final boolean seen, final boolean allied) {

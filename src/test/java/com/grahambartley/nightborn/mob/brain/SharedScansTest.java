@@ -14,6 +14,7 @@ import org.junit.jupiter.params.provider.CsvSource;
 class SharedScansTest {
 
   private static final double REUSE = 8.0;
+  private static final int WINDOW = 10;
 
   private final AtomicInteger scans = new AtomicInteger();
   private final Function<Vec3d, List<String>> scanner =
@@ -25,7 +26,7 @@ class SharedScansTest {
   @Test
   @DisplayName("a raid of ten builds one group picture per think tick")
   void raidOfTenScansOnce() {
-    final SharedScans<String> shared = new SharedScans<>(REUSE);
+    final SharedScans<String> shared = new SharedScans<>(REUSE, WINDOW);
     for (int raider = 0; raider < 10; raider++) {
       assertEquals(
           List.of("scan 1"), shared.near(100, new Vec3d(raider % 5, 64, raider / 5 * 2), scanner));
@@ -38,12 +39,20 @@ class SharedScansTest {
   }
 
   @ParameterizedTest(name = "a second mob {0} blocks away on tick {1}: scans {2}")
-  @CsvSource({"0, 100, 1", "8, 100, 1", "8.5, 100, 2", "30, 100, 2", "0, 101, 2"})
+  @CsvSource({
+    "0, 100, 1",
+    "8, 100, 1",
+    "8.5, 100, 2",
+    "30, 100, 2",
+    "0, 109, 1",
+    "0, 110, 2",
+    "0, 99, 2"
+  })
   @DisplayName(
-      "a mob reuses a picture taken this tick close enough to cover it, and scans afresh when it"
-          + " is too far off or the tick has moved on")
+      "a mob reuses a picture taken in the last half second close enough to cover it, and scans"
+          + " afresh when it is too far off or the picture is too old")
   void reusesOnlyNearbyThisTick(final double away, final long tick, final int expected) {
-    final SharedScans<String> shared = new SharedScans<>(REUSE);
+    final SharedScans<String> shared = new SharedScans<>(REUSE, WINDOW);
     shared.near(100, Vec3d.ZERO, scanner);
     shared.near(tick, new Vec3d(away, 0, 0), scanner);
     assertEquals(expected, scans.get());
