@@ -12,6 +12,9 @@
     "radius": 3.0,
     "motion": "step",
     "damage": 14.0,
-    "knock": 1.0
+    "knock": 1.0,
+    "hit": {
+      "damage_type": "nightborn:cleave"
+    }
   }
 }

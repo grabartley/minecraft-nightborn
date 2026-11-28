@@ -1,6 +1,7 @@
 package com.grahambartley.nightborn.mob.brain;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
@@ -90,7 +91,10 @@ class FactTest {
         "TARGET_VAMPIRE",
         "TARGET_HUNTER",
         "TARGET_AWARE",
-        "TARGET_THREATENING"
+        "TARGET_THREATENING",
+        "TARGET_HEALING",
+        "TARGET_RANGED",
+        "TARGET_HELD"
       })
   @DisplayName("a target fact is missing when the mob has no target")
   void targetFactsNeedATarget(final Fact fact) {
@@ -132,7 +136,7 @@ class FactTest {
   }
 
   private static final Situation.Member WARD =
-      new Situation.Member(new UUID(0, 9), 4.5, 0.35F, true, true, true, false);
+      new Situation.Member(new UUID(0, 9), 4.5, 0.35F, true, true, true, false, true);
 
   private static final Situation HELPING =
       new Situation(
@@ -143,7 +147,8 @@ class FactTest {
           Situation.Group.of(
               List.of(
                   WARD,
-                  new Situation.Member(new UUID(0, 8), 10.0, 1.0F, false, false, true, false)),
+                  new Situation.Member(new UUID(0, 8), 10.0, 1.0F, false, false, true, false),
+                  new Situation.Member(new UUID(0, 7), 8.0, 1.0F, false, false, false, false)),
               List.of(2.0, 6.0, 7.0)),
           WARD);
 
@@ -155,6 +160,9 @@ class FactTest {
     "ALLY_HEALING, 0, 1",
     "ALLIES_IN_RADIUS, 5, 1",
     "ALLIES_IN_RADIUS, 12, 2",
+    "ALLY_HELD, 0, 1",
+    "IDLE_ALLIES_IN_RADIUS, 12, 1",
+    "IDLE_ALLIES_IN_RADIUS, 5, 0",
     "FOES_IN_RADIUS, 6, 2",
     "FOES_IN_RADIUS, 1, 0"
   })
@@ -171,12 +179,48 @@ class FactTest {
         "ALLY_HEALTH",
         "ALLY_UNDER_ATTACK",
         "ALLY_HEALING",
+        "ALLY_HELD",
         "ALLIES_IN_RADIUS",
+        "IDLE_ALLIES_IN_RADIUS",
         "FOES_IN_RADIUS"
       })
   @DisplayName("a group fact is missing when no group was read and no ally is being helped")
   void groupFactsNeedAGroup(final Fact fact) {
     assertTrue(
         Double.isNaN(fact.read(new Situation(Intent.FIGHT, Situation.Self.of(1.0F, 0), null), 8)));
+  }
+
+  @ParameterizedTest(name = "healing {0}, ranged {1}, held {2}, self held {3}")
+  @CsvSource({
+    "true, false, false, false",
+    "false, true, false, false",
+    "false, false, true, false",
+    "false, false, false, true",
+    "false, false, false, false"
+  })
+  @DisplayName("each tactical fact reads whether the foe heals, shoots or is held, or the mob is")
+  void readsTactics(
+      final boolean healing, final boolean ranged, final boolean held, final boolean selfHeld) {
+    final Situation situation =
+        new Situation(
+            Intent.FIGHT,
+            new Situation.Self(1.0F, 0, false, false, false, false, selfHeld),
+            new Situation.Target(
+                5.0, true, 1.0F, false, false, held, false, true, false, true, false, healing,
+                ranged, held));
+    assertEquals(healing ? 1.0 : 0.0, Fact.TARGET_HEALING.read(situation));
+    assertEquals(ranged ? 1.0 : 0.0, Fact.TARGET_RANGED.read(situation));
+    assertEquals(held ? 1.0 : 0.0, Fact.TARGET_HELD.read(situation));
+    assertEquals(selfHeld ? 1.0 : 0.0, Fact.OWN_HELD.read(situation));
+  }
+
+  @ParameterizedTest(name = "{0}")
+  @EnumSource(
+      value = Fact.class,
+      names = {"TARGET_HEALING", "TARGET_RANGED", "TARGET_HELD", "OWN_HELD"})
+  @DisplayName("the tactical facts are their own group, apart from group and place")
+  void tacticsStandApart(final Fact fact) {
+    assertTrue(Fact.TACTICS.contains(fact));
+    assertFalse(Fact.GROUP.contains(fact) || Fact.PLACE.contains(fact));
   }
 }

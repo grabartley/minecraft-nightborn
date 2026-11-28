@@ -90,6 +90,18 @@
             }
           ],
           "weight": 0.8
+        },
+        {
+          "intent": "fight",
+          "aim": "self",
+          "considerations": [
+            {
+              "fact": "own_held",
+              "low": 1,
+              "high": 1
+            }
+          ],
+          "weight": 2.0
         }
       ]
     }

@@ -1,0 +1,37 @@
+{
+  "uses": [
+    {
+      "intent": "fight",
+      "aim": "allies",
+      "considerations": [
+        {
+          "fact": "ally_distance",
+          "high": 16
+        },
+        {
+          "fact": "ally_health",
+          "curve": "falling",
+          "low": 0.25,
+          "high": 0.6
+        }
+      ],
+      "weight": 2.0
+    },
+    {
+      "intent": "fight",
+      "aim": "allies",
+      "considerations": [
+        {
+          "fact": "ally_distance",
+          "high": 16
+        },
+        {
+          "fact": "ally_held",
+          "low": 1,
+          "high": 1
+        }
+      ],
+      "weight": 2.6
+    }
+  ]
+}

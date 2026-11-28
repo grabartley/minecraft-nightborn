@@ -3,8 +3,10 @@ package com.grahambartley.nightborn.mob.stage;
 import com.grahambartley.nightborn.mob.brain.Disposition;
 import com.grahambartley.nightborn.mob.brain.Mind;
 import com.grahambartley.nightborn.mob.brain.Sharpness;
+import com.grahambartley.nightborn.mob.combat.Presence;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import java.util.Optional;
 import java.util.function.Supplier;
 
 public record StageCombat(
@@ -17,14 +19,25 @@ public record StageCombat(
     int dodgeChance,
     int powerDodgeChance,
     int retreatHealth,
-    StageStuck stuck) {
+    StageStuck stuck,
+    Optional<Presence> presence) {
 
   static final int PLAIN_FLOOR = 20;
   static final int PLAIN_THINK = 40;
 
   public static final StageCombat PLAIN =
       new StageCombat(
-          PLAIN_FLOOR, PLAIN_THINK, Sharpness.KEEN, true, 0, 0, 0, 0, 0, StageStuck.PLAIN);
+          PLAIN_FLOOR,
+          PLAIN_THINK,
+          Sharpness.KEEN,
+          true,
+          0,
+          0,
+          0,
+          0,
+          0,
+          StageStuck.PLAIN,
+          Optional.empty());
 
   public static final Codec<StageCombat> CODEC =
       RecordCodecBuilder.create(
@@ -58,7 +71,8 @@ public record StageCombat(
                           .forGetter(StageCombat::retreatHealth),
                       StageStuck.CODEC
                           .optionalFieldOf("stuck", StageStuck.PLAIN)
-                          .forGetter(StageCombat::stuck))
+                          .forGetter(StageCombat::stuck),
+                      Presence.CODEC.optionalFieldOf("presence").forGetter(StageCombat::presence))
                   .apply(instance, StageCombat::new));
 
   public Mind mind(final Supplier<Disposition> disposition) {

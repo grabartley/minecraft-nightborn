@@ -50,7 +50,8 @@ public final class Situations {
             BatForm.isBat(mob) || WingedForm.on(mob),
             needed.contains(Fact.SUN_ON_ME) && DirectSun.reaches(mob),
             Downed.state(mob) != null,
-            Unsticking.stuck(mob)),
+            Unsticking.stuck(mob),
+            needed.contains(Fact.OWN_HELD) && TargetSigns.held(mob)),
         target == null
             ? null
             : TargetSigns.read(
@@ -59,6 +60,7 @@ public final class Situations {
                 needed.contains(Fact.TARGET_IN_SIGHT) && mob.canSee(target),
                 health(target),
                 readsSigns(needed),
+                readsTactics(needed),
                 moved),
         PlaceViews.read(mob, needed),
         group == null ? Situation.Group.UNKNOWN : group,
@@ -67,6 +69,10 @@ public final class Situations {
 
   static boolean readsGroup(final Set<Fact> needed) {
     return !Collections.disjoint(needed, Fact.GROUP);
+  }
+
+  static boolean readsTactics(final Set<Fact> needed) {
+    return !Collections.disjoint(needed, Fact.TACTICS);
   }
 
   static boolean readsSigns(final Set<Fact> needed) {

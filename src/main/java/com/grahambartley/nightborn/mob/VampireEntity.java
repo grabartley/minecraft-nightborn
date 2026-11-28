@@ -22,6 +22,7 @@ import com.grahambartley.nightborn.mob.home.HouseholdTie;
 import com.grahambartley.nightborn.mob.home.MobBlood;
 import com.grahambartley.nightborn.mob.household.HouseholdBonds;
 import com.grahambartley.nightborn.mob.household.HouseholdLife;
+import com.grahambartley.nightborn.mob.household.HouseholdPresence;
 import com.grahambartley.nightborn.mob.household.SeatedHeight;
 import com.grahambartley.nightborn.mob.look.BustNbt;
 import com.grahambartley.nightborn.mob.look.Figure;
@@ -298,16 +299,17 @@ public class VampireEntity extends HostileEntity
   }
 
   protected void fightAsVampire() {
-    fighting.tick(
-        this,
+    final MobFighting.Engagement engagement =
         MobFighting.engagement(
             getTarget() != null,
             Downed.state(this) != null,
             isSleeping(),
             escapes != null && escapes.active(),
-            Weakened.sources(this).level(false) > 0),
-        this::mind,
-        stage().combat().bloodFloor());
+            Weakened.sources(this).level(false) > 0);
+    if (engagement == MobFighting.Engagement.FIGHTING) {
+      HouseholdPresence.lead(this);
+    }
+    fighting.tick(this, engagement, this::mind, stage().combat().bloodFloor());
   }
 
   private Mind mind() {

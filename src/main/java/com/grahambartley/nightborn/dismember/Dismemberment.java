@@ -15,12 +15,10 @@ import net.fabricmc.fabric.api.attachment.v1.AttachmentSyncPredicate;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentType;
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
-import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.registry.RegistryKeys;
-import net.minecraft.registry.tag.TagKey;
+import net.minecraft.registry.DynamicRegistryManager;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Identifier;
@@ -35,9 +33,6 @@ public final class Dismemberment {
                   .persistent(BodyState.CODEC)
                   .syncWith(BodyState.PACKET_CODEC, AttachmentSyncPredicate.all()));
 
-  public static final TagKey<EntityType<?>> MAIMABLE =
-      TagKey.of(RegistryKeys.ENTITY_TYPE, Identifier.of(Nightborn.MOD_ID, "maimable"));
-
   static final SoundEvent CUT_SOUND = SoundEvents.ENTITY_SLIME_SQUISH;
   static final float CUT_PITCH = 0.5F;
 
@@ -45,6 +40,7 @@ public final class Dismemberment {
 
   public static void register() {
     BodyZoneData.register();
+    BodyRuleData.register();
     WoundSearing.register();
     ServerLivingEntityEvents.AFTER_DAMAGE.register(
         (entity, source, base, taken, blocked) -> {
@@ -74,11 +70,12 @@ public final class Dismemberment {
       return;
     }
     final DismembermentSettings settings = ServerConfigService.current().dismemberment();
+    final DynamicRegistryManager registries = victim.getWorld().getRegistryManager();
     final BodyState body = state(victim);
     final long now = victim.getWorld().getTime();
     final SeverRules.Victim facts =
         new SeverRules.Victim(
-            victim.getType().isIn(MAIMABLE),
+            BodyRuleData.rule(registries, victim.getType()),
             victim instanceof PlayerEntity,
             victim.getMaxHealth(),
             victim.getHealth(),
@@ -95,12 +92,7 @@ public final class Dismemberment {
       return;
     }
     SeverRules.part(
-            BlowAim.aimed(
-                victim,
-                source,
-                BodyZoneData.zones(victim.getWorld().getRegistryManager()),
-                victim.getRandom()),
-            body)
+            BlowAim.aimed(victim, source, BodyZoneData.zones(registries), victim.getRandom()), body)
         .ifPresent(part -> sever(victim, part, GoreEvents.sprayYaw(victim, source)));
   }
 

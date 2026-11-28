@@ -7,8 +7,5 @@
   "radius": 16.0,
   "effect_ticks": 160,
   "heal": 6.0,
-  "shout": true,
-  "trigger": {
-    "party_health": 0.5
-  }
+  "shout": true
 }

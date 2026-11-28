@@ -17,6 +17,19 @@ public final class PartyMember {
     return leader.filter(master::equals).isPresent();
   }
 
+  public static boolean fellows(
+      final UUID one,
+      final Optional<UUID> oneQuarry,
+      final Optional<UUID> oneLeader,
+      final UUID other,
+      final Optional<UUID> otherQuarry,
+      final Optional<UUID> otherLeader) {
+    return oneQuarry.isPresent() && oneQuarry.equals(otherQuarry)
+        || oneLeader.isPresent() && oneLeader.equals(otherLeader)
+        || follows(otherLeader, one)
+        || follows(oneLeader, other);
+  }
+
   public static boolean wakes(final boolean sleeping, final long timeOfDay) {
     return sleeping && !PartySchedule.night(timeOfDay);
   }

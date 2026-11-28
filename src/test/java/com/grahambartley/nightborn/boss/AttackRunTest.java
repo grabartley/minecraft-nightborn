@@ -2,12 +2,15 @@ package com.grahambartley.nightborn.boss;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import com.grahambartley.nightborn.MinecraftBootstrapExtension;
 import java.util.Optional;
 import net.minecraft.util.Identifier;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
+@ExtendWith(MinecraftBootstrapExtension.class)
 class AttackRunTest {
 
   private static final Identifier SOUND = Identifier.ofVanilla("entity.bat.takeoff");
@@ -15,7 +18,7 @@ class AttackRunTest {
   private static AttackRun run(final int tellTicks, final int flurryHits) {
     final Optional<FlurryAttack> flurry =
         flurryHits > 0
-            ? Optional.of(new FlurryAttack(flurryHits, 5, 4.0F, 3.0F, 0.0F))
+            ? Optional.of(new FlurryAttack(flurryHits, 5, 4.0F, 3.0F, 0.0F, Optional.empty()))
             : Optional.empty();
     final Optional<Identifier> power =
         flurryHits > 0 ? Optional.empty() : Optional.of(Identifier.of("nightborn", "lord/rally"));

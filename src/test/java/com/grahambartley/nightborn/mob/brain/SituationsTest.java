@@ -48,4 +48,22 @@ class SituationsTest {
             : Arrays.stream(facts.split(" ")).map(Fact::valueOf).collect(Collectors.toSet());
     assertEquals(reads, Situations.readsGroup(needed));
   }
+
+  @ParameterizedTest(name = "[{0}]: reads tactics {1}")
+  @CsvSource({
+    "'', false",
+    "TARGET_DISTANCE TARGET_SLOWED, false",
+    "TARGET_HEALING, true",
+    "TARGET_RANGED OWN_HEALTH, true",
+    "OWN_HELD, true",
+    "TARGET_HELD, true"
+  })
+  @DisplayName("a mob studies its foe and itself only when a ready power asks a tactical question")
+  void readsTactics(final String facts, final boolean reads) {
+    final Set<Fact> needed =
+        facts.isEmpty()
+            ? EnumSet.noneOf(Fact.class)
+            : Arrays.stream(facts.split(" ")).map(Fact::valueOf).collect(Collectors.toSet());
+    assertEquals(reads, Situations.readsTactics(needed));
+  }
 }

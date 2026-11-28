@@ -1,0 +1,6 @@
+{
+  "maimable": true,
+  "only_when_staggered": true,
+  "chance_scale": 0.5,
+  "cutting": "all"
+}

@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import com.grahambartley.nightborn.config.DismembermentSettings;
 import com.grahambartley.nightborn.config.NightbornConfig;
 import com.grahambartley.nightborn.fight.Blow;
+import com.grahambartley.nightborn.fight.Cutting;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -16,9 +17,11 @@ class SeverRulesTest {
   private static final Blow SWORD = new Blow(false, false, false, true, false);
   private static final Blow CLUB = new Blow(false, false, false, false, false);
   private static final Blow STAKE = new Blow(false, true, false, false, true);
+  private static final BodyRule PLAIN = new BodyRule(true, false, 1.0F, Cutting.WEAPON);
+  private static final BodyRule LEADER = new BodyRule(true, true, 0.5F, Cutting.ALL);
 
   private static SeverRules.Victim hunter(final float health, final boolean staggered) {
-    return new SeverRules.Victim(true, false, 40.0F, health, staggered, false);
+    return new SeverRules.Victim(PLAIN, false, 40.0F, health, staggered, false);
   }
 
   @ParameterizedTest(name = "health {0}, staggered {1}, dealt {2}, roll {3}: {4}")
@@ -44,6 +47,22 @@ class SeverRulesTest {
     assertEquals(
         severs,
         SeverRules.severs(DEFAULTS, hunter(health, staggered), SWORD, true, true, taken, roll));
+  }
+
+  @ParameterizedTest(name = "health {0}, staggered {1}, roll {2}: {3}")
+  @CsvSource({
+    "2, false, 0.0, false",
+    "30, true, 0.0, true",
+    "2, true, 0.07, true",
+    "2, true, 0.075, false",
+    "2, true, 0.1, false"
+  })
+  @DisplayName("a lord or veteran is cut only while staggered, and half as often")
+  void leader(
+      final float health, final boolean staggered, final double roll, final boolean severs) {
+    final SeverRules.Victim lord =
+        new SeverRules.Victim(LEADER, false, 40.0F, health, staggered, false);
+    assertEquals(severs, SeverRules.severs(DEFAULTS, lord, SWORD, true, true, 10.0F, roll));
   }
 
   @ParameterizedTest(name = "dealt {0}: {1}")
@@ -83,7 +102,8 @@ class SeverRulesTest {
     final DismembermentSettings settings =
         new DismembermentSettings(true, playersMaimed, 25, 20, 50, 35, 60, 20, 3);
     final SeverRules.Victim victim =
-        new SeverRules.Victim(maimable, player, 20.0F, 2.0F, false, false);
+        new SeverRules.Victim(
+            new BodyRule(maimable, false, 1.0F, Cutting.WEAPON), player, 20.0F, 2.0F, false, false);
     assertEquals(severs, SeverRules.severs(settings, victim, SWORD, byPlayer, pvp, 10.0F, 0.0));
   }
 
@@ -93,7 +113,8 @@ class SeverRulesTest {
   void switchAndCooldown(final boolean enabled, final boolean recent, final boolean severs) {
     final DismembermentSettings settings =
         new DismembermentSettings(enabled, true, 25, 20, 50, 35, 60, 20, 3);
-    final SeverRules.Victim victim = new SeverRules.Victim(true, false, 40.0F, 5.0F, false, recent);
+    final SeverRules.Victim victim =
+        new SeverRules.Victim(PLAIN, false, 40.0F, 5.0F, false, recent);
     assertEquals(severs, SeverRules.severs(settings, victim, SWORD, true, true, 10.0F, 0.0));
   }
 

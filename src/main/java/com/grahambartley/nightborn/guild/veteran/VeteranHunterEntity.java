@@ -5,7 +5,12 @@ import com.grahambartley.nightborn.guild.GuildMobs;
 import com.grahambartley.nightborn.guild.HunterEntity;
 import com.grahambartley.nightborn.guild.HunterRig;
 import com.grahambartley.nightborn.guild.HunterVoice;
+import com.grahambartley.nightborn.guild.party.PartyMember;
+import com.grahambartley.nightborn.guild.raiding.RaidOrders;
 import com.grahambartley.nightborn.inquisitor.StakeDownedGoal;
+import com.grahambartley.nightborn.mob.brain.Mind;
+import com.grahambartley.nightborn.mob.combat.MobFighting;
+import com.grahambartley.nightborn.mob.combat.PresenceAura;
 import java.util.Map;
 import java.util.Optional;
 import net.minecraft.entity.EntityType;
@@ -16,6 +21,7 @@ import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
+import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.mob.PathAwareEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.registry.entry.RegistryEntry;
@@ -109,14 +115,44 @@ public class VeteranHunterEntity extends HunterEntity {
     }
   }
 
+  Map<Identifier, VeteranAttack> attacks() {
+    return veteran().map(kind -> VeteranData.attacks(getRegistryManager(), kind)).orElse(Map.of());
+  }
+
   @Override
-  public void fight() {
-    super.fight();
-    final Map<Identifier, VeteranAttack> known =
-        veteran().map(kind -> VeteranData.attacks(getRegistryManager(), kind)).orElse(Map.of());
-    if (!telling()) {
-      attacks.tick(known);
+  protected MobFighting.Moves extraMoves() {
+    return attacks;
+  }
+
+  @Override
+  protected Mind mind() {
+    final Mind ranked = super.mind();
+    return veteran().map(kind -> kind.mind(ranked)).orElse(ranked);
+  }
+
+  @Override
+  protected void mobTick() {
+    super.mobTick();
+    if (!isSleeping()) {
+      lead();
     }
+  }
+
+  public void lead() {
+    veteran()
+        .flatMap(Veteran::presence)
+        .ifPresent(presence -> PresenceAura.spread(this, presence, this::fellow));
+  }
+
+  private boolean fellow(final MobEntity other) {
+    return other instanceof HunterEntity hunter
+        && PartyMember.fellows(
+            getUuid(),
+            raid().map(RaidOrders::quarry),
+            partyLeader(),
+            hunter.getUuid(),
+            hunter.raid().map(RaidOrders::quarry),
+            hunter.partyLeader());
   }
 
   @Override

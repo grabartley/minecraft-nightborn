@@ -8,10 +8,5 @@
   "count": 3,
   "radius": 1.0,
   "effect_ticks": 120,
-  "mark": "nightborn:holy_water",
-  "trigger": {
-    "crowd": 2,
-    "crowd_reach": 4.0,
-    "still_ticks": 20
-  }
+  "mark": "nightborn:holy_water"
 }

@@ -3,16 +3,18 @@ package com.grahambartley.nightborn.client.gore;
 import com.grahambartley.nightborn.client.state.GoreLevel;
 
 public enum SplatterLook {
-  FRESH(true, 0xFFFFFF),
-  DRIED(true, 0x6E5248),
-  HIDDEN(false, 0xFFFFFF);
+  FRESH(true, 0xFFFFFF, 1.0F),
+  DRIED(true, 0x6E5248, 0.5F),
+  HIDDEN(false, 0xFFFFFF, 0.0F);
 
   private final boolean drawn;
   private final int tint;
+  private final float lifeShare;
 
-  SplatterLook(final boolean drawn, final int tint) {
+  SplatterLook(final boolean drawn, final int tint, final float lifeShare) {
     this.drawn = drawn;
     this.tint = tint;
+    this.lifeShare = lifeShare;
   }
 
   public static SplatterLook of(final GoreLevel gore) {
@@ -29,6 +31,10 @@ public enum SplatterLook {
 
   public boolean drawn() {
     return this.drawn;
+  }
+
+  public float lifeShare() {
+    return this.lifeShare;
   }
 
   public boolean tinted() {

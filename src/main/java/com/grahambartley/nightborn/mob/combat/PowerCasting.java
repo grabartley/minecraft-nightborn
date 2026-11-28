@@ -59,6 +59,15 @@ public final class PowerCasting {
     return now >= (engaged ? nextThink : nextAid);
   }
 
+  public static long afterCast(
+      final long now,
+      final long nextThink,
+      final int thinkTicks,
+      final int cooldownPrice,
+      final boolean chains) {
+    return chains ? now : Math.max(nextThink, now + thinkTicks) + cooldownPrice;
+  }
+
   public <T extends MobEntity & PowerShow> void tick(
       final T caster,
       final boolean engaged,
@@ -114,7 +123,12 @@ public final class PowerCasting {
                       return;
                     }
                     nextThink =
-                        Math.max(nextThink, now + thinkTicks) + thought.budget().cooldownPrice();
+                        afterCast(
+                            now,
+                            nextThink,
+                            thinkTicks,
+                            thought.budget().cooldownPrice(),
+                            minded.chains());
                     nextAid = nextThink;
                   });
         });

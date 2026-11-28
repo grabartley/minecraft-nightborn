@@ -1,9 +1,9 @@
 package com.grahambartley.nightborn.accessory;
 
 import com.grahambartley.nightborn.gear.VampireBane;
+import com.grahambartley.nightborn.vampire.NightbornDamage;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
-import net.minecraft.entity.damage.DamageTypes;
 import net.minecraft.item.ItemStack;
 
 public final class WornStrikes {
@@ -17,9 +17,7 @@ public final class WornStrikes {
         || !(source.getAttacker() instanceof LivingEntity striker)) {
       return amount;
     }
-    final boolean blow =
-        source.getSource() == striker
-            && (source.isOf(DamageTypes.PLAYER_ATTACK) || source.isOf(DamageTypes.MOB_ATTACK));
+    final boolean blow = source.getSource() == striker && source.isIn(NightbornDamage.WEAPON_BLOWS);
     final ItemStack held = striker.getMainHandStack();
     return strike(
         amount,

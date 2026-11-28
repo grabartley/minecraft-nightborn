@@ -23,7 +23,8 @@ class CombatMoveTest {
 
   private static final CombatSettings SETTINGS = NightbornConfig.DEFAULTS.combat();
   private static final StageCombat ELDER =
-      new StageCombat(3, 20, Sharpness.KEEN, true, 45, 35, 30, 50, 35, StageStuck.PLAIN);
+      new StageCombat(
+          3, 20, Sharpness.KEEN, true, 45, 35, 30, 50, 35, StageStuck.PLAIN, Optional.empty());
   private static final int REST = 60;
 
   @ParameterizedTest(name = "{0}, free {1}, roll {2}: ready {3}")

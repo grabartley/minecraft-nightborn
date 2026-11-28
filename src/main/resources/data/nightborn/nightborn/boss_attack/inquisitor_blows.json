@@ -12,6 +12,7 @@
     "every_ticks": 7,
     "damage": 7.0,
     "reach": 3.5,
-    "lunge": 0.3
+    "lunge": 0.3,
+    "damage_type": "nightborn:cleave"
   }
 }

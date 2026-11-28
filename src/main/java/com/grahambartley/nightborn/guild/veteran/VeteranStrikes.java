@@ -44,7 +44,7 @@ final class VeteranStrikes {
       final LivingEntity target,
       final VeteranAttack attack,
       final boolean dodged) {
-    if (!VeteranChoice.chainLands(
+    if (!VeteranDodge.chainLands(
         dodged,
         target.isAlive(),
         VanishAttachment.isGone(target),

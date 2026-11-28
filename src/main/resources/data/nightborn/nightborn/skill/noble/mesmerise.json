@@ -145,6 +145,31 @@
             }
           ],
           "weight": 1.5
+        },
+        {
+          "intent": "fight",
+          "considerations": [
+            {
+              "fact": "target_distance",
+              "low": 3,
+              "high": 12
+            },
+            {
+              "fact": "target_in_sight",
+              "low": 1,
+              "high": 1
+            },
+            {
+              "fact": "target_slowed",
+              "high": 0
+            },
+            {
+              "fact": "target_healing",
+              "low": 1,
+              "high": 1
+            }
+          ],
+          "weight": 2.4
         }
       ]
     }

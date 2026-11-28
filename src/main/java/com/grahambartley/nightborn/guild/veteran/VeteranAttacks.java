@@ -1,37 +1,26 @@
 package com.grahambartley.nightborn.guild.veteran;
 
-import com.grahambartley.nightborn.batform.BatForm;
 import com.grahambartley.nightborn.boss.ZoneMarkEntity;
 import com.grahambartley.nightborn.boss.ZoneShape;
 import com.grahambartley.nightborn.boss.ZoneStrikes;
 import com.grahambartley.nightborn.guild.GuildData;
-import com.grahambartley.nightborn.guild.GuildMobs;
-import com.grahambartley.nightborn.guild.HunterEntity;
-import com.grahambartley.nightborn.guild.raiding.RaidOrders;
-import com.grahambartley.nightborn.guild.raiding.RaidingParties;
-import com.grahambartley.nightborn.guild.raiding.RaidingParty;
-import com.grahambartley.nightborn.mind.MindTies;
-import com.grahambartley.nightborn.vampire.Vampires;
+import com.grahambartley.nightborn.mob.brain.ActionReadiness;
+import com.grahambartley.nightborn.mob.combat.MobFighting;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
-import java.util.function.ToDoubleFunction;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.attribute.DefaultAttributeRegistry;
-import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.item.ItemStack;
 import net.minecraft.registry.Registries;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
 import org.jetbrains.annotations.Nullable;
 
-final class VeteranAttacks {
+final class VeteranAttacks implements MobFighting.Moves {
 
   static final double MARK_LIFT = 0.02;
 
@@ -44,7 +33,6 @@ final class VeteranAttacks {
   private Vec3d aim = Vec3d.ZERO;
   private List<Vec3d> spots = List.of();
   @Nullable private Vec3d lastTargetPos;
-  private int stillTicks;
   private boolean dodged;
   private ItemStack sheathed = ItemStack.EMPTY;
 
@@ -52,19 +40,63 @@ final class VeteranAttacks {
     this.veteran = veteran;
   }
 
-  void tick(final Map<Identifier, VeteranAttack> attacks) {
-    final LivingEntity target = veteran.getTarget();
-    final boolean hunting = target != null && target.isAlive();
-    final double moved = track(hunting ? target : null);
+  @Override
+  public void tick() {
+    final LivingEntity target = hunted();
+    final double moved = track(target);
     if (current != null) {
-      windup(hunting ? target : null, moved);
-      return;
+      windup(target, moved);
     }
-    if (!hunting || attacks.isEmpty()) {
-      return;
+  }
+
+  @Override
+  public List<ActionReadiness> actions() {
+    return readiness(
+        veteran.attacks(),
+        readyAt,
+        veteran.getWorld().getTime(),
+        current == null,
+        hunted() != null);
+  }
+
+  static List<ActionReadiness> readiness(
+      final Map<Identifier, VeteranAttack> attacks,
+      final Map<Identifier, Long> readyAt,
+      final long now,
+      final boolean free,
+      final boolean hunting) {
+    if (!free || !hunting) {
+      return List.of();
     }
-    VeteranChoice.pick(attacks, readyAt, veteran.getWorld().getTime(), situation(target, attacks))
-        .ifPresent(id -> begin(id, attacks.get(id), target));
+    final List<ActionReadiness> ready = new ArrayList<>(attacks.size());
+    attacks.forEach(
+        (id, attack) ->
+            ready.add(
+                ActionReadiness.of(
+                    id, now >= readyAt.getOrDefault(id, Long.MIN_VALUE), attack.cooldownTicks())));
+    return ready;
+  }
+
+  @Override
+  public boolean act(final Identifier action) {
+    final LivingEntity target = hunted();
+    final VeteranAttack chosen = veteran.attacks().get(action);
+    if (current != null || target == null || chosen == null) {
+      return false;
+    }
+    begin(action, chosen, target);
+    return true;
+  }
+
+  @Override
+  public boolean busy() {
+    return current != null;
+  }
+
+  @Nullable
+  private LivingEntity hunted() {
+    final LivingEntity target = veteran.getTarget();
+    return target != null && target.isAlive() ? target : null;
   }
 
   void clear() {
@@ -83,85 +115,12 @@ final class VeteranAttacks {
   private double track(@Nullable final LivingEntity target) {
     if (target == null) {
       lastTargetPos = null;
-      stillTicks = 0;
       return 0.0;
     }
     final Vec3d now = target.getPos();
     final double moved = lastTargetPos == null ? 0.0 : now.distanceTo(lastTargetPos);
-    stillTicks = VeteranChoice.stillTicks(stillTicks, moved);
     lastTargetPos = now;
     return moved;
-  }
-
-  private VeteranChoice.Situation situation(
-      final LivingEntity target, final Map<Identifier, VeteranAttack> attacks) {
-    final double crowdReach = most(attacks, VeteranAttack.Trigger::crowdReach);
-    final List<HunterEntity> allies =
-        VeteranStrikes.allies(
-            veteran,
-            attacks.values().stream()
-                .filter(a -> a.kind() == VeteranAttack.Kind.RALLYING_CRY)
-                .mapToDouble(VeteranAttack::radius)
-                .max()
-                .orElse(0.0));
-    return new VeteranChoice.Situation(
-        veteran.canSee(target),
-        veteran.distanceTo(target),
-        !target.isOnGround(),
-        BatForm.isBat(target),
-        veteran
-            .getWorld()
-            .getEntitiesByClass(
-                LivingEntity.class,
-                new Box(target.getBlockPos()).expand(crowdReach),
-                Vampires::isVampire)
-            .size(),
-        stillTicks,
-        allies.stream().anyMatch(MindTies::mesmerised),
-        partyHealth(allies));
-  }
-
-  private static double most(
-      final Map<Identifier, VeteranAttack> attacks,
-      final ToDoubleFunction<VeteranAttack.Trigger> field) {
-    return attacks.values().stream()
-        .map(VeteranAttack::trigger)
-        .mapToDouble(field)
-        .max()
-        .orElse(0.0);
-  }
-
-  private double partyHealth(final List<HunterEntity> allies) {
-    final double hunterMax =
-        DefaultAttributeRegistry.get(GuildMobs.HUNTER)
-            .getBaseValue(EntityAttributes.GENERIC_MAX_HEALTH);
-    final Optional<RaidingParty> raid =
-        veteran.getServer() == null
-            ? Optional.empty()
-            : veteran
-                .raid()
-                .map(RaidOrders::quarry)
-                .flatMap(quarry -> RaidingParties.get(veteran.getServer()).against(quarry));
-    if (raid.isEmpty()) {
-      return VeteranChoice.partyHealth(
-          allies.stream().mapToDouble(LivingEntity::getHealth).sum(),
-          allies.stream().mapToDouble(LivingEntity::getMaxHealth).sum(),
-          0,
-          0,
-          hunterMax);
-    }
-    final List<LivingEntity> standing =
-        raid.get().members().stream()
-            .map(id -> ((ServerWorld) veteran.getWorld()).getEntity(id))
-            .filter(LivingEntity.class::isInstance)
-            .map(LivingEntity.class::cast)
-            .toList();
-    return VeteranChoice.partyHealth(
-        standing.stream().mapToDouble(LivingEntity::getHealth).sum(),
-        standing.stream().mapToDouble(LivingEntity::getMaxHealth).sum(),
-        raid.get().members().size() - standing.size(),
-        raid.get().size() - raid.get().members().size(),
-        hunterMax);
   }
 
   private void begin(final Identifier id, final VeteranAttack chosen, final LivingEntity target) {
@@ -222,7 +181,7 @@ final class VeteranAttacks {
     final VeteranAttack winding = attack;
     veteran.getNavigation().stop();
     veteran.getLookControl().lookAt(aim.x, aim.y + 1.0, aim.z);
-    if (VeteranChoice.dodged(moved)) {
+    if (VeteranDodge.dodged(moved)) {
       dodged = true;
     }
     if (--left > 0) {

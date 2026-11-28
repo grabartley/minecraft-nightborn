@@ -16,6 +16,12 @@ class SplatterLookTest {
     assertEquals(drawn, look.drawn());
   }
 
+  @ParameterizedTest(name = "{0} lives {1} of the full time")
+  @CsvSource({"FRESH, 1.0", "DRIED, 0.5", "HIDDEN, 0.0"})
+  void reducedGoreKeepsBloodForLess(final SplatterLook look, final float share) {
+    assertEquals(share, look.lifeShare(), 1.0e-6F);
+  }
+
   @ParameterizedTest(name = "{0} over 0x{1}")
   @CsvSource({
     "FRESH, FF8C1620, FF8C1620",
