@@ -51,7 +51,7 @@ The canonical implementations are **Loot Lock** and **Dogs Unleashed**. Follow t
 ## Compatibility
 
 - **Work with vanilla wherever possible.** A feature that only works on the mod's own blocks is worth much less than one that works on the blocks players already have. Where a feature genuinely cannot apply to vanilla content, say so explicitly rather than leaving it ambiguous.
-- **Optional integrations degrade cleanly.** EMI and JEI are suggested dependencies, and Mod Menu is supported without being declared as one. The mod loads and runs correctly with none of them installed, and no class referencing their types loads when they are absent.
+- **Optional integrations degrade cleanly.** EMI, JEI and Mod Menu are supported without being declared as dependencies. The mod loads and runs correctly with none of them installed, and no class referencing their types loads when they are absent.
 - **Do not assume the player's video settings.** Particles are culled on reduced particle settings, and a meaningful number of players run Minimal. An effect whose readability depends on particles is invisible to them. Silhouettes must be geometry.
 
 ## Documentation

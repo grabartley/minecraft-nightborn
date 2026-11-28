@@ -54,23 +54,13 @@ public class WallDecorBlock extends HorizontalFacingBlock {
 
   @Override
   protected boolean canPlaceAt(final BlockState state, final WorldView world, final BlockPos pos) {
-    final Direction support = support(state);
-    final BlockPos behind = pos.offset(support);
-    return world.getBlockState(behind).isSideSolidFullSquare(world, behind, support.getOpposite());
+    return WallMount.backed(world, pos, support(state));
   }
 
   @Override
   @Nullable
   public BlockState getPlacementState(final ItemPlacementContext context) {
-    for (final Direction direction : context.getPlacementDirections()) {
-      if (direction.getAxis().isHorizontal()) {
-        final BlockState state = this.getDefaultState().with(FACING, direction.getOpposite());
-        if (state.canPlaceAt(context.getWorld(), context.getBlockPos())) {
-          return state;
-        }
-      }
-    }
-    return null;
+    return WallMount.placed(this.getDefaultState(), FACING, context);
   }
 
   @Override
@@ -81,7 +71,7 @@ public class WallDecorBlock extends HorizontalFacingBlock {
       final WorldAccess world,
       final BlockPos pos,
       final BlockPos neighborPos) {
-    return direction == support(state) && !state.canPlaceAt(world, pos)
+    return WallMount.fell(state, support(state), direction, world, pos)
         ? Blocks.AIR.getDefaultState()
         : super.getStateForNeighborUpdate(state, direction, neighborState, world, pos, neighborPos);
   }

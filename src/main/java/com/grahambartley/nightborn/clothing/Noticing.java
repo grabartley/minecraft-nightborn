@@ -29,10 +29,6 @@ public final class Noticing {
         : 1.0;
   }
 
-  public static int byVillagers(final LivingEntity wearer, final int range) {
-    return range(range, WornAttributes.value(wearer, WornAttributes.NOTICE_DISTANCE));
-  }
-
   public static int feeding(final LivingEntity feeder, final int range) {
     return feeding(
         range,

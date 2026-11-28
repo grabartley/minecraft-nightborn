@@ -145,6 +145,9 @@ Every `/nightborn` command needs operator permission.
 /nightborn thrall release <thralls>
 /nightborn thrall free <players>
 /nightborn house disband <players>
+/nightborn brain <entities>
+/nightborn body sever <entities> <part>
+/nightborn body restore <entities>
 ```
 
 Any vampire can use `/house` to see their house, and `/house accept`, `decline`, `leave`, `name` and `disband` to

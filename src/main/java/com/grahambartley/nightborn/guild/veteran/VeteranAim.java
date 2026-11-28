@@ -6,7 +6,6 @@ import net.minecraft.util.math.Vec3d;
 
 public final class VeteranAim {
 
-  public static final double MARK_STEP = 0.75;
   public static final double ARC_SPACING = 2.0;
   public static final double DRAG_GAP = 1.5;
 

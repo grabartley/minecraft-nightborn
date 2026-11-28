@@ -334,7 +334,7 @@ The skills only vampire mobs have, Bat Swarm and Call To Arms, stay as they are 
 ## New Art These Skills Need
 
 - A net, a snare and a flash trap.
-- An icon for every skill, at `textures/gui/sprites/skills/icon/<id>.png`. The id is the skill's name in lower case with spaces as underscores and apostrophes dropped, such as `sovereigns_gaze`.
+- An icon for every skill a player can learn, at `textures/gui/sprites/skills/icon/<id>.png`. The id is the skill's name in lower case with spaces as underscores and apostrophes dropped, such as `sovereigns_gaze`.
 
 ## Art And Feel
 
