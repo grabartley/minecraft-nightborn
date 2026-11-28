@@ -206,19 +206,29 @@ public class FaithfulGameTest implements FabricGameTest {
   }
 
   @GameTest(templateName = ARENA, batchId = BATCH, tickLimit = LIMIT)
-  public void bloodFireSetsACowAlightWithoutSearingIt(final TestContext context) {
+  public void bloodFireSetsACowAndAVampireAlightAndSearsOnlyTheVampire(final TestContext context) {
     final ServerPlayerEntity hunter = TestPlayers.hunter(context, new BlockPos(1, 2, 1));
     final CowEntity cow = context.spawnEntity(EntityType.COW, new BlockPos(2, 2, 1));
     cow.setAiDisabled(true);
+    final VampireEntity vampire = vampire(context, new BlockPos(1, 2, 2));
     learn(hunter, "blessing", "blood_fire");
     hunter.setStackInHand(Hand.MAIN_HAND, new ItemStack(Items.IRON_SWORD));
     context.runAtTick(
         TestPlayers.READY,
         () -> {
           cast(context, hunter, "blood_fire");
+          final int burnTicks =
+              Kindling.burning(hunter.getMainHandStack(), context.getWorld().getTime())
+                  .orElseThrow()
+                  .burnTicks();
           cow.damage(hunter.getDamageSources().playerAttack(hunter), 1.0F);
-          context.assertTrue(cow.isOnFire(), "the burning blade sets the cow alight");
-          context.assertFalse(FaithMarks.SEARED.on(cow), "only a vampire is seared");
+          vampire.damage(hunter.getDamageSources().playerAttack(hunter), 1.0F);
+          context.assertTrue(
+              cow.getFireTicks() >= burnTicks, "the cow burns for the skill's burn time");
+          context.assertTrue(
+              vampire.getFireTicks() >= burnTicks, "the vampire burns for the skill's burn time");
+          context.assertFalse(FaithMarks.SEARED.on(cow), "the cow is not seared");
+          context.assertTrue(FaithMarks.SEARED.on(vampire), "the vampire is seared");
           TestPlayers.finish(context, hunter);
         });
   }
