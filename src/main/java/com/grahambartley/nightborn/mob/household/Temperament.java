@@ -5,6 +5,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import java.util.Map;
+import net.minecraft.SharedConstants;
 import net.minecraft.util.math.intprovider.IntProvider;
 import net.minecraft.util.math.intprovider.UniformIntProvider;
 import net.minecraft.util.math.random.Random;
@@ -22,7 +23,7 @@ public record Temperament(
   public static final int LONGEST_PASTIME = 600;
   public static final int LONGEST_MOURNING = 1200;
   public static final int LONGEST_IDLE_VOICE = 600;
-  public static final IntProvider EVEN_IDLE_VOICE = UniformIntProvider.create(20, 45);
+  private static final IntProvider EVEN_IDLE_VOICE = UniformIntProvider.create(20, 45);
 
   public static final Temperament EVEN =
       new Temperament(
@@ -66,7 +67,7 @@ public record Temperament(
   }
 
   public int idleVoiceTicks(final Random random) {
-    return idleVoiceSeconds.get(random) * 20;
+    return idleVoiceSeconds.get(random) * SharedConstants.TICKS_PER_SECOND;
   }
 
   private static DataResult<Temperament> check(final Temperament temperament) {

@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import net.minecraft.util.math.intprovider.ConstantIntProvider;
+import net.minecraft.util.math.intprovider.IntProvider;
 import net.minecraft.util.math.random.Random;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -83,12 +84,9 @@ class TemperamentTest {
       "a vampire's idle voice waits as long as its temperament says, never the few seconds a"
           + " plain mob waits")
   void shippedIdleVoiceWaits(final String id, final int fewest, final int most) throws IOException {
-    final Temperament temperament = shipped(id);
-    final Random random = Random.create(7L);
-    for (int i = 0; i < 200; i++) {
-      final int ticks = temperament.idleVoiceTicks(random);
-      assertTrue(ticks >= fewest * 20 && ticks <= most * 20, id + " waited " + ticks + " ticks");
-    }
+    final IntProvider wait = shipped(id).idleVoiceSeconds();
+    assertEquals(fewest, wait.getMin());
+    assertEquals(most, wait.getMax());
   }
 
   @ParameterizedTest(name = "{0}")
