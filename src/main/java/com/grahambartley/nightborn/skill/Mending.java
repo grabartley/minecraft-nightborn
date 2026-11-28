@@ -1,6 +1,7 @@
 package com.grahambartley.nightborn.skill;
 
 import com.grahambartley.nightborn.Nightborn;
+import com.grahambartley.nightborn.dismember.Wounds;
 import com.grahambartley.nightborn.downed.Downed;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentRegistry;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentType;
@@ -18,6 +19,9 @@ public final class Mending {
 
   public static void start(final LivingEntity caster, final HealPower heal) {
     caster.setAttached(TYPE, heal.mend());
+    if (heal.closesWounds()) {
+      Wounds.close(caster);
+    }
   }
 
   public static void tick(final LivingEntity entity) {

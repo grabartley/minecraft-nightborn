@@ -1010,5 +1010,28 @@
         "stream": true
       }
     ]
+  },
+  "entity.bleeding.drip": {
+    "subtitle": "subtitles.nightborn.entity.bleeding.drip",
+    "sounds": [
+      {
+        "name": "minecraft:block/pointed_dripstone/drip_water1"
+      },
+      {
+        "name": "minecraft:block/pointed_dripstone/drip_water2"
+      },
+      {
+        "name": "minecraft:block/pointed_dripstone/drip_water3"
+      },
+      {
+        "name": "minecraft:block/pointed_dripstone/drip_water4"
+      },
+      {
+        "name": "minecraft:block/pointed_dripstone/drip_water5"
+      },
+      {
+        "name": "minecraft:block/pointed_dripstone/drip_water6"
+      }
+    ]
   }
 }

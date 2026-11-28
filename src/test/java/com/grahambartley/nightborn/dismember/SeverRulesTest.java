@@ -81,7 +81,7 @@ class SeverRulesTest {
       final boolean pvp,
       final boolean severs) {
     final DismembermentSettings settings =
-        new DismembermentSettings(true, playersMaimed, 25, 20, 50, 35);
+        new DismembermentSettings(true, playersMaimed, 25, 20, 50, 35, 60, 20, 3);
     final SeverRules.Victim victim =
         new SeverRules.Victim(maimable, player, 20.0F, 2.0F, false, false);
     assertEquals(severs, SeverRules.severs(settings, victim, SWORD, byPlayer, pvp, 10.0F, 0.0));
@@ -91,7 +91,8 @@ class SeverRulesTest {
   @CsvSource({"true, false, true", "false, false, false", "true, true, false"})
   @DisplayName("the switch and the cooldown both stop a cut")
   void switchAndCooldown(final boolean enabled, final boolean recent, final boolean severs) {
-    final DismembermentSettings settings = new DismembermentSettings(enabled, true, 25, 20, 50, 35);
+    final DismembermentSettings settings =
+        new DismembermentSettings(enabled, true, 25, 20, 50, 35, 60, 20, 3);
     final SeverRules.Victim victim = new SeverRules.Victim(true, false, 40.0F, 5.0F, false, recent);
     assertEquals(severs, SeverRules.severs(settings, victim, SWORD, true, true, 10.0F, 0.0));
   }
@@ -106,7 +107,7 @@ class SeverRulesTest {
   })
   @DisplayName("the trunk, the head and a part already gone sever nothing")
   void part(final BodyPart aimed, final BodyPart lost, final BodyPart expected) {
-    final BodyState body = lost == null ? BodyState.WHOLE : BodyState.WHOLE.cut(lost, 0L);
+    final BodyState body = lost == null ? BodyState.WHOLE : BodyState.WHOLE.cut(lost, 0L, 0);
     assertEquals(Optional.ofNullable(expected), SeverRules.part(Optional.ofNullable(aimed), body));
   }
 }

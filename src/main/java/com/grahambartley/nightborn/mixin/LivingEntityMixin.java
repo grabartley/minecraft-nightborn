@@ -11,6 +11,7 @@ import com.grahambartley.nightborn.coffin.CoffinSleeperHold;
 import com.grahambartley.nightborn.coffin.CoffinSleepers;
 import com.grahambartley.nightborn.coffin.DaySleep;
 import com.grahambartley.nightborn.config.NightbornConfig;
+import com.grahambartley.nightborn.dismember.Wounds;
 import com.grahambartley.nightborn.downed.DownedTargeting;
 import com.grahambartley.nightborn.faith.Kindling;
 import com.grahambartley.nightborn.gear.StakedFall;
@@ -73,6 +74,7 @@ abstract class LivingEntityMixin {
     }
     Vanish.tick(self);
     Mending.tick(self);
+    Wounds.tick(self);
     ParasolShade.tick(self, ServerConfigService.current().sun());
     PowerTicks.tick(self);
     if (Vampires.isVampire(self)) {

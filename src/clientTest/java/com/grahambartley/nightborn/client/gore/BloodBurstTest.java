@@ -24,6 +24,9 @@ class BloodBurstTest {
     "REDUCED, DECREASED, DRAINED, 3, DRIED",
     "FULL, ALL, STAKE, 18, FRESH",
     "FULL, ALL, SILVER, 10, FRESH",
+    "FULL, ALL, SEVER, 40, FRESH",
+    "REDUCED, DECREASED, SEVER, 10, DRIED",
+    "OFF, ALL, SEVER, 0, HIDDEN",
     "OFF, ALL, STAKED, 0, HIDDEN",
     "FULL, MINIMAL, STAKED, 0, HIDDEN"
   })
@@ -42,8 +45,8 @@ class BloodBurstTest {
   @ParameterizedTest(name = "{0}")
   @EnumSource(
       value = Gore.class,
-      names = {"DRAINED", "STAKED"})
-  @DisplayName("only death effects leave a pool under the body")
+      names = {"DRAINED", "STAKED", "SEVER"})
+  @DisplayName("only death effects and a lost part leave a pool under the body")
   void deathsPool(final Gore kind) {
     assertEquals(1, BloodBurst.of(GoreLevel.FULL, ParticlesMode.ALL, kind).pools());
   }

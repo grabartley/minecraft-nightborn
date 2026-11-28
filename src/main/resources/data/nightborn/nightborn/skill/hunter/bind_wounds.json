@@ -17,7 +17,8 @@
     "clip": "power_mend",
     "heal": {
       "health": 6.0,
-      "ticks": 80
+      "ticks": 80,
+      "closes_wounds": true
     },
     "sound": {
       "id": "minecraft:item.armor.equip_leather",

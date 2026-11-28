@@ -502,12 +502,12 @@ A vampire who has come of age can found a house: a household of their own, of va
 
 Every human can fight vampires with stake, silver, garlic and holy water. One who proves themselves and joins the guild is a hunter, and only a hunter grows: hunter experience, the tree, ranks, contracts and trials all begin with the oath.
 
-The hunter tree has a core that every hunter shares, and four paths, of which a hunter picks two. The core starts with Tracking, an active power that points toward the nearest vampire for a short time, which every path needs first. The rest of the core is what any hunter learns on the road: tougher hide, a harder stake, surer feet, eyes that clear faster, Second Wind, a short burst of speed and grit, and Bind Wounds, which dresses the hunter's own wounds. The gifts that last are player attributes (`nightborn:bite_resistance`, `nightborn:mesmerise_resistance` and `nightborn:faith`) that skills raise, so the features that use them read one number and never the skills themselves. A hunter must be online when the sun finishes the vampire to be paid.
+The hunter tree has a core that every hunter shares, and four paths, of which a hunter picks two. The core starts with Tracking, an active power that points toward the nearest vampire for a short time, which every path needs first. The rest of the core is what any hunter learns on the road: tougher hide, a harder stake, surer feet, eyes that clear faster, Second Wind, a short burst of speed and grit, and Bind Wounds, which dresses the hunter's own wounds and stops them bleeding (GORE-11). The gifts that last are player attributes (`nightborn:bite_resistance`, `nightborn:mesmerise_resistance` and `nightborn:faith`) that skills raise, so the features that use them read one number and never the skills themselves. A hunter must be online when the sun finishes the vampire to be paid.
 
 | Path | What it gives |
 |---|---|
 | **Trapper** | Traps, nets and bait. The fight is won before it starts |
-| **Faithful** | Faith as a weapon: stronger holy things, prayers that heal, and a blade blessed or set alight. A burning blade sets alight anything it strikes that can burn, and a vampire it burns cannot heal until the fire is out |
+| **Faithful** | Faith as a weapon: stronger holy things, prayers that heal and close bleeding wounds (GORE-11), and a blade blessed or set alight. A burning blade sets alight anything it strikes that can burn, and a vampire it burns cannot heal until the fire is out |
 | **Slayer** | The duellist: dodges, counters, stakes thrown and driven home, and bite resistance |
 | **Seeker** | Senses: longer tracking, warnings, a mark on a quarry, and sight that sees through a disguise, which a vampire player is told of |
 
@@ -738,15 +738,17 @@ Some of those who survive a player do not forget them.
 
 | ID | Requirement |
 |---|---|
-| GORE-1 | Bites, stakes and silver hits spray blood. Blood leaves splatter on nearby blocks, drawn by the client, that fades with time. It lands only on the full, flat top or side of a block it touches, never in or under liquid and never past the edge of its face, and it goes as soon as its block is broken, moved or flooded |
+| GORE-1 | Bites, stakes, silver hits and open wounds (GORE-10) spray blood. Blood leaves splatter on nearby blocks, drawn by the client, that fades with time. It lands only on the full, flat top or side of a block it touches, never in or under liquid and never past the edge of its face, and it goes as soon as its block is broken, moved or flooded |
 | GORE-2 | A drained victim and a staked vampire have their own death effects. A staked vampire also gives off the dark, ashy smoke of a burning one (SUN-3) |
-| GORE-3 | A client option sets gore, including vomit particles (FEED-3), blood spray and its splatter (GORE-1), and placed blood splatter (DECOR-3), to Full, Reduced or Off. Full is the default. Reduced draws fewer drops, and blood spray and splatter dried and dark. Vomit particles and blood spray also follow the vanilla Particles setting: fewer on Decreased, and none on Minimal. The form views option (CFG-7) sits beside it |
+| GORE-3 | A client option sets gore, including vomit particles (FEED-3), blood spray and its splatter (GORE-1), wound blood and its trail (GORE-10), and placed blood splatter (DECOR-3), to Full, Reduced or Off. Full is the default. Reduced draws fewer drops, and blood spray and splatter dried and dark. Vomit particles, blood spray and wound blood also follow the vanilla Particles setting: fewer on Decreased, and none on Minimal. The form views option (CFG-7) sits beside it |
 | GORE-4 | Gore is drawn by the client only. The setting never changes what happens in the world, including which parts a body has lost (GORE-5) |
 | GORE-5 | A blow can cut a part off a vampire mob, a hunter mob or a player, when dismemberment is on. A player can be maimed only while "players can be maimed" is on, and a player's blow on another player also needs PvP. Which mobs can be maimed is data. The Eldest and the Grand Inquisitor keep their bodies |
 | GORE-6 | A blow can sever when it is a direct melee blow with a severing weapon (swords, axes, the silver sword and axe and their ashen forms, the Blade of the Eldest and the Inquisitor's Greatsword, as data), a power or boss attack marked as severing in data, or any blow that takes at least the massive blow share of the victim's max health (default 50%). It must also take at least the strong blow share (default 15%) after armour, and leave the victim alive and open: staggered, or below the badly hurt share of health (default 35%). Then a roll under the chance to sever (default 15%) cuts. Stakes, bolts, bites, a player's bare fist, fire, falls and the sun never sever, whatever the damage, and neither does a blocked blow. Which damage and which shots never sever is data |
 | GORE-7 | A player's melee blow takes the part their line of sight meets, by height and side of the victim's body: the top quarter is the head, below the hip a leg, and outside the trunk between them an arm. A shot takes the part at its point of impact. A mob's melee blow picks a part by weights in data, limbs far more often than the head. A blow with no direction, such as a blast, picks a limb at random. A blow on the trunk, on the head or on a part already gone severs nothing. Zones are data |
 | GORE-8 | A body that lost a part in the last 10 seconds loses nothing more, so two blows in one tick take one part at most |
 | GORE-9 | Everyone near hears a heavy wet blow when a part comes off, and every client stops drawing that part on the body, with its armour and anything held in that hand. An operator can cut a named limb off any target and give every part back with `/nightborn body` |
+| GORE-10 | A lost part bleeds. The moment it comes off, blood bursts from the cut, thrown the way the blow went. While the wound is open, blood pulses from the shoulder, hip or neck of a standing or crouching body, or from the middle of a body that is lying, swimming or flying, and follows the body as it moves, and a bleeding body leaves splatter on the ground behind it, spaced by distance walked, so it can be tracked. The trail follows the landing rule in GORE-1. No wound blood or trail is drawn for an invisible body, and a bleeding player's own camera shows no drops in first person. Every client draws this from the body's saved state, and the server sends nothing per drop |
+| GORE-11 | A bleeding human loses half a heart every pulse, 3 seconds by default, but bleeding alone never takes them below one heart. A bleeding vampire loses one blood a pulse instead, and does not heal on its own while it bleeds. A human's wound closes on its own after 60 seconds by default, and a vampire's after 20. Bind Wounds, any healing prayer, and a lit torch, soul torch or flint and steel used in the air while bleeding each close every open wound at once. The torch or flint and steel sears the wound shut for a heart of damage that armour and fire resistance do not stop, though a sear never takes the last half heart. Pulses are timed from the latest cut, so a second cut restarts the pulse for every open wound. A bleeding player sees a Bleeding sign with its own icon, and every bleeding body drips with a slow sound that players near it hear, whatever the gore option (ACC-2) |
 
 **Enforcement:** server decides what happens. The client decides how much blood to draw.
 
@@ -789,7 +791,7 @@ Every number this document calls a default, a setting or tunable is an option he
 | Sun and weaknesses | Sun damage, how long a parasol lasts, garlic and crucifix ranges, the damage, weakened time and blood lost from eating garlic, silver damage, the damage, hits, time and weakening of each weapon coating, and the strength, time, radius and cloud time of a garlic bomb |
 | Blood and feeding | Blood drain and blood values, the drain while levitating and in bat form, flying and at a sprint, how fast starving weakens and hurts and how much it takes from night gifts and bare hands, the damage from bringing up food or potions, how much a lancet hurts, feeding range, and the health below which a finisher bite opens |
 | Being a vampire | The downed and escape times, hardcore vampire deaths, and the nights, blood and gifts of each stage |
-| Dismemberment | Whether blows can cut parts off, whether players can be maimed, the chance to sever, and the strong blow, massive blow and badly hurt shares of health |
+| Dismemberment | Whether blows can cut parts off, whether players can be maimed, the chance to sever, the strong blow, massive blow and badly hurt shares of health, how long a human's and a vampire's cut bleeds, and the bleed pulse |
 | Skills | How much experience each act pays, how fast a point's cost rises, the staking penalty, hunter experience per contract, the hunter points each guild rank needs, and the health and damage against vampires each rank gives |
 | Coffins and the day | The coffin sleep share, how soon after dawn a whole day's sleep must start, and what being rested gives |
 | Minds and servants | The chance a sip binds a thrall, how long a charm lasts, a human familiar's starting loyalty, wages, loyalty gains and losses, betrayal threshold and chance, and guard and errand ranges, and how far servants gather, scout, look about them on arrival and keep watch, which is also how far a household's guards see |
@@ -1075,7 +1077,7 @@ There is no singleplayer mode in this mod. A single-player world is an integrate
 | Names, epithets, their colours and who may set one | Draws the name tags and the naming dialogue, and sends the name the owner chose |
 | Household behaviour and structures | Draws fog and plays ambience |
 | Who is on which map | Draws the map it is sent |
-| Gore events, and which parts a body has lost | Decides how much gore to draw (GORE-3), and hides lost parts |
+| Gore events, which parts a body has lost and how long each wound bleeds | Decides how much gore to draw (GORE-3), hides lost parts, and draws wound blood, its trail and the Bleeding sign |
 | Coffin lids, ownership, burning and who sleeps inside, levitation, vomiting, vampire mob powers, the ritual and the Eldest, notoriety, the hunt and the Grand Inquisitor | Draws the lids, burning coffins, sleepers, poses, tells, vomit, the ritual and bell build-ups, the hunt's warnings and both arenas, with vomit scaled by GORE-3 |
 
 ### Concurrency
@@ -1195,7 +1197,7 @@ There is no singleplayer mode in this mod. A single-player world is an integrate
 | ID | Requirement |
 |---|---|
 | ACC-1 | No state relies on colour alone: weakness, sickness, blood quality and the turning bite each have a shape or icon as well |
-| ACC-2 | No meaning relies on particles alone. Sun damage, bat form, weakness, vomiting and a burning coffin all have sound and an on-screen sign |
+| ACC-2 | No meaning relies on particles alone. Sun damage, bat form, weakness, vomiting, bleeding and a burning coffin all have sound and an on-screen sign |
 | ACC-3 | Gore can be reduced or turned off (GORE-3) |
 | ACC-4 | Fog never hides a threat completely within 8 blocks |
 | ACC-5 | Every string is translated into every shipped language, except given names (NAME-10) |

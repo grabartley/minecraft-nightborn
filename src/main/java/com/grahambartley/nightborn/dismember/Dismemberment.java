@@ -4,9 +4,12 @@ import com.grahambartley.nightborn.Nightborn;
 import com.grahambartley.nightborn.config.DismembermentSettings;
 import com.grahambartley.nightborn.fight.Blow;
 import com.grahambartley.nightborn.fight.BlowReading;
+import com.grahambartley.nightborn.gore.Gore;
+import com.grahambartley.nightborn.gore.GoreEvents;
 import com.grahambartley.nightborn.hold.Holds;
 import com.grahambartley.nightborn.server.ServerConfigService;
 import com.grahambartley.nightborn.skill.PowerReach;
+import com.grahambartley.nightborn.vampire.Vampires;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentRegistry;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentSyncPredicate;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentType;
@@ -42,6 +45,7 @@ public final class Dismemberment {
 
   public static void register() {
     BodyZoneData.register();
+    WoundSearing.register();
     ServerLivingEntityEvents.AFTER_DAMAGE.register(
         (entity, source, base, taken, blocked) -> {
           if (!blocked && taken > 0.0F) {
@@ -97,11 +101,23 @@ public final class Dismemberment {
                 BodyZoneData.zones(victim.getWorld().getRegistryManager()),
                 victim.getRandom()),
             body)
-        .ifPresent(part -> sever(victim, part));
+        .ifPresent(part -> sever(victim, part, GoreEvents.sprayYaw(victim, source)));
   }
 
   public static void sever(final LivingEntity victim, final BodyPart part) {
-    victim.setAttached(TYPE, state(victim).cut(part, victim.getWorld().getTime()));
+    sever(victim, part, Float.NaN);
+  }
+
+  private static void sever(final LivingEntity victim, final BodyPart part, final float yaw) {
+    victim.setAttached(
+        TYPE,
+        state(victim)
+            .cut(
+                part,
+                victim.getWorld().getTime(),
+                BleedRules.bleedTicks(
+                    ServerConfigService.current().dismemberment(), Vampires.isVampire(victim))));
+    GoreEvents.spray(victim, Gore.SEVER, yaw);
     victim
         .getWorld()
         .playSound(

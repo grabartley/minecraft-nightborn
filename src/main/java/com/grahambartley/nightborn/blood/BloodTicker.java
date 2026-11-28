@@ -8,6 +8,7 @@ import com.grahambartley.nightborn.batform.BatForm;
 import com.grahambartley.nightborn.clothing.WornAttributes;
 import com.grahambartley.nightborn.coffin.CoffinSleepers;
 import com.grahambartley.nightborn.config.NightbornConfig;
+import com.grahambartley.nightborn.dismember.Wounds;
 import com.grahambartley.nightborn.downed.Downed;
 import com.grahambartley.nightborn.downed.DownedState;
 import com.grahambartley.nightborn.levitation.Levitation;
@@ -58,7 +59,8 @@ public final class BloodTicker {
                 vampire.getMaxHealth(),
                 vampire.getWorld().getDifficulty(),
                 vampire.getWorld().getGameRules().getBoolean(GameRules.NATURAL_REGENERATION)
-                    && (downed == null || !downed.isDowned()),
+                    && (downed == null || !downed.isDowned())
+                    && !Wounds.bleeding(vampire),
                 BloodMetabolism.atRate(
                     BloodMetabolism.flightDrainSeconds(
                         BatForm.effort(vampire), Levitation.isLevitating(vampire), config.core()),

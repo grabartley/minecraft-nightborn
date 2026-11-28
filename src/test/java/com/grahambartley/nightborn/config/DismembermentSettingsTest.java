@@ -39,10 +39,27 @@ class DismembermentSettingsTest {
       final int keptMassive,
       final int keptHurt) {
     final DismembermentSettings settings =
-        new DismembermentSettings(true, true, chance, strong, massive, hurt);
+        new DismembermentSettings(true, true, chance, strong, massive, hurt, 60, 20, 3);
     assertEquals(keptChance, settings.severChance());
     assertEquals(keptStrong, settings.strongBlow());
     assertEquals(keptMassive, settings.massiveBlow());
     assertEquals(keptHurt, settings.badlyHurt());
+  }
+
+  @ParameterizedTest(name = "human {0}s, vampire {1}s, pulse {2}s kept as {3}/{4}/{5}")
+  @CsvSource({"60, 20, 3, 60, 20, 3", "-1, -1, 0, 0, 0, 1", "900, 700, 99, 600, 600, 60"})
+  @DisplayName("the constructor clamps every bleed time to its bounds")
+  void clampsBleeds(
+      final int human,
+      final int vampire,
+      final int pulse,
+      final int keptHuman,
+      final int keptVampire,
+      final int keptPulse) {
+    final DismembermentSettings settings =
+        new DismembermentSettings(true, true, 15, 15, 50, 35, human, vampire, pulse);
+    assertEquals(keptHuman, settings.humanBleedSeconds());
+    assertEquals(keptVampire, settings.vampireBleedSeconds());
+    assertEquals(keptPulse, settings.bleedPulseSeconds());
   }
 }

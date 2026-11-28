@@ -12,7 +12,7 @@ class MendTest {
   @CsvSource({"6, 60", "1, 1", "10, 3", "0, 20"})
   @DisplayName("a mend heals its whole amount in equal steps and then ends")
   void healsItsWholeAmount(final float health, final int ticks) {
-    Mend mend = new HealPower(health, ticks).mend();
+    Mend mend = new HealPower(health, ticks, false).mend();
     float healed = 0.0F;
     int steps = 0;
     while (mend != null) {

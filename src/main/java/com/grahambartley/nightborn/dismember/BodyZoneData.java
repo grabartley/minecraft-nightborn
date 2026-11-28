@@ -17,7 +17,7 @@ public final class BodyZoneData {
   private BodyZoneData() {}
 
   public static void register() {
-    DynamicRegistries.register(ZONES, BodyZones.CODEC);
+    DynamicRegistries.registerSynced(ZONES, BodyZones.CODEC);
   }
 
   public static BodyZones zones(final DynamicRegistryManager registries) {

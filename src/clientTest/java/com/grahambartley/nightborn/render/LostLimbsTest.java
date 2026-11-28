@@ -39,7 +39,7 @@ class LostLimbsTest {
   })
   @DisplayName("only the bone named for a lost part is skipped, its children go with it")
   void hidesBone(final BodyPart lost, final String bone, final boolean hidden) {
-    assertEquals(hidden, LostLimbs.hidden(BodyState.WHOLE.cut(lost, 0L), bone));
+    assertEquals(hidden, LostLimbs.hidden(BodyState.WHOLE.cut(lost, 0L, 0), bone));
   }
 
   @ParameterizedTest(name = "{0}")
@@ -55,7 +55,7 @@ class LostLimbsTest {
   void hidesPlayerModel(final BodyPart lost) {
     final PlayerEntityModel<LivingEntity> model = player();
     model.setVisible(true);
-    LostLimbs.hide(model, BodyState.WHOLE.cut(lost, 0L));
+    LostLimbs.hide(model, BodyState.WHOLE.cut(lost, 0L, 0));
     assertEquals(lost != BodyPart.HEAD, model.head.visible, "head");
     assertEquals(lost != BodyPart.HEAD, model.hat.visible, "hat");
     assertEquals(lost != BodyPart.RIGHT_ARM, model.rightArm.visible, "right arm");

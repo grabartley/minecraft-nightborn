@@ -42,6 +42,7 @@ public record BloodBurst(
       case SILVER -> new BloodBurst(10, 0.6, 0.16, 0.06, false, 0, 0, look);
       case DRAINED -> new BloodBurst(14, 0.85, 0.03, 0.03, false, 1, 0, look);
       case STAKED -> new BloodBurst(32, 0.6, 0.24, 0.1, true, 1, 12, look);
+      case SEVER -> new BloodBurst(40, 0.75, 0.26, 0.09, false, 1, 0, look);
     };
   }
 }

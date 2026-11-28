@@ -47,16 +47,19 @@ public final class GoreEvents {
     return Vampires.isVampire(entity) || BloodQuality.of(entity.getType()).isPresent();
   }
 
+  public static float sprayYaw(final LivingEntity entity, final DamageSource source) {
+    final Entity from = source.getSource() != null ? source.getSource() : source.getAttacker();
+    return from == null
+        ? Float.NaN
+        : GoreRules.sprayYaw(entity.getX() - from.getX(), entity.getZ() - from.getZ());
+  }
+
+  public static void spray(final LivingEntity entity, final Gore gore, final float yaw) {
+    TrackingSends.toSelfAndWatchers(entity, new GorePayload(entity.getId(), gore, yaw));
+  }
+
   private static void send(
       final LivingEntity entity, final DamageSource source, final Optional<Gore> gore) {
-    if (gore.isEmpty()) {
-      return;
-    }
-    final Entity from = source.getSource() != null ? source.getSource() : source.getAttacker();
-    final float yaw =
-        from == null
-            ? Float.NaN
-            : GoreRules.sprayYaw(entity.getX() - from.getX(), entity.getZ() - from.getZ());
-    TrackingSends.toSelfAndWatchers(entity, new GorePayload(entity.getId(), gore.get(), yaw));
+    gore.ifPresent(kind -> spray(entity, kind, sprayYaw(entity, source)));
   }
 }

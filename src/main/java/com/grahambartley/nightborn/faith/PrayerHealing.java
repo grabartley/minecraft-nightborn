@@ -4,6 +4,7 @@ import com.grahambartley.nightborn.accessory.GiftAttributes;
 import com.grahambartley.nightborn.challenge.Deed;
 import com.grahambartley.nightborn.challenge.DeedKinds;
 import com.grahambartley.nightborn.challenge.Deeds;
+import com.grahambartley.nightborn.dismember.Wounds;
 import com.grahambartley.nightborn.occult.Circles;
 import com.grahambartley.nightborn.skill.HeldRanks;
 import java.util.List;
@@ -31,6 +32,7 @@ final class PrayerHealing {
       return false;
     }
     clears.forEach(target::removeStatusEffect);
+    Wounds.close(target);
     final float before = target.getHealth();
     target.heal(
         PrayerRules.boosted(health, GiftAttributes.value(caster, GiftAttributes.PRAYER_HEALING)));

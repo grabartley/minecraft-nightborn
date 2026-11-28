@@ -1,13 +1,18 @@
 package com.grahambartley.nightborn.client.gore;
 
 import com.grahambartley.nightborn.client.state.ClientStateService;
+import com.grahambartley.nightborn.dismember.BodyPart;
+import com.grahambartley.nightborn.dismember.Dismemberment;
+import com.grahambartley.nightborn.gore.Gore;
 import com.grahambartley.nightborn.network.GorePayload;
 import com.grahambartley.nightborn.particle.DecalSurface;
 import com.grahambartley.nightborn.smoke.SmokeParticles;
+import java.util.Optional;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.random.Random;
@@ -20,6 +25,7 @@ public final class BloodFx {
 
   public static void register() {
     BloodParticleFactories.register();
+    WoundBleeds.register();
     ClientPlayNetworking.registerGlobalReceiver(
         GorePayload.ID,
         (payload, context) -> {
@@ -30,6 +36,17 @@ public final class BloodFx {
             spray(client, world, entity, payload);
           }
         });
+  }
+
+  private static Vec3d origin(
+      final ClientWorld world, final Entity entity, final Gore gore, final BloodBurst burst) {
+    if (gore == Gore.SEVER && entity instanceof LivingEntity living) {
+      final Optional<BodyPart> cut = Dismemberment.state(living).newestCut();
+      if (cut.isPresent()) {
+        return WoundBleeds.site(world, living, cut.get());
+      }
+    }
+    return entity.getPos().add(0.0, entity.getHeight() * burst.height(), 0.0);
   }
 
   private static void spray(
@@ -46,7 +63,7 @@ public final class BloodFx {
       return;
     }
     final Random random = world.random;
-    final Vec3d origin = entity.getPos().add(0.0, entity.getHeight() * burst.height(), 0.0);
+    final Vec3d origin = origin(world, entity, payload.gore(), burst);
     final float yaw =
         Float.isNaN(payload.sprayYaw()) ? random.nextFloat() * 360.0F : payload.sprayYaw();
     for (int i = 0; i < burst.drops(); i++) {
